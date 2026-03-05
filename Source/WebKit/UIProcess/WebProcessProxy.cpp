@@ -315,7 +315,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     : AuxiliaryProcessProxy(processPool.shouldTakeUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
     , processPool.alwaysRunsAtBackgroundPriority() ? AlwaysRunsAtBackgroundPriority::Yes : AlwaysRunsAtBackgroundPriority::No)
     , m_backgroundResponsivenessTimer(makeUniqueRef<BackgroundProcessResponsivenessTimer>(*this))
-    , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
+    , m_processPool(processPool)
 #if HAVE(DISPLAY_LINK)
     , m_displayLinkClient(makeUniqueRef<DisplayLinkProcessProxyClient>())
 #endif
@@ -383,7 +383,7 @@ WebProcessProxy::~WebProcessProxy()
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
 #if HAVE(DISPLAY_LINK)
-    if (RefPtr<WebProcessPool> processPool = m_processPool.get())
+    if (RefPtr processPool = m_processPool)
         processPool->displayLinks().stopDisplayLinks(m_displayLinkClient.get());
 #endif
 
@@ -443,14 +443,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     // the process via a background activity long enough to process the IPC if necessary.
     sendWithAsyncReply(Messages::WebProcess::SetIsInProcessCache(m_isInProcessCache), []() { });
 
-    if (m_isInProcessCache) {
-        // WebProcessProxy objects normally keep the process pool alive but we do not want this to be the case
-        // for cached processes or it would leak the pool.
-        m_processPool.setIsWeak(IsWeak::Yes);
-    } else {
-        RELEASE_ASSERT(m_processPool);
-        m_processPool.setIsWeak(IsWeak::No);
-    }
+    RELEASE_ASSERT(m_isInProcessCache || m_processPool);
 
     updateRuntimeStatistics();
 }
@@ -471,11 +464,6 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     // Delay construction of the WebLockRegistryProxy until the WebProcessProxy has a data store since the data store holds the
     // LocalWebLockRegistry.
     lazyInitialize(m_webLockRegistry, makeUniqueWithoutRefCountedCheck<WebLockRegistryProxy>(*this));
-}
-
-bool WebProcessProxy::isDummyProcessProxy() const
-{
-    return m_websiteDataStore && protect(processPool())->dummyProcessProxy(m_websiteDataStore->sessionID()) == this;
 }
 
 void WebProcessProxy::updateRegistrationWithDataStore()
@@ -761,7 +749,8 @@ void WebProcessProxy::shutDown()
         routingArbitrator->processDidTerminate();
 #endif
 
-    Ref<WebProcessPool> { processPool() }->disconnectProcess(*this);
+    if (RefPtr processPool = m_processPool)
+        processPool->disconnectProcess(*this);
 }
 
 WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
@@ -899,7 +888,6 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
 
     m_isPrewarmed = false;
     RELEASE_ASSERT(m_processPool);
-    m_processPool.setIsWeak(IsWeak::No);
 
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
 
@@ -1638,14 +1626,15 @@ void WebProcessProxy::maybeShutDown()
 {
     if (isDummyProcessProxy() && m_pageMap.isEmpty()) {
         ASSERT(state() == State::Terminated);
-        protect(processPool())->disconnectProcess(*this);
+        if (RefPtr processPool = m_processPool)
+            processPool->disconnectProcess(*this);
         return;
     }
 
     if (state() == State::Terminated || !canTerminateAuxiliaryProcess())
         return;
 
-    if (canBeAddedToWebProcessCache() && protect(processPool())->webProcessCache().addProcessIfPossible(*this))
+    if (canBeAddedToWebProcessCache() && m_processPool && protect(m_processPool)->webProcessCache().addProcessIfPossible(*this))
         return;
 
     shutDown();
@@ -2126,7 +2115,7 @@ void WebProcessProxy::memoryPressureStatusChanged(SystemMemoryPressureStatus sta
     m_memoryPressureStatus = status;
 
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
-    if (RefPtr pool = m_processPool.get())
+    if (RefPtr pool = m_processPool)
         pool->memoryPressureStatusChangedForProcess(*this, status);
 #endif
 }
@@ -3013,7 +3002,7 @@ void WebProcessProxy::updateRuntimeStatistics()
     m_throttleStateForStatistics = newState;
     m_throttleStateForStatisticsTimestamp = newTimestamp;
 
-    if (RefPtr pool = m_processPool.get()) {
+    if (RefPtr pool = m_processPool) {
         if (pool->webProcessStateUpdatesForPageClientEnabled()) {
             for (Ref page : mainPages())
                 page->processDidUpdateThrottleState();
@@ -3126,7 +3115,7 @@ const WebCore::ProcessIdentity& WebProcessProxy::processIdentity()
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebProcessProxy::requestResourceMonitorRuleLists(bool forTesting)
 {
-    if (RefPtr processPool = m_processPool.get()) {
+    if (RefPtr processPool = m_processPool) {
         m_resourceMonitorRuleListRequestedBySomePage = true;
 
         if (RefPtr ruleList = processPool->cachedResourceMonitorRuleList(forTesting))

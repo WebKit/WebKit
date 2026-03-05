@@ -298,7 +298,8 @@ public:
     bool isStandaloneSharedWorkerProcess() const { return isRunningSharedWorkers() && !pageCount(); }
     bool isRunningWorkers() const { return m_sharedWorkerInformation || m_serviceWorkerInformation; }
 
-    bool isDummyProcessProxy() const;
+    void markAsDummyProcessProxy() { m_isDummyProcessProxy = true; }
+    bool isDummyProcessProxy() const { return m_isDummyProcessProxy; }
 
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
@@ -755,41 +756,9 @@ private:
     void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, String&& message);
 #endif
 
-    enum class IsWeak : bool { No, Yes };
-    template<typename T> class WeakOrStrongPtr {
-    public:
-        WeakOrStrongPtr(T& object, IsWeak isWeak)
-            : m_isWeak(isWeak)
-            , m_weakObject(object)
-        {
-            updateStrongReference();
-        }
-
-        void setIsWeak(IsWeak isWeak)
-        {
-            m_isWeak = isWeak;
-            updateStrongReference();
-        }
-
-        T* get() const { return m_weakObject.get(); }
-        T* operator->() const { return m_weakObject.get(); }
-        T& operator*() const { return *m_weakObject; }
-        explicit operator bool() const { return !!m_weakObject; }
-
-    private:
-        void updateStrongReference()
-        {
-            m_strongObject = m_isWeak == IsWeak::Yes ? nullptr : m_weakObject.get();
-        }
-
-        IsWeak m_isWeak;
-        WeakPtr<T> m_weakObject;
-        RefPtr<T> m_strongObject;
-    };
-
     const UniqueRef<BackgroundProcessResponsivenessTimer> m_backgroundResponsivenessTimer;
     
-    WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed and cached processes do not hold a strong reference to their pool.
+    WeakPtr<WebProcessPool> m_processPool; // The WebPageProxy objects are keeping the processPool alive via m_configuration.
 
     bool m_mayHaveUniversalFileReadSandboxExtension { false }; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
     HashSet<String> m_localPathsWithAssumedReadAccess;
@@ -937,6 +906,7 @@ private:
 #endif
 
     bool m_isEligibleForWebProcessCache { true };
+    bool m_isDummyProcessProxy { false };
 
     HashMap<String, SandboxExtension::Handle> m_fileSandboxExtensions;
 
