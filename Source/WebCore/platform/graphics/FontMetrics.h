@@ -108,6 +108,9 @@ public:
     Markable<float> zeroWidth() const { return m_zeroWidth; }
     void setZeroWidth(float zeroWidth) { m_zeroWidth = zeroWidth; }
 
+    Markable<float> ideogramHeight() const { return m_ideogramHeight; };
+    void setIdeogramHeight(float ideogramHeight) { m_ideogramHeight = ideogramHeight; }
+
     Markable<float> ideogramWidth() const { return m_ideogramWidth; }
     void setIdeogramWidth(float ideogramWidth) { m_ideogramWidth = ideogramWidth; }
 
@@ -134,6 +137,7 @@ private:
         m_ascent = { };
         m_capHeight = { };
         m_descent = { };
+        m_ideogramHeight = { };
         m_ideogramWidth = { };
         m_lineGap = { };
         m_lineSpacing = { };
@@ -154,6 +158,7 @@ private:
     Markable<float> m_ascent;
     Markable<float> m_capHeight;
     Markable<float> m_descent;
+    Markable<float> m_ideogramHeight;
     Markable<float> m_ideogramWidth;
     Markable<float> m_lineGap;
     Markable<float> m_lineSpacing;

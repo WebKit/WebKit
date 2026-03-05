@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
+ * Copyright (C) 2025 ChangSeok Oh <changseok@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,12 +97,9 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
     platformInit();
     platformGlyphInit();
     platformCharWidthInit();
-#if ENABLE(OPENTYPE_VERTICAL)
-    if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == IsOrientationFallback::No) {
-        m_verticalData = FontCache::forCurrentThread()->verticalData(platformData);
-        m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
-    }
-#endif
+
+    if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == IsOrientationFallback::No)
+        platformGlyphVerticalDataInit();
 }
 
 Font::Font(IsSystemFallbackFontPlaceholder isSystemFontFallbackPlaceholder)
@@ -172,6 +170,10 @@ void Font::platformGlyphInit()
     if (RefPtr page = glyphPage(GlyphPage::pageNumberForCodePoint(cjkWater))) {
         auto glyph = page->glyphDataForCharacter(cjkWater).glyph;
         m_fontMetrics.setIdeogramWidth(widthForGlyph(glyph));
+
+        platformGlyphVerticalDataInit();
+        if (auto height = heightForGlyph(glyph))
+            m_fontMetrics.setIdeogramHeight(*height);
     } else
         m_fontMetrics.setIdeogramWidth(platformData().size());
 
@@ -180,6 +182,16 @@ void Font::platformGlyphInit()
     m_fontMetrics.setLineGap(m_fontMetrics.lineGap() - amountToAdjustLineGap);
     m_fontMetrics.setLineSpacing(m_fontMetrics.lineSpacing() - amountToAdjustLineGap);
     determinePitch();
+}
+
+void Font::platformGlyphVerticalDataInit()
+{
+#if ENABLE(OPENTYPE_VERTICAL)
+    std::call_once(m_verticalDataOnceFlag, [this] {
+        m_verticalData = FontCache::forCurrentThread()->verticalData(m_platformData);
+        m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
+    });
+#endif
 }
 
 Font::~Font()
@@ -648,6 +660,17 @@ bool Font::canRenderCombiningCharacterSequence(StringView stringView) const
             return false;
     }
     return true;
+}
+
+std::optional<float> Font::heightForGlyph(Glyph glyph) const
+{
+#if ENABLE(OPENTYPE_VERTICAL)
+    if (m_verticalData)
+        return m_verticalData->advanceHeight(this, glyph);
+#else
+    UNUSED_PARAM(glyph);
+#endif
+    return std::nullopt;
 }
 
 Path Font::pathForGlyph(Glyph glyph) const

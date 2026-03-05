@@ -194,20 +194,20 @@ static float adjustedFontSize(float size, float sizeAdjust, float metricValue)
 
 float adjustedFontSize(float size, const WebCore::FontSizeAdjust& sizeAdjust, const FontMetrics& metrics)
 {
-    // FIXME: The behavior for missing metrics has yet to be defined.
+    // We use size as fallback values when required font metrics are missing.
     // https://github.com/w3c/csswg-drafts/issues/6384
     switch (sizeAdjust.metric) {
     case WebCore::FontSizeAdjust::Metric::CapHeight:
-        return metrics.capHeight() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.capHeight()) : size;
+        return adjustedFontSize(size, *sizeAdjust.value, metrics.capHeight() ? *metrics.capHeight() : size);
     case WebCore::FontSizeAdjust::Metric::ChWidth:
-        return metrics.zeroWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.zeroWidth()) : size;
-    // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
-    case WebCore::FontSizeAdjust::Metric::IcWidth:
+        return adjustedFontSize(size, *sizeAdjust.value, metrics.zeroWidth() ? *metrics.zeroWidth(): size);
     case WebCore::FontSizeAdjust::Metric::IcHeight:
-        return metrics.ideogramWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.ideogramWidth()) : size;
+        return adjustedFontSize(size, *sizeAdjust.value, metrics.ideogramHeight() ? *metrics.ideogramHeight() : size);
+    case WebCore::FontSizeAdjust::Metric::IcWidth:
+        return adjustedFontSize(size, *sizeAdjust.value, metrics.ideogramWidth() ? *metrics.ideogramWidth(): size);
     case WebCore::FontSizeAdjust::Metric::ExHeight:
     default:
-        return metrics.xHeight() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.xHeight()) : size;
+        return adjustedFontSize(size, *sizeAdjust.value, metrics.xHeight() ? *metrics.xHeight() : size);
     }
 
     ASSERT_NOT_REACHED();
