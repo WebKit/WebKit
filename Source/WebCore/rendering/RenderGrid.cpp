@@ -321,7 +321,7 @@ static void cacheBaselineAlignedGridItems(const RenderGrid& grid, GridTrackSizin
     ASSERT_IMPLIES(cachingRowSubgridsForRootGrid, !algorithm.renderGrid()->isSubgridRows() && (algorithm.renderGrid() == &grid || grid.isSubgridOf(GridLayoutFunctions::flowAwareDirectionForGridItem(*algorithm.renderGrid(), grid, Style::GridTrackSizingDirection::Rows), *algorithm.renderGrid())));
 
     for (auto& gridItem : childrenOfType<RenderBox>(grid)) {
-        if (gridItem.isOutOfFlowPositioned() || gridItem.isLegend())
+        if (grid.currentGrid().orderIterator().shouldSkipChild(gridItem))
             continue;
 
         callback(const_cast<RenderBox*>(&gridItem));
@@ -417,7 +417,7 @@ static void clearGridItemOverridingSizesBeforeLayout(RenderGrid& renderGrid)
     // clear any override set previously, so it doesn't interfere in current layout
     // execution.
     for (auto& gridItem : childrenOfType<RenderBox>(renderGrid)) {
-        if (gridItem.isOutOfFlowPositioned() || gridItem.isLegend())
+        if (renderGrid.currentGrid().orderIterator().shouldSkipChild(gridItem))
             continue;
         gridItem.clearOverridingSize();
     }
@@ -458,8 +458,6 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
         LayoutSize previousSize = size();
 
-        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems(gridLayoutState);
-
         resetLogicalHeightBeforeLayoutIfNeeded();
 
         updateLogicalWidth();
@@ -471,6 +469,8 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
         // The legend then gets skipped during normal layout. The same is true for ruby text.
         // It doesn't get included in the normal layout process but is instead skipped.
         layoutExcludedChildren(relayoutChildren);
+
+        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems(gridLayoutState);
 
         LayoutUnit availableSpaceForColumns = contentBoxLogicalWidth();
         placeItemsOnGrid(availableSpaceForColumns);
