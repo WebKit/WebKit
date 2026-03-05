@@ -1408,6 +1408,7 @@ void VideoPresentationManagerProxy::requestShowCaptionDisplaySettingsPreview(Pla
 void VideoPresentationManagerProxy::requestHideCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier contextId)
 {
     performCaptionDisplaySettingsAction(contextId, [](WebPageProxy& page, const FrameInfoData& frameInfo, WebCore::HTMLMediaElementIdentifier htmlMediaElementIdentifier) {
+        page.setCaptionDisplaySettingsPreviewProfileID(frameInfo, emptyString());
         page.hideCaptionDisplaySettingsPreview(frameInfo, htmlMediaElementIdentifier);
     });
 }
