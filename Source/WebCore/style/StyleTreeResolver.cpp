@@ -603,7 +603,7 @@ static bool isChildInBlockFormattingContext(const RenderStyle& style)
         return false;
     if (style.hasOutOfFlowPosition())
         return false;
-    if (style.floating() != Float::None)
+    if (!style.isFlexOrGridItem() && style.floating() != Float::None)
         return false;
     if (style.overflowX() != Overflow::Visible || style.overflowY() != Overflow::Visible)
         return false;

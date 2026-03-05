@@ -506,7 +506,7 @@ void RenderBox::updateFromStyle()
     if (isDocElementRenderer || isViewObject)
         setHasVisibleBoxDecorations(true);
 
-    setFloating(!isOutOfFlowPositioned() && styleToUse.floating() != Float::None);
+    setFloating(!isOutOfFlowPositioned() && !styleToUse.isFlexOrGridItem() && styleToUse.floating() != Float::None);
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
     if (!(effectiveOverflowX() == Overflow::Visible && effectiveOverflowY() == Overflow::Visible) && !isDocElementRenderer && isRenderBlock()) {

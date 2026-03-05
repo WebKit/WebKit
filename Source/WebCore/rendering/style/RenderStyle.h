@@ -103,6 +103,9 @@ public:
     inline bool isLink() const;
     inline void setIsLink(bool);
 
+    inline bool isFlexOrGridItem() const;
+    inline void setIsFlexOrGridItem(bool);
+
     inline bool emptyState() const;
     inline void setEmptyState(bool);
 

@@ -55,7 +55,8 @@ OptionSet<Change> determineChanges(const RenderStyle& s1, const RenderStyle& s2)
         if (s1.columnSpan() != ColumnSpan::All)
             return false;
         // Spanning in ignored for floating and out-of-flow boxes.
-        return (s1.floating() != Float::None) != (s2.floating() != Float::None)
+        return
+            (!s1.isFlexOrGridItem() && s1.floating() != Float::None) != (!s2.isFlexOrGridItem() && s2.floating() != Float::None)
             || s1.hasOutOfFlowPosition() != s2.hasOutOfFlowPosition();
     };
 

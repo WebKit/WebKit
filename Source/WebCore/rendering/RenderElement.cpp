@@ -990,7 +990,7 @@ void RenderElement::styleWillChange(Style::Difference diff, const RenderStyle& n
                 layer->invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::Style);
         }
 
-        if (isFloating() && m_style.floating() != newStyle.floating()) {
+        if (isFloating() && (m_style.isFlexOrGridItem() != newStyle.isFlexOrGridItem() || m_style.floating() != newStyle.floating())) {
             // For changes in float styles, we need to conceivably remove ourselves
             // from the floating objects list.
             downcast<RenderBox>(*this).removeFloatingOrOutOfFlowChildFromBlockLists();

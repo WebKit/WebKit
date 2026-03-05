@@ -83,6 +83,11 @@ inline void ComputedStyleBase::setIsLink(bool isLink)
     m_nonInheritedFlags.isLink = isLink;
 }
 
+inline void ComputedStyleBase::setIsFlexOrGridItem(bool isFlexOrGridItem)
+{
+    m_nonInheritedFlags.isFlexOrGridItem = isFlexOrGridItem;
+}
+
 inline void ComputedStyleBase::setEmptyState(bool emptyState)
 {
     m_nonInheritedFlags.emptyState = emptyState;
