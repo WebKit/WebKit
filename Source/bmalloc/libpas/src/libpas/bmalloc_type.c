@@ -54,8 +54,8 @@ bool bmalloc_type_try_name_dump(pas_stream* stream, const char* name)
 {
     const char* type_name_start_marker = "[LibPasBmallocHeapType = ";
     
-    char* type_name_start_marker_ptr;
-    char* type_name_start_ptr;
+    const char* type_name_start_marker_ptr;
+    const char* type_name_start_ptr;
     unsigned bracket_balance;
     size_t index;
 
@@ -74,7 +74,7 @@ bool bmalloc_type_try_name_dump(pas_stream* stream, const char* name)
             break;
         case ']':
             if (!bracket_balance) {
-                char* flexible_array_member_marker;
+                const char* flexible_array_member_marker;
 
                 flexible_array_member_marker = strstr(name, "primitiveHeapRefForTypeWithFlexibleArrayMember");
                 if (flexible_array_member_marker)
