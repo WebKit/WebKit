@@ -97,6 +97,7 @@ class SetBuildSummary(buildstep.BuildStep, AddToLogMixin):
     haltOnFailure = False
     flunkOnFailure = False
     FAILURE_MSG_IN_STRESS_MODE = 'Found test failures in stress mode'
+    FAILURE_MSG_IN_SITE_ISOLATION = 'Found test failures in site isolation'
 
     def doStepIf(self, step):
         return self.getProperty('build_summary', False)
@@ -109,7 +110,7 @@ class SetBuildSummary(buildstep.BuildStep, AddToLogMixin):
         build_summary = self.getProperty('build_summary', 'build successful')
         yield self._addToLog('stdio', f'Setting build summary as: {build_summary}')
         previous_build_summary = self.getProperty('build_summary', '')
-        if self.FAILURE_MSG_IN_STRESS_MODE in previous_build_summary:
+        if self.FAILURE_MSG_IN_STRESS_MODE in previous_build_summary or self.FAILURE_MSG_IN_SITE_ISOLATION in previous_build_summary:
             self.build.results = FAILURE
         elif any(s in previous_build_summary for s in ('Committed ', '@', 'Passed', 'Ignored pre-existing failure')):
             self.build.results = SUCCESS

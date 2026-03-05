@@ -4512,6 +4512,17 @@ class RunWebKitTestsInSiteIsolation(RunWebKitTestsInStressMode):
         if modified_tests:
             self.command += modified_tests
 
+    def evaluateCommand(self, cmd):
+        previous_build_summary = self.getProperty('build_summary', '')
+        rc = super().evaluateCommand(cmd)
+        if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE in previous_build_summary:
+            if rc == SUCCESS or rc == WARNINGS:
+                self.setProperty('build_summary', previous_build_summary)
+                self.build.results = FAILURE
+            else:
+                self.setProperty('build_summary', previous_build_summary + ', ' + self.FAILURE_MSG_IN_STRESS_MODE)
+        return rc
+
 
 class ReRunWebKitTests(RunWebKitTests):
     name = 're-run-layout-tests'
