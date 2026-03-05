@@ -662,7 +662,8 @@ protected:
         InLargestContentfulPaintTextContentSet = 1 << 20,
         DidMutateSubtreeAfterSetInnerHTML = 1 << 21,
         WasParsedWithFastPath = 1 << 22,
-        // 9 bits free.
+        ShouldNotifyTextManipulationControllerIfDisplayed = 1 << 23,
+        // 8 bits free.
     };
 
     enum class TabIndexState : uint8_t {

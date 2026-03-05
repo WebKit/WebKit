@@ -917,6 +917,9 @@ public:
 
     void addShadowRoot(Ref<ShadowRoot>&&);
 
+    bool shouldNotifyTextManipulationControllerIfDisplayed() const;
+    void clearShouldNotifyTextManipulationControllerIfDisplayed();
+
 protected:
     Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);
 
