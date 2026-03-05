@@ -688,6 +688,20 @@ bool Line::hasTrailingForcedLineBreak(const RunList& runs)
     return !runs.isEmpty() && runs.last().isLineBreak();
 }
 
+bool Line::hasContentOrDecoration(IncludeInsideListMarker includeInsideListMarker) const
+{
+    if (m_runs.isEmpty())
+        return false;
+    if (includeInsideListMarker == IncludeInsideListMarker::Yes && m_runs.first().isListMarkerInside())
+        return true;
+    auto& formattingContext = this->formattingContext();
+    for (auto& run : m_runs | std::views::reverse) {
+        if (Line::Run::isContentfulOrHasDecoration(run, formattingContext) && !run.isListMarker())
+            return true;
+    }
+    return false;
+}
+
 const InlineFormattingContext& Line::formattingContext() const
 {
     return m_inlineFormattingContext;
