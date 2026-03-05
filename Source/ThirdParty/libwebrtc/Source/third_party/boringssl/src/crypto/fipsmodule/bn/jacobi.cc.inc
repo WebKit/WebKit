@@ -45,7 +45,7 @@ int bn_jacobi(const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
   bssl::BN_CTXScope scope(ctx);
   BIGNUM *A = BN_CTX_get(ctx);
   BIGNUM *B = BN_CTX_get(ctx);
-  if (B == NULL) {
+  if (B == nullptr) {
     return -2;
   }
 

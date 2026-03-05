@@ -42,7 +42,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRSubImageProxy);
 RemoteXRSubImageProxy::RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_parent(WTFMove(parent))
+    , m_parent(WTF::move(parent))
 {
 }
 
@@ -62,7 +62,7 @@ RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::colorTexture()
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    lazyInitialize(m_currentTexture, RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier));
+    lazyInitialize(m_currentTexture, RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier));
     return m_currentTexture;
 }
 
@@ -76,7 +76,7 @@ RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::depthStencilTexture()
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    lazyInitialize(m_currentDepthTexture, RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier));
+    lazyInitialize(m_currentDepthTexture, RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier));
     return m_currentDepthTexture;
 }
 

@@ -36,6 +36,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -43,7 +44,7 @@ namespace WTF {
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
 struct SameSizeAsRefCounted {
     int a;
-    bool b;
+    ThreadLikeAssertion b;
     bool c;
     bool d;
     bool e;

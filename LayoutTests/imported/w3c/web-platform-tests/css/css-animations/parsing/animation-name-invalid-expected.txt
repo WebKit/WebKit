@@ -7,4 +7,5 @@ PASS e.style['animation-name'] = "one, unset" should not set the property value
 PASS e.style['animation-name'] = "default, two" should not set the property value
 PASS e.style['animation-name'] = "revert, three" should not set the property value
 PASS e.style['animation-name'] = "revert-layer, four" should not set the property value
+PASS e.style['animation-name'] = "\"\"" should not set the property value
 

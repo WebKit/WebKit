@@ -5,9 +5,11 @@
  * found in the LICENSE file.
  */
 
+#include "include/core/SkColorFilter.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkString.h"
 #include "include/private/SkHdrMetadata.h"
+#include "src/codec/SkHdrAgtmPriv.h"
 #include "src/core/SkStreamPriv.h"
 
 namespace skhdr {
@@ -24,10 +26,10 @@ bool ContentLightLevelInformation::parse(const SkData* data) {
 
     uint16_t max_cll = 0;
     uint16_t max_fall = 0;
-    if (!SkStreamReadU16BE(&s, &max_cll)) {
+    if (!SkStreamPriv::ReadU16BE(&s, &max_cll)) {
         return false;
     }
-    if (!SkStreamReadU16BE(&s, &max_fall)) {
+    if (!SkStreamPriv::ReadU16BE(&s, &max_fall)) {
         return false;
     }
 
@@ -38,8 +40,8 @@ bool ContentLightLevelInformation::parse(const SkData* data) {
 
 sk_sp<SkData> ContentLightLevelInformation::serialize() const {
     SkDynamicMemoryWStream s;
-    SkWStreamWriteU16BE(&s, std::llroundf(fMaxCLL));
-    SkWStreamWriteU16BE(&s, std::llroundf(fMaxFALL));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fMaxCLL));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fMaxFALL));
     return s.detachAsData();
 }
 
@@ -55,10 +57,10 @@ bool ContentLightLevelInformation::parsePngChunk(const SkData* data) {
 
     uint32_t max_cll_times_10000 = 0;
     uint32_t max_fall_times_10000 = 0;
-    if (!SkStreamReadU32BE(&s, &max_cll_times_10000)) {
+    if (!SkStreamPriv::ReadU32BE(&s, &max_cll_times_10000)) {
         return false;
     }
-    if (!SkStreamReadU32BE(&s, &max_fall_times_10000)) {
+    if (!SkStreamPriv::ReadU32BE(&s, &max_fall_times_10000)) {
         return false;
     }
 
@@ -69,8 +71,8 @@ bool ContentLightLevelInformation::parsePngChunk(const SkData* data) {
 
 sk_sp<SkData> ContentLightLevelInformation::serializePngChunk() const {
     SkDynamicMemoryWStream s;
-    SkWStreamWriteU32BE(&s, std::llroundf(fMaxCLL * clli_png_luminance_divisor));
-    SkWStreamWriteU32BE(&s, std::llroundf(fMaxFALL * clli_png_luminance_divisor));
+    SkStreamPriv::WriteU32BE(&s, std::llroundf(fMaxCLL * clli_png_luminance_divisor));
+    SkStreamPriv::WriteU32BE(&s, std::llroundf(fMaxFALL * clli_png_luminance_divisor));
     return s.detachAsData();
 }
 
@@ -103,16 +105,16 @@ bool MasteringDisplayColorVolume::parse(const SkData* data) {
 
     uint16_t chromaticities_times_50000[8];
     for (auto& chromaticity_times_50000 : chromaticities_times_50000) {
-        if (!SkStreamReadU16BE(&s, &chromaticity_times_50000)) {
+        if (!SkStreamPriv::ReadU16BE(&s, &chromaticity_times_50000)) {
             return false;
         }
     }
     uint32_t max_luminance_times_10000 = 0;
     uint32_t min_luminance_times_10000 = 0;
-    if (!SkStreamReadU32BE(&s, &max_luminance_times_10000)) {
+    if (!SkStreamPriv::ReadU32BE(&s, &max_luminance_times_10000)) {
         return false;
     }
-    if (!SkStreamReadU32BE(&s, &min_luminance_times_10000)) {
+    if (!SkStreamPriv::ReadU32BE(&s, &min_luminance_times_10000)) {
         return false;
     }
 
@@ -133,18 +135,18 @@ bool MasteringDisplayColorVolume::parse(const SkData* data) {
 
 sk_sp<SkData> MasteringDisplayColorVolume::serialize() const {
     SkDynamicMemoryWStream s;
-    SkWStreamWriteU16BE(&s, std::llroundf(fDisplayPrimaries.fRX * mdcv_chrominance_divisor));
-    SkWStreamWriteU16BE(&s, std::llroundf(fDisplayPrimaries.fRY * mdcv_chrominance_divisor));
-    SkWStreamWriteU16BE(&s, std::llroundf(fDisplayPrimaries.fGX * mdcv_chrominance_divisor));
-    SkWStreamWriteU16BE(&s, std::llroundf(fDisplayPrimaries.fGY * mdcv_chrominance_divisor));
-    SkWStreamWriteU16BE(&s, std::llroundf(fDisplayPrimaries.fBX * mdcv_chrominance_divisor));
-    SkWStreamWriteU16BE(&s, std::llroundf(fDisplayPrimaries.fBY * mdcv_chrominance_divisor));
-    SkWStreamWriteU16BE(&s, std::llroundf(fDisplayPrimaries.fWX * mdcv_chrominance_divisor));
-    SkWStreamWriteU16BE(&s, std::llroundf(fDisplayPrimaries.fWY * mdcv_chrominance_divisor));
-    SkWStreamWriteU32BE(
-        &s, std::llroundf(fMaximumDisplayMasteringLuminance * mdcv_luminance_divisor));
-    SkWStreamWriteU32BE(
-        &s, std::llroundf(fMinimumDisplayMasteringLuminance * mdcv_luminance_divisor));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fDisplayPrimaries.fRX * mdcv_chrominance_divisor));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fDisplayPrimaries.fRY * mdcv_chrominance_divisor));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fDisplayPrimaries.fGX * mdcv_chrominance_divisor));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fDisplayPrimaries.fGY * mdcv_chrominance_divisor));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fDisplayPrimaries.fBX * mdcv_chrominance_divisor));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fDisplayPrimaries.fBY * mdcv_chrominance_divisor));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fDisplayPrimaries.fWX * mdcv_chrominance_divisor));
+    SkStreamPriv::WriteU16BE(&s, std::llroundf(fDisplayPrimaries.fWY * mdcv_chrominance_divisor));
+    SkStreamPriv::WriteU32BE(
+            &s, std::llroundf(fMaximumDisplayMasteringLuminance * mdcv_luminance_divisor));
+    SkStreamPriv::WriteU32BE(
+            &s, std::llroundf(fMinimumDisplayMasteringLuminance * mdcv_luminance_divisor));
     return s.detachAsData();
 }
 
@@ -185,6 +187,21 @@ bool Metadata::getMasteringDisplayColorVolume(MasteringDisplayColorVolume* mdcv)
     return true;
 }
 
+bool Metadata::getAdaptiveGlobalToneMap(AdaptiveGlobalToneMap* agtm) const {
+    if (!fAdaptiveGlobalToneMap.has_value()) {
+        return false;
+    }
+    if (agtm) {
+        *agtm = fAdaptiveGlobalToneMap.value();
+    }
+    return true;
+}
+
+sk_sp<const SkData> Metadata::getSerializedAgtm() const {
+    return fAdaptiveGlobalToneMap.has_value() ?
+        fAdaptiveGlobalToneMap->serialize() : nullptr;
+}
+
 void Metadata::setMasteringDisplayColorVolume(const MasteringDisplayColorVolume& mdcv) {
     fMasteringDisplayColorVolume = mdcv;
 }
@@ -193,17 +210,49 @@ void Metadata::setContentLightLevelInformation(const ContentLightLevelInformatio
     fContentLightLevelInformation = clli;
 }
 
+void Metadata::setAdaptiveGlobalToneMap(const AdaptiveGlobalToneMap& agtm) {
+    fAdaptiveGlobalToneMap = agtm;
+}
+
+void Metadata::setSerializedAgtm(sk_sp<const SkData> agtm_encoded) {
+    AdaptiveGlobalToneMap agtm;
+    if (agtm.parse(agtm_encoded.get())) {
+        fAdaptiveGlobalToneMap = agtm;
+    } else {
+        fAdaptiveGlobalToneMap.reset();
+    }
+}
+
 SkString Metadata::toString() const {
-    return SkStringPrintf("{clli:%s, mdcv:%s}",
+    return SkStringPrintf("{clli:%s, mdcv:%s, agtm:%s}",
         fContentLightLevelInformation.has_value() ?
             fContentLightLevelInformation->toString().c_str() : "None",
         fMasteringDisplayColorVolume.has_value() ?
-            fMasteringDisplayColorVolume->toString().c_str() : "None");
+            fMasteringDisplayColorVolume->toString().c_str() : "None",
+        fAdaptiveGlobalToneMap.has_value() ?
+            fAdaptiveGlobalToneMap->toString().c_str() : "None");
 }
 
 bool Metadata::operator==(const Metadata& other) const {
     return fContentLightLevelInformation == other.fContentLightLevelInformation &&
-           fMasteringDisplayColorVolume == other.fMasteringDisplayColorVolume;
+           fMasteringDisplayColorVolume == other.fMasteringDisplayColorVolume &&
+           fAdaptiveGlobalToneMap == other.fAdaptiveGlobalToneMap;
+}
+
+sk_sp<SkColorFilter> Metadata::makeToneMapColorFilter(
+        float targetedHdrHeadroom, const SkColorSpace* inputColorSpace) const {
+    AdaptiveGlobalToneMap agtm;
+    float scaleFactor = 1.f;
+    if (!AgtmHelpers::PopulateToneMapAgtmParams(*this, inputColorSpace, &agtm, &scaleFactor)) {
+        return nullptr;
+    }
+
+    auto& hatm = agtm.fHeadroomAdaptiveToneMap;
+    if (!hatm.has_value()) {
+        // TODO(https://crbug.com/395659818): Add default tone mapping.
+        return nullptr;
+    }
+    return AgtmHelpers::MakeColorFilter(hatm.value(), targetedHdrHeadroom, scaleFactor);
 }
 
 }  // namespace skhdr

@@ -25,4 +25,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.lastIndexOf(0);
   });
-});
+}, null, ["passthrough"]);

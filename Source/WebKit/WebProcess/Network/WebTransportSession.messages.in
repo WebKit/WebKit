@@ -29,6 +29,8 @@ messages -> WebTransportSession {
     ReceiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
     ReceiveBidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
     StreamReceiveBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, std::optional<WebCore::Exception> exception)
-    DidFail(std::optional<unsigned> code, String message)
+    StreamReceiveError(WebCore::WebTransportStreamIdentifier identifier, uint64_t errorCode)
+    StreamSendError(WebCore::WebTransportStreamIdentifier identifier, uint64_t errorCode)
+    DidFail(std::optional<uint32_t> code, String message)
     DidDrain()
 }

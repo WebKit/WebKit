@@ -32,3 +32,161 @@ struct WebKit::ModelIdentifier {
 };
 
 #endif
+
+
+#if ENABLE(GPU_PROCESS_MODEL)
+header: <WebKit/Float4x4.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Float4x4 {
+    float m00;
+    float m01;
+    float m02;
+    float m03;
+
+    float m10;
+    float m11;
+    float m12;
+    float m13;
+
+    float m20;
+    float m21;
+    float m22;
+    float m23;
+
+    float m30;
+    float m31;
+    float m32;
+    float m33;
+};
+
+header: <WebKit/Float3.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Float3 {
+    float x;
+    float y;
+    float z;
+    float w;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateTextureDescriptor {
+    WebModel::ImageAsset imageAsset;
+    String identifier;
+    String hashString;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateMaterialDescriptor {
+    Vector<uint8_t> materialGraph;
+    String identifier;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MeshDescriptor {
+    long vertexBufferCount;
+    long vertexCapacity;
+    Vector<WebModel::VertexAttributeFormat> vertexAttributes;
+    Vector<WebModel::VertexLayout> vertexLayouts;
+    long indexCapacity;
+    long indexType;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::SkinningData {
+    uint8_t influencePerVertexCount;
+    Vector<WebModel::Float4x4> jointTransforms;
+    Vector<WebModel::Float4x4> inverseBindPoses;
+    Vector<uint32_t> influenceJointIndices;
+    Vector<float> influenceWeights;
+    WebModel::Float4x4 geometryBindTransform;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::BlendShapeData {
+    Vector<float> weights;
+    Vector<Vector<WebModel::Float3>> positionOffsets;
+    Vector<Vector<WebModel::Float3>> normalOffsets;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::RenormalizationData {
+    Vector<uint32_t> vertexIndicesPerTriangle;
+    Vector<uint32_t> vertexAdjacencies;
+    Vector<uint32_t> vertexAdjacencyEndIndices;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::DeformationData {
+    std::optional<WebModel::SkinningData> skinningData;
+    std::optional<WebModel::BlendShapeData> blendShapeData;
+    std::optional<WebModel::RenormalizationData> renormalizationData;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateMeshDescriptor {
+    String identifier;
+    uint8_t updateType;
+    WebModel::MeshDescriptor descriptor;
+    Vector<WebModel::MeshPart> parts;
+    Vector<uint8_t> indexData;
+    Vector<Vector<uint8_t>> vertexData;
+    WebModel::Float4x4 transform;
+    Vector<WebModel::Float4x4> instanceTransforms;
+    Vector<String> materialPrims;
+    std::optional<WebModel::DeformationData> deformationData;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::VertexAttributeFormat {
+    long semantic;
+    unsigned long format;
+    long layoutIndex;
+    long offset;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::VertexLayout {
+    long bufferIndex;
+    long bufferOffset;
+    long bufferStride;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MaterialDescriptor {
+    Vector<uint8_t> materialGraph;
+    String identifier;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::ImageAssetSwizzle {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+    uint8_t alpha;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::ImageAsset {
+    Vector<uint8_t> data;
+    long width;
+    long height;
+    long depth;
+    long bytesPerPixel;
+    uint64_t textureType;
+    uint64_t pixelFormat;
+    long mipmapLevelCount;
+    long arrayLength;
+    uint64_t textureUsage;
+    WebModel::ImageAssetSwizzle swizzle;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MeshPart {
+    uint32_t indexOffset;
+    uint32_t indexCount;
+    uint32_t topology;
+    uint32_t materialIndex;
+    WebModel::Float3 boundsMin;
+    WebModel::Float3 boundsMax;
+};
+
+#endif
+

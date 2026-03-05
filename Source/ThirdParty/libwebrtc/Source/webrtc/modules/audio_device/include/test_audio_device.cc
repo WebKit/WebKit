@@ -133,7 +133,7 @@ class WavFileReader final : public TestAudioDeviceModule::Capturer {
           }
           return read;
         });
-    return buffer->size() > 0;
+    return !buffer->empty();
   }
 
  private:
@@ -318,7 +318,7 @@ class RawFileReader final : public TestAudioDeviceModule::Capturer {
           memcpy(data.data(), read_buffer_view.data(), size);
           return read / 2;
         });
-    return buffer->size() > 0;
+    return !buffer->empty();
   }
 
  private:
@@ -429,10 +429,9 @@ scoped_refptr<AudioDeviceModule> TestAudioDeviceModule::Create(
     std::unique_ptr<TestAudioDeviceModule::Renderer> renderer,
     float speed) {
   auto audio_device = make_ref_counted<AudioDeviceModuleImpl>(
-      AudioDeviceModule::AudioLayer::kDummyAudio,
+      env, AudioDeviceModule::AudioLayer::kDummyAudio,
       std::make_unique<TestAudioDevice>(env, std::move(capturer),
                                         std::move(renderer), speed),
-      &env.task_queue_factory(),
       /*create_detached=*/true);
 
   // Ensure that the current platform is supported.

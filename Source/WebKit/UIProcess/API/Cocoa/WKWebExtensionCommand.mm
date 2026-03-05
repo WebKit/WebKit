@@ -72,12 +72,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 - (NSString *)debugDescription
 {
     return [NSString stringWithFormat:@"<%@: %p; identifier = %@; shortcut = %@>", NSStringFromClass(self.class), self,
-        self.identifier, self.activationKey.length ? self._protectedWebExtensionCommand->shortcutString().createNSString().get() : @"(none)"];
+        self.identifier, self.activationKey.length ? protect(*_webExtensionCommand)->shortcutString().createNSString().get() : @"(none)"];
 }
 
 - (WKWebExtensionContext *)webExtensionContext
 {
-    if (RefPtr context = self._protectedWebExtensionCommand->extensionContext())
+    if (RefPtr context = protect(*_webExtensionCommand)->extensionContext())
         return context->wrapper();
     return nil;
 }
@@ -94,20 +94,21 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 
 - (NSString *)activationKey
 {
-    if (auto& activationKey = self._protectedWebExtensionCommand->activationKey(); !activationKey.isEmpty())
+    Ref command = *_webExtensionCommand;
+    if (auto& activationKey = command->activationKey(); !activationKey.isEmpty())
         return activationKey.createNSString().autorelease();
     return nil;
 }
 
 - (void)setActivationKey:(NSString *)activationKey
 {
-    bool result = self._protectedWebExtensionCommand->setActivationKey(activationKey);
+    bool result = protect(*_webExtensionCommand)->setActivationKey(activationKey);
     NSAssert(result, @"Invalid parameter: an unsupported character was provided");
 }
 
 - (CocoaModifierFlags)modifierFlags
 {
-    return self._protectedWebExtensionCommand->modifierFlags().toRaw();
+    return protect(*_webExtensionCommand)->modifierFlags().toRaw();
 }
 
 - (void)setModifierFlags:(CocoaModifierFlags)modifierFlags
@@ -115,34 +116,34 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
     auto optionSet = OptionSet<WebKit::WebExtension::ModifierFlags>::fromRaw(modifierFlags) & WebKit::WebExtension::allModifierFlags();
     NSAssert(optionSet.toRaw() == modifierFlags, @"Invalid parameter: an unsupported modifier flag was provided");
 
-    self._protectedWebExtensionCommand->setModifierFlags(optionSet);
+    protect(*_webExtensionCommand)->setModifierFlags(optionSet);
 }
 
 - (CocoaMenuItem *)menuItem
 {
-    return self._protectedWebExtensionCommand->platformMenuItem();
+    return protect(*_webExtensionCommand)->platformMenuItem();
 }
 
 #if PLATFORM(IOS_FAMILY)
 - (UIKeyCommand *)keyCommand
 {
-    return _webExtensionCommand->keyCommand();
+    return protect(*_webExtensionCommand)->keyCommand();
 }
 #endif
 
 - (NSString *)_shortcut
 {
-    return self._protectedWebExtensionCommand->shortcutString().createNSString().autorelease();
+    return protect(*_webExtensionCommand)->shortcutString().createNSString().autorelease();
 }
 
 - (NSString *)_userVisibleShortcut
 {
-    return self._protectedWebExtensionCommand->userVisibleShortcut().createNSString().autorelease();
+    return protect(*_webExtensionCommand)->userVisibleShortcut().createNSString().autorelease();
 }
 
 - (BOOL)_isActionCommand
 {
-    return self._protectedWebExtensionCommand->isActionCommand();
+    return protect(*_webExtensionCommand)->isActionCommand();
 }
 
 #if USE(APPKIT)
@@ -150,7 +151,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 {
     NSParameterAssert([event isKindOfClass:NSEvent.class]);
 
-    return self._protectedWebExtensionCommand->matchesEvent(event);
+    return protect(*_webExtensionCommand)->matchesEvent(event);
 }
 #endif
 
@@ -162,11 +163,6 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 }
 
 - (WebKit::WebExtensionCommand&)_webExtensionCommand
-{
-    return *_webExtensionCommand;
-}
-
-- (Ref<WebKit::WebExtensionCommand>)_protectedWebExtensionCommand
 {
     return *_webExtensionCommand;
 }

@@ -1,0 +1,118 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("delay_based_congestion_control") {
+  sources = [
+    "delay_based_congestion_control.cc",
+    "delay_based_congestion_control.h",
+  ]
+  deps = [
+    ":scream_v2_parameters",
+    "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:windowed_min_filter",
+  ]
+}
+
+rtc_library("scream_v2_parameters") {
+  sources = [
+    "scream_v2_parameters.cc",
+    "scream_v2_parameters.h",
+  ]
+  deps = [
+    "../../../api:field_trials_view",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../rtc_base/experiments:field_trial_parser",
+  ]
+}
+
+rtc_library("scream_v2") {
+  sources = [
+    "scream_v2.cc",
+    "scream_v2.h",
+  ]
+  deps = [
+    ":delay_based_congestion_control",
+    ":scream_v2_parameters",
+    "../../../api:field_trials_view",
+    "../../../api/environment",
+    "../../../api/transport:ecn_marking",
+    "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../logging:rtc_event_bwe_update_scream",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base/experiments:field_trial_parser",
+  ]
+}
+
+rtc_library("scream_network_controller") {
+  sources = [
+    "scream_network_controller.cc",
+    "scream_network_controller.h",
+  ]
+  deps = [
+    ":scream_v2",
+    ":scream_v2_parameters",
+    "../../../api:field_trials_view",
+    "../../../api/environment",
+    "../../../api/transport:bandwidth_usage",
+    "../../../api/transport:ecn_marking",
+    "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../logging:rtc_event_bwe",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base/experiments:field_trial_parser",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("scream_unittests") {
+    testonly = true
+    sources = [
+      "delay_based_congestion_control_unittest.cc",
+      "scream_network_controller_unittest.cc",
+      "scream_v2_unittest.cc",
+    ]
+    deps = [
+      ":delay_based_congestion_control",
+      ":scream_network_controller",
+      ":scream_v2",
+      ":scream_v2_parameters",
+      "../../../api/environment",
+      "../../../api/environment:environment_factory",
+      "../../../api/transport:ecn_marking",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_rate",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:logging",
+      "../../../system_wrappers",
+      "../../../test:create_test_environment",
+      "../../../test:test_support",
+      "../../../test/network:simulated_network",
+      "test:cc_feedback_generator",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+}

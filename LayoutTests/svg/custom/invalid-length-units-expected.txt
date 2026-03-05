@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x=""
 CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x=" "
 CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x="foo"
 CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x="10foo"

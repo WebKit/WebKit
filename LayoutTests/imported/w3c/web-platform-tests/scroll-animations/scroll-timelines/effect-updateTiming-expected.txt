@@ -26,6 +26,7 @@ PASS Allows setting iterations to a double value
 PASS Throws when setting iterations to Infinity
 PASS Allows setting the iterations of an animation in progress
 PASS Allows setting the iterations of an animation in progress with duration "auto"
+PASS Allows creating scroll linked animation with duration Infinity
 PASS Allows setting the duration to 123.45
 PASS Allows setting the duration to auto
 PASS Allows setting the duration to Infinity

@@ -14,7 +14,6 @@
 #include <memory>
 
 #include "absl/memory/memory.h"
-#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 
@@ -27,18 +26,9 @@ RtcEventProbeClusterCreated::RtcEventProbeClusterCreated(int32_t id,
       min_probes_(min_probes),
       min_bytes_(min_bytes) {}
 
-RtcEventProbeClusterCreated::RtcEventProbeClusterCreated(
-    const RtcEventProbeClusterCreated& other)
-    : RtcEvent(other.timestamp_us_),
-      id_(other.id_),
-      bitrate_bps_(other.bitrate_bps_),
-      min_probes_(other.min_probes_),
-      min_bytes_(other.min_bytes_) {}
-
 std::unique_ptr<RtcEventProbeClusterCreated> RtcEventProbeClusterCreated::Copy()
     const {
-  return absl::WrapUnique<RtcEventProbeClusterCreated>(
-      new RtcEventProbeClusterCreated(*this));
+  return absl::WrapUnique(new RtcEventProbeClusterCreated(*this));
 }
 
 }  // namespace webrtc

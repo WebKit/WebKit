@@ -64,14 +64,13 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderQuote.h"
 #include "RenderSVGRoot.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderWidget.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
-#include "StyleInheritedData.h"
 #include "StyleScope.h"
 #include "TransformState.h"
 #include <wtf/SetForScope.h>
@@ -80,10 +79,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderView);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderView);
 
 RenderView::RenderView(Document& document, RenderStyle&& style)
-    : RenderBlockFlow(Type::View, document, WTFMove(style))
+    : RenderBlockFlow(Type::View, document, WTF::move(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
     , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox, LayoutIntegration::formattingContextRootLogicalWidthForType, LayoutIntegration::formattingContextRootLogicalHeightForType, LayoutIntegration::layoutWithFormattingContextForBlockInInline))
@@ -116,7 +115,7 @@ void RenderView::willBeDestroyed()
     RenderBlockFlow::willBeDestroyed();
 }
 
-void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderView::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
@@ -175,7 +174,7 @@ bool RenderView::isChildAllowed(const RenderObject& child, const RenderStyle&) c
 void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    if (!document().paginated())
+    if (!protect(document())->paginated())
         m_pageLogicalSize = { };
 
     if (shouldUsePrintingLayout()) {
@@ -220,7 +219,7 @@ void RenderView::layout()
 
 void RenderView::updateQuirksMode()
 {
-    m_layoutState->updateQuirksMode(protectedDocument());
+    m_layoutState->updateQuirksMode(protect(document()));
 }
 
 void RenderView::updateInitialContainingBlockSize()
@@ -246,7 +245,7 @@ LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
 {
     Ref frameView = this->frameView();
     if (frameView->fixedElementsLayoutRelativeToFrame())
-        return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleWidth() : frameView->visibleHeight()) / frameView->protectedFrame()->frameScaleFactor());
+        return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleWidth() : frameView->visibleHeight()) / protect(frameView->frame())->frameScaleFactor());
 
 #if PLATFORM(IOS_FAMILY)
     if (frameView->useCustomFixedPositionLayoutRect())
@@ -263,7 +262,7 @@ LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
 {
     Ref frameView = this->frameView();
     if (frameView->fixedElementsLayoutRelativeToFrame())
-        return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleHeight() : frameView->visibleWidth()) / frameView->protectedFrame()->frameScaleFactor());
+        return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleHeight() : frameView->visibleWidth()) / protect(frameView->frame())->frameScaleFactor());
 
 #if PLATFORM(IOS_FAMILY)
     if (frameView->useCustomFixedPositionLayoutRect())
@@ -370,7 +369,7 @@ RenderElement* RenderView::rendererForRootBackground() const
     if (documentRenderer.shouldApplyAnyContainment())
         return nullptr;
 
-    if (RefPtr body = protectedDocument()->body()) {
+    if (RefPtr body = protect(document())->body()) {
         if (auto* renderer = body->renderer()) {
             if (!renderer->shouldApplyAnyContainment())
                 return renderer;
@@ -382,10 +381,10 @@ RenderElement* RenderView::rendererForRootBackground() const
 static inline bool rendererObscuresBackground(const RenderElement& rootElement)
 {
     auto& style = rootElement.style();
-    if (style.usedVisibility() != Visibility::Visible || !style.opacity().isOpaque() || style.hasTransform())
+    if (style.usedVisibility() != Visibility::Visible || !style.opacity().isOpaque() || !style.transform().isNone() || !style.offsetPath().isNone())
         return false;
 
-    if (style.hasBorderRadius())
+    if (style.border().hasBorderRadius())
         return false;
 
     if (rootElement.isComposited())
@@ -415,14 +414,14 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being inside
     // a transform, transparency layer, etc.
     Ref document = this->document();
-    for (RefPtr element = document->ownerElement(); element && element->renderer(); element = element->protectedDocument()->ownerElement()) {
-        RenderLayer* layer = element->renderer()->enclosingLayer();
+    for (RefPtr element = document->ownerElement(); element && element->renderer(); element = protect(element->document())->ownerElement()) {
+        CheckedPtr layer = element->renderer()->enclosingLayer();
         if (layer->cannotBlitToWindow()) {
             frameView().setCannotBlitToWindow();
             break;
         }
 
-        if (auto* compositingLayer = layer->enclosingCompositingLayerForRepaint().layer) {
+        if (CheckedPtr compositingLayer = layer->enclosingCompositingLayerForRepaint().layer) {
             if (!compositingLayer->backing()->paintsIntoWindow()) {
                 frameView().setCannotBlitToWindow();
                 break;
@@ -538,7 +537,7 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect)
             // left scrollbar (if one exists).
             Ref frameView = this->frameView();
             if (frameView->verticalScrollbar() && frameView->shouldPlaceVerticalScrollbarOnLeft())
-                adjustedRect.move(LayoutSize(frameView->protectedVerticalScrollbar()->occupiedWidth(), 0));
+                adjustedRect.move(LayoutSize(frameView->verticalScrollbar()->occupiedWidth(), 0));
 
             ownerBox->repaintRectangle(adjustedRect);
         }
@@ -583,7 +582,7 @@ void RenderView::flushAccumulatedRepaintRegion() const
     IntSize rectOffset;
 
     CheckedPtr<RenderBox> iframeOwnerRenderer;
-    if (RefPtr ownerElement = protectedDocument()->ownerElement()) {
+    if (RefPtr ownerElement = protect(document())->ownerElement()) {
         iframeOwnerRenderer = ownerElement->renderBox();
         if (!iframeOwnerRenderer) {
             m_accumulatedRepaintRegion = nullptr;
@@ -600,7 +599,7 @@ void RenderView::flushAccumulatedRepaintRegion() const
         // left scrollbar (if one exists).
         Ref frameView = this->frameView();
         if (frameView->verticalScrollbar() && frameView->shouldPlaceVerticalScrollbarOnLeft())
-            rectOffsetLayoutSize += LayoutSize { frameView->protectedVerticalScrollbar()->occupiedWidth(), 0 };
+            rectOffsetLayoutSize += LayoutSize { frameView->verticalScrollbar()->occupiedWidth(), 0 };
 
         rectOffset = roundedIntSize(rectOffsetLayoutSize);
     }
@@ -647,7 +646,7 @@ auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const
 
     // Apply our transform if we have one (because of full page zooming).
     if (!container && hasLayer() && layer()->transform())
-        adjustedRects.transform(*layer()->transform(), protectedDocument()->deviceScaleFactor());
+        adjustedRects.transform(*layer()->transform(), protect(document())->deviceScaleFactor());
 
     return adjustedRects;
 }
@@ -675,14 +674,14 @@ void RenderView::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 
 bool RenderView::printing() const
 {
-    return document().printing();
+    return protect(document())->printing();
 }
 
 bool RenderView::shouldUsePrintingLayout() const
 {
     if (!printing())
         return false;
-    return frameView().protectedFrame()->shouldUsePrintingLayout();
+    return protect(frameView().frame())->shouldUsePrintingLayout();
 }
 
 LayoutRect RenderView::viewRect() const
@@ -907,11 +906,6 @@ RenderLayerCompositor& RenderView::compositor()
         m_compositor = makeUnique<RenderLayerCompositor>(*this);
 
     return *m_compositor;
-}
-
-CheckedRef<RenderLayerCompositor> RenderView::checkedCompositor()
-{
-    return compositor();
 }
 
 void RenderView::setIsInWindow(bool isInWindow)
@@ -1220,7 +1214,7 @@ void RenderView::removeViewTransitionGroup(const AtomString& name)
 
 RenderBox* RenderView::viewTransitionGroupForName(const AtomString& name)
 {
-    return m_viewTransitionGroups.get(name).get();
+    return m_viewTransitionGroups.get(name);
 }
 
 } // namespace WebCore

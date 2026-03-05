@@ -26,6 +26,10 @@
 
 #pragma once
 
+#include <cstdint>
+#include <wtf/Assertions.h>
+#include <wtf/Compiler.h>
+
 namespace WTF {
 class PrintStream;
 };

@@ -65,7 +65,7 @@ ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingNode
     : m_nodeType(nodeType)
     , m_nodeID(nodeID)
     , m_changedProperties(changedProperties)
-    , m_children(WTFMove(children))
+    , m_children(WTF::move(children))
     , m_layer(layerID)
 {
     for (auto& child : m_children) {
@@ -93,7 +93,7 @@ void ScrollingStateNode::attachAfterDeserialization(ScrollingStateTree& tree)
 
 void ScrollingStateNode::setChildren(Vector<Ref<ScrollingStateNode>>&& children)
 {
-    m_children = WTFMove(children);
+    m_children = WTF::move(children);
     for (auto& child : m_children) {
         ASSERT(!child->parent());
         child->setParent(this);
@@ -153,7 +153,7 @@ void ScrollingStateNode::appendChild(Ref<ScrollingStateNode>&& childNode)
 {
     childNode->setParent(this);
 
-    m_children.append(WTFMove(childNode));
+    m_children.append(WTF::move(childNode));
     setPropertyChanged(Property::ChildNodes);
 }
 
@@ -163,9 +163,9 @@ void ScrollingStateNode::insertChild(Ref<ScrollingStateNode>&& childNode, size_t
 
     if (index > m_children.size()) {
         ASSERT_NOT_REACHED();  // Crash data suggest we can get here.
-        m_children.append(WTFMove(childNode));
+        m_children.append(WTF::move(childNode));
     } else
-        m_children.insert(index, WTFMove(childNode));
+        m_children.insert(index, WTF::move(childNode));
     
     setPropertyChanged(Property::ChildNodes);
 }

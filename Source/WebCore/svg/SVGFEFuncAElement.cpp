@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEFuncAElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEFuncAElement);
 
 inline SVGFEFuncAElement::SVGFEFuncAElement(const QualifiedName& tagName, Document& document)
     : SVGComponentTransferFunctionElement(tagName, document)

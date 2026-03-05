@@ -43,7 +43,7 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteFaceDetector);
 
 RemoteFaceDetector::RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier)
-    : m_backing(WTFMove(faceDetector))
+    : m_backing(WTF::move(faceDetector))
     , m_renderingBackend(backend)
     , m_identifier(identifier)
 {
@@ -60,7 +60,7 @@ void RemoteFaceDetector::detect(WebCore::RenderingResourceIdentifier renderingRe
 {
     RefPtr sourceImage = m_renderingBackend.get().remoteResourceCache().cachedNativeImage(renderingResourceIdentifier);
     MESSAGE_CHECK(sourceImage);
-    m_backing->detect(*sourceImage, WTFMove(completionHandler));
+    m_backing->detect(*sourceImage, WTF::move(completionHandler));
 }
 
 } // namespace WebKit

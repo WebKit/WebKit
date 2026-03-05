@@ -42,7 +42,7 @@ struct MediaKeyMessageEventInit : EventInit {
     MediaKeyMessageEventInit(MediaKeyMessageType messageType, RefPtr<JSC::ArrayBuffer>&& message)
         : EventInit()
         , messageType(messageType)
-        , message(WTFMove(message))
+        , message(WTF::move(message))
     { }
 
     MediaKeyMessageType messageType;

@@ -38,11 +38,11 @@ struct FontFeatureSettings {
     using Value = Integer<CSS::Nonnegative>;
 
     FontFeatureSettings(CSS::Keyword::Normal) : m_platform { } { }
-    FontFeatureSettings(WebCore::FontFeatureSettings&& platform) : m_platform { WTFMove(platform) } { }
+    FontFeatureSettings(WebCore::FontFeatureSettings&& platform) : m_platform { WTF::move(platform) } { }
     FontFeatureSettings(const WebCore::FontFeatureSettings& platform) : m_platform { platform } { }
 
     const WebCore::FontFeatureSettings& platform() const { return m_platform; }
-    WebCore::FontFeatureSettings takePlatform() { return WTFMove(m_platform); }
+    WebCore::FontFeatureSettings takePlatform() { return WTF::move(m_platform); }
 
     bool operator==(const FontFeatureSettings&) const = default;
 

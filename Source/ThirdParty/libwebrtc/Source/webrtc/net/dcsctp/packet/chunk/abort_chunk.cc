@@ -33,7 +33,6 @@ namespace dcsctp {
 //  /                   zero or more Error Causes                   /
 //  \                                                               \
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int AbortChunk::kType;
 
 std::optional<AbortChunk> AbortChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

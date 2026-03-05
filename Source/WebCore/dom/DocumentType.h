@@ -30,7 +30,7 @@ namespace WebCore {
 class NamedNodeMap;
 
 class DocumentType final : public Node {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentType);
+    WTF_MAKE_TZONE_ALLOCATED(DocumentType);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentType);
 public:
     static Ref<DocumentType> create(Document& document, const String& name, const String& publicId, const String& systemId)
@@ -59,5 +59,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DocumentType)
-    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::Node::DOCUMENT_TYPE_NODE; }
+    static bool isType(const WebCore::Node& node) { return node.nodeType() == WebCore::NodeType::DocumentType; }
 SPECIALIZE_TYPE_TRAITS_END()

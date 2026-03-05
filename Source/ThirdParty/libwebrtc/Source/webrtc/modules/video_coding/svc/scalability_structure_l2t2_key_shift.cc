@@ -39,9 +39,6 @@ Dti(int sid, int tid, const ScalableVideoController::LayerFrameConfig& config) {
 
 }  // namespace
 
-constexpr int ScalabilityStructureL2T2KeyShift::kNumSpatialLayers;
-constexpr int ScalabilityStructureL2T2KeyShift::kNumTemporalLayers;
-
 ScalabilityStructureL2T2KeyShift::~ScalabilityStructureL2T2KeyShift() = default;
 
 ScalableVideoController::StreamLayersConfig

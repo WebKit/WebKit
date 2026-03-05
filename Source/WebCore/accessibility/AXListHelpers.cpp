@@ -61,7 +61,7 @@ bool AXListHelpers::childHasPseudoVisibleListItemMarkers(const Node& node)
     if (!beforePseudo)
         return false;
 
-    CheckedPtr cache = element->protectedDocument()->axObjectCache();
+    CheckedPtr cache = protect(element->document())->axObjectCache();
     RefPtr axBeforePseudo = cache ? cache->getOrCreate(*beforePseudo) : nullptr;
     if (!axBeforePseudo)
         return false;

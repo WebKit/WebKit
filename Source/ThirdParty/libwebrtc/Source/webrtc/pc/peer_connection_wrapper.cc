@@ -32,7 +32,6 @@
 #include "api/test/rtc_error_matchers.h"
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_proxy.h"
-#include "pc/sdp_utils.h"
 #include "pc/test/fake_video_track_source.h"
 #include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/checks.h"
@@ -110,7 +109,7 @@ PeerConnectionWrapper::CreateOfferAndSetAsLocal(
   if (!offer) {
     return nullptr;
   }
-  EXPECT_TRUE(SetLocalDescription(CloneSessionDescription(offer.get())));
+  EXPECT_TRUE(SetLocalDescription(offer->Clone()));
   return offer;
 }
 
@@ -142,13 +141,13 @@ PeerConnectionWrapper::CreateAnswerAndSetAsLocal(
   if (!answer) {
     return nullptr;
   }
-  EXPECT_TRUE(SetLocalDescription(CloneSessionDescription(answer.get())));
+  EXPECT_TRUE(SetLocalDescription(answer->Clone()));
   return answer;
 }
 
 std::unique_ptr<SessionDescriptionInterface>
 PeerConnectionWrapper::CreateRollback() {
-  return CreateSessionDescription(SdpType::kRollback, "");
+  return CreateRollbackSessionDescription();
 }
 
 std::unique_ptr<SessionDescriptionInterface> PeerConnectionWrapper::CreateSdp(
@@ -248,8 +247,7 @@ bool PeerConnectionWrapper::ExchangeOfferAnswerWith(
   if (!offer) {
     return false;
   }
-  bool set_local_offer =
-      SetLocalDescription(CloneSessionDescription(offer.get()));
+  bool set_local_offer = SetLocalDescription(offer->Clone());
   EXPECT_TRUE(set_local_offer);
   if (!set_local_offer) {
     return false;
@@ -265,8 +263,7 @@ bool PeerConnectionWrapper::ExchangeOfferAnswerWith(
   if (!answer) {
     return false;
   }
-  bool set_local_answer =
-      answerer->SetLocalDescription(CloneSessionDescription(answer.get()));
+  bool set_local_answer = answerer->SetLocalDescription(answer->Clone());
   EXPECT_TRUE(set_local_answer);
   if (!set_local_answer) {
     return false;

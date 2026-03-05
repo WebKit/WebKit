@@ -43,11 +43,6 @@ TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, con
 {
 }
 
-Ref<WebPageProxy> TextCheckerCompletion::protectedPage() const
-{
-    return m_page.get();
-}
-
 const TextCheckingRequestData& TextCheckerCompletion::textCheckingRequestData() const
 {
     return m_requestData;
@@ -55,20 +50,31 @@ const TextCheckingRequestData& TextCheckerCompletion::textCheckingRequestData() 
 
 int64_t TextCheckerCompletion::spellDocumentTag()
 {
-    return protectedPage()->spellDocumentTag();
+    RefPtr page = m_page.get();
+    if (page)
+        return page->spellDocumentTag();
+    return -1;
 }
 
 void TextCheckerCompletion::didFinishCheckingText(const Vector<TextCheckingResult>& result) const
 {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     if (result.isEmpty())
         didCancelCheckingText();
 
-    protectedPage()->didFinishCheckingText(m_requestID, result);
+    page->didFinishCheckingText(m_requestID, result);
 }
 
 void TextCheckerCompletion::didCancelCheckingText() const
 {
-    protectedPage()->didCancelCheckingText(m_requestID);
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    page->didCancelCheckingText(m_requestID);
 }
 
 } // namespace WebKit

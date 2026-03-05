@@ -45,7 +45,7 @@ namespace WebCore::WebGPU {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextImpl);
 
 PresentationContextImpl::PresentationContextImpl(WebGPUPtr<WGPUSurface>&& surface, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(surface))
+    : m_backing(WTF::move(surface))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
@@ -58,7 +58,7 @@ void PresentationContextImpl::setSize(uint32_t width, uint32_t height)
     m_height = height;
 }
 
-static WGPUToneMappingMode convertToToneMappingMode(WebCore::WebGPU::CanvasToneMappingMode toneMappingMode)
+static WGPUToneMappingMode NODELETE convertToToneMappingMode(WebCore::WebGPU::CanvasToneMappingMode toneMappingMode)
 {
     switch (toneMappingMode) {
     case WebCore::WebGPU::CanvasToneMappingMode::Standard:
@@ -71,7 +71,7 @@ static WGPUToneMappingMode convertToToneMappingMode(WebCore::WebGPU::CanvasToneM
     return WGPUToneMappingMode_Extended;
 }
 
-static WGPUCompositeAlphaMode convertToAlphaMode(WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode)
+static WGPUCompositeAlphaMode NODELETE convertToAlphaMode(WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode)
 {
     switch (compositingAlphaMode) {
     case WebCore::WebGPU::CanvasAlphaMode::Opaque:
@@ -108,7 +108,7 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
         .reportValidationErrors = canvasConfiguration.reportValidationErrors
     };
 
-    m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(convertToBackingContext->convertToBacking(canvasConfiguration.protectedDevice().get()), m_backing.get(), &backingDescriptor));
+    m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(convertToBackingContext->convertToBacking(protect(canvasConfiguration.device).get()), m_backing.get(), &backingDescriptor));
     return true;
 }
 

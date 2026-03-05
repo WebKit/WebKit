@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class WebXRViewerPose : public WebXRPose {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRViewerPose);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRViewerPose);
 public:
     static Ref<WebXRViewerPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition);
     virtual ~WebXRViewerPose();
@@ -45,7 +45,7 @@ public:
     const Vector<Ref<WebXRView>>& views() const;
     void setViews(Vector<Ref<WebXRView>>&&);
 
-    JSValueInWrappedObject& cachedViews() { return m_cachedViews; }
+    JSValueInWrappedObject& cachedViews() LIFETIME_BOUND { return m_cachedViews; }
 
 private:
     WebXRViewerPose(Ref<WebXRRigidTransform>&&, bool emulatedPosition);

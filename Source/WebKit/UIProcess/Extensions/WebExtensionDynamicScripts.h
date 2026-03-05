@@ -83,7 +83,7 @@ public:
     void removeUserScriptsAndStyleSheets(const String& identifier);
 
     void updateInjectedContent(InjectedContentData& injectedContent) { m_injectedContent = injectedContent; }
-    const InjectedContentData& injectedContent() const { return m_injectedContent; }
+    const InjectedContentData& injectedContent() const LIFETIME_BOUND { return m_injectedContent; }
 
     WebExtensionRegisteredScriptParameters parameters() const { return m_parameters; };
 

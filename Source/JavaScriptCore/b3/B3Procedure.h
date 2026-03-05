@@ -39,6 +39,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/IndexedContainerIterator.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/SequesteredMalloc.h>
@@ -236,7 +237,7 @@ public:
     // just keeps alive things like the double constant pool and switch lookup tables. If this sounds
     // confusing, you should probably be using the JSC::Compilation API to compile code. If you use
     // that API, then you don't have to worry about this.
-    std::unique_ptr<OpaqueByproducts> releaseByproducts() { return WTFMove(m_byproducts); }
+    std::unique_ptr<OpaqueByproducts> releaseByproducts() { return WTF::move(m_byproducts); }
 
     // This gives you direct access to Code. However, the idea is that clients of B3 shouldn't have to
     // call this. So, Procedure has some methods (below) that expose some Air::Code functionality.
@@ -265,7 +266,7 @@ public:
     PCToOriginMap releasePCToOriginMap()
     {
         RELEASE_ASSERT(needsPCToOriginMap());
-        return WTFMove(m_pcToOriginMap);
+        return WTF::move(m_pcToOriginMap);
     }
 
     JS_EXPORT_PRIVATE void setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator>);
@@ -276,7 +277,7 @@ public:
         setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator>(createSharedTask<WasmBoundsCheckGeneratorFunction>(functor)));
     }
 
-    JS_EXPORT_PRIVATE RegisterSetBuilder mutableGPRs();
+    JS_EXPORT_PRIVATE RegisterSet mutableGPRs();
 
     void setNeedsPCToOriginMap();
     bool needsPCToOriginMap() { return m_needsPCToOriginMap; }
@@ -303,6 +304,9 @@ public:
         return m_usesSIMD;
     }
 
+    void setIonGraphPasses(Ref<JSON::Array>&&);
+    void appendIonGraphPass(ASCIILiteral);
+
 private:
     friend class BlockInsertionSet;
 
@@ -325,6 +329,7 @@ private:
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
     PCToOriginMap m_pcToOriginMap;
+    RefPtr<JSON::Array> m_ionGraphPasses;
     unsigned m_numEntrypoints { 1 };
     unsigned m_optLevel { defaultOptLevel() };
     bool m_needsUsedRegisters { true };

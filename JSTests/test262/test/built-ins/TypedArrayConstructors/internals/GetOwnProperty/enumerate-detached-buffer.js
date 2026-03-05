@@ -39,4 +39,4 @@ testWithTypedArrayConstructors(function(TA) {
     count++;
   }
   assert.sameValue(count, 0, 'The value of `count` is 0');
-});
+}, null, ["passthrough"]);

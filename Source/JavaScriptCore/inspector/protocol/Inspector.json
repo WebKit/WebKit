@@ -1,6 +1,6 @@
 {
     "domain": "Inspector",
-    "debuggableTypes": ["itml", "javascript", "page", "service-worker", "web-page", "wasm-debugger"],
+    "debuggableTypes": ["itml", "javascript", "service-worker", "web-page", "wasm-debugger"],
     "targetTypes": ["itml", "javascript", "page", "service-worker", "wasm-debugger"],
     "commands": [
         {

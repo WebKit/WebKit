@@ -34,6 +34,7 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "NodeDocument.h"
+#include <WebCore/ExceptionOr.h>
 #include <limits>
 #include <wtf/TZoneMallocInlines.h>
 namespace WebCore {
@@ -53,7 +54,7 @@ private:
     {
     }
 
-    bool hasCallback() const final { return true; }
+    bool NODELETE hasCallback() const final { return true; }
 
     CallbackResult<void> invoke(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
     {
@@ -97,7 +98,7 @@ IntersectionObserver* LazyLoadModelObserver::intersectionObserver(Document& docu
         auto callback = LazyModelLoadIntersectionObserverCallback::create(document);
         static NeverDestroyed<const String> lazyLoadingScrollMarginFallback(MAKE_STATIC_STRING_IMPL("100%"));
         IntersectionObserver::Init options { std::nullopt, { }, lazyLoadingScrollMarginFallback, { } };
-        auto observer = IntersectionObserver::create(document, WTFMove(callback), WTFMove(options));
+        auto observer = IntersectionObserver::create(document, WTF::move(callback), WTF::move(options));
         if (observer.hasException())
             return nullptr;
         m_observer = observer.returnValue().ptr();

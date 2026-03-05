@@ -41,12 +41,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTDisjointTimerQuery);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EXTDisjointTimerQuery);
 
 EXTDisjointTimerQuery::EXTDisjointTimerQuery(WebGLRenderingContext& context)
     : WebGLExtension(context, WebGLExtensionName::EXTDisjointTimerQuery)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::EXT_disjoint_timer_query);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::EXT_disjoint_timer_query);
 }
 
 EXTDisjointTimerQuery::~EXTDisjointTimerQuery() = default;
@@ -85,10 +85,10 @@ void EXTDisjointTimerQuery::deleteQueryEXT(WebGLTimerQueryEXT* query)
     if (query == context->m_activeQuery) {
         context->m_activeQuery = nullptr;
         ASSERT(query->target() == GraphicsContextGL::TIME_ELAPSED_EXT);
-        context->graphicsContextGL()->endQueryEXT(GraphicsContextGL::TIME_ELAPSED_EXT);
+        protect(context->graphicsContextGL())->endQueryEXT(GraphicsContextGL::TIME_ELAPSED_EXT);
     }
 
-    query->deleteObject(locker, context->graphicsContextGL().get());
+    query->deleteObject(locker, protect(context->graphicsContextGL()));
 }
 
 GCGLboolean EXTDisjointTimerQuery::isQueryEXT(WebGLTimerQueryEXT* query)
@@ -159,7 +159,7 @@ void EXTDisjointTimerQuery::endQueryEXT(GCGLenum target)
     context->graphicsContextGL()->endQueryEXT(target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    context->scriptExecutionContext()->eventLoop().queueMicrotask([query = WTFMove(context->m_activeQuery)] {
+    context->scriptExecutionContext()->eventLoop().queueMicrotask(context->scriptExecutionContext()->vm(), [query = WTF::move(context->m_activeQuery)] {
         query->makeResultAvailable();
     });
 }
@@ -187,10 +187,10 @@ void EXTDisjointTimerQuery::queryCounterEXT(WebGLTimerQueryEXT& query, GCGLenum 
 
     query.setTarget(target);
 
-    context->graphicsContextGL()->queryCounterEXT(query.object(), target);
+    protect(context->graphicsContextGL())->queryCounterEXT(query.object(), target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    context->scriptExecutionContext()->eventLoop().queueMicrotask([&] {
+    context->scriptExecutionContext()->eventLoop().queueMicrotask(context->scriptExecutionContext()->vm(), [&] {
         query.makeResultAvailable();
     });
 }
@@ -209,7 +209,7 @@ WebGLAny EXTDisjointTimerQuery::getQueryEXT(GCGLenum target, GCGLenum pname)
     switch (pname) {
     case GraphicsContextGL::CURRENT_QUERY_EXT:
         if (target == GraphicsContextGL::TIME_ELAPSED_EXT)
-            return context->m_activeQuery;
+            return toWebGLAny(context->m_activeQuery);
         return nullptr;
     case GraphicsContextGL::QUERY_COUNTER_BITS_EXT:
         return context->graphicsContextGL()->getQueryiEXT(target, pname);

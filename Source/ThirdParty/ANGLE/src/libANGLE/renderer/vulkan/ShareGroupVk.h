@@ -103,7 +103,7 @@ class ShareGroupVk : public ShareGroupImpl
         }
     }
 
-    void onFramebufferBoundary();
+    void onFrameBoundary();
     uint32_t getCurrentFrameCount() const { return mCurrentFrameCount; }
 
   private:

@@ -23,11 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webauthn/#authenticatorresponse
 [
     Conditional=WEB_AUTHN,
     EnabledBySetting=WebAuthenticationEnabled,
     Exposed=Window,
     SecureContext,
 ] interface AuthenticatorResponse {
-    [SameObject] readonly attribute ArrayBuffer clientDataJSON;
+    // FIXME: `clientDataJSON` should not be nullable.
+    [SameObject] readonly attribute ArrayBuffer? clientDataJSON;
 };

@@ -28,6 +28,7 @@
 
 #include "NetworkCacheData.h"
 #include "NetworkCacheKey.h"
+#include <memory>
 #include <wtf/SHA1.h>
 
 namespace WebKit {
@@ -35,16 +36,17 @@ namespace NetworkCache {
 
 // BlobStorage deduplicates the data using SHA1 hash computed over the blob bytes.
 class BlobStorage {
+    WTF_MAKE_TZONE_ALLOCATED(BlobStorage);
     WTF_MAKE_NONCOPYABLE(BlobStorage);
 public:
-    BlobStorage(const String& blobDirectoryPath, Salt);
+    BlobStorage(const String& blobDirectoryPath, Salt, unsigned memoryCacheFileLimit = 0);
 
     struct Blob {
         Data data;
         SHA1::Digest hash;
     };
     // These are all synchronous and should not be used from the main thread.
-    Blob add(const String& path, const Data&);
+    Blob add(const String& path, const Data&, bool addToMemoryCache = false);
     Blob get(const String& path);
 
     // Blob won't be removed until synchronization.
@@ -56,6 +58,23 @@ public:
 
     void synchronize();
 
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    class MemoryCache {
+        WTF_MAKE_TZONE_ALLOCATED(MemoryCache);
+        WTF_MAKE_NONCOPYABLE(MemoryCache);
+    public:
+        explicit MemoryCache(unsigned fileLimit);
+        std::optional<Blob> get(const String& path);
+        void add(const String& path, const Blob&);
+        void remove(const String& path);
+
+    private:
+        UnfairLock m_lock;
+        unsigned m_limit;
+        HashMap<String, BlobStorage::Blob> m_cache;
+    };
+#endif
+
 private:
     String blobDirectoryPathIsolatedCopy() const;
     String blobPathForHash(const SHA1::Digest&) const;
@@ -64,6 +83,10 @@ private:
     const Salt m_salt;
 
     std::atomic<size_t> m_approximateSize { 0 };
+
+#if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
+    std::unique_ptr<MemoryCache> m_memoryCache;
+#endif
 };
 
 }

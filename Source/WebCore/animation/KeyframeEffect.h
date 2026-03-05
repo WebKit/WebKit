@@ -62,9 +62,9 @@ struct ResolutionContext;
 }
 
 class KeyframeEffect final : public AnimationEffect, public Style::Interpolation::Client, public KeyframeInterpolation {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(KeyframeEffect);
+    WTF_MAKE_TZONE_ALLOCATED(KeyframeEffect);
 public:
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, Variant<double, KeyframeEffectOptions>&&);
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);
     static Ref<KeyframeEffect> create(const Element&, const std::optional<Style::PseudoElementIdentifier>&);
 
@@ -115,11 +115,11 @@ public:
     Element* target() const { return m_target.get(); }
     void setTarget(RefPtr<Element>&&);
 
-    bool targetsPseudoElement() const;
+    bool NODELETE targetsPseudoElement() const;
     const String pseudoElement() const;
     ExceptionOr<void> setPseudoElement(const String&);
 
-    const std::optional<const Styleable> targetStyleable() const;
+    const std::optional<const Styleable> NODELETE targetStyleable() const;
 
     Vector<ComputedKeyframe> getKeyframes();
     ExceptionOr<void> setBindingsKeyframes(JSC::JSGlobalObject&, Document&, JSC::Strong<JSC::JSObject>&&);
@@ -146,14 +146,12 @@ public:
 
     void willChangeRenderer();
 
-    Document* document() const final;
+    Document& document() const final { return m_document; }
     RenderElement* renderer() const final;
     const RenderStyle& currentStyle() const final;
     bool triggersStackingContext() const { return m_triggersStackingContext; }
     bool isRunningAccelerated() const;
-
-    // FIXME: These ignore the fact that some timing functions can prevent acceleration.
-    bool isAboutToRunAccelerated() const { return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
+    bool isAboutToRunAccelerated() const;
 
     std::optional<unsigned> transformFunctionListPrefix() const override;
 
@@ -173,7 +171,7 @@ public:
     bool isRunningAcceleratedAnimationForProperty(CSSPropertyID) const;
     bool isRunningAcceleratedTransformRelatedAnimation() const;
 
-    bool requiresPseudoElement() const;
+    bool NODELETE requiresPseudoElement() const;
 
     void customPropertyRegistrationDidChange(const AtomString&);
 
@@ -195,13 +193,12 @@ public:
 
 #if ENABLE(THREADED_ANIMATIONS)
     bool canHaveAcceleratedRepresentation() const;
-    const AcceleratedEffect* acceleratedRepresentation() const { return m_acceleratedRepresentation.get(); }
-    void setAcceleratedRepresentation(const AcceleratedEffect* acceleratedRepresentation) { m_acceleratedRepresentation = acceleratedRepresentation; }
+    Ref<AcceleratedEffect> acceleratedRepresentation(const IntRect&, const AcceleratedEffectValues&, OptionSet<AcceleratedEffectProperty>&);
     void timelineAccelerationAbilityDidChange();
 #endif
 
 private:
-    KeyframeEffect(Element*, const std::optional<Style::PseudoElementIdentifier>&);
+    KeyframeEffect(Document&, Element*, const std::optional<Style::PseudoElementIdentifier>&);
     ~KeyframeEffect();
 
     enum class AcceleratedAction : uint8_t { Play, Pause, UpdateProperties, TransformChange, Stop };
@@ -250,6 +247,10 @@ private:
     void computeHasSizeDependentTransform();
     void analyzeAcceleratedProperties();
     void updateIsAssociatedWithProgressBasedTimeline();
+    bool isRunningAccountingForSuspension() const;
+
+    enum AccountForTimelineAccelerationAbility : bool { No, Yes };
+    bool canBeAccelerated(AccountForTimelineAccelerationAbility) const;
 
     void abilityToBeAcceleratedDidChange();
     void updateAcceleratedAnimationIfNecessary();
@@ -277,7 +278,7 @@ private:
     void animationDidChangeTimingProperties() final;
     void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
-    void animationTimelineDidChange(const AnimationTimeline*) final;
+    void animationTimelineDidChange() final;
     void animationDidFinish() final;
     void animationPlaybackRateDidChange() final;
     void setAnimation(WebAnimation*) final;
@@ -298,7 +299,7 @@ private:
     const TimingFunction* timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe&) const final;
     bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;
 
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     BlendingKeyframes m_blendingKeyframes { };
     HashSet<AnimatableCSSProperty> m_animatedProperties;

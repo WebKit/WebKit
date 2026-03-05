@@ -62,6 +62,7 @@ enum class LayerChangeIndex : size_t {
 #if HAVE(CORE_MATERIAL)
     AppleVisualEffectChanged,
 #endif
+    ShadowPathChanged,
 };
 
 enum class LayerChange : uint64_t {
@@ -122,6 +123,7 @@ enum class LayerChange : uint64_t {
 #if HAVE(CORE_MATERIAL)
     AppleVisualEffectChanged            = 1LLU << static_cast<size_t>(LayerChangeIndex::AppleVisualEffectChanged),
 #endif
+    ShadowPathChanged                   = 1LLU << static_cast<size_t>(LayerChangeIndex::ShadowPathChanged),
 };
 
 struct RemoteLayerBackingStoreOrProperties {
@@ -133,7 +135,6 @@ struct RemoteLayerBackingStoreOrProperties {
 
     // Used in the WebContent process.
     std::unique_ptr<RemoteLayerBackingStore> store;
-    CheckedPtr<RemoteLayerBackingStore> checkedStore() { return store.get(); }
     // Used in the UI process.
     std::unique_ptr<RemoteLayerBackingStoreProperties> properties;
 };
@@ -225,6 +226,7 @@ struct LayerProperties {
 #if HAVE(CORE_MATERIAL)
     WebCore::AppleVisualEffectData appleVisualEffectData;
 #endif
+    WebCore::Path shadowPath;
 };
 
 }

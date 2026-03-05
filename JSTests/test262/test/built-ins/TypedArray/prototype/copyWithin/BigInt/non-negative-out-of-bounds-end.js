@@ -15,14 +15,14 @@ info: |
   source data.
 
   ...
-includes: [compareArray.js, testBigIntTypedArray.js]
+includes: [compareArray.js, testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n]).copyWithin(0, 1, 6),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n])).copyWithin(0, 1, 6),
       [1n, 2n, 3n, 3n]
     ),
     '[0, 1, 2, 3].copyWithin(0, 1, 6) -> [1, 2, 3, 3]'
@@ -30,7 +30,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(0, 1, Infinity),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(0, 1, Infinity),
       [2n, 3n, 4n, 5n, 5n]
     ),
     '[1, 2, 3, 4, 5].copyWithin(0, 1, Infinity) -> [2, 3, 4, 5, 5]'
@@ -38,7 +38,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([0n, 1n, 2n, 3n, 4n, 5n]).copyWithin(1, 3, 6),
+      new TA(makeCtorArg([0n, 1n, 2n, 3n, 4n, 5n])).copyWithin(1, 3, 6),
       [0n, 3n, 4n, 5n, 4n, 5n]
     ),
     '[0, 1, 2, 3, 4, 5].copyWithin(1, 3, 6) -> [0, 3, 4, 5, 4, 5]'
@@ -46,7 +46,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
-      new TA([1n, 2n, 3n, 4n, 5n]).copyWithin(1, 3, Infinity),
+      new TA(makeCtorArg([1n, 2n, 3n, 4n, 5n])).copyWithin(1, 3, Infinity),
       [1n, 4n, 5n, 4n, 5n]
     ),
     '[1, 2, 3, 4, 5].copyWithin(1, 3, Infinity) -> [1, 4, 5, 4, 5]'

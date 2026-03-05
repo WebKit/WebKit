@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,86 @@
 #include "config.h"
 #include "StyleOpacityFunction.h"
 
+#include "AnimationUtilities.h"
 #include "CSSFilterFunctionDescriptor.h"
 #include "CSSOpacityFunction.h"
+#include "ColorMatrix.h"
+#include "ColorUtilities.h"
+#include "FEColorMatrix.h"
 #include "FilterOperation.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
 
-CSS::Opacity toCSSOpacity(Ref<BasicComponentTransferFilterOperation> operation, const RenderStyle& style)
+OpacityParameters OpacityParameters::passthroughForInterpolation()
 {
-    return { CSS::Opacity::Parameter { toCSS(Number<CSS::ClosedUnitRangeClampUpper> { operation->amount() }, style) } };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueOpacity>::initialValueForInterpolation };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::Opacity& filter, const BuilderState& state)
+bool OpacityParameters::transformColor(SRGBA<float>& color) const
 {
-    double value;
-    if (auto parameter = filter.value)
-        value = evaluate<double>(toStyle(*parameter, state));
-    else
-        value = filterFunctionDefaultValue<CSS::OpacityFunction::name>().value;
+    color = colorWithOverriddenAlpha(color, std::clamp<float>(color.resolved().alpha * evaluate<float>(value), 0.0f, 1.0f));
+    return true;
+}
 
-    return BasicComponentTransferFilterOperation::create(value, filterFunctionOperationType<CSS::OpacityFunction::name>());
+// MARK: - Conversion
+
+auto ToCSS<OpacityParameters>::operator()(const OpacityParameters& value, const RenderStyle& style) -> CSS::Opacity
+{
+    return { .value = CSS::Opacity::Parameter { toCSS(value.value, style) } };
+}
+
+auto ToStyle<CSS::Opacity>::operator()(const CSS::Opacity& value, const BuilderState& state) -> OpacityParameters
+{
+    if (auto parameter = value.value) {
+        return { .value = WTF::switchOn(*parameter,
+            [&](const CSS::Opacity::Parameter::Number& number) -> OpacityParameters::Parameter {
+                return { toStyle(number, state) };
+            },
+            [&](const CSS::Opacity::Parameter::Percentage& percentage) -> OpacityParameters::Parameter {
+                return { toStyle(percentage, state).value / 100 };
+            }
+        ) };
+    }
+    return { .value = CSSFilterFunctionDescriptor<CSSValueOpacity>::defaultValue };
+}
+
+// MARK: - Blending
+
+auto Blending<OpacityParameters>::blend(const OpacityParameters& from, const OpacityParameters& to, const BlendingContext& context) -> OpacityParameters
+{
+    // Accumulate needs to be special cased for filter functions with "initial values
+    // for interpolation of 1" to use the formula "Vresult = Va + Vb - 1".
+    // https://drafts.csswg.org/filter-effects/#accumulation
+    static_assert(CSSFilterFunctionDescriptor<CSSValueOpacity>::initialValueForInterpolation == 1_css_number);
+
+    if (context.compositeOperation == CompositeOperation::Accumulate) {
+        return { OpacityParameters::Parameter {
+            CSS::clampToRange<OpacityParameters::Parameter::range, typename OpacityParameters::Parameter::ResolvedValueType>(
+                from.value.value + to.value.value - 1
+            )
+        } };
+    }
+
+    return { Style::blend(from.value, to.value, context) };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<OpacityParameters, Ref<FilterEffect>>::operator()(const OpacityParameters& value) -> Ref<FilterEffect>
+{
+    ColorMatrix<5, 4> opacityMatrix = opacityColorMatrix(evaluate<float>(value));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX, opacityMatrix);
+}
+
+// MARK: - Platform
+
+auto ToPlatform<OpacityParameters>::operator()(const OpacityParameters& value) -> Ref<FilterOperation>
+{
+    return BasicComponentTransferFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<OpacityFunction::name>());
 }
 
 } // namespace Style

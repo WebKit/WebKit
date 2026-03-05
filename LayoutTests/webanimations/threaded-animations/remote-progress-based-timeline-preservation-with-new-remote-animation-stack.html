@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+body {
+    height: 2000px;
+}
+
+.target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const make_animation = t => {
+    const target = createDiv(t);
+    target.className = "target";
+    const timeline = new ScrollTimeline({ source: document.documentElement });
+    const animation = target.animate({ translate: '100px' }, { timeline });
+    return animation;
+};
+
+promise_test(async t => {
+    const initialAnimation = make_animation(t);
+    await animationAcceleration(initialAnimation);
+    const initialTimeline = await UIHelper.remoteTimeline(initialAnimation.timeline);
+    assert_not_equals(initialTimeline, undefined, "Remote timeline for the initial animation was created.");
+
+    const additionalAnimation = make_animation(t);
+    await animationAcceleration(additionalAnimation);
+    const additionalTimeline = await UIHelper.remoteTimeline(additionalAnimation.timeline);
+    const preservedInitialTimeline = await UIHelper.remoteTimeline(initialAnimation.timeline);
+    assert_not_equals(additionalTimeline, undefined, "Remote timeline for the additional animation was created.");
+    assert_not_equals(preservedInitialTimeline, undefined, "Remote timeline for the initial animation was preserved.");
+
+    initialAnimation.cancel();
+    await threadedAnimationsCommit();
+    const removedInitialTimeline = await UIHelper.remoteTimeline(initialAnimation.timeline);
+    const preservedAdditionalTimeline = await UIHelper.remoteTimeline(additionalAnimation.timeline);
+    assert_equals(removedInitialTimeline, undefined, "Canceling the additional animation removed its remote timeline.");
+    assert_not_equals(preservedAdditionalTimeline, undefined, "Remote timeline for the additional animation was preserved.");
+
+    additionalAnimation.cancel();
+    await threadedAnimationsCommit();
+    const removedAdditionalTimeline = await UIHelper.remoteTimeline(additionalAnimation.timeline);
+    assert_equals(removedAdditionalTimeline, undefined, "Canceling the additional animation removed its remote timeline.");
+}, "Remote timelines are preserved as new timelines are created for animations targeting another element.");
+
+</script>
+</body>

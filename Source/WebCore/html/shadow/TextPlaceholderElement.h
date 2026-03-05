@@ -32,7 +32,7 @@ namespace WebCore {
 class LayoutSize;
 
 class TextPlaceholderElement final : public HTMLDivElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextPlaceholderElement);
+    WTF_MAKE_TZONE_ALLOCATED(TextPlaceholderElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextPlaceholderElement);
 public:
     static Ref<TextPlaceholderElement> create(Document&, const LayoutSize&);
@@ -40,7 +40,7 @@ public:
 private:
     explicit TextPlaceholderElement(Document&, const LayoutSize&);
 
-    bool isTextPlaceholderElement() const final { return true; }
+    bool NODELETE isTextPlaceholderElement() const final { return true; }
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree) final;
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;

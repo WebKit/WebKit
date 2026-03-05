@@ -253,6 +253,8 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagMakeLowerCase:
     case ContextMenuAction::ContextMenuItemTagCapitalize:
     case ContextMenuAction::ContextMenuItemTagChangeBack:
+    case ContextMenuAction::ContextMenuItemTagConvertToTraditionalChinese:
+    case ContextMenuAction::ContextMenuItemTagConvertToSimplifiedChinese:
 #endif
     case ContextMenuAction::ContextMenuItemTagOpenMediaInNewWindow:
     case ContextMenuAction::ContextMenuItemTagDownloadMediaToDisk:
@@ -267,7 +269,7 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagToggleVideoFullscreen:
     case ContextMenuAction::ContextMenuItemTagShareMenu:
     case ContextMenuAction::ContextMenuItemTagToggleVideoViewer:
-    case ContextMenuAction::ContextMenuItemTagToggleVideoEnhancedFullscreen:
+    case ContextMenuAction::ContextMenuItemTagTogglePictureInPicture:
     case ContextMenuAction::ContextMenuItemTagLookUpImage:
     case ContextMenuAction::ContextMenuItemTagTranslate:
     case ContextMenuAction::ContextMenuItemTagWritingTools:

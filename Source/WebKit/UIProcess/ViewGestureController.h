@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "NativeWebWheelEvent.h"
 #include "SameDocumentNavigationType.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/BoxExtents.h>
@@ -42,6 +43,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/BlockPtr.h>
+#include <wtf/WeakObjCPtr.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -80,7 +82,8 @@ class Navigation;
 }
 
 #if PLATFORM(MAC)
-typedef NSEvent* PlatformScrollEvent;
+typedef WebKit::NativeWebWheelEvent PlatformScrollEvent;
+typedef NSEvent *PlatformMagnificationEvent;
 #elif PLATFORM(GTK)
 typedef struct {
     WebCore::FloatSize delta;
@@ -97,6 +100,11 @@ namespace WebKit {
 
 class ViewSnapshot;
 class WebBackForwardList;
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+class WebBackForwardListWrapper;
+#else
+using WebBackForwardListWrapper = WebBackForwardList;
+#endif
 class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
@@ -153,16 +161,16 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void handleMagnificationGestureEvent(PlatformScrollEvent, WebCore::FloatPoint origin);
+    void handleMagnificationGestureEvent(PlatformMagnificationEvent, WebCore::FloatPoint origin);
     void handleSmartMagnificationGesture(WebCore::FloatPoint gestureLocationInViewCoordinates);
 
-    void gestureEventWasNotHandledByWebCore(PlatformScrollEvent, WebCore::FloatPoint origin);
+    void gestureEventWasNotHandledByWebCore(PlatformMagnificationEvent, WebCore::FloatPoint origin);
 
-    void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTFMove(views); }
-    const WebCore::FloatBoxExtent& customSwipeViewsObscuredContentInsets() const { return m_customSwipeViewsObscuredContentInsets; }
-    void setCustomSwipeViewsObscuredContentInsets(WebCore::FloatBoxExtent&& insets) { m_customSwipeViewsObscuredContentInsets = WTFMove(insets); }
+    void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTF::move(views); }
+    const WebCore::FloatBoxExtent& customSwipeViewsObscuredContentInsets() const LIFETIME_BOUND { return m_customSwipeViewsObscuredContentInsets; }
+    void setCustomSwipeViewsObscuredContentInsets(WebCore::FloatBoxExtent&& insets) { m_customSwipeViewsObscuredContentInsets = WTF::move(insets); }
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
-    void setDidMoveSwipeSnapshotCallback(BlockPtr<void (CGRect)>&& callback) { m_didMoveSwipeSnapshotCallback = WTFMove(callback); }
+    void setDidMoveSwipeSnapshotCallback(BlockPtr<void (CGRect)>&& callback) { m_didMoveSwipeSnapshotCallback = WTF::move(callback); }
 #elif PLATFORM(IOS_FAMILY)
     bool isNavigationSwipeGestureRecognizer(UIGestureRecognizer *) const;
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
@@ -224,7 +232,7 @@ private:
 
     static ViewGestureController* controllerForGesture(WebPageProxyIdentifier, GestureID);
 
-    static GestureID takeNextGestureID();
+    static GestureID NODELETE takeNextGestureID();
     void willBeginGesture(ViewGestureType);
     void didEndGesture();
     void resetState();
@@ -232,7 +240,11 @@ private:
     void didStartProvisionalOrSameDocumentLoadForMainFrame();
 
 #if PLATFORM(COCOA)
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+    std::optional<WebBackForwardList> backForwardListForNavigation() const;
+#else
     WebBackForwardList* backForwardListForNavigation() const;
+#endif
 #endif
 
     class SnapshotRemovalTracker : public CanMakeCheckedPtr<SnapshotRemovalTracker> {
@@ -263,7 +275,7 @@ private:
         enum class ShouldIgnoreEventIfPaused : bool { No, Yes };
         bool eventOccurred(Events, ShouldIgnoreEventIfPaused = ShouldIgnoreEventIfPaused::Yes);
         bool cancelOutstandingEvent(Events);
-        bool hasOutstandingEvent(Event);
+        bool NODELETE hasOutstandingEvent(Event);
 
         void startWatchdog(Seconds);
 
@@ -337,7 +349,6 @@ private:
         void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
 
     private:
-        Ref<ViewGestureController> protectedViewGestureController() const;
 
         bool tryToStartSwipe(PlatformScrollEvent);
         bool scrollEventCanBecomeSwipe(PlatformScrollEvent, SwipeDirection&);
@@ -432,7 +443,7 @@ private:
 
     BlockPtr<void (CGRect)> m_didMoveSwipeSnapshotCallback;
 #elif PLATFORM(IOS_FAMILY)
-    UIView* m_liveSwipeView { nullptr };
+    WeakObjCPtr<UIView> m_liveSwipeView;
     RetainPtr<UIView> m_liveSwipeViewClippingView;
     RetainPtr<UIView> m_snapshotView;
     RetainPtr<UIView> m_transitionContainerView;

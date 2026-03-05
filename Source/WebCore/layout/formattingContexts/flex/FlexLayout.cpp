@@ -31,7 +31,7 @@
 #include "FlexRect.h"
 #include "InlineFormattingContext.h"
 #include "PathOperation.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
 #include <wtf/FixedVector.h>
@@ -46,7 +46,7 @@ struct FlexBaseAndHypotheticalMainSize {
 };
 
 struct PositionAndMargins {
-    LayoutUnit margin() const { return marginStart + marginEnd; }
+    LayoutUnit NODELETE margin() const { return marginStart + marginEnd; }
 
     LayoutUnit position;
     LayoutUnit marginStart;
@@ -194,7 +194,7 @@ LayoutUnit FlexLayout::flexContainerInnerMainSize(const ConstraintsForFlexConten
     return mainAxisGeometry.availableSize.value_or(LayoutUnit::max());
 }
 
-static LayoutUnit outerMainSize(const LogicalFlexItem& flexItem, LayoutUnit mainSize, std::optional<LayoutUnit> usedMargin = { })
+static LayoutUnit NODELETE outerMainSize(const LogicalFlexItem& flexItem, LayoutUnit mainSize, std::optional<LayoutUnit> usedMargin = { })
 {
     auto outerMainSize = usedMargin.value_or(flexItem.mainAxis().margin());
     if (flexItem.isContentBoxBased())
@@ -203,7 +203,7 @@ static LayoutUnit outerMainSize(const LogicalFlexItem& flexItem, LayoutUnit main
     return outerMainSize;
 }
 
-static LayoutUnit outerCrossSize(const LogicalFlexItem& flexItem, LayoutUnit crossSize, std::optional<LayoutUnit> usedMargin = { })
+static LayoutUnit NODELETE outerCrossSize(const LogicalFlexItem& flexItem, LayoutUnit crossSize, std::optional<LayoutUnit> usedMargin = { })
 {
     auto outerCrossSize = usedMargin.value_or(flexItem.crossAxis().margin());
     if (flexItem.isContentBoxBased())
@@ -420,7 +420,8 @@ FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRange
         for (size_t flexItemIndex = lineRanges[lineIndex].begin(); flexItemIndex < lineRanges[lineIndex].end(); ++flexItemIndex) {
             // Collect all the flex items whose inline-axis is parallel to the main-axis, whose align-self is baseline, and whose cross-axis margins are both non-auto.
             auto& flexItem = flexItems[flexItemIndex];
-            if (!flexItem.isOrthogonal() && flexItem.style().alignSelf().isFirstBaseline() && flexItem.crossAxis().hasNonAutoMargins()) {
+            auto alignSelf = flexItem.style().alignSelf().resolve(&flexContainerStyle());
+            if (!flexItem.isOrthogonal() && alignSelf.position() == ItemPosition::Baseline && flexItem.crossAxis().hasNonAutoMargins()) {
                 // Find the largest of the distances between each item's baseline and its hypothetical outer cross-start edge,
                 // and the largest of the distances between each item's baseline and its hypothetical outer cross-end edge, and sum these two values.
                 maximumAscent = std::max(maximumAscent, flexItem.crossAxis().ascent);
@@ -485,11 +486,10 @@ FlexLayout::SizeList FlexLayout::computeCrossSizeForFlexItems(const LogicalFlexI
         for (auto flexItemIndex = lineRanges[lineIndex].begin(); flexItemIndex < lineRanges[lineIndex].end(); ++flexItemIndex) {
             auto& flexItem = flexItems[flexItemIndex];
             auto& crossAxis = flexItem.crossAxis();
-            auto flexItemAlignSelf = flexItem.style().alignSelf();
-            auto alignValue = !flexItemAlignSelf.isAuto() ? flexItemAlignSelf.resolve().position() : flexContainerStyle().alignItems().resolve().position();
+            auto alignSelf = flexItem.style().alignSelf().resolve(&flexContainerStyle());
             // If a flex item has align-self: stretch, its computed cross size property is auto, and neither of its cross-axis margins are auto, the used outer cross size is the used cross size of its flex line,
             // clamped according to the item's used min and max cross sizes. Otherwise, the used cross size is the item's hypothetical cross size.
-            if ((alignValue == ItemPosition::Stretch || alignValue == ItemPosition::Normal) && crossAxis.hasSizeAuto && crossAxis.hasNonAutoMargins()) {
+            if (alignSelf.isStretchy(ItemPosition::Stretch) && crossAxis.hasSizeAuto && crossAxis.hasNonAutoMargins()) {
                 auto stretchedInnerCrossSize = [&] {
                     auto stretchedInnerCrossSize = flexLinesCrossSizeList[lineIndex] - flexItems[flexItemIndex].crossAxis().margin();
                     if (flexItem.isContentBoxBased())
@@ -715,7 +715,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
                 auto flexItemOuterCrossSize = outerCrossSize(flexItem, flexItemsCrossSizeList[flexItemIndex], crossPositionAndMargins[flexItemIndex].margin());
                 auto flexItemOuterCrossPosition = LayoutUnit { };
 
-                auto flexItemAlign = !flexItem.style().alignSelf().isAuto() ? flexItem.style().alignSelf().resolve() : flexContainerStyle().alignItems().resolve();
+                auto flexItemAlign = flexItem.style().alignSelf().resolve(&flexContainerStyle());
                 auto alignSelfPosition = flexItemAlign.position();
                 auto setFallbackValuesIfApplicable = [&] {
                     if (flexItemOuterCrossSize > flexLinesCrossSizeList[lineIndex] && flexItemAlign.overflow() == OverflowAlignment::Safe)

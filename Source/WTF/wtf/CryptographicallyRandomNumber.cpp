@@ -62,10 +62,10 @@ public:
     void randomValues(std::span<uint8_t>);
 
 private:
-    inline void addRandomData(std::span<const uint8_t, 128>);
+    inline void NODELETE addRandomData(std::span<const uint8_t, 128>);
     void stir() WTF_REQUIRES_LOCK(m_lock);
     void stirIfNeeded() WTF_REQUIRES_LOCK(m_lock);
-    inline uint8_t getByte() WTF_REQUIRES_LOCK(m_lock);
+    inline uint8_t NODELETE getByte() WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
     ARC4Stream m_stream;

@@ -21,4 +21,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.subarray(s);
   });
-});
+}, null, ["passthrough"]);

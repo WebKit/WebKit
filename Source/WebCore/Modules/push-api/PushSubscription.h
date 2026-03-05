@@ -48,18 +48,18 @@ class ServiceWorkerContainer;
 template<typename> class ExceptionOr;
 
 class PushSubscription : public RefCounted<PushSubscription> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(PushSubscription, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PushSubscription, WEBCORE_EXPORT);
 public:
     template<typename... Args> static Ref<PushSubscription> create(Args&&... args) { return adoptRef(*new PushSubscription(std::forward<Args>(args)...)); }
     WEBCORE_EXPORT ~PushSubscription();
 
-    WEBCORE_EXPORT const PushSubscriptionData& data() const;
+    WEBCORE_EXPORT const PushSubscriptionData& NODELETE data() const;
 
-    const String& endpoint() const;
-    std::optional<EpochTimeStamp> expirationTime() const;
+    const String& NODELETE endpoint() const;
+    std::optional<EpochTimeStamp> NODELETE expirationTime() const;
     PushSubscriptionOptions& options() const;
-    const Vector<uint8_t>& clientECDHPublicKey() const;
-    const Vector<uint8_t>& sharedAuthenticationSecret() const;
+    const Vector<uint8_t>& NODELETE clientECDHPublicKey() const;
+    const Vector<uint8_t>& NODELETE sharedAuthenticationSecret() const;
 
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> getKey(PushEncryptionKeyName) const;
     void unsubscribe(ScriptExecutionContext&, DOMPromiseDeferred<IDLBoolean>&&);

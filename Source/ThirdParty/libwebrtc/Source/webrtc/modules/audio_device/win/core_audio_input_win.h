@@ -11,10 +11,13 @@
 #ifndef MODULES_AUDIO_DEVICE_WIN_CORE_AUDIO_INPUT_WIN_H_
 #define MODULES_AUDIO_DEVICE_WIN_CORE_AUDIO_INPUT_WIN_H_
 
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
 
+#include "api/audio/audio_device.h"
+#include "api/environment/environment.h"
 #include "modules/audio_device/win/audio_device_module_win.h"
 #include "modules/audio_device/win/core_audio_base_win.h"
 
@@ -30,7 +33,7 @@ namespace webrtc_win {
 // and streaming of captured audio to a WebRTC client.
 class CoreAudioInput final : public CoreAudioBase, public AudioInput {
  public:
-  CoreAudioInput(bool automatic_restart);
+  CoreAudioInput(const Environment& env, bool automatic_restart);
   ~CoreAudioInput() override;
 
   // AudioInput implementation.

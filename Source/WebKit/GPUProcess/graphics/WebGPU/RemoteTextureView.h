@@ -54,7 +54,7 @@ class RemoteTextureView final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteTextureView> create(WebCore::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteTextureView(textureView, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteTextureView(textureView, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteTextureView();
@@ -74,16 +74,15 @@ private:
     RemoteTextureView& operator=(RemoteTextureView&&) = delete;
 
     WebCore::WebGPU::TextureView& backing() { return m_backing; }
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<WebCore::WebGPU::TextureView> m_backing;
+    const Ref<WebCore::WebGPU::TextureView> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

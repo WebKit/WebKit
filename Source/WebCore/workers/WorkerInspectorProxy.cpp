@@ -224,7 +224,7 @@ void WorkerInspectorProxy::sendMessageToWorkerInspectorController(const String& 
 void WorkerInspectorProxy::sendMessageFromWorkerToFrontend(String&& message)
 {
     if (RefPtr pageChannel = m_pageChannel.get())
-        pageChannel->sendMessageFromWorkerToFrontend(*this, WTFMove(message));
+        pageChannel->sendMessageFromWorkerToFrontend(*this, WTF::move(message));
 }
 
 } // namespace WebCore

@@ -16,7 +16,7 @@ info: |
   14. Else,
     a. Let newLength be ? ToLength(length).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, SharedArrayBuffer, TypedArray]
 ---*/
 
@@ -27,4 +27,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     new TA(buffer, 0, s);
   });
-});
+}, null, ["passthrough"]);

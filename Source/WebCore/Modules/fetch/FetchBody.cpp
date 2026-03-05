@@ -53,37 +53,40 @@ FetchBody::~FetchBody() = default;
 
 ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
 {
-    return WTF::switchOn(value, [&](RefPtr<Blob>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<const Blob> blob = value.releaseNonNull();
-        if (!blob->type().isEmpty())
-            contentType = blob->type();
-        return FetchBody(WTFMove(blob));
-    }, [&](RefPtr<DOMFormData>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<DOMFormData> domFormData = value.releaseNonNull();
-        auto formData = FormData::createMultiPart(domFormData.get());
-        contentType = makeString("multipart/form-data; boundary="_s, formData->boundary());
-        return FetchBody(WTFMove(formData));
-    }, [&](RefPtr<URLSearchParams>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<const URLSearchParams> params = value.releaseNonNull();
-        contentType = HTTPHeaderValues::formURLEncodedContentType();
-        return FetchBody(WTFMove(params));
-    }, [&](RefPtr<ArrayBuffer>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<const ArrayBuffer> buffer = value.releaseNonNull();
-        return FetchBody(WTFMove(buffer));
-    }, [&](RefPtr<ArrayBufferView>& value) mutable -> ExceptionOr<FetchBody> {
-        Ref<const ArrayBufferView> buffer = value.releaseNonNull();
-        return FetchBody(WTFMove(buffer));
-    }, [&](RefPtr<ReadableStream>& stream) mutable -> ExceptionOr<FetchBody> {
-        if (stream->isDisturbed())
-            return Exception { ExceptionCode::TypeError, "Input body is disturbed."_s };
-        if (stream->isLocked())
-            return Exception { ExceptionCode::TypeError, "Input body is locked."_s };
+    return WTF::switchOn(WTF::move(value),
+        [&](Ref<Blob>&& blob) -> ExceptionOr<FetchBody> {
+            if (!blob->type().isEmpty())
+                contentType = blob->type();
+            return FetchBody(WTF::move(blob));
+        },
+        [&](Ref<DOMFormData>&& domFormData) -> ExceptionOr<FetchBody> {
+            auto formData = FormData::createMultiPart(domFormData.get());
+            contentType = makeString("multipart/form-data; boundary="_s, formData->boundary());
+            return FetchBody(WTF::move(formData));
+        },
+        [&](Ref<URLSearchParams>&& params) -> ExceptionOr<FetchBody> {
+            contentType = HTTPHeaderValues::formURLEncodedContentType();
+            return FetchBody(WTF::move(params));
+        },
+        [&](Ref<ArrayBuffer>&& buffer) -> ExceptionOr<FetchBody> {
+            return FetchBody(WTF::move(buffer));
+        },
+        [&](Ref<ArrayBufferView>&& buffer) -> ExceptionOr<FetchBody> {
+            return FetchBody(WTF::move(buffer));
+        },
+        [&](Ref<ReadableStream>&& stream) -> ExceptionOr<FetchBody> {
+            if (stream->isDisturbed())
+                return Exception { ExceptionCode::TypeError, "Input body is disturbed."_s };
+            if (stream->isLocked())
+                return Exception { ExceptionCode::TypeError, "Input body is locked."_s };
 
-        return FetchBody(stream.releaseNonNull());
-    }, [&](String& value) -> ExceptionOr<FetchBody> {
-        contentType = HTTPHeaderValues::textPlainContentType();
-        return FetchBody(WTFMove(value));
-    });
+            return FetchBody(WTF::move(stream));
+        },
+        [&](String&& value) -> ExceptionOr<FetchBody> {
+            contentType = HTTPHeaderValues::textPlainContentType();
+            return FetchBody(WTF::move(value));
+        }
+    );
 }
 
 std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context, Ref<FormData>&& formData)
@@ -92,46 +95,46 @@ std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context
 
     if (auto buffer = formData->asSharedBuffer()) {
         FetchBody body;
-        body.checkedConsumer()->setData(buffer.releaseNonNull());
+        protect(body.consumer())->setData(buffer.releaseNonNull());
         return body;
     }
 
     auto url = formData->asBlobURL();
     if (!url.isNull()) {
         // FIXME: Properly set mime type and size of the blob.
-        Ref<const Blob> blob = Blob::deserialize(&context, url, { }, { }, 0, { });
-        return FetchBody { WTFMove(blob) };
+        Ref<Blob> blob = Blob::deserialize(&context, url, { }, { }, 0, { });
+        return FetchBody { WTF::move(blob) };
     }
 
-    return FetchBody { WTFMove(formData) };
+    return FetchBody { WTF::move(formData) };
 }
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->setType(FetchBodyConsumer::Type::ArrayBuffer);
-    consume(owner, WTFMove(promise));
+    protect(consumer())->setType(FetchBodyConsumer::Type::ArrayBuffer);
+    consume(owner, WTF::move(promise));
 }
 
 void FetchBody::blob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->setType(FetchBodyConsumer::Type::Blob);
-    consume(owner, WTFMove(promise));
+    protect(consumer())->setType(FetchBodyConsumer::Type::Blob);
+    consume(owner, WTF::move(promise));
 }
 
 void FetchBody::bytes(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->setType(FetchBodyConsumer::Type::Bytes);
-    consume(owner, WTFMove(promise));
+    protect(consumer())->setType(FetchBodyConsumer::Type::Bytes);
+    consume(owner, WTF::move(promise));
 }
 
 void FetchBody::json(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     if (isText()) {
-        fulfillPromiseWithJSON(WTFMove(promise), textBody());
+        fulfillPromiseWithJSON(WTF::move(promise), textBody());
         return;
     }
-    checkedConsumer()->setType(FetchBodyConsumer::Type::JSON);
-    consume(owner, WTFMove(promise));
+    protect(consumer())->setType(FetchBodyConsumer::Type::JSON);
+    consume(owner, WTF::move(promise));
 }
 
 void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
@@ -140,70 +143,70 @@ void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         promise->resolve<IDLDOMString>(textBody());
         return;
     }
-    checkedConsumer()->setType(FetchBodyConsumer::Type::Text);
-    consume(owner, WTFMove(promise));
+    protect(consumer())->setType(FetchBodyConsumer::Type::Text);
+    consume(owner, WTF::move(promise));
 }
 
 void FetchBody::formData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->setType(FetchBodyConsumer::Type::FormData);
-    consume(owner, WTFMove(promise));
+    protect(consumer())->setType(FetchBodyConsumer::Type::FormData);
+    consume(owner, WTF::move(promise));
 }
 
 void FetchBody::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Ref<DeferredPromise>&& promise)
 {
     CheckedRef consumer = this->consumer();
     consumer->setType(type);
-    consumer->setConsumePromise(WTFMove(promise));
+    consumer->setConsumePromise(WTF::move(promise));
 }
 
 void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     if (isArrayBuffer()) {
-        consumeArrayBuffer(owner, WTFMove(promise));
+        consumeArrayBuffer(owner, WTF::move(promise));
         return;
     }
     if (isArrayBufferView()) {
-        consumeArrayBufferView(owner, WTFMove(promise));
+        consumeArrayBufferView(owner, WTF::move(promise));
         return;
     }
     if (isText()) {
-        consumeText(owner, WTFMove(promise), textBody());
+        consumeText(owner, WTF::move(promise), textBody());
         return;
     }
     if (isURLSearchParams()) {
-        consumeText(owner, WTFMove(promise), protectedURLSearchParamsBody()->toString());
+        consumeText(owner, WTF::move(promise), protect(urlSearchParamsBody())->toString());
         return;
     }
     if (isBlob()) {
-        consumeBlob(owner, WTFMove(promise));
+        consumeBlob(owner, WTF::move(promise));
         return;
     }
     if (isFormData()) {
-        consumeFormData(owner, WTFMove(promise));
+        consumeFormData(owner, WTF::move(promise));
         return;
     }
 
-    checkedConsumer()->resolve(WTFMove(promise), owner.contentType(), &owner, m_readableStream.get());
+    protect(consumer())->resolve(WTF::move(promise), owner.contentType(), &owner, m_readableStream.get());
 }
 
 void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 {
     bool closeStream = false;
     if (isArrayBuffer())
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(protectedArrayBufferBody()->span()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(protect(arrayBufferBody())->span()));
     else if (isArrayBufferView())
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(protectedArrayBufferViewBody()->span()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(protect(arrayBufferViewBody())->span()));
     else if (isText()) {
         auto data = PAL::TextCodecUTF8::encodeUTF8(textBody());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data));
     } else if (isURLSearchParams()) {
-        auto data = PAL::TextCodecUTF8::encodeUTF8(protectedURLSearchParamsBody()->toString());
+        auto data = PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data));
     } else if (isBlob())
-        owner.loadBlob(protectedBlobBody().get(), nullptr);
+        owner.loadBlob(protect(blobBody()).get(), nullptr);
     else if (isFormData())
-        checkedConsumer()->consumeFormDataAsStream(protectedFormDataBody().get(), source, owner.protectedScriptExecutionContext().get());
+        protect(consumer())->consumeFormDataAsStream(protect(formDataBody()).get(), source, protect(owner.scriptExecutionContext()).get());
     else if (CheckedRef consumer = this->consumer(); consumer->hasData())
         closeStream = source.enqueue(consumer->asArrayBuffer());
     else
@@ -215,20 +218,20 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 
 void FetchBody::consumeArrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->resolveWithData(WTFMove(promise), owner.contentType(), protectedArrayBufferBody()->span());
+    protect(consumer())->resolveWithData(WTF::move(promise), owner.contentType(), protect(arrayBufferBody())->span());
     m_data = nullptr;
 }
 
 void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->resolveWithData(WTFMove(promise), owner.contentType(), protectedArrayBufferViewBody()->span());
+    protect(consumer())->resolveWithData(WTF::move(promise), owner.contentType(), protect(arrayBufferViewBody())->span());
     m_data = nullptr;
 }
 
 void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& text)
 {
     auto data = PAL::TextCodecUTF8::encodeUTF8(text);
-    checkedConsumer()->resolveWithData(WTFMove(promise), owner.contentType(), data.span());
+    protect(consumer())->resolveWithData(WTF::move(promise), owner.contentType(), data.span());
     m_data = nullptr;
 }
 
@@ -236,25 +239,25 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
 {
     CheckedPtr consumer = m_consumer.get();
     RELEASE_ASSERT(consumer);
-    consumer->setConsumePromise(WTFMove(promise));
-    owner.loadBlob(protectedBlobBody().get(), consumer.get());
+    consumer->setConsumePromise(WTF::move(promise));
+    owner.loadBlob(protect(blobBody()).get(), consumer.get());
     m_data = nullptr;
 }
 
 void FetchBody::consumeFormData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->resolveWithFormData(WTFMove(promise), owner.contentType(), protectedFormDataBody().get(), owner.protectedScriptExecutionContext().get());
+    protect(consumer())->resolveWithFormData(WTF::move(promise), owner.contentType(), protect(formDataBody()).get(), protect(owner.scriptExecutionContext()).get());
     m_data = nullptr;
 }
 
 void FetchBody::loadingFailed(const Exception& exception)
 {
-    checkedConsumer()->loadingFailed(exception);
+    protect(consumer())->loadingFailed(exception);
 }
 
 void FetchBody::loadingSucceeded(const String& contentType)
 {
-    checkedConsumer()->loadingSucceeded(contentType);
+    protect(consumer())->loadingSucceeded(contentType);
 }
 
 RefPtr<FormData> FetchBody::bodyAsFormData() const
@@ -262,19 +265,19 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
     if (isText())
         return FormData::create(PAL::TextCodecUTF8::encodeUTF8(textBody()));
     if (isURLSearchParams())
-        return FormData::create(PAL::TextCodecUTF8::encodeUTF8(protectedURLSearchParamsBody()->toString()));
+        return FormData::create(PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString()));
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
         return body;
     }
     if (isArrayBuffer())
-        return FormData::create(protectedArrayBufferBody()->span());
+        return FormData::create(protect(arrayBufferBody())->span());
     if (isArrayBufferView())
-        return FormData::create(protectedArrayBufferViewBody()->span());
+        return FormData::create(protect(arrayBufferViewBody())->span());
     if (isFormData())
         return &const_cast<FormData&>(formDataBody());
-    if (RefPtr data = const_cast<FetchBody*>(this)->checkedConsumer()->data())
+    if (RefPtr data = protect(const_cast<FetchBody*>(this)->consumer())->data())
         return FormData::create(data->makeContiguous()->span());
 
     ASSERT_NOT_REACHED();
@@ -285,25 +288,30 @@ void FetchBody::convertReadableStreamToArrayBuffer(FetchBodyOwner& owner, Comple
 {
     ASSERT(hasReadableStream());
 
-    checkedConsumer()->extract(*protectedReadableStream(), [owner = Ref { owner }, data = SharedBufferBuilder(), completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
-        WTF::switchOn(WTFMove(result), [&](std::nullptr_t) {
-            if (RefPtr arrayBuffer = data.takeAsArrayBuffer())
-                owner->body().m_data = *arrayBuffer;
-            completionHandler({ });
-        }, [&](std::span<const uint8_t>&& chunk) {
-            data.append(chunk);
-        }, [&](JSC::JSValue) {
-            completionHandler(Exception { ExceptionCode::TypeError, "Load failed"_s });
-        }, [&](Exception&& error) {
-            completionHandler(WTFMove(error));
-        });
+    protect(consumer())->extract(*protect(readableStream()), [owner = Ref { owner }, data = SharedBufferBuilder(), completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+        WTF::switchOn(WTF::move(result),
+            [&](std::nullptr_t) {
+                if (RefPtr arrayBuffer = data.takeBufferAsArrayBuffer())
+                    owner->body().m_data = *arrayBuffer;
+                completionHandler({ });
+            },
+            [&](std::span<const uint8_t>&& chunk) {
+                data.append(chunk);
+            },
+            [&](JSC::JSValue) {
+                completionHandler(Exception { ExceptionCode::TypeError, "Load failed"_s });
+            },
+            [&](Exception&& error) {
+                completionHandler(WTF::move(error));
+            }
+        );
     });
 }
 
 FetchBody::TakenData FetchBody::take()
 {
     if (m_consumer && m_consumer->hasData()) {
-        auto buffer = checkedConsumer()->takeData();
+        auto buffer = protect(consumer())->takeData();
         if (!buffer)
             return nullptr;
         return buffer->makeContiguous();
@@ -312,7 +320,7 @@ FetchBody::TakenData FetchBody::take()
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
-        return TakenData { WTFMove(body) };
+        return TakenData { WTF::move(body) };
     }
 
     if (isFormData())
@@ -321,12 +329,12 @@ FetchBody::TakenData FetchBody::take()
     if (isText())
         return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(textBody()));
     if (isURLSearchParams())
-        return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(protectedURLSearchParamsBody()->toString()));
+        return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString()));
 
     if (isArrayBuffer())
-        return SharedBuffer::create(protectedArrayBufferBody()->span());
+        return SharedBuffer::create(protect(arrayBufferBody())->span());
     if (isArrayBufferView())
-        return SharedBuffer::create(protectedArrayBufferViewBody()->span());
+        return SharedBuffer::create(protect(arrayBufferViewBody())->span());
 
     return nullptr;
 }
@@ -340,27 +348,27 @@ FetchBodyConsumer& FetchBody::consumer()
 
 FetchBody FetchBody::clone(JSDOMGlobalObject& globalObject)
 {
-    FetchBody clone(checkedConsumer()->clone());
+    FetchBody clone(protect(consumer())->clone());
 
     if (isArrayBuffer())
-        clone.m_data = protectedArrayBufferBody();
+        clone.m_data = protect(arrayBufferBody());
     else if (isArrayBufferView())
-        clone.m_data = protectedArrayBufferViewBody();
+        clone.m_data = protect(arrayBufferViewBody());
     else if (isBlob())
-        clone.m_data = protectedBlobBody();
+        clone.m_data = protect(blobBody());
     else if (isFormData())
-        clone.m_data = Ref { const_cast<FormData&>(formDataBody()) };
+        clone.m_data = protect(formDataBody());
     else if (isText())
         clone.m_data = textBody();
     else if (isURLSearchParams())
-        clone.m_data = protectedURLSearchParamsBody();
+        clone.m_data = protect(urlSearchParamsBody());
     else if (RefPtr readableStream = m_readableStream) {
         auto clones = readableStream->tee(globalObject, true);
         ASSERT(!clones.hasException());
         if (!clones.hasException()) {
             auto pair = clones.releaseReturnValue();
-            m_readableStream = WTFMove(pair[0]);
-            clone.m_readableStream = WTFMove(pair[1]);
+            m_readableStream = WTF::move(pair[0]);
+            clone.m_readableStream = WTF::move(pair[1]);
         }
     }
     return clone;
@@ -382,14 +390,14 @@ FetchBody FetchBody::createProxy(JSDOMGlobalObject& globalObject)
         return proxy;
 
     Ref identityTransform = identityTransformOrException.releaseReturnValue();
-    auto proxyStreamOrException = Ref { *m_readableStream }->pipeThrough(globalObject, { &identityTransform->readable(), &identityTransform->writable() }, { });
+    auto proxyStreamOrException = Ref { *m_readableStream }->pipeThrough(globalObject, { identityTransform->readable(), identityTransform->writable() }, { });
     ASSERT(!proxyStreamOrException.hasException());
     if (proxyStreamOrException.hasException())
         return proxy;
 
     Ref proxyStream = proxyStreamOrException.releaseReturnValue();
     proxy.m_data = proxyStream.get();
-    proxy.m_readableStream = WTFMove(proxyStream);
+    proxy.m_readableStream = WTF::move(proxyStream);
 
     return proxy;
 }

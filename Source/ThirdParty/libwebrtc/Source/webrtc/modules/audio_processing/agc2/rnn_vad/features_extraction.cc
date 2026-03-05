@@ -25,8 +25,8 @@ namespace {
 
 // Computed as `scipy.signal.butter(N=2, Wn=60/24000, btype='highpass')`.
 constexpr BiQuadFilter::Config kHpfConfig24k{
-    {0.99446179f, -1.98892358f, 0.99446179f},
-    {-1.98889291f, 0.98895425f}};
+    .b = {0.99446179f, -1.98892358f, 0.99446179f},
+    .a = {-1.98889291f, 0.98895425f}};
 
 }  // namespace
 

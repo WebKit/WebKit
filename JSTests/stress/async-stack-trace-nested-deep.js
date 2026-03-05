@@ -653,7 +653,6 @@ for (let i = 0; i < count; i++) {
         }, Error, "error",
         [
             ["problematicFunction", "645:20"],
-            ["problematicFunction", "641:36"],
             ["level101", "632:30"],
             ["async level100", "620:19"],
             ["async level99", "615:19"],

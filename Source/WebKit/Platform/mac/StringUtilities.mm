@@ -62,7 +62,7 @@ RetainPtr<NSString> formattedPhoneNumberString(NSString *originalPhoneNumber)
     if (!phoneNumberString)
         phoneNumberString = adoptCF(CFPhoneNumberCopyUnformattedRepresentation(phoneNumber.get()));
 
-    return bridge_cast(WTFMove(phoneNumberString));
+    return bridge_cast(WTF::move(phoneNumberString));
 }
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)

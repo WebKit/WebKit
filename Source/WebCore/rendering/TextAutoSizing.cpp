@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +36,7 @@
 #include "RenderBlock.h"
 #include "RenderListMarker.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
@@ -42,12 +44,126 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
 #include "StyleTextSizeAdjust.h"
+#include <utility>
+#include <wtf/HashSet.h>
+#include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
+struct TextAutoSizingHashTranslator {
+    static unsigned hash(const RenderStyle&);
+    static bool equal(const RenderStyle&, const RenderStyle&);
+    static bool equal(const TextAutoSizingKey&, const RenderStyle&);
+    static void translate(TextAutoSizingKey&, const RenderStyle&, unsigned hash);
+};
+
+class TextAutoSizingValue {
+    WTF_MAKE_TZONE_ALLOCATED(TextAutoSizingValue);
+public:
+    TextAutoSizingValue() = default;
+    ~TextAutoSizingValue();
+
+    void addTextNode(Text&, float size);
+
+    enum class StillHasNodes : bool { No, Yes };
+    StillHasNodes adjustTextNodeSizes();
+
+private:
+    void reset();
+
+    HashSet<Ref<Text>> m_autoSizedNodes;
+};
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextAutoSizingValue);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextAutoSizing);
+
+// MARK: - TextAutoSizingKey
+
+TextAutoSizingKey::TextAutoSizingKey(DeletedTag)
+{
+    HashTraits<std::unique_ptr<RenderStyle>>::constructDeletedValue(m_style);
+}
+
+TextAutoSizingKey::TextAutoSizingKey(const RenderStyle& style, unsigned hash)
+    : m_style(RenderStyle::clonePtr(style)) // FIXME: This seems very inefficient.
+    , m_hash(hash)
+{
+}
+
+bool TextAutoSizingKey::operator==(const TextAutoSizingKey& other) const
+{
+    if (isDeleted() || other.isDeleted())
+        return false;
+    if (!style() || !other.style())
+        return style() == other.style();
+    return TextAutoSizingHashTranslator::equal(*style(), *other.style());
+}
+
+// MARK: - TextAutoSizingHashTranslator
+
+static unsigned computeFontHash(const FontCascade& font)
+{
+    // FIXME: Would be better to hash the family name rather than hashing a hash of the family name. Also, should this use FontCascadeDescription::familyNameHash?
+    return computeHash(
+        ASCIICaseInsensitiveHash::hash(font.fontDescription().firstFamily()),
+        font.fontDescription().specifiedSize()
+    );
+}
+
+unsigned TextAutoSizingHashTranslator::hash(const RenderStyle& style)
+{
+    // FIXME: Not a very smart hash. Could be improved upon. See <https://bugs.webkit.org/show_bug.cgi?id=121131>.
+    unsigned hash = std::to_underlying(style.usedAppearance());
+    hash ^= style.lineClamp().valueForHash();
+    hash ^= std::to_underlying(style.overflowWrap());
+    hash ^= std::to_underlying(style.nbspMode());
+    hash ^= std::to_underlying(style.lineBreak());
+    hash ^= std::to_underlying(style.textSecurity());
+    hash ^= style.specifiedLineHeight().valueForHash();
+    hash ^= computeFontHash(style.fontCascade());
+    hash ^= WTF::FloatHash<float>::hash(style.borderHorizontalSpacing().unresolvedValue());
+    hash ^= WTF::FloatHash<float>::hash(style.borderVerticalSpacing().unresolvedValue());
+    hash ^= std::to_underlying(style.boxDirection());
+    hash ^= std::to_underlying(style.rtlOrdering());
+    hash ^= std::to_underlying(style.position());
+    hash ^= std::to_underlying(style.floating());
+    hash ^= std::to_underlying(style.textOverflow());
+    return hash;
+}
+
+bool TextAutoSizingHashTranslator::equal(const TextAutoSizingKey& key, const RenderStyle& styleB)
+{
+    return !key.isDeleted() && key.style() && equal(*key.style(), styleB);
+}
+
+bool TextAutoSizingHashTranslator::equal(const RenderStyle& styleA, const RenderStyle& styleB)
+{
+    return styleA.usedAppearance() == styleB.usedAppearance()
+        && styleA.lineClamp() == styleB.lineClamp()
+        && styleA.textSizeAdjust() == styleB.textSizeAdjust()
+        && styleA.overflowWrap() == styleB.overflowWrap()
+        && styleA.nbspMode() == styleB.nbspMode()
+        && styleA.lineBreak() == styleB.lineBreak()
+        && styleA.textSecurity() == styleB.textSecurity()
+        && styleA.specifiedLineHeight() == styleB.specifiedLineHeight()
+        && styleA.fontCascade().equalForTextAutoSizing(styleB.fontCascade())
+        && styleA.borderHorizontalSpacing() == styleB.borderHorizontalSpacing()
+        && styleA.borderVerticalSpacing() == styleB.borderVerticalSpacing()
+        && styleA.boxDirection() == styleB.boxDirection()
+        && styleA.rtlOrdering() == styleB.rtlOrdering()
+        && styleA.position() == styleB.position()
+        && styleA.floating() == styleB.floating()
+        && styleA.textOverflow() == styleB.textOverflow();
+}
+
+void TextAutoSizingHashTranslator::translate(TextAutoSizingKey& key, const RenderStyle& style, unsigned hash)
+{
+    key = { style, hash };
+}
+
+// MARK: - TextAutoSizingValue
 
 static RenderStyle cloneRenderStyleWithState(const RenderStyle& currentStyle)
 {
@@ -64,21 +180,10 @@ static RenderStyle cloneRenderStyleWithState(const RenderStyle& currentStyle)
     return newStyle;
 }
 
-TextAutoSizingKey::TextAutoSizingKey(DeletedTag)
-{
-    HashTraits<std::unique_ptr<RenderStyle>>::constructDeletedValue(m_style);
-}
-
-TextAutoSizingKey::TextAutoSizingKey(const RenderStyle& style, unsigned hash)
-    : m_style(RenderStyle::clonePtr(style)) // FIXME: This seems very inefficient.
-    , m_hash(hash)
-{
-}
-
 void TextAutoSizingValue::addTextNode(Text& node, float size)
 {
     node.renderer()->setCandidateComputedTextSize(size);
-    m_autoSizedNodes.add(&node);
+    m_autoSizedNodes.add(node);
 }
 
 auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
@@ -89,7 +194,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
     for (auto& textNode : m_autoSizedNodes) {
         auto* renderer = textNode->renderer();
         if (!renderer || !renderer->style().textSizeAdjust().isAuto() || !renderer->candidateComputedTextSize())
-            nodesForRemoval.append(textNode.get());
+            nodesForRemoval.append(textNode.ptr());
     }
 
     for (auto& node : nodesForRemoval)
@@ -127,7 +232,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             scaleChange = averageSize / specifiedSize;
         }
 
-        LOG(TextAutosizing, "  adjust node size %p firstPass=%d averageSize=%f scaleChange=%f", node.get(), firstPass, averageSize, scaleChange);
+        LOG(TextAutosizing, "  adjust node size %p firstPass=%d averageSize=%f scaleChange=%f", node.ptr(), firstPass, averageSize, scaleChange);
 
         auto* parentRenderer = renderer.parent();
 
@@ -135,7 +240,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         auto fontDescription = style.fontDescription();
         fontDescription.setComputedSize(averageSize);
         style.setFontDescription(FontCascadeDescription { fontDescription });
-        parentRenderer->setStyle(WTFMove(style));
+        parentRenderer->setStyle(WTF::move(style));
 
         if (parentRenderer->isAnonymousBlock())
             parentRenderer = parentRenderer->parent();
@@ -144,7 +249,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(*parentRenderer->firstChild())) {
             auto style = cloneRenderStyleWithState(listMarkerRenderer->style());
             style.setFontDescription(FontCascadeDescription { fontDescription });
-            listMarkerRenderer->setStyle(WTFMove(style));
+            listMarkerRenderer->setStyle(WTF::move(style));
         }
 
         // Resize the line height of the parent.
@@ -156,7 +261,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
                 return 0;
             },
             [&](const Style::LineHeight::Fixed& fixed) {
-                return Style::evaluate<LayoutUnit>(fixed, Style::ZoomFactor { 1.0f, parentStyle.deviceScaleFactor() }).toInt();
+                return Style::evaluate<LayoutUnit>(fixed, Style::ZoomFactor { 1.0f }).toInt();
             },
             [&](const Style::LineHeight::Percentage& percentage) {
                 return Style::evaluate<LayoutUnit>(percentage, LayoutUnit { fontDescription.specifiedSize() }).toInt();
@@ -168,14 +273,14 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 
         // This calculation matches the line-height computed size calculation in StyleBuilderCustom::applyValueLineHeight().
         int lineHeight = specifiedLineHeight * scaleChange;
-        if (auto fixedLineHeight = lineHeightLength.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f, parentStyle.deviceScaleFactor() }) == lineHeight)
+        if (auto fixedLineHeight = lineHeightLength.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f }) == lineHeight)
             continue;
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);
         newParentStyle.setLineHeight(lineHeightLength.isNormal() ? Style::LineHeight { lineHeightLength } : Style::LineHeight { Style::LineHeight::Fixed { static_cast<float>(lineHeight) } });
         newParentStyle.setSpecifiedLineHeight(Style::LineHeight { lineHeightLength });
-        newParentStyle.setFontDescription(WTFMove(fontDescription));
-        parentRenderer->setStyle(WTFMove(newParentStyle));
+        newParentStyle.setFontDescription(WTF::move(fontDescription));
+        parentRenderer->setStyle(WTF::move(newParentStyle));
 
         builder.updateAfterDescendants(*parentRenderer);
     }
@@ -184,7 +289,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         auto* textRenderer = dynamicDowncast<RenderTextFragment>(*node->renderer());
         if (!textRenderer)
             continue;
-        auto* block = textRenderer->blockForAccompanyingFirstLetter();
+        CheckedPtr block = textRenderer->blockForAccompanyingFirstLetter();
         if (!block)
             continue;
 
@@ -228,7 +333,7 @@ void TextAutoSizingValue::reset()
             fontDescription.setComputedSize(originalSize);
             auto style = cloneRenderStyleWithState(renderer->style());
             style.setFontDescription(FontCascadeDescription { fontDescription });
-            parentRenderer->setStyle(WTFMove(style));
+            parentRenderer->setStyle(WTF::move(style));
         }
 
         // Reset the line height of the parent.
@@ -242,10 +347,15 @@ void TextAutoSizingValue::reset()
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);
         newParentStyle.setLineHeight(Style::LineHeight { originalLineHeight });
-        newParentStyle.setFontDescription(WTFMove(fontDescription));
-        parentRenderer->setStyle(WTFMove(newParentStyle));
+        newParentStyle.setFontDescription(WTF::move(fontDescription));
+        parentRenderer->setStyle(WTF::move(newParentStyle));
     }
 }
+
+// MARK: - TextAutoSizing
+
+TextAutoSizing::TextAutoSizing() = default;
+TextAutoSizing::~TextAutoSizing() = default;
 
 void TextAutoSizing::addTextNode(Text& node, float candidateSize)
 {

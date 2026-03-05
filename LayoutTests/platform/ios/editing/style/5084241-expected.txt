@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 758x39
+        RenderText {#text} at (0,0) size 758x40
           text run at (0,0) width 758: "This tests for a bug where deleting everything in a paragraph of colored text would prevent the user from changing the"
           text run at (0,20) width 64: "text color."
       RenderBlock {DIV} at (0,56) size 784x20
-        RenderInline {SPAN} at (0,0) size 309x19
-          RenderInline {FONT} at (0,0) size 151x19 [color=#FF0000]
-            RenderText {#text} at (0,0) size 151x19
+        RenderInline {SPAN} at (0,0) size 309x20
+          RenderInline {FONT} at (0,0) size 151x20 [color=#FF0000]
+            RenderText {#text} at (0,0) size 151x20
               text run at (0,0) width 151: "This text should be red."
-          RenderInline {FONT} at (150,0) size 159x19 [color=#0000FF]
-            RenderText {#text} at (150,0) size 159x19
+          RenderInline {FONT} at (150,0) size 159x20 [color=#0000FF]
+            RenderText {#text} at (150,0) size 159x20
               text run at (150,0) width 159: "This text should be blue."
 caret: position 25 of child 0 {#text} of child 1 {FONT} of child 0 {SPAN} of child 2 {DIV} of body

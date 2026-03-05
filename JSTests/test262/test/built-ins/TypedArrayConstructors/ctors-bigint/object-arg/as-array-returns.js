@@ -12,12 +12,12 @@ info: |
   object does not have either a [[TypedArrayName]] or an [[ArrayBufferData]]
   internal slot.
 
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var typedArray = new TA([7n, 42n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var typedArray = new TA(makeCtorArg([7n, 42n]));
   assert.sameValue(typedArray.length, 2);
   assert.sameValue(typedArray[0], 7n);
   assert.sameValue(typedArray[1], 42n);

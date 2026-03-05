@@ -78,3 +78,14 @@ enum class WebCore::PlatformMediaSessionDisplayType : uint8_t {
     NoFlags,
     MayResumePlaying,
 };
+
+[OptionSet] enum class WebCore::MediaSessionRestriction : uint8_t {
+    NoRestrictions,
+    ConcurrentPlaybackNotPermitted,
+    BackgroundProcessPlaybackRestricted,
+    BackgroundTabPlaybackRestricted,
+    InterruptedPlaybackNotPermitted,
+    InactiveProcessPlaybackRestricted,
+    SuspendedUnderLockPlaybackRestricted,
+};
+using WebCore::MediaSessionRestrictions = OptionSet<WebCore::MediaSessionRestriction>;

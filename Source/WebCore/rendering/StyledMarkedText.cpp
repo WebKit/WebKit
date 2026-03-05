@@ -29,7 +29,7 @@
 #include "ColorBlending.h"
 #include "ElementRuleCollector.h"
 #include "RenderElement.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 
@@ -40,9 +40,9 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
     if (!pseudoElementStyle)
         return;
 
-    style.backgroundColor = pseudoElementStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor, paintInfo.paintBehavior);
-    style.textStyles.fillColor = pseudoElementStyle->computedStrokeColor();
-    style.textStyles.strokeColor = pseudoElementStyle->computedStrokeColor();
+    style.backgroundColor = pseudoElementStyle->visitedDependentBackgroundColorApplyingColorFilter(paintInfo.paintBehavior);
+    style.textStyles.fillColor = pseudoElementStyle->usedStrokeColor();
+    style.textStyles.strokeColor = pseudoElementStyle->usedStrokeColor();
     style.textStyles.hasExplicitlySetFillColor = pseudoElementStyle->hasExplicitlySetColor();
 
     auto color = TextDecorationPainter::decorationColor(*pseudoElementStyle, paintInfo.paintBehavior);
@@ -143,7 +143,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     }
     }
     StyledMarkedText styledMarkedText = markedText;
-    styledMarkedText.style = WTFMove(style);
+    styledMarkedText.style = WTF::move(style);
     return styledMarkedText;
 }
 
@@ -215,7 +215,7 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
             }
             continue;
         }
-        frontmostMarkedTexts.append(WTFMove(text));
+        frontmostMarkedTexts.append(WTF::move(text));
     }
     return frontmostMarkedTexts;
 }
@@ -263,7 +263,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
 
     if (textsToSubdivide.size() == 1 && textsToSubdivide[0].type == MarkedText::Type::Unmarked) {
         StyledMarkedText styledMarkedText = textsToSubdivide[0];
-        styledMarkedText.style = WTFMove(baseStyle);
+        styledMarkedText.style = WTF::move(baseStyle);
         return { styledMarkedText };
     }
 
@@ -286,7 +286,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
                 return resolveStyleForMarkedText(markedText, baseStyle, renderer, lineStyle, paintInfo);
             });
 
-            return coalesceAdjacentWithSameRanges(WTFMove(frontmostMarkedTexts));
+            return coalesceAdjacentWithSameRanges(WTF::move(frontmostMarkedTexts));
         }
     }
 

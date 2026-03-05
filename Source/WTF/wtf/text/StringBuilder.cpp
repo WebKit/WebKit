@@ -176,7 +176,7 @@ void StringBuilder::append(std::span<const Latin1Character> characters)
     }
 }
 
-bool StringBuilder::shouldShrinkToFit() const
+bool NODELETE StringBuilder::shouldShrinkToFit() const
 {
     // Shrink the buffer if it's 80% full or less.
     static_assert(static_cast<size_t>(String::MaxLength) + (String::MaxLength >> 2) <= static_cast<size_t>(std::numeric_limits<unsigned>::max()));

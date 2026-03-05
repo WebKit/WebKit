@@ -75,16 +75,3 @@ static void wpe_toplevel_headless_class_init(WPEToplevelHeadlessClass* toplevelH
     toplevelClass->resize = wpeToplevelHeadlessResize;
     toplevelClass->set_fullscreen = wpeToplevelHeadlessSetFullscreen;
 }
-
-/**
- * wpe_toplevel_headless_new:
- * @display: a #WPEDisplayHeadless
- *
- * Create a new #WPEToplevel on @display.
- *
- * Returns: (transfer full): a #WPEToplevel
- */
-WPEToplevel* wpe_toplevel_headless_new(WPEDisplayHeadless* display)
-{
-    return WPE_TOPLEVEL(g_object_new(WPE_TYPE_TOPLEVEL_HEADLESS, "display", display, nullptr));
-}

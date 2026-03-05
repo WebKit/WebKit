@@ -25,7 +25,7 @@
 
 [
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
 ] dictionary JsonWebKey {
     // The following fields are defined in Section 3.1 of JSON Web Key
     DOMString kty;

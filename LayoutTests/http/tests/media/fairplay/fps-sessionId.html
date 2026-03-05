@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-init-data-sinf</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=eme2016.js></script>
+    <script src=support.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    var session;
+
+    async function startTest() {
+        var access = await navigator.requestMediaKeySystemAccess("com.apple.fps", [{
+            initDataTypes: ['sinf'],
+            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]);
+
+        consoleWrite('PROMISE: requestMediaKeySystemAccess resolved');
+        var keys = await access.createMediaKeys();
+
+        consoleWrite('PROMISE: createMediaKeys resolved');
+        var certificateResponse = await fetch('resources/cert.der');
+
+        consoleWrite('FETCH: server certificate recieved');
+        var arrayBuffer = await certificateResponse.arrayBuffer();
+
+        consoleWrite('PROMISE: arrayBuffer resolved');
+        await keys.setServerCertificate(arrayBuffer);
+
+        consoleWrite('PROMISE: setServerCertificate resolved');
+        session = keys.createSession();
+
+        var initData = new TextEncoder().encode(JSON.stringify({
+            sinf: [
+                "AAAADGZybWFtcDRhAAAAFHNjaG0AAAAAY2JjcwABAAAAAAA5c2NoaQAAADF0ZW5jAQAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAENwoLj77jCjwCAAw3SqKao8=",
+            ]
+        }));
+
+        session.generateRequest('sinf', initData);
+        let message = await waitFor(session, 'message');
+        let response = await getResponse(message);
+        await session.update(response);
+        consoleWrite('PROMISE: session.update() resolved');
+
+        testExpected('session.sessionId', '', '!=');
+    }
+    </script>
+</head>
+<body>
+</body>
+</html>

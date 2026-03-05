@@ -56,7 +56,7 @@ public:
     virtual void handleCommitFailedAfterPostflight(SQLTransaction&) = 0;
 };
 
-class SQLTransaction : public ThreadSafeRefCounted<SQLTransaction>, public SQLTransactionStateMachine<SQLTransaction> {
+class SQLTransaction : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SQLTransaction>, public SQLTransactionStateMachine<SQLTransaction> {
 public:
     static Ref<SQLTransaction> create(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
     ~SQLTransaction();
@@ -88,7 +88,7 @@ private:
     void scheduleCallback(void (SQLTransaction::*)());
 
     // State Machine functions:
-    StateFunction stateFunctionFor(SQLTransactionState) override;
+    StateFunction NODELETE stateFunctionFor(SQLTransactionState) override;
     void computeNextStateAndCleanupIfNeeded();
 
     // State functions:
@@ -103,7 +103,7 @@ private:
     void deliverQuotaIncreaseCallback();
     void deliverSuccessCallback();
 
-    NO_RETURN_DUE_TO_ASSERT void unreachableState();
+    NO_RETURN_DUE_TO_ASSERT void NODELETE unreachableState();
 
     void callErrorCallbackDueToInterruption();
 

@@ -52,42 +52,42 @@ struct RenderPassColorAttachment {
     LoadOp loadOp { LoadOp::Load };
     StoreOp storeOp { StoreOp::Store };
 
-    const RefPtr<Texture> protectedTexture() const
+    Texture* texture() const
     {
-        return WTF::switchOn(view, [&](const WeakRef<Texture>& texture) -> const RefPtr<Texture> {
+        return WTF::switchOn(view, [&](const WeakRef<Texture>& texture) -> Texture* {
             return texture.ptr();
-        }, [&](const WeakRef<TextureView>&) -> const RefPtr<Texture> {
+        }, [&](const WeakRef<TextureView>&) -> Texture* {
             return nullptr;
         });
     }
-    const RefPtr<TextureView> protectedView() const
+    TextureView* textureView() const
     {
-        return WTF::switchOn(view, [&](const WeakRef<Texture>&) -> const RefPtr<TextureView> {
+        return WTF::switchOn(view, [&](const WeakRef<Texture>&) -> TextureView* {
             return nullptr;
-        }, [&](const WeakRef<TextureView>& view) -> const RefPtr<TextureView> {
-            return view.ptr();
+        }, [&](const WeakRef<TextureView>& textureView) -> TextureView* {
+            return textureView.ptr();
         });
     }
-    RefPtr<Texture> protectedResolveTexture() const
+    Texture* resolveTexture() const
     {
         if (!resolveTarget)
             return nullptr;
 
-        return WTF::switchOn(*resolveTarget, [&](const WeakPtr<Texture>& texture) -> const RefPtr<Texture> {
+        return WTF::switchOn(*resolveTarget, [&](const WeakPtr<Texture>& texture) -> Texture* {
             return texture.get();
-        }, [&](const WeakPtr<TextureView>&) -> const RefPtr<Texture> {
+        }, [&](const WeakPtr<TextureView>&) -> Texture* {
             return nullptr;
         });
     }
-    RefPtr<TextureView> protectedResolveTarget() const
+    TextureView* resolveTextureView() const
     {
         if (!resolveTarget)
             return nullptr;
 
-        return WTF::switchOn(*resolveTarget, [&](const WeakPtr<Texture>&) -> const RefPtr<TextureView> {
+        return WTF::switchOn(*resolveTarget, [&](const WeakPtr<Texture>&) -> TextureView* {
             return nullptr;
-        }, [&](const WeakPtr<TextureView>& view) -> const RefPtr<TextureView> {
-            return view.get();
+        }, [&](const WeakPtr<TextureView>& textureView) -> TextureView* {
+            return textureView.get();
         });
     }
 };

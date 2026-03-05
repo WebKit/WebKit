@@ -505,6 +505,9 @@ OPENSSL_EXPORT int BN_mod_lshift1_quick(BIGNUM *r, const BIGNUM *a,
 // If |a| is a square and |p| > 2, there are two possible square roots. This
 // function may return either and may even select one non-deterministically.
 //
+// If |in| is non-NULL, the function, instead of allocating the result, stores
+// the result in |in| and returns |in| on success or NULL on failure.
+//
 // This function only works if |p| is a prime. If |p| is composite, it may fail
 // or return an arbitrary value. Callers should not pass attacker-controlled
 // values of |p|.

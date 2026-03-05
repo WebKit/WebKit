@@ -45,7 +45,7 @@ struct WebCodecsVideoDecoderConfig {
     HardwareAcceleration hardwareAcceleration { HardwareAcceleration::NoPreference };
     std::optional<bool> optimizeForLatency;
 
-    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() && { return { WTFMove(codec).isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency }; }
+    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() && { return { WTF::move(codec).isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency }; }
     WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() const & { return { codec.isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency }; }
 };
 

@@ -37,6 +37,7 @@
 #include "api/audio/builtin_audio_processing_builder.h"
 #include "api/audio/echo_control.h"
 #include "api/audio/echo_detector_creator.h"
+#include "api/audio/neural_residual_echo_estimator.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
@@ -811,7 +812,8 @@ TEST_F(ApmTest, ChannelsInt16Interface) {
   // Testing number of invalid and valid channels.
   Init(16000, 16000, 16000, 4, 4, 4, false);
 
-  TestChangingChannelsInt16Interface(0, apm_->kBadNumberChannelsError);
+  TestChangingChannelsInt16Interface(0,
+                                     AudioProcessing::kBadNumberChannelsError);
 
   for (size_t i = 1; i < 4; i++) {
     TestChangingChannelsInt16Interface(i, AudioProcessing::kNoError);
@@ -823,8 +825,8 @@ TEST_F(ApmTest, Channels) {
   // Testing number of invalid and valid channels.
   Init(16000, 16000, 16000, 4, 4, 4, false);
 
-  TestChangingForwardChannels(0, 1, apm_->kBadNumberChannelsError);
-  TestChangingReverseChannels(0, apm_->kBadNumberChannelsError);
+  TestChangingForwardChannels(0, 1, AudioProcessing::kBadNumberChannelsError);
+  TestChangingReverseChannels(0, AudioProcessing::kBadNumberChannelsError);
 
   for (size_t i = 1; i < 4; ++i) {
     for (size_t j = 0; j < 1; ++j) {
@@ -2076,8 +2078,30 @@ TEST_P(AudioProcessingTest, Formats) {
     int num_reverse_output;
   };
   ChannelFormat cf[] = {
-      {1, 1, 1, 1}, {1, 1, 2, 1}, {2, 1, 1, 1},
-      {2, 1, 2, 1}, {2, 2, 1, 1}, {2, 2, 2, 2},
+      {.num_input = 1,
+       .num_output = 1,
+       .num_reverse_input = 1,
+       .num_reverse_output = 1},
+      {.num_input = 1,
+       .num_output = 1,
+       .num_reverse_input = 2,
+       .num_reverse_output = 1},
+      {.num_input = 2,
+       .num_output = 1,
+       .num_reverse_input = 1,
+       .num_reverse_output = 1},
+      {.num_input = 2,
+       .num_output = 1,
+       .num_reverse_input = 2,
+       .num_reverse_output = 1},
+      {.num_input = 2,
+       .num_output = 2,
+       .num_reverse_input = 1,
+       .num_reverse_output = 1},
+      {.num_input = 2,
+       .num_output = 2,
+       .num_reverse_input = 2,
+       .num_reverse_output = 2},
   };
 
   for (auto [num_input, num_output, num_reverse_input, num_reverse_output] :
@@ -2237,9 +2261,9 @@ INSTANTIATE_TEST_SUITE_P(
                       std::make_tuple(44100, 16000, 32000, 16000, 25, 20),
                       std::make_tuple(44100, 16000, 16000, 16000, 25, 0),
 
-                      std::make_tuple(32000, 48000, 48000, 48000, 15, 0),
-                      std::make_tuple(32000, 48000, 32000, 48000, 15, 30),
-                      std::make_tuple(32000, 48000, 16000, 48000, 15, 20),
+                      std::make_tuple(32000, 48000, 48000, 48000, 5, 0),
+                      std::make_tuple(32000, 48000, 32000, 48000, 5, 30),
+                      std::make_tuple(32000, 48000, 16000, 48000, 5, 20),
                       std::make_tuple(32000, 44100, 48000, 44100, 19, 20),
                       std::make_tuple(32000, 44100, 32000, 44100, 19, 15),
                       std::make_tuple(32000, 44100, 16000, 44100, 19, 15),
@@ -2250,9 +2274,9 @@ INSTANTIATE_TEST_SUITE_P(
                       std::make_tuple(32000, 16000, 32000, 16000, 25, 20),
                       std::make_tuple(32000, 16000, 16000, 16000, 25, 0),
 
-                      std::make_tuple(16000, 48000, 48000, 48000, 9, 0),
-                      std::make_tuple(16000, 48000, 32000, 48000, 9, 30),
-                      std::make_tuple(16000, 48000, 16000, 48000, 9, 20),
+                      std::make_tuple(16000, 48000, 48000, 48000, 1.7, 0),
+                      std::make_tuple(16000, 48000, 32000, 48000, 1.5, 30),
+                      std::make_tuple(16000, 48000, 16000, 48000, 1.5, 20),
                       std::make_tuple(16000, 44100, 48000, 44100, 15, 20),
                       std::make_tuple(16000, 44100, 32000, 44100, 15, 15),
                       std::make_tuple(16000, 44100, 16000, 44100, 15, 15),
@@ -2307,9 +2331,9 @@ INSTANTIATE_TEST_SUITE_P(
                       std::make_tuple(44100, 16000, 32000, 16000, 19, 20),
                       std::make_tuple(44100, 16000, 16000, 16000, 19, 0),
 
-                      std::make_tuple(32000, 48000, 48000, 48000, 17, 0),
-                      std::make_tuple(32000, 48000, 32000, 48000, 17, 30),
-                      std::make_tuple(32000, 48000, 16000, 48000, 17, 20),
+                      std::make_tuple(32000, 48000, 48000, 48000, 8, 0),
+                      std::make_tuple(32000, 48000, 32000, 48000, 8, 30),
+                      std::make_tuple(32000, 48000, 16000, 48000, 8, 20),
                       std::make_tuple(32000, 44100, 48000, 44100, 20, 20),
                       std::make_tuple(32000, 44100, 32000, 44100, 20, 15),
                       std::make_tuple(32000, 44100, 16000, 44100, 20, 15),
@@ -2320,17 +2344,17 @@ INSTANTIATE_TEST_SUITE_P(
                       std::make_tuple(32000, 16000, 32000, 16000, 20, 20),
                       std::make_tuple(32000, 16000, 16000, 16000, 20, 0),
 
-                      std::make_tuple(16000, 48000, 48000, 48000, 11, 0),
-                      std::make_tuple(16000, 48000, 32000, 48000, 11, 30),
-                      std::make_tuple(16000, 48000, 16000, 48000, 11, 20),
+                      std::make_tuple(16000, 48000, 48000, 48000, 3, 0),
+                      std::make_tuple(16000, 48000, 32000, 48000, 3, 30),
+                      std::make_tuple(16000, 48000, 16000, 48000, 3, 20),
                       std::make_tuple(16000, 44100, 48000, 44100, 15, 20),
                       std::make_tuple(16000, 44100, 32000, 44100, 15, 15),
                       std::make_tuple(16000, 44100, 16000, 44100, 15, 15),
-                      std::make_tuple(16000, 32000, 48000, 32000, 24, 35),
-                      std::make_tuple(16000, 32000, 32000, 32000, 24, 0),
+                      std::make_tuple(16000, 32000, 48000, 32000, 23, 35),
+                      std::make_tuple(16000, 32000, 32000, 32000, 23, 0),
                       std::make_tuple(16000, 32000, 16000, 32000, 25, 20),
-                      std::make_tuple(16000, 16000, 48000, 16000, 28, 20),
-                      std::make_tuple(16000, 16000, 32000, 16000, 28, 20),
+                      std::make_tuple(16000, 16000, 48000, 16000, 24, 20),
+                      std::make_tuple(16000, 16000, 32000, 16000, 24, 20),
                       std::make_tuple(16000, 16000, 16000, 16000, 0, 0),
 
                       std::make_tuple(192000, 192000, 48000, 192000, 20, 40),
@@ -2587,12 +2611,16 @@ class MockEchoControlFactory : public EchoControlFactory {
               Create,
               (const Environment&, int, int, int),
               (override));
+  MOCK_METHOD(std::unique_ptr<EchoControl>,
+              Create,
+              (const Environment&, int, int, int, NeuralResidualEchoEstimator*),
+              (override));
 };
 
 TEST(ApmConfiguration, EchoControlInjection) {
   // Verify that apm uses an injected echo controller if one is provided.
   auto echo_control_factory = std::make_unique<MockEchoControlFactory>();
-  EXPECT_CALL(*echo_control_factory, Create(_, _, _, _))
+  EXPECT_CALL(*echo_control_factory, Create(_, _, _, _, _))
       .WillOnce(WithoutArgs([] {
         auto ec = std::make_unique<test::MockEchoControl>();
         EXPECT_CALL(*ec, AnalyzeRender).Times(1);
@@ -2741,7 +2769,7 @@ TEST(MAYBE_ApmStatistics, AECEnabledTest) {
 
   // Fill the audio frame with a sawtooth pattern.
   int16_t* ptr = frame.data.data();
-  for (size_t i = 0; i < frame.kMaxDataSizeSamples; i++) {
+  for (size_t i = 0; i < Int16FrameData::kMaxDataSizeSamples; i++) {
     ptr[i] = 10000 * ((i % 3) - 1);
   }
 
@@ -2790,7 +2818,7 @@ TEST(MAYBE_ApmStatistics, AECMEnabledTest) {
 
   // Fill the audio frame with a sawtooth pattern.
   int16_t* ptr = frame.data.data();
-  for (size_t i = 0; i < frame.kMaxDataSizeSamples; i++) {
+  for (size_t i = 0; i < Int16FrameData::kMaxDataSizeSamples; i++) {
     ptr[i] = 10000 * ((i % 3) - 1);
   }
 
@@ -2837,7 +2865,7 @@ TEST(ApmStatistics, DoNotReportVoiceDetectedStat) {
 
   // Fill the audio frame with a sawtooth pattern.
   int16_t* ptr = frame.data.data();
-  for (size_t i = 0; i < frame.kMaxDataSizeSamples; i++) {
+  for (size_t i = 0; i < Int16FrameData::kMaxDataSizeSamples; i++) {
     ptr[i] = 10000 * ((i % 3) - 1);
   }
 
@@ -2852,7 +2880,10 @@ TEST(ApmStatistics, DoNotReportVoiceDetectedStat) {
                 StreamConfig(frame.sample_rate_hz, frame.num_channels()),
                 frame.data.data()),
             0);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   EXPECT_FALSE(apm->GetStatistics().voice_detected.has_value());
+#pragma clang diagnostic pop
 }
 
 TEST(ApmStatistics, GetStatisticsReportsNoEchoDetectorStatsWhenDisabled) {

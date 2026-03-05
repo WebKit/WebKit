@@ -60,13 +60,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PrivateClickMeasurementManager);
 
 Ref<PrivateClickMeasurementManager> PrivateClickMeasurementManager::create(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
 {
-    return adoptRef(*new PrivateClickMeasurementManager(WTFMove(client), storageDirectory));
+    return adoptRef(*new PrivateClickMeasurementManager(WTF::move(client), storageDirectory));
 }
 
 PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
     : m_firePendingAttributionRequestsTimer(RunLoop::mainSingleton(), "PrivateClickMeasurementManager::FirePendingAttributionRequestsTimer"_s, this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
     , m_storageDirectory(storageDirectory)
-    , m_client(WTFMove(client))
+    , m_client(WTF::move(client))
 {
     // We should send any pending attributions on session-start in case their
     // send delay has expired while the session was closed. Waiting 5 seconds accounts for the
@@ -94,7 +94,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
     if (measurement.ephemeralSourceNonce()) {
         auto measurementCopy = measurement;
         // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
-        getTokenPublicKey(WTFMove(measurementCopy), WebCore::PCM::AttributionReportEndpoint::Source, PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable, [weakThis = WeakPtr { *this }] (PrivateClickMeasurement&& measurement, const String& publicKeyBase64URL) {
+        getTokenPublicKey(WTF::move(measurementCopy), WebCore::PCM::AttributionReportEndpoint::Source, PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable, [weakThis = WeakPtr { *this }] (PrivateClickMeasurement&& measurement, const String& publicKeyBase64URL) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -114,14 +114,14 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
             }
 #endif
 
-            protectedThis->getSignedUnlinkableTokenForSource(WTFMove(measurement));
+            protectedThis->getSignedUnlinkableTokenForSource(WTF::move(measurement));
             return;
         });
     }
 
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Storing a click."_s);
 
-    insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed, WTFMove(completionHandler));
+    insertPrivateClickMeasurement(WTF::move(measurement), PrivateClickMeasurementAttributionType::Unattributed, WTF::move(completionHandler));
 }
 
 void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution, WebCore::PCM::AttributionReportEndpoint attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried pcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&& callback)
@@ -152,7 +152,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
-    PCM::NetworkLoader::start(WTFMove(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = WeakPtr { *this }, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& errorDescription, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTF::move(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = WeakPtr { *this }, attribution = WTF::move(attribution), callback = WTF::move(callback)] (auto& errorDescription, auto& jsonObject) mutable {
         WeakPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -169,7 +169,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
 
         protectedThis->m_client->broadcastConsoleMessage(MessageLevel::Log, makeString("[Private Click Measurement] Got JSON response for token public key request."_s));
 
-        callback(WTFMove(attribution), jsonObject->getString("token_public_key"_s));
+        callback(WTF::move(attribution), jsonObject->getString("token_public_key"_s));
     });
 }
 
@@ -201,7 +201,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(AttributionTriggerData&& 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
-    PCM::NetworkLoader::start(WTFMove(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = WeakPtr { *this }, attributionTriggerData = WTFMove(attributionTriggerData), callback = WTFMove(callback)] (auto& errorDescription, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTF::move(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = WeakPtr { *this }, attributionTriggerData = WTF::move(attributionTriggerData), callback = WTF::move(callback)] (auto& errorDescription, auto& jsonObject) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -218,7 +218,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(AttributionTriggerData&& 
 
         protectedThis->m_client->broadcastConsoleMessage(MessageLevel::Log, makeString("[Private Click Measurement] Got JSON response for token public key request."_s));
 
-        callback(WTFMove(attributionTriggerData), jsonObject->getString("token_public_key"_s));
+        callback(WTF::move(attributionTriggerData), jsonObject->getString("token_public_key"_s));
     });
 }
 
@@ -271,7 +271,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource(PrivateCl
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request for the click source.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request for the click source."_s);
 
-    PCM::NetworkLoader::start(WTFMove(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }, measurement = WTFMove(measurement)] (auto& errorDescription, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTF::move(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }, measurement = WTF::move(measurement)] (auto& errorDescription, auto& jsonObject) mutable {
         WeakPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -285,7 +285,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource(PrivateCl
             sourceSecretToken.tokenBase64URL = protectedThis->m_fraudPreventionValuesForTesting->secretTokenForSource;
             sourceSecretToken.signatureBase64URL = protectedThis->m_fraudPreventionValuesForTesting->signatureForSource;
             sourceSecretToken.keyIDBase64URL = protectedThis->m_fraudPreventionValuesForTesting->keyIDForSource;
-            measurement.setSourceSecretToken(WTFMove(sourceSecretToken));
+            measurement.setSourceSecretToken(WTF::move(sourceSecretToken));
 #if PLATFORM(COCOA)
         } else {
             if (auto errorMessage = measurement.calculateAndUpdateSourceSecretToken(*signatureBase64URL)) {
@@ -298,7 +298,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource(PrivateCl
 
         protectedThis->m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Storing a secret token."_s);
 
-        protectedThis->insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed, [] { });
+        protectedThis->insertPrivateClickMeasurement(WTF::move(measurement), PrivateClickMeasurementAttributionType::Unattributed, [] { });
     });
 
 }
@@ -318,7 +318,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination(Sour
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request for the click destination.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request for the click destination."_s);
 
-    PCM::NetworkLoader::start(WTFMove(tokenSignatureURL), attributionTriggerData.tokenSignatureJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }, sourceSite = WTFMove(sourceSite), destinationSite = WTFMove(destinationSite), attributionTriggerData = WTFMove(attributionTriggerData), applicationBundleIdentifier = applicationBundleIdentifier.isolatedCopy()] (auto& errorDescription, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTF::move(tokenSignatureURL), attributionTriggerData.tokenSignatureJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }, sourceSite = WTF::move(sourceSite), destinationSite = WTF::move(destinationSite), attributionTriggerData = WTF::move(attributionTriggerData), applicationBundleIdentifier = applicationBundleIdentifier.isolatedCopy()] (auto& errorDescription, auto& jsonObject) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -345,19 +345,19 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination(Sour
             protectedThis->m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Storing a secret token."_s);
 
             attributionTriggerData.destinationSecretToken = result.value();
-            protectedThis->attribute(WTFMove(sourceSite), WTFMove(destinationSite), WTFMove(attributionTriggerData), protectedThis->m_privateClickMeasurementAppBundleIDForTesting ? *protectedThis->m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
+            protectedThis->attribute(WTF::move(sourceSite), WTF::move(destinationSite), WTF::move(attributionTriggerData), protectedThis->m_privateClickMeasurementAppBundleIDForTesting ? *protectedThis->m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
 #endif
     });
 }
 
 void PrivateClickMeasurementManager::insertPrivateClickMeasurement(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type, CompletionHandler<void()>&& completionHandler)
 {
-    protectedStore()->insertPrivateClickMeasurement(WTFMove(measurement), type, WTFMove(completionHandler));
+    protect(store())->insertPrivateClickMeasurement(WTF::move(measurement), type, WTF::move(completionHandler));
 }
 
 void PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type)
 {
-    protectedStore()->insertPrivateClickMeasurement(WTFMove(measurement), type, [] { });
+    protect(store())->insertPrivateClickMeasurement(WTF::move(measurement), type, [] { });
 }
 
 void PrivateClickMeasurementManager::setDebugModeIsEnabled(bool enabled)
@@ -391,7 +391,7 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
         m_client->broadcastConsoleMessage(MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because it was requested in an HTTP redirect that is cross-site from the first-party but an attributionSource query parameter was still provided."_s);
         return;
     } else
-        sourceDomain = WTFMove(redirectDomain);
+        sourceDomain = WTF::move(redirectDomain);
 
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Triggering event accepted."_s);
 
@@ -399,7 +399,7 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
     if (attributionTriggerData.ephemeralDestinationNonce) {
         auto attributionTriggerDataCopy = attributionTriggerData;
         // This is guaranteed to be close in time to the triggering event which makes it likely to be personally identifiable.
-        getTokenPublicKey(WTFMove(attributionTriggerDataCopy), WebCore::PCM::AttributionReportEndpoint::Destination, PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable, [weakThis = WeakPtr { *this }, sourceSite = SourceSite { WTFMove(sourceDomain) }, destinationSite = AttributionDestinationSite { firstPartyURL }, applicationBundleIdentifier = applicationBundleIdentifier.isolatedCopy()] (AttributionTriggerData&& attributionTriggerData, const String& publicKeyBase64URL) mutable {
+        getTokenPublicKey(WTF::move(attributionTriggerDataCopy), WebCore::PCM::AttributionReportEndpoint::Destination, PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable, [weakThis = WeakPtr { *this }, sourceSite = SourceSite { WTF::move(sourceDomain) }, destinationSite = AttributionDestinationSite { firstPartyURL }, applicationBundleIdentifier = applicationBundleIdentifier.isolatedCopy()] (AttributionTriggerData&& attributionTriggerData, const String& publicKeyBase64URL) mutable {
             WeakPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -417,7 +417,7 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
                 auto result = PrivateClickMeasurement::calculateAndUpdateDestinationUnlinkableToken(publicKeyBase64URL);
                 if (result) {
                     attributionTriggerData.destinationUnlinkableToken = result.value();
-                    protectedThis->getSignedUnlinkableTokenForDestination(WTFMove(sourceSite), WTFMove(destinationSite), WTFMove(attributionTriggerData), protectedThis->m_privateClickMeasurementAppBundleIDForTesting ? *protectedThis->m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
+                    protectedThis->getSignedUnlinkableTokenForDestination(WTF::move(sourceSite), WTF::move(destinationSite), WTF::move(attributionTriggerData), protectedThis->m_privateClickMeasurementAppBundleIDForTesting ? *protectedThis->m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
                     return;
                 }
 
@@ -431,7 +431,12 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
         return;
     }
 
-    attribute(SourceSite { WTFMove(sourceDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData), m_privateClickMeasurementAppBundleIDForTesting ? *m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
+    attribute(SourceSite { WTF::move(sourceDomain) }, AttributionDestinationSite { firstPartyURL }, WTF::move(attributionTriggerData), m_privateClickMeasurementAppBundleIDForTesting ? *m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
+}
+
+void PrivateClickMeasurementManager::checkAttributionTimer()
+{
+    startTimer(5_s);
 }
 
 void PrivateClickMeasurementManager::startTimerImmediatelyForTesting()
@@ -444,7 +449,7 @@ void PrivateClickMeasurementManager::setPrivateClickMeasurementAppBundleIDForTes
     if (appBundleID.isEmpty())
         m_privateClickMeasurementAppBundleIDForTesting = std::nullopt;
     else
-        m_privateClickMeasurementAppBundleIDForTesting = WTFMove(appBundleID);
+        m_privateClickMeasurementAppBundleIDForTesting = WTF::move(appBundleID);
 }
 
 void PrivateClickMeasurementManager::startTimer(Seconds seconds)
@@ -457,7 +462,7 @@ void PrivateClickMeasurementManager::attribute(SourceSite&& sourceSite, Attribut
     if (!featureEnabled())
         return;
 
-    protectedStore()->attributePrivateClickMeasurement(WTFMove(sourceSite), WTFMove(destinationSite), applicationBundleIdentifier, WTFMove(attributionTriggerData), m_isRunningTest ? WebCore::PrivateClickMeasurement::IsRunningLayoutTest::Yes : WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No, [weakThis = WeakPtr { *this }] (auto attributionSecondsUntilSendData, auto debugInfo) {
+    protect(store())->attributePrivateClickMeasurement(WTF::move(sourceSite), WTF::move(destinationSite), applicationBundleIdentifier, WTF::move(attributionTriggerData), m_isRunningTest ? WebCore::PrivateClickMeasurement::IsRunningLayoutTest::Yes : WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No, [weakThis = WeakPtr { *this }] (auto attributionSecondsUntilSendData, auto debugInfo) {
         WeakPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -504,7 +509,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     auto attributionCopy = attribution;
     // This happens out of webpage context and with a long delay and is thus unlikely to be personally identifiable.
     if (attribution.sourceSecretToken()) {
-        getTokenPublicKey(WTFMove(attributionCopy), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = WeakPtr { *this }, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+        getTokenPublicKey(WTF::move(attributionCopy), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = WeakPtr { *this }, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -524,7 +529,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
                 return;
 
             if (attribution.attributionTriggerData()->destinationSecretToken) {
-                protectedThis->getTokenPublicKey(WTFMove(attribution), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = WeakPtr { protectedThis.get() }, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+                protectedThis->getTokenPublicKey(WTF::move(attribution), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = WeakPtr { protectedThis.get() }, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
                     RefPtr protectedThis = weakThis.get();
                     if (!protectedThis)
                         return;
@@ -550,7 +555,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
         return;
     }
 
-    getTokenPublicKey(WTFMove(attributionCopy), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = WeakPtr { *this }, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+    getTokenPublicKey(WTF::move(attributionCopy), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = WeakPtr { *this }, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -589,7 +594,7 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
 
-    PCM::NetworkLoader::start(WTFMove(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }](auto& errorDescription, auto&) {
+    PCM::NetworkLoader::start(WTF::move(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }](auto& errorDescription, auto&) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -604,7 +609,7 @@ void PrivateClickMeasurementManager::clearSentAttribution(PrivateClickMeasuremen
     if (!featureEnabled())
         return;
 
-    protectedStore()->clearSentAttribution(WTFMove(sentConversion), attributionReportEndpoint);
+    protect(store())->clearSentAttribution(WTF::move(sentConversion), attributionReportEndpoint);
 }
 
 Seconds PrivateClickMeasurementManager::randomlyBetweenFifteenAndThirtyMinutes() const
@@ -620,7 +625,7 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
     if (!featureEnabled())
         return;
 
-    protectedStore()->allAttributedPrivateClickMeasurement([weakThis = WeakPtr { *this }] (auto&& attributions) {
+    protect(store())->allAttributedPrivateClickMeasurement([weakThis = WeakPtr { *this }] (auto&& attributions) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -648,7 +653,7 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
 
                 auto laterTimeToSend = attribution.timesToSend().latestTimeToSend();
                 protectedThis->fireConversionRequest(attribution, *attributionReportEndpoint);
-                protectedThis->clearSentAttribution(WTFMove(attribution), *attributionReportEndpoint);
+                protectedThis->clearSentAttribution(WTF::move(attribution), *attributionReportEndpoint);
                 hasSentAttribution = true;
 
                 // Update nextTimeToFire in case the later report time for this attribution is sooner than the scheduled next time to fire.
@@ -683,7 +688,7 @@ void PrivateClickMeasurementManager::clear(CompletionHandler<void()>&& completio
     if (!featureEnabled())
         return completionHandler();
 
-    protectedStore()->clearPrivateClickMeasurement(WTFMove(completionHandler));
+    protect(store())->clearPrivateClickMeasurement(WTF::move(completionHandler));
 }
 
 void PrivateClickMeasurementManager::clearForRegistrableDomain(RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
@@ -691,7 +696,7 @@ void PrivateClickMeasurementManager::clearForRegistrableDomain(RegistrableDomain
     if (!featureEnabled())
         return completionHandler();
 
-    protectedStore()->clearPrivateClickMeasurementForRegistrableDomain(WTFMove(domain), WTFMove(completionHandler));
+    protect(store())->clearPrivateClickMeasurementForRegistrableDomain(WTF::move(domain), WTF::move(completionHandler));
 }
 
 void PrivateClickMeasurementManager::clearExpired()
@@ -699,7 +704,7 @@ void PrivateClickMeasurementManager::clearExpired()
     if (!featureEnabled())
         return;
 
-    protectedStore()->clearExpiredPrivateClickMeasurement();
+    protect(store())->clearExpiredPrivateClickMeasurement();
 }
 
 void PrivateClickMeasurementManager::toStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
@@ -707,14 +712,14 @@ void PrivateClickMeasurementManager::toStringForTesting(CompletionHandler<void(S
     if (!featureEnabled())
         return completionHandler("\nNo stored Private Click Measurement data.\n"_s);
 
-    protectedStore()->privateClickMeasurementToStringForTesting(WTFMove(completionHandler));
+    protect(store())->privateClickMeasurementToStringForTesting(WTF::move(completionHandler));
 }
 
 void PrivateClickMeasurementManager::setTokenPublicKeyURLForTesting(URL&& testURL)
 {
     if (testURL.isEmpty())
         return;
-    m_tokenPublicKeyURLForTesting = WTFMove(testURL);
+    m_tokenPublicKeyURLForTesting = WTF::move(testURL);
 }
 
 void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testURL)
@@ -722,7 +727,7 @@ void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testUR
     if (testURL.isEmpty())
         m_tokenSignatureURLForTesting = { };
     else
-        m_tokenSignatureURLForTesting = WTFMove(testURL);
+        m_tokenSignatureURLForTesting = WTF::move(testURL);
 }
 
 void PrivateClickMeasurementManager::setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL)
@@ -730,7 +735,7 @@ void PrivateClickMeasurementManager::setAttributionReportURLsForTesting(URL&& so
     if (sourceURL.isEmpty() || destinationURL.isEmpty())
         m_attributionReportTestConfig = std::nullopt;
     else
-        m_attributionReportTestConfig = AttributionReportTestConfig { WTFMove(sourceURL), WTFMove(destinationURL) };
+        m_attributionReportTestConfig = AttributionReportTestConfig { WTF::move(sourceURL), WTF::move(destinationURL) };
 }
 
 void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()
@@ -738,14 +743,14 @@ void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()
     if (!featureEnabled())
         return;
 
-    protectedStore()->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
+    protect(store())->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
 }
 
 void PrivateClickMeasurementManager::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)
 {
     if (unlinkableToken.isEmpty() || secretToken.isEmpty() || signature.isEmpty() || keyID.isEmpty())
         return;
-    m_fraudPreventionValuesForTesting = TestingFraudPreventionValues { WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID), emptyString(), emptyString(), emptyString(), emptyString() };
+    m_fraudPreventionValuesForTesting = TestingFraudPreventionValues { WTF::move(unlinkableToken), WTF::move(secretToken), WTF::move(signature), WTF::move(keyID), emptyString(), emptyString(), emptyString(), emptyString() };
 }
 
 bool PrivateClickMeasurementManager::featureEnabled() const
@@ -763,7 +768,7 @@ void PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExp
     if (!featureEnabled())
         return completionHandler();
 
-    protectedStore()->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
+    protect(store())->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTF::move(completionHandler));
 }
 
 void PrivateClickMeasurementManager::initializeStore() const
@@ -790,22 +795,12 @@ const PCM::Store& PrivateClickMeasurementManager::store() const
     return *m_store;
 }
 
-Ref<PCM::Store> PrivateClickMeasurementManager::protectedStore()
-{
-    return store();
-}
-
-Ref<const PCM::Store> PrivateClickMeasurementManager::protectedStore() const
-{
-    return store();
-}
-
 void PrivateClickMeasurementManager::destroyStoreForTesting(CompletionHandler<void()>&& completionHandler)
 {
     RefPtr store = m_store;
     if (!store)
         return completionHandler();
-    store->close([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+    store->close([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] () mutable {
         if (weakThis)
             weakThis->m_store = nullptr;
         return completionHandler();

@@ -26,6 +26,8 @@
 #pragma once
 
 #include <array>
+#include <wtf/ExportMacros.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
 namespace WTF {

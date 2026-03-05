@@ -53,7 +53,7 @@ public:
 
     void stretchTo(const RenderStyle&, LayoutUnit width);
 
-    void paint(const RenderStyle&, PaintInfo&, const LayoutPoint&);
+    void paint(const RenderStyle&, PaintInfo&, const LayoutPoint&, float deviceScaleFactor);
 
 private:
     struct GlyphAssemblyData {
@@ -71,16 +71,16 @@ private:
         void initialize();
     };
     enum class StretchType { Unstretched, SizeVariant, GlyphAssembly };
-    enum GlyphPaintTrimming {
-        TrimTop,
-        TrimBottom,
-        TrimTopAndBottom,
-        TrimLeft,
-        TrimRight,
-        TrimLeftAndRight
+    enum class GlyphPaintTrimming : uint8_t {
+        Top,
+        Bottom,
+        TopAndBottom,
+        Left,
+        Right,
+        LeftAndRight
     };
 
-    LayoutUnit stretchSize() const;
+    LayoutUnit NODELETE stretchSize() const;
     bool getGlyph(const RenderStyle&, char32_t character, GlyphData&) const;
     bool getBaseGlyph(const RenderStyle& style, GlyphData& baseGlyph) const { return getGlyph(style, m_baseCharacter, baseGlyph); }
     void setSizeVariant(const GlyphData&);
@@ -88,7 +88,7 @@ private:
     void getMathVariantsWithFallback(const RenderStyle&, bool isVertical, Vector<Glyph>&, Vector<OpenTypeMathData::AssemblyPart>&);
     void calculateDisplayStyleLargeOperator(const RenderStyle&);
     void calculateStretchyData(const RenderStyle&, bool calculateMaxPreferredWidth, LayoutUnit targetSize = 0_lu);
-    bool calculateGlyphAssemblyFallback(const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
+    bool NODELETE calculateGlyphAssemblyFallback(const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
 
     LayoutRect paintGlyph(const RenderStyle&, PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
     void fillWithVerticalExtensionGlyph(const RenderStyle&, PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);

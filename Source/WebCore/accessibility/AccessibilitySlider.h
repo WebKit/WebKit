@@ -44,7 +44,7 @@ private:
     explicit AccessibilitySlider(AXID, RenderObject&, AXObjectCache&);
 
     HTMLInputElement* inputElement() const;
-    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const final;
+    RefPtr<AccessibilityObject> elementAccessibilityHitTest(const IntPoint&) const final;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Slider; }
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RuntimeApplicationChecks.h"
+#include <wtf/RuntimeApplicationChecks.h>
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
@@ -36,7 +36,7 @@ namespace WTF {
 static bool presentingApplicationPIDOverrideWasQueried;
 #endif
 
-static std::optional<int>& presentingApplicationPIDOverride()
+static std::optional<int>& NODELETE presentingApplicationPIDOverride()
 {
     static NeverDestroyed<std::optional<int>> pid;
 #if !ASSERT_MSG_DISABLED
@@ -68,7 +68,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 #endif
 
-static std::optional<AuxiliaryProcessType>& auxiliaryProcessType()
+static std::optional<AuxiliaryProcessType>& NODELETE auxiliaryProcessType()
 {
     static std::optional<AuxiliaryProcessType> auxiliaryProcessType;
     return auxiliaryProcessType;

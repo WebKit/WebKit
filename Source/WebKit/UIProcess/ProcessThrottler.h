@@ -117,7 +117,7 @@ public:
 
     using Activity = ProcessThrottlerActivity;
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     using ForegroundActivity = Activity;
@@ -127,8 +127,8 @@ public:
     Ref<Activity> backgroundActivity(ASCIILiteral name);
     Ref<Activity> quietBackgroundActivity(ASCIILiteral name);
 
-    static bool isValidBackgroundActivity(const Activity*);
-    static bool isValidForegroundActivity(const Activity*);
+    static bool NODELETE isValidBackgroundActivity(const Activity*);
+    static bool NODELETE isValidForegroundActivity(const Activity*);
 
     using TimedActivity = ProcessThrottlerTimedActivity;
 
@@ -148,7 +148,7 @@ private:
     friend class ProcessThrottlerActivity;
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);
 
-    ProcessThrottleState expectedThrottleState();
+    ProcessThrottleState NODELETE expectedThrottleState();
     void updateThrottleStateIfNeeded(ASCIILiteral);
     void updateThrottleStateNow();
     void setAssertionType(ProcessAssertionType);
@@ -163,7 +163,7 @@ private:
     void removeActivity(Activity&);
     void invalidateAllActivities();
     String assertionName(ProcessAssertionType) const;
-    ProcessAssertionType assertionTypeForState(ProcessThrottleState);
+    ProcessAssertionType NODELETE assertionTypeForState(ProcessThrottleState);
 
     void uiAssertionWillExpireImminently();
     void assertionWasInvalidated();
@@ -173,8 +173,6 @@ private:
     void dropLastAssertion();
 
     class ProcessAssertionCache;
-
-    Ref<AuxiliaryProcessProxy> protectedProcess() const;
 
     const UniqueRef<ProcessAssertionCache> m_assertionCache;
     WeakRef<AuxiliaryProcessProxy> m_process;

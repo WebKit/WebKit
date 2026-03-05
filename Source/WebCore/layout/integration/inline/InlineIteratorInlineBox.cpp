@@ -29,13 +29,13 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace InlineIterator {
 
 InlineBox::InlineBox(PathVariant&& path)
-    : Box(WTFMove(path))
+    : Box(WTF::move(path))
 {
 }
 
@@ -96,7 +96,7 @@ IteratorRange<BoxIterator> InlineBox::descendants() const
 }
 
 InlineBoxIterator::InlineBoxIterator(Box::PathVariant&& pathVariant)
-    : BoxIterator(WTFMove(pathVariant))
+    : BoxIterator(WTF::move(pathVariant))
 {
 }
 
@@ -123,14 +123,14 @@ InlineBoxIterator& InlineBoxIterator::traverseInlineBoxLineLeftward()
 
 InlineBoxIterator lineLeftmostInlineBoxFor(const RenderInline& renderInline)
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderInline))
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(renderInline))
         return lineLayout->firstInlineBoxFor(renderInline);
     return { BoxLegacyPath { renderInline.firstLegacyInlineBox() } };
 }
 
 InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow& block)
 {
-    if (auto* lineLayout = block.inlineLayout())
+    if (CheckedPtr lineLayout = block.inlineLayout())
         return lineLayout->firstRootInlineBox();
     return { BoxLegacyPath { block.legacyRootBox() } };
 }

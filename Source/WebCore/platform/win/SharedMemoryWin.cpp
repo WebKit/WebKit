@@ -44,7 +44,7 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
     memory->m_size = size;
     memory->m_data = baseAddress;
-    memory->m_handle = WTFMove(handle);
+    memory->m_handle = WTF::move(handle);
 
     return memory;
 }
@@ -62,8 +62,12 @@ static DWORD accessRights(SharedMemory::Protection protection)
     return 0;
 }
 
-RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection, CopyOnWrite copyOnWrite)
 {
+    // Copy-on-write is not supported on this platform.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305633
+    ASSERT_UNUSED(copyOnWrite, copyOnWrite == CopyOnWrite::No);
+
     void* data = ::MapViewOfFile(handle.m_handle.get(), accessRights(protection), 0, 0, handle.size());
     ASSERT_WITH_MESSAGE(data, "::MapViewOfFile failed with error %lu %p", ::GetLastError(), handle.m_handle.get());
     if (!data)
@@ -72,7 +76,7 @@ RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
     RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
     memory->m_size = handle.size();
     memory->m_data = data;
-    memory->m_handle = WTFMove(handle.m_handle);
+    memory->m_handle = WTF::move(handle.m_handle);
     return memory;
 }
 

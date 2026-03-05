@@ -49,7 +49,7 @@ void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction
 {
     GRefPtr<WebKitOptionMenu> menu = static_cast<WebKitWebViewClient&>(m_view.client()).showOptionMenu(*this, rect, items, selectedIndex);
     if (menu) {
-        m_menu = WTFMove(menu);
+        m_menu = WTF::move(menu);
         g_signal_connect_swapped(m_menu.get(), "close", G_CALLBACK(menuCloseCallback), this);
     }
 }

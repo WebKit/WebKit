@@ -27,7 +27,7 @@
 #include "UnplacedGridItem.h"
 
 #include "LayoutElementBox.h"
-#include "RenderStyleInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -42,8 +42,8 @@ UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosit
 
 UnplacedGridItem::UnplacedGridItem(WTF::HashTableEmptyValueType)
     : m_layoutBox(WTF::HashTableEmptyValue)
-    , m_columnPosition({ RenderStyle::initialGridItemColumnStart(), RenderStyle::initialGridItemColumnEnd() })
-    , m_rowPosition({ RenderStyle::initialGridItemRowStart(), RenderStyle::initialGridItemRowEnd() })
+    , m_columnPosition({ Style::ComputedStyle::initialGridItemColumnStart(), Style::ComputedStyle::initialGridItemColumnEnd() })
+    , m_rowPosition({ Style::ComputedStyle::initialGridItemRowStart(), Style::ComputedStyle::initialGridItemRowEnd() })
 {
 }
 
@@ -130,16 +130,19 @@ bool UnplacedGridItem::hasAutoColumnPosition() const
     return m_columnPosition.first.isAuto() && m_columnPosition.second.isAuto();
 }
 
+bool UnplacedGridItem::hasAutoRowPosition() const
+{
+    return m_rowPosition.first.isAuto() && m_rowPosition.second.isAuto();
+}
+
 size_t UnplacedGridItem::columnSpanSize() const
 {
     auto firstPosition = m_columnPosition.first;
     auto secondPosition = m_columnPosition.second;
 
     // Case 1: Both positions are explicit - calculate span size
-    if (firstPosition.isExplicit() && secondPosition.isExplicit()) {
-        auto spanSize = explicitColumnEnd() - explicitColumnStart();
-        return spanSize;
-    }
+    if (firstPosition.isExplicit() && secondPosition.isExplicit())
+        return explicitColumnEnd() - explicitColumnStart();
 
     // Case 2: One position is a span - extract its span size.
     ASSERT(!(firstPosition.isSpan() && secondPosition.isSpan()));
@@ -150,6 +153,27 @@ size_t UnplacedGridItem::columnSpanSize() const
 
     // Default to span 1
     ASSERT(hasAutoColumnPosition());
+    return 1;
+}
+
+size_t UnplacedGridItem::rowSpanSize() const
+{
+    auto& firstPosition = m_rowPosition.first;
+    auto& secondPosition = m_rowPosition.second;
+
+    // Case 1: Both positions are explicit - calculate span size
+    if (firstPosition.isExplicit() && secondPosition.isExplicit())
+        return explicitRowEnd() - explicitRowStart();
+
+    // Case 2: One position is a span - extract its span size.
+    ASSERT(!(firstPosition.isSpan() && secondPosition.isSpan()));
+    if (firstPosition.isSpan())
+        return firstPosition.spanPosition();
+    if (secondPosition.isSpan())
+        return secondPosition.spanPosition();
+
+    // Default to span 1
+    ASSERT(hasAutoRowPosition());
     return 1;
 }
 

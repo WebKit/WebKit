@@ -106,15 +106,13 @@ public:
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
-    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController() const;
 #endif
     
 #if PLATFORM(MAC)
     NSWindow *window() const { return m_window.get(); }
     WKWebView *webView() const;
-    RetainPtr<WKWebView> protectedWebView() const;
 
-    const WebCore::FloatRect& sheetRect() const { return m_sheetRect; }
+    const WebCore::FloatRect& sheetRect() const LIFETIME_BOUND { return m_sheetRect; }
 
     void didBecomeActive();
 #endif
@@ -134,7 +132,6 @@ public:
 
 private:
     RemoteWebInspectorUIProxy();
-    RefPtr<WebPageProxy> protectedInspectorPage();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -175,8 +172,6 @@ private:
     void platformOpenURLExternally(const String& url);
     void platformRevealFileExternally(const String& path);
     void platformShowCertificate(const WebCore::CertificateInfo&);
-
-    CheckedPtr<RemoteWebInspectorUIProxyClient> checkedClient() const { return m_client.get(); }
 
     WeakPtr<RemoteWebInspectorUIProxyClient> m_client;
     WeakPtr<WebPageProxy> m_inspectorPage;

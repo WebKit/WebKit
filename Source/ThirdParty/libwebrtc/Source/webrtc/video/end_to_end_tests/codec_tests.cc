@@ -215,7 +215,8 @@ TEST_F(CodecEndToEndTest,
 class EndToEndTestH264 : public test::CallTest,
                          public ::testing::WithParamInterface<std::string> {
  public:
-  EndToEndTestH264() : CallTest(/*field_trials=*/GetParam()) {
+  EndToEndTestH264() {
+    field_trials().Set("WebRTC-SpsPpsIdrIsH264Keyframe", GetParam());
     RegisterRtpExtension(RtpExtension(RtpExtension::kVideoRotationUri,
                                       kVideoRotationExtensionId));
   }
@@ -224,8 +225,8 @@ class EndToEndTestH264 : public test::CallTest,
 INSTANTIATE_TEST_SUITE_P(
     SpsPpsIdrIsKeyframe,
     EndToEndTestH264,
-    ::testing::Values("WebRTC-SpsPpsIdrIsH264Keyframe/Disabled/",
-                      "WebRTC-SpsPpsIdrIsH264Keyframe/Enabled/"));
+    ::testing::Values(/*WebRTC-SpsPpsIdrIsH264Keyframe*/ "Disabled",
+                      /*WebRTC-SpsPpsIdrIsH264Keyframe*/ "Enabled"));
 
 TEST_P(EndToEndTestH264, SendsAndReceivesH264) {
   test::FunctionVideoEncoderFactory encoder_factory(

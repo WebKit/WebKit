@@ -1,15 +1,16 @@
 
+FAIL e.style['position-anchor'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
 PASS e.style['position-anchor'] = "auto" should set the property value
 PASS e.style['position-anchor'] = "--foo" should set the property value
-PASS e.style['position-anchor'] = "none" should not set the property value
 PASS e.style['position-anchor'] = "foo-bar" should not set the property value
 PASS e.style['position-anchor'] = "--foo --bar" should not set the property value
 PASS e.style['position-anchor'] = "--foo, --bar" should not set the property value
 PASS e.style['position-anchor'] = "100px" should not set the property value
 PASS e.style['position-anchor'] = "100%" should not set the property value
+FAIL Property position-anchor value 'none' assert_true: 'none' is a supported value for position-anchor. expected true got false
 PASS Property position-anchor value 'auto'
 PASS Property position-anchor value '--foo'
-PASS Property position-anchor has initial value auto
+FAIL Property position-anchor has initial value none assert_equals: expected "none" but got "auto"
 PASS Property position-anchor does not inherit
 PASS CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (-0.3) should be [--foo]
 PASS CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0) should be [--foo]

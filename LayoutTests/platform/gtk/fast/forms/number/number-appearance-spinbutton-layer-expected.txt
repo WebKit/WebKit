@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x64
   RenderBlock {HTML} at (0,0) size 800x64
     RenderBody {BODY} at (8,8) size 784x48
-      RenderBR {BR} at (192,3) size 0x17
+      RenderBR {BR} at (192,3) size 0x18
       RenderTextControl {INPUT} at (0,24) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderFlexibleBox {DIV} at (3,0) size 186x24
           RenderBlock {DIV} at (0,3) size 170x18
       RenderText {#text} at (0,0) size 0x0
 layer at (11,35) size 170x18
   RenderBlock {DIV} at (0,0) size 170x18
-    RenderText {#text} at (0,0) size 18x17
+    RenderText {#text} at (0,0) size 18x18
       text run at (0,0) width 18: "10"
 layer at (8,8) size 192x24
   RenderTextControl {INPUT} at (0,0) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
@@ -18,7 +18,7 @@ layer at (8,8) size 192x24
       RenderBlock {DIV} at (0,3) size 170x18
 layer at (11,11) size 170x18
   RenderBlock {DIV} at (0,0) size 170x18
-    RenderText {#text} at (0,0) size 18x17
+    RenderText {#text} at (0,0) size 18x18
       text run at (0,0) width 18: "10"
 layer at (181,8) size 16x24
   RenderBlock (relative positioned) {DIV} at (170,0) size 16x24

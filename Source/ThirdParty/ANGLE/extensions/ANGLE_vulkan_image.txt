@@ -59,9 +59,11 @@ New Tokens
 Additions to Chapter 4 of the OpenGL 4.5 Specification (Event Model)
 
     The command
+
         void AcquireTexturesANGLE(uint numTextures,
                                   const uint *textures,
                                   const GLenum *layouts);
+
     will acquire ownership of textures. Since the texture layout state is
     managed internally by the GL, but may have been modified by an external API,
     the current layout of the textures must be specified to initialize internal
@@ -71,10 +73,17 @@ Additions to Chapter 4 of the OpenGL 4.5 Specification (Event Model)
     perform appropriate transitions internally as necessary based on the
     specified current layout of the texture.
 
+    When ANGLE uses VK_KHR_unified_image_layouts, the Vulkan stage and access
+    masks for each texture continue to be derived from the layouts parameter
+    and used for synchronization purposes, but the actual Vulkan layout of the
+    images must be VK_IMAGE_LAYOUT_GENERAL.
+
     The command
+
         void ReleaseTexturesANGLE(uint numTextures,
                                   const uint *textures,
                                   GLenum *layouts);
+
     will release ownership of textures. The current texture layouts will be
     returned, so an external API can perform appropriate transitions as
     necessary based on the returned current layout of the textures.

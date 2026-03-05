@@ -1,4 +1,4 @@
 
 PASS window.open()
-FAIL window.open(noopener) assert_in_array: value undefined not in array ["prefetch", "prefetch;anonymous-client-ip"]
+PASS window.open(noopener)
 

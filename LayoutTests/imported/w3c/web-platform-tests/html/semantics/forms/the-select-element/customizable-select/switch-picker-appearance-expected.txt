@@ -1,12 +1,16 @@
   Reset
+option two
+option one
+option two
+option three
 
-FAIL Basic functionality of select picker and appearance assert_equals: expected "none" but got ""
-FAIL Basic functionality of select picker with appearance:auto assert_equals: expected "none" but got ""
-FAIL Basic functionality of select picker with appearance:none assert_equals: expected "none" but got ""
-FAIL Switching appearance in popover-open should close the picker assert_equals: expected "none" but got ""
-FAIL Switching appearance in JS after picker is open should close the picker assert_equals: expected "none" but got ""
-FAIL Test of the test harness promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL The select picker is closed if the <select> appearance value is changed via CSS while the picker is open promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL The select picker is closed if the ::picker() appearance value is changed via CSS while the picker is open promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL The select picker is closed if the <select> inline appearance value is changed while the picker is open promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+PASS Basic functionality of select picker and appearance
+PASS Basic functionality of select picker with appearance:auto
+PASS Basic functionality of select picker with appearance:none
+FAIL Switching appearance in :open should close the picker assert_false: Switching appearance in :open should re-close the picker expected false got true
+FAIL Switching appearance in JS after picker is open should close the picker assert_false: changing appearance while the picker is open should close it expected false got true
+PASS Test of the test harness
+PASS The select picker is closed if the <select> appearance value is changed via CSS while the picker is open
+FAIL The select picker is closed if the ::picker() appearance value is changed via CSS while the picker is open assert_false: picker should get closed when the appearance value changes expected false got true
+FAIL The select picker is closed if the <select> inline appearance value is changed while the picker is open assert_false: setup expected false got true
 

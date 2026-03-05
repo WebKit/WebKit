@@ -397,10 +397,10 @@ std::optional<NetEq::DecoderFormat> NetEqImpl::GetCurrentDecoderFormat() const {
     return std::nullopt;
   }
   return DecoderFormat{
-      /*payload_type=*/*current_rtp_payload_type_,
-      /*sample_rate_hz=*/di->SampleRateHz(),
-      /*num_channels=*/dchecked_cast<int>(di->GetDecoder()->Channels()),
-      /*sdp_format=*/di->GetFormat()};
+      .payload_type = *current_rtp_payload_type_,
+      .sample_rate_hz = di->SampleRateHz(),
+      .num_channels = dchecked_cast<int>(di->GetDecoder()->Channels()),
+      .sdp_format = di->GetFormat()};
 }
 
 void NetEqImpl::FlushBuffers() {
@@ -1073,8 +1073,9 @@ int NetEqImpl::GetDecision(Operation* operation,
   status.sync_buffer_samples = sync_buffer_->FutureLength();
   if (packet) {
     status.next_packet = {
-        packet->timestamp, packet->frame && packet->frame->IsDtxPacket(),
-        decoder_database_->IsComfortNoise(packet->payload_type)};
+        .timestamp = packet->timestamp,
+        .is_dtx = packet->frame && packet->frame->IsDtxPacket(),
+        .is_cng = decoder_database_->IsComfortNoise(packet->payload_type)};
   }
   *operation = controller_->GetDecision(status, &reset_decoder_);
 

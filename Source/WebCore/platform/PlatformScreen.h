@@ -124,9 +124,7 @@ WEBCORE_EXPORT bool suppressEDRForDisplay(PlatformDisplayID);
 WEBCORE_EXPORT PlatformDisplayID displayID(NSScreen *);
 
 WEBCORE_EXPORT NSScreen *screen(NSWindow *);
-WEBCORE_EXPORT RetainPtr<NSScreen> protectedScreen(NSWindow *);
 NSScreen *screen(PlatformDisplayID);
-RetainPtr<NSScreen> protectedScreen(PlatformDisplayID);
 
 WEBCORE_EXPORT FloatRect screenRectForDisplay(PlatformDisplayID);
 WEBCORE_EXPORT FloatRect screenRectForPrimaryScreen();

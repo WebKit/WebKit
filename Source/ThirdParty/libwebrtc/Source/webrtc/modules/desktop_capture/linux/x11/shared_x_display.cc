@@ -63,9 +63,7 @@ void SharedXDisplay::RemoveEventHandler(int type, XEventHandler* handler) {
   if (handlers == event_handlers_.end())
     return;
 
-  std::vector<XEventHandler*>::iterator new_end =
-      std::remove(handlers->second.begin(), handlers->second.end(), handler);
-  handlers->second.erase(new_end, handlers->second.end());
+  std::erase(handlers->second, handler);
 
   // Check if no handlers left for this event.
   if (handlers->second.empty())

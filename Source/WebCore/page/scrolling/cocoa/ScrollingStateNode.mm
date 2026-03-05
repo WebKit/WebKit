@@ -28,8 +28,6 @@
 
 #import "PlatformLayer.h"
 
-#if ENABLE(ASYNC_SCROLLING)
-
 namespace WebCore {
 
 void LayerRepresentation::retainPlatformLayer(void* typelessLayer)
@@ -44,7 +42,7 @@ void LayerRepresentation::releasePlatformLayer(void* typelessLayer)
         CFRelease(typelessLayer);
 }
 
-CALayer *LayerRepresentation::makePlatformLayerTyped(void* typelessLayer)
+CALayer *NODELETE LayerRepresentation::makePlatformLayerTyped(void* typelessLayer)
 {
     return (__bridge CALayer *)typelessLayer;
 }
@@ -60,5 +58,3 @@ CALayer* LayerRepresentation::platformLayerFromGraphicsLayer(GraphicsLayer& grap
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ASYNC_SCROLLING)

@@ -65,14 +65,14 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
 {
     // Sync xhr uses the message queue.
     if (m_messageQueue)
-        return m_messageQueue->append(makeUnique<Function<void()>>(WTFMove(function)));
+        return m_messageQueue->append(makeUnique<Function<void()>>(WTF::move(function)));
 
     // This is the common case.
     if (!scheduledWithCustomRunLoopMode(m_scheduledPairs))
-        return callOnMainThread(WTFMove(function));
+        return callOnMainThread(WTF::move(function));
 
     // If we have been scheduled in a custom run loop mode, schedule a block in that mode.
-    auto block = makeBlockPtr([alreadyCalled = false, function = WTFMove(function)] () mutable {
+    auto block = makeBlockPtr([alreadyCalled = false, function = WTF::move(function)] mutable {
         if (alreadyCalled)
             return;
         alreadyCalled = true;
@@ -94,7 +94,7 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
         if (auto* pairs = m_handle->context()->scheduledRunLoopPairs())
             m_scheduledPairs = *pairs;
     }
-    m_messageQueue = WTFMove(messageQueue);
+    m_messageQueue = WTF::move(messageQueue);
 
     return self;
 }
@@ -130,42 +130,42 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
 
 #if !LOG_DISABLED
     if ([redirectResponse isKindOfClass:[NSHTTPURLResponse class]])
-        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%d, Location:<%@>", m_handle, connection, [newRequest description], static_cast<int>([(id)redirectResponse statusCode]), [[(id)redirectResponse allHeaderFields] objectForKey:@"Location"]);
+        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%d, Location:<%@>", m_handle.get(), connection, [newRequest description], static_cast<int>([(id)redirectResponse statusCode]), [[(id)redirectResponse allHeaderFields] objectForKey:@"Location"]);
     else
-        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle, connection, [newRequest description]); 
+        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle.get(), connection, [newRequest description]);
 #endif
 
     auto protectedSelf = retainPtr(self);
-    auto work = [self, protectedSelf, newRequest = retainPtr(newRequest), redirectResponse = retainPtr(redirectResponse)] () mutable {
-        if (!m_handle) {
-            m_requestResult = nullptr;
-            m_semaphore.signal();
+    auto work = [protectedSelf, newRequest = retainPtr(newRequest), redirectResponse = retainPtr(redirectResponse)] mutable {
+        if (!protectedSelf->m_handle) {
+            protectedSelf->m_requestResult = nullptr;
+            protectedSelf->m_semaphore.signal();
             return;
         }
 
         ResourceResponse response(redirectResponse.get());
         ResourceRequest redirectRequest = newRequest.get();
         if ([newRequest HTTPBodyStream]) {
-            ASSERT(m_handle->firstRequest().httpBody());
-            redirectRequest.setHTTPBody(m_handle->firstRequest().httpBody());
+            ASSERT(protectedSelf->m_handle->firstRequest().httpBody());
+            redirectRequest.setHTTPBody(protectedSelf->m_handle->firstRequest().httpBody());
         }
-        if (m_handle->firstRequest().httpContentType().isEmpty())
+        if (protectedSelf->m_handle->firstRequest().httpContentType().isEmpty())
             redirectRequest.clearHTTPContentType();
 
         // Check if the redirected url is allowed to access the redirecting url's timing information.
-        if (!m_handle->hasCrossOriginRedirect() && !WebCore::SecurityOrigin::create(redirectRequest.url())->canRequest(redirectResponse.get().URL, OriginAccessPatternsForWebProcess::singleton()))
-            m_handle->markAsHavingCrossOriginRedirect();
-        m_handle->checkTAO(response);
+        if (!protectedSelf->m_handle->hasCrossOriginRedirect() && !WebCore::SecurityOrigin::create(redirectRequest.url())->canRequest(redirectResponse.get().URL, OriginAccessPatternsForWebProcess::singleton()))
+            protectedSelf->m_handle->markAsHavingCrossOriginRedirect();
+        protectedSelf->m_handle->checkTAO(response);
 
-        m_handle->incrementRedirectCount();
+        protectedSelf->m_handle->incrementRedirectCount();
 
-        m_handle->willSendRequest(WTFMove(redirectRequest), WTFMove(response), [self, protectedSelf = WTFMove(protectedSelf)](ResourceRequest&& request) {
-            m_requestResult = request.nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
-            m_semaphore.signal();
+        protectedSelf->m_handle->willSendRequest(WTF::move(redirectRequest), WTF::move(response), [protectedSelf = WTF::move(protectedSelf)](ResourceRequest&& request) {
+            protectedSelf->m_requestResult = request.nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
+            protectedSelf->m_semaphore.signal();
         });
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
     Locker locker { m_lock };
@@ -176,7 +176,7 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
 
     // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
     // as we do not want to get destroyed on a non-main thread.
-    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+    [self callFunctionOnMainThread:[protectedSelf = WTF::move(protectedSelf)] { }];
 
     return requestResult.autorelease();
 }
@@ -188,17 +188,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p didReceiveAuthenticationChallenge:%p", m_handle, connection, challenge);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveAuthenticationChallenge:%p", m_handle.get(), connection, challenge);
 
-    auto work = [self, protectedSelf = retainPtr(self), challenge = retainPtr(challenge)] () mutable {
-        if (!m_handle) {
+    auto work = [protectedSelf = retainPtr(self), challenge = retainPtr(challenge)] mutable {
+        if (!protectedSelf->m_handle) {
             [[challenge sender] cancelAuthenticationChallenge:challenge.get()];
             return;
         }
-        m_handle->didReceiveAuthenticationChallenge(core(challenge.get()));
+        protectedSelf->m_handle->didReceiveAuthenticationChallenge(core(challenge.get()));
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -208,22 +208,22 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%zd realm:%@ method:%@ %@%@", m_handle, connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
+    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%zd realm:%@ method:%@ %@%@", m_handle.get(), connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
 
     auto protectedSelf = retainPtr(self);
-    auto work = [self, protectedSelf, protectionSpace = retainPtr(protectionSpace)] () mutable {
-        if (!m_handle) {
-            m_boolResult = NO;
-            m_semaphore.signal();
+    auto work = [protectedSelf, protectionSpace = retainPtr(protectionSpace)] mutable {
+        if (!protectedSelf->m_handle) {
+            protectedSelf->m_boolResult = NO;
+            protectedSelf->m_semaphore.signal();
             return;
         }
-        m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()), [self, protectedSelf = WTFMove(protectedSelf)] (bool result) mutable {
-            m_boolResult = result;
-            m_semaphore.signal();
+        protectedSelf->m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()), [protectedSelf = WTF::move(protectedSelf)](bool result) mutable {
+            protectedSelf->m_boolResult = result;
+            protectedSelf->m_semaphore.signal();
         });
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
     Locker locker { m_lock };
@@ -234,7 +234,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
     // as we do not want to get destroyed on a non-main thread.
-    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+    [self callFunctionOnMainThread:[protectedSelf = WTF::move(protectedSelf)] { }];
 
     return boolResult;
 }
@@ -243,45 +243,45 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     ASSERT(!isMainThread());
 
-    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %zd, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %zd, reported MIMEType '%s')", m_handle.get(), connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
     auto protectedSelf = retainPtr(self);
-    auto work = [self, protectedSelf, r = retainPtr(r), connection = retainPtr(connection)] () mutable {
-        RefPtr<ResourceHandle> protectedHandle(m_handle);
-        if (!m_handle || !m_handle->client()) {
-            m_semaphore.signal();
+    auto work = [protectedSelf, r = retainPtr(r), connection = retainPtr(connection)] mutable {
+        RefPtr handle = protectedSelf->m_handle.get();
+        if (!handle || !handle->client()) {
+            protectedSelf->m_semaphore.signal();
             return;
         }
 
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0;
         if (statusCode != 304) {
-            bool isMainResourceLoad = m_handle->firstRequest().requester() == ResourceRequestRequester::Main;
+            bool isMainResourceLoad = handle->firstRequest().requester() == ResourceRequestRequester::Main;
             adjustMIMETypeIfNecessary([r _CFURLResponse], isMainResourceLoad ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, IsNoSniffSet::No);
         }
 
-        if ([m_handle->firstRequest().protectedNSURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
+        if ([protect(handle->firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)) _propertyForKey:@"ForceHTMLMIMEType"])
             [r _setMIMEType:@"text/html"];
 
         ResourceResponse resourceResponse(r.get());
-        m_handle->checkTAO(resourceResponse);
+        handle->checkTAO(resourceResponse);
 
-        auto metrics = copyTimingData(connection.get(), *m_handle);
+        auto metrics = copyTimingData(connection.get(), *handle);
         resourceResponse.setSource(ResourceResponse::Source::Network);
         resourceResponse.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics> { metrics });
 
-        m_handle->setNetworkLoadMetrics(WTFMove(metrics));
+        handle->setNetworkLoadMetrics(WTF::move(metrics));
 
-        m_handle->didReceiveResponse(WTFMove(resourceResponse), [self, protectedSelf = WTFMove(protectedSelf)] {
-            m_semaphore.signal();
+        handle->didReceiveResponse(WTF::move(resourceResponse), [protectedSelf = WTF::move(protectedSelf)] {
+            protectedSelf->m_semaphore.signal();
         });
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
     // Make sure we get destroyed on the main thread.
-    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+    [self callFunctionOnMainThread:[protectedSelf = WTF::move(protectedSelf)] { }];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
@@ -290,10 +290,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     UNUSED_PARAM(connection);
     UNUSED_PARAM(lengthReceived);
 
-    LOG(Network, "Handle %p delegate connection:%p didReceiveData:%p lengthReceived:%lld", m_handle, connection, data, lengthReceived);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveData:%p lengthReceived:%lld", m_handle.get(), connection, data, lengthReceived);
 
-    auto work = [self = self, protectedSelf = retainPtr(self), data = retainPtr(data)] () mutable {
-        if (!m_handle || !m_handle->client())
+    auto work = [protectedSelf = retainPtr(self), data = retainPtr(data)] mutable {
+        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client())
             return;
         // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
         // However, with today's computers and networking speeds, this won't happen in practice.
@@ -302,10 +302,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
         // -1 means we do not provide any data about transfer size to inspector so it would use
         // Content-Length headers or content size to show transfer size.
-        m_handle->client()->didReceiveData(m_handle, SharedBuffer::create(data.get()), -1);
+        protectedSelf->m_handle->client()->didReceiveData(protectedSelf->m_handle.get(), SharedBuffer::create(data.get()), -1);
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
@@ -314,15 +314,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     UNUSED_PARAM(connection);
     UNUSED_PARAM(bytesWritten);
 
-    LOG(Network, "Handle %p delegate connection:%p didSendBodyData:%zd totalBytesWritten:%zd totalBytesExpectedToWrite:%zd", m_handle, connection, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
+    LOG(Network, "Handle %p delegate connection:%p didSendBodyData:%zd totalBytesWritten:%zd totalBytesExpectedToWrite:%zd", m_handle.get(), connection, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 
-    auto work = [self = self, protectedSelf = retainPtr(self), totalBytesWritten = totalBytesWritten, totalBytesExpectedToWrite = totalBytesExpectedToWrite] () mutable {
-        if (!m_handle || !m_handle->client())
+    auto work = [protectedSelf = retainPtr(self), totalBytesWritten = totalBytesWritten, totalBytesExpectedToWrite = totalBytesExpectedToWrite] mutable {
+        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client())
             return;
-        m_handle->client()->didSendData(m_handle, totalBytesWritten, totalBytesExpectedToWrite);
+        protectedSelf->m_handle->client()->didSendData(protectedSelf->m_handle.get(), totalBytesWritten, totalBytesExpectedToWrite);
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -330,13 +330,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connectionDidFinishLoading:%p", m_handle, connection);
+    LOG(Network, "Handle %p delegate connectionDidFinishLoading:%p", m_handle.get(), connection);
 
-    auto work = [self = self, protectedSelf = retainPtr(self), connection = retainPtr(connection), timingData = retainPtr([connection _timingData])] () mutable {
-        if (!m_handle || !m_handle->client())
+    auto work = [protectedSelf = retainPtr(self), connection = retainPtr(connection), timingData = retainPtr([connection _timingData])] mutable {
+        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client())
             return;
 
-        if (auto metrics = m_handle->networkLoadMetrics()) {
+        if (auto metrics = protectedSelf->m_handle->networkLoadMetrics()) {
             if (double responseEndTime = [[timingData objectForKey:@"_kCFNTimingDataResponseEnd"] doubleValue])
                 metrics->responseEnd = WallTime::fromRawSeconds(adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:responseEndTime]).get().timeIntervalSince1970).approximateMonotonicTime();
             else
@@ -345,20 +345,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             metrics->responseBodyBytesReceived = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesReceived"] unsignedLongLongValue];
             metrics->responseBodyDecodedSize = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesDecoded"] unsignedLongLongValue];
             metrics->markComplete();
-            m_handle->client()->didFinishLoading(m_handle, *metrics);
+            protectedSelf->m_handle->client()->didFinishLoading(protectedSelf->m_handle.get(), *metrics);
         } else {
             NetworkLoadMetrics emptyMetrics;
             emptyMetrics.markComplete();
-            m_handle->client()->didFinishLoading(m_handle, emptyMetrics);
+            protectedSelf->m_handle->client()->didFinishLoading(protectedSelf->m_handle.get(), emptyMetrics);
         }
 
-        if (m_messageQueue) {
-            m_messageQueue->kill();
-            m_messageQueue = nullptr;
+        if (protectedSelf->m_messageQueue) {
+            protectedSelf->m_messageQueue->kill();
+            protectedSelf->m_messageQueue = nullptr;
         }
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -366,20 +366,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p didFailWithError:%@", m_handle, connection, error);
+    LOG(Network, "Handle %p delegate connection:%p didFailWithError:%@", m_handle.get(), connection, error);
 
-    auto work = [self = self, protectedSelf = retainPtr(self), error = retainPtr(error)] () mutable {
-        if (!m_handle || !m_handle->client())
+    auto work = [protectedSelf = retainPtr(self), error = retainPtr(error)] mutable {
+        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client())
             return;
 
-        m_handle->client()->didFail(m_handle, error.get());
-        if (m_messageQueue) {
-            m_messageQueue->kill();
-            m_messageQueue = nullptr;
+        protectedSelf->m_handle->client()->didFail(protectedSelf->m_handle.get(), error.get());
+        if (protectedSelf->m_messageQueue) {
+            protectedSelf->m_messageQueue->kill();
+            protectedSelf->m_messageQueue = nullptr;
         }
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 
@@ -388,23 +388,23 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle, connection, cachedResponse);
+    LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle.get(), connection, cachedResponse);
 
     auto protectedSelf = retainPtr(self);
-    auto work = [self, protectedSelf, cachedResponse = retainPtr(cachedResponse)] () mutable {
-        if (!m_handle || !m_handle->client()) {
-            m_cachedResponseResult = nullptr;
-            m_semaphore.signal();
+    auto work = [protectedSelf, cachedResponse = retainPtr(cachedResponse)] mutable {
+        if (!protectedSelf->m_handle || !protectedSelf->m_handle->client()) {
+            protectedSelf->m_cachedResponseResult = nullptr;
+            protectedSelf->m_semaphore.signal();
             return;
         }
 
-        m_handle->client()->willCacheResponseAsync(m_handle, cachedResponse.get(), [self, protectedSelf = WTFMove(protectedSelf)] (NSCachedURLResponse * response) mutable {
-            m_cachedResponseResult = response;
-            m_semaphore.signal();
+        protectedSelf->m_handle->client()->willCacheResponseAsync(protectedSelf->m_handle.get(), cachedResponse.get(), [protectedSelf = WTF::move(protectedSelf)](NSCachedURLResponse * response) mutable {
+            protectedSelf->m_cachedResponseResult = response;
+            protectedSelf->m_semaphore.signal();
         });
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
     Locker locker { m_lock };
@@ -415,7 +415,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
     // as we do not want to get destroyed on a non-main thread.
-    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+    [self callFunctionOnMainThread:[protectedSelf = WTF::move(protectedSelf)] { }];
 
     return cachedResponseResult.autorelease();
 }

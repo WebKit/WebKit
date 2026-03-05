@@ -30,6 +30,9 @@
 #include <WebCore/PseudoElementIdentifier.h>
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/WebAnimationTypes.h>
+#include <wtf/HashSet.h>
+#include <wtf/HashTraits.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -66,7 +69,6 @@ struct Styleable {
     }
 
     RenderElement* renderer() const;
-    Ref<Element> protectedElement() const { return element; }
 
     std::unique_ptr<RenderStyle> computeAnimatedStyle() const;
 
@@ -143,7 +145,7 @@ struct Styleable {
 
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&& collection) const
     {
-        element.setAnimationsCreatedByMarkup(pseudoElementIdentifier, WTFMove(collection));
+        element.setAnimationsCreatedByMarkup(pseudoElementIdentifier, WTF::move(collection));
     }
 
     const RenderStyle* lastStyleChangeEventStyle() const
@@ -153,7 +155,7 @@ struct Styleable {
 
     void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style) const
     {
-        element.setLastStyleChangeEventStyle(pseudoElementIdentifier, WTFMove(style));
+        element.setLastStyleChangeEventStyle(pseudoElementIdentifier, WTF::move(style));
     }
 
     bool hasPropertiesOverridenAfterAnimation() const
@@ -196,6 +198,13 @@ class WeakStyleable {
 public:
     WeakStyleable() = default;
 
+    WeakStyleable(AtomString name)
+    {
+        m_element = nullptr;
+        m_pseudoElementIdentifier = Style::PseudoElementIdentifier();
+        m_pseudoElementIdentifier->nameOrPart = name;
+    }
+
     explicit operator bool() const { return !!m_element; }
 
     bool operator==(const WeakStyleable& other) const = default;
@@ -227,6 +236,27 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
     std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
 };
+
+// FIXME: using PairHashTraits would give us constructDeletedValue() and isDeletedValue() for free.
+struct WeakStyleableHashTraits : HashTraits<WeakStyleable> {
+    static constexpr bool hasIsWeakNullValueFunction = true;
+    static bool isWeakNullValue(const WeakStyleable& value) { return !value; }
+    static void constructDeletedValue(WeakStyleable& slot) { slot = { AtomString { WTF::HashTableDeletedValue } }; }
+    static bool isDeletedValue(const WeakStyleable& value) { return !value.element() && value.pseudoElementIdentifier() && value.pseudoElementIdentifier()->nameOrPart.isHashTableDeletedValue(); }
+};
+
+struct WeakStyleableHash {
+    static unsigned hash(const WeakStyleable& styleable) { return WTF::PairHash<Element*, std::optional<Style::PseudoElementIdentifier>>::hash({ styleable.element().get(), styleable.pseudoElementIdentifier() }); }
+    static bool equal(const WeakStyleable& a, const WeakStyleable& b)
+    {
+        if (!a || !b)
+            return false;
+        return a.element().get() == b.element().get() && a.pseudoElementIdentifier() == b.pseudoElementIdentifier();
+    }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
+using WeakStyleableHashSet = HashSet<WeakStyleable, WeakStyleableHash, WeakStyleableHashTraits>;
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Styleable&);
 WTF::TextStream& operator<<(WTF::TextStream&, const WeakStyleable&);

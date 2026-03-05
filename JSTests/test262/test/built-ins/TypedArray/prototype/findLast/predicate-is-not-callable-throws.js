@@ -52,4 +52,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     sample.findLast(/./);
   }, "regexp");
-});
+}, null, ["passthrough"]);

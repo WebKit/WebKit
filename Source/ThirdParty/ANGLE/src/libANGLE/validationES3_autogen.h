@@ -356,7 +356,8 @@ bool ValidateIsSync(const Context *context, angle::EntryPoint entryPoint, SyncID
 bool ValidateIsTransformFeedback(const Context *context,
                                  angle::EntryPoint entryPoint,
                                  TransformFeedbackID idPacked);
-bool ValidateIsVertexArray(const Context *context,
+bool ValidateIsVertexArray(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            VertexArrayID arrayPacked);
 bool ValidateMapBufferRange(const Context *context,

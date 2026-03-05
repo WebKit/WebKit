@@ -64,7 +64,7 @@ static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Elem
     if (auto* mathmlElement = dynamicDowncast<MathMLElement>(element.get()))
         return createJSMathMLWrapper(globalObject, *mathmlElement);
 #endif
-    return createWrapper<Element>(globalObject, WTFMove(element));
+    return createWrapper<Element>(globalObject, WTF::move(element));
 }
 
 JSValue toJS(JSGlobalObject*, JSDOMGlobalObject* globalObject, Element& element)
@@ -83,7 +83,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<E
         ASSERT(!globalObject->vm().exceptionForInspection());
     }
     ASSERT(!getCachedWrapper(globalObject->world(), element));
-    return createNewElementWrapper(globalObject, WTFMove(element));
+    return createNewElementWrapper(globalObject, WTF::move(element));
 }
 
 static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, const JSElement& thisObject, const QualifiedName& attributeName)
@@ -117,6 +117,11 @@ static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, co
 JSValue JSElement::ariaControlsElements(JSGlobalObject& lexicalGlobalObject) const
 {
     return getElementsArrayAttribute(lexicalGlobalObject, *this, WebCore::HTMLNames::aria_controlsAttr);
+}
+
+JSValue JSElement::ariaActionsElements(JSGlobalObject& lexicalGlobalObject) const
+{
+    return getElementsArrayAttribute(lexicalGlobalObject, *this, WebCore::HTMLNames::aria_actionsAttr);
 }
 
 JSValue JSElement::ariaDescribedByElements(JSGlobalObject& lexicalGlobalObject) const

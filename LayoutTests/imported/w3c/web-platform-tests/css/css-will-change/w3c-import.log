@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/green-square-100-by-100-offset-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/green-square-100-by-100-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/inheritance.html
@@ -81,6 +82,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-isolation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mask-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mask-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mask-image-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mask-image-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mix-blend-mode-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mix-blend-mode-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-offset-path-1-expected.html
@@ -99,8 +102,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-transform-style-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-translate-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-translate-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-view-transition-name-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-view-transition-name-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-2-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-3-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-4-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-4.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-add-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-add-content-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-add-content.html

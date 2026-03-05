@@ -32,11 +32,12 @@
 #import "MockLocalConnection.h"
 #import <wtf/RunLoop.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/MockLocalServiceAdditions.h>
-#else
-#define MOCK_LOCAL_SERVICE_ADDITIONS
-#endif
+#import "AuthenticationServicesCoreSoftLink.h"
+
+static BOOL ACSWebKitSPIMockSupportMethod(id, SEL)
+{
+    return NO;
+}
 
 namespace WebKit {
 
@@ -49,7 +50,8 @@ MockLocalService::MockLocalService(AuthenticatorTransportServiceObserver& observ
     : LocalService(observer)
     , m_configuration(configuration)
 {
-MOCK_LOCAL_SERVICE_ADDITIONS
+    Method methodToSwizzle = class_getClassMethod(getASCWebKitSPISupportClassSingleton(), @selector(shouldUseAlternateCredentialStore)); \
+    method_setImplementation(methodToSwizzle, (IMP)ACSWebKitSPIMockSupportMethod);
 }
 
 bool MockLocalService::platformStartDiscovery() const

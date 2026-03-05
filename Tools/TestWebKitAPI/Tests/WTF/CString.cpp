@@ -87,6 +87,23 @@ TEST(WTF, CStringEmptyRegularConstructor)
     ASSERT_STREQ(referenceString, stringWithLength.data());
 }
 
+TEST(WTF, CStringOneByte)
+{
+    const char* referenceString = "W";
+
+    CString string(referenceString);
+    ASSERT_FALSE(string.isNull());
+    ASSERT_FALSE(string.isEmpty());
+    ASSERT_EQ(string.length(), strlen(referenceString));
+    ASSERT_STREQ(referenceString, string.data());
+
+    CString stringWithLength(std::span { referenceString, 1 });
+    ASSERT_FALSE(stringWithLength.isNull());
+    ASSERT_FALSE(stringWithLength.isEmpty());
+    ASSERT_EQ(stringWithLength.length(), strlen(referenceString));
+    ASSERT_STREQ(referenceString, stringWithLength.data());
+}
+
 TEST(WTF, CStringUninitializedConstructor)
 {
     std::span<char> buffer;

@@ -74,6 +74,13 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         gridSettingsGroup.addSetting(WI.settings.gridOverlayShowLineNames, WI.UIString("Line Names", "Line names @ Layout Panel Overlay Options", "Label for option to toggle the line names setting for CSS grid overlays"));
         gridSettingsGroup.addSetting(WI.settings.gridOverlayShowAreaNames, WI.UIString("Area Names", "Area names @ Layout Panel Overlay Options", "Label for option to toggle the area names setting for CSS grid overlays"));
         gridSettingsGroup.addSetting(WI.settings.gridOverlayShowExtendedGridLines, WI.UIString("Extended Grid Lines", "Show extended lines @ Layout Panel Overlay Options", "Label for option to toggle the extended lines setting for CSS grid overlays"));
+
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): `DOM.GridOverlayConfig.showOrderNumbers` did not exist yet.
+        // Since support can't be tested directly, check for if the `Page.navigate` command has been removed.
+        // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
+        if (!InspectorBackend.hasCommand("Page.navigate"))
+            gridSettingsGroup.addSetting(WI.settings.gridOverlayShowOrderNumbers, WI.UIString("Order Numbers", "Order Numbers @ Layout Panel Overlay Options", "Label for option to toggle the order numbers setting for CSS grid overlays"));
+
         this._gridOptionsDetailsSectionRow.element.append(gridSettingsGroup.element);
 
         this._gridNodesDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Grid Containers", "No CSS Grid Containers @ Layout Details Sidebar Panel", "Message shown when there are no CSS Grid containers on the inspected page."));

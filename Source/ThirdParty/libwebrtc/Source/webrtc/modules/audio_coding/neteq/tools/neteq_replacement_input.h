@@ -16,8 +16,8 @@
 #include <optional>
 #include <set>
 
-#include "api/rtp_headers.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 namespace test {
@@ -34,11 +34,11 @@ class NetEqReplacementInput : public NetEqInput {
   std::optional<int64_t> NextPacketTime() const override;
   std::optional<int64_t> NextOutputEventTime() const override;
   std::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override;
-  std::unique_ptr<PacketData> PopPacket() override;
+  std::unique_ptr<RtpPacketReceived> PopPacket() override;
   void AdvanceOutputEvent() override;
   void AdvanceSetMinimumDelay() override;
   bool ended() const override;
-  std::optional<RTPHeader> NextHeader() const override;
+  const RtpPacketReceived* NextPacket() const override;
 
  private:
   void ReplacePacket();
@@ -47,7 +47,7 @@ class NetEqReplacementInput : public NetEqInput {
   const uint8_t replacement_payload_type_;
   const std::set<uint8_t> comfort_noise_types_;
   const std::set<uint8_t> forbidden_types_;
-  std::unique_ptr<PacketData> packet_;         // The next packet to deliver.
+  std::unique_ptr<RtpPacketReceived> packet_;  // The next packet to deliver.
   uint32_t last_frame_size_timestamps_ = 960;  // Initial guess: 20 ms @ 48 kHz.
 };
 

@@ -78,6 +78,7 @@ private:
     // ScrollingCoordinator
     bool coordinatesScrollingForFrameView(const WebCore::LocalFrameView&) const override;
     void scheduleTreeStateCommit() override;
+    void willSendScrollPositionRequest(WebCore::ScrollingNodeID, WebCore::RequestedScrollData&) override;
 
     bool isRubberBandInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
     bool isUserScrollInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
@@ -91,7 +92,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     
     // Respond to UI process changes.
-    void scrollUpdateForNode(WebCore::ScrollUpdate, CompletionHandler<void()>&&);
+    void scrollUpdateForNode(WebCore::ScrollUpdate&&, CompletionHandler<void()>&&);
     void currentSnapPointIndicesChangedForNode(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
     void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase);
@@ -109,6 +110,12 @@ private:
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveRubberBanding;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveScrollSnap;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveUserScrolls;
+
+    struct PendingScrollResponseInfo {
+        Markable<WebCore::ScrollRequestIdentifier> identifier;
+        bool pendingScrollEnd { false };
+    };
+    HashMap<WebCore::ScrollingNodeID, PendingScrollResponseInfo> m_scrollRequestsPendingResponse;
 
     NodeAndGestureState m_currentWheelGestureInfo;
 

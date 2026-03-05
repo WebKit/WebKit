@@ -132,7 +132,7 @@ inline void RefCounter<T>::Count::refCounterWasDeleted()
 
 template<typename T>
 inline RefCounter<T>::RefCounter(ValueChangeFunction&& valueDidChange)
-    : m_valueDidChange(WTFMove(valueDidChange))
+    : m_valueDidChange(WTF::move(valueDidChange))
     , m_count(new Count(*this))
 {
 }

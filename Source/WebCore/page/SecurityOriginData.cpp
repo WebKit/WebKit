@@ -167,7 +167,7 @@ SecurityOriginData SecurityOriginData::isolatedCopy() const &
 
 SecurityOriginData SecurityOriginData::isolatedCopy() &&
 {
-    return SecurityOriginData { crossThreadCopy(WTFMove(m_data)) };
+    return SecurityOriginData { crossThreadCopy(WTF::move(m_data)) };
 }
 
 bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)

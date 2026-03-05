@@ -104,8 +104,8 @@ OPENSSL_EXPORT extern const CertErrorId kEkuLacksClientAuth;
 OPENSSL_EXPORT extern const CertErrorId kCertIsNotTrustAnchor;
 
 // The chain is not valid for any policy, and an explicit policy was required.
-// (Either because the relying party requested it during verificaiton, or it was
-// requrested by a PolicyConstraints extension).
+// (Either because the relying party requested it during verification, or it was
+// requested by a PolicyConstraints extension).
 OPENSSL_EXPORT extern const CertErrorId kNoValidPolicy;
 
 // The certificate is trying to map to, or from, anyPolicy.

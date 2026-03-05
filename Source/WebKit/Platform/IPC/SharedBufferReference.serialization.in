@@ -26,6 +26,7 @@ header: "SharedBufferReference.h"
 [Nested, RValue] struct IPC::SharedBufferReference::SerializableBuffer {
     uint64_t size;
     std::optional<WebCore::SharedMemory::Handle> handle;
+    std::optional<WebCore::MemoryLedger> ledger;
 };
 #endif
 

@@ -39,5 +39,5 @@ WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest *urlRequest)
 
 NSURLRequest *WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest)
 {
-    return [WebKit::toImpl(urlRequest)->resourceRequest().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) copy];
+    return [protect(WebKit::toImpl(urlRequest)->resourceRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)) copy];
 }

@@ -71,7 +71,7 @@ static void updateTextLogicalOrderCacheIfNeeded(const TextBoxIterator& textBox, 
 std::pair<TextBoxIterator, TextLogicalOrderCache> firstTextBoxInLogicalOrderFor(const RenderText& text)
 {
     if (auto cache = makeTextLogicalOrderCacheIfNeeded(text))
-        return { cache->boxes.first(), WTFMove(cache) };
+        return { cache->boxes.first(), WTF::move(cache) };
 
     return { lineLeftmostTextBoxFor(text), nullptr };
 }

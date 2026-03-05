@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "EventTargetInterfaces.h"
 #include "TrackListBase.h"
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class AudioTrackList final : public TrackListBase {
 public:
     static Ref<AudioTrackList> create(ScriptExecutionContext* context)
     {
-        auto list = adoptRef(*new AudioTrackList(context));
+        Ref list = adoptRef(*new AudioTrackList(context));
         list->suspendIfNeeded();
         return list;
     }
@@ -47,24 +48,23 @@ public:
     RefPtr<AudioTrack> getTrackById(TrackID) const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_inbandTracks.size(); }
-    AudioTrack* item(unsigned index) const;
-    AudioTrack* lastItem() const { return item(length() - 1); }
+    AudioTrack& NODELETE item(unsigned index) const;
+    AudioTrack* NODELETE itemForBindings(unsigned index) const;
+    AudioTrack& lastItem() const { return item(length() - 1); }
     AudioTrack* firstEnabled() const;
     void append(Ref<AudioTrack>&&);
     void remove(TrackBase&, bool scheduleEvent = true) final;
 
     // EventTarget
-    enum EventTargetInterfaceType eventTargetInterface() const override;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
 
 private:
-    AudioTrackList(ScriptExecutionContext*);
+    explicit AudioTrackList(ScriptExecutionContext*);
 };
 static_assert(sizeof(AudioTrackList) == sizeof(TrackListBase));
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioTrackList)
-    static bool isType(const WebCore::TrackListBase& trackList) { return trackList.type() == WebCore::TrackListBase::AudioTrackList; }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(AudioTrackList)
 
 #endif // ENABLE(VIDEO)

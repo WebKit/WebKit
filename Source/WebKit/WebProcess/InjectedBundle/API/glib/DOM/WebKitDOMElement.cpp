@@ -59,11 +59,13 @@ WebKitDOMElement* wrapElement(WebCore::Element* coreObject)
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 #if PLATFORM(GTK)
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMElement, webkit_dom_element, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkitDOMElementDOMEventTargetInit))
 #else
 G_DEFINE_TYPE(WebKitDOMElement, webkit_dom_element, WEBKIT_DOM_TYPE_NODE)
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkit_dom_element_class_init(WebKitDOMElementClass* elementClass)
 {

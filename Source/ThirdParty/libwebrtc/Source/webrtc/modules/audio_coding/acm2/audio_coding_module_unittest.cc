@@ -322,19 +322,19 @@ class AudioCodingModuleTestWithComfortNoiseOldApi
     const struct {
       int ix;
       AudioFrameType type;
-    } expectation[] = {{2, AudioFrameType::kAudioFrameCN},
-                       {5, AudioFrameType::kEmptyFrame},
-                       {8, AudioFrameType::kEmptyFrame},
-                       {11, AudioFrameType::kAudioFrameCN},
-                       {14, AudioFrameType::kEmptyFrame},
-                       {17, AudioFrameType::kEmptyFrame},
-                       {20, AudioFrameType::kAudioFrameCN},
-                       {23, AudioFrameType::kEmptyFrame},
-                       {26, AudioFrameType::kEmptyFrame},
-                       {29, AudioFrameType::kEmptyFrame},
-                       {32, AudioFrameType::kAudioFrameCN},
-                       {35, AudioFrameType::kEmptyFrame},
-                       {38, AudioFrameType::kEmptyFrame}};
+    } expectation[] = {{.ix = 2, .type = AudioFrameType::kAudioFrameCN},
+                       {.ix = 5, .type = AudioFrameType::kEmptyFrame},
+                       {.ix = 8, .type = AudioFrameType::kEmptyFrame},
+                       {.ix = 11, .type = AudioFrameType::kAudioFrameCN},
+                       {.ix = 14, .type = AudioFrameType::kEmptyFrame},
+                       {.ix = 17, .type = AudioFrameType::kEmptyFrame},
+                       {.ix = 20, .type = AudioFrameType::kAudioFrameCN},
+                       {.ix = 23, .type = AudioFrameType::kEmptyFrame},
+                       {.ix = 26, .type = AudioFrameType::kEmptyFrame},
+                       {.ix = 29, .type = AudioFrameType::kEmptyFrame},
+                       {.ix = 32, .type = AudioFrameType::kAudioFrameCN},
+                       {.ix = 35, .type = AudioFrameType::kEmptyFrame},
+                       {.ix = 38, .type = AudioFrameType::kEmptyFrame}};
     for (int i = 0; i < kLoops; ++i) {
       int num_calls_before = packet_cb_.num_calls();
       EXPECT_EQ(i / blocks_per_packet, num_calls_before);
@@ -950,7 +950,7 @@ const std::string payload_checksum =
 }  // namespace
 
 #if defined(WEBRTC_LINUX) && defined(WEBRTC_ARCH_X86_64)
-TEST_F(AcmSenderBitExactnessOldApi, Opus_stereo_20ms) {
+TEST_F(AcmSenderBitExactnessOldApi, DISABLED_Opus_stereo_20ms) {
   ASSERT_NO_FATAL_FAILURE(SetUpTest("opus", 48000, 2, 120, 960, 960));
   Run(audio_checksum, payload_checksum, /*expected_packets=*/50,
       /*expected_channels=*/test::AcmReceiveTestOldApi::kStereoOutput);
@@ -958,7 +958,7 @@ TEST_F(AcmSenderBitExactnessOldApi, Opus_stereo_20ms) {
 #endif
 
 #if defined(WEBRTC_LINUX) && defined(WEBRTC_ARCH_X86_64)
-TEST_F(AcmSenderBitExactnessNewApi, OpusFromFormat_stereo_20ms) {
+TEST_F(AcmSenderBitExactnessNewApi, DISABLED_OpusFromFormat_stereo_20ms) {
   const auto config = AudioEncoderOpus::SdpToConfig(
       SdpAudioFormat("opus", 48000, 2, {{"stereo", "1"}}));
   ASSERT_TRUE(SetUpSender(kTestFileFakeStereo32kHz, 32000));
@@ -1013,7 +1013,7 @@ TEST_F(AcmSenderBitExactnessNewApi, DISABLED_OpusManyChannels) {
 #endif
 
 #if defined(WEBRTC_LINUX) && defined(WEBRTC_ARCH_X86_64)
-TEST_F(AcmSenderBitExactnessNewApi, OpusFromFormat_stereo_20ms_voip) {
+TEST_F(AcmSenderBitExactnessNewApi, DISABLED_OpusFromFormat_stereo_20ms_voip) {
   auto config = AudioEncoderOpus::SdpToConfig(
       SdpAudioFormat("opus", 48000, 2, {{"stereo", "1"}}));
   // If not set, default will be kAudio in case of stereo.

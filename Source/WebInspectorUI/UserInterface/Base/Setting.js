@@ -118,7 +118,7 @@ WI.Setting = class Setting extends WI.Object
         if (!window.InspectorTest && window.localStorage) {
             let key = WI.Setting._localStorageKeyPrefix + this._name;
             try {
-                if (Object.shallowEqual(this._value, this._defaultValue))
+                if (this._value === this._defaultValue || Object.shallowEqual(this._value, this._defaultValue))
                     window.localStorage.removeItem(key);
                 else
                     window.localStorage.setItem(key, JSON.stringify(this._value));
@@ -206,6 +206,7 @@ WI.settings = {
     gridOverlayShowExtendedGridLines: new WI.Setting("grid-overlay-show-extended-grid-lines", false),
     gridOverlayShowLineNames: new WI.Setting("grid-overlay-show-line-names", false),
     gridOverlayShowLineNumbers: new WI.Setting("grid-overlay-show-line-numbers", true),
+    gridOverlayShowOrderNumbers: new WI.Setting("grid-overlay-show-order-numbers", false),
     gridOverlayShowTrackSizes: new WI.Setting("grid-overlay-show-track-sizes", true),
     groupMediaRequestsByDOMNode: new WI.Setting("group-media-requests-by-dom-node", WI.Setting.migrateValue("group-by-dom-node") || false),
     indentUnit: new WI.Setting("indent-unit", 4),
@@ -215,6 +216,7 @@ WI.settings = {
     searchFromSelection: new WI.Setting("search-from-selection", false),
     searchRegularExpression: new WI.Setting("search-regular-expression", false),
     selectedNetworkDetailContentViewIdentifier: new WI.Setting("network-detail-content-view-identifier", "preview"),
+    resourceContentViewIdentifierForMIMEType: new WI.Setting("resource-content-view-identifier-for-mime-type", {}),
     sourceMapsEnabled: new WI.Setting("source-maps-enabled", true),
     showConsoleMessageTimestamps: new WI.Setting("show-console-message-timestamps", false),
     showCSSPropertySyntaxInDocumentationPopover: new WI.Setting("show-css-property-syntax-in-documentation-popover", false),
@@ -227,6 +229,7 @@ WI.settings = {
     showRulers: new WI.Setting("show-rulers", false),
     showRulersDuringElementSelection: new WI.Setting("show-rulers-during-element-selection", true),
     showScopeChainOnPause: new WI.Setting("show-scope-chain-sidebar", true),
+    showUserAgentStyles: new WI.Setting("show-user-agent-styles", true),
     showWhitespaceCharacters: new WI.Setting("show-whitespace-characters", false),
     tabSize: new WI.Setting("tab-size", 4),
     timelinesAutoStop: new WI.Setting("timelines-auto-stop", true),
@@ -240,10 +243,10 @@ WI.settings = {
     experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", true),
     experimentalEnableNetworkEmulatedCondition: new WI.Setting("experimental-enable-network-emulated-condition", false),
     experimentalGroupSourceMapErrors: new WI.Setting("experimental-group-source-map-errors", true),
-    experimentalShowCaseSensitiveAutocomplete: new WI.Setting("experimental-show-case-sensitive-auto-complete", false),
     experimentalLimitSourceCodeHighlighting: new WI.Setting("engineering-limit-source-code-highlighting", false),
     experimentalUseFuzzyMatchingForCSSCodeCompletion: new WI.Setting("experimental-use-fuzzy-matching-for-css-code-completion", true),
     experimentalUseStrictCheckForGlobMatching: new WI.Setting("experimental-use-strict-check-for-glob-matching", false),
+    experimentalLayers3DShowLayerContents: new WI.Setting("experimental-layers-3d-show-layer-contents", true),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

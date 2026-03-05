@@ -17,6 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#if USE(LIBWPE)
+
 #include "config.h"
 #include "WebKitWebViewBackend.h"
 
@@ -119,3 +121,5 @@ struct wpe_view_backend* webkit_web_view_backend_get_wpe_backend(WebKitWebViewBa
 namespace WTF {
 WTF_DEFINE_GREF_TRAITS(WebKitWebViewBackend, webkitWebViewBackendRef, webkitWebViewBackendUnref)
 }
+
+#endif // USE(LIBWPE)

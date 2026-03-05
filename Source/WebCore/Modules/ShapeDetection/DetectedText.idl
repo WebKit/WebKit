@@ -27,9 +27,8 @@
 
 [
     EnabledBySetting=ShapeDetection,
-    JSGenerateToJSObject
-]
-dictionary DetectedText {
+    JSGenerateToJSObject,
+] dictionary DetectedText {
     required DOMRectReadOnly boundingBox;
     required DOMString rawValue;
     required FrozenArray<Point2D> cornerPoints;

@@ -101,6 +101,9 @@ if (rtc_include_tests && !build_with_chromium) {
       "video_coding/timing:timing_unittests",
     ]
 
+    if (rtc_enable_protobuf) {
+      deps += [ "audio_processing/aec3/neural_residual_echo_estimator:neural_residual_echo_estimator_unittest" ]
+    }
     if (rtc_desktop_capture_supported) {
       deps += [ "desktop_capture:desktop_capture_unittests" ]
     }

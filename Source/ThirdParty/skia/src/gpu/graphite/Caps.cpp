@@ -13,6 +13,7 @@
 #include "include/private/base/SkTo.h"
 #include "src/gpu/graphite/ContextOptionsPriv.h"
 #include "src/gpu/graphite/ResourceTypes.h"
+#include "src/gpu/graphite/TextureInfoPriv.h"
 #include "src/sksl/SkSLUtil.h"
 
 #include <algorithm>
@@ -28,7 +29,7 @@ Caps::~Caps() {}
 void Caps::finishInitialization(const ContextOptions& options) {
     fCapabilities->initSkCaps(fShaderCaps.get());
 
-    fDefaultMSAASamples = options.fInternalMultisampleCount;
+    fMaxInternalSampleCount = options.fInternalMultisampleCount;
 
     if (options.fShaderErrorHandler) {
         fShaderErrorHandler = options.fShaderErrorHandler;
@@ -40,6 +41,7 @@ void Caps::finishInitialization(const ContextOptions& options) {
     if (options.fOptionsPriv) {
         fMaxTextureSize = std::min(fMaxTextureSize, options.fOptionsPriv->fMaxTextureSizeOverride);
         fRequestedPathRendererStrategy = options.fOptionsPriv->fPathRendererStrategy;
+        fDrawListLayer = options.fOptionsPriv->fDrawListLayer;
     }
 #endif
     fGlyphCacheTextureMaximumBytes = options.fGlyphCacheTextureMaximumBytes;
@@ -60,9 +62,13 @@ SkISize Caps::getDepthAttachmentDimensions(const TextureInfo& textureInfo,
     return colorAttachmentDimensions;
 }
 
-bool Caps::isTexturable(const TextureInfo& info) const {
-    if (info.numSamples() > 1) {
-        return false;
+bool Caps::isTexturable(const TextureInfo& info, bool allowMSAA) const {
+    if (info.sampleCount() > SampleCount::k1) {
+        if (allowMSAA) {
+            return this->onIsTexturable(TextureInfoPriv::ReplaceSampleCount(info, SampleCount::k1));
+        } else {
+            return false;
+        }
     }
     return this->onIsTexturable(info);
 }
@@ -98,6 +104,33 @@ static inline SkColorType color_type_fallback(SkColorType ct) {
     }
 }
 
+const Caps::ColorTypeInfo* Caps::getColorTypeInfo(SkColorType ct, const TextureInfo& info) const {
+    if (!info.isValid()) {
+        return nullptr;
+    }
+
+    for (const ColorTypeInfo& colorInfo : this->getColorTypeInfos(info)) {
+        if (colorInfo.fColorType == ct) {
+            return &colorInfo;
+        }
+    }
+    return nullptr;
+}
+
+SkColorType Caps::getDefaultColorType(const TextureInfo& info) const {
+    if (!info.isValid()) {
+        return kUnknown_SkColorType;
+    }
+
+    const bool isRenderable = this->isRenderable(info);
+    for (const ColorTypeInfo& colorInfo : this->getColorTypeInfos(info)) {
+        if (!isRenderable || (colorInfo.fFlags & ColorTypeInfo::kRenderable_Flag)) {
+            return colorInfo.fColorType;
+        }
+    }
+    return kUnknown_SkColorType;
+}
+
 SkColorType Caps::getRenderableColorType(SkColorType ct) const {
     do {
         auto texInfo = this->getDefaultSampledTextureInfo(ct,
@@ -111,6 +144,29 @@ SkColorType Caps::getRenderableColorType(SkColorType ct) const {
         ct = color_type_fallback(ct);
     } while (ct != kUnknown_SkColorType);
     return kUnknown_SkColorType;
+}
+
+SampleCount Caps::getCompatibleMSAASampleCount(const TextureInfo& info) const {
+    if (info.sampleCount() > SampleCount::k1) {
+        // Use the inherent sample count since it's already MSAA
+        return info.sampleCount();
+    } else if (!this->avoidMSAA()) {
+        // The max internal sample count may be higher than what is universally supported for
+        // every renderable TextureFormat, but unless avoidMSAA() was true, this should bottom out
+        // at SampleCount::k4.
+        TextureFormat format = TextureInfoPriv::ViewFormat(info);
+        for (SampleCount s = fMaxInternalSampleCount;
+             s > SampleCount::k1;
+             s = static_cast<SampleCount>((uint8_t)s >> 1)) {
+            if (this->isSampleCountSupported(format, s)) {
+                return s;
+            }
+        }
+    }
+
+    // If we got here, MSAA has been disabled somehow (by ContextOption, driver workaround, or
+    // no support for a particular TextureFormat).
+    return SampleCount::k1;
 }
 
 skgpu::Swizzle Caps::getReadSwizzle(SkColorType ct, const TextureInfo& info) const {
@@ -134,6 +190,24 @@ skgpu::Swizzle Caps::getWriteSwizzle(SkColorType ct, const TextureInfo& info) co
     }
 
     return colorTypeInfo->fWriteSwizzle;
+}
+
+std::pair<SkColorType, bool /*isRGBFormat*/> Caps::supportedTransferColorType(
+        SkColorType colorType,
+        const TextureInfo& textureInfo) const {
+    // NOTE: Compressed textures can't be read back, and external format textures can't be read or
+    // written to. However, this is not checked here. Instead that is expected to be handled by
+    // supports[Read|Write]Pixels().
+    const ColorTypeInfo* colorInfo = this->getColorTypeInfo(colorType, textureInfo);
+    if (colorInfo) {
+        const TextureFormat format = TextureInfoPriv::ViewFormat(textureInfo);
+        const bool rgbRequiresIntervention =
+                TextureFormatChannelMask(format) == kRGB_SkColorChannelFlags &&
+                colorInfo->fTransferColorType != kRGB_565_SkColorType;
+        return {colorInfo->fTransferColorType, rgbRequiresIntervention};
+    } else {
+        return {kUnknown_SkColorType, false};
+    }
 }
 
 DstReadStrategy Caps::getDstReadStrategy() const {

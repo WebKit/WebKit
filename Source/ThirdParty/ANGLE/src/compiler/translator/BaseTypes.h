@@ -104,29 +104,20 @@ enum TBasicType
     EbtImage3D,
     EbtImage2DArray,
     EbtImageCube,
-    EbtImage2DMS,
-    EbtImage2DMSArray,
     EbtImageCubeArray,
-    EbtImageRect,
     EbtImageBuffer,
     EbtIImage2D,
     EbtIImage3D,
     EbtIImage2DArray,
     EbtIImageCube,
-    EbtIImage2DMS,
-    EbtIImage2DMSArray,
     EbtIImageCubeArray,
-    EbtIImageRect,
     EbtIImageBuffer,
     EbtGuardUIntImageBegin,
     EbtUImage2D = EbtGuardUIntImageBegin,
     EbtUImage3D,
     EbtUImage2DArray,
     EbtUImageCube,
-    EbtUImage2DMS,
-    EbtUImage2DMSArray,
     EbtUImageCubeArray,
-    EbtUImageRect,
     EbtUImageBuffer,
     EbtGuardUIntImageEnd = EbtUImageBuffer,
     EbtGuardImageEnd     = EbtGuardUIntImageEnd,
@@ -341,22 +332,6 @@ inline bool IsSamplerMS(TBasicType type)
     return IsSampler2DMS(type) || IsSampler2DMSArray(type);
 }
 
-inline bool IsImageMS(TBasicType type)
-{
-    switch (type)
-    {
-        case EbtImage2DMS:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMS:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMS:
-        case EbtUImage2DMSArray:
-            return true;
-        default:
-            return false;
-    }
-}
-
 inline bool IsFloatImage(TBasicType type)
 {
     switch (type)
@@ -365,10 +340,7 @@ inline bool IsFloatImage(TBasicType type)
         case EbtImage3D:
         case EbtImage2DArray:
         case EbtImageCube:
-        case EbtImage2DMS:
-        case EbtImage2DMSArray:
         case EbtImageCubeArray:
-        case EbtImageRect:
         case EbtImageBuffer:
             return true;
         default:
@@ -387,10 +359,7 @@ inline bool IsIntegerImage(TBasicType type)
         case EbtIImage3D:
         case EbtIImage2DArray:
         case EbtIImageCube:
-        case EbtIImage2DMS:
-        case EbtIImage2DMSArray:
         case EbtIImageCubeArray:
-        case EbtIImageRect:
         case EbtIImageBuffer:
             return true;
         default:
@@ -409,10 +378,7 @@ inline bool IsUnsignedImage(TBasicType type)
         case EbtUImage3D:
         case EbtUImage2DArray:
         case EbtUImageCube:
-        case EbtUImage2DMS:
-        case EbtUImage2DMSArray:
         case EbtUImageCubeArray:
-        case EbtUImageRect:
         case EbtUImageBuffer:
             return true;
         default:
@@ -726,9 +692,6 @@ inline bool IsImage2D(TBasicType type)
         case EbtImage2D:
         case EbtIImage2D:
         case EbtUImage2D:
-        case EbtImage2DMS:
-        case EbtIImage2DMS:
-        case EbtUImage2DMS:
             return true;
         case EbtImage3D:
         case EbtIImage3D:
@@ -739,15 +702,9 @@ inline bool IsImage2D(TBasicType type)
         case EbtImageCube:
         case EbtIImageCube:
         case EbtUImageCube:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMSArray:
         case EbtImageCubeArray:
         case EbtIImageCubeArray:
         case EbtUImageCubeArray:
-        case EbtImageRect:
-        case EbtIImageRect:
-        case EbtUImageRect:
         case EbtImageBuffer:
         case EbtIImageBuffer:
         case EbtUImageBuffer:
@@ -776,18 +733,9 @@ inline bool IsImage3D(TBasicType type)
         case EbtImageCube:
         case EbtIImageCube:
         case EbtUImageCube:
-        case EbtImage2DMS:
-        case EbtIImage2DMS:
-        case EbtUImage2DMS:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMSArray:
         case EbtImageCubeArray:
         case EbtIImageCubeArray:
         case EbtUImageCubeArray:
-        case EbtImageRect:
-        case EbtIImageRect:
-        case EbtUImageRect:
         case EbtImageBuffer:
         case EbtIImageBuffer:
         case EbtUImageBuffer:
@@ -806,9 +754,6 @@ inline bool IsImage2DArray(TBasicType type)
         case EbtImage2DArray:
         case EbtIImage2DArray:
         case EbtUImage2DArray:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMSArray:
             return true;
         case EbtImage2D:
         case EbtIImage2D:
@@ -819,15 +764,9 @@ inline bool IsImage2DArray(TBasicType type)
         case EbtImageCube:
         case EbtIImageCube:
         case EbtUImageCube:
-        case EbtImage2DMS:
-        case EbtIImage2DMS:
-        case EbtUImage2DMS:
         case EbtImageCubeArray:
         case EbtIImageCubeArray:
         case EbtUImageCubeArray:
-        case EbtImageRect:
-        case EbtIImageRect:
-        case EbtUImageRect:
         case EbtImageBuffer:
         case EbtIImageBuffer:
         case EbtUImageBuffer:
@@ -856,18 +795,9 @@ inline bool IsImageCube(TBasicType type)
         case EbtImage2DArray:
         case EbtIImage2DArray:
         case EbtUImage2DArray:
-        case EbtImage2DMS:
-        case EbtIImage2DMS:
-        case EbtUImage2DMS:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMSArray:
         case EbtImageCubeArray:
         case EbtIImageCubeArray:
         case EbtUImageCubeArray:
-        case EbtImageRect:
-        case EbtIImageRect:
-        case EbtUImageRect:
         case EbtImageBuffer:
         case EbtIImageBuffer:
         case EbtUImageBuffer:
@@ -941,7 +871,11 @@ enum TQualifier
     EvqPosition,
     EvqPointSize,
 
-    EvqDrawID,  // ANGLE_multi_draw
+    // ANGLE_base_vertex_base_instance_shader_builtin
+    EvqBaseVertex,
+    EvqBaseInstance,
+    // ANGLE_multi_draw
+    EvqDrawID,
 
     // built-ins read by fragment shader
     EvqFragCoord,
@@ -968,6 +902,8 @@ enum TQualifier
     // built-ins written by the shader_framebuffer_fetch_depth_stencil extension
     EvqLastFragDepth,
     EvqLastFragStencil,
+
+    EvqDepthRange,  // gl_DepthRange
 
     // GLSL ES 3.0 vertex output and fragment input
 
@@ -1055,9 +991,6 @@ enum TQualifier
     EvqPrimitiveID,    // gl_PrimitiveID
     EvqLayerOut,       // gl_Layer (GS output)
     EvqLayerIn,        // gl_Layer (FS input)
-
-    // GLSL ES 3.1 extension EXT_gpu_shader5 qualifiers
-    EvqPrecise,
 
     // GLES ES 3.1 extension EXT_tessellation_shader qualifiers
     EvqPatchIn,
@@ -1382,7 +1315,7 @@ struct TLayoutQualifier
 
     // EXT_shader_framebuffer_fetch layout qualifiers.
     int inputAttachmentIndex;
-    bool noncoherent;
+    bool noncoherent;  // Also used by ANGLE_shader_pixel_local_storage.
 
     // KHR_blend_equation_advanced layout qualifiers.
     AdvancedBlendEquations advancedBlendEquations;
@@ -1523,8 +1456,10 @@ inline const char *getQualifierString(TQualifier q)
     case EvqParamConst:                return "const";
     case EvqInstanceID:                return "InstanceID";
     case EvqVertexID:                  return "VertexID";
-    case EvqPosition:                  return "Position";
-    case EvqPointSize:                 return "PointSize";
+    case EvqPosition:                  return "out"; // Per EXT_separate_shader_objects
+    case EvqPointSize:                 return "out"; // Per EXT_separate_shader_objects
+    case EvqBaseVertex:                return "BaseVertex";
+    case EvqBaseInstance:              return "BaseInstance";
     case EvqDrawID:                    return "DrawID";
     case EvqFragCoord:                 return "FragCoord";
     case EvqFrontFacing:               return "FrontFacing";
@@ -1542,6 +1477,7 @@ inline const char *getQualifierString(TQualifier q)
     case EvqLastFragData:              return "LastFragData";
     case EvqLastFragDepth:             return "LastFragDepthARM";
     case EvqLastFragStencil:           return "LastFragStencilARM";
+    case EvqDepthRange:                return "DepthRange";
     case EvqFragmentInOut:             return "inout";
     case EvqSmoothOut:                 return "smooth out";
     case EvqCentroidOut:               return "smooth centroid out";
@@ -1576,11 +1512,10 @@ inline const char *getQualifierString(TQualifier q)
     case EvqVolatile:                  return "volatile";
     case EvqGeometryIn:                return "in";
     case EvqGeometryOut:               return "out";
-    case EvqPerVertexIn:               return "gl_in";
+    case EvqPerVertexIn:               return "in";
     case EvqPrimitiveIDIn:             return "gl_PrimitiveIDIn";
     case EvqInvocationID:              return "gl_InvocationID";
     case EvqPrimitiveID:               return "gl_PrimitiveID";
-    case EvqPrecise:                   return "precise";
     case EvqClipDistance:              return "ClipDistance";
     case EvqCullDistance:              return "CullDistance";
     case EvqSample:                    return "sample";

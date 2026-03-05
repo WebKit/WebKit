@@ -65,10 +65,10 @@ static inline LayoutRoundedRect::Radii computeMarginBoxShapeRadii(const LayoutRo
 
 LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& renderer)
 {
-    const RenderStyle& style = renderer.style();
+    CheckedRef style = renderer.style();
     switch (box) {
     case CSSBoxType::MarginBox: {
-        if (!style.hasBorderRadius())
+        if (!style->border().hasBorderRadius())
             return LayoutRoundedRect(renderer.marginBoxRect(), LayoutRoundedRect::Radii());
 
         auto marginBox = renderer.marginBoxRect();

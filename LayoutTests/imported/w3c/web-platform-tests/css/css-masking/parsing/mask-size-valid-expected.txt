@@ -1,5 +1,5 @@
 
-PASS e.style['mask-size'] = "1px" should set the property value
+FAIL e.style['mask-size'] = "1px" should set the property value assert_equals: serialization should be canonical expected "1px auto" but got "1px"
 PASS e.style['mask-size'] = "1px auto" should set the property value
 PASS e.style['mask-size'] = "2% 3%" should set the property value
 PASS e.style['mask-size'] = "auto" should set the property value

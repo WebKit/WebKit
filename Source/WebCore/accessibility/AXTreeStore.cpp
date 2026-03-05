@@ -36,18 +36,21 @@ namespace WebCore {
 template<>
 void AXTreeStore<AXIsolatedTree>::applyPendingChangesForAllIsolatedTrees()
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     Locker locker { AXTreeStore<AXIsolatedTree>::s_storeLock };
     auto& map = AXTreeStore<AXIsolatedTree>::isolatedTreeMap();
+    Vector<AXTreeID> treesToRemove;
     for (const auto& axIDToTree : map) {
         if (RefPtr tree = axIDToTree.value.get()) {
-            // Only applyPendingChanges for trees that aren't about to be destroyed.
-            // When a tree is destroyed, it tries to remove itself from AXTreeStore,
-            // which requires taking s_storeLock, which we hold. This would cause a deadlock.
-            tree->applyPendingChangesUnlessQueuedForDestruction();
+            if (tree->applyPendingChangesOrTearDown() == DidTearDown::Yes)
+                treesToRemove.append(axIDToTree.key);
         }
     }
+    for (auto& treeID : treesToRemove)
+        map.remove(treeID);
+
+    AXIsolatedTree::clearAnyTreeNeedsTearDown();
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 

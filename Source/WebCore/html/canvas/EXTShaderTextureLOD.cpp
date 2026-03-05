@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTShaderTextureLOD);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EXTShaderTextureLOD);
 
 EXTShaderTextureLOD::EXTShaderTextureLOD(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTShaderTextureLOD)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::EXT_shader_texture_lod);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::EXT_shader_texture_lod);
 }
 
 EXTShaderTextureLOD::~EXTShaderTextureLOD() = default;

@@ -33,7 +33,7 @@ namespace CSS {
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Calc auto const& value)
 {
-    return ts << value.protectedCalculation().get();
+    return ts << protect(value.calcValue()).get();
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, Numeric auto const& value)

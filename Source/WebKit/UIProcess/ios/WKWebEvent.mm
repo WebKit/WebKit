@@ -49,7 +49,8 @@
         modifierFlags = 0;
         uiEvent = event;
     } else {
-        UIPhysicalKeyboardEvent *keyEvent = (UIPhysicalKeyboardEvent *)event;
+        // FIXME: `checked_objc_cast<UIPhysicalKeyboardEvent>(event)` causes a linking error.
+        SUPPRESS_MEMORY_UNSAFE_CAST UIPhysicalKeyboardEvent *keyEvent = (UIPhysicalKeyboardEvent *)event;
         keyCode = keyEvent._keyCode;
         inputFlags = keyEvent._inputFlags;
         modifierFlags = keyEvent._gsModifierFlags;
@@ -60,7 +61,7 @@
     if (!self)
         return nil;
 
-    _uiEvent = WTFMove(uiEvent);
+    _uiEvent = WTF::move(uiEvent);
 
     return self;
 }

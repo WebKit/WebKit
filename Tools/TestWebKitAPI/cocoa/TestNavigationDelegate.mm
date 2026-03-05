@@ -127,6 +127,13 @@
         _didGeneratePageLoadTiming(timing);
 }
 
+- (void)webView:(WKWebView *)webView willSubmitForm:(WKFormInfo *)formInfo submissionHandler:(void (^)(void))submissionHandler
+{
+    if (_willSubmitForm)
+        _willSubmitForm(formInfo);
+    submissionHandler();
+}
+
 - (void)allowAnyTLSCertificate
 {
     EXPECT_FALSE(self.didReceiveAuthenticationChallenge);

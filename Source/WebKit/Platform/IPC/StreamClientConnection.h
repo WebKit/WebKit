@@ -73,7 +73,7 @@ public:
     ~StreamClientConnection();
 
     void setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait);
-    bool hasSemaphores() const;
+    bool NODELETE hasSemaphores() const;
     void setMaxBatchSize(unsigned);
 
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::currentSingleton());
@@ -104,8 +104,8 @@ public:
     void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiverBase&, uint64_t destinationID = 0);
     void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
-    StreamClientConnectionBuffer& bufferForTesting();
-    Connection& connectionForTesting();
+    StreamClientConnectionBuffer& NODELETE bufferForTesting();
+    Connection& NODELETE connectionForTesting();
 
     // Returns the timeout moment for current time.
     Timeout defaultTimeout() const { return m_defaultTimeoutDuration; }
@@ -116,7 +116,7 @@ public:
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     static bool signpostsEnabled();
-    static void forceEnableSignposts();
+    static void NODELETE forceEnableSignposts();
 #endif
 
 private:
@@ -187,7 +187,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W>
         if (trySendStream(*span, message))
             return Error::NoError;
     }
-    sendProcessOutOfStreamMessage(WTFMove(*span));
+    sendProcessOutOfStreamMessage(WTF::move(*span));
     return m_connection->send(std::forward<T>(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
@@ -217,24 +217,24 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     auto replyID = *handler.replyID;
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     if (signpostIdentifier) [[unlikely]] {
-        handler.completionHandler = CompletionHandler<void(Connection*, Decoder*)>([signpostIdentifier, handler = WTFMove(handler.completionHandler)](Connection* connection, Decoder* decoder) mutable {
+        handler.completionHandler = CompletionHandler<void(Connection*, Decoder*)>([signpostIdentifier, handler = WTF::move(handler.completionHandler)](Connection* connection, Decoder* decoder) mutable {
             WTFEndSignpost(signpostIdentifier, StreamClientConnection);
             handler(connection, decoder);
         });
     }
 #endif
-    connection->addAsyncReplyHandler(WTFMove(handler));
+    connection->addAsyncReplyHandler(WTF::move(handler));
 
     if constexpr (T::isStreamEncodable) {
         if (trySendStream(*span, message, replyID))
             return replyID;
     }
 
-    sendProcessOutOfStreamMessage(WTFMove(*span));
+    sendProcessOutOfStreamMessage(WTF::move(*span));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID.toUInt64());
     message.encode(encoder.get());
     encoder.get() << replyID;
-    if (connection->sendMessage(WTFMove(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }) == Error::NoError)
+    if (connection->sendMessage(WTF::move(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }) == Error::NoError)
         return replyID;
 
     // replyHandlerToCancel might be already cancelled if invalidate() happened in-between.
@@ -242,7 +242,7 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
         // FIXME(https://bugs.webkit.org/show_bug.cgi?id=248947): Current contract is that completionHandler
         // is called on the connection run loop.
         // This does not make sense. However, this needs a change that is done later.
-        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(replyHandlerToCancel)]() mutable {
             completionHandler(nullptr, nullptr);
         });
     }
@@ -277,29 +277,29 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     auto replyID = *handler.replyID;
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     if (signpostIdentifier) [[unlikely]] {
-        handler.completionHandler = CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)>([signpostIdentifier, handler = WTFMove(handler.completionHandler)](Connection* connection, std::unique_ptr<Decoder>&& decoder) mutable {
+        handler.completionHandler = CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)>([signpostIdentifier, handler = WTF::move(handler.completionHandler)](Connection* connection, std::unique_ptr<Decoder>&& decoder) mutable {
             WTFEndSignpost(signpostIdentifier, StreamClientConnection);
-            handler(connection, WTFMove(decoder));
+            handler(connection, WTF::move(decoder));
         });
     }
 #endif
-    connection->addAsyncReplyHandlerWithDispatcher(WTFMove(handler));
+    connection->addAsyncReplyHandlerWithDispatcher(WTF::move(handler));
 
     if constexpr(T::isStreamEncodable) {
         if (trySendStream(*span, message, replyID))
             return replyID;
     }
 
-    sendProcessOutOfStreamMessage(WTFMove(*span));
+    sendProcessOutOfStreamMessage(WTF::move(*span));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID.toUInt64());
     message.encode(encoder.get());
     encoder.get() << replyID;
-    if (connection->sendMessage(WTFMove(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }) == Error::NoError)
+    if (connection->sendMessage(WTF::move(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }) == Error::NoError)
         return replyID;
 
     // replyHandlerToCancel might be already cancelled if invalidate() happened in-between.
     if (auto replyHandlerToCancel = connection->takeAsyncReplyHandlerWithDispatcher(replyID)) {
-        dispatcher.dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
+        dispatcher.dispatch([completionHandler = WTF::move(replyHandlerToCancel)]() mutable {
             completionHandler(nullptr, nullptr);
         });
     }
@@ -350,9 +350,9 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
     if constexpr (T::isStreamEncodable) {
         auto maybeSendResult = trySendSyncStream(message, timeout, *span);
         if (maybeSendResult)
-            return WTFMove(*maybeSendResult);
+            return WTF::move(*maybeSendResult);
     }
-    sendProcessOutOfStreamMessage(WTFMove(*span));
+    sendProcessOutOfStreamMessage(WTF::move(*span));
     return m_connection->sendSync(std::forward<T>(message), destinationID.toUInt64(), timeout);
 }
 
@@ -412,14 +412,14 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
 
     if (!decoderResult->has_value())
         return { decoderResult->error() };
-    UniqueRef decoder = WTFMove(decoderResult->value());
+    UniqueRef decoder = WTF::move(decoderResult->value());
     if (decoder->messageName() == MessageName::CancelSyncMessageReply)
         return { Error::SyncMessageCancelled };
     std::optional<typename T::ReplyArguments> replyArguments;
     decoder.get() >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-    return { { WTFMove(decoder), WTFMove(*replyArguments) } };
+    return { { WTF::move(decoder), WTF::move(*replyArguments) } };
 }
 #endif
 

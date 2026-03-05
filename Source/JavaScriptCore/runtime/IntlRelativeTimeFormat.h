@@ -27,6 +27,7 @@
 #pragma once
 
 #include "JSObject.h"
+#include <unicode/uformattedvalue.h>
 #include <unicode/ureldatefmt.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -74,12 +75,12 @@ private:
     enum class Style : uint8_t { Long, Short, Narrow };
 
     using URelativeDateTimeFormatterDeleter = ICUDeleter<ureldatefmt_close>;
-    using UNumberFormatDeleter = ICUDeleter<unum_close>;
 
     static ASCIILiteral styleString(Style);
 
     std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter> m_relativeDateTimeFormatter;
-    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
+    mutable std::unique_ptr<UFormattedRelativeDateTime, ICUDeleter<ureldatefmt_closeResult>> m_formattedResult;
+    mutable std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>> m_cfpos;
 
     String m_locale;
     String m_numberingSystem;

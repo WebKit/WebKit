@@ -86,9 +86,9 @@ void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifi
     }
 
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    connection.sendWithAsyncReply(Messages::NetworkMDNSRegister::RegisterMDNSName { identifier, ipAddress }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback), identifier, ipAddress] (String&& mdnsName, std::optional<MDNSRegisterError> error) mutable {
+    connection.sendWithAsyncReply(Messages::NetworkMDNSRegister::RegisterMDNSName { identifier, ipAddress }, [weakThis = WeakPtr { *this }, callback = WTF::move(callback), identifier, ipAddress] (String&& mdnsName, std::optional<MDNSRegisterError> error) mutable {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->finishedRegisteringMDNSName(identifier, ipAddress, WTFMove(mdnsName), error, WTFMove(callback));
+            protectedThis->finishedRegisteringMDNSName(identifier, ipAddress, WTF::move(mdnsName), error, WTF::move(callback));
         else
             callback({ }, MDNSRegisterError::Internal);
     });

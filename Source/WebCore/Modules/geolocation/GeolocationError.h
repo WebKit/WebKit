@@ -40,7 +40,7 @@ public:
     static Ref<GeolocationError> create(ErrorCode code, const String& message) { return adoptRef(*new GeolocationError(code, message)); }
 
     ErrorCode code() const { return m_code; }
-    const String& message() const { return m_message; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
 
 private:
     GeolocationError(ErrorCode code, const String& message)

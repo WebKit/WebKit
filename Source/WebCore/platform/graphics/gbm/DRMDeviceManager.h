@@ -36,7 +36,7 @@ class GBMDevice;
 
 class DRMDeviceManager {
     WTF_MAKE_NONCOPYABLE(DRMDeviceManager);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED();
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DRMDeviceManager);
 public:
     static DRMDeviceManager& singleton();
 

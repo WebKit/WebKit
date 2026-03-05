@@ -39,6 +39,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/MemoryFootprint.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace TestWebKitAPI {
 
@@ -56,12 +57,12 @@ private:
 };
 
 class TestedGraphicsContextGLCocoa : public GraphicsContextGLCocoa {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TestedGraphicsContextGLCocoa);
+    WTF_MAKE_TZONE_ALLOCATED(TestedGraphicsContextGLCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TestedGraphicsContextGLCocoa);
 public:
     static RefPtr<TestedGraphicsContextGLCocoa> create(GraphicsContextGLAttributes&& attributes)
     {
-        auto context = adoptRef(*new TestedGraphicsContextGLCocoa(WTFMove(attributes)));
+        auto context = adoptRef(*new TestedGraphicsContextGLCocoa(WTF::move(attributes)));
         if (!context->initialize())
             return nullptr;
         return context;
@@ -69,10 +70,12 @@ public:
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return nullptr; }
 private:
     TestedGraphicsContextGLCocoa(GraphicsContextGLAttributes attributes)
-        : GraphicsContextGLCocoa(WTFMove(attributes), { })
+        : GraphicsContextGLCocoa(WTF::move(attributes), { })
     {
     }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TestedGraphicsContextGLCocoa);
 
 class GraphicsContextGLCocoaTest : public ::testing::Test {
 protected:
@@ -314,7 +317,7 @@ TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
     attributes.isWebGL2 = true;
     attributes.depth = true;
     attributes.stencil = true;
-    auto gl = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    auto gl = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
     gl->reshape(1, 1);
 
     float floats5[5] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
@@ -401,11 +404,11 @@ TEST_F(GraphicsContextGLCocoaTest, DestroyWithoutMakingCurrent)
     attributes.isWebGL2 = true;
     attributes.depth = true;
     attributes.stencil = true;
-    RefPtr gl1 = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    RefPtr gl1 = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
     gl1->reshape(1, 1);
-    RefPtr gl2 = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    RefPtr gl2 = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
     gl2->reshape(1, 1);
-    RefPtr gl3 = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    RefPtr gl3 = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
     gl3->reshape(1, 1);
     // Current context is now 3.
     gl1 = nullptr; // Test the case where we destroy with other context being current.
@@ -416,7 +419,7 @@ TEST_F(GraphicsContextGLCocoaTest, DestroyWithoutMakingCurrent)
 TEST_F(GraphicsContextGLCocoaTest, TwoLinks)
 {
     GraphicsContextGLAttributes attributes;
-    auto gl = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    auto gl = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
     auto vs = gl->createShader(GraphicsContextGL::VERTEX_SHADER);
     gl->shaderSource(vs, "void main() { }"_s);
     gl->compileShader(vs);
@@ -747,7 +750,7 @@ protected:
     void SetUp() override // NOLINT
     {
         GraphicsContextGLAttributes attributes;
-        m_context = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+        m_context = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
         m_expectedColor = Color::gray;
         auto [r, g, b, a] = m_expectedColor.toColorTypeLossy<SRGBA<float>>().resolved();
         m_context->reshape(20, 20);
@@ -809,7 +812,7 @@ protected:
     void SetUp() override // NOLINT
     {
         GraphicsContextGLAttributes attributes;
-        m_context = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+        m_context = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
         m_context->reshape(INITIAL_WIDTH, INITIAL_HEIGHT);
     }
 

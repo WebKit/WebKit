@@ -474,7 +474,7 @@ WKWebView *WebExtensionSidebar::webView()
     std::optional<Ref<WebExtensionContext>> maybeContext;
     if (!opensSidebar() || !(maybeContext = extensionContext()))
         return nil;
-    Ref<WebExtensionContext> context = WTFMove(maybeContext.value());
+    Ref<WebExtensionContext> context = WTF::move(maybeContext.value());
 
     if (m_webView)
         return m_webView.get();
@@ -519,7 +519,7 @@ void WebExtensionSidebar::notifyDelegateOfPropertyUpdate()
     std::optional<Ref<WebExtensionContext>> maybeContext = extensionContext();
     if (!maybeContext)
         return;
-    Ref<WebExtensionContext> context = WTFMove(maybeContext.value());
+    Ref<WebExtensionContext> context = WTF::move(maybeContext.value());
 
     RefPtr extensionController = context->extensionController();
     if (!extensionController)

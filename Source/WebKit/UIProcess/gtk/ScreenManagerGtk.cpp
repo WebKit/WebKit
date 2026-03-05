@@ -150,7 +150,7 @@ ScreenProperties ScreenManager::collectScreenProperties() const
         double diagonalInPixels = std::hypot(geometry.width, geometry.height);
         double diagonalInInches = std::hypot(data.screenSize.width(), data.screenSize.height()) / millimetresPerInch;
         data.dpi = diagonalInPixels / diagonalInInches;
-        properties.screenDataMap.add(iter.value, WTFMove(data));
+        properties.screenDataMap.add(iter.value, WTF::move(data));
     }
 
     // FIXME: don't use PlatformScreen from the UI process, better use ScreenManager directly.

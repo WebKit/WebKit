@@ -1,11 +1,12 @@
 <script>
 var frameDidLoad = false;
 
-onload = function()
+// rdar://161348735: onload doesn't fire with Site Isolation when resource is blocked by mixed content. so use setTimeout for now
+setTimeout(function()
 {
     if (window.opener)
         window.opener.postMessage(frameDidLoad ? 'done' : 'blocked', '*');
-}
+}, 2000);
 </script>
 <iframe onload="window.frameDidLoad = true"
         src="http://127.0.0.1:8080/resources/redirect.py?url=https://127.0.0.1:8443/security/mixedContent/resources/boring.html"></iframe>

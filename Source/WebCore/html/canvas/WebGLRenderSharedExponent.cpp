@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLRenderSharedExponent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLRenderSharedExponent);
 
 WebGLRenderSharedExponent::WebGLRenderSharedExponent(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLRenderSharedExponent)
 {
-    context.graphicsContextGL()->enableExtension(GCGLExtension::QCOM_render_shared_exponent);
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::QCOM_render_shared_exponent);
 }
 
 WebGLRenderSharedExponent::~WebGLRenderSharedExponent() = default;

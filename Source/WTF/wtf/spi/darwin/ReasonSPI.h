@@ -30,11 +30,14 @@
 
 DECLARE_SYSTEM_HEADER
 
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(WATCHOS) \
-    || PLATFORM(APPLETV) || PLATFORM(VISION)
-#if USE(APPLE_INTERNAL_SDK) && !defined(__swift__)
+#if PLATFORM(COCOA)
+
+// FIXME: Remove the `!__has_feature(modules)` condition once all configurations have a modularized <os/reason_private.h> (rdar://165816838)
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #include <os/reason_private.h>
 #else
+
+#include <stdint.h>
 
 WTF_EXTERN_C_BEGIN
 
@@ -46,16 +49,14 @@ int terminate_with_reason(int pid, uint32_t reasonNamespace, uint64_t reasonCode
 
 WTF_EXTERN_C_END
 
-#endif // USE(APPLE_INTERNAL_SDK) && !defined(__swift__)
+#define OS_REASON_FLAG_NO_CRASH_REPORT     0x1
+#define OS_REASON_FLAG_SECURITY_SENSITIVE  0x1000
+#define OS_REASON_WEBKIT 31
+
+#endif // USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #else
 
 #define abort_with_reason(reason_namespace, reason_code, reason_string, reason_flags)  CRASH()
 
-#endif
-
-#if !USE(APPLE_INTERNAL_SDK) || defined(__swift__)
-#define OS_REASON_FLAG_NO_CRASH_REPORT     0x1
-#define OS_REASON_FLAG_SECURITY_SENSITIVE  0x1000
-#define OS_REASON_WEBKIT 31
-#endif
+#endif // PLATFORM(COCOA)

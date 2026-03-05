@@ -89,7 +89,7 @@ public:
 
     FontPaletteValues(std::optional<FontPaletteIndex> basePalette, Vector<OverriddenColor>&& overrideColors)
         : m_basePalette(basePalette)
-        , m_overrideColors(WTFMove(overrideColors))
+        , m_overrideColors(WTF::move(overrideColors))
     {
     }
 

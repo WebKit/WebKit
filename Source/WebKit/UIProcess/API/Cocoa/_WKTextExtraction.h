@@ -26,38 +26,76 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKJSHandle.h>
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
+@class WKFrameInfo;
 @class WKWebView;
+@class _WKJSHandle;
 
 typedef NS_OPTIONS(NSUInteger, _WKTextExtractionFilterOptions) {
     _WKTextExtractionFilterNone = 0,
     _WKTextExtractionFilterTextRecognition = 1 << 0,
     _WKTextExtractionFilterClassifier = 1 << 1,
-    _WKTextExtractionFilterAll = _WKTextExtractionFilterTextRecognition | _WKTextExtractionFilterClassifier,
+    _WKTextExtractionFilterRules = 1 << 2,
+    _WKTextExtractionFilterAll = NSUIntegerMax,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 typedef NS_ENUM(NSInteger, _WKTextExtractionNodeIdentifierInclusion) {
     _WKTextExtractionNodeIdentifierInclusionNone = 0,
     _WKTextExtractionNodeIdentifierInclusionEditableOnly,
-    _WKTextExtractionNodeIdentifierInclusionInteractive
+    _WKTextExtractionNodeIdentifierInclusionInteractive,
+    _WKTextExtractionNodeIdentifierInclusionAllContainers,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 typedef NS_ENUM(NSInteger, _WKTextExtractionOutputFormat) {
     _WKTextExtractionOutputFormatTextTree = 0,
     _WKTextExtractionOutputFormatHTML,
     _WKTextExtractionOutputFormatMarkdown,
+    _WKTextExtractionOutputFormatJSON,
+    _WKTextExtractionOutputFormatPlainText,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
-// This is equivalent to USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCH) && !PLATFORM(APPLETV)
-#if (defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)) || (!TARGET_OS_WATCH && !TARGET_OS_TV)
+#define WK_TEXT_EXTRACTION_HAS_EVENT_LISTENER_CATEGORIES 1
+
+typedef NS_OPTIONS(NSUInteger, _WKTextExtractionEventListenerCategory) {
+    _WKTextExtractionEventListenerCategoryNone          = 0,
+    _WKTextExtractionEventListenerCategoryClick         = 1 << 0,
+    _WKTextExtractionEventListenerCategoryHover         = 1 << 1,
+    _WKTextExtractionEventListenerCategoryTouch         = 1 << 2,
+    _WKTextExtractionEventListenerCategoryWheel         = 1 << 3,
+    _WKTextExtractionEventListenerCategoryKeyboard      = 1 << 4,
+    _WKTextExtractionEventListenerCategoryAll           = NSUIntegerMax
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+#define WK_TEXT_EXTRACTION_HAS_DATA_DETECTOR_TYPES 1
+
+typedef NS_OPTIONS(NSUInteger, _WKTextExtractionDataDetectorTypes) {
+    _WKTextExtractionDataDetectorNone               = 0,
+    _WKTextExtractionDataDetectorMoney              = 1 << 0,
+    _WKTextExtractionDataDetectorAddress            = 1 << 1,
+    _WKTextExtractionDataDetectorCalendarEvent      = 1 << 2,
+    _WKTextExtractionDataDetectorTrackingNumber     = 1 << 3,
+    _WKTextExtractionDataDetectorAll                = NSUIntegerMax,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+typedef NS_ENUM(NSInteger, _WKTextExtractionWordLimitPolicy) {
+    _WKTextExtractionWordLimitPolicyAlways,
+    _WKTextExtractionWordLimitPolicyDiscretionary,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKTextExtractionConfiguration : NSObject
 
-@property (nonatomic, class, copy, readonly) _WKTextExtractionConfiguration *configurationForVisibleTextOnly NS_SWIFT_NAME(visibleTextOnly);
+@property (nonatomic, class, copy, readonly) _WKTextExtractionConfiguration *configurationForVisibleTextOnly WK_API_DEPRECATED_WITH_REPLACEMENT("_WKTextExtractionOutputFormatPlainText", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA), visionos(WK_XROS_TBA, WK_XROS_TBA)) NS_SWIFT_NAME(visibleTextOnly);
+
+/*!
+ Disables all optional metadata in the extraction output: URLs, bounding rects,
+ node identifiers, event listeners, and accessibility attributes.
+ The output format and other structural configuration (e.g. `targetRect`, `targetNode`)
+ are left unchanged. Individual flags can still be re-enabled after calling this method.
+ */
+- (void)configureForMinimalOutput;
 
 /*!
  Output format to use when collating extracted elements into the final text output.
@@ -86,10 +124,17 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @property (nonatomic) BOOL includeRects;
 
 /*!
+ Include options for `select` elements in text extraction output.
+ The default value is `YES`.
+ */
+@property (nonatomic) BOOL includeSelectOptions;
+
+/*!
  Policy determining which nodes should be uniquely identified in the output.
  `.none`          	Prevents collection of any identifiers.
  `.editableOnly`    Limits collection of identifiers to editable elements and form controls.
  `.interactive`     Collects identifiers for all buttons, links, and other interactive elements.
+ `.allContainers`   All containers (excludes text items).
  The default value is `.interactive`.
  */
 @property (nonatomic) _WKTextExtractionNodeIdentifierInclusion nodeIdentifierInclusion;
@@ -101,6 +146,13 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @property (nonatomic) BOOL includeEventListeners;
 
 /*!
+ Specifies categories of event listeners to include in text extraction output.
+ Setting this to `.none` excludes all event listener data, while `.all` includes all categories.
+ The default value is `.all`.
+ */
+@property (nonatomic) _WKTextExtractionEventListenerCategory eventListenerCategories;
+
+/*!
  Include accessibility attributes (e.g. `role`, `aria-label`).
  The default value is `YES`.
  */
@@ -108,9 +160,15 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 
 /*!
  Include text content underneath form controls that have been modified via AutoFill.
- The default value is `YES`.
+ The default value is `NO`.
  */
 @property (nonatomic) BOOL includeTextInAutoFilledControls;
+
+/*!
+ Include context around password fields, including those outside of `targetRect`.
+ The default value is `NO`.
+ */
+@property (nonatomic) BOOL includeOffscreenPasswordFields;
 
 /*!
  Max number of words to include per paragraph; remaining text is truncated with an ellipsis (…).
@@ -119,10 +177,31 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @property (nonatomic) NSUInteger maxWordsPerParagraph;
 
 /*!
+ Policy around when to enforce the max number of words to include per paragraph.
+ `.always`          Always enforce word limits per paragraph.
+ `.discretionary`   Limits may be ignored in cases where the total length of output text size is small.
+ The default value is `.always`.
+ */
+@property (nonatomic) _WKTextExtractionWordLimitPolicy maxWordsPerParagraphPolicy;
+
+/*!
  If specified, text extraction is limited to the subtree of this node.
  The default value is `nil`.
  */
 @property (nonatomic, copy, nullable) _WKJSHandle *targetNode;
+
+/*!
+ If specified, these DOM nodes and their subtrees will be skipped during extraction.
+ The default value is an empty array.
+ */
+@property (nonatomic, copy) NSArray<_WKJSHandle *> *nodesToSkip;
+
+/*!
+ If specified, text extraction includes content from these frames in addition to
+ content in the main frame and same-origin subframes (which are included by default).
+ The default value is an empty array.
+ */
+@property (nonatomic, copy, null_resettable) NSArray<WKFrameInfo *> *additionalFrames;
 
 /*!
  Client-specified attributes and values to add when extracting DOM nodes.
@@ -144,6 +223,19 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
  */
 @property (nonatomic) _WKTextExtractionFilterOptions filterOptions;
 
+/*!
+ Automatically shorten extracted URLs by removing or replacing parts of each URL.
+ The default value is `NO`.
+ */
+@property (nonatomic) BOOL shortenURLs;
+
+/*!
+ Automatically run data detectors for the given types, and limit extraction output
+ to text around the most prominent matches.
+ The default value is `.none`.
+ */
+@property (nonatomic) _WKTextExtractionDataDetectorTypes dataDetectorTypes;
+
 @end
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
@@ -157,6 +249,21 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
  */
 @property (nonatomic, readonly) BOOL filteredOutAnyText;
 
+/*!
+ A map of shortened URL strings to their original URLs; only populated when
+ `shortenURLs` is set when performing text extraction.
+ */
+@property (nonatomic, readonly) NSDictionary<NSString *, NSURL *> *shortenedURLs;
+
+/*!
+ Asynchronously map a node identifier string (corresponding to a `uid` in
+ text extraction output) to a corresponding JS handle to the node.
+ @param nodeIdentifier  The ID of the node to extract, or the ID of the node to search if `searchText` is additionally specified.
+ @param searchText      Rendered text to search inside the document or node corresponding to `nodeIdentifier`. The resulting element will fully contain this text.
+ At least one of `nodeIdentifier` or `searchText` must be specified.
+ */
+- (void)requestJSHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKTextExtractionAction) {
@@ -166,7 +273,8 @@ typedef NS_ENUM(NSInteger, _WKTextExtractionAction) {
     _WKTextExtractionActionTextInput,
     _WKTextExtractionActionKeyPress,
     _WKTextExtractionActionHighlightText,
-    _WKTextExtractionActionScrollBy
+    _WKTextExtractionActionScroll,
+    _WKTextExtractionActionScrollBy = _WKTextExtractionActionScroll,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
@@ -199,7 +307,5 @@ NS_REQUIRES_PROPERTY_DEFINITIONS
 @property (nonatomic, readonly, nullable) NSError *error;
 
 @end
-
-#endif // (defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)) || (!TARGET_OS_WATCH && !TARGET_OS_TV)
 
 NS_HEADER_AUDIT_END(nullability, sendability)

@@ -40,8 +40,6 @@ G_BEGIN_DECLS
 #define WPE_TYPE_TOPLEVEL_WAYLAND (wpe_toplevel_wayland_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEToplevelWayland, wpe_toplevel_wayland, WPE, TOPLEVEL_WAYLAND, WPEToplevel)
 
-WPE_API WPEToplevel       *wpe_toplevel_wayland_new            (WPEDisplayWayland  *display,
-                                                                guint               max_views);
 WPE_API struct wl_surface *wpe_toplevel_wayland_get_wl_surface (WPEToplevelWayland *toplevel);
 
 G_END_DECLS

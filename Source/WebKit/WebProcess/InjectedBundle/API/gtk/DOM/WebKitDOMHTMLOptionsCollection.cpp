@@ -56,7 +56,9 @@ WebKitDOMHTMLOptionsCollection* wrapHTMLOptionsCollection(WebCore::HTMLOptionsCo
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitDOMHTMLOptionsCollection, webkit_dom_html_options_collection, WEBKIT_DOM_TYPE_HTML_COLLECTION)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     DOM_HTML_OPTIONS_COLLECTION_PROP_0,

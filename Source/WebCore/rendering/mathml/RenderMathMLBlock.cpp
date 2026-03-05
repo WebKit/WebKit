@@ -37,27 +37,29 @@
 #include "MathMLPresentationElement.h"
 #include "RenderChildIterator.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderTableInlines.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLBlock);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLTable);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLBlock);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLTable);
 
 RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, RenderStyle&& style)
-    : RenderBlock(type, container, WTFMove(style), { })
+    : RenderBlock(type, container, WTF::move(style), { })
     , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
 RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, RenderStyle&& style)
-    : RenderBlock(type, document, WTFMove(style), { })
+    : RenderBlock(type, document, WTF::move(style), { })
     , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.
@@ -75,7 +77,7 @@ static LayoutUnit axisHeight(const RenderStyle& style)
     // If we have a MATH table we just return the AxisHeight constant.
     Ref primaryFont = style.fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData())
-        return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::AxisHeight));
+        return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::AxisHeight));
 
     // Otherwise, the idea is to try and use the middle of operators as the math axis which we thus approximate by "half of the x-height".
     // Note that Gecko has a slower but more accurate version that measures half of the height of U+2212 MINUS SIGN.
@@ -137,7 +139,8 @@ std::optional<LayoutUnit> RenderMathMLTable::firstLineBaseline() const
 {
     // By default the vertical center of <mtable> is aligned on the math axis.
     // This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
-    return LayoutUnit { (logicalHeight() / 2 + axisHeight(style())).toInt() };
+    auto baseline = logicalHeight() / 2 + axisHeight(style());
+    return { settings().subpixelInlineLayoutEnabled() ? baseline : LayoutUnit(baseline.toInt()) };
 }
 
 void RenderMathMLBlock::layoutItems(RelayoutChildren relayoutChildren)
@@ -222,7 +225,7 @@ void RenderMathMLBlock::computeAndSetBlockDirectionMarginsOfChildren()
         child->computeAndSetBlockDirectionMargins(*this);
 }
 
-void RenderMathMLBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderMathMLBlock::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 
@@ -271,7 +274,7 @@ void RenderMathMLBlock::adjustLayoutForBorderAndPadding()
 {
     setLogicalWidth(logicalWidth() + borderAndPaddingLogicalWidth());
     setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight());
-    shiftInFlowChildren(style().isLeftToRightDirection() ? borderAndPaddingStart() : borderAndPaddingEnd(), borderAndPaddingBefore());
+    shiftInFlowChildren(style().writingMode().deprecatedIsLeftToRightDirection() ? borderAndPaddingStart() : borderAndPaddingEnd(), borderAndPaddingBefore());
 }
 
 RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMathContent(LayoutPhase phase)
@@ -279,6 +282,20 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
     SizeAppliedToMathContent sizes;
     auto& style = this->style();
     auto usedZoom = style.usedZoomForLength();
+
+    // Handle size containment with contain-intrinsic-inline-size
+    if (shouldApplySizeOrInlineSizeContainment()) {
+        if (auto intrinsicWidth = explicitIntrinsicInnerLogicalWidth())
+            sizes.logicalWidth = intrinsicWidth.value();
+
+        if (phase == LayoutPhase::Layout && shouldApplySizeContainment()) {
+            if (auto intrinsicHeight = explicitIntrinsicInnerLogicalHeight())
+                sizes.logicalHeight = intrinsicHeight.value();
+        }
+
+        return sizes;
+    }
+
     // FIXME: Resolve percentages.
     // https://github.com/w3c/mathml-core/issues/76
     if (auto fixedLogicalWidth = style.logicalWidth().tryFixed())
@@ -310,7 +327,7 @@ LayoutUnit RenderMathMLBlock::applySizeToMathContent(LayoutPhase phase, const Si
         auto oldWidth = logicalWidth();
         if (isMathContentCentered()) {
             inlineShift = (*sizes.logicalWidth - oldWidth) / 2;
-        } else if (!style().isLeftToRightDirection())
+        } else if (!style().writingMode().deprecatedIsLeftToRightDirection())
             inlineShift = *sizes.logicalWidth - oldWidth;
         setLogicalWidth(*sizes.logicalWidth);
     }

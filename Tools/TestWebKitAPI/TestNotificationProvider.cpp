@@ -55,7 +55,7 @@ static WKDictionaryRef notificationPermissions(const void* clientInfo)
 }
 
 TestNotificationProvider::TestNotificationProvider(Vector<WKNotificationManagerRef>&& managers)
-    : m_managers(WTFMove(managers))
+    : m_managers(WTF::move(managers))
 {
     m_provider = {
         WKNotificationProviderBase { 0, this },

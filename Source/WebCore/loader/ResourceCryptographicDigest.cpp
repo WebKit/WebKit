@@ -72,10 +72,10 @@ template<typename CharacterType> static std::optional<ResourceCryptographicDiges
     StringView hashValue(beginHashValue.first(buffer.position() - beginHashValue.data()));
 
     if (auto digest = base64Decode(hashValue))
-        return ResourceCryptographicDigest { *algorithm, WTFMove(*digest) };
+        return ResourceCryptographicDigest { *algorithm, WTF::move(*digest) };
 
     if (auto digest = base64URLDecode(hashValue))
-        return ResourceCryptographicDigest { *algorithm, WTFMove(*digest) };
+        return ResourceCryptographicDigest { *algorithm, WTF::move(*digest) };
 
     return std::nullopt;
 }
@@ -126,15 +126,15 @@ std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDiges
 std::optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest& encodedDigest)
 {
     if (auto digest = base64Decode(encodedDigest.digest))
-        return ResourceCryptographicDigest { encodedDigest.algorithm, WTFMove(*digest) };
+        return ResourceCryptographicDigest { encodedDigest.algorithm, WTF::move(*digest) };
 
     if (auto digest = base64URLDecode(encodedDigest.digest))
-        return ResourceCryptographicDigest { encodedDigest.algorithm, WTFMove(*digest) };
+        return ResourceCryptographicDigest { encodedDigest.algorithm, WTF::move(*digest) };
 
     return std::nullopt;
 }
 
-static PAL::CryptoDigest::Algorithm toCryptoDigestAlgorithm(ResourceCryptographicDigest::Algorithm algorithm)
+static PAL::CryptoDigest::Algorithm NODELETE toCryptoDigestAlgorithm(ResourceCryptographicDigest::Algorithm algorithm)
 {
     switch (algorithm) {
     case ResourceCryptographicDigest::Algorithm::SHA256:

@@ -132,7 +132,8 @@ class RtcEventIceCandidatePairConfig final : public RtcEvent {
   }
 
  private:
-  RtcEventIceCandidatePairConfig(const RtcEventIceCandidatePairConfig& other);
+  RtcEventIceCandidatePairConfig(const RtcEventIceCandidatePairConfig&) =
+      default;
 
   const IceCandidatePairConfigType type_;
   const uint32_t candidate_pair_id_;

@@ -50,9 +50,13 @@ protected:
     virtual ~WebPopupMenuProxyClient() = default;
 
 public:
+#if !PLATFORM(IOS_FAMILY)
     virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) = 0;
-    virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) = 0;
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent() = 0;
+#endif
+#if !PLATFORM(COCOA)
+    virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) = 0;
+#endif
 #if PLATFORM(GTK)
     virtual void failedToShowPopupMenu() = 0;
 #endif

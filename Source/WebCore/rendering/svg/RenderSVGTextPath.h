@@ -30,17 +30,17 @@ class SVGLengthValue;
 class SVGTextPathElement;
 
 class RenderSVGTextPath final : public RenderSVGInline {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGTextPath);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGTextPath);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTextPath);
 public:
     RenderSVGTextPath(SVGTextPathElement&, RenderStyle&&);
     virtual ~RenderSVGTextPath();
 
-    SVGTextPathElement& textPathElement() const;
+    SVGTextPathElement& NODELETE textPathElement() const;
     SVGGeometryElement* targetElement() const;
 
     Path layoutPath() const;
-    const SVGLengthValue& startOffset() const;
+    const SVGLengthValue& NODELETE startOffset() const;
 
 private:
     void graphicsElement() const = delete;

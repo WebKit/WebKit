@@ -27,10 +27,10 @@ var obj = {
   }
 };
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   var sample;
 
-  sample = new TA([42, 43]);
+  sample = new TA(makeCtorArg([42, 43]));
   assert.sameValue(sample.lastIndexOf(42, "1"), 0, "string [0]");
   assert.sameValue(sample.lastIndexOf(43, "1"), 1, "string [1]");
 

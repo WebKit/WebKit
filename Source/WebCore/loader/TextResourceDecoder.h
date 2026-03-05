@@ -84,7 +84,7 @@ private:
     bool checkForHeadCharset(std::span<const uint8_t>, bool& movedDataToBuffer);
     bool checkForMetaCharset(std::span<const uint8_t>);
     void detectJapaneseEncoding(std::span<const uint8_t>);
-    bool shouldAutoDetect() const;
+    bool NODELETE shouldAutoDetect() const;
 
     ContentType m_contentType;
     PAL::TextEncoding m_encoding;

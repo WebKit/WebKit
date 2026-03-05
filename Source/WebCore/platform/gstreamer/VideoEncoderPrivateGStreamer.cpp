@@ -145,7 +145,9 @@ enum EncoderId {
     Vp9,
     Av1,
     VaapiAv1,
-    SvtAv1
+    SvtAv1,
+    QualcommH264,
+    QualcommH265,
 };
 
 class Encoders {
@@ -188,16 +190,16 @@ public:
         }
 
         singleton().emplace(std::make_pair(id, EncoderDefinition {
-            .caps = WTFMove(caps),
+            .caps = WTF::move(caps),
             .name = name,
             .parserName = parserName,
-            .factory = WTFMove(encoderFactory),
-            .encodedFormat = WTFMove(encodedFormat),
-            .setBitrate = WTFMove(setBitrate),
-            .setupEncoder = WTFMove(setupEncoder),
-            .setBitrateMode = WTFMove(setBitrateMode),
-            .setLatencyMode = WTFMove(setLatency),
-            .setBitRateAllocation = WTFMove(setBitRateAllocation),
+            .factory = WTF::move(encoderFactory),
+            .encodedFormat = WTF::move(encodedFormat),
+            .setBitrate = WTF::move(setBitrate),
+            .setupEncoder = WTF::move(setupEncoder),
+            .setBitrateMode = WTF::move(setBitrateMode),
+            .setLatencyMode = WTF::move(setLatency),
+            .setBitRateAllocation = WTF::move(setBitRateAllocation),
             .bitratePropertyName = bitratePropertyName,
             .keyframeIntervalPropertyName = keyframeIntervalPropertyName,
         }));
@@ -310,7 +312,7 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
     auto priv = self->priv;
     auto srcPad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT_CAST(self), "src"));
 
-    priv->encodedCaps = WTFMove(encodedCaps);
+    priv->encodedCaps = WTF::move(encodedCaps);
 
     auto encoderDefinition = Encoders::definition(encoderId);
     ASSERT(encoderDefinition);
@@ -332,12 +334,12 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
     GRefPtr<GstElement> videoFlip;
     if (priv->enableVideoFlip) {
         videoFlip = makeGStreamerElement("autovideoflip"_s);
-        if (!videoFlip)
-            return false;
-
-        gst_util_set_object_arg(G_OBJECT(videoFlip.get()), "video-direction", "auto");
-        gst_bin_add(bin, videoFlip.get());
-        gst_element_link(videoFlip.get(), videoConvert.get());
+        if (videoFlip) {
+            gst_util_set_object_arg(G_OBJECT(videoFlip.get()), "video-direction", "auto");
+            gst_bin_add(bin, videoFlip.get());
+            gst_element_link(videoFlip.get(), videoConvert.get());
+        } else
+            GST_WARNING_OBJECT(self, "The autovideoflip element is missing, video rotation handling cannot be enabled.");
     }
 
     const auto& element = videoFlip ? videoFlip : videoConvert;
@@ -409,7 +411,7 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
     }
 
     gst_bin_sync_children_states(bin);
-    GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(bin, GST_DEBUG_GRAPH_SHOW_ALL, "configured-encoder");
+    dumpBinToDotFile(bin, "configured-encoder"_s);
     videoEncoderSetBitrate(self, priv->bitrate);
     return true;
 }
@@ -465,13 +467,13 @@ bool videoEncoderSetCodec(WebKitVideoEncoder* self, const CodecConfig& config, c
         return false;
     }
 
-    return videoEncoderSetEncoder(self, encoderId, WTFMove(inputCaps), WTFMove(outputCaps), config.useAnnexB);
+    return videoEncoderSetEncoder(self, encoderId, WTF::move(inputCaps), WTF::move(outputCaps), config.useAnnexB);
 }
 
 void videoEncoderSetBitRateAllocation(WebKitVideoEncoder* self, RefPtr<WebKitVideoEncoderBitRateAllocation>&& allocation)
 {
     auto* priv = self->priv;
-    priv->bitRateAllocation = WTFMove(allocation);
+    priv->bitRateAllocation = WTF::move(allocation);
 
     if (priv->encoderId != None) {
         auto encoder = Encoders::definition(priv->encoderId);
@@ -1024,6 +1026,37 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 break;
             };
         });
+
+    Encoders::registerEncoder(QualcommH264, "qtic2venc"_s, "h264parse"_s, "video/x-h264"_s, "video/x-h264,alignment=au,stream-format=avc"_s, [](WebKitVideoEncoder* self) {
+        g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
+    }, "target-bitrate"_s, setBitrateBitPerSec, "min-force-key-unit-interval"_s, [](GstElement* element, BitrateMode bitrateMode) {
+        ASCIILiteral controlRate;
+        switch (bitrateMode) {
+        case CONSTANT_BITRATE_MODE:
+            controlRate = "constant"_s;
+            break;
+        case VARIABLE_BITRATE_MODE:
+            // Variable bitrate, constant framerate.
+            controlRate = "VBR-CFR"_s;
+            break;
+        };
+        gst_util_set_object_arg(G_OBJECT(element), "control-rate", controlRate.characters());
+    }, [](GstElement*, LatencyMode) { });
+
+    Encoders::registerEncoder(QualcommH265, "qtic2venc"_s, "h265parse"_s, "video/x-h265"_s, "video/x-h265,alignment=au,stream-format=hvc1"_s, [](WebKitVideoEncoder*) {
+    }, "target-bitrate"_s, setBitrateBitPerSec, "min-force-key-unit-interval"_s, [](GstElement* element, BitrateMode bitrateMode) {
+        ASCIILiteral controlRate;
+        switch (bitrateMode) {
+        case CONSTANT_BITRATE_MODE:
+            controlRate = "constant"_s;
+            break;
+        case VARIABLE_BITRATE_MODE:
+            // Variable bitrate, constant framerate.
+            controlRate = "VBR-CFR"_s;
+            break;
+        };
+        gst_util_set_object_arg(G_OBJECT(element), "control-rate", controlRate.characters());
+    }, [](GstElement*, LatencyMode) { });
 
     auto srcPadTemplateCaps = createSrcPadTemplateCaps();
     gst_element_class_add_pad_template(elementClass, gst_pad_template_new("src", GST_PAD_SRC, GST_PAD_ALWAYS, srcPadTemplateCaps.get()));

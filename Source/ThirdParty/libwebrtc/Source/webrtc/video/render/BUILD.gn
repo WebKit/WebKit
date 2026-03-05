@@ -19,6 +19,7 @@ rtc_library("incoming_video_stream") {
   deps = [
     ":video_render_frames",
     "../../api:sequence_checker",
+    "../../api/environment",
     "../../api/task_queue",
     "../../api/units:time_delta",
     "../../api/video:video_frame",
@@ -38,10 +39,10 @@ rtc_library("video_render_frames") {
   ]
 
   deps = [
+    "../../api/environment",
     "../../api/video:video_frame",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
-    "../../rtc_base:timeutils",
     "../../system_wrappers:metrics",
   ]
 }

@@ -29,6 +29,20 @@ extern "C" {
 
 typedef struct bn_blinding_st BN_BLINDING;
 
+// TODO(davidben): This is inside BCM because |RSA| is inside BCM, but BCM never
+// uses this. Split the RSA type in two.
+enum rsa_pss_params_t {
+  // No parameters.
+  // TODO(davidben): Remove this and use std::optional where appropriate.
+  rsa_pss_none = 0,
+  // RSA-PSS using SHA-256, MGF1 with SHA-256, salt length 32.
+  rsa_pss_sha256,
+  // RSA-PSS using SHA-384, MGF1 with SHA-384, salt length 48.
+  rsa_pss_sha384,
+  // RSA-PSS using SHA-512, MGF1 with SHA-512, salt length 64.
+  rsa_pss_sha512,
+};
+
 struct rsa_st {
   RSA_METHOD *meth;
 
@@ -74,6 +88,10 @@ struct rsa_st {
   BN_BLINDING **blindings;
   unsigned char *blindings_inuse;
   uint64_t blinding_fork_generation;
+
+  // pss_params is the RSA-PSS parameters associated with the key. This is not
+  // used by the low-level RSA implementation, just the EVP layer.
+  rsa_pss_params_t pss_params;
 
   // private_key_frozen is one if the key has been used for a private key
   // operation and may no longer be mutated.

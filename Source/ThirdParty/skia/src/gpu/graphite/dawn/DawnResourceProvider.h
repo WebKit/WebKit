@@ -28,7 +28,7 @@ public:
     template <size_t NumEntries>
     using BindGroupKey = FixedSizeKey<2 * NumEntries>;
 
-    static constexpr size_t kNumUniformEntries = 4;
+    static constexpr size_t kNumUniformEntries = 3;
 
     class BlitWithDrawEncoder {
     public:
@@ -58,7 +58,7 @@ public:
                                                               const TextureInfo& msaaInfo);
 
     BlitWithDrawEncoder findOrCreateBlitWithDrawEncoder(const RenderPassDesc& renderPassDesc,
-                                                        int srcSampleCount);
+                                                        SampleCount srcSampleCount);
 
     sk_sp<DawnBuffer> findOrCreateDawnBuffer(size_t size,
                                              BufferType type,

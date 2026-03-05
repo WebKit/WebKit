@@ -45,8 +45,6 @@ struct CanvasConfiguration {
     CanvasToneMappingMode toneMappingMode { CanvasToneMappingMode::Standard };
     CanvasAlphaMode compositingAlphaMode { CanvasAlphaMode::Opaque };
     bool reportValidationErrors { true };
-
-    Ref<Device> protectedDevice() const { return device.get(); }
 };
 
 } // namespace WebCore::WebGPU

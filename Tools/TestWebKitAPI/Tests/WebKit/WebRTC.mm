@@ -40,7 +40,7 @@
 Function<void(WKScriptMessage*)> _messageHandler;
 }
 - (void)setMessageHandler:(Function<void(WKScriptMessage*)>&&)messageHandler {
-    _messageHandler = WTFMove(messageHandler);
+    _messageHandler = WTF::move(messageHandler);
 }
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
@@ -113,6 +113,16 @@ TEST(WebKit2, RTCDataChannelPostMessage)
     "function transferDataChannel() {"
     "   doTransferDataChannelTest();"
     "}"
+    ""
+    "async function closePCTest(pc) {"
+    "    const promise = new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));"
+    "    pc.close();"
+    "    window.webkit.messageHandlers.webrtc.postMessage(await promise);"
+    "}"
+    ""
+    "function closePC1() {"
+    "    closePCTest(pc1);"
+    "}"
     "</script>"_s;
 
     static constexpr auto js = "self.onmessage = (event) => { "
@@ -158,6 +168,7 @@ TEST(WebKit2, RTCDataChannelPostMessage)
         EXPECT_WK_STREQ(@"READY", [message body]);
         isReady = true;
     }];
+
     isReady = false;
     [webView2 loadRequest:request];
     TestWebKitAPI::Util::run(&isReady);
@@ -175,6 +186,19 @@ TEST(WebKit2, RTCDataChannelPostMessage)
     // Transfer is probably out-of-process.
     isReady = false;
     [webView2 stringByEvaluatingJavaScript:@"transferDataChannel()"];
+    TestWebKitAPI::Util::run(&isReady);
+
+    [messageHandler setMessageHandler:[](WKScriptMessage *message) {
+        EXPECT_WK_STREQ(@"close event", [message body]);
+        isReady = true;
+    }];
+
+    isReady = false;
+    [webView1 stringByEvaluatingJavaScript:@"closePC1()"];
+    TestWebKitAPI::Util::run(&isReady);
+
+    isReady = false;
+    [webView2 stringByEvaluatingJavaScript:@"closePC1()"];
     TestWebKitAPI::Util::run(&isReady);
 }
 

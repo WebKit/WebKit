@@ -42,7 +42,7 @@ using SMILEventSender = EventSender<SVGSMILElement, WeakPtrImplWithEventTargetDa
 
 // This class implements SMIL interval timing model as needed for SVG animation.
 class SVGSMILElement : public SVGElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGSMILElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGSMILElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSMILElement);
 public:
     SVGSMILElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
@@ -57,12 +57,10 @@ public:
     virtual bool hasValidAttributeName() const;
     virtual void animationAttributeChanged() = 0;
 
-    SMILTimeContainer* timeContainer() { return m_timeContainer.get(); }
-    RefPtr<SMILTimeContainer> protectedTimeContainer() const;
+    SMILTimeContainer* timeContainer() { return m_timeContainer; }
 
-    SVGElement* targetElement() const { return m_targetElement.get(); }
-    RefPtr<SVGElement> protectedTargetElement() const { return m_targetElement.get(); }
-    const QualifiedName& attributeName() const { return m_attributeName; }
+    SVGElement* targetElement() const { return m_targetElement; }
+    const QualifiedName& attributeName() const LIFETIME_BOUND { return m_attributeName; }
 
     void beginByLinkActivation();
 
@@ -86,7 +84,7 @@ public:
 
     void seekToIntervalCorrespondingToTime(SMILTime elapsed);
     bool progress(SMILTime elapsed, SVGSMILElement& firstAnimation, bool seekToTime);
-    SMILTime nextProgressTime() const;
+    SMILTime NODELETE nextProgressTime() const;
 
     void reset();
 
@@ -94,7 +92,7 @@ public:
     static SMILTime parseOffsetValue(StringView);
 
     bool isContributing(SMILTime elapsed) const;
-    bool isFrozen() const;
+    bool NODELETE isFrozen() const;
 
     unsigned documentOrderIndex() const { return m_documentOrderIndex; }
     void setDocumentOrderIndex(unsigned index) { m_documentOrderIndex = index; }

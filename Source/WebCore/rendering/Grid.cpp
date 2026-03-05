@@ -155,13 +155,13 @@ unsigned Grid::autoRepeatTracks(Style::GridTrackSizingDirection direction) const
 void Grid::setAutoRepeatEmptyColumns(std::unique_ptr<OrderedTrackIndexSet> autoRepeatEmptyColumns)
 {
     ASSERT(!autoRepeatEmptyColumns || (autoRepeatEmptyColumns->size() <= m_autoRepeatColumns));
-    m_autoRepeatEmptyColumns = WTFMove(autoRepeatEmptyColumns);
+    m_autoRepeatEmptyColumns = WTF::move(autoRepeatEmptyColumns);
 }
 
 void Grid::setAutoRepeatEmptyRows(std::unique_ptr<OrderedTrackIndexSet> autoRepeatEmptyRows)
 {
     ASSERT(!autoRepeatEmptyRows || (autoRepeatEmptyRows->size() <= m_autoRepeatRows));
-    m_autoRepeatEmptyRows = WTFMove(autoRepeatEmptyRows);
+    m_autoRepeatEmptyRows = WTF::move(autoRepeatEmptyRows);
 }
 
 bool Grid::hasAutoRepeatEmptyTracks(Style::GridTrackSizingDirection direction) const

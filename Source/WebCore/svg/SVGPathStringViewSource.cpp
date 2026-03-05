@@ -50,7 +50,7 @@ bool SVGPathStringViewSource::moveToNextToken()
     return skipOptionalSVGSpaces(m_buffer16);
 }
 
-template <typename CharacterType> static std::optional<SVGPathSegType> nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
+template <typename CharacterType> static std::optional<SVGPathSegType> NODELETE nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
 {
     // Check for remaining coordinates in the current command.
     if ((*buffer == '+' || *buffer == '-' || *buffer == '.' || isASCIIDigit(*buffer))
@@ -144,7 +144,7 @@ std::optional<SVGPathSource::MoveToSegment> SVGPathStringViewSource::parseMoveTo
             return std::nullopt;
         
         MoveToSegment segment;
-        segment.targetPoint = WTFMove(*targetPoint);
+        segment.targetPoint = WTF::move(*targetPoint);
         return segment;
     });
 }
@@ -157,7 +157,7 @@ std::optional<SVGPathSource::LineToSegment> SVGPathStringViewSource::parseLineTo
             return std::nullopt;
         
         LineToSegment segment;
-        segment.targetPoint = WTFMove(*targetPoint);
+        segment.targetPoint = WTF::move(*targetPoint);
         return segment;
     });
 }

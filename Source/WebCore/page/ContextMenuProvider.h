@@ -41,7 +41,7 @@ namespace WebCore {
 class ContextMenu;
 class ContextMenuContext;
 
-class ContextMenuProvider : public RefCounted<ContextMenuProvider> {
+class ContextMenuProvider : public RefCountedAndCanMakeWeakPtr<ContextMenuProvider> {
 public:
     virtual ~ContextMenuProvider() { };
 

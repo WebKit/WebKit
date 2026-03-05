@@ -95,7 +95,7 @@ class EGLSyncMtl final : public EGLSyncImpl
 
   private:
     angle::ObjCPtr<id<MTLSharedEvent>> mSharedEvent;
-
+    EGLenum mType = EGL_NONE;
     std::unique_ptr<mtl::SyncImpl> mSync;
 };
 

@@ -86,6 +86,7 @@ private:
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     bool isSpatial() const;
     bool isMaybePanoramic() const;
+    bool isPanorama() const;
     bool shouldUseQuickLookForFullscreen() const;
 #endif
 

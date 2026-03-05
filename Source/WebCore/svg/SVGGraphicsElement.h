@@ -36,7 +36,7 @@ class SVGRect;
 class SVGMatrix;
 
 class SVGGraphicsElement : public SVGElement, public SVGTransformable, public SVGTests {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGGraphicsElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGGraphicsElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGGraphicsElement);
 public:
     virtual ~SVGGraphicsElement();
@@ -46,9 +46,6 @@ public:
 
     Ref<SVGMatrix> getScreenCTMForBindings();
     AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) override;
-
-    SVGElement* nearestViewportElement() const override;
-    SVGElement* farthestViewportElement() const override;
 
     AffineTransform localCoordinateSpaceTransform(CTMScope mode) const override { return SVGTransformable::localCoordinateSpaceTransform(mode); }
     AffineTransform animatedLocalTransform() const override;
@@ -71,8 +68,7 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGraphicsElement, SVGElement, SVGTests>;
 
-    const SVGTransformList& transform() const { return m_transform->currentValue(); }
-    Ref<const SVGTransformList> protectedTransform() const;
+    const SVGTransformList& transform() const LIFETIME_BOUND { return m_transform->currentValue(); }
     SVGAnimatedTransformList& transformAnimated() { return m_transform; }
 
 protected:
@@ -93,7 +89,7 @@ private:
     // Used to isolate blend operations caused by masking.
     bool m_shouldIsolateBlending { false };
 
-    Ref<SVGAnimatedTransformList> m_transform;
+    const Ref<SVGAnimatedTransformList> m_transform;
 };
 
 } // namespace WebCore

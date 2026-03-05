@@ -61,10 +61,10 @@ void SharedWorkerContextManager::stopSharedWorker(SharedWorkerIdentifier sharedW
     // FIXME: We should be able to deal with the thread being unresponsive here.
 
     Ref thread = worker->thread();
-    thread->stop([worker = WTFMove(worker)]() mutable {
+    thread->stop([worker = WTF::move(worker)]() mutable {
         // Spin the runloop before releasing the shared worker thread proxy, as there would otherwise be
         // a race towards its destruction.
-        callOnMainThread([worker = WTFMove(worker)] { });
+        callOnMainThread([worker = WTF::move(worker)] { });
     });
 
     if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
@@ -96,7 +96,7 @@ void SharedWorkerContextManager::stopAllSharedWorkers()
 void SharedWorkerContextManager::setConnection(RefPtr<Connection>&& connection)
 {
     ASSERT(!m_connection || m_connection->isClosed());
-    m_connection = WTFMove(connection);
+    m_connection = WTF::move(connection);
 }
 
 auto SharedWorkerContextManager::connection() const -> Connection*
@@ -115,7 +115,7 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
     proxy->thread().start([](const String& /*exceptionMessage*/) { });
 }
 
-void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, String&& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)
+void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainThread());
     RefPtr proxy = SharedWorkerContextManager::singleton().sharedWorker(sharedWorkerIdentifier);
@@ -123,9 +123,9 @@ void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdenti
     if (!proxy)
         return completionHandler(false);
 
-    proxy->thread().runLoop().postTask([transferredPort = WTFMove(transferredPort), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& scriptExecutionContext) mutable {
+    proxy->thread().runLoop().postTask([transferredPort = WTF::move(transferredPort), sourceOrigin = sourceOrigin.isolatedCopy()] (auto& scriptExecutionContext) mutable {
         ASSERT(!isMainThread());
-        downcast<SharedWorkerGlobalScope>(scriptExecutionContext).postConnectEvent(WTFMove(transferredPort), WTFMove(sourceOrigin));
+        downcast<SharedWorkerGlobalScope>(scriptExecutionContext).postConnectEvent(WTF::move(transferredPort), sourceOrigin);
     });
     completionHandler(true);
 }

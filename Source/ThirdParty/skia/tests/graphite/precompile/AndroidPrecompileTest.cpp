@@ -8,23 +8,11 @@
 #include "tests/Test.h"
 
 #if defined(SK_GRAPHITE)
-#include "include/gpu/graphite/Context.h"
 #include "include/gpu/graphite/PrecompileContext.h"
-#include "src/gpu/graphite/PrecompileContextPriv.h"
-#include "src/gpu/graphite/TextureInfoPriv.h"
-#include "src/sksl/SkSLUtil.h"
-#include "tests/graphite/precompile/AndroidRuntimeEffectManager.h"
 #include "tests/graphite/precompile/PrecompileTestUtils.h"
 
 using namespace skgpu::graphite;
 using namespace PrecompileTestUtils;
-
-typedef void (*VisitSettingsFunc)(
-            skgpu::graphite::PrecompileContext*,
-            RuntimeEffectManager& effectManager,
-            const std::function<void(skgpu::graphite::PrecompileContext*,
-                                     const PrecompileSettings&,
-                                     int index)>& func);
 
 void VisitAndroidPrecompileSettings_Old(
             skgpu::graphite::PrecompileContext*,
@@ -59,13 +47,13 @@ static const PipelineLabel kOldLabels[] = {
                 "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] SrcOver" },
 /*   2 */ { -1, "RP((RGBA16F+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
+                "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver" },
 /*   ? */ { -1, "RP((RGBA16F+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ RE_MouriMap_TonemapEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
 /*   4 */ { -1, "RP((RGBA16F+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ SolidColor ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
+                "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ SolidColor ] SrcOver" },
 /*   5 */ { -1, "RP((RGBA16F+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RE_MouriMap_BlurEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ] Src" },
@@ -86,13 +74,13 @@ static const PipelineLabel kOldLabels[] = {
                 "BlendCompose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] AlphaOnlyPaintColor SrcIn ] SrcOver" },
 /*  11 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "BlendCompose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] AlphaOnlyPaintColor SrcIn ] SrcOver" },
+                "BlendCompose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] AlphaOnlyPaintColor SrcIn ] SrcOver" },
 /*  12 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
                 "Compose [ BlendCompose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] AlphaOnlyPaintColor SrcIn ] MatrixColorFilter ] SrcOver" },
 /*  13 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "Compose [ BlendCompose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] AlphaOnlyPaintColor SrcIn ] MatrixColorFilter ] SrcOver" },
+                "Compose [ BlendCompose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] AlphaOnlyPaintColor SrcIn ] MatrixColorFilter ] SrcOver" },
 /*  14 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
                 "Compose [ Compose [ BlendCompose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] AlphaOnlyPaintColor SrcIn ] MatrixColorFilter ] Dither ] SrcOver" },
@@ -107,16 +95,16 @@ static const PipelineLabel kOldLabels[] = {
                 "Compose [ Compose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] MatrixColorFilter ] Dither ] SrcOver" },
 /*  18 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "Compose [ Compose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] MatrixColorFilter ] Dither ] SrcOver" },
+                "Compose [ Compose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] MatrixColorFilter ] Dither ] SrcOver" },
 /*  19 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
                 "Compose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] MatrixColorFilter ] SrcOver" },
 /*  20 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "Compose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] MatrixColorFilter ] SrcOver" },
+                "Compose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] MatrixColorFilter ] SrcOver" },
 /*  21 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "Compose [ RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] Dither ] SrcOver" },
+                "Compose [ RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] ] Dither ] SrcOver" },
 /*  22 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
                 "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] SrcOver" },
@@ -131,7 +119,7 @@ static const PipelineLabel kOldLabels[] = {
                 "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x238 709+narrow mid mid nearest F rgba cf1lf0) ] ColorSpaceTransformPremul ] ] SrcOver" },
 /*  26 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
+                "RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver" },
 /*  27 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
                 "SolidColor SrcOver" },
@@ -170,10 +158,10 @@ static const PipelineLabel kOldLabels[] = {
                 "Compose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] MatrixColorFilter ] SrcOver" },
 /*  39 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "Compose [ RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] Dither ] SrcOver" },
+                "Compose [ RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] ] Dither ] SrcOver" },
 /*  40 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "Compose [ RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] Dither ] SrcOver AnalyticClip" },
+                "Compose [ RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] ] Dither ] SrcOver AnalyticClip" },
 /*  41 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] Src" },
@@ -204,21 +192,24 @@ static const PipelineLabel kOldLabels[] = {
 /*   X */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RE_GainmapEffect [ RE_MouriMap_TonemapEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransform ] ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] ColorSpaceTransformPremul ColorSpaceTransformPremul ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransform ] ] ColorSpaceTransformPremul ColorSpaceTransformPremul ] Src" },
-/*  51 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+// Obsolete - Android will no longer generate
+/*   X */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RE_KawaseBlurDualFilter_HighSampleBlurEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ] Src" },
-/*  52 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+// Obsolete - Android will no longer generate
+/*   X */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RE_KawaseBlurDualFilter_LowSampleBlurEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ] Src" },
-/*  53 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+// Obsolete - Android will no longer generate
+/*   X */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RE_KawaseBlurDualFilter_LowSampleBlurEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ] SrcOver" },
 /*  54 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ SolidColor ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] Src" },
+                "RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ SolidColor ] Src" },
 /*  55 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "Compose [ RE_MouriMap_TonemapEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] ] ColorSpaceTransformSRGB ] Src" },
+                "Compose [ RE_MouriMap_TonemapEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ] ColorSpaceTransformSRGB ] Src" },
 /*  56 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "SolidColor Src" },
@@ -239,13 +230,13 @@ static const PipelineLabel kOldLabels[] = {
                 "BlendCompose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] AlphaOnlyPaintColor SrcIn ] SrcOver" },
 /*  62 */ { -1, "RP((RGBA8+D24_S8 x4->1).rgba w/ msaa load) + "
                 "AnalyticRRectRenderStep + "
-                "BlendCompose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] AlphaOnlyPaintColor SrcIn ] SrcOver" },
+                "BlendCompose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] AlphaOnlyPaintColor SrcIn ] SrcOver" },
 /*  63 */ { -1, "RP((RGBA8+D24_S8 x4->1).rgba w/ msaa load) + "
                 "AnalyticRRectRenderStep + "
                 "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] SrcOver" },
 /*  64 */ { -1, "RP((RGBA8+D24_S8 x4->1).rgba w/ msaa load) + "
                 "AnalyticRRectRenderStep + "
-                "RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
+                "RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver" },
 /*  65 */ { -1, "RP((RGBA8+D24_S8 x4->1).rgba w/ msaa load) + "
                 "CoverBoundsRenderStep[InverseCover] + "
                 "(empty)" },
@@ -290,7 +281,7 @@ static const PipelineLabel kOldLabels[] = {
                 "(empty)" },
 /*  79 */ { -1, "RP((RGBA8+D24_S8 x4->1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "Compose [ RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] Dither ] SrcOver" },
+                "Compose [ RE_LinearEffect_BT2020_ITU_PQ__BT2020__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] ] Dither ] SrcOver" },
 /*  80 */ { -1, "RP((RGBA8+D24_S8 x4->1).rgba) + "
                 "MiddleOutFanRenderStep[EvenOdd] + "
                 "(empty)" },
@@ -370,7 +361,7 @@ static const PipelineLabel kOldLabels[] = {
                 "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ RE_MouriMap_Tonemap [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x247 2020+narrow cos cos nearest F rgba cf1lf0) ] ColorSpaceTransform ] ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
 /* 103 */ { -1, "RP((RGBA16F+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "RE_LinearEffect_V0_SRGB__V0_SRGB__true__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
+                "RE_LinearEffect_V0_SRGB__V0_SRGB__true__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver" },
 /* 104 */ { -1, "RP((RGBA16F+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RE_MouriMap_CrossTalkAndChunk16x16Effect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] ] Src" },
@@ -385,11 +376,10 @@ static const PipelineLabel kOldLabels[] = {
                 "BlendCompose [ SolidColor LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] Plus ] SrcOver" },
 /* 108 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "Compose [ Compose [ RE_LinearEffect_0x188a0000__V0_SRGB__true__0x9010000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] MatrixColorFilter ] Dither ] SrcOver" },
+                "Compose [ Compose [ RE_LinearEffect_0x188a0000__V0_SRGB__true__0x9010000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] MatrixColorFilter ] Dither ] SrcOver" },
 /* 109 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
                 "Compose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] MatrixColorFilter ] SrcOver" },
-
 /* 110 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
                 "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] SrcOver AnalyticClip" },
@@ -401,10 +391,10 @@ static const PipelineLabel kOldLabels[] = {
                 "RE_EdgeExtensionEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformPremul ] ] ] SrcOver" },
 /* 113 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "RE_LinearEffect_0x188a0000__V0_SRGB__true__0x9010000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
+                "RE_LinearEffect_0x188a0000__V0_SRGB__true__0x9010000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver" },
 /* 114 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
-                "RE_LinearEffect_V0_SRGB__V0_SRGB__true__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
+                "RE_LinearEffect_V0_SRGB__V0_SRGB__true__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver" },
 /*     */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "AnalyticRRectRenderStep + "
                 "RE_LinearEffect_V0_SRGB__V0_SRGB__true__UNKNOWN__Shader [ RE_MouriMap_Tonemap [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
@@ -420,10 +410,9 @@ static const PipelineLabel kOldLabels[] = {
 /* 119 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "BlendCompose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x238 709+narrow mid mid nearest F rgba cf1lf0) ] ColorSpaceTransformPremul ] ] AlphaOnlyPaintColor SrcIn ] SrcOver" },
-
 /* 120 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "BlendCompose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] AlphaOnlyPaintColor SrcIn ] SrcOver AnalyticClip" },
+                "BlendCompose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] AlphaOnlyPaintColor SrcIn ] SrcOver AnalyticClip" },
 /*     */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "BlendCompose [ RuntimeEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ] AlphaOnlyPaintColor SrcIn ] SrcOver" },
@@ -455,13 +444,13 @@ static const PipelineLabel kOldLabels[] = {
 /*     */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "Compose [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(3: gHMAAPAAAAAAAAAA) ] ColorSpaceTransformPremul ] ] MatrixColorFilter ] SrcOver" },
-/* 131  */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+/* 131 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "Compose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] MatrixColorFilter ] SrcOver AnalyticClip" },
-/*      */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+                "Compose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] MatrixColorFilter ] SrcOver AnalyticClip" },
+/*     */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(3: gHIAAPAAAAAAAAAA) ] ColorSpaceTransformPremul ] ] SrcOver" },
-/*      */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+/*     */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(3: gHoAAO4AAAAAAAAA) ] ColorSpaceTransformPremul ] ] SrcOver" },
 /* 134 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
@@ -481,14 +470,13 @@ static const PipelineLabel kOldLabels[] = {
                 "RE_EdgeExtensionEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ] SrcOver AnalyticClip" },
 /* 139 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
-
+                "RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver" },
 /* 140 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver AnalyticClip" },
+                "RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver AnalyticClip" },
 /* 141 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
-                "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ColorSpaceTransformSRGB ] SrcOver" },
+                "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] ] SrcOver" },
 /*     */ { -1, "RP((RGBA8+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RuntimeEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x238 709+narrow mid mid nearest F rgba cf1lf0) ] Passthrough ] ] ] SrcOver" },
@@ -528,6 +516,18 @@ static const PipelineLabel kOldLabels[] = {
 /*     */ { -1, "RP((RGBA16F+D16 x1).rgba) + "
                 "CoverBoundsRenderStep[NonAAFill] + "
                 "RE_LinearEffect_UNKNOWN__SRGB__false__UNKNOWN__Shader [ RE_MouriMap_TonemapEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] ColorSpaceTransformSRGB ] ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ColorSpaceTransform ColorSpaceTransform ] ColorSpaceTransform ColorSpaceTransform ] SrcOver" },
+
+/* 154 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+                "CoverBoundsRenderStep[NonAAFill] + "
+                "Compose [ Compose [ RE_LinearEffect_0x188a0000__DISPLAY_P3__false__0x90a0000__Shader [ Compose [ RE_LutEffect [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x54 2020+full mid mid nearest F rgba cf0lf1) ] ColorSpaceTransform ] ] LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(0) ] Passthrough ] ] ] ColorSpaceTransformSRGB ] ] ColorSpaceTransformSRGB ] Dither ] SrcOver" },
+
+/* 155 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+                "CoverBoundsRenderStep[NonAAFill] + "
+                "LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x769 709+full mid mid nearest F rgba cf0lf1) ] ColorSpaceTransformPremul ] ] SrcOver" },
+
+/* 156 */ { -1, "RP((RGBA8+D16 x1).rgba) + "
+                "CoverBoundsRenderStep[NonAAFill] + "
+                "Compose [ Compose [ RE_LinearEffect_BT2020_HLG__UNKNOWN__false__UNKNOWN__Shader [ LocalMatrix [ Compose [ CoordNormalize [ HardwareImage(x54 2020+full mid mid nearest F rgba cf0lf1) ] ColorSpaceTransform ] ] ] ColorSpaceTransformSRGB ] Dither ] SrcOver" },
 
 // Synthetic placeholders for non-convex draw helpers. These labels are generated
 // for the kNonSimpleShape DrawTypeFlags but don't appear in the naturally
@@ -1567,130 +1567,11 @@ static const PipelineLabel kNewLabels[] = {
         "Compose [ PrimitiveColor Compose [ GaussianColorFilter BlendCompose [ SolidColor Passthrough Modulate ] ] ] SrcOver" },
 };
 
-bool skip(const char* str) {
-#if !defined(SK_VULKAN)
-    if (strstr(str, "HardwareImage(3:")) {
-        return true;
-    }
-#endif // SK_VULKAN
-    if (strstr(str, "RE_GainmapEffect")) {
-        return true;
-    }
-    return false;
-}
-
-// Find any duplicate Pipeline labels
-[[maybe_unused]] void find_duplicates(SkSpan<const PipelineLabel> labels) {
-    for (size_t i = 0; i < labels.size(); ++i) {
-        for (size_t j = i+1; j < labels.size(); ++j) {
-            if (!strcmp(labels[j].fString, labels[i].fString)) {
-                SkDebugf("%zu is a duplicate of %zu\n", i, j);
-            }
-        }
-    }
-}
-
 // The pipeline strings were created with Android Vulkan but we're going to run the test
 // on Dawn Metal and all the Native Vulkan configs
 bool is_acceptable_context_type(skgpu::ContextType type) {
     return type == skgpu::ContextType::kDawn_Metal ||
            type == skgpu::ContextType::kVulkan;
-}
-
-void test(skiatest::Reporter* reporter,
-          skgpu::graphite::Context* context,
-          SkSpan<const PipelineLabel> labels,
-          VisitSettingsFunc visitSettings) {
-    using namespace skgpu::graphite;
-
-    //find_duplicates(labels);
-
-#if defined(SK_VULKAN)
-    // Use this call to map back from a HardwareImage sub-string to a VulkanYcbcrConversionInfo
-    //Base642YCbCr("kAwAEPcAAAAAAAAA");
-#endif
-
-    std::unique_ptr<PrecompileContext> precompileContext = context->makePrecompileContext();
-    const skgpu::graphite::Caps* caps = precompileContext->priv().caps();
-
-    TextureInfo textureInfo = caps->getDefaultSampledTextureInfo(kBGRA_8888_SkColorType,
-                                                                 skgpu::Mipmapped::kNo,
-                                                                 skgpu::Protected::kNo,
-                                                                 skgpu::Renderable::kYes);
-
-    const bool msaaSupported =
-            caps->msaaRenderToSingleSampledSupport() ||
-            caps->isSampleCountSupported(TextureInfoPriv::ViewFormat(textureInfo),
-                                         caps->defaultMSAASamplesCount());
-
-    if (!msaaSupported) {
-        // The following pipelines rely on having MSAA
-        return;
-    }
-
-#ifdef SK_ENABLE_VELLO_SHADERS
-    if (caps->computeSupport()) {
-        // The following pipelines rely on not utilizing Vello
-        return;
-    }
-#endif
-
-    PipelineLabelInfoCollector collector(labels, skip);
-    RuntimeEffectManager effectManager;
-
-    (*visitSettings)(
-         precompileContext.get(),
-         effectManager,
-         [&](skgpu::graphite::PrecompileContext* precompileContext,
-             const PrecompileSettings& precompileCase,
-             int index) {
-            const skgpu::graphite::Caps* caps = precompileContext->priv().caps();
-
-            static const int kChosenCase = -1; // only test this entry in 'kPrecompileCases'
-            if (kChosenCase != -1 && kChosenCase != index) {
-                return;
-            }
-
-            if (caps->getDepthStencilFormat(DepthStencilFlags::kDepth) != TextureFormat::kD16) {
-                // The Pipeline labels in 'kOldLabels' have "D16" for this case (i.e., "D32F" is a
-                // fine Depth buffer type but won't match the strings).
-                bool skip = false;
-                for (const RenderPassProperties& rpp : precompileCase.fRenderPassProps) {
-                    if (rpp.fDSFlags == DepthStencilFlags::kDepth) {
-                        skip = true;
-                    }
-                }
-
-                if (skip) {
-                    return;
-                }
-            }
-
-            SkSpan<const SkBlendMode> blendModes = precompileCase.fPaintOptions.getBlendModes();
-            bool skip = false;
-            for (SkBlendMode bm : blendModes) {
-                if (bm == SkBlendMode::kSrc && !caps->shaderCaps()->fDualSourceBlendingSupport) {
-                    // The Pipeline labels were gathered on a device w/ dual source blending.
-                    // kSrc blend mode w/o dual source blending can result in a dst read and, thus,
-                    // break the string matching.
-                    skip = true;
-                    break;
-                }
-            }
-
-            if (skip) {
-                return;
-            }
-
-            RunTest(precompileContext, reporter, precompileCase, index, labels, &collector);
-        });
-
-#if defined(FINAL_REPORT)
-    // This block prints out a final report. This includes a list of the cases in 'labels' that
-    // were not covered by the PaintOptions.
-
-    collector.finalReport();
-#endif
 }
 
 } // anonymous namespace
@@ -1706,12 +1587,12 @@ void test(skiatest::Reporter* reporter,
 // Also of note, the "skip" method documents the Pipelines we're intentionally skipping and why.
 DEF_GRAPHITE_TEST_FOR_CONTEXTS(AndroidPrecompileTest_Old, is_acceptable_context_type,
                                reporter, context, /* testContext */, CtsEnforcement::kNever) {
-    test(reporter, context, kOldLabels, VisitAndroidPrecompileSettings_Old);
+    PrecompileTest(reporter, context, kOldLabels, VisitAndroidPrecompileSettings_Old);
 }
 
 DEF_GRAPHITE_TEST_FOR_CONTEXTS(AndroidPrecompileTest_Protected, is_acceptable_context_type,
                                reporter, context, /* testContext */, CtsEnforcement::kNever) {
-    test(reporter, context, kNewLabels, VisitAndroidPrecompileSettings_Protected);
+    PrecompileTest(reporter, context, kNewLabels, VisitAndroidPrecompileSettings_Protected);
 }
 
 #endif // SK_GRAPHITE

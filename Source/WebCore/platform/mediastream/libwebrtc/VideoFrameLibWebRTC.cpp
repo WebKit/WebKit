@@ -29,9 +29,6 @@
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
 
 #include "LibWebRTCRefWrappers.h"
-#include "NativeImage.h"
-#include "PixelBufferConformerCV.h"
-
 #include "CoreVideoSoftLink.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 
@@ -51,15 +48,15 @@ RefPtr<VideoFrameLibWebRTC> VideoFrameLibWebRTC::create(MediaTime presentationTi
         && bufferType != webrtc::VideoFrameBuffer::Type::kI210)
         return nullptr;
 
-    auto finalColorSpace = WTFMove(colorSpace).value_or(defaultVPXColorSpace());
-    return adoptRef(*new VideoFrameLibWebRTC(presentationTime, isMirrored, rotation, WTFMove(finalColorSpace), WTFMove(buffer), WTFMove(conversionCallback)));
+    auto finalColorSpace = WTF::move(colorSpace).value_or(defaultVPXColorSpace());
+    return adoptRef(*new VideoFrameLibWebRTC(presentationTime, isMirrored, rotation, WTF::move(finalColorSpace), WTF::move(buffer), WTF::move(conversionCallback)));
 }
 
 VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirrored, Rotation rotation, PlatformVideoColorSpace&& colorSpace, Ref<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
-    : VideoFrame(presentationTime, isMirrored, rotation, WTFMove(colorSpace))
-    , m_buffer(WTFMove(buffer))
+    : VideoFrame(presentationTime, isMirrored, rotation, WTF::move(colorSpace))
+    , m_buffer(WTF::move(buffer))
     , m_size(m_buffer->width(),  m_buffer->height())
-    , m_conversionCallback(WTFMove(conversionCallback))
+    , m_conversionCallback(WTF::move(conversionCallback))
 {
     switch (m_buffer->type()) {
     case webrtc::VideoFrameBuffer::Type::kI420:
@@ -79,18 +76,10 @@ VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirr
 
 CVPixelBufferRef VideoFrameLibWebRTC::pixelBuffer() const
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=302866 VideoFrameLibWebRTC should construct its CVPixelBuffer from the LibWebRTC buffer.
     Locker locker { m_pixelBufferLock };
     if (!m_pixelBuffer && m_conversionCallback)
         m_pixelBuffer = std::exchange(m_conversionCallback, { })(m_buffer.get());
     return m_pixelBuffer.get();
-}
-
-RefPtr<NativeImage> VideoFrameLibWebRTC::copyNativeImage() const
-{
-    // FIXME: It is not efficient to create a conformer everytime. We might want to make it more efficient, for instance by storing it in GraphicsContext.
-    auto conformer = makeUnique<PixelBufferConformerCV>(kCVPixelFormatType_32BGRA);
-    return NativeImage::create(conformer->createImageFromPixelBuffer(protectedPixelBuffer().get()));
 }
 
 Ref<VideoFrame> VideoFrameLibWebRTC::clone()

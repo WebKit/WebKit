@@ -50,16 +50,16 @@ namespace WebCore {
 
 Ref<RealtimeOutgoingVideoSource> RealtimeOutgoingVideoSource::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {
-    return RealtimeOutgoingVideoSourceCocoa::create(WTFMove(videoSource));
+    return RealtimeOutgoingVideoSourceCocoa::create(WTF::move(videoSource));
 }
 
 Ref<RealtimeOutgoingVideoSourceCocoa> RealtimeOutgoingVideoSourceCocoa::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {
-    return adoptRef(*new RealtimeOutgoingVideoSourceCocoa(WTFMove(videoSource)));
+    return adoptRef(*new RealtimeOutgoingVideoSourceCocoa(WTF::move(videoSource)));
 }
 
 RealtimeOutgoingVideoSourceCocoa::RealtimeOutgoingVideoSourceCocoa(Ref<MediaStreamTrackPrivate>&& videoSource)
-    : RealtimeOutgoingVideoSource(WTFMove(videoSource))
+    : RealtimeOutgoingVideoSource(WTF::move(videoSource))
 {
 }
 
@@ -67,7 +67,7 @@ RealtimeOutgoingVideoSourceCocoa::~RealtimeOutgoingVideoSourceCocoa() = default;
 
 void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
 {
-    ASSERT(!m_shouldApplyRotation);
+    ASSERT(!m_isApplyingRotation);
 
 #if !RELEASE_LOG_DISABLED
     if (!(++m_numberOfFrames % 60))
@@ -90,8 +90,8 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
     }
 
     auto videoFrameScaling = this->videoFrameScaling();
-    bool shouldApplyRotation = m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0;
-    if (!shouldApplyRotation) {
+    bool isApplyingRotation = m_isApplyingRotation && m_currentRotation != webrtc::kVideoRotation_0;
+    if (!isApplyingRotation) {
         if (videoFrame.isRemoteProxy()) {
             Ref remoteVideoFrame { videoFrame };
             auto size = videoFrame.presentationSize();
@@ -105,7 +105,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
             auto webrtcBuffer = webrtcVideoFrame->buffer();
             if (videoFrameScaling != 1)
                 webrtcBuffer = webrtcBuffer->Scale(webrtcBuffer->width() * videoFrameScaling, webrtcBuffer->height() * videoFrameScaling);
-            sendFrame(WTFMove(webrtcBuffer));
+            sendFrame(WTF::move(webrtcBuffer));
             return;
         }
     }
@@ -117,7 +117,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
 #endif
 
     RefPtr<VideoFrame> rotatedVideoFrame;
-    if (shouldApplyRotation) {
+    if (isApplyingRotation) {
         if (!m_rotationSession)
             m_rotationSession = makeUnique<ImageRotationSessionVT>(ImageRotationSessionVT::ShouldUseIOSurface::No);
         rotatedVideoFrame = m_rotationSession->applyRotation(videoFrame);
@@ -128,7 +128,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
     if (videoFrameScaling != 1)
         webrtcBuffer = webrtcBuffer->Scale(webrtcBuffer->width() * videoFrameScaling, webrtcBuffer->height() * videoFrameScaling);
 
-    sendFrame(WTFMove(webrtcBuffer));
+    sendFrame(WTF::move(webrtcBuffer));
 }
 
 webrtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceCocoa::createBlackFrame(size_t  width, size_t  height)

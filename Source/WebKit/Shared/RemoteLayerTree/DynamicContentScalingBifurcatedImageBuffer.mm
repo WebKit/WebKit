@@ -40,7 +40,7 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DynamicContentScalingBifurcatedImageBuffer);
 
 DynamicContentScalingBifurcatedImageBuffer::DynamicContentScalingBifurcatedImageBuffer(Parameters parameters, const WebCore::ImageBufferBackend::Info& backendInfo, const WebCore::ImageBufferCreationContext& creationContext, std::unique_ptr<WebCore::ImageBufferBackend>&& backend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    : ImageBuffer(parameters, backendInfo, creationContext, WTFMove(backend), renderingResourceIdentifier)
+    : ImageBuffer(parameters, backendInfo, creationContext, WTF::move(backend), renderingResourceIdentifier)
     , m_dynamicContentScalingBackend(DynamicContentScalingImageBufferBackend::create(ImageBuffer::backendParameters(parameters), creationContext))
 {
 }
@@ -68,7 +68,7 @@ std::optional<WebCore::DynamicContentScalingDisplayList> DynamicContentScalingBi
     // Avoid accumulating display lists; drop the current context and start fresh.
     releaseGraphicsContext();
 
-    return { WTFMove(displayList) };
+    return { WTF::move(displayList) };
 }
 
 void DynamicContentScalingBifurcatedImageBuffer::releaseGraphicsContext()

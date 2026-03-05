@@ -226,7 +226,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Sonoma-Release-Build-EWS': [
+        'macOS-Sequoia-Release-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -243,7 +243,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'macOS-Sonoma-Release-WK1-Tests-EWS': [
+        'macOS-Sequoia-Release-WK1-Tests-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
@@ -269,7 +269,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Sonoma-Release-WK2-Tests-EWS': [
+        'macOS-Sequoia-Release-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -294,7 +294,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Sonoma-Release-WK2-Intel-Tests-EWS': [
+        'macOS-Sequoia-Release-WK2-Intel-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -338,6 +338,33 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'print-clang-version',
             'checkout-llvm-project',
             'update-clang',
+            'find-modified-safer-cpp-expectations',
+            'scan-build'
+        ],
+        'Apple-iOS-26-Safer-CPP-Checks-EWS': [
+            'configure-build',
+            'check-change-relevance',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'set-credential-helper',
+            'checkout-source',
+            'fetch-branch-references',
+            'show-identifier',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'install-cmake',
+            'install-ninja',
+            'get-llvm-version',
+            'print-clang-version',
+            'checkout-llvm-project',
+            'get-swift-tag-name',
+            'print-swift-version',
+            'checkout-swift-project',
+            'update-swift-checkouts',
+            'build-swift',
+            'install-metal-toolchain',
             'find-modified-safer-cpp-expectations',
             'scan-build'
         ],
@@ -555,7 +582,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'clean-derived-sources',
             'compile-webkit'
         ],
-        'WPE-Cairo-LibWebRTC-Build-EWS': [
+        'GTK-GTK3-LibWebRTC-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -596,7 +623,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'layout-tests',
             'set-build-summary'
         ],
-        'JSC-Tests-arm64-EWS': [
+        'JSC-Tests-O3-Debug-arm64-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
@@ -612,6 +639,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'checkout-pull-request',
             'kill-old-processes',
             'validate-change',
+            'set-o3-optimization-level',
             'compile-jsc',
             'jscore-test'
         ],
@@ -810,6 +838,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'buildbot-check-config-for-build-webkit',
             'ews-unit-tests',
             'buildbot-check-config-for-ews',
+            'shared-unit-tests',
             'resultsdbpy-unit-tests'
         ],
         'Commit-Queue': [

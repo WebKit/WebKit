@@ -19,7 +19,7 @@ info: |
   ...
   6. If index = -0, return undefined.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -30,8 +30,8 @@ Object.defineProperty(proto, "-0", {
   }
 });
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n]));
 
   assert.sameValue(sample["-0"], undefined);
-});
+}, null, ["passthrough"]);

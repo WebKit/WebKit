@@ -33,7 +33,7 @@
 
 /* Macros for specifing specific calling conventions. */
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && CPU(X86_64)
 #define SYSV_ABI __attribute__((sysv_abi))
 #else
 #define SYSV_ABI

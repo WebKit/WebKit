@@ -174,7 +174,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgo
     auto output = gcryptSign(key.platformKey().get(), data, parameters.hashIdentifier, (key.keySizeInBits() + 7) / 8);
     if (!output)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*output);
+    return WTF::move(*output);
 }
 
 ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
@@ -182,7 +182,7 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
     auto output = gcryptVerify(key.platformKey().get(), signature, data, parameters.hashIdentifier, (key.keySizeInBits() + 7)/ 8);
     if (!output)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*output);
+    return WTF::move(*output);
 }
 
 } // namespace WebCore

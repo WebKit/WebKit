@@ -39,7 +39,7 @@ public:
 
     bool start(GRefPtr<GSocketAddress>&&, unsigned inspectorPort);
     bool isRunning() const { return !!m_server; }
-    const String& inspectorServerAddress() const;
+    const String& inspectorServerAddress() const LIFETIME_BOUND;
 
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const String& message) const;
     void targetDidClose(uint64_t connectionID, uint64_t targetID);

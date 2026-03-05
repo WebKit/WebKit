@@ -75,8 +75,6 @@ inline CapabilityLevel canCompile(Node* node)
     case PutStructure:
     case GetButterfly:
     case NewObject:
-    case NewGenerator:
-    case NewAsyncGenerator:
     case NewStringObject:
     case NewRegExpUntyped:
     case NewSymbol:
@@ -176,6 +174,8 @@ inline CapabilityLevel canCompile(Node* node)
     case StringCodePointAt:
     case StringFromCharCode:
     case StringIndexOf:
+    case StringStartsWith:
+    case StringEndsWith:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
     case NukeStructureAndSetButterfly:
@@ -289,6 +289,8 @@ inline CapabilityLevel canCompile(Node* node)
     case MapIterationEntry:
     case MapIterationEntryKey:
     case MapIterationEntryValue:
+    case MapOrSetSize:
+    case GetRegExpFlag:
     case MapStorage:
     case MapStorageOrSentinel:
     case MapIteratorNext:
@@ -385,7 +387,6 @@ inline CapabilityLevel canCompile(Node* node)
     case DeleteById:
     case DeleteByVal:
     case CreateRest:
-    case GetRestLength:
     case RegExpExec:
     case RegExpExecNonGlobalOrSticky:
     case RegExpTest:
@@ -422,6 +423,7 @@ inline CapabilityLevel canCompile(Node* node)
     case SameValue:
     case DefineDataProperty:
     case DefineAccessorProperty:
+    case ObjectDefineProperty:
     case StringValueOf:
     case StringSlice:
     case StringSubstring:
@@ -500,6 +502,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PromiseResolve:
     case PromiseReject:
     case PromiseThen:
+    case PerformPromiseThen:
         // These are OK.
         break;
 
@@ -567,6 +570,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case KnownBooleanUse:
                 case CellUse:
                 case KnownCellUse:
+                case KnownStorageUse:
                 case CellOrOtherUse:
                 case ObjectUse:
                 case ArrayUse:

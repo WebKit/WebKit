@@ -87,12 +87,12 @@ typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode) {
 @interface WKSLinearMediaSpatialVideoMetadata : NSObject
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithWidth:(SInt32)width height:(SInt32)height horizontalFOVDegrees:(float)horizontalFOVDegrees baseline:(float)baseline disparityAdjustment:(float)disparityAdjustment NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithWidth:(SInt32)width height:(SInt32)height horizontalFieldOfView:(SInt32)horizontalFieldOfView stereoCameraBaseline:(UInt32)stereoCameraBaseline horizontalDisparityAdjustment:(SInt32)horizontalDisparityAdjustment NS_DESIGNATED_INITIALIZER;
 @property (nonatomic, readonly) SInt32 width;
 @property (nonatomic, readonly) SInt32 height;
-@property (nonatomic, readonly) float horizontalFOVDegrees;
-@property (nonatomic, readonly) float baseline;
-@property (nonatomic, readonly) float disparityAdjustment;
+@property (nonatomic, readonly) SInt32 horizontalFieldOfView;
+@property (nonatomic, readonly) UInt32 stereoCameraBaseline;
+@property (nonatomic, readonly) SInt32 horizontalDisparityAdjustment;
 @end
 
 NS_SWIFT_UI_ACTOR

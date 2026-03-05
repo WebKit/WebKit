@@ -67,7 +67,7 @@ public:
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
     static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, Vector<WebGPU::BindableResources>&& bindableResources, RefPtr<WebGPU::RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, uint64_t commandCount, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&& bindGroups, Device& device)
     {
-        return adoptRef(*new RenderBundle(resources, WTFMove(bindableResources), encoder, descriptor, commandCount, makeSubmitInvalid, WTFMove(bindGroups), device));
+        return adoptRef(*new RenderBundle(resources, WTF::move(bindableResources), encoder, descriptor, commandCount, makeSubmitInvalid, WTF::move(bindGroups), device));
     }
     static Ref<RenderBundle> createInvalid(Device& device, NSString* errorString)
     {

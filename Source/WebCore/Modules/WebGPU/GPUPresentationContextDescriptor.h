@@ -34,11 +34,11 @@ struct GPUPresentationContextDescriptor {
     WebGPU::PresentationContextDescriptor convertToBacking() const
     {
         return {
-            layout.backing(),
+            layout->backing(),
         };
     }
 
-    GPUCompositorIntegration& layout;
+    WeakRef<GPUCompositorIntegration> layout;
 };
 
 }

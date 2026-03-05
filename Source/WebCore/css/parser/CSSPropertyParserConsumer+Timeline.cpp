@@ -44,7 +44,7 @@ namespace CSSPropertyParserHelpers {
 
 bool isAnimationRangeKeyword(CSSValueID id)
 {
-    return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing>(id);
+    return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing, CSSValueScroll>(id);
 }
 
 RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range, CSS::PropertyParserState&)
@@ -73,7 +73,7 @@ RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range, CSS:
     if (args.size())
         return nullptr;
 
-    return CSSScrollValue::create(WTFMove(scroller), WTFMove(axis));
+    return CSSScrollValue::create(WTF::move(scroller), WTF::move(axis));
 }
 
 RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -103,7 +103,7 @@ RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange& range, CSS::P
     if (args.size())
         return nullptr;
 
-    return CSSViewValue::create(WTFMove(axis), WTFMove(startInset), WTFMove(endInset));
+    return CSSViewValue::create(WTF::move(axis), WTF::move(startInset), WTF::move(endInset));
 }
 
 RefPtr<CSSValue> consumeSingleViewTimelineInsetItem(CSSParserTokenRange& range, CSS::PropertyParserState& state)

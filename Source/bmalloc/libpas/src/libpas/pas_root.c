@@ -469,13 +469,8 @@ kern_return_t pas_root_visit_conservative_candidate_pointers_in_address_range(ta
 #if PAS_CPU(ADDRESS64)
 
 #if PAS_ARM
-#if PAS_HAVE(36BIT_ADDRESS)
-        if (!PAS_DATA_ADDRESS_IS_SANE(candidate_pointer))
-            continue;
-#else
         if (candidate_pointer > MACH_VM_MAX_ADDRESS_RAW)
             continue;
-#endif
 #else
         if (candidate_pointer > (1ULL << 48))
             continue;

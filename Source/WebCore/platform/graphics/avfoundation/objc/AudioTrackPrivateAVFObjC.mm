@@ -51,7 +51,7 @@ AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC& 
 }
 
 AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(Ref<AVTrackPrivateAVFObjCImpl>&& impl)
-    : m_impl(WTFMove(impl))
+    : m_impl(WTF::move(impl))
     , m_audioTrackConfigurationObserver(AudioTrackConfigurationObserver::create([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->audioTrackConfigurationChanged();
@@ -85,7 +85,7 @@ void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
     if (!configuration().codec.isEmpty() && newConfiguration.codec.isEmpty())
         return;
 
-    setConfiguration(WTFMove(newConfiguration));
+    setConfiguration(WTF::move(newConfiguration));
 }
 
 void AudioTrackPrivateAVFObjC::audioTrackConfigurationChanged()

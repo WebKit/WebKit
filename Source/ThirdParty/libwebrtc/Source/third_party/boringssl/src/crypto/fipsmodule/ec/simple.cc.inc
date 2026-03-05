@@ -71,9 +71,9 @@ int ec_GFp_simple_group_set_curve(EC_GROUP *group, const BIGNUM *p,
 
 int ec_GFp_simple_group_get_curve(const EC_GROUP *group, BIGNUM *p, BIGNUM *a,
                                   BIGNUM *b) {
-  if ((p != NULL && !BN_copy(p, &group->field.N)) ||
-      (a != NULL && !ec_felem_to_bignum(group, a, &group->a)) ||
-      (b != NULL && !ec_felem_to_bignum(group, b, &group->b))) {
+  if ((p != nullptr && !BN_copy(p, &group->field.N)) ||
+      (a != nullptr && !ec_felem_to_bignum(group, a, &group->a)) ||
+      (b != nullptr && !ec_felem_to_bignum(group, b, &group->b))) {
     return 0;
   }
   return 1;

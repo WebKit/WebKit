@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TrackEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TrackEvent);
 
 static inline std::optional<TrackEvent::TrackEventTrack> convertToTrackEventTrack(Ref<TrackBase>&& track)
 {
@@ -40,11 +40,11 @@ static inline std::optional<TrackEvent::TrackEventTrack> convertToTrackEventTrac
     case TrackBase::BaseTrack:
         return std::nullopt;
     case TrackBase::TextTrack:
-        return TrackEvent::TrackEventTrack { RefPtr { uncheckedDowncast<TextTrack>(WTFMove(track)) } };
+        return TrackEvent::TrackEventTrack { uncheckedDowncast<TextTrack>(WTF::move(track)) };
     case TrackBase::AudioTrack:
-        return TrackEvent::TrackEventTrack { RefPtr { uncheckedDowncast<AudioTrack>(WTFMove(track)) } };
+        return TrackEvent::TrackEventTrack { uncheckedDowncast<AudioTrack>(WTF::move(track)) };
     case TrackBase::VideoTrack:
-        return TrackEvent::TrackEventTrack { RefPtr { uncheckedDowncast<VideoTrack>(WTFMove(track)) } };
+        return TrackEvent::TrackEventTrack { uncheckedDowncast<VideoTrack>(WTF::move(track)) };
     }
     
     ASSERT_NOT_REACHED();
@@ -53,13 +53,13 @@ static inline std::optional<TrackEvent::TrackEventTrack> convertToTrackEventTrac
 
 TrackEvent::TrackEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<TrackBase>&& track)
     : Event(EventInterfaceType::TrackEvent, type, canBubble, cancelable)
-    , m_track(convertToTrackEventTrack(WTFMove(track)))
+    , m_track(convertToTrackEventTrack(WTF::move(track)))
 {
 }
 
 TrackEvent::TrackEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::TrackEvent, type, initializer, isTrusted)
-    , m_track(WTFMove(initializer.track))
+    , m_track(WTF::move(initializer.track))
 {
 }
 

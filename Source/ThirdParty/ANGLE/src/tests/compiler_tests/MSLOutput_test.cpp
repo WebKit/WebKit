@@ -10,8 +10,8 @@
 #include <regex>
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
-#include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include "gtest/gtest.h"
 #include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
@@ -1120,7 +1120,7 @@ TEST_F(MSLOutputTest, EnsureLoopForwardProgressFinite)
 // Tests that uint assignment operators use the expected functions.
 TEST_F(MSLOutputTest, UintAssignmentOperators)
 {
-    const std::string &shaderString =R"(#version 300 es
+    const std::string &shaderString = R"(#version 300 es
 precision highp float;
 in vec4 i;
 out vec4 o;
@@ -1142,7 +1142,8 @@ void main() {
     --ii;
     o = vec4(ii);
 })";
-    const char expected[] = R"(void ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, thread ANGLE_FragmentIn & ANGLE_fragmentIn)
+    const char expected[] =
+        R"(void ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, thread ANGLE_FragmentIn & ANGLE_fragmentIn)
 {
   metal::int4 _uii = ANGLE_ftoi<metal::int4>(ANGLE_fragmentIn._ui);
   _uii = ANGLE_addAssignInt(_uii, 2);
@@ -1165,10 +1166,11 @@ void main() {
     EXPECT_THAT(outputCode(SH_MSL_METAL_OUTPUT), testing::HasSubstr(expected));
 }
 
-// Tests that some uint assignment operators use the swizzle ref helper if the swizzle is in lvalue position in the generated code.
+// Tests that some uint assignment operators use the swizzle ref helper if the swizzle is in lvalue
+// position in the generated code.
 TEST_F(MSLOutputTest, UintSwizzleAssignmentOperators)
 {
-    const std::string &shaderString =R"(#version 300 es
+    const std::string &shaderString = R"(#version 300 es
 precision highp float;
 in vec4 i;
 out vec4 o;
@@ -1190,7 +1192,8 @@ void main() {
     --ii.y;
     o = vec4(ii);
 })";
-    const char expected[] = R"(void ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, thread ANGLE_FragmentIn & ANGLE_fragmentIn)
+    const char expected[] =
+        R"(void ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, thread ANGLE_FragmentIn & ANGLE_fragmentIn)
 {
   metal::int4 _uii = ANGLE_ftoi<metal::int4>(ANGLE_fragmentIn._ui);
   _uii.x = ANGLE_addInt(_uii.x, 2);

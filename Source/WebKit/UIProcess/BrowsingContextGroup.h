@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include "EnhancedSecurity.h"
+#include "LoadedWebArchive.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Site.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakListHashSet.h>
 
@@ -52,18 +55,19 @@ class WebProcessPool;
 
 enum class IsMainFrame : bool;
 
-enum class InjectBrowsingContextIntoProcess : bool { No, Yes };
+enum class BrowsingContextGroupUpdate : uint8_t { None, AddProcess, AddProcessAndInjectBrowsingContext };
 
 class BrowsingContextGroup : public RefCountedAndCanMakeWeakPtr<BrowsingContextGroup> {
 public:
     static Ref<BrowsingContextGroup> create() { return adoptRef(*new BrowsingContextGroup()); }
     ~BrowsingContextGroup();
 
-    void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
-    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes);
-    FrameProcess* processForSite(const WebCore::Site&);
+    void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
+    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, BrowsingContextGroupUpdate = BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);
+    RefPtr<FrameProcess> processForSite(const WebCore::Site&);
     void addFrameProcess(FrameProcess&);
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
+    bool addFrameProcessWithoutInjectingPageContext(FrameProcess&);
     void removeFrameProcess(FrameProcess&);
     void processDidTerminate(WebPageProxy&, WebProcessProxy&);
 
@@ -90,6 +94,16 @@ private:
     HashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
-};
+} SWIFT_SHARED_REFERENCE(refBrowsingContextGroup, derefBrowsingContextGroup);
 
+}
+
+inline void refBrowsingContextGroup(WebKit::BrowsingContextGroup* WTF_NONNULL obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefBrowsingContextGroup(WebKit::BrowsingContextGroup* WTF_NONNULL obj)
+{
+    WTF::deref(obj);
 }

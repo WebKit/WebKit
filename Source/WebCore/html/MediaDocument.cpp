@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaDocument);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaDocument);
 
 using namespace HTMLNames;
 
@@ -124,7 +124,7 @@ void MediaDocumentParser::createDocumentStructure()
     if (!frame)
         return;
 
-    frame->loader().protectedActiveDocumentLoader()->setMainResourceDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
+    protect(frame->loader().activeDocumentLoader())->setMainResourceDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
     frame->loader().setOutgoingReferrer(document->completeURL(m_outgoingReferrer));
 }
 
@@ -153,7 +153,7 @@ Ref<DocumentParser> MediaDocument::createParser()
     return MediaDocumentParser::create(*this);
 }
 
-static inline HTMLVideoElement* descendantVideoElement(ContainerNode& node)
+static inline HTMLVideoElement* NODELETE descendantVideoElement(ContainerNode& node)
 {
     if (auto* video = dynamicDowncast<HTMLVideoElement>(node))
         return video;
@@ -172,7 +172,7 @@ void MediaDocument::replaceMediaElementTimerFired()
     htmlBody->setAttributeWithoutSynchronization(marginheightAttr, "0"_s);
 
     if (RefPtr videoElement = descendantVideoElement(*htmlBody)) {
-        auto embedElement = HTMLEmbedElement::create(*this);
+        Ref embedElement = HTMLEmbedElement::create(*this);
 
         embedElement->setAttributeWithoutSynchronization(widthAttr, "100%"_s);
         embedElement->setAttributeWithoutSynchronization(heightAttr, "100%"_s);
@@ -183,7 +183,7 @@ void MediaDocument::replaceMediaElementTimerFired()
         if (RefPtr loader = this->loader())
             embedElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->writer().mimeType() });
 
-        videoElement->parentNode()->replaceChild(embedElement, *videoElement);
+        protect(videoElement->parentNode())->replaceChild(embedElement, *videoElement);
     }
 }
 

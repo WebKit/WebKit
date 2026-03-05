@@ -91,11 +91,14 @@
             SO_REUSEPORT
             SO_TIMESTAMP)))
 
+(deny network-outbound (literal "/private/var/run/mDNSResponder"))
+(deny network-outbound (remote tcp) (remote udp))
+
 (with-filter (mac-policy-name "vnguard")
     (allow system-mac-syscall (mac-syscall-number 1)))
 
 (with-filter (mac-policy-name "Sandbox")
-    (allow system-mac-syscall (mac-syscall-number 5)))
+    (allow system-mac-syscall (mac-syscall-number 5 65)))
 
 (allow file-link
     (subpath "/private/var/mobile/Containers/Data/Application"))
@@ -117,7 +120,6 @@
     (require-all
         (privilege-id PRIV_NET_PRIVILEGED_SOCKET_DELEGATE)
         (require-entitlement "com.apple.private.network.socket-delegate")))
-
 
 (deny file-map-executable)
 (deny file-write-mount file-write-unmount)
@@ -153,10 +155,12 @@
 
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
-        (global-name "com.apple.aggregated")
-        (global-name "com.apple.analyticsd")
-        (global-name "com.apple.hangtracerd")
-        (global-name "com.apple.osanalytics.osanalyticshelper")))
+        (global-name
+            "com.apple.aggregated"
+            "com.apple.analyticsd"
+            "com.apple.hangtracerd"
+            "com.apple.networkscored"
+            "com.apple.osanalytics.osanalyticshelper")))
 
 (allow system-sched
     (require-entitlement "com.apple.private.kernel.override-cpumon"))
@@ -213,7 +217,7 @@
 (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
 (allow file-read* (extension "com.apple.app-sandbox.read"))
 
-(network-client (remote tcp) (remote udp))
+(network-client)
 
 ;; <rdar://problem/12620714>
 (deny file-write-create NO_REPORT
@@ -303,3 +307,7 @@
     (require-all
         (extension-class "com.apple.app-sandbox.read" "com.apple.app-sandbox.read-write")
         (extension "com.apple.app-sandbox.read-write")))
+
+#if HAVE(ENHANCED_SECURITY_LINKS) && __has_include(<WebKitAdditions/EnhancedSecurityLinks-ios.sb>)
+#include <WebKitAdditions/EnhancedSecurityLinks-ios.sb>
+#endif

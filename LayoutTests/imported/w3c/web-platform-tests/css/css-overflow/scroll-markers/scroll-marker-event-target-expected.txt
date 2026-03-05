@@ -1,0 +1,4 @@
+
+
+FAIL CSS Overflow: event.target and event.currentTarget for ::scroll-marker is its originating element assert_equals: event.currentTarget for ::scroll-marker click is its originating element expected Element node <div id="originatingElement"></div> but got null
+

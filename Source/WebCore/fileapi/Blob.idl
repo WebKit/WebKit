@@ -38,7 +38,7 @@ typedef (BufferSource or Blob or USVString) BlobPart;
     GenerateIsReachable=Impl,
     ReportExtraMemoryCost
 ] interface Blob {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options = {});
 
     readonly attribute unsigned long long size;
     readonly attribute DOMString type;

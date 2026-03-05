@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InstallEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InstallEvent);
 
 InstallEvent::InstallEvent(const AtomString& type, ExtendableEventInit&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::InstallEvent, type, initializer, isTrusted)
@@ -52,6 +52,7 @@ static ExceptionOr<ServiceWorkerRoutePattern> toServiceWorkerRoutePattern(const 
         return Exception { ExceptionCode::TypeError, "Service Worker route url pattern has regexp groups"_s };
 
     return ServiceWorkerRoutePattern {
+        pattern.shouldIgnoreCase(),
         pattern.protocol(),
         pattern.username(),
         pattern.password(),
@@ -67,7 +68,7 @@ static ExceptionOr<ServiceWorkerRouteCondition> toServiceWorkerRouteCondition(Ro
 {
     std::optional<ServiceWorkerRoutePattern> pattern;
     if (condition.urlPattern) {
-        Ref urlPattern = *std::get<RefPtr<URLPattern>>(*condition.urlPattern);
+        Ref urlPattern = std::get<Ref<URLPattern>>(*condition.urlPattern);
         auto patternOrException = toServiceWorkerRoutePattern(urlPattern);
         if (patternOrException.hasException())
             return patternOrException.releaseException();
@@ -75,41 +76,43 @@ static ExceptionOr<ServiceWorkerRouteCondition> toServiceWorkerRouteCondition(Ro
     }
 
     Vector<ServiceWorkerRouteCondition> orConditions;
-    for (auto& orCondition : condition.orConditions) {
-        auto orConditionOrException = toServiceWorkerRouteCondition(WTFMove(orCondition));
-        if (orConditionOrException.hasException())
-            return orConditionOrException.releaseException();
-        orConditions.append(orConditionOrException.releaseReturnValue());
+    if (condition.orConditions) {
+        for (auto& orCondition : *condition.orConditions) {
+            auto orConditionOrException = toServiceWorkerRouteCondition(WTF::move(orCondition));
+            if (orConditionOrException.hasException())
+                return orConditionOrException.releaseException();
+            orConditions.append(orConditionOrException.releaseReturnValue());
+        }
     }
 
     std::unique_ptr<ServiceWorkerRouteCondition> notCondition;
     if (condition.notCondition) {
-        auto notConditionOrException = toServiceWorkerRouteCondition(WTFMove(*condition.notCondition).value());
+        auto notConditionOrException = toServiceWorkerRouteCondition(WTF::move(*condition.notCondition).value());
         if (notConditionOrException.hasException())
             return notConditionOrException.releaseException();
         notCondition = makeUnique<ServiceWorkerRouteCondition>(notConditionOrException.releaseReturnValue());
     }
 
     return ServiceWorkerRouteCondition {
-        WTFMove(pattern),
-        WTFMove(condition.requestMethod),
-        WTFMove(condition.requestMode),
-        WTFMove(condition.requestDestination),
-        WTFMove(condition.runningStatus),
-        WTFMove(orConditions),
-        WTFMove(notCondition)
+        WTF::move(pattern),
+        WTF::move(condition.requestMethod),
+        WTF::move(condition.requestMode),
+        WTF::move(condition.requestDestination),
+        WTF::move(condition.runningStatus),
+        WTF::move(orConditions),
+        WTF::move(notCondition)
     };
 }
 
 static ExceptionOr<ServiceWorkerRoute> toServiceWorkerRoute(RouterRule&& rule)
 {
-    auto conditionOrException = toServiceWorkerRouteCondition(WTFMove(rule.condition));
+    auto conditionOrException = toServiceWorkerRouteCondition(WTF::move(rule.condition));
     if (conditionOrException.hasException())
         return conditionOrException.releaseException();
 
     return ServiceWorkerRoute {
         conditionOrException.releaseReturnValue(),
-        WTFMove(rule.source)
+        WTF::move(rule.source)
     };
 }
 
@@ -138,10 +141,10 @@ static std::optional<Exception> verifyRouterCondition(RouterCondition& condition
         hasCondition = true;
     if (condition.runningStatus)
         hasCondition = true;
-    if (!condition.orConditions.isEmpty()) {
+    if (condition.orConditions && !condition.orConditions->isEmpty()) {
         if (hasCondition)
             return Exception { ExceptionCode::TypeError, "Or condition should not be present"_s };
-        for (auto& orCondition : condition.orConditions) {
+        for (auto& orCondition : *condition.orConditions) {
             if (auto exception = verifyRouterCondition(orCondition, scope))
                 return *exception;
         }
@@ -156,16 +159,12 @@ static std::optional<Exception> verifyRouterCondition(RouterCondition& condition
     return { };
 }
 
-static std::optional<Exception> addServiceWorkerRoute(Vector<ServiceWorkerRoute>& routes, RouterRule&& rule, ServiceWorkerGlobalScope& scope)
+static ExceptionOr<ServiceWorkerRoute> convertServiceWorkerRule(RouterRule&& rule, ServiceWorkerGlobalScope& scope)
 {
     if (auto validationException = verifyRouterCondition(rule.condition, scope))
-        return *validationException;
+        return WTF::move(*validationException);
 
-    auto routeOrException = toServiceWorkerRoute(WTFMove(rule));
-    if (routeOrException.hasException())
-        return routeOrException.releaseException();
-    routes.append(routeOrException.releaseReturnValue());
-    return { };
+    return toServiceWorkerRoute(WTF::move(rule));
 }
 
 // https://w3c.github.io/ServiceWorker/#dom-installevent-addroutes
@@ -174,23 +173,28 @@ void InstallEvent::addRoutes(JSC::JSGlobalObject& globalObject, Variant<RouterRu
     auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
     RefPtr serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(jsDOMGlobalObject.scriptExecutionContext());
 
-    auto rulesVector = switchOn(WTFMove(rules), [](RouterRule&& rule) -> Vector<RouterRule> {
-        return Vector<RouterRule>::from(WTFMove(rule));
+    auto rulesVector = switchOn(WTF::move(rules), [](RouterRule&& rule) -> Vector<RouterRule> {
+        return Vector<RouterRule>::from(WTF::move(rule));
     }, [](Vector<RouterRule>&& rules) -> Vector<RouterRule> {
-        return { WTFMove(rules) };
+        return WTF::move(rules);
     });
 
     Vector<ServiceWorkerRoute> routes;
     for (auto& rule : rulesVector) {
-        if (auto exception = addServiceWorkerRoute(routes, WTFMove(rule), *serviceWorkerGlobalScope)) {
-            promise->reject(WTFMove(*exception));
+        auto routeOrException = convertServiceWorkerRule(WTF::move(rule), *serviceWorkerGlobalScope);
+        if (routeOrException.hasException()) {
+            promise->reject(routeOrException.releaseException());
             return;
         }
 
-        if (!serviceWorkerGlobalScope->hasFetchEventHandler() && std::get<RouterSourceEnum>(rule.source) == RouterSourceEnum::FetchEvent) {
-            promise->reject(Exception { ExceptionCode::TypeError, "Rule source is fetch event but no fetch event handler is registered"_s });
-            return;
+        auto route = routeOrException.releaseReturnValue();
+        if (!serviceWorkerGlobalScope->hasFetchEventHandler()) {
+            if (auto* source = std::get_if<RouterSourceEnum>(&route.source); *source == RouterSourceEnum::FetchEvent || *source == RouterSourceEnum::RaceNetworkAndFetchHandler) {
+                promise->reject(Exception { ExceptionCode::TypeError, "Rule source requires registering a fetch event handler"_s });
+                return;
+            }
         }
+        routes.append(WTF::move(route));
     }
 
     if (!isWaiting()) {
@@ -205,7 +209,7 @@ void InstallEvent::addRoutes(JSC::JSGlobalObject& globalObject, Variant<RouterRu
     }
 
     Ref<SWClientConnection> connection = serviceWorkerGlobalScope->swClientConnection();
-    serviceWorkerGlobalScope->enqueueTaskWhenSettled(connection->addRoutes(serviceWorkerGlobalScope->registration().identifier(), WTFMove(routes)), TaskSource::Networking, [promise = WTFMove(promise), delayPromise = WTFMove(delayPromise)](auto&& result) mutable {
+    serviceWorkerGlobalScope->enqueueTaskWhenSettled(connection->addRoutes(serviceWorkerGlobalScope->registration().identifier(), WTF::move(routes)), TaskSource::Networking, [promise = WTF::move(promise), delayPromise = WTF::move(delayPromise)](auto&& result) mutable {
         if (!result) {
             promise->reject(result.error().toException());
             delayPromise->resolve();

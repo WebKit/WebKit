@@ -36,10 +36,10 @@ namespace WebCore {
 void getDefaultWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& handler)
 {
     static NeverDestroyed<Ref<WorkQueue>> queue { WorkQueue::create("org.WebKit.WebCryptoMasterKey"_s) };
-    queue.get().get().dispatch([handler = WTFMove(handler)] mutable {
+    queue.get().get().dispatch([handler = WTF::move(handler)] mutable {
         auto key = defaultWebCryptoMasterKey();
-        WorkQueue::mainSingleton().dispatch([handler = WTFMove(handler), key = WTFMove(key)] mutable {
-            handler(WTFMove(key));
+        WorkQueue::mainSingleton().dispatch([handler = WTF::move(handler), key = WTF::move(key)] mutable {
+            handler(WTF::move(key));
         });
     });
 }

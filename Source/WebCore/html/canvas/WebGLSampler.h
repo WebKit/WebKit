@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLObject.h"
+#include <WebCore/WebGLObject.h>
 
 namespace WTF {
 class AbstractLocker;
@@ -37,13 +37,15 @@ namespace WebCore {
 
 class WebGLSampler final : public WebGLObject {
 public:
-    static RefPtr<WebGLSampler> create(WebGLRenderingContextBase&);
+    static Ref<WebGLSampler> createLost();
+    static Ref<WebGLSampler> create(WebGLRenderingContextBase&);
     virtual ~WebGLSampler();
     void didBind() { }
     bool isUsable() const { return object() && !isDeleted(); }
     bool isInitialized() const { return true; }
 private:
-    explicit WebGLSampler(WebGLRenderingContextBase&, PlatformGLObject);
+    WebGLSampler(WebGLRenderingContextBase&, PlatformGLObject);
+    WebGLSampler();
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) final;
 };
 

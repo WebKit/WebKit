@@ -52,7 +52,7 @@ using namespace HTMLNames;
 static const int dateTimeLocalDefaultStep = 60;
 static const int dateTimeLocalDefaultStepBase = 0;
 static const int dateTimeLocalStepScaleFactor = 1000;
-static const StepRange::StepDescription dateTimeLocalStepDescription { dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger };
+static const StepRange::StepDescription dateTimeLocalStepDescription { dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::StepValueShouldBe::ScaledInteger };
 
 const AtomString& DateTimeLocalInputType::formControlType() const
 {
@@ -135,10 +135,10 @@ void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutPa
     layoutParameters.shouldHaveMillisecondField = shouldHaveMillisecondField(date);
 
     if (layoutParameters.shouldHaveMillisecondField || shouldHaveSecondField(date)) {
-        layoutParameters.dateTimeFormat = layoutParameters.locale.dateTimeFormatWithSeconds();
+        layoutParameters.dateTimeFormat = layoutParameters.locale->dateTimeFormatWithSeconds();
         layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss"_s;
     } else {
-        layoutParameters.dateTimeFormat = layoutParameters.locale.dateTimeFormatWithoutSeconds();
+        layoutParameters.dateTimeFormat = layoutParameters.locale->dateTimeFormatWithoutSeconds();
         layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm"_s;
     }
 }

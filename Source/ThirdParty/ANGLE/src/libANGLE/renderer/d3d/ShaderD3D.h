@@ -63,7 +63,6 @@ struct CompiledShaderStateD3D : angle::NonCopyable
 
     unsigned int getUniformBlockRegister(const std::string &blockName) const;
     bool shouldUniformBlockUseStructuredBuffer(const std::string &blockName) const;
-    unsigned int getShaderStorageBlockRegister(const std::string &blockName) const;
     bool useImage2DFunction(const std::string &functionName) const;
     const std::set<std::string> &getSlowCompilingUniformBlockSet() const;
     void appendDebugInfo(const std::string &info) { debugInfo += info; }
@@ -78,7 +77,6 @@ struct CompiledShaderStateD3D : angle::NonCopyable
     bool usesSecondaryColor;
     bool usesFragCoord;
     bool usesFrontFacing;
-    bool usesHelperInvocation;
     bool usesPointSize;
     bool usesPointCoord;
     bool usesDepthRange;
@@ -101,7 +99,6 @@ struct CompiledShaderStateD3D : angle::NonCopyable
     std::map<std::string, unsigned int> uniformBlockRegisterMap;
     std::map<std::string, bool> uniformBlockUseStructuredBufferMap;
     std::set<std::string> slowCompilingUniformBlockSet;
-    std::map<std::string, unsigned int> shaderStorageBlockRegisterMap;
     unsigned int readonlyImage2DRegisterIndex;
     unsigned int image2DRegisterIndex;
     std::set<std::string> usedImage2DFunctionNames;

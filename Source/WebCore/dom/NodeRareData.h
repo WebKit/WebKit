@@ -113,8 +113,7 @@ public:
     {
         auto result = m_atomNameCaches.fastAdd(namedNodeListKey<T>(name), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T&>(*result.iterator->value);
-
+            return downcast<T>(*result.iterator->value);
         Ref list = T::create(container, name);
         result.iterator->value = list.ptr();
         return list;
@@ -132,25 +131,25 @@ public:
     }
 
     template<typename T, typename ContainerType>
-    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, CollectionType collectionType, const AtomString& name)
+    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, const AtomString& name)
     {
-        auto result = m_cachedCollections.fastAdd(namedCollectionKey(collectionType, name), nullptr);
+        auto result = m_cachedCollections.fastAdd(namedCollectionKey(CollectionClassTraits<T>::collectionType, name), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T&>(*result.iterator->value);
+            return downcast<T>(*result.iterator->value);
 
-        Ref list = T::create(container, collectionType, name);
+        Ref list = T::create(container, CollectionClassTraits<T>::collectionType, name);
         result.iterator->value = list.ptr();
         return list;
     }
 
     template<typename T, typename ContainerType>
-    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, CollectionType collectionType)
+    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container)
     {
-        auto result = m_cachedCollections.fastAdd(namedCollectionKey(collectionType, starAtom()), nullptr);
+        auto result = m_cachedCollections.fastAdd(namedCollectionKey(CollectionClassTraits<T>::collectionType, starAtom()), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T&>(*result.iterator->value);
+            return downcast<T>(*result.iterator->value);
 
-        Ref list = T::create(container, collectionType);
+        Ref list = T::create(container, CollectionClassTraits<T>::collectionType);
         result.iterator->value = list.ptr();
         return list;
     }
@@ -158,7 +157,10 @@ public:
     template<typename T>
     T* cachedCollection(CollectionType collectionType)
     {
-        return static_cast<T*>(m_cachedCollections.get(namedCollectionKey(collectionType, starAtom())));
+        if constexpr (std::same_as<T, HTMLCollection>)
+            return m_cachedCollections.get(namedCollectionKey(collectionType, starAtom()));
+        else
+            return downcast<T>(m_cachedCollections.get(namedCollectionKey(collectionType, starAtom())));
     }
 
     template<typename NodeListType>
@@ -218,7 +220,7 @@ class NodeMutationObserverData {
     WTF_MAKE_TZONE_ALLOCATED(NodeMutationObserverData);
     WTF_MAKE_NONCOPYABLE(NodeMutationObserverData);
 public:
-    Vector<std::unique_ptr<MutationObserverRegistration>> registry;
+    Vector<Ref<MutationObserverRegistration>> registry;
     WeakHashSet<MutationObserverRegistration> transientRegistry;
 
     NodeMutationObserverData() = default;
@@ -241,7 +243,6 @@ public:
         EffectiveLang = 1 << 7,
         Dataset = 1 << 8,
         ClassList = 1 << 9,
-        ShadowRoot = 1 << 10,
         CustomElementReactionQueue = 1 << 11,
         CustomElementDefaultARIA = 1 << 12,
         FormAssociatedCustomElement = 1 << 13,
@@ -274,19 +275,19 @@ public:
     bool isElementRareData() const { return m_isElementRareData; }
 
     void clearNodeLists() { m_nodeLists = nullptr; }
-    NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
-    NodeListsNodeData& ensureNodeLists()
+    NodeListsNodeData* nodeLists() const LIFETIME_BOUND { return m_nodeLists.get(); }
+    NodeListsNodeData& ensureNodeLists() LIFETIME_BOUND
     {
         if (!m_nodeLists)
             m_nodeLists = makeUnique<NodeListsNodeData>();
         return *m_nodeLists;
     }
 
-    NodeMutationObserverData* mutationObserverDataIfExists() { return m_mutationObserverData.get(); }
-    NodeMutationObserverData& mutationObserverData()
+    NodeMutationObserverData* mutationObserverDataIfExists() const LIFETIME_BOUND { return m_mutationObserverData.get(); }
+    NodeMutationObserverData& mutationObserverData() const LIFETIME_BOUND
     {
         if (!m_mutationObserverData)
-            m_mutationObserverData = makeUnique<NodeMutationObserverData>();
+            lazyInitialize(m_mutationObserverData, makeUnique<NodeMutationObserverData>());
         return *m_mutationObserverData;
     }
 
@@ -315,7 +316,7 @@ public:
 
 private:
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
-    std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
+    const std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_manuallyAssignedSlot;
     bool m_isElementRareData;
     bool m_hasEverPaintedImages { false }; // Keep last for better bit packing with ElementRareData.

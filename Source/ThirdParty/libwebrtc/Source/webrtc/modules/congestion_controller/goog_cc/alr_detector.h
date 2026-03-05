@@ -43,8 +43,8 @@ class AlrDetector {
   // Set current estimated bandwidth.
   void SetEstimatedBitrate(DataRate bitrate);
 
-  // Returns time in milliseconds when the current application-limited region
-  // started or empty result if the sender is currently not application-limited.
+  // Returns time when the current application-limited region started or empty
+  // result if the sender is currently not application-limited.
   std::optional<Timestamp> GetApplicationLimitedRegionStartTime() const;
 
  private:

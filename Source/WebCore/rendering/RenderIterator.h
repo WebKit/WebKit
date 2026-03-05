@@ -120,10 +120,6 @@ private:
     const T* m_current;
 };
 
-// Similar to is<>() but without the static_assert() making sure the check is necessary.
-template <typename T, typename U>
-inline bool isRendererOfType(const U& renderer) { return TypeCastTraits<const T, const U>::isOfType(renderer); }
-
 // Traversal helpers
 
 namespace RenderObjectTraversal {
@@ -207,65 +203,93 @@ namespace RenderTraversal {
 template <typename T, typename U>
 inline T* firstChild(U& current)
 {
-    RenderObject* object = RenderObjectTraversal::firstChild(current);
-    while (object && !isRendererOfType<T>(*object))
-        object = object->nextSibling();
-    return static_cast<T*>(object);
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return RenderObjectTraversal::firstChild(current);
+    else {
+        auto* object = RenderObjectTraversal::firstChild(current);
+        while (object && !is<T>(*object))
+            object = object->nextSibling();
+        return uncheckedDowncast<T>(object);
+    }
 }
 
 template <typename T, typename U>
 inline T* lastChild(U& current)
 {
-    RenderObject* object = current.lastChild();
-    while (object && !isRendererOfType<T>(*object))
-        object = object->previousSibling();
-    return static_cast<T*>(object);
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return current.lastChild();
+    else {
+        auto* object = current.lastChild();
+        while (object && !is<T>(*object))
+            object = object->previousSibling();
+        return uncheckedDowncast<T>(object);
+    }
 }
 
 template <typename T, typename U>
 inline T* nextSibling(U& current)
 {
-    RenderObject* object = current.nextSibling();
-    while (object && !isRendererOfType<T>(*object))
-        object = object->nextSibling();
-    return static_cast<T*>(object);
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return current.nextSibling();
+    else {
+        auto* object = current.nextSibling();
+        while (object && !is<T>(*object))
+            object = object->nextSibling();
+        return uncheckedDowncast<T>(object);
+    }
 }
 
 template <typename T, typename U>
 inline T* previousSibling(U& current)
 {
-    RenderObject* object = current.previousSibling();
-    while (object && !isRendererOfType<T>(*object))
-        object = object->previousSibling();
-    return static_cast<T*>(object);
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return current.previousSibling();
+    else {
+        auto* object = current.previousSibling();
+        while (object && !is<T>(*object))
+            object = object->previousSibling();
+        return uncheckedDowncast<T>(object);
+    }
 }
 
 template <typename T>
 inline T* findAncestorOfType(const RenderObject& current)
 {
-    for (auto* ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
-        if (isRendererOfType<T>(*ancestor))
-            return static_cast<T*>(ancestor);
+    if constexpr (std::is_same_v<T, RenderObject> || std::is_same_v<T, RenderElement>)
+        return current.parent();
+    else {
+        for (auto* ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
+            if (is<T>(*ancestor))
+                return uncheckedDowncast<T>(ancestor);
+        }
+        return nullptr;
     }
-    return nullptr;
 }
 
 template <typename T, typename U>
 inline T* firstWithin(U& current)
 {
-    auto* descendant = RenderObjectTraversal::firstChild(current);
-    while (descendant && !isRendererOfType<T>(*descendant))
-        descendant = RenderObjectTraversal::next(*descendant, &current);
-    return static_cast<T*>(descendant);
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return RenderObjectTraversal::firstChild(current);
+    else {
+        auto* descendant = RenderObjectTraversal::firstChild(current);
+        while (descendant && !is<T>(*descendant))
+            descendant = RenderObjectTraversal::next(*descendant, &current);
+        return uncheckedDowncast<T>(descendant);
+    }
 }
 
 template <typename T, typename U>
 inline T* next(U& current, const RenderObject* stayWithin)
 {
-    auto* descendant = RenderObjectTraversal::next(current, stayWithin);
-    while (descendant && !isRendererOfType<T>(*descendant))
-        descendant = RenderObjectTraversal::next(*descendant, stayWithin);
-    return static_cast<T*>(descendant);
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return RenderObjectTraversal::next(current, stayWithin);
+    else {
+        auto* descendant = RenderObjectTraversal::next(current, stayWithin);
+        while (descendant && !is<T>(*descendant))
+            descendant = RenderObjectTraversal::next(*descendant, stayWithin);
+        return uncheckedDowncast<T>(descendant);
+    }
 }
 
 } // namespace WebCore::RenderTraversal
@@ -275,19 +299,27 @@ namespace RenderPostOrderTraversal {
 template <typename T>
 inline T* firstWithin(RenderObject& current)
 {
-    auto* descendant = current.firstLeafChild();
-    while (descendant && !isRendererOfType<T>(*descendant))
-        descendant = RenderObjectPostOrderTraversal::next(*descendant, &current);
-    return static_cast<T*>(descendant);
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return current.firstLeafChild();
+    else {
+        auto* descendant = current.firstLeafChild();
+        while (descendant && !is<T>(*descendant))
+            descendant = RenderObjectPostOrderTraversal::next(*descendant, &current);
+        return uncheckedDowncast<T>(descendant);
+    }
 }
 
 template <typename T>
 inline T* next(RenderObject& current, const RenderObject* stayWithin)
 {
-    auto* descendant = RenderObjectPostOrderTraversal::next(current, stayWithin);
-    while (descendant && !isRendererOfType<T>(*descendant))
-        descendant = RenderObjectPostOrderTraversal::next(*descendant, stayWithin);
-    return static_cast<T*>(descendant);
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return RenderObjectPostOrderTraversal::next(current, stayWithin);
+    else {
+        auto* descendant = RenderObjectPostOrderTraversal::next(current, stayWithin);
+        while (descendant && !is<T>(*descendant))
+            descendant = RenderObjectPostOrderTraversal::next(*descendant, stayWithin);
+        return uncheckedDowncast<T>(descendant);
+    }
 }
 
 } // namespace WebCore::RenderPostOrderTraversal

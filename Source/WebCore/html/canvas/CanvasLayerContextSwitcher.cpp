@@ -39,18 +39,18 @@ RefPtr<CanvasLayerContextSwitcher> CanvasLayerContextSwitcher::create(CanvasRend
     if (!effectiveDrawingContext)
         return nullptr;
 
-    auto targetSwitcher = GraphicsContextSwitcher::create(*effectiveDrawingContext, bounds, context.colorSpace(), WTFMove(filter));
+    auto targetSwitcher = GraphicsContextSwitcher::create(*effectiveDrawingContext, bounds, context.colorSpace(), WTF::move(filter));
     if (!targetSwitcher)
         return nullptr;
 
-    return adoptRef(*new CanvasLayerContextSwitcher(context, bounds, WTFMove(targetSwitcher)));
+    return adoptRef(*new CanvasLayerContextSwitcher(context, bounds, WTF::move(targetSwitcher)));
 }
 
 CanvasLayerContextSwitcher::CanvasLayerContextSwitcher(CanvasRenderingContext2DBase& context, const FloatRect& bounds, std::unique_ptr<GraphicsContextSwitcher>&& targetSwitcher)
     : m_context(context)
     , m_effectiveDrawingContext(context.effectiveDrawingContext())
     , m_bounds(bounds)
-    , m_targetSwitcher(WTFMove(targetSwitcher))
+    , m_targetSwitcher(WTF::move(targetSwitcher))
 {
     ASSERT(m_targetSwitcher);
     ASSERT(m_effectiveDrawingContext);

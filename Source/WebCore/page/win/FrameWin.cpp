@@ -45,11 +45,11 @@ GDIObject<HBITMAP> imageFromRect(const LocalFrame*, IntRect&)
 
 void computePageRectsForFrame(LocalFrame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight)
 {
-    PrintContext printContext(frame);
+    Ref printContext = PrintContext::create(frame);
     float pageHeight = 0;
-    printContext.computePageRects(printRect, headerHeight, footerHeight, userScaleFactor, pageHeight);
+    printContext->computePageRects(printRect, headerHeight, footerHeight, userScaleFactor, pageHeight);
     outPageHeight = static_cast<int>(pageHeight);
-    outPages = printContext.pageRects();
+    outPages = printContext->pageRects();
 }
 
 GDIObject<HBITMAP> imageFromSelection(LocalFrame* frame, bool forceBlackText)

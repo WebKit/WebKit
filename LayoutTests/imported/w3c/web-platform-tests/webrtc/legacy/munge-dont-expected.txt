@@ -2,6 +2,6 @@
 PASS RTCSessionDescription.type is read-only
 PASS RTCSessionDescription.sdp is read-only
 PASS RTCIceCandidate.candidate is read-only
-PASS Rejects SDP munging between createOffer and setLocalDescription
-PASS Rejects SDP munging between createAnswer and setLocalDescription
+FAIL Rejects SDP munging between createOffer and setLocalDescription assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Rejects SDP munging between createAnswer and setLocalDescription assert_unreached: Should have rejected: undefined Reached unreachable code
 

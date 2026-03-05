@@ -49,7 +49,7 @@ PredefinedColorSpace ImageData::computeColorSpace(std::optional<ImageDataSetting
     return defaultColorSpace;
 }
 
-static ImageDataPixelFormat computePixelFormat(std::optional<ImageDataSettings> settings, ImageDataPixelFormat defaultPixelFormat = ImageDataPixelFormat::RgbaUnorm8)
+static ImageDataPixelFormat NODELETE computePixelFormat(std::optional<ImageDataSettings> settings, ImageDataPixelFormat defaultPixelFormat = ImageDataPixelFormat::RgbaUnorm8)
 {
     return settings ? settings->pixelFormat : defaultPixelFormat;
 }
@@ -65,7 +65,7 @@ Ref<ImageData> ImageData::create(Ref<Float16ArrayPixelBuffer>&& pixelBuffer, std
 {
     auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
     auto size = pixelBuffer->size();
-    return adoptRef(*new ImageData(size, WTFMove(pixelBuffer.get()).takeData(), *colorSpace, overridingPixelFormat));
+    return adoptRef(*new ImageData(size, WTF::move(pixelBuffer.get()).takeData(), *colorSpace, overridingPixelFormat));
 }
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)
 
@@ -79,10 +79,10 @@ RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer, 
 RefPtr<ImageData> ImageData::create(Ref<PixelBuffer>&& pixelBuffer, std::optional<ImageDataPixelFormat> overridingPixelFormat)
 {
     if (is<ByteArrayPixelBuffer>(pixelBuffer))
-        return create(uncheckedDowncast<ByteArrayPixelBuffer>(WTFMove(pixelBuffer)), overridingPixelFormat);
+        return create(uncheckedDowncast<ByteArrayPixelBuffer>(WTF::move(pixelBuffer)), overridingPixelFormat);
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (is<Float16ArrayPixelBuffer>(pixelBuffer))
-        return create(uncheckedDowncast<Float16ArrayPixelBuffer>(WTFMove(pixelBuffer)), overridingPixelFormat);
+        return create(uncheckedDowncast<Float16ArrayPixelBuffer>(WTF::move(pixelBuffer)), overridingPixelFormat);
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)
     return nullptr;
 }
@@ -95,7 +95,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, PredefinedColorSpace co
     auto array = ImageDataArray::tryCreate(dataSize, ImageDataPixelFormat::RgbaUnorm8);
     if (!array)
         return nullptr;
-    return adoptRef(*new ImageData(size, WTFMove(*array), colorSpace, imageDataPixelFormat));
+    return adoptRef(*new ImageData(size, WTF::move(*array), colorSpace, imageDataPixelFormat));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size, ImageDataArray&& array, PredefinedColorSpace colorSpace)
@@ -103,7 +103,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, ImageDataArray&& array,
     auto dataSize = computeDataSize(size, array.pixelFormat());
     if (dataSize.hasOverflowed() || dataSize != array.length())
         return nullptr;
-    return adoptRef(*new ImageData(size, WTFMove(array), colorSpace));
+    return adoptRef(*new ImageData(size, WTF::move(array), colorSpace));
 }
 
 
@@ -125,7 +125,7 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, Predefin
     }
 
     auto colorSpace = ImageData::computeColorSpace(settings, defaultColorSpace);
-    return adoptRef(*new ImageData(size, WTFMove(*array), colorSpace));
+    return adoptRef(*new ImageData(size, WTF::move(*array), colorSpace));
 }
 
 ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, std::optional<ImageDataSettings> settings)
@@ -156,19 +156,19 @@ ExceptionOr<Ref<ImageData>> ImageData::create(ImageDataArray&& array, unsigned s
         return Exception { ExceptionCode::RangeError };
 
     auto colorSpace = computeColorSpace(settings);
-    return adoptRef(*new ImageData(size, WTFMove(array), colorSpace));
+    return adoptRef(*new ImageData(size, WTF::move(array), colorSpace));
 }
 
 ImageData::ImageData(const IntSize& size, ImageDataArray&& data, PredefinedColorSpace colorSpace)
     : m_size(size)
-    , m_data(WTFMove(data))
+    , m_data(WTF::move(data))
     , m_colorSpace(colorSpace)
 {
 }
 
 ImageData::ImageData(const IntSize& size, ImageDataArray&& data, PredefinedColorSpace colorSpace, std::optional<ImageDataPixelFormat> overridingPixelFormat)
     : m_size(size)
-    , m_data(WTFMove(data), overridingPixelFormat)
+    , m_data(WTF::move(data), overridingPixelFormat)
     , m_colorSpace(colorSpace)
 {
 }

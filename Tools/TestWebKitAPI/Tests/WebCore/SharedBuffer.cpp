@@ -82,8 +82,8 @@ TEST_F(FragmentedSharedBufferTest, appendBufferCreatedWithContentsOfExistingFile
     builder.append(*buffer);
     builder.append("a"_span);
     EXPECT_TRUE(builder.size() == (strlen(FragmentedSharedBufferTest::testData()) + 1));
-    EXPECT_TRUE(!memcmp(builder.get()->makeContiguous()->span().data(), FragmentedSharedBufferTest::testData(), strlen(FragmentedSharedBufferTest::testData())));
-    EXPECT_EQ('a', builder.get()->makeContiguous()->span().data()[strlen(FragmentedSharedBufferTest::testData())]);
+    EXPECT_TRUE(!memcmp(builder.buffer()->makeContiguous()->span().data(), FragmentedSharedBufferTest::testData(), strlen(FragmentedSharedBufferTest::testData())));
+    EXPECT_EQ('a', builder.buffer()->makeContiguous()->span().data()[strlen(FragmentedSharedBufferTest::testData())]);
 }
 
 TEST_F(FragmentedSharedBufferTest, tryCreateArrayBuffer)
@@ -91,7 +91,7 @@ TEST_F(FragmentedSharedBufferTest, tryCreateArrayBuffer)
     SharedBufferBuilder builder(std::in_place, "Hello"_span);
     builder.append("World"_span);
     builder.append("Goodbye"_span);
-    RefPtr<ArrayBuffer> arrayBuffer = builder.get()->tryCreateArrayBuffer();
+    RefPtr<ArrayBuffer> arrayBuffer = builder.buffer()->tryCreateArrayBuffer();
     char expectedConcatenation[] = "HelloWorldGoodbye";
     ASSERT_EQ(strlen(expectedConcatenation), arrayBuffer->byteLength());
     EXPECT_EQ(0, memcmp(expectedConcatenation, arrayBuffer->data(), strlen(expectedConcatenation)));
@@ -100,7 +100,7 @@ TEST_F(FragmentedSharedBufferTest, tryCreateArrayBuffer)
 TEST_F(FragmentedSharedBufferTest, contiguousAlwaysStayContiguous)
 {
     SharedBufferBuilder builder(std::in_place, "Hello"_span);
-    RefPtr<FragmentedSharedBuffer> contiguousBuffer = builder.get()->makeContiguous();
+    RefPtr<FragmentedSharedBuffer> contiguousBuffer = builder.buffer()->makeContiguous();
     EXPECT_TRUE(contiguousBuffer->isContiguous());
     EXPECT_EQ(contiguousBuffer->segmentsCount(), 1u);
     builder.append("Goodbye"_span);
@@ -111,22 +111,22 @@ TEST_F(FragmentedSharedBufferTest, contiguousAlwaysStayContiguous)
 TEST_F(FragmentedSharedBufferTest, getReturnsContiguous)
 {
     SharedBufferBuilder builder;
-    EXPECT_TRUE(!builder.get());
+    EXPECT_TRUE(!builder.buffer());
     builder.append("Hello"_span);
-    EXPECT_TRUE(builder.get());
-    EXPECT_TRUE(builder.get()->isContiguous());
+    EXPECT_TRUE(builder.buffer());
+    EXPECT_TRUE(builder.buffer()->isContiguous());
     // makeContiguous is a no-op if already contiguous.
-    RefPtr<FragmentedSharedBuffer> contiguousBuffer = builder.get()->makeContiguous();
+    RefPtr<FragmentedSharedBuffer> contiguousBuffer = builder.buffer()->makeContiguous();
     EXPECT_TRUE(contiguousBuffer->isContiguous());
-    EXPECT_EQ(builder.get().get(), contiguousBuffer.get());
+    EXPECT_EQ(builder.buffer(), contiguousBuffer.get());
     EXPECT_EQ(contiguousBuffer->segmentsCount(), 1u);
     builder.append("Hi"_span);
     EXPECT_TRUE(contiguousBuffer->isContiguous());
     EXPECT_EQ(contiguousBuffer->segmentsCount(), 1u);
-    EXPECT_FALSE(builder.get()->isContiguous());
-    EXPECT_EQ(builder.get()->segmentsCount(), 2u);
+    EXPECT_FALSE(builder.buffer()->isContiguous());
+    EXPECT_EQ(builder.buffer()->segmentsCount(), 2u);
     builder.append("Goodbye"_span);
-    EXPECT_EQ(builder.get()->segmentsCount(), 3u);
+    EXPECT_EQ(builder.buffer()->segmentsCount(), 3u);
 }
 
 TEST_F(FragmentedSharedBufferTest, tryCreateArrayBufferLargeSegments)
@@ -135,10 +135,10 @@ TEST_F(FragmentedSharedBufferTest, tryCreateArrayBufferLargeSegments)
     Vector<uint8_t> vector1(0x4000, 'b');
     Vector<uint8_t> vector2(0x4000, 'c');
 
-    SharedBufferBuilder builder(std::in_place, WTFMove(vector0));
-    builder.append(WTFMove(vector1));
-    builder.append(WTFMove(vector2));
-    RefPtr<ArrayBuffer> arrayBuffer = builder.get()->tryCreateArrayBuffer();
+    SharedBufferBuilder builder(std::in_place, WTF::move(vector0));
+    builder.append(WTF::move(vector1));
+    builder.append(WTF::move(vector2));
+    RefPtr<ArrayBuffer> arrayBuffer = builder.buffer()->tryCreateArrayBuffer();
     ASSERT_EQ(0x4000U + 0x4000U + 0x4000U, arrayBuffer->byteLength());
     int position = 0;
     for (int i = 0; i < 0x4000; ++i) {
@@ -181,15 +181,15 @@ TEST_F(FragmentedSharedBufferTest, copy)
     builder1.append(testData);
     // sharedBuffer must contain data more than segmentSize (= 0x1000) to check copy().
     EXPECT_EQ(length * 4, builder1.size());
-    RefPtr<FragmentedSharedBuffer> clone = builder1.copy();
+    RefPtr<FragmentedSharedBuffer> clone = builder1.copyBuffer();
     EXPECT_EQ(length * 4, clone->size());
-    EXPECT_EQ(0, memcmp(clone->makeContiguous()->span().data(), builder1.get()->makeContiguous()->span().data(), clone->size()));
+    EXPECT_EQ(0, memcmp(clone->makeContiguous()->span().data(), builder1.buffer()->makeContiguous()->span().data(), clone->size()));
 
     SharedBufferBuilder builder2;
     builder2.append(*clone);
     builder2.append(testData);
     EXPECT_EQ(length * 5, builder2.size());
-    auto buffer = builder2.take();
+    auto buffer = builder2.takeBuffer();
     EXPECT_EQ(length * 5, buffer->size());
     // builder is now empty.
     EXPECT_EQ(0U, builder2.size());
@@ -203,8 +203,8 @@ TEST_F(FragmentedSharedBufferTest, builder)
     SharedBufferBuilder builder1(std::in_place, testData0);
     EXPECT_FALSE(builder1.isNull());
     EXPECT_FALSE(builder1.isEmpty());
-    auto copy = builder1.copy();
-    auto buffer = builder1.take();
+    auto copy = builder1.copyBuffer();
+    auto buffer = builder1.takeBuffer();
     EXPECT_TRUE(builder1.isNull());
     EXPECT_TRUE(builder1.isEmpty());
     EXPECT_NE(copy.ptr(), buffer.ptr()); // We have different FragmentedSharedBuffer
@@ -227,9 +227,9 @@ TEST_F(FragmentedSharedBufferTest, builder)
 TEST_F(FragmentedSharedBufferTest, builderEmptyFollowedByGet)
 {
     SharedBufferBuilder builder;
-    EXPECT_TRUE(!builder.get());
+    EXPECT_TRUE(!builder.buffer());
     builder.empty();
-    EXPECT_FALSE(!builder.get());
+    EXPECT_FALSE(!builder.buffer());
 }
 
 TEST_F(FragmentedSharedBufferTest, builderInPlace)
@@ -238,7 +238,7 @@ TEST_F(FragmentedSharedBufferTest, builderInPlace)
     EXPECT_FALSE(builder.isNull());
     EXPECT_FALSE(builder.isEmpty());
     EXPECT_FALSE(builder.isContiguous());
-    EXPECT_EQ(builder.take()->segmentsCount(), 2u);
+    EXPECT_EQ(builder.takeBuffer()->segmentsCount(), 2u);
     EXPECT_TRUE(builder.isNull());
     EXPECT_TRUE(builder.isEmpty());
     EXPECT_TRUE(builder.isContiguous());
@@ -265,10 +265,10 @@ TEST_F(FragmentedSharedBufferTest, getSomeData)
     Vector<uint8_t> s3 = { 'i', 'j', 'k', 'l' };
 
     SharedBufferBuilder builder;
-    builder.append(WTFMove(s1));
-    builder.append(WTFMove(s2));
-    builder.append(WTFMove(s3));
-    auto buffer = builder.take();
+    builder.append(WTF::move(s1));
+    builder.append(WTF::move(s2));
+    builder.append(WTF::move(s3));
+    auto buffer = builder.takeBuffer();
     
     auto abcd = buffer->getSomeData(0);
     auto gh1 = buffer->getSomeData(6);
@@ -300,10 +300,10 @@ TEST_F(FragmentedSharedBufferTest, getContiguousData)
     Vector<uint8_t> s3 = { 'i', 'j', 'k', 'l' };
 
     SharedBufferBuilder builder;
-    builder.append(WTFMove(s1));
-    builder.append(WTFMove(s2));
-    builder.append(WTFMove(s3));
-    auto buffer = builder.take();
+    builder.append(WTF::move(s1));
+    builder.append(WTF::move(s2));
+    builder.append(WTF::move(s3));
+    auto buffer = builder.takeBuffer();
 
     auto abcd = buffer->getContiguousData(0, 4);
     auto bcdefghi = buffer->getContiguousData(1, 8);
@@ -333,15 +333,15 @@ TEST_F(FragmentedSharedBufferTest, isEqualTo)
     auto makeBuffer = [] (Vector<Vector<uint8_t>>&& contents) {
         SharedBufferBuilder builder;
         for (auto& content : contents)
-            builder.append(WTFMove(content));
-        return builder.take();
+            builder.append(WTF::move(content));
+        return builder.takeBuffer();
     };
     auto buffer1 = makeBuffer({ { 'a', 'b', 'c', 'd' } });
     EXPECT_EQ(buffer1.get(), buffer1.get());
 
-    SharedBufferBuilder builder(WTFMove(buffer1));
+    SharedBufferBuilder builder(WTF::move(buffer1));
     builder.append(Vector<uint8_t>({ 'a', 'b', 'c', 'd' }));
-    EXPECT_EQ(*builder.get(), makeBuffer({ { 'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd' } }).get());
+    EXPECT_EQ(*builder.buffer(), makeBuffer({ { 'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd' } }).get());
 
     EXPECT_EQ(makeBuffer({ { 'a' }, { 'b', 'c' }, { 'd' } }).get(), makeBuffer({ { 'a', 'b' }, { 'c', 'd' } }).get());
     EXPECT_NE(makeBuffer({ { 'a', 'b' } }).get(), makeBuffer({ { 'a', 'b', 'c' } }).get());
@@ -353,12 +353,12 @@ TEST_F(FragmentedSharedBufferTest, toHexString)
 {
     Vector<uint8_t> t1 = {0x11, 0x5, 0x12};
     SharedBufferBuilder builder;
-    builder.append(WTFMove(t1));
-    auto buffer = builder.take();
+    builder.append(WTF::move(t1));
+    auto buffer = builder.takeBuffer();
     String result = buffer->toHexString();
     EXPECT_EQ(result, "110512"_s);
     builder.reset();
-    buffer = builder.take();
+    buffer = builder.takeBuffer();
     EXPECT_EQ(buffer->toHexString(), ""_s);
 }
 
@@ -382,14 +382,14 @@ TEST_F(FragmentedSharedBufferTest, read)
     SharedBufferBuilder builder;
     for (size_t i = 0; i < simpleText.size(); ++i)
         builder.append(simpleText.subspan(i, 1));
-    check(builder.take());
+    check(builder.takeBuffer());
     EXPECT_TRUE(builder.isNull() && !builder);
     EXPECT_EQ(builder.size(), 0u);
 
     for (size_t i = 0; i < simpleText.size(); i += 2)
         builder.append(simpleText.subspan(i, 2));
     EXPECT_EQ(builder.size(), simpleText.size());
-    check(builder.take());
+    check(builder.takeBuffer());
 }
 
 TEST_F(FragmentedSharedBufferTest, extractData)
@@ -414,31 +414,31 @@ TEST_F(FragmentedSharedBufferTest, copyIsContiguous)
 TEST_F(FragmentedSharedBufferTest, takeDataIsContiguousWhenPossible)
 {
     SharedBufferBuilder builder(std::in_place, "Part1"_span);
-    Ref buffer = builder.take();
+    Ref buffer = builder.takeBuffer();
     EXPECT_TRUE(buffer->isContiguous());
     builder.append("Part1"_span);
     builder.append("Part2"_span);
-    buffer = builder.take();
+    buffer = builder.takeBuffer();
     EXPECT_FALSE(buffer->isContiguous());
 }
 
 TEST_F(FragmentedSharedBufferTest, getIsContiguousWhenPossible)
 {
     SharedBufferBuilder builder;
-    EXPECT_TRUE(!builder.get());
+    EXPECT_TRUE(!builder.buffer());
     builder.append("Part1"_span);
-    EXPECT_FALSE(!builder.get());
-    EXPECT_TRUE(builder.get()->isContiguous());
+    EXPECT_FALSE(!builder.buffer());
+    EXPECT_TRUE(builder.buffer()->isContiguous());
     builder.append("Part2"_span);
-    EXPECT_FALSE(builder.get()->isContiguous());
+    EXPECT_FALSE(builder.buffer()->isContiguous());
 }
 
 TEST_F(FragmentedSharedBufferTest, emptySharedBufferBuilderIsContiguous)
 {
     SharedBufferBuilder builder;
-    Ref buffer = builder.copy();
+    Ref buffer = builder.copyBuffer();
     EXPECT_TRUE(buffer->isContiguous());
-    buffer = builder.take();
+    buffer = builder.takeBuffer();
     EXPECT_TRUE(buffer->isContiguous());
     EXPECT_TRUE(is<SharedBuffer>(buffer));
 }
@@ -499,13 +499,13 @@ TEST_F(SharedBufferChunkReaderTest, includeSeparator)
     check(sharedBuffer);
 
     SharedBufferBuilder builder(std::in_place, std::span<const uint8_t> { data });
-    check(builder.take());
+    check(builder.takeBuffer());
 
     for (size_t i = 0; i < 256; ++i) {
         const uint8_t byte = i;
         builder.append(std::span { &byte, 1 });
     }
-    check(builder.take());
+    check(builder.takeBuffer());
 }
 
 TEST_F(SharedBufferChunkReaderTest, peekData)
@@ -543,16 +543,16 @@ TEST_F(SharedBufferChunkReaderTest, peekData)
     check(sharedBuffer);
 
     SharedBufferBuilder builder(std::in_place, simpleText);
-    check(builder.take());
+    check(builder.takeBuffer());
 
     for (size_t i = 0; i < simpleText.size(); i++)
         builder.append(simpleText.subspan(i, 1));
-    check(builder.take());
+    check(builder.takeBuffer());
 
     for (size_t i = 0; i < simpleText.size(); i += 2)
         builder.append(simpleText.subspan(i, 2));
     EXPECT_EQ(builder.size(), simpleText.size());
-    check(builder.take());
+    check(builder.takeBuffer());
 }
 
 TEST_F(SharedBufferChunkReaderTest, readAllChunksInMultiSegment)
@@ -593,17 +593,17 @@ TEST_F(SharedBufferChunkReaderTest, readAllChunksInMultiSegment)
     check(sharedBuffer);
 
     SharedBufferBuilder builder(std::in_place, simpleText);
-    check(builder.take());
+    check(builder.takeBuffer());
 
     for (size_t i = 0; i < simpleText.size(); i++)
         builder.append(simpleText.subspan(i, 1));
     EXPECT_EQ(builder.size(), simpleText.size());
-    check(builder.take());
+    check(builder.takeBuffer());
 
     for (size_t i = 0; i < simpleText.size(); i += 5)
         builder.append(simpleText.subspan(i, 5));
     EXPECT_EQ(builder.size(), simpleText.size());
-    check(builder.take());
+    check(builder.takeBuffer());
 }
 
 TEST_F(SharedBufferChunkReaderTest, changingIterator)

@@ -68,14 +68,14 @@ TEST(WTF_NakedPtr, Basic)
 
     {
         NakedPtr<RefLogger> p1 = &a;
-        NakedPtr<RefLogger> p2 = WTFMove(p1);
+        NakedPtr<RefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
 
     {
         NakedPtr<RefLogger> p1 = &a;
-        NakedPtr<RefLogger> p2(WTFMove(p1));
+        NakedPtr<RefLogger> p2(WTF::move(p1));
         SUPPRESS_USE_AFTER_MOVE ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -89,7 +89,7 @@ TEST(WTF_NakedPtr, Basic)
 
     {
         NakedPtr<DerivedRefLogger> p1 = &a;
-        NakedPtr<RefLogger> p2 = WTFMove(p1);
+        NakedPtr<RefLogger> p2 = WTF::move(p1);
         SUPPRESS_USE_AFTER_MOVE ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -137,7 +137,7 @@ TEST(WTF_NakedPtr, Assignment)
         NakedPtr<RefLogger> p2(&b);
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&b, p2.get());
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         ASSERT_EQ(&b, p1.get());
         SUPPRESS_USE_AFTER_MOVE ASSERT_EQ(&b, p2.get());
     }
@@ -164,7 +164,7 @@ TEST(WTF_NakedPtr, Assignment)
         NakedPtr<DerivedRefLogger> p2(&c);
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&c, p2.get());
-        p1 = WTFMove(p2);
+        p1 = WTF::move(p2);
         ASSERT_EQ(&c, p1.get());
         SUPPRESS_USE_AFTER_MOVE ASSERT_EQ(&c, p2.get());
     }
@@ -189,7 +189,7 @@ TEST(WTF_NakedPtr, Assignment)
         NakedPtr<RefLogger> ptr(&a);
         ASSERT_EQ(&a, ptr.get());
         IGNORE_WARNINGS_BEGIN("self-move")
-        ptr = WTFMove(ptr);
+        ptr = WTF::move(ptr);
         IGNORE_WARNINGS_END
         ASSERT_EQ(&a, ptr.get());
     }

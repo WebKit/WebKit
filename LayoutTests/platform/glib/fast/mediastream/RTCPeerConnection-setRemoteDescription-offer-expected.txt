@@ -18,7 +18,6 @@ PASS pc.getTransceivers().includes(trackEvent.transceiver) is true
 PASS trackEvent.track.muted is true
 *** Remote track properties should match track added at remote side (remotePc)
 PASS trackEvent.track.kind is remotePcAudioTrack.kind
-PASS trackEvent.track.id is remotePcAudioTrack.id
 PASS trackEvent.track.label is 'remote audio'
 *** Check local and remote transceivers
 PASS trackEvent.transceiver.mid is remotePcAudioTransceiver.mid
@@ -48,7 +47,6 @@ PASS pc.getTransceivers().includes(trackEvent.transceiver) is true
 PASS trackEvent.track.muted is true
 *** Remote track properties should match track added at remote side (remotePc)
 PASS trackEvent.track.kind is remotePcVideoTrack.kind
-PASS trackEvent.track.id is remotePcVideoTrack.id
 PASS trackEvent.track.label is 'remote video'
 *** Check local and remote transceivers
 PASS trackEvent.transceiver.mid is remotePcVideoTransceiver.mid

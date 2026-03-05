@@ -181,13 +181,16 @@ YuvFileGenerator::~YuvFileGenerator() {
 
 FrameGeneratorInterface::VideoFrameData YuvFileGenerator::NextFrame() {
   // Empty update by default.
-  VideoFrame::UpdateRect update_rect{0, 0, 0, 0};
+  VideoFrame::UpdateRect update_rect{
+      .offset_x = 0, .offset_y = 0, .width = 0, .height = 0};
   if (current_display_count_ == 0) {
     const bool got_new_frame = ReadNextFrame();
     // Full update on a new frame from file.
     if (got_new_frame) {
-      update_rect = VideoFrame::UpdateRect{0, 0, static_cast<int>(width_),
-                                           static_cast<int>(height_)};
+      update_rect = VideoFrame::UpdateRect{.offset_x = 0,
+                                           .offset_y = 0,
+                                           .width = static_cast<int>(width_),
+                                           .height = static_cast<int>(height_)};
     }
   }
   if (++current_display_count_ >= frame_display_count_)
@@ -247,13 +250,16 @@ NV12FileGenerator::~NV12FileGenerator() {
 
 FrameGeneratorInterface::VideoFrameData NV12FileGenerator::NextFrame() {
   // Empty update by default.
-  VideoFrame::UpdateRect update_rect{0, 0, 0, 0};
+  VideoFrame::UpdateRect update_rect{
+      .offset_x = 0, .offset_y = 0, .width = 0, .height = 0};
   if (current_display_count_ == 0) {
     const bool got_new_frame = ReadNextFrame();
     // Full update on a new frame from file.
     if (got_new_frame) {
-      update_rect = VideoFrame::UpdateRect{0, 0, static_cast<int>(width_),
-                                           static_cast<int>(height_)};
+      update_rect = VideoFrame::UpdateRect{.offset_x = 0,
+                                           .offset_y = 0,
+                                           .width = static_cast<int>(width_),
+                                           .height = static_cast<int>(height_)};
     }
   }
   if (++current_display_count_ >= frame_display_count_)
@@ -407,7 +413,10 @@ ScrollingImageFrameGenerator::NextFrame() {
   if (!same_scroll_position) {
     // If scrolling is not finished yet, force full frame update.
     current_frame_.update_rect =
-        VideoFrame::UpdateRect{0, 0, target_width_, target_height_};
+        VideoFrame::UpdateRect{.offset_x = 0,
+                               .offset_y = 0,
+                               .width = target_width_,
+                               .height = target_height_};
   }
   prev_frame_not_scrolled_ = cur_frame_not_scrolled;
 
@@ -421,7 +430,8 @@ ScrollingImageFrameGenerator::GetResolution() const {
 }
 
 void ScrollingImageFrameGenerator::UpdateSourceFrame(size_t frame_num) {
-  VideoFrame::UpdateRect acc_update{0, 0, 0, 0};
+  VideoFrame::UpdateRect acc_update{
+      .offset_x = 0, .offset_y = 0, .width = 0, .height = 0};
   while (current_frame_num_ != frame_num) {
     current_source_frame_ = file_generator_.NextFrame();
     if (current_source_frame_.update_rect) {
@@ -452,8 +462,14 @@ void ScrollingImageFrameGenerator::CropSourceToScrolledImage(
 
   VideoFrame::UpdateRect update_rect =
       current_source_frame_.update_rect->IsEmpty()
-          ? VideoFrame::UpdateRect{0, 0, 0, 0}
-          : VideoFrame::UpdateRect{0, 0, target_width_, target_height_};
+          ? VideoFrame::UpdateRect{.offset_x = 0,
+                                   .offset_y = 0,
+                                   .width = 0,
+                                   .height = 0}
+          : VideoFrame::UpdateRect{.offset_x = 0,
+                                   .offset_y = 0,
+                                   .width = target_width_,
+                                   .height = target_height_};
   current_frame_ = VideoFrameData(
       WrapI420Buffer(target_width_, target_height_,
                      &i420_buffer->DataY()[offset_y], i420_buffer->StrideY(),

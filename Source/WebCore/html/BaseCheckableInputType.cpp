@@ -56,7 +56,7 @@ FormControlState BaseCheckableInputType::saveFormControlState() const
 void BaseCheckableInputType::restoreFormControlState(const FormControlState& state)
 {
     ASSERT(element());
-    protectedElement()->setChecked(state[0] == onAtom());
+    protect(element())->setChecked(state[0] == onAtom());
 }
 
 bool BaseCheckableInputType::appendFormData(DOMFormData& formData) const
@@ -74,7 +74,7 @@ auto BaseCheckableInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldC
     const String& key = event.keyIdentifier();
     if (key == "U+0020"_s) {
         ASSERT(element());
-        protectedElement()->setActive(true);
+        protect(element())->setActive(true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
         return ShouldCallBaseEventHandler::No;
@@ -99,7 +99,7 @@ bool BaseCheckableInputType::canSetStringValue() const
 bool BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 {
     ASSERT(element());
-    return InputType::accessKeyAction(sendMouseEvents) || protectedElement()->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    return InputType::accessKeyAction(sendMouseEvents) || protect(element())->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 ValueOrReference<String> BaseCheckableInputType::fallbackValue() const
@@ -115,7 +115,7 @@ bool BaseCheckableInputType::storesValueSeparateFromAttribute()
 void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
-    protectedElement()->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
+    protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
 }
 
 void BaseCheckableInputType::fireInputAndChangeEvents()

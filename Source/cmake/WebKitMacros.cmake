@@ -19,7 +19,7 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
     endif ()
 
     if (ENABLE_UNIFIED_BUILDS)
-        execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
+        execute_process(COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
             ${gusb_args}
             "--print-bundled-sources"
             ${_sourceListFileTruePaths}
@@ -36,7 +36,7 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         endforeach ()
         unset(_sourceFileTmp)
 
-        execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
+        execute_process(COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
             ${gusb_args}
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE  _resultTmp
@@ -57,7 +57,7 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         unset(_resultTmp)
         unset(_outputTmp)
     else ()
-        execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
+        execute_process(COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
             ${gusb_args}
             "--print-all-sources"
             ${_sourceListFileTruePaths}

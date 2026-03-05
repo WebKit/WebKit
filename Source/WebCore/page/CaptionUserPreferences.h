@@ -64,8 +64,9 @@ public:
     virtual CaptionDisplayMode captionDisplayMode() const;
     virtual void setCaptionDisplayMode(CaptionDisplayMode);
 
-    virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const;
-    virtual int textTrackLanguageSelectionScore(TextTrack*, const Vector<String>&) const;
+    virtual int textTrackSelectionScore(TextTrack&, CaptionDisplayMode, AudioTrack* enabledAudioTrack = nullptr) const;
+    virtual int textTrackSelectionScore(TextTrack&, HTMLMediaElement&) const;
+    virtual int textTrackLanguageSelectionScore(TextTrack&, const Vector<String>&) const;
 
     virtual bool userPrefersCaptions() const;
     virtual void setUserPrefersCaptions(bool);
@@ -93,32 +94,37 @@ public:
     virtual void setPreferredAudioCharacteristic(const String&);
     virtual Vector<String> preferredAudioCharacteristics() const;
 
-    virtual String displayNameForTrack(TextTrack*) const;
-    MediaSelectionOption mediaSelectionOptionForTrack(TextTrack*) const;
-    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>);
+    virtual String displayNameForTrack(const TextTrack&) const;
+    MediaSelectionOption mediaSelectionOptionForTrack(const TextTrack&) const;
+    virtual Vector<Ref<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>);
 
-    virtual String displayNameForTrack(AudioTrack*) const;
-    MediaSelectionOption mediaSelectionOptionForTrack(AudioTrack*) const;
-    virtual Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*);
+    virtual String displayNameForTrack(const AudioTrack&) const;
+    MediaSelectionOption mediaSelectionOptionForTrack(const AudioTrack&) const;
+    virtual Vector<Ref<AudioTrack>> sortedTrackListForMenu(AudioTrackList*);
 
     void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
     String primaryAudioTrackLanguageOverride() const;
 
+    void setPreferredAudioCharacteristicsForTesting(const Vector<String>& characteristics) { m_preferredAudioCharacteristicsForTesting = characteristics; }
+    const Vector<String>& preferredAudioCharacteristicsForTesting() const LIFETIME_BOUND { return m_preferredAudioCharacteristicsForTesting; }
+
     virtual bool testingMode() const { return m_testingModeCount; }
 
     friend class CaptionUserPreferencesTestingModeToken;
-    WEBCORE_EXPORT UniqueRef<CaptionUserPreferencesTestingModeToken> createTestingModeToken();
+    WEBCORE_EXPORT UniqueRef<CaptionUserPreferencesTestingModeToken> NODELETE createTestingModeToken();
 
     virtual String captionPreviewTitle() const;
+    virtual String captionPreviewProfileID() const { return emptyString(); }
+    virtual void setCaptionPreviewProfileID(const String&) { }
 
-    PageGroup& pageGroup() const;
+    PageGroup& NODELETE pageGroup() const;
 
 protected:
     explicit CaptionUserPreferences(PageGroup&);
 
     void updateCaptionStyleSheetOverride();
-    void beginBlockingNotifications();
-    void endBlockingNotifications();
+    void NODELETE beginBlockingNotifications();
+    void NODELETE endBlockingNotifications();
 
 private:
     void incrementTestingModeCount() { ++m_testingModeCount; }
@@ -131,7 +137,7 @@ private:
 
     void timerFired();
     void notify();
-    Page* currentPage() const;
+    RefPtr<Page> currentPage() const;
 
     WeakRef<PageGroup> m_pageGroup;
     mutable CaptionDisplayMode m_displayMode;
@@ -140,6 +146,7 @@ private:
     String m_userPreferredAudioCharacteristic;
     String m_captionsStyleSheetOverride;
     String m_primaryAudioTrackLanguageOverride;
+    Vector<String> m_preferredAudioCharacteristicsForTesting;
     unsigned m_blockNotificationsCounter { 0 };
     bool m_havePreferences { false };
     unsigned m_testingModeCount { 0 };
@@ -148,7 +155,7 @@ private:
 class CaptionUserPreferencesTestingModeToken {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CaptionUserPreferencesTestingModeToken, WEBCORE_EXPORT);
 public:
-    CaptionUserPreferencesTestingModeToken(CaptionUserPreferences& parent)
+    explicit CaptionUserPreferencesTestingModeToken(CaptionUserPreferences& parent)
         : m_parent(parent)
     {
         parent.incrementTestingModeCount();

@@ -54,7 +54,7 @@ public:
 
     double actionMenuTopLevelLimit() const { return webExtensionActionMenuItemTopLevelLimit; }
 
-    const ClickHandlerMap& clickHandlers() const { return m_clickHandlerMap; }
+    const ClickHandlerMap& clickHandlers() const LIFETIME_BOUND { return m_clickHandlerMap; }
 
 private:
     enum class ForUpdate : bool { No, Yes };

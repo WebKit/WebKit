@@ -43,17 +43,17 @@ WKTypeID WKFramePolicyListenerGetTypeID()
 
 void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 {
-    toProtectedImpl(policyListenerRef)->use();
+    protect(toImpl(policyListenerRef))->use();
 }
 
 void WKFramePolicyListenerUseInNewProcess(WKFramePolicyListenerRef policyListenerRef)
 {
-    toProtectedImpl(policyListenerRef)->use(nullptr, ProcessSwapRequestedByClient::Yes);
+    protect(toImpl(policyListenerRef))->use(nullptr, ProcessSwapRequestedByClient::Yes);
 }
 
 static void useWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
-    toProtectedImpl(policyListenerRef)->use(toProtectedImpl(websitePolicies).get(), processSwapRequestedByClient);
+    protect(toImpl(policyListenerRef))->use(protect(toImpl(websitePolicies)).get(), processSwapRequestedByClient);
 }
 
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
@@ -68,10 +68,10 @@ void WKFramePolicyListenerUseInNewProcessWithPolicies(WKFramePolicyListenerRef p
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)
 {
-    toProtectedImpl(policyListenerRef)->download();
+    protect(toImpl(policyListenerRef))->download();
 }
 
 void WKFramePolicyListenerIgnore(WKFramePolicyListenerRef policyListenerRef)
 {
-    toProtectedImpl(policyListenerRef)->ignore();
+    protect(toImpl(policyListenerRef))->ignore();
 }

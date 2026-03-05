@@ -75,6 +75,7 @@ enum class ClearSiteDataValue : uint8_t {
     Cookies = 1 << 1,
     ExecutionContexts = 1 << 2,
     Storage = 1 << 3,
+    PrefetchCache = 1 << 4,
 };
 
 enum class RangeAllowWhitespace : bool { No, Yes };
@@ -152,7 +153,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
     if (!isValidHTTPToken(token))
         return false;
 
-    set.add(WTFMove(token));
+    set.add(WTF::move(token));
     return true;
 }
 

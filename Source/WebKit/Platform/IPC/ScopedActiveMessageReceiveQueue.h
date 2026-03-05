@@ -46,7 +46,7 @@ public:
     ScopedActiveMessageReceiveQueue() = default;
     template <typename U>
     ScopedActiveMessageReceiveQueue(U&& object)
-        : m_object(WTFMove(object))
+        : m_object(WTF::move(object))
     {
     }
     ScopedActiveMessageReceiveQueue(ScopedActiveMessageReceiveQueue&& other)
@@ -80,9 +80,9 @@ private:
         object->stopListeningForIPC(object.releaseNonNull());
     }
     template<typename U>
-    static auto stopListeningForIPCAndRelease(U& object) -> decltype(object->stopListeningForIPC(WTFMove(object)), void())
+    static auto stopListeningForIPCAndRelease(U& object) -> decltype(object->stopListeningForIPC(WTF::move(object)), void())
     {
-        object->stopListeningForIPC(WTFMove(object));
+        object->stopListeningForIPC(WTF::move(object));
     }
     template<typename U>
     static auto stopListeningForIPCAndRelease(U& object) -> decltype(object->stopListeningForIPC(), void())

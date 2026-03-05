@@ -2,7 +2,7 @@
     "domain": "CPUProfiler",
     "description": "CPUProfiler domain exposes cpu usage tracking.",
     "condition": "defined(ENABLE_RESOURCE_USAGE) && ENABLE_RESOURCE_USAGE",
-    "debuggableTypes": ["page", "web-page"],
+    "debuggableTypes": ["web-page"],
     "targetTypes": ["page"],
     "types": [
         {

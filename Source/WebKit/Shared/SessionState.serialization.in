@@ -78,7 +78,12 @@ header: "SessionState.h"
     [Validator='WebKit::FrameState::validateDocumentState(*documentState)'] Vector<AtomString> documentState();
 };
 
+[CustomHeader] struct WebKit::BackForwardListItemState {
+    Ref<WebKit::FrameState> frameState;
+    std::optional<WebCore::FrameIdentifier> navigatedFrameID;
+};
+
 [CustomHeader] struct WebKit::BackForwardListState {
-    Vector<Ref<WebKit::FrameState>> items;
+    Vector<WebKit::BackForwardListItemState> items;
     std::optional<uint32_t> currentIndex;
 };

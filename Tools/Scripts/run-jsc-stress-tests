@@ -625,25 +625,14 @@ end
 
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
-$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "playstation")
+$isFTLPlatform = !($architecture == "x86" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "playstation")
 # Special case armv7 and windows, we want to run the wasm tests temporarily without B3/Air support
 $isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64"))
 $isOMGPlatform = $isFTLPlatform
 $isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64")
-# This should match the JSC build flag. This configuration is for local development of the 32-bit port on 64-bit platforms only.
-$useCompressedHeap = false
 
 $skipLockdown = false
 $skipMiniMode = false
-
-if $useCompressedHeap
-    $jitTests = false
-    $isFTLPlatform = false
-    $isWasmPlatform = false
-    $skipLockdown = true
-    $skipMiniMode = true
-    $memoryLimited = true
-end
 
 if $platform == "watchos"
     $jitTests = false
@@ -655,7 +644,8 @@ if $platform == "watchos"
 end
 
 if $architecture == "arm"
-    $runJITlessWasm = false # TODO: re-enable this when these tests pass <rdar://146100752>.
+    $isFTLPlatform = false
+    $isWasmPlatform = false
     $skipLockdown = true
 end
 
@@ -830,10 +820,10 @@ def frameworkFromJSCPath(jscPath)
         parentDirectory.dirname
     elsif $hostOS == "playstation"
         jscPath.dirname
-    elsif parentDirectory.basename.to_s =~ /^Debug/ or parentDirectory.basename.to_s =~ /^Release/
+    elsif parentDirectory.basename.to_s =~ /^Debug/ or parentDirectory.basename.to_s =~ /^Release/ or (parentDirectory / "JavaScriptCore.framework").directory?
         jscPath.dirname + "JavaScriptCore.framework"
     else
-        $stderr.puts "Warning: cannot identify JSC framework, doing generic VM copy."
+        $stderr.puts "Warning: cannot identify JSC framework, doing generic VM copy.\n"
         nil
     end
 end
@@ -888,22 +878,22 @@ def baseOutputName(kind)
     "#{$collectionName}/#{$benchmark}.#{kind}"
 end
 
-def addRunCommandCfg(cfg, *additionalEnv)
+def addRunCommandConfig(config, *additionalEnv)
     [:kind, :command, :outputHandler, :errorHandler].each { |key|
-        if not cfg.has_key?(key)
-            raise "Missing #{key} in #{cfg}"
+        if not config.has_key?(key)
+            raise "Missing #{key} in #{config}"
         end
     }
     $didAddRunCommand = true
-    name = baseOutputName(cfg[:kind])
+    name = baseOutputName(config[:kind])
     if $filter and name !~ $filter
         return
     end
     plan = Plan.create(
-        $benchmarkDirectory, cfg[:command], "#{$collectionName}/#{$benchmark}", name, cfg[:outputHandler],
-        cfg[:errorHandler])
-    if cfg.has_key?(:additionalEnv)
-        plan.additionalEnv.push(*(cfg[:additionalEnv]))
+        $benchmarkDirectory, config[:command], "#{$collectionName}/#{$benchmark}", name, config[:outputHandler],
+        config[:errorHandler])
+    if config.has_key?(:additionalEnv)
+        plan.additionalEnv.push(*(config[:additionalEnv]))
     end
     if $runCommandOptions[:serial]
         # Add this to the list of tests to be run on their own, so
@@ -921,14 +911,14 @@ def addRunCommandCfg(cfg, *additionalEnv)
 end
 
 def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
-    cfg = {
+    config = {
         :kind => kind,
         :command => command,
         :outputHandler => outputHandler,
         :errorHandler => errorHandler,
         :additionalEnv => additionalEnv,
     }
-    addRunCommandCfg(cfg)
+    addRunCommandConfig(config)
 end
 
 # Returns true if there were run commands found in the file ($benchmarkDirectory +
@@ -1028,58 +1018,58 @@ def requireOptions(*options)
     $testSpecificRequiredOptions += options
 end
 
-def runWithOptions(cfg, *options)
+def runWithOptions(config, *options)
     baseOptions = BASE_OPTIONS
-    if cfg.has_key?(:no_base_options)
+    if config.has_key?(:no_base_options)
         baseOptions = []
     end
-    commandPrefix = cfg.fetch(:command_prefix, [])
-    if cfg.has_key?(:place_benchmark_early)
-        cfg[:command] = commandPrefix + vmCommand + [$benchmark.to_s] + baseOptions + options + $testSpecificRequiredOptions
+    commandPrefix = config.fetch(:command_prefix, [])
+    if config.has_key?(:place_benchmark_early)
+        config[:command] = commandPrefix + vmCommand + [$benchmark.to_s] + baseOptions + options + $testSpecificRequiredOptions
     else
-        cfg[:command] = commandPrefix + vmCommand + baseOptions + options + $testSpecificRequiredOptions + [$benchmark.to_s]
+        config[:command] = commandPrefix + vmCommand + baseOptions + options + $testSpecificRequiredOptions + [$benchmark.to_s]
     end
-    addRunCommandCfg(cfg)
+    addRunCommandConfig(config)
 end
 
 def runWithOutputHandler(kind, outputHandler, *options)
-    cfg = {
+    config = {
         :kind => kind,
         :outputHandler => outputHandler,
         :errorHandler => simpleErrorHandler,
     }
-    runWithOptions(cfg, *options)
+    runWithOptions(config, *options)
 end
 
 def runWithOutputHandlerWithoutBaseOption(kind, outputHandler, *options)
-    cfg = {
+    config = {
         :kind => kind,
         :outputHandler => outputHandler,
         :errorHandler => simpleErrorHandler,
         :no_base_options => true,
     }
-    runWithOptions(cfg, *options)
+    runWithOptions(config, *options)
 end
 
 def run(kind, *options)
     runWithOutputHandler(kind, silentOutputHandler, *options)
 end
 
-def runInner(cfg, *options)
-    cfg = cfg.dup
-    if not cfg.has_key?(:outputHandler)
-        cfg[:outputHandler] = silentOutputHandler
+def runInner(config, *options)
+    config = config.dup
+    if not config.has_key?(:outputHandler)
+        config[:outputHandler] = silentOutputHandler
     end
-    if not cfg.has_key?(:errorHandler)
-        cfg[:errorHandler] = simpleErrorHandler
+    if not config.has_key?(:errorHandler)
+        config[:errorHandler] = simpleErrorHandler
     end
-    runWithOptions(cfg, *options)
+    runWithOptions(config, *options)
 end
 
-def runWithoutBaseOptionCfg(cfg, *options)
-    cfg = cfg.dup
-    cfg[:no_base_options] = true
-    runWithOptions(cfg, *options)
+def runWithoutBaseOptionConfig(config, *options)
+    config = config.dup
+    config[:no_base_options] = true
+    runWithOptions(config, *options)
 end
 
 def runWithoutBaseOption(kind, *options)
@@ -1110,7 +1100,7 @@ def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
         return nil
     end
     {
-        :cfg => {
+        :config => {
             :command_prefix => [
                 "sh",
                 (pathToHelpers + "bytecode-cache-test-helper.sh").to_s,
@@ -1124,43 +1114,43 @@ def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
 end
 
 
-def cfgInitializerPlain
-    Proc.new { |cfg, kind|
+def configInitializerPlain
+    Proc.new { |config, kind|
         { :kind => kind}
     }
 end
 
-def cfgInitializerCfg
-    Proc.new { |cfg, kind|
-        cfg = cfg.dup
-        cfg[:kind] = kind
-        cfg
+def configInitializerConfig
+    Proc.new { |config, kind|
+        config = config.dup
+        config[:kind] = kind
+        config
     }
 end
 
 # For each base mode (defined below) we generate two kinds of functions:
 #
-# - a version which takes a cfg argument and passes it along, only
+# - a version which takes a config argument and passes it along, only
 #   setting the kind field
-# - a "plain" version which starts out with an empty cfg
+# - a "plain" version which starts out with an empty config
 #
 # The plain  version is intended  for use in the  testcase definitions
 # (in `//@` comments and the like).
 #
 # The former version is used for plumbing. The caller may set various
-# fields in the cfg which will be respected.
+# fields in the config which will be respected.
 #
 # This way, we can
-# - define a set of test modes in defaultRunCfg
-# - have defaultRunCfg propagate the cfg argument to the run*Cfg
+# - define a set of test modes in defaultRunConfig
+# - have defaultRunConfig propagate the config argument to the run*Config
 #   functions it calls
-# - call defaultRunCfg from e.g. defaultRunNoisyTest with the output
+# - call defaultRunConfig from e.g. defaultRunNoisyTest with the output
 #   handlers appropriately set, in order to make sure we're running
 #   the exact same of tests.
-CfgKind = Struct.new(:extension, :expectCfg, :initializer)
-cfgKinds = [
-    CfgKind.new("", false, cfgInitializerPlain),
-    CfgKind.new("Cfg", true, cfgInitializerCfg),
+ConfigKind = Struct.new(:extension, :expectConfig, :initializer)
+configKinds = [
+    ConfigKind.new("", false, configInitializerPlain),
+    ConfigKind.new("Config", true, configInitializerConfig),
 ]
 
 # Define base test modes. Each mode is an array of [name, kind,
@@ -1460,7 +1450,7 @@ BASE_MODES = [
         nil, # Not used
         Proc.new { |size, *optionalTestSpecificOptions|
             {
-                :cfg => {
+                :config => {
                     :kind => "ram-size-#{size}",
                 },
                 :testSpecificOptions => [
@@ -1489,7 +1479,7 @@ BASE_MODES = [
         Proc.new { |*optionalTestSpecificOptions|
             timeout = rand(100)
             {
-                :cfg => {
+                :config => {
                     :kind => "ftl-eager-watchdog-#{timeout}",
                 },
                 :testSpecificOptions => [
@@ -1509,7 +1499,7 @@ BASE_MODES = [
         Proc.new { |*optionalTestSpecificOptions|
             if $jitTests
                 {
-                    :cfg => {
+                    :config => {
                     },
                     :testSpecificOptions => [
                         "--useLLInt=false",
@@ -1540,24 +1530,24 @@ BASE_MODES.each { |mode|
     kind = mode[1]
     options = mode[2]
 
-    # We need to define two variants, one expecting a cfg as the first
+    # We need to define two variants, one expecting a config as the first
     # argument, one not.
-    cfgKinds.each { |cfgKind|
-        methodName = "#{name}#{cfgKind.extension}".to_sym
+    configKinds.each { |configKind|
+        methodName = "#{name}#{configKind.extension}".to_sym
         define_method(methodName) { |*args|
             if not kind.nil? and $skipModes.include?(kind.to_sym)
                 return
             end
-            cfg = nil
-            if cfgKind.expectCfg
-                # If we're defining a method that expects a cfg
+            config = nil
+            if configKind.expectConfig
+                # If we're defining a method that expects a config
                 # argument, pick it out of the args to pass to the
                 # initializer.
-                cfg = args.shift
+                config = args.shift
             end
-            # The cfg is initialized differently depending on whether
-            # we're in a run*Cfg method or not.
-            cfg = cfgKind.initializer.call(cfg, kind)
+            # The config is initialized differently depending on whether
+            # we're in a run*Config method or not.
+            config = configKind.initializer.call(config, kind)
             finalOptions = nil
             if options.respond_to?(:call)
                 dynamicOptions = options.call(*args)
@@ -1565,10 +1555,10 @@ BASE_MODES.each { |mode|
                     skip
                     return
                 end
-                # The Proc object may override any cfg option passed
+                # The Proc object may override any config option passed
                 # in. This is used e.g. for dynamic test names as used
                 # by WithRAMSize and FTLEagerWatchdog.
-                cfg.merge!(dynamicOptions[:cfg])
+                config.merge!(dynamicOptions[:config])
                 # As the Proc may consume arguments, it's responsible
                 # for returning the final option list. Needed e.g. by
                 # WithRAMSize.
@@ -1576,7 +1566,7 @@ BASE_MODES.each { |mode|
             else
                 finalOptions = options + args
             end
-            runInner(cfg, *finalOptions)
+            runInner(config, *finalOptions)
         }
     }
 }
@@ -1590,80 +1580,80 @@ BASE_MODES.each { |mode|
     name = "runNoisyTest#{mode[0]}".to_sym
     define_method(name) { |*args|
         # For each base mode, define the "noisy" variant which simply
-        # calls the respective run#{name}Cfg, passing in the "noisy"
-        # cfg.
-        send("run#{mode[0]}Cfg", CFG_NOISY, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *args)
+        # calls the respective run#{name}Config, passing in the "noisy"
+        # config.
+        send("run#{mode[0]}Config", CFG_NOISY, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *args)
     }
 }
 
-# Default set of tests to run; propagates the cfg to every callee.
-def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
-    cfg.freeze
+# Default set of tests to run; propagates the config to every callee.
+def defaultRunConfig(config, subsetOptions, *optionalTestSpecificOptions)
+    config.freeze
     if not subsetOptions.has_key?(:ignoreQuickMode) and $mode == :quick
-        defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
+        defaultQuickRunConfig(config, *optionalTestSpecificOptions)
     else
-        runDefaultCfg(cfg, *optionalTestSpecificOptions)
-        runBytecodeCacheCfg(cfg, *optionalTestSpecificOptions)
-        runMiniModeCfg(cfg, *optionalTestSpecificOptions) unless $skipMiniMode
-        runLockdownCfg(cfg, *optionalTestSpecificOptions) unless $skipLockdown or $skipModes.include?(:lockdown)
+        runDefaultConfig(config, *optionalTestSpecificOptions)
+        runBytecodeCacheConfig(config, *optionalTestSpecificOptions)
+        runMiniModeConfig(config, *optionalTestSpecificOptions) unless $skipMiniMode
+        runLockdownConfig(config, *optionalTestSpecificOptions) unless $skipLockdown or $skipModes.include?(:lockdown)
         if $jitTests
             if not subsetOptions.has_key?(:skipNoLLInt)
-                runNoLLIntCfg(cfg, *optionalTestSpecificOptions)
+                runNoLLIntConfig(config, *optionalTestSpecificOptions)
             end
-            runNoCJITValidatePhasesCfg(cfg, *optionalTestSpecificOptions)
-            runNoCJITCollectContinuouslyCfg(cfg, *optionalTestSpecificOptions) if shouldCollectContinuously?
+            runNoCJITValidatePhasesConfig(config, *optionalTestSpecificOptions)
+            runNoCJITCollectContinuouslyConfig(config, *optionalTestSpecificOptions) if shouldCollectContinuously?
             if not subsetOptions.has_key?(:skipEager)
-                runDFGEagerCfg(cfg)
+                runDFGEagerConfig(config)
                 if $mode != :basic
-                    runDFGEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
-                    runEagerJettisonNoCJITCfg(cfg, *optionalTestSpecificOptions)
+                    runDFGEagerNoCJITValidateConfig(config, *optionalTestSpecificOptions)
+                    runEagerJettisonNoCJITConfig(config, *optionalTestSpecificOptions)
                 end
             end
 
             return if !$isFTLPlatform
 
-            runNoFTLCfg(cfg, *optionalTestSpecificOptions)
+            runNoFTLConfig(config, *optionalTestSpecificOptions)
             if not subsetOptions.has_key?(:skipEager)
-                runFTLEagerCfg(cfg, *optionalTestSpecificOptions)
-                runFTLEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions) if $buildType == "release"
+                runFTLEagerConfig(config, *optionalTestSpecificOptions)
+                runFTLEagerNoCJITValidateConfig(config, *optionalTestSpecificOptions) if $buildType == "release"
             end
-            runFTLNoCJITSmallPoolCfg(cfg, *optionalTestSpecificOptions)
+            runFTLNoCJITSmallPoolConfig(config, *optionalTestSpecificOptions)
 
             return if $mode == :basic
 
-            runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
-            runFTLNoCJITB3O0Cfg(cfg, *optionalTestSpecificOptions)
-            runFTLNoCJITNoPutStackValidateCfg(cfg, *optionalTestSpecificOptions)
-            runFTLNoCJITNoInlineValidateCfg(cfg, *optionalTestSpecificOptions)
+            runFTLNoCJITValidateConfig(config, *optionalTestSpecificOptions)
+            runFTLNoCJITB3O0Config(config, *optionalTestSpecificOptions)
+            runFTLNoCJITNoPutStackValidateConfig(config, *optionalTestSpecificOptions)
+            runFTLNoCJITNoInlineValidateConfig(config, *optionalTestSpecificOptions)
             if not subsetOptions.has_key?(:skipEager)
-                runFTLEagerNoCJITB3O1Cfg(cfg, *optionalTestSpecificOptions)
+                runFTLEagerNoCJITB3O1Config(config, *optionalTestSpecificOptions)
             end
         end
     end
 end
 
 def defaultRun
-    defaultRunCfg({}, {})
+    defaultRunConfig({}, {})
 end
 
 def defaultNoNoLLIntRun
-    defaultRunCfg({}, {:skipNoLLInt => true})
+    defaultRunConfig({}, {:skipNoLLInt => true})
 end
 
-def defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
-    runDefaultCfg(cfg, *optionalTestSpecificOptions)
+def defaultQuickRunConfig(config, *optionalTestSpecificOptions)
+    runDefaultConfig(config, *optionalTestSpecificOptions)
     if $jitTests
-        runNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
+        runNoCJITValidateConfig(config, *optionalTestSpecificOptions)
 
         return if !$isFTLPlatform
 
-        runNoFTLCfg(cfg, *optionalTestSpecificOptions)
-        runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
+        runNoFTLConfig(config, *optionalTestSpecificOptions)
+        runFTLNoCJITValidateConfig(config, *optionalTestSpecificOptions)
     end
 end
 
 def defaultQuickRun
-    defaultQuickRunCfg({})
+    defaultQuickRunConfig({})
 end
 
 def defaultSpotCheckNoMaximalFlush
@@ -1687,11 +1677,11 @@ end
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
 def defaultNoEagerRun(*optionalTestSpecificOptions)
-    defaultRunCfg({}, { :skipEager => true }, *optionalTestSpecificOptions)
+    defaultRunConfig({}, { :skipEager => true }, *optionalTestSpecificOptions)
 end
 
 def defaultNoSamplingProfilerRun(*optionalTestSpecificOptions)
-    defaultRunCfg({}, { :ignoreQuickMode => true }, *optionalTestSpecificOptions)
+    defaultRunConfig({}, { :ignoreQuickMode => true }, *optionalTestSpecificOptions)
 end
 
 def runProfiler
@@ -2397,18 +2387,18 @@ def defaultRunMozillaTest(mode, *extraFiles)
 end
 
 def runNoisyTestWithEnv(kind, *additionalEnv)
-    cfg = CFG_NOISY.dup
-    cfg[:kind] = kind
-    cfg[:additionalEnv] = additionalEnv
-    runDefaultCfg(cfg)
+    config = CFG_NOISY.dup
+    config[:kind] = kind
+    config[:additionalEnv] = additionalEnv
+    runDefaultConfig(config)
 end
 
 def defaultRunNoisyTest(*optionalTestSpecificOptions)
-    cfg = {
+    config = {
         :outputHandler => noisyOutputHandler,
         :errorHandler => noisyErrorHandler,
     }
-    defaultRunCfg(cfg, {}, *optionalTestSpecificOptions)
+    defaultRunConfig(config, {}, *optionalTestSpecificOptions)
 end
 
 def skip

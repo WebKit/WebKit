@@ -37,7 +37,7 @@ public:
     CoreIPCRetainPtr(T *object)
         : RetainPtr<T>(object) { }
     CoreIPCRetainPtr(RetainPtr<T>&& object)
-        : RetainPtr<T>(WTFMove(object)) { }
+        : RetainPtr<T>(WTF::move(object)) { }
 };
 
 }

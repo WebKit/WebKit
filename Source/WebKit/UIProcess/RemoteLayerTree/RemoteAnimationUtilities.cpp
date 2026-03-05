@@ -177,7 +177,7 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
                 object->setDouble("y"_s, rotate->y());
                 object->setDouble("z"_s, rotate->z());
                 object->setDouble("angle"_s, rotate->angle());
-                convertedValues->setObject(propertyName, WTFMove(object));
+                convertedValues->setObject(propertyName, WTF::move(object));
             } else
                 convertedValues->setValue(propertyName, JSON::Value::null());
             break;
@@ -188,7 +188,7 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
                 object->setDouble("x"_s, scale->x());
                 object->setDouble("y"_s, scale->y());
                 object->setDouble("z"_s, scale->z());
-                convertedValues->setObject(propertyName, WTFMove(object));
+                convertedValues->setObject(propertyName, WTF::move(object));
             } else
                 convertedValues->setValue(propertyName, JSON::Value::null());
             break;
@@ -200,7 +200,7 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
                 Ref convertedTransform = JSON::Array::create();
                 for (auto& operation : values.transform)
                     convertedTransform->pushString(convertTransformOperation(operation.get()));
-                convertedValues->setArray(propertyName, WTFMove(convertedTransform));
+                convertedValues->setArray(propertyName, WTF::move(convertedTransform));
             }
             break;
         }
@@ -210,7 +210,7 @@ Ref<JSON::Object> toJSONForTesting(const WebCore::AcceleratedEffectValues& value
                 object->setDouble("x"_s, translate->x());
                 object->setDouble("y"_s, translate->y());
                 object->setDouble("z"_s, translate->z());
-                convertedValues->setObject(propertyName, WTFMove(object));
+                convertedValues->setObject(propertyName, WTF::move(object));
             } else
                 convertedValues->setValue(propertyName, JSON::Value::null());
             break;

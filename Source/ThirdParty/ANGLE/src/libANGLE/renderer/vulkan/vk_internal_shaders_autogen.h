@@ -53,10 +53,9 @@ namespace BlitResolveStencilNoExport_comp
 {
 enum flags
 {
-    kSrcIsArray = 0x00000001,
-    kIsResolve  = 0x00000002,
+    kIsResolve = 0x00000001,
 };
-constexpr size_t kArrayLen = 0x00000004;
+constexpr size_t kArrayLen = 0x00000002;
 }  // namespace BlitResolveStencilNoExport_comp
 
 namespace ConvertIndex_comp

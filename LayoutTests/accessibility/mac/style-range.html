@@ -21,7 +21,12 @@ async function styleRangeForElementMatches(id, expectedString, moveOffStartBy = 
     await waitFor(() => {
         return expectedString == webArea.stringForTextMarkerRange(webArea.styleTextMarkerRangeForTextMarker(marker));
     });
-    output += `PASS: The style range for the start marker of #${id} was "${expectedString}".\n`
+    let actualString = webArea.stringForTextMarkerRange(webArea.styleTextMarkerRangeForTextMarker(marker));
+    if (expectedString != actualString) {
+        // waitFor must have timed out, log the expected and actual values.
+        output += `FAIL: expected '${expectedString.replaceAll("\n", "\\n")}' but got '${webArea.stringForTextMarkerRange(webArea.styleTextMarkerRangeForTextMarker(marker))}'\n`;
+    } else
+        output += `PASS: The style range for the start marker of #${id} was "${expectedString}".\n`
 }
 
 if (window.accessibilityController) {
@@ -52,4 +57,3 @@ if (window.accessibilityController) {
 </script>
 </body>
 </html>
-

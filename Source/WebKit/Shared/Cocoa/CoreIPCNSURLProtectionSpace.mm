@@ -44,7 +44,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCNSURLProtectionSpace);
     id NAME = dict[@#NAME];                 \
     if ([NAME isKindOfClass:CLASS.class]) { \
         auto var = WRAPPER(NAME);           \
-        m_data.NAME = WTFMove(var);         \
+        m_data.NAME = WTF::move(var);         \
     }
 
 CoreIPCNSURLProtectionSpace::CoreIPCNSURLProtectionSpace(NSURLProtectionSpace *ps)
@@ -90,12 +90,12 @@ CoreIPCNSURLProtectionSpace::CoreIPCNSURLProtectionSpace(NSURLProtectionSpace *p
             data.append(d);
         }
         if (allElementsValid)
-            m_data.distnames = WTFMove(data);
+            m_data.distnames = WTF::move(data);
     }
 }
 
 CoreIPCNSURLProtectionSpace::CoreIPCNSURLProtectionSpace(CoreIPCNSURLProtectionSpaceData&& data)
-    : m_data(WTFMove(data)) { }
+    : m_data(WTF::move(data)) { }
 
 CoreIPCNSURLProtectionSpace::CoreIPCNSURLProtectionSpace(const RetainPtr<NSURLProtectionSpace>& ps)
     : CoreIPCNSURLProtectionSpace(ps.get()) { }

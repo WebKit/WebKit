@@ -50,7 +50,7 @@ public:
     }
 
     ValueOrReference(ValueOrReference&& other)
-        : m_value(WTFMove(other.m_value))
+        : m_value(WTF::move(other.m_value))
         , m_reference(&other.m_reference == &other.m_value ? m_value : other.m_reference)
     {
     }
@@ -61,7 +61,7 @@ public:
     }
 
     ValueOrReference(T&& temporary)
-        : m_value(WTFMove(temporary))
+        : m_value(WTF::move(temporary))
         , m_reference(m_value)
     {
     }

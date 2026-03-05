@@ -52,7 +52,7 @@ template<typename> class AudioArray;
 typedef AudioArray<float> AudioFloatArray;
 
 class AudioWorkletNode final : public AudioNode, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioWorkletNode);
+    WTF_MAKE_TZONE_ALLOCATED(AudioWorkletNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioWorkletNode);
 public:
     static ExceptionOr<Ref<AudioWorkletNode>> create(JSC::JSGlobalObject&, BaseAudioContext&, String&& name, AudioWorkletNodeOptions&&);

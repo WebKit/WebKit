@@ -93,7 +93,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDurationFormatPrototypeFuncFormat, (JSGlobalObject*
     auto duration = TemporalDuration::toISO8601Duration(globalObject, argument);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(durationFormat->format(globalObject, WTFMove(duration))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(durationFormat->format(globalObject, WTF::move(duration))));
 }
 
 // https://tc39.es/proposal-intl-duration-format/#sec-Intl.DurationFormat.prototype.formatToParts
@@ -113,7 +113,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDurationFormatPrototypeFuncFormatToParts, (JSGlobal
     auto duration = TemporalDuration::toISO8601Duration(globalObject, argument);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(durationFormat->formatToParts(globalObject, WTFMove(duration))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(durationFormat->formatToParts(globalObject, WTF::move(duration))));
 }
 
 // https://tc39.es/proposal-intl-duration-format/#sec-Intl.DurationFormat.prototype.resolvedOptions

@@ -57,7 +57,7 @@
 
 - (void)setTargetPlatformName:(NSString *)targetPlatformName
 {
-    _debuggableInfo->setTargetPlatformName(targetPlatformName);
+    protect(*_debuggableInfo)->setTargetPlatformName(targetPlatformName);
 }
 
 - (NSString *)targetBuildVersion
@@ -67,7 +67,7 @@
 
 - (void)setTargetBuildVersion:(NSString *)targetBuildVersion
 {
-    _debuggableInfo->setTargetBuildVersion(targetBuildVersion);
+    protect(*_debuggableInfo)->setTargetBuildVersion(targetBuildVersion);
 }
 
 - (NSString *)targetProductVersion
@@ -77,7 +77,7 @@
 
 - (void)setTargetProductVersion:(NSString *)targetProductVersion
 {
-    _debuggableInfo->setTargetProductVersion(targetProductVersion);
+    protect(*_debuggableInfo)->setTargetProductVersion(targetProductVersion);
 }
 
 - (BOOL)targetIsSimulator

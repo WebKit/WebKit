@@ -59,7 +59,7 @@ ExceptionOr<ApplePaySessionPaymentRequestContactFields> convertAndValidate(unsig
         }
     }
 
-    return WTFMove(result);
+    return WTF::move(result);
 }
 
 } // namespace WebCore

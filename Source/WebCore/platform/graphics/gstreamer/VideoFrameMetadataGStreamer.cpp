@@ -68,13 +68,13 @@ static std::pair<GRefPtr<GstBuffer>, VideoFrameMetadataGStreamer*> ensureVideoFr
 {
     auto* meta = getInternalVideoFrameMetadata(buffer.get());
     if (meta)
-        return { WTFMove(buffer), meta };
+        return { WTF::move(buffer), meta };
 
     IGNORE_WARNINGS_BEGIN("cast-align");
     auto modifiedBuffer = adoptGRef(gst_buffer_make_writable(buffer.leakRef()));
     IGNORE_WARNINGS_END;
     meta = VIDEO_FRAME_METADATA_CAST(gst_buffer_add_meta(modifiedBuffer.get(), videoFrameMetadataGetInfo(), nullptr));
-    return { WTFMove(modifiedBuffer), meta };
+    return { WTF::move(modifiedBuffer), meta };
 }
 
 const GstMetaInfo* videoFrameMetadataGetInfo()
@@ -125,7 +125,7 @@ void webkitGstBufferAddVideoFrameMetadata(GstBuffer* buffer, std::optional<WebCo
     auto meta = getInternalVideoFrameMetadata(buffer);
     if (meta) {
         if (metadata)
-            meta->priv->videoSampleMetadata = WTFMove(metadata);
+            meta->priv->videoSampleMetadata = WTF::move(metadata);
         meta->priv->rotation = rotation;
         meta->priv->isMirrored = isMirrored;
         meta->priv->contentHint = hint;
@@ -242,6 +242,19 @@ VideoFrameContentHint webkitGstBufferGetContentHint(GstBuffer* buffer)
         return meta->priv->contentHint;
 
     return VideoFrameContentHint::None;
+}
+
+MediaTime webkitGstBufferGetProcessingTime(GstBuffer* buffer, GstElement* element)
+{
+    if (!GST_IS_BUFFER(buffer))
+        return MediaTime::invalidTime();
+
+    auto meta = getInternalVideoFrameMetadata(buffer);
+    if (!meta)
+        return MediaTime::invalidTime();
+
+    auto [startTime, stopTime] = meta->priv->processingTimes.get(element);
+    return fromGstClockTime(GST_CLOCK_DIFF(startTime, stopTime));
 }
 
 #undef GST_CAT_DEFAULT

@@ -132,11 +132,6 @@ std::optional<T> MaybeGetValue(const std::map<size_t, T>& map, size_t key) {
   return it->second;
 }
 
-SamplesStatsCounter::StatsSample StatsSample(double value,
-                                             Timestamp sampling_time) {
-  return SamplesStatsCounter::StatsSample{value, sampling_time};
-}
-
 }  // namespace
 
 DefaultVideoQualityAnalyzer::DefaultVideoQualityAnalyzer(
@@ -252,7 +247,8 @@ uint16_t DefaultVideoQualityAnalyzer::OnFrameCaptured(
         stream_frame_counters_.at(key).dropped++;
 
         analyzer_stats_.frames_in_flight_left_count.AddSample(
-            StatsSample(captured_frames_in_flight_.size(), Now()));
+            {.value = static_cast<double>(captured_frames_in_flight_.size()),
+             .time = Now()});
         frames_comparator_.AddComparison(
             InternalStatsKey(stream_index, peer_index, i),
             /*captured=*/std::nullopt,
@@ -282,7 +278,7 @@ uint16_t DefaultVideoQualityAnalyzer::OnFrameCaptured(
 
     if (options_.report_infra_metrics) {
       analyzer_stats_.on_frame_captured_processing_time_ms.AddSample(
-          (Now() - captured_time).ms<double>());
+          {.value = (Now() - captured_time).ms<double>(), .time = Now()});
     }
   }
   return frame_id;
@@ -315,7 +311,7 @@ void DefaultVideoQualityAnalyzer::OnFramePreEncode(absl::string_view peer_name,
 
   if (options_.report_infra_metrics) {
     analyzer_stats_.on_frame_pre_encode_processing_time_ms.AddSample(
-        (Now() - processing_started).ms<double>());
+        {.value = (Now() - processing_started).ms<double>(), .time = Now()});
   }
 }
 
@@ -385,7 +381,7 @@ void DefaultVideoQualityAnalyzer::OnFrameEncoded(
 
   if (options_.report_infra_metrics) {
     analyzer_stats_.on_frame_encoded_processing_time_ms.AddSample(
-        (Now() - processing_started).ms<double>());
+        {.value = (Now() - processing_started).ms<double>(), .time = Now()});
   }
 }
 
@@ -444,7 +440,7 @@ void DefaultVideoQualityAnalyzer::OnFramePreDecode(
 
   if (options_.report_infra_metrics) {
     analyzer_stats_.on_frame_pre_decode_processing_time_ms.AddSample(
-        (Now() - processing_started).ms<double>());
+        {.value = (Now() - processing_started).ms<double>(), .time = Now()});
   }
 }
 
@@ -490,7 +486,7 @@ void DefaultVideoQualityAnalyzer::OnFrameDecoded(absl::string_view peer_name,
 
   if (options_.report_infra_metrics) {
     analyzer_stats_.on_frame_decoded_processing_time_ms.AddSample(
-        (Now() - processing_started).ms<double>());
+        {.value = (Now() - processing_started).ms<double>(), .time = Now()});
   }
 }
 
@@ -579,7 +575,8 @@ void DefaultVideoQualityAnalyzer::OnFrameRendered(absl::string_view peer_name,
   state->SetLastRenderedFrameTime(peer_index,
                                   frame_in_flight->rendered_time(peer_index));
   analyzer_stats_.frames_in_flight_left_count.AddSample(
-      StatsSample(captured_frames_in_flight_.size(), Now()));
+      {.value = static_cast<double>(captured_frames_in_flight_.size()),
+       .time = Now()});
   frames_comparator_.AddComparison(
       stats_key, dropped_count, captured_frame, /*rendered=*/frame,
       FrameComparisonType::kRegular,
@@ -592,7 +589,7 @@ void DefaultVideoQualityAnalyzer::OnFrameRendered(absl::string_view peer_name,
 
   if (options_.report_infra_metrics) {
     analyzer_stats_.on_frame_rendered_processing_time_ms.AddSample(
-        (Now() - processing_started).ms<double>());
+        {.value = (Now() - processing_started).ms<double>(), .time = Now()});
   }
 }
 
@@ -648,7 +645,7 @@ void DefaultVideoQualityAnalyzer::OnDecoderError(absl::string_view peer_name,
 
   if (options_.report_infra_metrics) {
     analyzer_stats_.on_decoder_error_processing_time_ms.AddSample(
-        (Now() - processing_started).ms<double>());
+        {.value = (Now() - processing_started).ms<double>(), .time = Now()});
   }
 }
 
@@ -795,7 +792,8 @@ void DefaultVideoQualityAnalyzer::Stop() {
     // Add the amount of frames in flight to the analyzer stats before all left
     // frames in flight will be sent to the `frames_compartor_`.
     analyzer_stats_.frames_in_flight_left_count.AddSample(
-        StatsSample(captured_frames_in_flight_.size(), Now()));
+        {.value = static_cast<double>(captured_frames_in_flight_.size()),
+         .time = Now()});
 
     for (auto& state_entry : stream_states_) {
       const size_t stream_index = state_entry.first;
@@ -1063,7 +1061,8 @@ int DefaultVideoQualityAnalyzer::ProcessNotSeenFramesBeforeRendered(
       next_frame.MarkDropped(peer_index);
 
       analyzer_stats_.frames_in_flight_left_count.AddSample(
-          StatsSample(captured_frames_in_flight_.size(), Now()));
+          {.value = static_cast<double>(captured_frames_in_flight_.size()),
+           .time = Now()});
       frames_comparator_.AddComparison(stats_key, /*captured=*/std::nullopt,
                                        /*rendered=*/std::nullopt,
                                        FrameComparisonType::kDroppedFrame,

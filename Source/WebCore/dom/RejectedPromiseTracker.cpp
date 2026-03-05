@@ -60,18 +60,18 @@ class UnhandledPromise {
 public:
     UnhandledPromise(JSDOMGlobalObject& globalObject, JSPromise& promise, RefPtr<ScriptCallStack>&& stack)
         : m_promise(DOMPromise::create(globalObject, promise))
-        , m_stack(WTFMove(stack))
+        , m_stack(WTF::move(stack))
     {
     }
 
     UnhandledPromise(UnhandledPromise&&) = default;
 
-    ScriptCallStack* callStack()
+    ScriptCallStack* NODELETE callStack()
     {
         return m_stack.get();
     }
 
-    DOMPromise& promise()
+    DOMPromise& NODELETE promise()
     {
         return m_promise.get();
     }
@@ -130,7 +130,7 @@ void RejectedPromiseTracker::promiseHandled(JSDOMGlobalObject& globalObject, JSP
         return;
 
     m_context->postTask([this, rejectedPromise = DOMPromise::create(globalObject, promise)] (ScriptExecutionContext&) mutable {
-        reportRejectionHandled(WTFMove(rejectedPromise));
+        reportRejectionHandled(WTF::move(rejectedPromise));
     });
 }
 
@@ -141,9 +141,9 @@ void RejectedPromiseTracker::processQueueSoon()
     if (m_aboutToBeNotifiedRejectedPromises.isEmpty())
         return;
 
-    Vector<UnhandledPromise> items = WTFMove(m_aboutToBeNotifiedRejectedPromises);
-    m_context->postTask([this, items = WTFMove(items)] (ScriptExecutionContext&) mutable {
-        reportUnhandledRejections(WTFMove(items));
+    Vector<UnhandledPromise> items = WTF::move(m_aboutToBeNotifiedRejectedPromises);
+    m_context->postTask([this, items = WTF::move(items)] (ScriptExecutionContext&) mutable {
+        reportUnhandledRejections(WTF::move(items));
     });
 }
 
@@ -155,21 +155,21 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
     JSC::JSLockHolder lock(vm);
 
     for (auto& unhandledPromise : unhandledPromises) {
-        auto& domPromise = unhandledPromise.promise();
-        if (domPromise.isSuspended())
+        Ref domPromise = unhandledPromise.promise();
+        if (domPromise->isSuspended())
             continue;
-        auto& lexicalGlobalObject = *domPromise.globalObject();
-        auto& promise = *domPromise.promise();
+        auto& lexicalGlobalObject = *domPromise->globalObject();
+        auto& promise = *domPromise->promise();
 
         if (promise.isHandled())
             continue;
 
-        PromiseRejectionEvent::Init initializer;
-        initializer.cancelable = true;
-        initializer.promise = domPromise;
-        initializer.reason = promise.result();
-
-        Ref event = PromiseRejectionEvent::create(eventNames().unhandledrejectionEvent, initializer);
+        auto initializer = PromiseRejectionEvent::Init {
+            { false, true, false },
+            WTF::move(domPromise),
+            promise.result(),
+        };
+        Ref event = PromiseRejectionEvent::create(eventNames().unhandledrejectionEvent, WTF::move(initializer));
         RefPtr target = m_context->errorEventTarget();
         target->dispatchEvent(event);
 
@@ -193,11 +193,12 @@ void RejectedPromiseTracker::reportRejectionHandled(Ref<DOMPromise>&& rejectedPr
 
     auto& promise = *rejectedPromise->promise();
 
-    PromiseRejectionEvent::Init initializer;
-    initializer.promise = rejectedPromise.ptr();
-    initializer.reason = promise.result();
-
-    Ref event = PromiseRejectionEvent::create(eventNames().rejectionhandledEvent, initializer);
+    auto initializer = PromiseRejectionEvent::Init {
+        { false, false, false },
+        WTF::move(rejectedPromise),
+        promise.result(),
+    };
+    Ref event = PromiseRejectionEvent::create(eventNames().rejectionhandledEvent, WTF::move(initializer));
     RefPtr target = m_context->errorEventTarget();
     target->dispatchEvent(event);
 }

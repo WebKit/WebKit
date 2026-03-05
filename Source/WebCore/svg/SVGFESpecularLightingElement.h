@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class SVGFESpecularLightingElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFESpecularLightingElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGFESpecularLightingElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFESpecularLightingElement);
 public:
     static Ref<SVGFESpecularLightingElement> create(const QualifiedName&, Document&);
@@ -62,12 +62,12 @@ private:
     Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
-    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    Ref<SVGAnimatedNumber> m_specularConstant { SVGAnimatedNumber::create(this, 1) };
-    Ref<SVGAnimatedNumber> m_specularExponent { SVGAnimatedNumber::create(this, 1) };
-    Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, 1) };
-    Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
-    Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
+    const Ref<SVGAnimatedNumber> m_specularConstant { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_specularExponent { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

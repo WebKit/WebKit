@@ -220,7 +220,7 @@ bool addErrorInfo(VM& vm, Vector<StackFrame>* stackTrace, JSObject* obj)
         obj->putDirect(vm, vm.propertyNames->line, jsNumber(lineColumn.line));
         obj->putDirect(vm, vm.propertyNames->column, jsNumber(lineColumn.column));
         if (!sourceURL.isEmpty())
-            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(sourceURL)));
+            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTF::move(sourceURL)));
 
         obj->putDirect(vm, vm.propertyNames->stack, jsString(vm, Interpreter::stackTraceAsString(vm, *stackTrace)), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
@@ -265,7 +265,7 @@ JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& sour
 JSObject* createTypeErrorCopy(JSGlobalObject* globalObject, JSValue error)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     String errorString = "Error encountered during evaluation"_s;
 
     if (error.isPrimitive()) {

@@ -14,6 +14,7 @@
 #include "include/gpu/GpuTypes.h"
 
 #include <memory>
+#include <string>
 
 class SkSurface;
 
@@ -52,15 +53,23 @@ public:
         kAddCommandsFailed,
         // Internal failure, shader pipeline compilation failed (driver issue, or disk corruption),
         // state unrecoverable.
-        kAsyncShaderCompilesFailed
+        kAsyncShaderCompilesFailed,
+        // The inserted Recording is out of order from what the Context expects (when
+        // `[Context|Recorder]Options::fRequireOrderedRecordings` is true), which can either
+        // represent a client synchronization error or an internal failure when a prior dependent
+        // Recording failed for some reason, no CB changes but state likely unrecoverable.
+        kOutOfOrderRecording,
     };
 
-    constexpr InsertStatus() : fValue(kSuccess) {}
-    /*implicit*/ constexpr InsertStatus(V v) : fValue(v) {}
+    InsertStatus() : fValue(kSuccess) {}
+    /*implicit*/ InsertStatus(V v) : fValue(v) {}
+    InsertStatus(V v, std::string message) : fValue(v), fMessage(std::move(message)) {}
 
     operator InsertStatus::V() const {
         return fValue;
     }
+
+    const std::string& message() const { return fMessage; }
 
     // Assist migration from old bool return value of insertRecording; kSuccess is true,
     // all other error statuses are false.
@@ -73,6 +82,7 @@ public:
 
 private:
     V fValue;
+    std::string fMessage;
 };
 
 /**
@@ -148,7 +158,7 @@ struct InsertRecordingInfo {
  * and the caller can use the callback to know it is safe to free any resources associated with
  * the Recording that they may be holding onto. If the Recording is successfully submitted to the
  * GPU the callback will be called with CallbackResult::kSuccess once the GPU has finished. All
- * other cases where some failure occured it will be called with CallbackResult::kFailed.
+ * other cases where some failure occurred it will be called with CallbackResult::kFailed.
  */
 struct InsertFinishInfo {
     InsertFinishInfo() = default;
@@ -208,6 +218,26 @@ enum class DepthStencilFlags : int {
     kStencil      = 0b010,
     kDepthStencil = kDepth | kStencil,
 };
+
+enum class SampleCount : uint8_t {
+    k1  = 1,
+    k2  = 2,
+    k4  = 4,
+    k8  = 8,
+    k16 = 16
+};
+
+/**
+ * Convert an integer value to a strictly typed SampleCount value, rounding down to the lowest
+ * valid sample count if needed if `sampleCount` is not already equivalent.
+ */
+constexpr SampleCount ToSampleCount(uint32_t sampleCount) {
+    return sampleCount >= 16 ? SampleCount::k16 :
+           sampleCount >= 8  ? SampleCount::k8  :
+           sampleCount >= 4  ? SampleCount::k4  :
+           sampleCount >= 2  ? SampleCount::k2  :
+                               SampleCount::k1;
+}
 
 /*
  * This enum allows mapping from a set of observed RenderSteps (e.g., from a GraphicsPipeline

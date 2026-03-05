@@ -196,7 +196,6 @@ angle::Result TextureStorage9_2D::getSurfaceLevel(const gl::Context *context,
 
 angle::Result TextureStorage9_2D::findRenderTarget(const gl::Context *context,
                                                    const gl::ImageIndex &index,
-                                                   GLsizei samples,
                                                    RenderTargetD3D **outRT) const
 {
     ASSERT(index.getLevelIndex() < getLevelCount());
@@ -208,7 +207,6 @@ angle::Result TextureStorage9_2D::findRenderTarget(const gl::Context *context,
 
 angle::Result TextureStorage9_2D::getRenderTarget(const gl::Context *context,
                                                   const gl::ImageIndex &index,
-                                                  GLsizei samples,
                                                   RenderTargetD3D **outRT)
 {
     ASSERT(index.getLevelIndex() < getLevelCount());
@@ -334,7 +332,6 @@ angle::Result TextureStorage9_EGLImage::getSurfaceLevel(const gl::Context *conte
 
 angle::Result TextureStorage9_EGLImage::findRenderTarget(const gl::Context *context,
                                                          const gl::ImageIndex &index,
-                                                         GLsizei samples,
                                                          RenderTargetD3D **outRT) const
 {
     // Since the render target of a EGL image will be updated when orphaning, trying to find a cache
@@ -345,12 +342,10 @@ angle::Result TextureStorage9_EGLImage::findRenderTarget(const gl::Context *cont
 
 angle::Result TextureStorage9_EGLImage::getRenderTarget(const gl::Context *context,
                                                         const gl::ImageIndex &index,
-                                                        GLsizei samples,
                                                         RenderTargetD3D **outRT)
 {
     ASSERT(!index.hasLayer());
     ASSERT(index.getLevelIndex() == 0);
-    ASSERT(samples == 0);
 
     return mImage->getRenderTarget(context, outRT);
 }
@@ -473,12 +468,10 @@ angle::Result TextureStorage9_Cube::getSurfaceLevel(const gl::Context *context,
 
 angle::Result TextureStorage9_Cube::findRenderTarget(const gl::Context *context,
                                                      const gl::ImageIndex &index,
-                                                     GLsizei samples,
                                                      RenderTargetD3D **outRT) const
 {
     ASSERT(outRT);
     ASSERT(index.getLevelIndex() == 0);
-    ASSERT(samples == 0);
 
     ASSERT(index.getType() == gl::TextureType::CubeMap &&
            gl::IsCubeMapFaceTarget(index.getTarget()));
@@ -490,12 +483,10 @@ angle::Result TextureStorage9_Cube::findRenderTarget(const gl::Context *context,
 
 angle::Result TextureStorage9_Cube::getRenderTarget(const gl::Context *context,
                                                     const gl::ImageIndex &index,
-                                                    GLsizei samples,
                                                     RenderTargetD3D **outRT)
 {
     ASSERT(outRT);
     ASSERT(index.getLevelIndex() == 0);
-    ASSERT(samples == 0);
 
     ASSERT(index.getType() == gl::TextureType::CubeMap &&
            gl::IsCubeMapFaceTarget(index.getTarget()));

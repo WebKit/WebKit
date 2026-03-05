@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CustomStateSet);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomStateSet);
 
 bool CustomStateSet::addToSetLike(const AtomString& state)
 {

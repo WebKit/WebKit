@@ -21,6 +21,7 @@
 #include "api/scoped_refptr.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_codec_type.h"
@@ -29,7 +30,6 @@
 #include "api/video/video_frame_type.h"
 #include "api/video/video_timing.h"
 #include "api/video_codecs/video_decoder.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "common_video/include/corruption_score_calculator.h"
 #include "common_video/test/utilities.h"
 #include "modules/video_coding/include/video_coding_defines.h"
@@ -220,8 +220,8 @@ TEST_F(GenericDecoderTest, IsLowLatencyStreamActivatedByPlayoutDelay) {
 TEST_F(GenericDecoderTest, CallCalculateCorruptionScoreInDecoded) {
   constexpr uint32_t kRtpTimestamp = 1;
   FrameInfo frame_info;
-  frame_info.frame_instrumentation_data =
-      FrameInstrumentationData{.sequence_index = 1};
+  frame_info.frame_instrumentation_data.emplace();
+  frame_info.frame_instrumentation_data->SetSequenceIndex(1);
   frame_info.rtp_timestamp = kRtpTimestamp;
   frame_info.decode_start = Timestamp::Zero();
   frame_info.content_type = VideoContentType::SCREENSHARE;
@@ -235,7 +235,7 @@ TEST_F(GenericDecoderTest, CallCalculateCorruptionScoreInDecoded) {
   EXPECT_CALL(corruption_score_calculator_,
               CalculateCorruptionScore(
                   Property(&VideoFrame::rtp_timestamp, Eq(kRtpTimestamp)),
-                  Field(&FrameInstrumentationData::sequence_index, Eq(1)),
+                  Property(&FrameInstrumentationData::sequence_index, Eq(1)),
                   VideoContentType::SCREENSHARE));
   vcm_callback_.Decoded(video_frame);
 }

@@ -28,20 +28,20 @@ using libaom_test::ACMRandom;
 namespace {
 const int number_of_iterations = 200;
 
-typedef unsigned int (*MaskedSADFunc)(const uint8_t *src, int src_stride,
-                                      const uint8_t *ref, int ref_stride,
-                                      const uint8_t *second_pred,
-                                      const uint8_t *msk, int msk_stride,
-                                      int invert_mask);
-typedef std::tuple<MaskedSADFunc, MaskedSADFunc> MaskedSADParam;
+using MaskedSADFunc = unsigned int (*)(const uint8_t *src, int src_stride,
+                                       const uint8_t *ref, int ref_stride,
+                                       const uint8_t *second_pred,
+                                       const uint8_t *msk, int msk_stride,
+                                       int invert_mask);
+using MaskedSADParam = std::tuple<MaskedSADFunc, MaskedSADFunc>;
 
-typedef void (*MaskedSADx4Func)(const uint8_t *src, int src_stride,
-                                const uint8_t *ref[], int ref_stride,
-                                const uint8_t *second_pred, const uint8_t *msk,
-                                int msk_stride, int invert_mask,
-                                unsigned sads[]);
+using MaskedSADx4Func = void (*)(const uint8_t *src, int src_stride,
+                                 const uint8_t *ref[], int ref_stride,
+                                 const uint8_t *second_pred, const uint8_t *msk,
+                                 int msk_stride, int invert_mask,
+                                 unsigned sads[]);
 
-typedef std::tuple<MaskedSADx4Func, MaskedSADx4Func> MaskedSADx4Param;
+using MaskedSADx4Param = std::tuple<MaskedSADx4Func, MaskedSADx4Func>;
 
 class MaskedSADTestBase : public ::testing::Test {
  public:
@@ -195,13 +195,13 @@ TEST_P(MaskedSADTest, OperationCheck) { runMaskedSADTest(1); }
 TEST_P(MaskedSADTest, DISABLED_Speed) { runMaskedSADTest(2000000); }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-typedef unsigned int (*HighbdMaskedSADFunc)(const uint8_t *src, int src_stride,
-                                            const uint8_t *ref, int ref_stride,
-                                            const uint8_t *second_pred,
-                                            const uint8_t *msk, int msk_stride,
-                                            int invert_mask);
-typedef std::tuple<HighbdMaskedSADFunc, HighbdMaskedSADFunc>
-    HighbdMaskedSADParam;
+using HighbdMaskedSADFunc = unsigned int (*)(const uint8_t *src, int src_stride,
+                                             const uint8_t *ref, int ref_stride,
+                                             const uint8_t *second_pred,
+                                             const uint8_t *msk, int msk_stride,
+                                             int invert_mask);
+using HighbdMaskedSADParam =
+    std::tuple<HighbdMaskedSADFunc, HighbdMaskedSADFunc>;
 
 class HighbdMaskedSADTest
     : public ::testing::TestWithParam<HighbdMaskedSADParam> {

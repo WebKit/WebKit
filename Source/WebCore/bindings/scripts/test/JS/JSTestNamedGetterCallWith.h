@@ -32,7 +32,7 @@ public:
     static JSTestNamedGetterCallWith* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedGetterCallWith>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestNamedGetterCallWith* ptr = new (NotNull, JSC::allocateCell<JSTestNamedGetterCallWith>(vm)) JSTestNamedGetterCallWith(structure, *globalObject, WTFMove(impl));
+        JSTestNamedGetterCallWith* ptr = new (NotNull, JSC::allocateCell<JSTestNamedGetterCallWith>(vm)) JSTestNamedGetterCallWith(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -93,10 +93,8 @@ inline void* wrapperKey(TestNamedGetterCallWith* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNamedGetterCallWith&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedGetterCallWith* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestNamedGetterCallWith>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedGetterCallWith& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestNamedGetterCallWith>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestNamedGetterCallWith> {
     using WrapperClass = JSTestNamedGetterCallWith;

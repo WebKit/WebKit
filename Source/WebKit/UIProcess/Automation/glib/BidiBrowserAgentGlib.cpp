@@ -64,7 +64,7 @@ std::unique_ptr<BidiUserContext> BidiBrowserAgent::platformCreateUserContext(Str
         return nullptr;
     }
 
-    return makeUnique<BidiUserContext>(webkitWebsiteDataManagerGetDataStore(dataManager.get()), webkitWebContextGetProcessPool(context.get()), WTFMove(context));
+    return makeUnique<BidiUserContext>(webkitWebsiteDataManagerGetDataStore(dataManager.get()), webkitWebContextGetProcessPool(context.get()), WTF::move(context));
 }
 
 } // namespace WebKit

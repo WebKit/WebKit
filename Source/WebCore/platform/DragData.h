@@ -98,8 +98,8 @@ public:
     void getDragFileDescriptorData(int& size, String& pathname);
     void getDragFileContentData(int size, void* dataBlob);
 #endif
-    const IntPoint& clientPosition() const { return m_clientPosition; }
-    const IntPoint& globalPosition() const { return m_globalPosition; }
+    const IntPoint& clientPosition() const LIFETIME_BOUND { return m_clientPosition; }
+    const IntPoint& globalPosition() const LIFETIME_BOUND { return m_globalPosition; }
     void setClientPosition(const IntPoint& clientPosition) { m_clientPosition = clientPosition; }
     OptionSet<DragApplicationFlags> flags() const { return m_applicationFlags; }
     DragDataRef platformData() const { return m_platformDragData; }
@@ -116,13 +116,13 @@ public:
     bool containsFiles() const;
     unsigned numberOfFiles() const;
     OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
-    void setFileNames(Vector<String>& fileNames) { m_fileNames = WTFMove(fileNames); }
-    const Vector<String>& fileNames() const { return m_fileNames; }
-    void setPromisedFileMIMETypes(Vector<String>&& types) { m_promisedFileMIMETypes = WTFMove(types); }
-    const Vector<String>& promisedFileMIMETypes() const { return m_promisedFileMIMETypes; }
+    void setFileNames(Vector<String>& fileNames) { m_fileNames = WTF::move(fileNames); }
+    const Vector<String>& fileNames() const LIFETIME_BOUND { return m_fileNames; }
+    void setPromisedFileMIMETypes(Vector<String>&& types) { m_promisedFileMIMETypes = WTF::move(types); }
+    const Vector<String>& promisedFileMIMETypes() const LIFETIME_BOUND { return m_promisedFileMIMETypes; }
     void disallowFileAccess();
 #if PLATFORM(COCOA)
-    const String& pasteboardName() const { return m_pasteboardName; }
+    const String& pasteboardName() const LIFETIME_BOUND { return m_pasteboardName; }
     bool containsURLTypeIdentifier() const;
     bool containsPromise() const;
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include <WebCore/ColorTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
 namespace WebCore {
 
-class BasicColorMatrixFilterOperation;
+class FilterEffect;
 class FilterOperation;
-class RenderStyle;
 
 namespace CSS {
 struct Grayscale;
@@ -36,10 +38,43 @@ struct Grayscale;
 
 namespace Style {
 
-class BuilderState;
+// grayscale() = grayscale( [ <number [0,1(clamp upper)] > | <percentage [0,100(clamp upper)]> ]?@(default=1) )
+// https://drafts.fxtf.org/filter-effects/#funcdef-filter-grayscale
+struct Grayscale {
+    using Parameter = Number<CSS::ClosedUnitRangeClampUpper>;
 
-CSS::Grayscale toCSSGrayscale(Ref<BasicColorMatrixFilterOperation>, const RenderStyle&);
-Ref<FilterOperation> createFilterOperation(const CSS::Grayscale&, const BuilderState&);
+    Parameter value;
+
+    static Grayscale passthroughForInterpolation();
+
+    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool affectsOpacity() const { return false; }
+    constexpr bool movesPixels() const { return false; }
+    constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
+    bool isIdentity() const { return value.isZero(); }
+
+    bool transformColor(SRGBA<float>&) const;
+    constexpr bool inverseTransformColor(SRGBA<float>&) const { return false; }
+
+    bool operator==(const Grayscale&) const = default;
+};
+using GrayscaleFunction = FunctionNotation<CSSValueGrayscale, Grayscale>;
+DEFINE_TYPE_WRAPPER_GET(Grayscale, value);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<Grayscale> { auto operator()(const Grayscale&, const RenderStyle&) -> CSS::Grayscale; };
+template<> struct ToStyle<CSS::Grayscale> { auto operator()(const CSS::Grayscale&, const BuilderState&) -> Grayscale; };
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<Grayscale, Ref<FilterEffect>> { auto operator()(const Grayscale&) -> Ref<FilterEffect>; };
+
+// MARK: - Platform
+
+template<> struct ToPlatform<Grayscale> { auto operator()(const Grayscale&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Grayscale, 1)

@@ -78,7 +78,7 @@ class RtcEventBweUpdateLossBased final : public RtcEvent {
   }
 
  private:
-  RtcEventBweUpdateLossBased(const RtcEventBweUpdateLossBased& other);
+  RtcEventBweUpdateLossBased(const RtcEventBweUpdateLossBased&) = default;
 
   const int32_t bitrate_bps_;
   const uint8_t fraction_loss_;

@@ -56,16 +56,16 @@ struct OwnedString;
 template<typename> class ExceptionOr;
 
 class XMLHttpRequest final : public ActiveDOMObject, public RefCounted<XMLHttpRequest>, private ThreadableLoaderClient, public XMLHttpRequestEventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(XMLHttpRequest, WEBCORE_EXPORT);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(XMLHttpRequest);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(XMLHttpRequest, WEBCORE_EXPORT);
 public:
+    static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
+    WEBCORE_EXPORT ~XMLHttpRequest();
+
+    // ActiveDOMObject, ThreadableLoaderClient.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
     USING_CAN_MAKE_WEAKPTR(EventTarget);
-
-    static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
-    WEBCORE_EXPORT ~XMLHttpRequest();
 
     // Keep it in 3bits.
     enum State : uint8_t {
@@ -80,11 +80,10 @@ public:
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::XMLHttpRequest; }
     ScriptExecutionContext* scriptExecutionContext() const final;
-    using ActiveDOMObject::protectedScriptExecutionContext;
 
-    using SendTypes = Variant<RefPtr<Document>, RefPtr<Blob>, RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<DOMFormData>, String, RefPtr<URLSearchParams>>;
+    using SendTypes = Variant<Ref<Document>, Ref<Blob>, Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<DOMFormData>, String, Ref<URLSearchParams>>;
 
-    const URL& url() const { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     String statusText() const;
     int status() const;
     State readyState() const { return static_cast<State>(m_readyState); }
@@ -134,7 +133,7 @@ public:
     XMLHttpRequestUpload& upload();
     XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
 
-    const ResourceResponse& resourceResponse() const { return m_response; }
+    const ResourceResponse& resourceResponse() const LIFETIME_BOUND { return m_response; }
 
     size_t memoryCost() const;
 
@@ -177,13 +176,13 @@ private:
     void notifyIsDone(bool) final;
 
     std::optional<ExceptionOr<void>> prepareToSend();
-    ExceptionOr<void> send(const URLSearchParams&);
-    ExceptionOr<void> send(Document&);
-    ExceptionOr<void> send(const String& = { });
-    ExceptionOr<void> send(Blob&);
-    ExceptionOr<void> send(DOMFormData&);
-    ExceptionOr<void> send(JSC::ArrayBuffer&);
-    ExceptionOr<void> send(JSC::ArrayBufferView&);
+    ExceptionOr<void> send(Ref<URLSearchParams>&&);
+    ExceptionOr<void> send(Ref<Document>&&);
+    ExceptionOr<void> send(String&& = { });
+    ExceptionOr<void> send(Ref<Blob>&&);
+    ExceptionOr<void> send(Ref<DOMFormData>&&);
+    ExceptionOr<void> send(Ref<JSC::ArrayBuffer>&&);
+    ExceptionOr<void> send(Ref<JSC::ArrayBufferView>&&);
     ExceptionOr<void> sendBytesData(std::span<const uint8_t>);
 
     void changeState(State);
@@ -233,7 +232,6 @@ private:
     struct LoadingActivity {
         Ref<XMLHttpRequest> protectedThis; // Keep object alive while loading even if there is no longer a JS wrapper.
         Ref<ThreadableLoader> loader;
-        Ref<ThreadableLoader> protectedLoader() const;
     };
     std::optional<LoadingActivity> m_loadingActivity;
 
@@ -268,3 +266,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(XMLHttpRequest)

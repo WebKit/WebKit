@@ -47,11 +47,12 @@ except ImportError:
         "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
-version = Version(0, 7, 1)
+version = Version(0, 7, 2)
 
 AutoInstall.register(Package('blinker', Version(1, 8, 2)))
 AutoInstall.register(Package('click', Version(8, 1, 7)))
 AutoInstall.register(Package('flask', Version(2, 3, 3)))
+AutoInstall.register(Package('flask-compress', Version(1, 15)))
 AutoInstall.register(Package('hiredis', Version(3, 1, 0), wheel=True))
 AutoInstall.register(Package('itsdangerous', Version(1, 1, 0)))
 AutoInstall.register(Package('markupsafe', Version(3, 0, 3), pypi_name='MarkupSafe', wheel=True))

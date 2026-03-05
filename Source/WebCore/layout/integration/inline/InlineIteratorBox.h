@@ -149,8 +149,10 @@ public:
 
     BoxIterator& traverseLineRightwardOnLine();
     BoxIterator& traverseLineRightwardOnLineSkippingChildren();
+    BoxIterator& traverseLineLeftwardOnLine();
 
     BoxIterator& operator++() { return traverseLineRightwardOnLine(); }
+    BoxIterator& operator--() { return traverseLineLeftwardOnLine(); }
 
     bool atEnd() const;
 
@@ -201,7 +203,7 @@ LeafBoxIterator boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex)
 // -----------------------------------------------
 
 inline Box::Box(PathVariant&& path)
-    : m_pathVariant(WTFMove(path))
+    : m_pathVariant(WTF::move(path))
 {
 }
 

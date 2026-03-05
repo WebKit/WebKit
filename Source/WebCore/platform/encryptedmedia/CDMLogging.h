@@ -27,21 +27,8 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include <WebCore/CDMTypesForward.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-
-struct CDMKeySystemConfiguration;
-struct CDMMediaCapability;
-struct CDMRestrictions;
-
-enum class CDMEncryptionScheme : bool;
-enum class CDMKeyStatus : uint8_t;
-enum class CDMMessageType : uint8_t;
-enum class CDMRequirement : uint8_t;
-enum class CDMSessionType : uint8_t;
-
-}
 
 namespace WTF {
 
@@ -86,6 +73,16 @@ struct LogArgument<WebCore::CDMRequirement> {
 template <>
 struct LogArgument<WebCore::CDMSessionType> {
     static String toString(const WebCore::CDMSessionType&);
+};
+
+template <>
+struct LogArgument<WebCore::CDMKeyID> {
+    static String toString(const WebCore::CDMKeyID&);
+};
+
+template <>
+struct LogArgument<WebCore::CDMKeyIDs> {
+    static String toString(const WebCore::CDMKeyIDs&);
 };
 
 }

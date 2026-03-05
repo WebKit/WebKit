@@ -209,12 +209,19 @@ void EmitFragmentOutputDither(TCompiler *compiler,
     TIntermSwitch *formatSwitch = new TIntermSwitch(thisDitherControl, switchBody);
     ditherBlock->appendStatement(formatSwitch);
 
-    // fragmentOutput.rgb += ditherValue
+    // Only apply dither if "const uint dither_i = (dither >> 2*location) & 3" is non-zero
+    // if (dither_i != 0) {
+    //     fragmentOutput.rgb += ditherValue
+    // }
+    TIntermTyped *shouldApplyDitherCheck =
+        new TIntermBinary(EOpNotEqual, thisDitherControl->deepCopy(), CreateUIntNode(0));
     if (type.getNominalSize() > 3)
     {
         fragmentOutput = new TIntermSwizzle(fragmentOutput, {0, 1, 2});
     }
-    ditherBlock->appendStatement(new TIntermBinary(EOpAddAssign, fragmentOutput, ditherValue));
+    TIntermBlock *applyDitherValueBlock = new TIntermBlock;
+    applyDitherValueBlock->appendStatement(
+        new TIntermBinary(EOpAddAssign, fragmentOutput, ditherValue));
 
     // round() the output if workaround is enabled
     if (roundOutputAfterDithering)
@@ -228,9 +235,11 @@ void EmitFragmentOutputDither(TCompiler *compiler,
         TIntermTyped *rounded =
             CreateBuiltInUnaryFunctionCallNode("round", scaledUp, *symbolTable, 300);
         TIntermTyped *scaledDown = new TIntermBinary(EOpDiv, rounded, multiplier->deepCopy());
-        ditherBlock->appendStatement(
+        applyDitherValueBlock->appendStatement(
             new TIntermBinary(EOpAssign, fragmentOutput->deepCopy(), scaledDown));
     }
+    ditherBlock->appendStatement(
+        new TIntermIfElse(shouldApplyDitherCheck, applyDitherValueBlock, nullptr));
 }
 
 void EmitFragmentVariableDither(TCompiler *compiler,

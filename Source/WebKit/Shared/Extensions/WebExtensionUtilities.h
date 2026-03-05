@@ -67,6 +67,9 @@ Unexpected<WebExtensionError> toWebExtensionError(const String& callingAPIName, 
 /// Returns an error object that combines the provided information into a single, descriptive message.
 JSObjectRef toJSError(JSContextRef, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
 
+/// Serializes large data to JSON chunks to avoid StringBuilder overflow.
+void serializeToMultipleJSONStrings(Ref<JSON::Object>, Function<void(String&&)>&&);
+
 #ifdef __OBJC__
 
 /// Verifies that a dictionary:

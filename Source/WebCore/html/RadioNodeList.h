@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class RadioNodeList final : public CachedLiveNodeList<RadioNodeList> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RadioNodeList);
+    WTF_MAKE_TZONE_ALLOCATED(RadioNodeList);
 public:
     static Ref<RadioNodeList> create(ContainerNode& rootNode, const AtomString& name);
     virtual ~RadioNodeList();
@@ -49,3 +49,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_LIVENODELIST(RadioNodeList)

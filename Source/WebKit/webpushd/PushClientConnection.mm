@@ -146,7 +146,7 @@ RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t conne
     audit_token_t peerAuditToken;
     xpc_connection_get_audit_token(connection, &peerAuditToken);
     if (bool peerHasPushInjectEntitlement = WTF::hasEntitlement(peerAuditToken, "com.apple.private.webkit.webpush.inject"_s))
-        return adoptRef(new PushClientConnection(connection, WTFMove(configuration.bundleIdentifierOverride), peerHasPushInjectEntitlement, WTFMove(configuration.pushPartitionString), WTFMove(configuration.dataStoreIdentifier), configuration.declarativeWebPushEnabled));
+        return adoptRef(new PushClientConnection(connection, WTF::move(configuration.bundleIdentifierOverride), peerHasPushInjectEntitlement, WTF::move(configuration.pushPartitionString), WTF::move(configuration.dataStoreIdentifier), configuration.declarativeWebPushEnabled));
 
 #if USE(EXTENSIONKIT)
     pid_t pid = xpc_connection_get_pid(connection);
@@ -176,7 +176,7 @@ RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t conne
     bool hostAppHasWebPushEntitlement = hostAppHasEntitlement(hostAppAuditToken, hostAppWebPushEntitlement);
     String hostAppCodeSigningIdentifier = bundleIdentifierFromAuditToken(hostAppAuditToken);
     bool hostAppHasPushInjectEntitlement = hostAppHasEntitlement(hostAppAuditToken, "com.apple.private.webkit.webpush.inject"_s);
-    auto pushPartition = WTFMove(configuration.pushPartitionString);
+    auto pushPartition = WTF::move(configuration.pushPartitionString);
     bool hasValidPushPartition = isValidPushPartition(pushPartition);
 
     if (hostAppHasPushInjectEntitlement && !configuration.bundleIdentifierOverride.isEmpty())
@@ -199,15 +199,15 @@ RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t conne
         return nullptr;
     }
 
-    return adoptRef(new PushClientConnection(connection, WTFMove(hostAppCodeSigningIdentifier), hostAppHasPushInjectEntitlement, WTFMove(pushPartition), WTFMove(configuration.dataStoreIdentifier), configuration.declarativeWebPushEnabled));
+    return adoptRef(new PushClientConnection(connection, WTF::move(hostAppCodeSigningIdentifier), hostAppHasPushInjectEntitlement, WTF::move(pushPartition), WTF::move(configuration.dataStoreIdentifier), configuration.declarativeWebPushEnabled));
 }
 
 PushClientConnection::PushClientConnection(xpc_connection_t connection, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier, bool declarativeWebPushEnabled)
     : m_xpcConnection(connection)
-    , m_hostAppCodeSigningIdentifier(WTFMove(hostAppCodeSigningIdentifier))
+    , m_hostAppCodeSigningIdentifier(WTF::move(hostAppCodeSigningIdentifier))
     , m_hostAppHasPushInjectEntitlement(hostAppHasPushInjectEntitlement)
     , m_pushPartitionString(pushPartitionString)
-    , m_dataStoreIdentifier(WTFMove(dataStoreIdentifier))
+    , m_dataStoreIdentifier(WTF::move(dataStoreIdentifier))
     , m_declarativeWebPushEnabled(declarativeWebPushEnabled)
 {
 }
@@ -225,7 +225,7 @@ void PushClientConnection::initializeConnection(WebPushDaemonConnectionConfigura
 
 void PushClientConnection::getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
 {
-    WebPushDaemon::singleton().getPushTopicsForTesting(*this, WTFMove(completionHandler));
+    WebPushDaemon::singleton().getPushTopicsForTesting(*this, WTF::move(completionHandler));
 }
 
 std::optional<WebCore::PushSubscriptionSetIdentifier> PushClientConnection::subscriptionSetIdentifierForOrigin(const WebCore::SecurityOriginData& origin) const
@@ -266,68 +266,68 @@ void PushClientConnection::connectionClosed()
 
 void PushClientConnection::setPushAndNotificationsEnabledForOrigin(const String& originString, bool enabled, CompletionHandler<void()>&& replySender)
 {
-    WebPushDaemon::singleton().setPushAndNotificationsEnabledForOrigin(*this, originString, enabled, WTFMove(replySender));
+    WebPushDaemon::singleton().setPushAndNotificationsEnabledForOrigin(*this, originString, enabled, WTF::move(replySender));
 }
 
 void PushClientConnection::injectPushMessageForTesting(PushMessageForTesting&& message, CompletionHandler<void(const String&)>&& replySender)
 {
-    WebPushDaemon::singleton().injectPushMessageForTesting(*this, WTFMove(message), WTFMove(replySender));
+    WebPushDaemon::singleton().injectPushMessageForTesting(*this, WTF::move(message), WTF::move(replySender));
 }
 
 void PushClientConnection::injectEncryptedPushMessageForTesting(const String& message, CompletionHandler<void(bool)>&& replySender)
 {
-    WebPushDaemon::singleton().injectEncryptedPushMessageForTesting(*this, message, WTFMove(replySender));
+    WebPushDaemon::singleton().injectEncryptedPushMessageForTesting(*this, message, WTF::move(replySender));
 }
 
 void PushClientConnection::getPendingPushMessage(CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& replySender)
 {
-    WebPushDaemon::singleton().getPendingPushMessage(*this, WTFMove(replySender));
+    WebPushDaemon::singleton().getPendingPushMessage(*this, WTF::move(replySender));
 }
 
 void PushClientConnection::getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
 {
-    WebPushDaemon::singleton().getPendingPushMessages(*this, WTFMove(replySender));
+    WebPushDaemon::singleton().getPendingPushMessages(*this, WTF::move(replySender));
 }
 
 void PushClientConnection::subscribeToPushService(URL&& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)
 {
-    WebPushDaemon::singleton().subscribeToPushService(*this, WTFMove(scopeURL), applicationServerKey, WTFMove(replySender));
+    WebPushDaemon::singleton().subscribeToPushService(*this, WTF::move(scopeURL), applicationServerKey, WTF::move(replySender));
 }
 
 void PushClientConnection::unsubscribeFromPushService(URL&& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier> identifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender)
 {
-    WebPushDaemon::singleton().unsubscribeFromPushService(*this, WTFMove(scopeURL), WTFMove(identifier), WTFMove(replySender));
+    WebPushDaemon::singleton().unsubscribeFromPushService(*this, WTF::move(scopeURL), WTF::move(identifier), WTF::move(replySender));
 }
 
 void PushClientConnection::getPushSubscription(URL&& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender)
 {
-    WebPushDaemon::singleton().getPushSubscription(*this, WTFMove(scopeURL), WTFMove(replySender));
+    WebPushDaemon::singleton().getPushSubscription(*this, WTF::move(scopeURL), WTF::move(replySender));
 }
 
 void PushClientConnection::incrementSilentPushCount(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& replySender)
 {
-    WebPushDaemon::singleton().incrementSilentPushCount(*this, WTFMove(origin), WTFMove(replySender));
+    WebPushDaemon::singleton().incrementSilentPushCount(*this, WTF::move(origin), WTF::move(replySender));
 }
 
 void PushClientConnection::removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&& replySender)
 {
-    WebPushDaemon::singleton().removeAllPushSubscriptions(*this, WTFMove(replySender));
+    WebPushDaemon::singleton().removeAllPushSubscriptions(*this, WTF::move(replySender));
 }
 
 void PushClientConnection::removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& replySender)
 {
-    WebPushDaemon::singleton().removePushSubscriptionsForOrigin(*this, WTFMove(origin), WTFMove(replySender));
+    WebPushDaemon::singleton().removePushSubscriptionsForOrigin(*this, WTF::move(origin), WTF::move(replySender));
 }
 
 void PushClientConnection::setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&& replySender)
 {
-    WebPushDaemon::singleton().setPublicTokenForTesting(*this, publicToken, WTFMove(replySender));
+    WebPushDaemon::singleton().setPublicTokenForTesting(*this, publicToken, WTF::move(replySender));
 }
 
 void PushClientConnection::getPushPermissionState(WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().getPushPermissionState(*this, WTFMove(origin), WTFMove(replySender));
+    WebPushDaemon::singleton().getPushPermissionState(*this, WTF::move(origin), WTF::move(replySender));
 #else
     UNUSED_PARAM(origin);
     replySender({ });
@@ -337,7 +337,7 @@ void PushClientConnection::getPushPermissionState(WebCore::SecurityOriginData&& 
 void PushClientConnection::requestPushPermission(WebCore::SecurityOriginData&& origin, CompletionHandler<void(bool)>&& replySender)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().requestPushPermission(*this, WTFMove(origin), WTFMove(replySender));
+    WebPushDaemon::singleton().requestPushPermission(*this, WTF::move(origin), WTF::move(replySender));
 #else
     UNUSED_PARAM(origin);
     replySender(false);
@@ -347,7 +347,7 @@ void PushClientConnection::requestPushPermission(WebCore::SecurityOriginData&& o
 void PushClientConnection::showNotification(const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> notificationResources, CompletionHandler<void()>&& completionHandler)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().showNotification(*this, notificationData, notificationResources, WTFMove(completionHandler));
+    WebPushDaemon::singleton().showNotification(*this, notificationData, notificationResources, WTF::move(completionHandler));
 #else
     UNUSED_PARAM(notificationData);
     UNUSED_PARAM(notificationResources);
@@ -358,7 +358,7 @@ void PushClientConnection::showNotification(const WebCore::NotificationData& not
 void PushClientConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().getNotifications(*this, registrationURL, tag, WTFMove(completionHandler));
+    WebPushDaemon::singleton().getNotifications(*this, registrationURL, tag, WTF::move(completionHandler));
 #else
     UNUSED_PARAM(registrationURL);
     UNUSED_PARAM(tag);
@@ -369,21 +369,21 @@ void PushClientConnection::getNotifications(const URL& registrationURL, const St
 void PushClientConnection::cancelNotification(WebCore::SecurityOriginData&& origin, const WTF::UUID& notificationID)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().cancelNotification(*this, WTFMove(origin), notificationID);
+    WebPushDaemon::singleton().cancelNotification(*this, WTF::move(origin), notificationID);
 #endif
 }
 
 void PushClientConnection::setAppBadge(WebCore::SecurityOriginData&& origin, std::optional<uint64_t> badge)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().setAppBadge(*this, WTFMove(origin), badge);
+    WebPushDaemon::singleton().setAppBadge(*this, WTF::move(origin), badge);
 #endif
 }
 
 void PushClientConnection::getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().getAppBadgeForTesting(*this, WTFMove(completionHandler));
+    WebPushDaemon::singleton().getAppBadgeForTesting(*this, WTF::move(completionHandler));
 #else
     completionHandler(std::nullopt);
 #endif
@@ -391,7 +391,7 @@ void PushClientConnection::getAppBadgeForTesting(CompletionHandler<void(std::opt
 
 void PushClientConnection::setProtocolVersionForTesting(unsigned version, CompletionHandler<void()>&& completionHandler)
 {
-    WebPushDaemon::singleton().setProtocolVersionForTesting(*this, version, WTFMove(completionHandler));
+    WebPushDaemon::singleton().setProtocolVersionForTesting(*this, version, WTF::move(completionHandler));
 }
 
 void PushClientConnection::setServiceWorkerIsBeingInspected(URL&& scopeURL, bool isInspected, CompletionHandler<void()>&& completionHandler)

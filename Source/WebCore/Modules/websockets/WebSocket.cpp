@@ -54,7 +54,6 @@
 #include "ResourceLoadObserver.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
-#include "SecurityOrigin.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelInspector.h"
@@ -80,13 +79,13 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebSocket);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocket);
 
 Lock WebSocket::s_allActiveWebSocketsLock;
 
 const size_t maxReasonSizeInBytes = 123;
 
-static inline bool isValidProtocolCharacter(char16_t character)
+static inline bool NODELETE isValidProtocolCharacter(char16_t character)
 {
     // Hybi-10 says "(Subprotocol string must consist of) characters in the range U+0021 to U+007E not including
     // separator characters as defined in [RFC2616]."
@@ -135,7 +134,7 @@ static String joinStrings(const Vector<String>& strings, ASCIILiteral separator)
     return builder.toString();
 }
 
-static unsigned saturateAdd(unsigned a, unsigned b)
+static unsigned NODELETE saturateAdd(unsigned a, unsigned b)
 {
     if (std::numeric_limits<unsigned>::max() - a < b)
         return std::numeric_limits<unsigned>::max();
@@ -335,13 +334,15 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 
     auto reportRegistrableDomain = [domain = RegistrableDomain(m_url).isolatedCopy()](auto& context) mutable {
         if (RefPtr frame = downcast<Document>(context).frame())
-            frame->loader().client().didLoadFromRegistrableDomain(WTFMove(domain));
+            frame->loader().client().didLoadFromRegistrableDomain(WTF::move(domain));
     };
     if (is<Document>(context))
         reportRegistrableDomain(context.get());
     else if (CheckedPtr workerLoaderProxy = downcast<WorkerGlobalScope>(context)->thread()->workerLoaderProxy())
-        workerLoaderProxy->postTaskToLoader(WTFMove(reportRegistrableDomain));
+        workerLoaderProxy->postTaskToLoader(WTF::move(reportRegistrableDomain));
 
+    if (!m_origin)
+        lazyInitialize(m_origin, SecurityOrigin::create(m_url));
     m_pendingActivity = makePendingActivity(*this);
 
     return { };
@@ -362,7 +363,7 @@ ExceptionOr<void> WebSocket::send(const String& message)
     }
     // FIXME: WebSocketChannel also has a m_bufferedAmount. Remove that one. This one is the correct one accessed by JS.
     m_bufferedAmount = saturateAdd(m_bufferedAmount, utf8.length());
-    channel()->send(WTFMove(utf8));
+    channel()->send(WTF::move(utf8));
     return { };
 }
 
@@ -426,7 +427,7 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
             return Exception { ExceptionCode::InvalidAccessError };
         CString utf8 = reason.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
         if (utf8.length() > maxReasonSizeInBytes) {
-            protectedScriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_s);
+            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_s);
             return Exception { ExceptionCode::SyntaxError };
         }
     }
@@ -501,7 +502,7 @@ void WebSocket::contextDestroyed()
 void WebSocket::suspend(ReasonForSuspension reason)
 {
     RefPtr channel = m_channel;
-    if (!channel)
+    if (!channel || m_state == CLOSING || m_state == CLOSED)
         return;
 
     if (reason == ReasonForSuspension::BackForwardCache) {
@@ -550,7 +551,7 @@ void WebSocket::didConnect()
 void WebSocket::didReceiveMessage(String&& message)
 {
     LOG(Network, "WebSocket %p didReceiveMessage() Text message '%s'", this, message.utf8().data());
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [message = WTFMove(message)](auto& socket) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [message = WTF::move(message)](auto& socket) mutable {
         if (socket.m_state != OPEN)
             return;
 
@@ -561,14 +562,14 @@ void WebSocket::didReceiveMessage(String&& message)
             }
         }
         ASSERT(socket.scriptExecutionContext());
-        socket.dispatchEvent(MessageEvent::create(WTFMove(message), SecurityOrigin::create(socket.m_url)->toString()));
+        socket.dispatchEvent(MessageEvent::create(WTF::move(message), socket.m_origin.copyRef()));
     });
 }
 
 void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
 {
     LOG(Network, "WebSocket %p didReceiveBinaryData() %u byte binary message", this, static_cast<unsigned>(binaryData.size()));
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [binaryData = WTFMove(binaryData)](auto& socket) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [binaryData = WTF::move(binaryData)](auto& socket) mutable {
         if (socket.m_state != OPEN)
             return;
 
@@ -580,10 +581,10 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
         switch (socket.m_binaryType) {
         case BinaryType::Blob:
             // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-            socket.dispatchEvent(MessageEvent::create(Blob::create(socket.protectedScriptExecutionContext().get(), WTFMove(binaryData), emptyString()), SecurityOrigin::create(socket.m_url)->toString()));
+            socket.dispatchEvent(MessageEvent::create(Blob::create(protect(socket.scriptExecutionContext()).get(), WTF::move(binaryData), emptyString()), socket.m_origin.copyRef()));
             break;
         case BinaryType::Arraybuffer:
-            socket.dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData), SecurityOrigin::create(socket.m_url)->toString()));
+            socket.dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData), socket.m_origin.copyRef()));
             break;
         }
     });
@@ -592,7 +593,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
 void WebSocket::didReceiveMessageError(String&& reason)
 {
     LOG(Network, "WebSocket %p didReceiveErrorMessage()", this);
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [reason = WTFMove(reason)](auto& socket) {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [reason = WTF::move(reason)](auto& socket) {
         if (socket.m_state == CLOSED)
             return;
         socket.m_state = CLOSED;

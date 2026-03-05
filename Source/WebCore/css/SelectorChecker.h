@@ -94,7 +94,7 @@ public:
         const SelectorChecker::Mode resolvingMode;
 
         void setRequestedPseudoElement(Style::PseudoElementIdentifier);
-        std::optional<Style::PseudoElementIdentifier> requestedPseudoElement() const;
+        std::optional<Style::PseudoElementIdentifier> NODELETE requestedPseudoElement() const;
 
     private:
         friend class SelectorCompiler::SelectorCodeGenerator;
@@ -130,7 +130,7 @@ public:
     static bool attributeSelectorMatches(const Element&, const QualifiedName&, const AtomString& attributeValue, const CSSSelector&);
 
     enum LinkMatchMask { MatchDefault = 0, MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
-    static unsigned determineLinkMatchType(const CSSSelector*, const StyleRuleScope* = nullptr);
+    static unsigned determineLinkMatchType(const CSSSelector&, const StyleRuleScope* = nullptr);
 
     struct LocalContext;
     
@@ -140,7 +140,7 @@ private:
     bool matchSelectorList(CheckingContext&, const LocalContext&, const Element&, const CSSSelectorList&) const;
     bool matchHasPseudoClass(CheckingContext&, const Element&, const CSSSelector&) const;
 
-    bool checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
+    bool NODELETE checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
     bool checkViewTransitionPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
 
     bool m_strictParsing;

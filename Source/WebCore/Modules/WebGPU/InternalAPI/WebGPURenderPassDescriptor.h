@@ -42,8 +42,6 @@ struct RenderPassDescriptor : public ObjectDescriptorBase {
     WeakPtr<QuerySet> occlusionQuerySet;
     std::optional<RenderPassTimestampWrites> timestampWrites;
     std::optional<uint64_t> maxDrawCount;
-
-    RefPtr<QuerySet> protectedOcclusionQuerySet() const { return occlusionQuerySet.get(); }
 };
 
 } // namespace WebCore::WebGPU

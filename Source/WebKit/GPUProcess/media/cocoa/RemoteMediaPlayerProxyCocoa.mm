@@ -54,7 +54,7 @@ void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_layerHostingContextManager->setVideoLayerSizeIfPossible();
-    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
+    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
@@ -68,15 +68,15 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
         false;
 #endif
 
-    if (auto hostingContext = m_layerHostingContextManager->createHostingContextIfNeeded(protectedPlayer()->platformLayer(), canShowWhileLocked))
-        protectedConnection()->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextChanged(*hostingContext, m_layerHostingContextManager->videoLayerSize()), m_id);
+    if (auto hostingContext = m_layerHostingContextManager->createHostingContextIfNeeded(protect(m_player)->platformLayer(), canShowWhileLocked))
+        protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextChanged(*hostingContext, m_layerHostingContextManager->videoLayerSize()), m_id);
 
-    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
+    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
 
 void RemoteMediaPlayerProxy::requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&& completionHandler)
 {
-    m_layerHostingContextManager->requestHostingContext(WTFMove(completionHandler));
+    m_layerHostingContextManager->requestHostingContext(WTF::move(completionHandler));
 }
 
 void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)
@@ -85,14 +85,14 @@ void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& s
 
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
     m_layerHostingContextManager->setVideoLayerSizeFenced(size, WTF::MachSendRightAnnotated { sendRightAnnotated }, [&] {
-        protectedPlayer()->setVideoLayerSizeFenced(size, WTFMove(sendRightAnnotated));
+        protect(m_player)->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
     });
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
 {
-    auto properties = protectedVideoFrameObjectHeap()->add(WebCore::VideoFrameCV::create({ }, false, WebCore::VideoFrame::Rotation::None, WTFMove(buffer)));
-    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, properties), m_id);
+    auto properties = protect(m_videoFrameObjectHeap)->add(WebCore::VideoFrameCV::create({ }, false, WebCore::VideoFrame::Rotation::None, WTF::move(buffer)));
+    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, properties), m_id);
 }
 
 WebCore::FloatSize RemoteMediaPlayerProxy::mediaPlayerVideoLayerSize() const

@@ -4,7 +4,7 @@ layer at (0,0) size 785x2350
   RenderBlock {HTML} at (0,0) size 785x2351
     RenderBody {BODY} at (8,8) size 769x2335
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 613x36
+        RenderText {#text} at (0,0) size 613x37
           text run at (0,0) width 613: "Fixed Columns, Auto Span, Minheight Table"
       RenderTable {TABLE} at (0,58) size 40x101
         RenderTableSection {TBODY} at (0,0) size 40x100
@@ -15,13 +15,13 @@ layer at (0,0) size 785x2350
             RenderTableCell {TD} at (20,10) size 20x81 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
               RenderBlock {DIV} at (10,0) size 0x100
       RenderBlock {P} at (0,174) size 769x55
-        RenderText {#text} at (0,0) size 148x17
+        RenderText {#text} at (0,0) size 148x18
           text run at (0,0) width 148: "The table height is: 100"
-        RenderBR {BR} at (148,0) size 0x17
-        RenderText {#text} at (0,18) size 133x17
+        RenderBR {BR} at (148,0) size 0x18
+        RenderText {#text} at (0,18) size 133x18
           text run at (0,18) width 133: "Column One is: 33%"
-        RenderBR {BR} at (133,18) size 0x17
-        RenderText {#text} at (0,36) size 135x17
+        RenderBR {BR} at (133,18) size 0x18
+        RenderText {#text} at (0,36) size 135x18
           text run at (0,36) width 135: "Column Two is: 67%"
       RenderTable {TABLE} at (0,254) size 40x601
         RenderTableSection {TBODY} at (0,0) size 40x600
@@ -32,36 +32,36 @@ layer at (0,0) size 785x2350
             RenderTableCell {TD} at (20,10) size 20x580 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
               RenderBlock {DIV} at (10,0) size 0x600
       RenderBlock {P} at (0,870) size 769x55
-        RenderText {#text} at (0,0) size 148x17
+        RenderText {#text} at (0,0) size 148x18
           text run at (0,0) width 148: "The table height is: 600"
-        RenderBR {BR} at (148,0) size 0x17
-        RenderText {#text} at (0,18) size 133x17
+        RenderBR {BR} at (148,0) size 0x18
+        RenderText {#text} at (0,18) size 133x18
           text run at (0,18) width 133: "Column One is: 33%"
-        RenderBR {BR} at (133,18) size 0x17
-        RenderText {#text} at (0,36) size 135x17
+        RenderBR {BR} at (133,18) size 0x18
+        RenderText {#text} at (0,36) size 135x18
           text run at (0,36) width 135: "Column Two is: 67%"
       RenderTable {TABLE} at (0,950) size 56x601
         RenderTableSection {TBODY} at (0,0) size 56x600
           RenderTableRow {TR} at (0,0) size 36x600
             RenderTableCell {TD} at (0,0) size 36x200 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 35x188
-                text run at (0,0) width 188: "Fixed cell in column one with"
-                text run at (18,0) width 64: "some text."
+              RenderText {#text} at (0,0) size 36x188
+                text run at (0,0) width 189: "Fixed cell in column one with"
+                text run at (18,0) width 65: "some text."
             RenderTableCell {TD} at (0,200) size 36x400 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 35x398
+              RenderText {#text} at (0,0) size 36x398
                 text run at (0,0) width 398: "Fixed cell in column two with a lot more text. Will the ratios be"
-                text run at (18,0) width 68: "preserved?"
+                text run at (18,0) width 69: "preserved?"
           RenderTableRow {TR} at (36,0) size 20x600
             RenderTableCell {TD} at (36,10) size 20x580 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
               RenderBlock {DIV} at (10,0) size 0x600
       RenderBlock {P} at (0,1566) size 769x55
-        RenderText {#text} at (0,0) size 148x17
+        RenderText {#text} at (0,0) size 148x18
           text run at (0,0) width 148: "The table height is: 600"
-        RenderBR {BR} at (148,0) size 0x17
-        RenderText {#text} at (0,18) size 133x17
+        RenderBR {BR} at (148,0) size 0x18
+        RenderText {#text} at (0,18) size 133x18
           text run at (0,18) width 133: "Column One is: 33%"
-        RenderBR {BR} at (133,18) size 0x17
-        RenderText {#text} at (0,36) size 135x17
+        RenderBR {BR} at (133,18) size 0x18
+        RenderText {#text} at (0,36) size 135x18
           text run at (0,36) width 135: "Column Two is: 67%"
       RenderTable {TABLE} at (0,1646) size 40x601
         RenderTableSection {TBODY} at (0,0) size 40x600
@@ -74,13 +74,13 @@ layer at (0,0) size 785x2350
             RenderTableCell {TD} at (20,10) size 20x580 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
               RenderBlock {DIV} at (10,0) size 0x600
       RenderBlock {P} at (0,2262) size 769x55
-        RenderText {#text} at (0,0) size 148x17
+        RenderText {#text} at (0,0) size 148x18
           text run at (0,0) width 148: "The table height is: 600"
-        RenderBR {BR} at (148,0) size 0x17
-        RenderText {#text} at (0,18) size 133x17
+        RenderBR {BR} at (148,0) size 0x18
+        RenderText {#text} at (0,18) size 133x18
           text run at (0,18) width 133: "Column One is: 33%"
-        RenderBR {BR} at (133,18) size 0x17
-        RenderText {#text} at (0,36) size 135x17
+        RenderBR {BR} at (133,18) size 0x18
+        RenderText {#text} at (0,36) size 135x18
           text run at (0,36) width 135: "Column Two is: 67%"
 layer at (8,252) size 769x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,244) size 769x3 [color=#808080] [border: (1px inset #808080)]

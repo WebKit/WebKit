@@ -105,7 +105,7 @@ test_shorthand_value('view-timeline', '--abc 1px inline',
 });
 
 function test_shorthand_contraction(shorthand, longhands, expected) {
-  let longhands_fmt = Object.entries(longhands).map((e) => `${e[0]}:${e[1]}:${e[2]}`).join(';');
+  let longhands_fmt = Object.entries(longhands).map((e) => `${e[0]}:${e[1]}`).join(';');
   test((t) => {
     t.add_cleanup(() => {
       for (let shorthand of Object.keys(longhands))
@@ -142,23 +142,36 @@ test_shorthand_contraction('view-timeline', {
   'view-timeline-inset': 'auto auto, auto',
 }, 'none, none');
 
-// Longhands with different lengths:
+// Longhands with different lengths will cause the shorthand to serialize as the empty string due to no longer being able to round trip.
 
 test_shorthand_contraction('view-timeline', {
   'view-timeline-name': '--a, --b, --c',
   'view-timeline-axis': 'inline, inline',
   'view-timeline-inset': 'auto, auto',
-}, '--a inline, --b inline, --c inline');
+}, '');
 
 test_shorthand_contraction('view-timeline', {
   'view-timeline-name': '--a, --b',
   'view-timeline-axis': 'inline, inline, inline',
   'view-timeline-inset': 'auto, auto, auto',
-}, '--a inline, --b inline');
+}, '');
 
 test_shorthand_contraction('view-timeline', {
   'view-timeline-name': '--a, --b',
   'view-timeline-axis': 'inline, inline',
   'view-timeline-inset': 'auto, auto, auto',
-}, '--a inline, --b inline');
+}, '');
+
+test_shorthand_contraction('view-timeline', {
+  'view-timeline-name': '--a, --b',
+}, '');
+
+test_shorthand_contraction('view-timeline', {
+  'view-timeline-axis': 'inline, inline',
+}, '');
+
+test_shorthand_contraction('view-timeline', {
+  'view-timeline-name': '--a, --b',
+  'view-timeline-axis': 'inline, inline',
+}, '');
 </script>

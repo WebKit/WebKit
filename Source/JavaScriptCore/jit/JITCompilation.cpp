@@ -37,13 +37,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Compilation);
 
 Compilation::Compilation(MacroAssemblerCodeRef<JITCompilationPtrTag> codeRef, std::unique_ptr<OpaqueByproducts> byproducts)
     : m_codeRef(codeRef)
-    , m_byproducts(WTFMove(byproducts))
+    , m_byproducts(WTF::move(byproducts))
 {
 }
 
 Compilation::Compilation(Compilation&& other)
-    : m_codeRef(WTFMove(other.m_codeRef))
-    , m_byproducts(WTFMove(other.m_byproducts))
+    : m_codeRef(WTF::move(other.m_codeRef))
+    , m_byproducts(WTF::move(other.m_byproducts))
 {
 }
 

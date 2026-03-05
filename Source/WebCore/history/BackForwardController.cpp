@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BackForwardController);
 
 BackForwardController::BackForwardController(Page& page, Ref<BackForwardClient>&& client)
     : m_page(page)
-    , m_client(WTFMove(client))
+    , m_client(WTF::move(client))
 {
 }
 
@@ -59,11 +59,6 @@ RefPtr<HistoryItem> BackForwardController::currentItem(std::optional<FrameIdenti
 RefPtr<HistoryItem> BackForwardController::forwardItem(std::optional<FrameIdentifier> frameID)
 {
     return itemAtIndex(1, frameID);
-}
-
-Ref<Page> BackForwardController::protectedPage() const
-{
-    return m_page.get();
 }
 
 bool BackForwardController::canGoBackOrForward(int distance) const
@@ -96,7 +91,7 @@ void BackForwardController::goBackOrForward(int distance)
     if (!historyItem)
         return;
 
-    Ref page { protectedPage() };
+    Ref page = m_page;
     RefPtr localMainFrame = page->localMainFrame();
     if (!localMainFrame)
         return;
@@ -110,7 +105,7 @@ bool BackForwardController::goBack()
     if (!historyItem)
         return false;
 
-    Ref page { protectedPage() };
+    Ref page = m_page;
     RefPtr localMainFrame = page->localMainFrame();
     if (!localMainFrame)
         return false;
@@ -125,7 +120,7 @@ bool BackForwardController::goForward()
     if (!historyItem)
         return false;
 
-    Ref page { protectedPage() };
+    Ref page = m_page;
     RefPtr localMainFrame = page->localMainFrame();
     if (!localMainFrame)
         return false;
@@ -136,12 +131,12 @@ bool BackForwardController::goForward()
 
 void BackForwardController::addItem(Ref<HistoryItem>&& item)
 {
-    m_client->addItem(WTFMove(item));
+    m_client->addItem(WTF::move(item));
 }
 
 void BackForwardController::setChildItem(BackForwardFrameItemIdentifier frameItemID, Ref<HistoryItem>&& item)
 {
-    m_client->setChildItem(frameItemID, WTFMove(item));
+    m_client->setChildItem(frameItemID, WTF::move(item));
 }
 
 void BackForwardController::setCurrentItem(HistoryItem& item)

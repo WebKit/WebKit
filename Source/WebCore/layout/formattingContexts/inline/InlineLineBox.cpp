@@ -30,7 +30,7 @@
 #include "InlineLevelBoxInlines.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -52,7 +52,7 @@ void LineBox::addInlineLevelBox(InlineLevelBox&& inlineLevelBox)
 {
     m_boxTypes.add(inlineLevelBox.type());
     m_nonRootInlineLevelBoxMap.set(&inlineLevelBox.layoutBox(), m_nonRootInlineLevelBoxList.size());
-    m_nonRootInlineLevelBoxList.append(WTFMove(inlineLevelBox));
+    m_nonRootInlineLevelBoxList.append(WTF::move(inlineLevelBox));
 }
 
 InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
@@ -61,7 +61,8 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     auto* ancestorInlineBox = &parentInlineBox(run);
     ASSERT(ancestorInlineBox->isInlineBox());
     auto runlogicalTop = ancestorInlineBox->logicalTop() - ancestorInlineBox->inlineBoxContentOffsetForTextBoxTrim();
-    InlineLayoutUnit logicalHeight = ancestorInlineBox->primarymetricsOfPrimaryFont().intHeight();
+    auto& metricsOfPrimaryFont = ancestorInlineBox->primarymetricsOfPrimaryFont();
+    auto logicalHeight = InlineFormattingUtils::snapToInt(metricsOfPrimaryFont.ascent(), *ancestorInlineBox) + InlineFormattingUtils::snapToInt(metricsOfPrimaryFont.descent(), *ancestorInlineBox);
 
     while (ancestorInlineBox != &m_rootInlineBox && !ancestorInlineBox->hasLineBoxRelativeAlignment()) {
         ancestorInlineBox = &parentInlineBox(*ancestorInlineBox);

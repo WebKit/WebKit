@@ -75,12 +75,6 @@ void WebChromeClient::setNeedsScrollNotifications(WebCore::LocalFrame&, bool)
     notImplemented();
 }
 
-void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame& frame, WKContentChange observedContentChange)
-{
-    if (RefPtr page = m_page.get())
-        page->didFinishContentChangeObserving(frame.frameID(), observedContentChange);
-}
-
 void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame&)
 {
     if (RefPtr page = m_page.get())
@@ -198,19 +192,19 @@ bool WebChromeClient::showDataDetectorsUIForElement(const Element& element, cons
 void WebChromeClient::relayAccessibilityNotification(String&& notificationName, RetainPtr<NSData>&& notificationData) const
 {
     if (RefPtr page = m_page.get())
-        page->relayAccessibilityNotification(WTFMove(notificationName), WTFMove(notificationData));
+        page->relayAccessibilityNotification(WTF::move(notificationName), WTF::move(notificationData));
 }
 
 void WebChromeClient::relayAriaNotifyNotification(WebCore::AriaNotifyData&& notificationData) const
 {
     if (RefPtr page = m_page.get())
-        page->relayAriaNotifyNotification(WTFMove(notificationData));
+        page->relayAriaNotifyNotification(WTF::move(notificationData));
 }
 
 void WebChromeClient::relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&& notificationData) const
 {
     if (RefPtr page = m_page.get())
-        page->relayLiveRegionNotification(WTFMove(notificationData));
+        page->relayLiveRegionNotification(WTF::move(notificationData));
 }
 
 } // namespace WebKit

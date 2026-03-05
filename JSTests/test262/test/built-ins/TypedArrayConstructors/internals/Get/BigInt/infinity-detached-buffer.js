@@ -26,7 +26,7 @@ info: |
     4. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
     ...
 
-includes: [testBigIntTypedArray.js, detachArrayBuffer.js]
+includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, TypedArray]
 ---*/
 
@@ -35,4 +35,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   $DETACHBUFFER(sample.buffer);
 
   assert.sameValue(sample.Infinity, undefined, 'The value of sample.Infinity is expected to equal `undefined`');
-});
+}, null, ["passthrough"]);

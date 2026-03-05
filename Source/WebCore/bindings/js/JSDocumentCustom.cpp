@@ -60,7 +60,7 @@ void reportMemoryForDocumentIfFrameless(JSGlobalObject& lexicalGlobalObject, Doc
 
     VM& vm = lexicalGlobalObject.vm();
     size_t memoryCost = 0;
-    for (Node* node = &document; node; node = NodeTraversal::next(*node))
+    for (CheckedPtr<Node> node = &document; node; node = NodeTraversal::next(*node))
         memoryCost += node->approximateMemoryCost();
 
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
@@ -90,7 +90,7 @@ void JSDocument::setAdoptedStyleSheets(JSC::JSGlobalObject& lexicalGlobalObject,
 template<typename Visitor>
 void JSDocument::visitAdditionalChildren(Visitor& visitor)
 {
-    // This may get called on the GC thread so we cannot ref this object.
+    // This may get called on a GC thread so we cannot ref this object.
     SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
 }
 

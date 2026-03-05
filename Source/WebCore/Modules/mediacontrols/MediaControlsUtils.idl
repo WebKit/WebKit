@@ -29,5 +29,5 @@
     EnabledForWorld=isMediaControls,
 ] interface MediaControlsUtils {
     DOMString formattedStringForDuration(unrestricted double durationInSeconds);
-    HTMLImageElement createImageForIconNameAndType(DOMString iconName, DOMString iconType);
+    HTMLImageElement? createImageForIconNameAndType(DOMString iconName, DOMString iconType);
 };

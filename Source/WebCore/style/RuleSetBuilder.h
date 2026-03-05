@@ -26,6 +26,10 @@
 #include "RuleSet.h"
 
 namespace WebCore {
+
+class StyleRuleFunction;
+class StyleRuleFunctionDeclarations;
+
 namespace Style {
 
 class RuleSetBuilder {
@@ -45,7 +49,7 @@ private:
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<Ref<StyleRuleBase>>&);
     void addChildRule(Ref<StyleRuleBase>);
-    void disallowDynamicMediaQueryEvaluationIfNeeded();
+    void NODELETE disallowDynamicMediaQueryEvaluationIfNeeded();
     void addStyleRuleWithSelectorList(const CSSSelectorList&, const StyleRule&);
 
     void registerLayers(const Vector<CascadeLayerName>&);
@@ -92,10 +96,16 @@ private:
     RuleSet::ContainerQueryIdentifier m_currentContainerQueryIdentifier { 0 };
     RuleSet::ScopeRuleIdentifier m_currentScopeIdentifier { 0 };
 
-    OptionSet<UsedRuleType> m_usedRuleTypes { };
+    IsStartingStyle m_isStartingStyle { IsStartingStyle::No };
+
+    using FunctionDeclarationsList = Vector<Ref<const StyleRuleFunctionDeclarations>>;
+    FunctionDeclarationsList m_currentFunctionDeclarationsList;
+    HashMap<Ref<StyleRuleFunction>, FunctionDeclarationsList> m_functionDeclarationsMap;
 
     Vector<RuleSet::ResolverMutatingRule> m_collectedResolverMutatingRules;
     bool requiresStaticMediaQueryEvaluation { false };
+
+    RuleFeatureSet::CollectionContext m_featureCollectionContext;
 };
 
 }

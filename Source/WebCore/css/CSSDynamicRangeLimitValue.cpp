@@ -34,12 +34,12 @@ namespace WebCore {
 
 Ref<CSSDynamicRangeLimitValue> CSSDynamicRangeLimitValue::create(CSS::DynamicRangeLimit dynamicRangeLimit)
 {
-    return adoptRef(*new CSSDynamicRangeLimitValue(WTFMove(dynamicRangeLimit)));
+    return adoptRef(*new CSSDynamicRangeLimitValue(WTF::move(dynamicRangeLimit)));
 }
 
 CSSDynamicRangeLimitValue::CSSDynamicRangeLimitValue(CSS::DynamicRangeLimit&& dynamicRangeLimit)
     : CSSValue(ClassType::DynamicRangeLimit)
-    , m_dynamicRangeLimit(WTFMove(dynamicRangeLimit))
+    , m_dynamicRangeLimit(WTF::move(dynamicRangeLimit))
 {
 }
 

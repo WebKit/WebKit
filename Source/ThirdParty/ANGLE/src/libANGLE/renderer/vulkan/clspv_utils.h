@@ -44,6 +44,14 @@ struct ClspvLiteralSampler
     cl::FilterMode filterMode;
 };
 
+struct ClspvConstantDataBufferInfo
+{
+    uint32_t set;
+    uint32_t binding;
+    uint32_t pcOffset;
+    std::vector<uint8_t> bufferData;
+};
+
 namespace clspv_cl
 {
 

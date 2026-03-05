@@ -23,11 +23,12 @@
 #include "config.h"
 #include "HTMLHeadingElement.h"
 
+#include "HTMLNames.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLHeadingElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLHeadingElement);
 
 inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
@@ -37,6 +38,25 @@ inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Docu
 Ref<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLHeadingElement(tagName, document));
+}
+
+unsigned HTMLHeadingElement::level() const
+{
+    auto& tag = tagQName();
+    if (tag == HTMLNames::h1Tag)
+        return 1;
+    if (tag == HTMLNames::h2Tag)
+        return 2;
+    if (tag == HTMLNames::h3Tag)
+        return 3;
+    if (tag == HTMLNames::h4Tag)
+        return 4;
+    if (tag == HTMLNames::h5Tag)
+        return 5;
+    if (tag == HTMLNames::h6Tag)
+        return 6;
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 }

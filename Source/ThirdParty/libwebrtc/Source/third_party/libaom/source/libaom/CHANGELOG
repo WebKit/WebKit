@@ -1,4 +1,15 @@
-2025-mm-dd next version
+2025-09-05 v3.13.1
+  This release is ABI compatible with the last release.
+
+  This release fixes two issues with the newly installed cmake files in 3.13.0,
+  there are no changes to the library except for the version number.
+
+  - Bug Fixes
+    * b:441135035#comment9: the version number in AOMConfig.cmake is now
+      correct and AOM_LIBRARIES now contains only one libaom reference; there
+      is a AOM_STATIC_LIBRARIES variable for the static target.
+
+2025-09-02 v3.13.0
   This release is ABI compatible with the last release.
 
   The aom_roi_map_t struct, used only by the codec control
@@ -9,19 +20,25 @@
 
   - New Features
     * New tuning mode AOM_TUNE_SSIMULACRA2 for the AOME_SET_TUNING codec
-      control (--tune=ssimulacra2) in all-intra mode. The feature detection
-      macro AOM_HAVE_TUNE_SSIMULACRA2, if defined, indicates that
-      AOM_TUNE_SSIMULACRA2 is available.
-      AOM_TUNE_SSIMULACRA2 was developed to maximize SSIMULACRA 2 scores.
+      control (--tune=ssimulacra2) in all-intra mode. The feature
+      detection macro AOM_HAVE_TUNE_SSIMULACRA2, if defined, indicates
+      that AOM_TUNE_SSIMULACRA2 is available. AOM_TUNE_SSIMULACRA2 was
+      developed to maximize SSIMULACRA 2 scores.
     * New codec control AV1E_SET_SCREEN_CONTENT_DETECTION_MODE
       (--screen-detection-mode).
       This codec control helps select between two screen detection modes:
-       - Mode 1: standard (default)
-       - Mode 2: anti-aliased text and graphics aware
+       * Mode 1: standard (default)
+       * Mode 2: anti-aliased text and graphics aware
     * New codec control AV1E_SET_ENABLE_ADAPTIVE_SHARPNESS
       (--enable-adaptive-sharpness). When enabled, it modulates sharpness
       based on frame QP, which helps mitigate blocking artifacts in the
       low to medium quality range.
+    * Added low complexity decode mode for 720p vertical videos.
+    * ROI feature implemented for RTC: for delta QP, skip encoding, and
+      reference selection.
+    * External scaling feature for SVC: allow downscaled images to be
+      passed into encoder for spatial layers without reconfiguring it.
+    * Allow per-frame calculation of PSNR (contribution from Meta).
 
   - Compression Efficiency Improvements
     * Variance Boost is now enabled for tuning modes AOM_TUNE_IQ and
@@ -32,14 +49,37 @@
       * Up to 6.9% SSIMULACRA 2 BD-Rate gains for speed 8
       * Up to 2.2% SSIMULACRA 2 BD-Rate gains for speed 9
 
+  - Perceptual Quality Improvements
+    * RTC: Visual quality improvements for screen content mode.
+    * RTC: Visual quality improvements for video mode for resolutions >=
+      720p.
+
   - Speedups
     * Optimize intraBC search for better speed/efficiency tradeoffs for
       all intra mode speeds >= 1
     * Optimize intraBC block hashing process
+    * RTC Screen: speed feature added to speed 12 for ~2x speedup on
+      slide/scene changes, for resolutions >= 720p.
+    * ML based speedup improvement on the partition pruning for speed <= 2
+
+  - Other Improvements
+    * Fixes for RPS (reference picture selection) for RTC: Based on
+      av1_discuss issue:
+      https://groups.google.com/a/aomedia.org/g/av1-discuss/c/sqFad980SsA
 
   - Bug Fixes
     * b:421196988: all intra speed 8: overuse of palette mode
       unnecessarily inflating file sizes
+    * b:423804955: Improve quality for 4K Screencast
+    * webrtc:388070060: Allow per-frame calculation of PSNR
+    * b:433046392, b:432035817: Fix to SVC crash triggered with Jitsi
+      video conference app.
+    * b:419622699: Fix integer overflow in update_buffer_level
+    * b:407813259: Fix to update seq_params for number of layers change
+    * b:400885218: External scaling for AV1
+    * b:391849810: High AV1 frame encode time on slide changes
+    * b:399575647: Too aggressive QP backoff at scene changes
+    * b:383306740: Quality degradation at horizontal scrolling
 
 2025-04-11 v3.12.1
   This release includes several bug fixes. This release is ABI

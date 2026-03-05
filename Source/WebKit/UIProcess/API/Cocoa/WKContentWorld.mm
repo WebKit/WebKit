@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKContentWorldInternal.h"
 
+#import "WKContentWorldConfigurationInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
@@ -59,7 +60,24 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 {
     Ref world = API::ContentWorld::sharedWorldWithName(name);
     checkContentWorldOptions(world, nil);
-    return wrapper(WTFMove(world)).autorelease();
+    return wrapper(WTF::move(world)).autorelease();
+}
+
++ (WKContentWorld *)worldWithConfiguration:(WKContentWorldConfiguration *)configuration
+{
+    RefPtr protectedWorldConfiguration = configuration->_worldConfiguration.get();
+    auto optionSet = protectedWorldConfiguration->optionSet();
+
+    RefPtr<API::ContentWorld> apiWorld;
+
+    if ([configuration isKindOfClass:_WKContentWorldConfiguration.class]) {
+        auto *spiConfiguration = (_WKContentWorldConfiguration *)configuration;
+        apiWorld = API::ContentWorld::sharedWorldWithName(spiConfiguration.name, optionSet);
+        checkContentWorldOptions(*apiWorld, spiConfiguration);
+    } else
+        apiWorld = API::ContentWorld::createNamelessWorld(optionSet);
+
+    return wrapper(WTF::move(apiWorld)).autorelease();
 }
 
 - (void)dealloc
@@ -100,22 +118,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 + (WKContentWorld *)_worldWithConfiguration:(_WKContentWorldConfiguration *)configuration
 {
-    OptionSet<WebKit::ContentWorldOption> optionSet;
-    if (configuration.allowAccessToClosedShadowRoots)
-        optionSet.add(WebKit::ContentWorldOption::AllowAccessToClosedShadowRoots);
-    if (configuration.allowAutofill)
-        optionSet.add(WebKit::ContentWorldOption::AllowAutofill);
-    if (configuration.allowElementUserInfo)
-        optionSet.add(WebKit::ContentWorldOption::AllowElementUserInfo);
-    if (configuration.disableLegacyBuiltinOverrides)
-        optionSet.add(WebKit::ContentWorldOption::DisableLegacyBuiltinOverrides);
-    if (configuration.allowJSHandleCreation)
-        optionSet.add(WebKit::ContentWorldOption::AllowJSHandleCreation);
-    if (configuration.allowNodeSerialization)
-        optionSet.add(WebKit::ContentWorldOption::AllowNodeSerialization);
-    Ref world = API::ContentWorld::sharedWorldWithName(configuration.name, optionSet);
-    checkContentWorldOptions(world, configuration);
-    return wrapper(WTFMove(world)).autorelease();
+    return [WKContentWorld worldWithConfiguration:configuration];
 }
 
 @end

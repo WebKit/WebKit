@@ -11,17 +11,18 @@
 #ifndef COMMON_AUDIO_SMOOTHING_FILTER_H_
 #define COMMON_AUDIO_SMOOTHING_FILTER_H_
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <optional>
+
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 
 class SmoothingFilter {
  public:
   virtual ~SmoothingFilter() = default;
-  virtual void AddSample(float sample) = 0;
-  virtual std::optional<float> GetAverage() = 0;
+  virtual void AddSample(float sample, Timestamp now) = 0;
+  virtual std::optional<float> GetAverage(Timestamp now) = 0;
   virtual bool SetTimeConstantMs(int time_constant_ms) = 0;
 };
 
@@ -48,8 +49,8 @@ class SmoothingFilterImpl final : public SmoothingFilter {
 
   ~SmoothingFilterImpl() override;
 
-  void AddSample(float sample) override;
-  std::optional<float> GetAverage() override;
+  void AddSample(float sample, Timestamp now) override;
+  std::optional<float> GetAverage(Timestamp now) override;
   bool SetTimeConstantMs(int time_constant_ms) override;
 
   // Methods used for unittests.

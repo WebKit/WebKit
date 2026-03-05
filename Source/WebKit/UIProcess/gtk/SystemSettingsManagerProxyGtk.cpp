@@ -145,7 +145,7 @@ bool SystemSettingsManagerProxy::cursorBlink() const
 {
     gboolean cursorBlinkSetting;
     g_object_get(m_settings, "gtk-cursor-blink", &cursorBlinkSetting, nullptr);
-    return cursorBlinkSetting ? true : false;
+    return !!cursorBlinkSetting;
 }
 
 int SystemSettingsManagerProxy::cursorBlinkTime() const
@@ -159,21 +159,21 @@ bool SystemSettingsManagerProxy::primaryButtonWarpsSlider() const
 {
     gboolean buttonSetting;
     g_object_get(m_settings, "gtk-primary-button-warps-slider", &buttonSetting, nullptr);
-    return buttonSetting ? true : false;
+    return !!buttonSetting;
 }
 
 bool SystemSettingsManagerProxy::overlayScrolling() const
 {
     gboolean overlayScrollingSetting;
     g_object_get(m_settings, "gtk-overlay-scrolling", &overlayScrollingSetting, nullptr);
-    return overlayScrollingSetting ? true : false;
+    return !!overlayScrollingSetting;
 }
 
 bool SystemSettingsManagerProxy::enableAnimations() const
 {
     gboolean enableAnimationsSetting;
     g_object_get(m_settings, "gtk-enable-animations", &enableAnimationsSetting, nullptr);
-    return enableAnimationsSetting ? true : false;
+    return !!enableAnimationsSetting;
 }
 
 void SystemSettingsManagerProxy::updateFontProperties(const String& fontName, WebCore::SystemSettingsState& changedState)

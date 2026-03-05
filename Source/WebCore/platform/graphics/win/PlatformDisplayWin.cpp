@@ -52,7 +52,7 @@ std::unique_ptr<PlatformDisplayWin> PlatformDisplayWin::create()
 }
 
 PlatformDisplayWin::PlatformDisplayWin(Ref<GLDisplay>&& glDisplay)
-    : PlatformDisplay(WTFMove(glDisplay))
+    : PlatformDisplay(WTF::move(glDisplay))
 {
 }
 

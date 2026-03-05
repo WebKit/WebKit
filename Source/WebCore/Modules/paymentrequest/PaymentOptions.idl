@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=PAYMENT_REQUEST
+    Conditional=PAYMENT_REQUEST,
 ] dictionary PaymentOptions {
     boolean requestPayerName = false;
     boolean requestPayerEmail = false;

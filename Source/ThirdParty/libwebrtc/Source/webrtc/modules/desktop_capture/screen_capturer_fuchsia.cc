@@ -56,6 +56,9 @@ size_t RoundUpToMultiple(size_t value, size_t multiple) {
 
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
     const DesktopCaptureOptions& options) {
+  RTC_LOG(LS_INFO)
+      << "video capture: DesktopCapturer::CreateRawScreenCapturer creates "
+         "DesktopCapturer of type ScreenCapturerFuchsia";
   std::unique_ptr<ScreenCapturerFuchsia> capturer(new ScreenCapturerFuchsia());
   return capturer;
 }

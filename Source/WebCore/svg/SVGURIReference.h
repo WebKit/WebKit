@@ -74,7 +74,7 @@ public:
 protected:
     SVGURIReference(SVGElement* contextElement);
 
-    static bool isKnownAttribute(const QualifiedName& attributeName);
+    static bool NODELETE isKnownAttribute(const QualifiedName& attributeName);
 
     virtual bool haveFiredLoadEvent() const { return false; }
     virtual void setHaveFiredLoadEvent(bool) { }
@@ -85,9 +85,9 @@ protected:
     void dispatchLoadEvent();
 
 private:
-    SVGElement& contextElement() const;
+    SVGElement& NODELETE contextElement() const;
 
-    Ref<SVGAnimatedString> m_href;
+    const Ref<SVGAnimatedString> m_href;
 };
 
 } // namespace WebCore

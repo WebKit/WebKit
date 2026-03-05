@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLCompressedTexturePVRTC final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLCompressedTexturePVRTC);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLCompressedTexturePVRTC);
 public:
     explicit WebGLCompressedTexturePVRTC(WebGLRenderingContextBase&);
     ~WebGLCompressedTexturePVRTC();
@@ -42,3 +42,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLCompressedTexturePVRTC)

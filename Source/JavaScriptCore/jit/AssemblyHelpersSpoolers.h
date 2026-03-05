@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 #if ENABLE(JIT)
 
 #include <JavaScriptCore/AssemblyHelpers.h>
@@ -384,7 +387,7 @@ private:
             return;
         }
 
-        constexpr bool regTypeIsGPR = std::is_same<RegType, GPRReg>::value;
+        constexpr bool regTypeIsGPR = std::same_as<RegType, GPRReg>;
 
         if (m_currentSource < 2) {
             m_deferredStoreOffset = storeOffset;
@@ -512,7 +515,7 @@ private:
         RegType regToStore = invalid<RegType>();
         auto& source = m_sources[0];
         auto& srcOffset = source.offset;
-        constexpr bool regTypeIsGPR = std::is_same<RegType, GPRReg>::value;
+        constexpr bool regTypeIsGPR = std::same_as<RegType, GPRReg>;
 
         if (source.type == Source::Type::BufferOffset) {
             regToStore = temp1<RegType>();

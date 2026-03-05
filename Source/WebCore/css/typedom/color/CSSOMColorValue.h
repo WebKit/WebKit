@@ -33,19 +33,19 @@ namespace WebCore {
 
 class CSSKeywordValue;
 
-using CSSKeywordish = Variant<String, RefPtr<CSSKeywordValue>>;
-using CSSColorPercent = Variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
-using RectifiedCSSColorPercent = Variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>;
-using CSSColorNumber = Variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
-using RectifiedCSSColorNumber = Variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>;
-using CSSColorAngle = Variant<double, RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
-using RectifiedCSSColorAngle = Variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>;
+using CSSKeywordish = Variant<String, Ref<CSSKeywordValue>>;
+using CSSColorPercent = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSKeywordValue>>;
+using RectifiedCSSColorPercent = Variant<Ref<CSSNumericValue>, Ref<CSSKeywordValue>>;
+using CSSColorNumber = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSKeywordValue>>;
+using RectifiedCSSColorNumber = Variant<Ref<CSSNumericValue>, Ref<CSSKeywordValue>>;
+using CSSColorAngle = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSKeywordValue>>;
+using RectifiedCSSColorAngle = Variant<Ref<CSSNumericValue>, Ref<CSSKeywordValue>>;
 
 class CSSOMColorValue : public CSSStyleValue {
 public:
     RefPtr<CSSKeywordValue> colorSpace();
     RefPtr<CSSOMColorValue> to(CSSKeywordish);
-    static Variant<RefPtr<CSSOMColorValue>, RefPtr<CSSStyleValue>> parse(const String&);
+    static std::optional<Variant<Ref<CSSOMColorValue>, Ref<CSSStyleValue>>> NODELETE parse(const String&);
 
     static ExceptionOr<RectifiedCSSColorPercent> rectifyCSSColorPercent(CSSColorPercent&&);
     static ExceptionOr<RectifiedCSSColorAngle> rectifyCSSColorAngle(CSSColorAngle&&);

@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/PrintStream.h>
 
+#include <inttypes.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -239,6 +240,52 @@ void printInternal(PrintStream& out, RawPointer value)
 #else
     out.printf("%p", value.value());
 #endif
+}
+
+void printInternal(PrintStream& out, MemoryDump value)
+{
+    auto span = value.span();
+    auto sizeLimit = value.sizeLimit();
+
+    out.printf("\n");
+    if (span.data() == nullptr) [[unlikely]] {
+        out.printf("%08" PRIxPTR ": (not dumping %zu bytes)", reinterpret_cast<uintptr_t>(span.data()), span.size());
+        return;
+    }
+    if (span.empty()) [[unlikely]] {
+        out.printf("%08" PRIxPTR ": (span is empty)", reinterpret_cast<uintptr_t>(span.data()));
+        return;
+    }
+
+    for (size_t i = 0; i < span.size(); i += 16) {
+        if (i >= sizeLimit) {
+            size_t remainder = span.size() - i;
+            out.printf("... (remaining %zu bytes not dumped)\n", remainder);
+            break;
+        }
+
+        // Print address
+        out.printf("%08" PRIxPTR ": ", reinterpret_cast<uintptr_t>(span.data() + i));
+
+        // Print hex bytes
+        for (size_t byteIndex = 0; byteIndex < 16; ++byteIndex) {
+            if (i + byteIndex < span.size())
+                out.printf("%02x ", static_cast<uint8_t>(span[i + byteIndex]));
+            else
+                out.printf("   ");
+        }
+
+        // Print ASCII interpretation
+        out.printf(" ");
+        for (size_t byteIndex = 0; byteIndex < 16 && i + byteIndex < span.size(); ++byteIndex) {
+            std::byte byte = span[i + byteIndex];
+            uint8_t byteValue = static_cast<uint8_t>(byte);
+            char ch = (byteValue >= 32 && byteValue <= 126) ? static_cast<char>(byteValue) : '.';
+            out.printf("%c", ch);
+        }
+        if (i + 16 < span.size())
+            out.printf("\n");
+    }
 }
 
 void printInternal(PrintStream& out, FixedWidthDouble value)

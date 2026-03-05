@@ -81,9 +81,9 @@ ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 #if PLATFORM(IOS) || PLATFORM(VISION)
 bool isPokerBros()
 {
-    auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
+    RetainPtr bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
     return bundleID
-        && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
+        && CFEqual(bundleID.get(), CFSTR("com.kpgame.PokerBros"))
         && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoPokerBrosBuiltInTagQuirk);
 }
 #endif

@@ -14,7 +14,6 @@ namespace gl
 {
 
 void CaptureCreateShaderProgramv_strings(const State &glState,
-                                         bool isCallValid,
                                          ShaderType typePacked,
                                          GLsizei count,
                                          const GLchar *const *strings,
@@ -24,7 +23,6 @@ void CaptureCreateShaderProgramv_strings(const State &glState,
 }
 
 void CaptureDeleteProgramPipelines_pipelinesPacked(const State &glState,
-                                                   bool isCallValid,
                                                    GLsizei n,
                                                    const ProgramPipelineID *pipelines,
                                                    ParamCapture *paramCapture)
@@ -33,7 +31,6 @@ void CaptureDeleteProgramPipelines_pipelinesPacked(const State &glState,
 }
 
 void CaptureDrawArraysIndirect_indirect(const State &glState,
-                                        bool isCallValid,
                                         PrimitiveMode modePacked,
                                         const void *indirect,
                                         ParamCapture *paramCapture)
@@ -42,11 +39,10 @@ void CaptureDrawArraysIndirect_indirect(const State &glState,
     // including the DrawArraysIndirectCommand structure, be in buffer objects,
     // and may not be called when the default vertex array object is bound.
     // Indirect pointer is automatically captured in capture_gles_3_1_autogen.cpp
-    assert(!isCallValid || glState.getTargetBuffer(gl::BufferBinding::DrawIndirect));
+    assert(glState.getTargetBuffer(gl::BufferBinding::DrawIndirect));
 }
 
 void CaptureDrawElementsIndirect_indirect(const State &glState,
-                                          bool isCallValid,
                                           PrimitiveMode modePacked,
                                           DrawElementsType typePacked,
                                           const void *indirect,
@@ -56,11 +52,10 @@ void CaptureDrawElementsIndirect_indirect(const State &glState,
     // including the DrawElementsIndirectCommand structure, be in buffer objects,
     // and may not be called when the default vertex array object is bound
     // Indirect pointer is automatically captured in capture_gles_3_1_autogen.cpp
-    assert(!isCallValid || glState.getTargetBuffer(gl::BufferBinding::DrawIndirect));
+    assert(glState.getTargetBuffer(gl::BufferBinding::DrawIndirect));
 }
 
 void CaptureGenProgramPipelines_pipelinesPacked(const State &glState,
-                                                bool isCallValid,
                                                 GLsizei n,
                                                 ProgramPipelineID *pipelines,
                                                 ParamCapture *paramCapture)
@@ -69,7 +64,6 @@ void CaptureGenProgramPipelines_pipelinesPacked(const State &glState,
 }
 
 void CaptureGetBooleani_v_data(const State &glState,
-                               bool isCallValid,
                                GLenum target,
                                GLuint index,
                                GLboolean *data,
@@ -79,7 +73,6 @@ void CaptureGetBooleani_v_data(const State &glState,
 }
 
 void CaptureGetFramebufferParameteriv_params(const State &glState,
-                                             bool isCallValid,
                                              GLenum target,
                                              GLenum pname,
                                              GLint *params,
@@ -90,7 +83,6 @@ void CaptureGetFramebufferParameteriv_params(const State &glState,
 }
 
 void CaptureGetMultisamplefv_val(const State &glState,
-                                 bool isCallValid,
                                  GLenum pname,
                                  GLuint index,
                                  GLfloat *val,
@@ -101,7 +93,6 @@ void CaptureGetMultisamplefv_val(const State &glState,
 }
 
 void CaptureGetProgramInterfaceiv_params(const State &glState,
-                                         bool isCallValid,
                                          ShaderProgramID program,
                                          GLenum programInterface,
                                          GLenum pname,
@@ -112,7 +103,6 @@ void CaptureGetProgramInterfaceiv_params(const State &glState,
 }
 
 void CaptureGetProgramPipelineInfoLog_length(const State &glState,
-                                             bool isCallValid,
                                              ProgramPipelineID pipeline,
                                              GLsizei bufSize,
                                              GLsizei *length,
@@ -126,7 +116,6 @@ void CaptureGetProgramPipelineInfoLog_length(const State &glState,
 }
 
 void CaptureGetProgramPipelineInfoLog_infoLog(const State &glState,
-                                              bool isCallValid,
                                               ProgramPipelineID pipeline,
                                               GLsizei bufSize,
                                               GLsizei *length,
@@ -148,7 +137,6 @@ void CaptureGetProgramPipelineInfoLog_infoLog(const State &glState,
 }
 
 void CaptureGetProgramPipelineiv_params(const State &glState,
-                                        bool isCallValid,
                                         ProgramPipelineID pipeline,
                                         GLenum pname,
                                         GLint *params,
@@ -158,7 +146,6 @@ void CaptureGetProgramPipelineiv_params(const State &glState,
 }
 
 void CaptureGetProgramResourceIndex_name(const State &glState,
-                                         bool isCallValid,
                                          ShaderProgramID program,
                                          GLenum programInterface,
                                          const GLchar *name,
@@ -168,7 +155,6 @@ void CaptureGetProgramResourceIndex_name(const State &glState,
 }
 
 void CaptureGetProgramResourceLocation_name(const State &glState,
-                                            bool isCallValid,
                                             ShaderProgramID program,
                                             GLenum programInterface,
                                             const GLchar *name,
@@ -178,7 +164,6 @@ void CaptureGetProgramResourceLocation_name(const State &glState,
 }
 
 void CaptureGetProgramResourceName_length(const State &glState,
-                                          bool isCallValid,
                                           ShaderProgramID program,
                                           GLenum programInterface,
                                           GLuint index,
@@ -191,7 +176,6 @@ void CaptureGetProgramResourceName_length(const State &glState,
 }
 
 void CaptureGetProgramResourceName_name(const State &glState,
-                                        bool isCallValid,
                                         ShaderProgramID program,
                                         GLenum programInterface,
                                         GLuint index,
@@ -204,13 +188,12 @@ void CaptureGetProgramResourceName_name(const State &glState,
 }
 
 void CaptureGetProgramResourceiv_props(const State &glState,
-                                       bool isCallValid,
                                        ShaderProgramID program,
                                        GLenum programInterface,
                                        GLuint index,
                                        GLsizei propCount,
                                        const GLenum *props,
-                                       GLsizei bufSize,
+                                       GLsizei count,
                                        GLsizei *length,
                                        GLint *params,
                                        ParamCapture *paramCapture)
@@ -219,13 +202,12 @@ void CaptureGetProgramResourceiv_props(const State &glState,
 }
 
 void CaptureGetProgramResourceiv_length(const State &glState,
-                                        bool isCallValid,
                                         ShaderProgramID program,
                                         GLenum programInterface,
                                         GLuint index,
                                         GLsizei propCount,
                                         const GLenum *props,
-                                        GLsizei bufSize,
+                                        GLsizei count,
                                         GLsizei *length,
                                         GLint *params,
                                         ParamCapture *paramCapture)
@@ -234,25 +216,23 @@ void CaptureGetProgramResourceiv_length(const State &glState,
 }
 
 void CaptureGetProgramResourceiv_params(const State &glState,
-                                        bool isCallValid,
                                         ShaderProgramID program,
                                         GLenum programInterface,
                                         GLuint index,
                                         GLsizei propCount,
                                         const GLenum *props,
-                                        GLsizei bufSize,
+                                        GLsizei count,
                                         GLsizei *length,
                                         GLint *params,
                                         ParamCapture *paramCapture)
 {
     // Prefer to only capture as many parameters as are returned,
     // but if this is not known, then capture the whole buffer
-    int paramLength = length != nullptr ? *length : bufSize;
+    int paramLength = length != nullptr ? *length : count;
     CaptureMemory(params, sizeof(GLint) * paramLength, paramCapture);
 }
 
 void CaptureGetTexLevelParameterfv_params(const State &glState,
-                                          bool isCallValid,
                                           TextureTarget targetPacked,
                                           GLint level,
                                           GLenum pname,
@@ -263,7 +243,6 @@ void CaptureGetTexLevelParameterfv_params(const State &glState,
 }
 
 void CaptureGetTexLevelParameteriv_params(const State &glState,
-                                          bool isCallValid,
                                           TextureTarget targetPacked,
                                           GLint level,
                                           GLenum pname,
@@ -274,7 +253,6 @@ void CaptureGetTexLevelParameteriv_params(const State &glState,
 }
 
 void CaptureProgramUniform1fv_value(const State &glState,
-                                    bool isCallValid,
                                     ShaderProgramID program,
                                     UniformLocation location,
                                     GLsizei count,
@@ -285,7 +263,6 @@ void CaptureProgramUniform1fv_value(const State &glState,
 }
 
 void CaptureProgramUniform1iv_value(const State &glState,
-                                    bool isCallValid,
                                     ShaderProgramID program,
                                     UniformLocation location,
                                     GLsizei count,
@@ -296,7 +273,6 @@ void CaptureProgramUniform1iv_value(const State &glState,
 }
 
 void CaptureProgramUniform1uiv_value(const State &glState,
-                                     bool isCallValid,
                                      ShaderProgramID program,
                                      UniformLocation location,
                                      GLsizei count,
@@ -307,7 +283,6 @@ void CaptureProgramUniform1uiv_value(const State &glState,
 }
 
 void CaptureProgramUniform2fv_value(const State &glState,
-                                    bool isCallValid,
                                     ShaderProgramID program,
                                     UniformLocation location,
                                     GLsizei count,
@@ -318,7 +293,6 @@ void CaptureProgramUniform2fv_value(const State &glState,
 }
 
 void CaptureProgramUniform2iv_value(const State &glState,
-                                    bool isCallValid,
                                     ShaderProgramID program,
                                     UniformLocation location,
                                     GLsizei count,
@@ -329,7 +303,6 @@ void CaptureProgramUniform2iv_value(const State &glState,
 }
 
 void CaptureProgramUniform2uiv_value(const State &glState,
-                                     bool isCallValid,
                                      ShaderProgramID program,
                                      UniformLocation location,
                                      GLsizei count,
@@ -340,7 +313,6 @@ void CaptureProgramUniform2uiv_value(const State &glState,
 }
 
 void CaptureProgramUniform3fv_value(const State &glState,
-                                    bool isCallValid,
                                     ShaderProgramID program,
                                     UniformLocation location,
                                     GLsizei count,
@@ -351,7 +323,6 @@ void CaptureProgramUniform3fv_value(const State &glState,
 }
 
 void CaptureProgramUniform3iv_value(const State &glState,
-                                    bool isCallValid,
                                     ShaderProgramID program,
                                     UniformLocation location,
                                     GLsizei count,
@@ -362,7 +333,6 @@ void CaptureProgramUniform3iv_value(const State &glState,
 }
 
 void CaptureProgramUniform3uiv_value(const State &glState,
-                                     bool isCallValid,
                                      ShaderProgramID program,
                                      UniformLocation location,
                                      GLsizei count,
@@ -373,7 +343,6 @@ void CaptureProgramUniform3uiv_value(const State &glState,
 }
 
 void CaptureProgramUniform4fv_value(const State &glState,
-                                    bool isCallValid,
                                     ShaderProgramID program,
                                     UniformLocation location,
                                     GLsizei count,
@@ -384,7 +353,6 @@ void CaptureProgramUniform4fv_value(const State &glState,
 }
 
 void CaptureProgramUniform4iv_value(const State &glState,
-                                    bool isCallValid,
                                     ShaderProgramID program,
                                     UniformLocation location,
                                     GLsizei count,
@@ -395,7 +363,6 @@ void CaptureProgramUniform4iv_value(const State &glState,
 }
 
 void CaptureProgramUniform4uiv_value(const State &glState,
-                                     bool isCallValid,
                                      ShaderProgramID program,
                                      UniformLocation location,
                                      GLsizei count,
@@ -406,7 +373,6 @@ void CaptureProgramUniform4uiv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix2fv_value(const State &glState,
-                                          bool isCallValid,
                                           ShaderProgramID program,
                                           UniformLocation location,
                                           GLsizei count,
@@ -418,7 +384,6 @@ void CaptureProgramUniformMatrix2fv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix2x3fv_value(const State &glState,
-                                            bool isCallValid,
                                             ShaderProgramID program,
                                             UniformLocation location,
                                             GLsizei count,
@@ -430,7 +395,6 @@ void CaptureProgramUniformMatrix2x3fv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix2x4fv_value(const State &glState,
-                                            bool isCallValid,
                                             ShaderProgramID program,
                                             UniformLocation location,
                                             GLsizei count,
@@ -442,7 +406,6 @@ void CaptureProgramUniformMatrix2x4fv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix3fv_value(const State &glState,
-                                          bool isCallValid,
                                           ShaderProgramID program,
                                           UniformLocation location,
                                           GLsizei count,
@@ -454,7 +417,6 @@ void CaptureProgramUniformMatrix3fv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix3x2fv_value(const State &glState,
-                                            bool isCallValid,
                                             ShaderProgramID program,
                                             UniformLocation location,
                                             GLsizei count,
@@ -466,7 +428,6 @@ void CaptureProgramUniformMatrix3x2fv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix3x4fv_value(const State &glState,
-                                            bool isCallValid,
                                             ShaderProgramID program,
                                             UniformLocation location,
                                             GLsizei count,
@@ -478,7 +439,6 @@ void CaptureProgramUniformMatrix3x4fv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix4fv_value(const State &glState,
-                                          bool isCallValid,
                                           ShaderProgramID program,
                                           UniformLocation location,
                                           GLsizei count,
@@ -490,7 +450,6 @@ void CaptureProgramUniformMatrix4fv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix4x2fv_value(const State &glState,
-                                            bool isCallValid,
                                             ShaderProgramID program,
                                             UniformLocation location,
                                             GLsizei count,
@@ -502,7 +461,6 @@ void CaptureProgramUniformMatrix4x2fv_value(const State &glState,
 }
 
 void CaptureProgramUniformMatrix4x3fv_value(const State &glState,
-                                            bool isCallValid,
                                             ShaderProgramID program,
                                             UniformLocation location,
                                             GLsizei count,

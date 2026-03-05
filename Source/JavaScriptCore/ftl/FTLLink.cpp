@@ -53,10 +53,10 @@ void link(State& state)
         FixedVector<std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> tables(graph.m_stringSearchTable8.size());
         unsigned index = 0;
         for (auto& entry : graph.m_stringSearchTable8)
-            tables[index++] = WTFMove(entry.value);
-        state.jitCode->common.m_stringSearchTable8 = WTFMove(tables);
+            tables[index++] = WTF::move(entry.value);
+        state.jitCode->common.m_stringSearchTable8 = WTF::move(tables);
     }
-    state.jitCode->common.m_concatKeyAtomStringCaches = WTFMove(graph.m_concatKeyAtomStringCaches);
+    state.jitCode->common.m_concatKeyAtomStringCaches = WTF::move(graph.m_concatKeyAtomStringCaches);
 
     graph.registerFrozenValues();
 
@@ -68,7 +68,7 @@ void link(State& state)
                 "FTL B3 code for %s", toCString(CodeBlockWithJITType(codeBlock, JITType::FTLJIT)).data());
 
         state.jitCode->initializeB3Code(b3CodeRef);
-        state.jitCode->common.m_jumpReplacements = WTFMove(state.jumpReplacements);
+        state.jitCode->common.m_jumpReplacements = WTF::move(state.jumpReplacements);
     }
 
     state.finalizer->m_codeSize = state.b3CodeLinkBuffer->size();

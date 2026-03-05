@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class PageSwapEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PageSwapEvent);
+    WTF_MAKE_TZONE_ALLOCATED(PageSwapEvent);
 public:
     struct Init : EventInit {
         RefPtr<NavigationActivation> activation;

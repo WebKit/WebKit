@@ -16,9 +16,12 @@
 #include "libANGLE/renderer/cl/CLDeviceCL.h"
 #include "libANGLE/renderer/cl/cl_util.h"
 
+namespace OpenCLIcdLoader
+{
 extern "C" {
 #include "icd.h"
 }  // extern "C"
+}  // namespace OpenCLIcdLoader
 
 namespace rx
 {
@@ -430,7 +433,7 @@ void CLPlatformCL::Initialize(CreateFuncs &createFuncs, bool isIcd)
     // Using khrIcdInitialize() of the third party Khronos OpenCL ICD Loader to
     // enumerate the available OpenCL implementations on the system. They will be
     // stored in the singly linked list khrIcdVendors of the C struct KHRicdVendor.
-    khrIcdInitialize();
+    OpenCLIcdLoader::khrIcdInitialize();
 
     // The ICD loader will also enumerate ANGLE's OpenCL library if it is registered. Our
     // OpenCL entry points for the ICD enumeration are reentrant, but at this point of the
@@ -439,7 +442,8 @@ void CLPlatformCL::Initialize(CreateFuncs &createFuncs, bool isIcd)
 
     // Iterating through the singly linked list khrIcdVendors to create
     // an ANGLE CL pass-through platform for each found ICD platform.
-    for (KHRicdVendor *vendorIt = khrIcdVendors; vendorIt != nullptr; vendorIt = vendorIt->next)
+    for (OpenCLIcdLoader::KHRicdVendor *vendorIt = OpenCLIcdLoader::khrIcdVendors;
+         vendorIt != nullptr; vendorIt           = vendorIt->next)
     {
         cl_platform_id nativePlatform = vendorIt->platform;
         createFuncs.emplace_back([nativePlatform, isIcd](const cl::Platform &platform) {

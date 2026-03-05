@@ -148,7 +148,6 @@ Format::Format()
       mActualSampleOnlyImageFormatID(angle::FormatID::NONE),
       mActualRenderableImageFormatID(angle::FormatID::NONE),
       mActualBufferFormatID(angle::FormatID::NONE),
-      mActualCompressedBufferFormatID(angle::FormatID::NONE),
       mImageInitializerFunction(nullptr),
       mTextureLoadFunctions(),
       mRenderableTextureLoadFunctions(),
@@ -164,6 +163,15 @@ Format::Format()
 void Format::initImageFallback(Renderer *renderer, const ImageFormatInitInfo *info, int numInfo)
 {
     size_t skip                 = renderer->getFeatures().forceFallbackFormat.enabled ? 1 : 0;
+
+    // For R5G6B5, the fallback B5G6R5 is for performance reasons, and only used for some
+    // platforms by enabling the proper feature flag. Therefore, forcing format fallback should
+    // not apply to R5G6B5.
+    skip += (info[0].format == angle::FormatID::R5G6B5_UNORM &&
+             renderer->getFeatures().preferBGR565ToRGB565.enabled)
+                ? 1
+                : 0;
+
     SupportTest testFunction    = HasNonRenderableTextureFormatSupport;
     const angle::Format &format = angle::Format::Get(info[0].format);
     if (format.isInt() || (format.isFloat() && format.redBits >= 32))
@@ -206,22 +214,11 @@ void Format::initBufferFallback(Renderer *renderer,
         mVertexLoadFunction           = info[i].vertexLoadFunction;
         mVertexLoadRequiresConversion = info[i].vertexLoadRequiresConversion;
     }
-
-    if (renderer->getFeatures().compressVertexData.enabled && compressedStartIndex < numInfo)
-    {
-        int i = FindSupportedFormat(renderer, info, compressedStartIndex, numInfo,
-                                    HasFullBufferFormatSupport);
-
-        mActualCompressedBufferFormatID         = info[i].format;
-        mVkCompressedBufferFormatIsPacked       = info[i].vkFormatIsPacked;
-        mCompressedVertexLoadFunction           = info[i].vertexLoadFunction;
-        mCompressedVertexLoadRequiresConversion = info[i].vertexLoadRequiresConversion;
-    }
 }
 
-size_t Format::getVertexInputAlignment(bool compressed) const
+size_t Format::getVertexInputAlignment() const
 {
-    const angle::Format &bufferFormat = getActualBufferFormat(compressed);
+    const angle::Format &bufferFormat = getActualBufferFormat();
     size_t pixelBytes                 = bufferFormat.pixelBytes;
     return mVkBufferFormatIsPacked ? pixelBytes : (pixelBytes / bufferFormat.channelCount);
 }
@@ -263,6 +260,14 @@ void FormatTable::initialize(Renderer *renderer, gl::TextureCapsMap *outTextureC
         Format &format                           = mFormatData[formatIndex];
         const auto intendedFormatID              = static_cast<angle::FormatID>(formatIndex);
         const angle::Format &intendedAngleFormat = angle::Format::Get(intendedFormatID);
+
+        // Skip querying device caps for ASTC 3D formats if VK_EXT_texture_compression_astc_3d is
+        // not enabled
+        if (renderer->getFeatures().supportsAstc3d.enabled == false &&
+            IsASTC3DFormat(intendedFormatID))
+        {
+            continue;
+        }
 
         format.initialize(renderer, intendedAngleFormat);
         format.mIntendedFormatID = intendedFormatID;
@@ -527,6 +532,39 @@ bool IsETCFormat(angle::FormatID formatID)
     return formatID >= angle::FormatID::EAC_R11G11_SNORM_BLOCK &&
            formatID <= angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
 }
+
+// Checks if it is an ASTC 3D texture format
+bool IsASTC3DFormat(angle::FormatID formatID)
+{
+    switch (formatID)
+    {
+        case angle::FormatID::ASTC_3x3x3_UNORM_BLOCK:
+        case angle::FormatID::ASTC_3x3x3_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_4x3x3_UNORM_BLOCK:
+        case angle::FormatID::ASTC_4x3x3_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_4x4x3_UNORM_BLOCK:
+        case angle::FormatID::ASTC_4x4x3_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_4x4x4_UNORM_BLOCK:
+        case angle::FormatID::ASTC_4x4x4_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_5x4x4_UNORM_BLOCK:
+        case angle::FormatID::ASTC_5x4x4_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_5x5x4_UNORM_BLOCK:
+        case angle::FormatID::ASTC_5x5x4_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_5x5x5_UNORM_BLOCK:
+        case angle::FormatID::ASTC_5x5x5_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_6x5x5_UNORM_BLOCK:
+        case angle::FormatID::ASTC_6x5x5_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_6x6x5_UNORM_BLOCK:
+        case angle::FormatID::ASTC_6x6x5_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_6x6x6_UNORM_BLOCK:
+        case angle::FormatID::ASTC_6x6x6_UNORM_SRGB_BLOCK:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 // Checks if it is a BC texture format
 bool IsBCFormat(angle::FormatID formatID)
 {

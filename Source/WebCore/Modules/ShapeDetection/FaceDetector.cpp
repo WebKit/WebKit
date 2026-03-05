@@ -61,7 +61,7 @@ ExceptionOr<Ref<FaceDetector>> FaceDetector::create(ScriptExecutionContext& scri
 }
 
 FaceDetector::FaceDetector(Ref<ShapeDetection::FaceDetector>&& backing)
-    : m_backing(WTFMove(backing))
+    : m_backing(WTF::move(backing))
 {
 }
 
@@ -69,7 +69,7 @@ FaceDetector::~FaceDetector() = default;
 
 void FaceDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
-    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTFMove(source), { }, [backing = m_backing.copyRef(), promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTF::move(source), { }, [backing = m_backing.copyRef(), promise = WTF::move(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
         if (imageBitmap.hasException()) {
             promise.resolve({ });
             return;
@@ -83,7 +83,7 @@ void FaceDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageB
             return;
         }
 
-        backing->detect(*image, [promise = WTFMove(promise)](Vector<ShapeDetection::DetectedFace>&& detectedFaces) mutable {
+        backing->detect(*image, [promise = WTF::move(promise)](Vector<ShapeDetection::DetectedFace>&& detectedFaces) mutable {
             promise.resolve(detectedFaces.map([](const auto& detectedFace) {
                 return convertFromBacking(detectedFace);
             }));

@@ -76,7 +76,6 @@ private:
     RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
 
     RefPtr<IPC::Connection> connection() const;
-    Ref<WebCore::SourceBufferPrivate> protectedSourceBufferPrivate() const { return m_sourceBufferPrivate; }
 
     // SourceBufferPrivateClient
     Ref<WebCore::MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
@@ -130,7 +129,7 @@ private:
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     RemoteSourceBufferIdentifier m_identifier;
-    Ref<WebCore::SourceBufferPrivate> m_sourceBufferPrivate;
+    const Ref<WebCore::SourceBufferPrivate> m_sourceBufferPrivate;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
 
     StdUnorderedMap<TrackID, Ref<WebCore::MediaDescription>> m_mediaDescriptions;

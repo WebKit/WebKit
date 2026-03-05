@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class WebGLDebugRendererInfo final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLDebugRendererInfo);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLDebugRendererInfo);
 public:
     enum EnumType {
         UNMASKED_VENDOR_WEBGL = 0x9245,
@@ -45,3 +45,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(WebGLDebugRendererInfo)

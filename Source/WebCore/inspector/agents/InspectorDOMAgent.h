@@ -39,6 +39,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
@@ -265,8 +266,8 @@ private:
     Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget&, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
     Ref<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node&);
     void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>&);
-    
-    Node* nodeForPath(const String& path);
+
+    RefPtr<Node> nodeForPath(const String& path);
     Node* nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId&);
 
     void discardBindings();
@@ -277,9 +278,9 @@ private:
 
     void relayoutDocument();
 
-    Ref<InspectorOverlay> protectedOverlay() const;
+    InspectorOverlay& overlay() const { return m_overlay.get(); }
 
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
     const UniqueRef<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::DOMBackendDispatcher> m_backendDispatcher;
     WeakRef<Page> m_inspectedPage;

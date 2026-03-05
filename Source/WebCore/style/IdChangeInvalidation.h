@@ -51,7 +51,7 @@ private:
 
 inline IdChangeInvalidation::IdChangeInvalidation(Ref<Element>&& element, const AtomString& oldId, const AtomString& newId)
     : m_isEnabled(element->needsStyleInvalidation())
-    , m_element(WTFMove(element))
+    , m_element(WTF::move(element))
 {
     if (!m_isEnabled)
         return;

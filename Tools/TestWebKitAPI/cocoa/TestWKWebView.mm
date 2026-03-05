@@ -45,6 +45,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKitPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
+#import <WebKit/_WKContextMenuElementInfo.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKJSHandle.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -63,6 +64,8 @@
 #if PLATFORM(MAC)
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
+#else
+#import <WebKitLegacy/WebEvent.h>
 #endif
 
 #ifdef __cplusplus
@@ -797,9 +800,19 @@ static IterationStatus forEachCALayer(CALayer *layer, IterationStatus(^visitor)(
 
 - (CALayer *)firstLayerWithName:(NSString *)layerName
 {
+    return [self _firstLayerWithName:layerName andMatcher:@selector(isEqualToString:)];
+}
+
+- (CALayer *)firstLayerWithNameContaining:(NSString *)layerName
+{
+    return [self _firstLayerWithName:layerName andMatcher:@selector(containsString:)];
+}
+
+- (CALayer *)_firstLayerWithName:(NSString *)layerName andMatcher:(SEL)matcher
+{
     __block RetainPtr<CALayer> result;
     [self forEachCALayer:^(CALayer *layer) {
-        if (![layer.name isEqualToString:@"Gesture Swipe Snapshot Layer"])
+        if (![layer.name performSelector:matcher withObject:layerName])
             return IterationStatus::Continue;
 
         result = layer;
@@ -826,6 +839,11 @@ static IterationStatus forEachCALayer(CALayer *layer, IterationStatus(^visitor)(
 {
     RetainPtr script = [NSString stringWithFormat:@"window.webkit.createJSHandle(document.querySelector(`%@`))", selector];
     return dynamic_objc_cast<_WKJSHandle>([self objectByEvaluatingJavaScript:script.get() inFrame:frame inContentWorld:world]);
+}
+
+- (void)visitUnsafeSite
+{
+    [[self _safeBrowsingWarning] performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:[NSURL URLWithString:@"WKVisitUnsafeWebsiteSentinel"]];
 }
 
 @end
@@ -1217,6 +1235,20 @@ static UIWindowScene *windowScene()
     TestWebKitAPI::Util::run(&done);
 }
 
+- (void)setVisibility:(BOOL)isVisible
+{
+#if PLATFORM(MAC)
+    [self.window setIsVisible:isVisible];
+#else
+    [self.window setHidden:!isVisible];
+#endif
+
+    if (!isVisible)
+        [self.window resignKeyWindow];
+
+    [self waitUntilActivityStateUpdateDone];
+}
+
 - (void)forceLightMode
 {
 #if USE(APPKIT)
@@ -1359,6 +1391,21 @@ static UIWindowScene *windowScene()
     TestWebKitAPI::Util::run(&isDone);
 
     return result;
+}
+
+- (void)typeCharacter:(char)character
+{
+#if PLATFORM(MAC)
+    [self typeCharacter:character modifiers:0];
+#else
+    unichar c = character;
+    RetainPtr characters = adoptNS([[NSString alloc] initWithCharacters:&c length:1]);
+
+    auto firstWebEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:characters.get() charactersIgnoringModifiers:characters.get() modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
+    [self handleKeyEvent:firstWebEvent.get() completion:[=](WebEvent *event, BOOL) {
+        EXPECT_TRUE([event isEqual:firstWebEvent.get()]);
+    }];
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1636,11 +1683,6 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     return _hostWindow.getAutoreleased();
 }
 
-- (void)typeCharacter:(char)character
-{
-    [self typeCharacter:character modifiers:0];
-}
-
 - (void)sendKey:(NSString *)characters code:(unsigned short)keyCode isDown:(BOOL)isDown modifiers:(NSEventModifierFlags)modifiers
 {
     NSEvent *event = [NSEvent keyEventWithType:isDown ? NSEventTypeKeyDown : NSEventTypeKeyUp
@@ -1770,6 +1812,81 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
         TestWebKitAPI::Util::spinRunLoop();
     return findResult.autorelease();
 }
+
+@end
+
+
+@implementation TestWKWebView (ContextMenu)
+
+#if PLATFORM(MAC)
+
+static NSMenuItem *itemMatchingFilter(NSMenu *menu, MenuItemFilter filter)
+{
+    for (NSInteger index = 0; index < menu.numberOfItems; ++index) {
+        auto *item = [menu itemAtIndex:index];
+        if (!item)
+            continue;
+
+        if (filter(item))
+            return item;
+
+        if (item.hasSubmenu) {
+            if (auto *foundItem = itemMatchingFilter(item.submenu, filter))
+                return foundItem;
+        }
+    }
+    return nil;
+}
+
+- (void)rightClick:(NSPoint)clickLocation andSelectItemMatching:(MenuItemFilter)filter
+{
+    bool selectedItem = false;
+    RetainPtr selectItemTimer = [NSTimer timerWithTimeInterval:0.25 repeats:YES block:[&selectedItem, strongSelf = RetainPtr { self }, filter = makeBlockPtr(filter)](NSTimer *timer) {
+        NSMenu *activeMenu = [strongSelf _activeMenu];
+        if (!activeMenu)
+            return;
+
+        auto *item = itemMatchingFilter(activeMenu, filter.get());
+        if (!item)
+            return;
+
+        auto *itemMenu = item.menu;
+        [itemMenu performActionForItemAtIndex:[itemMenu indexOfItem:item]];
+        [activeMenu cancelTracking];
+        [timer invalidate];
+        selectedItem = true;
+    }];
+
+    [NSRunLoop.mainRunLoop addTimer:selectItemTimer.get() forMode:NSEventTrackingRunLoopMode];
+    [self.window orderFrontRegardless];
+    [self mouseDownAtPoint:NSMakePoint(50, 350) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [self mouseUpAtPoint:NSMakePoint(50, 350) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    TestWebKitAPI::Util::run(&selectedItem);
+}
+
+- (_WKContextMenuElementInfo *)rightClickAtPointAndWaitForContextMenu:(NSPoint)clickLocation
+{
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+
+    __block RetainPtr<_WKContextMenuElementInfo> result;
+    __block bool gotProposedMenu = false;
+    [uiDelegate setGetContextMenuFromProposedMenu:^(NSMenu *, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        result = elementInfo;
+        gotProposedMenu = true;
+        completion(nil);
+    }];
+
+    EXPECT_NULL(self.UIDelegate);
+    self.UIDelegate = uiDelegate.get();
+    [self rightClickAtPoint:clickLocation];
+    TestWebKitAPI::Util::run(&gotProposedMenu);
+    [self waitForNextPresentationUpdate];
+
+    self.UIDelegate = nil;
+    return result.autorelease();
+}
+
+#endif
 
 @end
 

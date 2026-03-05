@@ -31,6 +31,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/URL.h>
 
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_networkextension)
 SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_create_xcode_issue, void, __cdecl, (const char*, const void*, size_t))

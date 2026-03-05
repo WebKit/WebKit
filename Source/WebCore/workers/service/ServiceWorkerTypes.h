@@ -89,7 +89,7 @@ struct ServiceWorkerScripts {
         MemoryCompactRobinHoodHashMap<WTF::URL, ScriptBuffer> isolatedImportedScripts;
         for (auto& [url, script] : importedScripts)
             isolatedImportedScripts.add(url.isolatedCopy(), script.isolatedCopy());
-        return { identifier, mainScript.isolatedCopy(), WTFMove(isolatedImportedScripts) };
+        return { identifier, mainScript.isolatedCopy(), WTF::move(isolatedImportedScripts) };
     }
 
     ServiceWorkerIdentifier identifier;

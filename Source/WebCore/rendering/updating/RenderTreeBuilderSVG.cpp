@@ -34,12 +34,14 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderBlockFlow.h"
 #include "RenderTreeBuilderInline.h"
 #include "SVGResourcesCache.h"
 #include "Settings.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -54,21 +56,21 @@ RenderTreeBuilder::SVG::SVG(RenderTreeBuilder& builder)
 void RenderTreeBuilder::SVG::attach(LegacyRenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(parent, WTF::move(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
 void RenderTreeBuilder::SVG::attach(LegacyRenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(parent, WTF::move(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
 void RenderTreeBuilder::SVG::attach(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.inlineBuilder().attach(parent, WTFMove(child), beforeChild);
+    m_builder.inlineBuilder().attach(parent, WTF::move(child), beforeChild);
 
     if (!childToAdd.document().settings().layerBasedSVGEngineEnabled())
         SVGResourcesCache::clientWasAddedToTree(childToAdd);
@@ -79,13 +81,13 @@ void RenderTreeBuilder::SVG::attach(RenderSVGInline& parent, RenderPtr<RenderObj
 
 void RenderTreeBuilder::SVG::attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    m_builder.attachToRenderElement(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(findOrCreateParentForChild(parent), WTF::move(child), beforeChild);
 }
 
 void RenderTreeBuilder::SVG::attach(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.blockFlowBuilder().attach(parent, WTFMove(child), beforeChild);
+    m_builder.blockFlowBuilder().attach(parent, WTF::move(child), beforeChild);
 
     if (!childToAdd.document().settings().layerBasedSVGEngineEnabled())
         SVGResourcesCache::clientWasAddedToTree(childToAdd);
@@ -142,16 +144,16 @@ RenderSVGViewportContainer& RenderTreeBuilder::SVG::findOrCreateParentForChild(R
 
 RenderSVGViewportContainer& RenderTreeBuilder::SVG::createViewportContainer(RenderSVGRoot& parent)
 {
-    auto viewportContainerStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), RenderStyle::initialDisplay());
+    auto viewportContainerStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), Style::ComputedStyle::initialDisplay());
     viewportContainerStyle.setUsedZIndex(0); // Enforce a stacking context.
     viewportContainerStyle.setTransformOriginX(0_css_px);
     viewportContainerStyle.setTransformOriginY(0_css_px);
 
-    auto viewportContainer = createRenderer<RenderSVGViewportContainer>(parent, WTFMove(viewportContainerStyle));
+    auto viewportContainer = createRenderer<RenderSVGViewportContainer>(parent, WTF::move(viewportContainerStyle));
     viewportContainer->initializeStyle();
 
     auto* viewportContainerRenderer = viewportContainer.get();
-    m_builder.attachToRenderElement(parent, WTFMove(viewportContainer), nullptr);
+    m_builder.attachToRenderElement(parent, WTF::move(viewportContainer), nullptr);
     return *viewportContainerRenderer;
 }
 

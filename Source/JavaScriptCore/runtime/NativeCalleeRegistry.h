@@ -77,7 +77,7 @@ public:
     {
         Locker locker { m_lock };
         ASSERT(isValidCallee(callee));
-        auto addResult = m_pcToCodeOriginMaps.add(callee, WTFMove(originMap));
+        auto addResult = m_pcToCodeOriginMaps.add(callee, WTF::move(originMap));
         RELEASE_ASSERT(addResult.isNewEntry);
     }
 

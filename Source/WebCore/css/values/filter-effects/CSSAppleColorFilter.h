@@ -70,7 +70,7 @@ struct AppleColorFilterValue {
     bool operator==(const AppleColorFilterValue&) const = default;
 };
 
-// <apple-color-filter-value-list> = [ <apple-color-filter-function> | <url> ]+
+// <apple-color-filter-value-list> = [ <apple-color-filter-function> ]+
 // (Equivalent of https://drafts.fxtf.org/filter-effects/#typedef-filter-value-list)
 using AppleColorFilterValueList = SpaceSeparatedVector<AppleColorFilterValue>;
 

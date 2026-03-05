@@ -50,7 +50,7 @@ public:
 
     void invokeListenersWithArgument(id argument, NSURL *targetURL);
 
-    const ListenerVector& listeners() const { return m_listeners; }
+    const ListenerVector& listeners() const LIFETIME_BOUND { return m_listeners; }
 #endif
 
     void addListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, NSString **outExceptionString);

@@ -39,7 +39,7 @@ public:
 private:
     PhonyAssignmentStatement(SourceSpan span, Expression::Ref&& rhs)
         : Statement(span)
-        , m_rhs(WTFMove(rhs))
+        , m_rhs(WTF::move(rhs))
     { }
 
     Expression::Ref m_rhs;

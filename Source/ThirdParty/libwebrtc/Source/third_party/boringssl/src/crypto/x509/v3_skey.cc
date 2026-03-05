@@ -36,8 +36,8 @@ ASN1_OCTET_STRING *s2i_ASN1_OCTET_STRING(const X509V3_EXT_METHOD *method,
   size_t len;
   uint8_t *data = x509v3_hex_to_bytes(str, &len);
   ASN1_OCTET_STRING *oct;
-  if (data == NULL) {
-    return NULL;
+  if (data == nullptr) {
+    return nullptr;
   }
   if (len > INT_MAX) {
     OPENSSL_PUT_ERROR(X509V3, ERR_R_OVERFLOW);
@@ -45,7 +45,7 @@ ASN1_OCTET_STRING *s2i_ASN1_OCTET_STRING(const X509V3_EXT_METHOD *method,
   }
 
   oct = ASN1_OCTET_STRING_new();
-  if (oct == NULL) {
+  if (oct == nullptr) {
     goto err;
   }
   ASN1_STRING_set0(oct, data, (int)len);
@@ -53,7 +53,7 @@ ASN1_OCTET_STRING *s2i_ASN1_OCTET_STRING(const X509V3_EXT_METHOD *method,
 
 err:
   OPENSSL_free(data);
-  return NULL;
+  return nullptr;
 }
 
 static char *i2s_ASN1_OCTET_STRING_cb(const X509V3_EXT_METHOD *method,
@@ -65,7 +65,7 @@ static char *i2s_ASN1_OCTET_STRING_cb(const X509V3_EXT_METHOD *method,
 static void *s2i_skey_id(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
                          const char *str) {
   ASN1_OCTET_STRING *oct;
-  ASN1_BIT_STRING *pk;
+  const ASN1_BIT_STRING *pk;
   unsigned char pkey_dig[EVP_MAX_MD_SIZE];
   unsigned int diglen;
 
@@ -74,7 +74,7 @@ static void *s2i_skey_id(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
   }
 
   if (!(oct = ASN1_OCTET_STRING_new())) {
-    return NULL;
+    return nullptr;
   }
 
   if (ctx && (ctx->flags == X509V3_CTX_TEST)) {
@@ -87,17 +87,13 @@ static void *s2i_skey_id(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
   }
 
   if (ctx->subject_req) {
-    pk = ctx->subject_req->req_info->pubkey->public_key;
+    pk = &ctx->subject_req->req_info->pubkey->public_key;
   } else {
-    pk = ctx->subject_cert->cert_info->key->public_key;
+    pk = &ctx->subject_cert->key.public_key;
   }
 
-  if (!pk) {
-    OPENSSL_PUT_ERROR(X509V3, X509V3_R_NO_PUBLIC_KEY);
-    goto err;
-  }
-
-  if (!EVP_Digest(pk->data, pk->length, pkey_dig, &diglen, EVP_sha1(), NULL)) {
+  if (!EVP_Digest(pk->data, pk->length, pkey_dig, &diglen, EVP_sha1(),
+                  nullptr)) {
     goto err;
   }
 
@@ -109,22 +105,22 @@ static void *s2i_skey_id(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
 
 err:
   ASN1_OCTET_STRING_free(oct);
-  return NULL;
+  return nullptr;
 }
 
 const X509V3_EXT_METHOD v3_skey_id = {
     NID_subject_key_identifier,
     0,
     ASN1_ITEM_ref(ASN1_OCTET_STRING),
-    0,
-    0,
-    0,
-    0,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
     i2s_ASN1_OCTET_STRING_cb,
     s2i_skey_id,
-    0,
-    0,
-    0,
-    0,
-    NULL,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
 };

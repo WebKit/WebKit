@@ -55,8 +55,8 @@ TEST(AbortableTaskQueue, AsyncTasks)
             testFinished = true;
         });
     };
-    RunLoop::currentSingleton().dispatch([backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
-        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
+    RunLoop::currentSingleton().dispatch([backgroundThreadFunction = WTF::move(backgroundThreadFunction)]() mutable {
+        WTF::Thread::create("atq-background"_s, WTF::move(backgroundThreadFunction))->detach();
     });
 
     Util::run(&testFinished);
@@ -123,8 +123,8 @@ TEST(AbortableTaskQueue, SyncTasks)
             testFinished = true;
         });
     };
-    RunLoop::currentSingleton().dispatch([backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
-        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
+    RunLoop::currentSingleton().dispatch([backgroundThreadFunction = WTF::move(backgroundThreadFunction)]() mutable {
+        WTF::Thread::create("atq-background"_s, WTF::move(backgroundThreadFunction))->detach();
     });
 
     Util::run(&testFinished);
@@ -218,10 +218,10 @@ TEST(AbortableTaskQueue, Abort)
             testFinished = true;
         });
     };
-    RunLoop::currentSingleton().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+    RunLoop::currentSingleton().dispatch([&, backgroundThreadFunction = WTF::move(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
         DeterministicScheduler<TestThread>::ThreadContext mainThreadContext(scheduler, TestThread::Main);
-        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
+        WTF::Thread::create("atq-background"_s, WTF::move(backgroundThreadFunction))->detach();
 
         mainThreadContext.waitMyTurn();
 
@@ -258,9 +258,9 @@ TEST(AbortableTaskQueue, AbortBeforeSyncTaskRun)
             testFinished = true;
         });
     };
-    RunLoop::currentSingleton().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+    RunLoop::currentSingleton().dispatch([&, backgroundThreadFunction = WTF::move(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
-        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
+        WTF::Thread::create("atq-background"_s, WTF::move(backgroundThreadFunction))->detach();
 
         // Give the background thread a bit of time to get blocked waiting for a response.
         WTF::sleep(100_ms);
@@ -305,9 +305,9 @@ TEST(AbortableTaskQueue, AbortedBySyncTaskHandler)
             testFinished = true;
         });
     };
-    RunLoop::currentSingleton().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+    RunLoop::currentSingleton().dispatch([&, backgroundThreadFunction = WTF::move(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
-        WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
+        WTF::Thread::create("atq-background"_s, WTF::move(backgroundThreadFunction))->detach();
     });
 
     Util::run(&testFinished);

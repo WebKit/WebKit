@@ -18,11 +18,8 @@ namespace gl
 {
 const char *GLbooleanToString(unsigned int value);
 const char *GLenumToString(GLESEnum enumGroup, unsigned int value);
-const char *GLenumToString(BigGLEnum enumGroup, unsigned int value);
 std::string GLbitfieldToString(GLESEnum enumGroup, unsigned int value);
-std::string GLbitfieldToString(BigGLEnum enumGroup, unsigned int value);
 void OutputGLenumString(std::ostream &out, GLESEnum enumGroup, unsigned int value);
-void OutputGLenumString(std::ostream &out, BigGLEnum enumGroup, unsigned int value);
 void OutputGLbitfieldString(std::ostream &out, GLESEnum enumGroup, unsigned int value);
 const char *GLinternalFormatToString(unsigned int format);
 unsigned int StringToGLenum(const char *str);

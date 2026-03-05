@@ -45,10 +45,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceClipper);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceClipper);
 
 RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, RenderStyle&& style)
-    : RenderSVGResourceContainer(Type::SVGResourceClipper, element, WTFMove(style))
+    : RenderSVGResourceContainer(Type::SVGResourceClipper, element, WTF::move(style))
 {
     ASSERT(isRenderSVGResourceClipper());
 }
@@ -61,7 +61,7 @@ enum class ClippingMode {
     MaskClipping
 };
 
-static ClippingMode& currentClippingMode()
+static ClippingMode& NODELETE currentClippingMode()
 {
     static ClippingMode s_clippingMode { ClippingMode::NoClipping };
     return s_clippingMode;
@@ -82,7 +82,7 @@ RefPtr<SVGGraphicsElement> RenderSVGResourceClipper::shouldApplyPathClipping() c
 {
     if (currentClippingMode() == ClippingMode::MaskClipping)
         return nullptr;
-    return protectedClipPathElement()->shouldApplyPathClipping();
+    return protect(clipPathElement())->shouldApplyPathClipping();
 }
 
 void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const FloatRect& objectBoundingBox, SVGGraphicsElement& graphicsElement)
@@ -178,7 +178,7 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
         context.setCompositeOperation(CompositeOperator::SourceOver);
     }
 
-    checkedLayer()->paintSVGResourceLayer(context, contentTransform);
+    protect(layer())->paintSVGResourceLayer(context, contentTransform);
 
     if (pushTransparencyLayer)
         context.endTransparencyLayer();
@@ -222,7 +222,7 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
 
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    auto clipContentRepaintRect = protectedClipPathElement()->calculateClipContentRepaintRect(repaintRectCalculation);
+    auto clipContentRepaintRect = protect(clipPathElement())->calculateClipContentRepaintRect(repaintRectCalculation);
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform contentTransform;
         contentTransform.translate(targetBoundingBox.location());
@@ -238,18 +238,18 @@ void RenderSVGResourceClipper::updateFromStyle()
     updateHasSVGTransformFlags();
 }
 
-void RenderSVGResourceClipper::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderSVGResourceClipper::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
-    applySVGTransform(transform, protectedClipPathElement(), style, boundingBox, std::nullopt, std::nullopt, options);
+    applySVGTransform(transform, protect(clipPathElement()), style, boundingBox, std::nullopt, std::nullopt, options);
 }
 
 bool RenderSVGResourceClipper::needsHasSVGTransformFlags() const
 {
-    return protectedClipPathElement()->hasTransformRelatedAttributes();
+    return protect(clipPathElement())->hasTransformRelatedAttributes();
 }
 
-void RenderSVGResourceClipper::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderSVGResourceClipper::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 

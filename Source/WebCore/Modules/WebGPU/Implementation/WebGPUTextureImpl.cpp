@@ -42,7 +42,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureImpl);
 TextureImpl::TextureImpl(WebGPUPtr<WGPUTexture>&& texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     : m_format(format)
     , m_dimension(dimension)
-    , m_backing(WTFMove(texture))
+    , m_backing(WTF::move(texture))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }

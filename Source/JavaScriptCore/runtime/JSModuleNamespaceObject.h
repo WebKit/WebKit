@@ -49,7 +49,7 @@ public:
     {
         VM& vm = getVM(globalObject);
         JSModuleNamespaceObject* object = new (NotNull, allocateCell<JSModuleNamespaceObject>(vm)) JSModuleNamespaceObject(vm, structure);
-        object->finishCreation(globalObject, moduleRecord, WTFMove(resolutions));
+        object->finishCreation(globalObject, moduleRecord, WTF::move(resolutions));
         return object;
     }
 

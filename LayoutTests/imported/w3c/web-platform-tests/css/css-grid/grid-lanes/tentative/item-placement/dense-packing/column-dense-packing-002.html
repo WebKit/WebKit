@@ -7,14 +7,15 @@
 .grid-lanes {
     display: grid-lanes;
     background: gray;
-    item-tolerance: 0;
+    flow-tolerance: 0;
     grid-template-columns: repeat(3, 50px);
     padding: 10px;
     grid-auto-flow: dense;
+    grid-lanes-pack: dense;
 }
 </style>
 <body>
-  <p>Ensure that dense-packing places items correctly based on the auto-placement cursor location when there are multiple gaps. Item 5 should go into the right-most gap.</p>
+  <p>Ensure that dense-packing packs items in the start-most track opening. Item 6 should go into the left-most track opening.</p>
   <div class="grid-lanes">
     <div style="background: lightskyblue; height: 20px;" >
       1
@@ -31,7 +32,7 @@
     <div style="background:orchid; height: 10px; grid-column: span 2;">
       5
     </div>
-    <div style="background: red; height: 40px;">
+    <div style="background: yellow; height: 40px;">
       6
     </div>
   </div>

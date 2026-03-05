@@ -924,6 +924,12 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
             }
         }
         if (!mainFrameIsExternal && !isAllowedHost(host.get())) {
+            JSGlobalContextRef jsContext = WKBundleFrameGetJavaScriptContext(frame);
+            if (!jsContext) {
+                WKRetain(request);
+                return request;
+            }
+
             auto blockedURL = makeString(urlString.get());
             replace(blockedURL, JSC::Yarr::RegularExpression("\\?key=[-0123456789abcdefABCDEF]+"_s), "?key=GENERATED_KEY"_s);
             replace(blockedURL, JSC::Yarr::RegularExpression("&key=[-0123456789abcdefABCDEF]+"_s), "&key=GENERATED_KEY"_s);
@@ -934,7 +940,6 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
             replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
             auto script = makeString("console.log('Blocked access to external URL "_s, blockedURL, "');"_s);
             auto scriptRef = adopt(JSStringCreateWithUTF8CString(script.utf8().data()));
-            JSGlobalContextRef jsContext = WKBundleFrameGetJavaScriptContext(frame);
             JSEvaluateScript(jsContext, scriptRef.get(), 0, 0, 0, 0);
             return nullptr;
         }

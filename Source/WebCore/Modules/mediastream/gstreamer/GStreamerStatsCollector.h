@@ -30,7 +30,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -38,17 +38,25 @@ class RTCStatsReport;
 
 class GStreamerStatsCollector : public ThreadSafeRefCounted<GStreamerStatsCollector, WTF::DestructionThread::Main> {
 public:
-    using CollectorCallback = CompletionHandler<void(RefPtr<RTCStatsReport>&&)>;
     static Ref<GStreamerStatsCollector> create() { return adoptRef(*new GStreamerStatsCollector()); }
 
-    void setElement(GstElement* element) { m_webrtcBin = element; }
+    void setElement(GstElement* element) { m_webrtcBin.reset(element); }
+
+    using CollectorCallback = CompletionHandler<void(RefPtr<RTCStatsReport>&&)>;
     using PreprocessCallback = Function<GUniquePtr<GstStructure>(const GRefPtr<GstPad>&, const GstStructure*)>;
     void getStats(CollectorCallback&&, const GRefPtr<GstPad>&, PreprocessCallback&&);
 
+    using StatsCallback = CompletionHandler<void(GUniquePtr<GstStructure>&&)>;
+
+    void gatherDecoderImplementationName(const GRefPtr<GstPad>&, PreprocessCallback&&, Function<void(String&&)>&&);
     void invalidateCache();
 
 private:
-    GRefPtr<GstElement> m_webrtcBin;
+    explicit GStreamerStatsCollector();
+
+    void gatherStats(StatsCallback&&, const GRefPtr<GstPad>&, PreprocessCallback&&);
+
+    GThreadSafeWeakPtr<GstElement> m_webrtcBin;
 
     struct CachedReport {
         MonotonicTime generationTime;

@@ -40,10 +40,10 @@ IMPLEMENT_ASN1_FUNCTIONS_const(X509_CERT_AUX)
 
 static X509_CERT_AUX *aux_get(X509 *x) {
   if (!x) {
-    return NULL;
+    return nullptr;
   }
   if (!x->aux && !(x->aux = X509_CERT_AUX_new())) {
-    return NULL;
+    return nullptr;
   }
   return x->aux;
 }
@@ -58,7 +58,7 @@ int X509_alias_set1(X509 *x, const uint8_t *name, ossl_ssize_t len) {
       return 1;
     }
     ASN1_UTF8STRING_free(x->aux->alias);
-    x->aux->alias = NULL;
+    x->aux->alias = nullptr;
     return 1;
   }
   if (!(aux = aux_get(x))) {
@@ -80,7 +80,7 @@ int X509_keyid_set1(X509 *x, const uint8_t *id, ossl_ssize_t len) {
       return 1;
     }
     ASN1_OCTET_STRING_free(x->aux->keyid);
-    x->aux->keyid = NULL;
+    x->aux->keyid = nullptr;
     return 1;
   }
   if (!(aux = aux_get(x))) {
@@ -93,19 +93,19 @@ int X509_keyid_set1(X509 *x, const uint8_t *id, ossl_ssize_t len) {
 }
 
 const uint8_t *X509_alias_get0(const X509 *x, int *out_len) {
-  const ASN1_UTF8STRING *alias = x->aux != NULL ? x->aux->alias : NULL;
-  if (out_len != NULL) {
-    *out_len = alias != NULL ? alias->length : 0;
+  const ASN1_UTF8STRING *alias = x->aux != nullptr ? x->aux->alias : nullptr;
+  if (out_len != nullptr) {
+    *out_len = alias != nullptr ? alias->length : 0;
   }
-  return alias != NULL ? alias->data : NULL;
+  return alias != nullptr ? alias->data : nullptr;
 }
 
 const uint8_t *X509_keyid_get0(const X509 *x, int *out_len) {
-  const ASN1_OCTET_STRING *keyid = x->aux != NULL ? x->aux->keyid : NULL;
-  if (out_len != NULL) {
-    *out_len = keyid != NULL ? keyid->length : 0;
+  const ASN1_OCTET_STRING *keyid = x->aux != nullptr ? x->aux->keyid : nullptr;
+  if (out_len != nullptr) {
+    *out_len = keyid != nullptr ? keyid->length : 0;
   }
-  return keyid != NULL ? keyid->data : NULL;
+  return keyid != nullptr ? keyid->data : nullptr;
 }
 
 int X509_add1_trust_object(X509 *x, const ASN1_OBJECT *obj) {
@@ -141,13 +141,13 @@ int X509_add1_reject_object(X509 *x, const ASN1_OBJECT *obj) {
 void X509_trust_clear(X509 *x) {
   if (x->aux && x->aux->trust) {
     sk_ASN1_OBJECT_pop_free(x->aux->trust, ASN1_OBJECT_free);
-    x->aux->trust = NULL;
+    x->aux->trust = nullptr;
   }
 }
 
 void X509_reject_clear(X509 *x) {
   if (x->aux && x->aux->reject) {
     sk_ASN1_OBJECT_pop_free(x->aux->reject, ASN1_OBJECT_free);
-    x->aux->reject = NULL;
+    x->aux->reject = nullptr;
   }
 }

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+</head>
+<body>
+    <input id="startDisabled" type="checkbox" switch disabled>
+    <input id="startEnabled" type="checkbox" switch>
+</body>
+<script>
+    prepareForTest();
+    startDisabled.disabled = false;
+    startEnabled.disabled = true;
+    dumpRegions();
+</script>
+</html>

@@ -17,8 +17,9 @@
 #include <utility>
 
 #include "api/audio_codecs/audio_encoder.h"
-#include "api/rtp_headers.h"
-#include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "api/units/timestamp.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -38,17 +39,17 @@ EncodeNetEqInput::~EncodeNetEqInput() = default;
 
 std::optional<int64_t> EncodeNetEqInput::NextPacketTime() const {
   RTC_DCHECK(packet_data_);
-  return static_cast<int64_t>(packet_data_->time_ms);
+  return packet_data_->arrival_time().ms();
 }
 
 std::optional<int64_t> EncodeNetEqInput::NextOutputEventTime() const {
   return next_output_event_ms_;
 }
 
-std::unique_ptr<NetEqInput::PacketData> EncodeNetEqInput::PopPacket() {
+std::unique_ptr<RtpPacketReceived> EncodeNetEqInput::PopPacket() {
   RTC_DCHECK(packet_data_);
   // Grab the packet to return...
-  std::unique_ptr<PacketData> packet_to_return = std::move(packet_data_);
+  std::unique_ptr<RtpPacketReceived> packet_to_return = std::move(packet_data_);
   // ... and line up the next packet for future use.
   CreatePacket();
 
@@ -63,37 +64,38 @@ bool EncodeNetEqInput::ended() const {
   return next_output_event_ms_ > input_duration_ms_;
 }
 
-std::optional<RTPHeader> EncodeNetEqInput::NextHeader() const {
+const RtpPacketReceived* EncodeNetEqInput::NextPacket() const {
   RTC_DCHECK(packet_data_);
-  return packet_data_->header;
+  return packet_data_.get();
 }
 
 void EncodeNetEqInput::CreatePacket() {
   // Create a new PacketData object.
   RTC_DCHECK(!packet_data_);
-  packet_data_.reset(new NetEqInput::PacketData);
-  RTC_DCHECK_EQ(packet_data_->payload.size(), 0);
+  packet_data_ = std::make_unique<RtpPacketReceived>();
 
   // Loop until we get a packet.
   AudioEncoder::EncodedInfo info;
   RTC_DCHECK(!info.send_even_if_empty);
   int num_blocks = 0;
-  while (packet_data_->payload.size() == 0 && !info.send_even_if_empty) {
+  Buffer payload;
+  while (payload.empty() && !info.send_even_if_empty) {
     const size_t num_samples = CheckedDivExact(
         static_cast<int>(encoder_->SampleRateHz() * kOutputPeriodMs), 1000);
 
     info = encoder_->Encode(rtp_timestamp_, generator_->Generate(num_samples),
-                            &packet_data_->payload);
+                            &payload);
 
     rtp_timestamp_ +=
         dchecked_cast<uint32_t>(num_samples * encoder_->RtpTimestampRateHz() /
                                 encoder_->SampleRateHz());
     ++num_blocks;
   }
-  packet_data_->header.timestamp = info.encoded_timestamp;
-  packet_data_->header.payloadType = info.payload_type;
-  packet_data_->header.sequenceNumber = sequence_number_++;
-  packet_data_->time_ms = next_packet_time_ms_;
+  packet_data_->SetPayload(payload);
+  packet_data_->SetTimestamp(info.encoded_timestamp);
+  packet_data_->SetPayloadType(info.payload_type);
+  packet_data_->SetSequenceNumber(sequence_number_++);
+  packet_data_->set_arrival_time(Timestamp::Millis(next_packet_time_ms_));
   next_packet_time_ms_ += num_blocks * kOutputPeriodMs;
 }
 

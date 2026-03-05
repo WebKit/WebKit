@@ -38,15 +38,14 @@ namespace Layout {
 // This class implements the layout logic for flex formatting contexts.
 // https://www.w3.org/TR/css-flexbox-1/
 class FlexFormattingContext {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FlexFormattingContext);
+    WTF_MAKE_TZONE_ALLOCATED(FlexFormattingContext);
 public:
     FlexFormattingContext(const ElementBox& flexBox, LayoutState&);
 
     void layout(const ConstraintsForFlexContent&);
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints();
+    IntrinsicWidthConstraints NODELETE computedIntrinsicWidthConstraints();
 
     const ElementBox& root() const { return m_flexBox; }
-    CheckedRef<const ElementBox> checkedRoot() const { return m_flexBox; }
     const FlexFormattingUtils& formattingUtils() const { return m_flexFormattingUtils; }
 
     const BoxGeometry& geometryForFlexItem(const Box&) const;

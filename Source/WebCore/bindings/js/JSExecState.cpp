@@ -28,10 +28,10 @@
 
 #include "EventLoop.h"
 #include "JSDOMExceptionHandling.h"
-#include "Microtasks.h"
 #include "RejectedPromiseTracker.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
+#include <JavaScriptCore/MicrotaskQueue.h>
 #include <JavaScriptCore/ScriptProfilingScope.h>
 #include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <JavaScriptCore/VMTrapsInlines.h>
@@ -43,7 +43,7 @@ void JSExecState::didLeaveScriptContext(JSC::JSGlobalObject* lexicalGlobalObject
     RefPtr context = executionContext(lexicalGlobalObject);
     if (!context)
         return;
-    context->eventLoop().performMicrotaskCheckpoint();
+    context->eventLoop().performMicrotaskCheckpoint(lexicalGlobalObject->vm());
 }
 
 JSC::JSValue functionCallHandlerFromAnyThread(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
@@ -56,33 +56,11 @@ JSC::JSValue evaluateHandlerFromAnyThread(JSC::JSGlobalObject* lexicalGlobalObje
     return JSExecState::evaluate(lexicalGlobalObject, source, thisValue, returnedException);
 }
 
-void JSExecState::runTask(JSC::JSGlobalObject* globalObject, JSC::QueuedTask& task)
-{
-    JSC::VM& vm = globalObject->vm();
-    JSExecState currentState(globalObject);
-    JSC::VMEntryScope entryScope(vm, globalObject);
-    MicrotaskQueue::runJSMicrotask(globalObject, vm, task);
-}
-
-void JSExecState::runTaskWithDebugger(JSC::JSGlobalObject* globalObject, JSC::QueuedTask& task)
-{
-    JSC::VM& vm = globalObject->vm();
-    JSExecState currentState(globalObject);
-    JSC::VMEntryScope entryScope(vm, globalObject);
-    JSC::ScriptProfilingScope profilingScope(globalObject, JSC::ProfilingReason::Microtask);
-    MicrotaskQueue::runJSMicrotaskWithDebugger(globalObject, vm, task);
-}
-
 ScriptExecutionContext* executionContext(JSC::JSGlobalObject* globalObject)
 {
     if (!globalObject || !globalObject->inherits<JSDOMGlobalObject>())
         return nullptr;
     return JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
-}
-
-RefPtr<ScriptExecutionContext> protectedExecutionContext(JSC::JSGlobalObject* globalObject)
-{
-    return executionContext(globalObject);
 }
 
 } // namespace WebCore

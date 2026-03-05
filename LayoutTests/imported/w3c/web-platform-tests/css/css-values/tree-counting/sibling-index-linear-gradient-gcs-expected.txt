@@ -1,0 +1,5 @@
+
+FAIL Check that sibling-index() is resolved in serialization of computed value of linear-gradient() assert_equals: expected "linear-gradient(rgb(255, 255, 255), rgb(0, 0, 200))" but got "linear-gradient(rgb(255, 255, 255), rgb(0, 0, 0))"
+FAIL Check that sibling-index() is resolved in serialization of computed value of linear-gradient() inside cross-fade() assert_equals: expected "cross-fade(linear-gradient(rgb(255, 255, 255), rgb(0, 0, 200)) 40%, rgb(0, 0, 200) 60%)" but got "none"
+FAIL Check that sibling-index() is resolved in serialization of computed value of linear-gradient() inside image-set() assert_equals: expected "image-set(linear-gradient(rgb(255, 255, 255), rgb(0, 0, 200)) 1dppx)" but got "image-set(linear-gradient(rgb(255, 255, 255), rgb(0, 0, 0)) 1dppx)"
+

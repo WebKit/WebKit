@@ -42,7 +42,7 @@ namespace Style {
 
 struct EllipsePathPolicy final : public TinyLRUCachePolicy<FloatRect, WebCore::Path> {
 public:
-    static bool isKeyNull(const FloatRect& rect)
+    static bool NODELETE isKeyNull(const FloatRect& rect)
     {
         return rect.isEmpty();
     }
@@ -63,17 +63,17 @@ static const WebCore::Path& cachedEllipsePath(const FloatRect& rect)
 
 // MARK: - Path Generation
 
-FloatPoint resolvePosition(const Ellipse& value, FloatSize boundingBox)
+FloatPoint resolvePosition(const Ellipse& value, FloatSize boundingBox, ZoomFactor zoom)
 {
-    return value.position ? evaluate<FloatPoint>(*value.position, boundingBox, Style::ZoomNeeded { }) : FloatPoint { boundingBox.width() / 2, boundingBox.height() / 2 };
+    return value.position ? evaluate<FloatPoint>(*value.position, boundingBox, zoom) : FloatPoint { boundingBox.width() / 2, boundingBox.height() / 2 };
 }
 
-FloatSize resolveRadii(const Ellipse& value, FloatSize boxSize, FloatPoint center)
+FloatSize resolveRadii(const Ellipse& value, FloatSize boxSize, FloatPoint center, ZoomFactor zoom)
 {
     auto sizeForAxis = [&](const Ellipse::RadialSize& radius, float centerValue, float dimensionSize) {
         return WTF::switchOn(radius,
             [&](const Ellipse::Length& length) -> float {
-                return evaluate<float>(length, std::abs(dimensionSize), Style::ZoomNeeded { });
+                return evaluate<float>(length, std::abs(dimensionSize), zoom);
             },
             [&](const Ellipse::Extent& extent) -> float {
                 return WTF::switchOn(extent,
@@ -100,9 +100,9 @@ FloatSize resolveRadii(const Ellipse& value, FloatSize boxSize, FloatPoint cente
     };
 }
 
-WebCore::Path pathForCenterCoordinate(const Ellipse& value, const FloatRect& boundingBox, FloatPoint center)
+WebCore::Path pathForCenterCoordinate(const Ellipse& value, const FloatRect& boundingBox, FloatPoint center, ZoomFactor zoom)
 {
-    auto radii = resolveRadii(value, boundingBox.size(), center);
+    auto radii = resolveRadii(value, boundingBox.size(), center, zoom);
     auto bounding = FloatRect {
         center.x() - radii.width() + boundingBox.x(),
         center.y() - radii.height() + boundingBox.y(),
@@ -112,9 +112,9 @@ WebCore::Path pathForCenterCoordinate(const Ellipse& value, const FloatRect& bou
     return cachedEllipsePath(bounding);
 }
 
-WebCore::Path PathComputation<Ellipse>::operator()(const Ellipse& value, const FloatRect& boundingBox)
+WebCore::Path PathComputation<Ellipse>::operator()(const Ellipse& value, const FloatRect& boundingBox, ZoomFactor zoom)
 {
-    return pathForCenterCoordinate(value, boundingBox, resolvePosition(value, boundingBox.size()));
+    return pathForCenterCoordinate(value, boundingBox, resolvePosition(value, boundingBox.size(), zoom), zoom);
 }
 
 // MARK: - Blending

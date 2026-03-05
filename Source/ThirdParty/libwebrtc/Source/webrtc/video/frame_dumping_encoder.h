@@ -13,7 +13,7 @@
 
 #include <memory>
 
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
 #include "api/video_codecs/video_encoder.h"
 
 namespace webrtc {
@@ -26,8 +26,8 @@ namespace webrtc {
 // passed encoder. The directory specified by the field trial parameter should
 // be delimited by ';'.
 std::unique_ptr<VideoEncoder> MaybeCreateFrameDumpingEncoderWrapper(
-    std::unique_ptr<VideoEncoder> encoder,
-    const FieldTrialsView& field_trials);
+    const Environment& env,
+    std::unique_ptr<VideoEncoder> encoder);
 
 }  // namespace webrtc
 

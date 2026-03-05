@@ -55,11 +55,11 @@ struct VideoPresetData {
 class VideoPreset {
 public:
     explicit VideoPreset(VideoPresetData&& data)
-        : m_data(WTFMove(data))
+        : m_data(WTF::move(data))
     {
     }
     VideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, std::optional<double> minZoom, std::optional<double> maxZoom, bool isEfficient)
-        : m_data { size, WTFMove(frameRateRanges), minZoom.value_or(1), maxZoom.value_or(1), isEfficient }
+        : m_data { size, WTF::move(frameRateRanges), minZoom.value_or(1), maxZoom.value_or(1), isEfficient }
     {
         ASSERT(m_data.maxZoom >= m_data.minZoom);
     }

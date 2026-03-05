@@ -112,7 +112,7 @@ void TypeProfilerLog::processLogEntries(VM& vm, const String& reason)
         location->m_lastSeenType = type;
         if (location->m_globalTypeSet)
             location->m_globalTypeSet->addTypeInformation(type, shape.copyRef(), structure, sawPolyProtoStructure);
-        location->m_instructionTypeSet->addTypeInformation(type, WTFMove(shape), structure, sawPolyProtoStructure);
+        location->m_instructionTypeSet->addTypeInformation(type, WTF::move(shape), structure, sawPolyProtoStructure);
 
         entry++;
     }

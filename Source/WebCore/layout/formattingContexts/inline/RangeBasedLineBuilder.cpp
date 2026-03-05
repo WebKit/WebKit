@@ -27,12 +27,13 @@
 #include "RangeBasedLineBuilder.h"
 
 #include "InlineFormattingContext.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {
 namespace Layout {
 
-static inline bool hasInlineBoxesOnly(size_t inlineBoxCount, size_t numberOfInlineItems)
+static inline bool NODELETE hasInlineBoxesOnly(size_t inlineBoxCount, size_t numberOfInlineItems)
 {
     return !(numberOfInlineItems % 2) && inlineBoxCount == numberOfInlineItems / 2;
 }
@@ -51,23 +52,26 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
     if (hasInlineBoxesOnly(m_inlineBoxCount, numberOfInlineItems)) {
         Line::RunList inlineBoxRuns;
         inlineBoxRuns.reserveCapacity(numberOfInlineItems);
+        auto hasDecoration = false;
         for (auto& inlineItem : m_inlineItemList) {
             ASSERT(inlineItem.isInlineBoxStartOrEnd());
             inlineBoxRuns.append({ Line::Run(inlineItem, inlineItem.firstLineStyle(), { }) });
+            if (inlineItem.isInlineBoxStart())
+                hasDecoration |= !!formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingStart();
         }
 
         auto lineRect = lineInput.initialLogicalRect;
         auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), { }, lineRect.width(), { }, true);
         return LineLayoutResult { lineInput.needsLayoutRange
-            , WTFMove(inlineBoxRuns)
+            , WTF::move(inlineBoxRuns)
             , { }
             , { contentLeft, { }, contentLeft, std::max(0.f, contentLeft - lineRect.right()) }
-            , { lineRect.topLeft(), lineRect.width(), lineRect.left() }
+            , { lineRect.topLeft(), lineRect.width(), lineRect.topLeft() }
             , { }
             , { }
             , { isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, { } }
             , { }
-            , { LineLayoutResult::InlineContentEnding::Generic }
+            , { hasDecoration ? std::optional(LineLayoutResult::InlineContentEnding::Generic) : std::nullopt }
             , m_inlineBoxCount
             , { }
             , { }
@@ -144,10 +148,10 @@ bool RangeBasedLineBuilder::isEligibleForRangeInlineLayout(const InlineFormattin
         for (auto& inlineItem : inlineItemList) {
             if (!inlineItem.isInlineBoxStart())
                 return false;
-            auto& inlineBox = inlineItem.layoutBox();
+            CheckedRef inlineBox = inlineItem.layoutBox();
             if (inlineFormattingContext.geometryForBox(inlineBox).horizontalMarginBorderAndPadding())
                 return true;
-            if (inlineBox.style().boxDecorationBreak() != RenderStyle::initialBoxDecorationBreak())
+            if (inlineBox->style().boxDecorationBreak() != Style::ComputedStyle::initialBoxDecorationBreak())
                 return true;
         }
         ASSERT_NOT_REACHED();
@@ -167,9 +171,9 @@ bool RangeBasedLineBuilder::isEligibleForRangeInlineLayout(const InlineFormattin
         if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.requiresVisualReordering() || !placedFloats.isEmpty() || inlineItems.hasTextAutospace())
             return false;
 
-        auto& rootStyle = inlineFormattingContext.root().style();
-        auto& inlineBoxStyle = inlineItemList.first().layoutBox().style();
-        if (inlineBoxStyle.textAlign() != rootStyle.textAlign())
+        CheckedRef rootStyle = inlineFormattingContext.root().style();
+        CheckedRef inlineBoxStyle = inlineItemList.first().layoutBox().style();
+        if (inlineBoxStyle->textAlign() != rootStyle->textAlign())
             return false;
         if (!TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(inlineFormattingContext.root()) || !TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(inlineItemList.first().layoutBox()))
             return false;

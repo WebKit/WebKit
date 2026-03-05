@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CallFrameShuffleData);
 
 void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* registerSaveLocations)
 {
-    auto calleeSaveRegisters = RegisterSetBuilder::vmCalleeSaveRegisters();
+    auto calleeSaveRegisters = RegisterSet::vmCalleeSaveRegisters();
 
     for (size_t i = 0; i < registerSaveLocations->registerCount(); ++i) {
         RegisterAtOffset entry { registerSaveLocations->at(i) };

@@ -117,13 +117,8 @@ void JSTestDefaultToJSONIndirectInheritancePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestDefaultToJSONIndirectInheritance::s_info = { "TestDefaultToJSONIndirectInheritance"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONIndirectInheritance) };
 
 JSTestDefaultToJSONIndirectInheritance::JSTestDefaultToJSONIndirectInheritance(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONIndirectInheritance>&& impl)
-    : JSTestDefaultToJSONInherit(structure, globalObject, WTFMove(impl))
+    : JSTestDefaultToJSONInherit(structure, globalObject, WTF::move(impl))
 {
-}
-
-Ref<TestDefaultToJSONIndirectInheritance> JSTestDefaultToJSONIndirectInheritance::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, TestDefaultToJSONIndirectInheritance>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
@@ -209,7 +204,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestDefaultToJSONIndirectInheritance>(impl.ptr());
 #endif
-    return createWrapper<TestDefaultToJSONIndirectInheritance>(globalObject, WTFMove(impl));
+    return createWrapper<TestDefaultToJSONIndirectInheritance>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSONIndirectInheritance& impl)

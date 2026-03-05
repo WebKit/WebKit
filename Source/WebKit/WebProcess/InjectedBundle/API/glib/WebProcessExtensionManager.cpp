@@ -53,11 +53,8 @@ static void parseUserData(API::Object* userData, String& webProcessExtensionsDir
     ASSERT(userData->type() == API::Object::Type::String);
 
     CString userDataString = downcast<API::String>(userData)->string().utf8();
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    GRefPtr<GVariant> variant = adoptGRef(g_variant_parse(nullptr, userDataString.data(),
-        userDataString.data() + userDataString.length(), nullptr, nullptr));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    const auto userDataSpan = userDataString.spanIncludingNullTerminator();
+    GRefPtr<GVariant> variant = adoptGRef(g_variant_parse(nullptr, userDataSpan.data(), userDataSpan.last(1).data(), nullptr, nullptr));
 
     ASSERT(variant);
     ASSERT(g_variant_check_format_string(variant.get(), "(m&smv)", FALSE));

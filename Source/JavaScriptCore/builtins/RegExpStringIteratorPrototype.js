@@ -33,17 +33,17 @@ function next()
     if (!@isRegExpStringIterator(this))
         @throwTypeError("%RegExpStringIteratorPrototype%.next requires |this| to be an RegExp String Iterator instance");
 
-    var done = @getRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldDone);
-    if (done)
+    var flags = @getRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldFlags);
+    if (flags & @regExpStringIteratorFlagDone)
         return { value: @undefined, done: true };
 
     var regExp = @getRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldRegExp);
     var string = @getRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldString);
-    var global = @getRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldGlobal);
-    var fullUnicode = @getRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldFullUnicode);
+    var global = flags & @regExpStringIteratorFlagGlobal;
+    var fullUnicode = flags & @regExpStringIteratorFlagFullUnicode;
     var match = @regExpExec(regExp, string);
     if (match === null) {
-        @putRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldDone, true);
+        @putRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldFlags, flags | @regExpStringIteratorFlagDone);
         return { value: @undefined, done: true };
     }
 
@@ -54,7 +54,7 @@ function next()
             regExp.lastIndex = @advanceStringIndex(string, thisIndex, fullUnicode);
         }
     } else
-        @putRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldDone, true);
+        @putRegExpStringIteratorInternalField(this, @regExpStringIteratorFieldFlags, flags | @regExpStringIteratorFlagDone);
 
     return { value: match, done: false };
 }

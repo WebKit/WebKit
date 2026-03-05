@@ -25,13 +25,11 @@
 
 #pragma once
 
-#import <WebKit/_WKJSHandle.h>
 #import <WebKit/_WKTextExtraction.h>
 
-NS_ASSUME_NONNULL_BEGIN
+@class _WKJSHandle;
 
-// This is equivalent to USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCH) && !PLATFORM(APPLETV)
-#if (defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)) || (!TARGET_OS_WATCH && !TARGET_OS_TV)
+NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKTextExtractionConfiguration ()
 
@@ -51,20 +49,13 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  Iterates over all custom node attributes added via -addClientAttribute:value:forNode:.
  */
-- (void)forEachClientNodeAttribute:(void(NS_NOESCAPE ^)(NSString *attribute, NSString *value, _WKJSHandle *))block;
-
-/*!
- Only include visible text content, excluding all DOM attributes and element types.
- Takes precedence over `includeURLs`, `includeRects`, etc.
- Defaults to `NO`.
- */
-@property (nonatomic) BOOL onlyIncludeVisibleText;
+- (void)forEachClientNodeAttribute:(void(^)(NSString *attribute, NSString *value, _WKJSHandle *))block;
 
 @end
 
 @interface _WKTextExtractionResult ()
 
-- (instancetype)initWithTextContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText;
+- (instancetype)initWithWebView:(nullable WKWebView *)webView textContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText shortenedURLs:(NSDictionary<NSString *, NSURL *> *)shortenedURLs;
 
 @end
 
@@ -76,11 +67,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKTextExtractionInteractionResult ()
 
-- (instancetype)initWithErrorDescription:(nullable NSString *)errorDescription;
+- (instancetype)initWithErrorDescription:(NSString *)errorDescription;
 
 @end
-
-#endif // (defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)) || (!TARGET_OS_WATCH && !TARGET_OS_TV)
 
 typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
     WKTextExtractionContainerRoot,
@@ -95,6 +84,7 @@ typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
     WKTextExtractionContainerCanvas,
     WKTextExtractionContainerSubscript,
     WKTextExtractionContainerSuperscript,
+    WKTextExtractionContainerStrikethrough,
     WKTextExtractionContainerGeneric
 };
 
@@ -140,10 +130,21 @@ typedef NS_ENUM(NSInteger, WKTextExtractionEditableType) {
 @property (nonatomic, readonly) WKTextExtractionContainer container;
 @end
 
+@interface WKTextExtractionFormItem : WKTextExtractionItem
+- (instancetype)initWithAutocomplete:(NSString *)autocomplete name:(NSString *)name rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children eventListeners:(WKTextExtractionEventListenerTypes)eventListeners ariaAttributes:(NSDictionary<NSString *, NSString *> *)ariaAttributes accessibilityRole:(NSString *)accessibilityRole nodeIdentifier:(nullable NSString *)nodeIdentifier;
+@property (nonatomic, readonly) NSString *autocomplete;
+@property (nonatomic, readonly) NSString *name;
+@end
+
 @interface WKTextExtractionLinkItem : WKTextExtractionItem
 - (instancetype)initWithTarget:(NSString *)target url:(nullable NSURL *)url rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children eventListeners:(WKTextExtractionEventListenerTypes)eventListeners ariaAttributes:(NSDictionary<NSString *, NSString *> *)ariaAttributes accessibilityRole:(NSString *)accessibilityRole nodeIdentifier:(nullable NSString *)nodeIdentifier;
 @property (nonatomic, readonly) NSString *target;
 @property (nonatomic, readonly, nullable) NSURL *url;
+@end
+
+@interface WKTextExtractionIFrameItem : WKTextExtractionItem
+- (instancetype)initWithOrigin:(NSString *)origin rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children eventListeners:(WKTextExtractionEventListenerTypes)eventListeners ariaAttributes:(NSDictionary<NSString *, NSString *> *)ariaAttributes accessibilityRole:(NSString *)accessibilityRole nodeIdentifier:(nullable NSString *)nodeIdentifier;
+@property (nonatomic, readonly) NSString *origin;
 @end
 
 @interface WKTextExtractionContentEditableItem : WKTextExtractionItem
@@ -191,4 +192,3 @@ typedef NS_ENUM(NSInteger, WKTextExtractionEditableType) {
 @end
 
 NS_ASSUME_NONNULL_END
-

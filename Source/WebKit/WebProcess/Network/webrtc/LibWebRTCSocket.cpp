@@ -83,7 +83,7 @@ void LibWebRTCSocket::signalReadPacket(std::span<const uint8_t> data, webrtc::So
     if (m_isSuspended)
         return;
 
-    m_remoteAddress = WTFMove(address);
+    m_remoteAddress = WTF::move(address);
     std::optional<webrtc::Timestamp> packetTimestamp;
     if (timestamp)
         packetTimestamp = webrtc::Timestamp::Micros(timestamp);
@@ -109,7 +109,7 @@ void LibWebRTCSocket::signalClose(int error)
 
 void LibWebRTCSocket::signalUsedInterface(String&& name)
 {
-    LibWebRTCNetworkManager::signalUsedInterface(m_contextIdentifier, WTFMove(name));
+    LibWebRTCNetworkManager::signalUsedInterface(m_contextIdentifier, WTF::move(name));
 }
 
 int LibWebRTCSocket::SendTo(const void *value, size_t size, const webrtc::SocketAddress& address, const webrtc::AsyncSocketPacketOptions& options)

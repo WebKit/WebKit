@@ -66,6 +66,8 @@ ASCIILiteral description(WKTextExtractionContainer container)
         return "SUBSCRIPT"_s;
     case WKTextExtractionContainerSuperscript:
         return "SUPERSCRIPT"_s;
+    case WKTextExtractionContainerStrikethrough:
+        return "STRIKETHROUGH"_s;
     case WKTextExtractionContainerGeneric:
         return "GENERIC"_s;
     }
@@ -131,6 +133,15 @@ static void buildDescriptionIgnoringChildren(TextStream& stream, WKTextExtractio
 
     if (auto image = downcastItem(item, WKTextExtractionImageItem)) {
         stream << makeString("IMAGE \""_s, image.name ?: @"", "\", altText=\""_s, image.altText ?: @"", "\""_s);
+        return;
+    }
+
+    if (auto form = downcastItem(item, WKTextExtractionFormItem)) {
+        stream << "FORM"_s;
+        if (form.autocomplete.length)
+            stream << " autocomplete='"_s << form.autocomplete << '\'';
+        if (form.name.length)
+            stream << " name='"_s << form.name << '\'';
         return;
     }
 

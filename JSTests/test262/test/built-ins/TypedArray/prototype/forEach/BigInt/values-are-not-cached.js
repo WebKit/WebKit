@@ -12,12 +12,12 @@ info: |
   algorithm as Array.prototype.forEach as defined in 22.1.3.10 except that the
   this object's [[ArrayLength]] internal slot is accessed in place of performing
   a [[Get]] of "length"
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n, 44n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n, 44n]));
 
   sample.forEach(function(v, i) {
     if (i < sample.length - 1) {

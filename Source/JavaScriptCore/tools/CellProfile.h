@@ -55,7 +55,7 @@ struct CellProfile {
         , m_liveness(other.m_liveness)
         , m_timestamp(other.m_timestamp)
         , m_className(other.m_className)
-        , m_stackTrace(WTFMove(other.m_stackTrace))
+        , m_stackTrace(WTF::move(other.m_stackTrace))
     { }
 
     HeapCell* cell() const { return m_cell; }

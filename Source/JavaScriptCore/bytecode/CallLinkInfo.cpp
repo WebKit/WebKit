@@ -47,7 +47,6 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
 {
     switch (opcodeID) {
     case op_tail_call_varargs:
-    case op_tail_call_forward_arguments:
         return TailCallVarargs;
 
     case op_call:
@@ -304,7 +303,7 @@ JSGlobalObject* CallLinkInfo::globalObjectForSlowPath(JSCell* owner)
 void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
 {
     clearStub();
-    m_stub = WTFMove(newStub);
+    m_stub = WTF::move(newStub);
 
     m_callee.clear();
     *std::bit_cast<uintptr_t*>(m_callee.slot()) = polymorphicCalleeMask;
@@ -372,7 +371,7 @@ void CallLinkInfo::emitDataICFastPath(CCallHelpers& jit)
 
 void CallLinkInfo::emitTailCallDataICFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
 {
-    emitFastPathImpl(nullptr, jit, true, WTFMove(prepareForTailCall));
+    emitFastPathImpl(nullptr, jit, true, WTF::move(prepareForTailCall));
 }
 
 void CallLinkInfo::emitFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo)
@@ -386,9 +385,9 @@ void CallLinkInfo::emitFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callL
 void CallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo, ScopedLambda<void()>&& prepareForTailCall)
 {
     if (std::holds_alternative<OptimizingCallLinkInfo*>(callLinkInfo))
-        return std::get<OptimizingCallLinkInfo*>(callLinkInfo)->emitTailCallFastPath(jit, WTFMove(prepareForTailCall));
+        return std::get<OptimizingCallLinkInfo*>(callLinkInfo)->emitTailCallFastPath(jit, WTF::move(prepareForTailCall));
 
-    return CallLinkInfo::emitTailCallDataICFastPath(jit, WTFMove(prepareForTailCall));
+    return CallLinkInfo::emitTailCallDataICFastPath(jit, WTF::move(prepareForTailCall));
 }
 
 void OptimizingCallLinkInfo::emitFastPath(CCallHelpers& jit)
@@ -400,7 +399,7 @@ void OptimizingCallLinkInfo::emitFastPath(CCallHelpers& jit)
 void OptimizingCallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
 {
     RELEASE_ASSERT(isTailCall());
-    emitFastPathImpl(this, jit, isTailCall(), WTFMove(prepareForTailCall));
+    emitFastPathImpl(this, jit, isTailCall(), WTF::move(prepareForTailCall));
 }
 
 #if ENABLE(DFG_JIT)

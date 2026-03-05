@@ -71,10 +71,9 @@ enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger
 // a speculative check has failed. This allows the SpeculativeJIT
 // to propagate type information (including information that has
 // only speculatively been asserted) through the dataflow.
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
 class SpeculativeJIT : public JITCompiler {
     using Base = JITCompiler;
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SpeculativeJIT, SpeculativeJIT);
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(SpeculativeJIT);
     friend struct OSRExit;
 private:
     typedef JITCompiler::TrustedImm32 TrustedImm32;
@@ -323,7 +322,7 @@ public:
         use(nodeUse.node());
     }
     
-    RegisterSetBuilder usedRegisters();
+    RegisterSet usedRegisters();
     
     bool masqueradesAsUndefinedWatchpointSetIsStillValid()
     {
@@ -359,7 +358,7 @@ public:
 
     void checkArgumentTypes();
 
-    void clearGenerationInfo();
+    void NODELETE clearGenerationInfo();
 
     // These methods are used when generating 'unexpected'
     // calls out from JIT code to C++ helper routines -
@@ -371,9 +370,9 @@ public:
     void silentSpillImpl(const SilentRegisterSavePlan&);
     void silentFillImpl(const SilentRegisterSavePlan&);
 
-    RegisterSetBuilder spilledRegsForSilentSpillPlans(const auto& plans)
+    RegisterSet spilledRegsForSilentSpillPlans(const auto& plans)
     {
-        RegisterSetBuilder usedRegisters;
+        RegisterSet usedRegisters;
         for (auto& plan : plans)
             usedRegisters.add(plan.reg(), IgnoreVectors);
         return usedRegisters;
@@ -1084,7 +1083,7 @@ public:
         }
 
         if (exceptionReg != InvalidGPRReg) {
-            RegisterSetBuilder spilledRegs = spilledRegsForSilentSpillPlans(plans);
+            RegisterSet spilledRegs = spilledRegsForSilentSpillPlans(plans);
             if constexpr (std::same_as<GPRReg, ResultRegType> || std::same_as<JSValueRegs, ResultRegType>) {
                 spilledRegs.add(GPRInfo::returnValueGPR, IgnoreVectors);
                 spilledRegs.add(result, IgnoreVectors);
@@ -1098,13 +1097,13 @@ public:
                 (addRegIfNeeded(spilledRegs, otherSpilledRegs), ...);
             }
 
-            if (spilledRegs.buildAndValidate().contains(exceptionReg, IgnoreVectors)) {
+            if (spilledRegs.contains(exceptionReg, IgnoreVectors)) {
                 // It would be nice if we could do m_gprs.tryAllocate() but we're possibly on a slow path and register allocation state is
                 // probably garbage.
-                constexpr RegisterSetBuilder registersInBank = decltype(m_gprs)::registersInBank();
+                constexpr RegisterSet registersInBank = decltype(m_gprs)::registersInBank();
                 // Move to a non-constexpr local so we can call exclude.
-                RegisterSetBuilder possibleRegisters = registersInBank;
-                RegisterSet freeRegs = possibleRegisters.exclude(spilledRegs).buildAndValidate();
+                RegisterSet possibleRegisters = registersInBank;
+                RegisterSet freeRegs = possibleRegisters.exclude(spilledRegs);
                 auto iter = freeRegs.begin();
                 if (iter != freeRegs.end()) {
                     move(exceptionReg, iter.gpr());
@@ -1397,6 +1396,7 @@ public:
 
     void compileSymbolEquality(Node*);
     void compileHeapBigIntEquality(Node*);
+    void compileHeapBigIntCompare(Node*, RelationalCondition);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
 #if USE(JSVALUE64)
     void compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Node*, Edge neitherDoubleNorHeapBigInt, Edge notDouble);
@@ -1499,6 +1499,8 @@ public:
     void compileMapIterationEntry(Node*);
     void compileMapIterationEntryKey(Node*);
     void compileMapIterationEntryValue(Node*);
+    void compileMapOrSetSize(Node*);
+    void compileGetRegExpFlag(Node*);
     void compileSetAdd(Node*);
     void compileMapSet(Node*);
     void compileMapOrSetDelete(Node*);
@@ -1678,7 +1680,6 @@ public:
     void compileSpread(Node*);
     void compileNewArray(Node*);
     void compileNewArrayWithSpread(Node*);
-    void compileGetRestLength(Node*);
     void compileArraySlice(Node*);
     void compileArraySplice(Node*);
     void compileArrayIndexOfOrArrayIncludes(Node*);
@@ -1725,13 +1726,14 @@ public:
     void compileCompareEqPtr(Node*);
     void compileDefineDataProperty(Node*);
     void compileDefineAccessorProperty(Node*);
+    void compileObjectDefineProperty(Node*);
     void compileStringSlice(Node*);
     void compileStringSubstring(Node*);
     void compileToLowerCase(Node*);
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
 
-    void compileExtractFromTuple(Node*);
+    void NODELETE compileExtractFromTuple(Node*);
     void compileEnumeratorNextUpdateIndexAndMode(Node*);
     void compileEnumeratorNextUpdatePropertyName(Node*);
     void compileEnumeratorGetByVal(Node*);
@@ -1772,8 +1774,6 @@ public:
     void compileCreateGenerator(Node*);
     void compileCreateAsyncGenerator(Node*);
     void compileNewObject(Node*);
-    void compileNewGenerator(Node*);
-    void compileNewAsyncGenerator(Node*);
     void compileNewInternalFieldObject(Node*);
     void compileToPrimitive(Node*);
     void compileToPropertyKey(Node*);
@@ -1789,6 +1789,7 @@ public:
     void compileStringCodePointAt(Node*);
     void compileStringLocaleCompare(Node*);
     void compileStringIndexOf(Node*);
+    void compileStringStartsOrEndsWith(Node*);
     void compileDateGet(Node*);
     void compileDateSet(Node*);
     void compileGlobalIsNaN(Node*);
@@ -1804,6 +1805,7 @@ public:
     void compilePromiseResolve(Node*);
     void compilePromiseReject(Node*);
     void compilePromiseThen(Node*);
+    void compilePerformPromiseThen(Node*);
 
     template<typename JSClass, typename Operation>
     void compileCreateInternalFieldObject(Node*, Operation);
@@ -1861,8 +1863,8 @@ public:
 
     void emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure, GPRReg storageGPR, unsigned numElements, unsigned vectorLength);
     
-    void emitGetLength(InlineCallFrame*, GPRReg lengthGPR, bool includeThis = false);
-    void emitGetLength(CodeOrigin, GPRReg lengthGPR, bool includeThis = false);
+    void emitGetArgumentCount(InlineCallFrame*, GPRReg lengthGPR, bool includeThis = false);
+    void emitGetArgumentCount(CodeOrigin, GPRReg lengthGPR, bool includeThis = false);
     void emitGetCallee(CodeOrigin, GPRReg calleeGPR);
     void emitGetArgumentStart(CodeOrigin, GPRReg startGPR);
     void emitPopulateSliceIndex(Edge&, std::optional<GPRReg> indexGPR, GPRReg lengthGPR, GPRReg resultGPR);
@@ -2298,7 +2300,7 @@ public:
         m_edge = edge;
         ASSERT(m_gprOrInvalid == InvalidGPRReg);
         ASSERT(m_jit);
-        ASSERT(edge.useKind() == UntypedUse || edge.useKind() == KnownCellUse);
+        ASSERT(edge.useKind() == KnownStorageUse);
         if (jit->isFilled(node()))
             gpr();
     }
@@ -2377,7 +2379,7 @@ public:
         return *this;
     }
 
-    void adopt(GPRTemporary&);
+    void NODELETE adopt(GPRTemporary&);
 
     ~GPRTemporary()
     {
@@ -2409,7 +2411,7 @@ public:
 
     JSValueRegsTemporary& operator=(JSValueRegsTemporary&&) = default;
 
-    JSValueRegs regs();
+    JSValueRegs NODELETE regs();
 
 private:
 #if USE(JSVALUE64)

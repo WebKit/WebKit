@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLMathElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLMathElement);
 
 using namespace MathMLNames;
 
@@ -53,7 +53,7 @@ Ref<MathMLMathElement> MathMLMathElement::create(const QualifiedName& tagName, D
 
 RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMathMLMath>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLMath>(*this, WTF::move(style));
 }
 
 void MathMLMathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

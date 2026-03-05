@@ -29,28 +29,32 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOrigin.h>
 
+#if PLATFORM(COCOA)
+#include "WebPrivacyHelpers.h"
+#endif
+
 namespace WebKit {
 
 static void initializeFilterRules(Vector<ScriptTrackingPrivacyHost>&& source, HostToAllowedCategoriesMap& target, WebCore::ScriptTrackingPrivacyFlags& categoriesWithAllowedHosts)
 {
     target.reserveInitialCapacity(source.size());
-    for (auto&& [host, allowedCategories] : WTFMove(source)) {
+    for (auto&& [host, allowedCategories] : WTF::move(source)) {
         if (host.isEmpty()) {
             ASSERT_NOT_REACHED();
             continue;
         }
 
         categoriesWithAllowedHosts.add(allowedCategories);
-        target.add(WTFMove(host), WTFMove(allowedCategories));
+        target.add(WTF::move(host), WTF::move(allowedCategories));
     }
 }
 
 ScriptTrackingPrivacyFilter::ScriptTrackingPrivacyFilter(ScriptTrackingPrivacyRules&& rules)
 {
-    initializeFilterRules(WTFMove(rules.thirdPartyHosts), m_thirdPartyHosts, m_categoriesWithAllowedHosts);
-    initializeFilterRules(WTFMove(rules.thirdPartyTopDomains), m_thirdPartyTopDomains, m_categoriesWithAllowedHosts);
-    initializeFilterRules(WTFMove(rules.firstPartyHosts), m_firstPartyHosts, m_categoriesWithAllowedHosts);
-    initializeFilterRules(WTFMove(rules.firstPartyTopDomains), m_firstPartyTopDomains, m_categoriesWithAllowedHosts);
+    initializeFilterRules(WTF::move(rules.thirdPartyHosts), m_thirdPartyHosts, m_categoriesWithAllowedHosts);
+    initializeFilterRules(WTF::move(rules.thirdPartyTopDomains), m_thirdPartyTopDomains, m_categoriesWithAllowedHosts);
+    initializeFilterRules(WTF::move(rules.firstPartyHosts), m_firstPartyHosts, m_categoriesWithAllowedHosts);
+    initializeFilterRules(WTF::move(rules.firstPartyTopDomains), m_firstPartyTopDomains, m_categoriesWithAllowedHosts);
 }
 
 auto ScriptTrackingPrivacyFilter::lookup(const URL& url, const WebCore::SecurityOrigin& topOrigin) -> LookupResult
@@ -92,11 +96,34 @@ bool ScriptTrackingPrivacyFilter::shouldAllowAccess(const URL& url, const WebCor
     if (url.isEmpty())
         return false;
 
+#if PLATFORM(COCOA)
+    if (category == WebCore::ScriptTrackingPrivacyCategory::NetworkRequests && !isTaintedScriptURLBlockable(url))
+        return true;
+#endif
+
     auto categoryFlag = WebCore::scriptCategoryAsFlag(category);
     if (!m_categoriesWithAllowedHosts.contains(categoryFlag))
         return false;
 
     return lookup(url, topOrigin).allowedCategories.contains(categoryFlag);
+}
+
+bool ScriptTrackingPrivacyFilter::shouldBlockRequest(const URL& url, const WebCore::SecurityOrigin& topOrigin)
+{
+    if (url.isEmpty())
+        return true;
+
+#if PLATFORM(COCOA)
+    if (!isTaintedScriptURLBlockable(url))
+        return false;
+#endif
+
+    auto categoryFlag = WebCore::scriptCategoryAsFlag(ScriptTrackingPrivacyCategory::NetworkRequests);
+    if (!m_categoriesWithAllowedHosts.contains(categoryFlag))
+        return true;
+
+    auto result = lookup(url, topOrigin);
+    return result.foundMatch && !result.allowedCategories.contains(categoryFlag);
 }
 
 } // namespace WebKit

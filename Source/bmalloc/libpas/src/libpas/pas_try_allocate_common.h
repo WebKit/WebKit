@@ -31,9 +31,11 @@
 #include "pas_heap_inlines.h"
 #include "pas_local_allocator_inlines.h"
 #include "pas_malloc_stack_logging.h"
+#include "pas_mmap_capability.h"
 #include "pas_primitive_heap_ref.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_segregated_heap_inlines.h"
+#include "pas_stats.h"
 #include "pas_system_heap.h"
 #include "pas_utils.h"
 
@@ -218,8 +220,11 @@ pas_try_allocate_common_impl_slow(
             pas_physical_memory_transaction_begin(&transaction);
             pas_heap_lock_lock();
 
-            result = pas_large_heap_try_allocate(&heap->large_heap, size, alignment, allocation_mode, config.config_ptr, &transaction);
+            result = pas_large_heap_try_allocate_user_allocation(&heap->large_heap, size, alignment, allocation_mode, config.config_ptr, &transaction);
             
+            if (result.did_succeed)
+                PAS_RECORD_STAT_MALLOC(pas_stats_heap_type_large, size);
+
             pas_heap_lock_unlock();
         } while (!pas_physical_memory_transaction_end(&transaction));
         

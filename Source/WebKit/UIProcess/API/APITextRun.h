@@ -38,17 +38,17 @@ class TextRun final : public ObjectImpl<Object::Type::TextRun> {
 public:
     static Ref<TextRun> create(WebKit::WebPageProxy& page, WTF::String&& string, WebCore::FloatRect&& rect)
     {
-        return adoptRef(*new TextRun(page, WTFMove(string), WTFMove(rect)));
+        return adoptRef(*new TextRun(page, WTF::move(string), WTF::move(rect)));
     }
 
-    const WTF::String& string() const { return m_string; }
+    const WTF::String& string() const LIFETIME_BOUND { return m_string; }
     WebCore::FloatRect rectInWebView() const;
 
 private:
     explicit TextRun(WebKit::WebPageProxy& page, WTF::String&& string, WebCore::FloatRect&& rect)
         : m_page { page }
-        , m_string { WTFMove(string) }
-        , m_rectInRootView { WTFMove(rect) }
+        , m_string { WTF::move(string) }
+        , m_rectInRootView { WTF::move(rect) }
     {
     }
 

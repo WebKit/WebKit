@@ -67,14 +67,10 @@ using JSWorkerGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSWor
 
 /* Hash table */
 
-static const struct CompactHashIndex JSWorkerGlobalScopeTableIndex[18] = {
+static const struct CompactHashIndex JSWorkerGlobalScopeTableIndex[17] = {
     { -1, -1 },
-    { 0, 16 },
-    { 5, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
+    { 1, -1 },
+    { 4, -1 },
     { -1, -1 },
     { -1, -1 },
     { 3, -1 },
@@ -82,10 +78,13 @@ static const struct CompactHashIndex JSWorkerGlobalScopeTableIndex[18] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 4, -1 },
+    { 0, 16 },
     { -1, -1 },
-    { 1, 17 },
     { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 5, -1 },
 };
 
 
@@ -140,13 +139,8 @@ void JSWorkerGlobalScopePrototype::finishCreation(VM& vm)
 const ClassInfo JSWorkerGlobalScope::s_info = { "WorkerGlobalScope"_s, &Base::s_info, &JSWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScope) };
 
 JSWorkerGlobalScope::JSWorkerGlobalScope(VM& vm, Structure* structure, Ref<WorkerGlobalScope>&& impl)
-    : JSEventTarget(vm, structure, WTFMove(impl))
+    : JSEventTarget(vm, structure, WTF::move(impl))
 {
-}
-
-Ref<WorkerGlobalScope> JSWorkerGlobalScope::protectedWrapped() const
-{
-    return wrapped();
 }
 
 static_assert(!std::is_base_of<ActiveDOMObject, WorkerGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JITCompilationMode.h>
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
@@ -33,8 +34,13 @@
 #include <limits.h>
 #include <wtf/text/StringImpl.h>
 
+namespace JSC {
+class FunctionAllowlist;
+}
+
 namespace JSC { namespace DFG {
 
+class Graph;
 struct Node;
 
 typedef uint32_t BlockIndex;
@@ -76,12 +82,7 @@ inline bool logCompilationChanges(JITCompilationMode mode = JITCompilationMode::
     return verboseCompilationEnabled(mode) || Options::logCompilationChanges();
 }
 
-inline bool shouldDumpGraphAtEachPhase(JITCompilationMode mode = JITCompilationMode::DFG)
-{
-    if (isFTL(mode))
-        return Options::dumpGraphAtEachPhase() || Options::dumpDFGFTLGraphAtEachPhase();
-    return Options::dumpGraphAtEachPhase() || Options::dumpDFGGraphAtEachPhase();
-}
+inline bool shouldDumpGraphAtEachPhase(Graph&);
 
 inline bool validationEnabled()
 {
@@ -253,7 +254,8 @@ inline KillStatus killStatusForDoesKill(bool doesKill)
 enum class PlanStage {
     Initial,
     AfterFixup,
-    LICMAndLater
+    LICMAndLater, // Inclusive of LICM
+    AfterStackLayout,
 };
 
 // If possible, this will acquire a lock to make sure that if multiple threads
@@ -289,6 +291,14 @@ struct NodeAndIndex {
 // A less-than operator for strings that is useful for generating string switches. Sorts by <
 // relation on characters. Ensures that if a is a prefix of b, then a < b.
 bool stringLessThan(StringImpl& a, StringImpl& b);
+
+// Get the global DFG allowlist for filtering which functions can be DFG-compiled
+JSC::FunctionAllowlist& ensureGlobalDFGAllowlist();
+
+#if ENABLE(FTL_JIT)
+// Get the global FTL allowlist for filtering which functions can be FTL-compiled
+JSC::FunctionAllowlist& ensureGlobalFTLAllowlist();
+#endif
 
 } } // namespace JSC::DFG
 

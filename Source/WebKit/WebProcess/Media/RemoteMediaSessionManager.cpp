@@ -63,7 +63,7 @@ RemoteMediaSessionManager::RemoteMediaSessionManager(WebPage& topPage, WebPage& 
 {
     WebProcess::singleton().addMessageReceiver(Messages::RemoteMediaSessionManager::messageReceiverName(), m_localPageID, *this);
 
-    localPage.send(Messages::WebPageProxy::EnsureRemoteMediaSessionManagerProxy());
+    localPage.send(Messages::WebPageProxy::AddRemoteMediaSessionManager(m_localPageID));
 
 #if USE(AUDIO_SESSION)
     Ref sharedSession = WebCore::AudioSession::singleton();
@@ -81,12 +81,14 @@ RemoteMediaSessionManager::RemoteMediaSessionManager(WebPage& topPage, WebPage& 
         sharedSession->soundStageSize(),
         sharedSession->categoryOverride(),
     };
-    send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioConfigurationChanged(WTFMove(configuration)));
+    send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioConfigurationChanged(WTF::move(configuration)));
 #endif
 }
 
 RemoteMediaSessionManager::~RemoteMediaSessionManager()
 {
+    if (RefPtr page = m_localPage.get())
+        page->send(Messages::WebPageProxy::RemoveRemoteMediaSessionManager(m_localPageID));
     WebProcess::singleton().removeMessageReceiver(Messages::RemoteMediaSessionManager::messageReceiverName(), m_localPageID);
 }
 
@@ -116,9 +118,38 @@ void RemoteMediaSessionManager::setCurrentSession(WebCore::PlatformMediaSessionI
     send(Messages::RemoteMediaSessionManagerProxy::SetCurrentMediaSession(currentSessionState(session)));
 }
 
+void RemoteMediaSessionManager::sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(currentSessionState(session)), WTF::move(completionHandler));
+}
+
+void RemoteMediaSessionManager::addRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
+{
+    send(Messages::RemoteMediaSessionManagerProxy::AddMediaSessionRestriction(type, restrictions));
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addRestriction(type, restrictions);
+}
+
+void RemoteMediaSessionManager::removeRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
+{
+    send(Messages::RemoteMediaSessionManagerProxy::RemoveMediaSessionRestriction(type, restrictions));
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::removeRestriction(type, restrictions);
+}
+
+void RemoteMediaSessionManager::resetRestrictions()
+{
+    send(Messages::RemoteMediaSessionManagerProxy::ResetMediaSessionRestrictions());
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::resetRestrictions();
+}
+
 void RemoteMediaSessionManager::updateSessionState()
 {
     send(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionState());
+}
+
+void RemoteMediaSessionManager::sessionStateChanged(WebCore::PlatformMediaSessionInterface& session)
+{
+    send(Messages::RemoteMediaSessionManagerProxy::MediaSessionStateChanged(currentSessionState(session)));
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionStateChanged(session);
 }
 
 RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManager::sessionWithIdentifier(WebCore::MediaSessionIdentifier identifier)
@@ -131,31 +162,40 @@ RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManager::sessio
 void RemoteMediaSessionManager::clientShouldResumeAutoplaying(WebCore::MediaSessionIdentifier identifier)
 {
     if (RefPtr session = sessionWithIdentifier(identifier))
-        session->checkedClient()->resumeAutoplaying();
+        protect(session->client())->resumeAutoplaying();
 }
 
 void RemoteMediaSessionManager::clientMayResumePlayback(WebCore::MediaSessionIdentifier identifier, bool shouldResume)
 {
     if (RefPtr session = sessionWithIdentifier(identifier))
-        session->checkedClient()->mayResumePlayback(shouldResume);
+        protect(session->client())->mayResumePlayback(shouldResume);
 }
 
 void RemoteMediaSessionManager::clientShouldSuspendPlayback(WebCore::MediaSessionIdentifier identifier)
 {
     if (RefPtr session = sessionWithIdentifier(identifier))
-        session->checkedClient()->suspendPlayback();
+        protect(session->client())->suspendPlayback();
 }
 
 void RemoteMediaSessionManager::clientSetShouldPlayToPlaybackTarget(WebCore::MediaSessionIdentifier identifier, bool shouldPlay)
 {
     if (RefPtr session = sessionWithIdentifier(identifier))
-        session->checkedClient()->setShouldPlayToPlaybackTarget(shouldPlay);
+        protect(session->client())->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
 void RemoteMediaSessionManager::clientDidReceiveRemoteControlCommand(WebCore::MediaSessionIdentifier identifier, WebCore::PlatformMediaSessionRemoteControlCommandType command, WebCore::PlatformMediaSessionRemoteCommandArgument argument)
 {
     if (RefPtr session = sessionWithIdentifier(identifier))
-        session->checkedClient()->didReceiveRemoteControlCommand(command, argument);
+        protect(session->client())->didReceiveRemoteControlCommand(command, argument);
+}
+
+void RemoteMediaSessionManager::setCurrentMediaSession(std::optional<WebCore::MediaSessionIdentifier> identifier)
+{
+    if (!identifier)
+        return;
+
+    if (RefPtr session = sessionWithIdentifier(identifier.value()))
+        REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(*session);
 }
 
 RemoteMediaSessionState& RemoteMediaSessionManager::currentSessionState(const WebCore::PlatformMediaSessionInterface& session)
@@ -210,6 +250,9 @@ void RemoteMediaSessionManager::tryToSetAudioSessionActive(bool active)
 
 void RemoteMediaSessionManager::updateCachedSessionState(const WebCore::PlatformMediaSessionInterface& session, RemoteMediaSessionState& state)
 {
+    state.mediaType = session.mediaType();
+    state.presentationType = session.presentationType();
+    state.displayType = session.displayType();
     state.state = session.state();
     state.stateToRestore = session.stateToRestore();
     state.interruptionType = session.interruptionType();

@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 332x68
           RenderTableRow {TR} at (0,2) size 332x64
             RenderTableCell {TD} at (2,2) size 267x64 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 262x59
+              RenderText {#text} at (2,2) size 262x60
                 text run at (2,2) width 240: "This section will provide you with all"
                 text run at (2,22) width 132: "the information you "
                 text run at (133,22) width 131: "may need to use any"

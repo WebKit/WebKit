@@ -52,20 +52,20 @@ struct RenderPassDepthStencilAttachment {
     std::optional<StoreOp> stencilStoreOp;
     bool stencilReadOnly { false };
 
-    RefPtr<Texture> protectedTexture() const
+    Texture* texture() const
     {
-        return WTF::switchOn(view, [&](const WeakRef<Texture>& texture) -> const RefPtr<Texture> {
+        return WTF::switchOn(view, [&](const WeakRef<Texture>& texture) -> Texture* {
             return texture.ptr();
-        }, [&](const WeakRef<TextureView>&) -> const RefPtr<Texture> {
+        }, [&](const WeakRef<TextureView>&) -> Texture* {
             return nullptr;
         });
     }
-    RefPtr<TextureView> protectedView() const
+    TextureView* textureView() const
     {
-        return WTF::switchOn(view, [&](const WeakRef<Texture>&) -> const RefPtr<TextureView> {
+        return WTF::switchOn(view, [&](const WeakRef<Texture>&) -> TextureView* {
             return nullptr;
-        }, [&](const WeakRef<TextureView>& view) -> const RefPtr<TextureView> {
-            return view.ptr();
+        }, [&](const WeakRef<TextureView>& textureView) -> TextureView* {
+            return textureView.ptr();
         });
     }
 };

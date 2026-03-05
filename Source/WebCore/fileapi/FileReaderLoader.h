@@ -37,6 +37,7 @@
 #include <WebCore/URLKeepingBlobAlive.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -56,7 +57,6 @@ class ThreadableLoader;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FileReaderLoader);
 class FileReaderLoader final : public ThreadableLoaderClient, public RefCounted<FileReaderLoader> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FileReaderLoader, FileReaderLoader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FileReaderLoader);
 public:
     enum ReadType {
         ReadAsArrayBuffer,
@@ -69,17 +69,19 @@ public:
 
     // If client is given, do the loading asynchronously. Otherwise, load synchronously.
     WEBCORE_EXPORT static Ref<FileReaderLoader> create(ReadType, FileReaderLoaderClient*);
-    ~FileReaderLoader();
+    WEBCORE_EXPORT ~FileReaderLoader();
 
     WEBCORE_EXPORT void start(ScriptExecutionContext*, Blob&);
     void start(ScriptExecutionContext*, const URL&);
     WEBCORE_EXPORT void cancel();
 
-    // ThreadableLoaderClient
+    // ThreadableLoaderClient.
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
     void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) override;
     void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) override;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     String stringResult();
     WEBCORE_EXPORT RefPtr<JSC::ArrayBuffer> arrayBufferResult() const;
@@ -107,8 +109,6 @@ private:
 
     static ExceptionCode httpStatusCodeToErrorCode(int);
     static ExceptionCode toErrorCode(BlobResourceHandle::Error);
-
-    RefPtr<JSC::ArrayBuffer> protectedRawData() const { return m_rawData; }
 
     ReadType m_readType;
     WeakPtr<FileReaderLoaderClient> m_client;

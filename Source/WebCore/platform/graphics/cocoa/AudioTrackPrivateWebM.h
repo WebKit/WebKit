@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-struct AudioInfo;
+class AudioInfo;
 
 class AudioTrackPrivateWebM final : public AudioTrackPrivate {
     WTF_MAKE_TZONE_ALLOCATED(AudioTrackPrivateWebM);

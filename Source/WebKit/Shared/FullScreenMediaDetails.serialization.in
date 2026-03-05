@@ -33,4 +33,5 @@
     WebCore::FloatSize mediaDimensions;
     String mimeType;
     std::optional<WebCore::SharedMemory::Handle> imageHandle;
+    bool launchInImmersive;
 };

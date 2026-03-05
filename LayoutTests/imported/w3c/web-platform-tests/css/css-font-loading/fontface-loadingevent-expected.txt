@@ -1,9 +1,3 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
-main frame - didReceiveTitle: Tests FontFaceSet loading event
-main frame - didFinishDocumentLoadForFrame
-main frame - didHandleOnloadEventsForFrame
-main frame - didFinishLoadForFrame
 
 PASS FontFaceSet fires correct loading event
 

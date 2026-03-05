@@ -117,4 +117,17 @@ test_interpolation({
   {at: 1, expect: '15px'},
   {at: 1.5, expect: '20px'}
 ]);
+
+test_interpolation({
+  property: 'outline-width',
+  from: 'initial',
+  to: '20px',
+}, [
+  {at: -0.3, expect: '0px'},
+  {at: 0, expect: '3px'},
+  {at: 0.3, expect: '8.1px'},
+  {at: 0.6, expect: '13.2px'},
+  {at: 1, expect: '20px'},
+  {at: 1.5, expect: '28.5px'},
+]);
 </script>

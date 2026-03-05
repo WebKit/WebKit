@@ -55,7 +55,7 @@ static std::optional<ApplePaySessionError> additionalError(NSError *error)
 }
 
 PaymentSessionError::PaymentSessionError(RetainPtr<NSError>&& error)
-    : m_platformError { WTFMove(error) }
+    : m_platformError { WTF::move(error) }
 {
 }
 

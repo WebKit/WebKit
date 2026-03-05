@@ -50,7 +50,7 @@ public:
 
     void setScreenWakeLockHandler(Function<bool(bool shouldKeepScreenAwake)>&& screenWakeLockHandler)
     {
-        m_screenWakeLockHandler = WTFMove(screenWakeLockHandler);
+        m_screenWakeLockHandler = WTF::move(screenWakeLockHandler);
     }
 
 private:
@@ -84,7 +84,7 @@ void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(const String&)
 
 void SleepDisablerCocoa::setScreenWakeLockHandler(Function<bool(bool shouldKeepScreenAwake)>&& screenWakeLockHandler)
 {
-    ScreenSleepDisabler::singleton().setScreenWakeLockHandler(WTFMove(screenWakeLockHandler));
+    ScreenSleepDisabler::singleton().setScreenWakeLockHandler(WTF::move(screenWakeLockHandler));
 }
 
 } // namespace PAL

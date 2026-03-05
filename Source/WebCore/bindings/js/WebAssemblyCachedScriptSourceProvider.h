@@ -43,13 +43,17 @@ class WebAssemblyCachedScriptSourceProvider final : public JSC::BaseWebAssemblyS
 public:
     static Ref<WebAssemblyCachedScriptSourceProvider> create(CachedScript* cachedScript, Ref<CachedScriptFetcher>&& scriptFetcher)
     {
-        return adoptRef(*new WebAssemblyCachedScriptSourceProvider(cachedScript, JSC::SourceOrigin { cachedScript->response().url(), WTFMove(scriptFetcher) }, cachedScript->response().url().string()));
+        return adoptRef(*new WebAssemblyCachedScriptSourceProvider(cachedScript, JSC::SourceOrigin { cachedScript->response().url(), WTF::move(scriptFetcher) }, cachedScript->response().url().string()));
     }
 
     virtual ~WebAssemblyCachedScriptSourceProvider()
     {
         m_cachedScript->removeClient(*this);
     }
+
+    // CachedResourceClient.
+    void ref() const final { JSC::BaseWebAssemblySourceProvider::ref(); }
+    void deref() const final { JSC::BaseWebAssemblySourceProvider::deref(); }
 
     unsigned hash() const final { return m_cachedScript->scriptHash(); }
     StringView source() const final { return m_cachedScript->script(); }
@@ -80,7 +84,7 @@ public:
 
 private:
     WebAssemblyCachedScriptSourceProvider(CachedScript* cachedScript, const JSC::SourceOrigin& sourceOrigin, String sourceURL)
-        : BaseWebAssemblySourceProvider(sourceOrigin, WTFMove(sourceURL))
+        : BaseWebAssemblySourceProvider(sourceOrigin, WTF::move(sourceURL))
         , m_cachedScript(cachedScript)
         , m_buffer(nullptr)
     {

@@ -52,7 +52,7 @@ ExceptionOr<RefPtr<Database>> LocalDOMWindowWebDatabase::openDatabase(LocalDOMWi
     if (document->canAccessResource(ScriptExecutionContext::ResourceType::WebSQL) != ScriptExecutionContext::HasResourceAccess::Yes)
         return Exception { ExceptionCode::SecurityError };
 
-    auto result = manager.openDatabase(*window.document(), name, version, displayName, estimatedSize, WTFMove(creationCallback));
+    auto result = manager.openDatabase(*document, name, version, displayName, estimatedSize, WTF::move(creationCallback));
     if (result.hasException()) {
         // FIXME: To preserve our past behavior, this discards the error string in the exception.
         // At a later time we may decide that we want to use the error strings, and if so we can just return the exception as is.

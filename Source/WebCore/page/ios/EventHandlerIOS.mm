@@ -188,7 +188,7 @@ void EventHandler::focusDocumentView()
     }
 
     RELEASE_ASSERT(page == m_frame->page());
-    page->focusController().setFocusedFrame(protectedFrame().ptr());
+    page->focusController().setFocusedFrame(protect(m_frame).ptr());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
@@ -327,18 +327,18 @@ static bool findViewInSubviews(NSView *superview, NSView *target)
     return false;
 }
 
-NSView *EventHandler::mouseDownViewIfStillGood()
+RetainPtr<NSView> EventHandler::mouseDownViewIfStillGood()
 {
     // Since we have no way of tracking the lifetime of m_mouseDownView, we have to assume that
     // it could be deallocated already. We search for it in our subview tree; if we don't find
     // it, we set it to nil.
-    NSView *mouseDownView = m_mouseDownView;
+    RetainPtr mouseDownView = m_mouseDownView.get();
     if (!mouseDownView) {
         return nil;
     }
     auto* topFrameView = m_frame->view();
     NSView *topView = topFrameView ? topFrameView->platformWidget() : nil;
-    if (!topView || !findViewInSubviews(topView, mouseDownView)) {
+    if (!topView || !findViewInSubviews(topView, mouseDownView.get())) {
         m_mouseDownView = nil;
         return nil;
     }
@@ -352,7 +352,7 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
 
 bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
 {
-    NSView *view = mouseDownViewIfStillGood();
+    RetainPtr view = mouseDownViewIfStillGood();
     if (!view)
         return false;
 
@@ -466,7 +466,7 @@ void EventHandler::mouseDown(WebEvent *event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // FIXME: Why is this here? EventHandler::handleMousePressEvent() calls it.
-    protectedFrame()->loader().resetMultipleFormSubmissionProtection();
+    protect(m_frame)->loader().resetMultipleFormSubmissionProtection();
 
     m_mouseDownView = nil;
 
@@ -514,7 +514,7 @@ void EventHandler::mouseMoved(WebEvent *event)
         // Run style recalc to be able to capture content changes as the result of the mouse move event.
         document->updateStyleIfNeeded();
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-        callOnMainThread([frame = protectedFrame()] {
+        callOnMainThread([frame = protect(m_frame)] {
             // This is called by WebKitLegacy only.
             if (RefPtr document = frame->document())
                 document->contentChangeObserver().willNotProceedWithFixedObservationTimeWindow();
@@ -533,16 +533,6 @@ static bool frameHasPlatformWidget(const LocalFrame& frame)
     }
 
     return false;
-}
-
-void EventHandler::dispatchSyntheticMouseOut(const PlatformMouseEvent& platformMouseEvent)
-{
-    updateMouseEventTargetNode(eventNames().mouseoutEvent, nullptr, platformMouseEvent, FireMouseOverOut::Yes);
-}
-
-void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platformMouseEvent)
-{
-    mouseMoved(platformMouseEvent);
 }
 
 HandleUserInputEventResult EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
@@ -725,7 +715,7 @@ std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoin
     auto adjustedClientPosition = roundedIntPoint(adjustedClientPositionAsFloatPoint);
     auto adjustedGlobalPosition = frameView->windowToContents(adjustedClientPosition);
 
-    PlatformMouseEvent syntheticMousePressEvent(adjustedClientPosition, adjustedGlobalPosition, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, { }, MonotonicTime::now(), 0, SyntheticClickType::NoTap);
+    PlatformMouseEvent syntheticMousePressEvent(adjustedClientPosition, adjustedGlobalPosition, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, { }, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent };
     auto documentPoint = frameView->windowToContents(syntheticMousePressEvent.position());
     auto hitTestedMouseEvent = document->prepareMouseEvent(hitType, LayoutPoint { documentPoint }, syntheticMousePressEvent);
@@ -814,8 +804,8 @@ void EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const I
     IntPoint adjustedClientPosition = roundedIntPoint(adjustedClientPositionAsFloatPoint);
     IntPoint adjustedGlobalPosition = frame->view()->windowToContents(adjustedClientPosition);
 
-    PlatformMouseEvent syntheticMousePressEvent(adjustedClientPosition, adjustedGlobalPosition, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, { }, MonotonicTime::now(), 0, SyntheticClickType::NoTap);
-    PlatformMouseEvent syntheticMouseMoveEvent(adjustedClientPosition, adjustedGlobalPosition, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), 0, SyntheticClickType::NoTap);
+    PlatformMouseEvent syntheticMousePressEvent(adjustedClientPosition, adjustedGlobalPosition, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, { }, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+    PlatformMouseEvent syntheticMouseMoveEvent(adjustedClientPosition, adjustedGlobalPosition, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent };
     RefPtr frameView = frame->view();
@@ -824,7 +814,7 @@ void EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const I
 
     if (RefPtr subframe = subframeForHitTestResult(hitTestedMouseEvent)) {
         if (RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get()))
-            return localSubframe->eventHandler().tryToBeginDragAtPoint(adjustedClientPosition, adjustedGlobalPosition, WTFMove(completionHandler));
+            return localSubframe->eventHandler().tryToBeginDragAtPoint(adjustedClientPosition, adjustedGlobalPosition, WTF::move(completionHandler));
         if (RefPtr remoteSubframe = dynamicDowncast<RemoteFrame>(subframe.get())) {
             if (RefPtr remoteFrameView = remoteSubframe->view(); remoteFrameView && frameView)
                 return completionHandler(makeUnexpected(RemoteFrameGeometryTransformer(remoteFrameView.releaseNonNull(), frameView.releaseNonNull(), remoteSubframe->frameID())));
@@ -845,7 +835,7 @@ void EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const I
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
     RefPtr targetElement = hitTestedMouseEvent.hitTestResult().targetElement();
     if (RefPtr modelElement = dynamicDowncast<HTMLModelElement>(targetElement))
-        return modelElement->tryAnimateModelToFitPortal(handledDrag, WTFMove(completionHandler));
+        return modelElement->tryAnimateModelToFitPortal(handledDrag, WTF::move(completionHandler));
 #endif
 
     return completionHandler(handledDrag);

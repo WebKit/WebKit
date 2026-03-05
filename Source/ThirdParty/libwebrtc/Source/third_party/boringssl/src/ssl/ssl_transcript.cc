@@ -168,8 +168,8 @@ bool SSLTranscript::Update(Span<const uint8_t> in) {
   // transcript format as TLS 1.3 is used. This means we write the 1-byte
   // msg_type, 3-byte length, then skip 2+3+3 bytes for the DTLS-specific
   // fields that get omitted.
-  if (!AddToBufferOrHash(in.subspan(0, 4)) ||
-      !AddToBufferOrHash(in.subspan(12))) {
+  if (!AddToBufferOrHash(in.first<4>()) ||
+      !AddToBufferOrHash(in.subspan<12>())) {
     return false;
   }
   return true;
@@ -183,7 +183,7 @@ bool SSLTranscript::AddToBufferOrHash(Span<const uint8_t> in) {
     return false;
   }
 
-  if (EVP_MD_CTX_md(hash_.get()) != NULL) {
+  if (EVP_MD_CTX_md(hash_.get()) != nullptr) {
     EVP_DigestUpdate(hash_.get(), in.data(), in.size());
   }
 

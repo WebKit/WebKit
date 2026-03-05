@@ -1,0 +1,39 @@
+  <script>
+   testRunner?.waitUntilDone();
+   testRunner?.dumpAsText();
+   (async () => {
+       let dbName = 'db2';
+       let storeName = 'os1';
+       function transactionHelper2(transaction) {
+           let objectStore = transaction.objectStore(storeName);
+           let countRequest = objectStore.count();
+           countRequest.addEventListener('success', ev => {
+               throw new Error("One unhandled exception");
+           });
+           countRequest.addEventListener('success', ev => {
+               throw new Error("Two unhandled exceptions.");
+           });
+           countRequest.addEventListener('success', ev => {
+               testRunner?.notifyDone();
+           });
+       }
+       await (async () => {
+           let req = indexedDB.open(dbName, 1);
+           req.addEventListener('upgradeneeded', ev => {
+               let db = ev.target.result;
+               os = db.createObjectStore(storeName);
+           });
+       })();
+       await (async () => {
+           let req = indexedDB.open(dbName, 1);
+           req.addEventListener('success', async ev => {
+               let db = ev.target.result;
+               let transaction = db.transaction(storeName);
+               transactionHelper2(transaction);
+           });
+       })();
+   })();
+  </script>
+<div>
+    This test passes if it doesn't crash.
+</div>

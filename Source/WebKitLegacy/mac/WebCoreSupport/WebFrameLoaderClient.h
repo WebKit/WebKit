@@ -41,13 +41,6 @@
 @class WebHistoryItem;
 @class WebResource;
 
-class WebFrameLoaderClient;
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebFrameLoaderClient> : std::true_type { };
-}
-
 namespace PAL {
 class SessionID;
 }
@@ -131,14 +124,14 @@ private:
     void dispatchDidFinishLoad() final;
     void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) final;
 
-    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy) final;
+    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy, const String&) final;
     void dispatchShow() final;
 
     void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, const String&, WebCore::FramePolicyFunction&&) final;
     void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const WTF::String& frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::IsPerformingHTTPFallback, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
     void updateSandboxFlags(WebCore::SandboxFlags) { }
-    void updateOpener(const WebCore::Frame&) { }
+    void updateOpener(std::optional<WebCore::FrameIdentifier>) { }
     void setPrinting(bool, WebCore::FloatSize, WebCore::FloatSize, float, WebCore::AdjustViewSize) { }
     void cancelPolicyCheck() final;
 
@@ -166,7 +159,7 @@ private:
     void updateGlobalHistory() final;
     void updateGlobalHistoryRedirectLinks() final;
 
-    WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem(WebCore::HistoryItem&, WebCore::IsSameDocumentNavigation, WebCore::ProcessSwapDisposition) const final;
+    WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem(WebCore::HistoryItem&, WebCore::IsSameDocumentNavigation) const final;
     bool supportsAsyncShouldGoToHistoryItem() const final;
     void shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&) const final;
 
@@ -197,6 +190,7 @@ private:
     void provisionalLoadStarted() final;
     void didFinishLoad() final;
     void prepareForDataSourceReplacement() final;
+    Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::ResourceRequest&&, WebCore::SubstituteData&&, WebCore::ResourceRequest&&) final;
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::ResourceRequest&&, WebCore::SubstituteData&&) final;
     void updateCachedDocumentLoader(WebCore::DocumentLoader&) final { }
 
@@ -220,6 +214,7 @@ private:
     WebCore::IntPoint accessibilityRemoteFrameOffset() final { return { }; }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) final { }
+    RefPtr<WebCore::AXIsolatedTree> isolatedTree() const final { return nullptr; }
 #endif
 
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction&&, WebCore::PolicyAction defaultPolicy, NSURL *appLinkURL, NSURL* referrerURL);

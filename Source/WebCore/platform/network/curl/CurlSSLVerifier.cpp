@@ -58,7 +58,7 @@ std::unique_ptr<WebCore::CertificateInfo> CurlSSLVerifier::createCertificateInfo
     if (m_certificateChain.isEmpty())
         return nullptr;
 
-    return makeUnique<CertificateInfo>(*verifyResult, WTFMove(m_certificateChain));
+    return makeUnique<CertificateInfo>(*verifyResult, WTF::move(m_certificateChain));
 }
 
 void CurlSSLVerifier::collectInfo(X509_STORE_CTX* ctx)

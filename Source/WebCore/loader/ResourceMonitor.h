@@ -56,7 +56,7 @@ public:
     void setDocumentURL(URL&&);
     WEBCORE_EXPORT void addNetworkUsage(size_t);
     size_t networkUsageThreshold() const { return m_networkUsageThreshold; }
-    WEBCORE_EXPORT UsageLevel networkUsageLevel() const;
+    WEBCORE_EXPORT UsageLevel NODELETE networkUsageLevel() const;
 
     void updateNetworkUsageThreshold(size_t);
 

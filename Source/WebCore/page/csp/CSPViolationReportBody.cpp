@@ -37,16 +37,16 @@ namespace WebCore {
 
 using Init = SecurityPolicyViolationEventInit;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSPViolationReportBody);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSPViolationReportBody);
 
 CSPViolationReportBody::CSPViolationReportBody(Init&& init)
-    : m_documentURL(WTFMove(init.documentURI))
-    , m_referrer(init.referrer.isNull() ? emptyString() : WTFMove(init.referrer))
-    , m_blockedURL(WTFMove(init.blockedURI))
-    , m_effectiveDirective(WTFMove(init.effectiveDirective))
-    , m_originalPolicy(WTFMove(init.originalPolicy))
-    , m_sourceFile(WTFMove(init.sourceFile))
-    , m_sample(WTFMove(init.sample))
+    : m_documentURL(WTF::move(init.documentURI))
+    , m_referrer(init.referrer.isNull() ? emptyString() : WTF::move(init.referrer))
+    , m_blockedURL(WTF::move(init.blockedURI))
+    , m_effectiveDirective(WTF::move(init.effectiveDirective))
+    , m_originalPolicy(WTF::move(init.originalPolicy))
+    , m_sourceFile(WTF::move(init.sourceFile))
+    , m_sample(WTF::move(init.sample))
     , m_disposition(init.disposition)
     , m_statusCode(init.statusCode)
     , m_lineNumber(init.lineNumber)
@@ -55,13 +55,13 @@ CSPViolationReportBody::CSPViolationReportBody(Init&& init)
 }
 
 CSPViolationReportBody::CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, uint64_t lineNumber, uint64_t columnNumber)
-    : m_documentURL(WTFMove(documentURL))
-    , m_referrer(WTFMove(referrer))
-    , m_blockedURL(WTFMove(blockedURL))
-    , m_effectiveDirective(WTFMove(effectiveDirective))
-    , m_originalPolicy(WTFMove(originalPolicy))
-    , m_sourceFile(WTFMove(sourceFile))
-    , m_sample(WTFMove(sample))
+    : m_documentURL(WTF::move(documentURL))
+    , m_referrer(WTF::move(referrer))
+    , m_blockedURL(WTF::move(blockedURL))
+    , m_effectiveDirective(WTF::move(effectiveDirective))
+    , m_originalPolicy(WTF::move(originalPolicy))
+    , m_sourceFile(WTF::move(sourceFile))
+    , m_sample(WTF::move(sample))
     , m_disposition(disposition)
     , m_statusCode(statusCode)
     , m_lineNumber(lineNumber)
@@ -71,12 +71,12 @@ CSPViolationReportBody::CSPViolationReportBody(String&& documentURL, String&& re
 
 Ref<CSPViolationReportBody> CSPViolationReportBody::create(Init&& init)
 {
-    return adoptRef(*new CSPViolationReportBody(WTFMove(init)));
+    return adoptRef(*new CSPViolationReportBody(WTF::move(init)));
 }
 
 Ref<CSPViolationReportBody> CSPViolationReportBody::create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, uint64_t lineNumber, uint64_t columnNumber)
 {
-    return adoptRef(*new CSPViolationReportBody(WTFMove(documentURL), WTFMove(referrer), WTFMove(blockedURL), WTFMove(effectiveDirective), WTFMove(originalPolicy), WTFMove(sourceFile), WTFMove(sample), disposition, statusCode, lineNumber, columnNumber));
+    return adoptRef(*new CSPViolationReportBody(WTF::move(documentURL), WTF::move(referrer), WTF::move(blockedURL), WTF::move(effectiveDirective), WTF::move(originalPolicy), WTF::move(sourceFile), WTF::move(sample), disposition, statusCode, lineNumber, columnNumber));
 }
 
 const String& CSPViolationReportBody::type() const
@@ -135,7 +135,7 @@ Ref<FormData> CSPViolationReportBody::createReportFormDataForViolation(bool uses
     auto reportObject = JSON::Object::create();
     reportObject->setString("type"_s, type());
     reportObject->setString("url"_s, documentURL());
-    reportObject->setObject(usesReportTo ? "body"_s : "csp-report"_s, WTFMove(cspReport));
+    reportObject->setObject(usesReportTo ? "body"_s : "csp-report"_s, WTF::move(cspReport));
 
     return FormData::create(reportObject->toJSONString().utf8());
 }

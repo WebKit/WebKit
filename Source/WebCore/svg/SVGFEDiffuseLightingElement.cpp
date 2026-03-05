@@ -25,7 +25,7 @@
 #include "FEDiffuseLighting.h"
 #include "NodeName.h"
 #include "RenderElement.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEDiffuseLightingElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEDiffuseLightingElement);
 
 inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -89,11 +89,8 @@ bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect& filterE
     };
 
     switch (attrName.nodeName()) {
-    case AttributeNames::lighting_colorAttr: {
-        auto& style = renderer()->style();
-        auto color = style.colorWithColorFilter(style.lightingColor());
-        return effect.setLightingColor(color);
-    }
+    case AttributeNames::lighting_colorAttr:
+        return effect.setLightingColor(protect(renderer()->style())->lightingColorResolvingCurrentColorApplyingColorFilter());
     case AttributeNames::surfaceScaleAttr:
         return effect.setSurfaceScale(surfaceScale());
     case AttributeNames::diffuseConstantAttr:
@@ -166,11 +163,7 @@ RefPtr<FilterEffect> SVGFEDiffuseLightingElement::createFilterEffect(const Filte
         return nullptr;
 
     Ref lightSource = lightElement->lightSource();
-    auto& style = renderer->style();
-
-    Color color = style.colorWithColorFilter(style.lightingColor());
-
-    return FEDiffuseLighting::create(color, surfaceScale(), diffuseConstant(), kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
+    return FEDiffuseLighting::create(protect(renderer->style())->lightingColorResolvingCurrentColorApplyingColorFilter(), surfaceScale(), diffuseConstant(), kernelUnitLengthX(), kernelUnitLengthY(), WTF::move(lightSource));
 }
 
 } // namespace WebCore

@@ -11,23 +11,7 @@ Refer to chromium instructions for each platform for other prerequisites.
 
 Create a working directory, enter it, and run:
 
-    gclient config https://chromium.googlesource.com/libyuv/libyuv
-    gclient sync
-
-
-Then you'll get a .gclient file like:
-
-    solutions = [
-      { "name"        : "libyuv",
-        "url"         : "https://chromium.googlesource.com/libyuv/libyuv",
-        "deps_file"   : "DEPS",
-        "managed"     : True,
-        "custom_deps" : {
-        },
-        "safesync_url": "",
-      },
-    ];
-
+    fetch libyuv
 
 For iOS add `;target_os=['ios'];` to your OSX .gclient and run `GYP_DEFINES="OS=ios" gclient sync.`
 
@@ -157,12 +141,6 @@ ia32
     GYP_DEFINES="OS=android target_arch=ia32 android_full_debug=1" GYP_CROSSCOMPILE=1 ./gyp_libyuv
     ninja -j7 -C out/Debug yuv_unittest_apk
 
-mipsel
-
-    GYP_DEFINES="OS=android target_arch=mipsel" GYP_CROSSCOMPILE=1 ./gyp_libyuv
-    ninja -j7 -C out/Debug yuv_unittest_apk
-    ninja -j7 -C out/Release yuv_unittest_apk
-
 arm32 disassembly:
 
     llvm-objdump -d out/Release/obj/source/libyuv.row_neon.o
@@ -194,16 +172,6 @@ Running test with C code:
 
     gn gen out/Official "--args=is_debug=false is_official_build=true is_chrome_branded=true"
     ninja -C out/Official
-
-#### Building mips with GN
-
-mipsel
-    gn gen out/Default "--args=is_debug=false target_cpu=\"mipsel\" target_os = \"android\" mips_arch_variant = \"r6\" mips_use_msa = true is_component_build = true is_clang = false"
-    ninja -C out/Default
-
-mips64el
-    gn gen out/Default "--args=is_debug=false target_cpu=\"mips64el\" target_os = \"android\" mips_arch_variant = \"r6\" mips_use_msa = true is_component_build = true is_clang = false"
-    ninja -C out/Default
 
 ### Linux
 

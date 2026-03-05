@@ -28,7 +28,7 @@
 
 #include "CSSTextShadowPropertyValue.h"
 #include "ColorBlending.h"
-#include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
@@ -68,7 +68,7 @@ Ref<CSSValue> CSSValueCreation<TextShadowList>::operator()(CSSValuePool&, const 
     for (const auto& shadow : value | std::views::reverse)
         list.value.append(toCSS(shadow, style));
 
-    return CSSTextShadowPropertyValue::create(CSS::TextShadowProperty { WTFMove(list) });
+    return CSSTextShadowPropertyValue::create(CSS::TextShadowProperty { WTF::move(list) });
 }
 
 auto CSSValueConversion<TextShadows>::operator()(BuilderState& state, const CSSValue& value) -> TextShadows
@@ -103,8 +103,11 @@ void Serialize<TextShadowList>::operator()(StringBuilder& builder, const CSS::Se
 
 auto Blending<TextShadow>::blend(const TextShadow& a, const TextShadow& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> TextShadow
 {
+    ColorResolver aColorResolver { aStyle };
+    ColorResolver bColorResolver { bStyle };
+
     return {
-        .color = WebCore::blend(aStyle.colorResolvingCurrentColor(a.color), bStyle.colorResolvingCurrentColor(b.color), context),
+        .color = WebCore::blend(aColorResolver.colorResolvingCurrentColor(a.color), bColorResolver.colorResolvingCurrentColor(b.color), context),
         .location = WebCore::Style::blend(a.location, b.location, context),
         .blur = WebCore::Style::blend(a.blur, b.blur, context),
     };

@@ -37,7 +37,7 @@ bool IsIceChar(char c) {
   // permitted in order to allow external software to upgrade.
   if (c == '-' || c == '=' || c == '#' || c == '_') {
     RTC_LOG(LS_WARNING)
-        << "'-', '=', '#' and '-' are not valid ice-char and thus not "
+        << "'-', '=', '#' and '_' are not valid ice-char and thus not "
         << "permitted in ufrag or pwd. This is a protocol violation that "
         << "is permitted to allow upgrading but will be rejected in "
         << "the future. See https://crbug.com/1053756";
@@ -87,7 +87,7 @@ RTCError ValidateIcePwd(absl::string_view raw_pwd) {
 RTCErrorOr<IceParameters> IceParameters::Parse(absl::string_view raw_ufrag,
                                                absl::string_view raw_pwd) {
   IceParameters parameters(std::string(raw_ufrag), std::string(raw_pwd),
-                           /* renomination= */ false);
+                           /* ice_renomination= */ false);
   auto result = parameters.Validate();
   if (!result.ok()) {
     return result;

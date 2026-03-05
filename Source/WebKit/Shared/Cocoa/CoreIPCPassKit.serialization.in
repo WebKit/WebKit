@@ -38,6 +38,7 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     Vector<uint8_t> ipcData()
 }
 
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTMERCHANTSESSION)
 [WebKitSecureCodingClass=PAL::getPKPaymentMerchantSessionClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMerchantSession {
     merchantIdentifier: String
     merchantSessionIdentifier: String
@@ -53,8 +54,14 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     ampEnrollmentPinning: Data
     operationalAnalyticsIdentifier: String
     signedFields: Array<String>?
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    isDelegatedSession: Number
+    delegateDisplayName: String
+#endif
 }
+#endif
 
+#if !HAVE(WK_SECURE_CODING_PKPAYMENT)
 [WebKitSecureCodingClass=PAL::getPKPaymentClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPayment {
     token: PKPaymentToken
     shippingContact: PKContact
@@ -65,7 +72,9 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     biometryAttempts: Number
     installmentAuthorizationToken: String
 }
+#endif
 
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTTOKEN)
 [WebKitSecureCodingClass=PAL::getPKPaymentTokenClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentToken {
     paymentInstrumentName: String?
     paymentNetwork: String?
@@ -75,7 +84,9 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     redeemURL: URL
     retryNonce: String
 }
+#endif
 
+#if !HAVE(WK_SECURE_CODING_PKSHIPPINGMETHOD)
 [WebKitSecureCodingClass=PAL::getPKShippingMethodClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKShippingMethod {
     label: String
     amount: Number
@@ -88,6 +99,7 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     detail: String
     dateComponentsRange: PKDateComponentsRange
 }
+#endif
 
 #if !HAVE(WK_SECURE_CODING_PKDATECOMPONENTSRANGE)
 [WebKitSecureCodingClass=PAL::getPKDateComponentsRangeClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKDateComponentsRange {
@@ -97,6 +109,7 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
 #endif
 
 additional_forward_declaration: OBJC_CLASS PKSecureElementPass
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTMETHOD)
 [WebKitSecureCodingClass=PAL::getPKPaymentMethodClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMethod {
     type: Number
     displayName: String
@@ -107,7 +120,9 @@ additional_forward_declaration: OBJC_CLASS PKSecureElementPass
     installmentBindToken: String
     usePeerPaymentBalance: Number
 }
+#endif
 
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
 additional_forward_declaration: OBJC_CLASS NSSet
 [WebKitSecureCodingClass=PAL::getPKPaymentSetupFeatureClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentSetupFeature {
     identifiers: Set
@@ -127,5 +142,6 @@ additional_forward_declaration: OBJC_CLASS NSSet
     notificationMessage: String
     discoveryCardIdentifier: String
 }
+#endif
 
 #endif // USE(PASSKIT)

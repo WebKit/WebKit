@@ -23,7 +23,7 @@ info: |
   1. Let O be ? ToObject(this value).
   2. Let len be ? ToLength(? Get(O, "length")).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
@@ -33,14 +33,14 @@ Object.defineProperty(TypedArray.prototype, "length", {
   }
 });
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   Object.defineProperty(TA.prototype, "length", {
     get: function() {
       throw new Test262Error();
     }
   });
 
-  var sample = new TA(1);
+  var sample = new TA(makeCtorArg(1));
   Object.defineProperty(sample, "length", {
     get: function() {
       throw new Test262Error();
@@ -48,4 +48,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(sample.fill(1n, 0), sample);
-});
+}, null, ["passthrough"]);

@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (t) => {
+    if (!window.internals) {
+        assert_unreached("This test requires internals API");
+        return;
+    }
+
+    const openerPID = internals.processIdentifier;
+
+    // Open a cross-site window (localhost vs 127.0.0.1 are different sites)
+    const openedWindow = window.open("http://localhost:8000/site-isolation/resources/report-process-id.html");
+    t.add_cleanup(() => { if (openedWindow) openedWindow.close(); });
+
+    const event = await new Promise((resolve, reject) => {
+        const timeout = t.step_timeout(() => reject(new Error("Timeout waiting for message")), 5000);
+        window.addEventListener("message", (e) => {
+            clearTimeout(timeout);
+            resolve(e);
+        }, { once: true });
+    });
+
+    assert_equals(event.data.type, "processId", "Should receive processId message");
+    const openedPID = event.data.pid;
+
+    assert_not_equals(openerPID, openedPID, "Cross-site window.open should use a different process");
+}, "Cross-site window.open uses a different process");
+</script>
+</body>
+</html>

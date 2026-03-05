@@ -218,7 +218,7 @@ void NetworkLoadScheduler::startedPreconnectForMainResource(const URL& url, cons
     }
 
     PendingMainResourcePreconnectInfo info;
-    m_pendingMainResourcePreconnects.add(key, WTFMove(info));
+    m_pendingMainResourcePreconnects.add(key, WTF::move(info));
 }
 
 void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, const String& userAgent, const WebCore::ResourceError& error)
@@ -278,11 +278,11 @@ void NetworkLoadScheduler::setResourceLoadSchedulingMode(WebCore::PageIdentifier
     }
 }
 
-void NetworkLoadScheduler::prioritizeLoads(const Vector<RefPtr<NetworkLoad>>& loads)
+void NetworkLoadScheduler::prioritizeLoads(const Vector<Ref<NetworkLoad>>& loads)
 {
-    for (RefPtr load : loads) {
-        if (auto* context = contextForLoad(*load))
-            context->prioritize(*load);
+    for (Ref load : loads) {
+        if (auto* context = contextForLoad(load))
+            context->prioritize(load);
     }
 }
 

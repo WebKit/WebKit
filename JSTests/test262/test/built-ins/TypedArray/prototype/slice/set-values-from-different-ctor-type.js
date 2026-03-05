@@ -44,4 +44,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert(compareArray(result, arr), "values are set");
   assert.notSameValue(result.buffer, sample.buffer, "creates a new buffer");
   assert.sameValue(result.constructor, other, "used the custom ctor");
-});
+}, null, ["passthrough"]);

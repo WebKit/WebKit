@@ -47,7 +47,7 @@ CoreIPCStringSet::CoreIPCStringSet(NSSet *stringSet)
 }
 
 CoreIPCStringSet::CoreIPCStringSet(Vector<String>&& strings)
-    : m_stringSet(WTFMove(strings)) { }
+    : m_stringSet(WTF::move(strings)) { }
 
 CoreIPCStringSet::~CoreIPCStringSet() = default;
 

@@ -60,11 +60,6 @@ static bool isCSPDirectiveName(StringView name)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::styleSrc);
 }
 
-template<typename CharacterType> static bool isSourceCharacter(CharacterType c)
-{
-    return !isUnicodeCompatibleASCIIWhitespace(c);
-}
-
 template<typename CharacterType> static bool isHostCharacter(CharacterType c)
 {
     return isASCIIAlphanumeric(c) || c == '-';
@@ -87,12 +82,12 @@ template<typename CharacterType> static bool isNotColonOrSlash(CharacterType c)
 
 template<typename CharacterType> static bool isSourceListNone(StringParsingBuffer<CharacterType> buffer)
 {
-    skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+    skipWhile<isASCIIWhitespace>(buffer);
 
     if (!skipExactlyIgnoringASCIICase(buffer, "'none'"_s))
         return false;
 
-    skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+    skipWhile<isASCIIWhitespace>(buffer);
 
     return buffer.atEnd();
 }
@@ -242,12 +237,12 @@ static bool extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeFor
 template<typename CharacterType> void ContentSecurityPolicySourceList::parse(StringParsingBuffer<CharacterType> buffer)
 {
     while (buffer.hasCharactersRemaining()) {
-        skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+        skipWhile<isASCIIWhitespace>(buffer);
         if (buffer.atEnd())
             return;
 
         auto beginSource = buffer.span();
-        skipWhile<isSourceCharacter>(buffer);
+        skipWhile<isNotASCIIWhitespace>(buffer);
 
         StringParsingBuffer sourceBuffer(beginSource.first(buffer.position() - beginSource.data()));
 
@@ -270,7 +265,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
         } else
             m_policy->reportInvalidSourceExpression(m_directiveName, beginSource.first(buffer.position() - beginSource.data()));
 
-        ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
+        ASSERT(buffer.atEnd() || isASCIIWhitespace(*buffer));
     }
     
     m_list.shrinkToFit();
@@ -373,7 +368,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         if (!host)
             return std::nullopt;
 
-        source.host = WTFMove(*host);
+        source.host = WTF::move(*host);
         return source;
     }
 
@@ -388,8 +383,8 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         if (!path)
             return std::nullopt;
 
-        source.host = WTFMove(*host);
-        source.path = WTFMove(path);
+        source.host = WTF::move(*host);
+        source.path = WTF::move(path);
         return source;
     }
 
@@ -401,7 +396,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
             if (!scheme)
                 return std::nullopt;
 
-            source.scheme = WTFMove(scheme);
+            source.scheme = WTF::move(scheme);
             return source;
         }
 
@@ -417,7 +412,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
             if (buffer.atEnd())
                 return std::nullopt;
 
-            source.scheme = WTFMove(scheme);
+            source.scheme = WTF::move(scheme);
 
             beginHost = buffer.span();
             skipWhile<isNotColonOrSlash>(buffer);
@@ -449,7 +444,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         if (!port)
             return std::nullopt;
 
-        source.port = WTFMove(*port);
+        source.port = WTF::move(*port);
     }
 
     if (!beginPath.empty()) {
@@ -457,10 +452,10 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         if (!path)
             return std::nullopt;
 
-        source.path = WTFMove(path);
+        source.path = WTF::move(path);
     }
 
-    source.host = WTFMove(*host);
+    source.host = WTF::move(*host);
     return source;
 }
 
@@ -628,7 +623,7 @@ template<typename CharacterType> bool ContentSecurityPolicySourceList::parseHash
 
     if (extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_hashAlgorithmsUsed.add(digest->algorithm);
-        m_hashes.add(WTFMove(*digest));
+        m_hashes.add(WTF::move(*digest));
     }
     return true;
 }

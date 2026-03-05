@@ -54,6 +54,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSPromisePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSWebAssembly.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/KeywordLookup.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/LexerUnicodePropertyTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/Lexer.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/MapConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/NumberConstructor.lut.h
@@ -84,6 +85,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainMonthDayConstru
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainMonthDayPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainTimeConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainTimePrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainYearMonthConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainYearMonthPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalTimeZoneConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalTimeZonePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/UnicodePatternTables.h
@@ -109,6 +112,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyRuntimeErrorConst
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyRuntimeErrorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyStructConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyStructPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblySuspendErrorConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblySuspendErrorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyTableConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyTablePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyTagConstructor.lut.h

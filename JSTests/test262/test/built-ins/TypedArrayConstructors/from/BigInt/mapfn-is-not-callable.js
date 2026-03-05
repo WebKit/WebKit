@@ -10,7 +10,7 @@ info: |
   3. If mapfn was supplied and mapfn is not undefined, then
     a. If IsCallable(mapfn) is false, throw a TypeError exception.
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, Symbol.iterator, TypedArray]
 ---*/
 
@@ -56,4 +56,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     getIterator, 0,
     "IsCallable(mapfn) check occurs before getting source[@@iterator]"
   );
-});
+}, null, ["passthrough"]);

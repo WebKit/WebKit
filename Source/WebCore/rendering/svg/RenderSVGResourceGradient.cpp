@@ -23,15 +23,15 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceGradientInlines.h"
 #include "RenderSVGShape.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceGradient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceGradient);
 
 RenderSVGResourceGradient::RenderSVGResourceGradient(Type type, SVGElement& element, RenderStyle&& style)
-    : RenderSVGResourcePaintServer(type, element, WTFMove(style))
+    : RenderSVGResourcePaintServer(type, element, WTF::move(style))
 {
 }
 
@@ -39,11 +39,12 @@ RenderSVGResourceGradient::~RenderSVGResourceGradient() = default;
 
 GradientColorStops RenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const RenderStyle& style) const
 {
-    if (!style.hasAppleColorFilter())
+    if (style.appleColorFilter().isNone())
         return stops;
 
-    return stops.mapColors([&] (auto& color) {
-        return style.colorByApplyingColorFilter(color);
+    Style::ColorResolver colorResolver { style };
+    return stops.mapColors([&](auto& color) {
+        return colorResolver.colorApplyingColorFilter(color);
     });
 }
 
@@ -61,6 +62,20 @@ GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(
 
     ASSERT_NOT_REACHED();
     return GradientSpreadMethod::Pad;
+}
+
+ColorInterpolationMethod RenderSVGResourceGradient::gradientColorInterpolationMethod() const
+{
+    switch (style().colorInterpolation()) {
+    case ColorInterpolation::Auto:
+    case ColorInterpolation::SRGB:
+        return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
+    case ColorInterpolation::LinearRGB:
+        return { ColorInterpolationMethod::SRGBLinear { }, AlphaPremultiplication::Unpremultiplied };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
 }
 
 bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObject& targetRenderer, const RenderStyle& style, AffineTransform& userspaceTransform)
@@ -83,7 +98,10 @@ bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObje
         userspaceTransform.scale(objectBoundingBox.size());
     }
 
-    if (auto gradientTransform = this->gradientTransform(); !gradientTransform.isIdentity())
+    auto gradientTransform = this->gradientTransform();
+    if (!gradientTransform.isInvertible())
+        return false;
+    if (!gradientTransform.isIdentity())
         userspaceTransform.multiply(gradientTransform);
 
     return true;

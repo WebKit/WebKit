@@ -28,6 +28,7 @@ typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
 [
     Conditional=WEBXR_LAYERS&WEBGPU,
     EnabledBySetting=WebXRWebGPUBindingsEnabled,
+    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XRGPUProjectionLayerInit {
     required GPUTextureFormat colorFormat;
     GPUTextureFormat? depthStencilFormat;

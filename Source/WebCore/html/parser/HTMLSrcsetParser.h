@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <wtf/Function.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/text/StringView.h>
 

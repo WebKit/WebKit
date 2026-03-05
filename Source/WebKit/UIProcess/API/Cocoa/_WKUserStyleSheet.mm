@@ -66,7 +66,7 @@
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKUserStyleSheet.class, self))
         return;
 
-    _userStyleSheet->~UserStyleSheet();
+    SUPPRESS_UNRETAINED_ARG _userStyleSheet->~UserStyleSheet();
 
     [super dealloc];
 }

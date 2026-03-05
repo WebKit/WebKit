@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEConvolveMatrixElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEConvolveMatrixElement);
 
 inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -79,7 +79,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
             Ref { m_orderY }->setBaseValInternal(result->second);
 
             if (result->first < 1 || result->second < 1)
-                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+                protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         }
         break;
     }
@@ -88,7 +88,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         if (propertyValue != EdgeModeType::Unknown)
             Ref { m_edgeMode }->setBaseValInternal<EdgeModeType>(propertyValue);
         else
-            protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
     }
     case AttributeNames::kernelMatrixAttr:
@@ -102,7 +102,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
             Ref { m_divisor }->setBaseValInternal(*result);
 
             if (*result <= 0)
-                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+                protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         }
         break;
     }
@@ -125,7 +125,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
             Ref { m_kernelUnitLengthY }->setBaseValInternal(result->second);
 
             if (result->first < 0 || result->second < 0)
-                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+                protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         }
         break;
     }
@@ -135,7 +135,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         else if (newValue == falseAtom())
             Ref { m_preserveAlpha }->setBaseValInternal(false);
         else
-            protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing preserveAlphaAttr=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing preserveAlphaAttr=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
     default:
         break;
@@ -275,14 +275,14 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const Filter
     if (order.isEmpty())
         return nullptr;
 
-    auto& kernelMatrix = this->kernelMatrix();
+    Ref kernelMatrix = this->kernelMatrix();
 
     // The spec says this is a requirement, and should bail out if fails
-    if (order.unclampedArea() != kernelMatrix.length())
+    if (order.unclampedArea() != kernelMatrix->length())
         return nullptr;
 
     // Spec says the specified divisor cannot be 0.
-    auto divisor = filterDivisor(kernelMatrix);
+    auto divisor = filterDivisor(kernelMatrix.get());
     if (!divisor)
         return nullptr;
 
@@ -295,7 +295,7 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const Filter
     if (kernelUnitLength.isEmpty())
         return nullptr;
 
-    return FEConvolveMatrix::create(order, divisor, bias(), target, edgeMode(), FloatPoint(kernelUnitLength), preserveAlpha(), kernelMatrix);
+    return FEConvolveMatrix::create(order, divisor, bias(), target, edgeMode(), FloatPoint(kernelUnitLength), preserveAlpha(), kernelMatrix.get());
 }
 
 } // namespace WebCore

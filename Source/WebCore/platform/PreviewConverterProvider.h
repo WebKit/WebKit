@@ -25,20 +25,11 @@
 
 #pragma once
 
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-struct PreviewConverterProvider;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PreviewConverterProvider> : std::true_type { };
-}
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
-struct PreviewConverterProvider : CanMakeWeakPtr<PreviewConverterProvider> {
+struct PreviewConverterProvider : AbstractRefCountedAndCanMakeWeakPtr<PreviewConverterProvider> {
     virtual ~PreviewConverterProvider() = default;
 
     virtual void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(Ref<FragmentedSharedBuffer>&&)>&&) = 0;

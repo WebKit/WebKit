@@ -122,7 +122,7 @@ static RetainPtr<NSUUID> uuidFromPushPartition(NSString *pushPartition)
         return nil;
     }
 
-    result.coreNotificationData = WTFMove(notificationData);
+    result.coreNotificationData = WTF::move(notificationData);
 
     return result;
 #else
@@ -148,7 +148,7 @@ static RetainPtr<NSUUID> uuidFromPushPartition(NSString *pushPartition)
 #if PLATFORM(IOS)
     RetainPtr<NSString> taskName;
     if (_webClipIdentifier)
-        taskName = adoptNS([[NSString alloc] initWithFormat:@"%@ for %@", self._nameForBackgroundTaskAndLogging, _webClipIdentifier]);
+        taskName = adoptNS([[NSString alloc] initWithFormat:@"%@ for %@", self._nameForBackgroundTaskAndLogging, protect(_webClipIdentifier).get()]);
     else
         taskName = adoptNS([[NSString alloc] initWithFormat:@"%@", self._nameForBackgroundTaskAndLogging]);
 

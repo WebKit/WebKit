@@ -64,7 +64,7 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
 
     IDBIndex index(DOMString name);
 
-    [NewObject] IDBIndex createIndex(DOMString name, (DOMString or sequence<DOMString>) keyPath, optional IDBIndexParameters options);
+    [NewObject] IDBIndex createIndex(DOMString name, (DOMString or sequence<DOMString>) keyPath, optional IDBIndexParameters options = {});
     undefined deleteIndex(DOMString name);
 };
 

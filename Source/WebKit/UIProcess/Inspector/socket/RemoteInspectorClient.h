@@ -70,8 +70,8 @@ public:
         String url;
     };
 
-    const HashMap<ConnectionID, Vector<Target>>& targets() const { return m_targets; }
-    const String& backendCommandsURL() const { return m_backendCommandsURL; }
+    const HashMap<ConnectionID, Vector<Target>>& targets() const LIFETIME_BOUND { return m_targets; }
+    const String& backendCommandsURL() const LIFETIME_BOUND { return m_backendCommandsURL; }
 
     void inspect(ConnectionID, TargetID, Inspector::DebuggableType);
     void sendMessageToBackend(ConnectionID, TargetID, const String&);

@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE)
 
-#include <WebCore/SerializedPlatformDataCue.h>
-#include <WebCore/SerializedPlatformDataCueValue.h>
+#include "SerializedPlatformDataCue.h"
+#include "SerializedPlatformDataCueValue.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {

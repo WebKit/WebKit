@@ -27,7 +27,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |   Type = 14   |Reserved     |T|      Length = 4               |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int ShutdownCompleteChunk::kType;
 
 std::optional<ShutdownCompleteChunk> ShutdownCompleteChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

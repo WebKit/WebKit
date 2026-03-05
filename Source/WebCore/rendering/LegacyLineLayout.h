@@ -64,7 +64,7 @@ public:
     LegacyRootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     void addOverflowFromInlineChildren();
 
-    size_t lineCount() const;
+    size_t NODELETE lineCount() const;
 
     static void appendRunsForObject(BidiRunList<BidiRun>*, int start, int end, RenderObject&, InlineBidiResolver&);
 
@@ -82,8 +82,8 @@ private:
     void layoutRunsAndFloats(bool hasInlineChild);
     void layoutRunsAndFloatsInRange(InlineBidiResolver&);
 
-    const RenderStyle& style() const;
-    const LocalFrameViewLayoutContext& layoutContext() const;
+    const RenderStyle& NODELETE style() const;
+    const LocalFrameViewLayoutContext& NODELETE layoutContext() const;
 
     RenderBlockFlow& m_flow;
     std::unique_ptr<LegacyRootInlineBox> m_legacyRootInlineBox;

@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include "Blob.h"
+#include "FileSystemWriteCommandType.h"
+#include "WritableStream.h"
 #include <JavaScriptCore/ArrayBufferView.h>
-#include <WebCore/Blob.h>
-#include <WebCore/FileSystemWriteCommandType.h>
-#include <WebCore/WritableStream.h>
 
 namespace WebCore {
 
@@ -39,15 +39,15 @@ public:
     static ExceptionOr<Ref<FileSystemWritableFileStream>> create(JSDOMGlobalObject&, Ref<WritableStreamSink>&&);
 
     using WriteCommandType = FileSystemWriteCommandType;
-    using DataVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
+    using DataVariant = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<Blob>, String>;
     struct WriteParams {
         WriteCommandType type;
         std::optional<uint64_t> size { };
         std::optional<uint64_t> position { };
-        std::optional<DataVariant> data { RefPtr<JSC::ArrayBufferView> { nullptr } };
+        std::optional<std::optional<DataVariant>> data { };
     };
 
-    using ChunkType = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String, WriteParams>;
+    using ChunkType = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<Blob>, String, WriteParams>;
     void write(JSC::JSGlobalObject&, const ChunkType&, DOMPromiseDeferred<void>&&);
     void seek(JSC::JSGlobalObject&, uint64_t position, DOMPromiseDeferred<void>&&);
     void truncate(JSC::JSGlobalObject&, uint64_t size, DOMPromiseDeferred<void>&&);

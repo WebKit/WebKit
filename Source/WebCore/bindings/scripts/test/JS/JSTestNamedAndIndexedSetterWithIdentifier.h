@@ -32,7 +32,7 @@ public:
     static JSTestNamedAndIndexedSetterWithIdentifier* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedAndIndexedSetterWithIdentifier>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSTestNamedAndIndexedSetterWithIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedAndIndexedSetterWithIdentifier>(vm)) JSTestNamedAndIndexedSetterWithIdentifier(structure, *globalObject, WTFMove(impl));
+        JSTestNamedAndIndexedSetterWithIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedAndIndexedSetterWithIdentifier>(vm)) JSTestNamedAndIndexedSetterWithIdentifier(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -93,10 +93,8 @@ inline void* wrapperKey(TestNamedAndIndexedSetterWithIdentifier* wrappableObject
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNamedAndIndexedSetterWithIdentifier&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedAndIndexedSetterWithIdentifier* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestNamedAndIndexedSetterWithIdentifier>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedAndIndexedSetterWithIdentifier& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestNamedAndIndexedSetterWithIdentifier>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestNamedAndIndexedSetterWithIdentifier> {
     using WrapperClass = JSTestNamedAndIndexedSetterWithIdentifier;

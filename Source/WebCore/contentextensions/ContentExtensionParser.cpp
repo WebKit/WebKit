@@ -184,7 +184,7 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
             auto list = listReader(*array);
             if (!list.has_value())
                 return list.error();
-            trigger.conditions = WTFMove(list.value());
+            trigger.conditions = WTF::move(list.value());
             if (trigger.conditions.isEmpty())
                 return ContentExtensionError::JSONInvalidConditionList;
             trigger.flags |= static_cast<ResourceFlags>(actionCondition);
@@ -260,7 +260,7 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
             return makeUnexpected(ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
         if (!isValidCSSSelector(selectorString))
             return std::nullopt; // Skip rules with invalid selectors to be backwards-compatible.
-        return Action { CSSDisplayNoneSelectorAction { { WTFMove(selectorString) } } };
+        return Action { CSSDisplayNoneSelectorAction { { WTF::move(selectorString) } } };
     }
     if (actionType == "make-https"_s)
         return Action { MakeHTTPSAction() };
@@ -268,19 +268,19 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
         String notification = actionObject->getString("notification"_s);
         if (!notification)
             return makeUnexpected(ContentExtensionError::JSONInvalidNotification);
-        return Action { NotifyAction { { WTFMove(notification) } } };
+        return Action { NotifyAction { { WTF::move(notification) } } };
     }
     if (actionType == "redirect"_s) {
         auto action = RedirectAction::parse(*actionObject, urlFilter);
         if (!action)
             return makeUnexpected(action.error());
-        return Action { RedirectAction { WTFMove(*action) } };
+        return Action { RedirectAction { WTF::move(*action) } };
     }
     if (actionType == "modify-headers"_s) {
         auto action = ModifyHeadersAction::parse(*actionObject);
         if (!action)
             return makeUnexpected(action.error());
-        return Action { WTFMove(*action) };
+        return Action { WTF::move(*action) };
     }
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }
@@ -297,7 +297,7 @@ static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(c
     if (!action->has_value())
         return makeUnexpected(action->error());
 
-    return { { { WTFMove(trigger.value()), WTFMove(action->value()) } } };
+    return { { { WTF::move(trigger.value()), WTF::move(action->value()) } } };
 }
 
 static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRuleIdentifier(const JSON::Object& ruleObject)
@@ -316,7 +316,7 @@ static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRuleId
     if (!trigger.has_value())
         return makeUnexpected(trigger.error());
 
-    return { { { WTFMove(trigger.value()), Action { ReportIdentifierAction { rulesetIdentifier, identifier.value() } } } } };
+    return { { { WTF::move(trigger.value()), Action { ReportIdentifierAction { rulesetIdentifier, identifier.value() } } } } };
 }
 
 static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON, CSSSelectorsAllowed selectorsAllowed)
@@ -345,14 +345,14 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
             continue;
         if (!rule->has_value())
             return makeUnexpected(rule->error());
-        ruleList.append(WTFMove(rule->value()));
+        ruleList.append(WTF::move(rule->value()));
 
         auto ruleIdentifier = loadRuleIdentifier(*ruleObject);
         if (!ruleIdentifier)
             continue;
         if (!ruleIdentifier->has_value())
             return makeUnexpected(ruleIdentifier->error());
-        ruleList.append(WTFMove(ruleIdentifier->value()));
+        ruleList.append(WTF::move(ruleIdentifier->value()));
     }
 
     return ruleList;

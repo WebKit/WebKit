@@ -29,6 +29,7 @@
 
 #include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/SIMDUTF.h>
 #include <wtf/text/StringHasherInlines.h>
 #include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -128,6 +129,26 @@ template<Replacement replacement = Replacement::None, typename SourceCharacterTy
 
 ConversionResult<char8_t> convert(std::span<const char16_t> source, std::span<char8_t> buffer)
 {
+#if CPU(BIG_ENDIAN)
+    size_t requiredLength = simdutf::utf8_length_from_utf16be(source.data(), source.size());
+#else
+    size_t requiredLength = simdutf::utf8_length_from_utf16le(source.data(), source.size());
+#endif
+
+    if (buffer.size() < requiredLength)
+        return convertInternal(source, buffer);
+
+#if CPU(BIG_ENDIAN)
+    auto result = simdutf::convert_utf16be_to_utf8_with_errors(source.data(), source.size(), reinterpret_cast<char*>(buffer.data()));
+#else
+    auto result = simdutf::convert_utf16le_to_utf8_with_errors(source.data(), source.size(), reinterpret_cast<char*>(buffer.data()));
+#endif
+
+    if (result.error == simdutf::error_code::SUCCESS) {
+        bool isAllASCII = result.count == source.size();
+        return { ConversionResultCode::Success, buffer.first(result.count), isAllASCII };
+    }
+
     return convertInternal(source, buffer);
 }
 

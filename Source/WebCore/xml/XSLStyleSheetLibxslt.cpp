@@ -228,9 +228,9 @@ void XSLStyleSheet::loadChildSheets()
 
 void XSLStyleSheet::loadChildSheet(const String& href)
 {
-    auto childRule = makeUnique<XSLImportRule>(*this, href);
-    m_children.append(childRule.release());
-    m_children.last()->loadSheet();
+    Ref rule = XSLImportRule::create(*this, href);
+    m_children.append(rule.copyRef());
+    rule->loadSheet();
 }
 
 xsltStylesheetPtr XSLStyleSheet::compileStyleSheet()

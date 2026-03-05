@@ -49,11 +49,11 @@ void bn_big_endian_to_words(BN_ULONG *out, size_t out_len, const uint8_t *in,
 }
 
 BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
-  BIGNUM *bn = NULL;
-  if (ret == NULL) {
+  BIGNUM *bn = nullptr;
+  if (ret == nullptr) {
     bn = BN_new();
-    if (bn == NULL) {
-      return NULL;
+    if (bn == nullptr) {
+      return nullptr;
     }
     ret = bn;
   }
@@ -66,7 +66,7 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   size_t num_words = ((len - 1) / BN_BYTES) + 1;
   if (!bn_wexpand(ret, num_words)) {
     BN_free(bn);
-    return NULL;
+    return nullptr;
   }
 
   // |bn_wexpand| must check bounds on |num_words| to write it into
@@ -80,11 +80,11 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
 }
 
 BIGNUM *BN_lebin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
-  BIGNUM *bn = NULL;
-  if (ret == NULL) {
+  BIGNUM *bn = nullptr;
+  if (ret == nullptr) {
     bn = BN_new();
-    if (bn == NULL) {
-      return NULL;
+    if (bn == nullptr) {
+      return nullptr;
     }
     ret = bn;
   }
@@ -99,7 +99,7 @@ BIGNUM *BN_lebin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   size_t num_words = ((len - 1) / BN_BYTES) + 1;
   if (!bn_wexpand(ret, num_words)) {
     BN_free(bn);
-    return NULL;
+    return nullptr;
   }
   ret->width = (int)num_words;
 

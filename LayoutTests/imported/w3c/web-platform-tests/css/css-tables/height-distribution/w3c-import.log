@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/height-distribution/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/height-distribution/computing-row-measure-0.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/height-distribution/computing-row-measure-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/height-distribution/extra-height-given-to-all-row-groups-001-expected.xht

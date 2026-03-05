@@ -84,7 +84,9 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::MaxConstantBufferSize, 64 * 1024},
         {cl::DeviceInfo::SingleFpConfig, singleFPConfig},
         {cl::DeviceInfo::AtomicMemoryCapabilities,
-         CL_DEVICE_ATOMIC_ORDER_RELAXED | CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP},
+         CL_DEVICE_ATOMIC_ORDER_RELAXED | CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP |
+             CL_DEVICE_ATOMIC_ORDER_ACQ_REL | CL_DEVICE_ATOMIC_SCOPE_DEVICE |
+             CL_DEVICE_ATOMIC_ORDER_SEQ_CST},
         // TODO (http://anglebug.com/379669750) Add these based on the Vulkan features query
         {cl::DeviceInfo::AtomicFenceCapabilities, CL_DEVICE_ATOMIC_ORDER_RELAXED |
                                                       CL_DEVICE_ATOMIC_ORDER_ACQ_REL |
@@ -116,7 +118,8 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
 
         // TODO(aannestrand) Update these hardcoded platform/device queries
         // http://anglebug.com/42266935
-        {cl::DeviceInfo::AddressBits, 32},
+        {cl::DeviceInfo::AddressBits,
+         mRenderer->getFeatures().supportsBufferDeviceAddress.enabled ? 64 : 32},
         {cl::DeviceInfo::EndianLittle, CL_TRUE},
         {cl::DeviceInfo::LocalMemType, CL_LOCAL},
         // TODO (http://anglebug.com/379669750) Vulkan reports a big sampler count number, we dont
@@ -226,6 +229,20 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     {
         versionedExtensionList.push_back(
             cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_external_memory"});
+
+        // cl_arm_import_memory is layered on top of cl_arm_import_memory
+        bool reportBaseArmImportMemString = false;
+        if (supportedHandles.test(cl::ExternalMemoryHandle::DmaBuf))
+        {
+            versionedExtensionList.push_back(cl_name_version{
+                .version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_arm_import_memory_dma_buf"});
+            reportBaseArmImportMemString = true;
+        }
+        if (reportBaseArmImportMemString)
+        {
+            versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(1, 11, 0),
+                                                             .name    = "cl_arm_import_memory"});
+        }
     }
     if (mRenderer->getFeatures().supportsShaderFloat16.enabled)
     {
@@ -259,6 +276,23 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
         versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(2, 0, 0),
                                                          .name    = "cl_khr_integer_dot_product"});
     }
+
+    // cl_khr_int64_base_atomics and cl_khr_int64_extended_atomics
+    if (mRenderer->getFeatures().supportsShaderAtomicInt64.enabled)
+    {
+        versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                                                         .name    = "cl_khr_int64_base_atomics"});
+        versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                                                         .name = "cl_khr_int64_extended_atomics"});
+    }
+
+    // cl_khr_depth_images
+    if (setupAndReportDepthImageSupport(info))
+    {
+        versionedExtensionList.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_depth_images"});
+    }
+
     info.initializeVersionedExtensions(std::move(versionedExtensionList));
 
     if (!mRenderer->getFeatures().supportsUniformBufferStandardLayout.enabled)
@@ -292,6 +326,13 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
             cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
                             .name    = "__opencl_c_integer_dot_product_input_4x8bit_packed"});
     }
+
+    info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                                                     .name    = "__opencl_c_atomic_order_acq_rel"});
+    info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                                                     .name    = "__opencl_c_atomic_order_seq_cst"});
+    info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                                                     .name    = "__opencl_c_atomic_scope_device"});
 
     return info;
 }
@@ -459,6 +500,40 @@ CLDeviceVk::getIntegerDotProductAccelerationProperties4x8BitPacked() const
             .integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated;
 
     return integerDotProductAccelerationProperties;
+}
+
+bool CLDeviceVk::setupAndReportDepthImageSupport(Info &info) const
+{
+    if (IsNvidia(getRenderer()->getPhysicalDeviceProperties().vendorID))
+    {
+        // TODO(aannestrand) CTS validation issue with (cl_copy_images.2D use_pitches) on nvidia
+        // platform, disable its cl_khr_depth_images support for now
+        // http://anglebug.com/472472687
+        return false;
+    }
+
+    constexpr VkFlags kDepthFeatures =
+        VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
+    // for reporting the extension string, we only need CL_FLOAT and CL_UNORM_INT16
+    // https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#minimum-list-of-supported-image-formats
+    CLExtensions::SupportedDepthOrderTypes minimumDepthOrderTypeSupport;
+    minimumDepthOrderTypeSupport.set(cl::ImageChannelType::Float);
+    minimumDepthOrderTypeSupport.set(cl::ImageChannelType::UnormInt16);
+
+    for (const cl::ImageChannelType imageChannelType : angle::AllEnums<cl::ImageChannelType>())
+    {
+        angle::FormatID format = angle::Format::CLDEPTHFormatToID(cl::ToCLenum(imageChannelType));
+        if (format != angle::FormatID::NONE &&
+            mRenderer->hasImageFormatFeatureBits(format, kDepthFeatures))
+        {
+            info.supportedDepthOrderTypes.set(imageChannelType);
+        }
+    }
+
+    // check/return-true if the minimum support is there
+    return (info.supportedDepthOrderTypes & minimumDepthOrderTypeSupport) ==
+           minimumDepthOrderTypeSupport;
 }
 
 }  // namespace rx

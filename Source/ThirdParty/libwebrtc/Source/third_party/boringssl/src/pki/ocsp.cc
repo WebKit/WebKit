@@ -309,7 +309,7 @@ bool ParseOCSPResponseData(der::Input raw_tlv, OCSPResponseData *out) {
     return false;
   }
 
-  // For compatibilty, we ignore the restriction from X.690 Section 11.5 that
+  // For compatibility, we ignore the restriction from X.690 Section 11.5 that
   // DEFAULT values should be omitted for values equal to the default value.
   // TODO: Add warning about non-strict parsing.
   if (version_present) {
@@ -847,7 +847,7 @@ OCSPRevocationStatus GetRevocationStatusForCert(
     }
 
     // The SingleResponse matches the certificate, but may be out of date. Out
-    // of date responses are noted seperate from responses with mismatched
+    // of date responses are noted separate from responses with mismatched
     // serial numbers. If an OCSP responder provides both an up to date
     // response and an expired response, the up to date response takes
     // precedence (PROVIDED > INVALID_DATE).

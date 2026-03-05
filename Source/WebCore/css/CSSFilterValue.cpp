@@ -37,12 +37,12 @@ namespace WebCore {
 
 Ref<CSSFilterValue> CSSFilterValue::create(CSS::Filter filter)
 {
-    return adoptRef(*new CSSFilterValue(WTFMove(filter)));
+    return adoptRef(*new CSSFilterValue(WTF::move(filter)));
 }
 
 CSSFilterValue::CSSFilterValue(CSS::Filter filter)
     : CSSValue(ClassType::Filter)
-    , m_filter(WTFMove(filter))
+    , m_filter(WTF::move(filter))
 {
 }
 
@@ -79,7 +79,7 @@ Ref<DeprecatedCSSOMValue> CSSFilterValue::createDeprecatedCSSOMWrapper(CSSStyleD
                 );
             });
 
-            return DeprecatedCSSOMValueList::create(WTFMove(values), CSSValue::SpaceSeparator, owner);
+            return DeprecatedCSSOMValueList::create(WTF::move(values), CSSValue::SpaceSeparator, owner);
         }
     );
 }

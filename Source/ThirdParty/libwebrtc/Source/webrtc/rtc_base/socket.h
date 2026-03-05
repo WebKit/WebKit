@@ -15,11 +15,14 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <utility>
 
+#include "absl/functional/any_invocable.h"
 #include "api/transport/ecn_marking.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/sigslot_trampoline.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
@@ -161,14 +164,43 @@ class RTC_EXPORT Socket {
   sigslot::signal1<Socket*, sigslot::multi_threaded_local> SignalReadEvent;
   // ready to write
   sigslot::signal1<Socket*, sigslot::multi_threaded_local> SignalWriteEvent;
-  sigslot::signal1<Socket*> SignalConnectEvent;     // connected
+  sigslot::signal1<Socket*> SignalConnectEvent;  // connected
+  void SubscribeConnectEvent(void* tag,
+                             absl::AnyInvocable<void(Socket*)> callback) {
+    connect_event_trampoline_.Subscribe(tag, std::move(callback));
+  }
+  void UnsubscribeConnectEvent(void* tag) {
+    connect_event_trampoline_.Unsubscribe(tag);
+  }
+  void SubscribeConnectEvent(absl::AnyInvocable<void(Socket*)> callback) {
+    connect_event_trampoline_.Subscribe(std::move(callback));
+  }
+  void NotifyConnectEvent(Socket* socket) { SignalConnectEvent(socket); }
+
   sigslot::signal2<Socket*, int> SignalCloseEvent;  // closed
+  void SubscribeCloseEvent(void* tag,
+                           absl::AnyInvocable<void(Socket*, int)> callback) {
+    close_event_trampoline_.Subscribe(tag, std::move(callback));
+  }
+  void UnsubscribeCloseEvent(void* tag) {
+    close_event_trampoline_.Unsubscribe(tag);
+  }
+  void SubscribeCloseEvent(absl::AnyInvocable<void(Socket*, int)> callback) {
+    close_event_trampoline_.Subscribe(std::move(callback));
+  }
+  void NotifyCloseEvent(Socket* socket, int error) {
+    SignalCloseEvent(socket, error);
+  }
 
  protected:
-  Socket() {}
+  Socket() : connect_event_trampoline_(this), close_event_trampoline_(this) {}
+
+ private:
+  SignalTrampoline<Socket, &Socket::SignalConnectEvent>
+      connect_event_trampoline_;
+  SignalTrampoline<Socket, &Socket::SignalCloseEvent> close_event_trampoline_;
 };
 
 }  //  namespace webrtc
-
 
 #endif  // RTC_BASE_SOCKET_H_

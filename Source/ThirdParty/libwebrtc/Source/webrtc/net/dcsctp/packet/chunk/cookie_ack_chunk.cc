@@ -25,7 +25,6 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  |   Type = 11   |Chunk  Flags   |     Length = 4                |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-constexpr int CookieAckChunk::kType;
 
 std::optional<CookieAckChunk> CookieAckChunk::Parse(
     webrtc::ArrayView<const uint8_t> data) {

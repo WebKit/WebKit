@@ -47,7 +47,7 @@ static int dir_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
 static int new_dir(X509_LOOKUP *lu);
 static void free_dir(X509_LOOKUP *lu);
 static int add_cert_dir(BY_DIR *ctx, const char *dir, int type);
-static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
+static int get_cert_by_subject(X509_LOOKUP *xl, int type, const X509_NAME *name,
                                X509_OBJECT *ret);
 static const X509_LOOKUP_METHOD x509_dir_lookup = {
     new_dir,              // new
@@ -63,7 +63,7 @@ const X509_LOOKUP_METHOD *X509_LOOKUP_hash_dir(void) {
 static int dir_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
                     char **retp) {
   int ret = 0;
-  char *dir = NULL;
+  char *dir = nullptr;
 
   BY_DIR *ld = reinterpret_cast<BY_DIR *>(ctx->method_data);
 
@@ -91,10 +91,10 @@ static int dir_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
 static int new_dir(X509_LOOKUP *lu) {
   BY_DIR *a;
 
-  if ((a = (BY_DIR *)OPENSSL_malloc(sizeof(BY_DIR))) == NULL) {
+  if ((a = (BY_DIR *)OPENSSL_malloc(sizeof(BY_DIR))) == nullptr) {
     return 0;
   }
-  a->dirs = NULL;
+  a->dirs = nullptr;
   lu->method_data = a;
   return 1;
 }
@@ -113,7 +113,7 @@ static int by_dir_hash_cmp(const BY_DIR_HASH *const *a,
 }
 
 static void by_dir_entry_free(BY_DIR_ENTRY *ent) {
-  if (ent != NULL) {
+  if (ent != nullptr) {
     CRYPTO_MUTEX_cleanup(&ent->lock);
     OPENSSL_free(ent->dir);
     sk_BY_DIR_HASH_pop_free(ent->hashes, by_dir_hash_free);
@@ -123,7 +123,7 @@ static void by_dir_entry_free(BY_DIR_ENTRY *ent) {
 
 static void free_dir(X509_LOOKUP *lu) {
   BY_DIR *a = reinterpret_cast<BY_DIR *>(lu->method_data);
-  if (a != NULL) {
+  if (a != nullptr) {
     sk_BY_DIR_ENTRY_pop_free(a->dirs, by_dir_entry_free);
     OPENSSL_free(a);
   }
@@ -139,7 +139,7 @@ static int add_cert_dir(BY_DIR *ctx, const char *dir, int type) {
   size_t j, len;
   const char *s, *ss, *p;
 
-  if (dir == NULL || !*dir) {
+  if (dir == nullptr || !*dir) {
     OPENSSL_PUT_ERROR(X509, X509_R_INVALID_DIRECTORY);
     return 0;
   }
@@ -164,7 +164,7 @@ static int add_cert_dir(BY_DIR *ctx, const char *dir, int type) {
       if (j < sk_BY_DIR_ENTRY_num(ctx->dirs)) {
         continue;
       }
-      if (ctx->dirs == NULL) {
+      if (ctx->dirs == nullptr) {
         ctx->dirs = sk_BY_DIR_ENTRY_new_null();
         if (!ctx->dirs) {
           return 0;
@@ -179,7 +179,7 @@ static int add_cert_dir(BY_DIR *ctx, const char *dir, int type) {
       ent->dir_type = type;
       ent->hashes = sk_BY_DIR_HASH_new(by_dir_hash_cmp);
       ent->dir = OPENSSL_strndup(ss, len);
-      if (ent->dir == NULL || ent->hashes == NULL ||
+      if (ent->dir == nullptr || ent->hashes == nullptr ||
           !sk_BY_DIR_ENTRY_push(ctx->dirs, ent)) {
         by_dir_entry_free(ent);
         return 0;
@@ -189,7 +189,7 @@ static int add_cert_dir(BY_DIR *ctx, const char *dir, int type) {
   return 1;
 }
 
-static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
+static int get_cert_by_subject(X509_LOOKUP *xl, int type, const X509_NAME *name,
                                X509_OBJECT *ret) {
   bssl::UniquePtr<X509> lookup_cert;
   bssl::UniquePtr<X509_CRL> lookup_crl;
@@ -199,11 +199,11 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
   uint32_t h;
   uint32_t hash_array[2];
   int hash_index;
-  char *b = NULL;
+  char *b = nullptr;
   X509_OBJECT stmp, *tmp;
   const char *postfix = "";
 
-  if (name == NULL) {
+  if (name == nullptr) {
     return 0;
   }
 
@@ -246,13 +246,13 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
           hent = sk_BY_DIR_HASH_value(ent->hashes, idx);
           k = hent->suffix;
         } else {
-          hent = NULL;
+          hent = nullptr;
           k = 0;
         }
         CRYPTO_MUTEX_unlock_read(&ent->lock);
       } else {
         k = 0;
-        hent = NULL;
+        hent = nullptr;
       }
       for (;;) {
         OPENSSL_free(b);
@@ -283,7 +283,7 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
 
       // we have added it to the cache so now pull it out again
       CRYPTO_MUTEX_lock_write(&xl->store_ctx->objs_lock);
-      tmp = NULL;
+      tmp = nullptr;
       sk_X509_OBJECT_sort(xl->store_ctx->objs);
       if (sk_X509_OBJECT_find(xl->store_ctx->objs, &idx, &stmp)) {
         tmp = sk_X509_OBJECT_value(xl->store_ctx->objs, idx);
@@ -306,7 +306,7 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
         if (!hent) {
           hent = reinterpret_cast<BY_DIR_HASH *>(
               OPENSSL_malloc(sizeof(BY_DIR_HASH)));
-          if (hent == NULL) {
+          if (hent == nullptr) {
             CRYPTO_MUTEX_unlock_write(&ent->lock);
             ok = 0;
             goto finish;
@@ -327,7 +327,7 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
         CRYPTO_MUTEX_unlock_write(&ent->lock);
       }
 
-      if (tmp != NULL) {
+      if (tmp != nullptr) {
         ok = 1;
         ret->type = tmp->type;
         OPENSSL_memcpy(&ret->data, &tmp->data, sizeof(ret->data));
@@ -348,5 +348,5 @@ finish:
 }
 
 int X509_LOOKUP_add_dir(X509_LOOKUP *lookup, const char *name, int type) {
-  return X509_LOOKUP_ctrl(lookup, X509_L_ADD_DIR, name, type, NULL);
+  return X509_LOOKUP_ctrl(lookup, X509_L_ADD_DIR, name, type, nullptr);
 }

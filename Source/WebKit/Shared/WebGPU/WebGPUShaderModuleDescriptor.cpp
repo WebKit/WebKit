@@ -46,10 +46,10 @@ std::optional<ShaderModuleDescriptor> ConvertToBackingContext::convertToBacking(
         auto value = convertToBacking(hint.value);
         if (!value)
             return std::nullopt;
-        hints.append(makeKeyValuePair(hint.key, WTFMove(*value)));
+        hints.append(makeKeyValuePair(hint.key, WTF::move(*value)));
     }
 
-    return { { WTFMove(*base), shaderModuleDescriptor.code, WTFMove(hints) } };
+    return { { WTF::move(*base), shaderModuleDescriptor.code, WTF::move(hints) } };
 }
 
 std::optional<WebCore::WebGPU::ShaderModuleDescriptor> ConvertFromBackingContext::convertFromBacking(const ShaderModuleDescriptor& shaderModuleDescriptor)
@@ -64,10 +64,10 @@ std::optional<WebCore::WebGPU::ShaderModuleDescriptor> ConvertFromBackingContext
         auto value = convertFromBacking(hint.value);
         if (!value)
             return std::nullopt;
-        hints.append(makeKeyValuePair(hint.key, WTFMove(*value)));
+        hints.append(makeKeyValuePair(hint.key, WTF::move(*value)));
     }
 
-    return { { WTFMove(*base), shaderModuleDescriptor.code, WTFMove(hints) } };
+    return { { WTF::move(*base), shaderModuleDescriptor.code, WTF::move(hints) } };
 }
 
 } // namespace WebKit

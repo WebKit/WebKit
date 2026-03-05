@@ -36,30 +36,36 @@ namespace WTF {
 // ThreadSafeRefCounted. We would like to drop this class once Safer CPP Checking supports
 // suppression mechanism for the classes which cannot be handled well with the checker, or
 // the checker introduces a solution which works well with JSC::VM.
-class WTF_EMPTY_BASE_CLASS ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase : public RefCountDebugger {
+class WTF_EMPTY_BASE_CLASS ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase {
     WTF_MAKE_NONCOPYABLE(ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase);
 public:
     void refSuppressingSaferCPPChecking() const
     {
-        willRef(m_refCount, RefCountIsThreadSafe::Yes);
+        m_refCountDebugger.willRef(m_refCount);
         ++m_refCount;
     }
 
     bool hasOneRef() const { return m_refCount == 1; }
-    unsigned refCount() const { return m_refCount; }
+    uint32_t refCount() const { return m_refCount; }
+
+    // Debug APIs
+    void adopted() { m_refCountDebugger.adopted(); }
+    void relaxAdoptionRequirement() { m_refCountDebugger.relaxAdoptionRequirement(); }
+    void disableThreadingChecks() { m_refCountDebugger.disableThreadingChecks(); }
+    ThreadSafeRefCountDebugger& refCountDebugger() { return m_refCountDebugger; }
 
 protected:
     ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase()
     {
         // FIXME: Lots of subclasses violate our adoption requirements. Migrate
         // this call into only those subclasses that need it.
-        relaxAdoptionRequirement();
+        m_refCountDebugger.relaxAdoptionRequirement();
     }
 
     ~ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase()
     {
-        willDestroy(m_refCount);
+        m_refCountDebugger.willDestroy(m_refCount);
         // FIXME: Test performance, then change this to RELEASE_ASSERT.
         ASSERT(m_refCount == 1);
     }
@@ -67,10 +73,10 @@ protected:
     // Returns true if the pointer should be freed.
     bool derefBase() const
     {
-        willDeref(m_refCount, RefCountIsThreadSafe::Yes);
+        m_refCountDebugger.willDeref(m_refCount);
 
         if (!--m_refCount) [[unlikely]] {
-            willDelete();
+            m_refCountDebugger.willDelete();
 
             m_refCount = 1;
             return true;
@@ -80,7 +86,8 @@ protected:
     }
 
 private:
-    mutable std::atomic<unsigned> m_refCount { 1 };
+    mutable std::atomic<uint32_t> m_refCount { 1 };
+    NO_UNIQUE_ADDRESS ThreadSafeRefCountDebugger m_refCountDebugger;
 };
 
 template<class T, DestructionThread destructionThread = DestructionThread::Any> class ThreadSafeRefCountedWithSuppressingSaferCPPChecking : public ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase {
@@ -106,6 +113,13 @@ public:
             STATIC_ASSERT_NOT_REACHED_FOR_VALUE(destructionThread, "Unexpected destructionThread enumerator value");
     }
 } SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+
+inline void adopted(ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase* object)
+{
+    if (!object)
+        return;
+    object->adopted();
+}
 
 } // namespace WTF
 

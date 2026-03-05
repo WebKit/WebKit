@@ -323,14 +323,10 @@ static Float16 readFloat16(const std::span<const uint8_t>& span8, size_t offset)
 {
     union {
         Float16 float16 { };
-        uint8_t bytes[sizeof(Float16)];
+        std::array<uint8_t, sizeof(Float16)> bytes;
     } float16OrBytesUnion;
-    for (size_t i = 0; i < sizeof(Float16); ++i) {
-        auto u8 = span8[offset + i];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        float16OrBytesUnion.bytes[i] = u8;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    }
+    for (size_t i = 0; i < sizeof(Float16); ++i)
+        float16OrBytesUnion.bytes[i] = span8[offset + i];
     return float16OrBytesUnion.float16;
 }
 
@@ -338,14 +334,10 @@ static void writeFloat16(Float16 f16, const std::span<uint8_t>& spanFloat16, siz
 {
     union {
         Float16 float16 { };
-        uint8_t bytes[sizeof(Float16)];
+        std::array<uint8_t, sizeof(Float16)> bytes;
     } float16OrBytesUnion(f16);
-    for (size_t i = 0; i < sizeof(Float16); ++i) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        auto u8 = float16OrBytesUnion.bytes[i];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-        spanFloat16[offset + i] = u8;
-    }
+    for (size_t i = 0; i < sizeof(Float16); ++i)
+        spanFloat16[offset + i] = float16OrBytesUnion.bytes[i];
 }
 
 static void convertImagePixelsFromFloat16ToFloat16(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
@@ -385,14 +377,10 @@ static void convertImagePixelsFromFloat16ToFloat16(const ConstPixelBufferConvers
             static_assert(sizeof(Pixel16) == 4 * sizeof(Float16));
             union {
                 Pixel16 pixel16 { };
-                uint8_t bytes[sizeof(Pixel16)];
+                std::array<uint8_t, sizeof(Pixel16)> bytes;
             } pixel16OrBytesUnion;
-            for (size_t byte = 0; byte < sizeof(Pixel16); ++byte) {
-                auto value = source.rows[sourceRowStartOffset + offset + byte];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                pixel16OrBytesUnion.bytes[byte] = value;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-            }
+            for (size_t byte = 0; byte < sizeof(Pixel16); ++byte)
+                pixel16OrBytesUnion.bytes[byte] = source.rows[sourceRowStartOffset + offset + byte];
             if (source.format.alphaFormat != destination.format.alphaFormat) {
                 if (source.format.alphaFormat == AlphaPremultiplication::Unpremultiplied && destination.format.alphaFormat == AlphaPremultiplication::Premultiplied) {
                     auto fa = float(pixel16OrBytesUnion.pixel16.a);
@@ -408,12 +396,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 } else
                     RELEASE_ASSERT_NOT_REACHED();
             }
-            for (size_t byte = 0; byte < sizeof(Pixel16); ++byte) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                auto value = pixel16OrBytesUnion.bytes[byte];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-                destination.rows[destinationRowStartOffset + offset + byte] = value;
-            }
+            for (size_t byte = 0; byte < sizeof(Pixel16); ++byte)
+                destination.rows[destinationRowStartOffset + offset + byte] = pixel16OrBytesUnion.bytes[byte];
             offset += sizeof(Pixel16);
         }
         sourceRowStartOffset += source.bytesPerRow;

@@ -19,13 +19,13 @@
 #include "api/rtp_headers.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/color_space.h"
+#include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame_metadata.h"
 #include "api/video/video_frame_type.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
-#include "common_video/frame_instrumentation_data.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
@@ -97,9 +97,7 @@ struct RTPVideoHeader {
   std::optional<AbsoluteCaptureTime> absolute_capture_time;
 
   // Required for automatic corruption detection.
-  std::optional<
-      std::variant<FrameInstrumentationSyncData, FrameInstrumentationData>>
-      frame_instrumentation_data;
+  std::optional<FrameInstrumentationData> frame_instrumentation_data;
 };
 
 }  // namespace webrtc

@@ -76,8 +76,8 @@ private:
         WeakHashSet<WebPage> pageSet;
         WeakHashSet<WebPage> highAccuracyPageSet;
     };
-    bool isUpdating(const PageSets&) const;
-    bool isHighAccuracyEnabled(const PageSets&) const;
+    bool NODELETE isUpdating(const PageSets&) const;
+    bool NODELETE isHighAccuracyEnabled(const PageSets&) const;
 
     const CheckedRef<WebProcess> m_process;
     HashMap<WebCore::RegistrableDomain, PageSets> m_pageSets;

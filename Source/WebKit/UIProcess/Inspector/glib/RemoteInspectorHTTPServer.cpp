@@ -33,6 +33,7 @@
 #include <wtf/URL.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CStringView.h>
 
 namespace WebKit {
 
@@ -85,15 +86,12 @@ const String& RemoteInspectorHTTPServer::inspectorServerAddress() const
 
 unsigned RemoteInspectorHTTPServer::handleRequest(const char* path, SoupMessageHeaders* responseHeaders, SoupMessageBody* responseBody) const
 {
-    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
-    if (g_str_equal(path, "/")) {
-        auto* html = m_client->buildTargetListPage(RemoteInspectorClient::InspectorType::HTTP);
+    if (CStringView::unsafeFromUTF8(path) == "/"_s) {
+        auto html = m_client->buildTargetListPage(RemoteInspectorClient::InspectorType::HTTP).toString().utf8();
         soup_message_headers_append(responseHeaders, "Content-Type", "text/html");
-        gsize bodyLength = html->len;
-        soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, g_string_free(html, FALSE), bodyLength);
+        soup_message_body_append(responseBody, SOUP_MEMORY_COPY, html.data(), html.length());
         return SOUP_STATUS_OK;
     }
-    IGNORE_CLANG_WARNINGS_END
 
     GUniquePtr<char> resourcePath(g_build_filename("/org/webkit/inspector/UserInterface", path, nullptr));
 

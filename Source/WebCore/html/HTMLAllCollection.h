@@ -25,6 +25,25 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class HTMLAllCollection;
+class HTMLAllNamedSubCollection;
+
+template<>
+struct CollectionClassTraits<HTMLAllCollection> {
+    static constexpr CollectionType collectionType = CollectionType::DocAll;
+};
+
+template<>
+struct CollectionClassTraits<HTMLAllNamedSubCollection> {
+    static constexpr CollectionType collectionType = CollectionType::DocumentAllNamedItems;
+};
+
+} // namespace WebCore
+
 #include "AllDescendantsCollection.h"
 
 namespace WebCore {
@@ -33,16 +52,16 @@ class HTMLAllCollection final : public AllDescendantsCollection {
 public:
     static Ref<HTMLAllCollection> create(Document&, CollectionType);
 
-    std::optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const;
-    std::optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> namedItemOrItems(const AtomString&) const;
+    std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const;
+    std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> namedItemOrItems(const AtomString&) const;
 
 private:
     HTMLAllCollection(Document&, CollectionType);
 };
 static_assert(sizeof(HTMLAllCollection) == sizeof(AllDescendantsCollection));
 
-class HTMLAllNamedSubCollection final : public CachedHTMLCollection<HTMLAllNamedSubCollection, CollectionTraversalType::Descendants> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAllNamedSubCollection);
+class HTMLAllNamedSubCollection final : public CachedHTMLCollection<HTMLAllNamedSubCollection> {
+    WTF_MAKE_TZONE_ALLOCATED(HTMLAllNamedSubCollection);
 public:
     static Ref<HTMLAllNamedSubCollection> create(Document& document, CollectionType type, const AtomString& name)
     {
@@ -60,5 +79,5 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllCollection, CollectionType::DocAll)
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllNamedSubCollection, CollectionType::DocumentAllNamedItems)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllNamedSubCollection)

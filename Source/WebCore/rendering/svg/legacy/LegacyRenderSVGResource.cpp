@@ -3,7 +3,7 @@
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -44,6 +44,7 @@
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
         
         // But always use the initial fill paint server.
         LegacyRenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
-        colorResource->setColor(RenderStyle::initialFill().colorDisregardingType().resolvedColor());
+        colorResource->setColor(Style::ComputedStyle::initialFill().colorDisregardingType().resolvedColor());
         return colorResource;
     }
 
@@ -69,17 +70,20 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
     if (paint.isNone())
         return nullptr;
 
+    Style::ColorResolver colorResolver { style };
+
     Color color;
     if (auto paintColor = paint.tryAnyColor())
-        color = style.colorResolvingCurrentColor(*paintColor);
+        color = colorResolver.colorResolvingCurrentColor(*paintColor);
 
     if (style.insideLink() == InsideLink::InsideVisited) {
         // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
         auto& visitedPaint = applyToFill ? style.visitedLinkFill() : style.visitedLinkStroke();
 
-        // For `currentcolor`, 'color' already contains the 'visitedColor'.
-        if (auto visitedPaintColor = visitedPaint.tryColor(); visitedPaintColor && !visitedPaintColor->isCurrentColor()) {
-            if (auto visitedColor = style.colorResolvingCurrentColor(*visitedPaintColor); visitedColor.isValid())
+        if (auto visitedPaintColor = visitedPaint.tryColor()) {
+            if (visitedPaintColor->isCurrentColor())
+                color = style.visitedLinkColor();
+            else if (auto visitedColor = colorResolver.colorResolvingCurrentColor(*visitedPaintColor); visitedColor.isValid())
                 color = visitedColor.colorWithAlpha(color.alphaAsFloat());
         }
     }
@@ -153,7 +157,7 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
             clipper->removeClientFromCacheAndMarkForInvalidation(renderer);
     }
 
-    auto svgElement = dynamicDowncast<SVGElement>(renderer.protectedElement());
+    auto svgElement = dynamicDowncast<SVGElement>(protect(renderer.element()));
     if (!svgElement)
         return;
 

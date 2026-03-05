@@ -25,6 +25,11 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#import <wtf/Platform.h>
+
 #if HAVE(VK_IMAGE_ANALYSIS)
 
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
@@ -47,3 +52,5 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCRemoveBackgroundResult)
 #endif
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)
+
+#endif // !__has_feature(modules)

@@ -29,7 +29,7 @@ class ReplaceVariableTraverser : public TIntermTraverser
 
     void visitSymbol(TIntermSymbol *node) override
     {
-        if (&node->variable() == mToBeReplaced)
+        if (node->variable().uniqueId() == mToBeReplaced->uniqueId())
         {
             queueReplacement(mReplacement->deepCopy(), OriginalNode::IS_DROPPED);
         }
@@ -49,7 +49,7 @@ class ReplaceVariablesTraverser : public TIntermTraverser
 
     void visitSymbol(TIntermSymbol *node) override
     {
-        auto iter = mVariableMap.find(&node->variable());
+        auto iter = mVariableMap.find(node->variable().uniqueId());
         if (iter != mVariableMap.end())
         {
             queueReplacement(iter->second->deepCopy(), OriginalNode::IS_DROPPED);
@@ -86,12 +86,12 @@ class GetDeclaratorReplacementsTraverser : public TIntermTraverser
             ASSERT(asSymbol);
             const TVariable &variable = asSymbol->variable();
 
-            ASSERT(mVariableMap->find(&variable) == mVariableMap->end());
+            ASSERT(mVariableMap->find(variable.uniqueId()) == mVariableMap->end());
 
             const TVariable *replacementVariable = new TVariable(
                 mSymbolTable, variable.name(), &variable.getType(), variable.symbolType());
 
-            (*mVariableMap)[&variable] = new TIntermSymbol(replacementVariable);
+            (*mVariableMap)[variable.uniqueId()] = new TIntermSymbol(replacementVariable);
         }
 
         return false;
@@ -109,13 +109,14 @@ class GetDeclaratorReplacementsTraverser : public TIntermTraverser
                                    const TVariable *toBeReplaced,
                                    const TVariable *replacement)
 {
+    ASSERT(toBeReplaced && replacement);
     ReplaceVariableTraverser traverser(toBeReplaced, new TIntermSymbol(replacement));
     root->traverse(&traverser);
     return traverser.updateTree(compiler, root);
 }
 
 [[nodiscard]] bool ReplaceVariables(TCompiler *compiler,
-                                    TIntermBlock *root,
+                                    TIntermNode *root,
                                     const VariableReplacementMap &variableMap)
 {
     ReplaceVariablesTraverser traverser(variableMap);
@@ -137,6 +138,7 @@ void GetDeclaratorReplacements(TSymbolTable *symbolTable,
                                             const TVariable *toBeReplaced,
                                             const TIntermTyped *replacement)
 {
+    ASSERT(toBeReplaced && replacement);
     ReplaceVariableTraverser traverser(toBeReplaced, replacement);
     root->traverse(&traverser);
     return traverser.updateTree(compiler, root);

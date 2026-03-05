@@ -59,36 +59,32 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Observable);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Observable);
 
 Ref<Observable> Observable::create(Ref<SubscriberCallback> callback)
 {
     return adoptRef(*new Observable(callback));
 }
 
-void Observable::subscribe(ScriptExecutionContext& context, std::optional<ObserverUnion> observer, SubscribeOptions options)
+void Observable::subscribe(ScriptExecutionContext& context, ObserverUnion&& observer, SubscribeOptions&& options)
 {
-    if (observer) {
-        WTF::switchOn(
-            observer.value(),
-            [&](RefPtr<JSSubscriptionObserverCallback>& next) {
-                subscribeInternal(context, InternalObserverFromScript::create(context, next), options);
-            },
-            [&](SubscriptionObserver& subscription) {
-                subscribeInternal(context, InternalObserverFromScript::create(context, subscription), options);
-            }
-        );
-    } else
-        subscribeInternal(context, InternalObserverFromScript::create(context, nullptr), options);
+    WTF::switchOn(WTF::move(observer),
+        [&](RefPtr<JSSubscriptionObserverCallback>&& next) {
+            subscribeInternal(context, InternalObserverFromScript::create(context, next.releaseNonNull()), WTF::move(options));
+        },
+        [&](SubscriptionObserver&& subscription) {
+            subscribeInternal(context, InternalObserverFromScript::create(context, WTF::move(subscription)), WTF::move(options));
+        }
+    );
 }
 
-void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, const SubscribeOptions& options)
+void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, SubscribeOptions&& options)
 {
     RefPtr document = dynamicDowncast<Document>(context);
     if (document && !document->isFullyActive())
         return;
 
-    Ref subscriber = Subscriber::create(context, WTFMove(observer), options);
+    Ref subscriber = Subscriber::create(context, WTF::move(observer), WTF::move(options));
 
     Ref vm = context.globalObject()->vm();
     JSC::JSLockHolder lock(vm);
@@ -97,7 +93,7 @@ void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<Internal
     // error handler.
     JSC::Exception* previousException = nullptr;
     {
-        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+        auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         m_subscriberCallback->invokeRethrowingException(subscriber);
         previousException = catchScope.exception();
         if (previousException) {
@@ -127,54 +123,51 @@ Ref<Observable> Observable::drop(ScriptExecutionContext& context, uint64_t amoun
     return create(createSubscriberCallbackDrop(context, *this, amount));
 }
 
-Ref<Observable> Observable::inspect(ScriptExecutionContext& context, std::optional<InspectorUnion>&& inspectorUnion)
+Ref<Observable> Observable::inspect(ScriptExecutionContext& context, InspectorUnion&& inspectorUnion)
 {
-    if (!inspectorUnion)
-        return *this;
-
-    return WTF::switchOn(WTFMove(*inspectorUnion),
+    return WTF::switchOn(WTF::move(inspectorUnion),
         [&](RefPtr<JSSubscriptionObserverCallback>&& next) {
-            return create(createSubscriberCallbackInspect(context, *this, WTFMove(next)));
+            return create(createSubscriberCallbackInspect(context, *this, next.releaseNonNull()));
         },
         [&](ObservableInspector&& inspector) {
-            return create(createSubscriberCallbackInspect(context, *this, WTFMove(inspector)));
+            return create(createSubscriberCallbackInspect(context, *this, WTF::move(inspector)));
         }
     );
 }
 
-void Observable::first(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void Observable::first(ScriptExecutionContext& context, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    return createInternalObserverOperatorFirst(context, *this, options, WTFMove(promise));
+    return createInternalObserverOperatorFirst(context, *this, WTF::move(options), WTF::move(promise));
 }
 
-void Observable::forEach(ScriptExecutionContext& context, Ref<VisitorCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void Observable::forEach(ScriptExecutionContext& context, Ref<VisitorCallback>&& callback, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    return createInternalObserverOperatorForEach(context, *this, WTFMove(callback), options, WTFMove(promise));
+    return createInternalObserverOperatorForEach(context, *this, WTF::move(callback), WTF::move(options), WTF::move(promise));
 }
 
-void Observable::last(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void Observable::last(ScriptExecutionContext& context, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    return createInternalObserverOperatorLast(context, *this, options, WTFMove(promise));
+    return createInternalObserverOperatorLast(context, *this, WTF::move(options), WTF::move(promise));
 }
 
-void Observable::find(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void Observable::find(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    return createInternalObserverOperatorFind(context, *this, WTFMove(callback), options, WTFMove(promise));
+    return createInternalObserverOperatorFind(context, *this, WTF::move(callback), WTF::move(options), WTF::move(promise));
 }
 
-void Observable::every(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void Observable::every(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    return createInternalObserverOperatorEvery(context, *this, WTFMove(callback), options, WTFMove(promise));
+    return createInternalObserverOperatorEvery(context, *this, WTF::move(callback), WTF::move(options), WTF::move(promise));
 }
 
-void Observable::some(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void Observable::some(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    return createInternalObserverOperatorSome(context, *this, WTFMove(callback), options, WTFMove(promise));
+    return createInternalObserverOperatorSome(context, *this, WTF::move(callback), WTF::move(options), WTF::move(promise));
 }
 
-void Observable::reduce(ScriptExecutionContext& context, Ref<ReducerCallback>&& callback, JSC::JSValue initialValue, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void Observable::reduce(ScriptExecutionContext& context, Ref<ReducerCallback>&& callback, JSC::JSValue initialValue, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    return createInternalObserverOperatorReduce(context, *this, WTFMove(callback), initialValue, options, WTFMove(promise));
+    return createInternalObserverOperatorReduce(context, *this, WTF::move(callback), initialValue, WTF::move(options), WTF::move(promise));
 }
 
 Observable::Observable(Ref<SubscriberCallback> callback)

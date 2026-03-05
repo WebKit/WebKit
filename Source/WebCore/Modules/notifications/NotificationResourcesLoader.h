@@ -27,9 +27,9 @@
 
 #if ENABLE(NOTIFICATIONS)
 
-#include <WebCore/Notification.h>
-#include <WebCore/SharedBuffer.h>
-#include <WebCore/ThreadableLoader.h>
+#include "Notification.h"
+#include "SharedBuffer.h"
+#include "ThreadableLoader.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -41,6 +41,7 @@ class NetworkLoadMetrics;
 class NotificationResources;
 class ResourceError;
 class ResourceResponse;
+class WeakPtrImplWithEventTargetData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
 class NotificationResourcesLoader {
@@ -53,20 +54,25 @@ public:
 
 private:
     enum class Resource { Image, Icon, Badge, ActionIcon };
-    static bool resourceIsSupportedInPlatform(Resource);
+    static bool NODELETE resourceIsSupportedInPlatform(Resource);
 
-    class ResourceLoader final : public ThreadableLoaderClient {
+    class ResourceLoader final : public ThreadableLoaderClient, public RefCounted<ResourceLoader> {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceLoader, ResourceLoader);
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ResourceLoader);
     public:
-        ResourceLoader(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&&);
+        static Ref<ResourceLoader> create(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&&);
         ~ResourceLoader();
+
+        // ThreadableLoaderClient.
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
 
         void cancel();
 
         bool finished() const { return m_finished; }
 
     private:
+        ResourceLoader(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&&);
+
         // ThreadableLoaderClient API.
         void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
         void didReceiveData(const SharedBuffer&) final;
@@ -82,10 +88,10 @@ private:
 
     void didFinishLoadingResource(ResourceLoader*);
 
-    Notification& m_notification;
+    WeakRef<Notification, WeakPtrImplWithEventTargetData> m_notification;
     bool m_stopped { false };
     CompletionHandler<void(RefPtr<NotificationResources>&&)> m_completionHandler;
-    HashSet<std::unique_ptr<ResourceLoader>> m_loaders;
+    HashSet<Ref<ResourceLoader>> m_loaders;
     RefPtr<NotificationResources> m_resources;
 };
 

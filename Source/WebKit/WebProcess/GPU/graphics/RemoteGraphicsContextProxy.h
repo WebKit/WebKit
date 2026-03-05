@@ -30,6 +30,7 @@
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
+#include "RemotePathImplIdentifier.h"
 #include <WebCore/DisplayListRecorder.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -62,7 +63,7 @@ public:
     using GraphicsContext::drawDisplayList;
     void drawDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::ControlFactory&) final;
 
-    void setClient(ThreadSafeWeakPtr<RemoteImageBufferProxy>&& client) { m_client = WTFMove(client); }
+    void setClient(ThreadSafeWeakPtr<RemoteImageBufferProxy>&& client) { m_client = WTF::move(client); }
     // Returns false if there has not been any potential draws since last call.
     // Returns true if there has been potential draws since last call.
     bool consumeHasDrawn();
@@ -103,7 +104,7 @@ private:
     void endTransparencyLayer() final;
     void drawFilteredImageBuffer(WebCore::ImageBuffer*, const WebCore::FloatRect&, WebCore::Filter&, WebCore::FilterResults&) final;
     void drawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
-    void drawNativeImage(WebCore::NativeImage&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
+    void drawNativeImage(const WebCore::NativeImage&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void drawSystemImage(WebCore::SystemImage&, const WebCore::FloatRect&) final;
     void drawRect(const WebCore::FloatRect&, float) final;
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2) final;
@@ -113,7 +114,7 @@ private:
     void drawPath(const WebCore::Path&) final;
     void drawFocusRing(const WebCore::Path&, float outlineWidth, const WebCore::Color&) final;
     void drawFocusRing(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&) final;
-    void drawPattern(WebCore::NativeImage&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions = { }) final;
+    void drawPattern(const WebCore::NativeImage&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions = { }) final;
     void drawPattern(WebCore::ImageBuffer&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions = { }) final;
     void fillPath(const WebCore::Path&) final;
     void fillRect(const WebCore::FloatRect&, RequiresClipToRect) final;
@@ -145,8 +146,9 @@ private:
     void endPage() final;
     void setURLForRect(const URL&, const WebCore::FloatRect&) final;
 
-    [[nodiscard]] bool recordResourceUse(WebCore::NativeImage&);
+    [[nodiscard]] bool recordResourceUse(const WebCore::NativeImage&);
     [[nodiscard]] bool recordResourceUse(WebCore::ImageBuffer&);
+    std::optional<RemotePathImplIdentifier> recordResourceUse(const WebCore::PathImpl&);
     bool recordResourceUse(const WebCore::SourceImage&);
     bool recordResourceUse(WebCore::Font&);
     std::optional<RemoteGradientIdentifier> recordResourceUse(WebCore::Gradient&);

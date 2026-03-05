@@ -55,11 +55,16 @@ Lock& WebGLProgram::instancesLock()
     return s_instancesLock;
 }
 
-RefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& context)
+Ref<WebGLProgram> WebGLProgram::createLost(WebGLRenderingContextBase& context)
 {
-    auto object = context.graphicsContextGL()->createProgram();
+    return adoptRef(*new WebGLProgram { context });
+}
+
+Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& context)
+{
+    auto object = protect(context.graphicsContextGL())->createProgram();
     if (!object)
-        return nullptr;
+        return createLost(context);
     return adoptRef(*new WebGLProgram { context, object });
 }
 
@@ -69,6 +74,16 @@ WebGLProgram::WebGLProgram(WebGLRenderingContextBase& context, PlatformGLObject 
 {
     ASSERT(scriptExecutionContext());
 
+    {
+        Locker locker { instancesLock() };
+        instances().add(this, &context);
+    }
+}
+
+WebGLProgram::WebGLProgram(WebGLRenderingContextBase& context)
+    : ContextDestructionObserver(context.scriptExecutionContext())
+{
+    ASSERT(scriptExecutionContext());
     {
         Locker locker { instancesLock() };
         instances().add(this, &context);
@@ -122,7 +137,7 @@ bool WebGLProgram::linkStatus()
     return *m_state.linkStatus;
 }
 
-std::span<const GCGLAttribActiveInfo> WebGLProgram::activeAttribs()
+std::span<const GCGLAttribActiveInfo> WebGLProgram::activeAttribs() LIFETIME_BOUND
 {
     if (!m_state.activeAttribs) {
         RefPtr context = graphicsContextGL();
@@ -133,7 +148,7 @@ std::span<const GCGLAttribActiveInfo> WebGLProgram::activeAttribs()
     return *m_state.activeAttribs;
 }
 
-const HashMap<String, int>& WebGLProgram::attribLocations()
+const HashMap<String, int>& WebGLProgram::attribLocations() LIFETIME_BOUND
 {
     if (!m_state.attribLocations) {
         auto& locations = m_state.attribLocations.emplace();
@@ -156,16 +171,20 @@ std::span<const GCGLUniformActiveInfo> WebGLProgram::activeUniforms()
     return *m_state.activeUniforms;
 }
 
-const HashMap<String, int>& WebGLProgram::uniformLocations()
+const HashMap<String, int>& WebGLProgram::uniformLocations() LIFETIME_BOUND
 {
     if (!m_state.uniformLocations) {
         auto& locations = m_state.uniformLocations.emplace();
         for (auto& activeUniform : activeUniforms()) {
+            if (activeUniform.blockIndex != -1)
+                continue;
             auto name = String::fromUTF8(activeUniform.name.data());
-            locations.add(name, activeUniform.locations[0]);
+            if (activeUniform.locations[0] != -1)
+                locations.add(name, activeUniform.locations[0]);
             if (name.endsWith("[0]"_s)) {
                 auto baseName = name.left(name.length() - 3);
-                locations.add(baseName, activeUniform.locations[0]);
+                if (activeUniform.locations[0] != -1)
+                    locations.add(baseName, activeUniform.locations[0]);
                 for (size_t i = 1; i < activeUniform.locations.size(); ++i) {
                     if (activeUniform.locations[i] != -1)
                         locations.add(makeString(baseName, '[', i, ']'), activeUniform.locations[i]);
@@ -176,7 +195,7 @@ const HashMap<String, int>& WebGLProgram::uniformLocations()
     return *m_state.uniformLocations;
 }
 
-const HashMap<String, unsigned>& WebGLProgram::uniformIndices()
+const HashMap<String, unsigned>& WebGLProgram::uniformIndices() LIFETIME_BOUND
 {
     if (!m_state.uniformIndices) {
         auto& indices = m_state.uniformIndices.emplace();

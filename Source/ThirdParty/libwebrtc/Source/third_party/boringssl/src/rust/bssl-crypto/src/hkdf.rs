@@ -244,7 +244,7 @@ impl Prk {
                     info.len(),
                 );
                 // The output length is known to be within bounds so the only other
-                // possibily is an allocation failure, which we don't attempt to
+                // possibility is an allocation failure, which we don't attempt to
                 // handle.
                 assert_eq!(result, 1);
             })

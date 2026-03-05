@@ -67,7 +67,7 @@ public:
         m_overrideSandboxProfilePathOrSandboxProfile = path;
     }
 
-    const String& overrideSandboxProfilePath() const
+    const String& overrideSandboxProfilePath() const LIFETIME_BOUND
     {
         ASSERT(m_profileSelectionMode == ProfileSelectionMode::UseOverrideSandboxProfilePath);
         return m_overrideSandboxProfilePathOrSandboxProfile;
@@ -79,14 +79,14 @@ public:
         m_overrideSandboxProfilePathOrSandboxProfile = profile;
     }
 
-    const String& sandboxProfile() const
+    const String& sandboxProfile() const LIFETIME_BOUND
     {
         ASSERT(m_profileSelectionMode == ProfileSelectionMode::UseSandboxProfile);
         return m_overrideSandboxProfilePathOrSandboxProfile;
     }
 
     void setUserDirectorySuffix(const String& suffix) { m_userDirectorySuffix = suffix; }
-    const String& userDirectorySuffix() const { return m_userDirectorySuffix; }
+    const String& userDirectorySuffix() const LIFETIME_BOUND { return m_userDirectorySuffix; }
 #endif
 
 private:

@@ -106,7 +106,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
         return;
     }
 
-    checkedNetworkSession()->registerNetworkDataTask(*this);
+    protect(networkSession())->registerNetworkDataTask(*this);
 }
 
 NetworkDataTask::~NetworkDataTask()
@@ -149,7 +149,7 @@ void NetworkDataTask::scheduleFailure(FailureType type)
 void NetworkDataTask::didReceiveInformationalResponse(ResourceResponse&& headers)
 {
     if (RefPtr client = m_client.get())
-        client->didReceiveInformationalResponse(WTFMove(headers));
+        client->didReceiveInformationalResponse(WTF::move(headers));
 }
 
 void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, PrivateRelayed privateRelayed, std::optional<IPAddress> resolvedIPAddress, ResponseCompletionHandler&& completionHandler)
@@ -187,7 +187,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
         response.setWasPrivateRelayed(WasPrivateRelayed::Yes);
 
     if (RefPtr client = m_client.get())
-        client->didReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WTFMove(completionHandler));
+        client->didReceiveResponse(WTF::move(response), negotiatedLegacyTLS, privateRelayed, WTF::move(completionHandler));
     else
         completionHandler(PolicyAction::Ignore);
 }

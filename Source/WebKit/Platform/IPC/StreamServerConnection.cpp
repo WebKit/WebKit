@@ -27,6 +27,7 @@
 #include "StreamServerConnection.h"
 
 #include "Connection.h"
+#include "MessageLog.h"
 #include "StreamConnectionWorkQueue.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
@@ -35,23 +36,23 @@ namespace IPC {
 
 RefPtr<StreamServerConnection> StreamServerConnection::tryCreate(Handle&& handle, const StreamServerConnectionParameters& params)
 {
-    auto buffer = StreamServerConnectionBuffer::map(WTFMove(handle.buffer));
+    auto buffer = StreamServerConnectionBuffer::map(WTF::move(handle.buffer));
     if (!buffer)
         return { };
 
-    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle.outOfStreamConnection) });
+    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(handle.outOfStreamConnection) });
 
 #if ENABLE(IPC_TESTING_API)
     if (params.ignoreInvalidMessageForTesting)
         connection->setIgnoreInvalidMessageForTesting();
 #endif
 
-    return adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(*buffer)));
+    return adoptRef(*new StreamServerConnection(WTF::move(connection), WTF::move(*buffer)));
 }
 
 StreamServerConnection::StreamServerConnection(Ref<Connection> connection, StreamServerConnectionBuffer&& stream)
-    : m_connection(WTFMove(connection))
-    , m_buffer(WTFMove(stream))
+    : m_connection(WTF::move(connection))
+    , m_buffer(WTF::move(stream))
 {
 }
 
@@ -78,7 +79,7 @@ void StreamServerConnection::invalidate()
         connection->invalidate();
         return;
     }
-    protectedWorkQueue()->removeStreamConnection(*this);
+    protect(m_workQueue)->removeStreamConnection(*this);
     connection->invalidate();
     connection->removeMessageReceiveQueue({ });
     m_workQueue = nullptr;
@@ -107,10 +108,10 @@ void StreamServerConnection::enqueueMessage(Connection&, UniqueRef<Decoder>&& me
 {
     {
         Locker locker { m_outOfStreamMessagesLock };
-        m_outOfStreamMessages.append(WTFMove(message));
+        m_outOfStreamMessages.append(WTF::move(message));
     }
     ASSERT(m_workQueue);
-    protectedWorkQueue()->wakeUp();
+    protect(m_workQueue)->wakeUp();
 }
 
 void StreamServerConnection::didReceiveMessage(Connection&, Decoder&)
@@ -218,7 +219,7 @@ bool StreamServerConnection::processStreamMessage(Decoder& decoder, StreamMessag
     if (decoder.isSyncMessage()) {
         result = m_buffer.releaseAll();
         if (m_syncReplyToDispatch)
-            protectedConnection()->sendSyncReply(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_syncReplyToDispatch)));
+            protect(connection())->sendSyncReply(makeUniqueRefFromNonNullUniquePtr(WTF::move(m_syncReplyToDispatch)));
     } else
         result = m_buffer.release(decoder.currentBufferOffset());
     if (result == WakeUpClient::Yes)
@@ -269,6 +270,7 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessa
 #if ASSERT_ENABLED
     m_isDispatchingMessage = true;
 #endif
+    IPC::messageLog().add(message.messageName());
     receiver.didReceiveStreamMessage(*this, message);
 #if ASSERT_ENABLED
     m_isDispatchingMessage = false;
@@ -307,11 +309,5 @@ void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid(ASCIILitera
     ASSERT(m_isDispatchingMessage);
     m_didReceiveInvalidMessage = true;
 }
-
-RefPtr<StreamConnectionWorkQueue> StreamServerConnection::protectedWorkQueue() const
-{
-    return m_workQueue;
-}
-
 
 }

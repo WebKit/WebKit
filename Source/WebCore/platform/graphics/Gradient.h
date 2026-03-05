@@ -127,7 +127,7 @@ public:
 
     void addObserver(WeakRef<RenderingResourceObserver>&& observer) const
     {
-        m_observers.add(WTFMove(observer));
+        m_observers.add(WTF::move(observer));
     }
 
 private:

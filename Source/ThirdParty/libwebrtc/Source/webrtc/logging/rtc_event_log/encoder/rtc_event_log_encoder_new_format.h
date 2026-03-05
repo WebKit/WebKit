@@ -38,6 +38,7 @@ class RtcEventAudioReceiveStreamConfig;
 class RtcEventAudioSendStreamConfig;
 class RtcEventBweUpdateDelayBased;
 class RtcEventBweUpdateLossBased;
+class RtcEventBweUpdateScream;
 class RtcEventDtlsTransportState;
 class RtcEventDtlsWritableState;
 class RtcEventLoggingStarted;
@@ -56,9 +57,6 @@ class RtcEventIceCandidatePairConfig;
 class RtcEventIceCandidatePair;
 class RtpPacket;
 class RtcEventFrameDecoded;
-class RtcEventGenericAckReceived;
-class RtcEventGenericPacketReceived;
-class RtcEventGenericPacketSent;
 
 class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
  public:
@@ -94,6 +92,8 @@ class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
   void EncodeBweUpdateLossBased(
       ArrayView<const RtcEventBweUpdateLossBased*> batch,
       rtclog2::EventStream* event_stream);
+  void EncodeBweUpdateScream(ArrayView<const RtcEventBweUpdateScream*> batch,
+                             rtclog2::EventStream* event_stream);
   void EncodeDtlsTransportState(
       ArrayView<const RtcEventDtlsTransportState*> batch,
       rtclog2::EventStream* event_stream);
@@ -102,15 +102,6 @@ class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
       rtclog2::EventStream* event_stream);
   void EncodeFramesDecoded(ArrayView<const RtcEventFrameDecoded* const> batch,
                            rtclog2::EventStream* event_stream);
-  void EncodeGenericAcksReceived(
-      ArrayView<const RtcEventGenericAckReceived*> batch,
-      rtclog2::EventStream* event_stream);
-  void EncodeGenericPacketsReceived(
-      ArrayView<const RtcEventGenericPacketReceived*> batch,
-      rtclog2::EventStream* event_stream);
-  void EncodeGenericPacketsSent(
-      ArrayView<const RtcEventGenericPacketSent*> batch,
-      rtclog2::EventStream* event_stream);
   void EncodeIceCandidatePairConfig(
       ArrayView<const RtcEventIceCandidatePairConfig*> batch,
       rtclog2::EventStream* event_stream);

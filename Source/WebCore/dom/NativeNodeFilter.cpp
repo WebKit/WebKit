@@ -30,7 +30,7 @@ namespace WebCore {
 
 NativeNodeFilter::NativeNodeFilter(ScriptExecutionContext* context, Ref<NodeFilterCondition>&& condition)
     : NodeFilter(context)
-    , m_condition(WTFMove(condition))
+    , m_condition(WTF::move(condition))
 {
 }
 

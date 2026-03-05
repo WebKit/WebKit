@@ -33,8 +33,8 @@ class CSSVariableReferenceValue;
 
 class StylePropertyMap : public MainThreadStylePropertyMapReadOnly {
 public:
-    ExceptionOr<void> set(Document&, const AtomString& property, FixedVector<Variant<RefPtr<CSSStyleValue>, String>>&& values);
-    ExceptionOr<void> append(Document&, const AtomString& property, FixedVector<Variant<RefPtr<CSSStyleValue>, String>>&& values);
+    ExceptionOr<void> set(Document&, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&& values);
+    ExceptionOr<void> append(Document&, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&& values);
     ExceptionOr<void> remove(Document&, const AtomString& property);
     virtual void clear() = 0;
 

@@ -732,12 +732,14 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     _handleEditorFilterApplied(event)
     {
+        let lowerCaseFilterText = this._filterText.toLowerCase();
+
         let matchesGrouping = false;
         for (let groupingElement of this._groupingElements) {
             groupingElement.parentElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
             // Check the parent element to also include the grouping type in the search.
-            if (groupingElement.parentElement.textContent.includes(this._filterText)) {
+            if (groupingElement.parentElement.textContent.toLowerCase().includes(lowerCaseFilterText)) {
                 groupingElement.parentElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
                 matchesGrouping = true;
             }
@@ -747,7 +749,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         for (let selectorElement of this._selectorElements) {
             selectorElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
-            if (selectorElement.textContent.includes(this._filterText)) {
+            if (selectorElement.textContent.toLowerCase().includes(lowerCaseFilterText)) {
                 selectorElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
                 matchesSelector = true;
             }

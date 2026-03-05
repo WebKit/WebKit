@@ -50,7 +50,7 @@ public:
 
 private:
     static ASCIILiteral supplementName() { return "DOMWindowIndexedDatabase"_s; }
-    bool isDOMWindowIndexedDatabase() const final { return true; }
+    bool NODELETE isDOMWindowIndexedDatabase() const final { return true; }
 
     RefPtr<IDBFactory> m_idbFactory;
 };
@@ -63,7 +63,7 @@ public:
 
     static WorkerGlobalScopeIndexedDatabase* from(WorkerGlobalScope&);
     IDBFactory* indexedDB();
-    bool isWorkerGlobalScopeIndexedDatabase() const final { return true; }
+    bool NODELETE isWorkerGlobalScopeIndexedDatabase() const final { return true; }
 
 private:
     static ASCIILiteral supplementName() { return "WorkerGlobalScopeIndexedDatabase"_s; }
@@ -99,7 +99,7 @@ DOMWindowIndexedDatabase* DOMWindowIndexedDatabase::from(LocalDOMWindow& window)
     if (!supplement) {
         auto newSupplement = makeUnique<DOMWindowIndexedDatabase>(window);
         supplement = newSupplement.get();
-        provideTo(&window, supplementName(), WTFMove(newSupplement));
+        provideTo(&window, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }
@@ -150,7 +150,7 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(WorkerG
 
         auto newSupplement = makeUnique<WorkerGlobalScopeIndexedDatabase>(*connectionProxy);
         supplement = newSupplement.get();
-        provideTo(&scope, supplementName(), WTFMove(newSupplement));
+        provideTo(&scope, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

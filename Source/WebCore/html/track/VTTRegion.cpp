@@ -182,7 +182,7 @@ VTTRegion::RegionSetting VTTRegion::scanSettingName(VTTScanner& input)
     return None;
 }
 
-static inline bool parsedEntireRun(const VTTScanner& input, const VTTScanner::Run& run)
+static inline bool NODELETE parsedEntireRun(const VTTScanner& input, const VTTScanner::Run& run)
 {
     return input.isAt(run.end()); 
 }
@@ -271,7 +271,7 @@ void VTTRegion::displayLastTextTrackCueBox()
 
     // If it's a scrolling region, add the scrolling class.
     if (scroll() == ScrollSetting::Up)
-        m_cueContainer->protectedClassList()->add(textTrackCueContainerScrollingClass());
+        protect(m_cueContainer->classList())->add(textTrackCueContainerScrollingClass());
 
     float regionBottom = m_regionDisplayTree->boundingClientRect().maxY();
 
@@ -301,7 +301,7 @@ void VTTRegion::willRemoveTextTrackCueBox(VTTCueBox* box)
 
     double boxHeight = box->boundingClientRect().height();
 
-    m_cueContainer->protectedClassList()->remove(textTrackCueContainerScrollingClass());
+    protect(m_cueContainer->classList())->remove(textTrackCueContainerScrollingClass());
 
     m_currentTop += boxHeight;
     m_cueContainer->setInlineStyleProperty(CSSPropertyTop, m_currentTop, CSSUnitType::CSS_PX);
@@ -310,7 +310,7 @@ void VTTRegion::willRemoveTextTrackCueBox(VTTCueBox* box)
 HTMLDivElement& VTTRegion::getDisplayTree()
 {
     if (!m_regionDisplayTree) {
-        lazyInitialize(m_regionDisplayTree, HTMLDivElement::create(*protectedDocument()));
+        lazyInitialize(m_regionDisplayTree, HTMLDivElement::create(*protect(document())));
         m_regionDisplayTree->setUserAgentPart(UserAgentParts::webkitMediaTextTrackRegion());
         m_recalculateStyles = true;
     }
@@ -333,7 +333,7 @@ void VTTRegion::prepareRegionDisplayTree()
     // The cue container is used to wrap the cues and it is the object which is
     // gradually scrolled out as multiple cues are appended to the region.
     if (!m_cueContainer) {
-        lazyInitialize(m_cueContainer, HTMLDivElement::create(*protectedDocument()));
+        lazyInitialize(m_cueContainer, HTMLDivElement::create(*protect(document())));
         m_cueContainer->setUserAgentPart(UserAgentParts::webkitMediaTextTrackRegionContainer());
         m_regionDisplayTree->appendChild(*m_cueContainer);
     }
@@ -405,9 +405,9 @@ void VTTRegion::scrollTimerFired()
     displayLastTextTrackCueBox();
 }
 
-RefPtr<Document> VTTRegion::protectedDocument() const
+Document* VTTRegion::document() const
 {
-    return downcast<Document>(protectedScriptExecutionContext());
+    return downcast<Document>(scriptExecutionContext());
 }
 
 } // namespace WebCore

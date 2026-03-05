@@ -29,9 +29,8 @@
 typedef [EnforceRange] unsigned long long GPUSize64;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUBufferBindingLayout {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUBufferBindingLayout {
     GPUBufferBindingType type = "uniform";
     boolean hasDynamicOffset = false;
     GPUSize64 minBindingSize = 0;

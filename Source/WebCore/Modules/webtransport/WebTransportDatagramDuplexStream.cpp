@@ -38,11 +38,11 @@ namespace WebCore {
 
 Ref<WebTransportDatagramDuplexStream> WebTransportDatagramDuplexStream::create(Ref<ReadableStream>&& readable)
 {
-    return adoptRef(*new WebTransportDatagramDuplexStream(WTFMove(readable)));
+    return adoptRef(*new WebTransportDatagramDuplexStream(WTF::move(readable)));
 }
 
 WebTransportDatagramDuplexStream::WebTransportDatagramDuplexStream(Ref<ReadableStream>&& readable)
-    : m_readable(WTFMove(readable))
+    : m_readable(WTF::move(readable))
 {
 }
 
@@ -54,9 +54,9 @@ void WebTransportDatagramDuplexStream::attachTo(WebTransport& transport)
     m_transport = transport;
 }
 
-ExceptionOr<Ref<WritableStream>> WebTransportDatagramDuplexStream::createWritable(ScriptExecutionContext& context, WebTransportSendOptions&& options)
+ExceptionOr<Ref<WebTransportDatagramsWritable>> WebTransportDatagramDuplexStream::createWritable(ScriptExecutionContext& context, WebTransportSendOptions&& options)
 {
-    return WebTransportDatagramsWritable::create(context, m_transport.get(), WTFMove(options));
+    return WebTransportDatagramsWritable::create(context, m_transport.get(), WTF::move(options));
 }
 
 RefPtr<WebTransportSession> WebTransportDatagramDuplexStream::session()

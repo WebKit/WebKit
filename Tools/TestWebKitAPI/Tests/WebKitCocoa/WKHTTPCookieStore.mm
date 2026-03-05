@@ -804,7 +804,7 @@ TEST(WKHTTPCookieStore, CookiesForURL)
     [webView synchronouslyLoadHTMLString:@"start network process"];
     [cookieStore setCookie:webKitCookie completionHandler:^{
         [cookieStore setCookie:albuquerque completionHandler:^{
-            [cookieStore _getCookiesForURL:[NSURL URLWithString:@"https://webkit.org/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
+            [cookieStore getCookiesForURL:[NSURL URLWithString:@"https://webkit.org/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
                 EXPECT_EQ(cookies.count, 1ull);
                 EXPECT_WK_STREQ(cookies[0].name, "webKitName");
                 [cookieStore deleteCookie:webKitCookie completionHandler:^{

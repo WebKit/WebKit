@@ -26,7 +26,7 @@
 #pragma once
 
 #include <CoreMedia/CMTime.h>
-#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -38,7 +38,7 @@ OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 
 namespace WebCore {
 
-class WebAVSampleBufferListenerClient : public AbstractRefCountedAndCanMakeWeakPtr<WebAVSampleBufferListenerClient> {
+class WebAVSampleBufferListenerClient : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
 public:
     virtual ~WebAVSampleBufferListenerClient() = default;
     virtual void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) { }

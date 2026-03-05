@@ -42,23 +42,50 @@
 namespace WebCore {
 
 class SimulatedMouseEvent : public MouseEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SimulatedMouseEvent);
+    WTF_MAKE_TZONE_ALLOCATED(SimulatedMouseEvent);
 public:
     static Ref<SimulatedMouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
-        return adoptRef(*new SimulatedMouseEvent(eventType, WTFMove(view), WTFMove(underlyingEvent), target, source));
+        return adoptRef(*new SimulatedMouseEvent(eventType, WTF::move(view), WTF::move(underlyingEvent), target, source));
     }
 
 private:
-    SimulatedMouseEvent(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
-        : MouseEvent(EventInterfaceType::MouseEvent, eventType, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
-            underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), /* detail */ 0,
-            { }, { }, 0, 0, modifiersFromUnderlyingEvent(underlyingEvent), MouseButton::Left, 0, nullptr, 0, SyntheticClickType::NoTap, { }, { }, IsSimulated::Yes,
-            source == SimulatedClickSource::UserAgent ? IsTrusted::Yes : IsTrusted::No)
+    SimulatedMouseEvent(
+        const AtomString& eventType,
+        RefPtr<WindowProxy>&& view,
+        RefPtr<Event>&& underlyingEvent,
+        Element& target,
+        SimulatedClickSource source
+    )
+        : MouseEvent(
+            EventInterfaceType::MouseEvent,
+            eventType,
+            CanBubble::Yes,
+            IsCancelable::Yes,
+            IsComposed::Yes,
+            underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(),
+            WTF::move(view),
+            /* detail */ 0,
+            { },
+            { },
+            0,
+            0,
+            modifiersFromUnderlyingEvent(underlyingEvent),
+            MouseButton::Left,
+            0,
+            nullptr,
+            0,
+            SyntheticClickType::NoTap,
+            { },
+            { },
+            std::nullopt,
+            IsSimulated::Yes,
+            source == SimulatedClickSource::UserAgent ? IsTrusted::Yes : IsTrusted::No
+        )
     {
         setUnderlyingEvent(underlyingEvent.get());
 
-        if (auto* mouseEvent = dynamicDowncast<MouseEvent>(this->underlyingEvent())) {
+        if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(this->underlyingEvent())) {
             setScreenLocation(mouseEvent->screenLocation());
             initCoordinates(mouseEvent->clientLocation());
         } else if (source == SimulatedClickSource::UserAgent) {
@@ -73,22 +100,22 @@ private:
 
     static OptionSet<Modifier> modifiersFromUnderlyingEvent(const RefPtr<Event>& underlyingEvent)
     {
-        UIEventWithKeyState* keyStateEvent = findEventWithKeyState(underlyingEvent.get());
+        RefPtr keyStateEvent = findEventWithKeyState(underlyingEvent.get());
         if (!keyStateEvent)
             return { };
         return keyStateEvent->modifierKeys();
     }
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SimulatedMouseEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedMouseEvent);
 
 // https://www.w3.org/TR/pointerevents3/#pointerevent-interface
 class SimulatedPointerEvent final : public PointerEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SimulatedPointerEvent);
+    WTF_MAKE_TZONE_ALLOCATED(SimulatedPointerEvent);
 public:
     static Ref<SimulatedPointerEvent> create(const AtomString& type, const SimulatedMouseEvent& event, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
-        return adoptRef(*new SimulatedPointerEvent(type, event, WTFMove(underlyingEvent), target, source));
+        return adoptRef(*new SimulatedPointerEvent(type, event, WTF::move(underlyingEvent), target, source));
     }
 
 private:
@@ -117,16 +144,16 @@ private:
     }
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SimulatedPointerEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedPointerEvent);
 
 static void simulateMouseEvent(const AtomString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
 {
-    element.dispatchEvent(SimulatedMouseEvent::create(eventType, element.document().protectedWindowProxy().get(), underlyingEvent, element, source));
+    element.dispatchEvent(SimulatedMouseEvent::create(eventType, protect(element.document().windowProxy()).get(), underlyingEvent, element, source));
 }
 
 static void simulatePointerEvent(const AtomString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
 {
-    Ref mouseEvent = SimulatedMouseEvent::create(eventType, element.document().protectedWindowProxy().get(), underlyingEvent, element, source);
+    Ref mouseEvent = SimulatedMouseEvent::create(eventType, protect(element.document().windowProxy()).get(), underlyingEvent, element, source);
     Ref pointerEvent = SimulatedPointerEvent::create(eventType, mouseEvent.get(), underlyingEvent, element, source);
 
     element.dispatchEvent(pointerEvent.get());

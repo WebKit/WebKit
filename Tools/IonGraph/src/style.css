@@ -1,0 +1,481 @@
+/* iongraph-specific styles inspired by Tachyons */
+
+:root {
+  --ig-size-1: 1rem;
+  --ig-size-2: 2rem;
+  --ig-size-3: 4rem;
+  --ig-size-4: 8rem;
+  --ig-size-5: 16rem;
+
+  --ig-spacing-1: .25rem;
+  --ig-spacing-2: .5rem;
+  --ig-spacing-3: 1rem;
+  --ig-spacing-4: 2rem;
+  --ig-spacing-5: 4rem;
+  --ig-spacing-6: 8rem;
+  --ig-spacing-7: 16rem;
+
+  --ig-text-color: black;
+  --ig-text-color-dim: #777;
+  --ig-background-primary: #ffb54e;
+  --ig-background-light: white;
+  --ig-border-color: #0c0c0d;
+
+  --ig-block-header-color: #0c0c0d;
+  --ig-loop-header-color: #1fa411;
+  --ig-root-block-color: #1048af;
+  --ig-movable-color: #1048af;
+  --ig-rob-color: #444;
+  --ig-in-worklist-color: red;
+
+  --ig-block-selected: #ffc863;
+  --ig-block-last-selected: #ffb54e;
+
+  --ig-highlight-0: #ffb54e;
+  --ig-highlight-1: #ffb5c5;
+  --ig-highlight-2: #a4cbff;
+  --ig-highlight-3: #8be182;
+  --ig-highlight-4: #d9a4fd;
+
+  --ig-flash-color: #ffb54e;
+
+  /*
+   * The heatmap of sample counts will effectively be sampled from a gradient:
+   *
+   * |----------|---------------------------------------|
+   * cold     "cool"                                  hot
+   *
+   * The "cold" color will simply be transparent. Therefore, the "cool"
+   * threshold indicates where the instruction will be fully colored and
+   * noticeable to the user.
+   */
+  --ig-hot-color: #ff849e;
+  --ig-cool-color: #ffe546;
+  --ig-cool-threshold: 0.2;
+}
+
+a.ig-link-normal {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.ig-flex {
+  display: flex;
+}
+
+.ig-flex-column {
+  flex-direction: column;
+}
+
+.ig-flex-basis-0 {
+  flex-basis: 0;
+}
+
+.ig-flex-grow-1 {
+  flex-grow: 1;
+}
+
+.ig-flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.ig-flex-shrink-1 {
+  flex-shrink: 1;
+}
+
+.ig-items-center {
+  align-items: center;
+}
+
+.ig-relative {
+  position: relative;
+}
+
+.ig-absolute {
+  position: absolute;
+}
+
+.ig-absolute-fill {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.ig-g1 {
+  gap: var(--ig-spacing-1);
+}
+
+.ig-g2 {
+  gap: var(--ig-spacing-2);
+}
+
+.ig-g3 {
+  gap: var(--ig-spacing-3);
+}
+
+.ig-w1 {
+  width: var(--ig-size-1);
+}
+
+.ig-w2 {
+  width: var(--ig-size-2);
+}
+
+.ig-w3 {
+  width: var(--ig-size-3);
+}
+
+.ig-w4 {
+  width: var(--ig-size-4);
+}
+
+.ig-w5 {
+  width: var(--ig-size-5);
+}
+
+.ig-w-100 {
+  width: 100%;
+}
+
+.ig-ba {
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--ig-border-color);
+}
+
+.ig-bt {
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-color: var(--ig-border-color);
+}
+
+.ig-br {
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-color: var(--ig-border-color);
+}
+
+.ig-bb {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: var(--ig-border-color);
+}
+
+.ig-bl {
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-color: var(--ig-border-color);
+}
+
+.ig-pa1 {
+  padding: var(--ig-spacing-1);
+}
+
+.ig-pa2 {
+  padding: var(--ig-spacing-2);
+}
+
+.ig-pa3 {
+  padding: var(--ig-spacing-3);
+}
+
+.ig-ph1 {
+  padding-left: var(--ig-spacing-1);
+  padding-right: var(--ig-spacing-1);
+}
+
+.ig-ph2 {
+  padding-left: var(--ig-spacing-2);
+  padding-right: var(--ig-spacing-2);
+}
+
+.ig-ph3 {
+  padding-left: var(--ig-spacing-3);
+  padding-right: var(--ig-spacing-3);
+}
+
+.ig-pv1 {
+  padding-top: var(--ig-spacing-1);
+  padding-bottom: var(--ig-spacing-1);
+}
+
+.ig-pv2 {
+  padding-top: var(--ig-spacing-2);
+  padding-bottom: var(--ig-spacing-2);
+}
+
+.ig-pv3 {
+  padding-top: var(--ig-spacing-3);
+  padding-bottom: var(--ig-spacing-3);
+}
+
+.ig-pt1 {
+  padding-top: var(--ig-spacing-1);
+}
+
+.ig-pt2 {
+  padding-top: var(--ig-spacing-2);
+}
+
+.ig-pt3 {
+  padding-top: var(--ig-spacing-3);
+}
+
+.ig-pr1 {
+  padding-right: var(--ig-spacing-1);
+}
+
+.ig-pr2 {
+  padding-right: var(--ig-spacing-2);
+}
+
+.ig-pr3 {
+  padding-right: var(--ig-spacing-3);
+}
+
+.ig-pb1 {
+  padding-bottom: var(--ig-spacing-1);
+}
+
+.ig-pb2 {
+  padding-bottom: var(--ig-spacing-2);
+}
+
+.ig-pb3 {
+  padding-bottom: var(--ig-spacing-3);
+}
+
+.ig-pl1 {
+  padding-left: var(--ig-spacing-1);
+}
+
+.ig-pl2 {
+  padding-left: var(--ig-spacing-2);
+}
+
+.ig-pl3 {
+  padding-left: var(--ig-spacing-3);
+}
+
+.ig-f1 {
+  font-size: 3rem;
+}
+
+.ig-f2 {
+  font-size: 2.25rem;
+}
+
+.ig-f3 {
+  font-size: 1.5rem;
+}
+
+.ig-f4 {
+  font-size: 1.25rem;
+}
+
+.ig-f5 {
+  font-size: 1rem;
+}
+
+.ig-f6 {
+  font-size: .875rem;
+}
+
+.ig-f7 {
+  font-size: .75rem;
+}
+
+.ig-text-normal {
+  color: var(--ig-text-color);
+}
+
+.ig-text-dim {
+  color: var(--ig-text-color-dim);
+}
+
+.ig-tl {
+  text-align: left;
+}
+
+.ig-tr {
+  text-align: right;
+}
+
+.ig-tc {
+  text-align: center;
+}
+
+.ig-bg-white {
+  background-color: var(--ig-background-light);
+}
+
+.ig-bg-primary {
+  background-color: var(--ig-background-primary);
+}
+
+.ig-overflow-hidden {
+  overflow: hidden;
+}
+
+.ig-overflow-auto {
+  overflow: auto;
+}
+
+.ig-overflow-x-auto {
+  overflow-x: auto;
+}
+
+.ig-overflow-y-auto {
+  overflow-y: auto;
+}
+
+.ig-hide-if-empty:empty {
+  display: none;
+}
+
+/* Non-utility styles */
+
+.ig-graph {
+  color: var(--ig-text-color);
+  position: absolute;
+  left: 0;
+  top: 0;
+  isolation: isolate;
+}
+
+.ig-block {
+  position: absolute;
+
+  .ig-block-header {
+    font-weight: bold;
+    text-align: center;
+    background-color: var(--ig-block-header-color);
+    color: white;
+    padding: 0 1em;
+    border: 1px solid var(--ig-border-color);
+    border-width: 1px 1px 0;
+  }
+
+  .ig-instructions {
+    padding: 0.5em;
+    border: 1px solid var(--ig-border-color);
+    border-width: 0 1px 1px;
+
+    table {
+      border-collapse: collapse;
+    }
+
+    td,
+    th {
+      white-space: nowrap;
+      padding: 0.1em 0.5em;
+    }
+
+    th {
+      font-weight: normal;
+    }
+  }
+
+  &.ig-selected {
+    outline: 4px solid var(--ig-block-selected);
+  }
+
+  &.ig-last-selected {
+    outline-color: var(--ig-block-last-selected);
+  }
+}
+
+.ig-block-att-loopheader {
+  .ig-block-header {
+    background-color: var(--ig-loop-header-color);
+  }
+}
+
+.ig-block-att-root {
+  .ig-block-header {
+    background-color: var(--ig-root-block-color);
+  }
+}
+
+.ig-block-att-splitedge {
+  .ig-instructions {
+    border-style: dotted;
+    border-width: 0 2px 2px;
+  }
+}
+
+.ig-ins-num {
+  text-align: right;
+  cursor: pointer;
+}
+
+.ig-ins-type {
+  text-align: right;
+}
+
+.ig-ins-samples {
+  font-size: 0.875em;
+  text-align: right;
+  cursor: pointer;
+}
+
+.ig-use {
+  padding: 0 0.25em;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.ig-edge-label {
+  position: absolute;
+  font-size: 0.8em;
+  line-height: 1;
+  bottom: -1em;
+  padding-left: 4px;
+}
+
+.ig-ins-att-RecoveredOnBailout {
+  color: var(--ig-rob-color);
+}
+
+.ig-ins-att-Movable {
+  color: var(--ig-movable-color);
+}
+
+.ig-ins-att-Guard {
+  text-decoration: underline;
+}
+
+.ig-ins-att-InWorklist {
+  color: var(--ig-in-worklist-color);
+}
+
+.ig-can-flash {
+  transition: outline-color 1s ease-out;
+  outline: 3px solid color-mix(in srgb, var(--ig-flash-color) 0%, transparent);
+}
+
+.ig-flash {
+  transition: outline-color 0s;
+  outline-color: var(--ig-flash-color);
+}
+
+.ig-hotness {
+  --ig-hotness: 0;
+
+  --ig-cold-color: color-mix(in srgb, var(--ig-cool-color) 20%, transparent);
+  background-color:
+    /* cool <-> hot */
+    color-mix(in oklab,
+      /* cold <-> cool */
+      color-mix(in oklab,
+        /* dead or cold */
+        color-mix(in srgb, transparent, var(--ig-cold-color) clamp(0%, calc(var(--ig-hotness) * 100000000%), 100%)),
+        var(--ig-cool-color) clamp(0%, calc((var(--ig-hotness) / var(--ig-cool-threshold)) * 100%), 100%)),
+      var(--ig-hot-color) clamp(0%, calc(((var(--ig-hotness) - var(--ig-cool-threshold)) / (1 - var(--ig-cool-threshold))) * 100%), 100%));
+}
+
+.ig-highlight {
+  --ig-highlight-color: transparent;
+  background-color: var(--ig-highlight-color);
+}

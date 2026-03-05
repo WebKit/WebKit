@@ -45,7 +45,6 @@
 };
 
 // https://w3c.github.io/uievents/#idl-wheeleventinit
-
 dictionary WheelEventInit : MouseEventInit {
     double deltaX = 0.0;
     double deltaY = 0.0;

@@ -135,7 +135,7 @@ SincResampler::SincResampler(double scaleFactor, unsigned requestFrames, Functio
     : m_scaleFactor(scaleFactor)
     , m_kernelStorage(kernelStorageSize)
     , m_requestFrames(requestFrames)
-    , m_provideInput(WTFMove(provideInput))
+    , m_provideInput(WTF::move(provideInput))
     , m_inputBuffer(m_requestFrames + kernelSize) // See input buffer layout above.
     , m_r1(m_inputBuffer.span())
     , m_r2(m_inputBuffer.span().subspan(kernelSize / 2))

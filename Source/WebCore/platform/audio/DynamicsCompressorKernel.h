@@ -44,7 +44,7 @@ public:
     void setNumberOfChannels(unsigned);
 
     // Performs stereo-linked compression.
-    void process(std::span<std::span<const float>> sourceChannels,
+    void process(std::span<const std::span<const float>> sourceChannels,
                  std::span<std::span<float>> destinationChannels,
                  unsigned framesToProcess,
                  float dbThreshold,

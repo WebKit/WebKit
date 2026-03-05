@@ -75,14 +75,14 @@ DOMMatrix::DOMMatrix(const TransformationMatrix& matrix, Is2D is2D)
 }
 
 DOMMatrix::DOMMatrix(TransformationMatrix&& matrix, Is2D is2D)
-    : DOMMatrixReadOnly(WTFMove(matrix), is2D)
+    : DOMMatrixReadOnly(WTF::move(matrix), is2D)
 {
 }
 
 // https://drafts.fxtf.org/geometry/#create-a-dommatrix-from-the-dictionary
 ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromMatrix(DOMMatrixInit&& init)
 {
-    return fromMatrixHelper<DOMMatrix>(WTFMove(init));
+    return fromMatrixHelper<DOMMatrix>(WTF::move(init));
 }
 
 ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromFloat32Array(Ref<Float32Array>&& array32)
@@ -122,7 +122,7 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromFloat64Array(Ref<Float64Array>&& arra
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-multiplyself
 ExceptionOr<Ref<DOMMatrix>> DOMMatrix::multiplySelf(DOMMatrixInit&& other)
 {
-    auto fromMatrixResult = DOMMatrix::fromMatrix(WTFMove(other));
+    auto fromMatrixResult = DOMMatrix::fromMatrix(WTF::move(other));
     if (fromMatrixResult.hasException())
         return fromMatrixResult.releaseException();
     auto otherObject = fromMatrixResult.releaseReturnValue();
@@ -135,7 +135,7 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrix::multiplySelf(DOMMatrixInit&& other)
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-premultiplyself
 ExceptionOr<Ref<DOMMatrix>> DOMMatrix::preMultiplySelf(DOMMatrixInit&& other)
 {
-    auto fromMatrixResult = DOMMatrix::fromMatrix(WTFMove(other));
+    auto fromMatrixResult = DOMMatrix::fromMatrix(WTF::move(other));
     if (fromMatrixResult.hasException())
         return fromMatrixResult.releaseException();
     auto otherObject = fromMatrixResult.releaseReturnValue();

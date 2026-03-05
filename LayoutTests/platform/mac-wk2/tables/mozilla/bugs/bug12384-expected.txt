@@ -8,13 +8,13 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 707x23
             RenderTableRow {TR} at (0,0) size 707x23
               RenderTableCell {TD} at (0,0) size 707x23 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {NOBR} at (1,2) size 705x18
+                RenderInline {NOBR} at (1,1) size 705x19
                   RenderTextControl {INPUT} at (1,1) size 226x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderText {#text} at (226,2) size 15x18
-                    text run at (226,2) width 15: " - "
+                  RenderText {#text} at (226,1) size 15x19
+                    text run at (226,1) width 15: " - "
                   RenderTextControl {INPUT} at (240,1) size 226x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-                  RenderText {#text} at (465,2) size 15x18
-                    text run at (465,2) width 15: " - "
+                  RenderText {#text} at (465,1) size 15x19
+                    text run at (465,1) width 15: " - "
                   RenderTextControl {INPUT} at (479,1) size 227x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,23) size 707x0

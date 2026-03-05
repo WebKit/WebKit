@@ -69,7 +69,7 @@ void ServerOpenDBRequest::notifiedConnectionsOfVersionChange(HashSet<IDBDatabase
     ASSERT(!m_notifiedConnectionsOfVersionChange);
 
     m_notifiedConnectionsOfVersionChange = true;
-    m_connectionsPendingVersionChangeEvent = WTFMove(connectionIdentifiers);
+    m_connectionsPendingVersionChangeEvent = WTF::move(connectionIdentifiers);
 }
 
 void ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent(IDBDatabaseConnectionIdentifier connectionIdentifier)

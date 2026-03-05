@@ -83,7 +83,7 @@ TEST(WebKit, ResponsivenessTimerCrash)
         for (size_t i = 0; i < 50; ++i) {
             RetainPtr<id> observableState = adoptNS(WKPageCreateObservableState(pageRef));
             [observableState.get() addObserver:observer.get() forKeyPath:@"_webProcessIsResponsive" options:0 context:nullptr];
-            observableStates.add(WTFMove(observableState));
+            observableStates.add(WTF::move(observableState));
         }
 
         [webView synchronouslyLoadHTMLString:@"<script>document.addEventListener('keydown', function(){while(1){}});</script>"];

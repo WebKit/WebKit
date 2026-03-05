@@ -29,17 +29,12 @@
 #if ENABLE(VP9) && PLATFORM(COCOA)
 
 #include <WebCore/VP9Utilities.h>
-#include <webm/dom_types.h>
-
-namespace vp9_parser {
-class Vp9HeaderParser;
-}
 
 namespace WebCore {
 
-struct MediaCapabilitiesInfo;
-struct VideoConfiguration;
-struct VideoInfo;
+struct PlatformMediaCapabilitiesInfo;
+struct PlatformMediaCapabilitiesVideoConfiguration;
+class VideoInfo;
 
 WEBCORE_EXPORT bool shouldEnableVP9Decoder();
 WEBCORE_EXPORT bool shouldEnableSWVP9Decoder();
@@ -51,11 +46,9 @@ WEBCORE_EXPORT bool vp9HardwareDecoderAvailableInProcess();
 WEBCORE_EXPORT void setVP9HardwareDecoderAvailableInProcess(bool);
 bool isVP8DecoderAvailable();
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
-std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const VideoConfiguration&);
-std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&, bool vp9HardwareDecoderAvailable);
-bool isVPSoftwareDecoderSmooth(const VideoConfiguration&);
-
-Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Video&);
+std::optional<PlatformMediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
+std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration&, bool vp9HardwareDecoderAvailable);
+bool isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
 
 struct VP8FrameHeader {
     bool keyframe { false };
@@ -71,7 +64,6 @@ struct VP8FrameHeader {
 };
 
 std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t>);
-Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader&, const webm::Video&);
 
 class VP9TestingOverrides {
 public:

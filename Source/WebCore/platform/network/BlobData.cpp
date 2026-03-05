@@ -48,12 +48,12 @@ long long BlobDataItem::length() const
     if (m_length != toEndOfFile)
         return m_length;
 
-    switch (m_type) {
+    switch (type()) {
     case Type::Data:
         ASSERT_NOT_REACHED();
         return m_length;
     case Type::File:
-        return protectedFile()->size();
+        return protect(file())->size();
     }
 
     ASSERT_NOT_REACHED();
@@ -63,19 +63,19 @@ long long BlobDataItem::length() const
 void BlobData::appendData(Ref<DataSegment>&& data)
 {
     auto dataSize = data->size();
-    appendData(WTFMove(data), 0, dataSize);
+    appendData(WTF::move(data), 0, dataSize);
 }
 
 void BlobData::appendData(Ref<DataSegment>&& data, long long offset, long long length)
 {
-    m_items.append(BlobDataItem(WTFMove(data), offset, length));
+    m_items.append(BlobDataItem(WTF::move(data), offset, length));
 }
 
 void BlobData::replaceData(const DataSegment& oldData, Ref<DataSegment>&& newData)
 {
     for (auto& blobItem : m_items) {
-        if (blobItem.data() == &oldData) {
-            blobItem.m_data = WTFMove(newData);
+        if (blobItem.type() == BlobDataItem::Type::Data && &blobItem.data() == &oldData) {
+            blobItem.m_data = WTF::move(newData);
             break;
         }
     }
@@ -84,7 +84,7 @@ void BlobData::replaceData(const DataSegment& oldData, Ref<DataSegment>&& newDat
 void BlobData::appendFile(Ref<BlobDataFileReference>&& file)
 {
     file->startTrackingModifications();
-    m_items.append(BlobDataItem(WTFMove(file)));
+    m_items.append(BlobDataItem(WTF::move(file)));
 }
 
 Ref<BlobData> BlobData::clone() const
@@ -95,9 +95,9 @@ Ref<BlobData> BlobData::clone() const
     return blobData;
 }
 
-void BlobData::appendFile(BlobDataFileReference* file, long long offset, long long length)
+void BlobData::appendFile(Ref<BlobDataFileReference>&& file, long long offset, long long length)
 {
-    m_items.append(BlobDataItem(file, offset, length));
+    m_items.append(BlobDataItem(WTF::move(file), offset, length));
 }
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 
 #if USE(LIBWEBRTC)
 
+#import <WebCore/LibWebRTCMacros.h>
 #import "RTCVideoDecoderVTBAV1.h"
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN

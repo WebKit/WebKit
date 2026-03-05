@@ -38,16 +38,16 @@ class RenderStyle;
 namespace Layout {
 
 class ElementBox : public Box {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ElementBox);
+    WTF_MAKE_TZONE_ALLOCATED(ElementBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ElementBox);
 public:
-    ElementBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, OptionSet<BaseTypeFlag> = { ElementBoxFlag });
+    ElementBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, EnumSet<BaseTypeFlag> = { ElementBoxFlag });
 
-    enum class ListMarkerAttribute : uint8_t {
-        Image = 1 << 0,
-        Outside = 1 << 1,
+    enum class ListMarkerAttribute : bool {
+        Image,
+        Outside,
     };
-    ElementBox(ElementAttributes&&, OptionSet<ListMarkerAttribute>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    ElementBox(ElementAttributes&&, EnumSet<ListMarkerAttribute>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
     struct ReplacedAttributes {
         LayoutSize intrinsicSize;
@@ -59,13 +59,13 @@ public:
     ~ElementBox();
 
     const Box* firstChild() const { return m_firstChild.get(); }
-    const Box* firstInFlowChild() const;
-    const Box* firstInFlowOrFloatingChild() const;
-    const Box* firstOutOfFlowChild() const;
+    const Box* NODELETE firstInFlowChild() const;
+    const Box* NODELETE firstInFlowOrFloatingChild() const;
+    const Box* NODELETE firstOutOfFlowChild() const;
     const Box* lastChild() const { return m_lastChild.get(); }
-    const Box* lastInFlowChild() const;
-    const Box* lastInFlowOrFloatingChild() const;
-    const Box* lastOutOfFlowChild() const;
+    const Box* NODELETE lastInFlowChild() const;
+    const Box* NODELETE lastInFlowOrFloatingChild() const;
+    const Box* NODELETE lastOutOfFlowChild() const;
 
     // FIXME: This is currently needed for style updates.
     Box* firstChild() { return m_firstChild.get(); }
@@ -73,7 +73,7 @@ public:
     bool hasChild() const { return firstChild(); }
     bool hasInFlowChild() const { return firstInFlowChild(); }
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
-    bool hasOutOfFlowChild() const;
+    bool NODELETE hasOutOfFlowChild() const;
 
     void appendChild(UniqueRef<Box>);
     void insertChild(UniqueRef<Box>, Box* beforeChild = nullptr);
@@ -82,27 +82,27 @@ public:
     void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }
     std::optional<LayoutUnit> baselineForIntegration() const { return m_baselineForIntegration; }
 
-    bool hasIntrinsicWidth() const;
-    bool hasIntrinsicHeight() const;
-    bool hasIntrinsicRatio() const;
+    bool NODELETE hasIntrinsicWidth() const;
+    bool NODELETE hasIntrinsicHeight() const;
+    bool NODELETE hasIntrinsicRatio() const;
     LayoutUnit intrinsicWidth() const;
     LayoutUnit intrinsicHeight() const;
-    LayoutUnit intrinsicRatio() const;
-    bool hasAspectRatio() const;
+    LayoutUnit NODELETE intrinsicRatio() const;
+    bool NODELETE hasAspectRatio() const;
 
-    void setListMarkerAttributes(OptionSet<ListMarkerAttribute> listMarkerAttributes) { m_replacedData->listMarkerAttributes = listMarkerAttributes; }
+    void setListMarkerAttributes(EnumSet<ListMarkerAttribute> listMarkerAttributes) { m_replacedData->listMarkerAttributes = listMarkerAttributes; }
 
     bool isListMarkerImage() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Image); }
     bool isListMarkerOutside() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Outside); }
 
     // FIXME: This is temporary until after list marker content is accessible by IFC (webkit.org/b/294342)
-    void setListMarkerLayoutBounds(std::pair<int, int> layoutBounds) { m_replacedData->layoutBounds = layoutBounds; }
-    std::pair<int, int> layoutBoundsForListMarker() const { return m_replacedData ? m_replacedData->layoutBounds : std::pair<int, int>(); }
+    void setListMarkerLayoutBounds(std::pair<float, float> layoutBounds) { m_replacedData->layoutBounds = layoutBounds; }
+    std::pair<float, float> layoutBoundsForListMarker() const { return m_replacedData ? m_replacedData->layoutBounds : std::pair<float, float>(); }
 
     // FIXME: This doesn't belong.
     CachedImage* cachedImage() const { return m_replacedData ? m_replacedData->cachedImage : nullptr; }
 
-    RenderElement* rendererForIntegration() const;
+    RenderElement* NODELETE rendererForIntegration() const;
 
 private:
     friend class Box;
@@ -110,8 +110,8 @@ private:
     struct ReplacedData {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReplacedData);
 
-        OptionSet<ListMarkerAttribute> listMarkerAttributes;
-        std::pair<int, int> layoutBounds;
+        EnumSet<ListMarkerAttribute> listMarkerAttributes;
+        std::pair<float, float> layoutBounds;
 
         std::optional<LayoutSize> intrinsicSize;
         std::optional<LayoutUnit> intrinsicRatio;

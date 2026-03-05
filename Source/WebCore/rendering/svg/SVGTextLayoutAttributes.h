@@ -52,7 +52,7 @@ public:
     static constexpr float emptyValue() { return std::numeric_limits<float>::quiet_NaN(); }
     static bool isEmptyValue(float value) { return std::isnan(value); }
 
-    RenderSVGInlineText& context();
+    RenderSVGInlineText& NODELETE context();
     const RenderSVGInlineText& context() const;
     
     SVGCharacterDataMap& characterDataMap() { return m_characterDataMap; }

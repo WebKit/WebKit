@@ -59,7 +59,7 @@
 namespace WebCore {
 
 GPUQueue::GPUQueue(Ref<WebGPU::Queue>&& backing, WebGPU::Device& device)
-    : m_backing(WTFMove(backing))
+    : m_backing(WTF::move(backing))
     , m_device(&device)
 {
 }
@@ -71,7 +71,7 @@ String GPUQueue::label() const
 
 void GPUQueue::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    m_backing->setLabel(WTF::move(label));
 }
 
 void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
@@ -79,7 +79,7 @@ void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
     auto result = WTF::map(commandBuffers, [](auto& commandBuffer) -> Ref<WebGPU::CommandBuffer> {
         return commandBuffer->backing();
     });
-    m_backing->submit(WTFMove(result));
+    m_backing->submit(WTF::move(result));
 
     if (RefPtr device = m_device.get()) {
         for (Ref commandBuffer : commandBuffers) {
@@ -91,7 +91,7 @@ void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
 
 void GPUQueue::onSubmittedWorkDone(OnSubmittedWorkDonePromise&& promise)
 {
-    m_backing->onSubmittedWorkDone([promise = WTFMove(promise)]() mutable {
+    m_backing->onSubmittedWorkDone([promise = WTF::move(promise)]() mutable {
         promise.resolve(nullptr);
     });
 }
@@ -99,9 +99,10 @@ void GPUQueue::onSubmittedWorkDone(OnSubmittedWorkDonePromise&& promise)
 static GPUSize64 computeElementSize(const BufferSource& data)
 {
     return WTF::switchOn(data.variant(),
-        [&](const RefPtr<JSC::ArrayBufferView>& bufferView) {
+        [&](const Ref<JSC::ArrayBufferView>& bufferView) {
             return static_cast<GPUSize64>(JSC::elementSize(bufferView->getType()));
-        }, [&](const RefPtr<JSC::ArrayBuffer>&) {
+        },
+        [&](const Ref<JSC::ArrayBuffer>&) {
             return static_cast<GPUSize64>(1);
         }
     );
@@ -111,12 +112,12 @@ ExceptionOr<void> GPUQueue::writeBuffer(
     const GPUBuffer& buffer,
     GPUSize64 bufferOffset,
     BufferSource&& data,
-    std::optional<GPUSize64> optionalDataOffset,
+    GPUSize64 optionalDataOffset,
     std::optional<GPUSize64> optionalSize)
 {
     auto elementSize = computeElementSize(data);
-    auto dataOffset = elementSize * optionalDataOffset.value_or(0);
-    auto dataSize = data.length();
+    auto dataOffset = elementSize * optionalDataOffset;
+    auto dataSize = data.byteLength();
     auto contentSize = optionalSize.has_value() ? (elementSize * optionalSize.value()) : (dataSize - dataOffset);
 
     if (dataOffset > dataSize || dataOffset + contentSize > dataSize || (contentSize % 4))
@@ -160,9 +161,7 @@ static size_t requiredBytesInCopy(const GPUImageCopyTexture& destination, const 
 {
     using namespace WebGPU;
 
-    auto texture = destination.texture;
-    if (!texture)
-        return 0;
+    Ref texture = destination.texture;
 
     auto aspectSpecificFormat = GPUTexture::aspectSpecificFormat(texture->format(), destination.aspect);
     uint32_t blockWidth = GPUTexture::texelBlockWidth(aspectSpecificFormat);
@@ -252,7 +251,7 @@ void GPUQueue::writeTexture(
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-static PixelFormat toPixelFormat(GPUTextureFormat textureFormat)
+static PixelFormat NODELETE toPixelFormat(GPUTextureFormat textureFormat)
 {
     switch (textureFormat) {
     case GPUTextureFormat::R8unorm:
@@ -409,12 +408,12 @@ static void clampDimension(WebGPU::Extent3D& extent3D, size_t dimension, WebGPU:
     });
 }
 
-static void getImageBytesFromVideoFrame(const RefPtr<VideoFrame>& videoFrame, WebGPU::Extent3D& backingCopySize, NOESCAPE const ImageDataCallback& callback)
+static void getImageBytesFromVideoFrame(WebGPU::Queue& backing, const RefPtr<VideoFrame>& videoFrame, WebGPU::Extent3D& backingCopySize, NOESCAPE const ImageDataCallback& callback)
 {
     if (!videoFrame.get())
         return callback({ }, 0, 0);
 
-    RefPtr nativeImage = videoFrame->copyNativeImage();
+    RefPtr<NativeImage> nativeImage = backing.getNativeImage(*videoFrame.get());
     if (!nativeImage)
         return callback({ }, 0, 0);
 
@@ -477,208 +476,209 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
 
     const auto& source = sourceDescriptor.source;
     using ResultType = void;
-    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
-        return getImageBytesFromImageBuffer(imageBitmap->buffer(), needsPremultipliedAlpha, callback);
+    return WTF::switchOn(source,
+        [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
+            return getImageBytesFromImageBuffer(imageBitmap->buffer(), needsPremultipliedAlpha, callback);
+        },
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    }, [&](const RefPtr<ImageData> imageData) -> ResultType {
-        if (!imageData)
-            return callback({ }, 0, 0);
-        callback(imageData->byteArrayPixelBuffer()->bytes(), imageData->width(), imageData->height());
-    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
+        [&](const Ref<ImageData>& imageData) -> ResultType {
+            callback(imageData->byteArrayPixelBuffer()->bytes(), imageData->width(), imageData->height());
+        },
+        [&]([[maybe_unused]] const Ref<HTMLImageElement>& imageElement) -> ResultType {
 #if PLATFORM(COCOA)
-        if (!imageElement)
-            return callback({ }, 0, 0);
-        auto* cachedImage = imageElement->cachedImage();
-        if (!cachedImage)
-            return callback({ }, 0, 0);
-        RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());
-        RefPtr<NativeImage> nativeImage;
-        bool isSVG = false;
-        if (image)
-            nativeImage = image->nativeImage();
-        else {
-            RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image());
-            RefPtr texturePtr = destination.texture.get();
-            if (texturePtr) {
-                nativeImage = svgImage->nativeImage(FloatSize(texturePtr->width(), texturePtr->height()));
-                isSVG = true;
-            }
-        }
-
-        if (!nativeImage)
-            return callback({ }, 0, 0);
-        RetainPtr platformImage = nativeImage->platformImage();
-        if (!platformImage)
-            return callback({ }, 0, 0);
-        RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(RetainPtr { CGImageGetDataProvider(platformImage.get()) }.get()));
-        if (!pixelDataCfData)
-            return callback({ }, 0, 0);
-
-        auto rawWidth = CGImageGetWidth(platformImage.get());
-        auto rawHeight = CGImageGetHeight(platformImage.get());
-        auto orientedWidth = isSVG ? rawWidth : imageElement->width();
-        auto orientedHeight = isSVG ? rawHeight : imageElement->height();
-
-        if (!orientedWidth || !orientedHeight || !rawWidth || !rawHeight)
-            return callback({ }, 0, 0);
-
-        auto sizeInBytes = rawHeight * CGImageGetBytesPerRow(platformImage.get());
-        auto bitsPerComponent = CGImageGetBitsPerComponent(platformImage.get());
-        auto byteSpan = span(pixelDataCfData.get());
-        Vector<uint8_t> byteSpanBacking;
-        if (bitsPerComponent != 8) {
-            clipTo8bitsPerChannel(byteSpan, bitsPerComponent, byteSpanBacking);
-            byteSpan = byteSpanBacking.span();
-            sizeInBytes = byteSpan.size();
-        }
-
-        auto requiredSize = orientedWidth * orientedHeight * 4;
-        auto alphaInfo = CGImageGetAlphaInfo(platformImage.get());
-        bool channelLayoutIsRGB = false;
-        bool isBGRA = toPixelFormat(destination.texture->format()) == PixelFormat::BGRA8;
-        bool hasAlpha = false;
-        static constexpr std::array channelsSVG1 { 0, 1, 2, 3 };
-        static constexpr std::array channelsSVG2 { 2, 1, 0, 3 };
-        static constexpr std::array channelsRGBX { 0, 1, 2, 3 };
-        static constexpr std::array channelsBGRX { 2, 1, 0, 3 };
-        static constexpr std::array channelsXRGB { 3, 0, 1, 2 };
-        static constexpr std::array channelsXBGR { 3, 2, 1, 0 };
-        auto& channels = [&] -> const std::array<int, 4>& {
-            if (isSVG)
-                return isBGRA ? channelsSVG1 : channelsSVG2;
-
-            switch (alphaInfo) {
-            case kCGImageAlphaPremultipliedLast:  /* For example, premultiplied RGBA */
-            case kCGImageAlphaLast:               /* For example, non-premultiplied RGBA */
-                hasAlpha = true;
-                [[fallthrough]];
-            case kCGImageAlphaNone:               /* For example, RGB. */
-            case kCGImageAlphaNoneSkipLast: {     /* For example, RGBX. */
-                channelLayoutIsRGB = true;
-                return isBGRA ? channelsBGRX : channelsRGBX;
-            }
-            case kCGImageAlphaPremultipliedFirst: /* For example, premultiplied ARGB */
-            case kCGImageAlphaFirst:              /* For example, non-premultiplied ARGB */
-            case kCGImageAlphaOnly:               /* No color data, alpha data only */
-                hasAlpha = true;
-                [[fallthrough]];
-            case kCGImageAlphaNoneSkipFirst: {      /* For example, XRGB. */
-                return isBGRA ? channelsXBGR : channelsXRGB;
-            }
-            }
-        }();
-
-        auto orientation = RefPtr { imageElement->image() }->orientation().orientation();
-        if (sizeInBytes == requiredSize && channelLayoutIsRGB && orientation == ImageOrientation::Orientation::OriginTopLeft)
-            return callback(byteSpan.first(sizeInBytes), rawWidth, rawHeight);
-
-        auto bytesPerRow = CGImageGetBytesPerRow(platformImage.get()) / (bitsPerComponent / 8);
-        Vector<uint8_t> tempBuffer(requiredSize, 255);
-        auto bytesPerPixel = sizeInBytes / (rawWidth * rawHeight);
-        bool flipY = sourceDescriptor.flipY;
-        needsYFlip = false;
-        int direction = flipY ? -1 : 1;
-        auto maxChannelIndex = bytesPerPixel - 1;
-        auto alphaIndex = 0;
-        if (hasAlpha && maxChannelIndex > 0) {
-            --maxChannelIndex;
-            alphaIndex = 1;
-        }
-
-        auto mapDestinationToSource = [&orientation, &rawWidth, &rawHeight](size_t x, size_t y) -> std::pair<size_t, size_t> {
-            switch (orientation) {
-            case ImageOrientation::Orientation::OriginTopRight:
-                return { rawWidth - 1 - x, y };
-            case ImageOrientation::Orientation::OriginBottomRight:
-                return { rawWidth - 1 - x, rawHeight - 1 - y };
-            case ImageOrientation::Orientation::OriginBottomLeft:
-                return { x, rawHeight - 1 - y };
-            case ImageOrientation::Orientation::OriginLeftTop:
-                return { y, x };
-            case ImageOrientation::Orientation::OriginRightTop:
-                return { y, rawHeight - 1 - x };
-            case ImageOrientation::Orientation::OriginRightBottom:
-                return { rawWidth - 1 - y, rawHeight - 1 - x };
-            case ImageOrientation::Orientation::OriginLeftBottom:
-                return { rawWidth - 1 - y, x };
-            default:
-                return { x, y };
-            }
-        };
-
-        for (size_t y = 0, y0 = flipY ? (orientedHeight - 1) : 0; y < orientedHeight; ++y, y0 += direction) {
-            for (size_t x = 0; x < orientedWidth; ++x) {
-                auto [sourceX, sourceY] = mapDestinationToSource(x, y);
-
-                for (size_t c = 0; c < 4; ++c) {
-                    if (channels[c] == 3 && bytesPerPixel < 4)
-                        tempBuffer[y0 * (orientedWidth * 4) + x * 4 + channels[c]] = hasAlpha ? byteSpan[sourceY * bytesPerRow + sourceX * bytesPerPixel + alphaIndex] : 255;
-                    else
-                        tempBuffer[y0 * (orientedWidth * 4) + x * 4 + channels[c]] = byteSpan[sourceY * bytesPerRow + sourceX * bytesPerPixel + std::min<size_t>(maxChannelIndex, c)];
+            auto* cachedImage = imageElement->cachedImage();
+            if (!cachedImage)
+                return callback({ }, 0, 0);
+            RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());
+            RefPtr<NativeImage> nativeImage;
+            bool isSVG = false;
+            if (image)
+                nativeImage = image->nativeImage();
+            else {
+                RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image());
+                RefPtr texturePtr = destination.texture.get();
+                if (texturePtr) {
+                    nativeImage = svgImage->nativeImage(FloatSize(texturePtr->width(), texturePtr->height()));
+                    isSVG = true;
                 }
             }
+
+            if (!nativeImage)
+                return callback({ }, 0, 0);
+            RetainPtr platformImage = nativeImage->platformImage();
+            if (!platformImage)
+                return callback({ }, 0, 0);
+            RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(RetainPtr { CGImageGetDataProvider(platformImage.get()) }.get()));
+            if (!pixelDataCfData)
+                return callback({ }, 0, 0);
+
+            auto rawWidth = CGImageGetWidth(platformImage.get());
+            auto rawHeight = CGImageGetHeight(platformImage.get());
+            auto orientedWidth = isSVG ? rawWidth : imageElement->width();
+            auto orientedHeight = isSVG ? rawHeight : imageElement->height();
+
+            if (!orientedWidth || !orientedHeight || !rawWidth || !rawHeight)
+                return callback({ }, 0, 0);
+
+            auto sizeInBytes = rawHeight * CGImageGetBytesPerRow(platformImage.get());
+            auto bitsPerComponent = CGImageGetBitsPerComponent(platformImage.get());
+            auto byteSpan = span(pixelDataCfData.get());
+            Vector<uint8_t> byteSpanBacking;
+            if (bitsPerComponent != 8) {
+                clipTo8bitsPerChannel(byteSpan, bitsPerComponent, byteSpanBacking);
+                byteSpan = byteSpanBacking.span();
+                sizeInBytes = byteSpan.size();
+            }
+
+            auto requiredSize = orientedWidth * orientedHeight * 4;
+            auto alphaInfo = CGImageGetAlphaInfo(platformImage.get());
+            bool channelLayoutIsRGB = false;
+            bool isBGRA = toPixelFormat(destination.texture->format()) == PixelFormat::BGRA8;
+            bool hasAlpha = false;
+            static constexpr std::array channelsSVG1 { 0, 1, 2, 3 };
+            static constexpr std::array channelsSVG2 { 2, 1, 0, 3 };
+            static constexpr std::array channelsRGBX { 0, 1, 2, 3 };
+            static constexpr std::array channelsBGRX { 2, 1, 0, 3 };
+            static constexpr std::array channelsXRGB { 3, 0, 1, 2 };
+            static constexpr std::array channelsXBGR { 3, 2, 1, 0 };
+            auto& channels = [&] -> const std::array<int, 4>& {
+                if (isSVG)
+                    return isBGRA ? channelsSVG1 : channelsSVG2;
+
+                switch (alphaInfo) {
+                case kCGImageAlphaPremultipliedLast:  /* For example, premultiplied RGBA */
+                case kCGImageAlphaLast:               /* For example, non-premultiplied RGBA */
+                    hasAlpha = true;
+                    [[fallthrough]];
+                case kCGImageAlphaNone:               /* For example, RGB. */
+                case kCGImageAlphaNoneSkipLast: {     /* For example, RGBX. */
+                    channelLayoutIsRGB = true;
+                    return isBGRA ? channelsBGRX : channelsRGBX;
+                }
+                case kCGImageAlphaPremultipliedFirst: /* For example, premultiplied ARGB */
+                case kCGImageAlphaFirst:              /* For example, non-premultiplied ARGB */
+                case kCGImageAlphaOnly:               /* No color data, alpha data only */
+                    hasAlpha = true;
+                    [[fallthrough]];
+                case kCGImageAlphaNoneSkipFirst: {      /* For example, XRGB. */
+                    return isBGRA ? channelsXBGR : channelsXRGB;
+                }
+                }
+            }();
+
+            auto orientation = RefPtr { imageElement->image() }->orientation().orientation();
+            if (sizeInBytes == requiredSize && channelLayoutIsRGB && orientation == ImageOrientation::Orientation::OriginTopLeft)
+                return callback(byteSpan.first(sizeInBytes), rawWidth, rawHeight);
+
+            auto bytesPerRow = CGImageGetBytesPerRow(platformImage.get()) / (bitsPerComponent / 8);
+            Vector<uint8_t> tempBuffer(requiredSize, 255);
+            auto bytesPerPixel = sizeInBytes / (rawWidth * rawHeight);
+            bool flipY = sourceDescriptor.flipY;
+            needsYFlip = false;
+            int direction = flipY ? -1 : 1;
+            auto maxChannelIndex = bytesPerPixel - 1;
+            auto alphaIndex = 0;
+            if (hasAlpha && maxChannelIndex > 0) {
+                --maxChannelIndex;
+                alphaIndex = 1;
+            }
+
+            auto mapDestinationToSource = [&orientation, &rawWidth, &rawHeight](size_t x, size_t y) -> std::pair<size_t, size_t> {
+                switch (orientation) {
+                case ImageOrientation::Orientation::OriginTopRight:
+                    return { rawWidth - 1 - x, y };
+                case ImageOrientation::Orientation::OriginBottomRight:
+                    return { rawWidth - 1 - x, rawHeight - 1 - y };
+                case ImageOrientation::Orientation::OriginBottomLeft:
+                    return { x, rawHeight - 1 - y };
+                case ImageOrientation::Orientation::OriginLeftTop:
+                    return { y, x };
+                case ImageOrientation::Orientation::OriginRightTop:
+                    return { y, rawHeight - 1 - x };
+                case ImageOrientation::Orientation::OriginRightBottom:
+                    return { rawWidth - 1 - y, rawHeight - 1 - x };
+                case ImageOrientation::Orientation::OriginLeftBottom:
+                    return { rawWidth - 1 - y, x };
+                default:
+                    return { x, y };
+                }
+            };
+
+            for (size_t y = 0, y0 = flipY ? (orientedHeight - 1) : 0; y < orientedHeight; ++y, y0 += direction) {
+                for (size_t x = 0; x < orientedWidth; ++x) {
+                    auto [sourceX, sourceY] = mapDestinationToSource(x, y);
+
+                    for (size_t c = 0; c < 4; ++c) {
+                        if (channels[c] == 3 && bytesPerPixel < 4)
+                            tempBuffer[y0 * (orientedWidth * 4) + x * 4 + channels[c]] = hasAlpha ? byteSpan[sourceY * bytesPerRow + sourceX * bytesPerPixel + alphaIndex] : 255;
+                        else
+                            tempBuffer[y0 * (orientedWidth * 4) + x * 4 + channels[c]] = byteSpan[sourceY * bytesPerRow + sourceX * bytesPerPixel + std::min<size_t>(maxChannelIndex, c)];
+                    }
+                }
+            }
+            callback(tempBuffer.span(), orientedWidth, orientedHeight);
+#else
+            return callback({ }, 0, 0);
+#endif
+        },
+        [&]([[maybe_unused]] const Ref<HTMLVideoElement>& videoElement) -> ResultType {
+#if PLATFORM(COCOA)
+            if (RefPtr player = videoElement->player(); player && player->isVideoPlayer())
+                return getImageBytesFromVideoFrame(backing, player->videoFrameForCurrentTime(), backingCopySize, callback);
+#endif
+            return callback({ }, 0, 0);
+        },
+        [&]([[maybe_unused]] const Ref<WebCodecsVideoFrame>& webCodecsFrame) -> ResultType {
+#if PLATFORM(COCOA)
+            return getImageBytesFromVideoFrame(backing, webCodecsFrame->internalFrame(), backingCopySize, callback);
+#else
+            return callback({ }, 0, 0);
+#endif
+        },
+#endif
+        [&](const Ref<HTMLCanvasElement>& canvasElement) -> ResultType {
+            return getImageBytesFromImageBuffer(canvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), needsPremultipliedAlpha, callback);
         }
-        callback(tempBuffer.span(), orientedWidth, orientedHeight);
-#else
-        UNUSED_PARAM(needsYFlip);
-        UNUSED_PARAM(imageElement);
-        return callback({ }, 0, 0);
-#endif
-    }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
-#if PLATFORM(COCOA)
-        if (RefPtr player = videoElement ? videoElement->player() : nullptr; player && player->isVideoPlayer())
-            return getImageBytesFromVideoFrame(player->videoFrameForCurrentTime(), backingCopySize, callback);
-#else
-        UNUSED_PARAM(videoElement);
-#endif
-        return callback({ }, 0, 0);
-    }, [&](const RefPtr<WebCodecsVideoFrame> webCodecsFrame) -> ResultType {
-#if PLATFORM(COCOA)
-        return getImageBytesFromVideoFrame(webCodecsFrame->internalFrame(), backingCopySize, callback);
-#else
-        UNUSED_PARAM(webCodecsFrame);
-        return callback({ }, 0, 0);
-#endif
-#endif
-    }, [&](const RefPtr<HTMLCanvasElement>& canvasElement) -> ResultType {
-        return getImageBytesFromImageBuffer(canvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), needsPremultipliedAlpha, callback);
-    }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
-        return getImageBytesFromImageBuffer(offscreenCanvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), needsPremultipliedAlpha, callback);
-    }
+        , [&](const Ref<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
+            return getImageBytesFromImageBuffer(offscreenCanvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No), needsPremultipliedAlpha, callback);
+        }
 #endif
     );
 }
 
-static bool isOriginClean(const auto& source, ScriptExecutionContext& context)
+static bool isOriginClean(const auto& source, [[maybe_unused]] ScriptExecutionContext& context)
 {
-    UNUSED_PARAM(context);
     using ResultType = bool;
-    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
-        return imageBitmap->originClean();
+    return WTF::switchOn(source,
+        [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
+            return imageBitmap->originClean();
+        },
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    }, [&](const RefPtr<ImageData>) -> ResultType {
-        return true;
-    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
-        return imageElement->originClean(*context.protectedSecurityOrigin().get());
-    }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
+        [&](const Ref<ImageData>&) -> ResultType {
+            return true;
+        },
+        [&](const Ref<HTMLImageElement>& imageElement) -> ResultType {
+            return imageElement->originClean(*protect(context.securityOrigin()).get());
+        },
+        [&]([[maybe_unused]] const Ref<HTMLVideoElement>& videoElement) -> ResultType {
 #if PLATFORM(COCOA)
-        return !videoElement->taintsOrigin(*context.protectedSecurityOrigin().get());
+            return !videoElement->taintsOrigin(*protect(context.securityOrigin()).get());
 #else
-        UNUSED_PARAM(videoElement);
+            return true;
 #endif
-        return true;
-    }, [&](const RefPtr<WebCodecsVideoFrame>) -> ResultType {
-        return true;
+        },
+        [&](const Ref<WebCodecsVideoFrame>&) -> ResultType {
+            return true;
+        },
 #endif
-    }, [&](const RefPtr<HTMLCanvasElement>& canvasElement) -> ResultType {
-        return canvasElement->originClean();
-    }
+        [&](const Ref<HTMLCanvasElement>& canvasElement) -> ResultType {
+            return canvasElement->originClean();
+        }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
-        return offscreenCanvasElement->originClean();
-    }
+        , [&](const Ref<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
+            return offscreenCanvasElement->originClean();
+        }
 #endif
     );
 }
@@ -733,80 +733,86 @@ static bool isStateValid(const auto& source, const std::optional<GPUOrigin2D>& o
     uint32_t horizontalDimension = checkedHorizontalDimension.value();
     uint32_t verticalDimension = checkedVerticalDimension.value();
 
-    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
-        if (!imageBitmap->buffer()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        if (horizontalDimension > imageBitmap->width() || verticalDimension > imageBitmap->height()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        return true;
+    return WTF::switchOn(source,
+        [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
+            if (!imageBitmap->buffer()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (horizontalDimension > imageBitmap->width() || verticalDimension > imageBitmap->height()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            return true;
+        },
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    }, [&](const RefPtr<ImageData> imageData) -> ResultType {
-        auto width = imageData->width();
-        auto height = imageData->height();
-        if (width < 0 || height < 0 || horizontalDimension > static_cast<uint32_t>(width) || verticalDimension > static_cast<uint32_t>(height)) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        auto size = width * height;
-        if (!size) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        return true;
-    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
-        if (!imageElement->cachedImage()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        if (horizontalDimension > imageElement->width() || verticalDimension > imageElement->height()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        return true;
-    }, [&](const RefPtr<HTMLVideoElement>) -> ResultType {
-        return true;
-    }, [&](const RefPtr<WebCodecsVideoFrame>) -> ResultType {
-        return true;
+        [&](const Ref<ImageData>& imageData) -> ResultType {
+            auto width = imageData->width();
+            auto height = imageData->height();
+            if (width < 0 || height < 0 || horizontalDimension > static_cast<uint32_t>(width) || verticalDimension > static_cast<uint32_t>(height)) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            auto size = width * height;
+            if (!size) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            return true;
+        },
+        [&](const Ref<HTMLImageElement>& imageElement) -> ResultType {
+            if (!imageElement->cachedImage()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (horizontalDimension > imageElement->width() || verticalDimension > imageElement->height()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            return true;
+        },
+        [&](const Ref<HTMLVideoElement>&) -> ResultType {
+            return true;
+        },
+        [&](const Ref<WebCodecsVideoFrame>&) -> ResultType {
+            return true;
+        },
 #endif
-    }, [&](const RefPtr<HTMLCanvasElement>& canvas) -> ResultType {
-        if (!canvas->renderingContext()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
+        [&](const Ref<HTMLCanvasElement>& canvas) -> ResultType {
+            if (!canvas->renderingContext()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            if (canvas->renderingContext()->isPlaceholder()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (horizontalDimension > canvas->width() || verticalDimension > canvas->height()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            return true;
         }
-        if (canvas->renderingContext()->isPlaceholder()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        if (horizontalDimension > canvas->width() || verticalDimension > canvas->height()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        return true;
-    }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> ResultType {
-        if (offscreenCanvas->isDetached()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
+        , [&](const Ref<OffscreenCanvas>& offscreenCanvas) -> ResultType {
+            if (offscreenCanvas->isDetached()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (!offscreenCanvas->renderingContext()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            if (offscreenCanvas->renderingContext()->isPlaceholder()) {
+                errorCode = ExceptionCode::InvalidStateError;
+                return false;
+            }
+            if (horizontalDimension > offscreenCanvas->width() || verticalDimension > offscreenCanvas->height()) {
+                errorCode = ExceptionCode::OperationError;
+                return false;
+            }
+            return true;
         }
-        if (!offscreenCanvas->renderingContext()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        if (offscreenCanvas->renderingContext()->isPlaceholder()) {
-            errorCode = ExceptionCode::InvalidStateError;
-            return false;
-        }
-        if (horizontalDimension > offscreenCanvas->width() || verticalDimension > offscreenCanvas->height()) {
-            errorCode = ExceptionCode::OperationError;
-            return false;
-        }
-        return true;
-    }
 #endif
     );
 }
@@ -814,7 +820,7 @@ static bool isStateValid(const auto& source, const std::optional<GPUOrigin2D>& o
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=263692 - this code should be removed, it is to unblock
 // compiler <-> pipeline dependencies
 #if PLATFORM(COCOA)
-static uint32_t convertRGBA8888ToRGB10A2(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+static uint32_t NODELETE convertRGBA8888ToRGB10A2(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
     uint32_t r0 = (static_cast<uint32_t>(r) << 2) | (static_cast<uint32_t>(r) >> 6);
     uint32_t g0 = (static_cast<uint32_t>(g) << 2) | (static_cast<uint32_t>(g) >> 6);
@@ -1151,7 +1157,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         RELEASE_ASSERT(callbackScopeIsSafe);
         auto destinationTexture = destination.texture;
         auto sizeInBytes = imageBytes.size();
-        if (!imageBytes.data() || !sizeInBytes || !destinationTexture || (imageBytes.size() % 4))
+        if (!imageBytes.data() || !sizeInBytes || (imageBytes.size() % 4))
             return;
 
         bool supportedFormat;

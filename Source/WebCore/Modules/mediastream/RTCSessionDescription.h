@@ -43,7 +43,7 @@ namespace WebCore {
 struct RTCSessionDescriptionInit;
 
 class RTCSessionDescription final : public RefCounted<RTCSessionDescription>, public ScriptWrappable {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCSessionDescription);
+    WTF_MAKE_TZONE_ALLOCATED(RTCSessionDescription);
 public:
     struct Init {
         RTCSdpType type;
@@ -56,8 +56,8 @@ public:
 
     RTCSdpType type() const { return m_type; }
 
-    const String& sdp() const { return m_sdp; }
-    void setSdp(String&& sdp) { m_sdp = WTFMove(sdp); }
+    const String& sdp() const LIFETIME_BOUND { return m_sdp; }
+    void setSdp(String&& sdp) { m_sdp = WTF::move(sdp); }
 
 private:
     RTCSessionDescription(RTCSdpType, String&& sdp);

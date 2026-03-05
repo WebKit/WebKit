@@ -81,11 +81,10 @@ public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<ModelConnectionToWebProcess>);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
-    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTF::move(sharedPreferencesForWebProcess); }
 
     IPC::Connection& connection() { return m_connection.get(); }
-    Ref<IPC::Connection> protectedConnection() { return m_connection; }
-    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
+    IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
     ModelProcess& modelProcess() { return m_modelProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
@@ -93,9 +92,9 @@ public:
 
     ModelProcessModelPlayerManagerProxy& modelProcessModelPlayerManagerProxy() { return m_modelProcessModelPlayerManagerProxy.get(); }
 
-    Logger& logger();
+    Logger& NODELETE logger();
 
-    const WebCore::ProcessIdentity& webProcessIdentity() const { return m_webProcessIdentity; }
+    const WebCore::ProcessIdentity& webProcessIdentity() const LIFETIME_BOUND { return m_webProcessIdentity; }
 
     void didUnloadModelPlayer(WebCore::ModelPlayerIdentifier);
     bool allowsExitUnderMemoryPressure() const;

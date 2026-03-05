@@ -107,11 +107,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return self;
 }
 
-- (Ref<WebKit::WebPageProxy>)_protectedWebPageProxy
-{
-    return *_webPageProxy;
-}
-
 - (BOOL)isFlipped
 {
     return YES;
@@ -196,7 +191,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [_wkWebView _setThumbnailView:nil];
             [_wkWebView _setIgnoresAllEvents:NO];
         }
-        self._protectedWebPageProxy->setMayStartMediaWhenInWindow(_originalMayStartMediaWhenInWindow);
+        protect(*_webPageProxy)->setMayStartMediaWhenInWindow(_originalMayStartMediaWhenInWindow);
     }
 
     if (_shouldKeepSnapshotWhenRemovedFromSuperview)
@@ -214,7 +209,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     if (!_exclusivelyUsesSnapshot && !_originalSourceViewIsInWindow)
-        self._protectedWebPageProxy->setMayStartMediaWhenInWindow(false);
+        protect(*_webPageProxy)->setMayStartMediaWhenInWindow(false);
 
     [self _requestSnapshotIfNeeded];
 

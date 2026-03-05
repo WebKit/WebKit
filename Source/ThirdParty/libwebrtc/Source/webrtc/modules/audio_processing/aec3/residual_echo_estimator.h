@@ -16,6 +16,7 @@
 
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
+#include "api/audio/neural_residual_echo_estimator.h"
 #include "api/environment/environment.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec_state.h"
@@ -26,9 +27,11 @@ namespace webrtc {
 
 class ResidualEchoEstimator {
  public:
-  ResidualEchoEstimator(const Environment& env,
-                        const EchoCanceller3Config& config,
-                        size_t num_render_channels);
+  ResidualEchoEstimator(
+      const Environment& env,
+      const EchoCanceller3Config& config,
+      size_t num_render_channels,
+      NeuralResidualEchoEstimator* neural_residual_echo_estimator);
   ~ResidualEchoEstimator();
 
   ResidualEchoEstimator(const ResidualEchoEstimator&) = delete;
@@ -37,8 +40,11 @@ class ResidualEchoEstimator {
   void Estimate(
       const AecState& aec_state,
       const RenderBuffer& render_buffer,
+      ArrayView<const std::array<float, kFftLengthBy2>> capture,
+      ArrayView<const std::array<float, kFftLengthBy2>> linear_aec_output,
       ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2_linear,
       ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+      ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
       bool dominant_nearend,
       ArrayView<std::array<float, kFftLengthBy2Plus1>> R2,
       ArrayView<std::array<float, kFftLengthBy2Plus1>> R2_unbounded);
@@ -77,6 +83,7 @@ class ResidualEchoEstimator {
   std::array<float, kFftLengthBy2Plus1> X2_noise_floor_;
   std::array<int, kFftLengthBy2Plus1> X2_noise_floor_counter_;
   ReverbModel echo_reverb_;
+  NeuralResidualEchoEstimator* neural_residual_echo_estimator_;
 };
 
 }  // namespace webrtc

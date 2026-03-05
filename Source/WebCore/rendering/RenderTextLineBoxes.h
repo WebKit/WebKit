@@ -42,7 +42,7 @@ public:
 
     LegacyInlineTextBox* createAndAppendLineBox(RenderSVGInlineText&);
 
-    void remove(LegacyInlineTextBox&);
+    void NODELETE remove(LegacyInlineTextBox&);
 
     void removeAllFromParent(RenderSVGInlineText&);
     void deleteAll();
@@ -58,7 +58,7 @@ public:
 #endif
 
 private:
-    void checkConsistency() const;
+    void NODELETE checkConsistency() const;
 
     LegacyInlineTextBox* m_first { nullptr };
     LegacyInlineTextBox* m_last { nullptr };

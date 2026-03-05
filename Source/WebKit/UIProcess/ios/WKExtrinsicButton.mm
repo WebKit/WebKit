@@ -45,13 +45,13 @@
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
 {
     [super contextMenuInteraction:interaction willDisplayMenuForConfiguration:configuration animator:animator];
-    [_delegate wkExtrinsicButtonWillDisplayMenu:self];
+    [protect(_delegate) wkExtrinsicButtonWillDisplayMenu:self];
 }
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
 {
     [super contextMenuInteraction:interaction willEndForConfiguration:configuration animator:animator];
-    [_delegate wkExtrinsicButtonWillDismissMenu:self];
+    [protect(_delegate) wkExtrinsicButtonWillDismissMenu:self];
 }
 #endif // !PLATFORM(WATCHOS)
 

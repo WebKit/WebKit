@@ -56,7 +56,7 @@ void WebResourceInterceptController::defer(WebCore::ResourceLoaderIdentifier ide
 
     auto iterator = m_interceptedResponseQueue.find(identifier);
     if (iterator != m_interceptedResponseQueue.end())
-        iterator->value.append(WTFMove(function));
+        iterator->value.append(WTF::move(function));
 }
 
 } // namespace WebKit

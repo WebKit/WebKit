@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,10 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
-#include "MediaPlayerPrivateAVFoundation.h"
-#include "SharedBuffer.h"
-#include "VideoFrameMetadata.h"
 #include <CoreMedia/CMTime.h>
+#include <WebCore/MediaPlayerPrivateAVFoundation.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/VideoFrameMetadata.h>
 #include <wtf/Forward.h>
 #include <wtf/MainThreadDispatcher.h>
 #include <wtf/Observer.h>
@@ -78,7 +78,7 @@ class VideoLayerManagerObjC;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
 
-class MediaPlayerPrivateAVFoundationObjC final : public MediaPlayerPrivateAVFoundation {
+class WEBCORE_EXPORT MediaPlayerPrivateAVFoundationObjC final : public MediaPlayerPrivateAVFoundation {
 public:
     explicit MediaPlayerPrivateAVFoundationObjC(MediaPlayer&);
     virtual ~MediaPlayerPrivateAVFoundationObjC();
@@ -86,7 +86,7 @@ public:
     static void registerMediaEngine(MediaEngineRegistrar);
 
     void setAsset(RetainPtr<id>&&);
-    void didEnd() final;
+    void didEnd(double) final;
     void metadataLoaded() final;
 
     void processCue(NSArray *, NSArray *, const MediaTime&);
@@ -133,6 +133,10 @@ public:
     MediaTime currentTime() const final;
     void outputMediaDataWillChange();
     void processChapterTracks();
+
+    Ref<WebCoreAVFResourceLoader> ensureAVFResourceLoader(AVAssetResourceLoadingRequest *);
+
+    bool isAudible() const { return m_isAudible; }
 
 private:
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -241,6 +245,8 @@ private:
     void updateVideoLayerGravity() final { updateVideoLayerGravity(ShouldAnimate::No); }
     void updateVideoLayerGravity(ShouldAnimate);
 
+    void updateIsAudible() final;
+
     bool didPassCORSAccessCheck() const final;
     std::optional<bool> isCrossOrigin(const SecurityOrigin&) const final;
 
@@ -310,11 +316,12 @@ private:
     MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
     bool wirelessVideoPlaybackDisabled() const final;
     void setWirelessVideoPlaybackDisabled(bool) final;
-    bool canPlayToWirelessPlaybackTarget() const final { return true; }
+    OptionSet<MediaPlaybackTargetType> supportedPlaybackTargetTypes() const final;
+    static OptionSet<MediaPlaybackTargetType> playbackTargetTypes();
     void updateDisableExternalPlayback();
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(MAC)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) final;
     void setShouldPlayToPlaybackTarget(bool) final;
 #endif
@@ -388,10 +395,14 @@ private:
     bool supportsLinearMediaPlayer() const final { return true; }
 #endif
 
-    RefPtr<SharedBuffer> protectedKeyID() const { return m_keyID; }
 
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    RefPtr<CDMInstanceFairPlayStreamingAVFObjC> protectedCDMInstance() const;
+    void forEachResourceLoader(Function<void(WebCoreAVFResourceLoader&)>&&) const;
+    void addResourceLoader(AVAssetResourceLoadingRequest *, Ref<WebCoreAVFResourceLoader>&&);
+    RefPtr<WebCoreAVFResourceLoader> getResourceLoader(AVAssetResourceLoadingRequest *) const;
+    RefPtr<WebCoreAVFResourceLoader> takeResourceLoader(AVAssetResourceLoadingRequest *);
+
+#if HAVE(AVPLAYER_PARTICIPATESINAUDIOSESSION)
+    void setParticipatesInAudioSession(bool);
 #endif
 
     RetainPtr<AVURLAsset> m_avAsset;
@@ -424,15 +435,16 @@ private:
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 
     friend class WebCoreAVFResourceLoader;
-    HashMap<RetainPtr<CFTypeRef>, RefPtr<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
+    mutable Lock m_resourceLoaderMapLock;
+    HashMap<RetainPtr<AVAssetResourceLoadingRequest>, Ref<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
     const RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
     MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_keyURIToRequestMap;
     MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_sessionIDToRequestMap;
 
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
 
-    Vector<RefPtr<AudioTrackPrivateAVFObjC>> m_audioTracks;
-    Vector<RefPtr<VideoTrackPrivateAVFObjC>> m_videoTracks;
+    Vector<Ref<AudioTrackPrivateAVFObjC>> m_audioTracks;
+    Vector<Ref<VideoTrackPrivateAVFObjC>> m_videoTracks;
     RefPtr<MediaSelectionGroupAVFObjC> m_audibleGroup;
     RefPtr<MediaSelectionGroupAVFObjC> m_visualGroup;
 
@@ -442,11 +454,13 @@ private:
     RefPtr<InbandMetadataTextTrackPrivateAVF> m_metadataTrack;
 #endif
 
-    MemoryCompactRobinHoodHashMap<String, RefPtr<InbandChapterTrackPrivateAVFObjC>> m_chapterTracks;
+    MemoryCompactRobinHoodHashMap<String, Ref<InbandChapterTrackPrivateAVFObjC>> m_chapterTracks;
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(MAC)
-    RetainPtr<AVOutputContext> m_outputContext;
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
+#if PLATFORM(MAC)
+    RetainPtr<AVOutputContext> m_outputContext;
+#endif
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -480,6 +494,7 @@ private:
     double m_cachedRate { 0 };
     bool m_requestedPlaying { false };
     double m_requestedRate { 1.0 };
+    double m_volume { 1 };
     int m_cachedTimeControlStatus { 0 };
     mutable long long m_cachedTotalBytes { 0 };
     unsigned m_pendingStatusChanges { 0 };
@@ -515,6 +530,8 @@ private:
     uint64_t m_sampleCount { 0 };
     RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };
+    bool m_isAudible { false };
+    bool m_isVideoPlayer { false };
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     mutable std::optional<NSTimeInterval> m_cachedSeekableTimeRangesLastModifiedTime;
     mutable std::optional<NSTimeInterval> m_cachedLiveUpdateInterval;
@@ -523,13 +540,21 @@ private:
     ProcessIdentity m_resourceOwner;
     PlatformTimeRanges m_buffered;
     TrackID m_currentTextTrackID { 0 };
-    Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher { MainThreadDispatcher::singleton() };
+    const Ref<PlatformMediaResourceLoader> m_mediaResourceLoader;
+    const Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 #endif
+#if !RELEASE_LOG_DISABLED
+    uint64_t m_childIdentifierSeed { 0 };
+#endif
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlayerPrivateAVFoundationObjC)
+static bool isType(const WebCore::MediaPlayerPrivateInterface& player) { return player.mediaPlayerType() == WebCore::MediaPlayerType::AVFObjC; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

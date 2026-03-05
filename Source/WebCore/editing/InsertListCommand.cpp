@@ -53,7 +53,7 @@ static RefPtr<Node> enclosingListChild(Node* node, Node* listNode)
 
 RefPtr<HTMLElement> InsertListCommand::insertList(Ref<Document>&& document, Type type)
 {
-    RefPtr<InsertListCommand> insertCommand = create(WTFMove(document), type);
+    RefPtr<InsertListCommand> insertCommand = create(WTF::move(document), type);
     insertCommand->apply();
     return insertCommand->m_listElement;
 }
@@ -71,7 +71,7 @@ HTMLElement* InsertListCommand::fixOrphanedListChild(Node& node)
 
     removeNode(node);
     appendNode(node, listElement.copyRef());
-    m_listElement = WTFMove(listElement);
+    m_listElement = WTF::move(listElement);
     return m_listElement.get();
 }
 
@@ -111,9 +111,10 @@ bool InsertListCommand::selectionHasListOfType(const VisibleSelection& selection
     return true;
 }
 
-InsertListCommand::InsertListCommand(Ref<Document>&& document, Type type)
-    : CompositeEditCommand(WTFMove(document))
+InsertListCommand::InsertListCommand(Ref<Document>&& document, Type type, Style::ListStyleType styleType)
+    : CompositeEditCommand(WTF::move(document))
     , m_type(type)
+    , m_listStyleType(styleType)
 {
 }
 
@@ -371,9 +372,9 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
     moveParagraphs(start, end, insertionPoint, true);
 }
 
-static RefPtr<HTMLElement> adjacentEnclosingList(const VisiblePosition& pos, const VisiblePosition& adjacentPos, const HTMLQualifiedName& listTag)
+static RefPtr<HTMLElement> adjacentEnclosingList(const VisiblePosition& pos, const VisiblePosition& adjacentPos, const HTMLQualifiedName& listTag, Style::ListStyleType newListStyleType)
 {
-    RefPtr listNode = outermostEnclosingList(adjacentPos.deepEquivalent().protectedDeprecatedNode().get());
+    RefPtr listNode = outermostEnclosingList(protect(adjacentPos.deepEquivalent().deprecatedNode()).get());
 
     if (!listNode)
         return nullptr;
@@ -381,10 +382,13 @@ static RefPtr<HTMLElement> adjacentEnclosingList(const VisiblePosition& pos, con
     RefPtr previousCell = enclosingTableCell(pos.deepEquivalent());
     RefPtr currentCell = enclosingTableCell(adjacentPos.deepEquivalent());
 
+    Style::ListStyleType currentListStyleType = listNode->renderer() ? listNode->renderer()->style().listStyleType() : CSS::Keyword::None { };
+
     if (!listNode->hasTagName(listTag)
         || listNode->contains(pos.deepEquivalent().deprecatedNode())
         || previousCell != currentCell
-        || enclosingList(listNode.get()) != enclosingList(pos.deepEquivalent().protectedDeprecatedNode().get()))
+        || enclosingList(listNode.get()) != enclosingList(protect(pos.deepEquivalent().deprecatedNode()).get())
+        || (currentListStyleType != newListStyleType && newListStyleType != CSS::Keyword::None { }))
         return nullptr;
 
     return listNode;
@@ -404,17 +408,17 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
     appendNode(placeholder.copyRef(), listItemElement.copyRef());
 
     // Place list item into adjoining lists.
-    auto previousList = adjacentEnclosingList(start.deepEquivalent(), start.previous(CannotCrossEditingBoundary), listTag);
-    auto nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(CannotCrossEditingBoundary), listTag);
+    auto previousList = adjacentEnclosingList(start.deepEquivalent(), start.previous(CannotCrossEditingBoundary), listTag, m_listStyleType);
+    auto nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(CannotCrossEditingBoundary), listTag, m_listStyleType);
     RefPtr<HTMLElement> listElement;
     if (previousList)
-        appendNode(WTFMove(listItemElement), *previousList);
+        appendNode(WTF::move(listItemElement), *previousList);
     else if (nextList)
-        insertNodeAt(WTFMove(listItemElement), positionBeforeNode(nextList.get()));
+        insertNodeAt(WTF::move(listItemElement), positionBeforeNode(nextList.get()));
     else {
         // Create the list.
         listElement = createHTMLElement(document(), listTag);
-        appendNode(WTFMove(listItemElement), *listElement);
+        appendNode(WTF::move(listItemElement), *listElement);
 
         if (start == end) {
             RefPtr node = start.deepEquivalent().deprecatedNode();

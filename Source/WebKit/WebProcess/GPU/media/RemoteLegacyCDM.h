@@ -58,8 +58,6 @@ public:
     void deref() const final;
 
 private:
-    Ref<RemoteLegacyCDMFactory> protectedFactory() const;
-
     WeakRef<RemoteLegacyCDMFactory> m_factory;
     RemoteLegacyCDMIdentifier m_identifier;
 };

@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBKey);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBKey);
 
-using IDBKeyVector = Vector<RefPtr<IDBKey>>;
+using IDBKeyVector = Vector<Ref<IDBKey>>;
 
 Ref<IDBKey> IDBKey::createBinary(const ThreadSafeDataBuffer& buffer)
 {
@@ -76,9 +76,9 @@ IDBKey::IDBKey(const String& value)
 {
 }
 
-IDBKey::IDBKey(const IDBKeyVector& keyArray, size_t arraySize)
+IDBKey::IDBKey(Vector<Ref<IDBKey>>&& keyArray, size_t arraySize)
     : m_type(IndexedDB::KeyType::Array)
-    , m_value(keyArray)
+    , m_value(WTF::move(keyArray))
     , m_sizeEstimate(OverheadSize + arraySize)
 {
 }
@@ -117,7 +117,7 @@ std::weak_ordering IDBKey::compare(const IDBKey& other) const
         auto& array = std::get<IDBKeyVector>(m_value);
         auto& otherArray = std::get<IDBKeyVector>(other.m_value);
         for (size_t i = 0; i < array.size() && i < otherArray.size(); ++i) {
-            if (auto result = Ref { *array[i] }->compare(Ref { *otherArray[i] }); is_neq(result))
+            if (auto result = Ref { array[i] }->compare(Ref { otherArray[i] }); is_neq(result))
                 return result;
         }
         return array.size() <=> otherArray.size();

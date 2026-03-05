@@ -41,7 +41,7 @@ static constexpr double maxPrepareForSuspensionDelayInSecond = 15;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessStateMonitor);
 
 ProcessStateMonitor::ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler)
-    : m_becomeSuspendedHandler(WTFMove(becomeSuspendedHandler))
+    : m_becomeSuspendedHandler(WTF::move(becomeSuspendedHandler))
     , m_suspendTimer(RunLoop::mainSingleton(), "ProcessStateMonitor::SuspendTimer"_s, [this] { suspendTimerFired(); })
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessStateMonitor::ProcessStateMonitor", this);
@@ -52,7 +52,7 @@ ProcessStateMonitor::ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedH
         [descriptor setValues:RBSProcessStateValueLegacyAssertions | RBSProcessStateValueModernAssertions];
         [config setStateDescriptor:descriptor];
         [config setPredicates:@[[RBSProcessPredicate predicateMatchingHandle:[RBSProcessHandle currentProcess]]]];
-        [config setUpdateHandler:[weakThis = WTFMove(weakThis)](RBSProcessMonitor *monitor, RBSProcessHandle *process, RBSProcessStateUpdate *update) {
+        [config setUpdateHandler:[weakThis = WTF::move(weakThis)](RBSProcessMonitor *monitor, RBSProcessHandle *process, RBSProcessStateUpdate *update) {
             ensureOnMainRunLoop([weakThis] {
                 if (weakThis)
                     weakThis->checkRemainingRunTime();

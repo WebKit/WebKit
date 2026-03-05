@@ -31,6 +31,7 @@ enum class WebKit::SafeBrowsingCheckOngoing : bool;
     std::optional<WebKit::SandboxExtensionHandle> sandboxExtensionHandle;
     std::optional<WebKit::PolicyDecisionConsoleMessage> consoleMessage;
     WebKit::SafeBrowsingCheckOngoing isSafeBrowsingCheckOngoing;
+    RefPtr<WebKit::FrameState> backForwardFrameState;
 }
 
 [CustomHeader] struct WebKit::PolicyDecisionConsoleMessage {

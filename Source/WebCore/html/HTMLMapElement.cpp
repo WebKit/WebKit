@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLMapElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLMapElement);
 
 using namespace HTMLNames;
 
@@ -103,7 +103,7 @@ void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomStrin
         AtomString mapName = newValue;
         if (mapName[0] == '#')
             mapName = StringView(mapName).substring(1).toAtomString();
-        m_name = WTFMove(mapName);
+        m_name = WTF::move(mapName);
         if (isInTreeScope())
             treeScope().addImageMap(*this);
     }
@@ -111,7 +111,7 @@ void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomStrin
 
 Ref<HTMLCollection> HTMLMapElement::areas()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::MapAreas>::traversalType>>(*this, CollectionType::MapAreas);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLMapAreasCollection>(*this);
 }
 
 Node::InsertedIntoAncestorResult HTMLMapElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

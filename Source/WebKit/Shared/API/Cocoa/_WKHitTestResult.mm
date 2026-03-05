@@ -41,7 +41,7 @@
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKHitTestResult.class, self))
         return;
 
-    _hitTestResult->~HitTestResult();
+    SUPPRESS_UNCOUNTED_ARG _hitTestResult->~HitTestResult();
 
     [super dealloc];
 }
@@ -154,14 +154,14 @@ static NSURL *URLFromString(const WTF::String& urlString)
 - (NSURLResponse *)linkLocalResourceResponse
 {
     if (auto& response = _hitTestResult->linkLocalResourceResponse())
-        return response->protectedNSURLResponse().autorelease();
+        return protect(response->nsURLResponse()).autorelease();
     return nil;
 }
 
 - (WKFrameInfo *)frameInfo
 {
     if (auto frameInfo = _hitTestResult->frameInfo())
-        return wrapper(API::FrameInfo::create(WTFMove(*frameInfo))).autorelease();
+        return wrapper(API::FrameInfo::create(WTF::move(*frameInfo))).autorelease();
     return nil;
 }
 

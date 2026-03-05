@@ -54,6 +54,7 @@ if (shouldUseFlatpak()) {
     my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "run-javascriptcore-tests"));
     runInFlatpak(@command);
 }
+maybeUseContainerSDKRootDir();
 
 # These variables are intentionally left undefined.
 my $root;

@@ -39,7 +39,7 @@ public:
     static Ref<CSSMediaRule> create(StyleRuleMedia& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSMediaRule(rule, sheet)); }
     virtual ~CSSMediaRule();
 
-    WEBCORE_EXPORT MediaList* media() const;
+    WEBCORE_EXPORT MediaList& media() const;
 
 private:
     friend class MediaList;
@@ -51,7 +51,7 @@ private:
     String cssText(const CSS::SerializationContext&) const final;
     String conditionText() const final;
 
-    const MQ::MediaQueryList& mediaQueries() const;
+    const MQ::MediaQueryList& NODELETE mediaQueries() const;
     void setMediaQueries(MQ::MediaQueryList&&);
 
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;

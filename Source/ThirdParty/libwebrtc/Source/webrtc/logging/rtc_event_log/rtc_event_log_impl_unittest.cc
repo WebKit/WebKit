@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <deque>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 
@@ -24,6 +25,7 @@
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -33,7 +35,6 @@ namespace {
 
 using ::testing::_;
 using ::testing::InSequence;
-using ::testing::Invoke;
 using ::testing::Mock;
 using ::testing::Property;
 using ::testing::Ref;
@@ -115,9 +116,9 @@ class RtcEventLogImplTest : public ::testing::Test {
   std::unique_ptr<FakeOutput> output_ =
       std::make_unique<FakeOutput>(written_data_);
   FakeOutput* output_ptr_ = output_.get();
-  RtcEventLogImpl event_log_{std::move(encoder_),
-                             time_controller_.GetTaskQueueFactory(),
-                             kMaxEventsInHistory, kMaxEventsInConfigHistory};
+  RtcEventLogImpl event_log_{CreateTestEnvironment({.time = &time_controller_}),
+                             std::move(encoder_), kMaxEventsInHistory,
+                             kMaxEventsInConfigHistory};
 };
 
 TEST_F(RtcEventLogImplTest, WritesHeaderAndEventsAndTrailer) {
@@ -241,6 +242,37 @@ TEST_F(RtcEventLogImplTest, RewritesAllConfigEventsOnlyOnRestart) {
   Mock::VerifyAndClearExpectations(encoder_ptr_);
 }
 
+TEST_F(RtcEventLogImplTest, SetsEventTimestampOnLog) {
+  // Silence expected, but unimportant calls for this test.
+  EXPECT_CALL(*encoder_ptr_, EncodeLogStart);
+  EXPECT_CALL(*encoder_ptr_, EncodeLogEnd);
+  // Setup the main expectation of this test.
+  // Right value for the `expected_log_time` would be set later during the test.
+  std::optional<Timestamp> expected_log_time;
+  EXPECT_CALL(*encoder_ptr_, OnEncode).WillOnce([&](const RtcEvent& event) {
+    // This should be called after expected_log_time is set.
+    EXPECT_TRUE(expected_log_time.has_value());
+    EXPECT_EQ(event.timestamp(), expected_log_time);
+    return "";
+  });
+
+  event_log_.StartLogging(std::make_unique<FakeOutput>(written_data_),
+                          kOutputPeriod.ms());
+  auto event = std::make_unique<FakeEvent>();
+  // Change time to have different time of construction of the event, and
+  // time of logging the event. In production code they are normally about the
+  // same.
+  time_controller_.AdvanceTime(TimeDelta::Millis(100));
+
+  expected_log_time = time_controller_.GetClock()->CurrentTime();
+  event_log_.Log(std::move(event));
+
+  // Cleanup: stop the `event_log_` to wait until all events are written.
+  bool stopped = false;
+  event_log_.StopLogging([&] { stopped = true; });
+  EXPECT_TRUE(time_controller_.Wait([&] { return stopped; }));
+}
+
 TEST_F(RtcEventLogImplTest, SchedulesWriteAfterOutputDurationPassed) {
   event_log_.StartLogging(std::move(output_), kOutputPeriod.ms());
   event_log_.Log(std::make_unique<FakeConfigEvent>());
@@ -276,13 +308,13 @@ TEST_F(RtcEventLogImplTest, StopOutputOnWriteFailure) {
 
   size_t number_of_encoded_events = 0;
   EXPECT_CALL(*encoder_ptr_, OnEncode(_))
-      .WillRepeatedly(Invoke([this, &number_of_encoded_events]() {
+      .WillRepeatedly([this, &number_of_encoded_events]() {
         ++number_of_encoded_events;
         if (number_of_encoded_events == kFailsWriteOnEventsCount) {
           output_ptr_->FailsNextWrite();
         }
         return std::string();
-      }));
+      });
 
   event_log_.StartLogging(std::move(output_), kOutputPeriod.ms());
 

@@ -111,8 +111,8 @@ bool GCAwareJITStubRoutine::removeDeadOwners(VM& vm)
 PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner, bool isCodeImmutable)
     : GCAwareJITStubRoutine(type, code, owner, isCodeImmutable)
     , m_vm(vm)
-    , m_cases(WTFMove(cases))
-    , m_weakStructures(WTFMove(weakStructures))
+    , m_cases(WTF::move(cases))
+    , m_weakStructures(WTF::move(weakStructures))
     , m_watchpointSet(WatchpointSet::create(IsWatched))
 {
 }
@@ -134,7 +134,7 @@ void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
 
 void PolymorphicAccessJITStubRoutine::invalidate()
 {
-    if (RefPtr watchpointSet = WTFMove(m_watchpointSet)) {
+    if (RefPtr watchpointSet = WTF::move(m_watchpointSet)) {
         StringFireDetail detail("PolymorphicAccessJITStubRoutine has been invalidated");
         VM& vm = m_vm;
         watchpointSet->fireAll(vm, detail);
@@ -175,12 +175,16 @@ bool PolymorphicAccessJITStubRoutine::visitWeakImpl(VM& vm)
 MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine(
     Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner,
     const Vector<JSCell*>& cells, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos, bool isCodeImmutable)
-    : PolymorphicAccessJITStubRoutine(type, code, vm, WTFMove(cases), WTFMove(weakStructures), owner, isCodeImmutable)
+    : PolymorphicAccessJITStubRoutine(type, code, vm, WTF::move(cases), WTF::move(weakStructures), owner, isCodeImmutable)
     , m_cells(cells.size())
-    , m_callLinkInfos(WTFMove(callLinkInfos))
+    , m_callLinkInfos(WTF::move(callLinkInfos))
 {
-    for (unsigned i = cells.size(); i--;)
-        m_cells[i].set(vm, owner, cells[i]);
+    for (unsigned i = cells.size(); i--;) {
+        if (owner)
+            m_cells[i].set(vm, owner, cells[i]);
+        else
+            m_cells[i].setWithoutWriteBarrier(cells[i]);
+    }
 }
 
 template<typename Visitor>
@@ -217,7 +221,7 @@ CallLinkInfo* MarkingGCAwareJITStubRoutine::callLinkInfoAtImpl(const ConcurrentJ
 
 GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner, const Vector<JSCell*>& cells, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlerCallSiteIndex, bool isCodeImmutable)
-    : MarkingGCAwareJITStubRoutine(JITStubRoutine::Type::GCAwareJITStubRoutineWithExceptionHandlerType, code, vm, WTFMove(cases), WTFMove(weakStructures), owner, cells, WTFMove(callLinkInfos), isCodeImmutable)
+    : MarkingGCAwareJITStubRoutine(JITStubRoutine::Type::GCAwareJITStubRoutineWithExceptionHandlerType, code, vm, WTF::move(cases), WTF::move(weakStructures), owner, cells, WTF::move(callLinkInfos), isCodeImmutable)
     , m_codeBlockWithExceptionHandler(codeBlockForExceptionHandlers)
 #if ENABLE(DFG_JIT)
     , m_codeOriginPool(&m_codeBlockWithExceptionHandler->codeOrigins())
@@ -272,7 +276,7 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
             ASSERT(!callLinkInfo);
 #endif
         constexpr bool isCodeImmutable = false;
-        auto stub = adoptRef(*new PolymorphicAccessJITStubRoutine(JITStubRoutine::Type::PolymorphicAccessJITStubRoutineType, code, vm, WTFMove(cases), WTFMove(weakStructures), owner, isCodeImmutable));
+        auto stub = adoptRef(*new PolymorphicAccessJITStubRoutine(JITStubRoutine::Type::PolymorphicAccessJITStubRoutineType, code, vm, WTF::move(cases), WTF::move(weakStructures), owner, isCodeImmutable));
         stub->makeGCAware(vm);
         return stub;
     }
@@ -280,7 +284,7 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
     if (codeBlockForExceptionHandlers) {
         RELEASE_ASSERT(JSC::JITCode::isOptimizingJIT(codeBlockForExceptionHandlers->jitType()));
         constexpr bool isCodeImmutable = false;
-        auto stub = adoptRef(*new GCAwareJITStubRoutineWithExceptionHandler(code, vm, WTFMove(cases), WTFMove(weakStructures), owner, cells, WTFMove(callLinkInfos), codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex, isCodeImmutable));
+        auto stub = adoptRef(*new GCAwareJITStubRoutineWithExceptionHandler(code, vm, WTF::move(cases), WTF::move(weakStructures), owner, cells, WTF::move(callLinkInfos), codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex, isCodeImmutable));
         stub->makeGCAware(vm);
         return stub;
     }
@@ -295,13 +299,13 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
 
     if (cells.isEmpty() && !hasCallLinkInfo) {
         constexpr bool isCodeImmutable = false;
-        auto stub = adoptRef(*new PolymorphicAccessJITStubRoutine(JITStubRoutine::Type::PolymorphicAccessJITStubRoutineType, code, vm, WTFMove(cases), WTFMove(weakStructures), owner, isCodeImmutable));
+        auto stub = adoptRef(*new PolymorphicAccessJITStubRoutine(JITStubRoutine::Type::PolymorphicAccessJITStubRoutineType, code, vm, WTF::move(cases), WTF::move(weakStructures), owner, isCodeImmutable));
         stub->makeGCAware(vm);
         return stub;
     }
     
     constexpr bool isCodeImmutable = false;
-    auto stub = adoptRef(*new MarkingGCAwareJITStubRoutine(JITStubRoutine::Type::MarkingGCAwareJITStubRoutineType, code, vm, WTFMove(cases), WTFMove(weakStructures), owner, cells, WTFMove(callLinkInfos), isCodeImmutable));
+    auto stub = adoptRef(*new MarkingGCAwareJITStubRoutine(JITStubRoutine::Type::MarkingGCAwareJITStubRoutineType, code, vm, WTF::move(cases), WTF::move(weakStructures), owner, cells, WTF::move(callLinkInfos), isCodeImmutable));
     stub->makeGCAware(vm);
     return stub;
 }

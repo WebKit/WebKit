@@ -187,7 +187,7 @@ TEST(Color, Validity)
     EXPECT_EQ(validColorComponents.blue, 3);
     EXPECT_EQ(validColorComponents.alpha, 4);
 
-    Color yetAnotherValidColor(WTFMove(validColor));
+    Color yetAnotherValidColor(WTF::move(validColor));
     EXPECT_TRUE(yetAnotherValidColor.isValid());
     auto yetAnotherValidColorComponents = yetAnotherValidColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
     EXPECT_EQ(yetAnotherValidColorComponents.red, 1);
@@ -195,7 +195,7 @@ TEST(Color, Validity)
     EXPECT_EQ(yetAnotherValidColorComponents.blue, 3);
     EXPECT_EQ(yetAnotherValidColorComponents.alpha, 4);
 
-    otherValidColor = WTFMove(yetAnotherValidColor);
+    otherValidColor = WTF::move(yetAnotherValidColor);
     EXPECT_TRUE(otherValidColor.isValid());
     auto otherValidColorComponents = otherValidColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
     EXPECT_EQ(otherValidColorComponents.red, 1);
@@ -317,7 +317,7 @@ TEST(Color, Hash)
 TEST(Color, MoveConstructor)
 {
     Color c1 { DisplayP3<float> { 1.0, 0.5, 0.25, 1.0 } };
-    Color c2(WTFMove(c1));
+    Color c2(WTF::move(c1));
 
     // We should have moved the out of line color pointer into c2,
     // and set c1 to invalid so that it doesn't cause deletion.
@@ -339,7 +339,7 @@ namespace {
 template<typename T>
 void selfMove(T& a, T&& b)
 {
-    a = WTFMove(b);
+    a = WTF::move(b);
 }
 }
 
@@ -347,7 +347,7 @@ TEST(Color, MoveAssignment)
 {
     Color c1 { DisplayP3<float> { 1.0, 0.5, 0.25, 1.0 } };
     Color c2;
-    c2 = WTFMove(c1);
+    c2 = WTF::move(c1);
 
     EXPECT_TRUE(c2.isValid());
 
@@ -371,16 +371,16 @@ TEST(Color, MoveAssignment)
     // invalid condition.
     Color c3 { DisplayP3<float> { 1.0, 0.5, 0.25, 1.0 } };
     EXPECT_EQ(c2, c3);
-    c2 = WTFMove(c3);
+    c2 = WTF::move(c3);
     EXPECT_FALSE(c3.isValid()); // Moved-from source marked invalid.
     EXPECT_TRUE(c2.isValid());
     EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)"_s);
 
     // Moving into itself works.
-    selfMove(c2, WTFMove(c2));
+    selfMove(c2, WTF::move(c2));
     EXPECT_TRUE(c2.isValid());
     EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)"_s);
-    selfMove(c1, WTFMove(c1));
+    selfMove(c1, WTF::move(c1));
     EXPECT_FALSE(c1.isValid());
 }
 

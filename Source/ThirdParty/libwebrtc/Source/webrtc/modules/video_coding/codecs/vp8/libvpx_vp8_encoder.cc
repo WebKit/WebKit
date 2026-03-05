@@ -44,6 +44,7 @@
 #include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "api/video_codecs/vp8_frame_config.h"
 #include "api/video_codecs/vp8_temporal_layers_factory.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/interface/libvpx_interface.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
@@ -56,6 +57,7 @@
 #include "modules/video_coding/utility/vp8_constants.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/experiments/psnr_experiment.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/trace_event.h"
@@ -94,8 +96,7 @@ constexpr int kScreenshareMinQp = 15;
 constexpr int kTokenPartitions = VP8_ONE_TOKENPARTITION;
 constexpr uint32_t kVp832ByteAlign = 32u;
 
-constexpr int kRtpTicksPerSecond = 90000;
-constexpr int kRtpTicksPerMs = kRtpTicksPerSecond / 1000;
+constexpr int kRtpTicksPerMs = kVideoPayloadTypeFrequency / 1000;
 
 // If internal frame dropping is enabled, force the encoder to output a frame
 // on an encode request after this timeout even if this causes some
@@ -340,9 +341,9 @@ LibvpxVp8Encoder::LibvpxVp8Encoder(const Environment& env,
       encoder_info_override_(env_.field_trials()),
       max_frame_drop_interval_(ParseFrameDropInterval(env_.field_trials())),
       android_specific_threading_settings_(env_.field_trials().IsEnabled(
-          "WebRTC-LibvpxVp8Encoder-AndroidSpecificThreadingSettings")) {
-  // TODO(eladalon/ilnik): These reservations might be wasting memory.
-  // InitEncode() is resizing to the actual size, which might be smaller.
+          "WebRTC-LibvpxVp8Encoder-AndroidSpecificThreadingSettings")),
+      psnr_experiment_(env.field_trials()),
+      psnr_frame_sampler_(psnr_experiment_.SamplingInterval()) {
   raw_images_.reserve(kMaxSimulcastStreams);
   encoded_images_.reserve(kMaxSimulcastStreams);
   send_stream_.reserve(kMaxSimulcastStreams);
@@ -554,7 +555,7 @@ int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
   RTC_DCHECK(!frame_buffer_controller_);
   Vp8TemporalLayersFactory factory;
   frame_buffer_controller_ =
-      factory.Create(*inst, settings, fec_controller_override_);
+      factory.Create(env_, *inst, settings, fec_controller_override_);
   RTC_DCHECK(frame_buffer_controller_);
 
   number_of_cores_ = settings.number_of_cores;
@@ -602,7 +603,7 @@ int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
   }
   // setting the time base of the codec
   vpx_configs_[0].g_timebase.num = 1;
-  vpx_configs_[0].g_timebase.den = kRtpTicksPerSecond;
+  vpx_configs_[0].g_timebase.den = kVideoPayloadTypeFrequency;
   vpx_configs_[0].g_lag_in_frames = 0;  // 0- no frame lagging
 
   // Set the error resilience mode for temporal layers (but not simulcast).
@@ -1091,6 +1092,15 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
     flags[i] = send_key_frame ? VPX_EFLAG_FORCE_KF : EncodeFlags(tl_configs[i]);
   }
 
+#if defined(WEBRTC_ENCODER_PSNR_STATS) && defined(VPX_EFLAG_CALCULATE_PSNR)
+  if (psnr_experiment_.IsEnabled() &&
+      psnr_frame_sampler_.ShouldBeSampled(frame)) {
+    for (size_t i = 0; i < encoders_.size(); ++i) {
+      flags[i] |= VPX_EFLAG_CALCULATE_PSNR;
+    }
+  }
+#endif
+
   // Scale and map buffers and set `raw_images_` to hold pointers to the result.
   // Because `raw_images_` are set to hold pointers to the prepared buffers, we
   // need to keep these buffers alive through reference counting until after
@@ -1152,7 +1162,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
   // rate control seems to be off with that setup. Using the average input
   // frame rate to calculate an average duration for now.
   RTC_DCHECK_GT(codec_.maxFramerate, 0);
-  uint32_t duration = kRtpTicksPerSecond / codec_.maxFramerate;
+  uint32_t duration = kVideoPayloadTypeFrequency / codec_.maxFramerate;
 
   int error = WEBRTC_VIDEO_CODEC_OK;
   int num_tries = 0;
@@ -1237,6 +1247,7 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
        ++encoder_idx, --stream_idx) {
     vpx_codec_iter_t iter = nullptr;
     encoded_images_[encoder_idx].set_size(0);
+    encoded_images_[encoder_idx].set_psnr(std::nullopt);
     encoded_images_[encoder_idx]._frameType = VideoFrameType::kVideoFrameDelta;
     CodecSpecificInfo codec_specific;
     const vpx_codec_cx_pkt_t* pkt = nullptr;
@@ -1263,11 +1274,19 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
           encoded_pos += pkt->data.frame.sz;
           break;
         }
+        case VPX_CODEC_PSNR_PKT:
+          // PSNR index: 0: total, 1: Y, 2: U, 3: V
+          encoded_images_[encoder_idx].set_psnr(
+              EncodedImage::Psnr({.y = pkt->data.psnr.psnr[1],
+                                  .u = pkt->data.psnr.psnr[2],
+                                  .v = pkt->data.psnr.psnr[3]}));
+          break;
         default:
           break;
       }
       // End of frame
-      if ((pkt->data.frame.flags & VPX_FRAME_IS_FRAGMENT) == 0) {
+      if (pkt->kind == VPX_CODEC_CX_FRAME_PKT &&
+          (pkt->data.frame.flags & VPX_FRAME_IS_FRAGMENT) == 0) {
         // check if encoded frame is a key frame
         if (pkt->data.frame.flags & VPX_FRAME_IS_KEY) {
           encoded_images_[encoder_idx]._frameType =
@@ -1401,6 +1420,9 @@ VideoEncoder::EncoderInfo LibvpxVp8Encoder::GetEncoderInfo() const {
         }
       }
     }
+
+    info.mapped_resolution =
+        VideoEncoder::Resolution(raw_images_[0].d_w, raw_images_[0].d_h);
 
     if (codec_.mode == VideoCodecMode::kScreensharing) {
       info.min_qp = kScreenshareMinQp;

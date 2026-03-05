@@ -23,6 +23,7 @@
 
 #include <gtest/gtest.h>
 
+#include <openssl/err.h>
 #include <openssl/mem.h>
 #include <openssl/rand.h>
 
@@ -520,7 +521,11 @@ TEST(StackTest, Sort) {
   }
 }
 
+// STACK_OF(T) APIs should generally cleanly treat nullptr as the empty list.
 TEST(StackTest, NullIsEmpty) {
+  // Clear the error queue, to be sampled later.
+  ERR_clear_error();
+
   EXPECT_EQ(0u, sk_TEST_INT_num(nullptr));
 
   EXPECT_EQ(nullptr, sk_TEST_INT_value(nullptr, 0));
@@ -530,6 +535,40 @@ TEST(StackTest, NullIsEmpty) {
   ASSERT_TRUE(value);
   size_t index;
   EXPECT_FALSE(sk_TEST_INT_find(nullptr, &index, value.get()));
+
+  // Deleting from an empty list is a no-op.
+  EXPECT_EQ(nullptr, sk_TEST_INT_pop(nullptr));
+  EXPECT_EQ(nullptr, sk_TEST_INT_shift(nullptr));
+  EXPECT_EQ(nullptr, sk_TEST_INT_delete(nullptr, 0));
+  EXPECT_EQ(nullptr, sk_TEST_INT_delete(nullptr, 1));
+  EXPECT_EQ(nullptr, sk_TEST_INT_delete_ptr(nullptr, value.get()));
+  sk_TEST_INT_delete_if(
+      nullptr,
+      [](TEST_INT *, void *) -> int {
+        ADD_FAILURE() << "callback should not have been called";
+        return 0;
+      },
+      nullptr);
+
+  // An empty list is always sorted.
+  EXPECT_TRUE(sk_TEST_INT_is_sorted(nullptr));
+  sk_TEST_INT_sort(nullptr);
+
+  // Copying an empty list gives an empty list.
+  EXPECT_EQ(nullptr, sk_TEST_INT_dup(nullptr));
+  EXPECT_EQ(nullptr,
+            sk_TEST_INT_deep_copy(
+                nullptr,
+                [](const TEST_INT *) -> TEST_INT * {
+                  ADD_FAILURE() << "copy callback should not have been called";
+                  return nullptr;
+                },
+                [](TEST_INT *) {
+                  ADD_FAILURE() << "free callback should not have been called";
+                }));
+
+  // None of these operations should have added to the error queue.
+  EXPECT_EQ(0u, ERR_get_error());
 }
 
 }  // namespace

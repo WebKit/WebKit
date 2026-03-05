@@ -79,10 +79,10 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
             BufferVk *bufferVk             = vk::GetImpl(buffer);
             vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
-            vk::CommandBufferAccess access;
+            vk::CommandResources resources;
             vk::OutsideRenderPassCommandBuffer *commandBuffer;
-            access.onBufferExternalAcquireRelease(&bufferHelper);
-            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+            resources.onBufferExternalAcquireRelease(&bufferHelper);
+            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
 
             // Queue ownership transfer.
             bufferHelper.acquireFromExternal(vk::kExternalDeviceQueueIndex,
@@ -99,13 +99,13 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
         {
             TextureVk *textureVk   = vk::GetImpl(textureBarrier.texture);
             vk::ImageHelper &image = textureVk->getImage();
-            vk::ImageLayout layout =
-                vk::GetImageLayoutFromGLImageLayout(contextVk, textureBarrier.layout);
+            vk::ImageAccess imageAccess =
+                vk::GetImageAccessFromGLImageLayout(contextVk, textureBarrier.layout);
 
-            vk::CommandBufferAccess access;
+            vk::CommandResources resources;
             vk::OutsideRenderPassCommandBuffer *commandBuffer;
-            access.onExternalAcquireRelease(&image);
-            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+            resources.onExternalAcquireRelease(&image);
+            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
 
             // Image should not be accessed while unowned. Emulated formats may have staged updates
             // to clear the image after initialization.
@@ -113,7 +113,7 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
 
             // Queue ownership transfer and layout transition.
             image.acquireFromExternal(contextVk, vk::kExternalDeviceQueueIndex,
-                                      contextVk->getDeviceQueueIndex(), layout, commandBuffer);
+                                      contextVk->getDeviceQueueIndex(), imageAccess, commandBuffer);
         }
     }
 
@@ -136,10 +136,10 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
             vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
             ANGLE_TRY(contextVk->onBufferReleaseToExternal(bufferHelper));
-            vk::CommandBufferAccess access;
+            vk::CommandResources resources;
             vk::OutsideRenderPassCommandBuffer *commandBuffer;
-            access.onBufferExternalAcquireRelease(&bufferHelper);
-            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+            resources.onBufferExternalAcquireRelease(&bufferHelper);
+            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
 
             // Queue ownership transfer.
             bufferHelper.releaseToExternal(vk::kExternalDeviceQueueIndex, commandBuffer);
@@ -154,27 +154,27 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
         {
             TextureVk *textureVk   = vk::GetImpl(textureBarrier.texture);
             vk::ImageHelper &image = textureVk->getImage();
-            vk::ImageLayout layout =
-                vk::GetImageLayoutFromGLImageLayout(contextVk, textureBarrier.layout);
+            vk::ImageAccess imageAccess =
+                vk::GetImageAccessFromGLImageLayout(contextVk, textureBarrier.layout);
 
             // Don't transition to Undefined layout.  If external wants to transition the image away
             // from Undefined after this operation, it's perfectly fine to keep the layout as is in
             // ANGLE.  Note that vk::ImageHelper doesn't expect transitions to Undefined.
-            if (layout == vk::ImageLayout::Undefined)
+            if (imageAccess == vk::ImageAccess::Undefined)
             {
-                layout = image.getCurrentImageLayout();
+                imageAccess = image.getCurrentImageAccess();
             }
 
             ANGLE_TRY(textureVk->ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
 
             ANGLE_TRY(contextVk->onImageReleaseToExternal(image));
-            vk::CommandBufferAccess access;
+            vk::CommandResources resources;
             vk::OutsideRenderPassCommandBuffer *commandBuffer;
-            access.onExternalAcquireRelease(&image);
-            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+            resources.onExternalAcquireRelease(&image);
+            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
 
             // Queue ownership transfer and layout transition.
-            image.releaseToExternal(contextVk, vk::kExternalDeviceQueueIndex, layout,
+            image.releaseToExternal(contextVk, vk::kExternalDeviceQueueIndex, imageAccess,
                                     commandBuffer);
         }
     }
@@ -186,7 +186,7 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
     }
 
     return contextVk->flushAndSubmitCommands(&mSemaphore, nullptr,
-                                             RenderPassClosureReason::ExternalSemaphoreSignal);
+                                             QueueSubmitReason::ExternalSemaphoreSignal);
 }
 
 angle::Result SemaphoreVk::importOpaqueFd(ContextVk *contextVk, GLint fd)
@@ -195,7 +195,7 @@ angle::Result SemaphoreVk::importOpaqueFd(ContextVk *contextVk, GLint fd)
 
     if (!mSemaphore.valid())
     {
-        mSemaphore.init(renderer->getDevice());
+        mSemaphore.init(renderer->getDevice(), VK_SEMAPHORE_TYPE_BINARY);
     }
 
     ASSERT(mSemaphore.valid());
@@ -218,7 +218,7 @@ angle::Result SemaphoreVk::importZirconEvent(ContextVk *contextVk, GLuint handle
 
     if (!mSemaphore.valid())
     {
-        mSemaphore.init(renderer->getDevice());
+        mSemaphore.init(renderer->getDevice(), VK_SEMAPHORE_TYPE_BINARY);
     }
 
     ASSERT(mSemaphore.valid());

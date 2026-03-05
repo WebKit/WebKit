@@ -11,18 +11,21 @@
 #ifndef TEST_WAIT_UNTIL_H_
 #define TEST_WAIT_UNTIL_H_
 
+#include <optional>
 #include <string>
+#include <type_traits>
+#include <utility>
 #include <variant>
 
+#include "api/function_view.h"
 #include "api/rtc_error.h"
 #include "api/test/time_controller.h"
 #include "api/units/time_delta.h"
-#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_clock.h"
-#include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 #include "test/wait_until_internal.h"  // IWYU pragma: private
 
 namespace webrtc {
@@ -32,11 +35,6 @@ using ClockVariant = std::variant<std::monostate,
                                   FakeClock*,
                                   ThreadProcessingFakeClock*,
                                   TimeController*>;
-
-namespace wait_until_internal {
-Timestamp GetTimeFromClockVariant(const ClockVariant& clock);
-void AdvanceTimeOnClockVariant(ClockVariant& clock, TimeDelta delta);
-}  // namespace wait_until_internal
 
 struct WaitUntilSettings {
   // The maximum time to wait for the condition to be met.
@@ -49,6 +47,16 @@ struct WaitUntilSettings {
   std::string result_name = "result";
 };
 
+// Runs a function `fn`, until it returns true, or timeout from `settings`.
+// Calls `fn` at least once. Returns true when `fn` return true, returns false
+// after timeout if `fn` always returned false.
+//
+// Example:
+//
+//   EXPECT_TRUE(WaitUntil([&] { return client.IsConnected(); });
+[[nodiscard]] bool WaitUntil(FunctionView<bool()> fn,
+                             WaitUntilSettings settings = {});
+
 // Runs a function `fn`, which returns a result, until `matcher` matches the
 // result.
 //
@@ -59,39 +67,35 @@ struct WaitUntilSettings {
 // Example:
 //
 //   int counter = 0;
-//   RTCErrorOr<int> result = Waituntil([&] { return ++counter; }, Eq(3))
+//   RTCErrorOr<int> result = WaitUntil([&] { return ++counter; }, Eq(3))
 //   EXPECT_THAT(result, IsOkAndHolds(3));
-template <typename Fn, typename Matcher>
-[[nodiscard]] auto WaitUntil(const Fn& fn,
-                             Matcher matcher,
-                             WaitUntilSettings settings = {})
-    -> RTCErrorOr<decltype(fn())> {
-  if (std::holds_alternative<std::monostate>(settings.clock)) {
-    RTC_CHECK(Thread::Current()) << "A current thread is required. An "
-                                    "webrtc::AutoThread can work for tests.";
+template <typename Fn>
+[[nodiscard]] RTCErrorOr<std::invoke_result_t<Fn>> WaitUntil(
+    const Fn& fn,
+    ::testing::Matcher<std::invoke_result_t<Fn>> matcher,
+    WaitUntilSettings settings = {}) {
+  // Wrap `result` into optional to support types that are not default
+  // constructable.
+  std::optional<std::invoke_result_t<Fn>> result;
+  bool ok = WaitUntil(
+      [&] {
+        // `emplace` instead of assigning to support return types that do not
+        // have an assign operator.
+        result.emplace(fn());
+        return ::testing::Value(*result, matcher);
+      },
+      settings);
+
+  // WaitUntil promise to call `fn` at least once and thus `result` is
+  // populated.
+  RTC_CHECK(result.has_value());
+  if (ok) {
+    return *std::move(result);
   }
 
-  Timestamp start =
-      wait_until_internal::GetTimeFromClockVariant(settings.clock);
-  do {
-    auto result = fn();
-    if (::testing::Value(result, matcher)) {
-      return result;
-    }
-    wait_until_internal::AdvanceTimeOnClockVariant(settings.clock,
-                                                   settings.polling_interval);
-  } while (wait_until_internal::GetTimeFromClockVariant(settings.clock) <
-           start + settings.timeout);
-
-  // One more try after the last sleep. This failure will contain the error
-  // message.
-  auto result = fn();
   ::testing::StringMatchResultListener listener;
-  if (wait_until_internal::ExplainMatchResult(matcher, result, &listener,
-                                              settings.result_name)) {
-    return result;
-  }
-
+  wait_until_internal::ExplainMatchResult(matcher, *result, &listener,
+                                          settings.result_name);
   return RTCError(RTCErrorType::INTERNAL_ERROR, listener.str());
 }
 

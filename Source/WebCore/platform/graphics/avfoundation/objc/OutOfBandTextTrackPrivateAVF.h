@@ -40,7 +40,7 @@ class OutOfBandTextTrackPrivateAVF : public InbandTextTrackPrivateAVF {
 public:
     static Ref<OutOfBandTextTrackPrivateAVF> create(AVMediaSelectionOption* selection, TrackID trackID, ModeChangedCallback&& callback)
     {
-        return adoptRef(*new OutOfBandTextTrackPrivateAVF(selection, trackID, WTFMove(callback)));
+        return adoptRef(*new OutOfBandTextTrackPrivateAVF(selection, trackID, WTF::move(callback)));
     }
     
     void processCue(CFArrayRef, CFArrayRef, const MediaTime&) override { }
@@ -52,7 +52,7 @@ public:
     
 protected:
     OutOfBandTextTrackPrivateAVF(AVMediaSelectionOption* selection, TrackID trackID, ModeChangedCallback&& callback)
-        : InbandTextTrackPrivateAVF(trackID, InbandTextTrackPrivate::CueFormat::Generic, WTFMove(callback))
+        : InbandTextTrackPrivateAVF(trackID, InbandTextTrackPrivate::CueFormat::Generic, WTF::move(callback))
         , m_mediaSelectionOption(selection)
     {
     }

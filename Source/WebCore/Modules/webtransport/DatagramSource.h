@@ -28,6 +28,11 @@
 #include "ReadableStreamSource.h"
 #include <wtf/AbstractRefCounted.h>
 
+namespace JSC {
+class JSGlobalObject;
+class JSValue;
+}
+
 namespace WebCore {
 
 class WebTransport;
@@ -38,6 +43,7 @@ public:
     DatagramSource() = default;
     virtual ~DatagramSource() = default;
     virtual void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) = 0;
+    virtual void error(JSC::JSGlobalObject&, JSC::JSValue) = 0;
 };
 
 class DatagramDefaultSource final : public DatagramSource, public RefCountedReadableStreamSource {
@@ -52,12 +58,15 @@ private:
     DatagramDefaultSource();
 
     void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
+    void error(JSC::JSGlobalObject&, JSC::JSValue) final;
 
     void setActive() final { }
     void setInactive() final { }
     void doStart() final { }
     void doPull() final { }
-    void doCancel() final;
+    void doCancel(JSC::JSValue) final { doCancel(); }
+
+    void doCancel();
 
     bool m_isCancelled { false };
     bool m_isClosed { false };

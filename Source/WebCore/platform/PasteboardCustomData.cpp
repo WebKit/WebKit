@@ -82,8 +82,8 @@ PasteboardCustomData::PasteboardCustomData(PasteboardCustomData&&) = default;
 PasteboardCustomData::~PasteboardCustomData() = default;
 
 PasteboardCustomData::PasteboardCustomData(String&& origin, Vector<Entry>&& data)
-    : m_origin(WTFMove(origin))
-    , m_data(WTFMove(data))
+    : m_origin(WTF::move(origin))
+    , m_data(WTF::move(data))
 {
 }
 
@@ -113,7 +113,7 @@ PasteboardCustomData PasteboardCustomData::fromPersistenceDecoder(WTF::Persisten
     decoder >> origin;
     if (!origin)
         return { };
-    result.m_origin = WTFMove(*origin);
+    result.m_origin = WTF::move(*origin);
 
     std::optional<HashMap<String, String>> sameOriginCustomStringData;
     decoder >> sameOriginCustomStringData;
@@ -143,7 +143,7 @@ void PasteboardCustomData::writeString(const String& type, const String& value)
 
 void PasteboardCustomData::writeData(const String& type, Ref<SharedBuffer>&& data)
 {
-    addOrMoveEntryToEnd(type).platformData = { WTFMove(data) };
+    addOrMoveEntryToEnd(type).platformData = { WTF::move(data) };
 }
 
 void PasteboardCustomData::writeStringInCustomData(const String& type, const String& value)
@@ -159,7 +159,7 @@ PasteboardCustomData::Entry& PasteboardCustomData::addOrMoveEntryToEnd(const Str
     auto entry = index == notFound ? Entry(type) : m_data[index];
     if (index != notFound)
         m_data.removeAt(index);
-    m_data.append(WTFMove(entry));
+    m_data.append(WTF::move(entry));
     return m_data.last();
 }
 

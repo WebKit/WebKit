@@ -24,7 +24,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/alr_experiment.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -75,7 +74,7 @@ void AlrDetector::OnBytesSent(DataSize bytes_sent, Timestamp send_time) {
   bool state_changed = false;
   if (alr_budget_.budget_ratio() > conf_.start_budget_level_ratio &&
       !alr_started_time_) {
-    alr_started_time_ = Timestamp::Millis(TimeMillis());
+    alr_started_time_ = env_.clock().CurrentTime();
     state_changed = true;
   } else if (alr_budget_.budget_ratio() < conf_.stop_budget_level_ratio &&
              alr_started_time_) {

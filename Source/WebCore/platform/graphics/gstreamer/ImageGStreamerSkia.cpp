@@ -40,7 +40,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebCore {
 
 ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
-    : m_sample(WTFMove(sample))
+    : m_sample(WTF::move(sample))
 {
     GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
     if (!GST_IS_BUFFER(buffer)) [[unlikely]]

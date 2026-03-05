@@ -36,34 +36,34 @@ const X509V3_EXT_METHOD v3_info = {
     NID_info_access,
     X509V3_EXT_MULTILINE,
     ASN1_ITEM_ref(AUTHORITY_INFO_ACCESS),
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
     i2v_AUTHORITY_INFO_ACCESS,
     v2i_AUTHORITY_INFO_ACCESS,
-    0,
-    0,
-    NULL,
+    nullptr,
+    nullptr,
+    nullptr,
 };
 
 const X509V3_EXT_METHOD v3_sinfo = {
     NID_sinfo_access,
     X509V3_EXT_MULTILINE,
     ASN1_ITEM_ref(AUTHORITY_INFO_ACCESS),
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
     i2v_AUTHORITY_INFO_ACCESS,
     v2i_AUTHORITY_INFO_ACCESS,
-    0,
-    0,
-    NULL,
+    nullptr,
+    nullptr,
+    nullptr,
 };
 
 ASN1_SEQUENCE(ACCESS_DESCRIPTION) = {
@@ -77,7 +77,7 @@ ASN1_ITEM_TEMPLATE(AUTHORITY_INFO_ACCESS) = ASN1_EX_TEMPLATE_TYPE(
     ASN1_TFLG_SEQUENCE_OF, 0, GeneralNames, ACCESS_DESCRIPTION)
 ASN1_ITEM_TEMPLATE_END(AUTHORITY_INFO_ACCESS)
 
-IMPLEMENT_ASN1_FUNCTIONS(AUTHORITY_INFO_ACCESS)
+IMPLEMENT_ASN1_FUNCTIONS_const(AUTHORITY_INFO_ACCESS)
 
 static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_INFO_ACCESS(
     const X509V3_EXT_METHOD *method, void *ext, STACK_OF(CONF_VALUE) *ret) {
@@ -93,7 +93,7 @@ static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_INFO_ACCESS(
 
     desc = sk_ACCESS_DESCRIPTION_value(ainfo, i);
     tmp = i2v_GENERAL_NAME(method, desc->location, tret);
-    if (tmp == NULL) {
+    if (tmp == nullptr) {
       goto err;
     }
     tret = tmp;
@@ -106,16 +106,16 @@ static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_INFO_ACCESS(
     OPENSSL_free(vtmp->name);
     vtmp->name = name;
   }
-  if (ret == NULL && tret == NULL) {
+  if (ret == nullptr && tret == nullptr) {
     return sk_CONF_VALUE_new_null();
   }
 
   return tret;
 err:
-  if (ret == NULL && tret != NULL) {
+  if (ret == nullptr && tret != nullptr) {
     sk_CONF_VALUE_pop_free(tret, X509V3_conf_free);
   }
-  return NULL;
+  return nullptr;
 }
 
 static void *v2i_AUTHORITY_INFO_ACCESS(const X509V3_EXT_METHOD *method,

@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "absl/base/nullability.h"
+#include "api/environment/deprecated_global_field_trials.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/make_ref_counted.h"
@@ -22,7 +23,6 @@
 #include "api/scoped_refptr.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_factory.h"
-#include "api/transport/field_trial_based_config.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"
 
@@ -100,10 +100,7 @@ void EnvironmentFactory::Set(
 
 Environment EnvironmentFactory::CreateWithDefaults() && {
   if (field_trials_ == nullptr) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    Set(std::make_unique<FieldTrialBasedConfig>());
-#pragma clang diagnostic pop
+    Set(std::make_unique<DeprecatedGlobalFieldTrials>());
   }
   if (clock_ == nullptr) {
     Set(Clock::GetRealTimeClock());

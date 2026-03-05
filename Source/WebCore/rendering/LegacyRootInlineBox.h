@@ -36,13 +36,13 @@ struct BidiStatus;
 struct GapRects;
 
 class LegacyRootInlineBox : public LegacyInlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox>, public CanMakeCheckedPtr<LegacyRootInlineBox> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRootInlineBox);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRootInlineBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRootInlineBox);
 public:
     explicit LegacyRootInlineBox(RenderBlockFlow&);
     virtual ~LegacyRootInlineBox();
 
-    RenderBlockFlow& blockFlow() const;
+    RenderBlockFlow& NODELETE blockFlow() const;
 
     LegacyRootInlineBox* nextRootBox() const;
     LegacyRootInlineBox* prevRootBox() const;
@@ -57,8 +57,8 @@ public:
     LayoutUnit lineBoxBottom() const { return m_lineBoxBottom; }
     LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
 
-    LayoutUnit selectionTop() const;
-    LayoutUnit selectionBottom() const;
+    LayoutUnit NODELETE selectionTop() const;
+    LayoutUnit NODELETE selectionBottom() const;
     LayoutUnit selectionHeight() const { return std::max<LayoutUnit>(0, selectionBottom() - selectionTop()); }
 
     LayoutUnit selectionTopAdjustedForPrecedingBlock() const;
@@ -76,7 +76,7 @@ public:
     const LegacyInlineBox* firstSelectedBox() const;
     const LegacyInlineBox* lastSelectedBox() const;
 
-    void removeLineBoxFromRenderObject() final;
+    void NODELETE removeLineBoxFromRenderObject() final;
 
     FontBaseline baselineType() const { return static_cast<FontBaseline>(m_baselineType); }
     

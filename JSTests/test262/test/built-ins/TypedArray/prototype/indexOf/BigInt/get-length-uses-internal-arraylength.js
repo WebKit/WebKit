@@ -16,17 +16,17 @@ info: |
   ...
   2. Let len be ? ToLength(? Get(O, "length")).
   ...
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
 Object.defineProperty(TypedArray.prototype, "length", {value: 0});
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([7n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([7n]));
 
   Object.defineProperty(TA.prototype, "length", {value: 0});
   Object.defineProperty(sample, "length", {value: 0});
 
   assert.sameValue(sample.indexOf(7n), 0);
-});
+}, null, ["passthrough"]);

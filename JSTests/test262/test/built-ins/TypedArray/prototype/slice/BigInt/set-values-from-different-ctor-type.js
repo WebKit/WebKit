@@ -26,7 +26,7 @@ info: |
       v. Increase n by 1.
   ...
   16. Return A
-includes: [testBigIntTypedArray.js, compareArray.js]
+includes: [testTypedArray.js, compareArray.js]
 features: [BigInt, Symbol.species, TypedArray]
 ---*/
 
@@ -44,4 +44,4 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert(compareArray(result, arr), "values are set");
   assert.notSameValue(result.buffer, sample.buffer, "creates a new buffer");
   assert.sameValue(result.constructor, other, "used the custom ctor");
-});
+}, null, ["passthrough"]);

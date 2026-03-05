@@ -43,7 +43,7 @@ StaticCSSValuePool::StaticCSSValuePool()
     , m_blackColor(CSSValue::StaticCSSValue, WebCore::Color::black)
 {
     for (auto keyword : allCSSValueKeywords())
-        new (m_identifierValues[enumToUnderlyingType(keyword)].get()) CSSPrimitiveValue { CSSValue::StaticCSSValue, keyword };
+        new (m_identifierValues[std::to_underlying(keyword)].get()) CSSPrimitiveValue { CSSValue::StaticCSSValue, keyword };
 
     for (unsigned i = 0; i <= maximumCacheableIntegerValue; ++i) {
         new (m_pixelValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);

@@ -1,0 +1,14 @@
+This test ensures that hit testing a table cell returns the cell contents, not a table column.
+
+Hit test on cell 1: AXRole: AXStaticText
+PASS: hitTestResult.role.toLowerCase().includes('column') === false
+PASS: hitTestResult.role.toLowerCase().includes('statictext') === true
+Hit test on cell 4: AXRole: AXStaticText
+PASS: hitTestResult.role.toLowerCase().includes('column') === false
+PASS: hitTestResult.role.toLowerCase().includes('statictext') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Cell 1	Cell 2
+Cell 3	Cell 4

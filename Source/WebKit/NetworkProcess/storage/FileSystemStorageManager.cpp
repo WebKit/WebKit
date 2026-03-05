@@ -37,13 +37,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageManager);
 
 Ref<FileSystemStorageManager> FileSystemStorageManager::create(String&& path, FileSystemStorageHandleRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
 {
-    return adoptRef(*new FileSystemStorageManager(WTFMove(path), registry, WTFMove(quotaCheckFunction)));
+    return adoptRef(*new FileSystemStorageManager(WTF::move(path), registry, WTF::move(quotaCheckFunction)));
 }
 
 FileSystemStorageManager::FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
-    : m_path(WTFMove(path))
+    : m_path(WTF::move(path))
     , m_registry(registry)
-    , m_quotaCheckFunction(WTFMove(quotaCheckFunction))
+    , m_quotaCheckFunction(WTF::move(quotaCheckFunction))
 {
     ASSERT(!RunLoop::isMain());
 }
@@ -98,7 +98,7 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
         }
     }
 
-    RefPtr newHandle = FileSystemStorageHandle::create(*this, type, WTFMove(path), WTFMove(name));
+    RefPtr newHandle = FileSystemStorageHandle::create(*this, type, WTF::move(path), WTF::move(name));
     if (!newHandle)
         return makeUnexpected(FileSystemStorageError::Unknown);
     auto newHandleIdentifier = newHandle->identifier();
@@ -107,7 +107,7 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
     }).iterator->value.add(newHandleIdentifier);
     if (RefPtr registry = m_registry.get())
         registry->registerHandle(newHandleIdentifier, *newHandle);
-    m_handles.add(newHandleIdentifier, WTFMove(newHandle));
+    m_handles.add(newHandleIdentifier, newHandle.releaseNonNull());
     return newHandleIdentifier;
 }
 
@@ -230,7 +230,7 @@ void FileSystemStorageManager::close()
 
 void FileSystemStorageManager::requestSpace(uint64_t size, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_quotaCheckFunction(size, WTFMove(completionHandler));
+    m_quotaCheckFunction(size, WTF::move(completionHandler));
 }
 
 } // namespace WebKit

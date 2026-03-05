@@ -59,7 +59,7 @@ public class AppRTCAudioManager {
 
   private final Context apprtcContext;
   @Nullable
-  private AudioManager audioManager;
+  private final AudioManager audioManager;
 
   @Nullable
   private AudioManagerEvents audioManagerEvents;
@@ -103,7 +103,7 @@ public class AppRTCAudioManager {
   private Set<AudioDevice> audioDevices = new HashSet<>();
 
   // Broadcast receiver for wired headset intent broadcasts.
-  private BroadcastReceiver wiredHeadsetReceiver;
+  private final BroadcastReceiver wiredHeadsetReceiver;
 
   // Callback method for changes in audio focus.
   @Nullable

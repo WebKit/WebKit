@@ -448,14 +448,14 @@ void CurlHandle::appendRequestHeader(const String& name, const String& value)
         header = makeString(name, ": "_s, value);
     }
 
-    appendRequestHeader(WTFMove(header));
+    appendRequestHeader(WTF::move(header));
 }
 
 void CurlHandle::removeRequestHeader(const String& name)
 {
     // Add a header with no content, the internally used header will get disabled. 
     auto header = makeString(name, ':');
-    appendRequestHeader(WTFMove(header));
+    appendRequestHeader(WTF::move(header));
 }
 
 void CurlHandle::appendRequestHeader(const String& header)
@@ -909,7 +909,7 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
         additionalMetrics->tlsCipher = m_tlsConnectionInfo->cipher;
     }
 
-    networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
+    networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTF::move(additionalMetrics);
 }
 
 std::optional<CertificateInfo> CurlHandle::certificateInfo() const
@@ -919,7 +919,7 @@ std::optional<CertificateInfo> CurlHandle::certificateInfo() const
 
     if (m_sslVerifier) {
         if (auto certificateInfo = m_sslVerifier->createCertificateInfo(getSSLVerifyResult())) {
-            m_certificateInfo = WTFMove(certificateInfo);
+            m_certificateInfo = WTF::move(certificateInfo);
             return *m_certificateInfo;
         }
     }
@@ -927,7 +927,7 @@ std::optional<CertificateInfo> CurlHandle::certificateInfo() const
     // If you use an existing HTTP/2 connection, SSLVerifier does not exist.
     if (auto ssl = sslConnection()) {
         if (auto certificateInfo = OpenSSL::createCertificateInfo(getSSLVerifyResult(), *ssl)) {
-            m_certificateInfo = WTFMove(certificateInfo);
+            m_certificateInfo = WTF::move(certificateInfo);
             return *m_certificateInfo;
         }
     }

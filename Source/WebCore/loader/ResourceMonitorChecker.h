@@ -58,7 +58,7 @@ public:
     WEBCORE_EXPORT void setContentRuleList(ContentExtensions::ContentExtensionsBackend&&);
     WEBCORE_EXPORT void setNetworkUsageThreshold(size_t threshold, double randomness = defaultNetworkUsageThresholdRandomness);
 
-    WEBCORE_EXPORT size_t networkUsageThreshold() const;
+    WEBCORE_EXPORT size_t NODELETE networkUsageThreshold() const;
     WEBCORE_EXPORT size_t networkUsageThresholdWithNoise() const;
 
     static constexpr Seconds ruleListPreparationTimeout = 10_s;

@@ -15,25 +15,25 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 741x53
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 741x54
             text run at (0,27) width 741: "Deleting when a selection starts in a blank line created by a BR element and"
             text run at (0,54) width 346: "extends to the end of the document."
         RenderBlock {DIV} at (14,111) size 756x108
-          RenderText {#text} at (0,0) size 183x26
+          RenderText {#text} at (0,0) size 183x27
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 742x80
+          RenderBR {BR} at (183,0) size 0x27
+          RenderText {#text} at (0,27) size 742x81
             text run at (0,27) width 716: "Should see the two lines in the red box. First line should be \"A\". Next one"
             text run at (0,54) width 742: "should be empty. Insertion point should be blinking at the start of the second"
             text run at (0,81) width 43: "line."
       RenderBlock {DIV} at (0,257) size 784x58
         RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
           RenderBlock {P} at (2,2) size 780x27
-            RenderText {#text} at (0,0) size 17x26
+            RenderText {#text} at (0,0) size 17x27
               text run at (0,0) width 17: "A"
           RenderBlock (anonymous) at (2,29) size 780x27
-            RenderBR {BR} at (0,0) size 0x26
+            RenderBR {BR} at (0,0) size 0x27
 caret: position 0 of child 3 {BR} of child 1 {DIV} of child 3 {DIV} of body

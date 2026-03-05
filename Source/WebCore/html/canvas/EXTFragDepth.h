@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class EXTFragDepth final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTFragDepth);
+    WTF_MAKE_TZONE_ALLOCATED(EXTFragDepth);
     WTF_MAKE_NONCOPYABLE(EXTFragDepth);
 public:
     explicit EXTFragDepth(WebGLRenderingContextBase&);
@@ -43,3 +43,5 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(EXTFragDepth)

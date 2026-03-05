@@ -132,7 +132,8 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheck(Address function)
 template<typename OperationType>
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallSetJSValueResult(const CodePtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck<OperationType>(function);
+    updateTopCallFrame();
+    MacroAssembler::Call call = appendCall(function);
     emitPutVirtualRegister(dst, returnValueJSR);
     return call;
 }
@@ -140,7 +141,8 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallSetJSValueResult(const CodePtr
 template<typename OperationType>
 ALWAYS_INLINE void JIT::appendCallSetJSValueResult(Address function, VirtualRegister dst)
 {
-    appendCallWithExceptionCheck<OperationType>(function);
+    updateTopCallFrame();
+    appendCall(function);
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
@@ -176,9 +178,9 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
-ALWAYS_INLINE void JIT::linkAllSlowCasesForBytecodeIndex(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, BytecodeIndex bytecodeIndex)
+ALWAYS_INLINE void JIT::linkAllSlowCasesUpToBytecodeIndex(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, BytecodeIndex bytecodeIndex)
 {
-    while (iter != slowCases.end() && iter->to == bytecodeIndex)
+    while (iter != slowCases.end() && iter->to <= bytecodeIndex)
         linkSlowCase(iter);
 }
 
@@ -407,6 +409,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegisterTag(VirtualRegister src, RegisterI
     }
     load32(tagFor(src), dst);
 }
+
 #elif USE(JSVALUE64)
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID dst)
 {

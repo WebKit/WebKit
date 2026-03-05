@@ -21,6 +21,7 @@
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
+#include "api/audio/neural_residual_echo_estimator.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "modules/audio_processing/aec3/api_call_jitter_metrics.h"
@@ -95,6 +96,7 @@ class EchoCanceller3 : public EchoControl {
   EchoCanceller3(const Environment& env,
                  const EchoCanceller3Config& config,
                  const std::optional<EchoCanceller3Config>& multichannel_config,
+                 NeuralResidualEchoEstimator* neural_residual_echo_estimator,
                  int sample_rate_hz,
                  size_t num_render_channels,
                  size_t num_capture_channels);
@@ -198,6 +200,7 @@ class EchoCanceller3 : public EchoControl {
   const size_t num_capture_channels_;
   ConfigSelector config_selector_;
   MultiChannelContentDetector multichannel_content_detector_;
+  NeuralResidualEchoEstimator* neural_residual_echo_estimator_;
   std::unique_ptr<BlockFramer> linear_output_framer_
       RTC_GUARDED_BY(capture_race_checker_);
   BlockFramer output_framer_ RTC_GUARDED_BY(capture_race_checker_);

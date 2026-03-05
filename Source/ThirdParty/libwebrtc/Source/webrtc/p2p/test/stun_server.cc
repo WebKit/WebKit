@@ -27,7 +27,8 @@
 
 namespace webrtc {
 
-StunServer::StunServer(AsyncUDPSocket* socket) : socket_(socket) {
+StunServer::StunServer(std::unique_ptr<AsyncUDPSocket> socket)
+    : socket_(std::move(socket)) {
   socket_->RegisterReceivedPacketCallback(
       [&](AsyncPacketSocket* socket, const ReceivedIpPacket& packet) {
         OnPacket(socket, packet);

@@ -35,11 +35,16 @@
 
 namespace WebCore {
 
-RefPtr<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& context)
+Ref<WebGLSync> WebGLSync::createLost()
 {
-    auto object = context.graphicsContextGL()->fenceSync(GraphicsContextGL::SYNC_GPU_COMMANDS_COMPLETE, 0);
+    return adoptRef(*new WebGLSync { });
+}
+
+Ref<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& context)
+{
+    auto object = protect(context.graphicsContextGL())->fenceSync(GraphicsContextGL::SYNC_GPU_COMMANDS_COMPLETE, 0);
     if (!object)
-        return nullptr;
+        return createLost();
     return adoptRef(*new WebGLSync { context, object });
 }
 
@@ -57,6 +62,11 @@ WebGLSync::WebGLSync(WebGLRenderingContextBase& context, GCGLsync object)
 {
 }
 
+WebGLSync::WebGLSync()
+    : m_sync(nullptr)
+{
+}
+
 void WebGLSync::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject)
 {
     context3d->deleteSync(m_sync);
@@ -69,7 +79,7 @@ void WebGLSync::updateCache(WebGLRenderingContextBase& context)
         return;
 
     m_allowCacheUpdate = false;
-    m_syncStatus = context.graphicsContextGL()->getSynci(m_sync, GraphicsContextGL::SYNC_STATUS);
+    m_syncStatus = protect(context.graphicsContextGL())->getSynci(m_sync, GraphicsContextGL::SYNC_STATUS);
     if (m_syncStatus == GraphicsContextGL::UNSIGNALED)
         scheduleAllowCacheUpdate(context);
 }
@@ -97,7 +107,9 @@ bool WebGLSync::isSignaled() const
 
 void WebGLSync::scheduleAllowCacheUpdate(WebGLRenderingContextBase& context)
 {
-    context.protectedCanvasBase()->queueTaskKeepingObjectAlive(TaskSource::WebGL, [protectedThis = Ref { *this }](auto&) {
+    if (!m_sync)
+        return;
+    protect(context.canvasBase())->queueTaskKeepingObjectAlive(TaskSource::WebGL, [protectedThis = Ref { *this }](auto&) {
         protectedThis->m_allowCacheUpdate = true;
     });
 }

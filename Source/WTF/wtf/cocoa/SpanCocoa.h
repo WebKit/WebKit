@@ -32,7 +32,7 @@
 namespace WTF {
 
 #ifdef __OBJC__
-inline std::span<const uint8_t> span(NSData *data)
+inline std::span<const uint8_t> span(NSData *data LIFETIME_BOUND)
 {
     if (!data)
         return { };

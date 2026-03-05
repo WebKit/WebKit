@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ThreadedTimeBasedAnimationsEnabled=true ] -->
+<body>
+<style>
+
+html {
+    height: 2000px;
+}
+
+#target {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: green;
+    opacity: 0;
+}
+
+</style>
+
+<div id="target"></div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const assertRemoteAnimationProgress = async (expectedProgress, description) => {
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target);
+    assert_equals(remoteAnimationStack.animations.length, 1, `${description}, we have a single remote animation`);
+    const remoteAnimation = remoteAnimationStack.animations[0];
+    assert_approx_equals(remoteAnimation.progress, expectedProgress, 0.001, `${description}, the remote animation current time is ${expectedProgress}`);
+};
+
+promise_test(async t => {
+    const duration = 1000 * 1000;
+    const scroller = document.documentElement;
+    const timeline = new ScrollTimeline({ source : scroller });
+    const animation = target.animate({ opacity: 1 }, { timeline, duration });
+
+    const scrollProgress = 0.5;
+    const maxScrollTop = scroller.scrollHeight - window.innerHeight;
+    window.scrollTo(0, scrollProgress * maxScrollTop);
+    await Promise.all([UIHelper.renderingUpdate(), animationAcceleration(animation)]);
+    await assertRemoteAnimationProgress(scrollProgress, "After scrolling");
+
+    const monotonicProgress = 0.75;
+    animation.timeline = document.timeline;
+    animation.currentTime = monotonicProgress * duration;
+    await animationAcceleration(animation);
+    await assertRemoteAnimationProgress(monotonicProgress, "After changing the timeline to the document timeline");
+}, "Changing timelines on a threaded animation updates the current time of the remote animation");
+
+</script>
+</body>

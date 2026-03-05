@@ -513,8 +513,10 @@ inclusive_or_expression
 
 logical_and_expression
     : inclusive_or_expression { $$ = $1; }
-    | logical_and_expression AND_OP inclusive_or_expression {
-        $$ = context->addBinaryMathBooleanResult(EOpLogicalAnd, $1, $3, @2);
+    | logical_and_expression AND_OP {
+        context->onShortCircuitAndBegin($1, @2);
+    } inclusive_or_expression {
+        $$ = context->addBinaryMathBooleanResult(EOpLogicalAnd, $1, $4, @2);
     }
     ;
 
@@ -527,15 +529,21 @@ logical_xor_expression
 
 logical_or_expression
     : logical_xor_expression { $$ = $1; }
-    | logical_or_expression OR_OP logical_xor_expression  {
-        $$ = context->addBinaryMathBooleanResult(EOpLogicalOr, $1, $3, @2);
+    | logical_or_expression OR_OP {
+        context->onShortCircuitOrBegin($1, @2);
+    } logical_xor_expression  {
+        $$ = context->addBinaryMathBooleanResult(EOpLogicalOr, $1, $4, @2);
     }
     ;
 
 conditional_expression
     : logical_or_expression { $$ = $1; }
-    | logical_or_expression QUESTION expression COLON assignment_expression {
-        $$ = context->addTernarySelection($1, $3, $5, @2);
+    | logical_or_expression QUESTION {
+        context->onTernaryConditionParsed($1, @2);
+    } expression COLON {
+        context->onTernaryTrueExpressionParsed($4, @2);
+    } assignment_expression {
+        $$ = context->addTernarySelection($1, $4, $7, @2);
     }
     ;
 
@@ -582,8 +590,10 @@ expression
     : assignment_expression {
         $$ = $1;
     }
-    | expression COMMA assignment_expression {
-        $$ = context->addComma($1, $3, @2);
+    | expression COMMA {
+        context->onCommaLeftHandSideParsed($1);
+    } assignment_expression {
+        $$ = context->addComma($1, $4, @2);
     }
     ;
 
@@ -657,7 +667,7 @@ function_header_with_parameters
         $$ = $1;
         if ($2.type.getBasicType() != EbtVoid)
         {
-            $1->addParameter($2.createVariable(&context->symbolTable));
+            context->addParameter($1, &$2);
         }
         else
         {
@@ -682,7 +692,7 @@ function_header_with_parameters
                 // (void, non_void) parameters.
                 context->error(@2, "cannot be a parameter type except for '(void)'", "void");
             }
-            $1->addParameter($3.createVariable(&context->symbolTable));
+            context->addParameter($1, &$3);
         }
     }
     ;
@@ -1537,7 +1547,7 @@ compound_statement_with_scope
         $$ = new TIntermBlock();
         $$->setLine(@$);
     }
-    | LEFT_BRACE { context->symbolTable.push(); } statement_list { context->symbolTable.pop(); } RIGHT_BRACE {
+    | LEFT_BRACE { context->beginNestedScope(); } statement_list { context->endNestedScope(); } RIGHT_BRACE {
         $3->setLine(@$);
         $$ = $3;
     }
@@ -1545,12 +1555,19 @@ compound_statement_with_scope
 
 statement_no_new_scope
     : compound_statement_no_new_scope { $$ = $1; }
-    | simple_statement                { $$ = $1; }
+    | simple_statement                {
+        context->endStatementWithValue($1);
+        $$ = $1;
+    }
     ;
 
 statement_with_scope
-    : { context->symbolTable.push(); } compound_statement_no_new_scope { context->symbolTable.pop(); $$ = $2; }
-    | { context->symbolTable.push(); } simple_statement                { context->symbolTable.pop(); $$ = $2; }
+    : { context->beginNestedScope(); } compound_statement_no_new_scope { context->endNestedScope(); $$ = $2; }
+    | { context->beginNestedScope(); } simple_statement                {
+        context->endStatementWithValue($2);
+        context->endNestedScope();
+        $$ = $2;
+    }
     ;
 
 compound_statement_no_new_scope
@@ -1585,17 +1602,24 @@ expression_statement
     ;
 
 selection_statement
-    : IF LEFT_PAREN expression RIGHT_PAREN selection_rest_statement {
-        $$ = context->addIfElse($3, $5, @1);
+    : IF LEFT_PAREN expression RIGHT_PAREN {
+        context->onIfTrueBlockBegin($3, @1);
+    } selection_rest_statement {
+        $$ = context->addIfElse($3, $6, @1);
     }
     ;
 
 selection_rest_statement
-    : statement_with_scope ELSE statement_with_scope {
+    : statement_with_scope ELSE {
+        context->onIfTrueBlockEnd();
+        context->onIfFalseBlockBegin();
+    } statement_with_scope {
+        context->onIfFalseBlockEnd();
         $$.node1 = $1;
-        $$.node2 = $3;
+        $$.node2 = $4;
     }
     | statement_with_scope {
+        context->onIfTrueBlockEnd();
         $$.node1 = $1;
         $$.node2 = nullptr;
     }
@@ -1604,9 +1628,8 @@ selection_rest_statement
 // Note that we've diverged from the spec grammar here a bit for the sake of simplicity.
 // We're reusing compound_statement_with_scope instead of having separate rules for switch.
 switch_statement
-    : SWITCH LEFT_PAREN expression RIGHT_PAREN { context->incrSwitchNestingLevel(@1); } compound_statement_with_scope {
+    : SWITCH LEFT_PAREN expression RIGHT_PAREN { context->beginSwitch(@1, $3); } compound_statement_no_new_scope {
         $$ = context->addSwitch($3, $6, @1);
-        context->decrSwitchNestingLevel();
     }
     ;
 
@@ -1630,24 +1653,34 @@ condition
     ;
 
 iteration_statement
-    : WHILE LEFT_PAREN { context->symbolTable.push(); context->incrLoopNestingLevel(@1); } condition RIGHT_PAREN statement_no_new_scope {
+    : WHILE LEFT_PAREN {
+        context->symbolTable.push(); context->beginLoop(ELoopWhile, @1);
+        context->onLoopConditionBegin(nullptr, @1);
+    } condition {
+        context->onLoopConditionEnd($4, @4);
+    } RIGHT_PAREN statement_no_new_scope {
         context->symbolTable.pop();
-        $$ = context->addLoop(ELoopWhile, 0, $4, 0, $6, @1);
-        context->decrLoopNestingLevel();
+        $$ = context->addLoop(ELoopWhile, 0, $4, 0, $7, @1);
     }
-    | DO { context->incrLoopNestingLevel(@1); } statement_with_scope WHILE LEFT_PAREN expression RIGHT_PAREN SEMICOLON {
-        $$ = context->addLoop(ELoopDoWhile, 0, $6, 0, $3, @4);
-        context->decrLoopNestingLevel();
+    | DO {
+        context->beginLoop(ELoopDoWhile, @1);
+        context->onDoLoopBegin();
+    } statement_with_scope WHILE LEFT_PAREN {
+        context->onDoLoopConditionBegin();
+    } expression RIGHT_PAREN SEMICOLON {
+        $$ = context->addLoop(ELoopDoWhile, 0, $7, 0, $3, @4);
     }
-    | FOR LEFT_PAREN { context->symbolTable.push(); context->incrLoopNestingLevel(@1); } for_init_statement for_rest_statement RIGHT_PAREN statement_no_new_scope {
+    | FOR LEFT_PAREN { context->symbolTable.push(); context->beginLoop(ELoopFor, @1); } for_init_statement {
+        context->onLoopConditionBegin($4, @4);
+    } for_rest_statement RIGHT_PAREN statement_no_new_scope {
         context->symbolTable.pop();
-        $$ = context->addLoop(ELoopFor, $4, $5.node1, reinterpret_cast<TIntermTyped*>($5.node2), $7, @1);
-        context->decrLoopNestingLevel();
+        $$ = context->addLoop(ELoopFor, $4, $6.node1, reinterpret_cast<TIntermTyped*>($6.node2), $8, @1);
     }
     ;
 
 for_init_statement
     : expression_statement {
+        context->endStatementWithValue($1);
         $$ = $1;
     }
     | declaration_statement {
@@ -1666,12 +1699,17 @@ conditionopt
 
 for_rest_statement
     : conditionopt SEMICOLON {
+        context->onLoopConditionEnd($1, @1);
+        context->onLoopContinueEnd(nullptr, @1);
         $$.node1 = $1;
         $$.node2 = 0;
     }
-    | conditionopt SEMICOLON expression  {
+    | conditionopt SEMICOLON {
+        context->onLoopConditionEnd($1, @1);
+    } expression {
+        context->onLoopContinueEnd($4, @4);
         $$.node1 = $1;
-        $$.node2 = $3;
+        $$.node2 = $4;
     }
     ;
 

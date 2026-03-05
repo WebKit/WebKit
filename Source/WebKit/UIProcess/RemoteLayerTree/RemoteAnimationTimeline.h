@@ -38,14 +38,17 @@ namespace WebKit {
 
 using TimelineID = WebCore::ProcessQualified<WebCore::TimelineIdentifier>;
 
-class RemoteAnimationTimeline : public RefCounted<RemoteAnimationTimeline> {
+class RemoteAnimationTimeline : public ThreadSafeRefCounted<RemoteAnimationTimeline> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAnimationTimeline);
 public:
     virtual ~RemoteAnimationTimeline() = default;
 
-    const WebCore::WebAnimationTime& currentTime() const { return m_currentTime; }
-    const std::optional<WebCore::WebAnimationTime>& duration() const { return m_duration; }
-    const TimelineID& identifier() const { return m_identifier; }
+    bool isMonotonic() const { return !m_duration; }
+    bool isProgressBased() const { return !!m_duration; }
+
+    const WebCore::WebAnimationTime& currentTime() const LIFETIME_BOUND { return m_currentTime; }
+    const std::optional<WebCore::WebAnimationTime>& duration() const LIFETIME_BOUND { return m_duration; }
+    const TimelineID& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     Ref<JSON::Object> toJSONForTesting() const;
 
@@ -60,5 +63,10 @@ private:
 };
 
 } // namespace WebKit
+
+#define SPECIALIZE_TYPE_TRAITS_REMOTE_ANIMATION_TIMELINE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
+    static bool isType(const WebKit::RemoteAnimationTimeline& node) { return node.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(THREADED_ANIMATIONS)

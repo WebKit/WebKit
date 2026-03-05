@@ -27,20 +27,24 @@
 #include "WebPageInspectorController.h"
 
 #include "APIUIClient.h"
+#include "FrameInspectorTarget.h"
+#include "FrameInspectorTargetProxy.h"
 #include "InspectorBrowserAgent.h"
+#include "PageInspectorTarget.h"
+#include "PageInspectorTargetProxy.h"
+#include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
-#include "WebFrameInspectorTargetProxy.h"
 #include "WebFrameProxy.h"
 #include "WebPageInspectorAgentBase.h"
-#include "WebPageInspectorTarget.h"
-#include "WebPageInspectorTargetProxy.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
+#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -50,7 +54,17 @@ using namespace Inspector;
 
 static String getTargetID(const ProvisionalPageProxy& provisionalPage)
 {
-    return WebPageInspectorTarget::toTargetID(provisionalPage.webPageID());
+    return PageInspectorTarget::toTargetID(provisionalPage.webPageID());
+}
+
+static String getTargetID(const WebFrameProxy& frame)
+{
+    return FrameInspectorTarget::toTargetID(frame.frameID(), frame.process().coreProcessIdentifier());
+}
+
+static String getTargetID(const ProvisionalFrameProxy& provisionalFrame)
+{
+    return FrameInspectorTarget::toTargetID(protect(provisionalFrame.frame())->frameID(), provisionalFrame.process().coreProcessIdentifier());
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageInspectorController);
@@ -62,20 +76,15 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
 {
     auto targetAgent = makeUniqueRef<InspectorTargetAgent>(m_frontendRouter, m_backendDispatcher);
     m_targetAgent = targetAgent.ptr();
-    m_agents.append(WTFMove(targetAgent));
+    m_agents.append(WTF::move(targetAgent));
 }
 
 WebPageInspectorController::~WebPageInspectorController() = default;
 
-Ref<WebPageProxy> WebPageInspectorController::protectedInspectedPage()
-{
-    return m_inspectedPage.get();
-}
-
 void WebPageInspectorController::init()
 {
-    String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
-    createWebPageInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
+    String pageTargetId = PageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
+    addTarget(PageInspectorTargetProxy::create(protect(m_inspectedPage), pageTargetId, Inspector::InspectorTargetType::Page));
 }
 
 void WebPageInspectorController::pageClosed()
@@ -168,28 +177,18 @@ void WebPageInspectorController::setIndicating(bool indicating)
 }
 #endif
 
-void WebPageInspectorController::createWebPageInspectorTarget(const String& targetId, Inspector::InspectorTargetType type)
-{
-    addTarget(WebPageInspectorTargetProxy::create(protectedInspectedPage(), targetId, type));
-}
-
-void WebPageInspectorController::createWebFrameInspectorTarget(WebFrameProxy& frame, const String& targetId)
-{
-    addTarget(WebFrameInspectorTargetProxy::create(frame, targetId));
-}
-
-void WebPageInspectorController::destroyInspectorTarget(const String& targetId)
-{
-    auto it = m_targets.find(targetId);
-    if (it == m_targets.end())
-        return;
-    checkedTargetAgent()->targetDestroyed(*it->value);
-    m_targets.remove(it);
-}
-
 void WebPageInspectorController::sendMessageToInspectorFrontend(const String& targetId, const String& message)
 {
-    checkedTargetAgent()->sendMessageFromTargetToFrontend(targetId, message);
+    if (!m_targets.contains(targetId)) {
+        // FIXME <https://webkit.org/b/308182>: This assertion is currently relaxed under site isolation.
+        // More fine-tuning is needed around reporting provisional frame targets' destruction.
+        if (shouldManageFrameTargets())
+            return;
+
+        ASSERT_NOT_REACHED_WITH_MESSAGE("Sending a message from an untracked target to the frontend.");
+    }
+
+    protect(m_targetAgent)->sendMessageFromTargetToFrontend(targetId, message);
 }
 
 bool WebPageInspectorController::shouldPauseLoading(const ProvisionalPageProxy& provisionalPage) const
@@ -197,32 +196,32 @@ bool WebPageInspectorController::shouldPauseLoading(const ProvisionalPageProxy& 
     if (!m_frontendRouter->hasFrontends())
         return false;
 
-    auto* target = m_targets.get(getTargetID(provisionalPage));
+    CheckedPtr target = m_targets.get(getTargetID(provisionalPage));
     ASSERT(target);
     return target->isPaused();
 }
 
 void WebPageInspectorController::setContinueLoadingCallback(const ProvisionalPageProxy& provisionalPage, WTF::Function<void()>&& callback)
 {
-    auto* target = m_targets.get(getTargetID(provisionalPage));
+    CheckedPtr target = m_targets.get(getTargetID(provisionalPage));
     ASSERT(target);
-    target->setResumeCallback(WTFMove(callback));
+    target->setResumeCallback(WTF::move(callback));
 }
 
 void WebPageInspectorController::didCreateProvisionalPage(ProvisionalPageProxy& provisionalPage)
 {
-    addTarget(WebPageInspectorTargetProxy::create(provisionalPage, getTargetID(provisionalPage), Inspector::InspectorTargetType::Page));
+    addTarget(PageInspectorTargetProxy::create(provisionalPage, getTargetID(provisionalPage), Inspector::InspectorTargetType::Page));
 }
 
 void WebPageInspectorController::willDestroyProvisionalPage(const ProvisionalPageProxy& provisionalPage)
 {
-    destroyInspectorTarget(getTargetID(provisionalPage));
+    removeTarget(getTargetID(provisionalPage));
 }
 
 void WebPageInspectorController::didCommitProvisionalPage(WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID)
 {
-    String oldID = WebPageInspectorTarget::toTargetID(oldWebPageID);
-    String newID = WebPageInspectorTarget::toTargetID(newWebPageID);
+    String oldID = PageInspectorTarget::toTargetID(oldWebPageID);
+    String newID = PageInspectorTarget::toTargetID(newWebPageID);
     auto newTarget = m_targets.take(newID);
     CheckedPtr targetAgent = m_targetAgent;
     ASSERT(newTarget);
@@ -235,7 +234,58 @@ void WebPageInspectorController::didCommitProvisionalPage(WebCore::PageIdentifie
     for (auto& target : m_targets.values())
         targetAgent->targetDestroyed(*target);
     m_targets.clear();
-    m_targets.set(newTarget->identifier(), WTFMove(newTarget));
+    m_targets.set(newTarget->identifier(), WTF::move(newTarget));
+}
+
+void WebPageInspectorController::didCreateFrame(WebFrameProxy& frame)
+{
+    if (!shouldManageFrameTargets())
+        return;
+
+    addTarget(FrameInspectorTargetProxy::create(frame, getTargetID(frame)));
+}
+
+void WebPageInspectorController::willDestroyFrame(const WebFrameProxy& frame)
+{
+    if (!shouldManageFrameTargets())
+        return;
+
+    removeTarget(getTargetID(frame));
+}
+
+void WebPageInspectorController::didCreateProvisionalFrame(ProvisionalFrameProxy& provisionalFrame)
+{
+    if (!shouldManageFrameTargets())
+        return;
+
+    addTarget(FrameInspectorTargetProxy::create(provisionalFrame, getTargetID(provisionalFrame)));
+}
+
+void WebPageInspectorController::willDestroyProvisionalFrame(const ProvisionalFrameProxy& provisionalFrame)
+{
+    if (!shouldManageFrameTargets())
+        return;
+
+    removeTarget(getTargetID(provisionalFrame));
+}
+
+void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame, WebCore::ProcessIdentifier oldProcessID, WebCore::ProcessIdentifier newProcessID)
+{
+    if (!shouldManageFrameTargets())
+        return;
+
+    WebCore::FrameIdentifier frameID = frame.frameID();
+    String oldTargetID = FrameInspectorTarget::toTargetID(frameID, oldProcessID);
+    String newTargetID = FrameInspectorTarget::toTargetID(frameID, newProcessID);
+
+    CheckedPtr targetAgent = m_targetAgent;
+    CheckedPtr newTarget = m_targets.get(newTargetID);
+    ASSERT(newTarget);
+    newTarget->didCommitProvisionalTarget();
+    targetAgent->didCommitProvisionalTarget(oldTargetID, newTargetID);
+
+    if (auto oldTarget = m_targets.take(oldTargetID))
+        targetAgent->targetDestroyed(protect(*oldTarget));
 }
 
 InspectorBrowserAgent* WebPageInspectorController::enabledBrowserAgent() const
@@ -266,8 +316,22 @@ void WebPageInspectorController::createLazyAgents()
 
 void WebPageInspectorController::addTarget(std::unique_ptr<InspectorTargetProxy>&& target)
 {
-    checkedTargetAgent()->targetCreated(*target);
-    m_targets.set(target->identifier(), WTFMove(target));
+    protect(m_targetAgent)->targetCreated(*target);
+    m_targets.set(target->identifier(), WTF::move(target));
+}
+
+void WebPageInspectorController::removeTarget(const String& targetId)
+{
+    auto it = m_targets.find(targetId);
+    if (it == m_targets.end())
+        return;
+    protect(m_targetAgent)->targetDestroyed(CheckedRef { *it->value });
+    m_targets.remove(it);
+}
+
+bool WebPageInspectorController::shouldManageFrameTargets() const
+{
+    return protect(protect(m_inspectedPage)->preferences())->siteIsolationEnabled();
 }
 
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)
@@ -287,13 +351,13 @@ void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* a
 void WebPageInspectorController::browserExtensionsEnabled(HashMap<String, String>&& extensionIDToName)
 {
     if (CheckedPtr enabledBrowserAgent = m_enabledBrowserAgent)
-        enabledBrowserAgent->extensionsEnabled(WTFMove(extensionIDToName));
+        enabledBrowserAgent->extensionsEnabled(WTF::move(extensionIDToName));
 }
 
 void WebPageInspectorController::browserExtensionsDisabled(HashSet<String>&& extensionIDs)
 {
     if (CheckedPtr enabledBrowserAgent = m_enabledBrowserAgent)
-        enabledBrowserAgent->extensionsDisabled(WTFMove(extensionIDs));
+        enabledBrowserAgent->extensionsDisabled(WTF::move(extensionIDs));
 }
 
 } // namespace WebKit

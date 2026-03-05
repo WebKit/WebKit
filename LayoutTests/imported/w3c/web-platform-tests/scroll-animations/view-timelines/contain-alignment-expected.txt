@@ -2,5 +2,5 @@
 
 
 
-FAIL Stability of animated elements aligned to the bounds of a contain region assert_equals: a: Mismatched background color expected "rgb(0, 254, 0)" but got "rgb(136, 136, 136)"
+PASS Stability of animated elements aligned to the bounds of a contain region
 

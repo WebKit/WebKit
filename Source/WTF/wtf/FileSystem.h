@@ -42,6 +42,10 @@
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 #if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
@@ -82,6 +86,12 @@ enum class FileAccessPermission : bool {
     All
 };
 
+#if OS(WINDOWS)
+constexpr char pathSeparator = '\\';
+#else
+constexpr char pathSeparator = '/';
+#endif
+
 WTF_EXPORT_PRIVATE bool fileExists(const String&);
 WTF_EXPORT_PRIVATE bool deleteFile(const String&);
 WTF_EXPORT_PRIVATE void deleteAllFilesModifiedSince(const String&, WallTime);
@@ -90,7 +100,7 @@ WTF_EXPORT_PRIVATE bool moveFile(const String& oldPath, const String& newPath);
 WTF_EXPORT_PRIVATE std::optional<uint64_t> fileSize(const String&); // Follows symlinks.
 WTF_EXPORT_PRIVATE std::optional<uint64_t> directorySize(const String&);
 WTF_EXPORT_PRIVATE std::optional<WallTime> fileModificationTime(const String&);
-WTF_EXPORT_PRIVATE bool fileIDsAreEqual(std::optional<PlatformFileID>, std::optional<PlatformFileID>);
+WTF_EXPORT_PRIVATE bool NODELETE fileIDsAreEqual(std::optional<PlatformFileID>, std::optional<PlatformFileID>);
 WTF_EXPORT_PRIVATE bool updateFileModificationTime(const String& path); // Sets modification time to now.
 WTF_EXPORT_PRIVATE std::optional<WallTime> fileCreationTime(const String&); // Not all platforms store file creation time.
 WTF_EXPORT_PRIVATE bool isHiddenFile(const String&);
@@ -109,6 +119,7 @@ WTF_EXPORT_PRIVATE std::optional<int32_t> getFileDeviceId(const String&);
 WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 WTF_EXPORT_PRIVATE String createTemporaryZipArchive(const String& directory);
 WTF_EXPORT_PRIVATE String extractTemporaryZipArchive(const String& filePath);
+WTF_EXPORT_PRIVATE FileHandle createDumpFile(StringView filename, StringView extension, StringView path = StringView());
 
 enum class FileType { Regular, Directory, SymbolicLink };
 WTF_EXPORT_PRIVATE std::optional<FileType> fileType(const String&);
@@ -191,8 +202,8 @@ WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
 
 WTF_EXPORT_PRIVATE String realPath(const String&);
 
-WTF_EXPORT_PRIVATE bool isSafeToUseMemoryMapForPath(const String&);
-WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool makeSafeToUseMemoryMapForPath(const String&);
+WTF_EXPORT_PRIVATE bool NODELETE isSafeToUseMemoryMapForPath(const String&);
+[[nodiscard]] WTF_EXPORT_PRIVATE bool NODELETE makeSafeToUseMemoryMapForPath(const String&);
 
 WTF_EXPORT_PRIVATE std::optional<MappedFileData> mapFile(const String& path, MappedFileMode);
 

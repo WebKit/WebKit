@@ -36,9 +36,9 @@ using namespace WebCore;
 
 UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(FrameIdentifier frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     : m_frameID(frameID)
-    , m_completionHandler(WTFMove(handler))
-    , m_userMediaDocumentSecurityOrigin(WTFMove(userMediaDocumentOrigin))
-    , m_topLevelDocumentSecurityOrigin(WTFMove(topLevelDocumentOrigin))
+    , m_completionHandler(WTF::move(handler))
+    , m_userMediaDocumentSecurityOrigin(WTF::move(userMediaDocumentOrigin))
+    , m_topLevelDocumentSecurityOrigin(WTF::move(topLevelDocumentOrigin))
 {
 }
 
@@ -58,7 +58,7 @@ void UserMediaPermissionCheckProxy::complete(PermissionInfo info)
     if (!m_completionHandler)
         return;
 
-    auto completionHandler = WTFMove(m_completionHandler);
+    auto completionHandler = WTF::move(m_completionHandler);
     completionHandler(info);
 }
 

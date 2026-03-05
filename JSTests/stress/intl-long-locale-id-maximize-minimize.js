@@ -1,3 +1,6 @@
+//@ skip
+// FIXME: Unskip this test when webkit.org/b/305218 is resolved
+
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);

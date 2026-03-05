@@ -27,6 +27,7 @@
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -44,8 +45,10 @@ class RTC_EXPORT VideoCaptureImpl : public VideoCaptureModule {
    * using GetDeviceName
    */
   static scoped_refptr<VideoCaptureModule> Create(
+      Clock* clock,
       const char* deviceUniqueIdUTF8);
   static scoped_refptr<VideoCaptureModule> Create(
+      Clock* clock,
       VideoCaptureOptions* options,
       const char* deviceUniqueIdUTF8);
 
@@ -83,7 +86,7 @@ class RTC_EXPORT VideoCaptureImpl : public VideoCaptureModule {
   int32_t CaptureSettings(VideoCaptureCapability& /*settings*/) override;
 
  protected:
-  VideoCaptureImpl();
+  explicit VideoCaptureImpl(Clock* clock);
   ~VideoCaptureImpl() override;
 
   // Calls to the public API must happen on a single thread.
@@ -125,6 +128,8 @@ class RTC_EXPORT VideoCaptureImpl : public VideoCaptureModule {
 
   // Indicate whether rotation should be applied before delivered externally.
   bool apply_rotation_ RTC_GUARDED_BY(api_lock_);
+
+  Clock* const clock_;
 };
 }  // namespace videocapturemodule
 }  // namespace webrtc

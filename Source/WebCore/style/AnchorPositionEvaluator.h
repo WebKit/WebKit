@@ -69,9 +69,9 @@ struct AnchorScrollSnapshot {
 class AnchorScrollAdjuster {
 public:
     AnchorScrollAdjuster(RenderBox& anchored, const RenderBoxModelObject& defaultAnchor);
-    RenderBox* anchored() const;
+    RenderBox* NODELETE anchored() const;
 
-    inline bool isEmpty() const;
+    inline bool NODELETE isEmpty() const;
     bool mayNeedAdjustment() const { return m_needsXAdjustment | m_needsYAdjustment; }
     bool mayNeedXAdjustment() const { return m_needsXAdjustment; }
     bool mayNeedYAdjustment() const { return m_needsYAdjustment; }
@@ -84,7 +84,7 @@ public:
     bool hasViewportSnapshot() const { return m_adjustForViewport; }
 
     enum Diff : uint8_t { New, SnapshotsDiffer, SnapshotsMatch };
-    bool recaptureDiffers(const AnchorScrollAdjuster&) const; // Snapshot differences can require invalidation.
+    bool NODELETE recaptureDiffers(const AnchorScrollAdjuster&) const; // Snapshot differences can require invalidation.
 
     void setFallbackLimits(const RenderBox& anchored);
     bool hasFallbackLimits() const { return m_hasFallback; }
@@ -183,9 +183,9 @@ public:
 
     static AnchorToAnchorPositionedMap makeAnchorPositionedForAnchorMap(AnchorPositionedToAnchorMap&);
 
-    static bool isAnchorPositioned(const RenderStyle&);
-    static bool isStyleTimeAnchorPositioned(const RenderStyle&);
-    static bool isLayoutTimeAnchorPositioned(const RenderStyle&);
+    static bool NODELETE isAnchorPositioned(const RenderStyle&);
+    static bool NODELETE isStyleTimeAnchorPositioned(const RenderStyle&);
+    static bool NODELETE isLayoutTimeAnchorPositioned(const RenderStyle&);
 
     static CSSPropertyID resolvePositionTryFallbackProperty(CSSPropertyID, WritingMode, const BuilderPositionTryFallback&);
     static CSSValueID resolvePositionTryFallbackValueForSelfPosition(CSSPropertyID, CSSValueID, WritingMode, const BuilderPositionTryFallback&);
@@ -205,7 +205,7 @@ private:
     static CheckedPtr<RenderBoxModelObject> findAnchorForAnchorFunctionAndAttemptResolution(BuilderState&, std::optional<ScopedName> elementName);
     static AnchorElements findAnchorsForAnchorPositionedElement(const Element&, const HashSet<ResolvedScopedName>& anchorNames, const AnchorsForAnchorName&);
     static RefPtr<const Element> anchorPositionedElementOrPseudoElement(BuilderState&);
-    static AnchorPositionedKey keyForElementOrPseudoElement(const Element&);
+    static AnchorPositionedKey NODELETE keyForElementOrPseudoElement(const Element&);
     static void addAnchorFunctionScrollCompensatedAxis(RenderStyle&, const RenderBox& anchored, const RenderBoxModelObject& anchor, BoxAxis);
     static LayoutSize scrollOffsetFromAnchor(const RenderBoxModelObject& anchor, const RenderBox& anchored);
 };

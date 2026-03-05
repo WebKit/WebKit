@@ -175,7 +175,7 @@ void SceneKitModelPlayer::didFinishLoading(SceneKitModelLoader& loader, Ref<Scen
     ASSERT_UNUSED(loader, &loader == m_loader.get());
 
     m_loader = nullptr;
-    m_model = WTFMove(model);
+    m_model = WTF::move(model);
 
     updateScene();
 

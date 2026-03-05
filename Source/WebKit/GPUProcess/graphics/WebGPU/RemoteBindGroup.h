@@ -54,7 +54,7 @@ class RemoteBindGroup final : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteBindGroup> create(WebCore::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteBindGroup(bindGroup, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteBindGroup(bindGroup, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteBindGroup();
@@ -74,10 +74,6 @@ private:
     RemoteBindGroup& operator=(RemoteBindGroup&&) = delete;
 
     WebCore::WebGPU::BindGroup& backing() { return m_backing; }
-    Ref<WebCore::WebGPU::BindGroup> protectedBacking();
-
-    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap.get(); }
-    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -85,9 +81,9 @@ private:
     void destruct();
     void updateExternalTextures(WebGPUIdentifier, CompletionHandler<void(bool)>&&);
 
-    Ref<WebCore::WebGPU::BindGroup> m_backing;
+    const Ref<WebCore::WebGPU::BindGroup> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
-    Ref<IPC::StreamServerConnection> m_streamConnection;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };

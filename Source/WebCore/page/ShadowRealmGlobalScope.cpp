@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ShadowRealmGlobalScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShadowRealmGlobalScope);
 
 Ref<ShadowRealmGlobalScope> ShadowRealmGlobalScope::create(JSDOMGlobalObject* wrapper, ScriptModuleLoader* loader)
 {

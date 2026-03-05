@@ -196,7 +196,7 @@ static const uint8_t kExplicitHMACWithSHA1[] = {
 static void TestDecrypt(const uint8_t *der, size_t der_len,
                         const char *password) {
   const uint8_t *data = der;
-  bssl::UniquePtr<X509_SIG> sig(d2i_X509_SIG(NULL, &data, der_len));
+  bssl::UniquePtr<X509_SIG> sig(d2i_X509_SIG(nullptr, &data, der_len));
   ASSERT_TRUE(sig.get());
   ASSERT_EQ(der + der_len, data);
 
@@ -253,11 +253,11 @@ TEST(PKCS8Test, DecryptString) {
 }
 
 TEST(PKCS8Test, DecryptNull) {
-  TestDecrypt(kNullPassword, sizeof(kNullPassword), NULL);
+  TestDecrypt(kNullPassword, sizeof(kNullPassword), nullptr);
 }
 
 TEST(PKCS8Test, DecryptNullNSS) {
-  TestDecrypt(kNullPasswordNSS, sizeof(kNullPasswordNSS), NULL);
+  TestDecrypt(kNullPasswordNSS, sizeof(kNullPasswordNSS), nullptr);
 }
 
 TEST(PKCS8Test, DecryptEmptyStringOpenSSL) {

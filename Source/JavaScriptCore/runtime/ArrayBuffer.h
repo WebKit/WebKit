@@ -70,7 +70,7 @@ public:
 
     static Ref<SharedArrayBufferContents> create(std::span<uint8_t> data, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
     {
-        return adoptRef(*new SharedArrayBufferContents(data, maxByteLength, WTFMove(memoryHandle), WTFMove(destructor), mode));
+        return adoptRef(*new SharedArrayBufferContents(data, maxByteLength, WTF::move(memoryHandle), WTF::move(destructor), mode));
     }
     
     void* data() const LIFETIME_BOUND { return m_data.getMayBeNull(); }
@@ -104,8 +104,8 @@ public:
 private:
     SharedArrayBufferContents(std::span<uint8_t> data, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
         : m_data(data.data())
-        , m_destructor(WTFMove(destructor))
-        , m_memoryHandle(WTFMove(memoryHandle))
+        , m_destructor(WTF::move(destructor))
+        , m_memoryHandle(WTF::move(memoryHandle))
         , m_sizeInBytes(data.size())
         , m_maxByteLength(maxByteLength.value_or(data.size()))
         , m_hasMaxByteLength(!!maxByteLength)
@@ -133,7 +133,7 @@ public:
     ArrayBufferContents() = default;
     ArrayBufferContents(void* data, size_t sizeInBytes, std::optional<size_t> maxByteLength, ArrayBufferDestructorFunction&& destructor)
         : m_data(data)
-        , m_destructor(WTFMove(destructor))
+        , m_destructor(WTF::move(destructor))
         , m_sizeInBytes(sizeInBytes)
         , m_maxByteLength(maxByteLength.value_or(sizeInBytes))
         , m_hasMaxByteLength(!!maxByteLength)
@@ -142,12 +142,12 @@ public:
     }
 
     ArrayBufferContents(std::span<const uint8_t> data, std::optional<size_t> maxByteLength, ArrayBufferDestructorFunction&& destructor)
-        : ArrayBufferContents(const_cast<uint8_t*>(data.data()), data.size(), maxByteLength, WTFMove(destructor))
+        : ArrayBufferContents(const_cast<uint8_t*>(data.data()), data.size(), maxByteLength, WTF::move(destructor))
     {
     }
 
     ArrayBufferContents(Ref<SharedArrayBufferContents>&& shared, bool forceFixedLengthIfWasm = true)
-        : m_shared(WTFMove(shared))
+        : m_shared(WTF::move(shared))
         , m_memoryHandle(m_shared->memoryHandle())
         , m_sizeInBytes(m_shared->sizeInBytes(std::memory_order_seq_cst))
     {
@@ -167,7 +167,7 @@ public:
 
     ArrayBufferContents(void* data, size_t sizeInBytes, size_t maxByteLength, Ref<BufferMemoryHandle>&& memoryHandle)
         : m_data(data)
-        , m_memoryHandle(WTFMove(memoryHandle))
+        , m_memoryHandle(WTF::move(memoryHandle))
         , m_sizeInBytes(sizeInBytes)
         , m_maxByteLength(maxByteLength)
         , m_hasMaxByteLength(true)
@@ -184,7 +184,7 @@ public:
 
     ArrayBufferContents& operator=(ArrayBufferContents&& other)
     {
-        ArrayBufferContents moved(WTFMove(other));
+        ArrayBufferContents moved(WTF::move(other));
         swap(moved);
         return *this;
     }
@@ -240,7 +240,7 @@ public:
 
     ArrayBufferContents detach()
     {
-        ArrayBufferContents contents(WTFMove(*this));
+        ArrayBufferContents contents(WTF::move(*this));
         m_hasMaxByteLength = contents.m_hasMaxByteLength; // m_maxByteLength needs to be cleared while we need to keep the information that we had m_hasMaxByteLength.
         return contents;
     }
@@ -379,22 +379,22 @@ private:
     bool m_locked { false };
 };
 
-void* ArrayBuffer::data()
+void* ArrayBuffer::data() LIFETIME_BOUND
 {
     return m_contents.data();
 }
 
-const void* ArrayBuffer::data() const
+const void* ArrayBuffer::data() const LIFETIME_BOUND
 {
     return m_contents.data();
 }
 
-void* ArrayBuffer::dataWithoutPACValidation()
+void* ArrayBuffer::dataWithoutPACValidation() LIFETIME_BOUND
 {
     return m_contents.dataWithoutPACValidation();
 }
 
-const void* ArrayBuffer::dataWithoutPACValidation() const
+const void* ArrayBuffer::dataWithoutPACValidation() const LIFETIME_BOUND
 {
     return m_contents.dataWithoutPACValidation();
 }

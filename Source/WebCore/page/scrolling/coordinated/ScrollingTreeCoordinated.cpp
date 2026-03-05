@@ -162,6 +162,21 @@ RefPtr<ScrollingTreeNode> ScrollingTreeCoordinated::scrollingNodeForPoint(FloatP
     return rootScrollingNode;
 }
 
+#if HAVE(DISPLAY_LINK)
+void ScrollingTreeCoordinated::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    if (hasNodeWithAnimatedScroll)
+        didScheduleRenderingUpdate();
+
+    RefPtr scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
+        return;
+    scrollingCoordinator->hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && USE(COORDINATED_GRAPHICS)

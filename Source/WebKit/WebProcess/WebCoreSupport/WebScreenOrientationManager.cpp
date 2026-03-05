@@ -60,17 +60,12 @@ void WebScreenOrientationManager::deref() const
     m_page->deref();
 }
 
-Ref<WebPage> WebScreenOrientationManager::protectedPage() const
-{
-    return m_page.get();
-}
-
 WebCore::ScreenOrientationType WebScreenOrientationManager::currentOrientation()
 {
     if (m_currentOrientation)
         return *m_currentOrientation;
 
-    auto sendResult = protectedPage()->sendSync(Messages::WebScreenOrientationManagerProxy::CurrentOrientation { });
+    auto sendResult = protect(m_page)->sendSync(Messages::WebScreenOrientationManagerProxy::CurrentOrientation { });
     auto [currentOrientation] = sendResult.takeReplyOr(WebCore::naturalScreenOrientationType());
     if (!m_observers.isEmptyIgnoringNullReferences())
         m_currentOrientation = currentOrientation;
@@ -86,12 +81,12 @@ void WebScreenOrientationManager::orientationDidChange(WebCore::ScreenOrientatio
 
 void WebScreenOrientationManager::lock(WebCore::ScreenOrientationLockType lockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    protectedPage()->sendWithAsyncReply(Messages::WebScreenOrientationManagerProxy::Lock { lockType }, WTFMove(completionHandler));
+    protect(m_page)->sendWithAsyncReply(Messages::WebScreenOrientationManagerProxy::Lock { lockType }, WTF::move(completionHandler));
 }
 
 void WebScreenOrientationManager::unlock()
 {
-    protectedPage()->send(Messages::WebScreenOrientationManagerProxy::Unlock { });
+    protect(m_page)->send(Messages::WebScreenOrientationManagerProxy::Unlock { });
 }
 
 void WebScreenOrientationManager::addObserver(WebCore::ScreenOrientationManagerObserver& observer)
@@ -99,7 +94,7 @@ void WebScreenOrientationManager::addObserver(WebCore::ScreenOrientationManagerO
     bool wasEmpty = m_observers.isEmptyIgnoringNullReferences();
     m_observers.add(observer);
     if (wasEmpty)
-        protectedPage()->send(Messages::WebScreenOrientationManagerProxy::SetShouldSendChangeNotification { true });
+        protect(m_page)->send(Messages::WebScreenOrientationManagerProxy::SetShouldSendChangeNotification { true });
 }
 
 void WebScreenOrientationManager::removeObserver(WebCore::ScreenOrientationManagerObserver& observer)
@@ -107,7 +102,7 @@ void WebScreenOrientationManager::removeObserver(WebCore::ScreenOrientationManag
     m_observers.remove(observer);
     if (m_observers.isEmptyIgnoringNullReferences()) {
         m_currentOrientation = std::nullopt;
-        protectedPage()->send(Messages::WebScreenOrientationManagerProxy::SetShouldSendChangeNotification { false });
+        protect(m_page)->send(Messages::WebScreenOrientationManagerProxy::SetShouldSendChangeNotification { false });
     }
 }
 

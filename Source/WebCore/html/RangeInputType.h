@@ -72,7 +72,6 @@ private:
     HTMLElement* sliderTrackElement() const final;
 
     SliderThumbElement& typedSliderThumbElement() const;
-    Ref<SliderThumbElement> protectedTypedSliderThumbElement() const;
 
     void dataListMayHaveChanged() final;
     void updateTickMarkValues();

@@ -66,7 +66,7 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
     m_view.setViewNeedsDisplay(region);
 }
 
-void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated)
+void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated, WebCore::InterruptScrollAnimation)
 {
     notImplemented();
 }
@@ -129,7 +129,7 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool /* hiddenUntilMouseMove
 
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
-    m_undoController.registerEditCommand(WTFMove(command), undoOrRedo);
+    m_undoController.registerEditCommand(WTF::move(command), undoOrRedo);
 }
 
 void PageClientImpl::clearAllEditCommands()
@@ -197,7 +197,7 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
 #if ENABLE(CONTEXT_MENUS)
 Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
 {
-    return WebContextMenuProxyWin::create(page, WTFMove(frameInfo), WTFMove(context), userData);
+    return WebContextMenuProxyWin::create(page, WTF::move(frameInfo), WTF::move(context), userData);
 }
 #endif
 
@@ -269,12 +269,12 @@ bool PageClientImpl::handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy
             while (*p) {
                 length = wcslen(p);
                 String fileName(p, length);
-                fileList.append(FileSystem::pathByAppendingComponent(firstValue, WTFMove(fileName)));
+                fileList.append(FileSystem::pathByAppendingComponent(firstValue, WTF::move(fileName)));
                 p += length + 1;
             }
         } else
             // If only one file is selected, one full path string is set in the buffer.
-            fileList.append(WTFMove(firstValue));
+            fileList.append(WTF::move(firstValue));
 
         ASSERT(fileList.size());
         listener.chooseFiles(fileList);

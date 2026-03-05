@@ -40,7 +40,7 @@ public:
     }
 
     CoreIPCString(String&& string)
-        : m_string(WTFMove(string))
+        : m_string(WTF::move(string))
     {
     }
 

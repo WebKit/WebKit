@@ -10,7 +10,6 @@
 
 #include "rtc_base/firewall_socket_server.h"
 
-#include <algorithm>
 #include <cerrno>
 #include <cstddef>
 #include <cstdint>
@@ -247,8 +246,7 @@ void FirewallManager::AddServer(FirewallSocketServer* server) {
 
 void FirewallManager::RemoveServer(FirewallSocketServer* server) {
   MutexLock scope(&mutex_);
-  servers_.erase(std::remove(servers_.begin(), servers_.end(), server),
-                 servers_.end());
+  std::erase(servers_, server);
 }
 
 void FirewallManager::AddRule(bool allow,

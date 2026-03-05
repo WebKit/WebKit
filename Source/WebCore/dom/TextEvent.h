@@ -37,7 +37,7 @@ namespace WebCore {
     enum class MailBlockquoteHandling : bool;
 
     class TextEvent final : public UIEvent {
-        WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextEvent);
+        WTF_MAKE_TZONE_ALLOCATED(TextEvent);
     public:
         static Ref<TextEvent> create(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
         static Ref<TextEvent> createForBindings();
@@ -74,8 +74,6 @@ namespace WebCore {
         TextEvent(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
         TextEvent(RefPtr<WindowProxy>&&, const String& data, RefPtr<DocumentFragment>&&, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
         TextEvent(RefPtr<WindowProxy>&&, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
-
-        bool isTextEvent() const override;
 
         TextEventInputType m_inputType;
         String m_data;

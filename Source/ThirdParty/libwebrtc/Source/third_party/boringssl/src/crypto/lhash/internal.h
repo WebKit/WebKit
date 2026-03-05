@@ -187,7 +187,7 @@ OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
                                                                                \
   inline int lh_##type##_insert(LHASH_OF(type) *lh, type **old_data,           \
                                 type *data) {                                  \
-    void *old_data_void = NULL;                                                \
+    void *old_data_void = nullptr;                                             \
     int ret = OPENSSL_lh_insert((_LHASH *)lh, &old_data_void, data,            \
                                 lh_##type##_call_hash_func,                    \
                                 lh_##type##_call_cmp_func);                    \

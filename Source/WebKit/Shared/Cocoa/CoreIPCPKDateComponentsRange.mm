@@ -39,7 +39,7 @@ CoreIPCPKDateComponentsRange::CoreIPCPKDateComponentsRange(PKDateComponentsRange
 }
 
 CoreIPCPKDateComponentsRange::CoreIPCPKDateComponentsRange(std::optional<CoreIPCPKDateComponentsRangeData>&& data)
-    : m_data { WTFMove(data) }
+    : m_data { WTF::move(data) }
 {
 }
 

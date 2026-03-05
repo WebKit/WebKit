@@ -27,7 +27,6 @@
 #import "ScrollingTreePluginScrollingNodeIOS.h"
 
 #if PLATFORM(IOS_FAMILY)
-#if ENABLE(ASYNC_SCROLLING)
 
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 
@@ -58,7 +57,7 @@ ScrollingTreeScrollingNodeDelegateIOS& ScrollingTreePluginScrollingNodeIOS::dele
 
 WKBaseScrollView *ScrollingTreePluginScrollingNodeIOS::scrollView() const
 {
-    return delegate().scrollView();
+    return protect(delegate())->scrollView();
 }
 
 bool ScrollingTreePluginScrollingNodeIOS::commitStateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
@@ -66,13 +65,14 @@ bool ScrollingTreePluginScrollingNodeIOS::commitStateBeforeChildren(const WebCor
     if (!is<ScrollingStateScrollingNode>(stateNode))
         return false;
 
+    CheckedRef delegate = this->delegate();
     if (stateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
-        delegate().resetScrollViewDelegate();
+        delegate->resetScrollViewDelegate();
 
     if (!ScrollingTreePluginScrollingNode::commitStateBeforeChildren(stateNode))
         return false;
 
-    delegate().commitStateBeforeChildren(downcast<ScrollingStateScrollingNode>(stateNode));
+    delegate->commitStateBeforeChildren(downcast<ScrollingStateScrollingNode>(stateNode));
     return true;
 }
 
@@ -82,17 +82,16 @@ bool ScrollingTreePluginScrollingNodeIOS::commitStateAfterChildren(const Scrolli
     if (!scrollingStateNode)
         return false;
 
-    delegate().commitStateAfterChildren(*scrollingStateNode);
+    protect(delegate())->commitStateAfterChildren(*scrollingStateNode);
 
     return ScrollingTreePluginScrollingNode::commitStateAfterChildren(*scrollingStateNode);
 }
 
 void ScrollingTreePluginScrollingNodeIOS::repositionScrollingLayers()
 {
-    delegate().repositionScrollingLayers();
+    protect(delegate())->repositionScrollingLayers();
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING)
 #endif // PLATFORM(IOS_FAMILY)

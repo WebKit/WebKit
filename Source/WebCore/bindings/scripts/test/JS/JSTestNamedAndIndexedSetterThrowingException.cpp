@@ -123,7 +123,7 @@ void JSTestNamedAndIndexedSetterThrowingExceptionPrototype::finishCreation(VM& v
 const ClassInfo JSTestNamedAndIndexedSetterThrowingException::s_info = { "TestNamedAndIndexedSetterThrowingException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterThrowingException) };
 
 JSTestNamedAndIndexedSetterThrowingException::JSTestNamedAndIndexedSetterThrowingException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedAndIndexedSetterThrowingException>&& impl)
-    : JSDOMWrapper<TestNamedAndIndexedSetterThrowingException>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestNamedAndIndexedSetterThrowingException>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -159,7 +159,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::legacyPlatformObjectGetOwnPro
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (auto index = parseIndex(propertyName)) {
         if (auto item = thisObject->wrapped().item(index.value()); !!item) [[likely]] {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(WTF::move(item)));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -172,7 +172,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::legacyPlatformObjectGetOwnPro
             return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
         });
         if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTF::move(namedProperty.value()));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -195,7 +195,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::getOwnPropertySlotByIndex(JSO
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (index <= MAX_ARRAY_INDEX) [[likely]] {
         if (auto item = thisObject->wrapped().item(index); !!item) [[likely]] {
-            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(item));
+            auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(WTF::move(item)));
             RETURN_IF_EXCEPTION(throwScope, false);
             slot.setValue(thisObject, 0, value);
             return true;
@@ -208,7 +208,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::getOwnPropertySlotByIndex(JSO
         return thisObject.wrapped().namedItem(propertyNameToAtomString(propertyName));
     });
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
-        auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
+        auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTF::move(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
         slot.setValue(thisObject, 0, value);
         return true;
@@ -270,7 +270,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::put(JSCell* cell, JSGlobalObj
         ownDescriptor.setPropertySlot(lexicalGlobalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(throwScope, false);
     }
-    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTFMove(ownDescriptor), putPropertySlot.isStrictMode()));
+    RELEASE_AND_RETURN(throwScope, ordinarySetWithOwnDescriptor(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), WTF::move(ownDescriptor), putPropertySlot.isStrictMode()));
 }
 
 bool JSTestNamedAndIndexedSetterThrowingException::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
@@ -423,7 +423,7 @@ void JSTestNamedAndIndexedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedAndIndexedSetterThrowingException = static_cast<JSTestNamedAndIndexedSetterThrowingException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestNamedAndIndexedSetterThrowingException->protectedWrapped().ptr(), jsTestNamedAndIndexedSetterThrowingException);
+    uncacheWrapper(world, protect(jsTestNamedAndIndexedSetterThrowingException->wrapped()).ptr(), jsTestNamedAndIndexedSetterThrowingException);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -461,7 +461,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestNamedAndIndexedSetterThrowingException>(impl.ptr());
 #endif
-    return createWrapper<TestNamedAndIndexedSetterThrowingException>(globalObject, WTFMove(impl));
+    return createWrapper<TestNamedAndIndexedSetterThrowingException>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedAndIndexedSetterThrowingException& impl)

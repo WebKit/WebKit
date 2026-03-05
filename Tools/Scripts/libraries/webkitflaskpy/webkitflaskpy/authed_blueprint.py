@@ -47,10 +47,13 @@ class AuthedBlueprint(Blueprint):
             re.compile(value) if isinstance(value, str) else value
             for value in blocked_user_agents or []
         ]
+        self.no_auth_url_rules = set()
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, authed=True, **options):
         if self.blocked_user_agents:
             view_func = self.blocked_user_agent_decorator(view_func, self.blocked_user_agents)
+        if not authed:
+            self.no_auth_url_rules.add(rule)
         if not self.auth_decorator or not authed:
             return super(AuthedBlueprint, self).add_url_rule(rule, endpoint=endpoint, view_func=view_func, **options)
         return super(AuthedBlueprint, self).add_url_rule(rule, endpoint=endpoint, view_func=self.auth_decorator(view_func), **options)

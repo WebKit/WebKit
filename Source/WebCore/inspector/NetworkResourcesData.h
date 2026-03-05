@@ -87,10 +87,10 @@ public:
         void setMIMEType(const String& mimeType) { m_mimeType = mimeType; }
 
         RefPtr<TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
-        void setDecoder(RefPtr<TextResourceDecoder>&& decoder) { m_decoder = WTFMove(decoder); }
+        void setDecoder(RefPtr<TextResourceDecoder>&& decoder) { m_decoder = WTF::move(decoder); }
 
         RefPtr<FragmentedSharedBuffer> buffer() const { return m_buffer.copyRef(); }
-        void setBuffer(RefPtr<FragmentedSharedBuffer>&& buffer) { m_buffer = WTFMove(buffer); }
+        void setBuffer(RefPtr<FragmentedSharedBuffer>&& buffer) { m_buffer = WTF::move(buffer); }
 
         const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; }
         void setCertificateInfo(const std::optional<CertificateInfo>& certificateInfo) { m_certificateInfo = certificateInfo; }

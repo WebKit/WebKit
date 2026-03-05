@@ -25,7 +25,7 @@
     DispatchedTo=WebContent
 ]
 messages -> WebInspectorBackend {
-    Show() -> () Async
+    Show() -> (bool success) Async
     Close()
 
     SetAttached(bool attached)

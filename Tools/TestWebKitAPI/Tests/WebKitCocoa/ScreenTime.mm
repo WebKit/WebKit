@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
@@ -112,15 +113,6 @@ static void testSuppressUsageRecordingWithDataStore(RetainPtr<WKWebsiteDataStore
 
 @interface STWebHistory ()
 @property (readonly, copy) STWebHistoryProfileIdentifier profileIdentifier;
-@end
-
-@interface WKWebView (Internal)
-- (STWebpageController *)_screenTimeWebpageController;
-#if PLATFORM(MAC)
-- (NSVisualEffectView *) _screenTimeBlurredSnapshot;
-#else
-- (UIVisualEffectView *) _screenTimeBlurredSnapshot;
-#endif
 @end
 
 @interface BlockedStateObserver : NSObject

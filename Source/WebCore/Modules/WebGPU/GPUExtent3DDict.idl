@@ -29,9 +29,8 @@
 typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
 
 [
-    EnabledBySetting=WebGPUEnabled
-]
-dictionary GPUExtent3DDict {
+    EnabledBySetting=WebGPUEnabled,
+] dictionary GPUExtent3DDict {
     required GPUIntegerCoordinate width;
     GPUIntegerCoordinate height = 1;
     GPUIntegerCoordinate depthOrArrayLayers = 1;

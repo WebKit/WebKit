@@ -14,6 +14,7 @@ ocl_cts_source_set("image_streams") {
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/common.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_read_write/main.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_read_write/test_cl_ext_image_from_buffer.cpp",
+    "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_read_write/test_cl_ext_image_raw10_raw12.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_read_write/test_cl_ext_image_requirements_info.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_read_write/test_common.cpp",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_read_write/test_iterations.cpp",

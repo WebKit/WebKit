@@ -17,7 +17,7 @@
 #include "absl/strings/str_cat.h"
 #include "api/crypto/crypto_options.h"
 #include "api/dtls_transport_interface.h"
-#include "api/field_trials.h"
+#include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
 #include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
@@ -39,13 +39,16 @@
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/thread.h"
-#include "test/create_test_field_trials.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/wait_until.h"
 
-const int kRtpAuthTagLen = 10;
-static const int kTimeout = 10000;
+namespace webrtc {
+namespace {
+
+constexpr int kRtpAuthTagLen = 10;
+constexpr int kTimeout = 10000;
 
 /* A test using a DTLS-SRTP transport on one side and
  * SrtpTransport+DtlsTransport on the other side, connected by a
@@ -60,8 +63,8 @@ class DtlsSrtpTransportIntegrationTest : public ::testing::Test {
         server_dtls_transport_(MakeDtlsTransport(server_ice_transport_.get())),
         client_certificate_(MakeCertificate()),
         server_certificate_(MakeCertificate()),
-        dtls_srtp_transport_(false, field_trials_),
-        srtp_transport_(false, field_trials_) {
+        dtls_srtp_transport_(false, env_.field_trials()),
+        srtp_transport_(false, env_.field_trials()) {
     dtls_srtp_transport_.SetDtlsTransports(server_dtls_transport_.get(),
                                            nullptr);
     srtp_transport_.SetRtpPacketTransport(client_ice_transport_.get());
@@ -96,8 +99,8 @@ class DtlsSrtpTransportIntegrationTest : public ::testing::Test {
   std::unique_ptr<webrtc::DtlsTransportInternalImpl> MakeDtlsTransport(
       webrtc::FakeIceTransport* ice_transport) {
     return std::make_unique<webrtc::DtlsTransportInternalImpl>(
-        ice_transport, webrtc::CryptoOptions(),
-        /*event_log=*/nullptr, webrtc::SSL_PROTOCOL_DTLS_12);
+        env_, ice_transport, webrtc::CryptoOptions(),
+        webrtc::SSL_PROTOCOL_DTLS_12);
   }
   void SetRemoteFingerprintFromCert(
       webrtc::DtlsTransportInternalImpl* transport,
@@ -220,7 +223,7 @@ class DtlsSrtpTransportIntegrationTest : public ::testing::Test {
  private:
   webrtc::AutoThread main_thread_;
   webrtc::ScopedFakeClock fake_clock_;
-  webrtc::FieldTrials field_trials_ = webrtc::CreateTestFieldTrials();
+  const Environment env_ = CreateTestEnvironment();
 
   std::unique_ptr<webrtc::FakeIceTransport> client_ice_transport_;
   std::unique_ptr<webrtc::FakeIceTransport> server_ice_transport_;
@@ -249,3 +252,6 @@ TEST_F(DtlsSrtpTransportIntegrationTest, SendRtpFromDtlsSrtpToSrtp) {
   SetupClientKeysManually();
   SendRtpPacketFromDtlsSrtpToSrtp();
 }
+
+}  // namespace
+}  // namespace webrtc

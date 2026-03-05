@@ -112,8 +112,8 @@ public:
         representation.gpr = gpr;
         event.m_kind = kind;
         event.m_dataFormat = dataFormat;
-        event.m_which = WTFMove(which);
-        event.m_representation = WTFMove(representation);
+        event.m_which = WTF::move(which);
+        event.m_representation = WTF::move(representation);
         return event;
     }
     
@@ -129,8 +129,8 @@ public:
         representation.pair.payloadGPR = payloadGPR;
         event.m_kind = kind;
         event.m_dataFormat = DataFormatJS;
-        event.m_which = WTFMove(which);
-        event.m_representation = WTFMove(representation);
+        event.m_which = WTF::move(which);
+        event.m_representation = WTF::move(representation);
         return event;
     }
 #endif // USE(JSVALUE32_64)
@@ -145,8 +145,8 @@ public:
         representation.fpr = fpr;
         event.m_kind = kind;
         event.m_dataFormat = DataFormatDouble;
-        event.m_which = WTFMove(which);
-        event.m_representation = WTFMove(representation);
+        event.m_which = WTF::move(which);
+        event.m_representation = WTF::move(representation);
         return event;
     }
     
@@ -156,7 +156,7 @@ public:
         WhichType which;
         which.id = id.bits();
         event.m_kind = Birth;
-        event.m_which = WTFMove(which);
+        event.m_which = WTF::move(which);
         return event;
     }
     
@@ -170,8 +170,8 @@ public:
         representation.operand = virtualRegister;
         event.m_kind = kind;
         event.m_dataFormat = format;
-        event.m_which = WTFMove(which);
-        event.m_representation = WTFMove(representation);
+        event.m_which = WTF::move(which);
+        event.m_representation = WTF::move(representation);
         return event;
     }
     
@@ -181,7 +181,7 @@ public:
         WhichType which;
         which.id = id.bits();
         event.m_kind = Death;
-        event.m_which = WTFMove(which);
+        event.m_which = WTF::move(which);
         return event;
     }
     
@@ -195,8 +195,8 @@ public:
         representation.operand = bytecodeOperand;
         event.m_kind = SetLocalEvent;
         event.m_dataFormat = format;
-        event.m_which = WTFMove(which);
-        event.m_representation = WTFMove(representation);
+        event.m_which = WTF::move(which);
+        event.m_representation = WTF::move(representation);
         return event;
     }
     
@@ -208,8 +208,8 @@ public:
         VariableRepresentation representation;
         representation.operand = bytecodeReg;
         event.m_kind = MovHintEvent;
-        event.m_which = WTFMove(which);
-        event.m_representation = WTFMove(representation);
+        event.m_which = WTF::move(which);
+        event.m_representation = WTF::move(representation);
         return event;
     }
     

@@ -57,7 +57,7 @@ public:
 
 private:
     SecurityOrigin(WebCore::SecurityOriginData&& securityOrigin)
-        : m_securityOrigin(WTFMove(securityOrigin))
+        : m_securityOrigin(WTF::move(securityOrigin))
     {
     }
 

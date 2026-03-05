@@ -189,7 +189,7 @@ void XDGDBusProxy::launch(const ProcessLaunchOptions& webProcessLaunchOptions)
 
     GUniquePtr<char> syncFdStr(g_strdup_printf("--fd=%d", syncFds[1]));
     Vector<CString> proxyArgs = { syncFdStr.get() };
-    proxyArgs.appendVector(WTFMove(m_args));
+    proxyArgs.appendVector(WTF::move(m_args));
 
     // We have to run xdg-dbus-proxy under bubblewrap because we need /.flatpak-info to exist in
     // xdg-dbus-proxy's mount namespace. Portals may use this as a trusted way to get the

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/absolute-pos-box-inside-fixed-pos-box-with-changing-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/absolute-pos-box-inside-fixed-pos-box-with-changing-height-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/absolute-pos-box-inside-fixed-pos-box-with-changing-height.html
@@ -124,6 +125,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-fieldset-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-fieldset.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-fit-content-auto-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-fit-content-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-fit-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-001.sub-expected.html
@@ -158,6 +160,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-root-element-grid-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-root-element-grid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-root-element-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-scrollable-overflow-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-semi-replaced-stretch-button-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-semi-replaced-stretch-button-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-semi-replaced-stretch-button.html
@@ -171,6 +174,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-under-non-containing-stacking-context-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-under-non-containing-stacking-context-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-under-non-containing-stacking-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-with-negative-sized-imcb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-change-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-change.html
@@ -261,8 +265,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-relative-table-tr-top-absolute-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-relative-table-tr-top-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-relative-table-tr-top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-static-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-static-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-dynamic-ancestor-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-position/positon-absolute-scrollable-overflow-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/replaced-object-backdrop-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/replaced-object-backdrop.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky-dialog.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers-ref.html

@@ -46,7 +46,7 @@ MutableStyleProperties::MutableStyleProperties(CSSParserMode mode)
 
 MutableStyleProperties::MutableStyleProperties(Vector<CSSProperty>&& properties)
     : StyleProperties(HTMLStandardMode)
-    , m_propertyVector(WTFMove(properties))
+    , m_propertyVector(WTF::move(properties))
 {
 }
 
@@ -76,7 +76,7 @@ Ref<MutableStyleProperties> MutableStyleProperties::create(CSSParserMode mode)
 
 Ref<MutableStyleProperties> MutableStyleProperties::create(Vector<CSSProperty>&& properties)
 {
-    return adoptRef(*new MutableStyleProperties(WTFMove(properties)));
+    return adoptRef(*new MutableStyleProperties(WTF::move(properties)));
 }
 
 Ref<MutableStyleProperties> MutableStyleProperties::createEmpty()
@@ -180,7 +180,7 @@ bool MutableStyleProperties::setCustomProperty(const String& propertyName, const
 void MutableStyleProperties::setProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, IsImportant important)
 {
     if (isLonghand(propertyID)) {
-        setProperty(CSSProperty(propertyID, WTFMove(value), important));
+        setProperty(CSSProperty(propertyID, WTF::move(value), important));
         return;
     }
     auto shorthand = shorthandForProperty(propertyID);
@@ -238,7 +238,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSValueID id
 
 bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CSSParserContext context)
 {
-    auto oldProperties = WTFMove(m_propertyVector);
+    auto oldProperties = WTF::move(m_propertyVector);
     m_propertyVector.clear();
 
     context.mode = cssParserMode();
@@ -301,7 +301,7 @@ int MutableStyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
     // Convert here propertyID into an uint16_t to compare it with the metadata's m_propertyID to avoid
     // the compiler converting it to an int multiple times in the loop.
     auto& properties = m_propertyVector;
-    uint16_t id = enumToUnderlyingType(propertyID);
+    uint16_t id = std::to_underlying(propertyID);
     for (int n = m_propertyVector.size() - 1 ; n >= 0; --n) {
         if (properties[n].metadata().m_propertyID == id)
             return n;

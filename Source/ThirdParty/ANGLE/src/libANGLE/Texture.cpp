@@ -627,6 +627,9 @@ GLuint TextureState::getEnabledLevelCount() const
     const GLuint baseLevel = getEffectiveBaseLevel();
     GLuint maxLevel        = getMipmapMaxLevel();
 
+    // In edge case where base level > max level, make sure to get at least one level.
+    maxLevel = std::max(baseLevel, maxLevel);
+
     // Note: for cube textures, we only check the first face.
     TextureTarget target         = TextureTypeToTarget(mType, 0);
     const Format &expectedFormat = mImageDescs[GetImageDescIndex(target, baseLevel)].format;
@@ -1832,7 +1835,7 @@ angle::Result Texture::setStorageMultisample(Context *context,
 
     // Potentially adjust "samples" to a supported value
     const TextureCaps &formatCaps = context->getTextureCaps().get(internalFormat);
-    GLsizei samples               = formatCaps.getNearestSamples(samplesIn);
+    GLsizei samples               = formatCaps.sampleCounts.getNearestSamples(samplesIn);
 
     mState.mImmutableFormat = true;
     mState.mImmutableLevels = static_cast<GLuint>(1);
@@ -2648,16 +2651,6 @@ void Texture::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
 {
     switch (message)
     {
-        case angle::SubjectMessage::ContentsChanged:
-            if (index != kBufferSubjectIndex)
-            {
-                // ContentsChange originates from TextureStorage11::resolveAndReleaseTexture
-                // which resolves the underlying multisampled texture if it exists and so
-                // Texture will signal dirty storage to invalidate its own cache and the
-                // attached framebuffer's cache.
-                signalDirtyStorage(InitState::Initialized);
-            }
-            break;
         case angle::SubjectMessage::DirtyBitsFlagged:
             signalDirtyState(DIRTY_BIT_IMPLEMENTATION);
 
@@ -2739,11 +2732,7 @@ void Texture::onBufferContentsChange()
 
 void Texture::onBindToMSRTTFramebuffer()
 {
-    if (!mState.mHasBeenBoundToMSRTTFramebuffer)
-    {
-        mDirtyBits.set(DIRTY_BIT_BOUND_TO_MSRTT_FRAMEBUFFER);
-        mState.mHasBeenBoundToMSRTTFramebuffer = true;
-    }
+    mState.mHasBeenBoundToMSRTTFramebuffer = true;
 }
 
 GLenum Texture::getImplementationColorReadFormat(const Context *context) const

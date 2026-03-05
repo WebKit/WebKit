@@ -35,17 +35,19 @@ namespace WebCore {
 class WebGLVertexArrayObjectOES;
 
 class OESVertexArrayObject final : public WebGLExtension<WebGLRenderingContext> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OESVertexArrayObject);
+    WTF_MAKE_TZONE_ALLOCATED(OESVertexArrayObject);
 public:
     explicit OESVertexArrayObject(WebGLRenderingContext&);
     ~OESVertexArrayObject();
 
     static bool supported(GraphicsContextGL&);
 
-    RefPtr<WebGLVertexArrayObjectOES> createVertexArrayOES();
+    Ref<WebGLVertexArrayObjectOES> createVertexArrayOES();
     void deleteVertexArrayOES(WebGLVertexArrayObjectOES*);
     GCGLboolean isVertexArrayOES(WebGLVertexArrayObjectOES*);
     void bindVertexArrayOES(WebGLVertexArrayObjectOES*);
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBGL_EXTENSION(OESVertexArrayObject)

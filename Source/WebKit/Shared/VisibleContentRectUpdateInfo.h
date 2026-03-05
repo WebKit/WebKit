@@ -81,14 +81,14 @@ public:
     {
     }
 
-    const WebCore::FloatRect& exposedContentRect() const { return m_exposedContentRect; }
-    const WebCore::FloatRect& unobscuredContentRect() const { return m_unobscuredContentRect; }
-    const WebCore::FloatBoxExtent& contentInsets() const { return m_contentInsets; }
-    const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const { return m_unobscuredRectInScrollViewCoordinates; }
-    const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds() const { return m_unobscuredContentRectRespectingInputViewBounds; }
-    const WebCore::FloatRect& layoutViewportRect() const { return m_layoutViewportRect; }
-    const WebCore::FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
-    const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets() const { return m_unobscuredSafeAreaInsets; }
+    const WebCore::FloatRect& exposedContentRect() const LIFETIME_BOUND { return m_exposedContentRect; }
+    const WebCore::FloatRect& unobscuredContentRect() const LIFETIME_BOUND { return m_unobscuredContentRect; }
+    const WebCore::FloatBoxExtent& contentInsets() const LIFETIME_BOUND { return m_contentInsets; }
+    const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const LIFETIME_BOUND { return m_unobscuredRectInScrollViewCoordinates; }
+    const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds() const LIFETIME_BOUND { return m_unobscuredContentRectRespectingInputViewBounds; }
+    const WebCore::FloatRect& layoutViewportRect() const LIFETIME_BOUND { return m_layoutViewportRect; }
+    const WebCore::FloatBoxExtent& obscuredInsets() const LIFETIME_BOUND { return m_obscuredInsets; }
+    const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets() const LIFETIME_BOUND { return m_unobscuredSafeAreaInsets; }
 
     double scale() const { return m_scale; }
     bool inStableState() const { return m_viewStability.isEmpty(); }
@@ -97,7 +97,7 @@ public:
     bool allowShrinkToFit() const { return m_allowShrinkToFit; }
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
     bool needsScrollend() const { return m_needsScrollend; }
-    const WebCore::VelocityData& scrollVelocity() const { return m_scrollVelocity; }
+    const WebCore::VelocityData& scrollVelocity() const LIFETIME_BOUND { return m_scrollVelocity; }
     TransactionID lastLayerTreeTransactionID() const { return m_lastLayerTreeTransactionID; }
 
     MonotonicTime timestamp() const { return m_scrollVelocity.lastUpdateTime; }

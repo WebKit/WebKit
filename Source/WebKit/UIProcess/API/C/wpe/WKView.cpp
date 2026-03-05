@@ -42,10 +42,12 @@ WKViewRef WKViewCreate(WPEDisplay* display, WKPageConfigurationRef configuration
 }
 #endif
 
+#if USE(LIBWPE)
 WKViewRef WKViewCreateDeprecated(struct wpe_view_backend* backend, WKPageConfigurationRef configuration)
 {
     return toAPI(&WKWPE::ViewLegacy::create(backend, *toImpl(configuration)).leakRef());
 }
+#endif
 
 WKPageRef WKViewGetPage(WKViewRef view)
 {

@@ -153,14 +153,14 @@ std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObje
         return std::nullopt;
 
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    auto jsValue = jsValueForDecodedArgumentValue(globalObject, WTFMove(*value));
+    auto jsValue = jsValueForDecodedArgumentValue(globalObject, WTF::move(*value));
     RETURN_IF_EXCEPTION(scope, std::nullopt);
     if (jsValue.isEmpty()) {
         // Create array buffers out of types we don't recognize.
         auto span = decoder.span().subspan(startingBufferOffset, decoder.currentBufferOffset() - startingBufferOffset);
         auto arrayBuffer = JSC::ArrayBuffer::create(span);
         if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
-            jsValue = JSC::JSArrayBuffer::create(Ref { globalObject->vm() }, structure, WTFMove(arrayBuffer));
+            jsValue = JSC::JSArrayBuffer::create(Ref { globalObject->vm() }, structure, WTF::move(arrayBuffer));
         RETURN_IF_EXCEPTION(scope, std::nullopt);
     }
     array->putDirectIndex(globalObject, currentIndex, jsValue);

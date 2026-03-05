@@ -37,5 +37,5 @@ WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse *urlResponse
 
 NSURLResponse *WKURLResponseCopyNSURLResponse(WKURLResponseRef urlResponse)
 {
-    return [WebKit::toImpl(urlResponse)->resourceResponse().protectedNSURLResponse() copy];
+    return [protect(WebKit::toImpl(urlResponse)->resourceResponse().nsURLResponse()) copy];
 }

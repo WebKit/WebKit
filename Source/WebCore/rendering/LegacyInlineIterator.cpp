@@ -27,23 +27,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #include "LegacyInlineIterator.h"
 
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 
 UCharDirection LegacyInlineIterator::surrogateTextDirection(char16_t currentCodeUnit) const
 {
-    RenderText& text = downcast<RenderText>(*m_renderer);
+    CheckedRef text = downcast<RenderText>(*m_renderer);
     char16_t lead;
     char16_t trail;
     if (U16_IS_LEAD(currentCodeUnit)) {
         lead = currentCodeUnit;
-        trail = text.characterAt(m_pos + 1);
+        trail = text->characterAt(m_pos + 1);
         if (!U16_IS_TRAIL(trail))
             return U_OTHER_NEUTRAL;
     } else {
         ASSERT(U16_IS_TRAIL(currentCodeUnit));
-        lead = text.characterAt(m_pos - 1);
+        lead = text->characterAt(m_pos - 1);
         if (!U16_IS_LEAD(lead))
             return U_OTHER_NEUTRAL;
         trail = currentCodeUnit;

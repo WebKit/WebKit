@@ -18,12 +18,12 @@ Setting key 'asd' with value 'new'...
 Getting DOM storage entries...
 [
   [
-    "foo",
-    "bar"
-  ],
-  [
     "asd",
     "new"
+  ],
+  [
+    "foo",
+    "bar"
   ]
 ]
 
@@ -44,12 +44,12 @@ Setting key 'asd' with value 'new'...
 Getting DOM storage entries...
 [
   [
-    "foo",
-    "bar"
-  ],
-  [
     "asd",
     "new"
+  ],
+  [
+    "foo",
+    "bar"
   ]
 ]
 

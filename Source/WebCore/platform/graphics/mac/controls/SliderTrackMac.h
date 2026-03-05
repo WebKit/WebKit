@@ -39,7 +39,7 @@ public:
     SliderTrackMac(SliderTrackPart&, ControlFactoryMac&);
 
 private:
-    const SliderTrackPart& owningSliderTrackPart() const { return downcast<SliderTrackPart>(m_owningPart); }
+    Ref<const SliderTrackPart> owningSliderTrackPart() const { return downcast<SliderTrackPart>(m_owningPart.get()); }
 
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 

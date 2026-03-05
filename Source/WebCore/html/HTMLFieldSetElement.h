@@ -29,12 +29,12 @@
 namespace WebCore {
 
 class HTMLFieldSetElement final : public HTMLFormControlElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLFieldSetElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLFieldSetElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFieldSetElement);
 public:
     static Ref<HTMLFieldSetElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
-    HTMLLegendElement* legend() const;
+    HTMLLegendElement* NODELETE legend() const;
 
     Ref<HTMLCollection> elements();
 
@@ -47,7 +47,7 @@ private:
 
     bool isDisabledFormControl() const final;
     bool isActuallyDisabled() const final;
-    bool isEnumeratable() const final { return true; }
+    bool NODELETE isEnumeratable() const final { return true; }
     bool supportsFocus() const final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     const AtomString& formControlType() const final;

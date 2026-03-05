@@ -41,7 +41,7 @@ public:
     }
 
     CoreIPCURL(URL&& url)
-        : m_url(WTFMove(url))
+        : m_url(WTF::move(url))
     {
     }
 

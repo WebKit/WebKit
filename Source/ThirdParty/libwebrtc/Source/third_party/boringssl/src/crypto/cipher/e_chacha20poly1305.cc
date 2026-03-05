@@ -32,7 +32,7 @@ struct aead_chacha20_poly1305_ctx {
   uint8_t key[32];
 };
 
-static_assert(sizeof(((EVP_AEAD_CTX *)NULL)->state) >=
+static_assert(sizeof(((EVP_AEAD_CTX *)nullptr)->state) >=
                   sizeof(struct aead_chacha20_poly1305_ctx),
               "AEAD state is too small");
 static_assert(alignof(union evp_aead_ctx_st_state) >=
@@ -251,7 +251,7 @@ static int chacha20_poly1305_open_gather(
     OPENSSL_memcpy(data.in.nonce, nonce, 12);
     chacha20_poly1305_open(out, in, in_len, ad, ad_len, &data);
   } else {
-    calc_tag(data.out.tag, key, nonce, ad, ad_len, in, in_len, NULL, 0);
+    calc_tag(data.out.tag, key, nonce, ad, ad_len, in, in_len, nullptr, 0);
     CRYPTO_chacha_20(out, in, in_len, key, nonce, 1);
   }
 
@@ -306,13 +306,13 @@ static const EVP_AEAD aead_chacha20_poly1305 = {
     1,                 // seal_scatter_supports_extra_in
 
     aead_chacha20_poly1305_init,
-    NULL,  // init_with_direction
+    nullptr,  // init_with_direction
     aead_chacha20_poly1305_cleanup,
-    NULL /* open */,
+    nullptr /* open */,
     aead_chacha20_poly1305_seal_scatter,
     aead_chacha20_poly1305_open_gather,
-    NULL,  // get_iv
-    NULL,  // tag_len
+    nullptr,  // get_iv
+    nullptr,  // tag_len
 };
 
 static const EVP_AEAD aead_xchacha20_poly1305 = {
@@ -323,13 +323,13 @@ static const EVP_AEAD aead_xchacha20_poly1305 = {
     1,                 // seal_scatter_supports_extra_in
 
     aead_chacha20_poly1305_init,
-    NULL,  // init_with_direction
+    nullptr,  // init_with_direction
     aead_chacha20_poly1305_cleanup,
-    NULL /* open */,
+    nullptr /* open */,
     aead_xchacha20_poly1305_seal_scatter,
     aead_xchacha20_poly1305_open_gather,
-    NULL,  // get_iv
-    NULL,  // tag_len
+    nullptr,  // get_iv
+    nullptr,  // tag_len
 };
 
 const EVP_AEAD *EVP_aead_chacha20_poly1305(void) {

@@ -39,11 +39,11 @@ namespace WebKit {
 
 Ref<WebFileSystemStorageConnection> WebFileSystemStorageConnection::create(Ref<IPC::Connection>&& connection)
 {
-    return adoptRef(*new WebFileSystemStorageConnection(WTFMove(connection)));
+    return adoptRef(*new WebFileSystemStorageConnection(WTF::move(connection)));
 }
 
 WebFileSystemStorageConnection::WebFileSystemStorageConnection(Ref<IPC::Connection>&& connection)
-    : m_connection(WTFMove(connection))
+    : m_connection(WTF::move(connection))
 {
 }
 
@@ -90,7 +90,7 @@ void WebFileSystemStorageConnection::isSameEntry(WebCore::FileSystemHandleIdenti
     if (identifier == otherIdentifier)
         return completionHandler(true);
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::IsSameEntry(identifier, otherIdentifier), WTFMove(completionHandler));
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::IsSameEntry(identifier, otherIdentifier), WTF::move(completionHandler));
 }
 
 void WebFileSystemStorageConnection::getFileHandle(WebCore::FileSystemHandleIdentifier identifier, const String& name, bool createIfNecessary, WebCore::FileSystemStorageConnection::GetHandleCallback&& completionHandler)
@@ -99,7 +99,7 @@ void WebFileSystemStorageConnection::getFileHandle(WebCore::FileSystemHandleIden
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFileHandle(identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFileHandle(identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, completionHandler = WTF::move(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
@@ -113,7 +113,7 @@ void WebFileSystemStorageConnection::getDirectoryHandle(WebCore::FileSystemHandl
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetDirectoryHandle(identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetDirectoryHandle(identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, completionHandler = WTF::move(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
@@ -127,7 +127,7 @@ void WebFileSystemStorageConnection::removeEntry(WebCore::FileSystemHandleIdenti
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::RemoveEntry(identifier, name, deleteRecursively), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::RemoveEntry(identifier, name, deleteRecursively), [completionHandler = WTF::move(completionHandler)](auto error) mutable {
         return completionHandler(convertToExceptionOr(error));
     });
 }
@@ -138,11 +138,11 @@ void WebFileSystemStorageConnection::resolve(WebCore::FileSystemHandleIdentifier
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::Resolve(identifier, otherIdentifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::Resolve(identifier, otherIdentifier), [completionHandler = WTF::move(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
-        completionHandler(WTFMove(result.value()));
+        completionHandler(WTF::move(result.value()));
     });
 }
 
@@ -152,11 +152,11 @@ void WebFileSystemStorageConnection::getFile(WebCore::FileSystemHandleIdentifier
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFile(identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFile(identifier), [completionHandler = WTF::move(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
-        completionHandler(WTFMove(result.value()));
+        completionHandler(WTF::move(result.value()));
     });
 }
 
@@ -166,7 +166,7 @@ void WebFileSystemStorageConnection::createSyncAccessHandle(WebCore::FileSystemH
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CreateSyncAccessHandle(identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CreateSyncAccessHandle(identifier), [completionHandler = WTF::move(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
@@ -180,7 +180,7 @@ void WebFileSystemStorageConnection::closeSyncAccessHandle(WebCore::FileSystemHa
     if (!connection)
         return completionHandler();
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseSyncAccessHandle(identifier, accessHandleIdentifier), WTFMove(completionHandler));
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseSyncAccessHandle(identifier, accessHandleIdentifier), WTF::move(completionHandler));
 }
 
 void WebFileSystemStorageConnection::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, FileSystemStorageConnection::GetHandleNamesCallback&& completionHandler)
@@ -189,11 +189,11 @@ void WebFileSystemStorageConnection::getHandleNames(WebCore::FileSystemHandleIde
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandleNames(identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandleNames(identifier), [completionHandler = WTF::move(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
-        completionHandler(WTFMove(result.value()));
+        completionHandler(WTF::move(result.value()));
     });
 }
 
@@ -203,7 +203,7 @@ void WebFileSystemStorageConnection::getHandle(WebCore::FileSystemHandleIdentifi
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandle(identifier, name), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandle(identifier, name), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
         
@@ -218,7 +218,7 @@ void WebFileSystemStorageConnection::move(WebCore::FileSystemHandleIdentifier id
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::Move(identifier, destinationIdentifier, newName), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::Move(identifier, destinationIdentifier, newName), [completionHandler = WTF::move(completionHandler)](auto error) mutable {
         completionHandler(convertToExceptionOr(error));
     });
 }
@@ -250,13 +250,13 @@ void WebFileSystemStorageConnection::createWritable(WebCore::ScriptExecutionCont
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CreateWritable(identifier, keepExistingData), [protectedThis = Ref { *this }, contextIdentifier, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CreateWritable(identifier, keepExistingData), [protectedThis = Ref { *this }, contextIdentifier, completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
         ASSERT(!protectedThis->m_writableIdentifiers.contains(result.value()));
         protectedThis->m_writableIdentifiers.add(result.value(), contextIdentifier);
-        completionHandler(WTFMove(result.value()));
+        completionHandler(WTF::move(result.value()));
     });
 }
 
@@ -273,7 +273,7 @@ void WebFileSystemStorageConnection::closeWritable(WebCore::FileSystemHandleIden
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
     m_writableIdentifiers.remove(streamIdentifier);
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseWritable(identifier, streamIdentifier, reason), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseWritable(identifier, streamIdentifier, reason), [completionHandler = WTF::move(completionHandler)](auto error) mutable {
         completionHandler(convertToExceptionOr(error));
     });
 }
@@ -284,7 +284,7 @@ void WebFileSystemStorageConnection::executeCommandForWritable(WebCore::FileSyst
     if (!connection)
         return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::ExecuteCommandForWritable(identifier, streamIdentifier, type, position, size, dataBytes, hasDataError), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::ExecuteCommandForWritable(identifier, streamIdentifier, type, position, size, dataBytes, hasDataError), [completionHandler = WTF::move(completionHandler)](auto error) mutable {
         completionHandler(convertToExceptionOr(error));
     });
 }
@@ -295,7 +295,7 @@ void WebFileSystemStorageConnection::requestNewCapacityForSyncAccessHandle(WebCo
     if (!connection)
         return completionHandler(std::nullopt);
 
-    connection->sendWithAsyncReply(Messages::NetworkStorageManager::RequestNewCapacityForSyncAccessHandle(identifier, accessHandleIdentifier, newCapacity), WTFMove(completionHandler));
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::RequestNewCapacityForSyncAccessHandle(identifier, accessHandleIdentifier, newCapacity), WTF::move(completionHandler));
 }
 
 } // namespace WebKit

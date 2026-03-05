@@ -163,8 +163,8 @@ struct PluginPackageCandidates {
             candidates.update(plugin);
     }
     
-    WebBasePluginPackage *plugin = candidates.bestCandidate();
-    
+    RetainPtr plugin = candidates.bestCandidate();
+
     if (!plugin) {
         // If no plug-in was found from the extension, attempt to map from the extension to a MIME type
         // and find the a plug-in from the MIME type. This is done in case the plug-in has not fully specified
@@ -173,7 +173,7 @@ struct PluginPackageCandidates {
         if ([MIMEType length] > 0)
             plugin = [self pluginForMIMEType:MIMEType];
     }
-    return plugin;
+    return plugin.autorelease();
 }
 
 - (NSArray *)plugins

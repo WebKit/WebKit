@@ -77,12 +77,12 @@ bool tls_new(SSL *ssl) {
 }
 
 void tls_free(SSL *ssl) {
-  if (ssl->s3 == NULL) {
+  if (ssl->s3 == nullptr) {
     return;
   }
 
   Delete(ssl->s3);
-  ssl->s3 = NULL;
+  ssl->s3 = nullptr;
 }
 
 BSSL_NAMESPACE_END

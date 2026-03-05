@@ -18,9 +18,9 @@ includes: [testTypedArray.js]
 features: [TypedArray, change-array-by-copy]
 ---*/
 
-testWithTypedArrayConstructors(TA => {
+testWithTypedArrayConstructors((TA, makeCtorArg) => {
   var calls = 0;
-  var ta = new TA([3, 1, 2]);
+  var ta = new TA(makeCtorArg([3, 1, 2]));
   try {
     ta.toSorted(() => {
       ++calls;

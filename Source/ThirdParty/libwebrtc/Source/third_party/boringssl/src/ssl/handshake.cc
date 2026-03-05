@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <utility>
 
+#include <openssl/err.h>
 #include <openssl/rand.h>
 
 #include "../crypto/internal.h"
@@ -229,7 +230,7 @@ bool ssl_parse_extensions(const CBS *cbs, uint8_t *out_alert,
 enum ssl_verify_result_t ssl_verify_peer_cert(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
   const SSL_SESSION *prev_session = ssl->s3->established_session.get();
-  if (prev_session != NULL) {
+  if (prev_session != nullptr) {
     // If renegotiating, the server must not change the server certificate. See
     // https://mitls.org/pages/attacks/3SHAKE. We never resume on renegotiation,
     // so this check is sufficient to ensure the reported peer certificate never

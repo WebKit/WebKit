@@ -1,0 +1,85 @@
+<!doctype html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>RTCDataChannel.prototype.close</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="RTCPeerConnection-helper.js"></script>
+<script>
+'use strict';
+
+promise_test(async t => {
+  const pc1 = new RTCPeerConnection();
+  t.add_cleanup(() => pc1.close());
+  const [channel1, channel2] = await createDataChannelPairWithLabel(t, 'local_close', [], pc1);
+
+  const haveClosed1 = new Promise((resolve, reject) => {
+    channel1.addEventListener('close', () => {
+      assert_true(isClosed);
+      resolve();
+    });
+    t.step_timeout(() => reject('test1 timed out'), 2000);
+  });
+  const haveClosed2 = new Promise((resolve, reject) => {
+    channel2.addEventListener('close', resolve);
+    t.step_timeout(() => reject('test2 timed out'), 2000);
+  });
+
+  let isClosed = false;
+  let isClosing1 = false;
+  let isClosing2 = false;
+  channel1.onclosing = () => {
+    isClosing1 = true;
+    assert_true(isClosed, "isClosed for channel1.onclosing");
+  }
+  channel2.onclosing = () => {
+    isClosing2 = true;
+    assert_true(isClosed, "isClosed for channel2.onclosing");
+  }
+ 
+  pc1.close();
+  isClosed = true;
+  await haveClosed1;
+  await haveClosed2;
+
+  assert_false(isClosing1, "isClosing1");
+  assert_true(isClosing2, "isClosing2");
+}, `Close peerconnection causes close event on local channel`);
+
+promise_test(async t => {
+  const pc1 = new RTCPeerConnection();
+  t.add_cleanup(() => pc1.close());
+  const channel1 = pc1.createDataChannel("test");
+
+  const worker = new Worker(`data:text/javascript,onmessage = e => { e.data.onclose = () => postMessage('CLOSED'); postMessage("OK"); };`);
+
+  worker.postMessage(channel1, [channel1]);
+  const transferResult = await new Promise(resolve => worker.addEventListener('message', e => resolve(e.data)));
+  assert_equals(transferResult, "OK");
+
+  const haveClosed1 = new Promise((resolve, reject) => {
+    worker.addEventListener('message', e => resolve(e.data));
+    t.step_timeout(() => reject("test timed out"), 1000);
+  });
+
+  pc1.close();
+  assert_equals(await haveClosed1, "CLOSED");
+}, `Close peerconnection causes close event on transfered channel`);
+
+promise_test(async t => {
+  const pc1 = new RTCPeerConnection();
+  t.add_cleanup(() => pc1.close());
+  const channel1 = pc1.createDataChannel("test");
+
+  const worker = new Worker(`data:text/javascript,onmessage = e => { if (e.data.readyState === 'closed') postMessage('CLOSED'); e.data.onclose = () => postMessage('CLOSED'); };`);
+  const haveClosed1 = new Promise((resolve, reject) => {
+    worker.onmessage = e => resolve(e.data);
+    t.step_timeout(() => reject("test timed out"), 1000);
+  });
+
+  worker.postMessage(channel1, [channel1]);
+  pc1.close();
+  assert_equals(await haveClosed1, "CLOSED");
+}, `Close peerconnection causes close event on local being transfered channel`);
+
+</script>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,26 +27,51 @@
 
 #include "CSSFilterFunctionDescriptor.h"
 #include "CSSHueRotateFunction.h"
+#include "FEColorMatrix.h"
 #include "FilterOperation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
 namespace Style {
 
-CSS::HueRotate toCSSHueRotate(Ref<BasicColorMatrixFilterOperation> operation, const RenderStyle& style)
+HueRotate HueRotate::passthroughForInterpolation()
 {
-    return { CSS::HueRotate::Parameter { toCSS(Angle<> { operation->amount() }, style) } };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueHueRotate>::initialValueForInterpolation };
 }
 
-Ref<FilterOperation> createFilterOperation(const CSS::HueRotate& filter, const BuilderState& state)
+bool HueRotate::transformColor(SRGBA<float>& color) const
 {
-    double value;
-    if (auto parameter = filter.value)
-        value = toStyle(*parameter, state).value;
-    else
-        value = filterFunctionDefaultValue<CSS::HueRotateFunction::name>().value;
+    color = makeFromComponentsClamping<SRGBA<float>>(hueRotateColorMatrix(evaluate<float>(value)).transformedColorComponents(asColorComponents(color.resolved())));
+    return true;
+}
 
-    return BasicColorMatrixFilterOperation::create(value, filterFunctionOperationType<CSS::HueRotateFunction::name>());
+// MARK: - Conversion
+
+auto ToCSS<HueRotate>::operator()(const HueRotate& value, const RenderStyle& style) -> CSS::HueRotate
+{
+    return { .value = toCSS(value.value, style) };
+}
+
+auto ToStyle<CSS::HueRotate>::operator()(const CSS::HueRotate& value, const BuilderState& state) -> HueRotate
+{
+    if (auto parameter = value.value)
+        return { .value = toStyle(*parameter, state) };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueHueRotate>::defaultValue };
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<HueRotate, Ref<FilterEffect>>::operator()(const HueRotate& value) -> Ref<FilterEffect>
+{
+    auto inputParameters = Vector<float> { evaluate<float>(value) };
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE, WTF::move(inputParameters));
+}
+
+// MARK: - Platform
+
+auto ToPlatform<HueRotate>::operator()(const HueRotate& value) -> Ref<FilterOperation>
+{
+    return BasicColorMatrixFilterOperation::create(Style::evaluate<double>(value), filterFunctionOperationType<HueRotateFunction::name>());
 }
 
 } // namespace Style

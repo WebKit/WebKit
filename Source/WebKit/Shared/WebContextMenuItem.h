@@ -53,11 +53,10 @@ public:
 
     Ref<API::Array> submenuItemsAsAPIArray() const;
 
-    API::Object* userData() const;
-    RefPtr<API::Object> protectedUserData() const { return userData(); }
+    API::Object* NODELETE userData() const;
     void setUserData(API::Object*);
 
-    const WebContextMenuItemData& data() { return m_webContextMenuItemData; }
+    const WebContextMenuItemData& data() LIFETIME_BOUND { return m_webContextMenuItemData; }
 
 private:
     WebContextMenuItem(const WebContextMenuItemData&);

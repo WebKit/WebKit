@@ -35,14 +35,14 @@ class CompilationInfo final : public RefCounted<CompilationInfo> {
 public:
     static Ref<CompilationInfo> create(Vector<Ref<CompilationMessage>>&& messages)
     {
-        return adoptRef(*new CompilationInfo(WTFMove(messages)));
+        return adoptRef(*new CompilationInfo(WTF::move(messages)));
     }
 
-    const Vector<Ref<CompilationMessage>>& messages() const { return m_messages; }
+    const Vector<Ref<CompilationMessage>>& messages() const LIFETIME_BOUND { return m_messages; }
 
 protected:
     CompilationInfo(Vector<Ref<CompilationMessage>>&& messages)
-        : m_messages(WTFMove(messages))
+        : m_messages(WTF::move(messages))
     {
     }
 

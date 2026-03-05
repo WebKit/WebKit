@@ -54,7 +54,7 @@ public:
         RefPtr<LibWebRTCAudioModule> audioModule;
 #endif
 #if !RELEASE_LOG_DISABLED
-        const Logger& logger;
+        Ref<const Logger> logger;
         uint64_t logIdentifier;
 #endif
     };

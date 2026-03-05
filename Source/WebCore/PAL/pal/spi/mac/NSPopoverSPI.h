@@ -25,9 +25,19 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
+#import <wtf/Platform.h>
+
+#if USE(APPKIT)
+
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <AppKit/NSPopover_Private.h>
+#else
 
 // FIXME: This header should include system headers when possible.
 
@@ -49,3 +59,7 @@ typedef NS_OPTIONS(NSUInteger, NSPopoverPositioningOptions) {
 - (void)_setRequiresCorrectContentAppearance:(BOOL)requiresCorrectAppearance;
 @property NSPopoverPositioningOptions positioningOptions;
 @end
+
+#endif
+
+#endif // USE(APPKIT)

@@ -5,5 +5,5 @@ install-name: /System/Library/PrivateFrameworks/FontServices.framework/libFontPa
 swift-abi-version: 7
 exports:
 -       targets: [arm64-ios, arm64e-ios]
-        symbols: [_FPFontCopyPostScriptName, _FPFontCopySFNTData, _FPFontCreateFontsFromData]
+        symbols: [_FPFontCopyPostScriptName, _FPFontCopySFNTData, _FPFontCreateFontsFromData, _FPFontCreateMemorySafeFontsFromData]
 ...

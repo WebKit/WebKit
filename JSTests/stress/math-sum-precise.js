@@ -1,5 +1,3 @@
-//@ requireOptions("--useMathSumPreciseMethod=1")
-
 // Copyright (C) 2024 Kevin Gibbons. All rights reserved.
 // This code is governed by the BSD license found in the https://github.com/tc39/test262/blob/main/LICENSE file.
 

@@ -54,10 +54,10 @@ JSC_DEFINE_HOST_FUNCTION(callJSHTMLAllCollection, (JSGlobalObject* lexicalGlobal
 
     AtomString nameOrIndex = callFrame->uncheckedArgument(0).toString(lexicalGlobalObject)->toAtomString(lexicalGlobalObject).data;
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, JSValue::encode(toJS<IDLNullable<IDLUnion<IDLInterface<HTMLCollection>, IDLInterface<Element>>>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.namedOrIndexedItemOrItems(WTFMove(nameOrIndex)))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(toJS<IDLNullable<IDLUnion<IDLInterface<HTMLCollection>, IDLInterface<Element>>>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.namedOrIndexedItemOrItems(WTF::move(nameOrIndex)))));
 }
 
-CallData JSHTMLAllCollection::getCallData(JSCell*)
+CallData NODELETE JSHTMLAllCollection::getCallData(JSCell*)
 {
     CallData callData;
     callData.type = CallData::Type::Native;

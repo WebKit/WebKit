@@ -17,6 +17,7 @@
 
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
+#include "api/audio/neural_residual_echo_estimator.h"
 #include "api/environment/environment.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/echo_remover.h"
@@ -33,7 +34,8 @@ class BlockProcessor {
       const EchoCanceller3Config& config,
       int sample_rate_hz,
       size_t num_render_channels,
-      size_t num_capture_channels);
+      size_t num_capture_channels,
+      NeuralResidualEchoEstimator* neural_residual_echo_estimator);
   // Only used for testing purposes.
   static std::unique_ptr<BlockProcessor> Create(
       const Environment& env,
@@ -41,7 +43,8 @@ class BlockProcessor {
       int sample_rate_hz,
       size_t num_render_channels,
       size_t num_capture_channels,
-      std::unique_ptr<RenderDelayBuffer> render_buffer);
+      std::unique_ptr<RenderDelayBuffer> render_buffer,
+      NeuralResidualEchoEstimator* neural_residual_echo_estimator);
   static std::unique_ptr<BlockProcessor> Create(
       const EchoCanceller3Config& config,
       int sample_rate_hz,

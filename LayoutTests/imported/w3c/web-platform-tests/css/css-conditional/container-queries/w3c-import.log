@@ -60,6 +60,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-name-tree-scoped.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-rule-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-selection-unknown-features.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-selection.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/container-size-invalidation-after-load.html
@@ -224,6 +225,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-change-in-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-container-for-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-container-invalidation-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-negation-with-container-name-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-negation-with-container-name-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-negation-with-container-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-not-sharing-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-document-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-guaranteed-invalid.tentative.html

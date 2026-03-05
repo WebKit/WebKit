@@ -42,24 +42,24 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerScriptLoader);
 
 Ref<SharedWorkerScriptLoader> SharedWorkerScriptLoader::create(URL&& url, SharedWorker& worker, WorkerOptions&& options)
 {
-    return adoptRef(*new SharedWorkerScriptLoader(WTFMove(url), worker, WTFMove(options)));
+    return adoptRef(*new SharedWorkerScriptLoader(WTF::move(url), worker, WTF::move(options)));
 }
 
 SharedWorkerScriptLoader::SharedWorkerScriptLoader(URL&& url, SharedWorker& worker, WorkerOptions&& options)
-    : m_options(WTFMove(options))
+    : m_options(WTF::move(options))
     , m_worker(worker)
     , m_loader(WorkerScriptLoader::create())
-    , m_url(WTFMove(url))
+    , m_url(WTF::move(url))
 {
 }
 
 void SharedWorkerScriptLoader::load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&& completionHandler)
 {
     ASSERT(!m_completionHandler);
-    m_completionHandler = WTFMove(completionHandler);
+    m_completionHandler = WTF::move(completionHandler);
 
     auto source = m_options.type == WorkerType::Module ? WorkerScriptLoader::Source::ModuleScript : WorkerScriptLoader::Source::ClassicWorkerScript;
-    m_loader->loadAsynchronously(*m_worker->protectedScriptExecutionContext(), ResourceRequest(URL { m_url }), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode(), ScriptExecutionContextIdentifier::generate());
+    m_loader->loadAsynchronously(*protect(m_worker->scriptExecutionContext()), ResourceRequest(URL { m_url }), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode(), ScriptExecutionContextIdentifier::generate());
 }
 
 void SharedWorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse&)
@@ -86,7 +86,7 @@ void SharedWorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionConte
     auto fetchResult = m_loader->fetchResult();
     if (fetchResult.referrerPolicy.isNull() && scriptExecutionContext)
         fetchResult.referrerPolicy = referrerPolicyToString(scriptExecutionContext->referrerPolicy());
-    m_completionHandler(WTFMove(fetchResult), WorkerInitializationData {
+    m_completionHandler(WTF::move(fetchResult), WorkerInitializationData {
         m_loader->takeServiceWorkerData(),
         m_loader->clientIdentifier(),
         m_loader->advancedPrivacyProtections(),

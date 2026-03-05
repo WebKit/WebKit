@@ -80,7 +80,7 @@ std::unique_ptr<GLContext> GLContext::createWPEContext(GLDisplay& display, EGLCo
         return nullptr;
     }
 
-    EGLContext context = createContextForEGLVersion(eglDisplay, config, sharingContext);
+    auto context = createEGLContext(display, config, sharingContext);
     if (context == EGL_NO_CONTEXT) {
         RELEASE_LOG_INFO(Compositing, "Cannot create EGL WPE context: %s\n", lastErrorString());
         wpe_renderer_backend_egl_offscreen_target_destroy(target);

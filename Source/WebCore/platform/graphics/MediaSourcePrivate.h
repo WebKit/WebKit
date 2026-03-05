@@ -94,7 +94,7 @@ public:
 
     MediaPlayer::ReadyState mediaPlayerReadyState() const;
     virtual void setMediaPlayerReadyState(MediaPlayer::ReadyState);
-    virtual void markEndOfStream(EndOfStreamStatus) { m_isEnded = true; }
+    virtual void markEndOfStream(EndOfStreamStatus);
     virtual void unmarkEndOfStream() { m_isEnded = false; }
     bool isEnded() const { return m_isEnded; }
 

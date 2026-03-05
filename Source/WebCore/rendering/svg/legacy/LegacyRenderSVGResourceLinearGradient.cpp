@@ -26,10 +26,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceLinearGradient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceLinearGradient);
 
 LegacyRenderSVGResourceLinearGradient::LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement& element, RenderStyle&& style)
-    : LegacyRenderSVGResourceGradient(Type::LegacySVGResourceLinearGradient, element, WTFMove(style))
+    : LegacyRenderSVGResourceGradient(Type::LegacySVGResourceLinearGradient, element, WTF::move(style))
 {
 }
 
@@ -38,24 +38,24 @@ LegacyRenderSVGResourceLinearGradient::~LegacyRenderSVGResourceLinearGradient() 
 bool LegacyRenderSVGResourceLinearGradient::collectGradientAttributes()
 {
     m_attributes = LinearGradientAttributes();
-    return protectedLinearGradientElement()->collectGradientAttributes(m_attributes);
+    return protect(linearGradientElement())->collectGradientAttributes(m_attributes);
 }
 
 FloatPoint LegacyRenderSVGResourceLinearGradient::startPoint(const LinearGradientAttributes& attributes) const
 {
-    return SVGLengthContext::resolvePoint(protectedLinearGradientElement().ptr(), attributes.gradientUnits(), attributes.x1(), attributes.y1());
+    return SVGLengthContext::resolvePoint(protect(linearGradientElement()).ptr(), attributes.gradientUnits(), attributes.x1(), attributes.y1());
 }
 
 FloatPoint LegacyRenderSVGResourceLinearGradient::endPoint(const LinearGradientAttributes& attributes) const
 {
-    return SVGLengthContext::resolvePoint(protectedLinearGradientElement().ptr(), attributes.gradientUnits(), attributes.x2(), attributes.y2());
+    return SVGLengthContext::resolvePoint(protect(linearGradientElement()).ptr(), attributes.gradientUnits(), attributes.x2(), attributes.y2());
 }
 
 Ref<Gradient> LegacyRenderSVGResourceLinearGradient::buildGradient(const RenderStyle& style) const
 {
     return Gradient::create(
         Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) },
-        { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
+        gradientColorInterpolationMethod(),
         platformSpreadMethodFromSVGType(m_attributes.spreadMethod()),
         stopsByApplyingColorFilter(m_attributes.stops(), style),
         false);

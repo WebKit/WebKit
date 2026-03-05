@@ -189,7 +189,7 @@ float DynamicsCompressorKernel::updateStaticCurveParameters(float dbThreshold, f
     return m_K;
 }
 
-void DynamicsCompressorKernel::process(std::span<std::span<const float>> sourceChannels,
+void DynamicsCompressorKernel::process(std::span<const std::span<const float>> sourceChannels,
                                        std::span<std::span<float>> destinationChannels,
                                        unsigned framesToProcess,
                                        float dbThreshold,

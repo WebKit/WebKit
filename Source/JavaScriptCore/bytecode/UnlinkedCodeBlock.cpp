@@ -291,7 +291,7 @@ bool UnlinkedCodeBlock::hasIdentifier(UniquedStringImpl* uid)
             }
 
             WTF::storeStoreFence();
-            m_cachedIdentifierUids = WTFMove(cachedIdentifierUids);
+            m_cachedIdentifierUids = WTF::move(cachedIdentifierUids);
         }
 
         return m_cachedIdentifierUids.contains(uid);

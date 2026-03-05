@@ -51,6 +51,8 @@ public:
 
     virtual bool hasCallback() const = 0;
 
+    virtual bool isJSMutationCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
 };

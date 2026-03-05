@@ -274,36 +274,34 @@ void testRematerializeAfterSearchOfDecommitted()
         reinterpret_cast<uintptr_t>(ptr), &bmalloc_heap_config);
     pas_segregated_size_directory* directory = pas_segregated_view_get_size_directory(view);
 
-    pas_segregated_heap_medium_directory_tuple* tuple =
+    pas_segregated_heap_medium_directory_result result =
         pas_segregated_heap_medium_directory_tuple_for_index(
             &heap->segregated_heap,
             pas_segregated_heap_index_for_size(size, BMALLOC_HEAP_CONFIG),
             pas_segregated_heap_medium_size_directory_search_within_size_class_progression,
             pas_lock_is_not_held);
 
-    CHECK(tuple);
-    CHECK_EQUAL(pas_compact_atomic_segregated_size_directory_ptr_load(&tuple->directory),
-                directory);
+    CHECK_EQUAL(result.directory, directory);
 
     pas_scavenger_fake_decommit_expendable_memory();
 
-    tuple->begin_index = 0;
+    result.tuple_unsafe_without_lock->begin_index = 0;
 
-    pas_segregated_heap_medium_directory_tuple* someOtherTuple =
+    pas_segregated_heap_medium_directory_result someOtherResult =
         pas_segregated_heap_medium_directory_tuple_for_index(
             &heap->segregated_heap,
             pas_segregated_heap_index_for_size(someOtherSize, BMALLOC_HEAP_CONFIG),
             pas_segregated_heap_medium_size_directory_search_within_size_class_progression,
             pas_lock_is_not_held);
 
-    if (someOtherTuple) {
-        cout << "Unexpectedly found a tuple: " << someOtherTuple << "\n";
+    if (someOtherResult.tuple_unsafe_without_lock) {
+        cout << "Unexpectedly found a tuple: " << someOtherResult.tuple_unsafe_without_lock << "\n";
         cout << "It points at directory = "
-             << pas_compact_atomic_segregated_size_directory_ptr_load(&someOtherTuple->directory) << "\n";
+             << someOtherResult.directory << "\n";
         cout << "Our original directory is = " << directory << "\n";
     }
     
-    CHECK(!someOtherTuple);
+    CHECK(!someOtherResult.tuple_unsafe_without_lock);
 }
 
 void testBasicSizeClass(unsigned firstSize, unsigned secondSize)

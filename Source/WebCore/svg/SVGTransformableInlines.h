@@ -164,12 +164,12 @@ RefPtr<SVGTransform> SVGTransformable::parseTransform(SVGTransformValue::SVGTran
     case SVGTransformValue::SVG_TRANSFORM_SKEWX: {
         SVGTransformValue transform;
         transform.setSkewX(values[0]);
-        return SVGTransform::create(WTFMove(transform));
+        return SVGTransform::create(WTF::move(transform));
     }
     case SVGTransformValue::SVG_TRANSFORM_SKEWY: {
         SVGTransformValue transform;
         transform.setSkewY(values[0]);
-        return SVGTransform::create(WTFMove(transform));
+        return SVGTransform::create(WTF::move(transform));
     }
     case SVGTransformValue::SVG_TRANSFORM_SCALE: {
         auto resultValue = [&]() {

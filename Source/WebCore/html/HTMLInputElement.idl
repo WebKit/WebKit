@@ -48,7 +48,7 @@ enum AutofillButtonType {
     [EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded] attribute [AtomString] DOMString colorSpace;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
-    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement form;
+    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement? form;
     [ImplementedAs=filesForBindings] attribute FileList? files;
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] USVString formAction;
 
@@ -59,7 +59,7 @@ enum AutofillButtonType {
     [CEReactions=NotNeeded, Reflect] attribute DOMString formTarget;
     [CEReactions=NotNeeded, ReflectSetter] attribute unsigned long height;
     attribute boolean indeterminate;
-    readonly attribute HTMLElement list;
+    readonly attribute HTMLElement? list;
     [CEReactions=NotNeeded, Reflect] attribute DOMString max;
     [CEReactions=NotNeeded] attribute long minLength;
     [CEReactions=NotNeeded] attribute long maxLength;
@@ -92,7 +92,7 @@ enum AutofillButtonType {
     [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
     undefined setCustomValidity(DOMString error);
 
-    readonly attribute NodeList labels;
+    readonly attribute NodeList? labels;
 
     undefined select();
     [ImplementedAs=selectionStartForBindings] attribute unsigned long? selectionStart;

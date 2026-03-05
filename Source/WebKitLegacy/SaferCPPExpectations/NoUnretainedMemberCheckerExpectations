@@ -1,19 +1,15 @@
 WebCoreSupport/SocketStreamHandleImplCFNet.cpp
-WebCoreSupport/WebCryptoClient.h
 [ iOS ] ios/Misc/WebGeolocationProviderIOS.mm
 [ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
 [ iOS ] ios/WebCoreSupport/WebGeolocationPrivate.h
 [ iOS ] ios/WebView/WebPDFViewIOS.mm
 [ iOS ] ios/WebView/WebPDFViewPlaceholder.h
-[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
-[ Mac ] mac/DefaultDelegates/WebDefaultUIDelegate.h
 mac/History/BackForwardList.h
 mac/History/WebBackForwardList.h
 mac/History/WebHistory.h
 mac/History/WebHistoryItem.h
 mac/Misc/WebDownload.h
 mac/Misc/WebElementDictionary.h
-mac/Misc/WebLocalizableStrings.h
 [ Mac ] mac/Misc/WebSharingServicePickerController.h
 mac/Misc/WebUserContentURLPattern.h
 [ Mac ] mac/Panels/WebAuthenticationPanel.h
@@ -26,7 +22,6 @@ mac/Plugins/WebPluginDatabase.mm
 mac/Plugins/WebPluginPackage.h
 mac/Storage/WebDatabaseQuotaManager.h
 mac/WebCoreSupport/WebAlternativeTextClient.h
-mac/WebCoreSupport/WebChromeClient.h
 mac/WebCoreSupport/WebDragClient.h
 mac/WebCoreSupport/WebEditorClient.h
 mac/WebCoreSupport/WebGeolocationClient.h
@@ -43,7 +38,6 @@ mac/WebView/WebArchive.h
 mac/WebView/WebDeviceOrientation.h
 mac/WebView/WebDeviceOrientationProviderMock.h
 mac/WebView/WebDocumentLoaderMac.h
-[ iOS ] mac/WebView/WebFeature.h
 mac/WebView/WebFrame.h
 mac/WebView/WebFrameView.h
 mac/WebView/WebFrameView.mm
@@ -69,6 +63,5 @@ mac/WebView/WebTextIterator.h
 mac/WebView/WebView.h
 mac/WebView/WebView.mm
 mac/WebView/WebViewData.h
-[ iOS ] mac/WebView/WebViewPrivate.h
 [ iOS ] mac/WebView/WebViewRenderingUpdateScheduler.h
 [ Mac ] mac/WebView/WebWindowAnimation.h

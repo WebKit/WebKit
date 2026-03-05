@@ -22,9 +22,6 @@
 
 namespace webrtc {
 
-constexpr int ScalabilityStructureKeySvc::kMaxNumSpatialLayers;
-constexpr int ScalabilityStructureKeySvc::kMaxNumTemporalLayers;
-
 ScalabilityStructureKeySvc::ScalabilityStructureKeySvc(int num_spatial_layers,
                                                        int num_temporal_layers)
     : num_spatial_layers_(num_spatial_layers),

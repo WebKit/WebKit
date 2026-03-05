@@ -42,7 +42,7 @@ class SVGConditionalProcessingAttributes;
 template<typename T>
 concept HasFastPropertyForAttribute = requires(const T& element, const QualifiedName& name)
 {
-    { element.propertyForAttribute(name) } -> std::same_as<SVGAnimatedProperty*>;
+    { element.propertyForAttribute(name) } -> std::same_as<SVGAnimatedPropertyBase*>;
 };
 
 struct SVGAttributeHashTranslator {
@@ -75,103 +75,103 @@ public:
         registerProperty(attributeName, SVGConditionalProcessingAttributeAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGTransformList> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGTransformList> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGTransformListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedBoolean> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedBoolean> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedBooleanAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, typename EnumType, Ref<SVGAnimatedEnumeration> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, typename EnumType, const Ref<SVGAnimatedEnumeration> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedEnumerationAccessor<OwnerType, EnumType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedInteger> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedLength> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedLength> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedLengthAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedLengthList> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedLengthList> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedLengthListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedNumber> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedNumberAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedNumberList> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumberList> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedNumberListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedAngle> OwnerType::*property1, Ref<SVGAnimatedOrientType> OwnerType::*property2>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedAngle> OwnerType::*property1, const Ref<SVGAnimatedOrientType> OwnerType::*property2>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedAngleOrientAccessor<OwnerType>::template singleton<property1, property2>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedPathSegList> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedPathSegList> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedPathSegListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedPointList> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedPointList> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedPointListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedPreserveAspectRatio> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedPreserveAspectRatio> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedPreserveAspectRatioAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedRect> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedRect> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedRectAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedString> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedString> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedStringAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedTransformList> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedTransformList> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedTransformListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedInteger> OwnerType::*property1, Ref<SVGAnimatedInteger> OwnerType::*property2>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property1, const Ref<SVGAnimatedInteger> OwnerType::*property2>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedIntegerPairAccessor<OwnerType>::template singleton<property1, property2>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedNumber> OwnerType::*property1, Ref<SVGAnimatedNumber> OwnerType::*property2>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property1, const Ref<SVGAnimatedNumber> OwnerType::*property2>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedNumberPairAccessor<OwnerType>::template singleton<property1, property2>());
@@ -226,7 +226,7 @@ public:
         return attributeName;
     }
 
-    QualifiedName animatedPropertyAttributeName(const SVGAnimatedProperty& animatedProperty) const override
+    QualifiedName animatedPropertyAttributeName(const SVGAnimatedPropertyBase& animatedProperty) const override
     {
         QualifiedName attributeName = nullQName();
         enumerateRecursively([&](const auto& entry) -> bool {
@@ -238,9 +238,9 @@ public:
         return attributeName;
     }
 
-    void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
+    void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedPropertyBase& animatedProperty) const override
     {
-        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName)) {
+        if (RefPtr property = fastAnimatedPropertyLookup(m_owner, attributeName)) {
             property->setDirty();
             return;
         }
@@ -259,7 +259,7 @@ public:
         });
     }
 
-    static inline SVGAnimatedProperty* fastAnimatedPropertyLookup(OwnerType& owner, const QualifiedName& attributeName)
+    static inline SVGAnimatedPropertyBase* fastAnimatedPropertyLookup(OwnerType& owner, const QualifiedName& attributeName)
     {
         if constexpr (HasFastPropertyForAttribute<OwnerType>)
             return owner.propertyForAttribute(attributeName);
@@ -273,7 +273,7 @@ public:
     // string through the associated SVGMemberAccessor.
     std::optional<String> synchronize(const QualifiedName& attributeName) const override
     {
-        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName))
+        if (RefPtr property = fastAnimatedPropertyLookup(m_owner, attributeName))
             return property->synchronize();
 
         std::optional<String> value;

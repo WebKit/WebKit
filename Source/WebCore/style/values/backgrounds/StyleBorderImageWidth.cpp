@@ -62,27 +62,16 @@ auto CSSValueConversion<BorderImageWidth>::operator()(BuilderState& state, const
     if (RefPtr widthValue = dynamicDowncast<CSSBorderImageWidthValue>(value)) {
         auto& widths = widthValue->widths();
         return BorderImageWidth {
-            .values = {
-                convertBorderImageWidthValue(state, widths.top()),
-                convertBorderImageWidthValue(state, widths.right()),
-                convertBorderImageWidthValue(state, widths.bottom()),
-                convertBorderImageWidthValue(state, widths.left()),
-            },
-            .legacyWebkitBorderImage = widthValue->overridesBorderWidths(),
+            convertBorderImageWidthValue(state, widths.top()),
+            convertBorderImageWidthValue(state, widths.right()),
+            convertBorderImageWidthValue(state, widths.bottom()),
+            convertBorderImageWidthValue(state, widths.left()),
+            widthValue->overridesBorderWidths(),
         };
     }
 
     // Values coming from CSS Typed OM may not have been converted to a CSSBorderImageWidthValue.
-    auto widthValue = convertBorderImageWidthValue(state, value);
-    return BorderImageWidth {
-        .values = {
-            widthValue,
-            widthValue,
-            widthValue,
-            widthValue,
-        },
-        .legacyWebkitBorderImage = false
-    };
+    return convertBorderImageWidthValue(state, value);
 }
 
 auto CSSValueCreation<BorderImageWidth>::operator()(CSSValuePool& pool, const RenderStyle& style, const BorderImageWidth& value) -> Ref<CSSValue>
@@ -156,13 +145,11 @@ auto Blending<BorderImageWidth>::blend(const BorderImageWidth& a, const BorderIm
     }
 
     return BorderImageWidth {
-        .values = {
-            Style::blend(a.values.top(),     b.values.top(), context),
-            Style::blend(a.values.right(),   b.values.right(), context),
-            Style::blend(a.values.bottom(),  b.values.bottom(), context),
-            Style::blend(a.values.left(),    b.values.left(), context),
-        },
-        .legacyWebkitBorderImage = (!context.progress || !context.isDiscrete ? a : b).legacyWebkitBorderImage,
+        Style::blend(a.values.top(),     b.values.top(), context),
+        Style::blend(a.values.right(),   b.values.right(), context),
+        Style::blend(a.values.bottom(),  b.values.bottom(), context),
+        Style::blend(a.values.left(),    b.values.left(), context),
+        (!context.progress || !context.isDiscrete ? a : b).legacyWebkitBorderImage,
     };
 }
 

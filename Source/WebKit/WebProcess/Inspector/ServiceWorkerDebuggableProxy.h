@@ -31,6 +31,7 @@
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 
 namespace WebKit {

@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Dualshock3HIDGamepad);
 
 Dualshock3HIDGamepad::Dualshock3HIDGamepad(HIDDevice&& device, unsigned index)
-    : HIDGamepad(WTFMove(device), index)
+    : HIDGamepad(WTF::move(device), index)
 {
     LOG(Gamepad, "Creating Dualshock3HIDGamepad %p", this);
 

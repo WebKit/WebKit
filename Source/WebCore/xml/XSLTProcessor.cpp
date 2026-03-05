@@ -106,7 +106,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
 
     auto decoder = TextResourceDecoder::create(sourceMIMEType);
     decoder->setEncoding(sourceEncoding.isEmpty() ? PAL::UTF8Encoding() : PAL::TextEncoding(sourceEncoding), TextResourceDecoder::EncodingFromXMLHeader);
-    result->setDecoder(WTFMove(decoder));
+    result->setDecoder(WTF::move(decoder));
 
     result->setMarkupUnsafe(documentSource, { ParserContentPolicy::AllowDeclarativeShadowRoots });
 
@@ -135,7 +135,7 @@ RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node& sourceNode, Do
 
     if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
         return nullptr;
-    return createFragmentForTransformToFragment(outputDocument, WTFMove(resultString), WTFMove(resultMIMEType));
+    return createFragmentForTransformToFragment(outputDocument, WTF::move(resultString), WTF::move(resultMIMEType));
 }
 
 void XSLTProcessor::setParameter(const String& /*namespaceURI*/, const String& localName, const String& value)

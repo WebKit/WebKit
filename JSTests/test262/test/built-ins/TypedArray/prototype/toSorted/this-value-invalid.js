@@ -41,4 +41,4 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, () => {
     sample.toSorted();
   }, `array has a detached buffer`);
-});
+}, null, ["passthrough"]);

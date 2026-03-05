@@ -21,7 +21,6 @@ PASS checkReplaceTrackNullDoesntPreventPairing
 PASS checkRemoveAndReadd
 PASS checkAddTrackExistingTransceiverThenRemove
 FAIL checkRemoveTrackNegotiation assert_equals: expected "[{currentDirection:\"inactive\"},{currentDirection:\"inactive\"}]" but got "[{currentDirection:\"inactive\"},{currentDirection:\"inactive\"},{},{}]"
-FAIL checkMute assert_true: expected true got false
 FAIL checkStop assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:{kind:\"audio\"}}}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:null}}]"
 FAIL checkStopAfterCreateOffer assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\"}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\"}]"
 FAIL checkStopAfterSetLocalOffer assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\"}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\"}]"
@@ -36,4 +35,14 @@ FAIL checkMsectionReuse assert_equals: expected "stopped" but got "inactive"
 PASS checkStopAfterCreateOfferWithReusedMsection
 PASS checkAddIceCandidateToStoppedTransceiver
 PASS checkBundleTagRejected
+PASS track with audio is muted after SRD
+PASS track with audio gets unmuted when packets flow.
+PASS track with audio gets muted when setting the transceiver direction to 'inactive'
+PASS track with audio gets unmuted when setting the transceiver direction to 'sendrecv' after 'inactive'
+FAIL track with audio stays muted when setting the transceiver direction to 'sendrecv' after 'inactive' but no packets flow assert_true: track remains muted expected true got false
+PASS track with video is muted after SRD
+PASS track with video gets unmuted when packets flow.
+PASS track with video gets muted when setting the transceiver direction to 'inactive'
+PASS track with video gets unmuted when setting the transceiver direction to 'sendrecv' after 'inactive'
+FAIL track with video stays muted when setting the transceiver direction to 'sendrecv' after 'inactive' but no packets flow assert_true: track remains muted expected true got false
 

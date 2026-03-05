@@ -131,7 +131,7 @@ void JSTestDelegateToSharedSyntheticAttributePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestDelegateToSharedSyntheticAttribute::s_info = { "TestDelegateToSharedSyntheticAttribute"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDelegateToSharedSyntheticAttribute) };
 
 JSTestDelegateToSharedSyntheticAttribute::JSTestDelegateToSharedSyntheticAttribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl)
-    : JSDOMWrapper<TestDelegateToSharedSyntheticAttribute>(structure, globalObject, WTFMove(impl))
+    : JSDOMWrapper<TestDelegateToSharedSyntheticAttribute>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -269,7 +269,7 @@ void JSTestDelegateToSharedSyntheticAttributeOwner::finalize(JSC::Handle<JSC::Un
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDelegateToSharedSyntheticAttribute = static_cast<JSTestDelegateToSharedSyntheticAttribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestDelegateToSharedSyntheticAttribute->protectedWrapped().ptr(), jsTestDelegateToSharedSyntheticAttribute);
+    uncacheWrapper(world, protect(jsTestDelegateToSharedSyntheticAttribute->wrapped()).ptr(), jsTestDelegateToSharedSyntheticAttribute);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -307,7 +307,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlo
 #if ENABLE(BINDING_INTEGRITY)
     verifyVTable<TestDelegateToSharedSyntheticAttribute>(impl.ptr());
 #endif
-    return createWrapper<TestDelegateToSharedSyntheticAttribute>(globalObject, WTFMove(impl));
+    return createWrapper<TestDelegateToSharedSyntheticAttribute>(globalObject, WTF::move(impl));
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDelegateToSharedSyntheticAttribute& impl)

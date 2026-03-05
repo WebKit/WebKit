@@ -16,14 +16,14 @@ info: |
 
   [...]
   10. Return -1.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
   var ta1 = new TA();
   assert.sameValue(ta1.indexOf(), -1);
 
-  var ta2 = new TA([0n, 1n, 2n]);
+  var ta2 = new TA(makeCtorArg([0n, 1n, 2n]));
   assert.sameValue(ta2.indexOf(), -1);
 });

@@ -46,7 +46,7 @@ static RemoteCommandListener::CreationFunction& remoteCommandListenerCreationFun
 
 void RemoteCommandListener::setCreationFunction(CreationFunction&& function)
 {
-    remoteCommandListenerCreationFunction() = WTFMove(function);
+    remoteCommandListenerCreationFunction() = WTF::move(function);
 }
 
 void RemoteCommandListener::resetCreationFunction()

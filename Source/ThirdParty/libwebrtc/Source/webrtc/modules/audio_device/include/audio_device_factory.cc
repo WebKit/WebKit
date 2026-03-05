@@ -12,6 +12,11 @@
 
 #include <memory>
 
+#include "api/audio/audio_device.h"
+#include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
+#include "rtc_base/logging.h"
+
 #if defined(WEBRTC_WIN)
 #include "modules/audio_device/win/audio_device_module_win.h"
 #include "modules/audio_device/win/core_audio_input_win.h"
@@ -19,23 +24,18 @@
 #include "modules/audio_device/win/core_audio_utility_win.h"
 #endif
 
-#include "api/task_queue/task_queue_factory.h"
-#include "rtc_base/logging.h"
-
 namespace webrtc {
 
 webrtc::scoped_refptr<AudioDeviceModule>
-CreateWindowsCoreAudioAudioDeviceModule(TaskQueueFactory* task_queue_factory,
+CreateWindowsCoreAudioAudioDeviceModule(const Environment& env,
                                         bool automatic_restart) {
   RTC_DLOG(LS_INFO) << __FUNCTION__;
-  return CreateWindowsCoreAudioAudioDeviceModuleForTest(task_queue_factory,
-                                                        automatic_restart);
+  return CreateWindowsCoreAudioAudioDeviceModuleForTest(env, automatic_restart);
 }
 
 webrtc::scoped_refptr<AudioDeviceModuleForTest>
-CreateWindowsCoreAudioAudioDeviceModuleForTest(
-    TaskQueueFactory* task_queue_factory,
-    bool automatic_restart) {
+CreateWindowsCoreAudioAudioDeviceModuleForTest(const Environment& env,
+                                               bool automatic_restart) {
   RTC_DLOG(LS_INFO) << __FUNCTION__;
   // Returns NULL if Core Audio is not supported or if COM has not been
   // initialized correctly using ScopedCOMInitializer.
@@ -45,9 +45,8 @@ CreateWindowsCoreAudioAudioDeviceModuleForTest(
     return nullptr;
   }
   return CreateWindowsCoreAudioAudioDeviceModuleFromInputAndOutput(
-      std::make_unique<webrtc_win::CoreAudioInput>(automatic_restart),
-      std::make_unique<webrtc_win::CoreAudioOutput>(automatic_restart),
-      task_queue_factory);
+      env, std::make_unique<webrtc_win::CoreAudioInput>(env, automatic_restart),
+      std::make_unique<webrtc_win::CoreAudioOutput>(env, automatic_restart));
 }
 
 }  // namespace webrtc

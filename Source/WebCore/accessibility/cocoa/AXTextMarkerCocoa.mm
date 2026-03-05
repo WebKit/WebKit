@@ -26,6 +26,8 @@
 #import "AXTextMarker.h"
 
 #import <Foundation/NSRange.h>
+#import <WebCore/AXLoggerBase.h>
+#import <WebCore/Logging.h>
 #import <wtf/StdLibExtras.h>
 
 #if PLATFORM(MAC)
@@ -47,12 +49,12 @@ AXTextMarker::AXTextMarker(PlatformTextMarkerData platformData)
 
 #if PLATFORM(MAC)
     if (CFGetTypeID(platformData) != AXTextMarkerGetTypeID()) {
-        ASSERT_NOT_REACHED();
+        AX_ASSERT_NOT_REACHED();
         return;
     }
 
     if (AXTextMarkerGetLength(platformData) != sizeof(m_data)) {
-        ASSERT_NOT_REACHED();
+        AX_ASSERT_NOT_REACHED();
         return;
     }
 
@@ -71,11 +73,11 @@ RetainPtr<PlatformTextMarkerData> AXTextMarker::platformData() const
 #endif
 }
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 // FIXME: There's a lot of duplicated code between this function and AXTextMarkerRange::toString().
 RetainPtr<NSAttributedString> AXTextMarkerRange::toAttributedString(AXCoreObject::SpellCheck spellCheck) const
 {
-    ASSERT(!isMainThread());
+    AX_ASSERT(!isMainThread());
 
     auto start = m_start.toTextRunMarker();
     if (!start.isValid())
@@ -115,44 +117,53 @@ RetainPtr<NSAttributedString> AXTextMarkerRange::toAttributedString(AXCoreObject
         if (result)
             [result appendAttributedString:string.autorelease()];
         else
-            result = WTFMove(string);
+            result = WTF::move(string);
     };
 
-    auto emitNewlineOnExit = [&] (AXIsolatedObject& object) {
-        // FIXME: This function should not just be emitting newlines, but instead handling every character type in TextEmissionBehavior.
+    auto emitExitCharacter = [&] (AXIsolatedObject& object) {
         auto behavior = object.textEmissionBehavior();
-        if (behavior != TextEmissionBehavior::Newline && behavior != TextEmissionBehavior::DoubleNewline)
+        if (behavior == TextEmissionBehavior::None)
             return;
 
         auto length = [result length];
-        // Like TextIterator, don't emit a newline if the most recently emitted character was already a newline.
-        if (length && [[result string] characterAtIndex:length - 1] != '\n') {
+        if (!length)
+            return;
+
+        NSString *exitString = nil;
+        if (behavior == TextEmissionBehavior::Tab)
+            exitString = @"\t";
+        else {
+            // Like TextIterator, don't emit a newline if the most recently emitted character was already a newline.
+            if ([[result string] characterAtIndex:length - 1] == '\n')
+                return;
             // FIXME: This is super inefficient. We are creating a whole new dictionary and attributed string just to append newline(s).
-            NSString *newlineString = behavior == TextEmissionBehavior::Newline ? @"\n" : @"\n\n";
-            RetainPtr<NSDictionary> attributes = [result attributesAtIndex:length - 1 effectiveRange:nil];
-            appendToResult(adoptNS([[NSMutableAttributedString alloc] initWithString:newlineString attributes:attributes.get()]));
+            exitString = behavior == TextEmissionBehavior::Newline ? @"\n" : @"\n\n";
         }
+        RetainPtr<NSDictionary> attributes = [result attributesAtIndex:length - 1 effectiveRange:nil];
+        appendToResult(adoptNS([[NSMutableAttributedString alloc] initWithString:exitString attributes:attributes.get()]));
     };
 
     // FIXME: If we've been given reversed markers, i.e. the end marker actually comes before the start marker,
     // we may want to detect this and try searching AXDirection::Previous?
-    RefPtr current = findObjectWithRuns(*startObject, AXDirection::Next, std::nullopt, emitNewlineOnExit);
+    RefPtr current = findObjectWithRuns(*startObject, AXDirection::Next, std::nullopt, emitExitCharacter);
     while (current && current->objectID() != end.objectID()) {
         appendToResult(current->createAttributedString(current->textRuns()->toStringView(), spellCheck));
-        current = findObjectWithRuns(*current, AXDirection::Next, std::nullopt, emitNewlineOnExit);
+        current = findObjectWithRuns(*current, AXDirection::Next, std::nullopt, emitExitCharacter);
     }
     appendToResult(end.isolatedObject()->createAttributedString(end.runs()->substring(0, end.offset()), spellCheck));
 
     return result;
 }
-#endif // ENABLE(AX_THREAD_TEXT_APIS)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #if PLATFORM(MAC)
 
 AXTextMarkerRange::AXTextMarkerRange(AXTextMarkerRangeRef textMarkerRangeRef)
 {
     if (!textMarkerRangeRef || CFGetTypeID(textMarkerRangeRef) != AXTextMarkerRangeGetTypeID()) {
-        ASSERT_NOT_REACHED();
+        // FIXME: This is hit on any webpage when using VoiceOver and then turning on Accessibility Inspector
+        // and trying to hit-test something.
+        AX_BROKEN_ASSERT_NOT_REACHED();
         return;
     }
 
@@ -193,7 +204,6 @@ RetainPtr<NSArray> AXTextMarkerRange::platformData() const
         return nil;
 
     RefPtr object = downcast<AccessibilityObject>(m_start.object());
-    ASSERT(object); // Since *this is not null.
     auto* cache = object->axObjectCache();
     if (!cache)
         return nil;

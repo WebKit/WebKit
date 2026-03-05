@@ -88,7 +88,7 @@ WK_EXPORT void WKTextCheckerGrammarCheckingEnabledStateChanged(bool);
 WK_EXPORT void WKTextCheckerCheckSpelling(WKPageRef page, bool startBeforeSelection);
 WK_EXPORT void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word);
 
-WK_EXPORT void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages);
+WK_EXPORT void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages, const size_t length);
 
 #endif // PLATFORM(GTK)
 

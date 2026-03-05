@@ -50,7 +50,7 @@ RemoteLayerWithRemoteRenderingBackingStore::RemoteLayerWithRemoteRenderingBackin
         return;
     }
 
-    lazyInitialize(m_bufferSet, collection->protectedLayerTreeContext()->ensureProtectedRemoteRenderingBackendProxy()->createImageBufferSet(*CheckedPtr { this }.get()));
+    lazyInitialize(m_bufferSet, protect(protect(collection->layerTreeContext())->ensureRemoteRenderingBackendProxy())->createImageBufferSet(*CheckedPtr { this }));
 }
 
 RemoteLayerWithRemoteRenderingBackingStore::~RemoteLayerWithRemoteRenderingBackingStore()
@@ -101,6 +101,13 @@ std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithRemoteRenderingB
     return m_bufferSet->flushFrontBufferAsync(flushType);
 }
 
+void RemoteLayerWithRemoteRenderingBackingStore::submitDrawingCommands()
+{
+    if (!m_bufferSet)
+        return;
+    return m_bufferSet->submitDrawingCommands();
+}
+
 void RemoteLayerWithRemoteRenderingBackingStore::createContextAndPaintContents()
 {
     RefPtr bufferSet = m_bufferSet;
@@ -141,7 +148,7 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
             .includeDisplayList = m_parameters.includeDisplayList,
 #endif
         };
-        m_bufferSet->setConfiguration(WTFMove(configuration));
+        m_bufferSet->setConfiguration(WTF::move(configuration));
     }
 }
 

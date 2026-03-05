@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x89
-  RenderBlock {HTML} at (0,0) size 800x89
-    RenderBody {BODY} at (8,16) size 784x57
-      RenderBlock {UL} at (0,0) size 784x57
-        RenderListItem {LI} at (40,0) size 744x57
-          RenderBlock {FORM} at (0,0) size 744x21
-            RenderBlock {P} at (0,0) size 744x21
-              RenderListMarker at (-18,0) size 7x19: bullet
-              RenderTextControl {INPUT} at (0,1) size 294x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+layer at (0,0) size 800x90
+  RenderBlock {HTML} at (0,0) size 800x90
+    RenderBody {BODY} at (8,16) size 784x58
+      RenderBlock {UL} at (0,0) size 784x58
+        RenderListItem {LI} at (40,0) size 744x58
+          RenderBlock {FORM} at (0,0) size 744x22
+            RenderBlock {P} at (0,0) size 744x22
+              RenderListMarker at (-18,0) size 7x20: bullet
+              RenderTextControl {INPUT} at (0,1) size 294x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
               RenderText {#text} at (0,0) size 0x0
-          RenderBlock {P} at (0,37) size 744x20
-            RenderText {#text} at (0,0) size 340x19
+          RenderBlock {P} at (0,37) size 744x21
+            RenderText {#text} at (0,0) size 340x20
               text run at (0,0) width 340: "There should be an input field above this line of text."
-layer at (54,20) size 282x14
+layer at (54,21) size 282x14
   RenderBlock {DIV} at (6,3) size 282x14
     RenderText {#text} at (0,0) size 56x14
       text run at (0,0) width 56: "blah blubb"

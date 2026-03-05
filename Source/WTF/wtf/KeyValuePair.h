@@ -42,8 +42,8 @@ struct KeyValuePair {
     }
 
     KeyValuePair(KeyTypeArg&& key, ValueTypeArg&& value)
-        : key(WTFMove(key))
-        , value(WTFMove(value))
+        : key(WTF::move(key))
+        , value(WTF::move(value))
     {
     }
 

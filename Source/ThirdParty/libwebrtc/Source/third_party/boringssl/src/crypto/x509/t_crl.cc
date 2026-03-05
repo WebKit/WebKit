@@ -21,9 +21,9 @@
 #include <openssl/x509.h>
 
 
-int X509_CRL_print_fp(FILE *fp, X509_CRL *x) {
+int X509_CRL_print_fp(FILE *fp, const X509_CRL *x) {
   BIO *b = BIO_new_fp(fp, BIO_NOCLOSE);
-  if (b == NULL) {
+  if (b == nullptr) {
     OPENSSL_PUT_ERROR(X509, ERR_R_BUF_LIB);
     return 0;
   }
@@ -32,7 +32,7 @@ int X509_CRL_print_fp(FILE *fp, X509_CRL *x) {
   return ret;
 }
 
-int X509_CRL_print(BIO *out, X509_CRL *x) {
+int X509_CRL_print(BIO *out, const X509_CRL *x) {
   long version = X509_CRL_get_version(x);
   assert(X509_CRL_VERSION_1 <= version && version <= X509_CRL_VERSION_2);
   const X509_ALGOR *sig_alg;
@@ -44,12 +44,13 @@ int X509_CRL_print(BIO *out, X509_CRL *x) {
       // Note this and the other |X509_signature_print| call both print the
       // outer signature algorithm, rather than printing the inner and outer
       // ones separately. This matches OpenSSL, though it was probably a bug.
-      !X509_signature_print(out, sig_alg, NULL)) {
+      !X509_signature_print(out, sig_alg, nullptr)) {
     return 0;
   }
 
-  char *issuer = X509_NAME_oneline(X509_CRL_get_issuer(x), NULL, 0);
-  int ok = issuer != NULL && BIO_printf(out, "%8sIssuer: %s\n", "", issuer) > 0;
+  char *issuer = X509_NAME_oneline(X509_CRL_get_issuer(x), nullptr, 0);
+  int ok =
+      issuer != nullptr && BIO_printf(out, "%8sIssuer: %s\n", "", issuer) > 0;
   OPENSSL_free(issuer);
   if (!ok) {
     return 0;
@@ -76,7 +77,9 @@ int X509_CRL_print(BIO *out, X509_CRL *x) {
     return 0;
   }
 
-  const STACK_OF(X509_REVOKED) *rev = X509_CRL_get_REVOKED(x);
+  // TODO(crbug.com/442860745): |X509_CRL_get_REVOKED| is not const-correct.
+  const STACK_OF(X509_REVOKED) *rev =
+      X509_CRL_get_REVOKED(const_cast<X509_CRL *>(x));
   if (sk_X509_REVOKED_num(rev) > 0) {
     if (BIO_printf(out, "Revoked Certificates:\n") <= 0) {
       return 0;

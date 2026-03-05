@@ -89,11 +89,18 @@ struct SVGResourcesMap {
     MemoryCompactRobinHoodHashMap<AtomString, SingleThreadWeakPtr<LegacyRenderSVGResourceContainer>> legacyResources;
 };
 
+struct NodesInCommonTreeScope {
+    SUPPRESS_UNCOUNTED_MEMBER TreeScope* treeScope { nullptr };
+    SUPPRESS_UNCOUNTED_MEMBER Node* nodeA { nullptr };
+    SUPPRESS_UNCOUNTED_MEMBER Node* nodeB { nullptr };
+};
+static NodesInCommonTreeScope NODELETE findNodesInCommonTreeScope(Node*, Node*);
+
 TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document, RefPtr<CustomElementRegistry>&& registry)
     : m_rootNode(shadowRoot)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
-    , m_customElementRegistry(WTFMove(registry))
+    , m_customElementRegistry(WTF::move(registry))
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -151,7 +158,7 @@ void TreeScope::setParentTreeScope(TreeScope& newParentScope)
 
 void TreeScope::setCustomElementRegistry(RefPtr<CustomElementRegistry>&& registry)
 {
-    m_customElementRegistry = WTFMove(registry);
+    m_customElementRegistry = WTF::move(registry);
 }
 
 RefPtr<Element> TreeScope::getElementById(const AtomString& elementId) const
@@ -243,33 +250,9 @@ void TreeScope::removeElementByName(const AtomString& name, Element& element)
 
 Ref<Node> TreeScope::retargetToScope(Node& node) const
 {
-    auto& scope = node.treeScope();
-    if (this == &scope || !node.isInShadowTree()) [[likely]]
-        return node;
-    ASSERT(is<ShadowRoot>(scope.rootNode()));
-
-    Vector<TreeScope*, 8> nodeTreeScopes;
-    for (auto* currentScope = &scope; currentScope; currentScope = currentScope->parentTreeScope())
-        nodeTreeScopes.append(currentScope);
-    ASSERT(nodeTreeScopes.size() >= 2);
-
-    Vector<const TreeScope*, 8> ancestorScopes;
-    for (auto* currentScope = this; currentScope; currentScope = currentScope->parentTreeScope())
-        ancestorScopes.append(currentScope);
-
-    auto i = nodeTreeScopes.size();
-    auto j = ancestorScopes.size();
-    while (i > 0 && j > 0 && nodeTreeScopes[i - 1] == ancestorScopes[j - 1]) {
-        --i;
-        --j;
-    }
-
-    bool nodeIsInOuterTreeScope = !i;
-    if (nodeIsInOuterTreeScope)
-        return node;
-
-    auto& shadowRootInLowestCommonTreeScope = downcast<ShadowRoot>(nodeTreeScopes[i - 1]->rootNode());
-    return *shadowRootInLowestCommonTreeScope.host();
+    ASSERT(findNodesInCommonTreeScope(&rootNode(), &node).nodeB == findNodesInCommonTreeScope(&node, &rootNode()).nodeA);
+    auto* nodeInCommonAncestorTreeScope = findNodesInCommonTreeScope(&rootNode(), &node).nodeB;
+    return nodeInCommonAncestorTreeScope ? *nodeInCommonAncestorTreeScope : node;
 }
 
 Node* TreeScope::ancestorNodeInThisScope(Node* node) const
@@ -383,7 +366,7 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
         document.updateLayout();
         if (!document.view() || !document.hasLivingRenderTree())
             return std::nullopt;
-        auto* view = document.view();
+        RefPtr view = document.view();
         FloatPoint layoutViewportPoint = view->clientToLayoutViewportPoint(clientPoint);
         FloatRect layoutViewportBounds({ }, view->layoutViewportRect().size());
         if (!layoutViewportBounds.contains(layoutViewportPoint))
@@ -391,8 +374,8 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
         return LayoutPoint(view->layoutViewportToAbsolutePoint(layoutViewportPoint));
     }
 
-    auto* frame = document.frame();
-    auto* view = document.view();
+    RefPtr frame = document.frame();
+    CheckedPtr view = document.view();
     float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
 
     LayoutPoint absolutePoint = clientPoint;
@@ -426,7 +409,7 @@ RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoin
 
 RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY, HitTestSource source)
 {
-    if (!protectedDocumentScope()->hasLivingRenderTree())
+    if (!protect(documentScope())->hasLivingRenderTree())
         return nullptr;
 
     auto node = nodeFromPoint(LayoutPoint { clientX, clientY }, nullptr, source);
@@ -441,12 +424,12 @@ RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY, HitT
         node = retargetToScope(*node);
     }
 
-    return uncheckedDowncast<Element>(WTFMove(node));
+    return uncheckedDowncast<Element>(WTF::move(node));
 }
 
-Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clientY, HitTestSource source)
+Vector<Ref<Element>> TreeScope::elementsFromPoint(double clientX, double clientY, HitTestSource source)
 {
-    Vector<RefPtr<Element>> elements;
+    Vector<Ref<Element>> elements;
 
     Ref document = documentScope();
     if (!document->hasLivingRenderTree())
@@ -482,7 +465,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
         if (!node)
             continue;
 
-        if (auto pseudoElement = dynamicDowncast<PseudoElement>(*node))
+        if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(*node))
             node = pseudoElement->hostElement();
 
         // Prune duplicate entries. A pseudo ::before content above its parent
@@ -490,14 +473,14 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
         if (node == lastNode)
             continue;
 
-        elements.append(uncheckedDowncast<Element>(node));
+        elements.append(uncheckedDowncast<Element>(*node));
         lastNode = node;
     }
 
     if (auto* rootDocument = dynamicDowncast<Document>(m_rootNode.get())) {
-        if (Element* rootElement = rootDocument->documentElement()) {
-            if (elements.isEmpty() || elements.last() != rootElement)
-                elements.append(rootElement);
+        if (RefPtr rootElement = rootDocument->documentElement()) {
+            if (elements.isEmpty() || elements.last().ptr() != rootElement)
+                elements.append(*rootElement);
         }
     }
 
@@ -536,7 +519,7 @@ bool TreeScope::isMatchingAnchor(HTMLAnchorElement& anchor, StringView name)
     return false;
 }
 
-static Element* focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* currentFrame)
+static Element* NODELETE focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* currentFrame)
 {
     for (; focusedFrame; focusedFrame = focusedFrame->tree().parent()) {
         if (focusedFrame->tree().parent() == currentFrame)
@@ -547,66 +530,98 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* curren
 
 Element* TreeScope::focusedElementInScope()
 {
-    Ref document = documentScope();
-    RefPtr element = document->focusedElement();
+    auto& document = documentScope();
+    auto* element = document.focusedElement();
 
-    if (!element && document->page())
-        element = focusedFrameOwnerElement(document->page()->focusController().focusedFrame(), document->frame());
+    if (!element && document.page())
+        element = focusedFrameOwnerElement(document.page()->focusController().focusedFrame(), document.frame());
 
-    return ancestorElementInThisScope(element.get());
+    return ancestorElementInThisScope(element);
 }
 
 #if ENABLE(POINTER_LOCK)
 
 Element* TreeScope::pointerLockElement() const
 {
-    Document& document = documentScope();
-    Page* page = document.page();
+    CheckedRef document = documentScope();
+    RefPtr page = document->page();
     if (!page || page->pointerLockController().lockPending())
         return nullptr;
-    auto* element = page->pointerLockController().element();
-    if (!element || &element->document() != &document)
+    RefPtr element = page->pointerLockController().element();
+    if (!element || &element->document() != document.ptr())
         return nullptr;
-    return ancestorElementInThisScope(element);
+    return ancestorElementInThisScope(element.get());
 }
 
 #endif
 
-static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)
+static ALWAYS_INLINE Node* host(TreeScope& treeScope)
 {
-    while (true) {
-        treeScopes.append(&node->treeScope());
-        Element* ancestor = node->shadowHost();
-        if (!ancestor)
-            break;
-        node = ancestor;
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope.rootNode()))
+        return shadowRoot->host();
+    return nullptr;
+}
+
+static NodesInCommonTreeScope findNodesInCommonTreeScope(Node* nodeA, Node* nodeB)
+{
+    if (!nodeA || !nodeB)
+        return { nullptr, nullptr, nullptr };
+
+    if (&nodeA->treeScope() == &nodeB->treeScope())
+        return { &nodeA->treeScope(), nodeA, nodeB };
+
+    if (&nodeA->document() != &nodeB->document())
+        return { nullptr, nullptr, nullptr };
+
+    unsigned depthA = 0;
+    Node* currentNodeA = nodeA;
+    for (auto* treeScope = &nodeA->treeScope(); treeScope; treeScope = treeScope->parentTreeScope()) {
+        if (treeScope == &nodeB->treeScope())
+            return { treeScope, currentNodeA, nodeB };
+        depthA++;
+        currentNodeA = host(*treeScope);
     }
+
+    unsigned depthB = 0;
+    Node* currentNodeB = nodeB;
+    for (auto* treeScope = &nodeB->treeScope(); treeScope; treeScope = treeScope->parentTreeScope()) {
+        if (treeScope == &nodeA->treeScope())
+            return { treeScope, nodeA, currentNodeB };
+        depthB++;
+        currentNodeB = host(*treeScope);
+    }
+
+    if (depthA > depthB) {
+        for (auto* treeScope = &nodeA->treeScope(); treeScope && depthA > depthB; treeScope = treeScope->parentTreeScope()) {
+            nodeA = host(*treeScope);
+            depthA--;
+        }
+    } else {
+        for (auto* treeScope = &nodeB->treeScope(); treeScope && depthB > depthA; treeScope = treeScope->parentTreeScope()) {
+            nodeB = host(*treeScope);
+            depthB--;
+        }
+    }
+    ASSERT(nodeA && nodeB);
+    ASSERT(depthA == depthB);
+    auto* treeScopeA = &nodeA->treeScope();
+    auto* treeScopeB = &nodeB->treeScope();
+    while (treeScopeA && treeScopeB) {
+        if (treeScopeA == treeScopeB)
+            return { treeScopeA, nodeA, nodeB };
+        nodeA = host(*treeScopeA);
+        nodeB = host(*treeScopeB);
+        treeScopeA = treeScopeA->parentTreeScope();
+        treeScopeB = treeScopeB->parentTreeScope();
+    }
+
+    ASSERT_NOT_REACHED(); // If they didn't share the root, document equality check above should have failed.
+    return { nullptr, nullptr, nullptr };
 }
 
 TreeScope* commonTreeScope(Node* nodeA, Node* nodeB)
 {
-    if (!nodeA || !nodeB)
-        return nullptr;
-
-    if (&nodeA->treeScope() == &nodeB->treeScope())
-        return &nodeA->treeScope();
-
-    Vector<TreeScope*, 5> treeScopesA;
-    listTreeScopes(nodeA, treeScopesA);
-
-    Vector<TreeScope*, 5> treeScopesB;
-    listTreeScopes(nodeB, treeScopesB);
-
-    size_t indexA = treeScopesA.size();
-    size_t indexB = treeScopesB.size();
-
-    for (; indexA > 0 && indexB > 0 && treeScopesA[indexA - 1] == treeScopesB[indexB - 1]; --indexA, --indexB) { }
-
-    // If the nodes had no common tree scope, return immediately.
-    if (indexA == treeScopesA.size())
-        return nullptr;
-    
-    return treeScopesA[indexA] == treeScopesB[indexB] ? treeScopesA[indexA] : nullptr;
+    return findNodesInCommonTreeScope(nodeA, nodeB).treeScope;
 }
 
 RadioButtonGroups& TreeScope::radioButtonGroups()
@@ -637,7 +652,7 @@ ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&& 
 {
     if (!m_adoptedStyleSheets && sheets.isEmpty())
         return { };
-    return ensureAdoptedStyleSheets().setSheets(WTFMove(sheets));
+    return ensureAdoptedStyleSheets().setSheets(WTF::move(sheets));
 }
 
 SVGResourcesMap& TreeScope::svgResourcesMap() const
@@ -656,12 +671,15 @@ void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceCont
     svgResourcesMap().legacyResources.set(id, &resource);
 }
 
-void TreeScope::removeSVGResource(const AtomString& id)
+void TreeScope::removeSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
 {
     if (id.isEmpty())
         return;
 
-    svgResourcesMap().legacyResources.remove(id);
+    auto& resources = svgResourcesMap().legacyResources;
+    auto it = resources.find(id);
+    if (it != resources.end() && it->value == &resource)
+        resources.remove(it);
 }
 
 LegacyRenderSVGResourceContainer* TreeScope::lookupLegacySVGResoureById(const AtomString& id) const
@@ -670,7 +688,7 @@ LegacyRenderSVGResourceContainer* TreeScope::lookupLegacySVGResoureById(const At
         return nullptr;
 
     if (auto resource = svgResourcesMap().legacyResources.get(id))
-        return resource.get();
+        return resource;
 
     return nullptr;
 }
@@ -698,7 +716,9 @@ bool TreeScope::isElementWithPendingSVGResources(SVGElement& element) const
 {
     // This algorithm takes time proportional to the number of pending resources and need not.
     // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
-    return std::ranges::any_of(svgResourcesMap().pendingResources.values(), std::bind(&WeakSVGElementSet::contains<SVGElement>, std::placeholders::_1, std::ref(element)));
+    return std::ranges::any_of(svgResourcesMap().pendingResources.values(), [&] (const WeakSVGElementSet& set) {
+        return set.contains(element);
+    });
 }
 
 bool TreeScope::isPendingSVGResource(SVGElement& element, const AtomString& id) const
@@ -767,7 +787,7 @@ void TreeScope::markPendingSVGResourcesForRemoval(const AtomString& id)
 
     auto existing = svgResourcesMap().pendingResources.take(id);
     if (!existing.isEmptyIgnoringNullReferences())
-        svgResourcesMap().pendingResourcesForRemoval.add(id, WTFMove(existing));
+        svgResourcesMap().pendingResourcesForRemoval.add(id, WTF::move(existing));
 }
 
 RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(const AtomString& id)
@@ -790,11 +810,6 @@ RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(co
         svgResourcesMap().pendingResourcesForRemoval.remove(id);
 
     return firstElement;
-}
-
-Ref<Document> TreeScope::protectedDocumentScope() const
-{
-    return m_documentScope.get();
 }
 
 } // namespace WebCore

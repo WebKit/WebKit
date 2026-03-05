@@ -161,7 +161,7 @@ NetworkControlUpdate PccNetworkController::OnSentPacket(SentPacket msg) {
       received_size += last_received_packets_[i].sent_packet.size;
     }
     TimeDelta sending_time = TimeDelta::Zero();
-    if (last_received_packets_.size() > 0)
+    if (!last_received_packets_.empty())
       sending_time = last_received_packets_.back().receive_time -
                      last_received_packets_.front().receive_time;
     DataRate receiving_rate = bandwidth_estimate_;
@@ -179,7 +179,7 @@ NetworkControlUpdate PccNetworkController::OnSentPacket(SentPacket msg) {
       received_size += last_received_packets_[i].sent_packet.size;
     }
     TimeDelta sending_time = TimeDelta::Zero();
-    if (last_received_packets_.size() > 0)
+    if (!last_received_packets_.empty())
       sending_time = last_received_packets_.back().receive_time -
                      last_received_packets_.front().receive_time;
     DataRate receiving_rate = bandwidth_estimate_;

@@ -75,7 +75,7 @@ inline Vector<FloatSegment> differenceWithDilation(FloatSegment a, Vector<FloatS
     bs.shrink(result - bs.begin());
     if (a.length() > dilationAmount)
         bs.append(a);
-    return WTFMove(bs);
+    return WTF::move(bs);
 }
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, FloatSegment);

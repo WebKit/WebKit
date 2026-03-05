@@ -37,7 +37,7 @@
 namespace WebCore::WebGPU {
 
 XRBindingImpl::XRBindingImpl(WebGPUPtr<WGPUXRBinding>&& binding, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(WTFMove(binding))
+    : m_backing(WTF::move(binding))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
@@ -64,7 +64,7 @@ RefPtr<XRSubImage> XRBindingImpl::getSubImage(XRProjectionLayer&, WebCore::WebXR
 
 RefPtr<XRSubImage> XRBindingImpl::getViewSubImage(XRProjectionLayer& projectionLayer)
 {
-    auto& projectionLayerImpl = static_cast<XRProjectionLayerImpl&>(projectionLayer);
+    auto& projectionLayerImpl = downcast<XRProjectionLayerImpl>(projectionLayer);
     return XRSubImageImpl::create(adoptWebGPU(wgpuBindingGetViewSubImage(m_backing.get(), projectionLayerImpl.backing())), Ref { m_convertToBackingContext });
 }
 

@@ -1,5 +1,0 @@
-outer span container span start
-container span end outer span end
-
-FAIL absolute inside inline container location should be correct. assert_equals: left matches container expected 69 but got 0
-

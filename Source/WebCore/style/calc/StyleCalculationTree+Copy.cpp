@@ -63,12 +63,12 @@ std::optional<Child> copy(const std::optional<Child>& root)
     return std::nullopt;
 }
 
-Random::Fixed copy(const Random::Fixed& root)
+Random::Fixed NODELETE copy(const Random::Fixed& root)
 {
     return root;
 }
 
-CSS::Keyword::None copy(const CSS::Keyword::None& none)
+CSS::Keyword::None NODELETE copy(const CSS::Keyword::None& none)
 {
     return none;
 }
@@ -88,7 +88,7 @@ Child copy(const Child& root)
     return WTF::switchOn(root, [&](const auto& root) { return copy(root); });
 }
 
-template<Leaf Op> Child copy(const Op& root)
+template<Leaf Op> Child NODELETE copy(const Op& root)
 {
     return { root };
 }

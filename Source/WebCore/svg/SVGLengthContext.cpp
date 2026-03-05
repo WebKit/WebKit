@@ -31,8 +31,9 @@
 #include "FontMetrics.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include "StyleLengthResolution.h"
@@ -194,9 +195,9 @@ float SVGLengthContext::valueForLength(const Style::SVGStrokeDashoffset& size, S
     return valueForSizeType(size, zoomNeeded, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::StrokeWidth& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::StrokeWidth& size, Style::ZoomFactor usedZoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, zoomNeeded, lengthMode);
+    return valueForSizeType(size, usedZoom, lengthMode);
 }
 
 float SVGLengthContext::computeNonCalcLength(float inputValue, CSS::LengthUnit unit) const
@@ -325,7 +326,7 @@ float SVGLengthContext::convertValueFromPercentageToUserUnits(float value, SVGLe
     return value * dimensionForLengthMode(lengthMode, viewportSize);
 }
 
-static inline const RenderStyle* renderStyleForLengthResolving(const SVGElement* context)
+static inline const RenderStyle* NODELETE renderStyleForLengthResolving(const SVGElement* context)
 {
     if (!context)
         return nullptr;
@@ -377,14 +378,9 @@ std::optional<CSSToLengthConversionData> SVGLengthContext::cssConversionData() c
     };
 }
 
-RefPtr<const SVGElement> SVGLengthContext::protectedContext() const
-{
-    return m_context.get();
-}
-
 ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value) const
 {
-    auto* style = renderStyleForLengthResolving(protectedContext().get());
+    auto* style = renderStyleForLengthResolving(protect(m_context).get());
     if (!style)
         return Exception { ExceptionCode::NotSupportedError };
 
@@ -399,7 +395,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value)
 
 ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value) const
 {
-    auto* style = renderStyleForLengthResolving(protectedContext().get());
+    auto* style = renderStyleForLengthResolving(protect(m_context).get());
     if (!style)
         return Exception { ExceptionCode::NotSupportedError };
 
@@ -421,6 +417,8 @@ std::optional<FloatSize> SVGLengthContext::viewportSize() const
 
 std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
 {
+    using ViewportElementType = SVGElement::ViewportElementType;
+
     ASSERT(m_context);
 
     // Root <svg> element lengths are resolved against the top level viewport,
@@ -430,10 +428,10 @@ std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
     // applies zooming/panning for the whole SVG subtree as affine transform. Therefore
     // any length within the SVG subtree needs to exclude the 'zoom' information.
     if (m_context->isOutermostSVGSVGElement())
-        return downcast<SVGSVGElement>(*protectedContext()).currentViewportSizeExcludingZoom();
+        return downcast<SVGSVGElement>(*protect(m_context)).currentViewportSizeExcludingZoom();
 
-    // Take size from nearest viewport element.
-    RefPtr svg = dynamicDowncast<SVGSVGElement>(m_context->viewportElement());
+    // Take size from nearest SVGSVGElement, skipping over <symbol> elements.
+    RefPtr svg = dynamicDowncast<SVGSVGElement>(m_context->viewportElement(ViewportElementType::SVGSVGOnly));
     if (!svg)
         return std::nullopt;
 

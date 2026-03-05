@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include <WebCore/CSSValueList.h>
+#include "CSSValueList.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -63,7 +63,7 @@ void GamepadProviderWPE::gamepadConnected(WPEGamepad* gamepad, IsInitialDevice i
         m_gamepadVector.grow(index + 1);
 
     m_gamepadVector[index] = device.get();
-    m_gamepadMap.add(gamepad, WTFMove(device));
+    m_gamepadMap.add(gamepad, WTF::move(device));
 
     if (m_isMonitoringInput)
         wpe_gamepad_start_input_monitor(gamepad);

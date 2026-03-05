@@ -44,8 +44,7 @@ public:
     {
     }
 
-    LocalFrame& frame() const { return m_frame.get(); }
-    Ref<LocalFrame> protectedFrame() const { return m_frame.get(); }
+    LocalFrame& frame() const { return m_frame; }
 
 protected:
     bool shouldSanitize() const;
@@ -74,7 +73,6 @@ public:
     void addFragment(Ref<DocumentFragment>&&);
     RefPtr<DocumentFragment> takeFragment() { return std::exchange(m_fragment, nullptr); }
     DocumentFragment* fragment() const { return m_fragment.get(); }
-    RefPtr<DocumentFragment> protectedFragment() const { return m_fragment; }
 
     bool madeFragmentFromPlainText() const { return m_madeFragmentFromPlainText; }
 

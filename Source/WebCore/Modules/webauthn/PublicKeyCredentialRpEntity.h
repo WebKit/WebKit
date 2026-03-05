@@ -32,9 +32,11 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+
 struct PublicKeyCredentialRpEntity : public PublicKeyCredentialEntity {
     mutable String id;
 };
+
 }
 
 #endif // ENABLE(WEB_AUTHN)

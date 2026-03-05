@@ -205,5 +205,6 @@ TEST_P(VulkanMultithreadingTest, MultiContextDrawSmallDescriptorPools)
 }
 
 ANGLE_INSTANTIATE_TEST(VulkanMultithreadingTest, ES2_VULKAN(), ES3_VULKAN());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanMultithreadingTest);
 
 }  // namespace angle

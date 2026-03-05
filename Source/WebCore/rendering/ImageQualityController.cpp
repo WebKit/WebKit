@@ -33,7 +33,7 @@
 #include "Page.h"
 #include "RenderBoxModelObject.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -156,7 +156,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
     }
 
     // If the containing FrameView is being resized, paint at low quality until resizing is finished.
-    if (auto* frame = object->document().frame()) {
+    if (RefPtr frame = object->document().frame()) {
         bool frameViewIsCurrentlyInLiveResize = frame->view() && frame->view()->inLiveResize();
         if (frameViewIsCurrentlyInLiveResize) {
             set(object, innerMap, layer, size);

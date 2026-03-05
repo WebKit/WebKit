@@ -57,6 +57,10 @@ bool AccessibilityController::addNotificationListener(JSContextRef context, JSVa
     if (m_globalNotificationHandler)
         return false;
 
+    // Ensure the accessibility tree is built before we start observing
+    // notifications, otherwise notifications may never be posted.
+    _WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context));
+
     m_globalNotificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] initWithContext:context]);
     [m_globalNotificationHandler setCallback:functionCallback];
     [m_globalNotificationHandler startObserving];

@@ -51,7 +51,7 @@ public:
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
 
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&&);
-    void applyConstraintsFailed(WebCore::MediaConstraintType invalidConstraint, String&& errorMessage) { m_proxy.applyConstraintsFailed(invalidConstraint, WTFMove(errorMessage)); }
+    void applyConstraintsFailed(WebCore::MediaConstraintType invalidConstraint, String&& errorMessage) { m_proxy.applyConstraintsFailed(invalidConstraint, WTF::move(errorMessage)); }
 
     void captureStopped(bool didFail);
     void sourceMutedChanged(bool value, bool interrupted);
@@ -68,13 +68,13 @@ protected:
     RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&&, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, std::optional<WebCore::PageIdentifier>);
     void createRemoteMediaSource();
 
-    RemoteRealtimeMediaSourceProxy& proxy() { return m_proxy; }
+    RemoteRealtimeMediaSourceProxy& proxy() LIFETIME_BOUND { return m_proxy; }
     inline UserMediaCaptureManager& manager(); // Defined in RemoteRealtimeMediaSourceInlines.h.
 
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
 
-    const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
-    const WebCore::RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
+    const WebCore::RealtimeMediaSourceSettings& settings() LIFETIME_BOUND final { return m_settings; }
+    const WebCore::RealtimeMediaSourceCapabilities& capabilities() LIFETIME_BOUND final { return m_capabilities; }
 
     Ref<TakePhotoNativePromise> takePhoto(WebCore::PhotoSettings&&) final;
     Ref<PhotoCapabilitiesNativePromise> getPhotoCapabilities() final;
@@ -88,7 +88,7 @@ private:
     void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;
     void stopProducingData() final;
     void didEnd() final;
-    void whenReady(CompletionHandler<void(WebCore::CaptureSourceError&&)>&& callback) final { m_proxy.whenReady(WTFMove(callback)); }
+    void whenReady(CompletionHandler<void(WebCore::CaptureSourceError&&)>&& callback) final { m_proxy.whenReady(WTF::move(callback)); }
     WebCore::CaptureDevice::DeviceType deviceType() const final { return m_proxy.deviceType(); }
     bool interrupted() const final { return m_proxy.interrupted(); }
     bool isPowerEfficient() const final { return m_proxy.isPowerEfficient(); }

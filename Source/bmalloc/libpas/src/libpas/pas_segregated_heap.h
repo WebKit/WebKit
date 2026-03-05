@@ -66,11 +66,13 @@ typedef enum pas_segregated_heap_medium_size_directory_search_mode pas_segregate
 struct pas_heap;
 struct pas_segregated_size_directory;
 struct pas_segregated_heap;
+struct pas_segregated_heap_medium_directory_result;
 struct pas_segregated_heap_medium_directory_tuple;
 struct pas_segregated_heap_rare_data;
 typedef struct pas_heap pas_heap;
 typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_segregated_heap pas_segregated_heap;
+typedef struct pas_segregated_heap_medium_directory_result pas_segregated_heap_medium_directory_result;
 typedef struct pas_segregated_heap_medium_directory_tuple pas_segregated_heap_medium_directory_tuple;
 typedef struct pas_segregated_heap_rare_data pas_segregated_heap_rare_data;
 
@@ -124,6 +126,20 @@ struct pas_segregated_heap_medium_directory_tuple {
                                                                made this "begin_index_plus_one" or something
                                                                like that) */
     pas_segregated_heap_medium_directory_index end_index; /* inclusive */
+};
+
+struct pas_segregated_heap_medium_directory_result {
+    /* This field is super dangerous to use - it's only reliable in the following ways:
+
+       - It's not NULL if we found an entry. But you could also determine that by looking at whether
+         `directory` is not NULL or `allocator_index` is not zero.
+
+       - It'll point to what you want it to point to if you were holding the heap lock the entire time
+         that you were performing the medium directory query. */
+    pas_segregated_heap_medium_directory_tuple* tuple_unsafe_without_lock;
+
+    pas_segregated_size_directory* directory;
+    pas_allocator_index allocator_index;
 };
 
 struct pas_segregated_heap_rare_data {
@@ -205,7 +221,16 @@ PAS_API bool pas_segregated_heap_index_is_greater_equal_cached_index_and_cached_
     size_t index,
     const pas_heap_config* config);
 
-PAS_API pas_segregated_heap_medium_directory_tuple*
+static inline pas_segregated_heap_medium_directory_result pas_segregated_heap_medium_directory_result_create_empty(void)
+{
+    pas_segregated_heap_medium_directory_result result;
+    result.tuple_unsafe_without_lock = NULL;
+    result.directory = NULL;
+    result.allocator_index = 0;
+    return result;
+}
+
+PAS_API pas_segregated_heap_medium_directory_result
 pas_segregated_heap_medium_directory_tuple_for_index(
     pas_segregated_heap* heap,
     size_t index,

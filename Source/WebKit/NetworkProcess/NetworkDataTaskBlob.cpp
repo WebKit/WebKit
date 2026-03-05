@@ -74,7 +74,7 @@ static RefPtr<BlobData> blobDataFrom(NetworkSession& session, const WebCore::Res
     return session.blobRegistry().blobDataFromURL(request.url(), topOriginData);
 }
 
-NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& request, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences, const RefPtr<SecurityOrigin>& topOrigin)
+NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& request, const Vector<Ref<WebCore::BlobDataFileReference>>& fileReferences, const RefPtr<SecurityOrigin>& topOrigin)
     : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false, false, false)
     , BlobResourceHandleBase(true /* async */, blobDataFrom(session, request, topOrigin.get()))
     , m_fileReferences(fileReferences)
@@ -142,7 +142,7 @@ bool NetworkDataTaskBlob::erroredOrAborted() const
 
 void NetworkDataTaskBlob::didReceiveResponse(ResourceResponse&& response)
 {
-    NetworkDataTask::didReceiveResponse(WTFMove(response), NegotiatedLegacyTLS::No, PrivateRelayed::No, std::nullopt, [this, protectedThis = Ref { *this }](PolicyAction policyAction) {
+    NetworkDataTask::didReceiveResponse(WTF::move(response), NegotiatedLegacyTLS::No, PrivateRelayed::No, std::nullopt, [this, protectedThis = Ref { *this }](PolicyAction policyAction) {
         LOG(NetworkSession, "%p - NetworkDataTaskBlob::didReceiveResponse completionHandler (%s)", this, toString(policyAction).characters());
 
         if (m_state == State::Canceling || m_state == State::Completed) {
@@ -175,7 +175,7 @@ bool NetworkDataTaskBlob::didReceiveData(std::span<const uint8_t> data)
             return false;
     } else {
         ASSERT(m_client);
-        protectedClient()->didReceiveData(SharedBuffer::create(data));
+        protect(client())->didReceiveData(SharedBuffer::create(data));
     }
     return true;
 }
@@ -185,7 +185,7 @@ void NetworkDataTaskBlob::setPendingDownloadLocation(const String& filename, San
     NetworkDataTask::setPendingDownloadLocation(filename, { }, allowOverwrite);
 
     ASSERT(!m_sandboxExtension);
-    m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
+    m_sandboxExtension = SandboxExtension::create(WTF::move(sandboxExtensionHandle));
     if (RefPtr extension = m_sandboxExtension)
         extension->consume();
 
@@ -213,7 +213,7 @@ void NetworkDataTaskBlob::download()
     }
 
     CheckedRef downloadManager = m_networkProcess->downloadManager();
-    Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *checkedNetworkSession(), suggestedFilename());
+    Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *protect(networkSession()), suggestedFilename());
     downloadManager->dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
     download->didCreateDestination(m_pendingDownloadLocation);
 
@@ -233,7 +233,7 @@ bool NetworkDataTaskBlob::writeDownload(std::span<const uint8_t> data)
     }
 
     m_downloadBytesWritten += *bytesWritten;
-    RefPtr download = m_networkProcess->checkedDownloadManager()->download(*m_pendingDownloadID);
+    RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID);
     ASSERT(download);
     download->didReceiveData(*bytesWritten, m_downloadBytesWritten, totalSize());
     return true;
@@ -258,7 +258,7 @@ void NetworkDataTaskBlob::didFailDownload(const ResourceError& error)
     if (RefPtr client = m_client.get())
         client->didCompleteWithError(error);
     else {
-        RefPtr download = m_networkProcess->checkedDownloadManager()->download(*m_pendingDownloadID);
+        RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID);
         ASSERT(download);
         download->didFail(error, { });
     }
@@ -277,7 +277,7 @@ void NetworkDataTaskBlob::didFinishDownload()
 #endif
 
     clearStream();
-    RefPtr download = m_networkProcess->checkedDownloadManager()->download(*m_pendingDownloadID);
+    RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID);
     ASSERT(download);
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
@@ -302,7 +302,7 @@ void NetworkDataTaskBlob::didFail(Error errorCode)
 
     clearStream();
     ASSERT(m_client);
-    protectedClient()->didCompleteWithError(ResourceError(webKitBlobResourceDomain, static_cast<int>(errorCode), m_firstRequest.url(), String()));
+    protect(client())->didCompleteWithError(ResourceError(webKitBlobResourceDomain, static_cast<int>(errorCode), m_firstRequest.url(), String()));
 }
 
 void NetworkDataTaskBlob::didFinish()
@@ -318,7 +318,7 @@ void NetworkDataTaskBlob::didFinish()
 
     clearStream();
     ASSERT(m_client);
-    protectedClient()->didCompleteWithError({ });
+    protect(client())->didCompleteWithError({ });
 }
 
 } // namespace WebKit

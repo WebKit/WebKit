@@ -28,16 +28,16 @@
 namespace WebCore {
 
 struct ValidityStateFlags {
-    bool valueMissing : 1 { false };
-    bool typeMismatch : 1 { false };
-    bool patternMismatch : 1 { false };
-    bool tooLong : 1 { false };
-    bool tooShort : 1 { false };
-    bool rangeUnderflow : 1 { false };
-    bool rangeOverflow : 1 { false };
-    bool stepMismatch : 1 { false };
-    bool badInput : 1 { false };
-    bool customError : 1 { false };
+    bool valueMissing { false };
+    bool typeMismatch { false };
+    bool patternMismatch { false };
+    bool tooLong { false };
+    bool tooShort { false };
+    bool rangeUnderflow { false };
+    bool rangeOverflow { false };
+    bool stepMismatch { false };
+    bool badInput { false };
+    bool customError { false };
 
     bool isValid() const
     {

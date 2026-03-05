@@ -59,7 +59,7 @@ class ConfigDotJSONTest(unittest.TestCase):
         config = self.get_config()
         valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
                               'defaultProperties', 'env', 'factory', 'icon', 'locks', 'name', 'platform', 'properties',
-                              'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'triggered_by', 'workernames', 'workerbuilddir']
+                              'rebuild_without_change_on_builder', 'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'triggered_by', 'workernames', 'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:
                 self.assertTrue(key in valid_builder_keys, 'Unexpected key "{}" for builder {}'.format(key, builder.get('name')))
@@ -119,6 +119,12 @@ class ConfigDotJSONTest(unittest.TestCase):
                     self.assertTrue(builder['name'] in triggering_builder_triggers_buildernames,
                                     'Incorrect triggered_by "{}" in builder "{}", this builder is not in corresponding builder triggers "{}".'
                                     .format(triggered_by, builder['name'], triggering_builder_triggers_buildernames))
+
+    def test_rebuild_without_change_only_on_builder_queues(self):
+        config = self.get_config()
+        for builder in config['builders']:
+            if builder.get('rebuild_without_change_on_builder'):
+                self.assertTrue(builder.get('triggers'), f'rebuild_without_change_on_builder should only be set on builders with triggers, but found on: {builder["name"]}')
 
 
 class TagsForBuilderTest(unittest.TestCase):
@@ -221,6 +227,15 @@ class TestcheckValidBuilder(unittest.TestCase):
 
     def test_valid_builder(self):
         loadConfig.checkValidBuilder({}, {'name': 'macOS-High-Sierra-WK2-EWS', 'shortname': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra'})
+
+    def test_rebuild_without_change_on_builder_only_on_builders(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidBuilder({}, {'name': 'macOS-Tests-EWS', 'shortname': 'mac-tests', 'configuration': 'release', 'factory': 'TestFactory', 'platform': 'mac-sierra', 'rebuild_without_change_on_builder': True})
+        self.assertEqual(context.exception.args, ('rebuild_without_change_on_builder can only be set on builders with triggers. Builder: macOS-Tests-EWS',))
+
+    def test_rebuild_without_change_on_builder_valid(self):
+        config = {'schedulers': [{'name': 'some-trigger', 'type': 'Triggerable'}]}
+        loadConfig.checkValidBuilder(config, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra', 'rebuild_without_change_on_builder': True, 'triggers': ['some-trigger']})
 
 
 class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):

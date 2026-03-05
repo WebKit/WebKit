@@ -47,4 +47,6 @@ enum class PlatformVideoColorPrimaries : uint8_t {
     Smpte432 = SmpteEg432,
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformVideoColorPrimaries);
+
 } // namespace WebCore

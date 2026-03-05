@@ -40,7 +40,7 @@ public:
 private:
     explicit MockPageOverlay(PageOverlay*);
 
-    RefPtr<PageOverlay> m_overlay;
+    const RefPtr<PageOverlay> m_overlay;
 };
 
 } // namespace WebCore

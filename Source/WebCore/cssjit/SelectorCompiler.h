@@ -47,7 +47,7 @@ enum class SelectorContext {
     QuerySelector
 };
 
-void compileSelector(CompiledSelector&, const CSSSelector*, SelectorContext);
+void compileSelector(CompiledSelector&, const CSSSelector&, SelectorContext);
 
 inline unsigned ruleCollectorSimpleSelectorChecker(CompiledSelector& compiledSelector, const Element* element, unsigned* value)
 {

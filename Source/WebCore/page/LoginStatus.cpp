@@ -35,7 +35,7 @@ namespace WebCore {
 
 using CodeUnitMatchFunction = bool (*)(char16_t);
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LoginStatus);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LoginStatus);
 
 ExceptionOr<UniqueRef<LoginStatus>> LoginStatus::create(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType)
 {

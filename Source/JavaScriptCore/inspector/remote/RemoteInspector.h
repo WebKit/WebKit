@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include <JavaScriptCore/RemoteConnectionToTarget.h>

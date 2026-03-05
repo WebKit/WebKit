@@ -83,7 +83,7 @@ namespace WebCore {
 
 LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback)
     : m_observer(adoptNS([[WebLowPowerModeObserver alloc] initWithNotifier:*this]))
-    , m_callback(WTFMove(callback))
+    , m_callback(WTF::move(callback))
 {
     ASSERT(isMainThread());
 }

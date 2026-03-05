@@ -12,17 +12,18 @@ s=-
 t=0 0
 m=audio 9 UDP/TLS/RTP/SAVPF 111 8 0
 c=IN IP4 0.0.0.0
-a=rtcp-mux
-a=recvonly
-a=mid:{mid:OK}
-a=rtpmap:111 OPUS/48000/2
-a=rtpmap:8 PCMA/8000
-a=rtpmap:0 PCMU/8000
-a=ssrc:{ssrc:OK} cname:{cname:OK}
+a=rtcp:9 IN IP4 0.0.0.0
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
 a=fingerprint:sha-256 {fingerprint:OK}
 a=setup:active
+a=mid:{mid:OK}
+a=recvonly
+a=rtcp-mux
+a=rtpmap:111 OPUS/48000/2
+a=rtpmap:8 PCMA/8000
+a=rtpmap:0 PCMU/8000
+a=ssrc:{ssrc:OK} cname:{cname:OK}
 ===
 
 PASS Answer with audio and video created
@@ -34,37 +35,39 @@ s=-
 t=0 0
 m=audio 9 UDP/TLS/RTP/SAVPF 111 8 0
 c=IN IP4 0.0.0.0
-a=rtcp-mux
-a=recvonly
+a=rtcp:9 IN IP4 0.0.0.0
+a=ice-ufrag:{ice-ufrag:OK}
+a=ice-pwd:{ice-password:OK}
+a=fingerprint:sha-256 {fingerprint:OK}
+a=setup:active
 a=mid:{mid:OK}
+a=recvonly
+a=rtcp-mux
 a=rtpmap:111 OPUS/48000/2
 a=rtpmap:8 PCMA/8000
 a=rtpmap:0 PCMU/8000
 a=ssrc:{ssrc:OK} cname:{cname:OK}
-a=ice-ufrag:{ice-ufrag:OK}
-a=ice-pwd:{ice-password:OK}
-a=fingerprint:sha-256 {fingerprint:OK}
-a=setup:active
 m=video 9 UDP/TLS/RTP/SAVPF 103 100 120
 c=IN IP4 0.0.0.0
-a=rtcp-mux
-a=recvonly
-a=mid:{mid:OK}
-a=rtpmap:103 H264/90000
-a=rtpmap:100 VP8/90000
-a=rtpmap:120 RTX/90000
-a=fmtp:103 packetization-mode=1
-a=fmtp:120 apt=100;rtx-time=200
-a=rtcp-fb:100 nack
-a=rtcp-fb:103 nack pli
-a=rtcp-fb:100 nack pli
-a=rtcp-fb:103 ccm fir
-a=rtcp-fb:100 ccm fir
-a=ssrc:{ssrc:OK} cname:{cname:OK}
+a=rtcp:9 IN IP4 0.0.0.0
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
 a=fingerprint:sha-256 {fingerprint:OK}
 a=setup:active
+a=mid:{mid:OK}
+a=recvonly
+a=rtcp-mux
+a=rtpmap:103 H264/90000
+a=rtcp-fb:103 nack pli
+a=rtcp-fb:103 ccm fir
+a=fmtp:103 packetization-mode=1
+a=rtpmap:100 VP8/90000
+a=rtcp-fb:100 nack
+a=rtcp-fb:100 nack pli
+a=rtcp-fb:100 ccm fir
+a=rtpmap:120 RTX/90000
+a=fmtp:120 apt=100;rtx-time=200
+a=ssrc:{ssrc:OK} cname:{cname:OK}
 ===
 
 PASS successfullyParsed is true

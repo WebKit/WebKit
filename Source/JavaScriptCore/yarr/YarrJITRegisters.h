@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(YARR_JIT)
 
+#include <JavaScriptCore/FPRInfo.h>
 #include <JavaScriptCore/GPRInfo.h>
 
 namespace JSC {
@@ -63,8 +66,7 @@ public:
     static constexpr GPRReg length = ARM64Registers::x2;
     static constexpr GPRReg output = ARM64Registers::x3;
     static constexpr GPRReg matchingContext = ARM64Registers::x4;
-    static constexpr GPRReg freelistRegister = ARM64Registers::x4; // Loaded from the MatchingContextHolder in the prologue.
-    static constexpr GPRReg freelistSizeRegister = ARM64Registers::x5; // Only used during initialization.
+    static constexpr GPRReg freelistRegister = ARM64Registers::x13;
 
     // Scratch registers
     static constexpr GPRReg regT0 = ARM64Registers::x6;
@@ -75,19 +77,27 @@ public:
     static constexpr GPRReg unicodeAndSubpatternIdTemp = ARM64Registers::x5;
     static constexpr GPRReg initialStart = ARM64Registers::x11;
 
-#if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
     static constexpr GPRReg firstCharacterAdditionalReadSize { ARM64Registers::x12 };
-#else
-    static constexpr GPRReg firstCharacterAdditionalReadSize { InvalidGPRReg };
-#endif
-
-#define HAVE_YARR_SURROGATE_REGISTERS 1
-    static constexpr GPRReg surrogateTagMask = ARM64Registers::x13;
-    static constexpr GPRReg surrogatePairTags = ARM64Registers::x14;
     static constexpr GPRReg endOfStringAddress = ARM64Registers::x15;
 
     static constexpr GPRReg returnRegister = ARM64Registers::x0;
     static constexpr GPRReg returnRegister2 = ARM64Registers::x1;
+
+    // SIMD registers for Boyer-Moore SIMD lookahead (caller-saved, safe to use)
+    // Pattern constants (persistent across loop iterations)
+    static constexpr FPRReg vectorTemp0 = ARM64Registers::q0;
+    static constexpr FPRReg vectorTemp1 = ARM64Registers::q1;
+    static constexpr FPRReg vectorTemp2 = ARM64Registers::q2;
+    static constexpr FPRReg vectorTemp3 = ARM64Registers::q3;
+    static constexpr FPRReg vectorTemp4 = ARM64Registers::q4;
+    static constexpr FPRReg vectorInput0 = ARM64Registers::q16;
+    static constexpr FPRReg vectorInput1 = ARM64Registers::q17;
+    static constexpr FPRReg vectorInput2 = ARM64Registers::q18;
+    static constexpr FPRReg vectorInput3 = ARM64Registers::q19;
+    static constexpr FPRReg vectorScratch0 = ARM64Registers::q20;
+    static constexpr FPRReg vectorScratch1 = ARM64Registers::q21;
+    static constexpr FPRReg vectorScratch2 = ARM64Registers::q22;
+    static constexpr FPRReg vectorScratch3 = ARM64Registers::q23;
 #elif CPU(X86_64)
     // Argument registers
     static constexpr GPRReg input = X86Registers::edi;
@@ -95,8 +105,7 @@ public:
     static constexpr GPRReg length = X86Registers::edx;
     static constexpr GPRReg output = X86Registers::ecx;
     static constexpr GPRReg matchingContext = X86Registers::r8;
-    static constexpr GPRReg freelistRegister = X86Registers::r8; // Loaded from the MatchingContextHolder in the prologue.
-    static constexpr GPRReg freelistSizeRegister = X86Registers::r9; // Only used during initialization.
+    static constexpr GPRReg freelistRegister = InvalidGPRReg;
 
     // Scratch registers
     static constexpr GPRReg regT0 = X86Registers::eax;
@@ -112,8 +121,21 @@ public:
     static constexpr GPRReg returnRegister = X86Registers::eax;
     static constexpr GPRReg returnRegister2 = X86Registers::edx;
 
-    static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xdc00dc00);
-    static constexpr MacroAssembler::TrustedImm32 surrogatePairTags = MacroAssembler::TrustedImm32(0xdc00d800);
+    // SIMD registers for Boyer-Moore SIMD lookahead (caller-saved, safe to use)
+    // Pattern constants (persistent across loop iterations)
+    static constexpr FPRReg vectorTemp0 = X86Registers::xmm0;
+    static constexpr FPRReg vectorTemp1 = X86Registers::xmm1;
+    static constexpr FPRReg vectorTemp2 = X86Registers::xmm2;
+    static constexpr FPRReg vectorTemp3 = X86Registers::xmm3;
+    static constexpr FPRReg vectorTemp4 = X86Registers::xmm4;
+    static constexpr FPRReg vectorInput0 = X86Registers::xmm5;
+    static constexpr FPRReg vectorInput1 = X86Registers::xmm6;
+    static constexpr FPRReg vectorInput2 = X86Registers::xmm7;
+    static constexpr FPRReg vectorInput3 = X86Registers::xmm8;
+    static constexpr FPRReg vectorScratch0 = X86Registers::xmm9;
+    static constexpr FPRReg vectorScratch1 = X86Registers::xmm10;
+    static constexpr FPRReg vectorScratch2 = X86Registers::xmm11;
+    static constexpr FPRReg vectorScratch3 = X86Registers::xmm12;
 #elif CPU(RISCV64)
     // Argument registers
     static constexpr GPRReg input = RISCV64Registers::x10;
@@ -121,8 +143,7 @@ public:
     static constexpr GPRReg length = RISCV64Registers::x12;
     static constexpr GPRReg output = RISCV64Registers::x13;
     static constexpr GPRReg matchingContext = RISCV64Registers::x14;
-    static constexpr GPRReg freelistRegister = RISCV64Registers::x14; // Loaded from the MatchingContextHolder in the prologue.
-    static constexpr GPRReg freelistSizeRegister = RISCV64Registers::x15; // Only used during initialization.
+    static constexpr GPRReg freelistRegister = InvalidGPRReg;
 
     // Scratch registers
     static constexpr GPRReg regT0 = RISCV64Registers::x16;
@@ -136,9 +157,6 @@ public:
 
     static constexpr GPRReg returnRegister = RISCV64Registers::x10;
     static constexpr GPRReg returnRegister2 = RISCV64Registers::x11;
-
-    static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xdc00dc00);
-    static constexpr MacroAssembler::TrustedImm32 surrogatePairTags = MacroAssembler::TrustedImm32(0xdc00d800);
 #endif
 };
 
@@ -175,7 +193,6 @@ public:
 
     GPRReg matchingContext { InvalidGPRReg };
     GPRReg freelistRegister { InvalidGPRReg };
-    GPRReg freelistSizeRegister { InvalidGPRReg };
 
     GPRReg returnRegister { InvalidGPRReg };
     GPRReg returnRegister2 { InvalidGPRReg };
@@ -194,6 +211,22 @@ public:
     GPRReg unicodeAndSubpatternIdTemp { InvalidGPRReg };
     GPRReg endOfStringAddress { InvalidGPRReg };
     GPRReg firstCharacterAdditionalReadSize { InvalidGPRReg };
+
+    // SIMD registers for Boyer-Moore SIMD lookahead
+    // These are not used for inline JIT, but need to be present for template instantiation.
+    static constexpr FPRReg vectorTemp0 = InvalidFPRReg;
+    static constexpr FPRReg vectorTemp1 = InvalidFPRReg;
+    static constexpr FPRReg vectorTemp2 = InvalidFPRReg;
+    static constexpr FPRReg vectorTemp3 = InvalidFPRReg;
+    static constexpr FPRReg vectorTemp4 = InvalidFPRReg;
+    static constexpr FPRReg vectorInput0 = InvalidFPRReg;
+    static constexpr FPRReg vectorInput1 = InvalidFPRReg;
+    static constexpr FPRReg vectorInput2 = InvalidFPRReg;
+    static constexpr FPRReg vectorInput3 = InvalidFPRReg;
+    static constexpr FPRReg vectorScratch0 = InvalidFPRReg;
+    static constexpr FPRReg vectorScratch1 = InvalidFPRReg;
+    static constexpr FPRReg vectorScratch2 = InvalidFPRReg;
+    static constexpr FPRReg vectorScratch3 = InvalidFPRReg;
 };
 #endif
 

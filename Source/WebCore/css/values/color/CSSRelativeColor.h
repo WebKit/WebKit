@@ -73,15 +73,15 @@ WebCore::Color createColor(const RelativeColor<Descriptor>& unresolved, Platform
         return { };
 
     auto resolver = RelativeColorResolver<Descriptor> {
-        .origin = WTFMove(origin),
+        .origin = WTF::move(origin),
         .components = unresolved.components
     };
 
     if (state.conversionData)
-        return resolve(WTFMove(resolver), *state.conversionData);
+        return resolve(WTF::move(resolver), *state.conversionData);
 
     if (!componentsRequireConversionData<Descriptor>(resolver.components))
-        return resolveNoConversionDataRequired(WTFMove(resolver));
+        return resolveNoConversionDataRequired(WTF::move(resolver));
 
     return { };
 }

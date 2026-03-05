@@ -6,6 +6,7 @@ Test that main resource load delegates are the same when page cache is enabled a
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
     testRunner.dumpResourceLoadCallbacks();
     testRunner.waitUntilDone();
 }

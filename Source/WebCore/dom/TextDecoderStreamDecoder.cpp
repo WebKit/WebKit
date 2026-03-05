@@ -39,13 +39,13 @@ ExceptionOr<Ref<TextDecoderStreamDecoder>> TextDecoderStreamDecoder::create(cons
 }
 
 TextDecoderStreamDecoder::TextDecoderStreamDecoder(Ref<TextDecoder>&& textDecoder)
-    : m_textDecoder(WTFMove(textDecoder))
+    : m_textDecoder(WTF::move(textDecoder))
 {
 }
 
 ExceptionOr<String> TextDecoderStreamDecoder::decode(std::optional<BufferSource::VariantType> value)
 {
-    return m_textDecoder->decode(WTFMove(value), { true });
+    return m_textDecoder->decode(WTF::move(value), { true });
 }
 
 ExceptionOr<String> TextDecoderStreamDecoder::flush()

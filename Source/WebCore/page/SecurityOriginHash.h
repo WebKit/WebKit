@@ -30,8 +30,7 @@
 
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/Hasher.h>
-#include <wtf/RefPtr.h>
-#include <wtf/URL.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -40,9 +39,9 @@ struct SecurityOriginHash {
     {
         return computeHash(*origin);
     }
-    static unsigned hash(const RefPtr<SecurityOrigin>& origin)
+    static unsigned hash(const Ref<SecurityOrigin>& origin)
     {
-        return hash(origin.get());
+        return hash(origin.ptr());
     }
 
     static bool equal(const SecurityOrigin* a, const SecurityOrigin* b)
@@ -51,17 +50,17 @@ struct SecurityOriginHash {
             return a == b;
         return a->isSameSchemeHostPort(*b);
     }
-    static bool equal(const SecurityOrigin* a, const RefPtr<SecurityOrigin>& b)
+    static bool equal(const SecurityOrigin* a, const Ref<SecurityOrigin>& b)
     {
-        return equal(a, b.get());
+        return equal(a, b.ptr());
     }
-    static bool equal(const RefPtr<SecurityOrigin>& a, const SecurityOrigin* b)
+    static bool equal(const Ref<SecurityOrigin>& a, const SecurityOrigin* b)
     {
-        return equal(a.get(), b);
+        return equal(a.ptr(), b);
     }
-    static bool equal(const RefPtr<SecurityOrigin>& a, const RefPtr<SecurityOrigin>& b)
+    static bool equal(const Ref<SecurityOrigin>& a, const Ref<SecurityOrigin>& b)
     {
-        return equal(a.get(), b.get());
+        return equal(a.ptr(), b.ptr());
     }
 
     static const bool safeToCompareToEmptyOrDeleted = false;
@@ -72,6 +71,6 @@ struct SecurityOriginHash {
 namespace WTF {
 
 template<typename> struct DefaultHash;
-template<> struct DefaultHash<RefPtr<WebCore::SecurityOrigin>> : WebCore::SecurityOriginHash { };
+template<> struct DefaultHash<Ref<WebCore::SecurityOrigin>> : WebCore::SecurityOriginHash { };
 
 } // namespace WTF

@@ -65,8 +65,8 @@ class SpeechRecognitionRealtimeMediaSourceManager::Source final
 public:
     Source(RealtimeMediaSourceIdentifier identifier, Ref<RealtimeMediaSource>&& source, Ref<IPC::Connection>&& connection)
         : m_identifier(identifier)
-        , m_source(WTFMove(source))
-        , m_connection(WTFMove(connection))
+        , m_source(WTF::move(source))
+        , m_connection(WTF::move(connection))
     {
         m_source->addObserver(*this);
         m_source->addAudioSampleObserver(*this);
@@ -117,9 +117,9 @@ private:
             auto& format = m_description->streamDescription();
             auto result = ProducerSharedCARingBuffer::allocate(format, numberOfFrames);
             RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
-            auto [ringBuffer, handle] = WTFMove(*result);
-            m_ringBuffer = WTFMove(ringBuffer);
-            m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTFMove(handle), format), 0);
+            auto [ringBuffer, handle] = WTF::move(*result);
+            m_ringBuffer = WTF::move(ringBuffer);
+            m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTF::move(handle), format), 0);
         }
 
         m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
@@ -171,11 +171,6 @@ IPC::Connection& SpeechRecognitionRealtimeMediaSourceManager::connection() const
     return *m_process->parentProcessConnection();
 }
 
-Ref<IPC::Connection> SpeechRecognitionRealtimeMediaSourceManager::protectedConnection() const
-{
-    return *m_process->parentProcessConnection();
-}
-
 void SpeechRecognitionRealtimeMediaSourceManager::ref() const
 {
     m_process->ref();
@@ -196,7 +191,7 @@ void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSour
     }
 
     ASSERT(!m_sources.contains(identifier));
-    m_sources.add(identifier, makeUnique<Source>(identifier, result.source(), protectedConnection()));
+    m_sources.add(identifier, makeUnique<Source>(identifier, result.source(), protect(connection())));
 }
 
 void SpeechRecognitionRealtimeMediaSourceManager::deleteSource(RealtimeMediaSourceIdentifier identifier)

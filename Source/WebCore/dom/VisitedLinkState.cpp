@@ -126,7 +126,7 @@ InsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
 
     m_linksCheckedForVisitedState.add(hash);
 
-    if (!page->visitedLinkStore().isLinkVisited(*page, hash, element.document().baseURL(), attribute))
+    if (!protect(page->visitedLinkStore())->isLinkVisited(*page, hash, element.document().baseURL(), attribute))
         return InsideLink::InsideUnvisited;
 
     return InsideLink::InsideVisited;

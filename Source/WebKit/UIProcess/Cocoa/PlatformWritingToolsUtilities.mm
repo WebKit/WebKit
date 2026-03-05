@@ -63,6 +63,10 @@ WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools
         return WTTextSuggestionStatePending;
     case WebCore::WritingTools::TextSuggestion::State::Reviewing:
         return WTTextSuggestionStateReviewing;
+    case WebCore::WritingTools::TextSuggestion::State::Accepted:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        return WTTextSuggestionStateAccepted;
+        ALLOW_DEPRECATED_DECLARATIONS_END
     case WebCore::WritingTools::TextSuggestion::State::Rejected:
         return WTTextSuggestionStateRejected;
     case WebCore::WritingTools::TextSuggestion::State::Invalid:
@@ -106,12 +110,14 @@ WebCore::WritingTools::TextSuggestion::State convertToWebTextSuggestionState(WTT
         return WebCore::WritingTools::TextSuggestion::State::Pending;
     case WTTextSuggestionStateReviewing:
         return WebCore::WritingTools::TextSuggestion::State::Reviewing;
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    case WTTextSuggestionStateAccepted:
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        return WebCore::WritingTools::TextSuggestion::State::Accepted;
     case WTTextSuggestionStateRejected:
         return WebCore::WritingTools::TextSuggestion::State::Rejected;
     case WTTextSuggestionStateInvalid:
         return WebCore::WritingTools::TextSuggestion::State::Invalid;
-
-    // FIXME: Remove this default case once the WTTextSuggestionStateAccepted case is no longer in the build.
     default:
         ASSERT_NOT_REACHED();
         return WebCore::WritingTools::TextSuggestion::State::Invalid;

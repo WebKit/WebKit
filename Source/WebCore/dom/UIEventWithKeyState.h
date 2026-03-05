@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class UIEventWithKeyState : public UIEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(UIEventWithKeyState);
+    WTF_MAKE_TZONE_ALLOCATED(UIEventWithKeyState);
 public:
     using Modifier = PlatformEvent::Modifier;
 
@@ -45,21 +45,21 @@ public:
     WEBCORE_EXPORT bool getModifierState(const String& keyIdentifier) const;
 
 protected:
-    UIEventWithKeyState(enum EventInterfaceType eventInterface)
+    explicit UIEventWithKeyState(enum EventInterfaceType eventInterface)
         : UIEvent(eventInterface)
     {
     }
 
     UIEventWithKeyState(enum EventInterfaceType eventInterface, const AtomString& type, CanBubble canBubble, IsCancelable cancelable, IsComposed isComposed,
         RefPtr<WindowProxy>&& view, int detail, OptionSet<Modifier> modifiers)
-        : UIEvent(eventInterface, type, canBubble, cancelable, isComposed, WTFMove(view), detail)
+        : UIEvent(eventInterface, type, canBubble, cancelable, isComposed, WTF::move(view), detail)
         , m_modifiers(modifiers)
     {
     }
 
     UIEventWithKeyState(enum EventInterfaceType eventInterface, const AtomString& type, CanBubble canBubble, IsCancelable cancelable, IsComposed isComposed,
         MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, OptionSet<Modifier> modifiers, IsTrusted isTrusted)
-        : UIEvent(eventInterface, type, canBubble, cancelable, isComposed, timestamp, WTFMove(view), detail, isTrusted)
+        : UIEvent(eventInterface, type, canBubble, cancelable, isComposed, timestamp, WTF::move(view), detail, isTrusted)
         , m_modifiers(modifiers)
     {
     }
@@ -70,18 +70,18 @@ protected:
     {
     }
 
-    void setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
+    void NODELETE setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
 private:
-    static OptionSet<Modifier> modifiersFromInitializer(const EventModifierInit& initializer);
+    static OptionSet<Modifier> NODELETE modifiersFromInitializer(const EventModifierInit& initializer);
 
     bool isUIEventWithKeyState() const final { return true; }
 
     OptionSet<Modifier> m_modifiers;
 };
 
-UIEventWithKeyState* findEventWithKeyState(Event*);
+RefPtr<UIEventWithKeyState> findEventWithKeyState(Event*);
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_EVENT(UIEventWithKeyState)
+SPECIALIZE_TYPE_TRAITS_EVENT_POLYMORPHIC(UIEventWithKeyState)

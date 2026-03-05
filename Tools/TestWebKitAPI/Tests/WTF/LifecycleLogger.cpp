@@ -90,10 +90,10 @@ TEST(LifecycleLogger, Basic)
     { LifecycleLogger l("c"); LifecycleLogger l2; l2 = l; }
     ASSERT_STREQ("construct(c) construct(<default>) copy-assign(c) destruct(c) destruct(c) ", takeLogStr().c_str());
 
-    { LifecycleLogger l("d"); LifecycleLogger l2(WTFMove(l)); }
+    { LifecycleLogger l("d"); LifecycleLogger l2(WTF::move(l)); }
     ASSERT_STREQ("construct(d) move-construct(d) destruct(d) destruct(<default>) ", takeLogStr().c_str());
 
-    { LifecycleLogger l("e"); LifecycleLogger l2; l2 = WTFMove(l); }
+    { LifecycleLogger l("e"); LifecycleLogger l2; l2 = WTF::move(l); }
     ASSERT_STREQ("construct(e) construct(<default>) move-assign(e) destruct(e) destruct(<default>) ", takeLogStr().c_str());
 
     { LifecycleLogger l("f"); l.setName("x"); }

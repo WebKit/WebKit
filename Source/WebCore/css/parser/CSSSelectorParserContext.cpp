@@ -39,12 +39,13 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , imageControlsEnabled(context.imageControlsEnabled)
 #endif
     , popoverAttributeEnabled(context.popoverAttributeEnabled)
+    , cssPickerPseudoElementEnabled(context.cssPickerPseudoElementEnabled)
+    , htmlEnhancedSelectEnabled(context.htmlEnhancedSelectEnabled)
     , targetTextPseudoElementEnabled(context.targetTextPseudoElementEnabled)
-    , thumbAndTrackPseudoElementsEnabled(context.thumbAndTrackPseudoElementsEnabled)
+    , cssAppearanceBaseEnabled(context.cssAppearanceBaseEnabled)
     , viewTransitionsEnabled(context.propertySettings.viewTransitionsEnabled)
-    , viewTransitionClassesEnabled(viewTransitionsEnabled && context.propertySettings.viewTransitionClassesEnabled)
-    , viewTransitionTypesEnabled(viewTransitionsEnabled && context.viewTransitionTypesEnabled)
     , webkitMediaTextTrackDisplayQuirkEnabled(context.webkitMediaTextTrackDisplayQuirkEnabled)
+    , openPseudoClassEnabled(context.openPseudoClassEnabled)
 {
 }
 
@@ -54,30 +55,32 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , imageControlsEnabled(document.settings().imageControlsEnabled())
 #endif
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
+    , cssPickerPseudoElementEnabled(document.settings().cssPickerPseudoElementEnabled())
+    , htmlEnhancedSelectEnabled(document.settings().htmlEnhancedSelectEnabled())
     , targetTextPseudoElementEnabled(document.settings().targetTextPseudoElementEnabled())
-    , thumbAndTrackPseudoElementsEnabled(document.settings().thumbAndTrackPseudoElementsEnabled())
+    , cssAppearanceBaseEnabled(document.settings().cssAppearanceBaseEnabled())
     , viewTransitionsEnabled(document.settings().viewTransitionsEnabled())
-    , viewTransitionClassesEnabled(viewTransitionsEnabled && document.settings().viewTransitionClassesEnabled())
-    , viewTransitionTypesEnabled(viewTransitionsEnabled && document.settings().viewTransitionTypesEnabled())
     , webkitMediaTextTrackDisplayQuirkEnabled(document.quirks().needsWebKitMediaTextTrackDisplayQuirk())
+    , openPseudoClassEnabled(document.settings().openPseudoClassEnabled())
 {
 }
 
 void add(Hasher& hasher, const CSSSelectorParserContext& context)
 {
-    add(hasher,
-        context.mode,
+    auto bits = WTF::packBools(
 #if ENABLE(SERVICE_CONTROLS)
         context.imageControlsEnabled,
 #endif
         context.popoverAttributeEnabled,
+        context.cssPickerPseudoElementEnabled,
+        context.htmlEnhancedSelectEnabled,
         context.targetTextPseudoElementEnabled,
-        context.thumbAndTrackPseudoElementsEnabled,
+        context.cssAppearanceBaseEnabled,
         context.viewTransitionsEnabled,
-        context.viewTransitionClassesEnabled,
-        context.viewTransitionTypesEnabled,
-        context.webkitMediaTextTrackDisplayQuirkEnabled
+        context.webkitMediaTextTrackDisplayQuirkEnabled,
+        context.openPseudoClassEnabled
     );
+    add(hasher, context.mode, bits);
 }
 
 } // namespace WebCore

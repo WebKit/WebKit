@@ -47,7 +47,7 @@ public:
     static ExceptionOr<Ref<CSSStyleValue>> reifyValue(Document&, const CSSValue&, std::optional<CSSPropertyID>);
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(Document&, const AtomString&, const String&, bool parseMultiple);
     static RefPtr<CSSStyleValue> constructStyleValueForShorthandSerialization(Document&, const String&);
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStrings(Document&, const AtomString& property, FixedVector<Variant<RefPtr<CSSStyleValue>, String>>&&);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStrings(Document&, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&&);
 
     ~CSSStyleValueFactory();
 

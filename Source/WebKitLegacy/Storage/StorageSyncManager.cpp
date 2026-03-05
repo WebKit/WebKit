@@ -70,7 +70,7 @@ void StorageSyncManager::dispatch(Function<void ()>&& function)
     ASSERT(m_thread);
 
     if (m_thread)
-        m_thread->dispatch(WTFMove(function));
+        m_thread->dispatch(WTF::move(function));
 }
 
 void StorageSyncManager::close()

@@ -45,7 +45,7 @@ static void finishConverting(PKPaymentMethod *paymentMethod, ApplePayPaymentMeth
 #endif
 }
 
-static ApplePayPaymentPass::ActivationState convert(PKPaymentPassActivationState paymentPassActivationState)
+static ApplePayPaymentPass::ActivationState NODELETE convert(PKPaymentPassActivationState paymentPassActivationState)
 {
     switch (paymentPassActivationState) {
     case PKPaymentPassActivationStateActivated:
@@ -81,7 +81,7 @@ static std::optional<ApplePayPaymentPass> convert(PKPaymentPass *paymentPass)
     return result;
 }
 
-static std::optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType paymentMethodType)
+static std::optional<ApplePayPaymentMethod::Type> NODELETE convert(PKPaymentMethodType paymentMethodType)
 {
     switch (paymentMethodType) {
     case PKPaymentMethodTypeDebit:
@@ -156,7 +156,7 @@ static ApplePayPaymentMethod convert(PKPaymentMethod *paymentMethod)
 PaymentMethod::PaymentMethod() = default;
 
 PaymentMethod::PaymentMethod(RetainPtr<PKPaymentMethod>&& pkPaymentMethod)
-    : m_pkPaymentMethod { WTFMove(pkPaymentMethod) }
+    : m_pkPaymentMethod { WTF::move(pkPaymentMethod) }
 {
 }
 
@@ -167,7 +167,7 @@ ApplePayPaymentMethod PaymentMethod::toApplePayPaymentMethod() const
     return convert(m_pkPaymentMethod.get());
 }
 
-PKPaymentMethod *PaymentMethod::pkPaymentMethod() const
+PKPaymentMethod *NODELETE PaymentMethod::pkPaymentMethod() const
 {
     return m_pkPaymentMethod.get();
 }

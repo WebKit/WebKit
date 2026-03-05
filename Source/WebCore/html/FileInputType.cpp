@@ -111,7 +111,7 @@ FormControlState FileInputType::saveFormControlState() const
         stateVector.append(AtomString { file->name() });
     }
     stateVector.append(AtomString { m_displayString });
-    return FormControlState { WTFMove(stateVector) };
+    return FormControlState { WTF::move(stateVector) };
 }
 
 void FileInputType::restoreFormControlState(const FormControlState& state)
@@ -151,14 +151,14 @@ bool FileInputType::valueMissing(const String& value) const
 String FileInputType::valueMissingText() const
 {
     ASSERT(element());
-    return protectedElement()->multiple() ? validationMessageValueMissingForMultipleFileText() : validationMessageValueMissingForFileText();
+    return protect(element())->multiple() ? validationMessageValueMissingForMultipleFileText() : validationMessageValueMissingForFileText();
 }
 
 void FileInputType::handleDOMActivateEvent(Event& event)
 {
     ASSERT(element());
 
-    if (protectedElement()->isDisabledFormControl())
+    if (protect(element())->isDisabledFormControl())
         return;
 
     if (!UserGestureIndicator::processingUserGesture())
@@ -173,7 +173,7 @@ void FileInputType::showPicker()
     ASSERT(element());
     if (auto* chrome = this->chrome()) {
         applyFileChooserSettings();
-        chrome->runOpenPanel(*element()->document().protectedFrame(), *protectedFileChooser());
+        chrome->runOpenPanel(*protect(element()->document().frame()), *protect(m_fileChooser));
     }
 }
 
@@ -186,7 +186,7 @@ RenderPtr<RenderElement> FileInputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderFileUploadControl>(*protectedElement(), WTFMove(style));
+    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderFileUploadControl>(*protect(element()), WTF::move(style));
 }
 
 bool FileInputType::canSetStringValue() const
@@ -205,7 +205,7 @@ String FileInputType::firstElementPathForInputValue() const
     // decided to try to parse the value by looking for backslashes
     // (because that's what Windows file paths use). To be compatible
     // with that code, we make up a fake path for the file.
-    return makeString("C:\\fakepath\\"_s, protectedFiles()->file(0).name());
+    return makeString("C:\\fakepath\\"_s, protect(files())->file(0).name());
 }
 
 void FileInputType::setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection)
@@ -214,7 +214,7 @@ void FileInputType::setValue(const String&, bool valueChanged, TextFieldEventBeh
     if (!valueChanged)
         return;
     
-    protectedFiles()->clear();
+    protect(files())->clear();
     m_icon = nullptr;
     ASSERT(element());
     Ref element = *this->element();
@@ -229,7 +229,7 @@ void FileInputType::createShadowSubtree()
     ASSERT(element()->shadowRoot());
 
     Ref element = *this->element();
-    Ref button = HTMLInputElement::create(inputTag, element->protectedDocument(), nullptr, false);
+    Ref button = HTMLInputElement::create(inputTag, protect(element->document()), nullptr, false);
     {
         ScriptDisallowedScope::EventAllowedScope eventAllowedScopeBeforeAppend { button };
         button->setAttributeWithoutSynchronization(typeAttr, InputTypeNames::button());
@@ -300,7 +300,7 @@ FileChooserSettings FileInputType::fileChooserSettings() const
     settings.allowsMultipleFiles = element->hasAttributeWithoutSynchronization(multipleAttr);
     settings.acceptMIMETypes = element->acceptMIMETypes();
     settings.acceptFileExtensions = element->acceptFileExtensions();
-    settings.selectedFiles = protectedFiles()->paths();
+    settings.selectedFiles = protect(files())->paths();
 #if ENABLE(MEDIA_CAPTURE)
     settings.mediaCaptureType = element->mediaCaptureType();
 #endif
@@ -319,7 +319,7 @@ bool FileInputType::allowsDirectories() const
 {
     ASSERT(element());
     Ref element = *this->element();
-    if (!element->protectedDocument()->settings().directoryUploadEnabled())
+    if (!protect(element->document())->settings().directoryUploadEnabled())
         return false;
     return element->hasAttributeWithoutSynchronization(webkitdirectoryAttr);
 }
@@ -331,7 +331,7 @@ bool FileInputType::dirAutoUsesValue() const
 
 void FileInputType::setFiles(RefPtr<FileList>&& files, WasSetByJavaScript wasSetByJavaScript)
 {
-    setFiles(WTFMove(files), RequestIcon::Yes, wasSetByJavaScript);
+    setFiles(WTF::move(files), RequestIcon::Yes, wasSetByJavaScript);
 }
 
 void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequestIcon, WasSetByJavaScript wasSetByJavaScript)
@@ -363,7 +363,7 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     element->updateValidity();
 
     if (shouldRequestIcon == RequestIcon::Yes)
-        requestIcon(protectedFiles()->paths());
+        requestIcon(protect(this->files())->paths());
 
     if (CheckedPtr renderer = element->renderer())
         renderer->repaint();
@@ -399,7 +399,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
                 fileID = handle.id();
             return File::create(document.get(), fileInfo.path, fileInfo.replacementPath, fileInfo.displayName, fileID);
         });
-        didCreateFileList(FileList::create(WTFMove(files)), icon);
+        didCreateFileList(FileList::create(WTF::move(files)), icon);
         return;
     }
 
@@ -408,10 +408,10 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->didCreateFileList(WTFMove(fileList), WTFMove(icon));
+        protectedThis->didCreateFileList(WTF::move(fileList), WTF::move(icon));
     });
     creator->start(document.get(), paths);
-    m_directoryFileListCreator = WTFMove(creator);
+    m_directoryFileListCreator = WTF::move(creator);
 }
 
 void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String>& replacementPaths)
@@ -419,19 +419,19 @@ void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String
     ASSERT(element());
     ASSERT(!paths.isEmpty());
 
-    size_t size = protectedElement()->hasAttributeWithoutSynchronization(multipleAttr) ? paths.size() : 1;
+    size_t size = protect(element())->hasAttributeWithoutSynchronization(multipleAttr) ? paths.size() : 1;
 
     Vector<FileChooserFileInfo> files(size, [&](size_t i) {
         return FileChooserFileInfo { paths[i], i < replacementPaths.size() ? replacementPaths[i] : nullString(), { } };
     });
 
-    filesChosen(WTFMove(files));
+    filesChosen(WTF::move(files));
 }
 
 void FileInputType::fileChoosingCancelled()
 {
     ASSERT(element());
-    protectedElement()->dispatchCancelEvent();
+    protect(element())->dispatchCancelEvent();
 }
 
 void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& icon)
@@ -441,9 +441,9 @@ void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& i
     ASSERT(!allowsDirectories() || m_directoryFileListCreator);
     m_directoryFileListCreator = nullptr;
 
-    setFiles(WTFMove(fileList), icon ? RequestIcon::No : RequestIcon::Yes, WasSetByJavaScript::No);
+    setFiles(WTF::move(fileList), icon ? RequestIcon::No : RequestIcon::Yes, WasSetByJavaScript::No);
     if (icon && !m_fileList->isEmpty() && element())
-        iconLoaded(WTFMove(icon));
+        iconLoaded(WTF::move(icon));
 }
 
 String FileInputType::displayString() const
@@ -456,7 +456,7 @@ void FileInputType::iconLoaded(RefPtr<Icon>&& icon)
     if (m_icon == icon)
         return;
 
-    m_icon = WTFMove(icon);
+    m_icon = WTF::move(icon);
     ASSERT(element());
     if (CheckedPtr renderer = element()->renderer())
         renderer->repaint();
@@ -484,13 +484,13 @@ bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>
         protectedThis->filesChosen(paths, replacementPaths);
     };
 
-    sharedImageTranscodingQueueSingleton().dispatch([callFilesChosen = WTFMove(callFilesChosen), transcodingPaths = crossThreadCopy(WTFMove(transcodingPaths)), transcodingUTI = WTFMove(transcodingUTI).isolatedCopy(), transcodingExtension = WTFMove(transcodingExtension).isolatedCopy()]() mutable {
+    sharedImageTranscodingQueueSingleton().dispatch([callFilesChosen = WTF::move(callFilesChosen), transcodingPaths = crossThreadCopy(WTF::move(transcodingPaths)), transcodingUTI = WTF::move(transcodingUTI).isolatedCopy(), transcodingExtension = WTF::move(transcodingExtension).isolatedCopy()]() mutable {
         ASSERT(!RunLoop::isMain());
 
         auto replacementPaths = transcodeImages(transcodingPaths, transcodingUTI, transcodingExtension);
         ASSERT(transcodingPaths.size() == replacementPaths.size());
 
-        RunLoop::mainSingleton().dispatch([callFilesChosen = WTFMove(callFilesChosen), replacementPaths = crossThreadCopy(WTFMove(replacementPaths))] {
+        RunLoop::mainSingleton().dispatch([callFilesChosen = WTF::move(callFilesChosen), replacementPaths = crossThreadCopy(WTF::move(replacementPaths))] {
             callFilesChosen(replacementPaths);
         });
     });
@@ -526,7 +526,7 @@ String FileInputType::defaultToolTip() const
     unsigned listSize = m_fileList->length();
     if (!listSize) {
         ASSERT(element());
-        if (protectedElement()->multiple())
+        if (protect(element())->multiple())
             return fileButtonNoFilesSelectedLabel();
         return fileButtonNoFileSelectedLabel();
     }

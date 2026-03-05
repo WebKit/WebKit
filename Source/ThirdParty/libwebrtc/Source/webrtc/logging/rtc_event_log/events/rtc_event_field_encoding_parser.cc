@@ -396,7 +396,7 @@ EventParser::ParseOptionalNumericField(const FieldParameters& params,
   auto status = ParseField(params);
   if (!status.ok())
     return StatusOr(status);
-  ValueAndPostionView view{GetValues(), GetPositions()};
+  ValueAndPostionView view{.values = GetValues(), .positions = GetPositions()};
   if (required_field && view.positions.size() != NumEventsInBatch()) {
     return StatusOr::Error("Required numerical field not found", __FILE__,
                            __LINE__);

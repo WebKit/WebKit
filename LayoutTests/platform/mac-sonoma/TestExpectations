@@ -22,3 +22,7 @@ imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-i
 imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import-data.https.html [ Skip ]
 
 webkit.org/b/288847 imported/w3c/web-platform-tests/cookiestore/cookieStore_event_delete.https.window.html [ Pass Failure ]
+
+# Digital Credentials tests - Not supported on Sequoia (added in Tahoe)
+http/wpt/identity/ [ Skip ]
+imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]

@@ -89,7 +89,7 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
 
     if (type == ClientDataType::Get && transports.contains(AuthenticatorTransport::Internal)) {
         m_delayedPresentationNeedsSecurityKey = (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc));
-        m_delayedPresentation = [completionHandler = WTFMove(completionHandler), this] {
+        m_delayedPresentation = [completionHandler = WTF::move(completionHandler), this] {
             [m_presenter presentAuthorizationWithContext:m_context.get() completionHandler:completionHandler.get()];
         };
         return;
@@ -115,12 +115,12 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
     switch (status) {
     case WebAuthenticationStatus::PinBlocked: {
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorAuthenticatorPermanentlyLocked userInfo:nil]);
-        m_credentialRequestHandler(nil, error.get());
+        [m_presenter updateInterfaceForUserVisibleError:error.get()];
         break;
     }
     case WebAuthenticationStatus::PinAuthBlocked: {
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorAuthenticatorTemporarilyLocked userInfo:nil]);
-        m_credentialRequestHandler(nil, error.get());
+        [m_presenter updateInterfaceForUserVisibleError:error.get()];
         break;
     }
     case WebAuthenticationStatus::PinInvalid: {
@@ -187,7 +187,7 @@ void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<v
 #if HAVE(ASC_AUTH_UI)
     if (m_pinHandler)
         m_pinHandler(String());
-    m_pinHandler = WTFMove(completionHandler);
+    m_pinHandler = WTF::move(completionHandler);
 
     if (m_presentedPIN)
         return;
@@ -201,7 +201,7 @@ void AuthenticatorPresenterCoordinator::requestNewPin(uint64_t minLength, Comple
 #if HAVE(ASC_AUTH_UI)
     if (m_pinHandler)
         m_pinHandler(String());
-    m_pinHandler = WTFMove(completionHandler);
+    m_pinHandler = WTF::move(completionHandler);
 
     if (m_presentedPIN)
         return;
@@ -215,7 +215,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
 #if HAVE(ASC_AUTH_UI)
     if (m_responseHandler)
         m_responseHandler(nullptr);
-    m_responseHandler = WTFMove(completionHandler);
+    m_responseHandler = WTF::move(completionHandler);
 
     if (source == WebAuthenticationSource::External) {
         auto loginChoices = adoptNS([[NSMutableArray alloc] init]);
@@ -232,7 +232,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
             auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initWithName:response->name().createNSString().get() displayName:response->displayName().createNSString().get() userHandle:userHandle.get()]);
             [loginChoices addObject:loginChoice.get()];
 
-            m_credentials.add(response->name(), WTFMove(response));
+            m_credentials.add(response->name(), WTF::move(response));
         }
 
         [m_presenter updateInterfaceWithLoginChoices:loginChoices.get()];
@@ -249,7 +249,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
             auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initWithName:response->name().createNSString().get() displayName:response->displayName().createNSString().get() userHandle:userHandle.get()]);
             [m_context addLoginChoice:loginChoice.get()];
 
-            m_credentials.add(response->name(), WTFMove(response));
+            m_credentials.add(response->name(), WTF::move(response));
         }
 
         if (m_delayedPresentationNeedsSecurityKey)
@@ -267,7 +267,7 @@ void AuthenticatorPresenterCoordinator::requestLAContextForUserVerification(Comp
         return;
     }
 
-    m_laContextHandler = WTFMove(completionHandler);
+    m_laContextHandler = WTF::move(completionHandler);
 }
 
 void AuthenticatorPresenterCoordinator::dimissPresenter(WebAuthenticationResult result)
@@ -295,14 +295,14 @@ void AuthenticatorPresenterCoordinator::setLAContext(LAContext *context)
 
 void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(const String& credentialName, LAContext *context)
 {
-    auto response = m_credentials.take(credentialName);
+    RefPtr response = m_credentials.take(credentialName);
     if (!response)
         return;
 
     if (context)
         response->setLAContext(context);
 
-    m_responseHandler(response.get());
+    m_responseHandler(response);
 }
 
 void AuthenticatorPresenterCoordinator::setPin(const String& pin)

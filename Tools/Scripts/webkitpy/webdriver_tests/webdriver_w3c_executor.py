@@ -115,7 +115,7 @@ class WebKitDriverBrowser(WebDriverBrowser):
     test_env = None
 
     def __init__(self, logger, binary=None, webdriver_binary=None, webdriver_args=None, host="127.0.0.1", port=None, base_path="/", env=None, supports_pac=True, **kwargs):
-        WebDriverBrowser.__init__(self, logger, binary, webdriver_binary, webdriver_args, host, port, base_path, self.test_env, supports_pac)
+        WebDriverBrowser.__init__(self, logger, binary, webdriver_binary, webdriver_args, host, port, base_path, self.test_env, supports_pac, manager_number=0)
 
     def make_command(self):
         return [self.webdriver_binary, f"--port={self.port}"] + self.webdriver_args

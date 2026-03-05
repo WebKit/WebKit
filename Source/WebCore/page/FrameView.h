@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Frame;
+class RenderElement;
 enum class RenderAsTextFlag : uint16_t;
 
 class FrameView : public ScrollView {
@@ -41,12 +42,12 @@ public:
     virtual Type viewType() const = 0;
     virtual void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) = 0;
     virtual Frame& frame() const = 0;
-    Ref<Frame> protectedFrame() const;
 
     WEBCORE_EXPORT int headerHeight() const final;
     WEBCORE_EXPORT int footerHeight() const final;
 
     WEBCORE_EXPORT FloatBoxExtent obscuredContentInsets(InsetType = InsetType::WebCoreInset) const final;
+    CornerRadii scrollbarAvoidanceCornerRadii() const override;
 
     float visibleContentScaleFactor() const final;
 
@@ -98,6 +99,12 @@ public:
     WEBCORE_EXPORT IntRect convertFromContainingViewToRenderer(const RenderElement*, const IntRect&) const;
     WEBCORE_EXPORT FloatRect convertFromContainingViewToRenderer(const RenderElement*, const FloatRect&) const;
 
+    WEBCORE_EXPORT FloatPoint absoluteToLayoutViewportPoint(FloatPoint) const;
+    FloatPoint layoutViewportToAbsolutePoint(FloatPoint) const;
+
+    WEBCORE_EXPORT FloatRect absoluteToLayoutViewportRect(FloatRect) const;
+    FloatRect layoutViewportToAbsoluteRect(FloatRect) const;
+
     // Override ScrollView methods to do point conversion via renderers, in order to take transforms into account.
     IntPoint convertToContainingView(IntPoint) const final;
     FloatPoint convertToContainingView(FloatPoint) const final;
@@ -109,6 +116,14 @@ public:
     DoublePoint convertFromContainingView(DoublePoint) const final;
     IntRect convertFromContainingView(const IntRect&) const final;
     FloatRect convertFromContainingView(const FloatRect&) const final;
+
+    WEBCORE_EXPORT virtual LayoutRect layoutViewportRect() const = 0;
+
+    // Computes the visible area of a child frame in this frame as a rectangle.
+    // std::nullopt is returned if the child frame is entirely invisible, or
+    // the visible area is not computable. The given child frame must be a
+    // direct child of this frame.
+    virtual std::optional<LayoutRect> visibleRectOfChild(const Frame&) const = 0;
 
 private:
     ScrollableArea* enclosingScrollableArea() const final;

@@ -207,7 +207,6 @@ function shouldThrowAsync(run, errorType, message, stackFunctions) {
             }, Error, "error",
             [
                 ["throwError", "200:24"],
-                ["throwError", "199:35"],
                 ["two", "196:25"],
                 ["async one", "187:18"],
                 ["async test", "206:26"],

@@ -37,20 +37,20 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaintWorkletGlobalScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaintWorkletGlobalScope);
 
 RefPtr<PaintWorkletGlobalScope> PaintWorkletGlobalScope::tryCreate(Document& document, ScriptSourceCode&& code)
 {
     RefPtr<VM> vm = VM::tryCreate();
     if (!vm)
         return nullptr;
-    auto scope = adoptRef(*new PaintWorkletGlobalScope(document, vm.releaseNonNull(), WTFMove(code)));
+    auto scope = adoptRef(*new PaintWorkletGlobalScope(document, vm.releaseNonNull(), WTF::move(code)));
     scope->addToContextsMap();
     return scope;
 }
 
 PaintWorkletGlobalScope::PaintWorkletGlobalScope(Document& document, Ref<VM>&& vm, ScriptSourceCode&& code)
-    : WorkletGlobalScope(document, WTFMove(vm), WTFMove(code))
+    : WorkletGlobalScope(document, WTF::move(vm), WTF::move(code))
 {
 }
 
@@ -64,9 +64,9 @@ double PaintWorkletGlobalScope::devicePixelRatio() const
 PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments)
     : name(name)
     , paintConstructor(paintConstructor)
-    , paintCallback(WTFMove(paintCallback))
-    , inputProperties(WTFMove(inputProperties))
-    , inputArguments(WTFMove(inputArguments))
+    , paintCallback(WTF::move(paintCallback))
+    , inputProperties(WTF::move(inputProperties))
+    , inputArguments(WTF::move(inputArguments))
 {
 }
 
@@ -141,8 +141,8 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
         if (paintCallback.hasException(scope)) [[unlikely]]
             return Exception { ExceptionCode::ExistingExceptionError };
 
-        auto paintDefinition = makeUnique<PaintDefinition>(name, paintConstructor.get(), paintCallback.releaseReturnValue(), WTFMove(inputProperties), WTFMove(inputArguments));
-        paintDefinitionMap().add(name, WTFMove(paintDefinition));
+        auto paintDefinition = makeUnique<PaintDefinition>(name, paintConstructor.get(), paintCallback.releaseReturnValue(), WTF::move(inputProperties), WTF::move(inputArguments));
+        paintDefinitionMap().add(name, WTF::move(paintDefinition));
     }
 
     // This is for the case when we have already visited the paint definition map, and the GC is currently running in the background.

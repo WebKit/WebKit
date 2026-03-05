@@ -91,22 +91,14 @@ sk_sp<ComputePipeline> ResourceProvider::findOrCreateComputePipeline(
 sk_sp<Texture> ResourceProvider::findOrCreateShareableTexture(SkISize dimensions,
                                                               const TextureInfo& info,
                                                               std::string_view label) {
-    return this->findOrCreateTexture(dimensions,
-                                     info,
-                                     std::move(label),
-                                     Budgeted::kYes,
-                                     Shareable::kYes);
+    return this->findOrCreateTexture(dimensions, info, label, Budgeted::kYes, Shareable::kYes);
 }
 
 sk_sp<Texture> ResourceProvider::findOrCreateNonShareableTexture(SkISize dimensions,
                                                                  const TextureInfo& info,
                                                                  std::string_view label,
                                                                  Budgeted budgeted) {
-    return this->findOrCreateTexture(dimensions,
-                                     info,
-                                     std::move(label),
-                                     budgeted,
-                                     Shareable::kNo);
+    return this->findOrCreateTexture(dimensions, info, label, budgeted, Shareable::kNo);
 }
 
 sk_sp<Texture> ResourceProvider::findOrCreateScratchTexture(
@@ -114,13 +106,35 @@ sk_sp<Texture> ResourceProvider::findOrCreateScratchTexture(
         const TextureInfo& info,
         std::string_view label,
         const ResourceCache::ScratchResourceSet& unavailable) {
-    return this->findOrCreateTexture(dimensions,
-                                     info,
-                                     std::move(label),
-                                     Budgeted::kYes,
-                                     Shareable::kScratch,
-                                     &unavailable);
+    return this->findOrCreateTexture(
+            dimensions, info, label, Budgeted::kYes, Shareable::kScratch, &unavailable);
 }
+
+namespace {
+// TODO(b/387505250): Remove this helper once threadsafe label management is enforced by other
+// callers as outlined in the threadsafe resource label model outlined in Resource.h. To maintain
+// functionality until then, funnel all manual label update calls the ResourceProvider uses through
+// this helper for easier removal later on.
+void update_and_sync_resource_label(Resource* resource, std::string_view label) {
+    if (!resource) {
+        return;
+    }
+
+    if (resource->shareable() == Shareable::kYes) {
+        // Shareable resource labels should only be set upon creation
+        SkASSERT(resource->getLabel() == label);
+    } else {
+        resource->setLabel(label);
+        // TODO(b/476118698): Only non-shareable resources should be permitted to update their
+        // backend labels when returned from the cache. As it's currently implemented, scratch
+        // resource labels will be synchronized here as well. While this is safe to do while we
+        // do not use one global threadsafe resource cache, scratch resource label management
+        // will need to be implemented per the model outlined in Resource.h before we can
+        // use one threadsafe global cache.
+        resource->synchronizeBackendLabel();
+    }
+}
+} // anonymous
 
 sk_sp<Texture> ResourceProvider::findOrCreateTexture(
         SkISize dimensions,
@@ -147,12 +161,7 @@ sk_sp<Texture> ResourceProvider::findOrCreateTexture(
 
     if (Resource* resource =
                 fResourceCache->findAndRefResource(key, budgeted, shareable, unavailable)) {
-        // Shareable resource labels should only be set upon creation.
-        if (shareable == Shareable::kYes) {
-            SkASSERT(resource->getLabel() == label);
-        } else {
-            resource->setLabel(std::move(label));
-        }
+        update_and_sync_resource_label(resource, label);
         return sk_sp<Texture>(static_cast<Texture*>(resource));
     }
 
@@ -161,7 +170,7 @@ sk_sp<Texture> ResourceProvider::findOrCreateTexture(
         return nullptr;
     }
 
-    tex->setLabel(std::move(label));
+    update_and_sync_resource_label(tex.get(), label);
     fResourceCache->insertResource(tex.get(), key, budgeted, shareable);
 
     return tex;
@@ -171,7 +180,7 @@ sk_sp<Texture> ResourceProvider::createWrappedTexture(const BackendTexture& back
                                                       std::string_view label) {
     sk_sp<Texture> texture = this->onCreateWrappedTexture(backendTexture);
     if (texture) {
-        texture->setLabel(std::move(label));
+        update_and_sync_resource_label(texture.get(), label);
         SkASSERT(texture->ownership() == Ownership::kWrapped);
     }
     return texture;
@@ -266,12 +275,7 @@ sk_sp<Buffer> ResourceProvider::findOrCreateBuffer(
 
     if (Resource* resource =
             fResourceCache->findAndRefResource(key, kBudgeted, shareable, unavailable)) {
-        // Shareable resource labels should only be set upon creation.
-        if (shareable == Shareable::kYes) {
-            SkASSERT(resource->getLabel() == label);
-        } else {
-            resource->setLabel(std::move(label));
-        }
+        update_and_sync_resource_label(resource, label);
         return sk_sp<Buffer>(static_cast<Buffer*>(resource));
     }
     auto buffer = this->createBuffer(size, type, accessPattern);
@@ -279,7 +283,7 @@ sk_sp<Buffer> ResourceProvider::findOrCreateBuffer(
         return nullptr;
     }
 
-    buffer->setLabel(std::move(label));
+    update_and_sync_resource_label(buffer.get(), label);
     fResourceCache->insertResource(buffer.get(), key, kBudgeted, shareable);
     return buffer;
 }

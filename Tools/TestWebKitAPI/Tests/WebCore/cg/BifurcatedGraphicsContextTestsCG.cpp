@@ -89,7 +89,7 @@ TEST(BifurcatedGraphicsContextTests, Text)
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
     description.setComputedSize(80);
-    FontCascade font(WTFMove(description));
+    FontCascade font(WTF::move(description));
     font.update();
 
     String string = "Hello!"_s;

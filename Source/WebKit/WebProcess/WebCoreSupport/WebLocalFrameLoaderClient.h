@@ -34,6 +34,7 @@
 #include <pal/SessionID.h>
 
 namespace WebCore {
+class FrameLoadRequest;
 struct BackForwardItemIdentifierType;
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 }
@@ -62,11 +63,13 @@ public:
         WebCore::FrameIdentifier frameID;
         WebCore::PageIdentifier pageID;
     };
-    void setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
+    void NODELETE setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
     void didLoadFromRegistrableDomain(WebCore::RegistrableDomain&&) final;
     Vector<WebCore::RegistrableDomain> loadedSubresourceDomains() const final;
 
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;
+
+    void removeStorageAccess();
 
 private:
     bool hasHTMLView() const final;
@@ -133,14 +136,14 @@ private:
     void dispatchDidReachVisuallyNonEmptyState() final;
     void dispatchDidLayout() final;
 
-    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy) final;
+    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy, const String& openedMainFrameName) final;
     void dispatchShow() final;
     
     void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, const String&, WebCore::FramePolicyFunction&&) final;
     void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const String& frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::IsPerformingHTTPFallback, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
     void updateSandboxFlags(WebCore::SandboxFlags) final;
-    void updateOpener(const WebCore::Frame&) final;
+    void updateOpener(std::optional<WebCore::FrameIdentifier>) final;
     void setPrinting(bool printing, WebCore::FloatSize pageSize, WebCore::FloatSize originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize) final;
     void cancelPolicyCheck() final;
     
@@ -149,6 +152,8 @@ private:
     void dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&) final;
     void dispatchWillSubmitForm(WebCore::FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) final;
     
+    void dispatchBackForwardItemLoading(const URL&, const String& referer, WebCore::LocalFrame& childFrame) final;
+
     void revertToProvisionalState(WebCore::DocumentLoader*) final;
     void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) final;
     
@@ -168,7 +173,7 @@ private:
     void updateGlobalHistory() final;
     void updateGlobalHistoryRedirectLinks() final;
 
-    WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem(WebCore::HistoryItem&, WebCore::IsSameDocumentNavigation, WebCore::ProcessSwapDisposition) const final;
+    WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem(WebCore::HistoryItem&, WebCore::IsSameDocumentNavigation) const final;
     bool supportsAsyncShouldGoToHistoryItem() const final;
     void shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&) const final;
 
@@ -190,7 +195,8 @@ private:
     void provisionalLoadStarted() final;
     void didFinishLoad() final;
     void prepareForDataSourceReplacement() final;
-    
+
+    Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::ResourceRequest&&, WebCore::SubstituteData&&, WebCore::ResourceRequest&&) final;
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::ResourceRequest&&, WebCore::SubstituteData&&) final;
     void updateCachedDocumentLoader(WebCore::DocumentLoader&) final;
 
@@ -236,6 +242,7 @@ private:
     WebCore::IntPoint accessibilityRemoteFrameOffset() final;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) final;
+    RefPtr<WebCore::AXIsolatedTree> isolatedTree() const final;
 #endif
     void willCacheResponse(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
 
@@ -269,7 +276,7 @@ private:
 
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
 
-    inline bool hasPlugInView() const;
+    inline bool NODELETE hasPlugInView() const;
 
     void documentLoaderDetached(WebCore::NavigationIdentifier, WebCore::LoadWillContinueInAnotherProcess) final;
 
@@ -282,13 +289,11 @@ private:
     void broadcastAllFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncData&) final;
     void broadcastFrameTreeSyncDataToOtherProcesses(const WebCore::FrameTreeSyncSerializationData&) final;
 
-    Ref<WebCore::LocalFrame> protectedLocalFrame() const;
+    void dispatchDecidePolicyForBackForwardNavigationAction(WebCore::FrameLoadRequest&&, const String& referer, WebCore::FrameLoadType);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void didExceedNetworkUsageThreshold();
 #endif
-
-    void removeStorageAccess();
 
 #if ENABLE(PDF_PLUGIN)
     RefPtr<PluginView> m_pluginView;

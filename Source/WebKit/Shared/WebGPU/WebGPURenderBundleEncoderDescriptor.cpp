@@ -40,7 +40,7 @@ std::optional<RenderBundleEncoderDescriptor> ConvertToBackingContext::convertToB
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), renderBundleEncoderDescriptor.depthReadOnly, renderBundleEncoderDescriptor.stencilReadOnly } };
+    return { { WTF::move(*base), renderBundleEncoderDescriptor.depthReadOnly, renderBundleEncoderDescriptor.stencilReadOnly } };
 }
 
 std::optional<WebCore::WebGPU::RenderBundleEncoderDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
@@ -49,7 +49,7 @@ std::optional<WebCore::WebGPU::RenderBundleEncoderDescriptor> ConvertFromBacking
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), renderBundleEncoderDescriptor.depthReadOnly, renderBundleEncoderDescriptor.stencilReadOnly } };
+    return { { WTF::move(*base), renderBundleEncoderDescriptor.depthReadOnly, renderBundleEncoderDescriptor.stencilReadOnly } };
 }
 
 } // namespace WebKit

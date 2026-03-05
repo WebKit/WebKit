@@ -33,10 +33,14 @@
 namespace WebCore {
 
 class InbandTextTrack : public TextTrack, private InbandTextTrackPrivateClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InbandTextTrack);
+    WTF_MAKE_TZONE_ALLOCATED(InbandTextTrack);
 public:
     static Ref<InbandTextTrack> create(ScriptExecutionContext&, InbandTextTrackPrivate&);
     virtual ~InbandTextTrack();
+
+    // InbandTextTrackPrivateClient.
+    void ref() const final { TextTrack::ref(); }
+    void deref() const final { TextTrack::deref(); }
 
     bool isClosedCaptions() const override;
     bool isSDH() const override;
@@ -50,7 +54,6 @@ public:
     String inBandMetadataTrackDispatchType() const override;
 
     void setPrivate(InbandTextTrackPrivate&);
-    Ref<InbandTextTrackPrivate> protectedPrivate() const;
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, uint64_t) final;
 #endif

@@ -42,8 +42,8 @@ SimpleRange::SimpleRange(const BoundaryPoint& start, const BoundaryPoint& end)
 }
 
 SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
-    : start(WTFMove(start))
-    , end(WTFMove(end))
+    : start(WTF::move(start))
+    , end(WTF::move(end))
 {
 }
 
@@ -59,8 +59,8 @@ WeakSimpleRange::WeakSimpleRange(const WeakBoundaryPoint& start, const WeakBound
 }
 
 WeakSimpleRange::WeakSimpleRange(WeakBoundaryPoint&& start, WeakBoundaryPoint&& end)
-    : start(WTFMove(start))
-    , end(WTFMove(end))
+    : start(WTF::move(start))
+    , end(WTF::move(end))
 {
 }
 
@@ -84,7 +84,7 @@ OffsetRange characterDataOffsetRange(const SimpleRange& range, const Node& node)
         &node == range.end.container.ptr() ? range.end.offset : std::numeric_limits<unsigned>::max() };
 }
 
-static RefPtr<Node> firstIntersectingNode(const SimpleRange& range)
+static RefPtr<Node> NODELETE firstIntersectingNode(const SimpleRange& range)
 {
     if (range.start.container->isCharacterDataNode())
         return range.start.container.ptr();
@@ -93,7 +93,7 @@ static RefPtr<Node> firstIntersectingNode(const SimpleRange& range)
     return NodeTraversal::nextSkippingChildren(range.start.container);
 }
 
-static RefPtr<Node> nodePastLastIntersectingNode(const SimpleRange& range)
+static RefPtr<Node> NODELETE nodePastLastIntersectingNode(const SimpleRange& range)
 {
     if (range.end.container->isCharacterDataNode())
         return NodeTraversal::nextSkippingChildren(range.end.container);
@@ -102,7 +102,7 @@ static RefPtr<Node> nodePastLastIntersectingNode(const SimpleRange& range)
     return NodeTraversal::nextSkippingChildren(range.end.container);
 }
 
-static RefPtr<Node> firstIntersectingNodeWithDeprecatedZeroOffsetStartQuirk(const SimpleRange& range)
+static RefPtr<Node> NODELETE firstIntersectingNodeWithDeprecatedZeroOffsetStartQuirk(const SimpleRange& range)
 {
     if (range.start.container->isCharacterDataNode())
         return range.start.container.ptr();
@@ -298,7 +298,7 @@ bool contains(TreeType type, const SimpleRange& range, const Node& node)
 
 template<TreeType treeType> bool contains(const Node& outer, const Node& inner)
 {
-    for (auto inclusiveAncestor = &inner; inclusiveAncestor; inclusiveAncestor = parent<treeType>(*inclusiveAncestor)) {
+    for (RefPtr inclusiveAncestor = &inner; inclusiveAncestor; inclusiveAncestor = parent<treeType>(*inclusiveAncestor)) {
         if (inclusiveAncestor == &outer)
             return true;
     }
@@ -340,7 +340,7 @@ bool intersectsForTesting(TreeType type, const SimpleRange& range, const Node& n
 
 bool containsCrossingDocumentBoundaries(const SimpleRange& range, Node& node)
 {
-    auto* ancestor = &node;
+    RefPtr ancestor = &node;
     while (&range.start.document() != &ancestor->document()) {
         ancestor = ancestor->document().ownerElement();
         if (!ancestor)

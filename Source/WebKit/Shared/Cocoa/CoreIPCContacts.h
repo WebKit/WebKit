@@ -49,15 +49,15 @@ private:
     friend struct IPC::ArgumentCoder<CoreIPCCNPostalAddress>;
 
     CoreIPCCNPostalAddress(String&& street, String&& subLocality, String&& city, String&& subAdministrativeArea, String&& state, String&& postalCode, String&& country, String&& isoCountryCode, String&& formattedAddress)
-        : m_street(WTFMove(street))
-        , m_subLocality(WTFMove(subLocality))
-        , m_city(WTFMove(city))
-        , m_subAdministrativeArea(WTFMove(subAdministrativeArea))
-        , m_state(WTFMove(state))
-        , m_postalCode(WTFMove(postalCode))
-        , m_country(WTFMove(country))
-        , m_isoCountryCode(WTFMove(isoCountryCode))
-        , m_formattedAddress(WTFMove(formattedAddress))
+        : m_street(WTF::move(street))
+        , m_subLocality(WTF::move(subLocality))
+        , m_city(WTF::move(city))
+        , m_subAdministrativeArea(WTF::move(subAdministrativeArea))
+        , m_state(WTF::move(state))
+        , m_postalCode(WTF::move(postalCode))
+        , m_country(WTF::move(country))
+        , m_isoCountryCode(WTF::move(isoCountryCode))
+        , m_formattedAddress(WTF::move(formattedAddress))
     {
     }
 
@@ -82,8 +82,8 @@ private:
     friend struct IPC::ArgumentCoder<CoreIPCCNPhoneNumber>;
 
     CoreIPCCNPhoneNumber(String&& digits, String&& countryCode)
-        : m_digits(WTFMove(digits))
-        , m_countryCode(WTFMove(countryCode))
+        : m_digits(WTF::move(digits))
+        , m_countryCode(WTF::move(countryCode))
     {
     }
 

@@ -33,7 +33,7 @@ namespace WebKit {
 
 typedef HashMap<String, bool> BoolOverridesMap;
 
-static BoolOverridesMap& boolTestRunnerOverridesMap()
+static BoolOverridesMap& NODELETE boolTestRunnerOverridesMap()
 {
     static NeverDestroyed<BoolOverridesMap> map;
     return map;

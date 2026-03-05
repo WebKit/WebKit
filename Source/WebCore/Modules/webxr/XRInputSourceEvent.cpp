@@ -35,32 +35,30 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRInputSourceEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XRInputSourceEvent);
 
-Ref<XRInputSourceEvent> XRInputSourceEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<XRInputSourceEvent> XRInputSourceEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new XRInputSourceEvent(type, initializer, isTrusted));
+    return adoptRef(*new XRInputSourceEvent(type, WTF::move(initializer), isTrusted));
 }
 
-XRInputSourceEvent::XRInputSourceEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::XRInputSourceEvent, type, initializer, isTrusted)
-    , m_frame(initializer.frame)
-    , m_inputSource(initializer.inputSource)
+XRInputSourceEvent::XRInputSourceEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : Event(EventInterfaceType::XRInputSourceEvent, type, WTF::move(initializer), isTrusted)
+    , m_frame(WTF::move(initializer.frame))
+    , m_inputSource(WTF::move(initializer.inputSource))
 {
-    ASSERT(m_frame);
-    ASSERT(m_inputSource);
 }
 
 XRInputSourceEvent::~XRInputSourceEvent() = default;
 
 const WebXRFrame& XRInputSourceEvent::frame() const
 {
-    return *m_frame;
+    return m_frame;
 }
 
 const WebXRInputSource& XRInputSourceEvent::inputSource() const
 {
-    return *m_inputSource;
+    return m_inputSource;
 }
 
 void XRInputSourceEvent::setFrameActive(bool active)

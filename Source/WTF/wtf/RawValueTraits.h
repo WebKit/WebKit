@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <utility>
+#include <wtf/Compiler.h>
 
 namespace WTF {
 

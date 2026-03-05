@@ -37,7 +37,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -46,10 +46,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderAttachment);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderAttachment);
 
 RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, RenderStyle&& style)
-    : RenderReplaced(Type::Attachment, element, WTFMove(style), LayoutSize())
+    : RenderReplaced(Type::Attachment, element, WTF::move(style), LayoutSize())
     , m_isWideLayout(element.isWideLayout())
 {
     ASSERT(isRenderAttachment());
@@ -60,7 +60,7 @@ RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, RenderStyle&&
 
 RenderAttachment::~RenderAttachment() = default;
 
-HTMLAttachmentElement& RenderAttachment::attachmentElement() const
+HTMLAttachmentElement& NODELETE RenderAttachment::attachmentElement() const
 {
     return downcast<HTMLAttachmentElement>(nodeForNonAnonymous());
 }
@@ -108,6 +108,19 @@ bool RenderAttachment::shouldDrawBorder() const
     if (style().usedAppearance() == StyleAppearance::BorderlessAttachment)
         return false;
     return m_shouldDrawBorder;
+}
+
+void RenderAttachment::setSelectionState(HighlightState state)
+{
+    RenderReplaced::setSelectionState(state);
+
+    // HTMLAttachmentElement::HighlightState is duck-typed to match these RenderObject::HighlightState underlying values.
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::None) == uint8_t(RenderObject::HighlightState::None));
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::Start) == uint8_t(RenderObject::HighlightState::Start));
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::Inside) == uint8_t(RenderObject::HighlightState::Inside));
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::End) == uint8_t(RenderObject::HighlightState::End));
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::Both) == uint8_t(RenderObject::HighlightState::Both));
+    attachmentElement().addSelectionClasses(HTMLAttachmentElement::HighlightState(uint8_t(state)));
 }
 
 void RenderAttachment::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& offset)

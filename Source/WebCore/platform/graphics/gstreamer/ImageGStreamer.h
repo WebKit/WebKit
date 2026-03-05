@@ -36,7 +36,7 @@ class ImageGStreamer : public RefCounted<ImageGStreamer> {
 public:
     static Ref<ImageGStreamer> create(GRefPtr<GstSample>&& sample)
     {
-        return adoptRef(*new ImageGStreamer(WTFMove(sample)));
+        return adoptRef(*new ImageGStreamer(WTF::move(sample)));
     }
     ~ImageGStreamer();
 
@@ -60,10 +60,6 @@ private:
     GRefPtr<GstSample> m_sample;
     PlatformImagePtr m_image;
     FloatRect m_cropRect;
-#if USE(CAIRO)
-    GstVideoFrame m_videoFrame;
-    bool m_frameMapped { false };
-#endif
     FloatSize m_size;
     bool m_hasAlpha { false };
 };

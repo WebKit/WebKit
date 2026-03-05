@@ -204,10 +204,13 @@ String JSVMClientData::overrideSourceURL(const JSC::StackFrame& frame, const Str
     if (originalSourceURL.isEmpty())
         return nullString();
 
-    auto* codeBlock = frame.codeBlock();
-    RELEASE_ASSERT(codeBlock);
+    JSGlobalObject* globalObject = nullptr;
+    if (auto* codeBlock = frame.codeBlock())
+        globalObject = codeBlock->globalObject();
+    else if (auto* callee = jsDynamicCast<JSObject*>(frame.callee()))
+        globalObject = callee->globalObject();
+    RELEASE_ASSERT(globalObject);
 
-    auto* globalObject = codeBlock->globalObject();
     if (!globalObject->inherits<JSDOMWindowBase>())
         return nullString();
 

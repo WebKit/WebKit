@@ -5,7 +5,7 @@
 description: Throws if eraYear in the property bag is Infinity or -Infinity
 esid: sec-temporal.plaindate.from
 includes: [compareArray.js, temporalHelpers.js]
-features: [Temporal, Intl.Era-monthcode]
+features: [Temporal]
 ---*/
 
 const base = { era: "ad", month: 5, day: 2, calendar: "gregory" };

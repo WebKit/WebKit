@@ -37,7 +37,7 @@ String GPURenderPipeline::label() const
 
 void GPURenderPipeline::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    m_backing->setLabel(WTF::move(label));
 }
 
 Ref<GPUBindGroupLayout> GPURenderPipeline::getBindGroupLayout(uint32_t index)

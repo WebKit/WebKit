@@ -41,7 +41,7 @@ const ClassInfo WebAssemblyFunctionBase::s_info = { "WebAssemblyFunctionBase"_s,
 
 WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmOrJSImportableFunction&& importableFunction, Wasm::WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo)
     : Base(vm, executable, globalObject, structure)
-    , m_importableFunction(WTFMove(importableFunction))
+    , m_importableFunction(WTF::move(importableFunction))
     , m_callLinkInfo(callLinkInfo)
 { }
 

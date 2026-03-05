@@ -54,7 +54,7 @@ static ExceptionOr<Vector<uint8_t>> signRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentif
     if (status)
         return Exception { ExceptionCode::OperationError };
 
-    return WTFMove(signature);
+    return WTF::move(signature);
 }
 
 static ExceptionOr<bool> verifyRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentifier hash, const PlatformRSAKey key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)

@@ -32,6 +32,9 @@
 
 namespace WebKit {
 
+Authenticator::~Authenticator() = default;
+Authenticator::Authenticator() = default;
+
 void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
 {
     m_pendingRequestData = data;
@@ -40,7 +43,7 @@ void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (std::holds_alternative<WebCore::PublicKeyCredentialCreationOptions>(protectedThis->m_pendingRequestData.options))
+        if (std::holds_alternative<WebCore::PublicKeyCredentialCreationOptions>(protectedThis->m_pendingRequestData->options))
             protectedThis->makeCredential();
         else
             protectedThis->getAssertion();
@@ -51,7 +54,7 @@ void Authenticator::receiveRespond(AuthenticatorObserverRespond&& respond) const
 {
     ASSERT(RunLoop::isMain());
     if (RefPtr observer = m_observer.get())
-        observer->respondReceived(WTFMove(respond));
+        observer->respondReceived(WTF::move(respond));
 }
 
 } // namespace WebKit

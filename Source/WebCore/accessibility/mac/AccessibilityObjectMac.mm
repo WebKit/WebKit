@@ -28,7 +28,6 @@
 
 #import "AXObjectCacheInlines.h"
 #import "AXRemoteFrame.h"
-#import "BufferSource.h"
 #import "ColorCocoa.h"
 #import "CompositionHighlight.h"
 #import "CompositionUnderline.h"
@@ -447,7 +446,7 @@ static void attributedStringSetCompositionAttributes(NSMutableAttributedString *
 static bool shouldHaveAnySpellCheckAttribute(Node& node)
 {
     // If this node is not inside editable content, do not run the spell checker on the text.
-    auto* cache = node.document().axObjectCache();
+    CheckedPtr cache = node.document().axObjectCache();
     return cache && cache->rootAXEditableElement(&node);
 }
 
@@ -496,7 +495,7 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node& node, StringView text
     if (!renderer)
         return nil;
 
-    auto* cache = renderer->document().axObjectCache();
+    CheckedPtr cache = renderer->document().axObjectCache();
     RefPtr object = cache ? cache->getOrCreate(node) : nullptr;
     if (!object)
         return nil;
@@ -508,24 +507,24 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node& node, StringView text
     return string;
 }
 
-Vector<uint8_t> AXRemoteFrame::generateRemoteToken() const
+AccessibilityRemoteToken AXRemoteFrame::generateRemoteToken() const
 {
     if (RefPtr parent = parentObject()) {
         // We use the parent's wrapper so that the remote frame acts as a pass through for the remote token bridge.
-        return makeVector([NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()]);
+        return { makeVector([NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()]) };
     }
 
     return { };
 }
 
-void AXRemoteFrame::initializePlatformElementWithRemoteToken(std::span<const uint8_t> token, int processIdentifier)
+void AXRemoteFrame::initializePlatformElementWithRemoteToken(AccessibilityRemoteToken token, int processIdentifier)
 {
     m_processIdentifier = processIdentifier;
     if ([wrapper() respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)wrapper() accessibilitySetPresenterProcessIdentifier:processIdentifier];
-    m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:toNSData(BufferSource { token }).get()]);
+    m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:WTF::toNSData(token.bytes.span()).get()]);
 
-    if (auto* cache = axObjectCache())
+    if (CheckedPtr cache = axObjectCache())
         cache->onRemoteFrameInitialized(*this);
 }
 

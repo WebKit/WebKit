@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGRadialGradientElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGRadialGradientElement);
 
 inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document& document)
     : SVGGradientElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -113,8 +113,8 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
 RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGResourceRadialGradient>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGResourceRadialGradient>(*this, WTFMove(style));
+        return createRenderer<RenderSVGResourceRadialGradient>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGResourceRadialGradient>(*this, WTF::move(style));
 }
 
 static void setGradientAttributes(SVGGradientElement& element, RadialGradientAttributes& attributes, bool isRadial = true)
@@ -159,17 +159,17 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
     if (!renderer())
         return false;
 
-    HashSet<RefPtr<SVGGradientElement>> processedGradients;
-    RefPtr<SVGGradientElement> current = this;
+    HashSet<Ref<SVGGradientElement>> processedGradients;
+    Ref<SVGGradientElement> current { *this };
 
-    setGradientAttributes(*current, attributes);
+    setGradientAttributes(current, attributes);
     processedGradients.add(current);
 
     while (true) {
         // Respect xlink:href, take attributes from referenced element
         auto target = SVGURIReference::targetElementFromIRIString(current->href(), treeScopeForSVGReferences());
         if (RefPtr gradientElement = dynamicDowncast<SVGGradientElement>(target.element.get())) {
-            current = WTFMove(gradientElement);
+            current = gradientElement.releaseNonNull();
 
             // Cycle detection
             if (processedGradients.contains(current))
@@ -178,7 +178,7 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
             if (!current->renderer())
                 return false;
 
-            setGradientAttributes(*current, attributes, current->hasTagName(SVGNames::radialGradientTag));
+            setGradientAttributes(current, attributes, current->hasTagName(SVGNames::radialGradientTag));
             processedGradients.add(current);
         } else
             break;

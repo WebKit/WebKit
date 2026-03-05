@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
+#if PLATFORM(MAC)
 
 #include "DisplayLinkObserverID.h"
 #include "MomentumEventDispatcher.h"
@@ -66,6 +66,7 @@ class DisplayLink;
 class NativeWebWheelEvent;
 #if ENABLE(THREADED_ANIMATIONS)
 class RemoteAnimationTimeline;
+class RemoteProgressBasedTimeline;
 #endif
 class RemoteScrollingCoordinatorProxyMac;
 class RemoteLayerTreeDrawingAreaProxyMac;
@@ -111,10 +112,11 @@ public:
     void unlockForAnimationChanges() WTF_RELEASES_LOCK(m_animationLock);
     void animationsWereAddedToNode(RemoteLayerTreeNode&);
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
-    void updateTimelineRegistration(WebCore::ProcessIdentifier, const HashSet<Ref<WebCore::AcceleratedTimeline>>&, MonotonicTime);
+    void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime);
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&);
     void updateAnimations();
-    RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
+    RefPtr<const RemoteAnimationStack> NODELETE animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
+    HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID);
 #endif
 
 private:
@@ -134,7 +136,6 @@ private:
     DisplayLink* displayLink() const;
     DisplayLink* existingDisplayLink() const;
     RemoteLayerTreeDrawingAreaProxyMac& drawingAreaMac() const;
-    Ref<RemoteLayerTreeDrawingAreaProxyMac> protectedDrawingAreaMac() const;
 
     void startDisplayLinkObserver();
     void stopDisplayLinkObserver();
@@ -167,8 +168,6 @@ private:
 #endif
 
     RefPtr<RemoteScrollingTree> scrollingTree();
-
-    CheckedPtr<RemoteLayerTreeEventDispatcherDisplayLinkClient> checkedDisplayLinkClient();
 
     Lock m_scrollingTreeLock;
     RefPtr<RemoteScrollingTree> m_scrollingTree WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);
@@ -216,4 +215,4 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
+#endif // PLATFORM(MAC)

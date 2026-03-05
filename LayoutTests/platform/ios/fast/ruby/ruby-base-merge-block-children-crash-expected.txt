@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x32
   RenderBlock {HTML} at (0,0) size 800x32
     RenderBody {BODY} at (8,8) size 784x16
-      RenderInline {RUBY} at (0,-1) size 64x17
-        RenderInline (generated) at (0,-1) size 64x17
-          RenderText {#text} at (0,-1) size 64x17
-            text run at (0,-1) width 64: "PASS"
+      RenderInline {RUBY} at (0,0) size 64x16
+        RenderInline (generated) at (0,0) size 64x16
+          RenderText {#text} at (0,0) size 64x16
+            text run at (0,0) width 64: "PASS"
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {I} at (64,-1) size 0x17
+          RenderInline {I} at (64,0) size 0x16
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (64,-1) size 0x17
-              RenderInline {SPAN} at (64,-1) size 0x17
+            RenderInline {SPAN} at (64,0) size 0x16
+              RenderInline {SPAN} at (64,0) size 0x16
                 RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0

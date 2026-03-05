@@ -34,22 +34,23 @@
 namespace WebCore {
 
 class SpeechSynthesisEvent : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechSynthesisEvent);
+    WTF_MAKE_TZONE_ALLOCATED(SpeechSynthesisEvent);
 public:
-    
-    static Ref<SpeechSynthesisEvent> create(const AtomString& type, const SpeechSynthesisEventInit&);
+    using Init = SpeechSynthesisEventInit;
 
-    const SpeechSynthesisUtterance* utterance() const { return m_utterance.get(); }
+    static Ref<SpeechSynthesisEvent> create(const AtomString& type, Init&&);
+
+    const SpeechSynthesisUtterance& utterance() const { return m_utterance; }
     unsigned long charIndex() const { return m_charIndex; }
     unsigned long charLength() const { return m_charLength; }
     float elapsedTime() const { return m_elapsedTime; }
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 
 protected:
-    SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, const SpeechSynthesisEventInit&);
+    SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, Init&&);
 
 private:
-    RefPtr<SpeechSynthesisUtterance> m_utterance;
+    const Ref<SpeechSynthesisUtterance> m_utterance;
     unsigned long m_charIndex;
     unsigned long m_charLength;
     float m_elapsedTime;

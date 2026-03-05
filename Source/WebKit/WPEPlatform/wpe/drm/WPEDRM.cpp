@@ -61,7 +61,7 @@ std::unique_ptr<Crtc> Crtc::create(int fd, drmModeCrtc* crtc, unsigned index)
         return nullptr;
 
     Properties props = { drmPropertyForName(fd, properties.get(), "ACTIVE"), drmPropertyForName(fd, properties.get(), "MODE_ID") };
-    return makeUnique<Crtc>(crtc, index, WTFMove(props));
+    return makeUnique<Crtc>(crtc, index, WTF::move(props));
 }
 
 Crtc::Crtc(drmModeCrtc* crtc, unsigned index, Properties&& properties)
@@ -72,7 +72,7 @@ Crtc::Crtc(drmModeCrtc* crtc, unsigned index, Properties&& properties)
     , m_width(crtc->width)
     , m_height(crtc->height)
     , m_bufferID(crtc->buffer_id)
-    , m_properties(WTFMove(properties))
+    , m_properties(WTF::move(properties))
 {
     if (crtc->mode_valid)
         m_currentMode = crtc->mode;
@@ -98,7 +98,7 @@ std::unique_ptr<Connector> Connector::create(int fd, drmModeConnector* connector
         return nullptr;
 
     Properties props = { drmPropertyForName(fd, properties.get(), "CRTC_ID"), drmPropertyForName(fd, properties.get(), "link-status") };
-    return makeUnique<Connector>(connector, WTFMove(props));
+    return makeUnique<Connector>(connector, WTF::move(props));
 }
 
 Connector::Connector(drmModeConnector* connector, Properties&& properties)
@@ -106,7 +106,7 @@ Connector::Connector(drmModeConnector* connector, Properties&& properties)
     , m_encoderID(connector->encoder_id)
     , m_widthMM(connector->mmWidth)
     , m_heightMM(connector->mmHeight)
-    , m_properties(WTFMove(properties))
+    , m_properties(WTF::move(properties))
 {
     m_modes.reserveInitialCapacity(connector->count_modes);
     for (int i = 0; i < connector->count_modes; ++i) {
@@ -159,7 +159,7 @@ std::unique_ptr<Plane> Plane::create(int fd, Type type, drmModePlane* plane, boo
                     if (modifiers.isEmpty())
                         modifiers.append(DRM_FORMAT_MOD_LINEAR);
 
-                    formats.append({ blobFormats[i], WTFMove(modifiers) });
+                    formats.append({ blobFormats[i], WTF::move(modifiers) });
                 }
             }
         }
@@ -184,14 +184,14 @@ std::unique_ptr<Plane> Plane::create(int fd, Type type, drmModePlane* plane, boo
         drmPropertyForName(fd, properties.get(), "FB_DAMAGE_CLIPS"),
         drmPropertyForName(fd, properties.get(), "IN_FENCE_FD")
     };
-    return makeUnique<Plane>(plane, WTFMove(formats), WTFMove(props));
+    return makeUnique<Plane>(plane, WTF::move(formats), WTF::move(props));
 }
 
 Plane::Plane(drmModePlane* plane, Vector<Format>&& formats, Properties&& properties)
     : m_id(plane->plane_id)
     , m_possibleCrtcs(plane->possible_crtcs)
-    , m_formats(WTFMove(formats))
-    , m_properties(WTFMove(properties))
+    , m_formats(WTF::move(formats))
+    , m_properties(WTF::move(properties))
 {
 }
 

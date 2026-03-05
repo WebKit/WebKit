@@ -127,8 +127,8 @@ private:
     using AtomStringCache = std::array<AtomString, atomStringCacheCapacity>;
     using QualifiedNameCache = std::array<RefPtr<QualifiedName::QualifiedNameImpl>, qualifiedNameCacheCapacity>;
 
-    static AtomStringCache& atomStringCache();
-    static QualifiedNameCache& qualifiedNameCache();
+    static AtomStringCache& NODELETE atomStringCache();
+    static QualifiedNameCache& NODELETE qualifiedNameCache();
 };
 
 } // namespace WebCore

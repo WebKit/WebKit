@@ -4,7 +4,7 @@ layer at (0,0) size 800x338
   RenderBlock {HTML} at (0,0) size 800x338
     RenderBody {BODY} at (8,16) size 784x314
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 416x19
+        RenderText {#text} at (0,0) size 416x20
           text run at (0,0) width 416: "There six boxes below should look the same with no red present."
       RenderTable {TABLE} at (0,36) size 416x278
         RenderTableSection {TBODY} at (0,0) size 416x278

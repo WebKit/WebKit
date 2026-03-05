@@ -29,13 +29,21 @@
 
 #include "JITPlan.h"
 #include <wtf/AutomaticThread.h>
+#include <wtf/Platform.h>
+#include <wtf/SequesteredAutomaticThread.h>
 
 namespace JSC {
 
 class JITWorklist;
 class Safepoint;
 
-class JITWorklistThread final : public AutomaticThread {
+#if USE(PROTECTED_JIT_STACKS)
+using JITWorklistThreadBase = SequesteredAutomaticThread;
+#else
+using JITWorklistThreadBase = AutomaticThread;
+#endif
+
+class JITWorklistThread final : public JITWorklistThreadBase {
     WTF_MAKE_TZONE_ALLOCATED(JITWorklistThread);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(JITWorklistThread);
 

@@ -17,8 +17,8 @@ includes: [testTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 ---*/
 
-testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA([0]);
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([0]));
 
   assert.throws(TypeError, function() {
     Object.defineProperty(sample, "0", {
@@ -36,4 +36,4 @@ testWithTypedArrayConstructors(function(TA) {
   }, "complete descriptor");
 
   assert.sameValue(sample[0], 0, "side effect check");
-});
+}, null, ["passthrough"]);

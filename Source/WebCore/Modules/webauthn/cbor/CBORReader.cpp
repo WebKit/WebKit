@@ -40,12 +40,12 @@ namespace cbor {
 
 namespace {
 
-CBORValue::Type getMajorType(uint8_t initialDataByte)
+CBORValue::Type NODELETE getMajorType(uint8_t initialDataByte)
 {
     return static_cast<CBORValue::Type>((initialDataByte & constants::kMajorTypeMask) >> constants::kMajorTypeBitShift);
 }
 
-uint8_t getAdditionalInfo(uint8_t initialDataByte)
+uint8_t NODELETE getAdditionalInfo(uint8_t initialDataByte)
 {
     return initialDataByte & constants::kAdditionalInformationMask;
 }
@@ -109,7 +109,7 @@ std::optional<std::pair<CBORValue, size_t>> CBORReader::readWithBytesConsumed(co
         return std::nullopt;
 
     size_t bytesConsumed = reader.m_it - reader.m_data.begin();
-    return std::make_pair(WTFMove(*decodedCbor), bytesConsumed);
+    return std::make_pair(WTF::move(*decodedCbor), bytesConsumed);
 }
 
 std::optional<CBORValue> CBORReader::decodeCBOR(int maxNestingLevel)
@@ -245,7 +245,7 @@ std::optional<CBORValue> CBORReader::readString(uint64_t numBytes)
     // Invalid UTF8 bytes produce an empty WTFString.
     // Not to confuse it with an actual empty WTFString.
     if (!numBytes || hasValidUTF8Format(cborString))
-        return CBORValue(WTFMove(cborString));
+        return CBORValue(WTF::move(cborString));
     return std::nullopt;
 }
 
@@ -261,7 +261,7 @@ std::optional<CBORValue> CBORReader::readBytes(uint64_t numBytes)
     cborByteString.append(m_data.subspan(std::distance(m_data.begin(), m_it), static_cast<size_t>(numBytes)));
     m_it += numBytes;
 
-    return CBORValue(WTFMove(cborByteString));
+    return CBORValue(WTF::move(cborByteString));
 }
 
 std::optional<CBORValue> CBORReader::readCBORArray(uint64_t length, int maxNestingLevel)
@@ -271,9 +271,9 @@ std::optional<CBORValue> CBORReader::readCBORArray(uint64_t length, int maxNesti
         std::optional<CBORValue> cborElement = decodeCBOR(maxNestingLevel - 1);
         if (!cborElement)
             return std::nullopt;
-        cborArray.append(WTFMove(cborElement.value()));
+        cborArray.append(WTF::move(cborElement.value()));
     }
-    return CBORValue(WTFMove(cborArray));
+    return CBORValue(WTF::move(cborArray));
 }
 
 std::optional<CBORValue> CBORReader::readCBORMap(uint64_t length, int maxNestingLevel)
@@ -293,9 +293,9 @@ std::optional<CBORValue> CBORReader::readCBORMap(uint64_t length, int maxNesting
         if (!checkDuplicateKey(key.value(), cborMap) || !checkOutOfOrderKey(key.value(), cborMap))
             return std::nullopt;
 
-        cborMap.emplace(std::make_pair(WTFMove(key.value()), WTFMove(value.value())));
+        cborMap.emplace(std::make_pair(WTF::move(key.value()), WTF::move(value.value())));
     }
-    return CBORValue(WTFMove(cborMap));
+    return CBORValue(WTF::move(cborMap));
 }
 
 bool CBORReader::canConsume(uint64_t bytes)

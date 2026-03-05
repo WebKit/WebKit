@@ -27,6 +27,8 @@
 #include "config.h"
 #include "NavigatorCredentials.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "Document.h"
 #include "LocalFrameInlines.h"
 #include "Navigator.h"
@@ -43,7 +45,7 @@ NavigatorCredentials::~NavigatorCredentials() = default;
 CredentialsContainer* NavigatorCredentials::credentials(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
 {
     if (!m_credentialsContainer)
-        m_credentialsContainer = CredentialsContainer::create(WTFMove(document));
+        m_credentialsContainer = CredentialsContainer::create(WTF::move(document));
 
     return m_credentialsContainer.get();
 }
@@ -61,9 +63,11 @@ NavigatorCredentials* NavigatorCredentials::from(Navigator* navigator)
     if (!supplement) {
         auto newSupplement = makeUnique<NavigatorCredentials>();
         supplement = newSupplement.get();
-        provideTo(navigator, supplementName(), WTFMove(newSupplement));
+        provideTo(navigator, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

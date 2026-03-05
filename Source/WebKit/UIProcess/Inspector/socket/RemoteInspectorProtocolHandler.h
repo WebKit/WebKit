@@ -61,7 +61,6 @@ private:
     void updateTargetList();
 
     void runScript(const String&);
-    Ref<WebPageProxy> protectedPage() const;
 
     std::unique_ptr<RemoteInspectorClient> m_inspectorClient;
     WeakRef<WebPageProxy> m_page;

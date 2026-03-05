@@ -21,12 +21,14 @@
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/media_types.h"
 #include "api/rtc_error.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/sctp_transport_interface.h"
+#include "api/transport/sctp_transport_factory_interface.h"
 #include "media/base/codec.h"
 #include "media/base/media_constants.h"
 #include "media/base/media_engine.h"
@@ -45,6 +47,7 @@
 #include "pc/simulcast_description.h"
 #include "pc/used_ids.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/unique_id_generator.h"
 
@@ -77,13 +80,10 @@ webrtc::RtpHeaderExtensions RtpHeaderExtensionsFromCapabilities(
 std::vector<webrtc::RtpHeaderExtensionCapability>
 UnstoppedRtpHeaderExtensionCapabilities(
     std::vector<webrtc::RtpHeaderExtensionCapability> capabilities) {
-  capabilities.erase(
-      std::remove_if(
-          capabilities.begin(), capabilities.end(),
-          [](const webrtc::RtpHeaderExtensionCapability& capability) {
-            return capability.direction == RtpTransceiverDirection::kStopped;
-          }),
-      capabilities.end());
+  std::erase_if(
+      capabilities, [](const webrtc::RtpHeaderExtensionCapability& capability) {
+        return capability.direction == RtpTransceiverDirection::kStopped;
+      });
   return capabilities;
 }
 
@@ -591,6 +591,7 @@ bool CreateMediaContentAnswer(
         // See also crbug.com/webrtc/7477 about the general lack of direction.
         if (extension.direction != RtpTransceiverDirection::kStopped) {
           local_rtp_extensions_to_reply_with.push_back(extension_with_id);
+          break;
         }
       }
     }
@@ -665,20 +666,41 @@ const TransportDescription* GetTransportDescription(
   return desc;
 }
 
+bool OfferRfc8888(const FieldTrialsView& field_trials) {
+  if (field_trials.IsEnabled("WebRTC-RFC8888CongestionControlFeedback")) {
+    FieldTrialParameter<bool> offer_rfc_8888("offer", false);
+    ParseFieldTrial(
+        {&offer_rfc_8888},
+        field_trials.Lookup("WebRTC-RFC8888CongestionControlFeedback"));
+    return offer_rfc_8888;
+  }
+  return false;
+}
+
+bool AcceptOfferWithRfc8888(const FieldTrialsView& field_trials) {
+  return field_trials.IsEnabled("WebRTC-RFC8888CongestionControlFeedback");
+}
+
 }  // namespace
 
 MediaSessionDescriptionFactory::MediaSessionDescriptionFactory(
-    MediaEngineInterface* media_engine,
+    const Environment& env,
+    const MediaEngineInterface* media_engine,
     bool rtx_enabled,
     UniqueRandomIdGenerator* ssrc_generator,
     const TransportDescriptionFactory* transport_desc_factory,
+    SctpTransportFactoryInterface* sctp_factory,
     CodecLookupHelper* codec_lookup_helper)
-    : ssrc_generator_(ssrc_generator),
+    : offer_rfc_8888_(OfferRfc8888(transport_desc_factory->trials())),
+      accept_offer_with_rfc_8888_(
+          AcceptOfferWithRfc8888(transport_desc_factory->trials())),
+      ssrc_generator_(ssrc_generator),
       transport_desc_factory_(transport_desc_factory),
+      sctp_factory_(sctp_factory),
       codec_lookup_helper_(codec_lookup_helper),
       payload_types_in_transport_trial_enabled_(
-          transport_desc_factory_->trials().IsEnabled(
-              "WebRTC-PayloadTypesInTransport")) {
+          env.field_trials().IsEnabled("WebRTC-PayloadTypesInTransport")),
+      env_(env) {
   RTC_CHECK(transport_desc_factory_);
   RTC_CHECK(codec_lookup_helper_);
 }
@@ -688,14 +710,11 @@ MediaSessionDescriptionFactory::filtered_rtp_header_extensions(
     RtpHeaderExtensions extensions) const {
   if (!is_unified_plan_) {
     // Remove extensions only supported with unified-plan.
-    extensions.erase(
-        std::remove_if(extensions.begin(), extensions.end(),
-                       [](const webrtc::RtpExtension& extension) {
-                         return extension.uri == RtpExtension::kMidUri ||
-                                extension.uri == RtpExtension::kRidUri ||
-                                extension.uri == RtpExtension::kRepairedRidUri;
-                       }),
-        extensions.end());
+    std::erase_if(extensions, [](const webrtc::RtpExtension& extension) {
+      return extension.uri == RtpExtension::kMidUri ||
+             extension.uri == RtpExtension::kRidUri ||
+             extension.uri == RtpExtension::kRepairedRidUri;
+    });
   }
   return extensions;
 }
@@ -844,9 +863,11 @@ MediaSessionDescriptionFactory::CreateAnswerOrError(
 
   // Decide what congestion control feedback format we're using.
   bool has_ack_ccfb = false;
-  if (transport_desc_factory_->trials().IsEnabled(
-          "WebRTC-RFC8888CongestionControlFeedback")) {
+  if (accept_offer_with_rfc_8888_) {
     for (const auto& content : offer->contents()) {
+      if (content.type != MediaProtocolType::kRtp) {
+        continue;
+      }
       if (content.media_description()->rtcp_fb_ack_ccfb()) {
         has_ack_ccfb = true;
       } else if (has_ack_ccfb) {
@@ -1172,9 +1193,7 @@ RTCError MediaSessionDescriptionFactory::AddRtpContentForOffer(
     content_description = std::make_unique<VideoContentDescription>();
   }
   // RFC 8888 support.
-  content_description->set_rtcp_fb_ack_ccfb(
-      transport_desc_factory_->trials().IsEnabled(
-          "WebRTC-RFC8888CongestionControlFeedback"));
+  content_description->set_rtcp_fb_ack_ccfb(offer_rfc_8888_);
   auto error = CreateMediaContentOffer(
       media_description_options, session_options, codecs_to_include,
       header_extensions, ssrc_generator(), current_streams,
@@ -1221,6 +1240,19 @@ RTCError MediaSessionDescriptionFactory::AddDataContentForOffer(
                                       : kMediaProtocolSctp);
   data->set_use_sctpmap(session_options.use_obsolete_sctp_sdp);
   data->set_max_message_size(kSctpSendBufferSize);
+  if (session_options.use_sctp_snap) {
+    if (current_content && current_content->media_description()) {
+      auto current_data_description =
+          current_content->media_description()->as_sctp();
+      RTC_DCHECK(current_data_description);
+      data->set_sctp_init(current_data_description->sctp_init());
+    }
+    if (!data->sctp_init().has_value()) {
+      // Create a sctp-init on subsequent offers even if the remote side
+      // has not negotiated one previously.
+      data->set_sctp_init(sctp_factory_->GenerateConnectionToken(env_));
+    }
+  }
 
   auto error = CreateContentOffer(media_description_options, session_options,
                                   RtpHeaderExtensions(), ssrc_generator(),
@@ -1341,11 +1373,11 @@ RTCError MediaSessionDescriptionFactory::AddRtpContentForAnswer(
   // RFC 8888 support. Only answer with "ack ccfb" if offer has it and
   // experiment is enabled.
   if (offer_content_description->rtcp_fb_ack_ccfb()) {
-    answer_content->set_rtcp_fb_ack_ccfb(
-        transport_desc_factory_->trials().IsEnabled(
-            "WebRTC-RFC8888CongestionControlFeedback"));
-    for (auto& codec : codecs_to_include) {
-      codec.feedback_params.Remove(FeedbackParam(kRtcpFbParamTransportCc));
+    if (accept_offer_with_rfc_8888_) {
+      answer_content->set_rtcp_fb_ack_ccfb(true);
+      for (auto& codec : codecs_to_include) {
+        codec.feedback_params.Remove(FeedbackParam(kRtcpFbParamTransportCc));
+      }
     }
   }
   if (!SetCodecsInAnswer(offer_content_description, codecs_to_include,
@@ -1441,6 +1473,23 @@ RTCError MediaSessionDescriptionFactory::AddDataContentForAnswer(
     // Respond with sctpmap if the offer uses sctpmap.
     bool offer_uses_sctpmap = offer_data_description->use_sctpmap();
     data_answer->as_sctp()->set_use_sctpmap(offer_uses_sctpmap);
+
+    // Respond with sctp-init if the offer had sctp-init.
+    if (session_options.use_sctp_snap) {
+      if (offer_data_description->sctp_init().has_value()) {
+        if (current_content && current_content->media_description()) {
+          auto current_data_description =
+              current_content->media_description()->as_sctp();
+          RTC_DCHECK(current_data_description);
+          data_answer->as_sctp()->set_sctp_init(
+              current_data_description->sctp_init());
+        }
+        if (!data_answer->as_sctp()->sctp_init().has_value()) {
+          data_answer->as_sctp()->set_sctp_init(
+              sctp_factory_->GenerateConnectionToken(env_));
+        }
+      }
+    }
   } else {
     RTC_DCHECK_NOTREACHED() << "Non-SCTP data content found";
   }

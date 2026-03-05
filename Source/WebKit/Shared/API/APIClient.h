@@ -77,7 +77,7 @@ public:
         }
     }
 
-    const LatestClientInterface& client() const { return m_client; }
+    const LatestClientInterface& client() const LIFETIME_BOUND { return m_client; }
 
 protected:
     LatestClientInterface m_client;

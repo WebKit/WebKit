@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLFractionElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLFractionElement);
 
 using namespace MathMLNames;
 
@@ -88,17 +88,17 @@ MathMLFractionElement::FractionAlignment MathMLFractionElement::cachedFractionAl
         return alignment.value();
 
     if (document().settings().coreMathMLEnabled()) {
-        alignment = FractionAlignmentCenter;
+        alignment = FractionAlignment::Center;
         return alignment.value();
     }
 
     auto& value = attributeWithoutSynchronization(name);
     if (equalLettersIgnoringASCIICase(value, "left"_s))
-        alignment = FractionAlignmentLeft;
+        alignment = FractionAlignment::Left;
     else if (equalLettersIgnoringASCIICase(value, "right"_s))
-        alignment = FractionAlignmentRight;
+        alignment = FractionAlignment::Right;
     else
-        alignment = FractionAlignmentCenter;
+        alignment = FractionAlignment::Center;
     return alignment.value();
 }
 
@@ -143,7 +143,7 @@ void MathMLFractionElement::attributeChanged(const QualifiedName& name, const At
 RenderPtr<RenderElement> MathMLFractionElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::mfracTag));
-    return createRenderer<RenderMathMLFraction>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLFraction>(*this, WTF::move(style));
 }
 
 }

@@ -43,7 +43,7 @@ JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, JSV
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto constructData = JSC::getConstructData(constructorObject);
+    auto constructData = JSC::getConstructDataInline(constructorObject);
     if (constructData.type == CallData::Type::None) [[unlikely]] {
         throwTypeError(globalObject, scope, errorMessage);
         return nullptr;

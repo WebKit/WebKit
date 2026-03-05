@@ -20,7 +20,6 @@
 
 namespace webrtc {
 namespace test {
-constexpr float DriftingClock::kNoDrift;
 
 DriftingClock::DriftingClock(Clock* clock, float speed)
     : clock_(clock), drift_(speed - 1.0f), start_time_(clock_->CurrentTime()) {

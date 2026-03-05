@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderSVGResourceContainer.h"
 
+#include "ContainerNodeInlines.h"
 #include "RenderLayer.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
@@ -35,10 +36,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceContainer);
 
 RenderSVGResourceContainer::RenderSVGResourceContainer(Type type, SVGElement& element, RenderStyle&& style)
-    : RenderSVGHiddenContainer(type, element, WTFMove(style), SVGModelObjectFlag::IsResourceContainer)
+    : RenderSVGHiddenContainer(type, element, WTF::move(style), SVGModelObjectFlag::IsResourceContainer)
     , m_id(element.getIdAttribute())
 {
     ASSERT(isRenderSVGResourceContainer());
@@ -46,13 +47,19 @@ RenderSVGResourceContainer::RenderSVGResourceContainer(Type type, SVGElement& el
 
 RenderSVGResourceContainer::~RenderSVGResourceContainer() = default;
 
+void RenderSVGResourceContainer::layout()
+{
+    RenderSVGHiddenContainer::layout();
+    repaintAllClients();
+}
+
 void RenderSVGResourceContainer::willBeDestroyed()
 {
     m_registered = false;
     RenderSVGHiddenContainer::willBeDestroyed();
 }
 
-void RenderSVGResourceContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderSVGResourceContainer::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
@@ -65,7 +72,7 @@ void RenderSVGResourceContainer::styleDidChange(StyleDifference diff, const Rend
 void RenderSVGResourceContainer::idChanged()
 {
     // Remove old id, that is guaranteed to be present in cache.
-    m_id = protectedElement()->getIdAttribute();
+    m_id = protect(element())->getIdAttribute();
 
     registerResource();
 }
@@ -93,12 +100,20 @@ void RenderSVGResourceContainer::registerResource()
     if (!treeScope->isIdOfPendingSVGResource(m_id))
         return;
 
+    bool needsRepaintAllClients = false;
     auto elements = copyToVectorOf<Ref<SVGElement>>(treeScope->removePendingSVGResource(m_id));
     for (auto& element : elements) {
         ASSERT(element->hasPendingResources());
+        if (CheckedPtr clientRenderer = element->renderer()) {
+            Ref svgElement = this->element();
+            needsRepaintAllClients |= clientRenderer->addReferencedSVGResourceIfNeeded(svgElement.get(), m_id);
+        }
         treeScope->clearHasPendingSVGResourcesIfPossible(element);
         notifyResourceChanged(element.get());
     }
+    // If we were appended after the render tree was created and we had pending clients then repaint them.
+    if (needsRepaintAllClients)
+        repaintAllClients();
 }
 
 void RenderSVGResourceContainer::repaintAllClients() const

@@ -126,7 +126,8 @@ class ClippingEventPredictor : public ClippingPredictor {
         peak = std::max(std::fabs(sample), peak);
       }
       ch_buffers_[channel]->Push(
-          {sum_squares / static_cast<float>(samples_per_channel), peak});
+          {.average = sum_squares / static_cast<float>(samples_per_channel),
+           .max = peak});
     }
   }
 
@@ -266,7 +267,8 @@ class ClippingPeakPredictor : public ClippingPredictor {
         peak = std::max(std::fabs(sample), peak);
       }
       ch_buffers_[channel]->Push(
-          {sum_squares / static_cast<float>(samples_per_channel), peak});
+          {.average = sum_squares / static_cast<float>(samples_per_channel),
+           .max = peak});
     }
   }
 

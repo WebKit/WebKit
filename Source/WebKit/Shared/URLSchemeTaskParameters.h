@@ -41,7 +41,7 @@ struct URLSchemeTaskParameters {
         : handlerIdentifier(handlerIdentifier)
         , taskIdentifier(taskIdentifier)
         , request(request)
-        , frameInfo(WTFMove(frameInfo))
+        , frameInfo(WTF::move(frameInfo))
     { }
 
     WebURLSchemeHandlerIdentifier handlerIdentifier;

@@ -889,6 +889,8 @@ static inline void restore_extra_coding_context(AV1_COMP *cpi) {
   restore_cdef_coding_context(&cm->cdef_info, &cc->cdef_info);
   cpi->rc = cc->rc;
   cpi->ppi->mv_stats = cc->mv_stats;
+  cpi->common.current_frame.frame_number = cc->frame_number;
+  cpi->frame_index_set = cc->frame_index_set;
 }
 
 static inline int equal_dimensions_and_border(const YV12_BUFFER_CONFIG *a,

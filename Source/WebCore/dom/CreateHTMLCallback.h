@@ -41,6 +41,7 @@ public:
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
     virtual bool hasCallback() const = 0;
+    virtual bool isJSCreateHTMLCallback() const { return false; }
 
     virtual CallbackResult<String> invoke(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;
     virtual CallbackResult<String> invokeRethrowingException(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;

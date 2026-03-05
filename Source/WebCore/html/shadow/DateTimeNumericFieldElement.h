@@ -33,13 +33,13 @@
 namespace WebCore {
 
 class DateTimeNumericFieldElement : public DateTimeFieldElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeNumericFieldElement);
+    WTF_MAKE_TZONE_ALLOCATED(DateTimeNumericFieldElement);
 public:
     struct Range {
         Range(int minimum, int maximum)
             : minimum(minimum), maximum(maximum) { }
         int clampValue(int) const;
-        bool isInRange(int) const;
+        bool NODELETE isInRange(int) const;
 
         int minimum;
         int maximum;
@@ -48,7 +48,7 @@ public:
 protected:
     DateTimeNumericFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Range&, int placeholder);
 
-    int maximum() const;
+    int NODELETE maximum() const;
 
     // DateTimeFieldElement functions:
     bool hasValue() const final;

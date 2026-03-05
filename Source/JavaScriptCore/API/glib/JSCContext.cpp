@@ -35,6 +35,7 @@
 #include "JSWithScope.h"
 #include "OpaqueJSString.h"
 #include "Parser.h"
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/MakeString.h>
@@ -102,7 +103,7 @@ static void jscContextSetVirtualMachine(JSCContext* context, GRefPtr<JSCVirtualM
     JSCContextPrivate* priv = context->priv;
     if (vm) {
         ASSERT(!priv->vm);
-        priv->vm = WTFMove(vm);
+        priv->vm = WTF::move(vm);
         ASSERT(!priv->jsContext);
         GUniquePtr<char> name(g_strdup_printf("%p-jsContext", &Thread::currentSingleton()));
         if (auto* data = g_object_get_data(G_OBJECT(priv->vm.get()), name.get())) {
@@ -260,7 +261,7 @@ CallbackData jscContextPushCallback(JSCContext* context, JSValueRef calleeValue,
 {
     auto& thread = Thread::currentSingleton();
     auto* previousStack = static_cast<CallbackData*>(thread.m_apiData);
-    CallbackData data = { context, WTFMove(context->priv->exception), calleeValue, thisValue, argumentCount, arguments, previousStack };
+    CallbackData data = { context, WTF::move(context->priv->exception), calleeValue, thisValue, argumentCount, arguments, previousStack };
     thread.m_apiData = &data;
     return data;
 }
@@ -268,7 +269,7 @@ CallbackData jscContextPushCallback(JSCContext* context, JSValueRef calleeValue,
 void jscContextPopCallback(JSCContext* context, CallbackData&& data)
 {
     auto& thread = Thread::currentSingleton();
-    context->priv->exception = WTFMove(data.preservedException);
+    context->priv->exception = WTF::move(data.preservedException);
     thread.m_apiData = data.next;
 }
 
@@ -289,10 +290,8 @@ JSValueRef jscContextGArrayToJSArray(JSCContext* context, GPtrArray* gArray, JSV
     if (*exception)
         return JSValueMakeUndefined(priv->jsContext.get());
 
-    for (unsigned i = 0; i < gArray->len; ++i) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        gpointer item = g_ptr_array_index(gArray, i);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto i = 0;
+    for (auto& item : span(gArray)) {
         if (!item)
             JSObjectSetPropertyAtIndex(priv->jsContext.get(), jsArrayObject, i, JSValueMakeNull(priv->jsContext.get()), exception);
         else if (JSC_IS_VALUE(item))
@@ -302,6 +301,7 @@ JSValueRef jscContextGArrayToJSArray(JSCContext* context, GPtrArray* gArray, JSV
 
         if (*exception)
             return JSValueMakeUndefined(priv->jsContext.get());
+        i++;
     }
 
     return jsArray;
@@ -373,7 +373,11 @@ GUniquePtr<char*> jscContextJSArrayToGStrv(JSCContext* context, JSValueRef jsArr
     if (*exception)
         return nullptr;
 
-    GUniquePtr<char*> strv(static_cast<char**>(g_new0(char*, length + 1)));
+    auto sizeInBytes = checkedSum<size_t>(length + 1);
+    sizeInBytes *= sizeof(char*);
+    if (sizeInBytes.hasOverflowed())
+        return nullptr;
+    auto strv = GMallocSpan<char*>::zeroedMalloc(sizeInBytes);
     for (unsigned i = 0; i < length; ++i) {
         auto* jsItem = JSObjectGetPropertyAtIndex(priv->jsContext.get(), jsArrayObject, i, exception);
         if (*exception)
@@ -384,13 +388,10 @@ GUniquePtr<char*> jscContextJSArrayToGStrv(JSCContext* context, JSValueRef jsArr
             *exception = toRef(JSC::createTypeError(globalObject, makeString("invalid js type for GStrv: item "_s, i, " is not a string"_s)));
             return nullptr;
         }
-
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        strv.get()[i] = jsc_value_to_string(jsValueItem.get());
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        strv[i] = jsc_value_to_string(jsValueItem.get());
     }
 
-    return strv;
+    return GUniquePtr<char*> { strv.leakSpan().data() };
 }
 
 JSValueRef jscContextGValueToJSValue(JSCContext* context, const GValue* value, JSValueRef* exception)
@@ -447,13 +448,11 @@ JSValueRef jscContextGValueToJSValue(JSCContext* context, const GValue* value, J
                 return jscContextGArrayToJSArray(context, static_cast<GPtrArray*>(ptr), exception);
 
             if (g_type_is_a(G_VALUE_TYPE(value), G_TYPE_STRV)) {
-                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
                 auto** strv = static_cast<char**>(ptr);
                 auto strvLength = g_strv_length(strv);
                 GRefPtr<GPtrArray> gArray = adoptGRef(g_ptr_array_new_full(strvLength, g_object_unref));
-                for (unsigned i = 0; i < strvLength; i++)
-                    g_ptr_array_add(gArray.get(), jsc_value_new_string(context, strv[i]));
-                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                for (auto* item : span(strv))
+                    g_ptr_array_add(gArray.get(), jsc_value_new_string(context, item));
                 return jscContextGArrayToJSArray(context, gArray.get(), exception);
             }
         } else
@@ -855,7 +854,7 @@ JSCValue* jsc_context_evaluate(JSCContext* context, const char* code, gssize len
 
 static JSValueRef evaluateScriptInContext(JSGlobalContextRef jsContext, String&& script, const char* uri, unsigned lineNumber, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> scriptJS(Adopt, OpaqueJSString::tryCreate(WTFMove(script)).leakRef());
+    JSRetainPtr<JSStringRef> scriptJS(Adopt, OpaqueJSString::tryCreate(WTF::move(script)).leakRef());
     JSRetainPtr<JSStringRef> sourceURI = uri ? adopt(JSStringCreateWithUTF8CString(uri)) : nullptr;
     return JSEvaluateScript(jsContext, scriptJS.get(), nullptr, sourceURI.get(), lineNumber, exception);
 }
@@ -880,9 +879,7 @@ JSCValue* jsc_context_evaluate_with_source_uri(JSCContext* context, const char* 
     g_return_val_if_fail(code, nullptr);
 
     JSValueRef exception = nullptr;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    JSValueRef result = evaluateScriptInContext(context->priv->jsContext.get(), String::fromUTF8(std::span(code, length < 0 ? strlen(code) : length)), uri, lineNumber, &exception);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    JSValueRef result = evaluateScriptInContext(context->priv->jsContext.get(), length < 0 ? String::fromUTF8(code) : String::fromUTF8(unsafeMakeSpan(code, length)), uri, lineNumber, &exception);
     if (jscContextHandleExceptionIfNeeded(context, exception))
         return jsc_value_new_undefined(context);
 
@@ -922,9 +919,7 @@ JSCValue* jsc_context_evaluate_in_object(JSCContext* context, const char* code, 
     JSC::JSLockHolder locker(globalObject);
     globalObject->setGlobalScopeExtension(JSC::JSWithScope::create(vm, globalObject, globalObject->globalScope(), toJS(JSContextGetGlobalObject(context->priv->jsContext.get()))));
     JSValueRef exception = nullptr;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    JSValueRef result = evaluateScriptInContext(objectContext.get(), String::fromUTF8(std::span(code, length < 0 ? strlen(code) : length)), uri, lineNumber, &exception);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    JSValueRef result = evaluateScriptInContext(objectContext.get(), length < 0 ? String::fromUTF8(code) : String::fromUTF8(unsafeMakeSpan(code, length)), uri, lineNumber, &exception);
     if (jscContextHandleExceptionIfNeeded(context, exception))
         return jsc_value_new_undefined(context);
 
@@ -984,10 +979,8 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     JSC::JSLockHolder locker(vm);
 
     URL sourceURL = uri ? URL(String::fromLatin1(uri)) : URL();
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    JSC::SourceCode source = JSC::makeSource(String::fromUTF8(std::span(code, length < 0 ? strlen(code) : length)), JSC::SourceOrigin { sourceURL }, JSC::SourceTaintedOrigin::Untainted,
+    JSC::SourceCode source = JSC::makeSource(length < 0 ? String::fromUTF8(code) : String::fromUTF8(unsafeMakeSpan(code, length)), JSC::SourceOrigin { sourceURL }, JSC::SourceTaintedOrigin::Untainted,
         sourceURL.string() , TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     bool success = false;
     JSC::ParserError error;
     switch (mode) {

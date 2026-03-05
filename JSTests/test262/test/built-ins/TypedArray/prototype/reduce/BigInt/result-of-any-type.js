@@ -30,12 +30,12 @@ info: |
       ii. Let accumulator be ? Call(callbackfn, undefined, « accumulator,
       kValue, k, O »).
   9. Return accumulator.
-includes: [testBigIntTypedArray.js]
+includes: [testTypedArray.js]
 features: [BigInt, Symbol, TypedArray]
 ---*/
 
-testWithBigIntTypedArrayConstructors(function(TA) {
-  var sample = new TA([42n, 43n, 44n]);
+testWithBigIntTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample = new TA(makeCtorArg([42n, 43n, 44n]));
   [
     ["test262", "string"],
     ["", "empty string"],

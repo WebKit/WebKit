@@ -68,7 +68,7 @@ private:
         if (!delegate || !m_respondsToInspectorOpenURLExternally)
             return;
 
-        [delegate inspector:protectedWrapper(inspector).get() openURLExternally:adoptNS([[NSURL alloc] initWithString:url.createNSString().get()]).get()];
+        [delegate inspector:protect(wrapper(inspector)).get() openURLExternally:adoptNS([[NSURL alloc] initWithString:url.createNSString().get()]).get()];
     }
 
     void frontendLoaded(WebKit::WebInspectorUIProxy& inspector) final
@@ -77,7 +77,7 @@ private:
         if (!delegate || !m_respondsToInspectorFrontendLoaded)
             return;
 
-        [delegate inspectorFrontendLoaded:protectedWrapper(inspector).get()];
+        [delegate inspectorFrontendLoaded:protect(wrapper(inspector)).get()];
     }
 
     WeakObjCPtr<id <_WKInspectorDelegate> > m_delegate;
@@ -86,24 +86,19 @@ private:
     bool m_respondsToInspectorFrontendLoaded : 1;
 };
 
-Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
-{
-    return *inspector->_inspector;
-}
-
 @implementation _WKInspector
 
 // MARK: _WKInspector methods
 
 - (id <_WKInspectorDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<_WKInspectorDelegate>)delegate
 {
     _delegate = delegate;
-    protectedInspector(self)->setInspectorClient(WTF::makeUnique<InspectorClient>(delegate));
+    protect(*_inspector)->setInspectorClient(WTF::makeUnique<InspectorClient>(delegate));
 }
 
 - (WKWebView *)webView
@@ -124,7 +119,7 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
 
 - (BOOL)isFront
 {
-    return protectedInspector(self)->isFront();
+    return protect(*_inspector)->isFront();
 }
 
 - (BOOL)isProfilingPage
@@ -139,32 +134,32 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
 
 - (void)connect
 {
-    protectedInspector(self)->connect();
+    protect(*_inspector)->connect();
 }
 
 - (void)show
 {
-    protectedInspector(self)->show();
+    protect(*_inspector)->show();
 }
 
 - (void)hide
 {
-    protectedInspector(self)->hide();
+    protect(*_inspector)->hide();
 }
 
 - (void)close
 {
-    protectedInspector(self)->close();
+    protect(*_inspector)->close();
 }
 
 - (void)showConsole
 {
-    protectedInspector(self)->showConsole();
+    protect(*_inspector)->showConsole();
 }
 
 - (void)showResources
 {
-    protectedInspector(self)->showResources();
+    protect(*_inspector)->showResources();
 }
 
 - (void)showMainResourceForFrame:(_WKFrameHandle *)handle
@@ -174,27 +169,27 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
     auto frameID = handle->_frameHandle->frameID();
     if (!frameID)
         return;
-    protectedInspector(self)->showMainResourceForFrame(*frameID);
+    protect(*_inspector)->showMainResourceForFrame(*frameID);
 }
 
 - (void)attach
 {
-    protectedInspector(self)->attach();
+    protect(*_inspector)->attach();
 }
 
 - (void)detach
 {
-    protectedInspector(self)->detach();
+    protect(*_inspector)->detach();
 }
 
 - (void)togglePageProfiling
 {
-    protectedInspector(self)->togglePageProfiling();
+    protect(*_inspector)->togglePageProfiling();
 }
 
 - (void)toggleElementSelection
 {
-    protectedInspector(self)->toggleElementSelection();
+    protect(*_inspector)->toggleElementSelection();
 }
 
 - (void)printErrorToConsole:(NSString *)error
@@ -212,7 +207,7 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
         return;
 
     inspectorWebView.get()._diagnosticLoggingDelegate = delegate;
-    protectedInspector(self)->setDiagnosticLoggingAvailable(!!delegate);
+    protect(*_inspector)->setDiagnosticLoggingAvailable(!!delegate);
 }
 
 // MARK: _WKInspectorInternal methods
@@ -248,13 +243,13 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
         return;
     }
 
-    protectedInspector(self)->protectedExtensionController()->registerExtension(extensionID, extensionBundleIdentifier, displayName, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
+    protect(protect(*_inspector)->extensionController())->registerExtension(extensionID, extensionBundleIdentifier, displayName, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Ref<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
             return;
         }
 
-        capturedBlock(nil, protectedWrapper(result.value()).get());
+        capturedBlock(nil, protect(wrapper(result.value())).get());
     });
 #else
     completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]).get(), nil);
@@ -270,7 +265,7 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
         return;
     }
 
-    protectedInspector(self)->protectedExtensionController()->unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError> result) mutable {
+    protect(protect(*_inspector)->extensionController())->unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
             return;
@@ -292,7 +287,7 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
         return;
     }
 
-    protectedInspector(self)->protectedExtensionController()->showExtensionTab(extensionTabIdentifier, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError>&& result) mutable {
+    protect(protect(*_inspector)->extensionController())->showExtensionTab(extensionTabIdentifier, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError>&& result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
             return;
@@ -312,7 +307,7 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
         return;
     }
 
-    protectedInspector(self)->protectedExtensionController()->navigateTabForExtension(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (const std::optional<Inspector::ExtensionError>&& result) mutable {
+    protect(protect(*_inspector)->extensionController())->navigateTabForExtension(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (const std::optional<Inspector::ExtensionError>&& result) mutable {
         if (result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.value()).createNSString().get() }]).get());
             return;

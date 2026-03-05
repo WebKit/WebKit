@@ -176,7 +176,7 @@ void StorageMap::importItems(HashMap<String, String>&& items)
         newSize += value.sizeInBytes();
     }
 
-    m_impl->map = WTFMove(items);
+    m_impl->map = WTF::move(items);
     m_impl->currentSize = newSize;
 }
 

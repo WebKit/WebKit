@@ -51,24 +51,24 @@ auto CSSValueConversion<Cursor>::operator()(BuilderState& state, const CSSValue&
         Ref item = list->item(index);
         RefPtr image = requiredDowncast<CSSCursorImageValue>(state, item);
         if (!image)
-            return CursorImage { StyleInvalidImage::create() };
+            return CursorImageAndHotSpot { InvalidImage::create() };
 
         auto styleImage = image->createStyleImage(state);
         if (!styleImage) {
             state.setCurrentPropertyInvalidAtComputedValueTime();
-            return CursorImage { StyleInvalidImage::create() };
+            return CursorImageAndHotSpot { InvalidImage::create() };
         }
 
         // Point outside the image is how we tell the cursor machinery there is no hot spot, and it should generate one (done in the Cursor class).
         // FIXME: Would it be better to extend the concept of "no hot spot" deeper, into CursorImage and beyond, rather than using -1/-1 for it?
         auto hotSpot = styleImage->hotSpot().value_or(IntPoint { -1, -1 });
-        return CursorImage { styleImage.releaseNonNull(), hotSpot };
+        return CursorImageAndHotSpot { styleImage.releaseNonNull(), hotSpot };
     });
 
-    return { WTFMove(images), fromCSSValue<CursorType>(list->item(list->size() - 1)) };
+    return { WTF::move(images), fromCSSValue<CursorType>(list->item(list->size() - 1)) };
 }
 
-Ref<CSSValue> CSSValueCreation<CursorImage>::operator()(CSSValuePool&, const RenderStyle& style, const CursorImage& value)
+Ref<CSSValue> CSSValueCreation<CursorImageAndHotSpot>::operator()(CSSValuePool&, const RenderStyle& style, const CursorImageAndHotSpot& value)
 {
     Ref image = value.image;
     return image->computedStyleValue(style);
@@ -76,7 +76,7 @@ Ref<CSSValue> CSSValueCreation<CursorImage>::operator()(CSSValuePool&, const Ren
 
 // MARK: - Serialization
 
-void Serialize<CursorImage>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const CursorImage& value)
+void Serialize<CursorImageAndHotSpot>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const CursorImageAndHotSpot& value)
 {
     Ref image = value.image;
     Ref computedValue = image->computedStyleValue(style);
@@ -85,7 +85,7 @@ void Serialize<CursorImage>::operator()(StringBuilder& builder, const CSS::Seria
 
 // MARK: - Logging
 
-TextStream& operator<<(TextStream& ts, const CursorImage& value)
+TextStream& operator<<(TextStream& ts, const CursorImageAndHotSpot& value)
 {
     return ts << "cursor image with hotspot " << value.hotSpot;
 }

@@ -35,11 +35,6 @@ inline SVGPatternElement& RenderSVGResourcePattern::patternElement() const
     return downcast<SVGPatternElement>(RenderSVGResourceContainer::element());
 }
 
-inline Ref<SVGPatternElement> RenderSVGResourcePattern::protectedPatternElement() const
-{
-    return patternElement();
-}
-
 static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attributes, const FloatRect& objectBoundingBox, const SVGPatternElement& patternElement)
 {
     return SVGLengthContext::resolveRectangle(&patternElement, attributes.patternUnits(), objectBoundingBox, attributes.x(), attributes.y(), attributes.width(), attributes.height());

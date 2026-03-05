@@ -176,7 +176,7 @@ static UIBezierPath *pathWithRoundedRectInFrame(CGRect rect, CGFloat borderRadiu
 
 - (id <WKFocusedFormControlViewDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.get().getAutoreleased();
 }
 
 - (void)setDelegate:(id <WKFocusedFormControlViewDelegate>)delegate
@@ -475,7 +475,7 @@ static NSDictionary *submitActionNameFontAttributes()
     if (_textSuggestions == displayableTextSuggestions.get() || [_textSuggestions isEqualToArray:displayableTextSuggestions.get()])
         return;
 
-    _textSuggestions = WTFMove(displayableTextSuggestions);
+    _textSuggestions = WTF::move(displayableTextSuggestions);
     [_delegate focusedFormControllerDidUpdateSuggestions:self];
 }
 

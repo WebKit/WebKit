@@ -26,6 +26,10 @@
 #pragma once
 
 #include <wtf/Platform.h>
+#if USE(CG)
+#include <wtf/cf/CFTypeTraits.h>
+#endif
+
 #if PLATFORM(WIN)
 #include "DIBPixelData.h"
 typedef struct HDC__* HDC;
@@ -37,6 +41,8 @@ typedef unsigned char UInt8;
 
 #if USE(CG)
 using PlatformGraphicsContext = struct CGContext;
+typedef struct CGContext* CGContextRef;
+WTF_DECLARE_CF_TYPE_TRAIT(CGContext);
 #elif USE(CAIRO)
 namespace WebCore {
 class GraphicsContextCairo;

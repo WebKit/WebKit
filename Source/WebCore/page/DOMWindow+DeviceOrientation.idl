@@ -27,7 +27,5 @@
 [
     Conditional=DEVICE_ORIENTATION
 ] partial interface DOMWindow {
-    // FIXME: 'ondeviceorientation' should be enumerable.
-    // FIXME: 'ondeviceorientation' should be [SecureContext].
-    [NotEnumerable] attribute EventHandler ondeviceorientation;
+    [SecureContext] attribute EventHandler ondeviceorientation;
 };

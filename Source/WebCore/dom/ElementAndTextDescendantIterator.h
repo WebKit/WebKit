@@ -121,16 +121,16 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(const 
         return;
 
     Vector<Node*, 20> ancestorStack;
-    auto* ancestor = m_current->parentNode();
+    RefPtr ancestor = m_current->parentNode();
     while (ancestor != &root) {
-        ancestorStack.append(ancestor);
+        ancestorStack.append(ancestor.get());
         ancestor = ancestor->parentNode();
     }
 
     m_ancestorSiblingStack.append({ nullptr, 0 });
     for (unsigned i = ancestorStack.size(); i; --i) {
-        if (auto* sibling = nextSibling(*ancestorStack[i - 1]))
-            m_ancestorSiblingStack.append({ sibling, i });
+        if (RefPtr sibling = nextSibling(*ancestorStack[i - 1]))
+            m_ancestorSiblingStack.append({ sibling.get(), i });
     }
 
     m_depth = ancestorStack.size() + 1;
@@ -185,13 +185,13 @@ inline ElementAndTextDescendantIterator& ElementAndTextDescendantIterator::trave
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
 
-    auto* firstChild = ElementAndTextDescendantIterator::firstChild(*m_current);
-    auto* nextSibling = ElementAndTextDescendantIterator::nextSibling(*m_current);
+    RefPtr firstChild = ElementAndTextDescendantIterator::firstChild(*m_current);
+    RefPtr nextSibling = ElementAndTextDescendantIterator::nextSibling(*m_current);
     if (firstChild) {
         if (nextSibling)
-            m_ancestorSiblingStack.append({ nextSibling, m_depth });
+            m_ancestorSiblingStack.append({ nextSibling.get(), m_depth });
         ++m_depth;
-        m_current = firstChild;
+        m_current = firstChild.get();
         return *this;
     }
     if (!nextSibling) {
@@ -199,7 +199,7 @@ inline ElementAndTextDescendantIterator& ElementAndTextDescendantIterator::trave
         return *this;
     }
 
-    m_current = nextSibling;
+    m_current = nextSibling.get();
     return *this;
 }
 

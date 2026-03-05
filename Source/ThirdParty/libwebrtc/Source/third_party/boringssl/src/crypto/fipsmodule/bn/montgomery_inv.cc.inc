@@ -20,15 +20,12 @@
 #include "../../internal.h"
 
 
-static uint64_t bn_neg_inv_mod_r_u64(uint64_t n);
+static uint64_t bn_neg_inv_mod_u64(uint64_t n);
 
 static_assert(BN_MONT_CTX_N0_LIMBS == 1 || BN_MONT_CTX_N0_LIMBS == 2,
               "BN_MONT_CTX_N0_LIMBS value is invalid");
 static_assert(sizeof(BN_ULONG) * BN_MONT_CTX_N0_LIMBS == sizeof(uint64_t),
               "uint64_t is insufficient precision for n0");
-
-// LG_LITTLE_R is log_2(r).
-#define LG_LITTLE_R (BN_MONT_CTX_N0_LIMBS * BN_BITS2)
 
 uint64_t bn_mont_n0(const BIGNUM *n) {
   // These conditions are checked by the caller, |BN_MONT_CTX_set| or
@@ -37,11 +34,11 @@ uint64_t bn_mont_n0(const BIGNUM *n) {
   assert(!BN_is_negative(n));
   assert(BN_is_odd(n));
 
-  // r == 2**(BN_MONT_CTX_N0_LIMBS * BN_BITS2) and LG_LITTLE_R == lg(r). This
-  // ensures that we can do integer division by |r| by simply ignoring
-  // |BN_MONT_CTX_N0_LIMBS| limbs. Similarly, we can calculate values modulo
-  // |r| by just looking at the lowest |BN_MONT_CTX_N0_LIMBS| limbs. This is
-  // what makes Montgomery multiplication efficient.
+  // r == 2**(BN_MONT_CTX_N0_LIMBS * BN_BITS2) ensures that we can do integer
+  // division by |r| by simply ignoring |BN_MONT_CTX_N0_LIMBS| limbs. Similarly,
+  // we can calculate values modulo |r| by just looking at the lowest
+  // |BN_MONT_CTX_N0_LIMBS| limbs. This is what makes Montgomery multiplication
+  // efficient.
   //
   // As shown in Algorithm 1 of "Fast Prime Field Elliptic Curve Cryptography
   // with 256 Bit Primes" by Shay Gueron and Vlad Krasnov, in the loop of a
@@ -76,87 +73,45 @@ uint64_t bn_mont_n0(const BIGNUM *n) {
   }
 #endif
 
-  return bn_neg_inv_mod_r_u64(n_mod_r);
+  // A 64-bit inverse is enough precision to invert by r. (r is also currently
+  // always 2^64.)
+  return bn_neg_inv_mod_u64(n_mod_r);
 }
 
-// bn_neg_inv_r_mod_n_u64 calculates the -1/n mod r; i.e. it calculates |v|
-// such that u*r - v*n == 1. |r| is the constant defined in |bn_mont_n0|. |n|
-// must be odd.
-//
-// This is derived from |xbinGCD| in Henry S. Warren, Jr.'s "Montgomery
-// Multiplication" (http://www.hackersdelight.org/MontgomeryMultiplication.pdf).
-// It is very similar to the MODULAR-INVERSE function in Stephen R. Dussé's and
-// Burton S. Kaliski Jr.'s "A Cryptographic Library for the Motorola DSP56000"
-// (http://link.springer.com/chapter/10.1007%2F3-540-46877-3_21).
-//
-// This is inspired by Joppe W. Bos's "Constant Time Modular Inversion"
-// (http://www.joppebos.com/files/CTInversion.pdf) so that the inversion is
-// constant-time with respect to |n|. We assume uint64_t additions,
-// subtractions, shifts, and bitwise operations are all constant time, which
-// may be a large leap of faith on 32-bit targets. We avoid division and
-// multiplication, which tend to be the most problematic in terms of timing
-// leaks.
-//
-// Most GCD implementations return values such that |u*r + v*n == 1|, so the
-// caller would have to negate the resultant |v| for the purpose of Montgomery
-// multiplication. This implementation does the negation implicitly by doing
-// the computations as a difference instead of a sum.
-static uint64_t bn_neg_inv_mod_r_u64(uint64_t n) {
+// bn_neg_inv_mod_u64 calculates -1/n mod 2^64. |n| must be odd.
+static uint64_t bn_neg_inv_mod_u64(uint64_t n) {
+  // This is a modified version of the technique described in
+  // https://crypto.stackexchange.com/a/47496 and
+  // https://bearssl.org/bigint.html#montgomery-reduction-and-multiplication. We
+  // modify it to compute the negative inverse directly so that, on 32-bit,
+  // negation happens before we go to double-word precision, instead of at the
+  // end.
+  //
+  // If r = -n^-1 (mod m), then r * (r*n + 2) is -n^(-1) (mod m^2). This is
+  // because, for some k, r*n = k*m - 1. Then:
+  //
+  //     r*n * (r*n + 2) = (k*m - 1) * (k*m + 1) = k^2*m^2 - 1 = -1 (mod m^2)
+  //
+  // We start with the negative inverse mod some small power of 2 and square the
+  // modulus up to 2^64. n = n^-1 (mod 8) for all odd n, so r = -n (mod 8). From
+  // there, four iterations are enough for 2^32 and five for 2^64.
   assert(n % 2 == 1);
-
-  // alpha == 2**(lg r - 1) == r / 2.
-  static const uint64_t alpha = UINT64_C(1) << (LG_LITTLE_R - 1);
-
-  const uint64_t beta = n;
-
-  uint64_t u = 1;
-  uint64_t v = 0;
-
-  // The invariant maintained from here on is:
-  // 2**(lg r - i) == u*2*alpha - v*beta.
-  for (size_t i = 0; i < LG_LITTLE_R; ++i) {
-#if BN_BITS2 == 64 && defined(BN_ULLONG)
-    assert((BN_ULLONG)(1) << (LG_LITTLE_R - i) ==
-           ((BN_ULLONG)u * 2 * alpha) - ((BN_ULLONG)v * beta));
-#endif
-
-    // Delete a common factor of 2 in u and v if |u| is even. Otherwise, set
-    // |u = (u + beta) / 2| and |v = (v / 2) + alpha|.
-
-    uint64_t u_is_odd = UINT64_C(0) - (u & 1);  // Either 0xff..ff or 0.
-
-    // The addition can overflow, so use Dietz's method for it.
-    //
-    // Dietz calculates (x+y)/2 by (x⊕y)>>1 + x&y. This is valid for all
-    // (unsigned) x and y, even when x+y overflows. Evidence for 32-bit values
-    // (embedded in 64 bits to so that overflow can be ignored):
-    //
-    // (declare-fun x () (_ BitVec 64))
-    // (declare-fun y () (_ BitVec 64))
-    // (assert (let (
-    //    (one (_ bv1 64))
-    //    (thirtyTwo (_ bv32 64)))
-    //    (and
-    //      (bvult x (bvshl one thirtyTwo))
-    //      (bvult y (bvshl one thirtyTwo))
-    //      (not (=
-    //        (bvadd (bvlshr (bvxor x y) one) (bvand x y))
-    //        (bvlshr (bvadd x y) one)))
-    // )))
-    // (check-sat)
-    uint64_t beta_if_u_is_odd = beta & u_is_odd;  // Either |beta| or 0.
-    u = ((u ^ beta_if_u_is_odd) >> 1) + (u & beta_if_u_is_odd);
-
-    uint64_t alpha_if_u_is_odd = alpha & u_is_odd;  // Either |alpha| or 0.
-    v = (v >> 1) + alpha_if_u_is_odd;
+#if defined(OPENSSL_32_BIT)
+  // Compute the result mod 2^32 first.
+  uint32_t n32 = static_cast<uint32_t>(n);
+  uint32_t r = 0u - n32;
+  for (int i = 0; i < 4; i++) {
+    r *= r * n32 + 2;
   }
-
-  // The invariant now shows that u*r - v*n == 1 since r == 2 * alpha.
-#if BN_BITS2 == 64 && defined(BN_ULLONG)
-  declassify_assert(1 == ((BN_ULLONG)u * 2 * alpha) - ((BN_ULLONG)v * beta));
+  // Run one more double-word iteration to get the result mod 2^64.
+  return r * (r * n + 2);
+#else
+  uint64_t r = 0u - n;
+  for (int i = 0; i < 5; i++) {
+    r *= r * n + 2;
+  }
+  return r;
 #endif
-
-  return v;
 }
 
 int bn_mont_ctx_set_RR_consttime(BN_MONT_CTX *mont, BN_CTX *ctx) {

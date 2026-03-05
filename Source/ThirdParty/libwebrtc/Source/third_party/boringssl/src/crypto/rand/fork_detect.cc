@@ -41,7 +41,7 @@ static int g_force_madv_wipeonfork;
 static int g_force_madv_wipeonfork_enabled;
 static CRYPTO_once_t g_fork_detect_once = CRYPTO_ONCE_INIT;
 static CRYPTO_MUTEX g_fork_detect_lock = CRYPTO_MUTEX_INIT;
-static CRYPTO_atomic_u32 *g_fork_detect_addr;
+static bssl::Atomic<uint32_t> *g_fork_detect_addr;
 static uint64_t g_fork_generation;
 
 static void init_fork_detect(void) {
@@ -54,7 +54,7 @@ static void init_fork_detect(void) {
     return;
   }
 
-  void *addr = mmap(NULL, (size_t)page_size, PROT_READ | PROT_WRITE,
+  void *addr = mmap(nullptr, (size_t)page_size, PROT_READ | PROT_WRITE,
                     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
   if (addr == MAP_FAILED) {
     return;
@@ -71,8 +71,8 @@ static void init_fork_detect(void) {
     return;
   }
 
-  CRYPTO_atomic_u32 *const atomic = reinterpret_cast<CRYPTO_atomic_u32 *>(addr);
-  CRYPTO_atomic_store_u32(atomic, 1);
+  auto *const atomic = reinterpret_cast<bssl::Atomic<uint32_t> *>(addr);
+  atomic->store(1);
   g_fork_detect_addr = atomic;
   g_fork_generation = 1;
 }
@@ -91,8 +91,8 @@ uint64_t CRYPTO_get_fork_generation(void) {
   // child process is single-threaded, the child may become multi-threaded
   // before it observes this. Therefore, we must synchronize the logic below.
 
-  CRYPTO_atomic_u32 *const flag_ptr = g_fork_detect_addr;
-  if (flag_ptr == NULL) {
+  bssl::Atomic<uint32_t> *const flag_ptr = g_fork_detect_addr;
+  if (flag_ptr == nullptr) {
     // Our kernel is too old to support |MADV_WIPEONFORK| or
     // |g_force_madv_wipeonfork| is set.
     if (g_force_madv_wipeonfork && g_force_madv_wipeonfork_enabled) {
@@ -112,7 +112,7 @@ uint64_t CRYPTO_get_fork_generation(void) {
   // In the common case, try to observe the flag without taking a lock. This
   // avoids cacheline contention in the PRNG.
   uint64_t *const generation_ptr = &g_fork_generation;
-  if (CRYPTO_atomic_load_u32(flag_ptr) != 0) {
+  if (flag_ptr->load() != 0) {
     // If we observe a non-zero flag, it is safe to read |generation_ptr|
     // without a lock. The flag and generation number are fixed for this copy of
     // the address space.
@@ -125,7 +125,7 @@ uint64_t CRYPTO_get_fork_generation(void) {
   CRYPTO_MUTEX *const lock = &g_fork_detect_lock;
   CRYPTO_MUTEX_lock_write(lock);
   uint64_t current_generation = *generation_ptr;
-  if (CRYPTO_atomic_load_u32(flag_ptr) == 0) {
+  if (flag_ptr->load() == 0) {
     // A fork has occurred.
     current_generation++;
     if (current_generation == 0) {
@@ -136,7 +136,7 @@ uint64_t CRYPTO_get_fork_generation(void) {
     // We must update |generation_ptr| before |flag_ptr|. Other threads may
     // observe |flag_ptr| without taking a lock.
     *generation_ptr = current_generation;
-    CRYPTO_atomic_store_u32(flag_ptr, 1);
+    flag_ptr->store(1);
   }
   CRYPTO_MUTEX_unlock_write(lock);
 
@@ -163,7 +163,7 @@ static void we_are_forked(void) {
 }
 
 static void init_pthread_fork_detection(void) {
-  if (pthread_atfork(NULL, NULL, we_are_forked) != 0) {
+  if (pthread_atfork(nullptr, nullptr, we_are_forked) != 0) {
     abort();
   }
   g_atfork_fork_generation = 1;
@@ -187,7 +187,7 @@ uint64_t CRYPTO_get_fork_generation(void) { return 0xc0ffee; }
 
 // These platforms may fork, but we do not have a mitigation mechanism in
 // place.  Returning a constant zero value makes BoringSSL assume that address
-// space duplication could have occured on any call entropy must be added to
+// space duplication could have occurred on any call entropy must be added to
 // every RAND_bytes call.
 uint64_t CRYPTO_get_fork_generation(void) { return 0; }
 

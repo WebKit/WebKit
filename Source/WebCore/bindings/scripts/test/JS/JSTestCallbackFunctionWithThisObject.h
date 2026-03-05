@@ -24,6 +24,7 @@
 #include "JSCallbackData.h"
 #include "TestCallbackFunctionWithThisObject.h"
 #include <wtf/Forward.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -48,6 +49,8 @@ private:
 
     bool hasCallback() const final { return m_data && m_data->callback(); }
 
+    bool isJSTestCallbackFunctionWithThisObject() const final { return true; }
+
     void visitJSFunction(JSC::AbstractSlotVisitor&) override;
 
     void visitJSFunction(JSC::SlotVisitor&) override;
@@ -62,3 +65,7 @@ template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionWithThisObj
     using Base = TestCallbackFunctionWithThisObject;
 };
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::JSTestCallbackFunctionWithThisObject)
+    static bool isType(const WebCore::TestCallbackFunctionWithThisObject& callback) { return callback.isJSTestCallbackFunctionWithThisObject(); }
+SPECIALIZE_TYPE_TRAITS_END()

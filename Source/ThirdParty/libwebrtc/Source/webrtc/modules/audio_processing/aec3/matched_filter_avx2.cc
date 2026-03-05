@@ -46,7 +46,6 @@ void MatchedFilterCore_AccumulatedError_AVX2(size_t x_start_index,
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 16);
   std::fill(accumulated_error.begin(), accumulated_error.end(), 0.0f);
-
   // Process for all samples in the sub-block.
   for (size_t i = 0; i < y.size(); ++i) {
     // Apply the matched filter as filter * x, and compute x * x.
@@ -69,7 +68,7 @@ void MatchedFilterCore_AccumulatedError_AVX2(size_t x_start_index,
     __m256 x2_sum_256_8 = _mm256_set1_ps(0);
     __m128 e_128;
     float x2_sum = 0.0f;
-    float s_acum = 0;
+    float s_acum = 0.0f;
     const int limit_by_16 = h_size >> 4;
     for (int k = limit_by_16; k > 0; --k, h_p += 16, x_p += 16, a_p += 4) {
       // Load the data into 256 bit vectors.
@@ -93,7 +92,7 @@ void MatchedFilterCore_AccumulatedError_AVX2(size_t x_start_index,
       s_acum += s_inst_hadd_256[5];
       e_128[3] = s_acum - y[i];
 
-      __m128 acum_error = _mm_load_ps(a_p);
+      __m128 acum_error = _mm_loadu_ps(a_p);
       acum_error = _mm_fmadd_ps(e_128, e_128, acum_error);
       _mm_storeu_ps(a_p, acum_error);
     }

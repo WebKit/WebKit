@@ -83,6 +83,7 @@ public:
     WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
 #endif
     WEBCORE_EXPORT static std::optional<std::pair<Ref<HTMLElement>, IntRect>> findDataDetectionResultElementInImageOverlay(const FloatPoint& location, const HTMLElement& imageOverlayHost);
+    static Vector<SimpleRange> detectRanges(const SimpleRange&, OptionSet<DataDetectorType>, unsigned maximumResultCount = 100);
 
 #if ENABLE(IMAGE_ANALYSIS)
     static Ref<HTMLDivElement> createElementForImageOverlay(Document&, const TextRecognitionDataDetector&);

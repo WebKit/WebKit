@@ -69,7 +69,7 @@ static int add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio,
     X509_NAME *subject = X509_get_subject_name(x509.get());
     // Skip if already present in |out|. Duplicates in |to_append| will be
     // handled separately.
-    if (sk_X509_NAME_find(out, /*out_index=*/NULL, subject)) {
+    if (sk_X509_NAME_find(out, /*out_index=*/nullptr, subject)) {
       continue;
     }
 

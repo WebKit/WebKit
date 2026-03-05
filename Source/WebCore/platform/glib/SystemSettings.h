@@ -65,7 +65,7 @@ public:
 
     void updateSettings(const SystemSettings::State&);
 
-    const State& settingsState() const { return m_state; }
+    const State& settingsState() const LIFETIME_BOUND { return m_state; }
 
     void addObserver(Function<void(const State&)>&&, void* context);
     void removeObserver(void* context);

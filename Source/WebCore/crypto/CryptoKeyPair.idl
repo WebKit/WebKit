@@ -24,7 +24,7 @@
  */
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
 ] dictionary CryptoKeyPair {
     CryptoKey publicKey;
     CryptoKey privateKey;

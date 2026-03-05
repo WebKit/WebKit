@@ -54,9 +54,9 @@ function toBitmaskMouseButton(w3cButton)
     switch (w3cButton) {
     case LeftMouseButton:
         return 1 << 0;
-    case MiddleMouseButton:
-        return 1 << 1;
     case RightMouseButton:
+        return 1 << 1;
+    case MiddleMouseButton:
         return 1 << 2;
     }
     return; // We shouldn't get here.

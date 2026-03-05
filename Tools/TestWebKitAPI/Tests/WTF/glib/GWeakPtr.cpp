@@ -120,7 +120,7 @@ TEST(WTF_GWeakPtr, Move)
         GWeakPtr<GObject> weak(obj);
         EXPECT_EQ(obj, weak.get());
         EXPECT_TRUE(weak);
-        GWeakPtr<GObject> weak2(WTFMove(weak));
+        GWeakPtr<GObject> weak2(WTF::move(weak));
         EXPECT_NULL(weak.get());
         EXPECT_FALSE(weak);
         EXPECT_EQ(obj, weak2.get());
@@ -137,7 +137,7 @@ TEST(WTF_GWeakPtr, Move)
         GWeakPtr<GObject> weak(obj);
         EXPECT_EQ(obj, weak.get());
         EXPECT_TRUE(weak);
-        GWeakPtr<GObject> weak2 = WTFMove(weak);
+        GWeakPtr<GObject> weak2 = WTF::move(weak);
         EXPECT_NULL(weak.get());
         EXPECT_FALSE(weak);
         EXPECT_EQ(obj, weak2.get());
@@ -208,7 +208,7 @@ TEST(WTF_GThreadSafeWeakPtr, Move)
         obj = G_OBJECT(g_object_new(G_TYPE_OBJECT, nullptr));
         GThreadSafeWeakPtr<GObject> weak(obj);
         EXPECT_EQ(obj, weak.get());
-        GThreadSafeWeakPtr<GObject> weak2 = WTFMove(weak);
+        GThreadSafeWeakPtr<GObject> weak2 = WTF::move(weak);
         EXPECT_NULL(weak.get());
         EXPECT_EQ(obj, weak2.get());
         g_clear_object(&obj);

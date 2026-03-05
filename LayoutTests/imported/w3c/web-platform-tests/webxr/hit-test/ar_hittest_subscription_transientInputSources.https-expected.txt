@@ -1,8 +1,8 @@
 
-FAIL Ensures subscription to transient hit test works with an XRSpace from input source - no move - webgl assert_equals: There should be exactly one group of transient hit test results! expected 1 but got 0
-FAIL Ensures subscription to transient hit test works with an XRSpace from input source - no move - webgl2 assert_equals: There should be exactly one group of transient hit test results! expected 1 but got 0
-FAIL Ensures subscription to transient hit test works with an XRSpace from input source - after move - no results - webgl assert_equals: There should be exactly one group of transient hit test results! expected 1 but got 0
-FAIL Ensures subscription to transient hit test works with an XRSpace from input source - after move - no results - webgl2 assert_equals: There should be exactly one group of transient hit test results! expected 1 but got 0
-FAIL Ensures subscription to transient hit test works with an XRSpace from input source - after move - 1 result - webgl assert_equals: There should be exactly one group of transient hit test results! expected 1 but got 0
-FAIL Ensures subscription to transient hit test works with an XRSpace from input source - after move - 1 result - webgl2 assert_equals: There should be exactly one group of transient hit test results! expected 1 but got 0
+PASS Ensures subscription to transient hit test works with an XRSpace from input source - no move - webgl
+PASS Ensures subscription to transient hit test works with an XRSpace from input source - no move - webgl2
+PASS Ensures subscription to transient hit test works with an XRSpace from input source - after move - no results - webgl
+PASS Ensures subscription to transient hit test works with an XRSpace from input source - after move - no results - webgl2
+PASS Ensures subscription to transient hit test works with an XRSpace from input source - after move - 1 result - webgl
+PASS Ensures subscription to transient hit test works with an XRSpace from input source - after move - 1 result - webgl2
 

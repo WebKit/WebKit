@@ -18,6 +18,8 @@
 	<true/>
 	<key>com.apple.security.temporary-exception.files.absolute-path.read-only</key>
 	<string>/</string>
+	<key>com.apple.security.temporary-exception.files.absolute-path.read-write</key>
+	<string>/private/tmp/</string>
 	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
 	<array>
 		<string>com.apple.PIPAgent</string>

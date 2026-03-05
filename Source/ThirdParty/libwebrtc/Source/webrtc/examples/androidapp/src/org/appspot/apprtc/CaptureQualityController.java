@@ -28,8 +28,8 @@ public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener
           new CaptureFormat(320, 240, 0, 30000), new CaptureFormat(256, 144, 0, 30000));
   // Prioritize framerate below this threshold and resolution above the threshold.
   private static final int FRAMERATE_THRESHOLD = 15;
-  private TextView captureFormatText;
-  private CallFragment.OnCallEvents callEvents;
+  private final TextView captureFormatText;
+  private final CallFragment.OnCallEvents callEvents;
   private int width;
   private int height;
   private int framerate;

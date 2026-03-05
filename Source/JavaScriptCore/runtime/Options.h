@@ -174,8 +174,32 @@ private:
     static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers);
     static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int minimum = 1);
     static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta, int32_t multiCorePriorityDelta);
-    static constexpr bool jitEnabledByDefault() { return !useCompressedHeap && (is32Bit() || isAddress64Bit()); }
+    static constexpr bool jitEnabledByDefault() { return is32Bit() || isAddress64Bit(); }
     static constexpr bool ipintEnabledByDefault() { return isARM64() || isARM64E() || isX86_64(); }
+    static double defaultQuickDFGTierUpThresholdFactor()
+    {
+#if PLATFORM(MAC)
+        return 0.15;
+#else
+        return 0.2;
+#endif
+    }
+    static double defaultRelaxedProfileCoverageFactorForQuickDFGTierUp()
+    {
+#if PLATFORM(MAC)
+        return 0.85;
+#else
+        return 1.0;
+#endif
+    }
+    static double defaultQuickFTLTierUpThresholdFactor()
+    {
+#if PLATFORM(MAC)
+        return 0.15;
+#else
+        return 1.0;
+#endif
+    }
 };
 
 } // namespace JSC

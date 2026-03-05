@@ -24,6 +24,8 @@
 
 import sys
 from webkitpy.common.system import executive
+from webkitpy.port.linux_container_sdk_utils import maybe_use_container_sdk_root_dir
+maybe_use_container_sdk_root_dir()
 
 def main(argv):
     """Runs the JS builtins code generator on test input files and compares

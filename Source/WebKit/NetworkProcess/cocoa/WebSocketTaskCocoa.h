@@ -86,8 +86,6 @@ private:
 
     void readNextMessage();
 
-    RefPtr<NetworkSocketChannel> protectedChannel() const;
-
     NSURLSessionTask* task() const final;
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
 

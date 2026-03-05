@@ -56,7 +56,7 @@ public:
 
 private:
     explicit WebGeolocationPosition(WebCore::GeolocationPositionData&& geolocationPosition)
-        : m_corePosition(WTFMove(geolocationPosition))
+        : m_corePosition(WTF::move(geolocationPosition))
     {
     }
 

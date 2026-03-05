@@ -45,6 +45,10 @@ class LoadableNonModuleScriptBase : public LoadableScript, protected CachedResou
 public:
     virtual ~LoadableNonModuleScriptBase();
 
+    // CachedResourceClient.
+    void ref() const final { LoadableScript::ref(); }
+    void deref() const final { LoadableScript::deref(); }
+
     bool isLoaded() const final;
     bool hasError() const final;
     std::optional<Error> takeError() final;
@@ -53,7 +57,6 @@ public:
 
     Document* document() { return m_weakDocument.get(); }
     CachedScript& cachedScript() { return *m_cachedScript; }
-    CachedResourceHandle<CachedScript> protectedCachedScript() { return cachedScript(); }
 
     bool load(Document&, const URL&);
     bool isAsync() const { return m_isAsync; }

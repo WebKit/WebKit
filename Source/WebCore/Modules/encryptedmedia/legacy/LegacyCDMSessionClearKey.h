@@ -50,7 +50,7 @@ public:
 
     // CDMSessionPrivate
     LegacyCDMSessionType type() const final { return CDMSessionTypeClearKey; }
-    const String& sessionId() const override { return m_sessionId; }
+    const String& sessionId() const LIFETIME_BOUND override { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array*, String&, unsigned short&, uint32_t&) override;
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>&, unsigned short&, uint32_t&) override;

@@ -87,6 +87,7 @@
 #include <jsc/JSCContextPrivate.h>
 #include <libsoup/soup.h>
 #include <wtf/SetForScope.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GSpanExtras.h>
@@ -110,9 +111,7 @@
 #include "WPEUtilities.h"
 #include "WPEWebViewLegacy.h"
 #include "WPEWebViewPlatform.h"
-#if ENABLE(2022_GLIB_API)
-#include "WebKitImagePrivate.h"
-#endif
+#include "WebContextMenuProxy.h"
 #include "WebKitOptionMenuPrivate.h"
 #include "WebKitWebViewBackendPrivate.h"
 #include "WebKitWebViewClient.h"
@@ -123,6 +122,7 @@
 #endif
 
 #if ENABLE(2022_GLIB_API)
+#include "WebKitImagePrivate.h"
 #include "WebKitNetworkSessionPrivate.h"
 #else
 #include "WebKitJavascriptResultPrivate.h"
@@ -206,7 +206,9 @@ enum {
     PROP_0,
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     PROP_BACKEND,
+#endif
 #if ENABLE(WPE_PLATFORM)
     PROP_DISPLAY,
 #endif
@@ -356,7 +358,9 @@ struct _WebKitWebViewPrivate {
     }
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     GRefPtr<WebKitWebViewBackend> backend;
+#endif
 #if ENABLE(WPE_PLATFORM)
     GRefPtr<WPEDisplay> display;
 #endif
@@ -559,7 +563,7 @@ void WebKitWebViewClient::didChangePageID(WKWPE::View&)
 
 void WebKitWebViewClient::didReceiveUserMessage(WKWPE::View&, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
-    webkitWebViewDidReceiveUserMessage(m_webView, WTFMove(message), WTFMove(completionHandler));
+    webkitWebViewDidReceiveUserMessage(m_webView, WTF::move(message), WTF::move(completionHandler));
 }
 
 WebKitWebResourceLoadManager* WebKitWebViewClient::webResourceLoadManager()
@@ -832,6 +836,7 @@ static Ref<API::PageConfiguration> webkitWebViewCreatePageConfiguration(WebKitWe
     pageConfiguration->setProcessPool(&webkitWebContextGetProcessPool(priv->context.get()));
     pageConfiguration->setPreferences(webkitSettingsGetPreferences(priv->settings.get()));
     pageConfiguration->preferences().setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
+    pageConfiguration->preferences().setUsesSingleWebProcess(pageConfiguration->processPool().usesSingleWebProcess());
     pageConfiguration->setRelatedPage(priv->relatedView ? &webkitWebViewGetPage(priv->relatedView) : nullptr);
     pageConfiguration->setUserContentController(priv->userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(priv->userContentManager.get()) : nullptr);
     pageConfiguration->setControlledByAutomation(priv->isControlledByAutomation);
@@ -865,17 +870,23 @@ static Ref<API::PageConfiguration> webkitWebViewCreatePageConfiguration(WebKitWe
 static void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration)
 {
 #if PLATFORM(GTK)
-    webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
+    webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTF::move(configuration));
 #elif PLATFORM(WPE)
 #if ENABLE(WPE_PLATFORM)
+#if USE(LIBWPE)
     if (!webView->priv->backend) {
+#endif
         webView->priv->view = WKWPE::ViewPlatform::create(webkit_web_view_get_display(webView), configuration.get());
         if (auto* wpeView = webView->priv->view->wpeView())
             g_signal_connect_object(wpeView, "closed", G_CALLBACK(webkitWebViewClosePage), webView, G_CONNECT_SWAPPED);
         return;
+#if USE(LIBWPE)
     }
 #endif
+#endif
+#if USE(LIBWPE)
     webView->priv->view = WKWPE::ViewLegacy::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get());
+#endif
 #endif
 }
 
@@ -914,6 +925,7 @@ static void webkitWebViewConstructed(GObject* object)
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#if USE(LIBWPE)
     if (!priv->display && !priv->backend)
         priv->display = wpe_display_get_default();
     else if (priv->backend) {
@@ -926,6 +938,10 @@ static void webkitWebViewConstructed(GObject* object)
             priv->display = wpe_display_get_default();
         }
     }
+#else
+    if (!priv->display)
+        priv->display = wpe_display_get_default();
+#endif
 
     if (priv->display)
         SystemSettingsManagerProxy::initialize();
@@ -953,7 +969,7 @@ static void webkitWebViewConstructed(GObject* object)
         auto* contextDataManager = webkit_web_context_get_website_data_manager(priv->context.get());
         webkit_website_data_manager_set_tls_errors_policy(priv->websiteDataManager.get(), webkit_website_data_manager_get_tls_errors_policy(contextDataManager));
         auto proxySettings = webkitWebsiteDataManagerGetDataStore(contextDataManager).networkProxySettings();
-        webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()).setNetworkProxySettings(WTFMove(proxySettings));
+        webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()).setNetworkProxySettings(WTF::move(proxySettings));
     }
 #endif
 
@@ -961,7 +977,7 @@ static void webkitWebViewConstructed(GObject* object)
         priv->websitePolicies = adoptGRef(webkit_website_policies_new());
 
     Ref configuration = priv->relatedView && priv->relatedView->priv->configurationForNextRelatedView ? priv->relatedView->priv->configurationForNextRelatedView.releaseNonNull() : webkitWebViewCreatePageConfiguration(webView);
-    webkitWebViewCreatePage(webView, WTFMove(configuration));
+    webkitWebViewCreatePage(webView, WTF::move(configuration));
     webkitWebContextWebViewCreated(priv->context.get(), webView);
 
     priv->loadObserver = PageLoadStateObserver::create(webView);
@@ -1012,11 +1028,13 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
 
     switch (propId) {
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     case PROP_BACKEND: {
         gpointer backend = g_value_get_boxed(value);
         webView->priv->backend = backend ? adoptGRef(static_cast<WebKitWebViewBackend*>(backend)) : nullptr;
         break;
     }
+#endif
 #if ENABLE(WPE_PLATFORM)
     case PROP_DISPLAY: {
         gpointer display = g_value_get_object(value);
@@ -1101,9 +1119,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 
     switch (propId) {
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     case PROP_BACKEND:
         g_value_set_static_boxed(value, webView->priv->backend.get());
         break;
+#endif
 #if ENABLE(WPE_PLATFORM)
     case PROP_DISPLAY:
         g_value_set_object(value, webView->priv->display.get());
@@ -1272,6 +1292,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->authenticate = webkitWebViewAuthenticate;
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     /**
      * WebKitWebView:backend:
      *
@@ -1285,6 +1306,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             nullptr, nullptr,
             WEBKIT_TYPE_WEB_VIEW_BACKEND,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+#endif
 #if ENABLE(WPE_PLATFORM)
     /**
      * WebKitWebView:display:
@@ -2724,7 +2746,7 @@ void webkitWebViewGetLoadDecisionForIcon(WebKitWebView* webView, const LinkIcon&
         return;
     }
 
-    webkitFaviconDatabaseGetLoadDecisionForIcon(database, icon, getPage(webView).pageLoadState().activeURL(), webkitWebViewIsEphemeral(webView), WTFMove(completionHandler));
+    webkitFaviconDatabaseGetLoadDecisionForIcon(database, icon, getPage(webView).pageLoadState().activeURL(), webkitWebViewIsEphemeral(webView), WTF::move(completionHandler));
 }
 
 void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Data& iconData)
@@ -2740,7 +2762,7 @@ void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Dat
 RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration, WebKitNavigationAction* navigationAction)
 {
     ASSERT(!webView->priv->configurationForNextRelatedView);
-    SetForScope configurationScope(webView->priv->configurationForNextRelatedView, WTFMove(configuration));
+    SetForScope configurationScope(webView->priv->configurationForNextRelatedView, WTF::move(configuration));
 
     WebKitWebView* newWebView;
     g_signal_emit(webView, signals[CREATE], 0, navigationAction, &newWebView);
@@ -2791,7 +2813,7 @@ void webkitWebViewClosePage(WebKitWebView* webView)
 void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& message, Function<void()>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
-    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_ALERT, message, { }, [webView, completionHandler = WTFMove(completionHandler)](bool, const String&) {
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_ALERT, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool, const String&) {
         completionHandler();
         webView->priv->currentScriptDialog = nullptr;
     });
@@ -2803,7 +2825,7 @@ void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& mess
 void webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& message, Function<void(bool)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
-    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_CONFIRM, message, { }, [webView, completionHandler = WTFMove(completionHandler)](bool result, const String&) {
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_CONFIRM, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool result, const String&) {
         completionHandler(result);
         webView->priv->currentScriptDialog = nullptr;
     });
@@ -2815,7 +2837,7 @@ void webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& me
 void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& message, const CString& defaultText, Function<void(const String&)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
-    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_PROMPT, message, defaultText, [webView, completionHandler = WTFMove(completionHandler)](bool, const String& result) {
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_PROMPT, message, defaultText, [webView, completionHandler = WTF::move(completionHandler)](bool, const String& result) {
         completionHandler(result);
         webView->priv->currentScriptDialog = nullptr;
     });
@@ -2827,7 +2849,7 @@ void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& mes
 void webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView* webView, const CString& message, Function<void(bool)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
-    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message, { }, [webView, completionHandler = WTFMove(completionHandler)](bool result, const String&) {
+    webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool result, const String&) {
         completionHandler(result);
         webView->priv->currentScriptDialog = nullptr;
     });
@@ -2997,6 +3019,7 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     if (userData)
         webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
     webkitContextMenuSetEvent(contextMenu.get(), webkitWebViewBaseTakeContextMenuEvent(webViewBase));
+    webkitContextMenuSetPosition(contextMenu.get(), contextMenuProxy->menuLocation());
 
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
     gboolean returnValue;
@@ -3025,6 +3048,9 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(proposedMenu));
     if (userData)
         webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
+    if (auto* contextMenuProxy = getPage(webView).activeContextMenu())
+        webkitContextMenuSetPosition(contextMenu.get(), contextMenuProxy->menuLocation());
+
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
     gboolean returnValue;
     g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(),
@@ -3032,6 +3058,13 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
         nullptr,
 #endif
         hitTestResult.get(), &returnValue);
+    if (!returnValue)
+        return;
+
+    webkitContextMenuSetPage(contextMenu.get(), &getPage(webView));
+
+    // Clear the menu to make sure it's useless after signal emission.
+    webkit_context_menu_remove_all(contextMenu.get());
 }
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
@@ -3114,7 +3147,7 @@ void webkitWebViewDidChangePageID(WebKitWebView* webView)
 void webkitWebViewDidReceiveUserMessage(WebKitWebView* webView, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     // Sink the floating ref.
-    GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), WTFMove(completionHandler));
+    GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTF::move(message), WTF::move(completionHandler));
     gboolean returnValue;
     g_signal_emit(webView, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get(), &returnValue);
 }
@@ -3123,7 +3156,7 @@ void webkitWebViewDidReceiveUserMessage(WebKitWebView* webView, UserMessage&& me
 void webkitWebViewRequestPointerLock(WebKitWebView* webView, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if PLATFORM(GTK)
-    webkitWebViewBaseRequestPointerLock(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(completionHandler));
+    webkitWebViewBaseRequestPointerLock(WEBKIT_WEB_VIEW_BASE(webView), WTF::move(completionHandler));
 #endif
 
 #if PLATFORM(WPE)
@@ -3152,15 +3185,15 @@ void webkitWebViewDidLosePointerLock(WebKitWebView* webView)
 static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
 #if PLATFORM(GTK)
-    webkitWebViewBaseSynthesizeCompositionKeyPress(WEBKIT_WEB_VIEW_BASE(webView), text, WTFMove(underlines), WTFMove(selectionRange));
+    webkitWebViewBaseSynthesizeCompositionKeyPress(WEBKIT_WEB_VIEW_BASE(webView), text, WTF::move(underlines), WTF::move(selectionRange));
 #elif PLATFORM(WPE)
-    webView->priv->view->synthesizeCompositionKeyPress(text, WTFMove(underlines), WTFMove(selectionRange));
+    webView->priv->view->synthesizeCompositionKeyPress(text, WTF::move(underlines), WTF::move(selectionRange));
 #endif
 }
 
 void webkitWebViewSetComposition(WebKitWebView* webView, const String& text, const Vector<CompositionUnderline>& underlines, EditingRange&& selectionRange)
 {
-    webkitWebViewSynthesizeCompositionKeyPress(webView, text, underlines, WTFMove(selectionRange));
+    webkitWebViewSynthesizeCompositionKeyPress(webView, text, underlines, WTF::move(selectionRange));
 }
 
 void webkitWebViewConfirmComposition(WebKitWebView* webView, const String& text)
@@ -3207,6 +3240,7 @@ RendererBufferDescription webkitWebViewGetRendererBufferDescription(WebKitWebVie
 #endif
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
 /**
  * webkit_web_view_get_backend:
  * @web_view: a #WebKitWebView
@@ -3223,6 +3257,7 @@ WebKitWebViewBackend* webkit_web_view_get_backend(WebKitWebView* webView)
 
     return webView->priv->backend.get();
 }
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 /**
@@ -3459,9 +3494,8 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto contentData = spanReinterpretCast<const uint8_t>(CStringView::unsafeFromUTF8(content).span());
+    getPage(webView).loadData(WebCore::SharedBuffer::create(WTF::move(contentData)), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
 }
 
 /**
@@ -3484,9 +3518,8 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(Vector(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 })), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) }, nullptr);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    Vector contentData(spanReinterpretCast<const uint8_t>(CStringView::unsafeFromUTF8(content).span()));
+    getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(WTF::move(contentData)), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) }, nullptr);
 }
 
 /**
@@ -3553,7 +3586,7 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
 
     ResourceRequest resourceRequest;
     webkitURIRequestGetResourceRequest(request, resourceRequest);
-    getPage(webView).loadRequest(WTFMove(resourceRequest));
+    getPage(webView).loadRequest(WTF::move(resourceRequest));
 }
 
 /**
@@ -4124,7 +4157,7 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
     g_return_if_fail(command);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    getPage(webView).validateCommand(String::fromUTF8(command), [task = WTFMove(task)](bool isEnabled, int32_t) {
+    getPage(webView).validateCommand(String::fromUTF8(command), [task = WTF::move(task)](bool isEnabled, int32_t) {
         g_task_return_boolean(task.get(), isEnabled);
     });
 }
@@ -4248,7 +4281,7 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, WebKit:
 {
     auto world = worldName ? API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName)) : Ref<API::ContentWorld> { API::ContentWorld::pageContentWorldSingleton() };
     constexpr bool wantsResult = true;
-    getPage(webView).runJavaScriptInFrameInScriptWorld(WTFMove(params), std::nullopt, world.get(), wantsResult, [task = WTFMove(task), returnType] (auto&& result) {
+    getPage(webView).runJavaScriptInFrameInScriptWorld(WTF::move(params), std::nullopt, world.get(), wantsResult, [task = WTF::move(task), returnType] (auto&& result) {
         if (g_task_return_error_if_cancelled(task.get()))
             return;
 
@@ -4263,7 +4296,7 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, WebKit:
                     reinterpret_cast<GDestroyNotify>(g_object_unref));
             } else {
                 ASSERT(returnType == RunJavascriptReturnType::WebKitJavascriptResult);
-                g_task_return_pointer(task.get(), webkitJavascriptResultCreate(WTFMove(*result)),
+                g_task_return_pointer(task.get(), webkitJavascriptResultCreate(WTF::move(*result)),
                     reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
             }
 #endif
@@ -4272,7 +4305,7 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, WebKit:
                 g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_INVALID_RESULT, "Unsupported result type");
                 return;
             }
-            ExceptionDetails exceptionDetails = WTFMove(*result.error());
+            ExceptionDetails exceptionDetails = WTF::move(*result.error());
             StringBuilder builder;
             if (!exceptionDetails.sourceURL.isEmpty()) {
                 builder.append(exceptionDetails.sourceURL);
@@ -4294,9 +4327,14 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
-
+    GRefPtr task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    auto string = IPC::TransferString::create(String::fromUTF8(script));
+    if (!string) {
+        g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
+        return;
+    }
     WebKit::RunJavaScriptParameters params {
-        String::fromUTF8(script),
+        WTF::move(*string),
         JSC::SourceTaintedOrigin::Untainted,
         URL { },
         RunAsAsyncFunction::No,
@@ -4304,17 +4342,21 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
         ForceUserGesture::No,
         RemoveTransientActivation::Yes
     };
-    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::JSCValue, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
+    webkitWebViewRunJavaScriptWithParams(webView, WTF::move(params), nullptr, RunJavascriptReturnType::JSCValue, WTF::move(task));
 }
 
 static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, const char* script, gssize length, const char* worldName, const char* sourceURI, RunJavascriptReturnType returnType, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
+    GRefPtr task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    auto string = IPC::TransferString::create(length < 0 ? String::fromUTF8(script) : String::fromUTF8(unsafeMakeSpan(script, length)));
+    if (!string) {
+        g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
+        return;
+    }
     WebKit::RunJavaScriptParameters params {
-        String::fromUTF8(std::span(script, length < 0 ? strlen(script) : length)),
+        WTF::move(*string),
         JSC::SourceTaintedOrigin::Untainted,
         URL({ }, String::fromUTF8(sourceURI)),
         RunAsAsyncFunction::No,
@@ -4322,8 +4364,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         ForceUserGesture::Yes,
         RemoveTransientActivation::Yes
     };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
+    webkitWebViewRunJavaScriptWithParams(webView, WTF::move(params), worldName, returnType, WTF::move(task));
 }
 
 /**
@@ -4440,7 +4481,7 @@ static Vector<std::pair<String, JavaScriptEvaluationResult>> parseAsyncFunctionA
             *error = g_error_new(WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_INVALID_PARAMETER, "Invalid parameter %s passed as argument of async function call", key);
             return argumentsVector;
         }
-        argumentsVector.append({ String::fromUTF8(key), WTFMove(*parameter) });
+        argumentsVector.append({ String::fromUTF8(key), WTF::move(*parameter) });
     }
 
     return argumentsVector;
@@ -4451,26 +4492,28 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(body);
     g_return_if_fail(!arguments || g_variant_is_of_type(arguments, G_VARIANT_TYPE("a{sv}")));
-
+    GRefPtr task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
     GError* error = nullptr;
     auto argumentsVector = parseAsyncFunctionArguments(arguments, &error);
     if (error) {
-        g_task_report_error(webView, callback, userData, nullptr, error);
+        g_task_return_error(task.get(), error);
         return;
     }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
+    auto string = IPC::TransferString::create(length < 0 ? String::fromUTF8(body) : String::fromUTF8(unsafeMakeSpan(body, length)));
+    if (!string) {
+        g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
+        return;
+    }
     WebKit::RunJavaScriptParameters params {
-        String::fromUTF8(std::span(body, length < 0 ? strlen(body) : length)),
+        WTF::move(*string),
         JSC::SourceTaintedOrigin::Untainted,
         URL({ }, String::fromUTF8(sourceURI)),
         RunAsAsyncFunction::Yes,
-        WTFMove(argumentsVector),
+        WTF::move(argumentsVector),
         ForceUserGesture::Yes,
         RemoveTransientActivation::Yes
     };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
+    webkitWebViewRunJavaScriptWithParams(webView, WTF::move(params), worldName, returnType, WTF::move(task));
 }
 
 /**
@@ -4730,8 +4773,13 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
+    auto string = IPC::TransferString::create(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)));
+    if (!string) {
+        g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
+        return;
+    }
     WebKit::RunJavaScriptParameters params {
-        String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
+        WTF::move(*string),
         JSC::SourceTaintedOrigin::Untainted,
         URL { },
         RunAsAsyncFunction::No,
@@ -4739,7 +4787,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
         ForceUserGesture::Yes,
         RemoveTransientActivation::Yes
     };
-    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::WebKitJavascriptResult, WTFMove(task));
+    webkitWebViewRunJavaScriptWithParams(webView, WTF::move(params), nullptr, RunJavascriptReturnType::WebKitJavascriptResult, WTF::move(task));
 }
 
 /**
@@ -5116,11 +5164,6 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 #if USE(GTK4)
 #define SNAPSHOT_TYPE GdkTexture*
-#if USE(CAIRO)
-#define PLATFORM_IMAGE_TO_TEXTURE(image) cairoSurfaceToGdkTexture(image)
-#else
-#define PLATFORM_IMAGE_TO_TEXTURE(image) skiaImageToGdkTexture(*image)
-#endif
 #elif PLATFORM(GTK) && !USE(GTK4)
 #define SNAPSHOT_TYPE cairo_surface_t*
 #else
@@ -5164,36 +5207,35 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
         snapshotOptions.add(SnapshotOption::TransparentBackground);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    getPage(webView).takeSnapshotLegacy({ }, { }, snapshotOptions, [task = WTFMove(task)](std::optional<ShareableBitmap::Handle>&& handle) {
+    getPage(webView).takeSnapshotLegacy({ }, { }, snapshotOptions, [task = WTF::move(task)](std::optional<ShareableBitmap::Handle>&& handle) {
         if (handle) {
-            if (auto bitmap = ShareableBitmap::create(WTFMove(*handle), SharedMemory::Protection::ReadOnly)) {
-#if PLATFORM(GTK)
-#if USE(GTK4)
-                if (auto texture = PLATFORM_IMAGE_TO_TEXTURE(bitmap->createPlatformImage(BackingStoreCopy::DontCopyBackingStore).get())) {
-                    g_task_return_pointer(task.get(), texture.leakRef(), g_object_unref);
-                    return;
-                }
-#else
-#if USE(CAIRO)
-                auto surface = bitmap->createCairoSurface();
-#elif USE(SKIA)
-                auto surface = skiaImageToCairoSurface(*bitmap->createPlatformImage(BackingStoreCopy::DontCopyBackingStore));
-#endif
-                if (surface) {
-                    g_task_return_pointer(task.get(), surface.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
-                    return;
-                }
-#endif
-#else
+            if (auto bitmap = ShareableBitmap::create(WTF::move(*handle), SharedMemory::Protection::ReadOnly)) {
+#if ENABLE(2022_GLIB_API)
                 RELEASE_ASSERT(bitmap->bytesPerRow() <= std::numeric_limits<guint>::max());
                 bitmap->ref();
                 auto imageBytes = adoptGRef(g_bytes_new_with_free_func(bitmap->span().data(), bitmap->span().size(), [](void* data) {
                     static_cast<ShareableBitmap*>(data)->deref();
                 }, bitmap.get()));
-                auto* image = webkitImageNew(bitmap->size().width(), bitmap->size().height(), bitmap->bytesPerRow(), WTFMove(imageBytes));
-                g_task_return_pointer(task.get(), image, g_object_unref);
-                return;
-#endif
+                GRefPtr<WebKitImage> image = adoptGRef(webkitImageNew(bitmap->size().width(), bitmap->size().height(), bitmap->bytesPerRow(), WTF::move(imageBytes)));
+                if (image) {
+#if USE(GTK4)
+                    auto* bytes = webkit_image_as_bytes(image.get());
+                    if (auto texture = adoptGRef(gdk_memory_texture_new(webkit_image_get_width(image.get()), webkit_image_get_height(image.get()), GDK_MEMORY_DEFAULT, bytes, webkit_image_get_stride(image.get())))) {
+                        g_task_return_pointer(task.get(), texture.leakRef(), g_object_unref);
+                        return;
+                    }
+#else
+                    g_task_return_pointer(task.get(), image.leakRef(), g_object_unref);
+                    return;
+#endif // USE(GTK4)
+                }
+#else
+                auto surface = skiaImageToCairoSurface(*bitmap->createPlatformImage(BackingStoreCopy::DontCopyBackingStore));
+                if (surface) {
+                    g_task_return_pointer(task.get(), surface.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
+                    return;
+                }
+#endif // ENABLE(2022_GLIB_API)
             }
         }
         g_task_return_new_error(task.get(), WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE, _("There was an error creating the snapshot"));
@@ -5206,7 +5248,8 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
  * @result: a #GAsyncResult
  * @error: return location for error or %NULL to ignore
  *
- * Finishes an asynchronous operation started with webkit_web_view_get_snapshot().
+ * Finishes an asynchronous operation started with webkit_web_view_get_snapshot(), producing
+ * an image of the snapshot using the BGRA8888 pixel format.
  *
  * Returns: (transfer full): an image with the retrieved snapshot, or %NULL in case of error.
  */
@@ -5329,7 +5372,7 @@ WebKitWebViewSessionState* webkit_web_view_get_session_state(WebKitWebView* webV
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
     SessionState sessionState = getPage(webView).sessionState(nullptr);
-    return webkitWebViewSessionStateCreate(WTFMove(sessionState));
+    return webkitWebViewSessionStateCreate(WTF::move(sessionState));
 }
 
 /**
@@ -5432,13 +5475,13 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
     }
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    CompletionHandler<void(UserMessage&&)> completionHandler = [task = WTFMove(task)](UserMessage&& replyMessage) {
+    CompletionHandler<void(UserMessage&&)> completionHandler = [task = WTF::move(task)](UserMessage&& replyMessage) {
         switch (replyMessage.type) {
         case UserMessage::Type::Null:
             g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
             break;
         case UserMessage::Type::Message:
-            g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTFMove(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
+            g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTF::move(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
             break;
         case UserMessage::Type::Error:
             g_task_return_new_error(task.get(), WEBKIT_USER_MESSAGE_ERROR, replyMessage.errorCode, _("Message %s was not handled"), replyMessage.name.data());
@@ -5446,7 +5489,7 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
         }
     };
     page->ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::SendMessageToWebProcessExtensionWithReply(webkitUserMessageGetMessage(message)),
-        WTFMove(completionHandler), page->webPageIDInMainFrameProcess().toUInt64());
+        WTF::move(completionHandler), page->webPageIDInMainFrameProcess().toUInt64());
 }
 
 /**
@@ -5635,13 +5678,13 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
 
     Vector<String> allowListVector;
     if (allowList) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-        for (auto str = allowList; *str; ++str)
-            allowListVector.append(String::fromUTF8(*str));
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        const auto allowListSpan = span(allowList);
+        allowListVector.reserveInitialCapacity(allowListSpan.size());
+        for (const char* str : allowListSpan)
+            allowListVector.append(String::fromUTF8(str));
     }
 
-    getPage(webView).setCORSDisablingPatterns(WTFMove(allowListVector));
+    getPage(webView).setCORSDisablingPatterns(WTF::move(allowListVector));
 }
 
 static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::MediaProducerMediaCaptureKind captureKind, WebKitMediaCaptureState captureState)

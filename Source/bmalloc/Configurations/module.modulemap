@@ -1,50 +1,27 @@
 module bmalloc [system] {
     config_macros OS_UNFAIR_LOCK_INLINE
 
-    // List of "semi-public" bmalloc headers. What does "semi-public" mean? These are
-    // the headers which, in practice, are included by WTF headers. WTF headers are
-    // exported as part of the WebKit SPI, and therefore these headers need to be
-    // buildable as a clang module.
-    explicit module bmalloc_cpp {
-        requires cplusplus20
-        header "Algorithm.h"
-        header "BAssert.h"
-        header "BCompiler.h"
-        header "BInline.h"
-        header "BPlatform.h"
-        header "BVMTags.h"
-        header "CompactAllocationMode.h"
-        header "Gigacage.h"
-        header "GigacageConfig.h"
-        header "GigacageKind.h"
-        header "IsoHeap.h"
-        header "IsoHeapInlines.h"
-        header "Logging.h"
-        header "Sizes.h"
-        header "TZoneHeap.h"
-        header "TZoneHeapInlines.h"
+    explicit module pas_simple_free_heap_declarations_def {
+        private textual header "pas_simple_free_heap_declarations.def"
     }
-    // The following header contains only plain C definitions so
-    // we declare this in a submodule which doesn't require cplusplus11
-    explicit module bexport {
-        header "BExport.h"
+
+    explicit module pas_segregated_page_config_kind_def {
+        private textual header "pas_segregated_page_config_kind.def"
     }
-    // The following also do not need cplusplus11 and also need
-    // to be colocated in one module since any headers including
-    // most of these will end up requiring the definitions from
-    // the others. Specifically, we don't want lots of downstream
-    // files to need to explicitly include pas_utils_prefix.h,
-    // yet many of these other files define things in terms of
-    // the contents of that file.
-    explicit module pas {
-        header "pas_allocation_mode.h"
-        header "pas_config.h"
-        header "pas_config_prefix.h"
-        header "pas_lock.h"
-        header "pas_platform.h"
-        header "pas_thread.h"
-        header "pas_utils.h"
-        header "pas_utils_prefix.h"
+
+    explicit module pas_bitfit_page_config_kind_def {
+        private textual header "pas_bitfit_page_config_kind.def"
     }
-    export *
+
+    explicit module pas_heap_config_kind_def {
+        private textual header "pas_heap_config_kind.def"
+    }
+
+    explicit module Core {
+        umbrella "."
+
+        explicit module * {
+            export *
+        }
+    }
 }

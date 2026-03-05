@@ -31,8 +31,8 @@
 
 #pragma once
 
-#include <WebCore/GCReachableRef.h>
-#include <WebCore/MutationObserverOptions.h>
+#include "GCReachableRef.h"
+#include "MutationObserverOptions.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -55,7 +55,7 @@ class WindowEventLoop;
 template<typename> class ExceptionOr;
 
 class MutationObserver final : public RefCounted<MutationObserver> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MutationObserver);
+    WTF_MAKE_TZONE_ALLOCATED(MutationObserver);
 public:
     static Ref<MutationObserver> create(Ref<MutationCallback>&&);
 
@@ -91,7 +91,6 @@ public:
     MutationCallback& callback() const { return m_callback.get(); }
 
     static void enqueueSlotChangeEvent(HTMLSlotElement&);
-    static void enqueueShadowRootAttachedEvent(Element&);
 
     static void notifyMutationObservers(WindowEventLoop&);
 
@@ -104,7 +103,7 @@ private:
     explicit MutationObserver(Ref<MutationCallback>&&);
     void deliver();
 
-    static bool validateOptions(MutationObserverOptions);
+    static bool NODELETE validateOptions(MutationObserverOptions);
 
     const Ref<MutationCallback> m_callback;
     Vector<Ref<MutationRecord>> m_records;

@@ -25,7 +25,8 @@
 [
     ExceptionForDispatchedFrom,
     ExceptionForDispatchedTo,
-    ExceptionForEnabledBy
+    ExceptionForEnabledBy,
+    SwiftReceiverBuildEnabledBy=IPC_TESTING_SWIFT
 ]
 messages -> IPCTesterReceiver {
     void AsyncMessage(uint32_t arg1) -> (uint32_t reply) Asynchronous

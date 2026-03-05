@@ -30,6 +30,7 @@
 #include "ClonedArguments.h"
 #include "DirectArguments.h"
 #include "JSObjectInlines.h"
+#include "JSSetInlines.h"
 #include "ScopedArguments.h"
 #include <wtf/IterationStatus.h>
 
@@ -234,6 +235,38 @@ JSCellButterfly* JSCellButterfly::createFromString(JSGlobalObject* globalObject,
         result->setIndex(vm, resultIndex++, value);
         return IterationStatus::Continue;
     });
+
+    return result;
+}
+
+JSCellButterfly* JSCellButterfly::createFromSet(JSGlobalObject* globalObject, JSSet* set)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length = set->size();
+    JSCellButterfly* result = JSCellButterfly::tryCreate(vm, vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous), length);
+    if (!result) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    if (!length)
+        return result;
+
+    using Helper = JSSet::Helper;
+    if (!set->storage())
+        return result;
+
+    auto& storage = set->storageRef();
+    unsigned index = 0;
+    for (Helper::Entry entry = 0;; ++entry) {
+        auto transitionResult = Helper::transitAndNext(vm, storage, entry);
+        if (!transitionResult.storage)
+            break;
+        result->setIndex(vm, index++, transitionResult.key);
+        entry = transitionResult.entry;
+    }
 
     return result;
 }

@@ -28,11 +28,11 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <functional>
-#include <variant>
 #include <wtf/MediaTime.h>
 #include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Variant.h>
 #include <wtf/text/AtomString.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
@@ -51,7 +51,7 @@ using TrackID = uint64_t;
 
 class PlatformSample {
 public:
-    using VariantType = std::variant<const MockSampleBox*
+    using VariantType = Variant<const MockSampleBox*
 #if PLATFORM(COCOA)
         , RetainPtr<CMSampleBufferRef>
 #elif USE(GSTREAMER)
@@ -59,7 +59,7 @@ public:
 #endif
     >;
     PlatformSample(VariantType&& sample)
-        : m_sample(WTFMove(sample))
+        : m_sample(WTF::move(sample))
     { }
 
     const MockSampleBox* mockSampleBox() const { return std::get<const MockSampleBox*>(m_sample); }

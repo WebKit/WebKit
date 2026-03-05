@@ -75,35 +75,35 @@ protected:
 
     explicit ParserBase(std::span<const uint8_t>);
 
-    bool WARN_UNUSED_RETURN consumeCharacter(char);
-    bool WARN_UNUSED_RETURN consumeString(const char*);
-    bool WARN_UNUSED_RETURN consumeUTF8String(Name&, size_t);
+    [[nodiscard]] bool consumeCharacter(char);
+    [[nodiscard]] bool consumeString(const char*);
+    [[nodiscard]] bool consumeUTF8String(Name&, size_t);
 
-    bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t&);
-    bool WARN_UNUSED_RETURN parseInt7(int8_t&);
-    bool WARN_UNUSED_RETURN peekInt7(int8_t&);
-    bool WARN_UNUSED_RETURN parseUInt7(uint8_t&);
-    bool WARN_UNUSED_RETURN peekUInt8(uint8_t&);
-    bool WARN_UNUSED_RETURN parseUInt8(uint8_t&);
-    bool WARN_UNUSED_RETURN parseUInt32(uint32_t&);
-    bool WARN_UNUSED_RETURN parseUInt64(uint64_t&);
-    bool WARN_UNUSED_RETURN parseImmByteArray16(v128_t&);
-    bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t&);
-    bool WARN_UNUSED_RETURN peekVarUInt32(uint32_t&);
-    bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t&);
+    [[nodiscard]] bool parseVarUInt1(uint8_t&);
+    [[nodiscard]] bool parseInt7(int8_t&);
+    [[nodiscard]] bool peekInt7(int8_t&);
+    [[nodiscard]] bool parseUInt7(uint8_t&);
+    [[nodiscard]] bool peekUInt8(uint8_t&);
+    [[nodiscard]] bool parseUInt8(uint8_t&);
+    [[nodiscard]] bool parseUInt32(uint32_t&);
+    [[nodiscard]] bool parseUInt64(uint64_t&);
+    [[nodiscard]] bool parseImmByteArray16(v128_t&);
+    [[nodiscard]] bool parseVarUInt32(uint32_t&);
+    [[nodiscard]] bool peekVarUInt32(uint32_t&);
+    [[nodiscard]] bool parseVarUInt64(uint64_t&);
 
-    bool WARN_UNUSED_RETURN parseVarInt32(int32_t&);
-    bool WARN_UNUSED_RETURN parseVarInt64(int64_t&);
+    [[nodiscard]] bool parseVarInt32(int32_t&);
+    [[nodiscard]] bool parseVarInt64(int64_t&);
 
-    bool WARN_UNUSED_RETURN parseValueType(const ModuleInformation&, Type&);
-    bool WARN_UNUSED_RETURN parseRefType(const ModuleInformation&, Type&);
-    bool WARN_UNUSED_RETURN parseExternalKind(ExternalKind&);
-    bool WARN_UNUSED_RETURN parseHeapType(const ModuleInformation&, int32_t&);
+    [[nodiscard]] bool parseValueType(const ModuleInformation&, Type&);
+    [[nodiscard]] bool parseRefType(const ModuleInformation&, Type&);
+    [[nodiscard]] bool parseExternalKind(ExternalKind&);
+    [[nodiscard]] bool parseHeapType(const ModuleInformation&, int32_t&);
 
     size_t m_offset = 0;
 
     template <typename ...Args>
-    NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
+    [[nodiscard]] NEVER_INLINE UnexpectedResult fail(Args... args) const
     {
         using namespace FailureHelper; // See ADL comment in namespace above.
         return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, m_offset, ": "_s, makeString(args)...));
@@ -121,7 +121,7 @@ protected:
 #define WASM_FAIL_IF_HELPER_FAILS(helper) do {                      \
         auto helperResult = helper;                                 \
         if (!helperResult) [[unlikely]]                             \
-            return makeUnexpected(WTFMove(helperResult.error()));   \
+            return makeUnexpected(WTF::move(helperResult.error()));   \
     } while (0)
 
 private:

@@ -68,7 +68,7 @@ private:
 
     const CheckedRef<WorkerGlobalScope> m_workerGlobalScope;
 
-    typedef Vector<RefPtr<RequestAnimationFrameCallback>> CallbackList;
+    typedef Vector<Ref<RequestAnimationFrameCallback>> CallbackList;
     CallbackList m_animationCallbacks;
     typedef int CallbackId;
     CallbackId m_nextAnimationCallbackId { 0 };

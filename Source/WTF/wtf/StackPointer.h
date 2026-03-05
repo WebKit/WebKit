@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <wtf/Compiler.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/Platform.h>
+
 #pragma once
 
 namespace WTF {

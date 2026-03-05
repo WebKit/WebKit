@@ -27,7 +27,7 @@
 ]
 messages -> WebSharedWorkerContextManagerConnection {
     LaunchSharedWorker(struct WebCore::ClientOrigin origin, WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, struct WebCore::WorkerOptions workerOptions, struct WebCore::WorkerFetchResult workerFetchResult, struct WebCore::WorkerInitializationData workerInitializationData)
-    PostConnectEvent(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, WebCore::TransferredMessagePort port, String sourceOrigin) -> (bool success)
+    PostConnectEvent(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, WebCore::TransferredMessagePort port, WebCore::SecurityOriginData sourceOrigin) -> (bool success)
     TerminateSharedWorker(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     SetUserAgent(String userAgent)

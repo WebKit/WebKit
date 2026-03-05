@@ -52,7 +52,7 @@ public:
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
     static bool canDecodeType(const String& mimeType);
 
-    void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&& callback) final { m_encodedDataStatusChangedCallback = WTFMove(callback); }
+    void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&& callback) final { m_encodedDataStatusChangedCallback = WTF::move(callback); }
     EncodedDataStatus encodedDataStatus() const final;
     IntSize size() const final;
     size_t frameCount() const final { return m_sampleData.size(); }

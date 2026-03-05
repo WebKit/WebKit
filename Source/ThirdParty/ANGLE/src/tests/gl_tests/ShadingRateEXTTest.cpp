@@ -31,19 +31,14 @@ class ShadingRateEXTTest : public ANGLETest<>
     }
 };
 
-const char *kSimpleShadingRateVS()
-{
-    return R"(#version 310 es
+constexpr char kSimpleShadingRateVS[] = R"(#version 310 es
 in vec4 a_position;
 void main()
 {
     gl_Position = a_position;
 })";
-}
 
-const char *kSimplePrimitiveShadingRateVS()
-{
-    return R"(#version 310 es
+constexpr char kSimplePrimitiveShadingRateVS[] = R"(#version 310 es
 #extension GL_EXT_fragment_shading_rate : require
 in vec4 a_position;
 void main()
@@ -51,47 +46,43 @@ void main()
     gl_Position = a_position;
     gl_PrimitiveShadingRateEXT = gl_ShadingRateFlag2VerticalPixelsEXT | gl_ShadingRateFlag2HorizontalPixelsEXT;
 })";
-}
 
-const char *kSimplePrimitiveShadingRateGS()
-{
-    return R"(#version 310 es
+constexpr char kSimplePrimitiveShadingRateGS[] = R"(#version 310 es
 #extension GL_EXT_geometry_shader : require
 #extension GL_EXT_fragment_shading_rate : require
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 void main()
 {
-    gl_PrimitiveShadingRateEXT = gl_ShadingRateFlag2VerticalPixelsEXT | gl_ShadingRateFlag2HorizontalPixelsEXT;
     for (int i = 0; i < 3; i++)
     {
+        gl_PrimitiveShadingRateEXT = gl_ShadingRateFlag2VerticalPixelsEXT | gl_ShadingRateFlag2HorizontalPixelsEXT;
         gl_Position = gl_in[i].gl_Position;
         EmitVertex();
     }
     EndPrimitive();
 })";
-}
 
-const char *kSimpleShadingRateFS()
-{
-    return R"(#version 310 es
+constexpr char kSimpleShadingRateFS[] = R"(#version 310 es
 #extension GL_EXT_fragment_shading_rate : require
 precision highp float;
 layout(location = 0) out vec4 fragColor;
+uniform mediump vec4 u_color;
 void main()
 {
     // Emit red color if ShadingRateEXT == gl_ShadingRateFlag2VerticalPixelsEXT | gl_ShadingRateFlag2HorizontalPixelsEXT
     if (gl_ShadingRateEXT == 5) {
         fragColor = vec4(1.0, 0.0, 0.0, 1.0); // red
+    }
+    // ShadingRateEXT == 0 indicates 1x1 shading rate
+    else if (gl_ShadingRateEXT == 0) {
+        fragColor = u_color;
     } else {
-        fragColor = vec4(0.0, 1.0, 0.0, 1.0);
+        fragColor = vec4(0.0, 1.0, 0.0, 1.0); // green
     }
 })";
-}
 
-const char *kSimpleShadingRateUniformColorFS()
-{
-    return R"(#version 310 es
+constexpr char kSimpleShadingRateUniformColorFS[] = R"(#version 310 es
 #extension GL_EXT_fragment_shading_rate : require
 precision highp float;
 uniform mediump vec4 u_color;
@@ -105,7 +96,6 @@ void main()
         fragColor = vec4(0.0, 0.0, 0.0, 1.0);
     }
 })";
-}
 
 // Test basic functionality of EXT_fragment_shading_rate
 TEST_P(ShadingRateEXTTest, FragmentShadingRate)
@@ -129,7 +119,7 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRate)
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ANGLE_GL_PROGRAM(drawShadingRateProgram, kSimpleShadingRateVS(), kSimpleShadingRateFS());
+    ANGLE_GL_PROGRAM(drawShadingRateProgram, kSimpleShadingRateVS, kSimpleShadingRateFS);
     glUseProgram(drawShadingRateProgram);
 
     // Set and query shading rate.
@@ -146,16 +136,17 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRate)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
-// Test EXT_fragment_shading_rate state change with Blend
+// Test EXT_fragment_shading_rate and EXT_fragment_shading_rate_primitive state change with Blend
 TEST_P(ShadingRateEXTTest, FragmentShadingRateBlend)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_fragment_shading_rate"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_fragment_shading_rate_primitive"));
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     // Render red quad with 2x2 shading rate.
-    ANGLE_GL_PROGRAM(drawShadingRateProgram, kSimpleShadingRateVS(),
-                     kSimpleShadingRateUniformColorFS());
+    ANGLE_GL_PROGRAM(drawShadingRateProgram, kSimpleShadingRateVS,
+                     kSimpleShadingRateUniformColorFS);
     glUseProgram(drawShadingRateProgram);
     GLint colorUniformLocation = glGetUniformLocation(drawShadingRateProgram, "u_color");
     ASSERT_NE(colorUniformLocation, -1);
@@ -172,8 +163,8 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRateBlend)
     glBlendFunc(GL_ONE, GL_ONE);
 
     // Render green quad with 2x2 shading rate.
-    ANGLE_GL_PROGRAM(primitiveShadingRateVSProgram, kSimplePrimitiveShadingRateVS(),
-                     kSimpleShadingRateUniformColorFS());
+    ANGLE_GL_PROGRAM(primitiveShadingRateVSProgram, kSimplePrimitiveShadingRateVS,
+                     kSimpleShadingRateUniformColorFS);
     glUseProgram(primitiveShadingRateVSProgram);
     colorUniformLocation = glGetUniformLocation(primitiveShadingRateVSProgram, "u_color");
     ASSERT_NE(colorUniformLocation, -1);
@@ -195,11 +186,16 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRatePrimitive)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_fragment_shading_rate_primitive"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    // Yellow
+    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ANGLE_GL_PROGRAM(drawShadingRateProgram, kSimpleShadingRateVS(), kSimpleShadingRateFS());
+    ANGLE_GL_PROGRAM(drawShadingRateProgram, kSimpleShadingRateVS, kSimpleShadingRateFS);
     glUseProgram(drawShadingRateProgram);
+    GLint colorLoc = glGetUniformLocation(drawShadingRateProgram, "u_color");
+    ASSERT_NE(colorLoc, -1);
+    glUniform4f(colorLoc, 0, 0, 1, 1);  // blue
+
     // Set 1x1 shading rate and KEEP combinerOps.
     glShadingRateEXT(GL_SHADING_RATE_1X1_PIXELS_EXT);
     glShadingRateCombinerOpsEXT(GL_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_EXT,
@@ -207,13 +203,19 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRatePrimitive)
     // Verify draw call with 1x1 shading rate.
     drawQuad(drawShadingRateProgram, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    // GL_SHADING_RATE_1X1_PIXELS_EXT -> gl_ShadingRateEXT = 0
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 
     // Compile PrimitiveShadingRateVS + FS and use this program
-    ANGLE_GL_PROGRAM(primitiveShadingRateVSProgram, kSimplePrimitiveShadingRateVS(),
-                     kSimpleShadingRateFS());
+    ANGLE_GL_PROGRAM(primitiveShadingRateVSProgram, kSimplePrimitiveShadingRateVS,
+                     kSimpleShadingRateFS);
     glUseProgram(primitiveShadingRateVSProgram);
-    // Set REPLACE combinerOp0.
+    colorLoc = glGetUniformLocation(primitiveShadingRateVSProgram, "u_color");
+    ASSERT_NE(colorLoc, -1);
+    glUniform4f(colorLoc, 0, 0, 1, 1);  // blue
+
+    // Set 2x2 shading rate and REPLACE combinerOps.
+    glShadingRateEXT(GL_SHADING_RATE_2X2_PIXELS_EXT);
     glShadingRateCombinerOpsEXT(GL_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_EXT,
                                 GL_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_EXT);
     // Verify draw call with 2x2 primitive shading rate.
@@ -223,9 +225,12 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRatePrimitive)
 
     glClear(GL_COLOR_BUFFER_BIT);
     // Compile VS + PrimitiveShadingRateGS + FS and use this program
-    ANGLE_GL_PROGRAM_WITH_GS(primitiveShadingRateGSProgram, kSimpleShadingRateVS(),
-                             kSimplePrimitiveShadingRateGS(), kSimpleShadingRateFS());
+    ANGLE_GL_PROGRAM_WITH_GS(primitiveShadingRateGSProgram, kSimpleShadingRateVS,
+                             kSimplePrimitiveShadingRateGS, kSimpleShadingRateFS);
     glUseProgram(primitiveShadingRateGSProgram);
+    colorLoc = glGetUniformLocation(primitiveShadingRateGSProgram, "u_color");
+    ASSERT_NE(colorLoc, -1);
+    glUniform4f(colorLoc, 0, 0, 1, 1);  // blue
 
     // Verify draw call with 2x2 primitive shading rate with GS.
     drawQuad(primitiveShadingRateGSProgram, essl1_shaders::PositionAttrib(), 0.5f);
@@ -238,7 +243,7 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRatePrimitive)
                                 GL_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_EXT);
     drawQuad(drawShadingRateProgram, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 }
 
 // The negative test of EXT_fragment_shading_rate
@@ -284,6 +289,43 @@ TEST_P(ShadingRateEXTTest, Error)
                                     GL_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_EXT);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
     }
+}
+
+// Test that when FETCH_PER_SAMPLE_ARM is enabled, the fragment shading rate
+// is set to GL_SHADING_RATE_1X1_PIXELS_EXT.
+TEST_P(ShadingRateEXTTest, ShadingRateFramebufferFetchPerSample)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_fragment_shading_rate"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
+
+    glShadingRateEXT(GL_SHADING_RATE_2X2_PIXELS_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, kSimpleShadingRateVS, kSimpleShadingRateFS);
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, "u_color");
+    ASSERT_NE(colorLoc, -1);
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glEnable(GL_FETCH_PER_SAMPLE_ARM);
+    glUniform4f(colorLoc, 0, 0, 1, 0);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+    glDisable(GL_FETCH_PER_SAMPLE_ARM);
+    glUniform4f(colorLoc, 0, 0, 0, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+    glEnable(GL_FETCH_PER_SAMPLE_ARM);
+    glUniform4f(colorLoc, 0, 0.5, 0, 0);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 128, 255, 255), 1);
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these

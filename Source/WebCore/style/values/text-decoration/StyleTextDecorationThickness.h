@@ -52,7 +52,7 @@ struct TextDecorationThickness {
     }
 
     TextDecorationThickness(TextDecorationThicknessLength&& length)
-        : m_value { WTFMove(length) }
+        : m_value { WTF::move(length) }
     {
     }
 

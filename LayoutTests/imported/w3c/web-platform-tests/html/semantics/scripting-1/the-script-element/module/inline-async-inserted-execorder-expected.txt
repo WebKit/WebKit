@@ -1,0 +1,3 @@
+
+FAIL Inline async="" module scripts execute or throw parse errors asynchronously assert_array_equals: expected property 3 to be "no error script executed" but got "error event on Window" (expected array ["before any script execution", "after inserting noErrorScript", "after inserting parseErrorScript", "no error script executed", "error event on Window"] got ["before any script execution", "after inserting noErrorScript", "after inserting parseErrorScript", "error event on Window", "no error script executed"])
+

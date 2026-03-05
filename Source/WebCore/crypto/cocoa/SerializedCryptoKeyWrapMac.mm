@@ -236,7 +236,7 @@ bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint
 
     Vector<uint8_t> encryptedKey(key.size());
     size_t tagLength = expectedTagLengthAES;
-    uint8_t tag[expectedTagLengthAES] = { 0 };
+    std::array<uint8_t, expectedTagLengthAES> tag { };
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES128, kek.span().data(), kek.size(),
@@ -244,7 +244,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         nullptr, 0, // auth data
         key.span().data(), key.size(),
         encryptedKey.mutableSpan().data(),
-        tag, &tagLength);
+        tag.data(), &tagLength);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (status != kCCSuccess)
@@ -255,7 +255,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         versionKey: [NSNumber numberWithUnsignedInteger:currentSerializationVersion],
         wrappedKEKKey: toNSData(wrappedKEK).autorelease(),
         encryptedKeyKey: toNSData(encryptedKey).autorelease(),
-        tagKey: [NSData dataWithBytes:tag length:tagLength]
+        tagKey: toNSData(std::span { tag }.first(tagLength)).get()
     };
 
     NSData* serialization = [NSPropertyListSerialization dataWithPropertyList:dictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];

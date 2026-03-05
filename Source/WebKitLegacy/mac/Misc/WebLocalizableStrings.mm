@@ -37,22 +37,22 @@ WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit
 
 NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const char *key)
 {
-    NSBundle *bundle;
+    RetainPtr<NSBundle> bundle;
     if (stringsBundle == NULL) {
         static NeverDestroyed<RetainPtr<NSBundle>> mainBundle = [NSBundle mainBundle];
         ASSERT(mainBundle.get());
         bundle = mainBundle.get().get();
     } else {
         bundle = stringsBundle->bundle;
-        if (bundle == nil) {
+        if (!bundle) {
             bundle = [NSBundle bundleWithIdentifier:[NSString stringWithUTF8String:stringsBundle->identifier]];
             ASSERT(bundle);
-            stringsBundle->bundle = bundle;
+            stringsBundle->bundle = bundle.get();
         }
     }
     NSString *notFound = @"localized string not found";
     auto keyString = adoptCF(CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
-    NSString *result = [bundle localizedStringForKey:(__bridge NSString *)keyString.get() value:notFound table:nil];
+    NSString *result = [bundle.get() localizedStringForKey:(__bridge NSString *)keyString.get() value:notFound table:nil];
     ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key);
     return result;
 }

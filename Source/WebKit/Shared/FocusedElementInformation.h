@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
 #include "ColorControlSupportsAlpha.h"
 #include "FrameInfoData.h"
 #include "IdentifierTypes.h"
@@ -102,6 +101,7 @@ struct FocusedElementInformation {
     bool isMultiSelect { false };
     bool isReadOnly {false };
     bool allowsUserScaling { false };
+    bool usesBaseAppearancePicker { false };
     bool allowsUserScalingIgnoringAlwaysScalable { false };
     bool insideFixedPosition { false };
     bool hasPlainText { false };

@@ -40,7 +40,7 @@ namespace WebCore {
 static constexpr unsigned AES_CM_128_HMAC_SHA256_NONCE_SIZE = 12;
 #endif
 
-static inline void writeUInt64(std::span<uint8_t> data, uint64_t value, uint8_t valueLength)
+static inline void NODELETE writeUInt64(std::span<uint8_t> data, uint64_t value, uint8_t valueLength)
 {
     for (unsigned i = 0; i < valueLength; ++i)
         data[i] = (value >> ((valueLength - 1 - i) * 8)) & 0xff;
@@ -54,7 +54,7 @@ static inline uint64_t readUInt64(std::span<const uint8_t> data)
     return value;
 }
 
-static inline uint8_t lengthOfUInt64(uint64_t value)
+static inline uint8_t NODELETE lengthOfUInt64(uint64_t value)
 {
     uint8_t length = 0;
     do {
@@ -64,7 +64,7 @@ static inline uint8_t lengthOfUInt64(uint64_t value)
     return length;
 }
 
-static inline uint8_t computeFirstHeaderByte(uint64_t keyId, uint64_t counter)
+static inline uint8_t NODELETE computeFirstHeaderByte(uint64_t keyId, uint64_t counter)
 {
     uint8_t value = 0;
     value |= (lengthOfUInt64(counter) - 1) << 4;
@@ -94,12 +94,12 @@ static inline Vector<uint8_t> computeIV(uint64_t counter, const Vector<uint8_t>&
     return iv;
 }
 
-static inline bool hasSignature(uint8_t firstByte)
+static inline bool NODELETE hasSignature(uint8_t firstByte)
 {
     return firstByte & 0x80;
 }
 
-static inline bool hasLongKeyLength(uint8_t firstByte)
+static inline bool NODELETE hasLongKeyLength(uint8_t firstByte)
 {
     return firstByte & 0x08;
 }

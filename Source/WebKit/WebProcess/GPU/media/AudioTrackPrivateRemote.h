@@ -44,7 +44,7 @@ class AudioTrackPrivateRemote final : public WebCore::AudioTrackPrivate {
 public:
     static Ref<AudioTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, AudioTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new AudioTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTFMove(configuration)));
+        return adoptRef(*new AudioTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTF::move(configuration)));
     }
 
     WebCore::TrackID id() const final { return m_id; }

@@ -132,7 +132,7 @@ EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlo
 
     ASSERT(sharingMode == buffer->sharingMode());
 
-    return JSValue::encode(JSArrayBuffer::create(vm, structure, WTFMove(buffer)));
+    return JSValue::encode(JSArrayBuffer::create(vm, structure, WTF::move(buffer)));
 }
 
 template<ArrayBufferSharingMode sharingMode>
@@ -178,7 +178,7 @@ JSObject* constructArrayBufferWithSize(JSGlobalObject* globalObject, Structure* 
     if (structure == globalObject->arrayBufferStructureWithSharingMode<ArrayBufferSharingMode::Shared>())
         buffer->makeShared();
 
-    return JSArrayBuffer::create(vm, structure, WTFMove(buffer));
+    return JSArrayBuffer::create(vm, structure, WTF::move(buffer));
 }
 
 // ------------------------------ Functions --------------------------------

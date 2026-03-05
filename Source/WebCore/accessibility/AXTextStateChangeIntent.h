@@ -25,71 +25,82 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
-enum AXTextStateChangeType {
-    AXTextStateChangeTypeUnknown,
-    AXTextStateChangeTypeEdit,
-    AXTextStateChangeTypeSelectionMove,
-    AXTextStateChangeTypeSelectionExtend,
-    AXTextStateChangeTypeSelectionBoundary
+enum class AXTextStateChangeType : uint8_t {
+    Unknown,
+    Edit,
+    SelectionMove,
+    SelectionExtend,
+    SelectionBoundary
 };
 
-enum AXTextEditType {
-    AXTextEditTypeUnknown,
-    AXTextEditTypeDelete, // Generic text delete
-    AXTextEditTypeInsert, // Generic text insert
-    AXTextEditTypeTyping, // Insert via typing
-    AXTextEditTypeDictation, // Insert via dictation
-    AXTextEditTypeCut, // Delete via Cut
-    AXTextEditTypePaste, // Insert via Paste
-    AXTextEditTypeReplace, // A deletion + insertion that should be notified as an atomic operation.
-    AXTextEditTypeAttributesChange // Change font, style, alignment, color, etc.
+enum class AXTextEditType : uint8_t {
+    Unknown,
+    Delete, // Generic text delete
+    Insert, // Generic text insert
+    Typing, // Insert via typing
+    Dictation, // Insert via dictation
+    Cut, // Delete via Cut
+    Paste, // Insert via Paste
+    Replace, // A deletion + insertion that should be notified as an atomic operation.
+    AttributesChange // Change font, style, alignment, color, etc.
 };
 
-enum AXTextSelectionDirection {
-    AXTextSelectionDirectionUnknown,
-    AXTextSelectionDirectionBeginning,
-    AXTextSelectionDirectionEnd,
-    AXTextSelectionDirectionPrevious,
-    AXTextSelectionDirectionNext,
-    AXTextSelectionDirectionDiscontiguous
+enum class AXTextSelectionDirection : uint8_t {
+    Unknown,
+    Beginning,
+    End,
+    Previous,
+    Next,
+    Discontiguous
 };
 
-enum AXTextSelectionGranularity {
-    AXTextSelectionGranularityUnknown,
-    AXTextSelectionGranularityCharacter,
-    AXTextSelectionGranularityWord,
-    AXTextSelectionGranularityLine,
-    AXTextSelectionGranularitySentence,
-    AXTextSelectionGranularityParagraph,
-    AXTextSelectionGranularityPage,
-    AXTextSelectionGranularityDocument,
-    AXTextSelectionGranularityAll // All granularity represents the action of selecting the whole document as a single action. Extending selection by some other granularity until it encompasses the whole document will not result in a all granularity notification.
+enum class AXTextSelectionGranularity : uint8_t {
+    Unknown,
+    Character,
+    Word,
+    Line,
+    Sentence,
+    Paragraph,
+    Page,
+    Document,
+    All // All granularity represents the action of selecting the whole document as a single action. Extending selection by some other granularity until it encompasses the whole document will not result in a all granularity notification.
 };
+
+String debugDescription(AXTextStateChangeType);
+String debugDescription(AXTextEditType);
+String debugDescription(AXTextSelectionDirection);
+String debugDescription(AXTextSelectionGranularity);
 
 struct AXTextSelection {
-    AXTextSelectionDirection direction;
-    AXTextSelectionGranularity granularity;
-    bool focusChange;
+    AXTextSelectionDirection direction { AXTextSelectionDirection::Unknown };
+    AXTextSelectionGranularity granularity { AXTextSelectionGranularity::Unknown };
+    bool focusChange { false };
+
+    String debugDescription() const;
 };
 
 struct AXTextStateChangeIntent {
-    AXTextStateChangeType type;
+    AXTextStateChangeType type { AXTextStateChangeType::Unknown };
     union {
         AXTextSelection selection;
         AXTextEditType editType;
     };
 
-    AXTextStateChangeIntent(AXTextStateChangeType type = AXTextStateChangeTypeUnknown, AXTextSelection selection = AXTextSelection())
+    AXTextStateChangeIntent(AXTextStateChangeType type = AXTextStateChangeType::Unknown, AXTextSelection selection = AXTextSelection())
         : type(type)
         , selection(selection)
     { }
 
     AXTextStateChangeIntent(AXTextEditType editType)
-        : type(AXTextStateChangeTypeEdit)
+        : type(AXTextStateChangeType::Edit)
         , editType(editType)
     { }
+
+    String debugDescription() const;
 };
 
 } // namespace WebCore

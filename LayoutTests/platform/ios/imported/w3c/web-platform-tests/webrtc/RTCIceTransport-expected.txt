@@ -1,0 +1,21 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Two connected iceTransports should have matching local/remote candidates returned assert_true: Expect RTCIceRole to be either controlling or controlled, found undefined expected true got false
+FAIL Unconnected iceTransport should have empty remote candidates and selected pair promise_test: Unhandled rejection with value: object "TypeError: iceTransport.getRemoteCandidates is not a function. (In 'iceTransport.getRemoteCandidates()', 'iceTransport.getRemoteCandidates' is undefined)"
+PASS RTCIceTransport should be in state "new" initially
+PASS RTCIceTransport should transition to "gathering" then "complete", after sLD
+PASS PC.close() should not cause the RTCIceTransport gathering state to transition to "complete"
+PASS RTCIceTransport should transition to "gathering", then "complete" after sLD (DataChannel case)
+PASS RTCIceTransport should not transition to "checking" until after the answer is set _and_ the first remote candidate is received
+PASS RTCIceTransport should transition to "disconnected" if packets stop flowing
+PASS RTCIceTransport should transition to "disconnected" if packets stop flowing (DataChannel case)
+PASS Local ICE restart should not result in a different ICE transport
+PASS Local ICE restart should not result in a different ICE transport (DataChannel case)
+PASS Remote ICE restart should not result in a different ICE transport
+PASS Remote ICE restart should not result in a different ICE transport (DataChannel case)
+TIMEOUT RTCIceTransport should transition to "closed" if the underlying transport is closed because the answer used bundle Test timed out
+NOTRUN RTCIceTransport should synchronously transition to "closed" with no event if the underlying transport is closed due to PC.close()
+NOTRUN RTCIceTransport does not expose remote peer-reflexive candidates.
+FAIL Validate selected candidate pair assert_equals: Expect selected local candidate of one pc is the selected remote candidate or another expected "Cand[:3401403127:1:udp:2113937151:10.49.202.124:64781:host::0:xa+H:erqXo5Kw8iCz6rnRN5Xdh6R5:0:999:0]" but got "Cand[:3896158751:1:udp:1845501695:10.49.202.124:57781:prflx:10.49.202.124:64781:xa+H:erqXo5Kw8iCz6rnRN5Xdh6R5:0:999:0]"
+

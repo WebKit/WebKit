@@ -1,12 +1,16 @@
 This tests that the notifications for aria-live=polite and aria-live=assertive are properly formatted.
 
 Received announcement request:
-AnnouncementKey: Price: $10
+AnnouncementKey: Price: $10{
+    AXLanguage = en;
+}
 AXPriorityKey: 10
 AXAnnouncementIsLiveRegionKey: true
 
 Received announcement request:
-AnnouncementKey: Count: 5
+AnnouncementKey: Count: 5{
+    AXLanguage = en;
+}
 AXPriorityKey: 90
 AXAnnouncementIsLiveRegionKey: true
 

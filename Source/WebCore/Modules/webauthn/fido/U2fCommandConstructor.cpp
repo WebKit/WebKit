@@ -56,27 +56,27 @@ static Vector<uint8_t> constructU2fRegisterCommand(std::span<const uint8_t> appl
     command.setIns(static_cast<uint8_t>(U2fApduInstruction::kRegister));
     // This is needed for test of user presence even though the spec doesn't specify it.
     command.setP1(kP1EnforceUserPresenceAndSign);
-    command.setData(WTFMove(data));
+    command.setData(WTF::move(data));
     command.setResponseLength(apdu::ApduCommand::kApduMaxResponseLength);
     return command.getEncodedCommand();
 }
 
 static std::optional<Vector<uint8_t>> constructU2fSignCommand(const Vector<uint8_t>& applicationParameter, const Vector<uint8_t>& challengeParameter, const BufferSource& keyHandle, bool checkOnly)
 {
-    if (keyHandle.length() > kMaxKeyHandleLength)
+    if (keyHandle.byteLength() > kMaxKeyHandleLength)
         return std::nullopt;
 
     Vector<uint8_t> data;
-    data.reserveInitialCapacity(kU2fChallengeParamLength + kU2fApplicationParamLength + 1 + keyHandle.length());
+    data.reserveInitialCapacity(kU2fChallengeParamLength + kU2fApplicationParamLength + 1 + keyHandle.byteLength());
     data.appendVector(challengeParameter);
     data.appendVector(applicationParameter);
-    data.append(static_cast<uint8_t>(keyHandle.length()));
+    data.append(static_cast<uint8_t>(keyHandle.byteLength()));
     data.append(keyHandle.span());
 
     apdu::ApduCommand command;
     command.setIns(static_cast<uint8_t>(U2fApduInstruction::kSign));
     command.setP1(checkOnly ? kP1CheckOnly : kP1EnforceUserPresenceAndSign);
-    command.setData(WTFMove(data));
+    command.setData(WTF::move(data));
     command.setResponseLength(apdu::ApduCommand::kApduMaxResponseLength);
     return command.getEncodedCommand();
 }
@@ -85,7 +85,7 @@ static std::optional<Vector<uint8_t>> constructU2fSignCommand(const Vector<uint8
 
 bool isConvertibleToU2fRegisterCommand(const PublicKeyCredentialCreationOptions& request)
 {
-    if (request.authenticatorSelection && (request.authenticatorSelection->userVerification() == UserVerificationRequirement::Required || request.authenticatorSelection->requireResidentKey))
+    if (request.authenticatorSelection && (request.authenticatorSelection->userVerification == UserVerificationRequirement::Required || request.authenticatorSelection->requireResidentKey))
         return false;
     if (request.pubKeyCredParams.findIf([](auto& item) { return item.alg == COSE::ES256; }) == notFound)
         return false;
@@ -94,7 +94,7 @@ bool isConvertibleToU2fRegisterCommand(const PublicKeyCredentialCreationOptions&
 
 bool isConvertibleToU2fSignCommand(const PublicKeyCredentialRequestOptions& request)
 {
-    return (request.userVerification() != UserVerificationRequirement::Required) && !request.allowCredentials.isEmpty();
+    return (request.userVerification != UserVerificationRequirement::Required) && !request.allowCredentials.isEmpty();
 }
 
 std::optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request)

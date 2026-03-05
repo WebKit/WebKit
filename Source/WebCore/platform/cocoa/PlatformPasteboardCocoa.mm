@@ -52,7 +52,7 @@ std::optional<Vector<PasteboardItemInfo>> PlatformPasteboard::allPasteboardItemI
         if (!item)
             return std::nullopt;
 
-        itemInfo.append(WTFMove(*item));
+        itemInfo.append(WTF::move(*item));
     }
     return itemInfo;
 }

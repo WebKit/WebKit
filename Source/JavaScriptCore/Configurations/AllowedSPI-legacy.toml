@@ -20,7 +20,6 @@ symbols = [
     "_CFProcessPath",
     "_CFXPCCreateCFObjectFromXPCMessage",
     "_CFXPCCreateXPCMessageWithCFObject",
-    "_dyld_get_dlopen_image_header",
     "_dyld_get_image_uuid",
     "_dyld_get_shared_cache_uuid",
     "cache_simulate_memory_warning_event",
@@ -35,3 +34,8 @@ symbols = ["dyld_get_program_sdk_version"]
 # code in RuntimeApplicationChecks.
 allow-unused = true
 
+[[legacy]]
+symbols = [
+    "_dyld_get_dlopen_image_header",
+]
+requires-sdk = ["iOS <= 26.*"]

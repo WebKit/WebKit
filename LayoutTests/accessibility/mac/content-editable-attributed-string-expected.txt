@@ -38,7 +38,7 @@ AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-
 First line.
 Some text click me more text.
 Another line."
-First line: "Attributes in range {0, 11}:
+Line 1: "Attributes in range {0, 12}:
 AXFont: {
     AXFontFamily = Times;
     AXFontName = "Times-Roman";
@@ -46,8 +46,9 @@ AXFont: {
 }
 AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
 AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
-First line."
-Second line: "Attributes in range {0, 10}:
+First line.
+"
+Line 2: "Attributes in range {0, 10}:
 AXFont: {
     AXFontFamily = Times;
     AXFontName = "Times-Roman";
@@ -65,7 +66,7 @@ AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-
 AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
 AXUnderline: YES
 AXUnderlineColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0.933333 1 )
-Attributes in range {18, 11}:
+Attributes in range {18, 12}:
 AXFont: {
     AXFontFamily = Times;
     AXFontName = "Times-Roman";
@@ -73,8 +74,9 @@ AXFont: {
 }
 AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
 AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
-Some text click me more text."
-third line: "Attributes in range {0, 13}:
+Some text click me more text.
+"
+Line 3: "Attributes in range {0, 13}:
 AXFont: {
     AXFontFamily = Times;
     AXFontItalic = 1;

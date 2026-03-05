@@ -1,62 +1,14 @@
 
-FAIL .grid-lanes 1 assert_equals:
-<div class="grid-lanes" data-expected-width="300" data-expected-height="200">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 2 assert_equals:
-<div class="grid-lanes" style="width: 200px; height: 100px;" data-expected-width="300" data-expected-height="200">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 3 assert_equals:
-<div class="grid-lanes" style="width: min-content; height: min-content;" data-expected-width="300" data-expected-height="200">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 4 assert_equals:
-<div class="grid-lanes" style="width: max-content; height: max-content;" data-expected-width="300" data-expected-height="200">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 5 assert_equals:
-<div class="grid-lanes border" data-expected-width="320" data-expected-height="220">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 6 assert_equals:
-<div class="grid-lanes border" style="width: 200px; height: 100px;" data-expected-width="320" data-expected-height="220">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 7 assert_equals:
-<div class="grid-lanes border" style="width: min-content; height: min-content;" data-expected-width="320" data-expected-height="220">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 8 assert_equals:
-<div class="grid-lanes border" style="width: max-content; height: max-content;" data-expected-width="320" data-expected-height="220">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 9 assert_equals:
-<div class="grid-lanes border border-box" data-expected-width="320" data-expected-height="220">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 220 but got 200
-FAIL .grid-lanes 10 assert_equals:
-<div class="grid-lanes border border-box" style="width: 200px; height: 100px;" data-expected-width="300" data-expected-height="200">
-  <div class="item" data-offset-x="0" data-offset-y="100" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 50 but got 0
-FAIL .grid-lanes 11 assert_equals:
-<div class="grid-lanes border border-box" style="width: min-content; height: min-content;" data-expected-width="320" data-expected-height="220">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 220 but got 200
-FAIL .grid-lanes 12 assert_equals:
-<div class="grid-lanes border border-box" style="width: max-content; height: max-content;" data-expected-width="320" data-expected-height="220">
-  <div class="item" data-offset-x="0" data-offset-y="150" data-expected-width="300" data-expected-height="50"></div>
-</div>
-height expected 220 but got 200
+PASS .grid-lanes 1
+PASS .grid-lanes 2
+PASS .grid-lanes 3
+PASS .grid-lanes 4
+PASS .grid-lanes 5
+PASS .grid-lanes 6
+PASS .grid-lanes 7
+PASS .grid-lanes 8
+PASS .grid-lanes 9
+PASS .grid-lanes 10
+PASS .grid-lanes 11
+PASS .grid-lanes 12
 

@@ -30,28 +30,28 @@
 #include "JSDOMGuardedObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSReadableStreamReadResult.h"
-#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 
 namespace WebCore {
 
 class ReadableStreamDefaultReadRequest : public ReadableStreamReadRequest {
 public:
-    static Ref<ReadableStreamDefaultReadRequest> create(Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamDefaultReadRequest(WTFMove(promise))); }
+    static Ref<ReadableStreamDefaultReadRequest> create(Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamDefaultReadRequest(WTF::move(promise))); }
 
 private:
     explicit ReadableStreamDefaultReadRequest(Ref<DeferredPromise>&& promise)
-        : m_promise(WTFMove(promise))
+        : m_promise(WTF::move(promise))
     {
     }
 
     void runChunkSteps(JSC::JSValue value) final
     {
-        m_promise->resolve<IDLDictionary<ReadableStreamReadResult>>({ value, false });
+        m_promise->resolve<IDLDictionary<ReadableStreamReadResult>>(ReadableStreamReadResult { value, false });
     }
 
     void runCloseSteps() final
     {
-        m_promise->resolve<IDLDictionary<ReadableStreamReadResult>>({ JSC::jsUndefined(), true });
+        m_promise->resolve<IDLDictionary<ReadableStreamReadResult>>(ReadableStreamReadResult { JSC::jsUndefined(), true });
     }
 
     void runErrorSteps(JSC::JSValue value) final
@@ -63,7 +63,7 @@ private:
 
     void runErrorSteps(Exception&& exception) final
     {
-        m_promise->reject(WTFMove(exception));
+        m_promise->reject(WTF::move(exception));
     }
 
     JSDOMGlobalObject* globalObject() final
@@ -76,22 +76,22 @@ private:
 
 class ReadableStreamDefaultReadIntoRequest : public ReadableStreamReadIntoRequest {
 public:
-    static Ref<ReadableStreamDefaultReadIntoRequest> create(Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamDefaultReadIntoRequest(WTFMove(promise))); }
+    static Ref<ReadableStreamDefaultReadIntoRequest> create(Ref<DeferredPromise>&& promise) { return adoptRef(*new ReadableStreamDefaultReadIntoRequest(WTF::move(promise))); }
 
 private:
     explicit ReadableStreamDefaultReadIntoRequest(Ref<DeferredPromise>&& promise)
-        : m_promise(WTFMove(promise))
+        : m_promise(WTF::move(promise))
     {
     }
 
     void runChunkSteps(JSC::JSValue value) final
     {
-        m_promise->resolve<IDLDictionary<ReadableStreamReadResult>>({ value, false });
+        m_promise->resolve<IDLDictionary<ReadableStreamReadResult>>(ReadableStreamReadResult { value, false });
     }
 
     void runCloseSteps(JSC::JSValue value) final
     {
-        m_promise->resolve<IDLDictionary<ReadableStreamReadResult>>({ value, true });
+        m_promise->resolve<IDLDictionary<ReadableStreamReadResult>>(ReadableStreamReadResult { value, true });
     }
 
     void runErrorSteps(JSC::JSValue value) final
@@ -103,7 +103,7 @@ private:
 
     void runErrorSteps(Exception&& exception) final
     {
-        m_promise->reject(WTFMove(exception));
+        m_promise->reject(WTF::move(exception));
     }
 
     JSDOMGlobalObject* globalObject() final
@@ -122,8 +122,8 @@ void ReadableStreamReadRequestBase::runErrorSteps(Exception&& exception)
 
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto jsException = createDOMException(*globalObject, WTFMove(exception));
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+    auto jsException = createDOMException(*globalObject, WTF::move(exception));
     if (scope.exception()) [[unlikely]] {
         scope.clearException();
         return;
@@ -133,12 +133,12 @@ void ReadableStreamReadRequestBase::runErrorSteps(Exception&& exception)
 
 Ref<ReadableStreamReadRequest> ReadableStreamReadRequest::create(Ref<DeferredPromise>&& promise)
 {
-    return ReadableStreamDefaultReadRequest::create(WTFMove(promise));
+    return ReadableStreamDefaultReadRequest::create(WTF::move(promise));
 }
 
 Ref<ReadableStreamReadIntoRequest> ReadableStreamReadIntoRequest::create(Ref<DeferredPromise>&& promise)
 {
-    return ReadableStreamDefaultReadIntoRequest::create(WTFMove(promise));
+    return ReadableStreamDefaultReadIntoRequest::create(WTF::move(promise));
 }
 
 } // namespace WebCore

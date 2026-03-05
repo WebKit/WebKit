@@ -81,7 +81,7 @@ void ServiceWorkerDebuggableProxy::dispatchMessageFromRemote(String&& message)
 {
     RELEASE_LOG(Inspector, "ServiceWorkerDebuggableProxy::dispatchMessageFromRemote: serviceWorkerIdentifier=%" PRIu64, m_identifier.toUInt64());
     if (RefPtr webProcessProxy = m_webProcessProxy.get())
-        webProcessProxy->send(Messages::WebSWContextManagerConnection::DispatchMessageFromInspector(m_identifier, WTFMove(message)), 0);
+        webProcessProxy->send(Messages::WebSWContextManagerConnection::DispatchMessageFromInspector(m_identifier, WTF::move(message)), 0);
 }
 
 #if ENABLE(REMOTE_INSPECTOR_SERVICE_WORKER_AUTO_INSPECTION)

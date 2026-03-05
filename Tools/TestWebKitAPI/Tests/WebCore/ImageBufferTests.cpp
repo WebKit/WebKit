@@ -255,7 +255,7 @@ TEST_P(AnyScaleTest, SinkIntoNativeImageWorks)
     ASSERT_NE(verifyBuffer, nullptr);
     drawTestPattern(*buffer, 0);
 
-    auto image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
+    auto image = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
     ASSERT_NE(image, nullptr);
 
     EXPECT_EQ(image->size(), expandedIntSize(testSize.scaled(deviceScaleFactor())));

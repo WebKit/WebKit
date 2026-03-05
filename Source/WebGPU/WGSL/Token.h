@@ -183,7 +183,7 @@ struct Token {
     Token(TokenType type, SourcePosition position, unsigned length, String&& ident)
         : type(type)
         , span(position.line, position.lineOffset, position.offset, length)
-        , ident(WTFMove(ident))
+        , ident(WTF::move(ident))
     {
         ASSERT(this->ident.impl() && this->ident.impl()->bufferOwnership() == StringImpl::BufferInternal);
         ASSERT(type == TokenType::Identifier);

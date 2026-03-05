@@ -40,7 +40,6 @@ media [ Skip ]
 memory [ Skip ]
 mhtml [ Skip ]
 overflow [ Skip ]
-overlay-region [ Skip ]
 pageoverlay [ Skip ]
 perf [ Skip ]
 performance-api [ Skip ]
@@ -91,6 +90,9 @@ http/tests/iframe-monitor [ Pass ]
 
 media/modern-media-controls/visionos-inline-media-controls [ Pass ]
 
+http/tests/pdf [ Pass ]
+pdf [ Pass ]
+
 ###################################################################################################
 ### START OF Legitimate failures (due to platform behavioral differences)
 
@@ -116,8 +118,13 @@ imported/w3c/web-platform-tests/webxr/layers [ Skip ]
 imported/w3c/web-platform-tests/webxr/light-estimation [ Skip ]
 
 # The Digital Credentials API is not supported on visionOS.
+http/tests/digital-credentials/ [ Skip ]
 http/wpt/identity/ [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
+
+# webkit.org/b/308506 UnifiedPDFPlugin on iOS should receive full annotations support
+pdf/annotations [ Skip ]
+pdf/pdf-in-iframe-with-text-annotation.html [ Skip ]
 
 ### END OF Legitimate failures
 ###################################################################################################
@@ -171,8 +178,9 @@ fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [
 # webkit.org/b/300929 REGRESSION(297559@main): interaction-region/form-control-refresh/date-native-interaction-region.html does not pass on visionOS
 interaction-region/form-control-refresh/date-native-interaction-region.html [ Failure ]
 
-# webkit.org/b/300933 REGRESSION(visionOS 26): interaction-region/overlay.html started failing
-interaction-region/overlay.html [ Failure ]
+interaction-region/interaction-layers-culling.html [ Failure ]
+platform/visionos/transforms/separated-update.html [ Failure ]
+platform/visionos/transforms/separated-video.html [ Failure ]
 
 ### END OF Triaged failures
 ###################################################################################################
@@ -201,6 +209,8 @@ interaction-region/overlay.html [ Failure ]
 ###################################################################################################
 ### START OF Flaky tests
 
+# webkit.org/b/305613 overlay-region/clipping.html
+overlay-region/clipping.html [ Pass Failure ]
 
 ### END OF Flaky tests
 ###################################################################################################

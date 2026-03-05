@@ -20,12 +20,13 @@ PASS Partial interface MouseEvent: original interface defined
 PASS Partial interface MouseEvent: member names are unique
 PASS Partial interface Element[2]: member names are unique
 PASS Partial interface Window[2]: member names are unique
+PASS Partial interface Element[3]: member names are unique
 PASS Partial interface UIEvent: member names are unique
 PASS Partial interface MouseEvent[2]: member names are unique
 PASS Partial interface UIEvent[2]: member names are unique
 PASS Partial interface Document[2]: member names are unique
 PASS Partial interface Document[3]: member names are unique
-PASS Partial interface Element[3]: member names are unique
+PASS Partial interface Element[4]: member names are unique
 PASS Partial interface Range[2]: member names are unique
 PASS Partial interface HTMLImageElement[2]: member names are unique
 PASS Partial interface Document[4]: member names are unique

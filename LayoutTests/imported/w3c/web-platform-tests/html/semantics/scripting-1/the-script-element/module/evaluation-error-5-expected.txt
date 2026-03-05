@@ -1,0 +1,4 @@
+
+PASS Test for the inline module script error that reports wrong line
+
+

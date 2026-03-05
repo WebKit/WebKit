@@ -24,4 +24,6 @@ PASS e.style['opacity'] = "progress(5, 0%, sign(10px)" should not set the proper
 PASS e.style['opacity'] = "progress(5%, 0px, 10px" should not set the property value
 PASS e.style['letter-spacing'] = "calc(1px * progress(10deg, 0, 10))" should not set the property value
 PASS e.style['letter-spacing'] = "calc(1px * progress(10, 0px, 10))" should not set the property value
+FAIL e.style['opacity'] = "progress(10px * 10px, 10px * 10px, 10px * 10px)" should not set the property value assert_equals: expected "" but got "progress(10px * 10px, 10px * 10px, 10px * 10px)"
+PASS e.style['opacity'] = "progress(10px, 10px * 10px, 10px * 10px)" should not set the property value
 

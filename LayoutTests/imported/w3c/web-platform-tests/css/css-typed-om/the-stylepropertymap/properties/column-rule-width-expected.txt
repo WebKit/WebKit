@@ -4,13 +4,13 @@ PASS Can set 'column-rule-width' to CSS-wide keywords: inherit
 PASS Can set 'column-rule-width' to CSS-wide keywords: unset
 PASS Can set 'column-rule-width' to CSS-wide keywords: revert
 PASS Can set 'column-rule-width' to var() references:  var(--A)
-PASS Can set 'column-rule-width' to the 'thin' keyword: thin
-PASS Can set 'column-rule-width' to the 'medium' keyword: medium
-PASS Can set 'column-rule-width' to the 'thick' keyword: thick
-PASS Can set 'column-rule-width' to a length: 0px
-PASS Can set 'column-rule-width' to a length: -3.14em
-PASS Can set 'column-rule-width' to a length: 3.14cm
-PASS Can set 'column-rule-width' to a length: calc(0px + 0em)
+FAIL Can set 'column-rule-width' to the 'thin' keyword: thin assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+FAIL Can set 'column-rule-width' to the 'medium' keyword: medium assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+FAIL Can set 'column-rule-width' to the 'thick' keyword: thick assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+FAIL Can set 'column-rule-width' to a length: 0px assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+FAIL Can set 'column-rule-width' to a length: -3.14em assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+FAIL Can set 'column-rule-width' to a length: 3.14cm assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+FAIL Can set 'column-rule-width' to a length: calc(0px + 0em) assert_class_string: expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
 PASS Setting 'column-rule-width' to a percent: 0% throws TypeError
 PASS Setting 'column-rule-width' to a percent: -3.14% throws TypeError
 PASS Setting 'column-rule-width' to a percent: 3.14% throws TypeError
@@ -33,4 +33,11 @@ PASS Setting 'column-rule-width' to a number: calc(2 + 3) throws TypeError
 PASS Setting 'column-rule-width' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'column-rule-width' to a transform: perspective(10em) throws TypeError
 PASS Setting 'column-rule-width' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
+FAIL 'column-rule-width' does not support 'thin' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL 'column-rule-width' does not support 'medium' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL 'column-rule-width' does not support 'thick' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL 'column-rule-width' does not support '2px' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+FAIL 'column-rule-width' does not support '3px' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+FAIL 'column-rule-width' does not support '4px 5px' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object Undefined]"
+FAIL 'column-rule-width' does not support 'thin medium thick' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object Undefined]"
 

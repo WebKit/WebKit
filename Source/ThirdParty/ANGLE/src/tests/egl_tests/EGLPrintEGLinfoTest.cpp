@@ -529,6 +529,84 @@ TEST_P(EGLPrintEGLinfoTest, PrintConfigInfo)
     }
 }
 
+class EGLPrintFeaturesVulkanExtensionsInfoTest : public EGLPrintEGLinfoTest
+{};
+
+// Log enabled features
+TEST_P(EGLPrintFeaturesVulkanExtensionsInfoTest, LogEnabledFeatures)
+{
+    // The system EGL may not expose ANGLE-specific extensions, which is not a failure.
+    ANGLE_SKIP_TEST_IF(isDriverSystemEgl());
+
+    ASSERT_EQ(IsEGLClientExtensionEnabled("EGL_ANGLE_feature_control"), true);
+
+    EGLAttrib featureCount = -1;
+    EXPECT_EQ(static_cast<EGLBoolean>(EGL_TRUE),
+              eglQueryDisplayAttribANGLE(mDisplay, EGL_FEATURE_COUNT_ANGLE, &featureCount));
+    ASSERT_EGL_SUCCESS();
+    ASSERT_GT(featureCount, 0);
+    ASSERT_LT(featureCount, std::numeric_limits<int32_t>::max());
+
+    const char *kEnabled = "enabled";
+
+    std::cout << "Enabled ANGLE features:" << std::endl;
+    for (int32_t i = 0; i < featureCount; i++)
+    {
+        const char *name   = eglQueryStringiANGLE(mDisplay, EGL_FEATURE_NAME_ANGLE, i);
+        const char *status = eglQueryStringiANGLE(mDisplay, EGL_FEATURE_STATUS_ANGLE, i);
+        if (std::strcmp(status, kEnabled) == 0)
+        {
+            std::cout << name << std::endl;
+        }
+    }
+}
+
+// Log enabled vulkan instance and device extensions
+TEST_P(EGLPrintFeaturesVulkanExtensionsInfoTest, LogEnabledVulkanExtensions)
+{
+    // This test is only for the Vulkan backend
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    EGLDeviceEXT eglDevice        = 0;
+    EGLAttrib result              = 0;
+    size_t nextExtension          = 0;
+    const char *const *extensions = nullptr;
+
+    // Query EGL device
+    EXPECT_EGL_TRUE(eglQueryDisplayAttribEXT(mDisplay, EGL_DEVICE_EXT, (EGLAttrib *)&eglDevice));
+    EXPECT_NE(EGL_NO_DEVICE_EXT, eglDevice);
+
+    // Query enabled Vulkan Instance extensions
+    EXPECT_EGL_TRUE(
+        eglQueryDeviceAttribEXT(eglDevice, EGL_VULKAN_INSTANCE_EXTENSIONS_ANGLE, &result));
+    extensions    = reinterpret_cast<const char *const *>(result);
+    nextExtension = 0;
+    EXPECT_NE(extensions, nullptr);
+
+    std::cout << "Enabled Vulkan Instance extensions:" << std::endl;
+    while (extensions[nextExtension])
+    {
+        std::cout << extensions[nextExtension] << std::endl;
+        nextExtension++;
+    }
+
+    // Query enabled Vulkan Device extensions
+    EXPECT_EGL_TRUE(
+        eglQueryDeviceAttribEXT(eglDevice, EGL_VULKAN_DEVICE_EXTENSIONS_ANGLE, &result));
+    extensions    = reinterpret_cast<const char *const *>(result);
+    nextExtension = 0;
+    EXPECT_NE(extensions, nullptr);
+
+    std::cout << "Enabled Vulkan Device extensions:" << std::endl;
+    while (extensions[nextExtension])
+    {
+        std::cout << extensions[nextExtension] << std::endl;
+        nextExtension++;
+    }
+}
+
+// This test suite is not instantiated on some OSes.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLPrintEGLinfoTest);
 ANGLE_INSTANTIATE_TEST(EGLPrintEGLinfoTest,
                        ES1_VULKAN(),
                        ES1_VULKAN_SWIFTSHADER(),
@@ -538,4 +616,9 @@ ANGLE_INSTANTIATE_TEST(EGLPrintEGLinfoTest,
                        ES31_VULKAN_SWIFTSHADER());
 
 // This test suite is not instantiated on some OSes.
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLPrintEGLinfoTest);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLPrintFeaturesVulkanExtensionsInfoTest);
+ANGLE_INSTANTIATE_TEST(EGLPrintFeaturesVulkanExtensionsInfoTest,
+                       ES2_VULKAN(),
+                       ES3_VULKAN(),
+                       ES31_VULKAN(),
+                       ES32_VULKAN());

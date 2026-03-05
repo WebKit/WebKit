@@ -305,15 +305,24 @@ li {
     text-align: match-parent;
 }
 
-:is(dir, dl, menu, ol, ul) :is(dir, dl, menu, ol, ul) {
+/* The rightmost selector is written explicitly rather than with :is() to help with RuleSet bucketing.*/
+:is(dir, dl, menu, ol, ul) dir,
+:is(dir, dl, menu, ol, ul) dl,
+:is(dir, dl, menu, ol, ul) menu,
+:is(dir, dl, menu, ol, ul) ol,
+:is(dir, dl, menu, ol, ul) ul {
     margin-block: 0;
 }
 
-:is(dir, menu, ol, ul) :is(dir, menu, ul) {
+:is(dir, menu, ol, ul) dir,
+:is(dir, menu, ol, ul) menu,
+:is(dir, menu, ol, ul) ul {
     list-style-type: circle;
 }
 
-:is(dir, menu, ol, ul) :is(dir, menu, ol, ul) :is(dir, menu, ul) {
+:is(dir, menu, ol, ul) :is(dir, menu, ol, ul) dir,
+:is(dir, menu, ol, ul) :is(dir, menu, ol, ul) menu,
+:is(dir, menu, ol, ul) :is(dir, menu, ol, ul) ul {
     list-style-type: square;
 }
 
@@ -372,7 +381,7 @@ button {
 }
 
 ::-internal-writing-suggestions {
-    color: color-mix(in srgb, currentColor 50%, transparent);
+    color: color-mix(currentColor 50%, transparent);
 }
 
 input, textarea, select, button {
@@ -695,12 +704,10 @@ input::-webkit-list-button {
     flex: none;
     -webkit-user-select: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    inline-size: 11px;
     /* Make it easier to hit the button on iOS */
     padding: 7px;
     margin: -7px;
 #else
-    inline-size: 16px;
     block-size: 100%;
 #endif
 }
@@ -736,6 +743,7 @@ textarea {
     pointer-events: none !important;
     text-orientation: inherit !important;
     writing-mode: inherit !important;
+    position: static !important;
 }
 
 input::placeholder {
@@ -746,7 +754,7 @@ input::placeholder {
 }
 
 input:disabled, textarea:disabled {
-    color: color-mix(in hsl, CanvasText 66%, Canvas);
+    color: color-mix(CanvasText 66%, Canvas);
 }
 
 input:is([type="hidden"], [type="image"], [type="file"]) {
@@ -782,19 +790,67 @@ input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-au
     color: #000000 !important;
 }
 
-:autofill {
+input:autofill {
     field-sizing: fixed !important;
 }
 
 input:is([type="radio"], [type="checkbox"]) {
     margin: 3px 2px;
     box-sizing: border-box;
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: initial;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    width: 16px;
+    height: 16px;
+    padding: 0px;
+    /* We want to be as close to background:transparent as possible without actually being transparent */
+    background-color: rgba(255, 255, 255, 0.01);
 #else
     padding: initial;
     background-color: initial;
-    border: initial;
+#endif
+}
+
+input[type="checkbox"] {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-radius: 5px;
+#endif
+}
+
+input[type="radio"] {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-radius: 50%;
+#endif
+}
+
+input[type="checkbox"]:indeterminate {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    background: rgba(0, 0, 0, 0.8);
+#endif
+}
+
+input[type="checkbox"]:indeterminate:disabled {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    opacity: initial;
+    background: rgba(0, 0, 0, 0.8);
+#endif
+}
+
+input:is([type="checkbox"], [type="radio"]):checked {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-color: rgba(255, 255, 255, 0.0);
+#endif
+}
+
+input:is([type="checkbox"], [type="radio"]):disabled {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    opacity: initial;
+#endif
+}
+
+input:is([type="checkbox"], [type="radio"]):checked:disabled {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    opacity: initial;
+    background: rgba(0, 0, 0, 0.8);
 #endif
 }
 
@@ -857,7 +913,7 @@ input[type="range"] {
     color: #909090;
 }
 
-input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container {
+input[type="range"]::-webkit-slider-container {
     flex: 1;
     box-sizing: border-box;
     display: flex;
@@ -872,7 +928,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     display: block;
 }
 
-input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
     appearance: auto;
     box-sizing: border-box;
     display: block;
@@ -883,12 +939,6 @@ input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-slider-t
     background-color: white;
     border: initial;
     box-shadow: 0px 6px 13px rgba(0, 0, 0, 0.2), 0px 0.5px 4px rgba(0, 0, 0, 0.2);
-}
-
-input[type="range"]::-webkit-media-slider-thumb {
-    background-color: white;
-    border: 1px solid rgb(66, 66, 66);
-    padding: 0px;
 }
 
 input:disabled, textarea:disabled {
@@ -928,55 +978,12 @@ input[type="file"]:disabled {
 input:is([type="button"], [type="submit"], [type="reset"]):disabled,
 input[type="file"]:disabled::file-selector-button,
 button:disabled,
-select:disabled {
+select:-internal-uses-menulist:disabled {
     background-color: -apple-system-opaque-secondary-fill-disabled;
     color: -apple-system-tertiary-label;
     opacity: initial;
 }
 
-#endif
-
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-input[type="checkbox"] {
-    border-radius: 5px;
-    width: 16px;
-    height: 16px;
-    padding: 0px;
-    /* We want to be as close to background:transparent as possible without actually being transparent */
-    background-color: rgba(255, 255, 255, 0.01);
-}
-
-input[type="radio"] {
-    appearance: auto;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    padding: 0px;
-    /* We want to be as close to background:transparent as possible without actually being transparent */
-    background-color: rgba(255, 255, 255, 0.01);
-}
-
-input[type="checkbox"]:indeterminate {
-    background: rgba(0, 0, 0, 0.8);
-}
-
-input[type="checkbox"]:indeterminate:disabled {
-    opacity: initial;
-    background: rgba(0, 0, 0, 0.8);
-}
-
-input:is([type="checkbox"], [type="radio"]):checked {
-    border-color: rgba(255, 255, 255, 0.0);
-}
-
-input:is([type="checkbox"], [type="radio"]):disabled {
-    opacity: initial;
-}
-
-input:is([type="checkbox"], [type="radio"]):checked:disabled {
-    opacity: initial;
-    background: rgba(0, 0, 0, 0.8);
-}
 #endif
 
 input[type="color"] {
@@ -1028,57 +1035,176 @@ input[type="color"]::-webkit-color-swatch {
 select {
     box-sizing: border-box;
     appearance: auto;
+    border: 1px solid;
+    -webkit-rtl-ordering: logical;
+}
+
+/* FIXME: Implement revert-rule CSS keyword so we can de-duplicate some of this. */
+
+select:-internal-uses-menulist {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    letter-spacing: normal;
-    word-spacing: normal;
-    line-height: normal;
-    padding-block: 0;
-    padding-inline: 0.4em;
-    color: -apple-system-blue;
-    font: 11px system-ui;
-    border: 1px solid -webkit-control-background;
-    border-radius: initial;
+    padding-inline: -internal-auto-base(0.4em, 0.5em);
+    color: -internal-auto-base(-apple-system-blue, inherit);
+    font: -internal-auto-base(11px system-ui, inherit);
+    border-color: -internal-auto-base(-webkit-control-background, initial);
+    border-radius: -internal-auto-base(initial, 0.5em);
 #if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: -internal-auto-base(rgba(0, 0, 0, 0.04), transparent);
 #else
-    background-color: -apple-system-opaque-secondary-fill;
+    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill, transparent);
 #endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
 #else
-    border-radius: 5px;
-    border: 1px solid;
-    color: CanvasText;
+    padding-inline: -internal-auto-base(0, 0.5em);
+    color: -internal-auto-base(CanvasText, inherit);
+    background-color: -internal-auto-base(Canvas, transparent);
+    border-radius: -internal-auto-base(5px, 0.5em);
+    font: -internal-auto-base(-webkit-small-control, inherit);
+#endif /* defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY */
+    padding-block: -internal-auto-base(0, 0.25em);
+    align-items: -internal-auto-base(center, unset);
+    white-space: -internal-auto-base(pre, initial);
+    cursor: -internal-auto-base(default, inherit);
+    gap: -internal-auto-base(initial, 0.5em);
+
+    -webkit-rtl-ordering: -internal-auto-base(logical, inherit);
+    text-shadow: -internal-auto-base(none, inherit);
+    text-transform: -internal-auto-base(none, initial);
+    letter-spacing: -internal-auto-base(normal, inherit);
+    word-spacing: -internal-auto-base(normal, inherit);
+}
+
+select:-internal-uses-menulist:enabled:hover {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+#if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
+    background-color: -internal-auto-base(rgba(0, 0, 0, 0.04), color-mix(currentColor 10%, transparent));
+#else
+    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill, color-mix(currentColor 10%, transparent));
+#endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
+#else
+    background-color: -internal-auto-base(Canvas, color-mix(currentColor 10%, transparent));
+#endif /* defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY */
+}
+
+select:-internal-uses-menulist:enabled:active {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+#if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
+    background-color: -internal-auto-base(rgba(0, 0, 0, 0.04), color-mix(currentColor 20%, transparent));
+#else
+    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill, color-mix(currentColor 20%, transparent));
+#endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
+#else
+    background-color: -internal-auto-base(Canvas, color-mix(currentColor 20%, transparent));
+#endif /* defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY */
+}
+
+select:-internal-uses-menulist:disabled {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill-disabled, transparent);
+    color: -internal-auto-base(-apple-system-tertiary-label, color-mix(currentColor 50%, transparent));
+#else
+    color: -internal-auto-base(GrayText, color-mix(currentColor 50%, transparent));
+#endif
+}
+
+select:-internal-uses-menulist:not([popover]) {
+    display: -internal-auto-base(inline-block, inline-flex);
+}
+
+select:not(:-internal-uses-menulist) {
     background-color: Canvas;
-#endif
+    border-style: inset;
+    border-color: gray;
+}
+
+select:not(:-internal-uses-menulist):enabled {
+    color: CanvasText;
+}
+
+select:not([multiple]):-internal-uses-menulist > button:first-child {
+    all: unset;
+    display: contents;
+}
+
+select::picker-icon {
+    content: counter(fake-counter-name, disclosure-open);
+    display: block;
+    margin-inline-start: auto;
+}
+
+:-internal-select-popover {
+    box-sizing: border-box;
+    border: -internal-auto-base(none, 1px solid);
+    padding: 0;
+    color: -internal-auto-base(inherit, CanvasText);
+    background-color: -internal-auto-base(transparent, Canvas);
+    margin: 0;
+    inset: auto;
+    min-inline-size: -internal-auto-base(unset, anchor-size(self-inline));
+    min-block-size: 1lh;
+    /* Go to the edge of the viewport, and add scrollbars if needed. */
+    max-block-size: stretch;
+    overflow: auto;
+    /* Below and span-right, by default. */
+    position-area: -internal-auto-base(unset, block-end span-inline-end);
+    position-try-order: -internal-auto-base(unset, most-block-size);
+    position-try-fallbacks: -internal-auto-base(unset,
+        block-start span-inline-end,   /* First try above and span-right. */
+        block-end span-inline-start,   /* Then below but span-left. */
+        block-start span-inline-start); /* Then above and span-left. */
+
+    display: -internal-auto-base(contents, none);
+}
+
+:-internal-select-popover:popover-open {
+    display: block;
+}
+
+select:-internal-uses-menulist option {
+    min-inline-size: 24px;
+    min-block-size: max(24px, 1lh);
+    padding-inline: 0.5em;
+    padding-block-end: 0;
+    display: flex;
     align-items: center;
-    white-space: pre;
-    -webkit-rtl-ordering: logical;
-    cursor: default;
+    gap: 0.5em;
 }
 
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-select:is([size], [multiple]), select[size][multiple] {
-    align-items: normal;
-    cursor: auto;
-    border: 1px inset gray;
-    border-radius: initial;
-    white-space: initial;
+select option {
+    white-space: nowrap;
 }
 
-select:is([size=""], [size="0"], [size="1"]) {
-    align-items: center;
-    border: 1px solid;
-    border-radius: 5px;
-    white-space: pre;
+select option:enabled:hover {
+    background-color: color-mix(currentColor 10%, transparent);
 }
-#endif
 
-optgroup {
+select option:enabled:active {
+    background-color: color-mix(currentColor 20%, transparent);
+}
+
+select option:disabled {
+    color: color-mix(currentColor 50%, transparent);
+}
+
+select option::checkmark {
+    content: "\2713" / "";
+}
+
+select option:not(:checked)::checkmark {
+    visibility: hidden;
+}
+
+select optgroup {
+    display: block;
     font-weight: bolder;
 }
 
-option {
+select optgroup option {
     font-weight: normal;
-    white-space: nowrap;
+}
+
+select optgroup legend {
+    padding-inline: 0.5em;
+    min-block-size: 1lh;
 }
 
 output {
@@ -1258,18 +1384,18 @@ nobr {
 }
 
 /* Read-only text fields do not show a focus ring but do still receive focus */
-html:focus, body:focus, input[readonly]:focus, embed:focus, iframe:focus, object:focus {
+html:focus-visible, body:focus-visible, input[readonly]:focus, embed:focus-visible, iframe:focus-visible, object:focus-visible {
     outline: none;
 }
 
 #if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
-input:focus, textarea:focus, select:focus {
+input:focus-visible, textarea:focus-visible, select:focus-visible {
     outline-offset: -2px;
 }
 #endif
 
-input:is([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus,
-input[type="file"]:focus::file-selector-button {
+input:is([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus-visible,
+input[type="file"]:focus-visible::file-selector-button {
     outline-offset: 0;
 }
 
@@ -1344,7 +1470,7 @@ iframe {
     border: 2px inset;
 }
 
-hr, bdi, output {
+hr, bdi, legend, output {
     unicode-bidi: isolate;
 }
 

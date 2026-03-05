@@ -387,26 +387,23 @@ char* jsc_exception_report(JSCException* exception)
     g_return_val_if_fail(priv->context, nullptr);
 
     jscExceptionEnsureProperties(exception);
-    GString* report = g_string_new(nullptr);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+    auto report = StringBuilder();
     if (priv->sourceURI)
-        report = g_string_append(report, priv->sourceURI.get());
+        report.append(unsafeSpan(priv->sourceURI.get()));
     if (priv->lineNumber)
-        g_string_append_printf(report, ":%d", priv->lineNumber);
+        report.append(':', priv->lineNumber);
     if (priv->columnNumber)
-        g_string_append_printf(report, ":%d", priv->columnNumber);
-    report = g_string_append_c(report, ' ');
+        report.append(':', priv->columnNumber);
+    report.append(' ');
     GUniquePtr<char> errorMessage(jsc_exception_to_string(exception));
     if (errorMessage)
-        report = g_string_append(report, errorMessage.get());
-    report = g_string_append_c(report, '\n');
+        report.append(unsafeSpan(errorMessage.get()));
+    report.append('\n');
 
     if (priv->backtrace) {
-        GUniquePtr<char*> lines(g_strsplit(priv->backtrace.get(), "\n", 0));
-        for (unsigned i = 0; lines.get()[i]; ++i)
-            g_string_append_printf(report, "  %s\n", lines.get()[i]);
+        for (auto line : StringView::fromLatin1(priv->backtrace.get()).split('\n'))
+            report.append("  "_s, line, '\n');
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-    return g_string_free(report, FALSE);
+    return g_strdup(report.toString().utf8().data());
 }

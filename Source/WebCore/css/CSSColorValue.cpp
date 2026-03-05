@@ -31,27 +31,27 @@ namespace WebCore {
 
 Ref<CSSColorValue> CSSColorValue::create(CSS::Color color)
 {
-    return adoptRef(*new CSSColorValue(WTFMove(color)));
+    return adoptRef(*new CSSColorValue(WTF::move(color)));
 }
 
 Ref<CSSColorValue> CSSColorValue::create(WebCore::Color color)
 {
-    return adoptRef(*new CSSColorValue(WTFMove(color)));
+    return adoptRef(*new CSSColorValue(WTF::move(color)));
 }
 
 CSSColorValue::CSSColorValue(CSS::Color color)
     : CSSValue(ClassType::Color)
-    , m_color(WTFMove(color))
+    , m_color(WTF::move(color))
 {
 }
 
 CSSColorValue::CSSColorValue(WebCore::Color color)
-    : CSSColorValue(CSS::Color { CSS::ResolvedColor { WTFMove(color) } })
+    : CSSColorValue(CSS::Color { CSS::ResolvedColor { WTF::move(color) } })
 {
 }
 
 CSSColorValue::CSSColorValue(StaticCSSValueTag, WebCore::Color color)
-    : CSSColorValue(WTFMove(color))
+    : CSSColorValue(WTF::move(color))
 {
     makeStatic();
 }

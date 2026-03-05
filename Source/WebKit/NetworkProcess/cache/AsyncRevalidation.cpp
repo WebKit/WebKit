@@ -70,12 +70,12 @@ void AsyncRevalidation::staleWhileRevalidateEnding()
 
 Ref<AsyncRevalidation> AsyncRevalidation::create(Cache& cache, const GlobalFrameID& frameID, const WebCore::ResourceRequest& request, std::unique_ptr<NetworkCache::Entry>&& entry, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, CompletionHandler<void(Result)>&& handler)
 {
-    return adoptRef(*new AsyncRevalidation(cache, frameID, request, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTFMove(handler)));
+    return adoptRef(*new AsyncRevalidation(cache, frameID, request, WTF::move(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTF::move(handler)));
 }
 
 AsyncRevalidation::AsyncRevalidation(Cache& cache, const GlobalFrameID& frameID, const WebCore::ResourceRequest& request, std::unique_ptr<NetworkCache::Entry>&& entry, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, CompletionHandler<void(Result)>&& handler)
     : m_timer(*this, &AsyncRevalidation::staleWhileRevalidateEnding)
-    , m_completionHandler(WTFMove(handler))
+    , m_completionHandler(WTF::move(handler))
 {
     auto key = entry->key();
     auto revalidationRequest = constructRevalidationRequest(key, request, *entry.get());
@@ -91,7 +91,7 @@ AsyncRevalidation::AsyncRevalidation(Cache& cache, const GlobalFrameID& frameID,
         if (m_completionHandler)
             m_completionHandler(revalidatedEntry ? Result::Success : Result::Failure);
     };
-    lazyInitialize(m_load, SpeculativeLoad::create(cache, frameID, WTFMove(revalidationRequest), WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTFMove(loadRevalidationCompletionHandler)));
+    lazyInitialize(m_load, SpeculativeLoad::create(cache, frameID, WTF::move(revalidationRequest), WTF::move(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTF::move(loadRevalidationCompletionHandler)));
 }
 
 } // namespace NetworkCache

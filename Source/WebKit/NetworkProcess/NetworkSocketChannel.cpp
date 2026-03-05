@@ -80,19 +80,14 @@ NetworkSocketChannel::~NetworkSocketChannel()
     }
 }
 
-Ref<NetworkConnectionToWebProcess> NetworkSocketChannel::protectedConnectionToWebProcess()
-{
-    return m_connectionToWebProcess.get();
-}
-
 void NetworkSocketChannel::sendString(std::span<const uint8_t> message, CompletionHandler<void()>&& callback)
 {
-    protectedSocket()->sendString(message, WTFMove(callback));
+    protect(m_socket)->sendString(message, WTF::move(callback));
 }
 
 void NetworkSocketChannel::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
-    protectedSocket()->sendData(data, WTFMove(callback));
+    protect(m_socket)->sendData(data, WTF::move(callback));
 }
 
 void NetworkSocketChannel::finishClosingIfPossible()
@@ -103,12 +98,12 @@ void NetworkSocketChannel::finishClosingIfPossible()
     }
     ASSERT(m_state == State::Closing);
     m_state = State::Closed;
-    protectedConnectionToWebProcess()->removeSocketChannel(m_identifier);
+    protect(m_connectionToWebProcess)->removeSocketChannel(m_identifier);
 }
 
 void NetworkSocketChannel::close(int32_t code, const String& reason)
 {
-    protectedSocket()->close(code, reason);
+    protect(m_socket)->close(code, reason);
     finishClosingIfPossible();
 }
 
@@ -139,7 +134,7 @@ void NetworkSocketChannel::didClose(unsigned short code, const String& reason)
 
 void NetworkSocketChannel::didReceiveMessageError(String&& errorMessage)
 {
-    m_errorMessage = WTFMove(errorMessage);
+    m_errorMessage = WTF::move(errorMessage);
     m_errorTimer.startOneShot(NetworkProcess::randomClosedPortDelay());
 }
 
@@ -171,11 +166,6 @@ IPC::Connection* NetworkSocketChannel::messageSenderConnection() const
 NetworkSession* NetworkSocketChannel::session() const
 {
     return m_session.get();
-}
-
-RefPtr<WebSocketTask> NetworkSocketChannel::protectedSocket()
-{
-    return m_socket.get();
 }
 
 std::optional<SharedPreferencesForWebProcess> NetworkSocketChannel::sharedPreferencesForWebProcess() const

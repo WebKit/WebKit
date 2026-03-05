@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBGL)
 
-#include <WebCore/IDLTypes.h>
-#include <WebCore/JSDOMConvertBase.h>
+#include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ template<> struct JSConverter<IDLWebGLExtensionAny> {
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, WebGLExtensionAny value)
     {
-        return convertToJSValue(lexicalGlobalObject, globalObject, WTFMove(value));
+        return convertToJSValue(lexicalGlobalObject, globalObject, WTF::move(value));
     }
 };
 

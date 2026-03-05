@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+
 namespace WebCore {
 
 enum class AudioSessionCategory : uint8_t;
@@ -37,6 +39,7 @@ enum class PlatformMediaSessionMediaType : uint8_t {
     VideoAudio,
     Audio,
     WebAudio,
+    DOMMediaSession,
 };
 
 enum class PlatformMediaSessionState : uint8_t {
@@ -107,7 +110,18 @@ struct PlatformMediaSessionRemoteCommandArgument {
 
 using PlatformMediaSessionRemoteCommandsSet = HashSet<PlatformMediaSessionRemoteControlCommandType, IntHash<PlatformMediaSessionRemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSessionRemoteControlCommandType>>;
 
-class AudioCaptureSource : public CanMakeWeakPtr<AudioCaptureSource> {
+enum class MediaSessionRestriction : uint8_t {
+    NoRestrictions = 0,
+    ConcurrentPlaybackNotPermitted = 1 << 0,
+    BackgroundProcessPlaybackRestricted = 1 << 1,
+    BackgroundTabPlaybackRestricted = 1 << 2,
+    InterruptedPlaybackNotPermitted = 1 << 3,
+    InactiveProcessPlaybackRestricted = 1 << 4,
+    SuspendedUnderLockPlaybackRestricted = 1 << 5,
+};
+using MediaSessionRestrictions = OptionSet<MediaSessionRestriction>;
+
+class AudioCaptureSource : public AbstractRefCountedAndCanMakeWeakPtr<AudioCaptureSource> {
 public:
     virtual ~AudioCaptureSource() = default;
     virtual bool isCapturingAudio() const = 0;

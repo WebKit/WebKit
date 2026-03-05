@@ -89,7 +89,7 @@
     WebCore::JSMainThreadNullState state;
     if (!option)
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->add(core(option), std::optional<WebCore::HTMLOptionsCollection::HTMLElementOrInt> { static_cast<int>(index) }));
+    raiseOnDOMError(IMPL->add(*core(option), std::optional<WebCore::HTMLOptionsCollection::HTMLElementOrInt> { static_cast<int>(index) }));
 }
 
 - (void)remove:(unsigned)index
@@ -111,8 +111,8 @@ DOMHTMLOptionsCollection *kit(WebCore::HTMLOptionsCollection* value)
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
-    if (DOMHTMLOptionsCollection *wrapper = getDOMWrapper(value))
-        return retainPtr(wrapper).autorelease();
+    if (RetainPtr wrapper = getDOMWrapper(value))
+        return wrapper.autorelease();
     auto wrapper = adoptNS([[DOMHTMLOptionsCollection alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();

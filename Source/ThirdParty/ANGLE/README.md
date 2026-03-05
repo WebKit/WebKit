@@ -12,27 +12,26 @@ Metal and MacOS, Chrome OS, and Fuchsia support.
 |----------------|:-------------:|:----------------:|:--------------:|:-------------:|:--------:|:-------------:|
 | OpenGL ES 2.0  |    complete   |    complete      |    complete    |    complete   | complete |    complete   |
 | OpenGL ES 3.0  |               |    complete      |    complete    |    complete   | complete |    complete   |
-| OpenGL ES 3.1  |        | [incomplete][ES31OnD3D] |    complete    |    complete   | complete |               |
+| OpenGL ES 3.1  |               |                  |    complete    |    complete   | complete |               |
 | OpenGL ES 3.2  |               |                  |  in progress   |  in progress  | complete |               |
 
 Additionally, OpenGL ES 1.1 is implemented in the front-end using OpenGL ES 3.0 features.  This
 version of the specification is thus supported on all platforms specified above that support OpenGL
 ES 3.0 with [known issues][ES1].
 
-[ES31OnD3D]: doc/ES31StatusOnD3D11.md
 [ES1]: doc/ES1Status.md
 
 ### Platform support via backing renderers
 
-|              |    Direct3D 9  |   Direct3D 11  |   Desktop GL  |    GL ES    |   Vulkan    |    Metal             |
-|-------------:|:--------------:|:--------------:|:-------------:|:-----------:|:-----------:|:--------------------:|
-| Windows      |    complete    |    complete    |   complete    |   complete  |   complete  |                      |
-| Linux        |                |                |   complete    |             |   complete  |                      |
-| Mac OS X     |                |                |   complete    |             |             | complete [1]         |
-| iOS          |                |                |               |             |             | complete [2]         |
-| Chrome OS    |                |                |               |   complete  |   planned   |                      |
-| Android      |                |                |               |   complete  |   complete  |                      |
-| Fuchsia      |                |                |               |             |   complete  |                      |
+|              |    Direct3D 9  |   Direct3D 11  |   Desktop GL  |    GL ES    |   Vulkan    |    Metal             |   WebGPU   |
+|-------------:|:--------------:|:--------------:|:-------------:|:-----------:|:-----------:|:--------------------:|:----------:|
+| Windows      |    complete    |    complete    |   complete    |   complete  |   complete  |                      |            |
+| Linux        |                |                |   complete    |             |   complete  |                      |            |
+| Mac OS X     |                |                |   complete    |             |             | complete [1]         |            |
+| iOS          |                |                |               |             |             | complete [2]         |            |
+| Chrome OS    |                |                |               |   complete  |   planned   |                      |            |
+| Android      |                |                |               |   complete  |   complete  |                      |            |
+| Fuchsia      |                |                |               |             |   complete  |                      |            |
 
 [1] Metal is supported on macOS 10.14+
 

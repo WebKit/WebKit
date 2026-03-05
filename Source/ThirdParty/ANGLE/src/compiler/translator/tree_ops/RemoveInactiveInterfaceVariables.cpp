@@ -128,7 +128,7 @@ bool RemoveInactiveInterfaceVariablesTraverser::visitDeclaration(Visit visit,
     {
         removeDeclaration = !IsVariableActive(mInputVaryings, asSymbol->getName());
     }
-    else if (qualifier == EvqFragmentOut)
+    else if (qualifier == EvqFragmentOut || qualifier == EvqFragmentInOut)
     {
         removeDeclaration =
             !IsVariableActive(mOutputVariables, asSymbol->getName()) && mRemoveFragmentOutputs;

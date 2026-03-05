@@ -77,7 +77,7 @@ public:
     void deref() const final { API::ObjectImpl<API::Object::Type::Download>::deref(); }
 
     DownloadID downloadID() const { return m_downloadID; }
-    const WebCore::ResourceRequest& request() const { return m_request; }
+    const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_request; }
     API::Data* legacyResumeData() const { return m_legacyResumeData.get(); }
 
     void cancel(CompletionHandler<void(API::Data*)>&&);
@@ -88,15 +88,15 @@ public:
     void didReceiveDownloadProxyMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncDownloadProxyMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
-    WebPageProxy* originatingPage() const;
+    WebPageProxy* NODELETE originatingPage() const;
 
-    void setRedirectChain(Vector<URL>&& redirectChain) { m_redirectChain = WTFMove(redirectChain); }
-    const Vector<URL>& redirectChain() const { return m_redirectChain; }
+    void setRedirectChain(Vector<URL>&& redirectChain) { m_redirectChain = WTF::move(redirectChain); }
+    const Vector<URL>& redirectChain() const LIFETIME_BOUND { return m_redirectChain; }
 
     void setWasUserInitiated(bool value) { m_wasUserInitiated = value; }
     bool wasUserInitiated() const { return m_wasUserInitiated; }
 
-    const String& destinationFilename() const { return m_destinationFilename; }
+    const String& destinationFilename() const LIFETIME_BOUND { return m_destinationFilename; }
     void setDestinationFilename(const String& d) { m_destinationFilename = d; }
 
 #if PLATFORM(COCOA)
@@ -110,10 +110,9 @@ public:
     API::FrameInfo& frameInfo() { return m_frameInfo.get(); }
 
     API::DownloadClient& client() { return m_client.get(); }
-    Ref<API::DownloadClient> protectedClient() const;
 
     void setClient(Ref<API::DownloadClient>&&);
-    void setDidStartCallback(CompletionHandler<void(DownloadProxy*)>&& callback) { m_didStartCallback = WTFMove(callback); }
+    void setDidStartCallback(CompletionHandler<void(DownloadProxy*)>&& callback) { m_didStartCallback = WTF::move(callback); }
     void setSuggestedFilename(const String& suggestedFilename) { m_suggestedFilename = suggestedFilename; }
 
     // Message handlers.
@@ -132,17 +131,19 @@ public:
     void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, String&& suggestedFilename, DecideDestinationCallback&&);
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    static Vector<uint8_t> activityAccessToken();
+#endif
+
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, WebPageProxy*);
 
-    RefPtr<WebsiteDataStore> protectedDataStore() { return m_dataStore; }
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     static Vector<uint8_t> bookmarkDataForURL(const URL&);
-    static Vector<uint8_t> activityAccessToken();
 #endif
 
     WeakPtr<DownloadProxyMap> m_downloadProxyMap;

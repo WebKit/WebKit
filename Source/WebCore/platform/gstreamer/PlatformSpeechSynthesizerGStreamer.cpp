@@ -159,7 +159,7 @@ void GstSpeechSynthesisWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtt
     if (!utterance)
         return;
 
-    m_utterance = WTFMove(utterance);
+    m_utterance = WTF::move(utterance);
     webKitFliteSrcSetUtterance(WEBKIT_FLITE_SRC(m_src.get()), m_utterance->voice(), m_utterance->text());
 
     // The pitch element does not handle the rate bigger than 1.0. We control
@@ -247,7 +247,7 @@ void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&&
     if (!m_platformSpeechWrapper)
         m_platformSpeechWrapper = makeUnique<GstSpeechSynthesisWrapper>(*this);
 
-    m_platformSpeechWrapper->speakUtterance(WTFMove(utterance));
+    m_platformSpeechWrapper->speakUtterance(WTF::move(utterance));
 }
 
 void PlatformSpeechSynthesizer::cancel()

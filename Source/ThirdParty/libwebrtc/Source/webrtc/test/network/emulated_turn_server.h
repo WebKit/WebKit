@@ -16,6 +16,7 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/transport/stun.h"
@@ -46,7 +47,8 @@ class EmulatedTURNServer : public EmulatedTURNServerInterface,
   // Create an EmulatedTURNServer.
   // `thread` is a thread that will be used to run webrtc::TurnServer
   // that expects all calls to be made from a single thread.
-  EmulatedTURNServer(const EmulatedTURNServerConfig& config,
+  EmulatedTURNServer(const Environment& env,
+                     const EmulatedTURNServerConfig& config,
                      std::unique_ptr<Thread> thread,
                      EmulatedEndpoint* client,
                      EmulatedEndpoint* peer);
@@ -70,7 +72,7 @@ class EmulatedTURNServer : public EmulatedTURNServerInterface,
                                      std::string(username), key);
   }
 
-  AsyncPacketSocket* CreatePeerSocket() { return Wrap(peer_); }
+  std::unique_ptr<AsyncPacketSocket> CreatePeerSocket() { return Wrap(peer_); }
 
   // This method is called by network emulation when a packet
   // comes from an emulated link.
@@ -94,8 +96,8 @@ class EmulatedTURNServer : public EmulatedTURNServerInterface,
       RTC_GUARDED_BY(&thread_);
 
   // Wraps a EmulatedEndpoint in a AsyncPacketSocket to bridge interaction
-  // with TurnServer. webrtc::TurnServer gets ownership of the socket.
-  AsyncPacketSocket* Wrap(EmulatedEndpoint* endpoint);
+  // with TurnServer.
+  std::unique_ptr<AsyncPacketSocket> Wrap(EmulatedEndpoint* endpoint);
 };
 
 }  // namespace test

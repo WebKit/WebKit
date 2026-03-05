@@ -65,7 +65,7 @@ static AuthenticatorGetInfoResponse authenticatorInfoForConfig(const VirtualAuth
 {
     AuthenticatorGetInfoResponse infoResponse({ ProtocolVersion::kCtap2 }, Vector<uint8_t>(aaguidLength, 0u));
     AuthenticatorSupportedOptions options;
-    infoResponse.setOptions(WTFMove(options));
+    infoResponse.setOptions(WTF::move(options));
     return infoResponse;
 }
 

@@ -27,6 +27,9 @@
 
 #include <bit>
 #include <concepts>
+#include <wtf/Assertions.h>
+#include <wtf/Compiler.h>
+#include <wtf/FastMalloc.h>
 
 namespace WTF {
 

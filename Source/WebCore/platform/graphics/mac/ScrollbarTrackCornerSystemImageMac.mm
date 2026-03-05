@@ -47,7 +47,7 @@ Ref<ScrollbarTrackCornerSystemImageMac> ScrollbarTrackCornerSystemImageMac::crea
 Ref<ScrollbarTrackCornerSystemImageMac> ScrollbarTrackCornerSystemImageMac::create(WebCore::Color&& tintColor, bool useDarkAppearance)
 {
     auto result = create();
-    result->setTintColor(WTFMove(tintColor));
+    result->setTintColor(WTF::move(tintColor));
     result->setUseDarkAppearance(useDarkAppearance);
     return result;
 }

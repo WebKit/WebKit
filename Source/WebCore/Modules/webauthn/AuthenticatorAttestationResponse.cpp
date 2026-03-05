@@ -68,26 +68,26 @@ static std::optional<cbor::CBORValue> coseKeyForAttestationObject(Ref<ArrayBuffe
 
 Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
 {
-    return adoptRef(*new AuthenticatorAttestationResponse(WTFMove(rawId), WTFMove(attestationObject), attachment, WTFMove(transports)));
+    return adoptRef(*new AuthenticatorAttestationResponse(WTF::move(rawId), WTF::move(attestationObject), attachment, WTF::move(transports)));
 }
 
 Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
 {
-    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTFMove(transports));
+    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTF::move(transports));
 }
 
 Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, std::optional<AuthenticationExtensionsClientOutputs>&& extensions, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
 {
-    auto response = create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTFMove(transports));
+    auto response = create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTF::move(transports));
     if (extensions)
-        response->setExtensions(WTFMove(*extensions));
+        response->setExtensions(WTF::move(*extensions));
     return response;
 }
 
 AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
-    : AuthenticatorResponse(WTFMove(rawId), attachment)
-    , m_attestationObject(WTFMove(attestationObject))
-    , m_transports(WTFMove(transports))
+    : AuthenticatorResponse(WTF::move(rawId), attachment)
+    , m_attestationObject(WTF::move(attestationObject))
+    , m_transports(WTF::move(transports))
 {
 }
 
@@ -196,15 +196,14 @@ RegistrationResponseJSON::AuthenticatorAttestationResponseJSON AuthenticatorAtte
     for (auto transport : getTransports())
         transports.append(toString(transport));
     RegistrationResponseJSON::AuthenticatorAttestationResponseJSON value;
-    if (auto clientData = clientDataJSON())
+    if (RefPtr clientData = clientDataJSON())
         value.clientDataJSON = base64URLEncodeToString(clientData->span());
     value.transports = transports;
     if (auto authData = getAuthenticatorData())
         value.authenticatorData = base64URLEncodeToString(authData->span());
     if (auto publicKey = getPublicKey())
         value.publicKey = base64URLEncodeToString(publicKey->span());
-    if (auto attestationObj = attestationObject())
-        value.attestationObject = base64URLEncodeToString(attestationObj->span());
+    value.attestationObject = base64URLEncodeToString(attestationObject().span());
     value.publicKeyAlgorithm = getPublicKeyAlgorithm();
 
     return value;

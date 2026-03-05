@@ -41,7 +41,7 @@ class Box;
 // Note that a FloatingContext's inline direction always matches the root's inline direction but it may
 // not match the PlacedFloats's inline direction (i.e. PlacedFloats may be constructed by a parent BFC with mismatching inline direction).
 class FloatingContext {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FloatingContext);
+    WTF_MAKE_TZONE_ALLOCATED(FloatingContext);
 public:
     FloatingContext(const ElementBox& formattingContextRoot, const LayoutState&, const PlacedFloats&);
 
@@ -67,15 +67,15 @@ public:
 
     PlacedFloats::Item makeFloatItem(const Box& floatBox, const BoxGeometry&, std::optional<size_t> line = { }) const;
 
-    bool isStartPositioned(const Box& floatBox) const;
+    bool NODELETE isStartPositioned(const Box& floatBox) const;
 
 private:
-    bool isFloatingCandidateStartPositionedInBlockFormattingContext(const Box&) const;
-    Clear clearInBlockFormattingContext(const Box&) const;
+    bool NODELETE isFloatingCandidateStartPositionedInBlockFormattingContext(const Box&) const;
+    Clear NODELETE clearInBlockFormattingContext(const Box&) const;
 
     const ElementBox& root() const { return m_formattingContextRoot; }
     // FIXME: Turn this into an actual geometry cache.
-    const LayoutState& containingBlockGeometries() const;
+    const LayoutState& NODELETE containingBlockGeometries() const;
 
     void findPositionForFormattingContextRoot(FloatAvoider&, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const;
 

@@ -73,7 +73,7 @@ public:
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
     bool hasMetadata() const { return !size().isEmpty(); }
 
-    ImageBackingStore* backingStore() const { return m_backingStore ? m_backingStore.get() : nullptr; }
+    ImageBackingStore* backingStore() const LIFETIME_BOUND { return m_backingStore ? m_backingStore.get() : nullptr; }
     bool hasBackingStore() const { return backingStore(); }
 
 private:

@@ -32,28 +32,6 @@ use bigint;
 my $mask64 = 2**64 - 1;
 my $mask32 = 2**32 - 1;
 
-sub leftShift($$) {
-    my ($value, $distance) = @_;
-    return (($value << $distance) & 0xFFFFFFFF);
-}
-
-sub avalancheBits($) {
-    my ($value) = @_;
-
-    $value &= $mask32;
-
-    # Force "avalanching" of lower 32 bits
-    $value ^= leftShift($value, 3);
-    $value += ($value >> 5);
-    $value = ($value & $mask32);
-    $value ^= (leftShift($value, 2) & $mask32);
-    $value += ($value >> 15);
-    $value = $value & $mask32;
-    $value ^= (leftShift($value, 10) & $mask32);
-
-    return $value;
-}
-
 sub maskTop8BitsAndAvoidZero($) {
     my ($value) = @_;
 
@@ -69,43 +47,6 @@ sub maskTop8BitsAndAvoidZero($) {
     $value = (0x80000000 >> 8) if ($value == 0);
 
     return $value;
-}
-
-# Paul Hsieh's SuperFastHash
-# http://www.azillionmonkeys.com/qed/hash.html
-sub superFastHash {
-    my @chars = @_;
-
-    # This hash is designed to work on 16-bit chunks at a time. But since the normal case
-    # (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
-    # were 16-bit chunks, which should give matching results
-
-    my $hash = 0x9e3779b9;
-    my $l    = scalar @chars; #I wish this was in Ruby --- Maks
-    my $rem  = $l & 1;
-    $l = $l >> 1;
-
-    my $s = 0;
-
-    # Main loop
-    for (; $l > 0; $l--) {
-        $hash   += ord($chars[$s]);
-        my $tmp = leftShift(ord($chars[$s+1]), 11) ^ $hash;
-        $hash   = (leftShift($hash, 16) & $mask32) ^ $tmp;
-        $s += 2;
-        $hash += $hash >> 11;
-        $hash &= $mask32;
-    }
-
-    # Handle end case
-    if ($rem != 0) {
-        $hash += ord($chars[$s]);
-        $hash ^= (leftShift($hash, 11) & $mask32);
-        $hash += $hash >> 17;
-    }
-
-    $hash = avalancheBits($hash);
-    return maskTop8BitsAndAvoidZero($hash);
 }
 
 sub uint64_add($$) {
@@ -242,18 +183,10 @@ sub wyhash {
 }
 
 
-sub GenerateHashValue($$) {
-    my ($string, $useWYHash) = @_;
+sub GenerateHashValue($) {
+    my ($string) = @_;
     my @chars = split(/ */, $string);
-    my $charCount = scalar @chars;
-    if ($useWYHash) {
-        if ($charCount <= 48) {
-            return superFastHash(@chars);
-        }
-        return wyhash(@chars);
-    } else {
-        return superFastHash(@chars);
-    }
+    return wyhash(@chars);
 }
 
 1;

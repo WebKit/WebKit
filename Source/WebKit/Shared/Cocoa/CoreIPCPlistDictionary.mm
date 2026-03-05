@@ -70,7 +70,7 @@ CoreIPCPlistDictionary::CoreIPCPlistDictionary(CoreIPCPlistDictionary&&) = defau
 CoreIPCPlistDictionary::~CoreIPCPlistDictionary() = default;
 
 CoreIPCPlistDictionary::CoreIPCPlistDictionary(ValueType&& keyValuePairs)
-    : m_keyValuePairs(WTFMove(keyValuePairs)) { }
+    : m_keyValuePairs(WTF::move(keyValuePairs)) { }
 
 RetainPtr<id> CoreIPCPlistDictionary::toID() const
 {

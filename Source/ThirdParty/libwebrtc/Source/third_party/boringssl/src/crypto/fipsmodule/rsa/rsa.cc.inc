@@ -43,24 +43,24 @@ OPENSSL_DECLARE_ERROR_REASON(RSA, BLOCK_TYPE_IS_NOT_02)
 DEFINE_STATIC_EX_DATA_CLASS(g_rsa_ex_data_class)
 
 static int bn_dup_into(BIGNUM **dst, const BIGNUM *src) {
-  if (src == NULL) {
+  if (src == nullptr) {
     OPENSSL_PUT_ERROR(RSA, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
 
   BN_free(*dst);
   *dst = BN_dup(src);
-  return *dst != NULL;
+  return *dst != nullptr;
 }
 
 RSA *RSA_new_public_key(const BIGNUM *n, const BIGNUM *e) {
   RSA *rsa = RSA_new();
-  if (rsa == NULL ||               //
+  if (rsa == nullptr ||            //
       !bn_dup_into(&rsa->n, n) ||  //
       !bn_dup_into(&rsa->e, e) ||  //
       !RSA_check_key(rsa)) {
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
 
   return rsa;
@@ -70,7 +70,7 @@ RSA *RSA_new_private_key(const BIGNUM *n, const BIGNUM *e, const BIGNUM *d,
                          const BIGNUM *p, const BIGNUM *q, const BIGNUM *dmp1,
                          const BIGNUM *dmq1, const BIGNUM *iqmp) {
   RSA *rsa = RSA_new();
-  if (rsa == NULL ||                     //
+  if (rsa == nullptr ||                  //
       !bn_dup_into(&rsa->n, n) ||        //
       !bn_dup_into(&rsa->e, e) ||        //
       !bn_dup_into(&rsa->d, d) ||        //
@@ -81,7 +81,7 @@ RSA *RSA_new_private_key(const BIGNUM *n, const BIGNUM *e, const BIGNUM *d,
       !bn_dup_into(&rsa->iqmp, iqmp) ||  //
       !RSA_check_key(rsa)) {
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
 
   return rsa;
@@ -90,13 +90,13 @@ RSA *RSA_new_private_key(const BIGNUM *n, const BIGNUM *e, const BIGNUM *d,
 RSA *RSA_new_private_key_no_crt(const BIGNUM *n, const BIGNUM *e,
                                 const BIGNUM *d) {
   RSA *rsa = RSA_new();
-  if (rsa == NULL ||               //
+  if (rsa == nullptr ||            //
       !bn_dup_into(&rsa->n, n) ||  //
       !bn_dup_into(&rsa->e, e) ||  //
       !bn_dup_into(&rsa->d, d) ||  //
       !RSA_check_key(rsa)) {
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
 
   return rsa;
@@ -104,8 +104,8 @@ RSA *RSA_new_private_key_no_crt(const BIGNUM *n, const BIGNUM *e,
 
 RSA *RSA_new_private_key_no_e(const BIGNUM *n, const BIGNUM *d) {
   RSA *rsa = RSA_new();
-  if (rsa == NULL) {
-    return NULL;
+  if (rsa == nullptr) {
+    return nullptr;
   }
 
   rsa->flags |= RSA_FLAG_NO_PUBLIC_EXPONENT;
@@ -113,7 +113,7 @@ RSA *RSA_new_private_key_no_e(const BIGNUM *n, const BIGNUM *d) {
       !bn_dup_into(&rsa->d, d) ||  //
       !RSA_check_key(rsa)) {
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
 
   return rsa;
@@ -121,8 +121,8 @@ RSA *RSA_new_private_key_no_e(const BIGNUM *n, const BIGNUM *d) {
 
 RSA *RSA_new_public_key_large_e(const BIGNUM *n, const BIGNUM *e) {
   RSA *rsa = RSA_new();
-  if (rsa == NULL) {
-    return NULL;
+  if (rsa == nullptr) {
+    return nullptr;
   }
 
   rsa->flags |= RSA_FLAG_LARGE_PUBLIC_EXPONENT;
@@ -130,7 +130,7 @@ RSA *RSA_new_public_key_large_e(const BIGNUM *n, const BIGNUM *e) {
       !bn_dup_into(&rsa->e, e) ||  //
       !RSA_check_key(rsa)) {
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
 
   return rsa;
@@ -141,8 +141,8 @@ RSA *RSA_new_private_key_large_e(const BIGNUM *n, const BIGNUM *e,
                                  const BIGNUM *q, const BIGNUM *dmp1,
                                  const BIGNUM *dmq1, const BIGNUM *iqmp) {
   RSA *rsa = RSA_new();
-  if (rsa == NULL) {
-    return NULL;
+  if (rsa == nullptr) {
+    return nullptr;
   }
 
   rsa->flags |= RSA_FLAG_LARGE_PUBLIC_EXPONENT;
@@ -156,25 +156,25 @@ RSA *RSA_new_private_key_large_e(const BIGNUM *n, const BIGNUM *e,
       !bn_dup_into(&rsa->iqmp, iqmp) ||  //
       !RSA_check_key(rsa)) {
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
 
   return rsa;
 }
 
-RSA *RSA_new(void) { return RSA_new_method(NULL); }
+RSA *RSA_new(void) { return RSA_new_method(nullptr); }
 
 RSA *RSA_new_method(const ENGINE *engine) {
   RSA *rsa = reinterpret_cast<RSA *>(OPENSSL_zalloc(sizeof(RSA)));
-  if (rsa == NULL) {
-    return NULL;
+  if (rsa == nullptr) {
+    return nullptr;
   }
 
   if (engine) {
     rsa->meth = ENGINE_get_RSA_method(engine);
   }
 
-  if (rsa->meth == NULL) {
+  if (rsa->meth == nullptr) {
     rsa->meth = (RSA_METHOD *)RSA_default_method();
   }
   METHOD_ref(rsa->meth);
@@ -187,7 +187,7 @@ RSA *RSA_new_method(const ENGINE *engine) {
   if (rsa->meth->init && !rsa->meth->init(rsa)) {
     rsa->meth = nullptr;
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
 
   return rsa;
@@ -195,16 +195,16 @@ RSA *RSA_new_method(const ENGINE *engine) {
 
 RSA *RSA_new_method_no_e(const ENGINE *engine, const BIGNUM *n) {
   RSA *rsa = RSA_new_method(engine);
-  if (rsa == NULL || !bn_dup_into(&rsa->n, n)) {
+  if (rsa == nullptr || !bn_dup_into(&rsa->n, n)) {
     RSA_free(rsa);
-    return NULL;
+    return nullptr;
   }
   rsa->flags |= RSA_FLAG_NO_PUBLIC_EXPONENT;
   return rsa;
 }
 
 void RSA_free(RSA *rsa) {
-  if (rsa == NULL) {
+  if (rsa == nullptr) {
     return;
   }
 
@@ -257,54 +257,55 @@ const BIGNUM *RSA_get0_iqmp(const RSA *rsa) { return rsa->iqmp; }
 
 void RSA_get0_key(const RSA *rsa, const BIGNUM **out_n, const BIGNUM **out_e,
                   const BIGNUM **out_d) {
-  if (out_n != NULL) {
+  if (out_n != nullptr) {
     *out_n = rsa->n;
   }
-  if (out_e != NULL) {
+  if (out_e != nullptr) {
     *out_e = rsa->e;
   }
-  if (out_d != NULL) {
+  if (out_d != nullptr) {
     *out_d = rsa->d;
   }
 }
 
 void RSA_get0_factors(const RSA *rsa, const BIGNUM **out_p,
                       const BIGNUM **out_q) {
-  if (out_p != NULL) {
+  if (out_p != nullptr) {
     *out_p = rsa->p;
   }
-  if (out_q != NULL) {
+  if (out_q != nullptr) {
     *out_q = rsa->q;
   }
 }
 
 void RSA_get0_crt_params(const RSA *rsa, const BIGNUM **out_dmp1,
                          const BIGNUM **out_dmq1, const BIGNUM **out_iqmp) {
-  if (out_dmp1 != NULL) {
+  if (out_dmp1 != nullptr) {
     *out_dmp1 = rsa->dmp1;
   }
-  if (out_dmq1 != NULL) {
+  if (out_dmq1 != nullptr) {
     *out_dmq1 = rsa->dmq1;
   }
-  if (out_iqmp != NULL) {
+  if (out_iqmp != nullptr) {
     *out_iqmp = rsa->iqmp;
   }
 }
 
 int RSA_set0_key(RSA *rsa, BIGNUM *n, BIGNUM *e, BIGNUM *d) {
-  if ((rsa->n == NULL && n == NULL) || (rsa->e == NULL && e == NULL)) {
+  if ((rsa->n == nullptr && n == nullptr) ||
+      (rsa->e == nullptr && e == nullptr)) {
     return 0;
   }
 
-  if (n != NULL) {
+  if (n != nullptr) {
     BN_free(rsa->n);
     rsa->n = n;
   }
-  if (e != NULL) {
+  if (e != nullptr) {
     BN_free(rsa->e);
     rsa->e = e;
   }
-  if (d != NULL) {
+  if (d != nullptr) {
     BN_free(rsa->d);
     rsa->d = d;
   }
@@ -314,15 +315,16 @@ int RSA_set0_key(RSA *rsa, BIGNUM *n, BIGNUM *e, BIGNUM *d) {
 }
 
 int RSA_set0_factors(RSA *rsa, BIGNUM *p, BIGNUM *q) {
-  if ((rsa->p == NULL && p == NULL) || (rsa->q == NULL && q == NULL)) {
+  if ((rsa->p == nullptr && p == nullptr) ||
+      (rsa->q == nullptr && q == nullptr)) {
     return 0;
   }
 
-  if (p != NULL) {
+  if (p != nullptr) {
     BN_free(rsa->p);
     rsa->p = p;
   }
-  if (q != NULL) {
+  if (q != nullptr) {
     BN_free(rsa->q);
     rsa->q = q;
   }
@@ -332,21 +334,21 @@ int RSA_set0_factors(RSA *rsa, BIGNUM *p, BIGNUM *q) {
 }
 
 int RSA_set0_crt_params(RSA *rsa, BIGNUM *dmp1, BIGNUM *dmq1, BIGNUM *iqmp) {
-  if ((rsa->dmp1 == NULL && dmp1 == NULL) ||
-      (rsa->dmq1 == NULL && dmq1 == NULL) ||
-      (rsa->iqmp == NULL && iqmp == NULL)) {
+  if ((rsa->dmp1 == nullptr && dmp1 == nullptr) ||
+      (rsa->dmq1 == nullptr && dmq1 == nullptr) ||
+      (rsa->iqmp == nullptr && iqmp == nullptr)) {
     return 0;
   }
 
-  if (dmp1 != NULL) {
+  if (dmp1 != nullptr) {
     BN_free(rsa->dmp1);
     rsa->dmp1 = dmp1;
   }
-  if (dmq1 != NULL) {
+  if (dmq1 != nullptr) {
     BN_free(rsa->dmq1);
     rsa->dmq1 = dmq1;
   }
-  if (iqmp != NULL) {
+  if (iqmp != nullptr) {
     BN_free(rsa->iqmp);
     rsa->iqmp = iqmp;
   }
@@ -421,35 +423,35 @@ static const struct pkcs1_sig_prefix kPKCS1SigPrefixes[] = {
     },
     {
         NID_sha1,
-        BCM_SHA_DIGEST_LENGTH,
+        SHA_DIGEST_LENGTH,
         15,
         {0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a, 0x05,
          0x00, 0x04, 0x14},
     },
     {
         NID_sha224,
-        BCM_SHA224_DIGEST_LENGTH,
+        SHA224_DIGEST_LENGTH,
         19,
         {0x30, 0x2d, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03,
          0x04, 0x02, 0x04, 0x05, 0x00, 0x04, 0x1c},
     },
     {
         NID_sha256,
-        BCM_SHA256_DIGEST_LENGTH,
+        SHA256_DIGEST_LENGTH,
         19,
         {0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03,
          0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20},
     },
     {
         NID_sha384,
-        BCM_SHA384_DIGEST_LENGTH,
+        SHA384_DIGEST_LENGTH,
         19,
         {0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03,
          0x04, 0x02, 0x02, 0x05, 0x00, 0x04, 0x30},
     },
     {
         NID_sha512,
-        BCM_SHA512_DIGEST_LENGTH,
+        SHA512_DIGEST_LENGTH,
         19,
         {0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03,
          0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40},
@@ -554,7 +556,7 @@ int rsa_sign_no_self_test(int hash_nid, const uint8_t *digest,
 
   const unsigned rsa_size = RSA_size(rsa);
   int ret = 0;
-  uint8_t *signed_msg = NULL;
+  uint8_t *signed_msg = nullptr;
   size_t signed_msg_len = 0;
   int signed_msg_is_alloced = 0;
   size_t size_t_out_len;
@@ -599,7 +601,7 @@ int RSA_sign_pss_mgf1(RSA *rsa, size_t *out_len, uint8_t *out, size_t max_out,
 
   size_t padded_len = RSA_size(rsa);
   uint8_t *padded = reinterpret_cast<uint8_t *>(OPENSSL_malloc(padded_len));
-  if (padded == NULL) {
+  if (padded == nullptr) {
     return 0;
   }
 
@@ -614,15 +616,15 @@ int RSA_sign_pss_mgf1(RSA *rsa, size_t *out_len, uint8_t *out, size_t max_out,
 int rsa_verify_no_self_test(int hash_nid, const uint8_t *digest,
                             size_t digest_len, const uint8_t *sig,
                             size_t sig_len, RSA *rsa) {
-  if (rsa->n == NULL || rsa->e == NULL) {
+  if (rsa->n == nullptr || rsa->e == nullptr) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_VALUE_MISSING);
     return 0;
   }
 
   const size_t rsa_size = RSA_size(rsa);
-  uint8_t *buf = NULL;
+  uint8_t *buf = nullptr;
   int ret = 0;
-  uint8_t *signed_msg = NULL;
+  uint8_t *signed_msg = nullptr;
   size_t signed_msg_len = 0, len;
   int signed_msg_is_alloced = 0;
 
@@ -678,7 +680,7 @@ int RSA_verify_pss_mgf1(RSA *rsa, const uint8_t *digest, size_t digest_len,
 
   size_t em_len = RSA_size(rsa);
   uint8_t *em = reinterpret_cast<uint8_t *>(OPENSSL_malloc(em_len));
-  if (em == NULL) {
+  if (em == nullptr) {
     return 0;
   }
 
@@ -715,7 +717,7 @@ static int check_mod_inverse(int *out_ok, const BIGNUM *a, const BIGNUM *ainv,
   BIGNUM *tmp = BN_CTX_get(ctx);
   if (tmp == nullptr ||  //
       !bn_mul_consttime(tmp, a, ainv, ctx) ||
-      !bn_div_consttime(NULL, tmp, tmp, m, m_min_bits, ctx)) {
+      !bn_div_consttime(nullptr, tmp, tmp, m, m_min_bits, ctx)) {
     return 0;
   }
   *out_ok = constant_time_declassify_int(BN_is_one(tmp));
@@ -733,27 +735,27 @@ int RSA_check_key(const RSA *key) {
     return 0;
   }
 
-  if ((key->p != NULL) != (key->q != NULL)) {
+  if ((key->p != nullptr) != (key->q != nullptr)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_ONLY_ONE_OF_P_Q_GIVEN);
     return 0;
   }
 
   // |key->d| must be bounded by |key->n|. This ensures bounds on |RSA_bits|
   // translate to bounds on the running time of private key operations.
-  if (key->d != NULL &&
+  if (key->d != nullptr &&
       (BN_is_negative(key->d) || BN_cmp(key->d, key->n) >= 0)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_D_OUT_OF_RANGE);
     return 0;
   }
 
-  if (key->d == NULL || key->p == NULL) {
+  if (key->d == nullptr || key->p == nullptr) {
     // For a public key, or without p and q, there's nothing that can be
     // checked.
     return 1;
   }
 
   BN_CTX *ctx = BN_CTX_new();
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return 0;
   }
 
@@ -799,8 +801,8 @@ int RSA_check_key(const RSA *key) {
   pm1_bits = BN_num_bits(&pm1);
   qm1_bits = BN_num_bits(&qm1);
   if (!bn_mul_consttime(&de, key->d, key->e, ctx) ||
-      !bn_div_consttime(NULL, &tmp, &de, &pm1, pm1_bits, ctx) ||
-      !bn_div_consttime(NULL, &de, &de, &qm1, qm1_bits, ctx)) {
+      !bn_div_consttime(nullptr, &tmp, &de, &pm1, pm1_bits, ctx) ||
+      !bn_div_consttime(nullptr, &de, &de, &qm1, qm1_bits, ctx)) {
     OPENSSL_PUT_ERROR(RSA, ERR_LIB_BN);
     goto out;
   }
@@ -811,9 +813,9 @@ int RSA_check_key(const RSA *key) {
     goto out;
   }
 
-  has_crt_values = key->dmp1 != NULL;
-  if (has_crt_values != (key->dmq1 != NULL) ||
-      has_crt_values != (key->iqmp != NULL)) {
+  has_crt_values = key->dmp1 != nullptr;
+  if (has_crt_values != (key->dmq1 != nullptr) ||
+      has_crt_values != (key->iqmp != nullptr)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_INCONSISTENT_SET_OF_CRT_VALUES);
     goto out;
   }
@@ -884,7 +886,7 @@ int RSA_check_fips(RSA *key) {
   }
 
   BN_CTX *ctx = BN_CTX_new();
-  if (ctx == NULL) {
+  if (ctx == nullptr) {
     return 0;
   }
 
@@ -911,7 +913,7 @@ int RSA_check_fips(RSA *key) {
       !BN_is_one(&small_gcd) ||
       !BN_enhanced_miller_rabin_primality_test(&primality_result, key->n,
                                                BN_prime_checks_for_generation,
-                                               ctx, NULL) ||
+                                               ctx, nullptr) ||
       primality_result != bn_non_prime_power_composite) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_PUBLIC_KEY_VALIDATION_FAILED);
     ret = 0;
@@ -920,7 +922,7 @@ int RSA_check_fips(RSA *key) {
   BN_free(&small_gcd);
   BN_CTX_free(ctx);
 
-  if (!ret || key->d == NULL || key->p == NULL) {
+  if (!ret || key->d == nullptr || key->p == nullptr) {
     // On a failure or on only a public key, there's nothing else can be
     // checked.
     return ret;
@@ -933,7 +935,7 @@ int RSA_check_fips(RSA *key) {
   uint8_t data[32] = {0};
   unsigned sig_len = RSA_size(key);
   uint8_t *sig = reinterpret_cast<uint8_t *>(OPENSSL_malloc(sig_len));
-  if (sig == NULL) {
+  if (sig == nullptr) {
     return 0;
   }
 

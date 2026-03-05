@@ -44,8 +44,8 @@
 #include "RenderLayerCompositor.h"
 #include "RenderObjectInlines.h"
 #include "RenderStyle.h"
-#include "RenderStyleInlines.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderView.h"
 #include "StyleBuilderState.h"
 #include "StyleScope.h"
@@ -285,7 +285,7 @@ void AnchorPositionEvaluator::captureScrollSnapshots(RenderBox& anchored, bool i
         || anchored.style().positionVisibility().contains(PositionVisibilityValue::NoOverflow))
         adjuster.setFallbackLimits(anchored);
 
-    auto captureDiff = anchored.layoutContext().registerAnchorScrollAdjuster(WTFMove(adjuster));
+    auto captureDiff = anchored.layoutContext().registerAnchorScrollAdjuster(WTF::move(adjuster));
     if (invalidateStyleForScrollPositionChanges && AnchorScrollAdjuster::SnapshotsDiffer == captureDiff && anchored.style().usesAnchorFunctions()) {
         // Scroll positions changed since the last capture, which means anchor() resolution needs updating.
         if (CheckedPtr element = anchored.element())
@@ -345,7 +345,7 @@ static const ScopedName& implicitAnchorElementName()
     return name;
 }
 
-static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const WritingMode writingMode)
+static BoxAxis NODELETE mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const WritingMode writingMode)
 {
     switch (id) {
     case CSSPropertyLeft:
@@ -366,7 +366,7 @@ static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const WritingMod
     }
 }
 
-static LogicalBoxAxis mapInsetPropertyToLogicalAxis(CSSPropertyID id, const WritingMode writingMode)
+static LogicalBoxAxis NODELETE mapInsetPropertyToLogicalAxis(CSSPropertyID id, const WritingMode writingMode)
 {
     switch (id) {
     case CSSPropertyLeft:
@@ -390,7 +390,7 @@ static LogicalBoxAxis mapInsetPropertyToLogicalAxis(CSSPropertyID id, const Writ
 // Physical sides (left/right/top/bottom) can only be used in certain inset properties. "For example,
 // left is usable in left, right, or the logical inset properties that refer to the horizontal axis."
 // See: https://drafts.csswg.org/css-anchor-position-1/#typedef-anchor-side
-static bool anchorSideMatchesInsetProperty(CSSValueID anchorSideID, BoxAxis physicalAxis)
+static bool NODELETE anchorSideMatchesInsetProperty(CSSValueID anchorSideID, BoxAxis physicalAxis)
 {
     switch (anchorSideID) {
     case CSSValueID::CSSValueInside:
@@ -437,7 +437,7 @@ static LayoutSize offsetFromAncestorContainer(const RenderElement& descendantCon
 
         offset += currentOffset;
         referencePoint.move(currentOffset);
-        currentContainer = WTFMove(nextContainer);
+        currentContainer = WTF::move(nextContainer);
     } while (currentContainer != maxContainer);
 
     if (CheckedPtr descendantInline = dynamicDowncast<RenderInline>(&descendantContainer)) {
@@ -554,7 +554,7 @@ LayoutRect AnchorPositionEvaluator::computeAnchorRectRelativeToContainingBlock(C
     return LayoutRect(anchorLocation, LayoutSize(anchorWidth, anchorHeight));
 }
 
-static bool inline isInsetPropertyContainerStartSide(CSSPropertyID insetPropertyID, PositionedLayoutConstraints& constraints)
+static bool inline NODELETE isInsetPropertyContainerStartSide(CSSPropertyID insetPropertyID, PositionedLayoutConstraints& constraints)
 {
     switch (insetPropertyID) {
     case CSSPropertyLeft:
@@ -579,7 +579,7 @@ static bool inline isInsetPropertyContainerStartSide(CSSPropertyID insetProperty
     }
 }
 
-static CSSPropertyID getOppositeInset(CSSPropertyID propertyID)
+static CSSPropertyID NODELETE getOppositeInset(CSSPropertyID propertyID)
 {
     switch (propertyID) {
     case CSSPropertyLeft:
@@ -738,7 +738,7 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
 
 CheckedPtr<RenderBoxModelObject> AnchorPositionEvaluator::findAnchorForAnchorFunctionAndAttemptResolution(BuilderState& builderState, std::optional<ScopedName> anchorNameArgument)
 {
-    auto& style = builderState.style();
+    auto& style = builderState.renderStyle();
     style.setUsesAnchorFunctions();
 
     if (!builderState.anchorPositionedStates())
@@ -802,7 +802,7 @@ CheckedPtr<RenderBoxModelObject> AnchorPositionEvaluator::findAnchorForAnchorFun
 
     // Anchor value may now be resolved using layout information
 
-    RefPtr anchorElement = anchorPositionedState.anchorElements.get(resolvedAnchorName).get();
+    RefPtr anchorElement = anchorPositionedState.anchorElements.get(resolvedAnchorName);
     if (!anchorElement) {
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
         anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
@@ -828,7 +828,7 @@ bool AnchorPositionEvaluator::propertyAllowsAnchorFunction(CSSPropertyID propert
 
 std::optional<double> AnchorPositionEvaluator::evaluate(BuilderState& builderState, std::optional<ScopedName> elementName, Side side)
 {
-    auto& style = builderState.style();
+    auto& style = builderState.renderStyle();
 
     auto propertyID = builderState.cssPropertyID();
     auto physicalAxis = mapInsetPropertyToPhysicalAxis(propertyID, style.writingMode());
@@ -877,7 +877,7 @@ std::optional<double> AnchorPositionEvaluator::evaluate(BuilderState& builderSta
 
 // Returns the default anchor size dimension to use when it is not specified in
 // anchor-size(). This matches the axis of the property that anchor-size() is used in.
-static AnchorSizeDimension defaultDimensionForPropertyID(CSSPropertyID propertyID)
+static AnchorSizeDimension NODELETE defaultDimensionForPropertyID(CSSPropertyID propertyID)
 {
     switch (propertyID) {
     case CSSPropertyWidth:
@@ -923,7 +923,7 @@ static AnchorSizeDimension defaultDimensionForPropertyID(CSSPropertyID propertyI
 }
 
 // Convert anchor size dimension to the physical dimension (width or height).
-static BoxAxis anchorSizeDimensionToPhysicalDimension(AnchorSizeDimension dimension, const RenderStyle& style, const RenderStyle& containerStyle)
+static BoxAxis NODELETE anchorSizeDimensionToPhysicalDimension(AnchorSizeDimension dimension, const RenderStyle& style, const RenderStyle& containerStyle)
 {
     switch (dimension) {
     case AnchorSizeDimension::Width:
@@ -952,7 +952,7 @@ bool AnchorPositionEvaluator::propertyAllowsAnchorSizeFunction(CSSPropertyID pro
 std::optional<double> AnchorPositionEvaluator::evaluateSize(BuilderState& builderState, std::optional<ScopedName> elementName, std::optional<AnchorSizeDimension> dimension)
 {
     auto propertyID = builderState.cssPropertyID();
-    const auto& style = builderState.style();
+    const auto& style = builderState.renderStyle();
 
     auto isValidAnchorSize = [&] {
         // It’s being used in a sizing property, an inset property, or a margin property...
@@ -1295,7 +1295,7 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
                 }
                 document.styleScope().anchorPositionedToAnchorMap().set(*element, AnchorPositionedToAnchorEntry {
                     .pseudoElementIdentifier = elementAndState.key.second,
-                    .anchors = WTFMove(anchors)
+                    .anchors = WTF::move(anchors)
                 });
             }
             state.stage = renderer && renderer->style().usesAnchorFunctions() ? AnchorPositionResolutionStage::ResolveAnchorFunctions : AnchorPositionResolutionStage::Resolved;
@@ -1323,7 +1323,9 @@ void AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPosi
 
     // `position-visibility: no-overflow` should also work for non-anchor positioned out-of-flow boxes.
     // Create an empty anchor positioning state for it so we perform the required layout interleaving.
-    auto hasPositionVisibilityNoOverflow = generatesBox(style) && style.hasOutOfFlowPosition() && style.positionVisibility().contains(PositionVisibilityValue::NoOverflow);
+    auto hasPositionVisibilityNoOverflow = style.display().doesGenerateBox()
+        && style.hasOutOfFlowPosition()
+        && style.positionVisibility().contains(PositionVisibilityValue::NoOverflow);
 
     if (!shouldResolveDefaultAnchor && !hasPositionVisibilityNoOverflow)
         return;
@@ -1367,7 +1369,7 @@ bool AnchorPositionEvaluator::isAnchorPositioned(const RenderStyle& style)
 
 bool AnchorPositionEvaluator::isStyleTimeAnchorPositioned(const RenderStyle& style)
 {
-    if (!generatesBox(style) || !style.hasOutOfFlowPosition())
+    if (!style.display().doesGenerateBox() || !style.hasOutOfFlowPosition())
         return false;
 
     return style.usesAnchorFunctions();
@@ -1375,7 +1377,7 @@ bool AnchorPositionEvaluator::isStyleTimeAnchorPositioned(const RenderStyle& sty
 
 bool AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(const RenderStyle& style)
 {
-    if (!generatesBox(style) || !style.hasOutOfFlowPosition())
+    if (!style.display().doesGenerateBox() || !style.hasOutOfFlowPosition())
         return false;
 
     if (!style.positionArea().isNone())
@@ -1384,7 +1386,7 @@ bool AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(const RenderStyle& st
     return style.justifySelf().isAnchorCenter() || style.alignSelf().isAnchorCenter();
 }
 
-static CSSPropertyID flipHorizontal(CSSPropertyID propertyID)
+static CSSPropertyID NODELETE flipHorizontal(CSSPropertyID propertyID)
 {
     switch (propertyID) {
     case CSSPropertyLeft:
@@ -1400,7 +1402,7 @@ static CSSPropertyID flipHorizontal(CSSPropertyID propertyID)
     }
 }
 
-static CSSPropertyID flipVertical(CSSPropertyID propertyID)
+static CSSPropertyID NODELETE flipVertical(CSSPropertyID propertyID)
 {
     switch (propertyID) {
     case CSSPropertyTop:

@@ -43,7 +43,7 @@ class RTCEncodedFrame : public RefCounted<RTCEncodedFrame> {
 public:
     virtual ~RTCEncodedFrame() { }
 
-    RefPtr<JSC::ArrayBuffer> data() const;
+    Ref<JSC::ArrayBuffer> data() const;
     void setData(JSC::ArrayBuffer&);
 
     enum class ShouldNeuter : bool { No, Yes };

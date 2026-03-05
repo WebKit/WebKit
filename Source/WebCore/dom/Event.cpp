@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Event);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Event);
 
 ALWAYS_INLINE Event::Event(MonotonicTime createTime, enum EventInterfaceType eventInterface, const AtomString& type, IsTrusted isTrusted, CanBubble canBubble, IsCancelable cancelable, IsComposed composed)
     : m_isInitialized { !type.isNull() }
@@ -60,13 +60,12 @@ ALWAYS_INLINE Event::Event(MonotonicTime createTime, enum EventInterfaceType eve
     , m_isExecutingPassiveEventListener { false }
     , m_currentTargetIsInShadowTree { false }
     , m_isAutofillEvent { false }
-    , m_isShadowRootAttachedEvent { false }
     , m_eventPhase { NONE }
-    , m_eventInterface(enumToUnderlyingType(eventInterface))
+    , m_eventInterface(std::to_underlying(eventInterface))
     , m_type { type }
     , m_createTime { createTime }
 {
-    ASSERT(m_eventInterface == enumToUnderlyingType(eventInterface));
+    ASSERT(m_eventInterface == std::to_underlying(eventInterface));
 }
 
 Event::Event(enum EventInterfaceType eventInterface, IsTrusted isTrusted)
@@ -135,24 +134,14 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
     if (m_target == target)
         return;
 
-    m_target = WTFMove(target);
+    m_target = WTF::move(target);
     if (m_target)
         receivedTarget();
 }
 
-RefPtr<EventTarget> Event::protectedTarget() const
-{
-    return m_target;
-}
-
-RefPtr<EventTarget> Event::protectedCurrentTarget() const
-{
-    return m_currentTarget;
-}
-
 void Event::setCurrentTarget(RefPtr<EventTarget>&& currentTarget, std::optional<bool> isInShadowTree)
 {
-    m_currentTarget = WTFMove(currentTarget);
+    m_currentTarget = WTF::move(currentTarget);
     if (isInShadowTree)
         m_currentTargetIsInShadowTree = *isInShadowTree;
     else {
@@ -172,7 +161,7 @@ Vector<Ref<EventTarget>> Event::composedPath(JSC::JSGlobalObject& lexicalGlobalO
         return Vector<Ref<EventTarget>>();
     if (JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->world().shadowRootIsAlwaysOpen())
         return m_eventPath->computePathTreatingAllShadowRootsAsOpen();
-    return m_eventPath->computePathUnclosedToTarget(*protectedCurrentTarget());
+    return m_eventPath->computePathUnclosedToTarget(*protect(currentTarget()));
 }
 
 void Event::setUnderlyingEvent(Event* underlyingEvent)

@@ -33,6 +33,7 @@
 #include "PODIntervalTree.h"
 #include "RenderBlockFlow.h"
 #include "RenderFragmentContainer.h"
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ class RenderStyle;
 class RenderFragmentContainer;
 
 typedef SingleThreadWeakListHashSet<RenderFragmentContainer> RenderFragmentContainerList;
-typedef Vector<SingleThreadWeakPtr<RenderLayer>> RenderLayerList;
+typedef Vector<InlineWeakPtr<RenderLayer>> RenderLayerList;
 typedef PODIntervalTree<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>> FragmentIntervalTree;
 
 // RenderFragmentedFlow is used to collect all the render objects that participate in a
@@ -53,7 +54,7 @@ typedef PODIntervalTree<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>
 // of the RenderFragmentedFlow.
 
 class RenderFragmentedFlow : public RenderBlockFlow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderFragmentedFlow);
+    WTF_MAKE_TZONE_ALLOCATED(RenderFragmentedFlow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentedFlow);
 public:
     virtual ~RenderFragmentedFlow();
@@ -86,7 +87,7 @@ public:
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void repaintRectangleInFragments(const LayoutRect&) const;
 
@@ -119,7 +120,7 @@ public:
     virtual void setFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*, RenderFragmentContainer*);
     bool getFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
     bool computedFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
-    bool hasCachedFragmentRangeForBox(const RenderBox&) const;
+    bool NODELETE hasCachedFragmentRangeForBox(const RenderBox&) const;
 
     // Check if the object is in fragment and the fragment is part of this flow thread.
     bool objectInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
@@ -149,7 +150,7 @@ public:
     LayoutRect mapFromFragmentedFlowToLocal(const RenderBox*, const LayoutRect&) const;
     LayoutRect mapFromLocalToFragmentedFlow(const RenderBox*, const LayoutRect&) const;
 
-    void flipForWritingModeLocalCoordinates(LayoutRect&) const;
+    void NODELETE flipForWritingModeLocalCoordinates(LayoutRect&) const;
 
     // Used to estimate the maximum height of the flow thread.
     static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }
@@ -163,7 +164,7 @@ public:
     void layout() override;
 
     void setCurrentFragmentMaintainer(CurrentRenderFragmentContainerMaintainer* currentFragmentMaintainer) { m_currentFragmentMaintainer = currentFragmentMaintainer; }
-    RenderFragmentContainer* currentFragment() const;
+    RenderFragmentContainer* NODELETE currentFragment() const;
 
     bool cachedEnclosingFragmentedFlowNeedsUpdate() const override { return false; }
 

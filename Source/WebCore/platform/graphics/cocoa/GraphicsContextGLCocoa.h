@@ -74,7 +74,7 @@ private:
 };
 
 class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE, public CanMakeCheckedPtr<GraphicsContextGLCocoa> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED(GraphicsContextGLCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GraphicsContextGLCocoa);
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
@@ -177,20 +177,20 @@ protected:
 };
 
 inline IOSurfacePbuffer::IOSurfacePbuffer(std::unique_ptr<IOSurface>&& surface, void* pbuffer)
-    : IOSurfaceDrawingBuffer(WTFMove(surface))
+    : IOSurfaceDrawingBuffer(WTF::move(surface))
     , m_pbuffer(pbuffer)
 {
 }
 
 inline IOSurfacePbuffer::IOSurfacePbuffer(IOSurfacePbuffer&& other)
-    : IOSurfaceDrawingBuffer(WTFMove(other))
+    : IOSurfaceDrawingBuffer(WTF::move(other))
     , m_pbuffer(std::exchange(other.m_pbuffer, nullptr))
 {
 }
 
 inline IOSurfacePbuffer& IOSurfacePbuffer::operator=(IOSurfacePbuffer&& other)
 {
-    IOSurfaceDrawingBuffer::operator=(WTFMove(other));
+    IOSurfaceDrawingBuffer::operator=(WTF::move(other));
     m_pbuffer = std::exchange(other.m_pbuffer, nullptr);
     return *this;
 }

@@ -51,7 +51,7 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
@@ -152,7 +152,7 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     return *this;
 }
 
-static Node* moveOutOfUserAgentShadowTree(Node& node)
+static Node* NODELETE moveOutOfUserAgentShadowTree(Node& node)
 {
     if (node.isInShadowTree()) {
         if (ShadowRoot* root = node.containingShadowRoot()) {
@@ -165,11 +165,11 @@ static Node* moveOutOfUserAgentShadowTree(Node& node)
 
 void HitTestResult::setToNonUserAgentShadowAncestor()
 {
-    if (Node* node = innerNode()) {
+    if (RefPtr node = innerNode()) {
         node = moveOutOfUserAgentShadowTree(*node);
         setInnerNode(node);
     }
-    if (Node *node = innerNonSharedNode()) {
+    if (RefPtr node = innerNonSharedNode()) {
         node = moveOutOfUserAgentShadowTree(*node);
         setInnerNonSharedNode(node);
     }
@@ -194,7 +194,7 @@ void HitTestResult::setURLElement(Element* n)
 
 void HitTestResult::setScrollbar(RefPtr<Scrollbar>&& scrollbar)
 {
-    m_scrollbar = WTFMove(scrollbar);
+    m_scrollbar = WTF::move(scrollbar);
 }
 
 LocalFrame* HitTestResult::innerNodeFrame() const
@@ -206,6 +206,11 @@ LocalFrame* HitTestResult::innerNodeFrame() const
     return 0;
 }
 
+void HitTestResult::setLocalPoint(const LayoutPoint& p)
+{
+    m_localPoint = m_pseudoElementIdentifier ? LayoutPoint() : p;
+}
+
 std::optional<Style::PseudoElementIdentifier> HitTestResult::pseudoElementIdentifier() const
 {
     return m_pseudoElementIdentifier;
@@ -213,6 +218,7 @@ std::optional<Style::PseudoElementIdentifier> HitTestResult::pseudoElementIdenti
 
 void HitTestResult::setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier)
 {
+    ASSERT(!pseudoElementIdentifier || pseudoElementIdentifier->type != PseudoElementType::UserAgentPartFallback);
     m_pseudoElementIdentifier = pseudoElementIdentifier;
 }
 
@@ -224,12 +230,12 @@ LocalFrame* HitTestResult::frame() const
     return nullptr;
 }
 
-Frame* HitTestResult::targetFrame() const
+RefPtr<Frame> HitTestResult::targetFrame() const
 {
     if (!m_innerURLElement)
         return nullptr;
 
-    auto* frame = m_innerURLElement->document().frame();
+    RefPtr frame = m_innerURLElement->document().frame();
     if (!frame)
         return nullptr;
 
@@ -241,7 +247,7 @@ bool HitTestResult::isSelected() const
     if (!m_innerNonSharedNode)
         return false;
 
-    auto* frame = m_innerNonSharedNode->document().frame();
+    RefPtr frame = m_innerNonSharedNode->document().frame();
     if (!frame)
         return false;
 
@@ -262,7 +268,7 @@ bool HitTestResult::allowsFollowingLink() const
     if (!document)
         return false;
 
-    return document->protectedSecurityOrigin()->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
+    return protect(document->securityOrigin())->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 bool HitTestResult::allowsFollowingImageURL() const
@@ -279,7 +285,7 @@ bool HitTestResult::allowsFollowingImageURL() const
     if (!document)
         return false;
 
-    return document->protectedSecurityOrigin()->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
+    return protect(document->securityOrigin())->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 String HitTestResult::selectedText() const
@@ -287,7 +293,7 @@ String HitTestResult::selectedText() const
     if (!m_innerNonSharedNode)
         return emptyString();
 
-    auto* frame = m_innerNonSharedNode->document().frame();
+    RefPtr frame = m_innerNonSharedNode->document().frame();
     if (!frame)
         return emptyString();
 
@@ -348,7 +354,7 @@ String HitTestResult::title(TextDirection& dir) const
     dir = TextDirection::LTR;
     // Find the title in the nearest enclosing DOM node.
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
-    for (Node* titleNode = m_innerNode.get(); titleNode; titleNode = titleNode->parentInComposedTree()) {
+    for (RefPtr titleNode = m_innerNode.get(); titleNode; titleNode = titleNode->parentInComposedTree()) {
         if (RefPtr titleElement = dynamicDowncast<Element>(*titleNode)) {
             auto title = titleElement->title();
             if (!title.isNull()) {
@@ -363,8 +369,8 @@ String HitTestResult::title(TextDirection& dir) const
 
 String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
 {
-    for (auto* truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentInComposedTree()) {
-        auto* element = dynamicDowncast<Element>(*truncatedNode);
+    for (RefPtr truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentInComposedTree()) {
+        RefPtr element = dynamicDowncast<Element>(*truncatedNode);
         if (!element)
             continue;
 
@@ -454,7 +460,7 @@ bool HitTestResult::hasEntireImage() const
     if (imageURL.isEmpty() || imageRect().isEmpty())
         return false;
 
-    auto* innerFrame = innerNodeFrame();
+    RefPtr innerFrame = innerNodeFrame();
     if (!innerFrame)
         return false;
 
@@ -728,7 +734,7 @@ bool HitTestResult::isOverTextInsideFormControlElement() const
     if (!element || !element->isTextField())
         return false;
 
-    auto* frame = element->document().frame();
+    RefPtr frame = element->document().frame();
     if (!frame)
         return false;
 
@@ -807,7 +813,7 @@ bool HitTestResult::isContentEditable() const
 }
 
 template<typename RectType>
-inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const RectType& rect)
+inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* nodeArg, const HitTestRequest& request, const HitTestLocation& locationInContainer, const RectType& rect)
 {
     // If it is not a list-based hit test, this method has to be no-op.
     if (!request.resultIsElementList()) {
@@ -815,8 +821,10 @@ inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* n
         return HitTestProgress::Stop;
     }
 
-    if (!node)
+    if (!nodeArg)
         return HitTestProgress::Continue;
+
+    RefPtr node = nodeArg;
 
     if ((request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
         || (request.disallowsUserAgentShadowContentExceptForImageOverlays() && !ImageOverlay::isInsideOverlay(*node) && node->isInUserAgentShadowTree()))
@@ -894,23 +902,13 @@ Vector<String> HitTestResult::dictationAlternatives() const
     return frame->editor().dictationAlternativesForMarker(*marker);
 }
 
-RefPtr<Node> HitTestResult::protectedTargetNode() const
-{
-    return innerNode();
-}
-
 Element* HitTestResult::targetElement() const
 {
-    for (Node* node = m_innerNode.get(); node; node = node->parentInComposedTree()) {
+    for (RefPtr node = m_innerNode.get(); node; node = node->parentInComposedTree()) {
         if (auto* element = dynamicDowncast<Element>(*node))
             return element;
     }
     return nullptr;
-}
-
-RefPtr<Element> HitTestResult::protectedTargetElement() const
-{
-    return targetElement();
 }
 
 Element* HitTestResult::innerNonSharedElement() const
@@ -925,13 +923,13 @@ Element* HitTestResult::innerNonSharedElement() const
 
 String HitTestResult::linkSuggestedFilename() const
 {
-    auto* urlElement = URLElement();
+    RefPtr urlElement = URLElement();
     if (!is<HTMLAnchorElement>(urlElement))
         return nullAtom();
     return ResourceResponse::sanitizeSuggestedFilename(urlElement->attributeWithoutSynchronization(HTMLNames::downloadAttr));
 }
 
-bool HitTestResult::mediaSupportsEnhancedFullscreen() const
+bool HitTestResult::mediaSupportsPictureInPicture() const
 {
 #if PLATFORM(MAC) && ENABLE(VIDEO) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (RefPtr mediaElt = mediaElement())
@@ -940,7 +938,7 @@ bool HitTestResult::mediaSupportsEnhancedFullscreen() const
     return false;
 }
 
-bool HitTestResult::mediaIsInEnhancedFullscreen() const
+bool HitTestResult::mediaIsInPictureInPicture() const
 {
 #if PLATFORM(MAC) && ENABLE(VIDEO) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (RefPtr mediaElt = mediaElement())
@@ -949,7 +947,7 @@ bool HitTestResult::mediaIsInEnhancedFullscreen() const
     return false;
 }
 
-void HitTestResult::toggleEnhancedFullscreenForVideo() const
+void HitTestResult::togglePictureInPictureForVideo() const
 {
 #if PLATFORM(MAC) && ENABLE(VIDEO) && ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr mediaElement(this->mediaElement());
@@ -965,16 +963,6 @@ void HitTestResult::toggleEnhancedFullscreenForVideo() const
 #endif
 }
 
-RefPtr<Node> HitTestResult::protectedInnerNonSharedNode() const
-{
-    return innerNonSharedNode();
-}
-
-RefPtr<Element> HitTestResult::protectedURLElement() const
-{
-    return URLElement();
-}
-
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 HTMLImageElement* HitTestResult::imageElement() const
 {
@@ -985,7 +973,7 @@ HTMLImageElement* HitTestResult::imageElement() const
 
 bool HitTestResult::isAnimating() const
 {
-    if (auto* imageElement = this->imageElement())
+    if (RefPtr imageElement = this->imageElement())
         return imageElement->allowsAnimation();
     return false;
 }
@@ -1002,7 +990,7 @@ void HitTestResult::pauseAnimation() const
 
 void HitTestResult::setAllowsAnimation(bool allowAnimation) const
 {
-    if (auto* imageElement = this->imageElement()) {
+    if (RefPtr imageElement = this->imageElement()) {
         imageElement->setAllowsAnimation(allowAnimation);
         if (auto* renderer = m_innerNonSharedNode->renderer())
             renderer->repaint();

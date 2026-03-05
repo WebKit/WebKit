@@ -184,7 +184,7 @@ void AsyncSSLSocket::OnConnectEvent(Socket* socket) {
   if (res != sizeof(kSslClientHello)) {
     RTC_LOG(LS_ERROR) << "Sending fake SSL ClientHello message failed.";
     Close();
-    SignalCloseEvent(this, 0);
+    NotifyCloseEvent(this, 0);
   }
 }
 
@@ -195,7 +195,7 @@ void AsyncSSLSocket::ProcessInput(char* data, size_t* len) {
   if (memcmp(kSslServerHello, data, sizeof(kSslServerHello)) != 0) {
     RTC_LOG(LS_ERROR) << "Received non-matching fake SSL ServerHello message.";
     Close();
-    SignalCloseEvent(this, 0);  // TODO: error code?
+    NotifyCloseEvent(this, 0);  // TODO: error code?
     return;
   }
 
@@ -206,7 +206,7 @@ void AsyncSSLSocket::ProcessInput(char* data, size_t* len) {
 
   bool remainder = (*len > 0);
   BufferInput(false);
-  SignalConnectEvent(this);
+  NotifyConnectEvent(this);
 
   // FIX: if SignalConnect causes the socket to be destroyed, we are in trouble
   if (remainder)

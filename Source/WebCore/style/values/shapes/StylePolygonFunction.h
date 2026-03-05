@@ -34,7 +34,7 @@ namespace WebCore {
 namespace Style {
 
 struct Polygon {
-    using Vertex = SpaceSeparatedPoint<LengthPercentage<>>;
+    using Vertex = SpaceSeparatedPoint<LengthPercentage<CSS::AllUnzoomed>>;
     using Vertices = CommaSeparatedVector<Vertex>;
 
     // FIXME: Add support the "round" clause.
@@ -56,8 +56,8 @@ template<size_t I> const auto& get(const Polygon& value)
 
 DEFINE_TYPE_MAPPING(CSS::Polygon, Polygon)
 
-template<> struct PathComputation<Polygon> { WebCore::Path operator()(const Polygon&, const FloatRect&); };
-template<> struct WindRuleComputation<Polygon> { WebCore::WindRule operator()(const Polygon&); };
+template<> struct PathComputation<Polygon> { WebCore::Path operator()(const Polygon&, const FloatRect&, ZoomFactor); };
+template<> struct WindRuleComputation<Polygon> { WebCore::WindRule NODELETE operator()(const Polygon&); };
 
 template<> struct Blending<Polygon> {
     auto canBlend(const Polygon&, const Polygon&) -> bool;

@@ -28,7 +28,7 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
-#include <WebCore/Supplementable.h>
+#include "Supplementable.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -37,7 +37,7 @@ class DeferredPromise;
 class Document;
 
 class DocumentPictureInPicture : public Supplement<Document> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentPictureInPicture);
+    WTF_MAKE_TZONE_ALLOCATED(DocumentPictureInPicture);
 public:
     virtual ~DocumentPictureInPicture();
 

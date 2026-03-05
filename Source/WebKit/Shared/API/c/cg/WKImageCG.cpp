@@ -31,7 +31,7 @@
 #include "WebImage.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/ImageBufferUtilitiesCG.h>
+#include <WebCore/ImageUtilities.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/ShareableBitmap.h>
 
@@ -66,12 +66,12 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
 
     graphicsContext.clearRect(rect);
     graphicsContext.drawNativeImage(*nativeImage, rect, rect);
-    return toAPILeakingRef(WTFMove(webImage));
+    return toAPILeakingRef(WTF::move(webImage));
 }
 
 WKStringRef WKImageCreateDataURLFromImage(CGImageRef imageRef)
 {
     String mimeType { "image/png"_s };
-    auto value = WebCore::dataURL(imageRef, mimeType, { });
+    auto value = WebCore::encodeDataURL(imageRef, mimeType, { });
     return WKStringCreateWithUTF8CString(value.utf8().data());
 }

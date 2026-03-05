@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSCell.h>
 #include <JavaScriptCore/PackedCellPtr.h>
 #include <JavaScriptCore/Watchpoint.h>
 

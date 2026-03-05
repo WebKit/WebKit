@@ -184,8 +184,8 @@ protected:
     void setObject(const String& name, Ref<ObjectBase>&&);
     void setArray(const String& name, Ref<ArrayBase>&&);
 
-    iterator find(const String& name);
-    const_iterator find(const String& name) const;
+    iterator find(const String& name) LIFETIME_BOUND;
+    const_iterator find(const String& name) const LIFETIME_BOUND;
 
     WTF_EXPORT_PRIVATE std::optional<bool> getBoolean(const String& name) const;
     WTF_EXPORT_PRIVATE std::optional<double> getDouble(const String& name) const;
@@ -268,7 +268,7 @@ public:
 
     size_t length() const { return m_map.size(); }
 
-    Ref<Value> get(size_t index) const;
+    Ref<Value> NODELETE get(size_t index) const;
 
 protected:
     ~ArrayBase();
@@ -281,10 +281,10 @@ protected:
     void pushObject(Ref<ObjectBase>&&);
     void pushArray(Ref<ArrayBase>&&);
 
-    iterator begin() { return m_map.begin(); }
-    iterator end() { return m_map.end(); }
-    const_iterator begin() const { return m_map.begin(); }
-    const_iterator end() const { return m_map.end(); }
+    iterator begin() LIFETIME_BOUND { return m_map.begin(); }
+    iterator end() LIFETIME_BOUND { return m_map.end(); }
+    const_iterator begin() const LIFETIME_BOUND { return m_map.begin(); }
+    const_iterator end() const LIFETIME_BOUND { return m_map.end(); }
 
 protected:
     ArrayBase();
@@ -315,12 +315,12 @@ public:
     using ArrayBase::end;
 };
 
-inline ObjectBase::iterator ObjectBase::find(const String& name)
+inline ObjectBase::iterator ObjectBase::find(const String& name) LIFETIME_BOUND
 {
     return m_map.find(name);
 }
 
-inline ObjectBase::const_iterator ObjectBase::find(const String& name) const
+inline ObjectBase::const_iterator ObjectBase::find(const String& name) const LIFETIME_BOUND
 {
     return m_map.find(name);
 }
@@ -347,19 +347,19 @@ inline void ObjectBase::setString(const String& name, const String& value)
 
 inline void ObjectBase::setValue(const String& name, Ref<Value>&& value)
 {
-    if (m_map.set(name, WTFMove(value)).isNewEntry)
+    if (m_map.set(name, WTF::move(value)).isNewEntry)
         m_order.append(name);
 }
 
 inline void ObjectBase::setObject(const String& name, Ref<ObjectBase>&& value)
 {
-    if (m_map.set(name, WTFMove(value)).isNewEntry)
+    if (m_map.set(name, WTF::move(value)).isNewEntry)
         m_order.append(name);
 }
 
 inline void ObjectBase::setArray(const String& name, Ref<ArrayBase>&& value)
 {
-    if (m_map.set(name, WTFMove(value)).isNewEntry)
+    if (m_map.set(name, WTF::move(value)).isNewEntry)
         m_order.append(name);
 }
 
@@ -385,17 +385,17 @@ inline void ArrayBase::pushString(const String& value)
 
 inline void ArrayBase::pushValue(Ref<Value>&& value)
 {
-    m_map.append(WTFMove(value));
+    m_map.append(WTF::move(value));
 }
 
 inline void ArrayBase::pushObject(Ref<ObjectBase>&& value)
 {
-    m_map.append(WTFMove(value));
+    m_map.append(WTF::move(value));
 }
 
 inline void ArrayBase::pushArray(Ref<ArrayBase>&& value)
 {
-    m_map.append(WTFMove(value));
+    m_map.append(WTF::move(value));
 }
 
 template<typename T>
@@ -442,21 +442,21 @@ public:
         requires (std::is_base_of_v<Value, V> && !std::is_base_of_v<ObjectBase, V> && !std::is_base_of_v<ArrayBase, V>)
     void addItem(Ref<Value>&& value)
     {
-        castedArray().pushValue(WTFMove(value));
+        castedArray().pushValue(WTF::move(value));
     }
 
     template<typename V = T>
         requires (std::is_base_of_v<ObjectBase, V>)
     void addItem(Ref<ObjectBase>&& value)
     {
-        castedArray().pushObject(WTFMove(value));
+        castedArray().pushObject(WTF::move(value));
     }
 
     template<typename V = T>
         requires (std::is_base_of_v<ArrayBase, V>)
     void addItem(Ref<ArrayBase>&& value)
     {
-        castedArray().pushArray(WTFMove(value));
+        castedArray().pushArray(WTF::move(value));
     }
 
     static Ref<ArrayOf<T>> create()

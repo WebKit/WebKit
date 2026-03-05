@@ -19,17 +19,31 @@ PASS createDocument test: characterSet aliases for null,"foo1",null
 PASS createDocument test: null,"ெfoo",null,null
 PASS createDocument test: metadata for null,"ெfoo",null
 PASS createDocument test: characterSet aliases for null,"ெfoo",null
-PASS createDocument test: null,";foo",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: null,";foo",null,null Invalid qualified name start in ';foo'
+FAIL createDocument test: metadata for null,";foo",null Invalid qualified name start in ';foo'
+FAIL createDocument test: characterSet aliases for null,";foo",null Invalid qualified name start in ';foo'
 PASS createDocument test: null,"}foo",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: null,"f}oo",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: null,"foo}",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: null,"\ufffffoo",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: null,"f\uffffoo",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: null,"foo\uffff",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: null,"f}oo",null,null Invalid qualified name part in 'f}oo'
+FAIL createDocument test: metadata for null,"f}oo",null Invalid qualified name part in 'f}oo'
+FAIL createDocument test: characterSet aliases for null,"f}oo",null Invalid qualified name part in 'f}oo'
+FAIL createDocument test: null,"foo}",null,null Invalid qualified name part in 'foo}'
+FAIL createDocument test: metadata for null,"foo}",null Invalid qualified name part in 'foo}'
+FAIL createDocument test: characterSet aliases for null,"foo}",null Invalid qualified name part in 'foo}'
+FAIL createDocument test: null,"\ufffffoo",null,null Invalid qualified name start in '￿foo'
+FAIL createDocument test: metadata for null,"\ufffffoo",null Invalid qualified name start in '￿foo'
+FAIL createDocument test: characterSet aliases for null,"\ufffffoo",null Invalid qualified name start in '￿foo'
+FAIL createDocument test: null,"f\uffffoo",null,null Invalid qualified name part in 'f￿oo'
+FAIL createDocument test: metadata for null,"f\uffffoo",null Invalid qualified name part in 'f￿oo'
+FAIL createDocument test: characterSet aliases for null,"f\uffffoo",null Invalid qualified name part in 'f￿oo'
+FAIL createDocument test: null,"foo\uffff",null,null Invalid qualified name part in 'foo￿'
+FAIL createDocument test: metadata for null,"foo\uffff",null Invalid qualified name part in 'foo￿'
+FAIL createDocument test: characterSet aliases for null,"foo\uffff",null Invalid qualified name part in 'foo￿'
 PASS createDocument test: null,"<foo",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,"foo>",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,"<foo>",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: null,"f<oo",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: null,"f<oo",null,null Invalid qualified name part in 'f<oo'
+FAIL createDocument test: metadata for null,"f<oo",null Invalid qualified name part in 'f<oo'
+FAIL createDocument test: characterSet aliases for null,"f<oo",null Invalid qualified name part in 'f<oo'
 PASS createDocument test: null,"^^",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,"fo o",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,"-foo",null,"INVALID_CHARACTER_ERR"
@@ -37,7 +51,7 @@ PASS createDocument test: null,".foo",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,":foo",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,"f:oo",null,"NAMESPACE_ERR"
 PASS createDocument test: null,"foo:",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: null,"f:o:o",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: null,"f:o:o",null,"NAMESPACE_ERR" assert_throws_dom: function "function() { document.implementation.createDocument(namespace, qualifiedName, doctype) }" threw object "InvalidCharacterError: Unexpected colon in qualified name 'f:o:o'" that is not a DOMException NAMESPACE_ERR: property "code" is equal to 5, expected 14
 PASS createDocument test: null,":",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,"xml",null,null
 PASS createDocument test: metadata for null,"xml",null
@@ -91,7 +105,9 @@ PASS createDocument test: metadata for "http://example.com/","foo",null
 PASS createDocument test: characterSet aliases for "http://example.com/","foo",null
 PASS createDocument test: "http://example.com/","1foo",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: "http://example.com/","<foo>",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: "http://example.com/","fo<o",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: "http://example.com/","fo<o",null,null Invalid qualified name part in 'fo<o'
+FAIL createDocument test: metadata for "http://example.com/","fo<o",null Invalid qualified name part in 'fo<o'
+FAIL createDocument test: characterSet aliases for "http://example.com/","fo<o",null Invalid qualified name part in 'fo<o'
 PASS createDocument test: "http://example.com/","-foo",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: "http://example.com/",".foo",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: "http://example.com/","f1oo",null,null
@@ -104,24 +120,36 @@ PASS createDocument test: "http://example.com/",":foo",null,"INVALID_CHARACTER_E
 PASS createDocument test: "http://example.com/","f:oo",null,null
 PASS createDocument test: metadata for "http://example.com/","f:oo",null
 PASS createDocument test: characterSet aliases for "http://example.com/","f:oo",null
-PASS createDocument test: "http://example.com/","f:o:o",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: "http://example.com/","f:o:o",null,null Unexpected colon in qualified name 'f:o:o'
+FAIL createDocument test: metadata for "http://example.com/","f:o:o",null Unexpected colon in qualified name 'f:o:o'
+FAIL createDocument test: characterSet aliases for "http://example.com/","f:o:o",null Unexpected colon in qualified name 'f:o:o'
 PASS createDocument test: "http://example.com/","foo:",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: "http://example.com/","f::oo",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: "http://example.com/","a:0",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: "http://example.com/","0:a",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: "http://example.com/","0:a",null,null Invalid qualified name start in '0:a'
+FAIL createDocument test: metadata for "http://example.com/","0:a",null Invalid qualified name start in '0:a'
+FAIL createDocument test: characterSet aliases for "http://example.com/","0:a",null Invalid qualified name start in '0:a'
 PASS createDocument test: "http://example.com/","a:_",null,null
 PASS createDocument test: metadata for "http://example.com/","a:_",null
 PASS createDocument test: characterSet aliases for "http://example.com/","a:_",null
 PASS createDocument test: "http://example.com/","a:ெ",null,null
 PASS createDocument test: metadata for "http://example.com/","a:ெ",null
 PASS createDocument test: characterSet aliases for "http://example.com/","a:ெ",null
-PASS createDocument test: "http://example.com/","a:;",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: "http://example.com/","a:̀",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: "http://example.com/","a:;",null,null Invalid qualified name start in 'a:;'
+FAIL createDocument test: metadata for "http://example.com/","a:;",null Invalid qualified name start in 'a:;'
+FAIL createDocument test: characterSet aliases for "http://example.com/","a:;",null Invalid qualified name start in 'a:;'
+FAIL createDocument test: "http://example.com/","a:̀",null,null Invalid qualified name start in 'a:̀'
+FAIL createDocument test: metadata for "http://example.com/","a:̀",null Invalid qualified name start in 'a:̀'
+FAIL createDocument test: characterSet aliases for "http://example.com/","a:̀",null Invalid qualified name start in 'a:̀'
 PASS createDocument test: "http://example.com/","ெ:a",null,null
 PASS createDocument test: metadata for "http://example.com/","ெ:a",null
 PASS createDocument test: characterSet aliases for "http://example.com/","ெ:a",null
-PASS createDocument test: "http://example.com/","̀:a",null,"INVALID_CHARACTER_ERR"
-PASS createDocument test: "http://example.com/",";:a",null,"INVALID_CHARACTER_ERR"
+FAIL createDocument test: "http://example.com/","̀:a",null,null Invalid qualified name start in '̀:a'
+FAIL createDocument test: metadata for "http://example.com/","̀:a",null Invalid qualified name start in '̀:a'
+FAIL createDocument test: characterSet aliases for "http://example.com/","̀:a",null Invalid qualified name start in '̀:a'
+FAIL createDocument test: "http://example.com/",";:a",null,null Invalid qualified name start in ';:a'
+FAIL createDocument test: metadata for "http://example.com/",";:a",null Invalid qualified name start in ';:a'
+FAIL createDocument test: characterSet aliases for "http://example.com/",";:a",null Invalid qualified name start in ';:a'
 PASS createDocument test: "http://example.com/","a:aெ",null,null
 PASS createDocument test: metadata for "http://example.com/","a:aெ",null
 PASS createDocument test: characterSet aliases for "http://example.com/","a:aெ",null

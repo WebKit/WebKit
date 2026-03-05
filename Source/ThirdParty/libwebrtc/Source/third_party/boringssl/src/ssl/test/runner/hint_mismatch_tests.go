@@ -441,7 +441,7 @@ func addHintMismatchTests() {
 				"-install-cert-compression-algs",
 			},
 			expectations: connectionExpectations{
-				// The shim's configuration should take precendence.
+				// The shim's configuration should take precedence.
 				peerCertificate: rsaCertificate.WithOCSP(testOCSPResponse),
 			},
 		})

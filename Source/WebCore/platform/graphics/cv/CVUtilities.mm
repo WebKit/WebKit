@@ -28,6 +28,7 @@
 
 #import "ColorSpaceCG.h"
 #import "IOSurface.h"
+#import "ImageUtilities.h"
 #import "Logging.h"
 #import "RealtimeVideoUtilities.h"
 #import <wtf/CheckedArithmetic.h>
@@ -208,6 +209,114 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, 
     status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     ASSERT(!status);
     return adoptCF(pixelBuffer);
+}
+
+namespace {
+
+class CVPixelBufferDataProviderInfo {
+    WTF_MAKE_NONCOPYABLE(CVPixelBufferDataProviderInfo);
+public:
+    static RetainPtr<CGDataProviderRef> createDataProvider(RetainPtr<CVPixelBufferRef>&&);
+
+private:
+    CVPixelBufferDataProviderInfo(RetainPtr<CVPixelBufferRef>&& pixelBuffer)
+        : m_pixelBuffer(WTF::move(pixelBuffer))
+    {
+    }
+    ~CVPixelBufferDataProviderInfo();
+    const void* getBytePointer();
+    void releaseBytePointer();
+
+    static const void* getBytePointerCallback(void* info) { RELEASE_ASSERT(info); return static_cast<CVPixelBufferDataProviderInfo*>(info)->getBytePointer(); }
+    static void releaseBytePointerCallback(void* info, const void*) { RELEASE_ASSERT(info); static_cast<CVPixelBufferDataProviderInfo*>(info)->releaseBytePointer(); }
+    static void releaseInfoCallback(void* info) { RELEASE_ASSERT(info); delete static_cast<CVPixelBufferDataProviderInfo*>(info); }
+
+    const RetainPtr<CVPixelBufferRef> m_pixelBuffer;
+    unsigned m_lockCount { 0 };
+};
+
+RetainPtr<CGDataProviderRef> CVPixelBufferDataProviderInfo::createDataProvider(RetainPtr<CVPixelBufferRef>&& pixelBuffer)
+{
+    if (CVPixelBufferGetPixelFormatType(pixelBuffer.get()) != kCVPixelFormatType_32BGRA)
+        return nullptr;
+    auto dataSize = CVPixelBufferGetDataSize(pixelBuffer.get());
+    if (!dataSize)
+        return nullptr;
+    CVPixelBufferDataProviderInfo* info = new CVPixelBufferDataProviderInfo(WTF::move(pixelBuffer));
+    CGDataProviderDirectCallbacks providerCallbacks = { 0, getBytePointerCallback, releaseBytePointerCallback, 0, releaseInfoCallback };
+    return adoptCF(CGDataProviderCreateDirect(info, dataSize, &providerCallbacks));
+}
+
+CVPixelBufferDataProviderInfo::~CVPixelBufferDataProviderInfo()
+{
+    if (!m_lockCount)
+        return;
+    RELEASE_LOG_ERROR(Media, "lockCount != 0: %d", m_lockCount);
+    ASSERT_NOT_REACHED();
+    // To avoid UAF, we do not unlock the pixel buffer.
+}
+
+const void* CVPixelBufferDataProviderInfo::getBytePointer()
+{
+    auto result = CVPixelBufferLockBaseAddress(m_pixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+    if (result != kCVReturnSuccess) {
+        RELEASE_LOG_ERROR(Media, "CVPixelBufferLockBaseAddress() error: %d", result);
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    ++m_lockCount;
+    auto bytes = CVPixelBufferGetSpan(m_pixelBuffer.get());
+    if (!bytes.data()) {
+        RELEASE_LOG_ERROR(Media, "CVPixelBufferGetSpan() null");
+        return nullptr;
+    }
+    verifyImageBufferIsBigEnough(bytes);
+    return bytes.data();
+}
+
+void CVPixelBufferDataProviderInfo::releaseBytePointer()
+{
+    auto result = CVPixelBufferUnlockBaseAddress(m_pixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+    if (result != kCVReturnSuccess) {
+        RELEASE_LOG_ERROR(Media, "CVPixelBufferUnlockBaseAddress() error: %d", result);
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (!m_lockCount) {
+        RELEASE_LOG_ERROR(Media, "invalid releaseBytePointer()");
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    --m_lockCount;
+}
+
+}
+
+RetainPtr<CGImageRef> createImageFrom32BGRAPixelBuffer(RetainPtr<CVPixelBufferRef>&& buffer, CGColorSpaceRef colorSpace)
+{
+    if (!buffer)
+        return nullptr;
+    const CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaFirst);
+    const size_t bitsPerComponent = 8;
+    const size_t bitsPerPixel = 32;
+    const size_t width = CVPixelBufferGetWidth(buffer.get());
+    const size_t height = CVPixelBufferGetHeight(buffer.get());
+    const size_t bytesPerRow = CVPixelBufferGetBytesPerRow(buffer.get());
+    RetainPtr provider = CVPixelBufferDataProviderInfo::createDataProvider(WTF::move(buffer));
+    if (!provider)
+        return nullptr;
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider.get(), nullptr, false, kCGRenderingIntentDefault));
+    if (!image)
+        return nullptr;
+    // For historical reasons, CoreAnimation will adjust certain video color
+    // spaces when displaying the video. If the video frame derived image we
+    // create here is drawn to an accelerated image buffer (e.g. for a canvas),
+    // CA may not do this same adjustment, resulting in the canvas pixels not
+    // matching the source video. Setting this CGImage property (despite the
+    // image not being IOSurface backed), avoids this non-adjustment of the
+    // image color space. <rdar://88804270>
+    CGImageSetProperty(image.get(), CFSTR("CA_IOSURFACE_IMAGE"), kCFBooleanTrue);
+    return image;
 }
 
 }

@@ -129,6 +129,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/TemporalPlainMonthDayPrototype.cpp
     runtime/TemporalPlainTimeConstructor.cpp
     runtime/TemporalPlainTimePrototype.cpp
+    runtime/TemporalPlainYearMonthConstructor.cpp
+    runtime/TemporalPlainYearMonthPrototype.cpp
     runtime/TemporalTimeZoneConstructor.cpp
     runtime/TemporalTimeZonePrototype.cpp
 
@@ -151,6 +153,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/WebAssemblyModulePrototype.cpp
     wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
     wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
+    wasm/js/WebAssemblySuspendErrorConstructor.cpp
+    wasm/js/WebAssemblySuspendErrorPrototype.cpp
     wasm/js/WebAssemblyStructConstructor.cpp
     wasm/js/WebAssemblyStructPrototype.cpp
     wasm/js/WebAssemblyTableConstructor.cpp
@@ -165,10 +169,8 @@ list(APPEND JavaScriptCore_SOURCES
 
 set(JavaScriptCore_FRAMEWORKS
     WTF
+    bmalloc
 )
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND JavaScriptCore_FRAMEWORKS bmalloc)
-endif ()
 
 if (USE_CAPSTONE)
     list(APPEND JavaScriptCore_LIBRARIES capstone)
@@ -212,7 +214,6 @@ set(BUILD_VARIANTS
 
 set(LLINT_ASM
     llint/InPlaceInterpreter.asm
-    llint/InPlaceInterpreter32_64.asm
     llint/InPlaceInterpreter64.asm
     llint/LowLevelInterpreter.asm
     llint/LowLevelInterpreter32_64.asm
@@ -263,7 +264,7 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generator/main.rb
     DEPENDS ${GENERATOR} bytecode/BytecodeList.rb ${JAVASCRIPTCORE_DIR}/wasm/wasm.json
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h --init_bytecodes_asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm --bytecode_structs_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h --bytecode_indices_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb --wasm_json ${JAVASCRIPTCORE_DIR}/wasm/wasm.json  --bytecode_dumper ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
+    COMMAND ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h --init_bytecodes_asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm --bytecode_structs_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h --bytecode_indices_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb --wasm_json ${JAVASCRIPTCORE_DIR}/wasm/wasm.json  --bytecode_dumper ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
     VERBATIM)
 add_custom_target(Bytecodes DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h")
 
@@ -294,7 +295,7 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcodeGenerated.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes
     DEPENDS ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes VERBATIM
+    COMMAND ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes VERBATIM
     WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
 )
 
@@ -307,14 +308,14 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb
     DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${OFFLINE_ASM_BACKEND}
+    COMMAND ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${OFFLINE_ASM_BACKEND}
     VERBATIM)
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb
     DEPENDS LLIntSettingsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntSettingsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND} ${BUILD_VARIANTS}
+    COMMAND ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntSettingsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND} ${BUILD_VARIANTS}
     VERBATIM)
 
 # JSCBuiltins
@@ -348,7 +349,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/FunctionPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/GeneratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalOperations.js
-    ${JAVASCRIPTCORE_DIR}/builtins/InternalPromiseConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorHelpers.js
     ${JAVASCRIPTCORE_DIR}/builtins/JSIteratorConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/JSIteratorHelperPrototype.js
@@ -360,7 +360,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/ObjectConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/PromiseConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/PromiseOperations.js
-    ${JAVASCRIPTCORE_DIR}/builtins/PromisePrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/ProxyHelpers.js
     ${JAVASCRIPTCORE_DIR}/builtins/ReflectObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/RegExpPrototype.js
@@ -450,7 +449,7 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb
     DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
-    COMMAND ${CMAKE_COMMAND} -E env CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID} GCC_OFFLINEASM_SOURCE_MAP=${GCC_OFFLINEASM_SOURCE_MAP} ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntOffsetsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput} ${BUILD_VARIANTS} ${OFFLINE_ASM_ARGS}
+    COMMAND ${CMAKE_COMMAND} -E env CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID} GCC_OFFLINEASM_SOURCE_MAP=${GCC_OFFLINEASM_SOURCE_MAP} ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntOffsetsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput} ${BUILD_VARIANTS} ${OFFLINE_ASM_ARGS}
     COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
     WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
     VERBATIM)
@@ -587,6 +586,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     API/glib/JSCWrapperMap.h
 
     assembler/ARM64Assembler.h
+    assembler/ARM64EAssembler.h
     assembler/ARM64Registers.h
     assembler/ARMv7Assembler.h
     assembler/ARMv7Registers.h
@@ -617,6 +617,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/RegisterInfo.h
     assembler/SecureARM64EHashPins.h
     assembler/SecureARM64EHashPinsInlines.h
+    assembler/TargetAssemblerDefinitions.h
     assembler/X86Assembler.h
     assembler/X86_64Registers.h
 
@@ -972,7 +973,11 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     llint/LLIntPCRanges.h
     llint/LLIntThunks.h
 
+    lol/LOLJIT.h
+    lol/LOLRegisterAllocator.h
+
     parser/Lexer.h
+    parser/LexerUnicodeProperties.h
     parser/ParserArena.h
     parser/ParserError.h
     parser/ParserModes.h
@@ -1043,7 +1048,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CacheUpdate.h
     runtime/CagedBarrierPtr.h
     runtime/CallData.h
-    runtime/CatchScope.h
+    runtime/TopExceptionScope.h
     runtime/ClassInfo.h
     runtime/ClonedArguments.h
     runtime/CodeSpecializationKind.h
@@ -1060,6 +1065,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ConstructData.h
     runtime/ConstructorKind.h
     runtime/ControlFlowProfiler.h
+    runtime/CrossTaskToken.h
     runtime/CustomGetterSetter.h
     runtime/DOMAnnotation.h
     runtime/DataView.h
@@ -1085,6 +1091,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ErrorInstance.h
     runtime/ErrorPrototype.h
     runtime/ErrorType.h
+    runtime/EvacuatedStack.h
     runtime/EvalExecutable.h
     runtime/Exception.h
     runtime/ExceptionEventLocation.h
@@ -1136,6 +1143,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Int32Array.h
     runtime/Int8Array.h
     runtime/InternalFunction.h
+    runtime/IntlObject.h
     runtime/Intrinsic.h
     runtime/IterationKind.h
     runtime/IteratorOperations.h
@@ -1178,6 +1186,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSFloat64Array.h
     runtime/JSFunction.h
     runtime/JSFunctionInlines.h
+    runtime/JSFunctionWithFields.h
     runtime/JSGenerator.h
     runtime/JSGeneratorFunction.h
     runtime/JSGenericTypedArrayView.h
@@ -1203,6 +1212,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSMap.h
     runtime/JSMapInlines.h
     runtime/JSMapIterator.h
+    runtime/JSMicrotaskDispatcher.h
     runtime/MapIteratorPrototype.h
     runtime/MapIteratorPrototypeInlines.h
     runtime/JSMicrotask.h
@@ -1258,6 +1268,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/LeafExecutable.h
     runtime/Lookup.h
     runtime/MachineContext.h
+    runtime/MarkedVector.h
     runtime/MatchResult.h
     runtime/MathCommon.h
     runtime/MathObject.h
@@ -1288,6 +1299,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/OrderedHashTableHelper.h
     runtime/PageCount.h
     runtime/ParseInt.h
+    runtime/PinballCompletion.h
     runtime/PrivateFieldPutKind.h
     runtime/PrivateName.h
     runtime/ProfilerSupport.h
@@ -1413,6 +1425,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     tools/LLVMProfiling.h
     tools/SourceProfiler.h
 
+    wasm/WasmAddressType.h
     wasm/WasmBaselineData.h
     wasm/WasmBranchHints.h
     wasm/WasmCallProfile.h
@@ -1461,6 +1474,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/debugger/WasmDebugServer.h
     wasm/debugger/WasmDebugServerUtilities.h
     wasm/debugger/WasmExecutionHandler.h
+    wasm/debugger/WasmGDBPacketParser.h
     wasm/debugger/WasmMemoryHandler.h
     wasm/debugger/WasmModuleDebugInfo.h
     wasm/debugger/WasmModuleManager.h
@@ -1473,14 +1487,19 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/js/JSWebAssemblyLinkError.h
     wasm/js/JSWebAssemblyMemory.h
     wasm/js/JSWebAssemblyModule.h
+    wasm/js/WebAssemblyPromising.h
+    wasm/js/WebAssemblySuspending.h
     wasm/js/JSWebAssemblyTable.h
     wasm/js/WebAssemblyBuiltin.h
+    wasm/js/WebAssemblyCompileOptions.h
     wasm/js/WebAssemblyFunction.h
     wasm/js/WebAssemblyFunctionBase.h
     wasm/js/WebAssemblyGCStructure.h
     wasm/js/WebAssemblyLinkErrorConstructor.h
     wasm/js/WebAssemblyLinkErrorPrototype.h
     wasm/js/WebAssemblyModuleRecord.h
+    wasm/js/WebAssemblySuspendingConstructor.h
+    wasm/js/WebAssemblySuspendingPrototype.h
     wasm/js/WebAssemblyWrapperFunction.h
 
     yarr/RegularExpression.h
@@ -1514,6 +1533,15 @@ add_custom_command(
     VERBATIM)
 list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/RegExpJitTables.h)
 WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/YarrPattern.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/RegExpJitTables.h)
+
+add_custom_command(
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LexerUnicodePropertyTables.h
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/parser/generateLexerUnicodePropertyTables.py
+    DEPENDS ${JAVASCRIPTCORE_DIR}/ucd/UnicodeData.txt
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/parser/generateLexerUnicodePropertyTables.py ${JAVASCRIPTCORE_DIR}/ucd/UnicodeData.txt ${JavaScriptCore_DERIVED_SOURCES_DIR}/LexerUnicodePropertyTables.h
+    VERBATIM)
+list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/LexerUnicodePropertyTables.h)
+WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/LexerUnicodePropertyTables.h)
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/UnicodePatternTables.h
@@ -1676,7 +1704,7 @@ endif ()
 if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
     message(STATUS "Enabling asm postprocessing")
 
-    set(LowLevelInterpreter_LAUNCHER "${RUBY_EXECUTABLE} ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/postprocess-asm")
+    set(LowLevelInterpreter_LAUNCHER "${Ruby_EXECUTABLE} ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/postprocess-asm")
     get_target_property(PROP_RULE_LAUNCH_COMPILE LowLevelInterpreterLib RULE_LAUNCH_COMPILE)
     if (PROP_RULE_LAUNCH_COMPILE)
         set(LowLevelInterpreter_LAUNCHER "${LowLevelInterpreter_LAUNCHER} ${PROP_RULE_LAUNCH_COMPILE}")
@@ -1691,6 +1719,19 @@ if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
         PROPERTIES
         COMPILE_DEFINITIONS "POSTPROCESS_ASM=llint/LowLevelInterpreter.cpp"
         COMPILE_OPTIONS "-fno-lto")
+endif ()
+
+# Windows ARM64: Disable unwind tables to work around LLVM bug #47432
+# (alignment directives in inline asm break SEH unwind info calculation)
+if (WIN32 AND WTF_CPU_ARM64)
+    target_compile_options(LowLevelInterpreterLib PRIVATE /clang:-fno-unwind-tables)
+
+    # Also disable for other files with alignment directives in inline asm
+    set_source_files_properties(
+        assembler/MacroAssemblerARM64.cpp
+        jit/ThunkGenerators.cpp
+        PROPERTIES COMPILE_FLAGS "/clang:-fno-unwind-tables"
+    )
 endif ()
 
 # When building JavaScriptCore as an object library, we need to make sure the

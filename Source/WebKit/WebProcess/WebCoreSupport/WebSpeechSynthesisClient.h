@@ -50,7 +50,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& voiceList() override;
+    const Vector<Ref<WebCore::PlatformSpeechSynthesisVoice>>& voiceList() override;
     void speak(RefPtr<WebCore::PlatformSpeechSynthesisUtterance>) override;
     void cancel() override;
     void pause() override;
@@ -67,7 +67,7 @@ private:
     
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::SpeechSynthesisClientObserver> m_observer;
-    Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>> m_voices;
+    Vector<Ref<WebCore::PlatformSpeechSynthesisVoice>> m_voices;
 };
 
 } // namespace WebKit

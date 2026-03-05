@@ -33,7 +33,7 @@ public:
     static JSExposedToWorkerAndWindow* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
     {
         SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
-        JSExposedToWorkerAndWindow* ptr = new (NotNull, JSC::allocateCell<JSExposedToWorkerAndWindow>(vm)) JSExposedToWorkerAndWindow(structure, *globalObject, WTFMove(impl));
+        JSExposedToWorkerAndWindow* ptr = new (NotNull, JSC::allocateCell<JSExposedToWorkerAndWindow>(vm)) JSExposedToWorkerAndWindow(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -83,10 +83,8 @@ inline void* wrapperKey(ExposedToWorkerAndWindow* wrappableObject)
 }
 
 JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, ExposedToWorkerAndWindow&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, ExposedToWorkerAndWindow* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<ExposedToWorkerAndWindow>&&);
 ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, ExposedToWorkerAndWindow& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<ExposedToWorkerAndWindow>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<ExposedToWorkerAndWindow> {
     using WrapperClass = JSExposedToWorkerAndWindow;

@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <string>
 
+#include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
@@ -35,7 +36,8 @@ class TestController;
 
 class PacketSender {
  public:
-  PacketSender(TestController* test_controller,
+  PacketSender(const Environment& env,
+               TestController* test_controller,
                TaskQueueBase* worker_queue,
                scoped_refptr<PendingTaskSafetyFlag> task_safety_flag,
                const std::string& config_file_path);
@@ -54,6 +56,7 @@ class PacketSender {
   void UpdateTestSetting(size_t packet_size, int64_t send_interval_ms);
 
  private:
+  Environment env_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_queue_checker_;
   size_t packet_size_ RTC_GUARDED_BY(worker_queue_checker_);
   int64_t send_interval_ms_ RTC_GUARDED_BY(worker_queue_checker_);

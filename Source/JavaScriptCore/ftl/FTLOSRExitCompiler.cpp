@@ -158,7 +158,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         debugInfo->kind = exit.m_kind;
         debugInfo->exitIndex = exitID;
         debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
-        jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo, SavedFPWidth::DontSaveVectors);
+        jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo);
     }
 
     // The first thing we need to do is restablish our frame in the case of an exception.
@@ -483,7 +483,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     jit.checkStackPointerAlignment();
 
     {
-        auto allFTLCalleeSaves = RegisterSetBuilder::ftlCalleeSaveRegisters();
+        auto allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
         const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
         auto iterateCalleeSavesImpl = [&](auto check, auto func) {
             for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {

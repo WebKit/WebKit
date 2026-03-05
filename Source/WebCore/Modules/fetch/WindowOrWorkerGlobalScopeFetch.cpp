@@ -43,7 +43,7 @@ using FetchResponsePromise = DOMPromiseDeferred<IDLInterface<FetchResponse>>;
 // https://fetch.spec.whatwg.org/#dom-global-fetch
 static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, FetchRequest::Init&& init, FetchResponsePromise&& promise)
 {
-    auto requestOrException = FetchRequest::create(scope, WTFMove(input), WTFMove(init));
+    auto requestOrException = FetchRequest::create(scope, WTF::move(input), WTF::move(init));
     if (requestOrException.hasException()) {
         promise.reject(requestOrException.releaseException());
         return;
@@ -60,14 +60,14 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
         return;
     }
 
-    FetchResponse::fetch(scope, request.get(), [promise = WTFMove(promise), scope = Ref { scope }, userGestureToken = UserGestureIndicator::currentUserGesture()]<typename Result> (Result&& result) mutable {
-        scope->eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise), userGestureToken = WTFMove(userGestureToken), result = std::forward<Result>(result)] () mutable {
+    FetchResponse::fetch(scope, request.get(), [promise = WTF::move(promise), scope = Ref { scope }, userGestureToken = UserGestureIndicator::currentUserGesture()]<typename Result> (Result&& result) mutable {
+        scope->eventLoop().queueTask(TaskSource::Networking, [promise = WTF::move(promise), userGestureToken = WTF::move(userGestureToken), result = std::forward<Result>(result)] () mutable {
             if (!userGestureToken || userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !userGestureToken->processingUserGesture()) {
-                promise.settle(WTFMove(result));
+                promise.settle(WTF::move(result));
                 return;
             }
-            UserGestureIndicator gestureIndicator(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::ShouldPropagateToMicroTask::Yes);
-            promise.settle(WTFMove(result));
+            UserGestureIndicator gestureIndicator(userGestureToken, userGestureToken->scope(), UserGestureToken::ShouldPropagateToMicroTask::Yes);
+            promise.settle(WTF::move(result));
         });
     }, cachedResourceRequestInitiatorTypes().fetch);
 }
@@ -89,12 +89,12 @@ void WindowOrWorkerGlobalScopeFetch::fetch(DOMWindow& window, FetchRequest::Info
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
-    doFetch(*document, WTFMove(input), WTFMove(init), WTFMove(promise));
+    doFetch(*document, WTF::move(input), WTF::move(init), WTF::move(promise));
 }
 
 void WindowOrWorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
-    doFetch(scope, WTFMove(input), WTFMove(init), WTFMove(promise));
+    doFetch(scope, WTF::move(input), WTF::move(init), WTF::move(promise));
 }
 
 }

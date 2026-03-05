@@ -114,6 +114,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateHolePunch::supportsType(const MediaE
 }
 
 class MediaPlayerFactoryHolePunch final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerFactoryHolePunch);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaPlayerFactoryHolePunch);
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::HolePunch; };
 

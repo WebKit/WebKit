@@ -62,27 +62,29 @@ public:
     Ref<ModuleInformation>&& takeModuleInformation()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
         if (Options::enableWasmDebugger()) [[unlikely]]
-            m_moduleInformation->debugInfo->takeSource(WTFMove(m_source));
-        return WTFMove(m_moduleInformation);
+            m_moduleInformation->debugInfo->takeSource(WTF::move(m_source));
+#endif
+        return WTF::move(m_moduleInformation);
     }
 
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>>&& takeWasmToWasmExitStubs()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_wasmToWasmExitStubs);
+        return WTF::move(m_wasmToWasmExitStubs);
     }
 
     Vector<Vector<UnlinkedWasmToWasmCall>> takeWasmToWasmCallsites()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_unlinkedWasmToWasmCalls);
+        return WTF::move(m_unlinkedWasmToWasmCalls);
     }
 
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> takeWasmToJSExitStubs()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_wasmToJSExitStubs);
+        return WTF::move(m_wasmToJSExitStubs);
     }
 
     enum class State : uint8_t {

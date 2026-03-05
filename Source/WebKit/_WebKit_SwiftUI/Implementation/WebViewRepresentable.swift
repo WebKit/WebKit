@@ -58,6 +58,10 @@ struct WebViewRepresentable {
         let webView = page.backingWebView
         let environment = context.environment
 
+        #if ENABLE_WEBVIEW_ADDITIONAL_SETUP
+        performAdditionalPlatformViewUpdates(context: context)
+        #endif
+
         #if os(iOS)
         platformView.extrinsicSafeAreaInsets = safeAreaInsets
         #endif
@@ -164,9 +168,15 @@ final class WebViewCoordinator {
     }
 
     var configuration: WebViewRepresentable
+    #if ENABLE_WEBVIEW_ADDITIONAL_SETUP
+    var additionalInformation: Information?
+    #endif
 
     func update(_ view: CocoaWebViewAdapter, configuration: WebViewRepresentable, context: WebViewRepresentable.Context) {
         self.configuration = configuration
+        #if ENABLE_WEBVIEW_ADDITIONAL_SETUP
+        performAdditionalCoordinatorUpdates(context: context)
+        #endif
 
         #if canImport(SwiftUI, _version: "7.0.57")
         updateFindInteraction(view, context: context)

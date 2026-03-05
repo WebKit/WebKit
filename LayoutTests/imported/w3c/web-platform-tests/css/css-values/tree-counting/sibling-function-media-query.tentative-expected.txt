@@ -1,4 +1,6 @@
 
-PASS sibling-index() and sibling-count() are not valid in @media queries
-PASS @media queries with sibling-index() and sibling-count() as general-enclosed
+PASS Should be parseable: '(width > calc(0px * sibling-index()))'
+PASS Should be unknown: '(width > calc(0px * sibling-index()))'
+PASS Should be parseable: '(width > calc(0px * sibling-count()))'
+PASS Should be unknown: '(width > calc(0px * sibling-count()))'
 

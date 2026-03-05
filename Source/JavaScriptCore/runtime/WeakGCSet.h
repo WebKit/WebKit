@@ -36,8 +36,8 @@ namespace JSC {
 
 template<typename T>
 struct WeakGCSetHashTraits : HashTraits<Weak<T>> {
-    static constexpr bool hasIsReleasedWeakValueFunction = true;
-    static bool isReleasedWeakValue(const Weak<T>& value)
+    static constexpr bool hasIsWeakNullValueFunction = true;
+    static bool isWeakNullValue(const Weak<T>& value)
     {
         return !value.isHashTableDeletedValue() && !value.isHashTableEmptyValue() && !value;
     }
@@ -59,7 +59,8 @@ struct WeakGCSetHash {
 // FIXME: This doesn't currently accept WeakHandleOwners by default... it's probably not hard to add but it's not exactly clear how to handle multiple different handle owners for the same value.
 template<typename ValueArg, typename HashArg = WeakGCSetHash<ValueArg>, typename TraitsArg = WeakGCSetHashTraits<ValueArg>>
 class WeakGCSet final : public WeakGCHashTable {
-    WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(WeakGCSet);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakGCSet);
+    WTF_MAKE_NONCOPYABLE(WeakGCSet);
     using ValueType = Weak<ValueArg>;
     using HashSetType = UncheckedKeyHashSet<ValueType, HashArg, TraitsArg>;
 

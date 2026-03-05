@@ -41,7 +41,7 @@ extern "C" {
 // object should never leave the address space since the format is unstable.
 struct MLDSA65_private_key {
   union {
-    uint8_t bytes[32 + 32 + 64 + 256 * 4 * (5 + 6 + 6)];
+    uint8_t bytes[(32 + 64 + 256 * 4 * 6) + 32 + 256 * 4 * (5 + 6 + 6)];
     uint32_t alignment;
   } opaque;
 };
@@ -64,10 +64,6 @@ struct MLDSA65_prehash {
     uint64_t alignment;
   } opaque;
 };
-
-// MLDSA65_PRIVATE_KEY_BYTES is the number of bytes in an encoded ML-DSA-65
-// private key.
-#define MLDSA65_PRIVATE_KEY_BYTES 4032
 
 // MLDSA65_PUBLIC_KEY_BYTES is the number of bytes in an encoded ML-DSA-65
 // public key.
@@ -161,6 +157,17 @@ OPENSSL_EXPORT int MLDSA65_sign_message_representative(
     const struct MLDSA65_private_key *private_key,
     const uint8_t msg_rep[MLDSA_MU_BYTES]);
 
+// MLDSA65_verify_message_representative verifies that |signature| constitutes a
+// valid signature for the pre-hashed message |msg_rep| using |public_key|. The
+// |msg_rep| should be obtained via calls to |MLDSA65_prehash_init|,
+// |MLDSA65_prehash_update| and |MLDSA65_prehash_finalize| using |public key|
+// and the same context as when the signature was generated. Returns 1 on
+// success or 0 on error.
+OPENSSL_EXPORT int MLDSA65_verify_message_representative(
+    const struct MLDSA65_public_key *public_key,
+    const uint8_t *signature, size_t signature_len,
+    const uint8_t msg_rep[MLDSA_MU_BYTES]);
+
 // MLDSA65_marshal_public_key serializes |public_key| to |out| in the standard
 // format for ML-DSA-65 public keys. It returns 1 on success or 0 on
 // allocation error.
@@ -184,7 +191,7 @@ OPENSSL_EXPORT int MLDSA65_parse_public_key(
 // object should never leave the address space since the format is unstable.
 struct MLDSA87_private_key {
   union {
-    uint8_t bytes[32 + 32 + 64 + 256 * 4 * (7 + 8 + 8)];
+    uint8_t bytes[(32 + 64 + 256 * 4 * 8) + 32 + 256 * 4 * (7 + 8 + 8)];
     uint32_t alignment;
   } opaque;
 };
@@ -207,10 +214,6 @@ struct MLDSA87_prehash {
     uint64_t alignment;
   } opaque;
 };
-
-// MLDSA87_PRIVATE_KEY_BYTES is the number of bytes in an encoded ML-DSA-87
-// private key.
-#define MLDSA87_PRIVATE_KEY_BYTES 4896
 
 // MLDSA87_PUBLIC_KEY_BYTES is the number of bytes in an encoded ML-DSA-87
 // public key.
@@ -304,6 +307,17 @@ OPENSSL_EXPORT int MLDSA87_sign_message_representative(
     const struct MLDSA87_private_key *private_key,
     const uint8_t msg_rep[MLDSA_MU_BYTES]);
 
+// MLDSA87_verify_message_representative verifies that |signature| constitutes a
+// valid signature for the pre-hashed message |msg_rep| using |public_key|. The
+// |msg_rep| should be obtained via calls to |MLDSA87_prehash_init|,
+// |MLDSA87_prehash_update| and |MLDSA87_prehash_finalize| using |public key|
+// and the same context as when the signature was generated. Returns 1 on
+// success or 0 on error.
+OPENSSL_EXPORT int MLDSA87_verify_message_representative(
+    const struct MLDSA87_public_key *public_key,
+    const uint8_t *signature, size_t signature_len,
+    const uint8_t msg_rep[MLDSA_MU_BYTES]);
+
 // MLDSA87_marshal_public_key serializes |public_key| to |out| in the standard
 // format for ML-DSA-87 public keys. It returns 1 on success or 0 on
 // allocation error.
@@ -324,7 +338,7 @@ OPENSSL_EXPORT int MLDSA87_parse_public_key(
 // object should never leave the address space since the format is unstable.
 struct MLDSA44_private_key {
   union {
-    uint8_t bytes[32 + 32 + 64 + 256 * 4 * (4 + 4 + 4)];
+    uint8_t bytes[(32 + 64 + 256 * 4 * 4) + 32 + 256 * 4 * (4 + 4 + 4)];
     uint32_t alignment;
   } opaque;
 };
@@ -347,10 +361,6 @@ struct MLDSA44_prehash {
     uint64_t alignment;
   } opaque;
 };
-
-// MLDSA44_PRIVATE_KEY_BYTES is the number of bytes in an encoded ML-DSA-44
-// private key.
-#define MLDSA44_PRIVATE_KEY_BYTES 2560
 
 // MLDSA44_PUBLIC_KEY_BYTES is the number of bytes in an encoded ML-DSA-44
 // public key.
@@ -442,6 +452,17 @@ OPENSSL_EXPORT void MLDSA44_prehash_finalize(
 OPENSSL_EXPORT int MLDSA44_sign_message_representative(
     uint8_t out_encoded_signature[MLDSA44_SIGNATURE_BYTES],
     const struct MLDSA44_private_key *private_key,
+    const uint8_t msg_rep[MLDSA_MU_BYTES]);
+
+// MLDSA44_verify_message_representative verifies that |signature| constitutes a
+// valid signature for the pre-hashed message |msg_rep| using |public_key|. The
+// |msg_rep| should be obtained via calls to |MLDSA44_prehash_init|,
+// |MLDSA44_prehash_update| and |MLDSA44_prehash_finalize| using |public key|
+// and the same context as when the signature was generated. Returns 1 on
+// success or 0 on error.
+OPENSSL_EXPORT int MLDSA44_verify_message_representative(
+    const struct MLDSA44_public_key *public_key,
+    const uint8_t *signature, size_t signature_len,
     const uint8_t msg_rep[MLDSA_MU_BYTES]);
 
 // MLDSA44_marshal_public_key serializes |public_key| to |out| in the standard

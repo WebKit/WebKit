@@ -37,7 +37,7 @@ class GraphicsContext;
 class SVGFilterElement;
 
 struct FilterData {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FilterData);
+    WTF_MAKE_TZONE_ALLOCATED(FilterData);
     WTF_MAKE_NONCOPYABLE(FilterData);
 public:
     enum FilterDataState { PaintingSource, Applying, Built, CycleDetected, MarkedForRemoval };
@@ -54,14 +54,13 @@ public:
 };
 
 class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceFilter);
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceFilter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilter);
 public:
     LegacyRenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGResourceFilter();
 
     inline SVGFilterElement& filterElement() const;
-    inline Ref<SVGFilterElement> protectedFilterElement() const;
     bool isIdentity() const;
 
     void removeAllClientsFromCache() override;
@@ -97,4 +96,5 @@ WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceFilter)
     static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacyRenderSVGResourceFilter(); }
     static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
+    static bool isType(const WebCore::LegacyRenderSVGResourceContainer& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
 SPECIALIZE_TYPE_TRAITS_END()

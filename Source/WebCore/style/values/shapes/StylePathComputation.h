@@ -27,6 +27,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/Path.h>
 #include <WebCore/StyleValueTypes.h>
+#include <WebCore/StyleZoomPrimitives.h>
 
 namespace WebCore {
 namespace Style {
@@ -34,24 +35,24 @@ namespace Style {
 // All types that want to expose a generated WebCore::Path must specialize PathComputation the following member function:
 //
 //    template<> struct WebCore::Style::PathComputation<StyleType> {
-//        WebCore::Path operator()(const StyleType&, const FloatRect&);
+//        WebCore::Path operator()(const StyleType&, const FloatRect&, ZoomFactor);
 //    };
 
 template<typename StyleType> struct PathComputation;
 
 struct PathComputationInvoker {
-    template<typename StyleType, typename Reference> WebCore::Path operator()(const StyleType& value, const Reference& reference) const
+    template<typename StyleType, typename Reference> WebCore::Path operator()(const StyleType& value, const Reference& reference, ZoomFactor zoom) const
     {
-        return PathComputation<StyleType>{}(value, reference);
+        return PathComputation<StyleType>{}(value, reference, zoom);
     }
 };
 inline constexpr PathComputationInvoker path{};
 
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename StyleType> struct PathComputation<FunctionNotation<Name, StyleType>> {
-    template<typename Reference> WebCore::Path operator()(const FunctionNotation<Name, StyleType>& value, const Reference& reference)
+    template<typename Reference> WebCore::Path operator()(const FunctionNotation<Name, StyleType>& value, const Reference& reference, ZoomFactor zoom)
     {
-        return WebCore::Style::path(value.parameters, reference);
+        return WebCore::Style::path(value.parameters, reference, zoom);
     }
 };
 

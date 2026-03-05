@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <WebCore/GridFormattingContext.h>
-#include <WebCore/GridTypeAliases.h>
-#include <WebCore/StyleGridTrackBreadth.h>
+#include "GridFormattingContext.h"
+#include "GridTypeAliases.h"
+#include "StyleGridTrackBreadth.h"
 
 namespace WebCore {
 class RenderStyle;
@@ -41,21 +41,8 @@ namespace Layout {
 
 class ImplicitGrid;
 
-enum class PackingStrategy : bool {
-    Sparse,
-    Dense
-};
-
-enum class GridAutoFlowDirection : bool {
-    Row,
-    Column
-};
-
-struct GridAutoFlowOptions {
-    PackingStrategy strategy;
-    GridAutoFlowDirection direction;
-};
-
+struct GridAreaSizes;
+struct GridLayoutState;
 struct UsedTrackSizes;
 struct UsedMargins;
 
@@ -70,31 +57,32 @@ class GridLayout {
 public:
     GridLayout(const GridFormattingContext&);
 
-    std::pair<UsedTrackSizes, GridItemRects> layout(GridFormattingContext::GridLayoutConstraints, UnplacedGridItems&);
+    std::pair<UsedTrackSizes, GridItemRects> layout(UnplacedGridItems&, const GridLayoutState&);
 
 private:
 
     auto placeGridItems(UnplacedGridItems&, const Vector<Style::GridTrackSize>& gridTemplateColumnsTrackSizes,
         const Vector<Style::GridTrackSize>& gridTemplateRowsTrackSizes, GridAutoFlowOptions);
 
-    GridDimensions calculateGridDimensions(const UnplacedGridItems&, size_t explicitColumnsCount, size_t explicitRowsCount);
+    GridDimensions calculateInitialImplicitGridDimensions(const UnplacedGridItems&, size_t explicitColumnsCount, size_t explicitRowsCount);
+    ImplicitGrid constructInitialImplicitGrid(UnplacedGridItems&, size_t explicitColumnsCount, size_t explicitRowsCount);
 
-    static TrackSizingFunctionsList trackSizingFunctions(size_t implicitGridTracksCount, const Vector<Style::GridTrackSize> gridTemplateTrackSizes);
+    static TrackSizingFunctions convertGridTrackSizeToTrackSizingFunctions(const Style::GridTrackSize&);
+    static TrackSizingFunctionsList generateImplicitTrackSizingFunctions(size_t explicitTracksCount, size_t totalTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes);
+    static TrackSizingFunctionsList trackSizingFunctions(size_t totalTracksCount, const Vector<Style::GridTrackSize>& gridTemplateTrackSizes, const Style::GridTrackSizes& gridAutoTrackSizes);
 
-    static UsedTrackSizes performGridSizingAlgorithm(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctionsList, const TrackSizingFunctionsList& rowTrackSizingFunctionsList);
+    UsedTrackSizes performGridSizingAlgorithm(const GridLayoutState&, const PlacedGridItems&, const TrackSizingFunctionsList&, const TrackSizingFunctionsList&) const;
 
-    std::pair<UsedInlineSizes, UsedBlockSizes> layoutGridItems(const PlacedGridItems&, const UsedTrackSizes&) const;
+    std::pair<UsedInlineSizes, UsedBlockSizes> layoutGridItems(const PlacedGridItems&, const GridAreaSizes&,
+        const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
 
     static Vector<UsedMargins> computeInlineMargins(const PlacedGridItems&, const Style::ZoomFactor&);
     static Vector<UsedMargins> computeBlockMargins(const PlacedGridItems&, const Style::ZoomFactor&);
 
-    static BorderBoxPositions performInlineAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&);
-    static BorderBoxPositions performBlockAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&);
+    BorderBoxPositions performInlineAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&, const UsedInlineSizes&, const Vector<LayoutUnit>& gridAreasInlineSizeList);
+    BorderBoxPositions performBlockAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&, const UsedBlockSizes&, const Vector<LayoutUnit>& gridAreasBlockSizeList);
 
     const GridFormattingContext& formattingContext() const { return m_gridFormattingContext; }
-
-    const ElementBox& gridContainer() const;
-    const RenderStyle& gridContainerStyle() const;
 
     const GridFormattingContext& m_gridFormattingContext;
 };

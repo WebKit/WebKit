@@ -64,7 +64,7 @@ class ImageDecoderGStreamerSample final : public MediaSampleGStreamer {
 public:
     static Ref<ImageDecoderGStreamerSample> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
     {
-        return adoptRef(*new ImageDecoderGStreamerSample(WTFMove(sample), presentationSize));
+        return adoptRef(*new ImageDecoderGStreamerSample(WTF::move(sample), presentationSize));
     }
 
     PlatformImagePtr image() const
@@ -86,7 +86,7 @@ public:
 
 private:
     ImageDecoderGStreamerSample(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
-        : MediaSampleGStreamer(WTFMove(sample), presentationSize, { })
+        : MediaSampleGStreamer(WTF::move(sample), presentationSize, { })
         , m_frame(VideoFrameGStreamer::createWrappedSample(this->sample()))
     {
         m_image = m_frame->convertToImage();
@@ -123,7 +123,7 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
     ensureDebugCategoryIsInitialized();
     static Atomic<uint32_t> decoderId;
     GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-"_s, decoderId.exchangeAdd(1)).utf8().data());
-    m_parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, auto&&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
+    m_parserHarness = GStreamerElementHarness::create(WTF::move(parsebin), [](auto&, auto&&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
         auto caps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
         auto identityHarness = GStreamerElementHarness::create(GRefPtr<GstElement>(gst_element_factory_make("identity", nullptr)), [](auto&, const auto&) { });
         GST_DEBUG_OBJECT(pad.get(), "Caps on parser source pad: %" GST_PTR_FORMAT, caps.get());
@@ -146,8 +146,8 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
 
         GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
         configureVideoDecoderForHarnessing(element);
-        m_decoderHarness = GStreamerElementHarness::create(WTFMove(element), [this](auto&, auto&& outputSample) {
-            storeDecodedSample(WTFMove(outputSample));
+        m_decoderHarness = GStreamerElementHarness::create(WTF::move(element), [this](auto&, auto&& outputSample) {
+            storeDecodedSample(WTF::move(outputSample));
         });
         return m_decoderHarness;
     });
@@ -285,7 +285,7 @@ void ImageDecoderGStreamer::storeDecodedSample(GRefPtr<GstSample>&& sample)
     auto presentationSize = getVideoResolutionFromCaps(gst_sample_get_caps(sample.get()));
     if (presentationSize && !presentationSize->isEmpty() && (!m_size || m_size != roundedIntSize(*presentationSize)))
         m_size = roundedIntSize(*presentationSize);
-    m_sampleData.addSample(ImageDecoderGStreamerSample::create(WTFMove(sample), *m_size));
+    m_sampleData.addSample(ImageDecoderGStreamerSample::create(WTF::move(sample), *m_size));
 }
 
 void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& sharedBuffer)
@@ -325,7 +325,7 @@ void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& shared
 
     for (auto& stream : m_parserHarness->outputStreams()) {
         while (auto event = stream->pullEvent())
-            m_decoderHarness->pushEvent(WTFMove(event));
+            m_decoderHarness->pushEvent(WTF::move(event));
     }
 
     for (auto& stream : m_decoderHarness->outputStreams()) {

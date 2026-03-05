@@ -63,7 +63,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaDevices);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaDevices);
 
 inline MediaDevices::MediaDevices(Document& document)
     : ActiveDOMObject(document)
@@ -82,7 +82,7 @@ void MediaDevices::stop()
 {
     if (m_deviceChangeToken) {
         RefPtr document = this->document();
-        auto* controller = document ? UserMediaController::from(document->protectedPage().get()) : nullptr;
+        auto* controller = document ? UserMediaController::from(protect(document->page()).get()) : nullptr;
         if (controller)
             controller->removeDeviceChangeObserver(*m_deviceChangeToken);
     }
@@ -176,7 +176,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     if (audioConstraints.isValid) {
         if (audioConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Microphone)) {
             // Asynchronous rejection.
-            callOnMainThread([promise = WTFMove(promise)] () mutable {
+            callOnMainThread([promise = WTF::move(promise)] () mutable {
                 promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_s });
 
             });
@@ -188,7 +188,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     if (videoConstraints.isValid) {
         if (videoConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Camera)) {
             // Asynchronous rejection.
-            callOnMainThread([promise = WTFMove(promise)] () mutable {
+            callOnMainThread([promise = WTF::move(promise)] () mutable {
                 promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_s });
 
             });
@@ -198,7 +198,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         videoConstraints.setDefaultVideoConstraints();
     }
 
-    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTFMove(audioConstraints), WTFMove(videoConstraints), isUserGesturePriviledged, *document->pageID() }, WTFMove(constraints.audio), WTFMove(constraints.video), WTFMove(promise));
+    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTF::move(audioConstraints), WTF::move(videoConstraints), isUserGesturePriviledged, *document->pageID() }, WTF::move(constraints.audio), WTF::move(constraints.video), WTF::move(promise));
 
     if (!document->settings().getUserMediaRequiresFocus()) {
         request->start();
@@ -206,7 +206,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     }
 
     // FIXME: We use hidden while the spec is using focus, let's revisit when when spec is made clearer.
-    document->whenVisible([request = WTFMove(request)] {
+    document->whenVisible([request = WTF::move(request)] {
         if (request->isContextStopped())
             return;
         request->start();
@@ -311,7 +311,7 @@ void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, 
         return;
     }
 
-    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, WTFMove(videoConstraints), isUserGesturePriviledged, *document->pageID() }, WTFMove(constraints.audio), WTFMove(constraints.video), WTFMove(promise));
+    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, WTF::move(videoConstraints), isUserGesturePriviledged, *document->pageID() }, WTF::move(constraints.audio), WTF::move(constraints.video), WTF::move(promise));
     request->start();
 }
 
@@ -337,7 +337,7 @@ static inline bool checkSpeakerAccess(const Document& document)
         && isFeaturePolicyAllowingSpeakerSelection(document);
 }
 
-static inline bool exposeSpeakersWithoutMicrophoneAccess(const Document& document)
+static inline bool NODELETE exposeSpeakersWithoutMicrophoneAccess(const Document& document)
 {
     return document.frame() && document.frame()->settings().exposeSpeakersWithoutMicrophoneEnabled();
 }
@@ -358,7 +358,7 @@ String MediaDevices::deviceIdToPersistentId(const String& deviceId) const
     return m_audioOutputDeviceIdToPersistentId.get(deviceId);
 }
 
-static RefPtr<MediaDeviceInfo> createDefaultSpeakerAsSpecificDevice(const CaptureDevice& defaultRealDevice, const String& groupId)
+static Ref<MediaDeviceInfo> createDefaultSpeakerAsSpecificDevice(const CaptureDevice& defaultRealDevice, const String& groupId)
 {
     return MediaDeviceInfo::create(makeString(defaultSystemSpeakerLabel(), " - "_s, defaultRealDevice.label()), AudioMediaStreamTrackRenderer::defaultDeviceID(), groupId, MediaDeviceInfo::Kind::Audiooutput);
 }
@@ -379,7 +379,7 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
 
     m_audioOutputDeviceIdToPersistentId.clear();
 
-    Vector<Variant<RefPtr<MediaDeviceInfo>, RefPtr<InputDeviceInfo>>> devices;
+    Vector<Variant<Ref<MediaDeviceInfo>, Ref<InputDeviceInfo>>> devices;
     for (auto& newDeviceWithCapabilities : newDevices) {
         auto& newDevice = newDeviceWithCapabilities.device;
         if (!canAccessMicrophone && newDevice.type() == CaptureDevice::DeviceType::Microphone)
@@ -405,7 +405,7 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
                 }
 
                 m_audioOutputDeviceIdToPersistentId.add(deviceId, newDevice.persistentId());
-                devices.append(RefPtr { MediaDeviceInfo::create(newDevice.label(), WTFMove(deviceId), WTFMove(groupId), MediaDeviceInfo::Kind::Audiooutput) });
+                devices.append(MediaDeviceInfo::create(newDevice.label(), WTF::move(deviceId), WTF::move(groupId), MediaDeviceInfo::Kind::Audiooutput));
             }
         } else {
             if (newDevice.type() == CaptureDevice::DeviceType::Camera && !newDevice.label().isEmpty())
@@ -418,10 +418,10 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
                 if (newDeviceWithCapabilities.device.label().isEmpty())
                     newDeviceWithCapabilities.device.setLabel("default"_s);
             }
-            devices.append(RefPtr<InputDeviceInfo> { InputDeviceInfo::create(WTFMove(newDeviceWithCapabilities), WTFMove(deviceId), WTFMove(groupId)) });
+            devices.append(InputDeviceInfo::create(WTF::move(newDeviceWithCapabilities), WTF::move(deviceId), WTF::move(groupId)));
         }
     }
-    promise.resolve(WTFMove(devices));
+    promise.resolve(WTF::move(devices));
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
@@ -430,7 +430,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
     if (!document)
         return;
 
-    auto* controller = UserMediaController::from(document->protectedPage().get());
+    auto* controller = UserMediaController::from(protect(document->page()).get());
     if (!controller) {
         promise.resolve({ });
         return;
@@ -442,7 +442,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
         return;
     }
 
-    controller->enumerateMediaDevices(*document, [weakThis = WeakPtr { *this }, promise = WTFMove(promise), userGestureToken = UserGestureIndicator::currentUserGesture()](Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts) mutable {
+    controller->enumerateMediaDevices(*document, [weakThis = WeakPtr { *this }, promise = WTF::move(promise), userGestureToken = UserGestureIndicator::currentUserGesture()](Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -451,7 +451,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
         if (userGestureToken)
             gestureIndicator.emplace(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::ShouldPropagateToMicroTask::Yes);
 
-        protectedThis->exposeDevices(WTFMove(newDevices), WTFMove(deviceIDHashSalts), WTFMove(promise));
+        protectedThis->exposeDevices(WTF::move(newDevices), WTF::move(deviceIDHashSalts), WTF::move(promise));
     });
 }
 
@@ -484,7 +484,7 @@ ScriptExecutionContext* MediaDevices::scriptExecutionContext() const
 void MediaDevices::listenForDeviceChanges()
 {
     RefPtr document = this->document();
-    auto* controller = document ? UserMediaController::from(document->protectedPage().get()) : nullptr;
+    auto* controller = document ? UserMediaController::from(protect(document->page()).get()) : nullptr;
     if (!controller)
         return;
 
@@ -510,7 +510,7 @@ bool MediaDevices::addEventListener(const AtomString& eventType, Ref<EventListen
     if (eventType == eventNames().devicechangeEvent)
         listenForDeviceChanges();
 
-    return EventTarget::addEventListener(eventType, WTFMove(listener), options);
+    return EventTarget::addEventListener(eventType, WTF::move(listener), options);
 }
 
 void MediaDevices::willStartMediaCapture(bool microphone, bool camera)

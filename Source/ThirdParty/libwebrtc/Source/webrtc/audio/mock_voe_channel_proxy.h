@@ -35,6 +35,8 @@
 #include "api/scoped_refptr.h"
 #include "api/transport/rtp/rtp_source.h"
 #include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "audio/channel_receive.h"
 #include "audio/channel_send.h"
 #include "call/syncable.h"
@@ -42,6 +44,7 @@
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -57,7 +60,10 @@ class MockChannelReceive : public voe::ChannelReceiveInterface {
               (PacketRouter*),
               (override));
   MOCK_METHOD(void, ResetReceiverCongestionControlObjects, (), (override));
-  MOCK_METHOD(CallReceiveStatistics, GetRTCPStatistics, (), (const, override));
+  MOCK_METHOD(ChannelReceiveStatistics,
+              GetRTCPStatistics,
+              (),
+              (const, override));
   MOCK_METHOD(NetworkStatistics,
               GetNetworkStatistics,
               (bool),
@@ -83,13 +89,13 @@ class MockChannelReceive : public voe::ChannelReceiveInterface {
               (override));
   MOCK_METHOD(int, PreferredSampleRate, (), (const, override));
   MOCK_METHOD(std::vector<RtpSource>, GetSources, (), (const, override));
-  MOCK_METHOD(bool,
+  MOCK_METHOD(std::optional<Syncable::PlayoutInfo>,
               GetPlayoutRtpTimestamp,
-              (uint32_t*, int64_t*),
+              (),
               (const, override));
   MOCK_METHOD(void,
-              SetEstimatedPlayoutNtpTimestampMs,
-              (int64_t ntp_timestamp_ms, int64_t time_ms),
+              SetEstimatedPlayoutNtpTimestamp,
+              (NtpTime ntp_time, Timestamp time),
               (override));
   MOCK_METHOD(std::optional<int64_t>,
               GetCurrentEstimatedPlayoutNtpTimestampMs,
@@ -99,7 +105,7 @@ class MockChannelReceive : public voe::ChannelReceiveInterface {
               GetSyncInfo,
               (),
               (const, override));
-  MOCK_METHOD(bool, SetMinimumPlayoutDelay, (int delay_ms), (override));
+  MOCK_METHOD(bool, SetMinimumPlayoutDelay, (TimeDelta delay), (override));
   MOCK_METHOD(bool, SetBaseMinimumPlayoutDelayMs, (int delay_ms), (override));
   MOCK_METHOD(int, GetBaseMinimumPlayoutDelayMs, (), (const, override));
   MOCK_METHOD((std::optional<std::pair<int, SdpAudioFormat>>),
@@ -152,7 +158,7 @@ class MockChannelSend : public voe::ChannelSendInterface {
               (RtpTransportControllerSendInterface*),
               (override));
   MOCK_METHOD(void, ResetSenderCongestionControlObjects, (), (override));
-  MOCK_METHOD(CallSendStatistics, GetRTCPStatistics, (), (const, override));
+  MOCK_METHOD(ChannelSendStatistics, GetRTCPStatistics, (), (const, override));
   MOCK_METHOD(std::vector<ReportBlockData>,
               GetRemoteRTCPReportBlocks,
               (),

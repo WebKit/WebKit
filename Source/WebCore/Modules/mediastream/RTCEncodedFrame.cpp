@@ -34,15 +34,15 @@
 namespace WebCore {
 
 RTCEncodedFrame::RTCEncodedFrame(Ref<RTCRtpTransformableFrame>&& frame)
-    : m_frame(WTFMove(frame))
+    : m_frame(WTF::move(frame))
 {
 }
 
-RefPtr<JSC::ArrayBuffer> RTCEncodedFrame::data() const
+Ref<JSC::ArrayBuffer> RTCEncodedFrame::data() const
 {
     if (!m_data)
         m_data = m_isNeutered ? JSC::ArrayBuffer::create(static_cast<size_t>(0U), 1) : JSC::ArrayBuffer::create(m_frame->data());
-    return m_data;
+    return *m_data;
 }
 
 void RTCEncodedFrame::setData(JSC::ArrayBuffer& buffer)

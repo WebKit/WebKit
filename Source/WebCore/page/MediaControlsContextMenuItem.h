@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -33,6 +33,7 @@
 namespace WebCore {
 
 struct MediaControlsContextMenuItem {
+    using Item = MediaControlsContextMenuItem;
     using ID = uint64_t;
     static constexpr ID invalidID = 0;
 
@@ -45,4 +46,4 @@ struct MediaControlsContextMenuItem {
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

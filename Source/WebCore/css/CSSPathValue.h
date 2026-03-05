@@ -41,10 +41,10 @@ class CSSPathValue final : public CSSValue {
 public:
     static Ref<CSSPathValue> create(CSS::PathFunction path)
     {
-        return adoptRef(*new CSSPathValue(WTFMove(path)));
+        return adoptRef(*new CSSPathValue(WTF::move(path)));
     }
 
-    const CSS::PathFunction& path() const { return m_path; }
+    const CSS::PathFunction& path() const LIFETIME_BOUND { return m_path; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPathValue&) const;
@@ -54,7 +54,7 @@ public:
 private:
     CSSPathValue(CSS::PathFunction&& path)
         : CSSValue(ClassType::Path)
-        , m_path { WTFMove(path) }
+        , m_path { WTF::move(path) }
     {
     }
 

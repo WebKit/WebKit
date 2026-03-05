@@ -41,7 +41,7 @@ static constexpr auto ALG256 = "A256CBC"_s;
 static const size_t IVSIZE = 16;
 }
 
-static inline bool usagesAreInvalidForCryptoAlgorithmAESCBC(CryptoKeyUsageBitmap usages)
+static inline bool NODELETE usagesAreInvalidForCryptoAlgorithmAESCBC(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits);
 }
@@ -66,8 +66,8 @@ void CryptoAlgorithmAESCBC::encrypt(const CryptoAlgorithmParameters& parameters,
         return;
     }
 
-    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), plainText = WTFMove(plainText)] {
+    dispatchOperationInWorkQueue(workQueue, context, WTF::move(callback), WTF::move(exceptionCallback),
+        [parameters = crossThreadCopy(aesParameters), key = WTF::move(key), plainText = WTF::move(plainText)] {
             return platformEncrypt(parameters, downcast<CryptoKeyAES>(key.get()), plainText);
         });
 }
@@ -82,8 +82,8 @@ void CryptoAlgorithmAESCBC::decrypt(const CryptoAlgorithmParameters& parameters,
         return;
     }
 
-    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), cipherText = WTFMove(cipherText)] {
+    dispatchOperationInWorkQueue(workQueue, context, WTF::move(callback), WTF::move(exceptionCallback),
+        [parameters = crossThreadCopy(aesParameters), key = WTF::move(key), cipherText = WTF::move(cipherText)] {
             return platformDecrypt(parameters, downcast<CryptoKeyAES>(key.get()), cipherText);
         });
 }
@@ -103,7 +103,7 @@ void CryptoAlgorithmAESCBC::generateKey(const CryptoAlgorithmParameters& paramet
         return;
     }
 
-    callback(WTFMove(result));
+    callback(result.releaseNonNull());
 }
 
 void CryptoAlgorithmAESCBC::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
@@ -118,7 +118,7 @@ void CryptoAlgorithmAESCBC::importKey(CryptoKeyFormat format, KeyData&& data, co
     RefPtr<CryptoKeyAES> result;
     switch (format) {
     case CryptoKeyFormat::Raw:
-        result = CryptoKeyAES::importRaw(parameters.identifier, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyAES::importRaw(parameters.identifier, WTF::move(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Jwk: {
         auto checkAlgCallback = [](size_t length, const String& alg) -> bool {
@@ -132,7 +132,7 @@ void CryptoAlgorithmAESCBC::importKey(CryptoKeyFormat format, KeyData&& data, co
             }
             return false;
         };
-        result = CryptoKeyAES::importJwk(parameters.identifier, WTFMove(std::get<JsonWebKey>(data)), extractable, usages, WTFMove(checkAlgCallback));
+        result = CryptoKeyAES::importJwk(parameters.identifier, WTF::move(std::get<JsonWebKey>(data)), extractable, usages, WTF::move(checkAlgCallback));
         break;
     }
     default:
@@ -177,7 +177,7 @@ void CryptoAlgorithmAESCBC::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
         default:
             ASSERT_NOT_REACHED();
         }
-        result = WTFMove(jwk);
+        result = WTF::move(jwk);
         break;
     }
     default:
@@ -185,7 +185,7 @@ void CryptoAlgorithmAESCBC::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
         return;
     }
 
-    callback(format, WTFMove(result));
+    callback(format, WTF::move(result));
 }
 
 ExceptionOr<std::optional<size_t>> CryptoAlgorithmAESCBC::getKeyLength(const CryptoAlgorithmParameters& parameters)

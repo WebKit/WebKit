@@ -50,7 +50,7 @@ public:
     ~CacheStorageCache();
     const String& name() const { return m_name; }
     const String& uniqueName() const { return m_uniqueName; }
-    CacheStorageManager* manager();
+    CacheStorageManager* NODELETE manager();
 
     void getSize(CompletionHandler<void(uint64_t)>&&);
     void open(WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
@@ -59,6 +59,9 @@ public:
     void putRecords(Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void removeAllRecords();
     void close();
+
+    Vector<CacheStorageRecordInformation> findRecords(const WebCore::RetrieveRecordsOptions&);
+    void retrieveRecords(const Vector<CacheStorageRecordInformation>&, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
 
 private:
     CacheStorageCache(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);

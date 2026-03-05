@@ -1,10 +1,373 @@
-module WebKit_Internal {
-    header "WebKitInternal.h"
-    export *
-    requires objc
-}
+module WebKit_Internal [system] {
+    module AppKitSPI {
+        requires cplusplus20
+        header "../../Platform/spi/mac/AppKitSPI.h"
+        export *
+    }
 
-module WebKit_Internal_Cxx {
-    header "WebKitInternalCxx.h"
-    export *
+    module APIObject {
+        requires cplusplus20
+        header "../../Shared/API/APIObject.h"
+        export *
+    }
+
+    module FrameInfoData {
+        requires cplusplus20
+        header "../../Shared/FrameInfoData.h"
+        export *
+    }
+
+    module FrameTreeNodeData {
+        requires cplusplus20
+        header "../../Shared/FrameTreeNodeData.h"
+        export *
+    }
+
+    module GamepadData {
+        requires cplusplus20
+        header "../../Shared/Gamepad/GamepadData.h"
+        export *
+    }
+
+    module GestureTypes {
+        requires cplusplus20
+        header "../../Shared/Cocoa/GestureTypes.h"
+        export *
+    }
+
+    module HistoryClient {
+        requires cplusplus20
+        header "../../UIProcess/API/APIHistoryClient.h"
+        export *
+    }
+
+    module JSHandleInfo {
+        requires cplusplus20
+        header "../../Shared/JSHandleInfo.h"
+        export *
+    }
+
+    module JavaScriptEvaluationResult {
+        requires cplusplus20
+        header "../../Shared/JavaScriptEvaluationResult.h"
+        export *
+    }
+
+    module MessageReceiver {
+        requires cplusplus20
+        header "../../Platform/IPC/MessageReceiver.h"
+        export *
+    }
+
+    module NavigationClient {
+        requires cplusplus20
+        header "../../UIProcess/API/APINavigationClient.h"
+        export *
+    }
+
+    module WKObject {
+        requires cplusplus20
+        header "../../Shared/Cocoa/WKObject.h"
+        export *
+    }
+
+    module WKTextSelectionController {
+        requires cplusplus20
+        header "../../UIProcess/mac/WKTextSelectionController.h"
+        export *
+    }
+
+    module WKTextSelectionRect {
+        requires cplusplus20
+        header "../../UIProcess/Cocoa/WKTextSelectionRect.h"
+        export *
+    }
+
+    module WKWebViewIOS {
+        header "../../UIProcess/API/ios/WKWebViewIOS.h"
+        export *
+    }
+
+    module WebExtensionCookieParameters {
+        requires cplusplus20
+        header "../../Shared/Extensions/WebExtensionCookieParameters.h"
+        export *
+    }
+
+    module WebAutocorrectionData {
+        requires cplusplus20
+        header "../../Shared/ios/WebAutocorrectionData.h"
+        export *
+    }
+
+    module WebFrameMetrics {
+        requires cplusplus20
+        header "../../Shared/WebFrameMetrics.h"
+        export *
+    }
+
+    module WebKeyboardEvent {
+        requires cplusplus20
+        header "../../Shared/WebKeyboardEvent.h"
+        export *
+    }
+
+    module WebNavigationState {
+        requires cplusplus20
+        header "../../UIProcess/WebNavigationState.h"
+        export *
+    }
+
+    module WebPageCreationParameters {
+        requires cplusplus20
+        header "../../Shared/WebPageCreationParameters.h"
+        export *
+    }
+
+    module WebPageInspectorController {
+        requires cplusplus20
+        header "../../UIProcess/Inspector/WebPageInspectorController.h"
+        export *
+    }
+
+    module WebPageProxy {
+        requires cplusplus20
+        header "../../UIProcess/WebPageProxy.h"
+        export *
+    }
+
+    module WebPageProxyInternals {
+        requires cplusplus20
+        header "../../UIProcess/WebPageProxyInternals.h"
+        export *
+    }
+
+    module WebProcessActivityState {
+        requires cplusplus20
+        header "../../UIProcess/WebProcessActivityState.h"
+        export *
+    }
+
+    module WebPushMessage {
+        requires cplusplus20
+        header "../../Shared/WebPushMessage.h"
+        export *
+    }
+
+    module WebViewImpl {
+        header "../../UIProcess/mac/WebViewImpl.h"
+        export *
+    }
+
+    module WebsiteData {
+        requires cplusplus20
+        header "../../Shared/WebsiteData/WebsiteData.h"
+        export *
+    }
+
+    module APIArray {
+        requires cplusplus20
+        header "../../Shared/API/APIArray.h"
+        export *
+    }
+
+    module LoadedWebArchive {
+        requires cplusplus20
+        header "../../Shared/LoadedWebArchive.h"
+        export *
+    }
+
+    module SessionState {
+        requires cplusplus20
+        header "../../Shared/SessionState.h"
+        export *
+    }
+
+    module WebBackForwardCache {
+        requires cplusplus20
+        header "../../UIProcess/WebBackForwardCache.h"
+        export *
+    }
+
+    module WebBackForwardListCounts {
+        requires cplusplus20
+        header "../../Shared/WebBackForwardListCounts.h"
+        export *
+    }
+
+    module WebBackForwardListFrameItem {
+        requires cplusplus20
+        header "../../Shared/WebBackForwardListFrameItem.h"
+        export *
+    }
+
+    module WebBackForwardListItem {
+        requires cplusplus20
+        header "../../Shared/WebBackForwardListItem.h"
+        export *
+    }
+
+    module APICustomProtocolManagerClient {
+        requires cplusplus20
+        header "../../UIProcess/API/APICustomProtocolManagerClient.h"
+        export *
+    }
+
+    module APIHistoryClient {
+        requires cplusplus20
+        header "../../UIProcess/API/APIHistoryClient.h"
+        export *
+    }
+
+    module APINavigationClient {
+        requires cplusplus20
+        header "../../UIProcess/API/APINavigationClient.h"
+        export *
+    }
+
+    module AuxiliaryProcessProxy {
+        requires cplusplus20
+        header "../../UIProcess/AuxiliaryProcessProxy.h"
+        export *
+    }
+
+    module SwiftDemoLogoConfirmation {
+        requires cplusplus20
+        header "../../UIProcess/SwiftDemoLogoConfirmation.h"
+        export *
+    }
+
+    module WebBackForwardCacheEntry {
+        requires cplusplus20
+        header "../../UIProcess/WebBackForwardCacheEntry.h"
+        export *
+    }
+
+    module WebBackForwardListSwiftUtilities {
+        requires cplusplus20
+        header "../../UIProcess/WebBackForwardListSwiftUtilities.h"
+        export *
+    }
+
+    module WebFrameProxy {
+        requires cplusplus20
+        header "../../UIProcess/WebFrameProxy.h"
+        export *
+    }
+
+    module WebPermissionControllerProxy {
+        requires cplusplus20
+        header "../../UIProcess/WebPermissionControllerProxy.h"
+        export *
+    }
+
+    module WebProcessProxy {
+        requires cplusplus20
+        header "../../UIProcess/WebProcessProxy.h"
+        export *
+    }
+
+    module WebInspectorUtilities {
+        requires cplusplus20
+        header "../../UIProcess/Inspector/WebInspectorUtilities.h"
+        export *
+    }
+
+    module SuspendedPageProxy {
+        requires cplusplus20
+        header "../../UIProcess/SuspendedPageProxy.h"
+        export *
+    }
+
+    module IPCTesterReceiver {
+        requires cplusplus20
+        header "../../Shared/IPCTesterReceiver.h"
+        export *
+    }
+
+    module ModelTypes {
+        header "../../GPUProcess/graphics/Model/ModelTypes.h"
+        export *
+        requires objc
+    }
+
+    module UIWindowScene_Extras {
+        header "../../UIProcess/Cocoa/UIWindowScene+Extras.h"
+        export *
+        requires objc
+    }
+
+    module WKMaterialHostingSupport {
+        header "../../Platform/cocoa/WKMaterialHostingSupport.h"
+        export *
+        requires objc
+    }
+
+    module WKMouseDeviceObserver {
+        header "../../UIProcess/ios/WKMouseDeviceObserver.h"
+        export *
+        requires objc
+    }
+
+    module WKPreferencesInternal {
+        header "../../UIProcess/API/Cocoa/WKPreferencesInternal.h"
+        export *
+        requires objc
+    }
+
+    module WKScrollGeometry {
+        header "../../UIProcess/API/Cocoa/WKScrollGeometry.h"
+        export *
+        requires objc
+    }
+
+    module WKSeparatedImageView {
+        header "../../UIProcess/Cocoa/Separated/WKSeparatedImageView.h"
+        export *
+        requires objc
+    }
+
+    module WKSurroundingsEffect {
+        header "../../Platform/spi/visionos/WKSurroundingsEffect.h"
+        export *
+        requires objc
+    }
+
+    module WKUIDelegateInternal {
+        header "../../UIProcess/API/Cocoa/WKUIDelegateInternal.h"
+        export *
+        requires objc
+    }
+
+    module WKUSDStageConverter {
+        header "../../ModelProcess/cocoa/WKUSDStageConverter.h"
+        export *
+        requires objc
+    }
+
+    module WKWebViewConfigurationInternal {
+        header "../../UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h"
+        export *
+        requires objc
+    }
+
+    module WKWebViewInternal {
+        header "../../UIProcess/API/Cocoa/WKWebViewInternal.h"
+        export *
+        requires objc
+    }
+
+    module _WKTextExtractionInternal {
+        header "../../UIProcess/API/Cocoa/_WKTextExtractionInternal.h"
+        export *
+        requires objc
+    }
+
+    // FIXME: These parts of the module map needs work as discussed in https://github.com/WebKit/WebKit/pull/54322
+
+    module WebKit_Internal_Cxx {
+        header "WebKitInternalCxx.h"
+        export *
+        requires cplusplus20
+    }
 }

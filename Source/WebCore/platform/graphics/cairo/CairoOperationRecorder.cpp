@@ -554,7 +554,7 @@ void OperationRecorder::drawGlyphs(const Font& font, std::span<const GlyphBuffer
     append(createCommand<DrawGlyphs>(Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point,
         RefPtr<cairo_scaled_font_t>(font.platformData().scaledFont()),
-        font.syntheticBoldOffset(), WTFMove(cairoGlyphs), xOffset, state.textDrawingMode(),
+        font.syntheticBoldOffset(), WTF::move(cairoGlyphs), xOffset, state.textDrawingMode(),
         state.strokeThickness(), state.dropShadow(), fontSmoothing));
 }
 
@@ -616,7 +616,7 @@ void OperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, const Flo
     append(createCommand<DrawFilteredImageBuffer>(nativeImage->platformImage(), FloatRect(result->absoluteImageRect()), FloatRect({ } , imageBuffer->logicalSize()), filter.filterScale(), ImagePaintingOptions(state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }
 
-void OperationRecorder::drawNativeImage(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void OperationRecorder::drawNativeImage(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     struct DrawNativeImage final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawNativeImage() = default;
@@ -636,7 +636,7 @@ void OperationRecorder::drawNativeImage(NativeImage& nativeImage, const FloatRec
     append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }
 
-void OperationRecorder::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void OperationRecorder::drawPattern(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     struct DrawPattern final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, IntSize, FloatRect, FloatRect, AffineTransform, FloatPoint, FloatSize, ImagePaintingOptions> {
         virtual ~DrawPattern() = default;
@@ -719,8 +719,8 @@ void OperationRecorder::drawLinesForText(const FloatPoint& point, float thicknes
         return;
 
     auto& state = this->state();
-    Vector<FloatSegment> segmentVector { WTFMove(lineSegments) };
-    append(createCommand<DrawLinesForText>(point, thickness, WTFMove(segmentVector), printing, doubleUnderlines, state.strokeBrush().color()));
+    Vector<FloatSegment> segmentVector { WTF::move(lineSegments) };
+    append(createCommand<DrawLinesForText>(point, thickness, WTF::move(segmentVector), printing, doubleUnderlines, state.strokeBrush().color()));
 }
 
 void OperationRecorder::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
@@ -1178,7 +1178,7 @@ void OperationRecorder::applyDeviceScaleFactor(float)
 
 void OperationRecorder::append(std::unique_ptr<PaintingOperation>&& command)
 {
-    m_commandList.append(WTFMove(command));
+    m_commandList.append(WTF::move(command));
 }
 
 #if ENABLE(VIDEO)

@@ -32,10 +32,10 @@
 #include "ReadableStreamDefaultController.h"
 
 #include "WebCoreJSClientData.h"
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 
 namespace WebCore {
 
@@ -44,7 +44,7 @@ static bool invokeReadableStreamDefaultControllerFunction(JSC::JSGlobalObject& l
     JSC::VM& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder lock(vm);
 
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     auto function = lexicalGlobalObject.get(&lexicalGlobalObject, identifier);
 
     EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
@@ -76,13 +76,29 @@ void ReadableStreamDefaultController::error(const Exception& exception)
     JSC::JSGlobalObject& lexicalGlobalObject = this->globalObject();
     auto& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     auto value = createDOMException(&lexicalGlobalObject, exception.code(), exception.message());
 
     if (scope.exception()) [[unlikely]] {
         ASSERT(vm.hasPendingTerminationException());
         return;
     }
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(&jsController());
+    arguments.append(value);
+    ASSERT(!arguments.hasOverflowed());
+
+    auto* clientData = downcast<JSVMClientData>(vm.clientData);
+    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerErrorPrivateName();
+
+    invokeReadableStreamDefaultControllerFunction(globalObject(), privateName, arguments);
+}
+
+void ReadableStreamDefaultController::error(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+{
+    auto& vm = lexicalGlobalObject.vm();
+    JSC::JSLockHolder lock(vm);
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(&jsController());
@@ -122,9 +138,9 @@ bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
     JSC::JSGlobalObject& lexicalGlobalObject = this->globalObject();
     auto& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     auto length = buffer->byteLength();
-    auto chunk = JSC::Uint8Array::create(WTFMove(buffer), 0, length);
+    auto chunk = JSC::Uint8Array::create(WTF::move(buffer), 0, length);
     auto value = toJS(&lexicalGlobalObject, &lexicalGlobalObject, chunk.get());
 
     EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());

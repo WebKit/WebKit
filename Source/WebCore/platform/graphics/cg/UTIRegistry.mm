@@ -194,6 +194,8 @@ static Vector<String> allowableDefaultSupportedImageTypes()
     // JPEG2000 is supported only for PDF. Allow it at the process
     // level but disallow it in WebCore.
     allowableDefaultSupportedImageTypes.append("public.jpeg-2000"_s);
+    allowableDefaultSupportedImageTypes.append("public.radiance"_s);
+    allowableDefaultSupportedImageTypes.append("com.ilm.openexr-image"_s);
     return allowableDefaultSupportedImageTypes;
 }
 

@@ -65,7 +65,7 @@ type drbgTestResponse struct {
 }
 
 // drbg implements an ACVP algorithm by making requests to the
-// subprocess to generate random bits with the given entropy and other paramaters.
+// subprocess to generate random bits with the given entropy and other parameters.
 type drbg struct {
 	// algo is the ACVP name for this algorithm and also the command name
 	// given to the subprocess to generate random bytes.

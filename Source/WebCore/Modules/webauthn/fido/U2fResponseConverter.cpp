@@ -69,7 +69,7 @@ static Vector<uint8_t> extractECPublicKeyFromU2fRegistrationResponse(const Vecto
     pos += ES256FieldElementLength;
 
     auto y = u2fData.subvector(pos, ES256FieldElementLength);
-    return encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
+    return encodeES256PublicKeyAsCBOR(WTF::move(x), WTF::move(y));
 }
 
 static Vector<uint8_t> extractCredentialIdFromU2fRegistrationResponse(const Vector<uint8_t>& u2fData)
@@ -131,10 +131,10 @@ static cbor::CBORValue::MapValue createFidoAttestationStatementFromU2fRegisterRe
         return { };
 
     cbor::CBORValue::MapValue attestationStatementMap;
-    attestationStatementMap[cbor::CBORValue("sig")] = cbor::CBORValue(WTFMove(signature));
+    attestationStatementMap[cbor::CBORValue("sig")] = cbor::CBORValue(WTF::move(signature));
     Vector<cbor::CBORValue> cborArray;
-    cborArray.append(cbor::CBORValue(WTFMove(x509)));
-    attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
+    cborArray.append(cbor::CBORValue(WTF::move(x509)));
+    attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTF::move(cborArray));
 
     return attestationStatementMap;
 }
@@ -162,14 +162,14 @@ RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& r
     if (fidoAttestationStatement.empty())
         return nullptr;
 
-    auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f"_s, WTFMove(fidoAttestationStatement), attestation);
+    auto attestationObject = buildAttestationObject(WTF::move(authData), "fido-u2f"_s, WTF::move(fidoAttestationStatement), attestation);
 
-    return AuthenticatorAttestationResponse::create(credentialId, attestationObject, attachment, WTFMove(transports));
+    return AuthenticatorAttestationResponse::create(credentialId, attestationObject, attachment, WTF::move(transports));
 }
 
 RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, const WebCore::BufferSource& keyHandle, const Vector<uint8_t>& u2fData, AuthenticatorAttachment attachment)
 {
-    if (!keyHandle.length() || u2fData.size() <= signatureIndex)
+    if (!keyHandle.byteLength() || u2fData.size() <= signatureIndex)
         return nullptr;
 
     // 1 byte flags, 4 bytes counter

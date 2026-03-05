@@ -53,13 +53,13 @@ public:
     WEBCORE_EXPORT bool willValidate() const override;
     void updateVisibleValidationMessage(Ref<HTMLElement> validationAnchor);
     void hideVisibleValidationMessage();
-    WEBCORE_EXPORT bool checkValidity(Vector<RefPtr<ValidatedFormListedElement>>* unhandledInvalidControls = nullptr);
+    WEBCORE_EXPORT bool checkValidity(Vector<Ref<ValidatedFormListedElement>>* unhandledInvalidControls = nullptr);
     bool reportValidity();
     RefPtr<HTMLElement> focusableValidationAnchorElement();
     void reportNonFocusableControlError();
     WEBCORE_EXPORT void focusAndShowValidationMessage(Ref<HTMLElement> validationAnchor);
     bool isShowingValidationMessage() const;
-    WEBCORE_EXPORT bool isFocusingWithValidationMessage() const;
+    WEBCORE_EXPORT bool NODELETE isFocusingWithValidationMessage() const;
     // This must be called when a validation constraint or control value is changed.
     void updateValidity();
     WEBCORE_EXPORT void setCustomValidity(const String&) override;
@@ -75,7 +75,7 @@ public:
     // This must be called any time the result of willValidate() has changed.
     bool isValidFormControlElement() const { return m_isValid; }
 
-    bool isEnumeratable() const override { return false; }
+    bool NODELETE isEnumeratable() const override { return false; }
 
     bool wasInteractedWithSinceLastFormSubmitEvent() const { return m_wasInteractedWithSinceLastFormSubmitEvent; }
     void setInteractedWithSinceLastFormSubmitEvent(bool);
@@ -99,7 +99,7 @@ protected:
     void updateWillValidateAndValidity();
     bool disabledByAncestorFieldset() const { return m_disabledByAncestorFieldset; }
 
-    bool validationMessageShadowTreeContains(const Node&) const;
+    bool NODELETE validationMessageShadowTreeContains(const Node&) const;
 
     void insertedIntoAncestor(Node::InsertionType, ContainerNode&);
     void didFinishInsertingNode();
@@ -116,7 +116,7 @@ protected:
     void formWillBeDestroyed() final;
     bool belongsToFormThatIsBeingDestroyed() const { return m_belongsToFormThatIsBeingDestroyed; }
 
-    void setDataListAncestorState(TriState);
+    void NODELETE setDataListAncestorState(TriState);
     void syncWithFieldsetAncestors(ContainerNode* insertionNode);
     void restoreFormControlStateIfNecessary();
 

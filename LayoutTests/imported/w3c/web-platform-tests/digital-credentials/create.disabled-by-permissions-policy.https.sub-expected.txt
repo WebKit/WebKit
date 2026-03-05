@@ -3,6 +3,6 @@
 Harness Error (TIMEOUT), message = null
 
 FAIL Permissions-Policy header digital-credentials-create=() disallows the top-level document. assert_unreached: Should have rejected: undefined Reached unreachable code
-TIMEOUT Permissions-Policy header digital-credentials-create=() disallows same-origin iframes. Test timed out
-NOTRUN Permissions-Policy header digital-credentials-create=() cannot be overridden using the allow attribute.
+FAIL Permissions-Policy header digital-credentials-create=() disallows same-origin iframes. assert_false: Digital Credential API expected false got undefined
+TIMEOUT Permissions-Policy header digital-credentials-create=() cannot be overridden using the allow attribute. Test timed out
 

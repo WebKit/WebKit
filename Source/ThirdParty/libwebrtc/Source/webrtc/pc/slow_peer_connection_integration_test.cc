@@ -35,7 +35,6 @@
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/fake_network.h"
 #include "rtc_base/firewall_socket_server.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/test_certificate_verifier.h"
@@ -222,11 +221,11 @@ TEST_P(PeerConnectionIntegrationTest,
   options.offer_to_receive_video = 1;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  bool wait_res = true;
+  bool wait_res = WaitUntil([&]() { return DtlsConnected(); },
+                            {.timeout = kDefaultTimeout});
   // TODO(bugs.webrtc.org/9219): When IceConnectionState is implemented
   // properly, should be able to just wait for a state of "failed" instead of
   // waiting a fixed 10 seconds.
-  WAIT_(DtlsConnected(), kDefaultTimeout.ms(), wait_res);
   ASSERT_FALSE(wait_res);
 
   EXPECT_GT(client_1_cert_verifier->call_count_, 0u);
@@ -255,15 +254,14 @@ TEST_P(PeerConnectionIntegrationTest, GetCaptureStartNtpTimeWithOldStatsApi) {
 
   // Get the audio output level stats. Note that the level is not available
   // until an RTCP packet has been received.
-  EXPECT_THAT(
-      WaitUntil(
-          [&] {
-            return callee()
-                ->OldGetStatsForTrack(remote_audio_track.get())
-                ->CaptureStartNtpTime();
-          },
-          ::testing::Gt(0), {.timeout = 2 * kMaxWaitForFrames}),
-      IsRtcOk());
+  EXPECT_THAT(WaitUntil(
+                  [&] {
+                    return callee()
+                        ->OldGetStatsForTrack(remote_audio_track.get())
+                        ->CaptureStartNtpTime();
+                  },
+                  ::testing::Gt(0), {.timeout = 2 * kMaxWaitForFrames}),
+              IsRtcOk());
 }
 
 // Test that firewalling the ICE connection causes the clients to identify the
@@ -279,8 +277,8 @@ class PeerConnectionIntegrationIceStatesTest
   }
 
   void StartStunServer(const SocketAddress& server_address) {
-    stun_server_ =
-        TestStunServer::Create(firewall(), server_address, *network_thread());
+    stun_server_ = TestStunServer::Create(env_, server_address, *firewall(),
+                                          *network_thread());
   }
 
   bool TestIPv6() {

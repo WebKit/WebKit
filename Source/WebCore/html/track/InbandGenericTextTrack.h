@@ -44,14 +44,14 @@ public:
 
 private:
     using CueToDataMap = HashMap<TextTrackCue*, InbandGenericCueIdentifier>;
-    using CueDataToCueMap = HashMap<InbandGenericCueIdentifier, RefPtr<TextTrackCueGeneric>>;
+    using CueDataToCueMap = HashMap<InbandGenericCueIdentifier, Ref<TextTrackCueGeneric>>;
 
     CueToDataMap m_cueToDataMap;
     CueDataToCueMap m_dataToCueMap;
 };
 
 class InbandGenericTextTrack final : public InbandTextTrack, private WebVTTParserClient {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InbandGenericTextTrack);
+    WTF_MAKE_TZONE_ALLOCATED(InbandGenericTextTrack);
 public:
     static Ref<InbandGenericTextTrack> create(ScriptExecutionContext&, InbandTextTrackPrivate&);
     virtual ~InbandGenericTextTrack();

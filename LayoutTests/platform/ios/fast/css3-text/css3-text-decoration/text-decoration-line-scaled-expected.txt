@@ -12,106 +12,106 @@ layer at (8,8) size 784x709
         RenderBlock {HTML} at (0,0) size 700x700
           RenderBody {BODY} at (8,8) size 684x684
             RenderBlock {DIV} at (0,0) size 684x40
-              RenderText {#text} at (0,0) size 359x19
+              RenderText {#text} at (0,0) size 359x20
                 text run at (0,0) width 359: "Each line of this test should match its style description ("
-              RenderInline {I} at (358,0) size 180x19
-                RenderText {#text} at (358,0) size 180x19
+              RenderInline {I} at (358,0) size 180x20
+                RenderText {#text} at (358,0) size 180x20
                   text run at (358,0) width 180: "-webkit-text-decoration-line"
-              RenderText {#text} at (537,0) size 46x19
+              RenderText {#text} at (537,0) size 46x20
                 text run at (537,0) width 46: " resets "
-              RenderInline {I} at (582,0) size 98x19
-                RenderText {#text} at (582,0) size 98x19
+              RenderInline {I} at (582,0) size 98x20
+                RenderText {#text} at (582,0) size 98x20
                   text run at (582,0) width 98: "text-decoration"
-              RenderText {#text} at (0,0) size 684x39
+              RenderText {#text} at (0,0) size 684x40
                 text run at (679,0) width 5: ","
                 text run at (0,20) width 199: "except when the latter is set as "
-              RenderInline {I} at (198,20) size 64x19
-                RenderText {#text} at (198,20) size 64x19
+              RenderInline {I} at (198,20) size 64x20
+                RenderText {#text} at (198,20) size 64x20
                   text run at (198,20) width 64: "important"
-              RenderText {#text} at (261,20) size 11x19
+              RenderText {#text} at (261,20) size 11x20
                 text run at (261,20) width 11: "):"
             RenderBlock (anonymous) at (0,40) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,60) size 684x20
-              RenderText {#text} at (0,0) size 148x19
+              RenderText {#text} at (0,0) size 148x20
                 text run at (0,0) width 148: "This text is underlined "
-              RenderInline {SPAN} at (147,0) size 117x19
-                RenderText {#text} at (147,0) size 117x19
+              RenderInline {SPAN} at (147,0) size 117x20
+                RenderText {#text} at (147,0) size 117x20
                   text run at (147,0) width 117: "(also inside span)."
             RenderBlock (anonymous) at (0,80) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,100) size 684x20
-              RenderText {#text} at (0,0) size 140x19
+              RenderText {#text} at (0,0) size 140x20
                 text run at (0,0) width 140: "This text is overlined "
-              RenderInline {SPAN} at (139,0) size 117x19
-                RenderText {#text} at (139,0) size 117x19
+              RenderInline {SPAN} at (139,0) size 117x20
+                RenderText {#text} at (139,0) size 117x20
                   text run at (139,0) width 117: "(also inside span)."
             RenderBlock (anonymous) at (0,120) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,140) size 684x20
-              RenderText {#text} at (0,0) size 180x19
+              RenderText {#text} at (0,0) size 180x20
                 text run at (0,0) width 180: "This text has a line-through "
-              RenderInline {SPAN} at (179,0) size 117x19
-                RenderText {#text} at (179,0) size 117x19
+              RenderInline {SPAN} at (179,0) size 117x20
+                RenderText {#text} at (179,0) size 117x20
                   text run at (179,0) width 117: "(also inside span)."
             RenderBlock (anonymous) at (0,160) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,180) size 684x20
-              RenderText {#text} at (0,0) size 216x19
+              RenderText {#text} at (0,0) size 216x20
                 text run at (0,0) width 216: "This text contains no decorations."
             RenderBlock (anonymous) at (0,200) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,220) size 684x20
-              RenderText {#text} at (0,0) size 148x19
+              RenderText {#text} at (0,0) size 148x20
                 text run at (0,0) width 148: "This text is underlined."
             RenderBlock (anonymous) at (0,240) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,260) size 684x20
-              RenderText {#text} at (0,0) size 216x19
+              RenderText {#text} at (0,0) size 216x20
                 text run at (0,0) width 216: "This text contains no decorations."
             RenderBlock (anonymous) at (0,280) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,300) size 684x20
-              RenderText {#text} at (0,0) size 140x19
+              RenderText {#text} at (0,0) size 140x20
                 text run at (0,0) width 140: "This text is overlined."
             RenderBlock (anonymous) at (0,320) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,340) size 684x20
-              RenderText {#text} at (0,0) size 216x19
+              RenderText {#text} at (0,0) size 216x20
                 text run at (0,0) width 216: "This text contains no decorations."
             RenderBlock (anonymous) at (0,360) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,380) size 684x20
-              RenderText {#text} at (0,0) size 180x19
+              RenderText {#text} at (0,0) size 180x20
                 text run at (0,0) width 180: "This text has a line-through."
             RenderBlock (anonymous) at (0,400) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,420) size 684x20
-              RenderText {#text} at (0,0) size 216x19
+              RenderText {#text} at (0,0) size 216x20
                 text run at (0,0) width 216: "This text contains no decorations."
             RenderBlock (anonymous) at (0,440) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,460) size 684x20
-              RenderText {#text} at (0,0) size 363x19
+              RenderText {#text} at (0,0) size 363x20
                 text run at (0,0) width 363: "This text is underlined, overlined and has a line-through."
             RenderBlock (anonymous) at (0,480) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,500) size 684x20
-              RenderText {#text} at (0,0) size 216x19
+              RenderText {#text} at (0,0) size 216x20
                 text run at (0,0) width 216: "This text contains no decorations."
             RenderBlock (anonymous) at (0,520) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,540) size 684x20
-              RenderText {#text} at (0,0) size 140x19
+              RenderText {#text} at (0,0) size 140x20
                 text run at (0,0) width 140: "This text is overlined."
             RenderBlock (anonymous) at (0,560) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,580) size 684x20
-              RenderText {#text} at (0,0) size 140x19
+              RenderText {#text} at (0,0) size 140x20
                 text run at (0,0) width 140: "This text is overlined."
             RenderBlock (anonymous) at (0,600) size 684x20
-              RenderBR {BR} at (0,0) size 0x19
+              RenderBR {BR} at (0,0) size 0x20
             RenderBlock {DIV} at (0,620) size 684x20
-              RenderText {#text} at (0,0) size 148x19
+              RenderText {#text} at (0,0) size 148x20
                 text run at (0,0) width 148: "This text is underlined."
     RenderText {#text} at (0,0) size 0x0

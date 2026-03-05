@@ -176,7 +176,7 @@ void PaymentAuthorizationController::present(UIViewController *, CompletionHandl
     if (!m_controller)
         return completionHandler(false);
 
-    [m_controller presentWithCompletion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL success) mutable {
+    [m_controller presentWithCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL success) mutable {
         completionHandler(success);
     }).get()];
 }
@@ -186,7 +186,7 @@ void PaymentAuthorizationController::presentInScene(const String& sceneIdentifie
 {
     m_sceneIdentifier = sceneIdentifier;
     m_bundleIdentifier = bundleIdentifier;
-    present(nil, WTFMove(completionHandler));
+    present(nil, WTF::move(completionHandler));
 }
 #endif
 

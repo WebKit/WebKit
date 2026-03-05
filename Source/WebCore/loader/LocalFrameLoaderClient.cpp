@@ -27,6 +27,7 @@
 #include "LocalFrameLoaderClient.h"
 
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 
@@ -55,6 +56,18 @@ void LocalFrameLoaderClient::didExceedNetworkUsageThreshold()
 RefPtr<Frame> LocalFrameLoaderClient::provisionalParentFrame() const
 {
     return nullptr;
+}
+
+void LocalFrameLoaderClient::dispatchBackForwardItemLoading(const URL& url, const String& referer, LocalFrame& childFrame)
+{
+    Ref loader = m_loader;
+    ASSERT(isBackForwardLoadType(loader->loadType()));
+    ASSERT(!loader->frame().document()->loadEventFinished());
+
+    if (loader->loadChildHistoryItemIntoFrame(childFrame))
+        return;
+
+    loader->continueLoadURLIntoChildFrame(url, referer, childFrame);
 }
 
 } // namespace WebCore

@@ -22,21 +22,21 @@
 // directly dup the underlying structure instead of doing and encode and
 // decode.
 void *ASN1_item_dup(const ASN1_ITEM *it, void *x) {
-  unsigned char *b = NULL;
+  unsigned char *b = nullptr;
   const unsigned char *p;
   long i;
   void *ret;
 
-  if (x == NULL) {
-    return NULL;
+  if (x == nullptr) {
+    return nullptr;
   }
 
   i = ASN1_item_i2d(reinterpret_cast<ASN1_VALUE *>(x), &b, it);
-  if (b == NULL) {
-    return NULL;
+  if (b == nullptr) {
+    return nullptr;
   }
   p = b;
-  ret = ASN1_item_d2i(NULL, &p, i, it);
+  ret = ASN1_item_d2i(nullptr, &p, i, it);
   OPENSSL_free(b);
   return ret;
 }

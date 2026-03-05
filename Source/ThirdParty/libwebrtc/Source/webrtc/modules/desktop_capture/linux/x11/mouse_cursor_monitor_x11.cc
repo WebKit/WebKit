@@ -79,7 +79,7 @@ MouseCursorMonitorX11::MouseCursorMonitorX11(
   // Set a default initial cursor shape in case XFixes is not present.
   const int kSize = 5;
   std::unique_ptr<DesktopFrame> default_cursor(
-      new BasicDesktopFrame(DesktopSize(kSize, kSize)));
+      new BasicDesktopFrame(DesktopSize(kSize, kSize), FOURCC_ARGB));
   const uint8_t pixels[kSize * kSize] = {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff,
       0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00, 0xff, 0xff,
@@ -209,7 +209,7 @@ void MouseCursorMonitorX11::CaptureCursor() {
   }
 
   std::unique_ptr<DesktopFrame> image(
-      new BasicDesktopFrame(DesktopSize(img->width, img->height)));
+      new BasicDesktopFrame(DesktopSize(img->width, img->height), FOURCC_ARGB));
 
   // Xlib stores 32-bit data in longs, even if longs are 64-bits long.
   unsigned long* src = img->pixels;  // NOLINT(runtime/int)

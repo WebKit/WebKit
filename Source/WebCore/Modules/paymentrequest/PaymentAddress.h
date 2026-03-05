@@ -40,16 +40,16 @@ public:
         return adoptRef(*new PaymentAddress(std::forward<Args>(args)...));
     }
 
-    const String& country() const { return m_country; }
-    const Vector<String>& addressLine() const { return m_addressLine; }
-    const String& region() const { return m_region; }
-    const String& city() const { return m_city; }
-    const String& dependentLocality() const { return m_dependentLocality; }
-    const String& postalCode() const { return m_postalCode; }
-    const String& sortingCode() const { return m_sortingCode; }
-    const String& organization() const { return m_organization; }
-    const String& recipient() const { return m_recipient; }
-    const String& phone() const { return m_phone; }
+    const String& country() const LIFETIME_BOUND { return m_country; }
+    const Vector<String>& addressLine() const LIFETIME_BOUND { return m_addressLine; }
+    const String& region() const LIFETIME_BOUND { return m_region; }
+    const String& city() const LIFETIME_BOUND { return m_city; }
+    const String& dependentLocality() const LIFETIME_BOUND { return m_dependentLocality; }
+    const String& postalCode() const LIFETIME_BOUND { return m_postalCode; }
+    const String& sortingCode() const LIFETIME_BOUND { return m_sortingCode; }
+    const String& organization() const LIFETIME_BOUND { return m_organization; }
+    const String& recipient() const LIFETIME_BOUND { return m_recipient; }
+    const String& phone() const LIFETIME_BOUND { return m_phone; }
 
 private:
     PaymentAddress(const String& country, const Vector<String>& addressLine, const String& region, const String& city, const String& dependentLocality, const String& postalCode, const String& sortingCode, const String& organization, const String& recipient, const String& phone);

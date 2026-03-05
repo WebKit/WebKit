@@ -28,14 +28,19 @@
 
 #include "AnchorPositionEvaluator.h"
 #include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleJustifyItems.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
 
-StyleSelfAlignmentData JustifySelf::resolve(std::optional<StyleSelfAlignmentData> valueForNormalOrAuto) const
+StyleSelfAlignmentData JustifySelf::resolve(const RenderStyle* containerStyle) const
 {
+    if (PrimaryKind::Auto == primary())
+        return containerStyle ? containerStyle->justifyItems().resolve() : StyleSelfAlignmentData { ItemPosition::Normal };
+
     auto resolveOverflowPosition = [&](auto itemPosition) -> StyleSelfAlignmentData {
         switch (overflowPosition()) {
         case OverflowPositionKind::None:
@@ -43,16 +48,17 @@ StyleSelfAlignmentData JustifySelf::resolve(std::optional<StyleSelfAlignmentData
         case OverflowPositionKind::Unsafe:
             return { itemPosition, OverflowAlignment::Unsafe };
         case OverflowPositionKind::Safe:
-            return { itemPosition, OverflowAlignment::Safe, };
+            return { itemPosition, OverflowAlignment::Safe };
         }
         RELEASE_ASSERT_NOT_REACHED();
     };
 
     switch (primary()) {
     case PrimaryKind::Auto:
-        return valueForNormalOrAuto.value_or(ItemPosition::Auto);
+        ASSERT_NOT_REACHED();
+        return { ItemPosition::Auto };
     case PrimaryKind::Normal:
-        return valueForNormalOrAuto.value_or(ItemPosition::Normal);
+        return { ItemPosition::Normal };
     case PrimaryKind::Stretch:
         return { ItemPosition::Stretch };
     case PrimaryKind::Baseline:

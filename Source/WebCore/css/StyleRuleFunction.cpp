@@ -33,14 +33,14 @@ namespace WebCore {
 
 Ref<StyleRuleFunction> StyleRuleFunction::create(const AtomString& name, Vector<Parameter>&& parameters, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&& rules)
 {
-    return adoptRef(*new StyleRuleFunction(name, WTFMove(parameters), WTFMove(returnType), WTFMove(rules)));
+    return adoptRef(*new StyleRuleFunction(name, WTF::move(parameters), WTF::move(returnType), WTF::move(rules)));
 }
 
 StyleRuleFunction::StyleRuleFunction(const AtomString& name, Vector<Parameter>&& parameters, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&& rules)
-    : StyleRuleGroup(StyleRuleType::Function, WTFMove(rules))
+    : StyleRuleGroup(StyleRuleType::Function, WTF::move(rules))
     , m_name(name)
-    , m_parameters(WTFMove(parameters))
-    , m_returnType(WTFMove(returnType))
+    , m_parameters(WTF::move(parameters))
+    , m_returnType(WTF::move(returnType))
 {
 }
 
@@ -48,7 +48,7 @@ StyleRuleFunction::StyleRuleFunction(const StyleRuleFunction&) = default;
 
 StyleRuleFunctionDeclarations::StyleRuleFunctionDeclarations(Ref<StyleProperties>&& properties)
     : StyleRuleBase(StyleRuleType::FunctionDeclarations)
-    , m_properties(WTFMove(properties))
+    , m_properties(WTF::move(properties))
 {
 }
 

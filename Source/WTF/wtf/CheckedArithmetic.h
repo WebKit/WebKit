@@ -289,7 +289,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         return (lhs ^ rhs) >= 0;
     }
 
-    static inline bool add(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    [[nodiscard]] static inline bool add(LHS lhs, RHS rhs, ResultType& result)
     {
 #if !HAVE(INT128_T)
         if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
@@ -316,7 +316,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         return true;
     }
 
-    static inline bool sub(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    [[nodiscard]] static inline bool sub(LHS lhs, RHS rhs, ResultType& result)
     {
 #if !HAVE(INT128_T)
         if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
@@ -342,7 +342,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         return true;
     }
 
-    static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    [[nodiscard]] static inline bool multiply(LHS lhs, RHS rhs, ResultType& result)
     {
 #if USE(MUL_OVERFLOW)
         // Don't use the builtin if the int128 type is WTF::[U]Int128Impl.
@@ -383,7 +383,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         return true;
     }
 
-    static inline bool divide(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    [[nodiscard]] static inline bool divide(LHS lhs, RHS rhs, ResultType& result)
     {
         if (!rhs)
             return false;
@@ -398,7 +398,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
 
 template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOperations<LHS, RHS, ResultType, false, false> {
     // LHS and RHS are unsigned types so bounds checks are nice and easy
-    static inline bool add(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    [[nodiscard]] static inline bool add(LHS lhs, RHS rhs, ResultType& result)
     {
         ResultType temp;
 #if !HAVE(INT128_T)
@@ -418,7 +418,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         return true;
     }
 
-    static inline bool sub(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    [[nodiscard]] static inline bool sub(LHS lhs, RHS rhs, ResultType& result)
     {
         ResultType temp;
 #if !HAVE(INT128_T)
@@ -438,7 +438,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         return true;
     }
 
-    static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    [[nodiscard]] static inline bool multiply(LHS lhs, RHS rhs, ResultType& result)
     {
 #if USE(MUL_OVERFLOW)
         // Don't use the builtin if the int128 type is WTF::Int128Impl.
@@ -466,7 +466,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         return true;
     }
 
-    static inline bool divide(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    [[nodiscard]] static inline bool divide(LHS lhs, RHS rhs, ResultType& result)
     {
         if (!rhs)
             return false;

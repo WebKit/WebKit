@@ -52,14 +52,4 @@ std::optional<SimpleRange> makeSimpleRange(const RefPtr<AbstractRange>& range)
     return makeSimpleRange(range.get());
 }
 
-Ref<Node> AbstractRange::protectedStartContainer() const
-{
-    return startContainer();
-}
-
-Ref<Node> AbstractRange::protectedEndContainer() const
-{
-    return endContainer();
-}
-
 }

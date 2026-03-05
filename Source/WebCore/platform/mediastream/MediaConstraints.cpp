@@ -121,7 +121,7 @@ void StringConstraint::merge(const StringConstraint& other)
 
 void MediaTrackConstraintSetMap::forEach(NOESCAPE Function<void(MediaConstraintType, const MediaConstraint&)>&& callback) const
 {
-    filter([callback = WTFMove(callback)] (auto type, auto& constraint) mutable {
+    filter([callback = WTF::move(callback)] (auto type, auto& constraint) mutable {
         callback(type, constraint);
         return false;
     });
@@ -171,16 +171,16 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
 {
     switch (constraintType) {
     case MediaConstraintType::Width:
-        m_width = WTFMove(constraint);
+        m_width = WTF::move(constraint);
         break;
     case MediaConstraintType::Height:
-        m_height = WTFMove(constraint);
+        m_height = WTF::move(constraint);
         break;
     case MediaConstraintType::SampleRate:
-        m_sampleRate = WTFMove(constraint);
+        m_sampleRate = WTF::move(constraint);
         break;
     case MediaConstraintType::SampleSize:
-        m_sampleSize = WTFMove(constraint);
+        m_sampleSize = WTF::move(constraint);
         break;
 
     case MediaConstraintType::AspectRatio:
@@ -208,16 +208,16 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
 {
     switch (constraintType) {
     case MediaConstraintType::AspectRatio:
-        m_aspectRatio = WTFMove(constraint);
+        m_aspectRatio = WTF::move(constraint);
         break;
     case MediaConstraintType::FrameRate:
-        m_frameRate = WTFMove(constraint);
+        m_frameRate = WTF::move(constraint);
         break;
     case MediaConstraintType::Volume:
-        m_volume = WTFMove(constraint);
+        m_volume = WTF::move(constraint);
         break;
     case MediaConstraintType::Zoom:
-        m_zoom = WTFMove(constraint);
+        m_zoom = WTF::move(constraint);
         break;
 
     case MediaConstraintType::Width:
@@ -245,23 +245,23 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
 {
     switch (constraintType) {
     case MediaConstraintType::EchoCancellation:
-        m_echoCancellation = WTFMove(constraint);
+        m_echoCancellation = WTF::move(constraint);
         break;
     case MediaConstraintType::DisplaySurface:
-        m_displaySurface = WTFMove(constraint);
+        m_displaySurface = WTF::move(constraint);
         break;
     case MediaConstraintType::LogicalSurface:
-        m_logicalSurface = WTFMove(constraint);
+        m_logicalSurface = WTF::move(constraint);
         break;
 
     case MediaConstraintType::Torch:
-        m_torch = WTFMove(constraint);
+        m_torch = WTF::move(constraint);
         break;
     case MediaConstraintType::BackgroundBlur:
-        m_backgroundBlur = WTFMove(constraint);
+        m_backgroundBlur = WTF::move(constraint);
         break;
     case MediaConstraintType::PowerEfficient:
-        m_powerEfficient = WTFMove(constraint);
+        m_powerEfficient = WTF::move(constraint);
         break;
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
@@ -286,18 +286,18 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
 {
     switch (constraintType) {
     case MediaConstraintType::FacingMode:
-        m_facingMode = WTFMove(constraint);
+        m_facingMode = WTF::move(constraint);
         break;
     case MediaConstraintType::DeviceId:
         if (constraint)
             constraint->removeEmptyStringConstraint();
-        m_deviceId = WTFMove(constraint);
+        m_deviceId = WTF::move(constraint);
         break;
     case MediaConstraintType::GroupId:
-        m_groupId = WTFMove(constraint);
+        m_groupId = WTF::move(constraint);
         break;
     case MediaConstraintType::WhiteBalanceMode:
-        m_whiteBalanceMode = WTFMove(constraint);
+        m_whiteBalanceMode = WTF::move(constraint);
         break;
 
     case MediaConstraintType::Width:
@@ -624,17 +624,17 @@ static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoC
     if (addFrameRateConstraint) {
         DoubleConstraint frameRateConstraint;
         frameRateConstraint.setIdeal(30);
-        videoConstraints.set(MediaConstraintType::FrameRate, WTFMove(frameRateConstraint));
+        videoConstraints.set(MediaConstraintType::FrameRate, WTF::move(frameRateConstraint));
     }
     if (addWidthConstraint) {
         IntConstraint widthConstraint;
         widthConstraint.setIdeal(640);
-        videoConstraints.set(MediaConstraintType::Width, WTFMove(widthConstraint));
+        videoConstraints.set(MediaConstraintType::Width, WTF::move(widthConstraint));
     }
     if (addHeightConstraint) {
         IntConstraint heightConstraint;
         heightConstraint.setIdeal(480);
-        videoConstraints.set(MediaConstraintType::Height, WTFMove(heightConstraint));
+        videoConstraints.set(MediaConstraintType::Height, WTF::move(heightConstraint));
     }
 }
 
@@ -659,7 +659,7 @@ void MediaConstraints::setDefaultAudioConstraints()
     if (needsEchoCancellationConstraint) {
         BooleanConstraint echoCancellationConstraint;
         echoCancellationConstraint.setIdeal(true);
-        mandatoryConstraints.set(MediaConstraintType::EchoCancellation, WTFMove(echoCancellationConstraint));
+        mandatoryConstraints.set(MediaConstraintType::EchoCancellation, WTF::move(echoCancellationConstraint));
     }
 }
 

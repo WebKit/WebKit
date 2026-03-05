@@ -14,6 +14,7 @@
 #include "modules/video_capture/video_capture.h"
 #include "modules/video_capture/video_capture_impl.h"
 #include "modules/video_capture/video_capture_options.h"
+#include "system_wrappers/include/clock.h"
 
 #if defined(WEBRTC_USE_PIPEWIRE)
 #include "modules/video_capture/linux/video_capture_pipewire.h"
@@ -22,8 +23,9 @@
 namespace webrtc {
 namespace videocapturemodule {
 scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
+    Clock* clock,
     const char* deviceUniqueId) {
-  auto implementation = make_ref_counted<VideoCaptureModuleV4L2>();
+  auto implementation = make_ref_counted<VideoCaptureModuleV4L2>(clock);
 
   if (implementation->Init(deviceUniqueId) != 0)
     return nullptr;
@@ -32,19 +34,20 @@ scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
 }
 
 scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
+    Clock* clock,
     VideoCaptureOptions* options,
     const char* deviceUniqueId) {
 #if defined(WEBRTC_USE_PIPEWIRE)
   if (options->allow_pipewire()) {
     auto implementation =
-        webrtc::make_ref_counted<VideoCaptureModulePipeWire>(options);
+        webrtc::make_ref_counted<VideoCaptureModulePipeWire>(clock, options);
 
     if (implementation->Init(deviceUniqueId) == 0)
       return implementation;
   }
 #endif
   if (options->allow_v4l2()) {
-    auto implementation = make_ref_counted<VideoCaptureModuleV4L2>();
+    auto implementation = make_ref_counted<VideoCaptureModuleV4L2>(clock);
 
     if (implementation->Init(deviceUniqueId) == 0)
       return implementation;

@@ -62,7 +62,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>& userContentControllers()
+static HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>& NODELETE userContentControllers()
 {
     static NeverDestroyed<HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>> userContentControllers;
 
@@ -87,13 +87,13 @@ Ref<WebUserContentController> WebUserContentController::getOrCreate(UserContentC
     Ref userContentController = adoptRef(*new WebUserContentController(identifier));
     userContentControllerPtr = userContentController.get();
 
-    userContentController->addUserScripts(WTFMove(parameters.userScripts), InjectUserScriptImmediately::No);
-    userContentController->addUserStyleSheets(WTFMove(parameters.userStyleSheets));
-    userContentController->addUserScriptMessageHandlers(WTFMove(parameters.messageHandlers));
-    for (auto&& buffer : WTFMove(parameters.buffers))
-        userContentController->addJSBuffer(WTFMove(buffer));
+    userContentController->addUserScripts(WTF::move(parameters.userScripts), InjectUserScriptImmediately::No);
+    userContentController->addUserStyleSheets(WTF::move(parameters.userStyleSheets));
+    userContentController->addUserScriptMessageHandlers(WTF::move(parameters.messageHandlers));
+    for (auto&& buffer : WTF::move(parameters.buffers))
+        userContentController->addJSBuffer(WTF::move(buffer));
 #if ENABLE(CONTENT_EXTENSIONS)
-    userContentController->addContentRuleLists(WTFMove(parameters.contentRuleLists));
+    userContentController->addContentRuleLists(WTF::move(parameters.contentRuleLists));
 #endif
     return userContentController;
 }
@@ -131,7 +131,12 @@ void WebUserContentController::addContentWorldIfNecessary(const ContentWorldData
         if (auto* existingWorld = InjectedBundleScriptWorld::find(world.name))
             return Ref<InjectedBundleScriptWorld> { *existingWorld };
 #endif
-        return InjectedBundleScriptWorld::create(world.identifier, world.name, InjectedBundleScriptWorld::Type::User);
+#if PLATFORM(COCOA)
+        auto type = world.options.contains(ContentWorldOption::Inspectable) ? InjectedBundleScriptWorld::Type::User : InjectedBundleScriptWorld::Type::Internal;
+#else
+        auto type = InjectedBundleScriptWorld::Type::User;
+#endif
+        return InjectedBundleScriptWorld::create(world.identifier, world.name, type);
     });
 
     if (!addResult.isNewEntry)
@@ -194,7 +199,7 @@ void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userSc
         }
 
         UserScript script = userScriptData.userScript;
-        addUserScriptInternal(*world, userScriptData.identifier, WTFMove(script), immediately);
+        addUserScriptInternal(*world, userScriptData.identifier, WTF::move(script), immediately);
     }
 }
 
@@ -233,7 +238,7 @@ void WebUserContentController::addUserStyleSheets(Vector<WebUserStyleSheetData>&
         }
         
         UserStyleSheet sheet = userStyleSheetData.userStyleSheet;
-        addUserStyleSheetInternal(*world, userStyleSheetData.identifier, WTFMove(sheet));
+        addUserStyleSheetInternal(*world, userStyleSheetData.identifier, WTF::move(sheet));
     }
 
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
@@ -278,7 +283,7 @@ public:
 
     virtual ~WebUserMessageHandlerDescriptorProxy() = default;
 
-    ScriptMessageHandlerIdentifier identifier() { return m_identifier; }
+    ScriptMessageHandlerIdentifier NODELETE identifier() { return m_identifier; }
 
 private:
     WebUserMessageHandlerDescriptorProxy(WebUserContentController& controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
@@ -295,7 +300,7 @@ private:
         if (!frame)
             return;
 
-        auto webFrame = WebFrame::fromCoreFrame(*frame);
+        RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
         if (!webFrame)
             return;
 
@@ -308,7 +313,7 @@ private:
         if (!message)
             return;
 
-        WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::DidPostMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), webFrame->info(), m_identifier, *message), [completionHandler = WTFMove(completionHandler), context](Expected<WebKit::JavaScriptEvaluationResult, String>&& result) {
+        protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::WebProcessProxy::DidPostMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), webFrame->info(), m_identifier, *message), [completionHandler = WTF::move(completionHandler), context](Expected<WebKit::JavaScriptEvaluationResult, String>&& result) {
             if (!result)
                 return completionHandler(JSC::jsUndefined(), result.error());
             completionHandler(toJS(toJS(context.get()), result->toJS(context.get()).get()), { });
@@ -321,7 +326,7 @@ private:
         if (!frame)
             return JSC::jsUndefined();
 
-        auto webFrame = WebFrame::fromCoreFrame(*frame);
+        RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
         if (!webFrame)
             return JSC::jsUndefined();
 
@@ -334,7 +339,7 @@ private:
         if (!message)
             return JSC::jsUndefined();
 
-        auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebProcessProxy::DidPostLegacySynchronousMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), webFrame->info(), m_identifier, *message), 0);
+        auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebProcessProxy::DidPostLegacySynchronousMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), webFrame->info(), m_identifier, *message), 0);
         auto [result] = sendResult.takeReplyOr(makeUnexpected(String()));
         if (!result)
             return JSC::jsUndefined();
@@ -451,10 +456,10 @@ void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBu
 void WebUserContentController::addContentRuleLists(Vector<std::pair<WebCompiledContentRuleListData, URL>>&& contentRuleLists)
 {
     for (auto&& pair : contentRuleLists) {
-        auto&& contentRuleList = WTFMove(pair.first);
+        auto&& contentRuleList = WTF::move(pair.first);
         String identifier = contentRuleList.identifier;
-        if (RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleList)))
-            m_contentExtensionBackend.addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), WTFMove(pair.second));
+        if (RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTF::move(contentRuleList)))
+            m_contentExtensionBackend.addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), WTF::move(pair.second));
     }
 }
 
@@ -497,12 +502,12 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
     if (userScriptIdentifier && scriptsInWorld.findIf([&](auto& pair) { return pair.first == userScriptIdentifier; }) != notFound)
         return;
 
-    scriptsInWorld.append(std::make_pair(userScriptIdentifier, WTFMove(userScript)));
+    scriptsInWorld.append(std::make_pair(userScriptIdentifier, WTF::move(userScript)));
 }
 
 void WebUserContentController::addUserScript(InjectedBundleScriptWorld& world, UserScript&& userScript)
 {
-    addUserScriptInternal(world, std::nullopt, WTFMove(userScript), InjectUserScriptImmediately::No);
+    addUserScriptInternal(world, std::nullopt, WTF::move(userScript), InjectUserScriptImmediately::No);
 }
 
 void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld& world, const URL& url)
@@ -555,12 +560,12 @@ void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWor
         }
     }
 
-    styleSheetsInWorld.append(std::make_pair(userStyleSheetIdentifier, WTFMove(userStyleSheet)));
+    styleSheetsInWorld.append(std::make_pair(userStyleSheetIdentifier, WTF::move(userStyleSheet)));
 }
 
 void WebUserContentController::addUserStyleSheet(InjectedBundleScriptWorld& world, UserStyleSheet&& userStyleSheet)
 {
-    addUserStyleSheetInternal(world, std::nullopt, WTFMove(userStyleSheet));
+    addUserStyleSheetInternal(world, std::nullopt, WTF::move(userStyleSheet));
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 

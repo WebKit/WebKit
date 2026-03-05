@@ -38,19 +38,16 @@
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBox.h"
+#include "SelectionGeometry.h"
 #include "VisiblePosition.h"
 #include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include "SelectionGeometry.h"
-#endif
-
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderLineBreak);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLineBreak);
 
 RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
-    : RenderBoxModelObject(Type::LineBreak, element, WTFMove(style), { }, is<HTMLWBRElement>(element) ? OptionSet<LineBreakFlag> { LineBreakFlag::IsWBR } : OptionSet<LineBreakFlag> { })
+    : RenderBoxModelObject(Type::LineBreak, element, WTF::move(style), { }, is<HTMLWBRElement>(element) ? OptionSet<LineBreakFlag> { LineBreakFlag::IsWBR } : OptionSet<LineBreakFlag> { })
 {
     ASSERT(isRenderLineBreak());
 }
@@ -114,7 +111,6 @@ void RenderLineBreak::updateFromStyle()
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isInline());
 }
 
-#if PLATFORM(IOS_FAMILY)
 void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rects, unsigned, unsigned)
 {
     auto run = InlineIterator::boxFor(*this);
@@ -136,7 +132,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     }
 
     // FIXME: Out-of-flow positioned line breaks do not follow normal containing block chain.
-    auto* containingBlock = RenderObject::containingBlockForPositionType(PositionType::Static, *this);
+    CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Static, *this);
     // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
     LogicalSelectionOffsetCaches cache(*containingBlock);
     LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
@@ -159,8 +155,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed);
     bool boxIsHorizontal = !is<InlineIterator::SVGTextBoxIterator>(run) ? run->isHorizontal() : !writingMode().isVertical();
 
-    rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(element()), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+    rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(WTF::protect(element())), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, protect(view())->pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
 }
-#endif
 
 } // namespace WebCore

@@ -82,7 +82,9 @@ class MockAudioDecoder final : public AudioDecoder {
       if (decoded.size() >= output_size) {
         memset(decoded.data(), 0,
                sizeof(int16_t) * kPacketDuration * num_channels_);
-        return DecodeResult{kPacketDuration * num_channels_, kSpeech};
+        return DecodeResult{
+            .num_decoded_samples = kPacketDuration * num_channels_,
+            .speech_type = kSpeech};
       } else {
         ADD_FAILURE() << "Expected decoded.size() to be >= output_size ("
                       << decoded.size() << " vs. " << output_size << ")";
@@ -276,18 +278,29 @@ class NetEqNetworkStatsTest {
 
   void DecodeFecTest() {
     decoder_->set_fec_enabled(false);
-    NetEqNetworkStatsCheck expects = {kIgnore,  // current_buffer_size_ms
-                                      kIgnore,  // preferred_buffer_size_ms
-                                      kIgnore,  // jitter_peaks_found
-                                      kEqual,   // packet_loss_rate
-                                      kEqual,   // expand_rate
-                                      kEqual,   // voice_expand_rate
-                                      kIgnore,  // preemptive_rate
-                                      kEqual,   // accelerate_rate
-                                      kEqual,   // decoded_fec_rate
-                                      kEqual,   // discarded_fec_rate
-                                      kEqual,   // added_zero_samples
-                                      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+    NetEqNetworkStatsCheck expects = {
+        .current_buffer_size_ms = kIgnore,
+        .preferred_buffer_size_ms = kIgnore,
+        .jitter_peaks_found = kIgnore,
+        .packet_loss_rate = kEqual,
+        .expand_rate = kEqual,
+        .speech_expand_rate = kEqual,
+        .preemptive_rate = kIgnore,
+        .accelerate_rate = kEqual,
+        .secondary_decoded_rate = kEqual,
+        .secondary_discarded_rate = kEqual,
+        .added_zero_samples = kEqual,
+        .stats_ref = {.current_buffer_size_ms = 0,
+                      .preferred_buffer_size_ms = 0,
+                      .jitter_peaks_found = 0,
+                      .expand_rate = 0,
+                      .speech_expand_rate = 0,
+                      .preemptive_rate = 0,
+                      .accelerate_rate = 0,
+                      .secondary_decoded_rate = 0,
+                      .secondary_discarded_rate = 0,
+                      .mean_waiting_time_ms = 0,
+                      .median_waiting_time_ms = 0}};
     RunTest(50, expects);
 
     // Next we introduce packet losses.
@@ -306,18 +319,29 @@ class NetEqNetworkStatsTest {
   }
 
   void NoiseExpansionTest() {
-    NetEqNetworkStatsCheck expects = {kIgnore,  // current_buffer_size_ms
-                                      kIgnore,  // preferred_buffer_size_ms
-                                      kIgnore,  // jitter_peaks_found
-                                      kEqual,   // packet_loss_rate
-                                      kEqual,   // expand_rate
-                                      kEqual,   // speech_expand_rate
-                                      kIgnore,  // preemptive_rate
-                                      kEqual,   // accelerate_rate
-                                      kEqual,   // decoded_fec_rate
-                                      kEqual,   // discard_fec_rate
-                                      kEqual,   // added_zero_samples
-                                      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+    NetEqNetworkStatsCheck expects = {
+        .current_buffer_size_ms = kIgnore,
+        .preferred_buffer_size_ms = kIgnore,
+        .jitter_peaks_found = kIgnore,
+        .packet_loss_rate = kEqual,
+        .expand_rate = kEqual,
+        .speech_expand_rate = kEqual,
+        .preemptive_rate = kIgnore,
+        .accelerate_rate = kEqual,
+        .secondary_decoded_rate = kEqual,
+        .secondary_discarded_rate = kEqual,
+        .added_zero_samples = kEqual,
+        .stats_ref = {.current_buffer_size_ms = 0,
+                      .preferred_buffer_size_ms = 0,
+                      .jitter_peaks_found = 0,
+                      .expand_rate = 0,
+                      .speech_expand_rate = 0,
+                      .preemptive_rate = 0,
+                      .accelerate_rate = 0,
+                      .secondary_decoded_rate = 0,
+                      .secondary_discarded_rate = 0,
+                      .mean_waiting_time_ms = 0,
+                      .median_waiting_time_ms = 0}};
     RunTest(50, expects);
 
     SetPacketLossRate(1);

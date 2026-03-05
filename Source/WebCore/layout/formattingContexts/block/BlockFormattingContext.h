@@ -45,7 +45,7 @@ class FloatingContext;
 // This class implements the layout logic for block formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
 class BlockFormattingContext : public FormattingContext {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BlockFormattingContext);
+    WTF_MAKE_TZONE_ALLOCATED(BlockFormattingContext);
 public:
     BlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState&);
 

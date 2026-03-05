@@ -47,7 +47,7 @@ struct SpeakAs {
     using value_type = SpeakAsValueEnumSet::value_type;
 
     constexpr SpeakAs(CSS::Keyword::Normal) : m_value { } { }
-    constexpr SpeakAs(EnumSet&& set) : m_value { WTFMove(set) } { }
+    constexpr SpeakAs(EnumSet&& set) : m_value { WTF::move(set) } { }
     constexpr SpeakAs(value_type value) : SpeakAs { EnumSet { value } } { }
     constexpr SpeakAs(std::initializer_list<value_type> initializerList) : SpeakAs { EnumSet { initializerList } } { }
 

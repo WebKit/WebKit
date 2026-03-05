@@ -36,14 +36,18 @@ public:
     NodeKind kind() const override;
 
     Expression& base() { return m_base.get(); }
+    const Expression& base() const { return m_base.get(); }
+
     Identifier& fieldName() { return m_fieldName; }
+    const Identifier& fieldName() const { return m_fieldName; }
+
     const Identifier& originalFieldName() const { return m_originalFieldName; }
 
 private:
     FieldAccessExpression(SourceSpan span, Expression::Ref&& base, Identifier&& fieldName)
         : Expression(span)
-        , m_base(WTFMove(base))
-        , m_fieldName(WTFMove(fieldName))
+        , m_base(WTF::move(base))
+        , m_fieldName(WTF::move(fieldName))
         , m_originalFieldName(m_fieldName)
     { }
 

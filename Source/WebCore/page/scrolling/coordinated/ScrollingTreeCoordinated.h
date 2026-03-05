@@ -49,6 +49,11 @@ private:
     void applyLayerPositionsInternal() final;
     void didCompleteRenderingUpdate() final;
 
+#if HAVE(DISPLAY_LINK)
+    // ScrollingTree
+    void hasNodeWithAnimatedScrollChanged(bool /* hasNodeWithAnimatedScroll */) final;
+#endif
+
     RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint) final;
 };
 

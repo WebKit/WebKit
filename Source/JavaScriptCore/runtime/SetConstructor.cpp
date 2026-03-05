@@ -153,14 +153,4 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationEntryKey, (JSGlobalObject* gl
     return JSValue::encode(JSSet::Helper::getIterationEntryKey(storage));
 }
 
-JSC_DEFINE_HOST_FUNCTION(setPrivateFuncClone, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    ASSERT(jsDynamicCast<JSSet*>(callFrame->argument(0)));
-    JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
-    RELEASE_AND_RETURN(scope, JSValue::encode(set->clone(globalObject, vm, globalObject->setStructure())));
-}
-
 }

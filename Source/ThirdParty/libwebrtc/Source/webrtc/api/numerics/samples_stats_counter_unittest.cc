@@ -15,10 +15,13 @@
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "api/units/timestamp.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
+
+constexpr Timestamp kTimestamp = Timestamp::Seconds(1);
 
 SamplesStatsCounter CreateStatsFilledWithIntsFrom1ToN(int n) {
   std::vector<double> data;
@@ -29,7 +32,7 @@ SamplesStatsCounter CreateStatsFilledWithIntsFrom1ToN(int n) {
 
   SamplesStatsCounter stats;
   for (double v : data) {
-    stats.AddSample(v);
+    stats.AddSample({.value = v, .time = kTimestamp});
   }
   return stats;
 }
@@ -43,7 +46,7 @@ SamplesStatsCounter CreateStatsFromUniformDistribution(int n,
 
   SamplesStatsCounter stats;
   for (int i = 1; i <= n; i++) {
-    stats.AddSample(dis(gen));
+    stats.AddSample({.value = dis(gen), .time = kTimestamp});
   }
   return stats;
 }
@@ -71,10 +74,10 @@ TEST(SamplesStatsCounterTest, FullSimpleTest) {
 
 TEST(SamplesStatsCounterTest, VarianceAndDeviation) {
   SamplesStatsCounter stats;
-  stats.AddSample(2);
-  stats.AddSample(2);
-  stats.AddSample(-1);
-  stats.AddSample(5);
+  stats.AddSample({.value = 2, .time = kTimestamp});
+  stats.AddSample({.value = 2, .time = kTimestamp});
+  stats.AddSample({.value = -1, .time = kTimestamp});
+  stats.AddSample({.value = 5, .time = kTimestamp});
 
   EXPECT_DOUBLE_EQ(stats.GetAverage(), 2.0);
   EXPECT_DOUBLE_EQ(stats.GetVariance(), 4.5);
@@ -117,7 +120,7 @@ TEST(SamplesStatsCounterTest, NumericStabilityForVariance) {
 }
 
 TEST_P(SamplesStatsCounterTest, AddSamples) {
-  int data[SIZE_FOR_MERGE] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  double data[SIZE_FOR_MERGE] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
   // Split the data in different partitions.
   // We have 11 distinct tests:
   //   * Empty merged with full sequence.
@@ -128,10 +131,10 @@ TEST_P(SamplesStatsCounterTest, AddSamples) {
   // All must lead to the same result.
   SamplesStatsCounter stats0, stats1;
   for (int i = 0; i < GetParam(); ++i) {
-    stats0.AddSample(data[i]);
+    stats0.AddSample({.value = data[i], .time = kTimestamp});
   }
   for (int i = GetParam(); i < SIZE_FOR_MERGE; ++i) {
-    stats1.AddSample(data[i]);
+    stats1.AddSample({.value = data[i], .time = kTimestamp});
   }
   stats0.AddSamples(stats1);
 
@@ -192,7 +195,7 @@ TEST(SamplesStatsCounterTest, MultiplyLeft) {
 TEST(SamplesStatsCounterTest, Divide) {
   SamplesStatsCounter stats;
   for (int i = 1; i <= 10; i++) {
-    stats.AddSample(i * 10);
+    stats.AddSample({.value = i * 10., .time = kTimestamp});
   }
 
   EXPECT_TRUE(!stats.IsEmpty());

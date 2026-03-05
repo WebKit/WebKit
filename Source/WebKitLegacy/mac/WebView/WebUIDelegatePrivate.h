@@ -101,7 +101,7 @@ enum {
     WebMenuItemTagDictationAlternative,
     WebMenuItemTagToggleVideoFullscreen,
     WebMenuItemTagShareMenu,
-    WebMenuItemTagToggleVideoEnhancedFullscreen,
+    WebMenuItemTagTogglePictureInPicture,
     WebMenuItemTagToggleVideoViewer,
     WebMenuItemTagAddHighlightToCurrentQuickNote,
     WebMenuItemTagAddHighlightToNewQuickNote,

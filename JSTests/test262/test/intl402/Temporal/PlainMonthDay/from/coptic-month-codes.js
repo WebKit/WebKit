@@ -5,6 +5,7 @@
 esid: sec-temporal.plainmonthday.from
 description: PlainMonthDay can be created for all month codes (M01-M13) in Coptic calendar
 features: [Temporal, Intl.Era-monthcode]
+includes: [temporalHelpers.js]
 ---*/
 
 // Test that all month codes M01-M13 are valid for the Coptic calendar
@@ -22,21 +23,18 @@ const regularMonthCodes = [
 for (const monthCode of regularMonthCodes) {
   // Test creation with monthCode
   const pmd = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 1 });
-  assert.sameValue(pmd.monthCode, monthCode, `monthCode ${monthCode} should be preserved`);
-  assert.sameValue(pmd.day, 1, "day should be 1");
+  TemporalHelpers.assertPlainMonthDay(pmd, monthCode, 1, `${monthCode}-01`, 1972);
 
   // Test with day 30 (all regular months have 30 days)
   const pmd30 = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 30 });
-  assert.sameValue(pmd30.monthCode, monthCode, `${monthCode} with day 30 should be valid`);
-  assert.sameValue(pmd30.day, 30, `day should be 30 for ${monthCode}`);
+  TemporalHelpers.assertPlainMonthDay(pmd30, monthCode, 30, `${monthCode}-30`, 1972);
 
   // Test overflow: constrain to 30
   const constrained = Temporal.PlainMonthDay.from(
     { calendar, monthCode, day: 31 },
     { overflow: "constrain" }
   );
-  assert.sameValue(constrained.monthCode, monthCode, `${monthCode} should be preserved with constrain`);
-  assert.sameValue(constrained.day, 30, `day 31 should be constrained to 30 for ${monthCode}`);
+  TemporalHelpers.assertPlainMonthDay(constrained, monthCode, 30, `day 31 should be constrained to 30 for ${monthCode}`, 1972);
 
   // Test overflow: reject should throw for day 31
   assert.throws(RangeError, () => {
@@ -47,17 +45,16 @@ for (const monthCode of regularMonthCodes) {
 // M13: Short month (Epagomenal days) with 5 or 6 days
 
 // Test M13 with day 6 (maximum, valid in leap years)
+// Reference year 1971
 const pmdM13Day6 = Temporal.PlainMonthDay.from({ calendar, monthCode: "M13", day: 6 });
-assert.sameValue(pmdM13Day6.monthCode, "M13", "M13 should be valid with day 6");
-assert.sameValue(pmdM13Day6.day, 6, "day should be 6 for M13");
+TemporalHelpers.assertPlainMonthDay(pmdM13Day6, "M13", 6, "M13-06", 1971);
 
 // Test M13 overflow: constrain to maximum
 const constrained = Temporal.PlainMonthDay.from(
   { calendar, monthCode: "M13", day: 7 },
   { overflow: "constrain" }
 );
-assert.sameValue(constrained.monthCode, "M13", "M13 should be preserved with constrain");
-assert.sameValue(constrained.day, 6, "day 7 should be constrained to 6 for M13");
+TemporalHelpers.assertPlainMonthDay(constrained, "M13", 6, "day 7 should be constrained to 6 for M13", 1971);
 
 // Test M13 overflow: reject should throw for day 7
 assert.throws(RangeError, () => {

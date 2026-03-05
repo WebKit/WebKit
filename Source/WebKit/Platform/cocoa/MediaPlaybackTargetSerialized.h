@@ -38,12 +38,13 @@ public:
 
     ~MediaPlaybackTargetSerialized();
 
-    const MediaPlaybackTargetContextSerialized& context() const { return m_context; }
+    const MediaPlaybackTargetContextSerialized& context() const LIFETIME_BOUND { return m_context; }
 
 private:
     explicit MediaPlaybackTargetSerialized(MediaPlaybackTargetContextSerialized&&);
 
     // MediaPlaybackTarget
+    Type targetType() const final { return m_context.targetType(); }
     String deviceName() const final { return m_context.deviceName(); }
     bool hasActiveRoute() const final { return m_context.hasActiveRoute(); }
     bool supportsRemoteVideoPlayback() const final { return m_context.supportsRemoteVideoPlayback(); }
