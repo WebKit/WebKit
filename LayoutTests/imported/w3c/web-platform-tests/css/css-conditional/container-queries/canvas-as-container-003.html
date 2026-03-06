@@ -27,6 +27,11 @@
   requestAnimationFrame(()=> {
     requestAnimationFrame(()=> {
       target.focus();
+      requestAnimationFrame(()=> {
+        requestAnimationFrame(()=> {
+          takeScreenshot();
+        })
+      })
     });
   });
 </script>

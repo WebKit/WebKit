@@ -2047,11 +2047,6 @@ webkit.org/b/289211 [ Sequoia Release x86_64 ] imported/w3c/web-platform-tests/m
 
 webkit.org/b/289284 fast/canvas/image-buffer-resource-limits.html [ Pass Timeout Crash ]
 
-# webkit.org/b/289298 [ macOS wk2 Release ] 3x imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-00*.html are flaky failures.
-[ Release ] imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-001.html [ Pass Failure ]
-[ Release ] imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-004.html [ Pass Failure ]
-[ Release ] imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-003.html [ Pass Failure ]
-
 webkit.org/b/289370 [ Debug arm64 ] media/video-webm-seek-singlekeyframe.html [ Pass Failure ]
 
 webkit.org/b/289487 [ Sequoia Release x86_64 ] fast/webgpu/nocrash/RenderBundle_WRITE.html [ Pass Timeout ]
@@ -2165,8 +2160,6 @@ webkit.org/b/295938 scrollingcoordinator/mac/latching/horizontal-overflow-back-s
 webkit.org/b/296017 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-021.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/296066 [ Sequoia Debug arm64 ] accessibility/mac/scrolling-in-pdf-crash.html [ Pass Timeout ]
-
-webkit.org/b/295929 [ Release ] imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-002.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/296101 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-012.html [ Pass ImageOnlyFailure ]
 
