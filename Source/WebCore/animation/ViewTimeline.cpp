@@ -314,6 +314,7 @@ void ViewTimeline::cacheCurrentTime()
 
         auto scrollDirection = resolvedScrollDirection();
         float scrollOffset = scrollDirection.isVertical ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
+        float maxScrollOffset = scrollDirection.isVertical ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
         float scrollContainerSize = scrollDirection.isVertical ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
 
         // https://drafts.csswg.org/scroll-animations-1/#view-timelines-ranges
@@ -398,6 +399,7 @@ void ViewTimeline::cacheCurrentTime()
 
         return {
             scrollOffset,
+            maxScrollOffset,
             scrollContainerSize,
             subjectOffset,
             subjectSize,
@@ -503,6 +505,8 @@ std::pair<double, double> ViewTimeline::intervalForTimelineRangeName(const Scrol
         case Style::SingleAnimationRangeName::Cover:
         case Style::SingleAnimationRangeName::EntryCrossing:
             return data.rangeStart;
+        case Style::SingleAnimationRangeName::Scroll:
+            return 0.0;
         case Style::SingleAnimationRangeName::Entry:
             // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-entry
             // 0% is equivalent to 0% of the cover range.
@@ -529,6 +533,8 @@ std::pair<double, double> ViewTimeline::intervalForTimelineRangeName(const Scrol
         case Style::SingleAnimationRangeName::Cover:
         case Style::SingleAnimationRangeName::ExitCrossing:
             return data.rangeEnd;
+        case Style::SingleAnimationRangeName::Scroll:
+            return m_cachedCurrentTimeData.maxScrollOffset;
         case Style::SingleAnimationRangeName::Exit:
             // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-exit
             // 100% is equivalent to 100% of the cover range.

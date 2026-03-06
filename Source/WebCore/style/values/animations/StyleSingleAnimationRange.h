@@ -83,6 +83,10 @@ struct SingleAnimationRangeEdge {
         : SingleAnimationRangeEdge { Name::ExitCrossing, WTF::move(offset) }
     {
     }
+    SingleAnimationRangeEdge(CSS::Keyword::Scroll, std::optional<Offset>&& offset = std::nullopt)
+        : SingleAnimationRangeEdge { Name::Scroll, WTF::move(offset) }
+    {
+    }
 
     bool isNormal() const { return m_name == Name::Normal; }
 
@@ -113,6 +117,8 @@ struct SingleAnimationRangeEdge {
             return visitPredefinedNamedRange(CSS::Keyword::EntryCrossing { });
         case Name::ExitCrossing:
             return visitPredefinedNamedRange(CSS::Keyword::ExitCrossing { });
+        case Name::Scroll:
+            return visitPredefinedNamedRange(CSS::Keyword::Scroll { });
         }
         RELEASE_ASSERT_NOT_REACHED();
     }

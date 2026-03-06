@@ -52,6 +52,8 @@ void StyleRuleKeyframe::Key::writeToString(StringBuilder& str) const
         str.append("exit "_s);
     else if (rangeName == CSSValueExitCrossing)
         str.append("exit-crossing "_s);
+    else if (rangeName == CSSValueScroll)
+        str.append("scroll "_s);
     str.append(offset * 100, '%');
 }
 

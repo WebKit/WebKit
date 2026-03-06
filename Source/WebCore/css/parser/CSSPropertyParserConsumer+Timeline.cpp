@@ -44,7 +44,7 @@ namespace CSSPropertyParserHelpers {
 
 bool isAnimationRangeKeyword(CSSValueID id)
 {
-    return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing>(id);
+    return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing, CSSValueScroll>(id);
 }
 
 RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range, CSS::PropertyParserState&)

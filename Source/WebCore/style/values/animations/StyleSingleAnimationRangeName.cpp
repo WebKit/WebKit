@@ -49,6 +49,8 @@ SingleAnimationRangeName convertCSSValueIDToSingleAnimationRangeName(CSSValueID 
         return SingleAnimationRangeName::EntryCrossing;
     case CSSValueExitCrossing:
         return SingleAnimationRangeName::ExitCrossing;
+    case CSSValueScroll:
+        return SingleAnimationRangeName::Scroll;
     default:
         ASSERT_NOT_REACHED();
         return SingleAnimationRangeName::Normal;
@@ -72,6 +74,8 @@ CSSValueID convertSingleAnimationRangeNameToCSSValueID(SingleAnimationRangeName 
         return CSSValueEntryCrossing;
     case SingleAnimationRangeName::ExitCrossing:
         return CSSValueExitCrossing;
+    case SingleAnimationRangeName::Scroll:
+        return CSSValueScroll;
     case SingleAnimationRangeName::Omitted:
         return CSSValueInvalid;
     }
@@ -98,6 +102,8 @@ String convertSingleAnimationRangeNameToRangeString(SingleAnimationRangeName ran
         return "entry-crossing"_s;
     case SingleAnimationRangeName::ExitCrossing:
         return "exit-crossing"_s;
+    case SingleAnimationRangeName::Scroll:
+        return "scroll"_s;
     }
     ASSERT_NOT_REACHED();
     return "normal"_s;
@@ -118,6 +124,8 @@ SingleAnimationRangeName convertRangeStringToSingleTimelineRangeName(const Strin
         return Style::SingleAnimationRangeName::EntryCrossing;
     if (rangeString == "exit-crossing"_s)
         return Style::SingleAnimationRangeName::ExitCrossing;
+    if (rangeString == "scroll"_s)
+        return Style::SingleAnimationRangeName::Scroll;
     return Style::SingleAnimationRangeName::Normal;
 }
 

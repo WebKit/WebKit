@@ -112,6 +112,8 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(BuilderState
             return CSS::Keyword::EntryCrossing { };
         case CSSValueExitCrossing:
             return CSS::Keyword::ExitCrossing { };
+        case CSSValueScroll:
+            return CSS::Keyword::Scroll { };
         default:
             break;
         }
@@ -138,6 +140,8 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(BuilderState
         return { CSS::Keyword::EntryCrossing { }, WTF::move(offset) };
     case CSSValueExitCrossing:
         return { CSS::Keyword::ExitCrossing { }, WTF::move(offset) };
+    case CSSValueScroll:
+        return { CSS::Keyword::Scroll { }, WTF::move(offset) };
     default:
         break;
     }
@@ -174,6 +178,8 @@ template<typename Edge> static std::optional<Edge> deprecatedConvertSingleAnimat
             return { CSS::Keyword::EntryCrossing { } };
         case CSSValueExitCrossing:
             return { CSS::Keyword::ExitCrossing { } };
+        case CSSValueScroll:
+            return { CSS::Keyword::Scroll { } };
         default:
             break;
         }
@@ -210,6 +216,8 @@ template<typename Edge> static std::optional<Edge> deprecatedConvertSingleAnimat
         return { { CSS::Keyword::EntryCrossing { }, WTF::move(offset) } };
     case CSSValueExitCrossing:
         return { { CSS::Keyword::ExitCrossing { }, WTF::move(offset) } };
+    case CSSValueScroll:
+        return { { CSS::Keyword::Scroll { }, WTF::move(offset) } };
     default:
         break;
     }

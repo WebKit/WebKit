@@ -112,6 +112,7 @@ private:
 
     struct CurrentTimeData {
         float scrollOffset { 0 };
+        float maxScrollOffset { 0 };
         float scrollContainerSize { 0 };
         float subjectOffset { 0 };
         float subjectSize { 0 };

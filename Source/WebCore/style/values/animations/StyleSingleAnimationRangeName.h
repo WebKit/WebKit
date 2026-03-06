@@ -32,15 +32,16 @@ enum CSSValueID : uint16_t;
 
 namespace Style {
 
-// <timeline-range-name> = cover | contain | entry | exit | entry-crossing | exit-crossing
+// <timeline-range-name> = cover | contain | entry | exit | entry-crossing | exit-crossing | scroll
 // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-cover
 // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-contain
 // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-entry
 // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-exit
 // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-entry-crossing
 // https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-exit-crossing
+// https://drafts.csswg.org/scroll-animations-1/#valdef-animation-timeline-range-scroll
 
-enum class SingleAnimationRangeName : uint8_t { Normal, Omitted, Cover, Contain, Entry, Exit, EntryCrossing, ExitCrossing };
+enum class SingleAnimationRangeName : uint8_t { Normal, Omitted, Cover, Contain, Entry, Exit, EntryCrossing, ExitCrossing, Scroll };
 
 CSSValueID convertSingleAnimationRangeNameToCSSValueID(SingleAnimationRangeName);
 SingleAnimationRangeName convertCSSValueIDToSingleAnimationRangeName(CSSValueID);
