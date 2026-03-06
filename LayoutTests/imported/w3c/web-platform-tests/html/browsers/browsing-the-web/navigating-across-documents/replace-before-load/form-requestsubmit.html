@@ -30,7 +30,7 @@ promise_test(async t => {
 
   assert_equals(history.length, startingHistoryLength, "Inserting the under-test iframe must not change history.length");
 
-  await waitForLoad(t, iframe, afterReplacementURL);
+  await waitForLoadAllowingIntermediateLoads(t, iframe, afterReplacementURL);
   assert_equals(history.length, startingHistoryLength, "history.length must not change after waiting for the replacement");
 
   await checkSentinelIframe(t, sentinelIframe);
