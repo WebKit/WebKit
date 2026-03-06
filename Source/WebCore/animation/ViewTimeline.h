@@ -99,6 +99,7 @@ public:
     std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
 
     bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Styleable&) const;
+    WebAnimationTime epsilon() const;
 
 private:
     ScrollTimeline::Data computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;

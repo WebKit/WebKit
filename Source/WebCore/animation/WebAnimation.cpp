@@ -511,7 +511,19 @@ std::optional<WebAnimationTime> WebAnimation::currentTime(RespectHoldTime respec
         return std::nullopt;
 
     // Otherwise, current time = (timeline time - start time) * playback rate
-    return (*m_timeline->currentTime(useCachedCurrentTime) - *m_startTime) * m_playbackRate;
+    auto result = (*m_timeline->currentTime(useCachedCurrentTime) - *m_startTime) * m_playbackRate;
+
+    if (RefPtr viewTimeline = dynamicDowncast<ViewTimeline>(m_timeline)) {
+        auto epsilon = viewTimeline->epsilon();
+        auto zeroPercent = WebAnimationTime::fromPercentage(0);
+        if (result < zeroPercent && result + epsilon >= zeroPercent)
+            return zeroPercent;
+        auto hundredPercent = WebAnimationTime::fromPercentage(100);
+        if (result > hundredPercent && result - epsilon <= hundredPercent)
+            return hundredPercent;
+    }
+
+    return result;
 }
 
 ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<WebAnimationTime> seekTime)

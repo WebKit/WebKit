@@ -420,6 +420,17 @@ void ViewTimeline::cacheCurrentTime()
         sourceMetricsDidChange();
 }
 
+WebAnimationTime ViewTimeline::epsilon() const
+{
+    if (!m_cachedCurrentTimeData.subjectSize)
+        return WebAnimationTime::fromPercentage(0);
+    // The metrics reported for the subject and scroll container can be the subject of multiple conversions
+    // along the way, so we compute a percentage value that can be used in WebAnimation::currentTime() to round
+    // values around the 0% and 100% thresholds. To that end, we'll allow for a 0.1pt tolerance.
+    float pointTolerance = 0.1;
+    return WebAnimationTime::fromPercentage(pointTolerance / m_cachedCurrentTimeData.subjectSize * 100);
+}
+
 AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ViewTimeline::documentWillUpdateAnimationsAndSendEvents()
 {
     cacheCurrentTime();
