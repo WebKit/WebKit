@@ -85,8 +85,15 @@ public:
 
     void lock()
     {
-        while (!m_lock.compareExchangeWeak(0, 1, std::memory_order_acquire))
-            asm volatile ("pause");
+        while (!m_lock.compareExchangeWeak(0, 1, std::memory_order_acquire)) {
+#if CPU(ARM64)
+            asm volatile ("yield"); // NOLINT
+#elif CPU(X86_64)
+            asm volatile ("pause"); // NOLINT
+#else
+            Thread::yield();
+#endif
+        }
     }
 
     void unlock()

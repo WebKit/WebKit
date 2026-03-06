@@ -53,6 +53,7 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include <bit>
+#include <concepts>
 #include <optional>
 #include <wtf/StdLibExtras.h>
 #include <wtf/simde/simde.h>
@@ -60,7 +61,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF::SIMD {
 
-template<typename LaneType>
+template <typename T> concept Lane =
+    sizeof(T) == sizeof(uint8_t)
+    || sizeof(T) == sizeof(uint16_t)
+    || sizeof(T) == sizeof(uint32_t)
+    || sizeof(T) == sizeof(uint64_t);
+
+template<Lane LaneType>
 struct LaneToVector;
 
 template<>
@@ -83,12 +90,25 @@ struct LaneToVector<uint64_t> {
     using Type = simde_uint64x2_t;
 };
 
-template<typename LaneType>
+template<Lane LaneType>
 using VectorType = typename LaneToVector<LaneType>::Type;
 
 
-template<typename LaneType>
+template<Lane LaneType>
 inline constexpr size_t stride = 16 / sizeof(LaneType);
+
+template<Lane LaneType>
+ALWAYS_INLINE constexpr decltype(auto) zero()
+{
+    if constexpr (sizeof(LaneType) == sizeof(uint8_t))
+        return simde_vdupq_n_u8(0);
+    else if constexpr (sizeof(LaneType) == sizeof(uint16_t))
+        return simde_vdupq_n_u16(0);
+    else if constexpr (sizeof(LaneType) == sizeof(uint32_t))
+        return simde_vdupq_n_u32(0);
+    else
+        return simde_vdupq_n_u64(0);
+}
 
 constexpr simde_uint8x16_t splat8(uint8_t code)
 {
@@ -110,7 +130,7 @@ constexpr simde_uint64x2_t splat64(uint64_t code)
     return simde_uint64x2_t { code, code };
 }
 
-template<typename LaneType>
+template<Lane LaneType>
 ALWAYS_INLINE constexpr decltype(auto) splat(LaneType lane)
 {
     if constexpr (sizeof(LaneType) == sizeof(uint8_t))
@@ -119,10 +139,8 @@ ALWAYS_INLINE constexpr decltype(auto) splat(LaneType lane)
         return splat16(static_cast<uint16_t>(lane));
     else if constexpr (sizeof(LaneType) == sizeof(uint32_t))
         return splat32(static_cast<uint32_t>(lane));
-    else {
-        static_assert(sizeof(LaneType) == sizeof(uint64_t));
+    else
         return splat64(static_cast<uint64_t>(lane));
-    }
 }
 
 ALWAYS_INLINE simde_uint8x16_t load(const uint8_t* ptr)
@@ -280,6 +298,26 @@ ALWAYS_INLINE simde_uint64x2_t bitOr2(simde_uint64x2_t accumulated, simde_uint64
     return simde_vorrq_u64(accumulated, input);
 }
 
+ALWAYS_INLINE simde_uint8x16_t bitXor2(simde_uint8x16_t accumulated, simde_uint8x16_t input)
+{
+    return simde_veorq_u8(accumulated, input);
+}
+
+ALWAYS_INLINE simde_uint16x8_t bitXor2(simde_uint16x8_t accumulated, simde_uint16x8_t input)
+{
+    return simde_veorq_u16(accumulated, input);
+}
+
+ALWAYS_INLINE simde_uint32x4_t bitXor2(simde_uint32x4_t accumulated, simde_uint32x4_t input)
+{
+    return simde_veorq_u32(accumulated, input);
+}
+
+ALWAYS_INLINE simde_uint64x2_t bitXor2(simde_uint64x2_t accumulated, simde_uint64x2_t input)
+{
+    return simde_veorq_u64(accumulated, input);
+}
+
 ALWAYS_INLINE simde_uint8x16_t bitAnd2(simde_uint8x16_t accumulated, simde_uint8x16_t input)
 {
     return simde_vandq_u8(accumulated, input);
@@ -316,6 +354,15 @@ ALWAYS_INLINE decltype(auto) bitOr(VectorType a0, VectorType a1, Args... args)
         return bitOr2(a0, a1);
     else
         return bitOr2(a0, bitOr(a1, std::forward<Args>(args)...));
+}
+
+template<typename VectorType, typename... Args>
+ALWAYS_INLINE decltype(auto) bitXor(VectorType a0, VectorType a1, Args... args)
+{
+    if constexpr (!sizeof...(args))
+        return bitXor2(a0, a1);
+    else
+        return bitXor2(a0, bitXor(a1, std::forward<Args>(args)...));
 }
 
 template<typename VectorType, typename... Args>
