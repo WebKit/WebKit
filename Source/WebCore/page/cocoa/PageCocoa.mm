@@ -58,16 +58,16 @@ void Page::platformInitialize()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if ENABLE(TREE_DEBUGGING)
-        PAL::registerNotifyCallback("com.apple.WebKit.dumpAccessibilityTreeToStderr"_s, printAccessibilityTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.dumpAccessibilityTreeToStderrAfterDelay"_s, printAccessibilityTreeForLiveDocumentsAfterDelay);
-        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree"_s, printRenderTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree"_s, printLayerTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showPaintOrderTree"_s, printPaintOrderTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree"_s, Layout::printLayoutTreeForLiveDocuments);
+        PAL::registerNotifyCallback("dumpAccessibilityTreeToStderr"_s, printAccessibilityTreeForLiveDocuments);
+        PAL::registerNotifyCallback("dumpAccessibilityTreeToStderrAfterDelay"_s, printAccessibilityTreeForLiveDocumentsAfterDelay);
+        PAL::registerNotifyCallback("showRenderTree"_s, printRenderTreeForLiveDocuments);
+        PAL::registerNotifyCallback("showLayerTree"_s, printLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("showPaintOrderTree"_s, printPaintOrderTreeForLiveDocuments);
+        PAL::registerNotifyCallback("showLayoutTree"_s, Layout::printLayoutTreeForLiveDocuments);
 #endif // ENABLE(TREE_DEBUGGING)
 
-        PAL::registerNotifyCallback("com.apple.WebKit.showAllDocuments"_s, [] {
+        PAL::registerNotifyCallback("showAllDocuments"_s, [] {
             unsigned numPages = 0;
             Page::forEachPage([&numPages](Page&) {
                 ++numPages;

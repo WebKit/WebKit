@@ -380,7 +380,7 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
 #ifndef NDEBUG
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.showLegacyFlexReasons"_s, Function<void()> { printLegacyFlexReasons });
+        PAL::registerNotifyCallback("showLegacyFlexReasons"_s, Function<void()> { printLegacyFlexReasons });
     });
 #endif
     return canUseForFlexLayoutWithReason(flexBox, IncludeReasons::First).isEmpty();

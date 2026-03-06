@@ -61,6 +61,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/NotificationPoint.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -676,8 +677,10 @@ private:
     bool m_ftpEnabled { false };
     bool m_isSuspended { false };
     bool m_didSyncCookiesForClose { false };
+#if HAVE(NOTIFICATIONPOINT)
+    RefPtr<NotificationPoint> m_mediaStreamingActivityNotificationPoint;
+#endif
 #if PLATFORM(COCOA)
-    int m_mediaStreamingActivitityToken { NOTIFY_TOKEN_INVALID };
     bool m_isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
     bool m_enableModernDownloadProgress { false };

@@ -63,7 +63,7 @@ GarbageCollectionController::GarbageCollectionController()
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.dumpGCHeap"_s, [] {
+        PAL::registerNotifyCallback("dumpGCHeap"_s, [] {
             GarbageCollectionController::singleton().dumpHeap();
         });
     });

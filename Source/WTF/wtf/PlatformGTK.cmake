@@ -7,6 +7,7 @@ list(APPEND WTF_SOURCES
     glib/Application.cpp
     glib/ChassisType.cpp
     glib/FileSystemGlib.cpp
+    glib/NotificationPoint.cpp
     glib/GMallocString.cpp
     glib/GRefPtr.cpp
     glib/GSocketMonitor.cpp

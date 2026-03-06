@@ -269,9 +269,9 @@ void NetworkProcess::didClose(IPC::Connection&)
         session.notifyAdAttributionKitOfSessionTermination();
     });
 
-#if PLATFORM(COCOA)
-    if (m_mediaStreamingActivitityToken != NOTIFY_TOKEN_INVALID)
-        notify_cancel(m_mediaStreamingActivitityToken);
+#if HAVE(NOTIFICATIONPOINT)
+    if (m_mediaStreamingActivityNotificationPoint)
+        m_mediaStreamingActivityNotificationPoint = nullptr;
 #endif
 }
 
@@ -1571,24 +1571,26 @@ bool NetworkProcess::isEnhancedSecurityLinksEnabled() const
 
 void NetworkProcess::notifyMediaStreamingActivity(bool activity)
 {
-#if PLATFORM(COCOA)
-    static constexpr auto notifyMediaStreamingName = "com.apple.WebKit.mediaStreamingActivity"_s;
-
-    if (m_mediaStreamingActivitityToken == NOTIFY_TOKEN_INVALID) {
-        auto status = notify_register_check(notifyMediaStreamingName, &m_mediaStreamingActivitityToken);
-        if (status != NOTIFY_STATUS_OK || m_mediaStreamingActivitityToken == NOTIFY_TOKEN_INVALID) {
-            RELEASE_LOG_ERROR(IPC, "notify_register_check() for %s failed with status (%d) 0x%X", notifyMediaStreamingName.characters(), status, status);
-            m_mediaStreamingActivitityToken = NOTIFY_TOKEN_INVALID;
+#if HAVE(NOTIFICATIONPOINT)
+    static constexpr auto notifyMediaStreamingName = "mediaStreamingActivity"_s;
+    if (!m_mediaStreamingActivityNotificationPoint) {
+        auto point = NotificationPoint::create(notifyMediaStreamingName, nullptr);
+        if (point.has_value())
+            m_mediaStreamingActivityNotificationPoint = point.value();
+        else {
+            RELEASE_LOG_ERROR(IPC, "NotificationPoint::create() for %s failed with status (%d)", notifyMediaStreamingName.characters(), static_cast<int>(point.error()));
             return;
         }
     }
-    auto status = notify_set_state(m_mediaStreamingActivitityToken, activity ? 1 : 0);
-    if (status != NOTIFY_STATUS_OK) {
-        RELEASE_LOG_ERROR(IPC, "notify_set_state() for %s failed with status (%d) 0x%X", notifyMediaStreamingName.characters(), status, status);
+    RefPtr<NotificationPoint> point = m_mediaStreamingActivityNotificationPoint;
+    auto result = point->setState(activity ? 1 : 0);
+    if (!result.has_value()) {
+        RELEASE_LOG_ERROR(IPC, "NotificationPoint::setState() for %s failed with status (%d)", notifyMediaStreamingName.characters(), static_cast<int>(result.error()));
         return;
     }
-    status = notify_post(notifyMediaStreamingName);
-    RELEASE_LOG_ERROR_IF(status != NOTIFY_STATUS_OK, IPC, "notify_post() for %s failed with status (%d) 0x%X", notifyMediaStreamingName.characters(), status, status);
+    result = point->notify();
+    if (!result.has_value())
+        RELEASE_LOG_ERROR(IPC, "NotificationPoint::notify() for %s failed with status (%d)", notifyMediaStreamingName.characters(), static_cast<int>(result.error()));
 #else
     UNUSED_PARAM(activity);
 #endif

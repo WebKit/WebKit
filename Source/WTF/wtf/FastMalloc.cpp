@@ -30,6 +30,7 @@
 #include <string.h>
 #include <wtf/Atomics.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/NotificationPoint.h>
 #include <wtf/PageBlock.h>
 
 #if OS(WINDOWS)
@@ -52,10 +53,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackShot.h>
-
-#if PLATFORM(COCOA)
-#include <notify.h>
-#endif
 
 #endif
 
@@ -207,10 +204,13 @@ MallocCallTracker& MallocCallTracker::singleton()
 
 MallocCallTracker::MallocCallTracker()
 {
-    int token;
-    notify_register_dispatch("com.apple.WebKit.dumpUntrackedMallocs", &token, mainDispatchQueueSingleton(), ^(int) {
+#if HAVE(NOTIFICATIONPOINT)
+    auto point = NotificationPoint::create("dumpUntrackedMallocs"_s, []() {
         MallocCallTracker::singleton().dumpStats();
     });
+    if (point.has_value())
+        (void)point.value().leakRef();
+#endif
 }
 
 void MallocCallTracker::recordMalloc(void* address, size_t allocationSize)

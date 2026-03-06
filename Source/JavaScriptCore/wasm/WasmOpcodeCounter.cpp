@@ -30,13 +30,9 @@
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/NotificationPoint.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(COCOA)
-#include <notify.h>
-#include <unistd.h>
-#include <wtf/darwin/DispatchExtras.h>
-#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -101,18 +97,22 @@ void WasmOpcodeCounter::dump()
 
 void WasmOpcodeCounter::registerDispatch()
 {
-#if PLATFORM(COCOA)
+#if HAVE(NOTIFICATIONPOINT)
     static std::once_flag registerFlag;
     std::call_once(registerFlag, [&]() {
         int pid = getpid();
-        const char* key = "com.apple.WebKit.wasm.op.stat";
         dataLogF("<WASM.OP.STAT><%d> Registering callback for wasm opcode statistics.\n", pid);
-        dataLogF("<WASM.OP.STAT><%d> Use `notifyutil -v -p %s` to dump statistics.\n", pid, key);
 
-        int token;
-        notify_register_dispatch(key, &token, mainDispatchQueueSingleton(), ^(int) {
+        auto result = NotificationPoint::create("wasm.op.stat"_s, []() {
             WasmOpcodeCounter::singleton().dump();
         });
+        if (result.has_value()) {
+            RefPtr<NotificationPoint> point = result.value();
+#if PLATFORM(COCOA)
+            dataLogF("<WASM.OP.STAT><%d> Use `notifyutil -v -p %s` to dump statistics.\n", pid, point->key().utf8().data());
+#endif
+            (void)point.leakRef();
+        }
     });
 #endif
 }

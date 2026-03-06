@@ -208,6 +208,7 @@ set(WTF_PUBLIC_HEADERS
     Noncopyable.h
     Nonmovable.h
     NotFound.h
+    NotificationPoint.h
     NumberOfCores.h
     OSAllocator.h
     OSObjectPtr.h

@@ -91,7 +91,7 @@ static const Seconds unexpectedActivityDuration = 10_s;
 
 void WebProcessProxy::registerNotifyObservers()
 {
-    PAL::registerNotifyCallback("com.apple.WebKit.logFrameTrees"_s, [] {
+    PAL::registerNotifyCallback("logFrameTrees"_s, [] {
         for (Ref page : WebProcessProxy::globalPages())
             page->logFrameTree();
     });
