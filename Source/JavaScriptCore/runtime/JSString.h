@@ -130,7 +130,7 @@ public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
     static_assert(MaxLength == String::MaxLength);
 
-    // Minimum rope length for rope-walk optimizations (tryFindOneChar, tryReplaceOneChar).
+    // Minimum rope length for rope-walk optimizations (tryFindOneChar, tryGetCharAt, tryReplaceOneChar).
     static constexpr unsigned minLengthForRopeWalk = 0x128;
 
     static constexpr uintptr_t isRopeInPointer = 0x1;
@@ -282,6 +282,8 @@ public:
 
     ALWAYS_INLINE JSString* tryReplaceOneChar(JSGlobalObject*, char16_t, JSString* replacement);
     inline std::optional<size_t> tryFindOneChar(JSGlobalObject*, char16_t character, unsigned& startPosition) const;
+
+    inline std::optional<char16_t> tryGetCharAt(unsigned position) const;
 
     bool isSubstring() const;
 protected:

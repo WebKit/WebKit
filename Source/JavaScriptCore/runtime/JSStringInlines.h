@@ -221,6 +221,47 @@ std::optional<size_t> JSString::tryFindOneChar(JSGlobalObject*, char16_t charact
     return WTF::notFound;
 }
 
+std::optional<char16_t> JSString::tryGetCharAt(unsigned position) const
+{
+    ASSERT(isRope());
+    ASSERT(position < length());
+
+    // Retrieve a single character at `position` from a rope without resolving it.
+    // Returns the character if accessible, or std::nullopt if the rope structure
+    // is too complex (i.e. an unresolved non-substring fiber is encountered).
+
+    if (isSubstring()) {
+        const JSRopeString* rope = static_cast<const JSRopeString*>(this);
+        JSString* base = rope->substringBase();
+        ASSERT(!base->isRope());
+        return base->valueInternal().characterAt(rope->substringOffset() + position);
+    }
+
+    const JSRopeString* rope = static_cast<const JSRopeString*>(this);
+    unsigned offset = 0;
+    for (unsigned i = 0; i < JSRopeString::s_maxInternalRopeLength; ++i) {
+        JSString* fiber = rope->fiber(i);
+        if (!fiber)
+            break;
+        unsigned fiberLength = fiber->length();
+        if (position < offset + fiberLength) {
+            unsigned localPos = position - offset;
+            if (!fiber->isRope())
+                return fiber->valueInternal().characterAt(localPos);
+            if (fiber->isSubstring()) {
+                const JSRopeString* subRope = static_cast<const JSRopeString*>(fiber);
+                JSString* base = subRope->substringBase();
+                ASSERT(!base->isRope());
+                return base->valueInternal().characterAt(subRope->substringOffset() + localPos);
+            }
+            return std::nullopt;
+        }
+        offset += fiberLength;
+    }
+
+    return std::nullopt;
+}
+
 template<typename StringType>
 inline JSValue jsMakeNontrivialString(VM& vm, StringType&& string)
 {
