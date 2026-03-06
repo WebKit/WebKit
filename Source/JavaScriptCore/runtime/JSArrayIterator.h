@@ -65,8 +65,10 @@ public:
     const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
+    inline int64_t index() const { return internalField(Field::Index).get().asAnyInt(); }
     IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }
     JSObject* iteratedObject() const { return jsCast<JSObject*>(internalField(Field::IteratedObject).get()); }
+    inline void putIndex(int64_t index) { internalField(Field::Index).setWithoutWriteBarrier(jsNumber(index)); }
 
     JS_EXPORT_PRIVATE static JSArrayIterator* create(VM&, Structure*, JSObject* iteratedObject, JSValue kind);
     static JSArrayIterator* create(VM& vm, Structure* structure, JSObject* iteratedObject, IterationKind kind)

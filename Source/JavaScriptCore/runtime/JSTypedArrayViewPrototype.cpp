@@ -165,13 +165,6 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncTypedArrayFromFast, (JSGlobalO
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION_ON_TYPE(type.value(), genericTypedArrayViewPrivateFuncFromFast);
 }
 
-JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached, (JSGlobalObject*, CallFrame* callFrame))
-{
-    JSValue argument = callFrame->uncheckedArgument(0);
-    ASSERT(argument.isCell() && isTypedView(argument.asCell()->type()));
-    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(argument)->isDetached()));
-}
-
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
