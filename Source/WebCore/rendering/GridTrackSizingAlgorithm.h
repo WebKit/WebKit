@@ -186,7 +186,7 @@ private:
     // Helper methods for step 2. resolveIntrinsicTrackSizes().
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&, RenderGridLayoutState&);
     void sizeTrackToFitSingleSpanMasonryGroup(const GridSpan&, MasonryMinMaxTrackSize&, GridTrack&);
-
+    bool isUnderMaxContentConstraint() const;
     bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
 
     using GridItemsSpanGroupRange = std::span<GridItemWithSpan>;

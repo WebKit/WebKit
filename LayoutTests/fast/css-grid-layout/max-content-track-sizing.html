@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    display: inline-grid;
+    align-items: start;
+    justify-items: start;
+    border: 1px dotted;
+    margin-bottom: 4px;
+}
+
+.gridMinMaxAuto15px {
+    grid-template-columns: minmax(auto, 15px);
+    grid-template-rows: auto;
+}
+
+.gridMinMaxAuto30px {
+    grid-template-columns: minmax(auto, 30px);
+    grid-template-rows: auto;
+}
+
+.firstRowFirstColumn {
+    font: 10px/1 Ahem;
+    width: max-content; /* Equivalent to max-content in the original test */
+}
+
+.firstRowFirstColumn.min-content {
+    width: -moz-min-content;
+    width: -webkit-min-content;
+    width: min-content;
+}
+
+.firstRowFirstColumn.max-content {
+    width: -moz-max-content;
+    width: -webkit-max-content;
+    width: max-content;
+}
+
+.firstRowFirstColumn.fit-content {
+    width: -moz-fit-content;
+    width: -webkit-fit-content;
+    width: fit-content;
+}
+
+.firstRowFirstColumn.fill {
+    width: -moz-available;
+    width: -webkit-fill-available;
+    width: fill;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.gridMinMaxAuto15px'); checkLayout('.gridMinMaxAuto30px')">
+
+<p>Test that resolving minmax(auto, &lt;fixed&gt;) with different width properties on grid items works properly under max-content constraints</p>
+<!-- Tests for grid-template-columns: minmax(auto, 15px) -->
+<pre>grid-template-columns: minmax(auto, 15px)</pre>
+<br>
+<div class="constrainedContainer">
+    <div class="grid gridMinMaxAuto15px" data-expected-width="42" data-expected-height="12">
+        <div class="firstRowFirstColumn max-content" data-expected-width="40" data-expected-height="10">XXXX</div>
+    </div>
+</div>
+<br>
+<!-- Tests for grid-template-columns: minmax(auto, 30px) -->
+<pre>grid-template-columns: minmax(auto, 30px)</pre>
+<br>
+<div class="constrainedContainer">
+    <div class="grid gridMinMaxAuto30px" data-expected-width="42" data-expected-height="12">
+        <div class="firstRowFirstColumn max-content" data-expected-width="40" data-expected-height="10">XXXX</div>
+    </div>
+</div>
+</body>
+</html>

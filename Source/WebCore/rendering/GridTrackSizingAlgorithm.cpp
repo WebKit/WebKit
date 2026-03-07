@@ -243,6 +243,24 @@ LayoutUnit GridTrackSizingAlgorithm::initialGrowthLimit(const Style::GridTrackSi
     return infinity;
 }
 
+bool GridTrackSizingAlgorithm::isUnderMaxContentConstraint() const
+{
+    bool noAvailableSpace = !availableSpace(m_direction).has_value();
+    // Also check if the grid has an explicit max-content size
+    if (m_direction == GridTrackSizingDirection::ForColumns) {
+        const auto& gridStyle = m_renderGrid->style();
+        // Check if width is explicitly set to max-content
+        if (gridStyle.width().isMaxContent())
+            return true;
+    } else {
+        const auto& gridStyle = m_renderGrid->style();
+        // Check if height is explicitly set to max-content
+        if (gridStyle.height().isMaxContent())
+            return true;
+    }
+    return noAvailableSpace;
+}
+
 void GridTrackSizingAlgorithm::sizeTrackToFitSingleSpanMasonryGroup(const GridSpan& span, MasonryMinMaxTrackSize& masonryIndefiniteItems, GridTrack& track)
 {
     auto trackPosition = span.startLine();
@@ -274,9 +292,8 @@ void GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem(const GridSpan& spa
         track.setBaseSize(std::max(track.baseSize(), m_strategy->minContentContributionForGridItem(gridItem, gridLayoutState)));
     } else if (trackSize.hasMaxContentMinTrackBreadth()) {
         track.setBaseSize(std::max(track.baseSize(), m_strategy->maxContentContributionForGridItem(gridItem, gridLayoutState)));
-    } else if (trackSize.hasAutoMinTrackBreadth()) {
+    } else if (trackSize.hasAutoMinTrackBreadth())
         track.setBaseSize(std::max(track.baseSize(), m_strategy->minContributionForGridItem(gridItem, gridLayoutState)));
-    }
 
     if (trackSize.hasMinContentMaxTrackBreadth()) {
         track.setGrowthLimit(std::max(track.growthLimit(), m_strategy->minContentContributionForGridItem(gridItem, gridLayoutState)));
@@ -285,6 +302,10 @@ void GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem(const GridSpan& spa
         if (trackSize.isFitContent())
             growthLimit = std::min(growthLimit, Style::evaluate<LayoutUnit>(trackSize.fitContentTrackLength(), availableSpace().value_or(0), Style::ZoomNeeded { }));
         track.setGrowthLimit(std::max(track.growthLimit(), growthLimit));
+    } else if (m_direction == GridTrackSizingDirection::ForColumns && isUnderMaxContentConstraint() && trackSize.hasIntrinsicMinTrackBreadth()) {
+        // Allow tracks with intrinsic min sizing functions to grow to max-content under max-content constraints (columns only)
+        if (!trackSize.hasMinContentMaxTrackBreadth() && (!trackSize.hasFixedMaxTrackBreadth() || trackSize.hasAutoMinTrackBreadth()))
+            track.setGrowthLimit(std::max(track.growthLimit(), m_strategy->maxContentContributionForGridItem(gridItem, gridLayoutState)));
     }
 }
 
