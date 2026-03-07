@@ -1592,8 +1592,10 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
     if (thisObject->isDetached()) [[unlikely]]
         return JSValue::encode(thisObject);
 
+    // The comparator may trigger FastTypedArray -> WastefulTypedArray transition via .buffer access,
+    // which relocates the backing store. Do not reuse originalSpan here.
     size_t copyLength = std::min<size_t>(thisObject->length(), result.size());
-    WTF::copyElements(originalSpan, spanConstCast<const typename ViewClass::ElementType>(result.first(copyLength)));
+    WTF::copyElements(thisObject->typedSpan().first(copyLength), spanConstCast<const typename ViewClass::ElementType>(result.first(copyLength)));
 
     return JSValue::encode(thisObject);
 }
