@@ -44,15 +44,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-allowed-for-self.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-disallowed-for-all.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-disallowed-for-all.https.sub.html.sub.headers
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-allowed-by-feature-policy-attribute.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-allowed-by-feature-policy.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-allowed-by-feature-policy.https.sub.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-default-feature-policy.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-disabled-by-feature-policy.https.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-disabled-by-feature-policy.https.sub.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-supported-by-feature-policy.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/permissions-policy-feature-policy-coexist.https.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/permissions-policy-feature-policy-coexist.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/permissions-policy-header-policy-allowed-for-self.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/permissions-policy-header-policy-allowed-for-self.https.sub.html.sub.headers

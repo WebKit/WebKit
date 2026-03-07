@@ -4157,7 +4157,6 @@
 		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
 		2B1B1C3E2E3A871500D7D9ED /* ForwardDeclCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = ForwardDeclCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C3F2E3A871500D7D9ED /* MemoryUnsafeCastCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemoryUnsafeCastCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C402E3A871500D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncheckedPtrMemberCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C412E3A871500D7D9ED /* NoUncountedMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncountedMemberCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C422E3A871500D7D9ED /* NoUnretainedMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUnretainedMemberCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C432E3A871500D7D9ED /* RefCntblBaseVirtualDtorExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = RefCntblBaseVirtualDtorExpectations; sourceTree = "<group>"; };
@@ -7790,7 +7789,6 @@
 			children = (
 				2B1B1C3E2E3A871500D7D9ED /* ForwardDeclCheckerExpectations */,
 				2B1B1C3F2E3A871500D7D9ED /* MemoryUnsafeCastCheckerExpectations */,
-				2B1B1C402E3A871500D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */,
 				2B1B1C412E3A871500D7D9ED /* NoUncountedMemberCheckerExpectations */,
 				2B1B1C422E3A871500D7D9ED /* NoUnretainedMemberCheckerExpectations */,
 				2B1B1C432E3A871500D7D9ED /* RefCntblBaseVirtualDtorExpectations */,
