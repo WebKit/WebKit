@@ -6962,6 +6962,82 @@ TEST_P(WebGL2CompatibilityTest, PrimitiveRestartIndexAfterToggleIsError)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// Test that drawing a large GLuint index works.
+TEST_P(WebGL2CompatibilityTest, DrawLargeIndex)
+{
+    constexpr std::array<GLfloat, 4> kGreen = {0.0f, 1.0f, 0.0f, 1.0f};
+    constexpr GLuint offset = 0x80000000;
+    GLuint indexData[] = {0, 1, 2, 1, 3, 2};
+    for (auto& index : indexData)
+    {
+        index += offset;
+    }
+    float vertexData[] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+
+    GLBuffer indexBuffer;
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint vPos = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(vPos, -1);
+    glUseProgram(program);
+    GLint colorUniformLocation =
+        glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, offset * sizeof(float) * 2 + sizeof(vertexData), nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, offset * sizeof(float) * 2, sizeof(vertexData), vertexData);
+    glVertexAttribPointer(vPos, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(vPos);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_DYNAMIC_DRAW);
+
+    glUniform4fv(colorUniformLocation, 1, kGreen.data());
+    ASSERT_GL_NO_ERROR();
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() - 1, GLColor::green);
+}
+
+// Test that drawing a large GLuint index is detected as out-of-bounds access.
+TEST_P(WebGL2CompatibilityTest, DrawLargeIndexOOB)
+{
+    constexpr GLuint offset = 0x80000000;
+    GLuint indexData[] = {0, 1, 2};
+    for (auto& index : indexData)
+    {
+        index += offset;
+    }
+    GLBuffer indexBuffer;
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint vPos = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(vPos, -1);
+    glUseProgram(program);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 10, nullptr, GL_STATIC_DRAW);
+    glVertexAttribPointer(vPos, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(vPos);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_DYNAMIC_DRAW);
+
+    EXPECT_GL_NO_ERROR();
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+    if (!IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"))
+    {
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    else
+    {
+        EXPECT_GL_NO_ERROR();
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2CompatibilityTest);
