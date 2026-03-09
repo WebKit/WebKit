@@ -76,9 +76,14 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCo
         if (result == COMPRESSION_STATUS_ERROR)
             return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_s };
 
-        if ((result == COMPRESSION_STATUS_END && m_compressionStream.getPlatformStream().src_size)
-            || (m_didFinish && m_compressionStream.getPlatformStream().src_size))
-            return Exception { ExceptionCode::TypeError, "Extra bytes past the end."_s };
+        // Extra bytes: stream ended but there's unconsumed input
+        if (result == COMPRESSION_STATUS_END && m_compressionStream.getPlatformStream().src_size) {
+            m_didDetectExtraBytes = true;
+            shouldDecompress = false;
+            output.shrink(allocateSize - m_compressionStream.getPlatformStream().dst_size);
+            storage.append(output);
+            break;
+        }
 
         if (didInflateFinishAppleCompressionFramework(result)) {
             shouldDecompress = false;

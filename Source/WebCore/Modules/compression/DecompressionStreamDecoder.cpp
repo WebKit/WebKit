@@ -63,7 +63,7 @@ ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::flush()
     auto compressedDataCheck = decompress({ });
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
-    
+
     Ref compressedData = compressedDataCheck.releaseReturnValue();
     if (!compressedData->byteLength())
         return nullptr;
@@ -99,7 +99,12 @@ static bool didInflateFail(int result)
 
 bool DecompressionStreamDecoder::didInflateContainExtraBytes(int result) const
 {
-    return (result == Z_STREAM_END && m_zstream.getPlatformStream().avail_in) || (result == Z_BUF_ERROR && m_didFinish);
+    return result == Z_STREAM_END && m_zstream.getPlatformStream().avail_in;
+}
+
+static bool didInflateIncompleteInput(int result, bool didFinish)
+{
+    return result == Z_BUF_ERROR && didFinish;
 }
 
 static ZStream::Algorithm decompressionAlgorithm(Formats::CompressionFormat format)
@@ -152,8 +157,16 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
         if (didInflateFail(result))
             return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_s };
 
-        if (didInflateContainExtraBytes(result))
-            return Exception { ExceptionCode::TypeError, "Extra bytes past the end."_s };
+        if (didInflateIncompleteInput(result, m_didFinish))
+            return Exception { ExceptionCode::TypeError, "Incomplete compressed input."_s };
+
+        if (didInflateContainExtraBytes(result)) {
+            m_didDetectExtraBytes = true;
+            shouldDecompress = false;
+            output.shrink(allocateSize - m_zstream.getPlatformStream().avail_out);
+            storage.append(output);
+            break;
+        }
 
         if (didInflateFinish(result)) {
             shouldDecompress = false;

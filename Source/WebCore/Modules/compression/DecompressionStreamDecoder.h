@@ -47,6 +47,7 @@ public:
 
     ExceptionOr<RefPtr<Uint8Array>> decode(const BufferSource&&);
     ExceptionOr<RefPtr<Uint8Array>> flush();
+    bool didDetectExtraBytes() const { return m_didDetectExtraBytes; }
 
 private:
     bool didInflateFinish(int) const;
@@ -73,6 +74,7 @@ private:
     const size_t maxAllocationSize = 1073741824; // 1GB
 
     bool m_didFinish { false };
+    bool m_didDetectExtraBytes { false };
     const Formats::CompressionFormat m_format;
 
     // TODO: convert to using variant
