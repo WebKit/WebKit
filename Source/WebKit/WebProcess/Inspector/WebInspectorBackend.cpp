@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebInspectorBackend.h"
 
+#include "FrameNetworkAgentProxy.h"
 #include "WebFrame.h"
 #include "WebInspectorBackendMessages.h"
 #include "WebInspectorBackendProxyMessages.h"
@@ -34,6 +35,7 @@
 #include "WebProcess.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/DocumentView.h>
+#include <WebCore/FrameInspectorController.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/InspectorFrontendClient.h>
@@ -46,6 +48,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
 #include <WebCore/ScriptController.h>
+#include <WebCore/WebInjectedScriptManager.h>
 #include <WebCore/WindowFeatures.h>
 
 static const float minimumAttachedHeight = 250;
@@ -300,6 +303,66 @@ void WebInspectorBackend::updateDockingAvailability()
     m_previousCanAttach = canAttachWindow;
 
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::AttachAvailabilityChanged(canAttachWindow), m_page->identifier());
+}
+
+void WebInspectorBackend::ensureInstrumentationForFrame(LocalFrame& frame)
+{
+    if (!m_networkInstrumentationEnabled)
+        return;
+
+    auto frameID = frame.frameID();
+    if (m_frameNetworkAgentProxies.contains(frameID))
+        return;
+
+    auto& pageInspectorController = m_page->corePage()->inspectorController();
+    auto& frameController = frame.inspectorController();
+    Inspector::AgentContext baseContext = {
+        frameController,
+        pageInspectorController.injectedScriptManager(),
+        pageInspectorController.frontendRouter(),
+        pageInspectorController.backendDispatcher()
+    };
+    WebAgentContext webContext = {
+        baseContext,
+        frameController.instrumentingAgents()
+    };
+
+    auto proxy = makeUnique<FrameNetworkAgentProxy>(webContext, *m_page);
+    proxy->enable();
+    m_frameNetworkAgentProxies.add(frameID, WTF::move(proxy));
+}
+
+void WebInspectorBackend::enableNetworkInstrumentation()
+{
+    if (!m_page || !m_page->corePage())
+        return;
+
+    if (!m_networkInstrumentationEnabled) {
+        m_networkInstrumentationEnabled = true;
+        m_page->corePage()->settings().setDeveloperExtrasEnabled(true);
+        m_page->corePage()->inspectorController().connectRemoteInstrumentation();
+    }
+
+    m_page->corePage()->forEachLocalFrame([&](LocalFrame& frame) {
+        ensureInstrumentationForFrame(frame);
+    });
+}
+
+void WebInspectorBackend::disableNetworkInstrumentation()
+{
+    if (!m_networkInstrumentationEnabled)
+        return;
+
+    m_frameNetworkAgentProxies.clear();
+    m_networkInstrumentationEnabled = false;
+
+    if (m_page && m_page->corePage())
+        m_page->corePage()->inspectorController().disconnectRemoteInstrumentation();
+}
+
+void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
+{
+    m_frameNetworkAgentProxies.remove(frameID);
 }
 
 } // namespace WebKit

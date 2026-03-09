@@ -248,7 +248,7 @@ void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, HTTP
 
     // FIXME: Deprecate the ping load code path.
     if (platformStrategies()->loaderStrategy()->usePingLoad()) {
-        InspectorInstrumentation::willSendRequestOfType(&frame, identifier, protect(frame.loader().activeDocumentLoader()), request, InspectorInstrumentation::LoadType::Ping);
+        InspectorInstrumentation::willSendRequestOfType(&frame, identifier, protect(frame.loader().activeDocumentLoader()), request, Inspector::UncachedLoadType::Ping);
 
         platformStrategies()->loaderStrategy()->startPingLoad(frame, request, WTF::move(originalRequestHeaders), options, policyCheck, [protectedFrame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {
             if (!response.isNull())

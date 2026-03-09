@@ -58,6 +58,7 @@
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "NetworkAgentInstrumentation.h"
 #include "PageCanvasAgent.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebuggerAgent.h"
@@ -630,14 +631,18 @@ void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrume
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->willSendRequest(identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
+    if (auto* networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->willSendRequest(identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
         domDebuggerAgent->willSendRequest(request);
 }
 
-void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)
+void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType loadType)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->willSendRequestOfType(identifier, loader, request, loadType);
+    if (auto* networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->willSendRequestOfType(identifier, loader, request, loadType);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
         domDebuggerAgent->willSendRequestOfType(request);
 }
@@ -649,6 +654,8 @@ void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingA
 
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didLoadResourceFromMemoryCache(loader, *cachedResource);
+    if (auto* networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didLoadResourceFromMemoryCache(loader, *cachedResource);
 }
 
 void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
@@ -658,6 +665,8 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgent
 
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveResponse(identifier, loader, response, resourceLoader);
+    if (auto* networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didReceiveResponse(identifier, loader, response, resourceLoader);
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->didReceiveResponse(identifier, response); // This should come AFTER resource notification, front-end relies on this.
 }
@@ -672,12 +681,16 @@ void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents& instrumen
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveData(identifier, buffer, buffer ? buffer->size() : 0, encodedDataLength);
+    if (auto* networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didReceiveData(identifier, buffer, buffer ? buffer->size() : 0, encodedDataLength);
 }
 
 void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didFinishLoading(identifier, loader, networkLoadMetrics, resourceLoader);
+    if (auto* networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didFinishLoading(identifier, loader, networkLoadMetrics, resourceLoader);
 }
 
 void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceError& error)
@@ -687,6 +700,8 @@ void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumen
 
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didFailLoading(identifier, loader, error);
+    if (auto* networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didFailLoading(identifier, loader, error);
     if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }

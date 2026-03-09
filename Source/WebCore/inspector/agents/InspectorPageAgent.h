@@ -46,7 +46,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
-enum class ResourceType;
+enum class ResourceType : uint8_t;
 }
 
 namespace WebCore {

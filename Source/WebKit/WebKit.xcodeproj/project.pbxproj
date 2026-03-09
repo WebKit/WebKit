@@ -1781,6 +1781,8 @@
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 905620E912BC248B000799B6 /* WebMemorySampler.h */; };
 		9197940523DBC4BB00257892 /* InspectorBrowserAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9197940323DBC4BB00257892 /* InspectorBrowserAgent.h */; };
+		C3EE0FDA0234F84002CAF7FB /* ProxyingNetworkAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = EB43329193327F9D842EE004 /* ProxyingNetworkAgent.h */; };
+		A1B2C3D4E5F60718DEADBEEF /* FrameNetworkAgentProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60719DEADBEEF /* FrameNetworkAgentProxy.h */; };
 		9197940823DBC4CB00257892 /* WebPageInspectorAgentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 9197940723DBC4CA00257892 /* WebPageInspectorAgentBase.h */; };
 		9197940A23DBC4E000257892 /* APIInspectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9197940923DBC4E000257892 /* APIInspectorClient.h */; };
 		9197940C23DBC50300257892 /* _WKInspectorDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9197940B23DBC50300257892 /* _WKInspectorDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7304,6 +7306,12 @@
 		905620E912BC248B000799B6 /* WebMemorySampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMemorySampler.h; sourceTree = "<group>"; };
 		9197940323DBC4BB00257892 /* InspectorBrowserAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBrowserAgent.h; sourceTree = "<group>"; };
 		9197940423DBC4BB00257892 /* InspectorBrowserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBrowserAgent.cpp; sourceTree = "<group>"; };
+		EB43329193327F9D842EE004 /* ProxyingNetworkAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProxyingNetworkAgent.h; sourceTree = "<group>"; };
+		D2CB01DAB4428B76CDA8AECC /* ProxyingNetworkAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyingNetworkAgent.cpp; sourceTree = "<group>"; };
+		35541583DC2A3C24CD8C2D87 /* ProxyingNetworkAgent.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProxyingNetworkAgent.messages.in; sourceTree = "<group>"; };
+		A1B2C3D4E5F60719DEADBEEF /* FrameNetworkAgentProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameNetworkAgentProxy.h; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071ADEADBEEF /* FrameNetworkAgentProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameNetworkAgentProxy.cpp; sourceTree = "<group>"; };
+		B59E825E9829F560E50AE308 /* InspectorNetworkTypes.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = InspectorNetworkTypes.serialization.in; sourceTree = "<group>"; };
 		9197940723DBC4CA00257892 /* WebPageInspectorAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorAgentBase.h; sourceTree = "<group>"; };
 		9197940923DBC4E000257892 /* APIInspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInspectorClient.h; sourceTree = "<group>"; };
 		9197940B23DBC50300257892 /* _WKInspectorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorDelegate.h; sourceTree = "<group>"; };
@@ -8354,6 +8362,8 @@
 		CDA29A251CBEB67A00901CCF /* PlaybackSessionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManagerMessages.h; sourceTree = "<group>"; };
 		CDA29A261CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlaybackSessionManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		CDA29A271CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManagerProxyMessages.h; sourceTree = "<group>"; };
+		CC0302A10001000100010001 /* ProxyingNetworkAgentMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyingNetworkAgentMessageReceiver.cpp; sourceTree = "<group>"; };
+		CC0302A10001000100010002 /* ProxyingNetworkAgentMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyingNetworkAgentMessages.h; sourceTree = "<group>"; };
 		CDA6D44D25A97158004B1DF6 /* RemoteCDMInstance.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteCDMInstance.messages.in; sourceTree = "<group>"; };
 		CDA6D44F25A989AC004B1DF6 /* RemoteCDMInstanceMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCDMInstanceMessages.h; sourceTree = "<group>"; };
 		CDA6D45025A989AC004B1DF6 /* RemoteCDMInstanceMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCDMInstanceMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -10240,6 +10250,7 @@
 				999B7ED82550E4A800F450A4 /* InspectorExtensionTypes.cpp */,
 				99BE3B1625433B9400C6551C /* InspectorExtensionTypes.h */,
 				2D9BECF72B309B5A00D0AE99 /* InspectorExtensionTypes.serialization.in */,
+				B59E825E9829F560E50AE308 /* InspectorNetworkTypes.serialization.in */,
 				7BBA63DD280E93B600B04823 /* IPCConnectionTester.cpp */,
 				7BBA63DE280E93B600B04823 /* IPCConnectionTester.h */,
 				7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */,
@@ -14742,6 +14753,9 @@
 			children = (
 				9197940423DBC4BB00257892 /* InspectorBrowserAgent.cpp */,
 				9197940323DBC4BB00257892 /* InspectorBrowserAgent.h */,
+				D2CB01DAB4428B76CDA8AECC /* ProxyingNetworkAgent.cpp */,
+				EB43329193327F9D842EE004 /* ProxyingNetworkAgent.h */,
+				35541583DC2A3C24CD8C2D87 /* ProxyingNetworkAgent.messages.in */,
 			);
 			path = Agents;
 			sourceTree = "<group>";
@@ -14778,6 +14792,8 @@
 				91D970E523DA70470057DBC3 /* mac */,
 				F30EE46F2E721EDB00935B60 /* FrameInspectorTarget.cpp */,
 				F30EE46D2E721ECE00935B60 /* FrameInspectorTarget.h */,
+				A1B2C3D4E5F6071ADEADBEEF /* FrameNetworkAgentProxy.cpp */,
+				A1B2C3D4E5F60719DEADBEEF /* FrameNetworkAgentProxy.h */,
 				A543E30A215C8A8400279CD9 /* PageInspectorTarget.cpp */,
 				A543E308215C8A8300279CD9 /* PageInspectorTarget.h */,
 				A55BA8121BA23E05007CD33D /* RemoteWebInspectorUI.cpp */,
@@ -16881,6 +16897,8 @@
 				CDA29A251CBEB67A00901CCF /* PlaybackSessionManagerMessages.h */,
 				CDA29A261CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp */,
 				CDA29A271CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h */,
+				CC0302A10001000100010001 /* ProxyingNetworkAgentMessageReceiver.cpp */,
+				CC0302A10001000100010002 /* ProxyingNetworkAgentMessages.h */,
 				51EE7B5A2A95B5820016FF78 /* PushClientConnectionMessages.h */,
 				1C55A593275457C900EB7E95 /* RemoteAdapterMessageReceiver.cpp */,
 				1C55A5B1275457CD00EB7E95 /* RemoteAdapterMessages.h */,
@@ -18148,6 +18166,7 @@
 				F30EE46E2E721ED600935B60 /* FrameInspectorTarget.h in Headers */,
 				F30EE4742E72227500935B60 /* FrameInspectorTargetProxy.h in Headers */,
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
+				A1B2C3D4E5F60718DEADBEEF /* FrameNetworkAgentProxy.h in Headers */,
 				5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */,
 				2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */,
 				CD78E1151DB7D7ED0014A2DE /* FullscreenClient.h in Headers */,
@@ -18451,6 +18470,7 @@
 				86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */,
 				2D279E1926955768004B3EEB /* PrototypeToolsSPI.h in Headers */,
 				1ADC268E29E89FDA005990CA /* ProvisionalFrameCreationParameters.h in Headers */,
+				C3EE0FDA0234F84002CAF7FB /* ProxyingNetworkAgent.h in Headers */,
 				517B5F7D275E97B6002DC22D /* PushClientConnection.h in Headers */,
 				51EE7B5B2A95B5820016FF78 /* PushClientConnectionMessages.h in Headers */,
 				517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */,

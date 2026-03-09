@@ -27,7 +27,7 @@
 
 namespace Inspector {
 
-enum class ResourceType {
+enum class ResourceType : uint8_t {
     Document,
     StyleSheet,
     Image,

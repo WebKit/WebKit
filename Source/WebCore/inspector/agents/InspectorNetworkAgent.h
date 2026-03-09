@@ -51,7 +51,7 @@ class ConsoleMessage;
 class InjectedScriptManager;
 class PendingInterceptRequest;
 class PendingInterceptResponse;
-enum class ResourceType;
+enum class ResourceType : uint8_t;
 struct Intercept;
 }
 
@@ -110,7 +110,7 @@ public:
     void willRecalculateStyle();
     void didRecalculateStyle();
     void willSendRequest(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
-    void willSendRequestOfType(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, InspectorInstrumentation::LoadType);
+    void willSendRequestOfType(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, Inspector::UncachedLoadType);
     void didReceiveResponse(ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     void didReceiveData(ResourceLoaderIdentifier, const SharedBuffer*, int expectedDataLength, int encodedDataLength);
     void didFinishLoading(ResourceLoaderIdentifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*);

@@ -165,6 +165,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy \
 	UIProcess/WebPasteboardProxy \
 	UIProcess/Inspector/WebInspectorBackendProxy \
+	UIProcess/Inspector/Agents/ProxyingNetworkAgent \
 	UIProcess/Inspector/WebInspectorUIProxy \
 	UIProcess/Inspector/RemoteWebInspectorUIProxy \
 	UIProcess/Inspector/WebInspectorUIExtensionControllerProxy \
@@ -746,6 +747,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/GoToBackForwardItemParameters.serialization.in \
 	Shared/ImageOptions.serialization.in \
 	Shared/InspectorExtensionTypes.serialization.in \
+	Shared/InspectorNetworkTypes.serialization.in \
 	Shared/IPCTester.serialization.in \
 	Shared/ios/DynamicViewportSizeUpdate.serialization.in \
 	Shared/ios/HardwareKeyboardState.serialization.in \

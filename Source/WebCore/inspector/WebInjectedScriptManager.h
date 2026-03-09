@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CommandLineAPIHost.h"
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <WebCore/CommandLineAPIHost.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>

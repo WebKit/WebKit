@@ -40,7 +40,7 @@ namespace Inspector {
 namespace Protocol {
 }
 
-enum class ResourceType;
+enum class ResourceType : uint8_t;
 
 namespace ResourceUtilities {
 
@@ -50,9 +50,9 @@ void resourceContent(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*, co
 bool mainResourceContent(WebCore::LocalFrame*, bool withBase64Encode, String* result);
 
 String sourceMapURLForResource(WebCore::CachedResource*);
-WebCore::CachedResource* cachedResource(const WebCore::LocalFrame*, const URL&);
-Inspector::ResourceType inspectorResourceType(WebCore::CachedResource::Type);
-Inspector::ResourceType inspectorResourceType(const WebCore::CachedResource&);
+WebCore::CachedResource* WEBCORE_EXPORT cachedResource(const WebCore::LocalFrame*, const URL&);
+Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(WebCore::CachedResource::Type);
+Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(const WebCore::CachedResource&);
 
 Inspector::Protocol::Page::ResourceType resourceTypeToProtocol(Inspector::ResourceType);
 Inspector::Protocol::Page::ResourceType cachedResourceTypeToProtocol(const WebCore::CachedResource&);

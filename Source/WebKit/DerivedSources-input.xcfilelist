@@ -347,6 +347,7 @@ $(PROJECT_DIR)/Shared/IPCTester.serialization.in
 $(PROJECT_DIR)/Shared/IPCTesterReceiver.messages.in
 $(PROJECT_DIR)/Shared/ImageOptions.serialization.in
 $(PROJECT_DIR)/Shared/InspectorExtensionTypes.serialization.in
+$(PROJECT_DIR)/Shared/InspectorNetworkTypes.serialization.in
 $(PROJECT_DIR)/Shared/JavaScriptCore.serialization.in
 $(PROJECT_DIR)/Shared/JavaScriptEvaluationResult.serialization.in
 $(PROJECT_DIR)/Shared/KeyEventInterpretationContext.serialization.in
@@ -558,6 +559,7 @@ $(PROJECT_DIR)/UIProcess/Extensions/WebExtensionContext.messages.in
 $(PROJECT_DIR)/UIProcess/Extensions/WebExtensionController.messages.in
 $(PROJECT_DIR)/UIProcess/GPU/GPUProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/RemoteWebInspectorUIProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Inspector/Agents/ProxyingNetworkAgent.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorBackendProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIProxy.messages.in

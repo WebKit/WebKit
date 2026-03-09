@@ -432,6 +432,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebIDBConnectionToServerMessageR
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebIDBConnectionToServerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebInspectorBackendMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebInspectorBackendMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/ProxyingNetworkAgentMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/ProxyingNetworkAgentMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebInspectorBackendProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebInspectorBackendProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebInspectorInterruptDispatcherMessageReceiver.cpp

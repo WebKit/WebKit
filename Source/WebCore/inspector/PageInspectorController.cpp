@@ -322,6 +322,18 @@ void PageInspectorController::disconnectAllFrontends()
     m_inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
 }
 
+void PageInspectorController::connectRemoteInstrumentation()
+{
+    InspectorInstrumentation::frontendCreated();
+    InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
+}
+
+void PageInspectorController::disconnectRemoteInstrumentation()
+{
+    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+    InspectorInstrumentation::frontendDeleted();
+}
+
 void PageInspectorController::show()
 {
     ASSERT(!hasRemoteFrontend());

@@ -49,6 +49,7 @@
 #include "ResourceLoaderIdentifier.h"
 #include "StorageArea.h"
 #include "StyleOriginatedAnimation.h"
+#include "UncachedLoadType.h"
 #include "WebAnimation.h"
 #include "WorkerInspectorProxy.h"
 #include <JavaScriptCore/ConsoleMessage.h>
@@ -225,8 +226,7 @@ public:
     // Some network requests do not go through the normal network loading path.
     // These network requests have to issue their own willSendRequest / didReceiveResponse / didFinishLoading / didFailLoading
     // instrumentation calls. Some of these loads are for resources that lack a CachedResource::Type.
-    enum class LoadType { Ping, Beacon };
-    static void willSendRequestOfType(LocalFrame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, LoadType);
+    static void willSendRequestOfType(LocalFrame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, Inspector::UncachedLoadType);
 
     static void continueAfterXFrameOptionsDenied(LocalFrame&, ResourceLoaderIdentifier, DocumentLoader&, const ResourceResponse&);
     static void continueWithPolicyDownload(LocalFrame&, ResourceLoaderIdentifier, DocumentLoader&, const ResourceResponse&);
@@ -440,7 +440,7 @@ private:
     static void flexibleBoxRendererWrappedToNextLineImpl(InstrumentingAgents&, const RenderObject&, size_t lineStartItemIndex);
 
     static void willSendRequestImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
-    static void willSendRequestOfTypeImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, LoadType);
+    static void willSendRequestOfTypeImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, Inspector::UncachedLoadType);
     static void markResourceAsCachedImpl(InstrumentingAgents&, ResourceLoaderIdentifier);
     static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*);
     static void didReceiveResourceResponseImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
@@ -1109,7 +1109,7 @@ inline void InspectorInstrumentation::willSendRequest(ServiceWorkerGlobalScope& 
     willSendRequestImpl(instrumentingAgents(globalScope), identifier, nullptr, request, ResourceResponse { }, nullptr, nullptr);
 }
 
-inline void InspectorInstrumentation::willSendRequestOfType(LocalFrame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)
+inline void InspectorInstrumentation::willSendRequestOfType(LocalFrame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType loadType)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(frame))

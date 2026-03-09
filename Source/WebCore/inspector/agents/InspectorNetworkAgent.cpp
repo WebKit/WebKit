@@ -434,12 +434,12 @@ static ResourceType resourceTypeForCachedResource(const CachedResource* resource
     return ResourceType::Other;
 }
 
-static ResourceType resourceTypeForLoadType(InspectorInstrumentation::LoadType loadType)
+static ResourceType resourceTypeForLoadType(UncachedLoadType loadType)
 {
     switch (loadType) {
-    case InspectorInstrumentation::LoadType::Ping:
+    case UncachedLoadType::Ping:
         return ResourceType::Ping;
-    case InspectorInstrumentation::LoadType::Beacon:
+    case UncachedLoadType::Beacon:
         return ResourceType::Beacon;
     }
 
@@ -472,7 +472,7 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     willSendRequest(identifier, loader, request, redirectResponse, type, resourceLoader);
 }
 
-void InspectorNetworkAgent::willSendRequestOfType(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, InspectorInstrumentation::LoadType loadType)
+void InspectorNetworkAgent::willSendRequestOfType(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, UncachedLoadType loadType)
 {
     willSendRequest(identifier, loader, request, ResourceResponse(), resourceTypeForLoadType(loadType), nullptr);
 }

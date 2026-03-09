@@ -29,12 +29,14 @@
 #include "MessageReceiver.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorBackendClient.h>
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
+class FrameNetworkAgentProxy;
 class WebPage;
 
 class WebInspectorBackend : public ThreadSafeRefCounted<WebInspectorBackend>, private IPC::Connection::Client {
@@ -85,6 +87,11 @@ public:
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
+    void enableNetworkInstrumentation();
+    void disableNetworkInstrumentation();
+    void ensureInstrumentationForFrame(WebCore::LocalFrame&);
+    void removeInstrumentationForFrame(WebCore::FrameIdentifier);
+
     void setFrontendConnection(IPC::Connection::Handle&&);
 
     void disconnectFromPage() { close(); }
@@ -111,6 +118,9 @@ private:
 
     bool m_attached { false };
     bool m_previousCanAttach { false };
+
+    HashMap<WebCore::FrameIdentifier, std::unique_ptr<FrameNetworkAgentProxy>> m_frameNetworkAgentProxies;
+    bool m_networkInstrumentationEnabled { false };
 };
 
 } // namespace WebKit
