@@ -26,8 +26,11 @@
 #import "config.h"
 
 #import "DeprecatedGlobalValues.h"
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "RemoteObjectRegistry.h"
+#import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -877,6 +880,75 @@ TEST(IPCTestingAPI, SpeechSynthesisWithLockdownMode)
         && [alertMessage containsString:@"Receiver cancelled the reply due to invalid destination or deserialization error"]);
 
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:NO];
+}
+
+static RetainPtr<NSString> sendOriginAccessAllowListEntryAndFetchCrossOrigin(bool allowOriginAccessAllowListIPC)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/pageA"_s, { "<!DOCTYPE html>"_s } },
+        { "/pageB"_s, { "<!DOCTYPE html>"_s } },
+        { "/target"_s, { {{ "Content-Type"_s, "text/plain"_s }}, "cross-origin-data"_s } },
+    });
+    auto serverPort = server.port();
+
+    auto configA = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"])
+            [[configA preferences] _setEnabled:YES forFeature:feature];
+        if ([feature.key isEqualToString:@"AllowTestOnlyOriginAccessAllowListIPC"])
+            [[configA preferences] _setEnabled:allowOriginAccessAllowListIPC forFeature:feature];
+    }
+
+    auto configB = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configB setProcessPool:[configA processPool]];
+
+    auto webViewA = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configA.get()]);
+    auto webViewB = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configB.get()]);
+
+    [webViewA loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%u/pageA", serverPort]]]];
+    [webViewA _test_waitForDidFinishNavigation];
+
+    [webViewB loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%u/pageB", serverPort]]]];
+    [webViewB _test_waitForDidFinishNavigation];
+
+    [webViewA stringByEvaluatingJavaScript:[NSString stringWithFormat:
+        @"IPC.sendMessage('Networking', 0,"
+        "  IPC.messages.NetworkConnectionToWebProcess_AddOriginAccessAllowListEntry.name,"
+        "  ["
+        "    { type: 'String', value: 'http://localhost:%u' },"
+        "    { type: 'String', value: 'http' },"
+        "    { type: 'String', value: '127.0.0.1' },"
+        "    { type: 'bool', value: 1 }"
+        "  ]"
+        ")", serverPort]];
+
+    Util::runFor(0.5_s);
+
+    [webViewB evaluateJavaScript:[NSString stringWithFormat:
+        @"try {"
+        "  var xhr = new XMLHttpRequest();"
+        "  xhr.open('GET', 'http://127.0.0.1:%u/target', false);"
+        "  xhr.send();"
+        "  alert('FETCHED:' + xhr.responseText);"
+        "} catch(e) {"
+        "  alert('BLOCKED:' + e);"
+        "}", serverPort] completionHandler:nil];
+
+    return [webViewB _test_waitForAlert];
+}
+
+TEST(IPCTestingAPI, AddOriginAccessAllowListEntryRequiresTestOnlyIPC)
+{
+    auto result = sendOriginAccessAllowListEntryAndFetchCrossOrigin(false);
+    EXPECT_TRUE([result hasPrefix:@"BLOCKED:"]);
+}
+
+TEST(IPCTestingAPI, AddOriginAccessAllowListEntryAllowedWithTestOnlyIPC)
+{
+    auto result = sendOriginAccessAllowListEntryAndFetchCrossOrigin(true);
+    EXPECT_WK_STREQ(result, "FETCHED:cross-origin-data");
 }
 
 #endif
