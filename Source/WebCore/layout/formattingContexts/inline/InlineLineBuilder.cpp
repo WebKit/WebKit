@@ -1436,8 +1436,12 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate());
 
         auto commitPrecedingNonContentfulContent = [&] {
+            auto& candidateRuns = lineCandidate.inlineContent.continuousContent().runs();
+            if (candidateRuns.isEmpty())
+                return;
             LineCandidate precedingNonContentfulContent;
-            auto& firstCandidateInlineItem = lineCandidate.inlineContent.continuousContent().runs().first().inlineItem;
+            auto& firstCandidateInlineItem = candidateRuns.first().inlineItem;
+
             // We should not find any inline content here, only non-contentful items like <span> or </span> or trimmed whitespace or out-of-flow content.
             for (size_t index = layoutRange.startIndex(); index < layoutRange.endIndex(); ++index) {
                 auto& inlineItem = m_inlineItemList[index];
