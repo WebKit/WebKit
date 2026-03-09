@@ -47,7 +47,7 @@ public:
     IntSize kernelSize() const { return m_kernelSize; }
     void setKernelSize(const IntSize&);
 
-    const Vector<float>& kernel() const { return m_kernelMatrix; }
+    const Vector<float>& kernel() const LIFETIME_BOUND { return m_kernelMatrix; }
     void setKernel(const Vector<float>&);
 
     float divisor() const { return m_divisor; }

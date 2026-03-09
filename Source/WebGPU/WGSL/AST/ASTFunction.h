@@ -46,21 +46,21 @@ class Function final : public Declaration {
 public:
     NodeKind kind() const override;
     Identifier& name() override { return m_name; }
-    Parameter::List& parameters() { return m_parameters; }
-    Attribute::List& attributes() { return m_attributes; }
-    Attribute::List& returnAttributes() { return m_returnAttributes; }
+    Parameter::List& parameters() LIFETIME_BOUND { return m_parameters; }
+    Attribute::List& attributes() LIFETIME_BOUND { return m_attributes; }
+    Attribute::List& returnAttributes() LIFETIME_BOUND { return m_returnAttributes; }
     Expression* maybeReturnType() { return m_returnType; }
     CompoundStatement& body() { return m_body.get(); }
     const Identifier& name() const { return m_name; }
-    const Parameter::List& parameters() const { return m_parameters; }
-    const Attribute::List& attributes() const { return m_attributes; }
-    const Attribute::List& returnAttributes() const { return m_returnAttributes; }
+    const Parameter::List& parameters() const LIFETIME_BOUND { return m_parameters; }
+    const Attribute::List& attributes() const LIFETIME_BOUND { return m_attributes; }
+    const Attribute::List& returnAttributes() const LIFETIME_BOUND { return m_returnAttributes; }
     const Expression* maybeReturnType() const { return m_returnType; }
     const CompoundStatement& body() const { return m_body.get(); }
 
     bool mustUse() const { return m_mustUse; }
     std::optional<ShaderStage> stage() const { return m_stage; }
-    const std::optional<WorkgroupSize>& workgroupSize() const { return m_workgroupSize; }
+    const std::optional<WorkgroupSize>& workgroupSize() const LIFETIME_BOUND { return m_workgroupSize; }
 
     bool returnTypeInvariant() const { return m_returnTypeInvariant; }
     std::optional<Builtin> returnTypeBuiltin() const { return m_returnTypeBuiltin; }

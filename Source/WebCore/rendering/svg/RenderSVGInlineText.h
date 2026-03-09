@@ -58,9 +58,9 @@ public:
     FloatRect floatLinesBoundingBox() const;
 
     void removeTextBox(LegacyInlineTextBox& box) { m_legacyLineBoxes.remove(box); }
-    LegacyInlineTextBox* createInlineTextBox() { return m_legacyLineBoxes.createAndAppendLineBox(*this); }
+    LegacyInlineTextBox* createInlineTextBox() LIFETIME_BOUND { return m_legacyLineBoxes.createAndAppendLineBox(*this); }
     void deleteLegacyLineBoxes();
-    LegacyInlineTextBox* firstLegacyTextBox() const { return m_legacyLineBoxes.first(); }
+    LegacyInlineTextBox* firstLegacyTextBox() const LIFETIME_BOUND { return m_legacyLineBoxes.first(); }
     void removeAndDestroyLegacyTextBoxes();
     std::unique_ptr<LegacyInlineTextBox> createTextBox();
 

@@ -105,7 +105,7 @@ public:
     JSObject* commonPrototype() const;
     
     size_t numVariants() const { return m_variants.size(); }
-    const Vector<InstanceOfVariant, 2>& variants() const { return m_variants; }
+    const Vector<InstanceOfVariant, 2>& variants() const LIFETIME_BOUND { return m_variants; }
     const InstanceOfVariant& at(size_t index) const { return m_variants[index]; }
     const InstanceOfVariant& operator[](size_t index) const { return at(index); }
 

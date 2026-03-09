@@ -69,7 +69,7 @@ private:
             }
 
             ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
-            const Vector<ColorConvertedToInterpolationColorSpaceStop>& stops() const { return m_stops; }
+            const Vector<ColorConvertedToInterpolationColorSpaceStop>& stops() const LIFETIME_BOUND { return m_stops; }
 
             bool firstStopIsSynthetic() const { return m_firstStopIsSynthetic; }
             bool lastStopIsSynthetic() const { return m_lastStopIsSynthetic; }

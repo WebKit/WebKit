@@ -68,7 +68,7 @@ public:
     const GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
 
     TrackID streamId() const { return m_id; }
-    const String& gstStreamId() const { return m_gstStreamId; }
+    const String& gstStreamId() const LIFETIME_BOUND { return m_gstStreamId; }
 
     virtual void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) { }
 

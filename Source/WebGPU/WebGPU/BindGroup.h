@@ -88,7 +88,7 @@ public:
     id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
     id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
 
-    const Vector<BindableResources>& resources() const { return m_resources; }
+    const Vector<BindableResources>& resources() const LIFETIME_BOUND { return m_resources; }
 
     Device& device() const { return m_device; }
     static bool allowedUsage(const OptionSet<BindGroupEntryUsage>&);
@@ -102,7 +102,7 @@ public:
     bool rebindSamplersIfNeeded() const;
     bool updateExternalTextures(ExternalTexture&);
     bool makeSubmitInvalid(ShaderStage, const BindGroupLayout*) const;
-    const SamplersContainer& samplers() const { return m_samplers; }
+    const SamplersContainer& samplers() const LIFETIME_BOUND { return m_samplers; }
     uint32_t uniqueId() const { return m_uniqueIdentifier; }
     void validatedSuccessfully(uint32_t groupIndex, uint64_t pipelineIndex, uint32_t maxOffset) const;
     bool previouslyValidatedBindGroup(uint32_t groupIndex, uint64_t pipelineIndex, uint32_t maxOffset) const;

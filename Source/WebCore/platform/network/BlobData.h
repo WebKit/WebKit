@@ -111,12 +111,12 @@ public:
         return adoptRef(*new BlobData(contentType));
     }
 
-    const String& contentType() const { return m_contentType; }
+    const String& contentType() const LIFETIME_BOUND { return m_contentType; }
 
-    const PolicyContainer& policyContainer() const { return m_policyContainer; }
+    const PolicyContainer& policyContainer() const LIFETIME_BOUND { return m_policyContainer; }
     void setPolicyContainer(const PolicyContainer& policyContainer) { m_policyContainer = policyContainer; }
 
-    const BlobDataItemList& items() const { return m_items; }
+    const BlobDataItemList& items() const LIFETIME_BOUND { return m_items; }
 
     void replaceData(const DataSegment& oldData, Ref<DataSegment>&& newData);
     void appendData(Ref<DataSegment>&&);

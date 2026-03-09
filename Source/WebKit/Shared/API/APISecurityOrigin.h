@@ -53,7 +53,7 @@ public:
         return adoptRef(*new SecurityOrigin(securityOriginData.isolatedCopy()));
     }
 
-    const WebCore::SecurityOriginData& securityOrigin() const { return m_securityOrigin; }
+    const WebCore::SecurityOriginData& securityOrigin() const LIFETIME_BOUND { return m_securityOrigin; }
 
 private:
     SecurityOrigin(WebCore::SecurityOriginData&& securityOrigin)

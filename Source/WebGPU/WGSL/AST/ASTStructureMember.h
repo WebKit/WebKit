@@ -49,7 +49,7 @@ public:
     Identifier& name() { return m_name; }
     Identifier& originalName() { return m_originalName; }
     Expression& type() { return m_type; }
-    Attribute::List& attributes() { return m_attributes; }
+    Attribute::List& attributes() LIFETIME_BOUND { return m_attributes; }
 
     bool invariant() const { return m_invariant; }
     std::optional<Builtin> builtin() const { return m_builtin; }

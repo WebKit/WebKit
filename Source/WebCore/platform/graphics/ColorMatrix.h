@@ -59,7 +59,7 @@ public:
         return m_matrix[(row * ColumnCount) + column];
     }
 
-    const std::array<float, RowCount * ColumnCount>& data() const { return m_matrix; }
+    const std::array<float, RowCount * ColumnCount>& data() const LIFETIME_BOUND { return m_matrix; }
 
     friend bool operator==(const ColorMatrix&, const ColorMatrix&) = default;
 

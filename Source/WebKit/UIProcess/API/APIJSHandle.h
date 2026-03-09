@@ -39,7 +39,7 @@ public:
 
     virtual ~JSHandle();
 
-    const WebKit::JSHandleInfo& info() const { return m_info; }
+    const WebKit::JSHandleInfo& info() const LIFETIME_BOUND { return m_info; }
 
 private:
     const WebKit::JSHandleInfo m_info;

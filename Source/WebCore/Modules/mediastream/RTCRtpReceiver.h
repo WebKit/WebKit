@@ -76,7 +76,7 @@ public:
     RTCDtlsTransport* transport() { return m_transport.get(); }
     void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
 
-    RTCRtpReceiverBackend* backend() { return m_backend.get(); }
+    RTCRtpReceiverBackend* backend() LIFETIME_BOUND { return m_backend.get(); }
     void getStats(Ref<DeferredPromise>&&);
 
     std::optional<RTCRtpTransform::Internal> transform();

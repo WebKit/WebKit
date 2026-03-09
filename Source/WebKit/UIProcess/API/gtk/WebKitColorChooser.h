@@ -36,7 +36,7 @@ public:
     static Ref<WebKitColorChooser> create(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&);
     virtual ~WebKitColorChooser();
 
-    const WebCore::IntRect& elementRect() const { return m_elementRect; }
+    const WebCore::IntRect& elementRect() const LIFETIME_BOUND { return m_elementRect; }
 
 private:
     WebKitColorChooser(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&);

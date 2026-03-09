@@ -165,7 +165,7 @@ public:
 
     bool mutatorIsStopped() const final { return m_mutatorIsStopped; }
     
-    Lock& rightToRun() WTF_RETURNS_LOCK(m_rightToRun) { return m_rightToRun; }
+    Lock& rightToRun() LIFETIME_BOUND WTF_RETURNS_LOCK(m_rightToRun) { return m_rightToRun; }
     
     void updateMutatorIsStopped(const AbstractLocker&);
     void updateMutatorIsStopped();

@@ -555,8 +555,8 @@ public:
 #endif
 
 #if PLATFORM(PLAYSTATION)
-    const String& webProcessPath() const { return m_resolvedPaths.webProcessPath; }
-    const String& networkProcessPath() const { return m_resolvedPaths.networkProcessPath; }
+    const String& webProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.webProcessPath; }
+    const String& networkProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.networkProcessPath; }
     int32_t userId() const { return m_userId; }
 #endif
 

@@ -73,7 +73,7 @@ protected:
 
     WEBCORE_EXPORT virtual void dispatchDisplayDidRefresh(const DisplayUpdate&);
 
-    Lock& lock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+    Lock& lock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
     void setMaxUnscheduledFireCount(unsigned count) WTF_REQUIRES_LOCK(m_lock) { m_maxUnscheduledFireCount = count; }
 
     // Returns true if the start was successful.

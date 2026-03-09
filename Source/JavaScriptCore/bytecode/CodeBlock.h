@@ -197,7 +197,7 @@ private:
 public:
     JS_EXPORT_PRIVATE ~CodeBlock();
 
-    UnlinkedCodeBlock* unlinkedCodeBlock() const { return m_unlinkedCode.get(); }
+    UnlinkedCodeBlock* unlinkedCodeBlock() const LIFETIME_BOUND { return m_unlinkedCode.get(); }
 
     CString inferredName() const;
     String inferredNameWithHash() const;
@@ -354,7 +354,7 @@ public:
         return BytecodeIndex(bytecodeOffset(returnAddress));
     }
 
-    const JSInstructionStream& instructions() const { return m_unlinkedCode->instructions(); }
+    const JSInstructionStream& instructions() const LIFETIME_BOUND { return m_unlinkedCode->instructions(); }
     const JSInstruction* instructionAt(BytecodeIndex index) const { return instructions().at(index).ptr(); }
 
     size_t predictedMachineCodeSize();
@@ -407,7 +407,7 @@ public:
 
     void jettison(Profiler::JettisonReason, ReoptimizationMode = DontCountReoptimization, const FireDetail* = nullptr);
     
-    ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
+    ScriptExecutable* ownerExecutable() const LIFETIME_BOUND { return m_ownerExecutable.get(); }
     
     VM& vm() const { return *m_vm; }
 
@@ -431,7 +431,7 @@ public:
         return PutPropertySlot::PutById;
     }
 
-    const SourceCode& source() const { return m_ownerExecutable->source(); }
+    const SourceCode& source() const LIFETIME_BOUND { return m_ownerExecutable->source(); }
     unsigned sourceOffset() const { return m_ownerExecutable->source().startOffset(); }
     unsigned firstLineColumnOffset() const { return m_ownerExecutable->startColumn(); }
 
@@ -454,7 +454,7 @@ public:
         return m_argumentValueProfiles[argumentIndex];
     }
 
-    FixedVector<ArgumentValueProfile>& argumentValueProfiles() { return m_argumentValueProfiles; }
+    FixedVector<ArgumentValueProfile>& argumentValueProfiles() LIFETIME_BOUND { return m_argumentValueProfiles; }
 
     ValueProfile& valueProfileForOffset(unsigned profileOffset) { return m_metadata->valueProfileForOffset(profileOffset); }
 
@@ -524,7 +524,7 @@ public:
     bool wasDestructed();
 #endif
 
-    Vector<WriteBarrier<Unknown>>& constants() { return m_constantRegisters; }
+    Vector<WriteBarrier<Unknown>>& constants() LIFETIME_BOUND { return m_constantRegisters; }
     unsigned addConstant(const ConcurrentJSLocker&, JSValue v)
     {
         unsigned result = m_constantRegisters.size();
@@ -540,7 +540,7 @@ public:
         return result;
     }
 
-    const Vector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
+    const Vector<WriteBarrier<Unknown>>& constantRegisters() LIFETIME_BOUND { return m_constantRegisters; }
     WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) { return m_constantRegisters[reg.toConstantIndex()]; }
     ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
     bool isConstantOwnedByUnlinkedCodeBlock(VirtualRegister) const;
@@ -554,10 +554,10 @@ public:
     FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
     std::span<const WriteBarrier<FunctionExecutable>> functionExprs() { return m_functionExprs.span(); }
     
-    const BitVector& bitVector(size_t i) { return m_unlinkedCode->bitVector(i); }
+    const BitVector& bitVector(size_t i) LIFETIME_BOUND { return m_unlinkedCode->bitVector(i); }
 
-    JSC::Heap* heap() const { return &m_vm->heap; }
-    JSGlobalObject* globalObject() { return m_globalObject.get(); }
+    JSC::Heap* heap() const LIFETIME_BOUND { return &m_vm->heap; }
+    JSGlobalObject* globalObject() LIFETIME_BOUND { return m_globalObject.get(); }
 
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(CodeBlock, m_globalObject); }
 
@@ -601,7 +601,7 @@ public:
 #endif
 #endif
     size_t numberOfUnlinkedSwitchJumpTables() const { return m_unlinkedCode->numberOfUnlinkedSwitchJumpTables(); }
-    const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(int tableIndex) { return m_unlinkedCode->unlinkedSwitchJumpTable(tableIndex); }
+    const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(int tableIndex) LIFETIME_BOUND { return m_unlinkedCode->unlinkedSwitchJumpTable(tableIndex); }
 
 #if ENABLE(DFG_JIT)
     StringJumpTable& dfgStringSwitchJumpTable(int tableIndex);
@@ -609,7 +609,7 @@ public:
 #endif
 
     size_t numberOfUnlinkedStringSwitchJumpTables() const { return m_unlinkedCode->numberOfUnlinkedStringSwitchJumpTables(); }
-    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(int tableIndex) { return m_unlinkedCode->unlinkedStringSwitchJumpTable(tableIndex); }
+    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(int tableIndex) LIFETIME_BOUND { return m_unlinkedCode->unlinkedStringSwitchJumpTable(tableIndex); }
 
     DirectEvalCodeCache& directEvalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_directEvalCodeCache; }
 
@@ -646,7 +646,7 @@ public:
     }
 
     typedef UncheckedKeyHashMap<std::tuple<StructureID, BytecodeIndex>, FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
-    StructureWatchpointMap& llintGetByIdWatchpointMap() { return m_llintGetByIdWatchpointMap; }
+    StructureWatchpointMap& llintGetByIdWatchpointMap() LIFETIME_BOUND { return m_llintGetByIdWatchpointMap; }
 
     // Functions for controlling when tiered compilation kicks in. This
     // controls both when the optimizing compiler is invoked and when OSR
@@ -836,7 +836,7 @@ public:
     // 64bit environment does not need a lock for ValueProfile operations.
     NoLockingNecessaryTag valueProfileLock() { return NoLockingNecessary; }
 #else
-    ConcurrentJSLock& valueProfileLock() { return m_lock; }
+    ConcurrentJSLock& valueProfileLock() LIFETIME_BOUND { return m_lock; }
 #endif
 
     static constexpr ptrdiff_t offsetOfShouldAlwaysBeInlined() { return OBJECT_OFFSETOF(CodeBlock, m_shouldAlwaysBeInlined); }

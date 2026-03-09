@@ -67,8 +67,8 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     std::optional<WebCore::ProcessIdentifier> NODELETE webProcessIdentifier() const;
-    const WebCore::RegistrableDomain& registrableDomain() const { return m_site.domain(); }
-    const WebCore::Site& site() const { return m_site; }
+    const WebCore::RegistrableDomain& registrableDomain() const LIFETIME_BOUND { return m_site.domain(); }
+    const WebCore::Site& site() const LIFETIME_BOUND { return m_site; }
     IPC::Connection* NODELETE ipcConnection() const;
 
     void terminateWhenPossible() { m_shouldTerminateWhenPossible = true; }
@@ -80,7 +80,7 @@ public:
     void suspendSharedWorker(WebCore::SharedWorkerIdentifier);
     void resumeSharedWorker(WebCore::SharedWorkerIdentifier);
 
-    const HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>>& sharedWorkerObjects() const { return m_sharedWorkerObjects; }
+    const HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>>& sharedWorkerObjects() const LIFETIME_BOUND { return m_sharedWorkerObjects; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

@@ -41,7 +41,7 @@ public:
         VM&, JSCell*, AccessType, Structure*, const ObjectPropertyConditionSet&,
         JSObject* prototype);
     
-    JSObject* prototype() const { return m_prototype.get(); }
+    JSObject* prototype() const LIFETIME_BOUND { return m_prototype.get(); }
     
 private:
     InstanceOfAccessCase(

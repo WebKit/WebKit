@@ -39,7 +39,7 @@ public:
     ~PathWalker();
 
     bool isValid() const { return m_handle != INVALID_HANDLE_VALUE; }
-    const WIN32_FIND_DATAW& data() const { return m_data; }
+    const WIN32_FIND_DATAW& data() const LIFETIME_BOUND { return m_data; }
 
     bool step();
 

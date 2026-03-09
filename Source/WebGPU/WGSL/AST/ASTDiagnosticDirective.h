@@ -36,7 +36,7 @@ class DiagnosticDirective final : public Directive {
 public:
     NodeKind kind() const override;
 
-    Diagnostic& diagnostic() { return m_diagnostic; }
+    Diagnostic& diagnostic() LIFETIME_BOUND { return m_diagnostic; }
 
 private:
     DiagnosticDirective(SourceSpan span, Diagnostic&& diagnostic)

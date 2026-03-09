@@ -876,7 +876,7 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    const URL& url() const final { return m_url; }
+    const URL& url() const LIFETIME_BOUND final { return m_url; }
     WEBCORE_EXPORT void setURL(URL&&);
     WEBCORE_EXPORT const URL& urlForBindings();
 
@@ -897,8 +897,7 @@ public:
     // https://wicg.github.io/nav-speculation/speculation-rules.html#consider-speculation
     void considerSpeculationRules();
     void processSpeculationRules();
-    Ref<const SpeculationRules> NODELETE speculationRules() const;
-    Ref<SpeculationRules> NODELETE speculationRules();
+    SpeculationRules& NODELETE speculationRules() const;
 
     URL baseURLForComplete(const URL& baseURLOverride) const;
     WEBCORE_EXPORT URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
@@ -1220,7 +1219,7 @@ public:
     //    document inherits the security context of another document, it
     //    inherits its cookieURL but not its URL.
     //
-    const URL& cookieURL() const final { return m_cookieURL; }
+    const URL& cookieURL() const LIFETIME_BOUND final { return m_cookieURL; }
     void setCookieURL(const URL&);
 
     // The firstPartyForCookies is used to compute whether this document

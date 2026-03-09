@@ -259,7 +259,7 @@ public:
     WEBCORE_EXPORT std::optional<InstalledFont> toSerializableInstalledFont() const;
 #endif
 #if PLATFORM(WIN)
-    SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
+    SCRIPT_CACHE* scriptCache() const LIFETIME_BOUND { return &m_scriptCache; }
 #endif
 
     void setIsUsedInSystemFallbackFontCache() { m_isUsedInSystemFallbackFontCache = true; }

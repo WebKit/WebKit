@@ -4805,7 +4805,7 @@ void Document::processSpeculationRules()
 
     HashMap<URL, PrefetchCandidate> urlGroups;
 
-    for (auto [node, rules] : speculationRules()->prefetchRules()) {
+    for (auto [node, rules] : speculationRules().prefetchRules()) {
         for (const auto& rule : rules) {
             for (const auto& url : rule.urls) {
                 auto& group = urlGroups.ensure(url, [] {
@@ -4849,12 +4849,7 @@ void Document::processSpeculationRules()
     }
 }
 
-Ref<const SpeculationRules> Document::speculationRules() const
-{
-    return m_speculationRules;
-}
-
-Ref<SpeculationRules> Document::speculationRules()
+SpeculationRules& Document::speculationRules() const
 {
     return m_speculationRules;
 }

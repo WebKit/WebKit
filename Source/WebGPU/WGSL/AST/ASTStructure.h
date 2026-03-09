@@ -64,10 +64,10 @@ public:
 
     NodeKind kind() const override;
     StructureRole role() const { return m_role; }
-    StructureRole& role() { return m_role; }
+    StructureRole& role() LIFETIME_BOUND { return m_role; }
     Identifier& name() override { return m_name; }
-    Attribute::List& attributes() { return m_attributes; }
-    StructureMember::List& members() { return m_members; }
+    Attribute::List& attributes() LIFETIME_BOUND { return m_attributes; }
+    StructureMember::List& members() LIFETIME_BOUND { return m_members; }
     Structure* original() const { return m_original; }
     Structure* packed() const { return m_packed; }
     const Type* inferredType() const { return m_inferredType; }

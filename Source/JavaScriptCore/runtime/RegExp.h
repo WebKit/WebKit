@@ -64,7 +64,7 @@ public:
     bool globalOrSticky() const { return global() || sticky(); }
     bool eitherUnicode() const { return unicode() || unicodeSets(); }
 
-    const String& pattern() const { return m_patternString; }
+    const String& pattern() const LIFETIME_BOUND { return m_patternString; }
 
     bool isValid() const { return !Yarr::hasError(m_constructionErrorCode); }
     ASCIILiteral errorMessage() const { return Yarr::errorMessage(m_constructionErrorCode); }
@@ -167,7 +167,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
     bool hasValidAtom() const { return !m_atom.isNull(); }
-    const String& atom() const { return m_atom; }
+    const String& atom() const LIFETIME_BOUND { return m_atom; }
     Yarr::SpecificPattern specificPattern() const { return m_specificPattern; }
 
 private:

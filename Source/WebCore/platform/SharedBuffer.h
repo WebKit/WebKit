@@ -231,7 +231,7 @@ protected:
         : m_contiguous(contiguous == Contiguous::Yes) { }
     // To be used only by SharedBuffer constructor, set m_contiguous to true.
     WEBCORE_EXPORT explicit FragmentedSharedBuffer(Ref<const DataSegment>&&);
-    const DataSegmentVector& segments() const { return m_segments; }
+    const DataSegmentVector& segments() const LIFETIME_BOUND { return m_segments; }
 
 private:
     friend class SharedBufferBuilder;

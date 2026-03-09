@@ -65,7 +65,7 @@ public:
     bool operator==(const T* a) const { return a == m_object; }
     bool operator==(const RefPtr<T>& a) const { return a == m_object; }
     explicit operator bool() const { return m_object; }
-    T* get() const { return m_object.get(); }
+    T* get() const LIFETIME_BOUND { return m_object.get(); }
     T* operator->() const { return m_object.get(); }
     T& operator*() const { return *m_object; }
     operator RefPtr<T>() const { return m_object; }

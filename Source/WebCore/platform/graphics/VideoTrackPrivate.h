@@ -63,7 +63,7 @@ public:
     using SelectedChangedCallback = Function<void(VideoTrackPrivate&, bool selected)>;
     void setSelectedChangedCallback(SelectedChangedCallback&& callback) { m_selectedChangedCallback = WTF::move(callback); }
 
-    const PlatformVideoTrackConfiguration& configuration() const { return m_configuration; }
+    const PlatformVideoTrackConfiguration& configuration() const LIFETIME_BOUND { return m_configuration; }
     void setConfiguration(PlatformVideoTrackConfiguration&& configuration)
     {
         if (configuration == m_configuration)

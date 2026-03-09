@@ -44,14 +44,14 @@ public:
     double screenY() const override;
     double clientX() const override;
     double clientY() const override;
-    const DoublePoint& screenLocation() const { return m_screenLocation; }
+    const DoublePoint& screenLocation() const LIFETIME_BOUND { return m_screenLocation; }
 
     double movementX() const { return m_movementX; }
     double movementY() const { return m_movementY; }
 
-    const DoublePoint& windowLocation() const { return m_windowLocation; }
+    const DoublePoint& windowLocation() const LIFETIME_BOUND { return m_windowLocation; }
 
-    const DoublePoint& clientLocation() const { return m_clientLocation; }
+    const DoublePoint& clientLocation() const LIFETIME_BOUND { return m_clientLocation; }
     int layerX() override;
     int layerY() override;
 
@@ -63,7 +63,7 @@ public:
 
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
     // usable with RenderObject::absoluteToLocal).
-    const DoublePoint& absoluteLocation() const { return m_absoluteLocation; }
+    const DoublePoint& absoluteLocation() const LIFETIME_BOUND { return m_absoluteLocation; }
 
     static LocalFrameView* frameViewFromWindowProxy(WindowProxy*);
 

@@ -260,7 +260,7 @@ namespace JSC {
         RegisterID* propertyOffset() const { return m_propertyOffset.get(); }
         RegisterID* enumerator() const { return m_enumerator.get(); }
         RegisterID* mode() const { return m_mode.get(); }
-        const std::optional<Variable>& baseVariable() const { return m_baseVariable; }
+        const std::optional<Variable>& baseVariable() const LIFETIME_BOUND { return m_baseVariable; }
 
         void addGetInst(unsigned instIndex, int propertyRegIndex)
         {
@@ -359,7 +359,7 @@ namespace JSC {
         ~BytecodeGenerator();
         
         VM& vm() const { return m_vm; }
-        ParserArena& parserArena() const { return m_scopeNode->parserArena(); }
+        ParserArena& parserArena() const LIFETIME_BOUND { return m_scopeNode->parserArena(); }
         const CommonIdentifiers& propertyNames() const { return *m_vm.propertyNames; }
 
         bool isConstructor() const { return m_codeBlock->isConstructor(); }
@@ -1253,7 +1253,7 @@ namespace JSC {
         JSValue addBigIntConstant(const Identifier&, uint8_t radix, bool sign);
         RegisterID* addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&&, int);
 
-        const JSInstructionStreamWriter& instructions() const { return m_writer; }
+        const JSInstructionStreamWriter& instructions() const LIFETIME_BOUND { return m_writer; }
 
         RegisterID* emitThrowExpressionTooDeepException();
 

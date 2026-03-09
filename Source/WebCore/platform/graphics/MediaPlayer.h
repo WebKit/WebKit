@@ -700,7 +700,7 @@ public:
     void setShouldDisableSleep(bool);
     bool shouldDisableSleep() const;
 
-    const ContentType& contentType() const { return m_loadOptions.contentType; }
+    const ContentType& contentType() const LIFETIME_BOUND { return m_loadOptions.contentType; }
     String contentMIMEType() const;
     String contentTypeCodecs() const;
     bool contentMIMETypeWasInferredFromExtension() const;
@@ -809,7 +809,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
     void setSceneIdentifier(const String&);
-    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
 #endif
 
     void setMessageClientForTesting(WeakPtr<MessageClientForTesting>);

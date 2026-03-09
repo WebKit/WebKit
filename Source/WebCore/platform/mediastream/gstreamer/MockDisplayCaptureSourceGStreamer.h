@@ -46,7 +46,7 @@ protected:
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
 
     void generatePresets() override { };
-    const Vector<VideoPreset>& presets() final { return m_presets; }
+    const Vector<VideoPreset>& presets() LIFETIME_BOUND final { return m_presets; }
 
 private:
     MockDisplayCaptureSourceGStreamer(const CaptureDevice&, Ref<MockRealtimeVideoSourceGStreamer>&&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);

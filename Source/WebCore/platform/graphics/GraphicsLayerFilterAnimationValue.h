@@ -53,7 +53,7 @@ public:
 
     GraphicsLayerFilterAnimationValue(GraphicsLayerFilterAnimationValue&&) = default;
 
-    const FilterOperations& value() const { return m_value; }
+    const FilterOperations& value() const LIFETIME_BOUND { return m_value; }
 
 private:
     bool isGraphicsLayerFilterAnimationValue() const final { return true; }

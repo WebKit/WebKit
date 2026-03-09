@@ -99,7 +99,7 @@ protected:
         void setCTM(const AffineTransform&);
     };
 
-    const Vector<ContextState, 4>& stateStack() const { return m_stateStack; }
+    const Vector<ContextState, 4>& stateStack() const LIFETIME_BOUND { return m_stateStack; }
 
     const ContextState& currentState() const;
     ContextState& currentState();
@@ -128,7 +128,7 @@ protected:
     WEBCORE_EXPORT FloatRect initialClip() const;
     DrawGlyphsMode drawGlyphsMode() const { return m_drawGlyphsMode; }
 
-    const DestinationColorSpace& colorSpace() const final { return m_colorSpace; }
+    const DestinationColorSpace& colorSpace() const LIFETIME_BOUND final { return m_colorSpace; }
 
 private:
     bool hasPlatformContext() const final { return false; }

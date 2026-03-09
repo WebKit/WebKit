@@ -90,7 +90,7 @@ class BaselineJITCode : public DirectJITCode, public MathICHolder {
 public:
     BaselineJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck);
     ~BaselineJITCode() override;
-    PCToCodeOriginMap* pcToCodeOriginMap() override { return m_pcToCodeOriginMap.get(); }
+    PCToCodeOriginMap* pcToCodeOriginMap() LIFETIME_BOUND override { return m_pcToCodeOriginMap.get(); }
 
     CodeLocationLabel<JSInternalPtrTag> getCallLinkDoneLocationForBytecodeIndex(BytecodeIndex) const;
 
@@ -144,8 +144,8 @@ public:
         return leadingSpan();
     }
 
-    BaselineExecutionCounter& executeCounter() { return m_executeCounter; }
-    const BaselineExecutionCounter& executeCounter() const { return m_executeCounter; }
+    BaselineExecutionCounter& executeCounter() LIFETIME_BOUND { return m_executeCounter; }
+    const BaselineExecutionCounter& executeCounter() const LIFETIME_BOUND { return m_executeCounter; }
 
     JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
     intptr_t m_stackOffset { 0 };

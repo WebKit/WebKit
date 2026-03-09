@@ -44,7 +44,7 @@ public:
     void registerWrapper(JSC::JSGlobalObject*, JSC::ArrayBuffer&, JSC::JSArrayBuffer&) override;
     bool isAtomicsWaitAllowedOnCurrentThread() override;
 
-    JSC::WeakHandleOwner* wrapperOwner() { return &m_owner; }
+    JSC::WeakHandleOwner* wrapperOwner() LIFETIME_BOUND { return &m_owner; }
 
 private:
     bool isWebCoreTypedArrayController() const final { return true; }

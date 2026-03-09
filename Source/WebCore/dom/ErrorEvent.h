@@ -67,13 +67,13 @@ public:
 
     virtual ~ErrorEvent();
 
-    const String& message() const { return m_message; }
-    const String& filename() const { return m_fileName; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
+    const String& filename() const LIFETIME_BOUND { return m_fileName; }
     unsigned lineno() const { return m_lineNumber; }
     unsigned colno() const { return m_columnNumber; }
     JSC::JSValue error(JSC::JSGlobalObject&);
 
-    const JSValueInWrappedObject& originalError() const { return m_error; }
+    const JSValueInWrappedObject& originalError() const LIFETIME_BOUND { return m_error; }
     SerializedScriptValue* serializedError() const { return m_serializedError.get(); }
 
     RefPtr<SerializedScriptValue> trySerializeError(JSC::JSGlobalObject&);

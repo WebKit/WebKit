@@ -75,7 +75,7 @@ public:
     bool operator!() const { return !isSet(); }
     bool observedSlowPath() const { return m_state == ObservedTakesSlowPath; }
     bool isSimple() const { return m_state == Simple; }
-    const Vector<CheckPrivateBrandVariant, 1>& variants() { return m_variants; }
+    const Vector<CheckPrivateBrandVariant, 1>& variants() LIFETIME_BOUND { return m_variants; }
     CacheableIdentifier singleIdentifier() const;
 
     CheckPrivateBrandStatus slowVersion() const;

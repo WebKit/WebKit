@@ -54,7 +54,7 @@ public:
     static FourCC boxTypeName() { return std::span { "fkri" }; }
 
     using KeyID = Vector<uint8_t, 16>;
-    const KeyID& keyID() const { return m_keyID; }
+    const KeyID& keyID() const LIFETIME_BOUND { return m_keyID; }
 
     WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
@@ -128,10 +128,10 @@ public:
 
     static FourCC boxTypeName() { return std::span { "fpsk" }; }
 
-    const ISOFairPlayStreamingKeyRequestInfoBox& requestInfo() const { return m_requestInfo; }
-    const std::optional<ISOFairPlayStreamingKeyAssetIdBox>& assetID() const { return m_assetID; }
-    const std::optional<ISOFairPlayStreamingKeyContextBox>& content() const { return m_context; }
-    const std::optional<ISOFairPlayStreamingKeyVersionListBox>& versionList() const { return m_versionList; }
+    const ISOFairPlayStreamingKeyRequestInfoBox& requestInfo() const LIFETIME_BOUND { return m_requestInfo; }
+    const std::optional<ISOFairPlayStreamingKeyAssetIdBox>& assetID() const LIFETIME_BOUND { return m_assetID; }
+    const std::optional<ISOFairPlayStreamingKeyContextBox>& content() const LIFETIME_BOUND { return m_context; }
+    const std::optional<ISOFairPlayStreamingKeyVersionListBox>& versionList() const LIFETIME_BOUND { return m_versionList; }
 
     WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
@@ -149,8 +149,8 @@ public:
 
     static FourCC boxTypeName() { return std::span { "fpsd" }; }
 
-    const ISOFairPlayStreamingInfoBox& info() const { return m_info; }
-    const Vector<ISOFairPlayStreamingKeyRequestBox>& requests() const { return m_requests; }
+    const ISOFairPlayStreamingInfoBox& info() const LIFETIME_BOUND { return m_info; }
+    const Vector<ISOFairPlayStreamingKeyRequestBox>& requests() const LIFETIME_BOUND { return m_requests; }
 
     WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
@@ -166,7 +166,7 @@ public:
 
     static const Vector<uint8_t>& fairPlaySystemID();
 
-    const ISOFairPlayStreamingInitDataBox& initDataBox() { return m_initDataBox; }
+    const ISOFairPlayStreamingInitDataBox& initDataBox() LIFETIME_BOUND { return m_initDataBox; }
 
     WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 

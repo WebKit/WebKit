@@ -92,7 +92,7 @@ public:
     bool NODELETE requiresCommandReplay() const;
     bool NODELETE makeSubmitInvalid() const;
     bool rebindSamplersIfNeeded() const;
-    const Vector<WebGPU::BindableResources>& resources() { return m_resources; }
+    const Vector<WebGPU::BindableResources>& resources() LIFETIME_BOUND { return m_resources; }
 
 private:
     RenderBundle(NSArray<RenderBundleICBWithResources*> *, Vector<WebGPU::BindableResources>&&, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, uint64_t, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&&, Device&);

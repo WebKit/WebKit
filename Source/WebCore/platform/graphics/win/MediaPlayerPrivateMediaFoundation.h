@@ -221,8 +221,8 @@ private:
         void setFrameRate(const MFRatio& fps);
         void setClockRate(float rate) { m_playbackRate = rate; }
 
-        const LONGLONG& lastSampleTime() const { return m_lastSampleTime; }
-        const LONGLONG& frameDuration() const { return m_frameDuration; }
+        const LONGLONG& lastSampleTime() const LIFETIME_BOUND { return m_lastSampleTime; }
+        const LONGLONG& frameDuration() const LIFETIME_BOUND { return m_frameDuration; }
 
         HRESULT startScheduler(IMFClock*);
         HRESULT stopScheduler();

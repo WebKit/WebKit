@@ -82,7 +82,7 @@ public:
     WEBCORE_EXPORT void resetState();
     WEBCORE_EXPORT void reset();
     WEBCORE_EXPORT void invalidate();
-    const webm::Status& status() const { return m_status; }
+    const webm::Status& status() const LIFETIME_BOUND { return m_status; }
 
     void provideMediaData(MediaSamplesBlock&&);
 
@@ -146,7 +146,7 @@ public:
         virtual ~TrackData() = default;
 
         CodecType codec() const { return m_codec; }
-        webm::TrackEntry& track() { return m_track; }
+        webm::TrackEntry& track() LIFETIME_BOUND { return m_track; }
         TrackInfo::TrackType trackType() const { return m_trackType; }
 
         RefPtr<TrackInfo> formatDescription() const { return m_formatDescription.copyRef(); }
@@ -193,7 +193,7 @@ public:
     protected:
         RefPtr<SharedBuffer> contiguousCompleteBlockBuffer(size_t offset, size_t length) const;
         webm::Status readFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t* bytesRemaining);
-        WTFLogChannel& logChannel() const { return m_parser.logChannel(); }
+        WTFLogChannel& logChannel() const LIFETIME_BOUND { return m_parser.logChannel(); }
         MediaSamplesBlock m_processedMediaSamples;
         MediaSamplesBlock::MediaSampleDataType m_completeFrameData;
         RefPtr<TrackInfo> m_trackInfo;

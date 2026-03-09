@@ -237,7 +237,7 @@ public:
         return m_structureID.value();
     }
 
-    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
+    const ObjectPropertyConditionSet& conditionSet() const LIFETIME_BOUND { return m_conditionSet; }
 
     JSObject* tryGetAlternateBase() const;
 

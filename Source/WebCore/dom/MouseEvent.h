@@ -138,7 +138,7 @@ public:
         RefPtr<EventTarget>&& relatedTarget
     );
 
-    const std::optional<MouseEventInputSource>& inputSource() const { return m_inputSource; }
+    const std::optional<MouseEventInputSource>& inputSource() const LIFETIME_BOUND { return m_inputSource; }
 
     MouseButton button() const;
     int16_t buttonAsShort() const { return m_button; }

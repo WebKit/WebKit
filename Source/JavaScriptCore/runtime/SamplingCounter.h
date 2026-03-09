@@ -48,7 +48,7 @@ public:
 
     JS_EXPORT_PRIVATE static void dump();
 
-    int64_t* addressOfCounter() { return &m_counter; }
+    int64_t* addressOfCounter() LIFETIME_BOUND { return &m_counter; }
 
 protected:
     // Effectively the contructor, however called lazily in the case of GlobalSamplingCounter.

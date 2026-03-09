@@ -572,46 +572,46 @@ public:
     std::unique_ptr<ThreadSafeWeakHashSet<DeferredWorkTimer::TicketData>> m_weakTickets;
 
 public:
-    JSCallee* zombieFrameCallee() const { return m_zombieFrameCallee.get(); }
+    JSCallee* zombieFrameCallee() const LIFETIME_BOUND { return m_zombieFrameCallee.get(); }
 
-    InlineWatchpointSet& arrayIteratorProtocolWatchpointSet() { return m_arrayIteratorProtocolWatchpointSet; }
-    InlineWatchpointSet& mapIteratorProtocolWatchpointSet() { return m_mapIteratorProtocolWatchpointSet; }
-    InlineWatchpointSet& setIteratorProtocolWatchpointSet() { return m_setIteratorProtocolWatchpointSet; }
-    InlineWatchpointSet& stringIteratorProtocolWatchpointSet() { return m_stringIteratorProtocolWatchpointSet; }
-    InlineWatchpointSet& stringSymbolReplaceWatchpointSet() { return m_stringSymbolReplaceWatchpointSet; }
-    InlineWatchpointSet& stringSymbolToPrimitiveWatchpointSet() { return m_stringSymbolToPrimitiveWatchpointSet; }
-    InlineWatchpointSet& arraySymbolToPrimitiveWatchpointSet() { return m_arraySymbolToPrimitiveWatchpointSet; }
-    InlineWatchpointSet& stringToStringWatchpointSet() { return m_stringToStringWatchpointSet; }
-    InlineWatchpointSet& stringValueOfWatchpointSet() { return m_stringValueOfWatchpointSet; }
-    InlineWatchpointSet& regExpPrimordialPropertiesWatchpointSet() { return m_regExpPrimordialPropertiesWatchpointSet; }
-    InlineWatchpointSet& mapSetWatchpointSet() { return m_mapSetWatchpointSet; }
-    InlineWatchpointSet& setAddWatchpointSet() { return m_setAddWatchpointSet; }
-    InlineWatchpointSet& setPrimordialPropertiesWatchpointSet() { return m_setPrimordialPropertiesWatchpointSet; }
-    InlineWatchpointSet& promiseThenWatchpointSet() { return m_promiseThenWatchpointSet; }
-    InlineWatchpointSet& promiseResolveWatchpointSet() { return m_promiseResolveWatchpointSet; }
-    InlineWatchpointSet& arraySpeciesWatchpointSet() { return m_arraySpeciesWatchpointSet; }
-    InlineWatchpointSet& promiseSpeciesWatchpointSet() { return m_promiseSpeciesWatchpointSet; }
-    InlineWatchpointSet& arrayPrototypeChainIsSaneWatchpointSet() { return m_arrayPrototypeChainIsSaneWatchpointSet; }
-    InlineWatchpointSet& objectPrototypeChainIsSaneWatchpointSet() { return m_objectPrototypeChainIsSaneWatchpointSet; }
-    InlineWatchpointSet& stringPrototypeChainIsSaneWatchpointSet() { return m_stringPrototypeChainIsSaneWatchpointSet; }
-    InlineWatchpointSet& promisePrototypeChainIsSaneWatchpointSet() { return m_promisePrototypeChainIsSaneWatchpointSet; }
-    InlineWatchpointSet& arrayJoinWatchpointSet() { return m_arrayJoinWatchpointSet; }
-    InlineWatchpointSet& arrayToStringWatchpointSet() { return m_arrayToStringWatchpointSet; }
-    InlineWatchpointSet& arrayNegativeOneWatchpointSet() { return m_arrayNegativeOneWatchpointSet; }
-    InlineWatchpointSet& arrayIsConcatSpreadableWatchpointSet() { return m_arrayIsConcatSpreadableWatchpointSet; }
+    InlineWatchpointSet& arrayIteratorProtocolWatchpointSet() LIFETIME_BOUND { return m_arrayIteratorProtocolWatchpointSet; }
+    InlineWatchpointSet& mapIteratorProtocolWatchpointSet() LIFETIME_BOUND { return m_mapIteratorProtocolWatchpointSet; }
+    InlineWatchpointSet& setIteratorProtocolWatchpointSet() LIFETIME_BOUND { return m_setIteratorProtocolWatchpointSet; }
+    InlineWatchpointSet& stringIteratorProtocolWatchpointSet() LIFETIME_BOUND { return m_stringIteratorProtocolWatchpointSet; }
+    InlineWatchpointSet& stringSymbolReplaceWatchpointSet() LIFETIME_BOUND { return m_stringSymbolReplaceWatchpointSet; }
+    InlineWatchpointSet& stringSymbolToPrimitiveWatchpointSet() LIFETIME_BOUND { return m_stringSymbolToPrimitiveWatchpointSet; }
+    InlineWatchpointSet& arraySymbolToPrimitiveWatchpointSet() LIFETIME_BOUND { return m_arraySymbolToPrimitiveWatchpointSet; }
+    InlineWatchpointSet& stringToStringWatchpointSet() LIFETIME_BOUND { return m_stringToStringWatchpointSet; }
+    InlineWatchpointSet& stringValueOfWatchpointSet() LIFETIME_BOUND { return m_stringValueOfWatchpointSet; }
+    InlineWatchpointSet& regExpPrimordialPropertiesWatchpointSet() LIFETIME_BOUND { return m_regExpPrimordialPropertiesWatchpointSet; }
+    InlineWatchpointSet& mapSetWatchpointSet() LIFETIME_BOUND { return m_mapSetWatchpointSet; }
+    InlineWatchpointSet& setAddWatchpointSet() LIFETIME_BOUND { return m_setAddWatchpointSet; }
+    InlineWatchpointSet& setPrimordialPropertiesWatchpointSet() LIFETIME_BOUND { return m_setPrimordialPropertiesWatchpointSet; }
+    InlineWatchpointSet& promiseThenWatchpointSet() LIFETIME_BOUND { return m_promiseThenWatchpointSet; }
+    InlineWatchpointSet& promiseResolveWatchpointSet() LIFETIME_BOUND { return m_promiseResolveWatchpointSet; }
+    InlineWatchpointSet& arraySpeciesWatchpointSet() LIFETIME_BOUND { return m_arraySpeciesWatchpointSet; }
+    InlineWatchpointSet& promiseSpeciesWatchpointSet() LIFETIME_BOUND { return m_promiseSpeciesWatchpointSet; }
+    InlineWatchpointSet& arrayPrototypeChainIsSaneWatchpointSet() LIFETIME_BOUND { return m_arrayPrototypeChainIsSaneWatchpointSet; }
+    InlineWatchpointSet& objectPrototypeChainIsSaneWatchpointSet() LIFETIME_BOUND { return m_objectPrototypeChainIsSaneWatchpointSet; }
+    InlineWatchpointSet& stringPrototypeChainIsSaneWatchpointSet() LIFETIME_BOUND { return m_stringPrototypeChainIsSaneWatchpointSet; }
+    InlineWatchpointSet& promisePrototypeChainIsSaneWatchpointSet() LIFETIME_BOUND { return m_promisePrototypeChainIsSaneWatchpointSet; }
+    InlineWatchpointSet& arrayJoinWatchpointSet() LIFETIME_BOUND { return m_arrayJoinWatchpointSet; }
+    InlineWatchpointSet& arrayToStringWatchpointSet() LIFETIME_BOUND { return m_arrayToStringWatchpointSet; }
+    InlineWatchpointSet& arrayNegativeOneWatchpointSet() LIFETIME_BOUND { return m_arrayNegativeOneWatchpointSet; }
+    InlineWatchpointSet& arrayIsConcatSpreadableWatchpointSet() LIFETIME_BOUND { return m_arrayIsConcatSpreadableWatchpointSet; }
     InlineWatchpointSet& numberToStringWatchpointSet()
     {
         RELEASE_ASSERT(Options::useJIT());
         return m_numberToStringWatchpointSet;
     }
-    InlineWatchpointSet& structureCacheClearedWatchpointSet() { return m_structureCacheClearedWatchpointSet; }
+    InlineWatchpointSet& structureCacheClearedWatchpointSet() LIFETIME_BOUND { return m_structureCacheClearedWatchpointSet; }
     inline InlineWatchpointSet& arrayBufferSpeciesWatchpointSet(ArrayBufferSharingMode);
 
     inline InlineWatchpointSet& typedArraySpeciesWatchpointSet(TypedArrayType);
     inline InlineWatchpointSet& typedArrayIteratorProtocolWatchpointSet(TypedArrayType);
-    InlineWatchpointSet& typedArrayConstructorSpeciesWatchpointSet() { return m_typedArrayConstructorSpeciesWatchpointSet; }
-    InlineWatchpointSet& typedArrayPrototypeIteratorProtocolWatchpointSet() { return m_typedArrayPrototypeIteratorProtocolWatchpointSet; }
-    InlineWatchpointSet& propertyDescriptorFastPathWatchpointSet() { return m_propertyDescriptorFastPathWatchpointSet; }
+    InlineWatchpointSet& typedArrayConstructorSpeciesWatchpointSet() LIFETIME_BOUND { return m_typedArrayConstructorSpeciesWatchpointSet; }
+    InlineWatchpointSet& typedArrayPrototypeIteratorProtocolWatchpointSet() LIFETIME_BOUND { return m_typedArrayPrototypeIteratorProtocolWatchpointSet; }
+    InlineWatchpointSet& propertyDescriptorFastPathWatchpointSet() LIFETIME_BOUND { return m_propertyDescriptorFastPathWatchpointSet; }
 
     bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
     bool isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(TypedArrayType);
@@ -689,7 +689,7 @@ public:
 
     bool hasDebugger() const { return m_debugger; }
     bool hasInteractiveDebugger() const;
-    const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
+    const RuntimeFlags& runtimeFlags() const LIFETIME_BOUND { return m_runtimeFlags; }
 
 #if ENABLE(DFG_JIT)
     WatchpointSet* getReferencedPropertyWatchpointSet(UniquedStringImpl*);
@@ -728,54 +728,54 @@ public:
     template<BindingCreationContext> inline void createGlobalVarBinding(const Identifier&);
 
     inline JSScope* globalScope();
-    JSGlobalLexicalEnvironment* globalLexicalEnvironment() { return m_globalLexicalEnvironment.get(); }
+    JSGlobalLexicalEnvironment* globalLexicalEnvironment() LIFETIME_BOUND { return m_globalLexicalEnvironment.get(); }
 
-    JSScope* globalScopeExtension() { return m_globalScopeExtension.get(); }
+    JSScope* globalScopeExtension() LIFETIME_BOUND { return m_globalScopeExtension.get(); }
     void setGlobalScopeExtension(JSScope*);
     void clearGlobalScopeExtension();
 
-    JSCallee* globalCallee() { return m_globalCallee.get(); }
-    JSCallee* evalCallee() { return m_evalCallee.get(); }
+    JSCallee* globalCallee() LIFETIME_BOUND { return m_globalCallee.get(); }
+    JSCallee* evalCallee() LIFETIME_BOUND { return m_evalCallee.get(); }
 
     // The following accessors return pristine values, even if a script 
     // replaces the global object's associated property.
 
-    GetterSetter* arraySpeciesGetterSetter() const { return m_arraySpeciesGetterSetter.get(); }
-    GetterSetter* typedArraySpeciesGetterSetter() const { return m_typedArraySpeciesGetterSetter.get(); }
-    GetterSetter* promiseSpeciesGetterSetter() const { return m_promiseSpeciesGetterSetter.get(); }
+    GetterSetter* arraySpeciesGetterSetter() const LIFETIME_BOUND { return m_arraySpeciesGetterSetter.get(); }
+    GetterSetter* typedArraySpeciesGetterSetter() const LIFETIME_BOUND { return m_typedArraySpeciesGetterSetter.get(); }
+    GetterSetter* promiseSpeciesGetterSetter() const LIFETIME_BOUND { return m_promiseSpeciesGetterSetter.get(); }
 
-    ArrayConstructor* arrayConstructor() const { return m_arrayConstructor.get(); }
-    RegExpConstructor* regExpConstructor() const { return m_regExpConstructor.get(); }
-    ObjectConstructor* objectConstructor() const { return m_objectConstructor.get(); }
-    FunctionConstructor* functionConstructor() const { return m_functionConstructor.get(); }
-    JSPromiseConstructor* promiseConstructor() const { return m_promiseConstructor.get(); }
-    JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }
-    JSIteratorConstructor* iteratorConstructor() const { return m_iteratorConstructor.get(); }
+    ArrayConstructor* arrayConstructor() const LIFETIME_BOUND { return m_arrayConstructor.get(); }
+    RegExpConstructor* regExpConstructor() const LIFETIME_BOUND { return m_regExpConstructor.get(); }
+    ObjectConstructor* objectConstructor() const LIFETIME_BOUND { return m_objectConstructor.get(); }
+    FunctionConstructor* functionConstructor() const LIFETIME_BOUND { return m_functionConstructor.get(); }
+    JSPromiseConstructor* promiseConstructor() const LIFETIME_BOUND { return m_promiseConstructor.get(); }
+    JSInternalPromiseConstructor* internalPromiseConstructor() const LIFETIME_BOUND { return m_internalPromiseConstructor.get(); }
+    JSIteratorConstructor* iteratorConstructor() const LIFETIME_BOUND { return m_iteratorConstructor.get(); }
 
-    IntlCollator* defaultCollator() const { return m_defaultCollator.get(this); }
-    IntlNumberFormat* defaultNumberFormat() const { return m_defaultNumberFormat.get(this); }
+    IntlCollator* defaultCollator() const LIFETIME_BOUND { return m_defaultCollator.get(this); }
+    IntlNumberFormat* defaultNumberFormat() const LIFETIME_BOUND { return m_defaultNumberFormat.get(this); }
 
-    NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }
-    NullSetterFunction* nullSetterFunction() const { return m_nullSetterFunction.get(); }
-    NullSetterFunction* nullSetterStrictFunction() const { return m_nullSetterStrictFunction.get(); }
+    NullGetterFunction* nullGetterFunction() const LIFETIME_BOUND { return m_nullGetterFunction.get(); }
+    NullSetterFunction* nullSetterFunction() const LIFETIME_BOUND { return m_nullSetterFunction.get(); }
+    NullSetterFunction* nullSetterStrictFunction() const LIFETIME_BOUND { return m_nullSetterStrictFunction.get(); }
 
-    JSFunction* parseIntFunction() const { return m_parseIntFunction.get(this); }
-    JSFunction* parseFloatFunction() const { return m_parseFloatFunction.get(this); }
+    JSFunction* parseIntFunction() const LIFETIME_BOUND { return m_parseIntFunction.get(this); }
+    JSFunction* parseFloatFunction() const LIFETIME_BOUND { return m_parseFloatFunction.get(this); }
 
     JSFunction* promiseEmptyOnFulfilledFunction() const;
     JSFunction* promiseEmptyOnRejectedFunction() const;
     JSFunction* evalFunction() const;
     JSFunction* throwTypeErrorFunction() const;
-    JSFunction* objectProtoToStringFunction() const { return m_objectProtoToStringFunction.get(this); }
-    JSFunction* objectProtoToStringFunctionConcurrently() const { return m_objectProtoToStringFunction.getConcurrently(); }
-    JSFunction* arrayProtoToStringFunction() const { return m_arrayProtoToStringFunction.get(this); }
-    JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(this); }
-    JSFunction* arrayProtoValuesFunctionConcurrently() const { return m_arrayProtoValuesFunction.getConcurrently(); }
+    JSFunction* objectProtoToStringFunction() const LIFETIME_BOUND { return m_objectProtoToStringFunction.get(this); }
+    JSFunction* objectProtoToStringFunctionConcurrently() const LIFETIME_BOUND { return m_objectProtoToStringFunction.getConcurrently(); }
+    JSFunction* arrayProtoToStringFunction() const LIFETIME_BOUND { return m_arrayProtoToStringFunction.get(this); }
+    JSFunction* arrayProtoValuesFunction() const LIFETIME_BOUND { return m_arrayProtoValuesFunction.get(this); }
+    JSFunction* arrayProtoValuesFunctionConcurrently() const LIFETIME_BOUND { return m_arrayProtoValuesFunction.getConcurrently(); }
     JSFunction* iteratorProtocolFunction() const;
     JSFunction* promiseProtoThenFunction() const;
-    JSFunction* objectProtoValueOfFunction() const { return m_objectProtoValueOfFunction.get(); }
-    JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.getInitializedOnMainThread(this); }
-    JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
+    JSFunction* objectProtoValueOfFunction() const LIFETIME_BOUND { return m_objectProtoValueOfFunction.get(); }
+    JSFunction* numberProtoToStringFunction() const LIFETIME_BOUND { return m_numberProtoToStringFunction.getInitializedOnMainThread(this); }
+    JSFunction* functionProtoHasInstanceSymbolFunction() const LIFETIME_BOUND { return m_functionProtoHasInstanceSymbolFunction.get(); }
     JSFunction* regExpProtoExecFunction() const;
     JSFunction* stringProtoSubstringFunction() const;
     JSFunction* performProxyObjectHasFunction() const;
@@ -794,7 +794,7 @@ public:
     JSFunction* performProxyObjectSetByValSloppyFunctionConcurrently() const;
     JSFunction* performProxyObjectSetByValStrictFunction() const;
     JSFunction* performProxyObjectSetByValStrictFunctionConcurrently() const;
-    JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
+    JSObject* regExpProtoSymbolReplaceFunction() const LIFETIME_BOUND { return m_regExpProtoSymbolReplace.get(); }
     GetterSetter* regExpProtoFlagsGetter() const;
     GetterSetter* regExpProtoDotAllGetter() const;
     GetterSetter* regExpProtoGlobalGetter() const;
@@ -804,38 +804,38 @@ public:
     GetterSetter* regExpProtoStickyGetter() const;
     GetterSetter* regExpProtoUnicodeGetter() const;
     GetterSetter* regExpProtoUnicodeSetsGetter() const;
-    GetterSetter* throwTypeErrorArgumentsCalleeGetterSetter() const { return m_throwTypeErrorArgumentsCalleeGetterSetter.get(this); }
+    GetterSetter* throwTypeErrorArgumentsCalleeGetterSetter() const LIFETIME_BOUND { return m_throwTypeErrorArgumentsCalleeGetterSetter.get(this); }
     
-    JSModuleLoader* moduleLoader() const { return m_moduleLoader.get(this); }
+    JSModuleLoader* moduleLoader() const LIFETIME_BOUND { return m_moduleLoader.get(this); }
 
-    ObjectPrototype* objectPrototype() const { return m_objectPrototype.get(); }
-    FunctionPrototype* functionPrototype() const { return m_functionPrototype.get(); }
-    ArrayPrototype* arrayPrototype() const { return m_arrayPrototype.get(); }
-    JSObject* booleanPrototype() const { return m_booleanObjectStructure.prototypeInitializedOnMainThread(this); }
-    StringPrototype* stringPrototype() const { return m_stringPrototype.get(); }
-    JSObject* numberPrototype() const { return m_numberObjectStructure.prototypeInitializedOnMainThread(this); }
-    BigIntPrototype* bigIntPrototype() const { return m_bigIntPrototype.get(); }
-    JSObject* datePrototype() const { return m_dateStructure.prototype(this); }
-    SymbolPrototype* symbolPrototype() const { return m_symbolPrototype.get(); }
-    ShadowRealmPrototype* shadowRealmPrototype() const { return m_shadowRealmPrototype.get(); }
-    RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
-    JSObject* errorPrototype() const { return m_errorStructure.prototype(this); }
-    JSIteratorPrototype* iteratorPrototype() const { return m_iteratorPrototype.get(); }
-    JSIteratorHelperPrototype* iteratorHelperPrototype() const { return m_iteratorHelperPrototype.get(); }
-    AsyncIteratorPrototype* asyncIteratorPrototype() const { return m_asyncIteratorPrototype.get(); }
-    GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
-    GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
-    AsyncFunctionPrototype* asyncFunctionPrototype() const { return m_asyncFunctionPrototype.get(); }
-    ArrayIteratorPrototype* arrayIteratorPrototype() const { return m_arrayIteratorPrototype.get(); }
-    MapIteratorPrototype* mapIteratorPrototype() const { return m_mapIteratorPrototype.get(); }
-    SetIteratorPrototype* setIteratorPrototype() const { return m_setIteratorPrototype.get(); }
-    JSObject* mapPrototype() const { return m_mapStructure.prototype(this); }
+    ObjectPrototype* objectPrototype() const LIFETIME_BOUND { return m_objectPrototype.get(); }
+    FunctionPrototype* functionPrototype() const LIFETIME_BOUND { return m_functionPrototype.get(); }
+    ArrayPrototype* arrayPrototype() const LIFETIME_BOUND { return m_arrayPrototype.get(); }
+    JSObject* booleanPrototype() const LIFETIME_BOUND { return m_booleanObjectStructure.prototypeInitializedOnMainThread(this); }
+    StringPrototype* stringPrototype() const LIFETIME_BOUND { return m_stringPrototype.get(); }
+    JSObject* numberPrototype() const LIFETIME_BOUND { return m_numberObjectStructure.prototypeInitializedOnMainThread(this); }
+    BigIntPrototype* bigIntPrototype() const LIFETIME_BOUND { return m_bigIntPrototype.get(); }
+    JSObject* datePrototype() const LIFETIME_BOUND { return m_dateStructure.prototype(this); }
+    SymbolPrototype* symbolPrototype() const LIFETIME_BOUND { return m_symbolPrototype.get(); }
+    ShadowRealmPrototype* shadowRealmPrototype() const LIFETIME_BOUND { return m_shadowRealmPrototype.get(); }
+    RegExpPrototype* regExpPrototype() const LIFETIME_BOUND { return m_regExpPrototype.get(); }
+    JSObject* errorPrototype() const LIFETIME_BOUND { return m_errorStructure.prototype(this); }
+    JSIteratorPrototype* iteratorPrototype() const LIFETIME_BOUND { return m_iteratorPrototype.get(); }
+    JSIteratorHelperPrototype* iteratorHelperPrototype() const LIFETIME_BOUND { return m_iteratorHelperPrototype.get(); }
+    AsyncIteratorPrototype* asyncIteratorPrototype() const LIFETIME_BOUND { return m_asyncIteratorPrototype.get(); }
+    GeneratorFunctionPrototype* generatorFunctionPrototype() const LIFETIME_BOUND { return m_generatorFunctionPrototype.get(); }
+    GeneratorPrototype* generatorPrototype() const LIFETIME_BOUND { return m_generatorPrototype.get(); }
+    AsyncFunctionPrototype* asyncFunctionPrototype() const LIFETIME_BOUND { return m_asyncFunctionPrototype.get(); }
+    ArrayIteratorPrototype* arrayIteratorPrototype() const LIFETIME_BOUND { return m_arrayIteratorPrototype.get(); }
+    MapIteratorPrototype* mapIteratorPrototype() const LIFETIME_BOUND { return m_mapIteratorPrototype.get(); }
+    SetIteratorPrototype* setIteratorPrototype() const LIFETIME_BOUND { return m_setIteratorPrototype.get(); }
+    JSObject* mapPrototype() const LIFETIME_BOUND { return m_mapStructure.prototype(this); }
     // Workaround for the name conflict between JSCell::setPrototype.
-    JSObject* jsSetPrototype() const { return m_setStructure.prototype(this); }
-    JSPromisePrototype* promisePrototype() const { return m_promisePrototype.get(); }
-    JSInternalPromisePrototype* internalPromisePrototype() const { return m_internalPromisePrototype.get(); }
-    AsyncGeneratorPrototype* asyncGeneratorPrototype() const { return m_asyncGeneratorPrototype.get(); }
-    AsyncGeneratorFunctionPrototype* asyncGeneratorFunctionPrototype() const { return m_asyncGeneratorFunctionPrototype.get(); }
+    JSObject* jsSetPrototype() const LIFETIME_BOUND { return m_setStructure.prototype(this); }
+    JSPromisePrototype* promisePrototype() const LIFETIME_BOUND { return m_promisePrototype.get(); }
+    JSInternalPromisePrototype* internalPromisePrototype() const LIFETIME_BOUND { return m_internalPromisePrototype.get(); }
+    AsyncGeneratorPrototype* asyncGeneratorPrototype() const LIFETIME_BOUND { return m_asyncGeneratorPrototype.get(); }
+    AsyncGeneratorFunctionPrototype* asyncGeneratorFunctionPrototype() const LIFETIME_BOUND { return m_asyncGeneratorFunctionPrototype.get(); }
     JSValue nullPrototype() const { return jsNull(); }
 
     Structure* debuggerScopeStructure() const { return m_debuggerScopeStructure.get(this); }
@@ -966,7 +966,7 @@ public:
     Structure* webAssemblyModuleRecordStructure() const { return m_webAssemblyModuleRecordStructure.get(this); }
     Structure* webAssemblyFunctionStructure() const { return m_webAssemblyFunctionStructure.get(this); }
     Structure* webAssemblyWrapperFunctionStructure() const { return m_webAssemblyWrapperFunctionStructure.get(this); }
-    JSWebAssemblyTag* webAssemblyJSTag() { return m_webAssemblyJSTag.get(this); }
+    JSWebAssemblyTag* webAssemblyJSTag() LIFETIME_BOUND { return m_webAssemblyJSTag.get(this); }
 #endif // ENABLE(WEBASSEMBLY)
     Structure* collatorStructure() { return m_collatorStructure.get(this); }
     Structure* dateTimeFormatStructure() { return m_dateTimeFormatStructure.get(this); }
@@ -988,10 +988,10 @@ public:
     Structure* intlPartObjectWithUnitAndSourceStructure() { return m_intlPartObjectWithUnitAndSourceStructure.get(this); }
     Structure* trustedScriptStructure() { return m_trustedScriptStructure.get(); }
 
-    JSObject* dateTimeFormatConstructor() { return m_dateTimeFormatStructure.constructor(this); }
-    JSObject* dateTimeFormatPrototype() { return m_dateTimeFormatStructure.prototype(this); }
-    JSObject* numberFormatConstructor() { return m_numberFormatStructure.constructor(this); }
-    JSObject* numberFormatPrototype() { return m_numberFormatStructure.prototype(this); }
+    JSObject* dateTimeFormatConstructor() LIFETIME_BOUND { return m_dateTimeFormatStructure.constructor(this); }
+    JSObject* dateTimeFormatPrototype() LIFETIME_BOUND { return m_dateTimeFormatStructure.prototype(this); }
+    JSObject* numberFormatConstructor() LIFETIME_BOUND { return m_numberFormatStructure.constructor(this); }
+    JSObject* numberFormatPrototype() LIFETIME_BOUND { return m_numberFormatStructure.prototype(this); }
 
     Structure* calendarStructure() { return m_calendarStructure.get(this); }
     Structure* durationStructure() { return m_durationStructure.get(this); }
@@ -1008,7 +1008,7 @@ public:
 
     void setIsITML();
 
-    RegExpGlobalData& regExpGlobalData() { return m_regExpGlobalData; }
+    RegExpGlobalData& regExpGlobalData() LIFETIME_BOUND { return m_regExpGlobalData; }
     static constexpr ptrdiff_t regExpGlobalDataOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_regExpGlobalData); }
 
     static constexpr ptrdiff_t offsetOfGlobalThis() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalThis); }
@@ -1040,19 +1040,19 @@ public:
     void bumpGlobalLexicalBindingEpoch(VM&);
     unsigned globalLexicalBindingEpoch() const { return m_globalLexicalBindingEpoch; }
     static constexpr ptrdiff_t globalLexicalBindingEpochOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
-    unsigned* addressOfGlobalLexicalBindingEpoch() { return &m_globalLexicalBindingEpoch; }
+    unsigned* addressOfGlobalLexicalBindingEpoch() LIFETIME_BOUND { return &m_globalLexicalBindingEpoch; }
 
     JS_EXPORT_PRIVATE void setConsoleClient(WeakPtr<ConsoleClient>&&);
     JS_EXPORT_PRIVATE CheckedPtr<ConsoleClient> consoleClient() const;
 
     void setName(const String&);
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 
-    StructureCache& structureCache() { return m_structureCache; }
+    StructureCache& structureCache() LIFETIME_BOUND { return m_structureCache; }
     WeakGCMap<SymbolTable*, SymbolTable>& symbolTableCache() { return m_symbolTableCache; }
 
     inline void setUnhandledRejectionCallback(VM&, JSObject*);
-    JSObject* unhandledRejectionCallback() const { return m_unhandledRejectionCallback.get(); }
+    JSObject* unhandledRejectionCallback() const LIFETIME_BOUND { return m_unhandledRejectionCallback.get(); }
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
     static JSObject* currentScriptExecutionOwner(JSGlobalObject* global) { return global; }
@@ -1161,8 +1161,8 @@ public:
     bool evalEnabled() const { return m_evalEnabled; }
     bool webAssemblyEnabled() const { return m_webAssemblyEnabled; }
     TrustedTypesEnforcement trustedTypesEnforcement() const { return m_trustedTypesEnforcement; }
-    const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
-    const String& webAssemblyDisabledErrorMessage() const { return m_webAssemblyDisabledErrorMessage; }
+    const String& evalDisabledErrorMessage() const LIFETIME_BOUND { return m_evalDisabledErrorMessage; }
+    const String& webAssemblyDisabledErrorMessage() const LIFETIME_BOUND { return m_webAssemblyDisabledErrorMessage; }
     void setEvalEnabled(bool enabled, const String& errorMessage = String())
     {
         m_evalEnabled = enabled;
@@ -1191,7 +1191,7 @@ public:
 
     VM& vm() const { return *m_vm; }
     JSObject* globalThis() const;
-    WriteBarrier<JSObject>* addressOfGlobalThis() { return &m_globalThis; }
+    WriteBarrier<JSObject>* addressOfGlobalThis() LIFETIME_BOUND { return &m_globalThis; }
     OptionSet<CodeGenerationMode> defaultCodeGenerationMode() const;
 
     FunctionExecutable* tryGetCachedFunctionExecutableForFunctionConstructor(const Identifier& name, StringView program, const SourceOrigin&, SourceTaintedOrigin, const String& sourceURL, const TextPosition& startPosition, LexicallyScopedFeatures, FunctionConstructionMode);

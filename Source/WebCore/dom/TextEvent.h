@@ -66,7 +66,7 @@ namespace WebCore {
         bool shouldMatchStyle() const { return m_shouldMatchStyle; }
         MailBlockquoteHandling mailBlockquoteHandling() const { return m_mailBlockquoteHandling; }
         DocumentFragment* pastingFragment() const { return m_pastingFragment.get(); }
-        const Vector<DictationAlternative>& dictationAlternatives() const { return m_dictationAlternatives; }
+        const Vector<DictationAlternative>& dictationAlternatives() const LIFETIME_BOUND { return m_dictationAlternatives; }
 
     private:
         TextEvent();

@@ -98,7 +98,7 @@ public:
     const Data& data() const { return m_data; }
     ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
-    const GradientColorStops& stops() const { return m_stops; }
+    const GradientColorStops& stops() const LIFETIME_BOUND { return m_stops; }
     bool isTransient() const { return m_isTransient; }
 
     WEBCORE_EXPORT void addColorStop(GradientColorStop&&);

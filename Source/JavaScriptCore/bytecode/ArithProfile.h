@@ -144,7 +144,7 @@ public:
         m_bits |= ObservedResults::NonNumeric;
     }
 
-    const void* addressOfBits() const { return &m_bits; }
+    const void* addressOfBits() const LIFETIME_BOUND { return &m_bits; }
 
 #if ENABLE(JIT)
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble) if it sees a

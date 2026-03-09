@@ -73,7 +73,7 @@ public:
     bool NODELETE closed();
 
     void removeItem(WebCore::HistoryItem&);
-    const Vector<Ref<WebCore::HistoryItem>>& entries() const { return m_entries; }
+    const Vector<Ref<WebCore::HistoryItem>>& entries() const LIFETIME_BOUND { return m_entries; }
 
 #if PLATFORM(IOS_FAMILY)
     unsigned current();

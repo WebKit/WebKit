@@ -57,9 +57,9 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue proto);
     static PinballCompletion* create(VM&, Vector<std::unique_ptr<EvacuatedStackSlice>>&&, CPURegister* calleeSaves, JSPromise* resultPromise);
 
-    JSPromise* resultPromise() { return m_resultPromise.get(); }
+    JSPromise* resultPromise() LIFETIME_BOUND { return m_resultPromise.get(); }
 
-    Vector<std::unique_ptr<EvacuatedStackSlice>>& slices() { return m_slices; }
+    Vector<std::unique_ptr<EvacuatedStackSlice>>& slices() LIFETIME_BOUND { return m_slices; }
     std::unique_ptr<EvacuatedStackSlice> takeTopSlice() { return m_slices.takeLast(); }
     bool hasSlices() const { return !m_slices.isEmpty(); }
 

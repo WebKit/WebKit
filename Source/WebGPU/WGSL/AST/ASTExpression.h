@@ -65,10 +65,10 @@ public:
 
     const Type* inferredType() const { return m_inferredType; }
 
-    const std::optional<ConstantValue>& constantValue() const { return m_constantValue; }
+    const std::optional<ConstantValue>& constantValue() const LIFETIME_BOUND { return m_constantValue; }
     void setConstantValue(ConstantValue value) { m_constantValue = value; }
 
-    const std::optional<Evaluation>& maybeEvaluation() const { return m_evaluation; }
+    const std::optional<Evaluation>& maybeEvaluation() const LIFETIME_BOUND { return m_evaluation; }
     Evaluation evaluation() const { return *m_evaluation; }
 
 protected:

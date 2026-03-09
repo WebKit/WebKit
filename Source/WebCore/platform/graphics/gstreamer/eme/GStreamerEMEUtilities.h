@@ -58,7 +58,7 @@ public:
     }
 
     RefPtr<SharedBuffer> payload() const { return m_payload; }
-    const String& systemId() const { return m_systemId; }
+    const String& systemId() const LIFETIME_BOUND { return m_systemId; }
     String payloadContainerType() const
     {
         if (m_systemId == GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s)
@@ -77,8 +77,8 @@ public:
     using EventVector = Vector<GRefPtr<GstEvent>>;
 
     explicit ProtectionSystemEvents(GstMessage*);
-    const EventVector& events() const { return m_events; }
-    const Vector<String>& availableSystems() const { return m_availableSystems; }
+    const EventVector& events() const LIFETIME_BOUND { return m_events; }
+    const Vector<String>& availableSystems() const LIFETIME_BOUND { return m_availableSystems; }
 
 private:
     EventVector m_events;

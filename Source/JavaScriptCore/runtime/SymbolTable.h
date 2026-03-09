@@ -752,7 +752,7 @@ public:
     DebuggerLocation debuggerLocation();
     void collectDebuggerInfo(CodeBlock*);
     
-    InferredValue<JSScope>& singleton() { return m_singleton; }
+    InferredValue<JSScope>& singleton() LIFETIME_BOUND { return m_singleton; }
 
     void notifyCreation(VM& vm, JSScope* scope, const char* reason)
     {

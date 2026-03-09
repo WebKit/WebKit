@@ -416,7 +416,7 @@ public:
     
     inline bool holesMustForwardToPrototype(JSObject*) const;
         
-    JSGlobalObject* globalObject() const { return m_globalObject.get(); }
+    JSGlobalObject* globalObject() const LIFETIME_BOUND { return m_globalObject.get(); }
 
     // NOTE: This method should only be called during the creation of structures, since the global
     // object of a structure is presumed to be immutable in a bunch of places.
@@ -848,7 +848,7 @@ public:
     
     static void dumpContextHeader(PrintStream&);
     
-    ConcurrentJSLock& lock() { return m_lock; }
+    ConcurrentJSLock& lock() LIFETIME_BOUND { return m_lock; }
 
     unsigned propertyHash() const { return m_propertyHash; }
     SeenProperties seenProperties() const { return m_seenProperties; }

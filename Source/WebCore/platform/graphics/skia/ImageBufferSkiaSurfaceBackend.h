@@ -45,12 +45,12 @@ public:
     static unsigned calculateBytesPerRow(const IntSize&);
     static size_t calculateMemoryCost(const Parameters&);
 
-    SkSurface* surface() const final { return m_surface.get(); }
+    SkSurface* surface() const LIFETIME_BOUND final { return m_surface.get(); }
 
 protected:
     ImageBufferSkiaSurfaceBackend(const Parameters&, sk_sp<SkSurface>&&, RenderingMode);
 
-    GraphicsContext& context() override { return m_context; }
+    GraphicsContext& context() LIFETIME_BOUND override { return m_context; }
     unsigned bytesPerRow() const final;
     bool canMapBackingStore() const final;
 

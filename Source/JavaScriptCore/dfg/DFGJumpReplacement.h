@@ -41,7 +41,7 @@ public:
     
     void fire();
     void installVMTrapBreakpoint();
-    void* dataLocation() const { return m_source.dataLocation(); }
+    void* dataLocation() const LIFETIME_BOUND { return m_source.dataLocation(); }
 
 private:
     CodeLocationLabel<JSInternalPtrTag> m_source;

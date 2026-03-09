@@ -141,7 +141,7 @@ public:
 
     bool directionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
 
-    const FloatSize& scrollingVelocity() const { return m_scrollingVelocity; }
+    const FloatSize& scrollingVelocity() const LIFETIME_BOUND { return m_scrollingVelocity; }
 
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
     void setHasPreciseScrollingDeltas(bool hasPreciseScrollingDeltas) { m_hasPreciseScrollingDeltas = hasPreciseScrollingDeltas; }

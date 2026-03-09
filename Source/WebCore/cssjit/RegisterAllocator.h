@@ -165,7 +165,7 @@ public:
         return registers;
     }
 
-    const RegisterVector& allocatedRegisters() const { return m_allocatedRegisters; }
+    const RegisterVector& allocatedRegisters() const LIFETIME_BOUND { return m_allocatedRegisters; }
 
     static bool isValidRegister(JSC::MacroAssembler::RegisterID registerID)
     {

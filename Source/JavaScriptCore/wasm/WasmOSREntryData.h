@@ -65,7 +65,7 @@ public:
 
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     uint32_t loopIndex() const { return m_loopIndex; }
-    const StackMap& values() { return m_values; }
+    const StackMap& values() LIFETIME_BOUND { return m_values; }
 
 private:
     FunctionCodeIndex m_functionIndex;

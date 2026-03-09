@@ -829,7 +829,7 @@ private:
         void open(Function<void()>&&);
         void close();
 
-        OVERLAPPED& state() { return m_state; }
+        OVERLAPPED& state() LIFETIME_BOUND { return m_state; }
 
     private:
         static void WINAPI callback(void*, BOOLEAN);

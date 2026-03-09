@@ -111,7 +111,7 @@ public:
     
     JS_EXPORT_PRIVATE String tryGetMessageForDebugging();
 
-    Vector<StackFrame>* stackTrace() { return m_stackTrace.get(); }
+    Vector<StackFrame>* stackTrace() LIFETIME_BOUND { return m_stackTrace.get(); }
 
     bool materializeErrorInfoIfNeeded(VM&);
     bool materializeErrorInfoIfNeeded(VM&, PropertyName);

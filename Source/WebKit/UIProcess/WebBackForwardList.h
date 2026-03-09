@@ -107,7 +107,7 @@ private:
     void addItem(Ref<WebBackForwardListItem>&&);
     void addChildItem(WebCore::FrameIdentifier, Ref<FrameState>&&);
     void didRemoveItem(WebBackForwardListItem&);
-    const BackForwardListItemVector& entries() const { return m_entries; }
+    const BackForwardListItemVector& entries() const LIFETIME_BOUND { return m_entries; }
     WebBackForwardListCounts NODELETE counts() const;
     Ref<FrameState> completeFrameStateForNavigation(Ref<FrameState>&&);
 

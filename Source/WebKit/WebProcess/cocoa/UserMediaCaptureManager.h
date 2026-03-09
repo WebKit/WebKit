@@ -91,7 +91,7 @@ private:
     private:
         WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, std::optional<WebCore::PageIdentifier>) final;
         WebCore::CaptureDeviceManager& audioCaptureDeviceManager() final { return m_manager->m_noOpCaptureDeviceManager; }
-        const Vector<WebCore::CaptureDevice>& speakerDevices() const final { return m_speakerDevices; }
+        const Vector<WebCore::CaptureDevice>& speakerDevices() const LIFETIME_BOUND final { return m_speakerDevices; }
 
         const CheckedRef<UserMediaCaptureManager> m_manager;
         bool m_shouldCaptureInGPUProcess { false };

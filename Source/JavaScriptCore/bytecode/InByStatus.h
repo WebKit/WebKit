@@ -96,7 +96,7 @@ public:
     bool isProxyObject() const { return m_state == ProxyObject; }
 
     size_t numVariants() const { return m_variants.size(); }
-    const Vector<InByVariant, 1>& variants() const { return m_variants; }
+    const Vector<InByVariant, 1>& variants() const LIFETIME_BOUND { return m_variants; }
     const InByVariant& at(size_t index) const { return m_variants[index]; }
     const InByVariant& operator[](size_t index) const { return at(index); }
 

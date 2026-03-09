@@ -111,7 +111,7 @@ public:
     static bool isPresent(const WGPUTextureBindingLayout&);
     static bool isPresent(const WGPUStorageTextureBindingLayout&);
 
-    const EntriesContainer& entries() const { return m_bindGroupLayoutEntries; }
+    const EntriesContainer& entries() const LIFETIME_BOUND { return m_bindGroupLayoutEntries; }
     const Vector<const Entry*> sortedEntries() const;
     uint32_t NODELETE sizeOfVertexDynamicOffsets() const;
     uint32_t NODELETE sizeOfFragmentDynamicOffsets() const;

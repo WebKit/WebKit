@@ -50,7 +50,7 @@ public:
     virtual ~CoordinatedPlatformLayerBuffer() = default;
 
     Type type() const { return m_type; }
-    const IntSize& size() const { return m_size; }
+    const IntSize& size() const LIFETIME_BOUND { return m_size; }
     OptionSet<TextureMapperFlags> flags() const { return m_flags; }
 
     void waitForContentsIfNeeded()

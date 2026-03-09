@@ -36,7 +36,7 @@ public:
         return adoptRef(*new ModuleFetchParameters(type, integrity, isTopLevelModule));
     }
 
-    const String& integrity() const override { return m_integrity; }
+    const String& integrity() const LIFETIME_BOUND override { return m_integrity; }
     bool isTopLevelModule() const override { return m_isTopLevelModule; }
 
 private:

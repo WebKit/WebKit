@@ -62,8 +62,8 @@ public:
 
     id<MTLTexture> NODELETE texture() const;
     id<MTLTexture> NODELETE parentTexture() const;
-    const WGPUTextureViewDescriptor& descriptor() const { return m_descriptor; }
-    const std::optional<WGPUExtent3D>& renderExtent() const { return m_renderExtent; }
+    const WGPUTextureViewDescriptor& descriptor() const LIFETIME_BOUND { return m_descriptor; }
+    const std::optional<WGPUExtent3D>& renderExtent() const LIFETIME_BOUND { return m_renderExtent; }
 
     Device& device() const { return m_device; }
     bool previouslyCleared() const;

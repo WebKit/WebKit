@@ -47,8 +47,8 @@ public:
     void addListener(NetworkRTCMonitor&);
     void removeListener(NetworkRTCMonitor&);
 
-    const RTCNetwork::IPAddress& ipv4() const { return m_ipv4; }
-    const RTCNetwork::IPAddress& ipv6()  const { return m_ipv6; }
+    const RTCNetwork::IPAddress& ipv4() const LIFETIME_BOUND { return m_ipv4; }
+    const RTCNetwork::IPAddress& ipv6()  const LIFETIME_BOUND { return m_ipv6; }
 
     webrtc::AdapterType adapterTypeFromInterfaceName(const char*) const;
 

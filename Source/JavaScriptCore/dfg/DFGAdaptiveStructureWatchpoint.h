@@ -39,7 +39,7 @@ public:
     AdaptiveStructureWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
     AdaptiveStructureWatchpoint();
     
-    const ObjectPropertyCondition& key() const { return m_key; }
+    const ObjectPropertyCondition& key() const LIFETIME_BOUND { return m_key; }
 
     void initialize(const ObjectPropertyCondition&, CodeBlock*);
 

@@ -68,7 +68,7 @@ public:
     void initializeExports(JSGlobalObject*);
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
-    JSObject* exportsObject() const { return m_exportsObject.get(); }
+    JSObject* exportsObject() const LIFETIME_BOUND { return m_exportsObject.get(); }
 
     static constexpr ptrdiff_t offsetOfExportsObject() { return OBJECT_OFFSETOF(WebAssemblyModuleRecord, m_exportsObject); }
 

@@ -44,7 +44,7 @@ private:
 
     void resourceBecameFileBacked(SharedBuffer&);
 
-    const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
+    const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_resourceRequest; }
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     ResourceRequest m_resourceRequest;

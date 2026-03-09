@@ -43,7 +43,7 @@ public:
     bool isImportMap() const { return scriptType() == ScriptType::ImportMap; }
     bool isSpeculationRules() const { return scriptType() == ScriptType::SpeculationRules; }
 
-    const String& crossOriginMode() const { return m_crossOriginMode; }
+    const String& crossOriginMode() const LIFETIME_BOUND { return m_crossOriginMode; }
 
 protected:
     ScriptElementCachedScriptFetcher(const AtomString& nonce, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)

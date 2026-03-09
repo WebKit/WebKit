@@ -173,10 +173,10 @@ LegacyInlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* rend
     if (renderer == &m_flow)
         return createAndAppendRootInlineBox();
 
-    if (CheckedPtr textRenderer = dynamicDowncast<RenderSVGInlineText>(*renderer))
+    if (auto* textRenderer = dynamicDowncast<RenderSVGInlineText>(*renderer))
         return textRenderer->createInlineTextBox();
 
-    if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(renderer))
+    if (auto* renderInline = dynamicDowncast<RenderInline>(*renderer))
         return renderInline->createAndAppendInlineFlowBox();
 
     ASSERT_NOT_REACHED();

@@ -47,7 +47,7 @@ public:
 
     void cancel();
 
-    const GdkRGBA* initialColor() const { return &m_initialColor; }
+    const GdkRGBA* initialColor() const LIFETIME_BOUND { return &m_initialColor; }
 
 protected:
     WebColorPickerGtk(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&);

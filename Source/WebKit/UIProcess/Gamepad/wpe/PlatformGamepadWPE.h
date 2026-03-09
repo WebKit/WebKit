@@ -43,8 +43,8 @@ public:
     virtual ~PlatformGamepadWPE();
 
 private:
-    const Vector<WebCore::SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
-    const Vector<WebCore::SharedGamepadValue>& axisValues() const final { return m_axisValues; }
+    const Vector<WebCore::SharedGamepadValue>& buttonValues() const LIFETIME_BOUND final { return m_buttonValues; }
+    const Vector<WebCore::SharedGamepadValue>& axisValues() const LIFETIME_BOUND final { return m_axisValues; }
     void playEffect(GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(CompletionHandler<void()>&&) final;
 

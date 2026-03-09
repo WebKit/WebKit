@@ -965,7 +965,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent
 {
     auto fontFamilyNames = JSON::ArrayOf<String>::create();
 
-    Vector<String> systemFontFamilies = FontCache::forCurrentThread()->systemFontFamilies();
+    Vector<String> systemFontFamilies = FontCache::forCurrentThread().systemFontFamilies();
     for (const auto& familyName : systemFontFamilies)
         fontFamilyNames->addItem(familyName);
 

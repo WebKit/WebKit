@@ -758,7 +758,7 @@ protected:
     virtual void addCandidateSubresourceURLs(ListHashSet<URL>&) const { }
 
     bool hasRareData() const { return !!m_rareDataWithBitfields.pointer(); }
-    NodeRareData* rareData() const { return m_rareDataWithBitfields.pointer(); }
+    NodeRareData* rareData() const LIFETIME_BOUND { return m_rareDataWithBitfields.pointer(); }
     NodeRareData& ensureRareData();
     void clearRareData();
 

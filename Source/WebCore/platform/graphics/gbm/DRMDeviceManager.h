@@ -45,7 +45,7 @@ public:
 
     void initializeMainDevice(DRMDevice&&);
     bool isInitialized() const { return m_mainDevice.isInitialized; }
-    const DRMDevice& mainDevice() const { return m_mainDevice.device; }
+    const DRMDevice& mainDevice() const LIFETIME_BOUND { return m_mainDevice.device; }
 
     enum class NodeType : bool { Primary, Render };
     RefPtr<GBMDevice> mainGBMDevice(NodeType) const;

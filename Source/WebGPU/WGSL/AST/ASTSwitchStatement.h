@@ -39,9 +39,9 @@ class SwitchStatement final : public Statement {
 public:
     NodeKind kind() const final;
     Expression& value() { return m_value.get(); }
-    Attribute::List& valueAttributes() { return m_valueAttributes; }
-    Vector<SwitchClause>& clauses() { return m_clauses; }
-    SwitchClause& defaultClause() { return m_defaultClause; }
+    Attribute::List& valueAttributes() LIFETIME_BOUND { return m_valueAttributes; }
+    Vector<SwitchClause>& clauses() LIFETIME_BOUND { return m_clauses; }
+    SwitchClause& defaultClause() LIFETIME_BOUND { return m_defaultClause; }
 
     bool isInsideLoop() const { return m_isInsideLoop; }
     void setIsInsideLoop() { m_isInsideLoop = true;; }

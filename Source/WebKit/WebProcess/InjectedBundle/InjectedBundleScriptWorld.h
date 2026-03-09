@@ -68,7 +68,7 @@ public:
     void NODELETE setAllowPostingLegacySynchronousMessages();
 
     ContentWorldIdentifier identifier() const { return m_identifier; }
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 
 private:
     InjectedBundleScriptWorld(ContentWorldIdentifier, WebCore::DOMWrapperWorld&, const String&);

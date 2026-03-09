@@ -77,8 +77,8 @@ private:
         ElementAndTextDescendantIterator end;
         size_t slotNodeIndex { notFound };
     };
-    Context& context() { return m_contextStack.last(); }
-    const Context& context() const { return m_contextStack.last(); }
+    Context& context() LIFETIME_BOUND { return m_contextStack.last(); }
+    const Context& context() const LIFETIME_BOUND { return m_contextStack.last(); }
     Node& current() { return *context().iterator; }
 
     bool m_rootIsInShadowTree { false };

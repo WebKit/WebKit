@@ -121,7 +121,7 @@ public:
     void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
-    const String& keySystem() const final { return m_keySystem; }
+    const String& keySystem() const LIFETIME_BOUND final { return m_keySystem; }
     RefPtr<CDMInstanceSession> createSession() final;
 
     OpenCDMSystem& thunderSystem() const { return *m_thunderSystem.get(); };

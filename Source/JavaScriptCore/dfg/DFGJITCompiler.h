@@ -281,9 +281,9 @@ public:
 
     RefPtr<DFG::JITCode> jitCode() { return m_jitCode; }
     
-    Vector<Label>& blockHeads() { return m_blockHeads; }
+    Vector<Label>& blockHeads() LIFETIME_BOUND { return m_blockHeads; }
 
-    PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder() { return m_pcToCodeOriginMapBuilder; }
+    PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder() LIFETIME_BOUND { return m_pcToCodeOriginMapBuilder; }
 
     VM& vm() { return m_graph.m_vm; }
 

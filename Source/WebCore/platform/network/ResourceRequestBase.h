@@ -262,7 +262,7 @@ public:
     void setInitiatorIdentifier(const String& identifier) { m_initiatorIdentifier = identifier; }
 
     // Additional information for the Inspector to be able to identify the node that initiated this request.
-    const std::optional<int>& inspectorInitiatorNodeIdentifier() const { return m_inspectorInitiatorNodeIdentifier; }
+    const std::optional<int>& inspectorInitiatorNodeIdentifier() const LIFETIME_BOUND { return m_inspectorInitiatorNodeIdentifier; }
     void setInspectorInitiatorNodeIdentifier(int inspectorInitiatorNodeIdentifier) { m_inspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier; }
 
 #if !PLATFORM(COCOA) && !USE(SOUP)

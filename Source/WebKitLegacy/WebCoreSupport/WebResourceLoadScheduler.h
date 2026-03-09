@@ -111,7 +111,7 @@ private:
         HostInformation(const String&, unsigned);
         ~HostInformation();
         
-        const String& name() const { return m_name; }
+        const String& name() const LIFETIME_BOUND { return m_name; }
         void schedule(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriority::VeryLow);
         void addLoadInProgress(WebCore::ResourceLoader*);
         void remove(WebCore::ResourceLoader*);

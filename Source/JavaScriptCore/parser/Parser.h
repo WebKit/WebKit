@@ -329,9 +329,9 @@ public:
     bool usesEval() const { return m_usesEval; }
     bool usesImportMeta() const { return m_usesImportMeta; }
 
-    const UncheckedKeyHashSet<UniquedStringImpl*>& closedVariableCandidates() const { return m_closedVariableCandidates; }
-    VariableEnvironment& declaredVariables() { return m_declaredVariables; }
-    VariableEnvironment& lexicalVariables() { return m_lexicalVariables; }
+    const UncheckedKeyHashSet<UniquedStringImpl*>& closedVariableCandidates() const LIFETIME_BOUND { return m_closedVariableCandidates; }
+    VariableEnvironment& declaredVariables() LIFETIME_BOUND { return m_declaredVariables; }
+    VariableEnvironment& lexicalVariables() LIFETIME_BOUND { return m_lexicalVariables; }
     void finalizeLexicalEnvironment()
     {
         if (m_usesEval || m_needsFullActivation)

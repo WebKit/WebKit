@@ -84,10 +84,10 @@ public:
     void setTopRight(const FloatSize& size) { m_topRight = size; }
     void setBottomLeft(const FloatSize& size) { m_bottomLeft = size; }
     void setBottomRight(const FloatSize& size) { m_bottomRight = size; }
-    const FloatSize& topLeft() const { return m_topLeft; }
-    const FloatSize& topRight() const { return m_topRight; }
-    const FloatSize& bottomLeft() const { return m_bottomLeft; }
-    const FloatSize& bottomRight() const { return m_bottomRight; }
+    const FloatSize& topLeft() const LIFETIME_BOUND { return m_topLeft; }
+    const FloatSize& topRight() const LIFETIME_BOUND { return m_topRight; }
+    const FloatSize& bottomLeft() const LIFETIME_BOUND { return m_bottomLeft; }
+    const FloatSize& bottomRight() const LIFETIME_BOUND { return m_bottomRight; }
 
     bool isZero() const { return m_topLeft.isZero() && m_topRight.isZero() && m_bottomLeft.isZero() && m_bottomRight.isZero(); }
     bool hasEvenCorners() const;

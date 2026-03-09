@@ -992,7 +992,7 @@ bool ScriptController::registerSpeculationRules(Node& sourceNode, const ScriptSo
     if (!document || !document->settings().speculationRulesPrefetchEnabled())
         return false;
 
-    return document->speculationRules()->parseSpeculationRules(sourceNode, sourceCode.source(), baseURL, document->url());
+    return protect(document->speculationRules())->parseSpeculationRules(sourceNode, sourceCode.source(), baseURL, document->url());
 }
 
 } // namespace WebCore

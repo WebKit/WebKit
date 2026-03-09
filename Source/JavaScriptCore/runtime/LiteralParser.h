@@ -87,7 +87,7 @@ public:
 
     JSONRanges() = default;
 
-    const Entry& root() const { return m_root; }
+    const Entry& root() const LIFETIME_BOUND { return m_root; }
 
     JSValue record(JSValue value)
     {

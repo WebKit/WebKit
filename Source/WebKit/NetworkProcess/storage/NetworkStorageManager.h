@@ -153,8 +153,8 @@ public:
     void clearServiceWorkerRegistrations(CompletionHandler<void()>&&);
     void importServiceWorkerRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>&&)>&&);
     void updateServiceWorkerRegistrations(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerScripts>>)>&&);
-    const String& path() const { return m_pathNormalizedMainThread; }
-    const String& customIDBStoragePath() const { return m_customIDBStoragePathNormalizedMainThread; }
+    const String& path() const LIFETIME_BOUND { return m_pathNormalizedMainThread; }
+    const String& customIDBStoragePath() const LIFETIME_BOUND { return m_customIDBStoragePathNormalizedMainThread; }
 
     void queryCacheStorage(WebCore::ClientOrigin&&, WebCore::RetrieveRecordsOptions&&, String&&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Record>&&)>&&);
 

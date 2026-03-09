@@ -97,9 +97,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 class AdaptiveStringSearcherTables {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AdaptiveStringSearcherTables);
 public:
-    int* badCharShiftTable() { return m_badCharShiftTable.data(); }
-    int* goodSuffixShiftTable() { return m_goodSuffixShiftTable.data(); }
-    int* suffixTable() { return m_suffixTable.data(); }
+    int* badCharShiftTable() LIFETIME_BOUND { return m_badCharShiftTable.data(); }
+    int* goodSuffixShiftTable() LIFETIME_BOUND { return m_goodSuffixShiftTable.data(); }
+    int* suffixTable() LIFETIME_BOUND { return m_suffixTable.data(); }
 
 private:
     std::array<int, AdaptiveStringSearcherBase::ucharAlphabetSize> m_badCharShiftTable { };
@@ -193,7 +193,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     // Store for the BoyerMoore(Horspool) bad char shift table.
     // Return a table covering the last bmMaxShift+1 positions of
     // pattern.
-    int* badCharTable() { return m_tables.badCharShiftTable(); }
+    int* badCharTable() LIFETIME_BOUND { return m_tables.badCharShiftTable(); }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     // Store for the BoyerMoore good suffix shift table.

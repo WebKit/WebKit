@@ -126,8 +126,8 @@ public:
         Markable<GlyphOverflow> glyphOverflow;
     };
     using GlyphGeometryCache = TextMeasurementCache<GlyphGeometryCacheEntry>;
-    GlyphGeometryCache& glyphGeometryCache() { return m_glyphGeometryCache; }
-    const GlyphGeometryCache& glyphGeometryCache() const { return m_glyphGeometryCache; }
+    GlyphGeometryCache& glyphGeometryCache() LIFETIME_BOUND { return m_glyphGeometryCache; }
+    const GlyphGeometryCache& glyphGeometryCache() const LIFETIME_BOUND { return m_glyphGeometryCache; }
 
     using ShapedTextCache = TextMeasurementCache<
         CachedTextShapingResult,
@@ -137,8 +137,8 @@ public:
         ShapedTextCacheDefaults::maxSize,
         ShapedTextCacheDefaults::maxTextLength
     >;
-    ShapedTextCache& shapedTextCache() { return m_shapedTextCache; }
-    const ShapedTextCache& shapedTextCache() const { return m_shapedTextCache; }
+    ShapedTextCache& shapedTextCache() LIFETIME_BOUND { return m_shapedTextCache; }
+    const ShapedTextCache& shapedTextCache() const LIFETIME_BOUND { return m_shapedTextCache; }
 
     const TextShapingResult* getOrCreateCachedShapedText(const TextRun&, const FontCascade&, unsigned from, std::optional<unsigned> to, ForTextEmphasis);
 

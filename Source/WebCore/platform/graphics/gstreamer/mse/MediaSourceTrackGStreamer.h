@@ -47,7 +47,7 @@ public:
     TrackPrivateBaseGStreamer::TrackType type() const { return m_type; }
     TrackID id() const { return m_id; }
     GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
-    DataMutex<TrackQueue>& queueDataMutex() { return m_queueDataMutex; }
+    DataMutex<TrackQueue>& queueDataMutex() LIFETIME_BOUND { return m_queueDataMutex; }
 
     bool isReadyForMoreSamples();
 

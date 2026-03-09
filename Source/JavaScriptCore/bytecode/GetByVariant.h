@@ -62,18 +62,18 @@ public:
     
     bool isSet() const { return !!m_structureSet.size(); }
     explicit operator bool() const { return isSet(); }
-    const StructureSet& structureSet() const { return m_structureSet; }
-    StructureSet& structureSet() { return m_structureSet; }
+    const StructureSet& structureSet() const LIFETIME_BOUND { return m_structureSet; }
+    StructureSet& structureSet() LIFETIME_BOUND { return m_structureSet; }
 
     // A non-empty condition set means that this is a prototype load.
-    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
+    const ObjectPropertyConditionSet& conditionSet() const LIFETIME_BOUND { return m_conditionSet; }
     
     PropertyOffset offset() const { return m_offset; }
-    CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
+    CallLinkStatus* callLinkStatus() const LIFETIME_BOUND { return m_callLinkStatus.get(); }
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
     Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
     CodePtr<CustomAccessorPtrTag> customAccessorGetter() const { return m_customAccessorGetter; }
-    DOMAttributeAnnotation* domAttribute() const { return m_domAttribute.get(); }
+    DOMAttributeAnnotation* domAttribute() const LIFETIME_BOUND { return m_domAttribute.get(); }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
 

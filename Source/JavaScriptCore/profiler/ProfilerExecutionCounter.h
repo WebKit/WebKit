@@ -36,7 +36,7 @@ class ExecutionCounter {
 public:
     ExecutionCounter() : m_counter(0) { }
     
-    uint64_t* address() { return &m_counter; }
+    uint64_t* address() LIFETIME_BOUND { return &m_counter; }
     
     uint64_t count() const { return m_counter; }
 

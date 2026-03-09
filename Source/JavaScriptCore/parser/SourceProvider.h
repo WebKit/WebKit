@@ -79,14 +79,14 @@ public:
         return source().substring(start, end - start);
     }
 
-    const SourceOrigin& sourceOrigin() const { return m_sourceOrigin; }
+    const SourceOrigin& sourceOrigin() const LIFETIME_BOUND { return m_sourceOrigin; }
 
     // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same...
-    const String& sourceURL() const { return m_sourceURL; }
+    const String& sourceURL() const LIFETIME_BOUND { return m_sourceURL; }
     const String& sourceURLStripped();
-    const String& preRedirectURL() const { return m_preRedirectURL; }
-    const String& sourceURLDirective() const { return m_sourceURLDirective; }
-    const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
+    const String& preRedirectURL() const LIFETIME_BOUND { return m_preRedirectURL; }
+    const String& sourceURLDirective() const LIFETIME_BOUND { return m_sourceURLDirective; }
+    const String& sourceMappingURLDirective() const LIFETIME_BOUND { return m_sourceMappingURLDirective; }
 
     TextPosition startPosition() const { return m_startPosition; }
     SourceProviderSourceType sourceType() const { return m_sourceType; }

@@ -146,7 +146,7 @@ bool FontCascade::isCurrent(const FontSelector& fontSelector) const
 {
     if (!m_fonts)
         return false;
-    if (m_fonts->generation() != FontCache::forCurrentThread()->generation())
+    if (m_fonts->generation() != FontCache::forCurrentThread().generation())
         return false;
     if (fontSelectorVersion() != fontSelector.version())
         return false;
@@ -169,7 +169,7 @@ void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 {
     m_fontSelector = WTF::move(fontSelector);
-    FontCache::forCurrentThread()->updateFontCascade(*this);
+    FontCache::forCurrentThread().updateFontCascade(*this);
 }
 
 TextShapingResult FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasis forTextEmphasis) const
@@ -1342,7 +1342,7 @@ bool FontCascade::isLoadingCustomFonts() const
 
 bool FontCascade::computeUseBackslashAsYenSymbol() const
 {
-    return FontCache::forCurrentThread()->useBackslashAsYenSignForFamily(m_fontDescription.firstFamily());
+    return FontCache::forCurrentThread().useBackslashAsYenSignForFamily(m_fontDescription.firstFamily());
 }
 
 enum class GlyphUnderlineType : uint8_t {

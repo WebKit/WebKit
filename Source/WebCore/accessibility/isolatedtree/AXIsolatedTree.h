@@ -514,7 +514,7 @@ public:
     AXCoreObject::AccessibilityChildrenVector sortedNonRootWebAreas();
 
     void markMostRecentlyPaintedTextDirty() { m_mostRecentlyPaintedTextIsDirty = true; }
-    const HashMap<AXID, LineRange>& mostRecentlyPaintedText() const { return m_mostRecentlyPaintedText; }
+    const HashMap<AXID, LineRange>& mostRecentlyPaintedText() const LIFETIME_BOUND { return m_mostRecentlyPaintedText; }
 
     // Called on AX thread from WebAccessibilityObjectWrapper methods.
     WEBCORE_EXPORT void applyPendingChanges();

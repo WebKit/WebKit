@@ -128,8 +128,8 @@ public:
     BoyerMooreBitmap() = default;
 
     unsigned count() const { return m_count; }
-    const Map& map() const { return m_map; }
-    const BoyerMooreFastCandidates& charactersFastPath() const { return m_charactersFastPath; }
+    const Map& map() const LIFETIME_BOUND { return m_map; }
+    const BoyerMooreFastCandidates& charactersFastPath() const LIFETIME_BOUND { return m_charactersFastPath; }
 
     bool add(CharSize charSize, char32_t character)
     {
@@ -324,7 +324,7 @@ public:
         m_matchOnly16Stats.set(insnCount, stackSize, canInline, needsT2);
     }
 
-    InlineStats& get8BitInlineStats() { return m_matchOnly8Stats; }
+    InlineStats& get8BitInlineStats() LIFETIME_BOUND { return m_matchOnly8Stats; }
     InlineStats& get16BitInlineStats() { return  m_matchOnly16Stats; }
 
     MatchResult execute(std::span<const Latin1Character> input, unsigned start, int* output, MatchingContextHolder* matchingContext)

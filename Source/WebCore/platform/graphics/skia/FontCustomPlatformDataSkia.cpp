@@ -107,11 +107,11 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
     const auto bufferData = buffer.createSkData();
     bool isCollection = spanHasPrefix(buffer.span(), "ttcf"_span);
     if (itemInCollection.isNull() || !isCollection)
-        typeface = FontCache::forCurrentThread()->fontManager().makeFromData(bufferData);
+        typeface = FontCache::forCurrentThread().fontManager().makeFromData(bufferData);
     else {
         size_t index = 0;
         while (true) {
-            typeface = FontCache::forCurrentThread()->fontManager().makeFromData(bufferData, index++);
+            typeface = FontCache::forCurrentThread().fontManager().makeFromData(bufferData, index++);
             if (!typeface)
                 break;
             typeface->getFamilyName(&familyName);

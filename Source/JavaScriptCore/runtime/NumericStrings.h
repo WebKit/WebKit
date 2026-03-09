@@ -135,7 +135,7 @@ public:
             visitor.appendUnbarriered(m_smallIntCache[i].jsString);
     }
 
-    const StringWithJSString* smallIntCache() { return m_smallIntCache.data(); }
+    const StringWithJSString* smallIntCache() LIFETIME_BOUND { return m_smallIntCache.data(); }
 
     void initializeSmallIntCache(VM&);
 

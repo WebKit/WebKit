@@ -51,8 +51,8 @@ public:
 
     unsigned hash() const { return m_hash; }
 
-    const StringVector& rawStrings() const { return m_rawStrings; }
-    const OptionalStringVector& cookedStrings() const { return m_cookedStrings; }
+    const StringVector& rawStrings() const LIFETIME_BOUND { return m_rawStrings; }
+    const OptionalStringVector& cookedStrings() const LIFETIME_BOUND { return m_cookedStrings; }
 
     bool operator==(const TemplateObjectDescriptor& other) const { return m_hash == other.m_hash && m_rawStrings == other.m_rawStrings; }
 

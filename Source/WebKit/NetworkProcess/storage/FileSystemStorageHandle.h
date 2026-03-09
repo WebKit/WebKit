@@ -56,7 +56,7 @@ public:
     enum class Type : uint8_t { File, Directory, Any };
     static RefPtr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);
 
-    const String& path() const { return m_path; }
+    const String& path() const LIFETIME_BOUND { return m_path; }
     Type type() const { return m_type; }
     uint64_t allocatedUnusedCapacity();
 

@@ -74,8 +74,8 @@ public:
     NSString *connectionIdentifier() const;
     NSString *destination() const;
 
-    Lock& queueMutex() { return m_queueMutex; }
-    const RemoteTargetQueue& queue() const { return m_queue; }
+    Lock& queueMutex() LIFETIME_BOUND { return m_queueMutex; }
+    const RemoteTargetQueue& queue() const LIFETIME_BOUND { return m_queue; }
     RemoteTargetQueue takeQueue();
 #endif
 

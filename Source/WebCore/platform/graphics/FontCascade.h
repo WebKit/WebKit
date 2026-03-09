@@ -154,9 +154,9 @@ public:
     bool enableKerning() const { return m_enableKerning; }
     bool requiresShaping() const { return m_requiresShaping; }
 
-    const AtomString& firstFamily() const { return m_fontDescription.firstFamily(); }
+    const AtomString& firstFamily() const LIFETIME_BOUND { return m_fontDescription.firstFamily(); }
     unsigned familyCount() const { return m_fontDescription.familyCount(); }
-    const AtomString& familyAt(unsigned i) const { return m_fontDescription.familyAt(i); }
+    const AtomString& familyAt(unsigned i) const LIFETIME_BOUND { return m_fontDescription.familyAt(i); }
 
     // A std::nullopt return value indicates "font-style: normal".
     std::optional<FontSelectionValue> fontStyleSlope() const { return m_fontDescription.fontStyleSlope(); }

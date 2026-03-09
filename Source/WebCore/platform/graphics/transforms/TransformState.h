@@ -92,7 +92,7 @@ public:
     WEBCORE_EXPORT std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
     LayoutSize accumulatedOffset() const { return m_accumulatedOffset; }
-    TransformationMatrix* accumulatedTransform() const { return m_accumulatedTransform.get(); }
+    TransformationMatrix* accumulatedTransform() const LIFETIME_BOUND { return m_accumulatedTransform.get(); }
     std::unique_ptr<TransformationMatrix> releaseTrackedTransform();
     TransformDirection direction() const { return m_direction; }
 

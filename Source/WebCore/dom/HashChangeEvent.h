@@ -48,8 +48,8 @@ public:
         return adoptRef(*new HashChangeEvent(type, initializer, isTrusted));
     }
 
-    const String& oldURL() const { return m_oldURL; }
-    const String& newURL() const { return m_newURL; }
+    const String& oldURL() const LIFETIME_BOUND { return m_oldURL; }
+    const String& newURL() const LIFETIME_BOUND { return m_newURL; }
 
 private:
     HashChangeEvent()

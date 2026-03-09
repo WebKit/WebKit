@@ -1395,7 +1395,7 @@ public:
 
     void setScrollPerformanceDataCollectionEnabled(bool);
     bool scrollPerformanceDataCollectionEnabled() const { return m_scrollPerformanceDataCollectionEnabled; }
-    RemoteLayerTreeScrollingPerformanceData* scrollingPerformanceData() { return m_scrollingPerformanceData.get(); }
+    RemoteLayerTreeScrollingPerformanceData* scrollingPerformanceData() LIFETIME_BOUND { return m_scrollingPerformanceData.get(); }
 
     void addActivityStateUpdateCompletionHandler(CompletionHandler<void()>&&);
 #endif // PLATFORM(COCOA)

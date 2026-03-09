@@ -386,11 +386,11 @@ public:
 
     bool hasLocalName(const AtomString& other) const { return m_tagName.localName() == other; }
 
-    const AtomString& NODELETE localName() const final { return m_tagName.localName(); }
-    const AtomString& NODELETE prefix() const final { return m_tagName.prefix(); }
-    const AtomString& NODELETE namespaceURI() const final { return m_tagName.namespaceURI(); }
+    const AtomString& NODELETE localName() const LIFETIME_BOUND final { return m_tagName.localName(); }
+    const AtomString& NODELETE prefix() const LIFETIME_BOUND final { return m_tagName.prefix(); }
+    const AtomString& NODELETE namespaceURI() const LIFETIME_BOUND final { return m_tagName.namespaceURI(); }
 
-    const AtomString& localNameLowercase() const { return m_tagName.localNameLowercase(); }
+    const AtomString& localNameLowercase() const LIFETIME_BOUND { return m_tagName.localNameLowercase(); }
 
     ElementName elementName() const { return m_tagName.nodeName(); }
     Namespace nodeNamespace() const { return m_tagName.nodeNamespace(); }

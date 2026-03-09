@@ -53,8 +53,8 @@ public:
     virtual void show();
 
     WebPageProxy* page() const { return m_page.get(); }
-    const FrameInfoData& frameInfo() const { return m_frameInfo; }
-    const WebCore::IntPoint& menuLocation() const { return m_context.menuLocation(); }
+    const FrameInfoData& frameInfo() const LIFETIME_BOUND { return m_frameInfo; }
+    const WebCore::IntPoint& menuLocation() const LIFETIME_BOUND { return m_context.menuLocation(); }
 
 #if PLATFORM(COCOA)
     virtual NSMenu *platformMenu() const = 0;

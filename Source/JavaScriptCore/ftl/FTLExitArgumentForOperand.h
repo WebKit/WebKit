@@ -49,7 +49,7 @@ public:
     
     bool operator!() const { return !m_exitArgument; }
     
-    const ExitArgument& exitArgument() const { return m_exitArgument; }
+    const ExitArgument& exitArgument() const LIFETIME_BOUND { return m_exitArgument; }
     VirtualRegister operand() const { return m_operand; }
     
     void dump(PrintStream&) const;

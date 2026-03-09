@@ -79,7 +79,7 @@ public:
     std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
     std::optional<WebPageProxyIdentifier> webPageProxyID() const final { return m_webProxyPageID; }
     String partition() const { return m_partition; }
-    const WebCore::SecurityOriginData& topOrigin() const { return m_topOrigin; }
+    const WebCore::SecurityOriginData& topOrigin() const LIFETIME_BOUND { return m_topOrigin; }
 
 private:
     WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WeakPtr<SessionSet>&&, const WebCore::ResourceRequest&, const WebCore::ClientOrigin&, RetainPtr<NSURLSessionWebSocketTask>&&, WebCore::StoredCredentialsPolicy);

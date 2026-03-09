@@ -710,7 +710,7 @@ void ScriptElement::unregisterSpeculationRules()
     if (!document->settings().speculationRulesPrefetchEnabled())
         return;
 
-    auto removedURLs = document->speculationRules()->unregisterSpeculationRules(element);
+    auto removedURLs = protect(document->speculationRules())->unregisterSpeculationRules(element);
 
     // Remove prefetched resources that were initiated by the removed rules.
     if (RefPtr frame = document->frame()) {

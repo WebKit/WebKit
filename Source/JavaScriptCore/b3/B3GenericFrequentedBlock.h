@@ -55,7 +55,7 @@ public:
     BasicBlock* block() const { return m_block; }
     BasicBlock*& block() { return m_block; }
     FrequencyClass frequency() const { return m_frequency; }
-    FrequencyClass& frequency() { return m_frequency; }
+    FrequencyClass& frequency() LIFETIME_BOUND { return m_frequency; }
 
     bool isRare() const { return frequency() == FrequencyClass::Rare; }
 

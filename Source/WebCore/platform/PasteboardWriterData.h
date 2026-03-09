@@ -66,7 +66,7 @@ public:
 #endif
     };
 
-    const std::optional<PlainText>& plainText() const { return m_plainText; }
+    const std::optional<PlainText>& plainText() const LIFETIME_BOUND { return m_plainText; }
     void setPlainText(PlainText);
 
     struct URLData {
@@ -79,10 +79,10 @@ public:
 #endif
     };
 
-    const std::optional<URLData>& urlData() const { return m_url; }
+    const std::optional<URLData>& urlData() const LIFETIME_BOUND { return m_url; }
     void setURLData(URLData);
 
-    const std::optional<WebContent>& webContent() const { return m_webContent; }
+    const std::optional<WebContent>& webContent() const LIFETIME_BOUND { return m_webContent; }
     void setWebContent(WebContent);
 
 private:

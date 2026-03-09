@@ -188,10 +188,10 @@ public:
         return span[span.size() - index - 1];
     }
 
-    FixedVector<OptimizingCallLinkInfo>& callLinkInfos() { return m_callLinkInfos; }
+    FixedVector<OptimizingCallLinkInfo>& callLinkInfos() LIFETIME_BOUND { return m_callLinkInfos; }
 
-    UpperTierExecutionCounter& tierUpCounter() { return m_tierUpCounter; }
-    const UpperTierExecutionCounter& tierUpCounter() const { return m_tierUpCounter; }
+    UpperTierExecutionCounter& tierUpCounter() LIFETIME_BOUND { return m_tierUpCounter; }
+    const UpperTierExecutionCounter& tierUpCounter() const LIFETIME_BOUND { return m_tierUpCounter; }
 
     uint8_t neverExecutedEntry() const { return m_neverExecutedEntry; }
 
@@ -272,7 +272,7 @@ public:
 
     RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) final;
 #if ENABLE(FTL_JIT)
-    CodeBlock* osrEntryBlock() { return m_osrEntryBlock.get(); }
+    CodeBlock* osrEntryBlock() LIFETIME_BOUND { return m_osrEntryBlock.get(); }
     void setOSREntryBlock(VM&, const JSCell* owner, CodeBlock* osrEntryBlock);
     void clearOSREntryBlockAndResetThresholds(CodeBlock* dfgCodeBlock);
 #endif

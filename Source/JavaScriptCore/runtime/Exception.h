@@ -61,7 +61,7 @@ public:
     }
 
     JSValue value() const { return m_value.get(); }
-    const Vector<StackFrame>& stack() const { return m_stack; }
+    const Vector<StackFrame>& stack() const LIFETIME_BOUND { return m_stack; }
 
     bool didNotifyInspectorOfThrow() const { return m_didNotifyInspectorOfThrow; }
     void setDidNotifyInspectorOfThrow() { m_didNotifyInspectorOfThrow = true; }

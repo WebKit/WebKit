@@ -131,10 +131,10 @@ public:
     {
     }
     
-    RegisteredStructureSet& set() { return m_set; }
-    const RegisteredStructureSet& set() const { return m_set; }
-    GetByOffsetMethod& method() { return m_method; }
-    const GetByOffsetMethod& method() const { return m_method; }
+    RegisteredStructureSet& set() LIFETIME_BOUND { return m_set; }
+    const RegisteredStructureSet& set() const LIFETIME_BOUND { return m_set; }
+    GetByOffsetMethod& method() LIFETIME_BOUND { return m_method; }
+    const GetByOffsetMethod& method() const LIFETIME_BOUND { return m_method; }
     
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;

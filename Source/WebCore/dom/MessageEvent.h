@@ -72,9 +72,9 @@ public:
 
     String origin() const;
     const RefPtr<SecurityOrigin> securityOrigin() const;
-    const String& lastEventId() const { return m_lastEventId; }
-    const std::optional<MessageEventSource>& source() const { return m_source; }
-    const Vector<Ref<MessagePort>>& ports() const { return m_ports; }
+    const String& lastEventId() const LIFETIME_BOUND { return m_lastEventId; }
+    const std::optional<MessageEventSource>& source() const LIFETIME_BOUND { return m_source; }
+    const Vector<Ref<MessagePort>>& ports() const LIFETIME_BOUND { return m_ports; }
 
     const DataType& data() const
     {
@@ -83,9 +83,9 @@ public:
         IGNORE_CLANG_WARNINGS_END
     }
 
-    JSValueInWrappedObject& jsData() { return m_jsData; }
-    JSValueInWrappedObject& cachedData() { return m_cachedData; }
-    JSValueInWrappedObject& cachedPorts() { return m_cachedPorts; }
+    JSValueInWrappedObject& jsData() LIFETIME_BOUND { return m_jsData; }
+    JSValueInWrappedObject& cachedData() LIFETIME_BOUND { return m_cachedData; }
+    JSValueInWrappedObject& cachedPorts() LIFETIME_BOUND { return m_cachedPorts; }
 
     size_t memoryCost() const;
 

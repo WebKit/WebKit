@@ -35,9 +35,9 @@ public:
     using Ref = std::reference_wrapper<CompoundStatement>;
 
     NodeKind kind() const override;
-    Attribute::List& attributes() { return m_attributes; }
-    Statement::List& statements() { return m_statements; }
-    const Statement::List& statements() const { return m_statements; }
+    Attribute::List& attributes() LIFETIME_BOUND { return m_attributes; }
+    Statement::List& statements() LIFETIME_BOUND { return m_statements; }
+    const Statement::List& statements() const LIFETIME_BOUND { return m_statements; }
 
 private:
     CompoundStatement(SourceSpan span, Attribute::List&& attributes, Statement::List&& statements)

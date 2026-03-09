@@ -37,7 +37,7 @@ public:
     friend class AccessCase;
     friend class InlineCacheCompiler;
 
-    JSFunction* intrinsicFunction() const { return m_intrinsicFunction.get(); }
+    JSFunction* intrinsicFunction() const LIFETIME_BOUND { return m_intrinsicFunction.get(); }
     Intrinsic intrinsic() const { return m_intrinsicFunction->intrinsic(); }
 
     static Ref<AccessCase> create(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, RefPtr<PolyProtoAccessChain>&&);

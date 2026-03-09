@@ -117,12 +117,12 @@ public:
 
 #if ENABLE(DAMAGE_TRACKING)
     void setDamage(const std::optional<Damage>& damage) { m_damage = damage; }
-    const std::optional<Damage>& damage() const { return m_damage; }
+    const std::optional<Damage>& damage() const LIFETIME_BOUND { return m_damage; }
 #endif
 
 private:
     bool isInMaskMode() const { return m_isMaskMode; }
-    const TransformationMatrix& patternTransform() const { return m_patternTransform; }
+    const TransformationMatrix& patternTransform() const LIFETIME_BOUND { return m_patternTransform; }
 
     enum class Direction { X, Y };
 

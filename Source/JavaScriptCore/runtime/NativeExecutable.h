@@ -73,7 +73,7 @@ public:
         
     DECLARE_INFO;
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 
     const DOMJIT::Signature* signatureFor(CodeSpecializationKind) const;
     ImplementationVisibility implementationVisibility() const { return static_cast<ImplementationVisibility>(m_implementationVisibility); }
@@ -86,7 +86,7 @@ public:
         return m_asString.get();
     }
 
-    JSString* asStringConcurrently() const { return m_asString.get(); }
+    JSString* asStringConcurrently() const LIFETIME_BOUND { return m_asString.get(); }
     static constexpr ptrdiff_t offsetOfAsString() { return OBJECT_OFFSETOF(NativeExecutable, m_asString); }
 
 private:

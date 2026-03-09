@@ -41,7 +41,7 @@ public:
         : m_data(WTF::move(data)) { }
 
     RetainPtr<id> toID() const;
-    const Vector<uint8_t>& ipcData() const { return m_data; }
+    const Vector<uint8_t>& ipcData() const LIFETIME_BOUND { return m_data; }
 
 private:
     Vector<uint8_t> m_data;

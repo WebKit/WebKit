@@ -54,7 +54,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     LegacyCDMSessionType type() const override { return CDMSessionTypeAVFoundationObjC; }
-    const String& sessionId() const override { return m_sessionId; }
+    const String& sessionId() const LIFETIME_BOUND override { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;

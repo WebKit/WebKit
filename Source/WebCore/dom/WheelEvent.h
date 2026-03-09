@@ -55,7 +55,7 @@ public:
 
     static Ref<WheelEvent> create(const AtomString& type, const Init&);
 
-    const std::optional<PlatformWheelEvent>& underlyingPlatformEvent() const { return m_underlyingPlatformEvent; }
+    const std::optional<PlatformWheelEvent>& underlyingPlatformEvent() const LIFETIME_BOUND { return m_underlyingPlatformEvent; }
 
     double deltaX() const { return m_deltaX; } // Positive when scrolling right.
     double deltaY() const { return m_deltaY; } // Positive when scrolling down.

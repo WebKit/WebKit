@@ -102,8 +102,8 @@ public:
     PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<Ref<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, bool isCodeImmutable);
     ~PolymorphicAccessJITStubRoutine();
 
-    const FixedVector<Ref<AccessCase>>& cases() const { return m_cases; }
-    const FixedVector<StructureID>& weakStructures() const { return m_weakStructures; }
+    const FixedVector<Ref<AccessCase>>& cases() const LIFETIME_BOUND { return m_cases; }
+    const FixedVector<StructureID>& weakStructures() const LIFETIME_BOUND { return m_weakStructures; }
 
     unsigned hash() const
     {
@@ -117,7 +117,7 @@ public:
     void addGCAwareWatchpoint();
     void addedToSharedJITStubSet();
 
-    Watchpoints& watchpoints() { return m_watchpoints; }
+    Watchpoints& watchpoints() LIFETIME_BOUND { return m_watchpoints; }
     WatchpointSet& watchpointSet() { return *m_watchpointSet.get(); }
     void invalidate();
 

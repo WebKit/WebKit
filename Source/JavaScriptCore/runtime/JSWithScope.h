@@ -41,7 +41,7 @@ public:
 
     JS_EXPORT_PRIVATE static JSWithScope* create(VM&, JSGlobalObject*, JSScope* next, JSObject*);
 
-    JSObject* object() { return m_object.get(); }
+    JSObject* object() LIFETIME_BOUND { return m_object.get(); }
 
     DECLARE_VISIT_CHILDREN;
 

@@ -64,7 +64,7 @@ public:
     UCollationResult compareStrings(JSGlobalObject*, StringView, StringView) const;
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
-    JSBoundFunction* boundCompare() const { return m_boundCompare.get(); }
+    JSBoundFunction* boundCompare() const LIFETIME_BOUND { return m_boundCompare.get(); }
     void setBoundCompare(VM&, JSBoundFunction*);
 
     bool canDoASCIIUCADUCETComparison() const

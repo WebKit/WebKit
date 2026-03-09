@@ -36,8 +36,8 @@ public:
     ~VMThreadContext();
 
     VMThreadContext* next() const { return m_next; }
-    VMTraps& traps() { return m_traps; }
-    const VMTraps& traps() const { return m_traps; }
+    VMTraps& traps() LIFETIME_BOUND { return m_traps; }
+    const VMTraps& traps() const LIFETIME_BOUND { return m_traps; }
 
     static constexpr ptrdiff_t offsetOfTraps()
     {

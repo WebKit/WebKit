@@ -67,7 +67,7 @@ public:
         return MacroAssembler::Call();
     }
 
-    const NodeOrigin& origin() const  { return m_origin; }
+    const NodeOrigin& origin() const LIFETIME_BOUND { return m_origin; }
     Node* currentNode() const { return m_currentNode; }
 
 protected:

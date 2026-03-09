@@ -44,8 +44,8 @@ public:
     static Ref<RTCIceCandidateDescriptor> create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);
     virtual ~RTCIceCandidateDescriptor();
 
-    const String& candidate() const { return m_candidate; }
-    const String& sdpMid() const { return m_sdpMid; }
+    const String& candidate() const LIFETIME_BOUND { return m_candidate; }
+    const String& sdpMid() const LIFETIME_BOUND { return m_sdpMid; }
     unsigned short sdpMLineIndex() const { return m_sdpMLineIndex; }
 
 private:

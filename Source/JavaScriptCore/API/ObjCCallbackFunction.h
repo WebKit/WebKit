@@ -71,7 +71,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    ObjCCallbackFunctionImpl* impl() const { return m_impl.get(); }
+    ObjCCallbackFunctionImpl* impl() const LIFETIME_BOUND { return m_impl.get(); }
 
 protected:
     ObjCCallbackFunction(VM&, Structure*, JSObjectCallAsFunctionCallback, JSObjectCallAsConstructorCallback, std::unique_ptr<ObjCCallbackFunctionImpl>);

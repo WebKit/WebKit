@@ -56,13 +56,13 @@ public:
         initializeOverloads();
     }
 
-    const String& source() const { return m_source; }
-    const Configuration& configuration() const { return m_configuration; }
-    AST::Declaration::List& declarations() { return m_declarations; }
-    const AST::Declaration::List& declarations() const { return m_declarations; }
-    AST::Directive::List& directives() { return m_directives; }
-    TypeStore& types() { return m_types; }
-    AST::Builder& astBuilder() { return m_astBuilder; }
+    const String& source() const LIFETIME_BOUND { return m_source; }
+    const Configuration& configuration() const LIFETIME_BOUND { return m_configuration; }
+    AST::Declaration::List& declarations() LIFETIME_BOUND { return m_declarations; }
+    const AST::Declaration::List& declarations() const LIFETIME_BOUND { return m_declarations; }
+    AST::Directive::List& directives() LIFETIME_BOUND { return m_directives; }
+    TypeStore& types() LIFETIME_BOUND { return m_types; }
+    AST::Builder& astBuilder() LIFETIME_BOUND { return m_astBuilder; }
 
     const CallGraph& callGraph() const { return *m_callGraph; }
     void setCallGraph(CallGraph&& callGraph)
@@ -273,7 +273,7 @@ public:
         m_replacements.shrinkCapacity(limit);
     }
 
-    OptionSet<Extension>& enabledExtensions() { return m_enabledExtensions; }
+    OptionSet<Extension>& enabledExtensions() LIFETIME_BOUND { return m_enabledExtensions; }
     OptionSet<LanguageFeature> requiredFeatures() { return m_requiredFeatures; }
     bool containsOverrideID(uint32_t idValue) const
     {

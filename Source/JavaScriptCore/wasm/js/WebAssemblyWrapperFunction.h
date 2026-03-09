@@ -52,7 +52,7 @@ public:
     static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, Structure*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Wasm::TypeIndex, Ref<const Wasm::RTT>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    JSObject* function() { return m_function.get(); }
+    JSObject* function() LIFETIME_BOUND { return m_function.get(); }
 
 private:
     WebAssemblyWrapperFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* function, Wasm::WasmOrJSImportableFunction&&, Wasm::WasmOrJSImportableFunctionCallLinkInfo*);

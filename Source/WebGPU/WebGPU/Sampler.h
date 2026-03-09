@@ -71,7 +71,7 @@ public:
 
     id<MTLSamplerState> cachedSamplerState() const { return m_cachedSamplerState; }
     id<MTLSamplerState> tryCacheSamplerState() const;
-    const WGPUSamplerDescriptor& descriptor() const { return m_descriptor; }
+    const WGPUSamplerDescriptor& descriptor() const LIFETIME_BOUND { return m_descriptor; }
     bool isComparison() const { return descriptor().compare != WGPUCompareFunction_Undefined; }
     bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUMipmapFilterMode_Linear; }
 

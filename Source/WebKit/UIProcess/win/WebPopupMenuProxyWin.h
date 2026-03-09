@@ -116,7 +116,7 @@ private:
 
 
     int itemHeight() const { return m_itemHeight; }
-    const WebCore::IntRect& windowRect() const { return m_windowRect; }
+    const WebCore::IntRect& windowRect() const LIFETIME_BOUND { return m_windowRect; }
     int wheelDelta() const { return m_wheelDelta; }
     void setWasClicked(bool b = true) { m_wasClicked = b; }
     bool wasClicked() const { return m_wasClicked; }

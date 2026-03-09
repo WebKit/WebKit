@@ -97,7 +97,7 @@ public:
     bool writesDepth() const;
     bool NODELETE writesStencil() const;
 
-    const RequiredBufferIndicesContainer& requiredBufferIndices() const { return m_requiredBufferIndices; }
+    const RequiredBufferIndicesContainer& requiredBufferIndices() const LIFETIME_BOUND { return m_requiredBufferIndices; }
     WGPUPrimitiveTopology primitiveTopology() const { return m_descriptor.primitive.topology; }
 
     MTLIndexType stripIndexFormat() const { return m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint16 ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32; }

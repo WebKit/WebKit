@@ -45,7 +45,7 @@ public:
     const void* bufferDataOffsetAsPtr() const;
     unsigned numberOfVertices() const { return m_vertices.size(); }
 
-    const FloatRect& bounds() const { return m_bounds; }
+    const FloatRect& bounds() const LIFETIME_BOUND { return m_bounds; }
 
 private:
 

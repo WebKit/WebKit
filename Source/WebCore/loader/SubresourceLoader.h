@@ -62,7 +62,7 @@ public:
     void startLoading() final;
 
     // FIXME: What is an "iOS" original request? Why is it necessary?
-    const ResourceRequest& iOSOriginalRequest() const final { return m_iOSOriginalRequest; }
+    const ResourceRequest& iOSOriginalRequest() const LIFETIME_BOUND final { return m_iOSOriginalRequest; }
 #endif
 
     unsigned redirectCount() const { return m_redirectCount; }

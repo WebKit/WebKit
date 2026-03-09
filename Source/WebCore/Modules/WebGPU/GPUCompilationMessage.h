@@ -48,8 +48,8 @@ public:
     uint64_t NODELETE offset() const;
     uint64_t NODELETE length() const;
 
-    WebGPU::CompilationMessage& backing() { return m_backing; }
-    const WebGPU::CompilationMessage& backing() const { return m_backing; }
+    WebGPU::CompilationMessage& backing() LIFETIME_BOUND { return m_backing; }
+    const WebGPU::CompilationMessage& backing() const LIFETIME_BOUND { return m_backing; }
 
 private:
     GPUCompilationMessage(WebGPU::CompilationMessage& backing)

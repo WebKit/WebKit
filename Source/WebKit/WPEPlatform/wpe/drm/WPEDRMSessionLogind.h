@@ -41,7 +41,7 @@ public:
     ~SessionLogind();
 
 private:
-    const char* seatID() const final { return m_seatID.get(); }
+    const char* seatID() const LIFETIME_BOUND final { return m_seatID.get(); }
     int openDevice(const char*, int) final;
     int closeDevice(int) final;
 

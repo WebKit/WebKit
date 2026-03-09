@@ -688,8 +688,8 @@ public:
         return inlineStorageUnsafe();
     }
         
-    const Butterfly* butterfly() const { return m_butterfly.get(); }
-    Butterfly* butterfly() { return m_butterfly.get(); }
+    const Butterfly* butterfly() const LIFETIME_BOUND { return m_butterfly.get(); }
+    Butterfly* butterfly() LIFETIME_BOUND { return m_butterfly.get(); }
     Dependency fencedButterfly(Butterfly*& butterfly)
     {
         return Dependency::loadAndFence(static_cast<Butterfly**>(butterflyAddress()), butterfly);

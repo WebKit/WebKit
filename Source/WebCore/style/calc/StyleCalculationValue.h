@@ -61,7 +61,7 @@ public:
     CSS::Category category() const { return m_category; }
     CSS::Range range() const { return m_range; }
 
-    const Tree& tree() const { return m_tree; }
+    const Tree& tree() const LIFETIME_BOUND { return m_tree; }
     Tree copyTree() const;
     Child copyRoot() const;
 

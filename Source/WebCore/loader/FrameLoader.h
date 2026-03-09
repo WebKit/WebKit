@@ -127,11 +127,11 @@ public:
 
     HistoryController& history() const { return m_history; }
 
-    ResourceLoadNotifier& notifier() const { return m_notifier; }
+    ResourceLoadNotifier& notifier() const LIFETIME_BOUND { return m_notifier; }
 
     class SubframeLoader;
-    SubframeLoader& subframeLoader() { return m_subframeLoader; }
-    const SubframeLoader& subframeLoader() const { return m_subframeLoader; }
+    SubframeLoader& subframeLoader() LIFETIME_BOUND { return m_subframeLoader; }
+    const SubframeLoader& subframeLoader() const LIFETIME_BOUND { return m_subframeLoader; }
 
     void setupForMultipartReplace();
 
@@ -279,8 +279,8 @@ public:
     void setLoadsSynchronously(bool loadsSynchronously) { m_loadsSynchronously = loadsSynchronously; }
     bool loadsSynchronously() const { return m_loadsSynchronously; }
 
-    FrameLoaderStateMachine& stateMachine() { return m_stateMachine; }
-    const FrameLoaderStateMachine& stateMachine() const { return m_stateMachine; }
+    FrameLoaderStateMachine& stateMachine() LIFETIME_BOUND { return m_stateMachine; }
+    const FrameLoaderStateMachine& stateMachine() const LIFETIME_BOUND { return m_stateMachine; }
 
     void advanceStatePastInitialEmptyDocument();
 
@@ -308,7 +308,7 @@ public:
 
     void loadProgressingStatusChanged();
 
-    const URL& previousURL() const { return m_previousURL; }
+    const URL& previousURL() const LIFETIME_BOUND { return m_previousURL; }
 
     bool isHTTPFallbackInProgress() const { return m_navigationUpgradeToHTTPSBehavior == NavigationUpgradeToHTTPSBehavior::HTTPFallback; }
     bool NODELETE shouldNavigateWithHTTP(bool isSameSiteNavigation) const;
@@ -330,7 +330,7 @@ public:
 
     WEBCORE_EXPORT void NODELETE clearTestingOverrides();
 
-    const URL& provisionalLoadErrorBeingHandledURL() const { return m_provisionalLoadErrorBeingHandledURL; }
+    const URL& provisionalLoadErrorBeingHandledURL() const LIFETIME_BOUND { return m_provisionalLoadErrorBeingHandledURL; }
     void setProvisionalLoadErrorBeingHandledURL(const URL& url) { m_provisionalLoadErrorBeingHandledURL = url; }
 
     bool NODELETE shouldSuppressTextInputFromEditing() const;

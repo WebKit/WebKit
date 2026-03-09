@@ -42,7 +42,7 @@ namespace WebCore {
 
 Ref<SkiaHarfBuzzFont> SkiaHarfBuzzFont::getOrCreate(SkTypeface& typeface)
 {
-    return FontCache::forCurrentThread()->harfBuzzFontCache().font(typeface);
+    return FontCache::forCurrentThread().harfBuzzFontCache().font(typeface);
 }
 
 static hb_font_funcs_t* harfBuzzFontFunctions()
@@ -143,7 +143,7 @@ SkiaHarfBuzzFont::SkiaHarfBuzzFont(SkTypeface& typeface)
 
 SkiaHarfBuzzFont::~SkiaHarfBuzzFont()
 {
-    FontCache::forCurrentThread()->harfBuzzFontCache().remove(m_uniqueID);
+    FontCache::forCurrentThread().harfBuzzFontCache().remove(m_uniqueID);
 }
 
 static inline hb_position_t skScalarToHarfBuzzPosition(SkScalar value)

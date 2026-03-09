@@ -250,14 +250,14 @@ public:
     bool isControlledByAutomation() const { return m_data.controlledByAutomation; }
     void setControlledByAutomation(bool controlledByAutomation) { m_data.controlledByAutomation = controlledByAutomation; }
 
-    const WTF::String& overrideContentSecurityPolicy() const { return m_data.overrideContentSecurityPolicy; }
+    const WTF::String& overrideContentSecurityPolicy() const LIFETIME_BOUND { return m_data.overrideContentSecurityPolicy; }
     void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_data.overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
 
 #if PLATFORM(COCOA)
     ClassStructPtr attachmentFileWrapperClassSingleton() const { return m_data.attachmentFileWrapperClass.get(); }
     void setAttachmentFileWrapperClass(ClassStructPtr c) { m_data.attachmentFileWrapperClass = c; }
 
-    const std::optional<Vector<WTF::String>>& additionalSupportedImageTypes() const { return m_data.additionalSupportedImageTypes; }
+    const std::optional<Vector<WTF::String>>& additionalSupportedImageTypes() const LIFETIME_BOUND { return m_data.additionalSupportedImageTypes; }
     void setAdditionalSupportedImageTypes(std::optional<Vector<WTF::String>>&& additionalSupportedImageTypes) { m_data.additionalSupportedImageTypes = WTF::move(additionalSupportedImageTypes); }
 
     bool clientNavigationsRunAtForegroundPriority() const { return m_data.clientNavigationsRunAtForegroundPriority; }
@@ -274,9 +274,9 @@ public:
 
     RefPtr<WebKit::WebURLSchemeHandler> urlSchemeHandlerForURLScheme(const WTF::String&);
     void setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String&);
-    const HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() { return m_data.urlSchemeHandlers; }
+    const HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() LIFETIME_BOUND { return m_data.urlSchemeHandlers; }
 
-    const Vector<WTF::String>& corsDisablingPatterns() const { return m_data.corsDisablingPatterns; }
+    const Vector<WTF::String>& corsDisablingPatterns() const LIFETIME_BOUND { return m_data.corsDisablingPatterns; }
     void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_data.corsDisablingPatterns = WTF::move(patterns); }
 
     HashSet<WTF::String> maskedURLSchemes() const;
@@ -285,13 +285,13 @@ public:
     bool crossOriginAccessControlCheckEnabled() const { return m_data.crossOriginAccessControlCheckEnabled; }
     void setCrossOriginAccessControlCheckEnabled(bool enabled) { m_data.crossOriginAccessControlCheckEnabled = enabled; }
 
-    const WTF::String& processDisplayName() const { return m_data.processDisplayName; }
+    const WTF::String& processDisplayName() const LIFETIME_BOUND { return m_data.processDisplayName; }
     void setProcessDisplayName(const WTF::String& name) { m_data.processDisplayName = name; }
 
     bool loadsSubresources() const { return m_data.loadsSubresources; }
     void setLoadsSubresources(bool loads) { m_data.loadsSubresources = loads; }
 
-    const std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>& allowedNetworkHosts() const { return m_data.allowedNetworkHosts; }
+    const std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>& allowedNetworkHosts() const LIFETIME_BOUND { return m_data.allowedNetworkHosts; }
     void setAllowedNetworkHosts(std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>&& hosts) { m_data.allowedNetworkHosts = WTF::move(hosts); }
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -349,13 +349,13 @@ public:
     void setMultiRepresentationHEICInsertionEnabled(bool enabled) { m_data.multiRepresentationHEICInsertionEnabled = enabled; }
 #endif
 
-    const WTF::String& groupIdentifier() const { return m_data.groupIdentifier; }
+    const WTF::String& groupIdentifier() const LIFETIME_BOUND { return m_data.groupIdentifier; }
     void setGroupIdentifier(WTF::String&& identifier) { m_data.groupIdentifier = WTF::move(identifier); }
 
-    const WTF::String& mediaContentTypesRequiringHardwareSupport() const { return m_data.mediaContentTypesRequiringHardwareSupport; }
+    const WTF::String& mediaContentTypesRequiringHardwareSupport() const LIFETIME_BOUND { return m_data.mediaContentTypesRequiringHardwareSupport; }
     void setMediaContentTypesRequiringHardwareSupport(WTF::String&& types) { m_data.mediaContentTypesRequiringHardwareSupport = WTF::move(types); }
 
-    const std::optional<WTF::String>& applicationNameForUserAgent() const { return m_data.applicationNameForUserAgent; }
+    const std::optional<WTF::String>& applicationNameForUserAgent() const LIFETIME_BOUND { return m_data.applicationNameForUserAgent; }
     void setApplicationNameForUserAgent(std::optional<WTF::String>&& name) { m_data.applicationNameForUserAgent = WTF::move(name); }
 
     double sampledPageTopColorMaxDifference() const { return m_data.sampledPageTopColorMaxDifference; }
@@ -433,7 +433,7 @@ public:
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_data.shouldRelaxThirdPartyCookieBlocking; }
 
     void setAttributedBundleIdentifier(WTF::String&& identifier) { m_data.attributedBundleIdentifier = WTF::move(identifier); }
-    const WTF::String& attributedBundleIdentifier() const { return m_data.attributedBundleIdentifier; }
+    const WTF::String& attributedBundleIdentifier() const LIFETIME_BOUND { return m_data.attributedBundleIdentifier; }
 
 #if HAVE(TOUCH_BAR)
     bool requiresUserActionForEditingControlsManager() const { return m_data.requiresUserActionForEditingControlsManager; }

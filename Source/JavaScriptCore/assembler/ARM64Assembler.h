@@ -266,7 +266,7 @@ public:
     {
     }
     
-    AssemblerBuffer& buffer() { return m_buffer; }
+    AssemblerBuffer& buffer() LIFETIME_BOUND { return m_buffer; }
 
     // (HS, LO, HI, LS) -> (AE, B, A, BE)
     // (VS, VC) -> (O, NO)

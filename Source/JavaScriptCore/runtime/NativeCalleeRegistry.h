@@ -42,7 +42,7 @@ public:
     static void initialize();
     static NativeCalleeRegistry& singleton();
 
-    Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+    Lock& getLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
     void registerCallee(NativeCallee* callee)
     {

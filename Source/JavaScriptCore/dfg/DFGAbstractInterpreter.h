@@ -224,7 +224,7 @@ public:
     FiltrationResult filterByValue(AbstractValue&, FrozenValue);
     FiltrationResult filterClassInfo(AbstractValue&, const ClassInfo*);
     
-    PhiChildren* phiChildren() { return m_phiChildren.get(); }
+    PhiChildren* phiChildren() LIFETIME_BOUND { return m_phiChildren.get(); }
     
     void filterICStatus(Node*);
     

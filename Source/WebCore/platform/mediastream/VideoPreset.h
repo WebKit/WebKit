@@ -65,7 +65,7 @@ public:
     }
 
     IntSize size() const { return m_data.size; }
-    const Vector<FrameRateRange>& frameRateRanges() const { return m_data.frameRateRanges; }
+    const Vector<FrameRateRange>& frameRateRanges() const LIFETIME_BOUND { return m_data.frameRateRanges; }
     double minZoom() const { return m_data.minZoom; }
     double maxZoom() const { return m_data.maxZoom; }
 

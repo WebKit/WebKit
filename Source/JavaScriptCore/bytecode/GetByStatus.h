@@ -110,7 +110,7 @@ public:
     bool isProxyObject() const { return m_state == ProxyObject; }
 
     size_t numVariants() const { return m_variants.size(); }
-    const Vector<GetByVariant, 1>& variants() const { return m_variants; }
+    const Vector<GetByVariant, 1>& variants() const LIFETIME_BOUND { return m_variants; }
     const GetByVariant& at(size_t index) const { return m_variants[index]; }
     const GetByVariant& operator[](size_t index) const { return at(index); }
 
@@ -129,8 +129,8 @@ public:
     void filter(const StructureSet&);
     void filterById(UniquedStringImpl*);
 
-    JSModuleNamespaceObject* moduleNamespaceObject() const { return m_moduleNamespaceData->m_moduleNamespaceObject; }
-    JSModuleEnvironment* moduleEnvironment() const { return m_moduleNamespaceData->m_moduleEnvironment; }
+    JSModuleNamespaceObject* moduleNamespaceObject() const LIFETIME_BOUND { return m_moduleNamespaceData->m_moduleNamespaceObject; }
+    JSModuleEnvironment* moduleEnvironment() const LIFETIME_BOUND { return m_moduleNamespaceData->m_moduleEnvironment; }
     ScopeOffset scopeOffset() const { return m_moduleNamespaceData->m_scopeOffset; }
     
     DECLARE_VISIT_AGGREGATE;

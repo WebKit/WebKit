@@ -74,8 +74,8 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     void setKeyIDs(CDMKeyIDs&& keyIDs) { m_keyIDs = WTF::move(keyIDs); }
-    const CDMKeyIDs& keyIDs() const { return m_keyIDs; }
-    CDMKeyIDs& keyIDs() { return m_keyIDs; }
+    const CDMKeyIDs& keyIDs() const LIFETIME_BOUND { return m_keyIDs; }
+    CDMKeyIDs& keyIDs() LIFETIME_BOUND { return m_keyIDs; }
 #endif
 
     static bool isCMSampleBufferNonDisplaying(CMSampleBufferRef);

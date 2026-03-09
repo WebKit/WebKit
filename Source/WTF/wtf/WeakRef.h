@@ -78,7 +78,7 @@ public:
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return m_impl.isHashTableEmptyValue(); }
 
-    WeakPtrImpl& impl() const { return m_impl; }
+    WeakPtrImpl& impl() const LIFETIME_BOUND { return m_impl; }
     Ref<WeakPtrImpl> releaseImpl() { return WTF::move(m_impl); }
 
     T* ptrAllowingHashTableEmptyValue() const
