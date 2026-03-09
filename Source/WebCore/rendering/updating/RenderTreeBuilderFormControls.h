@@ -31,21 +31,21 @@
 namespace WebCore {
 
 class RenderBlock;
-class RenderButton;
+class RenderFlexibleBox;
 
 class RenderTreeBuilder::FormControls {
     WTF_MAKE_TZONE_ALLOCATED(FormControls);
 public:
     FormControls(RenderTreeBuilder&);
 
-    void attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(RenderFlexibleBox& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
-    [[nodiscard]] RenderPtr<RenderObject> detach(RenderButton& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed);
+    [[nodiscard]] RenderPtr<RenderObject> detach(RenderFlexibleBox& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed);
 
     void updateAfterDescendants(RenderElement&);
 
 private:
-    RenderBlock& findOrCreateParentForChild(RenderButton&);
+    RenderBlock& findOrCreateParentForChild(RenderFlexibleBox&);
 
     void updatePseudoElement(PseudoElementType, RenderElement&, StyleAppearance, RenderObject* beforeChild = nullptr);
 

@@ -50,13 +50,15 @@ RenderTreeBuilder::FormControls::FormControls(RenderTreeBuilder& builder)
 {
 }
 
-void RenderTreeBuilder::FormControls::attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::FormControls::attach(RenderFlexibleBox& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
+    ASSERT(is<RenderButton>(parent) || is<RenderMenuList>(parent));
     m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTF::move(child), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderButton& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
+RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderFlexibleBox& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
 {
+    ASSERT(is<RenderButton>(parent) || is<RenderMenuList>(parent));
     auto* innerRenderer = parent.innerRenderer();
     if (!innerRenderer || &child == innerRenderer || child.parent() == &parent) {
         ASSERT(&child == innerRenderer || !innerRenderer);
@@ -65,8 +67,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderButton& pa
     return m_builder.detach(*innerRenderer, child, willBeDestroyed);
 }
 
-
-RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderButton& parent)
+RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderFlexibleBox& parent)
 {
     auto* innerRenderer = parent.innerRenderer();
     if (innerRenderer)

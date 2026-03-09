@@ -50,6 +50,7 @@
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderMathMLFenced.h"
+#include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -359,6 +360,11 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
+    if (auto* menuList = dynamicDowncast<RenderMenuList>(parent)) {
+        formControlsBuilder().attach(*menuList, WTF::move(child), beforeChild);
+        return;
+    }
+
     if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent)) {
         svgBuilder().attach(*container, WTF::move(child), beforeChild);
         return;
@@ -432,6 +438,9 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
 
     if (auto* button = dynamicDowncast<RenderButton>(parent))
         return formControlsBuilder().detach(*button, child, willBeDestroyed);
+
+    if (auto* menuList = dynamicDowncast<RenderMenuList>(parent))
+        return formControlsBuilder().detach(*menuList, child, willBeDestroyed);
 
     if (auto* grid = dynamicDowncast<RenderGrid>(parent))
         return detachFromRenderGrid(*grid, child, willBeDestroyed);

@@ -61,6 +61,8 @@ public:
 
     void updateFromElement() final;
 
+    bool createsAnonymousWrapper() const override { return true; }
+
 private:
     void element() const = delete;
 

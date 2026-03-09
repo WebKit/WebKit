@@ -108,6 +108,10 @@ public:
     bool NODELETE isColumnOrRowReverse() const;
     bool NODELETE isWrapReverse() const;
 
+    RenderBlock* innerRenderer() const { return m_inner.get(); }
+    void setInnerRenderer(RenderBlock&);
+    void updateAnonymousChildStyle(RenderStyle&) const override;
+
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
@@ -327,6 +331,7 @@ private:
     bool m_shouldResetFlexItemLogicalHeightBeforeLayout { false };
     bool m_isComputingFlexBaseSizes { false };
     std::optional<bool> m_hasFlexFormattingContextLayout;
+    SingleThreadWeakPtr<RenderBlock> m_inner;
 };
 
 } // namespace WebCore

@@ -38,6 +38,7 @@
 #include "InspectorInstrumentation.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationFlexLayout.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "LayoutUnit.h"
 #include "RenderBlockInlines.h"
@@ -2961,6 +2962,23 @@ const RenderBox* RenderFlexibleBox::flexItemForLastBaseline() const
     }
     // Logically first (but visually last) item on logically last (but visually first) line.
     return firstBaselineCandidateOnLine(m_orderIterator, m_numberOfFlexItemsOnFirstLine);
+}
+
+void RenderFlexibleBox::setInnerRenderer(RenderBlock& innerRenderer)
+{
+    ASSERT(!m_inner.get());
+    m_inner = innerRenderer;
+    updateAnonymousChildStyle(m_inner->mutableStyle());
+
+    if (m_inner && m_inner->layoutBox()) {
+        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_inner); inlineFormattingContextRoot && inlineFormattingContextRoot->inlineLayout())
+            inlineFormattingContextRoot->inlineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, inlineFormattingContextRoot->style());
+        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
+            lineLayout->styleWillChange(*m_inner, m_inner->style(), Style::DifferenceResult::Layout);
+        LayoutIntegration::LineLayout::updateStyle(*m_inner);
+        for (auto& child : childrenOfType<RenderText>(*m_inner))
+            LayoutIntegration::LineLayout::updateStyle(child);
+    }
 }
 
 }

@@ -104,6 +104,24 @@ void RenderMenuList::updateOptionsWidth()
         setNeedsLayoutAndPreferredWidthsUpdate();
 }
 
+void RenderFlexibleBox::updateAnonymousChildStyle(RenderStyle& childStyle) const
+{
+    childStyle.setFlexGrow(1.0f);
+    // min-inline-size: 0; is needed for correct shrinking.
+    // Use margin-block:auto instead of align-items:center to get safe centering, i.e.
+    // when the content overflows, treat it the same as align-items: flex-start.
+    if (isHorizontalWritingMode()) {
+        childStyle.setMinWidth(0_css_px);
+        childStyle.setMarginTop(CSS::Keyword::Auto { });
+        childStyle.setMarginBottom(CSS::Keyword::Auto { });
+    } else {
+        childStyle.setMinHeight(0_css_px);
+        childStyle.setMarginLeft(CSS::Keyword::Auto { });
+        childStyle.setMarginRight(CSS::Keyword::Auto { });
+    }
+    childStyle.setTextBoxTrim(style().textBoxTrim());
+}
+
 void RenderMenuList::updateFromElement()
 {
     if (m_needsOptionsWidthUpdate) {

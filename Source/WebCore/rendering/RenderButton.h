@@ -52,8 +52,6 @@ public:
     bool hasControlClip() const override;
     LayoutRect controlClipRect(const LayoutPoint&) const override;
 
-    void updateAnonymousChildStyle(RenderStyle&) const override;
-
     void setText(const String&);
     String NODELETE text() const;
 
@@ -62,10 +60,6 @@ public:
 #endif
 
     RenderTextFragment* textRenderer() const { return m_buttonText.get(); }
-
-    RenderBlock* innerRenderer() const { return m_inner.get(); }
-    void setInnerRenderer(RenderBlock&);
-
 private:
     void element() const = delete;
 
@@ -76,7 +70,6 @@ private:
     bool isFlexibleBoxImpl() const override { return true; }
 
     SingleThreadWeakPtr<RenderTextFragment> m_buttonText;
-    SingleThreadWeakPtr<RenderBlock> m_inner;
 };
 
 } // namespace WebCore

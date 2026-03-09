@@ -29,6 +29,7 @@
 #include "RenderBlockInlines.h"
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
+#include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderStyle+GettersInlines.h"
@@ -326,7 +327,7 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
         return;
 
     auto* parent = anonymousBlock.parent();
-    if (isAnyOf<RenderButton, RenderTextControl>(*parent))
+    if (isAnyOf<RenderButton, RenderMenuList, RenderTextControl>(*parent))
         return;
 
     m_builder.removeFloatingObjects(anonymousBlock);

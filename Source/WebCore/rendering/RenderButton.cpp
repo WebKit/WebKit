@@ -26,7 +26,6 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "LayoutIntegrationLineLayout.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
@@ -63,41 +62,6 @@ bool RenderButton::canBeSelectionLeaf() const
 bool RenderButton::hasLineIfEmpty() const
 {
     return is<HTMLInputElement>(formControlElement());
-}
-
-void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
-{
-    ASSERT(!m_inner.get());
-    m_inner = innerRenderer;
-    updateAnonymousChildStyle(m_inner->mutableStyle());
-
-    if (m_inner && m_inner->layoutBox()) {
-        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_inner); inlineFormattingContextRoot && inlineFormattingContextRoot->inlineLayout())
-            inlineFormattingContextRoot->inlineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, inlineFormattingContextRoot->style());
-        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
-            lineLayout->styleWillChange(*m_inner, m_inner->style(), Style::DifferenceResult::Layout);
-        LayoutIntegration::LineLayout::updateStyle(*m_inner);
-        for (auto& child : childrenOfType<RenderText>(*m_inner))
-            LayoutIntegration::LineLayout::updateStyle(child);
-    }
-}
-
-void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const
-{
-    childStyle.setFlexGrow(1.0f);
-    // min-inline-size: 0; is needed for correct shrinking.
-    // Use margin-block:auto instead of align-items:center to get safe centering, i.e.
-    // when the content overflows, treat it the same as align-items: flex-start.
-    if (isHorizontalWritingMode()) {
-        childStyle.setMinWidth(0_css_px);
-        childStyle.setMarginTop(CSS::Keyword::Auto { });
-        childStyle.setMarginBottom(CSS::Keyword::Auto { });
-    } else {
-        childStyle.setMinHeight(0_css_px);
-        childStyle.setMarginLeft(CSS::Keyword::Auto { });
-        childStyle.setMarginRight(CSS::Keyword::Auto { });
-    }
-    childStyle.setTextBoxTrim(style().textBoxTrim());
 }
 
 void RenderButton::updateFromElement()
