@@ -1,8 +1,6 @@
 popover 3show popover 3
 
-FAIL CommandEvent.source and ToggleEvent.source should be retargeted during and after event dispatch. assert_equals: beforetoggle.source during capture. expected (object) Element node <div id="host">
-
-</div> but got (undefined) undefined
+PASS CommandEvent.source and ToggleEvent.source should be retargeted during and after event dispatch.
 PASS CommandEvent.source should be retargeted when manually dispatched with composed set to true.
-FAIL CommandEvent.source and ToggleEvent.source should not be set to null after dispatch without ShadowDOM. assert_equals: beforetoggle.source should be the invoker button after dispatch. expected (object) Element node <button id="button3" commandfor="popover3" command="show-... but got (undefined) undefined
+PASS CommandEvent.source and ToggleEvent.source should not be set to null after dispatch without ShadowDOM.
 

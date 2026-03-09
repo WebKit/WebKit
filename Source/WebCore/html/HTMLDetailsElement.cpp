@@ -153,7 +153,7 @@ void HTMLDetailsElement::queueDetailsToggleEventTask(ToggleState oldState, Toggl
     if (!m_toggleEventTask)
         m_toggleEventTask = ToggleEventTask::create(*this);
 
-    RefPtr { m_toggleEventTask }->queue(oldState, newState);
+    RefPtr { m_toggleEventTask }->queue(oldState, newState, nullptr);
 }
 
 void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

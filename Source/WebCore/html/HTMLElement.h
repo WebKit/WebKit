@@ -151,11 +151,11 @@ public:
         std::optional<bool> force;
     };
 
-    void queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState);
+    void queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState, Element* source);
     ExceptionOr<void> showPopover(const ShowPopoverOptions&);
     ExceptionOr<void> showPopoverInternal(HTMLElement* = nullptr);
     ExceptionOr<void> hidePopover();
-    ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
+    ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents, HTMLElement* = nullptr);
     ExceptionOr<bool> togglePopover(std::optional<Variant<WebCore::HTMLElement::TogglePopoverOptions, bool>>);
 
     const AtomString& popover() const;

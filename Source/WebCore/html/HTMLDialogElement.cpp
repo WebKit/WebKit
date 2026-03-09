@@ -67,7 +67,11 @@ ExceptionOr<void> HTMLDialogElement::show()
         return Exception { ExceptionCode::InvalidStateError, "Cannot call show() on an open modal dialog."_s };
     }
 
-    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
+    ToggleEvent::Init init;
+    init.oldState = "closed"_s;
+    init.newState = "open"_s;
+    init.source = nullptr;
+    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, init, Event::IsCancelable::Yes);
     dispatchEvent(event);
     if (event->defaultPrevented())
         return { };
@@ -75,7 +79,7 @@ ExceptionOr<void> HTMLDialogElement::show()
     if (isOpen())
         return { };
 
-    queueDialogToggleEventTask(ToggleState::Closed, ToggleState::Open);
+    queueDialogToggleEventTask(ToggleState::Closed, ToggleState::Open, nullptr);
 
     setAttributeWithoutSynchronization(openAttr, emptyAtom());
 
@@ -91,7 +95,7 @@ ExceptionOr<void> HTMLDialogElement::show()
     return { };
 }
 
-ExceptionOr<void> HTMLDialogElement::showModal()
+ExceptionOr<void> HTMLDialogElement::showModal(Element* source)
 {
     // If subject already has an open attribute, then throw an "InvalidStateError" DOMException.
     if (isOpen()) {
@@ -111,7 +115,11 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (!document->isFullyActive())
         return Exception { ExceptionCode::InvalidStateError, "Invalid for dialogs within documents that are not fully active."_s };
 
-    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
+    ToggleEvent::Init init;
+    init.oldState = "closed"_s;
+    init.newState = "open"_s;
+    init.source = source;
+    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, init, Event::IsCancelable::Yes);
     dispatchEvent(event);
     if (event->defaultPrevented())
         return { };
@@ -125,7 +133,7 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (isPopoverShowing())
         return { };
 
-    queueDialogToggleEventTask(ToggleState::Closed, ToggleState::Open);
+    queueDialogToggleEventTask(ToggleState::Closed, ToggleState::Open, source);
 
     // setAttributeWihoutSynchronization will dispatch a DOMSubtreeModified event.
     // Postpone callback execution that can potentially make the dialog disconnected.
@@ -157,18 +165,22 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     return { };
 }
 
-void HTMLDialogElement::close(const String& result)
+void HTMLDialogElement::close(const String& result, Element* source)
 {
     if (!isOpen())
         return;
 
-    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No);
+    ToggleEvent::Init init;
+    init.oldState = "open"_s;
+    init.newState = "closed"_s;
+    init.source = source;
+    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, init, Event::IsCancelable::No);
     dispatchEvent(event);
 
     if (!isOpen())
         return;
 
-    queueDialogToggleEventTask(ToggleState::Open, ToggleState::Closed);
+    queueDialogToggleEventTask(ToggleState::Open, ToggleState::Closed, source);
 
     removeAttribute(openAttr);
 
@@ -189,7 +201,7 @@ void HTMLDialogElement::close(const String& result)
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-void HTMLDialogElement::requestClose(const String& returnValue)
+void HTMLDialogElement::requestClose(const String& returnValue, Element* source)
 {
     if (!isOpen())
         return;
@@ -197,7 +209,7 @@ void HTMLDialogElement::requestClose(const String& returnValue)
     auto cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
     dispatchEvent(cancelEvent);
     if (!cancelEvent->defaultPrevented())
-        close(returnValue);
+        close(returnValue, source);
 }
 
 bool HTMLDialogElement::isValidCommandType(const CommandType command)
@@ -216,16 +228,16 @@ bool HTMLDialogElement::handleCommandInternal(HTMLButtonElement& invoker, const 
 
     if (isOpen()) {
         if (command == CommandType::Close) {
-            close(invoker.value().string());
+            close(invoker.value().string(), &invoker);
             return true;
         }
         if (command == CommandType::RequestClose) {
-            requestClose(invoker.value().string());
+            requestClose(invoker.value().string(), &invoker);
             return true;
         }
     } else {
         if (command == CommandType::ShowModal) {
-            showModal();
+            showModal(&invoker);
             return true;
         }
     }
@@ -295,12 +307,12 @@ void HTMLDialogElement::setIsModal(bool newValue)
     m_isModal = newValue;
 }
 
-void HTMLDialogElement::queueDialogToggleEventTask(ToggleState oldState, ToggleState newState)
+void HTMLDialogElement::queueDialogToggleEventTask(ToggleState oldState, ToggleState newState, Element* source)
 {
     if (!m_toggleEventTask)
         m_toggleEventTask = ToggleEventTask::create(*this);
 
-    RefPtr { m_toggleEventTask }->queue(oldState, newState);
+    RefPtr { m_toggleEventTask }->queue(oldState, newState, source);
 }
 
 bool HTMLDialogElement::isOpen() const

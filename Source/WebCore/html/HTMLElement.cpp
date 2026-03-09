@@ -1114,9 +1114,9 @@ static void runPopoverFocusingSteps(HTMLElement& popover)
     page->setAutofocusProcessed();
 }
 
-void HTMLElement::queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState)
+void HTMLElement::queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState, Element* source)
 {
-    popoverData()->ensureToggleEventTask(*this)->queue(oldState, newState);
+    popoverData()->ensureToggleEventTask(*this)->queue(oldState, newState, source);
 }
 
 ExceptionOr<void> HTMLElement::showPopover(const ShowPopoverOptions& options)
@@ -1124,7 +1124,7 @@ ExceptionOr<void> HTMLElement::showPopover(const ShowPopoverOptions& options)
     return showPopoverInternal(options.source.get());
 }
 
-ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* invoker)
+ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* source)
 {
     auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden);
     if (check.hasException())
@@ -1133,7 +1133,7 @@ ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* invoker)
         return { };
 
     if (popoverData())
-        setInvoker(invoker);
+        setInvoker(source);
 
     ASSERT(!isInTopLayer());
 
@@ -1141,7 +1141,11 @@ ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* invoker)
     auto fireEvents = showOrHidingPopoverScope.wasShowingOrHiding() ? FireEvents::No : FireEvents::Yes;
 
     Ref document = this->document();
-    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
+    ToggleEvent::Init init;
+    init.oldState = "closed"_s;
+    init.newState = "open"_s;
+    init.source = source;
+    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, init, Event::IsCancelable::Yes);
     dispatchEvent(event);
     if (event->defaultPrevented() || event->defaultHandled())
         return { };
@@ -1189,7 +1193,7 @@ ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* invoker)
         popoverData()->setPreviouslyFocusedElement(previouslyFocusedElement.get());
     }
 
-    queuePopoverToggleEventTask(ToggleState::Closed, ToggleState::Open);
+    queuePopoverToggleEventTask(ToggleState::Closed, ToggleState::Open, source);
 
     if (CheckedPtr cache = document->existingAXObjectCache())
         cache->onPopoverToggle(*this);
@@ -1206,7 +1210,7 @@ void HTMLElement::setInvoker(HTMLElement* invoker)
         newInvoker->setInvokedPopover(RefPtr { this });
 }
 
-ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPreviousElement, FireEvents fireEvents, HTMLElement* source)
 {
     auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing);
     if (check.hasException())
@@ -1232,8 +1236,14 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
 
     setInvoker(nullptr);
 
-    if (fireEvents == FireEvents::Yes)
-        dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No));
+    if (fireEvents == FireEvents::Yes) {
+        ToggleEvent::Init init;
+        init.oldState = "open"_s;
+        init.newState = "closed"_s;
+        init.source = source;
+        dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, init,
+            Event::IsCancelable::No));
+    }
 
     check = checkPopoverValidity(*this, PopoverVisibilityState::Showing);
     if (check.hasException())
@@ -1252,7 +1262,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
     popoverData()->setVisibilityState(PopoverVisibilityState::Hidden);
 
     if (fireEvents == FireEvents::Yes)
-        queuePopoverToggleEventTask(ToggleState::Open, ToggleState::Closed);
+        queuePopoverToggleEventTask(ToggleState::Open, ToggleState::Closed, source);
 
     Ref document = this->document();
     if (RefPtr element = popoverData()->previouslyFocusedElement()) {
@@ -1278,13 +1288,13 @@ ExceptionOr<void> HTMLElement::hidePopover()
 ExceptionOr<bool> HTMLElement::togglePopover(std::optional<Variant<WebCore::HTMLElement::TogglePopoverOptions, bool>> options)
 {
     std::optional<bool> force;
-    HTMLElement* invoker = nullptr;
+    HTMLElement* source = nullptr;
 
     if (options.has_value()) {
-        WTF::switchOn(options.value(),
+        WTF::switchOn(*options,
             [&](TogglePopoverOptions options) {
                 force = options.force;
-                invoker = options.source.get();
+                source = options.source.get();
             },
             [&](bool value) {
                 force = value;
@@ -1293,11 +1303,11 @@ ExceptionOr<bool> HTMLElement::togglePopover(std::optional<Variant<WebCore::HTML
     }
 
     if (isPopoverShowing() && !force.value_or(false)) {
-        auto returnValue = hidePopover();
+        auto returnValue = hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes, source);
         if (returnValue.hasException())
             return returnValue.releaseException();
     } else if (!isPopoverShowing() && force.value_or(true)) {
-        auto returnValue = showPopoverInternal(invoker);
+        auto returnValue = showPopoverInternal(source);
         if (returnValue.hasException())
             return returnValue.releaseException();
     } else {
@@ -1352,7 +1362,7 @@ bool HTMLElement::handleCommandInternal(HTMLButtonElement& invoker, const Comman
     if (isPopoverShowing()) {
         bool shouldHide = command == CommandType::TogglePopover || command == CommandType::HidePopover;
         if (shouldHide) {
-            hidePopover();
+            hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes, &invoker);
             return true;
         }
     } else {

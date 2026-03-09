@@ -393,7 +393,7 @@ void HTMLFormControlElement::handlePopoverTargetAction(const EventTarget* eventT
     bool shouldShow = canShow && popover->popoverData()->visibilityState() == PopoverVisibilityState::Hidden;
 
     if (shouldHide)
-        popover->hidePopover();
+        popover->hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes, this);
     else if (shouldShow)
         popover->showPopoverInternal(this);
 }

@@ -26,6 +26,10 @@
 #include "config.h"
 #include "ToggleEvent.h"
 
+#include "Document.h"
+#include "Element.h"
+#include "TreeScope.h"
+
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -41,6 +45,7 @@ ToggleEvent::ToggleEvent(const AtomString& type, const ToggleEvent::Init& initia
     : Event(EventInterfaceType::ToggleEvent, type, Event::CanBubble::No, cancelable, Event::IsComposed::No)
     , m_oldState(initializer.oldState)
     , m_newState(initializer.newState)
+    , m_source(initializer.source)
 {
 }
 
@@ -48,6 +53,7 @@ ToggleEvent::ToggleEvent(const AtomString& type, const ToggleEvent::Init& initia
     : Event(EventInterfaceType::ToggleEvent, type, initializer, IsTrusted::No)
     , m_oldState(initializer.oldState)
     , m_newState(initializer.newState)
+    , m_source(initializer.source)
 {
 }
 
@@ -64,6 +70,22 @@ Ref<ToggleEvent> ToggleEvent::create(const AtomString& eventType, const ToggleEv
 Ref<ToggleEvent> ToggleEvent::createForBindings()
 {
     return adoptRef(*new ToggleEvent);
+}
+
+RefPtr<Element> ToggleEvent::source() const
+{
+    if (!m_source)
+        return nullptr;
+
+    if (RefPtr target = dynamicDowncast<Node>(currentTarget())) {
+        Ref treeScope = target->treeScope();
+        Ref node = treeScope->retargetToScope(*m_source);
+        return downcast<Element>(node);
+    }
+
+    Ref treeScope = m_source->treeScope().documentScope();
+    Ref node = treeScope->retargetToScope(*m_source);
+    return downcast<Element>(node);
 }
 
 } // namespace WebCore
