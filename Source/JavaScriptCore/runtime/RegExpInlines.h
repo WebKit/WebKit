@@ -165,6 +165,10 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
 
         if (result == static_cast<int>(Yarr::JSRegExpResult::JITCodeFailure)) {
             // JIT'ed code couldn't handle expression, so punt back to the interpreter.
+            if constexpr (matchFrom == Yarr::MatchFrom::CompilerThread) {
+                if (!m_regExpBytecode)
+                    return -1;
+            }
             byteCodeCompileIfNecessary(&vm);
             if (m_state == ParseError)
                 return throwError();
@@ -289,6 +293,10 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
             return result;
 
         // JIT'ed code couldn't handle expression, so punt back to the interpreter.
+        if constexpr (matchFrom == Yarr::MatchFrom::CompilerThread) {
+            if (!m_regExpBytecode)
+                return MatchResult::failed();
+        }
         byteCodeCompileIfNecessary(&vm);
         if (m_state == ParseError)
             return throwError();
