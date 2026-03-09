@@ -2487,8 +2487,6 @@ webkit.org/b/307850 media/modern-media-controls/tracks-support/audio-single-trac
 
 webkit.org/b/307886 [ Release arm64 ] js/dom/promise-stack-overflow.html [ Pass Failure ]
 
-webkit.org/b/309525 [ Release ] media/video-webkit-playsinline.html [ Pass Failure ]
-
 webkit.org/b/307889 http/tests/multipart/multipart-async-image.html [ Pass Failure ]
 
 # webkit.org/b/309308 2x http/tests/site-isolation/accessibility/hit-test-X-remote-frame.html are constant text failures

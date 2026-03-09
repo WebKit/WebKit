@@ -5,6 +5,8 @@ RUN(video.play())
 EVENT(playing)
 EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
 EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 RUN(internals.settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(true))
 RUN(video.setAttribute("webkit-playsinline", ""))
 EVENT(canplaythrough)
@@ -12,6 +14,8 @@ RUN(video.play())
 EVENT(playing)
 EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
 EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 RUN(internals.settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(false))
 RUN(video.removeAttribute("webkit-playsinline", ""))
 EVENT(canplaythrough)
