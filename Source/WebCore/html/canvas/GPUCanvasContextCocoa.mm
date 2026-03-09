@@ -41,7 +41,6 @@
 #include "ScreenProperties.h"
 #include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -91,14 +90,6 @@ public:
     void setOpaque(bool opaque)
     {
         m_isOpaque = opaque;
-    }
-    bool hasExtendedRange() const
-    {
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-        return m_contentsFormat == ContentsFormat::RGBA16F;
-#else
-        return false;
-#endif
     }
 private:
     GPUDisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
@@ -185,11 +176,8 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, Ref<GPUComposit
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (auto* screenData = WebCore::screenData(displayID)) {
-            protectedThis->m_screenEDRHeadroom = screenData->currentEDRHeadroom;
-            protectedThis->m_screenSuppressEDR = screenData->suppressEDR;
-            protectedThis->updateHeadroomFromScreenProperties();
-        }
+        if (auto* screenData = WebCore::screenData(displayID))
+            protectedThis->updateScreenHeadroom(screenData->currentEDRHeadroom, screenData->suppressEDR);
     }))
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
 {
@@ -241,15 +229,7 @@ float GPUCanvasContextCocoa::computeContentsHeadroom()
 
 void GPUCanvasContextCocoa::updateContentsHeadroom()
 {
-    if (!m_layerContentsDisplayDelegate->hasExtendedRange())
-        return;
-
     m_compositorIntegration->updateContentsHeadroom(computeContentsHeadroom());
-}
-
-void GPUCanvasContextCocoa::updateHeadroomFromScreenProperties()
-{
-    updateScreenHeadroom(m_screenEDRHeadroom, m_screenSuppressEDR);
 }
 
 void GPUCanvasContextCocoa::updateScreenHeadroom(float currentEDRHeadroom, bool suppressEDR)
@@ -262,39 +242,15 @@ void GPUCanvasContextCocoa::updateScreenHeadroom(float currentEDRHeadroom, bool 
     updateContentsHeadroom();
 }
 
-void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenPropertiesIfNeeded()
+void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenProperties()
 {
-    if (!m_layerContentsDisplayDelegate->hasExtendedRange())
-        return;
-
-    if (m_screenPropertiesChangedObserver && (m_currentEDRHeadroom >= 1.f || m_screenEDRHeadroom >= 1.f)) {
-        if (m_currentEDRHeadroom < 1.f)
-            updateHeadroomFromScreenProperties();
-        return;
+    m_currentEDRHeadroom = 1.f;
+    m_suppressEDR = false;
+    for (const auto& screenData : WebCore::getScreenProperties().screenDataMap.values()) {
+        m_currentEDRHeadroom = std::max(m_currentEDRHeadroom, screenData.currentEDRHeadroom);
+        m_suppressEDR |= screenData.suppressEDR;
     }
-
-    float maxEDRHeadroom = 1.f;
-    bool suppressEDR = false;
-
-    auto gatherScreenProperties = [&] {
-        for (const auto& screenData : WebCore::getScreenProperties().screenDataMap.values()) {
-            maxEDRHeadroom = std::max(maxEDRHeadroom, screenData.currentEDRHeadroom);
-            suppressEDR |= screenData.suppressEDR;
-        }
-    };
-
-    if (isMainThread())
-        gatherScreenProperties();
-    else {
-        BinarySemaphore semaphore;
-        callOnMainThread([&gatherScreenProperties, &semaphore] {
-            gatherScreenProperties();
-            semaphore.signal();
-        });
-        semaphore.wait();
-    }
-
-    updateScreenHeadroom(maxEDRHeadroom, suppressEDR);
+    updateContentsHeadroom();
 }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -305,7 +261,8 @@ void GPUCanvasContextCocoa::setDynamicRangeLimit(PlatformDynamicRangeLimit dynam
 
     m_dynamicRangeLimit = dynamicRangeLimit;
 
-    updateScreenHeadroomFromScreenPropertiesIfNeeded();
+    if (!m_screenPropertiesChangedObserver || m_currentEDRHeadroom < 1.f)
+        return updateScreenHeadroomFromScreenProperties();
 
     updateContentsHeadroom();
 }
@@ -359,7 +316,8 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=294654 - OffscreenCanvas may not reflect the display the OffscreenCanvas is displayed on during background / resume
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    updateScreenHeadroomFromScreenPropertiesIfNeeded();
+    if (!m_screenPropertiesChangedObserver)
+        updateScreenHeadroomFromScreenProperties();
 #endif
 
     auto frameCount = m_configuration->frameCount;

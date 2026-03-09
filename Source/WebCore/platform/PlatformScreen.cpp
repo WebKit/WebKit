@@ -35,8 +35,6 @@ namespace WebCore {
 
 static ScreenProperties& screenProperties()
 {
-    ASSERT(isMainThread());
-
     static NeverDestroyed<ScreenProperties> screenProperties;
     return screenProperties;
 }
