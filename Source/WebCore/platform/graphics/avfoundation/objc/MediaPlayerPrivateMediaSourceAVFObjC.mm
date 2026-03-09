@@ -122,6 +122,13 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    // Prevent re-entrant callbacks during member destruction. Without this,
+    // KVO notifications fired during m_mediaSourcePrivate's destruction can
+    // call back into this partially-destroyed object via WeakPtr-guarded
+    // callbacks (such as the error callback calling setNetworkState(),
+    // which accesses the already-destroyed m_logger).
+    weakPtrFactory().revokeAll();
+
     cancelPendingSeek();
     m_seekTimer.stop();
     m_renderer->pause();
