@@ -31,6 +31,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ZippedRange.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringTable.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ExternalStringImpl.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -123,11 +124,9 @@ StringImpl::~StringImpl()
 
     STRING_STATS_REMOVE_STRING(*this);
 
-    if (isAtom()) {
-        ASSERT(!isSymbol());
-        if (length())
-            AtomStringImpl::remove(static_cast<AtomStringImpl*>(this));
-    } else if (isSymbol()) {
+    // Atom string removal is handled by AtomStringTable::releaseAndRemoveIfNeeded()
+    // before destroy() is called via destroyIfNeeded().
+    if (isSymbol()) {
         auto& symbol = static_cast<SymbolImpl&>(*this);
         if (CheckedPtr symbolRegistry = symbol.symbolRegistry())
             SUPPRESS_UNCOUNTED_ARG symbolRegistry->remove(*symbol.asRegisteredSymbolImpl());
@@ -158,6 +157,24 @@ void StringImpl::destroy(StringImpl* stringImpl)
 {
     stringImpl->~StringImpl();
     StringImplMalloc::free(stringImpl);
+}
+
+void StringImpl::destroyIfNeeded()
+{
+    if (isAtom()) {
+        // Atom string: delegate to AtomStringTable::releaseAndRemoveIfNeeded().
+        // It acquires the table lock, then atomically decrements refcount.
+        // If refcount was still s_refCountIncrement (no re-ref), removes from table
+        // and returns true. Otherwise another thread revived this string via Add().
+        if (AtomStringTable::releaseAndRemoveIfNeeded(static_cast<AtomStringImpl*>(this)))
+            StringImpl::destroy(this);
+        return;
+    }
+
+    // Non-atom string: safe to destroy directly.
+    // No other thread can have a reference to a non-atom string with refcount 1.
+    ASSERT(m_refCount.load(std::memory_order_acquire) == s_refCountIncrement);
+    StringImpl::destroy(this);
 }
 
 Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(std::span<const char16_t> characters)
@@ -1661,13 +1678,7 @@ NEVER_INLINE unsigned StringImpl::hashSlowCase() const
 
 unsigned StringImpl::concurrentHash() const
 {
-    unsigned hash;
-    if (is8Bit())
-        hash = StringHasher::computeHashAndMaskTop8Bits(span8());
-    else
-        hash = StringHasher::computeHashAndMaskTop8Bits(span16());
-    ASSERT(((hash << s_flagCount) >> s_flagCount) == hash);
-    return hash;
+    return hash();
 }
 
 SUPPRESS_NODELETE bool equalIgnoringNullity(std::span<const char16_t> a, StringImpl* b)

@@ -169,7 +169,7 @@ protected:
         const char* m_data8Char;
         const char16_t* m_data16Char;
     };
-    mutable unsigned m_hashAndFlags;
+    mutable std::atomic<uint32_t> m_hashAndFlags;
 };
 
 // FIXME: Use of StringImpl and const is rather confused.
@@ -184,6 +184,7 @@ class StringImpl : private StringImplShape, public NoVirtualDestructorBase {
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl, StringImpl);
 
     friend class AtomStringImpl;
+    friend class AtomStringTable;
     friend class JSC::LLInt::Data;
     friend class JSC::LLIntOffsetsExtractor;
     friend class PrivateSymbolImpl;
@@ -313,7 +314,7 @@ public:
     static constexpr ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
     bool isEmpty() const { return !m_length; }
 
-    bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
+    bool is8Bit() const { return m_hashAndFlags.load(std::memory_order_relaxed) & s_hashFlag8BitBuffer; }
     ALWAYS_INLINE std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT(is8Bit()); return unsafeMakeSpan(m_data8, length()); }
     ALWAYS_INLINE std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT(!is8Bit() || isEmpty()); return unsafeMakeSpan(m_data16, length()); }
 
@@ -324,8 +325,8 @@ public:
 
     WTF_EXPORT_PRIVATE size_t NODELETE sizeInBytes() const;
 
-    bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
-    bool isAtom() const { return m_hashAndFlags & s_hashFlagStringKindIsAtom; }
+    bool isSymbol() const { return m_hashAndFlags.load(std::memory_order_relaxed) & s_hashFlagStringKindIsSymbol; }
+    bool isAtom() const { return m_hashAndFlags.load(std::memory_order_acquire) & s_hashFlagStringKindIsAtom; }
     void setIsAtom(bool);
     
     bool isExternal() const { return bufferOwnership() == BufferExternal; }
@@ -354,7 +355,7 @@ private:
     // So, we shift left and right when setting and getting our hash code.
     void setHash(unsigned) const;
 
-    unsigned rawHash() const { return m_hashAndFlags >> s_flagCount; }
+    unsigned rawHash() const { return m_hashAndFlags.load(std::memory_order_relaxed) >> s_flagCount; }
 
 public:
     bool hasHash() const { return !!rawHash(); }
@@ -376,6 +377,10 @@ public:
     void ref();
     void deref();
 
+private:
+    WTF_EXPORT_PRIVATE void destroyIfNeeded();
+
+public:
     class StaticStringImpl : private StringImplShape {
         WTF_MAKE_NONCOPYABLE(StaticStringImpl);
     public:
@@ -527,7 +532,7 @@ public:
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
-    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
+    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags.load(std::memory_order_relaxed) & s_hashMaskBufferOwnership); }
 
     template<typename T> static constexpr size_t headerSize() { return tailOffset<T>(); }
     
@@ -1125,10 +1130,10 @@ inline size_t StringImpl::cost() const
     // We ensure this by pre-setting the s_hashFlagDidReportCost bit in all instances of
     // StaticStringImpl. As a result, StaticStringImpl instances will always return a cost of
     // 0 here and avoid modifying m_hashAndFlags.
-    if (m_hashAndFlags & s_hashFlagDidReportCost)
+    if (m_hashAndFlags.load(std::memory_order_relaxed) & s_hashFlagDidReportCost)
         return 0;
 
-    m_hashAndFlags |= s_hashFlagDidReportCost;
+    m_hashAndFlags.fetch_or(s_hashFlagDidReportCost, std::memory_order_relaxed);
     size_t result = m_length;
     if (!is8Bit())
         result <<= 1;
@@ -1154,9 +1159,9 @@ inline void StringImpl::setIsAtom(bool isAtom)
     ASSERT(!isStatic());
     ASSERT(!isSymbol());
     if (isAtom)
-        m_hashAndFlags |= s_hashFlagStringKindIsAtom;
+        m_hashAndFlags.fetch_or(s_hashFlagStringKindIsAtom, std::memory_order_release);
     else
-        m_hashAndFlags &= ~s_hashFlagStringKindIsAtom;
+        m_hashAndFlags.fetch_and(~s_hashFlagStringKindIsAtom, std::memory_order_release);
 }
 
 inline void StringImpl::setHash(unsigned hash) const
@@ -1165,27 +1170,25 @@ inline void StringImpl::setHash(unsigned hash) const
     // in the low bits because it makes them slightly more efficient to access.
     // So, we shift left and right when setting and getting our hash code.
 
-    ASSERT(!hasHash());
     ASSERT(!isStatic());
     // Multiple clients assume that StringHasher is the canonical string hash function.
     ASSERT(hash == (is8Bit() ? StringHasher::computeHashAndMaskTop8Bits(span8()) : StringHasher::computeHashAndMaskTop8Bits(span16())));
     ASSERT(!(hash & (s_flagMask << (8 * sizeof(hash) - s_flagCount)))); // Verify that enough high bits are empty.
 
     hash <<= s_flagCount;
-    ASSERT(!(hash & m_hashAndFlags)); // Verify that enough low bits are empty after shift.
     ASSERT(hash); // Verify that 0 is a valid sentinel hash value.
 
-    m_hashAndFlags |= hash; // Store hash with flags in low bits.
+    // fetch_or is idempotent: concurrent threads computing the same hash
+    // can safely race. This matches Blink's SetHashRaw() approach.
+    m_hashAndFlags.fetch_or(hash, std::memory_order_relaxed);
 }
 
 inline void StringImpl::ref()
 {
     STRING_STATS_REF_STRING(*this);
 
-#if TSAN_ENABLED
     if (isStatic())
         return;
-#endif
 
     m_refCount.fetch_add(s_refCountIncrement, std::memory_order_relaxed);
 }
@@ -1194,16 +1197,21 @@ inline void StringImpl::deref()
 {
     STRING_STATS_DEREF_STRING(*this);
 
-#if TSAN_ENABLED
     if (isStatic())
         return;
-#endif
 
-    auto oldRefCount = m_refCount.fetch_sub(s_refCountIncrement, std::memory_order_relaxed);
-    if (oldRefCount != s_refCountIncrement)
-        return;
-
-    StringImpl::destroy(this);
+    // CAS loop: never decrement refcount to zero. When refcount equals
+    // s_refCountIncrement (last ref), delegate to destroyIfNeeded()
+    // which handles atom string removal under lock before destroying.
+    uint32_t currentRefCount = m_refCount.load(std::memory_order_relaxed);
+    do {
+        if (currentRefCount == s_refCountIncrement) {
+            destroyIfNeeded();
+            return;
+        }
+    } while (!m_refCount.compare_exchange_weak(
+        currentRefCount, currentRefCount - s_refCountIncrement,
+        std::memory_order_acq_rel, std::memory_order_relaxed));
 }
 
 inline char16_t StringImpl::at(unsigned i) const
