@@ -115,11 +115,11 @@ void av1_copy_and_extend_frame(const YV12_BUFFER_CONFIG *src,
   // Extend src frame in buffer
   const int et_y = dst->border;
   const int el_y = dst->border;
-  const int er_y =
-      AOMMAX(src->y_width + dst->border, ALIGN_POWER_OF_TWO(src->y_width, 6)) -
-      src->y_crop_width;
-  const int eb_y = AOMMAX(src->y_height + dst->border,
-                          ALIGN_POWER_OF_TWO(src->y_height, 6)) -
+  const int er_y = AOMMAX(src->y_crop_width + dst->border,
+                          ALIGN_POWER_OF_TWO(src->y_crop_width, 6)) -
+                   src->y_crop_width;
+  const int eb_y = AOMMAX(src->y_crop_height + dst->border,
+                          ALIGN_POWER_OF_TWO(src->y_crop_height, 6)) -
                    src->y_crop_height;
   const int uv_width_subsampling = src->subsampling_x;
   const int uv_height_subsampling = src->subsampling_y;

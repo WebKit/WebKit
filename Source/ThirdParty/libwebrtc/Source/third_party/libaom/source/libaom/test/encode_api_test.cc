@@ -1729,4 +1729,37 @@ TEST(EncodeAPI, Issue449341177) {
   ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
 }
 
+TEST(EncodeAPI, SizeAlignOverflow) {
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_REALTIME),
+            AOM_CODEC_OK);
+
+  cfg.g_w = 16;
+  cfg.g_h = 16;
+  cfg.g_threads = 1;
+  cfg.g_lag_in_frames = 0;
+
+  aom_codec_ctx_t enc;
+  ASSERT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+
+  // Bug aomdiea:480978101: size_align=32 causes w,h=32 while d_w,d_h=16
+  // This mismatch causes buffer overflow in av1_copy_and_extend_frame()
+  // if the fix is not present.
+  aom_image_t *img =
+      aom_img_alloc_with_border(NULL, AOM_IMG_FMT_NV12, /*d_w=*/16, /*d_h=*/16,
+                                /*align=*/32,
+                                /*size_align=*/32,
+                                /*border=*/15);
+  ASSERT_NE(img, nullptr);
+  memset(img->img_data, 128, img->sz);
+
+  // Should not crash with heap-buffer-overflow
+  EXPECT_EQ(aom_codec_encode(&enc, img, /*pts=*/0, /*duration=*/1, /*flags=*/0),
+            AOM_CODEC_OK);
+
+  aom_img_free(img);
+  ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
+}
+
 }  // namespace
