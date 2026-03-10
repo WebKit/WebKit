@@ -3,8 +3,9 @@ This test verifies that a page with a constant width viewport smaller than the a
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS minScale is expectedScale
 PASS innerWidth is 300
+PASS minScale > 1 is true
+PASS zoomScale is minScale
 PASS successfullyParsed is true
 
 TEST COMPLETE

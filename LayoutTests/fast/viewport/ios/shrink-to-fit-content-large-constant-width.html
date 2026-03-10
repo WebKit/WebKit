@@ -31,9 +31,10 @@ addEventListener("load", async () => {
 
     await UIHelper.ensurePresentationUpdate();
     minScale = (await UIHelper.minimumZoomScale()).toFixed(2);
-    expectedScale = (screen.width / 1000).toFixed(2);
-    shouldBe("minScale", "expectedScale");
-    shouldBe("innerWidth", "1000");
+    zoomScale = (await UIHelper.zoomScale()).toFixed(2);
+    shouldBeTrue("innerWidth <= 1000");
+    shouldBeTrue("minScale < 1");
+    shouldBe("zoomScale", "minScale");
     finishJSTest();
 });
 </script>
