@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleTextEmphasisPosition.h"
 
+#include "Element.h"
 #include "StyleBuilderChecking.h"
 
 namespace WebCore {
@@ -34,6 +35,18 @@ auto CSSValueConversion<TextEmphasisPosition>::operator()(BuilderState& state, c
 {
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
+        case CSSValueAuto: {
+            // Per CSS Text Decoration Level 4, 'auto' resolves the emphasis mark position
+            // based on the language of the element. Chinese and Japanese text uses 'under right',
+            // while all other languages use 'over right'.
+            // https://drafts.csswg.org/css-text-decor-4/#propdef-text-emphasis-position
+            auto* element = state.element();
+            bool isUnderLanguage = element
+                && (startsWithLettersIgnoringASCIICase(element->effectiveLang(), "zh"_s)
+                    || startsWithLettersIgnoringASCIICase(element->effectiveLang(), "ja"_s));
+            return { isUnderLanguage ? TextEmphasisPositionValue::Under : TextEmphasisPositionValue::Over, TextEmphasisPositionValue::Right };
+        }
+
         case CSSValueOver:
             return { TextEmphasisPositionValue::Over, TextEmphasisPositionValue::Right };
         case CSSValueUnder:

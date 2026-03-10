@@ -11874,7 +11874,7 @@
                 "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::TextEmphasisPosition",
-                "parser-grammar": "[ [ over | under ] && [ right | left ]? ]@(no-single-item-opt)"
+                "parser-grammar": "auto | [ [ over | under ] && [ right | left ]? ]@(no-single-item-opt)"
             },
             "specification": {
                 "category": "css-text-decor",
