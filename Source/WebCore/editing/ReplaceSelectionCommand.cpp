@@ -1324,13 +1324,16 @@ void ReplaceSelectionCommand::doApply()
         }
 
         if (RefPtr<Node> nodeToSplitTo = nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(insertionPos)) {
-            if (nodeToSplitTo->parentNode() && insertionPos.containerNode() != nodeToSplitTo->parentNode()) {
+            RefPtr parentNode = nodeToSplitTo->parentNode();
+            if (parentNode && insertionPos.containerNode() != parentNode) {
                 RefPtr splitStart { insertionPos.computeNodeAfterPosition() };
                 if (!splitStart)
                     splitStart = insertionPos.containerNode();
                 ASSERT(splitStart);
-                nodeToSplitTo = splitTreeToNode(*splitStart, *nodeToSplitTo->parentNode()).get();
-                insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
+                if (splitStart != nodeToSplitTo) {
+                    nodeToSplitTo = splitTreeToNode(*splitStart, *parentNode).get();
+                    insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
+                }
             }
         }
     }
