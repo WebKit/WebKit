@@ -1374,7 +1374,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
             return percentageOrCalculated(calculatedLogicalHeight);
         },
         [&](const CSS::Keyword::FitContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::Stretch&) -> LayoutUnit {
             // stretch with indefinite containing block falls back to intrinsic height for replaced elements.
@@ -1383,10 +1384,12 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
             return intrinsicLogicalHeight();
         },
         [&](const CSS::Keyword::MinContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::MaxContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::Intrinsic&) -> LayoutUnit {
             return intrinsicLogicalHeight();
