@@ -2283,6 +2283,18 @@ void vp9_pick_inter_mode(VP9_COMP *cpi, MACROBLOCK *x, TileDataEnc *tile_data,
     // need to compute best_pred_sad which is only used to skip golden NEWMV.
     if (use_golden_nonzeromv && this_mode == NEWMV && ref_frame == LAST_FRAME &&
         frame_mv[NEWMV][LAST_FRAME].as_int != INVALID_MV) {
+      struct buf_2d backup_yv12[MAX_MB_PLANE] = { { 0, 0 } };
+      const YV12_BUFFER_CONFIG *scaled_ref_frame =
+          vp9_get_scaled_ref_frame(cpi, ref_frame);
+      if (scaled_ref_frame) {
+        assert(scaled_ref_frame->y_width == cpi->Source->y_width &&
+               scaled_ref_frame->y_height == cpi->Source->y_height);
+        // Swap out the reference frame for a version that's been scaled to
+        // match the resolution of the current frame, allowing the existing
+        // motion search code to be used without additional modifications.
+        for (i = 0; i < MAX_MB_PLANE; i++) backup_yv12[i] = xd->plane[i].pre[0];
+        vp9_setup_pre_planes(xd, 0, scaled_ref_frame, mi_row, mi_col, NULL);
+      }
       const int pre_stride = xd->plane[0].pre[0].stride;
       const uint8_t *const pre_buf =
           xd->plane[0].pre[0].buf +
@@ -2291,6 +2303,9 @@ void vp9_pick_inter_mode(VP9_COMP *cpi, MACROBLOCK *x, TileDataEnc *tile_data,
       best_pred_sad = cpi->fn_ptr[bsize].sdf(
           x->plane[0].src.buf, x->plane[0].src.stride, pre_buf, pre_stride);
       x->pred_mv_sad[LAST_FRAME] = best_pred_sad;
+      if (scaled_ref_frame) {
+        for (i = 0; i < MAX_MB_PLANE; i++) xd->plane[i].pre[0] = backup_yv12[i];
+      }
     }
 
     if (this_mode != NEARESTMV && !comp_pred &&

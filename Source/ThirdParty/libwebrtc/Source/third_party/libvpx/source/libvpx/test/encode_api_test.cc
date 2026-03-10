@@ -54,7 +54,8 @@ void *Memset16(void *dest, int val, size_t length) {
 }
 
 vpx_image_t *CreateImage(vpx_bit_depth_t bit_depth, vpx_img_fmt_t fmt,
-                         unsigned int width, unsigned int height) {
+                         unsigned int width, unsigned int height,
+                         libvpx_test::ACMRandom *rng = nullptr) {
   assert(fmt != VPX_IMG_FMT_NV12);
   if (bit_depth > VPX_BITS_8) {
     fmt = static_cast<vpx_img_fmt_t>(fmt | VPX_IMG_FMT_HIGHBITDEPTH);
@@ -62,26 +63,38 @@ vpx_image_t *CreateImage(vpx_bit_depth_t bit_depth, vpx_img_fmt_t fmt,
   vpx_image_t *image = vpx_img_alloc(nullptr, fmt, width, height, 1);
   if (!image) return image;
 
-  const int val = 1 << (bit_depth - 1);
+  auto get_val = [bit_depth, &rng]() {
+    if (rng != nullptr) {
+      switch (bit_depth) {
+        case VPX_BITS_8: return static_cast<int>(rng->Rand8());
+        case VPX_BITS_10: return static_cast<int>(rng->Rand10());
+        case VPX_BITS_12: return static_cast<int>(rng->Rand12());
+      }
+    }
+    return 1 << (bit_depth - 1);
+  };
+  const int val_y = get_val();
+  const int val_u = get_val();
+  const int val_v = get_val();
   const unsigned int uv_h =
       (image->d_h + image->y_chroma_shift) >> image->y_chroma_shift;
   const unsigned int uv_w =
       (image->d_w + image->x_chroma_shift) >> image->x_chroma_shift;
   if (bit_depth > VPX_BITS_8) {
     for (unsigned int i = 0; i < image->d_h; ++i) {
-      Memset16(image->planes[0] + i * image->stride[0], val, image->d_w);
+      Memset16(image->planes[0] + i * image->stride[0], val_y, image->d_w);
     }
     for (unsigned int i = 0; i < uv_h; ++i) {
-      Memset16(image->planes[1] + i * image->stride[1], val, uv_w);
-      Memset16(image->planes[2] + i * image->stride[2], val, uv_w);
+      Memset16(image->planes[1] + i * image->stride[1], val_u, uv_w);
+      Memset16(image->planes[2] + i * image->stride[2], val_v, uv_w);
     }
   } else {
     for (unsigned int i = 0; i < image->d_h; ++i) {
-      memset(image->planes[0] + i * image->stride[0], val, image->d_w);
+      memset(image->planes[0] + i * image->stride[0], val_y, image->d_w);
     }
     for (unsigned int i = 0; i < uv_h; ++i) {
-      memset(image->planes[1] + i * image->stride[1], val, uv_w);
-      memset(image->planes[2] + i * image->stride[2], val, uv_w);
+      memset(image->planes[1] + i * image->stride[1], val_u, uv_w);
+      memset(image->planes[2] + i * image->stride[2], val_v, uv_w);
     }
   }
 
@@ -1197,7 +1210,9 @@ class VP9Encoder {
 
   void Configure(unsigned int threads, unsigned int width, unsigned int height,
                  vpx_rc_mode end_usage, vpx_enc_deadline_t deadline);
-  void Encode(bool key_frame);
+  // If `rng` is non-null, use it to generate the image values for encoding.
+  // Otherwise the midpoint of the configured bitdepth is used.
+  void Encode(bool key_frame, libvpx_test::ACMRandom *rng = nullptr);
 
  private:
   const int speed_;
@@ -1264,10 +1279,10 @@ void VP9Encoder::Configure(unsigned int threads, unsigned int width,
       << vpx_codec_error_detail(&enc_);
 }
 
-void VP9Encoder::Encode(bool key_frame) {
+void VP9Encoder::Encode(bool key_frame, libvpx_test::ACMRandom *rng) {
   assert(initialized_);
   const vpx_codec_cx_pkt_t *pkt;
-  vpx_image_t *image = CreateImage(bit_depth_, fmt_, cfg_.g_w, cfg_.g_h);
+  vpx_image_t *image = CreateImage(bit_depth_, fmt_, cfg_.g_w, cfg_.g_h, rng);
   ASSERT_NE(image, nullptr);
   const vpx_enc_frame_flags_t frame_flags = key_frame ? VPX_EFLAG_FORCE_KF : 0;
   ASSERT_EQ(
@@ -2260,6 +2275,25 @@ TEST(EncodeAPI, PerFramePsnrNotSupportedWithLagInFrames) {
   vpx_img_free(image);
   ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
 }
+
+TEST(EncodeAPI, Buganizer487259772ScaledRefs) {
+  libvpx_test::ACMRandom rng;
+  VP9Encoder encoder(/*speed=*/7, /*row_mt=*/0, VPX_BITS_8, VPX_IMG_FMT_I420);
+  encoder.Configure(/*threads=*/1, /*width=*/478, /*height=*/755, VPX_VBR,
+                    VPX_DL_REALTIME);
+  encoder.Configure(/*threads=*/1, /*width=*/387, /*height=*/438, VPX_VBR,
+                    VPX_DL_REALTIME);
+  encoder.Encode(/*key_frame=*/false, &rng);
+  encoder.Encode(/*key_frame=*/true, &rng);
+  encoder.Encode(/*key_frame=*/false, &rng);
+  encoder.Encode(/*key_frame=*/false, &rng);
+
+  encoder.Configure(/*threads=*/1, /*width=*/341, /*height=*/655, VPX_VBR,
+                    VPX_DL_REALTIME);
+  encoder.Encode(/*key_frame=*/false, &rng);
+  encoder.Encode(/*key_frame=*/false, &rng);
+}
+
 #endif  // CONFIG_VP9_ENCODER
 
 }  // namespace
