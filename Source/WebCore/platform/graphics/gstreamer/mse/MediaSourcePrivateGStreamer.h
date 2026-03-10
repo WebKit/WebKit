@@ -74,7 +74,7 @@ public:
 
     void detach();
 
-    // Similar to TrackPrivateBaseGStreamer::TrackType, but with a new value (Invalid) for when the codec is
+    // Similar to WebCore::GStreamerTrackType, but with a new value (Invalid) for when the codec is
     // not supported on this system, which should result in ParsingFailed error being thrown in SourceBuffer.
     enum StreamType { Audio, Video, Text, Unknown, Invalid };
 
