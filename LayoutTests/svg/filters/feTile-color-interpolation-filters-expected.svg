@@ -1,0 +1,7 @@
+<svg version="1.2" width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Reference: both rectangles should be rgb(50%,50%,50%) = #808080.
+       feFlood produces the specified color; feTile should preserve it regardless
+       of the color-interpolation-filters setting. -->
+  <rect fill="rgb(50%,50%,50%)" x="20" y="20" width="150" height="150"/>
+  <rect fill="rgb(50%,50%,50%)" x="190" y="20" width="150" height="150"/>
+</svg>

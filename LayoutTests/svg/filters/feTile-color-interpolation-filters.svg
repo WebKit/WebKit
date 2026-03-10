@@ -1,0 +1,41 @@
+<svg version="1.2" width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Test that feTile preserves colors correctly under both sRGB and linearRGB
+       color-interpolation-filters modes. With the bug (rdar://167786547), feTile
+       hardcoded its intermediate buffer to sRGB, causing a color space mismatch
+       when operating in linearRGB and producing washed-out colors. -->
+  <defs>
+    <!-- sRGB filter: feFlood -> feTile. The tiled output should match the flood color. -->
+    <filter id="tile-sRGB" color-interpolation-filters="sRGB"
+            filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox"
+            x="0" y="0" width="1" height="1">
+      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0"
+               x="0" y="0" width="0.5" height="0.5" result="half"/>
+      <feTile in="half"/>
+    </filter>
+
+    <!-- linearRGB filter: feFlood -> feTile. The tiled output should also match
+         the flood color, even though the internal pipeline uses linearRGB. -->
+    <filter id="tile-linearRGB" color-interpolation-filters="linearRGB"
+            filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox"
+            x="0" y="0" width="1" height="1">
+      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0"
+               x="0" y="0" width="0.5" height="0.5" result="half"/>
+      <feTile in="half"/>
+    </filter>
+
+    <!-- Reference: just feFlood without tiling, in linearRGB, to show the correct color. -->
+    <filter id="flood-linearRGB" color-interpolation-filters="linearRGB"
+            filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox"
+            x="0" y="0" width="1" height="1">
+      <feFlood flood-color="rgb(50%,50%,50%)" flood-opacity="1.0"
+               x="0" y="0" width="1" height="1"/>
+    </filter>
+  </defs>
+
+  <!-- Left: feTile in sRGB mode. Should produce rgb(50%,50%,50%). -->
+  <rect filter="url(#tile-sRGB)" x="20" y="20" width="150" height="150"/>
+
+  <!-- Center: feTile in linearRGB mode. Should produce the same visual as the
+       feFlood alone in linearRGB mode (right). Before the fix, this was washed out. -->
+  <rect filter="url(#tile-linearRGB)" x="190" y="20" width="150" height="150"/>
+</svg>
