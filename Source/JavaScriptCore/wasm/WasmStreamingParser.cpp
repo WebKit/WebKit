@@ -454,7 +454,7 @@ auto StreamingParser::finalize() -> State
 
         if (m_remaining.isEmpty()) {
             if (Options::useEagerWasmModuleHashing()) [[unlikely]]
-                m_info->nameSection->setHash(m_hasher.computeHexDigest());
+                m_info->nameSection().setHash(m_hasher.computeHexDigest());
 
             m_info->importShouldBeHidden = FixedBitVector(m_info->imports.size());
 

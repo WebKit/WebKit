@@ -3133,8 +3133,8 @@ void BBQJIT::emitEntryTierUpCheck()
 WARN_UNUSED_RETURN ControlData BBQJIT::addTopLevel(BlockSignature signature)
 {
     if (Options::verboseBBQJITInstructions()) [[unlikely]] {
-        auto nameSection = m_info.nameSection;
-        std::pair<const Name*, RefPtr<NameSection>> name = nameSection->get(m_functionIndex);
+        auto& nameSection = m_info.nameSection();
+        std::pair<const Name*, RefPtr<NameSection>> name = nameSection.get(m_functionIndex);
         dataLog("BBQ\tFunction ");
         if (name.first)
             dataLog(makeString(*name.first));
