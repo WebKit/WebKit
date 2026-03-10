@@ -3494,9 +3494,13 @@ void vp9_scale_references(VP9_COMP *cpi) {
         int new_fb = cpi->scaled_ref_idx[ref_frame - 1];
         if (new_fb == INVALID_IDX) {
           new_fb = get_free_fb(cm);
+          if (new_fb == INVALID_IDX) {
+            assert(cm->error.setjmp);
+            vpx_internal_error(&cm->error, VPX_CODEC_MEM_ERROR,
+                               "Unable to find free frame buffer");
+          }
           force_scaling = 1;
         }
-        if (new_fb == INVALID_IDX) return;
         new_fb_ptr = &pool->frame_bufs[new_fb];
         if (force_scaling || new_fb_ptr->buf.y_crop_width != cm->width ||
             new_fb_ptr->buf.y_crop_height != cm->height) {

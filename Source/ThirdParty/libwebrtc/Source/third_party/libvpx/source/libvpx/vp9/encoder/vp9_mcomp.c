@@ -2288,6 +2288,8 @@ unsigned int vp9_int_pro_motion_estimation(const VP9_COMP *cpi, MACROBLOCK *x,
   MvLimits subpel_mv_limits;
 
   if (scaled_ref_frame) {
+    assert(scaled_ref_frame->y_width == cpi->Source->y_width &&
+           scaled_ref_frame->y_height == cpi->Source->y_height);
     int i;
     // Swap out the reference frame for a version that's been scaled to
     // match the resolution of the current frame, allowing the existing

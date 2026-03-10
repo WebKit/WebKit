@@ -183,6 +183,8 @@ static int combined_motion_search(VP9_COMP *cpi, MACROBLOCK *x,
   const YV12_BUFFER_CONFIG *scaled_ref_frame =
       vp9_get_scaled_ref_frame(cpi, ref);
   if (scaled_ref_frame) {
+    assert(scaled_ref_frame->y_width == cpi->Source->y_width &&
+           scaled_ref_frame->y_height == cpi->Source->y_height);
     int i;
     // Swap out the reference frame for a version that's been scaled to
     // match the resolution of the current frame, allowing the existing
