@@ -113,11 +113,10 @@ void NetworkTransportStream::start(NetworkTransportStreamReadyHandler&& readyHan
 
 void NetworkTransportStream::initializeReadyConnection()
 {
-#if HAVE(WEB_TRANSPORT)
-    RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get()));
+    RetainPtr metadata = adoptNS(nw_connection_copy_protocol_metadata(m_connection.get(), adoptNS(softLink_Network_nw_protocol_copy_webtransport_definition()).get()));
 
-    bool isPeerInitiated = nw_webtransport_metadata_get_is_peer_initiated(metadata.get());
-    bool isUnidirectional = nw_webtransport_metadata_get_is_unidirectional(metadata.get());
+    bool isPeerInitiated = canLoad_Network_nw_webtransport_metadata_get_is_peer_initiated() && softLink_Network_nw_webtransport_metadata_get_is_peer_initiated(metadata.get());
+    bool isUnidirectional = canLoad_Network_nw_webtransport_metadata_get_is_unidirectional() && softLink_Network_nw_webtransport_metadata_get_is_unidirectional(metadata.get());
 
     if (!isUnidirectional)
         m_streamType = NetworkTransportStreamType::Bidirectional;
@@ -191,7 +190,6 @@ void NetworkTransportStream::initializeReadyConnection()
             session->streamSendError(protectedThis->m_identifier, errorCode);
         }).get(), mainDispatchQueueSingleton());
     }
-#endif
 }
 
 void NetworkTransportStream::sendBytes(std::span<const uint8_t> data, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
@@ -296,18 +294,14 @@ void NetworkTransportStream::cancelReceive(std::optional<WebCore::WebTransportSt
     switch (m_streamState) {
     case NetworkTransportStreamState::Ready: {
         m_streamState = NetworkTransportStreamState::ReadClosed;
-#if HAVE(WEB_TRANSPORT)
         if (canLoad_Network_nw_connection_abort_reads())
             softLink_Network_nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
-#endif
         break;
     }
     case NetworkTransportStreamState::WriteClosed: {
         m_streamState = NetworkTransportStreamState::Complete;
-#if HAVE(WEB_TRANSPORT)
         if (canLoad_Network_nw_connection_abort_reads())
             softLink_Network_nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
-#endif
         break;
     }
     case NetworkTransportStreamState::ReadClosed:
@@ -321,18 +315,14 @@ void NetworkTransportStream::cancelSend(std::optional<WebCore::WebTransportStrea
     switch (m_streamState) {
     case NetworkTransportStreamState::Ready: {
         m_streamState = NetworkTransportStreamState::WriteClosed;
-#if HAVE(WEB_TRANSPORT)
         if (canLoad_Network_nw_connection_abort_writes())
             softLink_Network_nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
-#endif
         break;
     }
     case NetworkTransportStreamState::ReadClosed: {
         m_streamState = NetworkTransportStreamState::Complete;
-#if HAVE(WEB_TRANSPORT)
         if (canLoad_Network_nw_connection_abort_writes())
             softLink_Network_nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
-#endif
         break;
     }
     case NetworkTransportStreamState::WriteClosed:

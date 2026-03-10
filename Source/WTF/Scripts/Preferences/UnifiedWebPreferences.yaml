@@ -10013,11 +10013,9 @@ WebTransportEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "HAVE(COMPLETE_WEB_TRANSPORT)": true
-      default: false
+      default: true
     WebCore:
-      "HAVE(COMPLETE_WEB_TRANSPORT)": true
-      default: false
+      default: true
   sharedPreferenceForWebProcess: true
   richJavaScript: true
   disableInLockdownMode: true
