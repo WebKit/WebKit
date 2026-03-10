@@ -574,7 +574,7 @@ void MediaPlayerPrivateGStreamerMSE::emitStreams(const Vector<RefPtr<MediaSource
         if (!uniqueTracks.containsIf([&track](const auto& current) { return track->id() == current->id(); })) {
             uniqueTracks.append(track);
 
-            if (track->type() != TrackPrivateBaseGStreamer::Text)
+            if (track->type() != GStreamerTrackType::Text)
                 playbackTracks.append(track);
             else
                 GST_DEBUG("Ignoring text track with id %" PRIu64, track->id());
