@@ -87,6 +87,7 @@ protected:
 
     static GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&);
     static GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType);
+    ColorInterpolationMethod gradientColorInterpolationMethod() const;
 
 private:
     void element() const = delete;

@@ -64,6 +64,20 @@ GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(
     return GradientSpreadMethod::Pad;
 }
 
+ColorInterpolationMethod RenderSVGResourceGradient::gradientColorInterpolationMethod() const
+{
+    switch (style().colorInterpolation()) {
+    case ColorInterpolation::Auto:
+    case ColorInterpolation::SRGB:
+        return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
+    case ColorInterpolation::LinearRGB:
+        return { ColorInterpolationMethod::SRGBLinear { }, AlphaPremultiplication::Unpremultiplied };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
+}
+
 bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObject& targetRenderer, const RenderStyle& style, AffineTransform& userspaceTransform)
 {
     if (!m_gradient) {

@@ -66,7 +66,7 @@ RefPtr<Gradient> RenderSVGResourceRadialGradient::createGradient(const RenderSty
 
     return Gradient::create(
         Gradient::RadialData { focalPoint, centerPoint, focalRadius, radius, 1 },
-        { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
+        gradientColorInterpolationMethod(),
         platformSpreadMethodFromSVGType(m_attributes->spreadMethod()),
         stopsByApplyingColorFilter(m_attributes->stops(), style),
         false);

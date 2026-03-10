@@ -378,4 +378,18 @@ GradientSpreadMethod LegacyRenderSVGResourceGradient::platformSpreadMethodFromSV
     return GradientSpreadMethod::Pad;
 }
 
+ColorInterpolationMethod LegacyRenderSVGResourceGradient::gradientColorInterpolationMethod() const
+{
+    switch (style().colorInterpolation()) {
+    case ColorInterpolation::Auto:
+    case ColorInterpolation::SRGB:
+        return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
+    case ColorInterpolation::LinearRGB:
+        return { ColorInterpolationMethod::SRGBLinear { }, AlphaPremultiplication::Unpremultiplied };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
+}
+
 } // namespace WebCore
