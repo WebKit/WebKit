@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "HTTPServer.h"
+#import "TestNavigationDelegate.h"
 #import "WebExtensionUtilities.h"
 #import <WebKit/WKUserContentControllerPrivate.h>
 
@@ -1885,6 +1886,80 @@ TEST(WKWebExtensionAPIScripting, MigrateScriptDataToNewFormat)
     }
 
     [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, ContentScriptsRespectDeniedMatchPatterns)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Content Scripts Test",
+        @"description": @"Content Scripts Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://*/*" ],
+            @"js": @[ @"content.js" ],
+            @"css": @[ @"content.css" ],
+            @"run_at": @"document_end"
+        } ]
+    };
+
+    auto *contentScript = Util::constructScript(@[
+        @"document.body.dataset.scriptInjected = 'true'"
+    ]);
+
+    auto *contentStyle = @"body { background-color: rgb(255, 0, 0) !important; }";
+
+    auto *resources = @{
+        @"content.js": contentScript,
+        @"content.css": contentStyle
+    };
+
+    auto manager = Util::loadExtension(manifest, resources);
+
+    // Grant all hosts and schemes, but deny localhost specifically
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:WKWebExtensionMatchPattern.allHostsAndSchemesMatchPattern];
+
+    auto *localhostRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:localhostRequest.URL];
+
+    // Test 1: Load localhost, verify script and style are NOT injected due to denied pattern
+    [manager.get().defaultTab.webView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView _test_waitForDidFinishNavigation];
+
+    // Verify the script and style were NOT injected by checking the page
+    __block bool doneCheckingLocalhost = false;
+    [manager.get().defaultTab.webView evaluateJavaScript:@"({ scriptInjected: document.body.dataset.scriptInjected === 'true', backgroundColor: getComputedStyle(document.body).backgroundColor })" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NS_EQUAL([result objectForKey:@"scriptInjected"], @NO);
+        EXPECT_FALSE([[result objectForKey:@"backgroundColor"] isEqualToString:@"rgb(255, 0, 0)"]);
+        doneCheckingLocalhost = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneCheckingLocalhost);
+
+    // Test 2: Load 127.0.0.1 (loopback), verify script and style ARE injected
+    // This should work because allHostsAndSchemesMatchPattern is granted and loopback is not denied
+    auto *loopbackRequest = server.request();
+
+    [manager.get().defaultTab.webView loadRequest:loopbackRequest];
+    [manager.get().defaultTab.webView _test_waitForDidFinishNavigation];
+
+    // Verify the script and style WERE injected
+    __block bool doneCheckingLoopback = false;
+    [manager.get().defaultTab.webView evaluateJavaScript:@"({ scriptInjected: document.body.dataset.scriptInjected === 'true', backgroundColor: getComputedStyle(document.body).backgroundColor })" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NS_EQUAL([result objectForKey:@"scriptInjected"], @YES);
+        EXPECT_NS_EQUAL([result objectForKey:@"backgroundColor"], @"rgb(255, 0, 0)");
+        doneCheckingLoopback = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneCheckingLoopback);
 }
 
 } // namespace TestWebKitAPI

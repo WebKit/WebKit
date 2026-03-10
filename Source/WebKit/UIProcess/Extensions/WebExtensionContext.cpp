@@ -1340,7 +1340,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
         HashSet<String> excludeMatchPatternsSet;
         excludeMatchPatternsSet.addAll(injectedContentData.expandedExcludeMatchPatternStrings());
-        excludeMatchPatternsSet.unionWith(baseExcludeMatchPatternsSet);
+        excludeMatchPatternsSet.addAll(baseExcludeMatchPatternsSet);
 
         auto excludeMatchPatterns = copyToVector(excludeMatchPatternsSet);
 
