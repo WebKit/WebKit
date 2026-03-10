@@ -62,6 +62,11 @@ RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(Ref<w
     GST_DEBUG("Created incoming video source with ID: %s", persistentID().utf8().data());
 }
 
+RealtimeIncomingVideoSourceLibWebRTC::~RealtimeIncomingVideoSourceLibWebRTC()
+{
+    stop();
+}
+
 void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& frame)
 {
     if (!isProducingData())

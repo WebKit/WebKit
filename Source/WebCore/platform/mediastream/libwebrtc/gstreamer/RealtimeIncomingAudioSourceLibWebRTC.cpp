@@ -61,6 +61,11 @@ RealtimeIncomingAudioSourceLibWebRTC::RealtimeIncomingAudioSourceLibWebRTC(Ref<w
     GST_DEBUG("Created incoming audio source with ID: %s", persistentID().utf8().data());
 }
 
+RealtimeIncomingAudioSourceLibWebRTC::~RealtimeIncomingAudioSourceLibWebRTC()
+{
+    stop();
+}
+
 void RealtimeIncomingAudioSourceLibWebRTC::OnData(const void* audioData, int, int sampleRate, size_t numberOfChannels, size_t numberOfFrames)
 {
 #if GST_CHECK_VERSION(1, 22, 0)

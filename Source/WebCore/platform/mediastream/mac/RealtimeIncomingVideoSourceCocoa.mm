@@ -63,6 +63,11 @@ RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(Ref<webrtc::V
 {
 }
 
+RealtimeIncomingVideoSourceCocoa::~RealtimeIncomingVideoSourceCocoa()
+{
+    stop();
+}
+
 CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height, webrtc::BufferType bufferType) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height || m_pixelBufferPoolBufferType != bufferType) {

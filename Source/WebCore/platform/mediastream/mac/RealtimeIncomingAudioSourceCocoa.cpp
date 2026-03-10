@@ -72,6 +72,11 @@ RealtimeIncomingAudioSourceCocoa::RealtimeIncomingAudioSourceCocoa(Ref<webrtc::A
 {
 }
 
+RealtimeIncomingAudioSourceCocoa::~RealtimeIncomingAudioSourceCocoa()
+{
+    stop();
+}
+
 void RealtimeIncomingAudioSourceCocoa::startProducingData()
 {
     RealtimeIncomingAudioSource::startProducingData();

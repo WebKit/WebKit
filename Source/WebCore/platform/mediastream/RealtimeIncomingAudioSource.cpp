@@ -49,7 +49,10 @@ RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(Ref<webrtc::AudioTrackI
 
 RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource()
 {
-    stop();
+    // Subclasses must call stop() in their destructors to ensure the audio
+    // track sink is removed BEFORE derived members are destroyed. Otherwise,
+    // the OnData callback may access destroyed members on the audio thread.
+    ASSERT(!isProducingData());
     m_audioTrack->UnregisterObserver(this);
 }
 

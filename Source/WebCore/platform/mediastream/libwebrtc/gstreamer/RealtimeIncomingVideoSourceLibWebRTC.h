@@ -41,7 +41,7 @@ public:
 
 private:
     RealtimeIncomingVideoSourceLibWebRTC(Ref<webrtc::VideoTrackInterface>&&, String&&);
-    ~RealtimeIncomingVideoSourceLibWebRTC() { }
+    ~RealtimeIncomingVideoSourceLibWebRTC();
 
     // rtc::VideoSinkInterface
     void OnFrame(const webrtc::VideoFrame&) final;

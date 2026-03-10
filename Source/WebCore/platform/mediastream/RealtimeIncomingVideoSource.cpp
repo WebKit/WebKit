@@ -73,7 +73,10 @@ RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(Ref<webrtc::VideoTrackI
 
 RealtimeIncomingVideoSource::~RealtimeIncomingVideoSource()
 {
-    stop();
+    // Subclasses must call stop() in their destructors to ensure the video
+    // track sink is removed BEFORE derived members are destroyed. Otherwise,
+    // the OnFrame callback may access destroyed members on the video thread.
+    ASSERT(!isProducingData());
     m_videoTrack->UnregisterObserver(this);
 }
 
