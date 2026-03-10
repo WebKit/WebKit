@@ -201,8 +201,7 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), connection, completionHandler({ }, { }));
 
-    // FIXME: This should consult canAccessPasteboardData() instead, and avoid responding with file paths if it returns false.
-    if (!canAccessPasteboardTypes(connection, pasteboardName))
+    if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ }, { });
 
     auto dataOwner = determineDataOwner(connection, pasteboardName, pageID, PasteboardAccessIntent::Read);

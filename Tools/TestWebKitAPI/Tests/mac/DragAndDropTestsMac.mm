@@ -33,6 +33,7 @@
 #import <WebCore/PasteboardCustomData.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFeature.h>
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
@@ -264,5 +265,78 @@ TEST(DragAndDropTests, DragLocationForImageInScrolledSubframe)
     RetainPtr dragTypes = [[[simulator draggingInfo] draggingPasteboard] types];
     EXPECT_TRUE([dragTypes containsObject:UTTypePNG.identifier]);
 }
+
+#if ENABLE(IPC_TESTING_API)
+TEST(DragAndDropTests, PasteboardPathnamesRequireDataAccess)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@R"TESTHTML(
+        <!DOCTYPE html>
+        <body style="width: 100vw; height: 100vh; margin: 0;">
+        <script>
+        var pathnameCount = -1;
+
+        document.body.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+        });
+
+        document.body.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            if (pathnameCount >= 0 || !window.IPC || !window.pasteboardName)
+                return;
+
+            try {
+                var reply = IPC.sendSyncMessage('UI', 0,
+                    IPC.messages.WebPasteboardProxy_GetPasteboardPathnamesForType.name,
+                    1000,
+                    [
+                        {type: 'String', value: window.pasteboardName},
+                        {type: 'String', value: 'NSFilenamesPboardType'},
+                        {type: 'bool', value: 0}
+                    ]);
+                if (reply && reply.buffer) {
+                    var buf = new Uint8Array(reply.buffer);
+                    pathnameCount = buf.length > 32 ? 1 : 0;
+                } else {
+                    pathnameCount = 0;
+                }
+            } catch (ex) {
+                pathnameCount = -2;
+            }
+        });
+
+        document.body.addEventListener('drop', function(e) {
+            e.preventDefault();
+        });
+        </script>
+        </body>
+        )TESTHTML"];
+
+    NSString *tempFile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"test-pasteboard-access.txt"];
+    [@"test content" writeToFile:tempFile atomically:YES encoding:NSUTF8StringEncoding error:nil];
+
+    [simulator writeFiles:@[[NSURL fileURLWithPath:tempFile]]];
+
+    NSString *pbName = [simulator externalDragPasteboard].name;
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.pasteboardName = '%@'", pbName]];
+
+    [simulator runFrom:NSMakePoint(0, 0) to:NSMakePoint(200, 200)];
+
+    auto count = [webView stringByEvaluatingJavaScript:@"pathnameCount"].integerValue;
+    EXPECT_GE(count, 0);
+    EXPECT_EQ(0, count);
+
+    [[NSFileManager defaultManager] removeItemAtPath:tempFile error:nil];
+}
+#endif // ENABLE(IPC_TESTING_API)
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
