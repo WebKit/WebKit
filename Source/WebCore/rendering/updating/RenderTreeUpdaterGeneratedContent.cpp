@@ -199,7 +199,9 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
     // cancel any animations that were on it so we do not end up thinking we need to keep
     // the renderer around. We cannot completely rely on needsPseudoElement because
     // we may need to animate a box with display: none.
-    if (!updateStyle)
+    // Only cancel if we actually have animations on this pseudo-element to avoid
+    // performance overhead on pages with frequent style updates.
+    if (!updateStyle && keyframeEffectStackForPseudoElement(current, pseudoElementType))
         Styleable { current, Style::PseudoElementIdentifier { pseudoElementType } }.cancelStyleOriginatedAnimations();
 
     ASSERT(!is<PseudoElement>(current));
