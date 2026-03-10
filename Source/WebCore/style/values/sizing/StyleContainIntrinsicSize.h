@@ -35,7 +35,7 @@ using namespace CSS::Literals;
 // <'contain-intrinsic-*'> = auto? [ none | <length [0,inf]> ]
 // https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override
 struct ContainIntrinsicSize {
-    using Length = Style::Length<CSS::Nonnegative, float>;
+    using Length = Style::Length<CSS::NonnegativeUnzoomed, float>;
 
     ContainIntrinsicSize(CSS::Keyword::None)
         : type { ContainIntrinsicSizeType::None }
