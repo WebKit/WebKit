@@ -707,6 +707,8 @@ input::-webkit-list-button {
     /* Make it easier to hit the button on iOS */
     padding: 7px;
     margin: -7px;
+    /* Prevent the negative start margin from pulling the button over the text editing area */
+    margin-inline-start: 0px;
 #else
     block-size: 100%;
 #endif

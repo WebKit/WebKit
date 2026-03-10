@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+input {
+    font-size: 16px;
+    width: 300px;
+}
+</style>
+</head>
+<body>
+<!-- Regression test for rdar://168475613: the datalist list button should not
+     overlap the text editing area on iOS. The negative margin (-7px) used for
+     expanding the tap target must not extend the button's inline-start edge
+     into the text area. -->
+<input id="fruit" list="fruits" type="text" value="Test text here">
+<datalist id="fruits">
+    <option>Apple</option>
+    <option>Orange</option>
+    <option>Pear</option>
+</datalist>
+<pre id="output"></pre>
+<script>
+if (window.internals) {
+    var input = document.getElementById("fruit");
+    var shadow = internals.shadowRoot(input);
+    var children = shadow.querySelectorAll("div");
+    var listButton = null;
+    for (var i = 0; i < children.length; i++) {
+        var style = getComputedStyle(children[i]);
+        if (style.position === "relative" && style.cursor === "default")
+            listButton = children[i];
+    }
+    var textArea = internals.innerTextElement(input);
+    if (textArea && listButton) {
+        var textRect = textArea.getBoundingClientRect();
+        var buttonRect = listButton.getBoundingClientRect();
+        var overlaps = buttonRect.left < textRect.right;
+        document.getElementById("output").textContent =
+            (overlaps ? "FAIL" : "PASS") + ": The list button does " + (overlaps ? "" : "not ") + "overlap the text editing area.\n";
+    } else {
+        document.getElementById("output").textContent = "FAIL: Could not find text area or list button in shadow DOM.\n";
+    }
+}
+</script>
+</body>
+</html>
