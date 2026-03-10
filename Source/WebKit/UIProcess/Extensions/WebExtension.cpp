@@ -257,7 +257,7 @@ String WebExtension::processFileAndExtractZipArchive(const String& path)
 
 bool WebExtension::parseManifest(StringView manifestString)
 {
-    RefPtr manifestValue = JSON::Value::parseJSON(manifestString);
+    RefPtr manifestValue = JSON::Value::parseJSON(manifestString, JSON::Value::ParsingMode::AllowTrailingCommas);
     if (!manifestValue) {
         recordError(createError(Error::InvalidManifest));
         return false;

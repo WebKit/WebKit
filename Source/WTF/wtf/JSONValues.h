@@ -105,7 +105,10 @@ public:
     RefPtr<const Object> asObject() const;
     RefPtr<Array> asArray();
 
+    enum class ParsingMode : uint8_t { Strict, AllowTrailingCommas };
+
     static RefPtr<Value> parseJSON(StringView);
+    static RefPtr<Value> parseJSON(StringView, ParsingMode);
     static std::optional<Ref<Value>> optionalParseJSON(StringView);
 
     String toJSONString() const;
