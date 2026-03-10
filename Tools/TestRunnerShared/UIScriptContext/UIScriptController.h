@@ -233,6 +233,7 @@ public:
     virtual void typeCharacterUsingHardwareKeyboard(JSStringRef, JSValueRef) { notImplemented(); }
 
     virtual void keyDown(JSStringRef, JSValueRef) { notImplemented(); }
+    virtual void asyncKeyDown(JSStringRef, JSValueRef, JSValueRef) { notImplemented(); }
     virtual void toggleCapsLock(JSValueRef) { notImplemented(); }
     virtual void setContinuousSpellCheckingEnabled(bool) { notImplemented(); }
     virtual void setSpellCheckerResults(JSValueRef) { notImplemented(); }

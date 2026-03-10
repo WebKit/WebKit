@@ -110,6 +110,7 @@ interface UIScriptController {
     undefined typeCharacterUsingHardwareKeyboard(DOMString character, object callback);
 
     undefined keyDown(DOMString character, object modifierArray);
+    Promise<undefined> asyncKeyDown(DOMString character, object modifierArray);
     undefined toggleCapsLock(object callback);
     undefined setContinuousSpellCheckingEnabled(boolean enabled);
     undefined setSpellCheckerResults(object results);

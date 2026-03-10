@@ -80,6 +80,7 @@ private:
     void enterText(JSStringRef text) override;
     void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef) override;
     void keyDown(JSStringRef character, JSValueRef modifierArray) override;
+    void asyncKeyDown(JSStringRef character, JSValueRef modifierArray, JSValueRef resolveCallback) override;
 
     void activateAtPoint(long x, long y, JSValueRef callback) override;
 

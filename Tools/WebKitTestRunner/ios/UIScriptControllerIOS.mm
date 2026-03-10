@@ -672,12 +672,12 @@ void UIScriptControllerIOS::rawKeyUp(JSStringRef key)
     [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
 }
 
-void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierArray)
+static void dispatchKeyDownHIDEvents(JSContextRef context, JSStringRef character, JSValueRef modifierArray)
 {
     // Character can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
     // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
     auto inputString = toWTFString(character);
-    auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
+    auto modifierFlags = parseModifierArray(context, modifierArray);
 
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag.createNSString().get()];
@@ -689,8 +689,26 @@ void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierAr
         --i;
         [[HIDEventGenerator sharedHIDEventGenerator] keyUp:modifierFlags[i].createNSString().get()];
     }
+}
 
+void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierArray)
+{
+    dispatchKeyDownHIDEvents(m_context->jsContext(), character, modifierArray);
     [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
+}
+
+void UIScriptControllerIOS::asyncKeyDown(JSStringRef character, JSValueRef modifierArray, JSValueRef resolveCallback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(resolveCallback, CallbackTypeNonPersistent);
+
+    dispatchKeyDownHIDEvents(m_context->jsContext(), character, modifierArray);
+
+    [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:makeBlockPtr([protectedThis = Ref { *this }, callbackID] {
+        [protectedThis->webView() _doAfterProcessingAllPendingKeyEvents:makeBlockPtr([protectedThis, callbackID] {
+            if (protectedThis->m_context)
+                protectedThis->m_context->asyncTaskComplete(callbackID);
+        }).get()];
+    }).get()];
 }
 
 void UIScriptControllerIOS::dismissFormAccessoryView()

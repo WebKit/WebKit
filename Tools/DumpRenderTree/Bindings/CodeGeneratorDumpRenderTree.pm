@@ -284,7 +284,9 @@ EOF
                 my @arguments = ();
                 my @specifiedArguments = @{$operation->arguments};
 
-                $self->_includeHeaders(\%contentsIncludes, $operation->type);
+                if (not $operation->type->name eq "Promise") {
+                    $self->_includeHeaders(\%contentsIncludes, $operation->type);
+                }
 
                 if (!@specifiedArguments) {
                     push(@contents, "    UNUSED_VARIABLE(argumentCount);\n");
@@ -302,10 +304,16 @@ EOF
                     push(@arguments, $self->_argumentExpression($argument));
                 }
 
+                if ($operation->type->name eq "Promise") {
+                    push(@contents, "    JSObjectRef resolveFunction = nullptr;\n");
+                    push(@contents, "    JSObjectRef promise = JSObjectMakeDeferredPromise(context, &resolveFunction, nullptr, nullptr);\n\n");
+                    push(@arguments, "resolveFunction");
+                }
+
                 $functionCall = "impl->" . $operation->name . "(" . join(", ", @arguments) . ")";
             }
-            
-            push(@contents, "    ${functionCall};\n\n") if $operation->type->name eq "undefined";
+
+            push(@contents, "    ${functionCall};\n\n") if $operation->type->name eq "undefined" or $operation->type->name eq "Promise";
             push(@contents, "    return " . $self->_returnExpression($operation->type, $functionCall) . ";\n}\n");
         }
     }
@@ -476,6 +484,7 @@ sub _returnExpression
     my ($self, $returnType, $expression) = @_;
 
     return "JSValueMakeUndefined(context)" if $returnType->name eq "undefined";
+    return "promise" if $returnType->name eq "Promise";
     return "makeValue(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
     return "JSValueMakeBoolean(context, ${expression})" if $returnType->name eq "boolean";
     return "${expression}" if $returnType->name eq "object";
