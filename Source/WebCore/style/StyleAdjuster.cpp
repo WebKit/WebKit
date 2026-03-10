@@ -1147,7 +1147,9 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         //     animation-fill-mode: none, forwards;
         //     animation-name: menu-grow-left, menu-fade-in;
         auto menuGrowLeftAnimation = Style::Animation { { ScopedName { "menu-grow-left"_s } } };
+        menuGrowLeftAnimation.setDelay(0_css_s);
         menuGrowLeftAnimation.setDuration(.18_css_s);
+        menuGrowLeftAnimation.setFillMode(AnimationFillMode::None);
 
         auto menuFadeInAnimation = Style::Animation { { ScopedName { "menu-fade-in"_s } } };
         menuFadeInAnimation.setDelay(.06_css_s);
@@ -1155,8 +1157,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         menuFadeInAnimation.setFillMode(AnimationFillMode::Forwards);
 
         auto& animations = style.ensureAnimations();
-        animations.append(WTF::move(menuGrowLeftAnimation));
-        animations.append(WTF::move(menuFadeInAnimation));
+        animations = Style::Animations { WTF::move(menuGrowLeftAnimation), WTF::move(menuFadeInAnimation) };
+        animations.prepareForUse();
     }
 
 #if PLATFORM(IOS_FAMILY)

@@ -1,0 +1,4 @@
+
+PASS hotels.com animation quirk overrides animation:none for the menu container element
+PASS hotels.com animation quirk sets correct animation-delay and animation-duration
+

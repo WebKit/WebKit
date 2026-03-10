@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- Test for hotels.com animation quirk (https://webkit.org/b/308116)
+     The quirk restores menu-grow-left and menu-fade-in animations for elements
+     matching .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el
+     which otherwise receive animation:none from a @supports (-webkit-hyphens:none) block on the real site. -->
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<style>
+/* Mirrors the relevant hotels.com CSS that this quirk is meant to fix.
+   The real site uses @supports (-webkit-hyphens:none) and (stroke-color:transparent)
+   to set animation:none on Safari, overriding the intended open-menu animations. */
+.uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el {
+    animation: none;
+}
+</style>
+<body>
+<!-- Minimal DOM structure matching the hotels.com menu, per the quirk's CSS selector -->
+<div class="uitk-menu-mounted">
+    <div id="target" class="uitk-menu-container uitk-menu-container-autoposition uitk-menu-container-has-intersection-root-el"></div>
+</div>
+<script>
+"use strict";
+
+if (window.internals)
+    window.internals.setTopDocumentURLForQuirks("https://www.hotels.com");
+
+test(function() {
+    assert_true(!!window.internals, "This test requires window.internals");
+
+    const target = document.getElementById("target");
+    const animations = getComputedStyle(target).animationName;
+    // Without the quirk, the element would have animationName "none" due to the CSS above.
+    // With the quirk, WebCore overrides the computed style to apply the two named animations.
+    assert_not_equals(animations, "none", "animation:none should be overridden by the quirk");
+    assert_true(animations.includes("menu-grow-left"), "quirk should apply menu-grow-left animation");
+    assert_true(animations.includes("menu-fade-in"), "quirk should apply menu-fade-in animation");
+}, "hotels.com animation quirk overrides animation:none for the menu container element");
+
+test(function() {
+    assert_true(!!window.internals, "This test requires window.internals");
+
+    const target = document.getElementById("target");
+    const style = getComputedStyle(target);
+    // animation-delay: 0s for menu-grow-left, 0.06s for menu-fade-in
+    const delays = style.animationDelay;
+    assert_true(delays.includes("0s") || delays.includes("0.06s"),
+        "quirk should set correct animation delays (0s, 0.06s); got: " + delays);
+    // animation-duration: 0.18s for menu-grow-left, 0.06s for menu-fade-in
+    const durations = style.animationDuration;
+    assert_true(durations.includes("0.18s") || durations.includes("0.06s"),
+        "quirk should set correct animation durations (0.18s, 0.06s); got: " + durations);
+}, "hotels.com animation quirk sets correct animation-delay and animation-duration");
+</script>
+</body>
+</html>
