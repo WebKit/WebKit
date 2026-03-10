@@ -99,7 +99,8 @@ void enableAdvancedPrivacyProtections(NSMutableURLRequest *request, OptionSet<We
 void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried pcmDataCarried, NSMutableURLRequest *request)
 {
 #if ENABLE(TRACKER_DISPOSITION)
-    if (request._needsNetworkTrackingPrevention || pcmDataCarried == WebCore::PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable)
+    UNUSED_PARAM(pcmDataCarried);
+    if (request._needsNetworkTrackingPrevention)
         return;
 
     request._needsNetworkTrackingPrevention = YES;
