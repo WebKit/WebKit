@@ -1248,6 +1248,11 @@ private:
                     startPosition++;
                     if (startPosition > string.length())
                         break;
+                    if (regExp->eitherUnicode() && U16_IS_LEAD(string[startPosition - 1]) && U16_IS_TRAIL(string[startPosition])) {
+                        startPosition++;
+                        if (startPosition > string.length())
+                            break;
+                    }
                 }
             } while (regExp->global());
             if (!ok)
