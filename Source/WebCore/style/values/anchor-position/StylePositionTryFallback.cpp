@@ -28,6 +28,8 @@
 #include "StylePositionTryFallback.h"
 
 #include "StyleBuilderChecking.h"
+#include "CSSPropertyParserConsumer+Anchor.h"
+#include "CSSValuePair.h"
 #include "StylePrimitiveKeyword+CSSValueConversion.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"
 #include "StylePrimitiveKeyword+Logging.h"
@@ -135,16 +137,51 @@ auto CSSValueConversion<PositionTryFallback>::operator()(BuilderState& state, co
     };
 }
 
+// Return the computed-value form of a position-area CSS value stored in a
+// PositionTryFallback::PositionArea's ImmutableStyleProperties.
+//
+// When a position-area is inlined in position-try-fallbacks (e.g.
+// "position-try-fallbacks: block-start span-inline-end, ..."), the raw
+// specified CSS value is stored as-is. At computed-value time the block-/inline-
+// axis prefixes must be stripped when the two keywords are on opposite axes.
+// For example, "block-start span-inline-end" must become "start span-end".
+//
+// This mirrors the logic in CSSValueCreation<PositionAreaValue> which calls
+// valueForPositionArea(..., ValueType::Computed) via the PositionAreaValue
+// style type, but that path is only used for the standalone position-area
+// property, not for inlined position-area values inside position-try-fallbacks.
+static Ref<CSSValue> computedPositionAreaCSSValue(const PositionTryFallback::PositionArea& positionArea)
+{
+    using namespace CSSPropertyParserHelpers;
+
+    Ref rawValue = RefPtr { positionArea.properties }->getPropertyCSSValue(CSSPropertyPositionArea).releaseNonNull();
+
+    // Only two-keyword position-area values require computed-value normalization.
+    // Single-keyword values (e.g. "center", "start") have no block-/inline- prefix
+    // to strip and are already in their canonical computed form.
+    if (!rawValue->isPair())
+        return rawValue;
+
+    auto dim1 = rawValue->first().valueID();
+    auto dim2 = rawValue->second().valueID();
+
+    if (auto computed = valueForPositionArea(dim1, dim2, ValueType::Computed))
+        return computed.releaseNonNull();
+
+    // Fallback: return the raw value unchanged if normalization fails.
+    return rawValue;
+}
+
 auto CSSValueCreation<PositionTryFallback::PositionArea>::operator()(CSSValuePool&, const RenderStyle&, const PositionTryFallback::PositionArea& value) -> Ref<CSSValue>
 {
-    return RefPtr { value.properties }->getPropertyCSSValue(CSSPropertyPositionArea).releaseNonNull();
+    return computedPositionAreaCSSValue(value);
 }
 
 // MARK: - Serialization
 
 void Serialize<PositionTryFallback::PositionArea>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const PositionTryFallback::PositionArea& value)
 {
-    builder.append(RefPtr { value.properties }->getPropertyCSSValue(CSSPropertyPositionArea)->cssText(context));
+    builder.append(computedPositionAreaCSSValue(value)->cssText(context));
 }
 
 // MARK: - Logging
