@@ -31,6 +31,7 @@
 #include "WebFrameProxyMessages.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/FocusControllerTypes.h>
 #include <WebCore/FrameInlines.h>
@@ -42,6 +43,7 @@
 #include <WebCore/NodeDocument.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/UserGestureIndicator.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -176,14 +178,16 @@ void WebRemoteFrameClient::closePage()
 
 void WebRemoteFrameClient::focus()
 {
-    if (RefPtr page = m_frame->page())
-        page->send(Messages::WebPageProxy::FocusRemoteFrame(m_frame->frameID()));
+    if (RefPtr page = m_frame->page()) {
+        auto tokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(page->identifier(), UserGestureIndicator::currentUserGesture());
+        page->send(Messages::WebPageProxy::FocusRemoteFrame(m_frame->frameID(), tokenIdentifier));
+    }
 }
 
 void WebRemoteFrameClient::unfocus()
 {
     if (RefPtr page = m_frame->page())
-        page->send(Messages::WebPageProxy::SetFocus(false));
+        page->send(Messages::WebPageProxy::SetFocus(false, std::nullopt));
 }
 
 void WebRemoteFrameClient::documentURLForConsoleLog(CompletionHandler<void(const URL&)>&& completionHandler)

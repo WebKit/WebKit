@@ -121,6 +121,7 @@
 #include <WebCore/TextDetectorInterface.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextRecognitionOptions.h>
+#include <WebCore/UserGestureIndicator.h>
 #include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/JSONValues.h>
@@ -259,14 +260,16 @@ FloatRect WebChromeClient::pageRect() const
 
 void WebChromeClient::focus()
 {
-    if (RefPtr page = m_page.get())
-        page->send(Messages::WebPageProxy::SetFocus(true));
+    if (RefPtr page = m_page.get()) {
+        auto tokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(page->identifier(), UserGestureIndicator::currentUserGesture());
+        page->send(Messages::WebPageProxy::SetFocus(true, tokenIdentifier));
+    }
 }
 
 void WebChromeClient::unfocus()
 {
     if (RefPtr page = m_page.get())
-        page->send(Messages::WebPageProxy::SetFocus(false));
+        page->send(Messages::WebPageProxy::SetFocus(false, std::nullopt));
 }
 
 #if PLATFORM(COCOA)
