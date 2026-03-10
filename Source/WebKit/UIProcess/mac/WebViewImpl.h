@@ -1163,6 +1163,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<WKBannerView> m_bannerView;
     RetainPtr<CAShapeLayer> m_bannerViewMask;
     CGFloat m_bannerViewHeight { 0 };
+    CGFloat m_cachedBannerViewMaximumHeight { 0 };
     bool m_canShowBannerViewOverlay { false };
 #endif
 
