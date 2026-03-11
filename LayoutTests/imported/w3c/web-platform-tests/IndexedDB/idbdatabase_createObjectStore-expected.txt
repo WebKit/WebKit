@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.createObjectStore() - returns an instance of IDBObjectStore
-

@@ -1,0 +1,25 @@
+
+FAIL Single item get assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Single item get (generated key) assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+PASS getAllKeys on empty object store
+PASS Get all keys
+FAIL Test maxCount assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Get bound range assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Get bound range with maxCount assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Get upper excluded assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Get lower excluded assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Get bound range (generated) with maxCount assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Non existent key assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL zero maxCount assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Max value count assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Query with empty range where  first key < upperBound assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Query with empty range where lowerBound < last key assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Direction: next assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Direction: prev assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Direction: nextunique assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Direction: prevunique assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Direction and query assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Direction, query and count assert_true: "[object IDBObjectStore]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllKeys". expected true got false
+FAIL Get all keys with both options and count Failed to execute 'getAllKeys' on 'IDBObjectStore': The parameter is not a valid key.
+PASS Get all keys with invalid query keys
+

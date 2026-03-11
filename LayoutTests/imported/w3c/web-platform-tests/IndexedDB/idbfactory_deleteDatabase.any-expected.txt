@@ -1,0 +1,6 @@
+
+PASS deleteDatabase() request should have no source, and deleting a non-existent database should succeed with oldVersion of 0.
+PASS Result of the deleteDatabase() request is set to undefined.
+PASS The deleteDatabase() request's success event is an IDBVersionChangeEvent.
+PASS Delete an existing database - Test events opening a second database when one connection is open already
+

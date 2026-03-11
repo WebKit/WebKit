@@ -1,0 +1,14 @@
+
+PASS IDBFactory.cmp() - compared keys return correct value
+PASS IDBFactory.cmp() - no argument
+PASS IDBFactory.cmp() - null
+PASS IDBFactory.cmp() - NaN
+PASS Array vs. Binary
+PASS Binary vs. String
+PASS String vs. Date
+PASS Date vs. Number
+PASS Compare in unsigned octet values (in the range [0, 255])
+PASS Compare values of the same length
+PASS Compare values of different lengths
+PASS Compare when values in the range of their minimal length are the same
+

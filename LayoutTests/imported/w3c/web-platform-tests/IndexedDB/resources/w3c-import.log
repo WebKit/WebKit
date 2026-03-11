@@ -24,5 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/interleaved-cursors-common.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/nested-cloning-common.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/reading-autoincrement-common.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/request-event-ordering-common.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/support-get-all.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/support-promises.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/resources/support.js

@@ -1,0 +1,3 @@
+
+PASS IndexedDB: open and delete requests are processed as a FIFO queue
+

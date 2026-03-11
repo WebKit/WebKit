@@ -1,0 +1,5 @@
+
+PASS IDBCursor.primaryKey
+PASS IDBCursor.primaryKey 1
+PASS IDBCursor.primaryKey 2
+

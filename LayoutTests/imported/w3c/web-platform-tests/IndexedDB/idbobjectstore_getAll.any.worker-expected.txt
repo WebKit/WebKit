@@ -3,6 +3,7 @@ PASS Single item get
 PASS Single item get (generated key)
 PASS getAll on empty object store
 PASS Get all values
+PASS Get all with large values
 PASS Test maxCount
 PASS Get bound range
 PASS Get bound range with maxCount
@@ -11,5 +12,9 @@ PASS Get lower excluded
 PASS Get bound range (generated) with maxCount
 PASS Non existent key
 PASS zero maxCount
+PASS Max value count
+PASS Query with empty range where  first key < upperBound
+PASS Query with empty range where lowerBound < last key
 PASS Get all values with transaction.commit()
+PASS Get all values with invalid query keys
 

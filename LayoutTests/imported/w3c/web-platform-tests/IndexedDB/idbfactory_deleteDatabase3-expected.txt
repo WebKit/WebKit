@@ -1,3 +1,0 @@
-
-PASS IDBFactory.deleteDatabase() - success event
-

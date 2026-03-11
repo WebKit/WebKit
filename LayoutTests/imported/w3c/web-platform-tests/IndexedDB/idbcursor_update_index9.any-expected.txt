@@ -1,3 +1,0 @@
-
-PASS Index cursor - indexed values updated during iteration
-

@@ -1,3 +1,0 @@
-
-PASS IDBCursor.update() - object store - throw DataError
-

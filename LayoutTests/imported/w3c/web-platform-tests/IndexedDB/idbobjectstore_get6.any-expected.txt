@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.get() - throw TransactionInactiveError on aborted transaction
-

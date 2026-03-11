@@ -1,0 +1,7 @@
+
+PASS Key generator and key path validity check operates on a clone
+PASS Failing key path validity check operates on a clone
+PASS Index key path evaluations operate on a clone
+PASS Store and index key path evaluations operate on the same clone
+PASS Cursor update checks and keypath evaluations operate on a clone
+

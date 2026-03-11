@@ -1,0 +1,29 @@
+
+FAIL Single item assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Empty index queryTarget[getAllFunctionName] is not a function. (In 'queryTarget[getAllFunctionName]()', 'queryTarget[getAllFunctionName]' is undefined)
+FAIL Get all records queryTarget[getAllFunctionName] is not a function. (In 'queryTarget[getAllFunctionName]()', 'queryTarget[getAllFunctionName]' is undefined)
+FAIL Get all records with empty options assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Get all records with large value queryTarget[getAllFunctionName] is not a function. (In 'queryTarget[getAllFunctionName]()', 'queryTarget[getAllFunctionName]' is undefined)
+FAIL Count assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with bound range assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with bound range and count assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with upper excluded bound range assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with lower excluded bound range assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with bound range and count for generated keys assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with Nonexistent key assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Zero count assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Max value count assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with empty range where first key < upperBound assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with empty range where lowerBound < last key assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query index key that matches multiple records assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Query with multiEntry index assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Direction: next assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Direction: prev assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Direction: nextunique assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Direction: prevunique assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Direction and query assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Direction, query and count assert_true: "[object IDBIndex]" must support "getAllRecords()" to use an "IDBGetAllOptions" dictionary with "getAllRecords". expected true got false
+FAIL Get all records with invalid query keys assert_throws_dom: An invalid Date(NaN) key must throw an exception. function "() => {
+        queryTarget[getAllFunctionName](argument);
+      }" threw object "TypeError: queryTarget[getAllFunctionName] is not a function. (In 'queryTarget[getAllFunctionName](argument)', 'queryTarget[getAllFunctionName]' is undefined)" that is not a DOMException DataError: property "code" is equal to undefined, expected 0
+

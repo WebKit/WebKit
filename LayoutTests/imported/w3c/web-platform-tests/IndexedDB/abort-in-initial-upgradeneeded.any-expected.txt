@@ -1,0 +1,9 @@
+
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected 0 but got 1
+
+TIMEOUT An abort() in the initial onupgradeneeded sets version back to 0 Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected 0 but got 1
+
+TIMEOUT An abort() in the initial onupgradeneeded sets version back to 0 Test timed out
+

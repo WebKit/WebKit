@@ -1,0 +1,3 @@
+
+PASS A blob can be read back after the transaction that added it was aborted.
+

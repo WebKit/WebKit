@@ -1,0 +1,3 @@
+
+PASS IDBIndex.objectStore should return same object each time.
+

@@ -1950,10 +1950,10 @@ http/tests/images/mp4-partial-load.html [ Failure Pass ]
 
 # Failure since import.
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.sub.html [ Failure ]
-webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure ]
-webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
-webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Failure ]
-webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Failure ]
+webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.html [ Failure ]
+webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.html [ Failure ]
+webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.html [ Failure ]
+webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.html [ Failure ]
 
 webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-deletion.any.html [ Pass Failure ]
 

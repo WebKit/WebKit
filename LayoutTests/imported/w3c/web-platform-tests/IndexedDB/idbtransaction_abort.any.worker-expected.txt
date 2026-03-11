@@ -1,0 +1,5 @@
+
+PASS Abort event should fire during transaction
+PASS Abort during auto-committing should throw InvalidStateError.
+PASS Abort on completed transaction should throw InvalidStateError.
+

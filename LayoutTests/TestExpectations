@@ -3754,7 +3754,7 @@ webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pa
 
 webkit.org/b/246005 workers/many-nested-workers-no-crash.html [ Skip ]
 
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Pass Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.html [ Pass Failure ]
 webkit.org/b/186574 media/video-buffering-allowed.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-display/display-math-on-pseudo-elements-002.html [ ImageOnlyFailure ]

@@ -11,5 +11,10 @@ PASS Get lower excluded
 PASS Get bound range (generated) with maxCount
 PASS Non existent key
 PASS maxCount=0
-PASS Retrieve multiEntry keys
+PASS Max value count
+PASS Query with empty range where  first key < upperBound
+PASS Query with empty range where lowerBound < last key
+PASS Retrieve multiEntry key
+PASS Retrieve one key multiple values
+PASS Get all keys with invalid query keys
 

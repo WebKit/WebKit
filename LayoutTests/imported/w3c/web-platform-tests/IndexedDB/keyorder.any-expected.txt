@@ -1,0 +1,26 @@
+
+PASS Database readback sort - String < Array
+PASS IDBKey.cmp sort - String < Array
+PASS Database readback sort - float < String
+PASS IDBKey.cmp sort - float < String
+PASS Database readback sort - float < Date
+PASS IDBKey.cmp sort - float < Date
+PASS Database readback sort - float < Date < String < Array
+PASS IDBKey.cmp sort - float < Date < String < Array
+PASS Database readback sort - Date(1 sec ago) < Date(now) < Date(1 minute in future)
+PASS IDBKey.cmp sort - Date(1 sec ago) < Date(now) < Date(1 minute in future)
+PASS Database readback sort - -1.1 < 1 < 1.01337 < 1.013373 < 2
+PASS IDBKey.cmp sort - -1.1 < 1 < 1.01337 < 1.013373 < 2
+PASS Database readback sort - -Infinity < -0.01 < 0 < Infinity
+PASS IDBKey.cmp sort - -Infinity < -0.01 < 0 < Infinity
+PASS Database readback sort - "" < "a" < "ab" < "b" < "ba"
+PASS IDBKey.cmp sort - "" < "a" < "ab" < "b" < "ba"
+PASS Database readback sort - Arrays
+PASS IDBKey.cmp sort - Arrays
+PASS Database readback sort - Array.length: 10,000 < Array.length: 10,001
+PASS IDBKey.cmp sort - Array.length: 10,000 < Array.length: 10,001
+PASS Database readback sort - Infinity inside arrays
+PASS IDBKey.cmp sort - Infinity inside arrays
+PASS Database readback sort - Test different stuff at once
+PASS IDBKey.cmp sort - Test different stuff at once
+

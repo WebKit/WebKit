@@ -7,7 +7,9 @@ PASS  - fresh advance still async
 PASS  - fresh continue still async
 PASS Single item get
 PASS Empty object store
-PASS Get all keys
+PASS Get all
+PASS Get all with generated keys
+PASS Get all with large values
 PASS maxCount=10
 PASS Get bound range
 PASS Get bound range with maxCount
@@ -16,8 +18,12 @@ PASS Get lower excluded
 PASS Get bound range (generated) with maxCount
 PASS Non existent key
 PASS maxCount=0
+PASS Max value count
+PASS Query with empty range where  first key < upperBound
+PASS Query with empty range where lowerBound < last key
 PASS Retrieve multiEntry key
 PASS Retrieve one key multiple values
+PASS Get all values with invalid query keys
 PASS IDBObjectStore.openKeyCursor() - forward iteration
 PASS IDBObjectStore.openKeyCursor() - reverse iteration
 PASS IDBObjectStore.openKeyCursor() - forward iteration with range

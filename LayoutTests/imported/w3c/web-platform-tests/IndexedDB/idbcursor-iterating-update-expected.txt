@@ -1,4 +1,0 @@
-
-PASS Calling cursor => cursor.update({}) doesn't affect index iteration
-PASS Calling cursor => cursor.delete() doesn't affect index iteration
-
