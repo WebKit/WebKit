@@ -35,6 +35,13 @@ function testPlaysInline(requiresPlaysInline, hasWebkitPlaysInline, expectedDisp
             await testExpectedEventually('internals.isChangingPresentationMode(video)', false);
 
         testExpected('video.webkitDisplayingFullscreen', expectedDisplayingFullscreen);
+
+        if (video.webkitDisplayingFullscreen) {
+            video.webkitExitFullscreen();
+            await testExpectedEventually('internals.isChangingPresentationMode(video)', false);
+            await testExpectedEventually('video.webkitDisplayingFullscreen', false);
+        }
+
         document.body.removeChild(video);
         runNextTest();
     });
