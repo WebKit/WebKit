@@ -103,6 +103,15 @@ void SuspendableWorkQueue::dispatch(Function<void()>&& function)
     });
 }
 
+void SuspendableWorkQueue::dispatchWithQOS(Function<void()>&& function, QOS qos)
+{
+    RELEASE_ASSERT(function);
+    WorkQueue::dispatchWithQOS([protectedThis = Ref { *this }, function = WTF::move(function)] {
+        protectedThis->suspendIfNeeded();
+        function();
+    }, qos);
+}
+
 void SuspendableWorkQueue::dispatchAfter(Seconds seconds, Function<void()>&& function)
 {
     RELEASE_ASSERT(function);

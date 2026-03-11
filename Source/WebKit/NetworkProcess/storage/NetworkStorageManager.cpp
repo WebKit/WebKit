@@ -2176,7 +2176,9 @@ void NetworkStorageManager::importServiceWorkerRegistrations(CompletionHandler<v
     if (m_closed)
         return completionHandler(std::nullopt);
 
-    workQueue().dispatch([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
+    RELEASE_LOG(Storage, "%p - NetworkStorageManager::importServiceWorkerRegistrations: Starting import", this);
+    auto startTime = MonotonicTime::now();
+    workQueue().dispatchWithQOS([this, protectedThis = Ref { *this }, startTime, completionHandler = WTF::move(completionHandler)]() mutable {
         assertIsCurrent(workQueue());
 
         std::optional<Vector<WebCore::ServiceWorkerContextData>> result;
@@ -2196,10 +2198,15 @@ void NetworkStorageManager::importServiceWorkerRegistrations(CompletionHandler<v
                 result = WTF::move(registrations);
         }
 
-        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), result = crossThreadCopy(WTF::move(result)), completionHandler = WTF::move(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), startTime, result = crossThreadCopy(WTF::move(result)), completionHandler = WTF::move(completionHandler)]() mutable {
+            auto elapsed = MonotonicTime::now() - startTime;
+            if (elapsed > 2_s)
+                RELEASE_LOG_ERROR(Storage, "%p - NetworkStorageManager::importServiceWorkerRegistrations: Imported %zu registrations in %.0f ms", protectedThis.ptr(), result ? result->size() : 0, elapsed.milliseconds());
+            else
+                RELEASE_LOG(Storage, "%p - NetworkStorageManager::importServiceWorkerRegistrations: Imported %zu registrations in %.0f ms", protectedThis.ptr(), result ? result->size() : 0, elapsed.milliseconds());
             completionHandler(WTF::move(result));
         });
-    });
+    }, WorkQueue::QOS::UserInitiated);
 }
 
 void NetworkStorageManager::updateServiceWorkerRegistrations(Vector<WebCore::ServiceWorkerContextData>&& registrationsToUpdate, Vector<WebCore::ServiceWorkerRegistrationKey>&& registrationsToDelete, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerScripts>>)>&& completionHandler)
