@@ -553,6 +553,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                             // e.g. <span style="border-right: 10px solid green">text<br></span> where the <br>'s horizontal position is before the right border and not after.
                             auto& trailingLineBreak = *inlineContent.trailingLineBreak();
                             m_line.appendLineBreak(trailingLineBreak, trailingLineBreak.style());
+                            applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::Yes);
                             if (trailingLineBreak.bidiLevel() != UBIDI_DEFAULT_LTR)
                                 m_line.setContentNeedsBidiReordering();
                             ++placedInlineItemCount;
