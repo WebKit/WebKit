@@ -38,7 +38,6 @@ layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 [ iOS ] page/DOMTimer.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
-[ iOS ] page/FocusController.cpp
 page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/LocalFrameView.cpp

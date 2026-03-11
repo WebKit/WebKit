@@ -304,7 +304,6 @@ page/DOMWindow.cpp
 page/DragController.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
-page/FocusController.cpp
 page/FrameSnapshotting.cpp
 page/IntelligenceTextEffectsSupport.cpp
 page/InteractionRegion.cpp

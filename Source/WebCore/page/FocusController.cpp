@@ -112,7 +112,7 @@ static inline bool isFocusScopeOwner(const Element& element)
         return true;
     if (is<HTMLSlotElement>(element)) {
         RefPtr root = element.containingShadowRoot();
-        if (!root || !root->host() || !hasCustomFocusLogic(*root->host()))
+        if (!root || !root->host() || !hasCustomFocusLogic(protect(*root->host())))
             return true;
     }
     if (invokerForOpenPopover(&element))
@@ -156,7 +156,7 @@ static void clearSelectionIfNeeded(LocalFrame* oldFocusedFrame, LocalFrame* newF
         }
     }
 
-    oldFocusedFrame->selection().clear();
+    protect(oldFocusedFrame->selection())->clear();
 }
 
 class FocusNavigationScope {
@@ -269,7 +269,7 @@ Node* FocusNavigationScope::previousSiblingInScope(const Node& node) const
 Node* FocusNavigationScope::firstNodeInScope() const
 {
     if (m_slotElement) [[unlikely]] {
-        auto* assignedNodes = m_slotElement->assignedNodes();
+        auto* assignedNodes = protect(m_slotElement)->assignedNodes();
         if (m_slotKind == SlotKind::Assigned) {
             ASSERT(assignedNodes);
             return assignedNodes->first().get();
@@ -287,7 +287,7 @@ Node* FocusNavigationScope::firstNodeInScope() const
 Node* FocusNavigationScope::lastNodeInScope() const
 {
     if (m_slotElement) [[unlikely]] {
-        auto* assignedNodes = m_slotElement->assignedNodes();
+        auto* assignedNodes = protect(m_slotElement)->assignedNodes();
         if (m_slotKind == SlotKind::Assigned) {
             ASSERT(assignedNodes);
             return assignedNodes->last().get();
@@ -416,26 +416,26 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
             return;
     }
 
-    if (!focused && document->focusedElement()) {
-        if (document->focusedElement()->transferredFocusToPicker()) {
+    if (RefPtr focusedElement = document->focusedElement(); !focused && focusedElement) {
+        if (focusedElement->transferredFocusToPicker()) {
             // The webpage lost focus because the focused element transferred focus to
             // a non-web-content picker when it was activated. We don't want to post any
             // web-exposed events (e.g. blur) in these cases, so return.
-            document->focusedElement()->didSuppressBlurDueToPickerFocusTransfer();
+            focusedElement->didSuppressBlurDueToPickerFocusTransfer();
             return;
         }
 
-        if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(*document->focusedElement())) {
+        if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(focusedElement.get())) {
             if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
                 formControlElement->dispatchFormControlChangeEvent();
         }
 
-        document->focusedElement()->dispatchBlurEvent(nullptr);
+        focusedElement->dispatchBlurEvent(nullptr);
     }
 
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    if (focused && document->focusedElement())
-        document->focusedElement()->dispatchFocusEvent(nullptr, { });
+    if (RefPtr focusedElement = document->focusedElement(); focused && focusedElement)
+        focusedElement->dispatchFocusEvent(nullptr, { });
 }
 
 static inline bool isFocusableElementOrScopeOwner(Element& element, const FocusEventData& focusEventData)
@@ -488,12 +488,12 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
     // Now that the frame is updated, fire events and update the selection focused states of both frames.
     if (RefPtr oldFrameView = oldFrame ? oldFrame->view() : nullptr) {
         oldFrameView->stopKeyboardScrollAnimation();
-        oldFrame->selection().setFocused(false);
-        oldFrame->document()->dispatchWindowEvent(Event::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        protect(oldFrame->selection())->setFocused(false);
+        protect(oldFrame->document())->dispatchWindowEvent(Event::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
         RefPtr<Frame> frame = oldFrame;
         do {
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                localFrame->document()->updateServiceWorkerClientData();
+                protect(localFrame->document())->updateServiceWorkerClientData();
             frame = frame->tree().parent();
         } while (frame);
     }
@@ -504,8 +504,8 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
 #endif
 
     if (newFrame && newFrame->view() && isFocused()) {
-        newFrame->selection().setFocused(true);
-        newFrame->document()->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        protect(newFrame->selection())->setFocused(true);
+        protect(newFrame->document())->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
         RefPtr<Frame> frame = newFrame;
         do {
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
@@ -514,7 +514,7 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
         } while (frame);
     } else if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(frame)) {
         RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
-        if (CheckedPtr cache = focusedOrMainFrame ? focusedOrMainFrame->document()->existingAXObjectCache() : nullptr)
+        if (CheckedPtr cache = focusedOrMainFrame ? protect(focusedOrMainFrame->document())->existingAXObjectCache() : nullptr)
             cache->onRemoteFrameGainedFocus(*remoteFrame);
     }
 
@@ -592,7 +592,7 @@ FocusableElementSearchResult FocusController::findFocusableElementContinuingFrom
 
         // Chrome doesn't want focus, so we should wrap focus.
         // FIXME: We probably want to travel up the document tree
-        RefPtr localTopDocument = m_page->localTopDocument();
+        RefPtr localTopDocument = protect(m_page)->localTopDocument();
         if (!localTopDocument)
             return findResult;
 
@@ -621,7 +621,7 @@ FocusableElementSearchResult FocusController::findFocusableElementDescendingInto
             return { nullptr, ContinuedSearchInRemoteFrame::Yes };
         }
 
-        auto* localContentFrame = dynamicDowncast<LocalFrame>(owner->contentFrame());
+        RefPtr localContentFrame = dynamicDowncast<LocalFrame>(owner->contentFrame());
         if (!localContentFrame || !localContentFrame->document())
             break;
         protect(localContentFrame->document())->updateLayoutIgnorePendingStylesheets();
@@ -642,8 +642,8 @@ bool FocusController::setInitialFocus(FocusDirection direction, KeyboardEvent* p
     // into the web area again, even if focus did not change within WebCore. PostNotification is called instead
     // of handleFocusedUIElementChanged, because this will send the notification even if the element is the same.
     RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
-    if (CheckedPtr cache = focusedOrMainFrame ? focusedOrMainFrame->document()->existingAXObjectCache() : nullptr)
-        cache->onDocumentInitialFocus(*focusedOrMainFrame->document());
+    if (CheckedPtr cache = focusedOrMainFrame ? protect(focusedOrMainFrame->document())->existingAXObjectCache() : nullptr)
+        cache->onDocumentInitialFocus(protect(*focusedOrMainFrame->document()));
 
     return didAdvanceFocus;
 }
@@ -739,7 +739,7 @@ FocusableElementSearchResult FocusController::findFocusableElementInDocumentOrde
         }
 
         // Chrome doesn't want focus, so we should wrap focus.
-        RefPtr localTopDocument = m_page->localTopDocument();
+        RefPtr localTopDocument = protect(m_page)->localTopDocument();
         if (!localTopDocument)
             return findResult;
         findResult = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(*localTopDocument), nullptr, focusEventData, shouldFocusElement);
@@ -784,9 +784,9 @@ FocusableElementSearchResult FocusController::findFocusableElementInDocumentOrde
 
     if (caretBrowsing) {
         VisibleSelection newSelection(firstPositionInOrBeforeNode(element.get()), Affinity::Downstream);
-        if (frame->selection().shouldChangeSelection(newSelection)) {
+        if (protect(frame->selection())->shouldChangeSelection(newSelection)) {
             AXTextStateChangeIntent intent(AXTextStateChangeType::SelectionMove, AXTextSelection { AXTextSelectionDirection::Discontiguous, AXTextSelectionGranularity::Unknown, true });
-            frame->selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes), intent);
+            protect(frame->selection())->setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes), intent);
         }
     }
 
@@ -865,7 +865,7 @@ FocusableElementSearchResult FocusController::findFocusableElementAcrossFocusSco
                     if (shouldFocusElement == ShouldFocusElement::Yes) {
                         RefPtr currentFrame = currentNode->document().frame();
                         clearSelectionIfNeeded(currentFrame.get(), nullptr, nullptr);
-                        currentNode->document().setFocusedElement(nullptr);
+                        protect(currentNode->document())->setFocusedElement(nullptr);
                     }
                     downcast<RemoteFrame>(frame)->client().findFocusableElementContinuingFromFrame(direction, currentNode->document().frame()->frameID(), focusEventData, shouldFocusElement);
                     return { nullptr, ContinuedSearchInRemoteFrame::Yes };
@@ -1032,7 +1032,7 @@ Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigation
 
     // There are no nodes with a tabindex greater than start's tabindex,
     // so find the first node with a tabindex of 0.
-    return findElementWithExactTabIndex(scope, scope.firstNodeInScope(), 0, focusEventData, FocusDirection::Forward);
+    return findElementWithExactTabIndex(scope, protect(scope.firstNodeInScope()), 0, focusEventData, FocusDirection::Forward);
 }
 
 Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Node* start, const FocusEventData& focusEventData)
@@ -1083,7 +1083,7 @@ static bool relinquishesEditingFocus(Element& element)
     if (!frame || !root)
         return false;
 
-    return frame->editor().shouldEndEditing(makeRangeSelectingNodeContents(*root));
+    return protect(frame->editor())->shouldEndEditing(makeRangeSelectingNodeContents(*root));
 }
 
 static bool shouldClearSelectionWhenChangingFocusedElement(const Page& page, RefPtr<Element> oldFocusedElement, RefPtr<Element> newFocusedElement)
@@ -1208,7 +1208,7 @@ void FocusController::setActiveInternal(bool active)
     }
 
     if (RefPtr focusedOrMainFrame = this->focusedOrMainFrame())
-        focusedOrMainFrame->selection().pageActivationChanged();
+        protect(focusedOrMainFrame->selection())->pageActivationChanged();
 
     RefPtr focusedFrame = focusedLocalFrame();
     if (focusedFrame && isFocused())
@@ -1226,7 +1226,7 @@ static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didSho
 void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
 {
     Ref page = m_page.get();
-    RefPtr view = page->mainFrame().virtualView();
+    RefPtr view = protect(page->mainFrame())->virtualView();
     if (!view)
         return;
 
@@ -1378,7 +1378,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(const ContainerNode& 
         if (focusedElement && !hasOffscreenRect(*focusedElement))
             rect = nodeRectInAbsoluteCoordinates(*focusedElement, true /* ignore border */);
         protect(dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document())->updateLayoutIgnorePendingStylesheets();
-        if (!advanceFocusDirectionallyInContainer(*dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document(), rect, direction, focusEventData)) {
+        if (!advanceFocusDirectionallyInContainer(protect(*dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document()), rect, direction, focusEventData)) {
             // The new frame had nothing interesting, need to find another candidate.
             RefPtr visibleNode = focusCandidate.visibleNode.get();
             return advanceFocusDirectionallyInContainer(container, nodeRectInAbsoluteCoordinates(*visibleNode, true), direction, focusEventData);
@@ -1472,7 +1472,7 @@ void FocusController::focusRepaintTimerFired()
         return;
 
     if (focusedElement->renderer())
-        focusedElement->renderer()->repaint();
+        protect(focusedElement->renderer())->repaint();
 }
 
 Seconds FocusController::timeSinceFocusWasSet() const

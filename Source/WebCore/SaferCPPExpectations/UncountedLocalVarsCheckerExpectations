@@ -82,7 +82,6 @@ inspector/agents/page/PageCanvasAgent.cpp
 inspector/agents/page/PageNetworkAgent.cpp
 [ iOS ] loader/cache/CachedRawResource.cpp
 page/EventHandler.cpp
-page/FocusController.cpp
 page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 [ iOS ] page/LocalDOMWindow.cpp
