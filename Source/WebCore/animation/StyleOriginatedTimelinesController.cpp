@@ -504,7 +504,7 @@ void StyleOriginatedTimelinesController::styleableWasRemoved(const Styleable& st
     for (auto& timeline : m_removedTimelines) {
         if (originatingElement(timeline) != styleable)
             continue;
-        for (auto& animation : timeline->relevantAnimations()) {
+        for (auto& animation : copyToVector(timeline->relevantAnimations())) {
             if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation.get())) {
                 if (auto owningElement = cssAnimation->owningElement()) {
                     attachAnimation(*cssAnimation, AllowsDeferral::Yes);
