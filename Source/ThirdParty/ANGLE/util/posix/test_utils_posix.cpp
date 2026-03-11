@@ -360,9 +360,9 @@ void WriteDebugMessage(const char *format, ...)
 {
     va_list vararg;
     va_start(vararg, format);
-ANGLE_DISABLE_NONLITERAL_FORMAT_WARNING
+    ANGLE_DISABLE_NONLITERAL_FORMAT_WARNING
     vfprintf(stderr, format, vararg);
-ANGLE_REENABLE_NONLITERAL_FORMAT_WARNING
+    ANGLE_REENABLE_NONLITERAL_FORMAT_WARNING
     va_end(vararg);
 }
 

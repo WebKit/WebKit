@@ -244,10 +244,6 @@
 # VVL error
 42264614 LINUX : VulkanExternalImageTestES31.UninitializedOnGLImportAndStorageWrite/* = SKIP_FOR_CAPTURE
 
-# Change to Vulkan spec bans packing arrays in different components of the same location
-404418769 VULKAN : GLSLTest.MaxVaryingVec2Arrays/* = SKIP_FOR_CAPTURE
-404418769 VULKAN : GLSLTest.MaxVaryingVec3ArrayAndOneFloatArray/* = SKIP_FOR_CAPTURE
-
 # CoherentBufferTracker deadlocks and flaky crashes
 42266529 LINUX : BufferDataTestES3.* = SKIP_FOR_CAPTURE
 42266529 LINUX : BufferStorageTestES3.* = SKIP_FOR_CAPTURE
@@ -257,6 +253,8 @@
 381727390 : MultisampleTexture2DTestES31.CopyMultisampleArrayImageEXT/* = SKIP_FOR_CAPTURE
 381727390 : MultisampleTexture2DTestES31.CopyMultisampleArrayImageOES/* = SKIP_FOR_CAPTURE
 
+# Crashes in gl::JoinShaderSources during replay
+447613212 : GLSLTest.EmptyShader/* = SKIP_FOR_CAPTURE
 
 # Crashes on win and linux trace bots
 372059358 : MultisampleTestES3.CopyTexImage2DFromMsaaDefaultFbo/* = SKIP_FOR_CAPTURE

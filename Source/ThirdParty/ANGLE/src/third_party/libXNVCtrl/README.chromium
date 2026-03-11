@@ -4,6 +4,7 @@ URL: http://cgit.freedesktop.org/~aplattner/nvidia-settings/
 Revision: ffa5183362ed4ace5b1cfd031a272f72e7d68c1b
 Version: N/A
 Date: 2012-05-19
+Update Mechanism: Manual
 License: MIT
 License File: LICENSE
 Security Critical: no

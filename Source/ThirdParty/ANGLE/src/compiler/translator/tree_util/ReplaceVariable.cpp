@@ -116,7 +116,7 @@ class GetDeclaratorReplacementsTraverser : public TIntermTraverser
 }
 
 [[nodiscard]] bool ReplaceVariables(TCompiler *compiler,
-                                    TIntermBlock *root,
+                                    TIntermNode *root,
                                     const VariableReplacementMap &variableMap)
 {
     ReplaceVariablesTraverser traverser(variableMap);

@@ -81,7 +81,7 @@ class ShaderState final : angle::NonCopyable
 
     const std::string &getLabel() const { return mLabel; }
 
-    const std::string &getSource() const { return mSource; }
+    const std::string &getSource() const { return *mSource; }
     bool compilePending() const { return mCompileStatus == CompileStatus::COMPILE_REQUESTED; }
     CompileStatus getCompileStatus() const { return mCompileStatus; }
 
@@ -97,7 +97,7 @@ class ShaderState final : angle::NonCopyable
     friend class Shader;
 
     std::string mLabel;
-    std::string mSource;
+    std::shared_ptr<const std::string> mSource;
     size_t mSourceHash = 0;
 
     SharedCompiledShaderState mCompiledState;
@@ -199,15 +199,16 @@ class Shader final : angle::NonCopyable, public LabeledObject
 
   private:
     ~Shader() override;
-    static void GetSourceImpl(const std::string &source,
-                              GLsizei bufSize,
-                              GLsizei *length,
-                              char *buffer);
+
     bool loadBinaryImpl(const Context *context,
                         const void *binary,
                         GLsizei length,
                         angle::JobResultExpectancy resultExpectancy,
                         bool generatedWithOfflineCompiler);
+
+    void passthroughCompile(const Context *context,
+                            ShCompileOptions *compileOptions,
+                            angle::JobResultExpectancy resultExpectancy);
 
     // Compute a key to uniquely identify the shader object in memory caches.
     void setShaderKey(const Context *context,

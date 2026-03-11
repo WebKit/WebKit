@@ -108,41 +108,41 @@ class VertexArrayVk : public VertexArrayImpl
         return mCurrentArrayBufferSizes;
     }
 
-    const gl::AttribArray<VkVertexInputBindingDescription2EXT> &getVertexInputBindingDesc() const
+    const gl::AttribArray<VkVertexInputBindingDescription2EXT> &getVertexInputBindingDescs() const
     {
-        return mVertexInputBindingDesc;
+        return mVertexInputBindingDescs;
     }
 
-    const gl::AttribArray<VkVertexInputAttributeDescription2EXT> &getVertexInputAttribDesc() const
+    const gl::AttribArray<VkVertexInputAttributeDescription2EXT> &getVertexInputAttribDescs() const
     {
-        return mVertexInputAttribDesc;
+        return mVertexInputAttribDescs;
     }
 
     GLuint getCurrentArrayBufferRelativeOffset(size_t attribIndex) const
     {
-        return mVertexInputAttribDesc[attribIndex].offset;
+        return mVertexInputAttribDescs[attribIndex].offset;
     }
 
     VkFormat getCurrentArrayBufferVkFormat(size_t attribIndex) const
     {
-        return mVertexInputAttribDesc[attribIndex].format;
+        return mVertexInputAttribDescs[attribIndex].format;
     }
 
     angle::FormatID getCurrentArrayBufferFormatID(size_t attribIndex) const
     {
-        return mCurrentEnabledAttributesMask.test(attribIndex)
+        return mCurrentEnabledAttribsMask.test(attribIndex)
                    ? mState.getVertexAttribute(attribIndex).format->id
                    : mDefaultAttribFormatIDs[attribIndex];
     }
 
     GLuint getCurrentArrayBufferStride(size_t attribIndex) const
     {
-        return mVertexInputBindingDesc[attribIndex].stride;
+        return mVertexInputBindingDescs[attribIndex].stride;
     }
 
     GLuint getCurrentArrayBufferDivisor(size_t attribIndex) const
     {
-        return mVertexInputBindingDesc[attribIndex].divisor;
+        return mVertexInputBindingDescs[attribIndex].divisor;
     }
 
     // Update mCurrentElementArrayBuffer based on the vertex array state
@@ -177,10 +177,7 @@ class VertexArrayVk : public VertexArrayImpl
         return mCurrentVertexAttributesTypeMask;
     }
 
-    gl::AttributesMask getCurrentEnabledAttributesMask() const
-    {
-        return mCurrentEnabledAttributesMask;
-    }
+    gl::AttributesMask getCurrentEnabledAttribsMask() const { return mCurrentEnabledAttribsMask; }
 
   private:
     gl::AttributesMask mergeClientAttribsRange(
@@ -207,11 +204,19 @@ class VertexArrayVk : public VertexArrayImpl
                                          const angle::Format &dstFormat,
                                          const VertexCopyFunction vertexLoadFunction);
 
-    angle::Result syncDirtyEnabledAttrib(ContextVk *contextVk,
-                                         const gl::VertexAttribute &attrib,
-                                         const gl::VertexBinding &binding,
-                                         size_t attribIndex,
-                                         bool bufferOnly);
+    angle::Result syncDirtyEnabledNonStreamingAttrib(
+        ContextVk *contextVk,
+        const gl::VertexAttribute &attrib,
+        const gl::VertexBinding &binding,
+        size_t attribIndex,
+        const gl::VertexArray::DirtyAttribBits &dirtyAttribBits);
+
+    angle::Result syncDirtyEnabledStreamingAttrib(
+        ContextVk *contextVk,
+        const gl::VertexAttribute &attrib,
+        const gl::VertexBinding &binding,
+        size_t attribIndex,
+        const gl::VertexArray::DirtyAttribBits &dirtyAttribBits);
 
     angle::Result syncDirtyDisabledAttrib(ContextVk *contextVk,
                                           const gl::VertexAttribute &attrib,
@@ -241,8 +246,8 @@ class VertexArrayVk : public VertexArrayImpl
 
     // These struct are defined by VK_EXT_vertex_input_dynamic_state, for convenience, we these to
     // store offset/divisor even when vertexInputDynamicState not supported.
-    gl::AttribArray<VkVertexInputBindingDescription2EXT> mVertexInputBindingDesc;
-    gl::AttribArray<VkVertexInputAttributeDescription2EXT> mVertexInputAttribDesc;
+    gl::AttribArray<VkVertexInputBindingDescription2EXT> mVertexInputBindingDescs;
+    gl::AttribArray<VkVertexInputAttributeDescription2EXT> mVertexInputAttribDescs;
 
     vk::BufferHelper *mCurrentElementArrayBuffer;
 
@@ -260,16 +265,12 @@ class VertexArrayVk : public VertexArrayImpl
 
     gl::BufferBindingMask mDivisorExceedMaxSupportedValueBindingMask;
 
-    gl::AttributesMask mCurrentEnabledAttributesMask;
+    gl::AttributesMask mCurrentEnabledAttribsMask;
     // Track client and/or emulated attribs that we have to stream their buffer contents
     gl::AttributesMask mStreamingVertexAttribsMask;
-    gl::AttributesMask mNeedsConversionAttribMask;
+    gl::AttributesMask mNeedsConversionAttribsMask;
 
     gl::ComponentTypeMask mCurrentVertexAttributesTypeMask;
-
-    // The attrib/binding dirty bits that requires graphics pipeline update
-    gl::VertexArray::DirtyBindingBits mBindingDirtyBitsRequiresPipelineUpdate;
-    gl::VertexArray::DirtyAttribBits mAttribDirtyBitsRequiresPipelineUpdate;
 
     // This maybe 0 or 1 depends on feature bit
     uint32_t mZeroDivisor;

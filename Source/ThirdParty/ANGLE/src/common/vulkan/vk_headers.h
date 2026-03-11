@@ -16,6 +16,16 @@
 #    include <vulkan/vulkan.h>
 #endif
 
+/* vulkan.h includes <X11/Xlib.h> when VK_USE_PLATFORM_XLIB_KHR is defined
+ * after https://github.com/KhronosGroup/Vulkan-Headers/pull/534.
+ * This defines some macros which break build, so undefine them here.
+ */
+#undef Always
+#undef Bool
+#undef None
+#undef Status
+#undef Success
+
 #if !defined(ANGLE_SHARED_LIBVULKAN)
 
 namespace rx

@@ -167,22 +167,60 @@ const TFunction *TSymbolTable::setFunctionParameterNamesFromDefinition(const TFu
     return firstDeclaration;
 }
 
-bool TSymbolTable::setGlInArraySize(unsigned int inputArraySize)
+bool TSymbolTable::setGlInArraySize(unsigned int inputArraySize, int shaderVersion)
 {
     if (mGlInVariableWithArraySize)
     {
         return mGlInVariableWithArraySize->getType().getOutermostArraySize() == inputArraySize;
     }
-    const TInterfaceBlock *glPerVertex = static_cast<const TInterfaceBlock *>(m_gl_PerVertex);
-    TType *glInType = new TType(glPerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
-    glInType->makeArray(inputArraySize);
+    // Note: gl_in may be redeclared by the shader.
+    const TSymbol *glPerVertexVar = find(ImmutableString("gl_in"), shaderVersion);
+    ASSERT(glPerVertexVar);
+
+    TType *glInType = new TType(static_cast<const TVariable *>(glPerVertexVar)->getType());
+    glInType->sizeOutermostUnsizedArray(inputArraySize);
     mGlInVariableWithArraySize =
-        new TVariable(this, ImmutableString("gl_in"), glInType, SymbolType::BuiltIn,
+        new TVariable(this, glPerVertexVar->name(), glInType, glPerVertexVar->symbolType(),
                       TExtension::EXT_geometry_shader);
     return true;
 }
 
-TVariable *TSymbolTable::getGlInVariableWithArraySize() const
+void TSymbolTable::onGlInVariableRedeclaration(const TVariable *redeclaredGlIn)
+{
+    // There are 4 possibilities:
+    //
+    // 1. input primitive layout is set, then gl_in is encountered (not declared)
+    // 2. input primitive layout is set, then gl_in is redeclared
+    // 3. gl_in is redeclared with a size, then input primitive layout is set
+    // 4. gl_in is redeclared without a size, then input primitive layout is set
+    //
+    // In case 1, setGlInArraySize declares mGlInVariableWithArraySize, but this function is not
+    // called.
+    //
+    // In case 2, setGlInArraySize declares mGlInVariableWithArraySize, but we need to replace it
+    // with the shader-declared gl_in (redeclaredGlIn).  The array size of
+    // mGlInVariableWithArraySize and redeclaredGlIn should match (validated before the call).
+    //
+    // In case 3, this function is called when mGlInVariableWithArraySize is nullptr.  We set that
+    // to redeclaredGlIn.  Later when the input primitive is encountered, setGlInArraySize verifies
+    // that the size matches the expectation.
+    //
+    // In case 4, similarly this function is called when mGlInVariableWithArraySize is nullptr.
+    // That is again set to redeclaredGlIn.  The parser needs to ensure this unsized array is sized
+    // before calling setGlInArraySize which verifies the array sizes match.
+    //
+    // In all cases, basically mGlInVariableWithArraySize should be set to the redeclared variable.
+
+    // If mGlInVariableWithArraySize is set when gl_in is redeclared, it's because gl_in was
+    // sized before the redeclaration.  In that case, make sure the redeclared variable is also
+    // sized.
+    ASSERT(mGlInVariableWithArraySize == nullptr ||
+           mGlInVariableWithArraySize->getType().getOutermostArraySize() ==
+               redeclaredGlIn->getType().getOutermostArraySize());
+    mGlInVariableWithArraySize = redeclaredGlIn;
+}
+
+const TVariable *TSymbolTable::getGlInVariableWithArraySize() const
 {
     return mGlInVariableWithArraySize;
 }
@@ -291,7 +329,9 @@ bool TSymbolTable::declare(TSymbol *symbol)
 {
     ASSERT(!mTable.empty());
     // The following built-ins may be redeclared by the shader: gl_ClipDistance, gl_CullDistance,
-    // gl_LastFragData, gl_LastFragColorARM, gl_LastFragDepthARM and gl_LastFragStencilARM.
+    // gl_PerVertex, gl_in (EXT_geometry_shader), gl_Position, gl_PointSize
+    // (EXT_separate_shader_objects), gl_LastFragData, gl_LastFragColorARM, gl_LastFragDepthARM and
+    // gl_LastFragStencilARM.
     ASSERT(symbol->symbolType() == SymbolType::UserDefined ||
            (symbol->symbolType() == SymbolType::BuiltIn && IsRedeclarableBuiltIn(symbol->name())));
     ASSERT(!symbol->isFunction());

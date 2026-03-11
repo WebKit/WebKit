@@ -6,22 +6,15 @@
 #
 # main.star: lucicfg configuration for ANGLE's standalone builders.
 
-lucicfg.check_version(min = "1.31.3", message = "Update depot_tools")
+"""
+main.star: lucicfg configuration for Angle's standalone builders.
+"""
 
 # Use LUCI Scheduler BBv2 names and add Scheduler realms configs.
 lucicfg.enable_experiment("crbug.com/1182002")
 
 # Fail build when merge script fails.
 build_experiments = {"chromium_swarming.expose_merge_script_failures": 100}
-
-lucicfg.config(
-    fail_on_warnings = True,
-    lint_checks = [
-        "default",
-        "-module-docstring",
-        "-function-docstring",
-    ],
-)
 
 luci.project(
     name = "angle",
@@ -173,6 +166,14 @@ build_recipe(
 )
 
 def get_os_from_name(name):
+    """Returns os enum given the name.
+
+    Args:
+        name: A name to check against.
+
+    Returns:
+        An os enum given the name.
+    """
     if name.startswith("android"):
         return os.ANDROID
     if name.startswith("linux"):
@@ -188,6 +189,12 @@ def get_gpu_type_from_builder_name(name):
 
 # Adds both the CI and Try standalone builders.
 def angle_builder(name, cpu):
+    """Adds a CI and Try standalone builder.
+
+    Args:
+        name: string representing name of the builder.
+        cpu: string representing CPU archiecture of builder.
+    """
     config_os = get_os_from_name(name)
     dimensions = {}
     dimensions["os"] = config_os.dimension
@@ -220,6 +227,8 @@ def angle_builder(name, cpu):
 
     location_filters = None
 
+    test_mode = ""
+    category = ""
     if name.endswith("-compile"):
         test_mode = "compile_only"
         category = "compile"
@@ -280,31 +289,31 @@ def angle_builder(name, cpu):
         short_name = "rel"
 
     properties = {
-        "builder_group": "angle",
         "$build/siso": {
-            "project": "rbe-chromium-untrusted",
             "configs": ["builder"],
             "enable_cloud_monitoring": True,
             "enable_cloud_profiler": True,
             "enable_cloud_trace": True,
+            "project": "rbe-chromium-untrusted",
         },
+        "builder_group": "angle",
         "platform": config_os.console_name,
-        "toolchain": toolchain,
         "test_mode": test_mode,
+        "toolchain": toolchain,
     }
 
     ci_properties = {
-        "builder_group": "angle",
         "$build/siso": {
-            "project": "rbe-chromium-trusted",
             "configs": ["builder"],
             "enable_cloud_monitoring": True,
             "enable_cloud_profiler": True,
             "enable_cloud_trace": True,
+            "project": "rbe-chromium-trusted",
         },
+        "builder_group": "angle",
         "platform": config_os.console_name,
-        "toolchain": toolchain,
         "test_mode": test_mode,
+        "toolchain": toolchain,
     }
 
     # TODO(343503161): Remove sheriff_rotations after SoM is updated.

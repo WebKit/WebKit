@@ -144,10 +144,10 @@ class CLKernelVk : public CLKernelImpl
         angle::EnumIterator<DescriptorSetIndex> layoutIndex,
         vk::OutsideRenderPassCommandBufferHelper *computePassCommands);
 
-  private:
     // Initialize the descriptor pools for this kernel resources
     angle::Result initializeDescriptorPools();
 
+  private:
     CLProgramVk *mProgram;
     CLContextVk *mContext;
     std::string mName;

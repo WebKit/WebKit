@@ -346,13 +346,13 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
 
         TType *imageType = new TType(plsSymbol->getType());
 
-        TLayoutQualifier layoutQualifier = imageType->getLayoutQualifier();
-        switch (layoutQualifier.imageInternalFormat)
+        TLayoutQualifier imageLayoutQualifier = imageType->getLayoutQualifier();
+        switch (imageLayoutQualifier.imageInternalFormat)
         {
             case TLayoutImageInternalFormat::EiifRGBA8:
                 if (!mCompileOptions->pls.supportsNativeRGBA8ImageFormats)
                 {
-                    layoutQualifier.imageInternalFormat = EiifR32UI;
+                    imageLayoutQualifier.imageInternalFormat = EiifR32UI;
                     imageType->setPrecision(EbpHigh);
                     imageType->setBasicType(EbtUImage2D);
                 }
@@ -364,7 +364,7 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
             case TLayoutImageInternalFormat::EiifRGBA8I:
                 if (!mCompileOptions->pls.supportsNativeRGBA8ImageFormats)
                 {
-                    layoutQualifier.imageInternalFormat = EiifR32I;
+                    imageLayoutQualifier.imageInternalFormat = EiifR32I;
                     imageType->setPrecision(EbpHigh);
                 }
                 imageType->setBasicType(EbtIImage2D);
@@ -372,7 +372,7 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
             case TLayoutImageInternalFormat::EiifRGBA8UI:
                 if (!mCompileOptions->pls.supportsNativeRGBA8ImageFormats)
                 {
-                    layoutQualifier.imageInternalFormat = EiifR32UI;
+                    imageLayoutQualifier.imageInternalFormat = EiifR32UI;
                     imageType->setPrecision(EbpHigh);
                 }
                 imageType->setBasicType(EbtUImage2D);
@@ -386,12 +386,20 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
             default:
                 UNREACHABLE();
         }
-        layoutQualifier.rasterOrdered =
-            mCompileOptions->pls.fragmentSyncType ==
-                ShFragmentSynchronizationType::RasterizerOrderViews_D3D ||
-            mCompileOptions->pls.fragmentSyncType ==
-                ShFragmentSynchronizationType::RasterOrderGroups_Metal;
-        imageType->setLayoutQualifier(layoutQualifier);
+        const bool noncoherentPLS = plsSymbol->getType().getLayoutQualifier().noncoherent;
+        // Clear the noncoherent qualifier for the image, in case it got copied over from the PLS
+        // variable. (noncoherent is not valid for images.)
+        imageLayoutQualifier.noncoherent = false;
+        imageLayoutQualifier.rasterOrdered =
+            !noncoherentPLS && (mCompileOptions->pls.fragmentSyncType ==
+                                    ShFragmentSynchronizationType::RasterizerOrderViews_D3D ||
+                                mCompileOptions->pls.fragmentSyncType ==
+                                    ShFragmentSynchronizationType::RasterOrderGroups_Metal);
+        if (!noncoherentPLS)
+        {
+            mAllPLSVarsNoncoherent = false;
+        }
+        imageType->setLayoutQualifier(imageLayoutQualifier);
 
         TMemoryQualifier memoryQualifier{};
         memoryQualifier.coherent          = true;
@@ -583,40 +591,43 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
         // can also block stores to PLS.
         compiler->specifyEarlyFragmentTests();
 
-        // Delimit the beginning of a per-pixel critical section, if supported. This makes pixel
-        // local storage coherent.
-        //
-        // Either: GL_NV_fragment_shader_interlock
-        //         GL_INTEL_fragment_shader_ordering
-        //         GL_ARB_fragment_shader_interlock (may compile to
-        //                                           SPV_EXT_fragment_shader_interlock)
-        switch (compileOptions.pls.fragmentSyncType)
+        if (!mAllPLSVarsNoncoherent)
         {
-            // Raster ordered resources don't need explicit synchronization calls.
-            case ShFragmentSynchronizationType::RasterizerOrderViews_D3D:
-            case ShFragmentSynchronizationType::RasterOrderGroups_Metal:
-            case ShFragmentSynchronizationType::NotSupported:
-                break;
-            case ShFragmentSynchronizationType::FragmentShaderInterlock_NV_GL:
-                mainBody->insertStatement(
-                    plsBeginPosition,
-                    CreateBuiltInFunctionCallNode("beginInvocationInterlockNV", {}, symbolTable,
-                                                  kESSLInternalBackendBuiltIns));
-                break;
-            case ShFragmentSynchronizationType::FragmentShaderOrdering_INTEL_GL:
-                mainBody->insertStatement(
-                    plsBeginPosition,
-                    CreateBuiltInFunctionCallNode("beginFragmentShaderOrderingINTEL", {},
-                                                  symbolTable, kESSLInternalBackendBuiltIns));
-                break;
-            case ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL:
-                mainBody->insertStatement(
-                    plsBeginPosition,
-                    CreateBuiltInFunctionCallNode("beginInvocationInterlockARB", {}, symbolTable,
-                                                  kESSLInternalBackendBuiltIns));
-                break;
-            default:
-                UNREACHABLE();
+            // Delimit the beginning of a per-pixel critical section, if supported. This makes pixel
+            // local storage coherent.
+            //
+            // Either: GL_NV_fragment_shader_interlock
+            //         GL_INTEL_fragment_shader_ordering
+            //         GL_ARB_fragment_shader_interlock (may compile to
+            //                                           SPV_EXT_fragment_shader_interlock)
+            switch (compileOptions.pls.fragmentSyncType)
+            {
+                // Raster ordered resources don't need explicit synchronization calls.
+                case ShFragmentSynchronizationType::RasterizerOrderViews_D3D:
+                case ShFragmentSynchronizationType::RasterOrderGroups_Metal:
+                case ShFragmentSynchronizationType::NotSupported:
+                    break;
+                case ShFragmentSynchronizationType::FragmentShaderInterlock_NV_GL:
+                    mainBody->insertStatement(
+                        plsBeginPosition,
+                        CreateBuiltInFunctionCallNode("beginInvocationInterlockNV", {}, symbolTable,
+                                                      kESSLInternalBackendBuiltIns));
+                    break;
+                case ShFragmentSynchronizationType::FragmentShaderOrdering_INTEL_GL:
+                    mainBody->insertStatement(
+                        plsBeginPosition,
+                        CreateBuiltInFunctionCallNode("beginFragmentShaderOrderingINTEL", {},
+                                                      symbolTable, kESSLInternalBackendBuiltIns));
+                    break;
+                case ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL:
+                    mainBody->insertStatement(
+                        plsBeginPosition,
+                        CreateBuiltInFunctionCallNode("beginInvocationInterlockARB", {},
+                                                      symbolTable, kESSLInternalBackendBuiltIns));
+                    break;
+                default:
+                    UNREACHABLE();
+            }
         }
     }
 
@@ -626,39 +637,43 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
                            TIntermBlock *mainBody,
                            size_t plsEndPosition) override
     {
-        // Delimit the end of the PLS critical section, if required.
-        //
-        // Either: GL_NV_fragment_shader_interlock
-        //         GL_ARB_fragment_shader_interlock (may compile to
-        //                                           SPV_EXT_fragment_shader_interlock)
-        switch (compileOptions.pls.fragmentSyncType)
+        if (!mAllPLSVarsNoncoherent)
         {
-            // Raster ordered resources don't need explicit synchronization calls.
-            case ShFragmentSynchronizationType::RasterizerOrderViews_D3D:
-            case ShFragmentSynchronizationType::RasterOrderGroups_Metal:
-            // GL_INTEL_fragment_shader_ordering doesn't have an "end()" call.
-            case ShFragmentSynchronizationType::FragmentShaderOrdering_INTEL_GL:
-            case ShFragmentSynchronizationType::NotSupported:
-                break;
-            case ShFragmentSynchronizationType::FragmentShaderInterlock_NV_GL:
+            // Delimit the end of the PLS critical section, if required.
+            //
+            // Either: GL_NV_fragment_shader_interlock
+            //         GL_ARB_fragment_shader_interlock (may compile to
+            //                                           SPV_EXT_fragment_shader_interlock)
+            switch (compileOptions.pls.fragmentSyncType)
+            {
+                // Raster ordered resources don't need explicit synchronization calls.
+                case ShFragmentSynchronizationType::RasterizerOrderViews_D3D:
+                case ShFragmentSynchronizationType::RasterOrderGroups_Metal:
+                // GL_INTEL_fragment_shader_ordering doesn't have an "end()" call.
+                case ShFragmentSynchronizationType::FragmentShaderOrdering_INTEL_GL:
+                case ShFragmentSynchronizationType::NotSupported:
+                    break;
+                case ShFragmentSynchronizationType::FragmentShaderInterlock_NV_GL:
 
-                mainBody->insertStatement(
-                    plsEndPosition,
-                    CreateBuiltInFunctionCallNode("endInvocationInterlockNV", {}, symbolTable,
-                                                  kESSLInternalBackendBuiltIns));
-                break;
-            case ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL:
-                mainBody->insertStatement(
-                    plsEndPosition,
-                    CreateBuiltInFunctionCallNode("endInvocationInterlockARB", {}, symbolTable,
-                                                  kESSLInternalBackendBuiltIns));
-                break;
-            default:
-                UNREACHABLE();
+                    mainBody->insertStatement(
+                        plsEndPosition,
+                        CreateBuiltInFunctionCallNode("endInvocationInterlockNV", {}, symbolTable,
+                                                      kESSLInternalBackendBuiltIns));
+                    break;
+                case ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL:
+                    mainBody->insertStatement(
+                        plsEndPosition,
+                        CreateBuiltInFunctionCallNode("endInvocationInterlockARB", {}, symbolTable,
+                                                      kESSLInternalBackendBuiltIns));
+                    break;
+                default:
+                    UNREACHABLE();
+            }
         }
     }
 
     PLSBackingStoreMap<TVariable *> mImages;
+    bool mAllPLSVarsNoncoherent = true;
 };
 
 // Rewrites high level PLS operations to framebuffer fetch operations.
@@ -795,11 +810,19 @@ class RewritePLSToFramebufferFetchTraverser : public RewritePLSTraverser
                 compiler->getResources().MaxCombinedDrawBuffersAndPixelLocalStoragePlanes -
                 plsType.getLayoutQualifier().binding - 1;
             layoutQualifier.locationsSpecified = 1;
-            if (compileOptions.pls.fragmentSyncType == ShFragmentSynchronizationType::NotSupported)
+            if (compiler->getBuiltInResources().EXT_shader_framebuffer_fetch_non_coherent)
             {
-                // We're using EXT_shader_framebuffer_fetch_non_coherent, which requires the
-                // "noncoherent" qualifier.
-                layoutQualifier.noncoherent = true;
+                // EXT_shader_framebuffer_fetch_non_coherent requires the "noncoherent" qualifier if
+                // the coherent version of the extension isn't supported. The extension also allows
+                // us to opt into noncoherent accesses when PLS planes are specified as noncoherent
+                // by the shader.
+                //
+                // (Without EXT_shader_framebuffer_fetch_non_coherent, we just ignore the
+                // noncoherent qualifier, which is a perfectly valid implementation of the PLS
+                // spec.)
+                layoutQualifier.noncoherent = plsType.getLayoutQualifier().noncoherent ||
+                                              compileOptions.pls.fragmentSyncType ==
+                                                  ShFragmentSynchronizationType::NotSupported;
             }
             fragmentVarType->setLayoutQualifier(layoutQualifier);
 

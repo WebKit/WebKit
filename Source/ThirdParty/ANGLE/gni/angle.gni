@@ -359,6 +359,12 @@ if (angle_has_build) {
     angle_remove_configs += [ "//build/config/compiler:default_optimization" ]
     angle_common_configs += [ "//build/config/compiler:optimize_max" ]
   }
+
+  # See https://crbug.com/386992829
+  if (defined(angle_sanitize_array_bounds) && !angle_sanitize_array_bounds) {
+    angle_remove_configs +=
+        [ "//build/config/compiler:sanitize_c_array_bounds" ]
+  }
 }
 
 set_defaults("angle_executable") {

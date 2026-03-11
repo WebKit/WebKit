@@ -22,73 +22,77 @@ constexpr const ImmutableString kGlVertexIDString("gl_VertexID");
 class TBuiltinsWorkaround : public TIntermTraverser
 {
   public:
-    TBuiltinsWorkaround(TSymbolTable *symbolTable, const ShCompileOptions &options);
+    TBuiltinsWorkaround(TSymbolTable *symbolTable,
+                        const ShCompileOptions &options,
+                        const TVariable *emulatedBaseInstance)
+        : TIntermTraverser(true, false, false, symbolTable),
+          mCompileOptions(options),
+          mEmulatedBaseInstance(emulatedBaseInstance)
+    {}
 
     void visitSymbol(TIntermSymbol *node) override;
-    bool visitDeclaration(Visit, TIntermDeclaration *node) override;
 
   private:
     void ensureVersionIsAtLeast(int version);
 
     const ShCompileOptions &mCompileOptions;
-
-    bool isBaseInstanceDeclared = false;
+    const TVariable *mEmulatedBaseInstance;
 };
-
-TBuiltinsWorkaround::TBuiltinsWorkaround(TSymbolTable *symbolTable, const ShCompileOptions &options)
-    : TIntermTraverser(true, false, false, symbolTable), mCompileOptions(options)
-{}
 
 void TBuiltinsWorkaround::visitSymbol(TIntermSymbol *node)
 {
-    if (node->variable().symbolType() == SymbolType::BuiltIn)
+    if (node->variable().symbolType() == SymbolType::BuiltIn &&
+        node->getName() == kGlInstanceIDString)
     {
-        if (node->getName() == kGlInstanceIDString)
-        {
-            TIntermSymbol *instanceIndexRef =
-                new TIntermSymbol(BuiltInVariable::gl_InstanceIndex());
+        TIntermSymbol *instanceIndexRef = new TIntermSymbol(BuiltInVariable::gl_InstanceIndex());
 
-            if (isBaseInstanceDeclared)
-            {
-                TIntermSymbol *baseInstanceRef =
-                    new TIntermSymbol(BuiltInVariable::angle_BaseInstance());
-
-                TIntermBinary *subBaseInstance =
-                    new TIntermBinary(EOpSub, instanceIndexRef, baseInstanceRef);
-                queueReplacement(subBaseInstance, OriginalNode::IS_DROPPED);
-            }
-            else
-            {
-                queueReplacement(instanceIndexRef, OriginalNode::IS_DROPPED);
-            }
-        }
-        else if (node->getName() == kGlVertexIDString)
+        if (mEmulatedBaseInstance != nullptr)
         {
-            TIntermSymbol *vertexIndexRef = new TIntermSymbol(BuiltInVariable::gl_VertexIndex());
-            queueReplacement(vertexIndexRef, OriginalNode::IS_DROPPED);
+            TIntermSymbol *baseInstanceRef = new TIntermSymbol(mEmulatedBaseInstance);
+
+            TIntermBinary *subBaseInstance =
+                new TIntermBinary(EOpSub, instanceIndexRef, baseInstanceRef);
+            queueReplacement(subBaseInstance, OriginalNode::IS_DROPPED);
         }
+        else
+        {
+            queueReplacement(instanceIndexRef, OriginalNode::IS_DROPPED);
+        }
+    }
+    else if (node->getName() == kGlVertexIDString)
+    {
+        TIntermSymbol *vertexIndexRef = new TIntermSymbol(BuiltInVariable::gl_VertexIndex());
+        queueReplacement(vertexIndexRef, OriginalNode::IS_DROPPED);
     }
 }
 
-bool TBuiltinsWorkaround::visitDeclaration(Visit, TIntermDeclaration *node)
+const TVariable *FindEmulatedBaseInstance(TIntermBlock *root)
 {
-    const TIntermSequence &sequence = *(node->getSequence());
-    ASSERT(!sequence.empty());
-
-    for (TIntermNode *variableNode : sequence)
+    for (TIntermNode *node : *root->getSequence())
     {
-        TIntermSymbol *variable = variableNode->getAsSymbolNode();
-        if (variable && variable->variable().symbolType() == SymbolType::BuiltIn)
+        TIntermDeclaration *decl = node->getAsDeclarationNode();
+        if (decl == nullptr)
         {
-            if (variable->getName() == "angle_BaseInstance")
-            {
-                isBaseInstanceDeclared = true;
-            }
+            continue;
+        }
+
+        const TIntermSequence &sequence = *(decl->getSequence());
+        ASSERT(!sequence.empty());
+
+        TIntermSymbol *symbol = sequence[0]->getAsSymbolNode();
+        if (symbol == nullptr)
+        {
+            continue;
+        }
+
+        if (symbol->variable().symbolType() == SymbolType::AngleInternal &&
+            symbol->variable().name() == "angle_BaseInstance")
+        {
+            return &symbol->variable();
         }
     }
-    return true;
+    return nullptr;
 }
-
 }  // anonymous namespace
 
 [[nodiscard]] bool ShaderBuiltinsWorkaround(TCompiler *compiler,
@@ -96,7 +100,7 @@ bool TBuiltinsWorkaround::visitDeclaration(Visit, TIntermDeclaration *node)
                                             TSymbolTable *symbolTable,
                                             const ShCompileOptions &compileOptions)
 {
-    TBuiltinsWorkaround builtins(symbolTable, compileOptions);
+    TBuiltinsWorkaround builtins(symbolTable, compileOptions, FindEmulatedBaseInstance(root));
     root->traverse(&builtins);
     if (!builtins.updateTree(compiler, root))
     {

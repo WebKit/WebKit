@@ -1231,13 +1231,7 @@ ANGLE_NOINLINE void UpdateBufferWithLayoutStrided(GLsizei count,
         const int arrayOffset = writeIndex * layoutInfo.arrayStride;
         uint8_t *writePtr     = dst + arrayOffset;
         const T *readPtr      = v + (readIndex * componentCount);
-        // If we transform the data from 32-bit (GLfloat) to 16-bit (GLshort), elementSize ended up
-        // being half the size of uniformData layoutInfo element stride. However, we need to ensure
-        // with the original element stride, the range is still within the valid uniformData memory,
-        // because that is what the layoutInfo expects.
-        constexpr int kPackedElements = std::is_same<T, GLshort>::value ? 2 : 1;
-        ASSERT(writePtr + elementSize * kPackedElements <=
-               uniformData->data() + uniformData->size());
+        ASSERT(writePtr + elementSize <= uniformData->data() + uniformData->size());
         memcpy(writePtr, readPtr, elementSize);
     }
 }
@@ -1268,53 +1262,6 @@ ANGLE_INLINE void UpdateBufferWithLayout(GLsizei count,
     }
 }
 
-// Writing of half float is handled separately from the generic case above.
-// Because we need to add some padding so that each element is conformant to uniformData layoutInfo
-// arrayStride.
-// For example, if the uniform is vec4 uniformArray[2]
-// Src Data:
-// | half float 1 | half float 2 | half float 3 | half float 4 |
-// | half float 5 | half float 6 | half float 7 | half float 8 |
-// Dst Data:
-// | half float 1 | half float 2 | half float 3 | half float 4 | 8 byte of padding 0 |
-// | half float 5 | half float 6 | half float 7 | half float 8 | 8 byte of padding 0 |
-template <>
-ANGLE_INLINE void UpdateBufferWithLayout<GLshort>(GLsizei count,
-                                                  uint32_t arrayIndex,
-                                                  int componentCount,
-                                                  const GLshort *v,
-                                                  const sh::BlockMemberInfo &layoutInfo,
-                                                  angle::MemoryBuffer *uniformData)
-{
-    const int elementSize = sizeof(GLshort) * componentCount;
-    uint8_t *dst          = uniformData->data() + layoutInfo.offset;
-    if (ANGLE_LIKELY(layoutInfo.arrayStride == 0) ||
-        ANGLE_LIKELY(layoutInfo.arrayStride == elementSize * 2))
-    {
-        uint32_t arrayOffset = arrayIndex * layoutInfo.arrayStride;
-        // Each array component is not tightly packed, we need to copy each array component and
-        // leave some padding after each array component.
-        for (GLsizei i = 0; i < count; ++i)
-        {
-            uint8_t *writePtr = dst + arrayOffset + i * elementSize * 2;
-            // Even we only write elementSize of data, we need to check with the padding,
-            // the writePtr is still within the range because uniformData layoutInfo expects
-            // writePtr + (elementSize * 2) is within the range.
-            ASSERT(writePtr + (elementSize * 2) <= uniformData->data() + uniformData->size());
-            // copy the data to the first half of dst memory
-            memcpy(writePtr, v + i * componentCount, elementSize);
-            // pad the remaining half of dst memory with 0
-            memset(writePtr + elementSize, 0, elementSize);
-        }
-    }
-    else
-    {
-        // Have to respect the arrayStride between each element of the array.
-        UpdateBufferWithLayoutStrided(count, arrayIndex, componentCount, v, layoutInfo,
-                                      uniformData);
-    }
-}
-
 template <typename T>
 void ReadFromBufferWithLayout(int componentCount,
                               uint32_t arrayIndex,
@@ -1328,32 +1275,27 @@ void ReadFromBufferWithLayout(int componentCount,
     const int elementSize = sizeof(T) * componentCount;
     const uint8_t *source  = uniformData->data() + layoutInfo.offset;
     const uint8_t *readPtr = source + arrayIndex * layoutInfo.arrayStride;
-    // If the data read back is GLfloat, it is possible we need to transform the GLshort stored in
-    // memory to GLfloat, so handle GLfloat case separately.
+    // Special case when the expected data read back is GLfloat, it is possible we need to
+    // transform the data in memory from GLshort to GLfloat.
     if constexpr (std::is_same<T, GLfloat>::value)
     {
         if (isFloat16)
         {
-            // If we are expected to read back 4 GLfloat, we will first get back 8 GLshort,
-            // We transform the first 4 GLshort.
-            // The rest 4 GLshort is garbage value we don't care.
-            std::vector<GLshort> transformedValues(componentCount * 2, 0);
-            memcpy(transformedValues.data(), readPtr, elementSize);
+            // check that dst is aligned to 4 bytes (size of GLfloat)
+            ASSERT(reinterpret_cast<uintptr_t>(dst) % 4 == 0);
+            // check that readPtr is aligned to 2 bytes (size of GLshort)
+            ASSERT(reinterpret_cast<uintptr_t>(readPtr) % 2 == 0);
+            const GLshort *transformedValues = reinterpret_cast<const GLshort *>(readPtr);
             for (size_t index = 0; index < static_cast<size_t>(componentCount); ++index)
             {
-                *dst = gl::float16ToFloat32(transformedValues[index]);
-                ++dst;
+                dst[index] = gl::float16ToFloat32(transformedValues[index]);
             }
-        }
-        else
-        {
-            memcpy(dst, readPtr, elementSize);
+            // skip the generic case below
+            return;
         }
     }
-    else
-    {
-        memcpy(dst, readPtr, elementSize);
-    }
+    // Generic case where no data transform is needed
+    memcpy(dst, readPtr, elementSize);
 }
 
 template <typename T>
@@ -1417,6 +1359,70 @@ void SetUniform(const gl::ProgramExecutable *executable,
 
     if (ANGLE_LIKELY(linkedUniform.getType() == entryPointType))
     {
+        const GLint componentCount = linkedUniform.getElementComponents();
+        if constexpr (std::is_same<T, GLfloat>::value)
+        {
+            if (linkedUniform.isFloat16())
+            {
+                // Special case where we need to transform the 32-bit float to 16-bit float before
+                // storing.
+                for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
+                {
+                    BufferAndLayout &uniformBlock         = *(*defaultUniformBlocks)[shaderType];
+                    const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+                    // Assume an offset of -1 means the block is unused.
+                    if (layoutInfo.offset == -1)
+                    {
+                        continue;
+                    }
+
+                    const int elementSize = sizeof(GLshort) * componentCount;
+                    uint8_t *dst          = uniformBlock.uniformData.data() + layoutInfo.offset;
+                    int maxIndex          = locationInfo.arrayIndex + count;
+                    // We need to add some padding so that each element is conformant to
+                    // uniformData layoutInfo arrayStride.
+                    // For example, if the uniform is vec4 uniformArray[2]
+                    // Src Data:
+                    // | float 1 | float 2 | float 3 | float 4 |
+                    // | float 5 | float 6 | float 7 | float 8 |
+                    // Dst Data:
+                    // | half 1  | half 2  | half 3  | half 4  | 8 byte of padding 0 |
+                    // | half 5  | half 6  | half 7  | half 8  | 8 byte of padding 0 |
+                    for (int writeIndex = locationInfo.arrayIndex, readIndex = 0;
+                         writeIndex < maxIndex; writeIndex++, readIndex++)
+                    {
+                        const int arrayOffset = writeIndex * layoutInfo.arrayStride;
+                        uint8_t *writePtr     = dst + arrayOffset;
+                        // check that writePtr is aligned to 2 bytes (size of GLshort)
+                        ASSERT(reinterpret_cast<uintptr_t>(writePtr) % 2 == 0);
+                        const GLfloat *readPtr = v + (readIndex * componentCount);
+                        // check that readPtr is aligned to 4 bytes (size of GLfloat)
+                        ASSERT(reinterpret_cast<uintptr_t>(readPtr) % 4 == 0);
+                        // we need to write:
+                        // 1) elementSize of transformed GLshort data
+                        // 2) elementSize of padding 0s
+                        // Ensure the uniformBlock.uniformData has enough space
+                        ASSERT(writePtr + elementSize * 2 <=
+                               uniformBlock.uniformData.data() + uniformBlock.uniformData.size());
+                        // Transform each original GLfloat data to GLshort
+                        GLshort *dstGLShortPtr = reinterpret_cast<GLshort *>(writePtr);
+                        for (int componentIndex = 0; componentIndex < componentCount;
+                             ++componentIndex)
+                        {
+                            dstGLShortPtr[componentIndex] =
+                                gl::float32ToFloat16(readPtr[componentIndex]);
+                        }
+                        // pad the remaining half of dst memory with 0
+                        memset(writePtr + elementSize, 0, elementSize);
+                    }
+                    defaultUniformBlocksDirty->set(shaderType);
+                }
+                // Skip the generic case below
+                return;
+            }
+        }
+        // Generic case where data transformation is not required
         for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
         {
             BufferAndLayout &uniformBlock         = *(*defaultUniformBlocks)[shaderType];
@@ -1428,35 +1434,8 @@ void SetUniform(const gl::ProgramExecutable *executable,
                 continue;
             }
 
-            const GLint componentCount = linkedUniform.getElementComponents();
-            // If the uniform data to be stored is GLfloat, we handle it differently from the
-            // generic case because we may need to transform the 32-bit data to 16-bit data before
-            // storing.
-            if constexpr (std::is_same<T, GLfloat>::value)
-            {
-                if (linkedUniform.isFloat16())
-                {
-                    std::vector<GLshort> transformedV;
-                    transformedV.resize(componentCount * count);
-                    for (size_t i = 0; i < static_cast<size_t>(componentCount * count); ++i)
-                    {
-                        transformedV[i] = static_cast<GLshort>(gl::float32ToFloat16(v[i]));
-                    }
-                    UpdateBufferWithLayout(count, locationInfo.arrayIndex, componentCount,
-                                           transformedV.data(), layoutInfo,
-                                           &uniformBlock.uniformData);
-                }
-                else
-                {
-                    UpdateBufferWithLayout(count, locationInfo.arrayIndex, componentCount, v,
-                                           layoutInfo, &uniformBlock.uniformData);
-                }
-            }
-            else
-            {
-                UpdateBufferWithLayout(count, locationInfo.arrayIndex, componentCount, v,
-                                       layoutInfo, &uniformBlock.uniformData);
-            }
+            UpdateBufferWithLayout(count, locationInfo.arrayIndex, componentCount, v, layoutInfo,
+                                   &uniformBlock.uniformData);
             defaultUniformBlocksDirty->set(shaderType);
         }
     }

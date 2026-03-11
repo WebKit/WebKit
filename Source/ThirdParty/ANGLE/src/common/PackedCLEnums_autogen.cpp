@@ -1279,6 +1279,313 @@ std::ostream &operator<<(std::ostream &os, FilterMode value)
 }
 
 template <>
+ImageChannelOrder FromCLenum<ImageChannelOrder>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_R:
+            return ImageChannelOrder::R;
+        case CL_A:
+            return ImageChannelOrder::A;
+        case CL_RG:
+            return ImageChannelOrder::RG;
+        case CL_RA:
+            return ImageChannelOrder::RA;
+        case CL_RGB:
+            return ImageChannelOrder::RGB;
+        case CL_RGBA:
+            return ImageChannelOrder::RGBA;
+        case CL_BGRA:
+            return ImageChannelOrder::BGRA;
+        case CL_ARGB:
+            return ImageChannelOrder::ARGB;
+        case CL_INTENSITY:
+            return ImageChannelOrder::Intensity;
+        case CL_LUMINANCE:
+            return ImageChannelOrder::Luminance;
+        case CL_Rx:
+            return ImageChannelOrder::Rx;
+        case CL_RGx:
+            return ImageChannelOrder::RGx;
+        case CL_RGBx:
+            return ImageChannelOrder::RGBx;
+        case CL_DEPTH:
+            return ImageChannelOrder::Depth;
+        case CL_sRGB:
+            return ImageChannelOrder::sRGB;
+        case CL_sRGBx:
+            return ImageChannelOrder::sRGBx;
+        case CL_sRGBA:
+            return ImageChannelOrder::sRGBA;
+        case CL_sBGRA:
+            return ImageChannelOrder::sBGRA;
+        case CL_ABGR:
+            return ImageChannelOrder::ABGR;
+        default:
+            return ImageChannelOrder::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(ImageChannelOrder from)
+{
+    switch (from)
+    {
+        case ImageChannelOrder::R:
+            return CL_R;
+        case ImageChannelOrder::A:
+            return CL_A;
+        case ImageChannelOrder::RG:
+            return CL_RG;
+        case ImageChannelOrder::RA:
+            return CL_RA;
+        case ImageChannelOrder::RGB:
+            return CL_RGB;
+        case ImageChannelOrder::RGBA:
+            return CL_RGBA;
+        case ImageChannelOrder::BGRA:
+            return CL_BGRA;
+        case ImageChannelOrder::ARGB:
+            return CL_ARGB;
+        case ImageChannelOrder::Intensity:
+            return CL_INTENSITY;
+        case ImageChannelOrder::Luminance:
+            return CL_LUMINANCE;
+        case ImageChannelOrder::Rx:
+            return CL_Rx;
+        case ImageChannelOrder::RGx:
+            return CL_RGx;
+        case ImageChannelOrder::RGBx:
+            return CL_RGBx;
+        case ImageChannelOrder::Depth:
+            return CL_DEPTH;
+        case ImageChannelOrder::sRGB:
+            return CL_sRGB;
+        case ImageChannelOrder::sRGBx:
+            return CL_sRGBx;
+        case ImageChannelOrder::sRGBA:
+            return CL_sRGBA;
+        case ImageChannelOrder::sBGRA:
+            return CL_sBGRA;
+        case ImageChannelOrder::ABGR:
+            return CL_ABGR;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ImageChannelOrder value)
+{
+    switch (value)
+    {
+        case ImageChannelOrder::R:
+            os << "CL_R";
+            break;
+        case ImageChannelOrder::A:
+            os << "CL_A";
+            break;
+        case ImageChannelOrder::RG:
+            os << "CL_RG";
+            break;
+        case ImageChannelOrder::RA:
+            os << "CL_RA";
+            break;
+        case ImageChannelOrder::RGB:
+            os << "CL_RGB";
+            break;
+        case ImageChannelOrder::RGBA:
+            os << "CL_RGBA";
+            break;
+        case ImageChannelOrder::BGRA:
+            os << "CL_BGRA";
+            break;
+        case ImageChannelOrder::ARGB:
+            os << "CL_ARGB";
+            break;
+        case ImageChannelOrder::Intensity:
+            os << "CL_INTENSITY";
+            break;
+        case ImageChannelOrder::Luminance:
+            os << "CL_LUMINANCE";
+            break;
+        case ImageChannelOrder::Rx:
+            os << "CL_Rx";
+            break;
+        case ImageChannelOrder::RGx:
+            os << "CL_RGx";
+            break;
+        case ImageChannelOrder::RGBx:
+            os << "CL_RGBx";
+            break;
+        case ImageChannelOrder::Depth:
+            os << "CL_DEPTH";
+            break;
+        case ImageChannelOrder::sRGB:
+            os << "CL_sRGB";
+            break;
+        case ImageChannelOrder::sRGBx:
+            os << "CL_sRGBx";
+            break;
+        case ImageChannelOrder::sRGBA:
+            os << "CL_sRGBA";
+            break;
+        case ImageChannelOrder::sBGRA:
+            os << "CL_sBGRA";
+            break;
+        case ImageChannelOrder::ABGR:
+            os << "CL_ABGR";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+ImageChannelType FromCLenum<ImageChannelType>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_SNORM_INT8:
+            return ImageChannelType::SnormInt8;
+        case CL_SNORM_INT16:
+            return ImageChannelType::SnormInt16;
+        case CL_UNORM_INT8:
+            return ImageChannelType::UnormInt8;
+        case CL_UNORM_INT16:
+            return ImageChannelType::UnormInt16;
+        case CL_UNORM_SHORT_565:
+            return ImageChannelType::UnormShort565;
+        case CL_UNORM_SHORT_555:
+            return ImageChannelType::UnormShort555;
+        case CL_UNORM_INT_101010:
+            return ImageChannelType::UnormInt101010;
+        case CL_SIGNED_INT8:
+            return ImageChannelType::SignedInt8;
+        case CL_SIGNED_INT16:
+            return ImageChannelType::SignedInt16;
+        case CL_SIGNED_INT32:
+            return ImageChannelType::SignedInt32;
+        case CL_UNSIGNED_INT8:
+            return ImageChannelType::UnsignedInt8;
+        case CL_UNSIGNED_INT16:
+            return ImageChannelType::UnsignedInt16;
+        case CL_UNSIGNED_INT32:
+            return ImageChannelType::UnsignedInt32;
+        case CL_HALF_FLOAT:
+            return ImageChannelType::HalfFloat;
+        case CL_FLOAT:
+            return ImageChannelType::Float;
+        case CL_UNORM_INT_101010_2:
+            return ImageChannelType::UnormInt101010_2;
+        default:
+            return ImageChannelType::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(ImageChannelType from)
+{
+    switch (from)
+    {
+        case ImageChannelType::SnormInt8:
+            return CL_SNORM_INT8;
+        case ImageChannelType::SnormInt16:
+            return CL_SNORM_INT16;
+        case ImageChannelType::UnormInt8:
+            return CL_UNORM_INT8;
+        case ImageChannelType::UnormInt16:
+            return CL_UNORM_INT16;
+        case ImageChannelType::UnormShort565:
+            return CL_UNORM_SHORT_565;
+        case ImageChannelType::UnormShort555:
+            return CL_UNORM_SHORT_555;
+        case ImageChannelType::UnormInt101010:
+            return CL_UNORM_INT_101010;
+        case ImageChannelType::SignedInt8:
+            return CL_SIGNED_INT8;
+        case ImageChannelType::SignedInt16:
+            return CL_SIGNED_INT16;
+        case ImageChannelType::SignedInt32:
+            return CL_SIGNED_INT32;
+        case ImageChannelType::UnsignedInt8:
+            return CL_UNSIGNED_INT8;
+        case ImageChannelType::UnsignedInt16:
+            return CL_UNSIGNED_INT16;
+        case ImageChannelType::UnsignedInt32:
+            return CL_UNSIGNED_INT32;
+        case ImageChannelType::HalfFloat:
+            return CL_HALF_FLOAT;
+        case ImageChannelType::Float:
+            return CL_FLOAT;
+        case ImageChannelType::UnormInt101010_2:
+            return CL_UNORM_INT_101010_2;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ImageChannelType value)
+{
+    switch (value)
+    {
+        case ImageChannelType::SnormInt8:
+            os << "CL_SNORM_INT8";
+            break;
+        case ImageChannelType::SnormInt16:
+            os << "CL_SNORM_INT16";
+            break;
+        case ImageChannelType::UnormInt8:
+            os << "CL_UNORM_INT8";
+            break;
+        case ImageChannelType::UnormInt16:
+            os << "CL_UNORM_INT16";
+            break;
+        case ImageChannelType::UnormShort565:
+            os << "CL_UNORM_SHORT_565";
+            break;
+        case ImageChannelType::UnormShort555:
+            os << "CL_UNORM_SHORT_555";
+            break;
+        case ImageChannelType::UnormInt101010:
+            os << "CL_UNORM_INT_101010";
+            break;
+        case ImageChannelType::SignedInt8:
+            os << "CL_SIGNED_INT8";
+            break;
+        case ImageChannelType::SignedInt16:
+            os << "CL_SIGNED_INT16";
+            break;
+        case ImageChannelType::SignedInt32:
+            os << "CL_SIGNED_INT32";
+            break;
+        case ImageChannelType::UnsignedInt8:
+            os << "CL_UNSIGNED_INT8";
+            break;
+        case ImageChannelType::UnsignedInt16:
+            os << "CL_UNSIGNED_INT16";
+            break;
+        case ImageChannelType::UnsignedInt32:
+            os << "CL_UNSIGNED_INT32";
+            break;
+        case ImageChannelType::HalfFloat:
+            os << "CL_HALF_FLOAT";
+            break;
+        case ImageChannelType::Float:
+            os << "CL_FLOAT";
+            break;
+        case ImageChannelType::UnormInt101010_2:
+            os << "CL_UNORM_INT_101010_2";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 ImageInfo FromCLenum<ImageInfo>(CLenum from)
 {
     switch (from)

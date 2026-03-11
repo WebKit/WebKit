@@ -1,122 +1,464 @@
-//
-// Copyright 2025 The ANGLE Project Authors. All rights reserved.
+// Copyright 2025 The ANGLE Project Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-//
-// Span.h:
-//   Basic implementation of C++20's span.
-//
+
+// This is Chromium's base/containers/span.h, modified to support C++17
+// as part of the PDFium project, stubbed to be self-contained, and then
+// modified to conform to ANGLE:
+//  -- fixed missing constexpr as exercised by test.
+//  -- added operator==().
 
 #ifndef COMMON_SPAN_H_
 #define COMMON_SPAN_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
+#include <stddef.h>
+#include <stdint.h>
 
+#include <algorithm>
+#include <array>
+#include <iterator>
 #include <type_traits>
+#include <utility>
 
-#include "common/log_utils.h"
+#include "common/base/anglebase/logging.h"
+#include "common/unsafe_buffers.h"
 
 namespace angle
 {
 
-// Basic implementation of C++20's span.
-// See the reference for std::span here: https://en.cppreference.com/w/cpp/container/span
+constexpr size_t dynamic_extent = static_cast<size_t>(-1);
+
 template <typename T>
+using DefaultSpanInternalPtr = T *;
+
+template <typename T,
+          size_t Extent        = dynamic_extent,
+          typename InternalPtr = DefaultSpanInternalPtr<T>>
+class Span;
+
+namespace internal
+{
+
+template <typename T>
+struct IsSpanImpl : std::false_type
+{};
+
+template <typename T>
+struct IsSpanImpl<Span<T>> : std::true_type
+{};
+
+template <typename T>
+using IsSpan = IsSpanImpl<typename std::decay<T>::type>;
+
+template <typename T>
+struct IsStdArrayImpl : std::false_type
+{};
+
+template <typename T, size_t N>
+struct IsStdArrayImpl<std::array<T, N>> : std::true_type
+{};
+
+template <typename T>
+using IsStdArray = IsStdArrayImpl<typename std::decay<T>::type>;
+
+template <typename From, typename To>
+using IsLegalSpanConversion = std::is_convertible<From *, To *>;
+
+template <typename Container, typename T>
+using ContainerHasConvertibleData = IsLegalSpanConversion<
+    typename std::remove_pointer<decltype(std::declval<Container>().data())>::type,
+    T>;
+template <typename Container>
+using ContainerHasIntegralSize = std::is_integral<decltype(std::declval<Container>().size())>;
+
+template <typename From, typename To>
+using EnableIfLegalSpanConversion =
+    typename std::enable_if<IsLegalSpanConversion<From, To>::value>::type;
+
+// SFINAE check if Container can be converted to a Span<T>. Note that the
+// implementation details of this check differ slightly from the requirements in
+// the working group proposal: in particular, the proposal also requires that
+// the container conversion constructor participate in overload resolution only
+// if two additional conditions are true:
+//
+//   1. Container implements operator[].
+//   2. Container::value_type matches remove_const_t<element_type>.
+//
+// The requirements are relaxed slightly here: in particular, not requiring (2)
+// means that an immutable Span can be easily constructed from a mutable
+// container.
+template <typename Container, typename T>
+using EnableIfSpanCompatibleContainer =
+    typename std::enable_if<!internal::IsSpan<Container>::value &&
+                            !internal::IsStdArray<Container>::value &&
+                            ContainerHasConvertibleData<Container, T>::value &&
+                            ContainerHasIntegralSize<Container>::value>::type;
+
+template <typename Container, typename T>
+using EnableIfConstSpanCompatibleContainer =
+    typename std::enable_if<std::is_const<T>::value && !internal::IsSpan<Container>::value &&
+                            !internal::IsStdArray<Container>::value &&
+                            ContainerHasConvertibleData<Container, T>::value &&
+                            ContainerHasIntegralSize<Container>::value>::type;
+
+}  // namespace internal
+
+// A Span is a value type that represents an array of elements of type T. Since
+// it only consists of a pointer to memory with an associated size, it is very
+// light-weight. It is cheap to construct, copy, move and use spans, so that
+// users are encouraged to use it as a pass-by-value parameter. A Span does not
+// own the underlying memory, so care must be taken to ensure that a Span does
+// not outlive the backing store.
+//
+// Differences from the working group proposal
+// -------------------------------------------
+//
+// https://wg21.link/P0122 is the latest working group proposal, Chromium
+// currently implements R6.
+//
+// Differences in constants and types:
+// - Span has a capital "S".
+// - Allows custom smart pointer types in internal representation, if desired.
+// - no element_type type alias
+// - no index_type type alias
+// - no different_type type alias
+// - no extent constant
+//
+// Differences from [span.cons]:
+// - no constructor from a pointer range
+//
+// Differences from [span.sub]:
+// - using size_t instead of ptrdiff_t for indexing
+//
+// Differences from [span.obs]:
+// - using size_t instead of ptrdiff_t to represent size()
+//
+// Differences from [span.elem]:
+// - no operator ()()
+// - using size_t instead of ptrdiff_t for indexing
+//
+// Additions beyond the C++ standard draft
+// - as_chars() function.
+// - as_writable_chars() function.
+// - as_byte_span() function.
+// - as_writable_byte_span() function.
+// - span_from_ref() function.
+// - byte_span_from_ref() function.
+
+// [span], class template span
+template <typename T, size_t Extent, typename InternalPtr>
 class Span
 {
   public:
-    typedef size_t size_type;
+    using value_type             = typename std::remove_cv<T>::type;
+    using pointer                = T *;
+    using reference              = T &;
+    using iterator               = T *;
+    using const_iterator         = const T *;
+    using reverse_iterator       = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-    constexpr Span() = default;
-    constexpr Span(T *ptr, size_type size) : mData(ptr), mSize(size) {}
+    // [span.cons], span constructors, copy, assignment, and destructor
+    constexpr Span() noexcept = default;
 
-    template <typename V,
-              typename = std::enable_if_t<std::remove_reference_t<V>::is_pool_allocated>>
-    constexpr Span(V &&vec) : mData(vec.data()), mSize(vec.size())
+    ANGLE_UNSAFE_BUFFER_USAGE constexpr Span(T *data, size_t size) noexcept
+        : data_(data), size_(size)
+    {
+        DCHECK(data_ || size_ == 0);
+    }
+
+    // TODO(dcheng): Implement construction from a |begin| and |end| pointer.
+    template <size_t N>
+    constexpr Span(T (&array)[N]) noexcept
+        // SAFETY: The type signature guarantees `array` contains `N` elements.
+        : ANGLE_UNSAFE_BUFFERS(Span(array, N))
+    {
+        static_assert(Extent == dynamic_extent || Extent == N);
+    }
+
+    template <size_t N>
+    constexpr Span(std::array<T, N> &array) noexcept
+        // SAFETY: The type signature guarantees `array` contains `N` elements.
+        : ANGLE_UNSAFE_BUFFERS(Span(array.data(), N))
+    {
+        static_assert(Extent == dynamic_extent || Extent == N);
+    }
+
+    template <size_t N>
+    constexpr Span(const std::array<T, N> &array) noexcept
+        // SAFETY: The type signature guarantees `array` contains `N` elements.
+        : ANGLE_UNSAFE_BUFFERS(Span(array.data(), N))
+    {
+        static_assert(Extent == dynamic_extent || Extent == N);
+    }
+
+    // Conversion from a container that provides |T* data()| and |integral_type
+    // size()|. Note that |data()| may not return nullptr for some empty
+    // containers, which can lead to container overflow errors when probing
+    // raw ptrs.
+    template <typename Container,
+              typename = internal::EnableIfSpanCompatibleContainer<Container, T>>
+    constexpr Span(Container &container)
+        // SAFETY: `size()` is the number of elements that can be safely accessed
+        // at `data()`.
+        : ANGLE_UNSAFE_BUFFERS(Span(container.data(), container.size()))
     {}
 
-    template <typename V,
-              typename = std::enable_if_t<std::remove_reference_t<V>::is_pool_allocated>>
-    constexpr Span &operator=(V &&vec)
+    template <typename Container,
+              typename = internal::EnableIfConstSpanCompatibleContainer<Container, T>>
+    constexpr Span(const Container &container)
+        // SAFETY: `size()` is exactly the number of elements in the initializer
+        // list, so accessing that many will be safe.
+        : ANGLE_UNSAFE_BUFFERS(Span(container.data(), container.size()))
+    {}
+
+    constexpr Span(const Span &other) noexcept = default;
+
+    // Conversions from spans of compatible types: this allows a Span<T> to be
+    // seamlessly used as a Span<const T>, but not the other way around.
+    template <typename U,
+              size_t M,
+              typename R,
+              typename = internal::EnableIfLegalSpanConversion<U, T>>
+    constexpr Span(const Span<U, M, R> &other)
+        // SAFETY: `size()` is the number of elements that can be safely accessed
+        // at `data()`.
+        : ANGLE_UNSAFE_BUFFERS(Span(other.data(), other.size()))
     {
-        mData = vec.data();
-        mSize = vec.size();
-        return *this;
+        static_assert(Extent == dynamic_extent || Extent == M,
+                      "Assigning to fixed span from incompatible span");
     }
 
-    constexpr bool operator==(const Span &that) const
+    Span &operator=(const Span &other) noexcept = default;
+    Span &operator=(Span &&other) noexcept      = default;
+
+    ~Span() noexcept = default;
+
+    template <typename U, size_t M>
+    bool operator==(const Span<U, M> &other) const
     {
-        if (mSize != that.mSize)
-        {
-            return false;
-        }
-
-        if (mData == that.mData)
-        {
-            return true;
-        }
-
-        for (size_type index = 0; index < mSize; ++index)
-        {
-            if (mData[index] != that.mData[index])
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return std::equal(begin(), end(), other.begin(), other.end());
     }
-    constexpr bool operator!=(const Span &that) const { return !(*this == that); }
-
-    constexpr T *data() const { return mData; }
-    constexpr size_type size() const { return mSize; }
-    constexpr bool empty() const { return mSize == 0; }
-
-    constexpr T &operator[](size_type index) const { return mData[index]; }
-    constexpr T &front() const { return mData[0]; }
-    constexpr T &back() const { return mData[mSize - 1]; }
-
-    constexpr T *begin() const { return mData; }
-    constexpr T *end() const { return mData + mSize; }
-
-    constexpr std::reverse_iterator<T *> rbegin() const
+    template <typename U, size_t M>
+    bool operator!=(const Span<U, M> &other) const
     {
-        return std::make_reverse_iterator(end());
-    }
-    constexpr std::reverse_iterator<T *> rend() const
-    {
-        return std::make_reverse_iterator(begin());
+        return !std::equal(begin(), end(), other.begin(), other.end());
     }
 
-    constexpr Span first(size_type count) const
+    // [span.sub], span subviews
+    template <size_t Count>
+    constexpr Span<T, Count> first() const
     {
-        ASSERT(count <= mSize);
-        return count == 0 ? Span() : Span(mData, count);
+        // TODO(tsepez): The following assert isn't yet good enough to replace
+        // the runtime check since we are still allowing unchecked conversions
+        // to arbitrary non-dynamic_extent spans.
+        static_assert(Extent == dynamic_extent || Count <= Extent);
+        CHECK(Count <= size_);
+        // SAFETY: CHECK() on line above.
+        return ANGLE_UNSAFE_BUFFERS(Span<T, Count>(data(), Count));
     }
-    constexpr Span last(size_type count) const
+    constexpr Span<T, dynamic_extent> first(size_t count) const
     {
-        ASSERT(count <= mSize);
-        return count == 0 ? Span() : Span(mData + mSize - count, count);
-    }
-    constexpr Span subspan(size_type offset, size_type count) const
-    {
-        ASSERT(offset + count <= mSize);
-        return count == 0 ? Span() : Span(mData + offset, count);
+        CHECK(count <= size_);
+        // SAFETY: CHECK() on line above.
+        return ANGLE_UNSAFE_BUFFERS(Span(static_cast<T *>(data_), count));
     }
 
-    constexpr Span subspan(size_type offset) const
+    template <size_t Count>
+    constexpr Span<T, Count> last() const
     {
-        ASSERT(offset <= mSize);
-        return offset == mSize ? Span() : Span(mData + offset, mSize - offset);
+        // TODO(tsepez): The following assert isn't yet good enough to replace
+        // the runtime check since we are still allowing unchecked conversions
+        // to arbitrary non-dynamic_extent spans.
+        static_assert(Extent == dynamic_extent || Count <= Extent);
+        CHECK(Count <= size_);
+        // SAFETY: CHECK() on line above.
+        return ANGLE_UNSAFE_BUFFERS(Span<T, Count>(data() + (size_ - Count), Count));
+    }
+    constexpr Span<T, dynamic_extent> last(size_t count) const
+    {
+        CHECK(count <= size_);
+        // SAFETY: CHECK() on line above.
+        return ANGLE_UNSAFE_BUFFERS(Span(static_cast<T *>(data_) + (size_ - count), count));
+    }
+
+    template <size_t Offset, size_t Count = dynamic_extent>
+    constexpr Span<T, dynamic_extent> subspan() const
+    {
+        // TODO(tsepez): The following check isn't yet good enough to replace
+        // the runtime check since we are still allowing unchecked conversions
+        // to arbitrary non-dynamic_extent spans.
+        static_assert(Extent == dynamic_extent || Count == dynamic_extent ||
+                      Offset + Count <= Extent);
+        return subspan(Offset, Count);
+    }
+    constexpr Span<T, dynamic_extent> subspan(size_t pos, size_t count = dynamic_extent) const
+    {
+        CHECK(pos <= size_);
+        CHECK(count == dynamic_extent || count <= size_ - pos);
+        // SAFETY: CHECK()s on lines above.
+        return ANGLE_UNSAFE_BUFFERS(
+            Span(static_cast<T *>(data_) + pos, count == dynamic_extent ? size_ - pos : count));
+    }
+
+    // [span.obs], span observers
+    constexpr size_t size() const noexcept { return size_; }
+    constexpr size_t size_bytes() const noexcept { return size() * sizeof(T); }
+    constexpr bool empty() const noexcept { return size_ == 0; }
+
+    // [span.elem], span element access
+    T &operator[](size_t index) const noexcept
+    {
+        CHECK(index < size_);
+        return ANGLE_UNSAFE_BUFFERS(static_cast<T *>(data_)[index]);
+    }
+
+    constexpr T &front() const noexcept
+    {
+        CHECK(!empty());
+        return *data();
+    }
+
+    constexpr T &back() const noexcept
+    {
+        CHECK(!empty());
+        return ANGLE_UNSAFE_BUFFERS(*(data() + size() - 1));
+    }
+
+    constexpr T *data() const noexcept { return static_cast<T *>(data_); }
+
+    // [span.iter], span iterator support
+    constexpr iterator begin() const noexcept { return static_cast<T *>(data_); }
+    constexpr iterator end() const noexcept { return ANGLE_UNSAFE_BUFFERS(begin() + size_); }
+
+    constexpr const_iterator cbegin() const noexcept { return begin(); }
+    constexpr const_iterator cend() const noexcept { return end(); }
+
+    constexpr reverse_iterator rbegin() const noexcept { return reverse_iterator(end()); }
+    constexpr reverse_iterator rend() const noexcept { return reverse_iterator(begin()); }
+
+    constexpr const_reverse_iterator crbegin() const noexcept
+    {
+        return const_reverse_iterator(cend());
+    }
+    constexpr const_reverse_iterator crend() const noexcept
+    {
+        return const_reverse_iterator(cbegin());
     }
 
   private:
-    T *mData     = nullptr;
-    size_t mSize = 0;
+    InternalPtr data_ = nullptr;
+    size_t size_      = 0;
 };
+
+// Deduction guides.
+template <typename T, size_t N>
+Span(T (&)[N]) -> Span<T, N>;
+
+template <typename T, size_t N>
+Span(const T (&)[N]) -> Span<const T, N>;
+
+template <typename T, size_t N>
+Span(std::array<T, N> &) -> Span<T, N>;
+
+template <typename T, size_t N>
+Span(const std::array<T, N> &) -> Span<const T, N>;
+
+template <typename T>
+Span(std::vector<T> &) -> Span<T>;
+
+template <typename T>
+Span(const std::vector<T> &) -> Span<const T>;
+
+// [span.objectrep], views of object representation
+template <typename T, size_t N, typename P>
+Span<const uint8_t> as_bytes(Span<T, N, P> s) noexcept
+{
+    // SAFETY: from size_bytes() method.
+    return ANGLE_UNSAFE_BUFFERS(
+        Span<const uint8_t>(reinterpret_cast<const uint8_t *>(s.data()), s.size_bytes()));
+}
+
+template <typename T,
+          size_t N,
+          typename P,
+          typename U = typename std::enable_if<!std::is_const<T>::value>::type>
+Span<uint8_t> as_writable_bytes(Span<T, N, P> s) noexcept
+{
+    // SAFETY: from size_bytes() method.
+    return ANGLE_UNSAFE_BUFFERS(
+        Span<uint8_t>(reinterpret_cast<uint8_t *>(s.data()), s.size_bytes()));
+}
+
+template <typename T, size_t N, typename P>
+Span<const char> as_chars(Span<T, N, P> s) noexcept
+{
+    // SAFETY: from size_bytes() method.
+    return ANGLE_UNSAFE_BUFFERS(
+        Span<const char>(reinterpret_cast<const char *>(s.data()), s.size_bytes()));
+}
+
+template <typename T,
+          size_t N,
+          typename P,
+          typename U = typename std::enable_if<!std::is_const<T>::value>::type>
+Span<char> as_writable_chars(Span<T, N, P> s) noexcept
+{
+    // SAFETY: from size_bytes() method.
+    return ANGLE_UNSAFE_BUFFERS(Span<char>(reinterpret_cast<char *>(s.data()), s.size_bytes()));
+}
+
+// `span_from_ref` converts a reference to T into a span of length 1.  This is a
+// non-std helper that is inspired by the `std::slice::from_ref()` function from
+// Rust.
+template <typename T>
+static constexpr Span<T> span_from_ref(T &single_object) noexcept
+{
+    // SAFETY: single object passed by reference.
+    return ANGLE_UNSAFE_BUFFERS(Span<T>(&single_object, 1u));
+}
+
+// `byte_span_from_ref` converts a reference to T into a span of uint8_t of
+// length sizeof(T).  This is a non-std helper that is a sugar for
+// `as_writable_bytes(span_from_ref(x))`.
+template <typename T>
+static constexpr Span<const uint8_t> byte_span_from_ref(const T &single_object) noexcept
+{
+    return as_bytes(span_from_ref(single_object));
+}
+template <typename T>
+static constexpr Span<uint8_t> byte_span_from_ref(T &single_object) noexcept
+{
+    return as_writable_bytes(span_from_ref(single_object));
+}
+
+// Convenience function for converting an object which is itself convertible
+// to span into a span of bytes (i.e. span of const uint8_t). Typically used
+// to convert std::string or string-objects holding chars, or std::vector
+// or vector-like objects holding other scalar types, prior to passing them
+// into an API that requires byte spans.
+template <typename T>
+Span<const uint8_t> as_byte_span(const T &arg)
+{
+    return as_bytes(Span(arg));
+}
+template <typename T>
+Span<const uint8_t> as_byte_span(T &&arg)
+{
+    return as_bytes(Span(arg));
+}
+
+// Convenience function for converting an object which is itself convertible
+// to span into a span of mutable bytes (i.e. span of uint8_t). Typically used
+// to convert std::string or string-objects holding chars, or std::vector
+// or vector-like objects holding other scalar types, prior to passing them
+// into an API that requires mutable byte spans.
+template <typename T>
+constexpr Span<uint8_t> as_writable_byte_span(T &&arg)
+{
+    return as_writable_bytes(Span(arg));
+}
 
 }  // namespace angle
 
-#endif  // COMMON_SPAN_
+#endif  // COMMON_SPAN_H_

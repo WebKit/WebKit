@@ -84,7 +84,9 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::MaxConstantBufferSize, 64 * 1024},
         {cl::DeviceInfo::SingleFpConfig, singleFPConfig},
         {cl::DeviceInfo::AtomicMemoryCapabilities,
-         CL_DEVICE_ATOMIC_ORDER_RELAXED | CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP},
+         CL_DEVICE_ATOMIC_ORDER_RELAXED | CL_DEVICE_ATOMIC_SCOPE_WORK_GROUP |
+             CL_DEVICE_ATOMIC_ORDER_ACQ_REL | CL_DEVICE_ATOMIC_SCOPE_DEVICE |
+             CL_DEVICE_ATOMIC_ORDER_SEQ_CST},
         // TODO (http://anglebug.com/379669750) Add these based on the Vulkan features query
         {cl::DeviceInfo::AtomicFenceCapabilities, CL_DEVICE_ATOMIC_ORDER_RELAXED |
                                                       CL_DEVICE_ATOMIC_ORDER_ACQ_REL |
@@ -260,6 +262,16 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
         versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(2, 0, 0),
                                                          .name    = "cl_khr_integer_dot_product"});
     }
+
+    // cl_khr_int64_base_atomics and cl_khr_int64_extended_atomics
+    if (mRenderer->getFeatures().supportsShaderAtomicInt64.enabled)
+    {
+        versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                                                         .name    = "cl_khr_int64_base_atomics"});
+        versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                                                         .name = "cl_khr_int64_extended_atomics"});
+    }
+
     info.initializeVersionedExtensions(std::move(versionedExtensionList));
 
     if (!mRenderer->getFeatures().supportsUniformBufferStandardLayout.enabled)
@@ -293,6 +305,13 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
             cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
                             .name    = "__opencl_c_integer_dot_product_input_4x8bit_packed"});
     }
+
+    info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                                                     .name    = "__opencl_c_atomic_order_acq_rel"});
+    info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                                                     .name    = "__opencl_c_atomic_order_seq_cst"});
+    info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                                                     .name    = "__opencl_c_atomic_scope_device"});
 
     return info;
 }

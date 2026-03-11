@@ -26,6 +26,20 @@ struct TMatrixFields
     int col;
 };
 
+struct ClipCullDistanceInfo
+{
+    // Whether the size is specified by redeclaring the built-in
+    uint32_t size = 0;
+    // What is the maximum constant index used with this built-in
+    int32_t maxIndex = -1;
+    // Whether any non-constant indices were used with this built-in
+    bool hasNonConstIndex = false;
+    // Whether .length() has been called on this built-in
+    bool hasArrayLengthMethodCall = false;
+    // A location to associate with post-parse errors
+    TSourceLoc firstEncounter = kNoSourceLoc;
+};
+
 //
 // The following are extra variables needed during parsing, grouped together so
 // they can be passed to the parser without needing a global.
@@ -49,6 +63,7 @@ class TParseContext : angle::NonCopyable
     void *getScanner() const { return mScanner; }
     void setScanner(void *scanner) { mScanner = scanner; }
     int getShaderVersion() const { return mShaderVersion; }
+    void onShaderVersionDeclared(int version);
     sh::GLenum getShaderType() const { return mShaderType; }
     ShShaderSpec getShaderSpec() const { return mShaderSpec; }
     int numErrors() const { return mDiagnostics->numErrors(); }
@@ -78,22 +93,6 @@ class TParseContext : angle::NonCopyable
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
     bool hasDiscard() const { return mHasDiscard; }
     bool isSampleQualifierSpecified() const { return mSampleQualifierSpecified; }
-
-    void setLoopNestingLevel(int loopNestintLevel) { mLoopNestingLevel = loopNestintLevel; }
-
-    void incrLoopNestingLevel(const TSourceLoc &line)
-    {
-        ++mLoopNestingLevel;
-        checkNestingLevel(line);
-    }
-    void decrLoopNestingLevel() { --mLoopNestingLevel; }
-
-    void incrSwitchNestingLevel(const TSourceLoc &line)
-    {
-        ++mSwitchNestingLevel;
-        checkNestingLevel(line);
-    }
-    void decrSwitchNestingLevel() { --mSwitchNestingLevel; }
 
     bool isComputeShaderLocalSizeDeclared() const { return mComputeShaderLocalSizeDeclared; }
     sh::WorkGroupSize getComputeShaderLocalSize() const;
@@ -242,6 +241,16 @@ class TParseContext : angle::NonCopyable
                                          const ImmutableString &identifier,
                                          TIntermTyped *initializer,
                                          const TSourceLoc &loc);
+
+    void beginNestedScope();
+    void endNestedScope();
+
+    void beginLoop(TLoopType loopType, const TSourceLoc &line);
+    void onLoopConditionBegin(TIntermNode *init, const TSourceLoc &line);
+    void onLoopConditionEnd(TIntermNode *condition, const TSourceLoc &line);
+    void onLoopContinueEnd(TIntermNode *statement, const TSourceLoc &line);
+    void onDoLoopBegin();
+    void onDoLoopConditionBegin();
     TIntermNode *addLoop(TLoopType type,
                          TIntermNode *init,
                          TIntermNode *cond,
@@ -251,6 +260,10 @@ class TParseContext : angle::NonCopyable
 
     // For "if" test nodes. There are three children: a condition, a true path, and a false path.
     // The two paths are in TIntermNodePair code.
+    void onIfTrueBlockBegin(TIntermTyped *cond, const TSourceLoc &loc);
+    void onIfTrueBlockEnd();
+    void onIfFalseBlockBegin();
+    void onIfFalseBlockEnd();
     TIntermNode *addIfElse(TIntermTyped *cond, TIntermNodePair code, const TSourceLoc &loc);
 
     void addFullySpecifiedType(TPublicType *typeSpecifier);
@@ -348,6 +361,7 @@ class TParseContext : angle::NonCopyable
     void parseParameterQualifier(const TSourceLoc &line,
                                  const TTypeQualifierBuilder &typeQualifierBuilder,
                                  TPublicType &type);
+    void addParameter(TFunction *function, TParameter *param);
 
     TIntermTyped *addIndexExpression(TIntermTyped *baseExpression,
                                      const TSourceLoc &location,
@@ -441,6 +455,7 @@ class TParseContext : angle::NonCopyable
 
     void checkIsBelowStructNestingLimit(const TSourceLoc &line, const TField &field);
 
+    void beginSwitch(const TSourceLoc &line, TIntermTyped *init);
     TIntermSwitch *addSwitch(TIntermTyped *init,
                              TIntermBlock *statementList,
                              const TSourceLoc &loc);
@@ -461,7 +476,10 @@ class TParseContext : angle::NonCopyable
                             TIntermTyped *left,
                             TIntermTyped *right,
                             const TSourceLoc &loc);
+    void onShortCircuitAndBegin(TIntermTyped *left, const TSourceLoc &loc);
+    void onShortCircuitOrBegin(TIntermTyped *left, const TSourceLoc &loc);
 
+    void onCommaLeftHandSideParsed(TIntermTyped *left);
     TIntermTyped *addComma(TIntermTyped *left, TIntermTyped *right, const TSourceLoc &loc);
 
     TIntermBranch *addBranch(TOperator op, const TSourceLoc &loc);
@@ -481,10 +499,27 @@ class TParseContext : angle::NonCopyable
     // has the arguments.
     TIntermTyped *addFunctionCallOrMethod(TFunctionLookup *fnCall, const TSourceLoc &loc);
 
+    void onTernaryConditionParsed(TIntermTyped *cond, const TSourceLoc &line);
+    void onTernaryTrueExpressionParsed(TIntermTyped *trueExpression, const TSourceLoc &line);
     TIntermTyped *addTernarySelection(TIntermTyped *cond,
                                       TIntermTyped *trueExpression,
                                       TIntermTyped *falseExpression,
                                       const TSourceLoc &line);
+
+    uint32_t getClipDistanceArraySize() const
+    {
+        return mClipDistanceInfo.size > 0 ? mClipDistanceInfo.size : mClipDistanceInfo.maxIndex + 1;
+    }
+    uint32_t getCullDistanceArraySize() const
+    {
+        return mCullDistanceInfo.size > 0 ? mCullDistanceInfo.size : mCullDistanceInfo.maxIndex + 1;
+    }
+    bool isClipDistanceRedeclared() const { return mClipDistanceInfo.size > 0; }
+    bool isCullDistanceRedeclared() const { return mCullDistanceInfo.size > 0; }
+    bool isClipDistanceUsed() const
+    {
+        return mClipDistanceInfo.maxIndex >= 0 || mClipDistanceInfo.hasNonConstIndex;
+    }
 
     int getGeometryShaderMaxVertices() const { return mGeometryShaderMaxVertices; }
     int getGeometryShaderInvocations() const
@@ -517,11 +552,6 @@ class TParseContext : angle::NonCopyable
         return mTessEvaluationShaderInputPointType;
     }
 
-    const TVector<TType *> &getDeferredArrayTypesToSize() const
-    {
-        return mDeferredArrayTypesToSize;
-    }
-
     void markShaderHasPrecise() { mHasAnyPreciseType = true; }
     bool hasAnyPreciseType() const { return mHasAnyPreciseType; }
     AdvancedBlendEquations getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
@@ -530,6 +560,11 @@ class TParseContext : angle::NonCopyable
 
     size_t getMaxExpressionComplexity() const { return mMaxExpressionComplexity; }
     size_t getMaxStatementDepth() const { return mMaxStatementDepth; }
+
+    // Pop the side effect of a statement when it's discarded, like when ; is encountered.
+    void endStatementWithValue(TIntermNode *statement);
+
+    bool postParseChecks();
 
     const ShCompileOptions &getCompileOptions() const { return mCompileOptions; }
 
@@ -563,6 +598,7 @@ class TParseContext : angle::NonCopyable
                          TVariable **variable);
 
     void checkNestingLevel(const TSourceLoc &line);
+    bool checkCase(const TSourceLoc &line, int64_t caseValue, const char *caseOrDefault);
 
     void checkCanBeDeclaredWithoutInitializer(const TSourceLoc &line,
                                               const ImmutableString &identifier,
@@ -681,6 +717,15 @@ class TParseContext : angle::NonCopyable
                                                               const TSourceLoc &location,
                                                               bool insertParametersToSymbolTable);
 
+    void checkESSL100ForLoopInit(TIntermNode *init, const TSourceLoc &line);
+    void checkESSL100ForLoopCondition(TIntermNode *condition, const TSourceLoc &line);
+    void checkESSL100ForLoopContinue(TIntermNode *statement, const TSourceLoc &line);
+    void checkESSL100NoLoopSymbolAssign(TIntermSymbol *symbol, const TSourceLoc &line);
+    void checkESSL100ConstantIndex(TIntermTyped *index, const TSourceLoc &line);
+    bool isESSL100ConstantLoopSymbol(TIntermSymbol *symbol);
+
+    void checkCallGraph();
+
     void setAtomicCounterBindingDefaultOffset(const TPublicType &declaration,
                                               const TSourceLoc &location);
 
@@ -691,6 +736,23 @@ class TParseContext : angle::NonCopyable
 
     bool parseTessControlShaderOutputLayoutQualifier(const TTypeQualifier &typeQualifier);
     bool parseTessEvaluationShaderInputLayoutQualifier(const TTypeQualifier &typeQualifier);
+
+    void sizeUnsizedArrayTypes(uint32_t arraySize);
+
+    enum class ControlFlowType
+    {
+        // Control flow nested under `if`.
+        If,
+        // Control flow nested under `for`, `while` or `do { ... } while`.
+        Loop,
+        // Control flow nested under `switch`.
+        Switch,
+        // Not a divergent control flow, but nested under a new `{}` scope.
+        NewScope,
+    };
+    bool isNestedIn(ControlFlowType type) const;
+    bool isDirectlyUnderSwitch() const;
+    void popControlFlow();
 
     // Certain operations become illegal only iff the shader declares pixel local storage uniforms.
     enum class PLSIllegalOperations
@@ -744,12 +806,9 @@ class TParseContext : angle::NonCopyable
     ShCompileOptions mCompileOptions;  // Options passed to TCompiler
     int mShaderVersion;
     TIntermBlock *mTreeRoot;  // root of parse tree being created
-    int mLoopNestingLevel;    // 0 if outside all loops
     int mStructNestingLevel;  // incremented while parsing a struct declaration
-    int mSwitchNestingLevel;  // 0 if outside all switch statements
-    const TType
-        *mCurrentFunctionType;    // the return type of the function that's currently being parsed
-    bool mFunctionReturnsValue;   // true if a non-void function has a return
+    const TFunction *mCurrentFunction;   // the function that's currently being parsed
+    bool mFunctionReturnsValue;          // true if a non-void function has a return
     bool mFragmentPrecisionHighOnESSL1;  // true if highp precision is supported when compiling
                                          // ESSL1.
     bool mEarlyFragmentTestsSpecified;   // true if layout(early_fragment_tests) in; is specified.
@@ -779,6 +838,12 @@ class TParseContext : angle::NonCopyable
     int mMinProgramTextureGatherOffset;
     int mMaxProgramTextureGatherOffset;
 
+    // keep track of clip/cull distance redeclaration, accessed indices, etc so that gl_ClipDistance
+    // and gl_CullDistance can be validated and sized at the end of compilation.
+    int mMaxCombinedClipAndCullDistances;
+    ClipCullDistanceInfo mClipDistanceInfo;
+    ClipCullDistanceInfo mCullDistanceInfo;
+
     // keep track of local group size declared in layout. It should be declared only once.
     bool mComputeShaderLocalSizeDeclared;
     sh::WorkGroupSize mComputeShaderLocalSize;
@@ -794,12 +859,78 @@ class TParseContext : angle::NonCopyable
     int mMaxAtomicCounterBufferSize;
     int mMaxShaderStorageBufferBindings;
     int mMaxPixelLocalStoragePlanes;
+    int mMaxFunctionParameters;
+    int mMaxCallStackDepth;
+
+    // keeps track of whether any of the built-ins that can be redeclared (see
+    // IsRedeclarableBuiltIn()) has been marked as invariant/precise before the possible
+    // redeclaration.
+    //
+    // If redeclared after being marked as invariant/precise, a compile error is generated.
+    // The GLSL spec does not explicitly call this out as invalid, but it's not a useful sequence
+    // of statements (invariant/precise could have been directly specified on the redeclaration),
+    // and there are no known users.
+    TUnorderedMap<TQualifier, bool> mBuiltInQualified;
 
     // keeps track whether we are declaring / defining a function
     bool mDeclaringFunction;
 
     // keeps track whether we are declaring / defining the function main().
     bool mDeclaringMain;
+    const TFunction *mMainFunction;
+    // Whether `return` has been observed in `main()`.  Used to validate barrier() in tessellation
+    // control shaders which are not allowed after `return`.
+    bool mIsReturnVisitedInMain;
+
+    // Track state related to control flow, used for various validation:
+    //
+    // * That case is within switch, continue is within loop, and break is within loop or switch
+    // * That the shader statements don't get too nested (based on `MaxStatementDepth`)
+    // * In tessellation control shaders, barrier() cannot be called in divergent control flow.
+    // * ESSL 1.0 limits restricts the shape of `for` loops (see Appendix A)
+    // * ESSL 1.0 limits array indices to `constant-index-expressions` (see Appendix A)
+    // * Rejection of obvious infinite loops with WebGL.
+    struct ControlFlow
+    {
+        ControlFlowType type;
+
+        // Used when validating ESSL 1.0 limitations for `for` loops.
+        TSymbolUniqueId forLoopSymbol = TSymbolUniqueId::kInvalid();
+        bool isForLoopSymbolConstant  = false;
+
+        // Used to detect and reject infinite loops with WebGL.
+        TSourceLoc loopLocation                          = kNoSourceLoc;
+        bool isLoopConditionConstantTrue                 = false;
+        const TVariable *loopConditionConstantTrueSymbol = nullptr;
+        bool hasBreak                                    = false;
+        bool hasReturn                                   = false;
+
+        // Used to detect and reject invalid `case` placements in a switch.
+        // int64_t is used to include both signed and unsigned case values (which are 32-bit).  The
+        // default case uses a number outside the [INT_MIN, UINT_MAX] range.
+        TBasicType switchType                      = EbtInt;
+        static constexpr int64_t kDefaultCaseLabel = std::numeric_limits<int64_t>::max();
+        TVector<int64_t> caseLabels;
+    };
+    std::vector<ControlFlow> mControlFlow;
+    // Whether ESSL 1.0 limitations in Appendix A must be enforced.
+    bool mValidateESSL100Limitations;
+    // Whether the variable is initialized to true, and never modified.  If this is used as a loop
+    // variable, where the loop doesn't have break or return, at the end of parse we can detect
+    // these loops as infinite loop.
+    TUnorderedSet<TSymbolUniqueId> mConstantTrueVariables;
+    struct PossiblyInfiniteLoop
+    {
+        TSourceLoc line;
+        const TVariable *loopVariable;
+    };
+    TVector<PossiblyInfiniteLoop> mPossiblyInfiniteLoops;
+
+    // Track the static call graph.  Static recursion is disallowed by GLSL.
+    TUnorderedMap<const TFunction *, TUnorderedSet<const TFunction *>> mCallGraph;
+    // Track functions that have been defined.  At the end of parse, if any
+    // function is called that's not in this list, it's a compile error.
+    TUnorderedSet<const TFunction *> mDefinedFunctions;
 
     // Track the state of each atomic counter binding.
     std::map<int, AtomicCounterBindingState> mAtomicCounterBindingStates;

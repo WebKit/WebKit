@@ -1260,6 +1260,8 @@ void StateManager11::syncState(const gl::Context *context,
                                 mInternalDirtyBits.set(DIRTY_BIT_RASTERIZER_STATE);
                             }
                             break;
+                        case gl::state::EXTENDED_DIRTY_BIT_FETCH_PER_SAMPLE_ENABLED:
+                            break;
                     }
                 }
                 break;

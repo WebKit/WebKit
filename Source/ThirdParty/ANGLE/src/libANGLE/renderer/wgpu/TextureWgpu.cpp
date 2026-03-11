@@ -18,6 +18,7 @@
 #include "libANGLE/renderer/wgpu/FramebufferWgpu.h"
 #include "libANGLE/renderer/wgpu/ImageWgpu.h"
 #include "libANGLE/renderer/wgpu/RenderTargetWgpu.h"
+#include "libANGLE/renderer/wgpu/UtilsWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 namespace rx
@@ -105,6 +106,12 @@ bool CanCopyWithTransferForTexImage(const webgpu::ImageHelper &srcImage,
     return !isViewportFlipY && isFormatCompatible &&
            (srcImage.getUsage() & WGPUTextureUsage_CopySrc) != 0 &&
            (dstUsage & WGPUTextureUsage_CopyDst) != 0;
+}
+
+bool CanCopyWithDraw(const webgpu::ImageHelper &srcImage, WGPUTextureUsage dstUsage)
+{
+    return (srcImage.getUsage() & WGPUTextureUsage_TextureBinding) != 0 &&
+           (dstUsage & WGPUTextureUsage_RenderAttachment) != 0;
 }
 
 }  // namespace
@@ -200,6 +207,7 @@ angle::Result TextureWgpu::copyImage(const gl::Context *context,
     const bool isCubeMap             = index.getType() == gl::TextureType::CubeMap;
     gl::LevelIndex levelIndex(index.getLevelIndex());
     const uint32_t layerIndex    = index.hasLayer() ? index.getLayerIndex() : 0;
+
     const uint32_t redefinedFace = isCubeMap ? layerIndex : 0;
     const uint32_t sourceFace    = isCubeMap ? colorReadRT->getLayer() : 0;
     const bool isSelfCopy        = mImage->getTexture().get() == srcImage->getTexture().get() &&
@@ -298,6 +306,25 @@ angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
         return mImage->CopyImage(contextWgpu, colorReadRT->getImage(), index, modifiedDestOffset,
                                  colorReadRT->getGlLevel(), colorReadRT->getLayer(),
                                  clippedSourceBox);
+    }
+
+    // If it's possible to perform the copy with a draw call, do that.
+    if (CanCopyWithDraw(*colorReadRT->getImage(), mImage->getUsage()))
+    {
+        webgpu::TextureViewHandle dstView;
+        ANGLE_TRY(mImage->createTextureViewSingleLevel(gl::LevelIndex(index.getLevelIndex()),
+                                                       index.hasLayer() ? index.getLayerIndex() : 0,
+                                                       dstView));
+
+        WGPUExtent3D size =
+            gl_wgpu::GetExtent3D(gl::Extents(clippedSourceBox.width, clippedSourceBox.height, 1));
+        const angle::Format &srcFormat =
+            angle::Format::Get(colorReadRT->getImage()->getIntendedFormatID());
+        const angle::Format &dstAngleFormat = dstFormat.getIntendedFormat();
+
+        return contextWgpu->getUtils()->copyImage(contextWgpu, colorReadRT->getTextureView(),
+                                                  dstView, size, isViewportFlipY, srcFormat.id,
+                                                  dstAngleFormat.id, dstActualFormatID);
     }
 
     return getImage()->copyImageCpuReadback(

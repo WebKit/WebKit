@@ -659,7 +659,7 @@ angle::Result ProgramD3D::linkJobImpl(d3d::Context *context,
     {
         const gl::SharedCompiledShaderState &shader =
             mState.getAttachedShader(gl::ShaderType::Compute);
-        executableD3D->mShaderHLSL[gl::ShaderType::Compute] = shader->translatedSource;
+        executableD3D->mShaderHLSL[gl::ShaderType::Compute] = *shader->translatedSource;
 
         executableD3D->mShaderSamplers[gl::ShaderType::Compute].resize(
             caps.maxShaderTextureImageUnits[gl::ShaderType::Compute]);

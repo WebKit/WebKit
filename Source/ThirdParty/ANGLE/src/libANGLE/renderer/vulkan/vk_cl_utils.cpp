@@ -106,8 +106,12 @@ VkImageViewType GetImageViewType(cl::MemObjectType memObjectType)
 
 VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags)
 {
-    // TODO: http://anglebug.com/42267018
     VkMemoryPropertyFlags propFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+
+    if (memFlags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR))
+    {
+        propFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+    }
 
     if (memFlags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR))
     {

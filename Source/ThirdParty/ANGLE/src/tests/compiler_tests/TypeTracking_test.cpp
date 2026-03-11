@@ -678,8 +678,8 @@ void main()
 )";
     const char kExpected[] = R"(0:2: Code block
 0:6:   Declaration
-0:? :     '' (structure 's2' (specifier))
-0:? :       member: 'i' (mediump int)
+0:?:     '' (structure 's2' (specifier))
+0:?:       member: 'i' (mediump int)
 0:10:   Declaration
 0:10:     initialize first child with second child (const structure 's1' (specifier))
 0:10:       's11' (const structure 's1' (specifier))

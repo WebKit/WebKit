@@ -20,18 +20,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Process;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 
 import androidx.core.graphics.Insets;
@@ -40,11 +36,13 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
+import com.android.angle.R;
+
+import java.lang.reflect.Method;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,17 +50,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import com.android.angle.R;
-
 public class MainFragment extends PreferenceFragmentCompat implements OnSharedPreferenceChangeListener
 {
 
     private final String TAG = this.getClass().getSimpleName();
     private final boolean DEBUG = false;
 
+    private boolean mIsAngleSystemDriver;
     private SharedPreferences mSharedPreferences;
     private SwitchPreference mShowAngleInUseSwitchPref;
-    private List<ListPreference> mApplicationListPreferences = new ArrayList<>();
 
     private GlobalSettings mGlobalSettings;
     private Receiver mRefreshReceiver = new Receiver();
@@ -86,6 +82,8 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(
                 getActivity().getApplicationContext());
+        final String eglDriver = getSystemProperty("ro.hardware.egl", "");
+        mIsAngleSystemDriver = eglDriver.equals("angle");
         if (DEBUG)
         {
             Map<String, ?> preferences = PreferenceManager
@@ -94,6 +92,7 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
             {
                 Log.d(TAG, key + ", " + preferences.get(key));
             }
+            Log.d(TAG, "ro.hardware.egl = " + eglDriver);
         }
         mGlobalSettings = new GlobalSettings(getContext(), mSharedPreferences, mInstalledPackages);
 
@@ -177,6 +176,17 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
         });
     }
 
+    private static String getSystemProperty(String key, String defaultValue) {
+        try {
+            Class<?> systemProperties = Class.forName("android.os.SystemProperties");
+            Method getMethod = systemProperties.getMethod("get", String.class, String.class);
+            return (String) getMethod.invoke(null, key, defaultValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return defaultValue;
+        }
+    }
+
     private void createInstalledAppsListPreference()
     {
         final String selectDriverCategoryKey =
@@ -184,12 +194,11 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
         final PreferenceCategory preferenceCategory =
                 (PreferenceCategory) findPreference(selectDriverCategoryKey);
         preferenceCategory.removeAll();
-        mApplicationListPreferences.clear();
 
         final Context context = preferenceCategory.getContext();
         for (PackageInfo packageInfo : mInstalledPackages)
         {
-            ListPreference listPreference = new ListPreference(context);
+            final ListPreference listPreference = new ListPreference(context);
             initListPreference(packageInfo, listPreference);
             preferenceCategory.addPreference(listPreference);
         }
@@ -251,14 +260,24 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
 
     private void initListPreference(PackageInfo packageInfo, ListPreference listPreference)
     {
-        CharSequence[] drivers = getResources().getStringArray(R.array.driver_values);
-        listPreference.setEntries(drivers);
-        listPreference.setEntryValues(drivers);
-
         final String packageName = packageInfo.packageName;
         listPreference.setKey(packageName);
         listPreference.setTitle(getAppName(packageInfo));
 
+        if (mIsAngleSystemDriver) {
+            // if ANGLE is the system driver set by the ro property, then we disable the option and
+            // show all apps using ANGLE, because both "native" and "angle" options will ends up
+            // loading ANGLE, allowing users to choose "native" but still loads ANGLE will create
+            // more confusion.
+            listPreference.setEnabled(false);
+            listPreference.setSummary(GlobalSettings.DRIVER_SELECTION_ANGLE);
+            listPreference.setValue(GlobalSettings.DRIVER_SELECTION_ANGLE);
+            return;
+        }
+
+        final CharSequence[] drivers = getResources().getStringArray(R.array.driver_values);
+        listPreference.setEntries(drivers);
+        listPreference.setEntryValues(drivers);
         final String driverSelectionValue = mSharedPreferences.getString(packageName,
                 GlobalSettings.DRIVER_SELECTION_DEFAULT);
         listPreference.setDefaultValue(driverSelectionValue);
@@ -281,7 +300,5 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
                 return true;
             }
         });
-
-        mApplicationListPreferences.add(listPreference);
     }
 }

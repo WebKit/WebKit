@@ -261,6 +261,7 @@ FramebufferStatus CheckAttachmentSampleCompleteness(const Context *context,
 {
     ASSERT(attachment.isAttached());
 
+    GLsizei currRenderToTextureSamples = attachment.getRenderToTextureSamples();
     if (attachment.type() == GL_TEXTURE)
     {
         const Texture *texture = attachment.getTexture();
@@ -292,10 +293,11 @@ FramebufferStatus CheckAttachmentSampleCompleteness(const Context *context,
     {
         // Only check against RenderToTextureSamples if they actually exist.
         if (renderToTextureSamples->value() !=
-            FramebufferAttachment::kDefaultRenderToTextureSamples)
+                FramebufferAttachment::kDefaultRenderToTextureSamples ||
+            currRenderToTextureSamples != FramebufferAttachment::kDefaultRenderToTextureSamples)
         {
             FramebufferStatus sampleCountStatus =
-                CheckAttachmentSampleCounts(context, attachment.getRenderToTextureSamples(),
+                CheckAttachmentSampleCounts(context, currRenderToTextureSamples,
                                             renderToTextureSamples->value(), colorAttachment);
             if (!sampleCountStatus.isComplete())
             {
@@ -312,7 +314,8 @@ FramebufferStatus CheckAttachmentSampleCompleteness(const Context *context,
     {
         // RenderToTextureSamples takes precedence if they exist.
         if (renderToTextureSamples->value() ==
-            FramebufferAttachment::kDefaultRenderToTextureSamples)
+                FramebufferAttachment::kDefaultRenderToTextureSamples ||
+            currRenderToTextureSamples == FramebufferAttachment::kDefaultRenderToTextureSamples)
         {
 
             FramebufferStatus sampleCountStatus = CheckAttachmentSampleCounts(

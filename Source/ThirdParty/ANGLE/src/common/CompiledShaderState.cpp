@@ -241,6 +241,7 @@ std::string JoinShaderSources(GLsizei count, const char *const *string, const GL
 CompiledShaderState::CompiledShaderState(gl::ShaderType type)
     : shaderType(type),
       shaderVersion(100),
+      translatedSource(std::make_shared<std::string>()),
       numViews(-1),
       geometryShaderInputPrimitiveType(gl::PrimitiveMode::Triangles),
       geometryShaderOutputPrimitiveType(gl::PrimitiveMode::Triangles),
@@ -257,8 +258,13 @@ CompiledShaderState::CompiledShaderState(gl::ShaderType type)
 
 CompiledShaderState::~CompiledShaderState() {}
 
+void CompiledShaderState::buildPassthroughCompiledShaderState(
+    std::shared_ptr<const std::string> inputShaderSource)
+{
+    translatedSource = inputShaderSource;
+}
+
 void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle,
-                                                   const std::string &inputShaderSource,
                                                    ShShaderOutput outputType)
 {
     switch (outputType)
@@ -266,11 +272,8 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
         case SH_SPIRV_VULKAN_OUTPUT:
             compiledBinary = sh::GetObjectBinaryBlob(compilerHandle);
             break;
-        case SH_NULL_OUTPUT:
-            translatedSource = inputShaderSource;
-            break;
         default:
-            translatedSource = sh::GetObjectCode(compilerHandle);
+            translatedSource = std::make_shared<std::string>(sh::GetObjectCode(compilerHandle));
             break;
     }
 
@@ -530,7 +533,7 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             UNREACHABLE();
     }
 
-    stream.writeString(translatedSource);
+    stream.writeString(*translatedSource);
     stream.writeVector(compiledBinary);
 }
 
@@ -716,7 +719,11 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             UNREACHABLE();
     }
 
-    stream.readString(&translatedSource);
+    {
+        std::string src;
+        stream.readString(&src);
+        translatedSource = std::make_shared<std::string>(std::move(src));
+    }
     stream.readVector(&compiledBinary);
 }
 }  // namespace gl

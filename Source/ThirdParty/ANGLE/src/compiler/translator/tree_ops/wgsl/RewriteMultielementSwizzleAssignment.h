@@ -38,7 +38,16 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
+// Can only be called if CanRewriteMultiElementSwizzleAssignmentEasily() returns true for all
+// multi-element swizzles assignments in the tree.
 [[nodiscard]] bool RewriteMultielementSwizzleAssignment(TCompiler *compiler, TIntermBlock *root);
+
+[[nodiscard]] bool IsMultielementSwizzleAssignment(TOperator op, TIntermTyped *assignedNode);
+
+[[nodiscard]] bool CanRewriteMultiElementSwizzleAssignmentEasily(
+    TIntermBinary *multielementSwizzleAssignment,
+    TIntermNode *parent);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_WGSL_REWRITE_MULTIELEMENTSWIZZLEASSIGNMENT_H_

@@ -1100,6 +1100,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     egl::Display *mDisplay;
     const bool mWebGLContext;
     bool mBufferAccessValidationEnabled;
+    bool mRequiresRobustBehavior;
     const bool mExtensionsEnabled;
     MemoryProgramCache *mMemoryProgramCache;
     MemoryShaderCache *mMemoryShaderCache;

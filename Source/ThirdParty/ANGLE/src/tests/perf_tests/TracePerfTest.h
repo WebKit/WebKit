@@ -40,6 +40,8 @@ struct TracePerfParams final : public RenderTestParams
         // Display the frame after every drawBenchmark invocation
         iterationsPerStep = 1;
 
+        trackGpuTime = gTrackGPUTime;
+
         driver                   = driverType;
         eglParameters.renderer   = platformType;
         eglParameters.deviceType = deviceType;

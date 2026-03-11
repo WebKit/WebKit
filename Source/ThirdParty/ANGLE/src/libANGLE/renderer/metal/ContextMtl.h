@@ -356,6 +356,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     void present(const gl::Context *context, id<CAMetalDrawable> presentationDrawable);
     angle::Result finishCommandBuffer();
 
+    void addCommandBufferScheduledCallback(std::function<void()> callback);
+
     // Check whether compatible render pass has been started. Compatible render pass is a render
     // pass having the same attachments, and possibly having different load/store options.
     bool hasStartedRenderPass(const mtl::RenderPassDesc &desc);

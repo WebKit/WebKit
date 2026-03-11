@@ -17,7 +17,7 @@ namespace sh
 class TInfoSinkBase;
 struct TSourceLoc;
 
-class TDiagnostics : public angle::pp::Diagnostics, angle::NonCopyable
+class TDiagnostics final : public angle::pp::Diagnostics, angle::NonCopyable
 {
   public:
     TDiagnostics(TInfoSinkBase &infoSink);
@@ -36,7 +36,7 @@ class TDiagnostics : public angle::pp::Diagnostics, angle::NonCopyable
 
     void resetErrorCount();
 
-  protected:
+  private:
     void writeInfo(Severity severity,
                    const angle::pp::SourceLocation &loc,
                    const char *reason,

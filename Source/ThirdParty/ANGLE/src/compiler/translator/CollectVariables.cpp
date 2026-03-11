@@ -467,72 +467,6 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
     {
         UNREACHABLE();
     }
-    else if (symbolName == "gl_DepthRange")
-    {
-        ASSERT(qualifier == EvqUniform);
-
-        if (!mDepthRangeAdded)
-        {
-            ShaderVariable info;
-            const char kName[] = "gl_DepthRange";
-            info.name          = kName;
-            info.mappedName    = kName;
-            info.type          = GL_NONE;
-            info.precision     = GL_NONE;
-            info.staticUse     = true;
-            info.active        = true;
-
-            ShaderVariable nearInfo(GL_FLOAT);
-            const char kNearName[] = "near";
-            nearInfo.name          = kNearName;
-            nearInfo.mappedName    = kNearName;
-            nearInfo.precision     = GL_HIGH_FLOAT;
-            nearInfo.staticUse     = true;
-            nearInfo.active        = true;
-
-            ShaderVariable farInfo(GL_FLOAT);
-            const char kFarName[] = "far";
-            farInfo.name          = kFarName;
-            farInfo.mappedName    = kFarName;
-            farInfo.precision     = GL_HIGH_FLOAT;
-            farInfo.staticUse     = true;
-            farInfo.active        = true;
-
-            ShaderVariable diffInfo(GL_FLOAT);
-            const char kDiffName[] = "diff";
-            diffInfo.name          = kDiffName;
-            diffInfo.mappedName    = kDiffName;
-            diffInfo.precision     = GL_HIGH_FLOAT;
-            diffInfo.staticUse     = true;
-            diffInfo.active        = true;
-
-            info.fields.push_back(nearInfo);
-            info.fields.push_back(farInfo);
-            info.fields.push_back(diffInfo);
-
-            mUniforms->push_back(info);
-            mDepthRangeAdded = true;
-        }
-    }
-    else if (symbolName == "gl_NumSamples")
-    {
-        ASSERT(qualifier == EvqNumSamples);
-
-        if (!mNumSamplesAdded)
-        {
-            ShaderVariable info;
-            const char kName[] = "gl_NumSamples";
-            info.name          = kName;
-            info.mappedName    = kName;
-            info.type          = GL_INT;
-            info.precision     = GL_LOW_INT;
-            info.staticUse     = true;
-            info.active        = true;
-
-            mUniforms->push_back(info);
-            mNumSamplesAdded = true;
-        }
-    }
     else
     {
         switch (qualifier)
@@ -635,6 +569,50 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             case EvqSecondaryFragDataEXT:
                 recordBuiltInFragmentOutputUsed(symbol->variable(), &mSecondaryFragDataEXTAdded);
                 return;
+            case EvqDepthRange:
+                if (!mDepthRangeAdded)
+                {
+                    ShaderVariable info;
+                    const char kName[] = "gl_DepthRange";
+                    info.name          = kName;
+                    info.mappedName    = kName;
+                    info.type          = GL_NONE;
+                    info.precision     = GL_NONE;
+                    info.staticUse     = true;
+                    info.active        = true;
+
+                    ShaderVariable nearInfo(GL_FLOAT);
+                    const char kNearName[] = "near";
+                    nearInfo.name          = kNearName;
+                    nearInfo.mappedName    = kNearName;
+                    nearInfo.precision     = GL_HIGH_FLOAT;
+                    nearInfo.staticUse     = true;
+                    nearInfo.active        = true;
+
+                    ShaderVariable farInfo(GL_FLOAT);
+                    const char kFarName[] = "far";
+                    farInfo.name          = kFarName;
+                    farInfo.mappedName    = kFarName;
+                    farInfo.precision     = GL_HIGH_FLOAT;
+                    farInfo.staticUse     = true;
+                    farInfo.active        = true;
+
+                    ShaderVariable diffInfo(GL_FLOAT);
+                    const char kDiffName[] = "diff";
+                    diffInfo.name          = kDiffName;
+                    diffInfo.mappedName    = kDiffName;
+                    diffInfo.precision     = GL_HIGH_FLOAT;
+                    diffInfo.staticUse     = true;
+                    diffInfo.active        = true;
+
+                    info.fields.push_back(nearInfo);
+                    info.fields.push_back(farInfo);
+                    info.fields.push_back(diffInfo);
+
+                    mUniforms->push_back(info);
+                    mDepthRangeAdded = true;
+                }
+                break;
             case EvqInvocationID:
                 recordBuiltInVaryingUsed(symbol->variable(), &mInvocationIDAdded, mInputVaryings);
                 break;
@@ -708,6 +686,23 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
             case EvqSampleMask:
                 recordBuiltInFragmentOutputUsed(symbol->variable(), &mSampleMaskAdded);
                 return;
+            case EvqNumSamples:
+                if (!mNumSamplesAdded)
+                {
+                    ShaderVariable info;
+                    const char kName[] = "gl_NumSamples";
+                    info.name          = kName;
+                    info.mappedName    = kName;
+                    info.type          = GL_INT;
+                    info.precision     = GL_LOW_INT;
+                    info.staticUse     = true;
+                    info.active        = true;
+
+                    // Note: gl_NumSamples is considered a uniform
+                    mUniforms->push_back(info);
+                    mNumSamplesAdded = true;
+                }
+                break;
             case EvqPatchVerticesIn:
                 recordBuiltInVaryingUsed(symbol->variable(), &mPatchVerticesInAdded,
                                          mInputVaryings);
@@ -1316,11 +1311,7 @@ bool CollectVariablesTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
         }
         else if (qualifier != EvqPixelLocalEXT)
         {
-
-            if (!namedBlock)
-            {
-                namedBlock = findNamedInterfaceBlock(interfaceBlock->name());
-            }
+            namedBlock = findNamedInterfaceBlock(interfaceBlock->name());
             ASSERT(namedBlock);
             ASSERT(namedBlock->staticUse);
             namedBlock->active      = true;

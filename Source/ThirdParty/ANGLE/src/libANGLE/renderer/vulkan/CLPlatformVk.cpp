@@ -78,17 +78,30 @@ CLPlatformImpl::Info CLPlatformVk::createInfo() const
     info.hostTimerRes = 0u;
     info.version      = GetVersion();
 
+    // check all devices to see which device-extensions can be promoted to platform-extensions
+    bool platformSupportsBaseInt64Atomics     = true;
+    bool platformSupportsExtendedInt64Atomics = true;
     CLExtensions::ExternalMemoryHandleBitset supportedHandles;
     supportedHandles.set();  // set support for all types initially
     for (const cl::DevicePtr &platformDevice : mPlatform.getDevices())
     {
+        platformSupportsBaseInt64Atomics &= platformDevice->getInfo().khrInt64BaseAtomics;
+        platformSupportsExtendedInt64Atomics &= platformDevice->getInfo().khrInt64ExtendedAtomics;
         supportedHandles &= platformDevice->getInfo().externalMemoryHandleSupport;
     }
 
-    // Populate other extensions based on feature support
     if (info.populateSupportedExternalMemoryHandleTypes(supportedHandles))
     {
         extList.push_back(cl_name_version{CL_MAKE_VERSION(1, 0, 0), "cl_khr_external_memory"});
+    }
+    if (platformSupportsBaseInt64Atomics)
+    {
+        extList.push_back(cl_name_version{CL_MAKE_VERSION(1, 0, 0), "cl_khr_int64_base_atomics"});
+    }
+    if (platformSupportsExtendedInt64Atomics)
+    {
+        extList.push_back(
+            cl_name_version{CL_MAKE_VERSION(1, 0, 0), "cl_khr_int64_extended_atomics"});
     }
 
     info.initializeVersionedExtensions(std::move(extList));

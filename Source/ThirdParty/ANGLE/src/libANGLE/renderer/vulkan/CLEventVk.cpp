@@ -11,7 +11,6 @@
 #endif
 
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
-#include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"
 
 #include "libANGLE/CLCommandQueue.h"
 

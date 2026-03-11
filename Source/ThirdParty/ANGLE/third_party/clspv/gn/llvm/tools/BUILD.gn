@@ -50,6 +50,7 @@ executable("clspv-tool-clang-tblgen") {
   ]
   sources = [
     "//$clspv_llvm_dir/clang/utils/TableGen/ASTTableGen.cpp",
+    "//$clspv_llvm_dir/clang/utils/TableGen/CIRLoweringEmitter.cpp",
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangASTNodesEmitter.cpp",
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangASTPropertiesEmitter.cpp",
     "//$clspv_llvm_dir/clang/utils/TableGen/ClangAttrEmitter.cpp",

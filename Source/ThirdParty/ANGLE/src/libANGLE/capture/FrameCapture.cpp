@@ -2698,6 +2698,7 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
 {
     const std::vector<gl::VertexAttribute> &vertexAttribs = vertexArray->getVertexAttributes();
     const std::vector<gl::VertexBinding> &vertexBindings  = vertexArray->getVertexBindings();
+    const gl::BufferManager &capturedBuffers = context->getState().getBufferManagerForCapture();
 
     gl::AttributesMask vertexPointerBindings;
 
@@ -2726,10 +2727,18 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
             }
         }
 
+        gl::BufferID bufferID = {0};
+        if (buffer)
+        {
+            bufferID = buffer->id();
+        }
+
         // Don't capture CaptureVertexAttribPointer calls when a non-default VAO is bound, the array
         // buffer is null and a non-null attrib pointer is used.
         bool skipInvalidAttrib =
-            vertexArray->id().value != 0 && buffer == nullptr && attrib.pointer != nullptr;
+            vertexArray->id().value != 0 &&
+            (buffer == nullptr || !capturedBuffers.isHandleGenerated(bufferID)) &&
+            attrib.pointer != nullptr;
 
         if (!skipInvalidAttrib &&
             (attrib.format != defaultAttrib.format || attrib.pointer != defaultAttrib.pointer ||
@@ -2741,11 +2750,6 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
             {
                 replayState->setBufferBinding(context, gl::BufferBinding::Array, buffer);
 
-                gl::BufferID bufferID = {0};
-                if (buffer)
-                {
-                    bufferID = buffer->id();
-                }
                 Capture(setupCalls,
                         CaptureBindBuffer(*replayState, true, gl::BufferBinding::Array, bufferID));
             }

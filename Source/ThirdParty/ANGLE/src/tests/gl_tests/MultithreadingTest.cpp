@@ -286,6 +286,9 @@ TEST_P(MultithreadingTest, MultiContextDeleteDraw)
 
             EXPECT_EGL_TRUE(eglDestroyContext(dpy, ctx2));
             EXPECT_EGL_TRUE(eglDestroyContext(dpy, ctx1));
+
+            // Clean up
+            EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
         }
     });
 
@@ -329,6 +332,9 @@ TEST_P(MultithreadingTest, MultiContextDeleteDraw)
                 glDrawArrays(GL_TRIANGLES, 0, 6);
             }
         }
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     });
 
     t1.join();
@@ -828,6 +834,9 @@ TEST_P(MultithreadingTest, EGLImageProduceConsume)
         }
 
         eglDestroyContext(dpy, ctx);
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     });
 
     std::thread consumerThread([&]() {
@@ -896,6 +905,9 @@ TEST_P(MultithreadingTest, EGLImageProduceConsume)
             }
         }
         eglDestroyContext(dpy, ctx);
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     });
 
     producerThread.join();
@@ -1227,6 +1239,9 @@ TEST_P(MultithreadingTest, CreateFenceThreadAClientWaitSyncThreadBDelayedFlush)
         constexpr GLuint64 kTimeout = 2'000'000'000;  // 2 seconds
         threadSynchronization.nextStep(Step::Thread0ClientWaitSync);
         ASSERT_EQ(EGL_CONDITION_SATISFIED_KHR, eglClientWaitSyncKHR(dpy, sync, 0, kTimeout));
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
     };
@@ -3056,6 +3071,9 @@ TEST_P(MultithreadingTestES3, MultithreadedTextureUploadAndDraw)
         glFlush();
         ASSERT_NE(sync, nullptr);
 
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
         threadSynchronization.nextStep(Step::Thread0UploadFinish);
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
     };
@@ -3086,6 +3104,9 @@ TEST_P(MultithreadingTestES3, MultithreadedTextureUploadAndDraw)
         glFlush();
         ASSERT_GL_NO_ERROR();
         EXPECT_PIXEL_RECT_EQ(0, 0, kTexSize, kTexSize, GLColor::green);
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
         threadSynchronization.nextStep(Step::Finish);
     };
@@ -3216,6 +3237,9 @@ TEST_P(MultithreadingTestES3, CreateNewContextAfterTextureUploadOnMainThread)
 
         // Destroy the context.
         EXPECT_EGL_TRUE(eglDestroyContext(dpy, ctx1));
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     });
 
     thread.join();
@@ -3373,6 +3397,9 @@ void main()
         ASSERT_NE(sync, nullptr);
         ASSERT_GL_NO_ERROR();
 
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
         threadSynchronization.nextStep(Step::Thread0UploadFinish);
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
     };
@@ -3492,6 +3519,9 @@ void main()
             EXPECT_PIXEL_NE(x * w / 8, h / 4, 0, 0, 0, 0);
         }
         ASSERT_GL_NO_ERROR();
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     };
 
     std::array<LockStepThreadFunc, 2> threadFuncs = {
@@ -3595,6 +3625,9 @@ void main()
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
         ASSERT_GL_NO_ERROR();
 
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
         threadSynchronization.nextStep(Step::Finish);
     };
 
@@ -3643,6 +3676,9 @@ void main()
         // Verify results
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
         ASSERT_GL_NO_ERROR();
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
         // Tell the other thread to finish up.
         threadSynchronization.nextStep(Step::Thread1FinishedDrawing);
@@ -3724,6 +3760,9 @@ TEST_P(MultithreadingTestES3, SharedFoveatedTexture)
         glTextureFoveationParametersQCOM(texture, 0, 0, 0.0f, 0.0f, 8.0f, 8.0f, 0.0f);
         EXPECT_GL_NO_ERROR();
 
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
         threadSynchronization.nextStep(Step::Thread0ConfiguredTextureFoveation);
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
     };
@@ -3769,6 +3808,9 @@ TEST_P(MultithreadingTestES3, SharedFoveatedTexture)
         // Verify results
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
         ASSERT_GL_NO_ERROR();
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
         threadSynchronization.nextStep(Step::Finish);
     };
@@ -3969,6 +4011,9 @@ TEST_P(MultithreadingTest, ProgramLinkAndBind)
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
         ASSERT_GL_NO_ERROR();
 
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
         threadSynchronization.nextStep(Step::Finish);
     };
 
@@ -4003,6 +4048,9 @@ TEST_P(MultithreadingTest, ProgramLinkAndBind)
         // Verify results
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
         ASSERT_GL_NO_ERROR();
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
         // Tell the other thread to finish up.
         threadSynchronization.nextStep(Step::Thread1FinishedDrawing);
@@ -4123,6 +4171,9 @@ void main()
         verify(kSurfaceWidth / 2, kSurfaceHeight / 2);
         ASSERT_GL_NO_ERROR();
 
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
         if (index == 0)
         {
             threadSynchronization.nextStep(Step::Finish);
@@ -4224,6 +4275,9 @@ void main()
         }
         ASSERT_GL_NO_ERROR();
 
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
         threadSynchronization.nextStep(Step::Finish);
     };
     auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
@@ -4253,6 +4307,9 @@ void main()
         const GLColor expect(10, 50, 130, 220);
         EXPECT_PIXEL_RECT_EQ(0, 0, kSurfaceWidth, kSurfaceHeight, expect);
         ASSERT_GL_NO_ERROR();
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
     };

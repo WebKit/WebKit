@@ -548,6 +548,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo forceSubmitExceptionsAtFBOBoundary = {
+        "forceSubmitExceptionsAtFBOBoundary",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
     FeatureInfo useMultipleDescriptorsForExternalFormats = {
         "useMultipleDescriptorsForExternalFormats",
         FeatureCategory::VulkanWorkarounds,
@@ -1565,6 +1571,30 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo externallySynchronizePipelineCacheAccess = {
         "externallySynchronizePipelineCacheAccess",
         FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
+    FeatureInfo supportShaderPixelLocalStorageAngle = {
+        "supportShaderPixelLocalStorageAngle",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo debugClDumpCommandStream = {
+        "debugClDumpCommandStream",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsShaderAtomicInt64 = {
+        "supportsShaderAtomicInt64",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo forceSizePointerForBoundVertexBuffers = {
+        "forceSizePointerForBoundVertexBuffers",
+        FeatureCategory::VulkanFeatures,
         &members,
     };
 

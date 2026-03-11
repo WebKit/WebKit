@@ -265,6 +265,65 @@ FilterMode FromCLenum<FilterMode>(CLenum from);
 CLenum ToCLenum(FilterMode from);
 std::ostream &operator<<(std::ostream &os, FilterMode value);
 
+enum class ImageChannelOrder : uint8_t
+{
+    R         = 0,
+    A         = 1,
+    RG        = 2,
+    RA        = 3,
+    RGB       = 4,
+    RGBA      = 5,
+    BGRA      = 6,
+    ARGB      = 7,
+    Intensity = 8,
+    Luminance = 9,
+    Rx        = 10,
+    RGx       = 11,
+    RGBx      = 12,
+    Depth     = 13,
+    sRGB      = 14,
+    sRGBx     = 15,
+    sRGBA     = 16,
+    sBGRA     = 17,
+    ABGR      = 18,
+
+    InvalidEnum = 19,
+    EnumCount   = 19,
+};
+
+template <>
+ImageChannelOrder FromCLenum<ImageChannelOrder>(CLenum from);
+CLenum ToCLenum(ImageChannelOrder from);
+std::ostream &operator<<(std::ostream &os, ImageChannelOrder value);
+
+enum class ImageChannelType : uint8_t
+{
+    SnormInt8        = 0,
+    SnormInt16       = 1,
+    UnormInt8        = 2,
+    UnormInt16       = 3,
+    UnormShort565    = 4,
+    UnormShort555    = 5,
+    UnormInt101010   = 6,
+    SignedInt8       = 7,
+    SignedInt16      = 8,
+    SignedInt32      = 9,
+    UnsignedInt8     = 10,
+    UnsignedInt16    = 11,
+    UnsignedInt32    = 12,
+    HalfFloat        = 13,
+    Float            = 14,
+    UnormInt101010_2 = 15,
+
+    InvalidEnum = 16,
+    EnumCount   = 16,
+};
+
+template <>
+ImageChannelType FromCLenum<ImageChannelType>(CLenum from);
+CLenum ToCLenum(ImageChannelType from);
+std::ostream &operator<<(std::ostream &os, ImageChannelType value);
+
 enum class ImageInfo : uint8_t
 {
     Format       = 0,

@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "common/PackedCLEnums_autogen.h"
+#include "common/SimpleMutex.h"
 #include "common/hash_containers.h"
 
 #include "libANGLE/CLBuffer.h"
@@ -189,15 +190,81 @@ class DispatchWorkThread
     SerialIndex mQueueSerialIndex;
 };
 
-struct CommandsState
+// CommandsStateMap captures all the objects that need post-processing once the submitted job on
+// them has finished. All the objects take a refcount to ensure they are alive until the command is
+// finished.
+class CommandsStateMap
 {
-    cl::EventPtrs events;
-    cl::MemoryPtrs memories;
-    cl::KernelPtrs kernels;
-    cl::SamplerPtrs samplers;
-    HostTransferEntries hostTransferList;
+  public:
+    CommandsStateMap()  = default;
+    ~CommandsStateMap() = default;
+
+    void addPrintfBuffer(const QueueSerial queueSerial, cl::Memory *printfBuffer)
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        mCommandsState[queueSerial].mPrintfBuffer = cl::MemoryPtr(printfBuffer);
+    }
+    void addMemory(const QueueSerial queueSerial, cl::Memory *mem)
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        mCommandsState[queueSerial].mMemories.emplace_back(mem);
+    }
+    void addEvent(const QueueSerial queueSerial, cl::EventPtr event)
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        mCommandsState[queueSerial].mEvents.push_back(event);
+    }
+    void addKernel(const QueueSerial queueSerial, cl::Kernel *kernel)
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        mCommandsState[queueSerial].mKernels.emplace_back(kernel);
+    }
+    void addSampler(const QueueSerial queueSerial, cl::SamplerPtr sampler)
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        mCommandsState[queueSerial].mSamplers.push_back(sampler);
+    }
+    void addHostTransferEntry(const QueueSerial queueSerial, HostTransferEntry hostTransferEntry)
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        mCommandsState[queueSerial].mHostTransferList.push_back(hostTransferEntry);
+    }
+    void erase(const QueueSerial queueSerial)
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        mCommandsState.erase(queueSerial);
+    }
+    void clear()
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        mCommandsState.clear();
+    }
+    cl::MemoryPtr getPrintfBuffer(const QueueSerial queueSerial)
+    {
+        std::unique_lock<angle::SimpleMutex> ul(mMutex);
+        return mCommandsState[queueSerial].mPrintfBuffer;
+    }
+
+    angle::Result setEventsWithQueueSerialToState(const QueueSerial &queueSerial,
+                                                  cl::ExecutionStatus executionStatus);
+    angle::Result processQueueSerial(const QueueSerial queueSerial);
+
+  private:
+    struct CommandsState
+    {
+        cl::EventPtrs mEvents;
+        cl::MemoryPtrs mMemories;
+        cl::KernelPtrs mKernels;
+        cl::SamplerPtrs mSamplers;
+        cl::MemoryPtr mPrintfBuffer;
+        HostTransferEntries mHostTransferList;
+    };
+
+    // The entries are added and removed in different threads, so protect the map during insertion
+    // and removal.
+    angle::SimpleMutex mMutex;
+    angle::HashMap<QueueSerial, CommandsState> mCommandsState;
 };
-using CommandsStateMap = angle::HashMap<QueueSerial, CommandsState>;
 
 }  // namespace
 
@@ -438,8 +505,10 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     // event status updates etc. This is a blocking call.
     angle::Result finishQueueSerialInternal(const QueueSerial queueSerial);
 
-    angle::Result syncPendingHostTransfers(HostTransferEntries &hostTransferList);
+    // Flush commands recorded in this queue's secondary command buffer to renderer primary command
+    // buffer.
     angle::Result flushComputePassCommands();
+
     angle::Result processWaitlist(const cl::EventPtrs &waitEvents);
     angle::Result preEnqueueOps(cl::EventPtr &event, cl::ExecutionStatus initialStatus);
     angle::Result postEnqueueOps(const cl::EventPtr &event);
@@ -453,7 +522,6 @@ class CLCommandQueueVk : public CLCommandQueueImpl
         return angle::Result::Continue;
     }
 
-    angle::Result processPrintfBuffer();
     angle::Result copyImageToFromBuffer(CLImageVk &imageVk,
                                         CLBufferVk &buffer,
                                         VkBufferImageCopy copyRegion,
@@ -471,6 +539,8 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     angle::Result addMemoryDependencies(cl::Memory *mem, MemoryHandleAccess access);
 
     angle::Result submitEmptyCommand();
+
+    void addCommandBufferDiagnostics(const std::string &addCommandBufferDiagnostics);
 
     CLContextVk *mContext;
     const CLDeviceVk *mDevice;
@@ -494,12 +564,9 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     angle::HashSet<cl::Object *> mReadDependencyTracker;
 
     CommandsStateMap mCommandsStateMap;
-    angle::Result setEventsWithQueueSerialToState(const QueueSerial &queueSerial,
-                                                  cl::ExecutionStatus state);
 
     // printf handling
     bool mNeedPrintfHandling;
-    const angle::HashMap<uint32_t, ClspvPrintfInfo> *mPrintfInfos;
 
     // Host buffer transferring routines
     template <class T>
@@ -508,6 +575,8 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     angle::Result addToHostTransferList(CLImageVk *srcImage, HostTransferConfig<T> transferEntry);
 
     DispatchWorkThread mFinishHandler;
+
+    std::vector<std::string> mCommandBufferDiagnostics;
 };
 
 }  // namespace rx

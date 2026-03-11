@@ -130,13 +130,13 @@ class CreateWGPUShaderModuleTask : public LinkSubTask
         if (shaderType == gl::ShaderType::Vertex)
         {
             finalShaderSource = webgpu::WgslAssignLocationsAndSamplerBindings(
-                mExecutable, mCompiledShaderState->translatedSource, mExecutable.getProgramInputs(),
-                mMergedVaryings, shaderType);
+                mExecutable, *mCompiledShaderState->translatedSource,
+                mExecutable.getProgramInputs(), mMergedVaryings, shaderType);
         }
         else if (shaderType == gl::ShaderType::Fragment)
         {
             finalShaderSource = webgpu::WgslAssignLocationsAndSamplerBindings(
-                mExecutable, mCompiledShaderState->translatedSource,
+                mExecutable, *mCompiledShaderState->translatedSource,
                 mExecutable.getOutputVariables(), mMergedVaryings, shaderType);
         }
         else

@@ -927,7 +927,6 @@ void Program::setupExecutableForLink(const Context *context)
         mState.mShaderCompileJobs[shaderType] = std::move(compileJob);
         mState.mAttachedShaders[shaderType]   = std::move(shaderCompiledState);
     }
-    mProgram->prepareForLink(shaderImpls);
 
     const angle::FrontendFeatures &frontendFeatures = context->getFrontendFeatures();
     if (frontendFeatures.dumpShaderSource.enabled)
@@ -951,6 +950,13 @@ void Program::setupExecutableForLink(const Context *context)
     mState.mExecutable->mPod.isSeparable                 = mState.mSeparable;
 
     mState.mInfoLog.reset();
+
+    mProgram->prepareForLink(shaderImpls);
+
+    if (context->getState().usesPassthroughShaders())
+    {
+        mProgram->prepareForPassthroughLink(&mState.mAttachedShaders);
+    }
 }
 
 void Program::syncExecutableOnSuccessfulLink()
@@ -1520,7 +1526,7 @@ angle::Result Program::getBinary(Context *context,
         // release the memory.  Note that implicit caching to blob cache is disabled when the
         // GL_PROGRAM_BINARY_RETRIEVABLE_HINT is set.  If that hint is not set, serialization is
         // done twice, which is what the perf warning above is about!
-        mBinary.clear();
+        mBinary.destroy();
     }
 
     if (length)
@@ -2410,7 +2416,7 @@ void Program::cacheProgramBinaryIfNotAlready(const Context *context)
 
         // Drop the binary; the application didn't specify that it wants to retrieve the binary.  If
         // it did, we wouldn't be implicitly caching it.
-        mBinary.clear();
+        mBinary.destroy();
     }
 
     mIsBinaryCached = true;

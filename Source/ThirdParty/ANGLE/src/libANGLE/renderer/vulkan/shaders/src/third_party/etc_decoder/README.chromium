@@ -3,6 +3,7 @@ Short Name: Granite
 URL: https://github.com/Themaister/Granite
 Version: N/A
 Revision: cbc9cc966d2b3cae8906d2d30e761904342b5aba
+Update Mechanism: Manual
 License: MIT
 License File: LICENSE
 Security Critical: No
@@ -16,4 +17,3 @@ Local Modifications:
     add punchthrough parameter for DecodeRGB.
     add R11 macro for EAC_R11 decode.
     rename ALPHA_BITS to alphaBits.
-

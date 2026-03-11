@@ -9,6 +9,7 @@
 #include "common/log_utils.h"
 #include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/Common.h"
+#include "compiler/translator/ImmutableString.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/Types.h"
@@ -359,6 +360,35 @@ GlobalVars FindGlobalVars(TIntermBlock *root)
         }
     }
     return globals;
+}
+
+WgslPointerAddressSpace GetWgslAddressSpaceForPointer(const TType &type)
+{
+    switch (type.getQualifier())
+    {
+        case EvqTemporary:
+        // NOTE: As of Sept 2025, parameters are immutable in WGSL (and are handled by an AST pass
+        // that copies parameters to temporaries). Include these here in case parameters become
+        // mutable in the future.
+        case EvqParamIn:
+        case EvqParamOut:
+        case EvqParamInOut:
+            return WgslPointerAddressSpace::Function;
+        default:
+            // EvqGlobal and various other shader outputs/builtins are all globals.
+            return WgslPointerAddressSpace::Private;
+    }
+}
+
+ImmutableString StringForWgslPointerAddressSpace(WgslPointerAddressSpace as)
+{
+    switch (as)
+    {
+        case WgslPointerAddressSpace::Function:
+            return ImmutableString("function");
+        case WgslPointerAddressSpace::Private:
+            return ImmutableString("private");
+    }
 }
 
 }  // namespace sh

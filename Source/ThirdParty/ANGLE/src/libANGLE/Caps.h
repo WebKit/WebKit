@@ -718,6 +718,9 @@ struct DisplayExtensions
     // EGL_ANGLE_metal_shared_event_sync
     bool mtlSyncSharedEventANGLE = false;
 
+    // EGL_ANGLE_metal_commands_scheduled_sync
+    bool mtlSyncCommandsScheduledANGLE = false;
+
     // EGL_ANGLE_global_fence_sync
     bool globalFenceSyncANGLE = false;
 

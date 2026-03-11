@@ -988,6 +988,9 @@ angle::Result VertexArrayGL::syncDirtyBinding(
                 ANGLE_TRY(updateBindingDivisor(context, bindingIndex));
                 break;
 
+            case VertexArray::DIRTY_BINDING_SIZE:
+                break;
+
             default:
                 UNREACHABLE();
                 break;

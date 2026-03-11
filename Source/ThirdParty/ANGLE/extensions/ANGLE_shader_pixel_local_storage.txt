@@ -145,6 +145,12 @@ Overview
           synchronously and in API primitive order. No barriers are required and
           render passes can emit overlapping fragments.
 
+          Because raster ordering may come at a performance cost on some
+          platforms, an application may opt out of coherent pixel local storage
+          by using the "noncoherent" layout qualifier on a plane-by-plane basis.
+          When using "noncoherent", the former restrictions and barrier
+          requirements apply.
+
     Some implementations may support GL_ANGLE_shader_pixel_local_storage without
     supporting GL_ANGLE_shader_pixel_local_storage_coherent.
 
@@ -539,10 +545,10 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
   Section 2.X.1 "Non-coherent Pixel Local Storage"
 
-    When GL_ANGLE_shader_pixel_local_storage_coherent is _not_ supported, and
-    pixel local storage is active, applications must also split their rendering
-    of pixel local storage into separate passes, none of which touch an
-    individual pixel more than once. The command:
+    When GL_ANGLE_shader_pixel_local_storage_coherent is _not_ supported, or
+    when accessing planes that use the "noncoherent" layout qualifier,
+    applications must split their rendering of pixel local storage into separate
+    passes, none of which touch an individual pixel more than once. The command:
 
       void PixelLocalStorageBarrierANGLE()
 
@@ -993,6 +999,7 @@ Interactions with the ANGLE_request_extension specification
       * EXT_draw_buffers_indexed
       * EXT_color_buffer_float
       * EXT_color_buffer_half_float
+      * EXT_shader_framebuffer_fetch_non_coherent
       * ANGLE_shader_pixel_local_storage_coherent
       * ANGLE_shader_pixel_local_storage
 
@@ -1155,13 +1162,19 @@ Additions to the OpenGL ES Shading Language Specification, Version 3.00
       layout-qualifier-id
         binding = <integer-constant>
         <format>
+        noncoherent
 
     Acceptable identifiers for <format> are enumerated in Table X.3.
 
     It is a compile-time error to declare a pixel local storage uniform that
-    does not specify both of these layout qualifiers, or to specify a format
-    layout qualifier on any type other than that format's corresponding "Pixel
-    Local Type", as enumerated in Table X.3.
+    does not specify both the binding and format layout qualifiers, or to
+    specify a format layout qualifier on any type other than that format's
+    corresponding "Pixel Local Type", as enumerated in Table X.3.
+
+    If noncoherent is specified, any raster ordering guarantees are relaxed when
+    accessing the given plane, and the application is always responsible to
+    issue PixelLocalStorageBarrierANGLE() commands between overlapping
+    fragments.
 
   Modify Section 8 "Built-in Functions"
 

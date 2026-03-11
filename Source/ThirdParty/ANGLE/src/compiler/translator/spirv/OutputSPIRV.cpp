@@ -393,7 +393,7 @@ class OutputSPIRVTraverser : public TIntermTraverser
     // - TVariable, or
     // - TInterfaceBlock: because TIntermSymbols referencing a field of an unnamed interface block
     //   don't reference the TVariable that defines the struct, but the TInterfaceBlock itself.
-    angle::HashMap<const TSymbol *, spirv::IdRef> mSymbolIdMap;
+    angle::HashMap<TSymbolUniqueId, spirv::IdRef> mSymbolIdMap;
 
     // A map of TFunction to its various SPIR-V ids.
     angle::HashMap<const TFunction *, FunctionIds> mFunctionIdMap;
@@ -544,7 +544,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
                                                               spv::StorageClass *storageClass)
 {
     *storageClass = GetStorageClass(mCompileOptions, type, mCompiler->getShaderType());
-    auto iter     = mSymbolIdMap.find(symbol);
+    auto iter     = mSymbolIdMap.find(symbol->uniqueId());
     if (iter != mSymbolIdMap.end())
     {
         return iter->second;
@@ -761,7 +761,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
             break;
     }
 
-    mSymbolIdMap.insert({symbol, varId});
+    mSymbolIdMap.insert({symbol->uniqueId(), varId});
     return varId;
 }
 
@@ -1233,8 +1233,8 @@ void OutputSPIRVTraverser::declareConst(TIntermDeclaration *decl)
                        initializer->isConstantNullValue());
 
     // Remember the id of the variable for future look up.
-    ASSERT(mSymbolIdMap.count(variable) == 0);
-    mSymbolIdMap[variable] = constId;
+    ASSERT(mSymbolIdMap.count(variable->uniqueId()) == 0);
+    mSymbolIdMap.emplace(variable->uniqueId(), constId);
 
     if (!mInGlobalScope)
     {
@@ -1267,8 +1267,8 @@ void OutputSPIRVTraverser::declareSpecConst(TIntermDeclaration *decl)
         type.getBasicType(), type.getLayoutQualifier().location, mBuilder.getName(variable).data());
 
     // Remember the id of the variable for future look up.
-    ASSERT(mSymbolIdMap.count(variable) == 0);
-    mSymbolIdMap[variable] = specConstId;
+    ASSERT(mSymbolIdMap.count(variable->uniqueId()) == 0);
+    mSymbolIdMap.emplace(variable->uniqueId(), specConstId);
 }
 
 spirv::IdRef OutputSPIRVTraverser::createConstant(const TType &type,
@@ -4980,8 +4980,8 @@ void OutputSPIRVTraverser::visitSymbol(TIntermSymbol *node)
         type.getQualifier() == EvqSpecConst)
     {
         ASSERT(interfaceBlock == nullptr);
-        ASSERT(mSymbolIdMap.count(symbol) > 0);
-        nodeDataInitRValue(&mNodeData.back(), mSymbolIdMap[symbol], typeId);
+        ASSERT(mSymbolIdMap.count(symbol->uniqueId()) > 0);
+        nodeDataInitRValue(&mNodeData.back(), mSymbolIdMap[symbol->uniqueId()], typeId);
         return;
     }
 
@@ -5780,8 +5780,8 @@ bool OutputSPIRVTraverser::visitFunctionDefinition(Visit visit, TIntermFunctionD
                                           ids.parameterTypeIds[paramIndex], paramId);
 
             // Remember the id of the variable for future look up.
-            ASSERT(mSymbolIdMap.count(paramVariable) == 0);
-            mSymbolIdMap[paramVariable] = paramId;
+            ASSERT(mSymbolIdMap.count(paramVariable->uniqueId()) == 0);
+            mSymbolIdMap.emplace(paramVariable->uniqueId(), paramId);
 
             mBuilder.writeDebugName(paramId, mBuilder.getName(paramVariable).data());
         }
@@ -5881,9 +5881,9 @@ bool OutputSPIRVTraverser::visitGlobalQualifierDeclaration(Visit visit,
     ASSERT(node->isInvariant());
 
     const TVariable *variable = &node->getSymbol()->variable();
-    ASSERT(mSymbolIdMap.count(variable) > 0);
+    ASSERT(mSymbolIdMap.count(variable->uniqueId()) > 0);
 
-    const spirv::IdRef variableId = mSymbolIdMap[variable];
+    const spirv::IdRef variableId = mSymbolIdMap[variable->uniqueId()];
 
     spirv::WriteDecorate(mBuilder.getSpirvDecorations(), variableId, spv::DecorationInvariant, {});
 
@@ -6345,13 +6345,13 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
 
     // Remember the id of the variable for future look up.  For interface blocks, also remember the
     // id of the interface block.
-    ASSERT(mSymbolIdMap.count(variable) == 0);
-    mSymbolIdMap[variable] = variableId;
+    ASSERT(mSymbolIdMap.count(variable->uniqueId()) == 0);
+    mSymbolIdMap.emplace(variable->uniqueId(), variableId);
 
     if (type.isInterfaceBlock())
     {
-        ASSERT(mSymbolIdMap.count(type.getInterfaceBlock()) == 0);
-        mSymbolIdMap[type.getInterfaceBlock()] = variableId;
+        ASSERT(mSymbolIdMap.count(type.getInterfaceBlock()->uniqueId()) == 0);
+        mSymbolIdMap.emplace(type.getInterfaceBlock()->uniqueId(), variableId);
     }
 
     return false;

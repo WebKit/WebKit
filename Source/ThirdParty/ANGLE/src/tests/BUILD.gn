@@ -1871,6 +1871,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   config("angle_deqp_khr_common_config") {
     include_dirs = [
       "$deqp_path/external/openglcts/modules/common",
+      "$deqp_path/external/openglcts/modules/common/meshShader",
       "$deqp_path/external/openglcts/modules/common/subgroups",
       "$deqp_path/external/openglcts/modules/gl",
       "$deqp_path/external/openglcts/modules/gles2",

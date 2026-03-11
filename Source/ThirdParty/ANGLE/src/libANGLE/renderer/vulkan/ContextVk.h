@@ -637,6 +637,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     void disableRenderPassReactivation() { mAllowRenderPassToReactivate = false; }
 
+    bool hasStartedRenderPass() const { return mRenderPassCommands->started(); }
+
     // Only returns true if we have a started RP and we've run setupDraw.
     bool hasActiveRenderPass() const
     {
@@ -885,7 +887,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     bool hasExcessPendingGarbage() const;
 
-    angle::Result onFramebufferBoundary(const gl::Context *contextGL);
+    angle::Result onFrameBoundary(const gl::Context *contextGL);
 
     uint32_t getCurrentFrameCount() const { return mShareGroupVk->getCurrentFrameCount(); }
 
@@ -959,8 +961,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         DIRTY_BIT_DYNAMIC_LOGIC_OP,
         DIRTY_BIT_DYNAMIC_PRIMITIVE_RESTART_ENABLE,
         // - In VK_KHR_fragment_shading_rate
-        DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE_QCOM,
-        DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE_EXT,
+        DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE,
 
         DIRTY_BIT_MAX,
     };
@@ -1053,9 +1054,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
     static_assert(DIRTY_BIT_DYNAMIC_PRIMITIVE_RESTART_ENABLE > DIRTY_BIT_RENDER_PASS,
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
-    static_assert(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE_QCOM > DIRTY_BIT_RENDER_PASS,
-                  "Render pass using dirty bit must be handled after the render pass dirty bit");
-    static_assert(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE_EXT > DIRTY_BIT_RENDER_PASS,
+    static_assert(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE > DIRTY_BIT_RENDER_PASS,
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
 
     using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
@@ -1292,11 +1291,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result handleDirtyGraphicsDynamicPrimitiveRestartEnable(
         DirtyBits::Iterator *dirtyBitsIterator,
         DirtyBits dirtyBitMask);
-    angle::Result handleDirtyGraphicsDynamicFragmentShadingRateQCOM(
-        DirtyBits::Iterator *dirtyBitsIterator,
-        DirtyBits dirtyBitMask);
-    // EXT_fragment_shading_rate
-    angle::Result handleDirtyGraphicsDynamicFragmentShadingRateEXT(
+    angle::Result handleDirtyGraphicsDynamicFragmentShadingRate(
         DirtyBits::Iterator *dirtyBitsIterator,
         DirtyBits dirtyBitMask);
 
@@ -1665,6 +1660,9 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // True if current started render pass is allowed to reactivate.
     bool mAllowRenderPassToReactivate;
+
+    // This flag indicates whether size pointer should be used as arg for binding vertex buffers.
+    bool mUseSizePointerForBindingVertexBuffers;
 
     // The size of copy commands issued between buffers and images. Used to submit the command
     // buffer for the outside render pass.

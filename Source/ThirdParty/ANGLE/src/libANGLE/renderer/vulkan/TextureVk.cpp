@@ -1105,17 +1105,24 @@ angle::Result TextureVk::ensureImageInitializedIfUpdatesNeedStageOrFlush(
         updateMustBeFlushed(level, vkFormat.getActualImageFormatID(getRequiredFormatSupport()));
     bool mustStage = applyUpdate == vk::ApplyImageUpdate::Defer;
 
+    const bool canFlushStagedUpdates =
+        !mustStage && mImage->valid() && mImage->hasBufferSourcedStagedUpdatesInAllLevels();
+
     // If texture has all levels being specified, then do the flush immediately. This tries to avoid
     // issue flush as each level is being provided which may end up flushing out the staged clear
     // that otherwise might able to be removed. It also helps tracking all updates with just one
     // VkEvent instead of one for each level.
-    if (mustFlush ||
-        (!mustStage && mImage->valid() && mImage->hasBufferSourcedStagedUpdatesInAllLevels()))
+    if (mustFlush || canFlushStagedUpdates)
     {
         ANGLE_TRY(ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
 
-        // If forceSubmitImmutableTextureUpdates is enabled, submit the staged updates as well.
-        if (contextVk->getFeatures().forceSubmitImmutableTextureUpdates.enabled)
+        // To handle use cases where shared resources are not properly synchronized between multiple
+        // contexts, forceSubmitImmutableTextureUpdates submits the staged updates to force
+        // synchronization. This is limited to cases where the resource is an immutable texture and
+        // there are multiple active shared contexts.
+        if (canFlushStagedUpdates && contextVk->getShareGroup()->getContexts().size() > 1 &&
+            mState.getImmutableFormat() &&
+            contextVk->getFeatures().forceSubmitImmutableTextureUpdates.enabled)
         {
             ANGLE_TRY(contextVk->submitStagedTextureUpdates());
         }

@@ -937,7 +937,7 @@ void SerializeCompiledShaderState(JsonSerializer *json, const gl::SharedCompiled
 {
     json->addCString("Type", gl::ShaderTypeToString(state->shaderType));
     json->addScalar("Version", state->shaderVersion);
-    json->addString("TranslatedSource", state->translatedSource);
+    json->addString("TranslatedSource", *state->translatedSource);
     json->addVectorAsHash("CompiledBinary", state->compiledBinary);
     SerializeWorkGroupSize(json, state->localSize);
     SerializeShaderVariablesVector(json, state->inputVaryings);
@@ -1401,8 +1401,6 @@ void SerializeVertexArray(JsonSerializer *json, gl::VertexArray *vertexArray)
     SerializeVertexArrayState(json, vertexArray->getState());
     SerializeVertexBindingsVector(json, vertexArray->getVertexBindings(),
                                   vertexArray->getBufferBindingPointers());
-    json->addScalar("BufferAccessValidationEnabled",
-                    vertexArray->isBufferAccessValidationEnabled());
 }
 
 }  // namespace

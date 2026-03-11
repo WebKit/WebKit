@@ -1,7 +1,9 @@
 Name: astc-encoder
 Short Name: astc-encoder
 URL: https://github.com/ARM-software/astc-encoder
-Version: 2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b
+Version: N/A
+Revision: 2319d9c4d4af53a7fc7c52985e264ce6e8a02a9b
+Update Mechanism: Manual
 Security Critical: no
 Shipped: yes
 License: Apache-2.0

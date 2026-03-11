@@ -254,9 +254,6 @@ class Renderer : angle::NonCopyable
                                                   size_t *pipelineCacheSizeOut,
                                                   size_t lastSyncSize,
                                                   std::vector<uint8_t> *pipelineCacheDataOut);
-    angle::Result syncPipelineCacheVk(vk::ErrorContext *context,
-                                      vk::GlobalOps *globalOps,
-                                      const gl::Context *contextGL);
 
     const angle::FeaturesVk &getFeatures() const { return mFeatures; }
     uint32_t getMaxVertexAttribDivisor() const { return mMaxVertexAttribDivisor; }
@@ -726,6 +723,15 @@ class Renderer : angle::NonCopyable
                mVertexAttributeDivisorFeatures.vertexAttributeInstanceRateZeroDivisor == VK_TRUE;
     }
 
+    uint32_t getMinCommandCountToSubmit() const { return mMinCommandCountToSubmit; }
+
+    angle::Result onFrameBoundary(const gl::Context *contextGL);
+
+    uint32_t getMinRenderPassWriteCommandCountToEarlySubmit() const
+    {
+        return mMinRPWriteCommandCountToEarlySubmit;
+    }
+
   private:
     angle::Result setupDevice(vk::ErrorContext *context,
                               const angle::FeatureOverrides &featureOverrides,
@@ -782,6 +788,7 @@ class Renderer : angle::NonCopyable
                                     vk::PipelineCache *pipelineCache,
                                     bool *success);
     angle::Result ensurePipelineCacheInitialized(vk::ErrorContext *context);
+    angle::Result syncPipelineCacheVk(const gl::Context *contextGL);
 
     template <VkFormatFeatureFlags VkFormatProperties::*features>
     VkFormatFeatureFlags getFormatFeatureBits(angle::FormatID formatID,
@@ -933,6 +940,7 @@ class Renderer : angle::NonCopyable
     VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT mPhysicalDeviceGlobalPriorityQueryFeatures;
     VkPhysicalDeviceExternalMemoryHostPropertiesEXT mExternalMemoryHostProperties;
     VkPhysicalDeviceBufferDeviceAddressFeaturesKHR mBufferDeviceAddressFeatures;
+    VkPhysicalDeviceShaderAtomicInt64Features mShaderAtomicInt64Features;
 
     uint32_t mLegacyDitheringVersion = 0;
 
@@ -1123,6 +1131,14 @@ class Renderer : angle::NonCopyable
     uint32_t mNativeVectorWidthHalf;
     uint32_t mPreferredVectorWidthDouble;
     uint32_t mPreferredVectorWidthHalf;
+
+    // The number of minimum commands in the command buffer to prefer submit at FBO boundary or
+    // immediately submit when the device is idle after calling to flush.
+    uint32_t mMinCommandCountToSubmit;
+
+    // The number of minimum write commands in the command buffer to trigger one submission of
+    // pending commands at draw call time
+    uint32_t mMinRPWriteCommandCountToEarlySubmit;
 };
 
 ANGLE_INLINE Serial Renderer::generateQueueSerial(SerialIndex index)

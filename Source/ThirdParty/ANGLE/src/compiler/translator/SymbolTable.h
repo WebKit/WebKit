@@ -228,8 +228,9 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
                                                              bool *wasDefinedOut) const;
 
     // Return false if the gl_in array size has already been initialized with a mismatching value.
-    bool setGlInArraySize(unsigned int inputArraySize);
-    TVariable *getGlInVariableWithArraySize() const;
+    bool setGlInArraySize(unsigned int inputArraySize, int shaderVersion);
+    void onGlInVariableRedeclaration(const TVariable *redeclaredGlIn);
+    const TVariable *getGlInVariableWithArraySize() const;
 
     const TVariable *gl_FragData() const;
     const TVariable *gl_SecondaryFragDataEXT() const;
@@ -325,7 +326,7 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
 
     // Store gl_in variable with its array size once the array size can be determined. The array
     // size can also be checked against latter input primitive type declaration.
-    TVariable *mGlInVariableWithArraySize;
+    const TVariable *mGlInVariableWithArraySize;
     friend struct SymbolIdChecker;
 };
 

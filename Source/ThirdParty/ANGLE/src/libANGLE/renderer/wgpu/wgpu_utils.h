@@ -330,6 +330,7 @@ enum class RenderPassClosureReason
     VertexArrayLineLoop,
     CopyBufferToTexture,
     CopyTextureToTexture,
+    CopyImage,
 
     InvalidEnum,
     EnumCount = InvalidEnum,

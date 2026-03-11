@@ -1629,8 +1629,13 @@ void TracePerfTest::drawBenchmark()
 
     startGpuTimer();
     atraceCounter("TraceFrameIndex", mCurrentFrame);
+
     mTraceReplay->replayFrame(mCurrentFrame);
-    stopGpuTimer();
+
+    if (!gAddSwapIntoGPUTime)
+    {
+        stopGpuTimer();
+    }
 
     updatePerfCounters();
 
@@ -1740,6 +1745,14 @@ void TracePerfTest::drawBenchmark()
         bindFramebuffer(GL_FRAMEBUFFER, 0);
         saveScreenshotIfEnabled(ScreenshotType::kFrame);
         getGLWindow()->swap();
+    }
+
+    if (gAddSwapIntoGPUTime)
+    {
+        stopGpuTimer();
+        // Need this flush to submit the timestamp query to the GPU right now, instead of delaying
+        // it until some time later in the next frame.
+        glFlush();
     }
 
     endInternalTraceEvent(frameName);

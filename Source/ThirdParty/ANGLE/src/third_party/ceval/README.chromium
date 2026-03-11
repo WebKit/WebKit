@@ -1,7 +1,8 @@
 Name: ceval
 URL: https://github.com/erstan/ceval-single-header
-Version: 1ed80ae78ba7bef1744b1ccdffc6c6802eeec8fa
+Version: N/A
 Revision: 1ed80ae78ba7bef1744b1ccdffc6c6802eeec8fa
+Update Mechanism: Manual
 License: MIT
 License File: LICENSE
 Security Critical: no

@@ -1,6 +1,7 @@
 Name: R8
 URL: https://r8.googlesource.com/r8
 Version: 3.0.33
+Update Mechanism: Manual
 License: BSD-3-Clause
 License File: LICENSE
 Security Critical: no

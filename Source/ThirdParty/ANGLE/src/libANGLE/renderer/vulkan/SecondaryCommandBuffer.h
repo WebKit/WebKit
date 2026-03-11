@@ -16,9 +16,9 @@
 #endif
 
 #include "common/vulkan/vk_headers.h"
+#include "libANGLE/renderer/vulkan/AllocatorHelperPool.h"
 #include "libANGLE/renderer/vulkan/vk_command_buffer_utils.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
-#    include "libANGLE/renderer/vulkan/AllocatorHelperPool.h"
 
 namespace rx
 {
@@ -55,6 +55,8 @@ enum class CommandID : uint16_t
     BindTransformFeedbackBuffers,
     BindVertexBuffers,
     BindVertexBuffers2,
+    BindVertexBuffers2NoSize,
+    BindVertexBuffers2NoSizeNoStride,
     BindVertexBuffers2NoStride,
     BlitImage,
     BufferBarrier,
@@ -210,6 +212,8 @@ VERIFY_8_BYTE_ALIGNMENT(BindTransformFeedbackBuffersParams)
 
 using BindVertexBuffersParams  = BindTransformFeedbackBuffersParams;
 using BindVertexBuffers2Params         = BindVertexBuffersParams;
+using BindVertexBuffers2NoSizeParams         = BindVertexBuffers2Params;
+using BindVertexBuffers2NoSizeNoStrideParams = BindVertexBuffers2Params;
 using BindVertexBuffers2NoStrideParams = BindVertexBuffers2Params;
 
 struct BlitImageParams
@@ -909,6 +913,17 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                             const VkDeviceSize *sizes,
                             const VkDeviceSize *strides);
 
+    void bindVertexBuffers2NoSize(uint32_t firstBinding,
+                                  uint32_t bindingCount,
+                                  const VkBuffer *buffers,
+                                  const VkDeviceSize *offsets,
+                                  const VkDeviceSize *strides);
+
+    void bindVertexBuffers2NoSizeNoStride(uint32_t firstBinding,
+                                          uint32_t bindingCount,
+                                          const VkBuffer *buffers,
+                                          const VkDeviceSize *offsets);
+
     void bindVertexBuffers2NoStride(uint32_t firstBinding,
                                     uint32_t bindingCount,
                                     const VkBuffer *buffers,
@@ -1481,6 +1496,48 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2(uint32_t firstBindi
     writePtr                  = storeArrayParameter(writePtr, offsets, offsetsSize);
     writePtr                  = storeArrayParameter(writePtr, sizes, sizesSize);
     storeArrayParameter(writePtr, strides, stridesSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2NoSize(uint32_t firstBinding,
+                                                                   uint32_t bindingCount,
+                                                                   const VkBuffer *buffers,
+                                                                   const VkDeviceSize *offsets,
+                                                                   const VkDeviceSize *strides)
+{
+    ASSERT(firstBinding == 0);
+    uint8_t *writePtr;
+    const ArrayParamSize buffersSize = calculateArrayParameterSize<VkBuffer>(bindingCount);
+    const ArrayParamSize offsetsSize = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
+    const ArrayParamSize stridesSize = offsetsSize;
+    BindVertexBuffers2NoSizeParams *paramStruct = initCommand<BindVertexBuffers2NoSizeParams>(
+        CommandID::BindVertexBuffers2NoSize,
+        buffersSize.allocateBytes + offsetsSize.allocateBytes + stridesSize.allocateBytes,
+        &writePtr);
+    // Copy params
+    paramStruct->bindingCount = bindingCount;
+    writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
+    writePtr                  = storeArrayParameter(writePtr, offsets, offsetsSize);
+    storeArrayParameter(writePtr, strides, stridesSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2NoSizeNoStride(
+    uint32_t firstBinding,
+    uint32_t bindingCount,
+    const VkBuffer *buffers,
+    const VkDeviceSize *offsets)
+{
+    ASSERT(firstBinding == 0);
+    uint8_t *writePtr;
+    const ArrayParamSize buffersSize = calculateArrayParameterSize<VkBuffer>(bindingCount);
+    const ArrayParamSize offsetsSize = calculateArrayParameterSize<VkDeviceSize>(bindingCount);
+    BindVertexBuffers2NoSizeNoStrideParams *paramStruct =
+        initCommand<BindVertexBuffers2NoSizeNoStrideParams>(
+            CommandID::BindVertexBuffers2NoSizeNoStride,
+            buffersSize.allocateBytes + offsetsSize.allocateBytes, &writePtr);
+    // Copy params
+    paramStruct->bindingCount = bindingCount;
+    writePtr                  = storeArrayParameter(writePtr, buffers, buffersSize);
+    storeArrayParameter(writePtr, offsets, offsetsSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2NoStride(uint32_t firstBinding,

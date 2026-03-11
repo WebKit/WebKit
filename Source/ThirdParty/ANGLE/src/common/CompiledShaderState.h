@@ -52,8 +52,8 @@ struct CompiledShaderState
     ~CompiledShaderState();
 
     void buildCompiledShaderState(const ShHandle compilerHandle,
-                                  const std::string &inputShaderSource,
                                   ShShaderOutput outputType);
+    void buildPassthroughCompiledShaderState(std::shared_ptr<const std::string> inputShaderSource);
 
     void serialize(gl::BinaryOutputStream &stream) const;
     void deserialize(gl::BinaryInputStream &stream);
@@ -74,7 +74,7 @@ struct CompiledShaderState
     const gl::ShaderType shaderType;
 
     int shaderVersion;
-    std::string translatedSource;
+    std::shared_ptr<const std::string> translatedSource;
     sh::BinaryBlob compiledBinary;
     sh::WorkGroupSize localSize;
 

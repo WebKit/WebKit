@@ -22,22 +22,6 @@ namespace sh
 {
 namespace
 {
-bool IsMultielementSwizzleAssignment(TOperator op, TIntermTyped *assignedNode)
-{
-
-    if (!IsAssignment(op))
-    {
-        return false;
-    }
-
-    TIntermSwizzle *leftSwizzleNode = assignedNode->getAsSwizzleNode();
-    if (!leftSwizzleNode || leftSwizzleNode->getSwizzleOffsets().size() <= 1)
-    {
-        return false;
-    }
-
-    return true;
-}
 
 // Splits multielement swizzles into single-element swizzles.
 class MultielementSwizzleAssignmentTraverser : public TIntermTraverser
@@ -61,9 +45,8 @@ bool MultielementSwizzleAssignmentTraverser::visitUnary(Visit vist, TIntermUnary
         return true;
     }
 
-    // TODO(anglebug.com/42267100): increments and decrements should be handled by a pre-pass that
-    // converts them into additions of component-wise vectors filled with 1s.
-    // Then this can be converted into UNREACHABLE().
+    // TODO(anglebug.com/42267100): increments and decrements should be handled by generated WGSL
+    // functions, and this can just be deleted.
     switch (unaryNode->getOp())
     {
         case EOpPostIncrement:
@@ -87,20 +70,15 @@ bool MultielementSwizzleAssignmentTraverser::visitBinary(Visit visit, TIntermBin
         return true;
     }
 
-    if (!getParentNode()->getAsBlock())
+    if (!CanRewriteMultiElementSwizzleAssignmentEasily(parentBinNode, getParentNode()))
     {
-        // TODO(anglebug.com/42267100): Cannot yet handle assignments to swizzles that are nested
-        // inside other expressions.
-        UNIMPLEMENTED();
+        UNREACHABLE();
         return false;
     }
 
     TIntermSequence insertionsBefore;
 
     TIntermSwizzle *leftSwizzleNode = parentBinNode->getLeft()->getAsSwizzleNode();
-
-    // TODO(anglebug.com/42267100): The deepCopied node below would need to be traversed, but
-    // this doesn't yet handle assignments to swizzles that are nested in other expressions anyway.
 
     // Store the RHS in a temp in case of side effects, since it will be duplicated.
     TIntermDeclaration *rhsTempDeclaration;
@@ -112,21 +90,8 @@ bool MultielementSwizzleAssignmentTraverser::visitBinary(Visit visit, TIntermBin
     TIntermSequence singleElementSwizzleAssignments;
     for (uint32_t i = 0; i < leftSwizzleNode->getSwizzleOffsets().size(); i++)
     {
-        // TODO(anglebug.com/42267100): Doing a deepCopy of the swizzle operand can cause problems
-        // if it has side effects. E.g.
-        //
-        // x[i++].xy = vec(0.0, 0.0);
-        //
-        // will be transformed to something like
-        //
-        // x[i++].x = vec(0.0, 0.0).x;
-        // x[i++].y = vec(0.0, 0.0).y;
-        //
-        // Which obviously increments `i` an extra time.
-        if (leftSwizzleNode->getOperand()->hasSideEffects())
-        {
-            UNIMPLEMENTED();
-        }
+        // CanRewriteMultiElementSwizzleAssignmentEasily() should have filtered these cases out.
+        ASSERT(!leftSwizzleNode->getOperand()->hasSideEffects());
         TIntermTyped *swizzleOperandCopy = leftSwizzleNode->getOperand()->deepCopy();
         TIntermSwizzle *leftSideNewSwizzle =
             new TIntermSwizzle(swizzleOperandCopy, {leftSwizzleNode->getSwizzleOffsets()[i]});
@@ -151,8 +116,6 @@ bool MultielementSwizzleAssignmentTraverser::visitBinary(Visit visit, TIntermBin
 
                 // TODO(anglebug.com/42267100): this matrix multiplication could be kept in a temp
                 // var.
-                // TODO(anglebug.com/42267100): as above this does not work if the deepCopied AST
-                // subtrees have side effects.
                 newRightSide = new TIntermBinary(EOpVectorTimesMatrix, leftSwizzleNode->deepCopy(),
                                                  newRightSide);
             }
@@ -196,4 +159,37 @@ bool RewriteMultielementSwizzleAssignment(TCompiler *compiler, TIntermBlock *roo
     root->traverse(&traverser);
     return traverser.updateTree(compiler, root);
 }
+
+bool IsMultielementSwizzleAssignment(TOperator op, TIntermTyped *assignedNode)
+{
+    if (!IsAssignment(op))
+    {
+        return false;
+    }
+
+    TIntermSwizzle *leftSwizzleNode = assignedNode->getAsSwizzleNode();
+    if (!leftSwizzleNode || leftSwizzleNode->getSwizzleOffsets().size() <= 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+// Some multielement swizzles are too complicated without other AST transformations. Namely, swizzle
+// assignments that are nested within other expressions or swizzle assignments whose operand has
+// side effects. This AST transformation doesn't handle those swizzle assignments.
+// `multielementSwizzleAssignment` must be an assignment to a multielement swizzle as determined by
+// `IsMultielementSwizzleAssignment()`.
+bool CanRewriteMultiElementSwizzleAssignmentEasily(TIntermBinary *multielementSwizzleAssignment,
+                                                   TIntermNode *parent)
+{
+    ASSERT(IsMultielementSwizzleAssignment(multielementSwizzleAssignment->getOp(),
+                                           multielementSwizzleAssignment->getLeft()));
+    return parent->getAsBlock() != nullptr && !multielementSwizzleAssignment->getLeft()
+                                                   ->getAsSwizzleNode()
+                                                   ->getOperand()
+                                                   ->hasSideEffects();
+}
+
 }  // namespace sh

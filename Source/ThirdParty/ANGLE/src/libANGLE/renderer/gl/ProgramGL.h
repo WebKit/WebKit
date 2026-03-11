@@ -48,6 +48,8 @@ class ProgramGL : public ProgramImpl
     void setSeparable(bool separable) override;
 
     void prepareForLink(const gl::ShaderMap<ShaderImpl *> &shaders) override;
+    void prepareForPassthroughLink(
+        gl::ShaderMap<gl::SharedCompiledShaderState> *outAttachedShaders) override;
     angle::Result link(const gl::Context *contextImpl,
                        std::shared_ptr<LinkTask> *linkTaskOut) override;
     GLboolean validate(const gl::Caps &caps) override;
@@ -76,8 +78,12 @@ class ProgramGL : public ProgramImpl
     friend class LinkTaskGL;
     friend class PostLinkGL;
 
+    angle::Result passthroughLinkJobImpl(const gl::Extensions &extensions);
     angle::Result linkJobImpl(const gl::Extensions &extensions);
     angle::Result postLinkJobImpl(const gl::ProgramLinkedResources &resources);
+
+    void attachShaders();
+    void applyTransformFeedbackState();
 
     bool checkLinkStatus();
 

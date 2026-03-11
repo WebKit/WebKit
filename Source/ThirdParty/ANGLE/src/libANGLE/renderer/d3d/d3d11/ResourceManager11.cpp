@@ -9,6 +9,7 @@
 #include "libANGLE/renderer/d3d/d3d11/ResourceManager11.h"
 
 #include "common/debug.h"
+#include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 #include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
 
@@ -128,6 +129,7 @@ HRESULT CreateResource(ID3D11Device *device,
                        void * /*initData*/,
                        ID3D11ComputeShader **resourceOut)
 {
+    SCOPED_ANGLE_HISTOGRAM_TIMER_US("GPU.ANGLE.D3D11.CreateComputeShaderUs");
     return device->CreateComputeShader(desc->get(), desc->size(), nullptr, resourceOut);
 }
 
@@ -178,6 +180,7 @@ HRESULT CreateResource(ID3D11Device *device,
                        void * /*initData*/,
                        ID3D11PixelShader **resourceOut)
 {
+    SCOPED_ANGLE_HISTOGRAM_TIMER_US("GPU.ANGLE.D3D11.CreatePixelShaderUs");
     return device->CreatePixelShader(desc->get(), desc->size(), nullptr, resourceOut);
 }
 
@@ -250,6 +253,7 @@ HRESULT CreateResource(ID3D11Device *device,
                        void * /*initData*/,
                        ID3D11VertexShader **resourceOut)
 {
+    SCOPED_ANGLE_HISTOGRAM_TIMER_US("GPU.ANGLE.D3D11.CreateVertexShaderUs");
     return device->CreateVertexShader(desc->get(), desc->size(), nullptr, resourceOut);
 }
 

@@ -2717,8 +2717,10 @@ void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFea
     std::array<int, 3> mesaVersion = {0, 0, 0};
     bool isMesa                    = IsMesa(functions, &mesaVersion);
 
+    // Program binaries don't contain transform feedback varyings on multiple vendors' GPUs.
+    // https://crbug.com/442879525 for the latest example on Imagination / PowerVR.
     ANGLE_FEATURE_CONDITION(features, disableProgramCachingForTransformFeedback,
-                            !isMesa && isQualcomm);
+                            (!isMesa && isQualcomm) || IsPowerVR(vendor));
     // https://crbug.com/480992
     // Disable shader program cache to workaround PowerVR Rogue issues.
     ANGLE_FEATURE_CONDITION(features, disableProgramBinary, IsPowerVrRogue(functions));

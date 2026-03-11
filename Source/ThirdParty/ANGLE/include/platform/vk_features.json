@@ -709,6 +709,14 @@
             "issue": "https://issuetracker.google.com/187425444"
         },
         {
+            "name": "force_submit_exceptions_at_FBO_boundary",
+            "category": "Workarounds",
+            "description": [
+                "Some commands force immediate submission at FBO boundary."
+            ],
+            "issue": "https://issuetracker.google.com/422507974"
+        },
+        {
             "name": "use_multiple_descriptors_for_external_formats",
             "category": "Workarounds",
             "description": [
@@ -2061,6 +2069,36 @@
                 "Externally synchronize all pipeline cache accesses"
             ],
             "issue": "https://anglebug.com/445240187"
+        },
+        {
+            "name": "support_shader_pixel_local_storage_angle",
+            "category": "Features",
+            "description": [
+                "Enable support for GL_ANGLE_shader_pixel_local_storage extension"
+            ],
+            "issue": "https://anglebug.com/40096838"
+        },
+        {
+            "name": "debug_cl_dump_command_stream",
+            "category": "Features",
+            "description": [
+                "Dump OpenCL-Vulkan CommandBuffer stream to stdout."
+            ]
+        },
+        {
+            "name": "supports_shader_atomic_int64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_shader_atomic_int64 extension "
+            ]
+        },
+        {
+            "name": "force_size_pointer_for_bound_vertex_buffers",
+            "category": "Features",
+            "description": [
+                "Make sure the pSizes pointer to BindVertexBuffers2 is provided"
+            ],
+            "issue": "https://anglebug.com/448047351"
         }
     ]
 }

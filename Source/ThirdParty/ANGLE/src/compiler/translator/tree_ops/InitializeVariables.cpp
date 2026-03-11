@@ -24,6 +24,15 @@ namespace sh
 namespace
 {
 
+bool IsNamelessStruct(const TType &type)
+{
+    // There are two kinds of nameless structs that need to be handled here.  When SymbolType is
+    // Empty, it's a struct that can take a temporary name.  When the struct is "nameless", it
+    // _must_ stay without a name (because it's part of the shader's interface).
+    return type.getStruct() != nullptr &&
+           (type.getStruct()->symbolType() == SymbolType::Empty || type.getStruct()->isNameless());
+}
+
 void AddArrayZeroInitSequence(const TIntermTyped *initializedNode,
                               bool canUseLoopsToInitialize,
                               bool highPrecisionSupported,
@@ -54,7 +63,7 @@ void AddZeroInitSequence(const TIntermTyped *initializedNode,
                                  initSequenceOut, symbolTable);
     }
     else if (initializedNode->getType().isStructureContainingArrays() ||
-             initializedNode->getType().isNamelessStruct())
+             IsNamelessStruct(initializedNode->getType()))
     {
         AddStructZeroInitSequence(initializedNode, canUseLoopsToInitialize, highPrecisionSupported,
                                   initSequenceOut, symbolTable);
@@ -97,7 +106,7 @@ void AddStructZeroInitSequence(const TIntermTyped *initializedNode,
                                                    initializedNode->deepCopy(), CreateIndexNode(i));
         // Structs can't be defined inside structs, so the type of a struct field can't be a
         // nameless struct.
-        ASSERT(!element->getType().isNamelessStruct());
+        ASSERT(!IsNamelessStruct(element->getType()));
         AddZeroInitSequence(element, canUseLoopsToInitialize, highPrecisionSupported,
                             initSequenceOut, symbolTable);
     }
@@ -328,7 +337,7 @@ class InitializeLocalsTraverser final : public TIntermTraverser
                 // TODO(oetuaho): Check if it makes sense to initialize using a loop, even if we
                 // could use an initializer. It could at least reduce code size for very large
                 // arrays, but could hurt runtime performance.
-                if (arrayConstructorUnavailable || symbol->getType().isNamelessStruct())
+                if (arrayConstructorUnavailable || IsNamelessStruct(symbol->getType()))
                 {
                     // SimplifyLoopConditions should have been run so the parent node of this node
                     // should not be a loop.

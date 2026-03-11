@@ -91,7 +91,7 @@ class ShaderTranslateTaskGL final : public ShaderTranslateTask
   private:
     void startCompile(const gl::CompiledShaderState &compiledState)
     {
-        const char *source = compiledState.translatedSource.c_str();
+        const char *source = compiledState.translatedSource->c_str();
         mFunctions->shaderSource(mShaderID, 1, &source, nullptr);
         mFunctions->compileShader(mShaderID);
     }
@@ -288,7 +288,7 @@ std::shared_ptr<ShaderTranslateTask> ShaderGL::load(const gl::Context *context,
 
 std::string ShaderGL::getDebugInfo() const
 {
-    return mState.getCompiledState()->translatedSource;
+    return *mState.getCompiledState()->translatedSource;
 }
 
 GLuint ShaderGL::getShaderID() const

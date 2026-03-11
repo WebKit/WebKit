@@ -149,7 +149,7 @@ void TInfoSinkBase::location(int file, int line)
     if (line)
         stream << file << ":" << line;
     else
-        stream << file << ":? ";
+        stream << file << ":?";
     stream << ": ";
 
     sink.append(stream.str());

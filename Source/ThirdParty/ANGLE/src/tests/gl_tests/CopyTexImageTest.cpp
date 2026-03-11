@@ -1821,7 +1821,6 @@ TEST_P(CopyTexImageTest, MixedCubeMapFormats)
 ANGLE_INSTANTIATE_TEST_ES2_AND(
     CopyTexImageTest,
     ES2_D3D11_PRESENT_PATH_FAST(),
-    ES2_WEBGPU(),
     ES3_VULKAN(),
     ES2_OPENGL().enable(Feature::EmulateCopyTexImage2D),
     ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2D),

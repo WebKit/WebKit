@@ -140,8 +140,6 @@ class DeclarePerVertexBlocksTraverser : public TIntermTraverser
           mPerVertexOutVar(nullptr),
           mPerVertexInVarRedeclared(false),
           mPerVertexOutVarRedeclared(false),
-          mPositionRedeclaredForSeparateShaderObject(false),
-          mPointSizeRedeclaredForSeparateShaderObject(false),
           mPerVertexOutInvariantFlags(invariantFlags),
           mPerVertexOutPreciseFlags(preciseFlags)
     {}
@@ -226,9 +224,7 @@ class DeclarePerVertexBlocksTraverser : public TIntermTraverser
         //     };
         //
 
-        if (variable->symbolType() != SymbolType::BuiltIn &&
-            !(variable->name() == "gl_Position" && mPositionRedeclaredForSeparateShaderObject) &&
-            !(variable->name() == "gl_PointSize" && mPointSizeRedeclaredForSeparateShaderObject))
+        if (variable->symbolType() != SymbolType::BuiltIn)
         {
             ASSERT(variable->name() != "gl_Position" && variable->name() != "gl_PointSize" &&
                    variable->name() != "gl_ClipDistance" && variable->name() != "gl_CullDistance" &&
@@ -297,16 +293,28 @@ class DeclarePerVertexBlocksTraverser : public TIntermTraverser
         TIntermSequence emptyReplacement;
         if (symbol->getType().getQualifier() == EvqPosition)
         {
-            mPositionRedeclaredForSeparateShaderObject = true;
             mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), node,
                                             std::move(emptyReplacement));
             return false;
         }
         if (symbol->getType().getQualifier() == EvqPointSize)
         {
-            mPointSizeRedeclaredForSeparateShaderObject = true;
             mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), node,
                                             std::move(emptyReplacement));
+            return false;
+        }
+
+        // If gl_in is redeclared by the shader, make sure it's not overridden.
+        if (symbol->getType().getQualifier() == EvqPerVertexIn)
+        {
+            mPerVertexInVar = &symbol->variable();
+            return false;
+        }
+
+        // If gl_out is redeclared by the shader, make sure it's not overridden.
+        if (symbol->getType().getQualifier() == EvqPerVertexOut)
+        {
+            mPerVertexOutVar = &symbol->variable();
             return false;
         }
 
@@ -460,9 +468,6 @@ class DeclarePerVertexBlocksTraverser : public TIntermTraverser
 
     bool mPerVertexInVarRedeclared;
     bool mPerVertexOutVarRedeclared;
-
-    bool mPositionRedeclaredForSeparateShaderObject;
-    bool mPointSizeRedeclaredForSeparateShaderObject;
 
     // A map of already replaced built-in variables.
     VariableReplacementMap mVariableMap;

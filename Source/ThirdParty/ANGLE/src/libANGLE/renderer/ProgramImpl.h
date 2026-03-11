@@ -93,6 +93,11 @@ class ProgramImpl : angle::NonCopyable
     virtual void setSeparable(bool separable)                                     = 0;
 
     virtual void prepareForLink(const gl::ShaderMap<ShaderImpl *> &shaders) {}
+    virtual void prepareForPassthroughLink(
+        gl::ShaderMap<gl::SharedCompiledShaderState> *outAttachedShaders)
+    {
+        UNREACHABLE();
+    }
     virtual angle::Result link(const gl::Context *context,
                                std::shared_ptr<LinkTask> *linkTaskOut) = 0;
     virtual GLboolean validate(const gl::Caps &caps)                   = 0;

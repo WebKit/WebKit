@@ -1,7 +1,9 @@
 Name: glmark2
 Short Name: glmark2
 URL: https://github.com/glmark2/glmark2
-Version: ca8de51fedb70bace5351c6b002eb952c747e889
+Version: N/A
+Revision: ca8de51fedb70bace5351c6b002eb952c747e889
+Update Mechanism: Manual
 Security Critical: no
 Shipped: no
 License: GPL-3.0

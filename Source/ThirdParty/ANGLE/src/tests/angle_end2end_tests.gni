@@ -232,6 +232,7 @@ angle_end2end_tests_mac_sources = [
   "egl_tests/EGLIOSurfaceClientBufferTest.cpp",
   "egl_tests/EGLPowerPreferenceTest.cpp",
   "egl_tests/EGLSurfaceTestMac.mm",
+  "egl_tests/EGLSyncTestMetalCommandsScheduled.mm",
   "egl_tests/EGLSyncTestMetalSharedEvent.mm",
   "egl_tests/EGLWaitUntilWorkScheduledTest.cpp",
   "gl_tests/ImageTestMetal.mm",

@@ -25,7 +25,7 @@ using TableBase = TSymbolTableBase;
 
 struct SymbolIdChecker
 {
-    static_assert(TSymbolTable::kFirstUserDefinedSymbolId > 2029);
+    static_assert(TSymbolTable::kFirstUserDefinedSymbolId > 2015);
 };
 
 namespace BuiltInName
@@ -40,8 +40,6 @@ constexpr const ImmutableString abs("abs");
 constexpr const ImmutableString acos("acos");
 constexpr const ImmutableString acosh("acosh");
 constexpr const ImmutableString all("all");
-constexpr const ImmutableString angle_BaseInstance("angle_BaseInstance");
-constexpr const ImmutableString angle_BaseVertex("angle_BaseVertex");
 constexpr const ImmutableString any("any");
 constexpr const ImmutableString asin("asin");
 constexpr const ImmutableString asinh("asinh");
@@ -122,7 +120,6 @@ constexpr const ImmutableString gl_HelperInvocation("gl_HelperInvocation");
 constexpr const ImmutableString gl_InstanceID("gl_InstanceID");
 constexpr const ImmutableString gl_InstanceIndex("gl_InstanceIndex");
 constexpr const ImmutableString gl_InvocationID("gl_InvocationID");
-constexpr const ImmutableString gl_LastFragColor("gl_LastFragColor");
 constexpr const ImmutableString gl_LastFragColorARM("gl_LastFragColorARM");
 constexpr const ImmutableString gl_LastFragData("gl_LastFragData");
 constexpr const ImmutableString gl_LastFragDepthARM("gl_LastFragDepthARM");
@@ -407,30 +404,18 @@ namespace BuiltInVariable
 
 constexpr const unsigned int kArraySize4[1] = {4};
 
-constexpr const TVariable kangle_BaseInstance(
-    BuiltInId::angle_BaseInstance,
-    BuiltInName::angle_BaseInstance,
-    SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::ANGLE_base_vertex_base_instance_shader_builtin}},
-    StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
-constexpr const TVariable kangle_BaseVertex(
-    BuiltInId::angle_BaseVertex,
-    BuiltInName::angle_BaseVertex,
-    SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::ANGLE_base_vertex_base_instance_shader_builtin}},
-    StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
 constexpr const TVariable kgl_BaseInstance(
     BuiltInId::gl_BaseInstance,
     BuiltInName::gl_BaseInstance,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::ANGLE_base_vertex_base_instance_shader_builtin}},
-    StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
+    StaticType::Get<EbtInt, EbpHigh, EvqBaseInstance, 1, 1>());
 constexpr const TVariable kgl_BaseVertex(
     BuiltInId::gl_BaseVertex,
     BuiltInName::gl_BaseVertex,
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::ANGLE_base_vertex_base_instance_shader_builtin}},
-    StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>());
+    StaticType::Get<EbtInt, EbpHigh, EvqBaseVertex, 1, 1>());
 constexpr const TVariable kgl_DrawID(BuiltInId::gl_DrawID,
                                      BuiltInName::gl_DrawID,
                                      SymbolType::BuiltIn,
@@ -511,12 +496,6 @@ constexpr const TVariable kgl_InvocationIDTCSES3_2(
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
     StaticType::Get<EbtInt, EbpHigh, EvqInvocationID, 1, 1>());
-constexpr const TVariable kgl_LastFragColor(
-    BuiltInId::gl_LastFragColor,
-    BuiltInName::gl_LastFragColor,
-    SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::NV_shader_framebuffer_fetch}},
-    StaticType::Get<EbtFloat, EbpMedium, EvqLastFragColor, 4, 1>());
 constexpr const TVariable kgl_LastFragColorARM(
     BuiltInId::gl_LastFragColorARM,
     BuiltInName::gl_LastFragColorARM,
@@ -640,6 +619,31 @@ constexpr const TVariable kgl_Position(BuiltInId::gl_Position,
                                        SymbolType::BuiltIn,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                        StaticType::Get<EbtFloat, EbpHigh, EvqPosition, 4, 1>());
+constexpr const TVariable kgl_PositionGS(
+    BuiltInId::gl_PositionGS,
+    BuiltInName::gl_Position,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 2u>{{TExtension::EXT_geometry_shader, TExtension::OES_geometry_shader}},
+    StaticType::Get<EbtFloat, EbpHigh, EvqPosition, 4, 1>());
+constexpr const TVariable kgl_PositionGSES3_2(
+    BuiltInId::gl_PositionGSES3_2,
+    BuiltInName::gl_Position,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    StaticType::Get<EbtFloat, EbpHigh, EvqPosition, 4, 1>());
+constexpr const TVariable kgl_PositionTES(BuiltInId::gl_PositionTES,
+                                          BuiltInName::gl_Position,
+                                          SymbolType::BuiltIn,
+                                          std::array<TExtension, 2u>{
+                                              {TExtension::EXT_tessellation_shader,
+                                               TExtension::OES_tessellation_shader}},
+                                          StaticType::Get<EbtFloat, EbpHigh, EvqPosition, 4, 1>());
+constexpr const TVariable kgl_PositionTESES3_2(
+    BuiltInId::gl_PositionTESES3_2,
+    BuiltInName::gl_Position,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    StaticType::Get<EbtFloat, EbpHigh, EvqPosition, 4, 1>());
 constexpr const TVariable kgl_PrimitiveID(
     BuiltInId::gl_PrimitiveID,
     BuiltInName::gl_PrimitiveID,
@@ -1305,16 +1309,6 @@ constexpr const TVariable kpt_o_30D(BuiltInId::pt_o_30D,
                                     std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
                                     StaticType::Get<EbtUInt, EbpUndefined, EvqParamOut, 4, 1>());
 
-const TVariable *angle_BaseInstance()
-{
-    return &kangle_BaseInstance;
-}
-
-const TVariable *angle_BaseVertex()
-{
-    return &kangle_BaseVertex;
-}
-
 const TVariable *gl_BaseInstance()
 {
     return &kgl_BaseInstance;
@@ -1393,11 +1387,6 @@ const TVariable *gl_InvocationIDTCS()
 const TVariable *gl_InvocationIDTCSES3_2()
 {
     return &kgl_InvocationIDTCSES3_2;
-}
-
-const TVariable *gl_LastFragColor()
-{
-    return &kgl_LastFragColor;
 }
 
 const TVariable *gl_LastFragColorARM()
@@ -1503,6 +1492,26 @@ const TVariable *gl_PointSize300()
 const TVariable *gl_Position()
 {
     return &kgl_Position;
+}
+
+const TVariable *gl_PositionGS()
+{
+    return &kgl_PositionGS;
+}
+
+const TVariable *gl_PositionGSES3_2()
+{
+    return &kgl_PositionGSES3_2;
+}
+
+const TVariable *gl_PositionTES()
+{
+    return &kgl_PositionTES;
+}
+
+const TVariable *gl_PositionTESES3_2()
+{
+    return &kgl_PositionTESES3_2;
 }
 
 const TVariable *gl_PrimitiveID()
@@ -19489,10 +19498,6 @@ constexpr SymbolRule kRules[] = {
         &TableBase::m_gl_LastFragData),
     Rule::Get<100, Shader::FRAGMENT, EXT_INDEX(EXT_shader_framebuffer_fetch_non_coherent)>(
         &TableBase::m_gl_LastFragData),
-    Rule::Get<100, Shader::FRAGMENT, EXT_INDEX(NV_shader_framebuffer_fetch)>(
-        &TableBase::m_gl_LastFragDataNV),
-    Rule::Get<100, Shader::FRAGMENT, EXT_INDEX(NV_shader_framebuffer_fetch)>(
-        &BuiltInVariable::kgl_LastFragColor),
     Rule::Get<0, Shader::FRAGMENT, EXT_INDEX(ARM_shader_framebuffer_fetch)>(
         &BuiltInVariable::kgl_LastFragColorARM),
     Rule::Get<0, Shader::FRAGMENT, EXT_INDEX(ARM_shader_framebuffer_fetch_depth_stencil)>(
@@ -19542,21 +19547,16 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<320, Shader::FRAGMENT, 0>(&TableBase::m_gl_SampleMaskES3_2),
     Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(OES_sample_variables)>(&TableBase::m_gl_SampleMask),
     Rule::Get<0, Shader::VERTEX, 0>(&BuiltInVariable::kgl_Position),
-    Rule::Get<320, Shader::GEOMETRY_EXT, 0>(&TableBase::m_gl_PositionGSES3_2),
-    Rule::Get<320, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_PositionTCSES3_2),
-    Rule::Get<320, Shader::TESS_EVALUATION_EXT, 0>(&TableBase::m_gl_PositionTESES3_2),
+    Rule::Get<320, Shader::GEOMETRY_EXT, 0>(&BuiltInVariable::kgl_PositionGSES3_2),
+    Rule::Get<320, Shader::TESS_EVALUATION_EXT, 0>(&BuiltInVariable::kgl_PositionTESES3_2),
     Rule::Get<310, Shader::GEOMETRY_EXT, EXT_INDEX(EXT_geometry_shader)>(
-        &TableBase::m_gl_PositionGS),
+        &BuiltInVariable::kgl_PositionGS),
     Rule::Get<310, Shader::GEOMETRY_EXT, EXT_INDEX(OES_geometry_shader)>(
-        &TableBase::m_gl_PositionGS),
-    Rule::Get<310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
-        &TableBase::m_gl_PositionTCS),
-    Rule::Get<310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
-        &TableBase::m_gl_PositionTCS),
+        &BuiltInVariable::kgl_PositionGS),
     Rule::Get<310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
-        &TableBase::m_gl_PositionTES),
+        &BuiltInVariable::kgl_PositionTES),
     Rule::Get<310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
-        &TableBase::m_gl_PositionTES),
+        &BuiltInVariable::kgl_PositionTES),
     Rule::Get<100, Shader::VERTEX, 0>(&BuiltInVariable::kgl_PointSize),
     Rule::Get<300, Shader::VERTEX, 0>(&BuiltInVariable::kgl_PointSize300),
     Rule::Get<300, Shader::VERTEX, 0>(&BuiltInVariable::kgl_InstanceID),
@@ -19568,10 +19568,6 @@ constexpr SymbolRule kRules[] = {
         &BuiltInVariable::kgl_BaseVertex),
     Rule::Get<300, Shader::VERTEX, EXT_INDEX(ANGLE_base_vertex_base_instance_shader_builtin)>(
         &BuiltInVariable::kgl_BaseInstance),
-    Rule::Get<0, Shader::VERTEX, EXT_INDEX(ANGLE_base_vertex_base_instance_shader_builtin)>(
-        &BuiltInVariable::kangle_BaseVertex),
-    Rule::Get<0, Shader::VERTEX, EXT_INDEX(ANGLE_base_vertex_base_instance_shader_builtin)>(
-        &BuiltInVariable::kangle_BaseInstance),
     Rule::Get<0, Shader::VERTEX, EXT_INDEX(APPLE_clip_distance)>(
         &TableBase::m_gl_ClipDistanceAPPLE),
     Rule::Get<300, Shader::NOT_COMPUTE, EXT_INDEX(EXT_clip_cull_distance)>(
@@ -19662,15 +19658,10 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_TessLevelInnerTES),
     Rule::Get<320, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_outTCSES3_2),
-    Rule::Get<320, Shader::TESS_EVALUATION_EXT, 0>(&TableBase::m_gl_outTESES3_2),
     Rule::Get<310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_outTCS),
     Rule::Get<310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_outTCS),
-    Rule::Get<310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
-        &TableBase::m_gl_outTES),
-    Rule::Get<310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
-        &TableBase::m_gl_outTES),
     Rule::Get<320, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_BoundingBoxTCSES3_2),
     Rule::Get<320, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_BoundingBoxTCS),
@@ -21079,7 +21070,6 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "gl_SecondaryFragDataEXT",
                                          "gl_FragDepthEXT",
                                          "gl_LastFragData",
-                                         "gl_LastFragColor",
                                          "gl_LastFragColorARM",
                                          "gl_LastFragDepthARM",
                                          "gl_LastFragStencilARM",
@@ -21099,8 +21089,6 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "gl_DrawID",
                                          "gl_BaseVertex",
                                          "gl_BaseInstance",
-                                         "angle_BaseVertex",
-                                         "angle_BaseInstance",
                                          "gl_ClipDistance",
                                          "gl_PrimitiveShadingRateEXT",
                                          "gl_NumWorkGroups",
@@ -22511,50 +22499,47 @@ constexpr uint16_t kMangledOffsets[] = {
     1927,  // gl_SecondaryFragDataEXT
     1928,  // gl_FragDepthEXT
     1929,  // gl_LastFragData
-    1932,  // gl_LastFragColor
-    1933,  // gl_LastFragColorARM
-    1934,  // gl_LastFragDepthARM
-    1935,  // gl_LastFragStencilARM
-    1936,  // gl_PrimitiveID
-    1948,  // gl_Layer
-    1955,  // gl_ShadingRateEXT
-    1956,  // gl_SampleID
-    1958,  // gl_SamplePosition
-    1960,  // gl_SampleMaskIn
-    1962,  // gl_SampleMask
-    1964,  // gl_Position
-    1974,  // gl_PointSize
-    1976,  // gl_InstanceID
-    1977,  // gl_InstanceIndex
-    1978,  // gl_VertexID
-    1979,  // gl_VertexIndex
-    1980,  // gl_DrawID
-    1981,  // gl_BaseVertex
-    1982,  // gl_BaseInstance
-    1983,  // angle_BaseVertex
-    1984,  // angle_BaseInstance
-    1985,  // gl_ClipDistance
-    1988,  // gl_PrimitiveShadingRateEXT
-    1990,  // gl_NumWorkGroups
-    1991,  // gl_WorkGroupSize
-    1992,  // gl_WorkGroupID
-    1993,  // gl_LocalInvocationID
-    1994,  // gl_GlobalInvocationID
-    1995,  // gl_LocalInvocationIndex
-    1996,  // gl_PrimitiveIDIn
-    1999,  // gl_InvocationID
-    2005,  // gl_PerVertex
-    2014,  // gl_in
-    2023,  // gl_PatchVerticesIn
-    2029,  // gl_TessLevelOuter
-    2035,  // gl_TessLevelInner
-    2041,  // gl_out
-    2047,  // gl_BoundingBox
-    2050,  // gl_BoundingBoxEXT
-    2053,  // gl_BoundingBoxOES
-    2056,  // gl_TessCoord
-    2057,  // gl_ViewID_OVR
-    2058,  // gl_CullDistance
+    1931,  // gl_LastFragColorARM
+    1932,  // gl_LastFragDepthARM
+    1933,  // gl_LastFragStencilARM
+    1934,  // gl_PrimitiveID
+    1946,  // gl_Layer
+    1953,  // gl_ShadingRateEXT
+    1954,  // gl_SampleID
+    1956,  // gl_SamplePosition
+    1958,  // gl_SampleMaskIn
+    1960,  // gl_SampleMask
+    1962,  // gl_Position
+    1969,  // gl_PointSize
+    1971,  // gl_InstanceID
+    1972,  // gl_InstanceIndex
+    1973,  // gl_VertexID
+    1974,  // gl_VertexIndex
+    1975,  // gl_DrawID
+    1976,  // gl_BaseVertex
+    1977,  // gl_BaseInstance
+    1978,  // gl_ClipDistance
+    1981,  // gl_PrimitiveShadingRateEXT
+    1983,  // gl_NumWorkGroups
+    1984,  // gl_WorkGroupSize
+    1985,  // gl_WorkGroupID
+    1986,  // gl_LocalInvocationID
+    1987,  // gl_GlobalInvocationID
+    1988,  // gl_LocalInvocationIndex
+    1989,  // gl_PrimitiveIDIn
+    1992,  // gl_InvocationID
+    1998,  // gl_PerVertex
+    2007,  // gl_in
+    2016,  // gl_PatchVerticesIn
+    2022,  // gl_TessLevelOuter
+    2028,  // gl_TessLevelInner
+    2034,  // gl_out
+    2037,  // gl_BoundingBox
+    2040,  // gl_BoundingBoxEXT
+    2043,  // gl_BoundingBoxOES
+    2046,  // gl_TessCoord
+    2047,  // gl_ViewID_OVR
+    2048,  // gl_CullDistance
 };
 
 using Ext = TExtension;
@@ -22802,7 +22787,7 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, fields_gl_DepthRangeParameters);
     m_gl_DepthRangeParameters = gl_DepthRangeParameters;
     TType *type_gl_DepthRange = new TType(gl_DepthRangeParameters, false);
-    type_gl_DepthRange->setQualifier(EvqUniform);
+    type_gl_DepthRange->setQualifier(EvqDepthRange);
     type_gl_DepthRange->realize();
     m_gl_DepthRange =
         new TVariable(BuiltInId::gl_DepthRange, BuiltInName::gl_DepthRange, SymbolType::BuiltIn,
@@ -23849,13 +23834,6 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         std::array<TExtension, 2u>{{TExtension::EXT_shader_framebuffer_fetch,
                                     TExtension::EXT_shader_framebuffer_fetch_non_coherent}},
         type_gl_LastFragData);
-    TType *type_gl_LastFragDataNV = new TType(EbtFloat, EbpMedium, EvqLastFragData, 4, 1);
-    type_gl_LastFragDataNV->makeArray(resources.MaxDrawBuffers);
-    type_gl_LastFragDataNV->realize();
-    m_gl_LastFragDataNV = new TVariable(
-        BuiltInId::gl_LastFragDataNV, BuiltInName::gl_LastFragData, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::NV_shader_framebuffer_fetch}},
-        type_gl_LastFragDataNV);
     TType *type_gl_SampleMaskIn = new TType(EbtInt, EbpHigh, EvqSampleMaskIn, 1);
     type_gl_SampleMaskIn->makeArray((resources.MaxSamples + 31) / 32);
     type_gl_SampleMaskIn->realize();
@@ -23917,36 +23895,6 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_inES3_2 =
         new TVariable(BuiltInId::gl_inES3_2, BuiltInName::gl_in, SymbolType::BuiltIn,
                       std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_inES3_2);
-    TFieldList *fields_gl_PerVertexOutBlock = new TFieldList();
-    fields_gl_PerVertexOutBlock->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
-                   zeroSourceLoc, SymbolType::BuiltIn));
-    TInterfaceBlock *gl_PerVertexOutBlock =
-        new TInterfaceBlock(BuiltInId::gl_PerVertexOutBlock, BuiltInName::gl_PerVertex,
-                            std::array<TExtension, 2u>{
-                                {TExtension::EXT_geometry_shader, TExtension::OES_geometry_shader}},
-                            fields_gl_PerVertexOutBlock);
-    TFieldList *fields_gl_PerVertexOutBlockES3_2 = new TFieldList();
-    fields_gl_PerVertexOutBlockES3_2->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
-                   zeroSourceLoc, SymbolType::BuiltIn));
-    TInterfaceBlock *gl_PerVertexOutBlockES3_2 = new TInterfaceBlock(
-        BuiltInId::gl_PerVertexOutBlockES3_2, BuiltInName::gl_PerVertex,
-        std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, fields_gl_PerVertexOutBlockES3_2);
-    TType *type_gl_PositionGS = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
-    type_gl_PositionGS->setInterfaceBlock(gl_PerVertexOutBlock);
-    type_gl_PositionGS->realize();
-    m_gl_PositionGS =
-        new TVariable(BuiltInId::gl_PositionGS, BuiltInName::gl_Position, SymbolType::BuiltIn,
-                      std::array<TExtension, 2u>{
-                          {TExtension::EXT_geometry_shader, TExtension::OES_geometry_shader}},
-                      type_gl_PositionGS);
-    TType *type_gl_PositionGSES3_2 = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
-    type_gl_PositionGSES3_2->setInterfaceBlock(gl_PerVertexOutBlockES3_2);
-    type_gl_PositionGSES3_2->realize();
-    m_gl_PositionGSES3_2 =
-        new TVariable(BuiltInId::gl_PositionGSES3_2, BuiltInName::gl_Position, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_PositionGSES3_2);
     TType *type_gl_TessLevelOuterTCS = new TType(EbtFloat, EbpHigh, EvqTessLevelOuter, 1);
     type_gl_TessLevelOuterTCS->makeArray(4u);
     type_gl_TessLevelOuterTCS->realize();
@@ -24034,36 +23982,6 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_BoundingBoxTCSES3_2 = new TVariable(
         BuiltInId::gl_BoundingBoxTCSES3_2, BuiltInName::gl_BoundingBox, SymbolType::BuiltIn,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_BoundingBoxTCSES3_2);
-    TFieldList *fields_gl_PerVertexOutTcsBlock = new TFieldList();
-    fields_gl_PerVertexOutTcsBlock->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
-                   zeroSourceLoc, SymbolType::BuiltIn));
-    TInterfaceBlock *gl_PerVertexOutTcsBlock =
-        new TInterfaceBlock(BuiltInId::gl_PerVertexOutTcsBlock, BuiltInName::gl_PerVertex,
-                            std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
-                                                        TExtension::OES_tessellation_shader}},
-                            fields_gl_PerVertexOutTcsBlock);
-    TFieldList *fields_gl_PerVertexOutTcsBlockES3_2 = new TFieldList();
-    fields_gl_PerVertexOutTcsBlockES3_2->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
-                   zeroSourceLoc, SymbolType::BuiltIn));
-    TInterfaceBlock *gl_PerVertexOutTcsBlockES3_2 = new TInterfaceBlock(
-        BuiltInId::gl_PerVertexOutTcsBlockES3_2, BuiltInName::gl_PerVertex,
-        std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, fields_gl_PerVertexOutTcsBlockES3_2);
-    TType *type_gl_PositionTCS = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
-    type_gl_PositionTCS->setInterfaceBlock(gl_PerVertexOutTcsBlock);
-    type_gl_PositionTCS->realize();
-    m_gl_PositionTCS =
-        new TVariable(BuiltInId::gl_PositionTCS, BuiltInName::gl_Position, SymbolType::BuiltIn,
-                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
-                                                  TExtension::OES_tessellation_shader}},
-                      type_gl_PositionTCS);
-    TType *type_gl_PositionTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
-    type_gl_PositionTCSES3_2->setInterfaceBlock(gl_PerVertexOutTcsBlockES3_2);
-    type_gl_PositionTCSES3_2->realize();
-    m_gl_PositionTCSES3_2 = new TVariable(
-        BuiltInId::gl_PositionTCSES3_2, BuiltInName::gl_Position, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_PositionTCSES3_2);
     TType *type_gl_BoundingBoxEXTTCS = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
     type_gl_BoundingBoxEXTTCS->makeArray(2u);
     type_gl_BoundingBoxEXTTCS->realize();
@@ -24151,50 +24069,6 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_inTESES3_2 =
         new TVariable(BuiltInId::gl_inTESES3_2, BuiltInName::gl_in, SymbolType::BuiltIn,
                       std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_inTESES3_2);
-    TType *type_gl_outTES = new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create());
-    type_gl_outTES->makeArray(resources.MaxPatchVertices);
-    type_gl_outTES->realize();
-    m_gl_outTES = new TVariable(BuiltInId::gl_outTES, BuiltInName::gl_out, SymbolType::BuiltIn,
-                                std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
-                                                            TExtension::OES_tessellation_shader}},
-                                type_gl_outTES);
-    TType *type_gl_outTESES3_2 =
-        new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create());
-    type_gl_outTESES3_2->makeArray(resources.MaxPatchVertices);
-    type_gl_outTESES3_2->realize();
-    m_gl_outTESES3_2 =
-        new TVariable(BuiltInId::gl_outTESES3_2, BuiltInName::gl_out, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_outTESES3_2);
-    TFieldList *fields_gl_PerVertexOutTesBlock = new TFieldList();
-    fields_gl_PerVertexOutTesBlock->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
-                   zeroSourceLoc, SymbolType::BuiltIn));
-    TInterfaceBlock *gl_PerVertexOutTesBlock =
-        new TInterfaceBlock(BuiltInId::gl_PerVertexOutTesBlock, BuiltInName::gl_PerVertex,
-                            std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
-                                                        TExtension::OES_tessellation_shader}},
-                            fields_gl_PerVertexOutTesBlock);
-    TFieldList *fields_gl_PerVertexOutTesBlockES3_2 = new TFieldList();
-    fields_gl_PerVertexOutTesBlockES3_2->push_back(
-        new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
-                   zeroSourceLoc, SymbolType::BuiltIn));
-    TInterfaceBlock *gl_PerVertexOutTesBlockES3_2 = new TInterfaceBlock(
-        BuiltInId::gl_PerVertexOutTesBlockES3_2, BuiltInName::gl_PerVertex,
-        std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, fields_gl_PerVertexOutTesBlockES3_2);
-    TType *type_gl_PositionTES = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
-    type_gl_PositionTES->setInterfaceBlock(gl_PerVertexOutTesBlock);
-    type_gl_PositionTES->realize();
-    m_gl_PositionTES =
-        new TVariable(BuiltInId::gl_PositionTES, BuiltInName::gl_Position, SymbolType::BuiltIn,
-                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
-                                                  TExtension::OES_tessellation_shader}},
-                      type_gl_PositionTES);
-    TType *type_gl_PositionTESES3_2 = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
-    type_gl_PositionTESES3_2->setInterfaceBlock(gl_PerVertexOutTesBlockES3_2);
-    type_gl_PositionTESES3_2->realize();
-    m_gl_PositionTESES3_2 = new TVariable(
-        BuiltInId::gl_PositionTESES3_2, BuiltInName::gl_Position, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_PositionTESES3_2);
     TType *type_gl_ClipDistance = new TType(EbtFloat, EbpHigh, EvqClipDistance, 1);
     type_gl_ClipDistance->makeArray(resources.MaxClipDistances);
     type_gl_ClipDistance->realize();
@@ -24217,7 +24091,7 @@ namespace
 {
 uint16_t GetNextRuleIndex(uint32_t nameHash)
 {
-    if (nameHash == 1429 - 1)
+    if (nameHash == 1426 - 1)
         return ArraySize(BuiltInArray::kRules);
     return BuiltInArray::kMangledOffsets[nameHash + 1];
 }
@@ -24229,7 +24103,7 @@ const TSymbol *TSymbolTable::findBuiltIn(const ImmutableString &name, int shader
         return nullptr;
 
     uint32_t nameHash = name.mangledNameHash();
-    if (nameHash >= 1429)
+    if (nameHash >= 1426)
         return nullptr;
 
     const char *actualName = BuiltInArray::kMangledNames[nameHash];

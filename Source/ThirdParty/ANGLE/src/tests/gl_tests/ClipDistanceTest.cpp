@@ -1371,6 +1371,26 @@ void main()
     EXPECT_FALSE(prg.valid());
 }
 
+// Test that bad index to gl_ClipDistance does not cause a translator crash
+TEST_P(ClipCullDistanceTest, BadIndexNoCrash)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
+
+    std::string kVS = R"(#version 300 es
+#extension )" + kExtensionName +
+                      R"( : require
+
+void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_ClipDistance[float(0)] = gl_Position.w;
+})";
+
+    GLProgram prg;
+    prg.makeRaster(kVS.c_str(), essl1_shaders::fs::Red());
+    EXPECT_FALSE(prg.valid());
+}
+
 // Test that length() does not compile for unsized arrays
 TEST_P(ClipCullDistanceTest, UnsizedArrayLength)
 {

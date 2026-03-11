@@ -288,7 +288,7 @@ void TextureUpload::onTextureRelease(TextureVk *textureVk)
     }
 }
 
-void ShareGroupVk::onFramebufferBoundary()
+void ShareGroupVk::onFrameBoundary()
 {
     if (isDueForBufferPoolPrune())
     {

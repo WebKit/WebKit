@@ -25,6 +25,8 @@
 #include "libANGLE/CLProgram.h"
 #include "spirv/unified1/NonSemanticClspvReflection.h"
 
+#include <algorithm>
+
 namespace rx
 {
 
@@ -223,7 +225,7 @@ angle::Result CLKernelVk::init()
 
     // initialize the descriptor pools
     // descriptor pools are setup as per their indices
-    return initializeDescriptorPools();
+    return mContext->initializeDescriptorPools(this);
 }
 
 angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *argValue)
@@ -237,7 +239,7 @@ angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *a
                 ASSERT(mPodArgumentPushConstants.size() >=
                        arg.pushConstantSize + arg.pushConstOffset);
                 arg.handle     = &mPodArgumentPushConstants[arg.pushConstOffset];
-                arg.handleSize = argSize;
+                arg.handleSize = std::min(argSize, static_cast<size_t>(arg.pushConstantSize));
                 if (argSize > 0 && argValue != nullptr)
                 {
                     // Copy the contents since app is free to delete/reassign the contents after

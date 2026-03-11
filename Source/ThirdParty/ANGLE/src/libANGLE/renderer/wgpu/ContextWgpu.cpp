@@ -69,6 +69,7 @@ constexpr angle::PackedEnumMap<webgpu::RenderPassClosureReason, const char *>
          "Render pass closed to update texture"},
         {webgpu::RenderPassClosureReason::CopyTextureToTexture,
          "Render pass closed to copy texture"},
+        {webgpu::RenderPassClosureReason::CopyImage, "Render pass closed to copy image"},
     }};
 
 }  // namespace
@@ -936,6 +937,8 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                         case gl::state::EXTENDED_DIRTY_BIT_LOGIC_OP:
                             break;
                         case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
+                            break;
+                        case gl::state::EXTENDED_DIRTY_BIT_FETCH_PER_SAMPLE_ENABLED:
                             break;
                         default:
                             UNREACHABLE();

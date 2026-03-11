@@ -411,20 +411,21 @@ class RefCountedEventsGarbage final
 };
 
 // Two levels of RefCountedEvents recycle system: For the performance reason, we have two levels of
-// events recycler system. The first level is per ShareGroupVk, which owns RefCountedEventRecycler.
-// RefCountedEvent garbage is added to it without any lock. Once GPU complete, the refCount is
-// decremented. When the last refCount goes away, it goes into mEventsToReset. Note that since
-// ShareGroupVk access is already protected by context share lock at the API level, so no lock is
-// taken and reference counting is not atomic. At RefCountedEventsGarbageRecycler::cleanup time, the
-// entire mEventsToReset is added into renderer's list. The renderer owns RefCountedEventRecycler
-// list, and all access to it is protected with simple mutex lock. When any context calls
-// OutsideRenderPassCommandBufferHelper::flushToPrimary, mEventsToReset is retrieved from renderer
-// and the reset commands is added to the command buffer. The events are then moved to the
-// renderer's garbage list. They are checked and along with renderer's garbage cleanup and if
-// completed, they get moved to renderer's mEventsToReuse list. When a RefCountedEvent is needed, we
-// always dip into ShareGroupVk's mEventsToReuse list. If its empty, it then dip into renderer's
-// mEventsToReuse and grab a collector of events and try to reuse. That way the traffic into
-// renderer is minimized as most of calls will be contained in SHareGroupVk.
+// events recycler system. The first level is per ShareGroupVk, which owns
+// RefCountedEventsGarbageRecycler. RefCountedEvent garbage is added to it without any lock. Once
+// GPU complete, the refCount is decremented. When the last refCount goes away, it goes into
+// mEventsToReset. Note that since ShareGroupVk access is already protected by context share lock at
+// the API level, so no lock is taken and reference counting is not atomic. At
+// RefCountedEventsGarbageRecycler::cleanup time, the entire mEventsToReset is added into renderer's
+// list. The renderer owns RefCountedEventRecycler list, and all access to it is protected with
+// simple mutex lock. When any context calls OutsideRenderPassCommandBufferHelper::flushToPrimary,
+// mEventsToReset is retrieved from renderer and the reset commands is added to the command buffer.
+// The events are then moved to the renderer's garbage list. They are checked and along with
+// renderer's garbage cleanup and if completed, they get moved to renderer's mEventsToReuse list.
+// When a RefCountedEvent is needed, we always dip into ShareGroupVk's mEventsToReuse list. If its
+// empty, it then dip into renderer's mEventsToReuse and grab a collector of events and try to
+// reuse. That way the traffic into renderer is minimized as most of calls will be contained in
+// ShareGroupVk.
 
 // Thread safe event recycler, protected by its own lock.
 class RefCountedEventRecycler final
@@ -441,28 +442,26 @@ class RefCountedEventRecycler final
     void destroy(VkDevice device);
 
     // Add single event to the toReset list
-    void recycle(RefCountedEvent &&garbageObject)
+    void recycle(RefCountedEvent &&garbageObject, VkDevice device)
     {
         ASSERT(garbageObject.validAndNoReference());
         std::lock_guard<angle::SimpleMutex> lock(mMutex);
-        if (mEventsToReset.empty())
+        if (mEventsToReset.size() >= kMaxEventToKeepCount)
         {
-            mEventsToReset.emplace_back();
+            garbageObject.destroy(device);
         }
-        mEventsToReset.back().emplace_back(std::move(garbageObject));
+        else
+        {
+            if (mEventsToReset.empty())
+            {
+                mEventsToReset.emplace_back();
+            }
+            mEventsToReset.back().emplace_back(std::move(garbageObject));
+        }
     }
 
     // Add a list of events to the toReset list
-    void recycle(RefCountedEventCollector &&garbageObjects)
-    {
-        ASSERT(!garbageObjects.empty());
-        for (const RefCountedEvent &event : garbageObjects)
-        {
-            ASSERT(event.validAndNoReference());
-        }
-        std::lock_guard<angle::SimpleMutex> lock(mMutex);
-        mEventsToReset.emplace_back(std::move(garbageObjects));
-    }
+    void recycle(RefCountedEventCollector &&garbageObjects, VkDevice device);
 
     // Reset all events in the toReset list and move them to the toReuse list
     void resetEvents(ErrorContext *context,
@@ -478,6 +477,10 @@ class RefCountedEventRecycler final
     bool fetchEventsToReuse(RefCountedEventCollector *eventsToReuseOut);
 
   private:
+    // Maximum number of RefCountedEventCollector we will keep in mEventsToReset.
+    // When mEventsToReset size reaches kMaxEventToKeepCount, any extra used VkEvent items will be
+    // destroyed immediately.
+    static constexpr size_t kMaxEventToKeepCount = 16;
     angle::SimpleMutex mMutex;
     // RefCountedEvent list that has been released, needs to be reset.
     std::deque<RefCountedEventCollector> mEventsToReset;
@@ -508,7 +511,7 @@ class RefCountedEventsGarbageRecycler final
         mGarbageQueue.emplace(queueSerial, std::move(refCountedEvents));
     }
 
-    void recycle(RefCountedEvent &&garbageObject)
+    void recycle(RefCountedEvent &&garbageObject, VkDevice device)
     {
         ASSERT(garbageObject.validAndNoReference());
         mEventsToReset.emplace_back(std::move(garbageObject));

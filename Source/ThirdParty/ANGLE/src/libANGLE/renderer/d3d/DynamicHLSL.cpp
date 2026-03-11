@@ -815,7 +815,7 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
 
     if (vertexShader)
     {
-        std::string vertexSource = vertexShader->translatedSource;
+        std::string vertexSource = *vertexShader->translatedSource;
         angle::ReplaceSubstring(&vertexSource, std::string(MAIN_PROLOGUE_STUB_STRING),
                                 "    initAttributes(input);\n");
         angle::ReplaceSubstring(&vertexSource, std::string(VERTEX_OUTPUT_STUB_STRING),
@@ -1117,7 +1117,7 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
 
     if (fragmentShader)
     {
-        std::string pixelSource = fragmentShader->translatedSource;
+        std::string pixelSource = *fragmentShader->translatedSource;
 
         std::ostringstream pixelMainParametersStream;
         pixelMainParametersStream << "PS_INPUT input";

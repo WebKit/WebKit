@@ -168,6 +168,11 @@ bool IsQualcomm(VendorID vendorId)
     return vendorId == kVendorID_Qualcomm;
 }
 
+bool IsSamsung(VendorID vendorId)
+{
+    return vendorId == kVendorID_Samsung;
+}
+
 bool IsGoogle(VendorID vendorId)
 {
     return vendorId == kVendorID_GOOGLE;

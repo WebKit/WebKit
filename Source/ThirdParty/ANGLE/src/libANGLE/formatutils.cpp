@@ -1776,7 +1776,8 @@ bool InternalFormat::computeRowDepthSkipBytes(GLenum formatType,
     const GLuint skipRows   = static_cast<GLuint>(unpack.skipRows);
     const GLuint skipPixels = static_cast<GLuint>(unpack.skipPixels);
     const GLuint skipImages = is3D ? static_cast<GLuint>(unpack.skipImages) : 0u;
-    if (!computeSkipBytes(formatType, rowPitch, depthPitch, skipRows, skipPixels, skipImages, &skipBytes))
+    if (!computeSkipBytes(formatType, rowPitch, depthPitch, skipRows, skipPixels, skipImages,
+                          &skipBytes))
     {
         return false;
     }
@@ -1802,7 +1803,8 @@ bool InternalFormat::computeRowSkipBytes(GLenum formatType,
     const GLuint skipRows   = static_cast<GLuint>(pack.skipRows);
     const GLuint skipPixels = static_cast<GLuint>(pack.skipPixels);
     const GLuint skipImages = 0u;
-    if (!computeSkipBytes(formatType, rowPitch, depthPitch, skipRows, skipPixels, skipImages, &skipBytes))
+    if (!computeSkipBytes(formatType, rowPitch, depthPitch, skipRows, skipPixels, skipImages,
+                          &skipBytes))
     {
         return false;
     }

@@ -17,16 +17,4 @@ TSymbolUniqueId::TSymbolUniqueId(TSymbolTable *symbolTable) : mId(symbolTable->n
 
 TSymbolUniqueId::TSymbolUniqueId(const TSymbol &symbol) : mId(symbol.uniqueId().get()) {}
 
-TSymbolUniqueId &TSymbolUniqueId::operator=(const TSymbolUniqueId &) = default;
-
-bool TSymbolUniqueId::operator==(const TSymbolUniqueId &other) const
-{
-    return mId == other.mId;
-}
-
-bool TSymbolUniqueId::operator!=(const TSymbolUniqueId &other) const
-{
-    return !(*this == other);
-}
-
 }  // namespace sh

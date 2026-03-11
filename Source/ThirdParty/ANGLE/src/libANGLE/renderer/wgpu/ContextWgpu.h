@@ -15,6 +15,7 @@
 #include "image_util/loadimage.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
+#include "libANGLE/renderer/wgpu/UtilsWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_command_buffer.h"
 #include "libANGLE/renderer/wgpu/wgpu_format_utils.h"
 #include "libANGLE/renderer/wgpu/wgpu_helpers.h"
@@ -340,6 +341,9 @@ class ContextWgpu : public ContextImpl
         return mDriverUniformsBindGroupLayout;
     }
 
+    webgpu::UtilsWgpu *getUtils() { return &mUtils; }
+    webgpu::CommandBuffer &getCommandBuffer() { return mCommandBuffer; }
+
   private:
     // Dirty bits.
     enum DirtyBitType : size_t
@@ -434,6 +438,8 @@ class ContextWgpu : public ContextImpl
     // Holds the most recent driver uniforms BindGroup. Note there may be others in the
     // command buffer.
     webgpu::BindGroupHandle mDriverUniformsBindGroup;
+
+    webgpu::UtilsWgpu mUtils;
 };
 
 }  // namespace rx

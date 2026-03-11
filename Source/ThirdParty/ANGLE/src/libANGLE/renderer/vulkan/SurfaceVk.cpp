@@ -402,7 +402,7 @@ angle::Result NewSemaphore(vk::ErrorContext *context,
 {
     if (semaphoreRecycler->empty())
     {
-        ANGLE_VK_TRY(context, semaphoreOut->init(context->getDevice()));
+        ANGLE_VK_TRY(context, semaphoreOut->init(context->getDevice(), VK_SEMAPHORE_TYPE_BINARY));
     }
     else
     {
@@ -1032,7 +1032,7 @@ WindowSurfaceVk::WindowSurfaceVk(const egl::SurfaceState &surfaceState, EGLNativ
       mColorImageMSBinding(this, kAnySurfaceImageSubjectIndex),
       mFrameCount(1),
       mPresentID(0),
-      mBufferAgeQueryFrameNumber(0)
+      mIsBufferAgeQueried(false)
 {
     // Initialize the color render target with the multisampled targets.  If not multisampled, the
     // render target will be updated to refer to a swapchain image on every acquire.
@@ -1425,7 +1425,7 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMat
     // Create the semaphores that will be used for vkAcquireNextImageKHR.
     for (vk::Semaphore &semaphore : mAcquireOperation.unlockedAcquireData.acquireImageSemaphores)
     {
-        ANGLE_VK_TRY(displayVk, semaphore.init(displayVk->getDevice()));
+        ANGLE_VK_TRY(displayVk, semaphore.init(displayVk->getDevice(), VK_SEMAPHORE_TYPE_BINARY));
     }
 
     // Keep the image acquire deferred.  |mColorRenderTarget| will not be accessed until update in
@@ -2237,7 +2237,7 @@ egl::Error WindowSurfaceVk::swapWithDamage(const gl::Context *context,
     angle::Result result = swapImpl(contextVk, rects, n_rects, nullptr, feedback);
     if (result == angle::Result::Continue)
     {
-        result = contextVk->onFramebufferBoundary(context);
+        result = contextVk->onFrameBoundary(context);
     }
 
     return angle::ToEGL(result, EGL_BAD_SURFACE);
@@ -2263,7 +2263,7 @@ egl::Error WindowSurfaceVk::swap(const gl::Context *context, SurfaceSwapFeedback
     angle::Result result = swapImpl(contextVk, nullptr, 0, nullptr, feedback);
     if (result == angle::Result::Continue)
     {
-        result = contextVk->onFramebufferBoundary(context);
+        result = contextVk->onFrameBoundary(context);
     }
     return angle::ToEGL(result, EGL_BAD_SURFACE);
 }
@@ -2368,7 +2368,7 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
         // Under that situation, this optimization will not apply.
 
         if (!isSharedPresentMode() &&
-            (mState.swapBehavior == EGL_BUFFER_DESTROYED && mBufferAgeQueryFrameNumber == 0))
+            (mState.swapBehavior == EGL_BUFFER_DESTROYED && !mIsBufferAgeQueried))
         {
             vk::ClearValuesArray deferredClearValues;
             ANGLE_TRY(mColorImageMS.flushSingleSubresourceStagedUpdates(
@@ -3050,7 +3050,7 @@ VkResult WindowSurfaceVk::acquireNextSwapchainImage(vk::ErrorContext *context)
     // doesn't apply so no invalidation is done.
     if (!isSharedPresentMode())
     {
-        if (mState.swapBehavior == EGL_BUFFER_DESTROYED && mBufferAgeQueryFrameNumber == 0)
+        if (mState.swapBehavior == EGL_BUFFER_DESTROYED && !mIsBufferAgeQueried)
         {
             image.image->invalidateEntireLevelContent(context, gl::LevelIndex(0));
             if (mColorImageMS.valid())
@@ -3479,6 +3479,18 @@ egl::Error WindowSurfaceVk::getBufferAge(const gl::Context *context, EGLint *age
     // Image must be already acquired in the |prepareSwap| call.
     ASSERT(mAcquireOperation.state != ImageAcquireState::Unacquired);
 
+    if (!mIsBufferAgeQueried)
+    {
+        // When the buffer age is queried, we assume the application benefits from the contents
+        // of the swapchain images staying valid.
+        // Set a flag in that case before doDeferredAcquireNextImage, which invalidates the
+        // contents.
+        ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_LOW,
+                              "Querying age of a surface will make it retain its content");
+
+        mIsBufferAgeQueried = true;
+    }
+
     // If the result of vkAcquireNextImageKHR is not yet processed, do so now.
     if (mAcquireOperation.state == ImageAcquireState::NeedToProcessResult)
     {
@@ -3487,14 +3499,6 @@ egl::Error WindowSurfaceVk::getBufferAge(const gl::Context *context, EGLint *age
         {
             return result;
         }
-    }
-
-    if (mBufferAgeQueryFrameNumber == 0)
-    {
-        ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_LOW,
-                              "Querying age of a surface will make it retain its content");
-
-        mBufferAgeQueryFrameNumber = mFrameCount;
     }
 
     if (age != nullptr)

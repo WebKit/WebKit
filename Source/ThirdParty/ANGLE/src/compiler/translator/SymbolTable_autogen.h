@@ -122,7 +122,6 @@ class TSymbolTableBase
     TSymbol *m_gl_SecondaryFragDataEXT                       = nullptr;
     TSymbol *m_gl_FragDepthEXT                               = nullptr;
     TSymbol *m_gl_LastFragData                               = nullptr;
-    TSymbol *m_gl_LastFragDataNV                             = nullptr;
     TSymbol *m_gl_SampleMaskIn                               = nullptr;
     TSymbol *m_gl_SampleMaskInES3_2                          = nullptr;
     TSymbol *m_gl_SampleMask                                 = nullptr;
@@ -132,8 +131,6 @@ class TSymbolTableBase
     TSymbol *m_gl_PerVertexES3_2                             = nullptr;
     TSymbol *m_gl_in                                         = nullptr;
     TSymbol *m_gl_inES3_2                                    = nullptr;
-    TSymbol *m_gl_PositionGS                                 = nullptr;
-    TSymbol *m_gl_PositionGSES3_2                            = nullptr;
     TSymbol *m_gl_TessLevelOuterTCS                          = nullptr;
     TSymbol *m_gl_TessLevelOuterTCSES3_2                     = nullptr;
     TSymbol *m_gl_TessLevelInnerTCS                          = nullptr;
@@ -146,8 +143,6 @@ class TSymbolTableBase
     TSymbol *m_gl_outTCSES3_2                                = nullptr;
     TSymbol *m_gl_BoundingBoxTCS                             = nullptr;
     TSymbol *m_gl_BoundingBoxTCSES3_2                        = nullptr;
-    TSymbol *m_gl_PositionTCS                                = nullptr;
-    TSymbol *m_gl_PositionTCSES3_2                           = nullptr;
     TSymbol *m_gl_BoundingBoxEXTTCS                          = nullptr;
     TSymbol *m_gl_BoundingBoxEXTTCSES3_2                     = nullptr;
     TSymbol *m_gl_BoundingBoxOESTCS                          = nullptr;
@@ -160,10 +155,6 @@ class TSymbolTableBase
     TSymbol *m_gl_PerVertexTESES3_2                          = nullptr;
     TSymbol *m_gl_inTES                                      = nullptr;
     TSymbol *m_gl_inTESES3_2                                 = nullptr;
-    TSymbol *m_gl_outTES                                     = nullptr;
-    TSymbol *m_gl_outTESES3_2                                = nullptr;
-    TSymbol *m_gl_PositionTES                                = nullptr;
-    TSymbol *m_gl_PositionTESES3_2                           = nullptr;
     TSymbol *m_gl_ClipDistance                               = nullptr;
     TSymbol *m_gl_CullDistance                               = nullptr;
 };

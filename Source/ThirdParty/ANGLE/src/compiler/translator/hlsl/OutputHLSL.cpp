@@ -452,8 +452,7 @@ void OutputHLSL::output(TIntermNode *treeRoot, TInfoSinkBase &objSink)
     builtInFunctionEmulator.markBuiltInFunctionsForEmulation(treeRoot);
 
     // Now that we are done changing the AST, do the analyses need for HLSL generation
-    CallDAG::InitResult success = mCallDag.init(treeRoot, nullptr);
-    ASSERT(success == CallDAG::INITDAG_SUCCESS);
+    mCallDag.init(treeRoot);
     mASTMetadataList = CreateASTMetadataHLSL(treeRoot, mCallDag);
 
     const std::vector<MappedStruct> std140Structs = FlagStd140Structs(treeRoot);

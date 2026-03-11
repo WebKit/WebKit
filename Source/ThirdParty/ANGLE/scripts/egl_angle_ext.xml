@@ -530,6 +530,11 @@
                 <enum name="EGL_CONTEXT_MEMORY_USAGE_ANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_metal_commands_scheduled_sync" supported="egl">
+            <require>
+                <enum name="EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE"/>
+            </require>
+        </extension>
     </extensions>
 
     <!-- SECTION: EGL enumerant (token) definitions. -->
@@ -657,6 +662,9 @@
         <enum value="0x34DD" name="EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE"/>
         <enum value="0x34DE" name="EGL_SYNC_GLOBAL_FENCE_ANGLE"/>
         <enum value="0x34DF" name="EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE"/>
+    </enums>
+    <enums namespace="EGL" start="0x34E0" end="0x34E0" vendor="ANGLE">
+        <enum value="0x34E0" name="EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE"/>
     </enums>
     <enums namespace="EGL" start="0x34F0" end="0x34FF" vendor="ANGLE">
         <enum value="0x34F0" name="EGL_PLATFORM_ANGLE_VULKAN_DEVICE_UUID_ANGLE"/>

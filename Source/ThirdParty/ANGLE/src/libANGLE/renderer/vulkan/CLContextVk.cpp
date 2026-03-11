@@ -379,4 +379,41 @@ angle::Result CLContextVk::allocateDescriptorSet(
     return kernelVk->allocateDescriptorSet(index, layoutIndex, computePassCommands);
 }
 
+angle::Result CLContextVk::initializeDescriptorPools(CLKernelVk *kernelVk)
+{
+    std::lock_guard<angle::SimpleMutex> lock(mDescriptorSetMutex);
+
+    return kernelVk->initializeDescriptorPools();
+}
+
+void CLContextVk::addCommandBufferDiagnostics(const std::string &commandBufferDiagnostics)
+{
+    mCommandBufferDiagnostics.push_back(commandBufferDiagnostics);
+}
+
+void CLContextVk::dumpCommandStreamDiagnostics()
+{
+    std::ostream &out = std::cout;
+    if (mCommandBufferDiagnostics.empty())
+    {
+        return;
+    }
+
+    out << "digraph {\n"
+        << "    node [shape=box fontname=\"Consolas\"]\n";
+
+    for (size_t index = 0; index < mCommandBufferDiagnostics.size(); ++index)
+    {
+        std::string_view payload = mCommandBufferDiagnostics[index];
+        out << "    cb" << index << " [label =\"" << payload << "\"];\n";
+    }
+    for (size_t index = 0; index < mCommandBufferDiagnostics.size() - 1; ++index)
+    {
+        out << "    cb" << index << " -> cb" << index + 1 << "\n";
+    }
+    mCommandBufferDiagnostics.clear();
+
+    out << "}\n";
+}
+
 }  // namespace rx

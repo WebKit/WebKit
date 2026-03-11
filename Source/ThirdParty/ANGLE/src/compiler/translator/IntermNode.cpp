@@ -456,6 +456,11 @@ TIntermBlock::TIntermBlock(std::initializer_list<TIntermNode *> stmts)
     }
 }
 
+TIntermBlock::TIntermBlock(TIntermSequence &&stmts) : mStatements(std::move(stmts))
+{
+    mIsTreeRoot = false;
+}
+
 size_t TIntermBlock::getChildCount() const
 {
     return mStatements.size();
@@ -1468,7 +1473,7 @@ void TIntermUnary::promote()
 TPrecision TIntermUnary::derivePrecision() const
 {
     // Unary operators generally derive their precision from their operand, except for a few
-    // built-ins where this is overriden.
+    // built-ins where this is overridden.
     switch (mOp)
     {
         case EOpArrayLength:

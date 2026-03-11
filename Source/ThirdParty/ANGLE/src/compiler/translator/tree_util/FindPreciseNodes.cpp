@@ -22,6 +22,7 @@
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/util.h"
 
 namespace sh
 {
@@ -61,20 +62,6 @@ class AccessChain
   private:
     TVector<size_t> mChain;
 };
-
-bool IsIndexOp(TOperator op)
-{
-    switch (op)
-    {
-        case EOpIndexDirect:
-        case EOpIndexDirectStruct:
-        case EOpIndexDirectInterfaceBlock:
-        case EOpIndexIndirect:
-            return true;
-        default:
-            return false;
-    }
-}
 
 const TVariable *AccessChain::build(TIntermTyped *lvalue)
 {

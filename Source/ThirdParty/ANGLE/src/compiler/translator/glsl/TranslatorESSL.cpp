@@ -239,13 +239,7 @@ void TranslatorESSL::writeExtensionBehavior(const ShCompileOptions &compileOptio
         {
             const bool isMultiview = (iter->first == TExtension::OVR_multiview) ||
                                      (iter->first == TExtension::OVR_multiview2);
-            if (getResources().NV_shader_framebuffer_fetch &&
-                iter->first == TExtension::EXT_shader_framebuffer_fetch)
-            {
-                sink << "#extension GL_NV_shader_framebuffer_fetch : "
-                     << GetBehaviorString(iter->second) << "\n";
-            }
-            else if (getResources().NV_draw_buffers && iter->first == TExtension::EXT_draw_buffers)
+            if (getResources().NV_draw_buffers && iter->first == TExtension::EXT_draw_buffers)
             {
                 sink << "#extension GL_NV_draw_buffers : " << GetBehaviorString(iter->second)
                      << "\n";

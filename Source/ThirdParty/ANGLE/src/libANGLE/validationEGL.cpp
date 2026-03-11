@@ -1651,6 +1651,32 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
             }
             break;
 
+        case EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE:
+            if (!attribs.isEmpty())
+            {
+                val->setError(EGL_BAD_ATTRIBUTE, "Invalid attribute");
+                return false;
+            }
+            if (!display->getExtensions().fenceSync)
+            {
+                val->setError(EGL_BAD_MATCH, "EGL_KHR_fence_sync extension is not available");
+                return false;
+            }
+            if (!display->getExtensions().mtlSyncCommandsScheduledANGLE)
+            {
+                val->setError(EGL_BAD_DISPLAY,
+                              "EGL_ANGLE_metal_shared_event_sync is not available");
+                return false;
+            }
+            if (display != currentDisplay)
+            {
+                val->setError(EGL_BAD_MATCH,
+                              "CreateSync can only be called on the current display");
+                return false;
+            }
+            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext->id()));
+            break;
+
         default:
             if (isExt)
             {
@@ -1685,6 +1711,7 @@ bool ValidateGetSyncAttribBase(const ValidationContext *val,
                 case EGL_SYNC_NATIVE_FENCE_ANDROID:
                 case EGL_SYNC_GLOBAL_FENCE_ANGLE:
                 case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
+                case EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE:
                     break;
 
                 default:

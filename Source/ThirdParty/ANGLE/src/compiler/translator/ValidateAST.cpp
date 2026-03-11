@@ -89,7 +89,7 @@ class ValidateAST : public TIntermTraverser
     // For validateVariableReferences:
     std::vector<std::set<const TVariable *>> mDeclaredVariables;
     std::set<const TInterfaceBlock *> mNamelessInterfaceBlocks;
-    std::map<ImmutableString, const TVariable *> mReferencedBuiltIns;
+    std::map<ImmutableString, TSymbolUniqueId> mReferencedBuiltIns;
     bool mVariableReferencesFailed = false;
 
     // For validateOps:
@@ -623,11 +623,11 @@ void ValidateAST::visitBuiltInVariable(TIntermSymbol *node)
         auto iter = mReferencedBuiltIns.find(name);
         if (iter == mReferencedBuiltIns.end())
         {
-            mReferencedBuiltIns[name] = variable;
+            mReferencedBuiltIns.emplace(name, variable->uniqueId());
             return;
         }
 
-        if (variable != iter->second)
+        if (variable->uniqueId() != iter->second)
         {
             mDiagnostics->error(
                 node->getLine(),
@@ -644,10 +644,13 @@ void ValidateAST::visitBuiltInVariable(TIntermSymbol *node)
         if ((name == "gl_ClipDistance" && qualifier != EvqClipDistance) ||
             (name == "gl_CullDistance" && qualifier != EvqCullDistance) ||
             (name == "gl_FragDepth" && qualifier != EvqFragDepth) ||
+            (name == "gl_FragDepthEXT" && qualifier != EvqFragDepth) ||
             (name == "gl_LastFragData" && qualifier != EvqLastFragData) ||
             (name == "gl_LastFragColorARM" && qualifier != EvqLastFragColor) ||
             (name == "gl_LastFragDepthARM" && qualifier != EvqLastFragDepth) ||
-            (name == "gl_LastFragStencilARM" && qualifier != EvqLastFragStencil))
+            (name == "gl_LastFragStencilARM" && qualifier != EvqLastFragStencil) ||
+            (name == "gl_DepthRange" && qualifier != EvqDepthRange) ||
+            (name == "gl_NumSamples" && qualifier != EvqNumSamples))
         {
             mDiagnostics->error(
                 node->getLine(),

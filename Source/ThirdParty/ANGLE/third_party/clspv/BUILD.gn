@@ -218,7 +218,6 @@ source_set("clspv_passes") {
     "src/lib/UndoSRetPass.cpp",
     "src/lib/UndoTranslateSamplerFoldPass.cpp",
     "src/lib/UndoTruncateToOddIntegerPass.cpp",
-    "src/lib/WrapKernelPass.cpp",
     "src/lib/ZeroInitializeAllocasPass.cpp",
   ]
 

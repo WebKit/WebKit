@@ -1923,6 +1923,12 @@ angle::Result ContextMtl::finishCommandBuffer()
     return checkCommandBufferError();
 }
 
+void ContextMtl::addCommandBufferScheduledCallback(std::function<void()> callback)
+{
+    mCmdBuffer.cmdQueue().addCommandBufferScheduledCallback(mCmdBuffer.getQueueSerial(),
+                                                            std::move(callback));
+}
+
 bool ContextMtl::hasStartedRenderPass(const mtl::RenderPassDesc &desc)
 {
     return mRenderEncoder.valid() &&

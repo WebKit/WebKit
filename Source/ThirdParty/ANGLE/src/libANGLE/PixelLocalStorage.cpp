@@ -600,7 +600,6 @@ void PixelLocalStorage::end(Context *context, GLsizei n, const GLenum storeops[]
 
 void PixelLocalStorage::barrier(Context *context)
 {
-    ASSERT(!context->getExtensions().shaderPixelLocalStorageCoherentANGLE);
     onBarrier(context);
 }
 
@@ -961,12 +960,9 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
             }
         }
 
-        if (!context->getExtensions().shaderPixelLocalStorageCoherentANGLE)
-        {
-            // Insert a barrier if we aren't coherent, since the textures may have been rendered to
-            // previously.
-            barrier(context);
-        }
+        // Insert a barrier in case the app performs any noncoherent accesses, since the textures
+        // may have been accessed as attachments immediately before this call.
+        barrier(context);
     }
 
     void onEnd(Context *context, GLsizei n, const GLenum storeops[]) override
@@ -1009,9 +1005,24 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
         context->drawBuffers(static_cast<GLsizei>(mSavedDrawBuffers.size()),
                              mSavedDrawBuffers.data());
         mSavedDrawBuffers.clear();
+
+        // Insert a barrier in case the app performed any noncoherent accesses, since the textures
+        // may be accessed as attachments immediately after this call.
+        barrier(context);
     }
 
-    void onBarrier(Context *context) override { context->framebufferFetchBarrier(); }
+    void onBarrier(Context *context) override
+    {
+        if (context->getExtensions().shaderFramebufferFetchNonCoherentEXT)
+        {
+            context->framebufferFetchBarrier();
+        }
+        else
+        {
+            // Ignore barriers if we don't have EXT_shader_framebuffer_fetch_non_coherent.
+            ASSERT(context->getExtensions().shaderPixelLocalStorageCoherentANGLE);
+        }
+    }
 
   private:
     static GLuint GetDrawBufferIdx(const Caps &caps, GLuint plsPlaneIdx)

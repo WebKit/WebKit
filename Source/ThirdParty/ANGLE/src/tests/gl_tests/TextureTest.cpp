@@ -6380,8 +6380,8 @@ TEST_P(Texture2DBaseMaxTestES3, Fuzz545ImmutableTexRenderFeedback)
 {
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
 
-    constexpr uint32_t MIPS = 2;
-    constexpr uint32_t SIZE = 10;
+    constexpr GLint MIPS = 3;
+    constexpr GLint SIZE = 10;
 
     GLTexture immutTex;
     glBindTexture(GL_TEXTURE_2D, immutTex);
@@ -6389,9 +6389,9 @@ TEST_P(Texture2DBaseMaxTestES3, Fuzz545ImmutableTexRenderFeedback)
 
     GLTexture mutTex;
     glBindTexture(GL_TEXTURE_2D, mutTex);
-    for (uint32_t mip = 0; mip < MIPS; mip++)
+    for (GLint mip = 0; mip < MIPS; mip++)
     {
-        const uint32_t size = SIZE >> mip;
+        const GLint size = SIZE >> mip;
         glTexImage2D(GL_TEXTURE_2D, mip, GL_RGBA8, size, size, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      nullptr);
     }
@@ -6409,39 +6409,33 @@ TEST_P(Texture2DBaseMaxTestES3, Fuzz545ImmutableTexRenderFeedback)
     {
         glBindTexture(GL_TEXTURE_2D, tex);
 
-        for (GLuint level_prime_base = 0; level_prime_base < (MIPS + 1); level_prime_base++)
+        for (GLint level_prime_base = 0; level_prime_base < (MIPS + 1); level_prime_base++)
         {  // `level_base` in GLES
             // ES 3.0.6 p150
-            GLuint _level_base = level_prime_base;
+            GLint _level_base = level_prime_base;
             if (tex == immutTex)
             {
                 _level_base = std::min(_level_base, MIPS - 1);
             }
-            const GLuint level_base = _level_base;
+            const GLint level_base = _level_base;
 
-            for (GLuint _level_prime_max = (level_prime_base - 1); _level_prime_max < (MIPS + 2);
-                 _level_prime_max++)
+            for (GLint _level_prime_max = (level_prime_base > 0 ? level_prime_base - 1 : 0);
+                 _level_prime_max < (MIPS + 2); _level_prime_max++)
             {  // `q` in GLES
-                if (_level_prime_max < 0)
-                {
-                    continue;
-                }
-                if (_level_prime_max == (MIPS + 1))
-                {
-                    _level_prime_max = 10000;  // This is the default, after all!
-                }
-                const GLuint level_prime_max = _level_prime_max;
+                const GLint level_prime_max = (_level_prime_max == (MIPS + 1))
+                                                  ? 10000  // This is the default, after all!
+                                                  : _level_prime_max;
 
                 // ES 3.0.6 p150
-                GLuint _level_max = level_prime_max;
+                GLint _level_max = level_prime_max;
                 if (tex == immutTex)
                 {
                     _level_max = std::min(std::max(level_base, level_prime_max), MIPS - 1);
                 }
-                const GLuint level_max = _level_max;
+                const GLint level_max = _level_max;
 
-                const GLuint p = std::floor((float)std::log2(SIZE)) + level_base;
-                const GLuint q = std::min(p, level_max);
+                const GLint p = std::floor((float)std::log2(SIZE)) + level_base;
+                const GLint q = std::min(p, level_max);
 
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, level_prime_base);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level_prime_max);
@@ -6456,7 +6450,7 @@ TEST_P(Texture2DBaseMaxTestES3, Fuzz545ImmutableTexRenderFeedback)
                     {
                         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 
-                        for (GLuint dstMip = 0; dstMip < (MIPS + 1); dstMip++)
+                        for (GLint dstMip = 0; dstMip < (MIPS + 1); dstMip++)
                         {
                             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                                                    GL_TEXTURE_2D, tex, dstMip);
@@ -18752,8 +18746,7 @@ ANGLE_INSTANTIATE_TEST(Texture2DTest,
                        ANGLE_ALL_TEST_PLATFORMS_ES2,
                        ES2_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
                        ES2_EMULATE_COPY_TEX_IMAGE(),
-                       ES2_OPENGLES().enable(Feature::ForcePassthroughShaders),
-                       ES2_WEBGPU());
+                       ES2_OPENGLES().enable(Feature::ForcePassthroughShaders));
 ANGLE_INSTANTIATE_TEST_ES2(TextureCubeTest);
 ANGLE_INSTANTIATE_TEST_ES2(Texture2DTestWithDrawScale);
 ANGLE_INSTANTIATE_TEST_ES2(Sampler2DAsFunctionParameterTest);

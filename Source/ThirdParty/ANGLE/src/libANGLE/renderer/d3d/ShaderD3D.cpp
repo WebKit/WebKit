@@ -70,7 +70,7 @@ class ShaderTranslateTaskD3D final : public ShaderTranslateTask
 
     void postTranslate(ShHandle compiler, const gl::CompiledShaderState &compiledState) override
     {
-        const std::string &translatedSource = compiledState.translatedSource;
+        const std::string &translatedSource = *compiledState.translatedSource;
         CompiledShaderStateD3D *state       = mShader.get();
 
         // Note: We shouldn't need to cache this.

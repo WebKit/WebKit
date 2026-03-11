@@ -343,6 +343,28 @@ def _get_gtest_filter_for_batch(args, batch):
     return '--gtest_filter=%s' % ':'.join(expanded)
 
 
+def _get_filtered_batch(batches, args):
+    for batch in batches:
+        filtered_batch = []
+        filtered_trace = False
+        for trace in batch:
+
+            # Check for conditions where we want to skip golden image comparison on the trace
+            if args.key_frame_limit:
+                keyframe = get_trace_key_frame(trace)
+                if keyframe != '' and int(keyframe) > int(args.key_frame_limit):
+                    filtered_trace = True
+                    logging.info('Skipping %s since key frame (%s) is higher than the limit (%s).',
+                                 trace, keyframe, args.key_frame_limit)
+
+            if not filtered_trace:
+                logging.debug('Adding %s to batch.', trace)
+                filtered_batch.append(trace)
+
+            filtered_trace = False
+
+        yield filtered_batch
+
 def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_results):
     keys = get_skia_gold_keys(args, env)
 
@@ -367,7 +389,7 @@ def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_resu
 
         batches = _get_batches(traces, batch_size)
 
-        for batch in batches:
+        for batch in _get_filtered_batch(batches, args):
             if angle_test_util.IsAndroid():
                 android_helper.PrepareRestrictedTraces(batch)
 
@@ -389,6 +411,8 @@ def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_resu
                 ] + extra_flags
                 if args.swiftshader:
                     cmd_args += ['--use-angle=swiftshader']
+
+                # break here to debug new options
 
                 logging.info('Running batch with args: %s' % cmd_args)
                 result, _, json_results = angle_test_util.RunTestSuite(
@@ -484,6 +508,12 @@ def main():
         'that are likely to cause differences in many tests, e.g. SwiftShader '
         'or driver changes. Can be enabled on bots by adding a '
         '"Use-Permissive-Angle-Pixel-Comparison: True" footer.')
+    parser.add_argument(
+        '--key-frame-limit',
+        type=str,
+        help='Traces that have a high key frame can take a long time to run '
+        'on software renderers. To keep test times low, use this option to '
+        'skip traces that have key frames over the specified limit')
 
     add_skia_gold_args(parser)
 

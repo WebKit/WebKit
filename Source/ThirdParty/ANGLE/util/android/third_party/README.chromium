@@ -1,7 +1,8 @@
 Name: android_native_app_glue
 URL: https://android.googlesource.com/platform/ndk/+/5aac75cf5bea628f44bc8e09fe672573aeac0849/sources/android/native_app_glue
+Version: N/A
 Revision: 5aac75cf5bea628f44bc8e09fe672573aeac0849
-Version: 5aac75cf5bea628f44bc8e09fe672573aeac0849
+Update Mechanism: Manual
 License: Apache-2.0
 License File: LICENSE
 Security Critical: no

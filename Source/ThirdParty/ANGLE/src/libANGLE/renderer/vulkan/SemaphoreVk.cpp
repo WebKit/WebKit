@@ -195,7 +195,7 @@ angle::Result SemaphoreVk::importOpaqueFd(ContextVk *contextVk, GLint fd)
 
     if (!mSemaphore.valid())
     {
-        mSemaphore.init(renderer->getDevice());
+        mSemaphore.init(renderer->getDevice(), VK_SEMAPHORE_TYPE_BINARY);
     }
 
     ASSERT(mSemaphore.valid());
@@ -218,7 +218,7 @@ angle::Result SemaphoreVk::importZirconEvent(ContextVk *contextVk, GLuint handle
 
     if (!mSemaphore.valid())
     {
-        mSemaphore.init(renderer->getDevice());
+        mSemaphore.init(renderer->getDevice(), VK_SEMAPHORE_TYPE_BINARY);
     }
 
     ASSERT(mSemaphore.valid());

@@ -2834,6 +2834,7 @@ angle::Result DynamicBuffer::allocate(Context *context,
                                       BufferHelper **bufferHelperOut,
                                       bool *newBufferAllocatedOut)
 {
+    ASSERT(sizeInBytes != 0);
     bool newBuffer = !allocateFromCurrentBuffer(sizeInBytes, bufferHelperOut);
     if (newBufferAllocatedOut)
     {
@@ -4317,7 +4318,7 @@ void QueryHelper::endRenderPassQuery(ContextVk *contextVk)
 
 angle::Result QueryHelper::flushAndWriteTimestamp(ContextVk *contextVk)
 {
-    if (contextVk->hasActiveRenderPass())
+    if (contextVk->hasStartedRenderPass())
     {
         ANGLE_TRY(
             contextVk->flushCommandsAndEndRenderPass(RenderPassClosureReason::TimestampQuery));
@@ -4492,16 +4493,22 @@ void PipelineBarrierArray::execute(Renderer *renderer, PrimaryCommandBuffer *pri
 
 void PipelineBarrierArray::addDiagnosticsString(std::ostringstream &out) const
 {
-    out << "Memory Barrier: ";
+    std::ostringstream barrierStream;
+    barrierStream << "Memory Barrier: ";
+    bool haveBarrierLog = false;
     for (PipelineStage pipelineStage : mBarrierMask)
     {
         const PipelineBarrier &barrier = mBarriers[pipelineStage];
         if (!barrier.isEmpty())
         {
-            barrier.addDiagnosticsString(out);
+            haveBarrierLog = true;
+            barrier.addDiagnosticsString(barrierStream);
         }
     }
-    out << "\\l";
+    if (haveBarrierLog)
+    {
+        out << barrierStream.str() << "\\l";
+    }
 }
 
 // BufferHelper implementation.
@@ -4757,6 +4764,7 @@ VkResult BufferHelper::initSuballocation(Context *context,
                                          BufferPool *pool)
 {
     ASSERT(pool != nullptr);
+    ASSERT(size != 0);
     Renderer *renderer = context->getRenderer();
 
     // We should reset these in case the BufferHelper object has been released and called

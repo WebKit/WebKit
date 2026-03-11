@@ -597,12 +597,12 @@ void main()
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BasicSamplersTest);
-ANGLE_INSTANTIATE_TEST_ES2_AND(BasicSamplersTest, ES2_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2(BasicSamplersTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SampleFromRenderedTextureTestHalfWindow);
-ANGLE_INSTANTIATE_TEST_ES2_AND(SampleFromRenderedTextureTestHalfWindow, ES2_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2(SampleFromRenderedTextureTestHalfWindow);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SampleFromRenderedTextureTestFullWindow);
-ANGLE_INSTANTIATE_TEST_ES2_AND(SampleFromRenderedTextureTestFullWindow, ES2_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2(SampleFromRenderedTextureTestFullWindow);
 
 // Samplers are only supported on ES3.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SamplersTest);

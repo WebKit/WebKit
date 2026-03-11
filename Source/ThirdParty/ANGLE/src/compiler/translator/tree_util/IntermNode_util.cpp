@@ -6,6 +6,7 @@
 // IntermNode_util.cpp: High-level utilities for creating AST nodes and node hierarchies. Mostly
 // meant to be used in AST transforms.
 
+#include "compiler/translator/util.h"
 #ifdef UNSAFE_BUFFERS_BUILD
 #    pragma allow_unsafe_buffers
 #endif
@@ -194,6 +195,15 @@ TIntermConstantUnion *CreateBoolNode(bool value)
     return new TIntermConstantUnion(u, type);
 }
 
+TIntermConstantUnion *CreateYuvCscNode(TYuvCscStandardEXT value)
+{
+    TConstantUnion *u = new TConstantUnion[1];
+    u[0].setYuvCscStandardEXTConst(value);
+
+    TType type(EbtYuvCscStandardEXT, EbpUndefined, EvqConst, 1);
+    return new TIntermConstantUnion(u, type);
+}
+
 TVariable *CreateTempVariable(TSymbolTable *symbolTable, const TType *type)
 {
     ASSERT(symbolTable != nullptr);
@@ -355,6 +365,22 @@ const TVariable *DeclareInterfaceBlockVariable(TIntermBlock *root,
     root->insertChildNodes(firstFunctionIndex, insertSequence);
 
     return interfaceBlockVar;
+}
+
+const TVariable *FindRootVariable(TIntermNode *expr)
+{
+    if (TIntermBinary *binNode = expr->getAsBinaryNode())
+    {
+        return FindRootVariable(binNode->getLeft());
+    }
+    if (TIntermSwizzle *swizzle = expr->getAsSwizzleNode())
+    {
+        return FindRootVariable(swizzle->getOperand());
+    }
+
+    TIntermSymbol *sym = expr->getAsSymbolNode();
+    ASSERT(sym);
+    return &sym->variable();
 }
 
 const TVariable &CreateStructTypeVariable(TSymbolTable &symbolTable, const TStructure &structure)
@@ -532,6 +558,18 @@ bool EndsInBranch(TIntermBlock *block)
     }
 
     return false;
+}
+
+TIntermNode *CastScalar(const TType &type, TIntermTyped *scalar)
+{
+    const TBasicType basicType = type.getBasicType();
+    if (scalar->getType().getBasicType() == basicType)
+    {
+        return scalar;
+    }
+
+    TType castDestType(basicType, type.getPrecision());
+    return TIntermAggregate::CreateConstructor(castDestType, {scalar});
 }
 
 }  // namespace sh

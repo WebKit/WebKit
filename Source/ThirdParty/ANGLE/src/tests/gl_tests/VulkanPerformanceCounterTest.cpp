@@ -16,6 +16,8 @@
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_instantiate.h"
 #include "test_utils/gl_raii.h"
+#include "util/EGLWindow.h"
+#include "util/OSWindow.h"
 #include "util/random_utils.h"
 #include "util/shader_utils.h"
 #include "util/test_utils.h"
@@ -432,6 +434,20 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
 
     GLuint monitor;
     CounterNameToIndexMap mIndexMap;
+};
+
+class VulkanPerformanceCounterTest_RGBSurface : public VulkanPerformanceCounterTest
+{
+  protected:
+    VulkanPerformanceCounterTest_RGBSurface() : VulkanPerformanceCounterTest()
+    {
+        // Only set the Alpha bit to 0 on ARM platforms to avoid EGL configuration
+        // failures.
+        if (IsARM())
+        {
+            setConfigAlphaBits(0);
+        }
+    }
 };
 
 class VulkanPerformanceCounterTest_ES31 : public VulkanPerformanceCounterTest
@@ -8544,6 +8560,43 @@ TEST_P(VulkanPerformanceCounterTest, TextureOverwriteDoesNotBreakRenderPass)
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
 }
 
+// Verifies whether, when GL_RASTERIZER_DISCARD is enabled and no glClear is issued,
+// the Vulkan color attachment uses VK_ATTACHMENT_LOAD_OP_NONE and VK_ATTACHMENT_STORE_OP_NONE,
+// as no actual rendering or clearing is expected.
+TEST_P(VulkanPerformanceCounterTest_RGBSurface, UnrenderedSurfaceShouldNotClear)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    ANGLE_SKIP_TEST_IF(!hasLoadOpNoneSupport());
+
+    // Use default EGL window, display, surface, and context.
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay dpy     = window->getDisplay();
+    EGLSurface surface = window->getSurface();
+    EGLContext context = window->getContext();
+
+    // Make the default context current.
+    EXPECT_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    angle::VulkanPerfCounters expected;
+    // Expect rpCount+1, color(Clears+0, Loads+0, LoadNones+1, Stores+0, StoreNones+1)
+    setExpectedCountersForColorOps(getPerfCounters(), 1, 0, 0, 1, 0, 1, &expected);
+
+    glEnable(GL_RASTERIZER_DISCARD);
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    glDisable(GL_RASTERIZER_DISCARD);
+
+    // Validate no GL errors and check performance counters.
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+    glFinish();
+    EXPECT_COLOR_OP_COUNTERS(getPerfCounters(), expected);
+
+    // Restore original context (optional if already using default).
+    eglMakeCurrent(dpy, window->getSurface(), window->getSurface(), window->getContext());
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest);
 ANGLE_INSTANTIATE_TEST(
     VulkanPerformanceCounterTest,
@@ -8577,5 +8630,17 @@ ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_Prerotation,
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_SingleBuffer);
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_SingleBuffer, ES3_VULKAN());
+
+ANGLE_INSTANTIATE_TEST(
+    VulkanPerformanceCounterTest_RGBSurface,
+    ES3_VULKAN(),
+    ES3_VULKAN().enable(Feature::PadBuffersToMaxVertexAttribStride),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferMonolithicPipelinesOverLibraries),
+    ES3_VULKAN_SWIFTSHADER()
+        .enable(Feature::PreferMonolithicPipelinesOverLibraries)
+        .enable(Feature::SlowDownMonolithicPipelineCreationForTesting),
+    ES3_VULKAN_SWIFTSHADER()
+        .enable(Feature::PreferMonolithicPipelinesOverLibraries)
+        .disable(Feature::MergeProgramPipelineCachesToGlobalCache));
 
 }  // anonymous namespace

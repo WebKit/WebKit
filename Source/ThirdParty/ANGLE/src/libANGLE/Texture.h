@@ -742,9 +742,6 @@ class Texture final : public RefCountObject<TextureID>,
         DIRTY_BIT_BOUND_AS_IMAGE,
         DIRTY_BIT_BOUND_AS_ATTACHMENT,
 
-        // Bound to MSRTT Framebuffer
-        DIRTY_BIT_BOUND_TO_MSRTT_FRAMEBUFFER,
-
         // Misc
         DIRTY_BIT_USAGE,
         DIRTY_BIT_IMPLEMENTATION,

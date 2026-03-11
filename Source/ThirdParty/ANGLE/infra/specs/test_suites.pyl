@@ -1525,6 +1525,7 @@
           '--test-machine-name',
           '${buildername}',
           '--swiftshader',
+          '--key-frame-limit=10',
         ],
         'linux_args': [
           '--xvfb',

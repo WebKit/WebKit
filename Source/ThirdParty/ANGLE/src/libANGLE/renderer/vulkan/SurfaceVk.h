@@ -558,7 +558,7 @@ class WindowSurfaceVk : public SurfaceVk
     vk::BufferHelper mLockBufferHelper;
 
     // EGL_KHR_partial_update
-    uint64_t mBufferAgeQueryFrameNumber;
+    bool mIsBufferAgeQueried;
 
     // GL_EXT_shader_framebuffer_fetch
     vk::FramebufferFetchMode mFramebufferFetchMode = vk::FramebufferFetchMode::None;

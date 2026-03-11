@@ -1,0 +1,24 @@
+{
+	"lucicfg": "1.45.8",
+	"packages": [
+		{
+			"name": "@angle-project",
+			"deps": [
+				"@chromium-luci"
+			],
+			"lucicfg": "1.45.8",
+			"entrypoints": [
+				"main.star"
+			]
+		},
+		{
+			"name": "@chromium-luci",
+			"source": {
+				"repo": "https://chromium.googlesource.com/infra/chromium/+/refs/heads/main",
+				"revision": "d32eb6269c44595510753283e4288ea36b45f640",
+				"path": "starlark-libs/chromium-luci"
+			},
+			"lucicfg": "1.45.0"
+		}
+	]
+}

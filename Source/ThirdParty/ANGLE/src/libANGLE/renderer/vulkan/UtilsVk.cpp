@@ -5080,8 +5080,11 @@ angle::Result LineLoopHelper::streamIndices(ContextVk *contextVk,
     }
     *indexCountOut = numOutIndices;
 
-    ANGLE_TRY(contextVk->initBufferForVertexConversion(
-        &mDynamicIndexBuffer, unitSize * numOutIndices, vk::MemoryHostVisibility::Visible));
+    // Make sure indexBufferSize not zero, otherwise VMA may hit assertion.
+    size_t indexBufferSize = numOutIndices > 0 ? unitSize * numOutIndices : unitSize;
+
+    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mDynamicIndexBuffer, indexBufferSize,
+                                                       vk::MemoryHostVisibility::Visible));
     vk::BufferHelper *indexBuffer = mDynamicIndexBuffer.getBuffer();
     uint8_t *indices              = indexBuffer->getMappedMemory();
 

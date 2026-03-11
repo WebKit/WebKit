@@ -214,7 +214,7 @@ void MSLGetShaderSource(const gl::ProgramState &programState,
     for (const gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         const gl::SharedCompiledShaderState &glShader = programState.getAttachedShader(shaderType);
-        (*shaderSourcesOut)[shaderType]               = glShader ? glShader->translatedSource : "";
+        (*shaderSourcesOut)[shaderType]               = glShader ? *glShader->translatedSource : "";
     }
 }
 

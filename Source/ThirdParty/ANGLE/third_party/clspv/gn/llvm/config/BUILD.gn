@@ -65,7 +65,6 @@ write_cmake_config("config") {
   values = [
     "BUG_REPORT_URL=https://github.com/llvm/llvm-project/issues/",
     "ENABLE_BACKTRACES=1",
-    "ENABLE_DEBUGLOC_COVERAGE_TRACKING=",
     "ENABLE_CRASH_OVERRIDES=1",
     "BACKTRACE_HEADER=execinfo.h",
     "HAVE_BUILTIN_THREAD_POINTER=",
@@ -114,6 +113,8 @@ write_cmake_config("config") {
     "LLVM_GISEL_COV_ENABLED=",
     "LLVM_GISEL_COV_PREFIX=",
     "HAVE_GETAUXVAL=",
+    "HAVE_ICU=",
+    "HAVE_ICONV=",
 
     # FIXME: Set to 1 on mac once the 10.14 SDK is in common use.
     "LLVM_SUPPORT_XCODE_SIGNPOSTS=",
@@ -206,6 +207,7 @@ write_cmake_config("config") {
       "HAVE_UNISTD_H=",
       "HAVE__CHSIZE_S=1",
       "HAVE__UNWIND_BACKTRACE=",
+      "HAVE_SYS_IOCTL_H=",
       "stricmp=_stricmp",
       "strdup=_strdup",
     ]
@@ -233,6 +235,7 @@ write_cmake_config("config") {
       "HAVE_UNISTD_H=1",
       "HAVE__CHSIZE_S=",
       "HAVE__UNWIND_BACKTRACE=1",
+      "HAVE_SYS_IOCTL_H=1",
       "stricmp=",
       "strdup=",
     ]
@@ -294,6 +297,12 @@ write_cmake_config("llvm-config") {
     "LLVM_VERSION_PATCH=$llvm_version_patch",
     "LLVM_WITH_Z3=",
     "LLVM_ENABLE_TELEMETRY=",
+    "LLVM_ENABLE_PROFCHECK=",
+    "LLVM_ENABLE_LLVM_EXPORT_ANNOTATIONS=",
+    "LLVM_ENABLE_LLVM_C_EXPORT_ANNOTATIONS=",
+    "LLVM_ENABLE_DEBUGLOC_TRACKING_COVERAGE=",
+    "LLVM_ENABLE_DEBUGLOC_TRACKING_ORIGIN=",
+    "LLVM_ENABLE_ONDISK_CAS=",
     "PACKAGE_VERSION=${llvm_version}git",
   ]
 
@@ -362,94 +371,6 @@ write_cmake_config("llvm-config") {
   } else {
     values += [ "LLVM_FORCE_ENABLE_STATS=" ]
   }
-
-  if (llvm_build_AArch64) {
-    values += [ "LLVM_HAS_AARCH64_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_AARCH64_TARGET=" ]
-  }
-
-  if (llvm_build_AMDGPU) {
-    values += [ "LLVM_HAS_AMDGPU_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_AMDGPU_TARGET=" ]
-  }
-
-  values += [ "LLVM_HAS_ARC_TARGET=" ]
-
-  if (llvm_build_ARM) {
-    values += [ "LLVM_HAS_ARM_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_ARM_TARGET=" ]
-  }
-
-  values += [ "LLVM_HAS_AVR_TARGET=" ]
-
-  if (llvm_build_BPF) {
-    values += [ "LLVM_HAS_BPF_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_BPF_TARGET=" ]
-  }
-
-  values += [ "LLVM_HAS_CSKY_TARGET=" ]
-  values += [ "LLVM_HAS_DIRECTX_TARGET=" ]
-  values += [ "LLVM_HAS_HEXAGON_TARGET=" ]
-  values += [ "LLVM_HAS_LANAI_TARGET=" ]
-
-  if (llvm_build_LoongArch) {
-    values += [ "LLVM_HAS_LOONGARCH_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_LOONGARCH_TARGET=" ]
-  }
-
-  values += [ "LLVM_HAS_M68K_TARGET=" ]
-
-  if (llvm_build_Mips) {
-    values += [ "LLVM_HAS_MIPS_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_MIPS_TARGET=" ]
-  }
-
-  values += [ "LLVM_HAS_MSP430_TARGET=" ]
-  values += [ "LLVM_HAS_NVPTX_TARGET=" ]
-
-  if (llvm_build_PowerPC) {
-    values += [ "LLVM_HAS_POWERPC_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_POWERPC_TARGET=" ]
-  }
-
-  if (llvm_build_RISCV) {
-    values += [ "LLVM_HAS_RISCV_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_RISCV_TARGET=" ]
-  }
-
-  values += [ "LLVM_HAS_SPARC_TARGET=" ]
-  values += [ "LLVM_HAS_SPIRV_TARGET=" ]
-
-  if (llvm_build_SystemZ) {
-    values += [ "LLVM_HAS_SYSTEMZ_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_SYSTEMZ_TARGET=" ]
-  }
-
-  values += [ "LLVM_HAS_VE_TARGET=" ]
-
-  if (llvm_build_WebAssembly) {
-    values += [ "LLVM_HAS_WEBASSEMBLY_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_WEBASSEMBLY_TARGET=" ]
-  }
-
-  if (llvm_build_X86) {
-    values += [ "LLVM_HAS_X86_TARGET=1" ]
-  } else {
-    values += [ "LLVM_HAS_X86_TARGET=" ]
-  }
-
-  values += [ "LLVM_HAS_XCORE_TARGET=" ]
-  values += [ "LLVM_HAS_XTENSA_TARGET=" ]
 }
 
 ##############################################################################

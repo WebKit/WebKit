@@ -41,6 +41,9 @@ bool strtof_clamp(const std::string &str, float *value, bool preserveDenorms);
 
 GLenum GLVariableType(const TType &type);
 GLenum GLVariablePrecision(const TType &type);
+bool IsParam(TQualifier qualifier);
+// Returns true if `out` or `inout` function parameter.
+bool IsParamOut(TQualifier qualifier);
 bool IsVaryingIn(TQualifier qualifier);
 bool IsVaryingOut(TQualifier qualifier);
 bool IsVarying(TQualifier qualifier);
@@ -103,6 +106,9 @@ struct Declaration
 // Returns a `Declaration` view of the given node, for declarator `index` of
 // the declarations in `declNode`.
 Declaration ViewDeclaration(TIntermDeclaration &declNode, uint32_t index = 0);
+
+// Returns true if op indexes an array, struct, or interface block.
+bool IsIndexOp(TOperator op);
 
 }  // namespace sh
 
