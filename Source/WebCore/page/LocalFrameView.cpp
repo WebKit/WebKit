@@ -522,6 +522,16 @@ void LocalFrameView::didRestoreFromBackForwardCache()
     // When restoring from back/forward cache, the main frame stays in place while subframes get swapped in.
     // We update the scrollable area set to ensure that scrolling data structures get invalidated.
     updateScrollableAreaSet();
+
+    // Reset scroll tracking state for the main frame so that fixed container edge
+    // sampling is not blocked by stale state from the previous navigation entry.
+    // Page::didCommitLoad() clears the cached fixed container edges, and
+    // Page::updateFixedContainerEdges() skips top edge sampling when
+    // wasEverScrolledExplicitlyByUserBelowTopEdge() returns true.
+    if (m_frame->isMainFrame()) {
+        m_wasEverScrolledExplicitlyByUser = false;
+        m_wasEverScrolledExplicitlyByUserBelowTopEdge = false;
+    }
 }
 
 void LocalFrameView::willDestroyRenderTree()
