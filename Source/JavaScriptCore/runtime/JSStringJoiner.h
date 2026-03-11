@@ -216,8 +216,8 @@ ALWAYS_INLINE void JSStringJoiner::appendNumber(VM& vm, int32_t value)
 
 ALWAYS_INLINE void JSStringJoiner::appendNumber(VM& vm, double value)
 {
-    if (canBeStrictInt32(value))
-        appendNumber(vm, static_cast<int32_t>(value));
+    if (auto int32Value = tryConvertToStrictInt32(value))
+        appendNumber(vm, int32Value.value());
     else
         append8Bit(vm.numericStrings.add(value));
 }
