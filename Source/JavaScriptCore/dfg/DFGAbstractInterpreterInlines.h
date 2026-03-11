@@ -5766,9 +5766,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
                 if (argument.isType(SpecPromiseObject)) {
                     if (m_graph.isWatchingPromiseSpeciesWatchpoint(node)) {
-                        didFoldClobberWorld();
-                        forNode(node) = argument;
-                        break;
+                        if (auto structure = argument.m_structure.onlyStructure()) {
+                            if (structure.get() == globalObject->promiseStructure()) {
+                                didFoldClobberWorld();
+                                forNode(node) = argument;
+                                break;
+                            }
+                        }
                     }
                 }
 
