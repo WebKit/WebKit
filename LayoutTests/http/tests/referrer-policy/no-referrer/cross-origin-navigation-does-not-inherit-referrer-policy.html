@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="referrer" content="no-referrer">
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var channel = new BroadcastChannel("referrer-policy-pson-test");
+channel.onmessage = function(e) {
+    channel.close();
+    var referrer = e.data;
+    var passed = referrer.length > 0;
+    document.body.innerHTML = "<p>Tests that a cross-origin navigation via PSON does not inherit the previous page's no-referrer policy.</p>"
+        + (passed ? "PASS" : "FAIL") + ": Referrer should not be empty after PSON (got: \"" + referrer + "\")\n";
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+
+window.open("http://127.0.0.1:8000/referrer-policy/no-referrer/resources/navigate-cross-origin.html", "_blank", "noopener");
+</script>
+</body>
+</html>

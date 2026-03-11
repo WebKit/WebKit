@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// On 127.0.0.1:8000 after two PSON navigations from a noopener window whose
+// opener had Referrer-Policy: no-referrer. This page should NOT inherit that
+// policy. Load a cross-origin script from localhost:8000; if the referrer
+// policy was correctly NOT inherited, the request will include a Referer header.
+function checkReferrer(referrer) {
+    var channel = new BroadcastChannel("referrer-policy-pson-test");
+    channel.postMessage(referrer);
+    channel.close();
+}
+</script>
+<script src="http://localhost:8000/referrer-policy/resources/script.py"></script>
+</body>
+</html>

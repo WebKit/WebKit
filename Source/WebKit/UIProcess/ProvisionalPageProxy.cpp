@@ -126,13 +126,16 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
         ASSERT(&suspendedPage->process() == process.ptr());
         suspendedPage->unsuspend();
         m_mainFrame = suspendedPage->mainFrame();
+        m_mainFrame->updateReferrerPolicy(ReferrerPolicy::EmptyString);
         m_needsMainFrameObserver = true;
-    } else if (m_shouldReuseMainFrame)
+    } else if (m_shouldReuseMainFrame) {
         m_mainFrame = page.mainFrame();
+        m_mainFrame->updateReferrerPolicy(ReferrerPolicy::EmptyString);
+    }
     else {
         // Passing previous frame's url to restore the main frame's committed URL
         // as some clients may rely on it until the next load is committed.
-        Ref mainFrame = WebFrameProxy::create(page, m_frameProcess, generateFrameIdentifier(), previousMainFrame->effectiveSandboxFlags(), previousMainFrame->effectiveReferrerPolicy(), previousMainFrame->scrollingMode(), nullptr, nullptr, IsMainFrame::Yes, previousMainFrame->url());
+        Ref mainFrame = WebFrameProxy::create(page, m_frameProcess, generateFrameIdentifier(), previousMainFrame->effectiveSandboxFlags(), ReferrerPolicy::EmptyString, previousMainFrame->scrollingMode(), nullptr, nullptr, IsMainFrame::Yes, previousMainFrame->url());
         m_mainFrame = mainFrame.copyRef();
         m_needsMainFrameObserver = true;
         previousMainFrame->transferNavigationCallbackToFrame(mainFrame);
