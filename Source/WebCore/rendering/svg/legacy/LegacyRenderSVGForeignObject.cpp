@@ -167,7 +167,7 @@ void LegacyRenderSVGForeignObject::layout()
 bool LegacyRenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     // Embedded content is drawn in the foreground phase.
-    if (hitTestAction != HitTestForeground)
+    if (hitTestAction != HitTestAction::Foreground)
         return false;
 
     FloatPoint localPoint = valueOrDefault(localTransform().inverse()).mapPoint(pointInParent);
@@ -178,9 +178,9 @@ bool LegacyRenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& reques
 
     // FOs establish a stacking context, so we need to hit-test all layers.
     HitTestLocation hitTestLocation(flooredLayoutPoint(localPoint));
-    return RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestForeground)
-        || RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestFloat)
-        || RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestChildBlockBackgrounds);
+    return RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestAction::Foreground)
+        || RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestAction::Float)
+        || RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestAction::ChildBlockBackgrounds);
 }
 
 LayoutSize LegacyRenderSVGForeignObject::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool*) const

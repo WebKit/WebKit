@@ -146,7 +146,7 @@ public:
 
     virtual void dirtyLineFromChangedChild() { }
 
-    void setChildNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
+    void setChildNeedsLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     void NODELETE setOutOfFlowChildNeedsStaticPositionLayout();
     void NODELETE clearChildNeedsLayout();
     void setNeedsOutOfFlowMovementLayout(const RenderStyle* oldStyle);
@@ -485,7 +485,7 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
     if (normalChildNeedsLayout())
         return;
     setNormalChildNeedsLayoutBit(true);
-    if (markParents == MarkContainingBlockChain)
+    if (markParents == MarkingBehavior::ContainingBlockChain)
         scheduleLayout(markContainingBlocksForLayout());
 }
 

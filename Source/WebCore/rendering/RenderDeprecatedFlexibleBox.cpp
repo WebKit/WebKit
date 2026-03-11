@@ -406,7 +406,7 @@ static void gatherFlexChildrenInfo(FlexBoxIterator& iterator, RelayoutChildren r
             // may have changed, and we need to reallocate space.
             child->clearOverridingSize();
             if (relayoutChildren == RelayoutChildren::No)
-                child->setChildNeedsLayout(MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
             haveFlex = true;
             unsigned flexGroup = child->style().boxFlexGroup().value;
             if (lowestFlexGroup == 0)
@@ -478,7 +478,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
         LayoutUnit maxAscent, maxDescent;
         for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
             if (relayoutChildren == RelayoutChildren::Yes)
-                child->setChildNeedsLayout(MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
             if (child->isOutOfFlowPositioned())
                 continue;
@@ -536,7 +536,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
                 if (childLayer->staticBlockPosition() != yPos) {
                     childLayer->setStaticBlockPosition(yPos);
                     if (child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
-                        child->setChildNeedsLayout(MarkOnlyThis);
+                        child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
                 }
                 continue;
             }
@@ -549,7 +549,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
             LayoutUnit oldChildHeight = child->height();
             child->updateLogicalHeight();
             if (oldChildHeight != child->height())
-                child->setChildNeedsLayout(MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
             child->markForPaginationRelayoutIfNeeded();
 
@@ -795,7 +795,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
         for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
             // Make sure we relayout children if we need it.
             if (!haveLineClamp && relayoutChildren == RelayoutChildren::Yes)
-                child->setChildNeedsLayout(MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
             if (child->isOutOfFlowPositioned()) {
                 child->containingBlock()->addOutOfFlowBox(*child);
@@ -804,7 +804,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
                 if (childLayer->staticBlockPosition() != height()) {
                     childLayer->setStaticBlockPosition(height());
                     if (child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
-                        child->setChildNeedsLayout(MarkOnlyThis);
+                        child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
                 }
                 continue;
             }
@@ -1061,7 +1061,7 @@ RenderDeprecatedFlexibleBox::ClampedContent RenderDeprecatedFlexibleBox::applyLi
             child->clearOverridingSize();
             if (relayoutChildren == RelayoutChildren::Yes || (child->isBlockLevelReplacedOrAtomicInline() && (child->style().width().isPercentOrCalculated() || child->style().height().isPercentOrCalculated()))
                 || (child->style().height().isAuto() && is<RenderBlockFlow>(*child))) {
-                child->setChildNeedsLayout(MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
                 // Dirty all the positioned objects.
                 if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*child))
@@ -1095,7 +1095,7 @@ RenderDeprecatedFlexibleBox::ClampedContent RenderDeprecatedFlexibleBox::applyLi
                 if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*child))
                     numberOfLines += lineCountFor(*blockFlow);
                 // FIXME: This should be turned into a partial damage.
-                child->setChildNeedsLayout(MarkOnlyThis);
+                child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
             }
             return std::max<size_t>(1, (numberOfLines + 1) * percentage.value / 100.f);
         }
@@ -1115,7 +1115,7 @@ RenderDeprecatedFlexibleBox::ClampedContent RenderDeprecatedFlexibleBox::applyLi
 
             // Let line-clamp logic run but make sure no clamping happens (it's needed to make sure certain features are disabled like ellipsis in inline direction).
             layoutState.setLegacyLineClamp(RenderLayoutState::LegacyLineClamp { inlineLayout->lineCount() + 1, { }, { }, { } });
-            lastRoot->setChildNeedsLayout(MarkOnlyThis);
+            lastRoot->setChildNeedsLayout(MarkingBehavior::OnlyThis);
             lastRoot->layoutIfNeeded();
 
             layoutState.setLegacyLineClamp(currentLineClamp);

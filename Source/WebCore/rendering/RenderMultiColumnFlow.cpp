@@ -418,7 +418,7 @@ bool RenderMultiColumnFlow::nodeAtPoint(const HitTestRequest& request, HitTestRe
 {
     // You cannot be inside an in-flow RenderFragmentedFlow without a corresponding DOM node. It's better to
     // just let the ancestor figure out where we are instead.
-    if (hitTestAction == HitTestBlockBackground)
+    if (hitTestAction == HitTestAction::BlockBackground)
         return false;
     bool inside = RenderFragmentedFlow::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction);
     if (inside && !result.innerNode())

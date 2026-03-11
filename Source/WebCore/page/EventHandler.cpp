@@ -1690,11 +1690,11 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
     if (renderer) {
         Cursor overrideCursor;
         switch (renderer->getCursor(roundedIntPoint(result.localPoint()), overrideCursor)) {
-        case SetCursorBasedOnStyle:
+        case CursorDirective::BasedOnStyle:
             break;
-        case SetCursor:
+        case CursorDirective::Set:
             return overrideCursor;
-        case DoNotSetCursor:
+        case CursorDirective::DoNotSet:
             return std::nullopt;
         }
     }

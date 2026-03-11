@@ -93,7 +93,7 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
         }
 
         if (needsLayout)
-            child.setNeedsLayout(MarkOnlyThis);
+            child.setNeedsLayout(MarkingBehavior::OnlyThis);
 
         if (CheckedPtr element = dynamicDowncast<RenderElement>(child)) {
             if (element->needsLayout())

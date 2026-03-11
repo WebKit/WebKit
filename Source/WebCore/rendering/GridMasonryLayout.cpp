@@ -130,7 +130,7 @@ void GridMasonryLayout::setItemContainingBlockToGridArea(const GridTrackSizingAl
     }
 
     // FIXME(249230): Try to cache masonry layout sizes
-    gridItem.setChildNeedsLayout(MarkOnlyThis);
+    gridItem.setChildNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
 void GridMasonryLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem, const GridArea& area, GridMasonryLayout::MasonryLayoutPhase layoutPhase)

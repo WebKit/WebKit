@@ -27,29 +27,29 @@
 
 namespace WebCore {
 
-enum CursorDirective {
-    SetCursorBasedOnStyle,
-    SetCursor,
-    DoNotSetCursor
+enum class CursorDirective : uint8_t {
+    BasedOnStyle,
+    Set,
+    DoNotSet
 };
 
-enum HitTestFilter {
-    HitTestAll,
-    HitTestSelf,
-    HitTestDescendants
+enum class HitTestFilter : uint8_t {
+    All,
+    Self,
+    Descendants
 };
 
-enum HitTestAction {
-    HitTestBlockBackground,
-    HitTestChildBlockBackground,
-    HitTestChildBlockBackgrounds,
-    HitTestFloat,
-    HitTestForeground
+enum class HitTestAction : uint8_t {
+    BlockBackground,
+    ChildBlockBackground,
+    ChildBlockBackgrounds,
+    Float,
+    Foreground
 };
 
-enum MarkingBehavior {
-    MarkOnlyThis,
-    MarkContainingBlockChain,
+enum class MarkingBehavior : uint8_t {
+    OnlyThis,
+    ContainingBlockChain,
 };
 
 enum MapCoordinatesMode {

@@ -476,7 +476,7 @@ void LegacyLineLayout::layoutRunsAndFloats(bool hasInlineChild)
     resolver.setPosition(iter, numberOfIsolateAncestors(iter));
 
     if (hasInlineChild && !m_flow.selfNeedsLayout()) {
-        m_flow.setNeedsLayout(MarkOnlyThis); // Mark as needing a full layout to force us to repaint.
+        m_flow.setNeedsLayout(MarkingBehavior::OnlyThis); // Mark as needing a full layout to force us to repaint.
         if (!layoutContext().needsFullRepaint() && m_flow.cachedLayerClippedOverflowRect()) {
             // Because we waited until we were already inside layout to discover
             // that the block really needed a full layout, we missed our chance to repaint the layer

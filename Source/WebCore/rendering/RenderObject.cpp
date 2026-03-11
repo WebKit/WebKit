@@ -664,7 +664,7 @@ void RenderObject::setNeedsPreferredWidthsUpdate(MarkingBehavior markParents)
         return;
     }
 
-    if (markParents == MarkOnlyThis) {
+    if (markParents == MarkingBehavior::OnlyThis) {
         ensureRareData().preferredLogicalWidthsNeedUpdateIsMarkOnlyThis = true;
         return;
     }
@@ -1835,22 +1835,22 @@ bool RenderObject::isComposited() const
 bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter hitTestFilter)
 {
     bool inside = false;
-    if (hitTestFilter != HitTestSelf) {
+    if (hitTestFilter != HitTestFilter::Self) {
         // First test the foreground layer (lines and inlines).
-        inside = nodeAtPoint(request, result, locationInContainer, accumulatedOffset, HitTestForeground);
+        inside = nodeAtPoint(request, result, locationInContainer, accumulatedOffset, HitTestAction::Foreground);
 
         // Test floats next.
         if (!inside)
-            inside = nodeAtPoint(request, result, locationInContainer, accumulatedOffset, HitTestFloat);
+            inside = nodeAtPoint(request, result, locationInContainer, accumulatedOffset, HitTestAction::Float);
 
         // Finally test to see if the mouse is in the background (within a child block's background).
         if (!inside)
-            inside = nodeAtPoint(request, result, locationInContainer, accumulatedOffset, HitTestChildBlockBackgrounds);
+            inside = nodeAtPoint(request, result, locationInContainer, accumulatedOffset, HitTestAction::ChildBlockBackgrounds);
     }
 
     // See if the mouse is inside us but not any of our descendants
-    if (hitTestFilter != HitTestDescendants && !inside)
-        inside = nodeAtPoint(request, result, locationInContainer, accumulatedOffset, HitTestBlockBackground);
+    if (hitTestFilter != HitTestFilter::Descendants && !inside)
+        inside = nodeAtPoint(request, result, locationInContainer, accumulatedOffset, HitTestAction::BlockBackground);
 
     return inside;
 }
@@ -1985,7 +1985,7 @@ const RenderStyle& RenderObject::outlineStyleForRepaint() const
 
 CursorDirective RenderObject::getCursor(const LayoutPoint&, Cursor&) const
 {
-    return SetCursorBasedOnStyle;
+    return CursorDirective::BasedOnStyle;
 }
 
 bool RenderObject::useDarkAppearance() const

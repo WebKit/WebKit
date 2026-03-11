@@ -141,7 +141,7 @@ void RenderAttachment::layoutShadowContent(const LayoutSize& size)
     for (auto& renderBox : childrenOfType<RenderBox>(*this)) {
         renderBox.mutableStyle().setHeight(Style::PreferredSize::Fixed { size.height() });
         renderBox.mutableStyle().setWidth(Style::PreferredSize::Fixed { size.width() });
-        renderBox.setNeedsLayout(MarkOnlyThis);
+        renderBox.setNeedsLayout(MarkingBehavior::OnlyThis);
         renderBox.layout();
     }
 }
