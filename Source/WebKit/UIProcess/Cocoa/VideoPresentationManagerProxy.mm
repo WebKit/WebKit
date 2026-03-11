@@ -1101,6 +1101,14 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(PlaybackSessionContext
     // The video may not have been rendered yet, which would have triggered a call to createViewWithID/createLayerHostViewWithID making the AVPlayerLayer and AVPlayerLayerView not yet set. Create them as needed.
     if (!interface->videoView())
         createViewWithID(contextId, hostingContext, initialSize, videoDimensions, hostingDeviceScaleFactor);
+    else if (RetainPtr playerLayer = interface->playerLayer()) {
+        // On PiP re-entry, the existing WebAVPlayerLayer retains stale sublayer
+        // geometry from the previous session. Update bounds and force a layout
+        // pass so layoutSublayers recalculates the centered video position.
+        [playerLayer setBounds:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
+        [playerLayer setVideoDimensions:videoDimensions];
+        [playerLayer setNeedsLayout];
+    }
     ASSERT(interface->videoView());
 #endif
 
