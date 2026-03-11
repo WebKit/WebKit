@@ -116,10 +116,18 @@ void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedS
         return;
 
     auto channelIdentifiersForName = channelsForOriginIterator->value;
+
+    size_t numberOfMessagesNeeded = channelIdentifiersForName.size();
+    for (auto& channelIdentifier : channelIdentifiersForName) {
+        if (channelIdentifier == sourceInProcess)
+            --numberOfMessagesNeeded;
+    }
+
     for (auto& channelIdentifier : channelIdentifiersForName) {
         if (channelIdentifier == sourceInProcess)
             continue;
-        WebCore::BroadcastChannel::dispatchMessageTo(channelIdentifier, message.copyRef(), [callbackAggregator] { });
+        auto messageToDispatch = numberOfMessagesNeeded-- > 1 ? message->clone() : WTF::move(message);
+        WebCore::BroadcastChannel::dispatchMessageTo(channelIdentifier, WTF::move(messageToDispatch), [callbackAggregator] { });
     }
 }
 

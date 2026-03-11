@@ -1,0 +1,10 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useSharedArrayBuffer=true ] -->
+<html>
+<body>
+<pre id="output"></pre>
+<script src="resources/broadcastchannel-test-harness.js"></script>
+<script>
+broadcastChannelTest(function() { return new SharedArrayBuffer(8); }, "SharedArrayBuffer:8");
+</script>
+</body>
+</html>

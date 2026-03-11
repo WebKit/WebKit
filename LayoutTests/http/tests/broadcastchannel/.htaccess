@@ -1,0 +1,4 @@
+<FilesMatch "postmessage-shared(arraybuffer|wasmmemory)\.html$">
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    Header set Cross-Origin-Embedder-Policy "require-corp"
+</FilesMatch>

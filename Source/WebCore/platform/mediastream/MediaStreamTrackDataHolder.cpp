@@ -103,6 +103,13 @@ MediaStreamTrackDataHolder::~MediaStreamTrackDataHolder()
 {
 }
 
+std::unique_ptr<MediaStreamTrackDataHolder> MediaStreamTrackDataHolder::copy() const
+{
+    auto holder = makeUnique<MediaStreamTrackDataHolder>(trackId.isolatedCopy(), label.isolatedCopy(), type, deviceType, isEnabled, isEnded, contentHint, isProducingData, isMuted, isInterrupted, settings.isolatedCopy(), capabilities.isolatedCopy(), source.copyRef());
+    holder->preventSourceFromEndingObserverWrapper = preventSourceFromEndingObserverWrapper;
+    return holder;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

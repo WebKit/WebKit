@@ -77,6 +77,14 @@ DetachedImageBitmap::DetachedImageBitmap(UniqueRef<SerializedImageBuffer> bitmap
 {
 }
 
+DetachedImageBitmap::DetachedImageBitmap(const DetachedImageBitmap& other)
+    : m_bitmap(makeUniqueRefFromNonNullUniquePtr(other.m_bitmap->clone()))
+    , m_originClean(other.m_originClean)
+    , m_premultiplyAlpha(other.m_premultiplyAlpha)
+    , m_forciblyPremultiplyAlpha(other.m_forciblyPremultiplyAlpha)
+{
+}
+
 DetachedImageBitmap::DetachedImageBitmap(DetachedImageBitmap&&) = default;
 
 DetachedImageBitmap::~DetachedImageBitmap() = default;

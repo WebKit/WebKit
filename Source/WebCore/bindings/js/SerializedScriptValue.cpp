@@ -36,6 +36,7 @@
 #include "CryptoKeyRSA.h"
 #include "CryptoKeyRSAComponents.h"
 #include "CryptoKeyRaw.h"
+#include "HTMLCanvasElement.h"
 #include "IDBValue.h"
 #include "ImageBuffer.h"
 #include "JSAudioWorkletGlobalScope.h"
@@ -130,6 +131,7 @@
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 #include "JSOffscreenCanvas.h"
 #include "OffscreenCanvas.h"
+#include "PlaceholderRenderingContext.h"
 #endif
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN) || CPU(NEEDS_ALIGNED_ACCESS)
@@ -6045,6 +6047,70 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
     }
 {
     m_internals.memoryCost = computeMemoryCost();
+}
+
+static std::unique_ptr<ArrayBufferContentsArray> copyArrayBufferContentsArray(const std::unique_ptr<ArrayBufferContentsArray>& source)
+{
+    if (!source)
+        return nullptr;
+    auto result = makeUnique<ArrayBufferContentsArray>();
+    result->reserveInitialCapacity(source->size());
+    for (auto& content : *source) {
+        result->append(JSC::ArrayBufferContents());
+        content.shareWith(result->last());
+    }
+    return result;
+}
+
+Ref<SerializedScriptValue> SerializedScriptValue::clone() const
+{
+    return create(m_internals.clone());
+}
+
+SerializedScriptValue::Internals SerializedScriptValue::Internals::clone() const
+{
+    return Internals {
+        data,
+        copyArrayBufferContentsArray(arrayBufferContentsArray),
+#if ENABLE(WEB_RTC)
+        detachedRTCDataChannels.map([](const auto& channel) {
+            return makeUnique<DetachedRTCDataChannel>(channel->identifier, channel->label.isolatedCopy(), channel->options.isolatedCopy(), channel->state);
+        }),
+#endif
+#if ENABLE(WEB_CODECS)
+        serializedVideoChunks,
+        serializedAudioChunks,
+        serializedVideoFrames,
+        serializedAudioData,
+#endif
+#if ENABLE(WEB_RTC)
+        serializedRTCEncodedAudioFrames.map([](const auto& frame) { return frame->clone(); }),
+        serializedRTCEncodedVideoFrames.map([](const auto& frame) { return frame->clone(); }),
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        detachedMediaSourceHandles,
+#endif
+#if ENABLE(MEDIA_STREAM)
+        serializedMediaStreamTracks.map([](const auto& track) {
+            return track->copy();
+        }),
+#endif
+        copyArrayBufferContentsArray(sharedBufferContentsArray),
+        detachedImageBitmaps,
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+        detachedOffscreenCanvases.map([](const auto& canvas) {
+            return makeUnique<DetachedOffscreenCanvas>(canvas->size(), canvas->originClean(), RefPtr { canvas->placeholderSource() });
+        }),
+        inMemoryOffscreenCanvases,
+#endif
+        inMemoryMessagePorts,
+#if ENABLE(WEBASSEMBLY)
+        wasmModulesArray ? makeUnique<WasmModuleArray>(*wasmModulesArray) : nullptr,
+        wasmMemoryHandlesArray ? makeUnique<WasmMemoryHandleArray>(*wasmMemoryHandlesArray) : nullptr,
+#endif
+        blobHandles.map([](const auto& handle) { return handle.isolatedCopy(); }),
+        memoryCost
+    };
 }
 
 SerializedScriptValue::SerializedScriptValue(Internals&& internals)

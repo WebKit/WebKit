@@ -43,6 +43,7 @@ struct MediaStreamTrackDataHolder {
 
     MediaStreamTrackDataHolder(const MediaStreamTrackDataHolder &) = delete;
     MediaStreamTrackDataHolder &operator=(const MediaStreamTrackDataHolder &) = delete;
+    WEBCORE_EXPORT std::unique_ptr<MediaStreamTrackDataHolder> copy() const;
 
     String trackId;
     String label;

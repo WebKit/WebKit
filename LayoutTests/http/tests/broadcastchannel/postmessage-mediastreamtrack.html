@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="output"></pre>
+<script src="resources/broadcastchannel-test-harness.js"></script>
+<script>
+broadcastChannelTest(function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 2;
+    var stream = canvas.captureStream();
+    return stream.getVideoTracks()[0];
+}, "MediaStreamTrack:video");
+</script>
+</body>
+</html>

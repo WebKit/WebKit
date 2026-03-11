@@ -149,6 +149,8 @@ public:
     enum class DeserializationBehavior : uint8_t { Fail, Succeed, LegacyMapToNull, LegacyMapToUndefined, LegacyMapToEmptyObject };
     WEBCORE_EXPORT static DeserializationBehavior deserializationBehavior(JSC::JSObject&);
 
+    WEBCORE_EXPORT Ref<SerializedScriptValue> clone() const;
+
 private:
     friend struct IPC::ArgumentCoder<SerializedScriptValue>;
 
@@ -239,6 +241,8 @@ private:
 #endif
         Vector<URLKeepingBlobAlive> blobHandles { };
         uint64_t memoryCost { 0 };
+
+        WEBCORE_EXPORT Internals clone() const;
     };
     friend struct IPC::ArgumentCoder<Internals>;
 
