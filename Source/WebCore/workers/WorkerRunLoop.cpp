@@ -478,7 +478,7 @@ void WorkerMainRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, con
 bool WorkerMainRunLoop::runInMode(WorkerOrWorkletGlobalScope*, const String&, bool)
 {
     RunLoop::mainSingleton().cycle();
-    return true;
+    return !terminated();
 }
 
 } // namespace WebCore
