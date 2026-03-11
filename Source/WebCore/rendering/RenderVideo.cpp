@@ -94,6 +94,11 @@ void RenderVideo::intrinsicSizeChanged()
 {
     if (protect(videoElement())->shouldDisplayPosterImage())
         RenderMedia::intrinsicSizeChanged();
+    // Refresh the cached poster image size with the current zoom factor.
+    // This is needed because m_cachedImageSize includes zoom at cache time,
+    // and intrinsicSizeChanged() is called when usedZoom() changes.
+    if (hasPosterFrameSize())
+        m_cachedImageSize = imageResource().intrinsicSize(style().usedZoom());
     if (updateIntrinsicSize())
         invalidateLineLayout();
 }
