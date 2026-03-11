@@ -1305,6 +1305,7 @@
 		A18899012CA9FA6700FEB09A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; platformFilters = (macos, ); };
 		A198D0A22BC64D8E0058BBEB /* NowPlayingMetadataObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = A198D0A12BC64D8E0058BBEB /* NowPlayingMetadataObserver.mm */; };
 		A1AD382F2C3DA40B003499BE /* FullscreenLifecycle.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1AD38272C3D9FAF003499BE /* FullscreenLifecycle.mm */; };
+		A1CEB0012EA50000003499BE /* FullscreenEscapeKeyVision.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1CEB0002EA50000003499BE /* FullscreenEscapeKeyVision.mm */; };
 		A1B8D76A2D67CD830045C305 /* InjectedBundleTestWebKitAPI.bundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1B8D76B2D67CD9B0045C305 /* TestWebKitAPI.wkbundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1B8D76C2D67CDA20045C305 /* TestWebKitAPIResources.bundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3867,6 +3868,7 @@
 		A198D0A12BC64D8E0058BBEB /* NowPlayingMetadataObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NowPlayingMetadataObserver.mm; sourceTree = "<group>"; };
 		A1A4FE5D18DD3DB700B5EA8A /* Download.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Download.mm; sourceTree = "<group>"; };
 		A1AD38272C3D9FAF003499BE /* FullscreenLifecycle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenLifecycle.mm; sourceTree = "<group>"; };
+		A1CEB0002EA50000003499BE /* FullscreenEscapeKeyVision.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenEscapeKeyVision.mm; sourceTree = "<group>"; };
 		A1AE4A092D5DBFCC00320629 /* HostWindowManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HostWindowManager.h; path = cocoa/HostWindowManager.h; sourceTree = "<group>"; };
 		A1AE4A0A2D5DBFCC00320629 /* HostWindowManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = HostWindowManager.mm; path = cocoa/HostWindowManager.mm; sourceTree = "<group>"; };
 		A1C0982F2E12FB5800FAC83A /* ElementFullscreen.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ElementFullscreen.mm; sourceTree = "<group>"; };
@@ -4989,6 +4991,7 @@
 				51819F2926EAC98200E47375 /* FTP.mm */,
 				CDCF78A7244A2EDB00480311 /* FullscreenAlert.mm */,
 				CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */,
+				A1CEB0002EA50000003499BE /* FullscreenEscapeKeyVision.mm */,
 				3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */,
 				A1AD38272C3D9FAF003499BE /* FullscreenLifecycle.mm */,
 				CDDC7C6825FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm */,
@@ -8004,6 +8007,7 @@
 				7CCE7EC01A411A7E00447C4C /* FragmentNavigation.mm in Sources */,
 				7CCE7EF61A411AE600447C4C /* FrameMIMETypeHTML.cpp in Sources */,
 				7CCE7EF71A411AE600447C4C /* FrameMIMETypePNG.cpp in Sources */,
+				A1CEB0012EA50000003499BE /* FullscreenEscapeKeyVision.mm in Sources */,
 				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
 				E55999F72B476C2F00A3719F /* FullscreenLayoutParameters.mm in Sources */,
 				A1AD382F2C3DA40B003499BE /* FullscreenLifecycle.mm in Sources */,

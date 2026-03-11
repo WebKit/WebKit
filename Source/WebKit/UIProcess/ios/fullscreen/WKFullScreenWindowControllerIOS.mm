@@ -1324,8 +1324,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(VISION)
             if (WebKit::useSpatialFullScreenTransition()) {
                 [strongSelf _performSpatialFullScreenTransition:YES completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), strongSelf] mutable {
-                    // We may have lost key status during the transition into fullscreen
+                    // We may have lost key and first responder status during the transition into fullscreen.
                     [strongSelf->_window makeKeyAndVisible];
+                    [[strongSelf _webView] becomeFirstResponder];
                     completionHandler(true);
                 })];
             } else
