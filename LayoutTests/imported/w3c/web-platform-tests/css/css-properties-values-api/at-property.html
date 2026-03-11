@@ -135,6 +135,15 @@ test_descriptor('syntax', '"<length> <percentage>"', null, {'initial-value': '42
 
 // syntax: leading bar
 test_descriptor('syntax', '"|<length>"', null, {'initial-value': '42px'});
+test_descriptor('syntax', '"| <length>"', null, {'initial-value': '42px'});
+test_descriptor('syntax', '"||<length>"', null, {'initial-value': '42px'});
+test_descriptor('syntax', '"|| <length>"', null, {'initial-value': '42px'});
+
+// syntax: trailing bar
+test_descriptor('syntax', '"<length>|"', null, {'initial-value': '42px'});
+test_descriptor('syntax', '"<length> |"', null, {'initial-value': '42px'});
+test_descriptor('syntax', '"<length>||"', null, {'initial-value': '42px'});
+test_descriptor('syntax', '"<length> ||"', null, {'initial-value': '42px'});
 
 // initial-value
 test_descriptor('initial-value', '10px');

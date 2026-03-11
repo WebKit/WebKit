@@ -113,9 +113,11 @@ std::optional<CSSCustomPropertySyntax> CSSCustomPropertySyntax::parse(StringView
             return universal();
         }
 
-        Definition definition;
+        if (!buffer.hasCharactersRemaining())
+            return { };
 
-        while (buffer.hasCharactersRemaining()) {
+        Definition definition;
+        while (true) {
             auto begin = buffer.span();
 
             skipUntil(buffer, '|');
@@ -126,12 +128,12 @@ std::optional<CSSCustomPropertySyntax> CSSCustomPropertySyntax::parse(StringView
 
             definition.append(*component);
 
-            skipExactly(buffer, '|');
+            if (!skipExactly(buffer, '|'))
+                break;
             skipWhile<isCSSSpace>(buffer);
+            if (!buffer.hasCharactersRemaining())
+                return { };
         }
-
-        if (definition.isEmpty())
-            return { };
 
         return CSSCustomPropertySyntax { definition };
     });

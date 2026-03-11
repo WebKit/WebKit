@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Invalid @property syntax falls back for leading and trailing bars</title>
+  <link rel="author" title="CGQAQ" href="mailto:cgqaq@chromium.org">
+  <link rel="author" title="一丝" href="mailto:yiorsi@gmail.com">
+  <link rel="help" href="https://drafts.css-houdini.org/css-properties-values-api-1/#at-property-rule">
+  <link rel="match" href="at-property-invalid-syntax-fallback-color-ref.html">
+  <meta name="assert" content="Invalid @property syntax using leading or trailing bars should not register the property, so var() falls back to green.">
+  <style>
+    @property --test1 {
+      syntax: "<color> |";
+      inherits: true;
+      initial-value: red;
+    }
+
+    @property --test2 {
+      syntax: "| <color>";
+      inherits: true;
+      initial-value: red;
+    }
+
+    .squares {
+      font-size: 0;
+    }
+
+    .square {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+
+    .square + .square {
+      margin-left: 8px;
+    }
+
+    .test1 {
+      background-color: var(--test1, green);
+    }
+
+    .test2 {
+      background-color: var(--test2, green);
+    }
+  </style>
+</head>
+<body>
+  <p>Test passes if there are two filled green squares below.</p>
+  <div class="squares">
+    <div class="square test1"></div><div class="square test2"></div>
+  </div>
+</body>
+</html>
