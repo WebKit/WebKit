@@ -3184,8 +3184,8 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     if (m_metadata->m_numLocals % 2)
         m_metadata->m_argumINTBytecode.append(0);
 
-    m_metadata->m_maxFrameSizeInV128 = roundUpToMultipleOf<2>(m_metadata->m_numLocals) / 2;
-    m_metadata->m_maxFrameSizeInV128 += m_metadata->m_numAlignedRethrowSlots / 2;
+    m_metadata->m_maxFrameSizeInV128 = roundUpToMultipleOf<2>(m_metadata->m_numLocals);
+    m_metadata->m_maxFrameSizeInV128 += m_metadata->m_numAlignedRethrowSlots;
     m_metadata->m_maxFrameSizeInV128 += m_maxStackSize;
     if (m_metadata->m_callTargets.size() < m_parser->numCallProfiles())
         m_metadata->m_callTargets.insertFill(m_metadata->m_callTargets.size(), FunctionSpaceIndex { }, m_parser->numCallProfiles() - m_metadata->m_callTargets.size());
