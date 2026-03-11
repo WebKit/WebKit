@@ -1454,7 +1454,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
             if (!precedingNonContentfulContent.inlineContent.isEmpty()) {
                 commitCandidateContent(precedingNonContentfulContent, { });
                 // At this point we can't yet have contentful runs on the line.
-                ASSERT(!m_line.hasContent(Line::IncludeInsideListMarker::Yes));
+                ASSERT(!m_line.hasContentOrDecoration(Line::IncludeInsideListMarker::Yes));
             }
         };
         commitPrecedingNonContentfulContent();
