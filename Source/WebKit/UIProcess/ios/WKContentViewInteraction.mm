@@ -9766,6 +9766,10 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     if (_fileUploadPanel)
         return;
 
+    // Retain the active focused state so that the focused element (e.g., a contenteditable
+    // email body in Outlook) is not blurred when the file picker takes first responder.
+    _fileUploadActiveFocusedStateRetainBlock = makeBlockPtr(self.webView._retainActiveFocusedState);
+
     _frameInfoForFileUploadPanel = frameInfo;
     _fileUploadPanel = adoptNS([[WKFileUploadPanel alloc] initWithView:self]);
     [_fileUploadPanel setDelegate:self];
@@ -9775,6 +9779,10 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel
 {
     ASSERT(_fileUploadPanel.get() == fileUploadPanel);
+
+    // Release the active focused state retain so that normal focus management resumes.
+    if (auto releaseFocusState = WTF::move(_fileUploadActiveFocusedStateRetainBlock))
+        releaseFocusState();
 
     if ([self window] && ![[self window] firstResponder])
         [self becomeFirstResponder];

@@ -437,6 +437,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
     std::optional<WebKit::FrameInfoData> _frameInfoForFileUploadPanel;
+    BlockPtr<void()> _fileUploadActiveFocusedStateRetainBlock;
 #if HAVE(SHARE_SHEET_UI)
     RetainPtr<WKShareSheet> _shareSheet;
 #endif
