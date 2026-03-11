@@ -3310,9 +3310,12 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 
     m_mouseDownDelegatedFocus = false;
 
-    // If clicking on a frame scrollbar, do not make any change to which element is focused.
+    // If clicking on a scrollbar, do not make any change to which element is focused.
+    // This covers both frame-level scrollbars and overflow element scrollbars.
     RefPtr view = frame->view();
     if (view && view->scrollbarAtPoint(flooredIntPoint(platformMouseEvent.position())))
+        return true;
+    if (isInsideScrollbar(flooredIntPoint(platformMouseEvent.position())))
         return true;
 
     // The layout needs to be up to date to determine if an element is focusable.

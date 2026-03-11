@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.scroll-container {
+    width: 200px;
+    height: 100px;
+    overflow: auto;
+    border: 1px solid black;
+    float: left;
+    margin: 10px;
+}
+.tall-content {
+    height: 500px;
+    background: linear-gradient(to bottom, lightblue, blue);
+}
+input, textarea {
+    float: left;
+    margin: 10px;
+}
+</style>
+</head>
+<body>
+<!-- Test 1: Overflow scrollbar with no focusable ancestor (baseline) -->
+<input id="input1" type="text" value="Test 1">
+<div id="scroller1" class="scroll-container">
+    <div class="tall-content"></div>
+</div>
+
+<br style="clear: both;">
+
+<!-- Test 2: Overflow scrollbar with a focusable ancestor (the bug case) -->
+<input id="input2" type="text" value="Test 2">
+<div tabindex="0" id="focusable-ancestor" style="float: left; padding: 5px; border: 2px solid red;">
+    <div id="scroller2" class="scroll-container">
+        <div class="tall-content"></div>
+    </div>
+</div>
+
+<br style="clear: both;">
+
+<!-- Test 3: Same with textarea as the focused element -->
+<textarea id="textarea1" rows="2">Focused textarea</textarea>
+<div tabindex="0" style="float: left; padding: 5px; border: 2px solid green;">
+    <div id="scroller3" class="scroll-container">
+        <div class="tall-content"></div>
+    </div>
+</div>
+
+<br style="clear: both;">
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var blurCount;
+
+function click(x, y)
+{
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+function clickVerticalScrollbar(elementId)
+{
+    var element = document.getElementById(elementId);
+    // Click near the right edge (on the scrollbar track) and vertically centered.
+    click(element.offsetLeft + element.offsetWidth - 5, element.offsetTop + element.offsetHeight / 2);
+}
+
+function resetBlurCount(elementId)
+{
+    blurCount = 0;
+    document.getElementById(elementId).addEventListener("blur", function() { blurCount++; });
+}
+
+description("Clicking on an overflow scrollbar should not blur the focused input, even when there is a mouse-focusable ancestor.");
+
+debug("<br>Overflow scrollbar click should not blur input when no focusable ancestor exists");
+resetBlurCount("input1");
+document.getElementById("input1").focus();
+clickVerticalScrollbar("scroller1");
+shouldBeEqualToString("document.activeElement.tagName", "INPUT");
+shouldBe("blurCount", "0");
+
+debug("<br>Overflow scrollbar click should not blur input when a focusable ancestor exists");
+resetBlurCount("input2");
+document.getElementById("input2").focus();
+clickVerticalScrollbar("scroller2");
+shouldBeEqualToString("document.activeElement.tagName", "INPUT");
+shouldBe("blurCount", "0");
+

@@ -1,0 +1,18 @@
+Clicking on an overflow scrollbar should not blur the focused input, even when there is a mouse-focusable ancestor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Overflow scrollbar click should not blur input when no focusable ancestor exists
+PASS document.activeElement.tagName is "INPUT"
+PASS blurCount is 0
+
+Overflow scrollbar click should not blur input when a focusable ancestor exists
+PASS document.activeElement.tagName is "INPUT"
+PASS blurCount is 0
+
+Overflow scrollbar click should not blur textarea
+PASS document.activeElement.tagName is "TEXTAREA"
+PASS blurCount is 0
+PASS successfullyParsed is true
+
