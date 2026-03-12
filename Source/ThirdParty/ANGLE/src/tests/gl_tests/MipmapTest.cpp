@@ -2223,6 +2223,31 @@ TEST_P(MipmapTestES3, GenerateMipmapWithRedefineLevelAndTexture)
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::black);
 }
 
+// Test that generating mipmaps after defining an incompatible image out of base-max range
+// does not cause problems. At the time of writing with Metal backend, defining images
+// after one state sync would cause problems upon subsequent GenerateMipmaps().
+TEST_P(MipmapTestES3, GenerateMipmapWithOutOfRangeLevelDefinition)
+{
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    std::vector<GLColor> data(2 * 2, GLColor::green);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 data.data());
+    glGenerateMipmap(GL_TEXTURE_2D); // Sync state.
+    glTexImage2D(GL_TEXTURE_2D, 10, GL_DEPTH_COMPONENT32F, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                 nullptr); // Trigger the bug.
+    EXPECT_GL_NO_ERROR();
+    glGenerateMipmap(GL_TEXTURE_2D); // At the time, this would fail.
+    EXPECT_GL_NO_ERROR();
+
+    clearAndDrawQuad(m2DProgram, getWindowWidth(), getWindowHeight());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
+}
+
 // Test that manually generating mipmaps using draw calls is functional
 TEST_P(MipmapTestES31, GenerateMipmapWithDraw)
 {
@@ -2544,6 +2569,7 @@ TEST_P(MipmapTest, GeneratedMipmapsInvalidatedAfterSizeChange)
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::green);
 }
+
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.

@@ -427,6 +427,13 @@ inline bool IsLittleEndian()
     UNREACHABLE();                    \
     ANGLE_CHECK(context, false, "Unreachable code.", GL_INVALID_OPERATION)
 
+#define ANGLE_CHECK_ASSERT(context, result) \
+    do { \
+        bool resultValue = (result); \
+        ASSERT(resultValue); \
+        ANGLE_CHECK(context, resultValue, gl::err::kInternalError, GL_INVALID_OPERATION); \
+    } while (false)
+
 #if defined(ANGLE_WITH_LSAN)
 #    define ANGLE_SCOPED_DISABLE_LSAN() __lsan::ScopedDisabler lsanDisabler
 #else

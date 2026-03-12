@@ -182,19 +182,16 @@ class TextureMtl : public TextureImpl
                                     int layer,
                                     GLenum format);
 
-    const mtl::Format &getFormat() const { return mFormat; }
-
   private:
-    void deallocateNativeStorage(bool keepImages, bool keepSamplerStateAndFormat = false);
+    void deallocateNativeStorage(bool keepImages);
     angle::Result createNativeStorage(const gl::Context *context,
                                       gl::TextureType type,
+                                      const mtl::Format &mtlFormat,
                                       GLuint mips,
                                       GLuint samples,
                                       const gl::Extents &size);
     angle::Result onBaseMaxLevelsChanged(const gl::Context *context);
     angle::Result ensureSamplerStateCreated(const gl::Context *context);
-    // Ensure image at given index is created:
-    angle::Result ensureImageCreated(const gl::Context *context, const gl::ImageIndex &index);
     // Ensure all image views at all faces/levels are retained.
     void retainImageDefinitions();
     mtl::TextureRef createImageViewFromTextureStorage(GLuint cubeFaceOrZero, GLuint glLevel);
@@ -328,7 +325,6 @@ class TextureMtl : public TextureImpl
 
     angle::Result generateMipmapCPU(const gl::Context *context);
 
-    bool needsFormatViewForPixelLocalStorage(const ShPixelLocalStorageOptions &) const;
     bool isImmutableOrPBuffer() const;
 
     mtl::Format mFormat;
