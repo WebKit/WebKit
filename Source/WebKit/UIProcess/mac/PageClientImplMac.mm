@@ -220,6 +220,9 @@ bool PageClientImpl::isViewVisible(NSView *view, NSWindow *viewWindow)
 
         if (windowIsOccluded())
             return false;
+    } else if (viewWindow.miniaturized) {
+        RELEASE_LOG(ActivityState, "PageClientImpl %p isViewVisible(): returning false because window %p is miniaturized (backgroundTextExtractionEnabled bypass does not apply to miniaturized windows)", this, viewWindow);
+        return false;
     }
 
     return true;

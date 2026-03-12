@@ -31,6 +31,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 
 #if !PLATFORM(IOS_SIMULATOR)
 #import "DeprecatedGlobalValues.h"
@@ -65,6 +66,69 @@ TEST(VisibilityState, InitialVisibleState)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+#if PLATFORM(MAC)
+
+TEST(VisibilityState, MiniaturizedWindowIsHiddenWithBackgroundTextExtraction)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setBackgroundTextExtractionEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadHTMLString:@"<html><body>test</body></html>"];
+
+    // Verify the window is visible and document.visibilityState is "visible".
+    __block bool done = false;
+    [webView evaluateJavaScript:@"document.visibilityState" completionHandler:^(NSString *visibilityState, NSError *error) {
+        EXPECT_WK_STREQ("visible", visibilityState);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Miniaturize the window. Even with backgroundTextExtractionEnabled,
+    // the page should report as hidden.
+    [webView.get().window miniaturize:nil];
+    [webView waitUntilActivityStateUpdateDone];
+
+    done = false;
+    [webView evaluateJavaScript:@"document.visibilityState" completionHandler:^(NSString *visibilityState, NSError *error) {
+        EXPECT_WK_STREQ("hidden", visibilityState);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Deminiaturize the window. The page should report as visible again.
+    [webView.get().window deminiaturize:nil];
+    [webView waitUntilActivityStateUpdateDone];
+
+    done = false;
+    [webView evaluateJavaScript:@"document.visibilityState" completionHandler:^(NSString *visibilityState, NSError *error) {
+        EXPECT_WK_STREQ("visible", visibilityState);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(VisibilityState, OccludedWindowIsVisibleWithBackgroundTextExtraction)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setBackgroundTextExtractionEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadHTMLString:@"<html><body>test</body></html>"];
+
+    // Verify the window is visible and document.visibilityState is "visible".
+    // This test ensures that backgroundTextExtractionEnabled still works for
+    // occluded (not miniaturized) windows -- the bypass should still apply.
+    __block bool done = false;
+    [webView evaluateJavaScript:@"document.visibilityState" completionHandler:^(NSString *visibilityState, NSError *error) {
+        EXPECT_WK_STREQ("visible", visibilityState);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif // PLATFORM(MAC)
 
 #if !PLATFORM(IOS_SIMULATOR)
 
