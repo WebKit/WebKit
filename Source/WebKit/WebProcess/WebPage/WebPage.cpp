@@ -4938,6 +4938,14 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     updateSettingsGenerated(store, settings);
 
+#if PLATFORM(IOS_FAMILY)
+    // rdar://169732367: iOS Mail compose sets _shouldAllowUserInstalledFonts = NO
+    // for general sandboxing, but must allow user-installed fonts for the custom
+    // font picker. This mirrors the macOS exemption for Apple Mail above.
+    if (!settings.shouldAllowUserInstalledFonts() && (WTF::IOSApplication::isMailCompositionService() || WTF::IOSApplication::isMobileMail()))
+        settings.setShouldAllowUserInstalledFonts(true);
+#endif
+
 #if !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION) && !PLATFORM(WPE)
     if (!settings.acceleratedCompositingEnabled()) {
         WEBPAGE_RELEASE_LOG(Layers, "updatePreferences: acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true");
