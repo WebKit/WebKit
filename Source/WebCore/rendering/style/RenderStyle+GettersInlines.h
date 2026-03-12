@@ -930,7 +930,7 @@ inline bool RenderStyle::isFixedTableLayout() const
     return tableLayout() == TableLayoutType::Fixed 
         && (logicalWidth().isSpecified() 
             || logicalWidth().isFitContent() 
-            || logicalWidth().isFillAvailable() 
+            || logicalWidth().isStretch()
             || logicalWidth().isMinContent());
 }
 
