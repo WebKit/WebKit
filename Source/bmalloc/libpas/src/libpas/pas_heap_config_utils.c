@@ -165,7 +165,8 @@ void* pas_heap_config_utils_prepare_to_enumerate(pas_enumerator* enumerator,
     pas_heap_config* config_ptr;
     pas_basic_heap_config_root_data* root_data_ptr;
     pas_basic_heap_config_root_data root_data;
-    pas_page_header_table medium_page_header_table;
+    pas_page_header_table medium_segregated_page_header_table;
+    pas_page_header_table medium_bitfit_page_header_table;
     pas_page_header_table marge_page_header_table;
 
     if (!pas_enumerator_copy_remote(enumerator, &config_ptr, enumerator->root->heap_configs + my_config->kind, sizeof(pas_heap_config*)))
@@ -181,13 +182,22 @@ void* pas_heap_config_utils_prepare_to_enumerate(pas_enumerator* enumerator,
     
     pas_ptr_hash_map_construct(&result->page_header_table);
 
-    if (!pas_enumerator_copy_remote(enumerator, &medium_page_header_table, root_data.medium_page_header_table, sizeof(pas_page_header_table)))
+    if (!pas_enumerator_copy_remote(enumerator, &medium_segregated_page_header_table, root_data.medium_segregated_page_header_table, sizeof(pas_page_header_table)))
         return NULL;
 
     if (!pas_basic_heap_config_enumerator_data_add_page_header_table(
             result,
             enumerator,
-            &medium_page_header_table))
+            &medium_segregated_page_header_table))
+        return NULL;
+
+    if (!pas_enumerator_copy_remote(enumerator, &medium_bitfit_page_header_table, root_data.medium_bitfit_page_header_table, sizeof(pas_page_header_table)))
+        return NULL;
+
+    if (!pas_basic_heap_config_enumerator_data_add_page_header_table(
+            result,
+            enumerator,
+            &medium_bitfit_page_header_table))
         return NULL;
     
     if (!pas_enumerator_copy_remote(enumerator, &marge_page_header_table, root_data.marge_page_header_table, sizeof(pas_page_header_table)))

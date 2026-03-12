@@ -84,7 +84,8 @@ typedef struct {
     bool use_small_bitfit;
     uint8_t small_bitfit_min_align_shift;
     size_t small_bitfit_page_size;
-    size_t medium_page_size; /* segregated and bitfit must share the same page size. */
+    size_t medium_segregated_page_size;
+    size_t medium_bitfit_page_size;
     size_t granule_size;
     bool use_medium_segregated;
     uint8_t medium_segregated_min_align_shift;
@@ -186,11 +187,11 @@ typedef struct {
             .min_align_shift = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_min_align_shift, \
             .page_size = \
-                ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size, \
+                ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_page_size, \
             .granule_size = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).granule_size, \
             .max_object_size = PAS_MAX_OBJECT_SIZE( \
-                ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size), \
+                ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_page_size), \
             .page_header_for_boundary = name ## _medium_segregated_page_header_for_boundary, \
             .boundary_for_page_header = name ## _medium_segregated_boundary_for_page_header, \
             .page_header_for_boundary_remote = \
@@ -208,13 +209,13 @@ typedef struct {
             ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_partial_view_padding, \
         .num_alloc_bits = PAS_BASIC_SEGREGATED_NUM_ALLOC_BITS( \
             ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_min_align_shift, \
-            ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size), \
+            ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_page_size), \
         .shared_payload_offset = 0, \
         .exclusive_payload_offset = 0, \
         .shared_payload_size = \
-            ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size, \
+            ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_page_size, \
         .exclusive_payload_size = \
-            ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size, \
+            ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_segregated_page_size, \
         .shared_logging_mode = \
             ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_shared_segregated_logging_mode, \
         .exclusive_logging_mode = \
@@ -287,11 +288,11 @@ typedef struct {
             .min_align_shift = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_bitfit_min_align_shift, \
             .page_size = \
-                ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size, \
+                (((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_bitfit_page_size), \
             .granule_size = \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).granule_size, \
             .max_object_size = PAS_MAX_BITFIT_OBJECT_SIZE_WITH_MAX_BITS( \
-                ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size, \
+                (((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_bitfit_page_size), \
                 ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_bitfit_min_align_shift, \
                 PAS_BITFIT_MAX_FREE_MAX_VALID_MEDIUM), \
             .page_header_for_boundary = name ## _medium_bitfit_page_header_for_boundary, \
@@ -304,7 +305,7 @@ typedef struct {
         .kind = pas_bitfit_page_config_kind_ ## name ## _medium_bitfit, \
         .page_object_payload_offset = 0, \
         .page_object_payload_size = \
-            ((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_page_size, \
+            (((pas_basic_heap_config_arguments){__VA_ARGS__}).medium_bitfit_page_size), \
         .page_allocator = name ## _heap_config_allocate_medium_bitfit_page, \
         PAS_BITFIT_PAGE_CONFIG_SPECIALIZATIONS(name ## _medium_bitfit_page_config) \
     }, \
@@ -380,7 +381,8 @@ typedef struct {
     PAS_BASIC_BITFIT_PAGE_CONFIG_FORWARD_DECLARATIONS(name ## _medium_bitfit); \
     PAS_BASIC_BITFIT_PAGE_CONFIG_FORWARD_DECLARATIONS(name ## _marge_bitfit); \
     PAS_API extern pas_fast_megapage_table name ## _megapage_table; \
-    PAS_API extern pas_page_header_table name ## _medium_page_header_table; \
+    PAS_API extern pas_page_header_table name ## _medium_segregated_page_header_table; \
+    PAS_API extern pas_page_header_table name ## _medium_bitfit_page_header_table; \
     PAS_API extern pas_page_header_table name ## _marge_page_header_table; \
     PAS_API extern pas_basic_heap_page_caches name ## _page_caches; \
     PAS_API extern pas_basic_heap_runtime_config name ## _intrinsic_runtime_config; \
@@ -417,21 +419,23 @@ typedef struct {
         \
         config = (upcase_name ## _HEAP_CONFIG); \
         \
-        if (config.medium_segregated_config.base.is_enabled \
-            || config.medium_bitfit_config.base.is_enabled) { \
+        if (config.medium_segregated_config.base.is_enabled) { \
             pas_page_base* result; \
             \
-            PAS_ASSERT( \
-                !config.medium_segregated_config.base.is_enabled || \
-                !config.medium_bitfit_config.base.is_enabled || \
-                config.medium_segregated_config.base.page_size \
-                == config.medium_bitfit_config.base.page_size); \
+            result = pas_page_header_table_get_for_address( \
+                &name ## _medium_segregated_page_header_table, \
+                config.medium_segregated_config.base.page_size, \
+                (void*)begin); \
+            if (result) \
+                return result; \
+        } \
+        \
+        if (config.medium_bitfit_config.base.is_enabled) { \
+            pas_page_base* result; \
             \
             result = pas_page_header_table_get_for_address( \
-                &name ## _medium_page_header_table, \
-                config.medium_segregated_config.base.is_enabled \
-                ? config.medium_segregated_config.base.page_size \
-                : config.medium_bitfit_config.base.page_size, \
+                &name ## _medium_bitfit_page_header_table, \
+                config.medium_bitfit_config.base.page_size, \
                 (void*)begin); \
             if (result) \
                 return result; \
@@ -454,7 +458,7 @@ typedef struct {
     PAS_BASIC_SEGREGATED_PAGE_CONFIG_DECLARATIONS( \
         name ## _medium_segregated, (upcase_name ## _HEAP_CONFIG).medium_segregated_config, \
         pas_page_header_in_table, \
-        &name ## _medium_page_header_table); \
+        &name ## _medium_segregated_page_header_table); \
     \
     PAS_BASIC_BITFIT_PAGE_CONFIG_DECLARATIONS( \
         name ## _small_bitfit, (upcase_name ## _HEAP_CONFIG).small_bitfit_config, \
@@ -463,7 +467,7 @@ typedef struct {
     PAS_BASIC_BITFIT_PAGE_CONFIG_DECLARATIONS( \
         name ## _medium_bitfit, (upcase_name ## _HEAP_CONFIG).medium_bitfit_config, \
         pas_page_header_in_table, \
-        &name ## _medium_page_header_table); \
+        &name ## _medium_bitfit_page_header_table); \
     PAS_BASIC_BITFIT_PAGE_CONFIG_DECLARATIONS( \
         name ## _marge_bitfit, (upcase_name ## _HEAP_CONFIG).marge_bitfit_config, \
         pas_page_header_in_table, \

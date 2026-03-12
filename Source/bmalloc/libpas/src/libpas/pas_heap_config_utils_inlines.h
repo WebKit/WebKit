@@ -320,13 +320,16 @@ typedef struct {
     } \
     \
     pas_fast_megapage_table name ## _megapage_table = PAS_FAST_MEGAPAGE_TABLE_INITIALIZER; \
-    pas_page_header_table name ## _medium_page_header_table = PAS_PAGE_HEADER_TABLE_INITIALIZER( \
+    pas_page_header_table name ## _medium_segregated_page_header_table = PAS_PAGE_HEADER_TABLE_INITIALIZER( \
         upcase_name ##_HEAP_CONFIG.medium_segregated_config.base.page_size); \
+    pas_page_header_table name ## _medium_bitfit_page_header_table = PAS_PAGE_HEADER_TABLE_INITIALIZER( \
+        upcase_name ##_HEAP_CONFIG.medium_bitfit_config.base.page_size); \
     pas_page_header_table name ## _marge_page_header_table = PAS_PAGE_HEADER_TABLE_INITIALIZER( \
         upcase_name ##_HEAP_CONFIG.marge_bitfit_config.base.page_size); \
     \
     pas_basic_heap_config_root_data name ## _root_data = { \
-        .medium_page_header_table = &name ## _medium_page_header_table, \
+        .medium_segregated_page_header_table = &name ## _medium_segregated_page_header_table, \
+        .medium_bitfit_page_header_table = &name ## _medium_bitfit_page_header_table, \
         .marge_page_header_table = &name ## _marge_page_header_table \
     }; \
     \
@@ -343,7 +346,7 @@ typedef struct {
     PAS_BASIC_SEGREGATED_PAGE_CONFIG_DEFINITIONS( \
         name ## _medium_segregated, \
         .page_config = upcase_name ## _HEAP_CONFIG.medium_segregated_config, \
-        .header_table = &name ## _medium_page_header_table); \
+        .header_table = &name ## _medium_segregated_page_header_table); \
     \
     PAS_BASIC_BITFIT_PAGE_CONFIG_DEFINITIONS( \
         name ## _small_bitfit, \
@@ -353,7 +356,7 @@ typedef struct {
     PAS_BASIC_BITFIT_PAGE_CONFIG_DEFINITIONS( \
         name ## _medium_bitfit, \
         .page_config = upcase_name ## _HEAP_CONFIG.medium_bitfit_config, \
-        .header_table = &name ## _medium_page_header_table); \
+        .header_table = &name ## _medium_bitfit_page_header_table); \
     \
     PAS_BASIC_BITFIT_PAGE_CONFIG_DEFINITIONS( \
         name ## _marge_bitfit, \
