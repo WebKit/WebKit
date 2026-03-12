@@ -17,20 +17,20 @@ Tests that a suggested filename on a download attribute is allowed if
 <a id="dl" download="foo.pdf">the link</a> is a blob URL.
 <p>The suggested filename at the top should be foo.pdf.</p>
 <script>
-    function click(elmt)
+    async function click(elmt)
     {
         if (!window.eventSender)
             return;
 
-        UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+        await UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
     }
 
-    function runTest()
+    async function runTest()
     {
         var blob = new Blob(["Hello world!"], {type: "application/octet-stream"});
         var link = document.getElementById("dl");
         link.href = window.URL.createObjectURL(blob);
-        click(link);
+        await click(link);
     }
     runTest();
 </script>

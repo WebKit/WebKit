@@ -11,11 +11,11 @@ function navigateFrame()
 	window.location.href = 'resources/notify-done.html';
 }
 
-window.onload = function()
+window.onload = async function()
 {
 	// Simulate a user interaction with the page so that the beforeunload alert shows.
 	const testButton = document.getElementById("testButton");
-	UIHelper.activateAt(testButton.offsetLeft + 5, testButton.offsetTop + 5);
+	await UIHelper.activateAt(testButton.offsetLeft + 5, testButton.offsetTop + 5);
 }
 
 window.onbeforeunload = function()

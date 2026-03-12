@@ -45,11 +45,11 @@ function runTest(file1, file2) {
     shouldBeEqualToString("file1.files.item(0).name", "bar.txt");
 }
 
-function dragFilesOntoInput(input, files) {
+async function dragFilesOntoInput(input, files) {
     testRunner.setOpenPanelFiles(files);
     var centerX = input.offsetLeft + input.offsetWidth / 2;
     var centerY = input.offsetTop + input.offsetHeight / 2;
-    UIHelper.activateAt(centerX, centerY);
+    await UIHelper.activateAt(centerX, centerY);
 }
 </script>
 <script src="../../../resources/js-test-post.js"></script>

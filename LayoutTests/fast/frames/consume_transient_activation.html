@@ -16,10 +16,10 @@
             const target = document.getElementById("target");
             const x = target.offsetLeft + target.offsetWidth / 2;
             const y = target.offsetTop + target.offsetHeight / 2;
-            return new Promise((r) => {
+            const clickPromise = new Promise((r) => {
                 target.addEventListener("click", r, { once: true });
-                UIHelper.activateAt(x, y);
             });
+            return UIHelper.activateAt(x, y).then(() => clickPromise);
         }
 
         async function doTest() {

@@ -15,7 +15,7 @@
     
         let write = (message) => output.innerHTML += (message + "<br>");
 
-        function runTest()
+        async function runTest()
         {
 
             var blob = this.response;
@@ -24,10 +24,10 @@
             navigator.share({text: "This is a text file", files: [textFile]}).then((result) => {
                 write("PASS: Share sheet invoked.");
                     testRunner.notifyDone();
-                });    
+                });
             });
-            
-            UIHelper.activateAt(50, 50);
+
+            await UIHelper.activateAt(50, 50);
         }
 
     </script>

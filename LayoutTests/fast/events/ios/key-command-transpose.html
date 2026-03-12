@@ -35,7 +35,7 @@ function handleMutation()
     finishJSTest();
 }
 
-function runTest()
+async function runTest()
 {
     if (!window.testRunner)
         document.getElementById("manual-instructions").classList.remove("hidden");
@@ -50,7 +50,7 @@ function runTest()
     }
     testElement.addEventListener("focus", handleFocus, { once: true });
     if (window.testRunner)
-        UIHelper.activateElement(testElement);
+        await UIHelper.activateElement(testElement);
 }
 
 description("Tests that pressing Control + t in a content-editable field performs a tranpose.");

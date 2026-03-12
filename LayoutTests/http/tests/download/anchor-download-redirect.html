@@ -18,18 +18,18 @@ Tests that download redirects are reported to the client.
 <p>
 The suggested filename at the top should be foo.pdf and you should see a redirect to /media/resources/test.pdf.
 <script>
-    function click(elmt)
+    async function click(elmt)
     {
         if (!window.eventSender)
             return;
 
-        UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+        await UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
     }
 
-    function runTest()
+    async function runTest()
     {
         var link = document.getElementById("dl");
-        click(link);
+        await click(link);
     }
     runTest();
 </script>

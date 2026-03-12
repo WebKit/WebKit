@@ -31,7 +31,7 @@ function onFileChange(file, filePath)
     finishJSTest();
 }
 
-function runTest()
+async function runTest()
 {
     var testFilePath = "../resources/file-for-drag-to-send.txt";
     setFileInputChangeCallback(function(file) { onFileChange(file, testFilePath); });
@@ -39,7 +39,7 @@ function runTest()
 
     var centerX = fileInput.offsetLeft + fileInput.offsetWidth / 2;
     var centerY = fileInput.offsetTop + fileInput.offsetHeight / 2;
-    UIHelper.activateAt(centerX, centerY);
+    await UIHelper.activateAt(centerX, centerY);
 }
 
 if (window.testRunner)

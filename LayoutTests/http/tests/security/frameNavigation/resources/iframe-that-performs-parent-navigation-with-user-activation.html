@@ -7,10 +7,10 @@
             document.getElementsByTagName('h4')[0].innerHTML = document.domain;
         }
 
-        function startTest(event)
+        async function startTest(event)
         {
             var button = document.getElementById("button");
-            UIHelper.activateAt(event.data.x + button.offsetLeft + 2, event.data.y + button.offsetTop + 2).catch(function(reason) {
+            await UIHelper.activateAt(event.data.x + button.offsetLeft + 2, event.data.y + button.offsetTop + 2).catch(function(reason) {
                 parent.postMessage("Failed to emulate user interaction: " + reason, "*");
             });
         }

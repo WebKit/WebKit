@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="../../../../resources/ui-helper.js"></script>
 <style>
 input {
@@ -53,6 +53,10 @@ input.addEventListener("focus", onFocusEvent);
 
 const center = input.offsetHeight / 2;
 
+jsTestIsAsync = true;
+
+(async () => {
+
 debug("Focus/blur using mouse\n");
 
 // Click on month field.
@@ -71,7 +75,7 @@ resetFocusAndBlurCount();
 
 debug("\nFocus/blur using keyboard\n");
 
-UIHelper.activateElement(before);
+await UIHelper.activateElement(before);
 // Focus on month field.
 UIHelper.keyDown("\t");
 assertFocusAndBlurCount(1, 0);
@@ -96,7 +100,7 @@ debug("\nFocus/blur on disabled input\n")
 
 input.disabled = true;
 
-UIHelper.activateElement(before);
+await UIHelper.activateElement(before);
 // Tab to focus should skip disabled input.
 UIHelper.keyDown("\t");
 assertFocusAndBlurCount(0, 0);
@@ -118,7 +122,7 @@ debug("\nFocus/blur on readonly input\n")
 input.disabled = false;
 input.readOnly = true;
 
-UIHelper.activateElement(before);
+await UIHelper.activateElement(before);
 // Tab to focus should not skip readonly input.
 UIHelper.keyDown("\t");
 assertFocusAndBlurCount(1, 0);
@@ -134,8 +138,9 @@ mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
 assertFocusAndBlurCount(1, 1);
 resetFocusAndBlurCount();
 
-</script>
+finishJSTest();
+})();
 
-<script src="../../../../resources/js-test-post.js"></script>
+</script>
 </body>
 </html>

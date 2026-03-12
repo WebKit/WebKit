@@ -43,34 +43,38 @@ const hourField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-hour-f
 const minuteField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-minute-field");
 const meridiemField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-meridiem-field");
 
+jsTestIsAsync = true;
+
+(async () => {
+
 debug("Enabled Input\n");
 
-UIHelper.activateElement(monthField);
+await UIHelper.activateElement(monthField);
 UIHelper.keyDown("9");
 shouldBeEqualToString("input.value", "2020-09-20T05:30");
 
-UIHelper.activateElement(dayField);
+await UIHelper.activateElement(dayField);
 UIHelper.keyDown("1");
 UIHelper.keyDown("2");
 shouldBeEqualToString("input.value", "2020-09-12T05:30");
 
-UIHelper.activateElement(yearField);
+await UIHelper.activateElement(yearField);
 UIHelper.keyDown("3");
 UIHelper.keyDown("0");
 UIHelper.keyDown("3");
 UIHelper.keyDown("0");
 shouldBeEqualToString("input.value", "3030-09-12T05:30");
 
-UIHelper.activateElement(hourField);
+await UIHelper.activateElement(hourField);
 UIHelper.keyDown("8");
 shouldBeEqualToString("input.value", "3030-09-12T08:30");
 
-UIHelper.activateElement(minuteField);
+await UIHelper.activateElement(minuteField);
 UIHelper.keyDown("4");
 UIHelper.keyDown("5");
 shouldBeEqualToString("input.value", "3030-09-12T08:45");
 
-UIHelper.activateElement(meridiemField);
+await UIHelper.activateElement(meridiemField);
 UIHelper.keyDown("P");
 shouldBeEqualToString("input.value", "3030-09-12T20:45");
 
@@ -91,12 +95,12 @@ clickEventsFired = 0;
 input.disabled = true;
 input.readOnly = false;
 
-UIHelper.activateElement(monthField);
-UIHelper.activateElement(dayField);
-UIHelper.activateElement(yearField);
-UIHelper.activateElement(hourField);
-UIHelper.activateElement(minuteField);
-UIHelper.activateElement(meridiemField);
+await UIHelper.activateElement(monthField);
+await UIHelper.activateElement(dayField);
+await UIHelper.activateElement(yearField);
+await UIHelper.activateElement(hourField);
+await UIHelper.activateElement(minuteField);
+await UIHelper.activateElement(meridiemField);
 // Click on control, but not a specific field, defaults to first field.
 mouseClickOn(550, center);
 // Click outside control.
@@ -109,18 +113,21 @@ clickEventsFired = 0;
 input.disabled = false;
 input.readOnly = true;
 
-UIHelper.activateElement(monthField);
-UIHelper.activateElement(dayField);
-UIHelper.activateElement(yearField);
-UIHelper.activateElement(hourField);
-UIHelper.activateElement(minuteField);
-UIHelper.activateElement(meridiemField);
+await UIHelper.activateElement(monthField);
+await UIHelper.activateElement(dayField);
+await UIHelper.activateElement(yearField);
+await UIHelper.activateElement(hourField);
+await UIHelper.activateElement(minuteField);
+await UIHelper.activateElement(meridiemField);
 // Click on control, but not a specific field, defaults to first field.
 mouseClickOn(550, center);
 // Click outside control.
 mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
 
 shouldBe("clickEventsFired", "7");
+
+finishJSTest();
+})();
 
 </script>
 </body>

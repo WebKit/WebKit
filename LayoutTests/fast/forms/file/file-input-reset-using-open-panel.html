@@ -37,11 +37,11 @@ if (testRunner && eventSender) {
     openFilesInElement(file, ["foo.txt"]);
 }
 
-function openFilesInElement(element, files) {
+async function openFilesInElement(element, files) {
     testRunner.setOpenPanelFiles(files);
     var centerX = element.offsetLeft + element.offsetWidth / 2;
     var centerY = element.offsetTop + element.offsetHeight / 2;
-    UIHelper.activateAt(centerX, centerY);
+    await UIHelper.activateAt(centerX, centerY);
 }
 </script>
 </body>

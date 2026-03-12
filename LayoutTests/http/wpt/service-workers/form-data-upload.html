@@ -32,7 +32,7 @@ function with_iframe(url) {
     });
 }
 
-function prepareUpload()
+async function prepareUpload()
 {
     let resolve, reject;
     const promise = new Promise((resolve_, reject_) => {
@@ -54,7 +54,7 @@ function prepareUpload()
 
         var centerX = input.offsetLeft + input.offsetWidth / 2;
         var centerY = input.offsetTop + input.offsetHeight / 2;
-        UIHelper.activateAt(centerX, centerY);
+        await UIHelper.activateAt(centerX, centerY);
     }
     return promise;
 }

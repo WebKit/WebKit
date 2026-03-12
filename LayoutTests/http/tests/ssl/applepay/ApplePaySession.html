@@ -230,8 +230,8 @@ function go() {
     finishJSTest();
 }
 
-window.onload = function() {
-    UIHelper.activateElement(document.querySelector("button"));
+window.onload = async function() {
+    await UIHelper.activateElement(document.querySelector("button"));
 }
 
 </script>

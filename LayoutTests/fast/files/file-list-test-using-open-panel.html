@@ -40,7 +40,11 @@ testRunner.setOpenPanelFiles(["resources/UTF8.txt", "resources/UTF8-2.txt"]);
 var inputElement = document.getElementById("file");
 var centerX = inputElement.offsetLeft + inputElement.offsetWidth / 2;
 var centerY = inputElement.offsetTop + inputElement.offsetHeight / 2;
-UIHelper.activateAt(centerX, centerY);
+
+async function runTest() {
+    await UIHelper.activateAt(centerX, centerY);
+}
+runTest();
 
 </script>
 </body>

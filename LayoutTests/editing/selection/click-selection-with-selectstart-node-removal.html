@@ -26,7 +26,7 @@ editor.addEventListener('mousedown', () => {
 });
 
 if (window.testRunner)
-    UIHelper.activateElement(editor);
+    (async () => { await UIHelper.activateElement(editor); })();
 
 successfullyParsed = true;
 

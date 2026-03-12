@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="../../../resources/ui-helper.js"></script>
 </head>
 <body>
@@ -19,21 +19,25 @@ description('Test for keyboard operations for &lt;input type=text&gt; with list 
 
 var input = document.getElementById("fruit");
 
-UIHelper.activateElement(input);
+jsTestIsAsync = true;
+
+(async () => {
+
+await UIHelper.activateElement(input);
 eventSender.keyDown("downArrow");
 eventSender.keyDown("\r");
 shouldBe('input.value', '"Apple"');
 
 input.value = "";
 
-UIHelper.activateElement(input);
+await UIHelper.activateElement(input);
 eventSender.keyDown("upArrow");
 eventSender.keyDown("\r");
 shouldBe('input.value', '"Pear"');
 
 input.value = "Appl";
 
-UIHelper.activateElement(input);
+await UIHelper.activateElement(input);
 eventSender.keyDown("\r");
 shouldBe('input.value', '"Appl"');
 
@@ -41,7 +45,7 @@ const arrowKeysCycleThroughOptions = !(UIHelper.isIOSFamily() || UIHelper.isMac(
 
 input.value = "";
 
-UIHelper.activateElement(input);
+await UIHelper.activateElement(input);
 eventSender.keyDown("downArrow");
 eventSender.keyDown("upArrow");
 eventSender.keyDown("\r");
@@ -49,14 +53,16 @@ shouldBe('input.value', arrowKeysCycleThroughOptions ? '"Pear"' : '"Apple"');
 
 input.value = "";
 
-UIHelper.activateElement(input);
+await UIHelper.activateElement(input);
 eventSender.keyDown("upArrow");
 eventSender.keyDown("downArrow");
 eventSender.keyDown("\r");
 shouldBe('input.value', arrowKeysCycleThroughOptions ? '"Apple"' : '"Pear"');
 
+finishJSTest();
+})();
+
 </script>
 
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

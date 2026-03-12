@@ -29,7 +29,7 @@ function onChange(event)
     xhr.send(formData);
 }
 
-function runTest()
+async function runTest()
 {
     debug("Sending FormData containing one file with custom empty filename:");
 
@@ -40,7 +40,7 @@ function runTest()
 
         var centerX = input.offsetLeft + input.offsetWidth / 2;
         var centerY = input.offsetTop + input.offsetHeight / 2;
-        UIHelper.activateAt(centerX, centerY);
+        await UIHelper.activateAt(centerX, centerY);
     }
 }
 

@@ -19,20 +19,20 @@
 <p>Tests that the download attribute on area elements is working.</p>
 <p>The suggested filename at the top should be foo.pdf.</p>
 <script>
-    function click(elmt)
+    async function click(elmt)
     {
         if (!window.eventSender)
             return;
 
-        UIHelper.activateAt(elmt.offsetLeft + 10, elmt.offsetTop + 10);
+        await UIHelper.activateAt(elmt.offsetLeft + 10, elmt.offsetTop + 10);
     }
 
-    function runTest()
+    async function runTest()
     {
         var img = document.getElementById("testImage");
-        click(img);
+        await click(img);
     }
-    onload = function() {
+    onload = async function() {
         runTest();
     }
 </script>
