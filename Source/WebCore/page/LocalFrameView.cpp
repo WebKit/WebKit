@@ -76,7 +76,6 @@
 #include "HTMLPlugInElement.h"
 #include "HighlightRegistry.h"
 #include "ImageDocument.h"
-#include "InspectorBackendClient.h"
 #include "InspectorInstrumentation.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalDOMWindow.h"
@@ -89,7 +88,6 @@
 #include "NullGraphicsContext.h"
 #include "Page.h"
 #include "PageColorSampler.h"
-#include "PageInspectorController.h"
 #include "PageOverlayController.h"
 #include "PerformanceLoggingClient.h"
 #include "ProgressTracker.h"
@@ -4869,12 +4867,6 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
 
     LOG_WITH_STREAM(Events, stream << "LocalFrameView " << this << " scheduleResizeEventIfNeeded scheduling resize event for document" << document << ", size " << currentSize);
     document->setNeedsDOMWindowResizeEvent();
-
-    bool isMainFrame = m_frame->isMainFrame();
-    if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
-        if (InspectorBackendClient* inspectorBackendClient = page ? page->inspectorController().inspectorBackendClient() : nullptr)
-            inspectorBackendClient->didResizeMainFrame(m_frame.ptr());
-    }
 }
 
 void LocalFrameView::willStartLiveResize()

@@ -316,7 +316,7 @@ void WebInspectorUIProxy::attachLeft()
 void WebInspectorUIProxy::attach(AttachmentSide side)
 {
     ASSERT(m_inspectorPage);
-    if (!m_inspectedPage || !m_inspectorPage || (!m_isAttached && !platformCanAttach(m_canAttach)))
+    if (!m_inspectedPage || !m_inspectorPage || (!m_isAttached && !platformCanAttach()))
         return;
 
     m_isAttached = true;
@@ -327,8 +327,6 @@ void WebInspectorUIProxy::attach(AttachmentSide side)
 
     if (m_isVisible)
         preferences->setInspectorStartsAttached(true);
-
-    protect(protect(inspectedPage())->legacyMainFrameProcess())->send(Messages::WebInspectorBackend::SetAttached(true), m_inspectedPage->webPageIDInMainFrameProcess());
 
     switch (m_attachmentSide) {
     case AttachmentSide::Bottom:
@@ -359,7 +357,6 @@ void WebInspectorUIProxy::detach()
     if (m_isVisible)
         protect(inspectorPagePreferences())->setInspectorStartsAttached(false);
 
-    protect(protect(inspectedPage())->legacyMainFrameProcess())->send(Messages::WebInspectorBackend::SetAttached(false), m_inspectedPage->webPageIDInMainFrameProcess());
     protect(protect(inspectorPage())->legacyMainFrameProcess())->send(Messages::WebInspectorUI::Detached(), m_inspectorPage->webPageIDInMainFrameProcess());
 
     platformDetach();
@@ -502,16 +499,10 @@ void WebInspectorUIProxy::openLocalInspectorFrontend()
     inspectedPage->inspectorController().connectFrontend(*this);
 
     if (!m_underTest) {
-        // FIXME <https://webkit.org/b/283435>: Remove the webProcessCanAttach argument from platformCanAttach.
-        // The value canAttach in the web process is no longer used or respected.
-        const bool webProcessCanAttach = false;
-        m_canAttach = platformCanAttach(webProcessCanAttach);
         m_isAttached = shouldOpenAttached();
         m_attachmentSide = static_cast<AttachmentSide>(protect(inspectorPagePreferences())->inspectorAttachmentSide());
 
-        protect(inspectedPage->legacyMainFrameProcess())->send(Messages::WebInspectorBackend::SetAttached(m_isAttached), inspectedPage->webPageIDInMainFrameProcess());
-
-        Ref inspectorPageProcess = inspectorPage->legacyMainFrameProcess();
+        Ref inspectorPageProcess = inspectorPage->siteIsolatedProcess();
         if (m_isAttached) {
             switch (m_attachmentSide) {
             case AttachmentSide::Bottom:
@@ -529,7 +520,7 @@ void WebInspectorUIProxy::openLocalInspectorFrontend()
         } else
             inspectorPageProcess->send(Messages::WebInspectorUI::Detached(), inspectorPage->webPageIDInMainFrameProcess());
 
-        inspectorPageProcess->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach), inspectorPage->webPageIDInMainFrameProcess());
+        inspectorPageProcess->send(Messages::WebInspectorUI::SetDockingUnavailable { !platformCanAttach() }, inspectorPage->webPageIDInMainFrameProcess());
 
         dispatchDidChangeLocalInspectorAttachment();
     }
@@ -564,7 +555,7 @@ void WebInspectorUIProxy::open()
     m_isVisible = true;
     protect(protect(inspectorPage())->legacyMainFrameProcess())->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->webPageIDInMainFrameProcess());
 
-    if (m_isAttached && platformCanAttach(m_canAttach))
+    if (m_isAttached && platformCanAttach())
         platformAttach();
     else {
         m_isAttached = false;
@@ -683,19 +674,12 @@ void WebInspectorUIProxy::bringToFront()
         open();
 }
 
-void WebInspectorUIProxy::attachAvailabilityChanged(bool available)
+void WebInspectorUIProxy::attachAvailabilityChanged()
 {
-    bool previousCanAttach = m_canAttach;
-
-    m_canAttach = m_isAttached || platformCanAttach(available);
-
-    if (previousCanAttach == m_canAttach)
-        return;
-
     if (RefPtr inspectorPage = m_inspectorPage.get(); inspectorPage && !m_underTest)
-        protect(inspectorPage->legacyMainFrameProcess())->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach), inspectorPage->webPageIDInMainFrameProcess());
+        protect(inspectorPage->siteIsolatedProcess())->send(Messages::WebInspectorUI::SetDockingUnavailable { !platformCanAttach() }, inspectorPage->webPageIDInMainFrameProcess());
 
-    platformAttachAvailabilityChanged(m_canAttach);
+    platformAttachAvailabilityChanged();
 }
 
 void WebInspectorUIProxy::setForcedAppearance(InspectorFrontendClient::Appearance appearance)
@@ -1036,11 +1020,6 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
 }
 
 void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned)
-{
-    notImplemented();
-}
-
-void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool)
 {
     notImplemented();
 }

@@ -63,43 +63,43 @@ static void deleteSetting(const String& key)
     CFPreferencesSetAppValue(createKeyForPreferences(key).get(), nullptr, kCFPreferencesCurrentApplication);
 }
 
-void WebInspectorClient::sendMessageToFrontend(const String& message)
+void WebInspectorBackendClient::sendMessageToFrontend(const String& message)
 {
     ASSERT(m_frontendClient);
     m_frontendClient->frontendAPIDispatcher().dispatchMessageAsync(message);
 }
 
-bool WebInspectorClient::inspectorAttachDisabled()
+bool WebInspectorBackendClient::inspectorAttachDisabled()
 {
     return loadSetting(inspectorAttachDisabledSetting) == "true"_s;
 }
 
-void WebInspectorClient::setInspectorAttachDisabled(bool disabled)
+void WebInspectorBackendClient::setInspectorAttachDisabled(bool disabled)
 {
     storeSetting(inspectorAttachDisabledSetting, disabled ? "true"_s : "false"_s);
 }
 
-void WebInspectorClient::deleteInspectorStartsAttached()
+void WebInspectorBackendClient::deleteInspectorStartsAttached()
 {
     deleteSetting(inspectorAttachDisabledSetting);
 }
 
-bool WebInspectorClient::inspectorStartsAttached()
+bool WebInspectorBackendClient::inspectorStartsAttached()
 {
     return loadSetting(inspectorStartsAttachedSetting) == "true"_s;
 }
 
-void WebInspectorClient::setInspectorStartsAttached(bool attached)
+void WebInspectorBackendClient::setInspectorStartsAttached(bool attached)
 {
     storeSetting(inspectorStartsAttachedSetting, attached ? "true"_s : "false"_s);
 }
 
-void WebInspectorClient::deleteInspectorAttachDisabled()
+void WebInspectorBackendClient::deleteInspectorAttachDisabled()
 {
     deleteSetting(inspectorStartsAttachedSetting);
 }
 
-std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
+std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorBackendClient::createFrontendSettings()
 {
     class InspectorFrontendSettingsCF : public WebCore::InspectorFrontendClientLocal::Settings {
     private:

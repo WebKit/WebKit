@@ -618,15 +618,16 @@ bool WebInspectorUIProxy::platformIsFront()
     return m_isVisible && [m_inspectorViewController webView].window.isMainWindow;
 }
 
-bool WebInspectorUIProxy::platformCanAttach(bool webProcessCanAttach)
+bool WebInspectorUIProxy::platformCanAttach()
 {
     RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
         return false;
 
+    // Don't allow attaching an inspector to an inspector.
     RetainPtr inspectedView = inspectedPage->inspectorAttachmentView();
     if ([WKInspectorViewController viewIsInspectorWebView:inspectedView.get()])
-        return webProcessCanAttach;
+        return false;
 
     if (inspectedView.get().hidden)
         return false;
@@ -639,11 +640,6 @@ bool WebInspectorUIProxy::platformCanAttach(bool webProcessCanAttach)
 
     float maximumAttachedHeight = NSHeight(inspectedViewFrame) * maximumAttachedHeightRatio;
     return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= NSWidth(inspectedViewFrame);
-}
-
-void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool available)
-{
-    // Do nothing.
 }
 
 void WebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance appearance)
@@ -758,7 +754,7 @@ void WebInspectorUIProxy::windowFullScreenDidChange()
     if (m_isAttached || !m_isVisible || !m_inspectorWindow)
         return;
 
-    attachAvailabilityChanged(platformCanAttach(canAttach()));    
+    attachAvailabilityChanged();
 }
 
 void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
@@ -769,7 +765,7 @@ void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
     if (!m_isAttached) {
         // Check if the attach availability changed. We need to do this here in case
         // the attachment view is not the WKView.
-        attachAvailabilityChanged(platformCanAttach(canAttach()));
+        attachAvailabilityChanged();
         return;
     }
 

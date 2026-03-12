@@ -56,17 +56,16 @@ class PageInspectorController;
 
 class WebInspectorFrontendClient;
 
-class WebInspectorClient final : public WebCore::InspectorBackendClient, public Inspector::FrontendChannel {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebInspectorClient);
+class WebInspectorBackendClient final : public WebCore::InspectorBackendClient, public Inspector::FrontendChannel {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebInspectorBackendClient);
 public:
-    explicit WebInspectorClient(WebView *inspectedWebView);
-    virtual ~WebInspectorClient();
+    explicit WebInspectorBackendClient(WebView *inspectedWebView);
+    virtual ~WebInspectorBackendClient();
 
     void inspectedPageDestroyed() override;
 
     Inspector::FrontendChannel* openLocalFrontend(WebCore::PageInspectorController*) override;
     void bringFrontendToFront() override;
-    void didResizeMainFrame(WebCore::LocalFrame*) override;
 
     void highlight() override;
     void hideHighlight() override;

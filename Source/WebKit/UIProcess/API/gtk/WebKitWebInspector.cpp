@@ -345,8 +345,9 @@ private:
     {
     }
 
-    void didChangeAttachAvailability(WebInspectorUIProxy&, bool available) override
+    void didChangeAttachAvailability(WebInspectorUIProxy& webInspector) override
     {
+        bool available = webInspector.platformCanAttach();
         if (m_inspector->priv->canAttach == available)
             return;
         m_inspector->priv->canAttach = available;

@@ -91,6 +91,7 @@
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "PageInspectorController.h"
 #include "PaymentSession.h"
 #include "ProcessWarming.h"
 #include "RemoteFrame.h"

@@ -72,7 +72,7 @@ static const CGFloat initialWindowHeight = 650;
     RetainPtr<WebView> _inspectedWebView;
     RetainPtr<WebView> _frontendWebView;
     NakedPtr<WebInspectorFrontendClient> _frontendClient;
-    WebInspectorClient* _inspectorClient;
+    WebInspectorBackendClient* _backendClient;
     BOOL _attachedToInspectedWebView;
     BOOL _shouldAttach;
     BOOL _visible;
@@ -86,8 +86,8 @@ static const CGFloat initialWindowHeight = 650;
 - (void)detach;
 - (BOOL)attached;
 - (void)setFrontendClient:(NakedPtr<WebInspectorFrontendClient>)frontendClient;
-- (void)setInspectorClient:(NakedPtr<WebInspectorClient>)inspectorClient;
-- (NakedPtr<WebInspectorClient>)inspectorClient;
+- (void)setInspectorClient:(NakedPtr<WebInspectorBackendClient>)inspectorClient;
+- (NakedPtr<WebInspectorBackendClient>)inspectorClient;
 - (void)setAttachedWindowHeight:(unsigned)height;
 - (void)setDockingUnavailable:(BOOL)unavailable;
 - (void)destroyInspectorView;
@@ -96,19 +96,19 @@ static const CGFloat initialWindowHeight = 650;
 
 // MARK: -
 
-WebInspectorClient::WebInspectorClient(WebView* inspectedWebView)
+WebInspectorBackendClient::WebInspectorBackendClient(WebView* inspectedWebView)
     : m_inspectedWebView(inspectedWebView)
     , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:inspectedWebView]))
 {
 }
 
-WebInspectorClient::~WebInspectorClient() = default;
+WebInspectorBackendClient::~WebInspectorBackendClient() = default;
 
-void WebInspectorClient::inspectedPageDestroyed()
+void WebInspectorBackendClient::inspectedPageDestroyed()
 {
 }
 
-FrontendChannel* WebInspectorClient::openLocalFrontend(PageInspectorController* inspectedPageController)
+FrontendChannel* WebInspectorBackendClient::openLocalFrontend(PageInspectorController* inspectedPageController)
 {
     RetainPtr<WebInspectorWindowController> windowController = adoptNS([[WebInspectorWindowController alloc] initWithInspectedWebView:m_inspectedWebView.get().get() isUnderTest:inspectedPageController->isUnderTest()]);
     [windowController.get() setInspectorClient:this];
@@ -127,40 +127,34 @@ FrontendChannel* WebInspectorClient::openLocalFrontend(PageInspectorController* 
     return nullptr;
 }
 
-void WebInspectorClient::bringFrontendToFront()
+void WebInspectorBackendClient::bringFrontendToFront()
 {
     ASSERT(m_frontendClient);
     m_frontendClient->bringToFront();
 }
 
-void WebInspectorClient::didResizeMainFrame(LocalFrame*)
+void WebInspectorBackendClient::windowFullScreenDidChange()
 {
     if (m_frontendClient)
         m_frontendClient->attachAvailabilityChanged(canAttach());
 }
 
-void WebInspectorClient::windowFullScreenDidChange()
-{
-    if (m_frontendClient)
-        m_frontendClient->attachAvailabilityChanged(canAttach());
-}
-
-bool WebInspectorClient::canAttach()
+bool WebInspectorBackendClient::canAttach()
 {
     return m_frontendClient->canAttach() && !inspectorAttachDisabled();
 }
 
-void WebInspectorClient::highlight()
+void WebInspectorBackendClient::highlight()
 {
     [m_highlighter.get() highlight];
 }
 
-void WebInspectorClient::hideHighlight()
+void WebInspectorBackendClient::hideHighlight()
 {
     [m_highlighter.get() hideHighlight];
 }
 
-void WebInspectorClient::didSetSearchingForNode(bool enabled)
+void WebInspectorBackendClient::didSetSearchingForNode(bool enabled)
 {
     RetainPtr inspector = [m_inspectedWebView.get() inspector];
 
@@ -174,7 +168,7 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
         [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStopSearchingForNode object:inspector.get()];
 }
 
-void WebInspectorClient::releaseFrontend()
+void WebInspectorBackendClient::releaseFrontend()
 {
     m_frontendClient = nullptr;
     m_frontendPage = nullptr;
@@ -596,12 +590,12 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
-    _inspectorClient->windowFullScreenDidChange();
+    _backendClient->windowFullScreenDidChange();
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
-    _inspectorClient->windowFullScreenDidChange();
+    _backendClient->windowFullScreenDidChange();
 }
 
 - (void)close
@@ -648,7 +642,7 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
 
     _visible = YES;
 
-    _shouldAttach = _inspectorClient->inspectorStartsAttached() && _frontendClient->canAttach();
+    _shouldAttach = _backendClient->inspectorStartsAttached() && _frontendClient->canAttach();
 
     if (_shouldAttach) {
         WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
@@ -681,7 +675,7 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
     if (_attachedToInspectedWebView)
         return;
 
-    _inspectorClient->setInspectorStartsAttached(true);
+    _backendClient->setInspectorStartsAttached(true);
     _frontendClient->setAttachedWindow(InspectorFrontendClient::DockSide::Bottom);
 
     [self close];
@@ -693,7 +687,7 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
     if (!_attachedToInspectedWebView)
         return;
 
-    _inspectorClient->setInspectorStartsAttached(false);
+    _backendClient->setInspectorStartsAttached(false);
     _frontendClient->setAttachedWindow(InspectorFrontendClient::DockSide::Undocked);
 
     [self close];
@@ -710,14 +704,14 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
     _frontendClient = frontendClient;
 }
 
-- (void)setInspectorClient:(NakedPtr<WebInspectorClient>)inspectorClient
+- (void)setInspectorClient:(NakedPtr<WebInspectorBackendClient>)inspectorClient
 {
-    _inspectorClient = inspectorClient;
+    _backendClient = inspectorClient;
 }
 
-- (NakedPtr<WebInspectorClient>)inspectorClient
+- (NakedPtr<WebInspectorBackendClient>)inspectorClient
 {
-    return _inspectorClient;
+    return _backendClient;
 }
 
 - (void)setAttachedWindowHeight:(unsigned)height
@@ -749,10 +743,10 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
 
     if (Page* frontendPage = _frontendClient->frontendPage())
         frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
-    RefPtr { [_inspectedWebView.get() inspectorController] }->disconnectFrontend(*_inspectorClient);
+    RefPtr { [_inspectedWebView.get() inspectorController] }->disconnectFrontend(*_backendClient);
 
     [[_inspectedWebView.get() inspector] releaseFrontend];
-    _inspectorClient->releaseFrontend();
+    _backendClient->releaseFrontend();
 
     if (_destroyingInspectorView)
         return;

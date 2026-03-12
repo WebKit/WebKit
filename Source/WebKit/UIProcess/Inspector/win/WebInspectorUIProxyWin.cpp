@@ -509,11 +509,6 @@ void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(con
     completionHandler({ });
 }
 
-void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool /* available */)
-{
-    notImplemented();
-}
-
 void WebInspectorUIProxy::platformCreateFrontendWindow()
 {
     platformDetach();

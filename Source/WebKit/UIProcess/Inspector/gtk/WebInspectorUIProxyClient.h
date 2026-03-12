@@ -42,7 +42,7 @@ public:
     virtual bool detach(WebInspectorUIProxy&) = 0;
     virtual void didChangeAttachedHeight(WebInspectorUIProxy&, unsigned height) = 0;
     virtual void didChangeAttachedWidth(WebInspectorUIProxy&, unsigned width) = 0;
-    virtual void didChangeAttachAvailability(WebInspectorUIProxy&, bool available) = 0;
+    virtual void didChangeAttachAvailability(WebInspectorUIProxy&) = 0;
 };
 
 } // namespace WebKit

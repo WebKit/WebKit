@@ -119,16 +119,6 @@ void WebInspectorBackendClient::bringFrontendToFront()
         inspector->bringToFront();
 }
 
-void WebInspectorBackendClient::didResizeMainFrame(LocalFrame*)
-{
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
-
-    if (RefPtr inspector = page->inspector())
-        inspector->updateDockingAvailability();
-}
-
 void WebInspectorBackendClient::highlight()
 {
     RefPtr page = m_page.get();
