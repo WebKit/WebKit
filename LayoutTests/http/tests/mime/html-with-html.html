@@ -12,8 +12,8 @@ function runTests() {
     let iframe = document.createElement("iframe");
     iframe.src = 'resources/html-document.html';
     if (window.testRunner) {
-        iframe.onerror = testRunner.notifyDone();
-        iframe.onload = testRunner.notifyDone();
+        iframe.onerror = () => testRunner.notifyDone();
+        iframe.onload = () => testRunner.notifyDone();
     }
     document.body.appendChild(iframe);
 }
