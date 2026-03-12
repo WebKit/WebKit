@@ -148,6 +148,7 @@ private:
 
     RunLoop::Timer m_delayCategoryChangeTimer;
     AudioSession::CategoryType m_previousCategory { AudioSession::CategoryType::None };
+    AudioSession::Mode m_previousAudioMode { AudioSession::Mode::Default };
     bool m_previousHadAudibleAudioOrVideoMediaType { false };
 };
 

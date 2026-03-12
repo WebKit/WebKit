@@ -207,10 +207,21 @@ void MediaSessionManagerCocoa::updateSessionState()
 
     RouteSharingPolicy policy = (category == AudioSession::CategoryType::MediaPlayback) ? RouteSharingPolicy::LongFormAudio : RouteSharingPolicy::Default;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "setting category = ", category, ", mode = ", mode, ", policy = ", policy, ", previous category = ", m_previousCategory);
+    bool categoryOrModeChanged = category != m_previousCategory || mode != m_previousAudioMode;
+
+    ALWAYS_LOG(LOGIDENTIFIER, "setting category = ", category, ", mode = ", mode, ", policy = ", policy, ", previous category = ", m_previousCategory, ", categoryOrModeChanged = ", categoryOrModeChanged);
 
     m_previousCategory = category;
-    sharedSession->setCategory(category, mode, policy);
+    m_previousAudioMode = mode;
+
+    // Only call setCategory() when the category or mode has actually changed.
+    // On visionOS, Travel Mode transitions may trigger updateSessionState() via
+    // an audio session interruption, but the desired category/mode remain the same.
+    // AudioSessionIOS::setCategory() has its own guard against redundant AVAudioSession
+    // calls, but during an interruption the transient AVAudioSession state may differ
+    // from the logical WebKit state, causing an unnecessary session reconfiguration.
+    if (categoryOrModeChanged)
+        sharedSession->setCategory(category, mode, policy);
 
     forEachSession([&] (auto& session) {
         session.audioSessionCategoryChanged(category, mode, policy);
@@ -221,6 +232,7 @@ void MediaSessionManagerCocoa::possiblyChangeAudioCategory()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_previousCategory = AudioSession::CategoryType::None;
+    m_previousAudioMode = AudioSession::Mode::Default;
     updateSessionState();
 }
 
@@ -229,6 +241,7 @@ void MediaSessionManagerCocoa::resetSessionState()
     ALWAYS_LOG(LOGIDENTIFIER);
     m_delayCategoryChangeTimer.stop();
     m_previousCategory = AudioSession::CategoryType::None;
+    m_previousAudioMode = AudioSession::Mode::Default;
     m_previousHadAudibleAudioOrVideoMediaType = false;
 }
 
