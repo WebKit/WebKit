@@ -58,6 +58,7 @@ PaintRenderingContext2D::~PaintRenderingContext2D()
     // Call the user-induced restore()s. Restore through the restore() method
     // to let the CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
     // code make sense.
+    resetUnrealizedSaveCount();
     size_t restoreCount = stateStack().size() - 1;
     for (size_t i = 0; i < restoreCount; ++i)
         restore();
@@ -94,6 +95,7 @@ void PaintRenderingContext2D::replayDisplayList(GraphicsContext& target) const
 
 void PaintRenderingContext2D::didUpdateCanvasSizeProperties(bool sizeChanged)
 {
+    resetUnrealizedSaveCount();
     size_t restoreCount = stateStack().size() - 1;
     for (size_t i = 0; i < restoreCount; ++i)
         restore();

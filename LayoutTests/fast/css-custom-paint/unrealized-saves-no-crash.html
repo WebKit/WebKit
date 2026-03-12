@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSPaintingAPIEnabled=true ] -->
+<meta name="assert" content="PaintRenderingContext2D should not crash when destroyed with unrealized saves">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+
+<script id="code" type="text/worklet">
+  class UnrealizedSavePaint {
+    paint(ctx, geom) {
+      // Create some unrealized saves.
+      ctx.save();
+      ctx.save();
+
+      // Perform a draw to realize the pending saves.
+      ctx.fillStyle = "green";
+      ctx.fillRect(0, 0, geom.width, geom.height);
+
+      // Create more unrealized saves (these will not be realized
+      // because no further draws occur). When the PaintRenderingContext2D
+      // is destroyed, the destructor must properly account for these
+      // unrealized saves when unwinding the RecorderImpl state stack.
+      ctx.save();
+      ctx.save();
+      // Intentionally no matching restore() calls.
+    }
+  }
+  registerPaint('unrealized-save-paint', UnrealizedSavePaint);
+</script>
+
+<div id="target" style="width: 100px; height: 100px; background-image: paint(unrealized-save-paint);"></div>
+<pre id="result"></pre>
+
+<script>
+  importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+  // If we reach here without crashing, the test passes.
+  // Allow a rAF for the paint to execute.
+  requestAnimationFrame(() => {
+    document.getElementById('result').textContent = "PASS: No crash with unrealized saves in paint worklet.";
+    if (window.testRunner)
+      testRunner.notifyDone();
+  });
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+</script>

@@ -403,6 +403,7 @@ protected:
     RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
     RefPtr<ImageBuffer> createImageForNoiseInjection() const;
     void didUpdateCanvasSizeProperties(bool) override;
+    void resetUnrealizedSaveCount() { m_unrealizedSaveCount = 0; }
 
 private:
     struct CachedContentsTransparent {
