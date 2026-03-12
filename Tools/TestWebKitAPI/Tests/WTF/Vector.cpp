@@ -764,49 +764,49 @@ TEST(WTF_Vector, RemoveAll)
     Vector<CString> vExpected;
     Vector<CString> v2;
     EXPECT_TRUE(v2.isEmpty());
-    EXPECT_FALSE(v2.removeAll("1"));
+    EXPECT_FALSE(v2.removeAll("1"_s));
     EXPECT_TRUE(v2.isEmpty());
 
     v2.fill("1", 10);
     EXPECT_EQ(10U, v2.size());
-    EXPECT_EQ(10U, v2.removeAll("1"));
+    EXPECT_EQ(10U, v2.removeAll("1"_s));
     EXPECT_TRUE(v2.isEmpty());
 
     v2.fill("2", 10);
     EXPECT_EQ(10U, v2.size());
-    EXPECT_EQ(0U, v2.removeAll("1"));
+    EXPECT_EQ(0U, v2.removeAll("1"_s));
     EXPECT_EQ(10U, v2.size());
 
     v2 = {"1", "2", "1", "2", "1", "2", "2", "1", "1", "1"};
     EXPECT_EQ(10U, v2.size());
-    EXPECT_EQ(6U, v2.removeAll("1"));
+    EXPECT_EQ(6U, v2.removeAll("1"_s));
     EXPECT_EQ(4U, v2.size());
-    EXPECT_TRUE(v2.find("1") == notFound);
-    EXPECT_EQ(4U, v2.removeAll("2"));
+    EXPECT_TRUE(v2.find("1"_s) == notFound);
+    EXPECT_EQ(4U, v2.removeAll("2"_s));
     EXPECT_TRUE(v2.isEmpty());
 
     v2 = {"3", "1", "2", "1", "2", "1", "2", "2", "1", "1", "1", "3"};
     EXPECT_EQ(12U, v2.size());
-    EXPECT_EQ(6U, v2.removeAll("1"));
+    EXPECT_EQ(6U, v2.removeAll("1"_s));
     EXPECT_EQ(6U, v2.size());
-    EXPECT_TRUE(v2.find("1") == notFound);
+    EXPECT_TRUE(v2.find("1"_s) == notFound);
     vExpected = {"3", "2", "2", "2", "2", "3"};
     EXPECT_TRUE(v2 == vExpected);
 
-    EXPECT_EQ(4U, v2.removeAll("2"));
+    EXPECT_EQ(4U, v2.removeAll("2"_s));
     EXPECT_EQ(2U, v2.size());
-    EXPECT_TRUE(v2.find("2") == notFound);
+    EXPECT_TRUE(v2.find("2"_s) == notFound);
     vExpected = {"3", "3"};
     EXPECT_TRUE(v2 == vExpected);
 
-    EXPECT_EQ(2U, v2.removeAll("3"));
+    EXPECT_EQ(2U, v2.removeAll("3"_s));
     EXPECT_TRUE(v2.isEmpty());
 
     v2 = {"1", "1", "1", "3", "2", "4", "2", "2", "2", "4", "4", "3"};
     EXPECT_EQ(12U, v2.size());
-    EXPECT_EQ(3U, v2.removeAll("1"));
+    EXPECT_EQ(3U, v2.removeAll("1"_s));
     EXPECT_EQ(9U, v2.size());
-    EXPECT_TRUE(v2.find("1") == notFound);
+    EXPECT_TRUE(v2.find("1"_s) == notFound);
     vExpected = {"3", "2", "4", "2", "2", "2", "4", "4", "3"};
     EXPECT_TRUE(v2 == vExpected);
 }

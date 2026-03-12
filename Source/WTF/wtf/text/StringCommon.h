@@ -1517,6 +1517,12 @@ inline NewlinePosition findNextNewline(std::span<const CharacterType> span, size
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+
+inline bool operator==(ASCIILiteral a, const char* b)
+{
+    return equalSpans(a.spanIncludingNullTerminator(), unsafeSpanIncludingNullTerminator(b));
+}
+
 }
 
 using WTF::charactersContain;

@@ -141,6 +141,15 @@ bool operator==(const CString& a, const CString& b)
     return equal(byteCast<Latin1Character>(a.span()).data(), byteCast<Latin1Character>(b.span()));
 }
 
+bool operator==(const CString& a, ASCIILiteral b)
+{
+    if (a.isNull() != b.isNull())
+        return false;
+    if (a.length() != b.length())
+        return false;
+    return equal(byteCast<Latin1Character>(a.span()).data(), b.span8());
+}
+
 unsigned CString::hash() const
 {
     if (isNull())
