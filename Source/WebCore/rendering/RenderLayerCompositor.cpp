@@ -2589,18 +2589,6 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
         extent.extentComputed = true;
     });
 
-    RenderLayerModelObject& renderer = layer.renderer();
-    if (renderer.isStickilyPositioned()) {
-        // Use rectangle that represents union of all possible sticky element positions,
-        // because it could be moved around without re-computing overlap.
-        auto const& box = downcast<RenderBoxModelObject>(renderer);
-        StickyPositionViewportConstraints constraints;
-        auto constrainingRectForStickyPosition = box.constrainingRectForStickyPosition();
-        box.computeStickyPositionConstraints(constraints, constrainingRectForStickyPosition);
-        extent.bounds = LayoutRect(constraints.computeStickyExtent());
-        return;
-    }
-
     LayoutRect layerBounds;
     if (extent.hasTransformAnimation)
         extent.animationCausesExtentUncertainty = !layer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(layerBounds);
@@ -2615,7 +2603,19 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
     if (extent.bounds.isEmpty())
         extent.bounds.setSize(LayoutSize(1, 1));
 
-    if (renderer.isFixedPositioned() && renderer.container() == &m_renderView) {
+    auto& renderer = layer.renderer();
+    if (renderer.isStickilyPositioned()) {
+        // Use rectangle that represents union of all possible sticky element positions,
+        // because it could be moved around without re-computing overlap.
+        auto scrollInflated = m_renderView.frameView().fixedScrollableAreaBoundsInflatedForScrolling(extent.bounds);
+        auto& box = downcast<RenderBoxModelObject>(renderer);
+        StickyPositionViewportConstraints constraints;
+        auto constrainingRect = box.constrainingRectForStickyPosition();
+        box.computeStickyPositionConstraints(constraints, constrainingRect);
+        auto stickyBounds = LayoutRect(constraints.computeStickyExtent());
+        scrollInflated.intersect(stickyBounds);
+        extent.bounds = scrollInflated;
+    } else if (renderer.isFixedPositioned() && renderer.container() == &m_renderView) {
         // Because fixed elements get moved around without re-computing overlap, we have to compute an overlap
         // rect that covers all the locations that the fixed element could move to.
         extent.bounds = m_renderView.frameView().fixedScrollableAreaBoundsInflatedForScrolling(extent.bounds);
