@@ -7,8 +7,8 @@
     function runTest() {
       window.jsTestIsAsync = true;
 
-      setTimeout(() => {
-        UIHelper.activateAt(110, 110);
+      setTimeout(async () => {
+        await UIHelper.activateAt(110, 110);
       }, 0);
     }
 

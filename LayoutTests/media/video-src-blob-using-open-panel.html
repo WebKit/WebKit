@@ -13,7 +13,7 @@
                 video.src = window.URL.createObjectURL(file);
             }
 
-            function runTest() {
+            async function runTest() {
                 var inputFile = document.getElementById('file');
                 var centerX = inputFile.offsetLeft + inputFile.offsetWidth / 2;
                 var centerY = inputFile.offsetTop + inputFile.offsetHeight / 2;
@@ -21,7 +21,7 @@
 
                 if (window.testRunner) {
                     testRunner.setOpenPanelFiles([findMediaFile("video", "content/test")]);
-                    UIHelper.activateAt(centerX, centerY);
+                    await UIHelper.activateAt(centerX, centerY);
                 }
             }
         </script>

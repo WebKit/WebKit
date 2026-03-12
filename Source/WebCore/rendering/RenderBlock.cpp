@@ -1523,8 +1523,8 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         flippedBlockRect.moveBy(rootBlockPhysicalPosition);
         clipOutOutOfFlowBoxes(paintInfo, flippedBlockRect.location(), outOfFlowBoxes());
         if (isBody() || isDocumentElementRenderer()) { // The <body> must make sure to examine its containingBlock's positioned objects.
-            for (RenderBlock* cb = containingBlock(); cb && !is<RenderView>(*cb); cb = cb->containingBlock())
-                clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(cb->x(), cb->y()), cb->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.
+            for (auto* ancestor = containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock())
+                clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(ancestor->x(), ancestor->y()), ancestor->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.
         }
         clipOutFloatingBoxes(rootBlock, paintInfo, rootBlockPhysicalPosition, offsetFromRootBlock);
     }
@@ -1717,15 +1717,15 @@ LayoutUnit RenderBlock::logicalLeftSelectionOffset(RenderBlock& rootBlock, Layou
         return logicalLeft;
     }
 
-    RenderBlock* cb = this;
+    auto* containingBlock = this;
     const LogicalSelectionOffsetCaches* currentCache = &cache;
-    while (cb != &rootBlock) {
-        logicalLeft += cb->logicalLeft();
+    while (containingBlock != &rootBlock) {
+        logicalLeft += containingBlock->logicalLeft();
 
         ASSERT(currentCache);
-        auto info = currentCache->containingBlockInfo(*cb);
-        cb = info.block();
-        if (!cb)
+        auto info = currentCache->containingBlockInfo(*containingBlock);
+        containingBlock = info.block();
+        if (!containingBlock)
             break;
         currentCache = info.cache();
     }
@@ -1741,15 +1741,15 @@ LayoutUnit RenderBlock::logicalRightSelectionOffset(RenderBlock& rootBlock, Layo
         return logicalRight;
     }
 
-    RenderBlock* cb = this;
+    auto* containingBlock = this;
     const LogicalSelectionOffsetCaches* currentCache = &cache;
-    while (cb != &rootBlock) {
-        logicalRight += cb->logicalLeft();
+    while (containingBlock != &rootBlock) {
+        logicalRight += containingBlock->logicalLeft();
 
         ASSERT(currentCache);
-        auto info = currentCache->containingBlockInfo(*cb);
-        cb = info.block();
-        if (!cb)
+        auto info = currentCache->containingBlockInfo(*containingBlock);
+        containingBlock = info.block();
+        if (!containingBlock)
             break;
         currentCache = info.cache();
     }

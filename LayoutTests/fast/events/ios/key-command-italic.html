@@ -31,7 +31,7 @@ function handleChildListModified()
     Markup.notifyDone();
 }
 
-function runTest()
+async function runTest()
 {
     if (!window.testRunner) {
         document.getElementById("manual-instructions").classList.remove("hidden");
@@ -48,7 +48,7 @@ function runTest()
         UIHelper.keyDown("i", ["metaKey"]);
     }
     testElement.addEventListener("focus", handleFocus, { once: true });
-    UIHelper.activateElement(testElement);
+    await UIHelper.activateElement(testElement);
 }
 
 Markup.waitUntilDone();

@@ -468,8 +468,10 @@ void RenderListMarker::updateInlineMargins()
     };
 
     auto [marginStart, marginEnd] = isInside() ? marginsForInsideMarker() : marginsForOutsideMarker();
-    mutableStyle().setMarginStart(Style::MarginEdge::Fixed { marginStart });
-    mutableStyle().setMarginEnd(Style::MarginEdge::Fixed { marginEnd });
+    auto zoom = style().usedZoomForLength().value;
+
+    mutableStyle().setMarginStart(Style::MarginEdge::Fixed { marginStart / zoom });
+    mutableStyle().setMarginEnd(Style::MarginEdge::Fixed { marginEnd / zoom });
 }
 
 bool RenderListMarker::isInside() const

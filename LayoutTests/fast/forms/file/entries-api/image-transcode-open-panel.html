@@ -10,12 +10,12 @@
         description("Tests a HEIC image, chosen via the file picker which accepts PNG, will be converted to a PNG image.");
         jsTestIsAsync = true;
 
-        function runTest()
+        async function runTest()
         {
             testRunner.setOpenPanelFiles(['resources/images/green-400x400.heic']);
 
             inputElement = document.getElementsByTagName('input')[0];
-            UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2,
+            await UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2,
                 inputElement.offsetTop + inputElement.offsetHeight / 2);
         }
 

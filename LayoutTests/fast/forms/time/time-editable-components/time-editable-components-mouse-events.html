@@ -40,18 +40,22 @@ const hourField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-hour-f
 const minuteField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-minute-field");
 const meridiemField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-meridiem-field");
 
+jsTestIsAsync = true;
+
+(async () => {
+
 debug("Enabled Input\n");
 
-UIHelper.activateElement(hourField);
+await UIHelper.activateElement(hourField);
 UIHelper.keyDown("9");
 shouldBeEqualToString("input.value", "09:30");
 
-UIHelper.activateElement(minuteField);
+await UIHelper.activateElement(minuteField);
 UIHelper.keyDown("1");
 UIHelper.keyDown("2");
 shouldBeEqualToString("input.value", "09:12");
 
-UIHelper.activateElement(meridiemField);
+await UIHelper.activateElement(meridiemField);
 UIHelper.keyDown("upArrow");
 shouldBeEqualToString("input.value", "21:12");
 
@@ -72,9 +76,9 @@ clickEventsFired = 0;
 input.disabled = true;
 input.readOnly = false;
 
-UIHelper.activateElement(hourField);
-UIHelper.activateElement(minuteField);
-UIHelper.activateElement(meridiemField);
+await UIHelper.activateElement(hourField);
+await UIHelper.activateElement(minuteField);
+await UIHelper.activateElement(meridiemField);
 // Click on control, but not a specific field, defaults to first field.
 mouseClickOn(250, center);
 // Click outside control.
@@ -87,15 +91,18 @@ clickEventsFired = 0;
 input.disabled = false;
 input.readOnly = true;
 
-UIHelper.activateElement(hourField);
-UIHelper.activateElement(minuteField);
-UIHelper.activateElement(meridiemField);
+await UIHelper.activateElement(hourField);
+await UIHelper.activateElement(minuteField);
+await UIHelper.activateElement(meridiemField);
 // Click on control, but not a specific field, defaults to first field.
 mouseClickOn(250, center);
 // Click outside control.
 mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
 
 shouldBe("clickEventsFired", "4");
+
+finishJSTest();
+})();
 
 </script>
 </body>

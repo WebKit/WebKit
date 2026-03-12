@@ -369,13 +369,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static activateAt(x, y, modifiers=[])
+    static async activateAt(x, y, modifiers=[])
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {
-            eventSender.mouseMoveTo(x, y);
-            eventSender.mouseDown(0, modifiers);
-            eventSender.mouseUp(0, modifiers);
-            return Promise.resolve();
+            await eventSender.asyncMouseMoveTo(x, y);
+            await eventSender.asyncMouseDown(0, modifiers);
+            await eventSender.asyncMouseUp(0, modifiers);
+            return;
         }
 
         return new Promise((resolve) => {

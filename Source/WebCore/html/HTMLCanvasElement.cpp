@@ -104,7 +104,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "GPUAvailability.h"
 #include "VideoFrameCV.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 #endif
@@ -388,26 +387,6 @@ CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type, Ca
 
 #if ENABLE(WEBGL)
 
-static bool NODELETE requiresAcceleratedCompositingForWebGL()
-{
-#if PLATFORM(GTK) || PLATFORM(WIN)
-    return false;
-#else
-    return true;
-#endif
-
-}
-static bool NODELETE shouldEnableWebGL(const Settings& settings)
-{
-    if (!settings.webGLEnabled())
-        return false;
-
-    if (!requiresAcceleratedCompositingForWebGL())
-        return true;
-
-    return settings.acceleratedCompositingEnabled();
-}
-
 bool HTMLCanvasElement::isWebGLType(const String& type)
 {
     // Retain support for the legacy "webkit-3d" name.
@@ -427,16 +406,8 @@ WebGLVersion HTMLCanvasElement::toWebGLVersion(const String& type)
 WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion type, WebGLContextAttributes&& attrs)
 {
     ASSERT(!m_context);
-
-    if (!shouldEnableWebGL(document().settings()))
+    if (!document().settings().webGLEnabled())
         return nullptr;
-
-#if HAVE(GPU_AVAILABILITY_CHECK)
-    if (!document().settings().useGPUProcessForWebGLEnabled() && !isGPUAvailable()) {
-        RELEASE_LOG_FAULT(WebGL, "GPU is not available.");
-        return nullptr;
-    }
-#endif
 
 #if ENABLE(WEBXR)
     // https://immersive-web.github.io/webxr/#xr-compatible
@@ -467,9 +438,6 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion ty
 
 RefPtr<WebGLRenderingContextBase> HTMLCanvasElement::getContextWebGL(WebGLVersion type, WebGLContextAttributes&& attrs)
 {
-    if (!shouldEnableWebGL(document().settings()))
-        return nullptr;
-
     if (!m_context)
         return createContextWebGL(type, WTF::move(attrs));
 

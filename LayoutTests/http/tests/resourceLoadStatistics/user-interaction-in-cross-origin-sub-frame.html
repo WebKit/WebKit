@@ -11,11 +11,11 @@ jsTestIsAsync = true;
 const topFrameOrigin = "http://127.0.0.1:8000";
 const subFrameOrigin = "http://localhost:8000";
 
-function activateElement(elementId) {
+async function activateElement(elementId) {
     var element = document.getElementById(elementId);
     var centerX = element.offsetLeft + element.offsetWidth / 2;
     var centerY = element.offsetTop + element.offsetHeight / 2;
-    UIHelper.activateAt(centerX, centerY);
+    await UIHelper.activateAt(centerX, centerY);
 }
 
 function finishTest() {
@@ -33,7 +33,7 @@ onload = async function() {
             shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
             shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
 
-            activateElement("testFrame");
+            await activateElement("testFrame");
         }
         await testRunner.statisticsProcessStatisticsAndDataRecords();
         finishTest();

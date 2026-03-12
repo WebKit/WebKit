@@ -7,12 +7,12 @@
 <input id=file1 type=file multiple=multiple>
 </form>
 <script>
-function openFilesInElement(element, files, icon) {
+async function openFilesInElement(element, files, icon) {
     testRunner.setOpenPanelFiles(files);
     testRunner.setOpenPanelFilesMediaIcon(icon);
     var centerX = element.offsetLeft + element.offsetWidth / 2;
     var centerY = element.offsetTop + element.offsetHeight / 2;
-    UIHelper.activateAt(centerX, centerY);
+    await UIHelper.activateAt(centerX, centerY);
 }
 
 function handleChange() {

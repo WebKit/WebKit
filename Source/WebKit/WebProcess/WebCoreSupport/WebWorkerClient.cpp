@@ -113,9 +113,11 @@ RefPtr<GraphicsContextGL> GPUProcessWebWorkerClient::createGraphicsContextGL(con
     if (!dispatcher)
         return nullptr;
     assertIsCurrent(*dispatcher);
-    if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
-        return RemoteGraphicsContextGLProxy::create(attributes, protect(ensureRenderingBackend()), *dispatcher);
-    return WebWorkerClient::createGraphicsContextGL(attributes);
+    if (!WebProcess::singleton().shouldUseRemoteRenderingForWebGL()) {
+        // ANGLE does not support multithreading, so we cannot create in-process contexts in worker threads.
+        return nullptr;
+    }
+    return RemoteGraphicsContextGLProxy::create(attributes, protect(ensureRenderingBackend()), *dispatcher);
 }
 #endif
 
@@ -180,7 +182,8 @@ RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, Re
 RefPtr<GraphicsContextGL> WebWorkerClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
     assertIsCurrent(*dispatcher().get());
-    return WebCore::createWebProcessGraphicsContextGL(attributes);
+    // ANGLE does not support multithreading, so we cannot create in-process contexts in worker threads.
+    return nullptr;
 }
 #endif
 

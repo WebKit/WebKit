@@ -73,11 +73,12 @@
 
             await UIHelper.activateElement(touchTarget);
 
-            await new Promise((resolve) => {
+            const clickPromise = new Promise((resolve) => {
                 const finishTarget = document.querySelector("#finish-target");
                 finishTarget.onclick = () => resolve();
-                UIHelper.activateElement(finishTarget);
             });
+            await UIHelper.activateElement(document.querySelector("#finish-target"));
+            await clickPromise;
 
             shouldBe(() => frameWasClicked, () => frameWasClickedExpected);
             shouldBe(() => alternateWasClicked, () => alternateWasClickedExpected);

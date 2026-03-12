@@ -64,12 +64,12 @@ window.addEventListener("pagehide", function(event) {
     }
 }, false);
 
-window.addEventListener('load', function() {
+window.addEventListener('load', async function() {
     testRunner.setOpenPanelFiles(['../files/resources/abe.png']);
     var element = document.getElementById('file');
     var centerX = element.offsetLeft + element.offsetWidth / 2;
     var centerY = element.offsetTop + element.offsetHeight / 2;
-    UIHelper.activateAt(centerX, centerY);
+    await UIHelper.activateAt(centerX, centerY);
 }, false);
 
 </script>

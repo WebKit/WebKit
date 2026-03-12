@@ -6686,7 +6686,6 @@
 		E3C788FD2D039A2500D6C13D /* LogMessages.in in Headers */ = {isa = PBXBuildFile; fileRef = E3C788FC2D039A1600D6C13D /* LogMessages.in */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C99A091DC3D41C00794AD3 /* DOMJITCheckDOM.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C99A081DC3D41700794AD3 /* DOMJITCheckDOM.h */; };
 		E3CA0BFC2673F47C009FDD67 /* JSDOMBindingSecurityInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CA0BFA2673F478009FDD67 /* JSDOMBindingSecurityInlines.h */; };
-		E3D3C00B2881D90B00ECD5F6 /* GPUAvailabilityMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3D3C00A2881D90B00ECD5F6 /* GPUAvailabilityMetal.mm */; };
 		E3E4E2A81E3B17100023BB8A /* ScriptElementCachedScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E4E2A61E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FA38641D71812D00AA5950 /* PendingScriptClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FA38611D716E7600AA5950 /* PendingScriptClient.h */; };
 		E401B3632A942E3F0018B557 /* ScopedName.h in Headers */ = {isa = PBXBuildFile; fileRef = E401B3622A942E3E0018B557 /* ScopedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -22015,8 +22014,6 @@
 		E3C99A081DC3D41700794AD3 /* DOMJITCheckDOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCheckDOM.h; sourceTree = "<group>"; };
 		E3CA0BFA2673F478009FDD67 /* JSDOMBindingSecurityInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSDOMBindingSecurityInlines.h; sourceTree = "<group>"; };
 		E3D049931DADC04500718F3C /* NodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeType.h; sourceTree = "<group>"; };
-		E3D3C0092881D72200ECD5F6 /* GPUAvailability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUAvailability.h; sourceTree = "<group>"; };
-		E3D3C00A2881D90B00ECD5F6 /* GPUAvailabilityMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUAvailabilityMetal.mm; sourceTree = "<group>"; };
 		E3E4E2A51E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptElementCachedScriptFetcher.cpp; sourceTree = "<group>"; };
 		E3E4E2A61E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptElementCachedScriptFetcher.h; sourceTree = "<group>"; };
 		E3FA38611D716E7600AA5950 /* PendingScriptClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingScriptClient.h; sourceTree = "<group>"; };
@@ -25659,7 +25656,6 @@
 			isa = PBXGroup;
 			children = (
 				1CE3497B26B33B8C008306BD /* cocoa */,
-				E3D3C0092881D72200ECD5F6 /* GPUAvailability.h */,
 			);
 			path = gpu;
 			sourceTree = "<group>";
@@ -25667,7 +25663,6 @@
 		1CE3497B26B33B8C008306BD /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				E3D3C00A2881D90B00ECD5F6 /* GPUAvailabilityMetal.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -49567,7 +49562,6 @@
 				4664D1A62964FCE8006FE0C5 /* GamepadHapticActuator.cpp in Sources */,
 				51A9D9E9195B931F001B2B5C /* GamepadManager.cpp in Sources */,
 				837964CF1F8DB69D00218EA0 /* GeolocationPositionDataCocoa.mm in Sources */,
-				E3D3C00B2881D90B00ECD5F6 /* GPUAvailabilityMetal.mm in Sources */,
 				6E72F54E229DCD1000B3E151 /* GraphicsContextGLANGLE.cpp in Sources */,
 				7BE37F7A27BB86AB007A6CD3 /* GraphicsContextGLCocoa.mm in Sources */,
 				4195B986296442AA0071566E /* GraphicsContextGLCVCocoa.mm in Sources */,

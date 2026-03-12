@@ -265,28 +265,28 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetectionGeneric(
 
     // Anonymous block boxes are ignored when resolving percentage values that
     // would refer to it: the closest non-anonymous ancestor box is used instead.
-    auto* cb = containingBlock();
-    while (cb && cb->isAnonymousForPercentageResolution() && !is<RenderView>(cb))
-        cb = cb->containingBlock();
-    if (!cb)
+    auto* ancestor = containingBlock();
+    while (ancestor && ancestor->isAnonymousForPercentageResolution() && !is<RenderView>(ancestor))
+        ancestor = ancestor->containingBlock();
+    if (!ancestor)
         return nullptr;
 
     // Matching RenderBox::percentageLogicalHeightIsResolvable() by
     // ignoring table cell's attribute value, where it says that table cells
     // violate what the CSS spec says to do with heights. Basically we don't care
     // if the cell specified a height or not.
-    if (cb->isRenderTableCell())
+    if (ancestor->isRenderTableCell())
         return nullptr;
 
     // Match RenderBox::availableLogicalHeightUsing by special casing the layout
     // view. The available height is taken from the frame.
-    if (cb->isRenderView())
+    if (ancestor->isRenderView())
         return nullptr;
 
-    if (isOutOfFlowPositionedWithImplicitHeight(*cb))
+    if (isOutOfFlowPositionedWithImplicitHeight(*ancestor))
         return nullptr;
 
-    return cb;
+    return ancestor;
 }
 
 RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::PreferredSize& logicalHeight) const

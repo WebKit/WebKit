@@ -17,16 +17,16 @@ if (window.testRunner) {
 <a style="display:none" id="blob-url" download>Blob URL</a>
 <input type="button" id="testButton" value="Download">
 <script>
-function userClick(element)
+async function userClick(element)
 {
     if (!window.eventSender) {
         alert('Click the button to run the test.');
         return;
     }
-    UIHelper.activateAt(element.offsetLeft + 5, element.offsetTop + 5);
+    await UIHelper.activateAt(element.offsetLeft + 5, element.offsetTop + 5);
 }
 
-function runTest()
+async function runTest()
 {
     var string = "test";
     var blob = new Blob([string], {type: "text/html"});
@@ -36,7 +36,7 @@ function runTest()
     button.onclick = function() {
         link.click();
     }
-    userClick(button);
+    await userClick(button);
 }
 runTest();
 </script>

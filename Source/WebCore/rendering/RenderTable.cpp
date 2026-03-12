@@ -295,10 +295,10 @@ void RenderTable::updateLogicalWidth()
         setMarginEnd(computedValues.margins.end);
     }
 
-    RenderBlock& cb = *containingBlock();
+    auto& containingBlock = *this->containingBlock();
 
     LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
-    bool hasPerpendicularContainingBlock = writingMode().isOrthogonal(cb.writingMode());
+    bool hasPerpendicularContainingBlock = writingMode().isOrthogonal(containingBlock.writingMode());
     LayoutUnit containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
 
     auto& styleLogicalWidth = style().logicalWidth();
@@ -314,9 +314,9 @@ void RenderTable::updateLogicalWidth()
 
         // Subtract out our margins to get the available content width.
         LayoutUnit availableContentLogicalWidth = std::max<LayoutUnit>(0, containerWidthInInlineDirection - marginTotal);
-        if (shrinkToAvoidFloats() && cb.containsFloats() && !hasPerpendicularContainingBlock) {
+        if (shrinkToAvoidFloats() && containingBlock.containsFloats() && !hasPerpendicularContainingBlock) {
             // FIXME: Work with regions someday.
-            availableContentLogicalWidth = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, cb);
+            availableContentLogicalWidth = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock);
         }
 
         // Ensure we aren't bigger than our available width.
@@ -351,11 +351,11 @@ void RenderTable::updateLogicalWidth()
     setMarginEnd(0);
     if (!hasPerpendicularContainingBlock) {
         LayoutUnit containerLogicalWidthForAutoMargins = availableLogicalWidth;
-        if (avoidsFloats() && cb.containsFloats())
+        if (avoidsFloats() && containingBlock.containsFloats())
             containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidth();
         ComputedMarginValues marginValues;
-        bool hasSameDirection = !cb.writingMode().isInlineOpposing(writingMode());
-        computeInlineDirectionMargins(cb, availableLogicalWidth, containerLogicalWidthForAutoMargins, logicalWidth(),
+        bool hasSameDirection = !containingBlock.writingMode().isInlineOpposing(writingMode());
+        computeInlineDirectionMargins(containingBlock, availableLogicalWidth, containerLogicalWidthForAutoMargins, logicalWidth(),
             hasSameDirection ? marginValues.start : marginValues.end,
             hasSameDirection ? marginValues.end : marginValues.start);
         setMarginStart(marginValues.start);

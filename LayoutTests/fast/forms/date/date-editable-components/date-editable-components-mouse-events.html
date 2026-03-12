@@ -40,18 +40,22 @@ const monthField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-month
 const dayField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-day-field");
 const yearField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-year-field");
 
+jsTestIsAsync = true;
+
+(async () => {
+
 debug("Enabled Input\n");
 
-UIHelper.activateElement(monthField);
+await UIHelper.activateElement(monthField);
 UIHelper.keyDown("9");
 shouldBeEqualToString("input.value", "2020-09-26");
 
-UIHelper.activateElement(dayField);
+await UIHelper.activateElement(dayField);
 UIHelper.keyDown("1");
 UIHelper.keyDown("2");
 shouldBeEqualToString("input.value", "2020-09-12");
 
-UIHelper.activateElement(yearField);
+await UIHelper.activateElement(yearField);
 UIHelper.keyDown("3");
 UIHelper.keyDown("0");
 UIHelper.keyDown("3");
@@ -75,9 +79,9 @@ clickEventsFired = 0;
 input.disabled = true;
 input.readOnly = false;
 
-UIHelper.activateElement(monthField);
-UIHelper.activateElement(dayField);
-UIHelper.activateElement(yearField);
+await UIHelper.activateElement(monthField);
+await UIHelper.activateElement(dayField);
+await UIHelper.activateElement(yearField);
 // Click on control, but not a specific field, defaults to first field.
 mouseClickOn(250, center);
 // Click outside control.
@@ -90,15 +94,18 @@ clickEventsFired = 0;
 input.disabled = false;
 input.readOnly = true;
 
-UIHelper.activateElement(monthField);
-UIHelper.activateElement(dayField);
-UIHelper.activateElement(yearField);
+await UIHelper.activateElement(monthField);
+await UIHelper.activateElement(dayField);
+await UIHelper.activateElement(yearField);
 // Click on control, but not a specific field, defaults to first field.
 mouseClickOn(250, center);
 // Click outside control.
 mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
 
 shouldBe("clickEventsFired", "4");
+
+finishJSTest();
+})();
 
 </script>
 </body>

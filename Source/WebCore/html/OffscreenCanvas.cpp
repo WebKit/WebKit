@@ -173,39 +173,6 @@ void OffscreenCanvas::didUpdateSizeProperties(bool sizeChanged)
     scheduleCommitToPlaceholderCanvas();
 }
 
-#if ENABLE(WEBGL)
-static bool NODELETE requiresAcceleratedCompositingForWebGL()
-{
-#if PLATFORM(GTK) || PLATFORM(WIN)
-    return false;
-#else
-    return true;
-#endif
-}
-
-static bool NODELETE shouldEnableWebGL(const SettingsValues& settings, bool isWorker)
-{
-    if (!settings.webGLEnabled)
-        return false;
-
-    if (!settings.allowWebGLInWorkers)
-        return false;
-
-#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
-    if (isWorker && !settings.useGPUProcessForWebGLEnabled)
-        return false;
-#else
-    UNUSED_PARAM(isWorker);
-#endif
-
-    if (!requiresAcceleratedCompositingForWebGL())
-        return true;
-
-    return settings.acceleratedCompositingEnabled;
-}
-
-#endif // ENABLE(WEBGL)
-
 ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_detached)
@@ -272,8 +239,11 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
                 return Exception { ExceptionCode::ExistingExceptionError };
 
             RefPtr scriptExecutionContext = this->scriptExecutionContext();
-            if (shouldEnableWebGL(scriptExecutionContext->settingsValues(), is<WorkerGlobalScope>(scriptExecutionContext)))
-                m_context = WebGLRenderingContextBase::create(*this, attributes.releaseReturnValue(), webGLVersion);
+            if (scriptExecutionContext) {
+                auto& settings = scriptExecutionContext->settingsValues();
+                if (settings.webGLEnabled && (!is<WorkerGlobalScope>(scriptExecutionContext) || settings.allowWebGLInWorkers))
+                    m_context = WebGLRenderingContextBase::create(*this, attributes.releaseReturnValue(), webGLVersion);
+            }
         }
         if (webGLVersion == WebGLVersion::WebGL1) {
             if (RefPtr context = dynamicDowncast<WebGLRenderingContext>(m_context.get()))

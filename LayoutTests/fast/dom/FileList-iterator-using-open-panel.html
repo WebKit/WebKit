@@ -12,12 +12,12 @@
 description("Tests that FileList objects have an iterator.");
 jsTestIsAsync = true;
 
-function runTest()
+async function runTest()
 {
     testRunner.setOpenPanelFiles(['test.txt']);
 
     var inputElement = document.getElementsByTagName('input')[0];
-    UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2,
+    await UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2,
         inputElement.offsetTop + inputElement.offsetHeight / 2);
 }
 

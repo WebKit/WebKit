@@ -17,18 +17,18 @@ Tests that the download attribute is ignored if
 <p>It should navigate the subframe instead of downloading the file.</p>
 <iframe name="targetFrame"></iframe>
 <script>
-    function click(elmt)
+    async function click(elmt)
     {
         if (!window.eventSender)
             return;
 
-        UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+        await UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
     }
 
-    function runTest()
+    async function runTest()
     {
         var link = document.getElementById("dl");
-        click(link);
+        await click(link);
     }
     onload = runTest;
 </script>

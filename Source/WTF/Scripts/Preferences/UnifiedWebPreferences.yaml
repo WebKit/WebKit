@@ -8737,15 +8737,11 @@ UseGPUProcessForWebGLEnabled:
   status: internal
   humanReadableName: "GPU Process: WebGL"
   humanReadableDescription: "Process all WebGL operations in GPU Process"
+  webcoreBinding: none
   condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
-      "ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_WEBGL_BY_DEFAULT)": true
-      "USE(GRAPHICS_LAYER_WC)": true
-      default: false
-    WebCore:
       "ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_WEBGL_BY_DEFAULT)": true
       "USE(GRAPHICS_LAYER_WC)": true
       default: false
