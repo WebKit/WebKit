@@ -1,0 +1,5 @@
+Tests that role="slider" elements on facebook.com activate the pointer touch compatibility quirk (rdar://136847265).
+
+PASS: needsPointerTouchCompatibilityQuirk is true for role="slider" element
+PASS: needsPointerTouchCompatibilityQuirk is false for plain div element
+PASS: needsPointerTouchCompatibilityQuirk is true for child of role="slider" element

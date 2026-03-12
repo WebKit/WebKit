@@ -2144,6 +2144,15 @@ bool Quirks::needsPointerTouchCompatibility(const Element& target) const
             if (ancestor->hasClassName("a-gesture-horizontal"_s))
                 return true;
         }
+    } else if (m_quirksData.isFacebook) {
+        // facebook.com rdar://136847265
+        // Facebook's video scrubber uses a horizontal two-finger drag gesture that gets
+        // cancelled by the UIScrollView pan gesture. Enable the PointerTouchCompatibilitySimulator
+        // for elements with role="slider" to convert scroll events into simulated touch events.
+        for (Ref ancestor : lineageOfType<HTMLElement>(target)) {
+            if (equalLettersIgnoringASCIICase(ancestor->attributeWithoutSynchronization(HTMLNames::roleAttr), "slider"_s))
+                return true;
+        }
     }
 
     return false;
