@@ -91,30 +91,30 @@ pub mod visitor {
         block: &Block,
         kind: BlockKind,
         block_visit: &BlockVisit,
-        indent_level: usize,
+        depth: usize,
     ) where
         BlockVisit: Fn(&mut State, &Block, BlockKind, usize) -> VisitAfter,
     {
-        let visit_after = block_visit(state, block, kind, indent_level);
+        let visit_after = block_visit(state, block, kind, depth);
 
         let visit_sub_blocks = visit_after == VISIT_SUB_BLOCKS;
         let visit_merge_block = visit_after != STOP;
         let parent_op = block.get_terminating_op();
-        let sub_block_indent = indent_level + 1;
+        let sub_block_depth = depth + 1;
 
         if visit_sub_blocks {
             block.loop_condition.as_ref().inspect(|block| {
-                visit(state, block, BlockKind::LoopCondition, block_visit, sub_block_indent)
+                visit(state, block, BlockKind::LoopCondition, block_visit, sub_block_depth)
             });
             block.block1.as_ref().inspect(|block| {
-                visit(state, block, block1_kind(parent_op), block_visit, sub_block_indent)
+                visit(state, block, block1_kind(parent_op), block_visit, sub_block_depth)
             });
             block.block2.as_ref().inspect(|block| {
-                visit(state, block, block2_kind(parent_op), block_visit, sub_block_indent)
+                visit(state, block, block2_kind(parent_op), block_visit, sub_block_depth)
             });
             if let OpCode::Switch(_, case_ids) = parent_op {
                 block.case_blocks.iter().zip(case_ids).for_each(|(case, &case_id)| {
-                    visit(state, case, BlockKind::Case(case_id), block_visit, sub_block_indent)
+                    visit(state, case, BlockKind::Case(case_id), block_visit, sub_block_depth)
                 });
             }
         }
@@ -123,7 +123,7 @@ pub mod visitor {
             block
                 .merge_block
                 .as_ref()
-                .inspect(|merge| visit(state, merge, BlockKind::Merge, block_visit, indent_level));
+                .inspect(|merge| visit(state, merge, BlockKind::Merge, block_visit, depth));
         }
     }
 

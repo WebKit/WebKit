@@ -939,6 +939,9 @@ fn dump_types(ir_meta: &IRMeta, result: &mut String) {
                     name_str(name, TEMP_STRUCT_PREFIX, id as u32)
                 ),
                 &Type::Pointer(type_id) => format!("Pointer to {}", type_id_str(type_id)),
+                Type::DeadCodeEliminated => {
+                    return;
+                }
             }
         );
         append_on_new_line(result, formatted, 1);
@@ -954,6 +957,9 @@ fn dump_types(ir_meta: &IRMeta, result: &mut String) {
 fn dump_constants(ir_meta: &IRMeta, result: &mut String) {
     result.push_str("\n\nConstants:");
     ir_meta.all_constants().iter().enumerate().for_each(|(id, c)| {
+        if c.is_dead_code_eliminated {
+            return;
+        }
         let formatted = format!(
             "c{id} ({}): {}",
             type_id_str(c.type_id),
@@ -980,6 +986,9 @@ fn dump_constants(ir_meta: &IRMeta, result: &mut String) {
 fn dump_variables(ir_meta: &IRMeta, result: &mut String) {
     result.push_str("\n\nVariables:");
     ir_meta.all_variables().iter().enumerate().for_each(|(id, v)| {
+        if v.is_dead_code_eliminated {
+            return;
+        }
         let name = name_str(&v.name, TEMP_VARIABLE_PREFIX, id as u32);
         let initializer = v
             .initializer

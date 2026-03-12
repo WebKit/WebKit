@@ -3077,6 +3077,7 @@ void Context::insertEventMarker(GLsizei length, const char *marker)
 
 void Context::pushGroupMarker(GLsizei length, const char *marker)
 {
+    ASSERT(mState.getGroupMarkerCount() < getCaps().maxDebugGroupStackDepth);
     if (length < 0)
     {
         return;  // no-op, not an error
@@ -3093,11 +3094,18 @@ void Context::pushGroupMarker(GLsizei length, const char *marker)
         ANGLE_CONTEXT_TRY(
             mImplementation->pushGroupMarker(GetMarkerLength(length, marker), marker));
     }
+    mState.incrementGroupMarkers();
 }
 
 void Context::popGroupMarker()
 {
+    // According to the spec, if there is no group marker to pop, the pop command should be ignored.
+    if (mState.getGroupMarkerCount() == 0)
+    {
+        return;
+    }
     ANGLE_CONTEXT_TRY(mImplementation->popGroupMarker());
+    mState.decrementGroupMarkers();
 }
 
 void Context::bindUniformLocation(ShaderProgramID program,
@@ -3773,8 +3781,6 @@ void Context::setExtensionEnabled(const char *name, bool enabled)
             };
             enableIfRequestable("GL_OES_draw_buffers_indexed");
             enableIfRequestable("GL_EXT_draw_buffers_indexed");
-            enableIfRequestable("GL_EXT_color_buffer_float");
-            enableIfRequestable("GL_EXT_color_buffer_half_float");
             enableIfRequestable("GL_EXT_shader_framebuffer_fetch_non_coherent");
             enableIfRequestable("GL_ANGLE_shader_pixel_local_storage_coherent");
             enableIfRequestable("GL_ANGLE_shader_pixel_local_storage");

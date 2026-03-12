@@ -92,8 +92,6 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     // OES_shader_multisample_interpolation
     mResources.OES_shader_multisample_interpolation = extensions.shaderMultisampleInterpolationOES;
     mResources.OES_shader_image_atomic              = extensions.shaderImageAtomicOES;
-    // TODO: use shader precision caps to determine if high precision is supported?
-    mResources.FragmentPrecisionHigh = 1;
     mResources.EXT_frag_depth        = extensions.fragDepthEXT;
 
     // OVR_multiview / OVR_multiview2
@@ -252,7 +250,6 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.EXT_geometry_shader          = extensions.geometryShaderEXT;
     mResources.OES_geometry_shader          = extensions.geometryShaderOES;
     mResources.MaxGeometryUniformComponents = caps.maxShaderUniformComponents[ShaderType::Geometry];
-    mResources.MaxGeometryUniformBlocks     = caps.maxShaderUniformBlocks[ShaderType::Geometry];
     mResources.MaxGeometryInputComponents   = caps.maxGeometryInputComponents;
     mResources.MaxGeometryOutputComponents  = caps.maxGeometryOutputComponents;
     mResources.MaxGeometryOutputVertices    = caps.maxGeometryOutputVertices;
@@ -262,7 +259,6 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.MaxGeometryAtomicCounterBuffers =
         caps.maxShaderAtomicCounterBuffers[ShaderType::Geometry];
     mResources.MaxGeometryAtomicCounters      = caps.maxShaderAtomicCounters[ShaderType::Geometry];
-    mResources.MaxGeometryShaderStorageBlocks = caps.maxShaderStorageBlocks[ShaderType::Geometry];
     mResources.MaxGeometryShaderInvocations   = caps.maxGeometryShaderInvocations;
     mResources.MaxGeometryImageUniforms       = caps.maxShaderImageUniforms[ShaderType::Geometry];
 
@@ -297,9 +293,6 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
         caps.maxShaderAtomicCounters[ShaderType::TessEvaluation];
     mResources.MaxTessEvaluationAtomicCounterBuffers =
         caps.maxShaderAtomicCounterBuffers[ShaderType::TessEvaluation];
-
-    // Subpixel bits.
-    mResources.SubPixelBits = static_cast<int>(caps.subPixelBits);
 }
 
 Compiler::~Compiler() = default;

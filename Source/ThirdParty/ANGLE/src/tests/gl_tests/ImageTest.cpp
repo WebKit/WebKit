@@ -10140,6 +10140,44 @@ TEST_P(ImageTestES3, RewriteSourceTexture)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test orphaning the image by destroying the source texture.
+TEST_P(ImageTestES3, DestroySourceTexture)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    const GLColor originalColor = GLColor::yellow;
+
+    // Create the Image
+    GLTexture source;
+    EGLImageKHR image;
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs,
+                                  originalColor.data(), source, &image);
+
+    // Delete the texture.
+    glBindTexture(GL_TEXTURE_2D, 0);
+    source.reset();
+
+    // Make sure the image is still valid.
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    // Verify that the target texture has the expected color, makes sure everything is synced and
+    // |texture| is fully set up.
+    verifyResults2D(target, originalColor.data());
+
+    // Destroy the texture before the image.
+    glBindTexture(GL_TEXTURE_2D, 0);
+    target.reset();
+
+    // Finally, destroy the image itself.
+    eglDestroyImageKHR(window->getDisplay(), image);
+
+    ASSERT_EGL_SUCCESS();
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test using the source GL texture as a storage image.  Internally, the Vulkan backend recreates
 // the Texture's image backing.
 TEST_P(ImageTestES31, UseSourceTextureAsStorageImage)

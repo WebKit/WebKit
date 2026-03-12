@@ -28,8 +28,8 @@ TEST(WorkerPoolTest, SimpleTask)
     };
 
     std::array<std::shared_ptr<WorkerThreadPool>, 2> pools = {
-        {WorkerThreadPool::Create(1, ANGLEPlatformCurrent()),
-         WorkerThreadPool::Create(0, ANGLEPlatformCurrent())}};
+        {WorkerThreadPool::Create(ThreadPoolType::Synchronous, 0, ANGLEPlatformCurrent()),
+         WorkerThreadPool::Create(ThreadPoolType::Asynchronous, 0, ANGLEPlatformCurrent())}};
     for (auto &pool : pools)
     {
         std::array<std::shared_ptr<TestTask>, 4> tasks = {
@@ -66,7 +66,7 @@ TEST(WorkerPoolTest, AsyncPoolTest)
 
     {
         std::shared_ptr<WorkerThreadPool> pool =
-            WorkerThreadPool::Create(2, ANGLEPlatformCurrent());
+            WorkerThreadPool::Create(ThreadPoolType::Asynchronous, 2, ANGLEPlatformCurrent());
 
         waitables = {{pool->postWorkerTask(tasks[0]), pool->postWorkerTask(tasks[1]),
                       pool->postWorkerTask(tasks[2]), pool->postWorkerTask(tasks[3])}};
@@ -78,6 +78,48 @@ TEST(WorkerPoolTest, AsyncPoolTest)
     {
         EXPECT_TRUE(tasks[taskIndex]->fired || !waitables[taskIndex]->isReady());
     }
+}
+
+// Tests async worker pool with a single thread.
+TEST(WorkerPoolTest, AsyncPoolWithOneThreadTest)
+{
+    using CallbackFunc   = std::function<void()>;
+    size_t callCount     = 0;
+    CallbackFunc counter = [&callCount]() { callCount++; };
+
+    constexpr size_t kCallbackSteps = 1000;
+    class TestTask : public Closure
+    {
+      public:
+        TestTask(CallbackFunc callback) : mCallback(callback) { ASSERT(mCallback != nullptr); }
+        void operator()() override
+        {
+            for (size_t iter = 0; iter < kCallbackSteps; iter++)
+            {
+                mCallback();
+            }
+        }
+
+      private:
+        CallbackFunc mCallback;
+    };
+
+    std::shared_ptr<WorkerThreadPool> pool =
+        WorkerThreadPool::Create(ThreadPoolType::Asynchronous, 1, ANGLEPlatformCurrent());
+
+    constexpr size_t kTaskCount                             = 4;
+    std::array<std::shared_ptr<TestTask>, kTaskCount> tasks = {
+        {std::make_shared<TestTask>(counter), std::make_shared<TestTask>(counter),
+         std::make_shared<TestTask>(counter), std::make_shared<TestTask>(counter)}};
+
+    std::array<std::shared_ptr<WaitableEvent>, kTaskCount> waitables;
+    waitables = {{pool->postWorkerTask(tasks[0]), pool->postWorkerTask(tasks[1]),
+                  pool->postWorkerTask(tasks[2]), pool->postWorkerTask(tasks[3])}};
+
+    WaitableEvent::WaitMany(&waitables);
+
+    // Thread pool has 1 thread, all tasks should be serialized
+    EXPECT_EQ(callCount, kTaskCount * kCallbackSteps);
 }
 
 }  // anonymous namespace

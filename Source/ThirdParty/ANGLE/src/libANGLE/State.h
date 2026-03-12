@@ -682,6 +682,10 @@ class PrivateState : angle::NonCopyable
                                bool pureInteger,
                                GLuint relativeOffset);
 
+    GLuint getGroupMarkerCount() const { return mGroupMarkerCount; }
+    void incrementGroupMarkers() { mGroupMarkerCount++; }
+    void decrementGroupMarkers() { mGroupMarkerCount--; }
+
   private:
     bool hasConstantColor(GLenum sourceRGB, GLenum destRGB) const;
     bool hasConstantAlpha(GLenum sourceRGB, GLenum destRGB) const;
@@ -733,6 +737,10 @@ class PrivateState : angle::NonCopyable
 
     ClipOrigin mClipOrigin;
     ClipDepthMode mClipDepthMode;
+
+    // GL_EXT_debug_marker
+    // Keeps track of debug group marker count. Pop calls are ignored if there is no marker to pop.
+    GLuint mGroupMarkerCount;
 
     // GL_ANGLE_provoking_vertex
     ProvokingVertexConvention mProvokingVertex;
@@ -900,6 +908,10 @@ class State : angle::NonCopyable
     TextureCapsMap *getMutableTextureCaps() { return mPrivateState.getMutableTextureCaps(); }
     Extensions *getMutableExtensions() { return mPrivateState.getMutableExtensions(); }
     Limitations *getMutableLimitations() { return mPrivateState.getMutableLimitations(); }
+
+    GLuint getGroupMarkerCount() const { return mPrivateState.getGroupMarkerCount(); }
+    void incrementGroupMarkers() { mPrivateState.incrementGroupMarkers(); }
+    void decrementGroupMarkers() { mPrivateState.decrementGroupMarkers(); }
 
     const TextureCaps &getTextureCap(GLenum internalFormat) const
     {

@@ -440,6 +440,13 @@ class Renderer : angle::NonCopyable
                                            egl::ContextPriority dstContextPriority,
                                            SerialIndex index);
 
+    angle::Result insertOneOffSubmitDebugMarker(vk::ErrorContext *context,
+                                                vk::ProtectionType protectionType,
+                                                egl::ContextPriority priority,
+                                                QueueSubmitReason reason);
+    void insertSubmitDebugMarkerInCommandBuffer(PrimaryCommandBuffer &commandBuffer,
+                                                QueueSubmitReason reason);
+
     void handleDeviceLost();
     angle::Result finishResourceUse(vk::ErrorContext *context, const vk::ResourceUse &use);
     angle::Result finishQueueSerial(vk::ErrorContext *context, const QueueSerial &queueSerial);
@@ -544,6 +551,8 @@ class Renderer : angle::NonCopyable
         return mStagingBufferMemoryTypeIndex[coherency];
     }
     size_t getStagingBufferAlignment() const { return mStagingBufferAlignment; }
+
+    uint32_t getTileMemoyTypeIndex() const { return mTileMemoyTypeIndex; }
 
     uint32_t getVertexConversionBufferMemoryTypeIndex(MemoryHostVisibility hostVisibility) const
     {
@@ -707,8 +716,6 @@ class Renderer : angle::NonCopyable
         return !mFeatures.supportsVertexInputDynamicState.enabled ||
                mVertexAttributeDivisorFeatures.vertexAttributeInstanceRateZeroDivisor == VK_TRUE;
     }
-
-    uint32_t getMinCommandCountToSubmit() const { return mMinCommandCountToSubmit; }
 
     angle::Result onFrameBoundary(const gl::Context *contextGL);
 
@@ -926,6 +933,8 @@ class Renderer : angle::NonCopyable
     VkPhysicalDeviceExternalMemoryHostPropertiesEXT mExternalMemoryHostProperties;
     VkPhysicalDeviceBufferDeviceAddressFeaturesKHR mBufferDeviceAddressFeatures;
     VkPhysicalDeviceShaderAtomicInt64Features mShaderAtomicInt64Features;
+    VkPhysicalDeviceTileMemoryHeapFeaturesQCOM mTileMemoryHeapFeatures;
+    VkPhysicalDeviceTileMemoryHeapPropertiesQCOM mTileMemoryHeapProperties;
 
     uint32_t mLegacyDitheringVersion = 0;
 
@@ -970,6 +979,7 @@ class Renderer : angle::NonCopyable
     vk::ImageMemorySuballocator mImageMemorySuballocator;
 
     vk::MemoryProperties mMemoryProperties;
+    uint32_t mTileMemoyTypeIndex;
     VkDeviceSize mPreferredInitialBufferBlockSize;
     VkDeviceSize mPreferredLargeHeapBlockSize;
 
@@ -1117,10 +1127,6 @@ class Renderer : angle::NonCopyable
     uint32_t mNativeVectorWidthHalf;
     uint32_t mPreferredVectorWidthDouble;
     uint32_t mPreferredVectorWidthHalf;
-
-    // The number of minimum commands in the command buffer to prefer submit at FBO boundary or
-    // immediately submit when the device is idle after calling to flush.
-    uint32_t mMinCommandCountToSubmit;
 
     // The number of minimum write commands in the command buffer to trigger one submission of
     // pending commands at draw call time

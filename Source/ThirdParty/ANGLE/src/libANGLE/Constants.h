@@ -76,8 +76,9 @@ enum
     // In ES 3.1 and below, the limit for active textures is 64.
     IMPLEMENTATION_MAX_ES31_ACTIVE_TEXTURES = 64,
 
-    // In ES 3.2 we need to support a minimum of 96 maximum textures.
-    IMPLEMENTATION_MAX_ACTIVE_TEXTURES = 96,
+    // In ES 3.2 we need to support a minimum of 96 maximum textures, but some Android
+    // apps assume more are available without querying limits first.
+    IMPLEMENTATION_MAX_ACTIVE_TEXTURES = 192,
     IMPLEMENTATION_MAX_IMAGE_UNITS     = IMPLEMENTATION_MAX_ACTIVE_TEXTURES,
 
     // Maximum framebuffer and renderbuffer size supported.

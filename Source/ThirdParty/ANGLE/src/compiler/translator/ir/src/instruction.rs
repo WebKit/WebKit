@@ -3419,6 +3419,7 @@ mod promote {
 // Helper functions that derive the precision of an operation.
 pub mod precision {
     use crate::ir::*;
+    use crate::*;
 
     // Taking some precision and comparing it with another:
     //
@@ -3451,7 +3452,7 @@ pub mod precision {
         type_id: TypeId,
         args: &mut impl Iterator<Item = Precision>,
     ) -> Precision {
-        if ir_meta.get_type(type_id).is_struct() {
+        if !util::is_precision_applicable_to_type(ir_meta, type_id) {
             Precision::NotApplicable
         } else {
             args.fold(Precision::NotApplicable, |accumulator, precision| {

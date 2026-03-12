@@ -139,6 +139,7 @@ inline constexpr const char *kExceedsMaxDebugGroupStackDepth = "Cannot push more
 inline constexpr const char *kExceedsMaxDebugMessageLength = "Message length is larger than GL_MAX_DEBUG_MESSAGE_LENGTH.";
 inline constexpr const char *kExceedsMaxDrawBuffers = "Draw buffer greater than MAX_DRAW_BUFFERS.";
 inline constexpr const char *kExceedsMaxElement = "Element value exceeds maximum element index.";
+inline constexpr const char *kExceedsMaxGroupMarkerStackDepth = "Cannot push more than GL_MAX_DEBUG_GROUP_STACK_DEPTH group markers.";
 inline constexpr const char *kExceedsMaxImageUnits = "Index must be within [0, MAX_IMAGE_UNITS).";
 inline constexpr const char *kExceedsMaxLabelLength = "Label length is larger than GL_MAX_LABEL_LENGTH.";
 inline constexpr const char *kExceedsMaxShaderStorageBufferBindings = "Index must be within [0, MAX_SHADER_STORAGE_BUFFER_BINDINGS).";

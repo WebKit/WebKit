@@ -1052,10 +1052,14 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 }
             }
 
-            if (!EmulateDithering(this, compileOptions, root, &getSymbolTable(), specConst,
-                                  driverUniforms))
+            if (compileOptions.emulateDithering)
             {
-                return false;
+                // Inject dithering code in fragment shader iff "emulateDithering" is enabled
+                if (!EmulateDithering(this, compileOptions, root, &getSymbolTable(), specConst,
+                                      driverUniforms))
+                {
+                    return false;
+                }
             }
 
             break;

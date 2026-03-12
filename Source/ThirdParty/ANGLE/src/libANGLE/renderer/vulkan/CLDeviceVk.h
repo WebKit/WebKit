@@ -58,6 +58,7 @@ class CLDeviceVk : public CLDeviceImpl
     cl_device_integer_dot_product_acceleration_properties_khr
     getIntegerDotProductAccelerationProperties4x8BitPacked() const;
     bool populateSupportedExternalMemoryHandleTypes(Info &info) const;
+    bool setupAndReportDepthImageSupport(Info &info) const;
 };
 
 }  // namespace rx

@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 386
+#define ANGLE_SH_VERSION 392
 
 enum ShShaderSpec
 {
@@ -114,6 +114,7 @@ enum class ShPixelLocalStorageFormat : uint8_t
     RGBA8I,
     RGBA8UI,
     R32F,
+    R32I,
     R32UI,
 };
 
@@ -340,7 +341,9 @@ struct ShCompileOptions
     // read undefined values that could be coming from another webpage/application.
     uint64_t initSharedVariables : 1;
 
-    uint64_t unused : 1;
+    // For MSL, non-const global variables cannot have an initializer, even if the initializer is
+    // constant.  Initialization of these variables is deferred to the beginning of main.
+    uint64_t forceDeferNonConstGlobalInitializers : 1;
 
     // Rewrite gl_BaseVertex and gl_BaseInstance as uniform int
     uint64_t emulateGLBaseVertexBaseInstance : 1;
@@ -381,7 +384,7 @@ struct ShCompileOptions
     // VK_EXT_depth_clip_control is supported, this code is not generated, saving a uniform look up.
     uint64_t addVulkanDepthCorrection : 1;
 
-    uint64_t forceShaderPrecisionHighpToMediump : 1;
+    uint64_t unused2 : 1;
 
     // Ask compiler to generate Vulkan transform feedback emulation support code.
     uint64_t addVulkanXfbEmulationSupportCode : 1;
@@ -397,6 +400,9 @@ struct ShCompileOptions
 
     // Always write explicit location layout qualifiers for fragment outputs.
     uint64_t explicitFragmentLocations : 1;
+
+    // Dithering is emulated by injecting code in the fragment shader
+    uint64_t emulateDithering : 1;
 
     // Add round() after applying dither.  This works around a Qualcomm quirk where values can get
     // ceil()ed instead.
@@ -572,10 +578,7 @@ struct ShBuiltInResources
     // function. This applies to Tegra K1 devices.
     int NV_draw_buffers;
 
-    // Set to 1 if highp precision is supported in the ESSL 1.00 version of the
-    // fragment language. Does not affect versions of the language where highp
-    // support is mandatory.
-    // Default is 0.
+    // Unused, highp support is always assumed.
     int FragmentPrecisionHigh;
 
     // GLSL ES 3.0 constants.
@@ -703,7 +706,6 @@ struct ShBuiltInResources
 
     // EXT_geometry_shader constants
     int MaxGeometryUniformComponents;
-    int MaxGeometryUniformBlocks;
     int MaxGeometryInputComponents;
     int MaxGeometryOutputComponents;
     int MaxGeometryOutputVertices;
@@ -711,7 +713,6 @@ struct ShBuiltInResources
     int MaxGeometryTextureImageUnits;
     int MaxGeometryAtomicCounterBuffers;
     int MaxGeometryAtomicCounters;
-    int MaxGeometryShaderStorageBlocks;
     int MaxGeometryShaderInvocations;
     int MaxGeometryImageUniforms;
 
@@ -736,9 +737,6 @@ struct ShBuiltInResources
     int MaxTessEvaluationImageUniforms;
     int MaxTessEvaluationAtomicCounters;
     int MaxTessEvaluationAtomicCounterBuffers;
-
-    // Subpixel bits used in rasterization.
-    int SubPixelBits;
 
     // APPLE_clip_distance / EXT_clip_cull_distance / ANGLE_clip_cull_distance constants
     int MaxClipDistances;

@@ -4,3 +4,5 @@
 pub mod astify;
 pub mod dealias;
 pub mod propagate_precision;
+pub mod prune_unused_variables;
+pub mod remove_unused_framebuffer_fetch;

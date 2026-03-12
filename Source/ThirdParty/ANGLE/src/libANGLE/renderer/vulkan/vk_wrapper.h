@@ -239,6 +239,8 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
                                     const VkDeviceSize *offsets,
                                     const VkDeviceSize *sizes);
 
+    void bindTileMemory(const DeviceMemory &tileMemory);
+
     void blitImage(const Image &srcImage,
                    VkImageLayout srcImageLayout,
                    const Image &dstImage,
@@ -378,6 +380,7 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     void setLineWidth(float lineWidth);
     void setLogicOp(VkLogicOp logicOp);
     void setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable);
+    void setPrimitiveTopology(VkPrimitiveTopology primitiveTopology);
     void setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable);
     void setRenderingAttachmentLocations(const VkRenderingAttachmentLocationInfoKHR *info);
     void setRenderingInputAttachmentIndicates(const VkRenderingInputAttachmentIndexInfoKHR *info);
@@ -465,6 +468,9 @@ class Image final : public WrappedObject<Image, VkImage>
     VkResult init(VkDevice device, const VkImageCreateInfo &createInfo);
 
     void getMemoryRequirements(VkDevice device, VkMemoryRequirements *requirementsOut) const;
+    void getMemoryRequirements2(VkDevice device,
+                                const VkImageMemoryRequirementsInfo2 &info,
+                                VkMemoryRequirements2 *requirements2Out) const;
     VkResult bindMemory(VkDevice device, const DeviceMemory &deviceMemory);
     VkResult bindMemory2(VkDevice device, const VkBindImageMemoryInfoKHR &bindInfo);
 
@@ -1194,6 +1200,12 @@ ANGLE_INLINE void CommandBuffer::setPrimitiveRestartEnable(VkBool32 primitiveRes
     vkCmdSetPrimitiveRestartEnableEXT(mHandle, primitiveRestartEnable);
 }
 
+ANGLE_INLINE void CommandBuffer::setPrimitiveTopology(VkPrimitiveTopology primitiveTopology)
+{
+    ASSERT(valid());
+    vkCmdSetPrimitiveTopologyEXT(mHandle, primitiveTopology);
+}
+
 ANGLE_INLINE void CommandBuffer::setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable)
 {
     ASSERT(valid());
@@ -1471,6 +1483,15 @@ ANGLE_INLINE void CommandBuffer::bindVertexBuffers2NoStride(uint32_t firstBindin
     bindVertexBuffers2(firstBinding, bindingCount, buffers, offsets, sizes, nullptr);
 }
 
+ANGLE_INLINE void CommandBuffer::bindTileMemory(const DeviceMemory &tileMemory)
+{
+    ASSERT(valid());
+    ASSERT(tileMemory.valid());
+    const VkTileMemoryBindInfoQCOM tileMemoryBindInfo = {
+        VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM, nullptr, tileMemory.getHandle()};
+    vkCmdBindTileMemoryQCOM(mHandle, &tileMemoryBindInfo);
+}
+
 ANGLE_INLINE void CommandBuffer::beginTransformFeedback(uint32_t firstCounterBuffer,
                                                         uint32_t counterBufferCount,
                                                         const VkBuffer *counterBuffers,
@@ -1566,6 +1587,14 @@ ANGLE_INLINE void Image::getMemoryRequirements(VkDevice device,
 {
     ASSERT(valid());
     vkGetImageMemoryRequirements(device, mHandle, requirementsOut);
+}
+
+ANGLE_INLINE void Image::getMemoryRequirements2(VkDevice device,
+                                                const VkImageMemoryRequirementsInfo2 &info,
+                                                VkMemoryRequirements2 *requirements2Out) const
+{
+    ASSERT(valid());
+    vkGetImageMemoryRequirements2(device, &info, requirements2Out);
 }
 
 ANGLE_INLINE VkResult Image::bindMemory(VkDevice device, const vk::DeviceMemory &deviceMemory)

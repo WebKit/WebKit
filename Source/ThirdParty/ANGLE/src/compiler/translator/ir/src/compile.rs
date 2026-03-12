@@ -77,15 +77,20 @@ mod ffi {
     }
 
     struct CompileOptions {
+        // Input shader and device properties:
+
+        // The version of the input version
+        shader_version: i32,
+        // Extensions that were enabled, mostly useful for the GLSL/ESSL output to replicate them.
+        extensions: ExtensionsEnabled,
+        // TODO(http://anglebug.com/349994211): equivalent to ShBuiltInResources
+
         // Flags controlling the output:
 
         // Whether this is an ES1 shader.  This is used while the output is AST.  Eventually, an
         // enum equivalent to ShShaderOutput should be used to instead indicate what the _output_
         // version is, not the input.
         is_es1: bool,
-        // Extensions that were enabled, mostly useful for the GLSL/ESSL output to replicate them.
-        extensions: ExtensionsEnabled,
-        // TODO(http://anglebug.com/349994211): equivalent to ShBuiltInResources
         // TODO(http://anglebug.com/349994211): equivalent to ShCompileOptions flags
     }
 
@@ -150,6 +155,9 @@ unsafe fn generate_ast(
 ) -> ffi::Output {
     unsafe { ffi::set_global_pool_allocator(allocator) };
 
+    // Apply transforms shared by multiple generators:
+    common_transforms(&mut ir, options);
+
     // Passes required before AST can be generated:
     transform::dealias::run(&mut ir);
     transform::astify::run(&mut ir);
@@ -159,6 +167,22 @@ unsafe fn generate_ast(
     let ast = generator.generate(&mut ast_gen);
 
     ffi::Output { ast, variables: vec![] }
+}
+
+fn common_transforms(ir: &mut IR, options: &Options) {
+    // Turn |inout| variables that are never read from into |out| before collecting variables and
+    // before PLS uses them.
+    if ir.meta.get_shader_type() == ShaderType::Fragment
+        && options.shader_version >= 300
+        && (options.extensions.EXT_shader_framebuffer_fetch
+            || options.extensions.EXT_shader_framebuffer_fetch_non_coherent)
+    {
+        transform::remove_unused_framebuffer_fetch::run(ir);
+    }
+
+    // Basic dead-code-elimination to avoid outputting variables, constants and types that are not
+    // used by the shader.
+    transform::prune_unused_variables::run(ir);
 }
 
 fn initialize_global_pool_index_workaround() {

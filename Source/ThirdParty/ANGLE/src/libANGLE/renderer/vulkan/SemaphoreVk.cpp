@@ -186,7 +186,7 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
     }
 
     return contextVk->flushAndSubmitCommands(&mSemaphore, nullptr,
-                                             RenderPassClosureReason::ExternalSemaphoreSignal);
+                                             QueueSubmitReason::ExternalSemaphoreSignal);
 }
 
 angle::Result SemaphoreVk::importOpaqueFd(ContextVk *contextVk, GLint fd)

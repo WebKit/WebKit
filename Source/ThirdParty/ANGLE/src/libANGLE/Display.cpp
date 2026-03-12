@@ -1160,8 +1160,10 @@ Error Display::initialize()
         mDevice = nullptr;
     }
 
-    mState.singleThreadPool = angle::WorkerThreadPool::Create(1, ANGLEPlatformCurrent());
-    mState.multiThreadPool  = angle::WorkerThreadPool::Create(0, ANGLEPlatformCurrent());
+    mState.singleThreadPool = angle::WorkerThreadPool::Create(angle::ThreadPoolType::Synchronous, 0,
+                                                              ANGLEPlatformCurrent());
+    mState.multiThreadPool = angle::WorkerThreadPool::Create(angle::ThreadPoolType::Asynchronous, 0,
+                                                             ANGLEPlatformCurrent());
 
     if (kIsContextMutexEnabled)
     {

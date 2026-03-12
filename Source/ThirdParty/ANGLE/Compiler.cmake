@@ -148,8 +148,6 @@ set(angle_translator_sources
     "src/compiler/translator/tree_ops/EmulateMultiDrawShaderBuiltins.h"
     "src/compiler/translator/tree_ops/FoldExpressions.cpp"
     "src/compiler/translator/tree_ops/FoldExpressions.h"
-    "src/compiler/translator/tree_ops/ForcePrecisionQualifier.cpp"
-    "src/compiler/translator/tree_ops/ForcePrecisionQualifier.h"
     "src/compiler/translator/tree_ops/GatherDefaultUniforms.cpp"
     "src/compiler/translator/tree_ops/GatherDefaultUniforms.h"
     "src/compiler/translator/tree_ops/InitializeVariables.cpp"

@@ -7,6 +7,7 @@
 #define COMPILER_TRANSLATOR_PARSECONTEXT_H_
 
 #include "common/hash_containers.h"
+#include "common/span.h"
 #include "compiler/preprocessor/Preprocessor.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/Declarator.h"
@@ -96,15 +97,6 @@ class TParseContext : angle::NonCopyable
     void setTreeRoot(TIntermBlock *treeRoot);
 
     ir::IR getIR();
-
-    bool getFragmentPrecisionHigh() const
-    {
-        return mFragmentPrecisionHighOnESSL1 || mShaderVersion >= 300;
-    }
-    void setFragmentPrecisionHighOnESSL1(bool fragmentPrecisionHigh)
-    {
-        mFragmentPrecisionHighOnESSL1 = fragmentPrecisionHigh;
-    }
 
     bool usesDerivatives() const { return mUsesDerivatives; }
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
@@ -847,8 +839,6 @@ class TParseContext : angle::NonCopyable
     int mStructNestingLevel;  // incremented while parsing a struct declaration
     const TFunction *mCurrentFunction;   // the function that's currently being parsed
     bool mFunctionReturnsValue;          // true if a non-void function has a return
-    bool mFragmentPrecisionHighOnESSL1;  // true if highp precision is supported when compiling
-                                         // ESSL1.
     bool mEarlyFragmentTestsSpecified;   // true if layout(early_fragment_tests) in; is specified.
     bool mHasDiscard;                    // true if |discard| is encountered in the shader.
     bool mSampleQualifierSpecified;      // true if the |sample| qualifier is used
@@ -1028,8 +1018,7 @@ class TParseContext : angle::NonCopyable
     angle::HashMap<const TFunction *, ir::FunctionId> mFunctionToId;
 };
 
-int PaParseStrings(size_t count,
-                   const char *const string[],
+int PaParseStrings(angle::Span<const char *const> string,
                    const int length[],
                    TParseContext *context);
 

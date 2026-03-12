@@ -845,7 +845,8 @@ class FrameCaptureShared final : angle::NonCopyable
                             GLintptr offset,
                             GLsizeiptr length,
                             bool writable,
-                            bool coherent);
+                            bool coherent,
+                            bool persistent);
 
     void trackTextureUpdate(const gl::Context *context, const CallCapture &call);
     void trackImageUpdate(const gl::Context *context, const CallCapture &call);

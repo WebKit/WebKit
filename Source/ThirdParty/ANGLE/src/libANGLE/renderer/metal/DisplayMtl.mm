@@ -441,7 +441,7 @@ gl::Version DisplayMtl::getMaxSupportedESVersion() const
     // FIXME: None of the feature conditions are checked for simulator support.
     return gl::Version(3, 0);
 #else
-    if (supportsEitherGPUFamily(3, 1))
+    if (supportsEitherGPUFamily(4, 1))
     {
         return mtl::kMaxSupportedGLVersion;
     }

@@ -4473,7 +4473,6 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(BlitFramebufferTest,
                                    .disable(Feature::SupportsExtendedDynamicState)
                                    .disable(Feature::SupportsExtendedDynamicState2),
                                ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
-                               ES3_VULKAN().enable(Feature::DisableFlippingBlitWithCommand),
                                ES3_METAL().disable(Feature::HasShaderStencilOutput));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferTestES31);

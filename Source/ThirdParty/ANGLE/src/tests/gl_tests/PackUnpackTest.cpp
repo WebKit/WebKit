@@ -8,6 +8,7 @@
 //
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 using namespace angle;
 
@@ -234,6 +235,32 @@ TEST_P(PackUnpackTest, PackUnpackSnormOverflow)
     // Expect the shader to clamp the input to [-1, 1]
     // mediump float data range is [2^-14, 2^14]
     compareBeforeAfter(mSNormProgram, 16384.0f, -16384.0f, 1.0f, -1.0f);
+}
+
+// Test that the SaturateDepth pass in Metal uses the correct buffer size when the unpack image
+// height is smaller than the image height.
+TEST_P(PackUnpackTest, D32FSaturateDepth)
+{
+    glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, 128);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<float> kInitData(1024, 0);
+
+    GLBuffer unpackBuffer;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, unpackBuffer);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, sizeof(float) * kInitData.size(), kInitData.data(),
+                 GL_STATIC_DRAW);
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, 1, 512, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PackUnpackTest);

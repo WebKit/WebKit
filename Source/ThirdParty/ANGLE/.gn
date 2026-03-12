@@ -67,6 +67,9 @@ default_args = {
   # Enable Rust usage
   enable_rust = true
   enable_rust_cxx = true
+
+  # Angle must stay in C++20 for longer due to some downstream dependencies.
+  use_cxx23 = false
 }
 
 no_check_targets = [ "third_party/dawn/*" ]

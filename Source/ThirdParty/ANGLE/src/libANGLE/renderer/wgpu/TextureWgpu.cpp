@@ -337,15 +337,17 @@ angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
                                                        index.hasLayer() ? index.getLayerIndex() : 0,
                                                        dstView));
 
-        WGPUExtent3D size =
-            gl_wgpu::GetExtent3D(gl::Extents(clippedSourceBox.width, clippedSourceBox.height, 1));
+        WGPUExtent3D srcSize = colorReadRT->getImage()->getTextureDescriptor().size;
+        WGPUExtent3D dstSize = mImage->getTextureDescriptor().size;
         const angle::Format &srcFormat =
             angle::Format::Get(colorReadRT->getImage()->getIntendedFormatID());
         const angle::Format &dstAngleFormat = dstFormat.getIntendedFormat();
+        gl::Rectangle finalSourceArea       = clippedSourceArea;
 
-        return contextWgpu->getUtils()->copyImage(contextWgpu, colorReadRT->getTextureView(),
-                                                  dstView, size, isViewportFlipY, srcFormat,
-                                                  dstAngleFormat.id, dstActualFormatID);
+        return contextWgpu->getUtils()->copyImage(
+            contextWgpu, colorReadRT->getTextureView(), dstView, finalSourceArea,
+            modifiedDestOffset, srcSize, dstSize, false, false, isViewportFlipY, false, srcFormat,
+            dstAngleFormat.id, dstActualFormatID);
     }
 
     return getImage()->copyImageCpuReadback(
@@ -450,7 +452,28 @@ angle::Result TextureWgpu::copySubTextureImpl(const gl::Context *context,
                                  sourceBox);
     }
 
-    // TODO(crbug.com/438268609): Add blit with draw path.
+    if (CanCopyWithDraw(*sourceTextureWgpu->getImage(), mImage->getUsage()))
+    {
+        webgpu::TextureViewHandle srcView;
+        ANGLE_TRY(sourceTextureWgpu->getImage()->createTextureViewSingleLevel(
+            gl::LevelIndex(sourceLevel), 0, srcView));
+        webgpu::TextureViewHandle dstView;
+        ANGLE_TRY(mImage->createTextureViewSingleLevel(gl::LevelIndex(index.getLevelIndex()), 0,
+                                                       dstView));
+
+        WGPUExtent3D srcSize = sourceTextureWgpu->getImage()->getTextureDescriptor().size;
+        WGPUExtent3D dstSize = mImage->getTextureDescriptor().size;
+        const angle::Format &srcFormat =
+            sourceTextureWgpu->getBaseLevelFormat(contextWgpu).getIntendedFormat();
+
+        gl::Rectangle sourceRect(sourceBox.x, sourceBox.y, sourceBox.width, sourceBox.height);
+
+        return contextWgpu->getUtils()->copyImage(
+            contextWgpu, srcView, dstView, sourceRect, destOffset, srcSize, dstSize,
+            unpackPremultiplyAlpha, unpackUnmultiplyAlpha, false, unpackFlipY, srcFormat,
+            dstWebgpuFormat.getIntendedFormatID(), dstWebgpuFormat.getActualImageFormatID());
+    }
+
     const gl::ImageDesc &srcImageDesc = sourceTextureWgpu->mState.getImageDesc(
         NonCubeTextureTypeToTarget(sourceTextureWgpu->mState.getType()),
         gl::LevelIndex(sourceLevel).get());

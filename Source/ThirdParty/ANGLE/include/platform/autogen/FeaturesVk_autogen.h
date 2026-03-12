@@ -272,12 +272,6 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo disableFlippingBlitWithCommand = {
-        "disableFlippingBlitWithCommand",
-        FeatureCategory::VulkanWorkarounds,
-        &members,
-    };
-
     FeatureInfo avoidInvisibleWindowSwapchainRecreate = {
         "avoidInvisibleWindowSwapchainRecreate",
         FeatureCategory::VulkanWorkarounds,
@@ -452,12 +446,6 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo waitIdleBeforeSwapchainRecreation = {
-        "waitIdleBeforeSwapchainRecreation",
-        FeatureCategory::VulkanWorkarounds,
-        &members,
-    };
-
     FeatureInfo destroyOldSwapchainInSharedPresentMode = {
         "destroyOldSwapchainInSharedPresentMode",
         FeatureCategory::VulkanWorkarounds,
@@ -538,12 +526,6 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo emulateR32fImageAtomicExchange = {
         "emulateR32fImageAtomicExchange",
-        FeatureCategory::VulkanWorkarounds,
-        &members,
-    };
-
-    FeatureInfo forceFragmentShaderPrecisionHighpToMediump = {
-        "forceFragmentShaderPrecisionHighpToMediump",
         FeatureCategory::VulkanWorkarounds,
         &members,
     };
@@ -748,6 +730,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo useFrontFaceDynamicState = {
         "useFrontFaceDynamicState",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
+    FeatureInfo usePrimitiveTopologyDynamicState = {
+        "usePrimitiveTopologyDynamicState",
         FeatureCategory::VulkanWorkarounds,
         &members,
     };
@@ -994,6 +982,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo enableAsyncPipelineCacheCompression = {
         "enableAsyncPipelineCacheCompression",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
+    FeatureInfo syncPipelineCacheToBlobCacheEveryFrame = {
+        "syncPipelineCacheToBlobCacheEveryFrame",
         FeatureCategory::VulkanWorkarounds,
         &members,
     };
@@ -1282,6 +1276,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo useVkEventForBufferBarrier = {
         "useVkEventForBufferBarrier",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo isVertexSyncDeferred = {
+        "isVertexSyncDeferred",
         FeatureCategory::VulkanFeatures,
         &members,
     };
@@ -1619,6 +1619,18 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo dropDepthStencilClearOnInvalidate = {
         "dropDepthStencilClearOnInvalidate",
         FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
+    FeatureInfo supportsTileMemoryHeap = {
+        "supportsTileMemoryHeap",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo simulateTileMemoryForTesting = {
+        "simulateTileMemoryForTesting",
+        FeatureCategory::VulkanFeatures,
         &members,
     };
 

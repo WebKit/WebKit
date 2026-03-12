@@ -133,6 +133,9 @@ namespace vk
 {
 class Renderer;
 
+constexpr VkImageUsageFlags kImageUsageTransferBits =
+    VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+
 // Used for memory allocation tracking.
 enum class MemoryAllocationType;
 
@@ -540,10 +543,17 @@ class MemoryProperties final : angle::NonCopyable
         return mMemoryProperties.memoryHeaps[heapIndex].size;
     }
 
-    const VkMemoryType &getMemoryType(uint32_t i) const { return mMemoryProperties.memoryTypes[i]; }
+    const VkMemoryType &getMemoryType(uint32_t memoryTypeIndex) const
+    {
+        return mMemoryProperties.memoryTypes[memoryTypeIndex];
+    }
 
     uint32_t getMemoryHeapCount() const { return mMemoryProperties.memoryHeapCount; }
     uint32_t getMemoryTypeCount() const { return mMemoryProperties.memoryTypeCount; }
+
+    uint32_t findTileMemoryTypeIndex() const;
+
+    void log(std::ostringstream &out) const;
 
   private:
     VkPhysicalDeviceMemoryProperties mMemoryProperties;
@@ -606,6 +616,15 @@ VkResult AllocateImageMemoryWithRequirements(ErrorContext *context,
                                              Image *image,
                                              uint32_t *memoryTypeIndexOut,
                                              DeviceMemory *deviceMemoryOut);
+
+VkResult AllocateImageMemoryFromTileHeap(ErrorContext *context,
+                                         MemoryAllocationType memoryAllocationType,
+                                         VkMemoryPropertyFlags requestedMemoryPropertyFlags,
+                                         VkMemoryPropertyFlags *memoryPropertyFlagsOut,
+                                         Image *image,
+                                         uint32_t *memoryTypeIndexOut,
+                                         DeviceMemory *deviceMemoryOut,
+                                         VkDeviceSize *sizeOut);
 
 VkResult AllocateBufferMemoryWithRequirements(ErrorContext *context,
                                               MemoryAllocationType memoryAllocationType,
@@ -1486,6 +1505,9 @@ void InitFragmentShadingRateKHRDeviceFunction(VkDevice device);
 // VK_KHR_maintenance5
 void InitMaintenance5Functions(VkDevice device);
 
+// VK_QCOM_tile_memory_heap
+void InitTileMemoryHeapFunctions(VkDevice device);
+
 // VK_GOOGLE_display_timing
 void InitGetPastPresentationTimingGoogleFunction(VkDevice device);
 
@@ -1627,12 +1649,6 @@ enum class RenderPassClosureReason
     AlreadySpecifiedElsewhere,
 
     // Implicit closures due to flush/wait/etc.
-    ContextDestruction,
-    ContextChange,
-    GLFlush,
-    GLFinish,
-    EGLSwapBuffers,
-    EGLWaitClient,
     SurfaceUnMakeCurrent,
 
     // Closure due to switching rendering to another framebuffer.
@@ -1651,7 +1667,6 @@ enum class RenderPassClosureReason
     XfbWriteThenTextureBuffer,
 
     // Use of resource after render pass
-    BufferWriteThenMap,
     BufferWriteThenOutOfRPRead,
     BufferUseThenOutOfRPWrite,
     ImageUseThenOutOfRPRead,
@@ -1660,25 +1675,18 @@ enum class RenderPassClosureReason
     XfbWriteThenIndirectDispatchBuffer,
     ImageAttachmentThenComputeRead,
     GraphicsTextureImageAccessThenComputeAccess,
-    GetQueryResult,
     BeginNonRenderPassQuery,
     EndNonRenderPassQuery,
     TimestampQuery,
     EndRenderPassQuery,
-    GLReadPixels,
 
     // Synchronization
     BufferUseThenReleaseToExternal,
     ImageUseThenReleaseToExternal,
-    BufferInUseWhenSynchronizedMap,
     GLMemoryBarrierThenStorageResource,
     StorageResourceUseThenGLMemoryBarrier,
-    ExternalSemaphoreSignal,
     SyncObjectInit,
-    SyncObjectWithFdInit,
     SyncObjectClientWait,
-    SyncObjectServerWait,
-    SyncObjectGetStatus,
     ForeignImageRelease,
 
     // Closures that ANGLE could have avoided, but doesn't for simplicity or optimization of more
@@ -1689,8 +1697,10 @@ enum class RenderPassClosureReason
     GenerateMipmapOnCPU,
     CopyTextureOnCPU,
     TextureReformatToRenderable,
-    DeviceLocalBufferMap,
     OutOfReservedQueueSerialForOutsideCommands,
+
+    // VK_QCOM_tile_memory_heap
+    TileMemorySimulatedClear,
 
     // UtilsVk
     GenerateMipmapWithDraw,
@@ -1704,12 +1714,68 @@ enum class RenderPassClosureReason
     // LegacyDithering requires updating the render pass
     LegacyDithering,
 
+    // Flushing and submitting the command buffer requires render pass closure.
+    SubmitCommands,
+
+    InvalidEnum,
+    EnumCount = InvalidEnum,
+};
+
+enum class QueueSubmitReason
+{
+    // Flush/Finish/Wait
+    EGLSwapBuffers,
+    EGLWaitClient,
+    GLFinish,
+    GLFlush,
+    GLReadPixels,
+
+    // Context/Surface
+    AcquireNextImage,
+    ContextChange,
+    ContextDestruction,
+    ContextPriorityChange,
+    SurfaceUnMakeCurrent,
+
+    // Buffer/Image
+    CopyBufferToImageOneOff,
+    CopyBufferToSurfaceImage,
+    CopySurfaceImageToBuffer,
+    ForeignImageRelease,
+    ImageUseThenReleaseToExternal,
+    InitNonZeroMemory,
+    TextureReformatToRenderable,
+    CopyTextureOnCPU,
+    GenerateMipmapOnCPU,
+
+    // Sync/Query/Timestamp
+    ExternalSemaphoreSignal,
+    GetQueryResult,
+    GetTimestamp,
+    SyncCPUGPUTime,
+    SyncObjectInit,
+    SyncObjectClientWait,
+    SyncObjectWithFdInit,
+    DeviceLocalBufferMap,
+    BufferWriteThenMap,
+    BufferInUseWhenSynchronizedMap,
+    WaitSemaphore,
+
     // In case of memory budget issues, pending garbage needs to be freed.
     ExcessivePendingGarbage,
     OutOfMemory,
 
     // In case of reaching the render pass limit in the command buffer, it should be submitted.
     RenderPassCountLimitReached,
+    RenderPassCommandLimitReached,
+
+    // Outside command buffer submission
+    BufferToImageUpdateLimitReached,
+    ForceSubmitStagedTexture,
+
+    // Others
+    DeferredFlush,
+    DrawOverlay,
 
     InvalidEnum,
     EnumCount = InvalidEnum,

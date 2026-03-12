@@ -14,6 +14,7 @@
 
 #include "common/MemoryBuffer.h"
 #include "common/bitset_utils.h"
+#include "common/span_util.h"
 #include "common/string_utils.h"
 #include "common/utilities.h"
 #include "libANGLE/Context.h"
@@ -518,7 +519,7 @@ class ProgramD3D::LoadTaskD3D final : public LinkLoadTaskD3D
         ASSERT(linkSubTasksOut && linkSubTasksOut->empty());
         ASSERT(postLinkSubTasksOut && postLinkSubTasksOut->empty());
 
-        gl::BinaryInputStream stream(mStreamData.data(), mStreamData.size());
+        gl::BinaryInputStream stream(mStreamData);
         mResult = mExecutable->loadBinaryShaderExecutables(this, mProgram->mRenderer, &stream);
 
         return;
@@ -561,14 +562,14 @@ angle::Result ProgramD3D::load(const gl::Context *context,
     // Copy the remaining data from the stream locally so that the client can't modify it when
     // loading off thread.
     angle::MemoryBuffer streamData;
-    const size_t dataSize = stream->remainingSize();
-    if (!streamData.resize(dataSize))
+    angle::Span<const uint8_t> remaining = stream->remainingSpan();
+    if (!streamData.resize(remaining.size()))
     {
         mState.getExecutable().getInfoLog()
             << "Failed to copy program binary data to local buffer.";
         return angle::Result::Stop;
     }
-    memcpy(streamData.data(), stream->data() + stream->offset(), dataSize);
+    angle::SpanMemcpy(angle::Span(streamData), remaining);
 
     // Note: pretty much all the above can also be moved to the task
     *loadTaskOut = std::shared_ptr<LinkTask>(new LoadTaskD3D(this, std::move(streamData)));

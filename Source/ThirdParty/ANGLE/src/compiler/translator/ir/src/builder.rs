@@ -2660,28 +2660,19 @@ pub mod ffi {
         Image3D,
         Image2DArray,
         ImageCube,
-        Image2DMS,
-        Image2DMSArray,
         ImageCubeArray,
-        ImageRect,
         ImageBuffer,
         IImage2D,
         IImage3D,
         IImage2DArray,
         IImageCube,
-        IImage2DMS,
-        IImage2DMSArray,
         IImageCubeArray,
-        IImageRect,
         IImageBuffer,
         UImage2D,
         UImage3D,
         UImage2DArray,
         UImageCube,
-        UImage2DMS,
-        UImage2DMSArray,
         UImageCubeArray,
-        UImageRect,
         UImageBuffer,
         PixelLocalANGLE,
         IPixelLocalANGLE,
@@ -3507,10 +3498,7 @@ impl BuilderWrapper {
                         | ffi::ASTBasicType::Image3D
                         | ffi::ASTBasicType::Image2DArray
                         | ffi::ASTBasicType::ImageCube
-                        | ffi::ASTBasicType::Image2DMS
-                        | ffi::ASTBasicType::Image2DMSArray
                         | ffi::ASTBasicType::ImageCubeArray
-                        | ffi::ASTBasicType::ImageRect
                         | ffi::ASTBasicType::ImageBuffer
                         | ffi::ASTBasicType::PixelLocalANGLE
                         | ffi::ASTBasicType::SubpassInput
@@ -3531,10 +3519,7 @@ impl BuilderWrapper {
                         | ffi::ASTBasicType::IImage3D
                         | ffi::ASTBasicType::IImage2DArray
                         | ffi::ASTBasicType::IImageCube
-                        | ffi::ASTBasicType::IImage2DMS
-                        | ffi::ASTBasicType::IImage2DMSArray
                         | ffi::ASTBasicType::IImageCubeArray
-                        | ffi::ASTBasicType::IImageRect
                         | ffi::ASTBasicType::IImageBuffer
                         | ffi::ASTBasicType::IPixelLocalANGLE
                         | ffi::ASTBasicType::ISubpassInput
@@ -3556,10 +3541,7 @@ impl BuilderWrapper {
                             | ffi::ASTBasicType::UImage3D
                             | ffi::ASTBasicType::UImage2DArray
                             | ffi::ASTBasicType::UImageCube
-                            | ffi::ASTBasicType::UImage2DMS
-                            | ffi::ASTBasicType::UImage2DMSArray
                             | ffi::ASTBasicType::UImageCubeArray
-                            | ffi::ASTBasicType::UImageRect
                             | ffi::ASTBasicType::UImageBuffer
                             | ffi::ASTBasicType::UPixelLocalANGLE
                             | ffi::ASTBasicType::USubpassInput
@@ -3585,16 +3567,10 @@ impl BuilderWrapper {
                         | ffi::ASTBasicType::USampler2DMSArray
                         | ffi::ASTBasicType::Image2D
                         | ffi::ASTBasicType::Image2DArray
-                        | ffi::ASTBasicType::Image2DMS
-                        | ffi::ASTBasicType::Image2DMSArray
                         | ffi::ASTBasicType::IImage2D
                         | ffi::ASTBasicType::IImage2DArray
-                        | ffi::ASTBasicType::IImage2DMS
-                        | ffi::ASTBasicType::IImage2DMSArray
                         | ffi::ASTBasicType::UImage2D
                         | ffi::ASTBasicType::UImage2DArray
-                        | ffi::ASTBasicType::UImage2DMS
-                        | ffi::ASTBasicType::UImage2DMSArray
                 ) {
                     ImageDimension::D2
                 } else if matches!(
@@ -3634,9 +3610,6 @@ impl BuilderWrapper {
                     ffi::ASTBasicType::Sampler2DRect
                         | ffi::ASTBasicType::ISampler2DRect
                         | ffi::ASTBasicType::USampler2DRect
-                        | ffi::ASTBasicType::ImageRect
-                        | ffi::ASTBasicType::IImageRect
-                        | ffi::ASTBasicType::UImageRect
                 ) {
                     ImageDimension::Rect
                 } else if matches!(
@@ -3714,19 +3687,16 @@ impl BuilderWrapper {
                         | ffi::ASTBasicType::SamplerCubeArray
                         | ffi::ASTBasicType::SamplerCubeArrayShadow
                         | ffi::ASTBasicType::Image2DArray
-                        | ffi::ASTBasicType::Image2DMSArray
                         | ffi::ASTBasicType::ImageCubeArray
                         | ffi::ASTBasicType::ISampler2DArray
                         | ffi::ASTBasicType::ISampler2DMSArray
                         | ffi::ASTBasicType::ISamplerCubeArray
                         | ffi::ASTBasicType::IImage2DArray
-                        | ffi::ASTBasicType::IImage2DMSArray
                         | ffi::ASTBasicType::IImageCubeArray
                         | ffi::ASTBasicType::USampler2DArray
                         | ffi::ASTBasicType::USampler2DMSArray
                         | ffi::ASTBasicType::USamplerCubeArray
                         | ffi::ASTBasicType::UImage2DArray
-                        | ffi::ASTBasicType::UImage2DMSArray
                         | ffi::ASTBasicType::UImageCubeArray
                 );
 
@@ -3734,16 +3704,10 @@ impl BuilderWrapper {
                     basic_type,
                     ffi::ASTBasicType::Sampler2DMS
                         | ffi::ASTBasicType::Sampler2DMSArray
-                        | ffi::ASTBasicType::Image2DMS
-                        | ffi::ASTBasicType::Image2DMSArray
                         | ffi::ASTBasicType::ISampler2DMS
                         | ffi::ASTBasicType::ISampler2DMSArray
-                        | ffi::ASTBasicType::IImage2DMS
-                        | ffi::ASTBasicType::IImage2DMSArray
                         | ffi::ASTBasicType::USampler2DMS
                         | ffi::ASTBasicType::USampler2DMSArray
-                        | ffi::ASTBasicType::UImage2DMS
-                        | ffi::ASTBasicType::UImage2DMSArray
                 );
 
                 let is_shadow = matches!(

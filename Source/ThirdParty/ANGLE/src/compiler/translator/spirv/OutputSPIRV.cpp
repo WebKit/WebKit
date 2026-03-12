@@ -164,7 +164,7 @@ struct BuiltInResultStructHash
             static_cast<uint8_t>(key.msbPrimarySize),
         };
 
-        return angle::ComputeGenericHash(properties, sizeof(properties));
+        return angle::ComputeGenericHash(properties);
     }
 };
 
@@ -2341,6 +2341,60 @@ void OutputSPIRVTraverser::visitArrayLength(TIntermUnary *node)
     nodeDataInitRValue(&mNodeData.back(), castResultId, intTypeId);
 }
 
+// If an expression is short-circuited, it must not be executed.  However, in some cases there is
+// nothing to execute, such as constants, variables etc.  Notably, hasSideEffects() is not
+// a sufficient check, because it could include read-only operations that are out of bounds, despite
+// not having any side effects.
+bool IsSafeToExecuteInShortCircuit(TIntermTyped *node)
+{
+    // Constants and symbols are safe to execute.
+    if (node->getAsConstantUnion() || node->getAsSymbolNode())
+    {
+        return true;
+    }
+
+    // Swizzle is safe if the operand is safe.
+    {
+        TIntermSwizzle *asSwizzle = node->getAsSwizzleNode();
+        if (asSwizzle)
+        {
+            return IsSafeToExecuteInShortCircuit(asSwizzle->getOperand());
+        }
+    }
+
+    // Indexing a struct or interface block is safe to execute, as long as no array index is in the
+    // access chain.
+    {
+        TIntermBinary *asBinary = node->getAsBinaryNode();
+        if (asBinary != nullptr)
+        {
+            return (asBinary->getOp() == EOpIndexDirectInterfaceBlock ||
+                    asBinary->getOp() == EOpIndexDirectStruct) &&
+                   IsSafeToExecuteInShortCircuit(asBinary->getLeft());
+        }
+    }
+
+    // Constructors are safe as long as every member is safe.
+    {
+        TIntermAggregate *asAggregate = node->getAsAggregate();
+        if (asAggregate != nullptr && asAggregate->getOp() == EOpConstruct)
+        {
+            for (TIntermNode *component : *asAggregate->getSequence())
+            {
+                if (!IsSafeToExecuteInShortCircuit(component->getAsTyped()))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    // Assume everything else is unsafe.  This includes safe but complex expressions that are better
+    // off not getting executed anyway.
+    return false;
+}
+
 bool IsShortCircuitNeeded(TIntermOperator *node)
 {
     TOperator op = node->getOp();
@@ -2353,12 +2407,9 @@ bool IsShortCircuitNeeded(TIntermOperator *node)
 
     ASSERT(node->getChildCount() == 2);
 
-    // If the right hand side does not have side effects, short-circuiting is unnecessary.
-    // TODO: experiment with the performance of OpLogicalAnd/Or vs short-circuit based on the
-    // complexity of the right hand side expression.  We could potentially only allow
-    // OpLogicalAnd/Or if the right hand side is a constant or an access chain and have more complex
-    // expressions be placed inside an if block.  http://anglebug.com/40096715
-    return node->getChildNode(1)->getAsTyped()->hasSideEffects();
+    // If the right hand side is not safe to execute, short-circuiting is needed
+    // For example: is_in_bounds(index) && access(data[index])
+    return !IsSafeToExecuteInShortCircuit(node->getChildNode(1)->getAsTyped());
 }
 
 using WriteUnaryOp      = void (*)(spirv::Blob *blob,
@@ -3292,11 +3343,6 @@ spirv::IdRef OutputSPIRVTraverser::createAtomicBuiltIn(TIntermOperator *node,
     {
         // One parameter for coordinates.
         ++imagePointerParameterCount;
-        if (IsImageMS(operandBasicType))
-        {
-            // One parameter for samples.
-            ++imagePointerParameterCount;
-        }
     }
 
     ASSERT(parameterCount >= 2 + imagePointerParameterCount);
@@ -3804,8 +3850,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
     // If an implicit-lod instruction is used outside a fragment shader, change that to an explicit
     // one as they are not allowed in SPIR-V outside fragment shaders.
     const bool noLodSupport = IsSamplerBuffer(samplerBasicType) ||
-                              IsImageBuffer(samplerBasicType) || IsSamplerMS(samplerBasicType) ||
-                              IsImageMS(samplerBasicType);
+                              IsImageBuffer(samplerBasicType) || IsSamplerMS(samplerBasicType);
     const bool makeLodExplicit =
         mCompiler->getShaderType() != GL_FRAGMENT_SHADER && lodIndex == 0 && dPdxIndex == 0 &&
         !noLodSupport && (spirvOp == spv::OpImageSampleImplicitLod || spirvOp == spv::OpImageFetch);
@@ -5300,8 +5345,8 @@ bool OutputSPIRVTraverser::visitTernary(Visit visit, TIntermTernary *node)
     // prior to 1.4 requires the type to be either scalar or vector.
     const TType &type   = node->getType();
     bool canUseOpSelect = (type.isScalar() || type.isVector() || mCompileOptions.emitSPIRV14) &&
-                          !node->getTrueExpression()->hasSideEffects() &&
-                          !node->getFalseExpression()->hasSideEffects();
+                          IsSafeToExecuteInShortCircuit(node->getTrueExpression()) &&
+                          IsSafeToExecuteInShortCircuit(node->getFalseExpression());
 
     // Don't use OpSelect on buggy drivers.  Technically this is only needed if the two sides don't
     // have matching use of RelaxedPrecision, but not worth being precise about it.

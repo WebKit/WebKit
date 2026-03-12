@@ -105,13 +105,15 @@ TLayoutBlockStorage GetBlockStorage(const TType &type)
 ShaderVariable ToShaderVariable(const TFieldListCollection *block,
                                 GLenum type,
                                 const angle::Span<const unsigned int> arraySizes,
-                                bool isRowMajor)
+                                bool isRowMajor,
+                                bool isFloat16)
 {
     ShaderVariable var;
 
     var.type             = type;
     var.arraySizes       = {arraySizes.begin(), arraySizes.end()};
     var.isRowMajorLayout = isRowMajor;
+    var.isFloat16        = isFloat16;
 
     if (block != nullptr)
     {
@@ -126,8 +128,40 @@ ShaderVariable ToShaderVariable(const TFieldListCollection *block,
             const GLenum glType =
                 fieldType.getStruct() != nullptr ? GL_NONE : GLVariableType(fieldType);
 
+            // In the following case:
+
+            // precision mediump float
+            // struct S {
+            //    float floatMember;
+            //    vec2 vec2Member;
+            //    int intMember;
+            // }
+            // uniform float floatUniform;
+            // uniform highp float highpFloatUniform;
+            // uniform S structUniform;
+
+            // defaultUniform interface block looks like:
+            // defaultUniform {
+            //   float floatUniform;
+            //   highp float highpFloatUniform;
+            //   S structUniform;
+            // }
+
+            // iSFieldFloat16 for each defaultUniform member should be:
+            // defaultUniform.floatUniform: true
+            // defaultUniform.highpFloatUniform: false
+            // defaultUniform.structUniform.floatMember: true
+            // defaultUniform.structUniform.vec2Member: true
+            // defaultUniform.structUniform.intMember: false
+
+            const bool isFieldFloat16 =
+                isFloat16 &&
+                ((fieldType.getBasicType() == EbtFloat || fieldType.getBasicType() == EbtStruct) &&
+                 (fieldType.getPrecision() < EbpHigh));
+
             var.fields.push_back(ToShaderVariable(fieldType.getStruct(), glType,
-                                                  fieldType.getArraySizes(), isFieldRowMajor));
+                                                  fieldType.getArraySizes(), isFieldRowMajor,
+                                                  isFieldFloat16));
         }
     }
 
@@ -142,11 +176,18 @@ ShaderVariable SpirvTypeToShaderVariable(const SpirvType &type)
         type.block != nullptr
             ? EbtStruct
             : GLVariableType(TType(type.type, type.primarySize, type.secondarySize));
+    const bool isFloat16 = (type.typeSpec.precision == SPIRVPrecisionChoice::UseFP16);
 
-    return ToShaderVariable(type.block, glType, type.arraySizes, isRowMajor);
+    return ToShaderVariable(type.block, glType, type.arraySizes, isRowMajor, isFloat16);
 }
 
-// The following function encodes a variable in a std140 or std430 block.  The variable could be:
+// The following function encodes a variable in a
+// 1) std140 layout block
+// 2) std430 layout block
+// 3) tighter packed layout block. This only applies to default uniform buffer block, and when
+// 16-bit float is allowed in the default uniform buffer block
+//
+// The variable could be:
 //
 // - An interface block: In this case, |decorationsBlob| is provided and SPIR-V decorations are
 //   output to this blob.
@@ -157,12 +198,23 @@ ShaderVariable SpirvTypeToShaderVariable(const SpirvType &type)
 //
 uint32_t Encode(const ShaderVariable &var,
                 bool isStd140,
+                bool isDefaultUniform,
+                bool usePackedEncoder,
                 spirv::IdRef blockTypeId,
                 spirv::Blob *decorationsBlob)
 {
     Std140BlockEncoder std140;
     Std430BlockEncoder std430;
-    BlockLayoutEncoder *encoder = isStd140 ? &std140 : &std430;
+    PackedSPIRVBlockEncoder packSPIRV;
+    BlockLayoutEncoder *encoder = nullptr;
+    if (isDefaultUniform && usePackedEncoder)
+    {
+        encoder = &packSPIRV;
+    }
+    else
+    {
+        encoder = isStd140 ? &std140 : &std430;
+    }
 
     ASSERT(var.isStruct());
     encoder->enterAggregateType(var);
@@ -177,7 +229,8 @@ uint32_t Encode(const ShaderVariable &var,
         if (fieldVar.isStruct())
         {
             // For structs, recursively encode it.
-            const uint32_t structSize = Encode(fieldVar, isStd140, {}, nullptr);
+            const uint32_t structSize =
+                Encode(fieldVar, isStd140, isDefaultUniform, usePackedEncoder, {}, nullptr);
 
             encoder->enterAggregateType(fieldVar);
             fieldInfo = encoder->encodeArrayOfPreEncodedStructs(structSize, fieldVar.arraySizes);
@@ -186,7 +239,10 @@ uint32_t Encode(const ShaderVariable &var,
         else
         {
             fieldInfo =
-                encoder->encodeType(fieldVar.type, fieldVar.arraySizes, fieldVar.isRowMajorLayout);
+                encoder->encodeType(fieldVar.type,
+                                    fieldVar.isFloat16 ? BlockLayoutEncoder::kBytesPer16BitComponent
+                                                       : BlockLayoutEncoder::kBytesPerComponent,
+                                    fieldVar.arraySizes, fieldVar.isRowMajorLayout);
         }
 
         if (decorationsBlob)
@@ -217,11 +273,23 @@ uint32_t Encode(const ShaderVariable &var,
     return static_cast<uint32_t>(encoder->getCurrentOffset());
 }
 
-uint32_t GetArrayStrideInBlock(const ShaderVariable &var, bool isStd140)
+uint32_t GetArrayStrideInBlock(const ShaderVariable &var,
+                               bool isStd140,
+                               bool isDefaultUniform,
+                               bool usePackedEncoder)
 {
     Std140BlockEncoder std140;
     Std430BlockEncoder std430;
-    BlockLayoutEncoder *encoder = isStd140 ? &std140 : &std430;
+    PackedSPIRVBlockEncoder packSPIRV;
+    BlockLayoutEncoder *encoder = nullptr;
+    if (isDefaultUniform && usePackedEncoder)
+    {
+        encoder = &packSPIRV;
+    }
+    else
+    {
+        encoder = isStd140 ? &std140 : &std430;
+    }
 
     ASSERT(var.isArray());
 
@@ -232,7 +300,8 @@ uint32_t GetArrayStrideInBlock(const ShaderVariable &var, bool isStd140)
         ShaderVariable element = var;
         element.arraySizes.clear();
 
-        const uint32_t structSize = Encode(element, isStd140, {}, nullptr);
+        const uint32_t structSize =
+            Encode(element, isStd140, isDefaultUniform, usePackedEncoder, {}, nullptr);
 
         // Stride is struct size by inner array size
         return structSize * var.getInnerArraySizeProduct();
@@ -240,7 +309,10 @@ uint32_t GetArrayStrideInBlock(const ShaderVariable &var, bool isStd140)
 
     // Otherwise encode the basic type.
     BlockMemberInfo memberInfo =
-        encoder->encodeType(var.type, var.arraySizes, var.isRowMajorLayout);
+        encoder->encodeType(var.type,
+                            var.isFloat16 ? BlockLayoutEncoder::kBytesPer16BitComponent
+                                          : BlockLayoutEncoder::kBytesPerComponent,
+                            var.arraySizes, var.isRowMajorLayout);
 
     // The encoder returns the array stride for the base element type (which is not an array!), so
     // need to multiply by the inner array sizes to get the outermost array's stride.
@@ -426,6 +498,9 @@ void SpirvTypeSpec::inferDefaults(const TType &type,
                                           type.getBasicType() == EbtBool;
         }
 
+        isDefaultUniform = (type.getInterfaceBlock() != nullptr &&
+                            type.getInterfaceBlock()->isDefaultUniformBlock());
+
         if (precision == SPIRVPrecisionChoice::Unset)
         {
             // For a struct uniform and a float uniform declared as below:
@@ -461,9 +536,7 @@ void SpirvTypeSpec::inferDefaults(const TType &type,
 
             if ((type.getBasicType() == EbtInterfaceBlock || type.getBasicType() == EbtFloat ||
                  type.getBasicType() == EbtStruct) &&
-                type.getQualifier() == EvqUniform &&
-                (type.getInterfaceBlock() != nullptr &&
-                 type.getInterfaceBlock()->isDefaultUniformBlock()) &&
+                type.getQualifier() == EvqUniform && isDefaultUniform &&
                 type.getPrecision() < EbpHigh)
             {
                 precision = transformFloatUniformToFP16 ? SPIRVPrecisionChoice::UseFP16
@@ -1233,13 +1306,15 @@ SpirvTypeData SPIRVBuilder::declareType(const SpirvType &type, const TSymbol *bl
 
         const bool isInterfaceBlock = block != nullptr && block->isInterfaceBlock();
         const bool isStd140         = type.typeSpec.blockStorage != EbsStd430;
+        const bool usePackEncoder   = mCompileOptions.transformFloatUniformTo16Bits;
 
         if (!type.arraySizes.empty() && !isInterfaceBlock)
         {
             // Write the ArrayStride decoration for arrays inside interface blocks.  An array of
             // interface blocks doesn't need a stride.
             const ShaderVariable var = SpirvTypeToShaderVariable(type);
-            const uint32_t stride    = GetArrayStrideInBlock(var, isStd140);
+            const uint32_t stride    = GetArrayStrideInBlock(
+                var, isStd140, type.typeSpec.isDefaultUniform, usePackEncoder);
 
             spirv::WriteDecorate(&mSpirvDecorations, typeId, spv::DecorationArrayStride,
                                  {spirv::LiteralInteger(stride)});
@@ -1248,7 +1323,8 @@ SpirvTypeData SPIRVBuilder::declareType(const SpirvType &type, const TSymbol *bl
         {
             // Write the Offset decoration for interface blocks and structs in them.
             const ShaderVariable var = SpirvTypeToShaderVariable(type);
-            Encode(var, isStd140, typeId, &mSpirvDecorations);
+            Encode(var, isStd140, type.typeSpec.isDefaultUniform, usePackEncoder, typeId,
+                   &mSpirvDecorations);
         }
     }
 
@@ -1294,11 +1370,9 @@ void SPIRVBuilder::getImageTypeParameters(TBasicType type,
             isArrayed = true;
             break;
         case EbtSampler2DMS:
-        case EbtImage2DMS:
             isMultisampled = true;
             break;
         case EbtSampler2DMSArray:
-        case EbtImage2DMSArray:
             isArrayed      = true;
             isMultisampled = true;
             break;
@@ -1322,12 +1396,10 @@ void SPIRVBuilder::getImageTypeParameters(TBasicType type,
             isArrayed   = true;
             break;
         case EbtISampler2DMS:
-        case EbtIImage2DMS:
             sampledType    = EbtInt;
             isMultisampled = true;
             break;
         case EbtISampler2DMSArray:
-        case EbtIImage2DMSArray:
             sampledType    = EbtInt;
             isArrayed      = true;
             isMultisampled = true;
@@ -1345,12 +1417,10 @@ void SPIRVBuilder::getImageTypeParameters(TBasicType type,
             isArrayed   = true;
             break;
         case EbtUSampler2DMS:
-        case EbtUImage2DMS:
             sampledType    = EbtUInt;
             isMultisampled = true;
             break;
         case EbtUSampler2DMSArray:
-        case EbtUImage2DMSArray:
             sampledType    = EbtUInt;
             isArrayed      = true;
             isMultisampled = true;
@@ -1420,16 +1490,13 @@ void SPIRVBuilder::getImageTypeParameters(TBasicType type,
 
         // Rect images
         case EbtSampler2DRect:
-        case EbtImageRect:
             *dimOut = spv::DimRect;
             break;
         case EbtISampler2DRect:
-        case EbtIImageRect:
             sampledType = EbtInt;
             *dimOut     = spv::DimRect;
             break;
         case EbtUSampler2DRect:
-        case EbtUImageRect:
             sampledType = EbtUInt;
             *dimOut     = spv::DimRect;
             break;
@@ -1478,10 +1545,10 @@ void SPIRVBuilder::getImageTypeParameters(TBasicType type,
     //
     //     Dim          Sampled         Storage            Storage Array
     //     --------------------------------------------------------------
-    //     2D           Shader                             ImageMSArray
+    //     2D           Shader                             ImageMSArray (desktop GLSL)
     //     3D
     //     Cube         Shader                             ImageCubeArray
-    //     Rect         SampledRect     ImageRect
+    //     Rect         SampledRect     ImageRect (desktop GLSL)
     //     Buffer       SampledBuffer   ImageBuffer
     //
     // Additionally, the SubpassData Dim requires the InputAttachment capability.
@@ -1505,7 +1572,8 @@ void SPIRVBuilder::getImageTypeParameters(TBasicType type,
             }
             break;
         case spv::DimRect:
-            addCapability(isSampledImage ? spv::CapabilitySampledRect : spv::CapabilityImageRect);
+            ASSERT(!isSampledImage);
+            addCapability(spv::CapabilitySampledRect);
             break;
         case spv::DimBuffer:
             addCapability(isSampledImage ? spv::CapabilitySampledBuffer

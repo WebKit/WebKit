@@ -258,6 +258,14 @@
             "issue": "http://crbug.com/797243"
         },
         {
+            "name": "disable_MSAA_sample_count_1",
+            "category": "Workarounds",
+            "description": [
+                "Do not expose multisample sample count 1 to avoid driver bugs"
+            ],
+            "issue": "http://anglebug.com/467164245"
+        },
+        {
             "name": "allow_clear_for_robust_resource_init",
             "category": "Workarounds",
             "description": [
@@ -761,6 +769,14 @@
                 "Corrupt the program binary retrieved from the driver for testing purposes."
             ],
             "issue": "https://anglebug.com/41488638"
+        },
+        {
+            "name": "emit_max_glsl_400_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Avoid GLSL versions above 4.0 for testing purposes."
+            ],
+            "issue": "https://anglebug.com/42267207"
         },
         {
             "name": "use_intermediate_texture_for_generate_mipmap",

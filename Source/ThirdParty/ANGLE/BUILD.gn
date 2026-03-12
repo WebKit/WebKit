@@ -36,7 +36,7 @@ declare_args() {
                angle_has_build
 
   # Enable using Vulkan to collect system info as a fallback.
-  angle_enable_vulkan_system_info = false
+  angle_enable_vulkan_system_info = is_chromeos
 
   # Link in system libGL, to work with apitrace.  See doc/DebuggingTips.md.
   angle_link_glx = false

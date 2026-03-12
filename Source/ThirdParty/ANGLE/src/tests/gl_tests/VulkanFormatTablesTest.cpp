@@ -117,5 +117,6 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
 }
 
 ANGLE_INSTANTIATE_TEST(VulkanFormatTablesTest, ES2_VULKAN());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanFormatTablesTest);
 
 }  // anonymous namespace

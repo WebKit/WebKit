@@ -22,7 +22,7 @@ namespace vk
 // Resource implementation.
 angle::Result Resource::waitForIdle(ContextVk *contextVk,
                                     const char *debugMessage,
-                                    RenderPassClosureReason reason)
+                                    QueueSubmitReason reason)
 {
     // If there are pending commands for the resource, flush them.
     if (contextVk->hasUnsubmittedUse(mUse))

@@ -623,6 +623,7 @@ TEST_P(VulkanUniformUpdatesTest, MultipleProgramsShareDescriptors)
 }
 
 ANGLE_INSTANTIATE_TEST(VulkanUniformUpdatesTest, ES2_VULKAN(), ES3_VULKAN());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanUniformUpdatesTest);
 
 // This test tries to test uniform data update while switching between PPO and monolithic program.
 // The uniform data update occurred on one should carry over to the other. Also buffers are hacked
@@ -761,5 +762,6 @@ void main()
 }
 
 ANGLE_INSTANTIATE_TEST(PipelineProgramUniformUpdatesTest, ES31_VULKAN());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PipelineProgramUniformUpdatesTest);
 
 }  // anonymous namespace

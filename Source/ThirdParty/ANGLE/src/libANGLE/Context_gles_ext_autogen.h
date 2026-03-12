@@ -233,6 +233,7 @@
     /* GL_EXT_shader_io_blocks */                                                                  \
     /* GL_EXT_shader_non_constant_global_initializers */                                           \
     /* GL_EXT_shader_texture_lod */                                                                \
+    /* GL_EXT_shader_texture_samples */                                                            \
     /* GL_EXT_shadow_samplers */                                                                   \
     /* GL_EXT_tessellation_shader */                                                               \
     /* GL_EXT_texture_border_clamp */                                                              \

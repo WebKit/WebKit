@@ -35,13 +35,11 @@ bool IsNamelessStruct(const TType &type)
 
 void AddArrayZeroInitSequence(const TIntermTyped *initializedNode,
                               bool canUseLoopsToInitialize,
-                              bool highPrecisionSupported,
                               TIntermSequence *initSequenceOut,
                               TSymbolTable *symbolTable);
 
 void AddStructZeroInitSequence(const TIntermTyped *initializedNode,
                                bool canUseLoopsToInitialize,
-                               bool highPrecisionSupported,
                                TIntermSequence *initSequenceOut,
                                TSymbolTable *symbolTable);
 
@@ -53,20 +51,19 @@ TIntermBinary *CreateZeroInitAssignment(const TIntermTyped *initializedNode)
 
 void AddZeroInitSequence(const TIntermTyped *initializedNode,
                          bool canUseLoopsToInitialize,
-                         bool highPrecisionSupported,
                          TIntermSequence *initSequenceOut,
                          TSymbolTable *symbolTable)
 {
     if (initializedNode->isArray())
     {
-        AddArrayZeroInitSequence(initializedNode, canUseLoopsToInitialize, highPrecisionSupported,
-                                 initSequenceOut, symbolTable);
+        AddArrayZeroInitSequence(initializedNode, canUseLoopsToInitialize, initSequenceOut,
+                                 symbolTable);
     }
     else if (initializedNode->getType().isStructureContainingArrays() ||
              IsNamelessStruct(initializedNode->getType()))
     {
-        AddStructZeroInitSequence(initializedNode, canUseLoopsToInitialize, highPrecisionSupported,
-                                  initSequenceOut, symbolTable);
+        AddStructZeroInitSequence(initializedNode, canUseLoopsToInitialize, initSequenceOut,
+                                  symbolTable);
     }
     else if (initializedNode->getType().isInterfaceBlock())
     {
@@ -94,7 +91,6 @@ void AddZeroInitSequence(const TIntermTyped *initializedNode,
 
 void AddStructZeroInitSequence(const TIntermTyped *initializedNode,
                                bool canUseLoopsToInitialize,
-                               bool highPrecisionSupported,
                                TIntermSequence *initSequenceOut,
                                TSymbolTable *symbolTable)
 {
@@ -107,14 +103,12 @@ void AddStructZeroInitSequence(const TIntermTyped *initializedNode,
         // Structs can't be defined inside structs, so the type of a struct field can't be a
         // nameless struct.
         ASSERT(!IsNamelessStruct(element->getType()));
-        AddZeroInitSequence(element, canUseLoopsToInitialize, highPrecisionSupported,
-                            initSequenceOut, symbolTable);
+        AddZeroInitSequence(element, canUseLoopsToInitialize, initSequenceOut, symbolTable);
     }
 }
 
 void AddArrayZeroInitStatementList(const TIntermTyped *initializedNode,
                                    bool canUseLoopsToInitialize,
-                                   bool highPrecisionSupported,
                                    TIntermSequence *initSequenceOut,
                                    TSymbolTable *symbolTable)
 {
@@ -122,21 +116,17 @@ void AddArrayZeroInitStatementList(const TIntermTyped *initializedNode,
     {
         TIntermBinary *element =
             new TIntermBinary(EOpIndexDirect, initializedNode->deepCopy(), CreateIndexNode(i));
-        AddZeroInitSequence(element, canUseLoopsToInitialize, highPrecisionSupported,
-                            initSequenceOut, symbolTable);
+        AddZeroInitSequence(element, canUseLoopsToInitialize, initSequenceOut, symbolTable);
     }
 }
 
 void AddArrayZeroInitForLoop(const TIntermTyped *initializedNode,
-                             bool highPrecisionSupported,
                              TIntermSequence *initSequenceOut,
                              TSymbolTable *symbolTable)
 {
     ASSERT(initializedNode->isArray());
-    const TType *mediumpIndexType = StaticType::Get<EbtInt, EbpMedium, EvqTemporary, 1, 1>();
-    const TType *highpIndexType   = StaticType::Get<EbtInt, EbpHigh, EvqTemporary, 1, 1>();
     TVariable *indexVariable =
-        CreateTempVariable(symbolTable, highPrecisionSupported ? highpIndexType : mediumpIndexType);
+        CreateTempVariable(symbolTable, StaticType::Get<EbtInt, EbpHigh, EvqTemporary, 1, 1>());
 
     TIntermSymbol *indexSymbolNode = CreateTempSymbolNode(indexVariable);
     TIntermDeclaration *indexInit =
@@ -152,7 +142,7 @@ void AddArrayZeroInitForLoop(const TIntermTyped *initializedNode,
 
     TIntermBinary *element = new TIntermBinary(EOpIndexIndirect, initializedNode->deepCopy(),
                                                indexSymbolNode->deepCopy());
-    AddZeroInitSequence(element, true, highPrecisionSupported, forLoopBodySeq, symbolTable);
+    AddZeroInitSequence(element, true, forLoopBodySeq, symbolTable);
 
     TIntermLoop *forLoop =
         new TIntermLoop(ELoopFor, indexInit, indexSmallerThanSize, indexIncrement, forLoopBody);
@@ -161,7 +151,6 @@ void AddArrayZeroInitForLoop(const TIntermTyped *initializedNode,
 
 void AddArrayZeroInitSequence(const TIntermTyped *initializedNode,
                               bool canUseLoopsToInitialize,
-                              bool highPrecisionSupported,
                               TIntermSequence *initSequenceOut,
                               TSymbolTable *symbolTable)
 {
@@ -179,13 +168,12 @@ void AddArrayZeroInitSequence(const TIntermTyped *initializedNode,
     {
         // Fragment outputs should not be indexed by non-constant indices.
         // Also it doesn't make sense to use loops to initialize very small arrays.
-        AddArrayZeroInitStatementList(initializedNode, canUseLoopsToInitialize,
-                                      highPrecisionSupported, initSequenceOut, symbolTable);
+        AddArrayZeroInitStatementList(initializedNode, canUseLoopsToInitialize, initSequenceOut,
+                                      symbolTable);
     }
     else
     {
-        AddArrayZeroInitForLoop(initializedNode, highPrecisionSupported, initSequenceOut,
-                                symbolTable);
+        AddArrayZeroInitForLoop(initializedNode, initSequenceOut, symbolTable);
     }
 }
 
@@ -195,8 +183,7 @@ void InsertInitCode(TCompiler *compiler,
                     TSymbolTable *symbolTable,
                     int shaderVersion,
                     const TExtensionBehavior &extensionBehavior,
-                    bool canUseLoopsToInitialize,
-                    bool highPrecisionSupported)
+                    bool canUseLoopsToInitialize)
 {
     TIntermSequence *mainBody = FindMainBody(root)->getSequence();
     for (const TVariable *var : variables)
@@ -215,8 +202,7 @@ void InsertInitCode(TCompiler *compiler,
                 initializedSymbol = ReferenceGlobalVariable(field->name(), *symbolTable);
 
                 TIntermSequence initCode;
-                CreateInitCode(initializedSymbol, canUseLoopsToInitialize, highPrecisionSupported,
-                               &initCode, symbolTable);
+                CreateInitCode(initializedSymbol, canUseLoopsToInitialize, &initCode, symbolTable);
                 mainBody->insert(mainBody->begin(), initCode.begin(), initCode.end());
             }
 
@@ -237,8 +223,7 @@ void InsertInitCode(TCompiler *compiler,
         }
 
         TIntermSequence initCode;
-        CreateInitCode(initializedSymbol, canUseLoopsToInitialize, highPrecisionSupported,
-                       &initCode, symbolTable);
+        CreateInitCode(initializedSymbol, canUseLoopsToInitialize, &initCode, symbolTable);
         mainBody->insert(mainBody->begin(), initCode.begin(), initCode.end());
     }
 }
@@ -265,12 +250,10 @@ class InitializeLocalsTraverser final : public TIntermTraverser
   public:
     InitializeLocalsTraverser(int shaderVersion,
                               TSymbolTable *symbolTable,
-                              bool canUseLoopsToInitialize,
-                              bool highPrecisionSupported)
+                              bool canUseLoopsToInitialize)
         : TIntermTraverser(true, false, false, symbolTable),
           mShaderVersion(shaderVersion),
-          mCanUseLoopsToInitialize(canUseLoopsToInitialize),
-          mHighPrecisionSupported(highPrecisionSupported)
+          mCanUseLoopsToInitialize(canUseLoopsToInitialize)
     {}
 
     void collectUnnamedOutFunctions(TIntermBlock &root)
@@ -347,8 +330,7 @@ class InitializeLocalsTraverser final : public TIntermTraverser
                     // this declarator.
                     ASSERT(node->getSequence()->size() == 1);
                     TIntermSequence initCode;
-                    CreateInitCode(symbol, mCanUseLoopsToInitialize, mHighPrecisionSupported,
-                                   &initCode, mSymbolTable);
+                    CreateInitCode(symbol, mCanUseLoopsToInitialize, &initCode, mSymbolTable);
                     insertStatementsInParentBlock(TIntermSequence(), initCode);
                 }
                 else
@@ -405,8 +387,8 @@ class InitializeLocalsTraverser final : public TIntermTraverser
                 continue;
             }
 
-            CreateInitCode(new TIntermSymbol(paramVariable), mCanUseLoopsToInitialize,
-                           mHighPrecisionSupported, &initCode, mSymbolTable);
+            CreateInitCode(new TIntermSymbol(paramVariable), mCanUseLoopsToInitialize, &initCode,
+                           mSymbolTable);
         }
 
         if (!initCode.empty())
@@ -438,7 +420,6 @@ class InitializeLocalsTraverser final : public TIntermTraverser
   private:
     int mShaderVersion;
     bool mCanUseLoopsToInitialize;
-    bool mHighPrecisionSupported;
     angle::HashMap<const TFunction *, TFunction *> mFunctionsToReplace;
 };
 
@@ -446,23 +427,19 @@ class InitializeLocalsTraverser final : public TIntermTraverser
 
 void CreateInitCode(const TIntermTyped *initializedSymbol,
                     bool canUseLoopsToInitialize,
-                    bool highPrecisionSupported,
                     TIntermSequence *initCode,
                     TSymbolTable *symbolTable)
 {
-    AddZeroInitSequence(initializedSymbol, canUseLoopsToInitialize, highPrecisionSupported,
-                        initCode, symbolTable);
+    AddZeroInitSequence(initializedSymbol, canUseLoopsToInitialize, initCode, symbolTable);
 }
 
 bool InitializeUninitializedLocals(TCompiler *compiler,
                                    TIntermBlock *root,
                                    int shaderVersion,
                                    bool canUseLoopsToInitialize,
-                                   bool highPrecisionSupported,
                                    TSymbolTable *symbolTable)
 {
-    InitializeLocalsTraverser traverser(shaderVersion, symbolTable, canUseLoopsToInitialize,
-                                        highPrecisionSupported);
+    InitializeLocalsTraverser traverser(shaderVersion, symbolTable, canUseLoopsToInitialize);
     traverser.collectUnnamedOutFunctions(*root);
     root->traverse(&traverser);
     return traverser.updateTree(compiler, root);
@@ -474,11 +451,10 @@ bool InitializeVariables(TCompiler *compiler,
                          TSymbolTable *symbolTable,
                          int shaderVersion,
                          const TExtensionBehavior &extensionBehavior,
-                         bool canUseLoopsToInitialize,
-                         bool highPrecisionSupported)
+                         bool canUseLoopsToInitialize)
 {
     InsertInitCode(compiler, root, vars, symbolTable, shaderVersion, extensionBehavior,
-                   canUseLoopsToInitialize, highPrecisionSupported);
+                   canUseLoopsToInitialize);
 
     return compiler->validateAST(root);
 }

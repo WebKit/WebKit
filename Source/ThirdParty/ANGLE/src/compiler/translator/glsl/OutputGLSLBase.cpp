@@ -98,7 +98,6 @@ TOutputGLSLBase::TOutputGLSLBase(TCompiler *compiler,
       mShaderType(compiler->getShaderType()),
       mShaderVersion(compiler->getShaderVersion()),
       mOutput(compiler->getOutputType()),
-      mHighPrecisionSupported(compiler->isHighPrecisionSupported()),
       // If pixel local storage introduces new fragment outputs, we are now required to specify a
       // location for _all_ fragment outputs, including previously valid outputs that had an
       // implicit location of zero.

@@ -37,6 +37,9 @@ class PalettedTextureTest : public ANGLETest<>
 class PalettedTextureTestES2 : public PalettedTextureTest
 {};
 
+class PalettedTextureTestES3 : public PalettedTextureTest
+{};
+
 struct TestImage
 {
     GLColor palette[16];
@@ -206,6 +209,20 @@ TEST_P(PalettedTextureTestES2, PalettedTextureDraw)
     EXPECT_PIXEL_COLOR_EQ(31, 31, GLColor::red);
 }
 
+// glTexStorage2D with paletted formats should fail.
+TEST_P(PalettedTextureTestES3, TexStorage2DShouldFail)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_PALETTE4_RGBA8_OES, 2, 2);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+}
+
 ANGLE_INSTANTIATE_TEST_ES1(PalettedTextureTest);
 
 ANGLE_INSTANTIATE_TEST_ES2(PalettedTextureTestES2);
+
+ANGLE_INSTANTIATE_TEST_ES3(PalettedTextureTestES3);

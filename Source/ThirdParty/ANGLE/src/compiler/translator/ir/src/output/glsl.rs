@@ -703,6 +703,9 @@ impl ast::Target for Generator {
                         Some(pointee_type.use_text_post.clone()),
                     )
                 }
+                Type::DeadCodeEliminated => {
+                    return;
+                }
             };
 
         let glsl_type = GlslType {

@@ -59,6 +59,7 @@ libangle_common_headers = [
   "src/common/platform.h",
   "src/common/platform_helpers.h",
   "src/common/span.h",
+  "src/common/span_util.h",
   "src/common/string_utils.h",
   "src/common/system_utils.h",
   "src/common/tls.h",

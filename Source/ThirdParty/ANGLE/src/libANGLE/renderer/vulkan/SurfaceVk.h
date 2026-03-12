@@ -35,7 +35,8 @@ class SurfaceVk : public SurfaceImpl, public angle::ObserverInterface, public vk
 
     void destroy(const egl::Display *display) override;
     // We monitor the staging buffer for changes. This handles staged data from outside this class.
-    void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
+    virtual void onSubjectStateChange(angle::SubjectIndex index,
+                                      angle::SubjectMessage message) override;
 
     // size can change with client window resizing
     gl::Extents getSize() const override;
@@ -278,6 +279,7 @@ class WindowSurfaceVk : public SurfaceVk
 
     egl::Error initialize(const egl::Display *display) override;
 
+    egl::Error makeCurrent(const gl::Context *context) override;
     egl::Error unMakeCurrent(const gl::Context *context) override;
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
@@ -479,6 +481,8 @@ class WindowSurfaceVk : public SurfaceVk
     angle::FormatID getIntendedFormatID(vk::Renderer *renderer);
     angle::FormatID getActualFormatID(vk::Renderer *renderer);
 
+    void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
+
     bool mIsSurfaceSizedBySwapchain;
 
     // Atomic is to allow update state without necessarily locking the mSizeMutex.
@@ -562,6 +566,8 @@ class WindowSurfaceVk : public SurfaceVk
 
     // GL_EXT_shader_framebuffer_fetch
     vk::FramebufferFetchMode mFramebufferFetchMode = vk::FramebufferFetchMode::None;
+
+    vk::Renderer *mRenderer;
 };
 
 }  // namespace rx

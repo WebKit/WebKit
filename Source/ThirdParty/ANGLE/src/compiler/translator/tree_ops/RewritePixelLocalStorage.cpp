@@ -279,6 +279,11 @@ class RewritePLSTraverser : public TIntermTraverser
                         {expr, CreateFloatNode(0, EbpLow), CreateFloatNode(0, EbpLow),
                          CreateFloatNode(1, EbpLow)});
                     break;
+                case EbtInt:
+                    expr = TIntermAggregate::CreateConstructor(  // "ivec4(r, 0, 0, 1)"
+                        TType(EbtInt, 4),
+                        {expr, CreateIndexNode(0), CreateIndexNode(0), CreateIndexNode(1)});
+                    break;
                 case EbtUInt:
                     expr = TIntermAggregate::CreateConstructor(  // "uvec4(r, 0, 0, 1)"
                         TType(EbtUInt, 4),
@@ -379,6 +384,9 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
                 break;
             case TLayoutImageInternalFormat::EiifR32F:
                 imageType->setBasicType(EbtImage2D);
+                break;
+            case TLayoutImageInternalFormat::EiifR32I:
+                imageType->setBasicType(EbtIImage2D);
                 break;
             case TLayoutImageInternalFormat::EiifR32UI:
                 imageType->setBasicType(EbtUImage2D);
@@ -788,6 +796,9 @@ class RewritePLSToFramebufferFetchTraverser : public RewritePLSTraverser
                     break;
                 case EiifR32F:
                     accessVarType = new TType(EbtFloat, 1);
+                    break;
+                case EiifR32I:
+                    accessVarType = new TType(EbtInt, 1);
                     break;
                 case EiifR32UI:
                     accessVarType = new TType(EbtUInt, 1);

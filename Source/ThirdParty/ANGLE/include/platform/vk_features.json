@@ -331,14 +331,6 @@
             "issue": "http://anglebug.com/42262115"
         },
         {
-            "name": "disable_flipping_blit_with_command",
-            "category": "Workarounds",
-            "description": [
-                "vkCmdBlitImage with flipped coordinates blits incorrectly."
-            ],
-            "issue": "http://anglebug.com/42262161"
-        },
-        {
             "name": "avoid_invisible_window_swapchain_recreate",
             "category": "Workarounds",
             "description": [
@@ -582,15 +574,6 @@
             "issue": "http://anglebug.com/40644747"
         },
         {
-            "name": "wait_idle_before_swapchain_recreation",
-            "category": "Workarounds",
-            "description": [
-                "Before passing an oldSwapchain to VkSwapchainCreateInfoKHR, wait for queue to be idle. ",
-                "Works around a bug on platforms which destroy oldSwapchain in vkCreateSwapchainKHR."
-            ],
-            "issue": "http://anglebug.com/42263629"
-        },
-        {
             "name": "destroy_old_swapchain_in_shared_present_mode",
             "category": "Workarounds",
             "description": [
@@ -699,14 +682,6 @@
                 "Emulate r32f images with r32ui to support imageAtomicExchange."
             ],
             "issue": "http://anglebug.com/42264071"
-        },
-        {
-            "name": "force_fragment_shader_precision_highp_to_mediump",
-            "category": "Workarounds",
-            "description": [
-                "Forces highp precision in fragment shader to mediump."
-            ],
-            "issue": "https://issuetracker.google.com/184850002"
         },
         {
             "name": "prefer_submit_at_FBO_boundary",
@@ -969,6 +944,14 @@
             "category": "Workarounds",
             "description": [
                 "Use the Front Face dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/42264446"
+        },
+        {
+            "name": "use_primitive_topology_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Primitive Topology dynamic state from VK_EXT_extended_dynamic_state"
             ],
             "issue": "http://anglebug.com/42264446"
         },
@@ -1304,6 +1287,15 @@
                 "Enable compressing pipeline cache in a thread."
             ],
             "issue": "http://anglebug.com/42263322"
+        },
+        {
+            "name": "sync_pipeline_cache_to_blob_cache_every_frame",
+            "category": "Workarounds",
+            "description": [
+                "Synchronize the Vulkan pipeline cache to the blob cache every frame",
+                "for testing purposes."
+            ],
+            "issue": "https://issuetracker.google.com/467732555"
         },
         {
             "name": "enable_extra_submit_fence",
@@ -1688,6 +1680,14 @@
                 "Uses VkEvent instead of VkCmdPipelineBarrier for buffer barriers"
             ],
             "issue": "https://issues.angleproject.org/360274928"
+        },
+        {
+            "name": "is_vertex_sync_deferred",
+            "category": "Features",
+            "description": [
+                "Prefer VkEvent instead of VkCmdPipelineBarrier if vertex synchronization is deferred"
+            ],
+            "issue": "https://issues.angleproject.org/issues/414630743"
         },
         {
             "name": "recycle_vkEvent",
@@ -2136,6 +2136,22 @@
                 "so this we have to disable our optimization that drops the clears on invalidate."
             ],
             "issue": "https://issuetracker.google.com/462484277"
+        },
+        {
+            "name": "supports_tile_memory_heap",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_QCOM_tile_memory_heap extension."
+            ],
+            "issue": "https://issuetracker.google.com/447633563"
+        },
+        {
+            "name": "simulate_tile_memory_for_testing",
+            "category": "Features",
+            "description": [
+                "Simulate VK_QCOM_tile_memory_heap for images on GPUs that do not support VK_QCOM_tile_memory_heap extension for testing purpose."
+            ],
+            "issue": "https://issuetracker.google.com/447633563"
         }
     ]
 }

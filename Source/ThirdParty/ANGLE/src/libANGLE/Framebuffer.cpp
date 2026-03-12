@@ -64,7 +64,7 @@ FramebufferStatus CheckMultiviewStateMatchesForCompleteness(
     if (checkAttachment->getBaseViewIndex() + checkAttachment->getNumViews() >
         checkAttachment->getSize().depth)
     {
-        return FramebufferStatus::Incomplete(GL_FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR,
+        return FramebufferStatus::Incomplete(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT,
                                              err::kFramebufferIncompleteMultiviewBaseViewMismatch);
     }
 

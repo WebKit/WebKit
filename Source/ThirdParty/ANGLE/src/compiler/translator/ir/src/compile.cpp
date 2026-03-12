@@ -121,6 +121,7 @@ void SetEnabledExtensions(const TExtensionBehavior &behavior, ffi::ExtensionsEna
 Output GenerateAST(IR ir, TCompiler *compiler, const ShCompileOptions &options)
 {
     ffi::CompileOptions opt;
+    opt.shader_version = compiler->getShaderVersion();
     opt.is_es1 = compiler->getShaderVersion() == 100;
 
     SetEnabledExtensions(compiler->getExtensionBehavior(), &opt.extensions);

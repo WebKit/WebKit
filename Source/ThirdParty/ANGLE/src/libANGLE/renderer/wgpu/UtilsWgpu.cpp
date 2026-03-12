@@ -18,15 +18,23 @@ namespace
 constexpr char kVertexEntryPoint[]   = "vs_main";
 constexpr char kFragmentEntryPoint[] = "fs_main";
 
-constexpr char kVertexMain[] = R"(@vertex
-fn vs_main(@builtin(vertex_index) vertex_index : u32) -> @builtin(position) vec4<f32> {
-    var pos = array<vec2<f32>, 4>(
-        vec2<f32>(-1.0, 1.0),
-        vec2<f32>(-1.0, -1.0),
-        vec2<f32>(1.0, 1.0),
-        vec2<f32>(1.0, -1.0)
-    );
-    return vec4<f32>(pos[vertex_index], 0.0, 1.0);
+constexpr char kVertexMain[] = R"(
+struct VertexInput {
+    @location(0) pos: vec2<f32>,
+    @location(1) texCoord: vec2<f32>,
+};
+
+struct VertexOutput {
+    @builtin(position) position: vec4<f32>,
+    @location(0) texCoord: vec2<f32>,
+};
+
+@vertex
+fn vs_main(in: VertexInput) -> VertexOutput {
+    var out: VertexOutput;
+    out.position = vec4<f32>(in.pos, 0.0, 1.0);
+    out.texCoord = in.texCoord;
+    return out;
 }
 )";
 
@@ -58,38 +66,46 @@ UtilsWgpu::UtilsWgpu() = default;
 
 UtilsWgpu::~UtilsWgpu() = default;
 
-webgpu::ShaderModuleHandle UtilsWgpu::getShaderModule(ContextWgpu *context, const PipelineKey &key)
+webgpu::ShaderModuleHandle UtilsWgpu::getCopyShaderModule(ContextWgpu *context, const CopyKey &key)
 {
     std::stringstream ss;
-    if (key.op == WgpuPipelineOp::ImageCopy)
+
+    const angle::Format &dstFormat = angle::Format::Get(key.dstActualFormatID);
+
+    ss << kVertexMain;
+    ss << "@group(0) @binding(0)\n var t_source: texture_2d<"
+       << GetWgslTextureComponentTypeFromGlComponent(key.srcComponentType) << ">;\n";
+
+    ss << "@fragment\nfn " << kFragmentEntryPoint
+       << "(in: VertexOutput) -> @location(0) "
+          "vec4<"
+       << GetWgslTextureComponentTypeFromFormat(dstFormat) << "> {\n";
+    ss << "    var srcValue = textureLoad(t_source, vec2<i32>(floor(in.texCoord)), 0);\n";
+    ss << "    var out_rgb = srcValue.rgb;\n";
+    if (key.premultiplyAlpha && !key.unmultiplyAlpha)
     {
-        const angle::Format &dstFormat = angle::Format::Get(key.dstActualFormatID);
-
-        ss << kVertexMain;
-        ss << "@group(0) @binding(0)\n var t_source: texture_2d<"
-           << GetWgslTextureComponentTypeFromGlComponent(key.srcComponentType) << ">;\n";
-
-        ss << "@fragment\nfn " << kFragmentEntryPoint
-           << "(@builtin(position) frag_coord: vec4<f32>) -> @location(0) "
-              "vec4<"
-           << GetWgslTextureComponentTypeFromFormat(dstFormat) << "> {\n";
-
-        ss << "    var texel_coords: vec2<i32> = vec2<i32>(floor(frag_coord.xy));\n";
-        ss << "    var srcValue = textureLoad(t_source, texel_coords, 0);\n";
-        if (!key.dstIntentedFormatHasAlphaBits)
-        {
-            ss << "    srcValue.a = 1;\n";
-        }
-        ss << "    return vec4<" << GetWgslTextureComponentTypeFromFormat(dstFormat)
-           << ">(srcValue);\n";
-        ss << "}\n";
+        ss << "    out_rgb = out_rgb * srcValue.a;\n";
     }
-    else
+    else if (key.unmultiplyAlpha && !key.premultiplyAlpha)
     {
-        UNREACHABLE();
+        ss << "    if (srcValue.a > 0.0) {\n";
+        ss << "        out_rgb = out_rgb / srcValue.a;\n";
+        ss << "    }\n";
     }
+    ss << "    var out_a = srcValue.a;\n";
+    if (!key.dstIntentedFormatHasAlphaBits)
+    {
+        ss << "    out_a = 1.0;\n";
+    }
+    ss << "    return vec4<" << GetWgslTextureComponentTypeFromFormat(dstFormat)
+       << ">(out_rgb, out_a);\n";
+    ss << "}\n";
+    return getShaderModule(context, ss.str());
+}
 
-    std::string shaderSource      = ss.str();
+webgpu::ShaderModuleHandle UtilsWgpu::getShaderModule(ContextWgpu *context,
+                                                      const std::string &shaderSource)
+{
     WGPUShaderSourceWGSL wgslDesc = WGPU_SHADER_SOURCE_WGSL_INIT;
     wgslDesc.code                 = {shaderSource.c_str(), shaderSource.length()};
 
@@ -102,24 +118,31 @@ webgpu::ShaderModuleHandle UtilsWgpu::getShaderModule(ContextWgpu *context, cons
 }
 
 angle::Result UtilsWgpu::getPipeline(ContextWgpu *context,
-                                     const PipelineKey &key,
-                                     const CachedPipeline **cachedPipelineOut)
+                                     const CopyKey &key,
+                                     const webgpu::ShaderModuleHandle &shader,
+                                     CachedPipeline *cachedPipelineOut)
 {
-    auto it = mPipelineCache.find(key);
-    if (it != mPipelineCache.end())
-    {
-        *cachedPipelineOut = &it->second;
-        return angle::Result::Continue;
-    }
-
-    webgpu::ShaderModuleHandle shaderModule = getShaderModule(context, key);
+    webgpu::ShaderModuleHandle shaderModule = shader;
 
     WGPURenderPipelineDescriptor pipelineDesc = WGPU_RENDER_PIPELINE_DESCRIPTOR_INIT;
     pipelineDesc.primitive.topology           = WGPUPrimitiveTopology_TriangleStrip;
     pipelineDesc.multisample.count            = 1;
 
-    pipelineDesc.vertex.bufferCount = 0;
-    pipelineDesc.vertex.buffers     = nullptr;
+    WGPUVertexAttribute attributes[2] = {};
+    attributes[0].format              = WGPUVertexFormat_Float32x2;
+    attributes[0].offset              = offsetof(CopyVertex, position);
+    attributes[0].shaderLocation      = 0;
+    attributes[1].format              = WGPUVertexFormat_Float32x2;
+    attributes[1].offset              = offsetof(CopyVertex, texCoord);
+    attributes[1].shaderLocation      = 1;
+
+    WGPUVertexBufferLayout vertexBufferLayout = {};
+    vertexBufferLayout.arrayStride            = sizeof(CopyVertex);
+    vertexBufferLayout.attributeCount         = 2;
+    vertexBufferLayout.attributes             = attributes;
+
+    pipelineDesc.vertex.bufferCount = 1;
+    pipelineDesc.vertex.buffers     = &vertexBufferLayout;
     pipelineDesc.vertex.module      = shaderModule.get();
     pipelineDesc.vertex.entryPoint  = {kVertexEntryPoint, sizeof(kVertexEntryPoint) - 1};
 
@@ -147,7 +170,7 @@ angle::Result UtilsWgpu::getPipeline(ContextWgpu *context,
     }
     else
     {
-        bglEntry.texture.sampleType = WGPUTextureSampleType_UnfilterableFloat;
+        bglEntry.texture.sampleType = WGPUTextureSampleType_Float;
     }
 
     WGPUBindGroupLayoutDescriptor bglDesc = WGPU_BIND_GROUP_LAYOUT_DESCRIPTOR_INIT;
@@ -168,14 +191,9 @@ angle::Result UtilsWgpu::getPipeline(ContextWgpu *context,
         wgpu, wgpu->deviceCreatePipelineLayout(device, &plDesc));
     pipelineDesc.layout = pipelineLayout.get();
 
-    CachedPipeline newCachedPipeline;
-    newCachedPipeline.pipeline = webgpu::RenderPipelineHandle::Acquire(
+    cachedPipelineOut->pipeline = webgpu::RenderPipelineHandle::Acquire(
         wgpu, wgpu->deviceCreateRenderPipeline(device, &pipelineDesc));
-    newCachedPipeline.bindGroupLayout = std::move(bindGroupLayout);
-
-    auto inserted = mPipelineCache.emplace(key, std::move(newCachedPipeline));
-
-    *cachedPipelineOut = &inserted.first->second;
+    cachedPipelineOut->bindGroupLayout = std::move(bindGroupLayout);
 
     return angle::Result::Continue;
 }
@@ -183,22 +201,44 @@ angle::Result UtilsWgpu::getPipeline(ContextWgpu *context,
 angle::Result UtilsWgpu::copyImage(ContextWgpu *context,
                                    webgpu::TextureViewHandle src,
                                    webgpu::TextureViewHandle dst,
-                                   const WGPUExtent3D &size,
-                                   bool flipY,
+                                   const gl::Rectangle &sourceArea,
+                                   const gl::Offset &destOffset,
+                                   const WGPUExtent3D &srcSize,
+                                   const WGPUExtent3D &dstSize,
+                                   bool premultiplyAlpha,
+                                   bool unmultiplyAlpha,
+                                   bool srcFlipY,
+                                   bool dstFlipY,
                                    const angle::Format &srcFormat,
                                    angle::FormatID dstIntendedFormatID,
                                    angle::FormatID dstActualFormatID)
 {
-    const DawnProcTable *wgpu = webgpu::GetProcs(context);
+    const DawnProcTable *wgpu              = webgpu::GetProcs(context);
     const angle::Format &dstIntendedFormat = angle::Format::Get(dstIntendedFormatID);
-    PipelineKey key           = {};
-    key.op                    = WgpuPipelineOp::ImageCopy;
+    CopyKey key                            = {};
+    key.op                                 = WgpuPipelineOp::ImageCopy;
     key.srcComponentType                   = srcFormat.componentType;
-    key.dstActualFormatID     = dstActualFormatID;
+    key.dstActualFormatID                  = dstActualFormatID;
     key.dstIntentedFormatHasAlphaBits      = dstIntendedFormat.alphaBits != 0;
+    key.premultiplyAlpha                   = premultiplyAlpha;
+    key.unmultiplyAlpha                    = unmultiplyAlpha;
+    key.srcFlipY                           = srcFlipY;
+    key.dstFlipY                           = dstFlipY;
 
     const CachedPipeline *cachedPipeline = nullptr;
-    ANGLE_TRY(getPipeline(context, key, &cachedPipeline));
+    auto it                              = mCopyPipelineCache.find(key);
+    if (it != mCopyPipelineCache.end())
+    {
+        cachedPipeline = &it->second;
+    }
+    else
+    {
+        webgpu::ShaderModuleHandle shaderModule = getCopyShaderModule(context, key);
+        CachedPipeline newCachedPipeline;
+        ANGLE_TRY(getPipeline(context, key, shaderModule, &newCachedPipeline));
+        auto inserted  = mCopyPipelineCache.emplace(key, std::move(newCachedPipeline));
+        cachedPipeline = &inserted.first->second;
+    }
 
     WGPUBindGroupDescriptor bgDesc = WGPU_BIND_GROUP_DESCRIPTOR_INIT;
     WGPUBindGroupEntry bgEntry     = WGPU_BIND_GROUP_ENTRY_INIT;
@@ -222,9 +262,49 @@ angle::Result UtilsWgpu::copyImage(ContextWgpu *context,
     ANGLE_TRY(context->endRenderPass(webgpu::RenderPassClosureReason::CopyImage));
     ANGLE_TRY(context->startRenderPass(renderPassDesc));
 
+    float dstX1 = destOffset.x;
+    float dstY1 = destOffset.y;
+    float dstX2 = destOffset.x + sourceArea.width;
+    float dstY2 = destOffset.y + sourceArea.height;
+
+    float srcX1 = sourceArea.x;
+    float srcY1 = sourceArea.y;
+    float srcX2 = sourceArea.x + sourceArea.width;
+    float srcY2 = sourceArea.y + sourceArea.height;
+
+    if (srcFlipY != dstFlipY)
+    {
+        std::swap(srcY1, srcY2);
+    }
+
+    // WebGPU's texture coordinate system has (0,0) in the top-left corner.
+    // Normalized device coordinates (NDC) has y pointing up.
+    // The following vertex positions are in NDC. The viewport is not flipped.
+    float dstNormX1 = dstX1 / dstSize.width * 2.0f - 1.0f;
+    float dstNormY1 = -(dstY1 / dstSize.height * 2.0f - 1.0f);
+    float dstNormX2 = dstX2 / dstSize.width * 2.0f - 1.0f;
+    float dstNormY2 = -(dstY2 / dstSize.height * 2.0f - 1.0f);
+
     webgpu::CommandBuffer &commandBuffer = context->getCommandBuffer();
     commandBuffer.setPipeline(cachedPipeline->pipeline);
     commandBuffer.setBindGroup(0, bindGroup);
+    CopyVertex vertices[4] = {
+        {{dstNormX1, dstNormY2}, {srcX1, srcY2}},
+        {{dstNormX2, dstNormY2}, {srcX2, srcY2}},
+        {{dstNormX1, dstNormY1}, {srcX1, srcY1}},
+        {{dstNormX2, dstNormY1}, {srcX2, srcY1}},
+    };
+
+    WGPUBufferDescriptor bufferDesc   = {};
+    bufferDesc.size                   = sizeof(vertices);
+    bufferDesc.usage                  = WGPUBufferUsage_Vertex | WGPUBufferUsage_CopyDst;
+    webgpu::BufferHandle vertexBuffer = webgpu::BufferHandle::Acquire(
+        wgpu, wgpu->deviceCreateBuffer(context->getDevice().get(), &bufferDesc));
+
+    wgpu->queueWriteBuffer(context->getQueue().get(), vertexBuffer.get(), 0, vertices,
+                           sizeof(vertices));
+    commandBuffer.setVertexBuffer(0, vertexBuffer, 0, sizeof(vertices));
+
     commandBuffer.draw(4, 1, 0, 0);
 
     ANGLE_TRY(context->endRenderPass(webgpu::RenderPassClosureReason::CopyImage));

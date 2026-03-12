@@ -210,6 +210,14 @@ bool IsPowerVrRogue(const FunctionsGL *functions)
     return angle::BeginsWith(nativeGLRenderer, powerVRRogue);
 }
 
+bool IsHuaweiMaleoon(const FunctionsGL *functions)
+{
+    const char *nativeGLVendor   = GetString(functions, GL_VENDOR);
+    const char *nativeGLRenderer = GetString(functions, GL_RENDERER);
+    return (std::string(nativeGLVendor).find("HUAWEI") != std::string::npos) &&
+           (std::string(nativeGLRenderer).find("Maleoon") != std::string::npos);
+}
+
 }  // namespace
 
 SwapControlData::SwapControlData()
@@ -280,68 +288,65 @@ uint32_t GetDeviceID(const FunctionsGL *functions)
     return 0;
 }
 
-ShShaderOutput GetShaderOutputType(const FunctionsGL *functions)
+ShShaderOutput GetShaderOutputType(const angle::FeaturesGL &features, const FunctionsGL *functions)
 {
     ASSERT(functions);
 
     if (functions->standard == STANDARD_GL_DESKTOP)
     {
         // GLSL outputs
-        if (functions->isAtLeastGL(gl::Version(4, 5)))
+        if (!features.emitMaxGlsl400ForTesting.enabled)
         {
-            return SH_GLSL_450_CORE_OUTPUT;
+            if (functions->isAtLeastGL(gl::Version(4, 5)))
+            {
+                return SH_GLSL_450_CORE_OUTPUT;
+            }
+            if (functions->isAtLeastGL(gl::Version(4, 4)))
+            {
+                return SH_GLSL_440_CORE_OUTPUT;
+            }
+            if (functions->isAtLeastGL(gl::Version(4, 3)))
+            {
+                return SH_GLSL_430_CORE_OUTPUT;
+            }
+            if (functions->isAtLeastGL(gl::Version(4, 2)))
+            {
+                return SH_GLSL_420_CORE_OUTPUT;
+            }
+            if (functions->isAtLeastGL(gl::Version(4, 1)))
+            {
+                return SH_GLSL_410_CORE_OUTPUT;
+            }
         }
-        else if (functions->isAtLeastGL(gl::Version(4, 4)))
-        {
-            return SH_GLSL_440_CORE_OUTPUT;
-        }
-        else if (functions->isAtLeastGL(gl::Version(4, 3)))
-        {
-            return SH_GLSL_430_CORE_OUTPUT;
-        }
-        else if (functions->isAtLeastGL(gl::Version(4, 2)))
-        {
-            return SH_GLSL_420_CORE_OUTPUT;
-        }
-        else if (functions->isAtLeastGL(gl::Version(4, 1)))
-        {
-            return SH_GLSL_410_CORE_OUTPUT;
-        }
-        else if (functions->isAtLeastGL(gl::Version(4, 0)))
+        if (functions->isAtLeastGL(gl::Version(4, 0)))
         {
             return SH_GLSL_400_CORE_OUTPUT;
         }
-        else if (functions->isAtLeastGL(gl::Version(3, 3)))
+        if (functions->isAtLeastGL(gl::Version(3, 3)))
         {
             return SH_GLSL_330_CORE_OUTPUT;
         }
-        else if (functions->isAtLeastGL(gl::Version(3, 2)))
+        if (functions->isAtLeastGL(gl::Version(3, 2)))
         {
             return SH_GLSL_150_CORE_OUTPUT;
         }
-        else if (functions->isAtLeastGL(gl::Version(3, 1)))
+        if (functions->isAtLeastGL(gl::Version(3, 1)))
         {
             return SH_GLSL_140_OUTPUT;
         }
-        else if (functions->isAtLeastGL(gl::Version(3, 0)))
+        if (functions->isAtLeastGL(gl::Version(3, 0)))
         {
             return SH_GLSL_130_OUTPUT;
         }
-        else
-        {
-            return SH_GLSL_COMPATIBILITY_OUTPUT;
-        }
+        return SH_GLSL_COMPATIBILITY_OUTPUT;
     }
-    else if (functions->standard == STANDARD_GL_ES)
+    if (functions->standard == STANDARD_GL_ES)
     {
         // ESSL outputs
         return SH_ESSL_OUTPUT;
     }
-    else
-    {
-        UNREACHABLE();
-        return ShShaderOutput(0);
-    }
+    UNREACHABLE();
+    return ShShaderOutput(0);
 }
 
 namespace nativegl_gl
@@ -597,6 +602,12 @@ static gl::TextureCaps GenerateTextureFormatCaps(const FunctionsGL *functions,
             for (size_t sampleIndex = 0; sampleIndex < samples.size(); sampleIndex++)
             {
                 if (features.limitMaxMSAASamplesTo4.enabled && samples[sampleIndex] > 4)
+                {
+                    continue;
+                }
+
+                // Supporting MSAA=1 is not required on OpenGL for non-conformant drivers.
+                if (features.disableMSAASampleCount1.enabled && samples[sampleIndex] == 1)
                 {
                     continue;
                 }
@@ -2276,6 +2287,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     bool isVMWare   = IsVMWare(vendor);
     bool hasAMD     = systemInfo.hasAMDGPU();
     bool isMali     = IsARM(vendor);
+    bool isHuaweiMaleoon = IsHuaweiMaleoon(functions);
 
     std::array<int, 3> mesaVersion = {0, 0, 0};
     bool isMesa                    = IsMesa(functions, &mesaVersion);
@@ -2390,6 +2402,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // 4 is a lowest common denominator that is always supported.
     ANGLE_FEATURE_CONDITION(features, limitMaxMSAASamplesTo4,
                             IsAndroid() || (IsApple() && (isIntel || isAMD || isNvidia)));
+    ANGLE_FEATURE_CONDITION(features, disableMSAASampleCount1, isHuaweiMaleoon);
     ANGLE_FEATURE_CONDITION(features, limitMax3dArrayTextureSizeTo1024,
                             isIntelLinuxLessThanKernelVersion5);
 
@@ -2691,7 +2704,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     // BGRA formats do not appear to be accepted by the qualcomm driver despite the extension being
     // exposed.
-    ANGLE_FEATURE_CONDITION(features, bgraTexImageFormatsBroken, IsQualcomm(vendor));
+    ANGLE_FEATURE_CONDITION(features, bgraTexImageFormatsBroken, !isMesa && isQualcomm);
 
     // https://github.com/flutter/flutter/issues/47164
     // https://github.com/flutter/flutter/issues/47804

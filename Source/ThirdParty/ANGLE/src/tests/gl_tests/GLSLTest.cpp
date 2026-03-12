@@ -3843,6 +3843,99 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
+// Test that short circuit doesn't evaluate out of bounds expressions.
+TEST_P(GLSLTest_ES31, ShortCircuitOutOfBoundsAccess)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
+
+    // Note that the uniform doesn't need to be set, and will contain the default value of false.
+    constexpr char kCS[] = R"(#version 310 es
+#extension GL_OES_texture_buffer : require
+layout(local_size_x = 128, local_size_y = 1, local_size_z = 1) in;
+
+uniform bool falseValue;
+uniform uint zero;
+
+layout(binding = 0) readonly buffer Input
+{
+    uint inData[];
+};
+
+layout(binding = 1, std430) writeonly buffer Output
+{
+    uint outData[];
+};
+
+layout(r32ui, binding = 0) uniform highp uimageBuffer image;
+
+void main()
+{
+    outData[0] = falseValue ? inData[123456] : 1u;
+    outData[1] = falseValue ? inData[~zero] : 2u;
+    outData[2] = falseValue ? inData[123456] : 3u;
+    outData[3] = !falseValue ? 4u : inData[~zero];
+    outData[4] = !falseValue ? 5u : imageLoad(image, 1234567).x;
+    outData[5] = falseValue ? imageLoad(image, int(~zero)).x : 6u;
+
+    bool eval6 = falseValue && bool(inData[123456]);
+    bool eval7 = falseValue && bool(inData[~zero]);
+    bool eval8 = !falseValue || bool(inData[123456]);
+    bool eval9 = !falseValue || bool(inData[~zero]);
+    bool eval10 = falseValue && bool(imageLoad(image, 1234567).x);
+    bool eval11 = !falseValue || bool(imageLoad(image, int(~zero)).x);
+
+    outData[6] = eval6 ? 1234u : 7u;
+    outData[7] = eval7 ? 2345u : 8u;
+    outData[8] = eval8 ? 9u : 3456u;
+    outData[9] = eval9 ? 10u : 4567u;
+    outData[10] = eval10 ? 5678u : 11u;
+    outData[11] = eval11 ? 12u : 6789u;
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+
+    GLBuffer input;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, input);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(uint32_t), nullptr, GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, input);
+
+    constexpr std::array<uint32_t, 12> kInitialData = {};
+
+    GLBuffer output;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, output);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kInitialData), kInitialData.data(),
+                 GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, output);
+
+    GLBuffer imageBufferStorage;
+    GLTexture imageBuffer;
+
+    glBindBuffer(GL_TEXTURE_BUFFER, imageBufferStorage);
+    glBufferData(GL_TEXTURE_BUFFER, sizeof(uint32_t), nullptr, GL_STATIC_DRAW);
+
+    glBindTexture(GL_TEXTURE_BUFFER, imageBuffer);
+    glTexBufferEXT(GL_TEXTURE_BUFFER, GL_R32UI, imageBufferStorage);
+    glBindImageTexture(0, imageBuffer, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32UI);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(program);
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    glFinish();
+
+    std::array<uint32_t, 12> readback = {};
+    void *mapped =
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(kInitialData), GL_MAP_READ_BIT);
+    memcpy(readback.data(), mapped, sizeof(kInitialData));
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    for (size_t i = 0; i < kInitialData.size(); ++i)
+    {
+        EXPECT_EQ(readback[i], i + 1) << i;
+    }
+}
+
 // Test that nesting ternary and short-circuitting operators work.
 TEST_P(GLSLTest, NestedTernaryAndShortCircuit)
 {
@@ -21226,6 +21319,82 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Make sure unnamed `out` function parameters are initialized correctly.
+TEST_P(GLSLTest_ES3_InitShaderVariables, UnnamedOutParamInPrototype)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 o;
+void f(out float, out float);
+void main()
+{
+    o = vec4(0.5);
+    // o.g is reset to 0 because of the forceInitShaderVariables feature
+    f(o.r, o.g);
+}
+void f(out float r, out float)
+{
+    r = 1.0;
+}
+)";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 0, 127, 127), 1);
+}
+
+// Same as UnnamedOutParamInPrototype, but with nested calls.
+TEST_P(GLSLTest_ES3_InitShaderVariables, UnnamedOutParamInPrototype2)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 o;
+void f(out float, out float);
+void g(out float a, out float b)
+{
+    f(a, b);
+}
+void main()
+{
+    o = vec4(0.75);
+    // o.g is reset to 0 because of the forceInitShaderVariables feature
+    g(o.r, o.g);
+}
+void f(out float r, out float)
+{
+    r = 0.5;
+}
+)";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 0, 191, 191), 1);
+}
+
+// Same as UnnamedOutParamInPrototype, but with a non-void function.
+TEST_P(GLSLTest_ES3_InitShaderVariables, UnnamedOutParamInPrototype3)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 o;
+float f(out float r, out float)
+{
+    r = 0.75;
+    return 0.25;
+}
+void main()
+{
+    o = vec4(0.5);
+    float z = f(o.r, o.g);
+    o.z = z;
+}
+)";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(191, 0, 63, 127), 1);
+}
+
 // Test that lowp and mediump varyings can be correctly matched between VS and FS.
 TEST_P(GLSLTest, LowpMediumpVarying)
 {
@@ -22267,7 +22436,7 @@ void main()
 )";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -23080,6 +23249,221 @@ void main() {
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests pack/unpack emulation in the shader translator.
+class GLSLTest_ES3_PackUnpackEmulation : public GLSLTest_ES3
+{
+  protected:
+    void testUnsignedInt(GLuint program, uint32_t expect);
+    void testFloat(GLuint program, float r, float g, float b, float a);
+};
+
+void GLSLTest_ES3_PackUnpackEmulation::testUnsignedInt(GLuint program, uint32_t expect)
+{
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32I, 1, 1);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0);
+    EXPECT_EQ(expect, static_cast<uint32_t>(GetFirstIntPixelRedValue()));
+    EXPECT_GL_NO_ERROR();
+}
+
+void GLSLTest_ES3_PackUnpackEmulation::testFloat(GLuint program, float r, float g, float b, float a)
+{
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, 1, 1);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_32F_NEAR(0, 0, r, g, b, a, 1e-6);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Verify correct emulation of packSnorm2x16
+TEST_P(GLSLTest_ES3_PackUnpackEmulation, PackSnorm2x16)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+uniform vec2 u;
+out uvec4 color;
+void main()
+{
+   uint v = packSnorm2x16(u);
+   color = uvec4(v, 0, 0, 0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    glUniform2f(glGetUniformLocation(program, "u"), 4096.0 / 32767.0, -8192.0 / 32767.0);
+    testUnsignedInt(program, 0xE000'1000);
+}
+
+// Verify correct emulation of unpackSnorm2x16
+TEST_P(GLSLTest_ES3_PackUnpackEmulation, UnpackSnorm2x16)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+uniform uint u;
+out vec4 color;
+void main()
+{
+   vec2 v = unpackSnorm2x16(u);
+   color = vec4(v, 0.0, 0.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    glUniform1ui(glGetUniformLocation(program, "u"), 0xE0001000);
+    testFloat(program, 4096.0 / 32767.0, -8192.0 / 32767.0, 0, 0);
+}
+
+// Verify correct emulation of packUnorm2x16
+TEST_P(GLSLTest_ES3_PackUnpackEmulation, PackUnorm2x16)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+uniform vec2 u;
+out uvec4 color;
+void main()
+{
+   uint v = packUnorm2x16(u);
+   color = uvec4(v, 0, 0, 0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    glUniform2f(glGetUniformLocation(program, "u"), 64.0 / 65535.0, 16384.0 / 65535.0);
+    testUnsignedInt(program, 0x4000'0040);
+}
+
+// Verify correct emulation of unpackSnorm2x16
+TEST_P(GLSLTest_ES3_PackUnpackEmulation, UnpackUnorm2x16)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+uniform uint u;
+out vec4 color;
+void main()
+{
+   vec2 v = unpackUnorm2x16(u);
+   color = vec4(v, 0.0, 0.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    glUniform1ui(glGetUniformLocation(program, "u"), 0x4000'0040);
+    testFloat(program, 64.0 / 65535.0, 16384.0 / 65535.0, 0, 0);
+}
+
+// Verify correct emulation of packHalf2x16
+TEST_P(GLSLTest_ES3_PackUnpackEmulation, PackHalf2x16)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+uniform vec2 u;
+out uvec4 color;
+void main()
+{
+    uint v = packHalf2x16(u);
+    color = uvec4(v, 0, 0, 0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    glUniform2f(glGetUniformLocation(program, "u"), 47.03125, -20.6875);
+    testUnsignedInt(program, 0xCD2C'51E1);
+}
+
+// Verify correct emulation of unpackHalf2x16
+TEST_P(GLSLTest_ES3_PackUnpackEmulation, UnpackHalf2x16)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+uniform uint u;
+out vec4 color;
+void main()
+{
+    vec2 v = unpackHalf2x16(u);
+    color = vec4(v, 0.0, 0.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    glUniform1ui(glGetUniformLocation(program, "u"), 0xCD2C'51E1);
+    testFloat(program, 47.03125, -20.6875, 0, 0);
+}
+
+// Regression test for a bug where the translator assumed the last case can be simply pruned because
+// it is no-op.
+TEST_P(GLSLTest_ES3, EmptyLastCaseInSwitch)
+{
+    // Incorrect translation before IR.
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
+
+    constexpr char kFS[] = R"(#version 300 es
+uniform int ui;
+out mediump vec4 color;
+
+void main(void)
+{
+    color = vec4(1, 0, 0, 1);
+
+    int i = ui;
+    switch (i)
+    {
+        default:
+            // This shouldn't run, because `ui` is zero.
+            color = vec4(0, 1, 0, 1);
+            break;
+        case 0:
+            int j;
+            1;
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that if the uniform struct specifier is referenced by non-uniform variables, the
+// sortUniforms() step does not reorder the uniform struct specifier and place it after where it is
+// referenced.
+TEST_P(GLSLTest_ES3, UniformStructSpecifierIsReferencedByNonUniforms)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform struct b{vec2 S;}t;
+struct{b x;};
+out vec4 color;
+void main()
+{
+    color = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_ES32(
@@ -23127,6 +23511,10 @@ ANGLE_INSTANTIATE_TEST_ES31_AND(
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTest_ES3_InitShaderVariables);
 ANGLE_INSTANTIATE_TEST(
     GLSLTest_ES3_InitShaderVariables,
+    ES3_D3D11().enable(Feature::ForceInitShaderVariables),
+    ES3_OPENGL().enable(Feature::ForceInitShaderVariables),
+    ES3_OPENGLES().enable(Feature::ForceInitShaderVariables),
+    ES3_METAL().enable(Feature::ForceInitShaderVariables),
     ES3_VULKAN().enable(Feature::ForceInitShaderVariables),
     ES3_VULKAN().disable(Feature::SupportsSPIRV14).enable(Feature::ForceInitShaderVariables));
 
@@ -23135,3 +23523,12 @@ ANGLE_INSTANTIATE_TEST(
     GLSLTest_ES31_InitShaderVariables,
     ES31_VULKAN().enable(Feature::ForceInitShaderVariables),
     ES31_VULKAN().disable(Feature::SupportsSPIRV14).enable(Feature::ForceInitShaderVariables));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTest_ES3_PackUnpackEmulation);
+ANGLE_INSTANTIATE_TEST(GLSLTest_ES3_PackUnpackEmulation,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_OPENGL().enable(Feature::EmitMaxGlsl400ForTesting),
+                       ES3_OPENGLES(),
+                       ES3_METAL(),
+                       ES3_VULKAN());

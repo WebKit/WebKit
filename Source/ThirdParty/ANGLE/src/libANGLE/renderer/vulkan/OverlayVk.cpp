@@ -63,14 +63,15 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
     constexpr bool kNoRobustInit = false;
 
     // Create the font image.
-    ANGLE_TRY(mFontImage.init(
-        contextVk, gl::TextureType::_2D,
-        VkExtent3D{gl::overlay::kFontGlyphWidth, gl::overlay::kFontGlyphHeight, 1},
-        renderer->getFormat(angle::FormatID::R8_UNORM), 1,
-        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, gl::LevelIndex(0),
-        gl::overlay::kFontMipCount, gl::overlay::kFontCharacters, kNoRobustInit, false));
+    ANGLE_TRY(
+        mFontImage.init(contextVk, gl::TextureType::_2D,
+                        VkExtent3D{gl::overlay::kFontGlyphWidth, gl::overlay::kFontGlyphHeight, 1},
+                        renderer->getFormat(angle::FormatID::R8_UNORM), 1,
+                        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                        gl::LevelIndex(0), gl::overlay::kFontMipCount, gl::overlay::kFontCharacters,
+                        kNoRobustInit, false, vk::TileMemory::Prohibited));
 
-    ANGLE_TRY(contextVk->initImageAllocation(&mFontImage, false, renderer->getMemoryProperties(),
+    ANGLE_TRY(contextVk->initImageAllocation(&mFontImage, false,
                                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                                              vk::MemoryAllocationType::FontImage));
 

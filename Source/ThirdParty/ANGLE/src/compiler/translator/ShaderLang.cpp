@@ -16,6 +16,8 @@
 #include "GLSLANG/ShaderLang.h"
 
 #include "common/PackedEnums.h"
+#include "common/span.h"
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/InitializeGlobals.h"
 #include "compiler/translator/length_limits.h"
@@ -255,9 +257,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxCullDistances                = 8;
     resources->MaxCombinedClipAndCullDistances = 8;
 
-    // Disable highp precision in fragment shader by default.
-    resources->FragmentPrecisionHigh = 0;
-
     // GLSL ES 3.0 constants.
     resources->MaxVertexOutputVectors  = 16;
     resources->MaxFragmentInputVectors = 15;
@@ -324,7 +323,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxShaderStorageBufferBindings = 4;
 
     resources->MaxGeometryUniformComponents     = 1024;
-    resources->MaxGeometryUniformBlocks         = 12;
     resources->MaxGeometryInputComponents       = 64;
     resources->MaxGeometryOutputComponents      = 64;
     resources->MaxGeometryOutputVertices        = 256;
@@ -332,7 +330,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxGeometryTextureImageUnits     = 16;
     resources->MaxGeometryAtomicCounterBuffers  = 0;
     resources->MaxGeometryAtomicCounters        = 0;
-    resources->MaxGeometryShaderStorageBlocks   = 0;
     resources->MaxGeometryShaderInvocations     = 32;
     resources->MaxGeometryImageUniforms         = 0;
 
@@ -356,8 +353,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxTessEvaluationImageUniforms        = 0;
     resources->MaxTessEvaluationAtomicCounters       = 0;
     resources->MaxTessEvaluationAtomicCounterBuffers = 0;
-
-    resources->SubPixelBits = 8;
 
     resources->MaxSamples = 4;
 }
@@ -432,7 +427,9 @@ bool Compile(const ShHandle handle,
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
 
-    return compiler->compile(shaderStrings, numStrings, compileOptions);
+    // SAFETY: required from caller across this exposed API.
+    return compiler->compile(ANGLE_UNSAFE_BUFFERS(angle::Span(shaderStrings, numStrings)),
+                             compileOptions);
 }
 
 void ClearResults(const ShHandle handle)
@@ -501,7 +498,10 @@ bool GetShaderBinary(const ShHandle handle,
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
 
-    return compiler->getShaderBinary(handle, shaderStrings, numStrings, compileOptions, binaryOut);
+    // SAFETY: required from caller across this exposed API.
+    return compiler->getShaderBinary(handle,
+                                     ANGLE_UNSAFE_BUFFERS(angle::Span(shaderStrings, numStrings)),
+                                     compileOptions, binaryOut);
 }
 
 const std::map<std::string, std::string> *GetNameHashingMap(const ShHandle handle)

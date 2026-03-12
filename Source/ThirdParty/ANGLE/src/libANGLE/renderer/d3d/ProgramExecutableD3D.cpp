@@ -13,6 +13,7 @@
 #include "libANGLE/renderer/d3d/ProgramExecutableD3D.h"
 
 #include "common/bitset_utils.h"
+#include "common/span.h"
 #include "common/string_utils.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/FramebufferAttachment.h"
@@ -485,8 +486,7 @@ bool ProgramExecutableD3D::load(const gl::Context *context,
     reset();
 
     DeviceIdentifier binaryDeviceIdentifier = {};
-    stream->readBytes(reinterpret_cast<unsigned char *>(&binaryDeviceIdentifier),
-                      sizeof(DeviceIdentifier));
+    stream->readBytes(angle::byte_span_from_ref(binaryDeviceIdentifier));
 
     DeviceIdentifier identifier = renderer->getAdapterIdentifier();
     if (memcmp(&identifier, &binaryDeviceIdentifier, sizeof(DeviceIdentifier)) != 0)
@@ -649,8 +649,7 @@ bool ProgramExecutableD3D::load(const gl::Context *context,
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         stream->readString(&mShaderHLSL[shaderType]);
-        stream->readBytes(reinterpret_cast<unsigned char *>(&mShaderWorkarounds[shaderType]),
-                          sizeof(CompilerWorkaroundsD3D));
+        stream->readBytes(angle::byte_span_from_ref(mShaderWorkarounds[shaderType]));
     }
 
     stream->readEnum(&mFragDepthUsage);
@@ -682,9 +681,7 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
                                                                 RendererD3D *renderer,
                                                                 gl::BinaryInputStream *stream)
 {
-    gl::InfoLog &infoLog        = mExecutable->getInfoLog();
-    const unsigned char *binary = reinterpret_cast<const unsigned char *>(stream->data());
-
+    gl::InfoLog &infoLog = mExecutable->getInfoLog();
     bool separateAttribs = mExecutable->getTransformFeedbackBufferMode() == GL_SEPARATE_ATTRIBS;
 
     size_t vertexShaderCount = stream->readInt<size_t>();
@@ -699,8 +696,7 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
         }
 
         size_t vertexShaderSize                   = stream->readInt<size_t>();
-        const unsigned char *vertexShaderFunction = binary + stream->offset();
-
+        const unsigned char *vertexShaderFunction = stream->remainingSpan().data();
         ShaderExecutableD3D *shaderExecutable = nullptr;
 
         ANGLE_TRY(renderer->loadExecutable(contextD3D, vertexShaderFunction, vertexShaderSize,
@@ -746,7 +742,7 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
         }
 
         size_t pixelShaderSize                   = stream->readInt<size_t>();
-        const unsigned char *pixelShaderFunction = binary + stream->offset();
+        const unsigned char *pixelShaderFunction = stream->remainingSpan().data();
         ShaderExecutableD3D *shaderExecutable    = nullptr;
 
         ANGLE_TRY(renderer->loadExecutable(contextD3D, pixelShaderFunction, pixelShaderSize,
@@ -774,9 +770,8 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
             continue;
         }
 
-        const unsigned char *geometryShaderFunction = binary + stream->offset();
-
-        ShaderExecutableD3D *geometryExecutable = nullptr;
+        const unsigned char *geometryShaderFunction = stream->remainingSpan().data();
+        ShaderExecutableD3D *geometryExecutable     = nullptr;
         ANGLE_TRY(renderer->loadExecutable(contextD3D, geometryShaderFunction, geometryShaderSize,
                                            gl::ShaderType::Geometry, mStreamOutVaryings,
                                            separateAttribs, &geometryExecutable));
@@ -817,8 +812,7 @@ void ProgramExecutableD3D::save(const gl::Context *context,
     // When we load the binary again later, we can validate the device identifier before trying to
     // compile any HLSL
     DeviceIdentifier binaryIdentifier = renderer->getAdapterIdentifier();
-    stream->writeBytes(reinterpret_cast<unsigned char *>(&binaryIdentifier),
-                       sizeof(DeviceIdentifier));
+    stream->writeBytes(angle::byte_span_from_ref(binaryIdentifier));
 
     stream->writeInt(ANGLE_COMPILE_OPTIMIZATION_LEVEL);
 
@@ -909,8 +903,7 @@ void ProgramExecutableD3D::save(const gl::Context *context,
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         stream->writeString(mShaderHLSL[shaderType]);
-        stream->writeBytes(reinterpret_cast<unsigned char *>(&mShaderWorkarounds[shaderType]),
-                           sizeof(CompilerWorkaroundsD3D));
+        stream->writeBytes(angle::byte_span_from_ref(mShaderWorkarounds[shaderType]));
     }
 
     stream->writeEnum(mFragDepthUsage);
@@ -954,7 +947,7 @@ void ProgramExecutableD3D::save(const gl::Context *context,
         stream->writeInt(vertexShaderSize);
 
         const uint8_t *vertexBlob = vertexExecutable->shaderExecutable()->getFunction();
-        stream->writeBytes(vertexBlob, vertexShaderSize);
+        stream->writeBytes(angle::Span(vertexBlob, vertexShaderSize));
     }
 
     stream->writeInt(mPixelExecutables.size());
@@ -982,7 +975,7 @@ void ProgramExecutableD3D::save(const gl::Context *context,
         stream->writeInt(pixelShaderSize);
 
         const uint8_t *pixelBlob = pixelExecutable->shaderExecutable()->getFunction();
-        stream->writeBytes(pixelBlob, pixelShaderSize);
+        stream->writeBytes(angle::Span(pixelBlob, pixelShaderSize));
     }
 
     for (auto const &geometryExecutable : mGeometryExecutables)
@@ -995,7 +988,7 @@ void ProgramExecutableD3D::save(const gl::Context *context,
 
         size_t geometryShaderSize = geometryExecutable->getLength();
         stream->writeInt(geometryShaderSize);
-        stream->writeBytes(geometryExecutable->getFunction(), geometryShaderSize);
+        stream->writeBytes(angle::Span(geometryExecutable->getFunction(), geometryShaderSize));
     }
 
     for (const gl::ShaderType shaderType : {gl::ShaderType::Vertex, gl::ShaderType::Fragment})

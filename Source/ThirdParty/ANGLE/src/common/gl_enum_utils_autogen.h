@@ -197,7 +197,6 @@ enum class GLESEnum
     VertexAttribPointerType,
     VertexAttribPropertyARB,
     VertexAttribType,
-    VertexBufferObjectUsage,
     VertexPointerType,
     VertexProvokingMode,
     VertexShaderTextureUnitParameter,

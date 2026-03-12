@@ -47,11 +47,13 @@ void main()
 
     vec2 pos = vec2(0.);
     switch (gl_VertexID) {
-        case 0: pos = vec2(-1., -1.); break;
-        case 1: pos = vec2(3., -1.); break;
-        case 2: pos = vec2(-1., 3.); break;
+        // The tests often include 1 and 3, reduce the chance of checking for those values hitting
+        // the values for position by using 1.1 and 3.1 instead of 1.0 and 3.0.
+        case 0: pos = vec2(-1.5, -1.5); break;
+        case 1: pos = vec2(3.5, -1.5); break;
+        case 2: pos = vec2(-1.5, 3.5); break;
     };
-    gl_Position = vec4(pos, 0., 1.);
+    gl_Position = vec4(pos, 0.1, 1.1);
 })";
 
         std::stringstream fsSrc;
@@ -101,7 +103,8 @@ void main()
         if (IsOpenGL())
         {
             EXPECT_TRUE(getCompiledShader(GL_VERTEX_SHADER).verifyInTranslatedSource(expect))
-                << expect;
+                << '"' << expect << "\" should have been in:\n"
+                << getCompiledShader(GL_VERTEX_SHADER).getTranslatedSource();
         }
     }
     void verifyIsNotInTranslation(const char *expect)
@@ -109,7 +112,8 @@ void main()
         if (IsOpenGL())
         {
             EXPECT_TRUE(getCompiledShader(GL_VERTEX_SHADER).verifyNotInTranslatedSource(expect))
-                << expect;
+                << '"' << expect << "\" should not have been in:\n"
+                << getCompiledShader(GL_VERTEX_SHADER).getTranslatedSource();
         }
     }
 };
@@ -125,6 +129,7 @@ TEST_P(GLSLConstantFoldingTest, IntegerAdd)
 {
     test("int", "const int c = 1124 + 5", "v == 1129");
     verifyIsInTranslation(" 1129");
+    verifyIsNotInTranslation("1124");
 }
 
 // Constant fold integer subtraction
@@ -132,6 +137,7 @@ TEST_P(GLSLConstantFoldingTest, IntegerSub)
 {
     test("int", "const int c = 1124 - 5", "v == 1119");
     verifyIsInTranslation(" 1119");
+    verifyIsNotInTranslation("1124");
 }
 
 // Constant fold integer multiplication
@@ -139,6 +145,7 @@ TEST_P(GLSLConstantFoldingTest, IntegerMul)
 {
     test("int", "const int c = 1124 * 5", "v == 5620");
     verifyIsInTranslation(" 5620");
+    verifyIsNotInTranslation("1124");
 }
 
 // Constant fold integer division
@@ -147,6 +154,7 @@ TEST_P(GLSLConstantFoldingTest, IntegerDiv)
     // Rounding mode of division is undefined in the spec but ANGLE can be expected to round down.
     test("int", "const int c = 1124 / 5", "v == 224");
     verifyIsInTranslation(" 224");
+    verifyIsNotInTranslation("1124");
 }
 
 // Constant fold integer modulus
@@ -154,6 +162,7 @@ TEST_P(GLSLConstantFoldingTest, IntegerMod)
 {
     test("int", "const int c = 1124 % 5", "v == 4");
     verifyIsInTranslation(" 4");
+    verifyIsNotInTranslation("1124");
 }
 
 // Constant fold cross()
@@ -162,6 +171,8 @@ TEST_P(GLSLConstantFoldingTest, Cross)
     test("vec3", "const vec3 c = cross(vec3(1., 1., 1.), vec3(1., -1., 1.))",
          "all(equal(v, vec3(2., 0., -2.)))");
     verifyIsInTranslation("-2.0");
+    verifyIsNotInTranslation("cross");
+    verifyIsNotInTranslation("-1.0");
 }
 
 // Constant fold inverse()
@@ -170,6 +181,8 @@ TEST_P(GLSLConstantFoldingTest, Inverse2x2)
     test("mat2", "const mat2 c = inverse(mat2(2., 3., 5., 7.))",
          "all(equal(v[0], vec2(-7., 3.))) && all(equal(v[1], vec2(5., -2.)))");
     verifyIsInTranslation("-7.0");
+    verifyIsNotInTranslation("5.0, 7.0");
+    verifyIsNotInTranslation("inverse");
 }
 
 // Constant fold inverse()
@@ -183,6 +196,8 @@ TEST_P(GLSLConstantFoldingTest, Inverse3x3)
          "all(lessThan(abs(v[2] - vec3(29.*37.-23.*41., 11.*41.-13.*37., 13.*23.-11.*29.)/680.), "
          "vec3(0.000001)))");
     verifyIsInTranslation("0.0352");
+    verifyIsNotInTranslation("29.0");
+    verifyIsNotInTranslation("inverse");
 }
 
 // Constant fold inverse()
@@ -198,6 +213,8 @@ TEST_P(GLSLConstantFoldingTest, Inverse4x4)
          "all(lessThan(abs(v[2] - vec4(425., -330., 129., -76.)/630.), vec4(0.000001))) && "
          "all(lessThan(abs(v[3] - vec4(-180., 225., -108., 27.)/630.), vec4(0.000001)))");
     verifyIsInTranslation("0.3412");
+    verifyIsNotInTranslation("53.0");
+    verifyIsNotInTranslation("inverse");
 }
 
 // Constant fold determinant()
@@ -205,6 +222,8 @@ TEST_P(GLSLConstantFoldingTest, Determinant2x2)
 {
     test("float", "const float c = determinant(mat2(2., 3., 5., 7.))", "v == -1.");
     verifyIsInTranslation("-1.0");
+    verifyIsNotInTranslation("7.0");
+    verifyIsNotInTranslation("determinant");
 }
 
 // Constant fold determinant()
@@ -213,6 +232,8 @@ TEST_P(GLSLConstantFoldingTest, Determinant3x3)
     test("float", "const float c = determinant(mat3(11., 13., 19., 23., 29., 31., 37., 41., 43.))",
          "v == -680.");
     verifyIsInTranslation("-680.");
+    verifyIsNotInTranslation("31.0");
+    verifyIsNotInTranslation("determinant");
 }
 
 // Constant fold determinant()
@@ -225,6 +246,8 @@ TEST_P(GLSLConstantFoldingTest, Determinant4x4)
          "79., 83., 89., 97.))",
          "v == -2520.");
     verifyIsInTranslation("-2520.0");
+    verifyIsNotInTranslation("71.0");
+    verifyIsNotInTranslation("determinant");
 }
 
 // Constant fold transpose()
@@ -235,6 +258,8 @@ TEST_P(GLSLConstantFoldingTest, Transpose3x3)
          "all(lessThan(abs(v[1] - vec3(13., 29., 41.)), vec3(0.000001))) && "
          "all(lessThan(abs(v[2] - vec3(19., 31., 43.)), vec3(0.000001)))");
     verifyIsInTranslation("11.0, 23.0");
+    verifyIsNotInTranslation("11.0, 13.0");
+    verifyIsNotInTranslation("transpose");
 }
 
 // 0xFFFFFFFF as int should evaluate to -1.
@@ -341,6 +366,10 @@ const S s1 = S(nested(0.), 2.);
 const S s2 = S(nested(0.), 3.);
 const int c = s1 == s2 ? 1 : 0;)",
          "!bool(v)");
+
+    verifyIsNotInTranslation("2.0");
+    verifyIsNotInTranslation("3.0");
+    verifyIsNotInTranslation("==");
 }
 
 // Constant fold struct comparison when structs are identical
@@ -359,6 +388,10 @@ const S s1 = S(nested(0.), 2., 3);
 const S s2 = S(nested(0.), 2., 3);
 const int c = s1 == s2 ? 1 : 0;)",
          "bool(v)");
+
+    verifyIsNotInTranslation("2.0");
+    verifyIsNotInTranslation("3.0");
+    verifyIsNotInTranslation("==");
 }
 
 // Constant fold indexing of a non-square matrix
@@ -378,6 +411,8 @@ TEST_P(GLSLConstantFoldingTest, NonSquareOuterProduct)
          "all(equal(v[1], vec2(14., 21.))) &&"
          "all(equal(v[2], vec2(22., 33.)))");
     verifyIsInTranslation("15.0");
+    verifyIsNotInTranslation("7.0");
+    verifyIsNotInTranslation("outerProduct");
 }
 
 // Constant fold shift left with different non-matching signedness
@@ -385,6 +420,12 @@ TEST_P(GLSLConstantFoldingTest, ShiftLeftMismatchingSignedness)
 {
     test("uint", "const uint c = 0xFFFFFFFFu << 31", "v == 0x80000000u");
     verifyIsInTranslation("2147483648");
+    if (!IsOpenGLES())
+    {
+        // Do not check with GLES, because `#version 310 es` would match this.
+        verifyIsNotInTranslation("31");
+    }
+    verifyIsNotInTranslation("<<");
 }
 
 // Constant fold shift right with different non-matching signedness
@@ -392,6 +433,8 @@ TEST_P(GLSLConstantFoldingTest, ShiftRightMismatchingSignedness)
 {
     test("uint", "const uint c = 0xFFFFFFFFu >> 29", "v == 0x7u");
     verifyIsInTranslation("7");
+    verifyIsNotInTranslation("29");
+    verifyIsNotInTranslation(">>");
 }
 
 // Constant fold shift right, expecting sign extension
@@ -399,13 +442,17 @@ TEST_P(GLSLConstantFoldingTest, ShiftRightSignExtension)
 {
     test("int", "const int c = 0x8FFFE000 >> 6", "v == 0xFE3FFF80");
     verifyIsInTranslation("29360256");
+    verifyIsNotInTranslation(" 6");
+    verifyIsNotInTranslation(">>");
 }
 
 // Constant fold shift left, such that the number turns from positive to negative
 TEST_P(GLSLConstantFoldingTest, ShiftLeftChangeSign)
 {
-    test("int", "const int c = 0x1FFFFFFF << 3", "v == 0xFFFFFFF8");
-    verifyIsInTranslation("-8");
+    test("int", "const int c = 0x1FFFFFFF << 7", "v == 0xFFFFFF80");
+    verifyIsInTranslation("-128");
+    verifyIsNotInTranslation(" 7");
+    verifyIsNotInTranslation("<<");
 }
 
 // Constant fold divide minimum integer by -1.
@@ -429,6 +476,7 @@ TEST_P(GLSLConstantFoldingTest, UnsignedIntegerAddOverflow)
 {
     test("uint", "const uint c = 0xFFFFFFFFu + 43u", "v == 42u");
     verifyIsInTranslation("42");
+    verifyIsNotInTranslation("43");
 }
 
 // Constant fold signed addition with overflow
@@ -525,6 +573,7 @@ TEST_P(GLSLConstantFoldingTest, SignedIntegerShiftRightZero)
 TEST_P(GLSLConstantFoldingTest, IsInfTrue)
 {
     test("int", "const int c = isinf(1.0e2048) ? 1 : 0", "bool(v)");
+    verifyIsNotInTranslation("isinf");
 }
 
 // Test that floats that are too small to be represented get flushed to zero.
@@ -543,6 +592,7 @@ TEST_P(GLSLConstantFoldingTest, TooSmallFloat)
 TEST_P(GLSLConstantFoldingTest, RadiansInfinity)
 {
     test("float", "const float c = radians(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("radians");
 }
 
 // IEEE 754 dictates that behavior of infinity is derived from limiting cases of real arithmetic.
@@ -552,6 +602,7 @@ TEST_P(GLSLConstantFoldingTest, RadiansInfinity)
 TEST_P(GLSLConstantFoldingTest, DegreesInfinity)
 {
     test("float", "const float c = degrees(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("degress");
 }
 
 // IEEE 754 dictates that sinh(inf) = inf.
@@ -560,6 +611,7 @@ TEST_P(GLSLConstantFoldingTest, DegreesInfinity)
 TEST_P(GLSLConstantFoldingTest, SinhInfinity)
 {
     test("float", "const float c = sinh(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("sinh");
 }
 
 // IEEE 754 dictates that sinh(-inf) = -inf.
@@ -568,6 +620,7 @@ TEST_P(GLSLConstantFoldingTest, SinhInfinity)
 TEST_P(GLSLConstantFoldingTest, SinhNegativeInfinity)
 {
     test("float", "const float c = sinh(-1.0e2048)", "isinf(v) && v < 0.");
+    verifyIsNotInTranslation("sinh");
 }
 
 // IEEE 754 dictates that cosh(inf) = inf.
@@ -576,6 +629,7 @@ TEST_P(GLSLConstantFoldingTest, SinhNegativeInfinity)
 TEST_P(GLSLConstantFoldingTest, CoshInfinity)
 {
     test("float", "const float c = cosh(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("cosh");
 }
 
 // IEEE 754 dictates that cosh(-inf) = inf.
@@ -584,6 +638,7 @@ TEST_P(GLSLConstantFoldingTest, CoshInfinity)
 TEST_P(GLSLConstantFoldingTest, CoshNegativeInfinity)
 {
     test("float", "const float c = cosh(-1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("cosh");
 }
 
 // IEEE 754 dictates that asinh(inf) = inf.
@@ -592,6 +647,7 @@ TEST_P(GLSLConstantFoldingTest, CoshNegativeInfinity)
 TEST_P(GLSLConstantFoldingTest, AsinhInfinity)
 {
     test("float", "const float c = asinh(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("asinh");
 }
 
 // IEEE 754 dictates that asinh(-inf) = -inf.
@@ -600,6 +656,7 @@ TEST_P(GLSLConstantFoldingTest, AsinhInfinity)
 TEST_P(GLSLConstantFoldingTest, AsinhNegativeInfinity)
 {
     test("float", "const float c = asinh(-1.0e2048)", "isinf(v) && v < 0.");
+    verifyIsNotInTranslation("asinh");
 }
 
 // IEEE 754 dictates that acosh(inf) = inf.
@@ -608,6 +665,7 @@ TEST_P(GLSLConstantFoldingTest, AsinhNegativeInfinity)
 TEST_P(GLSLConstantFoldingTest, AcoshInfinity)
 {
     test("float", "const float c = acosh(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("acosh");
 }
 
 // IEEE 754 dictates that pow or powr(0, inf) = 0.
@@ -616,6 +674,7 @@ TEST_P(GLSLConstantFoldingTest, AcoshInfinity)
 TEST_P(GLSLConstantFoldingTest, PowInfinity)
 {
     test("float", "const float c = pow(0.0, 1.0e2048)", "v == 0.");
+    verifyIsNotInTranslation("pow");
 }
 
 // IEEE 754 dictates that exp(inf) = inf.
@@ -624,6 +683,7 @@ TEST_P(GLSLConstantFoldingTest, PowInfinity)
 TEST_P(GLSLConstantFoldingTest, ExpInfinity)
 {
     test("float", "const float c = exp(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("exp");
 }
 
 // IEEE 754 dictates that exp(-inf) = 0.
@@ -632,6 +692,7 @@ TEST_P(GLSLConstantFoldingTest, ExpInfinity)
 TEST_P(GLSLConstantFoldingTest, ExpNegativeInfinity)
 {
     test("float", "const float c = exp(-1.0e2048)", "v == 0.");
+    verifyIsNotInTranslation("exp");
 }
 
 // IEEE 754 dictates that log(inf) = inf.
@@ -640,6 +701,7 @@ TEST_P(GLSLConstantFoldingTest, ExpNegativeInfinity)
 TEST_P(GLSLConstantFoldingTest, LogInfinity)
 {
     test("float", "const float c = log(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("log");
 }
 
 // IEEE 754 dictates that exp2(inf) = inf.
@@ -648,6 +710,7 @@ TEST_P(GLSLConstantFoldingTest, LogInfinity)
 TEST_P(GLSLConstantFoldingTest, Exp2Infinity)
 {
     test("float", "const float c = exp2(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("exp2");
 }
 
 // IEEE 754 dictates that exp2(-inf) = 0.
@@ -656,6 +719,7 @@ TEST_P(GLSLConstantFoldingTest, Exp2Infinity)
 TEST_P(GLSLConstantFoldingTest, Exp2NegativeInfinity)
 {
     test("float", "const float c = exp2(-1.0e2048)", "v == 0.");
+    verifyIsNotInTranslation("exp2");
 }
 
 // IEEE 754 dictates that log2(inf) = inf.
@@ -664,6 +728,7 @@ TEST_P(GLSLConstantFoldingTest, Exp2NegativeInfinity)
 TEST_P(GLSLConstantFoldingTest, Log2Infinity)
 {
     test("float", "const float c = log2(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("log2");
 }
 
 // IEEE 754 dictates that behavior of infinity is derived from limiting cases of real arithmetic.
@@ -673,6 +738,7 @@ TEST_P(GLSLConstantFoldingTest, Log2Infinity)
 TEST_P(GLSLConstantFoldingTest, SqrtInfinity)
 {
     test("float", "const float c = sqrt(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("sqrt");
 }
 
 // IEEE 754 dictates that rSqrt(inf) = 0
@@ -681,6 +747,7 @@ TEST_P(GLSLConstantFoldingTest, SqrtInfinity)
 TEST_P(GLSLConstantFoldingTest, InversesqrtInfinity)
 {
     test("float", "const float c = inversesqrt(1.0e2048)", "v == 0.");
+    verifyIsNotInTranslation("inversesqrt");
 }
 
 // IEEE 754 dictates that behavior of infinity is derived from limiting cases of real arithmetic.
@@ -690,6 +757,7 @@ TEST_P(GLSLConstantFoldingTest, InversesqrtInfinity)
 TEST_P(GLSLConstantFoldingTest, LengthInfinity)
 {
     test("float", "const float c = length(1.0e2048)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("length");
 }
 
 // IEEE 754 dictates that behavior of infinity is derived from limiting cases of real arithmetic.
@@ -699,6 +767,7 @@ TEST_P(GLSLConstantFoldingTest, LengthInfinity)
 TEST_P(GLSLConstantFoldingTest, DotInfinity)
 {
     test("float", "const float c = dot(1.0e2048, 1.)", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("dot");
 }
 
 // IEEE 754 dictates that behavior of infinity is derived from limiting cases of real arithmetic.
@@ -708,6 +777,7 @@ TEST_P(GLSLConstantFoldingTest, DotInfinity)
 TEST_P(GLSLConstantFoldingTest, DotInfinity2)
 {
     test("float", "const float c = dot(vec2(1.0e2048, -1.), vec2(1.))", "isinf(v) && v > 0.");
+    verifyIsNotInTranslation("dot");
 }
 
 // Faceforward behavior with infinity as a parameter can be derived from dot().
@@ -716,6 +786,7 @@ TEST_P(GLSLConstantFoldingTest, DotInfinity2)
 TEST_P(GLSLConstantFoldingTest, FaceForwardInfinity)
 {
     test("float", "const float c = faceforward(4., 1.0e2048, 1.)", "v == -4.");
+    verifyIsNotInTranslation("faceforward");
 }
 
 // Faceforward behavior with infinity as a parameter can be derived from dot().
@@ -725,6 +796,7 @@ TEST_P(GLSLConstantFoldingTest, FaceForwardInfinity2)
 {
     test("float", "const float c = faceforward(vec2(4.), vec2(1.0e2048, -1.), vec2(1.)).x",
          "v == -4.");
+    verifyIsNotInTranslation("faceforward");
 }
 
 // Test that infinity - finite value evaluates to infinity.
@@ -775,6 +847,7 @@ TEST_P(GLSLConstantFoldingTest, InfinityMultipliedByNegativeInfinity)
 TEST_P(GLSLConstantFoldingTest, DivideByNegativeZero)
 {
     test("float", "const float c = 1. / (-0.)", "isinf(v) && v < 0.");
+    verifyIsNotInTranslation("-0.0");
 }
 
 // Test that infinity divided by zero evaluates to infinity.
@@ -806,12 +879,16 @@ TEST_P(GLSLConstantFoldingTest_ES31, UnsignedBitfieldExtract)
 {
     test("uint", "const uint c = bitfieldExtract(0x00110000u, 16, 5)", "v == 0x11u");
     verifyIsInTranslation("17");
+    verifyIsNotInTranslation("16");
+    verifyIsNotInTranslation("bitfieldExtract");
 }
 
 // Test that unsigned bitfieldExtract to extract 32 bits is folded correctly.
 TEST_P(GLSLConstantFoldingTest_ES31, UnsignedBitfieldExtract32Bits)
 {
     test("uint", "const uint c = bitfieldExtract(0xFF0000FFu, 0, 32)", "v == 0xFF0000FFu");
+    verifyIsNotInTranslation("32");
+    verifyIsNotInTranslation("bitfieldExtract");
 }
 
 // Test that signed bitfieldExtract is folded correctly. The higher bits should be set to 1 if the
@@ -820,6 +897,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, SignedBitfieldExtract)
 {
     test("int", "const int c = bitfieldExtract(0x00110000, 16, 5)", "v == -15");
     verifyIsInTranslation("-15");
+    verifyIsNotInTranslation("16");
+    verifyIsNotInTranslation("bitfieldExtract");
 }
 
 // Test that bitfieldInsert is folded correctly.
@@ -827,6 +906,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, BitfieldInsert)
 {
     test("uint", "const uint c = bitfieldInsert(0x04501701u, 0x11u, 8, 5)", "v == 0x04501101u");
     verifyIsInTranslation("72356097");
+    verifyIsNotInTranslation(" 8");
+    verifyIsNotInTranslation("bitfieldInsert");
 }
 
 // Test that bitfieldInsert to insert 32 bits is folded correctly.
@@ -834,6 +915,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, BitfieldInsert32Bits)
 {
     test("uint", "const uint c = bitfieldInsert(0xFF0000FFu, 0x11u, 0, 32)", "v == 0x11u");
     verifyIsInTranslation("17");
+    verifyIsNotInTranslation("32");
+    verifyIsNotInTranslation("bitfieldInsert");
 }
 
 // Test that bitfieldReverse is folded correctly.
@@ -841,6 +924,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, BitfieldReverse)
 {
     test("uint", "const uint c = bitfieldReverse((1u << 4u) | (1u << 7u))", "v == 0x9000000u");
     verifyIsInTranslation("150994944");
+    verifyIsNotInTranslation(" 7");
+    verifyIsNotInTranslation("bitfieldReverse");
 }
 
 // Test that bitCount is folded correctly.
@@ -848,6 +933,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, BitCount)
 {
     test("int", "const int c = bitCount(0x17103121u)", "v == 10");
     verifyIsInTranslation("10");
+    verifyIsNotInTranslation("386937121");
+    verifyIsNotInTranslation("bitCount");
 }
 
 // Test that findLSB is folded correctly.
@@ -855,6 +942,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, FindLSB)
 {
     test("int", "const int c = findLSB(0x80010000u)", "v == 16");
     verifyIsInTranslation("16");
+    verifyIsNotInTranslation("2147549184");
+    verifyIsNotInTranslation("findLSB");
 }
 
 // Test that findLSB is folded correctly when the operand is zero.
@@ -862,6 +951,7 @@ TEST_P(GLSLConstantFoldingTest_ES31, FindLSBZero)
 {
     test("int", "const int c = findLSB(0u)", "v == -1");
     verifyIsInTranslation("-1");
+    verifyIsNotInTranslation("findLSB");
 }
 
 // Test that findMSB is folded correctly.
@@ -869,6 +959,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, FindMSB)
 {
     test("int", "const int c = findMSB(0x01000008u)", "v == 24");
     verifyIsInTranslation("24");
+    verifyIsNotInTranslation("16777224");
+    verifyIsNotInTranslation("findMSB");
 }
 
 // Test that findMSB is folded correctly when the operand is zero.
@@ -876,6 +968,7 @@ TEST_P(GLSLConstantFoldingTest_ES31, FindMSBZero)
 {
     test("int", "const int c = findMSB(0u)", "v == -1");
     verifyIsInTranslation("-1");
+    verifyIsNotInTranslation("findMSB");
 }
 
 // Test that findMSB is folded correctly for a negative integer.
@@ -884,18 +977,22 @@ TEST_P(GLSLConstantFoldingTest_ES31, FindMSBNegativeInt)
 {
     test("int", "const int c = findMSB(-8)", "v == 2");
     verifyIsInTranslation("2");
+    verifyIsNotInTranslation("-8");
+    verifyIsNotInTranslation("findMSB");
 }
 
 // Test that findMSB is folded correctly for -1.
 TEST_P(GLSLConstantFoldingTest_ES31, FindMSBMinusOne)
 {
     test("int", "const int c = findMSB(-1)", "v == -1");
+    verifyIsNotInTranslation("findMSB");
 }
 
 // Test that packUnorm4x8 is folded correctly for a vector of zeroes.
 TEST_P(GLSLConstantFoldingTest_ES31, PackUnorm4x8Zero)
 {
     test("uint", "const uint c = packUnorm4x8(vec4(0.))", "v == 0u");
+    verifyIsNotInTranslation("packUnorm4x8");
 }
 
 // Test that packUnorm4x8 is folded correctly for a vector of ones.
@@ -903,12 +1000,14 @@ TEST_P(GLSLConstantFoldingTest_ES31, PackUnorm4x8One)
 {
     test("uint", "const uint c = packUnorm4x8(vec4(1.))", "v == 0xFFFFFFFFu");
     verifyIsInTranslation("4294967295");
+    verifyIsNotInTranslation("packUnorm4x8");
 }
 
 // Test that packSnorm4x8 is folded correctly for a vector of zeroes.
 TEST_P(GLSLConstantFoldingTest_ES31, PackSnorm4x8Zero)
 {
     test("uint", "const uint c = packSnorm4x8(vec4(0.))", "v == 0u");
+    verifyIsNotInTranslation("packSnorm4x8");
 }
 
 // Test that packSnorm4x8 is folded correctly for a vector of ones.
@@ -916,6 +1015,7 @@ TEST_P(GLSLConstantFoldingTest_ES31, PackSnorm4x8One)
 {
     test("uint", "const uint c = packSnorm4x8(vec4(1.))", "v == 0x7F7F7F7Fu");
     verifyIsInTranslation("2139062143");
+    verifyIsNotInTranslation("packSnorm4x8");
 }
 
 // Test that packSnorm4x8 is folded correctly for a vector of minus ones.
@@ -923,6 +1023,7 @@ TEST_P(GLSLConstantFoldingTest_ES31, PackSnorm4x8MinusOne)
 {
     test("uint", "const uint c = packSnorm4x8(vec4(-1.))", "v == 0x81818181u");
     verifyIsInTranslation("2172748161");
+    verifyIsNotInTranslation("packSnorm4x8");
 }
 
 // Test that unpackSnorm4x8 is folded correctly when it needs to clamp the result.
@@ -930,6 +1031,7 @@ TEST_P(GLSLConstantFoldingTest_ES31, UnpackSnorm4x8Clamp)
 {
     test("float", "const float c = unpackSnorm4x8(0x00000080u).x", "v == -1.");
     verifyIsInTranslation("-1.0");
+    verifyIsNotInTranslation("packSnorm4x8");
 }
 
 // Test that unpackUnorm4x8 is folded correctly.
@@ -937,12 +1039,16 @@ TEST_P(GLSLConstantFoldingTest_ES31, UnpackUnorm4x8)
 {
     test("float", "const float c = unpackUnorm4x8(0x007bbeefu).z", "abs(v - 123./255.) < 0.000001");
     verifyIsInTranslation("0.48235");
+    verifyIsNotInTranslation("8109807");
+    verifyIsNotInTranslation("packUnorm4x8");
 }
 
 // Test that ldexp is folded correctly.
 TEST_P(GLSLConstantFoldingTest_ES31, Ldexp)
 {
     test("float", "const float c = ldexp(0.625, 1)", "v == 1.25");
+    verifyIsNotInTranslation("0.625");
+    verifyIsNotInTranslation("ldexp");
 }
 
 // Constant fold ternary
@@ -994,6 +1100,12 @@ TEST_P(GLSLConstantFoldingTest_ES31, NamedArrayOfArrayIndex)
     test("float[2]", R"(const float[2][2] arr = float[2][2](float[2](-1., 1.), float[2](2., 3.));
 const float[2] c = arr[1])",
          "v[0] == 2. && v[1] == 3.");
+
+    // The AST path does not remove the definition of `arr`.
+    if (getEGLWindow()->isFeatureEnabled(Feature::UseIr))
+    {
+        verifyIsNotInTranslation("1.0");
+    }
 }
 
 // Constant fold indexing of an array of mixed constant and non-constant values (without side
@@ -1019,6 +1131,8 @@ TEST_P(GLSLConstantFoldingTest, ArrayEqualityFalse)
 {
     test("float", "const float c = float[3](2., 1., 1.) == float[3](2., 1., -1.) ? 1. : 2.",
          "v == 2.");
+    verifyIsNotInTranslation("-1.0");
+    verifyIsNotInTranslation("==");
 }
 
 // Constant fold equality of constructed arrays.
@@ -1026,6 +1140,8 @@ TEST_P(GLSLConstantFoldingTest, ArrayEqualityTrue)
 {
     test("float", "const float c = float[3](2., 1., -1.) == float[3](2., 1., -1.) ? 1. : 2.",
          "v == 1.");
+    verifyIsNotInTranslation("-1.0");
+    verifyIsNotInTranslation("==");
 }
 
 // Constant fold equality of constructed arrays stashed in variables.
@@ -1035,6 +1151,8 @@ TEST_P(GLSLConstantFoldingTest, NamedArrayEqualityFalse)
 const float[3] arrB = float[3](1., 1., 2.);
 float c = arrA == arrB ? 1. : 2.)",
          "v == 2.");
+    verifyIsNotInTranslation("-1.0");
+    verifyIsNotInTranslation("==");
 }
 
 // Constant fold equality of constructed arrays stashed in variables.
@@ -1044,6 +1162,8 @@ TEST_P(GLSLConstantFoldingTest, NamedArrayEqualityTrue)
 const float[3] arrB = float[3](-1., 1., 2.);
 float c = arrA == arrB ? 1. : 2.)",
          "v == 1.");
+    verifyIsNotInTranslation("-1.0");
+    verifyIsNotInTranslation("==");
 }
 
 // Constant fold equality of constructed arrays of arrays.
@@ -1052,6 +1172,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, ArrayOfArrayEqualityFalse)
     test("float", R"(const float c = float[2][2](float[2](-1., 1.), float[2](2., 3.))
                                   == float[2][2](float[2](-1., 1.), float[2](2., 1000.)) ? 1. : 2.)",
          "v == 2.");
+    verifyIsNotInTranslation("-1.0");
+    verifyIsNotInTranslation("==");
 }
 
 // Constant fold equality of constructed arrays.
@@ -1060,6 +1182,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, ArrayOfArrayEqualityTrue)
     test("float", R"(const float c = float[2][2](float[2](-1., 1.), float[2](2., 3.))
                                   == float[2][2](float[2](-1., 1.), float[2](2., 3.)) ? 1. : 2.)",
          "v == 1.");
+    verifyIsNotInTranslation("-1.0");
+    verifyIsNotInTranslation("==");
 }
 
 // Constant fold casting a negative float to uint.
@@ -1076,6 +1200,7 @@ TEST_P(GLSLConstantFoldingTest, NegativeFloatToUvec)
 {
     test("uint", "const uint c = uvec4(2., 1., vec2(0., -1.)).w", "v == 0xFFFFFFFFu");
     verifyIsInTranslation("4294967295");
+    verifyIsNotInTranslation("2.0");
 }
 
 // Constant fold casting a negative float to uint inside a uvec constructor, but that which is not
@@ -1083,6 +1208,7 @@ TEST_P(GLSLConstantFoldingTest, NegativeFloatToUvec)
 TEST_P(GLSLConstantFoldingTest, NegativeFloatInsideUvecConstructorButOutOfRange)
 {
     test("uint", "const uint c = uvec2(1., vec2(0., -1.)).x", "v == 1u");
+    verifyIsNotInTranslation("-1.0");
 }
 
 // Constant fold a large float (above max signed int) to uint.
@@ -1095,12 +1221,14 @@ TEST_P(GLSLConstantFoldingTest, LargeFloatToUint)
 TEST_P(GLSLConstantFoldingTest, IntegerModulusNegativeDividend)
 {
     test("int", "const int c = (-5) % 3", "v == 0");
+    verifyIsNotInTranslation("%");
 }
 
 // Constant fold modulus with a negative divisor.
 TEST_P(GLSLConstantFoldingTest, IntegerModulusNegativeDivisor)
 {
     test("int", "const int c = 5 % (-3)", "v == 0");
+    verifyIsNotInTranslation("%");
 }
 
 // Constant fold isnan with multiple components
@@ -1108,6 +1236,9 @@ TEST_P(GLSLConstantFoldingTest_ES31, IsnanMultipleComponents)
 {
     test("ivec4", "const ivec4 c = ivec4(mix(ivec2(2), ivec2(3), isnan(vec2(1., 0. / 0.))), 4, 5)",
          "all(equal(v, ivec4(2, 3, 4, 5)))");
+    verifyIsNotInTranslation("1.0");
+    verifyIsNotInTranslation("isnan");
+    verifyIsNotInTranslation("mix");
 }
 
 // Constant fold isinf with multiple components
@@ -1116,6 +1247,8 @@ TEST_P(GLSLConstantFoldingTest_ES31, IsinfMultipleComponents)
     test("ivec4",
          "const ivec4 c = ivec4(mix(ivec2(2), ivec2(3), isinf(vec2(0.0, 1.0e2048))), 4, 5)",
          "all(equal(v, ivec4(2, 3, 4, 5)))");
+    verifyIsNotInTranslation("isnan");
+    verifyIsNotInTranslation("mix");
 }
 
 // Constant fold floatBitsToInt with multiple components
@@ -1123,6 +1256,8 @@ TEST_P(GLSLConstantFoldingTest, FloatBitsToIntMultipleComponents)
 {
     test("ivec4", "const ivec4 c = ivec4(floatBitsToInt(vec2(0.0, 1.0)), 4, 5)",
          "all(equal(v, ivec4(0, 0x3f800000, 4, 5)))");
+    verifyIsNotInTranslation("1.0");
+    verifyIsNotInTranslation("floatBitsToInt");
 }
 
 // Constant fold floatBitsToUint with multiple components
@@ -1130,6 +1265,8 @@ TEST_P(GLSLConstantFoldingTest, FloatBitsToUintMultipleComponents)
 {
     test("ivec4", "const ivec4 c = ivec4(floatBitsToUint(vec2(0.0, 1.0)), 4, 5)",
          "all(equal(v, ivec4(0, 0x3f800000, 4, 5)))");
+    verifyIsNotInTranslation("1.0");
+    verifyIsNotInTranslation("floatBitsToInt");
 }
 
 // Constant fold intBitsToFloat with multiple components
@@ -1137,6 +1274,8 @@ TEST_P(GLSLConstantFoldingTest, IntBitsToFloatMultipleComponents)
 {
     test("vec4", "const vec4 c = vec4(intBitsToFloat(ivec2(0, 0x3f800000)), 0.25, 0.5)",
          "all(equal(v, vec4(0., 1., 0.25, 0.5)))");
+    verifyIsNotInTranslation("1065353216");
+    verifyIsNotInTranslation("intBitsToFloat");
 }
 
 // Constant fold uintBitsToFloat with multiple components
@@ -1144,6 +1283,8 @@ TEST_P(GLSLConstantFoldingTest, UintBitsToFloatMultipleComponents)
 {
     test("vec4", "const vec4 c = vec4(uintBitsToFloat(uvec2(0U, 0x3f800000U)), 0.25, 0.5)",
          "all(equal(v, vec4(0., 1., 0.25, 0.5)))");
+    verifyIsNotInTranslation("1065353216");
+    verifyIsNotInTranslation("uintBitsToFloat");
 }
 
 // Test that infinity - infinity evaluates to NaN.

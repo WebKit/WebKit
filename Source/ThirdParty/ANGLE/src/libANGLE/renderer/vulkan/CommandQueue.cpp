@@ -514,9 +514,7 @@ angle::Result CommandsState::getCommandsAndWaitSemaphores(
     return angle::Result::Continue;
 }
 
-angle::Result CommandsState::ensurePrimaryCommandBufferValidLocked(
-    ErrorContext *context,
-    const ProtectionType &protectionType)
+angle::Result CommandsState::ensurePrimaryCommandBufferValidLocked(ErrorContext *context)
 {
     Renderer *renderer = context->getRenderer();
 
@@ -527,7 +525,7 @@ angle::Result CommandsState::ensurePrimaryCommandBufferValidLocked(
     else
     {
         ANGLE_TRY(renderer->getCommandPoolAccess().allocatePrimaryCommandBufferLocked(
-            context, protectionType, &mPrimaryCommands));
+            context, mProtectionType, &mPrimaryCommands));
 
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -536,6 +534,22 @@ angle::Result CommandsState::ensurePrimaryCommandBufferValidLocked(
         ANGLE_VK_TRY(context, mPrimaryCommands.begin(beginInfo));
     }
 
+    return angle::Result::Continue;
+}
+
+angle::Result CommandsState::insertSubmitDebugMarker(ErrorContext *context,
+                                                     QueueSubmitReason reason)
+{
+    Renderer *renderer = context->getRenderer();
+    if (!renderer->enableDebugUtils() && !renderer->angleDebuggerMode())
+    {
+        return angle::Result::Continue;
+    }
+
+    std::lock_guard<angle::SimpleMutex> lock(mCmdPoolMutex);
+    ANGLE_TRY(ensurePrimaryCommandBufferValidLocked(context));
+
+    renderer->insertSubmitDebugMarkerInCommandBuffer(mPrimaryCommands, reason);
     return angle::Result::Continue;
 }
 

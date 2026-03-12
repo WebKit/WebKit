@@ -102,6 +102,12 @@ class AsyncWaitableEvent final : public WaitableEvent
     std::condition_variable mCondition;
 };
 
+enum class ThreadPoolType
+{
+    Asynchronous = 0,
+    Synchronous  = 1,
+};
+
 // Request WorkerThreads from the WorkerThreadPool. Each pool can keep worker threads around so
 // we avoid the costly spin up and spin down time.
 class WorkerThreadPool : angle::NonCopyable
@@ -110,19 +116,28 @@ class WorkerThreadPool : angle::NonCopyable
     WorkerThreadPool();
     virtual ~WorkerThreadPool();
 
-    // Creates a new thread pool.
-    // If numThreads is 0, the pool will choose the best number of threads to run.
-    // If numThreads is 1, the pool will be single-threaded. Tasks will run on the calling thread.
-    // Other numbers indicate how many threads the pool should spawn.
-    // Note that based on build options, this class may not actually run tasks in threads, or it may
-    // hook into the provided PlatformMethods::postWorkerTask, in which case numThreads is ignored.
-    static std::shared_ptr<WorkerThreadPool> Create(size_t numThreads, PlatformMethods *platform);
+    // Creates a new thread pool
+    //
+    // If <type> is Asynchronous, <numThreads> count of threads are spawned. If numThreads is 0,
+    // the pool chooses the count based on the number of concurrent threads supported by the
+    // platform. Note that based on build options, tasks may not actually run in an async thread.
+    //
+    // When angle_delegate_workers is enabled, like on Chromium, the pool hooks into the provided
+    // PlatformMethods::postWorkerTask and numThreads is ignored.
+    //
+    // If <type> is Synchronous, the pool has no additional threads and tasks are executed
+    // inline on the calling thread.
+    static std::shared_ptr<WorkerThreadPool> Create(ThreadPoolType type,
+                                                    size_t numThreads,
+                                                    PlatformMethods *platform);
 
     // Returns an event to wait on for the task to finish.  If the pool fails to create the task,
     // returns null.  This function is thread-safe.
     virtual std::shared_ptr<WaitableEvent> postWorkerTask(const std::shared_ptr<Closure> &task) = 0;
 
     virtual bool isAsync() = 0;
+
+    virtual size_t getEnqueuedTaskCount() { return 0; }
 
   private:
 };

@@ -91,6 +91,7 @@ ContextNULL::ContextNULL(const gl::State &state,
 
     mExtensions.textureStorageEXT               = true;
     mExtensions.rgb8Rgba8OES                    = true;
+    mExtensions.colorBufferFloatEXT             = state.getClientVersion() >= gl::Version(3, 0);
     mExtensions.textureCompressionDxt1EXT       = true;
     mExtensions.textureCompressionDxt3ANGLE     = true;
     mExtensions.textureCompressionDxt5ANGLE     = true;

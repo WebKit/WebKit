@@ -669,7 +669,7 @@ angle::Result BufferVk::handleDeviceLocalBufferMap(ContextVk *contextVk,
     VkBufferCopy copyRegion = {mBuffer.getOffset() + offset, mStagingBuffer.getOffset(), size};
     ANGLE_TRY(CopyBuffers(contextVk, &mBuffer, &mStagingBuffer, 1, &copyRegion));
     ANGLE_TRY(mStagingBuffer.waitForIdle(contextVk, "GPU stall due to mapping device local buffer",
-                                         RenderPassClosureReason::DeviceLocalBufferMap));
+                                         QueueSubmitReason::DeviceLocalBufferMap));
     // Since coherent is prefer, we may end up getting non-coherent. Always call invalidate here (it
     // will check memory flag before it actually calls into driver).
     ANGLE_TRY(mStagingBuffer.invalidate(renderer));
@@ -817,8 +817,8 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
             // If there are unflushed write commands for the resource, flush them.
             if (contextVk->hasUnsubmittedUse(mBuffer.getWriteResourceUse()))
             {
-                ANGLE_TRY(contextVk->flushAndSubmitCommands(
-                    nullptr, nullptr, RenderPassClosureReason::BufferWriteThenMap));
+                ANGLE_TRY(contextVk->flushAndSubmitCommands(nullptr, nullptr,
+                                                            QueueSubmitReason::BufferWriteThenMap));
             }
             ANGLE_TRY(renderer->finishResourceUse(contextVk, mBuffer.getWriteResourceUse()));
         }
@@ -877,7 +877,7 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
 
     // Write case (worst case, buffer in use for write)
     ANGLE_TRY(mBuffer.waitForIdle(contextVk, "GPU stall due to mapping buffer in use by the GPU",
-                                  RenderPassClosureReason::BufferInUseWhenSynchronizedMap));
+                                  QueueSubmitReason::BufferInUseWhenSynchronizedMap));
     return mapHostVisibleBuffer(contextVk, offset, access, mapPtrBytes);
 }
 

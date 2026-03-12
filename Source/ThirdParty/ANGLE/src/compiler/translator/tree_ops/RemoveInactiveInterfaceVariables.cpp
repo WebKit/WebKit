@@ -176,7 +176,8 @@ bool RemoveInactiveInterfaceVariablesTraverser::visitBinary(Visit visit, TInterm
     }
 
     const TQualifier qualifier = symbol->getType().getQualifier();
-    if (qualifier != EvqFragmentOut || IsVariableActive(mOutputVariables, symbol->getName()))
+    if (!mRemoveFragmentOutputs || qualifier != EvqFragmentOut ||
+        IsVariableActive(mOutputVariables, symbol->getName()))
     {
         return false;
     }

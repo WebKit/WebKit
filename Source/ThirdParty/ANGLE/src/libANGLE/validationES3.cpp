@@ -1467,6 +1467,12 @@ bool ValidateES3TexStorageParametersFormat(const Context *context,
         return false;
     }
 
+    if (formatInfo.paletted)
+    {
+        ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kInvalidInternalFormat, internalformat);
+        return false;
+    }
+
     if (formatInfo.compressed)
     {
         if (target == TextureType::Rectangle)

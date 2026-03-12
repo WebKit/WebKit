@@ -355,4 +355,19 @@ bool FixedVector<T, N, Storage>::full() const
 }
 }  // namespace angle
 
+namespace std
+{
+template <class T, size_t N, class Storage, class Predicate>
+typename angle::FixedVector<T, N, Storage>::size_type erase_if(angle::FixedVector<T, N, Storage> &c,
+                                                               Predicate pred)
+{
+    const auto oldSize = c.size();
+    auto it            = std::remove_if(c.begin(), c.end(), pred);
+    const auto newSize = static_cast<typename angle::FixedVector<T, N, Storage>::size_type>(
+        std::distance(c.begin(), it));
+    c.resize(newSize);
+    return oldSize - c.size();
+}
+}  // namespace std
+
 #endif  // COMMON_FIXEDVECTOR_H_

@@ -479,6 +479,9 @@ struct Extensions
     // GL_EXT_shader_texture_lod
     bool shaderTextureLodEXT = false;
 
+    // GL_EXT_shader_texture_samples
+    bool shaderTextureSamplesEXT = false;
+
     // GL_QCOM_shading_rate
     bool shadingRateQCOM = false;
 

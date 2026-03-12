@@ -451,7 +451,7 @@ TEST_P(FramebufferMultiviewTest, IncompleteViewTargetsLayered)
     glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, otherTexLayered, 0, 3,
                                      2);
     ASSERT_GL_NO_ERROR();
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR,
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT,
                      glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
     // Test that framebuffer is complete when the number of views, base view index and layouts are

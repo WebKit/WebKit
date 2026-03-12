@@ -273,7 +273,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     }
     std::cerr << "\nEnd of compile input.\n\n";
 
-    translator->compile(shaderStrings, 1, options);
+    translator->compile(shaderStrings, options);
 
     sh::Finalize();
     return 0;

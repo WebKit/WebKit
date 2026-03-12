@@ -17,6 +17,7 @@
 #include "common/BinaryStream.h"
 #include "common/angle_version_info.h"
 #include "common/mathutil.h"
+#include "common/span.h"
 #include "common/string_utils.h"
 #include "common/utilities.h"
 #include "libANGLE/Context.h"
@@ -5048,9 +5049,9 @@ bool ValidateShaderBinary(const Context *context,
     }
 
     // Check ANGLE version used to generate binary matches the current version.
-    BinaryInputStream stream(binary, length);
-    std::vector<uint8_t> versionString(angle::GetANGLEShaderProgramVersionHashSize(), 0);
-    stream.readBytes(versionString.data(), versionString.size());
+    BinaryInputStream stream(angle::Span(static_cast<const uint8_t *>(binary), length));
+    std::vector<uint8_t> versionString(angle::GetANGLEShaderProgramVersionHashSize());
+    stream.readBytes(versionString);
     if (memcmp(versionString.data(), angle::GetANGLEShaderProgramVersion(), versionString.size()) !=
         0)
     {

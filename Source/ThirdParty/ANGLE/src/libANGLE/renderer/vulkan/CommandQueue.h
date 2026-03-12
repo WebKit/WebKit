@@ -217,26 +217,24 @@ class CommandsState : angle::NonCopyable
     void destroy(VkDevice device);
 
     angle::Result flushOutsideRPCommands(Context *context,
-                                         ProtectionType protectionType,
                                          OutsideRenderPassCommandBufferHelper **outsideRPCommands)
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "CommandsState::flushOutsideRPCommands");
         std::lock_guard<angle::SimpleMutex> lock(mCmdPoolMutex);
-        ANGLE_TRY(ensurePrimaryCommandBufferValidLocked(context, protectionType));
+        ANGLE_TRY(ensurePrimaryCommandBufferValidLocked(context));
         ANGLE_TRY((*outsideRPCommands)->flushToPrimary(context, this, &mPrimaryCommands));
         // Restart the command buffer.
         return (*outsideRPCommands)->reset(context, &mSecondaryCommands);
     }
 
     angle::Result flushRenderPassCommands(Context *context,
-                                          const ProtectionType &protectionType,
                                           const RenderPass &renderPass,
                                           VkFramebuffer framebufferOverride,
                                           RenderPassCommandBufferHelper **renderPassCommands)
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "CommandsState::flushRenderPassCommands");
         std::lock_guard<angle::SimpleMutex> lock(mCmdPoolMutex);
-        ANGLE_TRY(ensurePrimaryCommandBufferValidLocked(context, protectionType));
+        ANGLE_TRY(ensurePrimaryCommandBufferValidLocked(context));
         ANGLE_TRY((*renderPassCommands)
                       ->flushToPrimary(context, this, &mPrimaryCommands, renderPass,
                                        framebufferOverride));
@@ -278,9 +276,10 @@ class CommandsState : angle::NonCopyable
     egl::ContextPriority getPriority() const { return mPriority; }
     ProtectionType getProtectionType() const { return mProtectionType; }
 
+    angle::Result insertSubmitDebugMarker(ErrorContext *context, QueueSubmitReason reason);
+
   private:
-    angle::Result ensurePrimaryCommandBufferValidLocked(ErrorContext *context,
-                                                        const ProtectionType &protectionType);
+    angle::Result ensurePrimaryCommandBufferValidLocked(ErrorContext *context);
 
     // Command pool mutex lock shared with CommandPoolAccess
     angle::SimpleMutex &mCmdPoolMutex;

@@ -4613,9 +4613,9 @@ TEST_P(UniformBufferTest, BufferDataInLoop)
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Use large buffer size to get around suballocation, so that we will gets a new buffer with
+    // Use large buffer size to get around suballocation, so that we will get a new buffer with
     // bufferData call.
-    static constexpr size_t kBufferSize = 4 * 1024 * 1024;
+    static constexpr size_t kBufferSize = 64 * 1024 * 1024;
     std::vector<float> floatData;
     floatData.resize(kBufferSize / (sizeof(float)), 0.0f);
     floatData[0] = 0.5f;

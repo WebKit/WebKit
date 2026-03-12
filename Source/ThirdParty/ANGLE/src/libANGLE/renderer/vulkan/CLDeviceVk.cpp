@@ -272,6 +272,13 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
                                                          .name = "cl_khr_int64_extended_atomics"});
     }
 
+    // cl_khr_depth_images
+    if (setupAndReportDepthImageSupport(info))
+    {
+        versionedExtensionList.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_depth_images"});
+    }
+
     info.initializeVersionedExtensions(std::move(versionedExtensionList));
 
     if (!mRenderer->getFeatures().supportsUniformBufferStandardLayout.enabled)
@@ -479,6 +486,40 @@ CLDeviceVk::getIntegerDotProductAccelerationProperties4x8BitPacked() const
             .integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated;
 
     return integerDotProductAccelerationProperties;
+}
+
+bool CLDeviceVk::setupAndReportDepthImageSupport(Info &info) const
+{
+    if (IsNvidia(getRenderer()->getPhysicalDeviceProperties().vendorID))
+    {
+        // TODO(aannestrand) CTS validation issue with (cl_copy_images.2D use_pitches) on nvidia
+        // platform, disable its cl_khr_depth_images support for now
+        // http://anglebug.com/472472687
+        return false;
+    }
+
+    constexpr VkFlags kDepthFeatures =
+        VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
+    // for reporting the extension string, we only need CL_FLOAT and CL_UNORM_INT16
+    // https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#minimum-list-of-supported-image-formats
+    CLExtensions::SupportedDepthOrderTypes minimumDepthOrderTypeSupport;
+    minimumDepthOrderTypeSupport.set(cl::ImageChannelType::Float);
+    minimumDepthOrderTypeSupport.set(cl::ImageChannelType::UnormInt16);
+
+    for (const cl::ImageChannelType imageChannelType : angle::AllEnums<cl::ImageChannelType>())
+    {
+        angle::FormatID format = angle::Format::CLDEPTHFormatToID(cl::ToCLenum(imageChannelType));
+        if (format != angle::FormatID::NONE &&
+            mRenderer->hasImageFormatFeatureBits(format, kDepthFeatures))
+        {
+            info.supportedDepthOrderTypes.set(imageChannelType);
+        }
+    }
+
+    // check/return-true if the minimum support is there
+    return (info.supportedDepthOrderTypes & minimumDepthOrderTypeSupport) ==
+           minimumDepthOrderTypeSupport;
 }
 
 }  // namespace rx

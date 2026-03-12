@@ -155,6 +155,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_shader_non_constant_global_initializers](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_non_constant_global_initializers.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_NV_shader_noperspective_interpolation](https://khronos.org/registry/OpenGL/extensions/NV/NV_shader_noperspective_interpolation.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_shader_texture_lod](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_texture_lod.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_EXT_shader_texture_samples](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_texture_samples.txt) |  |  |  |  |  |  |  |
 | [GL_QCOM_shading_rate](https://khronos.org/registry/OpenGL/extensions/QCOM/QCOM_shading_rate.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_shadow_samplers](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shadow_samplers.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_sRGB](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_sRGB.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |

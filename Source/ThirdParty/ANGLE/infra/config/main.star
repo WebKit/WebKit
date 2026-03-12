@@ -383,8 +383,7 @@ def angle_builder(name, cpu):
 
         # Don't add experimental bots to CQ.
         # IR bots are also experimental currently.
-        # Also exclude mac-arm64-test for now anglebug.com/42266214
-        add_to_cq = (not is_exp and not is_ir and not name == "mac-arm64-test")
+        add_to_cq = (not is_exp and not is_ir)
         if migrated_to_chromium_pool:
             if add_to_cq:
                 max_concurrent_builds = 5
@@ -409,7 +408,6 @@ def angle_builder(name, cpu):
         )
 
         # Don't add experimental bots to CQ.
-        # Also exclude mac-arm64-test for now anglebug.com/42266214
         if add_to_cq:
             luci.cq_tryjob_verifier(
                 cq_group = "main",

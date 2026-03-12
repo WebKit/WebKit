@@ -218,6 +218,12 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo disableMSAASampleCount1 = {
+        "disableMSAASampleCount1",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
     FeatureInfo allowClearForRobustResourceInit = {
         "allowClearForRobustResourceInit",
         FeatureCategory::OpenGLWorkarounds,
@@ -586,6 +592,12 @@ struct FeaturesGL : FeatureSetBase
 
     FeatureInfo corruptProgramBinaryForTesting = {
         "corruptProgramBinaryForTesting",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
+    FeatureInfo emitMaxGlsl400ForTesting = {
+        "emitMaxGlsl400ForTesting",
         FeatureCategory::OpenGLWorkarounds,
         &members,
     };

@@ -149,14 +149,9 @@ int main(int argc, char *argv[])
                                 {
                                     spec = SH_WEBGL2_SPEC;
                                 }
-                                else if (argv[0][4] == 'n')
-                                {
-                                    spec = SH_WEBGL_SPEC;
-                                }
                                 else
                                 {
-                                    spec                            = SH_WEBGL_SPEC;
-                                    resources.FragmentPrecisionHigh = 1;
+                                    spec = SH_WEBGL_SPEC;
                                 }
                                 break;
                             default:
@@ -445,7 +440,6 @@ void usage()
         "       -s=e31   : use GLES31 spec (in development)\n"
         "       -s=e32   : use GLES32 spec (in development)\n"
         "       -s=w     : use WebGL 1.0 spec\n"
-        "       -s=wn    : use WebGL 1.0 spec with no highp support in fragment shaders\n"
         "       -s=w2    : use WebGL 2.0 spec\n"
         "       -b=e     : output GLSL ES code (this is by default)\n"
         "       -b=g     : output GLSL code (compatibility profile)\n"

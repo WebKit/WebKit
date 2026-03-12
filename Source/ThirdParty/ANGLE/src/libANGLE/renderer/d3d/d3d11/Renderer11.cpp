@@ -121,6 +121,8 @@ ANGLEFeatureLevel GetANGLEFeatureLevel(D3D_FEATURE_LEVEL d3dFeatureLevel)
         case D3D_FEATURE_LEVEL_11_0:
             return ANGLE_FEATURE_LEVEL_11_0;
         case D3D_FEATURE_LEVEL_11_1:
+        case D3D_FEATURE_LEVEL_12_0:
+        case D3D_FEATURE_LEVEL_12_1:
             return ANGLE_FEATURE_LEVEL_11_1;
         default:
             return ANGLE_FEATURE_LEVEL_INVALID;
@@ -459,6 +461,17 @@ Renderer11::Renderer11(egl::Display *display)
         EGLint requestedMinorVersion = static_cast<EGLint>(
             attributes.get(EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE, EGL_DONT_CARE));
 
+        if (requestedMajorVersion == EGL_DONT_CARE || requestedMajorVersion >= 12)
+        {
+            if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 1)
+            {
+                mAvailableFeatureLevels.push_back(D3D_FEATURE_LEVEL_12_1);
+            }
+            if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 0)
+            {
+                mAvailableFeatureLevels.push_back(D3D_FEATURE_LEVEL_12_0);
+            }
+        }
         if (requestedMajorVersion == EGL_DONT_CARE || requestedMajorVersion >= 11)
         {
             if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 1)
@@ -968,13 +981,16 @@ egl::Error Renderer11::initializeD3DDevice()
                 result = callD3D11CreateDevice(D3D11CreateDevice, true);
             }
 
-            if (result == E_INVALIDARG && mAvailableFeatureLevels.size() > 1u &&
-                mAvailableFeatureLevels[0] == D3D_FEATURE_LEVEL_11_1)
+            std::vector<D3D_FEATURE_LEVEL>::iterator ite;
+            if (result == E_INVALIDARG &&
+                (ite = std::lower_bound(mAvailableFeatureLevels.begin(),
+                                        mAvailableFeatureLevels.end(), D3D_FEATURE_LEVEL_11_1,
+                                        std::greater{})) != mAvailableFeatureLevels.end())
             {
                 // On older Windows platforms, D3D11.1 is not supported which returns E_INVALIDARG.
-                // Try again without passing D3D_FEATURE_LEVEL_11_1 in case we have other feature
+                // Try again without passing D3D_FEATURE_LEVEL_11_1+ in case we have other feature
                 // levels to fall back on.
-                mAvailableFeatureLevels.erase(mAvailableFeatureLevels.begin());
+                mAvailableFeatureLevels.erase(mAvailableFeatureLevels.begin(), ite + 1);
                 if (createD3D11on12Device)
                 {
                     result =
@@ -1004,13 +1020,16 @@ egl::Error Renderer11::initializeD3DDevice()
                 result = callD3D11CreateDevice(D3D11CreateDevice, false);
             }
 
-            if (result == E_INVALIDARG && mAvailableFeatureLevels.size() > 1u &&
-                mAvailableFeatureLevels[0] == D3D_FEATURE_LEVEL_11_1)
+            std::vector<D3D_FEATURE_LEVEL>::iterator ite;
+            if (result == E_INVALIDARG &&
+                (ite = std::lower_bound(mAvailableFeatureLevels.begin(),
+                                        mAvailableFeatureLevels.end(), D3D_FEATURE_LEVEL_11_1,
+                                        std::greater{})) != mAvailableFeatureLevels.end())
             {
                 // On older Windows platforms, D3D11.1 is not supported which returns E_INVALIDARG.
                 // Try again without passing D3D_FEATURE_LEVEL_11_1 in case we have other feature
                 // levels to fall back on.
-                mAvailableFeatureLevels.erase(mAvailableFeatureLevels.begin());
+                mAvailableFeatureLevels.erase(mAvailableFeatureLevels.begin(), ite + 1);
                 if (createD3D11on12Device)
                 {
                     result =
@@ -2472,6 +2491,8 @@ int Renderer11::getMajorShaderModel() const
 {
     switch (mRenderer11DeviceCaps.featureLevel)
     {
+        case D3D_FEATURE_LEVEL_12_1:
+        case D3D_FEATURE_LEVEL_12_0:
         case D3D_FEATURE_LEVEL_11_1:
         case D3D_FEATURE_LEVEL_11_0:
             return D3D11_SHADER_MAJOR_VERSION;  // 5
@@ -2491,6 +2512,8 @@ int Renderer11::getMinorShaderModel() const
 {
     switch (mRenderer11DeviceCaps.featureLevel)
     {
+        case D3D_FEATURE_LEVEL_12_1:
+        case D3D_FEATURE_LEVEL_12_0:
         case D3D_FEATURE_LEVEL_11_1:
         case D3D_FEATURE_LEVEL_11_0:
             return D3D11_SHADER_MINOR_VERSION;  // 0
@@ -2510,6 +2533,8 @@ std::string Renderer11::getShaderModelSuffix() const
 {
     switch (mRenderer11DeviceCaps.featureLevel)
     {
+        case D3D_FEATURE_LEVEL_12_1:
+        case D3D_FEATURE_LEVEL_12_0:
         case D3D_FEATURE_LEVEL_11_1:
         case D3D_FEATURE_LEVEL_11_0:
             return "";

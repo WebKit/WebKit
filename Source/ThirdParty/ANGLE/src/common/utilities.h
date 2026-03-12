@@ -51,6 +51,8 @@ bool IsImage2DType(GLenum type);
 bool IsAtomicCounterType(GLenum type);
 bool IsOpaqueType(GLenum type);
 bool IsMatrixType(GLenum type);
+bool IsFloatScalarAndVectorType(GLenum type);
+bool IsFloatVectorType(GLenum type);
 GLenum TransposeMatrixType(GLenum type);
 int VariableRegisterCount(GLenum type);
 int MatrixRegisterCount(GLenum type, bool isRowMajorMatrix);

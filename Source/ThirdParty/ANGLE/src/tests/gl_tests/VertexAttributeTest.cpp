@@ -3982,6 +3982,51 @@ TEST_P(VertexAttributeTest, VertexAttribPointerCopyBufferFromInvalidAddressAfter
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that when the offset for the vertex attribute pointer is not aligned with the stride, the
+// draw is successful without crashes due to out-of-bound access.
+TEST_P(VertexAttributeTest, BufferOffsetNonAlignedWithStride)
+{
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    constexpr char kVS[] = R"(
+attribute highp vec3 pos;
+void main() {
+    gl_Position = vec4(pos, 1.0);
+})";
+    constexpr char kFS[] = R"(
+precision highp float;
+void main() {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "pos");
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    const std::vector<float> kVertexData = {-1.0f, -1.0f, 0.0f, -1.0f, 1.0f,  0.0f,
+                                            1.0f,  1.0f,  0.0f, -1.0f, -1.0f, 0.0f,
+                                            1.0f,  1.0f,  0.0f, 1.0f,  -1.0f, 0.0f};
+    constexpr size_t kOffset             = 1;
+    constexpr size_t kStride             = 12;
+    static_assert(kOffset % kStride != 0, "Offset must not be aligned with stride.");
+
+    constexpr size_t kBufferSize = 1 * 1024 * 1024;
+    std::vector<uint8_t> bufferData(kBufferSize, 0);
+    memcpy(bufferData.data() + kOffset, kVertexData.data(), kVertexData.size() * sizeof(float));
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, kBufferSize, bufferData.data(), GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, kStride,
+                          reinterpret_cast<const void *>(kOffset));
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
+}
+
 // Test that default unsigned integer attribute works correctly even if there is a gap in
 // attribute locations.
 TEST_P(VertexAttributeTestES3, DefaultUIntAttribWithGap)

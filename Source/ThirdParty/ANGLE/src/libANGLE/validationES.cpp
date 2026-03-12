@@ -652,10 +652,12 @@ ANGLE_INLINE GLenum ShPixelLocalStorageFormatToGLenum(ShPixelLocalStorageFormat 
             return GL_RGBA8I;
         case ShPixelLocalStorageFormat::RGBA8UI:
             return GL_RGBA8UI;
-        case ShPixelLocalStorageFormat::R32UI:
-            return GL_R32UI;
         case ShPixelLocalStorageFormat::R32F:
             return GL_R32F;
+        case ShPixelLocalStorageFormat::R32I:
+            return GL_R32I;
+        case ShPixelLocalStorageFormat::R32UI:
+            return GL_R32UI;
     }
     UNREACHABLE();
     return GL_NONE;
@@ -5017,6 +5019,14 @@ bool ValidatePushGroupMarkerEXT(const Context *context,
                                 GLsizei length,
                                 const char *marker)
 {
+    // This is to prevent the stack from getting too large. The limit used here is also used for
+    // pushing debug groups.
+    if (context->getState().getGroupMarkerCount() >= context->getCaps().maxDebugGroupStackDepth)
+    {
+        ANGLE_VALIDATION_ERROR(GL_STACK_OVERFLOW, kExceedsMaxGroupMarkerStackDepth);
+        return false;
+    }
+
     return true;
 }
 

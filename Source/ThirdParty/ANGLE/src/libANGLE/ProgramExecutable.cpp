@@ -968,7 +968,7 @@ void ProgramExecutable::load(gl::BinaryInputStream *stream)
     size_t plsCount = stream->readInt<size_t>();
     ASSERT(mPixelLocalStorageFormats.empty());
     mPixelLocalStorageFormats.resize(plsCount);
-    stream->readBytes(reinterpret_cast<uint8_t *>(mPixelLocalStorageFormats.data()), plsCount);
+    stream->readBytes(angle::as_writable_byte_span(mPixelLocalStorageFormats));
 
     // These values are currently only used by PPOs, so only load them when the program is marked
     // separable to save memory.
@@ -1073,8 +1073,7 @@ void ProgramExecutable::save(gl::BinaryOutputStream *stream) const
 
     // ANGLE_shader_pixel_local_storage.
     stream->writeInt<size_t>(mPixelLocalStorageFormats.size());
-    stream->writeBytes(reinterpret_cast<const uint8_t *>(mPixelLocalStorageFormats.data()),
-                       mPixelLocalStorageFormats.size());
+    stream->writeBytes(angle::as_byte_span(mPixelLocalStorageFormats));
 
     // These values are currently only used by PPOs, so only save them when the program is marked
     // separable to save memory.

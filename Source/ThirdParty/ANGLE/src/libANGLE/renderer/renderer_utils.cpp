@@ -1380,15 +1380,6 @@ void SetUniform(const gl::ProgramExecutable *executable,
                     const int elementSize = sizeof(GLshort) * componentCount;
                     uint8_t *dst          = uniformBlock.uniformData.data() + layoutInfo.offset;
                     int maxIndex          = locationInfo.arrayIndex + count;
-                    // We need to add some padding so that each element is conformant to
-                    // uniformData layoutInfo arrayStride.
-                    // For example, if the uniform is vec4 uniformArray[2]
-                    // Src Data:
-                    // | float 1 | float 2 | float 3 | float 4 |
-                    // | float 5 | float 6 | float 7 | float 8 |
-                    // Dst Data:
-                    // | half 1  | half 2  | half 3  | half 4  | 8 byte of padding 0 |
-                    // | half 5  | half 6  | half 7  | half 8  | 8 byte of padding 0 |
                     for (int writeIndex = locationInfo.arrayIndex, readIndex = 0;
                          writeIndex < maxIndex; writeIndex++, readIndex++)
                     {
@@ -1399,11 +1390,8 @@ void SetUniform(const gl::ProgramExecutable *executable,
                         const GLfloat *readPtr = v + (readIndex * componentCount);
                         // check that readPtr is aligned to 4 bytes (size of GLfloat)
                         ASSERT(reinterpret_cast<uintptr_t>(readPtr) % 4 == 0);
-                        // we need to write:
-                        // 1) elementSize of transformed GLshort data
-                        // 2) elementSize of padding 0s
                         // Ensure the uniformBlock.uniformData has enough space
-                        ASSERT(writePtr + elementSize * 2 <=
+                        ASSERT(writePtr + elementSize <=
                                uniformBlock.uniformData.data() + uniformBlock.uniformData.size());
                         // Transform each original GLfloat data to GLshort
                         GLshort *dstGLShortPtr = reinterpret_cast<GLshort *>(writePtr);
@@ -1413,8 +1401,17 @@ void SetUniform(const gl::ProgramExecutable *executable,
                             dstGLShortPtr[componentIndex] =
                                 gl::float32ToFloat16(readPtr[componentIndex]);
                         }
-                        // pad the remaining half of dst memory with 0
-                        memset(writePtr + elementSize, 0, elementSize);
+                        // Add paddings of 0 if the next item written to the destination memory is
+                        // not tightly packed to the current item
+                        if (writeIndex + 1 < maxIndex)
+                        {
+                            const int paddingSize = (writeIndex + 1) * layoutInfo.arrayStride -
+                                                    arrayOffset - elementSize;
+                            if (paddingSize > 0)
+                            {
+                                memset(writePtr + elementSize, 0, paddingSize);
+                            }
+                        }
                     }
                     defaultUniformBlocksDirty->set(shaderType);
                 }

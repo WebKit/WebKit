@@ -193,6 +193,25 @@ angle::Result CLContextVk::getSupportedImageFormats(cl::MemFlags flags,
             supportedFormats.push_back(format);
         }
     }
+
+    if (cl::Is2DImage(imageType))
+    {
+        CLExtensions::SupportedDepthOrderTypes supportedDepthOrderTypesUnion;
+        for (const cl::DevicePtr &device : mContext.getDevices())
+        {
+            // clGetSupportedImageFormats returns a union of image formats supported by all devices
+            // in the context
+            supportedDepthOrderTypesUnion |= device->getInfo().supportedDepthOrderTypes;
+        }
+        for (const cl::ImageChannelType imageChannelType : angle::AllEnums<cl::ImageChannelType>())
+        {
+            if (supportedDepthOrderTypesUnion.test(imageChannelType))
+            {
+                supportedFormats.push_back({CL_DEPTH, cl::ToCLenum(imageChannelType)});
+            }
+        }
+    }
+
     if (numImageFormats != nullptr)
     {
         *numImageFormats = static_cast<cl_uint>(supportedFormats.size());
@@ -399,8 +418,7 @@ void CLContextVk::dumpCommandStreamDiagnostics()
         return;
     }
 
-    out << "digraph {\n"
-        << "    node [shape=box fontname=\"Consolas\"]\n";
+    out << "digraph {\n" << "    node [shape=box fontname=\"Consolas\"]\n";
 
     for (size_t index = 0; index < mCommandBufferDiagnostics.size(); ++index)
     {

@@ -24,8 +24,10 @@ TEST(AstcDecompressor, Decompress)
     const int width  = 1024;
     const int height = 1024;
 
-    auto singleThreadedPool = WorkerThreadPool::Create(1, ANGLEPlatformCurrent());
-    auto multiThreadedPool  = WorkerThreadPool::Create(0, ANGLEPlatformCurrent());
+    auto singleThreadedPool =
+        WorkerThreadPool::Create(ThreadPoolType::Synchronous, 0, ANGLEPlatformCurrent());
+    auto multiThreadedPool =
+        WorkerThreadPool::Create(ThreadPoolType::Asynchronous, 0, ANGLEPlatformCurrent());
 
     auto &decompressor = AstcDecompressor::get();
     if (!decompressor.available())

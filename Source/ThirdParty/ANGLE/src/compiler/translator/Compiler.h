@@ -17,6 +17,7 @@
 #include <GLSLANG/ShaderVars.h>
 
 #include "common/PackedEnums.h"
+#include "common/span.h"
 #include "compiler/translator/BuiltInFunctionEmulator.h"
 #include "compiler/translator/CallDAG.h"
 #include "compiler/translator/Diagnostics.h"
@@ -100,12 +101,10 @@ class TCompiler : public TShHandleBase
     // compileTreeForTesting should be used only when tests require access to
     // the AST. Users of this function need to manually manage the global pool
     // allocator. Returns nullptr whenever there are compilation errors.
-    TIntermBlock *compileTreeForTesting(const char *const shaderStrings[],
-                                        size_t numStrings,
+    TIntermBlock *compileTreeForTesting(angle::Span<const char *const> shaderStrings,
                                         const ShCompileOptions &compileOptions);
 
-    bool compile(const char *const shaderStrings[],
-                 size_t numStrings,
+    bool compile(angle::Span<const char *const> shaderStrings,
                  const ShCompileOptions &compileOptions);
 
     // Get results of the last compilation.
@@ -144,8 +143,6 @@ class TCompiler : public TShHandleBase
     ShShaderOutput getOutputType() const { return mOutputType; }
     const ShBuiltInResources &getBuiltInResources() const { return mResources; }
     const std::string &getBuiltInResourcesString() const { return mBuiltInResourcesString; }
-
-    bool isHighPrecisionSupported() const;
 
     bool shouldRunLoopAndIndexingValidation(const ShCompileOptions &compileOptions) const;
     bool shouldLimitTypeSizes() const;
@@ -204,8 +201,7 @@ class TCompiler : public TShHandleBase
 
     // Generate a self-contained binary representation of the shader.
     bool getShaderBinary(const ShHandle compilerHandle,
-                         const char *const shaderStrings[],
-                         size_t numStrings,
+                         angle::Span<const char *const> shaderStrings,
                          const ShCompileOptions &compileOptions,
                          ShaderBinaryBlob *const binaryOut);
 
@@ -311,8 +307,7 @@ class TCompiler : public TShHandleBase
     // Removes unused function declarations and prototypes from the AST
     bool pruneUnusedFunctions(TIntermBlock *root);
 
-    TIntermBlock *compileTreeImpl(const char *const shaderStrings[],
-                                  size_t numStrings,
+    TIntermBlock *compileTreeImpl(angle::Span<const char *const> shaderStrings,
                                   const ShCompileOptions &compileOptions);
 
     // Fetches and stores shader metadata that is not stored within the AST itself, such as shader

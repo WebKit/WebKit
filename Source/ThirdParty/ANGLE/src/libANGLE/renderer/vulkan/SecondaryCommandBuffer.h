@@ -52,6 +52,7 @@ enum class CommandID : uint16_t
     BindGraphicsPipeline,
     BindIndexBuffer,
     BindIndexBuffer2,
+    BindTileMemory,
     BindTransformFeedbackBuffers,
     BindVertexBuffers,
     BindVertexBuffers2,
@@ -110,6 +111,7 @@ enum class CommandID : uint16_t
     SetLineWidth,
     SetLogicOp,
     SetPrimitiveRestartEnable,
+    SetPrimitiveTopology,
     SetRasterizerDiscardEnable,
     SetScissor,
     SetStencilCompareMask,
@@ -245,6 +247,14 @@ struct BufferBarrier2Params
     VkBufferMemoryBarrier2 bufferMemoryBarrier2;
 };
 VERIFY_8_BYTE_ALIGNMENT(BufferBarrier2Params)
+
+struct BindTileMemoryParams
+{
+    CommandHeader header;
+    uint32_t padding;
+    VkDeviceMemory tileMemory;
+};
+VERIFY_8_BYTE_ALIGNMENT(BindTileMemoryParams)
 
 struct ClearAttachmentsParams
 {
@@ -716,6 +726,14 @@ struct SetPrimitiveRestartEnableParams
 };
 VERIFY_8_BYTE_ALIGNMENT(SetPrimitiveRestartEnableParams)
 
+struct SetPrimitiveTopologyParams
+{
+    CommandHeader header;
+
+    VkPrimitiveTopology primitiveTopology;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetPrimitiveTopologyParams)
+
 struct SetRasterizerDiscardEnableParams
 {
     CommandHeader header;
@@ -894,6 +912,8 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                           VkDeviceSize offset,
                           VkDeviceSize size,
                           VkIndexType indexType);
+
+    void bindTileMemory(const DeviceMemory &tileMemory);
 
     void bindTransformFeedbackBuffers(uint32_t firstBinding,
                                       uint32_t bindingCount,
@@ -1105,6 +1125,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void setLineWidth(float lineWidth);
     void setLogicOp(VkLogicOp logicOp);
     void setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable);
+    void setPrimitiveTopology(VkPrimitiveTopology primitiveTopology);
     void setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable);
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
     void setStencilCompareMask(uint32_t compareFrontMask, uint32_t compareBackMask);
@@ -1429,6 +1450,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindIndexBuffer2(const Buffer &buffer,
     paramStruct->offset    = offset;
     paramStruct->size      = size;
     paramStruct->indexType = indexType;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::bindTileMemory(const DeviceMemory &tileMemory)
+{
+    BindTileMemoryParams *paramStruct =
+        initCommand<BindTileMemoryParams>(CommandID::BindTileMemory);
+    paramStruct->tileMemory = tileMemory.getHandle();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindTransformFeedbackBuffers(uint32_t firstBinding,
@@ -2226,6 +2254,14 @@ ANGLE_INLINE void SecondaryCommandBuffer::setPrimitiveRestartEnable(VkBool32 pri
     SetPrimitiveRestartEnableParams *paramStruct =
         initCommand<SetPrimitiveRestartEnableParams>(CommandID::SetPrimitiveRestartEnable);
     paramStruct->primitiveRestartEnable = primitiveRestartEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setPrimitiveTopology(
+    VkPrimitiveTopology primitiveTopology)
+{
+    SetPrimitiveTopologyParams *paramStruct =
+        initCommand<SetPrimitiveTopologyParams>(CommandID::SetPrimitiveTopology);
+    paramStruct->primitiveTopology = primitiveTopology;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setRasterizerDiscardEnable(

@@ -24,18 +24,30 @@ enum class WgpuPipelineOp : uint8_t
     ImageCopy,
 };
 
-struct PipelineKey
+struct CopyVertex
+{
+    float position[2];
+    float texCoord[2];
+};
+
+struct CopyKey
 {
     GLenum srcComponentType;
     angle::FormatID dstActualFormatID;
-    bool dstIntentedFormatHasAlphaBits;
     WgpuPipelineOp op;
+    bool dstIntentedFormatHasAlphaBits;
+    bool premultiplyAlpha;
+    bool unmultiplyAlpha;
+    bool srcFlipY;
+    bool dstFlipY;
 
-    bool operator<(const PipelineKey &other) const
+    bool operator<(const CopyKey &other) const
     {
-        return std::tie(srcComponentType, dstActualFormatID, dstIntentedFormatHasAlphaBits, op) <
-               std::tie(other.srcComponentType, other.dstActualFormatID,
-                        other.dstIntentedFormatHasAlphaBits, other.op);
+        return std::tie(op, srcComponentType, dstActualFormatID, dstIntentedFormatHasAlphaBits,
+                        premultiplyAlpha, unmultiplyAlpha, srcFlipY, dstFlipY) <
+               std::tie(other.op, other.srcComponentType, other.dstActualFormatID,
+                        other.dstIntentedFormatHasAlphaBits, other.premultiplyAlpha,
+                        other.unmultiplyAlpha, other.srcFlipY, other.dstFlipY);
     }
 };
 
@@ -54,20 +66,28 @@ class UtilsWgpu : angle::NonCopyable
     angle::Result copyImage(ContextWgpu *context,
                             webgpu::TextureViewHandle src,
                             webgpu::TextureViewHandle dst,
-                            const WGPUExtent3D &size,
-                            bool flipY,
+                            const gl::Rectangle &sourceArea,
+                            const gl::Offset &destOffset,
+                            const WGPUExtent3D &srcSize,
+                            const WGPUExtent3D &dstSize,
+                            bool premultiplyAlpha,
+                            bool unmultiplyAlpha,
+                            bool srcFlipY,
+                            bool dstFlipY,
                             const angle::Format &srcFormat,
                             angle::FormatID dstIntendedFormatID,
                             angle::FormatID dstActualFormatID);
 
   private:
-    webgpu::ShaderModuleHandle getShaderModule(ContextWgpu *context, const PipelineKey &key);
+    webgpu::ShaderModuleHandle getCopyShaderModule(ContextWgpu *context, const CopyKey &key);
+    webgpu::ShaderModuleHandle getShaderModule(ContextWgpu *context, const std::string &shader);
 
     angle::Result getPipeline(ContextWgpu *context,
-                              const PipelineKey &key,
-                              const CachedPipeline **cachedPipelineOut);
+                              const CopyKey &key,
+                              const webgpu::ShaderModuleHandle &shader,
+                              CachedPipeline *cachedPipelineOut);
 
-    std::map<PipelineKey, CachedPipeline> mPipelineCache;
+    std::map<CopyKey, CachedPipeline> mCopyPipelineCache;
 };
 
 }  // namespace webgpu

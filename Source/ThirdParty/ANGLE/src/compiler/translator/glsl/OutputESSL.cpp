@@ -20,11 +20,6 @@ bool TOutputESSL::writeVariablePrecision(TPrecision precision)
     if (precision == EbpUndefined)
         return false;
 
-    if (precision == EbpHigh && !isHighPrecisionSupported())
-    {
-        precision = EbpMedium;
-    }
-
     TInfoSinkBase &out = objSink();
     out << getPrecisionString(precision);
     return true;
@@ -44,8 +39,11 @@ ImmutableString TOutputESSL::translateTextureFunction(const ImmutableString &nam
         }
         else
         {
-            // Default translating textureVideoWEBGL to texture2D.
-            return ImmutableString("texture2D");
+            // For ESSL 300+ (ES 3.0+), use "texture" instead of "texture2D" to match the
+            // translation of samplerVideoWEBGL to sampler2D and the ESSL version's texture
+            // function naming. ESSL 100 (ES 2.0) still uses texture2D.
+            return (getShaderVersion() >= 300) ? ImmutableString("texture")
+                                               : ImmutableString("texture2D");
         }
     }
 

@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_D3D_D3D11_RENDERSTATECACHE_H_
 
 #include "common/angleutils.h"
+#include "common/span.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/SizedMRUCache.h"
 #include "libANGLE/angletypes.h"
@@ -25,7 +26,7 @@ struct hash<rx::d3d11::BlendStateKey>
 {
     size_t operator()(const rx::d3d11::BlendStateKey &key) const
     {
-        return angle::ComputeGenericHash(key);
+        return angle::ComputeGenericHash(angle::byte_span_from_ref(key));
     }
 };
 
@@ -34,7 +35,7 @@ struct hash<rx::d3d11::RasterizerStateKey>
 {
     size_t operator()(const rx::d3d11::RasterizerStateKey &key) const
     {
-        return angle::ComputeGenericHash(key);
+        return angle::ComputeGenericHash(angle::byte_span_from_ref(key));
     }
 };
 
@@ -43,14 +44,17 @@ struct hash<gl::DepthStencilState>
 {
     size_t operator()(const gl::DepthStencilState &key) const
     {
-        return angle::ComputeGenericHash(key);
+        return angle::ComputeGenericHash(angle::byte_span_from_ref(key));
     }
 };
 
 template <>
 struct hash<gl::SamplerState>
 {
-    size_t operator()(const gl::SamplerState &key) const { return angle::ComputeGenericHash(key); }
+    size_t operator()(const gl::SamplerState &key) const
+    {
+        return angle::ComputeGenericHash(angle::byte_span_from_ref(key));
+    }
 };
 }  // namespace std
 

@@ -53,6 +53,8 @@ void CLExtensions::initializeExtensions(std::string &&extensionStr)
     khrIntegerDotProduct    = hasExtension("cl_khr_integer_dot_product");
     khrExternalMemory       = hasExtension("cl_khr_external_memory");
     khrPriorityHints        = hasExtension("cl_khr_priority_hints");
+
+    armNonUniformWorkGroupSize = hasExtension("cl_arm_non_uniform_work_group_size");
 }
 
 void CLExtensions::initializeVersionedExtensions(const NameVersionVector &versionedExtList)

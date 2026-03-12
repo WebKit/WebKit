@@ -21,6 +21,7 @@
 #include "common/debug.h"
 #include "common/platform.h"
 #include "common/platform_helpers.h"
+#include "common/span_util.h"
 #include "common/string_utils.h"
 #include "common/utilities.h"
 #include "compiler/translator/blocklayout.h"
@@ -1423,7 +1424,7 @@ angle::Result Program::loadBinary(const Context *context,
     ASSERT(mLinkingState);
     unlink();
 
-    BinaryInputStream stream(binary, length);
+    BinaryInputStream stream(angle::Span(static_cast<const uint8_t *>(binary), length));
     if (!deserialize(context, stream))
     {
         return angle::Result::Continue;
@@ -2184,8 +2185,8 @@ angle::Result Program::serialize(const Context *context)
     BinaryOutputStream stream;
 
     stream.writeBytes(
-        reinterpret_cast<const unsigned char *>(angle::GetANGLEShaderProgramVersion()),
-        angle::GetANGLEShaderProgramVersionHashSize());
+        angle::Span(reinterpret_cast<const uint8_t *>(angle::GetANGLEShaderProgramVersion()),
+                    angle::GetANGLEShaderProgramVersionHashSize()));
 
     stream.writeBool(angle::Is64Bit());
 
@@ -2252,23 +2253,22 @@ angle::Result Program::serialize(const Context *context)
     mProgram->save(context, &stream);
     ASSERT(mState.mExecutable->mPostLinkSubTasks.empty());
 
-    if (!mBinary.resize(stream.length()))
+    if (!mBinary.resize(stream.size()))
     {
         ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                            "Failed to allocate enough memory to serialize a program. (%zu bytes)",
-                           stream.length());
+                           stream.size());
         return angle::Result::Stop;
     }
-    memcpy(mBinary.data(), stream.data(), stream.length());
+    angle::SpanMemcpy(mBinary.span(), angle::Span(stream));
     return angle::Result::Continue;
 }
 
 bool Program::deserialize(const Context *context, BinaryInputStream &stream)
 {
     std::vector<uint8_t> angleShaderProgramVersionString(
-        angle::GetANGLEShaderProgramVersionHashSize(), 0);
-    stream.readBytes(angleShaderProgramVersionString.data(),
-                     angleShaderProgramVersionString.size());
+        angle::GetANGLEShaderProgramVersionHashSize());
+    stream.readBytes(angleShaderProgramVersionString);
     if (memcmp(angleShaderProgramVersionString.data(), angle::GetANGLEShaderProgramVersion(),
                angleShaderProgramVersionString.size()) != 0)
     {

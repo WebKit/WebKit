@@ -9,10 +9,6 @@
 #ifndef COMMON_ANGLEUTILS_H_
 #define COMMON_ANGLEUTILS_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/platform.h"
 
 #if defined(ANGLE_WITH_LSAN)
@@ -32,6 +28,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#include "common/unsafe_buffers.h"
 
 namespace angle
 {
@@ -155,6 +153,8 @@ struct PerfMonitorTriplet
     FN(shaderResourcesDescriptorSetCacheMisses)    \
     FN(shaderResourcesDescriptorSetCacheTotalSize) \
     FN(deviceMemoryImageAllocationFallbacks)       \
+    FN(tileMemoryImages)                           \
+    FN(fallbackFromTileMemory)                     \
     FN(mutableTexturesUploaded)                    \
     FN(fullImageClears)                            \
     FN(buffersGhosted)                             \
@@ -187,11 +187,7 @@ template <typename T>
 class WrappedArray final : angle::NonCopyable
 {
   public:
-    template <size_t N>
-    constexpr WrappedArray(const T (&data)[N]) : mArray(&data[0]), mSize(N)
-    {}
-
-    constexpr WrappedArray() : mArray(nullptr), mSize(0) {}
+    constexpr WrappedArray() = default;
     constexpr WrappedArray(const T *data, size_t size) : mArray(data), mSize(size) {}
 
     WrappedArray(WrappedArray &&other) : WrappedArray()
@@ -200,14 +196,18 @@ class WrappedArray final : angle::NonCopyable
         std::swap(mSize, other.mSize);
     }
 
+    template <size_t N>
+    constexpr WrappedArray(const T (&data)[N]) : mArray(&data[0]), mSize(N)
+    {}
+
     ~WrappedArray() {}
 
     constexpr const T *get() const { return mArray; }
     constexpr size_t size() const { return mSize; }
 
   private:
-    const T *mArray;
-    size_t mSize;
+    const T *mArray = nullptr;
+    size_t mSize    = 0;
 };
 
 template <typename T, unsigned int N>
@@ -215,7 +215,8 @@ void SafeRelease(T (&resourceBlock)[N])
 {
     for (unsigned int i = 0; i < N; i++)
     {
-        SafeRelease(resourceBlock[i]);
+        // SAFETY: size deduced by compiler from template.
+        SafeRelease(ANGLE_UNSAFE_BUFFERS(resourceBlock[i]));
     }
 }
 
@@ -258,7 +259,8 @@ void SafeDeleteArray(T *&resource)
 template <typename T>
 inline bool StructLessThan(const T &a, const T &b)
 {
-    return (memcmp(&a, &b, sizeof(T)) < 0);
+    // SAFETY: both `a` and `b` are the same compiler-deduced size.
+    return ANGLE_UNSAFE_BUFFERS(memcmp(&a, &b, sizeof(T)) < 0);
 }
 
 // Provide a less-than function for comparing structs
@@ -266,13 +268,22 @@ inline bool StructLessThan(const T &a, const T &b)
 template <typename T>
 inline bool StructEquals(const T &a, const T &b)
 {
-    return (memcmp(&a, &b, sizeof(T)) == 0);
+    // SAFETY: both `a` and `b` are the same compiler-deduced size.
+    return ANGLE_UNSAFE_BUFFERS(memcmp(&a, &b, sizeof(T)) == 0);
 }
 
 template <typename T>
 inline void StructZero(T *obj)
 {
-    memset(obj, 0, sizeof(T));
+    // SAFETY: compiler-deduced size.
+    ANGLE_UNSAFE_BUFFERS(memset(obj, 0, sizeof(T)));
+}
+
+template <typename T>
+inline void StructCopy(T *dst, const T &src)
+{
+    // SAFETY: compiler-deduced size.
+    ANGLE_UNSAFE_BUFFERS(memcpy(dst, &src, sizeof(T)));
 }
 
 template <typename T>

@@ -444,6 +444,7 @@
 		7B4556F02F18CE2B00DC54D0 /* SizeClipCullDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B4556EE2F18CE2B00DC54D0 /* SizeClipCullDistance.h */; };
 		7B4556F12F18CE2B00DC54D0 /* SizeClipCullDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B4556EF2F18CE2B00DC54D0 /* SizeClipCullDistance.cpp */; };
 		7B4556F22F18CE2B00DC54D0 /* SizeClipCullDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B4556EF2F18CE2B00DC54D0 /* SizeClipCullDistance.cpp */; };
+		7B4556F62F28AE5700DC54D0 /* span_util.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B4556F42F28AE5700DC54D0 /* span_util.h */; };
 		7B533A8A2E0A933D0069B90F /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
 		7B5B1F112F0FC73B00B5D57B /* unsafe_buffers.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B5B1F0F2F0FC73B00B5D57B /* unsafe_buffers.h */; };
 		7B600EBD2CF9CFF600D5DE66 /* Name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B600EBC2CF9CFF600D5DE66 /* Name.cpp */; };
@@ -828,7 +829,6 @@
 		7BF555822C81F198002B101E /* CallDAG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC031B04375F00235552 /* CallDAG.cpp */; };
 		7BF555832C81F198002B101E /* DiscoverEnclosingFunctionTraverser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF412581919700894E24 /* DiscoverEnclosingFunctionTraverser.cpp */; };
 		7BF555842C81F198002B101E /* CodeGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DA318B97B9B0039062F /* CodeGen.cpp */; };
-		7BF555852C81F198002B101E /* ForcePrecisionQualifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FDB27432CC2006A97A3 /* ForcePrecisionQualifier.cpp */; };
 		7BF555862C81F198002B101E /* RemoveAtomicCounterBuiltins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BDEE2432CCC300E01503 /* RemoveAtomicCounterBuiltins.cpp */; };
 		7BF555872C81F31A002B101E /* angleutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBBE71B0436EC00235552 /* angleutils.cpp */; };
 		7BF555882C81F33C002B101E /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D45D19102620000B8C1F /* debug.cpp */; };
@@ -1338,10 +1338,8 @@
 		FF194FE427432CC3006A97A3 /* SeparateStructFromUniformDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */; };
 		FF194FE527432CC3006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FD727432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h */; };
 		FF194FE727432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FDA27432CC2006A97A3 /* MonomorphizeUnsupportedFunctions.h */; };
-		FF194FE827432CC3006A97A3 /* ForcePrecisionQualifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FDB27432CC2006A97A3 /* ForcePrecisionQualifier.cpp */; };
 		FF194FE927432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FDC27432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp */; };
 		FF194FEA27432CC3006A97A3 /* ClampIndirectIndices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FDE27432CC3006A97A3 /* ClampIndirectIndices.cpp */; };
-		FF194FEB27432CC3006A97A3 /* ForcePrecisionQualifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FDF27432CC3006A97A3 /* ForcePrecisionQualifier.h */; };
 		FF3A9FFB2756B7C000BE0397 /* ImageImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF3A9FFA2756B7C000BE0397 /* ImageImpl.cpp */; };
 		FF4BB3642769467600994EBF /* mtl_context_device.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF4BB3612769467500994EBF /* mtl_context_device.mm */; };
 		FF4BB3652769467600994EBF /* mtl_resource_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = FF4BB3622769467600994EBF /* mtl_resource_spi.h */; };
@@ -2139,6 +2137,7 @@
 		7B359E182A7CFE0B0016DC59 /* RegenerateStructNames.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegenerateStructNames.cpp; sourceTree = "<group>"; };
 		7B4556EE2F18CE2B00DC54D0 /* SizeClipCullDistance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SizeClipCullDistance.h; sourceTree = "<group>"; };
 		7B4556EF2F18CE2B00DC54D0 /* SizeClipCullDistance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SizeClipCullDistance.cpp; sourceTree = "<group>"; };
+		7B4556F42F28AE5700DC54D0 /* span_util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = span_util.h; sourceTree = "<group>"; };
 		7B533A8F2E0A933D0069B90F /* ANGLETranslator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ANGLETranslator; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B5B1F0F2F0FC73B00B5D57B /* unsafe_buffers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unsafe_buffers.h; sourceTree = "<group>"; };
 		7B600EBB2CF9CFF600D5DE66 /* Name.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Name.h; sourceTree = "<group>"; };
@@ -2612,10 +2611,8 @@
 		FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateStructFromUniformDeclarations.h; sourceTree = "<group>"; };
 		FF194FD727432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteArrayOfArrayOfOpaqueUniforms.h; sourceTree = "<group>"; };
 		FF194FDA27432CC2006A97A3 /* MonomorphizeUnsupportedFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonomorphizeUnsupportedFunctions.h; sourceTree = "<group>"; };
-		FF194FDB27432CC2006A97A3 /* ForcePrecisionQualifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForcePrecisionQualifier.cpp; sourceTree = "<group>"; };
 		FF194FDC27432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonomorphizeUnsupportedFunctions.cpp; sourceTree = "<group>"; };
 		FF194FDE27432CC3006A97A3 /* ClampIndirectIndices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClampIndirectIndices.cpp; sourceTree = "<group>"; };
-		FF194FDF27432CC3006A97A3 /* ForcePrecisionQualifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForcePrecisionQualifier.h; sourceTree = "<group>"; };
 		FF3A9FFA2756B7C000BE0397 /* ImageImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageImpl.cpp; sourceTree = "<group>"; };
 		FF4BB3612769467500994EBF /* mtl_context_device.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mtl_context_device.mm; sourceTree = "<group>"; };
 		FF4BB3622769467600994EBF /* mtl_resource_spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_resource_spi.h; sourceTree = "<group>"; };
@@ -3456,8 +3453,6 @@
 				A30306EF2305F5EE002DA972 /* EmulateMultiDrawShaderBuiltins.h */,
 				5C55D64022826B9C00B5BA2C /* FoldExpressions.cpp */,
 				5C55D64822826B9E00B5BA2C /* FoldExpressions.h */,
-				FF194FDB27432CC2006A97A3 /* ForcePrecisionQualifier.cpp */,
-				FF194FDF27432CC3006A97A3 /* ForcePrecisionQualifier.h */,
 				5C55D64422826B9D00B5BA2C /* InitializeVariables.cpp */,
 				5C55D61F22826B9400B5BA2C /* InitializeVariables.h */,
 				FF194FDC27432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp */,
@@ -3594,6 +3589,7 @@
 				7BFAF8D82DE6EDE400327F7F /* SimpleMutex_unittest.cpp */,
 				7BFD81832D50CF7C0010ED68 /* span.h */,
 				7BFAF8D92DE6EDE400327F7F /* span_unittest.cpp */,
+				7B4556F42F28AE5700DC54D0 /* span_util.h */,
 				5CCD818B1DBFEA10006066B8 /* string_utils.cpp */,
 				5CCD818C1DBFEA10006066B8 /* string_utils.h */,
 				7BFAF8DA2DE6EDE400327F7F /* string_utils_unittest.cpp */,
@@ -4635,7 +4631,6 @@
 				7B359DAF2A7CEDAA0016DC59 /* FixTypeConstructors.h in Headers */,
 				31CDFFC0249184A700486F27 /* FlagStd140Structs.h in Headers */,
 				31CDFF7F2491849800486F27 /* FoldExpressions.h in Headers */,
-				FF194FEB27432CC3006A97A3 /* ForcePrecisionQualifier.h in Headers */,
 				31CD0040249184F400486F27 /* Format.h in Headers */,
 				31CD0080249184FD00486F27 /* formatutils.h in Headers */,
 				31CD0062249184FC00486F27 /* Framebuffer.h in Headers */,
@@ -4831,6 +4826,7 @@
 				A3C49C04255DF719005E8DF7 /* SoftLinking.h in Headers */,
 				31CDFF6C2491849200486F27 /* SourceLocation.h in Headers */,
 				7BFD81852D50CF7C0010ED68 /* span.h in Headers */,
+				7B4556F62F28AE5700DC54D0 /* span_util.h in Headers */,
 				FF62F64927446DC800AD6EDC /* SpecializationConstant.h in Headers */,
 				31CDFF7B2491849700486F27 /* SplitSequenceOperator.h in Headers */,
 				31CD0082249184FD00486F27 /* State.h in Headers */,
@@ -5429,7 +5425,6 @@
 				DF83E2CE2639FD84000825EF /* FlagStd140Structs.cpp in Sources */,
 				DF83E2122639FC74000825EF /* Float16ToFloat32.cpp in Sources */,
 				DF83E26D2639FD33000825EF /* FoldExpressions.cpp in Sources */,
-				FF194FE827432CC3006A97A3 /* ForcePrecisionQualifier.cpp in Sources */,
 				DF83E2E52639FE17000825EF /* format_map_autogen.cpp in Sources */,
 				DF83E38D2639FED4000825EF /* Format_table_autogen.cpp in Sources */,
 				DF83E3102639FE17000825EF /* formatutils.cpp in Sources */,
@@ -6100,7 +6095,6 @@
 				7BF555532C81F198002B101E /* FlagStd140Structs.cpp in Sources */,
 				7BF555412C81F198002B101E /* Float16ToFloat32.cpp in Sources */,
 				7BF555742C81F198002B101E /* FoldExpressions.cpp in Sources */,
-				7BF555852C81F198002B101E /* ForcePrecisionQualifier.cpp in Sources */,
 				7BF555012C81F198002B101E /* FunctionLookup.cpp in Sources */,
 				7BF554EF2C81F198002B101E /* glslang_lex_autogen.cpp in Sources */,
 				7BF554F52C81F198002B101E /* glslang_tab_autogen.cpp in Sources */,

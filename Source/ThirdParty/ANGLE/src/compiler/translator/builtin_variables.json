@@ -888,7 +888,11 @@
                     "gl_FragDepthEXT":{
                         "essl_level":"ESSL1_BUILTINS",
                         "essl_extension":"EXT_frag_depth",
-                        "initDynamicType":"TType *{type_name} = new TType(EbtFloat, resources.FragmentPrecisionHigh ? EbpHigh : EbpMedium, EvqFragDepth, 1);"
+                        "type": {
+                            "basic":"Float",
+                            "precision":"High",
+                            "qualifier":"FragDepth"
+                        }
                     }
                 }
             },

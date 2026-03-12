@@ -783,6 +783,17 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
             }
         }
 
+        bool isSelfCopy = false;
+        if (readBuffer && readBuffer->type() == GL_TEXTURE)
+        {
+            TextureGL *sourceTexture = GetImplAs<TextureGL>(readBuffer->getTexture());
+            const bool isSameCubeFace =
+                readBuffer->cubeMapFace() == gl::TextureTarget::InvalidEnum ||
+                readBuffer->cubeMapFace() == target;
+            isSelfCopy = sourceTexture && sourceTexture->mTextureID == mTextureID &&
+                         readBuffer->mipLevel() == static_cast<GLint>(level) && isSameCubeFace;
+        }
+
         LevelInfoGL levelInfo =
             GetLevelInfo(features, originalInternalFormatInfo, copyTexImageFormat.internalFormat);
         gl::Offset destOffset(clippedArea.x - sourceArea.x, clippedArea.y - sourceArea.y, 0);
@@ -828,7 +839,72 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
             }
             else
             {
-                if (features.emulateCopyTexImage2D.enabled)
+                if (isSelfCopy)
+                {
+                    if (type == GL_HALF_FLOAT_OES && functions->standard == STANDARD_GL_DESKTOP)
+                    {
+                        type = GL_HALF_FLOAT;
+                    }
+
+                    // Avoid redefining the texture before the copy, as that would invalidate the
+                    // source attachment. Copy through a temporary texture first.
+                    const GLenum unsizedFormat =
+                        gl::GetUnsizedFormat(copyTexImageFormat.internalFormat);
+
+                    GLuint tempTex = 0;
+                    ANGLE_GL_TRY(context, functions->genTextures(1, &tempTex));
+
+                    // Always use a 2D temp texture to keep the attachment complete (especially for
+                    // cube maps in ES, which require all faces to be defined).
+                    stateManager->bindTexture(gl::TextureType::_2D, tempTex);
+                    ANGLE_GL_TRY(context,
+                                 functions->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0));
+                    ANGLE_GL_TRY(context,
+                                 functions->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0));
+                    ANGLE_GL_TRY(context, functions->texParameteri(
+                                              GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+                    ANGLE_GL_TRY(context, functions->texParameteri(
+                                              GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+                    ANGLE_GL_TRY_ALWAYS_CHECK(
+                        context,
+                        functions->texImage2D(GL_TEXTURE_2D, 0, copyTexImageFormat.internalFormat,
+                                              clippedArea.width, clippedArea.height, 0,
+                                              unsizedFormat, type, nullptr));
+                    ANGLE_GL_TRY(context, functions->copyTexSubImage2D(
+                                              GL_TEXTURE_2D, 0, 0, 0, clippedArea.x, clippedArea.y,
+                                              clippedArea.width, clippedArea.height));
+
+                    GLuint tempFBO = 0;
+                    ANGLE_GL_TRY(context, functions->genFramebuffers(1, &tempFBO));
+                    const GLenum readFramebufferTarget =
+                        stateManager->getHasSeparateFramebufferBindings() ? GL_READ_FRAMEBUFFER
+                                                                          : GL_FRAMEBUFFER;
+                    stateManager->bindFramebuffer(readFramebufferTarget, tempFBO);
+                    ANGLE_GL_TRY(context, functions->framebufferTexture2D(
+                                              readFramebufferTarget, GL_COLOR_ATTACHMENT0,
+                                              GL_TEXTURE_2D, tempTex, 0));
+
+                    // Redefine the destination texture after the temp framebuffer is set up.
+                    stateManager->bindTexture(getType(), mTextureID);
+                    ANGLE_GL_TRY_ALWAYS_CHECK(
+                        context,
+                        functions->texImage2D(ToGLenum(target), static_cast<GLint>(level),
+                                              copyTexImageFormat.internalFormat, sourceArea.width,
+                                              sourceArea.height, 0, unsizedFormat, type, nullptr));
+
+                    ANGLE_GL_TRY(context,
+                                 functions->copyTexSubImage2D(
+                                     ToGLenum(target), static_cast<GLint>(level), destOffset.x,
+                                     destOffset.y, 0, 0, clippedArea.width, clippedArea.height));
+
+                    stateManager->deleteFramebuffer(tempFBO);
+                    stateManager->deleteTexture(tempTex);
+
+                    // Restore the read framebuffer binding for the rest of this function.
+                    stateManager->bindFramebuffer(readFramebufferTarget,
+                                                  sourceFramebufferGL->getFramebufferID());
+                }
+                else if (features.emulateCopyTexImage2D.enabled)
                 {
                     if (type == GL_HALF_FLOAT_OES && functions->standard == STANDARD_GL_DESKTOP)
                     {
@@ -2291,42 +2367,6 @@ angle::Result TextureGL::initializeContents(const gl::Context *context,
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
-    const gl::ImageDesc &desc                    = mState.getImageDesc(imageIndex);
-    const gl::InternalFormat &internalFormatInfo = *desc.format.info;
-
-    // Clearing cube maps with EXT_clear_texture has inconsistent results. The drivers often clear
-    // the entire level when only one face is specified.
-    if (functions->clearTexImage && !internalFormatInfo.compressed &&
-        getType() != gl::TextureType::CubeMap)
-    {
-        nativegl::TexSubImageFormat nativeSubImageFormat = nativegl::GetTexSubImageFormat(
-            functions, features, internalFormatInfo.format, internalFormatInfo.type);
-
-        // Some drivers may use color mask state when clearing textures.
-        contextGL->getStateManager()->setColorMask(true, true, true, true);
-
-        // The largest GL data format is 16 bytes (RGBA32F)
-        static constexpr std::array<uint8_t, 16> data = {0};
-        CHECK(internalFormatInfo.pixelBytes <= data.size());
-        if (imageIndex.hasLayer())
-        {
-            ANGLE_GL_TRY(context, functions->clearTexSubImage(
-                                      mTextureID, imageIndex.getLevelIndex(), 0, 0,
-                                      imageIndex.getLayerIndex(), desc.size.width, desc.size.height,
-                                      imageIndex.getLayerCount(), nativeSubImageFormat.format,
-                                      nativeSubImageFormat.type, data.data()));
-        }
-        else
-        {
-            ANGLE_GL_TRY(context, functions->clearTexImage(mTextureID, imageIndex.getLevelIndex(),
-                                                           nativeSubImageFormat.format,
-                                                           nativeSubImageFormat.type, data.data()));
-        }
-
-        contextGL->markWorkSubmitted();
-        return angle::Result::Continue;
-    }
-
     GLenum nativeInternalFormat =
         getLevelInfo(imageIndex.getTarget(), imageIndex.getLevelIndex()).nativeInternalFormat;
     if (features.allowClearForRobustResourceInit.enabled &&
@@ -2349,6 +2389,8 @@ angle::Result TextureGL::initializeContents(const gl::Context *context,
     // Either the texture is not renderable or was incomplete when clearing, fall back to a data
     // upload
     ASSERT(nativegl::SupportsTexImage(getType()));
+    const gl::ImageDesc &desc                    = mState.getImageDesc(imageIndex);
+    const gl::InternalFormat &internalFormatInfo = *desc.format.info;
 
     gl::PixelUnpackState unpackState;
     unpackState.alignment = 1;

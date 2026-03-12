@@ -171,6 +171,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_EXT_shader_non_constant_global_initializers"] = enableableExtension(&Extensions::shaderNonConstantGlobalInitializersEXT);
         map["GL_NV_shader_noperspective_interpolation"] = enableableExtension(&Extensions::shaderNoperspectiveInterpolationNV);
         map["GL_EXT_shader_texture_lod"] = enableableExtension(&Extensions::shaderTextureLodEXT);
+        map["GL_EXT_shader_texture_samples"] = enableableExtension(&Extensions::shaderTextureSamplesEXT);
         map["GL_QCOM_shading_rate"] = enableableExtension(&Extensions::shadingRateQCOM);
         map["GL_EXT_shadow_samplers"] = enableableExtension(&Extensions::shadowSamplersEXT);
         map["GL_EXT_sRGB"] = enableableExtension(&Extensions::sRGBEXT);

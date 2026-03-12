@@ -2147,8 +2147,7 @@ angle::Result CLCommandQueueVk::flushComputePassCommands()
     // get hold of the queue serial that is flushed, post the flush the command buffer will be reset
     mLastFlushedQueueSerial = mComputePassCommands->getQueueSerial();
     // Here, we flush our compute cmds to RendererVk's primary command buffer
-    ANGLE_TRY(
-        mCommandState.flushOutsideRPCommands(mContext, getProtectionType(), &mComputePassCommands));
+    ANGLE_TRY(mCommandState.flushOutsideRPCommands(mContext, &mComputePassCommands));
 
     mContext->getPerfCounters().flushedOutsideRenderPassCommandBuffers++;
 

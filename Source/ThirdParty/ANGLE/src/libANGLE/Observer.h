@@ -56,6 +56,9 @@ enum class SubjectMessage
     // to prevent having to flush pending commands and waiting for the GPU to become idle.
     InternalMemoryAllocationChanged,
 
+    // Indicate VkImage gets reallocated due to tile memory fallback. Only used by vulkan backend
+    VkImageChanged,
+
     // Indicates an external change to the default framebuffer.
     SurfaceChanged,
 

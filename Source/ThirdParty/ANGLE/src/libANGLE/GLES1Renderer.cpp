@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "common/hash_utils.h"
+#include "common/span.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/ErrorStrings.h"
@@ -65,7 +66,7 @@ bool operator!=(const GLES1ShaderState &a, const GLES1ShaderState &b)
 
 size_t GLES1ShaderState::hash() const
 {
-    return angle::ComputeGenericHash(*this);
+    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
 }
 
 GLES1Renderer::GLES1Renderer() : mRendererProgramInitialized(false) {}

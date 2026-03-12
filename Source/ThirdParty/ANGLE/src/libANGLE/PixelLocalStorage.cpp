@@ -443,12 +443,16 @@ void PixelLocalStoragePlane::issueClearCommand(ClearCommands *clearCommands,
             break;
         }
         case GL_RGBA8I:
+        case GL_R32I:
         {
             std::array<GLint, 4> clearValue = {0, 0, 0, 0};
             if (loadop == GL_LOAD_OP_CLEAR_ANGLE)
             {
                 clearValue = mClearValuei;
-                ClampArray(clearValue, -128, 127);
+                if (mInternalformat == GL_RGBA8I)
+                {
+                    ClampArray(clearValue, -128, 127);
+                }
             }
             clearCommands->cleariv(target, clearValue.data());
             break;

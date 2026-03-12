@@ -194,6 +194,7 @@ constexpr bool IsValidWithPixelLocalStorage(TLayoutImageInternalFormat internalF
         case EiifRGBA8I:
         case EiifRGBA8UI:
         case EiifR32F:
+        case EiifR32I:
         case EiifR32UI:
             return true;
         default:
@@ -215,6 +216,8 @@ constexpr ShPixelLocalStorageFormat ImageFormatToPLSFormat(TLayoutImageInternalF
             return ShPixelLocalStorageFormat::RGBA8UI;
         case EiifR32F:
             return ShPixelLocalStorageFormat::R32F;
+        case EiifR32I:
+            return ShPixelLocalStorageFormat::R32I;
         case EiifR32UI:
             return ShPixelLocalStorageFormat::R32UI;
     }
@@ -419,7 +422,6 @@ TParseContext::TParseContext(TSymbolTable &symt,
       mStructNestingLevel(0),
       mCurrentFunction(nullptr),
       mFunctionReturnsValue(false),
-      mFragmentPrecisionHighOnESSL1(false),
       mEarlyFragmentTestsSpecified(false),
       mHasDiscard(false),
       mSampleQualifierSpecified(false),
@@ -2308,6 +2310,7 @@ void TParseContext::nonEmptyDeclarationErrorCheck(const TPublicType &publicType,
                           getImageInternalFormatString(layoutQualifier.imageInternalFormat));
                 }
                 break;
+            case EiifR32I:
             case EiifRGBA8I:
                 if (publicType.getBasicType() != EbtIPixelLocalANGLE)
                 {
@@ -2325,7 +2328,6 @@ void TParseContext::nonEmptyDeclarationErrorCheck(const TPublicType &publicType,
                           getImageInternalFormatString(layoutQualifier.imageInternalFormat));
                 }
                 break;
-            case EiifR32I:
             case EiifRGBA8_SNORM:
             case EiifRGBA16F:
             case EiifRGBA32F:
@@ -4920,12 +4922,6 @@ void TParseContext::parseDefaultPrecisionQualifier(const TPrecision precision,
                                                    const TPublicType &type,
                                                    const TSourceLoc &loc)
 {
-    if ((precision == EbpHigh) && (getShaderType() == GL_FRAGMENT_SHADER) &&
-        !getFragmentPrecisionHigh())
-    {
-        error(loc, "precision is not supported in fragment shader", "highp");
-    }
-
     if (!CanSetDefaultPrecisionOnType(type))
     {
         error(loc, "illegal type argument for default precision qualifier",
@@ -6649,29 +6645,55 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
         }
     }
 
+    int index                   = 0;
+    bool outOfRangeIndexIsError = false;
+
+    // If the index is using the comma operator, descend to the right-most value, see if that's a
+    // constant.  This is used for validating the index only, we can't constant fold the expression
+    // due to the left-hand-side of the comma.
+    TIntermTyped *commaRHS = indexExpression;
+    while (true)
+    {
+        TIntermConstantUnion *constant = commaRHS->getAsConstantUnion();
+        if (constant)
+        {
+            // If an out-of-range index is not qualified as constant, the behavior in the spec is
+            // undefined. This applies even if ANGLE has been able to constant fold it (ANGLE may
+            // constant fold expressions that are not constant expressions). The most compatible way
+            // to handle this case is to report a warning instead of an error and force the index to
+            // be in the correct range.
+            outOfRangeIndexIsError = commaRHS->getQualifier() == EvqConst;
+            index                  = 0;
+            if (constant->getBasicType() == EbtInt)
+            {
+                index = constant->getIConst(0);
+            }
+            else if (constant->getBasicType() == EbtUInt)
+            {
+                index = static_cast<int>(constant->getUConst(0));
+            }
+
+            if (index < 0)
+            {
+                outOfRangeError(outOfRangeIndexIsError, location, "index expression is negative",
+                                "[]");
+            }
+            break;
+        }
+
+        TIntermBinary *asBinary = commaRHS->getAsBinaryNode();
+        if (asBinary == nullptr || asBinary->getOp() != EOpComma)
+        {
+            break;
+        }
+        commaRHS = asBinary->getRight();
+    }
+
     if (indexConstantUnion)
     {
-        // If an out-of-range index is not qualified as constant, the behavior in the spec is
-        // undefined. This applies even if ANGLE has been able to constant fold it (ANGLE may
-        // constant fold expressions that are not constant expressions). The most compatible way to
-        // handle this case is to report a warning instead of an error and force the index to be in
-        // the correct range.
-        bool outOfRangeIndexIsError = indexExpression->getQualifier() == EvqConst;
-        int index                   = 0;
-        if (indexConstantUnion->getBasicType() == EbtInt)
-        {
-            index = indexConstantUnion->getIConst(0);
-        }
-        else if (indexConstantUnion->getBasicType() == EbtUInt)
-        {
-            index = static_cast<int>(indexConstantUnion->getUConst(0));
-        }
-
         int safeIndex = -1;
-
         if (index < 0)
         {
-            outOfRangeError(outOfRangeIndexIsError, location, "index expression is negative", "[]");
             safeIndex = 0;
         }
 
@@ -7021,7 +7043,10 @@ TLayoutQualifier TParseContext::parseLayoutQualifier(const ImmutableString &qual
     }
     else if (qualifierType == "r32i")
     {
-        checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        if (!isExtensionEnabled(TExtension::ANGLE_shader_pixel_local_storage))
+        {
+            checkLayoutQualifierSupported(qualifierTypeLine, qualifierType, 310);
+        }
         qualifier.imageInternalFormat = EiifR32I;
     }
     else if (qualifierType == "rgba32ui")
@@ -9811,18 +9836,19 @@ bool TParseContext::postParseChecks()
 //
 // Returns 0 for success.
 //
-int PaParseStrings(size_t count,
-                   const char *const string[],
+int PaParseStrings(angle::Span<const char *const> string,
                    const int length[],
                    TParseContext *context)
 {
-    if ((count == 0) || (string == nullptr))
+    if (string.empty())
+    {
         return 1;
+    }
 
     if (glslang_initialize(context))
         return 1;
 
-    int error = glslang_scan(count, string, length, context);
+    int error = glslang_scan(string.size(), string.data(), length, context);
     if (!error)
         error = glslang_parse(context);
 

@@ -102,6 +102,8 @@ class AsyncWorkerPool final : public WorkerThreadPool
 
     bool isAsync() override;
 
+    size_t getEnqueuedTaskCount() override;
+
   private:
     void createThreads();
 
@@ -122,7 +124,7 @@ class AsyncWorkerPool final : public WorkerThreadPool
 
 AsyncWorkerPool::AsyncWorkerPool(size_t numThreads) : mDesiredThreadCount(numThreads)
 {
-    ASSERT(numThreads != 0);
+    ASSERT(mDesiredThreadCount != 0);
 }
 
 AsyncWorkerPool::~AsyncWorkerPool()
@@ -214,6 +216,12 @@ bool AsyncWorkerPool::isAsync()
     return true;
 }
 
+size_t AsyncWorkerPool::getEnqueuedTaskCount()
+{
+    std::unique_lock<std::mutex> lock(mMutex);
+    return mTaskQueue.size();
+}
+
 #endif  // ANGLE_STD_ASYNC_WORKERS
 
 #if ANGLE_DELEGATE_WORKERS
@@ -292,29 +300,33 @@ bool DelegateWorkerPool::isAsync()
 #endif
 
 // static
-std::shared_ptr<WorkerThreadPool> WorkerThreadPool::Create(size_t numThreads,
+std::shared_ptr<WorkerThreadPool> WorkerThreadPool::Create(ThreadPoolType type,
+                                                           size_t numThreads,
                                                            PlatformMethods *platform)
 {
-    const bool multithreaded = numThreads != 1;
+    // A Synchronous pool must have a threadcount of 0
+    ASSERT(type != ThreadPoolType::Synchronous || numThreads == 0);
+
     std::shared_ptr<WorkerThreadPool> pool(nullptr);
 
 #if ANGLE_DELEGATE_WORKERS
+    ASSERT(platform);
     const bool hasPostWorkerTaskImpl = platform->postWorkerTask != nullptr;
-    if (hasPostWorkerTaskImpl && multithreaded)
+    if (hasPostWorkerTaskImpl && type == ThreadPoolType::Asynchronous)
     {
-        pool = std::shared_ptr<WorkerThreadPool>(new DelegateWorkerPool(platform));
+        pool = std::make_shared<DelegateWorkerPool>(platform);
     }
 #endif
 #if ANGLE_STD_ASYNC_WORKERS
-    if (!pool && multithreaded)
+    if (!pool && type == ThreadPoolType::Asynchronous)
     {
-        pool = std::shared_ptr<WorkerThreadPool>(new AsyncWorkerPool(
-            numThreads == 0 ? std::thread::hardware_concurrency() : numThreads));
+        pool = std::make_shared<AsyncWorkerPool>(
+            numThreads == 0 ? std::thread::hardware_concurrency() : numThreads);
     }
 #endif
     if (!pool)
     {
-        return std::shared_ptr<WorkerThreadPool>(new SingleThreadedWorkerPool());
+        return std::make_shared<SingleThreadedWorkerPool>();
     }
     return pool;
 }

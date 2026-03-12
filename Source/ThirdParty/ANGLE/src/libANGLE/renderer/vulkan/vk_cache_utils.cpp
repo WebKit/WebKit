@@ -15,6 +15,7 @@
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 
 #include "common/aligned_memory.h"
+#include "common/span.h"
 #include "common/system_utils.h"
 #include "libANGLE/BlobCache.h"
 #include "libANGLE/VertexAttribute.h"
@@ -407,10 +408,14 @@ void DeriveRenderingInfo(Renderer *renderer,
                 static_cast<vk::ImageAccess>(ops[attachmentCount].initialLayout));
             const VkImageLayout resolveImageLayout = renderer->getVkImageLayout(
                 static_cast<vk::ImageAccess>(ops[attachmentCount].finalResolveLayout));
+            const bool hasColorResolveAttachment = desc.hasColorResolveAttachment(colorIndexGL);
+            const bool isIntegerFormat           = angle::Format::Get(attachmentFormatID).isInt();
             const VkResolveModeFlagBits resolveMode =
                 isYUVExternalFormat ? VK_RESOLVE_MODE_EXTERNAL_FORMAT_DOWNSAMPLE_ANDROID
-                : desc.hasColorResolveAttachment(colorIndexGL) ? VK_RESOLVE_MODE_AVERAGE_BIT
-                                                               : VK_RESOLVE_MODE_NONE;
+                : hasColorResolveAttachment || desc.isRenderToTexture()
+                    ? isIntegerFormat ? VK_RESOLVE_MODE_SAMPLE_ZERO_BIT
+                                      : VK_RESOLVE_MODE_AVERAGE_BIT
+                    : VK_RESOLVE_MODE_NONE;
             const RenderPassLoadOp loadOp =
                 static_cast<RenderPassLoadOp>(ops[attachmentCount].loadOp);
             const RenderPassStoreOp storeOp =
@@ -437,7 +442,7 @@ void DeriveRenderingInfo(Renderer *renderer,
             }
             infoOut->colorAttachmentInfo[attachmentCount.get()].imageView =
                 attachmentViews[attachmentCount.get()];
-            if (resolveMode != VK_RESOLVE_MODE_NONE)
+            if (resolveMode != VK_RESOLVE_MODE_NONE && !desc.isRenderToTexture())
             {
                 infoOut->colorAttachmentInfo[attachmentCount.get()].resolveImageView =
                     attachmentViews[RenderPassFramebuffer::kColorResolveAttachmentBegin +
@@ -2925,7 +2930,7 @@ void RenderPassDesc::setWriteControlMode(gl::SrgbWriteControlMode mode)
 
 size_t RenderPassDesc::hash() const
 {
-    return angle::ComputeGenericHash(*this);
+    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
 }
 
 bool RenderPassDesc::isColorAttachmentEnabled(size_t colorIndexGL) const
@@ -3205,20 +3210,19 @@ size_t ComputePipelineDesc::hash() const
 
     size_t paddedPipelineOptions = mPipelineOptions.permutationIndex;
     size_t pipelineOptionsHash =
-        angle::ComputeGenericHash(&paddedPipelineOptions, sizeof(paddedPipelineOptions));
+        angle::ComputeGenericHash(angle::byte_span_from_ref(paddedPipelineOptions));
 
     size_t specializationConstantIDsHash = 0;
     if (!mConstantIds.empty())
     {
         specializationConstantIDsHash =
-            angle::ComputeGenericHash(mConstantIds.data(), mConstantIds.size() * sizeof(uint32_t));
+            angle::ComputeGenericHash(angle::as_byte_span(mConstantIds));
     }
 
     size_t specializationConstantsHash = 0;
     if (!mConstants.empty())
     {
-        specializationConstantsHash =
-            angle::ComputeGenericHash(mConstants.data(), mConstants.size() * sizeof(uint32_t));
+        specializationConstantsHash = angle::ComputeGenericHash(angle::as_byte_span(mConstants));
     }
 
     return pipelineOptionsHash ^ specializationConstantIDsHash ^ specializationConstantsHash;
@@ -3320,7 +3324,7 @@ size_t GraphicsPipelineDesc::hash(GraphicsPipelineSubset subset) const
     size_t keySize  = 0;
     const void *key = getPipelineSubsetMemory(subset, &keySize);
 
-    return angle::ComputeGenericHash(key, keySize);
+    return angle::ComputeGenericHash(angle::Span(static_cast<const uint8_t *>(key), keySize));
 }
 
 bool GraphicsPipelineDesc::keyEqual(const GraphicsPipelineDesc &other,
@@ -3856,6 +3860,10 @@ void GraphicsPipelineDesc::initializePipelineVertexInputState(
         activeAttributeLocationsMask.any())
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE);
+    }
+    if (context->getFeatures().usePrimitiveTopologyDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY_EXT);
     }
     if (context->getFeatures().usePrimitiveRestartEnableDynamicState.enabled)
     {
@@ -4921,7 +4929,7 @@ void AttachmentOpsArray::setClearStencilOp(PackedAttachmentIndex index)
 
 size_t AttachmentOpsArray::hash() const
 {
-    return angle::ComputeGenericHash(mOps);
+    return angle::ComputeGenericHash(angle::byte_span_from_ref(mOps));
 }
 
 bool operator==(const AttachmentOpsArray &lhs, const AttachmentOpsArray &rhs)
@@ -4943,23 +4951,17 @@ DescriptorSetLayoutDesc &DescriptorSetLayoutDesc::operator=(const DescriptorSetL
 
 size_t DescriptorSetLayoutDesc::hash() const
 {
-    size_t validDescriptorSetLayoutBindingsCount = mDescriptorSetLayoutBindings.size();
-    size_t validImmutableSamplersCount           = mImmutableSamplers.size();
-
-    ASSERT(validDescriptorSetLayoutBindingsCount != 0 || validImmutableSamplersCount == 0);
+    ASSERT(!mDescriptorSetLayoutBindings.empty() || mImmutableSamplers.empty());
 
     size_t genericHash = 0;
-    if (validDescriptorSetLayoutBindingsCount > 0)
+    if (!mDescriptorSetLayoutBindings.empty())
     {
-        genericHash = angle::ComputeGenericHash(
-            mDescriptorSetLayoutBindings.data(),
-            validDescriptorSetLayoutBindingsCount * sizeof(PackedDescriptorSetBinding));
+        genericHash = angle::ComputeGenericHash(angle::as_byte_span(mDescriptorSetLayoutBindings));
     }
 
-    if (validImmutableSamplersCount > 0)
+    if (!mImmutableSamplers.empty())
     {
-        genericHash ^= angle::ComputeGenericHash(mImmutableSamplers.data(),
-                                                 validImmutableSamplersCount * sizeof(VkSampler));
+        genericHash ^= angle::ComputeGenericHash(angle::as_byte_span(mImmutableSamplers));
     }
 
     return genericHash;
@@ -5058,7 +5060,7 @@ PipelineLayoutDesc &PipelineLayoutDesc::operator=(const PipelineLayoutDesc &rhs)
 
 size_t PipelineLayoutDesc::hash() const
 {
-    size_t genericHash = angle::ComputeGenericHash(mPushConstantRange);
+    size_t genericHash = angle::ComputeGenericHash(angle::byte_span_from_ref(mPushConstantRange));
     for (const DescriptorSetLayoutDesc &descriptorSetLayoutDesc : mDescriptorSetLayouts)
     {
         genericHash ^= descriptorSetLayoutDesc.hash();
@@ -5311,9 +5313,7 @@ size_t DescriptorSetDesc::hash() const
     {
         return 0;
     }
-
-    return angle::ComputeGenericHash(mDescriptorInfos.data(),
-                                     sizeof(mDescriptorInfos[0]) * mDescriptorInfos.size());
+    return angle::ComputeGenericHash(angle::as_byte_span(mDescriptorInfos));
 }
 
 // FramebufferDesc implementation.
@@ -5376,7 +5376,7 @@ bool FramebufferDesc::hasFragmentShadingRateAttachment() const
 
 size_t FramebufferDesc::hash() const
 {
-    return angle::ComputeGenericHash(&mSerials, sizeof(mSerials[0]) * mMaxIndex) ^
+    return angle::ComputeGenericHash(angle::as_bytes(angle::Span(mSerials).first(mMaxIndex))) ^
            mHasColorFramebufferFetch << 26 ^ mIsRenderToTexture << 25 ^ mLayerCount << 16 ^
            mUnresolveAttachmentMask;
 }
@@ -5479,7 +5479,7 @@ YcbcrConversionDesc &YcbcrConversionDesc::operator=(const YcbcrConversionDesc &r
 
 size_t YcbcrConversionDesc::hash() const
 {
-    return angle::ComputeGenericHash(*this);
+    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
 }
 
 bool YcbcrConversionDesc::operator==(const YcbcrConversionDesc &other) const
@@ -5860,7 +5860,7 @@ angle::Result SamplerDesc::init(ContextVk *contextVk, Sampler *sampler) const
 
 size_t SamplerDesc::hash() const
 {
-    return angle::ComputeGenericHash(*this);
+    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
 }
 
 bool SamplerDesc::operator==(const SamplerDesc &other) const

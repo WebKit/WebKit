@@ -19,6 +19,7 @@
 
 #include "GLSLANG/ShaderLang.h"
 #include "common/angle_version_info.h"
+#include "common/span_util.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "common/utilities.h"
@@ -306,7 +307,7 @@ angle::Result CompileTask::postTranslate()
         while (std::getline(inputSourceStream, line))
         {
             // Remove null characters from the source line
-            line.erase(std::remove(line.begin(), line.end(), '\0'), line.end());
+            std::erase(line, '\0');
 
             shaderStream << "// " << line;
 
@@ -854,16 +855,15 @@ angle::Result Shader::serialize(const Context *context, angle::MemoryBuffer *bin
     stream.writeInt(kShaderCacheIdentifier);
     mState.mCompiledState->serialize(stream);
 
-    ASSERT(binaryOut);
-    if (!binaryOut->resize(stream.length()))
+    if (!binaryOut->resize(stream.size()))
     {
         ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                            "Failed to allocate enough memory to serialize a shader. (%zu bytes)",
-                           stream.length());
+                           stream.size());
         return angle::Result::Stop;
     }
 
-    memcpy(binaryOut->data(), stream.data(), stream.length());
+    angle::SpanMemcpy(binaryOut->span(), angle::Span(stream));
 
     return angle::Result::Continue;
 }
@@ -907,7 +907,7 @@ bool Shader::loadBinaryImpl(const Context *context,
                             angle::JobResultExpectancy resultExpectancy,
                             bool generatedWithOfflineCompiler)
 {
-    BinaryInputStream stream(binary, length);
+    BinaryInputStream stream(angle::Span(static_cast<const uint8_t *>(binary), length));
 
     mState.mCompiledState = std::make_shared<CompiledShaderState>(mState.getShaderType());
 
@@ -918,7 +918,7 @@ bool Shader::loadBinaryImpl(const Context *context,
         // Validation layer should have already verified that the shader program version and shader
         // type match
         std::vector<uint8_t> commitString(angle::GetANGLEShaderProgramVersionHashSize(), 0);
-        stream.readBytes(commitString.data(), commitString.size());
+        stream.readBytes(commitString);
         ASSERT(memcmp(commitString.data(), angle::GetANGLEShaderProgramVersion(),
                       commitString.size()) == 0);
 
@@ -936,10 +936,10 @@ bool Shader::loadBinaryImpl(const Context *context,
         // In the absence of element-by-element serialize/deserialize functions, read
         // ShCompileOptions and ShBuiltInResources as raw binary blobs.
         ShCompileOptions compileOptions;
-        stream.readBytes(reinterpret_cast<uint8_t *>(&compileOptions), sizeof(ShCompileOptions));
+        stream.readBytes(angle::byte_span_from_ref(compileOptions));
 
         ShBuiltInResources resources;
-        stream.readBytes(reinterpret_cast<uint8_t *>(&resources), sizeof(ShBuiltInResources));
+        stream.readBytes(angle::byte_span_from_ref(resources));
 
         setShaderKey(context, compileOptions, outputType, resources);
     }

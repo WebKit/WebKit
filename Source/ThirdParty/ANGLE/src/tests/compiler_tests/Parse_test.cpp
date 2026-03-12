@@ -21,7 +21,6 @@ class ParseTest : public testing::Test
     ParseTest()
     {
         InitBuiltInResources(&mResources);
-        mResources.FragmentPrecisionHigh = 1;
         mCompileOptions.intermediateTree = true;
     }
 
@@ -42,7 +41,7 @@ class ParseTest : public testing::Test
         }
 
         const char *shaderStrings[] = {shaderString.c_str()};
-        bool compilationSuccess     = mTranslator->compile(shaderStrings, 1, mCompileOptions);
+        bool compilationSuccess     = mTranslator->compile(shaderStrings, mCompileOptions);
         mInfoLog                    = mTranslator->getInfoSink().info.str();
         if (!compilationSuccess)
         {

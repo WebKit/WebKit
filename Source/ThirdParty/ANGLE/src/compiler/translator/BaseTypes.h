@@ -104,29 +104,20 @@ enum TBasicType
     EbtImage3D,
     EbtImage2DArray,
     EbtImageCube,
-    EbtImage2DMS,
-    EbtImage2DMSArray,
     EbtImageCubeArray,
-    EbtImageRect,
     EbtImageBuffer,
     EbtIImage2D,
     EbtIImage3D,
     EbtIImage2DArray,
     EbtIImageCube,
-    EbtIImage2DMS,
-    EbtIImage2DMSArray,
     EbtIImageCubeArray,
-    EbtIImageRect,
     EbtIImageBuffer,
     EbtGuardUIntImageBegin,
     EbtUImage2D = EbtGuardUIntImageBegin,
     EbtUImage3D,
     EbtUImage2DArray,
     EbtUImageCube,
-    EbtUImage2DMS,
-    EbtUImage2DMSArray,
     EbtUImageCubeArray,
-    EbtUImageRect,
     EbtUImageBuffer,
     EbtGuardUIntImageEnd = EbtUImageBuffer,
     EbtGuardImageEnd     = EbtGuardUIntImageEnd,
@@ -341,22 +332,6 @@ inline bool IsSamplerMS(TBasicType type)
     return IsSampler2DMS(type) || IsSampler2DMSArray(type);
 }
 
-inline bool IsImageMS(TBasicType type)
-{
-    switch (type)
-    {
-        case EbtImage2DMS:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMS:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMS:
-        case EbtUImage2DMSArray:
-            return true;
-        default:
-            return false;
-    }
-}
-
 inline bool IsFloatImage(TBasicType type)
 {
     switch (type)
@@ -365,10 +340,7 @@ inline bool IsFloatImage(TBasicType type)
         case EbtImage3D:
         case EbtImage2DArray:
         case EbtImageCube:
-        case EbtImage2DMS:
-        case EbtImage2DMSArray:
         case EbtImageCubeArray:
-        case EbtImageRect:
         case EbtImageBuffer:
             return true;
         default:
@@ -387,10 +359,7 @@ inline bool IsIntegerImage(TBasicType type)
         case EbtIImage3D:
         case EbtIImage2DArray:
         case EbtIImageCube:
-        case EbtIImage2DMS:
-        case EbtIImage2DMSArray:
         case EbtIImageCubeArray:
-        case EbtIImageRect:
         case EbtIImageBuffer:
             return true;
         default:
@@ -409,10 +378,7 @@ inline bool IsUnsignedImage(TBasicType type)
         case EbtUImage3D:
         case EbtUImage2DArray:
         case EbtUImageCube:
-        case EbtUImage2DMS:
-        case EbtUImage2DMSArray:
         case EbtUImageCubeArray:
-        case EbtUImageRect:
         case EbtUImageBuffer:
             return true;
         default:
@@ -726,9 +692,6 @@ inline bool IsImage2D(TBasicType type)
         case EbtImage2D:
         case EbtIImage2D:
         case EbtUImage2D:
-        case EbtImage2DMS:
-        case EbtIImage2DMS:
-        case EbtUImage2DMS:
             return true;
         case EbtImage3D:
         case EbtIImage3D:
@@ -739,15 +702,9 @@ inline bool IsImage2D(TBasicType type)
         case EbtImageCube:
         case EbtIImageCube:
         case EbtUImageCube:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMSArray:
         case EbtImageCubeArray:
         case EbtIImageCubeArray:
         case EbtUImageCubeArray:
-        case EbtImageRect:
-        case EbtIImageRect:
-        case EbtUImageRect:
         case EbtImageBuffer:
         case EbtIImageBuffer:
         case EbtUImageBuffer:
@@ -776,18 +733,9 @@ inline bool IsImage3D(TBasicType type)
         case EbtImageCube:
         case EbtIImageCube:
         case EbtUImageCube:
-        case EbtImage2DMS:
-        case EbtIImage2DMS:
-        case EbtUImage2DMS:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMSArray:
         case EbtImageCubeArray:
         case EbtIImageCubeArray:
         case EbtUImageCubeArray:
-        case EbtImageRect:
-        case EbtIImageRect:
-        case EbtUImageRect:
         case EbtImageBuffer:
         case EbtIImageBuffer:
         case EbtUImageBuffer:
@@ -806,9 +754,6 @@ inline bool IsImage2DArray(TBasicType type)
         case EbtImage2DArray:
         case EbtIImage2DArray:
         case EbtUImage2DArray:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMSArray:
             return true;
         case EbtImage2D:
         case EbtIImage2D:
@@ -819,15 +764,9 @@ inline bool IsImage2DArray(TBasicType type)
         case EbtImageCube:
         case EbtIImageCube:
         case EbtUImageCube:
-        case EbtImage2DMS:
-        case EbtIImage2DMS:
-        case EbtUImage2DMS:
         case EbtImageCubeArray:
         case EbtIImageCubeArray:
         case EbtUImageCubeArray:
-        case EbtImageRect:
-        case EbtIImageRect:
-        case EbtUImageRect:
         case EbtImageBuffer:
         case EbtIImageBuffer:
         case EbtUImageBuffer:
@@ -856,18 +795,9 @@ inline bool IsImageCube(TBasicType type)
         case EbtImage2DArray:
         case EbtIImage2DArray:
         case EbtUImage2DArray:
-        case EbtImage2DMS:
-        case EbtIImage2DMS:
-        case EbtUImage2DMS:
-        case EbtImage2DMSArray:
-        case EbtIImage2DMSArray:
-        case EbtUImage2DMSArray:
         case EbtImageCubeArray:
         case EbtIImageCubeArray:
         case EbtUImageCubeArray:
-        case EbtImageRect:
-        case EbtIImageRect:
-        case EbtUImageRect:
         case EbtImageBuffer:
         case EbtIImageBuffer:
         case EbtUImageBuffer:

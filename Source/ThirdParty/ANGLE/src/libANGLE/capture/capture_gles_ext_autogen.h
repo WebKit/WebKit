@@ -1992,6 +1992,8 @@ angle::CallCapture CaptureFramebufferFetchBarrierEXT(const State &glState, bool 
 
 // GL_EXT_shader_texture_lod
 
+// GL_EXT_shader_texture_samples
+
 // GL_EXT_shadow_samplers
 
 // GL_EXT_tessellation_shader

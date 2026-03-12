@@ -222,6 +222,22 @@
 42263733 MAC OPENGL AMD : dEQP-GLES2.functional.shaders.fragdata.* = FAIL
 42263733 MAC OPENGL AMD : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.* = FAIL
 
+// Apple M2
+42266214 MAC APPLE : dEQP-GLES2.functional.shaders.indexing.tmp_array.float_const_write_dynamic_* = FAIL
+42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear_clamp = FAIL
+42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_clamp = FAIL
+42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_mirror = FAIL
+42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_repeat = FAIL
+42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.2d.projected.nearest_nearest_mirror = FAIL
+42266214 MAC APPLE OPENGL : dEQP-GLES2.functional.texture.mipmap.cube.projected.nearest_linear = FAIL
+42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear_clamp = FAIL
+42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear_repeat = FAIL
+42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_clamp = FAIL
+42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_mirror = FAIL
+42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest_repeat = FAIL
+42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.nearest_linear_repeat = FAIL
+42266214 MAC APPLE WGPU : dEQP-GLES2.functional.texture.mipmap.2d.projected.nearest_nearest_mirror = FAIL
+
 // D3D11 AMD already covered by Line 148
 42261921 D3D11 INTEL : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_nearest = FAIL
 42261921 D3D11 INTEL : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_linear = FAIL
@@ -349,8 +365,6 @@
 388052193 LINUX UBSAN : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.* = SKIP
 
 42265173 UBSAN : dEQP-GLES2.functional.shaders.random.* = SKIP
-
-417757002 : dEQP-GLES2.functional.debug_marker.random = SKIP
 
 // Samsung Galaxy S23
 42266598 GALAXYS23 VULKAN : dEQP-GLES2.functional.fbo.render.color_clear.* = SKIP
