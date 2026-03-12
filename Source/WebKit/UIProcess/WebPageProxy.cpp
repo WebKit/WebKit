@@ -3879,6 +3879,10 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
     performDragControllerAction(DragControllerAction::PerformDragOperation, dragData);
 #elif PLATFORM(COCOA)
     grantAccessToCurrentPasteboardData(dragStorageName, [this, protectedThis = Ref { *this }, dragStorageName, dragData = WTF::move(dragData), sandboxExtensionHandle = WTF::move(sandboxExtensionHandle), sandboxExtensionsForUpload = WTF::move(sandboxExtensionsForUpload)] () mutable {
+#if ENABLE(ATTACHMENT_ELEMENT)
+        for (auto& filename : dragData.fileNames())
+            protectedLegacyMainFrameProcess()->addAllowedAttachmentFilePath(filename);
+#endif
         sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTF::move(sandboxExtensionHandle), WTF::move(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
             if (RefPtr pageClient = this->pageClient())
                 pageClient->didPerformDragOperation(handled);
@@ -15444,6 +15448,7 @@ void WebPageProxy::registerAttachmentIdentifierFromFilePath(IPC::Connection& con
 {
     MESSAGE_CHECK_BASE(protectedPreferences()->attachmentElementEnabled(), connection);
     MESSAGE_CHECK_BASE(IdentifierToAttachmentMap::isValidKey(identifier), connection);
+    MESSAGE_CHECK_BASE(WebProcessProxy::fromConnection(connection)->isAllowedAttachmentFilePath(filePath), connection);
 
     if (attachmentForIdentifier(identifier))
         return;
@@ -15469,6 +15474,7 @@ void WebPageProxy::registerAttachmentsFromSerializedData(IPC::Connection& connec
     MESSAGE_CHECK_BASE(protectedPreferences()->attachmentElementEnabled(), connection);
 
     for (auto& serializedData : data) {
+        MESSAGE_CHECK_BASE(IdentifierToAttachmentMap::isValidKey(serializedData.identifier), connection);
         auto identifier = WTF::move(serializedData.identifier);
         if (!attachmentForIdentifier(identifier)) {
             Ref attachment = ensureAttachment(identifier);

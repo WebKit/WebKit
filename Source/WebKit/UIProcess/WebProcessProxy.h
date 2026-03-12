@@ -492,6 +492,11 @@ public:
     bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
     void setIgnoreInvalidMessageForTesting();
 #endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void addAllowedAttachmentFilePath(const String&);
+    bool isAllowedAttachmentFilePath(const String&) const;
+#endif
     
     bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
     void setAllowTestOnlyIPC(bool allowTestOnlyIPC) { m_allowTestOnlyIPC = allowTestOnlyIPC; }
@@ -860,6 +865,10 @@ private:
 
 #if ENABLE(IPC_TESTING_API)
     bool m_ignoreInvalidMessageForTesting { false };
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    HashSet<String> m_allowedAttachmentFilePaths;
 #endif
     
     bool m_allowTestOnlyIPC { false };

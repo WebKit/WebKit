@@ -1433,6 +1433,19 @@ void WebProcessProxy::setIgnoreInvalidMessageForTesting()
 }
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+void WebProcessProxy::addAllowedAttachmentFilePath(const String& filePath)
+{
+    if (!filePath.isEmpty())
+        m_allowedAttachmentFilePaths.add(filePath);
+}
+
+bool WebProcessProxy::isAllowedAttachmentFilePath(const String& filePath) const
+{
+    return m_allowedAttachmentFilePaths.contains(filePath);
+}
+#endif
+
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "didFinishLaunching:");
