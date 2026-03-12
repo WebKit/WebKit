@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-5; totalPixels=0-40000" />
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../media/utilities.js"></script>
+<script>
+    description("Ensure drawImage(video) with canvas filter produces correct output and does not flicker. Bug: rdar://169617372");
+    jsTestIsAsync = true;
+
+    let video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+
+    let canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 240;
+    document.body.appendChild(canvas);
+
+    let ctx = canvas.getContext("2d");
+
+    function pixelAt(x, y) {
+        return ctx.getImageData(x, y, 1, 1).data;
+    }
+
+    function isNonBlack(pixel) {
+        return pixel[0] > 10 || pixel[1] > 10 || pixel[2] > 10;
+    }
+
+    waitForVideoFrame(video, async function() {
+        // Draw without filter first to establish baseline
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        let baselinePixel = pixelAt(160, 120);
+        debug("Baseline center pixel (no filter): [" + baselinePixel[0] + ", " + baselinePixel[1] + ", " + baselinePixel[2] + ", " + baselinePixel[3] + "]");
+        shouldBeTrue("isNonBlack(pixelAt(160, 120))");
+
+        // Draw with blur filter applied — exercises the CG native image path with filter
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.filter = "blur(1px)";
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.filter = "none";
+
+        let filteredPixel = pixelAt(160, 120);
+        debug("Filtered center pixel (blur 1px): [" + filteredPixel[0] + ", " + filteredPixel[1] + ", " + filteredPixel[2] + ", " + filteredPixel[3] + "]");
+        shouldBeTrue("isNonBlack(pixelAt(160, 120))");
+
+        // Draw with partial source rect — exercises the normalizedSrcRect remapping code
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.filter = "blur(1px)";
+        ctx.drawImage(video, 0, 0, video.videoWidth / 2, video.videoHeight / 2, 0, 0, canvas.width, canvas.height);
+        ctx.filter = "none";
+
+        let partialPixel = pixelAt(160, 120);
+        debug("Partial src filtered pixel: [" + partialPixel[0] + ", " + partialPixel[1] + ", " + partialPixel[2] + ", " + partialPixel[3] + "]");
+        shouldBeTrue("isNonBlack(pixelAt(160, 120))");
+
+        finishJSTest();
+    });
+
+    video.src = findMediaFile("video", "../../media/content/test");
+</script>
+<script src="../../resources/js-test-post.js"></script>

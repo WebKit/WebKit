@@ -1,0 +1,10 @@
+Ensure drawImage(video) with canvas filter produces correct output and does not flicker. Bug: rdar://169617372
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Baseline center pixel (no filter): [PIXEL VALUES]
+PASS isNonBlack(pixelAt(160, 120)) is true
+Filtered center pixel (blur 1px): [PIXEL VALUES]
+PASS isNonBlack(pixelAt(160, 120)) is true
+Partial src filtered pixel: [PIXEL VALUES]
+PASS isNonBlack(pixelAt(160, 120)) is true

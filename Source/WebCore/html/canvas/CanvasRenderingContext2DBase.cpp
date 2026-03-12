@@ -1901,8 +1901,21 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
 #if USE(CG)
     if (c->hasPlatformContext() && video.shouldGetNativeImageForCanvasDrawing()) {
         if (auto image = video.nativeImageForCurrentTime()) {
-            c->drawNativeImage(*image, normalizedDstRect, normalizedSrcRect);
-
+            // During a camera resolution change, naturalSize() and the native image can be
+            // temporarily out of sync: naturalSize() reflects the new resolution while the
+            // native image is still from the previous resolution (or vice versa). Remap
+            // normalizedSrcRect from naturalSize coordinate space to the actual native image
+            // coordinate space to prevent rendering artifacts and flickering.
+            auto imageSize = FloatSize(image->size());
+            auto videoSize = size(video);
+            FloatRect effectiveSrcRect = normalizedSrcRect;
+            if (!imageSize.isEmpty() && !videoSize.isEmpty() && imageSize != videoSize) {
+                float scaleX = imageSize.width() / videoSize.width();
+                float scaleY = imageSize.height() / videoSize.height();
+                effectiveSrcRect = { normalizedSrcRect.x() * scaleX, normalizedSrcRect.y() * scaleY,
+                    normalizedSrcRect.width() * scaleX, normalizedSrcRect.height() * scaleY };
+            }
+            c->drawNativeImage(*image, normalizedDstRect, effectiveSrcRect);
             didDraw(repaintEntireCanvas, targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, defaultDidDrawOptionsWithoutPostProcessing());
             return { };
         }
