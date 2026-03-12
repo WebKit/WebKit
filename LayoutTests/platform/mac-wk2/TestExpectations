@@ -88,7 +88,6 @@ http/tests/ssl/applepay [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 
-
 http/tests/paymentrequest/ApplePayModifier-disbursementRequest.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-isDelegatedRequest.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
@@ -1390,7 +1389,6 @@ http/wpt/service-workers/push-console-messages-showNotification-sync.https.html 
 webkit.org/b/242164 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
 
 webkit.org/b/242138 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Crash ImageOnlyFailure ]
-
 
 # Cocoa ports run WPT tests over localhost so the URL is treated as secure even though not HTTPs.
 imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip ]

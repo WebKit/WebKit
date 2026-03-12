@@ -11,8 +11,8 @@ PASS Page did enter and was restored from the back/forward cache
 Testing that the promise returned by retry() was rejected with "AbortError".
 PASS retryPromise rejected promise  with AbortError: The operation was aborted..
 Testing that PaymentResponse is now in the Closed state.
-PASS response.complete() rejected promise  with AbortError: The operation was aborted..
-PASS response.retry() rejected promise  with AbortError: The operation was aborted..
+PASS response.complete() rejected promise  with InvalidStateError: The payment response object is closed..
+PASS response.retry() rejected promise  with InvalidStateError: The payment response object is closed..
 PASS successfullyParsed is true
 
 TEST COMPLETE

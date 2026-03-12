@@ -4052,9 +4052,6 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-width-001.html [ Pass ]
 
 # These tests are flaky due to "Blocked access to external URL" messages because we don't support WPT domains.
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html [ Failure Pass ]
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html [ Failure Pass ]
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html [ Failure Pass ]
 
 # Close Watcher tests rely on sending escape keys from test_driver which doesn't work on iOS webkit.org/b/274832
 webkit.org/b/274832 imported/w3c/web-platform-tests/close-watcher/esc-key [ Skip ]
@@ -4521,7 +4518,6 @@ webkit.org/b/254044 webxr [ Skip ]
 webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
 webkit.org/b/254044 http/tests/webxr [ Skip ]
 webkit.org/b/254044 http/wpt/webxr [ Skip ]
-webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html [ Skip ]
 
 # Test times out:
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/only-observe-firstInput.html [ Skip ]
@@ -7117,7 +7113,6 @@ webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsign
 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html
 webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html
 
-webkit.org/b/269086 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ Pass Failure ]
 
 webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
 
@@ -7683,9 +7678,6 @@ media/remove-video-best-media-element-in-main-frame-crash.html [ Pass Timeout ]
 
 # webkit.org/b/278343 [ iOS iPhone Debug ] editing/inserting/insert-composition-whitespace.html is a constant crash
 [ Debug ] editing/inserting/insert-composition-whitespace.html [ Crash ]
-
-# webkit.org/b/278346 REGRESSION(281587@main - 281612@main): [ iOS Debug ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html is a constant crash
-[ Debug ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html [ Crash ]
 
 # webkit.org/b/278349 [ iOS ] imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-001.html is a flaky image failure
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-001.html [ Pass ImageOnlyFailure ]
