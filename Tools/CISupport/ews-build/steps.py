@@ -7960,7 +7960,7 @@ class ParseStaticAnalyzerResultsWithoutChange(ParseStaticAnalyzerResults):
 
 class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
     name = 'find-modified-safer-cpp-expectations'
-    RE_FILE = r'^(\+|-)(?P<file>[^/+/-].+(?:\.cpp|\.mm|\.h|\.m|\.c))$'
+    RE_FILE = r'^(\+|-)(?:\[\s*(?P<platform>[^\]]+?)\s*\]\s+)?(?P<file>[^/+/-].+(?:\.cpp|\.mm|\.h|\.m|\.c))$'
     RE_EXPECTATIONS = r'^(\+\+\+).+(Source/(?P<project>.+)/SaferCPPExpectations/(?P<checker>.+)Expectations)$'
     command = ['git', 'diff', 'HEAD~1', '--', '*Expectations']
 
@@ -7983,8 +7983,8 @@ class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
             return defer.returnValue(rc)
 
         yield self._addToLog('stdio', '\nLooking for changes to Safer CPP expectations...\n')
-        removed_tests = []
-        added_tests = []
+        removed_tests = {}
+        added_tests = {}
         for line in logText.splitlines():
             expectation_match = re.search(self.RE_EXPECTATIONS, line, re.IGNORECASE)
             if expectation_match:
@@ -7993,13 +7993,16 @@ class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
                 yield self._addToLog('stdio', f'Changes for {project}/{checker}...\n')
             file_match = re.search(self.RE_FILE, line, re.IGNORECASE)
             if file_match:
+                raw_platform = (file_match.group('platform') or '').strip()
+                platform = raw_platform.lower() if raw_platform else 'all'
                 test_name = f"{project}/{file_match.group('file')}/{checker}"
+                platform_str = f'[{raw_platform}] ' if raw_platform else ''
                 if file_match.group(1) == '+':
-                    added_tests.append(test_name)
-                    yield self._addToLog('stdio', f'    {test_name} was added to {checker} expectations.\n')
+                    added_tests.setdefault(platform, []).append(test_name)
+                    yield self._addToLog('stdio', f'    {platform_str}{test_name} was added to {checker} expectations.\n')
                 elif file_match.group(1) == '-':
-                    removed_tests.append(test_name)
-                    yield self._addToLog('stdio', f'    {test_name} was removed from {checker} expectations.\n')
+                    removed_tests.setdefault(platform, []).append(test_name)
+                    yield self._addToLog('stdio', f'    {platform_str}{test_name} was removed from {checker} expectations.\n')
 
         self.setProperty('user_removed_tests', removed_tests)
         self.setProperty('user_added_tests', added_tests)
@@ -8007,7 +8010,7 @@ class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            if self.getProperty('user_removed_tests', []) or self.getProperty('user_added_tests', []):
+            if self.getProperty('user_removed_tests', {}) or self.getProperty('user_added_tests', {}):
                 return {'step': 'Found modified expectations'}
             return {'step': 'No modified expectations'}
         else:
@@ -8054,8 +8057,11 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
         num_unexpected_results = self.getProperty('num_failing_files', 0) or self.getProperty('num_unexpected_issues', 0) or self.getProperty('num_passing_files', 0)
         unexpected_results_after_filter = None
         if num_unexpected_results:
-            user_removed_tests = self.getProperty('user_removed_tests', [])
-            user_added_tests = self.getProperty('user_added_tests', [])
+            user_removed_tests = self.getProperty('user_removed_tests', {})
+            user_added_tests = self.getProperty('user_added_tests', {})
+            current_platform = self.getProperty('platform', '')
+            user_removed_tests_for_platform = self.get_tests_for_platform(user_removed_tests, current_platform)
+            user_added_tests_for_platform = self.get_tests_for_platform(user_added_tests, current_platform)
 
             results_json = yield self.decode_results_data()
             if not results_json:
@@ -8066,11 +8072,11 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
 
             needs_filter = False
             for test in unexpected_passes:
-                if test not in user_added_tests:
+                if test not in user_added_tests_for_platform:
                     needs_filter = True
                     break
             for test in unexpected_failures:
-                if test not in user_removed_tests or needs_filter:
+                if test not in user_removed_tests_for_platform or needs_filter:
                     needs_filter = True
                     break
 
@@ -8188,8 +8194,11 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
     def check_results_db(self, results_json, result_type, configuration, identifier):
         yield self._addToLog(self.results_db_log_name, f'\nChecking for unexpected {result_type}...\n')
         filtered_results = set()
-        user_removed_tests = self.getProperty('user_removed_tests', [])
-        user_added_tests = self.getProperty('user_added_tests', [])
+        user_removed_tests = self.getProperty('user_removed_tests', {})
+        user_added_tests = self.getProperty('user_added_tests', {})
+        current_platform = configuration.get('platform', '')
+        user_removed_tests_for_platform = self.get_tests_for_platform(user_removed_tests, current_platform)
+        user_added_tests_for_platform = self.get_tests_for_platform(user_added_tests, current_platform)
 
         for project, checkers in results_json.items():
             for checker, files in checkers.items():
@@ -8209,7 +8218,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
                     yield self._addToLog(self.results_db_log_name, f"\n{test_name}: pre-existing={data['does_result_match']}\nResponse from results-db: {data}\n{data['logs']}")
 
                     skip_filter = False
-                    if (test_name in user_removed_tests and result_type == 'failures') or (test_name in user_added_tests and result_type == 'passes'):
+                    if (test_name in user_removed_tests_for_platform and result_type == 'failures') or (test_name in user_added_tests_for_platform and result_type == 'passes'):
                         skip_filter = True
 
                     if data['does_result_match'] and skip_filter:
@@ -8223,6 +8232,13 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
                         yield self._addToLog('stdio', f'Adding {file} to unexpected {result_type}.\n')
                         filtered_results.add(file)
         return defer.returnValue(filtered_results)
+
+    @staticmethod
+    def get_tests_for_platform(tests_dict, current_platform):
+        result = set(tests_dict.get('all', []))
+        if current_platform:
+            result.update(tests_dict.get(current_platform.lower(), []))
+        return result
 
     def find_unexpected_results(self):
         log_text = self.log_observer.getStdout()
@@ -8308,12 +8324,15 @@ class FindUnexpectedStaticAnalyzerResultsWithoutChange(FindUnexpectedStaticAnaly
 
         self.find_unexpected_results()
 
-        user_removed_tests = self.getProperty('user_removed_tests', [])
-        user_added_tests = self.getProperty('user_added_tests', [])
+        user_removed_tests = self.getProperty('user_removed_tests', {})
+        user_added_tests = self.getProperty('user_added_tests', {})
+        current_platform = self.getProperty('platform', '')
+        user_removed_tests_for_platform = self.get_tests_for_platform(user_removed_tests, current_platform)
+        user_added_tests_for_platform = self.get_tests_for_platform(user_added_tests, current_platform)
 
-        if user_removed_tests or user_added_tests:
+        if user_removed_tests_for_platform or user_added_tests_for_platform:
             self.unexpected_results_filtered = yield self.decode_results_data()
-            yield self.filter_results_by_user_modification(user_added_tests, user_removed_tests)
+            yield self.filter_results_by_user_modification(user_added_tests_for_platform, user_removed_tests_for_platform)
 
         has_unexpected_results = self.getProperty('num_failing_files', 0) or self.getProperty('num_unexpected_issues', 0) or self.getProperty('num_passing_files', 0)
         if has_unexpected_results and self.was_filtered:

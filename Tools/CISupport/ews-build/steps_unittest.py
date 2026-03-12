@@ -10104,8 +10104,8 @@ diff --git a/Source/WebCore/SaferCPPExpectations/UncountedCallArgsCheckerExpecta
         )
         self.expect_outcome(result=SUCCESS, state_string='Found modified expectations')
         rc = self.run_step()
-        self.expect_property('user_added_tests', ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker'])
-        self.expect_property('user_removed_tests', ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker', 'WebCore/Modules/WebGPU/GPUQueue.cpp/UncountedCallArgsChecker'])
+        self.expect_property('user_added_tests', {'all': ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker']})
+        self.expect_property('user_removed_tests', {'all': ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker', 'WebCore/Modules/WebGPU/GPUQueue.cpp/UncountedCallArgsChecker']})
         return rc
 
     def test_replace(self):
@@ -10137,8 +10137,41 @@ index 8a2d2375b8d2..f7ebc3b11b94 100644
         )
         self.expect_outcome(result=SUCCESS, state_string='Found modified expectations')
         rc = self.run_step()
-        self.expect_property('user_added_tests', ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker'])
-        self.expect_property('user_removed_tests', ['WebCore/inspector/agents/worker/WorkerAuditAgent.h/NoUncountedMemberChecker'])
+        self.expect_property('user_added_tests', {'all': ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker']})
+        self.expect_property('user_removed_tests', {'all': ['WebCore/inspector/agents/worker/WorkerAuditAgent.h/NoUncountedMemberChecker']})
+        return rc
+
+    def test_with_platform_tags(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+
+        commit_diff = '''
+diff --git a/Source/WebCore/SaferCPPExpectations/NoDeleteCheckerExpectations b/Source/WebCore/SaferCPPExpectations/NoDeleteCheckerExpectations
+--- a/Source/WebCore/SaferCPPExpectations/NoDeleteCheckerExpectations
++++ b/Source/WebCore/SaferCPPExpectations/NoDeleteCheckerExpectations
+-[ iOS ] dom/NodeInlines.h
++[ iOS ] dom/NodeNewFile.h
+-[ Mac ] page/mac/PageMac.mm
++generic/file.cpp
+'''
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['git', 'diff', 'HEAD~1', '--', '*Expectations'])
+            .log('stdio', stdout=commit_diff)
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Found modified expectations')
+        rc = self.run_step()
+        self.expect_property('user_added_tests', {
+            'ios': ['WebCore/dom/NodeNewFile.h/NoDeleteChecker'],
+            'all': ['WebCore/generic/file.cpp/NoDeleteChecker'],
+        })
+        self.expect_property('user_removed_tests', {
+            'ios': ['WebCore/dom/NodeInlines.h/NoDeleteChecker'],
+            'mac': ['WebCore/page/mac/PageMac.mm/NoDeleteChecker'],
+        })
         return rc
 
     @expectedFailure
@@ -10320,8 +10353,8 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
     def test_changed_expectations_match(self):
         self.configureStep(True)
         FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'NoUncountedMemberChecker': ['css/ShorthandSerializer.cpp']}}, 'failures': {'WebCore': {'NoUncountedMemberChecker': ['inspector/agents/worker/WorkerWorkerAgent.h']}}}
-        self.setProperty('user_removed_tests', ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker'])
-        self.setProperty('user_added_tests', ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker'])
+        self.setProperty('user_removed_tests', {'all': ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker']})
+        self.setProperty('user_added_tests', {'all': ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker']})
         next_steps = []
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
@@ -10343,8 +10376,8 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.configureStep(True)
         FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'NoUncountedMemberChecker': ['css/ShorthandSerializer.cpp']}}, 'failures': {'WebCore': {'NoUncountedMemberChecker': ['inspector/agents/worker/WorkerWorkerAgent.h']}}}
         FindUnexpectedStaticAnalyzerResults.filter_results_using_results_db = lambda self, logText: False
-        self.setProperty('user_removed_tests', [])
-        self.setProperty('user_added_tests', ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker'])
+        self.setProperty('user_removed_tests', {})
+        self.setProperty('user_added_tests', {'all': ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker']})
         next_steps = []
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
@@ -10368,8 +10401,8 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'NoUncountedMemberChecker': []}}, 'failures': {'WebCore': {'NoUncountedMemberChecker': []}}}
         self.setProperty('test_failures', ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker'])
         self.setProperty('test_passes', [])
-        self.setProperty('user_removed_tests', ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker'])
-        self.setProperty('user_added_tests', [])
+        self.setProperty('user_removed_tests', {'all': ['WebCore/inspector/agents/worker/WorkerWorkerAgent.h/NoUncountedMemberChecker']})
+        self.setProperty('user_added_tests', {})
         self._expected_uploaded_files = ['public_html/results/Safer-CPP-Checks/1234-1234/unexpected_results.json']
         next_steps = []
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
@@ -10391,7 +10424,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
     def test_second_pass_no_results(self):
         self.configureStep(False)
         FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'NoUncountedMemberChecker': []}}, 'failures': {'WebCore': {'NoUncountedMemberChecker': ['css/ShorthandSerializer.cpp']}}}
-        self.setProperty('user_added_tests', ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker'])
+        self.setProperty('user_added_tests', {'all': ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker']})
         next_steps = []
         self._expected_uploaded_files = ['public_html/results/Safer-CPP-Checks/1234-1234/unexpected_results.json']
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
@@ -10409,6 +10442,48 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             rc = self.run_step()
         self.assertEqual([], next_steps)
         return rc
+
+    def test_second_pass_ios_platform_mismatch(self):
+        # iOS-specific added expectation should NOT be filtered on a macOS builder
+        self.configureStep(False)
+        FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'NoDeleteChecker': []}}, 'failures': {'WebCore': {'NoDeleteChecker': ['dom/NodeInlines.h']}}}
+        self.setProperty('platform', 'mac')
+        self.setProperty('user_added_tests', {'ios': ['WebCore/dom/NodeInlines.h/NoDeleteChecker']})
+        self.setProperty('user_removed_tests', {})
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        logfiles={'json': self.jsonFileName},
+                        command=self.command + self.upload_options + self.configuration,
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
+            .log('stdio', stdout='Total unexpected failing files: 1\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='1 failing file ')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.run_step()
+
+    def test_second_pass_ios_platform_match(self):
+        # iOS-specific added expectation SHOULD be filtered on an iOS builder
+        self.configureStep(False)
+        FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'NoDeleteChecker': []}}, 'failures': {'WebCore': {'NoDeleteChecker': ['dom/NodeInlines.h']}}}
+        self.setProperty('platform', 'ios')
+        self.setProperty('user_added_tests', {'ios': ['WebCore/dom/NodeInlines.h/NoDeleteChecker']})
+        self.setProperty('user_removed_tests', {})
+        self._expected_uploaded_files = ['public_html/results/Safer-CPP-Checks/1234-1234/unexpected_results.json']
+        ios_configuration = ['--architecture', 'arm64', '--platform', 'ios', '--version', '14.6.1', '--version-name', 'Sonoma', '--style', 'release', '--sdk', '23G93']
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        logfiles={'json': self.jsonFileName},
+                        command=self.command + self.upload_options + ios_configuration,
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
+            .log('stdio', stdout='Total unexpected failing files: 1\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Found no unexpected results')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.run_step()
 
 
 class TestDownloadUnexpectedResultsfromMaster(BuildStepMixinAdditions, unittest.TestCase):
