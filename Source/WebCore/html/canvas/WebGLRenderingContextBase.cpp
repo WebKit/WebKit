@@ -3349,9 +3349,31 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
 
     if (RefPtr imageData = source.getImageData()) {
         texImageSourceHelper(functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, sourceImageRect, depth, unpackImageHeight, TexImageSource(imageData.releaseNonNull()));
-    } else if (RefPtr image = source.copiedImage()) {
-        texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
+        return { };
     }
+
+    // When the source is a WebGL canvas whose drawing buffer has been composited and
+    // cleared (preserveDrawingBuffer is false by default), copiedImage() would return an
+    // empty image because it reads the drawing buffer which clearIfComposited() clears.
+    // In this case, read from the display buffer which holds the last composited content.
+    // This only applies to texImage2D; other consumers like drawImage() are expected to
+    // see the cleared drawing buffer per the WebGL spec.
+    // See https://bugs.webkit.org/show_bug.cgi?id=290436.
+    if (RefPtr sourceContext = dynamicDowncast<WebGLRenderingContextBase>(source.renderingContext())) {
+        if (!sourceContext->compositingResultsNeedUpdating()) {
+            RefPtr buffer = sourceContext->surfaceBufferToImageBuffer(SurfaceBuffer::DisplayBuffer);
+            if (buffer) {
+                if (RefPtr image = buffer->copyNativeImage()) {
+                    auto bufferImage = BitmapImage::create(image.releaseNonNull());
+                    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, bufferImage.get(), GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
+                }
+            }
+            return { };
+        }
+    }
+
+    if (RefPtr image = source.copiedImage())
+        texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
     return { };
 }
 
