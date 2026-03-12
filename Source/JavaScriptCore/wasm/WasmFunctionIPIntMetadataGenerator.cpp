@@ -64,6 +64,16 @@ void FunctionIPIntMetadataGenerator::addLength(size_t length)
     WRITE_TO_METADATA(m_metadata.mutableSpan().data() + size, instructionLength, IPInt::InstructionLengthMetadata);
 }
 
+void FunctionIPIntMetadataGenerator::addMemoryIndex(uint8_t memoryIndex)
+{
+    IPInt::MemoryIndexMetadata mdConst {
+        .memoryIndex = memoryIndex
+    };
+    size_t size = m_metadata.size();
+    m_metadata.grow(size + sizeof(mdConst));
+    WRITE_TO_METADATA(m_metadata.mutableSpan().data() + size, mdConst, IPInt::MemoryIndexMetadata);
+}
+
 void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t value, size_t length)
 {
     IPInt::Const32Metadata mdConst {

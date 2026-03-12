@@ -38,6 +38,7 @@ namespace Wasm {
 // These limits are arbitrary except that they match the limits imposed
 // by other browsers' implementation of WebAssembly. It is desirable for
 // us to accept at least the same inputs.
+// see https://www.w3.org/TR/wasm-js-api-2/#limits
 
 constexpr size_t maxTypes = 1000000;
 constexpr size_t maxFunctions = 1000000;
@@ -46,6 +47,7 @@ constexpr size_t maxExports = 1000000;
 constexpr size_t maxExceptions = 100000;
 constexpr size_t maxGlobals = 1000000;
 constexpr size_t maxDataSegments = 100000;
+constexpr size_t maxMemories = 100;
 constexpr size_t maxStructFieldCount = 10000;
 constexpr size_t maxArrayNewFixedArgs = 10000;
 constexpr size_t maxRecursionGroupCount = 1000000;

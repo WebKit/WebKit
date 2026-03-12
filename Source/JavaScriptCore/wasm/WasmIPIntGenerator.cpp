@@ -304,13 +304,13 @@ public:
 
     // Memory
 
-    [[nodiscard]] PartialResult load(LoadOpType, ExpressionType, ExpressionType&, uint64_t);
-    [[nodiscard]] PartialResult store(StoreOpType, ExpressionType, ExpressionType, uint64_t);
-    [[nodiscard]] PartialResult addGrowMemory(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addCurrentMemory(ExpressionType&);
-    [[nodiscard]] PartialResult addMemoryFill(ExpressionType, ExpressionType, ExpressionType);
-    [[nodiscard]] PartialResult addMemoryCopy(ExpressionType, ExpressionType, ExpressionType);
-    [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType, ExpressionType, ExpressionType);
+    [[nodiscard]] PartialResult load(LoadOpType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
+    [[nodiscard]] PartialResult store(StoreOpType, ExpressionType, ExpressionType, uint64_t, uint8_t);
+    [[nodiscard]] PartialResult addGrowMemory(ExpressionType, ExpressionType&, uint8_t);
+    [[nodiscard]] PartialResult addCurrentMemory(ExpressionType&, uint8_t);
+    [[nodiscard]] PartialResult addMemoryFill(ExpressionType, ExpressionType, ExpressionType, uint8_t);
+    [[nodiscard]] PartialResult addMemoryCopy(ExpressionType, ExpressionType, ExpressionType, uint8_t, uint8_t);
+    [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType, ExpressionType, ExpressionType, uint8_t);
     [[nodiscard]] PartialResult addDataDrop(unsigned);
 
     // Atomics
@@ -1071,19 +1071,21 @@ IPIntGenerator::ExpressionType IPIntGenerator::addConstant(v128_t)
 
 // Loads and Stores
 
-[[nodiscard]] PartialResult IPIntGenerator::load(LoadOpType, ExpressionType, ExpressionType&, uint64_t offset)
+[[nodiscard]] PartialResult IPIntGenerator::load(LoadOpType, ExpressionType, ExpressionType&, uint64_t offset, uint8_t memoryIndex)
 {
-    if (m_info.theOnlyMemory().isMemory64())
+    m_metadata->addMemoryIndex(memoryIndex);
+    if (m_info.memory(memoryIndex).isMemory64())
         m_metadata->addLEB128ConstantInt64AndLength(offset, getCurrentInstructionLength());
     else
         m_metadata->addLEB128ConstantInt32AndLength(static_cast<uint32_t>(offset), getCurrentInstructionLength());
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::store(StoreOpType, ExpressionType, ExpressionType, uint64_t offset)
+[[nodiscard]] PartialResult IPIntGenerator::store(StoreOpType, ExpressionType, ExpressionType, uint64_t offset, uint8_t memoryIndex)
 {
     changeStackSize(-2);
-    if (m_info.theOnlyMemory().isMemory64())
+    m_metadata->addMemoryIndex(memoryIndex);
+    if (m_info.memory(memoryIndex).isMemory64())
         m_metadata->addLEB128ConstantInt64AndLength(offset, getCurrentInstructionLength());
     else
         m_metadata->addLEB128ConstantInt32AndLength(static_cast<uint32_t>(offset), getCurrentInstructionLength());
@@ -1092,34 +1094,40 @@ IPIntGenerator::ExpressionType IPIntGenerator::addConstant(v128_t)
 
 // Memories
 
-[[nodiscard]] PartialResult IPIntGenerator::addGrowMemory(ExpressionType, ExpressionType&)
+[[nodiscard]] PartialResult IPIntGenerator::addGrowMemory(ExpressionType, ExpressionType&, uint8_t memoryIndex)
 {
+    m_metadata->addMemoryIndex(memoryIndex);
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addCurrentMemory(ExpressionType&)
+[[nodiscard]] PartialResult IPIntGenerator::addCurrentMemory(ExpressionType&, uint8_t memoryIndex)
 {
     changeStackSize(1);
+    m_metadata->addMemoryIndex(memoryIndex);
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addMemoryFill(ExpressionType, ExpressionType, ExpressionType)
+[[nodiscard]] PartialResult IPIntGenerator::addMemoryFill(ExpressionType, ExpressionType, ExpressionType, uint8_t memoryIndex)
 {
     changeStackSize(-3);
+    m_metadata->addMemoryIndex(memoryIndex);
     m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addMemoryCopy(ExpressionType, ExpressionType, ExpressionType)
+[[nodiscard]] PartialResult IPIntGenerator::addMemoryCopy(ExpressionType, ExpressionType, ExpressionType, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex)
 {
     changeStackSize(-3);
+    m_metadata->addMemoryIndex(dstMemoryIndex);
+    m_metadata->addMemoryIndex(srcMemoryIndex);
     m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addMemoryInit(unsigned dataIndex, ExpressionType, ExpressionType, ExpressionType)
+[[nodiscard]] PartialResult IPIntGenerator::addMemoryInit(unsigned dataIndex, ExpressionType, ExpressionType, ExpressionType, uint8_t memoryIndex)
 {
     changeStackSize(-3);
+    m_metadata->addMemoryIndex(memoryIndex);
     m_metadata->addLEB128ConstantInt32AndLength(dataIndex, getCurrentInstructionLength());
     return { };
 }

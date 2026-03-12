@@ -119,6 +119,7 @@ private:
     };
 
     void addLength(size_t length);
+    void addMemoryIndex(uint8_t memoryIndex);
     void addLEB128ConstantInt32AndLength(uint32_t value, size_t length);
     void addLEB128ConstantInt64AndLength(uint64_t value, size_t length);
     void addLEB128ConstantAndLengthForType(Type, uint64_t value, size_t length);

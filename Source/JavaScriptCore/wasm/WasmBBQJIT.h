@@ -1208,7 +1208,7 @@ public:
     }
 
     template<typename Functor>
-    auto emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, Functor&&) -> decltype(auto);
+    auto emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex, Functor&&) -> decltype(auto);
 
     static inline uint32_t sizeOfLoadOp(LoadOpType op)
     {
@@ -1268,7 +1268,7 @@ public:
         "I64Load8S", "I64Load8U", "I64Load16S", "I64Load16U", "I64Load32S", "I64Load32U"
     };
 
-    [[nodiscard]] PartialResult load(LoadOpType loadOp, Value pointer, Value& result, uint64_t uoffset);
+    [[nodiscard]] PartialResult load(LoadOpType loadOp, Value pointer, Value& result, uint64_t uoffset, uint8_t memoryIndex);
 
     inline uint32_t sizeOfStoreOp(StoreOpType op)
     {
@@ -1296,17 +1296,17 @@ public:
         "I64Store8", "I64Store16", "I64Store32",
     };
 
-    [[nodiscard]] PartialResult store(StoreOpType storeOp, Value pointer, Value value, uint64_t uoffset);
+    [[nodiscard]] PartialResult store(StoreOpType storeOp, Value pointer, Value value, uint64_t uoffset, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult addGrowMemory(Value delta, Value& result);
+    [[nodiscard]] PartialResult addGrowMemory(Value delta, Value& result, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult addCurrentMemory(Value& result);
+    [[nodiscard]] PartialResult addCurrentMemory(Value& result, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult addMemoryFill(Value dstAddress, Value targetValue, Value count);
+    [[nodiscard]] PartialResult addMemoryFill(Value dstAddress, Value targetValue, Value count, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult addMemoryCopy(Value dstAddress, Value srcAddress, Value count);
+    [[nodiscard]] PartialResult addMemoryCopy(Value dstAddress, Value srcAddress, Value count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex);
 
-    [[nodiscard]] PartialResult addMemoryInit(unsigned dataSegmentIndex, Value dstAddress, Value srcAddress, Value length);
+    [[nodiscard]] PartialResult addMemoryInit(unsigned dataSegmentIndex, Value dstAddress, Value srcAddress, Value length, uint8_t memoryIndex);
 
     [[nodiscard]] PartialResult addDataDrop(unsigned dataSegmentIndex);
 

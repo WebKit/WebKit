@@ -656,12 +656,12 @@ inline int32_t tableSize(JSWebAssemblyInstance* instance, unsigned tableIndex)
     return instance->table(tableIndex)->length();
 }
 
-inline int32_t growMemory(JSWebAssemblyInstance* instance, int32_t delta)
+inline int32_t growMemory(JSWebAssemblyInstance* instance, int32_t delta, uint8_t memoryIndex)
 {
     if (delta < 0)
         return -1;
 
-    auto grown = instance->memory()->memory().grow(instance->vm(), PageCount(delta));
+    auto grown = instance->memory(memoryIndex)->memory().grow(instance->vm(), PageCount(delta));
     if (!grown) {
         switch (grown.error()) {
         case GrowFailReason::InvalidDelta:
@@ -677,16 +677,21 @@ inline int32_t growMemory(JSWebAssemblyInstance* instance, int32_t delta)
     return grown.value().pageCount();
 }
 
-inline bool memoryInit(JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint64_t dstAddress, uint32_t srcAddress, uint32_t length)
+inline int64_t memorySize(JSWebAssemblyInstance* instance, uint8_t memoryIndex)
 {
-    ASSERT(dataSegmentIndex < instance->module().moduleInformation().dataSegmentsCount());
-    return instance->memoryInit(dstAddress, srcAddress, length, dataSegmentIndex);
+    return instance->memory(memoryIndex)->memory().size();
 }
 
-inline bool memoryFill(JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count)
+inline bool memoryInit(JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint8_t memoryIndex)
 {
-    auto* base = std::bit_cast<uint8_t*>(instance->cachedMemory());
-    uint64_t size = instance->cachedMemorySize();
+    ASSERT(dataSegmentIndex < instance->module().moduleInformation().dataSegmentsCount());
+    return instance->memoryInit(dstAddress, srcAddress, length, dataSegmentIndex, memoryIndex);
+}
+
+inline bool memoryFill(JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count, uint8_t memoryIndex)
+{
+    auto* base = std::bit_cast<uint8_t*>(instance->memory(memoryIndex)->basePointer());
+    uint64_t size = instance->memory(memoryIndex)->memory().size();
 
     uint64_t lastDstAddress = static_cast<uint64_t>(dstAddress) + count;
     if (lastDstAddress > size)
@@ -696,22 +701,24 @@ inline bool memoryFill(JSWebAssemblyInstance* instance, uint32_t dstAddress, uin
     return true;
 }
 
-inline bool memoryCopy(JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count)
+inline bool memoryCopy(JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex)
 {
-    auto* base = std::bit_cast<uint8_t*>(instance->cachedMemory());
-    uint64_t size = instance->cachedMemorySize();
+    auto* dstBase = std::bit_cast<uint8_t*>(instance->memory(dstMemoryIndex)->basePointer());
+    uint64_t dstSize = instance->memory(dstMemoryIndex)->memory().size();
+    auto* srcBase = std::bit_cast<uint8_t*>(instance->memory(srcMemoryIndex)->basePointer());
+    uint64_t srcSize = instance->memory(srcMemoryIndex)->memory().size();
 
     uint64_t lastDstAddress = static_cast<uint64_t>(dstAddress) + count;
     uint64_t lastSrcAddress = static_cast<uint64_t>(srcAddress) + count;
 
-    if (lastDstAddress > size || lastSrcAddress > size)
+    if (lastDstAddress > dstSize || lastSrcAddress > srcSize)
         return false;
 
     if (!count)
         return true;
 
     // Source and destination areas might overlap, so using memmove.
-    memmove(base + dstAddress, base + srcAddress, count);
+    memmoveSpan(std::span(dstBase + dstAddress, count), std::span(srcBase + srcAddress, count));
     return true;
 }
 

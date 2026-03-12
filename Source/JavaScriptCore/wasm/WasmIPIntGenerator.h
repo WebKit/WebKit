@@ -82,6 +82,10 @@ struct InstructionLengthMetadata {
     uint8_t length; // 1B for length of current instruction
 };
 
+struct MemoryIndexMetadata {
+    uint8_t memoryIndex; // 1B for memory index (JS embedding of wasm is limited to 100 memories)
+};
+
 struct BlockMetadata {
     // Field order is significant, both may be loaded with one 'loadpairi' instruction.
     // Negative deltas are possible for some Wasm instructions and require sign extension to 64b before the addition.

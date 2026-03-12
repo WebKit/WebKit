@@ -130,8 +130,9 @@ bool MemoryHandler::readMemoryData(VirtualAddress address, size_t length, String
         return false;
     }
 
-    void* memoryBase = jsInstance->cachedMemory();
-    size_t size = jsInstance->cachedMemorySize();
+    // FIXME(wasm-multimemory): do any debuggers support multiple memories?
+    void* memoryBase = jsInstance->memory(0)->basePointer();
+    size_t size = jsInstance->memory(0)->memory().size();
     if (!memoryBase || offset + length > size) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] - memory access out of bounds. Instance ID: ", instanceId, " offset: ", offset, " size: ", length, " memory size: ", size);
         return false;
@@ -188,7 +189,8 @@ void MemoryHandler::handleWasmMemoryRegionInfo(VirtualAddress address, uint32_t 
 {
     JSWebAssemblyInstance* instance = m_debugServer.m_moduleManager->jsInstance(instanceId);
     if (instance) {
-        size_t memorySize = instance->cachedMemorySize();
+        // FIXME(wasm-multimemory): do any debuggers support multiple memories?
+        size_t memorySize = instance->memory(0)->memory().size();
         if (offset < memorySize) {
             // Address is within WASM memory - return the memory region
             uint32_t moduleId = instance->moduleInformation().debugInfo->id;

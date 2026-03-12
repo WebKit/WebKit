@@ -1099,10 +1099,10 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
     return Address(pointerLocation.asGPR(), static_cast<int32_t>(uoffset));
 }
 
-[[nodiscard]] PartialResult BBQJIT::addGrowMemory(Value delta, Value& result)
+[[nodiscard]] PartialResult BBQJIT::addGrowMemory(Value delta, Value& result, uint8_t memoryIndex)
 {
-    Vector<Value, 8> arguments = { instanceValue(), delta };
-    result = topValue(m_info.theOnlyMemory().addressType().asTypeKind());
+    Vector<Value, 8> arguments = { instanceValue(), delta, Value::fromI32(memoryIndex) };
+    result = topValue(m_info.memory(memoryIndex).addressType().asTypeKind());
     emitCCall(&operationGrowMemory, arguments, result);
     restoreWebAssemblyGlobalState();
 
@@ -1111,31 +1111,36 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addCurrentMemory(Value& result)
+[[nodiscard]] PartialResult BBQJIT::addCurrentMemory(Value& result, uint8_t memoryIndex)
 {
-    result = topValue(TypeKind::I32);
-    Location resultLocation = allocate(result);
-    m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemorySize()), wasmScratchGPR);
-
-    constexpr uint32_t shiftValue = 16;
-    static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
-    m_jit.urshiftPtr(Imm32(shiftValue), wasmScratchGPR);
-    m_jit.zeroExtend32ToWord(wasmScratchGPR, resultLocation.asGPR());
+    result = topValue(m_info.memory(memoryIndex).addressType().asTypeKind());
+    if (!memoryIndex) {
+        Location resultLocation = allocate(result);
+        m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCurrentMemory0()), wasmScratchGPR);
+        constexpr uint32_t shiftValue = 16;
+        static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
+        m_jit.urshiftPtr(Imm32(shiftValue), wasmScratchGPR);
+        m_jit.zeroExtend32ToWord(wasmScratchGPR, resultLocation.asGPR());
+    } else {
+        Vector<Value, 8> arguments = { instanceValue(), Value::fromI32(memoryIndex) };
+        emitCCall(&operationWasmMemorySizeInPages, arguments, result);
+        restoreWebAssemblyGlobalState();
+    }
 
     LOG_INSTRUCTION("CurrentMemory", RESULT(result));
 
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addMemoryFill(Value dstAddress, Value targetValue, Value count)
+[[nodiscard]] PartialResult BBQJIT::addMemoryFill(Value dstAddress, Value targetValue, Value count, uint8_t memoryIndex)
 {
-    ASSERT(dstAddress.type() == m_info.theOnlyMemory().addressType());
-    ASSERT(count.type() == m_info.theOnlyMemory().addressType());
+    ASSERT(dstAddress.type() == m_info.memory(memoryIndex).addressType());
+    ASSERT(count.type() == m_info.memory(memoryIndex).addressType());
     ASSERT(targetValue.type() == TypeKind::I32);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
-        dstAddress, targetValue, count
+        dstAddress, targetValue, count, Value::fromI32(memoryIndex)
     };
     Value shouldThrow = topValue(TypeKind::I32);
     emitCCall(&operationWasmMemoryFill, arguments, shouldThrow);
@@ -1150,15 +1155,18 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addMemoryCopy(Value dstAddress, Value srcAddress, Value count)
+[[nodiscard]] PartialResult BBQJIT::addMemoryCopy(Value dstAddress, Value srcAddress, Value count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex)
 {
-    ASSERT(dstAddress.type() == m_info.theOnlyMemory().addressType());
-    ASSERT(srcAddress.type() == m_info.theOnlyMemory().addressType());
-    ASSERT(count.type() == m_info.theOnlyMemory().addressType());
+    ASSERT(dstAddress.type() == m_info.memory(dstMemoryIndex).addressType());
+    ASSERT(srcAddress.type() == m_info.memory(srcMemoryIndex).addressType());
+    if (m_info.memory(dstMemoryIndex).isMemory64() && m_info.memory(srcMemoryIndex).isMemory64())
+        ASSERT(count.type() == TypeKind::I64);
+    else
+        ASSERT(count.type() == TypeKind::I32);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
-        dstAddress, srcAddress, count
+        dstAddress, srcAddress, count, Value::fromI32(dstMemoryIndex), Value::fromI32(srcMemoryIndex)
     };
     Value shouldThrow = topValue(TypeKind::I32);
     emitCCall(&operationWasmMemoryCopy, arguments, shouldThrow);
@@ -1173,16 +1181,16 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint32_t uoffset)
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addMemoryInit(unsigned dataSegmentIndex, Value dstAddress, Value srcAddress, Value length)
+[[nodiscard]] PartialResult BBQJIT::addMemoryInit(unsigned dataSegmentIndex, Value dstAddress, Value srcAddress, Value length, uint8_t memoryIndex)
 {
-    ASSERT(dstAddress.type() == m_info.theOnlyMemory().addressType());
+    ASSERT(dstAddress.type() == m_info.memory(memoryIndex).addressType());
     ASSERT(srcAddress.type() == TypeKind::I32);
     ASSERT(length.type() == TypeKind::I32);
 
     Vector<Value, 8> arguments = {
         instanceValue(),
         Value::fromI32(dataSegmentIndex),
-        dstAddress, srcAddress, length
+        dstAddress, srcAddress, length, Value::fromI32(memoryIndex)
     };
     Value shouldThrow = topValue(TypeKind::I32);
     emitCCall(&operationWasmMemoryInit, arguments, shouldThrow);
@@ -4169,7 +4177,7 @@ void BBQJIT::restoreWebAssemblyContextInstance()
 
 void BBQJIT::loadWebAssemblyGlobalState(GPRReg wasmBaseMemoryPointer, GPRReg wasmBoundsCheckingSizeRegister)
 {
-    m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemory()), wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
+    m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
     m_jit.cageConditionally(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR);
 }
 
@@ -4440,8 +4448,8 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const TypeDefin
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace)) {
         static_assert(sizeof(WasmOrJSImportableFunctionCallLinkInfo) * maxImports < std::numeric_limits<int32_t>::max());
-        RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndexSpace) < std::numeric_limits<int32_t>::max());
-        m_jit.farJump(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndexSpace)), WasmEntryPtrTag);
+        RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(m_module.moduleInformation(), functionIndexSpace) < std::numeric_limits<int32_t>::max());
+        m_jit.farJump(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(m_module.moduleInformation(), functionIndexSpace)), WasmEntryPtrTag);
     } else {
         // Record the callee so the callee knows to look for it in updateCallsitesToCallUs.
         m_directCallees.testAndSet(m_info.toCodeIndex(functionIndexSpace));
@@ -4487,8 +4495,8 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const TypeDefin
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace)) {
         static_assert(sizeof(WasmOrJSImportableFunctionCallLinkInfo) * maxImports < std::numeric_limits<int32_t>::max());
-        RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndexSpace) < std::numeric_limits<int32_t>::max());
-        m_jit.call(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndexSpace)), WasmEntryPtrTag);
+        RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(m_module.moduleInformation(), functionIndexSpace) < std::numeric_limits<int32_t>::max());
+        m_jit.call(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(m_module.moduleInformation(), functionIndexSpace)), WasmEntryPtrTag);
     } else {
         // Record the callee so the callee knows to look for it in updateCallsitesToCallUs.
         ASSERT(m_info.toCodeIndex(functionIndexSpace) < m_info.internalFunctionCount());

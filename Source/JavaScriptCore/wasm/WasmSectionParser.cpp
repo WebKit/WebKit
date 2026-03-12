@@ -388,6 +388,8 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
     if (!Options::useWasmMultiMemory())
         WASM_PARSER_FAIL_IF(m_info->memoryCount(), "there can at most be one Memory section for now"_s);
 
+    WASM_PARSER_FAIL_IF(m_info->memoryCount() >= maxMemories, "there can be at most "_s, maxMemories, " memories"_s);
+
     PageCount initialPageCount;
     PageCount maximumPageCount;
     bool isShared { false };

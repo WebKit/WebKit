@@ -277,13 +277,13 @@ public:
     }
 
     [[nodiscard]] PartialResult setGlobal(uint32_t, ExpressionType) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult load(LoadOpType, ExpressionType, ExpressionType&, uint32_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult store(StoreOpType, ExpressionType, ExpressionType, uint32_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addGrowMemory(ExpressionType, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addCurrentMemory(ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addMemoryFill(ExpressionType, ExpressionType, ExpressionType) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addMemoryCopy(ExpressionType, ExpressionType, ExpressionType) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType, ExpressionType, ExpressionType) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult load(LoadOpType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult store(StoreOpType, ExpressionType, ExpressionType, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addGrowMemory(ExpressionType, ExpressionType&, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addCurrentMemory(ExpressionType&, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addMemoryFill(ExpressionType, ExpressionType, ExpressionType, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addMemoryCopy(ExpressionType, ExpressionType, ExpressionType, uint8_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType, ExpressionType, ExpressionType, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addDataDrop(unsigned) CONST_EXPR_STUB
     [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t) CONST_EXPR_STUB

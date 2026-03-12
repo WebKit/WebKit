@@ -302,7 +302,7 @@ void BufferMemoryHandle::registerInstance(JSWebAssemblyInstance& instance)
     RefPtr anchor = instance.anchor();
     RELEASE_ASSERT(anchor);
     m_anchors.add(*anchor);
-    instance.updateCachedMemory();
+    instance.updateCachedIsMemory64();
 }
 #endif
 

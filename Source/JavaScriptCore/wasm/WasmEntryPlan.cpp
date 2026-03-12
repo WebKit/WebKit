@@ -312,7 +312,7 @@ bool EntryPlan::generateWasmToWasmStubs()
 
 #if ENABLE(JIT)
         if (Options::useJIT()) {
-            auto binding = wasmToWasm(importFunctionIndex);
+            auto binding = wasmToWasm(m_moduleInformation, importFunctionIndex);
             if (!binding) [[unlikely]]
                 return false;
             m_wasmToWasmExitStubs[importFunctionIndex++] = binding.value();
@@ -335,7 +335,7 @@ bool EntryPlan::generateWasmToJSStubs()
 #if ENABLE(JIT)
         Wasm::TypeIndex typeIndex = m_moduleInformation->importFunctionTypeIndices.at(importIndex);
         if (Options::useJIT()) {
-            auto binding = wasmToJS(typeIndex, importIndex);
+            auto binding = wasmToJS(m_moduleInformation, typeIndex, importIndex);
             if (!binding) [[unlikely]]
                 return false;
             m_wasmToJSExitStubs[importIndex] = binding.value();

@@ -99,7 +99,6 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
     , m_passiveDataSegments(m_moduleInformation->dataSegmentsCount())
     , m_tags(m_moduleInformation->exceptionIndexSpaceSize())
 {
-    static_assert(static_cast<ptrdiff_t>(JSWebAssemblyInstance::offsetOfCachedMemory() + sizeof(void*)) == JSWebAssemblyInstance::offsetOfCachedBoundsCheckingSize());
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
         new (importFunctionInfo(i)) WasmOrJSImportableFunctionCallLinkInfo();
 
@@ -490,7 +489,7 @@ void JSWebAssemblyInstance::elemDrop(uint32_t elementIndex)
     m_passiveElements.quickClear(elementIndex);
 }
 
-bool JSWebAssemblyInstance::memoryInit(uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex)
+bool JSWebAssemblyInstance::memoryInit(uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex, uint8_t memoryIndex)
 {
     RELEASE_ASSERT(dataSegmentIndex < module().moduleInformation().dataSegmentsCount());
 
@@ -504,8 +503,8 @@ bool JSWebAssemblyInstance::memoryInit(uint64_t dstAddress, uint32_t srcAddress,
 
     const uint8_t* segmentData = !length ? nullptr : &segment->byte(srcAddress);
 
-    ASSERT(memory());
-    return memory()->memory().init(dstAddress, segmentData, length);
+    ASSERT(memoryIndex < m_moduleInformation->memoryCount());
+    return memory(memoryIndex)->memory().init(dstAddress, segmentData, length);
 }
 
 void JSWebAssemblyInstance::dataDrop(uint32_t dataSegmentIndex)

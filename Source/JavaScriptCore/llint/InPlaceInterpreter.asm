@@ -327,10 +327,10 @@ end
 # Memory
 macro ipintReloadMemory()
     if ARM64 or ARM64E
-        loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
+        loadpairq constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase, boundsCheckingSize
     elsif X86_64
-        loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
-        loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
     end
     if not ARMv7
         cagedPrimitiveMayBeNull(memoryBase, t2)
@@ -648,8 +648,8 @@ end
 
 macro reloadMemoryRegistersFromInstance(instance, scratch1)
 if not ARMv7
-    loadp JSWebAssemblyInstance::m_cachedMemory[instance], memoryBase
-    loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[instance], boundsCheckingSize
+    loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[instance], memoryBase
+    loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + sizeof(void*))[instance], boundsCheckingSize
     cagedPrimitiveMayBeNull(memoryBase, scratch1) # If boundsCheckingSize is 0, pointer can be a nullptr.
 end
 end
@@ -846,10 +846,10 @@ end
 
     # Memory
     if ARM64 or ARM64E
-        loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
+        loadpairq constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase, boundsCheckingSize
     elsif X86_64
-        loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
-        loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
     end
     if not ARMv7
         cagedPrimitiveMayBeNull(memoryBase, wa0)
@@ -1005,10 +1005,10 @@ end
 
     # Memory
     if ARM64 or ARM64E
-        loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
+        loadpairq constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase, boundsCheckingSize
     elsif X86_64
-        loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
-        loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
     end
     if not ARMv7
         cagedPrimitiveMayBeNull(memoryBase, ws1)

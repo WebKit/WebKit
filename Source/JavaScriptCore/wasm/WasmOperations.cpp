@@ -1534,23 +1534,28 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopcount64, uint64_t, (int64_t value)
     return std::popcount(static_cast<uint64_t>(value));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGrowMemory, int64_t, (JSWebAssemblyInstance* instance, int64_t delta))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGrowMemory, int64_t, (JSWebAssemblyInstance* instance, int64_t delta, uint8_t memoryIndex))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
-    return growMemory(instance, delta);
+    return growMemory(instance, delta, memoryIndex);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryFill, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemorySizeInPages, int64_t, (JSWebAssemblyInstance* instance, uint8_t memoryIndex))
 {
-    return toUCPUStrictInt32(memoryFill(instance, dstAddress, targetValue, count));
+    return instance->memory(memoryIndex)->memory().size() >> 16;
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryCopy, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryFill, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count, uint8_t memoryIndex))
 {
-    return toUCPUStrictInt32(memoryCopy(instance, dstAddress, srcAddress, count));
+    return toUCPUStrictInt32(memoryFill(instance, dstAddress, targetValue, count, memoryIndex));
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryCopy, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex))
+{
+    return toUCPUStrictInt32(memoryCopy(instance, dstAddress, srcAddress, count, dstMemoryIndex, srcMemoryIndex));
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (JSWebAssemblyInstance* instance, unsigned tableIndex, int32_t signedIndex))
@@ -1630,9 +1635,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicNotify, UCPUStrictInt32, 
     return toUCPUStrictInt32(memoryAtomicNotify(instance, base, offset, countValue));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryInit, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryInit, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length, uint8_t memoryIndex))
 {
-    return toUCPUStrictInt32(memoryInit(instance, dataSegmentIndex, dstAddress, srcAddress, length));
+    return toUCPUStrictInt32(memoryInit(instance, dataSegmentIndex, dstAddress, srcAddress, length, memoryIndex));
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmDataDrop, void, (JSWebAssemblyInstance* instance, unsigned dataSegmentIndex))

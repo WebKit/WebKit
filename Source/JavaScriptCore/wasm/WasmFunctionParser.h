@@ -288,12 +288,12 @@ private:
     };
     [[nodiscard]] PartialResult parseAnnotatedSelectImmediates(AnnotatedSelectImmediates&);
 
-    [[nodiscard]] PartialResult parseMemoryFillImmediate();
-    [[nodiscard]] PartialResult parseMemoryCopyImmediates();
+    [[nodiscard]] PartialResult parseMemoryFillImmediate(uint8_t&);
+    [[nodiscard]] PartialResult parseMemoryCopyImmediates(uint8_t&, uint8_t&);
 
     struct MemoryInitImmediates {
         unsigned dataSegmentIndex;
-        unsigned unused;
+        unsigned memoryIndex;
     };
     [[nodiscard]] PartialResult parseMemoryInitImmediates(MemoryInitImmediates&);
 
@@ -710,8 +710,19 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
     uint64_t offset;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
+
+    bool hasMemoryIndex = alignment & (1 << 6);
+    alignment = alignment & 0b111111;
     WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds load's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
-    if (m_info.theOnlyMemory().isMemory64())
+
+    uint32_t memoryIndex = 0;
+    if (hasMemoryIndex) {
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get memory index"_s);
+        RELEASE_ASSERT(memoryIndex < 256);
+        WASM_VALIDATOR_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory index "_s, memoryIndex, " is out of range"_s);
+    }
+
+    if (m_info.memory(memoryIndex).isMemory64())
         WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
     else {
         uint32_t offset32;
@@ -721,13 +732,13 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
 
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
-    if (m_info.theOnlyMemory().isMemory64())
+    if (m_info.memory(memoryIndex).isMemory64())
         WASM_VALIDATOR_FAIL_IF(!pointer.type().isI64(), m_currentOpcode, " pointer type mismatch"_s);
     else
         WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset));
+    WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset, static_cast<uint8_t>(memoryIndex)));
     m_expressionStack.constructAndAppend(memoryType, result);
     return { };
 }
@@ -742,8 +753,19 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
     TypedExpression value;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
+
+    bool hasMemoryIndex = alignment & (1 << 6);
+    alignment = alignment & 0b111111;
     WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds store's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
-    if (m_info.theOnlyMemory().isMemory64())
+
+    uint32_t memoryIndex = 0;
+    if (hasMemoryIndex) {
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get memory index"_s);
+        RELEASE_ASSERT(memoryIndex < 256);
+        WASM_VALIDATOR_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory index "_s, memoryIndex, " is out of range"_s);
+    }
+
+    if (m_info.memory(memoryIndex).isMemory64())
         WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get store offset"_s);
     else {
         uint32_t offset32;
@@ -753,14 +775,14 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
 
-    if (m_info.theOnlyMemory().isMemory64())
+    if (m_info.memory(memoryIndex).isMemory64())
         WASM_VALIDATOR_FAIL_IF(!pointer.type().isI64(), m_currentOpcode, " pointer type mismatch"_s);
     else
         WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
 
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch"_s);
 
-    WASM_TRY_ADD_TO_CONTEXT(store(static_cast<StoreOpType>(m_currentOpcode), pointer, value, offset));
+    WASM_TRY_ADD_TO_CONTEXT(store(static_cast<StoreOpType>(m_currentOpcode), pointer, value, offset, static_cast<uint8_t>(memoryIndex)));
     return { };
 }
 
@@ -1667,24 +1689,21 @@ auto FunctionParser<Context>::parseAnnotatedSelectImmediates(AnnotatedSelectImme
 }
 
 template<typename Context>
-auto FunctionParser<Context>::parseMemoryFillImmediate() -> PartialResult
+auto FunctionParser<Context>::parseMemoryFillImmediate(uint8_t& memoryIndex) -> PartialResult
 {
-    uint8_t auxiliaryByte;
-    WASM_PARSER_FAIL_IF(!parseUInt8(auxiliaryByte), "can't parse auxiliary byte"_s);
-    WASM_PARSER_FAIL_IF(!!auxiliaryByte, "auxiliary byte for memory.fill should be zero, but got "_s, auxiliaryByte);
+    WASM_PARSER_FAIL_IF(!parseUInt8(memoryIndex), "memory.fill: can't parse memory index"_s);
+    WASM_PARSER_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory.fill: illegal memory index "_s, memoryIndex);
     return { };
 }
 
 template<typename Context>
-auto FunctionParser<Context>::parseMemoryCopyImmediates() -> PartialResult
+auto FunctionParser<Context>::parseMemoryCopyImmediates(uint8_t& dstMemoryIndex, uint8_t& srcMemoryIndex) -> PartialResult
 {
-    uint8_t firstAuxiliaryByte;
-    WASM_PARSER_FAIL_IF(!parseUInt8(firstAuxiliaryByte), "can't parse auxiliary byte"_s);
-    WASM_PARSER_FAIL_IF(!!firstAuxiliaryByte, "auxiliary byte for memory.copy should be zero, but got "_s, firstAuxiliaryByte);
+    WASM_PARSER_FAIL_IF(!parseUInt8(dstMemoryIndex), "memory.copy: can't parse dst memory index"_s);
+    WASM_PARSER_FAIL_IF(dstMemoryIndex >= m_info.memoryCount(), "memory.copy: illegal dst memory index "_s, dstMemoryIndex);
 
-    uint8_t secondAuxiliaryByte;
-    WASM_PARSER_FAIL_IF(!parseUInt8(secondAuxiliaryByte), "can't parse auxiliary byte"_s);
-    WASM_PARSER_FAIL_IF(!!secondAuxiliaryByte, "auxiliary byte for memory.copy should be zero, but got "_s, secondAuxiliaryByte);
+    WASM_PARSER_FAIL_IF(!parseUInt8(srcMemoryIndex), "memory.copy: can't parse src memory index"_s);
+    WASM_PARSER_FAIL_IF(srcMemoryIndex >= m_info.memoryCount(), "memory.copy: illegal src memory index "_s, srcMemoryIndex);
     return { };
 }
 
@@ -1694,11 +1713,11 @@ auto FunctionParser<Context>::parseMemoryInitImmediates(MemoryInitImmediates& re
     unsigned dataSegmentIndex;
     WASM_FAIL_IF_HELPER_FAILS(parseDataSegmentIndex(dataSegmentIndex));
 
-    unsigned unused;
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't parse unused"_s);
-    WASM_PARSER_FAIL_IF(!!unused, "memory.init invalid unsued byte"_s);
+    unsigned memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "memory.init: can't parse memory index"_s);
+    WASM_PARSER_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory.init illegal memory index "_s, memoryIndex);
 
-    result.unused = unused;
+    result.memoryIndex = memoryIndex;
     result.dataSegmentIndex = dataSegmentIndex;
     return { };
 }
@@ -2190,9 +2209,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             break;
         }
         case Ext1OpType::MemoryFill: {
-            WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate());
-
             WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "memory must be present");
+
+            uint8_t memoryIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate(memoryIndex));
 
             TypedExpression dstAddress;
             TypedExpression targetValue;
@@ -2202,7 +2222,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(targetValue, "memory.fill");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.fill");
 
-            if (m_info.theOnlyMemory().isMemory64()) {
+            if (m_info.memory(memoryIndex).isMemory64()) {
                 WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.fill dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I64);
                 WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != targetValue.type().kind, "memory.fill targetValue to type ", targetValue.type(), " expected ", TypeKind::I32);
                 WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind, "memory.fill size to type ", count.type(), " expected ", TypeKind::I64);
@@ -2212,11 +2232,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.fill size to type ", count.type(), " expected ", TypeKind::I32);
             }
 
-            WASM_TRY_ADD_TO_CONTEXT(addMemoryFill(dstAddress, targetValue, count));
+            WASM_TRY_ADD_TO_CONTEXT(addMemoryFill(dstAddress, targetValue, count, memoryIndex));
             break;
         }
         case Ext1OpType::MemoryCopy: {
-            WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates());
+            uint8_t dstMemoryIndex, srcMemoryIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates(dstMemoryIndex, srcMemoryIndex));
 
             WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "memory must be present");
 
@@ -2228,17 +2249,22 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(srcAddress, "memory.copy");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.copy");
 
-            if (m_info.theOnlyMemory().isMemory64()) {
+            if (m_info.memory(dstMemoryIndex).isMemory64())
                 WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I64);
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I64);
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I64);
-            } else {
+            else
                 WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.copy dstAddress to type ", dstAddress.type(), " expected ", TypeKind::I32);
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I32);
-                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I32);
-            }
 
-            WASM_TRY_ADD_TO_CONTEXT(addMemoryCopy(dstAddress, srcAddress, count));
+            if (m_info.memory(srcMemoryIndex).isMemory64())
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I64);
+            else
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind, "memory.copy targetValue to type ", srcAddress.type(), " expected ", TypeKind::I32);
+
+            if (m_info.memory(dstMemoryIndex).isMemory64() && m_info.memory(srcMemoryIndex).isMemory64())
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I64);
+            else
+                WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "memory.copy size to type ", count.type(), " expected ", TypeKind::I32);
+
+            WASM_TRY_ADD_TO_CONTEXT(addMemoryCopy(dstAddress, srcAddress, count, dstMemoryIndex, srcMemoryIndex));
             break;
         }
         case Ext1OpType::MemoryInit: {
@@ -2252,7 +2278,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(srcAddress, "memory.init");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.init");
 
-            if (m_info.theOnlyMemory().isMemory64())
+            if (m_info.memory(immediates.memoryIndex).isMemory64())
                 WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != dstAddress.type().kind, "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I64);
             else
                 WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != dstAddress.type().kind, "memory.init dst address to type ", dstAddress.type(), " expected ", TypeKind::I32);
@@ -2260,7 +2286,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != srcAddress.type().kind, "memory.init src address to type ", srcAddress.type(), " expected ", TypeKind::I32);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != length.type().kind, "memory.init length to type ", length.type(), " expected ", TypeKind::I32);
 
-            WASM_TRY_ADD_TO_CONTEXT(addMemoryInit(immediates.dataSegmentIndex, dstAddress, srcAddress, length));
+            WASM_TRY_ADD_TO_CONTEXT(addMemoryInit(immediates.dataSegmentIndex, dstAddress, srcAddress, length, immediates.memoryIndex));
             break;
         }
         case Ext1OpType::DataDrop: {
@@ -3746,12 +3772,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case GrowMemory: {
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "grow_memory is only valid if a memory is defined or imported"_s);
 
-        uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseUInt8(reserved), "can't parse reserved byte for grow_memory"_s);
-        WASM_PARSER_FAIL_IF(reserved, "reserved byte for grow_memory must be zero"_s);
+        uint8_t memoryIndex;
+        WASM_PARSER_FAIL_IF(!parseUInt8(memoryIndex), "can't parse memory index for grow_memory"_s);
+        uint32_t memoryIndex32 = memoryIndex;
+        WASM_PARSER_FAIL_IF(memoryIndex >= m_info.memoryCount(), "grow_memory: illegal memory index "_s, memoryIndex32);
 
         TypedExpression delta;
-        bool isMemory64 = m_info.theOnlyMemory().isMemory64();
+        bool isMemory64 = m_info.memory(memoryIndex).isMemory64();
         if (isMemory64) {
             WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "expect an i64 argument to grow_memory on the stack"_s);
             WASM_VALIDATOR_FAIL_IF(!delta.type().isI64(), "grow_memory with non-i64 delta argument has type: ", delta.type());
@@ -3761,7 +3788,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
 
         ExpressionType result;
-        WASM_TRY_ADD_TO_CONTEXT(addGrowMemory(delta, result));
+        WASM_TRY_ADD_TO_CONTEXT(addGrowMemory(delta, result, memoryIndex));
         m_expressionStack.constructAndAppend(isMemory64 ? Types::I64 : Types::I32, result);
 
         return { };
@@ -3770,13 +3797,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case CurrentMemory: {
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "current_memory is only valid if a memory is defined or imported"_s);
 
-        uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseUInt8(reserved), "can't parse reserved byte for current_memory"_s);
-        WASM_PARSER_FAIL_IF(reserved, "reserved byte for current_memory must be zero"_s);
+        uint8_t memoryIndex;
+        WASM_PARSER_FAIL_IF(!parseUInt8(memoryIndex), "can't parse memory index for current_memory"_s);
+        uint32_t memoryIndex32 = memoryIndex;
+        WASM_PARSER_FAIL_IF(memoryIndex >= m_info.memoryCount(), "current_memory: invalid memory index "_s, memoryIndex32);
 
         ExpressionType result;
-        WASM_TRY_ADD_TO_CONTEXT(addCurrentMemory(result));
-        m_expressionStack.constructAndAppend(m_info.theOnlyMemory().isMemory64() ? Types::I64 : Types::I32, result);
+        WASM_TRY_ADD_TO_CONTEXT(addCurrentMemory(result, memoryIndex));
+        m_expressionStack.constructAndAppend(m_info.memory(memoryIndex).isMemory64() ? Types::I64 : Types::I32, result);
 
         return { };
     }
@@ -4006,6 +4034,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "load/store instruction without memory"_s);
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        // FIXME(wasm-multimemory)
         if (m_info.theOnlyMemory().isMemory64()) {
             uint64_t unused64;
             WASM_PARSER_FAIL_IF(!parseVarUInt64(unused64), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
@@ -4112,11 +4141,13 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             return { };
         }
         case Ext1OpType::MemoryFill: {
-            WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate());
+            uint8_t memoryIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate(memoryIndex));
             return { };
         }
         case Ext1OpType::MemoryCopy: {
-            WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates());
+            uint8_t dstMemoryIndex, srcMemoryIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates(dstMemoryIndex, srcMemoryIndex));
             return { };
         }
         case Ext1OpType::MemoryInit: {

@@ -565,19 +565,24 @@ WASM_IPINT_EXTERN_CPP_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* m
     WASM_RETURN_TWO(std::bit_cast<void*>(Wasm::tableGrow(instance, metadata->tableIndex, fill, n)), 0);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_grow, int64_t delta)
+WASM_IPINT_EXTERN_CPP_DECL(memory_grow, int64_t delta, uint8_t memoryIndex)
 {
     WasmSlowPathWithoutCallFrameTracer tracer(instance->vm());
-    WASM_RETURN_TWO(reinterpret_cast<void*>(Wasm::growMemory(instance, delta)), 0);
+    WASM_RETURN_TWO(reinterpret_cast<void*>(Wasm::growMemory(instance, delta, memoryIndex)), 0);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_init, int32_t dataIndex, IPIntStackEntry* sp)
+WASM_IPINT_EXTERN_CPP_DECL(memory_size, uint8_t memoryIndex)
+{
+    IPINT_RETURN(Wasm::memorySize(instance, memoryIndex));
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(memory_init, int32_t dataIndex, IPIntStackEntry* sp, uint8_t memoryIndex)
 {
     int32_t n = sp[0].i32;
     int32_t s = sp[1].i32;
     int64_t d = sp[2].i64;
 
-    if (!Wasm::memoryInit(instance, dataIndex, d, s, n))
+    if (!Wasm::memoryInit(instance, dataIndex, d, s, n, memoryIndex))
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     IPINT_END();
 }
@@ -588,16 +593,25 @@ WASM_IPINT_EXTERN_CPP_DECL(data_drop, int32_t dataIndex)
     IPINT_END();
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_copy, int64_t dst, int64_t src, int64_t count)
+WASM_IPINT_EXTERN_CPP_DECL(memory_copy, IPIntStackEntry* sp)
 {
-    if (!Wasm::memoryCopy(instance, dst, src, count))
+    uint8_t srcMemoryIndex = static_cast<uint8_t>(sp[0].i64);
+    uint8_t dstMemoryIndex = static_cast<uint8_t>(sp[1].i64);
+    int64_t count = sp[2].i64;
+    int64_t src = sp[3].i64;
+    int64_t dst = sp[4].i64;
+    if (!Wasm::memoryCopy(instance, dst, src, count, dstMemoryIndex, srcMemoryIndex))
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     IPINT_END();
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_fill, int64_t dst, int32_t targetValue, int64_t count)
+WASM_IPINT_EXTERN_CPP_DECL(memory_fill, IPIntStackEntry* sp)
 {
-    if (!Wasm::memoryFill(instance, dst, targetValue, count))
+    uint8_t memoryIndex = static_cast<uint8_t>(sp[0].i64);
+    int64_t count = sp[1].i64;
+    int32_t targetValue = sp[2].i32;
+    int64_t dst = sp[3].i64;
+    if (!Wasm::memoryFill(instance, dst, targetValue, count, memoryIndex))
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     IPINT_END();
 }

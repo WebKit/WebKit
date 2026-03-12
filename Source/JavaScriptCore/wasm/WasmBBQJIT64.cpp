@@ -340,9 +340,9 @@ Value BBQJIT::instanceValue()
 
 // Memory
 
-[[nodiscard]] PartialResult BBQJIT::load(LoadOpType loadOp, Value pointer, Value& result, uint64_t uoffset)
+[[nodiscard]] PartialResult BBQJIT::load(LoadOpType loadOp, Value pointer, Value& result, uint64_t uoffset, uint8_t memoryIndex)
 {
-    bool offsetAndSizeOverflows = m_info.theOnlyMemory().isMemory64()
+    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).isMemory64()
         ? sumOverflows<uint64_t>(uoffset, sizeOfLoadOp(loadOp))
         : sumOverflows<uint32_t>(uoffset, sizeOfLoadOp(loadOp));
 
@@ -377,7 +377,7 @@ Value BBQJIT::instanceValue()
             break;
         }
     } else {
-        result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeOfLoadOp(loadOp), [&](auto location) -> Value {
+        result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeOfLoadOp(loadOp), memoryIndex, [&](auto location) -> Value {
             consume(pointer);
             Value result = topValue(typeOfLoadOp(loadOp));
             Location resultLocation = allocate(result);
@@ -431,15 +431,15 @@ Value BBQJIT::instanceValue()
         });
     }
 
-    LOG_INSTRUCTION(LOAD_OP_NAMES[(unsigned)loadOp - (unsigned)I32Load], pointer, uoffset, RESULT(result));
+    LOG_INSTRUCTION(LOAD_OP_NAMES[(unsigned)loadOp - (unsigned)I32Load], memoryIndex, pointer, uoffset, RESULT(result));
 
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::store(StoreOpType storeOp, Value pointer, Value value, uint64_t uoffset)
+[[nodiscard]] PartialResult BBQJIT::store(StoreOpType storeOp, Value pointer, Value value, uint64_t uoffset, uint8_t memoryIndex)
 {
     Location valueLocation = locationOf(value);
-    bool offsetAndSizeOverflows = m_info.theOnlyMemory().isMemory64()
+    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).isMemory64()
         ? sumOverflows<uint64_t>(uoffset, sizeOfStoreOp(storeOp))
         : sumOverflows<uint32_t>(uoffset, sizeOfStoreOp(storeOp));
 
@@ -449,7 +449,7 @@ Value BBQJIT::instanceValue()
         consume(pointer);
         consume(value);
     } else {
-        emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeOfStoreOp(storeOp), [&](auto location) -> void {
+        emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeOfStoreOp(storeOp), memoryIndex, [&](auto location) -> void {
             Location valueLocation;
             if (value.isConst() && value.isFloat()) {
                 ScratchScope<0, 1> scratches(*this);
@@ -492,7 +492,7 @@ Value BBQJIT::instanceValue()
         });
     }
 
-    LOG_INSTRUCTION(STORE_OP_NAMES[(unsigned)storeOp - (unsigned)I32Store], pointer, uoffset, value, valueLocation);
+    LOG_INSTRUCTION(STORE_OP_NAMES[(unsigned)storeOp - (unsigned)I32Store], memoryIndex, pointer, uoffset, value, valueLocation);
 
     return { };
 }
@@ -3328,7 +3328,7 @@ void BBQJIT::restoreWebAssemblyGlobalStateAfterWasmCall()
         m_jit.loadPtr(Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), wasmScratchGPR);
         Jump isSameInstanceAfter = m_jit.branchPtr(RelationalCondition::Equal, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
         m_jit.move(wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
-        m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemory()), wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
+        m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
         m_jit.cageConditionally(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR);
         isSameInstanceAfter.link(&m_jit);
     } else
@@ -3345,7 +3345,8 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
 
 [[nodiscard]] PartialResult BBQJIT::addSIMDLoad(ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
 {
-    result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, bytesForWidth(Width::Width128), [&](auto location) -> Value {
+    uint8_t memoryIndex = 0; // FIXME(wasm-multimemory)
+    result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, bytesForWidth(Width::Width128), memoryIndex, [&](auto location) -> Value {
         consume(pointer);
         Value result = topValue(TypeKind::V128);
         Location resultLocation = allocate(result);
@@ -3358,7 +3359,8 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
 
 [[nodiscard]] PartialResult BBQJIT::addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t uoffset)
 {
-    emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, bytesForWidth(Width::Width128), [&](auto location) -> void {
+    uint8_t memoryIndex = 0; // FIXME(wasm-multimemory)
+    emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, bytesForWidth(Width::Width128), memoryIndex, [&](auto location) -> void {
         Location valueLocation = loadIfNecessary(value);
         consume(pointer);
         consume(value);
@@ -3787,7 +3789,8 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeof(double), [&](auto location) -> Value {
+    uint8_t memoryIndex = 0; // FIXME(wasm-multimemory)
+    result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeof(double), memoryIndex, [&](auto location) -> Value {
         consume(pointer);
         Value result = topValue(TypeKind::V128);
         Location resultLocation = allocate(result);
@@ -3804,7 +3807,8 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
 
 [[nodiscard]] PartialResult BBQJIT::addSIMDLoadPad(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
 {
-    result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, op == SIMDLaneOperation::LoadPad32 ? sizeof(float) : sizeof(double), [&](auto location) -> Value {
+    uint8_t memoryIndex = 0; // FIXME(wasm-multimemory)
+    result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, op == SIMDLaneOperation::LoadPad32 ? sizeof(float) : sizeof(double), memoryIndex, [&](auto location) -> Value {
         consume(pointer);
         Value result = topValue(TypeKind::V128);
         Location resultLocation = allocate(result);
