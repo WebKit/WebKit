@@ -40,6 +40,7 @@
 #import <Contacts/Contacts.h>
 #import <MapKit/MapKit.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
