@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
  * Copyright (c) 2020, 2021, 2022 Igalia S.L.
@@ -839,18 +839,26 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
             child->collectLayers(posZOrderList, negZOrderList, accumulatedDirtyFlags);
     }
 
-    auto compareZIndex = [] (const RenderLayer* first, const RenderLayer* second) -> bool {
-        return first->zIndex() < second->zIndex();
+    // Precompute z-indices to avoid recomputing them on every sort comparison.
+    struct LayerWithZIndex {
+        RenderLayer* layer;
+        int zIndex;
+    };
+    auto sortByZIndex = [](Vector<RenderLayer*>& list) {
+        auto pairs = list.map([](auto* layer) -> LayerWithZIndex {
+            return { layer, layer->zIndex() };
+        });
+        std::ranges::stable_sort(pairs, { }, &LayerWithZIndex::zIndex);
+        std::ranges::transform(pairs, list.begin(), &LayerWithZIndex::layer);
     };
 
-    // Sort the two lists.
     if (posZOrderList) {
-        std::stable_sort(posZOrderList->begin(), posZOrderList->end(), compareZIndex);
+        sortByZIndex(*posZOrderList);
         posZOrderList->shrinkToFit();
     }
 
     if (negZOrderList) {
-        std::stable_sort(negZOrderList->begin(), negZOrderList->end(), compareZIndex);
+        sortByZIndex(*negZOrderList);
         negZOrderList->shrinkToFit();
     }
 
