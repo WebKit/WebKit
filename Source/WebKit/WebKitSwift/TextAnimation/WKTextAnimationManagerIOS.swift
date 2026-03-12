@@ -65,7 +65,7 @@ extension WKTextAnimationManager {
     @nonobjc
     private var chunkToEffect: [UUID: UITextEffectView.EffectID] = [:]
 
-    private weak var delegate: WKTextAnimationSourceDelegate?
+    private weak var delegate: (any WKTextAnimationSourceDelegate)?
 
     init(delegate: any WKTextAnimationSourceDelegate) {
         super.init()

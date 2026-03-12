@@ -24,7 +24,9 @@
  */
 
 #include <bit>
+#ifdef __APPLE__
 #include <mach/arm/kern_return.h>
+#endif
 #include <stdlib.h>
 #include <unistd.h>
 

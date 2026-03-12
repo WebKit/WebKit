@@ -43,7 +43,7 @@ public:
     static AssemblyCommentRegistry& singleton();
     static void initialize();
 
-    Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+    Lock& getLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
     using CommentMap = UncheckedKeyHashMap<uintptr_t, String>;
 

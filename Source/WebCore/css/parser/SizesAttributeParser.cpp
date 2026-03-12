@@ -236,7 +236,7 @@ bool SizesAttributeParser::mediaConditionMatches(const MQ::MediaQuery& mediaCond
 
 std::optional<CSSToLengthConversionData> SizesAttributeParser::conversionData() const
 {
-    CheckedPtr renderer = protect(document())->renderView();
+    CheckedPtr renderer = document().renderView();
     if (!renderer)
         return std::nullopt;
     CheckedRef style = renderer->style();

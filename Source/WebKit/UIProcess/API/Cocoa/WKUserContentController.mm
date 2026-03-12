@@ -118,7 +118,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (void)removeContentRuleList:(WKContentRuleList *)contentRuleList
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    protect(*_userContentControllerProxy)->removeContentRuleList(Ref { *contentRuleList->_contentRuleList }->name());
+    protect(*_userContentControllerProxy)->removeContentRuleList(contentRuleList->_contentRuleList->name());
 #endif
 }
 

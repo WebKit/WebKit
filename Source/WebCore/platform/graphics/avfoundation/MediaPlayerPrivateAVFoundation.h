@@ -308,7 +308,7 @@ protected:
     
     void invalidateCachedDuration();
 
-    const String& assetURL() const { return m_assetURL.string(); }
+    const String& assetURL() const LIFETIME_BOUND { return m_assetURL.string(); }
 
     RefPtr<MediaPlayer> player() const { return m_player.get(); }
 
@@ -322,7 +322,7 @@ protected:
     Vector<RefPtr<InbandTextTrackPrivateAVF>> m_textTracks;
 
     void setResolvedURL(URL&&);
-    const URL& resolvedURL() const { return m_resolvedURL; }
+    const URL& resolvedURL() const LIFETIME_BOUND { return m_resolvedURL; }
 
     void setNeedsRenderingModeChanged();
     void renderingModeChanged();

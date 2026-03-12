@@ -100,6 +100,88 @@ TEST(WTF_StringCommon, Find16NonASCII)
 }
 #endif
 
+TEST(WTF_StringCommon, FindNaN)
+{
+    auto bitsToDouble = [](uint64_t bits) {
+        return std::bit_cast<double>(bits);
+    };
+
+    // IEEE 754 NaN: exponent all-ones, mantissa non-zero. Cover multiple
+    // bit patterns to exercise the self-compare SIMD path.
+    const double nanSamples[] = {
+        bitsToDouble(0x7ff8000000000000ULL), // PNaN (quiet_NaN on most platforms)
+        bitsToDouble(0xfff8000000000000ULL), // -PNaN (e.g. sin(-inf))
+        bitsToDouble(0x7ff0000000000001ULL), // Signaling NaN, min payload
+        bitsToDouble(0x7fffffffffffffffULL), // Max payload
+        bitsToDouble(0xffff000000000000ULL), // ImpureNaN in JSC terminology
+        bitsToDouble(0xfffffffffffffffeULL),
+    };
+
+    // Non-NaN values that share bit patterns close to NaN boundaries.
+    const double nonNaNSamples[] = {
+        0.0,
+        -0.0,
+        1.5,
+        -42.25,
+        bitsToDouble(0x7ff0000000000000ULL), // +Infinity
+        bitsToDouble(0xfff0000000000000ULL), // -Infinity
+        bitsToDouble(0x7fefffffffffffffULL), // DBL_MAX
+        bitsToDouble(0x0000000000000001ULL), // Smallest subnormal
+    };
+
+    // Empty and short inputs (scalar path).
+    {
+        EXPECT_FALSE(WTF::findNaN(nullptr, 0));
+
+        double a[] = { 1.5 };
+        EXPECT_FALSE(WTF::findNaN(a, 1));
+
+        double b[] = { 1.5, 2.5, 3.5 };
+        EXPECT_FALSE(WTF::findNaN(b, 3));
+
+        double c[] = { 1.5, 2.5, nanSamples[0], 4.5 };
+        EXPECT_EQ(WTF::findNaN(c, 4), c + 2);
+
+        double d[] = { nanSamples[1], 2.5, 3.5, 4.5 };
+        EXPECT_EQ(WTF::findNaN(d, 4), d);
+    }
+
+    // SIMD path: fill with non-NaN values (including Infinities) and verify no false positive.
+    {
+        Vector<double> v(64);
+        for (unsigned i = 0; i < v.size(); ++i)
+            v[i] = nonNaNSamples[i % std::size(nonNaNSamples)];
+        EXPECT_FALSE(WTF::findNaN(v.span().data(), v.size()));
+    }
+
+    // SIMD path: place each NaN bit pattern at every position in 0..31 and
+    // verify the returned pointer, covering scalar runway, unrolled body and
+    // overlapping tail load.
+    for (double nan : nanSamples) {
+        for (unsigned len : { 5u, 8u, 11u, 12u, 16u, 17u, 31u, 32u }) {
+            Vector<double> v(len);
+            for (unsigned i = 0; i < len; ++i)
+                v[i] = static_cast<double>(i) + 0.5;
+            for (unsigned pos = 0; pos < len; ++pos) {
+                v[pos] = nan;
+                EXPECT_EQ(WTF::findNaN(v.span().data(), len), v.span().data() + pos)
+                    << "len=" << len << " pos=" << pos;
+                v[pos] = static_cast<double>(pos) + 0.5;
+            }
+        }
+    }
+
+    // Returns the first NaN when multiple are present.
+    {
+        Vector<double> v(32);
+        for (unsigned i = 0; i < v.size(); ++i)
+            v[i] = static_cast<double>(i) + 0.5;
+        v[9] = nanSamples[2];
+        v[20] = nanSamples[0];
+        EXPECT_EQ(WTF::findNaN(v.span().data(), v.size()), v.span().data() + 9);
+    }
+}
+
 TEST(WTF_StringCommon, FindIgnoringASCIICaseWithoutLengthIdentical)
 {
     EXPECT_EQ(WTF::findIgnoringASCIICaseWithoutLength("needle", "needle"), 0UL);

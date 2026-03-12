@@ -31,8 +31,9 @@
 #include "CallFrame.h"
 #include "EvacuatedStack.h"
 #include "Exception.h"
+#include "JSPIContextInlines.h"
 #include "JSPromise.h"
-#include "JSWebAssemblyException.h"
+#include "PinballHandlerContext.h"
 #include "TopExceptionScope.h"
 
 #include <wtf/StdLibExtras.h>

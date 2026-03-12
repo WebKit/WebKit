@@ -177,7 +177,7 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
 
     // If we have a new grid to track, then add it to our set.
     if (!renderer.style().lineGrid().isNone()) {
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
+        if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
             establishLineGrid(layoutStateStack, *blockFlow);
     }
 }

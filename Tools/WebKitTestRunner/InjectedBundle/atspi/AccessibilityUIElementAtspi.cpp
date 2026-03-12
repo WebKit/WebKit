@@ -1457,7 +1457,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementAtspi::selectedTextRange()
     return OpaqueJSString::tryCreate(range).leakRef();
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementAtspi::intersectionWithSelectionRange()
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementAtspi::intersectionWithSelectionRange()
 {
     return nullptr;
 }

@@ -153,10 +153,10 @@ public:
     uint32_t id() const { return m_id; }
 
     // The name of the builtin function.
-    const ASCIILiteral& name() const { return m_name; }
+    const ASCIILiteral& name() const LIFETIME_BOUND { return m_name; }
 
     // The signature that a valid import of this builtin must match.
-    const WebAssemblyBuiltinSignature& signature() const { return m_signature; }
+    const WebAssemblyBuiltinSignature& signature() const LIFETIME_BOUND { return m_signature; }
 
     CodePtr<CFunctionPtrTag> wasmEntrypoint() const { return m_wasmEntrypoint; }
     CodePtr<WasmEntryPtrTag> wasmTrampoline() const { return m_wasmTrampoline; }

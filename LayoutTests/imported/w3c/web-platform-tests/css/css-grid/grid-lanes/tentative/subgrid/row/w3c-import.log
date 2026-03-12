@@ -26,6 +26,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-001d-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-001d-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-001d.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-001e-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-001e-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-001e.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-002a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-002a-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/subgrid/row/grid-lanes-subgrid-002a.html

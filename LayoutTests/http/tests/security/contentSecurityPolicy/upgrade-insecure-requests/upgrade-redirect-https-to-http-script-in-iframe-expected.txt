@@ -1,3 +1,4 @@
+PASS window.data is 'done'
 This test loads a secure iframe that loads an insecure script (but with a tricky redirect). We should upgrade the relevant requests.
 
 

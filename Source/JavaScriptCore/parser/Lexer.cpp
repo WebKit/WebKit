@@ -501,11 +501,11 @@ static constexpr const Latin1Character singleCharacterEscapeValuesForASCII[128] 
 
 template <typename T>
 Lexer<T>::Lexer(VM& vm, JSParserBuiltinMode builtinMode, JSParserScriptMode scriptMode)
-    : m_positionBeforeLastNewline(0,0,0)
-    , m_isReparsingFunction(false)
-    , m_vm(vm)
+    : m_vm(vm)
     , m_parsingBuiltinFunction(builtinMode == JSParserBuiltinMode::Builtin || Options::exposePrivateIdentifiers())
+    , m_positionBeforeLastNewline(0, 0, 0)
     , m_scriptMode(scriptMode)
+    , m_isReparsingFunction(false)
 {
 }
 

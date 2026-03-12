@@ -63,11 +63,10 @@ extension WTF.String {
         // Safety - we are guaranteed to get a valid buffer from the Swift
         // string for the duration that we're using it to construct the WTF::String.
         // The WTF::String will take a copy.
-        let span = string.utf8CString.span
-        self = unsafe span.withUnsafeBufferPointer { ptr in
+        self = unsafe string.utf8CString.span.withUnsafeBufferPointer { ptr in
             // Warning here is rdar://163018821
             // swift-format-ignore: NeverForceUnwrap
-            let cppspan = unsafe SpanConstChar(ptr.baseAddress!, span.count)
+            let cppspan = unsafe SpanConstChar(ptr.baseAddress!, string.utf8CString.count)
             return unsafe WTF.String.fromUTF8(cppspan)
         }
     }

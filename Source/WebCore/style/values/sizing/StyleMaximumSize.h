@@ -71,7 +71,7 @@ struct MaximumSize : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed
         return holdsAlternative<CSS::Keyword::Intrinsic>()
             || holdsAlternative<CSS::Keyword::MinIntrinsic>();
     }
-    ALWAYS_INLINE bool isIntrinsicOrLegacyIntrinsicOrAuto() const
+    ALWAYS_INLINE bool isSizingKeyword() const // Excludes isNone().
     {
         return holdsAlternative<CSS::Keyword::MinContent>()
             || holdsAlternative<CSS::Keyword::MaxContent>()

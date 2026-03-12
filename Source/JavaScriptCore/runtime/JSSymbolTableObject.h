@@ -41,7 +41,7 @@ public:
     using Base = JSScope;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnSpecialPropertyNames;
 
-    SymbolTable* symbolTable() const { return m_symbolTable.get(); }
+    SymbolTable* symbolTable() const LIFETIME_BOUND { return m_symbolTable.get(); }
     
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     JS_EXPORT_PRIVATE static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);

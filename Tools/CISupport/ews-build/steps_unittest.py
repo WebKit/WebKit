@@ -1594,6 +1594,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setup_step(RunJavaScriptCoreTests())
         self.prefix = RunJavaScriptCoreTests.prefix
         self.command_extra = RunJavaScriptCoreTests.command_extra
+        RunJavaScriptCoreTests.filter_failures_using_results_db = lambda self, stress_test_failures, binary_failures: ''
         if platform:
             self.setProperty('platform', platform)
         if fullPlatform:
@@ -2381,7 +2382,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                         logfiles={'json': self.jsonFileName},
                         log_environ=False,
                         timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --dump-render-tree --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --iterations 100 test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -1 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --iterations 100 test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
                         )
             .exit(0),
         )
@@ -2398,7 +2399,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                         logfiles={'json': self.jsonFileName},
                         log_environ=False,
                         timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --iterations 100 test 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -2 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --iterations 100 test 2>&1 | Tools/Scripts/filter-test-logs layout'],
                         )
             .log('stdio', stdout='9 failures found.')
             .exit(2),
@@ -2418,7 +2419,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                         logfiles={'json': self.jsonFileName},
                         log_environ=False,
                         timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --iterations 100 test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -2 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --iterations 100 test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
                         )
             .exit(0),
         )
@@ -2436,7 +2437,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                         logfiles={'json': self.jsonFileName},
                         log_environ=False,
                         timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --iterations 100 test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -2 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --iterations 100 test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
                         )
             .exit(0),
         )
@@ -2468,7 +2469,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                         logfiles={'json': self.jsonFileName},
                         log_environ=False,
                         timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --guard-malloc --iterations 100 test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -2 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --guard-malloc --iterations 100 test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
                         )
             .exit(0),
         )
@@ -2485,7 +2486,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                         logfiles={'json': self.jsonFileName},
                         log_environ=False,
                         timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --guard-malloc --iterations 100 test 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -2 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --guard-malloc --iterations 100 test 2>&1 | Tools/Scripts/filter-test-logs layout'],
                         )
             .log('stdio', stdout='9 failures found.')
             .exit(2),
@@ -2494,6 +2495,90 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
         rc = self.run_step()
         self.expect_property('build_summary', 'Found test failures in stress mode')
         return rc
+
+
+class TestRunWebKitTestsInSiteIsolationMode(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'layout-test-results/full_results.json'
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(RunWebKitTestsInSiteIsolationMode())
+        self.property_exceed_failure_limit = 'first_results_exceed_failure_limit'
+        self.property_failures = 'first_run_failures'
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
+        self.setProperty('stress_mode_passed', True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -2 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --site-isolation test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        rc = self.run_step()
+        self.expect_property('build_summary', 'Passed layout tests')
+        return rc
+
+    def test_success_wk1(self):
+        self.setup_step(RunWebKitTestsInSiteIsolationMode(layout_test_class=RunWebKit1Tests))
+        self.property_exceed_failure_limit = 'first_results_exceed_failure_limit'
+        self.property_failures = 'first_run_failures'
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
+        self.setProperty('stress_mode_passed', True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -1 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --site-isolation test1 test2 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.run_step()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test'])
+        self.setProperty('stress_mode_passed', True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -2 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 10 --skipped always --site-isolation test 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        )
+            .log('stdio', stdout='9 failures found.')
+            .exit(2),
+        )
+        self.expect_outcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.run_step()
+        self.expect_property('build_summary', 'Found test failures in site isolation mode')
+        return rc
+
+    def test_skipped_if_stress_mode_not_passed(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
+        self.expect_outcome(result=SKIPPED)
+        return self.run_step()
 
 
 class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
@@ -2652,7 +2737,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
                         logfiles={'json': self.jsonFileName},
                         log_environ=False,
                         timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --debug --dump-render-tree --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --debug -1 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs layout'],
                         )
             .exit(0),
         )
@@ -2668,7 +2753,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
                         logfiles={'json': self.jsonFileName},
                         log_environ=False,
                         timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --dump-render-tree --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release -1 --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs layout'],
                         )
             .log('stdio', stdout='9 failures found.')
             .exit(2),
@@ -7320,6 +7405,49 @@ class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=FAILURE, state_string="Unable to determine owner of PR 17518\n")
         self.run_step()
 
+    @classmethod
+    def mock_sleep(cls):
+        return patch('twisted.internet.task.deferLater', lambda *_, **__: None)
+
+    @defer.inlineCallbacks
+    def test_github_api_returns_none(self):
+        with self.mock_sleep():
+            self.setup_step(DetermineLabelOwner())
+            self.setProperty('github.number', 17518)
+            self.setProperty('buildername', 'Merge-Queue')
+            GitHubMixin.query_graph_ql = lambda self, query: None
+            next_steps = []
+            self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+            self.expect_outcome(result=FAILURE, state_string='Unable to determine owner of PR 17518\n')
+            yield self.run_step()
+            self.assertTrue(any(isinstance(step, RemoveLabelsFromPullRequest) for step in next_steps))
+
+    @defer.inlineCallbacks
+    def test_github_api_returns_false(self):
+        with self.mock_sleep():
+            self.setup_step(DetermineLabelOwner())
+            self.setProperty('github.number', 17518)
+            self.setProperty('buildername', 'Merge-Queue')
+            GitHubMixin.query_graph_ql = lambda self, query: False
+            next_steps = []
+            self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+            self.expect_outcome(result=FAILURE, state_string='Unable to determine owner of PR 17518\n')
+            yield self.run_step()
+            self.assertTrue(any(isinstance(step, RemoveLabelsFromPullRequest) for step in next_steps))
+
+    @defer.inlineCallbacks
+    def test_graphql_errors_response(self):
+        with self.mock_sleep():
+            self.setup_step(DetermineLabelOwner())
+            self.setProperty('github.number', 17518)
+            self.setProperty('buildername', 'Merge-Queue')
+            GitHubMixin.query_graph_ql = lambda self, query: {'errors': [{'message': 'API rate limit exceeded'}]}
+            next_steps = []
+            self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+            self.expect_outcome(result=FAILURE, state_string='Unable to determine owner of PR 17518\n')
+            yield self.run_step()
+            self.assertTrue(any(isinstance(step, RemoveLabelsFromPullRequest) for step in next_steps))
+
 
 class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -9535,6 +9663,7 @@ class TestBuildSwift(BuildStepMixinAdditions, unittest.TestCase):
         self.setup_step(BuildSwift())
         self.setProperty('archForUpload', 'arm64')
         self.setProperty('builddir', 'webkit')
+        self.setProperty('fullPlatform', 'mac-tahoe')
         self.setProperty('canonical_swift_tag', 'swift-6.0.3-RELEASE')
 
     def expectedShellCommand(self):
@@ -9804,6 +9933,28 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
             .exit(0),
             ExpectShell(workdir=self.WORK_DIR,
                         command=self.EXPECTED_IOS_BUILD_COMMAND,
+                        log_environ=False,
+                        timeout=2 * 60 * 60)
+            .log('stdio', stdout='ANALYZE SUCCEEDED No issues found.\n')
+            .exit(0)
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Found 0 issues')
+        return self.run_step()
+
+    def test_success_mac_tahoe(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        expected_build_command = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --configuration release --only-smart-pointers --toolchains={SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER} --swift-conditions=SWIFT_WEBKIT_TOOLCHAIN --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        log_environ=False,
+                        timeout=2 * 60 * 60)
+            .exit(0),
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=expected_build_command,
                         log_environ=False,
                         timeout=2 * 60 * 60)
             .log('stdio', stdout='ANALYZE SUCCEEDED No issues found.\n')
@@ -10191,6 +10342,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
     def test_changed_expectations_no_match(self):
         self.configureStep(True)
         FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'NoUncountedMemberChecker': ['css/ShorthandSerializer.cpp']}}, 'failures': {'WebCore': {'NoUncountedMemberChecker': ['inspector/agents/worker/WorkerWorkerAgent.h']}}}
+        FindUnexpectedStaticAnalyzerResults.filter_results_using_results_db = lambda self, logText: False
         self.setProperty('user_removed_tests', [])
         self.setProperty('user_added_tests', ['WebCore/css/ShorthandSerializer.cpp/NoUncountedMemberChecker'])
         next_steps = []

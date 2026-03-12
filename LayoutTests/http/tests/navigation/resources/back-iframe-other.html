@@ -11,7 +11,7 @@ window.onpageshow = ()=> sendMessageToOpener("pageshow", event.persisted ? "pers
 
 window.onmessage = (event) => dispatchMessage(event.data, {
     opener: {
-        back1: () => history.back(),
+        back: () => history.back(),
     },
 });
 

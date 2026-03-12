@@ -35,7 +35,7 @@
 
 namespace WebGPU {
 
-static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
+static bool NODELETE validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpusamplerdescriptor
 
@@ -61,7 +61,7 @@ static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& d
     return true;
 }
 
-static MTLSamplerAddressMode addressMode(WGPUAddressMode addressMode)
+static MTLSamplerAddressMode NODELETE addressMode(WGPUAddressMode addressMode)
 {
     switch (addressMode) {
     case WGPUAddressMode_Repeat:
@@ -76,7 +76,7 @@ static MTLSamplerAddressMode addressMode(WGPUAddressMode addressMode)
     }
 }
 
-static MTLSamplerMinMagFilter minMagFilter(WGPUFilterMode filterMode)
+static MTLSamplerMinMagFilter NODELETE minMagFilter(WGPUFilterMode filterMode)
 {
     switch (filterMode) {
     case WGPUFilterMode_Nearest:
@@ -89,7 +89,7 @@ static MTLSamplerMinMagFilter minMagFilter(WGPUFilterMode filterMode)
     }
 }
 
-static MTLSamplerMipFilter mipFilter(WGPUMipmapFilterMode filterMode)
+static MTLSamplerMipFilter NODELETE mipFilter(WGPUMipmapFilterMode filterMode)
 {
     switch (filterMode) {
     case WGPUMipmapFilterMode_Nearest:
@@ -102,7 +102,7 @@ static MTLSamplerMipFilter mipFilter(WGPUMipmapFilterMode filterMode)
     }
 }
 
-static MTLCompareFunction compareFunction(WGPUCompareFunction compareFunction)
+static MTLCompareFunction NODELETE compareFunction(WGPUCompareFunction compareFunction)
 {
     switch (compareFunction) {
     case WGPUCompareFunction_Never:
@@ -205,7 +205,7 @@ struct SamplerState {
     size_t useCount { 0 };
 };
 
-static HashMap<GenericHashKey<Sampler::UniqueSamplerIdentifier>, SamplerState>& samplerStates() WTF_REQUIRES_LOCK(samplerStatesLock)
+static HashMap<GenericHashKey<Sampler::UniqueSamplerIdentifier>, SamplerState>& NODELETE samplerStates() WTF_REQUIRES_LOCK(samplerStatesLock)
 {
     static NeverDestroyed<HashMap<GenericHashKey<Sampler::UniqueSamplerIdentifier>, SamplerState>> samplerStates WTF_GUARDED_BY_LOCK(samplerStatesLock);
     return samplerStates.get();
@@ -343,7 +343,7 @@ id<MTLSamplerState> Sampler::tryCacheSamplerState() const
 
 #pragma mark WGPU Stubs
 
-void wgpuSamplerReference(WGPUSampler sampler)
+void NODELETE wgpuSamplerReference(WGPUSampler sampler)
 {
     WebGPU::fromAPI(sampler).ref();
 }

@@ -5297,6 +5297,9 @@
     "imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/payment-request/payment-request-constructor-thcrash.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture.html": [
         "slow"
     ],

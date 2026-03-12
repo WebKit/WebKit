@@ -30,6 +30,7 @@
 
 #include "CallFrame.h"
 #include "JSCConfig.h"
+#include "JSPIContext.h"
 #include "NativeCallee.h"
 #include "WasmCallee.h"
 

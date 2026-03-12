@@ -50,7 +50,7 @@ WebPagePreferencesLockdownModeObserver::~WebPagePreferencesLockdownModeObserver(
 
 void WebPagePreferencesLockdownModeObserver::willChangeLockdownMode()
 {
-    if (RetainPtr preferences = wrapper(protect(m_policies).get())) {
+    if (RetainPtr preferences = wrapper(m_policies.get())) {
         [preferences willChangeValueForKey:@"_captivePortalModeEnabled"];
         [preferences willChangeValueForKey:@"lockdownModeEnabled"];
     }
@@ -58,7 +58,7 @@ void WebPagePreferencesLockdownModeObserver::willChangeLockdownMode()
 
 void WebPagePreferencesLockdownModeObserver::didChangeLockdownMode()
 {
-    if (RetainPtr preferences = wrapper(protect(m_policies).get())) {
+    if (RetainPtr preferences = wrapper(m_policies.get())) {
         [preferences didChangeValueForKey:@"_captivePortalModeEnabled"];
         [preferences didChangeValueForKey:@"lockdownModeEnabled"];
     }

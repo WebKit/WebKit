@@ -218,7 +218,7 @@ inline String toWTFString(WKURLRef urlRef)
 {
     if (!urlRef)
         return String();
-    return protect(toImpl(urlRef))->string();
+    return toImpl(urlRef)->string();
 }
 
 inline ProxyingRefPtr<API::Error> toAPI(const WebCore::ResourceError& error)

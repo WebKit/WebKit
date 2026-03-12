@@ -88,7 +88,7 @@ static bool NODELETE isRelevantTransferFunctionElement(const Element& child)
 
     ASSERT(is<SVGComponentTransferFunctionElement>(child));
 
-    for (CheckedPtr laterSibling = child.nextElementSibling(); laterSibling; laterSibling = laterSibling->nextElementSibling()) {
+    for (auto* laterSibling = child.nextElementSibling(); laterSibling; laterSibling = laterSibling->nextElementSibling()) {
         if (laterSibling->elementName() == name)
             return false;
     }

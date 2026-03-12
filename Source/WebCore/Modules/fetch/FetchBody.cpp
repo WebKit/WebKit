@@ -111,19 +111,19 @@ std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    protect(consumer())->setType(FetchBodyConsumer::Type::ArrayBuffer);
+    consumer().setType(FetchBodyConsumer::Type::ArrayBuffer);
     consume(owner, WTF::move(promise));
 }
 
 void FetchBody::blob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    protect(consumer())->setType(FetchBodyConsumer::Type::Blob);
+    consumer().setType(FetchBodyConsumer::Type::Blob);
     consume(owner, WTF::move(promise));
 }
 
 void FetchBody::bytes(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    protect(consumer())->setType(FetchBodyConsumer::Type::Bytes);
+    consumer().setType(FetchBodyConsumer::Type::Bytes);
     consume(owner, WTF::move(promise));
 }
 
@@ -133,7 +133,7 @@ void FetchBody::json(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         fulfillPromiseWithJSON(WTF::move(promise), textBody());
         return;
     }
-    protect(consumer())->setType(FetchBodyConsumer::Type::JSON);
+    consumer().setType(FetchBodyConsumer::Type::JSON);
     consume(owner, WTF::move(promise));
 }
 
@@ -143,13 +143,13 @@ void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         promise->resolve<IDLDOMString>(textBody());
         return;
     }
-    protect(consumer())->setType(FetchBodyConsumer::Type::Text);
+    consumer().setType(FetchBodyConsumer::Type::Text);
     consume(owner, WTF::move(promise));
 }
 
 void FetchBody::formData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    protect(consumer())->setType(FetchBodyConsumer::Type::FormData);
+    consumer().setType(FetchBodyConsumer::Type::FormData);
     consume(owner, WTF::move(promise));
 }
 

@@ -264,7 +264,7 @@ public:
         void NODELETE insertAfter(ContinuationChainNode&);
     };
 
-    ContinuationChainNode* continuationChainNode() const;
+    ContinuationChainNode* continuationChainNode() const LIFETIME_BOUND;
 
 protected:
     LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&) const;
@@ -274,7 +274,7 @@ protected:
     void collectAbsoluteQuadsForContinuation(Vector<FloatQuad>& quads, bool* wasFixed) const;
 
 private:
-    ContinuationChainNode& ensureContinuationChainNode();
+    ContinuationChainNode& ensureContinuationChainNode() LIFETIME_BOUND;
 
     virtual LayoutRect frameRectForStickyPositioning() const = 0;
 

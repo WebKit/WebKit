@@ -117,10 +117,10 @@ public:
     std::optional<ExportEntry> tryGetExportEntry(UniquedStringImpl* exportName);
 
     const Identifier& moduleKey() const { return m_moduleKey; }
-    const Vector<ModuleRequest>& requestedModules() const { return m_requestedModules; }
-    const ExportEntries& exportEntries() const { return m_exportEntries; }
-    const ImportEntries& importEntries() const { return m_importEntries; }
-    const OrderedIdentifierSet& starExportEntries() const { return m_starExportEntries; }
+    const Vector<ModuleRequest>& requestedModules() const LIFETIME_BOUND { return m_requestedModules; }
+    const ExportEntries& exportEntries() const LIFETIME_BOUND { return m_exportEntries; }
+    const ImportEntries& importEntries() const LIFETIME_BOUND { return m_importEntries; }
+    const OrderedIdentifierSet& starExportEntries() const LIFETIME_BOUND { return m_starExportEntries; }
 
     void dump();
 

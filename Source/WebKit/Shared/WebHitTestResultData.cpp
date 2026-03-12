@@ -131,7 +131,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
             }
 
             imageText = [&]() -> String {
-                if (RefPtr element = dynamicDowncast<Element>(target.get())) {
+                if (auto* element = dynamicDowncast<Element>(target.get())) {
                     auto& title = element->attributeWithoutSynchronization(HTMLNames::titleAttr);
                     if (!title.isEmpty())
                         return title;

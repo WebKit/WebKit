@@ -267,7 +267,7 @@ public:
     AccessibilityReplacedText() = default;
     AccessibilityReplacedText(const VisibleSelection&);
     void postTextStateChangeNotification(AXObjectCache*, AXTextEditType, const String&, const VisibleSelection&);
-    const VisiblePositionIndexRange& replacedRange() { return m_replacedRange; }
+    const VisiblePositionIndexRange& replacedRange() LIFETIME_BOUND { return m_replacedRange; }
 protected:
     String m_replacedText;
     VisiblePositionIndexRange m_replacedRange;
@@ -322,8 +322,8 @@ public:
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     WEBCORE_EXPORT void setFrameInheritedState(LocalFrame&, const InheritedFrameState&);
     WEBCORE_EXPORT void setFrameGeometry(LocalFrame&, const FrameGeometry&);
-    const std::optional<FrameGeometry>& frameGeometry() const { return m_frameGeometry; }
-    const std::optional<FrameGeometry>& getAndUpdateFrameGeometry();
+    const std::optional<FrameGeometry>& frameGeometry() const LIFETIME_BOUND { return m_frameGeometry; }
+    const std::optional<FrameGeometry>& getAndUpdateFrameGeometry() LIFETIME_BOUND;
 #endif
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT void buildIsolatedTreeIfNeeded();
@@ -395,7 +395,7 @@ public:
     }
     inline std::optional<AXID> getAXID(RenderObject& renderer) const
     {
-        if (RefPtr node = renderer.node())
+        if (auto* node = renderer.node())
             return m_nodeIdMapping.getOptional(*node);
         return m_renderObjectIdMapping.getOptional(const_cast<RenderObject&>(renderer));
     }
@@ -690,7 +690,7 @@ public:
     void startCachingComputedObjectAttributesUntilTreeMutates();
     void stopCachingComputedObjectAttributes();
 
-    AXComputedObjectAttributeCache* computedObjectAttributeCache() { return m_computedObjectAttributeCache.get(); }
+    AXComputedObjectAttributeCache* computedObjectAttributeCache() LIFETIME_BOUND { return m_computedObjectAttributeCache.get(); }
 
     Document* document() const { return m_document; }
     FrameIdentifier frameID() const { return m_frameID; }
@@ -890,6 +890,7 @@ private:
     void handleRowspanChanged(AccessibilityNodeObject&);
 #endif
     void handleDeferredNotification(const DeferredNotificationData&);
+    void handleDeferredPopoverToggle(AccessibilityObject&);
 
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;
@@ -1039,6 +1040,7 @@ private:
     Vector<WeakPtr<Document, WeakPtrImplWithEventTargetData>> m_deferredDocumentsWithNewRenderTrees;
 #endif
     Vector<DeferredNotificationData> m_deferredNotifications;
+    Vector<Ref<AccessibilityObject>> m_deferredToggledPopovers;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Timer m_buildIsolatedTreeTimer;

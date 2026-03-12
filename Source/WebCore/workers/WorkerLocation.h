@@ -37,7 +37,7 @@ class WorkerLocation : public RefCounted<WorkerLocation> {
 public:
     static Ref<WorkerLocation> create(URL&& url, String&& origin) { return adoptRef(*new WorkerLocation(WTF::move(url), WTF::move(origin))); }
 
-    const URL& url() const { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     String href() const;
 
     // URI decomposition attributes

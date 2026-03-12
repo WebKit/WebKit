@@ -26,22 +26,38 @@
 #pragma once
 
 #include "ASTBuilder.h"
+#include "ASTDiagnostic.h"
 #include "ASTNode.h"
+#include <wtf/OptionSet.h>
 #include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
 
-class Statement : public Node {
+enum class Behavior : uint8_t {
+    Return = 1 << 0,
+    Break = 1 << 1,
+    Continue = 1 << 2,
+    Next = 1 << 3,
+};
+using Behaviors = OptionSet<Behavior>;
+
+class Statement : public Node, public DiagnosticContainer {
     WGSL_AST_BUILDER_NODE(Statement);
 public:
     using Ref = std::reference_wrapper<Statement>;
     using Ptr = Statement*;
     using List = ReferenceWrapperVector<Statement>;
 
+    Behaviors behaviors() const { return m_behaviors; }
+    void setBehaviors(Behaviors behaviors) { m_behaviors = behaviors; }
+
 protected:
     Statement(SourceSpan span)
         : Node(span)
     { }
+
+private:
+    Behaviors m_behaviors;
 };
 
 } // namespace WGSL::AST

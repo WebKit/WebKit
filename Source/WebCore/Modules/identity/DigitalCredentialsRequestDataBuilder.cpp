@@ -83,7 +83,7 @@ ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawReques
     return std::make_pair(
         DigitalCredentialsRequestData {
             DigitalCredentialsMobileDocumentRequestData {
-                { protect(document.topOrigin())->data(), protect(document.securityOrigin())->data() },
+                { document.topOrigin().data(), document.securityOrigin().data() },
                 WTF::move(validatedCredentialRequests) } },
         DigitalCredentialsRawRequests { WTF::move(unvalidatedRequests) });
 }

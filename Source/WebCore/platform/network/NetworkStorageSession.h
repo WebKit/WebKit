@@ -153,7 +153,7 @@ public:
     WEBCORE_EXPORT static bool processMayUseCookieAPI();
 
     PAL::SessionID sessionID() const { return m_sessionID; }
-    CredentialStorage& credentialStorage() { return m_credentialStorage; }
+    CredentialStorage& credentialStorage() LIFETIME_BOUND { return m_credentialStorage; }
 
 #if PLATFORM(COCOA) || USE(SOUP)
     enum class IsInMemoryCookieStore : bool { No, Yes };

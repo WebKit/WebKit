@@ -1,6 +1,6 @@
 function shouldBe(actual, expected) {
     if (actual !== expected)
-        throw new Error("bad value: " + actual);
+        throw new Error("bad value: " + actual + " expected: " + expected);
 }
 
 let timeZoneNames = ["short", "long", "shortOffset", "longOffset", "shortGeneric", "longGeneric"];
@@ -58,11 +58,11 @@ timeZoneTest(date, "zh-Hant", {
 
 timeZoneTest(date, "ja-JP", {
     short: "2021/7/10 10:48:02 GMT-7",
-    long: "2021/7/10 10時48分02秒 アメリカ太平洋夏時間",
+    long: ["2021/7/10 10時48分02秒 アメリカ太平洋夏時間", "2021/7/10 10時48分02秒 米国太平洋夏時間"],
     shortOffset: "2021/7/10 10時48分02秒 GMT-7",
     longOffset: "2021/7/10 10時48分02秒 GMT-07:00",
     shortGeneric: "2021/7/10 10:48:02 ロサンゼルス時間",
-    longGeneric: "2021/7/10 10:48:02 アメリカ太平洋時間",
+    longGeneric: ["2021/7/10 10:48:02 アメリカ太平洋時間", "2021/7/10 10:48:02 米国太平洋時間"],
 });
 
 timeZoneTest(date, "ja-JP", {

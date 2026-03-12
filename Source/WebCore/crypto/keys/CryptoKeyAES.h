@@ -58,7 +58,7 @@ public:
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::AES; }
 
-    const Vector<uint8_t>& key() const { return m_key; }
+    const Vector<uint8_t>& key() const LIFETIME_BOUND { return m_key; }
     JsonWebKey exportJwk() const;
 
     static ExceptionOr<std::optional<size_t>> getKeyLength(const CryptoAlgorithmParameters&);

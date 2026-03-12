@@ -54,7 +54,7 @@ public:
     }
 
     size_t indexForTesting() const { return m_index.load(std::memory_order_relaxed); }
-    const std::array<MessageName, Capacity>& bufferForTesting() const { return m_buffer; }
+    const std::array<MessageName, Capacity>& bufferForTesting() const LIFETIME_BOUND { return m_buffer; }
 
 private:
     std::atomic<size_t> m_index { 0 };

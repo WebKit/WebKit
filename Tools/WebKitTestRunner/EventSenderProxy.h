@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
@@ -36,7 +37,6 @@
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSEvent;
-OBJC_CLASS NSView;
 #endif
 
 namespace WebCore {
@@ -58,15 +58,16 @@ public:
 
     WKPoint position() const { return m_position; }
 
-    void mouseDown(unsigned button, WKEventModifiers, WKStringRef pointerType = nullptr);
-    void mouseUp(unsigned button, WKEventModifiers, WKStringRef pointerType = nullptr);
+    void mouseDown(unsigned button, WKEventModifiers, WKStringRef pointerType = nullptr, CompletionHandler<void()>&& = nullptr);
+    void mouseUp(unsigned button, WKEventModifiers, WKStringRef pointerType = nullptr, CompletionHandler<void()>&& = nullptr);
+    void mouseMoveTo(double x, double y, WKStringRef pointerType = nullptr, CompletionHandler<void()>&& = nullptr);
+
     void mouseForceDown();
     void mouseForceUp();
     void mouseForceChanged(float);
     void mouseForceClick();
     void startAndCancelMouseForceClick();
-    void mouseMoveTo(double x, double y, WKStringRef pointerType = nullptr);
-    
+
     // Legacy wheel events.
     void mouseScrollBy(int x, int y);
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum);
@@ -92,7 +93,7 @@ public:
 
     void leapForward(int milliseconds);
 
-    void keyDown(WKStringRef key, WKEventModifiers, unsigned location);
+    void keyDown(WKStringRef key, WKEventModifiers, unsigned location, CompletionHandler<void()>&& = nullptr);
     void rawKeyDown(WKStringRef key, WKEventModifiers, unsigned location);
     void rawKeyUp(WKStringRef key, WKEventModifiers, unsigned location);
 
@@ -126,8 +127,6 @@ public:
     void scaleGestureEnd(double scale);
 #endif
 
-    void waitForPendingMouseEvents();
-
 private:
     TestController* m_testController;
 
@@ -156,7 +155,6 @@ private:
     WKEventMouseButton m_clickButton { kWKEventMouseButtonNoButton };
 #if PLATFORM(COCOA)
     int m_eventNumber { 0 };
-    RetainPtr<NSView> m_targetView;
     WTF::HashMap<WebCore::MouseButton, bool, WTF::IntHash<WebCore::MouseButton>, WTF::StrongEnumHashTraits<WebCore::MouseButton>> m_mouseButtonsCurrentlyDown;
     unsigned m_lastButtonDown { 0 };
 #else

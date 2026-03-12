@@ -110,7 +110,7 @@ FloatPoint ScrollingStateStickyNode::computeAnchorLayerPosition(const LayoutRect
         FloatRect constrainingRect;
         if (is<ScrollingStateFrameScrollingNode>(scrollingStateNode))
             constrainingRect = viewportRect;
-        else if (RefPtr overflowScrollingNode = dynamicDowncast<ScrollingStateOverflowScrollingNode>(scrollingStateNode))
+        else if (auto* overflowScrollingNode = dynamicDowncast<ScrollingStateOverflowScrollingNode>(scrollingStateNode))
             constrainingRect = FloatRect(overflowScrollingNode->scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
 
         constrainingRect.move(offsetFromStickyAncestors);

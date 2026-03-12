@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPagePrivate_h
-#define WKPagePrivate_h
+#pragma once
 
 #include <WebKit/WKBase.h>
 #include <WebKit/WKPage.h>
@@ -240,8 +239,11 @@ WK_EXPORT void WKPageFindStringForTesting(WKPageRef page, void* context, WKStrin
 typedef void (*WKPageDoAfterProcessingAllPendingMouseEventsFunction)(void* functionContext);
 WK_EXPORT void WKPageDoAfterProcessingAllPendingMouseEvents(WKPageRef page, void* context, WKPageDoAfterProcessingAllPendingMouseEventsFunction function);
 
+#if !defined(__APPLE__)
+typedef void (*WKPageDoAfterProcessingAllPendingKeyEventsFunction)(void* functionContext);
+WK_EXPORT void WKPageDoAfterProcessingAllPendingKeyEvents(WKPageRef page, void* context, WKPageDoAfterProcessingAllPendingKeyEventsFunction function);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* WKPagePrivate_h */

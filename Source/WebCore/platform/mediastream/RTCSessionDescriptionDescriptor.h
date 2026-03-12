@@ -47,7 +47,7 @@ public:
     const String& type() const LIFETIME_BOUND { return m_type; }
     void setType(const String& type) { m_type = type; }
 
-    const String& sdp() const { return m_sdp; }
+    const String& sdp() const LIFETIME_BOUND { return m_sdp; }
     void setSdp(const String& sdp) { m_sdp = sdp; }
 
 private:

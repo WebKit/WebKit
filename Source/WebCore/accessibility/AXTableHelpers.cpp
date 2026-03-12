@@ -156,8 +156,8 @@ bool tableElementIndicatesAccessibleTable(HTMLTableElement& tableElement)
         return true;
 
     // If there's a colgroup or col element, it's probably a data table.
-    for (const Ref child : childrenOfType<HTMLElement>(tableElement)) {
-        auto elementName = child->elementName();
+    for (const auto& child : childrenOfType<HTMLElement>(tableElement)) {
+        auto elementName = child.elementName();
         if (elementName == ElementName::HTML_col || elementName == ElementName::HTML_colgroup)
             return true;
     }

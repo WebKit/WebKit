@@ -54,7 +54,7 @@ public:
     void setContentString(const String& text);
     StringImpl* contentString() const { return m_contentString.impl(); }
 
-    const String& altText() const { return m_altText; }
+    const String& altText() const LIFETIME_BOUND { return m_altText; }
     void setAltText(const String& altText) { m_altText = altText; }
     
 private:

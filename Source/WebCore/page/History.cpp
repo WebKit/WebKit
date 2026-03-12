@@ -121,10 +121,10 @@ ExceptionOr<SerializedScriptValue*> History::state()
 
 SerializedScriptValue* History::stateInternal() const
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return nullptr;
-    RefPtr historyItem = frame->loader().history().currentItem();
+    auto* historyItem = frame->loader().history().currentItem();
     if (!historyItem)
         return nullptr;
     return historyItem->stateObject();

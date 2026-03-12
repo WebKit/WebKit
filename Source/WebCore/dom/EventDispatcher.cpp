@@ -136,7 +136,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (auto* textEvent = dynamicDowncast<TextEvent>(event))
         return textEvent->isKeyboard() || textEvent->isComposition();
 
-    return is<CompositionEvent>(event) || is<InputEvent>(event) || is<KeyboardEvent>(event);
+    return isAnyOf<CompositionEvent, InputEvent, KeyboardEvent>(event);
 }
 
 static HTMLInputElement* NODELETE findInputElementInEventPath(const EventPath& path)
@@ -192,10 +192,10 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     RefPtr window = document->window();
     std::optional<PerformanceEventTimingCandidate> pendingEventTiming;
     if (typeInfo.isInCategory(EventCategory::EventTimingEligible) && window && document->settings().eventTimingEnabled() && event.isTrusted())
-        pendingEventTiming = window->initializeEventTimingEntry(event, typeInfo.type());
+        pendingEventTiming = window->initializeEventTiming(event, typeInfo.type());
     auto finalizeEntry(WTF::makeScopeExit([&, event = Ref(event)] {
         if (pendingEventTiming)
-            window->finalizeEventTimingEntry(*pendingEventTiming, event, typeInfo.type());
+            window->markEndOfProcessingForEventTiming(*pendingEventTiming, event, typeInfo.type());
     }));
 
     bool targetOrRelatedTargetIsInShadowTree = node.isInShadowTree() || isInShadowTree(event.relatedTarget());
@@ -220,7 +220,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         // FIXME: We should also set shouldClearTargetsAfterDispatch to true if an EventTarget object in eventContext's touch target list
         // is a node and its root is a shadow root.
         if (eventContext.target()) {
-            shouldClearTargetsAfterDispatch = isInShadowTree(protect(eventContext.target()).get()) || isInShadowTree(protect(eventContext.relatedTarget()).get());
+            shouldClearTargetsAfterDispatch = isInShadowTree(eventContext.target()) || isInShadowTree(eventContext.relatedTarget());
             break;
         }
     }

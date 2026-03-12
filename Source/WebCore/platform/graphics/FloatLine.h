@@ -45,8 +45,8 @@ public:
     {
     }
     
-    const FloatPoint& start() const { return m_start; }
-    const FloatPoint& end() const { return m_end; }
+    const FloatPoint& start() const LIFETIME_BOUND { return m_start; }
+    const FloatPoint& end() const LIFETIME_BOUND { return m_end; }
     
     float length() const { return m_length; }
 

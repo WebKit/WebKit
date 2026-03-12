@@ -136,6 +136,7 @@ class IntlCache;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
 class JSObject;
+struct JSPIContext;
 class JSPromise;
 class JSPropertyNameEnumerator;
 class JITSizeStatistics;
@@ -233,26 +234,6 @@ private:
     ScratchBuffer* m_scratchBuffer;
 };
 
-// A record marking the top (in memory address terms) of the "interesting" stack span when
-// handling a JSPI suspension. A pointer to it is saved in the VM as the 'topJSPIContext' field.
-struct JSPIContext {
-    enum class Purpose {
-        Promising, // Started in a 'WebAssembly.promising()' wrapper function.
-        Completing // Started in a PinballCompletion fulfillment handler.
-    };
-
-    JSPIContext(Purpose, VM&, CallFrame*, JSPromise*);
-    ~JSPIContext();
-
-    void deactivate(VM&);
-
-    Purpose purpose;
-    JSPIContext* previousContext;
-    CallFrame* limitFrame; // scan up to this frame, and return from it after evacuating the stack
-    PinballCompletion* completion { nullptr };
-    JSPromise* resultPromise;
-};
-
 enum VMIdentifierType { };
 using VMIdentifier = AtomicObjectIdentifier<VMIdentifierType>;
 
@@ -301,7 +282,7 @@ public:
     JS_EXPORT_PRIVATE RefPtr<JSON::Value> takeSamplingProfilerSamplesAsJSON();
 #endif
 
-    FuzzerAgent* fuzzerAgent() const { return m_fuzzerAgent.get(); }
+    FuzzerAgent* fuzzerAgent() const LIFETIME_BOUND { return m_fuzzerAgent.get(); }
     void setFuzzerAgent(std::unique_ptr<FuzzerAgent>&&);
 
     VMIdentifier identifier() const { return m_identifier; }
@@ -312,9 +293,9 @@ public:
     // Global object in which execution began.
     JS_EXPORT_PRIVATE JSGlobalObject* deprecatedVMEntryGlobalObject(JSGlobalObject*) const;
 
-    WeakRandom& random() { return m_random; }
-    WeakRandom& heapRandom() { return m_heapRandom; }
-    Integrity::Random& integrityRandom() { return m_integrityRandom; }
+    WeakRandom& random() LIFETIME_BOUND { return m_random; }
+    WeakRandom& heapRandom() LIFETIME_BOUND { return m_heapRandom; }
+    Integrity::Random& integrityRandom() LIFETIME_BOUND { return m_integrityRandom; }
 
     template<typename Type, typename Functor>
     Type& ensureSideData(void* key, const Functor&);
@@ -630,7 +611,7 @@ public:
     StringReplaceCache stringReplaceCache;
 
     bool mightBeExecutingTaintedCode() const { return m_mightBeExecutingTaintedCode; }
-    bool* addressOfMightBeExecutingTaintedCode() { return &m_mightBeExecutingTaintedCode; }
+    bool* addressOfMightBeExecutingTaintedCode() LIFETIME_BOUND { return &m_mightBeExecutingTaintedCode; }
     void setMightBeExecutingTaintedCode(bool value = true) { m_mightBeExecutingTaintedCode = value; }
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
@@ -638,6 +619,12 @@ public:
     SymbolRegistry& privateSymbolRegistry() { return m_privateSymbolRegistry.get(); }
 
     WriteBarrier<JSBigInt> heapBigIntConstantOne;
+
+    // Cached multiplicative inverse for BigInt modulo optimization.
+    WriteBarrier<JSBigInt> m_cachedBigIntDivisor;
+    WriteBarrier<JSBigInt> m_nextCachedBigIntDivisor;
+    Vector<UCPURegister> m_bigIntCachedInverse;
+    int m_bigIntDivisorCount { 0 };
 
     JSCell* orderedHashTableDeletedValue()
     {
@@ -1029,7 +1016,7 @@ public:
 
     bool hasTimeZoneChange() { return dateCache.hasTimeZoneChange(); }
 
-    RegExpCache* regExpCache() { return m_regExpCache.get(); }
+    RegExpCache* regExpCache() LIFETIME_BOUND { return m_regExpCache.get(); }
 
     bool isCollectorBusyOnCurrentThread() { return heap.currentThreadIsDoingGCWork(); }
 
@@ -1041,7 +1028,7 @@ public:
     bool currentThreadIsHoldingAPILock() const { return m_apiLock->currentThreadIsHoldingLock(); }
 
     JSLock& apiLock() { return m_apiLock.get(); }
-    CodeCache* codeCache() { return m_codeCache.get(); }
+    CodeCache* codeCache() LIFETIME_BOUND { return m_codeCache.get(); }
     IntlCache& intlCache() { return *m_intlCache; }
 
     JS_EXPORT_PRIVATE void whenIdle(Function<void()>&&);
@@ -1056,19 +1043,19 @@ public:
     // FIXME: Use AtomString once it got merged with Identifier.
     JS_EXPORT_PRIVATE void addImpureProperty(UniquedStringImpl*);
     
-    InlineWatchpointSet& primitiveGigacageEnabled() { return m_primitiveGigacageEnabled; }
+    InlineWatchpointSet& primitiveGigacageEnabled() LIFETIME_BOUND { return m_primitiveGigacageEnabled; }
 
-    BuiltinExecutables* builtinExecutables() { return m_builtinExecutables.get(); }
+    BuiltinExecutables* builtinExecutables() LIFETIME_BOUND { return m_builtinExecutables.get(); }
 
     bool enableTypeProfiler();
     bool disableTypeProfiler();
-    TypeProfilerLog* typeProfilerLog() { return m_typeProfilerLog.get(); }
-    TypeProfiler* typeProfiler() { return m_typeProfiler.get(); }
+    TypeProfilerLog* typeProfilerLog() LIFETIME_BOUND { return m_typeProfilerLog.get(); }
+    TypeProfiler* typeProfiler() LIFETIME_BOUND { return m_typeProfiler.get(); }
     JS_EXPORT_PRIVATE void dumpTypeProfilerData();
 
-    FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
+    FunctionHasExecutedCache* functionHasExecutedCache() LIFETIME_BOUND { return &m_functionHasExecutedCache; }
 
-    ControlFlowProfiler* controlFlowProfiler() { return m_controlFlowProfiler.get(); }
+    ControlFlowProfiler* controlFlowProfiler() LIFETIME_BOUND { return m_controlFlowProfiler.get(); }
     bool enableControlFlowProfiler();
     bool disableControlFlowProfiler();
 
@@ -1148,7 +1135,7 @@ public:
     void promiseRejected(JSPromise*);
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
-    StackTrace* nativeStackTraceOfLastThrow() const { return m_nativeStackTraceOfLastThrow.get(); }
+    StackTrace* nativeStackTraceOfLastThrow() const LIFETIME_BOUND { return m_nativeStackTraceOfLastThrow.get(); }
     Thread* throwingThread() const { return m_throwingThread.get(); }
     bool needExceptionCheck() const { return m_needExceptionCheck; }
 #endif
@@ -1169,7 +1156,7 @@ public:
     ALWAYS_INLINE void mutatorFence() { heap.mutatorFence(); }
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
-    DoesGCCheck* addressOfDoesGC() { return &m_doesGC; }
+    DoesGCCheck* addressOfDoesGC() LIFETIME_BOUND { return &m_doesGC; }
     void setDoesGCExpectation(bool expectDoesGC, unsigned nodeIndex, unsigned nodeOp) { m_doesGC.set(expectDoesGC, nodeIndex, nodeOp); }
     void setDoesGCExpectation(bool expectDoesGC, DoesGCCheck::Special special) { m_doesGC.set(expectDoesGC, special); }
     void verifyCanGC() { m_doesGC.verifyCanGC(*this); }
@@ -1394,22 +1381,6 @@ extern "C" void SYSV_ABI sanitizeStackForVMImpl(VM*);
 #endif
 
 JS_EXPORT_PRIVATE void sanitizeStackForVM(VM&);
-
-inline JSPIContext::JSPIContext(Purpose purpose, VM& vm, CallFrame* callFrame, JSPromise* resultPromise)
-    : purpose(purpose)
-    , previousContext(vm.topJSPIContext)
-    , limitFrame(callFrame)
-    , resultPromise(resultPromise)
-{
-    vm.topJSPIContext = this;
-}
-
-inline void JSPIContext::deactivate(VM& vm)
-{
-    vm.topJSPIContext = previousContext;
-    limitFrame = nullptr; // indicates that this has been deactivated
-}
-
 
 } // namespace JSC
 

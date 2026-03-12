@@ -68,7 +68,7 @@ public:
 
         ~WeakListHashSetIteratorBase() = default;
 
-        T* get() { return m_position->get(); }
+        T* get() LIFETIME_BOUND { return m_position->get(); }
         const T* get() const { return get(); }
         T& operator*() { return *get(); }
         const T& operator*() const { return *get(); }

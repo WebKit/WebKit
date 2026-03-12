@@ -121,7 +121,7 @@ bool TextFieldInputType::isEmptyValue() const
         return visibleValue().isEmpty();
     }
 
-    for (RefPtr text = TextNodeTraversal::firstWithin(*innerText); text; text = TextNodeTraversal::next(*text, innerText.get())) {
+    for (auto* text = TextNodeTraversal::firstWithin(*innerText); text; text = TextNodeTraversal::next(*text, innerText.get())) {
         if (text->length())
             return false;
     }
@@ -413,7 +413,7 @@ void TextFieldInputType::removeShadowSubtree()
     m_innerText = nullptr;
     m_placeholder = nullptr;
     m_innerBlock = nullptr;
-    if (RefPtr innerSpinButton = m_innerSpinButton)
+    if (auto* innerSpinButton = m_innerSpinButton.get())
         innerSpinButton->removeSpinButtonOwner();
     m_innerSpinButton = nullptr;
     m_capsLockIndicator = nullptr;
@@ -922,7 +922,18 @@ IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
     if (!element()->renderer())
         return IntRect();
     Ref element = *this->element();
-    return protect(protect(element->document())->view())->contentsToRootView(protect(element->renderer())->absoluteBoundingBoxRect());
+    return protect(element->document().view())->contentsToRootView(protect(element->renderer())->absoluteBoundingBoxRect());
+}
+
+std::optional<FrameIdentifier> TextFieldInputType::rootFrameID() const
+{
+    RefPtr element = this->element();
+    if (!element)
+        return std::nullopt;
+    RefPtr view = element->document().view();
+    if (!view)
+        return std::nullopt;
+    return view->rootFrameID();
 }
 
 Vector<DataListSuggestion> TextFieldInputType::suggestions()

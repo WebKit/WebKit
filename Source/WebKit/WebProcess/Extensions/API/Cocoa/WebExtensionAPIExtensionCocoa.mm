@@ -111,7 +111,7 @@ JSValue *WebExtensionAPIExtension::getBackgroundPage(JSContextRef context)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/getBackgroundPage
 
-    auto backgroundPage = protect(extensionContext())->backgroundPage();
+    auto backgroundPage = extensionContext().backgroundPage();
     if (!backgroundPage)
         return toJSValue(context, JSValueMakeNull(context));
 

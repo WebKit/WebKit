@@ -31,7 +31,9 @@
 #import <WebCore/SQLiteTransaction.h>
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
@@ -425,3 +427,64 @@ TEST(PrivateClickMeasurement, MigrateWithDestinationToken)
     pollUntilPCMIsMigrated(webView.get(), MigratingFromResourceLoadStatistics::No, UsingDestinationToken::Yes);
     cleanUp(webView);
 }
+
+#if PLATFORM(MAC)
+TEST(PrivateClickMeasurement, FetchAndRemoveSafariCampaignDomains)
+{
+    auto webView = webViewWithResourceLoadStatisticsEnabledInNetworkProcess();
+    auto dataStore = webView.get().configuration.websiteDataStore;
+
+    [webView _storePrivateClickMeasurementWithSourceID:100 destinationURL:[NSURL URLWithString:@"https://pcmdestination.example"] reportEndpoint:[NSURL URLWithString:@"https://safaricampaign.apple"]];
+
+    TestWebKitAPI::Util::runFor(0.5_s);
+
+    // Verify Safari Campaign domains appear in fetchDataRecords
+    __block bool fetchDone = false;
+    __block bool foundSafariCampaign = false;
+    __block bool foundPCMDestination = false;
+
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypePrivateClickMeasurements]
+        completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+            for (WKWebsiteDataRecord *record in records) {
+                NSString *domain = record.displayName;
+                if ([domain isEqualToString:@"safaricampaign.apple"])
+                    foundSafariCampaign = true;
+                if ([domain isEqualToString:@"pcmdestination.example"])
+                    foundPCMDestination = true;
+            }
+            fetchDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&fetchDone);
+
+    EXPECT_TRUE(foundSafariCampaign);
+    EXPECT_TRUE(foundPCMDestination);
+
+    __block bool removeDone = false;
+    [dataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypePrivateClickMeasurements]
+        modifiedSince:[NSDate distantPast]
+        completionHandler:^{
+        removeDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&removeDone);
+
+    // Verify all PCM domains are removed
+    fetchDone = false;
+    __block NSUInteger recordCount = 0;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypePrivateClickMeasurements]
+        completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+            recordCount = records.count;
+            fetchDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&fetchDone);
+    EXPECT_EQ(0U, recordCount);
+
+    // Verify via dump that database is empty
+    const char* emptyPCMDatabase = "\nNo stored Private Click Measurement data.\n";
+    EXPECT_WK_STREQ(dumpedPCM(webView).get(), emptyPCMDatabase);
+
+    cleanUp(webView);
+}
+#endif

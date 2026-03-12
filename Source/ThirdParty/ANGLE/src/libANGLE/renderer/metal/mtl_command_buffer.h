@@ -387,7 +387,7 @@ struct RenderCommandEncoderShaderStates
     void reset();
 
     std::array<id<MTLBuffer>, kMaxShaderBuffers> buffers;
-    std::array<uint32_t, kMaxShaderBuffers> bufferOffsets;
+    std::array<size_t, kMaxShaderBuffers> bufferOffsets;
     std::array<id<MTLSamplerState>, kMaxShaderSamplers> samplers;
     std::array<Optional<std::pair<float, float>>, kMaxShaderSamplers> samplerLodClamps;
     std::array<id<MTLTexture>, kMaxShaderSamplers> textures;
@@ -459,7 +459,7 @@ class RenderCommandEncoder final : public CommandEncoder
 
     RenderCommandEncoder &setBlendColor(float r, float g, float b, float a);
 
-    RenderCommandEncoder &setVertexBuffer(const BufferRef &buffer, uint32_t offset, uint32_t index)
+    RenderCommandEncoder &setVertexBuffer(const BufferRef &buffer, size_t offset, uint32_t index)
     {
         return setBuffer(gl::ShaderType::Vertex, buffer, offset, index);
     }
@@ -485,7 +485,7 @@ class RenderCommandEncoder final : public CommandEncoder
     }
 
     RenderCommandEncoder &setFragmentBuffer(const BufferRef &buffer,
-                                            uint32_t offset,
+                                            size_t offset,
                                             uint32_t index)
     {
         return setBuffer(gl::ShaderType::Fragment, buffer, offset, index);
@@ -513,11 +513,11 @@ class RenderCommandEncoder final : public CommandEncoder
 
     RenderCommandEncoder &setBuffer(gl::ShaderType shaderType,
                                     const BufferRef &buffer,
-                                    uint32_t offset,
+                                    size_t offset,
                                     uint32_t index);
     RenderCommandEncoder &setBufferForWrite(gl::ShaderType shaderType,
                                             const BufferRef &buffer,
-                                            uint32_t offset,
+                                            size_t offset,
                                             uint32_t index);
     RenderCommandEncoder &setBytes(gl::ShaderType shaderType,
                                    const void *bytes,
@@ -640,7 +640,7 @@ class RenderCommandEncoder final : public CommandEncoder
 
     RenderCommandEncoder &commonSetBuffer(gl::ShaderType shaderType,
                                           id<MTLBuffer> mtlBuffer,
-                                          uint32_t offset,
+                                          size_t offset,
                                           uint32_t index);
 
     RenderPassDesc mRenderPassDesc;
@@ -742,9 +742,9 @@ class ComputeCommandEncoder final : public CommandEncoder
 
     ComputeCommandEncoder &setComputePipelineState(id<MTLComputePipelineState> state);
 
-    ComputeCommandEncoder &setBuffer(const BufferRef &buffer, uint32_t offset, uint32_t index);
+    ComputeCommandEncoder &setBuffer(const BufferRef &buffer, size_t offset, uint32_t index);
     ComputeCommandEncoder &setBufferForWrite(const BufferRef &buffer,
-                                             uint32_t offset,
+                                             size_t offset,
                                              uint32_t index);
     ComputeCommandEncoder &setBytes(const void *bytes, size_t size, uint32_t index);
     template <typename T>

@@ -156,7 +156,7 @@
     Ref frame = *_frame;
     if (!frame->page())
         return nil;
-    return WebKit::wrapper(*protect(frame->page()));
+    return WebKit::wrapper(*frame->page());
 }
 
 - (NSURL *)URL
@@ -186,7 +186,7 @@
 
 - (NSString *)_securityOrigin
 {
-    RefPtr coreFrame = protect(*_frame)->coreLocalFrame();
+    RefPtr coreFrame = _frame->coreLocalFrame();
     if (!coreFrame)
         return nil;
     return protect(protect(coreFrame->document())->securityOrigin())->toString().createNSString().autorelease();

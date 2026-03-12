@@ -176,7 +176,7 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
                 return;
             if (RefPtr data = m_data) {
                 data->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
-                    if (!client || hasClient(*client))
+                    if (client && hasClient(*client))
                         client->dataReceived(*this, buffer);
                 });
             }

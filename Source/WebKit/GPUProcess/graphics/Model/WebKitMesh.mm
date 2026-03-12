@@ -465,6 +465,15 @@ void WebMesh::setCameraDistance(float distance)
 #endif
 }
 
+void WebMesh::setBackgroundColor(const simd_float3& color)
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    [m_receiver setBackgroundColor:color];
+#else
+    UNUSED_PARAM(color);
+#endif
+}
+
 void WebMesh::setEnvironmentMap(const WebModel::ImageAsset& imageAsset)
 {
 #if ENABLE(GPU_PROCESS_MODEL)

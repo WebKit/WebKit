@@ -204,6 +204,9 @@ public:
     void setIsEnhancedSecurityLinkForCurrentSite(bool isEnhancedSecurityLink) { m_isEnhancedSecurityLinkForCurrentSite = isEnhancedSecurityLink; }
     bool isEnhancedSecurityLinkForCurrentSite() const { return m_isEnhancedSecurityLinkForCurrentSite; }
 
+    WebKit::FrameState* backForwardFrameState() const { return m_backForwardFrameState.get(); }
+    void setBackForwardFrameState(RefPtr<WebKit::FrameState>&& frameState) { m_backForwardFrameState = WTF::move(frameState); }
+
 private:
     Navigation(WebCore::ProcessIdentifier);
     Navigation(WebCore::ProcessIdentifier, RefPtr<WebKit::WebBackForwardListItem>&&);
@@ -243,6 +246,7 @@ private:
     RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
     ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
     RefPtr<WebKit::FrameProcess> m_pendingSharedProcess;
+    RefPtr<WebKit::FrameState> m_backForwardFrameState;
 };
 
 } // namespace API

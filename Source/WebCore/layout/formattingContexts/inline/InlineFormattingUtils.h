@@ -84,7 +84,7 @@ public:
 private:
     bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const;
 
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;

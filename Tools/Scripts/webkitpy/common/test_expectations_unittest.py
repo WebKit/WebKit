@@ -28,11 +28,12 @@ from webkitpy.common.test_expectations import TestExpectations
 
 class MockTestExpectations(TestExpectations):
 
-    def __init__(self, port, expectations, build_type='Release'):
+    def __init__(self, port, expectations, build_type='Release', architecture=None):
         host = MockHost()
         port = host.port_factory.get(port)
         self._port_name = port.name()
         self._build_type = build_type
+        self._architecture = architecture
         self._expectations = self._load_expectation_string(expectations)
 
     def is_skip(self, test, subtest):
@@ -181,6 +182,93 @@ class ExpectationsTest(unittest.TestCase):
     }
 }"""
 
+    ARCHITECTURE = """
+{
+    "TestWebKit": {
+        "subtests": {
+            "WebKit.ArmCrash": {
+                "expected": {"all:arm64": {"status": ["CRASH"], "bug": "1234"}}
+            },
+            "WebKit.GtkArmTimeout": {
+                "expected": {"gtk:arm64": {"status": ["TIMEOUT"], "bug": "1234"}}
+            },
+            "WebKit.AllFail": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "1234"}}
+            }
+        }
+    }
+}"""
+
+    SPECIFICITY = """
+{
+    "TestWebKit": {
+        "subtests": {
+            "WebKit.PortVsAll": {
+                "expected": {
+                    "all:arm64": {"status": ["TIMEOUT"], "bug": "1234"},
+                    "gtk": {"status": ["FAIL"], "bug": "1234"}
+                }
+            },
+            "WebKit.ArchVsPlain": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "1234"},
+                    "gtk:arm64": {"status": ["CRASH"], "bug": "1234"}
+                }
+            },
+            "WebKit.BuildVsPlain": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "1234"},
+                    "gtk@Release": {"status": ["TIMEOUT"], "bug": "1234"}
+                }
+            },
+            "WebKit.FullyQualified": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "1234"},
+                    "gtk:arm64": {"status": ["TIMEOUT"], "bug": "1234"},
+                    "gtk@Debug:arm64": {"status": ["CRASH"], "bug": "1234"}
+                }
+            },
+            "WebKit.PortVsAllFullyQualified": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "1234"},
+                    "all@Release:arm64": {"status": ["TIMEOUT"], "bug": "1234"}
+                }
+            }
+        }
+    }
+}"""
+
+    ARCHITECTURE_SLOW = """
+{
+    "TestWebKit": {
+        "expected": {"all": {"slow": true}},
+        "subtests": {
+            "WebKit.FastOnArm": {
+                "expected": {"all:arm64": {"slow": false}}
+            }
+        }
+    }
+}"""
+
+    ARCHITECTURE_SKIP = """
+{
+    "TestSkipArch": {
+        "expected": {"all:arm64": {"status": ["SKIP"], "bug": "1234"}},
+        "subtests": {
+            "TestSkipArch.PassOnArm": {
+                "expected": {"all": {"status": ["PASS"]}}
+            }
+        }
+    },
+    "TestSkipArchSubtest": {
+        "subtests": {
+            "sub1": {
+                "expected": {"all:arm64": {"status": ["SKIP"], "bug": "1234"}}
+            }
+        }
+    }
+}"""
+
     REPEATED_KEYS = """
 {
     "TestDummy": {
@@ -301,6 +389,80 @@ class ExpectationsTest(unittest.TestCase):
         self.assert_slow('TestWebKit', 'WebKit.WKView', False)
         self.assert_slow('TestWebKit', 'WebKit.MouseMoveAfterCrash', True)
         self.assert_slow('TestWebKit', 'WebKit.WKConnection', False)
+
+    def test_architecture(self):
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE, architecture='arm64')
+        self.assert_exp('TestWebKit', 'WebKit.ArmCrash', 'CRASH')
+        self.assert_exp('TestWebKit', 'WebKit.GtkArmTimeout', 'TIMEOUT')
+        self.assert_exp('TestWebKit', 'WebKit.AllFail', 'FAIL')
+
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE, architecture='x86_64')
+        self.assert_exp('TestWebKit', 'WebKit.ArmCrash', 'PASS')
+        self.assert_exp('TestWebKit', 'WebKit.GtkArmTimeout', 'PASS')
+        self.assert_exp('TestWebKit', 'WebKit.AllFail', 'FAIL')
+
+        self.expectations = MockTestExpectations('wpe', self.ARCHITECTURE, architecture='arm64')
+        self.assert_exp('TestWebKit', 'WebKit.ArmCrash', 'CRASH')
+        self.assert_exp('TestWebKit', 'WebKit.GtkArmTimeout', 'PASS')
+        self.assert_exp('TestWebKit', 'WebKit.AllFail', 'FAIL')
+
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE)
+        self.assert_exp('TestWebKit', 'WebKit.ArmCrash', 'PASS')
+        self.assert_exp('TestWebKit', 'WebKit.AllFail', 'FAIL')
+
+    def test_specificity(self):
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Release', 'arm64')
+        self.assert_exp('TestWebKit', 'WebKit.PortVsAll', 'FAIL')
+        self.expectations = MockTestExpectations('wpe', self.SPECIFICITY, 'Release', 'arm64')
+        self.assert_exp('TestWebKit', 'WebKit.PortVsAll', 'TIMEOUT')
+
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Release', 'arm64')
+        self.assert_exp('TestWebKit', 'WebKit.ArchVsPlain', 'CRASH')
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Release', 'x86_64')
+        self.assert_exp('TestWebKit', 'WebKit.ArchVsPlain', 'FAIL')
+
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Release', 'x86_64')
+        self.assert_exp('TestWebKit', 'WebKit.BuildVsPlain', 'TIMEOUT')
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Debug', 'x86_64')
+        self.assert_exp('TestWebKit', 'WebKit.BuildVsPlain', 'FAIL')
+
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Debug', 'arm64')
+        self.assert_exp('TestWebKit', 'WebKit.FullyQualified', 'CRASH')
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Release', 'arm64')
+        self.assert_exp('TestWebKit', 'WebKit.FullyQualified', 'TIMEOUT')
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Release', 'x86_64')
+        self.assert_exp('TestWebKit', 'WebKit.FullyQualified', 'FAIL')
+
+        self.expectations = MockTestExpectations('gtk', self.SPECIFICITY, 'Release', 'arm64')
+        self.assert_exp('TestWebKit', 'WebKit.PortVsAllFullyQualified', 'FAIL')
+        self.expectations = MockTestExpectations('wpe', self.SPECIFICITY, 'Release', 'arm64')
+        self.assert_exp('TestWebKit', 'WebKit.PortVsAllFullyQualified', 'TIMEOUT')
+        self.expectations = MockTestExpectations('wpe', self.SPECIFICITY, 'Debug', 'arm64')
+        self.assert_exp('TestWebKit', 'WebKit.PortVsAllFullyQualified', 'PASS')
+
+    def test_architecture_slow(self):
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE_SLOW, architecture='arm64')
+        self.assert_slow('TestWebKit', None, True)
+        self.assert_slow('TestWebKit', 'WebKit.FastOnArm', False)
+
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE_SLOW, architecture='x86_64')
+        self.assert_slow('TestWebKit', None, True)
+        self.assert_slow('TestWebKit', 'WebKit.FastOnArm', True)
+
+    def test_architecture_skip(self):
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE_SKIP, architecture='arm64')
+        self.assert_skip('TestSkipArch', None, True)
+        self.assert_exp('TestSkipArch', 'TestSkipArch.PassOnArm', 'PASS')
+
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE_SKIP, architecture='x86_64')
+        self.assert_skip('TestSkipArch', None, False)
+
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE_SKIP, architecture='arm64')
+        self.assert_skip('TestSkipArchSubtest', None, False)
+        self.assert_skip('TestSkipArchSubtest', 'sub1', True)
+
+        self.expectations = MockTestExpectations('gtk', self.ARCHITECTURE_SKIP, architecture='x86_64')
+        self.assert_skip('TestSkipArchSubtest', 'sub1', False)
 
     def test_repeated_keys(self):
         self.assertRaises(ValueError, lambda: MockTestExpectations('gtk', self.REPEATED_KEYS))

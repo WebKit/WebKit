@@ -60,7 +60,7 @@ public:
     ~DMABufBuffer();
 
     uint64_t id() const { return m_id; }
-    const Attributes& attributes() const { return m_attributes; }
+    const Attributes& attributes() const LIFETIME_BOUND { return m_attributes; }
     std::optional<Attributes> takeAttributes();
 
     enum class ColorSpace : uint8_t { Bt601, Bt709, Bt2020, Smpte240M };
@@ -71,7 +71,7 @@ public:
     std::optional<TransferFunction> transferFunction() const { return m_transferFunction; }
     void setTransferFunction(TransferFunction transferFunction) { m_transferFunction = transferFunction; }
 
-    CoordinatedPlatformLayerBuffer* buffer() const { return m_buffer.get(); }
+    CoordinatedPlatformLayerBuffer* buffer() const LIFETIME_BOUND { return m_buffer.get(); }
     void setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
 
 private:

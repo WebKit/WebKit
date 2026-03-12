@@ -46,7 +46,7 @@ static HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>&
 Ref<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(VisitedLinkTableIdentifier identifier)
 {
     auto& visitedLinkTableControllerPtr = visitedLinkTableControllers().add(identifier, nullptr).iterator->value;
-    if (RefPtr ptr = visitedLinkTableControllerPtr.get())
+    if (auto* ptr = visitedLinkTableControllerPtr.get())
         return *ptr;
 
     auto visitedLinkTableController = adoptRef(*new VisitedLinkTableController(identifier));

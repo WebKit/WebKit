@@ -33,7 +33,7 @@ namespace Style {
 
 auto CSSValueConversion<ScrollSnapAlign>::operator()(BuilderState& state, const CSSValue& value) -> ScrollSnapAlign
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
         return { toStyleFromCSSValue<ScrollSnapAxisAlignType>(state, *primitiveValue) };
 
     auto pair = requiredPairDowncast<CSSPrimitiveValue>(state, value);

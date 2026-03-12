@@ -79,7 +79,7 @@ StyleSelfAlignmentData AlignItems::resolve() const
 
 auto CSSValueConversion<AlignItems>::operator()(BuilderState& state, const CSSValue& value) -> AlignItems
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         // normal
         case CSSValueNormal:

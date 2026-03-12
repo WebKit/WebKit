@@ -71,7 +71,7 @@ public:
 
     void dumpDisassembly(PrintStream&, LinkBuffer&, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback = scopedLambda<void(DFG::Node*)>([] (DFG::Node*) { }));
 
-    StructureStubInfo* addStructureStubInfo();
+    PropertyInlineCache* addPropertyInlineCache();
     OptimizingCallLinkInfo* addCallLinkInfo(CodeOrigin);
 
     // None of these things is owned by State. It is the responsibility of

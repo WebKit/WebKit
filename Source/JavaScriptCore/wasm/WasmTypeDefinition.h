@@ -700,7 +700,7 @@ public:
 
     static RefPtr<ArrayType> tryCreate(const FieldType&);
 
-    const FieldType& elementType() const { return m_elementType; }
+    const FieldType& elementType() const LIFETIME_BOUND { return m_elementType; }
     bool hasRecursiveReference() const { return m_hasRecursiveReference; }
 
     WTF::String toString() const;

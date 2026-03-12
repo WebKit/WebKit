@@ -67,7 +67,7 @@
 #define PAS_MIN_ALIGN                    ((size_t)1 << PAS_MIN_ALIGN_SHIFT)
 
 /* Use VA-based memory zeroing when the allocation size exceeds this threshold. */
-#define PAS_VA_BASED_ZERO_MEMORY_SHIFT   24
+#define PAS_VA_BASED_ZERO_MEMORY_SHIFT   20
 
 /* Default amount of padding between backing allocations of different partial views within a
  * single segregated shared page. Most useful for heaps which allocate user-facing objects. */

@@ -1064,6 +1064,26 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementMac::description()
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElementMac::debugDescription()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto description = descriptionOfValue(attributeValue(@"_AXDebugDescription").get());
+    return concatenateAttributeAndValue(@"_AXDebugDescription", description.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementMac::rawRoleForTesting()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto description = descriptionOfValue(attributeValue(@"_AXRawRoleForTesting").get());
+    return concatenateAttributeAndValue(@"_AXRawRoleForTesting", description.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElementMac::brailleLabel() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -1911,14 +1931,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementMac::selectedTextRange()
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementMac::intersectionWithSelectionRange()
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementMac::intersectionWithSelectionRange()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    if (auto rangeAttribute = attributeValue(NSAccessibilityIntersectionWithSelectionRangeAttribute)) {
-        NSRange range = [rangeAttribute rangeValue];
-        NSString *rangeDescription = [NSString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
-        return [rangeDescription createJSStringRef];
-    }
+    if (RetainPtr intersection = attributeValue(NSAccessibilityIntersectionWithSelectionRangeAttribute))
+        return AccessibilityTextMarkerRange::create(intersection.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;

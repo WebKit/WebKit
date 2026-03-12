@@ -125,7 +125,7 @@ struct FontCache::FontDataCaches {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(FontCache::FontDataCaches);
 
-CheckedRef<FontCache> FontCache::forCurrentThread()
+FontCache& FontCache::forCurrentThread()
 {
     return threadGlobalDataSingleton().fontCache();
 }
@@ -414,7 +414,7 @@ static void dispatchToAllFontCaches(F function)
 {
     ASSERT(isMainThread());
 
-    function(FontCache::forCurrentThread().get());
+    function(protect(FontCache::forCurrentThread()).get());
 
     for (Ref thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
         thread->runLoop().postTask([function](ScriptExecutionContext&) {

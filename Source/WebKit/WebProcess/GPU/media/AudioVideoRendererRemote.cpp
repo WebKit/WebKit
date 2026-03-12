@@ -798,7 +798,7 @@ WebCore::FloatSize AudioVideoRendererRemote::naturalSize() const
 void AudioVideoRendererRemote::setCDMInstance(CDMInstance* instance)
 {
     std::optional<RemoteCDMInstanceIdentifier> identifier;
-    if (RefPtr remoteInstance = dynamicDowncast<RemoteCDMInstance>(instance))
+    if (auto* remoteInstance = dynamicDowncast<RemoteCDMInstance>(instance))
         identifier = remoteInstance->identifier();
 
     ensureOnDispatcherWithConnection([identifier = WTF::move(identifier)](auto& renderer, auto& connection) mutable {
@@ -832,7 +832,7 @@ void AudioVideoRendererRemote::attemptToDecrypt()
 void AudioVideoRendererRemote::setCDMSession(LegacyCDMSession* session)
 {
     std::optional<RemoteLegacyCDMSessionIdentifier> identifier;
-    if (RefPtr remoteSession = dynamicDowncast<RemoteLegacyCDMSession>(session))
+    if (auto* remoteSession = dynamicDowncast<RemoteLegacyCDMSession>(session))
         identifier = remoteSession->identifier();
 
     ensureOnDispatcherWithConnection([identifier = WTF::move(identifier)](auto& renderer, auto& connection) mutable {

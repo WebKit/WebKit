@@ -103,11 +103,11 @@ Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, Option
 }
 
 #if USE(GBM)
-Ref<BitmapTexture> BitmapTexturePool::createTextureForImage(EGLImage image, OptionSet<BitmapTexture::Flags> flags)
+Ref<BitmapTexture> BitmapTexturePool::createTextureForImage(EGLImage image, const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
 {
     ASSERT(GLContextWrapper::currentContext());
     Locker locker { m_lock };
-    auto texture = BitmapTexture::create(image, flags);
+    auto texture = BitmapTexture::create(image, size, flags);
     m_imageTextures.append(texture.copyRef());
     scheduleReleaseUnusedTextures();
     return texture;

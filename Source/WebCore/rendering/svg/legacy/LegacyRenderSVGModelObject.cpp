@@ -32,6 +32,7 @@
 #include "LegacyRenderSVGModelObject.h"
 
 #include "ContainerNodeInlines.h"
+#include "LegacyRenderSVGModelObjectInlines.h"
 #include "LegacyRenderSVGResource.h"
 #include "NodeInlines.h"
 #include "NotImplemented.h"

@@ -49,10 +49,10 @@ public:
     static Ref<StorageEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     virtual ~StorageEvent();
 
-    const String& key() const { return m_key; }
-    const String& oldValue() const { return m_oldValue; }
-    const String& newValue() const { return m_newValue; }
-    const String& url() const { return m_url; }
+    const String& key() const LIFETIME_BOUND { return m_key; }
+    const String& oldValue() const LIFETIME_BOUND { return m_oldValue; }
+    const String& newValue() const LIFETIME_BOUND { return m_newValue; }
+    const String& url() const LIFETIME_BOUND { return m_url; }
     Storage* storageArea() const { return m_storageArea; }
 
     void initStorageEvent(const AtomString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);

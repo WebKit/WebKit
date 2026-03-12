@@ -29,6 +29,7 @@
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
 #import "TestController.h"
+#import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 #import <WebKit/WKString.h>
 
@@ -58,16 +59,22 @@ void EventSenderProxy::updateClickCountForButton(int button)
     m_clickButton = button;
 }
 
-void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
+void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
+    if (completionHandler)
+        completionHandler();
 }
 
-void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
+void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
+    if (completionHandler)
+        completionHandler();
 }
 
-void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
+void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
+    if (completionHandler)
+        completionHandler();
 }
 
 void EventSenderProxy::leapForward(int milliseconds)
@@ -75,8 +82,10 @@ void EventSenderProxy::leapForward(int milliseconds)
     m_time += milliseconds / 1000.0;
 }
 
-void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation, CompletionHandler<void()>&& completionHandler)
 {
+    if (completionHandler)
+        completionHandler();
 }
 
 void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
@@ -146,9 +155,5 @@ void EventSenderProxy::cancelTouchPoint(int index)
 }
 
 #endif
-
-void EventSenderProxy::waitForPendingMouseEvents()
-{
-}
 
 } // namespace WTR

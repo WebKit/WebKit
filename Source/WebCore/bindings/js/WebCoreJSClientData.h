@@ -49,10 +49,10 @@ public:
 
     static JSHeapData* ensureHeapData(JSC::Heap&);
 
-    Lock& lock() { return m_lock; }
-    ExtendedDOMIsoSubspaces& subspaces() { return m_subspaces; }
+    Lock& lock() LIFETIME_BOUND { return m_lock; }
+    ExtendedDOMIsoSubspaces& subspaces() LIFETIME_BOUND { return m_subspaces; }
 
-    Vector<JSC::IsoSubspace*>& outputConstraintSpaces() { return m_outputConstraintSpaces; }
+    Vector<JSC::IsoSubspace*>& outputConstraintSpaces() LIFETIME_BOUND { return m_outputConstraintSpaces; }
 
     template<typename Func>
     void forEachOutputConstraintSpace(const Func& func)
@@ -144,24 +144,24 @@ public:
 
     JSHeapData& heapData() { return *m_heapData; }
 
-    WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
-    JSBuiltinFunctions& builtinFunctions() { return m_builtinFunctions; }
-    
-    JSC::GCClient::IsoSubspace& domBuiltinConstructorSpace() { return m_domBuiltinConstructorSpace; }
-    JSC::GCClient::IsoSubspace& domConstructorSpace() { return m_domConstructorSpace; }
-    JSC::GCClient::IsoSubspace& domNamespaceObjectSpace() { return m_domNamespaceObjectSpace; }
-    JSC::GCClient::IsoSubspace& domWindowPropertiesSpace() { return m_domWindowPropertiesSpace; }
-    JSC::GCClient::IsoSubspace& runtimeArraySpace() { return m_runtimeArraySpace; }
-#if PLATFORM(COCOA)
-    JSC::GCClient::IsoSubspace& objcFallbackObjectImpSpace() { return m_objcFallbackObjectImpSpace; }
-#endif
-    JSC::GCClient::IsoSubspace& observableArraySpace() { return m_observableArraySpace; }
-    JSC::GCClient::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
-    JSC::GCClient::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
-    JSC::GCClient::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
-    JSC::GCClient::IsoSubspace& idbSerializationSpace() { return m_idbSerializationSpace; }
+    WebCoreBuiltinNames& builtinNames() LIFETIME_BOUND { return m_builtinNames; }
+    JSBuiltinFunctions& builtinFunctions() LIFETIME_BOUND { return m_builtinFunctions; }
 
-    ExtendedDOMClientIsoSubspaces& clientSubspaces() { return m_clientSubspaces; }
+    JSC::GCClient::IsoSubspace& domBuiltinConstructorSpace() LIFETIME_BOUND { return m_domBuiltinConstructorSpace; }
+    JSC::GCClient::IsoSubspace& domConstructorSpace() LIFETIME_BOUND { return m_domConstructorSpace; }
+    JSC::GCClient::IsoSubspace& domNamespaceObjectSpace() LIFETIME_BOUND { return m_domNamespaceObjectSpace; }
+    JSC::GCClient::IsoSubspace& domWindowPropertiesSpace() LIFETIME_BOUND { return m_domWindowPropertiesSpace; }
+    JSC::GCClient::IsoSubspace& runtimeArraySpace() LIFETIME_BOUND { return m_runtimeArraySpace; }
+#if PLATFORM(COCOA)
+    JSC::GCClient::IsoSubspace& objcFallbackObjectImpSpace() LIFETIME_BOUND { return m_objcFallbackObjectImpSpace; }
+#endif
+    JSC::GCClient::IsoSubspace& observableArraySpace() LIFETIME_BOUND { return m_observableArraySpace; }
+    JSC::GCClient::IsoSubspace& runtimeMethodSpace() LIFETIME_BOUND { return m_runtimeMethodSpace; }
+    JSC::GCClient::IsoSubspace& runtimeObjectSpace() LIFETIME_BOUND { return m_runtimeObjectSpace; }
+    JSC::GCClient::IsoSubspace& windowProxySpace() LIFETIME_BOUND { return m_windowProxySpace; }
+    JSC::GCClient::IsoSubspace& idbSerializationSpace() LIFETIME_BOUND { return m_idbSerializationSpace; }
+
+    ExtendedDOMClientIsoSubspaces& clientSubspaces() LIFETIME_BOUND { return m_clientSubspaces; }
 
     void addClient(JSVMClientDataClient& client) { m_clients.add(client); }
 

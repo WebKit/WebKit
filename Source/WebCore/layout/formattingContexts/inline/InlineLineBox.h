@@ -73,17 +73,17 @@ public:
     InlineRect logicalBorderBoxForInlineBox(const Box&, const BoxGeometry&) const;
     InlineRect logicalContentBoxForInlineBox(const Box&) const;
 
-    const InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox) const { return const_cast<LineBox&>(*this).inlineLevelBoxFor(layoutBox); }
-    const InlineLevelBox& inlineLevelBoxFor(const Line::Run& lineRun) const { return const_cast<LineBox&>(*this).inlineLevelBoxFor(lineRun); }
+    const InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox) const LIFETIME_BOUND { return const_cast<LineBox&>(*this).inlineLevelBoxFor(layoutBox); }
+    const InlineLevelBox& inlineLevelBoxFor(const Line::Run& lineRun) const LIFETIME_BOUND { return const_cast<LineBox&>(*this).inlineLevelBoxFor(lineRun); }
 
-    const InlineLevelBox& rootInlineBox() const { return m_rootInlineBox; }
+    const InlineLevelBox& rootInlineBox() const LIFETIME_BOUND { return m_rootInlineBox; }
     using InlineLevelBoxList = Vector<InlineLevelBox>;
-    const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
+    const InlineLevelBoxList& nonRootInlineLevelBoxes() const LIFETIME_BOUND { return m_nonRootInlineLevelBoxList; }
 
     InlineLayoutUnit alignmentBaseline() const { return logicalRectForRootInlineBox().top() + rootInlineBox().ascent(); }
     FontBaseline baselineType() const { return m_baselineType; }
 
-    const InlineRect& logicalRect() const { return m_logicalRect; }
+    const InlineRect& logicalRect() const LIFETIME_BOUND { return m_logicalRect; }
 
     size_t lineIndex() const { return m_lineIndex; }
 
@@ -95,18 +95,18 @@ private:
     friend class RubyFormattingContext;
 
     void addInlineLevelBox(InlineLevelBox&&);
-    InlineLevelBoxList& nonRootInlineLevelBoxes() { return m_nonRootInlineLevelBoxList; }
+    InlineLevelBoxList& nonRootInlineLevelBoxes() LIFETIME_BOUND { return m_nonRootInlineLevelBoxList; }
 
-    InlineLevelBox& rootInlineBox() { return m_rootInlineBox; }
+    InlineLevelBox& rootInlineBox() LIFETIME_BOUND { return m_rootInlineBox; }
 
-    const InlineLevelBox& parentInlineBox(const InlineLevelBox& inlineLevelBox) const { return const_cast<LineBox&>(*this).parentInlineBox(inlineLevelBox); }
-    InlineLevelBox& parentInlineBox(const InlineLevelBox&);
+    const InlineLevelBox& parentInlineBox(const InlineLevelBox& inlineLevelBox) const LIFETIME_BOUND { return const_cast<LineBox&>(*this).parentInlineBox(inlineLevelBox); }
+    InlineLevelBox& parentInlineBox(const InlineLevelBox&) LIFETIME_BOUND;
 
-    const InlineLevelBox& parentInlineBox(const Line::Run& lineRun) const { return const_cast<LineBox&>(*this).parentInlineBox(lineRun); }
-    InlineLevelBox& parentInlineBox(const Line::Run&);
+    const InlineLevelBox& parentInlineBox(const Line::Run& lineRun) const LIFETIME_BOUND { return const_cast<LineBox&>(*this).parentInlineBox(lineRun); }
+    InlineLevelBox& parentInlineBox(const Line::Run&) LIFETIME_BOUND;
 
-    InlineLevelBox& inlineLevelBoxFor(const Line::Run&);
-    InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox);
+    InlineLevelBox& inlineLevelBoxFor(const Line::Run&) LIFETIME_BOUND;
+    InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox) LIFETIME_BOUND;
 
     InlineRect logicalRectForInlineLevelBox(const Box& layoutBox) const;
 

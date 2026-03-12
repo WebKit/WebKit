@@ -53,16 +53,16 @@ RTCController::RTCController()
 
 RTCController::~RTCController()
 {
-    for (Ref connection : m_peerConnections)
-        connection->clearController();
+    for (auto& connection : m_peerConnections)
+        connection.clearController();
     stopGatheringLogs();
 }
 
 void RTCController::reset(bool shouldFilterICECandidates)
 {
     m_shouldFilterICECandidates = shouldFilterICECandidates;
-    for (Ref connection : m_peerConnections)
-        connection->clearController();
+    for (auto& connection : m_peerConnections)
+        connection.clearController();
     m_peerConnections.clear();
     m_filteringDisabledOrigins.clear();
 }

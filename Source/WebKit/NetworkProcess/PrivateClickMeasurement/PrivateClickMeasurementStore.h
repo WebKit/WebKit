@@ -55,6 +55,8 @@ public:
     virtual void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&) = 0;
     virtual void clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, WebCore::PCM::AttributionReportEndpoint) = 0;
 
+    virtual void fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&) = 0;
+
     virtual void close(CompletionHandler<void()>&&) = 0;
 };
 

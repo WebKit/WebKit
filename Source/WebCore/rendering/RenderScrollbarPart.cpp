@@ -86,21 +86,21 @@ void RenderScrollbarPart::layoutVerticalPart()
 
 static int calcScrollbarThicknessUsing(const Style::PreferredSize& preferredSize, Style::ZoomFactor zoomFactor)
 {
-    if (!preferredSize.isPercentOrCalculated() && !preferredSize.isIntrinsicOrLegacyIntrinsicOrAuto())
+    if (preferredSize.isFixed())
         return Style::evaluateMinimum<LayoutUnit>(preferredSize, 0_lu, zoomFactor);
     return ScrollbarTheme::theme().scrollbarThickness();
 }
 
 static int calcScrollbarThicknessUsing(const Style::MinimumSize& minimumSize, Style::ZoomFactor zoomFactor)
 {
-    if ((!minimumSize.isPercentOrCalculated() && !minimumSize.isIntrinsicOrLegacyIntrinsicOrAuto()) || minimumSize.isAuto())
+    if (minimumSize.isFixed() || minimumSize.isAuto())
         return Style::evaluateMinimum<LayoutUnit>(minimumSize, 0_lu, zoomFactor);
     return ScrollbarTheme::theme().scrollbarThickness();
 }
 
 static int calcScrollbarThicknessUsing(const Style::MaximumSize& maximumSize, Style::ZoomFactor zoomFactor)
 {
-    if (!maximumSize.isPercentOrCalculated() && !maximumSize.isIntrinsic() && !maximumSize.isLegacyIntrinsic())
+    if (maximumSize.isFixed())
         return Style::evaluateMinimum<LayoutUnit>(maximumSize, 0_lu, zoomFactor);
     return ScrollbarTheme::theme().scrollbarThickness();
 }

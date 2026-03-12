@@ -268,7 +268,7 @@ void MemoryIndex::removeEntriesWithValueKey(const IDBKeyData& valueKey)
 MemoryIndexCursor* MemoryIndex::maybeOpenCursor(const IDBCursorInfo& info, MemoryBackingStoreTransaction& transaction)
 {
     if (transaction.isWriting()) {
-        RefPtr objectStore = m_objectStore.get();
+        auto* objectStore = m_objectStore.get();
         if (!objectStore)
             return nullptr;
 

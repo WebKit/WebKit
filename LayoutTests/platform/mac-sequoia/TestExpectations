@@ -38,6 +38,9 @@ http/wpt/identity/ [ Skip ]
 # -- The above has different, expected behavior on Tahoe than Sequoia --
 # -- New failure expectations for Sequoia below this point only!! --
 
+# webkit.org/b/308169 Skip until after macOS 26.4, where AXIntersectionWithSelectionRange returns AXTextMarkerRangeRef.
+accessibility/mac/intersection-with-selection-range.html [ Skip ]
+
 
 
 

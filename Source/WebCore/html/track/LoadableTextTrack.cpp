@@ -146,7 +146,7 @@ void LoadableTextTrack::newStyleSheetsAvailable(TextTrackLoader& loader)
 
 AtomString LoadableTextTrack::id() const
 {
-    RefPtr trackElement = m_trackElement.get();
+    auto* trackElement = m_trackElement.get();
     if (!trackElement)
         return emptyAtom();
     return trackElement->attributeWithoutSynchronization(idAttr);
@@ -158,10 +158,10 @@ size_t LoadableTextTrack::trackElementIndex()
     ASSERT(m_trackElement->parentNode());
 
     size_t index = 0;
-    for (RefPtr<Node> node = m_trackElement->parentNode()->firstChild(); node; node = node->nextSibling()) {
+    for (auto* node = m_trackElement->parentNode()->firstChild(); node; node = node->nextSibling()) {
         if (!node->hasTagName(trackTag) || !node->parentNode())
             continue;
-        if (node.get() == m_trackElement.get())
+        if (node == m_trackElement.get())
             return index;
         ++index;
     }
@@ -172,7 +172,7 @@ size_t LoadableTextTrack::trackElementIndex()
 
 bool LoadableTextTrack::isDefault() const
 {
-    RefPtr trackElement = m_trackElement.get();
+    auto* trackElement = m_trackElement.get();
     return trackElement && trackElement->hasAttributeWithoutSynchronization(defaultAttr);
 }
 

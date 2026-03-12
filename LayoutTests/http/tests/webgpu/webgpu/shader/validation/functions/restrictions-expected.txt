@@ -386,22 +386,7 @@ PASS :function_attributes:case="compute";placement="ret"
 PASS :function_attributes:case="const";placement="func"
 PASS :function_attributes:case="const";placement="param"
 PASS :function_attributes:case="const";placement="ret"
-FAIL :function_attributes:case="diagnostic";placement="func" assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    2:1: error: invalid attribute for function declaration
-
-    ---- shader ----
-
-    @diagnostic(off, derivative_uniformity)
-    fn b( foo: i32) ->  i32{
-      return 1;
-    }
-
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
-    2:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :function_attributes:case="diagnostic";placement="func"
 PASS :function_attributes:case="diagnostic";placement="param"
 PASS :function_attributes:case="diagnostic";placement="ret"
 PASS :function_attributes:case="fragment";placement="func"

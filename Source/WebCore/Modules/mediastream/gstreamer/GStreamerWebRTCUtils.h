@@ -116,6 +116,7 @@ inline GstWebRTCRTPTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTra
 {
     switch (direction) {
     case RTCRtpTransceiverDirection::Inactive:
+    case RTCRtpTransceiverDirection::Stopped:
         return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_INACTIVE;
     case RTCRtpTransceiverDirection::Sendonly:
         return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY;

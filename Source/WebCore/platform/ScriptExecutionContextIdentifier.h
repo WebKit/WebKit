@@ -50,7 +50,7 @@ public:
 
     explicit operator bool() const { return !!m_object; }
 
-    const WTF::UUID& object() const { return m_object; }
+    const WTF::UUID& object() const LIFETIME_BOUND { return m_object; }
     ProcessIdentifier processIdentifier() const { return m_processIdentifier; }
 
     bool isHashTableDeletedValue() const { return m_processIdentifier.isHashTableDeletedValue(); }

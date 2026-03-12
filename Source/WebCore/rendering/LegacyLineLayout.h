@@ -82,7 +82,7 @@ private:
     void layoutRunsAndFloats(bool hasInlineChild);
     void layoutRunsAndFloatsInRange(InlineBidiResolver&);
 
-    const RenderStyle& NODELETE style() const;
+    const RenderStyle& NODELETE style() const LIFETIME_BOUND;
     const LocalFrameViewLayoutContext& NODELETE layoutContext() const;
 
     RenderBlockFlow& m_flow;

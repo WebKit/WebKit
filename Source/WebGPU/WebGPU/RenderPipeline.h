@@ -70,7 +70,7 @@ public:
     ~RenderPipeline();
 
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
-    void setLabel(String&&);
+    void NODELETE setLabel(String&&);
 
     bool isValid() const { return m_renderPipelineDescriptor && m_pipelineLayout->isValid(); }
 
@@ -78,7 +78,7 @@ public:
     id<MTLRenderPipelineState> renderPipelineState() const;
     id<MTLRenderPipelineState> icbRenderPipelineState() const;
 
-    id<MTLDepthStencilState> depthStencilState() const;
+    id<MTLDepthStencilState> NODELETE depthStencilState() const;
     bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
     MTLPrimitiveType primitiveType() const { return m_primitiveType; }
     MTLWinding frontFace() const { return m_frontFace; }
@@ -95,14 +95,14 @@ public:
     NSString* errorValidatingColorDepthStencilTargets(const WGPURenderPassDescriptor&, const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
     bool validateRenderBundle(const WGPURenderBundleEncoderDescriptor&) const;
     bool writesDepth() const;
-    bool writesStencil() const;
+    bool NODELETE writesStencil() const;
 
-    const RequiredBufferIndicesContainer& requiredBufferIndices() const { return m_requiredBufferIndices; }
+    const RequiredBufferIndicesContainer& requiredBufferIndices() const LIFETIME_BOUND { return m_requiredBufferIndices; }
     WGPUPrimitiveTopology primitiveTopology() const { return m_descriptor.primitive.topology; }
 
     MTLIndexType stripIndexFormat() const { return m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint16 ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32; }
 
-    const BufferBindingSizesForBindGroup* minimumBufferSizes(uint32_t) const;
+    const BufferBindingSizesForBindGroup* NODELETE minimumBufferSizes(uint32_t) const;
     RefPtr<RenderPipeline> recomputeLastStrideAsStride() const;
     uint64_t uniqueId() const { return m_uniqueId; }
     uint32_t vertexShaderBindingCount() const { return m_vertexShaderBindingCount; }

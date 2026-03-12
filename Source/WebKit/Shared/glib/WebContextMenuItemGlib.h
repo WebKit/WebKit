@@ -53,7 +53,7 @@ public:
     WebCore::ContextMenuItemType type() const { return m_submenuItems.isEmpty() ? WebContextMenuItemData::type() : WebCore::ContextMenuItemType::Submenu; }
     GAction* gAction() const { return m_gAction.get(); }
     GVariant* gActionTarget() const { return m_gActionTarget.get(); }
-    const Vector<WebContextMenuItemGlib>& submenuItems() const { return m_submenuItems; }
+    const Vector<WebContextMenuItemGlib>& submenuItems() const LIFETIME_BOUND { return m_submenuItems; }
 
 #if PLATFORM(GTK) && !USE(GTK4)
     GtkAction* gtkAction() const { return m_gtkAction; }

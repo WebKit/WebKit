@@ -63,7 +63,7 @@ public:
     Update(Document&);
     ~Update();
 
-    const ListHashSet<Ref<ContainerNode>>& roots() const { return m_roots; }
+    const ListHashSet<Ref<ContainerNode>>& roots() const LIFETIME_BOUND { return m_roots; }
     ListHashSet<Ref<Element>> takeRebuildRoots() { return WTF::move(m_rebuildRoots); }
 
     const ElementUpdate* NODELETE elementUpdate(const Element&) const;
@@ -71,7 +71,7 @@ public:
 
     const TextUpdate* NODELETE textUpdate(const Text&) const;
 
-    const RenderStyle* initialContainingBlockUpdate() const { return m_initialContainingBlockUpdate.get(); }
+    const RenderStyle* initialContainingBlockUpdate() const LIFETIME_BOUND { return m_initialContainingBlockUpdate.get(); }
 
     const RenderStyle* NODELETE elementStyle(const Element&) const;
     RenderStyle* NODELETE elementStyle(const Element&);

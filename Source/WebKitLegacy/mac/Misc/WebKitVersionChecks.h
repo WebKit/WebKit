@@ -71,7 +71,7 @@ extern "C" {
 #endif
 
 BOOL WebKitLinkedOnOrAfter(int version);
-void setWebKitLinkTimeVersion(int);
+void NODELETE setWebKitLinkTimeVersion(int);
 
 #ifdef __cplusplus
 }

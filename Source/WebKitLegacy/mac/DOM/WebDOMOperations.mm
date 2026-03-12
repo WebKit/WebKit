@@ -256,7 +256,7 @@ using namespace JSC;
 @end
 
 #if !PLATFORM(IOS_FAMILY)
-static NSEventPhase toNSEventPhase(PlatformWheelEventPhase platformPhase)
+static NSEventPhase NODELETE toNSEventPhase(PlatformWheelEventPhase platformPhase)
 {
     switch (platformPhase) {
     case PlatformWheelEventPhase::None:

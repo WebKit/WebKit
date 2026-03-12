@@ -316,22 +316,14 @@ void AccessibilityScrollView::addLocalFrameChild()
 
     if (!m_localFrame) {
         RefPtr localFrameView = dynamicDowncast<LocalFrameView>(m_scrollView.get());
-        if (!localFrameView)
-            return;
-
-        RefPtr localFrame = localFrameView->frame();
-        if (!localFrame)
-            return;
-
-        RefPtr document = localFrame->document();
-        if (!document)
-            return;
-
-        WeakPtr frameAXObjectCache = document->axObjectCache();
+        RefPtr localFrame = localFrameView ? &localFrameView->frame() : nullptr;
+        RefPtr document = localFrame ? localFrame->document() : nullptr;
+        WeakPtr frameAXObjectCache = document ? document->axObjectCache() : nullptr;
         if (!frameAXObjectCache)
             return;
 
-        RefPtr frameRoot = frameAXObjectCache->getOrCreate(localFrame->view());
+        RefPtr protectedView = localFrame->view();
+        RefPtr frameRoot = frameAXObjectCache->getOrCreate(protectedView.get());
         if (!frameRoot)
             return;
 
@@ -349,13 +341,17 @@ void AccessibilityScrollView::addLocalFrameChild()
         frameAXObjectCache->buildIsolatedTreeIfNeeded();
 #endif
 
-        m_localFrame = downcast<AXLocalFrame>(cache->create(AccessibilityRole::LocalFrame));
-        m_localFrame->setLocalFrameView(localFrameView.get());
-        m_localFrame->setWrapper(frameRoot->wrapper());
+        if (RefPtr localFrame = downcast<AXLocalFrame>(cache->create(AccessibilityRole::LocalFrame))) {
+            localFrame->setLocalFrameView(localFrameView.get());
+            localFrame->setWrapperFrom(*frameRoot);
+            m_localFrame = WTF::move(localFrame);
+        }
     }
 
-    m_localFrame->setParent(this);
-    addChild(*m_localFrame);
+    if (RefPtr protectedLocalFrame = m_localFrame) {
+        protectedLocalFrame->setParent(this);
+        addChild(*protectedLocalFrame);
+    }
 #endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 }
 
@@ -419,7 +415,7 @@ void AccessibilityScrollView::addChildren()
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     if (isRoot())
-        addChild(webAreaObject());
+        addChild(protect(webAreaObject()).get());
     else {
         // Always add frame children, even if ignored. Ignored state propagates naturally through the tree.
         addLocalFrameChild();
@@ -427,7 +423,7 @@ void AccessibilityScrollView::addChildren()
     }
 #else
     addRemoteFrameChild();
-    addChild(RefPtr { webAreaObject() }.get());
+    addChild(protect(webAreaObject()).get());
 #endif
 
     updateScrollbars();
@@ -487,7 +483,7 @@ LayoutRect AccessibilityScrollView::elementRect() const
 
 Document* AccessibilityScrollView::document() const
 {
-    if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_scrollView.get()))
+    if (auto* frameView = dynamicDowncast<LocalFrameView>(m_scrollView.get()))
         return frameView->frame().document();
 
     // For the RemoteFrameView case, we need to return the document of our hosting parent so axObjectCache() resolves correctly.
@@ -504,7 +500,7 @@ LocalFrameView* AccessibilityScrollView::documentFrameView() const
     if (auto* localFrameView = dynamicDowncast<LocalFrameView>(m_scrollView.get()))
         return localFrameView;
 
-    RefPtr element = m_frameOwnerElement.get();
+    auto* element = m_frameOwnerElement.get();
     if (element && element->contentDocument())
         return element->contentDocument()->view();
     return nullptr;
@@ -603,15 +599,6 @@ FrameGeometry AccessibilityScrollView::frameGeometry() const
     return { };
 }
 
-bool AccessibilityScrollView::isAXHidden() const
-{
-    // If this is the root scroll view, use the inherited state from the parent frame.
-    if (isRoot())
-        return m_inheritedFrameState.isAXHidden;
-
-    return AccessibilityObject::isAXHidden();
-}
-
 bool AccessibilityScrollView::isARIAHidden() const
 {
     // This is necessary to implement on root scrollviews so that the base isAXHidden ancestor traversal works as expected.
@@ -628,7 +615,7 @@ bool AccessibilityScrollView::isHostingFrameInert() const
         return m_inheritedFrameState.isInert;
 
     RefPtr frameOwner = frameOwnerElement();
-    if (CheckedPtr renderer = frameOwner ? frameOwner->renderer() : nullptr)
+    if (auto* renderer = frameOwner ? frameOwner->renderer() : nullptr)
         return renderer->style().effectiveInert();
 
     return false;
@@ -640,8 +627,8 @@ bool AccessibilityScrollView::isHostingFrameRenderHidden() const
         return m_inheritedFrameState.isRenderHidden;
 
     RefPtr frameOwner = frameOwnerElement();
-    if (CheckedPtr renderer = frameOwner ? frameOwner->renderer() : nullptr)
-        return WebCore::isRenderHidden(renderer->style());
+    if (auto* renderer = frameOwner ? frameOwner->renderer() : nullptr)
+        return WebCore::isRenderHidden(protect(renderer->style()).get());
 
     return false;
 }
@@ -667,18 +654,14 @@ void AccessibilityScrollView::updateHostedFrameInheritedState()
 {
     if (m_localFrame) {
         RefPtr localFrameView = m_localFrame->localFrameView();
-        if (!localFrameView)
-            return;
-
-        RefPtr document = localFrameView->frame().document();
-        if (!document)
-            return;
-
-        WeakPtr hostedFrameCache = document->axObjectCache();
+        RefPtr document = localFrameView ? localFrameView->frame().document() : nullptr;
+        WeakPtr hostedFrameCache = document ? document->axObjectCache() : nullptr;
         if (!hostedFrameCache)
             return;
 
-        RefPtr hostedFrameScrollView = dynamicDowncast<AccessibilityScrollView>(hostedFrameCache->rootObjectForFrame(localFrameView->frame()));
+        RefPtr protectedFrame = localFrameView->frame();
+        RefPtr root = protectedFrame ? hostedFrameCache->rootObjectForFrame(*protectedFrame) : nullptr;
+        RefPtr hostedFrameScrollView = dynamicDowncast<AccessibilityScrollView>(root);
         if (!hostedFrameScrollView)
             return;
 

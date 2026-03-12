@@ -118,7 +118,7 @@ static void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     [(DOMAbstractView *)windowWrapper _disconnectFrame];
 }
 
-void initializeDOMWrapperHooks()
+void NODELETE initializeDOMWrapperHooks()
 {
     WebCore::initializeDOMWrapperHooks(createDOMWrapper, disconnectWindowWrapper);
 }

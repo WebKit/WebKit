@@ -345,7 +345,7 @@ bool ContentSecurityPolicy::urlMatchesSelf(const URL& url, bool forFrameSrc) con
 
 bool ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtocol() const
 {
-    if (RefPtr document = dynamicDowncast<Document>(m_scriptExecutionContext.get()))
+    if (auto* document = dynamicDowncast<Document>(m_scriptExecutionContext.get()))
         return document->settings().allowContentSecurityPolicySourceStarToMatchAnyProtocol();
     return false;
 }
@@ -1181,7 +1181,7 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
     ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress = (upgradeRequest || shouldUpgradeLocalhostAndIPAddressInMixedContext) ? ShouldUpgradeLocalhostAndIPAddress::Yes : ShouldUpgradeLocalhostAndIPAddress::No;
     std::optional<uint16_t> upgradePort;
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext.get()); document && document->page()) {
-        auto portsForUpgradingInsecureScheme = protect(document->page())->portsForUpgradingInsecureSchemeForTesting();
+        auto portsForUpgradingInsecureScheme = document->page()->portsForUpgradingInsecureSchemeForTesting();
         if (portsForUpgradingInsecureScheme) {
             if (url.port() == portsForUpgradingInsecureScheme->first)
                 upgradePort = portsForUpgradingInsecureScheme->second;

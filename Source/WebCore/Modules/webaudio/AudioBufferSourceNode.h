@@ -53,7 +53,7 @@ public:
     ExceptionOr<void> setBufferForBindings(RefPtr<AudioBuffer>&&);
 
     AudioBuffer* buffer() WTF_REQUIRES_LOCK(m_processLock) { return m_buffer.get(); }
-    Lock& processLock() WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
+    Lock& processLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
 
     // This function does not lock before accessing the buffer and should therefore only be called on the main thread.
     AudioBuffer* bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_buffer.get(); }

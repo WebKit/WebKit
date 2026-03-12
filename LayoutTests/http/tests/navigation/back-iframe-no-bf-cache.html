@@ -65,7 +65,7 @@ window.onmessage = (event) => dispatchMessage(event.data, {
                 sendMessageToPopup("navigate-to-other");
             } else if (page2ShowCount == 2) {
                 testPassed("Page2 displayed twice.");
-                sendMessageToPopup("back2");
+                sendMessageToPopup("back");
             }
         }
     },
@@ -73,7 +73,7 @@ window.onmessage = (event) => dispatchMessage(event.data, {
         load: () => debug("Other page loaded"),
         pageshow: ({arg}) => {
             debug("Other page displayed.");
-            sendMessageToPopup("back1");
+            sendMessageToPopup("back");
         }
     },
 });

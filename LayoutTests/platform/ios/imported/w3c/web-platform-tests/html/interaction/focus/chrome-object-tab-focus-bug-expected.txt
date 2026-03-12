@@ -1,4 +1,4 @@
-Pressing TAB twice should focus/highlight end checkbox
+Pressing TAB twice should focus end text box
 
 start  end
 

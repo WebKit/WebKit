@@ -157,9 +157,9 @@ unsigned HTMLFormElement::length() const
 {
     unsigned length = 0;
     for (auto& weakElement : m_listedElements) {
-        RefPtr element { weakElement.get() };
+        auto* element = weakElement.get();
         ASSERT(element);
-        RefPtr listedElement = element->asFormListedElement();
+        auto* listedElement = element->asFormListedElement();
         ASSERT(listedElement);
         if (listedElement->isEnumeratable())
             ++length;

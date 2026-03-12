@@ -244,8 +244,13 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
             // FIXME: try to get rid of this custom handling of embedded SVG invalidation, maybe through abstraction.
             if (CheckedPtr renderer = this->renderer()) {
-                if (isEmbeddedThroughFrameContainingSVGDocument(*renderer))
+                if (isEmbeddedThroughFrameContainingSVGDocument(*renderer)) {
                     protect(renderer->view())->setNeedsLayout(MarkOnlyThis);
+                    if (RefPtr frame = document().frame()) {
+                        if (CheckedPtr ownerRenderer = frame->ownerRenderer())
+                            ownerRenderer->setNeedsLayoutAndPreferredWidthsUpdate();
+                    }
+                }
             }
         }
         invalidateResourceImageBuffersIfNeeded();
@@ -264,17 +269,26 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 
             // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
             updateSVGRendererForElementChange();
-            return;
+        } else {
+            if (CheckedPtr renderer = this->renderer()) {
+                renderer->setNeedsTransformUpdate();
+                if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(*renderer))
+                    svgRoot->setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
+            }
+
+            invalidateResourceImageBuffersIfNeeded();
+            updateSVGRendererForElementChange();
         }
 
+        // FIXME: try to get rid of this custom handling of embedded SVG invalidation, maybe through abstraction.
         if (CheckedPtr renderer = this->renderer()) {
-            renderer->setNeedsTransformUpdate();
-            if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(*renderer))
-                svgRoot->setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
+            if (isEmbeddedThroughFrameContainingSVGDocument(*renderer)) {
+                if (RefPtr frame = document().frame()) {
+                    if (CheckedPtr ownerRenderer = frame->ownerRenderer())
+                        ownerRenderer->setNeedsLayoutAndPreferredWidthsUpdate();
+                }
+            }
         }
-
-        invalidateResourceImageBuffersIfNeeded();
-        updateSVGRendererForElementChange();
         return;
     }
 
@@ -465,7 +479,7 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
 {
     if (isOutermostSVGSVGElement()) {
         if (document().settings().layerBasedSVGEngineEnabled()) {
-            protect(document())->setMayHaveRenderedSVGRootElements();
+            document().setMayHaveRenderedSVGRootElements();
             return createRenderer<RenderSVGRoot>(*this, WTF::move(style));
         }
         return createRenderer<LegacyRenderSVGRoot>(*this, WTF::move(style));
@@ -535,12 +549,12 @@ bool SVGSVGElement::resumePausedAnimationsIfNeeded(const IntRect& visibleRect)
 
 bool SVGSVGElement::animationsPaused() const
 {
-    return protect(timeContainer())->isPaused();
+    return timeContainer().isPaused();
 }
 
 bool SVGSVGElement::hasActiveAnimation() const
 {
-    return protect(timeContainer())->isActive();
+    return timeContainer().isActive();
 }
 
 float SVGSVGElement::getCurrentTime() const
@@ -580,7 +594,7 @@ static bool isEmbeddedThroughSVGImage(const SVGSVGElement& element)
 FloatRect SVGSVGElement::currentViewBoxRect() const
 {
     if (m_useCurrentView) {
-        if (RefPtr viewSpec = m_viewSpec)
+        if (auto* viewSpec = m_viewSpec.get())
             return viewSpec->viewBox();
         return { };
     }
@@ -604,7 +618,7 @@ FloatSize SVGSVGElement::currentViewportSizeExcludingZoom() const
     if (renderer()) {
         if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderer()))
             viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().usedZoom();
-        else if (CheckedPtr svgViewportContainer = dynamicDowncast<LegacyRenderSVGViewportContainer>(renderer()))
+        else if (auto* svgViewportContainer = dynamicDowncast<LegacyRenderSVGViewportContainer>(renderer()))
             viewportSize = svgViewportContainer->viewport().size();
         else if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer()))
             viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().usedZoom();

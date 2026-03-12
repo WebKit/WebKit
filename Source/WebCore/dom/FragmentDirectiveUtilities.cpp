@@ -55,7 +55,7 @@ namespace FragmentDirectiveUtilities {
 ContainerNode& nearestBlockAncestor(Node& node)
 {
     for (RefPtr currentNode = node; currentNode; currentNode = currentNode->parentNode()) {
-        if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(currentNode->renderer()); renderElement && renderElement->style().display().isBlockType())
+        if (auto* renderElement = dynamicDowncast<RenderElement>(currentNode->renderer()); renderElement && renderElement->style().display().isBlockType())
             return downcast<ContainerNode>(*currentNode);
     }
     return node.document();

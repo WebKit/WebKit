@@ -169,7 +169,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const St
 
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
-    ASSERT_UNUSED(observer, isMainThread() && observer == FontCache::forCurrentThread().ptr());
+    ASSERT_UNUSED(observer, isMainThread() && observer == &FontCache::forCurrentThread());
 
     ensureOnMainThread([] {
         FontCache::invalidateAllFontCaches();
@@ -1010,7 +1010,7 @@ void FontCache::prewarmGlobally()
 
     FontCache::PrewarmInformation prewarmInfo;
     prewarmInfo.seenFamilies = WTF::move(families);
-    FontCache::forCurrentThread()->prewarm(WTF::move(prewarmInfo));
+    protect(FontCache::forCurrentThread())->prewarm(WTF::move(prewarmInfo));
 #endif
 }
 

@@ -40,7 +40,7 @@ public:
 
     String disposition() const;
     const String& type() const final;
-    const String& blockedURL() const { return m_blockedURL.string(); }
+    const String& blockedURL() const LIFETIME_BOUND { return m_blockedURL.string(); }
     FetchOptions::Destination destination() const { return m_destination; }
 
 private:

@@ -88,7 +88,7 @@ public:
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
-    const ResourceRequest& originalRequest() const { return m_originalRequest; }
+    const ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
 
     WEBCORE_EXPORT void start();
     WEBCORE_EXPORT void cancel(const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
@@ -108,7 +108,7 @@ public:
     bool wasAuthenticationChallengeBlocked() const { return m_wasAuthenticationChallengeBlocked; }
 
     virtual void releaseResources();
-    const ResourceResponse& response() const { return m_response; }
+    const ResourceResponse& response() const LIFETIME_BOUND { return m_response; }
 
     const FragmentedSharedBuffer* resourceData() const;
     void clearResourceData();
@@ -136,7 +136,7 @@ public:
     virtual void didReceivePreviewResponse(ResourceResponse&&) { };
 #endif
 
-    const URL& url() const { return m_request.url(); }
+    const URL& url() const LIFETIME_BOUND { return m_request.url(); }
     ResourceHandle* handle() const { return m_handle.get(); }
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
     void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.sendLoadCallbacks = sendLoadCallbacks; }
@@ -149,14 +149,14 @@ public:
 
     bool reachedTerminalState() const { return m_reachedTerminalState; }
 
-    const ResourceRequest& request() const { return m_request; }
+    const ResourceRequest& request() const LIFETIME_BOUND { return m_request; }
     void setRequest(ResourceRequest&& request) { m_request = WTF::move(request); }
 
     void setDataBufferingPolicy(DataBufferingPolicy);
 
     void willSwitchToSubstituteResource();
 
-    const ResourceLoadTiming& loadTiming() { return m_loadTiming; }
+    const ResourceLoadTiming& loadTiming() LIFETIME_BOUND { return m_loadTiming; }
 
 #if PLATFORM(COCOA)
     void schedule(WTF::SchedulePair&);
@@ -165,9 +165,9 @@ public:
 
     WEBCORE_EXPORT LocalFrame* NODELETE frame() const;
 
-    const ResourceLoaderOptions& options() const { return m_options; }
+    const ResourceLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
 
-    const ResourceRequest& deferredRequest() const { return m_deferredRequest; }
+    const ResourceRequest& deferredRequest() const LIFETIME_BOUND { return m_deferredRequest; }
     ResourceRequest takeDeferredRequest() { return std::exchange(m_deferredRequest, { }); }
 
     bool NODELETE isPDFJSResourceLoad() const;

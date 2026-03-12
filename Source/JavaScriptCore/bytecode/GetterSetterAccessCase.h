@@ -38,7 +38,7 @@ public:
     friend class AccessCase;
     friend class InlineCacheCompiler;
 
-    JSObject* customSlotBase() const { return m_customSlotBase.get(); }
+    JSObject* customSlotBase() const LIFETIME_BOUND { return m_customSlotBase.get(); }
     std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
     static Ref<AccessCase> create(

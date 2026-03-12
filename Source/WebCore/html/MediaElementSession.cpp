@@ -130,9 +130,9 @@ static String restrictionNames(MediaElementSession::BehaviorRestrictions restric
 
 static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& element)
 {
-    Ref document = element.document();
-    RefPtr page = document->page();
-    return document->isMediaDocument() && !document->ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
+    auto& document = element.document();
+    auto* page = document.page();
+    return document.isMediaDocument() && !document.ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
 }
 
 #if ENABLE(MEDIA_SESSION)
@@ -1015,7 +1015,7 @@ MediaPlaybackTargetType MediaElementSession::playbackTargetType() const
 MediaPlayer::Preload MediaElementSession::effectivePreloadForElement() const
 {
     MediaPlayer::Preload preload = [&] {
-        RefPtr element = m_element.get();
+        auto* element = m_element.get();
         if (!element)
             return MediaPlayer::Preload::None;
 
@@ -1087,7 +1087,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback() const
 
 bool MediaElementSession::allowsAutomaticMediaDataLoading() const
 {
-    RefPtr element = m_element.get();
+    auto* element = m_element.get();
     if (!element)
         return false;
 
@@ -1134,18 +1134,18 @@ void MediaElementSession::resumeBuffering()
 
 bool MediaElementSession::bufferingSuspended() const
 {
-    RefPtr element = m_element.get();
+    auto* element = m_element.get();
     if (!element)
         return true;
 
-    if (RefPtr page = element->document().page())
+    if (auto* page = element->document().page())
         return page->mediaBufferingIsSuspended();
     return true;
 }
 
 bool MediaElementSession::allowsPictureInPicture() const
 {
-    RefPtr element = m_element.get();
+    auto* element = m_element.get();
     if (element)
         return element->document().settings().allowsPictureInPictureMediaPlayback();
     return false;
@@ -1324,7 +1324,7 @@ bool MediaElementSession::updateIsMainContent() const
 
 bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 {
-    RefPtr element = m_element.get();
+    auto* element = m_element.get();
     if (!element)
         return false;
 
@@ -1337,7 +1337,7 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 static bool isDocumentPlayingSeveralMediaStreamsAndCapturing(Document& document)
 {
     // We restrict to capturing document for now, until we have a good way to state to the UIProcess application that audio rendering is muted from here.
-    RefPtr page = document.page();
+    auto* page = document.page();
     return document.activeMediaElementsWithMediaStreamCount() > 1 && page && MediaProducer::isCapturing(page->mediaState());
 }
 
@@ -1513,6 +1513,12 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
         sourceApplicationIdentifier = page->presentingApplicationBundleIdentifier();
 #endif
 
+    MediaPlayerEnums::VideoFullscreenMode fullscreenMode = MediaPlayerEnums::VideoFullscreenModeNone;
+#if HAVE(AVEXPERIENCECONTROLLER)
+    if (element->document().settings().isAVExperienceControllerFullscreenEnabled())
+        fullscreenMode = element->fullscreenMode();
+#endif
+
     NowPlayingInfo info {
         {
             element->mediaSessionTitle(),
@@ -1529,7 +1535,8 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
         element->mediaUniqueIdentifier(),
         isPlaying,
         allowsNowPlayingControlsVisibility,
-        element->isVideo()
+        element->isVideo(),
+        fullscreenMode
     };
 
     if (page->usesEphemeralSession() && !element->document().settings().allowPrivacySensitiveOperationsInNonPersistentDataStores()) {

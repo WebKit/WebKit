@@ -480,7 +480,7 @@ bool FELightingCoreImageApplier::apply(const Filter& filter, std::span<const Ref
         .pointsAt = { },
     };
 
-    if (RefPtr distantLight = dynamicDowncast<DistantLightSource>(m_effect->lightSource())) {
+    if (auto* distantLight = dynamicDowncast<DistantLightSource>(m_effect->lightSource())) {
         lightSourceConstants.azimuthRadians = deg2rad(distantLight->azimuth());
         lightSourceConstants.elevationRadians = deg2rad(distantLight->elevation());
     }

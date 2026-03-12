@@ -1281,7 +1281,7 @@ id<MTLDevice> Queue::metalDevice() const
 
 #pragma mark WGPU Stubs
 
-void wgpuQueueReference(WGPUQueue queue)
+void NODELETE wgpuQueueReference(WGPUQueue queue)
 {
     WebGPU::fromAPI(queue).ref();
 }

@@ -40,8 +40,6 @@ enum class HasAvailableTargets : bool { No, Yes };
 enum class PlayingToAutomotiveHeadUnit : bool { No, Yes };
 enum class ShouldPause : bool { No, Yes };
 enum class SupportsAirPlayVideo : bool { No, Yes };
-enum class SupportsSpatialAudioPlayback : bool { No, Yes };
-
 class MediaSessionHelperClient : public AbstractRefCountedAndCanMakeWeakPtr<MediaSessionHelperClient> {
 public:
     virtual ~MediaSessionHelperClient() = default;
@@ -63,9 +61,6 @@ public:
 
     using SupportsAirPlayVideo = WebCore::SupportsAirPlayVideo;
     virtual void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&) = 0;
-
-    using SupportsSpatialAudioPlayback = WebCore::SupportsSpatialAudioPlayback;
-    virtual void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback) = 0;
 };
 
 class WEBCORE_EXPORT MediaSessionHelper
@@ -107,16 +102,12 @@ public:
     using ShouldPause = MediaSessionHelperClient::ShouldPause;
     using SupportsAirPlayVideo = MediaSessionHelperClient::SupportsAirPlayVideo;
     using SuspendedUnderLock = MediaSessionHelperClient::SuspendedUnderLock;
-    using SupportsSpatialAudioPlayback = MediaSessionHelperClient::SupportsSpatialAudioPlayback;
 
     void activeAudioRouteDidChange(ShouldPause);
     void applicationWillEnterForeground(SuspendedUnderLock);
     void applicationDidEnterBackground(SuspendedUnderLock);
     void applicationWillBecomeInactive();
     void applicationDidBecomeActive();
-
-    void setActiveAudioRouteSupportsSpatialPlayback(bool);
-    void updateActiveAudioRouteSupportsSpatialPlayback();
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     void activeRoutesDidChange(MediaDeviceRouteController&) final;
@@ -126,7 +117,6 @@ protected:
     void externalOutputDeviceAvailableDidChange(HasAvailableTargets);
     void isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit);
     void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&);
-    void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback);
 
 private:
     virtual void startMonitoringWirelessRoutesInternal() = 0;
@@ -137,7 +127,6 @@ private:
     uint32_t m_monitoringWirelessRoutesCount { 0 };
     bool m_activeVideoRouteSupportsAirPlayVideo { false };
     bool m_isPlayingToAutomotiveHeadUnit { false };
-    SupportsSpatialAudioPlayback m_activeAudioRouteSupportsSpatialPlayback { SupportsSpatialAudioPlayback::No };
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
 };
 

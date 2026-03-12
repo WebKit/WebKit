@@ -48,7 +48,7 @@ public:
     SVGTextLayoutEngine(SVGTextLayoutEngine&&) = default;
     SVGTextLayoutEngine(const SVGTextLayoutEngine&) = delete;
 
-    Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
+    Vector<SVGTextLayoutAttributes*>& layoutAttributes() LIFETIME_BOUND { return m_layoutAttributes; }
 
     void beginTextPathLayout(const RenderSVGTextPath&, SVGTextLayoutEngine& lineLayout);
     void endTextPathLayout();

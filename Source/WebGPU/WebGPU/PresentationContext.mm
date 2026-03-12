@@ -81,7 +81,7 @@ TextureView* PresentationContext::getCurrentTextureView()
 
 #pragma mark WGPU Stubs
 
-void wgpuSurfaceReference(WGPUSurface surface)
+void NODELETE wgpuSurfaceReference(WGPUSurface surface)
 {
     WebGPU::fromAPI(surface).ref();
 }
@@ -91,7 +91,7 @@ void wgpuSurfaceRelease(WGPUSurface surface)
     WebGPU::fromAPI(surface).deref();
 }
 
-void wgpuSwapChainReference(WGPUSwapChain swapChain)
+void NODELETE wgpuSwapChainReference(WGPUSwapChain swapChain)
 {
     WebGPU::fromAPI(swapChain).ref();
 }

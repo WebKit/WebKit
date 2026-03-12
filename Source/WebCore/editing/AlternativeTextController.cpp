@@ -134,7 +134,7 @@ void AlternativeTextController::stopAlternativeTextUITimer()
 void AlternativeTextController::stopPendingCorrection(const VisibleSelection& oldSelection)
 {
     // Make sure there's no pending autocorrection before we call markMisspellingsAndBadGrammar() below.
-    VisibleSelection currentSelection(protect(m_document)->selection().selection());
+    VisibleSelection currentSelection(m_document->selection().selection());
     if (currentSelection == oldSelection)
         return;
 
@@ -168,7 +168,7 @@ bool AlternativeTextController::hasPendingCorrection() const
 
 bool AlternativeTextController::isSpellingMarkerAllowed(const SimpleRange& misspellingRange) const
 {
-    CheckedPtr controller = protect(m_document)->markersIfExists();
+    CheckedPtr controller = m_document->markersIfExists();
     if (!controller)
         return true;
     return !controller->hasMarkers(misspellingRange, DocumentMarkerType::SpellCheckingExemption);
@@ -229,7 +229,7 @@ bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
     if (m_type != AlternativeTextType::Correction)
         return false;
 
-    Position caretPosition = protect(m_document)->selection().selection().start();
+    Position caretPosition = m_document->selection().selection().start();
 
     if (makeDeprecatedLegacyPosition(m_rangeWithAlternative->end) == caretPosition) {
         handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeText::Accepted));
@@ -307,7 +307,7 @@ void AlternativeTextController::timerFired()
             }
         } else {
             auto paragraphText = plainText(TextCheckingParagraph(*m_rangeWithAlternative).paragraphRange());
-            textChecker()->getGuessesForWord(m_originalText, paragraphText, protect(m_document)->selection().selection(), suggestions);
+            textChecker()->getGuessesForWord(m_originalText, paragraphText, m_document->selection().selection(), suggestions);
         }
 
         if (suggestions.isEmpty()) {
@@ -382,7 +382,7 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
 bool AlternativeTextController::canEnableAutomaticSpellingCorrection() const
 {
 #if ENABLE(AUTOCORRECT)
-    auto position = protect(m_document)->selection().selection().start();
+    auto position = m_document->selection().selection().start();
     if (RefPtr control = enclosingTextFormControl(position)) {
         if (!control->shouldAutocorrect())
             return false;
@@ -412,7 +412,7 @@ FloatRect AlternativeTextController::rootViewRectForRange(const SimpleRange& ran
 
 void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection)
 {
-    VisibleSelection currentSelection(protect(m_document)->selection().selection());
+    VisibleSelection currentSelection(m_document->selection().selection());
     // When user moves caret to the end of autocorrected word and pauses, we show the panel
     // containing the original pre-correction word so that user can quickly revert the
     // undesired autocorrection. Here, we start correction panel timer once we confirm that
@@ -667,7 +667,7 @@ void AlternativeTextController::applyAlternativeTextToRange(const SimpleRange& r
 
     // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
     auto updatedParagraphStartContainingCorrection = resolveCharacterLocation(makeRangeSelectingNodeContents(treeScopeRoot), paragraphOffsetInTreeScope);
-    auto updatedParagraphEndContainingCorrection = makeBoundaryPoint(protect(m_document)->selection().selection().start());
+    auto updatedParagraphEndContainingCorrection = makeBoundaryPoint(m_document->selection().selection().start());
     if (!updatedParagraphEndContainingCorrection)
         return;
     auto replacementRange = resolveCharacterRange({ updatedParagraphStartContainingCorrection, *updatedParagraphEndContainingCorrection }, CharacterRange(correctionOffsetInParagraph, alternative.length()));
@@ -684,7 +684,7 @@ void AlternativeTextController::applyAlternativeTextToRange(const SimpleRange& r
 
 void AlternativeTextController::removeCorrectionIndicatorMarkers()
 {
-    CheckedPtr markers = protect(m_document)->markersIfExists();
+    CheckedPtr markers = m_document->markersIfExists();
     if (!markers)
         return;
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)

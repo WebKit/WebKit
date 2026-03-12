@@ -60,9 +60,9 @@ public:
         m_barrier.set(vm, cell, CagedType(std::forward<U>(value)));
     }
     
-    T* get() const { return m_barrier.get().get(); }
-    T* getMayBeNull() const { return m_barrier.get().getMayBeNull(); }
-    T* getUnsafe() const { return m_barrier.get().getUnsafe(); }
+    T* get() const LIFETIME_BOUND { return m_barrier.get().get(); }
+    T* getMayBeNull() const LIFETIME_BOUND { return m_barrier.get().getMayBeNull(); }
+    T* getUnsafe() const LIFETIME_BOUND { return m_barrier.get().getUnsafe(); }
 
     // We need the template here so that the type of U is deduced at usage time rather than class time. U should always be T.
     template<typename U = T>

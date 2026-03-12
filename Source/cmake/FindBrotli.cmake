@@ -94,7 +94,7 @@ if ("dec" IN_LIST Brotli_FIND_COMPONENTS)
     )
 
     find_library(Brotli_DEC_LIBRARY
-        NAMES ${Brotli_DEC_NAMES} Brotlidec
+        NAMES ${Brotli_DEC_NAMES} brotlidec
         HINTS ${PC_Brotli_DEC_LIBDIR} ${PC_Brotli_DEC_LIBRARY_DIRS}
     )
 

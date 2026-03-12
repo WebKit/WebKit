@@ -14,11 +14,16 @@ async function startCamera()
 
 async function paintCameraInCanvas()
 {
-    try {
-        await local.play();
-    } catch (e) {
-        window.webkit.messageHandlers.gum.postMessage("FAIL with " + e);
-    }
+    local.play().then(() => { }, e => {
+        window.webkit.messageHandlers.gum.postMessage("FAIL, element failed playing with " + e);
+    });
+    await new Promise((resolve, reject) => {
+        local.requestVideoFrameCallback(resolve);
+        setTimeout(() => {
+            window.webkit.messageHandlers.gum.postMessage("FAIL, no frame found in a timely manner");
+            reject("no frame found");
+        }, 10000);
+    });
 
     canvas.getContext('2d').fillStyle = "#FFFFFF";
     canvas.getContext('2d').fillRect(0, 0, 640, 480);
@@ -26,17 +31,17 @@ async function paintCameraInCanvas()
     const pixelData = canvas.getContext('2d').getImageData(0, 0, 1, 1,).data;
 
     if (pixelData[0] != 0) {
-        window.webkit.messageHandlers.gum.postMessage("FAIL r");
+        window.webkit.messageHandlers.gum.postMessage("FAIL r, got " + JSON.stringify(pixelData));
         return;
     }
 
     if (pixelData[1] != 0) {
-        window.webkit.messageHandlers.gum.postMessage("FAIL g");
+        window.webkit.messageHandlers.gum.postMessage("FAIL g, got " + JSON.stringify(pixelData));
         return;
     }
 
     if (pixelData[2] != 0) {
-        window.webkit.messageHandlers.gum.postMessage("FAIL b");
+        window.webkit.messageHandlers.gum.postMessage("FAIL b, got " + JSON.stringify(pixelData));
         return;
     }
 

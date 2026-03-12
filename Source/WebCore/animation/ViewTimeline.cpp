@@ -330,7 +330,7 @@ void ViewTimeline::cacheCurrentTime()
         auto subjectBounds = [&] -> FloatSize {
             if (CheckedPtr subjectRenderBoxModelObject = dynamicDowncast<RenderBoxModelObject>(subjectRenderer.get()))
                 return subjectRenderBoxModelObject->borderBoundingBox().size();
-            if (CheckedPtr subjectRenderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(subjectRenderer.get()))
+            if (auto* subjectRenderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(subjectRenderer.get()))
                 return subjectRenderSVGModelObject->borderBoxRectEquivalent().size();
             if (is<LegacyRenderSVGModelObject>(subjectRenderer.get()))
                 return subjectRenderer->objectBoundingBox().size();
@@ -370,10 +370,10 @@ void ViewTimeline::cacheCurrentTime()
 
         enum class PaddingEdge : bool { Start, End };
         auto scrollPadding = [&](PaddingEdge edge) {
-            CheckedRef style = sourceRenderer->style();
+            auto& style = sourceRenderer->style();
             if (edge == PaddingEdge::Start)
-                return scrollDirection.isVertical ? style->scrollPaddingTop() : style->scrollPaddingLeft();
-            return scrollDirection.isVertical ? style->scrollPaddingBottom() : style->scrollPaddingRight();
+                return scrollDirection.isVertical ? style.scrollPaddingTop() : style.scrollPaddingLeft();
+            return scrollDirection.isVertical ? style.scrollPaddingBottom() : style.scrollPaddingRight();
         };
         auto zoom = sourceRenderer->style().usedZoomForLength();
 

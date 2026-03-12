@@ -24,6 +24,7 @@
 
 namespace WebCore {
 
+class HTMLElement;
 class HTMLMeterElement;
 
 class RenderMeter final : public RenderBlockFlow {

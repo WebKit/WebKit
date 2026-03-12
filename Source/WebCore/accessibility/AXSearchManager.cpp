@@ -224,6 +224,11 @@ static void appendChildrenToArray(AXCoreObject& object, bool isForward, RefPtr<A
     size_t startIndex = isForward ? childrenSize : 0;
     size_t endIndex = isForward ? 0 : childrenSize;
 
+    // Save the original startObject before the ignored-element handling may
+    // modify or nullify it. We need the original for the descendant-lookup
+    // fallback below.
+    RefPtr<AXCoreObject> originalStartObject = startObject;
+
     // If the startObject is ignored, we should use an accessible sibling as a start element instead.
     if (startObject && startObject->isIgnored() && startObject->crossFrameIsDescendantOfObject(object)) {
         RefPtr<AXCoreObject> parentObject = startObject->parentObjectIncludingCrossFrame();
@@ -235,16 +240,9 @@ static void appendChildrenToArray(AXCoreObject& object, bool isForward, RefPtr<A
             parentObject = parentObject->parentObjectIncludingCrossFrame();
         }
 
-        // We should only ever hit this case with a live object (not an isolated object), as it would require startObject to be ignored,
-        // and we should never have created an isolated object from an ignored live object.
-        // FIXME: This is not true for ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE), fix this before shipping it.
-        // FIXME: We hit this ASSERT on google.com. https://bugs.webkit.org/show_bug.cgi?id=293263
-        AX_BROKEN_ASSERT(is<AccessibilityObject>(startObject));
-        RefPtr newStartObject = dynamicDowncast<AccessibilityObject>(startObject);
         // Get the un-ignored sibling based on the search direction, and update the searchPosition.
-        if (newStartObject && newStartObject->isIgnored())
-            newStartObject = isForward ? newStartObject->previousSiblingUnignored() : newStartObject->nextSiblingUnignored();
-        startObject = newStartObject;
+        if (startObject->isIgnored())
+            startObject = isForward ? startObject->previousSiblingUnignored() : startObject->nextSiblingUnignored();
     }
 
     size_t searchPosition = notFound;
@@ -252,6 +250,22 @@ static void appendChildrenToArray(AXCoreObject& object, bool isForward, RefPtr<A
         searchPosition = searchChildren.findIf([&](const Ref<AXCoreObject>& object) {
             return startObject == object.ptr();
         });
+    }
+
+    // If startObject wasn't found directly in children, it may be an ignored
+    // ancestor of one of the children. For example, an iframe's FrameHost
+    // (AccessibilityScrollView) is ignored, but its child RemoteFrame appears
+    // directly in the parent's unignored children. Since crossFrameUnignoredChildren()
+    // replaces ignored parents with their children, we can find the right position
+    // by looking up the ignored element's direct children in searchChildren.
+    if (searchPosition == notFound && originalStartObject) {
+        for (const auto& child : originalStartObject->children()) {
+            searchPosition = searchChildren.findIf([&](const Ref<AXCoreObject>& searchChild) {
+                return searchChild.ptr() == child.ptr();
+            });
+            if (searchPosition != notFound)
+                break;
+        }
     }
 
     if (searchPosition != notFound) {

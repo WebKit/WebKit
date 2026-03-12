@@ -71,7 +71,7 @@ public:
     WEBCORE_EXPORT ~ValidationBubble();
 #endif
 
-    const String& message() const { return m_message; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
     double fontSize() const { return m_fontSize; }
 
 #if PLATFORM(IOS_FAMILY)

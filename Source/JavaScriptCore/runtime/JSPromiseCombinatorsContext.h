@@ -50,7 +50,7 @@ public:
 
     static JSPromiseCombinatorsContext* create(VM&, JSPromiseCombinatorsGlobalContext*, uint64_t index);
 
-    JSPromiseCombinatorsGlobalContext* globalContext() const { return m_globalContext.get(); }
+    JSPromiseCombinatorsGlobalContext* globalContext() const LIFETIME_BOUND { return m_globalContext.get(); }
     uint64_t index() const { return m_index; }
 
 private:

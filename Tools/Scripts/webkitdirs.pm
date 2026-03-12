@@ -190,6 +190,8 @@ BEGIN {
        &shouldBuildForCrossTarget
        &shouldUseFlatpak
        &shouldUseVcpkg
+       &isWinCrossCompileFromLinux
+       &winCrossCompileVcpkgRoot
        &sourceDir
        &splitVersionString
        &tsanIsEnabled
@@ -1847,6 +1849,11 @@ sub isWin()
     return portName() eq Win;
 }
 
+sub isWinCrossCompileFromLinux()
+{
+    return isWin() && isLinux();
+}
+
 sub shouldBuild32Bit()
 {
     determineShouldBuild32Bit();
@@ -2682,6 +2689,11 @@ sub shouldUseVcpkg()
     return isWin() || (isJSCOnly() && isAnyWindows());
 }
 
+sub winCrossCompileVcpkgRoot()
+{
+    return File::Spec->catdir(sourceDir(), "WebKitLibraries", "windows", "vcpkg");
+}
+
 sub cmakeCachePath()
 {
     return File::Spec->catdir(productDir(), "CMakeCache.txt");
@@ -2861,6 +2873,37 @@ sub generateBuildSystemFromCMakeProject
             push @args, '-DVCPKG_TARGET_TRIPLET=arm64-windows-static-md';
         } else {
             push @args, '-DVCPKG_TARGET_TRIPLET=x64-windows-webkit'
+        }
+        if (isWinCrossCompileFromLinux()) {
+            push @args, '-DVCPKG_APPLOCAL_DEPS=OFF';
+            push @args, "-DVCPKG_INSTALLED_DIR=\"" . File::Spec->catdir(productDir(), "vcpkg_installed") . "\"";
+            push @args, '-DCMAKE_SYSTEM_NAME=Windows';
+            # Force clang-cl-20 for cross-compilation (use absolute paths)
+            push @args, '-DCMAKE_C_COMPILER=/usr/bin/clang-cl-20';
+            push @args, '-DCMAKE_CXX_COMPILER=/usr/bin/clang-cl-20';
+            push @args, '-DCMAKE_LINKER=/usr/bin/lld-link-20';
+            push @args, '-DCMAKE_AR=/usr/bin/llvm-lib-20';
+            push @args, '-DCMAKE_RC_COMPILER=/usr/bin/llvm-rc-20';
+            push @args, '-DCMAKE_MT=/usr/bin/llvm-mt-20';
+            # Force release runtime (we don't have debug CRT libs)
+            push @args, '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL';
+            # Set SDK/CRT include paths for compiler tests (before project files are loaded)
+            my $sysroot = sourceDir() . "/WebKitLibraries/windows";
+            my $sdkInc = "$sysroot/sdk/include";
+            my $crtInc = "$sysroot/crt/include";
+            my $imsvcFlags = "-imsvc $crtInc -imsvc $sdkInc/ucrt -imsvc $sdkInc/um -imsvc $sdkInc/shared -imsvc $sdkInc/winrt";
+            push @args, "-DCMAKE_C_FLAGS_INIT=\"$imsvcFlags\"";
+            push @args, "-DCMAKE_CXX_FLAGS_INIT=\"$imsvcFlags\"";
+            # Set linker library paths
+            my $sdkLib = "$sysroot/sdk/lib";
+            my $crtLib = "$sysroot/crt/lib";
+            my $linkFlags = "-libpath:$crtLib/x64 -libpath:$sdkLib/ucrt/x64 -libpath:$sdkLib/um/x64";
+            push @args, "-DCMAKE_EXE_LINKER_FLAGS_INIT=\"$linkFlags\"";
+            push @args, "-DCMAKE_SHARED_LINKER_FLAGS_INIT=\"$linkFlags\"";
+            push @args, "-DCMAKE_MODULE_LINKER_FLAGS_INIT=\"$linkFlags\"";
+            # Tell CMake where the host ninja is — CMAKE_SYSTEM_NAME=Windows
+            # makes CMake look for ninja.exe which doesn't exist on Linux.
+            push @args, '-DCMAKE_MAKE_PROGRAM=ninja';
         }
     } elsif (isPlayStation()) {
         my $toolChainFile = $ENV{'CMAKE_TOOLCHAIN_FILE'} || "Platform/PlayStation5";
@@ -3063,7 +3106,7 @@ sub vcpkgArgsFromFeatures(\@;$)
     push @args, $skia ? "skia" : "cairo";
     push @args, "woff2" if $woff2;
 
-    return "-DVCPKG_MANIFEST_FEATURES=" . join(";", @args);
+    return "-DVCPKG_MANIFEST_FEATURES=\"" . join(";", @args) . "\"";
 }
 
 sub cmakeBasedPortName()

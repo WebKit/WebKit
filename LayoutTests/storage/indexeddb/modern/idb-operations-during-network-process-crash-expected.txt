@@ -1,0 +1,12 @@
+Database opened successfully
+Initial write completed, terminating network process
+Database connection closed by crash
+Attempting recovery without page reload
+PASS window.indexedDB is the same object after crash
+PASS Test A: Existing connection is dead (InvalidStateError)
+PASS Test B: Re-opened database and read back data
+PASS Test C: Created and wrote to a brand new database
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test verifies IndexedDB recovers after the network process is terminated while active operations are in progress. New indexedDB.open() calls should succeed without a page reload.

@@ -1,0 +1,3 @@
+
+FAIL event is canceled when an iframe is detached assert_true: expected true got false
+

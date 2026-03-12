@@ -428,7 +428,8 @@ inline Color& Color::operator=(Color&& other)
     if (isOutOfLine())
         asOutOfLine().deref();
 
-    m_colorAndFlags = std::exchange(other.m_colorAndFlags, invalidColorAndFlags);
+    m_colorAndFlags = other.m_colorAndFlags;
+    other.m_colorAndFlags = invalidColorAndFlags;
     return *this;
 }
 

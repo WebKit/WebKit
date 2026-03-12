@@ -59,7 +59,7 @@ auto CSSValueConversion<ViewFunction>::operator()(BuilderState& state, const CSS
 auto CSSValueConversion<ViewFunction>::operator()(BuilderState& state, const CSSViewValue& value) -> ViewFunction
 {
     auto axis = [&] {
-        if (RefPtr axisValue = value.axis())
+        if (auto* axisValue = value.axis())
             return fromCSSValueID<ScrollAxis>(axisValue->valueID());
         return ScrollAxis::Block;
     }();

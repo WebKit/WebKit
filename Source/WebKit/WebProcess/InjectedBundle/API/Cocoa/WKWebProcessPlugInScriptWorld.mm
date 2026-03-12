@@ -58,22 +58,22 @@
 
 - (void)makeAllShadowRootsOpen
 {
-    protect(*_world)->makeAllShadowRootsOpen();
+    _world->makeAllShadowRootsOpen();
 }
 
 - (void)exposeClosedShadowRootsForExtensions
 {
-    protect(*_world)->exposeClosedShadowRootsForExtensions();
+    _world->exposeClosedShadowRootsForExtensions();
 }
 
 - (void)disableOverrideBuiltinsBehavior
 {
-    protect(*_world)->disableOverrideBuiltinsBehavior();
+    _world->disableOverrideBuiltinsBehavior();
 }
 
 - (void)allowJSHandleCreation
 {
-    protect(*_world)->setAllowJSHandleCreation();
+    _world->setAllowJSHandleCreation();
 }
 
 - (NSString *)name

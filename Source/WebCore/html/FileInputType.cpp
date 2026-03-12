@@ -158,7 +158,7 @@ void FileInputType::handleDOMActivateEvent(Event& event)
 {
     ASSERT(element());
 
-    if (protect(element())->isDisabledFormControl())
+    if (element()->isDisabledFormControl())
         return;
 
     if (!UserGestureIndicator::processingUserGesture())
@@ -205,7 +205,7 @@ String FileInputType::firstElementPathForInputValue() const
     // decided to try to parse the value by looking for backslashes
     // (because that's what Windows file paths use). To be compatible
     // with that code, we make up a fake path for the file.
-    return makeString("C:\\fakepath\\"_s, protect(files())->file(0).name());
+    return makeString("C:\\fakepath\\"_s, files().file(0).name());
 }
 
 void FileInputType::setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection)
@@ -244,7 +244,7 @@ void FileInputType::createShadowSubtree()
 
 static RefPtr<HTMLInputElement> fileSelectorButton(const Element& element)
 {
-    RefPtr root = element.userAgentShadowRoot();
+    auto* root = element.userAgentShadowRoot();
     return root ? downcast<HTMLInputElement>(root->firstChild()) : nullptr;
 }
 
@@ -319,7 +319,7 @@ bool FileInputType::allowsDirectories() const
 {
     ASSERT(element());
     Ref element = *this->element();
-    if (!protect(element->document())->settings().directoryUploadEnabled())
+    if (!element->document().settings().directoryUploadEnabled())
         return false;
     return element->hasAttributeWithoutSynchronization(webkitdirectoryAttr);
 }
@@ -348,7 +348,7 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     if (length != m_fileList->length())
         pathsChanged = true;
     else {
-        Ref currentFiles = m_fileList;
+        auto& currentFiles = m_fileList;
         for (unsigned i = 0; i < length; ++i) {
             if (files->file(i).path() != currentFiles->file(i).path() || !FileSystem::fileIDsAreEqual(files->file(i).fileID(), currentFiles->file(i).fileID())) {
                 pathsChanged = true;
@@ -419,7 +419,7 @@ void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String
     ASSERT(element());
     ASSERT(!paths.isEmpty());
 
-    size_t size = protect(element())->hasAttributeWithoutSynchronization(multipleAttr) ? paths.size() : 1;
+    size_t size = element()->hasAttributeWithoutSynchronization(multipleAttr) ? paths.size() : 1;
 
     Vector<FileChooserFileInfo> files(size, [&](size_t i) {
         return FileChooserFileInfo { paths[i], i < replacementPaths.size() ? replacementPaths[i] : nullString(), { } };

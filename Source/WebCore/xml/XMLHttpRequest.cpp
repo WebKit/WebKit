@@ -640,7 +640,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     if (m_async) {
         m_progressEventThrottle->dispatchProgressEvent(eventNames().loadstartEvent);
         if (!m_uploadComplete && m_uploadListenerFlag)
-            m_upload->dispatchProgressEvent(eventNames().loadstartEvent, 0, request.httpBody()->lengthInBytes());
+            m_upload->dispatchProgressEvent(eventNames().loadstartEvent, 0, protect(request.httpBody())->lengthInBytes());
 
         if (readyState() != OPENED || !m_sendFlag || m_loadingActivity)
             return { };

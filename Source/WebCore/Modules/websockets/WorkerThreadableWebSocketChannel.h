@@ -160,7 +160,7 @@ private:
     bool hasCreatedHandshake() const final { return false; }
     bool isConnected() const final { return false; }
     ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }
-    const ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
+    const ResourceResponse& serverHandshakeResponse() const LIFETIME_BOUND final { return m_handshakeResponse; }
 
     const Ref<WorkerGlobalScope> m_workerGlobalScope;
     const Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;

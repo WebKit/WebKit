@@ -140,17 +140,17 @@ static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<ASCIILite
 
 + (size_t)cachedFontDataCount
 {
-    return FontCache::forCurrentThread()->fontCount();
+    return protect(FontCache::forCurrentThread())->fontCount();
 }
 
 + (size_t)cachedFontDataInactiveCount
 {
-    return FontCache::forCurrentThread()->inactiveFontCount();
+    return protect(FontCache::forCurrentThread())->inactiveFontCount();
 }
 
 + (void)purgeInactiveFontData
 {
-    FontCache::forCurrentThread()->purgeInactiveFontData();
+    protect(FontCache::forCurrentThread())->purgeInactiveFontData();
 }
 
 + (size_t)glyphPageCount
@@ -255,7 +255,7 @@ static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<ASCIILite
     return externalRepresentation(_private->coreFrame, { RenderAsTextFlag::PrintingMode }).createNSString().autorelease();
 }
 
-static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOptions options)
+static OptionSet<RenderAsTextFlag> NODELETE toRenderAsTextFlags(WebRenderTreeAsTextOptions options)
 {
     OptionSet<RenderAsTextFlag> flags;
 

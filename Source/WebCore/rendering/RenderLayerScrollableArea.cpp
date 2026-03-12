@@ -669,7 +669,7 @@ void RenderLayerScrollableArea::availableContentSizeChanged(AvailableSizeChangeR
 
     auto& renderer = m_layer.renderer();
     if (reason == AvailableSizeChangeReason::ScrollbarsChanged) {
-        if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer))
+        if (auto* renderBlock = dynamicDowncast<RenderBlock>(renderer))
             renderBlock->setShouldForceRelayoutChildren(true);
         renderer.setNeedsLayout();
     }
@@ -871,7 +871,7 @@ static inline RenderElement* rendererForScrollbar(RenderLayerModelObject& render
     if (RefPtr element = renderer.element()) {
         if (RefPtr shadowRoot = element->containingShadowRoot()) {
             if (shadowRoot->mode() == ShadowRootMode::UserAgent)
-                return protect(shadowRoot->host())->renderer();
+                return shadowRoot->host()->renderer();
         }
     }
 
@@ -1231,7 +1231,7 @@ void RenderLayerScrollableArea::updateScrollbarPresenceAndState(std::optional<bo
             return *hasOverflow ? ScrollbarState::Enabled : nonScrollableState;
         
         // If we don't have information about overflow (because we haven't done layout yet), just return the current state of the scrollbar.
-        auto existingScrollbar = scrollbarForAxis(orientation);
+        auto* existingScrollbar = scrollbarForAxis(orientation).get();
         return (existingScrollbar && existingScrollbar->enabled()) ? ScrollbarState::Enabled : nonScrollableState;
     };
 
@@ -1491,7 +1491,7 @@ void RenderLayerScrollableArea::paintOverflowControls(GraphicsContext& context, 
         if (!paintingRoot)
             paintingRoot = renderer.view().layer();
 
-        if (CheckedPtr scrollableArea = paintingRoot->scrollableArea())
+        if (auto* scrollableArea = paintingRoot->scrollableArea())
             scrollableArea->setContainsDirtyOverlayScrollbars(true);
         return;
     }

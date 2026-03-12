@@ -103,7 +103,7 @@ bool AccessibilitySpinButton::computeIsIgnored() const
     // inside a collapsed <details> element with content-visibility: hidden),
     // the spin button is not visible.
     CheckedPtr renderer = m_spinButtonElement ? m_spinButtonElement->renderer() : nullptr;
-    return !renderer || WebCore::isRenderHidden(protect(renderer->style()).get());
+    return !renderer || WebCore::isRenderHidden(&renderer->style());
 }
 
 } // namespace WebCore

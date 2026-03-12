@@ -906,7 +906,7 @@ float StringImpl::toFloat(bool* ok)
     return charactersToFloat(span16(), ok);
 }
 
-size_t StringImpl::find(std::span<const Latin1Character> matchString, size_t start)
+SUPPRESS_NODELETE size_t StringImpl::find(std::span<const Latin1Character> matchString, size_t start)
 {
     ASSERT(!matchString.empty());
     ASSERT(isValidLength<Latin1Character>(matchString.size()));
@@ -1026,7 +1026,7 @@ size_t StringImpl::reverseFind(char16_t character, size_t start)
     return WTF::reverseFind(span16(), character, start);
 }
 
-size_t StringImpl::reverseFind(StringView matchString, size_t start)
+SUPPRESS_NODELETE size_t StringImpl::reverseFind(StringView matchString, size_t start)
 {
     // Check for null or empty string to match against
     if (!matchString)
@@ -1670,7 +1670,7 @@ unsigned StringImpl::concurrentHash() const
     return hash;
 }
 
-bool equalIgnoringNullity(std::span<const char16_t> a, StringImpl* b)
+SUPPRESS_NODELETE bool equalIgnoringNullity(std::span<const char16_t> a, StringImpl* b)
 {
     if (!b)
         return a.empty();

@@ -161,7 +161,7 @@ void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState(ActivityS
 
 void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 {
-    RefPtr page = this->page();
+    auto* page = this->page();
     if (!page)
         return;
 

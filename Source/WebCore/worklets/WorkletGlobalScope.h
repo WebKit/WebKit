@@ -67,8 +67,8 @@ public:
 
     MessagePortChannelProvider& messagePortChannelProvider();
 
-    const URL& url() const final { return m_url; }
-    const URL& cookieURL() const final { return url(); }
+    const URL& url() const LIFETIME_BOUND final { return m_url; }
+    const URL& cookieURL() const LIFETIME_BOUND final { return url(); }
 
     void evaluate();
 
@@ -111,7 +111,7 @@ private:
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     String userAgent(const URL&) const final;
-    const SettingsValues& settingsValues() const final { return m_settingsValues; }
+    const SettingsValues& settingsValues() const LIFETIME_BOUND final { return m_settingsValues; }
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 

@@ -99,7 +99,7 @@ public:
     const IDBTransactionInfo& info() const LIFETIME_BOUND { return m_info; }
     IDBDatabase& database() { return m_database.get(); }
     const IDBDatabase& database() const { return m_database.get(); }
-    IDBDatabaseInfo* originalDatabaseInfo() const { return m_info.originalDatabaseInfo().get(); }
+    IDBDatabaseInfo* originalDatabaseInfo() const LIFETIME_BOUND { return m_info.originalDatabaseInfo().get(); }
 
     void didStart(const IDBError&);
     void didAbort(const IDBError&);

@@ -119,7 +119,7 @@ public:
         m_type = SVG_TRANSFORM_MATRIX;
         m_angle = 0;
         m_rotationCenter = { };
-        protect(this->matrix())->setValue(matrix);
+        this->matrix().setValue(matrix);
     }
 
     void matrixDidChange()

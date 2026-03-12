@@ -261,7 +261,7 @@ public:
 
     Box<InlineWatchpointSet> sharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
 
-    ScriptExecutable* topLevelExecutable() const { return m_topLevelExecutable.get(); }
+    ScriptExecutable* topLevelExecutable() const LIFETIME_BOUND { return m_topLevelExecutable.get(); }
 
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 

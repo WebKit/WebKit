@@ -210,7 +210,7 @@ sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(const Str
         return nullptr;
 
     return m_typefaceCache.ensure({ font->path, font->ttcIndex }, [font] -> sk_sp<SkTypeface> {
-        return FontCache::forCurrentThread()->fontManager().makeFromFile(font->path.utf8().data(), font->ttcIndex);
+        return FontCache::forCurrentThread().fontManager().makeFromFile(font->path.utf8().data(), font->ttcIndex);
     }).iterator->value;
 }
 

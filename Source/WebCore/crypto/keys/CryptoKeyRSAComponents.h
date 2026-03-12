@@ -74,15 +74,15 @@ public:
     Type type() const { return m_type; }
 
     // Private and public keys.
-    const Vector<uint8_t>& modulus() const { return m_modulus; }
-    const Vector<uint8_t>& exponent() const { return m_exponent; }
+    const Vector<uint8_t>& modulus() const LIFETIME_BOUND { return m_modulus; }
+    const Vector<uint8_t>& exponent() const LIFETIME_BOUND { return m_exponent; }
 
     // Only private keys.
-    const Vector<uint8_t>& privateExponent() const { return m_privateExponent; }
+    const Vector<uint8_t>& privateExponent() const LIFETIME_BOUND { return m_privateExponent; }
     bool hasAdditionalPrivateKeyParameters() const { return m_hasAdditionalPrivateKeyParameters; }
-    const PrimeInfo& firstPrimeInfo() const { return m_firstPrimeInfo; }
-    const PrimeInfo& secondPrimeInfo() const { return m_secondPrimeInfo; }
-    const Vector<PrimeInfo>& otherPrimeInfos() const { return m_otherPrimeInfos; }
+    const PrimeInfo& firstPrimeInfo() const LIFETIME_BOUND { return m_firstPrimeInfo; }
+    const PrimeInfo& secondPrimeInfo() const LIFETIME_BOUND { return m_secondPrimeInfo; }
+    const Vector<PrimeInfo>& otherPrimeInfos() const LIFETIME_BOUND { return m_otherPrimeInfos; }
 
 private:
     CryptoKeyRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent);

@@ -226,7 +226,7 @@ JSArrayBuffer* JSWebAssemblyMemory::toResizableBuffer(JSGlobalObject* globalObje
     return m_bufferWrapper.get();
 }
 
-PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, uint32_t delta)
+PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, uint64_t delta)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -258,19 +258,33 @@ PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, uint32
 JSObject* JSWebAssemblyMemory::type(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     PageCount minimum = m_memory->initial();
     PageCount maximum = m_memory->maximum();
 
+    auto pageCountValue = [&](PageCount count) -> JSValue {
+        if (m_memory->addressType().is64Bit())
+            return JSBigInt::createFrom(globalObject, count.pageCount());
+        return jsNumber(count.pageCount());
+    };
+
     JSObject* result;
     if (maximum.isValid()) {
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-        result->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(maximum.pageCount()));
+        JSValue maxValue = pageCountValue(maximum);
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
+        result->putDirect(vm, Identifier::fromString(vm, "maximum"_s), maxValue);
     } else
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
-    result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(minimum.pageCount()));
+    JSValue minValue = pageCountValue(minimum);
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+    result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), minValue);
     result->putDirect(vm, Identifier::fromString(vm, "shared"_s), jsBoolean(m_memory->sharingMode() == MemorySharingMode::Shared));
+
+    JSString* address = m_memory->addressType().is64Bit() ? jsNontrivialString(vm, "i64"_s) : jsNontrivialString(vm, "i32"_s);
+    result->putDirect(vm, Identifier::fromString(vm, "address"_s), address);
 
     return result;
 }

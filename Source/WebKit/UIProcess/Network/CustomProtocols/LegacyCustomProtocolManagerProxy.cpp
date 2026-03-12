@@ -55,12 +55,12 @@ LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 
 void LegacyCustomProtocolManagerProxy::startLoading(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request)
 {
-    protect(m_networkProcessProxy)->customProtocolManagerClient().startLoading(*this, customProtocolID, request);
+    m_networkProcessProxy->customProtocolManagerClient().startLoading(*this, customProtocolID, request);
 }
 
 void LegacyCustomProtocolManagerProxy::stopLoading(LegacyCustomProtocolID customProtocolID)
 {
-    protect(m_networkProcessProxy)->customProtocolManagerClient().stopLoading(*this, customProtocolID);
+    m_networkProcessProxy->customProtocolManagerClient().stopLoading(*this, customProtocolID);
 }
 
 void LegacyCustomProtocolManagerProxy::invalidate()

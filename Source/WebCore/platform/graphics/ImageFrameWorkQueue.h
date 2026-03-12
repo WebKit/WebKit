@@ -65,7 +65,7 @@ private:
     using DecodeQueue = Deque<Request, BufferSize>;
 
     RequestQueue& requestQueue();
-    DecodeQueue& decodeQueue() { return m_decodeQueue; }
+    DecodeQueue& decodeQueue() LIFETIME_BOUND { return m_decodeQueue; }
 
     Seconds minimumDecodingDurationForTesting() const { return m_minimumDecodingDurationForTesting; }
 

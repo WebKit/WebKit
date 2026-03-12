@@ -33,7 +33,7 @@
 
 namespace WTF {
 
-template <typename ExpectedType, typename ArgType, bool isBaseType = std::is_base_of_v<ExpectedType, ArgType>>
+template<typename ExpectedType, typename ArgType, bool isBaseType = std::is_base_of_v<ExpectedType, ArgType>>
 struct TypeCastTraits {
     static bool isOfType(ArgType&)
     {
@@ -49,28 +49,39 @@ struct TypeCastTraits {
 
 // Template specialization for the case where ExpectedType is a base of ArgType,
 // so we can return return true unconditionally.
-template <typename ExpectedType, typename ArgType>
+template<typename ExpectedType, typename ArgType>
 struct TypeCastTraits<ExpectedType, ArgType, true /* isBaseType */> {
     static bool isOfType(ArgType&) { return true; }
 };
 
 // Type checking function, to use before casting with downcast<>().
-template <typename ExpectedType, typename ArgType>
+template<typename ExpectedType, typename ArgType>
 inline bool is(const ArgType& source)
 {
     static_assert(std::is_base_of_v<ArgType, ExpectedType>, "Unnecessary type check");
     return TypeCastTraits<const ExpectedType, const ArgType>::isOfType(source);
 }
 
-template <typename ExpectedType, typename ArgType>
+template<typename ExpectedType, typename ArgType>
 inline bool is(ArgType* source)
 {
-    static_assert(std::is_base_of_v<ArgType, ExpectedType>, "Unnecessary type check");
-    return source && TypeCastTraits<const ExpectedType, const ArgType>::isOfType(*source);
+    return source && is<ExpectedType>(*source);
+}
+
+template<typename... ExpectedTypes, typename ArgType>
+inline bool isAnyOf(const ArgType& source)
+{
+    return (is<ExpectedTypes>(source) || ...);
+}
+
+template<typename... ExpectedTypes, typename ArgType>
+inline bool isAnyOf(ArgType* source)
+{
+    return source && (is<ExpectedTypes>(*source) || ...);
 }
 
 // Update T's constness to match Reference's.
-template <typename Reference, typename T>
+template<typename Reference, typename T>
 using match_constness_t =
     typename std::conditional_t<std::is_const_v<Reference>, typename std::add_const_t<T>, typename std::remove_const_t<T>>;
 
@@ -129,7 +140,7 @@ inline match_constness_t<Source, Target>* dynamicDowncast(Source* source)
 // Add support for type checking / casting using is<>() / downcast<>() helpers for a specific class.
 #define SPECIALIZE_TYPE_TRAITS_BEGIN(ClassName) \
 namespace WTF { \
-template <typename ArgType> \
+template<typename ArgType> \
 class TypeCastTraits<const ClassName, ArgType, false /* isBaseType */> { \
 public: \
     static bool isOfType(ArgType& source) { return isType(source); } \
@@ -153,10 +164,23 @@ inline bool is(const std::unique_ptr<ArgType, Deleter>& source)
     return is<ExpectedType>(source.get());
 }
 
+template<typename... ExpectedTypes, typename ArgType, typename Deleter>
+inline bool isAnyOf(std::unique_ptr<ArgType, Deleter>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType, typename Deleter>
+inline bool isAnyOf(const std::unique_ptr<ArgType, Deleter>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
 } // namespace WTF
 
 using WTF::TypeCastTraits;
 using WTF::is;
+using WTF::isAnyOf;
 using WTF::downcast;
 using WTF::dynamicDowncast;
 using WTF::uncheckedDowncast;

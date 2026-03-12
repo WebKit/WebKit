@@ -203,7 +203,7 @@ void SpellChecker::requestExtendedCheckingFor(Ref<SpellCheckRequest>&& request, 
     request->setCheckerAndIdentifier(this, identifier);
     request->setExistingResults(results);
 
-    client()->requestExtendedCheckingOfString(WTF::move(request), protect(document())->selection().selection());
+    client()->requestExtendedCheckingOfString(WTF::move(request), document().selection().selection());
 }
 
 void SpellChecker::invokeRequest(Ref<SpellCheckRequest>&& request)
@@ -212,7 +212,7 @@ void SpellChecker::invokeRequest(Ref<SpellCheckRequest>&& request)
     if (!client())
         return;
     m_processingRequest = WTF::move(request);
-    client()->requestCheckingOfString(*m_processingRequest, protect(document())->selection().selection());
+    client()->requestCheckingOfString(*m_processingRequest, document().selection().selection());
 }
 
 void SpellChecker::enqueueRequest(Ref<SpellCheckRequest>&& request)

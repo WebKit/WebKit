@@ -68,7 +68,8 @@ void* pas_immortal_heap_allocate_with_manual_alignment(size_t size,
         allocation_size = size + pas_immortal_heap_allocation_granule;
 
         allocation_result = pas_compact_heap_reservation_try_allocate(allocation_size, alignment);
-        PAS_ASSERT(allocation_result.result);
+        if (!allocation_result.result)
+            pas_panic_on_out_of_memory_error();
         PAS_ASSERT(allocation_result.result_size == allocation_size);
         PAS_ASSERT(!allocation_result.right_padding_size);
         

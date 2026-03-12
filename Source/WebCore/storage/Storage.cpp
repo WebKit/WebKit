@@ -145,7 +145,7 @@ Vector<AtomString> Storage::supportedPropertyNames() const
 
 bool Storage::requiresScriptTrackingPrivacyProtection() const
 {
-    RefPtr document = window() ? protect(window())->document() : nullptr;
+    RefPtr document = window() ? window()->document() : nullptr;
     return document && document->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::LocalStorage);
 }
 

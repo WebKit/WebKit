@@ -504,6 +504,7 @@ public:
     bool hasWritingToolsTextSuggestionMarker(int from, int length);
 #endif
     bool hasTransparentContentMarker(int from, int length);
+    bool hasDictationStreamingOpacityMarker(int from, int length);
     void setContinuousSpellCheckingEnabled(bool);
     void setAutomaticQuoteSubstitutionEnabled(bool);
     void setAutomaticLinkDetectionEnabled(bool);
@@ -580,6 +581,7 @@ public:
     ExceptionOr<uint64_t> verticalScrollbarLayerID(Node*) const;
     ExceptionOr<Ref<DOMRect>> horizontalScrollbarFrameRect(Node*) const;
     ExceptionOr<Ref<DOMRect>> verticalScrollbarFrameRect(Node*) const;
+    ExceptionOr<Ref<DOMRect>> scrollCornerRect(Node*) const;
 
     ExceptionOr<String> scrollbarsControllerTypeForNode(Node*) const;
 

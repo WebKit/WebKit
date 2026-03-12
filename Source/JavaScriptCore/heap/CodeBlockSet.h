@@ -55,7 +55,7 @@ public:
     void clearCurrentlyExecutingAndRemoveDeadCodeBlocks(VM&);
 
     bool contains(const AbstractLocker&, void* candidateCodeBlock);
-    Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+    Lock& getLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
     // This is expected to run only when we're not adding to the set for now. If
     // this needs to run concurrently in the future, we'll need to lock around this.

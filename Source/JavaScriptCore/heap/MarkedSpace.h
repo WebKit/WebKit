@@ -110,7 +110,7 @@ public:
     template<typename Visitor>
     Ref<SharedTask<void(Visitor&)>> forEachWeakInParallel(Visitor&);
 
-    MarkedBlockSet& blocks() { return m_blocks; }
+    MarkedBlockSet& blocks() LIFETIME_BOUND { return m_blocks; }
 
     void willStartIterating();
     bool isIterating() const { return m_isIterating; }
@@ -159,10 +159,10 @@ public:
     HeapVersion edenVersion() const { return m_edenVersion; }
 
     void registerPreciseAllocation(PreciseAllocation*, bool isNewAllocation);
-    const Vector<PreciseAllocation*>& preciseAllocations() const { return m_preciseAllocations; }
+    const Vector<PreciseAllocation*>& preciseAllocations() const LIFETIME_BOUND { return m_preciseAllocations; }
     unsigned preciseAllocationsNurseryOffset() const { return m_preciseAllocationsNurseryOffset; }
     unsigned preciseAllocationsOffsetForThisCollection() const { return m_preciseAllocationsOffsetForThisCollection; }
-    std::optional<UncheckedKeyHashSet<HeapCell*>>& preciseAllocationSet() { return m_preciseAllocationSet; }
+    std::optional<UncheckedKeyHashSet<HeapCell*>>& preciseAllocationSet() LIFETIME_BOUND { return m_preciseAllocationSet; }
 
     void enablePreciseAllocationTracking();
     
@@ -172,9 +172,9 @@ public:
     PreciseAllocation** preciseAllocationsForThisCollectionEnd() const { return m_preciseAllocationsForThisCollectionEnd; }
     unsigned preciseAllocationsForThisCollectionSize() const { return m_preciseAllocationsForThisCollectionSize; }
     
-    BlockDirectory* firstDirectory() const { return m_directories.first(); }
+    BlockDirectory* firstDirectory() const LIFETIME_BOUND { return m_directories.first(); }
     
-    Lock& directoryLock() { return m_directoryLock; }
+    Lock& directoryLock() LIFETIME_BOUND { return m_directoryLock; }
     void addBlockDirectory(const AbstractLocker&, BlockDirectory*);
     
     // When this is true it means that we have flipped but the mark bits haven't converged yet.

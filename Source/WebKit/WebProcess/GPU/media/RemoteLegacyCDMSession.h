@@ -55,7 +55,7 @@ public:
     // MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    const RemoteLegacyCDMSessionIdentifier& identifier() const { return m_identifier; }
+    const RemoteLegacyCDMSessionIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
 
 private:
     RemoteLegacyCDMSession(RemoteLegacyCDMFactory&, RemoteLegacyCDMSessionIdentifier&&, WebCore::LegacyCDMSessionClient&);
@@ -63,7 +63,7 @@ private:
     // LegacyCDMSession
     void invalidate() final;
     WebCore::LegacyCDMSessionType type() const final { return WebCore::CDMSessionTypeRemote; }
-    const String& sessionId() const final { return m_sessionId; }
+    const String& sessionId() const LIFETIME_BOUND final { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
     void releaseKeys() final;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) final;

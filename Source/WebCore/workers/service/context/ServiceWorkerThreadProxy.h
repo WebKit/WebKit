@@ -67,14 +67,14 @@ public:
 
     ServiceWorkerIdentifier identifier() const { return m_serviceWorkerThread->identifier(); }
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }
-    ServiceWorkerInspectorProxy& inspectorProxy() { return m_inspectorProxy; }
+    ServiceWorkerInspectorProxy& inspectorProxy() LIFETIME_BOUND { return m_inspectorProxy; }
 
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
     void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
     WEBCORE_EXPORT RefPtr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 
-    const URL& scriptURL() const { return m_document->url(); }
+    const URL& scriptURL() const LIFETIME_BOUND { return m_document->url(); }
 
     WEBCORE_EXPORT void notifyNetworkStateChange(bool isOnline);
 

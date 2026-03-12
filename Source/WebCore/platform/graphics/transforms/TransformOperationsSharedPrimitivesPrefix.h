@@ -43,7 +43,7 @@ public:
     void update(const auto&);
 
     bool hadIncompatibleTransformFunctions() { return m_indexOfFirstMismatch.has_value(); }
-    const Vector<PrimitiveType>& primitives() const { return m_primitives; }
+    const Vector<PrimitiveType>& primitives() const LIFETIME_BOUND { return m_primitives; }
 
 private:
     std::optional<size_t> m_indexOfFirstMismatch;

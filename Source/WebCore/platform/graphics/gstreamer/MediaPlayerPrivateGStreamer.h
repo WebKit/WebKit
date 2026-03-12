@@ -242,7 +242,7 @@ public:
 
     // This AbortableTaskQueue must be aborted everytime a flush is sent downstream from the main thread
     // to avoid deadlocks from threads in the playback pipeline waiting for the main thread.
-    AbortableTaskQueue& sinkTaskQueue() { return m_sinkTaskQueue; }
+    AbortableTaskQueue& sinkTaskQueue() LIFETIME_BOUND { return m_sinkTaskQueue; }
 
     String codecForStreamId(TrackID streamId);
     bool shouldDownload() { return m_fillTimer.isActive(); }

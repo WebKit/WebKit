@@ -64,7 +64,7 @@ void SocketStreamHandleImpl::platformSend(std::span<const uint8_t> data, Functio
     return completionHandler(true);
 }
 
-static std::span<const uint8_t> removeTerminationCharacters(std::span<const uint8_t> data)
+static std::span<const uint8_t> NODELETE removeTerminationCharacters(std::span<const uint8_t> data)
 {
 #ifndef NDEBUG
     ASSERT(data.size() > 2);

@@ -86,7 +86,7 @@ public:
     inline void set(VM&, uint32_t index, v128_t value);
 
     void fill(VM&, uint32_t, uint64_t, uint32_t);
-    void fill(VM&, uint32_t, v128_t, uint32_t);
+    void NODELETE fill(VM&, uint32_t, v128_t, uint32_t);
     void copy(VM&, JSWebAssemblyArray&, uint32_t, uint32_t, uint32_t);
 
 #if ASSERT_ENABLED

@@ -50,13 +50,13 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const Vector<String>& supportedDataTypes() const { return m_supportedDataTypes; }
+    const Vector<String>& supportedDataTypes() const LIFETIME_BOUND { return m_supportedDataTypes; }
     void setSupportedDataTypes(Vector<String>&&);
 
-    const Vector<MediaKeySessionType>& supportedSessionTypes() const { return m_supportedSessionTypes; }
+    const Vector<MediaKeySessionType>& supportedSessionTypes() const LIFETIME_BOUND { return m_supportedSessionTypes; }
     void setSupportedSessionTypes(Vector<MediaKeySessionType>&& types) { m_supportedSessionTypes = WTF::move(types); }
 
-    const Vector<String>& supportedRobustness() const { return m_supportedRobustness; }
+    const Vector<String>& supportedRobustness() const LIFETIME_BOUND { return m_supportedRobustness; }
     void setSupportedRobustness(Vector<String>&& supportedRobustness) { m_supportedRobustness = WTF::move(supportedRobustness); }
 
     MediaKeysRequirement distinctiveIdentifiersRequirement() const { return m_distinctiveIdentifiersRequirement; }
@@ -74,7 +74,7 @@ public:
     bool supportsSessions() const { return m_supportsSessions; }
     void setSupportsSessions(bool flag) { m_supportsSessions = flag; }
 
-    const Vector<MediaKeyEncryptionScheme>& supportedEncryptionSchemes() const { return m_supportedEncryptionSchemes; }
+    const Vector<MediaKeyEncryptionScheme>& supportedEncryptionSchemes() const LIFETIME_BOUND { return m_supportedEncryptionSchemes; }
     void setSupportedEncryptionSchemes(Vector<MediaKeyEncryptionScheme>&& schemes) { m_supportedEncryptionSchemes = WTF::move(schemes); }
 
     void unregister();
@@ -110,7 +110,7 @@ public:
     MockCDM(WeakPtr<MockCDMFactory>, const String&);
 
     MockCDMFactory* factory() { return m_factory.get(); }
-    const String& mediaKeysHashSalt() const { return m_mediaKeysHashSalt; }
+    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 private:
     friend class MockCDMInstance;

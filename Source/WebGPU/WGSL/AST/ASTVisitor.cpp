@@ -544,7 +544,7 @@ void Visitor::visit(AST::ReturnStatement& returnStatement)
 void Visitor::visit(AST::SwitchStatement& statement)
 {
     checkErrorAndVisit(statement.value());
-    for (auto& attribute : statement.valueAttributes())
+    for (auto& attribute : statement.bodyAttributes())
         checkErrorAndVisit(attribute);
     for (auto& clause : statement.clauses())
         checkErrorAndVisit(clause);
@@ -573,8 +573,6 @@ void Visitor::visit(AST::WhileStatement& whileStatement)
 
 void Visitor::visit(AST::Structure& structure)
 {
-    for (auto& attribute : structure.attributes())
-        checkErrorAndVisit(attribute);
     for (auto& member : structure.members())
         checkErrorAndVisit(member);
 }

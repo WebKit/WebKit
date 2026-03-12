@@ -1963,12 +1963,7 @@ TEST(WebKit2, OrientationNotAffectedByCSSOrientation)
 
 #endif
 
-// FIXME when webkit.org/b/309014 is resolved.
-#if PLATFORM(MAC)
-TEST(GetUserMedia, DISABLED_ClearRemoteVideoFrameObjectHeapPixelConformerUnderMemoryPressure)
-#else
 TEST(GetUserMedia, ClearRemoteVideoFrameObjectHeapPixelConformerUnderMemoryPressure)
-#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureAudioInGPUProcessEnabled"));

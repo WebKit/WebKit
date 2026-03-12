@@ -31,11 +31,12 @@
 #include "InlineWalker.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LegacyRootInlineBox.h"
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 #include "MultiRepresentationHEICMetrics.h"
 #endif
 #include "RenderAttachment.h"
-#include "RenderBlockFlow.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderButton.h"
 #include "RenderDeprecatedFlexibleBox.h"
@@ -93,7 +94,8 @@ static LayoutUnit snapToInt(LayoutUnit value, const RenderObject& renderer, Snap
 
 static float ascent(const RenderObject& renderer)
 {
-    auto& fontMetrics = renderer.firstLineStyle().metricsOfPrimaryFont();
+    CheckedRef style = renderer.firstLineStyle();
+    auto& fontMetrics = style->metricsOfPrimaryFont();
     return renderer.settings().subpixelInlineLayoutEnabled() ? fontMetrics.ascent() : fontMetrics.intAscent();
 }
 
@@ -389,7 +391,7 @@ static std::optional<LayoutUnit> lastInflowBoxBaseline(const RenderBlock& blockC
             continue;
         }
 
-        if (is<RenderFlexibleBox>(*inflowBox) || is<RenderGrid>(*inflowBox) || is<RenderBlockFlow>(*inflowBox) || is<RenderTextControlInnerContainer>(*inflowBox) || is<RenderMenuList>(*inflowBox)) {
+        if (isAnyOf<RenderFlexibleBox, RenderGrid, RenderBlockFlow, RenderTextControlInnerContainer, RenderMenuList>(*inflowBox)) {
             if (auto baseline = baselineForBox(*inflowBox)) {
                 auto baselineValue = inflowBox->logicalTop() + *baseline;
                 return LayoutUnit { snapToInt(baselineValue, *inflowBox, SnapDirection::Floor) };
@@ -415,22 +417,27 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
     if (writingMode.computedWritingMode() != renderBox.writingMode().computedWritingMode())
         return { };
 
-    if (is<RenderIFrame>(renderBox)
-        || is<RenderEmbeddedObject>(renderBox)
-        || is<LegacyRenderSVGRoot>(renderBox)
-        || is<RenderHTMLCanvas>(renderBox)
-        || is<RenderViewTransitionCapture>(renderBox)
-        || is<RenderTextControlMultiLine>(renderBox)
+    bool noBoxBaseline = isAnyOf<
+        RenderIFrame,
+        RenderEmbeddedObject,
+        LegacyRenderSVGRoot,
+        RenderHTMLCanvas,
+        RenderViewTransitionCapture,
+        RenderTextControlMultiLine,
 #if ENABLE(MODEL_ELEMENT)
-        || is<RenderModel>(renderBox)
+        RenderModel,
 #endif
-        || is<RenderSVGRoot>(renderBox))
+        RenderSVGRoot
+    >(renderBox);
+
+    if (noBoxBaseline)
         return { };
 
     auto borderBoxBottom = renderBox.height();
     auto marginBoxBottom = renderBox.marginBoxLogicalHeight(writingMode) - (writingMode.isHorizontal() ? renderBox.marginTop() : renderBox.marginRight());
 
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderBox)) {
+    if (auto* renderImage = dynamicDowncast<RenderImage>(renderBox)) {
+        UNUSED_VARIABLE(renderImage);
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
         if (renderImage->isMultiRepresentationHEIC())
             return snapToInt(marginBoxBottom, *renderImage) - LayoutUnit::fromFloatRound(renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().descent);
@@ -442,7 +449,7 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
     if (CheckedPtr rendererAttachment = dynamicDowncast<RenderAttachment>(renderBox)) {
         // Subtract margin top to preserve legacy behavior.
         auto marginBefore = renderBox.writingMode().isHorizontal() ? renderBox.marginTop() : renderBox.marginRight();
-        if (CheckedPtr baselineElement = CheckedRef { rendererAttachment->attachmentElement() }->wideLayoutImageElement()) {
+        if (auto* baselineElement = rendererAttachment->attachmentElement().wideLayoutImageElement()) {
             if (auto* baselineElementRenderBox = baselineElement->renderBox()) {
                 // This is the bottom of the image assuming it is vertically centered.
                 return (borderBoxBottom + baselineElementRenderBox->height()) / 2 - marginBefore;
@@ -502,12 +509,12 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
     if (is<RenderTable>(renderBox))
         return renderBox.firstLineBaseline();
 
-    if (is<RenderMenuList>(renderBox) || is<RenderTextControlInnerContainer>(renderBox)) {
+    if (isAnyOf<RenderMenuList, RenderTextControlInnerContainer>(renderBox)) {
         // Both menu list and inner container are types of flex box but they behave slightly differently so always check them before checking for flex.
         return lastInflowBoxBaseline(downcast<RenderBlock>(renderBox));
     }
 
-    if (is<RenderFlexibleBox>(renderBox) || is<RenderGrid>(renderBox))
+    if (isAnyOf<RenderFlexibleBox, RenderGrid>(renderBox))
         return renderBox.firstLineBaseline();
 
     if (renderBox.isFieldset()) {
@@ -605,24 +612,31 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
         if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderBox))
             return !renderListMarker->isImage();
 
-        if ((is<RenderReplaced>(renderBox) && renderBox.style().display() == Style::DisplayType::InlineFlow)
-            || is<RenderListBox>(renderBox)
-            || is<RenderSlider>(renderBox)
-            || is<RenderTextControlMultiLine>(renderBox)
-            || is<RenderTable>(renderBox)
-            || is<RenderGrid>(renderBox)
-            || is<RenderFlexibleBox>(renderBox)
-            || is<RenderDeprecatedFlexibleBox>(renderBox)
+        if (is<RenderReplaced>(renderBox) && renderBox.style().display() == Style::DisplayType::InlineFlow)
+            return true;
+
+        // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
+
+        bool overrideDefaultBaselineBehavior = isAnyOf<
+            RenderListBox,
+            RenderSlider,
+            RenderTextControlMultiLine,
+            RenderTable,
+            RenderGrid,
+            RenderFlexibleBox,
+            RenderDeprecatedFlexibleBox,
 #if ENABLE(ATTACHMENT_ELEMENT)
-            || is<RenderAttachment>(renderBox)
+            RenderAttachment,
 #endif
 #if ENABLE(MATHML)
-            || is<RenderMathMLBlock>(renderBox)
+            RenderMathMLBlock,
 #endif
-            || is<RenderButton>(renderBox)) {
-            // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
+            RenderButton
+        >(renderBox);
+
+        if (overrideDefaultBaselineBehavior)
             return true;
-        }
+
         auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderBox);
         if (!blockFlow)
             return false;
@@ -654,7 +668,7 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
                 return marginBefore + snapToInt(contentBoxBottom, renderBox);
             }
 
-            return snapToInt(marginBoxLogicalHeight, renderBox);
+            return snapToInt(rootWritingMode.prefersCentralBaseline() && !isWritingModeRoot ? marginBoxLogicalHeight / 2: marginBoxLogicalHeight, renderBox);
         };
         const_cast<Layout::ElementBox&>(*renderBox.layoutBox()).setBaselineForIntegration(baselinePosition());
     }

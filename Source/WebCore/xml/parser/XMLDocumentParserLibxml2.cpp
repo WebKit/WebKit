@@ -52,6 +52,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
+#include "NameValidation.h"
 #include "NodeDocument.h"
 #include "NodeInlines.h"
 #include "OriginAccessPatterns.h"
@@ -692,6 +693,8 @@ XMLDocumentParser::~XMLDocumentParser()
     // FIXME: m_pendingScript handling should be moved into XMLDocumentParser.cpp!
     if (RefPtr pendingScript = m_pendingScript)
         pendingScript->clearClient();
+
+    m_scriptWaitingForStylesheets = nullptr;
 }
 
 void XMLDocumentParser::doWrite(const String& parseString)
@@ -764,11 +767,12 @@ static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
         if (xmlNamespace.prefix)
             namespaceQName = makeAtomString("xmlns:"_s, toString(xmlNamespace.prefix));
 
-        auto result = Element::parseAttributeName(XMLNSNames::xmlnsNamespaceURI, namespaceQName);
-        if (result.hasException())
+        auto parseResult = NameValidation::parseQualifiedAttributeName(XMLNSNames::xmlnsNamespaceURI, namespaceQName);
+        if (parseResult.hasException())
             return false;
-
-        QualifiedName attributeName = result.releaseReturnValue();
+        QualifiedName attributeName { parseResult.releaseReturnValue() };
+        if (!NameValidation::hasValidNamespaceForAttributes(attributeName))
+            return false;
         if (attributeName == HTMLNames::customelementregistryAttr)
             shouldUseNullCustomElementRegistry = true;
 
@@ -796,11 +800,12 @@ static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes
         AtomString attrURI = attrPrefix.isEmpty() ? nullAtom() : toAtomString(attribute.uri);
         AtomString attrQName = attrPrefix.isEmpty() ? toAtomString(attribute.localname) : makeAtomString(attrPrefix, ':', toString(attribute.localname));
 
-        auto result = Element::parseAttributeName(attrURI, attrQName);
-        if (result.hasException())
+        auto parseResult = NameValidation::parseQualifiedAttributeName(attrURI, attrQName);
+        if (parseResult.hasException())
             return false;
-
-        QualifiedName attributeName = result.releaseReturnValue();
+        QualifiedName attributeName { parseResult.releaseReturnValue() };
+        if (!NameValidation::hasValidNamespaceForAttributes(attributeName))
+            return false;
         if (attributeName == HTMLNames::customelementregistryAttr)
             shouldUseNullCustomElementRegistry = true;
 
@@ -957,7 +962,10 @@ void XMLDocumentParser::endElementNs()
     protect(document->eventLoop())->performMicrotaskCheckpoint(document->vm());
     if (scriptElement->prepareScript(m_scriptStartPosition)) {
         if (scriptElement->readyToBeParserExecuted()) {
-            if (scriptElement->scriptType() == ScriptType::Classic)
+            if (!document->haveStylesheetsLoaded()) {
+                m_scriptWaitingForStylesheets = PendingScript::create(*scriptElement, m_scriptStartPosition);
+                pauseParsing();
+            } else if (scriptElement->scriptType() == ScriptType::Classic)
                 scriptElement->executeClassicScript(ScriptSourceCode(scriptElement->scriptContent(), scriptElement->sourceTaintedOrigin(), URL(document->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*scriptElement)));
             else
                 scriptElement->registerImportMap(ScriptSourceCode(scriptElement->scriptContent(), scriptElement->sourceTaintedOrigin(), URL(document->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
@@ -1099,7 +1107,7 @@ void XMLDocumentParser::startDocument(const xmlChar* version, const xmlChar* enc
     if (version)
         protect(document())->setXMLVersion(toString(version));
     if (standalone != StandaloneUnspecified)
-        protect(document())->setXMLStandalone(standaloneInfo == StandaloneYes);
+        document()->setXMLStandalone(standaloneInfo == StandaloneYes);
     if (encoding)
         document()->setXMLEncoding(toString(encoding));
     document()->setHasXMLDeclaration(true);

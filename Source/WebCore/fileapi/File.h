@@ -75,12 +75,12 @@ public:
 
     static Ref<File> createWithRelativePath(ScriptExecutionContext*, const String& path, const String& relativePath);
 
-    const String& path() const { return m_path; }
-    const String& relativePath() const { return m_relativePath; }
+    const String& path() const LIFETIME_BOUND { return m_path; }
+    const String& relativePath() const LIFETIME_BOUND { return m_relativePath; }
     void setRelativePath(const String& relativePath) { m_relativePath = relativePath; }
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     WEBCORE_EXPORT int64_t lastModified() const; // Number of milliseconds since Epoch.
-    const std::optional<int64_t>& lastModifiedOverride() const { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
+    const std::optional<int64_t>& lastModifiedOverride() const LIFETIME_BOUND { return m_lastModifiedDateOverride; } // Number of milliseconds since Epoch.
     const std::optional<FileSystem::PlatformFileID> fileID() const { return m_fileID; }
 
     WEBCORE_EXPORT static String contentTypeForFile(const String& path);

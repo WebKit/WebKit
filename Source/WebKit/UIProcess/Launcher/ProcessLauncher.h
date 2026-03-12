@@ -154,7 +154,7 @@ public:
     void invalidate();
 
 #if USE(EXTENSIONKIT)
-    const std::optional<ExtensionProcess>& extensionProcess() const { return m_process; }
+    const std::optional<ExtensionProcess>& extensionProcess() const LIFETIME_BOUND { return m_process; }
     void setIsRetryingLaunch() { m_isRetryingLaunch = true; }
     bool isRetryingLaunch() const { return m_isRetryingLaunch; }
     LaunchGrant* launchGrant() const { return m_launchGrant.get(); }

@@ -1147,10 +1147,10 @@ select::picker-icon {
     /* Below and span-right, by default. */
     position-area: -internal-auto-base(unset, block-end span-inline-end);
     position-try-order: -internal-auto-base(unset, most-block-size);
-    position-try-fallbacks: -internal-auto-base(unset,
+    position-try-fallbacks: -internal-auto-base(unset, {
         block-start span-inline-end,   /* First try above and span-right. */
         block-end span-inline-start,   /* Then below but span-left. */
-        block-start span-inline-start); /* Then above and span-left. */
+        block-start span-inline-start }); /* Then above and span-left. */
 
     display: -internal-auto-base(contents, none);
 }

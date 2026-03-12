@@ -38,8 +38,8 @@ public:
     CompiledBytecode(const OriginStack&, const CString& description);
     ~CompiledBytecode();
     
-    const OriginStack& originStack() const { return m_origin; }
-    const CString& description() const { return m_description; }
+    const OriginStack& originStack() const LIFETIME_BOUND { return m_origin; }
+    const CString& description() const LIFETIME_BOUND { return m_description; }
 
     Ref<JSON::Value> toJSON(Dumper&) const;
 

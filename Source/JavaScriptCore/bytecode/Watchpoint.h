@@ -96,8 +96,8 @@ class WatchpointSet;
 #if ENABLE(JIT)
 #define JSC_WATCHPOINT_TYPES_WITHOUT_DFG(macro) \
     JSC_WATCHPOINT_TYPES_WITHOUT_JIT(macro) \
-    macro(StructureTransitionStructureStubClearing, StructureTransitionStructureStubClearingWatchpoint) \
-    macro(StructureStubInfoClearing, StructureStubInfoClearingWatchpoint)
+    macro(StructureTransitionPropertyInlineCacheClearing, StructureTransitionPropertyInlineCacheClearingWatchpoint) \
+    macro(PropertyInlineCacheClearing, PropertyInlineCacheClearingWatchpoint)
 
 #if ENABLE(DFG_JIT)
 #define JSC_WATCHPOINT_TYPES(macro) \

@@ -65,15 +65,15 @@ private:
     static FlexTracks collectFlexTracks(const UnsizedTracks&);
     static bool hasFlexTracks(const UnsizedTracks&);
     static double flexFactorSum(const FlexTracks&);
-    static LayoutUnit findSizeOfFr(const UnsizedTracks&, const LayoutUnit& availableSpace, const LayoutUnit& gapSize);
+    static LayoutUnit findSizeOfFr(const UnsizedTracks&, const LayoutUnit availableSpace, const LayoutUnit gapSize);
 
     // Expand Flexible Tracks (spec section 11.7)
-    static void expandFlexibleTracks(UnsizedTracks&, const AxisConstraint::FreeSpaceScenario&, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit& gapSize,
+    static void expandFlexibleTracks(UnsizedTracks&, const AxisConstraint::FreeSpaceScenario&, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit gapSize,
         const PlacedGridItems&, const PlacedGridItemSpanList&, const TrackSizingGridItemConstraintList&, const GridItemSizingFunctions&);
     static void NODELETE expandFlexibleTracksForMinContent(UnsizedTracks&);
-    static void expandFlexibleTracksForMaxContent(UnsizedTracks&, const FlexTracks&, const LayoutUnit& gapSize,
+    static void expandFlexibleTracksForMaxContent(UnsizedTracks&, const FlexTracks&, const LayoutUnit gapSize,
         const PlacedGridItems&, const PlacedGridItemSpanList&, const TrackSizingGridItemConstraintList&, const GridItemSizingFunctions&);
-    static void expandFlexibleTracksForDefiniteLength(UnsizedTracks&, const FlexTracks&, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit& gapSize);
+    static void expandFlexibleTracksForDefiniteLength(UnsizedTracks&, const FlexTracks&, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit gapSize);
 };
 
 } // namespace WebCore

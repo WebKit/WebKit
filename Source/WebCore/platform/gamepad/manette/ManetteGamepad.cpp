@@ -136,6 +136,8 @@ static void onButtonReleaseEvent(ManetteDevice* device, ManetteEvent* event, Man
 ManetteGamepad::ManetteGamepad(ManetteDevice* device, unsigned index)
     : PlatformGamepad(index)
     , m_device(device)
+    , m_effectDelayTimer(RunLoop::currentSingleton(), "ManetteGamepad::EffectDelayTimer"_s, this, &ManetteGamepad::effectDelayTimerFired)
+    , m_effectDurationTimer(RunLoop::currentSingleton(), "ManetteGamepad::EffectDurationTimer"_s, this, &ManetteGamepad::effectDurationTimerFired)
 {
     ASSERT(index < 4);
 
@@ -151,6 +153,9 @@ ManetteGamepad::ManetteGamepad(ManetteDevice* device, unsigned index)
     m_buttonValues.resize(static_cast<size_t>(standardGamepadButtonCount));
     for (auto& value : m_buttonValues)
         value.setValue(0.0);
+
+    if (manette_device_has_rumble(m_device.get()))
+        m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);
 
     g_signal_connect(device, "button-press-event", G_CALLBACK(onButtonPressEvent), this);
     g_signal_connect(device, "button-release-event", G_CALLBACK(onButtonReleaseEvent), this);
@@ -176,6 +181,61 @@ void ManetteGamepad::absoluteAxisChanged(ManetteDevice*, StandardGamepadAxis axi
     m_axisValues[static_cast<int>(axis)].setValue(value);
 
     ManetteGamepadProvider::singleton().gamepadHadInput(*this, ManetteGamepadProvider::ShouldMakeGamepadsVisible::Yes);
+}
+
+void ManetteGamepad::playEffect(GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!m_supportedEffectTypes.contains(type))
+        return completionHandler(false);
+
+    if (m_effectCompletionHandler)
+        stopEffects({ });
+
+    m_effectCompletionHandler = WTF::move(completionHandler);
+    if (parameters.startDelay) {
+        m_pendingEffectParameters = parameters;
+        m_effectDelayTimer.startOneShot(Seconds::fromMilliseconds(parameters.startDelay));
+        return;
+    }
+
+    startRumble(parameters);
+}
+
+void ManetteGamepad::stopEffects(CompletionHandler<void()>&& completionHandler)
+{
+    m_effectDelayTimer.stop();
+    m_effectDurationTimer.stop();
+    if (m_effectCompletionHandler)
+        m_effectCompletionHandler(false);
+
+    manette_device_rumble(m_device.get(), 0, 0, 0);
+
+    if (completionHandler)
+        completionHandler();
+}
+
+void ManetteGamepad::effectDelayTimerFired()
+{
+    startRumble(std::exchange(m_pendingEffectParameters, { }));
+}
+
+void ManetteGamepad::startRumble(const GamepadEffectParameters& parameters)
+{
+#if LIBMANETTE_CHECK_VERSION(0, 2, 13)
+    manette_device_rumble(m_device.get(), parameters.strongMagnitude, parameters.weakMagnitude, static_cast<guint>(parameters.duration));
+#else
+    manette_device_rumble(m_device.get(), parameters.strongMagnitude * G_MAXUINT16, parameters.weakMagnitude * G_MAXUINT16, static_cast<guint>(parameters.duration));
+#endif
+
+    if (parameters.duration)
+        m_effectDurationTimer.startOneShot(Seconds::fromMilliseconds(parameters.duration));
+    else
+        m_effectCompletionHandler(true);
+}
+
+void ManetteGamepad::effectDurationTimerFired()
+{
+    m_effectCompletionHandler(true);
 }
 
 } // namespace WebCore

@@ -171,7 +171,7 @@ public:
     JSValue formatRangeToParts(JSGlobalObject*, double, double) const;
     JSValue formatRangeToParts(JSGlobalObject*, IntlMathematicalValue&&, IntlMathematicalValue&&) const;
 
-    JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
+    JSBoundFunction* boundFormat() const LIFETIME_BOUND { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
 
     enum class Style : uint8_t { Decimal, Percent, Currency, Unit };

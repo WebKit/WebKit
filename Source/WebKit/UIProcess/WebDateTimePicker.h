@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,12 +42,17 @@ public:
     virtual ~WebDateTimePicker();
 
     virtual void endPicker();
-    virtual void showDateTimePicker(WebCore::DateTimeChooserParameters&&) = 0;
+    void showDateTimePicker(WebCore::DateTimeChooserParameters&&);
+
+    std::optional<WebCore::FrameIdentifier> frameID() const { return m_frameID; }
 
 protected:
     explicit WebDateTimePicker(WebPageProxy&);
 
+    virtual void platformShowDateTimePicker(WebCore::DateTimeChooserParameters&&) = 0;
+
     WeakPtr<WebPageProxy> m_page;
+    std::optional<WebCore::FrameIdentifier> m_frameID;
 };
 
 } // namespace WebKit

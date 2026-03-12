@@ -28,7 +28,7 @@
 
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
-#include <Objbase.h>
+#include <objbase.h>
 
 namespace WebKit {
 using namespace WebCore;

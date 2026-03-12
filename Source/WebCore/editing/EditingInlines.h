@@ -30,11 +30,18 @@
 
 namespace WebCore {
 
-Position lastPositionInOrAfterNode(Node* node)
+inline Position firstPositionInOrBeforeNode(Node* node)
 {
     if (!node)
         return { };
-    return editingIgnoresContent(*node) ? positionAfterNode(node) : lastPositionInNode(node);
+    return editingIgnoresContent(*node) ? positionBeforeNode(*node) : firstPositionInNode(*node);
 }
 
+inline Position lastPositionInOrAfterNode(Node* node)
+{
+    if (!node)
+        return { };
+    return editingIgnoresContent(*node) ? positionAfterNode(*node) : lastPositionInNode(*node);
 }
+
+} // namespace WebCore

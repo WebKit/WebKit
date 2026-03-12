@@ -34,7 +34,7 @@ public:
 
     bool operator==(const PointLightSource&) const;
 
-    const FloatPoint3D& position() const { return m_position; }
+    const FloatPoint3D& position() const LIFETIME_BOUND { return m_position; }
     bool setX(float) override;
     bool setY(float) override;
     bool setZ(float) override;

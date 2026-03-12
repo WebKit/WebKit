@@ -72,7 +72,7 @@ void RenderSVGResourceContainer::styleDidChange(Style::Difference diff, const Re
 void RenderSVGResourceContainer::idChanged()
 {
     // Remove old id, that is guaranteed to be present in cache.
-    m_id = protect(element())->getIdAttribute();
+    m_id = element().getIdAttribute();
 
     registerResource();
 }

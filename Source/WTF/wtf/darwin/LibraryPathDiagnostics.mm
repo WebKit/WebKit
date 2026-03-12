@@ -97,9 +97,9 @@ LibraryPathDiagnosticsLogger::LibraryPathDiagnosticsLogger()
 void LibraryPathDiagnosticsLogger::logJSONPayload(const JSON::Object &object)
 {
     auto textRepresentation = object.toJSONString();
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    os_log(m_osLog, "%{public}s", textRepresentation.utf8().data());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto utf8 = textRepresentation.utf8();
+    auto span = utf8.span();
+    os_log(m_osLog, "%{public}.*s", static_cast<int>(span.size()), span.data());
 }
 
 void LibraryPathDiagnosticsLogger::logString(std::span<const String> path, const String& string)
@@ -175,26 +175,26 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
 
     const struct mach_header *header = _dyld_get_dlopen_image_header(handle);
     if (!header) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        logError("Unable to locate mach header for %s", installName.utf8().data());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        auto utf8 = installName.utf8();
+        auto span = utf8.span();
+        logError("Unable to locate mach header for %.*s", static_cast<int>(span.size()), span.data());
         return;
     }
 
     Dl_info info = { };
     int dladdr_ret = dladdr(header, &info);
     if (!dladdr_ret) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        logError("No info returned from dladdr() for %s", installName.utf8().data());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        auto utf8 = installName.utf8();
+        auto span = utf8.span();
+        logError("No info returned from dladdr() for %.*s", static_cast<int>(span.size()), span.data());
         return;
     }
 
     uuid_t uuid = { 0 };
     if (!_dyld_get_image_uuid(header, uuid)) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        logError("No UUID found for %s", installName.utf8().data());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        auto utf8 = installName.utf8();
+        auto span = utf8.span();
+        logError("No UUID found for %.*s", static_cast<int>(span.size()), span.data());
         return;
     }
 
@@ -258,7 +258,9 @@ void LibraryPathDiagnosticsLogger::logCryptexCanaryInfo(canary_cryptex_t which, 
     const canary_meta_t *metadata = canary_metadata(which);
 
     if (!metadata) {
-        logError("Unable to load canary metadata for '%s' cryptex", description.utf8().data());
+        auto utf8 = description.utf8();
+        auto span = utf8.span();
+        logError("Unable to load canary metadata for '%.*s' cryptex", static_cast<int>(span.size()), span.data());
         return;
     }
 

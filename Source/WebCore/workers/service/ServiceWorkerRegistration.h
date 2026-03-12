@@ -95,7 +95,7 @@ public:
     void getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);
     void getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 
-    const ServiceWorkerRegistrationData& data() const { return m_registrationData; }
+    const ServiceWorkerRegistrationData& data() const LIFETIME_BOUND { return m_registrationData; }
 
     void updateStateFromServer(ServiceWorkerRegistrationState, RefPtr<ServiceWorker>&&);
     void queueTaskToFireUpdateFoundEvent();

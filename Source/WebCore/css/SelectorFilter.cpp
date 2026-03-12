@@ -72,7 +72,7 @@ void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vect
 
 bool SelectorFilter::parentStackIsConsistent(const ContainerNode* parentNode) const
 {
-    if (!parentNode || is<Document>(parentNode) || is<ShadowRoot>(parentNode))
+    if (!parentNode || isAnyOf<Document, ShadowRoot>(*parentNode))
         return m_parentStack.isEmpty();
 
     return !m_parentStack.isEmpty() && m_parentStack.last().element == parentNode;

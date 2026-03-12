@@ -417,7 +417,8 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
     globalScope->eventLoop().performMicrotaskCheckpoint(*m_vm);
 
     // Drive RunLoop until we get either of "Worker is terminated", "Loading is done", or "Loading is failed".
-    WorkerRunLoop& runLoop = globalScope->workerOrWorkletThread()->runLoop();
+    RefPtr workerOrWorkletThread = globalScope->workerOrWorkletThread();
+    auto& runLoop = workerOrWorkletThread->runLoop();
 
     // We do not want to receive messages that are not related to asynchronous resource loading.
     // Otherwise, a worker discards some messages from the main thread here in a racy way.

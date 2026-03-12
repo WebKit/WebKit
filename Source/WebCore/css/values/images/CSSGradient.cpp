@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "CSSGradient.h"
+#include "CSSGradientInlines.h"
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"

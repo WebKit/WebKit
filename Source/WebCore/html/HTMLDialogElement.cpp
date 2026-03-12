@@ -29,7 +29,6 @@
 #include "ContainerNodeInlines.h"
 #include "CSSSelector.h"
 #include "DocumentPage.h"
-#include "EventLoop.h"
 #include "EventNames.h"
 #include "FocusOptions.h"
 #include "HTMLButtonElement.h"
@@ -206,7 +205,7 @@ void HTMLDialogElement::requestClose(const String& returnValue, Element* source)
     if (!isOpen())
         return;
 
-    auto cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
+    Ref cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
     dispatchEvent(cancelEvent);
     if (!cancelEvent->defaultPrevented())
         close(returnValue, source);
@@ -247,14 +246,11 @@ bool HTMLDialogElement::handleCommandInternal(HTMLButtonElement& invoker, const 
 
 void HTMLDialogElement::queueCancelTask()
 {
-    queueTaskKeepingThisNodeAlive(TaskSource::UserInteraction, [weakThis = WeakPtr { *this }] {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-        auto cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
-        protectedThis->dispatchEvent(cancelEvent);
+    queueTaskKeepingNodeAlive(*this, TaskSource::UserInteraction, [](auto& dialog) {
+        Ref cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
+        dialog.dispatchEvent(cancelEvent);
         if (!cancelEvent->defaultPrevented())
-            protectedThis->close(nullString());
+            dialog.close(nullString());
     });
 }
 

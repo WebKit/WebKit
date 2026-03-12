@@ -43,6 +43,7 @@ messages -> WebFrame {
     DescribeTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (struct WebCore::TextExtraction::InteractionDescription description)
     TakeSnapshotOfExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (RefPtr<WebCore::TextIndicator> textIndicator)
     RequestJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
+    RequestContainerJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
 
     # Element targeting support
     GetSelectorPathsForNode(struct WebKit::JSHandleInfo handle) -> (Vector<HashSet<String>> selectors)

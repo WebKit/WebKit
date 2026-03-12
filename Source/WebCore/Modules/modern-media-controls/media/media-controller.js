@@ -427,7 +427,7 @@ class MediaController
 
         if (this.host && this.host.inWindowFullscreen) {
             this._stopPropagationOnInteractionEvents();
-            if (!this.host.supportsRewind)
+            if (!this.host.supportsRewind && this.controls.rewindButton)
                 this.controls.rewindButton.dropped = true;
         }
 

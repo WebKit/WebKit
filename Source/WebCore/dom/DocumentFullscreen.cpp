@@ -193,7 +193,7 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
         return handleError("Cannot request fullscreen on a document that is not fully active."_s, EmitErrorEvent::No, WTF::move(completionHandler));
 
     auto isElementTypeAllowedForFullscreen = [] (const auto& element) {
-        if (is<HTMLElement>(element) || is<SVGSVGElement>(element))
+        if (isAnyOf<HTMLElement, SVGSVGElement>(element))
             return true;
 #if ENABLE(MATHML)
         if (is<MathMLMathElement>(element))
@@ -419,7 +419,7 @@ bool DocumentFullscreen::didEnterFullscreen()
 bool DocumentFullscreen::isSimpleFullscreenDocument() const
 {
     bool foundFullscreenFlag = false;
-    for (Ref element : document().topLayerElements()) {
+    for (auto& element : document().topLayerElements()) {
         if (element->hasFullscreenFlag()) {
             if (foundFullscreenFlag)
                 return false;
@@ -502,7 +502,7 @@ void DocumentFullscreen::exitFullscreen(CompletionHandler<void(ExceptionOr<void>
 
     m_pendingExitFullscreen = true;
     auto resetPendingExitFullscreenScope = makeScopeExit([weakThis = WeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get())
+        if (auto* protectedThis = weakThis.get())
             protectedThis->m_pendingExitFullscreen = false;
     });
 
@@ -701,7 +701,7 @@ void DocumentFullscreen::fullyExitFullscreen()
 
     m_pendingExitFullscreen = true;
     auto resetPendingExitFullscreenScope = makeScopeExit([weakThis = WeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get())
+        if (auto* protectedThis = weakThis.get())
             protectedThis->m_pendingExitFullscreen = false;
     });
 

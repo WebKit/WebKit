@@ -316,7 +316,7 @@ void AnimationTimelinesController::resumeAnimations()
 
 ReducedResolutionSeconds AnimationTimelinesController::liveCurrentTime() const
 {
-    return protect(protect(document())->window())->nowTimestamp();
+    return protect(document().window())->nowTimestamp();
 }
 
 std::optional<Seconds> AnimationTimelinesController::currentTime(UseCachedCurrentTime useCachedCurrentTime)
@@ -390,7 +390,7 @@ void AnimationTimelinesController::processPendingAnimations()
 
 bool AnimationTimelinesController::isPendingTimelineAttachment(const WebAnimation& animation) const
 {
-    CheckedPtr styleOriginatedTimelinesController = protect(document())->styleOriginatedTimelinesController();
+    CheckedPtr styleOriginatedTimelinesController = document().styleOriginatedTimelinesController();
     return styleOriginatedTimelinesController && styleOriginatedTimelinesController->isPendingTimelineAttachment(animation);
 }
 

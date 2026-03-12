@@ -114,7 +114,7 @@ public:
 
     String defaultTimeZone();
     String timeZoneDisplayName(bool isDST);
-    Ref<DateInstanceData> cachedDateInstanceData(double millisecondsFromEpoch);
+    Ref<DateInstanceData> NODELETE cachedDateInstanceData(double millisecondsFromEpoch);
 
     void msToGregorianDateTime(double millisecondsFromEpoch, TimeType outputTimeType, GregorianDateTime&);
     double gregorianDateTimeToMS(const GregorianDateTime&, double milliseconds, TimeType);
@@ -158,7 +158,7 @@ private:
         LocalTimeOffset localTimeOffset(DateCache&, int64_t millisecondsFromEpoch, TimeType);
 
     private:
-        LocalTimeOffsetCache* leastRecentlyUsed(LocalTimeOffsetCache* exclude);
+        LocalTimeOffsetCache* NODELETE leastRecentlyUsed(LocalTimeOffsetCache* exclude);
         std::tuple<LocalTimeOffsetCache*, LocalTimeOffsetCache*> probe(int64_t millisecondsFromEpoch);
         void extendTheAfterCache(int64_t millisecondsFromEpoch, LocalTimeOffset);
 

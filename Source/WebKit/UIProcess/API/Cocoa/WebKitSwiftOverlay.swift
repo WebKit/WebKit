@@ -51,7 +51,7 @@ extension WKWebView {
         arguments: [Swift.String: Any] = [:],
         in frame: WKFrameInfo? = nil,
         in contentWorld: WKContentWorld,
-        completionHandler: (@MainActor (Result<Any, Error>) -> Void)? = nil
+        completionHandler: (@MainActor (Result<Any, any Error>) -> Void)? = nil
     ) {
         let thunk = completionHandler.map { ObjCBlockConversion.boxingNilAsAnyForCompatibility($0) }
         __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld, completionHandler: thunk)
@@ -62,7 +62,7 @@ extension WKWebView {
     @preconcurrency
     public func createPDF(
         configuration: WKPDFConfiguration = .init(),
-        completionHandler: @MainActor @escaping (Result<Data, Error>) -> Void
+        completionHandler: @MainActor @escaping (Result<Data, any Error>) -> Void
     ) {
         __createPDF(with: configuration, completionHandler: ObjCBlockConversion.exclusive(completionHandler))
     }
@@ -70,7 +70,7 @@ extension WKWebView {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @preconcurrency
-    public func createWebArchiveData(completionHandler: @MainActor @escaping (Result<Data, Error>) -> Void) {
+    public func createWebArchiveData(completionHandler: @MainActor @escaping (Result<Data, any Error>) -> Void) {
         __createWebArchiveData(completionHandler: ObjCBlockConversion.exclusive(completionHandler))
     }
 
@@ -81,7 +81,7 @@ extension WKWebView {
         _ javaScript: Swift.String,
         in frame: WKFrameInfo? = nil,
         in contentWorld: WKContentWorld,
-        completionHandler: (@MainActor (Result<Any, Error>) -> Void)? = nil
+        completionHandler: (@MainActor (Result<Any, any Error>) -> Void)? = nil
     ) {
         let thunk = completionHandler.map { ObjCBlockConversion.boxingNilAsAnyForCompatibility($0) }
         __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld, completionHandler: thunk)
@@ -171,7 +171,7 @@ extension WKWebExtension {
 extension WKWebExtensionController {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public func didCloseTab(_ closedTab: WKWebExtensionTab, windowIsClosing: Bool = false) {
+    public func didCloseTab(_ closedTab: any WKWebExtensionTab, windowIsClosing: Bool = false) {
         __didClose(closedTab, windowIsClosing: windowIsClosing)
     }
 
@@ -194,7 +194,7 @@ extension WKWebExtensionController {
 extension WKWebExtensionContext {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public func didCloseTab(_ closedTab: WKWebExtensionTab, windowIsClosing: Bool = false) {
+    public func didCloseTab(_ closedTab: any WKWebExtensionTab, windowIsClosing: Bool = false) {
         __didClose(closedTab, windowIsClosing: windowIsClosing)
     }
 

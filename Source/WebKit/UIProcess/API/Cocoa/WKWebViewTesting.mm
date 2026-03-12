@@ -524,6 +524,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (void)_doAfterProcessingAllPendingKeyEvents:(dispatch_block_t)action
+{
+    _page->doAfterProcessingAllPendingKeyEvents([action = makeBlockPtr(action)] {
+        action();
+    });
+}
+
 + (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier
 {
     setApplicationBundleIdentifierOverride(String(bundleIdentifier));
@@ -1111,6 +1118,28 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     for (auto side : WebCore::allBoxSides)
         [_fixedColorExtensionViews.at(side) cancelFadeAnimation];
 #endif
+}
+
+- (void)_startMonitoringWheelEventsForTesting:(void(^)(void))completionHandler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    pageForTesting->startMonitoringWheelEventsForTesting([completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
+- (void)_waitForWheelEventsToCompleteForTesting:(void(^)(void))completionHandler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    pageForTesting->waitForWheelEventsToCompleteForTesting([completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
 }
 
 - (unsigned)_forwardedLogsCountForTesting

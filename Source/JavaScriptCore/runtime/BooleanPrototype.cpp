@@ -57,6 +57,7 @@ void BooleanPrototype::finishCreation(VM& vm, JSGlobalObject*)
     setInternalValue(vm, jsBoolean(false));
 
     ASSERT(inherits(info()));
+    structure()->setMayBePrototype(true);
 }
 
 // ------------------------------ Functions ---------------------------

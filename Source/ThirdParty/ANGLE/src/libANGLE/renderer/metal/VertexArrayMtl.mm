@@ -489,9 +489,9 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
                 continue;
             }
             uint32_t bufferIdx    = mtl::kVboBindingIndexStart + v;
-            uint32_t bufferOffset = static_cast<uint32_t>(mCurrentArrayBufferOffsets[v]);
             if (mCurrentArrayBuffers[v])
             {
+                size_t bufferOffset = mCurrentArrayBufferOffsets[v];
                 cmdEncoder->setVertexBuffer(mCurrentArrayBuffers[v]->getCurrentBuffer(),
                                             bufferOffset, bufferIdx);
             }

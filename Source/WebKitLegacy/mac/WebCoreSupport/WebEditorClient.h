@@ -219,7 +219,7 @@ private:
     EditorStateIsContentEditable m_lastEditorStateWasContentEditable { EditorStateIsContentEditable::Unset };
 };
 
-inline NSSelectionAffinity kit(WebCore::Affinity affinity)
+inline NSSelectionAffinity NODELETE kit(WebCore::Affinity affinity)
 {
     switch (affinity) {
     case WebCore::Affinity::Upstream:

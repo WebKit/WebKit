@@ -55,7 +55,7 @@ public:
 
     Class parametersClass() const final { return Class::AesCbcCfbParams; }
 
-    const Vector<uint8_t>& ivVector() const
+    const Vector<uint8_t>& ivVector() const LIFETIME_BOUND
     {
         if (!m_ivVector.isEmpty() || !iv || !iv->byteLength())
             return m_ivVector;

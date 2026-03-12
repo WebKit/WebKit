@@ -1,80 +1,58 @@
 <script src="../../../resources/js-test.js"></script>
 <script src="../resources/shared.js"></script>
 <body>
-This test verifies when storage process crashes, indexedDB operation should not hang indefinitely.
+This test verifies when the network process crashes, indexedDB.open() recovers without a page reload.
 </body>
 <script>
 
 var dbname = setDBNameFromPath() + Date();
-var storageKey = "opendatabase-after-storage-crash.html";
+var idbRef = window.indexedDB;
 
-function continueTest()
-{
-	var request = window.indexedDB.open(dbname, 2);
-	request.onupgradeneeded = function(e) {
-		document.body.innerHTML = "Unexpected upgradeneeded after storage process termination. Database: name " + dbname + ", version 2.";
-		if (window.testRunner)
-			testRunner.notifyDone();
-	}
-
-	request.onerror = function(e) {
-		// Good, we received an expected error.
-		// Now reload to see if a new document connects successfully
-		if (localStorage[storageKey]) {
-			document.body.innerHTML = "Received error more than once unexpectedly. Database: name " + dbname + ", version 2.";
-			if (window.testRunner)
-				testRunner.notifyDone();
-			return;
-		}
-
-		localStorage[storageKey] = "Made it";
-		location.reload();
-	}
-
-	request.onsuccess = function(e) {
-		document.body.innerHTML = "Unexpected upgradeneeded after storage process termination. Database: name " + dbname + ", version 2. localStorage value: " + sessionStorage[storageKey] + ".";
-		if (window.testRunner)
-			testRunner.notifyDone();
-	}
-}
-
-var versionToOpen = localStorage.doneFirstLoad ? 3 : 1;
-var request = window.indexedDB.open(dbname, versionToOpen);
+var request = window.indexedDB.open(dbname, 1);
 
 request.onupgradeneeded = function(e) {
-	if (localStorage.doneFirstLoad) {
-		document.body.innerHTML = "Successfully opened database with version " + versionToOpen + ".";
-		shouldBeEqualToString('localStorage[storageKey]', 'Made it');
-
-		if (window.testRunner) {
-			testRunner.notifyDone();
-			return;
-		}
-	}
-
-	localStorage.doneFirstLoad = true;
-
-	// Set an error handler on the database connection so once the storage process terminates we know to continue the test
-	e.target.result.onerror = function(e) {
-		setTimeout(continueTest, 0);
-	}
-
-	if (window.testRunner) {
-		testRunner.waitUntilDone();
-		// Make sure localStorage is flushed to disk before crashing network process.
-		testRunner.syncLocalStorage();
-		testRunner.terminateNetworkProcess();
-	}
-}
-
-request.onerror = function(e) {
-	if (versionToOpen == 1)
-		document.body.innerHTML = "Error on opening reuqest for database version 1. (FAIL: test should stop at opening version 3.)"; 
+    e.target.result.createObjectStore("test");
 }
 
 request.onsuccess = function(e) {
-	if (versionToOpen == 1)
-		document.body.innerHTML = "Success on opening reuqest for database version 1. (FAIL: test should stop at opening version 3.)";
+    var db = e.target.result;
+    // Keep the database open so we receive the onclose event on crash.
+    db.onclose = function() {
+        debug("Database connection closed by network process crash.");
+
+        if (idbRef !== window.indexedDB) {
+            testFailed("window.indexedDB returned a different object after crash");
+            if (window.testRunner)
+                testRunner.notifyDone();
+            return;
+        }
+        testPassed("window.indexedDB is the same object after crash");
+
+        var reopenRequest = window.indexedDB.open(dbname, 2);
+        reopenRequest.onupgradeneeded = function(e) {
+            debug("Successfully opened database with version 2 after network process crash.");
+            testPassed("indexedDB.open() recovered after network process crash without page reload");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        reopenRequest.onerror = function(e) {
+            testFailed("indexedDB.open() failed after network process crash: " + e.target.error);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    };
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.terminateNetworkProcess();
+    }
+}
+
+request.onerror = function(e) {
+    testFailed("Error on initial database open: " + e.target.error);
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

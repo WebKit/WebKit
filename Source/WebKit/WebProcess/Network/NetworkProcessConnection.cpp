@@ -223,8 +223,15 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
     Ref<NetworkProcessConnection> protector(*this);
     WebProcess::singleton().networkProcessConnectionClosed(this);
 
-    if (auto idbConnection = std::exchange(m_webIDBConnection, nullptr))
+    if (auto idbConnection = std::exchange(m_webIDBConnection, nullptr)) {
         idbConnection->connectionToServerLost();
+
+        // Mark that workers need their IDB proxies refreshed. The actual refresh
+        // is deferred until the network process is relaunched for another reason
+        // (e.g. a document calling indexedDB.open()), to avoid unnecessarily
+        // relaunching the network process just for workers.
+        WebProcess::singleton().setNeedsIDBConnectionRefreshForWorkers();
+    }
 
     if (auto swConnection = std::exchange(m_swConnection, nullptr))
         swConnection->connectionToServerLost();

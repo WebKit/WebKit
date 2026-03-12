@@ -41,10 +41,10 @@ public:
     
     explicit operator bool() const { return !!m_structureSet.size(); }
     
-    const StructureSet& structureSet() const { return m_structureSet; }
-    StructureSet& structureSet() { return m_structureSet; }
+    const StructureSet& structureSet() const LIFETIME_BOUND { return m_structureSet; }
+    StructureSet& structureSet() LIFETIME_BOUND { return m_structureSet; }
     
-    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
+    const ObjectPropertyConditionSet& conditionSet() const LIFETIME_BOUND { return m_conditionSet; }
     
     JSObject* prototype() const { return m_prototype; }
     

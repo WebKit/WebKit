@@ -41,7 +41,7 @@
 @end
 
 using WorldMap = HashMap<SingleThreadWeakRef<WebCore::DOMWrapperWorld>, WebScriptWorld*>;
-static WorldMap& allWorlds()
+static WorldMap& NODELETE allWorlds()
 {
     static WorldMap& map = *new WorldMap;
     return map;

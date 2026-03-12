@@ -619,8 +619,8 @@ String ShorthandSerializer::serializeCoordinatingListPropertyGroup() const
     // If any longhand has a different number of items than the coordinating list base
     // property, there is no serialization that will round-trip, so the serialization fails
     for (unsigned longhandIndex = 1; longhandIndex < length(); ++longhandIndex) {
-        Ref value = longhandValue(longhandIndex);
-        if (RefPtr valueList = dynamicDowncast<CSSValueList>(value)) {
+        auto& value = longhandValue(longhandIndex);
+        if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
             if (valueList->length() != numberOfItemsForCoordinatingListBaseProperty)
                 return String();
         }
@@ -630,11 +630,11 @@ String ShorthandSerializer::serializeCoordinatingListPropertyGroup() const
     for (unsigned listItemIndex = 0; listItemIndex < numberOfItemsForCoordinatingListBaseProperty; ++listItemIndex) {
         LayerValues layerValues { m_shorthand };
         for (unsigned longhandIndex = 0; longhandIndex < length(); ++longhandIndex) {
-            Ref value = longhandValue(longhandIndex);
-            if (auto* valueList = dynamicDowncast<CSSValueList>(value.ptr()))
+            auto& value = longhandValue(longhandIndex);
+            if (auto* valueList = dynamicDowncast<CSSValueList>(&value))
                 layerValues.set(longhandIndex, valueList->item(listItemIndex));
             else
-                layerValues.set(longhandIndex, value.ptr());
+                layerValues.set(longhandIndex, &value);
         }
         // The coordinating list base property must never be skipped.
         layerValues.skip(0) = false;
@@ -890,9 +890,9 @@ String ShorthandSerializer::serializeBorderRadius() const
     std::array<RefPtr<const CSSValue>, 4> horizontalRadii;
     std::array<RefPtr<const CSSValue>, 4> verticalRadii;
     for (unsigned i = 0; i < 4; ++i) {
-        Ref value = longhandValue(i);
-        horizontalRadii[i] = value->first();
-        verticalRadii[i] = value->second();
+        auto& value = longhandValue(i);
+        horizontalRadii[i] = value.first();
+        verticalRadii[i] = value.second();
     }
 
     bool serializeBoth = false;
@@ -965,8 +965,8 @@ String ShorthandSerializer::serializeFont() const
     // If some but not all properties are, the font shorthand can't represent that, serialize as empty string.
     std::optional<CSSValueID> specialKeyword;
     bool allSpecialKeywords = true;
-    for (Ref longhandValue : longhandValues()) {
-        auto keyword = valueID(longhandValue.ptr());
+    for (auto& longhandValue : longhandValues()) {
+        auto keyword = valueID(&longhandValue);
         if (!CSSPropertyParserHelpers::isSystemFontShorthand(keyword))
             allSpecialKeywords = false;
         else {
@@ -1062,8 +1062,8 @@ String ShorthandSerializer::serializeFontSynthesis() const
 
 String ShorthandSerializer::serializeFontVariant() const
 {
-    for (Ref value : longhandValues()) {
-        if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID(value.ptr())))
+    for (auto& value : longhandValues()) {
+        if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID(&value)))
             return String();
     }
     if (isLonghandValueNone(longhandIndex(0, CSSPropertyFontVariantLigatures))) {
@@ -1090,8 +1090,8 @@ static bool NODELETE isValueIDIncludingList(const CSSValue& value, CSSValueID id
 static bool gridAutoFlowContains(CSSValue& autoFlow, CSSValueID id)
 {
     if (auto* valueList = dynamicDowncast<CSSValueList>(autoFlow)) {
-        for (Ref currentValue : *valueList) {
-            if (isValueID(currentValue.ptr(), id))
+        for (auto& currentValue : *valueList) {
+            if (isValueID(&currentValue, id))
                 return true;
         }
         return false;

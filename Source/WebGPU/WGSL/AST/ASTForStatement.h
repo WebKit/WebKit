@@ -37,19 +37,22 @@ public:
     Statement* maybeInitializer() { return m_initializer; }
     Expression* maybeTest() { return m_test; }
     Statement* maybeUpdate() { return m_update; }
+    Attribute::List& attributes() { return m_attributes; }
     CompoundStatement& body() { return m_body; }
     bool isInternallyGenerated() const { return m_isInternallyGenerated; }
     void setInternallyGenerated() { m_isInternallyGenerated = true; }
 
 private:
-    ForStatement(SourceSpan span, Statement::Ptr initializer, Expression::Ptr test, Statement::Ptr update, CompoundStatement::Ref&& body)
+    ForStatement(SourceSpan span, Attribute::List&& attributes, Statement::Ptr initializer, Expression::Ptr test, Statement::Ptr update, CompoundStatement::Ref&& body)
         : Statement(span)
+        , m_attributes(WTF::move(attributes))
         , m_initializer(initializer)
         , m_test(test)
         , m_update(update)
         , m_body(WTF::move(body))
     { }
 
+    Attribute::List m_attributes;
     Statement::Ptr m_initializer;
     Expression::Ptr m_test;
     Statement::Ptr m_update;

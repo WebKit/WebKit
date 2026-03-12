@@ -154,7 +154,7 @@ public:
     ASCIILiteral logClassName() const { return "CDMInstanceFairPlayStreamingAVFObjC"_s; }
 #endif
 
-    const String& mediaKeysHashSalt() const { return m_mediaKeysHashSalt; }
+    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 private:
     explicit CDMInstanceFairPlayStreamingAVFObjC(const CDMPrivateFairPlayStreaming&);
@@ -231,7 +231,7 @@ public:
     bool hasRequest(AVContentKeyRequest*) const;
     bool isAnyKeyUsable(const CDMKeyIDs&) const;
 
-    const KeyStatusVector& keyStatuses() const { return m_keyStatuses; }
+    const KeyStatusVector& keyStatuses() const LIFETIME_BOUND { return m_keyStatuses; }
     KeyStatusVector copyKeyStatuses() const;
 
     void attachContentKeyToSample(const MediaSampleAVFObjC&);

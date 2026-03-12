@@ -71,7 +71,7 @@ public:
             return;
         stopListeningForIPCAndRelease(m_object);
     }
-    T* get() const { return m_object.get(); }
+    T* get() const LIFETIME_BOUND { return m_object.get(); }
     T* operator->() const { return m_object.get(); }
 private:
     template<typename U>

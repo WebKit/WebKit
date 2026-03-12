@@ -69,7 +69,7 @@ public:
     AnimatedProperty property() const { return m_property; }
 
     size_t size() const { return m_values.size(); }
-    const GraphicsLayerAnimationValue& at(size_t i) const { return *m_values.at(i); }
+    const GraphicsLayerAnimationValue& at(size_t i) const LIFETIME_BOUND { return *m_values.at(i); }
 
     // Insert, sorted by keyTime.
     WEBCORE_EXPORT void insert(std::unique_ptr<const GraphicsLayerAnimationValue>);

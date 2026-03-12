@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+<style>
+.flex {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 100%;
+}
+</style>
+<script src="../resources/runner.js"></script>
+<script>
+function createFlexTree(depth) {
+    if (depth <= 0)
+        return "";
+    return '<div class="flex">' + createFlexTree(depth - 1) + '</div>'
+         + '<div class="flex">' + createFlexTree(depth - 1) + '</div>';
+}
+
+function startTest() {
+    var container = document.getElementById("container");
+    container.innerHTML = '<div class="flex">' + createFlexTree(10) + '</div>';
+    document.body.offsetHeight;
+
+    var index = 0;
+    PerfTestRunner.measureRunsPerSecond({
+        run: function() {
+            document.body.style.width = ++index % 2 ? "99%" : "98%";
+            document.body.offsetHeight;
+        },
+        done: function() {
+            container.style.display = "none";
+        }
+    });
+}
+</script>
+</head>
+<body onload="startTest()">
+<div id="container"></div>
+</body>

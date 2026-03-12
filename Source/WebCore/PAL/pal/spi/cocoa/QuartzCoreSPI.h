@@ -380,10 +380,3 @@ extern NSString * const kCASnapshotOriginY;
 extern NSString * const kCASnapshotTransform;
 extern NSString * const kCASnapshotTimeOffset;
 #endif
-
-#if PLATFORM(VISION) && !__has_feature(modules)
-// FIXME:rdar://160881286 - clean-up once in SDK.
-@interface CARemoteExternalEffect (Radar_160881286)
-+ (instancetype)rcp_requiresTwoHandedInteractionProcessorEffect;
-@end
-#endif // PLATFORM(VISION) && !__has_feature(modules)

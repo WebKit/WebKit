@@ -30,7 +30,7 @@ internal import Metal
 @_spi(RealityCoreRendererAPI) import RealityKit
 @_spi(SGInternal) import RealityKit
 
-nonisolated func mapSemantic(_ semantic: LowLevelMesh.VertexSemantic) -> _Proto_LowLevelMeshResource_v1.VertexSemantic {
+func mapSemantic(_ semantic: LowLevelMesh.VertexSemantic) -> _Proto_LowLevelMeshResource_v1.VertexSemantic {
     switch semantic {
     case .position: .position
     case .color: .color
@@ -51,7 +51,7 @@ nonisolated func mapSemantic(_ semantic: LowLevelMesh.VertexSemantic) -> _Proto_
 }
 
 extension _Proto_LowLevelMeshResource_v1.Descriptor {
-    nonisolated static func fromLlmDescriptor(_ llmDescriptor: LowLevelMesh.Descriptor) -> Self {
+    static func fromLlmDescriptor(_ llmDescriptor: LowLevelMesh.Descriptor) -> Self {
         var descriptor = Self.init()
         descriptor.vertexCapacity = llmDescriptor.vertexCapacity
         descriptor.vertexAttributes = llmDescriptor.vertexAttributes.map { attribute in
@@ -73,32 +73,34 @@ extension _Proto_LowLevelMeshResource_v1.Descriptor {
 }
 
 extension _Proto_LowLevelMeshResource_v1 {
-    nonisolated func replaceVertexData(_ vertexData: [Data]) {
+    func replaceVertexData(_ vertexData: [Data]) {
         for (vertexBufferIndex, vertexData) in vertexData.enumerated() {
             let bufferSizeInByte = vertexData.bytes.byteCount
             self.replaceVertices(at: vertexBufferIndex) { vertexBytes in
-                vertexBytes.withUnsafeMutableBytes { ptr in
+                // FIXME: (rdar://164559261) understand/document/remove unsafety
+                unsafe vertexBytes.withUnsafeMutableBytes { ptr in
                     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                     // swift-format-ignore: NeverForceUnwrap
-                    vertexData.copyBytes(to: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: bufferSizeInByte)
+                    unsafe vertexData.copyBytes(to: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: bufferSizeInByte)
                 }
             }
         }
     }
 
-    nonisolated func replaceIndexData(_ indexData: Data?) {
+    func replaceIndexData(_ indexData: Data?) {
         if let indexData = indexData {
             self.replaceIndices { indicesBytes in
-                indicesBytes.withUnsafeMutableBytes { ptr in
+                // FIXME: (rdar://164559261) understand/document/remove unsafety
+                unsafe indicesBytes.withUnsafeMutableBytes { ptr in
                     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                     // swift-format-ignore: NeverForceUnwrap
-                    indexData.copyBytes(to: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: ptr.count)
+                    unsafe indexData.copyBytes(to: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: ptr.count)
                 }
             }
         }
     }
 
-    nonisolated func replaceData(indexData: Data?, vertexData: [Data]) {
+    func replaceData(indexData: Data?, vertexData: [Data]) {
         // Copy index data
         self.replaceIndexData(indexData)
 
@@ -123,7 +125,7 @@ extension _Proto_LowLevelTextureResource_v1.Descriptor {
         return descriptor
     }
 
-    static func from(_ texture: MTLTexture, swizzle: MTLTextureSwizzleChannels) -> _Proto_LowLevelTextureResource_v1.Descriptor {
+    static func from(_ texture: any MTLTexture, swizzle: MTLTextureSwizzleChannels) -> _Proto_LowLevelTextureResource_v1.Descriptor {
         var descriptor = _Proto_LowLevelTextureResource_v1.Descriptor()
         descriptor.width = texture.width
         descriptor.height = texture.height
@@ -160,7 +162,7 @@ private func mapSemantic(_ semantic: Int) -> _Proto_LowLevelMeshResource_v1.Vert
 }
 
 extension _Proto_LowLevelMeshResource_v1.Descriptor {
-    nonisolated static func fromLlmDescriptor(_ llmDescriptor: WKBridgeMeshDescriptor) -> Self {
+    static func fromLlmDescriptor(_ llmDescriptor: WKBridgeMeshDescriptor) -> Self {
         var descriptor = Self.init()
         descriptor.vertexCapacity = Int(llmDescriptor.vertexCapacity)
         descriptor.vertexAttributes = llmDescriptor.vertexAttributes.map { attribute in

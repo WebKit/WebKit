@@ -45,7 +45,7 @@ public:
     void clearAllWrappers();
 
     void setSavedResultAlias(const std::optional<String>& alias) { m_savedResultAlias = alias; }
-    const std::optional<String>& savedResultAlias() const { return m_savedResultAlias; }
+    const std::optional<String>& savedResultAlias() const LIFETIME_BOUND { return m_savedResultAlias; }
 
 private:
     PerGlobalObjectWrapperWorld m_wrappers;

@@ -62,7 +62,6 @@ platform/graphics/ca/TileController.cpp
 [ iOS ] platform/ios/DeviceMotionClientIOS.h
 [ iOS ] platform/ios/LegacyTileCache.h
 platform/mediastream/libwebrtc/LibWebRTCDav1dDecoder.cpp
-rendering/MarkedText.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderTextLineBoxes.h

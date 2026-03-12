@@ -96,7 +96,7 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Ref<Node>>>& par
         unsigned sortedEnd = from;
         // FIXME: namespace nodes are not implemented.
         for (unsigned i = sortedEnd; i < to; ++i) {
-            if (RefPtr attr = dynamicDowncast<Attr>(parentMatrix[i][0].get()); attr && attr->ownerElement() == commonAncestor)
+            if (auto* attr = dynamicDowncast<Attr>(parentMatrix[i][0].get()); attr && attr->ownerElement() == commonAncestor)
                 parentMatrix[i].swap(parentMatrix[sortedEnd++]);
         }
         if (sortedEnd != from) {

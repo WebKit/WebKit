@@ -141,8 +141,8 @@ RefPtr<TextTrack> TextTrackList::getTrackById(const AtomString& id) const
 RefPtr<TextTrack> TextTrackList::getTrackById(TrackID id) const
 {
     for (unsigned i = 0; i < length(); ++i) {
-        Ref track = *item(i);
-        if (track->trackId() == id)
+        auto& track = *item(i);
+        if (track.trackId() == id)
             return track;
     }
     return nullptr;

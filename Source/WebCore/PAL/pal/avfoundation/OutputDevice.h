@@ -46,7 +46,7 @@ public:
     };
     uint8_t deviceFeatures() const;
 
-    AVOutputDevice* platformDevice() const { return m_device.get(); }
+    AVOutputDevice* platformDevice() const LIFETIME_BOUND { return m_device.get(); }
 private:
     friend class OutputContext;
     OutputDevice(RetainPtr<AVOutputDevice>&&);

@@ -214,10 +214,10 @@ public:
     ScrollingNodeID scrollingNodeIDForTesting();
 
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
-    ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }
+    ScrollAnimator* existingScrollAnimator() const LIFETIME_BOUND { return m_scrollAnimator.get(); }
 
     WEBCORE_EXPORT ScrollbarsController& scrollbarsController() const;
-    ScrollbarsController* existingScrollbarsController() const { return m_scrollbarsController.get(); }
+    ScrollbarsController* existingScrollbarsController() const LIFETIME_BOUND { return m_scrollbarsController.get(); }
     WEBCORE_EXPORT virtual void createScrollbarsController();
 
     virtual bool isActive() const = 0;
@@ -269,7 +269,7 @@ public:
         return nullptr;
     }
 
-    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
+    const IntPoint& scrollOrigin() const LIFETIME_BOUND { return m_scrollOrigin; }
     bool scrollOriginChanged() const { return m_scrollOriginChanged; }
 
     virtual ScrollPosition scrollPosition() const = 0;

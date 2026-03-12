@@ -108,7 +108,7 @@ public:
     void logTypesForTypeLocation(TypeLocation*, VM&);
     JS_EXPORT_PRIVATE String typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, SourceID, VM&);
     void insertNewLocation(TypeLocation*);
-    TypeLocationCache* typeLocationCache() { return &m_typeLocationCache; }
+    TypeLocationCache* typeLocationCache() LIFETIME_BOUND { return &m_typeLocationCache; }
     TypeLocation* findLocation(unsigned divot, SourceID, TypeProfilerSearchDescriptor, VM&);
     GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
     TypeLocation* nextTypeLocation();

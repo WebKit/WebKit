@@ -606,7 +606,7 @@ void GPUCanvasContextCocoa::updateMemoryCost() const
     // Computes only a rough ballpark figure to drive garbage collection.
     size_t newMemoryCost = 0;
     if (m_readDisplayBuffer)
-        newMemoryCost += Ref { *m_readDisplayBuffer }->memoryCost();
+        newMemoryCost += m_readDisplayBuffer->memoryCost();
     if (m_currentTexture)
         newMemoryCost += m_width * m_height * 4;
     CanvasRenderingContext::updateMemoryCost(newMemoryCost);

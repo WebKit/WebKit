@@ -51,6 +51,7 @@
 #include "HistoryItem.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrameInlines.h"
+#include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "Navigation.h"
 #include "NavigationDisabler.h"
@@ -100,6 +101,9 @@ public:
     virtual void didStopTimer(Frame&, NewLoadInProgress) { }
     virtual bool targetIsCurrentFrame() const { return true; }
     virtual bool isSameDocumentNavigation(Frame&) const { return false; }
+
+    enum class ShouldCancel : uint8_t { No, Yes };
+    virtual ShouldCancel adjustForNewBackForwardEntry() { return ShouldCancel::No; }
 
     double NODELETE delay() const { return m_delay; }
     LockHistory NODELETE lockHistory() const { return m_lockHistory; }
@@ -290,31 +294,44 @@ public:
 
 class ScheduledHistoryNavigation : public ScheduledNavigation {
 public:
-    explicit ScheduledHistoryNavigation(Ref<HistoryItem>&& historyItem)
+    explicit ScheduledHistoryNavigation(int steps)
         : ScheduledNavigation(0, LockHistory::No, LockBackForwardList::No, false, true)
-        , m_historyItem(WTF::move(historyItem))
+        , m_steps(steps)
     {
     }
 
-    void fire(Frame& frame) override
+    void fire(Frame& frame) final
     {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             return;
 
         RefPtr page { localFrame->page() };
-        if (!page || !protect(page->backForward())->containsItem(m_historyItem))
+        if (!page)
             return;
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
 
-        if (RefPtr currentItem = protect(page->backForward())->currentItem(); currentItem && currentItem->itemID() == m_historyItem->itemID()) {
+        if (page->settings().useUIProcessForBackForwardItemLoading()) {
+            localFrame->loader().setPendingAsyncBackForwardNavigation();
+            localFrame->loader().client().dispatchGoToBackForwardItemAtIndex(m_steps, FrameLoadType::IndexedBackForward);
+            return;
+        }
+
+        RefPtr historyItem = targetHistoryItem(*localFrame);
+        if (!historyItem)
+            return;
+
+        if (!protect(page->backForward())->containsItem(*historyItem))
+            return;
+
+        if (RefPtr currentItem = protect(page->backForward())->currentItem(); currentItem && currentItem->itemID() == historyItem->itemID()) {
             localFrame->loader().changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;
         }
-        
+
         Ref rootFrame = localFrame->rootFrame();
-        page->goToItem(rootFrame, m_historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
+        page->goToItem(rootFrame, *historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
     }
 
     bool isSameDocumentNavigation(Frame& frame) const final
@@ -323,16 +340,37 @@ public:
         if (!localFrame)
             return false;
 
-        RefPtr page { localFrame->page() };
-        if (!page || !protect(page->backForward())->containsItem(m_historyItem))
+        RefPtr historyItem = targetHistoryItem(*localFrame);
+        if (!historyItem)
             return false;
 
-        URL url { m_historyItem->url() };
-        return equalIgnoringFragmentIdentifier(localFrame->document()->url(), url);
+        RefPtr currentItem = localFrame->loader().history().currentItem();
+        return currentItem && historyItem->shouldDoSameDocumentNavigationTo(*currentItem);
+    }
+
+    ShouldCancel adjustForNewBackForwardEntry() final
+    {
+        if (m_steps > 0)
+            return ShouldCancel::Yes;
+        if (m_steps < 0)
+            m_steps--;
+        return ShouldCancel::No;
     }
 
 private:
-    const Ref<HistoryItem> m_historyItem;
+    HistoryItem* targetHistoryItem(LocalFrame& localFrame) const
+    {
+        if (!m_historyItem) {
+            RefPtr page = localFrame.page();
+            if (!page)
+                return nullptr;
+            m_historyItem = protect(page->backForward())->itemAtIndex(m_steps, localFrame.rootFrame().frameID());
+        }
+        return m_historyItem.get();
+    }
+
+    mutable RefPtr<HistoryItem> m_historyItem;
+    int m_steps;
 };
 
 // This matches ScheduledHistoryNavigation, but instead of having a HistoryItem provided, it finds
@@ -594,7 +632,7 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
         return false;
     if (url.protocolIsJavaScript())
         return true;
-    return NavigationDisabler::isNavigationAllowed(protect(m_frame));
+    return NavigationDisabler::isNavigationAllowed(m_frame.get());
 }
 
 void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double delay, const URL& url, IsMetaRefresh isMetaRefresh)
@@ -758,14 +796,7 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
         return;
     }
 
-    RefPtr historyItem = backForward->itemAtIndex(steps, localFrame->rootFrame().frameID());
-    if (!historyItem) {
-        cancel();
-        return;
-    }
-
-    // In all other cases, schedule the history traversal to occur asynchronously.
-    schedule(makeUnique<ScheduledHistoryNavigation>(historyItem.releaseNonNull()));
+    schedule(makeUnique<ScheduledHistoryNavigation>(steps));
 }
 
 void NavigationScheduler::scheduleHistoryNavigationByKey(const String& key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&& completionHandler)
@@ -855,6 +886,14 @@ void NavigationScheduler::startTimer()
     Seconds delay = 1_s * m_redirect->delay();
     m_timer.startOneShot(delay);
     m_redirect->didStartTimer(frame, m_timer); // m_redirect may be null on return (e.g. the client canceled the load)
+}
+
+void NavigationScheduler::adjustPendingHistoryNavigationForNewBackForwardEntry()
+{
+    if (!m_redirect)
+        return;
+    if (m_redirect->adjustForNewBackForwardEntry() == ScheduledNavigation::ShouldCancel::Yes)
+        cancel();
 }
 
 void NavigationScheduler::cancel(NewLoadInProgress newLoadInProgress)

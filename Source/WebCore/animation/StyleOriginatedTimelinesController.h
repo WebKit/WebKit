@@ -77,7 +77,7 @@ public:
     void styleableWasRemoved(const Styleable&);
 
 private:
-    Vector<Ref<ScrollTimeline>>& timelinesForName(const AtomString&);
+    Vector<Ref<ScrollTimeline>>& timelinesForName(const AtomString&) LIFETIME_BOUND;
     Vector<WeakStyleable> relatedTimelineScopeElements(const CustomIdentifier&);
     void updateCSSAnimationsAssociatedWithNamedTimeline(const AtomString&);
 

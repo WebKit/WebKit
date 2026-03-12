@@ -50,10 +50,10 @@ public:
     bool isTableFormattingState() const { return m_type == Type::Table; }
     bool isFlexFormattingState() const { return m_type == Type::Flex; }
 
-    LayoutState& layoutState() const { return m_layoutState; }
+    LayoutState& layoutState() const LIFETIME_BOUND { return m_layoutState; }
 
     // FIXME: We need to find a way to limit access to mutable geometry.
-    BoxGeometry& boxGeometry(const Box& layoutBox);
+    BoxGeometry& boxGeometry(const Box& layoutBox) LIFETIME_BOUND;
 
 protected:
     enum class Type { Block, Table, Flex };

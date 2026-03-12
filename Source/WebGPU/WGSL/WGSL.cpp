@@ -40,6 +40,7 @@
 #include "PhaseTimer.h"
 #include "PointerRewriter.h"
 #include "TypeCheck.h"
+#include "UniformityAnalysis.h"
 #include "VisibilityValidator.h"
 #include "WGSLShaderModule.h"
 
@@ -51,8 +52,11 @@ namespace WGSL {
         PhaseTimer phaseTimer(#pass, phaseTimes); \
         return pass(__VA_ARGS__); \
     }(); \
-    if (maybe##pass##Failure) \
-        return { *maybe##pass##Failure };
+    if (maybe##pass##Failure) { \
+        if (!maybe##pass##Failure->errors.isEmpty()) \
+            return { *maybe##pass##Failure }; \
+        warnings.appendVector(WTF::move(maybe##pass##Failure->warnings)); \
+    }
 
 #define RUN_PASS(pass, ...) \
     do { \
@@ -72,6 +76,7 @@ Variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std:
 {
     PhaseTimes phaseTimes;
     auto shaderModule = makeUniqueRef<ShaderModule>(wgsl, configuration);
+    Vector<Warning> warnings;
 
     CHECK_PASS(parse, shaderModule);
     CHECK_PASS(reorderGlobals, shaderModule);
@@ -83,8 +88,8 @@ Variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std:
     RUN_PASS(mangleNames, shaderModule);
     RUN_PASS(rewritePointers, shaderModule);
     CHECK_PASS(aliasAnalysis, shaderModule);
+    CHECK_PASS(uniformityAnalysis, shaderModule);
 
-    Vector<Warning> warnings { };
     return Variant<SuccessfulCheck, FailedCheck>(WTF::InPlaceType<SuccessfulCheck>, WTF::move(warnings), WTF::move(shaderModule));
 }
 
@@ -110,7 +115,8 @@ inline Variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, con
 
         RUN_PASS(insertBoundsChecks, shaderModule);
         RUN_PASS(rewriteEntryPoints, shaderModule, pipelineLayouts);
-        CHECK_PASS(rewriteGlobalVariables, shaderModule, pipelineLayouts, entryPoints);
+        if (auto error = rewriteGlobalVariables(shaderModule, pipelineLayouts, entryPoints))
+            return { *error };
 
         dumpASTAtEndIfNeeded(shaderModule);
 

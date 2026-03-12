@@ -498,7 +498,7 @@ static bool NODELETE shouldReportNetworkOrGPUProcessCrash(ProcessTerminationReas
 
 void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProcessProxy, ProcessTerminationReason reason)
 {
-    for (Ref process : m_processes)
+    for (auto& process : m_processes)
         process->resetHasRegisteredServiceWorkerClients();
 
     if (shouldReportNetworkOrGPUProcessCrash(reason))
@@ -1176,10 +1176,10 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
     }
 
     if (m_configuration->fullySynchronousModeIsAllowedForTesting())
-        protect(process.connection())->allowFullySynchronousModeForTesting();
+        process.connection().allowFullySynchronousModeForTesting();
 
     if (m_configuration->ignoreSynchronousMessagingTimeoutsForTesting())
-        protect(process.connection())->ignoreTimeoutsForTesting();
+        process.connection().ignoreTimeoutsForTesting();
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     for (auto& page : process.pages()) {
@@ -1876,9 +1876,9 @@ bool WebProcessPool::httpPipeliningEnabled() const
 
 RefPtr<WebProcessProxy> WebProcessPool::webProcessProxyFromConnection(const IPC::Connection& connection) const
 {
-    for (Ref process : m_processes) {
+    for (auto& process : m_processes) {
         if (process->hasConnection(connection))
-            return process;
+            return &process.get();
     }
 
     ASSERT_NOT_REACHED();
@@ -2170,7 +2170,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     if (siteIsolationEnabled && !site.isEmpty()) {
         ASSERT(frameInfo.isMainFrame ? site == mainFrameSite : Site(URL(protect(page.pageLoadState())->activeURL())) == mainFrameSite);
         if (!frame.isMainFrame() && site == mainFrameSite) {
-            Ref mainFrameProcess = protect(page.mainFrame())->process();
+            Ref mainFrameProcess = Ref { page.mainFrame()->process() };
             if (!mainFrameProcess->isInProcessCache())
                 return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same site as main frame"_s);
         }
@@ -2316,7 +2316,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
 
     if (RefPtr targetItem = navigation.targetItem(); targetItem && !siteIsolationEnabled) {
         if (CheckedPtr suspendedPage = targetItem->suspendedPage()) {
-            if (protect(suspendedPage->process())->state() != AuxiliaryProcessProxy::State::Terminated)
+            if (suspendedPage->process().state() != AuxiliaryProcessProxy::State::Terminated)
                 return { suspendedPage->process(), suspendedPage.get(), "Using target back/forward item's process and suspended page"_s };
         }
 

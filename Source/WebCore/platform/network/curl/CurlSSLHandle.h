@@ -51,9 +51,9 @@ public:
 
     CurlSSLHandle();
 
-    const CString& cipherList() const { return m_cipherList; }
-    const CString& signatureAlgorithmsList() const { return m_signatureAlgorithmsList; }
-    const CString& ecCurves() const { return m_ecCurves; }
+    const CString& cipherList() const LIFETIME_BOUND { return m_cipherList; }
+    const CString& signatureAlgorithmsList() const LIFETIME_BOUND { return m_signatureAlgorithmsList; }
+    const CString& ecCurves() const LIFETIME_BOUND { return m_ecCurves; }
 
     void setCipherList(CString&& data) { m_cipherList = WTF::move(data); }
     void setSignatureAlgorithmsList(CString&& data) { m_signatureAlgorithmsList = WTF::move(data); }
@@ -62,7 +62,7 @@ public:
     bool shouldIgnoreSSLErrors() const { return m_ignoreSSLErrors; }
     WEBCORE_EXPORT void setIgnoreSSLErrors(bool flag) { m_ignoreSSLErrors = flag; }
 
-    const CACertInfo& getCACertInfo() const { return m_caCertInfo; }
+    const CACertInfo& getCACertInfo() const LIFETIME_BOUND { return m_caCertInfo; }
     WEBCORE_EXPORT void setCACertPath(String&&);
     WEBCORE_EXPORT void setCACertData(CertificateInfo::Certificate&&);
     WEBCORE_EXPORT void clearCACertInfo();

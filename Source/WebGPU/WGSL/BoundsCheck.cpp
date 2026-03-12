@@ -52,6 +52,7 @@ public:
 
 private:
     ShaderModule& m_shaderModule;
+    HashSet<AST::IndexAccessExpression*> m_visited;
 };
 
 
@@ -66,6 +67,10 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
 {
     if (access.constantValue())
         return;
+
+    if (m_visited.contains(&access))
+        return;
+    m_visited.add(&access);
 
     AST::Visitor::visit(access);
 

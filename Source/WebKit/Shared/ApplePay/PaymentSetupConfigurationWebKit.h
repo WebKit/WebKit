@@ -41,8 +41,8 @@ public:
 
     RetainPtr<PKPaymentSetupConfiguration> platformConfiguration() const;
 
-    const WebCore::ApplePaySetupConfiguration& configuration() const { return m_configuration; }
-    const URL& url() const { return m_url; }
+    const WebCore::ApplePaySetupConfiguration& configuration() const LIFETIME_BOUND { return m_configuration; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
 
 private:
     WebCore::ApplePaySetupConfiguration m_configuration;

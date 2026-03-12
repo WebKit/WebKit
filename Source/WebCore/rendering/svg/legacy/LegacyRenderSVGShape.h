@@ -77,7 +77,7 @@ public:
     FloatPoint getPointAtLength(float distance) const;
 
     bool hasPath() const { return m_path.get(); }
-    Path& path() const
+    Path& path() const LIFETIME_BOUND
     {
         ASSERT(m_path);
         return *m_path;
@@ -89,7 +89,7 @@ public:
 protected:
     void element() const = delete;
 
-    Path& ensurePath();
+    Path& ensurePath() LIFETIME_BOUND;
 
     virtual void updateShapeFromElement() = 0;
     virtual bool NODELETE isEmpty() const;
@@ -116,7 +116,7 @@ private:
 
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
     FloatRect decoratedBoundingBox() const final;
-    const AffineTransform& localToParentTransform() const final { return m_localTransform; }
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND final { return m_localTransform; }
     AffineTransform localTransform() const final { return m_localTransform; }
 
     bool canHaveChildren() const final { return false; }

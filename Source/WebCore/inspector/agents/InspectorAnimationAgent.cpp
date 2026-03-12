@@ -288,7 +288,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
 
     const auto existsInCurrentPage = [&] (ScriptExecutionContext* scriptExecutionContext) {
         // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's WebSockets
-        RefPtr document = dynamicDowncast<Document>(scriptExecutionContext);
+        auto* document = dynamicDowncast<Document>(scriptExecutionContext);
         return document && document->page() == m_inspectedPage.ptr();
     };
 

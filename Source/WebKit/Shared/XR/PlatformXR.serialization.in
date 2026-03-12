@@ -129,6 +129,9 @@ header: <WebCore/PlatformXR.h>
 
 [Nested, RValue] struct PlatformXR::FrameData::LayerSetupData {
     std::array<std::array<uint16_t, 2>, 2> physicalSize;
+#if PLATFORM(COCOA)
+    std::array<std::array<uint16_t, 2>, 2> actualSize;
+#endif
     std::array<WebCore::IntRect, 2> viewports;
     PlatformXR::RateMapDescription foveationRateMapDesc;
 #if PLATFORM(COCOA)

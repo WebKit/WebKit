@@ -54,15 +54,15 @@ public:
 
     ~XRProjectionLayer();
 
-    void setLabel(String&&);
+    void NODELETE setLabel(String&&);
 
-    bool isValid() const;
-    void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples);
+    bool NODELETE isValid() const;
+    void NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples);
 
-    id<MTLTexture> colorTexture() const;
-    id<MTLTexture> depthTexture() const;
-    const std::pair<id<MTLSharedEvent>, uint64_t>& completionEvent() const;
-    size_t reusableTextureIndex() const;
+    id<MTLTexture> NODELETE colorTexture() const;
+    id<MTLTexture> NODELETE depthTexture() const;
+    const std::pair<id<MTLSharedEvent>, uint64_t>& NODELETE completionEvent() const;
+    size_t NODELETE reusableTextureIndex() const;
     WGPUTextureFormat colorFormat() const { return m_colorFormat; }
     std::optional<WGPUTextureFormat> optionalDepthStencilFormat() const { return m_optionalDepthStencilFormat; }
     WGPUTextureUsageFlags flags() const { return m_flags; }

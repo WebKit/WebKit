@@ -49,7 +49,7 @@ public:
 
     const Vector<CaptureDevice>& captureDevices() final;
     void computeCaptureDevices(CompletionHandler<void()>&&) final;
-    const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
+    const Vector<CaptureDevice>& speakerDevices() const LIFETIME_BOUND { return m_speakerDevices; }
     std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
     std::optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);
@@ -60,7 +60,7 @@ public:
     void disableAllDevicesQuery();
 
     void setPreferredMicrophoneID(const String&);
-    const String& preferredMicrophoneID() const { return m_preferredMicrophoneID; }
+    const String& preferredMicrophoneID() const LIFETIME_BOUND { return m_preferredMicrophoneID; }
     void configurePreferredMicrophone();
 
     WEBCORE_EXPORT void setPreferredSpeakerID(const String&);

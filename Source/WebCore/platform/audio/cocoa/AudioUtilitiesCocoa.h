@@ -33,7 +33,7 @@ namespace WebCore {
 class AudioBus;
 
 WEBCORE_EXPORT AudioStreamBasicDescription audioStreamBasicDescriptionForAudioBus(AudioBus&);
-
+WEBCORE_EXPORT Vector<uint8_t> createESDescriptor(std::span<const uint8_t> audioSpecificConfig);
 }
 
 #endif

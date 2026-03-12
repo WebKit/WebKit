@@ -41,7 +41,7 @@ public:
     bool removeFromSetLike(const String& item) { return m_items.removeFirst(item); }
     void initializeSetLike(DOMSetAdapter&);
 
-    const Vector<String>& items() const { return m_items; }
+    const Vector<String>& items() const LIFETIME_BOUND { return m_items; }
 
 private:
     InternalsSetLike();

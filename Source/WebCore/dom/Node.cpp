@@ -44,11 +44,9 @@
 #include "ElementTraversal.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
-#include "EventLoop.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "FrameInlines.h"
-#include "GCReachableRef.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDialogElement.h"
@@ -65,6 +63,7 @@
 #include "Logging.h"
 #include "MouseEventTypes.h"
 #include "MutationEvent.h"
+#include "NameValidation.h"
 #include "NodeName.h"
 #include "NodeRareDataInlines.h"
 #include "NodeRenderStyle.h"
@@ -141,9 +140,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SameSizeAsNode);
 static_assert(sizeof(Node) == sizeof(SameSizeAsNode), "Node should stay small");
 
 #if DUMP_NODE_STATISTICS
-static WeakHashSet<Node>& liveNodeSet()
+static WeakHashSet<Node, WeakPtrImplWithEventTargetData>& liveNodeSet()
 {
-    static NeverDestroyed<WeakHashSet<Node>> liveNodes;
+    static NeverDestroyed<WeakHashSet<Node, WeakPtrImplWithEventTargetData>> liveNodes;
     return liveNodes;
 }
 
@@ -202,8 +201,12 @@ static ASCIILiteral stringForRareDataUseType(NodeRareData::UseType useType)
         return "ExplicitlySetAttrElementsMap"_s;
     case NodeRareData::UseType::Popover:
         return "Popover"_s;
+    case NodeRareData::UseType::CustomStateSet:
+        return "CustomStateSet"_s;
     case NodeRareData::UseType::UserInfo:
         return "UserInfo"_s;
+    case NodeRareData::UseType::InvokedPopover:
+        return "InvokedPopover"_s;
     }
     return { };
 }
@@ -391,9 +394,9 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
 #endif
 }
 
-static HashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>& NODELETE nodeIdentifiersMap()
+static HashMap<WeakPtr<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>& NODELETE nodeIdentifiersMap()
 {
-    static MainThreadNeverDestroyed<HashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>> map;
+    static MainThreadNeverDestroyed<HashMap<WeakPtr<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>> map;
     return map;
 }
 
@@ -1141,7 +1144,7 @@ ExceptionOr<void> Node::checkSetPrefix(const AtomString& prefix)
     // Perform error checking as required by spec for setting Node.prefix. Used by
     // Element::setPrefix() and Attr::setPrefix()
 
-    if (!prefix.isEmpty() && !Document::isValidName(prefix))
+    if (!prefix.isEmpty() && !NameValidation::isValidNamespacePrefix(prefix))
         return Exception { ExceptionCode::InvalidCharacterError };
 
     // FIXME: Raise NamespaceError if prefix is malformed per the Namespaces in XML specification.
@@ -1268,11 +1271,11 @@ bool Node::canStartSelection() const
         return true;
 
     if (renderer()) {
-        const CheckedRef style = renderer()->style();
+        const auto& style = renderer()->style();
 
         // We allow selections to begin within an element that has -webkit-user-select: none set,
         // but if the element is draggable then dragging should take priority over selection.
-        if (style->userDrag() == UserDrag::Element && style->usedUserSelect() == UserSelect::None)
+        if (style.userDrag() == UserDrag::Element && style.usedUserSelect() == UserSelect::None)
             return false;
     }
     return parentOrShadowHostNode() ? parentOrShadowHostNode()->canStartSelection() : true;
@@ -1476,17 +1479,10 @@ Node& Node::getRootNode(const GetRootNodeOptions& options) const
     return options.composed ? shadowIncludingRoot() : rootNode();
 }
 
-void Node::queueTaskKeepingThisNodeAlive(TaskSource source, Function<void ()>&& task)
-{
-    document().eventLoop().queueTask(source, [protectedThis = GCReachableRef(*this), task = WTF::move(task)] () {
-        task();
-    });
-}
-
 void Node::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
 {
-    queueTaskKeepingThisNodeAlive(source, [protectedThis = Ref { *this }, event = WTF::move(event)]() {
-        protectedThis->dispatchEvent(event);
+    queueTaskKeepingNodeAlive(*this, source, [event = WTF::move(event)](Node& node) {
+        node.dispatchEvent(event);
     });
 }
 
@@ -3132,7 +3128,7 @@ Node* Node::fromIdentifier(NodeIdentifier identifier)
 {
     for (auto& [node, nodeIdentifier] : nodeIdentifiersMap()) {
         if (nodeIdentifier == identifier)
-            return node.ptr();
+            return node.get();
     }
     return nullptr;
 }

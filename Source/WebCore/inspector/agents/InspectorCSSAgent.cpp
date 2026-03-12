@@ -965,7 +965,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent
 {
     auto fontFamilyNames = JSON::ArrayOf<String>::create();
 
-    Vector<String> systemFontFamilies = FontCache::forCurrentThread()->systemFontFamilies();
+    Vector<String> systemFontFamilies = FontCache::forCurrentThread().systemFontFamilies();
     for (const auto& familyName : systemFontFamilies)
         fontFamilyNames->addItem(familyName);
 
@@ -1159,7 +1159,7 @@ RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> Inspect
 
 static void pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(InspectorDOMAgent& domAgent, ContainerNode& node)
 {
-    for (CheckedRef child : childrenOfType<Element>(node))
+    for (auto& child : childrenOfType<Element>(node))
         pushChildrenNodesToFrontendIfLayoutFlagIsRelevant(domAgent, child);
     
     if (layoutFlagContextType(node.renderer()))

@@ -95,8 +95,8 @@ public:
     using OpenWindowCallback = CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>;
     virtual void openWindow(ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) = 0;
 
-    const RegistrableDomain& registrableDomain() const { return m_site.domain(); }
-    const Site& site() const { return m_site; }
+    const RegistrableDomain& registrableDomain() const LIFETIME_BOUND { return m_site.domain(); }
+    const Site& site() const LIFETIME_BOUND { return m_site; }
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
     virtual void connectionIsNoLongerNeeded() = 0;

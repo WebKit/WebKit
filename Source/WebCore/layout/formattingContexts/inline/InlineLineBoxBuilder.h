@@ -62,13 +62,13 @@ private:
 
     bool isFirstFormattedLine() const { return lineLayoutResult().isFirstLast.isFirstFormattedLine == IsFirstFormattedLine::Yes; }
     bool isLastLine() const { return lineLayoutResult().isFirstLast.isLastLineWithInlineContent; }
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    const LineLayoutResult& lineLayoutResult() const { return m_lineLayoutResult; }
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
+    const LineLayoutResult& lineLayoutResult() const LIFETIME_BOUND { return m_lineLayoutResult; }
     const ElementBox& rootBox() const { return formattingContext().root(); }
-    const RenderStyle& rootStyle() const { return isFirstFormattedLine() ? rootBox().firstLineStyle() : rootBox().style(); }
+    const RenderStyle& rootStyle() const LIFETIME_BOUND { return isFirstFormattedLine() ? rootBox().firstLineStyle() : rootBox().style(); }
 
-    const InlineLayoutState& layoutState() const { return formattingContext().layoutState(); }
-    const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
+    const InlineLayoutState& layoutState() const LIFETIME_BOUND { return formattingContext().layoutState(); }
+    const BlockLayoutState& blockLayoutState() const LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;

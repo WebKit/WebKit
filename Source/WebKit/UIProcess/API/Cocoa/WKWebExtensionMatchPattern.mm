@@ -214,7 +214,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
 
 - (BOOL)matchesAllHosts
 {
-    return protect(*_webExtensionMatchPattern)->matchesAllHosts();
+    return _webExtensionMatchPattern->matchesAllHosts();
 }
 
 - (BOOL)matchesURL:(NSURL *)urlToMatch

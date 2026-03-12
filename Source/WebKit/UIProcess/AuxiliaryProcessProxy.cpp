@@ -47,6 +47,7 @@
 #include "CoreIPCSecureCoding.h"
 #include "SandboxUtilities.h"
 #include <sys/sysctl.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
@@ -351,7 +352,23 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
         return;
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    m_lifetimeActivity = protect(throttler())->foregroundActivity("Lifetime Activity"_s);
+    enum class LifetimeActivityState { None, Background, Foreground };
+    static LifetimeActivityState lifetimeActivityState = []() {
+        if (auto value = dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("LifetimeActivityState"), kCFPreferencesCurrentApplication)))) {
+            if (CFEqual(value, CFSTR("None")))
+                return LifetimeActivityState::None;
+            if (CFEqual(value, CFSTR("BG")))
+                return LifetimeActivityState::Background;
+            if (CFEqual(value, CFSTR("FG")))
+                return LifetimeActivityState::Foreground;
+        }
+        return LifetimeActivityState::Background;
+    }();
+
+    if (lifetimeActivityState == LifetimeActivityState::Foreground)
+        m_lifetimeActivity = protect(throttler())->foregroundActivity("FG Lifetime Activity"_s);
+    else if (lifetimeActivityState == LifetimeActivityState::Background)
+        m_lifetimeActivity = protect(throttler())->backgroundActivity("BG Lifetime Activity"_s);
 #endif
 
     RefPtr connection = IPC::Connection::createServerConnection(WTF::move(connectionIdentifier), Thread::QOS::UserInteractive);

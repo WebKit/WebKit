@@ -246,8 +246,8 @@ bool FrameState::isEqualForTesting(const FrameState& other) const
         return false;
 
     for (size_t i = 0; i < children.size(); ++i) {
-        Ref child = children[i];
-        Ref otherChild = other.children[i];
+        auto& child = children[i];
+        auto& otherChild = other.children[i];
         if (!child->isEqualForTesting(otherChild.get()))
             return false;
     }

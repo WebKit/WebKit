@@ -1,6 +1,7 @@
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/misc/resources/acid3/empty.css' because non CSS MIME types are not allowed in strict mode.
-ALERT: Test 23 failed: expected '14' but got '5' - wrong exception for createElementNS('null', ':div')
-Test 25 failed: wrong exception
+ALERT: Test 22 failed: no exception for createElement('di<v')
+Test 23 failed: no exception for createElementNS('null', 'di<v')
+Test 25 failed: failed to raise exception
 Test 35 failed: expected '0' but got '1' - root element, with no parent node, claims to be a :first-child
 
 layer at (0,0) size 800x600
@@ -22,7 +23,7 @@ layer at (20,20) size 644x433
       RenderBlock {P} at (41,214) size 568x120
         RenderInline {SPAN} at (262,4) size 112x112
           RenderText {#text} at (262,4) size 112x112
-            text run at (262,4) width 112: "97"
+            text run at (262,4) width 112: "96"
         RenderInline {SPAN} at (373,4) size 29x112
           RenderText {#text} at (373,4) size 29x112
             text run at (373,4) width 29: "/"

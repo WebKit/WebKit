@@ -189,11 +189,11 @@ public:
     RenderLayerModelObject& renderer() const { return m_renderer; }
     RenderBox* renderBox() const { return dynamicDowncast<RenderBox>(renderer()); }
 
-    RenderLayer* parent() const { return m_parent.get(); }
-    RenderLayer* previousSibling() const { return m_previous.get(); }
-    RenderLayer* nextSibling() const { return m_next.get(); }
-    RenderLayer* firstChild() const { return m_first.get(); }
-    RenderLayer* lastChild() const { return m_last.get(); }
+    RenderLayer* parent() const LIFETIME_BOUND { return m_parent.get(); }
+    RenderLayer* previousSibling() const LIFETIME_BOUND { return m_previous.get(); }
+    RenderLayer* nextSibling() const LIFETIME_BOUND { return m_next.get(); }
+    RenderLayer* firstChild() const LIFETIME_BOUND { return m_first.get(); }
+    RenderLayer* lastChild() const LIFETIME_BOUND { return m_last.get(); }
     bool NODELETE isDescendantOf(const RenderLayer&) const;
     WEBCORE_EXPORT RenderLayer* commonAncestorWithLayer(const RenderLayer&) const;
 
@@ -479,10 +479,10 @@ public:
     RenderLayer* NODELETE reflectionLayer() const;
     bool NODELETE isReflectionLayer(const RenderLayer&) const;
 
-    inline const LayoutPoint& location() const;
+    inline const LayoutPoint& location() const LIFETIME_BOUND;
     void setLocation(const LayoutPoint& p) { m_topLeft = p; }
 
-    inline const IntSize& size() const;
+    inline const IntSize& size() const LIFETIME_BOUND;
     void setSize(const IntSize& size) { m_layerSize = size; } // Only public for RenderTreeAsText.
 
     inline LayoutRect rect() const;
@@ -540,7 +540,7 @@ public:
 
     bool hasCompositedLayerInEnclosingPaginationChain() const;
     enum PaginationInclusionMode { ExcludeCompositedPaginatedLayers, IncludeCompositedPaginatedLayers };
-    RenderLayer* enclosingPaginationLayer(PaginationInclusionMode mode) const
+    RenderLayer* enclosingPaginationLayer(PaginationInclusionMode mode) const LIFETIME_BOUND
     {
         if (mode == ExcludeCompositedPaginatedLayers && hasCompositedLayerInEnclosingPaginationChain())
             return nullptr;
@@ -552,7 +552,7 @@ public:
     void updateBlendMode();
     void NODELETE willRemoveChildWithBlendMode();
 
-    const LayoutSize& offsetForInFlowPosition() const { return m_offsetForPosition; }
+    const LayoutSize& offsetForInFlowPosition() const LIFETIME_BOUND { return m_offsetForPosition; }
 
     void clearClipRectsIncludingDescendants(ClipRectsType typeToClear = AllClipRectTypes);
     void clearClipRects(ClipRectsType typeToClear = AllClipRectTypes);
@@ -807,7 +807,7 @@ public:
 
     inline bool isTransformed() const;
     // Note that this transform has the transform-origin baked in.
-    TransformationMatrix* transform() const { return m_transform.get(); }
+    TransformationMatrix* transform() const LIFETIME_BOUND { return m_transform.get(); }
     // updateTransformFromStyle computes a transform according to the passed options (e.g. transform-origin baked in or excluded) and the given style.
     void updateTransformFromStyle(TransformationMatrix&, const RenderStyle&, OptionSet<Style::TransformResolverOption>) const;
     // currentTransform computes a transform which takes accelerated animations into account. The
@@ -878,19 +878,19 @@ public:
     void clearHasDescendantNeedingEventRegionUpdate() { m_hasDescendantNeedingEventRegionUpdate = false; }
 
     // If non-null, a non-ancestor composited layer that this layer paints into (it is sharing its backing store with this layer).
-    RenderLayer* backingProviderLayer() const { return m_backingProviderLayer.get(); }
+    RenderLayer* backingProviderLayer() const LIFETIME_BOUND { return m_backingProviderLayer.get(); }
     void setBackingProviderLayer(RenderLayer*, OptionSet<UpdateBackingSharingFlags>);
     void disconnectFromBackingProviderLayer(OptionSet<UpdateBackingSharingFlags>);
 
     bool paintsIntoProvidedBacking() const { return !!m_backingProviderLayer; }
 
-    RenderLayer* backingProviderLayerAtEndOfCompositingUpdate() const { return m_backingProviderLayerAtEndOfCompositingUpdate.get(); }
+    RenderLayer* backingProviderLayerAtEndOfCompositingUpdate() const LIFETIME_BOUND { return m_backingProviderLayerAtEndOfCompositingUpdate.get(); }
     void setBackingProviderLayerAtEndOfCompositingUpdate(RenderLayer* provider) { m_backingProviderLayerAtEndOfCompositingUpdate = provider; }
     RenderLayerModelObject* repaintContainer() const { return m_repaintContainer.get(); }
     void clearRepaintContainer() { m_repaintContainer = nullptr; }
 
-    RenderLayerBacking* backing() const { return m_backing.get(); }
-    RenderLayerBacking* ensureBacking();
+    RenderLayerBacking* backing() const LIFETIME_BOUND { return m_backing.get(); }
+    RenderLayerBacking* ensureBacking() LIFETIME_BOUND;
     void clearBacking(OptionSet<UpdateBackingSharingFlags>, bool layerBeingDestroyed = false);
 
     bool hasCompositedScrollingAncestor() const { return m_hasCompositedScrollingAncestor; }

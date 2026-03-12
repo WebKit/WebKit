@@ -44,7 +44,7 @@ CSSImportRule::CSSImportRule(StyleRuleImport& importRule, CSSStyleSheet* parent)
 CSSImportRule::~CSSImportRule()
 {
     if (m_styleSheetCSSOMWrapper)
-        protect(m_styleSheetCSSOMWrapper)->clearOwnerRule();
+        m_styleSheetCSSOMWrapper->clearOwnerRule();
     if (m_mediaCSSOMWrapper)
         protect(m_mediaCSSOMWrapper)->detachFromParent();
 }

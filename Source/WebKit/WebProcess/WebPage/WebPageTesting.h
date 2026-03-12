@@ -70,6 +70,8 @@ private:
     void setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&&);
 
     void clearWheelEventTestMonitor();
+    void startMonitoringWheelEventsForTesting(CompletionHandler<void()>&&);
+    void waitForWheelEventsToCompleteForTesting(CompletionHandler<void()>&&);
 
     WeakPtr<WebPage> m_page;
     WebCore::PageIdentifier m_pageIdentifier;

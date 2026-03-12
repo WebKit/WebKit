@@ -1097,7 +1097,7 @@ angle::Result ProgramExecutableMtl::commitUniforms(ContextMtl *context,
             // Commit
             ANGLE_TRY(bufferPool->commit(context));
             // Set buffer
-            cmdEncoder->setBuffer(shaderType, mtlBufferOut, (uint32_t)offsetOut,
+            cmdEncoder->setBuffer(shaderType, mtlBufferOut, offsetOut,
                                   mtl::kDefaultUniformsBindingIndex);
         }
 
@@ -1221,7 +1221,7 @@ angle::Result ProgramExecutableMtl::updateUniformBuffers(
 
     // This array is only used inside this function and its callees.
     ScopedAutoClearVector<uint32_t> scopeArrayClear(&mArgumentBufferRenderStageUsages);
-    ScopedAutoClearVector<std::pair<mtl::BufferRef, uint32_t>> scopeArrayClear2(
+    ScopedAutoClearVector<std::pair<mtl::BufferRef, size_t>> scopeArrayClear2(
         &mLegalizedOffsetedUniformBuffers);
     mArgumentBufferRenderStageUsages.resize(blocks.size());
     mLegalizedOffsetedUniformBuffers.resize(blocks.size());
@@ -1327,8 +1327,7 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *con
             size_t bytesToOffset = numBlocksToOffset * conversionInfo.metalSize();
 
             mLegalizedOffsetedUniformBuffers[bufferIndex].first = conversion->convertedBuffer;
-            mLegalizedOffsetedUniformBuffers[bufferIndex].second =
-                static_cast<uint32_t>(conversion->convertedOffset + bytesToOffset);
+            mLegalizedOffsetedUniformBuffers[bufferIndex].second = conversion->convertedOffset + bytesToOffset;
             // Ensure that the converted info can fit in the buffer.
             ASSERT(conversion->convertedOffset + bytesToOffset + conversionInfo.metalSize() <=
                    conversion->convertedBuffer->size());
@@ -1336,8 +1335,7 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *con
         else
         {
             mLegalizedOffsetedUniformBuffers[bufferIndex].first = bufferMtl->getCurrentBuffer();
-            mLegalizedOffsetedUniformBuffers[bufferIndex].second =
-                static_cast<uint32_t>(bufferBinding.getOffset());
+            mLegalizedOffsetedUniformBuffers[bufferIndex].second = bufferBinding.getOffset();
         }
     }
     return angle::Result::Continue;
@@ -1373,7 +1371,7 @@ angle::Result ProgramExecutableMtl::bindUniformBuffersToDiscreteSlots(
         }
 
         mtl::BufferRef mtlBuffer = mLegalizedOffsetedUniformBuffers[bufferIndex].first;
-        uint32_t offset          = mLegalizedOffsetedUniformBuffers[bufferIndex].second;
+        size_t offset            = mLegalizedOffsetedUniformBuffers[bufferIndex].second;
         cmdEncoder->setBuffer(shaderType, mtlBuffer, offset, actualBufferIdx);
     }
     return angle::Result::Continue;
@@ -1437,7 +1435,7 @@ angle::Result ProgramExecutableMtl::encodeUniformBuffersInfoArgumentBuffer(
         }
 
         mtl::BufferRef mtlBuffer = mLegalizedOffsetedUniformBuffers[bufferIndex].first;
-        uint32_t offset          = mLegalizedOffsetedUniformBuffers[bufferIndex].second;
+        size_t offset            = mLegalizedOffsetedUniformBuffers[bufferIndex].second;
         [bufferEncoder.metalArgBufferEncoder setBuffer:mtlBuffer->get()
                                                 offset:offset
                                                atIndex:actualBufferIdx];
@@ -1447,7 +1445,7 @@ angle::Result ProgramExecutableMtl::encodeUniformBuffersInfoArgumentBuffer(
     argumentBuffer->unmapAndFlushSubset(context, argumentBufferOffset,
                                         bufferEncoder.metalArgBufferEncoder.get().encodedLength);
 
-    cmdEncoder->setBuffer(shaderType, argumentBuffer, static_cast<uint32_t>(argumentBufferOffset),
+    cmdEncoder->setBuffer(shaderType, argumentBuffer, argumentBufferOffset,
                           mtl::kUBOArgumentBufferBindingIndex);
     return angle::Result::Continue;
 }

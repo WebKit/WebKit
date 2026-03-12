@@ -33,7 +33,7 @@
 #include "BoxLayoutShape.h"
 #include "FloatingObjects.h"
 #include "NullGraphicsContext.h"
-#include "RenderBlockFlow.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentContainer.h"

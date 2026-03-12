@@ -64,11 +64,11 @@ public:
     unsigned leaderOffset() const { return m_leaderOffset; }
     unsigned totalLength() const { return m_totalLength; }
 
-    const Vector<uint8_t>& delta() const { return m_delta; }
-    const Vector<unsigned>& successors() const { return m_successors; }
+    const Vector<uint8_t>& delta() const LIFETIME_BOUND { return m_delta; }
+    const Vector<unsigned>& successors() const LIFETIME_BOUND { return m_successors; }
 
-    FastBitVector& in() { return m_in; }
-    FastBitVector& out() { return m_out; }
+    FastBitVector& in() LIFETIME_BOUND { return m_in; }
+    FastBitVector& out() LIFETIME_BOUND { return m_out; }
 
     unsigned index() const { return m_index; }
 

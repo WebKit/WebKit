@@ -40,6 +40,7 @@
 #include <WebCore/MediaPromiseTypes.h>
 #include <WebCore/PlatformDynamicRangeLimit.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/PlatformMediaDecodingType.h>
 #include <WebCore/PlatformTextTrack.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SecurityOriginData.h>
@@ -111,10 +112,9 @@ struct HostingContext;
 struct VideoFrameMetadata;
 
 struct MediaEngineSupportParameters {
+    PlatformMediaDecodingType platformType { PlatformMediaDecodingType::FileOrHLS };
     ContentType type;
     URL url { };
-    bool isMediaSource { false };
-    bool isMediaStream { false };
     bool requiresRemotePlayback { false };
     bool supportsLimitedMatroska { false };
     Vector<ContentType> contentTypesRequiringHardwareSupport { };
@@ -700,7 +700,7 @@ public:
     void setShouldDisableSleep(bool);
     bool shouldDisableSleep() const;
 
-    const ContentType& contentType() const { return m_loadOptions.contentType; }
+    const ContentType& contentType() const LIFETIME_BOUND { return m_loadOptions.contentType; }
     String contentMIMEType() const;
     String contentTypeCodecs() const;
     bool contentMIMETypeWasInferredFromExtension() const;
@@ -809,7 +809,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
     void setSceneIdentifier(const String&);
-    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
 #endif
 
     void setMessageClientForTesting(WeakPtr<MessageClientForTesting>);

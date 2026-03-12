@@ -131,8 +131,8 @@ public:
     WEBCORE_EXPORT void setVerticalScrollbarLayer(const LayerRepresentation&);
 
 #if PLATFORM(MAC)
-    NSScrollerImp *verticalScrollerImp() const { return m_verticalScrollerImp.get(); }
-    NSScrollerImp *horizontalScrollerImp() const { return m_horizontalScrollerImp.get(); }
+    NSScrollerImp *verticalScrollerImp() const LIFETIME_BOUND { return m_verticalScrollerImp.get(); }
+    NSScrollerImp *horizontalScrollerImp() const LIFETIME_BOUND { return m_horizontalScrollerImp.get(); }
 #elif USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     ScrollerImpAdwaita* verticalScrollerImp() const { return m_verticalScrollerImp; }
     ScrollerImpAdwaita* horizontalScrollerImp() const { return m_horizontalScrollerImp; }

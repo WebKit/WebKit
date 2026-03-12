@@ -1,0 +1,14 @@
+Testing that the volume slider respects the user interface layout direction.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+width = 600
+usesLTRUserInterfaceLayoutDirection = false
+PASS Volume slider positioned from left in RTL (left: 0px, right: 506px)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

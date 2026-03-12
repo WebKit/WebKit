@@ -407,7 +407,7 @@ Value FunLocalName::evaluate() const
         return node ? expandedNameLocalPart(*node) : emptyString();
     }
 
-    return expandedNameLocalPart(*protect(evaluationContext().node));
+    return expandedNameLocalPart(*evaluationContext().node);
 }
 
 Value FunNamespaceURI::evaluate() const
@@ -421,7 +421,7 @@ Value FunNamespaceURI::evaluate() const
         return node ? node->namespaceURI().string() : emptyString();
     }
 
-    return protect(evaluationContext().node)->namespaceURI().string();
+    return evaluationContext().node->namespaceURI().string();
 }
 
 Value FunName::evaluate() const

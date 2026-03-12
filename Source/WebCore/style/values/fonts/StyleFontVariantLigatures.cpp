@@ -36,7 +36,7 @@ namespace Style {
 
 auto CSSValueConversion<FontVariantLigatures>::operator()(BuilderState& state, const CSSValue& value) -> FontVariantLigatures
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         case CSSValueNormal:
             return CSS::Keyword::Normal { };
@@ -59,8 +59,8 @@ auto CSSValueConversion<FontVariantLigatures>::operator()(BuilderState& state, c
     auto historical = Normal;
     auto contextual = Normal;
 
-    for (Ref item : *list) {
-        switch (item->valueID()) {
+    for (auto& item : *list) {
+        switch (item.valueID()) {
         case CSSValueNoCommonLigatures:
             common = No;
             break;

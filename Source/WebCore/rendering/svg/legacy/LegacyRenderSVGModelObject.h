@@ -65,7 +65,7 @@ public:
     static bool checkIntersection(RenderElement*, const FloatRect&);
     static bool checkEnclosure(RenderElement*, const FloatRect&);
 
-    SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
+    inline SVGElement& element() const; // Defined in LegacyRenderSVGModelObjectInlines.h
 
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) const;
 

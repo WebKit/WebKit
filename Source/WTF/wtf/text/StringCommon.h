@@ -684,6 +684,72 @@ SUPPRESS_NODELETE ALWAYS_INLINE const uint64_t* NODELETE find64(const uint64_t* 
     return nullptr;
 }
 
+SUPPRESS_NODELETE ALWAYS_INLINE const double* NODELETE findNaN(const double* pointer, size_t length)
+{
+    constexpr size_t scalarThreshold = 4;
+    size_t index = 0;
+    size_t runway = std::min(scalarThreshold, length);
+    for (; index < runway; ++index) {
+        double value = pointer[index];
+        if (value != value)
+            return pointer + index;
+    }
+    if (runway == length)
+        return nullptr;
+
+    constexpr size_t stride = SIMD::stride<double>;
+    constexpr size_t unrollFactor = 4;
+    constexpr size_t unrolledStride = stride * unrollFactor;
+
+    // NaN is the only IEEE 754 value for which self-compare yields false.
+    // fcmeq(v, v) produces all-zero lanes for NaN and all-one lanes otherwise.
+    auto vectorMatch = [](simde_float64x2_t value) ALWAYS_INLINE_LAMBDA {
+        return SIMD::findFirstNonZeroIndex(SIMD::bitNot(SIMD::equal(value, value)));
+    };
+
+    auto* cursor = pointer + index;
+    auto* end = pointer + length;
+
+    // Common case: all doubles are ordered (dense array). AND the fcmeq results
+    // together and take a single branch; if every lane stayed all-ones we skip
+    // the per-vector work entirely. This avoids per-vector bitNot and branch on
+    // the hot path.
+    for (; cursor + unrolledStride <= end; cursor += unrolledStride) {
+        auto v0 = SIMD::load(cursor);
+        auto v1 = SIMD::load(cursor + stride);
+        auto v2 = SIMD::load(cursor + stride * 2);
+        auto v3 = SIMD::load(cursor + stride * 3);
+
+        auto eq0 = SIMD::equal(v0, v0);
+        auto eq1 = SIMD::equal(v1, v1);
+        auto eq2 = SIMD::equal(v2, v2);
+        auto eq3 = SIMD::equal(v3, v3);
+
+        auto merged = SIMD::bitAnd(eq0, eq1, eq2, eq3);
+        if (SIMD::isNonZero(SIMD::bitNot(merged))) [[unlikely]] {
+            if (auto idx = SIMD::findFirstNonZeroIndex(SIMD::bitNot(eq0)))
+                return cursor + idx.value();
+            if (auto idx = SIMD::findFirstNonZeroIndex(SIMD::bitNot(eq1)))
+                return cursor + stride + idx.value();
+            if (auto idx = SIMD::findFirstNonZeroIndex(SIMD::bitNot(eq2)))
+                return cursor + stride * 2 + idx.value();
+            return cursor + stride * 3 + SIMD::findFirstNonZeroIndex(SIMD::bitNot(eq3)).value();
+        }
+    }
+
+    for (; cursor + stride <= end; cursor += stride) {
+        if (auto idx = vectorMatch(SIMD::load(cursor)))
+            return cursor + idx.value();
+    }
+
+    if (cursor < end) {
+        if (auto idx = vectorMatch(SIMD::load(end - stride)))
+            return end - stride + idx.value();
+    }
+
+    return nullptr;
+}
+
 ALWAYS_INLINE const Float16* NODELETE findFloat16(const Float16* pointer, Float16 target, size_t length)
 {
     for (size_t index = 0; index < length; ++index) {

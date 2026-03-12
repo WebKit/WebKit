@@ -81,7 +81,7 @@ void WebProcessActivityState::takeTextExtractionAssertion()
         return weakPageRef.get();
     }, m_page);
 
-    auto processID = protect(process())->processID();
+    auto processID = process().processID();
     Ref assertion = ProcessAssertion::create(protect(process()), "WebKit text extraction"_s, ProcessAssertionType::Background);
     m_textExtractionAssertion = assertion.copyRef();
     assertion->setInvalidationHandler([processID, weakPage = page] {
@@ -251,7 +251,7 @@ void WebProcessActivityState::takeAccessibilityActivityWhenInWindow()
     bool isCurrentlyInWindow = WTF::switchOn(m_page, [](WeakRef<WebPageProxy> page) -> bool {
         return page->isInWindow();
     }, [](WeakRef<RemotePageProxy> remotePage) -> bool {
-        if (RefPtr page = remotePage->page())
+        if (auto* page = remotePage->page())
             return page->isInWindow();
         return false;
     });

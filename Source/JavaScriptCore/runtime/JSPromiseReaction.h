@@ -50,7 +50,7 @@ public:
     JSValue onFulfilled() const { return m_onFulfilled.get(); }
     JSValue onRejected() const { return m_onRejected.get(); }
     JSValue context() const { return m_context.get(); }
-    JSPromiseReaction* next() const { return m_next.get(); }
+    JSPromiseReaction* next() const LIFETIME_BOUND { return m_next.get(); }
 
     void setPromise(VM& vm, JSValue value) { m_promise.set(vm, this, value); }
     void setOnFulfilled(VM& vm, JSValue value) { m_onFulfilled.set(vm, this, value); }

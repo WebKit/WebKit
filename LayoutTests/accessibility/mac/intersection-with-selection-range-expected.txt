@@ -1,41 +1,39 @@
-This tests the intersectionWithSelectionRange api, which returns the range of characters in a static text node that are part of the document selection, if any.
+This tests the intersectionWithSelectionRange API, which returns the range of characters in an AX element that are part of the document selection, if any.
 
-Trying range: text1:0 - text1:5 : Alpha
-PASS: window.getSelection().toString() === expectedText
-PASS: axStaticText.role === "AXRole: AXStaticText"
-PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+Selecting: text1:0 - text1:5
+Selected text: 'Alpha'
+text1 range:   'Alpha Bravo'
+Intersection:  'Alpha'
 
-Trying range: text1:6 - text1:11 : Bravo
-PASS: window.getSelection().toString() === expectedText
-PASS: axStaticText.role === "AXRole: AXStaticText"
-PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+Selecting: text1:6 - text1:11
+Selected text: 'Bravo'
+text1 range:   'Alpha Bravo'
+Intersection:  'Bravo'
 
-Trying range: text2:2 - text2:9 : Charlie
-PASS: window.getSelection().toString() === expectedText
-PASS: axStaticText.role === "AXRole: AXStaticText"
-PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+Selecting: text2:2 - text2:9
+Selected text: 'Charlie'
+text2 range:   'Charlie Delta'
+Intersection:  'Charlie'
 
-Trying range: text2:11 - text2:16 : Delta
-PASS: window.getSelection().toString() === expectedText
-PASS: axStaticText.role === "AXRole: AXStaticText"
-PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+Selecting: text2:11 - text2:16
+Selected text: 'Delta'
+text2 range:   'Charlie Delta'
+Intersection:  'Delta'
 
-Trying range: text1:6 - text2:9 : Bravo
-Charlie
-PASS: window.getSelection().toString() === expectedText
-PASS: axStaticText.role === "AXRole: AXStaticText"
-PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+Selecting: text1:6 - text2:9
+Selected text: 'Bravo\nCharlie'
+text1 range:   'Alpha Bravo'
+Intersection:  'Bravo'
 
-Trying range: text1:0 - text1:5 : Alpha
-PASS: window.getSelection().toString() === expectedText
-PASS: axStaticText.role === "AXRole: AXStaticText"
-PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+Selecting: text1:0 - text1:5
+Selected text: 'Alpha'
+text2 range:   'Charlie Delta'
+Intersection:  'null'
 
-Trying range: text1:6 - text2:9 : Bravo
-Charlie
-PASS: window.getSelection().toString() === expectedText
-PASS: axStaticText.role === "AXRole: AXStaticText"
-PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+Selecting: text1:6 - text2:9
+Selected text: 'Bravo\nCharlie'
+text2 range:   'Charlie Delta'
+Intersection:  'Charlie'
 
 
 PASS successfullyParsed is true
@@ -43,4 +41,3 @@ PASS successfullyParsed is true
 TEST COMPLETE
 Alpha Bravo
 Charlie Delta
-

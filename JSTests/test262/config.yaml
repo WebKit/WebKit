@@ -44,7 +44,6 @@ skip:
     - test/staging/sm/Temporal
     # Explicit Resource Management
     - test/staging/explicit-resource-management
-    - test/language/statements/using
     - test/language/statements/await-using
   files:
     # https://github.com/claudepache/es-legacy-function-reflection

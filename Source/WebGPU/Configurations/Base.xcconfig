@@ -91,7 +91,7 @@ GCC_WARN_UNINITIALIZED_AUTOS = YES;
 GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 PREBINDING = NO;
-WARNING_CFLAGS = $(inherited) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-typedef-redefinition -Wunsafe-buffer-usage -Wno-unknown-warning-option -Wno-backend-plugin -Wno-unsafe-buffer-usage-in-format-attr-call -fsafe-buffer-usage-suggestions;
+WARNING_CFLAGS = $(inherited) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-typedef-redefinition -Wunsafe-buffer-usage -Wno-unknown-warning-option -Wno-backend-plugin -fsafe-buffer-usage-suggestions;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;

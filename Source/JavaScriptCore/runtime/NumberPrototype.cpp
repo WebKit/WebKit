@@ -84,6 +84,7 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->toString, globalObject->numberProtoToStringFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     ASSERT(inherits(info()));
     globalObject->installNumberPrototypeWatchpoint(this);
+    structure()->setMayBePrototype(true);
 }
 
 // ------------------------------ Functions ---------------------------

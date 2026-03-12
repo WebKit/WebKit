@@ -337,7 +337,7 @@ void Performance::processEventEntry(const PerformanceEventTimingCandidate& candi
         m_firstInput = PerformanceEventTiming::create(candidate, true);
         queueEntry(*m_firstInput);
         if (RefPtr document = dynamicDowncast<Document>(*scriptExecutionContext())) {
-            if (RefPtr window = document->window())
+            if (auto* window = document->window())
                 window->setDispatchedInputEvent();
         }
     }

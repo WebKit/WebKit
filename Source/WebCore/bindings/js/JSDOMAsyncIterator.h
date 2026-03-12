@@ -299,7 +299,7 @@ JSC::JSPromise* JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>::getNextIterat
 
         auto resultValue = result.releaseReturnValue();
         if (!resultValue) {
-            if (RefPtr isFinished = weakIsFinished.get())
+            if (auto* isFinished = weakIsFinished.get())
                 isFinished->markAsFinished();
 
             return deferred->resolve();
@@ -317,10 +317,10 @@ JSC::JSPromise* JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>::getNextIterat
 {
     Ref promise = Ref { *m_iterator }->next(*JSC::jsCast<JSDOMGlobalObject*>(&globalObject));
     promise->whenSettled([weakIterator = WeakPtr { *m_iterator }, weakIsFinished = WeakPtr(m_isFinished)] {
-        RefPtr isFinished = weakIsFinished.get();
+        auto* isFinished = weakIsFinished.get();
         if (!isFinished)
             return;
-        RefPtr iterator = weakIterator.get();
+        auto* iterator = weakIterator.get();
         if (iterator && iterator->isFinished())
             isFinished->markAsFinished();
     });

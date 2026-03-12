@@ -26,6 +26,7 @@
 #pragma once
 
 #include <span>
+#include <wtf/EnumSet.h>
 #include <wtf/Forward.h>
 #include <wtf/InlineWeakPtr.h>
 #include <wtf/Markable.h>
@@ -371,6 +372,20 @@ TextStream& operator<<(TextStream& ts, const HashMap<KeyArg, MappedArg, HashArg,
 
 template<typename Option>
 TextStream& operator<<(TextStream& ts, const OptionSet<Option>& options)
+{
+    ts << '[';
+    bool needComma = false;
+    for (auto option : options) {
+        if (needComma)
+            ts << ", "_s;
+        needComma = true;
+        ts << option;
+    }
+    return ts << ']';
+}
+
+template<typename Option>
+TextStream& operator<<(TextStream& ts, const EnumSet<Option>& options)
 {
     ts << '[';
     bool needComma = false;

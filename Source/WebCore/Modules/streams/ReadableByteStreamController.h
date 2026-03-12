@@ -163,7 +163,7 @@ private:
     void fillReadRequestFromQueue(JSDOMGlobalObject&, Ref<ReadableStreamReadRequest>&&);
     void handleQueueDrain(JSDOMGlobalObject&);
 
-    static void handleSourcePromise(DOMPromise&, Callback&&);
+    void handleSourcePromise(JSDOMGlobalObject&, DOMPromise&, Callback&&);
 
     WeakRef<ReadableStream> m_stream;
     bool m_pullAgain { false };

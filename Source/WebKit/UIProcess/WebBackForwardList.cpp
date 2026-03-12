@@ -184,7 +184,7 @@ void WebBackForwardList::addChildItem(FrameIdentifier parentFrameID, Ref<FrameSt
     if (!currentItem)
         return;
 
-    RefPtr parentItem = protect(currentItem->mainFrameItem())->childItemForFrameID(parentFrameID);
+    RefPtr parentItem = currentItem->mainFrameItem().childItemForFrameID(parentFrameID);
     if (!parentItem)
         return;
 
@@ -689,11 +689,11 @@ void WebBackForwardList::backForwardUpdateItem(IPC::Connection& connection, Ref<
         auto newFrameID = frameItem->frameID();
 
         if (oldFrameID && newFrameID && oldFrameID != newFrameID)
-            updateAllFrameIDs(*oldFrameID, *newFrameID);
+            updateFrameIdentifier(*oldFrameID, *newFrameID);
     }
 }
 
-void WebBackForwardList::updateAllFrameIDs(FrameIdentifier oldFrameID, FrameIdentifier newFrameID)
+void WebBackForwardList::updateFrameIdentifier(FrameIdentifier oldFrameID, FrameIdentifier newFrameID)
 {
     for (auto& entry : m_entries)
         entry->updateFrameID(oldFrameID, newFrameID);
@@ -720,7 +720,7 @@ void WebBackForwardList::backForwardListContainsItem(WebCore::BackForwardItemIde
 void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
 {
     if (RefPtr webPageProxy = m_page.get())
-        MESSAGE_CHECK_COMPLETION(protect(webPageProxy->legacyMainFrameProcess()), !WebKit::isInspectorPage(*webPageProxy), completionHandler(counts()));
+        MESSAGE_CHECK_COMPLETION(Ref { webPageProxy->legacyMainFrameProcess() }, !WebKit::isInspectorPage(*webPageProxy), completionHandler(counts()));
 
     RefPtr item = itemForID(itemID);
     if (!item)
@@ -733,7 +733,7 @@ void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier ite
 void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
 {
     auto frameItems = WTF::compactMap(entries(), [frameID](const auto& item) -> RefPtr<WebBackForwardListFrameItem> {
-        return protect(item->mainFrameItem())->childItemForFrameID(frameID);
+        return item->mainFrameItem().childItemForFrameID(frameID);
     });
 
     completionHandler(WTF::map(WTF::move(frameItems), [](const auto& frameItem) {
@@ -745,7 +745,7 @@ void WebBackForwardList::backForwardItemAtIndex(int32_t index, FrameIdentifier f
 {
     // FIXME: This should verify that the web process requesting the item hosts the specified frame.
     if (RefPtr item = itemAtIndex(index)) {
-        if (RefPtr frameItem = protect(item->mainFrameItem())->childItemForFrameID(frameID))
+        if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
             return completionHandler(frameItem->copyFrameStateWithChildren());
         completionHandler(item->mainFrameState());
     } else
@@ -763,7 +763,7 @@ FrameState* WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIde
     if (!targetItem)
         return nullptr;
 
-    RefPtr parentFrameItem = protect(targetItem->mainFrameItem())->childItemForFrameID(parentFrameID);
+    RefPtr parentFrameItem = targetItem->mainFrameItem().childItemForFrameID(parentFrameID);
     if (!parentFrameItem)
         return nullptr;
 

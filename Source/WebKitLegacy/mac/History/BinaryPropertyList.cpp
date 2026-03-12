@@ -62,8 +62,8 @@ public:
     bool isDeletedValue() const { return HashTraits<size_t>::isDeletedValue(m_size); }
 
     using value_type = const int; // For std::span.
-    const int* data() const { ASSERT(!isDeletedValue()); return m_integers; }
-    size_t size() const { ASSERT(!isDeletedValue()); return m_size; }
+    const int* NODELETE data() const { ASSERT(!isDeletedValue()); return m_integers; }
+    size_t NODELETE size() const { ASSERT(!isDeletedValue()); return m_size; }
 
 private:
     friend struct IntegerArrayHashTraits;
@@ -73,7 +73,7 @@ private:
     size_t m_size;
 };
 
-inline bool operator==(const IntegerArray& a, const IntegerArray& b)
+inline bool NODELETE operator==(const IntegerArray& a, const IntegerArray& b)
 {
     return a.m_integers == b.m_integers &&  a.m_size == b.m_size;
 }
@@ -118,10 +118,10 @@ public:
     ObjectReference stringObjectReference(const String&) const;
     ObjectReference integerArrayObjectReference(const int*, size_t) const;
 
-    ObjectReference objectCount() const { return m_currentObjectReference; }
+    ObjectReference NODELETE objectCount() const { return m_currentObjectReference; }
 
-    ObjectReference byteCount() const { return m_byteCount; }
-    ObjectReference objectReferenceCount() const { return m_objectReferenceCount; }
+    ObjectReference NODELETE byteCount() const { return m_byteCount; }
+    ObjectReference NODELETE objectReferenceCount() const { return m_objectReferenceCount; }
 
 private:
     virtual void writeBooleanTrue();
@@ -140,7 +140,7 @@ private:
     void writeStringObject(const String&);
     void writeStringObject(const char*);
 
-    static ObjectReference invalidObjectReference() { return std::numeric_limits<ObjectReference>::max(); }
+    static ObjectReference NODELETE invalidObjectReference() { return std::numeric_limits<ObjectReference>::max(); }
 
     typedef HashMap<IntegerArray, ObjectReference, IntegerArrayHash, IntegerArrayHashTraits> IntegerArrayMap;
 
@@ -179,7 +179,7 @@ void BinaryPropertyListPlan::writeBooleanTrue()
     ++m_byteCount;
 }
 
-static inline int integerByteCount(size_t integer)
+static inline int NODELETE integerByteCount(size_t integer)
 {
     if (integer <= 0xFF)
         return 2;
@@ -275,7 +275,7 @@ void BinaryPropertyListPlan::writeDictionaryEnd(size_t savedAggregateSize)
     m_currentAggregateSize = savedAggregateSize + 1;
 }
 
-static size_t markerPlusLengthByteCount(size_t length)
+static size_t NODELETE markerPlusLengthByteCount(size_t length)
 {
     if (length <= maxLengthInMarkerByte)
         return 1;
@@ -411,7 +411,7 @@ inline void BinaryPropertyListSerializer::appendByte(int byte)
     ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
 }
 
-static int bytesNeeded(size_t count)
+static int NODELETE bytesNeeded(size_t count)
 {
     ASSERT(count);
     int bytesNeeded = 1;
@@ -420,7 +420,7 @@ static int bytesNeeded(size_t count)
     return bytesNeeded;
 }
 
-static inline void storeLength(std::span<UInt8> destination, size_t length)
+static inline void NODELETE storeLength(std::span<UInt8> destination, size_t length)
 {
 #ifdef __LP64__
     destination[0] = length >> 56;

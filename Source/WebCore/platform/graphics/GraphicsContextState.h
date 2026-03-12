@@ -85,8 +85,8 @@ public:
     ChangeFlags changes() const { return m_changeFlags; }
     void didApplyChanges() { m_changeFlags = { }; }
 
-    SourceBrush& fillBrush() { return m_fillBrush; }
-    const SourceBrush& fillBrush() const { return m_fillBrush; }
+    SourceBrush& fillBrush() LIFETIME_BOUND { return m_fillBrush; }
+    const SourceBrush& fillBrush() const LIFETIME_BOUND { return m_fillBrush; }
     void setFillBrush(const SourceBrush& brush) { setProperty(Change::FillBrush, &GraphicsContextState::m_fillBrush, brush); }
     void setFillColor(const Color& color) { setProperty(Change::FillBrush, &GraphicsContextState::m_fillBrush, { color }); }
     void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_fillBrush.setGradient(WTF::move(gradient), spaceTransform); m_changeFlags.add(Change::FillBrush); }
@@ -95,8 +95,8 @@ public:
     WindRule fillRule() const { return m_fillRule; }
     void setFillRule(WindRule fillRule) { setProperty(Change::FillRule, &GraphicsContextState::m_fillRule, fillRule); }
 
-    SourceBrush& strokeBrush() { return m_strokeBrush; }
-    const SourceBrush& strokeBrush() const { return m_strokeBrush; }
+    SourceBrush& strokeBrush() LIFETIME_BOUND { return m_strokeBrush; }
+    const SourceBrush& strokeBrush() const LIFETIME_BOUND { return m_strokeBrush; }
     void setStrokeBrush(const SourceBrush& brush) { setProperty(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush, brush); }
     void setStrokeColor(const Color& color) { setProperty(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush, { color }); }
     void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_strokeBrush.setGradient(WTF::move(gradient), spaceTransform); m_changeFlags.add(Change::StrokeBrush); }
@@ -108,13 +108,13 @@ public:
     StrokeStyle strokeStyle() const { return m_strokeStyle; }
     void setStrokeStyle(StrokeStyle strokeStyle) { setProperty(Change::StrokeStyle, &GraphicsContextState::m_strokeStyle, strokeStyle); }
 
-    const CompositeMode& compositeMode() const { return m_compositeMode; }
+    const CompositeMode& compositeMode() const LIFETIME_BOUND { return m_compositeMode; }
     void setCompositeMode(CompositeMode compositeMode) { setProperty(Change::CompositeMode, &GraphicsContextState::m_compositeMode, compositeMode); }
 
-    const std::optional<GraphicsDropShadow>& dropShadow() const { return m_dropShadow; }
+    const std::optional<GraphicsDropShadow>& dropShadow() const LIFETIME_BOUND { return m_dropShadow; }
     void setDropShadow(const std::optional<GraphicsDropShadow>& dropShadow) { setProperty(Change::DropShadow, &GraphicsContextState::m_dropShadow, dropShadow); }
 
-    const std::optional<GraphicsStyle>& style() const { return m_style; }
+    const std::optional<GraphicsStyle>& style() const LIFETIME_BOUND { return m_style; }
     void setStyle(const std::optional<GraphicsStyle>& style) { setProperty(Change::Style, &GraphicsContextState::m_style, style); }
 
     float alpha() const { return m_alpha; }

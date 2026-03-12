@@ -261,7 +261,7 @@ private:
     PDFDataDetectorOverlayController& dataDetectorOverlayController() { return *m_dataDetectorOverlayController; }
 #endif
 
-    const PDFDocumentLayout& documentLayout() const { return m_documentLayout; }
+    const PDFDocumentLayout& documentLayout() const LIFETIME_BOUND { return m_documentLayout; }
 
     double scaleForActualSize() const;
     double initialScale() const;

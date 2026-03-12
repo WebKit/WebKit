@@ -204,11 +204,11 @@ WebPage* PDFPluginBase::webPage() const
 
 Page* PDFPluginBase::page() const
 {
-    RefPtr frame = m_frame.get();
+    auto* frame = m_frame.get();
     if (!frame)
         return nullptr;
 
-    if (RefPtr coreFrame = frame->coreLocalFrame())
+    if (auto* coreFrame = frame->coreLocalFrame())
         return coreFrame->page();
 
     return nullptr;
@@ -252,11 +252,11 @@ bool PDFPluginBase::isFullFramePlugin() const
         m_cachedIsFullFramePlugin = [&] {
             // <object> or <embed> plugins will appear to be in their parent frame,
             // so we have to check whether our frame's widget is exactly our PluginView.
-            RefPtr frame = m_frame.get();
+            auto* frame = m_frame.get();
             if (!frame || !frame->coreLocalFrame())
                 return false;
 
-            RefPtr document = dynamicDowncast<PluginDocument>(frame->coreLocalFrame()->document());
+            auto* document = dynamicDowncast<PluginDocument>(frame->coreLocalFrame()->document());
             return document && document->pluginWidget() == m_view;
         }();
     }
@@ -858,7 +858,7 @@ void PDFPluginBase::setScrollOffset(const ScrollOffset& offset)
 
 bool PDFPluginBase::isActive() const
 {
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         return page->focusController().isActive();
 
     return false;
@@ -866,7 +866,7 @@ bool PDFPluginBase::isActive() const
 
 bool PDFPluginBase::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         return page->settings().scrollingPerformanceTestingEnabled();
 
     return false;
@@ -914,7 +914,7 @@ IntSize PDFPluginBase::overhangAmount() const
 
 float PDFPluginBase::deviceScaleFactor() const
 {
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         return page->deviceScaleFactor();
     return 1;
 }
@@ -1099,7 +1099,7 @@ Ref<Scrollbar> PDFPluginBase::createScrollbar(ScrollbarOrientation orientation)
             scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
     }
 
-    if (RefPtr frame = protect(m_view.get())->frame()) {
+    if (RefPtr frame = m_view.get()->frame()) {
         if (RefPtr frameView = frame->view())
             frameView->addChild(widget);
     }
@@ -1146,7 +1146,7 @@ void PDFPluginBase::print()
 
 std::optional<PageIdentifier> PDFPluginBase::pageIdentifier() const
 {
-    RefPtr frame = m_frame.get();
+    auto* frame = m_frame.get();
     return frame && frame->coreLocalFrame() ? frame->coreLocalFrame()->pageID() : std::nullopt;
 }
 
@@ -1275,7 +1275,7 @@ IntRect PDFPluginBase::frameForHUDInRootViewCoordinates() const
 
 bool PDFPluginBase::hudEnabled() const
 {
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         return page->settings().pdfPluginHUDEnabled();
     return false;
 }
@@ -1521,7 +1521,7 @@ void PDFPluginBase::registerPDFTest(RefPtr<WebCore::VoidCallback>&& callback)
 
 std::optional<FrameIdentifier> PDFPluginBase::rootFrameID() const
 {
-    return protect(m_view.get())->frame()->rootFrame().frameID();
+    return m_view.get()->frame()->rootFrame().frameID();
 }
 
 // FIXME: Share more of the style sheet between the embed/non-embed case.

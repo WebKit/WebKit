@@ -82,12 +82,17 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyMemoryProtoFuncGrow, (JSGlobalObject* global
     JSWebAssemblyMemory* memory = getMemory(globalObject, vm, callFrame->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
     
-    uint32_t delta = toNonWrappingUint32(globalObject, callFrame->argument(0));
+    uint64_t delta = addressValueToUint64(globalObject, callFrame->argument(0), memory->memory().addressType());
     RETURN_IF_EXCEPTION(throwScope, { });
 
     PageCount result = memory->grow(vm, globalObject, delta);
     RETURN_IF_EXCEPTION(throwScope, { });
 
+    if (memory->memory().addressType().is64Bit()) {
+        JSValue bigInt = JSBigInt::createFrom(globalObject, result.pageCount());
+        RETURN_IF_EXCEPTION(throwScope, { });
+        return JSValue::encode(bigInt);
+    }
     return JSValue::encode(jsNumber(result.pageCount()));
 }
 

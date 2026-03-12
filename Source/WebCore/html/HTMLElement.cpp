@@ -918,13 +918,7 @@ bool HTMLElement::willRespondToMouseClickEventsWithEditability(Editability edita
 
 bool HTMLElement::canBeActuallyDisabled() const
 {
-    if (is<HTMLButtonElement>(*this)
-        || is<HTMLInputElement>(*this)
-        || is<HTMLSelectElement>(*this)
-        || is<HTMLTextAreaElement>(*this)
-        || is<HTMLOptGroupElement>(*this)
-        || is<HTMLOptionElement>(*this)
-        || is<HTMLFieldSetElement>(*this))
+    if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement, HTMLOptGroupElement, HTMLOptionElement, HTMLFieldSetElement>(*this))
         return true;
     auto* customElement = dynamicDowncast<HTMLMaybeFormAssociatedCustomElement>(*this);
     return customElement && customElement->isFormAssociatedCustomElement();
@@ -1305,7 +1299,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
 
     Ref document = this->document();
     if (RefPtr element = popoverData()->previouslyFocusedElement()) {
-        if (focusPreviousElement == FocusPreviousElement::Yes && isShadowIncludingInclusiveAncestorOf(protect(document->focusedElement()).get())) {
+        if (focusPreviousElement == FocusPreviousElement::Yes && isShadowIncludingInclusiveAncestorOf(document->focusedElement())) {
             FocusOptions options;
             options.preventScroll = true;
             element->focus(options);

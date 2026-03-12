@@ -68,6 +68,8 @@ class PlacardSupport extends MediaControllerSupport
         let placard = null;
         if (media.webkitPresentationMode === "picture-in-picture" && this._controlsNeedJavascriptPipPlacard())
             placard = controls.pipPlacard;
+        else if (media.webkitPresentationMode === "fullscreen" && this._controlsNeedJavascriptFullscreenPlacard())
+            placard = controls.fullscreenPlacard;
         else if (media.webkitCurrentPlaybackTargetIsWireless) {
             this._updateAirPlayPlacard();
             placard = controls.airplayPlacard;
@@ -82,6 +84,13 @@ class PlacardSupport extends MediaControllerSupport
         if (this.mediaController.controls instanceof IOSInlineMediaControls)
             return false;
         return true;
+    }
+
+    _controlsNeedJavascriptFullscreenPlacard()
+    {
+        if (this.mediaController.controls instanceof TVOSMediaControls && this.mediaController.host.isAVExperienceControllerFullscreenEnabled)
+            return true;
+        return false;
     }
 
     _updateAirPlayPlacard()

@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/multiple-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-addHandler-throws.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-addHandler.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-new-navigation-before-commit.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-push.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/precommit-handler/precommitHandler-redirect-options.html

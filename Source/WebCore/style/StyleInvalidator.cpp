@@ -49,12 +49,12 @@ namespace Style {
 static bool shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
-        if (RefPtr styleRuleMedia = dynamicDowncast<StyleRuleMedia>(rule.get())) {
+        if (auto* styleRuleMedia = dynamicDowncast<StyleRuleMedia>(rule.get())) {
             if (shouldDirtyAllStyle(styleRuleMedia->childRules()))
                 return true;
             continue;
         }
-        if (RefPtr styleRuleWithNesting = dynamicDowncast<StyleRuleWithNesting>(rule.get())) {
+        if (auto* styleRuleWithNesting = dynamicDowncast<StyleRuleWithNesting>(rule.get())) {
             if (shouldDirtyAllStyle(styleRuleWithNesting->nestedRules()))
                 return true;
             continue;

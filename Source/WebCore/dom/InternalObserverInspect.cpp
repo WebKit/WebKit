@@ -195,7 +195,7 @@ private:
             return;
 
         auto handle = std::exchange(m_abortAlgorithmHandler, std::nullopt);
-        protect(m_subscriber)->signal().removeAlgorithm(*handle);
+        m_subscriber->signal().removeAlgorithm(*handle);
     }
 
     JSC::VM& vm() const
@@ -211,7 +211,7 @@ private:
         , m_inspector(WTF::move(inspector))
     {
         if (RefPtr abort = m_inspector.abort) {
-            Ref signal = protect(m_subscriber)->signal();
+            Ref signal = m_subscriber->signal();
             m_abortAlgorithmHandler = signal->addAlgorithm([abort = WTF::move(abort)](JSC::JSValue reason) {
                 abort->invoke(reason);
             });

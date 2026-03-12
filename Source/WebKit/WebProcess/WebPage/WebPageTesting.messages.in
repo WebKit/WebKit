@@ -34,6 +34,8 @@ messages -> WebPageTesting {
 #endif
 
     ClearWheelEventTestMonitor()
+    StartMonitoringWheelEventsForTesting() -> ()
+    WaitForWheelEventsToCompleteForTesting() -> ()
     ResetStateBetweenTests()
     SetObscuredContentInsets(float top, float right, float bottom, float left) -> ()
     ClearCachedBackForwardListCounts() -> ()

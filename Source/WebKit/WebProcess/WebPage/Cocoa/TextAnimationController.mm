@@ -71,13 +71,13 @@ WebCore::Document* TextAnimationController::document() const
         return nullptr;
     }
 
-    RefPtr corePage = m_webPage->corePage();
+    auto* corePage = m_webPage->corePage();
     if (!corePage) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    RefPtr frame = corePage->focusController().focusedOrMainFrame();
+    auto* frame = corePage->focusController().focusedOrMainFrame();
     if (!frame) {
         ASSERT_NOT_REACHED();
         return nullptr;

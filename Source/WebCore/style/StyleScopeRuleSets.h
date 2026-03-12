@@ -71,16 +71,16 @@ public:
     RuleSet* userStyle() const;
     RuleSet* styleForDeclarationOrigin(DeclarationOrigin);
 
-    const RuleFeatureSet& features() const;
+    const RuleFeatureSet& features() const LIFETIME_BOUND;
     RuleSet* scopeBreakingHasPseudoClassInvalidationRuleSet() const { return m_scopeBreakingHasPseudoClassInvalidationRuleSet.get(); }
 
-    const Vector<InvalidationRuleSet>* idInvalidationRuleSets(const AtomString&) const;
-    const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString&) const;
-    const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomString&) const;
-    const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
-    const Vector<InvalidationRuleSet>* hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
+    const Vector<InvalidationRuleSet>* idInvalidationRuleSets(const AtomString&) const LIFETIME_BOUND;
+    const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString&) const LIFETIME_BOUND;
+    const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomString&) const LIFETIME_BOUND;
+    const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const LIFETIME_BOUND;
+    const Vector<InvalidationRuleSet>* hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const LIFETIME_BOUND;
 
-    const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
+    const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const LIFETIME_BOUND;
 
     SelectorsForStyleAttribute selectorsForStyleAttribute() const;
 
@@ -100,14 +100,14 @@ public:
 
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&);
 
-    RuleFeatureSet& mutableFeatures();
+    RuleFeatureSet& mutableFeatures() LIFETIME_BOUND;
 
     void setDynamicViewTransitionsStyle(RuleSet* ruleSet)
     {
         m_dynamicViewTransitionsStyle = ruleSet;
     }
 
-    bool& isInvalidatingStyleWithRuleSets() { return m_isInvalidatingStyleWithRuleSets; }
+    bool& isInvalidatingStyleWithRuleSets() LIFETIME_BOUND { return m_isInvalidatingStyleWithRuleSets; }
 
     bool hasMatchingUserOrAuthorStyle(NOESCAPE const WTF::Function<bool(RuleSet&)>&);
 

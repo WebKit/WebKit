@@ -88,15 +88,15 @@ public:
 
     void configureSource(RealtimeOutgoingMediaSourceGStreamer&, GUniquePtr<GstStructure>&&);
 
-    ExceptionOr<RefPtr<GStreamerRtpSenderBackend>> addTrack(MediaStreamTrack&, const FixedVector<String>&);
+    ExceptionOr<Ref<GStreamerRtpSenderBackend>> addTrack(MediaStreamTrack&, const FixedVector<String>&);
     void removeTrack(GStreamerRtpSenderBackend&);
 
     void recycleTransceiverForSenderTrack(GStreamerRtpTransceiverBackend*, MediaStreamTrack&, const FixedVector<String>&);
 
     struct Backends {
-        RefPtr<GStreamerRtpSenderBackend> senderBackend;
-        std::unique_ptr<GStreamerRtpReceiverBackend> receiverBackend;
-        std::unique_ptr<GStreamerRtpTransceiverBackend> transceiverBackend;
+        Ref<GStreamerRtpSenderBackend> senderBackend;
+        UniqueRef<GStreamerRtpReceiverBackend> receiverBackend;
+        UniqueRef<GStreamerRtpTransceiverBackend> transceiverBackend;
     };
     ExceptionOr<Backends> addTransceiver(const String& trackKind, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
     ExceptionOr<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
@@ -104,7 +104,7 @@ public:
 
     GStreamerRtpSenderBackend::Source createSourceForTrack(MediaStreamTrack&);
 
-    void collectTransceivers();
+    void collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&&);
 
     void createSessionDescriptionSucceeded(GUniquePtr<GstWebRTCSessionDescription>&&);
     void createSessionDescriptionFailed(RTCSdpType, GUniquePtr<GError>&&);

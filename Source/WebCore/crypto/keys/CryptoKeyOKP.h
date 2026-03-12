@@ -63,7 +63,7 @@ public:
 
     size_t keySizeInBits() const { return platformKey().size() * 8; }
     size_t keySizeInBytes() const { return platformKey().size(); }
-    const KeyMaterial& platformKey() const { return m_data; }
+    const KeyMaterial& platformKey() const LIFETIME_BOUND { return m_data; }
 
 private:
     CryptoKeyOKP(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, Vector<uint8_t>&&, bool extractable, CryptoKeyUsageBitmap);

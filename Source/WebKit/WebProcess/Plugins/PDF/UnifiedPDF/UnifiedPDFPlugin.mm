@@ -235,7 +235,7 @@ void UnifiedPDFPlugin::installAnnotationContainer()
     Ref shadowRoot = element->ensureUserAgentShadowRoot();
     m_shadowRoot = shadowRoot.copyRef();
     shadowRoot->appendChild(*annotationContainer);
-    if (CheckedPtr renderer = dynamicDowncast<RenderEmbeddedObject>(element->renderer()))
+    if (auto* renderer = dynamicDowncast<RenderEmbeddedObject>(element->renderer()))
         renderer->setHasShadowContent();
 
     document->updateLayoutIgnorePendingStylesheets();
@@ -295,7 +295,7 @@ void UnifiedPDFPlugin::setPresentationController(RefPtr<PDFPresentationControlle
 
 LocalFrameView* UnifiedPDFPlugin::frameView() const
 {
-    if (RefPtr frame = m_frame.get())
+    if (auto* frame = m_frame.get())
         return frame->coreLocalFrame()->view();
 
     return nullptr;
@@ -662,7 +662,7 @@ void UnifiedPDFPlugin::createScrollingNodeIfNecessary()
         return;
 
     m_scrollingNodeID = scrollingCoordinator->uniqueScrollingNodeID();
-    scrollingCoordinator->createNode(protect(m_frame)->coreLocalFrame()->rootFrame().frameID(), ScrollingNodeType::PluginScrolling, *m_scrollingNodeID);
+    scrollingCoordinator->createNode(m_frame->coreLocalFrame()->rootFrame().frameID(), ScrollingNodeType::PluginScrolling, *m_scrollingNodeID);
 
     RefPtr scrollContainerLayer = m_scrollContainerLayer;
 #if ENABLE(SCROLLING_THREAD)
@@ -1248,7 +1248,7 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     if (origin) {
         // Compensate for the subtraction of content insets that happens in ViewGestureController::handleMagnificationGestureEvent();
         // origin is not in root view coordinates.
-        if (RefPtr frameView = protect(m_frame)->coreLocalFrame()->view()) {
+        if (RefPtr frameView = m_frame->coreLocalFrame()->view()) {
             auto obscuredContentInsets = frameView->obscuredContentInsets();
             origin->move(std::round(obscuredContentInsets.left()), std::round(obscuredContentInsets.top()));
         }
@@ -1674,7 +1674,7 @@ bool UnifiedPDFPlugin::shouldCachePagePreviews() const
 OptionSet<TiledBackingScrollability> UnifiedPDFPlugin::computeScrollability() const
 {
     if (shouldSizeToFitContent()) {
-        RefPtr frameView = protect(m_frame)->coreLocalFrame()->view();
+        RefPtr frameView = m_frame->coreLocalFrame()->view();
         if (frameView)
             return frameView->computeScrollability();
     }
@@ -2091,7 +2091,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                     if (RefPtr webPage = frame->page(); webPage && webPage->hasActiveContextMenuInteraction())
                         return false;
 #endif
-                    auto immediateActionStage = protect(frame->coreLocalFrame())->eventHandler().immediateActionStage();
+                    auto immediateActionStage = frame->coreLocalFrame()->eventHandler().immediateActionStage();
                     return !immediateActionBeganOrWasCompleted(immediateActionStage);
                 }();
 
@@ -2527,7 +2527,12 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
 
     auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEventRootViewPoint), IntSize())).location();
 
-    return PDFContextMenu { contextMenuPoint, WTF::move(menuItems), WTF::move(openInDefaultViewerTag) };
+    return PDFContextMenu {
+        contextMenuPoint,
+        WTF::move(menuItems),
+        WTF::move(openInDefaultViewerTag),
+        contextMenuEvent.inputSource()
+    };
 }
 
 bool UnifiedPDFPlugin::isDisplayModeContextMenuItemTag(ContextMenuItemTag tag) const
@@ -3390,10 +3395,10 @@ void UnifiedPDFPlugin::collectFindMatchRects(const String& target, WebCore::Find
 void UnifiedPDFPlugin::updateFindOverlay(HideFindIndicator hideFindIndicator)
 {
     Ref frame = *m_frame;
-    protect(frame->page())->findController().didInvalidateFindRects();
+    frame->page()->findController().didInvalidateFindRects();
 
     if (hideFindIndicator == HideFindIndicator::Yes)
-        protect(frame->page())->findController().hideFindIndicator();
+        frame->page()->findController().hideFindIndicator();
 }
 
 Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const IntRect& clipRect) const

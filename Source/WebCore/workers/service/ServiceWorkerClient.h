@@ -69,7 +69,7 @@ public:
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
-    const ServiceWorkerClientData& data() const { return m_data; }
+    const ServiceWorkerClientData& data() const LIFETIME_BOUND { return m_data; }
 
 protected:
     ServiceWorkerClient(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);

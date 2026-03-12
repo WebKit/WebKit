@@ -70,13 +70,13 @@ public:
     WEBCORE_EXPORT void resume();
     WEBCORE_EXPORT void cancel();
 
-    const ResourceRequest& resourceRequest() const { return m_request; }
+    const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_request; }
     bool isCancelled();
     bool isCompletedOrCancelled();
     Seconds timeoutInterval() const;
 
-    const String& user() const { return m_user; }
-    const String& password() const { return m_password; }
+    const String& user() const LIFETIME_BOUND { return m_user; }
+    const String& password() const LIFETIME_BOUND { return m_password; }
 
     // Processing for DidReceiveResponse
     WEBCORE_EXPORT void completeDidReceiveResponse();

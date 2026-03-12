@@ -64,7 +64,8 @@ class TestRunner(object):
 
         self._programs_path = common.binary_build_path(self._port)
         expectations_file = os.path.join(common.top_level_path(), "Tools", "TestWebKitAPI", "glib", "TestExpectations.json")
-        self._expectations = TestExpectations(self._port.name(), expectations_file, self._build_type)
+        self._expectations = TestExpectations(self._port.name(), expectations_file, self._build_type, self._port.architecture())
+        print("Test expectations: port=%s, build_type=%s, architecture=%s" % (self._port.name(), self._build_type, self._port.architecture()))
         self._initial_test_list = tests
         self._tests = self._get_tests(tests)
         self._disabled_tests = []

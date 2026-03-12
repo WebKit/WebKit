@@ -83,6 +83,11 @@ struct LaneToVector<uint64_t> {
     using Type = simde_uint64x2_t;
 };
 
+template<>
+struct LaneToVector<double> {
+    using Type = simde_float64x2_t;
+};
+
 template<typename LaneType>
 using VectorType = typename LaneToVector<LaneType>::Type;
 
@@ -143,6 +148,11 @@ ALWAYS_INLINE simde_uint32x4_t load(const uint32_t* ptr)
 ALWAYS_INLINE simde_uint64x2_t load(const uint64_t* ptr)
 {
     return simde_vld1q_u64(ptr);
+}
+
+ALWAYS_INLINE simde_float64x2_t load(const double* ptr)
+{
+    return simde_vld1q_f64(ptr);
 }
 
 ALWAYS_INLINE void store(simde_uint8x16_t value, uint8_t* ptr)
@@ -505,6 +515,11 @@ ALWAYS_INLINE simde_uint32x4_t equal(simde_uint32x4_t lhs, simde_uint32x4_t rhs)
 ALWAYS_INLINE simde_uint64x2_t equal(simde_uint64x2_t lhs, simde_uint64x2_t rhs)
 {
     return simde_vceqq_u64(lhs, rhs);
+}
+
+ALWAYS_INLINE simde_uint64x2_t equal(simde_float64x2_t lhs, simde_float64x2_t rhs)
+{
+    return simde_vceqq_f64(lhs, rhs);
 }
 
 ALWAYS_INLINE simde_uint8x16_t lessThan(simde_uint8x16_t lhs, simde_uint8x16_t rhs)

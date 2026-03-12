@@ -133,8 +133,8 @@ public:
         return m_info.memoryCost;
     }
 
-    const WebCore::ImageBuffer::Parameters& parameters() const { return m_parameters; }
-    const WebCore::ImageBufferBackend::Info& info() const { return m_info; }
+    const WebCore::ImageBuffer::Parameters& parameters() const LIFETIME_BOUND { return m_parameters; }
+    const WebCore::ImageBufferBackend::Info& info() const LIFETIME_BOUND { return m_info; }
 private:
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer() final
     {

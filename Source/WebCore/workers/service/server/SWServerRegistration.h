@@ -59,7 +59,7 @@ public:
     static Ref<SWServerRegistration> create(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&&);
     WEBCORE_EXPORT ~SWServerRegistration();
 
-    const ServiceWorkerRegistrationKey& key() const { return m_registrationKey; }
+    const ServiceWorkerRegistrationKey& key() const LIFETIME_BOUND { return m_registrationKey; }
 
     SWServerWorker* getNewestWorker();
     WEBCORE_EXPORT ServiceWorkerRegistrationData data() const;
@@ -116,7 +116,7 @@ public:
     WEBCORE_EXPORT std::optional<ExceptionData> enableNavigationPreload();
     WEBCORE_EXPORT std::optional<ExceptionData> disableNavigationPreload();
     WEBCORE_EXPORT std::optional<ExceptionData> setNavigationPreloadHeaderValue(String&&);
-    const NavigationPreloadState& navigationPreloadState() const { return m_preloadState; }
+    const NavigationPreloadState& navigationPreloadState() const LIFETIME_BOUND { return m_preloadState; }
 
     WEBCORE_EXPORT void addCookieChangeSubscriptions(Vector<CookieChangeSubscription>&&);
     WEBCORE_EXPORT void removeCookieChangeSubscriptions(Vector<CookieChangeSubscription>&&);

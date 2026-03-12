@@ -414,8 +414,8 @@ private:
     VisibleAndCoverageRects computeVisibleAndCoverageRect(TransformState&, bool accumulateTransform, ComputeVisibleRectFlags = RespectAnimatingTransforms) const;
     bool adjustCoverageRect(VisibleAndCoverageRects&, const FloatRect& oldVisibleRect) const;
 
-    const FloatRect& visibleRect() const { return m_visibleRect; }
-    const FloatRect& coverageRect() const { return m_coverageRect; }
+    const FloatRect& visibleRect() const LIFETIME_BOUND { return m_visibleRect; }
+    const FloatRect& coverageRect() const LIFETIME_BOUND { return m_coverageRect; }
 
     void setVisibleAndCoverageRects(const VisibleAndCoverageRects&);
 

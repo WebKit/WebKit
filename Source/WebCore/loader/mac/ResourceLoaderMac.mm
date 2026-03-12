@@ -40,7 +40,7 @@ void ResourceLoader::willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse
 {
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::DoNotSendCallbacks)
         return completionHandler(nullptr);
-    protect(protect(frameLoader())->client())->willCacheResponse(protect(documentLoader()).get(), *identifier(), response, WTF::move(completionHandler));
+    protect(frameLoader()->client())->willCacheResponse(protect(documentLoader()).get(), *identifier(), response, WTF::move(completionHandler));
 }
 
 }

@@ -40,7 +40,7 @@ public:
     WEBCORE_EXPORT ~HitTestLocation();
     HitTestLocation& operator=(const HitTestLocation&);
 
-    const LayoutPoint& point() const { return m_point; }
+    const LayoutPoint& point() const LIFETIME_BOUND { return m_point; }
     IntPoint roundedPoint() const { return roundedIntPoint(m_point); }
 
     // Rect-based hit test related methods.
@@ -52,8 +52,8 @@ public:
     bool intersects(const FloatRect&) const;
     bool intersects(const LayoutRoundedRect&) const;
 
-    const FloatPoint& transformedPoint() const { return m_transformedPoint; }
-    const FloatQuad& transformedRect() const { return m_transformedRect; }
+    const FloatPoint& transformedPoint() const LIFETIME_BOUND { return m_transformedPoint; }
+    const FloatQuad& transformedRect() const LIFETIME_BOUND { return m_transformedRect; }
 
 private:
     template<typename RectType> bool intersectsRect(const RectType&) const;

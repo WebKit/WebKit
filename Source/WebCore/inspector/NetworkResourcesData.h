@@ -52,17 +52,17 @@ public:
     public:
         ResourceData(const String& requestId, const String& loaderId);
 
-        const String& requestId() const { return m_requestId; }
-        const String& loaderId() const { return m_loaderId; }
+        const String& requestId() const LIFETIME_BOUND { return m_requestId; }
+        const String& loaderId() const LIFETIME_BOUND { return m_loaderId; }
 
-        const String& frameId() const { return m_frameId; }
+        const String& frameId() const LIFETIME_BOUND { return m_frameId; }
         void setFrameId(const String& frameId) { m_frameId = frameId; }
 
-        const String& url() const { return m_url; }
+        const String& url() const LIFETIME_BOUND { return m_url; }
         void setURL(const String& url) { m_url = url; }
 
         bool hasContent() const { return !m_content.isNull(); }
-        const String& content() const { return m_content; }
+        const String& content() const LIFETIME_BOUND { return m_content; }
         void setContent(const String&, bool base64Encoded);
 
         bool base64Encoded() const { return m_base64Encoded; }
@@ -77,13 +77,13 @@ public:
         int httpStatusCode() const { return m_httpStatusCode; }
         void setHTTPStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
         
-        const String& httpStatusText() const { return m_httpStatusText; }
+        const String& httpStatusText() const LIFETIME_BOUND { return m_httpStatusText; }
         void setHTTPStatusText(const String& httpStatusText) { m_httpStatusText = httpStatusText; }
 
-        const String& textEncodingName() const { return m_textEncodingName; }
+        const String& textEncodingName() const LIFETIME_BOUND { return m_textEncodingName; }
         void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
         
-        const String& mimeType() const { return m_mimeType; }
+        const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
         void setMIMEType(const String& mimeType) { m_mimeType = mimeType; }
 
         RefPtr<TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
@@ -92,7 +92,7 @@ public:
         RefPtr<FragmentedSharedBuffer> buffer() const { return m_buffer.copyRef(); }
         void setBuffer(RefPtr<FragmentedSharedBuffer>&& buffer) { m_buffer = WTF::move(buffer); }
 
-        const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; }
+        const std::optional<CertificateInfo>& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }
         void setCertificateInfo(const std::optional<CertificateInfo>& certificateInfo) { m_certificateInfo = certificateInfo; }
 
         CachedResource* cachedResource() const { return m_cachedResource; }

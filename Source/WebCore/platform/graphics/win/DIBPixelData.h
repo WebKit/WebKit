@@ -53,7 +53,7 @@ public:
 
     UInt8* buffer() const { return m_bitmapBuffer; }
     unsigned bufferLength() const { return m_bitmapBufferLength; }
-    const IntSize& size() const { return m_size; }
+    const IntSize& size() const LIFETIME_BOUND { return m_size; }
     unsigned bytesPerRow() const { return m_bytesPerRow; }
     unsigned short bitsPerPixel() const { return m_bitsPerPixel; }
     WEBCORE_EXPORT static void setRGBABitmapAlpha(HDC, const IntRect&, unsigned char);

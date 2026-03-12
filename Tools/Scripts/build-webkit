@@ -207,6 +207,16 @@ if ((isAppleWebKit() || isPlayStation()) && !-d "WebKitLibraries") {
     die "Error: No WebKitLibraries directory found. Please do a fresh checkout.\n";
 }
 
+if (isWinCrossCompileFromLinux()) {
+    $ENV{"VCPKG_ROOT"} = winCrossCompileVcpkgRoot();
+    # Prevent pkg-config from finding host system packages during cross-compilation.
+    # The triplet sets VCPKG_ENV_PASSTHROUGH_UNTRACKED to forward this to port builds.
+    $ENV{"PKG_CONFIG_LIBDIR"} = "";
+    # Add WebKitLibraries/windows/bin to PATH for dummy pwsh (satisfies vcpkg's PowerShell check)
+    my $winBinDir = File::Spec->catdir(sourceDir(), "WebKitLibraries", "windows", "bin");
+    $ENV{"PATH"} = "$winBinDir:$ENV{PATH}";
+}
+
 if (shouldUseVcpkg() && ! defined $ENV{"VCPKG_ROOT"}) {
     die "Error: VCPKG_ROOT is unset. Please set that environment variable to the location of vcpkg.exe.\n";
 }
@@ -236,7 +246,7 @@ if (isAppleCocoaWebKit()) {
 
 my $result = 0;
 
-if (isCMakeBuild() && !isAnyWindows()) {
+if (isCMakeBuild() && !isAnyWindows() && !isWin()) {
     if (defined $ENV{'BUILD_WEBKIT_PRE_SCRIPT'}) {
         my $preScript = $ENV{'BUILD_WEBKIT_PRE_SCRIPT'};
 
@@ -292,6 +302,15 @@ if (isCMakeBuild() && !isAnyWindows()) {
 
 my $baseProductDir = baseProductDir();
 if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
+    # For Windows cross-compile from Linux, run dependency check first
+    if (isWin() && isLinux()) {
+        my $depsScript = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "check-win-cross-build-deps");
+        my $depsResult = system($depsScript);
+        if (exitStatus($depsResult)) {
+            die "Windows cross-build dependency check failed. Please resolve missing dependencies.\n";
+        }
+    }
+
     my @featureArgs = cmakeArgsFromFeatures(@features, !$noExperimentalFeatures);
     removeCMakeCache(@featureArgs);
 

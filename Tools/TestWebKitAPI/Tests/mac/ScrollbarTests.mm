@@ -411,6 +411,352 @@ TEST(ScrollbarTests, ScrollbarAvoidanceInConcentricContainerWithNonUniformCorner
     runTestCaseWithCornerRadii(container, webView, caseTwo);
 }
 
+TEST(ScrollbarTests, VerticalScrollbarXPositionAccountsForObscuredContentInsets)
+{
+    RetainPtr webView = scrollbarAvoidanceTestWebView();
+
+    [webView synchronouslyLoadHTMLString:@"<body style='height: 2000px;'></body>"];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameWidth = [webView frame].size.width;
+
+    auto verticalFrameRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalFrameRect);
+
+    auto scrollbarWidth = verticalFrameRect->size.width;
+    EXPECT_EQ(verticalFrameRect->origin.x, frameWidth - scrollbarWidth);
+
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 0, 50)];
+    [webView waitForNextPresentationUpdate];
+
+    verticalFrameRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalFrameRect);
+
+    EXPECT_EQ(verticalFrameRect->origin.x, frameWidth - scrollbarWidth - 50);
+
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 0, 0)];
+
+    [webView synchronouslyLoadHTMLString:@"<html dir='rtl'><body style='height: 2000px;'></body></html>"];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView waitForNextPresentationUpdate];
+
+    verticalFrameRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalFrameRect);
+
+    EXPECT_EQ(verticalFrameRect->origin.x, 0);
+
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 50, 0, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    verticalFrameRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalFrameRect);
+
+    EXPECT_EQ(verticalFrameRect->origin.x, 50);
+
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 0, 0)];
+}
+
+TEST(ScrollbarTests, HorizontalScrollbarYPositionAccountsForObscuredContentInsets)
+{
+    RetainPtr webView = scrollbarAvoidanceTestWebView();
+
+    [webView synchronouslyLoadHTMLString:@"<body style='width: 2000px;'></body>"];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameHeight = [webView frame].size.height;
+
+    auto horizontalFrameRect = scrollbarFrameRect(webView.get(), ScrollbarType::Horizontal);
+    EXPECT_TRUE(horizontalFrameRect.has_value());
+    if (!horizontalFrameRect.has_value())
+        return;
+
+    auto scrollbarHeight = horizontalFrameRect->size.height;
+    EXPECT_EQ(horizontalFrameRect->origin.y, frameHeight - scrollbarHeight);
+
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 50, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    horizontalFrameRect = scrollbarFrameRect(webView.get(), ScrollbarType::Horizontal);
+    EXPECT_TRUE(horizontalFrameRect.has_value());
+    if (!horizontalFrameRect.has_value())
+        return;
+
+    EXPECT_EQ(horizontalFrameRect->origin.y, frameHeight - scrollbarHeight - 50);
+
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 0, 0)];
+}
+
+static std::optional<CGRect> scrollCornerRectForWebView(TestWKWebView *webView)
+{
+    RetainPtr script = @"(() => { "
+        "const rect = internals.scrollCornerRect(); "
+        "if (!rect) return null; "
+        "return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }; "
+        "})()";
+
+    id result = [webView objectByEvaluatingJavaScript:script.get()];
+    if (RetainPtr<NSDictionary> dictionary = result) {
+        return CGRectMake(
+            [[dictionary objectForKey:@"x"] doubleValue],
+            [[dictionary objectForKey:@"y"] doubleValue],
+            [[dictionary objectForKey:@"width"] doubleValue],
+            [[dictionary objectForKey:@"height"] doubleValue]
+        );
+    }
+
+    return std::nullopt;
+}
+
+static constexpr NSString *customScrollbarStyle = @(R"(
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar:horizontal { height: 18px; }
+    ::-webkit-scrollbar-track { background: gray; }
+    ::-webkit-scrollbar-thumb { background: yellow; }
+    ::-webkit-scrollbar-corner { background: red; }
+    )");
+
+static NSString *customScrollbarHTMLWithDimensions(NSString *bodyStyle)
+{
+    return [NSString stringWithFormat:@"<style>%@</style><body style='%@'></body>", customScrollbarStyle, bodyStyle];
+}
+
+static NSString *customScrollbarHTMLWithBothScrollbars()
+{
+    return customScrollbarHTMLWithDimensions(@"width: 2000px; height: 2000px;");
+}
+
+TEST(ScrollbarTests, CustomScrollbarSizesNoCornerRadii)
+{
+    RetainPtr webView = scrollbarAvoidanceTestWebView();
+
+    [webView synchronouslyLoadHTMLString:customScrollbarHTMLWithBothScrollbars()];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameWidth = [webView frame].size.width;
+    auto frameHeight = [webView frame].size.height;
+
+    auto verticalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalRect);
+    EXPECT_EQ(verticalRect->size.width, 10);
+    EXPECT_EQ(verticalRect->origin.x, frameWidth - 10);
+    EXPECT_EQ(verticalRect->origin.y, 0);
+    EXPECT_EQ(verticalRect->size.height, frameHeight - 18);
+
+    auto horizontalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Horizontal);
+    ASSERT_TRUE(horizontalRect);
+    EXPECT_EQ(horizontalRect->size.height, 18);
+    EXPECT_EQ(horizontalRect->origin.x, 0);
+    EXPECT_EQ(horizontalRect->origin.y, frameHeight - 18);
+    EXPECT_EQ(horizontalRect->size.width, frameWidth - 10);
+}
+
+TEST(ScrollbarTests, CustomScrollbarScrollCornerRectNoCornerRadii)
+{
+    RetainPtr webView = scrollbarAvoidanceTestWebView();
+
+    [webView synchronouslyLoadHTMLString:customScrollbarHTMLWithBothScrollbars()];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameWidth = [webView frame].size.width;
+    auto frameHeight = [webView frame].size.height;
+
+    auto cornerRect = scrollCornerRectForWebView(webView.get());
+    ASSERT_TRUE(cornerRect);
+    EXPECT_EQ(cornerRect->origin.x, frameWidth - 10);
+    EXPECT_EQ(cornerRect->origin.y, frameHeight - 18);
+    EXPECT_EQ(cornerRect->size.width, 10);
+    EXPECT_EQ(cornerRect->size.height, 18);
+}
+
+TEST(ScrollbarTests, CustomScrollbarScrollCornerRectWithObscuredContentInsets)
+{
+    RetainPtr webView = scrollbarAvoidanceTestWebView();
+
+    [webView synchronouslyLoadHTMLString:customScrollbarHTMLWithBothScrollbars()];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 15, 20)];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameWidth = [webView frame].size.width;
+    auto frameHeight = [webView frame].size.height;
+
+    auto verticalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalRect);
+    EXPECT_EQ(verticalRect->origin.x, frameWidth - 10 - 20);
+
+    auto horizontalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Horizontal);
+    ASSERT_TRUE(horizontalRect);
+    EXPECT_EQ(horizontalRect->origin.y, frameHeight - 18 - 15);
+
+    auto cornerRect = scrollCornerRectForWebView(webView.get());
+    ASSERT_TRUE(cornerRect);
+    EXPECT_EQ(cornerRect->origin.x, frameWidth - 10 - 20);
+    EXPECT_EQ(cornerRect->origin.y, frameHeight - 18 - 15);
+    EXPECT_EQ(cornerRect->size.width, 10);
+    EXPECT_EQ(cornerRect->size.height, 18);
+
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 0, 0)];
+}
+
+TEST(ScrollbarTests, CustomScrollbarCornerRadiusAvoidanceAccountsForScrollCorner)
+{
+    RetainPtr webView = scrollbarAvoidanceTestWebView();
+    RetainPtr window = scrollbarAvoidanceTestWindow();
+    RetainPtr container = adoptNS([[ContainerView alloc] initWithFrame:NSMakeRect(0, 0, 500, 400)]);
+
+    [[window contentView] addSubview:container.get()];
+
+    WebCore::CornerRadii radii { 30 };
+    [container setCustomCornerRadius:radii];
+    [container addSubview:webView.get()];
+
+    [webView synchronouslyLoadHTMLString:customScrollbarHTMLWithBothScrollbars()];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameWidth = [webView frame].size.width;
+    auto frameHeight = [webView frame].size.height;
+
+    auto verticalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalRect);
+    auto horizontalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Horizontal);
+    ASSERT_TRUE(horizontalRect);
+
+    auto cornerRadius = 30.0;
+    auto verticalScrollbarWidth = verticalRect->size.width;
+    auto horizontalScrollbarHeight = horizontalRect->size.height;
+
+    auto expectedBottomOffset = std::max(0.0, cornerRadius - horizontalScrollbarHeight);
+    auto expectedTopOffset = cornerRadius;
+    auto expectedVerticalHeight = frameHeight - horizontalScrollbarHeight - expectedTopOffset - expectedBottomOffset;
+
+    EXPECT_NEAR(verticalRect->origin.y, expectedTopOffset, 0.5);
+    EXPECT_NEAR(verticalRect->size.height, expectedVerticalHeight, 0.5);
+
+    auto expectedRightOffset = std::max(0.0, cornerRadius - verticalScrollbarWidth);
+    auto expectedLeftOffset = cornerRadius;
+    auto expectedHorizontalWidth = frameWidth - verticalScrollbarWidth - expectedLeftOffset - expectedRightOffset;
+
+    EXPECT_NEAR(horizontalRect->origin.x, expectedLeftOffset, 0.5);
+    EXPECT_NEAR(horizontalRect->size.width, expectedHorizontalWidth, 0.5);
+
+    auto cornerRect = scrollCornerRectForWebView(webView.get());
+    ASSERT_TRUE(cornerRect);
+    EXPECT_NEAR(cornerRect->origin.x, verticalRect->origin.x, 0.5);
+    EXPECT_NEAR(cornerRect->origin.y, horizontalRect->origin.y, 0.5);
+    EXPECT_NEAR(cornerRect->size.width, verticalScrollbarWidth, 0.5);
+    EXPECT_NEAR(cornerRect->size.height, horizontalScrollbarHeight, 0.5);
+}
+
+TEST(ScrollbarTests, CustomScrollbarCornerRadiusAvoidanceWithObscuredContentInsetsAndScrollCorner)
+{
+    RetainPtr webView = scrollbarAvoidanceTestWebView();
+    RetainPtr window = scrollbarAvoidanceTestWindow();
+    RetainPtr container = adoptNS([[ContainerView alloc] initWithFrame:NSMakeRect(0, 0, 500, 400)]);
+
+    [[window contentView] addSubview:container.get()];
+
+    WebCore::CornerRadii radii { 30 };
+    [container setCustomCornerRadius:radii];
+    [container addSubview:webView.get()];
+
+    [webView synchronouslyLoadHTMLString:customScrollbarHTMLWithBothScrollbars()];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(5, 5, 10, 8)];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameWidth = [webView frame].size.width;
+    auto frameHeight = [webView frame].size.height;
+
+    auto verticalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalRect);
+    auto horizontalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Horizontal);
+    ASSERT_TRUE(horizontalRect);
+
+    auto cornerRadius = 30.0;
+    auto verticalScrollbarWidth = 10.0;
+    auto horizontalScrollbarHeight = 18.0;
+
+    auto expectedTopOffset = std::max(cornerRadius, 5.0);
+    auto expectedBottomOffset = std::max(std::max(0.0, cornerRadius - horizontalScrollbarHeight), 10.0);
+    auto expectedVerticalHeight = frameHeight - horizontalScrollbarHeight - expectedTopOffset - expectedBottomOffset;
+
+    EXPECT_NEAR(verticalRect->origin.y, expectedTopOffset, 0.5);
+    EXPECT_NEAR(verticalRect->size.height, expectedVerticalHeight, 0.5);
+    EXPECT_NEAR(verticalRect->origin.x, frameWidth - verticalScrollbarWidth - 8, 0.5);
+
+    auto expectedLeftOffset = std::max(cornerRadius, 5.0);
+    auto expectedRightOffset = std::max(std::max(0.0, cornerRadius - verticalScrollbarWidth), 8.0);
+    auto expectedHorizontalWidth = frameWidth - verticalScrollbarWidth - expectedLeftOffset - expectedRightOffset;
+
+    EXPECT_NEAR(horizontalRect->origin.x, expectedLeftOffset, 0.5);
+    EXPECT_NEAR(horizontalRect->size.width, expectedHorizontalWidth, 0.5);
+    EXPECT_NEAR(horizontalRect->origin.y, frameHeight - horizontalScrollbarHeight - 10, 0.5);
+
+    auto cornerRect = scrollCornerRectForWebView(webView.get());
+    ASSERT_TRUE(cornerRect);
+    EXPECT_NEAR(cornerRect->origin.x, verticalRect->origin.x, 0.5);
+    EXPECT_NEAR(cornerRect->origin.y, horizontalRect->origin.y, 0.5);
+    EXPECT_NEAR(cornerRect->size.width, verticalScrollbarWidth, 0.5);
+    EXPECT_NEAR(cornerRect->size.height, horizontalScrollbarHeight, 0.5);
+
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(0, 0, 0, 0)];
+}
+
+TEST(ScrollbarTests, CustomScrollbarScrollCornerSmallCornerRadius)
+{
+    RetainPtr webView = scrollbarAvoidanceTestWebView();
+    RetainPtr window = scrollbarAvoidanceTestWindow();
+    RetainPtr container = adoptNS([[ContainerView alloc] initWithFrame:NSMakeRect(0, 0, 500, 400)]);
+
+    [[window contentView] addSubview:container.get()];
+
+    WebCore::CornerRadii radii { 8 };
+    [container setCustomCornerRadius:radii];
+    [container addSubview:webView.get()];
+
+    [webView synchronouslyLoadHTMLString:customScrollbarHTMLWithBothScrollbars()];
+    [webView stringByEvaluatingJavaScript:@"internals.setUsesOverlayScrollbars(false)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameWidth = [webView frame].size.width;
+    auto frameHeight = [webView frame].size.height;
+
+    auto verticalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Vertical);
+    ASSERT_TRUE(verticalRect);
+    auto horizontalRect = scrollbarFrameRect(webView.get(), ScrollbarType::Horizontal);
+    ASSERT_TRUE(horizontalRect);
+
+    auto cornerRadius = 8.0;
+    auto verticalScrollbarWidth = 10.0;
+    auto horizontalScrollbarHeight = 18.0;
+
+    auto expectedTopOffset = cornerRadius;
+    auto expectedBottomOffset = 0.0;
+    auto expectedVerticalHeight = frameHeight - horizontalScrollbarHeight - expectedTopOffset - expectedBottomOffset;
+
+    EXPECT_NEAR(verticalRect->origin.y, expectedTopOffset, 0.5);
+    EXPECT_NEAR(verticalRect->size.height, expectedVerticalHeight, 0.5);
+
+    auto expectedLeftOffset = cornerRadius;
+    auto expectedRightOffset = 0.0;
+    auto expectedHorizontalWidth = frameWidth - verticalScrollbarWidth - expectedLeftOffset - expectedRightOffset;
+
+    EXPECT_NEAR(horizontalRect->origin.x, expectedLeftOffset, 0.5);
+    EXPECT_NEAR(horizontalRect->size.width, expectedHorizontalWidth, 0.5);
+
+    auto cornerRect = scrollCornerRectForWebView(webView.get());
+    ASSERT_TRUE(cornerRect);
+    EXPECT_NEAR(cornerRect->origin.x, verticalRect->origin.x, 0.5);
+    EXPECT_NEAR(cornerRect->origin.y, horizontalRect->origin.y, 0.5);
+    EXPECT_NEAR(cornerRect->size.width, verticalScrollbarWidth, 0.5);
+    EXPECT_NEAR(cornerRect->size.height, horizontalScrollbarHeight, 0.5);
+}
+
 #endif // HAVE(NSVIEW_CORNER_CONFIGURATION)
 
 } // namespace TestWebKitAPI

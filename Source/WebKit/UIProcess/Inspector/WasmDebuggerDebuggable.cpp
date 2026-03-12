@@ -61,7 +61,7 @@ WasmDebuggerDebuggable::~WasmDebuggerDebuggable() = default;
 
 std::optional<ProcessID> WasmDebuggerDebuggable::webContentProcessPID() const
 {
-    RefPtr process = m_process.get();
+    auto* process = m_process.get();
     if (!process)
         return std::nullopt;
 
@@ -102,7 +102,7 @@ void WasmDebuggerDebuggable::connect(FrontendChannel& channel, bool isAutomaticC
     m_frontendChannel = &channel;
 
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, isAutomaticConnection, immediatelyPause] {
-        RefPtr process = m_process.get();
+        auto* process = m_process.get();
         if (!process)
             return;
 
@@ -116,7 +116,7 @@ void WasmDebuggerDebuggable::disconnect(FrontendChannel& channel)
     m_frontendChannel = nullptr;
 
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }] {
-        RefPtr process = m_process.get();
+        auto* process = m_process.get();
         if (!process)
             return;
 
@@ -140,7 +140,7 @@ void WasmDebuggerDebuggable::dispatchMessageFromRemote(String&& message)
 void WasmDebuggerDebuggable::setIndicating(bool indicating)
 {
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, indicating] {
-        RefPtr process = m_process.get();
+        auto* process = m_process.get();
         if (!process)
             return;
 

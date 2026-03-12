@@ -84,8 +84,8 @@ public:
     static Ref<const CustomProperty> createForValue(const AtomString& name, Value&&);
     static Ref<const CustomProperty> createForValueList(const AtomString& name, ValueList&&);
 
-    const AtomString& name() const { return m_name; }
-    const Kind& value() const { return m_value; }
+    const AtomString& name() const LIFETIME_BOUND { return m_name; }
+    const Kind& value() const LIFETIME_BOUND { return m_value; }
 
     const Vector<CSSParserToken>& tokens() const;
 

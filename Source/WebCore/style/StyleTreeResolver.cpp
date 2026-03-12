@@ -70,6 +70,7 @@
 #include "StylePositionTryFallbackTactic.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleTreeResolverInlines.h"
 #include "Text.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "ViewTransition.h"
@@ -374,9 +375,8 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
         m_document->setTextColor(update.style->visitedDependentColor());
 
     // FIXME: These elements should not change renderer based on appearance property.
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); (input && input->isSearchField())
-        || is<HTMLMeterElement>(element)
-        || is<HTMLProgressElement>(element)) {
+    if (auto* input = dynamicDowncast<HTMLInputElement>(element); (input && input->isSearchField())
+        || isAnyOf<HTMLMeterElement, HTMLProgressElement>(element)) {
         if (existingStyle && update.style->usedAppearance() != existingStyle->usedAppearance()) {
             update.changes.add(Change::Renderer);
             descendantsToResolve = DescendantsToResolve::All;
@@ -465,12 +465,12 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         return { };
 
     if (pseudoElementIdentifier.type == PseudoElementType::Checkmark) {
-        if (RefPtr option = dynamicDowncast<HTMLOptionElement>(element)) {
+        if (auto* option = dynamicDowncast<HTMLOptionElement>(element)) {
             // Option elements need to check against the picker for their appearance value.
-            RefPtr select = option->ownerSelectElement();
+            auto* select = option->ownerSelectElement();
             if (!select)
                 return { };
-            RefPtr pickerElement = select->pickerPopoverElement();
+            auto* pickerElement = select->pickerPopoverElement();
             if (!pickerElement)
                 return { };
             CheckedPtr pickerStyle = m_update->elementStyle(*pickerElement);
@@ -479,7 +479,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         } else {
             if (elementUpdate.style->usedAppearance() != StyleAppearance::Base)
                 return { };
-            if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); !input || !input->isCheckable())
+            if (auto* input = dynamicDowncast<HTMLInputElement>(element); !input || !input->isCheckable())
                 return { };
         }
     }
@@ -487,7 +487,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     if (pseudoElementIdentifier.type == PseudoElementType::PickerIcon) {
         if (elementUpdate.style->usedAppearance() != StyleAppearance::Base)
             return { };
-        if (RefPtr select = dynamicDowncast<HTMLSelectElement>(element); !select || !select->usesMenuList())
+        if (auto* select = dynamicDowncast<HTMLSelectElement>(element); !select || !select->usesMenuList())
             return { };
     }
 
@@ -1213,8 +1213,8 @@ static bool hasLoadingStylesheet(const Style::Scope& styleScope, const Element& 
         return true;
     if (!checkDescendants)
         return false;
-    for (Ref descendant : descendantsOfType<Element>(element)) {
-        if (styleScope.hasPendingSheetInBody(descendant.get()))
+    for (auto& descendant : descendantsOfType<Element>(element)) {
+        if (styleScope.hasPendingSheetInBody(descendant))
             return true;
     };
     return false;
@@ -1665,8 +1665,8 @@ std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const Position
         // "If an at-rule or property defines a name that other CSS constructs can refer to it by, ... it must be defined as a tree-scoped name."
         // https://drafts.csswg.org/css-scoping-1/#shadow-names
         return Style::Scope::resolveTreeScopedReference(styleable.element, *fallback.ruleAndTactics.rule, [](const Style::Scope& scope, const AtomString& name) -> RefPtr<const StyleProperties> {
-            Ref ruleSet = scope.resolverIfExists()->ruleSets().authorStyle();
-            auto rule = ruleSet->positionTryRuleForName(name);
+            auto& ruleSet = scope.resolverIfExists()->ruleSets().authorStyle();
+            auto rule = ruleSet.positionTryRuleForName(name);
             if (!rule)
                 return nullptr;
             return rule->properties();

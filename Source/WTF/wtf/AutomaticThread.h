@@ -72,7 +72,7 @@ class AutomaticThread;
 
 class AutomaticThreadCondition : public ThreadSafeRefCounted<AutomaticThreadCondition> {
 public:
-    static WTF_EXPORT_PRIVATE Ref<AutomaticThreadCondition> create();
+    static WTF_EXPORT_PRIVATE Ref<AutomaticThreadCondition> NODELETE create();
 
     WTF_EXPORT_PRIVATE ~AutomaticThreadCondition();
     

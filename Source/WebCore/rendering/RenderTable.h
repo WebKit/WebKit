@@ -94,8 +94,8 @@ public:
     struct ColumnStruct {
         unsigned span { 1 };
     };
-    const Vector<ColumnStruct>& columns() const { return m_columns; }
-    const Vector<LayoutUnit>& columnPositions() const { return m_columnPos; }
+    const Vector<ColumnStruct>& columns() const LIFETIME_BOUND { return m_columns; }
+    const Vector<LayoutUnit>& columnPositions() const LIFETIME_BOUND { return m_columnPos; }
     void setColumnPosition(unsigned index, LayoutUnit position)
     {
         // Note that if our horizontal border-spacing changed, our position will change but not
@@ -189,7 +189,7 @@ public:
     void invalidateCollapsedBorders(RenderTableCell* cellWithStyleChange = nullptr);
     void invalidateCollapsedBordersAfterStyleChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle, RenderTableCell* cellWithStyleChange = nullptr);
     void collapsedEmptyBorderIsPresent() { m_collapsedEmptyBorderIsPresent = true; }
-    const CollapsedBorderValue* currentBorderValue() const { return m_currentBorder; }
+    const CollapsedBorderValue* currentBorderValue() const LIFETIME_BOUND { return m_currentBorder; }
     
     bool hasSections() const { return m_head || m_foot || m_firstBody; }
 

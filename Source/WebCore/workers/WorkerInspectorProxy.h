@@ -74,9 +74,9 @@ public:
     static Vector<Ref<WorkerInspectorProxy>> proxiesForPage(PageIdentifier);
     static Vector<Ref<WorkerInspectorProxy>> proxiesForWorkerGlobalScope(ScriptExecutionContextIdentifier);
 
-    const URL& url() const { return m_url; }
-    const String& name() const { return m_name; }
-    const String& identifier() const { return m_identifier; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext.get(); }
 
     WorkerThreadStartMode workerStartMode(ScriptExecutionContext&);

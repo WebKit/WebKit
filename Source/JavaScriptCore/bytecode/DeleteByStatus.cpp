@@ -30,7 +30,7 @@
 #include "CodeBlock.h"
 #include "ICStatusUtils.h"
 #include "InlineCacheCompiler.h"
-#include "StructureStubInfo.h"
+#include "PropertyInlineCache.h"
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -55,8 +55,8 @@ DeleteByStatus DeleteByStatus::computeForBaseline(CodeBlock* baselineBlock, ICSt
     DeleteByStatus result;
 
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfoWithoutExitSiteFeedback(
-        locker, baselineBlock, map.get(CodeOrigin(bytecodeIndex)).stubInfo);
+    result = computeForPropertyInlineCacheWithoutExitSiteFeedback(
+        locker, baselineBlock, map.get(CodeOrigin(bytecodeIndex)).propertyCache);
 
     if (didExit)
         return result.slowVersion();
@@ -70,39 +70,39 @@ DeleteByStatus DeleteByStatus::computeForBaseline(CodeBlock* baselineBlock, ICSt
 }
 
 #if ENABLE(JIT)
-DeleteByStatus::DeleteByStatus(StubInfoSummary summary, StructureStubInfo& stubInfo)
+DeleteByStatus::DeleteByStatus(PropertyInlineCacheSummary summary, PropertyInlineCache& propertyCache)
 {
     switch (summary) {
-    case StubInfoSummary::NoInformation:
+    case PropertyInlineCacheSummary::NoInformation:
         m_state = NoInformation;
         return;
-    case StubInfoSummary::Simple:
-    case StubInfoSummary::Megamorphic:
-    case StubInfoSummary::MakesCalls:
-    case StubInfoSummary::TakesSlowPathAndMakesCalls:
+    case PropertyInlineCacheSummary::Simple:
+    case PropertyInlineCacheSummary::Megamorphic:
+    case PropertyInlineCacheSummary::MakesCalls:
+    case PropertyInlineCacheSummary::TakesSlowPathAndMakesCalls:
         RELEASE_ASSERT_NOT_REACHED();
         return;
-    case StubInfoSummary::TakesSlowPath:
-        m_state = stubInfo.tookSlowPath ? ObservedTakesSlowPath : LikelyTakesSlowPath;
+    case PropertyInlineCacheSummary::TakesSlowPath:
+        m_state = propertyCache.tookSlowPath ? ObservedTakesSlowPath : LikelyTakesSlowPath;
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* block, StructureStubInfo* stubInfo)
+DeleteByStatus DeleteByStatus::computeForPropertyInlineCacheWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* block, PropertyInlineCache* propertyCache)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(locker, block->vm(), stubInfo);
+    PropertyInlineCacheSummary summary = PropertyInlineCache::summary(locker, block->vm(), propertyCache);
     if (!isInlineable(summary))
-        return DeleteByStatus(summary, *stubInfo);
+        return DeleteByStatus(summary, *propertyCache);
 
     DeleteByStatus result;
     result.m_state = Simple;
-    switch (stubInfo->cacheType()) {
+    switch (propertyCache->cacheType()) {
     case CacheType::Unset:
         return DeleteByStatus(NoInformation);
 
     case CacheType::Stub: {
-        auto list = stubInfo->listedAccessCases(locker);
+        auto list = propertyCache->listedAccessCases(locker);
         for (unsigned listIndex = 0; listIndex < list.size(); ++listIndex) {
             const AccessCase& access = *list.at(listIndex);
             ASSERT(!access.viaGlobalProxy());
@@ -115,24 +115,24 @@ DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(const C
             case AccessCase::DeleteNonConfigurable: {
                 DeleteByVariant variant(access.identifier(), access.type() == AccessCase::DeleteMiss, structure, nullptr, invalidOffset);
                 if (!result.appendVariant(variant))
-                    return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
+                    return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);
                 break;
             }
             case AccessCase::Delete: {
                 PropertyOffset offset;
                 Structure* newStructure = Structure::removePropertyTransitionFromExistingStructureConcurrently(structure, access.identifier().uid(), offset);
                 if (!newStructure)
-                    return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
+                    return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);
                 ASSERT_UNUSED(offset, offset == access.offset());                
                 DeleteByVariant variant(access.identifier(), true, structure, newStructure, access.offset());
 
                 if (!result.appendVariant(variant))
-                    return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
+                    return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);
                 break;
             }
             default:
                 ASSERT_NOT_REACHED();
-                return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
+                return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);
             }
         }
 
@@ -141,7 +141,7 @@ DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(const C
     }
 
     default:
-        return DeleteByStatus(JSC::slowVersion(summary), *stubInfo);
+        return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -170,12 +170,12 @@ DeleteByStatus DeleteByStatus::computeFor(
             return result;
         };
 
-        if (status.stubInfo) {
+        if (status.propertyCache) {
             DeleteByStatus result;
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
-                result = computeForStubInfoWithoutExitSiteFeedback(
-                    locker, context->optimizedCodeBlock, status.stubInfo);
+                result = computeForPropertyInlineCacheWithoutExitSiteFeedback(
+                    locker, context->optimizedCodeBlock, status.propertyCache);
             }
             if (result.isSet())
                 return bless(result);

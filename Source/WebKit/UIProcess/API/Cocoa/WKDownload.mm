@@ -301,7 +301,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (WKWebView *)webView
 {
-    RefPtr page = protect(_download.get())->originatingPage();
+    RefPtr page = _download->originatingPage();
     return page ? page->cocoaView().autorelease() : nil;
 }
 

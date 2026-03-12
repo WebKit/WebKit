@@ -43,7 +43,7 @@ HTMLFormElement* FormController::ownerForm(const FormListedElement& control)
     // Assume controls with form attribute have no owners because we restore
     // state during parsing and form owners of such controls might be
     // indeterminate.
-    return protect(control.asHTMLElement())->hasAttributeWithoutSynchronization(HTMLNames::formAttr) ? nullptr : control.form();
+    return control.asHTMLElement().hasAttributeWithoutSynchronization(HTMLNames::formAttr) ? nullptr : control.form();
 }
 
 struct AtomStringVectorReader {

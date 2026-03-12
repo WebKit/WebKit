@@ -334,6 +334,9 @@ TEST(WebKit, ConfigurationMaskedURLSchemes)
     NSString *htmlSource = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
     EXPECT_EQ([htmlSource containsString:@"<iframe src=\"webkit-masked-url://hidden/\"></iframe>"], YES);
 
+    NSString *xmlSource = [webView stringByEvaluatingJavaScript:@"(new XMLSerializer()).serializeToString(document.body)"];
+    EXPECT_WK_STREQ(xmlSource, @"<body xmlns=\"http://www.w3.org/1999/xhtml\"><iframe src=\"webkit-masked-url://hidden/\"></iframe><iframe src=\"http://apple.com/baz.html\"></iframe></body>");
+
     [webView synchronouslyLoadHTMLString:@""];
 
     NSURL *scriptURL = [NSURL URLWithString:@"another-scheme://foo.com/bar.js"];

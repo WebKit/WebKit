@@ -123,7 +123,7 @@ public:
     WEBCORE_EXPORT unsigned flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;
 
-    InspectorBackendClient* inspectorBackendClient() const { return m_inspectorBackendClient.get(); }
+    InspectorBackendClient* inspectorBackendClient() const LIFETIME_BOUND { return m_inspectorBackendClient.get(); }
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
 
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }

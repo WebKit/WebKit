@@ -149,7 +149,7 @@ void MediaPlayerPrivateWebM::getSupportedTypes(HashSet<String>& types)
 
 MediaPlayer::SupportsType MediaPlayerPrivateWebM::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    if (parameters.isMediaSource || parameters.isMediaStream || parameters.requiresRemotePlayback)
+    if (parameters.platformType != PlatformMediaDecodingType::FileOrHLS || parameters.requiresRemotePlayback)
         return MediaPlayer::SupportsType::IsNotSupported;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -682,6 +682,7 @@ void MediaPlayerPrivateWebM::updateBufferedFromTrackBuffers(bool ended)
 
 void MediaPlayerPrivateWebM::updateDurationFromTrackBuffers()
 {
+    ASSERT(m_loadFinished);
     MediaTime highestEndTime = MediaTime::zeroTime();
     for (auto& pair : m_trackBufferMap) {
         auto& trackBuffer = pair.second;
@@ -844,6 +845,9 @@ void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
     m_duration = WTF::move(duration);
     if (RefPtr player = m_player.get())
         player->durationChanged();
+
+    if (m_readyState < MediaPlayerReadyState::HaveMetadata)
+        return;
 
     monitorReadyState();
 }
@@ -1290,12 +1294,10 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
         }
     }
 
-    setReadyState(MediaPlayer::ReadyState::HaveMetadata);
-
     if (segment.duration.isValid())
         setDuration(WTF::move(segment.duration));
-    else
-        setDuration(MediaTime::positiveInfiniteTime());
+
+    setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 }
 
 void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType)

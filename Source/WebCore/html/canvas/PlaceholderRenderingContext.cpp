@@ -149,7 +149,7 @@ void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuf
 
 PixelFormat PlaceholderRenderingContext::pixelFormat() const
 {
-    if (RefPtr buffer = m_buffer)
+    if (auto* buffer = m_buffer.get())
         return buffer->pixelFormat();
     return CanvasRenderingContext::pixelFormat();
 }

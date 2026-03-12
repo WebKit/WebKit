@@ -55,8 +55,8 @@ auto CSSValueConversion<HangingPunctuation>::operator()(BuilderState& state, con
         return CSS::Keyword::None { };
 
     HangingPunctuationValueEnumSet result;
-    for (Ref item : *list) {
-        switch (item->valueID()) {
+    for (auto& item : *list) {
+        switch (item.valueID()) {
         case CSSValueFirst:
             result.value.add(HangingPunctuationValue::First);
             break;

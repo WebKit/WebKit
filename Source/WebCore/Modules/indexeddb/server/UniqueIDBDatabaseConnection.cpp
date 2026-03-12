@@ -130,7 +130,7 @@ Ref<UniqueIDBDatabaseTransaction> UniqueIDBDatabaseConnection::createVersionChan
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::createVersionChangeTransaction - %s - %" PRIu64, m_openRequestIdentifier.loggingString().utf8().data(), identifier().toUInt64());
     ASSERT(!m_closePending);
 
-    IDBTransactionInfo info = IDBTransactionInfo::versionChange(m_connectionToClient, protect(database())->info(), newVersion);
+    IDBTransactionInfo info = IDBTransactionInfo::versionChange(m_connectionToClient, database()->info(), newVersion);
 
     Ref<UniqueIDBDatabaseTransaction> transaction = UniqueIDBDatabaseTransaction::create(*this, info);
     m_transactionMap.set(transaction->info().identifier(), transaction);

@@ -93,7 +93,7 @@ public:
 
     // Context State
 
-    const SourceBrush& fillBrush() const { return m_state.fillBrush(); }
+    const SourceBrush& fillBrush() const LIFETIME_BOUND { return m_state.fillBrush(); }
     const Color& fillColor() const { return fillBrush().color(); }
     Gradient* fillGradient() const { return fillBrush().gradient(); }
     const AffineTransform& fillGradientSpaceTransform() const { return fillBrush().gradientSpaceTransform(); }
@@ -106,7 +106,7 @@ public:
     WindRule fillRule() const { return m_state.fillRule(); }
     void setFillRule(WindRule fillRule) { m_state.setFillRule(fillRule); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillRule)); }
 
-    const SourceBrush& strokeBrush() const { return m_state.strokeBrush(); }
+    const SourceBrush& strokeBrush() const LIFETIME_BOUND { return m_state.strokeBrush(); }
     const Color& strokeColor() const { return strokeBrush().color(); }
     Gradient* strokeGradient() const { return strokeBrush().gradient(); }
     const AffineTransform& strokeGradientSpaceTransform() const { return strokeBrush().gradientSpaceTransform(); }

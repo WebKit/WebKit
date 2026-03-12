@@ -63,7 +63,7 @@ public:
     GridSpan gridItemSpan(const RenderBox&, Style::GridTrackSizingDirection) const;
     GridSpan gridItemSpanIgnoringCollapsedTracks(const RenderBox&, Style::GridTrackSizingDirection) const;
 
-    const GridCell& NODELETE cell(unsigned row, unsigned column) const;
+    const GridCell& NODELETE cell(unsigned row, unsigned column) const LIFETIME_BOUND;
 
     unsigned NODELETE explicitGridStart(Style::GridTrackSizingDirection) const;
     void NODELETE setExplicitGridStart(unsigned rowStart, unsigned columnStart);
@@ -82,10 +82,10 @@ public:
     bool NODELETE hasAutoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
     bool isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, unsigned) const;
 
-    OrderedTrackIndexSet* NODELETE autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
+    OrderedTrackIndexSet* NODELETE autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
-    OrderIterator& orderIterator() { return m_orderIterator; }
-    const OrderIterator& orderIterator() const { return m_orderIterator; }
+    OrderIterator& orderIterator() LIFETIME_BOUND { return m_orderIterator; }
+    const OrderIterator& orderIterator() const LIFETIME_BOUND { return m_orderIterator; }
 
     void setNeedsItemsPlacement(bool);
     bool needsItemsPlacement() const { return m_needsItemsPlacement; };

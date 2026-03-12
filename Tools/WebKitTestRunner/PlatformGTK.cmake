@@ -4,8 +4,6 @@ add_custom_target(WebKitTestRunner-forwarding-headers
 list(APPEND WebKitTestRunner_DEPENDENCIES WebKitTestRunner-forwarding-headers)
 
 list(APPEND WebKitTestRunner_SOURCES
-    cairo/TestInvocationCairo.cpp
-
     gtk/EventSenderProxyGtk.cpp
     gtk/PlatformWebViewGtk.cpp
     gtk/TestControllerGtk.cpp
@@ -25,12 +23,10 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitTestRunner_LIBRARIES
-    Cairo::Cairo
     GTK::GTK
 )
 
 list(APPEND TestRunnerInjectedBundle_LIBRARIES
-    Fontconfig::Fontconfig
     GLib::GLib
 )
 

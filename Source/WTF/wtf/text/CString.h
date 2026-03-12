@@ -110,7 +110,7 @@ private:
     RefPtr<CStringBuffer> m_buffer;
 } SWIFT_ESCAPABLE;
 
-WTF_EXPORT_PRIVATE bool operator==(const CString&, const CString&);
+WTF_EXPORT_PRIVATE bool NODELETE operator==(const CString&, const CString&);
 WTF_EXPORT_PRIVATE bool operator<(const CString&, const CString&);
 
 WTF_EXPORT_PRIVATE CString convertToASCIILowercase(std::span<const char8_t>);
@@ -118,7 +118,7 @@ WTF_EXPORT_PRIVATE CString convertToASCIIUppercase(std::span<const char8_t>);
 
 struct CStringHash {
     static unsigned hash(const CString& string) { return string.hash(); }
-    WTF_EXPORT_PRIVATE static bool equal(const CString& a, const CString& b);
+    WTF_EXPORT_PRIVATE static bool NODELETE equal(const CString& a, const CString& b);
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 

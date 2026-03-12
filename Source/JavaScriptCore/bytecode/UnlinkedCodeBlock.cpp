@@ -164,7 +164,7 @@ ExpressionInfo::Entry UnlinkedCodeBlock::expressionInfoForBytecodeIndex(Bytecode
 static void dumpExpressionInfoDetails(size_t index, const JSInstructionStream& instructionStream, unsigned instructionOffset, LineColumn lineColumn, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
     const auto instruction = instructionStream.at(instructionOffset);
-    const char* event = "";
+    ASCIILiteral event = "";
     if (instruction->is<OpDebug>()) {
         switch (instruction->as<OpDebug>().m_debugHookType) {
         case WillExecuteProgram: event = " WillExecuteProgram"; break;
@@ -178,7 +178,7 @@ static void dumpExpressionInfoDetails(size_t index, const JSInstructionStream& i
         case DidAwait: event = " DidAwait"; break;
         }
     }
-    dataLogF("  [%zu] pc %u @ line %u col %u divot %u startOffset %u endOffset %u : %s%s\n", index, instructionOffset, lineColumn.line, lineColumn.column, divot, startOffset, endOffset, instruction->name(), event);
+    SAFE_DATALOGF("  [%zu] pc %u @ line %u col %u divot %u startOffset %u endOffset %u : %s%s\n", index, instructionOffset, lineColumn.line, lineColumn.column, divot, startOffset, endOffset, instruction->name(), event);
 }
 
 void UnlinkedCodeBlock::dumpExpressionInfo()

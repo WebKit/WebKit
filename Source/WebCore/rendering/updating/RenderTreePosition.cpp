@@ -121,7 +121,7 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
             // ├─ element contents
             // ├─ ::after
             // └─ ::picker-icon
-            if (RefPtr after = element->afterPseudoElement()) {
+            if (auto* after = element->afterPseudoElement()) {
                 if (auto* renderer = after->renderer())
                     return renderer;
             }

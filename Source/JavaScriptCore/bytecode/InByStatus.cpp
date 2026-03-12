@@ -32,7 +32,7 @@
 #include "ComplexGetStatus.h"
 #include "ICStatusUtils.h"
 #include "InlineCacheCompiler.h"
-#include "StructureStubInfo.h"
+#include "PropertyInlineCache.h"
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -58,7 +58,7 @@ InByStatus InByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, By
     InByStatus result;
 
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock, map.get(CodeOrigin(bytecodeIndex)).stubInfo, callExitSiteData, codeOrigin);
+    result = computeForPropertyInlineCacheWithoutExitSiteFeedback(locker, profiledBlock, map.get(CodeOrigin(bytecodeIndex)).propertyCache, callExitSiteData, codeOrigin);
 
     if (!result.takesSlowPath() && didExit)
         return InByStatus(TakesSlowPath);
@@ -95,11 +95,11 @@ InByStatus InByStatus::computeFor(
         };
         
 #if ENABLE(DFG_JIT)
-        if (status.stubInfo) {
+        if (status.propertyCache) {
             InByStatus result;
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
-                result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock, status.stubInfo, callExitSiteData, codeOrigin);
+                result = computeForPropertyInlineCacheWithoutExitSiteFeedback(locker, profiledBlock, status.propertyCache, callExitSiteData, codeOrigin);
             }
             if (result.isSet())
                 return bless(result);
@@ -115,24 +115,24 @@ InByStatus InByStatus::computeFor(
 #endif // ENABLE(JIT)
 
 #if ENABLE(DFG_JIT)
-InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData, CodeOrigin)
+InByStatus InByStatus::computeForPropertyInlineCacheWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, PropertyInlineCache* propertyCache, CallLinkStatus::ExitSiteData callExitSiteData, CodeOrigin)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(locker, profiledBlock->vm(), stubInfo);
+    PropertyInlineCacheSummary summary = PropertyInlineCache::summary(locker, profiledBlock->vm(), propertyCache);
     if (!isInlineable(summary))
         return InByStatus(summary);
     
     // Finally figure out if we can derive an access strategy.
     InByStatus result;
     result.m_state = Simple;
-    switch (stubInfo->cacheType()) {
+    switch (propertyCache->cacheType()) {
     case CacheType::Unset:
         return InByStatus(NoInformation);
 
     case CacheType::InByIdSelf: {
-        Structure* structure = stubInfo->inlineAccessBaseStructure();
+        Structure* structure = propertyCache->inlineAccessBaseStructure();
         if (structure->takesSlowPathInDFGForImpureProperty())
             return InByStatus(TakesSlowPath);
-        CacheableIdentifier identifier = stubInfo->identifier();
+        CacheableIdentifier identifier = propertyCache->identifier();
         UniquedStringImpl* uid = identifier.uid();
         RELEASE_ASSERT(uid);
         InByVariant variant(WTF::move(identifier));
@@ -150,13 +150,13 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
     }
 
     case CacheType::Stub: {
-        auto list = stubInfo->listedAccessCases(locker);
+        auto list = propertyCache->listedAccessCases(locker);
         if (list.size() == 1) {
             const AccessCase& access = *list.at(0);
             switch (access.type()) {
             case AccessCase::InMegamorphic:
             case AccessCase::IndexedMegamorphicIn: {
-                if (!stubInfo->tookSlowPath)
+                if (!propertyCache->tookSlowPath)
                     return InByStatus(Megamorphic);
                 break;
             }
@@ -164,7 +164,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
             case AccessCase::IndexedProxyObjectIn: {
                 auto status = InByStatus(InByStatus::ProxyObject);
                 auto callLinkStatus = makeUnique<CallLinkStatus>();
-                if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, 0, access))
+                if (CallLinkInfo* callLinkInfo = propertyCache->callLinkInfoAt(locker, 0, access))
                     *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
                 status.appendVariant(InByVariant(access.identifier(), { }, invalidOffset, { }, WTF::move(callLinkStatus)));
                 return status;

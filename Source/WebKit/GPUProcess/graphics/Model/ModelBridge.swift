@@ -845,8 +845,9 @@ extension WKBridgeLiteral {
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreRenderer, _version: 11) && compiler(>=6.2)
 
 internal func toData<T>(_ input: [T]) -> Data {
+    // FIXME: (rdar://164559261) understand/document/remove unsafety
     unsafe input.withUnsafeBytes { bufferPointer in
-        Data(bufferPointer)
+        unsafe Data(bufferPointer)
     }
 }
 

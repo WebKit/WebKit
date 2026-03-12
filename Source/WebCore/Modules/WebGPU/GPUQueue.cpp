@@ -514,8 +514,16 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
 
             auto rawWidth = CGImageGetWidth(platformImage.get());
             auto rawHeight = CGImageGetHeight(platformImage.get());
-            auto orientedWidth = isSVG ? rawWidth : imageElement->width();
-            auto orientedHeight = isSVG ? rawHeight : imageElement->height();
+
+            // We need to account for EXIF orientation which may swap width/height.
+            auto orientation = RefPtr { imageElement->image() }->orientation().orientation();
+            bool orientationSwapsDimensions = orientation == ImageOrientation::Orientation::OriginLeftTop
+                || orientation == ImageOrientation::Orientation::OriginRightTop
+                || orientation == ImageOrientation::Orientation::OriginRightBottom
+                || orientation == ImageOrientation::Orientation::OriginLeftBottom;
+
+            auto orientedWidth = orientationSwapsDimensions ? rawHeight : rawWidth;
+            auto orientedHeight = orientationSwapsDimensions ? rawWidth : rawHeight;
 
             if (!orientedWidth || !orientedHeight || !rawWidth || !rawHeight)
                 return callback({ }, 0, 0);
@@ -566,7 +574,6 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
                 }
             }();
 
-            auto orientation = RefPtr { imageElement->image() }->orientation().orientation();
             if (sizeInBytes == requiredSize && channelLayoutIsRGB && orientation == ImageOrientation::Orientation::OriginTopLeft)
                 return callback(byteSpan.first(sizeInBytes), rawWidth, rawHeight);
 

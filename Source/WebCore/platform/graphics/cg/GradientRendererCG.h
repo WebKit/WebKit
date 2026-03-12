@@ -44,18 +44,15 @@ struct ColorConvertedToInterpolationColorSpaceStop {
 
 class GradientRendererCG {
 public:
-    GradientRendererCG(ColorInterpolationMethod, const GradientColorStops&, std::optional<DestinationColorSpace>);
+    GradientRendererCG(ColorInterpolationMethod, const GradientColorStops&);
 
     void drawLinearGradient(CGContextRef, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions);
     void drawRadialGradient(CGContextRef, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions);
     void drawConicGradient(CGContextRef, CGPoint center, CGFloat angle);
 
-    std::optional<DestinationColorSpace> colorSpace() const;
-
 private:
     struct Gradient {
         RetainPtr<CGGradientRef> gradient;
-        std::optional<DestinationColorSpace> colorSpace;
     };
 
     struct Shading {
@@ -69,7 +66,7 @@ private:
             }
 
             ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
-            const Vector<ColorConvertedToInterpolationColorSpaceStop>& stops() const { return m_stops; }
+            const Vector<ColorConvertedToInterpolationColorSpaceStop>& stops() const LIFETIME_BOUND { return m_stops; }
 
             bool firstStopIsSynthetic() const { return m_firstStopIsSynthetic; }
             bool lastStopIsSynthetic() const { return m_lastStopIsSynthetic; }
@@ -96,8 +93,8 @@ private:
 
     using Strategy = Variant<Gradient, Shading>;
 
-    Strategy pickStrategy(ColorInterpolationMethod, const GradientColorStops&, std::optional<DestinationColorSpace>) const;
-    Strategy makeGradient(ColorInterpolationMethod, const GradientColorStops&, std::optional<DestinationColorSpace>) const;
+    Strategy pickStrategy(ColorInterpolationMethod, const GradientColorStops&) const;
+    Strategy makeGradient(ColorInterpolationMethod, const GradientColorStops&) const;
     Strategy makeShading(ColorInterpolationMethod, const GradientColorStops&) const;
 
     Strategy m_strategy;

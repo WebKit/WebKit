@@ -197,15 +197,15 @@ public:
 
     size_t numberOfIdentifiers() const { return m_identifiers.size(); }
     const Identifier& identifier(int index) const { return m_identifiers[index]; }
-    const FixedVector<Identifier>& identifiers() const { return m_identifiers; }
+    const FixedVector<Identifier>& identifiers() const LIFETIME_BOUND { return m_identifiers; }
 
     BitVector& bitVector(size_t i) { ASSERT(m_rareData); return m_rareData->m_bitVectors[i]; }
 
-    const FixedVector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
+    const FixedVector<WriteBarrier<Unknown>>& constantRegisters() LIFETIME_BOUND { return m_constantRegisters; }
     const WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()]; }
     WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) { return m_constantRegisters[reg.toConstantIndex()]; }
     ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
-    const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
+    const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() LIFETIME_BOUND { return m_constantsSourceCodeRepresentation; }
 
     SourceCodeRepresentation constantSourceCodeRepresentation(VirtualRegister reg) const
     {
@@ -362,7 +362,7 @@ public:
         return hasExitSite(locker, site);
     }
 
-    DFG::ExitProfile& exitProfile() { return m_exitProfile; }
+    DFG::ExitProfile& exitProfile() LIFETIME_BOUND { return m_exitProfile; }
 #endif
 
     UnlinkedMetadataTable& metadata() { return m_metadata.get(); }
@@ -378,8 +378,8 @@ public:
         return !isBuiltinFunction();
     }
     void allocateSharedProfiles(unsigned numBinaryArithProfiles, unsigned numUnaryArithProfiles);
-    FixedVector<UnlinkedValueProfile>& unlinkedValueProfiles() { return m_valueProfiles; }
-    FixedVector<UnlinkedArrayProfile>& unlinkedArrayProfiles() { return m_arrayProfiles; }
+    FixedVector<UnlinkedValueProfile>& unlinkedValueProfiles() LIFETIME_BOUND { return m_valueProfiles; }
+    FixedVector<UnlinkedArrayProfile>& unlinkedArrayProfiles() LIFETIME_BOUND { return m_arrayProfiles; }
     unsigned numberOfValueProfiles() const { return m_valueProfiles.size(); }
     unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
 
@@ -514,7 +514,7 @@ public:
     BinaryArithProfile& binaryArithProfile(unsigned i) { return m_binaryArithProfiles[i]; }
     UnaryArithProfile& unaryArithProfile(unsigned i) { return m_unaryArithProfiles[i]; }
 
-    BaselineExecutionCounter& llintExecuteCounter() { return m_llintExecuteCounter; }
+    BaselineExecutionCounter& llintExecuteCounter() LIFETIME_BOUND { return m_llintExecuteCounter; }
 
 private:
     using OutOfLineJumpTargets = UncheckedKeyHashMap<JSInstructionStream::Offset, int>;

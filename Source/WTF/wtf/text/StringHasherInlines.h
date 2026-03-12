@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <wtf/Assertions.h>
 #include <wtf/text/StringHasher.h>
 #include <wtf/text/WYHash.h>
 
@@ -37,78 +36,6 @@ constexpr unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(const T (&cha
 {
     constexpr unsigned characterCountWithoutNull = characterCount - 1;
     return WYHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
-}
-
-inline void StringHasher::addCharacter(char16_t character)
-{
-    static constexpr unsigned bufferCapacity = numberOfCharactersInLargestBulkForWYHash * 2;
-    if (m_bufferSize == bufferCapacity) {
-        // This algorithm must stay in sync with WYHash::hash function.
-        if (!m_pendingHashValue) {
-            m_seed = WYHash::initSeed();
-            m_see1 = m_seed;
-            m_see2 = m_seed;
-            m_pendingHashValue = true;
-        }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        char16_t* p = m_buffer.data();
-        while (m_bufferSize >= 24) {
-            WYHash::consume24Characters(p, WYHash::Reader16Bit<char16_t>::wyr8, m_seed, m_see1, m_see2);
-            p += 24;
-            m_bufferSize -= 24;
-        }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-        ASSERT(!m_bufferSize);
-        m_numberOfProcessedCharacters += bufferCapacity;
-    }
-
-    ASSERT(m_bufferSize < bufferCapacity);
-    m_buffer[m_bufferSize++] = character;
-}
-
-inline unsigned StringHasher::hashWithTop8BitsMasked()
-{
-    static constexpr unsigned bufferCapacity = numberOfCharactersInLargestBulkForWYHash * 2;
-    unsigned hashValue;
-    if (!m_pendingHashValue) {
-        hashValue = WYHash::computeHashAndMaskTop8Bits<char16_t>(std::span { m_buffer }.first(m_bufferSize));
-    } else {
-        // This algorithm must stay in sync with WYHash::hash function.
-        auto wyr8 = WYHash::Reader16Bit<char16_t>::wyr8;
-        unsigned i = m_bufferSize;
-        if (i <= 24)
-            m_seed ^= m_see1 ^ m_see2;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        char16_t* p = m_buffer.data();
-        WYHash::handleGreaterThan8CharactersCase(p, i, wyr8, m_seed, m_see1, m_see2);
-
-        uint64_t a = 0;
-        uint64_t b = 0;
-        if (m_bufferSize >= 8) {
-            a = wyr8(p + i - 8);
-            b = wyr8(p + i - 4);
-        } else {
-            char16_t tmp[8];
-            unsigned bufferIndex = bufferCapacity - (8 - i);
-            for (unsigned tmpIndex = 0; tmpIndex < 8; tmpIndex++) {
-                tmp[tmpIndex] = m_buffer[bufferIndex];
-                bufferIndex = (bufferIndex + 1) % bufferCapacity;
-            }
-
-            char16_t* tmpPtr = tmp;
-            a = wyr8(tmpPtr);
-            b = wyr8(tmpPtr + 4);
-        }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
-        const uint64_t totalByteCount = (static_cast<uint64_t>(m_numberOfProcessedCharacters) + static_cast<uint64_t>(m_bufferSize)) << 1;
-        hashValue = StringHasher::avoidZero(WYHash::handleEndCase(a, b, m_seed, totalByteCount) & StringHasher::maskHash);
-
-        m_pendingHashValue = false;
-        m_numberOfProcessedCharacters = m_seed = m_see1 = m_see2 = 0;
-    }
-    m_bufferSize = 0;
-    return hashValue;
 }
 
 } // namespace WTF

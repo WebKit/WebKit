@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-extern const ASCIILiteral WeakMapInvalidKeyError;
+inline constexpr ASCIILiteral WeakMapInvalidKeyError { "WeakMap keys must be objects or non-registered symbols"_s };
 
 JSC_DECLARE_HOST_FUNCTION(protoFuncWeakMapSet);
 

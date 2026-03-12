@@ -75,13 +75,13 @@ NSString *WebPreferencesCacheModelChangedInternalNotification = @"WebPreferences
 
 enum { WebPreferencesVersion = 1 };
 
-static RetainPtr<WebPreferences>& standardPreferences()
+static RetainPtr<WebPreferences>& NODELETE standardPreferences()
 {
     static NeverDestroyed<RetainPtr<WebPreferences>> standardPreferences;
     return standardPreferences;
 }
 
-static RetainPtr<NSMutableDictionary>& webPreferencesInstances()
+static RetainPtr<NSMutableDictionary>& NODELETE webPreferencesInstances()
 {
     static NeverDestroyed<RetainPtr<NSMutableDictionary>> webPreferencesInstances;
     return webPreferencesInstances;
@@ -1618,7 +1618,7 @@ public:
         @{ WebKitDefaultTextEncodingNamePreferenceKey: PAL::defaultTextEncodingNameForSystemLanguage().createNSString().get() }];
 }
 
-static RetainPtr<NSString>& classIBCreatorID()
+static RetainPtr<NSString>& NODELETE classIBCreatorID()
 {
     static NeverDestroyed<RetainPtr<NSString>> classIBCreatorID;
     return classIBCreatorID;

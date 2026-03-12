@@ -52,7 +52,7 @@
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    RefPtr object = protect(*_array)->at(i);
+    RefPtr object = _array->at(i);
     return object ? (id)object->wrapper() : [NSNull null];
 }
 

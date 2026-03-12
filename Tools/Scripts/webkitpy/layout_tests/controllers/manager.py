@@ -128,6 +128,7 @@ class Manager(object):
             self._printer.write_update(u'Parsing expectations {}...'.format(for_device_type))
             self._expectations[device_type] = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force, device_type=device_type)
             self._expectations[device_type].parse_all_expectations()
+            self._expectations[device_type].add_test_list_expectations(self._finder.get_test_list_expectations())
 
             tests_to_run = self._tests_to_run(tests, device_type=device_type)
             tests_to_run_by_device[device_type] = [test for test in tests_to_run if test not in aggregate_tests_to_run]
@@ -334,11 +335,13 @@ class Manager(object):
             skipped_tests_by_path[test.test_path].add(test)
 
         # If a test is marked skipped, but was explicitly requested, run it anyways.
+        # However, tests explicitly marked [ Skip ] in a --test-list file should stay skipped.
         if self._options.skipped != 'always':
+            test_list_skip_paths = self._finder.get_test_list_skip_paths()
             _, explicitly_specified_tests = self._finder.find_tests_for_specified_files(self._options, args)
             for test in explicitly_specified_tests:
                 path = test.test_path
-                if path in skipped_tests_by_path:
+                if path in skipped_tests_by_path and path not in test_list_skip_paths:
                     skipped_tests = skipped_tests_by_path[path]
                     tests_to_run_by_device[device_type_list[0]].extend(skipped_tests)
                     aggregate_tests_to_run |= skipped_tests

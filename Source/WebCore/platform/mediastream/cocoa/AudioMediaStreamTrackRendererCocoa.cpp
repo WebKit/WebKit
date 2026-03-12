@@ -98,7 +98,7 @@ void AudioMediaStreamTrackRendererCocoa::setVolume(float volume)
     ASSERT(isMainThread());
 
     AudioMediaStreamTrackRenderer::setVolume(volume);
-    if (auto source = m_registeredDataSource)
+    if (auto* source = m_registeredDataSource.get())
         source->setVolume(volume);
 }
 
@@ -106,7 +106,7 @@ void AudioMediaStreamTrackRendererCocoa::reset()
 {
     ASSERT(isMainThread());
 
-    if (auto source = m_registeredDataSource)
+    if (auto* source = m_registeredDataSource.get())
         source->recomputeSampleOffset();
 }
 

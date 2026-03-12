@@ -88,6 +88,9 @@ bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo)
         if (m_nowPlayingInfo->isVideo != nowPlayingInfo.isVideo)
             return true;
 
+        if (m_nowPlayingInfo->fullscreenMode != nowPlayingInfo.fullscreenMode)
+            return true;
+
         if (m_nowPlayingInfo->metadata.sourceApplicationIdentifier != nowPlayingInfo.metadata.sourceApplicationIdentifier)
             return true;
 #endif

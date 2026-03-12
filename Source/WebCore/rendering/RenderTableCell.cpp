@@ -1602,6 +1602,50 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         fillRect.moveBy(backgroundPaintOffset);
     } else
         fillRect = LayoutRect { adjustedPaintOffset, size() };
+
+    // When painting a cell's own background with collapsed borders, inset the
+    // fill rect at the table's outer edges to match this cell's collapsed
+    // border extent. The cell's allocated width includes space for the maximum
+    // collapsed border inner halves across all cells in the same column. If
+    // this cell has narrower borders at the table edge, its background should
+    // not paint into that extra space. Interior column edges are not adjusted
+    // so that cell backgrounds remain continuous across the row.
+    if (backgroundObject == this && tableElt->collapseBorders()) {
+        bool isFirstColumn = !tableElt->colToEffCol(col());
+        bool isLastColumn = tableElt->colToEffCol(col() + colSpan() - 1) == tableElt->numEffCols() - 1;
+
+        LayoutUnit leftInset;
+        LayoutUnit rightInset;
+
+        if (isFirstColumn || isLastColumn) {
+            LayoutUnit cellLeftHalf = isFirstColumn ? borderHalfLeft(false) : 0_lu;
+            LayoutUnit cellRightHalf = isLastColumn ? borderHalfRight(false) : 0_lu;
+            LayoutUnit maxLeftHalf = cellLeftHalf;
+            LayoutUnit maxRightHalf = cellRightHalf;
+
+            for (auto* cell = tableElt->cellAbove(this); cell; cell = tableElt->cellAbove(cell)) {
+                if (isFirstColumn)
+                    maxLeftHalf = std::max(maxLeftHalf, cell->borderHalfLeft(false));
+                if (isLastColumn)
+                    maxRightHalf = std::max(maxRightHalf, cell->borderHalfRight(false));
+            }
+            for (auto* cell = tableElt->cellBelow(this); cell; cell = tableElt->cellBelow(cell)) {
+                if (isFirstColumn)
+                    maxLeftHalf = std::max(maxLeftHalf, cell->borderHalfLeft(false));
+                if (isLastColumn)
+                    maxRightHalf = std::max(maxRightHalf, cell->borderHalfRight(false));
+            }
+
+            leftInset = maxLeftHalf - cellLeftHalf;
+            rightInset = maxRightHalf - cellRightHalf;
+        }
+
+        if (leftInset || rightInset) {
+            fillRect.shiftXEdgeBy(leftInset);
+            fillRect.shiftMaxXEdgeBy(-rightInset);
+        }
+    }
+
     auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
 
     BackgroundPainter painter { *this, paintInfo };

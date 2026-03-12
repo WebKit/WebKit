@@ -1,0 +1,80 @@
+
+FAIL canvas 1 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" data-expected-width="10" data-expected-height="20"></canvas>
+  </div>
+width expected 10 but got 30
+FAIL canvas 2 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" style="width: 1px; min-width: fit-content" data-expected-width="10" data-expected-height="20"></canvas>
+  </div>
+width expected 10 but got 30
+FAIL canvas 3 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" style="width: 100px; max-width: fit-content" data-expected-width="10" data-expected-height="20"></canvas>
+  </div>
+width expected 10 but got 30
+PASS canvas 4
+PASS canvas 5
+PASS canvas 6
+FAIL canvas 7 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withBorder" data-expected-width="15" data-expected-height="20"></canvas>
+  </div>
+width expected 15 but got 38
+FAIL canvas 8 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withBorder" style="width: 1px; min-width: fit-content" data-expected-width="15" data-expected-height="20"></canvas>
+  </div>
+width expected 15 but got 38
+FAIL canvas 9 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withBorder" style="width: 100px; max-width: fit-content" data-expected-width="15" data-expected-height="20"></canvas>
+  </div>
+width expected 15 but got 38
+FAIL canvas 10 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPadding" data-expected-width="15" data-expected-height="20"></canvas>
+  </div>
+width expected 15 but got 38
+FAIL canvas 11 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPadding" style="width: 1px; min-width: fit-content" data-expected-width="15" data-expected-height="20"></canvas>
+  </div>
+width expected 15 but got 38
+FAIL canvas 12 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPadding" style="width: 100px; max-width: fit-content" data-expected-width="15" data-expected-height="20"></canvas>
+  </div>
+width expected 15 but got 38
+FAIL canvas 13 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPxMargin" data-expected-width="8" data-expected-height="16"></canvas>
+  </div>
+width expected 8 but got 30
+FAIL canvas 14 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPxMargin" style="width: 1px; min-width: fit-content" data-expected-width="8" data-expected-height="16"></canvas>
+  </div>
+width expected 8 but got 30
+FAIL canvas 15 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPxMargin" style="width: 100px; max-width: fit-content" data-expected-width="8" data-expected-height="16"></canvas>
+  </div>
+width expected 8 but got 30
+FAIL canvas 16 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPctMargin" data-expected-width="8" data-expected-height="16"></canvas>
+  </div>
+width expected 8 but got 30
+FAIL canvas 17 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPctMargin" style="width: 1px; min-width: fit-content" data-expected-width="8" data-expected-height="16"></canvas>
+  </div>
+width expected 8 but got 30
+FAIL canvas 18 assert_equals:
+<div class="container">
+    <canvas width="30" height="60" class="withPctMargin" style="width: 100px; max-width: fit-content" data-expected-width="8" data-expected-height="16"></canvas>
+  </div>
+width expected 8 but got 30
+

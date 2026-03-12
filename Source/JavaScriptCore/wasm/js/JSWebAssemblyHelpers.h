@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <limits>
 #include "Error.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferViewInlines.h"
@@ -35,6 +36,7 @@
 #include "JSSourceCode.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyRuntimeError.h"
+#include "WasmAddressType.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinition.h"
 #include "WebAssemblyFunction.h"
@@ -67,6 +69,35 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue
     else
         throwTypeError(globalObject, throwScope, message);
     return { };
+}
+
+ALWAYS_INLINE uint64_t toNonWrappingUint64(JSGlobalObject* globalObject, JSValue value, ErrorType errorType = ErrorType::TypeError)
+{
+    VM& vm = getVM(globalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue bigInt = value.toBigInt(globalObject);
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    auto lo = JSBigInt::compare(bigInt, static_cast<uint64_t>(0));
+    auto high = JSBigInt::compare(bigInt, std::numeric_limits<uint64_t>::max());
+    bool validRange = lo != JSBigInt::ComparisonResult::LessThan && high != JSBigInt::ComparisonResult::GreaterThan;
+    if (validRange && bigInt)
+        RELEASE_AND_RETURN(throwScope, bigInt.toBigUInt64(globalObject));
+
+    constexpr auto message = "Expect an integer argument in the range: [0, 2^64 - 1]"_s;
+    if (errorType == ErrorType::RangeError)
+        throwRangeError(globalObject, throwScope, message);
+    else
+        throwTypeError(globalObject, throwScope, message);
+    return { };
+}
+
+ALWAYS_INLINE uint64_t addressValueToUint64(JSGlobalObject* globalObject, JSValue value, Wasm::AddressType addressType, ErrorType errorType = ErrorType::TypeError)
+{
+    if (addressType.is64Bit())
+        return toNonWrappingUint64(globalObject, value, errorType);
+    return static_cast<uint64_t>(toNonWrappingUint32(globalObject, value, errorType));
 }
 
 ALWAYS_INLINE std::span<const uint8_t> getWasmBufferFromValue(JSGlobalObject* globalObject, JSValue value, const SourceProviderBufferGuard&)

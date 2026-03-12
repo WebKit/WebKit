@@ -60,7 +60,7 @@ public:
     void appendSublayer(PlatformCALayer&) override;
     void insertSublayer(PlatformCALayer&, size_t index) override;
     void replaceSublayer(PlatformCALayer& reference, PlatformCALayer&) override;
-    const PlatformCALayerList* customSublayers() const override { return m_customSublayers.get(); }
+    const PlatformCALayerList* customSublayers() const LIFETIME_BOUND override { return m_customSublayers.get(); }
     void adoptSublayers(PlatformCALayer& source) override;
 
     void addAnimationForKey(const String& key, PlatformCAAnimation&) override;
@@ -182,7 +182,7 @@ public:
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
-    const EventRegion* eventRegion() const override { return &m_eventRegion; }
+    const EventRegion* eventRegion() const LIFETIME_BOUND override { return &m_eventRegion; }
     void setEventRegion(const EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)

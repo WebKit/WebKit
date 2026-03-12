@@ -343,7 +343,7 @@ private:
 
     FloatSize m_naturalSize;
     MediaTime m_currentTime;
-    MediaTime m_duration;
+    MediaTime m_duration { MediaTime::indefiniteTime() };
     double m_rate { 1 };
 
     bool isEnabledVideoTrackID(TrackID) const;

@@ -125,7 +125,7 @@ std::optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
 
     auto coalescedWebEvent = WebWheelEvent { coalescedNativeEvent };
 
-    while (!m_wheelEventQueue.isEmpty() && canCoalesce(coalescedWebEvent, CheckedRef { m_wheelEventQueue.first() })) {
+    while (!m_wheelEventQueue.isEmpty() && canCoalesce(coalescedWebEvent, protect(m_wheelEventQueue.first()))) {
         auto firstEvent = m_wheelEventQueue.takeFirst();
         coalescedSequence->append(firstEvent);
         SUPPRESS_UNCHECKED_ARG coalescedWebEvent = coalesce(coalescedWebEvent, WebWheelEvent { firstEvent });

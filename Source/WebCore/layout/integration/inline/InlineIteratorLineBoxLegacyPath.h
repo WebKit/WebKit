@@ -79,10 +79,7 @@ public:
     bool isFirstAfterPageBreak() const { return false; }
     bool hasBlockLevelBox() const { return false; }
 
-    size_t lineIndex() const
-    {
-        return formattingContextRoot().legacyRootBox() ? 1 : 0;
-    }
+    inline size_t lineIndex() const; // Defined in InlineIteratorLineBoxLegacyPathInlines.h
 
     void traverseNext()
     {

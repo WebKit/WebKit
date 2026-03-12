@@ -40,11 +40,11 @@ public:
     ~OSRExit();
     
     unsigned id() const { return m_id; }
-    const OriginStack& origin() const { return m_origin; }
+    const OriginStack& origin() const LIFETIME_BOUND { return m_origin; }
     ExitKind exitKind() const { return m_exitKind; }
     bool isWatchpoint() const { return m_isWatchpoint; }
     
-    uint64_t* counterAddress() { return &m_counter; }
+    uint64_t* counterAddress() LIFETIME_BOUND { return &m_counter; }
     uint64_t count() const { return m_counter; }
     void incCount() { m_counter++; }
 

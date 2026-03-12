@@ -141,7 +141,7 @@ static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilte
 
 static void applyLinkDecorationFilteringIfNeeded(ContentRuleListResults& results, Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
 {
-    if (RefPtr frame = initiatingDocumentLoader.frame(); !frame || !frame->isMainFrame())
+    if (auto* frame = initiatingDocumentLoader.frame(); !frame || !frame->isMainFrame())
         return;
 
     if (auto adjustedURL = page.chrome().client().applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Navigation); adjustedURL != url)

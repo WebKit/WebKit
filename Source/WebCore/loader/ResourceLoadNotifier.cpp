@@ -56,12 +56,12 @@ ResourceLoadNotifier::ResourceLoadNotifier(LocalFrame& frame)
 
 void ResourceLoadNotifier::didReceiveAuthenticationChallenge(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const AuthenticationChallenge& currentWebChallenge)
 {
-    protect(m_frame)->loader().client().dispatchDidReceiveAuthenticationChallenge(loader, identifier, currentWebChallenge);
+    m_frame->loader().client().dispatchDidReceiveAuthenticationChallenge(loader, identifier, currentWebChallenge);
 }
 
 void ResourceLoadNotifier::willSendRequest(ResourceLoader& loader, ResourceLoaderIdentifier identifier, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
 {
-    protect(m_frame)->loader().applyUserAgentIfNeeded(clientRequest);
+    m_frame->loader().applyUserAgentIfNeeded(clientRequest);
 
     dispatchWillSendRequest(protect(loader.documentLoader()), identifier, clientRequest, redirectResponse, protect(loader.cachedResource()).get(), &loader);
 }
@@ -111,13 +111,13 @@ void ResourceLoadNotifier::didFailToLoad(ResourceLoader& loader, ResourceLoaderI
 void ResourceLoadNotifier::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     bool pageIsProvisionallyLoading = false;
-    if (RefPtr frameLoader = loader ? loader->frameLoader() : nullptr)
+    if (auto* frameLoader = loader ? loader->frameLoader() : nullptr)
         pageIsProvisionallyLoading = frameLoader->provisionalDocumentLoader() == loader;
 
     if (pageIsProvisionallyLoading)
         m_initialRequestIdentifier = identifier;
 
-    protect(m_frame)->loader().client().assignIdentifierToInitialRequest(identifier, loader, request);
+    m_frame->loader().client().assignIdentifierToInitialRequest(identifier, loader, request);
 }
 
 void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)

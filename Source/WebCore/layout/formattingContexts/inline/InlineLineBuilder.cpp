@@ -1422,7 +1422,7 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
 LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layoutRange, LineCandidate& lineCandidate)
 {
     auto result = tryPlacingCandidateInlineContentOnLine(layoutRange, lineCandidate);
-    if (!m_line.hasContentOrDecoration(Line::IncludeInsideListMarker::Yes)) {
+    if (!result.committedCount.value || !m_line.hasContentOrDecoration(Line::IncludeInsideListMarker::Yes)) {
         applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::No);
         return result;
     }

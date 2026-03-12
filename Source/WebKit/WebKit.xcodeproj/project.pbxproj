@@ -4825,19 +4825,9 @@
 		2A96B7172EB4A74700E2B46F /* AdditionalButtonMasksIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AdditionalButtonMasksIOS.h; path = ios/AdditionalButtonMasksIOS.h; sourceTree = "<group>"; };
 		2ADBEA4B2F358BEF00EDB398 /* WKWebView+WKBannerViewOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WKWebView+WKBannerViewOverlay.swift"; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WKWebView+WKBannerViewOverlay.swift"; sourceTree = "<group>"; };
 		2ADBEA4B2F358BEF00EDB399 /* WebViewRepresentable+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WebViewRepresentable+Extras.swift"; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebViewRepresentable+Extras.swift"; sourceTree = "<group>"; };
-		2B1B1C2E2E3A86F400D7D9ED /* ForwardDeclCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = ForwardDeclCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C2F2E3A86F400D7D9ED /* MemoryUnsafeCastCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemoryUnsafeCastCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C302E3A86F400D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncheckedPtrMemberCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C312E3A86F400D7D9ED /* NoUncountedMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncountedMemberCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C322E3A86F400D7D9ED /* NoUnretainedMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUnretainedMemberCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C342E3A86F400D7D9ED /* RetainPtrCtorAdoptCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = RetainPtrCtorAdoptCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C352E3A86F400D7D9ED /* UncheckedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncheckedCallArgsCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C362E3A86F400D7D9ED /* UncheckedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncheckedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C372E3A86F400D7D9ED /* UncountedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedCallArgsCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C382E3A86F400D7D9ED /* UncountedLambdaCapturesCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedLambdaCapturesCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C392E3A86F400D7D9ED /* UncountedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UncountedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C3A2E3A86F400D7D9ED /* UnretainedCallArgsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedCallArgsCheckerExpectations; sourceTree = "<group>"; };
-		2B1B1C3B2E3A86F400D7D9ED /* UnretainedLambdaCapturesCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedLambdaCapturesCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C3C2E3A86F400D7D9ED /* UnretainedLocalVarsCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnretainedLocalVarsCheckerExpectations; sourceTree = "<group>"; };
 		2BBCCE222EB2B3DA00FE7E5A /* RemotePageScreenOrientationManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePageScreenOrientationManagerProxy.cpp; sourceTree = "<group>"; };
 		2BBCCE232EB2B3F500FE7E5A /* RemotePageScreenOrientationManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePageScreenOrientationManagerProxy.h; sourceTree = "<group>"; };
@@ -11666,19 +11656,9 @@
 		2B1B1C3D2E3A86F400D7D9ED /* SaferCPPExpectations */ = {
 			isa = PBXGroup;
 			children = (
-				2B1B1C2E2E3A86F400D7D9ED /* ForwardDeclCheckerExpectations */,
-				2B1B1C2F2E3A86F400D7D9ED /* MemoryUnsafeCastCheckerExpectations */,
-				2B1B1C302E3A86F400D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */,
-				2B1B1C312E3A86F400D7D9ED /* NoUncountedMemberCheckerExpectations */,
-				2B1B1C322E3A86F400D7D9ED /* NoUnretainedMemberCheckerExpectations */,
-				2B1B1C342E3A86F400D7D9ED /* RetainPtrCtorAdoptCheckerExpectations */,
 				2B1B1C352E3A86F400D7D9ED /* UncheckedCallArgsCheckerExpectations */,
-				2B1B1C362E3A86F400D7D9ED /* UncheckedLocalVarsCheckerExpectations */,
 				2B1B1C372E3A86F400D7D9ED /* UncountedCallArgsCheckerExpectations */,
-				2B1B1C382E3A86F400D7D9ED /* UncountedLambdaCapturesCheckerExpectations */,
 				2B1B1C392E3A86F400D7D9ED /* UncountedLocalVarsCheckerExpectations */,
-				2B1B1C3A2E3A86F400D7D9ED /* UnretainedCallArgsCheckerExpectations */,
-				2B1B1C3B2E3A86F400D7D9ED /* UnretainedLambdaCapturesCheckerExpectations */,
 				2B1B1C3C2E3A86F400D7D9ED /* UnretainedLocalVarsCheckerExpectations */,
 			);
 			path = SaferCPPExpectations;

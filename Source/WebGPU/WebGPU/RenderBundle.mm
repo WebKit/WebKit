@@ -192,7 +192,7 @@ bool RenderBundle::rebindSamplersIfNeeded() const
 
 #pragma mark WGPU Stubs
 
-void wgpuRenderBundleReference(WGPURenderBundle renderBundle)
+void NODELETE wgpuRenderBundleReference(WGPURenderBundle renderBundle)
 {
     WebGPU::fromAPI(renderBundle).ref();
 }

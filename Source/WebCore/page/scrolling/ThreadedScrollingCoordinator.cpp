@@ -109,7 +109,7 @@ void ThreadedScrollingCoordinator::scheduleTreeStateCommit()
 
 void ThreadedScrollingCoordinator::didScheduleRenderingUpdate()
 {
-    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
+    auto* threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     threadedScrollingTree->didScheduleRenderingUpdate();
 }
 

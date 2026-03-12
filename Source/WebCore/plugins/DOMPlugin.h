@@ -36,7 +36,7 @@ public:
     static Ref<DOMPlugin> create(Navigator&, const PluginInfo&);
     ~DOMPlugin();
 
-    const PluginInfo& info() const { return m_info; }
+    const PluginInfo& info() const LIFETIME_BOUND { return m_info; }
 
     String name() const;
     String filename() const;
@@ -50,7 +50,7 @@ public:
     Vector<AtomString> supportedPropertyNames() const;
     bool isSupportedPropertyName(const AtomString&) const;
 
-    const Vector<Ref<DOMMimeType>>& mimeTypes() const { return m_mimeTypes; }
+    const Vector<Ref<DOMMimeType>>& mimeTypes() const LIFETIME_BOUND { return m_mimeTypes; }
 
     Navigator* navigator() { return m_navigator.get(); }
 

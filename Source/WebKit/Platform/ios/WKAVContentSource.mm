@@ -39,11 +39,6 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVInterfaceTimelineSegment)
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AVInterfaceMetadata (Staging_169033633)
-- (instancetype)initWithAudioOnly:(BOOL)audioOnly title:(nullable NSString *)title subtitle:(nullable NSString *)subtitle albumArtworkRepresentations:(NSArray<AVInterfaceAlbumArtwork *> *)albumArtworkRepresentations;
-- (instancetype)initWithAudioOnly:(BOOL)audioOnly title:(nullable NSString *)title subtitle:(nullable NSString *)subtitle albumArtworks:(nullable NSArray<AVInterfaceAlbumArtwork *> *)albumArtworks;
-@end
-
 @implementation WKAVContentSource {
     WeakPtr<WebCore::PlaybackSessionModel> _model;
 
@@ -453,16 +448,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 RetainPtr<AVInterfaceMetadata> createPlatformMetadata(NSString * _Nullable title, NSString * _Nullable subtitle)
 {
     using namespace PAL;
-
-    if ([getAVInterfaceMetadataClassSingleton() respondsToSelector:@selector(initWithAudioOnly:title:subtitle:albumArtworkRepresentations:)])
-        return adoptNS([allocAVInterfaceMetadataInstance() initWithAudioOnly:NO title:title subtitle:subtitle albumArtworkRepresentations:[NSArray array]]).get();
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptNS([allocAVInterfaceMetadataInstance() initWithAudioOnly:NO title:title subtitle:subtitle albumArtworks:nil]).get();
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return adoptNS([allocAVInterfaceMetadataInstance() initWithAudioOnly:NO presentationSize:CGSizeZero title:title subtitle:subtitle albumArtworkRepresentations:[NSArray array]]);
 }
 
 NS_ASSUME_NONNULL_END
-
 
 #endif // HAVE(AVEXPERIENCECONTROLLER)

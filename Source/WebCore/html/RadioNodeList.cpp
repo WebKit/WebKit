@@ -104,7 +104,7 @@ bool RadioNodeList::elementMatches(Element& element) const
         return false;
 
     if (is<HTMLFormElement>(ownerNode())) {
-        RefPtr form = element.asFormListedElement()->form();
+        auto* form = element.asFormListedElement()->form();
         if (form != &ownerNode())
             return false;
     }

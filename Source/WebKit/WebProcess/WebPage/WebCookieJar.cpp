@@ -134,7 +134,7 @@ static WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieB
 
 String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*protect(document.frame())) : nullptr;
+    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (!webFrame)
         return { };
 
@@ -162,7 +162,7 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 
 void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const String& cookieString)
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*protect(document.frame())) : nullptr;
+    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (!webFrame)
         return;
 
@@ -225,7 +225,7 @@ void WebCookieJar::clearCacheForHost(const String& host)
 
 bool WebCookieJar::cookiesEnabled(Document& document)
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*protect(document.frame())) : nullptr;
+    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (!webFrame || !webFrame->page())
         return false;
 
@@ -244,7 +244,7 @@ bool WebCookieJar::cookiesEnabled(Document& document)
 
 bool WebCookieJar::remoteCookiesEnabledSync(Document& document) const
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*protect(document.frame())) : nullptr;
+    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (!webFrame)
         return false;
 
@@ -265,7 +265,7 @@ bool WebCookieJar::remoteCookiesEnabledSync(Document& document) const
 
 void WebCookieJar::remoteCookiesEnabled(const Document& document, CompletionHandler<void(bool)>&& completionHandler) const
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*protect(document.frame())) : nullptr;
+    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (!webFrame)
         return completionHandler(false);
 
@@ -298,7 +298,7 @@ std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHea
 
 bool WebCookieJar::getRawCookies(WebCore::Document& document, const URL& url, Vector<WebCore::Cookie>& rawCookies) const
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*protect(document.frame())) : nullptr;
+    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url) == BlockCookies::Yes)
         return false;
 
@@ -410,7 +410,7 @@ void WebCookieJar::addChangeListenerWithAccess(const URL& url, const URL& firstP
 
 void WebCookieJar::addChangeListener(const WebCore::Document& document, const WebCore::CookieChangeListener& listener)
 {
-    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*protect(document.frame())) : nullptr;
+    RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (!webFrame)
         return;
 

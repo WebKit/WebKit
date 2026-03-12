@@ -59,9 +59,20 @@ Ref<MediaStream> MediaStream::create(Document& document, MediaStream& stream)
     return mediaStream;
 }
 
-Ref<MediaStream> MediaStream::create(Document& document, const Vector<Ref<MediaStreamTrack>>& tracks)
+Ref<MediaStream> MediaStream::create(Document& document, Vector<Ref<MediaStreamTrack>>&& tracks, CheckDuplicate checkDuplicate)
 {
-    auto mediaStream = adoptRef(*new MediaStream(document, tracks));
+    if (checkDuplicate == CheckDuplicate::Yes) {
+        HashSet<MediaStreamTrack*> existingTracks;
+        Vector<size_t> tracksToRemove;
+        for (size_t counter = 0; counter < tracks.size(); ++counter) {
+            if (!existingTracks.add(tracks[counter].ptr()).isNewEntry)
+                tracksToRemove.append(counter);
+        }
+        for (auto iterator = tracksToRemove.rbegin(); iterator != tracksToRemove.rend(); ++iterator)
+            tracks.removeAt(*iterator);
+    }
+
+    auto mediaStream = adoptRef(*new MediaStream(document, WTF::move(tracks)));
     mediaStream->suspendIfNeeded();
     return mediaStream;
 }
@@ -78,17 +89,16 @@ static inline MediaStreamTrackPrivateVector createTrackPrivateVector(const Vecto
     return map(tracks, [](auto& track) { return Ref { track->privateTrack() }; });
 }
 
-MediaStream::MediaStream(Document& document, const Vector<Ref<MediaStreamTrack>>& tracks)
+MediaStream::MediaStream(Document& document, Vector<Ref<MediaStreamTrack>>&& tracks)
     : ActiveDOMObject(document)
     , m_private(MediaStreamPrivate::create(document.logger(), createTrackPrivateVector(tracks)))
+    , m_tracks(WTF::move(tracks))
 {
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
 
-    for (auto& track : tracks) {
+    for (Ref track : m_tracks)
         track->setMediaStreamId(id());
-        m_trackMap.add(track->id(), track);
-    }
 
     setIsActive(m_private->active());
     m_private->addObserver(*this);
@@ -104,7 +114,7 @@ MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPri
     for (auto& trackPrivate : m_private->tracks()) {
         auto track = MediaStreamTrack::create(document, trackPrivate.get());
         track->setMediaStreamId(id());
-        m_trackMap.add(trackPrivate->id(), WTF::move(track));
+        m_tracks.append(WTF::move(track));
     }
 
     setIsActive(m_private->active());
@@ -132,12 +142,12 @@ RefPtr<MediaStream> MediaStream::clone()
         return nullptr;
 
     Vector<Ref<MediaStreamTrack>> clonedTracks;
-    clonedTracks.reserveInitialCapacity(m_trackMap.size());
-    for (auto& track : m_trackMap.values()) {
+    clonedTracks.reserveInitialCapacity(m_tracks.size());
+    for (Ref track : m_tracks) {
         if (auto clone = track->clone())
             clonedTracks.append(clone.releaseNonNull());
     }
-    return MediaStream::create(*document, WTF::move(clonedTracks));
+    return MediaStream::create(*document, WTF::move(clonedTracks), CheckDuplicate::No);
 }
 
 void MediaStream::addTrack(MediaStreamTrack& track)
@@ -161,16 +171,18 @@ void MediaStream::removeTrack(MediaStreamTrack& track)
 
 MediaStreamTrack* MediaStream::getTrackById(String id)
 {
-    auto iterator = m_trackMap.find(id);
-    if (iterator != m_trackMap.end())
-        return iterator->value.ptr();
+    auto position = m_tracks.findIf([&](auto& track) {
+        return track->id() == id;
+    });
+    if (position == notFound)
+        return nullptr;
 
-    return nullptr;
+    return m_tracks[position].ptr();
 }
 
 MediaStreamTrack* MediaStream::getFirstAudioTrack() const
 {
-    for (auto& track : m_trackMap.values()) {
+    for (auto& track : m_tracks) {
         if (track->isAudio())
             return track.ptr();
     }
@@ -179,7 +191,7 @@ MediaStreamTrack* MediaStream::getFirstAudioTrack() const
 
 MediaStreamTrack* MediaStream::getFirstVideoTrack() const
 {
-    for (auto& track : m_trackMap.values()) {
+    for (auto& track : m_tracks) {
         if (track->isVideo())
             return track.ptr();
     }
@@ -188,21 +200,27 @@ MediaStreamTrack* MediaStream::getFirstVideoTrack() const
 
 MediaStreamTrackVector MediaStream::getAudioTracks() const
 {
-    return filteredTracks([] (auto& track) mutable {
-        return track.isAudio();
-    });
+    MediaStreamTrackVector tracks;
+    for (Ref track : m_tracks) {
+        if (track->isAudio())
+            tracks.append(WTF::move(track));
+    }
+    return tracks;
 }
 
 MediaStreamTrackVector MediaStream::getVideoTracks() const
 {
-    return filteredTracks([] (auto& track) mutable {
-        return track.isVideo();
-    });
+    MediaStreamTrackVector tracks;
+    for (Ref track : m_tracks) {
+        if (track->isVideo())
+            tracks.append(WTF::move(track));
+    }
+    return tracks;
 }
 
 MediaStreamTrackVector MediaStream::getTracks() const
 {
-    return copyToVector(m_trackMap.values());
+    return m_tracks;
 }
 
 void MediaStream::activeStatusChanged()
@@ -244,18 +262,23 @@ void MediaStream::addTrackFromPlatform(Ref<MediaStreamTrack>&& track)
     dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTF::move(track)));
 }
 
-void MediaStream::internalAddTrack(Ref<MediaStreamTrack>&& trackToAdd)
+void MediaStream::internalAddTrack(Ref<MediaStreamTrack>&& track)
 {
-    ASSERT(!m_trackMap.contains(trackToAdd->id()));
-    m_trackMap.add(trackToAdd->id(), WTF::move(trackToAdd));
+    ASSERT(!getTrackById(track->id()));
+    m_tracks.append(WTF::move(track));
     updateActiveState();
 }
 
 RefPtr<MediaStreamTrack> MediaStream::internalTakeTrack(const String& trackId)
 {
-    auto track = m_trackMap.take(trackId);
-    if (track)
-        updateActiveState();
+    auto position = m_tracks.findIf([&](auto& track) {
+        return track->id() == trackId;
+    });
+    if (position == notFound)
+        return nullptr;
+
+    RefPtr track = m_tracks[position].get();
+    m_tracks.removeAt(position);
 
     return track;
 }
@@ -331,7 +354,7 @@ MediaProducerMediaStateFlags MediaStream::mediaState() const
     if (!m_isActive || !document() || !document()->page())
         return state;
 
-    for (const auto& track : m_trackMap.values())
+    for (Ref track : m_tracks)
         state.add(track->mediaState());
 
     return state;
@@ -358,7 +381,7 @@ void MediaStream::characteristicsChanged()
 void MediaStream::updateActiveState()
 {
     bool active = false;
-    for (auto& track : m_trackMap.values()) {
+    for (Ref track : m_tracks) {
         if (!track->ended()) {
             active = true;
             break;
@@ -369,17 +392,6 @@ void MediaStream::updateActiveState()
         return;
 
     setIsActive(active);
-}
-
-MediaStreamTrackVector MediaStream::filteredTracks(NOESCAPE const Function<bool(const MediaStreamTrack&)>& filter) const
-{
-    MediaStreamTrackVector tracks;
-    for (auto& track : m_trackMap.values()) {
-        if (filter(track))
-            tracks.append(track);
-    }
-
-    return tracks;
 }
 
 Document* MediaStream::document() const

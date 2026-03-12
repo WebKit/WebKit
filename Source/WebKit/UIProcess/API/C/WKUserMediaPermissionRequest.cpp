@@ -97,15 +97,15 @@ WKArrayRef WKUserMediaPermissionRequestAudioDeviceUIDs(WKUserMediaPermissionRequ
 
 bool WKUserMediaPermissionRequestRequiresCameraCapture(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
 {
-    return protect(toImpl(userMediaPermissionRequestRef))->requiresVideoCapture();
+    return toImpl(userMediaPermissionRequestRef)->requiresVideoCapture();
 }
 
 bool WKUserMediaPermissionRequestRequiresDisplayCapture(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
 {
-    return protect(toImpl(userMediaPermissionRequestRef))->requiresDisplayCapture();
+    return toImpl(userMediaPermissionRequestRef)->requiresDisplayCapture();
 }
 
 bool WKUserMediaPermissionRequestRequiresMicrophoneCapture(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
 {
-    return protect(toImpl(userMediaPermissionRequestRef))->requiresAudioCapture();
+    return toImpl(userMediaPermissionRequestRef)->requiresAudioCapture();
 }

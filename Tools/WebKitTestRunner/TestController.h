@@ -586,6 +586,7 @@ private:
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsBoolean(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsPoint(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsSize(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXSearchPredicate(WKDictionaryRef);
 #endif
 
     // WKContextClient

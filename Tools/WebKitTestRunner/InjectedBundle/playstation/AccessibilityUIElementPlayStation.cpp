@@ -696,7 +696,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::selectedTextRange()
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::intersectionWithSelectionRange()
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementPlayStation::intersectionWithSelectionRange()
 {
     notImplemented();
     return nullptr;

@@ -82,7 +82,7 @@ WebDataListSuggestionsDropdownMac::WebDataListSuggestionsDropdownMac(WebPageProx
 {
 }
 
-void WebDataListSuggestionsDropdownMac::show(WebCore::DataListSuggestionInformation&& information)
+void WebDataListSuggestionsDropdownMac::platformShow(WebCore::DataListSuggestionInformation&& information)
 {
     if (m_dropdownUI) {
         [m_dropdownUI updateWithInformation:WTF::move(information)];
@@ -99,7 +99,7 @@ void WebDataListSuggestionsDropdownMac::didSelectOption(const String& selectedOp
     if (!page)
         return;
 
-    page->didSelectOption(selectedOption);
+    page->didSelectOption(selectedOption, m_targetFrameID);
     close();
 }
 
@@ -111,7 +111,7 @@ void WebDataListSuggestionsDropdownMac::selectOption()
 
     String selectedOption = [m_dropdownUI currentSelectedString];
     if (!selectedOption.isNull())
-        page->didSelectOption(selectedOption);
+        page->didSelectOption(selectedOption, m_targetFrameID);
 
     close();
 }

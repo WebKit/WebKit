@@ -129,6 +129,7 @@ public:
 
     T* get() const
     {
+        static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
             HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
@@ -158,6 +159,7 @@ public:
 
     T* operator->() const
     {
+        static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
             HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
@@ -173,6 +175,7 @@ public:
 
     T& operator*() const
     {
+        static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
             HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
@@ -363,6 +366,18 @@ template<typename ExpectedType, typename ArgType, typename WeakPtrImpl, typename
 inline bool is(const WeakPtr<ArgType, WeakPtrImpl, PtrTraits>& source)
 {
     return is<ExpectedType>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType, typename WeakPtrImpl, typename PtrTraits>
+inline bool isAnyOf(WeakPtr<ArgType, WeakPtrImpl, PtrTraits>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType, typename WeakPtrImpl, typename PtrTraits>
+inline bool is(const WeakPtr<ArgType, WeakPtrImpl, PtrTraits>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
 }
 
 template<typename Target, typename Source, typename WeakPtrImpl, typename PtrTraits>

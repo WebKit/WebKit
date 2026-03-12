@@ -61,7 +61,7 @@ public:
 private:
     WebDataListSuggestionsDropdownIOS(WebPageProxy&, WKContentView *);
 
-    void show(WebCore::DataListSuggestionInformation&&) final;
+    void platformShow(WebCore::DataListSuggestionInformation&&) final;
     void handleKeydownWithIdentifier(const String&) final;
     void close() final;
 

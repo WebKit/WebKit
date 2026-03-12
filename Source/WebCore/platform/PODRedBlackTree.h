@@ -155,7 +155,7 @@ protected:
         Color color() const { return m_color; }
         void setColor(Color color) { m_color = color; }
 
-        T& data() { return m_data; }
+        T& data() LIFETIME_BOUND { return m_data; }
 
         void moveDataFrom(Node& src) { m_data = WTF::move(src.m_data); }
 

@@ -122,7 +122,7 @@ template<typename, size_t = 0> class Deque;
 template<typename Key, typename, Key> class EnumeratedArray;
 template<typename> class EnumSet;
 template<typename, typename = EmbeddedFixedVectorMalloc> class FixedVector;
-template<typename, size_t = 8, typename = SegmentedVectorMalloc> class SegmentedVector;
+template<typename, size_t = 8, size_t = 0, typename = SegmentedVectorMalloc> class SegmentedVector;
 template<typename> class Function;
 template<typename> struct FlatteningVariantTraits;
 template<typename> struct IsSmartPtr;
@@ -164,7 +164,7 @@ template<typename T, typename = NoTaggingTraits<T>> class ThreadSafeWeakPtr;
 template<typename T, typename = NoTaggingTraits<T>> class ThreadSafeWeakRef;
 
 template <typename T>
-using SaSegmentedVector = SegmentedVector<T, 8, SequesteredArenaMalloc>;
+using SaSegmentedVector = SegmentedVector<T, 8, 0, SequesteredArenaMalloc>;
 template <typename T>
 using SaFixedVector = FixedVector<T, SequesteredArenaMalloc>;
 template <typename T>

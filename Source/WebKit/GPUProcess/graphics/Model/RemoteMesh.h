@@ -39,6 +39,7 @@ namespace WebCore {
 class Mesh;
 }
 namespace WebModel {
+struct Float3;
 struct Float4x4;
 struct MaterialDescriptor;
 struct MeshDescriptor;
@@ -96,6 +97,7 @@ private:
     void updateMaterial(const WebModel::UpdateMaterialDescriptor&, CompletionHandler<void(bool)>&&);
     void updateTransform(const WebModel::Float4x4& transform);
     void setCameraDistance(float);
+    void setBackgroundColor(const WebModel::Float3&);
     void play(bool);
     void setEnvironmentMap(const WebModel::ImageAsset&);
 

@@ -36,14 +36,66 @@
 #define CSS_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
 
 #include <JavaScriptCore/JITCompilationEffort.h>
+#include <JavaScriptCore/LineColumn.h>
 #include <JavaScriptCore/MacroAssembler.h>
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/SourceProvider.h>
 #include <wtf/DataLog.h>
+#include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/text/CString.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+class SourceProvider;
+
+class IRDumpDebugInfo {
+    WTF_MAKE_TZONE_ALLOCATED(IRDumpDebugInfo);
+    WTF_MAKE_NONCOPYABLE(IRDumpDebugInfo);
+public:
+    // This is per-line either BasicBlock header annotation or actual IR node. Like,
+    //     BB#0
+    //         GetLocal
+    struct IRLine {
+        ASCIILiteral opName;
+        uint32_t blockIndex { 0 };
+    };
+
+    struct CodeEntry {
+        uint32_t codeOffset;
+        uint32_t irLineIndex;
+    };
+
+    IRDumpDebugInfo(CString&& name)
+        : functionName(WTF::move(name))
+    {
+    }
+
+    CString functionName;
+    Vector<IRLine> irLines;
+    Vector<CodeEntry> codeEntries;
+};
+
+class SourceCodeDumpDebugInfo {
+    WTF_MAKE_TZONE_ALLOCATED(SourceCodeDumpDebugInfo);
+    WTF_MAKE_NONCOPYABLE(SourceCodeDumpDebugInfo);
+public:
+    struct CodeEntry {
+        uint32_t codeOffset;
+        LineColumn lineColumn;
+        Ref<SourceProvider> sourceProvider;
+    };
+
+    SourceCodeDumpDebugInfo(CString&& name)
+        : functionName(WTF::move(name))
+    {
+    }
+
+    CString functionName;
+    Vector<CodeEntry> codeEntries;
+};
 
 // LinkBuffer:
 //
@@ -210,7 +262,7 @@ public:
     // These methods are used to obtain handles to allow the code to be relinked / repatched later.
     
     template<PtrTag tag>
-    CodeLocationLabel<tag> entrypoint()
+    CodeLocationLabel<tag> entrypoint() const
     {
         return CodeLocationLabel<tag>(tagCodePtr<tag>(code()));
     }
@@ -328,6 +380,10 @@ ALLOW_NONLITERAL_FORMAT_END
 
     void setIsThunk() { m_isThunk = true; }
 
+    void setIRDumpDebugInfo(std::unique_ptr<IRDumpDebugInfo>&& info) { m_irDumpDebugInfo = WTF::move(info); }
+
+    void setSourceCodeDumpDebugInfo(std::unique_ptr<SourceCodeDumpDebugInfo>&& info) { m_sourceCodeDebugInfo = WTF::move(info); }
+
 private:
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithoutDisassemblyImpl(ASCIILiteral);
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, ASCIILiteral, const char* format, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
@@ -354,7 +410,7 @@ private:
     }
 
     // Keep this private! - the underlying code should only be obtained externally via finalizeCode().
-    void* code()
+    void* code() const
     {
         return m_code.dataLocation();
     }
@@ -414,6 +470,8 @@ private:
     CodePtr<LinkBufferPtrTag> m_code;
     Vector<Ref<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
     Vector<Ref<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
+    std::unique_ptr<IRDumpDebugInfo> m_irDumpDebugInfo;
+    std::unique_ptr<SourceCodeDumpDebugInfo> m_sourceCodeDebugInfo;
 
     static size_t s_profileCummulativeLinkedSizes[numberOfProfiles];
     static size_t s_profileCummulativeLinkedCounts[numberOfProfiles];

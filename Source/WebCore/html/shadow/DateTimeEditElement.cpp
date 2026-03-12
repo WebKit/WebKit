@@ -394,7 +394,7 @@ bool DateTimeEditElement::isFieldOwnerReadOnly() const
 
 bool DateTimeEditElement::isFieldOwnerHorizontal() const
 {
-    if (CheckedPtr renderer = fieldsWrapperElement().renderer())
+    if (auto* renderer = fieldsWrapperElement().renderer())
         return renderer->isHorizontalWritingMode();
     return true;
 }

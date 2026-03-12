@@ -77,7 +77,7 @@ static double NODELETE lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis
 
 static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalAxis, const FloatSize& size, const RenderView& renderView)
 {
-    RefPtr rootElement = renderView.document().documentElement();
+    auto* rootElement = renderView.document().documentElement();
     if (!rootElement)
         return 0;
 

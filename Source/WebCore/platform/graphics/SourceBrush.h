@@ -45,7 +45,7 @@ public:
     // Color should be stored in the variant, in place of std::monospace. Currently a lot of code
     // queries the color unconditionally, color is accessible unconditionally, returning incorrect
     // but defined data.
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
     void setColor(const Color color) { m_color = color; }
     // Packed color accessor takes into account the discrimination between color, gradient, pattern.
     std::optional<PackedColor::RGBA> packedColor() const;

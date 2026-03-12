@@ -36,9 +36,9 @@ class MathMLSpaceElement final : public MathMLPresentationElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLSpaceElement);
 public:
     static Ref<MathMLSpaceElement> create(const QualifiedName& tagName, Document&);
-    const Length& width();
-    const Length& height();
-    const Length& depth();
+    const Length& width() LIFETIME_BOUND;
+    const Length& height() LIFETIME_BOUND;
+    const Length& depth() LIFETIME_BOUND;
 private:
     MathMLSpaceElement(const QualifiedName& tagName, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;

@@ -51,7 +51,7 @@ public:
 
     Document* document() const { return m_document.get(); }
     FrameView* view() const { return m_view.get(); }
-    const URL& url() const { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
 
 protected:
@@ -84,7 +84,7 @@ public:
     void destroy();
 
     WEBCORE_EXPORT void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
-    WEBCORE_EXPORT CachedFramePlatformData* NODELETE cachedFramePlatformData();
+    WEBCORE_EXPORT CachedFramePlatformData* NODELETE cachedFramePlatformData() LIFETIME_BOUND;
 
     HasInsecureContent hasInsecureContent() const;
     UsedLegacyTLS NODELETE usedLegacyTLS() const;

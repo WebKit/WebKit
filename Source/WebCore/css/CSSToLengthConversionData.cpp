@@ -151,7 +151,7 @@ void CSSToLengthConversionData::setUsesContainerUnits() const
 bool CSSToLengthConversionData::evaluationTimeZoomEnabled() const
 {
     ASSERT(m_style);
-    return CheckedPtr { m_style }->evaluationTimeZoomEnabled();
+    return m_style->evaluationTimeZoomEnabled();
 }
 
 } // namespace WebCore

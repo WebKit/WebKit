@@ -57,7 +57,7 @@ public:
     {
     }
 
-    const Vector<uint8_t>& saltVector() const
+    const Vector<uint8_t>& saltVector() const LIFETIME_BOUND
     {
         if (!m_saltVector.isEmpty() || !salt || !salt->byteLength())
             return m_saltVector;

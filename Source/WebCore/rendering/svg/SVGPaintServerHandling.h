@@ -44,7 +44,7 @@ public:
 
     ~SVGPaintServerHandling() = default;
 
-    GraphicsContext& context() const { return m_context; }
+    GraphicsContext& context() const LIFETIME_BOUND { return m_context; }
 
     enum class Operation : bool { Fill, Stroke };
     enum class URIResolving : bool { Disabled, Enabled };

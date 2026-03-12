@@ -51,7 +51,7 @@ private class SwiftOnlyData: NSObject {
     @Published
     var videoMaterial: VideoMaterial?
     @Published
-    var peculiarEntity: PeculiarEntity?
+    var peculiarEntity: (any PeculiarEntity)?
 
     // FIXME: It should be possible to store these directly on WKSLinearMediaPlayer since they are
     // bridged to NSDate, but a bug prevents that from compiling (rdar://121877511).
@@ -72,7 +72,7 @@ private class SwiftOnlyData: NSObject {
     var enteredFromInline = false
 
     var spatialVideoMetadata: WKSLinearMediaSpatialVideoMetadata?
-    var videoReceiverEndpointObserver: Cancellable?
+    var videoReceiverEndpointObserver: (any Cancellable)?
 
     var isImmersiveVideo = false
     weak var viewController: WKSPlayableViewControllerHost?
@@ -86,10 +86,10 @@ enum LinearMediaPlayerErrors: Error {
 @objc
 @implementation
 extension WKSLinearMediaPlayer {
-    weak var delegate: WKSLinearMediaPlayerDelegate?
+    weak var delegate: (any WKSLinearMediaPlayerDelegate)?
 
     var selectedPlaybackRate = 1.0
-    var error: Error?
+    var error: (any Error)?
     var canTogglePlayback = false
     var requiresLinearPlayback = false
     var interstitialRanges: [WKSLinearMediaTimeRange] = []
@@ -448,7 +448,7 @@ extension WKSLinearMediaPlayer {
 
     // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public var errorPublisher: AnyPublisher<Error?, Never> {
+    public var errorPublisher: AnyPublisher<(any Error)?, Never> {
         publisher(for: \.error).eraseToAnyPublisher()
     }
 
@@ -652,7 +652,7 @@ extension WKSLinearMediaPlayer {
 
     // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public var peculiarEntityPublisher: AnyPublisher<PeculiarEntity?, Never> {
+    public var peculiarEntityPublisher: AnyPublisher<(any PeculiarEntity)?, Never> {
         swiftOnlyData.$peculiarEntity.eraseToAnyPublisher()
     }
 
@@ -714,25 +714,25 @@ extension WKSLinearMediaPlayer {
 
     // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public var currentAudioTrackPublisher: AnyPublisher<Track?, Never> {
+    public var currentAudioTrackPublisher: AnyPublisher<(any Track)?, Never> {
         publisher(for: \.currentAudioTrack).map { $0 }.eraseToAnyPublisher()
     }
 
     // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public var audioTracksPublisher: AnyPublisher<[Track]?, Never> {
+    public var audioTracksPublisher: AnyPublisher<[any Track]?, Never> {
         publisher(for: \.audioTracks).map { $0 }.eraseToAnyPublisher()
     }
 
     // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public var currentLegibleTrackPublisher: AnyPublisher<Track?, Never> {
+    public var currentLegibleTrackPublisher: AnyPublisher<(any Track)?, Never> {
         publisher(for: \.currentLegibleTrack).map { $0 }.eraseToAnyPublisher()
     }
 
     // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public var legibleTracksPublisher: AnyPublisher<[Track]?, Never> {
+    public var legibleTracksPublisher: AnyPublisher<[any Track]?, Never> {
         publisher(for: \.legibleTracks).map { $0 }.eraseToAnyPublisher()
     }
 
@@ -901,14 +901,14 @@ extension WKSLinearMediaPlayer {
 
     // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public func setAudioTrack(_ newTrack: Track?) {
+    public func setAudioTrack(_ newTrack: (any Track)?) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(newTrack?.localizedDisplayName ?? "nil")")
         delegate?.linearMediaPlayer?(self, setAudioTrack: newTrack as? WKSLinearMediaTrack)
     }
 
     // FIXME: Objective-C interface type WKSLinearMediaPlayer should not itself conform to a Swift protocol.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public func setLegibleTrack(_ newTrack: Track?) {
+    public func setLegibleTrack(_ newTrack: (any Track)?) {
         Logger.linearMediaPlayer.log("\(#function)(\(self.logIdentifier, privacy: .public)) \(newTrack?.localizedDisplayName ?? "nil")")
         delegate?.linearMediaPlayer?(self, setLegibleTrack: newTrack as? WKSLinearMediaTrack)
     }

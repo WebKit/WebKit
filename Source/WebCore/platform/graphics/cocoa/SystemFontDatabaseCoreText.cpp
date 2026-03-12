@@ -39,7 +39,7 @@ namespace WebCore {
 
 SystemFontDatabaseCoreText& SystemFontDatabaseCoreText::forCurrentThread()
 {
-    return FontCache::forCurrentThread()->systemFontDatabaseCoreText();
+    return FontCache::forCurrentThread().systemFontDatabaseCoreText();
 }
 
 SystemFontDatabase& SystemFontDatabase::singleton()

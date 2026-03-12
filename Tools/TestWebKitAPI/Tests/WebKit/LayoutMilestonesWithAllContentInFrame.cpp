@@ -80,11 +80,6 @@ TEST(WebKit, FirstVisuallyNonEmptyLayoutAfterPageCacheRestore)
     WKContextSetCacheModel(context.get(), kWKCacheModelPrimaryWebBrowser); // Enables the back/forward cache.
 
     PlatformWebView webView(context.get());
-
-    // FIXME: Page cache is currently disabled under site isolation; see rdar://161762363.
-    if (isSiteIsolationEnabled(static_cast<WKWebView*>(webView.platformView())))
-        return;
-
     WKPageNavigationClientV3 loaderClient;
     zeroBytes(loaderClient);
 

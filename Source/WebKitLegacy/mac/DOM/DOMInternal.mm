@@ -49,7 +49,7 @@
 static Lock wrapperCacheLock;
 static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
 #else
-static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache()
+static HashMap<DOMObjectInternal*, NSObject *>& NODELETE wrapperCache()
 #endif
 {
     static NeverDestroyed<HashMap<DOMObjectInternal*, NSObject *>> map;

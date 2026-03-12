@@ -147,7 +147,7 @@ protected:
     virtual bool shouldStartHeapInstrument() const { return true; }
     void autoCaptureStarted() const;
 
-    const Vector<Inspector::Protocol::Timeline::Instrument>& instruments() const { return m_instruments; }
+    const Vector<Inspector::Protocol::Timeline::Instrument>& instruments() const LIFETIME_BOUND { return m_instruments; }
 
     enum class InstrumentState { Start, Stop };
     void toggleInstruments(InstrumentState);

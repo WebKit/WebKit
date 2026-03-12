@@ -51,6 +51,7 @@
 #include "OutlinePainter.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "PaintInfoInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
@@ -1605,7 +1606,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
         }
 
         // FIXME: Eventually we won't special-case table and other layout roots like this.
-        auto propagatesSelectionToChildren = is<RenderTable>(*curr) || is<RenderFlexibleBox>(*curr) || is<RenderDeprecatedFlexibleBox>(*curr) || is<RenderGrid>(*curr);
+        auto propagatesSelectionToChildren = isAnyOf<RenderTable, RenderFlexibleBox, RenderDeprecatedFlexibleBox, RenderGrid>(*curr);
         auto paintsOwnSelection = curr->shouldPaintSelectionGaps() || propagatesSelectionToChildren;
         bool fillBlockGaps = paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != HighlightState::None);
         if (fillBlockGaps) {
@@ -2561,7 +2562,7 @@ std::pair<RenderObject*, RenderElement*> RenderBlock::firstLetterAndContainer(Re
                 break;
             }
             firstLetter = current.nextSibling();
-        } else if (current.isBlockLevelReplacedOrAtomicInline() || is<RenderButton>(current) || is<RenderMenuList>(current))
+        } else if (current.isBlockLevelReplacedOrAtomicInline() || isAnyOf<RenderButton, RenderMenuList>(current))
             break;
         else if (current.isFlexibleBoxIncludingDeprecated() || current.isRenderGrid())
             return { };

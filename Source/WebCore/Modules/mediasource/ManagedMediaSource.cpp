@@ -81,7 +81,7 @@ void ManagedMediaSource::setStreaming(bool streaming)
         return;
     ALWAYS_LOG(LOGIDENTIFIER, streaming);
     m_streaming = streaming;
-    if (RefPtr msp = mediaSourcePrivate())
+    if (auto* msp = mediaSourcePrivate())
         msp->setStreaming(streaming);
     if (streaming) {
         scheduleEvent(eventNames().startstreamingEvent);
@@ -145,7 +145,7 @@ void ManagedMediaSource::streamingTimerFired()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "Disabling streaming due to policy ", *m_highThreshold);
     m_streamingAllowed = false;
-    if (RefPtr msp = mediaSourcePrivate())
+    if (auto* msp = mediaSourcePrivate())
         msp->setStreamingAllowed(false);
     notifyElementUpdateMediaState();
 }

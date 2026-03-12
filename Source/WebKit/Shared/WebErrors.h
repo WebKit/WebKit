@@ -45,6 +45,7 @@ WebCore::ResourceError ftpDisabledError(const WebCore::ResourceRequest&);
 WebCore::ResourceError failedCustomProtocolSyncLoad(const WebCore::ResourceRequest&);
 #if ENABLE(CONTENT_FILTERING)
 WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceRequest&);
+bool isBlockedByContentFilterError(const WebCore::ResourceError&);
 #endif
 WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
 WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);

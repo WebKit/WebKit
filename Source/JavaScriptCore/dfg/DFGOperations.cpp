@@ -4343,7 +4343,7 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIncludesValueInt32, UCPUStrictInt32, (JSG
 
     JSValue searchElement = JSValue::decode(encodedValue);
 
-    if (searchElement.isUndefined() && containsHole(data, length))
+    if (searchElement.isUndefined() && containsHole(data + index, length - index))
         OPERATION_RETURN(scope, toUCPUStrictInt32(1));
 
     int32_t int32Value = 0;
@@ -4366,7 +4366,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIncludesValueDouble, UCPUStrictI
     const double* data = butterfly->contiguousDouble().data();
     int32_t length = butterfly->publicLength();
 
-    if (searchElement.isUndefined() && containsHole(data, length))
+    if (index >= length)
+        return toUCPUStrictInt32(0);
+
+    if (searchElement.isUndefined() && containsHole(data + index, length - index))
         return toUCPUStrictInt32(1);
     if (!searchElement.isNumber())
         return toUCPUStrictInt32(0);
@@ -4394,7 +4397,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIncludesNonStringIdentityValueCo
         return toUCPUStrictInt32(1);
 
     JSValue searchElementValue = JSValue::decode(searchElement);
-    if (searchElementValue.isUndefined() && containsHole(data, length))
+    if (searchElementValue.isUndefined() && containsHole(data + index, length - index))
         return toUCPUStrictInt32(1);
     return toUCPUStrictInt32(0);
 }

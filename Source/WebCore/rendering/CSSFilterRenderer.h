@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT static Ref<CSSFilterRenderer> create(Vector<Ref<FilterFunction>>&&);
     WEBCORE_EXPORT static Ref<CSSFilterRenderer> create(Vector<Ref<FilterFunction>>&&, const FilterGeometry&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, bool showDebugOverlay);
 
-    const Vector<Ref<FilterFunction>>& functions() const { return m_functions; }
+    const Vector<Ref<FilterFunction>>& functions() const LIFETIME_BOUND { return m_functions; }
     void setFilterRegion(const FloatRect&);
 
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }

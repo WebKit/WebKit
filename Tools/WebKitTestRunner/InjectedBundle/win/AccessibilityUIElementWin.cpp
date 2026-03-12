@@ -701,7 +701,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementWin::selectedTextRange()
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementWin::intersectionWithSelectionRange()
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementWin::intersectionWithSelectionRange()
 {
     notImplemented();
     return nullptr;

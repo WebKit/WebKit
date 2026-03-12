@@ -161,7 +161,7 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
     // Try a system fallback for the whole cluster if needed.
     if (clusterContainsOtherNonDefaultIgnorableCodePoints) {
         auto preferColoredFont = emojiPolicy == ResolvedEmojiPolicy::RequireEmoji ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No;
-        if (auto systemFallback = FontCache::forCurrentThread()->systemFallbackForCharacterCluster(m_fontDescription, fallbackRangesAt(0).fontForFirstRange(), IsForPlatformFont::No, preferColoredFont, stringView)) {
+        if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacterCluster(m_fontDescription, fallbackRangesAt(0).fontForFirstRange(), IsForPlatformFont::No, preferColoredFont, stringView)) {
             if (systemFallback->canRenderCombiningCharacterSequence(stringView))
                 return systemFallback.get();
         }

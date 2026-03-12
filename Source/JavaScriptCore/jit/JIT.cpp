@@ -91,11 +91,11 @@ JITConstantPool::Constant JIT::addToConstantPool(JITConstantPool::Type type, voi
     return result;
 }
 
-std::tuple<BaselineUnlinkedStructureStubInfo*, StructureStubInfoIndex> JIT::addUnlinkedStructureStubInfo()
+std::tuple<BaselineUnlinkedPropertyInlineCache*, PropertyInlineCacheIndex> JIT::addUnlinkedPropertyInlineCache()
 {
-    unsigned stubInfoIndex = m_unlinkedStubInfos.size();
-    BaselineUnlinkedStructureStubInfo* stubInfo = &m_unlinkedStubInfos.alloc();
-    return std::tuple { stubInfo, StructureStubInfoIndex { stubInfoIndex } };
+    unsigned propertyCacheIndex = m_unlinkedPropertyInlineCaches.size();
+    BaselineUnlinkedPropertyInlineCache* propertyCache = &m_unlinkedPropertyInlineCaches.alloc();
+    return std::tuple { propertyCache, PropertyInlineCacheIndex { propertyCacheIndex } };
 }
 
 BaselineUnlinkedCallLinkInfo* JIT::addUnlinkedCallLinkInfo()
@@ -220,10 +220,12 @@ void JIT::privateCompileMainPass()
 #endif
 
         if (m_compilation) [[unlikely]] {
+            JIT_COMMENT(*this, "Execution trace start");
             add64(
                 TrustedImm32(1),
                 AbsoluteAddress(m_compilation->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
                     m_compilation->bytecodes(), m_bytecodeIndex)))->address()));
+            JIT_COMMENT(*this, "First non-trace instruction");
         }
         
         if (Options::eagerlyUpdateTopCallFrame())
@@ -925,8 +927,8 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
 
     auto finalizeICs = [&] (auto& generators) {
         for (auto& gen : generators) {
-            gen.m_unlinkedStubInfo->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
-            gen.m_unlinkedStubInfo->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
+            gen.m_unlinkedPropertyCache->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
+            gen.m_unlinkedPropertyCache->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
         }
     };
 
@@ -969,7 +971,26 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
     std::unique_ptr<PCToCodeOriginMap> pcToCodeOriginMap;
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
         pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTF::move(m_pcToCodeOriginMapBuilder), patchBuffer);
-    
+
+    if (Options::useSourceCodeDump() && m_profiledCodeBlock) [[unlikely]] {
+        auto debugInfo = makeUnique<SourceCodeDumpDebugInfo>(m_profiledCodeBlock->inferredName());
+        if (RefPtr provider = m_profiledCodeBlock->ownerExecutable()->source().provider()) {
+            void* codeStart = patchBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
+            for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
+                if (!m_labels[bytecodeOffset].isSet())
+                    continue;
+                BytecodeIndex bytecodeIndex(bytecodeOffset);
+                if (bytecodeIndex.offset() >= m_profiledCodeBlock->instructionsSize())
+                    continue;
+                LineColumn lineColumn = m_profiledCodeBlock->lineColumnForBytecodeIndex(bytecodeIndex);
+                auto location = patchBuffer.locationOf<DisassemblyPtrTag>(m_labels[bytecodeOffset]);
+                uint32_t codeOffset = static_cast<uint32_t>(location.dataLocation<uintptr_t>() - reinterpret_cast<uintptr_t>(codeStart));
+                debugInfo->codeEntries.append({ codeOffset, lineColumn, Ref { *provider } });
+            }
+            patchBuffer.setSourceCodeDumpDebugInfo(WTF::move(debugInfo));
+        }
+    }
+
     // FIXME: Make a version of CodeBlockWithJITType that knows about UnlinkedCodeBlock.
     CodeRef<JSEntryPtrTag> result = FINALIZE_BASELINE_CODE(
         patchBuffer, JSEntryPtrTag,
@@ -987,9 +1008,9 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
                 return lhs.bytecodeIndex < rhs.bytecodeIndex;
             });
     }
-    jitCode->m_unlinkedStubInfos = FixedVector<BaselineUnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
-    if (jitCode->m_unlinkedStubInfos.size())
-        std::move(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), jitCode->m_unlinkedStubInfos.begin());
+    jitCode->m_unlinkedPropertyInlineCaches = FixedVector<BaselineUnlinkedPropertyInlineCache>(m_unlinkedPropertyInlineCaches.size());
+    if (jitCode->m_unlinkedPropertyInlineCaches.size())
+        std::move(m_unlinkedPropertyInlineCaches.begin(), m_unlinkedPropertyInlineCaches.end(), jitCode->m_unlinkedPropertyInlineCaches.begin());
     jitCode->m_switchJumpTables = WTF::move(m_switchJumpTables);
     jitCode->m_stringSwitchJumpTables = WTF::move(m_stringSwitchJumpTables);
     jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();

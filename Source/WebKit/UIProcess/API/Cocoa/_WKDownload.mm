@@ -89,7 +89,7 @@ IGNORE_WARNINGS_END
 
 - (WKWebView *)originatingWebView
 {
-    RefPtr page = Ref { *_download->_download }->originatingPage();
+    RefPtr page = _download->_download->originatingPage();
     return page ? page->cocoaView().autorelease() : nil;
 }
 

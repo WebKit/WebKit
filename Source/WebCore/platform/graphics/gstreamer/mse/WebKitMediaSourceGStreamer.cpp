@@ -203,14 +203,14 @@ static void dumpPipeline([[maybe_unused]] ASCIILiteral description, [[maybe_unus
 #endif
 }
 
-static GstStreamType gstStreamType(TrackPrivateBaseGStreamer::TrackType type)
+static GstStreamType gstStreamType(GStreamerTrackType type)
 {
     switch (type) {
-    case TrackPrivateBaseGStreamer::TrackType::Video:
+    case GStreamerTrackType::Video:
         return GST_STREAM_TYPE_VIDEO;
-    case TrackPrivateBaseGStreamer::TrackType::Audio:
+    case GStreamerTrackType::Audio:
         return GST_STREAM_TYPE_AUDIO;
-    case TrackPrivateBaseGStreamer::TrackType::Text:
+    case GStreamerTrackType::Text:
         return GST_STREAM_TYPE_TEXT;
     default:
         GST_ERROR("Received unexpected stream type");
@@ -219,17 +219,17 @@ static GstStreamType gstStreamType(TrackPrivateBaseGStreamer::TrackType type)
 }
 
 #ifndef GST_DISABLE_GST_DEBUG
-static ASCIILiteral streamTypeToString(TrackPrivateBaseGStreamer::TrackType type)
+static ASCIILiteral streamTypeToString(GStreamerTrackType type)
 {
     switch (type) {
-    case TrackPrivateBaseGStreamer::TrackType::Audio:
+    case GStreamerTrackType::Audio:
         return "Audio"_s;
-    case TrackPrivateBaseGStreamer::TrackType::Video:
+    case GStreamerTrackType::Video:
         return "Video"_s;
-    case TrackPrivateBaseGStreamer::TrackType::Text:
+    case GStreamerTrackType::Text:
         return "Text"_s;
     default:
-    case TrackPrivateBaseGStreamer::TrackType::Unknown:
+    case GStreamerTrackType::Unknown:
         return "Unknown"_s;
     }
 }
@@ -603,7 +603,7 @@ static void webKitMediaSrcLoop(void* userData)
         ASSERT(GST_BUFFER_PTS_IS_VALID(buffer.get()));
         GST_TRACE_OBJECT(pad, "Pushing buffer downstream: %" GST_PTR_FORMAT, buffer.get());
         GstFlowReturn result = gst_pad_push(pad, buffer.leakRef());
-        if (result == GST_FLOW_NOT_LINKED && stream->track->type() == TrackPrivateBaseGStreamer::TrackType::Video) {
+        if (result == GST_FLOW_NOT_LINKED && stream->track->type() == GStreamerTrackType::Video) {
             // We allow multiple video tracks and all of them except one may be unlinked. Just drop the buffer.
             GST_TRACE_OBJECT(pad, "Buffer not pushed because pad is not-linked, ignoring");
         } else if (result != GST_FLOW_OK && result != GST_FLOW_FLUSHING) {
@@ -773,7 +773,7 @@ static void webKitMediaSrcSeek(WebKitMediaSrc* source, uint64_t startTime, doubl
         webKitMediaSrcStreamFlush(stream.get(), true);
 }
 
-static int countStreamsOfType(WebKitMediaSrc* source, WebCore::TrackPrivateBaseGStreamer::TrackType type)
+static int countStreamsOfType(WebKitMediaSrc* source, WebCore::GStreamerTrackType type)
 {
     // Barring pipeline dumps someone may add during debugging, WebKit will only read these properties (n-video etc.) from the main thread.
     return std::count_if(source->priv->streams.begin(), source->priv->streams.end(), [type](auto item) {
@@ -787,13 +787,13 @@ static void webKitMediaSrcGetProperty(GObject* object, unsigned propId, GValue* 
 
     switch (propId) {
     case WEBKIT_MEDIA_SRC_PROP_N_AUDIO:
-        g_value_set_int(value, countStreamsOfType(source, WebCore::TrackPrivateBaseGStreamer::TrackType::Audio));
+        g_value_set_int(value, countStreamsOfType(source, WebCore::GStreamerTrackType::Audio));
         break;
     case WEBKIT_MEDIA_SRC_PROP_N_VIDEO:
-        g_value_set_int(value, countStreamsOfType(source, WebCore::TrackPrivateBaseGStreamer::TrackType::Video));
+        g_value_set_int(value, countStreamsOfType(source, WebCore::GStreamerTrackType::Video));
         break;
     case WEBKIT_MEDIA_SRC_PROP_N_TEXT:
-        g_value_set_int(value, countStreamsOfType(source, WebCore::TrackPrivateBaseGStreamer::TrackType::Text));
+        g_value_set_int(value, countStreamsOfType(source, WebCore::GStreamerTrackType::Text));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, pspec);

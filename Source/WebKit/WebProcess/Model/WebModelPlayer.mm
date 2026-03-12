@@ -464,9 +464,17 @@ WebCore::ModelPlayerIdentifier WebModelPlayer::identifier() const
     return m_id;
 }
 
-void WebModelPlayer::configureGraphicsLayer(WebCore::GraphicsLayer& graphicsLayer, WebCore::ModelPlayerGraphicsLayerConfiguration&&)
+void WebModelPlayer::configureGraphicsLayer(WebCore::GraphicsLayer& graphicsLayer, WebCore::ModelPlayerGraphicsLayerConfiguration&& configuration)
 {
     graphicsLayer.setContentsDisplayDelegate(contentsDisplayDelegate(), WebCore::GraphicsLayer::ContentsLayerPurpose::Canvas);
+    if (RefPtr currentModel = m_currentModel) {
+        auto backgroundColor = configuration.backgroundColor;
+        if (backgroundColor.isValid()) {
+            auto opaqueColor = backgroundColor.opaqueColor();
+            auto [r, g, b, _a] = opaqueColor.toResolvedColorComponentsInColorSpace(WebCore::ColorSpace::LinearSRGB);
+            currentModel->setBackgroundColor(simd_make_float3(r, g, b));
+        }
+    }
 }
 
 const MachSendRight* WebModelPlayer::displayBuffer() const
@@ -588,6 +596,18 @@ void WebModelPlayer::setPaused(bool paused, CompletionHandler<void(bool succeede
 bool WebModelPlayer::paused() const
 {
     return m_pauseState != PauseState::Playing;
+}
+
+Seconds WebModelPlayer::currentTime() const
+{
+    return Seconds([m_modelLoader currentTime]);
+}
+
+void WebModelPlayer::setCurrentTime(Seconds currentTime, CompletionHandler<void()>&& completion)
+{
+    double clamped = std::clamp(currentTime.seconds(), 0.0, duration());
+    [m_modelLoader setCurrentTime:clamped];
+    completion();
 }
 
 std::optional<WebCore::TransformationMatrix> WebModelPlayer::entityTransform() const

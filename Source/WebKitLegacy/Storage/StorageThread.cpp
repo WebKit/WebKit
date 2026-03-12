@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static HashSet<CheckedRef<StorageThread>>& activeStorageThreads()
+static HashSet<CheckedRef<StorageThread>>& NODELETE activeStorageThreads()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<HashSet<CheckedRef<StorageThread>>> threads;

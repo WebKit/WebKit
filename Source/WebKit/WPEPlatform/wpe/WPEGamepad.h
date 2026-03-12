@@ -44,6 +44,11 @@ struct _WPEGamepadClass
 
     void (* start_input_monitor) (WPEGamepad *gamepad);
     void (* stop_input_monitor)  (WPEGamepad *gamepad);
+    gboolean (* has_rumble)      (WPEGamepad *gamepad);
+    gboolean (* rumble)          (WPEGamepad *gamepad,
+                                  gdouble     strong_magnitude,
+                                  gdouble     weak_magnitude,
+                                  guint       duration_ms);
 
     gpointer padding[32];
 };
@@ -115,6 +120,11 @@ WPE_API void        wpe_gamepad_button_event        (WPEGamepad      *gamepad,
 WPE_API void        wpe_gamepad_axis_event          (WPEGamepad      *gamepad,
                                                      WPEGamepadAxis   axis,
                                                      gdouble          value);
+WPE_API gboolean    wpe_gamepad_has_rumble          (WPEGamepad      *gamepad);
+WPE_API gboolean    wpe_gamepad_rumble              (WPEGamepad      *gamepad,
+                                                     gdouble          strong_magnitude,
+                                                     gdouble          weak_magnitude,
+                                                     guint            duration_ms);
 
 G_END_DECLS
 

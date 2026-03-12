@@ -98,7 +98,7 @@ public:
 
     RefPtr<DeferredPromise> addElementDefinition(Ref<JSCustomElementInterface>&&);
 
-    bool& elementDefinitionIsRunning() { return m_elementDefinitionIsRunning; }
+    bool& elementDefinitionIsRunning() LIFETIME_BOUND { return m_elementDefinitionIsRunning; }
 
     JSCustomElementInterface* findInterface(const Element&) const;
     JSCustomElementInterface* findInterface(const QualifiedName&) const;

@@ -449,10 +449,10 @@ private:
         if (!m_state->canceled2() && branch2)
             branch2->controller()->close(*globalObject);
 
-        if (branch1 && protect(branch1->controller())->hasPendingPullIntos())
-            protect(branch1->controller())->respond(*globalObject, 0);
-        if (branch2 && protect(branch2->controller())->hasPendingPullIntos())
-            protect(branch2->controller())->respond(*globalObject, 0);
+        if (branch1 && branch1->controller()->hasPendingPullIntos())
+            branch1->controller()->respond(*globalObject, 0);
+        if (branch2 && branch2->controller()->hasPendingPullIntos())
+            branch2->controller()->respond(*globalObject, 0);
 
         if (!m_state->canceled1() || !m_state->canceled2())
             m_state->resolveCancelPromise();

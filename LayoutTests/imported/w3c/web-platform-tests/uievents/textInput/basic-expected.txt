@@ -1,10 +1,9 @@
 Type "a" into each text field below.
 
 
+a
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT textInput: basic, <input> Test timed out
-NOTRUN textInput: basic, <textarea>
-NOTRUN textInput: basic, <div contenteditable="true">
+FAIL textInput: basic, <input> assert_equals: expected 1 but got 0
+FAIL textInput: basic, <textarea> assert_equals: expected 1 but got 0
+FAIL textInput: basic, <div contenteditable="true"> assert_equals: expected 1 but got 0
 

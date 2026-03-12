@@ -170,7 +170,7 @@ NetworkSession* NetworkSocketChannel::session() const
 
 std::optional<SharedPreferencesForWebProcess> NetworkSocketChannel::sharedPreferencesForWebProcess() const
 {
-    RefPtr connectionToWebProcess = m_connectionToWebProcess.get();
+    auto* connectionToWebProcess = &m_connectionToWebProcess.get();
     if (!connectionToWebProcess)
         return std::nullopt;
 

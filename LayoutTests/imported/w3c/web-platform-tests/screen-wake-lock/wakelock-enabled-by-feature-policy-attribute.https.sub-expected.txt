@@ -1,4 +1,0 @@
-
-PASS Feature policy "screen-wake-lock" can be enabled in same-origin iframe using allow="screen-wake-lock" attribute
-PASS Feature policy "screen-wake-lock" can be enabled in cross-origin iframe using allow="screen-wake-lock" attribute
-

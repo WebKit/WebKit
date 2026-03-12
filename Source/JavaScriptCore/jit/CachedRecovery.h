@@ -49,7 +49,7 @@ public:
     CachedRecovery& operator=(CachedRecovery&) = delete;
     CachedRecovery& operator=(CachedRecovery&&) = delete;
 
-    const Vector<VirtualRegister, 1>& targets() const { return m_targets; }
+    const Vector<VirtualRegister, 1>& targets() const LIFETIME_BOUND { return m_targets; }
 
     void addTarget(VirtualRegister reg)
     {

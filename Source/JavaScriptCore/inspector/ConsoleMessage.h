@@ -70,8 +70,8 @@ public:
     MessageSource source() const { return m_source; }
     MessageType type() const { return m_type; }
     MessageLevel level() const { return m_level; }
-    const String& message() const { return m_message; }
-    const String& url() const { return m_url; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
+    const String& url() const LIFETIME_BOUND { return m_url; }
     unsigned line() const { return m_line; }
     unsigned column() const { return m_column; }
     WallTime timestamp() const { return m_timestamp; }

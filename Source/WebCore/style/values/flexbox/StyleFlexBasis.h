@@ -60,7 +60,7 @@ struct FlexBasis : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>,
         return holdsAlternative<CSS::Keyword::Intrinsic>()
             || holdsAlternative<CSS::Keyword::MinIntrinsic>();
     }
-    ALWAYS_INLINE bool isIntrinsicOrLegacyIntrinsicOrAuto() const
+    ALWAYS_INLINE bool isSizingKeywordOrAuto() const // Excludes isContent().
     {
         return holdsAlternative<CSS::Keyword::MinContent>()
             || holdsAlternative<CSS::Keyword::MaxContent>()

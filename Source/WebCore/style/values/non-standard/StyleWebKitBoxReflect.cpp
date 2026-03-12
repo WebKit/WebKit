@@ -41,7 +41,7 @@ namespace Style {
 
 auto CSSValueConversion<WebkitBoxReflect>::operator()(BuilderState& state, const CSSValue& value) -> WebkitBoxReflect
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueNone)
             return CSS::Keyword::None { };
 

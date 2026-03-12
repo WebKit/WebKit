@@ -145,7 +145,7 @@ WTF_EXPORT_PRIVATE const SDKAlignedBehaviors& sdkAlignedBehaviors();
 WTF_EXPORT_PRIVATE void NODELETE setSDKAlignedBehaviors(SDKAlignedBehaviors);
 
 WTF_EXPORT_PRIVATE void enableAllSDKAlignedBehaviors();
-WTF_EXPORT_PRIVATE void disableAllSDKAlignedBehaviors();
+WTF_EXPORT_PRIVATE void NODELETE disableAllSDKAlignedBehaviors();
 
 WTF_EXPORT_PRIVATE bool linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior);
 

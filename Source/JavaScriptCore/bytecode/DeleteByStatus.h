@@ -32,14 +32,14 @@
 #include "DeleteByVariant.h"
 #include "ExitFlag.h"
 #include "ICStatusMap.h"
-#include "StubInfoSummary.h"
+#include "PropertyInlineCacheSummary.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class AccessCase;
 class CodeBlock;
-class StructureStubInfo;
+class PropertyInlineCache;
 
 class DeleteByStatus final {
     WTF_MAKE_TZONE_ALLOCATED(DeleteByStatus);
@@ -74,7 +74,7 @@ public:
     bool operator!() const { return !isSet(); }
     bool observedSlowPath() const { return m_state == ObservedTakesSlowPath; }
     bool isSimple() const { return m_state == Simple; }
-    const Vector<DeleteByVariant, 1>& variants() { return m_variants; }
+    const Vector<DeleteByVariant, 1>& variants() LIFETIME_BOUND { return m_variants; }
     CacheableIdentifier singleIdentifier() const;
 
     DeleteByStatus slowVersion() const;
@@ -92,13 +92,13 @@ public:
     void dump(PrintStream&) const;
 
 private:
-    explicit DeleteByStatus(StubInfoSummary, StructureStubInfo&);
+    explicit DeleteByStatus(PropertyInlineCacheSummary, PropertyInlineCache&);
     void merge(const DeleteByStatus&);
 
     static DeleteByStatus computeForBaseline(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag);
 #if ENABLE(JIT)
-    static DeleteByStatus computeForStubInfoWithoutExitSiteFeedback(
-        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*);
+    static DeleteByStatus computeForPropertyInlineCacheWithoutExitSiteFeedback(
+        const ConcurrentJSLocker&, CodeBlock* profiledBlock, PropertyInlineCache*);
 #endif
 
     Vector<DeleteByVariant, 1> m_variants;

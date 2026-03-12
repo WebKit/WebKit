@@ -54,8 +54,8 @@ public:
     void pause(Seconds);
     void resume();
 
-    const String& name() const { return m_name; }
-    const GraphicsLayerKeyframeValueList& keyframes() const { return m_keyframes; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const GraphicsLayerKeyframeValueList& keyframes() const LIFETIME_BOUND { return m_keyframes; }
     State state() const { return m_state; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
 
@@ -98,8 +98,8 @@ public:
 
     bool isEmpty() const { return m_animations.isEmpty(); }
     size_t size() const { return m_animations.size(); }
-    const Vector<TextureMapperAnimation>& animations() const { return m_animations; }
-    Vector<TextureMapperAnimation>& animations() { return m_animations; }
+    const Vector<TextureMapperAnimation>& animations() const LIFETIME_BOUND { return m_animations; }
+    Vector<TextureMapperAnimation>& animations() LIFETIME_BOUND { return m_animations; }
 
     bool hasActiveAnimationsOfType(AnimatedProperty) const;
 

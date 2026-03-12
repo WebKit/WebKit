@@ -115,7 +115,6 @@ symbols = [
     "nw_webtransport_options_set_initial_max_streams_uni",
     "nw_webtransport_options_set_initial_max_streams_bidi"
 ]
-requires = ["HAVE_WEB_TRANSPORT"]
 
 [[temporary-usage]]
 request = "rdar://157886016"

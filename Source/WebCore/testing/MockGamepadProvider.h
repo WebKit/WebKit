@@ -43,7 +43,7 @@ public:
 
     WEBCORE_TESTSUPPORT_EXPORT void startMonitoringGamepads(GamepadProviderClient&) final;
     WEBCORE_TESTSUPPORT_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;
-    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() final { return m_connectedGamepadVector; }
+    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() LIFETIME_BOUND final { return m_connectedGamepadVector; }
     bool isMockGamepadProvider() const final { return true; }
     void playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned, const String&, CompletionHandler<void()>&&) final;

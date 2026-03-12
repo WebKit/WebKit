@@ -73,7 +73,7 @@ public:
         return narrow()->opcodeID();
     }
 
-    const char* name() const
+    const ASCIILiteral name() const
     {
         return Traits::opcodeNames[opcodeID()];
     }

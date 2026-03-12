@@ -44,8 +44,8 @@ public:
     URLKeepingBlobAlive(const URLKeepingBlobAlive&) = delete;
     URLKeepingBlobAlive& operator=(const URLKeepingBlobAlive&) = delete;
 
-    operator const URL&() const { return m_url; }
-    const URL& url() const { return m_url; }
+    operator const URL&() const LIFETIME_BOUND { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     bool isEmpty() const { return m_url.isEmpty(); }
     std::optional<SecurityOriginData> topOrigin() const { return m_topOrigin; }
 

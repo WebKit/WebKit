@@ -96,7 +96,7 @@ ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, 
     , m_navigator(navigator)
 {
     // We should queue messages until the DOMContentLoaded event has fired or startMessages() has been called.
-    if (RefPtr document = dynamicDowncast<Document>(context); document && document->parsing())
+    if (auto* document = dynamicDowncast<Document>(context); document && document->parsing())
         m_shouldDeferMessageEvents = true;
 }
 

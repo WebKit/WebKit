@@ -13,8 +13,9 @@ window.onpageshow = ()=> sendMessageToOpener("pageshow", event.persisted ? "pers
 window.onmessage = (event) => dispatchMessage(event.data, {
     opener: {
         'navigate-to-page2': () => navigateIframeTo("back-iframe-2.html"),
+        'navigate-to-page2-cross-site-iframe': () => navigateIframeTo(crossSiteUrl("back-iframe-2.html")),
         'navigate-to-other': () => navigateTo("back-iframe-other.html"),
-        back2: () => history.back(),
+        back: () => history.back(),
     },
     page1: () => forwardMessageToOpener(event.data),
     page2: () => forwardMessageToOpener(event.data),

@@ -273,7 +273,7 @@ UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayer
             return nil;
         }
         if (RefPtr node = RemoteLayerTreeNode::forCALayer(view.layer)) {
-            if (auto* actingParent = host.nodeForID(node->actingScrollContainerID())) {
+            if (RefPtr actingParent = host.nodeForID(node->actingScrollContainerID())) {
                 if (auto scrollView = dynamic_objc_cast<UIScrollView>(actingParent->uiView()))
                     return scrollView;
             }

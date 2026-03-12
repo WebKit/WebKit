@@ -78,14 +78,6 @@ template<typename C, typename P> struct GradientColorStop {
     bool operator==(const GradientColorStop<C, P>&) const = default;
 };
 
-template<size_t I, typename C, typename P> const auto& get(const GradientColorStop<C, P>& stop)
-{
-    if constexpr (!I)
-        return stop.color;
-    else if constexpr (I == 1)
-        return stop.position;
-}
-
 using GradientAngularColorStopColor = Markable<Color>;
 using GradientAngularColorStopPosition = std::optional<AnglePercentage<>>;
 using GradientAngularColorStop = GradientColorStop<GradientAngularColorStopColor, GradientAngularColorStopPosition>;
@@ -119,16 +111,6 @@ struct LinearGradient {
 
 template<> struct Serialize<LinearGradient> { void operator()(StringBuilder&, const SerializationContext&, const LinearGradient&); };
 
-template<size_t I> const auto& get(const LinearGradient& gradient)
-{
-    if constexpr (!I)
-        return gradient.colorInterpolationMethod;
-    else if constexpr (I == 1)
-        return gradient.gradientLine;
-    else if constexpr (I == 2)
-        return gradient.stops;
-}
-
 // MARK: - PrefixedLinearGradient
 
 struct PrefixedLinearGradient {
@@ -143,16 +125,6 @@ struct PrefixedLinearGradient {
 
 template<> struct Serialize<PrefixedLinearGradient> { void operator()(StringBuilder&, const SerializationContext&, const PrefixedLinearGradient&); };
 
-template<size_t I> const auto& get(const PrefixedLinearGradient& gradient)
-{
-    if constexpr (!I)
-        return gradient.colorInterpolationMethod;
-    else if constexpr (I == 1)
-        return gradient.gradientLine;
-    else if constexpr (I == 2)
-        return gradient.stops;
-}
-
 // MARK: - DeprecatedLinearGradient
 
 struct DeprecatedLinearGradient {
@@ -166,16 +138,6 @@ struct DeprecatedLinearGradient {
 };
 
 template<> struct Serialize<DeprecatedLinearGradient> { void operator()(StringBuilder&, const SerializationContext&, const DeprecatedLinearGradient&); };
-
-template<size_t I> const auto& get(const DeprecatedLinearGradient& gradient)
-{
-    if constexpr (!I)
-        return gradient.colorInterpolationMethod;
-    else if constexpr (I == 1)
-        return gradient.gradientLine;
-    else if constexpr (I == 2)
-        return gradient.stops;
-}
 
 // MARK: - RadialGradient
 
@@ -206,32 +168,6 @@ template<> struct Serialize<RadialGradient::Ellipse> { void operator()(StringBui
 template<> struct Serialize<RadialGradient::Circle> { void operator()(StringBuilder&, const SerializationContext&, const RadialGradient::Circle&); };
 template<> struct Serialize<RadialGradient> { void operator()(StringBuilder&, const SerializationContext&, const RadialGradient&); };
 
-template<size_t I> const auto& get(const RadialGradient::Ellipse& ellipse)
-{
-    if constexpr (!I)
-        return ellipse.size;
-    else if constexpr (I == 1)
-        return ellipse.position;
-}
-
-template<size_t I> const auto& get(const RadialGradient::Circle& circle)
-{
-    if constexpr (!I)
-        return circle.size;
-    else if constexpr (I == 1)
-        return circle.position;
-}
-
-template<size_t I> const auto& get(const RadialGradient& gradient)
-{
-    if constexpr (!I)
-        return gradient.colorInterpolationMethod;
-    else if constexpr (I == 1)
-        return gradient.gradientBox;
-    else if constexpr (I == 2)
-        return gradient.stops;
-}
-
 // MARK: - PrefixedRadialGradient
 
 struct PrefixedRadialGradient {
@@ -260,32 +196,6 @@ template<> struct Serialize<PrefixedRadialGradient::Ellipse> { void operator()(S
 template<> struct Serialize<PrefixedRadialGradient::Circle> { void operator()(StringBuilder&, const SerializationContext&, const PrefixedRadialGradient::Circle&); };
 template<> struct Serialize<PrefixedRadialGradient> { void operator()(StringBuilder&, const SerializationContext&, const PrefixedRadialGradient&); };
 
-template<size_t I> const auto& get(const PrefixedRadialGradient::Ellipse& ellipse)
-{
-    if constexpr (!I)
-        return ellipse.size;
-    else if constexpr (I == 1)
-        return ellipse.position;
-}
-
-template<size_t I> const auto& get(const PrefixedRadialGradient::Circle& circle)
-{
-    if constexpr (!I)
-        return circle.size;
-    else if constexpr (I == 1)
-        return circle.position;
-}
-
-template<size_t I> const auto& get(const PrefixedRadialGradient& gradient)
-{
-    if constexpr (!I)
-        return gradient.colorInterpolationMethod;
-    else if constexpr (I == 1)
-        return gradient.gradientBox;
-    else if constexpr (I == 2)
-        return gradient.stops;
-}
-
 // MARK: - DeprecatedRadialGradient
 
 struct DeprecatedRadialGradient {
@@ -308,28 +218,6 @@ struct DeprecatedRadialGradient {
 template<> struct Serialize<DeprecatedRadialGradient::GradientBox> { void operator()(StringBuilder&, const SerializationContext&, const DeprecatedRadialGradient::GradientBox&); };
 template<> struct Serialize<DeprecatedRadialGradient> { void operator()(StringBuilder&, const SerializationContext&, const DeprecatedRadialGradient&); };
 
-template<size_t I> const auto& get(const DeprecatedRadialGradient::GradientBox& gradientBox)
-{
-    if constexpr (!I)
-        return gradientBox.first;
-    else if constexpr (I == 1)
-        return gradientBox.firstRadius;
-    else if constexpr (I == 2)
-        return gradientBox.second;
-    else if constexpr (I == 3)
-        return gradientBox.secondRadius;
-}
-
-template<size_t I> const auto& get(const DeprecatedRadialGradient& gradient)
-{
-    if constexpr (!I)
-        return gradient.colorInterpolationMethod;
-    else if constexpr (I == 1)
-        return gradient.gradientBox;
-    else if constexpr (I == 2)
-        return gradient.stops;
-}
-
 // MARK: - ConicGradient
 
 struct ConicGradient {
@@ -349,24 +237,6 @@ struct ConicGradient {
 
 template<> struct Serialize<ConicGradient::GradientBox> { void operator()(StringBuilder&, const SerializationContext&, const ConicGradient::GradientBox&); };
 template<> struct Serialize<ConicGradient> { void operator()(StringBuilder&, const SerializationContext&, const ConicGradient&); };
-
-template<size_t I> const auto& get(const ConicGradient::GradientBox& gradientBox)
-{
-    if constexpr (!I)
-        return gradientBox.angle;
-    else if constexpr (I == 1)
-        return gradientBox.position;
-}
-
-template<size_t I> const auto& get(const ConicGradient& gradient)
-{
-    if constexpr (!I)
-        return gradient.colorInterpolationMethod;
-    else if constexpr (I == 1)
-        return gradient.gradientBox;
-    else if constexpr (I == 2)
-        return gradient.stops;
-}
 
 // MARK: - Gradient (variant)
 
@@ -392,20 +262,6 @@ using Gradient = Variant<
 
 } // namespace CSS
 } // namespace WebCore
-
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinearGradient, 3)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedLinearGradient, 3)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::DeprecatedLinearGradient, 3)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::RadialGradient::Ellipse, 2)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::RadialGradient::Circle, 2)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::RadialGradient, 3)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedRadialGradient::Ellipse, 2)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedRadialGradient::Circle, 2)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedRadialGradient, 3)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::DeprecatedRadialGradient::GradientBox, 4)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::DeprecatedRadialGradient, 3)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ConicGradient::GradientBox, 2)
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ConicGradient, 3)
 
 template<typename C, typename P> inline constexpr bool WebCore::TreatAsTupleLike<WebCore::CSS::GradientColorStop<C, P>> = true;
 

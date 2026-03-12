@@ -493,6 +493,24 @@ void Database::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
     }
 }
 
+Vector<WebCore::RegistrableDomain> Database::fetchRegistrableDomains() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto statement = m_database->prepareStatement("SELECT registrableDomain FROM PCMObservedDomains;"_s);
+
+    if (!statement)
+        return { };
+
+    Vector<WebCore::RegistrableDomain> domains;
+    while (statement->step() == SQLITE_ROW) {
+        String domainString = statement->columnText(0);
+        if (!domainString.isEmpty())
+            domains.append(WebCore::RegistrableDomain::uncheckedCreateFromHost(domainString));
+    }
+    return domains;
+}
+
 void Database::clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDomain> domain)
 {
     ASSERT(!RunLoop::isMain());

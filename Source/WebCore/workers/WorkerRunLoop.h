@@ -94,7 +94,7 @@ public:
         WTF_MAKE_NONCOPYABLE(Task);
     public:
         Task(ScriptExecutionContext::Task&&, const String& mode);
-        const String& mode() const { return m_mode; }
+        const String& mode() const LIFETIME_BOUND { return m_mode; }
 
     private:
         void performTask(WorkerOrWorkletGlobalScope*);

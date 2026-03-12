@@ -115,6 +115,9 @@ private:
 
     void notifyFinished(PendingScript&) final;
 
+    bool hasScriptsWaitingForStylesheets() const final;
+    void executeScriptsWaitingForStylesheets() final;
+
     void end();
 
     void pauseParsing();
@@ -181,6 +184,7 @@ private:
     std::unique_ptr<XMLErrors> m_xmlErrors;
 
     RefPtr<PendingScript> m_pendingScript;
+    RefPtr<PendingScript> m_scriptWaitingForStylesheets;
     TextPosition m_scriptStartPosition;
 
     bool m_parsingFragment { false };

@@ -78,10 +78,10 @@ TEST(WebKit, DidRemoveFrameFromHiearchyInBackForwardCache)
 
     PlatformWebView webView(context.get());
 
-    // FIXME: Page cache is currently disabled under site isolation; see rdar://161762363.
-    // In site isolation, persisted: false. PageShow events are not being restored from the back-forward cache.
-    if (isSiteIsolationEnabled(static_cast<WKWebView*>(webView.platformView())))
+    if (!isUsingBackForwardCache(static_cast<WKWebView*>(webView.platformView()))) {
+        WTFLogAlways("WebKit.DidRemoveFrameFromHiearchyInBackForwardCache: Test is skipped as backfoward cache is disabled");
         return;
+    }
 
     setPageLoaderClient(webView.page());
     setInjectedBundleClient(webView.page());

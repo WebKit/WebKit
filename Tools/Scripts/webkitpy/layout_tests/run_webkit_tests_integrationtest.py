@@ -495,6 +495,77 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
         self.assertEqual(['passes/text.html'], tests_run)
 
+    def test_test_list_with_skip_expectation(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'passes/text.html [ Skip ]\npasses/image.html')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertEqual(['passes/image.html'], tests_run)
+
+    def test_test_list_with_hash_comments(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, '# this is a comment\npasses/text.html\n# another comment')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertEqual(['passes/text.html'], tests_run)
+
+    def test_test_list_with_mixed_content(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename,
+                                        '# comment line\n'
+                                        'passes/text.html\n'
+                                        '// legacy comment\n'
+                                        'passes/image.html [ Failure ]\n'
+                                        '\n'
+                                        'passes/error.html\n')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertIn('passes/text.html', tests_run)
+        self.assertIn('passes/image.html', tests_run)
+        self.assertIn('passes/error.html', tests_run)
+
+    def test_test_list_with_slow_expectation(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'passes/text.html [ Slow ]')
+        results = get_test_results(['--test-list=%s' % filename], host=host)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].test_name, 'passes/text.html')
+        self.assertTrue(results[0].test_input.is_slow)
+
+    def test_test_list_with_failure_expectation(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'failures/unexpected/text.html [ Failure ]')
+        details, _, _ = logging_run(['--test-list=%s' % filename], tests_included=True, host=host)
+        self.assertNotIn('failures/unexpected/text.html', details.initial_results.unexpected_results_by_name)
+
+    def test_test_list_with_double_slash_comments(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, '// this is a legacy comment\npasses/text.html // inline comment')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertEqual(['passes/text.html'], tests_run)
+
+    def test_test_list_skip_not_overridden(self):
+        # Tests marked [ Skip ] in the test-list should stay skipped,
+        # even though being in the test-list makes them "explicitly specified".
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'passes/text.html [ Skip ]\npasses/image.html')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertNotIn('passes/text.html', tests_run)
+        self.assertIn('passes/image.html', tests_run)
+
+    def test_test_list_unskip_with_pass(self):
+        # A test marked [ Skip ] in TestExpectations can be un-skipped
+        # by marking it [ Pass ] in the test-list file.
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'passes/skipped/skip.html [ Pass ]')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertIn('passes/skipped/skip.html', tests_run)
+
     def test_missing_and_unexpected_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.

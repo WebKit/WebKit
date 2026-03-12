@@ -33,7 +33,7 @@ public:
 
     static Ref<PropertyNameArray> create() { return adoptRef(*new PropertyNameArray); }
 
-    PropertyNameVector& propertyNameVector() { return m_propertyNameVector; }
+    PropertyNameVector& propertyNameVector() LIFETIME_BOUND { return m_propertyNameVector; }
 
 private:
     PropertyNameArray()

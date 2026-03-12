@@ -136,9 +136,6 @@ public:
     virtual void setIsPlayingToAutomotiveHeadUnit(bool);
     virtual bool isPlayingToAutomotiveHeadUnit() const { return m_isPlayingToAutomotiveHeadUnit; };
 
-    virtual void setSupportsSpatialAudioPlayback(bool);
-    virtual std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration&) { return m_supportsSpatialAudioPlayback; }
-
     virtual void addAudioCaptureSource(AudioCaptureSource&);
     virtual void removeAudioCaptureSource(AudioCaptureSource&);
     virtual void audioCaptureSourceStateChanged() { updateSessionState(); }
@@ -183,8 +180,6 @@ protected:
 
     int countActiveAudioCaptureSources();
 
-    std::optional<bool> supportsSpatialAudioPlayback() { return m_supportsSpatialAudioPlayback; }
-
     bool computeSupportsSeeking() const;
 
     void scheduleUpdateSessionState();
@@ -208,7 +203,6 @@ private:
 
     std::array<MediaSessionRestrictions, static_cast<unsigned>(PlatformMediaSessionMediaType::DOMMediaSession) + 1> m_restrictions;
 
-    std::optional<bool> m_supportsSpatialAudioPlayback;
     std::optional<PlatformMediaSessionInterruptionType> m_currentInterruption;
 
     WeakHashSet<AudioCaptureSource> m_audioCaptureSources;

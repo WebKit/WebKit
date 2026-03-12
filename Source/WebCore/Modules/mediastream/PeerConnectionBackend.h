@@ -213,7 +213,7 @@ public:
     };
     static void generateCertificate(Document&, const CertificateInformation&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
-    virtual void collectTransceivers() { };
+    virtual void collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&&) { };
 
     ScriptExecutionContext* context() const;
 

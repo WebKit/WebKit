@@ -44,7 +44,7 @@ public:
     size_t size() const { return m_cells.size(); }
 
     typedef SegmentedVector<CellProfile, 64> CellProfileVector;
-    CellProfileVector& cells() { return m_cells; }
+    CellProfileVector& cells() LIFETIME_BOUND { return m_cells; }
 
     void add(CellProfile&& profile)
     {

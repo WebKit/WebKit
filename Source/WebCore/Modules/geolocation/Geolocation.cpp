@@ -162,7 +162,7 @@ SecurityOrigin* Geolocation::securityOrigin() const
 
 Page* Geolocation::page() const
 {
-    RefPtr document = this->document();
+    auto* document = this->document();
     return document ? document->page() : nullptr;
 }
     
@@ -310,11 +310,9 @@ void Geolocation::getCurrentPosition(Ref<PositionCallback>&& successCallback, Re
         if (!errorCallback)
             return;
 
-        if (RefPtr context = errorCallback->scriptExecutionContext()) {
-            protect(context->eventLoop())->queueTask(TaskSource::Geolocation, [errorCallback = WTF::move(errorCallback)] {
-                errorCallback->invoke(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, "Document is not fully active"_s));
-            });
-        }
+        queueTaskKeepingObjectAlive(*this, TaskSource::Geolocation, [errorCallback = WTF::move(errorCallback)](auto&) {
+            errorCallback->invoke(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, "Document is not fully active"_s));
+        });
         return;
     }
 
@@ -331,11 +329,9 @@ int Geolocation::watchPosition(Ref<PositionCallback>&& successCallback, RefPtr<P
         if (!errorCallback)
             return 0;
 
-        if (RefPtr context = errorCallback->scriptExecutionContext()) {
-            protect(context->eventLoop())->queueTask(TaskSource::Geolocation, [errorCallback = WTF::move(errorCallback)] {
-                errorCallback->invoke(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, "Document is not fully active"_s));
-            });
-        }
+        queueTaskKeepingObjectAlive(*this, TaskSource::Geolocation, [errorCallback = WTF::move(errorCallback)](auto&) {
+            errorCallback->invoke(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, "Document is not fully active"_s));
+        });
         return 0;
     }
 
@@ -345,7 +341,7 @@ int Geolocation::watchPosition(Ref<PositionCallback>&& successCallback, RefPtr<P
     int watchID;
     // Keep asking for the next id until we're given one that we don't already have.
     do {
-        watchID = protect(scriptExecutionContext())->circularSequentialID();
+        watchID = scriptExecutionContext()->circularSequentialID();
     } while (!m_watchers.add(watchID, notifier.copyRef()));
     return watchID;
 }

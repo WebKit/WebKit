@@ -36,6 +36,7 @@
 #include "InlineIteratorSVGTextBox.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
+#include "LegacyRenderSVGResourceContainerInlines.h"
 #include "LegacyRenderSVGResourceFilterInlines.h"
 #include "LegacyRenderSVGResourceLinearGradientInlines.h"
 #include "LegacyRenderSVGResourceMarkerInlines.h"

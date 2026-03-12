@@ -69,19 +69,6 @@ extension WebKit.WebBackForwardListItem {
     }
 }
 
-extension WebKit.WebBackForwardListFrameItem {
-    private borrowing func getFrameState() -> WebKit.FrameState {
-        // Safety: FrameState is a SWIFT_SHARED_REFERENCE so this will
-        // result in a reference count increment and no lifetime risk.
-        // FIXME(rdar://168057355): remove this.
-        unsafe __frameStateUnsafe()
-    }
-
-    var frameState: WebKit.FrameState {
-        getFrameState()
-    }
-}
-
 // Some of these utility functions would be better in WebBackForwardListSwiftUtilities.h
 // but can't be put there as we are unable to use swift::Array and swift::String
 // rdar://161270632
@@ -718,7 +705,7 @@ final class WebBackForwardList {
         guard let childFrameItem = parentFrameItem.childItemAtIndex(childFrameIndex) else {
             return nil
         }
-        return childFrameItem.frameState
+        return childFrameItem.frameState()
     }
 
     func loggingString() -> Swift.String {
@@ -910,13 +897,13 @@ final class WebBackForwardList {
         if let oldFrameID = Optional(fromCxx: oldFrameID) {
             if let newFrameID = Optional(fromCxx: newFrameID) {
                 if !contentsMatch(oldFrameID, newFrameID) {
-                    updateAllFrameIDs(oldFrameID: oldFrameID, newFrameID: newFrameID)
+                    updateFrameIdentifier(oldFrameID: oldFrameID, newFrameID: newFrameID)
                 }
             }
         }
     }
 
-    private func updateAllFrameIDs(oldFrameID: WebCore.FrameIdentifier, newFrameID: WebCore.FrameIdentifier) {
+    func updateFrameIdentifier(oldFrameID: WebCore.FrameIdentifier, newFrameID: WebCore.FrameIdentifier) {
         for entry in entries {
             entry.updateFrameID(oldFrameID, newFrameID)
         }

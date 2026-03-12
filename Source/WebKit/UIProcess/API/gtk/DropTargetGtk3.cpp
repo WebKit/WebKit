@@ -196,14 +196,14 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
         gint length;
         const auto* uriListData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0)
-            m_selectionData->setURIList(String::fromUTF8(std::span(uriListData, length)));
+            m_selectionData->setURIList(String(unsafeMakeSpan(uriListData, length)));
         break;
     }
     case DropTargetType::NetscapeURL: {
         gint length;
         const auto* urlData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0) {
-            Vector<String> tokens = String::fromUTF8(std::span(urlData, length)).split('\n');
+            Vector<String> tokens = String(unsafeMakeSpan(urlData, length)).split('\n');
             URL url({ }, tokens[0]);
             if (url.isValid())
                 m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
@@ -217,7 +217,7 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
         int length;
         const auto* customData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0)
-            m_selectionData->setCustomData(SharedBuffer::create(std::span { customData, static_cast<size_t>(length) }));
+            m_selectionData->setCustomData(SharedBuffer::create(unsafeMakeSpan(customData, static_cast<size_t>(length))));
         break;
     }
     }

@@ -273,7 +273,7 @@ public:
     DisplayLinkCollection& displayLinks() LIFETIME_BOUND { return m_displayLinks; }
 #endif
 
-    void NODELETE addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
+    void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
     void NODELETE clearSupportedPlugins();
 
     HashSet<ProcessID> prewarmedProcessIdentifiers();
@@ -555,8 +555,8 @@ public:
 #endif
 
 #if PLATFORM(PLAYSTATION)
-    const String& webProcessPath() const { return m_resolvedPaths.webProcessPath; }
-    const String& networkProcessPath() const { return m_resolvedPaths.networkProcessPath; }
+    const String& webProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.webProcessPath; }
+    const String& networkProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.networkProcessPath; }
     int32_t userId() const { return m_userId; }
 #endif
 

@@ -95,7 +95,7 @@ bool shouldStopStitchingAt(const RenderObject& renderer, const AccessibilityObje
         return true;
     }
 
-    if (hasEnclosingInputElement(RefPtr { renderer.node() }.get())) {
+    if (hasEnclosingInputElement(renderer.node())) {
         // Don't stitch within text inputs. One example of why we want to avoid
         // this is otherwise the number values of the chosen dates will get stitched
         // with the "/"s that surround them, which is a poor user experience.

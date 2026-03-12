@@ -75,10 +75,10 @@ Document* ScreenOrientation::document() const
 
 ScreenOrientationManager* ScreenOrientation::manager() const
 {
-    RefPtr document = this->document();
+    auto* document = this->document();
     if (!document)
         return nullptr;
-    RefPtr page = document->page();
+    auto* page = document->page();
     return page ? page->screenOrientationManager() : nullptr;
 }
 

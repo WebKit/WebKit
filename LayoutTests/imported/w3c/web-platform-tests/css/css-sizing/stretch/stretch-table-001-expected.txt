@@ -1,0 +1,22 @@
+
+FAIL .stretch 1 assert_equals:
+<table class="stretch" data-expected-width="40" data-expected-height="10">
+    <tbody>
+      <tr>
+        <td><div class="spacer"></div></td>
+        <td><div class="spacer"></div></td>
+      </tr>
+    </tbody>
+  </table>
+height expected 10 but got 584
+PASS .stretch 2
+PASS .stretch 3
+PASS .stretch 4
+PASS .stretch 5
+PASS .stretch 6
+FAIL .stretch 7 assert_equals:
+<caption class="stretch" data-expected-width="40" data-expected-height="10">
+      <div class="spacer"></div>
+    </caption>
+height expected 10 but got 581
+

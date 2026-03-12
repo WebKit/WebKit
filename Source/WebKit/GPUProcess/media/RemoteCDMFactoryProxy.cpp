@@ -80,7 +80,7 @@ void RemoteCDMFactoryProxy::createCDM(const String& keySystem, const String& med
         return;
     }
 
-    auto proxy = RemoteCDMProxy::create(*this, WTF::move(privateCDM));
+    Ref proxy = RemoteCDMProxy::create(*this, makeUniqueRefFromNonNullUniquePtr(WTF::move(privateCDM)));
     auto identifier = RemoteCDMIdentifier::generate();
     RemoteCDMConfiguration configuration = proxy->configuration();
     addProxy(identifier, WTF::move(proxy));
@@ -146,7 +146,7 @@ void RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage(IPC::Connect
     }
 }
 
-void RemoteCDMFactoryProxy::addProxy(const RemoteCDMIdentifier& identifier, RefPtr<RemoteCDMProxy>&& proxy)
+void RemoteCDMFactoryProxy::addProxy(const RemoteCDMIdentifier& identifier, Ref<RemoteCDMProxy>&& proxy)
 {
     ASSERT(!m_proxies.contains(identifier));
     m_proxies.set(identifier, WTF::move(proxy));

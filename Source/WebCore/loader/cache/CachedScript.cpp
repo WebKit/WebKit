@@ -54,7 +54,7 @@ void CachedScript::setEncoding(const String& chs)
 
 ASCIILiteral CachedScript::encoding() const
 {
-    return protect(m_decoder)->encoding().name();
+    return m_decoder->encoding().name();
 }
 
 StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
@@ -141,7 +141,7 @@ JSC::CodeBlockHash CachedScript::codeBlockHashConcurrently(int startOffset, int 
             forceUTF8Decoder->setAlwaysUseUTF8();
             result = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
         } else {
-            auto decoder = TextResourceDecoder::create(protect(m_decoder)->contentType(), protect(m_decoder)->encoding(), protect(m_decoder)->usesEncodingDetector());
+            auto decoder = TextResourceDecoder::create(m_decoder->contentType(), m_decoder->encoding(), m_decoder->usesEncodingDetector());
             result = decoder->decodeAndFlush(contiguousData->span());
         }
 

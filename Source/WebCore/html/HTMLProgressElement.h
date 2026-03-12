@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,15 +25,14 @@
 
 namespace WebCore {
 
-class ProgressValueElement;
 class RenderProgress;
 
 class HTMLProgressElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLProgressElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLProgressElement);
 public:
-    static const double IndeterminatePosition;
-    static const double InvalidPosition;
+    static constexpr double IndeterminatePosition = -1;
+    static constexpr double InvalidPosition = -2;
 
     static Ref<HTMLProgressElement> create(const QualifiedName&, Document&);
 
@@ -47,26 +47,29 @@ public:
 
 private:
     HTMLProgressElement(const QualifiedName&, Document&);
-    virtual ~HTMLProgressElement();
 
-    bool matchesIndeterminatePseudoClass() const final;
+    bool matchesIndeterminatePseudoClass() const final { return !m_isDeterminate; }
     bool isLabelable() const final { return true; }
+    bool canContainRangeEndPoint() const final { return false; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     RenderProgress* renderProgress() const;
+    bool childShouldCreateRenderer(const Node&) const final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-
     void didAttachRenderers() final;
 
     void updateDeterminateState();
-    void didElementStateChange();
-    void didAddUserAgentShadowRoot(ShadowRoot&) final;
     bool isDeterminate() const { return m_isDeterminate; };
 
-    bool canContainRangeEndPoint() const final { return false; }
+    void appendShadowTreeForAutoAppearance(ShadowRoot&);
+    void appendShadowTreeForBaseAppearance(ShadowRoot&);
 
-    WeakPtr<ProgressValueElement, WeakPtrImplWithEventTargetData> m_valueElement;
+    void didChangeElementValue();
+    void didAddUserAgentShadowRoot(ShadowRoot&) final;
+
+    WeakPtr<HTMLDivElement, WeakPtrImplWithEventTargetData> m_valueElement;
+    WeakPtr<HTMLDivElement, WeakPtrImplWithEventTargetData> m_fillElement;
     bool m_isDeterminate { false };
 };
 

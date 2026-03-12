@@ -971,6 +971,7 @@ static void runGoBackAfterNavigatingSameSiteIframe(ShouldEnablePageCache shouldE
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    const bool backForwardCacheEnabled = isUsingBackForwardCache(webView.get());
     webView.get().navigationDelegate = navigationDelegate.get();
     static bool didCommitLoadForAllFrames = false;
     static unsigned expectedCommittedFrameSize = 2;
@@ -1018,7 +1019,7 @@ static void runGoBackAfterNavigatingSameSiteIframe(ShouldEnablePageCache shouldE
 
     // Navigate main frame back.
     // For page cache case, iframe is not reloaded, so there is only one commit.
-    expectedCommittedFrameSize = shouldEnablePageCache == ShouldEnablePageCache::Yes ? 1 : 2;
+    expectedCommittedFrameSize = backForwardCacheEnabled ? 1 : 2;
     [webView goBack];
 
     TestWebKitAPI::Util::run(&didCommitLoadForAllFrames);
@@ -1036,11 +1037,6 @@ static void runGoBackAfterNavigatingSameSiteIframe(ShouldEnablePageCache shouldE
 
 TEST(WKBackForwardList, PageCacheGoBackAfterNavigatingSameSiteIframe)
 {
-    // FIXME: Page cache is currently disabled under site isolation; see rdar://161762363.
-    RetainPtr webView = adoptNS([[WKWebView alloc] init]);
-    if (isSiteIsolationEnabled(webView.get()))
-        return;
-
     runGoBackAfterNavigatingSameSiteIframe(ShouldEnablePageCache::Yes);
 }
 
@@ -1064,6 +1060,7 @@ static void runGoBackAfterNavigatingSameSiteIframe2(ShouldEnablePageCache should
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    const bool backForwardCacheEnabled = isUsingBackForwardCache(webView.get());
     webView.get().navigationDelegate = navigationDelegate.get();
     static bool didCommitLoadForAllFrames = false;
     static unsigned expectedCommittedFrameSize = 2;
@@ -1111,7 +1108,7 @@ static void runGoBackAfterNavigatingSameSiteIframe2(ShouldEnablePageCache should
 
     // Navigate main frame back.
     // For page cache case, iframe is not reloaded, so there is only one commit.
-    expectedCommittedFrameSize = shouldEnablePageCache == ShouldEnablePageCache::Yes ? 1 : 2;
+    expectedCommittedFrameSize = backForwardCacheEnabled ? 1 : 2;
     [webView goBack];
 
     TestWebKitAPI::Util::run(&didCommitLoadForAllFrames);
@@ -1129,11 +1126,6 @@ static void runGoBackAfterNavigatingSameSiteIframe2(ShouldEnablePageCache should
 
 TEST(WKBackForwardList, PageCacheGoBackAfterNavigatingSameSiteIframe2)
 {
-    // FIXME: Page cache is currently disabled under site isolation; see rdar://161762363.
-    RetainPtr webView = adoptNS([[WKWebView alloc] init]);
-    if (isSiteIsolationEnabled(webView.get()))
-        return;
-
     runGoBackAfterNavigatingSameSiteIframe2(ShouldEnablePageCache::Yes);
 }
 

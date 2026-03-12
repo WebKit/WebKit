@@ -12,6 +12,6 @@ EXPECTED (video.paused == 'true') OK
 * Send a play command, it should succeed.
 RUN(internals.postRemoteControlCommand('play'))
 
-EVENT(timeupdate)
+EVENT(playing)
 END OF TEST
 

@@ -52,7 +52,7 @@ public:
         , m_priority(priority) { }
     SubresourceInfo(const Key&, const WebCore::ResourceRequest&, const SubresourceInfo* previousInfo);
 
-    const Key& key() const { return m_key; }
+    const Key& key() const LIFETIME_BOUND { return m_key; }
     WallTime lastSeen() const { return m_lastSeen; }
     WallTime firstSeen() const { return m_firstSeen; }
 
@@ -106,9 +106,9 @@ public:
     Storage::Record encodeAsStorageRecord() const;
     static std::unique_ptr<SubresourcesEntry> decodeStorageRecord(const Storage::Record&);
 
-    const Key& key() const { return m_key; }
+    const Key& key() const LIFETIME_BOUND { return m_key; }
     WallTime timeStamp() const { return m_timeStamp; }
-    Vector<SubresourceInfo>& subresources() { return m_subresources; }
+    Vector<SubresourceInfo>& subresources() LIFETIME_BOUND { return m_subresources; }
 
     void updateSubresourceLoads(const Vector<std::unique_ptr<SubresourceLoad>>&);
 

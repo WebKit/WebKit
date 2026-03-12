@@ -208,7 +208,7 @@ void ColorInputType::createShadowSubtree()
     Ref wrapperElement = HTMLDivElement::create(document);
     Ref colorSwatch = HTMLDivElement::create(document);
 
-    Ref shadowRoot = *protect(element())->userAgentShadowRoot();
+    Ref shadowRoot = *element()->userAgentShadowRoot();
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { shadowRoot };
     shadowRoot->appendChild(ContainerNode::ChildChange::Source::Parser, wrapperElement);
 
@@ -332,7 +332,7 @@ void ColorInputType::updateColorSwatch()
 HTMLElement* ColorInputType::shadowColorSwatch() const
 {
     ASSERT(element());
-    RefPtr shadow = protect(element())->userAgentShadowRoot();
+    RefPtr shadow = element()->userAgentShadowRoot();
     if (!shadow)
         return nullptr;
 
@@ -347,12 +347,12 @@ IntRect ColorInputType::elementRectRelativeToRootView() const
     CheckedPtr renderer = element->renderer();
     if (!renderer)
         return IntRect();
-    return protect(protect(element->document())->view())->contentsToRootView(renderer->absoluteBoundingBoxRect());
+    return protect(element->document().view())->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
 std::optional<FrameIdentifier> ColorInputType::rootFrameID() const
 {
-    return protect(protect(element()->document())->view())->rootFrameID();
+    return element()->document().view()->rootFrameID();
 }
 
 bool ColorInputType::supportsAlpha() const

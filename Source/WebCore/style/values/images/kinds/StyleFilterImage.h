@@ -53,7 +53,7 @@ public:
     bool equalInputImages(const FilterImage&) const;
 
     RefPtr<Image> inputImage() const { return m_image; }
-    const Filter& filter() const { return m_filter; }
+    const Filter& filter() const LIFETIME_BOUND { return m_filter; }
 
     static constexpr bool isFixedSize = true;
 

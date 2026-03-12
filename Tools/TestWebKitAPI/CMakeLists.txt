@@ -106,6 +106,7 @@ set(TestWTF_SOURCES
     Tests/WTF/SaturatedArithmeticOperations.cpp
     Tests/WTF/Scope.cpp
     Tests/WTF/ScopedLambda.cpp
+    Tests/WTF/SegmentedVector.cpp
     Tests/WTF/SentinelLinkedList.cpp
     Tests/WTF/SetForScope.cpp
     Tests/WTF/Signals.cpp

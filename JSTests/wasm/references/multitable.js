@@ -428,10 +428,10 @@ if (!$vm.isMemoryLimited()) {
                   .GetLocal(0)
                   .TableSet(1)
                 .End()
-              .End().WebAssembly().get())), Error, "Table count of 1000000 is too big, maximum 1000000");
+              .End().WebAssembly().get())), Error, "Table count of 100000 is too big, maximum 100000");
 
     {
-        const largeNumber = 1000000;
+        const largeNumber = 100000;
         const $1 = new WebAssembly.Instance(new WebAssembly.Module(tableInsanity(largeNumber-2, (new Builder())
               .Type().End())
                     .Table({initial: 3, maximum: 3, element: "funcref"})

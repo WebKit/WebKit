@@ -40,7 +40,7 @@ class InterpolateAttribute final : public Attribute {
     WGSL_AST_BUILDER_NODE(InterpolateAttribute);
 public:
     NodeKind kind() const override;
-    const Interpolation& interpolation() const { return m_interpolation; }
+    const Interpolation& interpolation() const LIFETIME_BOUND { return m_interpolation; }
     InterpolationType type() const { return m_interpolation.type; }
     InterpolationSampling sampling() const { return m_interpolation.sampling; }
 

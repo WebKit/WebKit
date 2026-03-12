@@ -343,7 +343,9 @@ TEST(WKWebView, AttributedStringFromTable)
         EXPECT_EQ(cell.columnSpan, static_cast<NSInteger>(1));
         EXPECT_EQ(cell.rowSpan, static_cast<NSInteger>(1));
         EXPECT_EQ(cell.table, expectedTable);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         EXPECT_EQ([cell widthForLayer:NSTextBlockLayerBorder edge:NSRectEdgeMinX], expectedBorderWidth);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (!expectedBackgroundColor)
             EXPECT_NULL(cell.backgroundColor);

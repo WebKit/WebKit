@@ -73,11 +73,11 @@
 #include "PCToCodeOriginMap.h"
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
+#include "PropertyInlineCache.h"
 #include "ReduceWhitespace.h"
 #include "SlotVisitorInlines.h"
 #include "SourceProvider.h"
 #include "StackVisitor.h"
-#include "StructureStubInfo.h"
 #include "TypeLocationCache.h"
 #include "TypeProfiler.h"
 #include "VMInlines.h"
@@ -778,7 +778,7 @@ void CodeBlock::setBaselineJITData(std::unique_ptr<BaselineJITData>&& jitData)
     m_jitData = jitData.release();
     checker().set(CrashChecker::BaselineJITData, checker().hash(this, m_jitData));
     auto* baselineJITData = std::bit_cast<BaselineJITData*>(m_jitData);
-    checker().set(CrashChecker::StubInfoCount, checker().hash(this, baselineJITData->stubInfos().size()));
+    checker().set(CrashChecker::PropertyInlineCacheCount, checker().hash(this, baselineJITData->propertyInlineCaches().size()));
 }
 
 void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
@@ -796,12 +796,12 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
 
     {
         ASSERT(!m_jitData);
-        auto baselineJITData = BaselineJITData::create(jitCode->m_unlinkedStubInfos.size(), jitCode->m_constantPool.size(), this);
+        auto baselineJITData = BaselineJITData::create(jitCode->m_unlinkedPropertyInlineCaches.size(), jitCode->m_constantPool.size(), this);
 
-        for (unsigned index = 0; index < jitCode->m_unlinkedStubInfos.size(); ++index) {
-            BaselineUnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];
-            auto& stubInfo = baselineJITData->stubInfo(index);
-            stubInfo.initializeFromUnlinkedStructureStubInfo(vm(), this, unlinkedStubInfo);
+        for (unsigned index = 0; index < jitCode->m_unlinkedPropertyInlineCaches.size(); ++index) {
+            BaselineUnlinkedPropertyInlineCache& unlinkedPropertyCache = jitCode->m_unlinkedPropertyInlineCaches[index];
+            auto& propertyCache = baselineJITData->propertyCache(index);
+            propertyCache.initializeFromUnlinkedPropertyInlineCache(vm(), this, unlinkedPropertyCache);
         }
 
         for (size_t i = 0; i < jitCode->m_constantPool.size(); ++i) {
@@ -864,10 +864,10 @@ CodeBlock::~CodeBlock()
         if (cc.isEnabled && m_jitData) {
             RELEASE_ASSERT(cc.get(CrashChecker::BaselineJITData) == cc.hash(this, m_jitData),
                 CrashChecker::BaselineJITData, cc.value(), cc.hash(this, m_jitData), this, m_jitData);
-            auto stubInfoCount = std::bit_cast<BaselineJITData*>(m_jitData)->stubInfos().size();
-            RELEASE_ASSERT(cc.get(CrashChecker::StubInfoCount) == cc.hash(this, stubInfoCount),
-                CrashChecker::StubInfoCount, cc.value(),
-                cc.hash(this, stubInfoCount), this, m_jitData, stubInfoCount);
+            auto propertyCacheCount = std::bit_cast<BaselineJITData*>(m_jitData)->propertyInlineCaches().size();
+            RELEASE_ASSERT(cc.get(CrashChecker::PropertyInlineCacheCount) == cc.hash(this, propertyCacheCount),
+                CrashChecker::PropertyInlineCacheCount, cc.value(),
+                cc.hash(this, propertyCacheCount), this, m_jitData, propertyCacheCount);
             RELEASE_ASSERT(!cc.get(CrashChecker::DFGJITData),
                 CrashChecker::DFGJITData, cc.value(), cc.hash(this, m_jitData), this, m_jitData);
         }
@@ -940,14 +940,14 @@ CodeBlock::~CodeBlock()
         } else {
             RELEASE_ASSERT(cc.get(CrashChecker::BaselineJITData) == cc.hash(this, m_jitData),
                 CrashChecker::BaselineJITData, cc.value(), cc.hash(this, m_jitData), this, m_jitData);
-            auto stubInfoCount = std::bit_cast<BaselineJITData*>(m_jitData)->stubInfos().size();
-            RELEASE_ASSERT(cc.get(CrashChecker::StubInfoCount) == cc.hash(this, stubInfoCount),
-                CrashChecker::StubInfoCount, cc.value(), cc.hash(this, stubInfoCount), this, m_jitData, stubInfoCount);
+            auto propertyCacheCount = std::bit_cast<BaselineJITData*>(m_jitData)->propertyInlineCaches().size();
+            RELEASE_ASSERT(cc.get(CrashChecker::PropertyInlineCacheCount) == cc.hash(this, propertyCacheCount),
+                CrashChecker::PropertyInlineCacheCount, cc.value(), cc.hash(this, propertyCacheCount), this, m_jitData, propertyCacheCount);
         }
     }
-    forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
-        stubInfo.aboutToDie();
-        stubInfo.deref();
+    forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
+        propertyCache.aboutToDie();
+        propertyCache.deref();
         return IterationStatus::Continue;
     });
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
@@ -1071,9 +1071,17 @@ Vector<unsigned> CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<
                             symbolTable->prepareForTypeProfiling(locker);
                         }
 
-                        SymbolTable* clone = symbolTable->cloneScopePart(vm);
+                        // We have to make sure to use a single code block for constant watchpointing.
+                        // If we didn't then we could jettison a compilation because that constant changed
+                        // but invalidate the clone. Then the next compilation would see the original
+                        // watchpoint intact and assume the value is still the original constant.
+                        SymbolTable* clone = globalObject->symbolTableCache().get(symbolTable);
+                        if (!clone) {
+                            clone = symbolTable->cloneScopePart(vm);
+                            globalObject->symbolTableCache().set(symbolTable, clone);
+                        }
                         if (wasCompiledWithDebuggingOpcodes())
-                            clone->setRareDataCodeBlock(this);
+                            clone->collectDebuggerInfo(this);
 
                         constant = clone;
                     } else if (jsDynamicCast<JSTemplateObjectDescriptor*>(cell))
@@ -1138,27 +1146,31 @@ size_t CodeBlock::estimatedSize(JSCell* cell, VM& vm)
 }
 
 template<typename Func>
-inline void CodeBlock::forEachStructureStubInfo(Func func)
+inline void CodeBlock::forEachPropertyInlineCache(Func func)
 {
     UNUSED_PARAM(func);
 #if ENABLE(JIT)
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
 #if ENABLE(DFG_JIT)
-        for (auto* stubInfo : jitCode()->dfgCommon()->m_stubInfos) {
-            if (func(*stubInfo) == IterationStatus::Done)
+        for (auto* propertyCache : jitCode()->dfgCommon()->m_handlerPropertyInlineCaches) {
+            if (func(*propertyCache) == IterationStatus::Done)
+                return;
+        }
+        for (auto* propertyCache : jitCode()->dfgCommon()->m_repatchingPropertyInlineCaches) {
+            if (func(*propertyCache) == IterationStatus::Done)
                 return;
         }
         if (auto* jitData = dfgJITData()) {
-            for (auto& stubInfo : jitData->stubInfos()) {
-                if (func(stubInfo) == IterationStatus::Done)
+            for (auto& propertyCache : jitData->propertyInlineCaches()) {
+                if (func(propertyCache) == IterationStatus::Done)
                     return;
             }
         }
 #endif
     } else {
         if (auto* jitData = baselineJITData()) {
-            for (auto& stubInfo : jitData->stubInfos()) {
-                if (func(stubInfo) == IterationStatus::Done)
+            for (auto& propertyCache : jitData->propertyInlineCaches()) {
+                if (func(propertyCache) == IterationStatus::Done)
                     return;
             }
         }
@@ -1368,8 +1380,8 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
     }
 
 #if ENABLE(JIT)
-    forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
-        stubInfo.propagateTransitions(visitor);
+    forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
+        propertyCache.propagateTransitions(visitor);
         return IterationStatus::Continue;
     });
 #endif // ENABLE(JIT)
@@ -1739,9 +1751,9 @@ void CodeBlock::finalizeJITInlineCaches()
     }
 #endif
 
-    forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
+    forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
         ConcurrentJSLockerBase locker(NoLockingNecessary);
-        stubInfo.visitWeak(locker, this);
+        propertyCache.visitWeak(locker, this);
         return IterationStatus::Continue;
     });
 }
@@ -1847,8 +1859,8 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
     }
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
-            result.add(stubInfo.codeOrigin, ICStatus()).iterator->value.stubInfo = &stubInfo;
+        forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
+            result.add(propertyCache.codeOrigin, ICStatus()).iterator->value.propertyCache = &propertyCache;
             return IterationStatus::Continue;
         });
         if (JSC::JITCode::isOptimizingJIT(jitType())) {
@@ -1887,13 +1899,13 @@ void CodeBlock::getICStatusMap(ICStatusMap& result)
 }
 
 #if ENABLE(JIT)
-StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
+PropertyInlineCache* CodeBlock::findPropertyCache(CodeOrigin codeOrigin)
 {
     ConcurrentJSLocker locker(m_lock);
-    StructureStubInfo* result = nullptr;
-    forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
-        if (stubInfo.codeOrigin == codeOrigin) {
-            result = &stubInfo;
+    PropertyInlineCache* result = nullptr;
+    forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
+        if (propertyCache.codeOrigin == codeOrigin) {
+            result = &propertyCache;
             return IterationStatus::Done;
         }
         return IterationStatus::Continue;
@@ -1943,8 +1955,8 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
     });
 
 #if ENABLE(JIT)
-    forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
-        stubInfo.visitAggregate(visitor);
+    forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
+        propertyCache.visitAggregate(visitor);
         return IterationStatus::Continue;
     });
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
@@ -2293,8 +2305,8 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 #if ENABLE(JIT)
     {
         ConcurrentJSLocker locker(m_lock);
-        forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
-            stubInfo.deref();
+        forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
+            propertyCache.deref();
             return IterationStatus::Continue;
         });
     }
@@ -3632,9 +3644,9 @@ std::optional<CodeOrigin> CodeBlock::findPC(void* pc)
     {
         ConcurrentJSLocker locker(m_lock);
         std::optional<CodeOrigin> result;
-        forEachStructureStubInfo([&](StructureStubInfo& stubInfo) {
-            if (stubInfo.containsPC(pc)) {
-                result = stubInfo.codeOrigin;
+        forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
+            if (propertyCache.containsPC(pc)) {
+                result = propertyCache.codeOrigin;
                 return IterationStatus::Done;
             }
             return IterationStatus::Continue;
@@ -3674,21 +3686,6 @@ void CodeBlock::jitSoon()
 void CodeBlock::jitNextInvocation()
 {
     m_unlinkedCode->llintExecuteCounter().setNewThreshold(0, this);
-}
-
-bool CodeBlock::useDataIC() const
-{
-#if ENABLE(DFG_JIT)
-    if (jitType() == JITType::DFGJIT) {
-        if (auto* jitCode = m_jitCode.get())
-            return static_cast<const DFG::JITCode*>(jitCode)->isUnlinked();
-    }
-#endif
-#if ENABLE(FTL_JIT)
-    if (jitType() == JITType::FTLJIT)
-        return Options::useDataICInFTL();
-#endif
-    return true;
 }
 
 CodePtr<JSEntryPtrTag> CodeBlock::addressForCallConcurrently(const ConcurrentJSLocker&, ArityCheckMode arityCheck) const

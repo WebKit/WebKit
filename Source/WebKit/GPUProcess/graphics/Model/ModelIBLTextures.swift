@@ -31,9 +31,9 @@ internal import Metal
 
 class IBLTextures {
     static func loadIBLTextures(
-        renderContext: _Proto_LowLevelRenderContext_v1,
-        diffuseTextureOriginal: MTLTexture,
-        specularTextureOriginal: MTLTexture
+        renderContext: any _Proto_LowLevelRenderContext_v1,
+        diffuseTextureOriginal: any MTLTexture,
+        specularTextureOriginal: any MTLTexture
     ) throws -> (
         diffuse: _Proto_LowLevelTextureResource_v1,
         specular: _Proto_LowLevelTextureResource_v1

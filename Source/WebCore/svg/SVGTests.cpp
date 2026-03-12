@@ -127,7 +127,7 @@ SVGConditionalProcessingAttributes& SVGTests::conditionalProcessingAttributes()
 
 SVGConditionalProcessingAttributes* SVGTests::conditionalProcessingAttributesIfExists() const
 {
-    return protect(m_contextElement)->conditionalProcessingAttributesIfExists();
+    return m_contextElement->conditionalProcessingAttributesIfExists();
 }
 
 } // namespace WebCore

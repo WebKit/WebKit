@@ -64,45 +64,45 @@ public:
     void destroy();
     void setLabel(String&&);
 
-    bool isValid() const;
+    bool NODELETE isValid() const;
 
     static uint32_t texelBlockWidth(WGPUTextureFormat); // Texels
     static uint32_t texelBlockHeight(WGPUTextureFormat); // Texels
-    static NSUInteger bytesPerRow(WGPUTextureFormat, uint32_t textureWidth, uint32_t sampleCount);
-    static WGPUExtent3D physicalTextureExtent(WGPUTextureDimension, WGPUTextureFormat, WGPUExtent3D logicalExtent);
+    static NSUInteger NODELETE bytesPerRow(WGPUTextureFormat, uint32_t textureWidth, uint32_t sampleCount);
+    static WGPUExtent3D NODELETE physicalTextureExtent(WGPUTextureDimension, WGPUTextureFormat, WGPUExtent3D logicalExtent);
 
     // For depth-stencil textures, the input value to texelBlockSize()
     // needs to be the output of aspectSpecificFormat().
     static Checked<uint32_t> texelBlockSize(WGPUTextureFormat); // Bytes
-    static bool containsDepthAspect(WGPUTextureFormat);
-    static bool containsStencilAspect(WGPUTextureFormat);
-    static bool isDepthOrStencilFormat(WGPUTextureFormat);
-    static WGPUTextureFormat aspectSpecificFormat(WGPUTextureFormat, WGPUTextureAspect);
+    static bool NODELETE containsDepthAspect(WGPUTextureFormat);
+    static bool NODELETE containsStencilAspect(WGPUTextureFormat);
+    static bool NODELETE isDepthOrStencilFormat(WGPUTextureFormat);
+    static WGPUTextureFormat NODELETE aspectSpecificFormat(WGPUTextureFormat, WGPUTextureAspect);
     static NSString* errorValidatingImageCopyTexture(const WGPUImageCopyTexture&, const WGPUExtent3D&);
     static NSString* errorValidatingTextureCopyRange(const WGPUImageCopyTexture&, const WGPUExtent3D&);
-    static bool refersToSingleAspect(WGPUTextureFormat, WGPUTextureAspect);
-    static bool isValidDepthStencilCopySource(WGPUTextureFormat, WGPUTextureAspect);
-    static bool isValidDepthStencilCopyDestination(WGPUTextureFormat, WGPUTextureAspect);
+    static bool NODELETE refersToSingleAspect(WGPUTextureFormat, WGPUTextureAspect);
+    static bool NODELETE isValidDepthStencilCopySource(WGPUTextureFormat, WGPUTextureAspect);
+    static bool NODELETE isValidDepthStencilCopyDestination(WGPUTextureFormat, WGPUTextureAspect);
     static NSString* errorValidatingLinearTextureData(const WGPUTextureDataLayout&, uint64_t, WGPUTextureFormat, WGPUExtent3D);
-    static MTLTextureUsage usage(WGPUTextureUsageFlags, WGPUTextureFormat);
-    static MTLPixelFormat pixelFormat(WGPUTextureFormat);
-    static WGPUTextureFormat textureFormat(MTLPixelFormat);
-    static std::optional<MTLPixelFormat> depthOnlyAspectMetalFormat(WGPUTextureFormat);
-    static std::optional<MTLPixelFormat> stencilOnlyAspectMetalFormat(WGPUTextureFormat);
-    static WGPUTextureFormat removeSRGBSuffix(WGPUTextureFormat);
-    static std::optional<WGPUTextureFormat> resolveTextureFormat(WGPUTextureFormat, WGPUTextureAspect);
-    static bool isCompressedFormat(WGPUTextureFormat);
+    static MTLTextureUsage NODELETE usage(WGPUTextureUsageFlags, WGPUTextureFormat);
+    static MTLPixelFormat NODELETE pixelFormat(WGPUTextureFormat);
+    static WGPUTextureFormat NODELETE textureFormat(MTLPixelFormat);
+    static std::optional<MTLPixelFormat> NODELETE depthOnlyAspectMetalFormat(WGPUTextureFormat);
+    static std::optional<MTLPixelFormat> NODELETE stencilOnlyAspectMetalFormat(WGPUTextureFormat);
+    static WGPUTextureFormat NODELETE removeSRGBSuffix(WGPUTextureFormat);
+    static std::optional<WGPUTextureFormat> NODELETE resolveTextureFormat(WGPUTextureFormat, WGPUTextureAspect);
+    static bool NODELETE isCompressedFormat(WGPUTextureFormat);
     enum class CompressFormat {
         ASTC, // NOLINT
         BC, // NOLINT
         ETC // NOLINT
     };
-    static std::optional<CompressFormat> compressedFormatType(WGPUTextureFormat);
+    static std::optional<CompressFormat> NODELETE compressedFormatType(WGPUTextureFormat);
     static bool isRenderableFormat(WGPUTextureFormat, const Device&);
     static bool isColorRenderableFormat(WGPUTextureFormat, const Device&);
-    static bool isDepthStencilRenderableFormat(WGPUTextureFormat, const Device&);
-    static uint32_t renderTargetPixelByteCost(WGPUTextureFormat);
-    static uint32_t renderTargetPixelByteAlignment(WGPUTextureFormat);
+    static bool NODELETE isDepthStencilRenderableFormat(WGPUTextureFormat, const Device&);
+    static uint32_t NODELETE renderTargetPixelByteCost(WGPUTextureFormat);
+    static uint32_t NODELETE renderTargetPixelByteAlignment(WGPUTextureFormat);
 
     WGPUExtent3D logicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
     WGPUExtent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
@@ -130,19 +130,19 @@ public:
     static bool supportsMultisampling(WGPUTextureFormat, const Device&);
     static bool supportsResolve(WGPUTextureFormat, const Device&);
     static bool supportsBlending(WGPUTextureFormat, const Device&);
-    void recreateIfNeeded();
-    void makeCanvasBacking();
+    void NODELETE recreateIfNeeded();
+    void NODELETE makeCanvasBacking();
     void setCommandEncoder(CommandEncoder&) const;
     static ASCIILiteral formatToString(WGPUTextureFormat);
     bool isCanvasBacking() const { return m_canvasBacking; }
 
     bool waitForCommandBufferCompletion();
-    void updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
-    id<MTLSharedEvent> sharedEvent() const;
-    uint64_t sharedEventSignalValue() const;
+    void NODELETE updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
+    id<MTLSharedEvent> NODELETE sharedEvent() const;
+    uint64_t NODELETE sharedEventSignalValue() const;
     void setRasterizationRateMaps(std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>>&& rateMaps) { m_leftRightRasterizationMaps = WTF::move(rateMaps); }
     id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice) const { return slice ? m_leftRightRasterizationMaps.second : m_leftRightRasterizationMaps.first; }
-    uint32_t arrayLayerCount() const;
+    uint32_t NODELETE arrayLayerCount() const;
     WGPUTextureAspect aspect() const { return WGPUTextureAspect_All; }
     uint32_t baseArrayLayer() const { return 0; }
     uint32_t baseMipLevel() const { return 0; }

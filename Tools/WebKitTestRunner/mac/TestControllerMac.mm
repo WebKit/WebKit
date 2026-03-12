@@ -67,8 +67,12 @@
 
 namespace WTR {
 
+static __weak NSMenu *gCurrentPopUpMenu;
+
 void TestController::notifyDone()
 {
+    if (RetainPtr menu = gCurrentPopUpMenu)
+        [menu cancelTracking];
 }
 
 static PlatformWindow wtr_NSApplication_keyWindow(id self, SEL _cmd)
@@ -87,7 +91,6 @@ static Class menuImplClassSingleton()
     return menuImplClass;
 }
 
-static __weak NSMenu *gCurrentPopUpMenu = nil;
 static void setSwizzledPopUpMenu(NSMenu *menu)
 {
     if (gCurrentPopUpMenu == menu)
@@ -112,6 +115,9 @@ static void swizzledPopUpContextMenu(Class, SEL, NSMenu *menu, NSEvent *event, N
 static void swizzledPopUpMenu(id, SEL, NSMenu *menu, NSPoint, CGFloat, NSView *, NSInteger, NSFont *, NSUInteger, NSDictionary *)
 {
     setSwizzledPopUpMenu(menu);
+
+    while (gCurrentPopUpMenu)
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
 }
 
 static void swizzledCancelTracking(NSMenu *menu, SEL)
@@ -182,6 +188,9 @@ void TestController::initializeTestPluginDirectory()
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
+    if (RetainPtr menu = gCurrentPopUpMenu)
+        [menu cancelTracking];
+
     cocoaResetStateToConsistentValues(options);
 
     if (RetainPtr webView = m_mainWebView ? m_mainWebView->platformView() : nil) {

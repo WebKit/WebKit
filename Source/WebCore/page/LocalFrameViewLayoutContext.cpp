@@ -39,6 +39,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "Quirks.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
@@ -109,6 +110,19 @@ private:
     const RenderView& m_renderView;
 };
 #endif
+
+RepaintBlocker::RepaintBlocker(Document& document)
+    : m_document(document)
+{
+    if (CheckedPtr view = m_document->view())
+        view->layoutContext().blockRepaints();
+}
+
+RepaintBlocker::~RepaintBlocker()
+{
+    if (CheckedPtr view = m_document->view())
+        view->layoutContext().allowRepaints();
+}
 
 class LayoutFrameScope {
 public:
@@ -903,7 +917,7 @@ LocalFrameView& LocalFrameViewLayoutContext::view() const
 
 RenderView* LocalFrameViewLayoutContext::renderView() const
 {
-    return protect(view())->renderView();
+    return view().renderView();
 }
 
 Document* LocalFrameViewLayoutContext::document() const

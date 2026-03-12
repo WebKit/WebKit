@@ -49,7 +49,7 @@ public:
     ColorMatrixType type() const { return m_type; }
     bool setType(ColorMatrixType);
 
-    const Vector<float>& values() const { return m_values; }
+    const Vector<float>& values() const LIFETIME_BOUND { return m_values; }
     bool setValues(const Vector<float>&);
 
     static void calculateSaturateComponents(std::span<float, 9> components, float value);

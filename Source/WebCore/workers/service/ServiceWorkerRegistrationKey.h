@@ -48,9 +48,9 @@ public:
     size_t scopeLength() const { return m_scope.string().length(); }
 
     WEBCORE_EXPORT ClientOrigin clientOrigin() const;
-    const SecurityOriginData& topOrigin() const { return m_topOrigin; }
+    const SecurityOriginData& topOrigin() const LIFETIME_BOUND { return m_topOrigin; }
     WEBCORE_EXPORT RegistrableDomain firstPartyForCookies() const;
-    const URL& scope() const { return m_scope; }
+    const URL& scope() const LIFETIME_BOUND { return m_scope; }
     void setScope(URL&& scope) { m_scope = WTF::move(scope); }
 
     bool relatesToOrigin(const SecurityOriginData&) const;

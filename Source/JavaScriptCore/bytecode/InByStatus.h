@@ -31,14 +31,14 @@
 #include "ConcurrentJSLock.h"
 #include "ICStatusMap.h"
 #include "InByVariant.h"
-#include "StubInfoSummary.h"
+#include "PropertyInlineCacheSummary.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class AccessCase;
 class CodeBlock;
-class StructureStubInfo;
+class PropertyInlineCache;
 
 class InByStatus final {
     WTF_MAKE_TZONE_ALLOCATED(InByStatus);
@@ -65,19 +65,19 @@ public:
         ASSERT(state != Simple);
     }
 
-    explicit InByStatus(StubInfoSummary summary)
+    explicit InByStatus(PropertyInlineCacheSummary summary)
     {
         switch (summary) {
-        case StubInfoSummary::NoInformation:
+        case PropertyInlineCacheSummary::NoInformation:
             m_state = NoInformation;
             return;
-        case StubInfoSummary::Simple:
-        case StubInfoSummary::Megamorphic:
-        case StubInfoSummary::MakesCalls:
+        case PropertyInlineCacheSummary::Simple:
+        case PropertyInlineCacheSummary::Megamorphic:
+        case PropertyInlineCacheSummary::MakesCalls:
             RELEASE_ASSERT_NOT_REACHED();
             return;
-        case StubInfoSummary::TakesSlowPath:
-        case StubInfoSummary::TakesSlowPathAndMakesCalls:
+        case PropertyInlineCacheSummary::TakesSlowPath:
+        case PropertyInlineCacheSummary::TakesSlowPathAndMakesCalls:
             m_state = TakesSlowPath;
             return;
         }
@@ -96,7 +96,7 @@ public:
     bool isProxyObject() const { return m_state == ProxyObject; }
 
     size_t numVariants() const { return m_variants.size(); }
-    const Vector<InByVariant, 1>& variants() const { return m_variants; }
+    const Vector<InByVariant, 1>& variants() const LIFETIME_BOUND { return m_variants; }
     const InByVariant& at(size_t index) const { return m_variants[index]; }
     const InByVariant& operator[](size_t index) const { return at(index); }
 
@@ -117,7 +117,7 @@ public:
 
 private:
 #if ENABLE(DFG_JIT)
-    static InByStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, CodeBlock*, StructureStubInfo*, CallLinkStatus::ExitSiteData, CodeOrigin);
+    static InByStatus computeForPropertyInlineCacheWithoutExitSiteFeedback(const ConcurrentJSLocker&, CodeBlock*, PropertyInlineCache*, CallLinkStatus::ExitSiteData, CodeOrigin);
 #endif
     bool appendVariant(const InByVariant&);
     void shrinkToFit();

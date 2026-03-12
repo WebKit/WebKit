@@ -35,7 +35,7 @@ namespace Style {
 
 auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSSValue& value) -> GridAutoFlow
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         case CSSValueNormal:
             return CSS::Keyword::Normal { };
@@ -55,12 +55,12 @@ auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSS
     if (!list)
         return CSS::Keyword::Normal { };
 
-    Ref first = list->item(0);
-    switch (first->valueID()) {
+    auto& first = list->item(0);
+    switch (first.valueID()) {
     case CSSValueRow:
         if (list->size() == 2) {
-            Ref second = list->item(1);
-            switch (second->valueID()) {
+            auto& second = list->item(1);
+            switch (second.valueID()) {
             case CSSValueDense:
                 return { CSS::Keyword::Row { }, CSS::Keyword::Dense { } };
             default:
@@ -71,8 +71,8 @@ auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSS
         return CSS::Keyword::Row { };
     case CSSValueColumn:
         if (list->size() == 2) {
-            Ref second = list->item(1);
-            switch (second->valueID()) {
+            auto& second = list->item(1);
+            switch (second.valueID()) {
             case CSSValueDense:
                 return { CSS::Keyword::Column { }, CSS::Keyword::Dense { } };
             default:
@@ -83,8 +83,8 @@ auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSS
         return CSS::Keyword::Column { };
     case CSSValueDense:
         if (list->size() == 2) {
-            Ref second = list->item(1);
-            switch (second->valueID()) {
+            auto& second = list->item(1);
+            switch (second.valueID()) {
             case CSSValueRow:
                 return { CSS::Keyword::Row { }, CSS::Keyword::Dense { } };
             case CSSValueColumn:

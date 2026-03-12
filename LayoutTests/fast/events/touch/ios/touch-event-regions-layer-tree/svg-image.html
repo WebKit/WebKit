@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/ui-helper.js"></script>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+        async function runTest() {
+            if (window.internals)
+                await UIHelper.tapAt(10, 10);
+        }
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+        <image ontouchstart="dumpRegions()" href="../../../../../interaction-region/resources/image.png" x="0" y="0" width="400" height="200"/>
+    </svg>
+</body>
+</html>

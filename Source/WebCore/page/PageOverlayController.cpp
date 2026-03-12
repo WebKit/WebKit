@@ -78,7 +78,7 @@ void PageOverlayController::installedPageOverlaysChanged()
     else
         detachViewOverlayLayers();
 
-    if (RefPtr localMainFrame = protect(m_page)->localMainFrame()) {
+    if (RefPtr localMainFrame = m_page->localMainFrame()) {
         if (RefPtr frameView = localMainFrame->view())
             frameView->setNeedsCompositingConfigurationUpdate();
     }
@@ -107,12 +107,12 @@ bool PageOverlayController::hasViewOverlays() const
 void PageOverlayController::attachViewOverlayLayers()
 {
     if (hasViewOverlays())
-        protect(m_page)->chrome().client().attachViewOverlayGraphicsLayer(protect(layerWithViewOverlays()).ptr());
+        m_page->chrome().client().attachViewOverlayGraphicsLayer(protect(layerWithViewOverlays()).ptr());
 }
 
 void PageOverlayController::detachViewOverlayLayers()
 {
-    protect(m_page)->chrome().client().attachViewOverlayGraphicsLayer(nullptr);
+    m_page->chrome().client().attachViewOverlayGraphicsLayer(nullptr);
 }
 
 GraphicsLayer* PageOverlayController::documentOverlayRootLayer() const
@@ -194,7 +194,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
     m_pageOverlays.append(overlay);
 
     auto layerType = (overlay.alwaysTileOverlayLayer() == PageOverlay::AlwaysTileOverlayLayer::Yes) ? GraphicsLayer::Type::TiledBacking : GraphicsLayer::Type::Normal;
-    Ref layer = GraphicsLayer::create(protect(m_page)->chrome().client().graphicsLayerFactory(), *this, layerType);
+    Ref layer = GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), *this, layerType);
     layer->setAnchorPoint({ });
     layer->setBackgroundColor(overlay.backgroundColor());
     layer->setName(MAKE_STATIC_STRING_IMPL("Overlay content"));
@@ -214,7 +214,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
 
     overlay.setPage(protect(m_page).ptr());
 
-    if (RefPtr localMainFrame = protect(m_page)->localMainFrame()) {
+    if (RefPtr localMainFrame = m_page->localMainFrame()) {
         if (RefPtr frameView = localMainFrame->view())
             frameView->enterCompositingMode();
     }

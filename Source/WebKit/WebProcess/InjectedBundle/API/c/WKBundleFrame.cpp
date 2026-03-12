@@ -76,7 +76,7 @@ WKURLRef WKBundleFrameCopyProvisionalURL(WKBundleFrameRef frameRef)
 
 WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
 {
-    RefPtr coreFrame = protect(WebKit::toImpl(frameRef))->coreLocalFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return kWKFrameLoadStateFinished;
 
@@ -260,7 +260,7 @@ bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
     if (!frameRef)
         return true;
 
-    RefPtr coreFrame = protect(WebKit::toImpl(frameRef))->coreLocalFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return true;
 
@@ -275,7 +275,7 @@ WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frame
 
 WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
 {
-    RefPtr coreFrame = protect(WebKit::toImpl(frameRef))->coreLocalFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return 0;
 
@@ -284,11 +284,11 @@ WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
 
 void WKBundleFrameFocus(WKBundleFrameRef frameRef)
 {
-    RefPtr coreFrame = protect(WebKit::toImpl(frameRef))->coreLocalFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return;
 
-    protect(coreFrame->page())->focusController().setFocusedFrame(coreFrame.get());
+    coreFrame->page()->focusController().setFocusedFrame(coreFrame.get());
 }
 
 void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)
@@ -296,7 +296,7 @@ void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef mes
     if (!frameRef)
         return;
 
-    RefPtr coreFrame = protect(WebKit::toImpl(frameRef))->coreLocalFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return;
 
@@ -312,7 +312,7 @@ void* _WKAccessibilityRootObjectForTesting(WKBundleFrameRef frameRef)
     auto getAXObjectCache = [&frameRef] () -> CheckedPtr<WebCore::AXObjectCache> {
         WebCore::AXObjectCache::enableAccessibility();
 
-        RefPtr frame = protect(WebKit::toImpl(frameRef))->coreLocalFrame();
+        RefPtr frame = WebKit::toImpl(frameRef)->coreLocalFrame();
         RefPtr document = frame ? frame->rootFrame().document() : nullptr;
         return document ? document->axObjectCache() : nullptr;
     };

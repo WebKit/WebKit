@@ -68,7 +68,7 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    AbstractModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
+    AbstractModuleRecord* moduleRecord() LIFETIME_BOUND { return m_moduleRecord.get(); }
 
 private:
     JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);

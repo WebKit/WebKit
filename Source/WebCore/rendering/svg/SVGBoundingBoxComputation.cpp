@@ -63,17 +63,17 @@ FloatRect SVGBoundingBoxComputation::computeDecoratedBoundingBox(const SVGBoundi
     // - a shape (RenderSVGShape)
     // - a text content element (RenderSVGText or RenderSVGInline)
     // - an "a" element within a text content element (-> creates RenderSVGInline)
-    if (is<RenderSVGShape>(m_renderer) || is<RenderSVGText>(m_renderer) || is<RenderSVGInline>(m_renderer))
+    if (isAnyOf<RenderSVGShape, RenderSVGText, RenderSVGInline>(m_renderer))
         return handleShapeOrTextOrInline(options, boundingBoxValid);
 
     // - a container element (RenderSVGRoot / RenderSVGContainer)
     // - "use" (RenderSVGTransformableContainer)
-    if (is<RenderSVGRoot>(m_renderer) || is<RenderSVGContainer>(m_renderer))
+    if (isAnyOf<RenderSVGRoot, RenderSVGContainer>(m_renderer))
         return handleRootOrContainer(options, boundingBoxValid);
 
     // - "foreignObject"
     // - "image"
-    if (is<RenderSVGForeignObject>(m_renderer) || is<RenderSVGImage>(m_renderer))
+    if (isAnyOf<RenderSVGForeignObject, RenderSVGImage>(m_renderer))
         return handleForeignObjectOrImage(options, boundingBoxValid);
 
     ASSERT_NOT_REACHED();

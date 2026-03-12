@@ -163,7 +163,7 @@ RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, Optio
 {
     updateAltText();
 #if ENABLE(SERVICE_CONTROLS)
-    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
+    if (auto* image = dynamicDowncast<HTMLImageElement>(element))
         m_hasShadowControls = image->isImageMenuEnabled();
 #endif
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)
@@ -518,7 +518,7 @@ void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint 
 
 static bool isDeferredImage(Element* element)
 {
-    RefPtr image = dynamicDowncast<HTMLImageElement>(element);
+    auto* image = dynamicDowncast<HTMLImageElement>(element);
     return image && image->isDeferred();
 }
 

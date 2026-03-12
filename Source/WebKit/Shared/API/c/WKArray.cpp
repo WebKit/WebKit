@@ -55,7 +55,7 @@ WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* rawValues, size_t numberOfValu
 
 WKTypeRef WKArrayGetItemAtIndex(WKArrayRef arrayRef, size_t index)
 {
-    return WebKit::toAPI(protect(protect(WebKit::toImpl(arrayRef))->at(index)).get());
+    return WebKit::toAPI(protect(WebKit::toImpl(arrayRef)->at(index)).get());
 }
 
 size_t WKArrayGetSize(WKArrayRef arrayRef)

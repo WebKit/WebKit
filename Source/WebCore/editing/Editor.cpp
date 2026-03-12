@@ -1257,7 +1257,7 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     VisibleSelection newSelection(command.endingSelection());
 
     bool wasUserEdit = [&command] {
-        RefPtr typingCommand = dynamicDowncast<TypingCommand>(command);
+        auto* typingCommand = dynamicDowncast<TypingCommand>(command);
         return !typingCommand || !typingCommand->triggeringEventIsUntrusted();
     }();
     notifyTextFromControls(composition->startingRootEditableElement(), composition->endingRootEditableElement(), wasUserEdit);
@@ -2347,7 +2347,7 @@ String Editor::compositionText() const
     if (!m_compositionNode)
         return { };
 
-    return protect(compositionNode())->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart);
+    return compositionNode()->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart);
 }
 
 bool Editor::hasDeadKeyComposition() const
@@ -3885,7 +3885,7 @@ RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size
 
     document->selection().addCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::TextPlaceholderIsShowing);
 
-    document->selection().setSelection(VisibleSelection { positionInParentBeforeNode(placeholder.ptr()) }, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
+    document->selection().setSelection(VisibleSelection { positionInParentBeforeNode(placeholder) }, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
 
 #if ENABLE(WRITING_TOOLS)
     // For Writing Tools, we need the snapshot of the last inserted placeholder.
@@ -3904,7 +3904,7 @@ void Editor::removeTextPlaceholder(TextPlaceholderElement& placeholder)
 
     // Save off state so that we can set the text insertion position to just before the placeholder element after removal.
     RefPtr savedRootEditableElement { placeholder.rootEditableElement() };
-    auto savedPositionBeforePlaceholder = positionInParentBeforeNode(&placeholder);
+    auto savedPositionBeforePlaceholder = positionInParentBeforeNode(placeholder);
 
     // FIXME: Save the current selection if it has changed since the placeholder was inserted
     // and restore it after text insertion.
@@ -4511,7 +4511,7 @@ OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& root
 {
 #if USE(AUTOMATIC_TEXT_REPLACEMENT) && !PLATFORM(IOS_FAMILY)
     bool onlyAllowsTextReplacement = false;
-    if (RefPtr host = dynamicDowncast<HTMLInputElement>(rootEditableElement.shadowHost()))
+    if (auto* host = dynamicDowncast<HTMLInputElement>(rootEditableElement.shadowHost()))
         onlyAllowsTextReplacement = host->isSpellcheckDisabledExceptTextReplacement();
     if (onlyAllowsTextReplacement)
         textCheckingOptions = textCheckingOptions & TextCheckingType::Replacement;
@@ -4629,7 +4629,7 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
         if (!ancestor->renderer())
             continue;
 
-        if (is<HTMLUListElement>(ancestor) || is<HTMLOListElement>(ancestor))
+        if (isAnyOf<HTMLUListElement, HTMLOListElement>(ancestor))
             enclosingLists.append(WTF::move(ancestor));
     }
 
@@ -4949,7 +4949,7 @@ std::optional<SimpleRange> Editor::adjustedSelectionRange()
     // FIXME: Why do we need to adjust the selection to include the anchor tag it's in? Whoever wrote this code originally forgot to leave us a comment explaining the rationale.
     auto range = selectedRange();
     if (range) {
-        if (RefPtr enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor<ComposedTree>(*range)), HTMLNames::aTag)) {
+        if (RefPtr enclosingAnchor = enclosingElementWithTag(firstPositionInNode(*commonInclusiveAncestor<ComposedTree>(*range)), HTMLNames::aTag)) {
             if (firstPositionInOrBeforeNode(range->start.container.ptr()) >= makeDeprecatedLegacyPosition(range->start))
                 range->start = makeBoundaryPointBeforeNodeContents(*enclosingAnchor);
         }

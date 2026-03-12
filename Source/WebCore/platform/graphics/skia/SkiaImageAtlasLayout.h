@@ -51,8 +51,8 @@ public:
 
     static Ref<SkiaImageAtlasLayout> create(const IntSize& atlasSize, Vector<Entry>&& entries);
 
-    const IntSize& atlasSize() const { return m_atlasSize; }
-    const Vector<Entry>& entries() const { return m_entries; }
+    const IntSize& atlasSize() const LIFETIME_BOUND { return m_atlasSize; }
+    const Vector<Entry>& entries() const LIFETIME_BOUND { return m_entries; }
 
 private:
     SkiaImageAtlasLayout(const IntSize& atlasSize, Vector<Entry>&& entries);

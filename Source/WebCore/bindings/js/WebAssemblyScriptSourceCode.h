@@ -55,7 +55,7 @@ public:
     {
     }
 
-    const JSC::SourceCode& jsSourceCode() const { return m_code; }
+    const JSC::SourceCode& jsSourceCode() const LIFETIME_BOUND { return m_code; }
 
 private:
     const Ref<JSC::SourceProvider> m_provider;

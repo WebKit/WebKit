@@ -46,7 +46,7 @@ bool WebExtensionAPIWebPageNamespace::isPropertyAllowed(const ASCIILiteral& name
     if (name == "test"_s) {
         if (!page)
             return false;
-        if (RefPtr extensionController = page->webExtensionControllerProxy())
+        if (auto* extensionController = page->webExtensionControllerProxy())
             return extensionController->inTestingMode();
         return false;
     }

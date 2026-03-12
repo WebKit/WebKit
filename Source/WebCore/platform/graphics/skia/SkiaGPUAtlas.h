@@ -60,9 +60,9 @@ public:
 
     virtual ~SkiaGPUAtlas();
 
-    const GrBackendTexture& backendTexture() const { return m_backendTexture; }
-    const ImageToRectMap& imageToRect() const { return m_imageToRect; }
-    const IntSize& size() const { return m_size; }
+    const GrBackendTexture& backendTexture() const LIFETIME_BOUND { return m_backendTexture; }
+    const ImageToRectMap& imageToRect() const LIFETIME_BOUND { return m_imageToRect; }
+    const IntSize& size() const LIFETIME_BOUND { return m_size; }
     BitmapTexture& atlasTexture() const { return m_atlasTexture.get(); }
 
 private:

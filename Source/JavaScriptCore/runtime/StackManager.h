@@ -42,7 +42,7 @@ public:
     class Mirror : public BasicRawSentinelNode<Mirror> {
     public:
         void* softStackLimit() const { return m_softStackLimit; }
-        void* trapAwareSoftStackLimit() const { return m_trapAwareSoftStackLimit.loadRelaxed(); }
+        void* trapAwareSoftStackLimit() const LIFETIME_BOUND { return m_trapAwareSoftStackLimit.loadRelaxed(); }
 
         static constexpr ptrdiff_t offsetOfSoftStackLimit()
         {
@@ -65,7 +65,7 @@ public:
     CONCURRENT_SAFE void cancelStop();
 
     void* softStackLimit() const { return m_softStackLimit; }
-    void* trapAwareSoftStackLimit() const { return m_trapAwareSoftStackLimit.loadRelaxed(); }
+    void* trapAwareSoftStackLimit() const LIFETIME_BOUND { return m_trapAwareSoftStackLimit.loadRelaxed(); }
 
     void setStackSoftLimit(void* newLimit);
 
@@ -81,8 +81,8 @@ public:
     void setCLoopStackLimit(void* newStackLimit);
     ALWAYS_INLINE void* currentCLoopStackPointer() const { return m_cloopStack.currentStackPointer(); }
 
-    CLoopStack& cloopStack() { return m_cloopStack; }
-    const CLoopStack& cloopStack() const { return m_cloopStack; }
+    CLoopStack& cloopStack() LIFETIME_BOUND { return m_cloopStack; }
+    const CLoopStack& cloopStack() const LIFETIME_BOUND { return m_cloopStack; }
 
     static constexpr ptrdiff_t offsetOfCLoopStack()
     {

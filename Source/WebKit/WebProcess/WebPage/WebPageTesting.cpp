@@ -43,6 +43,7 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NotificationController.h>
 #include <WebCore/Page.h>
+#include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -119,6 +120,32 @@ void WebPageTesting::clearWheelEventTestMonitor()
         return;
 
     page->clearWheelEventTestMonitor();
+}
+
+void WebPageTesting::startMonitoringWheelEventsForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr page = m_page ? m_page->corePage() : nullptr;
+    if (!page) {
+        completionHandler();
+        return;
+    }
+
+    page->startMonitoringWheelEvents(true);
+    completionHandler();
+}
+
+void WebPageTesting::waitForWheelEventsToCompleteForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr page = m_page ? m_page->corePage() : nullptr;
+    if (!page || !page->isMonitoringWheelEvents()) {
+        completionHandler();
+        return;
+    }
+
+    if (auto wheelEventTestMonitor = page->wheelEventTestMonitor())
+        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(true, false, WTF::move(completionHandler));
+    else
+        completionHandler();
 }
 
 void WebPageTesting::setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&& completionHandler)

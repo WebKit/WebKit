@@ -334,7 +334,7 @@ public:
     RefPtr<WebCore::SharedBuffer> readBuffer(std::optional<size_t> index, const String& type);
     URL readURL(size_t index, String& title);
 
-    const PasteboardContext* context() const { return m_context.get(); }
+    const PasteboardContext* context() const LIFETIME_BOUND { return m_context.get(); }
 
 private:
 #if PLATFORM(IOS_FAMILY)

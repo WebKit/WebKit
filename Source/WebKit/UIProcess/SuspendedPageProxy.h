@@ -77,7 +77,7 @@ public:
 
     WebBackForwardCache& NODELETE backForwardCache() const;
 
-    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
+    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() LIFETIME_BOUND { return m_messageReceiverRegistration; }
 
     bool NODELETE pageIsClosedOrClosing() const;
 

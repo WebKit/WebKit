@@ -214,7 +214,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _requestSnapshotIfNeeded];
 
     if (!_exclusivelyUsesSnapshot) {
-        auto obscuredContentInsets = RefPtr { _webPageProxy.get() }->obscuredContentInsets();
+        auto obscuredContentInsets = _webPageProxy->obscuredContentInsets();
         self._sublayerTranslation = CGPointMake(-obscuredContentInsets.left(), -obscuredContentInsets.top());
         if (_wkView) {
             [_wkView _setThumbnailView:self];

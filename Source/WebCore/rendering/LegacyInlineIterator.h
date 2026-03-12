@@ -28,6 +28,7 @@
 #include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderText.h"
+#include "TrailingObjects.h"
 #include "UnicodeBidi.h"
 #include <wtf/StdLibExtras.h>
 
@@ -361,7 +362,7 @@ ALWAYS_INLINE UCharDirection LegacyInlineIterator::direction() const
         return surrogateTextDirection(codeUnit);
     }
 
-    if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListMarker>(*m_renderer))
+    if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(*m_renderer))
         return listMarkerRenderer->writingMode().isBidiLTR() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
 
     return U_OTHER_NEUTRAL;
@@ -375,7 +376,7 @@ inline void InlineBidiResolver::incrementInternal()
 
 static inline bool isIsolatedInline(RenderObject& object)
 {
-    if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(object))
+    if (auto* inlineBox = dynamicDowncast<RenderInline>(object))
         return isIsolated(inlineBox->style().unicodeBidi());
     return false;
 }

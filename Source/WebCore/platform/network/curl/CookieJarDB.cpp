@@ -102,6 +102,7 @@ CookieJarDB::CookieJarDB(const String& databasePath)
 CookieJarDB::~CookieJarDB()
 {
     closeDatabase();
+    m_database.setDidBeginCheckedPtrDeletion();
 }
 
 void CookieJarDB::open()

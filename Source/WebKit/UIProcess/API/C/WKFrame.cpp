@@ -42,7 +42,7 @@ WKTypeID WKFrameGetTypeID()
 
 bool WKFrameIsMainFrame(WKFrameRef frameRef)
 {
-    return protect(toImpl(frameRef))->isMainFrame();
+    return toImpl(frameRef)->isMainFrame();
 }
 
 WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frameRef)
@@ -92,7 +92,7 @@ WKStringRef WKFrameCopyTitle(WKFrameRef frameRef)
 
 WKPageRef WKFrameGetPage(WKFrameRef frameRef)
 {
-    return toAPI(protect(protect(toImpl(frameRef))->page()).get());
+    return toAPI(protect(toImpl(frameRef)->page()).get());
 }
 
 WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
@@ -127,7 +127,7 @@ bool WKFrameIsFrameSet(WKFrameRef frameRef)
 
 WKFrameHandleRef WKFrameCreateFrameHandle(WKFrameRef frameRef)
 {
-    return toAPILeakingRef(API::FrameHandle::create(protect(toImpl(frameRef))->frameID()));
+    return toAPILeakingRef(API::FrameHandle::create(toImpl(frameRef)->frameID()));
 }
 
 WKFrameInfoRef WKFrameCreateFrameInfo(WKFrameRef frameRef)

@@ -34,22 +34,22 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (WKFrameInfo *)targetFrame
 {
-    return wrapper(protect(*_formInfo)->targetFrame());
+    return wrapper(_formInfo->targetFrame());
 }
 
 - (WKFrameInfo *)sourceFrame
 {
-    return wrapper(protect(*_formInfo)->sourceFrame());
+    return wrapper(_formInfo->sourceFrame());
 }
 
 - (NSURL *)submissionURL
 {
-    return protect(*_formInfo)->submissionURL().createNSURL().autorelease();
+    return _formInfo->submissionURL().createNSURL().autorelease();
 }
 
 - (NSString *)httpMethod
 {
-    return nsStringNilIfEmpty(protect(*_formInfo)->httpMethod()).autorelease();
+    return nsStringNilIfEmpty(_formInfo->httpMethod()).autorelease();
 }
 
 - (NSDictionary<NSString *, NSString *> *)formValues

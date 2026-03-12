@@ -44,6 +44,7 @@
 #include "MediaDocument.h"
 #include "MediaPlayer.h"
 #include "MediaQueryParser.h"
+#include "NameValidation.h"
 #include "PDFDocument.h"
 #include "ParserContentPolicy.h"
 #include "PluginData.h"
@@ -78,9 +79,8 @@ DOMImplementation::DOMImplementation(Document& document)
 
 ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const AtomString& qualifiedName, const String& publicId, const String& systemId)
 {
-    auto parseResult = Document::parseQualifiedName(qualifiedName);
-    if (parseResult.hasException())
-        return parseResult.releaseException();
+    if (!NameValidation::isValidDoctypeName(qualifiedName))
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid doctype name: '"_s, qualifiedName, '\'') };
     return DocumentType::create(protect(document()), qualifiedName, publicId, systemId);
 }
 

@@ -329,7 +329,7 @@ LLINT_SLOW_PATH_DECL(trace)
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     OpcodeID opcodeID = pc->opcodeID();
-    dataLogF("<%p> %p / %p: executing bc#%zu, %s, pc = %p\n",
+    SAFE_DATALOGF("<%p> %p / %p: executing bc#%zu, %s, pc = %p\n",
             &Thread::currentSingleton(),
             codeBlock,
             callFrame,

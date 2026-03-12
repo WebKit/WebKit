@@ -48,7 +48,7 @@ public:
         {
         }
 
-        const Vector<Node*>& nextPoints() const { return m_nextPoints; }
+        const Vector<Node*>& nextPoints() const LIFETIME_BOUND { return m_nextPoints; }
 
         void addNextPoint(Node* node)
         {

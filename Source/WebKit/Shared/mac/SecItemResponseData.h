@@ -44,8 +44,8 @@ public:
         : m_resultCode(code)
         , m_resultObject(WTF::move(result)) { }
 
-    Result& resultObject() { return m_resultObject; }
-    const Result& resultObject() const { return m_resultObject; }
+    Result& resultObject() LIFETIME_BOUND { return m_resultObject; }
+    const Result& resultObject() const LIFETIME_BOUND { return m_resultObject; }
     OSStatus resultCode() const { return m_resultCode; }
 
 private:

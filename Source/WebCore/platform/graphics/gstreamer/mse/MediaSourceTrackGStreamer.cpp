@@ -39,7 +39,7 @@ GST_DEBUG_CATEGORY_STATIC(webkit_mse_track_debug);
 
 namespace WebCore {
 
-MediaSourceTrackGStreamer::MediaSourceTrackGStreamer(TrackPrivateBaseGStreamer::TrackType type, TrackID trackId, GRefPtr<GstCaps>&& initialCaps)
+MediaSourceTrackGStreamer::MediaSourceTrackGStreamer(GStreamerTrackType type, TrackID trackId, GRefPtr<GstCaps>&& initialCaps)
     : m_type(type)
     , m_id(trackId)
     , m_initialCaps(WTF::move(initialCaps))
@@ -56,7 +56,7 @@ MediaSourceTrackGStreamer::~MediaSourceTrackGStreamer()
     ASSERT(m_isRemoved);
 }
 
-Ref<MediaSourceTrackGStreamer> MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType type, TrackID trackId, GRefPtr<GstCaps>&& initialCaps)
+Ref<MediaSourceTrackGStreamer> MediaSourceTrackGStreamer::create(GStreamerTrackType type, TrackID trackId, GRefPtr<GstCaps>&& initialCaps)
 {
     return adoptRef(*new MediaSourceTrackGStreamer(type, trackId, WTF::move(initialCaps)));
 }

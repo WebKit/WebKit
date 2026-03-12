@@ -83,15 +83,15 @@ public:
 
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     bool hasTailCallSuccessors() const { return m_hasTailCallSuccessors; }
-    const BitVector& tailCallSuccessors() const { return m_tailCallSuccessors; }
+    const BitVector& tailCallSuccessors() const LIFETIME_BOUND { return m_tailCallSuccessors; }
     bool tailCallClobbersInstance() const { return m_tailCallClobbersInstance ; }
     void setTailCall(uint32_t, bool);
     void setTailCallClobbersInstance() { m_tailCallClobbersInstance = true; }
 
-    const uint8_t* getBytecode() const { return m_bytecode.data(); }
-    const uint8_t* getMetadata() const { return m_metadata.span().data(); }
+    const uint8_t* getBytecode() const LIFETIME_BOUND { return m_bytecode.data(); }
+    const uint8_t* getMetadata() const LIFETIME_BOUND { return m_metadata.span().data(); }
 
-    UncheckedKeyHashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
+    UncheckedKeyHashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>& tierUpCounter() LIFETIME_BOUND { return m_tierUpCounter; }
 
     const RTT* addSignature(const TypeDefinition&);
 

@@ -6,4 +6,6 @@ document.body.offsetHeight;
 if (window.internals)
   internals.beginSimulatedMemoryPressure();
 remove_this.remove();
+if (window.internals)
+  internals.endSimulatedMemoryPressure();
 </script>

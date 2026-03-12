@@ -98,7 +98,7 @@ public:
     
     Kind kind() const { return m_kind; }
     PropertyOffset offset() const { return m_offset; }
-    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
+    const ObjectPropertyConditionSet& conditionSet() const LIFETIME_BOUND { return m_conditionSet; }
     
 private:
     Kind m_kind;

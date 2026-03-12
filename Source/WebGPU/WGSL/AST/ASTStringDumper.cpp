@@ -80,10 +80,7 @@ void StringDumper::visit(ShaderModule& shaderModule)
 
 void StringDumper::visit(Diagnostic& diagnostic)
 {
-    m_out.print("diagnostic("_s, diagnostic.severity, ", "_s, diagnostic.triggeringRule.name);
-    if (auto maybeSuffix = diagnostic.triggeringRule.suffix)
-        m_out.print("."_s, *maybeSuffix);
-    m_out.print(")"_s);
+    m_out.print("diagnostic("_s, diagnostic.severity, ", "_s, diagnostic.triggeringRule, ')');
 }
 
 // Attribute
@@ -169,12 +166,7 @@ void StringDumper::visit(Function& function)
 
 void StringDumper::visit(Structure& structure)
 {
-    m_out.print(m_indent);
-    if (!structure.attributes().isEmpty()) {
-        visitVector(structure.attributes(), " ");
-        m_out.print("\n", m_indent);
-    }
-    m_out.print("struct ", structure.name(), " {");
+    m_out.print(m_indent, "struct ", structure.name(), " {");
     if (!structure.members().isEmpty()) {
         m_out.print("\n");
         {

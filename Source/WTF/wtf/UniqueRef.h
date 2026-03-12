@@ -131,6 +131,18 @@ inline bool is(const UniqueRef<ArgType>& source)
     return is<ExpectedType>(source.get());
 }
 
+template<typename... ExpectedTypes, typename ArgType>
+inline bool isAnyOf(UniqueRef<ArgType>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType>
+inline bool is(const UniqueRef<ArgType>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
 template<typename T>
 inline bool arePointingToEqualData(const UniqueRef<T>& a, const UniqueRef<T>& b)
 {

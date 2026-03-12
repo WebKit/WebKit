@@ -337,6 +337,12 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'get-llvm-version',
             'print-clang-version',
             'checkout-llvm-project',
+            'get-swift-tag-name',
+            'print-swift-version',
+            'checkout-swift-project',
+            'update-swift-checkouts',
+            'build-swift',
+            'install-metal-toolchain',
             'update-clang',
             'find-modified-safer-cpp-expectations',
             'scan-build'
@@ -365,6 +371,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'update-swift-checkouts',
             'build-swift',
             'install-metal-toolchain',
+            'update-clang',
             'find-modified-safer-cpp-expectations',
             'scan-build'
         ],
@@ -389,6 +396,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'wait-for-crash-collection',
             'run-layout-tests-in-stress-mode',
+            'run-layout-tests-in-site-isolation',
             'trigger-crash-log-submission',
             'set-build-summary'
         ],

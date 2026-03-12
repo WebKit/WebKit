@@ -58,9 +58,9 @@ public:
     constexpr MediaTime(int64_t value, uint32_t scale, uint8_t flags = Valid);
     MediaTime(const MediaTime&) = default;
 
-    static MediaTime createWithFloat(float floatTime);
+    static MediaTime NODELETE createWithFloat(float floatTime);
     static MediaTime createWithFloat(float floatTime, uint32_t timeScale);
-    static MediaTime createWithDouble(double doubleTime);
+    static MediaTime NODELETE createWithDouble(double doubleTime);
     static MediaTime createWithDouble(double doubleTime, uint32_t timeScale);
     static MediaTime createWithSeconds(Seconds seconds) { return createWithDouble(seconds.value()); }
 
@@ -73,9 +73,9 @@ public:
     MediaTime& operator-=(const MediaTime& rhs) { return *this = *this - rhs; }
     MediaTime operator+(const MediaTime& rhs) const;
     MediaTime operator-(const MediaTime& rhs) const;
-    MediaTime operator-() const;
+    MediaTime NODELETE operator-() const;
     MediaTime operator*(int32_t) const;
-    bool operator!() const;
+    bool NODELETE operator!() const;
     explicit operator bool() const;
 
     WTF_EXPORT_PRIVATE friend std::partial_ordering operator<=>(const MediaTime&, const MediaTime&);

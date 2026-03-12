@@ -209,7 +209,7 @@ private:
     friend class ParallelHelperPool;
 
     void finishWithLock() WTF_REQUIRES_LOCK(*m_pool->m_lock);
-    RefPtr<SharedTask<void ()>> claimTask() WTF_REQUIRES_LOCK(*m_pool->m_lock);
+    RefPtr<SharedTask<void()>> NODELETE claimTask() WTF_REQUIRES_LOCK(*m_pool->m_lock);
     void runTask(const RefPtr<SharedTask<void ()>>&);
 
     const RefPtr<ParallelHelperPool> m_pool;

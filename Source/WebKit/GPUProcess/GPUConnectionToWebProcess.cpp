@@ -548,11 +548,11 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
         return false;
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (RefPtr cdmFactoryProxy = m_cdmFactoryProxy; cdmFactoryProxy && !cdmFactoryProxy->allowsExitUnderMemoryPressure())
+    if (auto* cdmFactoryProxy = m_cdmFactoryProxy.get(); cdmFactoryProxy && !cdmFactoryProxy->allowsExitUnderMemoryPressure())
         return false;
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (RefPtr legacyCdmFactoryProxy = m_legacyCdmFactoryProxy; legacyCdmFactoryProxy && !legacyCdmFactoryProxy->allowsExitUnderMemoryPressure())
+    if (auto* legacyCdmFactoryProxy = m_legacyCdmFactoryProxy.get(); legacyCdmFactoryProxy && !legacyCdmFactoryProxy->allowsExitUnderMemoryPressure())
         return false;
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -631,10 +631,8 @@ RemoteAudioVideoRendererProxyManager& GPUConnectionToWebProcess::remoteAudioVide
 void GPUConnectionToWebProcess::canDecodeExtendedType(PlatformMediaDecodingType platformType, ContentType contentType, CompletionHandler<void(bool)>&& completionHandler) const
 {
     MediaEngineSupportParameters parameters {
+        .platformType = platformType,
         .type = contentType,
-#if ENABLE(MEDIA_SOURCE)
-        .isMediaSource = platformType == PlatformMediaDecodingType::MediaSource
-#endif
     };
     completionHandler(MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported);
 }

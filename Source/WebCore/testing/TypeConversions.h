@@ -108,40 +108,40 @@ public:
     float testUnrestrictedFloat() const { return m_unrestrictedFloat; }
     void setTestUnrestrictedFloat(float unrestrictedFloat) { m_unrestrictedFloat = unrestrictedFloat; }
 
-    const String& testString() const { return m_string; }
+    const String& testString() const LIFETIME_BOUND { return m_string; }
     void setTestString(const String& string) { m_string = string; }
-    const String& testUSVString() const { return m_usvstring; }
+    const String& testUSVString() const LIFETIME_BOUND { return m_usvstring; }
     void setTestUSVString(const String& usvstring) { m_usvstring = usvstring; }
-    const String& testByteString() const { return m_byteString; }
+    const String& testByteString() const LIFETIME_BOUND { return m_byteString; }
     void setTestByteString(const String& byteString) { m_byteString = byteString; }
-    const String& testTreatNullAsEmptyString() const { return m_treatNullAsEmptyString; }
+    const String& testTreatNullAsEmptyString() const LIFETIME_BOUND { return m_treatNullAsEmptyString; }
     void setTestTreatNullAsEmptyString(const String& string) { m_treatNullAsEmptyString = string; }
 
-    const Vector<KeyValuePair<String, int>>& testLongRecord() const { return m_longRecord; }
+    const Vector<KeyValuePair<String, int>>& testLongRecord() const LIFETIME_BOUND { return m_longRecord; }
     void setTestLongRecord(const Vector<KeyValuePair<String, int>>& value) { m_longRecord = value; }
-    const Vector<KeyValuePair<String, Ref<Node>>>& testNodeRecord() const { return m_nodeRecord; }
+    const Vector<KeyValuePair<String, Ref<Node>>>& testNodeRecord() const LIFETIME_BOUND { return m_nodeRecord; }
     void setTestNodeRecord(const Vector<KeyValuePair<String, Ref<Node>>>& value) { m_nodeRecord = value; }
-    const Vector<KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
+    const Vector<KeyValuePair<String, Vector<String>>>& testSequenceRecord() const LIFETIME_BOUND { return m_sequenceRecord; }
     void setTestSequenceRecord(const Vector<KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
 
     using TestUnion = Variant<String, int, bool, Ref<Node>, Vector<int>>;
-    const TestUnion& testUnion() const { return m_union; }
+    const TestUnion& testUnion() const LIFETIME_BOUND { return m_union; }
     void setTestUnion(TestUnion&& value) { m_union = value; }
 
-    const Dictionary& testDictionary() const { return m_testDictionary; }
+    const Dictionary& testDictionary() const LIFETIME_BOUND { return m_testDictionary; }
     void setTestDictionary(Dictionary&& dictionary) { m_testDictionary = dictionary; }
     
 
     using TestClampUnion = Variant<String, int, Vector<int>>;
-    const TestClampUnion& testClampUnion() const { return m_clampUnion; }
+    const TestClampUnion& testClampUnion() const LIFETIME_BOUND { return m_clampUnion; }
     void setTestClampUnion(const TestClampUnion& value) { m_clampUnion = value; }
 
     using TestEnforceRangeUnion = Variant<String, int, Vector<int>>;
-    const TestEnforceRangeUnion& testEnforceRangeUnion() const { return m_enforceRangeUnion; }
+    const TestEnforceRangeUnion& testEnforceRangeUnion() const LIFETIME_BOUND { return m_enforceRangeUnion; }
     void setTestEnforceRangeUnion(const TestEnforceRangeUnion& value) { m_enforceRangeUnion = value; }
 
     using TestTreatNullAsEmptyStringUnion = Variant<String, int, Vector<String>>;
-    const TestTreatNullAsEmptyStringUnion& testTreatNullAsEmptyStringUnion() const { return m_treatNullAsEmptyStringUnion; }
+    const TestTreatNullAsEmptyStringUnion& testTreatNullAsEmptyStringUnion() const LIFETIME_BOUND { return m_treatNullAsEmptyStringUnion; }
     void setTestTreatNullAsEmptyStringUnion(const TestTreatNullAsEmptyStringUnion& value) { m_treatNullAsEmptyStringUnion = value; }
 
     double testImpureNaNUnrestrictedDouble() const { return std::bit_cast<double>(0xffff000000000000ll); }

@@ -38,17 +38,17 @@ WKTypeID WKProtectionSpaceGetTypeID()
 
 WKStringRef WKProtectionSpaceCopyHost(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toCopiedAPI(protect(toImpl(protectionSpaceRef))->host());
+    return toCopiedAPI(toImpl(protectionSpaceRef)->host());
 }
 
 int WKProtectionSpaceGetPort(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return protect(toImpl(protectionSpaceRef))->port();
+    return toImpl(protectionSpaceRef)->port();
 }
 
 WKStringRef WKProtectionSpaceCopyRealm(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toCopiedAPI(protect(toImpl(protectionSpaceRef))->realm());
+    return toCopiedAPI(toImpl(protectionSpaceRef)->realm());
 }
 
 bool WKProtectionSpaceGetIsProxy(WKProtectionSpaceRef protectionSpaceRef)
@@ -58,7 +58,7 @@ bool WKProtectionSpaceGetIsProxy(WKProtectionSpaceRef protectionSpaceRef)
 
 WKProtectionSpaceServerType WKProtectionSpaceGetServerType(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toAPI(protect(toImpl(protectionSpaceRef))->serverType());
+    return toAPI(toImpl(protectionSpaceRef)->serverType());
 }
 
 bool WKProtectionSpaceGetReceivesCredentialSecurely(WKProtectionSpaceRef protectionSpaceRef)
@@ -68,5 +68,5 @@ bool WKProtectionSpaceGetReceivesCredentialSecurely(WKProtectionSpaceRef protect
 
 WKProtectionSpaceAuthenticationScheme WKProtectionSpaceGetAuthenticationScheme(WKProtectionSpaceRef protectionSpaceRef)
 {
-    return toAPI(protect(toImpl(protectionSpaceRef))->authenticationScheme());
+    return toAPI(toImpl(protectionSpaceRef)->authenticationScheme());
 }

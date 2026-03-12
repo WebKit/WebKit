@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+class RenderStyle;
+
 class HitTestRequest {
 public:
     enum class Type {
@@ -109,6 +111,8 @@ public:
     bool touchRelease() const { return release() && touchEvent(); }
 
     OptionSet<Type> type() const { return m_type; }
+
+    bool isVisibleForStyle(const RenderStyle&) const;
 
 private:
     OptionSet<Type> m_type;

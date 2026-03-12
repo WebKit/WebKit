@@ -54,6 +54,7 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
 #include <wtf/Int128.h>
 #include <wtf/UnalignedAccess.h>
 #include <wtf/text/StringHasher.h>

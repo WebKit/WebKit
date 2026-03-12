@@ -221,7 +221,7 @@ bool RenderBundleEncoder::replayingCommands() const
 
 id<MTLIndirectRenderCommand> RenderBundleEncoder::currentRenderCommand()
 {
-    if (RefPtr renderPassEncoder = m_renderPassEncoder.get())
+    if (auto* renderPassEncoder = m_renderPassEncoder.get())
         return (id<MTLIndirectRenderCommand>)renderPassEncoder->renderCommandEncoder();
 
     if (m_currentCommand)
@@ -1449,7 +1449,7 @@ void RenderBundleEncoder::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
-void wgpuRenderBundleEncoderReference(WGPURenderBundleEncoder renderBundleEncoder)
+void NODELETE wgpuRenderBundleEncoderReference(WGPURenderBundleEncoder renderBundleEncoder)
 {
     WebGPU::fromAPI(renderBundleEncoder).ref();
 }
@@ -1501,7 +1501,7 @@ void wgpuRenderBundleEncoderPushDebugGroup(WGPURenderBundleEncoder renderBundleE
     protect(WebGPU::fromAPI(renderBundleEncoder))->pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
 
-void wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder, uint32_t, WGPUBindGroup, size_t, const uint32_t*)
+void NODELETE wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder, uint32_t, WGPUBindGroup, size_t, const uint32_t*)
 {
 }
 

@@ -215,7 +215,7 @@ RenderMarquee* HTMLMarqueeElement::renderMarquee() const
     CheckedPtr renderer = this->renderer();
     if (!renderer || !renderer->hasLayer())
         return nullptr;
-    CheckedPtr scrollableArea = protect(downcast<RenderBoxModelObject>(*renderer).layer())->scrollableArea();
+    CheckedPtr scrollableArea = downcast<RenderBoxModelObject>(*renderer).layer()->scrollableArea();
     if (!scrollableArea)
         return nullptr;
     return scrollableArea->marquee();

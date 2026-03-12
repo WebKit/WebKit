@@ -94,13 +94,13 @@ public:
         Style::PreferredSize logicalHeight { CSS::Keyword::Auto { } };
     };
 
-    inline const BorderValue& borderAdjoiningTableStart() const;
-    inline const BorderValue& borderAdjoiningTableEnd() const;
-    const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
-    const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
+    inline const BorderValue& borderAdjoiningTableStart() const LIFETIME_BOUND;
+    inline const BorderValue& borderAdjoiningTableEnd() const LIFETIME_BOUND;
+    const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const LIFETIME_BOUND;
+    const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const LIFETIME_BOUND;
 
-    CellStruct& cellAt(unsigned row,  unsigned col);
-    const CellStruct& cellAt(unsigned row, unsigned col) const;
+    CellStruct& cellAt(unsigned row,  unsigned col) LIFETIME_BOUND;
+    const CellStruct& cellAt(unsigned row, unsigned col) const LIFETIME_BOUND;
     RenderTableCell* primaryCellAt(unsigned row, unsigned col);
     RenderTableRow* rowRendererAt(unsigned row) const;
 

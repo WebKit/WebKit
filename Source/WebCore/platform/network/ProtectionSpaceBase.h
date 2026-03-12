@@ -75,11 +75,11 @@ public:
 
     bool isHashTableDeletedValue() const { return m_isHashTableDeletedValue; }
     
-    const String& host() const { return m_host; }
+    const String& host() const LIFETIME_BOUND { return m_host; }
     int port() const { return m_port; }
     ServerType serverType() const { return m_serverType; }
     WEBCORE_EXPORT bool isProxy() const;
-    const String& realm() const { return m_realm; }
+    const String& realm() const LIFETIME_BOUND { return m_realm; }
     AuthenticationScheme authenticationScheme() const { return m_authenticationScheme; }
     
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;

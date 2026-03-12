@@ -182,7 +182,7 @@ void HTMLMetaElement::process(const AtomString& oldValue)
     // tree (changing a meta tag while it's not in the tree shouldn't have any effect
     // on the document)
     if (!httpEquivValue.isNull())
-        document->processMetaHttpEquiv(httpEquivValue, contentValue, isDescendantOf(protect(document->head()).get()));
+        document->processMetaHttpEquiv(httpEquivValue, contentValue, isDescendantOf(document->head()));
     
     if (nameValue.isNull())
         return;

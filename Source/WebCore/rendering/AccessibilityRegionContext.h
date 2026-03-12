@@ -25,17 +25,20 @@
 
 #pragma once
 
-#include <WebCore/InlineIteratorTextBox.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/RegionContext.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
 class RenderBox;
 class RenderBoxModelObject;
+class RenderInline;
+class RenderLineBreak;
 class RenderText;
 class RenderView;
+class ScrollView;
 
 class AccessibilityRegionContext final : public RegionContext {
     WTF_MAKE_TZONE_ALLOCATED(AccessibilityRegionContext);

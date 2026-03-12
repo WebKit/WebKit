@@ -324,6 +324,8 @@ public:
 
     bool shouldComparareUsedValuesForBorderWidthForTriggeringTransitions() const;
 
+    bool shouldLimitHLSPlaybackRate() const;
+
     void determineRelevantQuirks();
 
 private:

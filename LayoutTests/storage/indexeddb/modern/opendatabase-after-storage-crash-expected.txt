@@ -1,2 +1,5 @@
-PASS localStorage[storageKey] is "Made it"
-Successfully opened database with version 3.
+Database connection closed by network process crash.
+PASS window.indexedDB is the same object after crash
+Successfully opened database with version 2 after network process crash.
+PASS indexedDB.open() recovered after network process crash without page reload
+This test verifies when the network process crashes, indexedDB.open() recovers without a page reload.

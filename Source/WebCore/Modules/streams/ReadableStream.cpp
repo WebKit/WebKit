@@ -577,7 +577,7 @@ Ref<DOMPromise> ReadableStream::cancel(JSDOMGlobalObject& globalObject, JSC::JSV
 size_t ReadableStream::getNumReadIntoRequests() const
 {
     ASSERT(m_byobReader);
-    RefPtr byobReader = m_byobReader.get();
+    auto* byobReader = m_byobReader.get();
     return byobReader->readIntoRequestsSize();
 }
 
@@ -585,7 +585,7 @@ size_t ReadableStream::getNumReadIntoRequests() const
 size_t ReadableStream::getNumReadRequests() const
 {
     ASSERT(m_defaultReader);
-    RefPtr defaultReader = m_defaultReader.get();
+    auto* defaultReader = m_defaultReader.get();
     return defaultReader->getNumReadRequests();
 }
 

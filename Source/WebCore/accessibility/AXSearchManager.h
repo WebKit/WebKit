@@ -166,7 +166,7 @@ public:
     bool isRemoteFrame() const { return m_type == Type::RemoteFrame; }
 
     RefPtr<AXCoreObject> objectIfLocalResult() const { return isLocalResult() ? m_object : nullptr; }
-    const std::optional<FrameIdentifier>& frameID() const { return m_frameID; }
+    const std::optional<FrameIdentifier>& frameID() const LIFETIME_BOUND { return m_frameID; }
     size_t streamIndex() const { return m_streamIndex; }
 
 private:
@@ -204,7 +204,7 @@ public:
         m_entries.append(SearchResultEntry::remoteFrame(frameID, nextIndex()));
     }
 
-    const Vector<SearchResultEntry>& entries() const { return m_entries; }
+    const Vector<SearchResultEntry>& entries() const LIFETIME_BOUND { return m_entries; }
     size_t entryCount() const { return m_entries.size(); }
 
     void setResultsLimit(unsigned limit) { m_resultsLimit = limit; }
@@ -235,7 +235,7 @@ public:
     bool isRemote() const { return m_remoteToken.has_value(); }
 
     RefPtr<AXCoreObject> objectIfLocalResult() const { return isLocal() ? m_localObject : nullptr; }
-    const std::optional<AccessibilityRemoteToken>& remoteToken() const { return m_remoteToken; }
+    const std::optional<AccessibilityRemoteToken>& remoteToken() const LIFETIME_BOUND { return m_remoteToken; }
 
 private:
     AccessibilitySearchResult(RefPtr<AXCoreObject> object, std::optional<AccessibilityRemoteToken> token)

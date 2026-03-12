@@ -26,6 +26,7 @@
 
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
+#include "LegacyRenderSVGResourceGradientInlines.h"
 #include "RenderSVGText.h"
 #include "RenderStyle+GettersInlines.h"
 #include "SVGRenderingContext.h"

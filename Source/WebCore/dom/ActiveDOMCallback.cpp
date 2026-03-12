@@ -44,19 +44,19 @@ ActiveDOMCallback::~ActiveDOMCallback() = default;
 
 bool ActiveDOMCallback::canInvokeCallback() const
 {
-    RefPtr context = scriptExecutionContext();
+    auto* context = scriptExecutionContext();
     return context && !context->activeDOMObjectsAreSuspended() && !context->activeDOMObjectsAreStopped();
 }
 
 bool ActiveDOMCallback::activeDOMObjectsAreSuspended() const
 {
-    RefPtr context = scriptExecutionContext();
+    auto* context = scriptExecutionContext();
     return context && context->activeDOMObjectsAreSuspended();
 }
 
 bool ActiveDOMCallback::activeDOMObjectAreStopped() const
 {
-    RefPtr context = scriptExecutionContext();
+    auto* context = scriptExecutionContext();
     return !context || context->activeDOMObjectsAreStopped();
 }
 

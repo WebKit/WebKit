@@ -208,12 +208,22 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         size_t currentBoundaryIndex = find(data, boundary.span());
         if (currentBoundaryIndex == notFound)
             return nullptr;
+
         skip(data, currentBoundaryIndex + boundaryLength);
+        if (spanHasPrefix(data, "--\r\n"_span))
+            return form;
+        if (!spanHasPrefix(data, "\r\n"_span))
+            return nullptr;
+
         size_t nextBoundaryIndex;
         while ((nextBoundaryIndex = find(data, boundary.span())) != notFound) {
             parseMultipartPart(data.first(nextBoundaryIndex - oneNewLine.length()), form.get());
             currentBoundaryIndex = nextBoundaryIndex;
             skip(data, nextBoundaryIndex + boundaryLength);
+            if (spanHasPrefix(data, "--\r\n"_span))
+                return form;
+            if (!spanHasPrefix(data, "\r\n"_span))
+                return nullptr;
         }
     } else if (mimeType && equalLettersIgnoringASCIICase(mimeType->type, "application"_s) && equalLettersIgnoringASCIICase(mimeType->subtype, "x-www-form-urlencoded"_s)) {
         auto dataString = String::fromUTF8(data);

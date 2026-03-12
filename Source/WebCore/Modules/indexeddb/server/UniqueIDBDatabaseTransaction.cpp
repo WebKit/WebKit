@@ -50,7 +50,7 @@ UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConn
     ASSERT(database());
 
     if (m_transactionInfo.mode() == IDBTransactionMode::Versionchange)
-        m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(protect(database())->info());
+        m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(database()->info());
 
     RefPtr databaseConnection = m_databaseConnection.get();
     if (!databaseConnection)

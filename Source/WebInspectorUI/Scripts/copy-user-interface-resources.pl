@@ -280,9 +280,11 @@ sub combineOrStripResourcesForWebKitAdditions() {
     }
 
     # Copy the contents of the Protocol/Legacy directory from WebKitAdditions/WebInspectorUI/ if it exists
-    my $protocolLegacyAdditionsDir = File::Spec->catdir($webInspectorUIAdditionsDir, 'Protocol', 'Legacy');
-    if (-d $protocolLegacyAdditionsDir) {
-        ditto($protocolLegacyAdditionsDir, File::Spec->catdir($protocolDir, 'Legacy'));
+    if (defined $webInspectorUIAdditionsDir) {
+        my $protocolLegacyAdditionsDir = File::Spec->catdir($webInspectorUIAdditionsDir, 'Protocol', 'Legacy');
+        if (-d $protocolLegacyAdditionsDir) {
+            ditto($protocolLegacyAdditionsDir, File::Spec->catdir($protocolDir, 'Legacy'));
+        }
     }
 }
 

@@ -29,8 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
-
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
@@ -40,7 +38,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     [SameObject] readonly attribute RTCRtpSender sender;
     [SameObject] readonly attribute RTCRtpReceiver receiver;
     readonly attribute boolean stopped;
-    attribute RtpTransceiverDirection direction;
+    attribute RTCRtpTransceiverDirection direction;
     readonly attribute RTCRtpTransceiverDirection? currentDirection;
     undefined stop();
     undefined setCodecPreferences(sequence<RTCRtpCodecCapability> codecs);

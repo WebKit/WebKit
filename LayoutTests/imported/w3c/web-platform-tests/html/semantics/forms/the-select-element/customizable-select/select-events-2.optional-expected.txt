@@ -2,8 +2,8 @@
 one
 select0-button              select7-button
 
-FAIL Button controller code should not run if the mousedown event is preventDefaulted. assert_false: Listbox shouldn't have opened yet expected false got true
-FAIL Listbox controller code should not run if the mousedown event is preventDefaulted. assert_true: Listbox shouldn't have closed yet expected true got false
+PASS Button controller code should not run if the mousedown event is preventDefaulted.
+PASS Listbox controller code should not run if the mousedown event is preventDefaulted.
 PASS <select> should fire input and change events when new option is selected.
 PASS <select> should not fire input and change events when new selected option has the same value as the old.
 PASS <select> should fire input and change events when option in listbox is clicked

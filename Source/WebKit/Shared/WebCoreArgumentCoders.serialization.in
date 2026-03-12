@@ -2197,6 +2197,7 @@ class WebCore::LayoutRect {
 struct WebCore::RemoteFrameLayoutInfo {
     std::optional<WebCore::LayoutRect> visibleRectInParent;
     float usedZoom;
+    bool useDarkAppearance;
 };
 
 header: <WebCore/VP9Utilities.h>
@@ -2371,6 +2372,7 @@ struct WebCore::DateTimeChooserParameters {
     bool hasSecondField;
     bool hasMillisecondField;
     bool wasActivatedByKeyboard;
+    std::optional<WebCore::FrameIdentifier> rootFrameID;
 }
 
 header: <WebCore/ScreenProperties.h>
@@ -2497,6 +2499,7 @@ struct WebCore::DataListSuggestionInformation {
     WebCore::DataListSuggestionActivationType activationType;
     Vector<WebCore::DataListSuggestion> suggestions;
     WebCore::IntRect elementRect;
+    std::optional<WebCore::FrameIdentifier> rootFrameID;
 };
 
 struct WebCore::ClientOrigin {
@@ -4452,9 +4455,9 @@ struct WebCore::MediaSelectionOption {
 };
 
 enum class WebCore::PlatformMediaDecodingType : uint8_t {
-    File,
+    FileOrHLS,
     MediaSource,
-    WebRTC
+    MediaStream
 };
 
 enum class WebCore::PlatformMediaEncodingType : bool;
@@ -4577,10 +4580,9 @@ struct WebCore::FourCC {
 #if ENABLE(VIDEO)
 header: <WebCore/MediaPlayer.h>
 [CustomHeader] struct WebCore::MediaEngineSupportParameters {
+    WebCore::PlatformMediaDecodingType platformType;
     WebCore::ContentType type;
     URL url;
-    bool isMediaSource;
-    bool isMediaStream;
     bool requiresRemotePlayback;
     bool supportsLimitedMatroska;
     Vector<WebCore::ContentType> contentTypesRequiringHardwareSupport;
@@ -7768,6 +7770,7 @@ struct WebCore::NowPlayingInfo {
     bool isPlaying;
     bool allowsNowPlayingControlsVisibility;
     bool isVideo;
+    WebCore::MediaPlayer::VideoFullscreenMode fullscreenMode;
 }
 
 struct WebCore::PlatformMediaCapabilitiesVideoConfiguration {

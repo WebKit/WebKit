@@ -65,11 +65,7 @@ function createDisposableResource(value, isAsync /* , method */)
                 if (method === @undefined)
                     @throwTypeError("@@asyncDispose must not be an undefined");
             } else {
-                method = value.@@dispose;
-                if (!@isCallable(method))
-                    @throwTypeError("@@dispose must be callable");
-                if (@isUndefinedOrNull(method))
-                    @throwTypeError("@@dispose must not be an undefined");
+                method = @getDisposeMethod(value);
             }
         }
     } else {
@@ -79,6 +75,31 @@ function createDisposableResource(value, isAsync /* , method */)
     }
 
     return { value, method };
+}
+
+@linkTimeConstant
+function createSuppressedError(error, suppressed)
+{
+    'use strict';
+    return new @SuppressedError(error, suppressed);
+}
+
+// https://tc39.es/proposal-explicit-resource-management/#sec-getdisposemethod
+@linkTimeConstant
+function getDisposeMethod(value)
+{
+    'use strict';
+
+    if (@isUndefinedOrNull(value))
+        return @undefined;
+    if (!@isObject(value))
+        @throwTypeError("Disposable value must be an object, null, or undefined");
+    var method = value.@@dispose;
+    if (@isUndefinedOrNull(method))
+        @throwTypeError("@@dispose must not be undefined or null");
+    if (!@isCallable(method))
+        @throwTypeError("@@dispose must be callable");
+    return method;
 }
 
 // https://tc39.es/proposal-explicit-resource-management/#sec-adddisposableresource

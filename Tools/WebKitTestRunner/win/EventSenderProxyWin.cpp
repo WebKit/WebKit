@@ -31,8 +31,29 @@
 #include "TestController.h"
 #include <WebCore/NotImplemented.h>
 #include <WebKit/WKPagePrivate.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Seconds.h>
 
 namespace WTR {
+
+static void runPendingEventsCallback(void* userData)
+{
+    *static_cast<bool*>(userData) = true;
+}
+
+static void waitForPendingKeyEvents(TestController* testController)
+{
+    bool done = false;
+    WKPageDoAfterProcessingAllPendingKeyEvents(testController->mainWebView()->page(), &done, runPendingEventsCallback);
+    testController->runUntil(done, 100_ms);
+}
+
+static void waitForPendingMouseEvents(TestController* testController)
+{
+    bool done = false;
+    WKPageDoAfterProcessingAllPendingMouseEvents(testController->mainWebView()->page(), &done, runPendingEventsCallback);
+    testController->runUntil(done, 100_ms);
+}
 
 LRESULT EventSenderProxy::dispatchMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -59,7 +80,7 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
 
 EventSenderProxy::~EventSenderProxy() = default;
 
-void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType)
+void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
     int messageType;
     switch (button) {
@@ -83,9 +104,13 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, 
     }
     WPARAM wparam = 0;
     dispatchMessage(messageType, wparam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
+    if (completionHandler) {
+        waitForPendingMouseEvents(m_testController);
+        completionHandler();
+    }
 }
 
-void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType)
+void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
     int messageType;
     switch (button) {
@@ -109,14 +134,22 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WK
     }
     WPARAM wparam = 0;
     dispatchMessage(messageType, wparam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
+    if (completionHandler) {
+        waitForPendingMouseEvents(m_testController);
+        completionHandler();
+    }
 }
 
-void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
+void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
     m_position.x = x;
     m_position.y = y;
     WPARAM wParam = m_leftMouseButtonDown ? MK_LBUTTON : 0;
     dispatchMessage(WM_MOUSEMOVE, wParam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
+    if (completionHandler) {
+        waitForPendingMouseEvents(m_testController);
+        completionHandler();
+    }
 }
 
 void EventSenderProxy::mouseScrollBy(int x, int y)
@@ -198,7 +231,7 @@ static void pumpMessageQueue()
     }
 }
 
-void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers, unsigned location)
+void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers, unsigned location, CompletionHandler<void()>&& completionHandler)
 {
     int virtualKeyCode = 0;
     int charCode = 0;
@@ -312,6 +345,10 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 
     if (wkModifiers || needsShiftKeyModifier)
         SetKeyboardState(keyState);
+    if (completionHandler) {
+        waitForPendingKeyEvents(m_testController);
+        completionHandler();
+    }
 }
 
 void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
@@ -367,31 +404,5 @@ void EventSenderProxy::cancelTouchPoint(int)
 {
 }
 #endif // ENABLE(TOUCH_EVENTS)
-
-struct DoAfterProcessingAllPendingMouseEventsCallbackContext {
-    bool done { false };
-    bool timedOut { false };
-};
-
-static void doAfterProcessingAllPendingMouseEventsCallback(void* userData)
-{
-    auto* context = static_cast<DoAfterProcessingAllPendingMouseEventsCallbackContext*>(userData);
-    if (context->timedOut) {
-        delete context;
-        return;
-    }
-    context->done = true;
-}
-
-void EventSenderProxy::waitForPendingMouseEvents()
-{
-    auto* context = new DoAfterProcessingAllPendingMouseEventsCallbackContext;
-    WKPageDoAfterProcessingAllPendingMouseEvents(m_testController->mainWebView()->page(), context, doAfterProcessingAllPendingMouseEventsCallback);
-    m_testController->runUntil(context->done, 100_ms);
-    if (context->done)
-        delete context;
-    else
-        context->timedOut = true;
-}
 
 } // namespace WTR

@@ -107,9 +107,10 @@ bool LegacyCDMPrivateAVFObjC::supportsKeySystemAndMimeType(const String& keySyst
     if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"_s))
         return true;
 
-    MediaEngineSupportParameters parameters;
-    parameters.isMediaSource = true;
-    parameters.type = ContentType(mimeType);
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = ContentType(mimeType)
+    };
 
     return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 #else
@@ -124,9 +125,10 @@ bool LegacyCDMPrivateAVFObjC::supportsMIMEType(const String& mimeType) const
     if (mimeType == "keyrelease"_s)
         return true;
 
-    MediaEngineSupportParameters parameters;
-    parameters.isMediaSource = true;
-    parameters.type = ContentType(mimeType);
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = ContentType(mimeType)
+    };
 
     return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 #else

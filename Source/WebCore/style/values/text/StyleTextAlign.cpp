@@ -36,7 +36,7 @@ namespace Style {
 
 auto CSSValueConversion<TextAlign>::operator()(BuilderState& state, const CSSValue& value) -> TextAlign
 {
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
+    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
     if (!primitiveValue)
         return TextAlign::Start;
 
@@ -58,7 +58,7 @@ auto CSSValueConversion<TextAlign>::operator()(BuilderState& state, const CSSVal
     }
 
     if (primitiveValue->valueID() == CSSValueWebkitMatchParent || primitiveValue->valueID() == CSSValueMatchParent) {
-        RefPtr element = state.element();
+        auto* element = state.element();
 
         if (element && element == state.document().documentElement())
             return TextAlign::Start;

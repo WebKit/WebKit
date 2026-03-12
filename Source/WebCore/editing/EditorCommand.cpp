@@ -54,6 +54,7 @@
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "MutableStyleProperties.h"
+#include "NameValidation.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Range.h"
@@ -419,12 +420,11 @@ static bool executeFormatBlock(LocalFrame& frame, Event*, EditorCommandSource, c
     else
         tagName = AtomString { WTF::move(lowercaseValue) };
 
-    auto qualifiedTagName = Document::parseQualifiedName(xhtmlNamespaceURI, tagName);
-    if (qualifiedTagName.hasException())
+    if (!NameValidation::isValidElementName(tagName))
         return false;
 
     ASSERT(frame.document());
-    auto command = FormatBlockCommand::create(*frame.document(), qualifiedTagName.releaseReturnValue());
+    auto command = FormatBlockCommand::create(*frame.document(), QualifiedName { nullAtom(), WTF::move(tagName), xhtmlNamespaceURI });
     command->apply();
     return command->didApply();
 }

@@ -24,6 +24,7 @@
 #include "SVGUnitTypes.h"
 #include <wtf/EnumeratedArray.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 

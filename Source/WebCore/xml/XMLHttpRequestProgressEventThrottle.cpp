@@ -107,7 +107,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomString
         m_total = 0;
     }
 
-    if (protect(m_target)->hasEventListeners(type))
+    if (m_target->hasEventListeners(type))
         dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(type, m_lengthComputable, m_loaded, m_total));
 }
 
@@ -115,7 +115,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchErrorProgressEvent(const AtomS
 {
     ASSERT(type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 
-    if (protect(m_target)->hasEventListeners(type))
+    if (m_target->hasEventListeners(type))
         dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(type, false, 0, 0));
 }
 

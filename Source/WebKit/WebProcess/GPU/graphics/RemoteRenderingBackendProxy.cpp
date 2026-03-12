@@ -578,7 +578,7 @@ void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<Remo
     Vector<std::pair<ImageBufferSetIdentifier, OptionSet<BufferInSetType>>> identifiers;
     for (auto& pair : bufferSets) {
         identifiers.append(std::make_pair(pair.first->identifier(), pair.second));
-        Ref { pair.first }->addRequestedVolatility(pair.second);
+        pair.first->addRequestedVolatility(pair.second);
     }
     auto requestIdentifier = MarkSurfacesAsVolatileRequestIdentifier::generate();
     auto result = send(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(requestIdentifier, identifiers, forcePurge));

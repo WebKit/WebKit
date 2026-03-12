@@ -94,15 +94,15 @@ public:
     void waitForFenceIfNeeded(const SkImage&);
     bool hasFences();
 
-    const sk_sp<SkPicture>& picture() const { return m_picture; }
-    const IntRect& recordRect() const { return m_recordRect; }
+    const sk_sp<SkPicture>& picture() const LIFETIME_BOUND { return m_picture; }
+    const IntRect& recordRect() const LIFETIME_BOUND { return m_recordRect; }
     RenderingMode renderingMode() const { return m_renderingMode; }
     bool contentsOpaque() const { return m_contentsOpaque; }
     float contentsScale() const { return m_contentsScale; }
 
     // Atlas layouts for batched raster image uploads.
     bool hasAtlasLayouts() const { return !m_atlasLayouts.isEmpty(); }
-    const Vector<Ref<SkiaImageAtlasLayout>>& atlasLayouts() const { return m_atlasLayouts; }
+    const Vector<Ref<SkiaImageAtlasLayout>>& atlasLayouts() const LIFETIME_BOUND { return m_atlasLayouts; }
     unsigned imageSetFingerprint() const { return m_imageSetFingerprint; }
 
     // GPU atlases prepared on main thread for worker threads to rewrap.
@@ -119,7 +119,7 @@ public:
     bool hasGPUAtlases() const { return !m_gpuAtlases.isEmpty(); }
 
     // Get prepared GPU atlases (for worker threads to rewrap).
-    const Vector<Ref<SkiaGPUAtlas>>& gpuAtlases() const { return m_gpuAtlases; }
+    const Vector<Ref<SkiaGPUAtlas>>& gpuAtlases() const LIFETIME_BOUND { return m_gpuAtlases; }
 
     // Wait for GPU upload fence (call from worker threads before using atlases).
     void waitForUploadFence();

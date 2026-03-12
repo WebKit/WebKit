@@ -754,6 +754,7 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
         ${WPE_API_INSTALLED_HEADERS}
         Shared/API/glib
         UIProcess/API/glib
+        UIProcess/API/wpe/WebKitImageWPE.cpp
     NO_IMPLICIT_SOURCES
 )
 GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in

@@ -82,7 +82,7 @@ static Layout::Box::ElementAttributes elementAttributes(const RenderElement& ren
             return Layout::Box::NodeType::ListMarker;
         if (is<RenderReplaced>(renderer))
             return is<RenderImage>(renderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
-        if (is<RenderButton>(renderer) || is<RenderMenuList>(renderer) || is<RenderTextControlInnerContainer>(renderer) || is<RenderSlider>(renderer) || renderer.isRenderSliderContainer())
+        if (isAnyOf<RenderButton, RenderMenuList, RenderTextControlInnerContainer, RenderSlider>(renderer) || renderer.isRenderSliderContainer())
             return Layout::Box::NodeType::ImplicitFlexBox;
         if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
             return renderLineBreak->isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;

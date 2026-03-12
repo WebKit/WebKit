@@ -255,7 +255,7 @@ class BundleCreator(object):
             readme_handle.write('  - Please report bugs at https://bugs.webkit.org (Product: WebKit and Component: WebKitGTK or WPEWebKit).\n')
         return True
 
-    def _generate_wrapper(self, interpreter, binary_to_wrap):
+    def _generate_wrapper(self, interpreter, binary_to_wrap, skip_wrapper_if_missing_binary=False):
         variables = dict()
         mydir = self._bundler.VAR_MYDIR
         lib_dir = os.path.join(self._bundler.destination_dir(), 'lib')
@@ -263,6 +263,12 @@ class BundleCreator(object):
         bin_dir = os.path.join(self._bundler.destination_dir(), 'bin')
         share_dir = os.path.join(self._bundler.destination_dir(), 'share')
         sys_share_dir = os.path.join(self._bundler.destination_dir(), 'sys/share')
+        binary_to_wrap_path = os.path.join(bin_dir, binary_to_wrap)
+
+        if not (os.path.isfile(binary_to_wrap_path) and os.access(binary_to_wrap_path, os.X_OK)):
+            if skip_wrapper_if_missing_binary:
+                return
+            raise RuntimeError('Unable to find binary to wrap for %s' % binary_to_wrap)
 
         if os.path.isdir(os.path.join(sys_lib_dir, 'gio')):
             gio_var = 'GIO_MODULE_DIR' if self._syslibs == 'bundle-all' else 'GIO_EXTRA_MODULES'
@@ -905,7 +911,8 @@ class BundleCreator(object):
         # Finally generate the wrappers.
         self._generate_wrapper(interpreter, bundle_binary)
         if bundle_binary == 'MiniBrowser':
-            self._generate_wrapper(interpreter, self._port_binary_preffix + 'WebDriver')
+            # Generate the wrapper for WebDriver only if it was built (-DENABLE_WEBDRIVER=ON)
+            self._generate_wrapper(interpreter, self._port_binary_preffix + 'WebDriver', skip_wrapper_if_missing_binary=True)
         self._generate_install_deps_script(system_packages_needed)
         # Clean remaining stuff
         if bundle_binary == 'MiniBrowser' and self._syslibs == 'bundle-all':

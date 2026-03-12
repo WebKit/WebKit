@@ -72,8 +72,8 @@ public:
     LogicalFlexItem(const ElementBox&, const MainAxisGeometry&, const CrossAxisGeometry&, bool hasAspectRatio, bool isOrthogonal);
     LogicalFlexItem() = default;
 
-    const MainAxisGeometry& mainAxis() const { return m_mainAxisGeometry; }
-    const CrossAxisGeometry& crossAxis() const { return m_crossAxisGeometry; }
+    const MainAxisGeometry& mainAxis() const LIFETIME_BOUND { return m_mainAxisGeometry; }
+    const CrossAxisGeometry& crossAxis() const LIFETIME_BOUND { return m_crossAxisGeometry; }
 
     float growFactor() const { return style().flexGrow().value; }
     float shrinkFactor() const { return style().flexShrink().value; }
@@ -85,7 +85,7 @@ public:
     bool isContentBoxBased() const { return style().boxSizing() == BoxSizing::ContentBox; }
 
     const ElementBox& layoutBox() const { return *m_layoutBox; }
-    const RenderStyle& style() const { return layoutBox().style(); }
+    const RenderStyle& style() const LIFETIME_BOUND { return layoutBox().style(); }
     WritingMode writingMode() const { return style().writingMode(); }
 
 private:

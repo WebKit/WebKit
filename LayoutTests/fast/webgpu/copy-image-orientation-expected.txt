@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: PASS: copyExternalImageToTexture handled image dimensions correctly
+This test passes if it does not crash and prints PASS.

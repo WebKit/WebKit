@@ -102,25 +102,25 @@ public:
 
     virtual ~CurlContext();
 
-    const CurlShareHandle& shareHandle() { return m_shareHandle; }
+    const CurlShareHandle& shareHandle() LIFETIME_BOUND { return m_shareHandle; }
 
     CurlRequestScheduler& scheduler() { return *m_scheduler; }
     WEBCORE_EXPORT CurlStreamScheduler& streamScheduler();
 
     // Alt-Svc
-    const String& alternativeServicesStorageFile() const { return m_alternativeServicesStorageFile; }
+    const String& alternativeServicesStorageFile() const LIFETIME_BOUND { return m_alternativeServicesStorageFile; }
     void setAlternativeServicesStorageFile(const String& cacheFile) { m_alternativeServicesStorageFile = cacheFile; }
     void clearAlternativeServicesStorageFile();
 
     // Proxy
-    const CurlProxySettings& proxySettings() const { return m_proxySettings; }
+    const CurlProxySettings& proxySettings() const LIFETIME_BOUND { return m_proxySettings; }
     void setProxySettings(const CurlProxySettings& settings) { m_proxySettings = settings; }
     void setProxyUserPass(const String& user, const String& password) { m_proxySettings.setUserPass(user, password); }
     void setDefaultProxyAuthMethod() { m_proxySettings.setDefaultAuthMethod(); }
     void setProxyAuthMethod(long authMethod) { m_proxySettings.setAuthMethod(authMethod); }
 
     // SSL
-    CurlSSLHandle& sslHandle() { return m_sslHandle; }
+    CurlSSLHandle& sslHandle() LIFETIME_BOUND { return m_sslHandle; }
 
     // Supported features
     bool isAltSvcEnabled() const { return m_isAltSvcEnabled; }
@@ -245,7 +245,7 @@ public:
     virtual ~CurlHandle();
 
     CURL* handle() const { return m_handle; }
-    const URL& url() const { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
 
     CURLcode perform();
     CURLcode pause(int);

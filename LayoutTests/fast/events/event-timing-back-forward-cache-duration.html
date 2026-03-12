@@ -1,0 +1,72 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<a id="link" href="resources/go-back-after-delay.html" style="display:block; width:100px; height:100px;">Navigate</a>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+description("Tests that event timing entries do not have inflated durations after back-forward cache restore.");
+window.jsTestIsAsync = true;
+
+const collectedEntries = [];
+const observer = new PerformanceObserver(list => {
+    for (const entry of list.getEntries()) {
+        collectedEntries.push({
+            name: entry.name,
+            duration: entry.duration,
+        });
+    }
+});
+observer.observe({ type: 'event', durationThreshold: 16 });
+
+const link = document.getElementById('link');
+link.addEventListener('click', () => {
+    const target = performance.now() + 20;
+    while (performance.now() < target);
+}, { once: true });
+
+window.addEventListener("pageshow", function(event) {
+    if (!event.persisted)
+        return;
+
+    // Wait for any remaining entries to be dispatched after restoration.
+    requestAnimationFrame(async () => {
+        await new Promise(r => setTimeout(r, 0));
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => setTimeout(r, 0));
+
+        let hasClickEntry = false;
+        let hasInflatedDuration = false;
+        for (const entry of collectedEntries) {
+            if (entry.name === 'click')
+                hasClickEntry = true;
+            if (entry.duration >= 1500) {
+                testFailed("'" + entry.name + "' entry has inflated duration: " + entry.duration + "ms");
+                hasInflatedDuration = true;
+            }
+        }
+        if (!hasClickEntry)
+            testFailed("No 'click' event timing entry collected");
+        else if (!hasInflatedDuration)
+            testPassed("Event timing entries have reasonable durations after back-forward restore");
+        finishJSTest();
+    });
+});
+
+window.addEventListener("pagehide", function(event) {
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache");
+        finishJSTest();
+    }
+});
+
+window.addEventListener('load', async function() {
+    // Click the link to generate event timing entries and navigate via
+    // the link's default action. The navigation happens as part of click
+    // event dispatch, so no rendering update can drain entries beforehand.
+    await UIHelper.activateElement(link);
+});
+</script>
+</body>
+</html>

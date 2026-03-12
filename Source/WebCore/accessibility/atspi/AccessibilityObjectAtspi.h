@@ -62,7 +62,7 @@ public:
         TableCell = 1 << 11,
         Collection =  1 << 12
     };
-    const OptionSet<Interface>& interfaces() const { return m_interfaces; }
+    const OptionSet<Interface>& interfaces() const LIFETIME_BOUND { return m_interfaces; }
 
     void setParent(std::optional<AccessibilityObjectAtspi*>);
     WEBCORE_EXPORT std::optional<AccessibilityObjectAtspi*> parent() const;

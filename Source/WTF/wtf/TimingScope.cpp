@@ -43,7 +43,7 @@ public:
         unsigned callCount { 0 };
         Seconds maxDuration;
         
-        Seconds meanDuration() const { return totalDuration / callCount; }
+        Seconds NODELETE meanDuration() const { return totalDuration / callCount; }
     };
 
     State() = default;

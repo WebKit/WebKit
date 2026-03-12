@@ -59,7 +59,7 @@ static inline auto span(id<MTLBuffer> buffer, uint64_t byteOffset)
     return unsafeMakeSpan(static_cast<T*>(static_cast<void*>(byteSpan.data())), (byteOffset < buffer.length) ? (buffer.length - byteOffset) / sizeof(T) : 0);
 }
 
-static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor& descriptor)
+static bool NODELETE validateDescriptor(const Device& device, const WGPUBufferDescriptor& descriptor)
 {
     UNUSED_PARAM(device);
 
@@ -76,7 +76,7 @@ static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor&
     return true;
 }
 
-static bool validateCreateBuffer(const Device& device, const WGPUBufferDescriptor& descriptor)
+static bool NODELETE validateCreateBuffer(const Device& device, const WGPUBufferDescriptor& descriptor)
 {
     if (!device.isValid())
         return false;
@@ -107,7 +107,7 @@ static bool validateCreateBuffer(const Device& device, const WGPUBufferDescripto
     return true;
 }
 
-static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFlags usage, bool mappedAtCreation)
+static MTLStorageMode NODELETE storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFlags usage, bool mappedAtCreation)
 {
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
@@ -282,7 +282,7 @@ bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
     return true;
 }
 
-static size_t computeRangeSize(uint64_t size, size_t offset)
+static size_t NODELETE computeRangeSize(uint64_t size, size_t offset)
 {
     auto result = checkedDifference<uint64_t>(size, offset);
     if (result.hasOverflowed())
@@ -570,7 +570,7 @@ void Buffer::takeSlowIndirectIndexValidationPath(CommandBuffer& commandBuffer, B
     }
 }
 
-static bool verifyIndirectBufferData(MTLDrawPrimitivesIndirectArguments& input, uint32_t minVertexCount, uint32_t minInstanceCount)
+static bool NODELETE verifyIndirectBufferData(MTLDrawPrimitivesIndirectArguments& input, uint32_t minVertexCount, uint32_t minInstanceCount)
 {
     bool vertexCondition = input.vertexCount + input.vertexStart > minVertexCount || input.vertexStart >= minVertexCount;
     bool instanceCondition = input.baseInstance + input.instanceCount > minInstanceCount || input.baseInstance >= minInstanceCount;
@@ -765,7 +765,7 @@ void Buffer::removeSkippedValidationCommandEncoder(uint64_t uniqueId)
 
 #pragma mark WGPU Stubs
 
-void wgpuBufferReference(WGPUBuffer buffer)
+void NODELETE wgpuBufferReference(WGPUBuffer buffer)
 {
     WebGPU::fromAPI(buffer).ref();
 }
@@ -845,7 +845,7 @@ WGPUBufferUsageFlags wgpuBufferGetUsage(WGPUBuffer buffer)
     return protect(WebGPU::fromAPI(buffer))->usage();
 }
 
-void wgpuBufferCopy(WGPUBuffer buffer, std::span<const uint8_t> data, size_t offset)
+void NODELETE wgpuBufferCopy(WGPUBuffer buffer, std::span<const uint8_t> data, size_t offset)
 {
 #if ENABLE(WEBGPU_SWIFT)
     protect(WebGPU::fromAPI(buffer))->copyFrom(data, offset);

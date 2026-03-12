@@ -677,6 +677,7 @@ NS_SWIFT_SENDABLE
 - (void)updateMaterial:(WKBridgeUpdateMaterial *)descriptor completionHandler:(void (^)(void))completionHandler;
 - (void)setTransform:(simd_float4x4)transform;
 - (void)setCameraDistance:(float)distance;
+- (void)setBackgroundColor:(simd_float3)color;
 - (void)setPlaying:(BOOL)play;
 - (void)setEnvironmentMap:(WKBridgeImageAsset *)imageAsset;
 
@@ -690,6 +691,7 @@ NS_SWIFT_SENDABLE
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 
 - (double)currentTime;
+- (void)setCurrentTime:(double)newTime;
 - (double)duration;
 - (void)loadModelFrom:(NSURL *)url;
 - (void)loadModel:(NSData *)data;

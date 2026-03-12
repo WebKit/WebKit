@@ -21,9 +21,7 @@
 
 #pragma once
 
-#include <array>
 #include <unicode/utypes.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Latin1Character.h>
 
@@ -36,7 +34,6 @@ class SuperFastHash;
 class WYHash;
 
 class StringHasher {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StringHasher);
 public:
     static constexpr unsigned flagCount = 8; // Save 8 bits for StringImpl to use as flags.
     static constexpr unsigned maskHash = (1U << (sizeof(unsigned) * 8 - flagCount)) - 1;
@@ -50,18 +47,11 @@ public:
         }
     };
 
-    StringHasher() = default;
-
     template<typename T, typename Converter = DefaultConverter>
     static unsigned computeHashAndMaskTop8Bits(std::span<const T> data);
 
     template<typename T, unsigned characterCount>
     static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount]);
-
-    void addCharacter(char16_t character);
-
-    // hashWithTop8BitsMasked will reset to initial status.
-    unsigned hashWithTop8BitsMasked();
 
 private:
     friend class SuperFastHash;
@@ -102,15 +92,6 @@ private:
             return hash;
         return 0x80000000 >> flagCount;
     }
-
-    bool m_pendingHashValue { false };
-    unsigned m_numberOfProcessedCharacters { 0 };
-    uint64_t m_seed { 0 };
-    uint64_t m_see1 { 0 };
-    uint64_t m_see2 { 0 };
-
-    unsigned m_bufferSize { 0 };
-    std::array<char16_t, numberOfCharactersInLargestBulkForWYHash * 2> m_buffer;
 };
 
 } // namespace WTF

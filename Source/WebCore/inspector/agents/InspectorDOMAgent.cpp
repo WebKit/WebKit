@@ -368,6 +368,9 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
 
 Vector<Document*> InspectorDOMAgent::documents()
 {
+    if (!m_document)
+        return { };
+
     Vector<Document*> result;
     for (RefPtr<Frame> frame = m_document->frame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
@@ -584,15 +587,15 @@ void InspectorDOMAgent::discardBindings()
 
 static RefPtr<Element> elementToPushForStyleable(const Styleable& styleable)
 {
-    Ref element = styleable.element;
+    auto& element = styleable.element;
     // FIXME: We want to get rid of PseudoElement.
     if (styleable.pseudoElementIdentifier) {
         if (styleable.pseudoElementIdentifier->type == PseudoElementType::Before)
-            return element->beforePseudoElement();
+            return element.beforePseudoElement();
         if (styleable.pseudoElementIdentifier->type == PseudoElementType::After)
-            return element->afterPseudoElement();
+            return element.afterPseudoElement();
     }
-    return element;
+    return &element;
 }
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushStyleableElementToFrontend(const Styleable& styleable)
@@ -1258,7 +1261,7 @@ bool InspectorDOMAgent::handleMousePress()
     if (!m_searchingForNode)
         return false;
 
-    if (RefPtr node = protect(overlay())->highlightedNode()) {
+    if (RefPtr node = overlay().highlightedNode()) {
         inspect(node.get());
         return true;
     }
@@ -2612,9 +2615,9 @@ unsigned InspectorDOMAgent::innerChildNodeCount(Node* node)
 Node* InspectorDOMAgent::innerParentNode(Node* node)
 {
     ASSERT(node);
-    if (RefPtr document = dynamicDowncast<Document>(*node))
+    if (auto* document = dynamicDowncast<Document>(*node))
         return document->ownerElement();
-    if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(*node))
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*node))
         return shadowRoot->host();
     return node->parentNode();
 }
@@ -2664,7 +2667,7 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
     };
 
 #if ENABLE(FULLSCREEN_API)
-    if (is<Document>(node) || is<HTMLMediaElement>(node))
+    if (isAnyOf<Document, HTMLMediaElement>(node))
         createEventListener(eventNames().webkitfullscreenchangeEvent);
 #endif // ENABLE(FULLSCREEN_API)
 

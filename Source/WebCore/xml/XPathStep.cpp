@@ -203,7 +203,7 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
 
             // For other axes, the principal node type is element.
             ASSERT(primaryNodeType(axis) == NodeType::Element);
-            RefPtr element = dynamicDowncast<Element>(node);
+            auto* element = dynamicDowncast<Element>(node);
             if (!element)
                 return false;
 
@@ -334,7 +334,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
             return;
         case PrecedingAxis: {
             RefPtr<Node> node;
-            if (RefPtr attr = dynamicDowncast<Attr>(context)) {
+            if (auto* attr = dynamicDowncast<Attr>(context)) {
                 node = attr->ownerElement();
                 if (!node)
                     return;

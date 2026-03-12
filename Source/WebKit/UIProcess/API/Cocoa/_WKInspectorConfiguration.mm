@@ -69,7 +69,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (WKProcessPool *)processPool
 {
-    return wrapper(protect(*_configuration)->processPool());
+    return wrapper(_configuration->processPool());
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 

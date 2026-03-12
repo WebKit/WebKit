@@ -43,3 +43,8 @@ bool isSiteIsolationEnabled(WKWebView *webView)
 
     return false;
 }
+
+bool isUsingBackForwardCache(WKWebView *webView)
+{
+    return [webView _isUsingBackForwardCache];
+}

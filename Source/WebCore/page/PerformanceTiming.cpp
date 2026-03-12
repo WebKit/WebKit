@@ -351,7 +351,7 @@ unsigned long long PerformanceTiming::loadEventEnd() const
 
 const DocumentLoader* PerformanceTiming::documentLoader() const
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return nullptr;
 
@@ -360,7 +360,7 @@ const DocumentLoader* PerformanceTiming::documentLoader() const
 
 const DocumentEventTiming* PerformanceTiming::documentEventTiming() const
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return nullptr;
 
@@ -372,19 +372,16 @@ const DocumentEventTiming* PerformanceTiming::documentEventTiming() const
 
 const DocumentLoadTiming* PerformanceTiming::documentLoadTiming() const
 {
-    RefPtr loader = documentLoader();
-    if (!loader)
-        return nullptr;
-
-    return &loader->timing();
+    if (auto* loader = documentLoader())
+        return &loader->timing();
+    return nullptr;
 }
 
 const NetworkLoadMetrics* PerformanceTiming::networkLoadMetrics() const
 {
-    RefPtr loader = documentLoader();
-    if (!loader)
-        return nullptr;
-    return loader->response().deprecatedNetworkLoadMetricsOrNull();
+    if (auto* loader = documentLoader())
+        return loader->response().deprecatedNetworkLoadMetricsOrNull();
+    return nullptr;
 }
 
 unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(MonotonicTime timeStamp) const

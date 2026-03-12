@@ -110,7 +110,6 @@ TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, cons
     , m_shadowColorFilter(shadowColorFilter)
     , m_combinedText(combinedText)
     , m_emphasisMarkOffset(emphasisMarkOffset)
-    , m_writingMode(renderStyle.writingMode())
 {
 }
 

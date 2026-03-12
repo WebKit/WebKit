@@ -82,7 +82,7 @@ public:
 
     bool isSkippedContentAnimation() const;
 
-    const String& id() const { return m_id; }
+    const String& id() const LIFETIME_BOUND { return m_id; }
     void setId(String&&);
 
     AnimationEffect* bindingsEffect() const { return effect(); }
@@ -112,10 +112,10 @@ public:
     bool pending() const { return hasPendingPauseTask() || hasPendingPlayTask(); }
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
-    ReadyPromise& ready() { return m_readyPromise.get(); }
+    ReadyPromise& ready() LIFETIME_BOUND { return m_readyPromise.get(); }
 
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
-    FinishedPromise& finished() { return m_finishedPromise.get(); }
+    FinishedPromise& finished() LIFETIME_BOUND { return m_finishedPromise.get(); }
 
     enum class Silently : bool { No, Yes };
     virtual void cancel(Silently = Silently::No);
@@ -138,8 +138,8 @@ public:
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual ReplaceState bindingsReplaceState() const { return replaceState(); }
     virtual bool bindingsPending() const { return pending(); }
-    virtual ReadyPromise& bindingsReady() { return ready(); }
-    virtual FinishedPromise& bindingsFinished() { return finished(); }
+    virtual ReadyPromise& bindingsReady() LIFETIME_BOUND { return ready(); }
+    virtual FinishedPromise& bindingsFinished() LIFETIME_BOUND { return finished(); }
     virtual ExceptionOr<void> bindingsPlay() { return play(); }
     virtual ExceptionOr<void> bindingsPause() { return pause(); }
     std::optional<WebAnimationTime> holdTime() const { return m_holdTime; }
@@ -156,7 +156,7 @@ public:
     virtual void setBindingsRangeEnd(TimelineRangeValue&&);
     void setRangeStart(Style::SingleAnimationRangeStart&&);
     void setRangeEnd(Style::SingleAnimationRangeEnd&&);
-    const Style::SingleAnimationRange& range();
+    const Style::SingleAnimationRange& range() LIFETIME_BOUND;
 
     bool needsTick() const;
     virtual void tick();

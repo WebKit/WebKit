@@ -162,7 +162,7 @@ public:
     static Thread& currentSingleton();
 
     // Set of all WTF::Thread created threads.
-    WTF_EXPORT_PRIVATE static ThreadSafeWeakHashSet<Thread>& allThreads();
+    WTF_EXPORT_PRIVATE static ThreadSafeWeakHashSet<Thread>& NODELETE allThreads();
 
     WTF_EXPORT_PRIVATE unsigned numberOfThreadGroups();
 

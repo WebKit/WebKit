@@ -47,8 +47,8 @@ public:
     ~RenderLineBoxList();
 #endif
 
-    LegacyInlineFlowBox* firstLegacyLineBox() const { return m_firstLineBox; }
-    LegacyInlineFlowBox* lastLegacyLineBox() const { return m_lastLineBox; }
+    LegacyInlineFlowBox* firstLegacyLineBox() const LIFETIME_BOUND { return m_firstLineBox; }
+    LegacyInlineFlowBox* lastLegacyLineBox() const LIFETIME_BOUND { return m_lastLineBox; }
 
     void checkConsistency() const;
 

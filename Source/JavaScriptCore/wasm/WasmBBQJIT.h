@@ -165,7 +165,7 @@ public:
 
         void dump(PrintStream& out) const;
 
-        bool operator==(Location other) const;
+        bool NODELETE operator==(Location other) const;
 
         Kind NODELETE kind() const;
 
@@ -438,8 +438,8 @@ public:
         };
 
         static RegisterBinding none() { return RegisterBinding(); }
-        static RegisterBinding fromValue(Value value);
-        static RegisterBinding scratch();
+        static RegisterBinding NODELETE fromValue(Value);
+        static RegisterBinding NODELETE scratch();
 
         Value NODELETE toValue() const;
 
@@ -849,7 +849,7 @@ public:
 
         void linkIfBranch(MacroAssembler::AbstractMacroAssemblerType* masm);
 
-        void dump(PrintStream& out) const;
+        void NODELETE dump(PrintStream& out) const;
 
         LocalOrTempIndex NODELETE enclosedHeight() const;
 
@@ -1377,7 +1377,7 @@ public:
 
     TruncationKind NODELETE truncationKind(OpType truncationOp);
 
-    TruncationKind truncationKind(Ext1OpType truncationOp);
+    TruncationKind NODELETE truncationKind(Ext1OpType truncationOp);
 
     FloatingPointRange NODELETE lookupTruncationRange(TruncationKind truncationKind);
 
@@ -1394,7 +1394,7 @@ public:
 
     [[nodiscard]] PartialResult addI31GetU(TypedExpression value, ExpressionType& result);
 
-    const Ref<TypeDefinition> getTypeDefinition(uint32_t typeIndex);
+    const Ref<TypeDefinition> NODELETE getTypeDefinition(uint32_t typeIndex);
 
     // Given a type index, verify that it's an array type and return its expansion
     const ArrayType* getArrayTypeDefinition(uint32_t typeIndex);
@@ -1926,17 +1926,17 @@ public:
     // Control flow
     [[nodiscard]] ControlData addTopLevel(BlockSignature&&);
 
-    bool hasLoops() const;
+    bool NODELETE hasLoops() const;
 
     MacroAssembler::Label addLoopOSREntrypoint();
 
     [[nodiscard]] PartialResult addBlock(BlockSignature&&, Stack& enclosingStack, ControlType& result, Stack& newStack);
 
-    B3::Type toB3Type(Type type);
+    B3::Type NODELETE toB3Type(Type);
 
-    B3::Type toB3Type(TypeKind kind);
+    B3::Type toB3Type(TypeKind);
 
-    B3::ValueRep toB3Rep(Location location);
+    B3::ValueRep toB3Rep(Location);
 
     StackMap makeStackMap(const ControlData& data, Stack& enclosingStack);
 
@@ -2004,7 +2004,7 @@ public:
         BranchNotFolded
     };
 
-    [[nodiscard]] BranchFoldResult tryFoldFusedBranchCompare(OpType, ExpressionType);
+    [[nodiscard]] BranchFoldResult NODELETE tryFoldFusedBranchCompare(OpType, ExpressionType);
     [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location);
     [[nodiscard]] BranchFoldResult tryFoldFusedBranchCompare(OpType, ExpressionType, ExpressionType);
     [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location, ExpressionType, Location);
@@ -2032,9 +2032,9 @@ public:
     template<typename Args>
     void saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation& callInfo, const TypeDefinition& signature);
 
-    void slowPathSpillBindings(const RegisterBindings& bindings);
+    void slowPathSpillBindings(const RegisterBindings&);
     void slowPathRestoreBindings(const RegisterBindings&);
-    void restoreValuesAfterCall(const CallInformation& callInfo);
+    void NODELETE restoreValuesAfterCall(const CallInformation&);
 
     template<size_t N>
     void returnValuesFromCall(Vector<Value, N>& results, const FunctionSignature& functionType, const CallInformation& callInfo);
@@ -2067,7 +2067,7 @@ public:
 
     // SIMD
 
-    bool usesSIMD();
+    bool NODELETE usesSIMD();
 
     void notifyFunctionUsesSIMD();
 
@@ -2118,20 +2118,20 @@ public:
     PartialResult addSIMDRelaxedFMA(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType, ExpressionType&);
 
     void dump(const ControlStack&, const Stack*);
-    void didFinishParsingLocals();
-    void didPopValueFromStack(ExpressionType, ASCIILiteral);
+    void NODELETE didFinishParsingLocals();
+    void NODELETE didPopValueFromStack(ExpressionType, ASCIILiteral);
 
     void finalize();
 
-    Vector<UnlinkedHandlerInfo>&& takeExceptionHandlers();
-    FixedBitVector&& takeDirectCallees();
-    Vector<CCallHelpers::Label>&& takeCatchEntrypoints();
+    Vector<UnlinkedHandlerInfo>&& NODELETE takeExceptionHandlers();
+    FixedBitVector&& NODELETE takeDirectCallees();
+    Vector<CCallHelpers::Label>&& NODELETE takeCatchEntrypoints();
     Box<PCToCodeOriginMapBuilder> takePCToCodeOriginMapBuilder();
 
     std::unique_ptr<BBQDisassembler> takeDisassembler();
 
 private:
-    static bool isScratch(Location loc);
+    static bool NODELETE isScratch(Location);
 
     void emitStoreConst(Value constant, Location dst);
     void emitStoreConst(StorageType, Value constant, BaseIndex dst);
@@ -2173,32 +2173,32 @@ private:
     template<size_t N, typename OverflowHandler>
     void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector);
 
-    ControlData& currentControlData();
+    ControlData& NODELETE currentControlData();
 
-    void setLRUKey(Location, LocalOrTempIndex key);
-    void increaseLRUKey(Location);
+    void NODELETE setLRUKey(Location, LocalOrTempIndex key);
+    void NODELETE increaseLRUKey(Location);
     uint32_t nextLRUKey() { return ++m_lastUseTimestamp; }
 
-    Location bind(Value value);
+    Location bind(Value);
 
-    Location allocate(Value value);
+    Location allocate(Value);
 
-    Location allocateWithHint(Value value, Location hint);
+    Location allocateWithHint(Value, Location hint);
 
-    Location locationOfWithoutBinding(Value value);
+    Location NODELETE locationOfWithoutBinding(Value);
 
-    Location locationOf(Value value);
+    Location locationOf(Value);
 
-    Location loadIfNecessary(Value value);
+    Location loadIfNecessary(Value);
 
     // This should generally be avoided if possible but sometimes you just *need* a value in a register.
     Location materializeToGPR(Value, std::optional<ScratchScope<1, 0>>&);
 
-    void consume(Value value);
+    void consume(Value);
 
-    Location bind(Value value, Location loc);
+    Location bind(Value, Location);
 
-    void unbind(Value value, Location loc);
+    void unbind(Value, Location);
 
     void unbindAllRegisters();
 
@@ -2211,7 +2211,7 @@ private:
     void clobber(FPRReg fpr) { m_fprAllocator.clobber(*this, fpr); }
     void clobber(JSC::Reg reg) { reg.isGPR() ? clobber(reg.gpr()) : clobber(reg.fpr()); }
 
-    Location canonicalSlot(Value value);
+    Location NODELETE canonicalSlot(Value);
 
     Location allocateStack(Value value);
 

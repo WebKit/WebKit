@@ -79,7 +79,7 @@ public:
     void setSubject(Element*);
     void setSubject(const Styleable&);
 
-    const Style::ViewTimelineInsetItem& insets() const { return m_insets; }
+    const Style::ViewTimelineInsetItem& insets() const LIFETIME_BOUND { return m_insets; }
     void setInsets(const Style::ViewTimelineInsetItem& insets) { m_insets = insets; }
 
     Ref<CSSNumericValue> startOffset() const;

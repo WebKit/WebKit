@@ -59,9 +59,14 @@ void createMediaPlayerDecodingConfigurationGStreamer(PlatformMediaDecodingConfig
     PlatformMediaCapabilitiesDecodingInfo info;
     info.supported = lookupResult.isSupported;
     info.powerEfficient = lookupResult.isUsingHardware;
-    info.configuration = WTF::move(configuration);
     info.smooth = lookupResult.isSupported;
 
+    if (configuration.audio && configuration.audio->spatialRendering.value_or(false)) {
+        auto channelCount = configuration.audio->channels.toDouble();
+        info.supported &= channelCount > 2;
+    }
+
+    info.configuration = WTF::move(configuration);
     callback(WTF::move(info));
 }
 
@@ -77,5 +82,7 @@ void createMediaPlayerEncodingConfigurationGStreamer(PlatformMediaEncodingConfig
 
     callback(WTF::move(info));
 }
-}
-#endif
+
+} // namespace WebCore
+
+#endif // USE(GSTREAMER)

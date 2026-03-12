@@ -77,6 +77,12 @@ ResourceError blockedByContentFilterError(const ResourceRequest& request)
 {
     return ResourceError(API::Error::webKitPolicyErrorDomain(), API::Error::Policy::FrameLoadBlockedByContentFilter, request.url(), WEB_UI_STRING("The URL was blocked by a content filter", "WebKitErrorFrameLoadBlockedByContentFilter description"));
 }
+
+bool isBlockedByContentFilterError(const WebCore::ResourceError& error)
+{
+    return error.domain() == API::Error::webKitPolicyErrorDomain() && error.errorCode() == API::Error::Policy::FrameLoadBlockedByContentFilter;
+}
+
 #endif
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)

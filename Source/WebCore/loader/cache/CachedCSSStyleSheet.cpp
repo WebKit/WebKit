@@ -51,7 +51,7 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, PAL::S
 
 CachedCSSStyleSheet::~CachedCSSStyleSheet()
 {
-    if (RefPtr parsedStyleSheetCache = m_parsedStyleSheetCache)
+    if (auto* parsedStyleSheetCache = m_parsedStyleSheetCache.get())
         parsedStyleSheetCache->removedFromMemoryCache();
 }
 
@@ -74,7 +74,7 @@ void CachedCSSStyleSheet::setEncoding(const String& chs)
 
 ASCIILiteral CachedCSSStyleSheet::encoding() const
 {
-    return protect(m_decoder)->encoding().name();
+    return m_decoder->encoding().name();
 }
 
 const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, bool* hasValidMIMEType, bool* hasHTTPStatusOK) const
@@ -133,7 +133,7 @@ void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinu
 
     CachedResourceClientWalker<CachedStyleSheetClient> walker(*this);
     while (RefPtr client = walker.next())
-        client->setCSSStyleSheet(m_resourceRequest.url().string(), response().url(), protect(m_decoder)->encoding().name(), this);
+        client->setCSSStyleSheet(m_resourceRequest.url().string(), response().url(), m_decoder->encoding().name(), this);
 }
 
 String CachedCSSStyleSheet::responseMIMEType() const
@@ -194,7 +194,7 @@ void CachedCSSStyleSheet::destroyDecodedData()
     if (!m_parsedStyleSheetCache)
         return;
 
-    Ref { *m_parsedStyleSheetCache }->removedFromMemoryCache();
+    m_parsedStyleSheetCache->removedFromMemoryCache();
     m_parsedStyleSheetCache = nullptr;
 
     setDecodedSize(0);
@@ -227,7 +227,7 @@ void CachedCSSStyleSheet::saveParsedStyleSheet(Ref<StyleSheetContents>&& sheet)
 {
     ASSERT(sheet->isCacheable());
 
-    if (RefPtr parsedStyleSheetCache = m_parsedStyleSheetCache)
+    if (auto* parsedStyleSheetCache = m_parsedStyleSheetCache.get())
         parsedStyleSheetCache->removedFromMemoryCache();
     m_parsedStyleSheetCache = sheet.copyRef();
     sheet->addedToMemoryCache();

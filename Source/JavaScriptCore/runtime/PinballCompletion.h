@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/EvacuatedStack.h>
-#include <JavaScriptCore/FPRInfo.h>
 #include <JavaScriptCore/GPRInfo.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSFunctionWithFields.h>
@@ -58,9 +57,9 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue proto);
     static PinballCompletion* create(VM&, Vector<std::unique_ptr<EvacuatedStackSlice>>&&, CPURegister* calleeSaves, JSPromise* resultPromise);
 
-    JSPromise* resultPromise() { return m_resultPromise.get(); }
+    JSPromise* resultPromise() LIFETIME_BOUND { return m_resultPromise.get(); }
 
-    Vector<std::unique_ptr<EvacuatedStackSlice>>& slices() { return m_slices; }
+    Vector<std::unique_ptr<EvacuatedStackSlice>>& slices() LIFETIME_BOUND { return m_slices; }
     std::unique_ptr<EvacuatedStackSlice> takeTopSlice() { return m_slices.takeLast(); }
     bool hasSlices() const { return !m_slices.isEmpty(); }
 
@@ -82,36 +81,6 @@ private:
 
 JSFunctionWithFields* createPinballCompletionFulfillHandler(VM&, JSGlobalObject*, PinballCompletion*);
 JSFunctionWithFields* createPinballCompletionRejectHandler(VM&, JSGlobalObject*, PinballCompletion*);
-
-// Allocated on the stack by assembly entry points of fulfill and reject handlers of a suspension promise.
-// Holds all state shared by assembly and C++ code implementing the fulfillment or rejection.
-
-struct PinballHandlerContext final {
-    WTF_FORBID_HEAP_ALLOCATION;
-public:
-    static constexpr size_t NumberOfWasmArgumentRegisters = GPRInfo::numberOfArgumentRegisters + FPRInfo::numberOfArgumentRegisters;
-
-#if ASSERT_ENABLED
-    size_t magic;
-#endif
-    JSGlobalObject* globalObject;
-    VM* vm;
-    JSFunctionWithFields* handler;
-    EvacuatedStackSlice* slice;
-    size_t sliceByteSize;
-    JSPIContext jspiContext;
-    // Callee saves to restore before entering the evacuated code (points into the PinballCompletion held by the handler).
-    CPURegister* evacuatedCalleeSaves;
-    // Callee saves captured on entry into the handler.
-    CPURegister handlerCalleeSaves[NUMBER_OF_CALLEE_SAVES_REGISTERS];
-    // A spill buffer for Wasm argument registers to carry their state between slices.
-    // The first element is also used to store the argument to pass into the top WasmToJS frame
-    // and the return value returned by the bottom JSToWasm frame.
-    CPURegister arguments[NumberOfWasmArgumentRegisters];
-    // The following fields are only used for handling rejections.
-    JSCallee* zombieFrameCallee;
-    Exception* exception;
-};
 
 } // namespace JSC
 

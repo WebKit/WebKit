@@ -84,7 +84,7 @@ void DocumentFontLoader::beginLoadingFontSoon(CachedFont& font)
     // Increment the request count now, in order to prevent didFinishLoad from being dispatched
     // after this font has been requested but before it began loading. Balanced by
     // decrementRequestCount() in fontLoadingTimerFired() and in stopLoadingAndClearFonts().
-    protect(protect(m_document)->cachedResourceLoader())->incrementRequestCount(font);
+    protect(m_document)->cachedResourceLoader().incrementRequestCount(font);
 
     if (!m_isFontLoadingSuspended && !m_fontLoadingTimer.isActive())
         m_fontLoadingTimer.startOneShot(0_s);

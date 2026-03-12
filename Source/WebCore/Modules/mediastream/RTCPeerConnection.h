@@ -146,6 +146,7 @@ public:
     bool isStopped() const { return m_isStopped; }
 
     void addInternalTransceiver(Ref<RTCRtpTransceiver>&&);
+    void removeTransceiver(const RTCRtpTransceiver&);
 
     // 5.1 RTCPeerConnection extensions
     Vector<std::reference_wrapper<RTCRtpSender>> getSenders() const;
@@ -182,7 +183,7 @@ public:
     void scheduleEvent(Ref<Event>&&);
 
     void disableICECandidateFiltering() { protect(*m_backend)->disableICECandidateFiltering(); }
-    void enableICECandidateFiltering() { protect(*m_backend)->enableICECandidateFiltering(); }
+    void enableICECandidateFiltering() { m_backend->enableICECandidateFiltering(); }
 
     void clearController() { m_controller = nullptr; }
 

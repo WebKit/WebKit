@@ -222,9 +222,10 @@ bool MockSourceBufferPrivate::canSetMinimumUpcomingPresentationTime(TrackID) con
 
 bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
 {
-    MediaEngineSupportParameters parameters;
-    parameters.isMediaSource = true;
-    parameters.type = contentType;
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = contentType
+    };
     return MockMediaPlayerMediaSource::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 

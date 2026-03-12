@@ -70,7 +70,7 @@ public:
     void releaseKeys() final;
     bool update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) final;
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const final;
-    const String& sessionId() const final { return m_sessionId; }
+    const String& sessionId() const LIFETIME_BOUND final { return m_sessionId; }
     void setSessionId(const String& sessionId) { m_sessionId = sessionId; }
 
     void addRenderer(AudioVideoRenderer&);

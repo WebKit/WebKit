@@ -720,7 +720,7 @@ void HTMLAttachmentElement::setUniqueIdentifier(const String& uniqueIdentifier)
 
 AttachmentAssociatedElement* HTMLAttachmentElement::associatedElement() const
 {
-    if (RefPtr host = shadowHost())
+    if (auto* host = shadowHost())
         return host->asAttachmentAssociatedElement();
     return nullptr;
 }

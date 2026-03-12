@@ -107,7 +107,7 @@ public:
     JSRetainPtr<JSStringRef> valueDescription() override;
     int insertionPointLineNumber() override;
     JSRetainPtr<JSStringRef> selectedTextRange() override;
-    JSRetainPtr<JSStringRef> intersectionWithSelectionRange() override;
+    RefPtr<AccessibilityTextMarkerRange> intersectionWithSelectionRange() override;
     JSRetainPtr<JSStringRef> textInputMarkedRange() const override;
     bool isAtomicLiveRegion() const override;
     bool isBusy() const override;

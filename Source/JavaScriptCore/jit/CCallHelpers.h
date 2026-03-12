@@ -533,7 +533,7 @@ private:
 #endif // USE(JSVALUE64)
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename Arg, typename... Args>
-        requires WTF::DerivedFromOrConvertibleTo<Arg, TrustedImm> // DerivedFromOrConvertibleTo instead of derived_from since DFGSpeculativeJIT has its own implementation of TrustedImmPtr
+        requires DerivedFromOrConvertibleTo<Arg, TrustedImm> // DerivedFromOrConvertibleTo instead of derived_from since DFGSpeculativeJIT has its own implementation of TrustedImmPtr
     ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, Arg arg, Args... args)
     {
         // Right now this only supports non-floating point immediate arguments since we never call operations with non-register values.

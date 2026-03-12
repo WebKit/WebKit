@@ -123,12 +123,12 @@ static bool containsPreservedTab(const InlineItem& inlineItem)
         return false;
     if (!textItem->isWhitespace())
         return false;
-    CheckedRef textBox = textItem->inlineTextBox();
+    auto& textBox = textItem->inlineTextBox();
     if (!TextUtil::shouldPreserveSpacesAndTabs(textBox))
         return false;
     auto start = textItem->start();
     auto length = textItem->length();
-    const auto& textContent = textBox->content();
+    const auto& textContent = textBox.content();
     for (size_t index = start; index < start + length; index++) {
         if (textContent[index] == tabCharacter)
             return true;

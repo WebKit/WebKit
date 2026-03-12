@@ -30,13 +30,13 @@ private let largeBufferSize = 32 * 1024 * 1024
 // swift-format-ignore: AlwaysUseLowerCamelCase
 // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
 @_expose(Cxx)
-public func Queue_writeBuffer_thunk(queue: WebGPU.Queue, buffer: MTLBuffer, bufferOffset: UInt64, data: WebGPU.SpanUInt8) {
+public func Queue_writeBuffer_thunk(queue: WebGPU.Queue, buffer: any MTLBuffer, bufferOffset: UInt64, data: WebGPU.SpanUInt8) {
     // FIXME (rdar://161269480): We should be able to declare 'data' as MutableSpan<UInt8>, which will remove this use of 'unsafe'.
     queue.writeBuffer(buffer: buffer, bufferOffset: bufferOffset, data: unsafe MutableSpan(_unsafeCxxSpan: data))
 }
 
 extension WebGPU.Queue {
-    func writeBuffer(buffer: MTLBuffer, bufferOffset: UInt64, data: consuming MutableSpan<UInt8>) {
+    func writeBuffer(buffer: any MTLBuffer, bufferOffset: UInt64, data: consuming MutableSpan<UInt8>) {
         guard self.metalDevice() != nil else {
             return
         }

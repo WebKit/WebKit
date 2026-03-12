@@ -56,14 +56,14 @@ public:
         return adoptRef(*new SecurityPolicyViolationEvent(type, WTF::move(initializer), isTrusted));
     }
 
-    const String& documentURI() const { return m_documentURI; }
-    const String& referrer() const { return m_referrer; }
-    const String& blockedURI() const { return m_blockedURI; }
-    const String& violatedDirective() const { return m_violatedDirective; }
-    const String& effectiveDirective() const { return m_effectiveDirective; }
-    const String& originalPolicy() const { return m_originalPolicy; }
-    const String& sourceFile() const { return m_sourceFile; }
-    const String& sample() const { return m_sample; }
+    const String& documentURI() const LIFETIME_BOUND { return m_documentURI; }
+    const String& referrer() const LIFETIME_BOUND { return m_referrer; }
+    const String& blockedURI() const LIFETIME_BOUND { return m_blockedURI; }
+    const String& violatedDirective() const LIFETIME_BOUND { return m_violatedDirective; }
+    const String& effectiveDirective() const LIFETIME_BOUND { return m_effectiveDirective; }
+    const String& originalPolicy() const LIFETIME_BOUND { return m_originalPolicy; }
+    const String& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
+    const String& sample() const LIFETIME_BOUND { return m_sample; }
     Disposition disposition() const { return m_disposition; }
     unsigned short statusCode() const { return m_statusCode; }
     unsigned lineNumber() const { return m_lineNumber; }

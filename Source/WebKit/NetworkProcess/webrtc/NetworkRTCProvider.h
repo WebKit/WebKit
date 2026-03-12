@@ -121,8 +121,8 @@ public:
 
 #if PLATFORM(COCOA)
     bool webRTCInterfaceMonitoringViaNWEnabled() const;
-    const std::optional<audit_token_t>& sourceApplicationAuditToken() const { return m_sourceApplicationAuditToken; }
-    const char* applicationBundleIdentifier() const { return m_applicationBundleIdentifier.data(); }
+    const std::optional<audit_token_t>& sourceApplicationAuditToken() const LIFETIME_BOUND { return m_sourceApplicationAuditToken; }
+    const char* applicationBundleIdentifier() const LIFETIME_BOUND { return m_applicationBundleIdentifier.data(); }
 #endif
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&);

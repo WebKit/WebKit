@@ -60,7 +60,7 @@ static uint64_t maxBufferSize(id<MTLDevice> device)
     return multipleOf4(result);
 }
 
-static constexpr uint32_t largeReasonableLimit()
+static constexpr uint32_t NODELETE largeReasonableLimit()
 {
     return USHRT_MAX;
 }
@@ -762,7 +762,7 @@ bool isValid(const WGPULimits& limits)
 
 } // namespace WebGPU
 
-WGPULimits wgpuDefaultLimits()
+WGPULimits NODELETE wgpuDefaultLimits()
 {
     return WebGPU::defaultLimits();
 }

@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "CSSColor.h"
+#include "CSSColorInlines.h"
 
 #include "CSSAbsoluteColor.h"
 #include "CSSColorLayers.h"

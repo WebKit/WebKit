@@ -31,7 +31,6 @@
 #include "CommonVM.h"
 #include "ContainerNodeInlines.h"
 #include "ContentSecurityPolicy.h"
-#include "DocumentEventLoop.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
@@ -39,12 +38,10 @@
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
-#include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "GCReachableRef.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -463,13 +460,13 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
     if (ScriptDisallowedScope::InMainThread::isScriptAllowed())
         return document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, getNameAttribute(), mimeType, paramNames, paramValues);
 
-    protect(document->eventLoop())->queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues, document]() mutable {
-        if (!this->isConnected() || &this->document() != document.ptr())
+    queueTaskKeepingNodeAlive(*this, TaskSource::Networking, [relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues, document](auto& element) mutable {
+        if (!element.isConnected() || &element.document() != document.ptr())
             return;
-        RefPtr frame = this->document().frame();
+        RefPtr frame = element.document().frame();
         if (!frame)
             return;
-        frame->loader().subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
+        frame->loader().subframeLoader().requestObject(element, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
     });
     return true;
 }
@@ -514,8 +511,8 @@ void HTMLPlugInElement::scheduleUpdateForAfterStyleResolution()
 
     m_hasUpdateScheduledForAfterStyleResolution = true;
 
-    protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [element = GCReachableRef { *this }] {
-        element->updateAfterStyleResolution();
+    queueTaskKeepingNodeAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
+        element.updateAfterStyleResolution();
     });
 }
 

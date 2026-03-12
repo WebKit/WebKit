@@ -53,7 +53,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderSVGViewportContainer"_s; }
 
     AffineTransform viewportTransform() const;
-    const AffineTransform& localToParentTransform() const override { return m_localToParentTransform; }
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localToParentTransform; }
 
     void calcViewport() override;
     bool calculateLocalTransform() override;

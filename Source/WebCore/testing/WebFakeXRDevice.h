@@ -56,9 +56,9 @@ public:
     using Fov = PlatformXR::FrameData::Fov;
 
     XREye eye() const { return m_eye; }
-    const Pose& offset() const { return m_offset; }
-    const std::array<float, 16>& projection() const { return m_projection; }
-    const std::optional<Fov>& fieldOfView() const { return m_fov;}
+    const Pose& offset() const LIFETIME_BOUND { return m_offset; }
+    const std::array<float, 16>& projection() const LIFETIME_BOUND { return m_projection; }
+    const std::optional<Fov>& fieldOfView() const LIFETIME_BOUND { return m_fov; }
 
     void setResolution(FakeXRViewInit::DeviceResolution resolution) { m_resolution = resolution; }
     void setOffset(Pose&& offset) { m_offset = WTF::move(offset); }

@@ -209,11 +209,11 @@ public:
         void didAddToDirectory(BlockDirectory*, unsigned index);
         void didRemoveFromDirectory();
         
-        void* start() const { return &m_block->atoms()[m_startAtom]; }
-        void* end() const { return &m_block->atoms()[endAtom]; }
-        void* atomAt(size_t i) const { return &m_block->atoms()[i]; }
+        void* start() const LIFETIME_BOUND { return &m_block->atoms()[m_startAtom]; }
+        void* end() const LIFETIME_BOUND { return &m_block->atoms()[endAtom]; }
+        void* atomAt(size_t i) const LIFETIME_BOUND { return &m_block->atoms()[i]; }
         bool contains(void* p) const { return start() <= p && p < end(); }
-        void* pageStart() const { return &m_block->atoms()[0]; }
+        void* pageStart() const LIFETIME_BOUND { return &m_block->atoms()[0]; }
 
         void dumpState(PrintStream&);
         

@@ -83,7 +83,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
         auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
         auto isReversedInCrossAxis = FlexFormattingUtils::areFlexLinesReversedInCrossAxis(root());
 
-        for (CheckedPtr flexItem = protect(root())->firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
+        for (CheckedPtr flexItem = root().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
             auto& flexItemGeometry = m_globalLayoutState->geometryForBox(*flexItem);
             CheckedRef style = flexItem->style();
             auto mainAxis = LogicalFlexItem::MainAxisGeometry { };
@@ -291,7 +291,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
 void FlexFormattingContext::positionOutOfFlowChildren()
 {
     // FIXME: Implement out-of-flow positioning.
-    for (CheckedPtr outOfFlowChild = protect(root())->firstOutOfFlowChild(); outOfFlowChild; outOfFlowChild = outOfFlowChild->nextOutOfFlowSibling())
+    for (CheckedPtr outOfFlowChild = root().firstOutOfFlowChild(); outOfFlowChild; outOfFlowChild = outOfFlowChild->nextOutOfFlowSibling())
         m_globalLayoutState->ensureGeometryForBox(*outOfFlowChild).setTopLeft({ });
 }
 

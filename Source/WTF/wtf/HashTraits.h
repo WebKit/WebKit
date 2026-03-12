@@ -365,6 +365,10 @@ struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::Tra
 
     static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
     static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
+
+    using TakeType = std::pair<typename FirstTraits::TakeType, typename SecondTraits::TakeType>;
+    static TakeType take(TraitType&& value) { return { FirstTraits::take(WTF::move(value.first)), SecondTraits::take(WTF::move(value.second)) }; }
+    static TakeType emptyTakeValue() { return { FirstTraits::take(FirstTraits::emptyValue()), SecondTraits::take(SecondTraits::emptyValue()) }; }
 };
 
 template<typename First, typename Second>

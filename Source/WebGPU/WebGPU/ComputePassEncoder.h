@@ -79,14 +79,14 @@ public:
 
     Device& device() const { return m_device; }
 
-    bool isValid() const;
-    id<MTLComputeCommandEncoder> computeCommandEncoder() const;
+    bool NODELETE isValid() const;
+    id<MTLComputeCommandEncoder> NODELETE computeCommandEncoder() const;
 
 private:
     ComputePassEncoder(id<MTLComputeCommandEncoder>, const WGPUComputePassDescriptor&, CommandEncoder&, Device&);
     ComputePassEncoder(CommandEncoder&, Device&, NSString*);
 
-    bool validatePopDebugGroup() const;
+    bool NODELETE validatePopDebugGroup() const;
 
     void makeInvalid(NSString* = nil);
     void executePreDispatchCommands(const Buffer* = nullptr);

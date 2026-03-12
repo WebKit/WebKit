@@ -86,12 +86,12 @@ void ProcessWarming::prewarmGlobally()
 
 WebCore::PrewarmInformation ProcessWarming::collectPrewarmInformation()
 {
-    return { FontCache::forCurrentThread()->collectPrewarmInformation() };
+    return { protect(FontCache::forCurrentThread())->collectPrewarmInformation() };
 }
 
 void ProcessWarming::prewarmWithInformation(PrewarmInformation&& prewarmInfo)
 {
-    FontCache::forCurrentThread()->prewarm(WTF::move(prewarmInfo.fontCache));
+    protect(FontCache::forCurrentThread())->prewarm(WTF::move(prewarmInfo.fontCache));
 }
 
 }

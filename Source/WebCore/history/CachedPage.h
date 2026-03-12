@@ -55,7 +55,7 @@ public:
 
     bool hasExpired() const;
     
-    CachedFrame* cachedMainFrame() const { return m_cachedMainFrame.get(); }
+    CachedFrame* cachedMainFrame() const LIFETIME_BOUND { return m_cachedMainFrame.get(); }
 
 #if ENABLE(VIDEO)
     void markForCaptionPreferencesChanged() { m_needsCaptionPreferencesChanged = true; }

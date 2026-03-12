@@ -45,7 +45,7 @@ public:
 
     BorderStyle style() const { return m_style; }
     LayoutUnit width() const { return m_width; }
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
     bool isTransparent() const { return m_isTransparent; }
     bool isPresent() const { return m_isPresent; }
 

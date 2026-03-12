@@ -1,6 +1,0 @@
-
-
-PASS Feature-Policy header {"screen-wake-lock" : []} disallows the top-level document.
-FAIL Feature-Policy header {"screen-wake-lock" : []} disallows same-origin iframes. assert_false: navigator.wakeLock.request("screen") expected false got true
-PASS Feature-Policy header {"screen-wake-lock" : []} disallows cross-origin iframes.
-

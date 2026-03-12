@@ -1,0 +1,4 @@
+
+
+PASS A navigation to a redirected page ends up on the page redirected to
+

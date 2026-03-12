@@ -42,8 +42,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface NSApplication (Details)
 - (void)_setCurrentEvent:(NSEvent *)event;
@@ -346,7 +348,7 @@ static NSInteger swizzledEventButtonNumber()
     return TestController::singleton().eventSenderProxy()->lastButtonDown();
 }
 
-void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
+void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
     auto button = WebCore::buttonFromShort(static_cast<int16_t>(buttonNumber));
     m_mouseButtonsCurrentlyDown.set(button, true);
@@ -354,63 +356,98 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
 
     updateClickCountForButton(buttonNumber);
 
-    NSEventType eventType = eventTypeForMouseButtonAndAction(button, MouseAction::Down);
-    NSEvent *event = [NSEvent mouseEventWithType:eventType
-                                        location:NSMakePoint(m_position.x, m_position.y)
-                                   modifierFlags:buildModifierFlags(modifiers)
-                                       timestamp:absoluteTimeForEventTime(currentEventTime())
-                                    windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
-                                         context:[NSGraphicsContext currentContext] 
-                                     eventNumber:++m_eventNumber 
-                                      clickCount:m_clickCount 
-                                        pressure:WebCore::ForceAtClick];
+    auto eventType = eventTypeForMouseButtonAndAction(button, MouseAction::Down);
+    RetainPtr event = [NSEvent mouseEventWithType:eventType
+        location:NSMakePoint(m_position.x, m_position.y)
+        modifierFlags:buildModifierFlags(modifiers)
+        timestamp:absoluteTimeForEventTime(currentEventTime())
+        windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
+        context:[NSGraphicsContext currentContext]
+        eventNumber:++m_eventNumber
+        clickCount:m_clickCount
+        pressure:WebCore::ForceAtClick];
 
-    m_targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
-    if (m_targetView) {
+    RetainPtr targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    if (!targetView) {
+        if (completionHandler)
+            completionHandler();
+        return;
+    }
+
+    if (button == WebCore::MouseButton::Left)
+        m_leftMouseButtonDown = true;
+
+    auto dispatchMouseDown = [event, targetView] {
         auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
         auto eventButtonNumberSwizzler = makeUnique<InstanceMethodSwizzler>([NSEvent class], @selector(buttonNumber), reinterpret_cast<IMP>(swizzledEventButtonNumber));
         [NSApp _setCurrentEvent:event];
-        [m_targetView mouseDown:event];
+        [targetView mouseDown:event];
         [NSApp _setCurrentEvent:nil];
-        if (button == WebCore::MouseButton::Left)
-            m_leftMouseButtonDown = true;
+    };
+
+    if (!completionHandler) {
+        dispatchMouseDown();
+        return;
     }
+
+    RetainPtr webView = m_testController->mainWebView()->platformView();
+    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([dispatchMouseDown = WTF::move(dispatchMouseDown), webView, completionHandler = WTF::move(completionHandler)] mutable {
+        dispatchMouseDown();
+        [webView _doAfterProcessingAllPendingMouseEvents:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler();
+        }).get()];
+    }).get());
 }
 
-void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
+void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
     auto button = WebCore::buttonFromShort(static_cast<int16_t>(buttonNumber));
     m_mouseButtonsCurrentlyDown.set(button, false);
     m_lastButtonDown = nsEventButtonNumberFromWebCoreMouseButton(button);
 
-    NSEventType eventType = eventTypeForMouseButtonAndAction(button, MouseAction::Up);
-    NSEvent *event = [NSEvent mouseEventWithType:eventType
-                                        location:NSMakePoint(m_position.x, m_position.y)
-                                   modifierFlags:buildModifierFlags(modifiers)
-                                       timestamp:absoluteTimeForEventTime(currentEventTime())
-                                    windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
-                                         context:[NSGraphicsContext currentContext] 
-                                     eventNumber:++m_eventNumber 
-                                      clickCount:m_clickCount 
-                                        pressure:0.0];
+    auto eventType = eventTypeForMouseButtonAndAction(button, MouseAction::Up);
+    RetainPtr event = [NSEvent mouseEventWithType:eventType
+        location:NSMakePoint(m_position.x, m_position.y)
+        modifierFlags:buildModifierFlags(modifiers)
+        timestamp:absoluteTimeForEventTime(currentEventTime())
+        windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
+        context:[NSGraphicsContext currentContext]
+        eventNumber:++m_eventNumber
+        clickCount:m_clickCount
+        pressure:0.0];
 
-    m_targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     // FIXME: Silly hack to teach WKTR to respect capturing mouse events outside the WKView.
-    // The right solution is just to use NSApplication's built-in event sending methods, 
+    // The right solution is just to use NSApplication's built-in event sending methods,
     // instead of rolling our own algorithm for selecting an event target.
-    if (!m_targetView)
-        m_targetView = m_testController->mainWebView()->platformView();
+    RetainPtr targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    if (!targetView)
+        targetView = m_testController->mainWebView()->platformView();
 
-    ASSERT(m_targetView);
-    auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
-    auto eventButtonNumberSwizzler = makeUnique<InstanceMethodSwizzler>([NSEvent class], @selector(buttonNumber), reinterpret_cast<IMP>(swizzledEventButtonNumber));
-    [NSApp _setCurrentEvent:event];
-    [m_targetView mouseUp:event];
-    [NSApp _setCurrentEvent:nil];
     if (button == WebCore::MouseButton::Left)
         m_leftMouseButtonDown = false;
     m_clickTime = currentEventTime();
     m_clickPosition = m_position;
+
+    auto dispatchMouseUp = [event, targetView] {
+        auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
+        auto eventButtonNumberSwizzler = makeUnique<InstanceMethodSwizzler>([NSEvent class], @selector(buttonNumber), reinterpret_cast<IMP>(swizzledEventButtonNumber));
+        [NSApp _setCurrentEvent:event];
+        [targetView mouseUp:event];
+        [NSApp _setCurrentEvent:nil];
+    };
+
+    if (!completionHandler) {
+        dispatchMouseUp();
+        return;
+    }
+
+    RetainPtr webView = m_testController->mainWebView()->platformView();
+    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([dispatchMouseUp = WTF::move(dispatchMouseUp), webView, completionHandler = WTF::move(completionHandler)] mutable {
+        dispatchMouseUp();
+        [webView _doAfterProcessingAllPendingMouseEvents:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler();
+        }).get()];
+    }).get());
 }
 
 void EventSenderProxy::sendMouseDownToStartPressureEvents()
@@ -613,41 +650,57 @@ void EventSenderProxy::mouseForceChanged(float force)
     IGNORE_NULL_CHECK_WARNINGS_END
 }
 
-void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
+void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
-    NSView *view = m_testController->mainWebView()->platformView();
-    NSPoint newMousePosition = [view convertPoint:NSMakePoint(x, y) toView:nil];
-    bool isDrag = m_leftMouseButtonDown;
-    NSEvent *event = [NSEvent mouseEventWithType:(isDrag ? NSEventTypeLeftMouseDragged : NSEventTypeMouseMoved)
-                                        location:newMousePosition
-                                   modifierFlags:0 
-                                       timestamp:absoluteTimeForEventTime(currentEventTime())
-                                    windowNumber:view.window.windowNumber
-                                         context:[NSGraphicsContext currentContext] 
-                                     eventNumber:++m_eventNumber 
-                                      clickCount:(m_leftMouseButtonDown ? m_clickCount : 0) 
-                                        pressure:0];
+    auto *view = m_testController->mainWebView()->platformView();
+    auto newMousePosition = [view convertPoint:NSMakePoint(x, y) toView:nil];
+    auto isDrag = m_leftMouseButtonDown;
+    RetainPtr event = [NSEvent mouseEventWithType:(isDrag ? NSEventTypeLeftMouseDragged : NSEventTypeMouseMoved)
+        location:newMousePosition
+        modifierFlags:0
+        timestamp:absoluteTimeForEventTime(currentEventTime())
+        windowNumber:view.window.windowNumber
+        context:[NSGraphicsContext currentContext]
+        eventNumber:++m_eventNumber
+        clickCount:(m_leftMouseButtonDown ? m_clickCount : 0)
+        pressure:0];
 
-    CGEventRef cgEvent = event.CGEvent;
+    CGEventRef cgEvent = event.get().CGEvent;
     CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaX, newMousePosition.x - m_position.x);
     CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, -1 * (newMousePosition.y - m_position.y));
     event = [NSEvent eventWithCGEvent:cgEvent];
     m_position.x = newMousePosition.x;
     m_position.y = newMousePosition.y;
 
-    NSPoint windowLocation = event.locationInWindow;
+    RetainPtr webView = m_testController->mainWebView()->platformView();
+
     // Always target drags at the WKWebView to allow for drag-scrolling outside the view.
-    m_targetView = isDrag ? m_testController->mainWebView()->platformView() : [m_testController->mainWebView()->platformView() hitTest:windowLocation];
-    if (m_targetView) {
-        auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
-        [NSApp _setCurrentEvent:event];
-        if (isDrag)
-            [m_targetView mouseDragged:event];
-        else
-            [checked_objc_cast<WKWebView>(m_targetView.get()) _simulateMouseMove:event];
-        [NSApp _setCurrentEvent:nil];
-    } else
-        WTFLogAlways("mouseMoveTo failed to find a target view at %f,%f\n", windowLocation.x, windowLocation.y);
+    // For non-drag moves, _simulateMouseMove: must be called on the WKWebView directly
+    // (not on a hitTest: result, which may not be a WKWebView).
+    auto dispatchMouseMove = [event, webView, isDrag] {
+        if (isDrag) {
+            auto eventPressedMouseButtonsSwizzler = makeUnique<ClassMethodSwizzler>([NSEvent class], @selector(pressedMouseButtons), reinterpret_cast<IMP>(swizzledEventPressedMouseButtons));
+            [NSApp _setCurrentEvent:event];
+            [webView mouseDragged:event];
+            [NSApp _setCurrentEvent:nil];
+        } else {
+            [NSApp _setCurrentEvent:event];
+            [webView _simulateMouseMove:event];
+            [NSApp _setCurrentEvent:nil];
+        }
+    };
+
+    if (!completionHandler) {
+        dispatchMouseMove();
+        return;
+    }
+
+    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([dispatchMouseMove = WTF::move(dispatchMouseMove), webView, completionHandler = WTF::move(completionHandler)] mutable {
+        dispatchMouseMove();
+        [webView _doAfterProcessingAllPendingMouseEvents:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler();
+        }).get()];
+    }).get());
 }
 
 void EventSenderProxy::leapForward(int milliseconds)
@@ -655,11 +708,11 @@ void EventSenderProxy::leapForward(int milliseconds)
     m_time += milliseconds / 1000.0;
 }
 
-void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation, CompletionHandler<void()>&& completionHandler)
 {
-    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:toWTFString(key).createNSString().get() modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
+    RetainPtr modifierKeys = [ModifierKeys modifierKeysWithKey:toWTFString(key).createNSString().get() modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
 
-    NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyDown
+    RetainPtr keyDownEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown
         location:NSMakePoint(5, 5)
         modifierFlags:modifierKeys->modifierFlags
         timestamp:absoluteTimeForEventTime(currentEventTime())
@@ -670,24 +723,43 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
         isARepeat:NO
         keyCode:modifierKeys->keyCode];
 
-    [NSApp _setCurrentEvent:event];
-    [[m_testController->mainWebView()->platformWindow() firstResponder] keyDown:event];
-    [NSApp _setCurrentEvent:nil];
+    RetainPtr keyUpEvent = [NSEvent keyEventWithType:NSEventTypeKeyUp
+        location:NSMakePoint(5, 5)
+        modifierFlags:modifierKeys->modifierFlags
+        timestamp:absoluteTimeForEventTime(currentEventTime())
+        windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
+        context:[NSGraphicsContext currentContext]
+        characters:modifierKeys->eventCharacter.get()
+        charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get()
+        isARepeat:NO
+        keyCode:modifierKeys->keyCode];
 
-    event = [NSEvent keyEventWithType:NSEventTypeKeyUp
-                        location:NSMakePoint(5, 5)
-                        modifierFlags:modifierKeys->modifierFlags
-                        timestamp:absoluteTimeForEventTime(currentEventTime())
-                        windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
-                        context:[NSGraphicsContext currentContext]
-                        characters:modifierKeys->eventCharacter.get()
-                        charactersIgnoringModifiers:modifierKeys->charactersIgnoringModifiers.get()
-                        isARepeat:NO
-                        keyCode:modifierKeys->keyCode];
+    RetainPtr firstResponder = [m_testController->mainWebView()->platformWindow() firstResponder];
 
-    [NSApp _setCurrentEvent:event];
-    [[m_testController->mainWebView()->platformWindow() firstResponder] keyUp:event];
-    [NSApp _setCurrentEvent:nil];
+    auto dispatchKeyEvents = [keyDownEvent, keyUpEvent, firstResponder] {
+        [NSApp _setCurrentEvent:keyDownEvent];
+        [firstResponder keyDown:keyDownEvent];
+        [NSApp _setCurrentEvent:nil];
+
+        [NSApp _setCurrentEvent:keyUpEvent];
+        [firstResponder keyUp:keyUpEvent];
+        [NSApp _setCurrentEvent:nil];
+    };
+
+    if (!completionHandler) {
+        dispatchKeyEvents();
+        return;
+    }
+
+    RetainPtr webView = m_testController->mainWebView()->platformView();
+
+    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([dispatchKeyEvents = WTF::move(dispatchKeyEvents), webView, completionHandler = WTF::move(completionHandler)] mutable {
+        dispatchKeyEvents();
+
+        [webView _doAfterProcessingAllPendingKeyEvents:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler();
+        }).get()];
+    }).get());
 }
 
 void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
@@ -956,16 +1028,5 @@ void EventSenderProxy::scaleGestureEnd(double scale)
 }
 
 #endif // ENABLE(MAC_GESTURE_EVENTS)
-
-void EventSenderProxy::waitForPendingMouseEvents()
-{
-    if (RetainPtr targetView = std::exchange(m_targetView, nullptr)) {
-        __block bool doneProcessingMouseEvents = false;
-        [checked_objc_cast<WKWebView>(targetView.get()) _doAfterProcessingAllPendingMouseEvents:^{
-            doneProcessingMouseEvents = true;
-        }];
-        m_testController->runUntil(doneProcessingMouseEvents, 100_ms);
-    }
-}
 
 } // namespace WTR

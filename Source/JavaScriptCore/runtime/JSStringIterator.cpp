@@ -45,7 +45,7 @@ void JSStringIterator::finishCreation(VM& vm, JSString* iteratedString)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    internalField(Field::Index).set(vm, this, jsNumber(0));
+    internalField(Field::Index).setWithoutWriteBarrier(jsNumber(0));
     internalField(Field::IteratedString).set(vm, this, iteratedString);
 }
 

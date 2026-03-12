@@ -94,6 +94,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCopyPickableRou
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, MRUIControllerProvider);
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, MRNowPlayingActivityActiveRouteIdentifier, NSString *)
+#define MRNowPlayingActivityActiveRouteIdentifier get_MediaRemote_MRNowPlayingActivityActiveRouteIdentifierSingleton()
 #endif
 
 #if HAVE(AVEXPERIENCECONTROLLER)

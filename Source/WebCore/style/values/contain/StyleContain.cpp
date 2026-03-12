@@ -61,8 +61,8 @@ auto CSSValueConversion<Contain>::operator()(BuilderState& state, const CSSValue
         return CSS::Keyword::None { };
 
     ContainValueEnumSet result;
-    for (Ref item : *list) {
-        switch (item->valueID()) {
+    for (auto& item : *list) {
+        switch (item.valueID()) {
         case CSSValueSize:
             if (result.contains(ContainValue::InlineSize)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();

@@ -43,7 +43,7 @@ class InspectorNodeFinder {
 public:
     InspectorNodeFinder(const String& query, bool caseSensitive);
     void performSearch(Node*);
-    const ListHashSet<Node*>& results() const { return m_results; }
+    const ListHashSet<Node*>& results() const LIFETIME_BOUND { return m_results; }
 
 private:
     bool checkEquals(const String&, const String&);

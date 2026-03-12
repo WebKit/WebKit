@@ -35,8 +35,8 @@ using namespace WebCore;
 
 void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
 {
-    if (request.httpBody()) {
-        for (const FormDataElement& element : request.httpBody()->elements()) {
+    if (RefPtr httpBody = request.httpBody()) {
+        for (const FormDataElement& element : httpBody->elements()) {
             auto* fileData = std::get_if<FormDataElement::EncodedFileData>(&element.data);
             if (!fileData)
                 continue;

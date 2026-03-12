@@ -80,7 +80,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement& table, 
             return &*row;
     }
 
-    RefPtr<Element> child;
+    Element* child = nullptr;
 
     // If still looking at head sections, find the first row in the next head section.
     if (!previous)

@@ -34,6 +34,7 @@
 #include "StyleColor.h"
 
 #include "AnimationUtilities.h"
+#include "CSSColorInlines.h"
 #include "CSSColorValue.h"
 #include "CSSKeywordColor.h"
 #include "CSSValuePool.h"

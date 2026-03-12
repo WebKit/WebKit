@@ -66,8 +66,8 @@ public:
 
     TextBoxIterator& operator++() { return traverseNextTextBox(); }
 
-    const TextBox& operator*() const { return get(); }
-    const TextBox* operator->() const { return &get(); }
+    const TextBox& operator*() const LIFETIME_BOUND { return get(); }
+    const TextBox* operator->() const LIFETIME_BOUND { return &get(); }
 
     // This traverses to the next text box generated for the same RenderText/Layout::InlineTextBox.
     TextBoxIterator& traverseNextTextBox();
@@ -78,7 +78,7 @@ private:
     BoxIterator& traverseLineRightwardOnLineIgnoringLineBreak() = delete;
     BoxIterator& traverseLineLeftwardOnLineIgnoringLineBreak() = delete;
 
-    const TextBox& get() const { return downcast<TextBox>(m_box); }
+    const TextBox& get() const LIFETIME_BOUND { return downcast<TextBox>(m_box); }
 };
 
 TextBoxIterator lineLeftmostTextBoxFor(const RenderText&);

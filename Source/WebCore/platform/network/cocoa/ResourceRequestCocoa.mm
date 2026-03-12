@@ -355,7 +355,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 
     configureRequestWithData(nsRequest.get(), m_requestData);
 
-    auto formData = httpBody();
+    RefPtr formData = httpBody();
     if (formData && !formData->isEmpty())
         WebCore::setHTTPBody(nsRequest.get(), WTF::move(formData));
 

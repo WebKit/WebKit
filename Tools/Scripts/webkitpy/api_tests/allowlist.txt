@@ -265,7 +265,6 @@ TestWebKitAPI.DatabaseTracker
 TestWebKitAPI.DateInputTests
 TestWebKitAPI.Decimal
 TestWebKitAPI.DeviceOrientation
-TestWebKitAPI.DeviceScaleFactorOnBack
 TestWebKitAPI.DisableAutomaticSpellingCorrection
 TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/0
 TestWebKitAPI.DisplayListRecorderTest/DisplayListRecorderResultStateTest/1
@@ -436,7 +435,6 @@ TestWebKitAPI.WKPreferencesPrivate
 TestWebKitAPI.WKProcessPoolConfiguration
 TestWebKitAPI.WKScrollGeometry
 TestWebKitAPI.WKScrollViewTests
-TestWebKitAPI.WKUserContentController
 TestWebKitAPI.WKWebExtension
 TestWebKitAPI.WKWebExtensionAPIAlarms
 TestWebKitAPI.WKWebExtensionAPICommands

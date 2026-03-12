@@ -260,7 +260,7 @@ namespace JSC {
         RegisterID* propertyOffset() const { return m_propertyOffset.get(); }
         RegisterID* enumerator() const { return m_enumerator.get(); }
         RegisterID* mode() const { return m_mode.get(); }
-        const std::optional<Variable>& baseVariable() const { return m_baseVariable; }
+        const std::optional<Variable>& baseVariable() const LIFETIME_BOUND { return m_baseVariable; }
 
         void addGetInst(unsigned instIndex, int propertyRegIndex)
         {
@@ -327,6 +327,15 @@ namespace JSC {
         TryData* tryData;
     };
 
+    struct UsingSlot {
+        RefPtr<RegisterID> value;
+        RefPtr<RegisterID> method;
+    };
+
+    struct UsingScope {
+        Vector<UsingSlot> slots;
+        unsigned nextSlot { 0 };
+    };
 
     struct JSGeneratorTraits {
         using OpcodeTraits = JSOpcodeTraits;
@@ -359,7 +368,7 @@ namespace JSC {
         ~BytecodeGenerator();
         
         VM& vm() const { return m_vm; }
-        ParserArena& parserArena() const { return m_scopeNode->parserArena(); }
+        ParserArena& parserArena() const LIFETIME_BOUND { return m_scopeNode->parserArena(); }
         const CommonIdentifiers& propertyNames() const { return *m_vm.propertyNames; }
 
         bool isConstructor() const { return m_codeBlock->isConstructor(); }
@@ -869,6 +878,12 @@ namespace JSC {
         void emitTryWithFinallyThatDoesNotShadowException(const ScopedLambda<void(BytecodeGenerator&)>& emitTry, const ScopedLambda<void(BytecodeGenerator&)>& emitFinally);
         void emitTryWithFinallyThatDoesNotShadowException(FinallyContext&, const ScopedLambda<void(BytecodeGenerator&)>& emitTry, const ScopedLambda<void(BytecodeGenerator&)>& emitFinally);
 
+        // Explicit Resource Management: using declarations
+        UsingScope& currentUsingScope() { ASSERT(!m_usingScopeStack.isEmpty()); return m_usingScopeStack.last(); }
+        void emitPrepareDisposable(RegisterID* value, const JSTextPosition& divot);
+        void emitUsingBodyScope(unsigned usingCount, const ScopedLambda<void(BytecodeGenerator&)>& emitBody);
+        void emitBodyWithUsingIfNeeded(unsigned usingCount, const ScopedLambda<void(BytecodeGenerator&)>& emitBody);
+
         void emitGenericEnumeration(ThrowableExpressionData* enumerationNode, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* = nullptr, RegisterID* forLoopSymbolTable = nullptr);
         void emitEnumeration(ThrowableExpressionData* enumerationNode, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* = nullptr, RegisterID* forLoopSymbolTable = nullptr);
 
@@ -1253,7 +1268,7 @@ namespace JSC {
         JSValue addBigIntConstant(const Identifier&, uint8_t radix, bool sign);
         RegisterID* addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&&, int);
 
-        const JSInstructionStreamWriter& instructions() const { return m_writer; }
+        const JSInstructionStreamWriter& instructions() const LIFETIME_BOUND { return m_writer; }
 
         RegisterID* emitThrowExpressionTooDeepException();
 
@@ -1357,6 +1372,7 @@ namespace JSC {
         Vector<SwitchInfo> m_switchContextStack;
         Vector<Ref<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
+        Vector<UsingScope> m_usingScopeStack;
         unsigned m_yieldPoints { 0 };
         bool m_needsGeneratorification { false };
 

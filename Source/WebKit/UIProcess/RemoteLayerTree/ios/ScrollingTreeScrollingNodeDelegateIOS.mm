@@ -504,10 +504,10 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(std
 
 WKBaseScrollView *ScrollingTreeScrollingNodeDelegateIOS::scrollView() const
 {
-    if (auto* delegate = protect(scrollLayer()).get().delegate) {
-        auto scrollView = dynamic_objc_cast<WKBaseScrollView>(delegate);
-        ASSERT(scrollView);
-        return scrollView;
+    // FIXME: This is a static analyzer false positive.
+    SUPPRESS_UNRETAINED_LOCAL if (auto* delegate = protect(scrollLayer()).get().delegate) {
+        ASSERT(is_objc<WKBaseScrollView>(delegate));
+        return dynamic_objc_cast<WKBaseScrollView>(delegate);
     }
     return nullptr;
 }

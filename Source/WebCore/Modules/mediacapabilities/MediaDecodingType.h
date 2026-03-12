@@ -38,9 +38,9 @@ enum class MediaDecodingType : uint8_t {
 inline PlatformMediaDecodingType toPlatform(MediaDecodingType value)
 {
     switch (value) {
-    case MediaDecodingType::File:           return PlatformMediaDecodingType::File;
+    case MediaDecodingType::File:           return PlatformMediaDecodingType::FileOrHLS;
     case MediaDecodingType::MediaSource:    return PlatformMediaDecodingType::MediaSource;
-    case MediaDecodingType::WebRTC:         return PlatformMediaDecodingType::WebRTC;
+    case MediaDecodingType::WebRTC:         return PlatformMediaDecodingType::MediaStream;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -48,9 +48,9 @@ inline PlatformMediaDecodingType toPlatform(MediaDecodingType value)
 inline MediaDecodingType fromPlatform(PlatformMediaDecodingType value)
 {
     switch (value) {
-    case PlatformMediaDecodingType::File:           return MediaDecodingType::File;
+    case PlatformMediaDecodingType::FileOrHLS:      return MediaDecodingType::File;
     case PlatformMediaDecodingType::MediaSource:    return MediaDecodingType::MediaSource;
-    case PlatformMediaDecodingType::WebRTC:         return MediaDecodingType::WebRTC;
+    case PlatformMediaDecodingType::MediaStream:    return MediaDecodingType::WebRTC;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

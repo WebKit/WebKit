@@ -74,7 +74,7 @@ public:
     NavigationAction(NavigationAction&&);
     NavigationAction& operator=(NavigationAction&&);
 
-    const std::optional<NavigationRequester>& requester() const { return m_requester; }
+    const std::optional<NavigationRequester>& requester() const LIFETIME_BOUND { return m_requester; }
 
     struct UIEventWithKeyStateData {
         UIEventWithKeyStateData(const UIEventWithKeyState&);
@@ -94,15 +94,15 @@ public:
         SyntheticClickType syntheticClickType;
         bool buttonDown;
     };
-    const std::optional<UIEventWithKeyStateData>& keyStateEventData() const { return m_keyStateEventData; }
-    const std::optional<MouseEventData>& mouseEventData() const { return m_mouseEventData; }
+    const std::optional<UIEventWithKeyStateData>& keyStateEventData() const LIFETIME_BOUND { return m_keyStateEventData; }
+    const std::optional<MouseEventData>& mouseEventData() const LIFETIME_BOUND { return m_mouseEventData; }
 
     NavigationAction copyWithShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy) const;
 
     bool isEmpty() const { return !m_requester || m_requester->url.isEmpty() || m_originalRequest.url().isEmpty(); }
 
     URL url() const { return m_originalRequest.url(); }
-    const ResourceRequest& originalRequest() const { return m_originalRequest; }
+    const ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
 
     NavigationType type() const { return m_type; }
 
@@ -118,7 +118,7 @@ public:
     void setOpenedByDOMWithOpener() { m_openedByDOMWithOpener = true; }
 
     void NODELETE setSourceBackForwardItem(HistoryItem*);
-    const std::optional<BackForwardItemIdentifier>& sourceBackForwardItemIdentifier() const { return m_sourceBackForwardItemIdentifier; }
+    const std::optional<BackForwardItemIdentifier>& sourceBackForwardItemIdentifier() const LIFETIME_BOUND { return m_sourceBackForwardItemIdentifier; }
 
     const std::optional<PrivateClickMeasurement>& privateClickMeasurement() const { return m_privateClickMeasurement; };
     void setPrivateClickMeasurement(PrivateClickMeasurement&& privateClickMeasurement) { m_privateClickMeasurement = privateClickMeasurement; };

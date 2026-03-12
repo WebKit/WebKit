@@ -141,24 +141,24 @@ public:
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
 
-    const WebPageProxySet& allPages() const { return m_pages; }
+    const WebPageProxySet& allPages() const LIFETIME_BOUND { return m_pages; }
 
-    const WebsiteDataStoreSet& allWebsiteDataStores() const { return m_websiteDataStores; }
+    const WebsiteDataStoreSet& allWebsiteDataStores() const LIFETIME_BOUND { return m_websiteDataStores; }
     RefPtr<WebsiteDataStore> websiteDataStore(std::optional<PAL::SessionID> = std::nullopt) const;
 
     // Includes both non-private and private browsing content controllers.
-    const UserContentControllerProxySet& allUserContentControllers() const { return m_allUserContentControllers; }
-    const UserContentControllerProxySet& allNonPrivateUserContentControllers() const { return m_allNonPrivateUserContentControllers; }
-    const UserContentControllerProxySet& allPrivateUserContentControllers() const { return m_allPrivateUserContentControllers; }
+    const UserContentControllerProxySet& allUserContentControllers() const LIFETIME_BOUND { return m_allUserContentControllers; }
+    const UserContentControllerProxySet& allNonPrivateUserContentControllers() const LIFETIME_BOUND { return m_allNonPrivateUserContentControllers; }
+    const UserContentControllerProxySet& allPrivateUserContentControllers() const LIFETIME_BOUND { return m_allPrivateUserContentControllers; }
 
-    const WebProcessPoolSet& allProcessPools() const { return m_processPools; }
+    const WebProcessPoolSet& allProcessPools() const LIFETIME_BOUND { return m_processPools; }
     WebProcessProxySet allProcesses() const;
 
     RefPtr<WebExtensionContext> extensionContext(const WebExtension&) const;
     RefPtr<WebExtensionContext> extensionContext(const UniqueIdentifier&) const;
     RefPtr<WebExtensionContext> extensionContext(const URL&) const;
 
-    const WebExtensionContextSet& extensionContexts() const { return m_extensionContexts; }
+    const WebExtensionContextSet& extensionContexts() const LIFETIME_BOUND { return m_extensionContexts; }
     WebExtensionSet extensions() const;
 
     void cookiesDidChange(API::HTTPCookieStore&);

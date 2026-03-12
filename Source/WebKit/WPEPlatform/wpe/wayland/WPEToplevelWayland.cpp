@@ -328,10 +328,7 @@ const struct xdg_toplevel_listener xdgToplevelListener = {
         }
 
         uint32_t pendingState = 0;
-        const auto* stateData = static_cast<uint32_t*>(states->data);
-        for (size_t i = 0; i < states->size; i++) {
-            uint32_t state = stateData[i];
-
+        for (auto state : unsafeMakeSpan(static_cast<uint32_t*>(states->data), states->size / sizeof(uint32_t))) {
             switch (state) {
             case XDG_TOPLEVEL_STATE_FULLSCREEN:
                 pendingState |= WPE_TOPLEVEL_STATE_FULLSCREEN;

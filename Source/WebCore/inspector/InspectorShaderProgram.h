@@ -38,7 +38,7 @@ class InspectorShaderProgram final : public RefCounted<InspectorShaderProgram> {
 public:
     static Ref<InspectorShaderProgram> create(WebGLProgram&, InspectorCanvas&);
 
-    const String& identifier() const { return m_identifier; }
+    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
     InspectorCanvas& canvas() const { return m_canvas; }
     WebGLProgram& program() const { return m_program; }
 

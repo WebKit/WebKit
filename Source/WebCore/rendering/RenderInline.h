@@ -70,11 +70,11 @@ public:
 
     LegacyInlineFlowBox* createAndAppendInlineFlowBox();
 
-    RenderLineBoxList& legacyLineBoxes() { return m_legacyLineBoxes; }
-    const RenderLineBoxList& legacyLineBoxes() const { return m_legacyLineBoxes; }
+    RenderLineBoxList& legacyLineBoxes() LIFETIME_BOUND { return m_legacyLineBoxes; }
+    const RenderLineBoxList& legacyLineBoxes() const LIFETIME_BOUND { return m_legacyLineBoxes; }
     void deleteLegacyLineBoxes();
-    LegacyInlineFlowBox* firstLegacyInlineBox() const { return m_legacyLineBoxes.firstLegacyLineBox(); }
-    LegacyInlineFlowBox* lastLegacyInlineBox() const { return m_legacyLineBoxes.lastLegacyLineBox(); }
+    LegacyInlineFlowBox* firstLegacyInlineBox() const LIFETIME_BOUND { return m_legacyLineBoxes.firstLegacyLineBox(); }
+    LegacyInlineFlowBox* lastLegacyInlineBox() const LIFETIME_BOUND { return m_legacyLineBoxes.lastLegacyLineBox(); }
 
 #if PLATFORM(IOS_FAMILY)
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;

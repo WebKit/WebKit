@@ -70,6 +70,8 @@ public:
 #endif
 
     void clearWheelEventTestMonitor();
+    void startMonitoringWheelEventsForTesting(CompletionHandler<void()>&&);
+    void waitForWheelEventsToCompleteForTesting(CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned>);

@@ -80,7 +80,7 @@ void UIEventWithKeyState::setModifierKeys(bool ctrlKey, bool altKey, bool shiftK
 RefPtr<UIEventWithKeyState> findEventWithKeyState(Event* event)
 {
     for (RefPtr e = event; e; e = e->underlyingEvent()) {
-        if (is<KeyboardEvent>(*e) || is<MouseEvent>(*e))
+        if (isAnyOf<KeyboardEvent, MouseEvent>(*e))
             return downcast<UIEventWithKeyState>(WTF::move(e));
     }
     return nullptr;

@@ -58,10 +58,10 @@ public:
 
     // Returns the actual allocated buffer size, which may be larger than size()
     // due to GPU alignment requirements (e.g. tiled formats).
-    const IntSize& allocatedSize() const { return m_allocatedSize; }
+    const IntSize& allocatedSize() const LIFETIME_BOUND { return m_allocatedSize; }
 
-    const IntSize& size() const { return m_size; }
-    const OptionSet<BufferFlag>& flags() const { return m_flags; }
+    const IntSize& size() const LIFETIME_BOUND { return m_size; }
+    const OptionSet<BufferFlag>& flags() const LIFETIME_BOUND { return m_flags; }
 
     // Map dma-buf into memory, if not yet mapped.
     bool mapIfNeeded();
@@ -91,7 +91,7 @@ public:
 
         static std::unique_ptr<AccessScope> create(MemoryMappedGPUBuffer&, Mode);
 
-        const Mode& mode() const { return m_mode; }
+        const Mode& mode() const LIFETIME_BOUND { return m_mode; }
         const MemoryMappedGPUBuffer& buffer() const { return m_buffer; }
 
     private:

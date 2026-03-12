@@ -866,8 +866,8 @@ std::optional<SimpleRange> AccessibilityObject::simpleRange() const
 
     // |this| is a stitching of multiple objects, so we need to include all of their contents in the range.
     CheckedPtr cache = axObjectCache();
-    if (RefPtr endNode = cache ? lastNode(stitchGroup->members(), *cache) : nullptr) {
-        if (std::optional range = makeSimpleRange(positionBeforeNode(node.get()), positionAfterNode(endNode.get())))
+    if (RefPtr endNode = cache ? lastNonAriaHiddenNode(stitchGroup->members(), *cache) : nullptr) {
+        if (std::optional range = makeSimpleRange(positionBeforeNode(*node), positionAfterNode(*endNode)))
             return range;
     }
     return AXObjectCache::rangeForNodeContents(*node);
@@ -1177,8 +1177,8 @@ static std::optional<TextOperationRange> textOperationRangeFromRange(const Simpl
     if (!rootEditableElement)
         return std::nullopt;
 
-    auto scopeStart = firstPositionInNode(rootEditableElement.get());
-    auto scopeEnd = lastPositionInNode(rootEditableElement.get());
+    auto scopeStart = firstPositionInNode(*rootEditableElement);
+    auto scopeEnd = lastPositionInNode(*rootEditableElement);
 
     std::optional<SimpleRange> scope = makeSimpleRange(scopeStart, scopeEnd);
     if (!scope)
@@ -1947,7 +1947,7 @@ static StringView lineStartListMarkerText(const RenderListItem* listItem, const 
         return { };
 
     // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
-    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(listItem->element())))
+    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(*listItem->element())))
         return { };
     return *markerText;
 }
@@ -1996,7 +1996,7 @@ bool AccessibilityObject::shouldCacheStringValue() const
     // Only consider RenderTexts for now.
 
     if (renderer->isAnonymous()) {
-        CheckedPtr parent = renderer ? renderer->parent() : nullptr;
+        auto* parent = renderer ? renderer->parent() : nullptr;
         if (is<PseudoElement>(parent ? parent->element() : nullptr)) {
             // RenderTexts descending from pseudo-elements (e.g. ::before) can have alt text that
             // we don't currently handle via text runs, and thus we must cache the string value.
@@ -2554,12 +2554,12 @@ AccessibilityCurrentState AccessibilityObject::currentState() const
 
 bool AccessibilityObject::isModalDescendant(Node& modalNode) const
 {
-    RefPtr node = this->node();
+    auto* node = this->node();
     // ARIA 1.1 aria-modal, indicates whether an element is modal when displayed.
     // For the decendants of the modal object, they should also be considered as aria-modal=true.
     // Determine descendancy by iterating the composed tree which inherently accounts for shadow roots and slots.
-    for (RefPtr ancestor = node.get(); ancestor; ancestor = ancestor->parentInComposedTree()) {
-        if (ancestor.get() == &modalNode)
+    for (auto* ancestor = node; ancestor; ancestor = ancestor->parentInComposedTree()) {
+        if (ancestor == &modalNode)
             return true;
     }
     return false;
@@ -3953,18 +3953,6 @@ bool AccessibilityObject::isARIAHidden() const
     return element && equalLettersIgnoringASCIICase(element->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s);
 }
 
-// ARIA component of hidden definition.
-// https://www.w3.org/TR/wai-aria/#dfn-hidden
-bool AccessibilityObject::isAXHidden() const
-{
-    if (isFocused())
-        return false;
-
-    return Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const auto& object) {
-        return object.isARIAHidden();
-    }) != nullptr;
-}
-
 bool AccessibilityObject::isShowingValidationMessage() const
 {
     if (RefPtr element = this->element()) {
@@ -4095,6 +4083,19 @@ bool AccessibilityObject::isIgnored() const
     return ignored;
 }
 
+std::optional<bool> AccessibilityObject::cachedIsIgnored() const
+{
+    switch (m_lastKnownIsIgnoredValue) {
+    case AccessibilityObjectInclusion::IgnoreObject:
+        return true;
+    case AccessibilityObjectInclusion::IncludeObject:
+        return false;
+    case AccessibilityObjectInclusion::DefaultBehavior:
+        return std::nullopt;
+    }
+    return std::nullopt;
+}
+
 bool AccessibilityObject::isIgnoredWithoutCache(AXObjectCache* cache) const
 {
     // If we are in the midst of retrieving the current modal node, we only need to consider whether the object
@@ -4155,13 +4156,13 @@ Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedN
 #if PLATFORM(COCOA)
 bool AccessibilityObject::preventKeyboardDOMEventDispatch() const
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     return frame && frame->settings().preventKeyboardDOMEventDispatch();
 }
 
 void AccessibilityObject::setPreventKeyboardDOMEventDispatch(bool on)
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return;
     frame->settings().setPreventKeyboardDOMEventDispatch(on);

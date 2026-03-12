@@ -149,7 +149,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
         return;
 
     ASSERT(element->shadowRoot());
-    if (targetNode != element.ptr() && !targetNode->isDescendantOf(protect(element->userAgentShadowRoot()).get()))
+    if (targetNode != element.ptr() && !targetNode->isDescendantOf(element->userAgentShadowRoot()))
         return;
     Ref thumb = typedSliderThumbElement();
     if (targetNode == thumb.ptr())
@@ -215,7 +215,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     const Decimal bigStep = std::max((stepRange.maximum() - stepRange.minimum()) / 10, step);
 
     bool isVertical = false;
-    if (CheckedPtr renderer = element->renderer())
+    if (auto* renderer = element->renderer())
         isVertical = renderer->style().usedAppearance() == StyleAppearance::SliderVertical;
 
     Decimal newValue;
@@ -283,7 +283,7 @@ HTMLElement* RangeInputType::sliderTrackElement() const
     if (!hasCreatedShadowSubtree())
         return nullptr;
 
-    RefPtr root = protect(element())->userAgentShadowRoot();
+    RefPtr root = element()->userAgentShadowRoot();
     ASSERT(root);
     ASSERT(is<SliderContainerElement>(root->firstChild())); // container
     ASSERT(root->firstChild()->firstChild()); // track

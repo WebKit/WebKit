@@ -76,7 +76,7 @@ AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
 
 void AsyncScrollingCoordinator::hysterisisTimerFired(PAL::HysteresisState state)
 {
-    if (RefPtr page = this->page(); page && state == PAL::HysteresisState::Stopped)
+    if (auto* page = this->page(); page && state == PAL::HysteresisState::Stopped)
         page->didFinishScrolling();
 }
 
@@ -666,8 +666,8 @@ LocalFrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(LocalFrame&
 
     // Walk the frame tree to find the matching LocalFrameView. This is not ideal, but avoids back pointers to LocalFrameViews
     // from ScrollingTreeStateNodes.
-    for (RefPtr<Frame> frame = rootFrame; frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame.get());
+    for (Frame* frame = &rootFrame; frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
         if (SUPPRESS_UNCOUNTED_LOCAL auto* view = localFrame->view()) {
@@ -1408,7 +1408,7 @@ void AsyncScrollingCoordinator::reportSynchronousScrollingReasonsChanged(Monoton
 bool AsyncScrollingCoordinator::scrollAnimatorEnabled() const
 {
     ASSERT(isMainThread());
-    RefPtr localMainFrame = page()->localMainFrame();
+    auto* localMainFrame = page()->localMainFrame();
     if (!localMainFrame)
         return false;
     auto& settings = localMainFrame->settings();

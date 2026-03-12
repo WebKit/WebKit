@@ -45,11 +45,11 @@ namespace WebCore {
 
 static bool isUnslottedElement(Element& element)
 {
-    for (RefPtr ancestor = &element; ancestor; ) {
-        RefPtr parent = ancestor->parentElement();
+    for (auto* ancestor = &element; ancestor; ) {
+        auto* parent = ancestor->parentElement();
         if (parent && parent->shadowRoot() && !ancestor->assignedSlot())
             return true;
-        ancestor = WTF::move(parent);
+        ancestor = parent;
     }
     return false;
 }

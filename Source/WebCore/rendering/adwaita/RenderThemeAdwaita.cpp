@@ -404,7 +404,7 @@ void RenderThemeAdwaita::adjustListButtonStyle(RenderStyle& style, const Element
 
 Style::PreferredSizePair RenderThemeAdwaita::controlSize(StyleAppearance appearance, const FontCascade& fontCascade, const Style::PreferredSizePair& zoomedSize, float zoomFactor) const
 {
-    if (!zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+    if (!zoomedSize.width().isSizingKeywordOrAuto() && !zoomedSize.height().isSizingKeywordOrAuto())
         return RenderTheme::controlSize(appearance, fontCascade, zoomedSize, zoomFactor);
 
     switch (appearance) {
@@ -412,18 +412,18 @@ Style::PreferredSizePair RenderThemeAdwaita::controlSize(StyleAppearance appeara
     case StyleAppearance::Radio: {
         auto buttonSizeWidth = zoomedSize.width();
         auto buttonSizeHeight = zoomedSize.height();
-        if (buttonSizeWidth.isIntrinsicOrLegacyIntrinsicOrAuto())
+        if (buttonSizeWidth.isSizingKeywordOrAuto())
             buttonSizeWidth = 12_css_px * zoomFactor;
-        if (buttonSizeHeight.isIntrinsicOrLegacyIntrinsicOrAuto())
+        if (buttonSizeHeight.isSizingKeywordOrAuto())
             buttonSizeHeight = 12_css_px * zoomFactor;
         return { WTF::move(buttonSizeWidth), WTF::move(buttonSizeHeight) };
     }
     case StyleAppearance::InnerSpinButton: {
         auto spinButtonSizeWidth = zoomedSize.width();
         auto spinButtonSizeHeight = zoomedSize.height();
-        if (spinButtonSizeWidth.isIntrinsicOrLegacyIntrinsicOrAuto())
+        if (spinButtonSizeWidth.isSizingKeywordOrAuto())
             spinButtonSizeWidth = Style::PreferredSize::Fixed { static_cast<float>(static_cast<int>(arrowSize * zoomFactor)) };
-        if (spinButtonSizeHeight.isIntrinsicOrLegacyIntrinsicOrAuto() || fontCascade.size() > arrowSize)
+        if (spinButtonSizeHeight.isSizingKeywordOrAuto() || fontCascade.size() > arrowSize)
             spinButtonSizeHeight = Style::PreferredSize::Fixed { fontCascade.size() };
         return { WTF::move(spinButtonSizeWidth), WTF::move(spinButtonSizeHeight) };
     }
@@ -436,15 +436,15 @@ Style::PreferredSizePair RenderThemeAdwaita::controlSize(StyleAppearance appeara
 
 Style::MinimumSizePair RenderThemeAdwaita::minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair& zoomedSize, float) const
 {
-    if (!zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+    if (!zoomedSize.width().isSizingKeywordOrAuto() && !zoomedSize.height().isSizingKeywordOrAuto())
         return zoomedSize;
 
     auto resultWidth = zoomedSize.width();
     auto resultHeight = zoomedSize.height();
 
-    if (resultWidth.isIntrinsicOrLegacyIntrinsicOrAuto())
+    if (resultWidth.isSizingKeywordOrAuto())
         resultWidth = 0_css_px;
-    if (resultHeight.isIntrinsicOrLegacyIntrinsicOrAuto())
+    if (resultHeight.isSizingKeywordOrAuto())
         resultHeight = 0_css_px;
 
     return { WTF::move(resultWidth), WTF::move(resultHeight) };

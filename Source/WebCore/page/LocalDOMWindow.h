@@ -284,9 +284,9 @@ public:
     void finishedLoading();
 
     // EventTiming API
-    PerformanceEventTimingCandidate initializeEventTimingEntry(Event&, EventType);
-    void finalizeEventTimingEntry(PerformanceEventTimingCandidate&, const Event&, EventType);
-    void dispatchPendingEventTimingEntries();
+    PerformanceEventTimingCandidate initializeEventTiming(Event&, EventType);
+    void markEndOfProcessingForEventTiming(PerformanceEventTimingCandidate&, const Event&, EventType);
+    void finalizeAndQueueEventTimingEntries();
     uint64_t interactionCount() { return m_interactionCount; }
     // Misleading function names that mirror the spec; see https://github.com/w3c/event-timing/issues/158 :
     bool hasDispatchedInputEvent() const { return m_hasDispatchedInputEvent; }

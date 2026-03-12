@@ -842,9 +842,9 @@ static Style::PreferredSizePair sizeFromNSControlSize(NSControlSize nsControlSiz
         controlSize = IntSize(controlSize.width() * zoomFactor, controlSize.height() * zoomFactor);
     auto resultWidth = zoomedSize.width();
     auto resultHeight = zoomedSize.height();
-    if (zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && controlSize.width() > 0)
+    if (zoomedSize.width().isSizingKeywordOrAuto() && controlSize.width() > 0)
         resultWidth = Style::PreferredSize::Fixed { static_cast<float>(controlSize.width()) };
-    if (zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto() && controlSize.height() > 0)
+    if (zoomedSize.height().isSizingKeywordOrAuto() && controlSize.height() > 0)
         resultHeight = Style::PreferredSize::Fixed { static_cast<float>(controlSize.height()) };
     return { WTF::move(resultWidth), WTF::move(resultHeight) };
 }
@@ -923,7 +923,7 @@ static std::span<const int, 4> NODELETE checkboxMargins(NSControlSize controlSiz
 static Style::PreferredSizePair checkboxSize(const Style::PreferredSizePair& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+    if (!zoomedSize.width().isSizingKeywordOrAuto() && !zoomedSize.height().isSizingKeywordOrAuto())
         return zoomedSize;
 
     return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, checkboxSizes());
@@ -956,7 +956,7 @@ static std::span<const int, 4> NODELETE radioMargins(NSControlSize controlSize)
 static Style::PreferredSizePair radioSize(const Style::PreferredSizePair& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+    if (!zoomedSize.width().isSizingKeywordOrAuto() && !zoomedSize.height().isSizingKeywordOrAuto())
         return zoomedSize;
 
     return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, radioSizes());
@@ -1046,7 +1046,7 @@ static std::span<const int, 4> NODELETE visualSwitchMargins(NSControlSize contro
 static Style::PreferredSizePair switchSize(const Style::PreferredSizePair& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+    if (!zoomedSize.width().isSizingKeywordOrAuto() && !zoomedSize.height().isSizingKeywordOrAuto())
         return zoomedSize;
 
     return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, switchSizes());
@@ -1215,7 +1215,7 @@ static void setSizeFromFont(RenderStyle& style, std::span<const IntSize, 4> size
 {
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     IntSize size = sizeForFont(style, sizes);
-    if (style.width().isIntrinsicOrLegacyIntrinsicOrAuto() && size.width() > 0)
+    if (style.width().isSizingKeywordOrAuto() && size.width() > 0)
         style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width()) });
     if (style.height().isAuto() && size.height() > 0)
         style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height()) });
@@ -1463,7 +1463,7 @@ std::span<const IntSize, 4> RenderThemeMac::searchFieldSizes() const
 void RenderThemeMac::setSearchFieldSize(RenderStyle& style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !style.height().isAuto())
+    if (!style.width().isSizingKeywordOrAuto() && !style.height().isAuto())
         return;
 
     // Use the font size to determine the intrinsic width of the control.
@@ -1682,7 +1682,7 @@ Style::PreferredSizePair RenderThemeMac::controlSize(StyleAppearance appearance,
         // Height is reset to auto so that specified heights can be ignored.
         return sizeFromFont(font, { zoomedSize.width(), CSS::Keyword::Auto { } }, zoomFactor, buttonSizes());
     case StyleAppearance::InnerSpinButton:
-        if (!zoomedSize.width().isIntrinsicOrLegacyIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrLegacyIntrinsicOrAuto())
+        if (!zoomedSize.width().isSizingKeywordOrAuto() && !zoomedSize.height().isSizingKeywordOrAuto())
             return zoomedSize;
         return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
     default:

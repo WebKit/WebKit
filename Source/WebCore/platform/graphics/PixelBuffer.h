@@ -54,8 +54,8 @@ public:
 
     WEBCORE_EXPORT virtual ~PixelBuffer();
 
-    const PixelBufferFormat& format() const { return m_format; }
-    const IntSize& size() const { return m_size; }
+    const PixelBufferFormat& format() const LIFETIME_BOUND { return m_format; }
+    const IntSize& size() const LIFETIME_BOUND { return m_size; }
 
     std::span<uint8_t> bytes() const { return m_bytes; }
 
@@ -104,7 +104,7 @@ public:
         return PixelBufferSourceView(format, size, bytes);
     }
 
-    const PixelBufferFormat& format() const { return m_format; }
+    const PixelBufferFormat& format() const LIFETIME_BOUND { return m_format; }
     IntSize size() const { return m_size; }
     std::span<const uint8_t> bytes() const LIFETIME_BOUND { return m_bytes; }
 

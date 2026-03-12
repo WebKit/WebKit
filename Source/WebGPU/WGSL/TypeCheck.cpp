@@ -91,13 +91,8 @@ struct Binding {
     std::optional<ConstantValue> constantValue;
 };
 
-enum class Behavior : uint8_t {
-    Return = 1 << 0,
-    Break = 1 << 1,
-    Continue = 1 << 2,
-    Next = 1 << 3,
-};
-using Behaviors = OptionSet<Behavior>;
+using Behavior = AST::Behavior;
+using Behaviors = AST::Behaviors;
 
 using BreakTarget = Variant<
     AST::SwitchStatement*,
@@ -511,8 +506,6 @@ Result<void> TypeChecker::visit(AST::Declaration& declaration)
 
 Result<void> TypeChecker::visit(AST::Structure& structure)
 {
-    CHECK(visitAttributes(structure.attributes()));
-
     HashMap<String, const Type*> fields;
     for (unsigned i = 0; i < structure.members().size(); ++i) {
         auto& member = structure.members()[i];
@@ -1135,7 +1128,7 @@ Result<void> TypeChecker::visit(AST::SwitchStatement& statement)
         return { };
     };
 
-    CHECK(visitAttributes(statement.valueAttributes()));
+    CHECK(visitAttributes(statement.bodyAttributes()));
     CHECK(visitClause(statement.defaultClause()));
     for (auto& clause : statement.clauses())
         CHECK(visitClause(clause));
@@ -1546,9 +1539,13 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
             target.m_inferredType = result;
 
             // FIXME: <rdar://150366527> this will go away once we track used intrinsics properly
-            if (targetName == "workgroupUniformLoad"_s)
-                m_shaderModule.setUsesWorkgroupUniformLoad();
-            else if (targetName == "frexp"_s)
+            if (targetName == "workgroupUniformLoad"_s) {
+                auto* argument = call.arguments()[0].inferredType();
+                if (std::holds_alternative<Types::Atomic>(*std::get<Types::Pointer>(*argument).element))
+                    m_shaderModule.setUsesWorkgroupUniformLoadAtomic();
+                else
+                    m_shaderModule.setUsesWorkgroupUniformLoad();
+            } else if (targetName == "frexp"_s)
                 m_shaderModule.setUsesFrexp();
             else if (targetName == "modf"_s)
                 m_shaderModule.setUsesModf();
@@ -2249,6 +2246,7 @@ Result<const Type*> TypeChecker::infer(AST::Expression& expression, Evaluation e
 
 Result<Behaviors> TypeChecker::analyze(AST::Statement& statement)
 {
+    Behaviors behaviors;
     switch (statement.kind()) {
     case AST::NodeKind::AssignmentStatement:
     case AST::NodeKind::CallStatement:
@@ -2258,7 +2256,8 @@ Result<Behaviors> TypeChecker::analyze(AST::Statement& statement)
     case AST::NodeKind::DiscardStatement:
     case AST::NodeKind::PhonyAssignmentStatement:
     case AST::NodeKind::VariableStatement:
-        return { Behavior::Next };
+        behaviors = { Behavior::Next };
+        break;
     case AST::NodeKind::BreakStatement:
         if (m_breakTargetStack.isEmpty()) [[unlikely]]
             TYPE_ERROR(statement.span(), "break statement must be in a loop or switch case"_s);
@@ -2266,12 +2265,14 @@ Result<Behaviors> TypeChecker::analyze(AST::Statement& statement)
         if (std::holds_alternative<AST::Continuing*>(m_breakTargetStack.last())) [[unlikely]]
             TYPE_ERROR(statement.span(), "`break` must not be used to exit from a continuing block. Use `break-if` instead"_s);
 
-        return { Behavior::Break };
+        behaviors = { Behavior::Break };
+        break;
     case AST::NodeKind::ReturnStatement:
         if (m_breakTargetStack.containsIf([&](auto& it) { return std::holds_alternative<AST::Continuing*>(it); })) [[unlikely]]
             TYPE_ERROR(statement.span(), "continuing blocks must not contain a return statement"_s);
 
-        return { Behavior::Return };
+        behaviors = { Behavior::Return };
+        break;
     case AST::NodeKind::ContinueStatement: {
         bool hasLoopTarget = false;
         bool hasSwitchTarget = false;
@@ -2311,28 +2312,39 @@ Result<Behaviors> TypeChecker::analyze(AST::Statement& statement)
         if (!hasLoopTarget) [[unlikely]]
             TYPE_ERROR(statement.span(), "continue statement must be in a loop"_s);
 
-        return { Behavior::Continue };
+        behaviors = { Behavior::Continue };
+        break;
     }
     case AST::NodeKind::CompoundStatement:
-        return analyze(uncheckedDowncast<AST::CompoundStatement>(statement));
+        UNWRAP_ASSIGN(behaviors, analyze(uncheckedDowncast<AST::CompoundStatement>(statement)));
+        break;
     case AST::NodeKind::ForStatement:
-        return analyze(uncheckedDowncast<AST::ForStatement>(statement));
+        UNWRAP_ASSIGN(behaviors, analyze(uncheckedDowncast<AST::ForStatement>(statement)));
+        break;
     case AST::NodeKind::IfStatement:
-        return analyze(uncheckedDowncast<AST::IfStatement>(statement));
+        UNWRAP_ASSIGN(behaviors, analyze(uncheckedDowncast<AST::IfStatement>(statement)));
+        break;
     case AST::NodeKind::LoopStatement:
-        return analyze(uncheckedDowncast<AST::LoopStatement>(statement));
+        UNWRAP_ASSIGN(behaviors, analyze(uncheckedDowncast<AST::LoopStatement>(statement)));
+        break;
     case AST::NodeKind::SwitchStatement:
-        return analyze(uncheckedDowncast<AST::SwitchStatement>(statement));
+        UNWRAP_ASSIGN(behaviors, analyze(uncheckedDowncast<AST::SwitchStatement>(statement)));
+        break;
     case AST::NodeKind::WhileStatement:
-        return analyze(uncheckedDowncast<AST::WhileStatement>(statement));
+        UNWRAP_ASSIGN(behaviors, analyze(uncheckedDowncast<AST::WhileStatement>(statement)));
+        break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
+    statement.setBehaviors(behaviors);
+    return { behaviors };
 }
 
 Result<Behaviors> TypeChecker::analyze(AST::CompoundStatement& statement)
 {
-    return analyzeStatements(statement.statements());
+    UNWRAP(behaviors, analyzeStatements(statement.statements()));
+    statement.setBehaviors(behaviors);
+    return { behaviors };
 }
 
 Result<Behaviors> TypeChecker::analyze(AST::ForStatement& statement)
@@ -2373,6 +2385,7 @@ Result<Behaviors> TypeChecker::analyze(AST::LoopStatement& statement)
 {
     m_breakTargetStack.append(&statement);
     UNWRAP(behaviors, analyzeStatements(statement.body()));
+    statement.setBodyBehaviors(behaviors);
     if (auto& continuing = statement.continuing()) {
         m_breakTargetStack.append(&continuing.value());
         UNWRAP(body, analyzeStatements(continuing->body));

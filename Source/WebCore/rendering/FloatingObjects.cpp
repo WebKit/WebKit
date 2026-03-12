@@ -24,8 +24,9 @@
 #include "config.h"
 #include "FloatingObjects.h"
 
+#include "LegacyRootInlineBox.h"
 #include "PODIntervalTree.h"
-#include "RenderBlockFlow.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBox.h"
 #include "RenderView.h"
 #include <wtf/HexNumber.h>

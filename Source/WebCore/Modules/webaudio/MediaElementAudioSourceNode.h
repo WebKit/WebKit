@@ -59,7 +59,7 @@ public:
     void ref() const final { AudioNode::ref(); }
     void deref() const final { AudioNode::deref(); }
 
-    Lock& processLock() WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
+    Lock& processLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
 
 private:
     MediaElementAudioSourceNode(BaseAudioContext&, Ref<HTMLMediaElement>&&);

@@ -39,8 +39,8 @@ public:
     static InlineLayoutUnit applyRubyAlign(RubyAlign, Line::RunList&, WTF::Range<size_t>, InlineLayoutUnit spaceToDistribute);
 
     enum class AdjustContentOnlyInsideRubyBase : bool { No, Yes };
-    static void applyRubyBaseAlignmentOffset(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase, InlineFormattingContext&);
-    static void applyRubyAnnotationAlignmentOffset(InlineDisplay::Boxes&, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
+    static void applyRubyBaseAlignmentOffset(std::span<InlineDisplay::Box>, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase, InlineFormattingContext&);
+    static void applyRubyAnnotationAlignmentOffset(std::span<InlineDisplay::Box>, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
 
 private:
     static InlineLayoutUnit applyExpansionOnRange(Line::RunList&, WTF::Range<size_t>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);

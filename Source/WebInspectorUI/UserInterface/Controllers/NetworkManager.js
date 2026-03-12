@@ -199,7 +199,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     {
         if (target.hasDomain("Page")) {
             target.PageAgent.enable();
-            target.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
+
+            if (!target.isProvisional)
+                target.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
 
             // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
             if (target.hasCommand("Page.setBootstrapScript") && this._bootstrapScript && this._bootstrapScriptEnabledSetting.value)
@@ -238,6 +240,11 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     {
         this._transitioningPageTarget = true;
         this._waitingForMainFrameResourceTreePayload = true;
+
+        let pageTarget = WI.pageTarget;
+        console.assert(pageTarget && !pageTarget.isProvisional, pageTarget);
+        if (pageTarget.hasDomain("Page"))
+            pageTarget.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
     }
 
     // Public

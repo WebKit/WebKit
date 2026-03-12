@@ -520,7 +520,7 @@ String roleToString(AccessibilityRole role)
 bool needsLayoutOrStyleRecalc(const Document& document)
 {
     if (RefPtr frameView = document.view()) {
-        if (frameView->needsLayout() || protect(frameView->layoutContext())->isLayoutPending())
+        if (frameView->needsLayout() || frameView->layoutContext().isLayoutPending())
             return true;
     }
     return document.hasPendingStyleRecalc();
@@ -530,10 +530,10 @@ std::optional<CursorType> cursorTypeFrom(const StyleProperties& properties)
 {
     for (auto property : properties) {
         if (property.id() == CSSPropertyCursor) {
-            if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(property.value()))
+            if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(property.value()))
                 return fromCSSValue<CursorType>(*primitiveValue);
-            if (RefPtr valueList = dynamicDowncast<CSSValueList>(property.value()); valueList && valueList->size() >= 2) {
-                if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>((*valueList)[valueList->size() - 1]))
+            if (auto* valueList = dynamicDowncast<CSSValueList>(property.value()); valueList && valueList->size() >= 2) {
+                if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>((*valueList)[valueList->size() - 1]))
                     return fromCSSValue<CursorType>(*primitiveValue);
             }
         }
@@ -541,15 +541,15 @@ std::optional<CursorType> cursorTypeFrom(const StyleProperties& properties)
     return std::nullopt;
 }
 
-RefPtr<Node> lastNode(const FixedVector<AXID>& axIDs, AXObjectCache& cache)
+RefPtr<Node> lastNonAriaHiddenNode(const FixedVector<AXID>& axIDs, AXObjectCache& cache)
 {
     AX_ASSERT(isMainThread());
 
     for (auto axID = axIDs.rbegin(); axID != axIDs.rend(); ++axID) {
-        if (RefPtr object = cache.objectForID(*axID)) {
-            if (RefPtr node = object->node())
-                return node;
-        }
+        RefPtr object = cache.objectForID(*axID);
+        RefPtr node = object ? object->node() : nullptr;
+        if (node && !object->isAXHidden())
+            return node;
     }
     return nullptr;
 }

@@ -104,7 +104,7 @@ public:
     void appendSomeRegister(Value*);
     void appendSomeRegisterWithClobber(Value*);
     
-    const Vector<ValueRep>& reps() const { return m_reps; }
+    const Vector<ValueRep>& reps() const LIFETIME_BOUND { return m_reps; }
 
     // Stackmaps allow you to specify that the operation may clobber some registers. Clobbering a register
     // means that the operation appears to store a value into the register, but the compiler doesn't
@@ -195,10 +195,10 @@ public:
         clobberLate(set);
     }
 
-    RegisterSet& earlyClobbered() { return m_earlyClobbered; }
-    RegisterSet& lateClobbered() { return m_lateClobbered; }
-    const RegisterSet& earlyClobbered() const { return m_earlyClobbered; }
-    const RegisterSet& lateClobbered() const { return m_lateClobbered; }
+    RegisterSet& earlyClobbered() LIFETIME_BOUND { return m_earlyClobbered; }
+    RegisterSet& lateClobbered() LIFETIME_BOUND { return m_lateClobbered; }
+    const RegisterSet& earlyClobbered() const LIFETIME_BOUND { return m_earlyClobbered; }
+    const RegisterSet& lateClobbered() const LIFETIME_BOUND { return m_lateClobbered; }
 
     void setGenerator(RefPtr<StackmapGenerator> generator)
     {

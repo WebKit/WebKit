@@ -87,10 +87,10 @@ public:
     WEBCORE_EXPORT bool NODELETE hasPreviouslyBeenReported();
     PCM::AttributionTimeToSendData timesToSend() const { return m_timesToSend; };
     void setTimesToSend(PCM::AttributionTimeToSendData data) { m_timesToSend = data; }
-    const SourceID& sourceID() const { return m_sourceID; }
-    const std::optional<PCM::AttributionTriggerData>& attributionTriggerData() const { return m_attributionTriggerData; }
+    const SourceID& sourceID() const LIFETIME_BOUND { return m_sourceID; }
+    const std::optional<PCM::AttributionTriggerData>& attributionTriggerData() const LIFETIME_BOUND { return m_attributionTriggerData; }
     void setAttribution(PCM::AttributionTriggerData&& attributionTriggerData) { m_attributionTriggerData = WTF::move(attributionTriggerData); }
-    const String& sourceApplicationBundleID() const { return m_sourceApplicationBundleID; }
+    const String& sourceApplicationBundleID() const LIFETIME_BOUND { return m_sourceApplicationBundleID; }
     WEBCORE_EXPORT void setSourceApplicationBundleIDForTesting(const String&);
 
     PCM::AttributionEphemeral isEphemeral() const { return m_isEphemeral; }
@@ -115,9 +115,9 @@ public:
     WEBCORE_EXPORT static Expected<PCM::DestinationSecretToken, String> calculateAndUpdateDestinationSecretToken(const String& serverResponseBase64URL, PCM::DestinationUnlinkableToken&);
 #endif
 
-    PCM::SourceUnlinkableToken& sourceUnlinkableToken() { return m_sourceUnlinkableToken; }
+    PCM::SourceUnlinkableToken& sourceUnlinkableToken() LIFETIME_BOUND { return m_sourceUnlinkableToken; }
     void setSourceUnlinkableTokenValue(const String& value) { m_sourceUnlinkableToken.valueBase64URL = value; }
-    const std::optional<PCM::SourceSecretToken>& sourceSecretToken() const { return m_sourceSecretToken; }
+    const std::optional<PCM::SourceSecretToken>& sourceSecretToken() const LIFETIME_BOUND { return m_sourceSecretToken; }
     WEBCORE_EXPORT void setSourceSecretToken(PCM::SourceSecretToken&&);
     WEBCORE_EXPORT void setDestinationSecretToken(PCM::DestinationSecretToken&&);
 

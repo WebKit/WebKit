@@ -57,9 +57,9 @@ public:
 
     ~XRBinding();
 
-    void setLabel(String&&);
+    void NODELETE setLabel(String&&);
 
-    bool isValid() const;
+    bool NODELETE isValid() const;
     Ref<XRProjectionLayer> createXRProjectionLayer(WGPUTextureFormat, WGPUTextureFormat*, WGPUTextureUsageFlags, double);
     RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&);
     Device& device() { return m_device; }

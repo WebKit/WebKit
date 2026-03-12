@@ -71,8 +71,8 @@ private:
     const RenderFlexibleBox& flexBoxRenderer() const { return downcast<RenderFlexibleBox>(*m_flexBox->rendererForIntegration()); }
     RenderFlexibleBox& flexBoxRenderer() { return downcast<RenderFlexibleBox>(*m_flexBox->rendererForIntegration()); }
 
-    Layout::LayoutState& layoutState() { return *m_layoutState; }
-    const Layout::LayoutState& layoutState() const { return *m_layoutState; }
+    Layout::LayoutState& layoutState() LIFETIME_BOUND { return *m_layoutState; }
+    const Layout::LayoutState& layoutState() const LIFETIME_BOUND { return *m_layoutState; }
 
     CheckedPtr<Layout::ElementBox> m_flexBox;
     WeakPtr<Layout::LayoutState> m_layoutState;

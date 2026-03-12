@@ -68,7 +68,7 @@ public:
 
     CSSSelector::Match match() const { return m_selector.match(); }
     CSSSelector::PseudoElement pseudoElement() const { return m_selector.pseudoElement(); }
-    const CSSSelectorList* selectorList() const { return m_selector.selectorList(); }
+    const CSSSelectorList* selectorList() const LIFETIME_BOUND { return m_selector.selectorList(); }
 
     void setPseudoElement(CSSSelector::PseudoElement type) { m_selector.setPseudoElement(type); }
     void setPseudoClass(CSSSelector::PseudoClass type) { m_selector.setPseudoClass(type); }
@@ -96,7 +96,7 @@ public:
     // special case, since it will be covered by this function once again.
     bool needsImplicitShadowCombinatorForMatching() const;
 
-    MutableCSSSelector* precedingInComplexSelector() const { return m_precedingInComplexSelector.get(); }
+    MutableCSSSelector* precedingInComplexSelector() const LIFETIME_BOUND { return m_precedingInComplexSelector.get(); }
     MutableCSSSelector* NODELETE leftmostSimpleSelector();
     const MutableCSSSelector* NODELETE leftmostSimpleSelector() const;
     bool NODELETE startsWithExplicitCombinator() const;

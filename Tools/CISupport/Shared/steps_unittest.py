@@ -452,6 +452,7 @@ class TestPrintSwiftVersion(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setup_step(PrintSwiftVersion())
+        self.setProperty('fullPlatform', 'mac-tahoe')
 
     def test_success_with_tag_and_toolchain(self):
         self.configureStep()
@@ -547,6 +548,7 @@ class TestGetSwiftTagName(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setup_step(GetSwiftTagName())
+        self.setProperty('fullPlatform', 'mac-tahoe')
 
     def test_success(self):
         self.configureStep()
@@ -755,6 +757,7 @@ class TestInstallMetalToolchain(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setup_step(InstallMetalToolchain())
+        self.setProperty('fullPlatform', 'mac-tahoe')
 
     def test_success_symlink_created(self):
         self.configureStep()

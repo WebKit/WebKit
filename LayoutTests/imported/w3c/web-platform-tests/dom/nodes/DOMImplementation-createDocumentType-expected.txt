@@ -1,6 +1,6 @@
 
 PASS DOMImplementation.createDocumentType(qualifiedName, publicId, systemId)
-FAIL createDocumentType("", "", "") should work The string contains invalid characters.
+PASS createDocumentType("", "", "") should work
 PASS createDocumentType("test:root", "1234", "") should work
 PASS createDocumentType("test:root", "1234", "test") should work
 PASS createDocumentType("test:root", "test", "") should work
@@ -20,57 +20,57 @@ PASS createDocumentType("a.b:c", "", "") should work
 PASS createDocumentType("a-b:c.j", "", "") should work
 PASS createDocumentType("a-b:c", "", "") should work
 PASS createDocumentType("foo", "", "") should work
-FAIL createDocumentType("1foo", "", "") should work Invalid qualified name start in '1foo'
+PASS createDocumentType("1foo", "", "") should work
 PASS createDocumentType("foo1", "", "") should work
 PASS createDocumentType("f1oo", "", "") should work
-FAIL createDocumentType("@foo", "", "") should work Invalid qualified name start in '@foo'
-FAIL createDocumentType("foo@", "", "") should work Invalid qualified name part in 'foo@'
-FAIL createDocumentType("f@oo", "", "") should work Invalid qualified name part in 'f@oo'
-FAIL createDocumentType("edi:{", "", "") should work Invalid qualified name start in 'edi:{'
-FAIL createDocumentType("edi:}", "", "") should work Invalid qualified name start in 'edi:}'
-FAIL createDocumentType("edi:~", "", "") should work Invalid qualified name start in 'edi:~'
-FAIL createDocumentType("edi:'", "", "") should work Invalid qualified name start in 'edi:''
-FAIL createDocumentType("edi:!", "", "") should work Invalid qualified name start in 'edi:!'
-FAIL createDocumentType("edi:@", "", "") should work Invalid qualified name start in 'edi:@'
-FAIL createDocumentType("edi:#", "", "") should work Invalid qualified name start in 'edi:#'
-FAIL createDocumentType("edi:$", "", "") should work Invalid qualified name start in 'edi:$'
-FAIL createDocumentType("edi:%", "", "") should work Invalid qualified name start in 'edi:%'
-FAIL createDocumentType("edi:^", "", "") should work Invalid qualified name start in 'edi:^'
-FAIL createDocumentType("edi:&", "", "") should work Invalid qualified name start in 'edi:&'
-FAIL createDocumentType("edi:*", "", "") should work Invalid qualified name start in 'edi:*'
-FAIL createDocumentType("edi:(", "", "") should work Invalid qualified name start in 'edi:('
-FAIL createDocumentType("edi:)", "", "") should work Invalid qualified name start in 'edi:)'
-FAIL createDocumentType("edi:+", "", "") should work Invalid qualified name start in 'edi:+'
-FAIL createDocumentType("edi:=", "", "") should work Invalid qualified name start in 'edi:='
-FAIL createDocumentType("edi:[", "", "") should work Invalid qualified name start in 'edi:['
-FAIL createDocumentType("edi:]", "", "") should work Invalid qualified name start in 'edi:]'
-FAIL createDocumentType("edi:\\", "", "") should work Invalid qualified name start in 'edi:\'
-FAIL createDocumentType("edi:/", "", "") should work Invalid qualified name start in 'edi:/'
-FAIL createDocumentType("edi:;", "", "") should work Invalid qualified name start in 'edi:;'
-FAIL createDocumentType("edi:`", "", "") should work Invalid qualified name start in 'edi:`'
-FAIL createDocumentType("edi:<", "", "") should work Invalid qualified name start in 'edi:<'
+PASS createDocumentType("@foo", "", "") should work
+PASS createDocumentType("foo@", "", "") should work
+PASS createDocumentType("f@oo", "", "") should work
+PASS createDocumentType("edi:{", "", "") should work
+PASS createDocumentType("edi:}", "", "") should work
+PASS createDocumentType("edi:~", "", "") should work
+PASS createDocumentType("edi:'", "", "") should work
+PASS createDocumentType("edi:!", "", "") should work
+PASS createDocumentType("edi:@", "", "") should work
+PASS createDocumentType("edi:#", "", "") should work
+PASS createDocumentType("edi:$", "", "") should work
+PASS createDocumentType("edi:%", "", "") should work
+PASS createDocumentType("edi:^", "", "") should work
+PASS createDocumentType("edi:&", "", "") should work
+PASS createDocumentType("edi:*", "", "") should work
+PASS createDocumentType("edi:(", "", "") should work
+PASS createDocumentType("edi:)", "", "") should work
+PASS createDocumentType("edi:+", "", "") should work
+PASS createDocumentType("edi:=", "", "") should work
+PASS createDocumentType("edi:[", "", "") should work
+PASS createDocumentType("edi:]", "", "") should work
+PASS createDocumentType("edi:\\", "", "") should work
+PASS createDocumentType("edi:/", "", "") should work
+PASS createDocumentType("edi:;", "", "") should work
+PASS createDocumentType("edi:`", "", "") should work
+PASS createDocumentType("edi:<", "", "") should work
 PASS createDocumentType("edi:>", "", "") should throw INVALID_CHARACTER_ERR
-FAIL createDocumentType("edi:,", "", "") should work Invalid qualified name start in 'edi:,'
+PASS createDocumentType("edi:,", "", "") should work
 PASS createDocumentType("edi:a ", "", "") should throw INVALID_CHARACTER_ERR
-FAIL createDocumentType("edi:\"", "", "") should work Invalid qualified name start in 'edi:"'
-FAIL createDocumentType("{", "", "") should work Invalid qualified name start in '{'
-FAIL createDocumentType("}", "", "") should work Invalid qualified name start in '}'
-FAIL createDocumentType("'", "", "") should work Invalid qualified name start in '''
-FAIL createDocumentType("~", "", "") should work Invalid qualified name start in '~'
-FAIL createDocumentType("`", "", "") should work Invalid qualified name start in '`'
-FAIL createDocumentType("@", "", "") should work Invalid qualified name start in '@'
-FAIL createDocumentType("#", "", "") should work Invalid qualified name start in '#'
-FAIL createDocumentType("$", "", "") should work Invalid qualified name start in '$'
-FAIL createDocumentType("%", "", "") should work Invalid qualified name start in '%'
-FAIL createDocumentType("^", "", "") should work Invalid qualified name start in '^'
-FAIL createDocumentType("&", "", "") should work Invalid qualified name start in '&'
-FAIL createDocumentType("*", "", "") should work Invalid qualified name start in '*'
-FAIL createDocumentType("(", "", "") should work Invalid qualified name start in '('
-FAIL createDocumentType(")", "", "") should work Invalid qualified name start in ')'
+PASS createDocumentType("edi:\"", "", "") should work
+PASS createDocumentType("{", "", "") should work
+PASS createDocumentType("}", "", "") should work
+PASS createDocumentType("'", "", "") should work
+PASS createDocumentType("~", "", "") should work
+PASS createDocumentType("`", "", "") should work
+PASS createDocumentType("@", "", "") should work
+PASS createDocumentType("#", "", "") should work
+PASS createDocumentType("$", "", "") should work
+PASS createDocumentType("%", "", "") should work
+PASS createDocumentType("^", "", "") should work
+PASS createDocumentType("&", "", "") should work
+PASS createDocumentType("*", "", "") should work
+PASS createDocumentType("(", "", "") should work
+PASS createDocumentType(")", "", "") should work
 PASS createDocumentType("f:oo", "", "") should work
-FAIL createDocumentType(":foo", "", "") should work Namespace in qualified name ':foo' is too short
-FAIL createDocumentType("foo:", "", "") should work Namespace in qualified name 'foo:' is too short
-FAIL createDocumentType("prefix::local", "", "") should work Unexpected colon in qualified name 'prefix::local'
+PASS createDocumentType(":foo", "", "") should work
+PASS createDocumentType("foo:", "", "") should work
+PASS createDocumentType("prefix::local", "", "") should work
 PASS createDocumentType("foo", "foo", "") should work
 PASS createDocumentType("foo", "", "foo") should work
 PASS createDocumentType("foo", "f'oo", "") should work

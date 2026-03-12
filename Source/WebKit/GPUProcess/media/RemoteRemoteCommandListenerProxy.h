@@ -59,7 +59,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     bool supportsSeeking() const { return m_supportsSeeking; }
-    const WebCore::RemoteCommandListener::RemoteCommandsSet& supportedCommands() const { return m_supportedCommands; }
+    const WebCore::RemoteCommandListener::RemoteCommandsSet& supportedCommands() const LIFETIME_BOUND { return m_supportedCommands; }
 
     RemoteRemoteCommandListenerIdentifier identifier() const { return m_identifier; }
 

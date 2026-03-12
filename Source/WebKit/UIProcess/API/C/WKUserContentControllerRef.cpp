@@ -53,7 +53,7 @@ WKUserContentControllerRef WKUserContentControllerCreate()
 
 WKArrayRef WKUserContentControllerCopyUserScripts(WKUserContentControllerRef userContentControllerRef)
 {
-    return toAPILeakingRef(protect(toImpl(userContentControllerRef))->userScripts().copy());
+    return toAPILeakingRef(toImpl(userContentControllerRef)->userScripts().copy());
 }
 
 void WKUserContentControllerAddUserScript(WKUserContentControllerRef userContentControllerRef, WKUserScriptRef userScriptRef)

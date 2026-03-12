@@ -342,13 +342,9 @@ ALWAYS_INLINE bool isHole(double value)
 template<typename T>
 ALWAYS_INLINE bool containsHole(const T* data, unsigned length)
 {
-    if constexpr (std::is_same_v<T, double>) {
-        for (unsigned i = 0; i < length; ++i) {
-            if (isHole(data[i]))
-                return true;
-        }
-        return false;
-    } else
+    if constexpr (std::is_same_v<T, double>)
+        return WTF::findNaN(data, length);
+    else
         return WTF::find64(std::bit_cast<const uint64_t*>(data), JSValue::encode(JSValue()), length);
 }
 

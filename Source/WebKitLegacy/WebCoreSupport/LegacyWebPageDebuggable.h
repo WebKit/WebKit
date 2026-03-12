@@ -53,10 +53,10 @@ public:
     void dispatchMessageFromRemote(String&& message) final;
     void setIndicating(bool) final;
 
-    const String& nameOverride() const final { return m_nameOverride; }
+    const String& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
     void setNameOverride(const String&);
 
-    void detachFromPage();
+    void NODELETE detachFromPage();
 
 private:
     LegacyWebPageDebuggable(LegacyWebPageInspectorController&, WebCore::Page&);

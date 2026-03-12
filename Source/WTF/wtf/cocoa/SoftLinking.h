@@ -162,9 +162,9 @@ static void* lib##Library() \
         return frameworkLibrary; \
     }
 
-#define SOFT_LINK(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_INTERNAL(framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
     WTF_EXTERN_C_BEGIN \
-    resultType functionName parameterDeclarations; \
+    functionAttributes resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
     static resultType init##functionName parameterDeclarations; \
     static resultType (*softLink##functionName) parameterDeclarations = init##functionName; \
@@ -177,14 +177,20 @@ static void* lib##Library() \
         return softLink##functionName parameterNames; \
     } \
     \
-    inline __attribute__((__always_inline__)) resultType functionName parameterDeclarations \
+    functionAttributes inline __attribute__((__always_inline__)) resultType functionName parameterDeclarations \
     { \
         return softLink##functionName parameterNames; \
     }
 
-#define SOFT_LINK_MAY_FAIL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_INTERNAL(framework, functionName, resultType, parameterDeclarations, parameterNames, )
+
+#define SOFT_LINK_WITH_NS_RETURNS_RETAINED(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_INTERNAL(framework, functionName, resultType, parameterDeclarations, parameterNames, NS_RETURNS_RETAINED)
+
+#define SOFT_LINK_MAY_FAIL_INTERNAL(framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
     WTF_EXTERN_C_BEGIN \
-    resultType functionName parameterDeclarations; \
+    functionAttributes resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
     static resultType (*softLink##functionName) parameterDeclarations = 0; \
     \
@@ -202,11 +208,17 @@ static void* lib##Library() \
         return loaded; \
     } \
     \
-    inline __attribute__((__always_inline__)) __attribute__((visibility("hidden"))) resultType functionName parameterDeclarations \
+    functionAttributes inline __attribute__((__always_inline__)) __attribute__((visibility("hidden"))) resultType functionName parameterDeclarations \
     { \
         ASSERT(softLink##functionName); \
         return softLink##functionName parameterNames; \
     }
+
+#define SOFT_LINK_MAY_FAIL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_MAY_FAIL_INTERNAL(framework, functionName, resultType, parameterDeclarations, parameterNames, )
+
+#define SOFT_LINK_MAY_FAIL_WITH_NS_RETURNS_RETAINED(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_MAY_FAIL_INTERNAL(framework, functionName, resultType, parameterDeclarations, parameterNames, NS_RETURNS_RETAINED)
 
 /* callingConvention is unused on Mac but is here to keep the macro prototype the same between Mac and Windows. */
 #define SOFT_LINK_OPTIONAL(framework, functionName, resultType, callingConvention, parameterDeclarations) \

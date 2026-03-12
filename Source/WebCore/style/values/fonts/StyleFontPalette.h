@@ -82,7 +82,7 @@ struct FontPalette {
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    const WebCore::FontPalette& platform() const { return m_platform; }
+    const WebCore::FontPalette& platform() const LIFETIME_BOUND { return m_platform; }
 
     bool operator==(const FontPalette&) const = default;
 

@@ -59,19 +59,19 @@ void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, cons
 {
     switch (name.nodeName()) {
     case AttributeNames::xAttr:
-        Ref { m_x }->baseVal()->parse(newValue);
+        m_x->baseVal()->parse(newValue);
         break;
     case AttributeNames::yAttr:
-        Ref { m_y }->baseVal()->parse(newValue);
+        m_y->baseVal()->parse(newValue);
         break;
     case AttributeNames::dxAttr:
-        Ref { m_dx }->baseVal()->parse(newValue);
+        m_dx->baseVal()->parse(newValue);
         break;
     case AttributeNames::dyAttr:
-        Ref { m_dy }->baseVal()->parse(newValue);
+        m_dy->baseVal()->parse(newValue);
         break;
     case AttributeNames::rotateAttr:
-        Ref { m_rotate }->baseVal()->parse(newValue);
+        m_rotate->baseVal()->parse(newValue);
         break;
     default:
         break;
@@ -102,8 +102,8 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
         if (attrName != SVGNames::rotateAttr)
             updateRelativeLengthsInformation();
 
-        if (CheckedPtr renderer = this->renderer()) {
-            if (CheckedPtr textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*renderer))
+        if (auto* renderer = this->renderer()) {
+            if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*renderer))
                 textAncestor->setNeedsPositioningValuesUpdate();
         }
         updateSVGRendererForElementChange();

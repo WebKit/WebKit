@@ -492,7 +492,7 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
     }
 
     auto targetParametersCopy = targetParameters;
-    targetParametersCopy.pageProxyIdentifier = protect(*webView._page)->identifier();
+    targetParametersCopy.pageProxyIdentifier = webView._page->identifier();
 
     Ref callbackAggregator = EagerCallbackAggregator<void(Expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 

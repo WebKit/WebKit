@@ -68,7 +68,7 @@ public:
     float webkitRotationAngle() const { return m_rotationAngle; }
     double twist() const { return m_twist; }
     float webkitForce() const { return m_force; }
-    const DoublePoint& absoluteLocation() const { return m_absoluteLocation; }
+    const DoublePoint& absoluteLocation() const LIFETIME_BOUND { return m_absoluteLocation; }
     Ref<Touch> cloneWithNewTarget(EventTarget*) const;
 
 private:

@@ -67,8 +67,8 @@ public:
     WEBCORE_EXPORT void onResponse(ResponseCallback&&);
 
     FetchRequest& request() { return m_request.get(); }
-    const String& clientId() const { return m_clientId; }
-    const String& resultingClientId() const { return m_resultingClientId; }
+    const String& clientId() const LIFETIME_BOUND { return m_clientId; }
+    const String& resultingClientId() const LIFETIME_BOUND { return m_resultingClientId; }
     DOMPromise& handled() const { return m_handled.get(); }
 
     bool respondWithEntered() const { return m_respondWithEntered; }

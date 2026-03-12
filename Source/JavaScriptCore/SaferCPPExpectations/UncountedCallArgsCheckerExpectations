@@ -30,11 +30,11 @@ bytecode/InlineCacheCompiler.cpp
 bytecode/ObjectPropertyConditionSet.cpp
 bytecode/PolyProtoAccessChain.cpp
 bytecode/PropertyCondition.cpp
+bytecode/PropertyInlineCache.cpp
 bytecode/PutByStatus.cpp
 bytecode/Repatch.cpp
 bytecode/SetPrivateBrandStatus.cpp
 bytecode/SharedJITStubSet.h
-bytecode/StructureStubInfo.cpp
 bytecode/UnlinkedFunctionExecutable.cpp
 bytecompiler/BytecodeGenerator.cpp
 bytecompiler/BytecodeGenerator.h
@@ -51,7 +51,6 @@ dfg/DFGJITCompiler.h
 dfg/DFGJITFinalizer.cpp
 dfg/DFGLazyJSValue.cpp
 dfg/DFGLoopUnrollingPhase.cpp
-[ iOS ] dfg/DFGNode.cpp
 dfg/DFGOperations.cpp
 dfg/DFGPlan.cpp
 dfg/DFGSpeculativeJIT.cpp

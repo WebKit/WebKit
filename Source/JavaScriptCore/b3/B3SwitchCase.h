@@ -49,7 +49,7 @@ public:
 
     int64_t caseValue() const { return m_caseValue; }
     FrequentedBlock target() const { return m_target; }
-    BasicBlock* targetBlock() const { return m_target.block(); }
+    BasicBlock* targetBlock() const LIFETIME_BOUND { return m_target.block(); }
 
     void dump(PrintStream& out) const;
 

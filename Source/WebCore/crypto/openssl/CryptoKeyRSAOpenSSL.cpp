@@ -32,8 +32,8 @@
 #include "ExceptionOr.h"
 #include "OpenSSLUtilities.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
-#include <openssl/X509.h>
 #include <openssl/evp.h>
+#include <openssl/x509.h>
 
 namespace WebCore {
 

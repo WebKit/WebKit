@@ -585,6 +585,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     AddDictationAlternative(String text, WebCore::DictationContext context) -> (bool success) Async
     DictationAlternativesAtSelection() -> (Vector<WebCore::DictationContext> contexts) Async
     ClearDictationAlternatives(Vector<WebCore::DictationContext> contexts)
+    SetDictationStreamingOpacity(String hypothesisText, struct WebCore::CharacterRange streamingRangeInHypothesis, float opacity)
+    ClearDictationStreamingOpacity()
 
     HasMarkedText() -> (bool hasMarkedText)
     GetMarkedRangeAsync() -> (struct WebKit::EditingRange range)

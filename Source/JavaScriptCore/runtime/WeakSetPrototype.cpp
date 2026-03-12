@@ -33,8 +33,6 @@
 
 namespace JSC {
 
-const ASCIILiteral WeakSetInvalidValueError { "WeakSet values must be objects or non-registered symbols"_s };
-
 const ClassInfo WeakSetPrototype::s_info = { "WeakSet"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakSetPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetDelete);

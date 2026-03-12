@@ -137,7 +137,7 @@ void NavigateEvent::processScrollBehavior(Document& document)
         if (m_navigationType == NavigationNavigationType::Reload)
             document.frame()->loader().history().restoreScrollPositionAndViewState();
         else
-            document.frame()->view()->scrollTo({ 0, 0 });
+            document.frame()->view()->setScrollPosition({ 0, 0 });
 
         return;
     }

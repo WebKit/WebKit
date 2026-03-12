@@ -90,7 +90,7 @@ RenderStyle RenderListItem::computeMarkerStyle() const
 
 bool isHTMLListElement(const Node& node)
 {
-    return is<HTMLUListElement>(node) || is<HTMLOListElement>(node);
+    return isAnyOf<HTMLUListElement, HTMLOListElement>(node);
 }
 
 // Returns the enclosing list with respect to the DOM order.
@@ -320,7 +320,7 @@ void RenderListItem::updateListMarkerNumbers()
         return;
 
     bool isInReversedOrderedList = false;
-    if (RefPtr orderedList = dynamicDowncast<HTMLOListElement>(*list)) {
+    if (auto* orderedList = dynamicDowncast<HTMLOListElement>(*list)) {
         orderedList->itemCountChanged();
         isInReversedOrderedList = orderedList->isReversed();
     }

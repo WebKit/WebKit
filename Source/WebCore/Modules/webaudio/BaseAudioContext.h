@@ -194,7 +194,7 @@ public:
     // Returns true only after the audio thread has been started and then shutdown.
     bool isAudioThreadFinished() const { return m_isAudioThreadFinished; }
 
-    RecursiveLock& graphLock() const { return m_graphLock; }
+    RecursiveLock& graphLock() const LIFETIME_BOUND { return m_graphLock; }
 
     // Returns true if this thread owns the context's lock.
     bool isGraphOwner() const { return m_graphLock.isOwner(); }

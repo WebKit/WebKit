@@ -53,7 +53,7 @@ public:
     void adopted() { m_refCountDebugger.adopted(); }
     void relaxAdoptionRequirement() { m_refCountDebugger.relaxAdoptionRequirement(); }
     void disableThreadingChecks() { m_refCountDebugger.disableThreadingChecks(); }
-    ThreadSafeRefCountDebugger& refCountDebugger() { return m_refCountDebugger; }
+    ThreadSafeRefCountDebugger& refCountDebugger() LIFETIME_BOUND { return m_refCountDebugger; }
 
 protected:
     ThreadSafeRefCountedWithSuppressingSaferCPPCheckingBase()

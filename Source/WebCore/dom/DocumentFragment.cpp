@@ -126,9 +126,9 @@ RefPtr<Element> DocumentFragment::getElementById(const AtomString& id) const
         return protect(treeScope())->getElementById(id);
 
     // Otherwise, fall back to iterating all of the element descendants.
-    for (Ref element : descendantsOfType<Element>(*const_cast<DocumentFragment*>(this))) {
-        if (element->getIdAttribute() == id)
-            return element;
+    for (auto& element : descendantsOfType<Element>(*const_cast<DocumentFragment*>(this))) {
+        if (element.getIdAttribute() == id)
+            return &element;
     }
 
     return nullptr;

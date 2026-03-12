@@ -97,7 +97,7 @@ public:
 
     bool isValid() const { return m_renderCommandEncoder; }
     NSString* errorValidatingColorDepthStencilTargets(const RenderPipeline&) const;
-    id<MTLRenderCommandEncoder> renderCommandEncoder() const;
+    id<MTLRenderCommandEncoder> NODELETE renderCommandEncoder() const;
     void makeInvalid(NSString* = nil);
     CommandEncoder& parentEncoder() const { return m_parentEncoder; }
 
@@ -122,7 +122,7 @@ private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, uint64_t maxDrawCount, Device&, MTLRenderPassDescriptor*);
     RenderPassEncoder(CommandEncoder&, Device&, NSString*);
 
-    bool validatePopDebugGroup() const;
+    bool NODELETE validatePopDebugGroup() const;
     bool executePreDrawCommands(uint32_t vertexCount);
     bool executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer*, bool needsValidationLayerWorkaround);
     bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
@@ -137,11 +137,11 @@ private:
 
     NSString* errorValidatingAndBindingBuffers();
     NSString* errorValidatingDrawIndexed() const;
-    uint32_t maxVertexBufferIndex() const;
-    uint32_t maxBindGroupIndex() const;
-    bool issuedDrawCall() const;
+    uint32_t NODELETE maxVertexBufferIndex() const;
+    uint32_t NODELETE maxBindGroupIndex() const;
+    bool NODELETE issuedDrawCall() const;
     void incrementDrawCount(uint32_t = 1);
-    bool occlusionQueryIsDestroyed() const;
+    bool NODELETE occlusionQueryIsDestroyed() const;
     DrawIndexResult clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes, bool& needsValidationLayerWorkaround);
     std::pair<uint32_t, uint32_t> computeMininumVertexInstanceCount(bool& needsValidationLayerWorkaround) const;
     std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder);

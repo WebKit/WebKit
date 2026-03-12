@@ -57,7 +57,7 @@ static Document* documentFromClipboard(const Clipboard* clipboard)
     if (!clipboard)
         return nullptr;
 
-    RefPtr frame = clipboard->frame();
+    auto* frame = clipboard->frame();
     return frame ? frame->document() : nullptr;
 }
 

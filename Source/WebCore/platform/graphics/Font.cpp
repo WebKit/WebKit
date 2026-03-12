@@ -98,7 +98,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
     platformCharWidthInit();
 #if ENABLE(OPENTYPE_VERTICAL)
     if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == IsOrientationFallback::No) {
-        m_verticalData = FontCache::forCurrentThread()->verticalData(platformData);
+        m_verticalData = FontCache::forCurrentThread().verticalData(platformData);
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
 #endif
@@ -419,11 +419,9 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
 
 const GlyphPage* Font::glyphPage(unsigned pageNumber) const
 {
-    auto addResult = m_glyphPages.add(pageNumber, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = createAndFillGlyphPage(pageNumber, *this);
-
-    return addResult.iterator->value.get();
+    return m_glyphPages.ensure(pageNumber, [&] {
+        return createAndFillGlyphPage(pageNumber, *this);
+    }).iterator->value.get();
 }
 
 Glyph Font::glyphForCharacter(char32_t character) const

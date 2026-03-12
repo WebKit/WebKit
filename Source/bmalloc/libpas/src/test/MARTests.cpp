@@ -24,16 +24,19 @@
  */
 
 #include <bit>
-#include <mach/arm/kern_return.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 #include "TestHarness.h"
 
 #include "pas_mar_registry.h"
+#if PAS_OS(DARWIN)
+#include <mach/arm/kern_return.h>
+#endif
 
 using namespace std;
 
+#if PAS_OS(DARWIN)
 namespace {
 
 void testRetrieval()
@@ -115,10 +118,13 @@ void testRetrievalAfterMultipleCycles()
 }
 
 } // anonymous namespace
+#endif
 
 void addMARTests()
 {
+#if PAS_OS(DARWIN)
     ADD_TEST(testRetrieval());
     ADD_TEST(testRetrievalAfterCycling());
     ADD_TEST(testRetrievalAfterMultipleCycles());
+#endif
 }

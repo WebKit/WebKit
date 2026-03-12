@@ -36,6 +36,7 @@
 #include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"
 #include "FTLPatchpointExceptionHandle.h"
+#include "Options.h"
 
 #include <wtf/RecursableLambda.h>
 
@@ -69,7 +70,7 @@ State::State(Graph& graph)
 
     proc = makeUniqueWithoutFastMallocCheck<Procedure>(/* usesSIMD = */ false);
 
-    if (graph.m_vm.shouldBuilderPCToCodeOriginMapping())
+    if (graph.m_vm.shouldBuilderPCToCodeOriginMapping() || Options::useIRDump() || Options::useSourceCodeDump())
         proc->setNeedsPCToOriginMap();
 
     proc->setOriginPrinter(
@@ -166,12 +167,12 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, const Scop
 
 State::~State() = default;
 
-StructureStubInfo* State::addStructureStubInfo()
+PropertyInlineCache* State::addPropertyInlineCache()
 {
     ASSERT(!graph.m_plan.isUnlinked());
-    auto* stubInfo = jitCode->common.m_stubInfos.add();
-    stubInfo->useDataIC = Options::useDataICInFTL();
-    return stubInfo;
+    if (Options::useHandlerICInFTL())
+        return jitCode->common.m_handlerPropertyInlineCaches.add();
+    return jitCode->common.m_repatchingPropertyInlineCaches.add();
 }
 
 OptimizingCallLinkInfo* State::addCallLinkInfo(CodeOrigin codeOrigin)

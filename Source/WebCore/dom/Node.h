@@ -321,7 +321,7 @@ public:
     inline WebCoreOpaqueRoot opaqueRoot() const;
     WebCoreOpaqueRoot NODELETE traverseToOpaqueRoot() const;
 
-    void queueTaskKeepingThisNodeAlive(TaskSource, Function<void ()>&&);
+    template<typename T, typename Task> static void queueTaskKeepingNodeAlive(T&, TaskSource, Task&&);
     void queueTaskToDispatchEvent(TaskSource, Ref<Event>&&);
 
     // Use when it's guaranteed to that shadowHost is null.
@@ -758,7 +758,7 @@ protected:
     virtual void addCandidateSubresourceURLs(ListHashSet<URL>&) const { }
 
     bool hasRareData() const { return !!m_rareDataWithBitfields.pointer(); }
-    NodeRareData* rareData() const { return m_rareDataWithBitfields.pointer(); }
+    NodeRareData* rareData() const LIFETIME_BOUND { return m_rareDataWithBitfields.pointer(); }
     NodeRareData& ensureRareData();
     void clearRareData();
 

@@ -70,15 +70,15 @@ public:
 
     void updateQuirksMode(const Document&);
 
-    InlineContentCache& inlineContentCache(const ElementBox& formattingContextRoot);
+    InlineContentCache& inlineContentCache(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
 
-    BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot);
-    TableFormattingState& ensureTableFormattingState(const ElementBox& formattingContextRoot);
+    BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
+    TableFormattingState& ensureTableFormattingState(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
 
-    BlockFormattingState& formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const;
-    TableFormattingState& formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const;
+    BlockFormattingState& formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const LIFETIME_BOUND;
+    TableFormattingState& formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const LIFETIME_BOUND;
 
-    FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const;
+    FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const LIFETIME_BOUND;
 
     void destroyBlockFormattingState(const ElementBox& formattingContextRoot);
     void destroyInlineContentCache(const ElementBox& formattingContextRoot);
@@ -90,9 +90,9 @@ public:
     void deregisterFormattingContext(const FormattingContext& formattingContext) { m_formattingContextList.remove(&formattingContext); }
 #endif
 
-    BoxGeometry& geometryForRootBox();
-    BoxGeometry& ensureGeometryForBox(const Box&);
-    const BoxGeometry& geometryForBox(const Box&) const;
+    BoxGeometry& geometryForRootBox() LIFETIME_BOUND;
+    BoxGeometry& ensureGeometryForBox(const Box&) LIFETIME_BOUND;
+    const BoxGeometry& geometryForBox(const Box&) const LIFETIME_BOUND;
 
     bool hasBoxGeometry(const Box&) const;
 
@@ -114,7 +114,7 @@ public:
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
-    BoxGeometry& ensureGeometryForBoxSlow(const Box&);
+    BoxGeometry& ensureGeometryForBoxSlow(const Box&) LIFETIME_BOUND;
 
     const Type m_type;
 

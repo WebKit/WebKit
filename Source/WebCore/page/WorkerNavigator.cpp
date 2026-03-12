@@ -90,7 +90,7 @@ void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<D
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     if (RefPtr context = dynamicDowncast<ServiceWorkerGlobalScope>(scriptExecutionContext())) {
-        if (RefPtr declarativePushEvent = context->declarativePushEvent()) {
+        if (auto* declarativePushEvent = context->declarativePushEvent()) {
             declarativePushEvent->setUpdatedAppBadge(WTF::move(badge));
             return;
         }

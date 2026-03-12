@@ -232,7 +232,7 @@ public:
     virtual void setScrollTop(int, const ScrollPositionChangeOptions&);
     virtual void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
 
-    const LayoutBoxExtent& marginBox() const { return m_marginBox; }
+    const LayoutBoxExtent& marginBox() const LIFETIME_BOUND { return m_marginBox; }
     LayoutUnit marginTop() const override { return m_marginBox.top(); }
     LayoutUnit marginBottom() const override { return m_marginBox.bottom(); }
     LayoutUnit marginLeft() const override { return m_marginBox.left(); }
@@ -616,7 +616,7 @@ public:
 
     bool computeHasTransformRelatedProperty(const RenderStyle&) const;
 
-    ShapeOutsideInfo* shapeOutsideInfo() const;
+    ShapeOutsideInfo* shapeOutsideInfo() const LIFETIME_BOUND;
 
     LayoutUnit computeIntrinsicLogicalWidthUsing(CSS::Keyword::WebkitFillAvailable, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
     LayoutUnit computeIntrinsicLogicalWidthUsing(CSS::Keyword::MinIntrinsic, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;

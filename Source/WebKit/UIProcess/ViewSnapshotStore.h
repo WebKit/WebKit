@@ -102,10 +102,10 @@ public:
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
     void setOrigin(WebCore::SecurityOriginData&& origin) { m_origin = WTF::move(origin); }
-    const WebCore::SecurityOriginData& origin() const { return m_origin; }
+    const WebCore::SecurityOriginData& origin() const LIFETIME_BOUND { return m_origin; }
 
 #if HAVE(IOSURFACE)
-    WebCore::IOSurface* surface() const { return m_surface.get(); }
+    WebCore::IOSurface* surface() const LIFETIME_BOUND { return m_surface.get(); }
 
     size_t estimatedImageSizeInBytes() const { return m_surface ? m_surface->totalBytes() : 0; }
     WebCore::IntSize size() const { return m_surface ? m_surface->size() : WebCore::IntSize(); }
@@ -119,7 +119,7 @@ public:
 #if USE(GTK4)
     GdkTexture* texture() const { return m_texture.get(); }
 #else
-    cairo_surface_t* surface() const { return m_surface.get(); }
+    cairo_surface_t* surface() const LIFETIME_BOUND { return m_surface.get(); }
 #endif
 
     size_t estimatedImageSizeInBytes() const;
@@ -127,7 +127,7 @@ public:
 #endif
 
 #if PLATFORM(WPE)
-    SkImage* image() const { return m_image.get(); }
+    SkImage* image() const LIFETIME_BOUND { return m_image.get(); }
 
     size_t estimatedImageSizeInBytes() const;
     WebCore::IntSize size() const;

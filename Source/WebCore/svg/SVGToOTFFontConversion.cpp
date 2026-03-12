@@ -1059,7 +1059,7 @@ void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, SVGKerning
 template<typename T> inline size_t SVGToOTFFontConverter::appendKERNSubtable(std::optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage)
 {
     Vector<KerningData> kerningData;
-    for (Ref element : childrenOfType<T>(protect(m_fontElement))) {
+    for (Ref element : childrenOfType<T>(m_fontElement)) {
         if (auto kerningPair = (element.get().*buildKerningPair)())
             addKerningPair(kerningData, WTF::move(*kerningPair));
     }
@@ -1412,7 +1412,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         boundingBox = FloatRect(0, 0, s_outputUnitsPerEm, s_outputUnitsPerEm);
     }
 
-    for (Ref glyphElement : childrenOfType<SVGGlyphElement>(protect(m_fontElement))) {
+    for (Ref glyphElement : childrenOfType<SVGGlyphElement>(m_fontElement)) {
         auto& unicodeAttribute = glyphElement->attributeWithoutSynchronization(SVGNames::unicodeAttr);
         if (!unicodeAttribute.isEmpty()) // If we can never actually trigger this glyph, ignore it completely
             processGlyphElement(glyphElement.get(), glyphElement.ptr(), defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);

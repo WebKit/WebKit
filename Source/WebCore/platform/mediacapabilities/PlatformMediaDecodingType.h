@@ -28,9 +28,9 @@
 namespace WebCore {
 
 enum class PlatformMediaDecodingType : uint8_t {
-    File,
+    FileOrHLS,
     MediaSource,
-    WebRTC
+    MediaStream
 };
 
 }

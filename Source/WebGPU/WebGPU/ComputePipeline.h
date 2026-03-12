@@ -62,7 +62,7 @@ public:
     ~ComputePipeline();
 
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
-    void setLabel(String&&);
+    void NODELETE setLabel(String&&);
 
     bool isValid() const { return m_computePipelineState && m_pipelineLayout->isValid(); }
 
@@ -73,7 +73,7 @@ public:
 
     PipelineLayout& pipelineLayout() const { return m_pipelineLayout; }
 
-    const BufferBindingSizesForBindGroup* minimumBufferSizes(uint32_t) const;
+    const BufferBindingSizesForBindGroup* NODELETE minimumBufferSizes(uint32_t) const;
     uint64_t uniqueId() const { return m_uniqueId; }
 private:
     ComputePipeline(id<MTLComputePipelineState>, Ref<PipelineLayout>&&, MTLSize, BufferBindingSizesForPipeline&&, uint64_t uniqueId, Device&);

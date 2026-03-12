@@ -318,7 +318,7 @@ std::optional<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpan,
 GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter)
 {
     ASSERT(subgrid.isSubgridInParentDirection(outer.direction()));
-    CheckedPtr parent = downcast<RenderGrid>(subgrid.parent());
+    auto* parent = downcast<RenderGrid>(subgrid.parent());
 
     // Translate the current row/column indices into the coordinate
     // space of the subgrid.

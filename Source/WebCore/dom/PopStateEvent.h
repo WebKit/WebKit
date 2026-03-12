@@ -48,7 +48,7 @@ public:
     static Ref<PopStateEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
     static Ref<PopStateEvent> createForBindings();
 
-    const JSValueInWrappedObject& state() const { return m_state; }
+    const JSValueInWrappedObject& state() const LIFETIME_BOUND { return m_state; }
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
 
     RefPtr<SerializedScriptValue> trySerializeState(JSC::JSGlobalObject&);

@@ -137,7 +137,7 @@ bool Adapter::isXRCompatible() const
 
 #pragma mark WGPU Stubs
 
-void wgpuAdapterReference(WGPUAdapter adapter)
+void NODELETE wgpuAdapterReference(WGPUAdapter adapter)
 {
     WebGPU::fromAPI(adapter).ref();
 }

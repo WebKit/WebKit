@@ -36,7 +36,7 @@ namespace Style {
 
 auto CSSValueConversion<FontVariantNumeric>::operator()(BuilderState& state, const CSSValue& value) -> FontVariantNumeric
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         case CSSValueNormal:
             return CSS::Keyword::Normal { };
@@ -56,8 +56,8 @@ auto CSSValueConversion<FontVariantNumeric>::operator()(BuilderState& state, con
     auto ordinal = FontVariantNumericOrdinal::Normal;
     auto slashedZero = FontVariantNumericSlashedZero::Normal;
 
-    for (Ref item : *list) {
-        switch (item->valueID()) {
+    for (auto& item : *list) {
+        switch (item.valueID()) {
         case CSSValueLiningNums:
             figure = FontVariantNumericFigure::LiningNumbers;
             break;

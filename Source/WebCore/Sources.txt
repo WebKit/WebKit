@@ -1321,6 +1321,7 @@ dom/MutationObserverInterestGroup.cpp
 dom/MutationObserverRegistration.cpp
 dom/MutationRecord.cpp
 dom/NameNodeList.cpp
+dom/NameValidation.cpp
 dom/NamedNodeMap.cpp
 dom/NativeNodeFilter.cpp
 dom/Node.cpp
@@ -1807,7 +1808,6 @@ html/shadow/DateTimeFieldElements.cpp
 html/shadow/DateTimeNumericFieldElement.cpp
 html/shadow/DateTimeSymbolicFieldElement.cpp
 html/shadow/MediaControlTextTrackContainerElement.cpp
-html/shadow/ProgressShadowElement.cpp
 html/shadow/SelectFallbackButtonElement.cpp
 html/shadow/SelectPopoverElement.cpp
 html/shadow/SliderThumbElement.cpp
@@ -2854,6 +2854,7 @@ rendering/RenderGridLayoutState.cpp
 rendering/GridMasonryLayout.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestLocation.cpp
+rendering/HitTestRequest.cpp
 rendering/HitTestResult.cpp
 rendering/HitTestingTransformState.cpp
 rendering/ImageQualityController.cpp

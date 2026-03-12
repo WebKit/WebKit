@@ -1074,8 +1074,8 @@ ScrollbarRevealBehaviorScope::ScrollbarRevealBehaviorScope(ScrollableArea& scrol
 
 ScrollbarRevealBehaviorScope::~ScrollbarRevealBehaviorScope()
 {
-    CheckedRef scrollableArea = m_scrollableArea.get();
-    scrollableArea->setScrollbarRevealBehavior(m_oldBehavior);
+    auto& scrollableArea = m_scrollableArea.get();
+    scrollableArea.setScrollbarRevealBehavior(m_oldBehavior);
 }
 
 // MARK: -
@@ -1116,8 +1116,8 @@ void ScrollTypeScope::restore()
     if (!m_oldScrollType)
         return;
 
-    CheckedRef scrollableArea = m_scrollableArea.get();
-    scrollableArea->setCurrentScrollType(*m_oldScrollType);
+    auto& scrollableArea = m_scrollableArea.get();
+    scrollableArea.setCurrentScrollType(*m_oldScrollType);
     m_oldScrollType = { };
 }
 

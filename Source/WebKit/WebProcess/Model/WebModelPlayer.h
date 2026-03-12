@@ -105,6 +105,8 @@ private:
     void setLoop(bool) final;
     void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
     bool paused() const final;
+    Seconds currentTime() const final;
+    void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
     void play(bool);
     void simulate(float elapsedTime);
     double duration() const final;

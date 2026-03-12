@@ -60,10 +60,10 @@ inline LocalFrameViewLayoutContext& RenderObject::layoutContext() const
 
 inline TreeScope& RenderObject::treeScopeForSVGReferences() const
 {
-    return Ref { m_node.get() }->treeScopeForSVGReferences();
+    return m_node->treeScopeForSVGReferences();
 }
 
-inline const RenderStyle& RenderObject::firstLineStyle() const
+inline CheckedRef<const RenderStyle> RenderObject::firstLineStyle() const
 {
     if (isRenderText())
         return protect(parent())->firstLineStyle();

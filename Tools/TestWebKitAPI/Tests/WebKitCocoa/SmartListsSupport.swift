@@ -49,12 +49,14 @@ extension SmartListsTestConfiguration {
     fileprivate let expectedSelection: SmartListsTestSelectionConfiguration
     fileprivate let input: String
     fileprivate let stylesheet: String?
+    fileprivate let isRTL: Bool
 
-    init(expectedHTML: String, expectedSelection: SmartListsTestSelectionConfiguration, input: String, stylesheet: String?) {
+    init(expectedHTML: String, expectedSelection: SmartListsTestSelectionConfiguration, input: String, stylesheet: String?, isRTL: Bool) {
         self.expectedHTML = expectedHTML
         self.expectedSelection = expectedSelection
         self.input = input
         self.stylesheet = stylesheet
+        self.isRTL = isRTL
     }
 }
 
@@ -88,6 +90,7 @@ extension SmartListsSupport {
         #endif
 
         let template = """
+            \(configuration.isRTL ? "<html dir='rtl'>" : "<html>")
             <head>
               <meta charset="UTF-8">
             </head>

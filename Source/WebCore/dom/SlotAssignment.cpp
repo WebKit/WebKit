@@ -85,7 +85,7 @@ static HTMLSlotElement* nextSlotElementSkippingSubtree(ContainerNode& startingNo
             return NodeTraversal::nextSkippingChildren(node);
         return NodeTraversal::next(node);
     };
-    for (RefPtr node = nextNode(startingNode); node; node = nextNode(*node)) {
+    for (auto* node = nextNode(startingNode); node; node = nextNode(*node)) {
         if (auto* slotElement = dynamicDowncast<HTMLSlotElement>(*node))
             return slotElement;
     }
@@ -494,7 +494,7 @@ void ManualSlotAssignment::renameSlotElement(HTMLSlotElement&, const AtomString&
 void ManualSlotAssignment::addSlotElementByName(const AtomString&, HTMLSlotElement& slot, ShadowRoot& shadowRoot)
 {
     if (!m_slotElementCount)
-        protect(shadowRoot.host())->setHasShadowRootContainingSlots(true);
+        shadowRoot.host()->setHasShadowRootContainingSlots(true);
     ++m_slotElementCount;
     ++m_slottableVersion;
 

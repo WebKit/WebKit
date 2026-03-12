@@ -82,7 +82,7 @@ private:
     BorderBoxPositions performInlineAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&, const UsedInlineSizes&, const Vector<LayoutUnit>& gridAreasInlineSizeList);
     BorderBoxPositions performBlockAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&, const UsedBlockSizes&, const Vector<LayoutUnit>& gridAreasBlockSizeList);
 
-    const GridFormattingContext& formattingContext() const { return m_gridFormattingContext; }
+    const GridFormattingContext& formattingContext() const LIFETIME_BOUND { return m_gridFormattingContext; }
 
     const GridFormattingContext& m_gridFormattingContext;
 };

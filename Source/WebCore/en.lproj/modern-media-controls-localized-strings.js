@@ -36,6 +36,7 @@ var UIStrings = {
     "Skip Forward 10 Seconds": "Skip Forward 10 Seconds",
     "Skip Forward 15 Seconds": "Skip Forward 15 Seconds",
     "Source": "Source",
+    "This video is playing in fullscreen.": "This video is playing in fullscreen.",
     "This video is playing in picture in picture.": "This video is playing in picture in picture.",
     "This video is playing on the TV.": "This video is playing on the TV.",
     "This video is playing on \u201C%s\u201D.": "This video is playing on \u201C%s\u201D.",

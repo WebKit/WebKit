@@ -69,8 +69,8 @@ public:
     unsigned lineNumber() const { return m_lineNumber; }
     unsigned columnNumber() const { return m_columnNumber; }
 
-    const String& condition() const { return m_condition; }
-    const ActionsVector& actions() const { return m_actions; }
+    const String& condition() const LIFETIME_BOUND { return m_condition; }
+    const ActionsVector& actions() const LIFETIME_BOUND { return m_actions; }
     bool isAutoContinue() const { return m_autoContinue; }
 
     void resetHitCount() { m_hitCount = 0; }

@@ -103,7 +103,7 @@ void AudioBasicProcessorNode::processOnlyAudioParams(size_t framesToProcess)
 void AudioBasicProcessorNode::pullInputs(size_t framesToProcess)
 {
     // Render input stream - suggest to the input to render directly into output bus for in-place processing in process() if possible.
-    protect(input(0))->pull(protect(protect(output(0))->bus()).ptr(), framesToProcess);
+    protect(input(0))->pull(protect(output(0)->bus()).ptr(), framesToProcess);
 }
 
 // As soon as we know the channel count of our input, we can lazily initialize.

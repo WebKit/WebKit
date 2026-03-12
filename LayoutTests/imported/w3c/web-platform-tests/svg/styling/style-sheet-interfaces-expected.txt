@@ -4,5 +4,5 @@ PASS sheet_property_updates
 PASS CSSStyleSheet_properties
 PASS CSSStyleSheet_property_values
 PASS StyleSheet_properties
-FAIL StyleSheet_property_values null is not an object (evaluating 'importSheet.ownerNode')
+PASS StyleSheet_property_values
 

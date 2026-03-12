@@ -349,7 +349,7 @@ static bool NODELETE virtualKeyHasStickyModifier(VirtualKey key)
 // PlatformEventFactoryMac::codeForKeyEvent.
 static constexpr unsigned short unknownKeyCode = USHRT_MAX;
 
-static int NODELETE keyCodeForCharKey(CharKey charKey)
+static int keyCodeForCharKey(CharKey charKey)
 {
     if (charKey.length() != 1)
         return unknownKeyCode;

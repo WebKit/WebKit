@@ -102,7 +102,7 @@ void CookieStore::MainThreadBridge::ensureOnMainThread(Function<void(ScriptExecu
 {
     ASSERT(m_cookieStore);
 
-    RefPtr context = protect(m_cookieStore)->scriptExecutionContext();
+    RefPtr context = m_cookieStore->scriptExecutionContext();
     if (!context)
         return;
     ASSERT(context->isContextThread());

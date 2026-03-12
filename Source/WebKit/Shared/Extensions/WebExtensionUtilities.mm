@@ -377,8 +377,8 @@ bool anyItemsExceedQuota(NSDictionary *items, size_t quota, NSString **outKeyWit
 
 Markable<WTF::UUID> toDocumentIdentifier(WebFrame& frame)
 {
-    RefPtr coreFrame = frame.coreLocalFrame();
-    RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+    auto* coreFrame = frame.coreLocalFrame();
+    auto* document = coreFrame ? coreFrame->document() : nullptr;
     if (!document)
         return { };
     return document->identifier().object();

@@ -53,7 +53,7 @@ template<typename T> struct LengthWrapperBlendingSupport {
         auto isTooDeepToBlendWithNode = [](const T& value) {
             if (!value.isCalculated())
                 return false;
-            auto treeDepth = computeDepth(protect(value.m_value.calculationValue())->tree());
+            auto treeDepth = computeDepth(value.m_value.calculationValue().tree());
             return treeDepth > maximumBlendTreeDepth;
         };
 

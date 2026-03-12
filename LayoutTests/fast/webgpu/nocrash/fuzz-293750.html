@@ -391,9 +391,9 @@ struct FragmentInput2 {
 struct VertexOutput0 {
   @location(14) location_14: vec2h,
   @location(3) location_3: f16,
-  @location(12) @interpolate(linear, either) location_12: f16,
-  @location(7) location_7: vec2u,
-  @location(1) @interpolate(flat, either) location_1: vec4h,
+  @location(12) @interpolate(linear) location_12: f16,
+  @location(7) @interpolate(flat) location_7: vec2u,
+  @location(1) @interpolate(flat) location_1: vec4h,
   @invariant @builtin(position) position: vec4f,
 }
 
@@ -491,14 +491,14 @@ struct FragmentOutput0 {
 fn unconst_u32(v: u32) -> u32 { return v; }
 
 struct VertexInput1 {
-  @location(0) @interpolate(flat, centroid) location_0: vec2i,
+  @location(0) @interpolate(flat) location_0: vec2i,
   @location(9) location_9: f16,
   @location(7) location_7: f32,
   @location(11) location_11: vec4h,
 }
 
 struct VertexInput3 {
-  @location(2) @interpolate(perspective, sample) location_2: vec2f,
+  @location(2) @interpolate(perspective) location_2: vec2f,
 }
 
 struct FragmentInput0 {
@@ -580,7 +580,7 @@ fn vertex0(@location(5) location_5: vec4u, @builtin(vertex_index) vertex_index: 
 
 /* used global variables: st4 */
 @fragment
-fn fragment0(a0: FragmentInput0, @location(1) location_1: vec4h, @location(12) @interpolate(linear, centroid) location_12: f16, @location(7) location_7: vec2u, @builtin(sample_index) sample_index: u32, a5: FragmentInput1, a6: FragmentInput2) -> FragmentOutput0 {
+fn fragment0(a0: FragmentInput0, @location(1) location_1: vec4h, @location(12) @interpolate(linear) location_12: f16, @location(7) @interpolate(flat) location_7: vec2u, @builtin(sample_index) sample_index: u32, a5: FragmentInput1, a6: FragmentInput2) -> FragmentOutput0 {
   var out: FragmentOutput0;
   fn0();
   fn0();
@@ -716,7 +716,7 @@ diagnostic(info, xyz);
 struct VertexInput8 {
   @builtin(vertex_index) vertex_index: u32,
   @location(2) @interpolate(flat) location_2: f32,
-  @location(3) @interpolate(flat, centroid) location_3: vec4f,
+  @location(3) @interpolate(flat) location_3: vec4f,
 }
 
 struct VertexInput9 {
@@ -737,22 +737,22 @@ struct T5 {
 var<private> vp4: vec4f = vec4f(0.01749, 0.1178, -0.4250, 0.3171e-21);
 
 struct FragmentOutput1 {
-  @location(3) @interpolate(linear, sample) location_3: vec4f,
+  @location(3) @interpolate(linear) location_3: vec4f,
   @location(0) location_0: vec2i,
 }
 
 var<private> vp2: vec2h = vec2h(13532.3, 23009.7);
 
 struct VertexInput6 {
-  @location(10) @interpolate(flat, centroid) location_10: vec4i,
+  @location(10) @interpolate(flat) location_10: vec4i,
   @location(14) location_14: vec2h,
-  @location(0) @interpolate(flat, center) location_0: i32,
+  @location(0) @interpolate(flat) location_0: i32,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
 
 struct FragmentInput4 {
-  @location(3) @interpolate(flat, sample) location_3: vec2u,
+  @location(3) @interpolate(flat) location_3: vec2u,
 }
 
 
@@ -767,7 +767,7 @@ struct T1 {
 struct VertexOutput1 {
   @builtin(position) position: vec4f,
   @location(8) location_8: f32,
-  @location(3) @interpolate(flat, sample) location_3: vec2u,
+  @location(3) @interpolate(flat) location_3: vec2u,
 }
 
 fn unconst_i32(v: i32) -> i32 { return v; }
@@ -806,16 +806,16 @@ var<private> vp1 = array(array(array(modf(f16(6815.6))), array(modf(f16(-4138.0)
 @id(44503) override override5: u32 = (338259277 % 103) + 1;
 
 struct FragmentInput5 {
-  @location(12) @interpolate(linear, either) location_12: f16,
+  @location(12) @interpolate(linear) location_12: f16,
   @align(16) @size(1152) f0: vec2i,
   @size(624) f1: array<T5, 2>,
 }
 
 
 struct VertexInput7 {
-  @location(15) @interpolate(flat, either) location_15: i32,
+  @location(15) @interpolate(flat) location_15: i32,
   @builtin(instance_index) instance_index: u32,
-  @location(12) @interpolate(linear, center) location_12: vec4f,
+  @location(12) @interpolate(linear) location_12: vec4f,
 }
 
 /* used global variables: buffer12 */
@@ -829,7 +829,7 @@ fn fn1() -> array<array<array<f16, 1>, 4>, 1> {
 
 /* zero global variables used */
 @vertex
-fn vertex1(a0: VertexInput6, a1: VertexInput7, @location(5) location_5: vec4u, @location(9) @interpolate(linear) location_9: vec4f, @location(6) location_6: vec4i, @location(4) location_4: vec2f, @location(8) location_8: vec2h, a7: VertexInput8, a8: VertexInput9, @location(7) @interpolate(flat, either) location_7: vec2u, @location(13) @interpolate(flat, center) location_13: u32, @location(11) location_11: f32) -> VertexOutput1 {
+fn vertex1(a0: VertexInput6, a1: VertexInput7, @location(5) location_5: vec4u, @location(9) @interpolate(linear) location_9: vec4f, @location(6) location_6: vec4i, @location(4) location_4: vec2f, @location(8) location_8: vec2h, a7: VertexInput8, a8: VertexInput9, @location(7) @interpolate(flat) location_7: vec2u, @location(13) @interpolate(flat) location_13: u32, @location(11) location_11: f32) -> VertexOutput1 {
   var out: VertexOutput1;
   var vf23: f32 = location_4[unconst_u32(1163486805)];
   for (var jj87=0u; jj87<3; jj87++) { vp1[unconst_u32(1229928460)][unconst_u32(698359182)][jj87].fract = f16(select(unconst_u32(509442499), unconst_u32(240136560), unconst_bool(true))); }
@@ -1569,17 +1569,17 @@ fn unconst_i32(v: i32) -> i32 { return v; }
 
 struct VertexOutput2 {
   @location(3) location_3: vec4h,
-  @location(11) @interpolate(flat, centroid) location_11: vec2i,
-  @location(12) @interpolate(flat, centroid) location_12: vec4i,
+  @location(11) @interpolate(flat) location_11: vec2i,
+  @location(12) @interpolate(flat) location_12: vec4i,
   @location(1) @interpolate(perspective) location_1: f32,
   @builtin(position) position: vec4f,
-  @location(13) @interpolate(flat, centroid) location_13: i32,
+  @location(13) @interpolate(flat) location_13: i32,
 }
 
 var<workgroup> vw2: array<array<array<atomic<u32>, 1>, 28>, 1>;
 
 struct VertexInput12 {
-  @location(12) @interpolate(linear, either) location_12: f16,
+  @location(12) @interpolate(linear) location_12: f16,
 }
 
 fn unconst_u32(v: u32) -> u32 { return v; }
@@ -1597,8 +1597,8 @@ struct ComputeInput4 {
 }
 
 struct VertexInput10 {
-  @location(8) @interpolate(flat, center) location_8: u32,
-  @location(11) @interpolate(flat, centroid) location_11: u32,
+  @location(8) @interpolate(flat) location_8: u32,
+  @location(11) @interpolate(flat) location_11: u32,
   @location(3) location_3: vec4u,
   @location(9) @interpolate(flat) location_9: vec2u,
   @location(1) location_1: vec2h,
@@ -2096,11 +2096,11 @@ let shaderModule4 = device0.createShaderModule({
 enable f16;
 
 struct VertexOutput3 {
-  @location(1) location_1: u32,
-  @location(2) location_2: vec4i,
-  @location(6) @interpolate(flat, sample) location_6: vec2i,
+  @location(1) @interpolate(flat) location_1: u32,
+  @location(2) @interpolate(flat) location_2: vec4i,
+  @location(6) @interpolate(flat) location_6: vec2i,
   @builtin(position) position: vec4f,
-  @location(12) @interpolate(flat, centroid) location_12: vec2i,
+  @location(12) @interpolate(flat) location_12: vec2i,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
@@ -2188,8 +2188,8 @@ fn fn3() -> array<vec2<bool>, 2> {
 struct VertexInput14 {
   @location(10) location_10: i32,
   @location(4) location_4: vec2i,
-  @location(15) @interpolate(linear, first) location_15: vec4f,
-  @location(11) @interpolate(flat, sample) location_11: vec4u,
+  @location(15) @interpolate(linear) location_15: vec4f,
+  @location(11) @interpolate(flat) location_11: vec4u,
 }
 
 @group(0) @binding(4) var<storage, read_write> buffer42: array<array<array<array<array<f16, 1>, 29>, 1>, 1>>;
@@ -2221,7 +2221,7 @@ fn fn0() -> vec2f {
 
 /* zero global variables used */
 @vertex
-fn vertex3(@location(1) location_1: vec4i, a1: VertexInput13, a2: VertexInput14, a3: VertexInput15, @location(9) @interpolate(flat) location_9: vec2u, a5: VertexInput16, @location(13) @interpolate(flat) location_13: vec2i, @location(3) location_3: vec2f, a8: VertexInput17, @location(6) @interpolate(flat, first) location_6: vec2u, @location(0) location_0: vec4u, @location(12) @interpolate(perspective, either) location_12: vec2h, @builtin(instance_index) instance_index: u32) -> VertexOutput3 {
+fn vertex3(@location(1) location_1: vec4i, a1: VertexInput13, a2: VertexInput14, a3: VertexInput15, @location(9) @interpolate(flat) location_9: vec2u, a5: VertexInput16, @location(13) @interpolate(flat) location_13: vec2i, @location(3) location_3: vec2f, a8: VertexInput17, @location(6) @interpolate(flat) location_6: vec2u, @location(0) location_0: vec4u, @location(12) @interpolate(perspective) location_12: vec2h, @builtin(instance_index) instance_index: u32) -> VertexOutput3 {
   var out: VertexOutput3;
   var vf45: mat3x3f = transpose(mat3x3f(unconst_f32(0.02210), unconst_f32(0.06663e-29), unconst_f32(-0.2306), unconst_f32(0.03241e-40), unconst_f32(0.06883e-43), unconst_f32(0.1397e38), unconst_f32(-0.6149e-41), unconst_f32(0.05078e-13), unconst_f32(0.07371)));
   out.location_1 = bitcast<u32>(cos(unconst_f32(0.1994)));
@@ -2484,9 +2484,9 @@ fn unconst_f16(v: f16) -> f16 { return v; }
 fn unconst_bool(v: bool) -> bool { return v; }
 
 struct FragmentInput17 {
-  @location(13) location_13: vec2i,
+  @location(13) @interpolate(flat) location_13: vec2i,
   @location(12) location_12: vec4f,
-  @location(1) @interpolate(flat, sample) location_1: vec4i,
+  @location(1) @interpolate(flat) location_1: vec4i,
   @location(10) location_10: f32,
 }
 
@@ -2498,18 +2498,18 @@ struct FragmentOutput3 {
 fn unconst_i32(v: i32) -> i32 { return v; }
 
 struct VertexOutput5 {
-  @location(0) location_0: vec2u,
-  @location(8) location_8: vec2u,
-  @location(13) @interpolate(linear, first) location_13: vec4f,
-  @location(6) @interpolate(perspective, center) location_6: vec4f,
+  @location(0) @interpolate(flat) location_0: vec2u,
+  @location(8) @interpolate(flat) location_8: vec2u,
+  @location(13) @interpolate(linear) location_13: vec4f,
+  @location(6) @interpolate(perspective) location_6: vec4f,
   @location(14) location_14: f32,
-  @location(5) @interpolate(linear, either) location_5: f16,
+  @location(5) @interpolate(linear) location_5: f16,
   @builtin(position) position: vec4f,
-  @location(7) location_7: vec4u,
+  @location(7) @interpolate(flat) location_7: vec4u,
   @location(9) location_9: f16,
-  @location(1) @interpolate(flat, centroid) location_1: vec2h,
-  @location(2) location_2: vec2u,
-  @location(4) location_4: i32,
+  @location(1) @interpolate(flat) location_1: vec2h,
+  @location(2) @interpolate(flat) location_2: vec2u,
+  @location(4) @interpolate(flat) location_4: i32,
 }
 
 /* used global variables: buffer57, buffer58 */
@@ -2530,7 +2530,7 @@ fn unconst_f32(v: f32) -> f32 { return v; }
 @group(0) @binding(4) var<storage, read_write> buffer57: array<array<array<array<array<f16, 1>, 29>, 1>, 1>>;
 
 struct FragmentInput19 {
-  @location(8) @interpolate(linear, either) location_8: vec2f,
+  @location(8) @interpolate(linear) location_8: vec2f,
   @location(14) @interpolate(flat) location_14: vec2u,
 }
 
@@ -2543,11 +2543,11 @@ struct ComputeInput6 {
 }
 
 struct FragmentInput18 {
-  @location(9) location_9: vec2i,
+  @location(9) @interpolate(flat) location_9: vec2i,
 }
 
 struct FragmentInput20 {
-  @location(11) @interpolate(perspective, first) location_11: vec4h,
+  @location(11) @interpolate(perspective) location_11: vec4h,
   @location(6) location_6: vec4f,
   @location(0) @interpolate(flat) location_0: vec2i,
 }
@@ -2560,7 +2560,7 @@ struct T1 {
 
 /* used global variables: et8 */
 @vertex
-fn vertex5(@location(2) location_2: f16, @location(7) location_7: vec4f, a2: VertexInput23, @location(8) @interpolate(flat, either) location_8: i32, @location(9) @interpolate(flat, center) location_9: u32) -> VertexOutput5 {
+fn vertex5(@location(2) location_2: f16, @location(7) location_7: vec4f, a2: VertexInput23, @location(8) @interpolate(flat) location_8: i32, @location(9) @interpolate(flat) location_9: u32) -> VertexOutput5 {
   var out: VertexOutput5;
   let vf61: f16 = fma(unconst_f16(29448.0), vec4h(location_7.yyxx.xwyy.yxxx).z, unconst_f16(8773.8));
   out.location_5 -= smoothstep(vec3h(unconst_f16(7086.9), unconst_f16(6882.0), unconst_f16(11010.6)), vec3h(f16(out.location_14)), vec3h(unconst_f16(-9225.2), unconst_f16(14348.4), unconst_f16(1396.3)))[1];
@@ -2570,7 +2570,7 @@ fn vertex5(@location(2) location_2: f16, @location(7) location_7: vec4f, a2: Ver
 
 /* used global variables: buffer59 */
 @fragment
-fn fragment6(@builtin(position) position: vec4f, a1: FragmentInput17, a2: FragmentInput18, a3: FragmentInput19, a4: FragmentInput20, @location(7) @interpolate(linear, sample) location_7: vec2h, @location(15) location_15: vec2i, a7: FragmentInput21, @location(4) location_4: vec4f, a9: FragmentInput22) -> FragmentOutput3 {
+fn fragment6(@builtin(position) position: vec4f, a1: FragmentInput17, a2: FragmentInput18, a3: FragmentInput19, a4: FragmentInput20, @location(7) @interpolate(linear) location_7: vec2h, @location(15) @interpolate(flat) location_15: vec2i, a7: FragmentInput21, @location(4) location_4: vec4f, a9: FragmentInput22) -> FragmentOutput3 {
   var out: FragmentOutput3;
   var vf63: u32 = pack4xU8Clamp(vec4u(unconst_u32(73128350), unconst_u32(1247516492), unconst_u32(1182335425), unconst_u32(421641405)));
   buffer59.location_5 -= vec2f((*&buffer59).location_5[unconst_u32(552354661)]);
@@ -3120,8 +3120,8 @@ struct FragmentOutput4 {
 }
 
 struct FragmentInput23 {
-  @location(3) @interpolate(flat, centroid) location_3: vec2i,
-  @location(6) @interpolate(flat, center) location_6: f16,
+  @location(3) @interpolate(flat) location_3: vec2i,
+  @location(6) @interpolate(flat) location_6: f16,
   @location(11) location_11: vec2f,
 }
 
@@ -3162,23 +3162,23 @@ struct T2 {
 }
 
 struct VertexOutput6 {
-  @location(5) location_5: vec4u,
+  @location(5) @interpolate(flat) location_5: vec4u,
   @builtin(position) position: vec4f,
   @location(0) @interpolate(flat) location_0: vec2u,
   @location(4) location_4: f32,
   @location(11) location_11: vec2f,
-  @location(8) location_8: vec2i,
-  @location(15) @interpolate(flat, centroid) location_15: vec2i,
+  @location(8) @interpolate(flat) location_8: vec2i,
+  @location(15) @interpolate(flat) location_15: vec2i,
   @location(9) @interpolate(flat) location_9: vec4i,
-  @location(2) location_2: vec4i,
-  @location(3) @interpolate(flat, centroid) location_3: vec2i,
-  @location(7) location_7: vec4u,
-  @location(6) @interpolate(flat, center) location_6: f16,
+  @location(2) @interpolate(flat) location_2: vec4i,
+  @location(3) @interpolate(flat) location_3: vec2i,
+  @location(7) @interpolate(flat) location_7: vec4u,
+  @location(6) @interpolate(flat) location_6: f16,
 }
 
 struct VertexInput25 {
   @location(5) location_5: u32,
-  @location(9) @interpolate(flat, either) location_9: vec4f,
+  @location(9) @interpolate(flat) location_9: vec4f,
   @builtin(vertex_index) vertex_index: u32,
 }
 
@@ -3196,18 +3196,18 @@ fn unconst_f32(v: f32) -> f32 { return v; }
 
 struct VertexInput27 {
   @location(1) location_1: vec4u,
-  @location(6) @interpolate(flat, first) location_6: vec2u,
+  @location(6) @interpolate(flat) location_6: vec2u,
 }
 
 fn unconst_f16(v: f16) -> f16 { return v; }
 
 struct VertexInput24 {
   @location(15) location_15: vec2u,
-  @location(13) @interpolate(linear, center) location_13: vec2f,
+  @location(13) @interpolate(linear) location_13: vec2f,
   @location(14) location_14: vec4h,
   @location(8) @interpolate(flat) location_8: vec2i,
   @location(10) location_10: vec4i,
-  @location(4) @interpolate(flat, either) location_4: u32,
+  @location(4) @interpolate(flat) location_4: u32,
 }
 
 fn unconst_i32(v: i32) -> i32 { return v; }
@@ -3221,7 +3221,7 @@ struct T6 {
 
 /* zero global variables used */
 @vertex
-fn vertex6(a0: VertexInput24, a1: VertexInput25, a2: VertexInput26, @location(12) @interpolate(flat, sample) location_12: vec4u, a4: VertexInput27, @location(2) @interpolate(perspective, center) location_2: f16, @builtin(instance_index) instance_index: u32, @location(0) location_0: vec4u, a8: VertexInput28, a9: VertexInput29) -> VertexOutput6 {
+fn vertex6(a0: VertexInput24, a1: VertexInput25, a2: VertexInput26, @location(12) @interpolate(flat) location_12: vec4u, a4: VertexInput27, @location(2) @interpolate(perspective) location_2: f16, @builtin(instance_index) instance_index: u32, @location(0) location_0: vec4u, a8: VertexInput28, a9: VertexInput29) -> VertexOutput6 {
   var out: VertexOutput6;
   out.location_5 <<= bitcast<vec4u>(unpack2x16snorm(unconst_u32(2530682028)).yyyx);
   _ = fn0(&vp14[5].fract, &vp17[unconst_u32(182078122)][0]);
@@ -3694,11 +3694,11 @@ var<workgroup> vw7: atomic<u32>;
 
 struct VertexOutput8 {
   @invariant @builtin(position) position: vec4f,
-  @location(10) location_10: vec2i,
-  @location(11) @interpolate(flat, centroid) location_11: vec4h,
-  @location(14) location_14: vec4i,
-  @location(7) @interpolate(perspective, sample) location_7: vec2h,
-  @location(8) @interpolate(flat, either) location_8: f16,
+  @location(10) @interpolate(flat) location_10: vec2i,
+  @location(11) @interpolate(flat) location_11: vec4h,
+  @location(14) @interpolate(flat) location_14: vec4i,
+  @location(7) @interpolate(perspective) location_7: vec2h,
+  @location(8) @interpolate(flat) location_8: f16,
 }
 
 var<workgroup> vw5: vec4h;
@@ -3714,7 +3714,7 @@ struct VertexInput34 {
 var<workgroup> vw6: array<vec2i, 4>;
 
 struct VertexInput37 {
-  @location(11) @interpolate(perspective, either) location_11: vec2f,
+  @location(11) @interpolate(perspective) location_11: vec2f,
 }
 
 struct VertexInput36 {
@@ -3722,7 +3722,7 @@ struct VertexInput36 {
 }
 
 struct FragmentOutput5 {
-  @location(0) @interpolate(perspective, centroid) location_0: vec4f,
+  @location(0) @interpolate(perspective) location_0: vec4f,
   @location(7) location_7: vec4u,
 }
 
@@ -3759,12 +3759,12 @@ struct T0 {
 }
 
 struct VertexInput35 {
-  @location(10) @interpolate(flat, sample) location_10: u32,
+  @location(10) @interpolate(flat) location_10: u32,
 }
 
 /* zero global variables used */
 @vertex
-fn vertex8(@location(5) location_5: vec2u, @location(2) @interpolate(flat) location_2: u32, @location(4) location_4: f32, a3: VertexInput32, @location(12) location_12: f16, a5: VertexInput33, a6: VertexInput34, a7: VertexInput35, a8: VertexInput36, @location(15) location_15: vec4f, a10: VertexInput37, @location(3) @interpolate(flat, either) location_3: vec4u) -> VertexOutput8 {
+fn vertex8(@location(5) location_5: vec2u, @location(2) @interpolate(flat) location_2: u32, @location(4) location_4: f32, a3: VertexInput32, @location(12) location_12: f16, a5: VertexInput33, a6: VertexInput34, a7: VertexInput35, a8: VertexInput36, @location(15) location_15: vec4f, a10: VertexInput37, @location(3) @interpolate(flat) location_3: vec4u) -> VertexOutput8 {
   var out: VertexOutput8;
   out.location_14 |= firstTrailingBit(vec2i(unconst_i32(821815081), unconst_i32(366373640))).xxyx;
   var vf72: vec4u = unpack4xU8(unconst_u32(186391009));
@@ -3966,13 +3966,13 @@ struct FragmentOutput7 {
 fn unconst_bool(v: bool) -> bool { return v; }
 
 struct FragmentInput33 {
-  @location(3) @interpolate(flat, first) location_3: u32,
+  @location(3) @interpolate(flat) location_3: u32,
 }
 
 struct FragmentInput34 {
   @builtin(position) position: vec4f,
-  @location(11) location_11: vec4i,
-  @location(1) location_1: vec4u,
+  @location(11) @interpolate(flat) location_11: vec4i,
+  @location(1) @interpolate(flat) location_1: vec4u,
 }
 
 fn unconst_i32(v: i32) -> i32 { return v; }
@@ -3982,9 +3982,9 @@ struct T0 {
 }
 
 struct FragmentInput32 {
-  @location(5) @interpolate(perspective, sample) location_5: vec2h,
-  @location(14) @interpolate(perspective, either) location_14: vec2h,
-  @location(7) @interpolate(linear, centroid) location_7: vec2h,
+  @location(5) @interpolate(perspective) location_5: vec2h,
+  @location(14) @interpolate(perspective) location_14: vec2h,
+  @location(7) @interpolate(linear) location_7: vec2h,
 }
 
 /* used global variables: st14, st15 */
@@ -4004,8 +4004,8 @@ fn fn2(a0: array<array<array<array<array<vec2i, 1>, 1>, 4>, 1>, 1>) -> vec2<bool
 override override35: u32 = (167572716 % 103) + 1;
 
 struct FragmentInput30 {
-  @location(4) @interpolate(flat, centroid) location_4: vec2u,
-  @location(0) location_0: vec2i,
+  @location(4) @interpolate(flat) location_4: vec2u,
+  @location(0) @interpolate(flat) location_0: vec2i,
 }
 
 @id(38647) override override36: u32;
@@ -4046,16 +4046,16 @@ struct FragmentInput31 {
 }
 
 struct FragmentInput35 {
-  @location(8) @interpolate(flat, either) location_8: f16,
-  @location(14) location_14: vec4i,
-  @location(10) location_10: vec2i,
+  @location(8) @interpolate(flat) location_8: f16,
+  @location(14) @interpolate(flat) location_14: vec4i,
+  @location(10) @interpolate(flat) location_10: vec2i,
 }
 
 fn unconst_f16(v: f16) -> f16 { return v; }
 
 /* zero global variables used */
 @fragment
-fn fragment10(@location(9) @interpolate(flat, centroid) location_9: i32, a1: FragmentInput30, @location(13) @interpolate(perspective) location_13: vec4f, a3: FragmentInput31, @location(10) @interpolate(flat, centroid) location_10: vec2u, a5: FragmentInput32, a6: FragmentInput33, @location(15) location_15: f16, @location(2) @interpolate(flat, center) location_2: vec4i, a9: FragmentInput34, @location(12) location_12: vec2u, @location(6) location_6: vec4h) -> FragmentOutput6 {
+fn fragment10(@location(9) @interpolate(flat) location_9: i32, a1: FragmentInput30, @location(13) @interpolate(perspective) location_13: vec4f, a3: FragmentInput31, @location(10) @interpolate(flat) location_10: vec2u, a5: FragmentInput32, a6: FragmentInput33, @location(15) location_15: f16, @location(2) @interpolate(flat) location_2: vec4i, a9: FragmentInput34, @location(12) @interpolate(flat) location_12: vec2u, @location(6) location_6: vec4h) -> FragmentOutput6 {
   var out: FragmentOutput6;
   out.sample_mask = a1.location_4[0];
   fn1();
@@ -4065,7 +4065,7 @@ fn fragment10(@location(9) @interpolate(flat, centroid) location_9: i32, a1: Fra
 
 /* used global variables: st14 */
 @fragment
-fn fragment11(a0: FragmentInput35, @location(11) @interpolate(linear, first) location_11: vec4h, @location(7) @interpolate(perspective, either) location_7: vec2h, a3: FragmentInput36) -> FragmentOutput7 {
+fn fragment11(a0: FragmentInput35, @location(11) @interpolate(linear) location_11: vec4h, @location(7) @interpolate(perspective) location_7: vec2h, a3: FragmentInput36) -> FragmentOutput7 {
   var out: FragmentOutput7;
   return out;
   _ = override36;

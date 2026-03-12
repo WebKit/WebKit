@@ -35,8 +35,8 @@
 
 namespace JSC { namespace DFG {
 
-JITData::JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode& jitCode, ExitVector&& exits)
-    : Base(stubInfoSize, poolSize)
+JITData::JITData(unsigned propertyCacheSize, unsigned poolSize, const JITCode& jitCode, ExitVector&& exits)
+    : Base(propertyCacheSize, poolSize)
     , m_callLinkInfos(jitCode.m_unlinkedCallLinkInfos.size())
     , m_exits(WTF::move(exits))
 {
@@ -94,9 +94,9 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
     m_globalObject = codeBlock->globalObject();
     m_stackOffset = codeBlock->stackPointerOffset() * sizeof(Register);
 
-    for (unsigned index = 0; index < jitCode.m_unlinkedStubInfos.size(); ++index) {
-        const UnlinkedStructureStubInfo& unlinkedStubInfo = jitCode.m_unlinkedStubInfos[index];
-        stubInfo(index).initializeFromDFGUnlinkedStructureStubInfo(codeBlock, unlinkedStubInfo);
+    for (unsigned index = 0; index < jitCode.m_unlinkedPropertyInlineCaches.size(); ++index) {
+        const UnlinkedPropertyInlineCache& unlinkedPropertyCache = jitCode.m_unlinkedPropertyInlineCaches[index];
+        propertyCache(index).initializeFromDFGUnlinkedPropertyInlineCache(codeBlock, unlinkedPropertyCache);
     }
 
     unsigned indexOfWatchpoints = 0;

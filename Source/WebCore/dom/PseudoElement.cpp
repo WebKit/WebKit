@@ -31,6 +31,7 @@
 #include "DocumentPage.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffectStack.h"
+#include "PseudoElementUtilitiesInlines.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
@@ -83,7 +84,7 @@ void PseudoElement::clearHostElement()
 
 bool PseudoElement::rendererIsNeeded(const RenderStyle& style)
 {
-    if (pseudoElementRendererIsNeeded(&style))
+    if (Style::pseudoElementRendererIsNeeded(style))
         return true;
 
     if (RefPtr element = m_hostElement.get()) {

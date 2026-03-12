@@ -36,7 +36,7 @@ namespace Style {
 
 auto CSSValueConversion<ScrollbarGutter>::operator()(BuilderState& state, const CSSValue& value) -> ScrollbarGutter
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->isValueID()) {
             switch (primitiveValue->valueID()) {
             case CSSValueAuto:

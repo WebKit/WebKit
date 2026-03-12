@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/focus-reset/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/focus-reset/autofocus.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/focus-reset/basic.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/focus-reset/change-focus-again-in-blur-during-intercept.html

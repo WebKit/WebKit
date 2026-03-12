@@ -128,7 +128,7 @@ private:
     bool copyBaseWindowsDriveLetter(const URL&);
     StringView parsedDataView(size_t start, size_t length) LIFETIME_BOUND;
     char16_t parsedDataView(size_t position);
-    template<typename CharacterType> bool subdomainStartsWithXNDashDash(CodePointIterator<CharacterType>);
+    template<typename CharacterType> bool NODELETE subdomainStartsWithXNDashDash(CodePointIterator<CharacterType>);
     bool subdomainStartsWithXNDashDash(StringImpl&);
 
     bool NODELETE needsNonSpecialDotSlash() const;
@@ -149,7 +149,7 @@ private:
 
     enum class URLPart;
     template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&, const URLTextEncoding*&);
-    template<typename CharacterType> bool isForbiddenHostCodePoint(CharacterType);
+    template<typename CharacterType> bool NODELETE isForbiddenHostCodePoint(CharacterType);
     template<typename CharacterType> bool isForbiddenDomainCodePoint(CharacterType);
     static size_t NODELETE urlLengthUntilPart(const URL&, URLPart);
     void popPath();

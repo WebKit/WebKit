@@ -40,6 +40,7 @@
 #include "InlineIteratorInlineBox.h"
 #include "LayoutRepainter.h"
 #include "LocalFrameView.h"
+#include "PaintInfoInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"

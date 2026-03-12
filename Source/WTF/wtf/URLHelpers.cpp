@@ -356,7 +356,7 @@ static bool isLookalikeCharacter(const std::optional<char32_t>& previousCodePoin
     }
 }
 
-static void addScriptToIDNAllowedScriptList(int32_t script)
+static void NODELETE addScriptToIDNAllowedScriptList(int32_t script)
 {
     if (script >= 0 && script < scriptCodeLimit) {
         size_t index = script / 32;
@@ -365,7 +365,7 @@ static void addScriptToIDNAllowedScriptList(int32_t script)
     }
 }
 
-static void addScriptToIDNAllowedScriptList(UScriptCode script)
+static void NODELETE addScriptToIDNAllowedScriptList(UScriptCode script)
 {
     addScriptToIDNAllowedScriptList(static_cast<int32_t>(script));
 }

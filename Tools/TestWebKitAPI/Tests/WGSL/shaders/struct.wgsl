@@ -34,11 +34,11 @@ fn main()
 }
 
 struct S1 {
-@location(0) x: i32,
+@location(0) @interpolate(flat) x: i32,
 }
 
 struct S2 {
-@location(1) x: i32,
+@location(1) @interpolate(flat) x: i32,
 }
 
 @fragment

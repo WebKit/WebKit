@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-class Document;
-
 class StyleOriginatedAnimationEvent : public AnimationEventBase {
     WTF_MAKE_TZONE_ALLOCATED(StyleOriginatedAnimationEvent);
 public:
@@ -39,11 +37,11 @@ public:
 
     double elapsedTime() const { return m_elapsedTime; }
     const String& pseudoElement();
-    const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier() const { return m_pseudoElementIdentifier; }
+    const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier() const LIFETIME_BOUND { return m_pseudoElementIdentifier; }
 
 protected:
     StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const std::optional<Style::PseudoElementIdentifier>&);
-    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString&, EventInit&&, IsTrusted, double, String&&, Document&);
+    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString&, EventInit&&, IsTrusted, double, String&&);
 
 private:
     double m_elapsedTime;

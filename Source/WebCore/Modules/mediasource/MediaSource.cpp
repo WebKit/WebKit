@@ -1172,10 +1172,11 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     // 4. If type contains at a codec that the MediaSource does not support, then return false.
     // 5. If the MediaSource does not support the specified combination of media type, media subtype, and codecs then return false.
     // 6. Return true.
-    MediaEngineSupportParameters parameters;
-    parameters.type = contentType;
-    parameters.isMediaSource = true;
-    parameters.contentTypesRequiringHardwareSupport = WTF::move(contentTypesRequiringHardwareSupport);
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = contentType,
+        .contentTypesRequiringHardwareSupport = WTF::move(contentTypesRequiringHardwareSupport)
+    };
 
     if (document) {
         if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, document->settings().allowedMediaContainerTypes(), document->settings().allowedMediaCodecTypes()))

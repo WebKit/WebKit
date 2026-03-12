@@ -35,6 +35,7 @@
 #include "B3CCallValue.h"
 #include "B3CaseCollectionInlines.h"
 #include "B3CheckValue.h"
+#include "B3ConstDoubleValue.h"
 #include "B3ConstPtrValue.h"
 #include "B3FenceValue.h"
 #include "B3InsertionSetInlines.h"
@@ -156,17 +157,116 @@ private:
                         makeDivisionChill(Mod);
                     break;
                 }
-                
+
                 if (m_value->type() == Double) {
-                    Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::fmodDouble));
-                    Value* result = m_insertionSet.insert<CCallValue>(m_index, Double, m_origin,
+                    if constexpr (!isARM64()) {
+                        // Non-ARM64: just call fmod directly.
+                        Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::fmodDouble));
+                        Value* result = m_insertionSet.insert<CCallValue>(m_index, Double, m_origin,
+                            Effects::none(),
+                            functionAddress,
+                            m_value->child(0),
+                            m_value->child(1));
+                        m_value->replaceWithIdentity(result);
+                        m_changed = true;
+                        break;
+                    }
+
+                    BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+                    BasicBlock* fastCase = m_blockInsertionSet.insertBefore(m_block);
+                    BasicBlock* slowCase = m_blockInsertionSet.insertBefore(m_block);
+
+                    Value* left = m_value->child(0);
+                    Value* right = m_value->child(1);
+
+                    // Replace the Jump added by splitForward so we can add our own control flow.
+                    before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
+
+                    Value* zero = before->appendNew<ConstDoubleValue>(m_proc, m_origin, 0.0);
+
+                    // Check integrality and int32 range for inputs. Use
+                    // roundTowardZeroInt32Double (frint32z) when available — it checks
+                    // both in a single instruction. Otherwise, fall back to
+                    // truncateDoubleToInt32 (fcvtzs) + IToD (scvtf) round-trip.
+                    auto emitInt32RoundTrip = [&](BasicBlock* block, Value* input) -> Value* {
+#if CPU(ARM64)
+                        if (MacroAssemblerARM64::supportsRoundFloatToIntegerFloat()) {
+                            PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(m_proc, Double, m_origin);
+                            patchpoint->append(input, ValueRep::SomeRegister);
+                            patchpoint->effects = Effects::none();
+                            patchpoint->setGenerator(
+                                [](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                                    jit.roundTowardZeroInt32Double(params[1].fpr(), params[0].fpr());
+                                });
+                            return patchpoint;
+                        }
+#endif
+                        PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(m_proc, Int32, m_origin);
+                        patchpoint->append(input, ValueRep::SomeRegister);
+                        patchpoint->effects = Effects::none();
+                        patchpoint->setGenerator(
+                            [](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                                jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
+                            });
+                        return block->appendNew<Value>(m_proc, IToD, m_origin, patchpoint);
+                    };
+
+                    // Check left is a positive integer in int32 range.
+                    Value* leftRoundTrip = emitInt32RoundTrip(before, left);
+                    Value* leftIsInt = before->appendNew<Value>(m_proc, Equal, m_origin, left, leftRoundTrip);
+                    Value* leftIsPositive = before->appendNew<Value>(m_proc, GreaterThan, m_origin, left, zero);
+                    Value* leftOk = before->appendNew<Value>(m_proc, BitAnd, m_origin, leftIsInt, leftIsPositive);
+
+                    // Check right is a positive integer in int32 range.
+                    Value* rightRoundTrip = emitInt32RoundTrip(before, right);
+                    Value* rightIsInt = before->appendNew<Value>(m_proc, Equal, m_origin, right, rightRoundTrip);
+                    Value* rightIsPositive = before->appendNew<Value>(m_proc, GreaterThan, m_origin, right, zero);
+                    Value* rightOk = before->appendNew<Value>(m_proc, BitAnd, m_origin, rightIsInt, rightIsPositive);
+
+                    Value* bothOk = before->appendNew<Value>(m_proc, BitAnd, m_origin, leftOk, rightOk);
+                    before->appendNew<Value>(m_proc, Branch, m_origin, bothOk);
+                    before->setSuccessors(
+                        FrequentedBlock(fastCase, FrequencyClass::Normal),
+                        FrequentedBlock(slowCase, FrequencyClass::Rare));
+
+                    // Fast case: remainder = left - trunc(left / right) * right
+                    Value* divResult = fastCase->appendNew<Value>(m_proc, Div, m_origin, left, right);
+                    Value* divTrunc = fastCase->appendNew<Value>(m_proc, FTrunc, m_origin, divResult);
+                    Value* mulBack = fastCase->appendNew<Value>(m_proc, Mul, m_origin, divTrunc, right);
+                    Value* remainder = fastCase->appendNew<Value>(m_proc, Sub, m_origin, left, mulBack);
+
+                    // Validate: remainder >= 0 && remainder < right
+                    Value* remNonNeg = fastCase->appendNew<Value>(m_proc, GreaterEqual, m_origin, remainder, zero);
+                    Value* remLessThanRight = fastCase->appendNew<Value>(m_proc, LessThan, m_origin, remainder, right);
+                    Value* fastValid = fastCase->appendNew<Value>(m_proc, BitAnd, m_origin, remNonNeg, remLessThanRight);
+                    UpsilonValue* fastResult = fastCase->appendNew<UpsilonValue>(m_proc, m_origin, remainder);
+                    fastCase->appendNew<Value>(m_proc, Branch, m_origin, fastValid);
+                    fastCase->setSuccessors(
+                        FrequentedBlock(m_block, FrequencyClass::Normal),
+                        FrequentedBlock(slowCase, FrequencyClass::Rare));
+
+                    // Slow case: call fmod
+                    Value* functionAddress = slowCase->appendNew<ConstPtrValue>(m_proc, m_origin, tagCFunction<OperationPtrTag>(Math::fmodDouble));
+                    Value* slowResult = slowCase->appendNew<CCallValue>(m_proc, Double, m_origin,
                         Effects::none(),
                         functionAddress,
-                        m_value->child(0),
-                        m_value->child(1));
-                    m_value->replaceWithIdentity(result);
+                        left,
+                        right);
+                    UpsilonValue* slowUpsilon = slowCase->appendNew<UpsilonValue>(m_proc, m_origin, slowResult);
+                    slowCase->appendNew<Value>(m_proc, Jump, m_origin);
+                    slowCase->setSuccessors(FrequentedBlock(m_block));
+
+                    // Continuation: phi merging fast and slow results
+                    Value* phi = m_insertionSet.insert<Value>(m_index, Phi, Double, m_origin);
+                    fastResult->setPhi(phi);
+                    slowUpsilon->setPhi(phi);
+                    m_value->replaceWithIdentity(phi);
+                    before->updatePredecessorsAfter();
                     m_changed = true;
-                } else if (m_value->type() == Float) {
+                    break;
+                }
+
+                if (m_value->type() == Float) {
                     Value* numeratorAsDouble = m_insertionSet.insert<Value>(m_index, FloatToDouble, m_origin, m_value->child(0));
                     Value* denominatorAsDouble = m_insertionSet.insert<Value>(m_index, FloatToDouble, m_origin, m_value->child(1));
                     Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::fmodDouble));
@@ -178,17 +278,24 @@ private:
                     Value* result = m_insertionSet.insert<Value>(m_index, DoubleToFloat, m_origin, doubleMod);
                     m_value->replaceWithIdentity(result);
                     m_changed = true;
-                } else if constexpr (isARM_THUMB2()) {
+                    break;
+                }
+
+                if constexpr (isARM_THUMB2()) {
                     if (m_value->type() == Int64)
                         replaceWithBinaryCall(Math::i64_rem_s);
                     else
                         replaceWithBinaryCall(Math::i32_rem_s);
-                } else if (isARM64()) {
+                    break;
+                }
+
+                if (isARM64()) {
                     Value* divResult = m_insertionSet.insert<Value>(m_index, chill(Div), m_origin, m_value->child(0), m_value->child(1));
                     Value* multipliedBack = m_insertionSet.insert<Value>(m_index, Mul, m_origin, divResult, m_value->child(1));
                     Value* result = m_insertionSet.insert<Value>(m_index, Sub, m_origin, m_value->child(0), multipliedBack);
                     m_value->replaceWithIdentity(result);
                     m_changed = true;
+                    break;
                 }
                 break;
             }

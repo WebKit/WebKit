@@ -108,14 +108,14 @@ inline std::optional<std::pair<Ref<const ValueType>, Ref<const ValueType>>> requ
 template<typename ListType, typename ValueType, unsigned minimumSize>
 inline auto requiredListDowncast(BuilderState& builderState, const CSSValue& value) -> std::optional<TypedRequiredList<ListType, ValueType>>
 {
-    RefPtr listValue = requiredDowncast<ListType>(builderState, value);
+    auto* listValue = requiredDowncast<ListType>(builderState, value);
     if (!listValue) [[unlikely]]
         return { };
     if (listValue->size() < minimumSize) [[unlikely]] {
         builderState.setCurrentPropertyInvalidAtComputedValueTime();
         return { };
     }
-    for (Ref value : *listValue) {
+    for (auto& value : *listValue) {
         if (!requiredDowncast<ValueType>(builderState, value)) [[unlikely]]
             return { };
     }

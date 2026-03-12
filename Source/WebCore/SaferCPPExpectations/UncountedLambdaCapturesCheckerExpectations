@@ -18,7 +18,6 @@ animation/KeyframeEffect.cpp
 contentextensions/ContentExtensionsBackend.cpp
 crypto/SubtleCrypto.cpp
 css/CSSValue.cpp
-dom/ContentVisibilityDocumentState.cpp
 dom/CustomElementDefaultARIA.cpp
 dom/RejectedPromiseTracker.cpp
 inspector/agents/page/PageDOMDebuggerAgent.cpp

@@ -30,7 +30,7 @@ class ArrayPrototype;
 class JSArray;
 class GetterSetter;
 
-extern const ASCIILiteral ArrayInvalidLengthError;
+inline constexpr ASCIILiteral ArrayInvalidLengthError { "Array length must be a positive integer of safe magnitude."_s };
 
 class ArrayConstructor final : public InternalFunction {
 public:

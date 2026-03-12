@@ -31,6 +31,7 @@
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
 #include "GraphicsContext.h"
+#include "PaintInfoInlines.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"

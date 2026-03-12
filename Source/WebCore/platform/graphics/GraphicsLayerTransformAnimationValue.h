@@ -58,7 +58,7 @@ public:
 
     GraphicsLayerTransformAnimationValue(GraphicsLayerTransformAnimationValue&&) = default;
 
-    const TransformOperations& value() const { return m_value; }
+    const TransformOperations& value() const LIFETIME_BOUND { return m_value; }
 
 private:
     bool isGraphicsLayerTransformAnimationValue() const final { return true; }

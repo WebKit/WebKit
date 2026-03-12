@@ -56,10 +56,10 @@ void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomS
 {
     switch (name.nodeName()) {
     case AttributeNames::dxAttr:
-        Ref { m_dx }->setBaseValInternal(newValue.toFloat());
+        m_dx->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::dyAttr:
-        Ref { m_dy }->setBaseValInternal(newValue.toFloat());
+        m_dy->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);

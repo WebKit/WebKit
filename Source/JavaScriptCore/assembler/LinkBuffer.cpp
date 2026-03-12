@@ -47,6 +47,8 @@ namespace JSC {
 size_t LinkBuffer::s_profileCummulativeLinkedSizes[LinkBuffer::numberOfProfiles];
 size_t LinkBuffer::s_profileCummulativeLinkedCounts[LinkBuffer::numberOfProfiles];
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IRDumpDebugInfo);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceCodeDumpDebugInfo);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LinkBuffer);
 
 static const char* profileName(LinkBuffer::Profile profile)
@@ -127,7 +129,7 @@ void LinkBuffer::logJITCodeForJITDump(CodeRef<LinkBufferPtrTag>& codeRef, ASCIIL
         GdbJIT::log(finalName, codeRef);
 
     if (Options::useJITDump()) [[unlikely]]
-        PerfLog::log(finalName, codeRef);
+        PerfLog::log(finalName, codeRef, WTF::move(m_irDumpDebugInfo), WTF::move(m_sourceCodeDebugInfo));
 }
 
 LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, ASCIILiteral simpleName, const char* format, ...)

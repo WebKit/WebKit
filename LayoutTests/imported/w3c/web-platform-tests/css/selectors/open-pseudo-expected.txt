@@ -3,5 +3,5 @@ details
 
 PASS The dialog element should support :open.
 PASS The details element should support :open.
-FAIL The select element should support :open. assert_true: :open should match when the select is open. expected true got false
+PASS The select element should support :open.
 

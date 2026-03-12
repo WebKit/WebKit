@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin-no-match-element.sub.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin-no-match-element.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin-not-embedded-sized.sub.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin-not-embedded-sized.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin.sub.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-cross-origin.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-dom-content-loaded.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-fallback.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-icb.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-no-match-element-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-no-match-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-not-embedded-sized.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-not-embedded-sized.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-request-resize-error.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-request-resize.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-request-resize.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-unsized-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe-value.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/responsive-iframe.tentative.html

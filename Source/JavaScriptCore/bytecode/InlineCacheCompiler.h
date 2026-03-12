@@ -31,8 +31,8 @@
 #include "JITStubRoutine.h"
 #include "JSFunctionInlines.h"
 #include "MacroAssembler.h"
+#include "PropertyInlineCacheClearingWatchpoint.h"
 #include "ScratchRegisterAllocator.h"
-#include "StructureStubClearingWatchpoint.h"
 #include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
@@ -44,7 +44,7 @@ class GetterSetter;
 class CCallHelpers;
 class CodeBlock;
 class PolymorphicAccess;
-class StructureStubInfo;
+class PropertyInlineCache;
 class InlineCacheHandler;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PolymorphicAccess);
@@ -137,7 +137,7 @@ public:
 
     // When this fails (returns GaveUp), this will leave the old stub intact but you should not try
     // to call this method again for that PolymorphicAccess instance.
-    AccessGenerationResult addCases(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, RefPtr<AccessCase>&& previousCase, Ref<AccessCase>);
+    AccessGenerationResult addCases(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, PropertyInlineCache&, RefPtr<AccessCase>&& previousCase, Ref<AccessCase>);
 
     bool isEmpty() const { return m_list.isEmpty(); }
     unsigned size() const { return m_list.size(); }
@@ -148,7 +148,7 @@ public:
 
     DECLARE_VISIT_AGGREGATE;
 
-    // If this returns false then we are requesting a reset of the owning StructureStubInfo.
+    // If this returns false then we are requesting a reset of the owning PropertyInlineCache.
     bool visitWeak(VM&);
 
     // This returns true if it has marked everything it will ever marked. This can be used as an
@@ -171,8 +171,8 @@ class InlineCacheHandler final : public RefCounted<InlineCacheHandler>, public T
 public:
     using Base = TrailingArray<InlineCacheHandler, DataOnlyCallLinkInfo>;
 
-    static Ref<InlineCacheHandler> create(Ref<InlineCacheHandler>&&, CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
-    static Ref<InlineCacheHandler> createPreCompiled(Ref<InlineCacheHandler>&&, CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, AccessCase&, CacheType);
+    static Ref<InlineCacheHandler> create(Ref<InlineCacheHandler>&&, CodeBlock*, PropertyInlineCache&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<PropertyInlineCacheClearingWatchpoint>&&, unsigned callLinkInfoCount);
+    static Ref<InlineCacheHandler> createPreCompiled(Ref<InlineCacheHandler>&&, CodeBlock*, PropertyInlineCache&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<PropertyInlineCacheClearingWatchpoint>&&, AccessCase&, CacheType);
 
     CodePtr<JITStubRoutinePtrTag> callTarget() const { return m_callTarget; }
     CodePtr<JITStubRoutinePtrTag> jumpTarget() const { return m_jumpTarget; }
@@ -189,7 +189,7 @@ public:
 
     CallLinkInfo* callLinkInfoAt(const ConcurrentJSLocker&, unsigned index);
 
-    // If this returns false then we are requesting a reset of the owning StructureStubInfo.
+    // If this returns false then we are requesting a reset of the owning PropertyInlineCache.
     bool visitWeak(VM&);
 
     void dump(PrintStream&) const;
@@ -251,7 +251,7 @@ private:
         disableThreadingChecks();
     }
 
-    InlineCacheHandler(Ref<InlineCacheHandler>&&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount, CacheType);
+    InlineCacheHandler(Ref<InlineCacheHandler>&&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<PropertyInlineCacheClearingWatchpoint>&&, unsigned callLinkInfoCount, CacheType);
 
     static Ref<InlineCacheHandler> createSlowPath(VM&, AccessType);
 
@@ -280,7 +280,7 @@ private:
     RefPtr<InlineCacheHandler> m_next;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     RefPtr<AccessCase> m_accessCase;
-    std::unique_ptr<StructureStubInfoClearingWatchpoint> m_watchpoint;
+    std::unique_ptr<PropertyInlineCacheClearingWatchpoint> m_watchpoint;
 };
 
 ALWAYS_INLINE bool canUseMegamorphicGetByIdExcludingIndex(VM& vm, UniquedStringImpl* uid)
@@ -314,10 +314,10 @@ inline AccessGenerationResult::AccessGenerationResult(Kind kind, Ref<InlineCache
 
 class InlineCacheCompiler {
 public:
-    InlineCacheCompiler([[maybe_unused]] JITType jitType, VM& vm, JSGlobalObject* globalObject, ECMAMode ecmaMode, StructureStubInfo& stubInfo)
+    InlineCacheCompiler([[maybe_unused]] JITType jitType, VM& vm, JSGlobalObject* globalObject, ECMAMode ecmaMode, PropertyInlineCache& propertyCache)
         : m_vm(vm)
         , m_globalObject(globalObject)
-        , m_stubInfo(stubInfo)
+        , m_propertyCache(propertyCache)
         , m_ecmaMode(ecmaMode)
 #if ASSERT_ENABLED
         , m_jitType(jitType)
@@ -394,7 +394,7 @@ public:
     // Fall through on success, add a jump to the failure list on failure.
     void generateWithoutGuard(unsigned index, AccessCase&);
 
-    static bool canEmitIntrinsicGetter(StructureStubInfo&, JSFunction*, Structure*);
+    static bool canEmitIntrinsicGetter(PropertyInlineCache&, JSFunction*, Structure*);
 
     VM& vm() { return m_vm; }
 
@@ -431,7 +431,7 @@ private:
 
     VM& m_vm;
     JSGlobalObject* const m_globalObject;
-    StructureStubInfo& m_stubInfo;
+    PropertyInlineCache& m_propertyCache;
     const ECMAMode m_ecmaMode { ECMAMode::sloppy() };
 #if ASSERT_ENABLED
     JITType m_jitType;
