@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!-- Regression test for rdar://171573375 -->
+<!-- RenderBlock::hasLineIfEmpty() must not trigger resolveComputedStyle() -->
+<!-- during layout, which caused O(N^2) stack growth in nested block-in-inline -->
+<!-- contenteditable layouts, leading to a stack overflow crash. -->
+<body>
+<p>This test passes if WebKit does not crash with a stack overflow when laying out nested editable block-in-inline content.</p>
+<div id="container"></div>
+<script>
+    // Build nested block-in-inline structure inside contenteditable:
+    // <div contenteditable>text <div>text <div>text...</div></div></div>
+    // Each inner <div> is a block element inside inline content, triggering
+    // block-in-inline layout. Each layout level calls hasLineIfEmpty(), which
+    // previously triggered resolveComputedStyle() traversing all ancestors.
+    function buildNestedContent(depth) {
+        if (depth === 0)
+            return document.createTextNode("leaf");
+        var outer = document.createElement("div");
+        outer.appendChild(document.createTextNode("before "));
+        outer.appendChild(buildNestedContent(depth - 1));
+        outer.appendChild(document.createTextNode(" after"));
+        return outer;
+    }
+
+    var container = document.getElementById("container");
+    container.setAttribute("contenteditable", "true");
+
+    // 30 levels of nesting is enough to trigger the stack overflow in the
+    // unfixed code (each level adds O(depth) stack frames).
+    container.appendChild(buildNestedContent(30));
+
+    // Force layout to exercise the crash path.
+    container.getBoundingClientRect();
+
+    // Also test with CSS-based editability (-webkit-user-modify).
+    var cssContainer = document.createElement("div");
+    cssContainer.style.cssText = "-webkit-user-modify: read-write;";
+    cssContainer.appendChild(buildNestedContent(20));
+    document.body.appendChild(cssContainer);
+    cssContainer.getBoundingClientRect();
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</body>

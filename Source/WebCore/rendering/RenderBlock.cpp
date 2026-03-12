@@ -2455,8 +2455,30 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderBox& childBox, Layout
 
 bool RenderBlock::hasLineIfEmpty() const
 {
-    RefPtr element = this->element();
-    return element && element->isRootEditableElement();
+    // Avoid calling element()->isRootEditableElement() here because it triggers
+    // computedStyleForEditability() -> resolveComputedStyle(Editability), which
+    // traverses the full ancestor chain adding O(depth) stack frames. In deeply
+    // nested block-in-inline layouts with editable content, each layout level
+    // calls hasLineIfEmpty(), causing O(N^2) stack growth and a stack overflow
+    // crash. rdar://171573375
+    //
+    // Instead, use the renderer's already-computed style. -webkit-user-modify is
+    // an inherited CSS property, so anonymous parent renderers correctly reflect
+    // the DOM element's editability without any style resolution.
+    if (!element())
+        return false;
+
+    auto& doc = document();
+    bool pageIsEditable = doc.page() && doc.page()->isEditable();
+    if (!pageIsEditable && style().usedUserModify() == UserModify::ReadOnly)
+        return false;
+
+    if (isBody())
+        return true;
+    auto* parentRenderer = parent();
+    if (!parentRenderer)
+        return true;
+    return pageIsEditable ? false : parentRenderer->style().usedUserModify() == UserModify::ReadOnly;
 }
 
 std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const

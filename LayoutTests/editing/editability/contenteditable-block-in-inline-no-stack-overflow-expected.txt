@@ -1,0 +1,1 @@
+This test passes if WebKit does not crash with a stack overflow when laying out nested editable block-in-inline content.
