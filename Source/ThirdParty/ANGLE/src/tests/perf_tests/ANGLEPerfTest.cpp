@@ -37,6 +37,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <numeric>
@@ -310,6 +311,8 @@ ANGLEPerfTest::ANGLEPerfTest(const std::string &name,
       mBackend(backend),
       mStory(story),
       mGPUTimeNs(0),
+      mFrameWallTimeSec(0.0),
+      mBusyWaitCpuTimeSec(0.0),
       mSkipTest(false),
       mStepsToRun(std::max(gStepsPerTrial, gMaxStepsPerformed)),
       mTrialNumStepsPerformed(0),
@@ -328,6 +331,7 @@ ANGLEPerfTest::ANGLEPerfTest(const std::string &name,
     }
     mReporter = std::make_unique<perf_test::PerfResultReporter>(mName + mBackend, mStory);
     mReporter->RegisterImportantMetric(".wall_time", units);
+    mReporter->RegisterImportantMetric(".frame_wall_time", units);
     mReporter->RegisterImportantMetric(".cpu_time", units);
     mReporter->RegisterImportantMetric(".gpu_time", units);
     mReporter->RegisterFyiMetric(".trial_steps", "count");
@@ -377,6 +381,14 @@ void ANGLEPerfTest::run()
             double secondsPerIteration = secondsPerStep / static_cast<double>(mIterationsPerStep);
             mTestTrialResults.push_back(secondsPerIteration * 1000.0);
         }
+        if (gSleepBetweenTrialMs > 0 && trial + 1 < numTrials)
+        {
+            if (gVerboseLogging)
+            {
+                printf("Sleeping for %d milliseconds before next trial...\n", gSleepBetweenTrialMs);
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(gSleepBetweenTrialMs));
+        }
     }
 
     atraceCounter("TraceStage", 0);
@@ -420,6 +432,8 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
     mTrialNumStepsPerformed = 0;
     mRunning                = true;
     mGPUTimeNs              = 0;
+    mFrameWallTimeSec       = 0.0;
+    mBusyWaitCpuTimeSec     = 0.0;
     int stepAlignment       = getStepAlignment();
     mTrialTimer.start();
     startTest();
@@ -428,15 +442,15 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
     double lastLoopWallTime = 0;
     while (mRunning)
     {
-        // When ATrace enabled, track average frame time before the first frame of each trace loop.
+        // When ATrace enabled, track average wall time before the first frame of each trace loop.
         if (ATraceEnabled() && stepAlignment > 1 && runPolicy == RunTrialPolicy::RunContinuously &&
             mTrialNumStepsPerformed % stepAlignment == 0)
         {
             double wallTime = mTrialTimer.getElapsedWallClockTime();
             if (loopStepsPerformed > 0)  // 0 at the first frame of the first loop
             {
-                int frameTimeAvgUs = int(1e6 * (wallTime - lastLoopWallTime) / loopStepsPerformed);
-                atraceCounter("TraceLoopFrameTimeAvgUs", frameTimeAvgUs);
+                int wallTimeAvgUs = int(1e6 * (wallTime - lastLoopWallTime) / loopStepsPerformed);
+                atraceCounter("TraceLoopWallTimeAvgUs", wallTimeAvgUs);
                 loopStepsPerformed = 0;
             }
             lastLoopWallTime = wallTime;
@@ -478,11 +492,28 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
 
         if (gFpsLimit)
         {
-            double wantTime    = mTrialNumStepsPerformed / double(gFpsLimit);
-            double currentTime = mTrialTimer.getElapsedWallClockTime();
-            if (currentTime < wantTime)
+            double wantTime = mTrialNumStepsPerformed / double(gFpsLimit);
+            if (gFpsLimitUsesBusyWait)
             {
-                std::this_thread::sleep_for(std::chrono::duration<double>(wantTime - currentTime));
+                Timer busyWaitTimer;
+                busyWaitTimer.start();
+                while (mTrialTimer.getElapsedWallClockTime() < wantTime)
+                {
+                }
+                busyWaitTimer.stop();
+                // Estimate CPU time spend busy waiting by the current thread.
+                const double busyWaitCpuTime = std::min(busyWaitTimer.getElapsedWallClockTime(),
+                                                        busyWaitTimer.getElapsedCpuTime());
+                mBusyWaitCpuTimeSec += busyWaitCpuTime;
+            }
+            else
+            {
+                double currentTime = mTrialTimer.getElapsedWallClockTime();
+                if (currentTime < wantTime)
+                {
+                    std::this_thread::sleep_for(
+                        std::chrono::duration<double>(wantTime - currentTime));
+                }
             }
         }
         step();
@@ -507,7 +538,7 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
 
     if (runPolicy == RunTrialPolicy::RunContinuously)
     {
-        atraceCounter("TraceLoopFrameTimeAvgUs", 0);
+        atraceCounter("TraceLoopWallTimeAvgUs", 0);
     }
     finishTest();
     mTrialTimer.stop();
@@ -586,7 +617,11 @@ void ANGLEPerfTest::addHistogramSample(const char *metric, double value, const s
 
 void ANGLEPerfTest::processResults()
 {
-    processClockResult(".cpu_time", mTrialTimer.getElapsedCpuTime());
+    processClockResult(".cpu_time", mTrialTimer.getElapsedCpuTime() - mBusyWaitCpuTimeSec);
+    if (mFrameWallTimeSec > 0.0)
+    {
+        processClockResult(".frame_wall_time", mFrameWallTimeSec);
+    }
     processClockResult(".wall_time", mTrialTimer.getElapsedWallClockTime());
 
     if (mGPUTimeNs > 0)
@@ -1007,14 +1042,29 @@ void ANGLERenderTest::SetUp()
         return;
     }
 
+    constexpr const char *REQUESTED_EXTENSIONS_FILENAME = "angle_trace_requested_extensions";
+
     if (gRequestedExtensions != nullptr)
     {
+        std::filesystem::path tempDir     = std::filesystem::temp_directory_path();
+        std::filesystem::path extFilePath = tempDir / REQUESTED_EXTENSIONS_FILENAME;
         std::istringstream ss{gRequestedExtensions};
         std::string ext;
+
+        std::ofstream extFile(extFilePath);
+        if (!extFile.is_open())
+        {
+            FATAL() << "Error: Couldn't open temporary extension file";
+        }
+
         while (std::getline(ss, ext, ' '))
         {
+            // Set the extension for the trace's main context
             glRequestExtensionANGLE(ext.c_str());
+            // Write extension to file for the trace's side-contexts
+            extFile << ext << std::endl;
         }
+        extFile.close();
     }
 
     // Disable vsync (if not done by the window init).
@@ -1030,6 +1080,18 @@ void ANGLERenderTest::SetUp()
     if (mTestParams.trackGpuTime)
     {
         mIsTimestampQueryAvailable = EnsureGLExtensionEnabled("GL_EXT_disjoint_timer_query");
+
+        if (IsAndroid() && mIsTimestampQueryAvailable &&
+            mTestParams.driver == GLESDriverType::SystemEGL)
+        {
+            // It was observed that on Native GLES drivers (both Adreno and Mali) the query was
+            // inserted before previous draw commands if there is no flush right before the
+            // glQueryCounterEXT() call. Adreno is known to respect glFlush() call, while Mali
+            // ignores it and requires a glFenceSync() hack.
+            mEndQueryFlushPolicy = (mTestParams.majorVersion >= 3 && !IsAdreno())
+                                       ? EndQueryFlushPolicy::FenceSync
+                                       : EndQueryFlushPolicy::Flush;
+        }
     }
 
     skipTestIfMissingExtensionPrerequisites();
@@ -1066,6 +1128,19 @@ void ANGLERenderTest::SetUp()
     {
         printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
         printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
+        switch (mEndQueryFlushPolicy)
+        {
+            case EndQueryFlushPolicy::Flush:
+                printf("Native GLES driver - using flush before end GPU timestamp query\n");
+                break;
+            case EndQueryFlushPolicy::FenceSync:
+                printf(
+                    "Native GLES driver - using glFenceSync() hack before end GPU "
+                    "timestamp query\n");
+                break;
+            default:
+                break;
+        }
     }
 
     mTestTrialResults.reserve(gTestTrials);
@@ -1196,6 +1271,8 @@ void ANGLERenderTest::updatePerfCounters()
     {
         uint32_t counter               = iter.first;
         std::vector<GLuint64> &samples = iter.second.samples;
+        ASSERT(perfData[counter].group == 0);
+        ASSERT(perfData[counter].counter == counter);
         samples.push_back(perfData[counter].value);
     }
 }
@@ -1300,10 +1377,27 @@ void ANGLERenderTest::startGpuTimer()
     }
 }
 
-void ANGLERenderTest::stopGpuTimer()
+void ANGLERenderTest::stopGpuTimer(bool mayNeedFlush)
 {
     if (mTestParams.trackGpuTime && mIsTimestampQueryAvailable)
     {
+        if (mayNeedFlush)
+        {
+            switch (mEndQueryFlushPolicy)
+            {
+                case EndQueryFlushPolicy::Flush:
+                    glFlush();
+                    break;
+                case EndQueryFlushPolicy::FenceSync:
+                {
+                    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+                    glDeleteSync(sync);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
         GLuint endQuery = 0;
         glGenQueriesEXT(1, &endQuery);
         glQueryCounterEXT(endQuery, GL_TIMESTAMP_EXT);

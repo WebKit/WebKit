@@ -90,6 +90,7 @@ class AsyncWaitableEvent final : public WaitableEvent
     bool isReady() override;
 
     void markAsReady();
+    void markAsAborted();
 
   private:
     // To protect the concurrent accesses from both main thread and background
@@ -97,6 +98,7 @@ class AsyncWaitableEvent final : public WaitableEvent
     std::mutex mMutex;
 
     bool mIsReady = false;
+    bool mAborted = false;
     std::condition_variable mCondition;
 };
 

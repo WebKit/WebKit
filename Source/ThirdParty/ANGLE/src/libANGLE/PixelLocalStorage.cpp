@@ -348,7 +348,12 @@ void PixelLocalStoragePlane::ensureBackingTextureIfMemoryless(Context *context, 
         ASSERT(mTextureID.value == 0);
 
         // Create a new texture that backs the memoryless plane.
-        mTextureID = context->createTexture();
+        if (!context->createTexture(&mTextureID))
+        {
+            context->handleExhaustionError(angle::EntryPoint::GLBeginPixelLocalStorageANGLE);
+            return;
+        }
+
         {
             ScopedBindTexture2D scopedBindTexture2D(context, mTextureID);
             context->bindTexture(TextureType::_2D, mTextureID);

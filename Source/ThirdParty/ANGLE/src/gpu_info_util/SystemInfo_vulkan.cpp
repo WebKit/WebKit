@@ -394,7 +394,7 @@ class VulkanLibrary final : NonCopyable
             return VK_NULL_HANDLE;
         }
 
-        mPfnDestroyInstance = getProc<PFN_vkDestroyInstance>("vkDestroyInstance");
+        mPfnDestroyInstance = getProcWithDLSym<PFN_vkDestroyInstance>("vkDestroyInstance");
         if (!mPfnDestroyInstance)
         {
             return VK_NULL_HANDLE;

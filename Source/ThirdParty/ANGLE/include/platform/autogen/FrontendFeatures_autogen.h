@@ -99,6 +99,12 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
+    FeatureInfo useIr = {
+        "useIr",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
     FeatureInfo cacheCompiledShader = {
         "cacheCompiledShader",
         FeatureCategory::FrontendFeatures,

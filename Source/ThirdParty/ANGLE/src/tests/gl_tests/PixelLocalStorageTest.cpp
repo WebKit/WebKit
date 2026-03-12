@@ -4291,11 +4291,6 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTest);
 #define PLS_INSTANTIATE_RENDERING_TEST_AND(TEST, API, ...)                                \
     ANGLE_INSTANTIATE_TEST(                                                               \
         TEST,                                                                             \
-        PLATFORM(API, D3D11) /* D3D coherent. */                                          \
-            .enable(Feature::EmulatePixelLocalStorage),                                   \
-        PLATFORM(API, D3D11) /* D3D noncoherent. */                                       \
-            .enable(Feature::DisableRasterizerOrderViews)                                 \
-            .enable(Feature::EmulatePixelLocalStorage),                                   \
         PLATFORM(API, OPENGL) /* OpenGL coherent. */                                      \
             .enable(Feature::EmulatePixelLocalStorage),                                   \
         PLATFORM(API, OPENGL) /* OpenGL noncoherent. */                                   \
@@ -4333,10 +4328,17 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTest);
 
 #define PLS_INSTANTIATE_RENDERING_TEST_ES3(TEST)                                                   \
     PLS_INSTANTIATE_RENDERING_TEST_AND(                                                            \
-        TEST, ES3, /* Metal, coherent (in tiled memory on Apple Silicon).*/                        \
-        ES3_METAL().enable(Feature::EmulatePixelLocalStorage), /* Metal, coherent via raster order \
-                                                                  groups + read_write textures.*/  \
-        ES3_METAL()                                                                                \
+        TEST, ES3,                                                                                 \
+                                                                                                   \
+        ES3_D3D11().enable(Feature::EmulatePixelLocalStorage), /* D3D coherent. */                 \
+                                                                                                   \
+        ES3_D3D11() /* D3D noncoherent. */                                                         \
+            .enable(Feature::DisableRasterizerOrderViews)                                          \
+            .enable(Feature::EmulatePixelLocalStorage),                                            \
+                                                                                                   \
+        ES3_METAL().enable(Feature::EmulatePixelLocalStorage), /* Metal, coherent (in tiled memory \
+                                                                  on Apple Silicon).*/             \
+        ES3_METAL() /* Metal, coherent via raster order groups + read_write textures.*/            \
             .enable(Feature::EmulatePixelLocalStorage)                                             \
             .enable(Feature::DisableProgrammableBlending), /* Metal, coherent, r32 packed          \
                                                               read_write texture formats.*/        \
@@ -8631,12 +8633,12 @@ TEST_P(PixelLocalStorageCompilerTest, BlendFuncExtended_illegal_with_PLS)
     void main()
     {})";
     EXPECT_FALSE(log.compileFragmentShader(kBlendFuncExtendedNoLocation));
-    EXPECT_TRUE(log.has(
-        "ERROR: 0:5: 'out1' : must explicitly specify all locations when using multiple fragment "
-        "outputs and pixel local storage, even if EXT_blend_func_extended is enabled"));
-    EXPECT_TRUE(log.has(
-        "ERROR: 0:6: 'out0' : must explicitly specify all locations when using multiple fragment "
-        "outputs and pixel local storage, even if EXT_blend_func_extended is enabled"));
+    EXPECT_TRUE(
+        log.has("'out1' : must explicitly specify all locations when using multiple fragment "
+                "outputs and pixel local storage, even if EXT_blend_func_extended is enabled"));
+    EXPECT_TRUE(
+        log.has("'out0' : must explicitly specify all locations when using multiple fragment "
+                "outputs and pixel local storage, even if EXT_blend_func_extended is enabled"));
 
     // index=0 is ok.
     constexpr char kValidFragmentIndex0[] = R"(#version 300 es

@@ -32,6 +32,10 @@ declare_args() {
 
   # Benchmark mode golden default directory
   angle_standalone_benchmark_goldens_dir = ""
+
+  # Whether the ANGLE translator should be built with IR instead
+  # THIS IS CURRENTLY EXPERIMENTAL.
+  angle_ir = false
 }
 
 declare_args() {

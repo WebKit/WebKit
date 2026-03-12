@@ -8476,10 +8476,10 @@ TEST_P(SimpleStateChangeTestES3, RespecifyBufferAfterBeginTransformFeedback)
     glEndTransformFeedback();
 }
 
-// Test a bug angleproject:6998 in TransformFeedback code path by allocating paddingBuffer first and
-// then allocate another buffer and then deallocate paddingBuffer and then allocate buffer again.
-// This new buffer will be allocated in the space where paddingBuffer was allocated which causing
-// XFB generate VVL error.
+// Test a bug http://anglebug.com/42265470 in TransformFeedback code path by allocating
+// paddingBuffer first and then allocate another buffer and then deallocate paddingBuffer and then
+// allocate buffer again. This new buffer will be allocated in the space where paddingBuffer was
+// allocated which causing XFB generate VVL error.
 TEST_P(SimpleStateChangeTestES3, RespecifyBufferAfterBeginTransformFeedbackInDeletedPaddingBuffer)
 {
     std::vector<std::string> tfVaryings = {"gl_Position"};

@@ -868,6 +868,7 @@ void DisplayMtl::ensureCapsInitialized() const
 
     // Fill in additional limits for UBOs and SSBOs.
     mNativeCaps.maxUniformBufferBindings = mNativeCaps.maxCombinedUniformBlocks;
+    static_assert(mtl::kMaxUBOSize <= gl::IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE);
     mNativeCaps.maxUniformBlockSize      = mtl::kMaxUBOSize;  // Default according to GLES 3.0 spec.
     if (supportsAppleGPUFamily(1))
     {
@@ -953,12 +954,6 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.multiDrawIndirectEXT        = true;
     mNativeExtensions.translatedShaderSourceANGLE = true;
     mNativeExtensions.discardFramebufferEXT       = true;
-    // TODO(anglebug.com/42264909): Apple's implementation exposed
-    // mNativeExtensions.textureRectangle = true here and
-    // EGL_TEXTURE_RECTANGLE_ANGLE as the eglBindTexImage texture target on
-    // macOS. This no longer seems necessary as IOSurfaces can be bound to
-    // regular 2D textures with Metal, and causes other problems such as
-    // breaking the SPIR-V Metal compiler.
 
     mNativeExtensions.multisampledRenderToTextureEXT =
         (supportsAppleGPUFamily(1) ||

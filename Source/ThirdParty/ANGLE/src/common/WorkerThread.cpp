@@ -45,10 +45,17 @@ void AsyncWaitableEvent::markAsReady()
     mCondition.notify_all();
 }
 
+void AsyncWaitableEvent::markAsAborted()
+{
+    std::lock_guard<std::mutex> lock(mMutex);
+    mAborted = true;
+    mCondition.notify_all();
+}
+
 void AsyncWaitableEvent::wait()
 {
     std::unique_lock<std::mutex> lock(mMutex);
-    mCondition.wait(lock, [this] { return mIsReady; });
+    mCondition.wait(lock, [this] { return mIsReady || mAborted; });
 }
 
 bool AsyncWaitableEvent::isReady()
@@ -122,6 +129,12 @@ AsyncWorkerPool::~AsyncWorkerPool()
 {
     {
         std::unique_lock<std::mutex> lock(mMutex);
+        // Mark each task's AsyncWaitableEvent as aborted and drain the task queue
+        for (; !mTaskQueue.empty(); mTaskQueue.pop())
+        {
+            auto task = mTaskQueue.front();
+            task.first->markAsAborted();
+        }
         mTerminated = true;
     }
     mCondVar.notify_all();
@@ -153,6 +166,7 @@ std::shared_ptr<WaitableEvent> AsyncWorkerPool::postWorkerTask(const std::shared
     auto waitable = std::make_shared<AsyncWaitableEvent>();
     {
         std::lock_guard<std::mutex> lock(mMutex);
+        ASSERT(!mTerminated);
 
         // Lazily create the threads on first task
         createThreads();
@@ -175,6 +189,7 @@ void AsyncWorkerPool::threadLoop()
             mCondVar.wait(lock, [this] { return !mTaskQueue.empty() || mTerminated; });
             if (mTerminated)
             {
+                ASSERT(mTaskQueue.empty());
                 return;
             }
             task = mTaskQueue.front();

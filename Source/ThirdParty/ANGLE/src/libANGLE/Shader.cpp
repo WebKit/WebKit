@@ -659,6 +659,11 @@ void Shader::compile(const Context *context, angle::JobResultExpectancy resultEx
         options.emulateGLBaseVertexBaseInstance = true;
     }
 
+    if (context->getFrontendFeatures().useIr.enabled)
+    {
+        options.useIR = true;
+    }
+
     if (context->getFrontendFeatures().forceInitShaderVariables.enabled)
     {
         options.initOutputVariables           = true;

@@ -107,6 +107,14 @@
             "issue": "http://anglebug.com/40096838"
         },
         {
+            "name": "use_ir",
+            "category": "Features",
+            "description": [
+                "Use the translator's IR instead of AST"
+            ],
+            "issue": "http://anglebug.com/349994211"
+        },
+        {
             "name": "cache_compiled_shader",
             "category": "Features",
             "description": [

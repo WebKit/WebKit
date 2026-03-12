@@ -84,6 +84,10 @@ enum
     IMPLEMENTATION_MAX_FRAMEBUFFER_SIZE  = 32768,
     IMPLEMENTATION_MAX_RENDERBUFFER_SIZE = 32768,
 
+    // Limit uniform block size to 64KB, which is what the majority of devices support.  Internally,
+    // ANGLE assumes 16 bits are enough to hold offsets in the UBO block.
+    IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE = 65536,
+
     // Maximum number of slots allocated for atomic counter buffers.
     IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS = 8,
 
@@ -105,6 +109,9 @@ enum
     // TODO (anglebug.com/42266906): Implement support for multiple layers
     IMPLEMENTATION_MAX_NUM_LAYERS   = 1,
     IMPLEMENTATION_MAX_FOCAL_POINTS = 2,
+
+    // Maximum simultaneous handles of an object type.
+    IMPLEMENTATION_MAX_OBJECT_HANDLES = 1 << 24,
 };
 
 namespace limits

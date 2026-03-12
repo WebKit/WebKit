@@ -11,7 +11,6 @@
 
 #include "common/utilities.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
-#include "compiler/translator/hlsl/AtomicCounterFunctionHLSL.h"
 #include "compiler/translator/hlsl/StructureHLSL.h"
 #include "compiler/translator/hlsl/UtilsHLSL.h"
 #include "compiler/translator/hlsl/blocklayoutHLSL.h"
@@ -464,15 +463,6 @@ void ResourcesHLSL::outputUniform(TInfoSinkBase &out,
     out << ArrayString(type) << " : " << registerString << ";\n";
 }
 
-void ResourcesHLSL::outputAtomicCounterBuffer(TInfoSinkBase &out,
-                                              const int binding,
-                                              const unsigned int registerIndex)
-{
-    // Atomic counter memory access is not incoherent
-    out << "uniform globallycoherent RWByteAddressBuffer "
-        << getAtomicCounterNameForBinding(binding) << " : register(u" << registerIndex << ");\n";
-}
-
 void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
                                    ShShaderOutput outputType,
                                    const ReferencedVariables &referencedUniforms,
@@ -490,7 +480,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
     TVector<TVector<const TVariable *>> groupedReadonlyImageUniforms(HLSL_TEXTURE_MAX + 1);
     TVector<TVector<const TVariable *>> groupedImageUniforms(HLSL_RWTEXTURE_MAX + 1);
 
-    TUnorderedMap<int, unsigned int> assignedAtomicCounterBindings;
     unsigned int reservedReadonlyImageRegisterCount = 0, reservedImageRegisterCount = 0;
     for (auto &uniformIt : referencedUniforms)
     {
@@ -532,24 +521,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
                 groupedImageUniforms[group].push_back(&variable);
             }
         }
-        else if (outputType == SH_HLSL_4_1_OUTPUT && IsAtomicCounter(type.getBasicType()))
-        {
-            TLayoutQualifier layout = type.getLayoutQualifier();
-            int binding             = layout.binding;
-            unsigned int registerIndex;
-            if (assignedAtomicCounterBindings.find(binding) == assignedAtomicCounterBindings.end())
-            {
-                registerIndex                          = mUAVRegister++;
-                assignedAtomicCounterBindings[binding] = registerIndex;
-                outputAtomicCounterBuffer(out, binding, registerIndex);
-            }
-            else
-            {
-                registerIndex = assignedAtomicCounterBindings[binding];
-            }
-            const ShaderVariable *uniform      = findUniformByName(variable.name());
-            mUniformRegisterMap[uniform->name] = registerIndex;
-        }
         else
         {
             if (type.isStructureContainingSamplers())
@@ -589,8 +560,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
     if (outputType == SH_HLSL_4_1_OUTPUT)
     {
         unsigned int groupTextureRegisterIndex = 0;
-        // Atomic counters and RW texture share the same resources. Therefore, RW texture need to
-        // start counting after the last atomic counter.
         unsigned int groupRWTextureRegisterIndex = mUAVRegister;
         // TEXTURE_2D is special, index offset is assumed to be 0 and omitted in that case.
         ASSERT(HLSL_TEXTURE_MIN == HLSL_TEXTURE_2D);
@@ -748,58 +717,6 @@ TString ResourcesHLSL::uniformBlocksHeader(
     return (interfaceBlocks.empty() ? "" : ("// Uniform Blocks\n\n" + interfaceBlocks));
 }
 
-void ResourcesHLSL::allocateShaderStorageBlockRegisters(
-    const ReferencedInterfaceBlocks &referencedInterfaceBlocks)
-{
-    for (const auto &interfaceBlockReference : referencedInterfaceBlocks)
-    {
-        const TInterfaceBlock &interfaceBlock = *interfaceBlockReference.second->block;
-        const TVariable *instanceVariable     = interfaceBlockReference.second->instanceVariable;
-
-        mShaderStorageBlockRegisterMap[interfaceBlock.name().data()] = mUAVRegister;
-
-        if (instanceVariable != nullptr && instanceVariable->getType().isArray())
-        {
-            mUAVRegister += instanceVariable->getType().getOutermostArraySize();
-        }
-        else
-        {
-            mUAVRegister += 1u;
-        }
-    }
-}
-
-TString ResourcesHLSL::shaderStorageBlocksHeader(
-    const ReferencedInterfaceBlocks &referencedInterfaceBlocks)
-{
-    TString interfaceBlocks;
-
-    for (const auto &interfaceBlockReference : referencedInterfaceBlocks)
-    {
-        const TInterfaceBlock &interfaceBlock = *interfaceBlockReference.second->block;
-        const TVariable *instanceVariable     = interfaceBlockReference.second->instanceVariable;
-
-        unsigned int activeRegister = mShaderStorageBlockRegisterMap[interfaceBlock.name().data()];
-
-        if (instanceVariable != nullptr && instanceVariable->getType().isArray())
-        {
-            unsigned int instanceArraySize = instanceVariable->getType().getOutermostArraySize();
-            for (unsigned int arrayIndex = 0; arrayIndex < instanceArraySize; arrayIndex++)
-            {
-                interfaceBlocks += shaderStorageBlockString(
-                    interfaceBlock, instanceVariable, activeRegister + arrayIndex, arrayIndex);
-            }
-        }
-        else
-        {
-            interfaceBlocks += shaderStorageBlockString(interfaceBlock, instanceVariable,
-                                                        activeRegister, GL_INVALID_INDEX);
-        }
-    }
-
-    return interfaceBlocks;
-}
-
 TString ResourcesHLSL::uniformBlockString(const TInterfaceBlock &interfaceBlock,
                                           const TVariable *instanceVariable,
                                           unsigned int registerIndex,
@@ -876,26 +793,6 @@ TString ResourcesHLSL::uniformBlockWithOneLargeArrayMemberString(
                 " : register(t" + str(registerIndex) + ");\n";
     }
 
-    return hlsl;
-}
-
-TString ResourcesHLSL::shaderStorageBlockString(const TInterfaceBlock &interfaceBlock,
-                                                const TVariable *instanceVariable,
-                                                unsigned int registerIndex,
-                                                unsigned int arrayIndex)
-{
-    TString hlsl;
-    if (instanceVariable != nullptr)
-    {
-        hlsl += "RWByteAddressBuffer " +
-                InterfaceBlockInstanceString(instanceVariable->name(), arrayIndex) +
-                ": register(u" + str(registerIndex) + ");\n";
-    }
-    else
-    {
-        hlsl += "RWByteAddressBuffer " + Decorate(interfaceBlock.name()) + ": register(u" +
-                str(registerIndex) + ");\n";
-    }
     return hlsl;
 }
 

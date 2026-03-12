@@ -63,6 +63,10 @@ default_args = {
 
   # TODO(439777063): llvm and Dawn need to fix includes
   use_clang_modules = false
+
+  # Enable Rust usage
+  enable_rust = true
+  enable_rust_cxx = true
 }
 
 no_check_targets = [ "third_party/dawn/*" ]

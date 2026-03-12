@@ -1518,17 +1518,6 @@ inline void ContextPrivateTranslatex(PrivateState *privateState,
                              ConvertFixedToFloat(y), ConvertFixedToFloat(z));
 }
 
-inline void ContextPrivateGenVertexArrays(PrivateState *privateState,
-                                          PrivateStateCache *privateStateCache,
-                                          GLsizei n,
-                                          VertexArrayID *arrays)
-{
-    for (int arrayIndex = 0; arrayIndex < n; arrayIndex++)
-    {
-        arrays[arrayIndex] = privateState->allocateVertexID();
-    }
-}
-
 inline GLboolean ContextPrivateIsVertexArray(PrivateState *privateState,
                                              PrivateStateCache *privateStateCache,
                                              VertexArrayID array)

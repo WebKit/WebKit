@@ -70,7 +70,7 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
 
         const gl::TextureCaps &textureCaps =
             contextMtl->getTextureCaps().get(mFormat.intendedFormatId);
-        actualSamples = textureCaps.getNearestSamples(actualSamples);
+        actualSamples = textureCaps.sampleCounts.getNearestSamples(actualSamples);
         ANGLE_CHECK(contextMtl, actualSamples != 0, gl::err::kInternalError, GL_INVALID_VALUE);
     }
 

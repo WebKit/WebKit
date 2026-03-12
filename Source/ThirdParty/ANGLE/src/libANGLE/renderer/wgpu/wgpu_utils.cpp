@@ -235,6 +235,7 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glExtensions->EGLImageExternalEssl3OES     = true;
     glExtensions->EGLImageExternalWrapModesEXT = true;
     glExtensions->requiredInternalformatOES    = true;
+    glExtensions->copyTextureCHROMIUM          = true;
 
     // OpenGL ES caps
     glCaps->maxElementIndex       = std::numeric_limits<GLuint>::max() - 1;
@@ -286,10 +287,8 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glCaps->fragmentMediumpInt.setTwosComplementInt(16);
     glCaps->fragmentLowpInt.setTwosComplementInt(16);
 
-    // Clamp the maxUniformBlockSize to 64KB (majority of devices support up to this size
-    // currently), on AMD the maxUniformBufferRange is near uint32_t max.
-    GLuint maxUniformBlockSize = static_cast<GLuint>(
-        std::min(static_cast<uint64_t>(0x10000), limitsWgpu.maxUniformBufferBindingSize));
+    const GLuint maxUniformBlockSize = static_cast<GLuint>(std::min<uint64_t>(
+        gl::IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE, limitsWgpu.maxUniformBufferBindingSize));
 
     const GLuint maxUniformVectors    = maxUniformBlockSize / (sizeof(GLfloat) * 4);
     const GLuint maxUniformComponents = maxUniformVectors * 4;

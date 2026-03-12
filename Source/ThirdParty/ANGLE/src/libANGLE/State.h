@@ -638,11 +638,14 @@ class PrivateState : angle::NonCopyable
     void setPerfMonitorActive(bool active) { mIsPerfMonitorActive = active; }
     bool isPerfMonitorActive() const { return mIsPerfMonitorActive; }
 
-    VertexArrayID allocateVertexID()
+    bool allocateVertexID(VertexArrayID *outId)
     {
-        VertexArrayID vertexArray = {mVertexArrayHandleAllocator.allocate()};
-        mVertexArrayMap.assign(vertexArray, nullptr);
-        return vertexArray;
+        if (!mVertexArrayHandleAllocator.allocate(&outId->value))
+        {
+            return false;
+        }
+        mVertexArrayMap.assign(*outId, nullptr);
+        return true;
     }
     bool isVertexArrayGenerated(VertexArrayID vertexArray) const
     {

@@ -6100,6 +6100,19 @@ void GL_APIENTRY glFramebufferTextureMultiviewOVR(GLenum target,
 
 // GL_OVR_multiview2
 
+// GL_OVR_multiview_multisampled_render_to_texture
+void GL_APIENTRY glFramebufferTextureMultisampleMultiviewOVR(GLenum target,
+                                                             GLenum attachment,
+                                                             GLuint texture,
+                                                             GLint level,
+                                                             GLsizei samples,
+                                                             GLint baseViewIndex,
+                                                             GLsizei numViews)
+{
+    return GL_FramebufferTextureMultisampleMultiviewOVR(target, attachment, texture, level, samples,
+                                                        baseViewIndex, numViews);
+}
+
 // GL_QCOM_framebuffer_foveated
 void GL_APIENTRY glFramebufferFoveationConfigQCOM(GLuint framebuffer,
                                                   GLuint numLayers,

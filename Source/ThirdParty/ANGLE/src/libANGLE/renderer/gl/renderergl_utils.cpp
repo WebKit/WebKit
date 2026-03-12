@@ -622,7 +622,15 @@ static gl::TextureCaps GenerateTextureFormatCaps(const FunctionsGL *functions,
                 }
                 if (conformant == GL_TRUE)
                 {
-                    textureCaps.sampleCounts.insert(samples[sampleIndex]);
+                    if (gl::isPow2(samples[sampleIndex]))
+                    {
+                        textureCaps.sampleCounts.insert(samples[sampleIndex]);
+                    }
+                    else
+                    {
+                        WARN() << "Skipping unexpected sample count " << samples[sampleIndex]
+                               << " for internal format " << gl::FmtHex(queryInternalFormat) << ".";
+                    }
                 }
             }
         }
@@ -634,7 +642,7 @@ static gl::TextureCaps GenerateTextureFormatCaps(const FunctionsGL *functions,
     const gl::InternalFormat &glFormatInfo = gl::GetSizedInternalFormatInfo(internalFormat);
     if (textureCaps.renderbuffer && !glFormatInfo.isInt() &&
         glFormatInfo.isRequiredRenderbufferFormat(gl::Version(3, 0)) &&
-        textureCaps.getMaxSamples() < 4)
+        textureCaps.sampleCounts.getMaxSamples() < 4)
     {
         LimitVersion(maxSupportedESVersion, gl::Version(2, 0));
     }
@@ -1061,9 +1069,8 @@ void GenerateCaps(const FunctionsGL *functions,
         caps->maxCombinedShaderUniformComponents[gl::ShaderType::Fragment] =
             QuerySingleGLInt64(functions, GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS);
 
-        // Clamp the maxUniformBlockSize to 64KB (majority of devices support up to this size
-        // currently), some drivers expose an excessively large value.
-        caps->maxUniformBlockSize = std::min<GLint64>(0x10000, caps->maxUniformBlockSize);
+        caps->maxUniformBlockSize =
+            std::min<GLint64>(gl::IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE, caps->maxUniformBlockSize);
     }
     else
     {
@@ -2707,6 +2714,10 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // number of samples in currently bound FBO and require to reset sample
     // coverage each time FBO changes.
     ANGLE_FEATURE_CONDITION(features, resetSampleCoverageOnFBOChange, isQualcomm);
+
+    // Mali 400 series drivers fail linking shaders when passthrough shaders are enabled. Likely due
+    // to not querying correct information from varyings and uniforms.
+    ANGLE_FEATURE_CONDITION(features, disablePassthroughShaders, IsAdreno4xx(functions));
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)

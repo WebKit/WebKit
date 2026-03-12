@@ -30,17 +30,23 @@ fn vs_main(@builtin(vertex_index) vertex_index : u32) -> @builtin(position) vec4
 }
 )";
 
-const char *GetWgslTextureComponentType(const angle::Format &format)
+const char *GetWgslTextureComponentTypeFromGlComponent(GLenum componentType)
 {
-    if (format.isSint())
+    if (componentType == GL_INT)
     {
         return "i32";
     }
-    if (format.isUint())
+    if (componentType == GL_UNSIGNED_INT)
     {
         return "u32";
     }
+
     return "f32";
+}
+
+const char *GetWgslTextureComponentTypeFromFormat(const angle::Format &format)
+{
+    return GetWgslTextureComponentTypeFromGlComponent(format.componentType);
 }
 
 }  // namespace
@@ -57,25 +63,25 @@ webgpu::ShaderModuleHandle UtilsWgpu::getShaderModule(ContextWgpu *context, cons
     std::stringstream ss;
     if (key.op == WgpuPipelineOp::ImageCopy)
     {
-        const angle::Format &srcFormat = angle::Format::Get(key.srcFormatID);
-        const angle::Format &dstFormat = angle::Format::Get(key.dstIntendedFormatID);
+        const angle::Format &dstFormat = angle::Format::Get(key.dstActualFormatID);
 
         ss << kVertexMain;
         ss << "@group(0) @binding(0)\n var t_source: texture_2d<"
-           << GetWgslTextureComponentType(srcFormat) << ">;\n";
+           << GetWgslTextureComponentTypeFromGlComponent(key.srcComponentType) << ">;\n";
 
         ss << "@fragment\nfn " << kFragmentEntryPoint
            << "(@builtin(position) frag_coord: vec4<f32>) -> @location(0) "
               "vec4<"
-           << GetWgslTextureComponentType(dstFormat) << "> {\n";
+           << GetWgslTextureComponentTypeFromFormat(dstFormat) << "> {\n";
 
         ss << "    var texel_coords: vec2<i32> = vec2<i32>(floor(frag_coord.xy));\n";
         ss << "    var srcValue = textureLoad(t_source, texel_coords, 0);\n";
-        if (dstFormat.alphaBits == 0)
+        if (!key.dstIntentedFormatHasAlphaBits)
         {
             ss << "    srcValue.a = 1;\n";
         }
-        ss << "    return vec4<" << GetWgslTextureComponentType(dstFormat) << ">(srcValue);\n";
+        ss << "    return vec4<" << GetWgslTextureComponentTypeFromFormat(dstFormat)
+           << ">(srcValue);\n";
         ss << "}\n";
     }
     else
@@ -131,12 +137,11 @@ angle::Result UtilsWgpu::getPipeline(ContextWgpu *context,
     bglEntry.visibility               = WGPUShaderStage_Fragment;
     bglEntry.texture.viewDimension    = WGPUTextureViewDimension_2D;
 
-    const angle::Format &srcFormat = angle::Format::Get(key.srcFormatID);
-    if (srcFormat.isSint())
+    if (key.srcComponentType == GL_INT)
     {
         bglEntry.texture.sampleType = WGPUTextureSampleType_Sint;
     }
-    else if (srcFormat.isUint())
+    else if (key.srcComponentType == GL_UNSIGNED_INT)
     {
         bglEntry.texture.sampleType = WGPUTextureSampleType_Uint;
     }
@@ -180,16 +185,17 @@ angle::Result UtilsWgpu::copyImage(ContextWgpu *context,
                                    webgpu::TextureViewHandle dst,
                                    const WGPUExtent3D &size,
                                    bool flipY,
-                                   angle::FormatID srcFormatID,
+                                   const angle::Format &srcFormat,
                                    angle::FormatID dstIntendedFormatID,
                                    angle::FormatID dstActualFormatID)
 {
     const DawnProcTable *wgpu = webgpu::GetProcs(context);
+    const angle::Format &dstIntendedFormat = angle::Format::Get(dstIntendedFormatID);
     PipelineKey key           = {};
     key.op                    = WgpuPipelineOp::ImageCopy;
-    key.srcFormatID           = srcFormatID;
-    key.dstIntendedFormatID   = dstIntendedFormatID;
+    key.srcComponentType                   = srcFormat.componentType;
     key.dstActualFormatID     = dstActualFormatID;
+    key.dstIntentedFormatHasAlphaBits      = dstIntendedFormat.alphaBits != 0;
 
     const CachedPipeline *cachedPipeline = nullptr;
     ANGLE_TRY(getPipeline(context, key, &cachedPipeline));

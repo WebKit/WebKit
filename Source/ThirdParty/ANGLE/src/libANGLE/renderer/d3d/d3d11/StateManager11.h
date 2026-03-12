@@ -38,7 +38,6 @@ class ShaderConstants11 : angle::NonCopyable
     size_t getRequiredBufferSize(gl::ShaderType shaderType) const;
     void markDirty();
 
-    void setComputeWorkGroups(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ);
     void onViewportChange(const gl::Rectangle &glViewport,
                           const D3D11_VIEWPORT &dxViewport,
                           const gl::Offset &glFragCoordOffset,
@@ -124,13 +123,6 @@ class ShaderConstants11 : angle::NonCopyable
     static constexpr uint32_t kPixelMiscMultisamplingMask = 0x1;
     static_assert(sizeof(Pixel) % 16u == 0, "D3D11 constant buffers must be multiples of 16 bytes");
 
-    struct Compute
-    {
-        Compute() : numWorkGroups{0u}, padding(0u) {}
-        unsigned int numWorkGroups[3];
-        unsigned int padding;  // This just pads the struct to 16 bytes
-    };
-
     struct SamplerMetadata
     {
         SamplerMetadata() : baseLevel(0), wrapModes(0), padding{0}, intBorderColor{0} {}
@@ -167,7 +159,6 @@ class ShaderConstants11 : angle::NonCopyable
 
     Vertex mVertex;
     Pixel mPixel;
-    Compute mCompute;
     gl::ShaderBitSet mShaderConstantsDirty;
 
     gl::ShaderMap<std::vector<SamplerMetadata>> mShaderSamplerMetadata;
@@ -190,11 +181,6 @@ class StateManager11 final : angle::NonCopyable
                    const gl::state::DirtyBits &dirtyBits,
                    const gl::state::ExtendedDirtyBits &extendedDirtyBits,
                    gl::Command command);
-
-    angle::Result updateStateForCompute(const gl::Context *context,
-                                        GLuint numGroupsX,
-                                        GLuint numGroupsY,
-                                        GLuint numGroupsZ);
 
     void updateStencilSizeIfChanged(bool depthStencilInitialized, unsigned int stencilSize);
 
@@ -273,7 +259,6 @@ class StateManager11 final : angle::NonCopyable
     void setVertexShader(const d3d11::VertexShader *shader);
     void setGeometryShader(const d3d11::GeometryShader *shader);
     void setPixelShader(const d3d11::PixelShader *shader);
-    void setComputeShader(const d3d11::ComputeShader *shader);
     void setVertexConstantBuffer(unsigned int slot, const d3d11::Buffer *buffer);
     void setPixelConstantBuffer(unsigned int slot, const d3d11::Buffer *buffer);
     void setDepthStencilState(const d3d11::DepthStencilState *depthStencilState, UINT stencilRef);
@@ -291,10 +276,6 @@ class StateManager11 final : angle::NonCopyable
     angle::Result updateVertexOffsetsForPointSpritesEmulation(const gl::Context *context,
                                                               GLint startVertex,
                                                               GLsizei emulatedInstanceId);
-
-    // TODO(jmadill): Should be private.
-    angle::Result applyComputeUniforms(const gl::Context *context,
-                                       ProgramExecutableD3D *executableD3D);
 
     // Only used in testing.
     InputLayoutCache *getInputLayoutCache() { return &mInputLayoutCache; }
@@ -328,10 +309,6 @@ class StateManager11 final : angle::NonCopyable
                               uintptr_t resource,
                               const gl::ImageIndex *index,
                               bool isRenderTarget);
-    void unsetConflictingUAVs(gl::PipelineType pipeline,
-                              gl::ShaderType shaderType,
-                              uintptr_t resource,
-                              const gl::ImageIndex *index);
 
     template <typename CacheType>
     void unsetConflictingRTVs(uintptr_t resource, CacheType &viewCache);
@@ -360,12 +337,10 @@ class StateManager11 final : angle::NonCopyable
 
     angle::Result syncFramebuffer(const gl::Context *context);
     angle::Result syncProgram(const gl::Context *context, gl::PrimitiveMode drawMode);
-    angle::Result syncProgramForCompute(const gl::Context *context);
 
     angle::Result syncTextures(const gl::Context *context);
     angle::Result applyTexturesForSRVs(const gl::Context *context, gl::ShaderType shaderType);
     angle::Result applyTexturesForUAVs(const gl::Context *context, gl::ShaderType shaderType);
-    angle::Result syncTexturesForCompute(const gl::Context *context);
 
     angle::Result setSamplerState(const gl::Context *context,
                                   gl::ShaderType type,
@@ -408,29 +383,19 @@ class StateManager11 final : angle::NonCopyable
     angle::Result applyUniforms(const gl::Context *context);
     angle::Result applyUniformsForShader(const gl::Context *context, gl::ShaderType shaderType);
 
-    angle::Result getUAVsForShaderStorageBuffers(const gl::Context *context,
-                                                 gl::ShaderType shaderType,
-                                                 UAVList *uavList);
-
     angle::Result syncUniformBuffers(const gl::Context *context);
     angle::Result syncUniformBuffersForShader(const gl::Context *context,
                                               gl::ShaderType shaderType);
-    angle::Result getUAVsForAtomicCounterBuffers(const gl::Context *context,
-                                                 gl::ShaderType shaderType,
-                                                 UAVList *uavList);
     angle::Result getUAVsForShader(const gl::Context *context,
                                    gl::ShaderType shaderType,
                                    UAVList *uavList);
     angle::Result syncUAVsForGraphics(const gl::Context *context);
-    angle::Result syncUAVsForCompute(const gl::Context *context);
     angle::Result syncTransformFeedbackBuffers(const gl::Context *context);
 
     // These are currently only called internally.
     void invalidateDriverUniforms();
     void invalidateProgramUniforms();
     void invalidateConstantBuffer(unsigned int slot);
-    void invalidateProgramAtomicCounterBuffers();
-    void invalidateProgramShaderStorageBuffers();
     void invalidateImageBindings();
 
     // Called by the Framebuffer11 directly.
@@ -476,12 +441,10 @@ class StateManager11 final : angle::NonCopyable
         // DIRTY_BIT_SHADERS and DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE should be dealt before
         // DIRTY_BIT_PROGRAM_UNIFORM_BUFFERS for update image layers.
         DIRTY_BIT_SHADERS,
-        // DIRTY_BIT_GRAPHICS_SRV_STATE and DIRTY_BIT_COMPUTE_SRV_STATE should be lower
+        // DIRTY_BIT_GRAPHICS_SRV_STATE should be lower
         // bits than DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE.
         DIRTY_BIT_GRAPHICS_SRV_STATE,
         DIRTY_BIT_GRAPHICS_UAV_STATE,
-        DIRTY_BIT_COMPUTE_SRV_STATE,
-        DIRTY_BIT_COMPUTE_UAV_STATE,
         DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE,
         DIRTY_BIT_PROGRAM_UNIFORMS,
         DIRTY_BIT_DRIVER_UNIFORMS,
@@ -501,7 +464,6 @@ class StateManager11 final : angle::NonCopyable
     // Internal dirty bits.
     DirtyBits mInternalDirtyBits;
     DirtyBits mGraphicsDirtyBitsMask;
-    DirtyBits mComputeDirtyBitsMask;
 
     bool mCurSampleAlphaToCoverage;
 
@@ -587,7 +549,6 @@ class StateManager11 final : angle::NonCopyable
     using RTVCache = ViewCache<ID3D11RenderTargetView, D3D11_RENDER_TARGET_VIEW_DESC>;
     using DSVCache = ViewCache<ID3D11DepthStencilView, D3D11_DEPTH_STENCIL_VIEW_DESC>;
     gl::ShaderMap<SRVCache> mCurShaderSRVs;
-    UAVCache mCurComputeUAVs;
     RTVCache mCurRTVs;
     DSVCache mCurrentDSV;
 
@@ -646,7 +607,6 @@ class StateManager11 final : angle::NonCopyable
     // Driver Constants.
     gl::ShaderMap<d3d11::Buffer> mShaderDriverConstantBuffers;
 
-    ResourceSerial mCurrentComputeConstantBuffer;
     ResourceSerial mCurrentGeometryConstantBuffer;
 
     template <typename T>
@@ -664,14 +624,6 @@ class StateManager11 final : angle::NonCopyable
     FragmentConstantBufferArray<ResourceSerial> mCurrentConstantBufferPS;
     FragmentConstantBufferArray<GLintptr> mCurrentConstantBufferPSOffset;
     FragmentConstantBufferArray<GLsizeiptr> mCurrentConstantBufferPSSize;
-
-    template <typename T>
-    using ComputeConstantBufferArray =
-        std::array<T, gl::IMPLEMENTATION_MAX_COMPUTE_SHADER_UNIFORM_BUFFERS>;
-
-    ComputeConstantBufferArray<ResourceSerial> mCurrentConstantBufferCS;
-    ComputeConstantBufferArray<GLintptr> mCurrentConstantBufferCSOffset;
-    ComputeConstantBufferArray<GLsizeiptr> mCurrentConstantBufferCSSize;
 
     // Currently applied transform feedback buffers
     UniqueSerial mAppliedTFSerial;

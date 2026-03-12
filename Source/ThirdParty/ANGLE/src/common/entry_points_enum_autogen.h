@@ -495,6 +495,7 @@ enum class EntryPoint
     GLFramebufferTexture3DOES,
     GLFramebufferTextureEXT,
     GLFramebufferTextureLayer,
+    GLFramebufferTextureMultisampleMultiviewOVR,
     GLFramebufferTextureMultiviewOVR,
     GLFramebufferTextureOES,
     GLFramebufferTexturePixelLocalStorageANGLE,

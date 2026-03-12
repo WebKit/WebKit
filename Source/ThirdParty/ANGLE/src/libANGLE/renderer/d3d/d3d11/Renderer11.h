@@ -422,12 +422,6 @@ class Renderer11 : public RendererD3D
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
 
-    angle::Result dispatchCompute(const gl::Context *context,
-                                  GLuint numGroupsX,
-                                  GLuint numGroupsY,
-                                  GLuint numGroupsZ);
-    angle::Result dispatchComputeIndirect(const gl::Context *context, GLintptr indirect);
-
     angle::Result createStagingTexture(const gl::Context *context,
                                        ResourceType textureType,
                                        const d3d11::Format &formatSet,

@@ -71,11 +71,11 @@ static const char testContent2[] = R"cpp(
     const char program[] = R"TEST()cpp";
 
 static const char testContent3[] =
-    R"cpp(                                                                                           )TEST";
+    R"cpp(                                                                                                     )TEST";
     sh::Compile(compiler, program, 1, options);
-                                                                                                     sh::Destruct(
-                                                                                                         compiler);
-                                                                                                     }
+                                                                                                               sh::Destruct(
+                                                                                                                   compiler);
+                                                                                                               }
     )cpp";
 
 static const char testFooter[] = R"cpp(

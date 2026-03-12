@@ -118,6 +118,11 @@ set(angle_translator_sources
     "src/compiler/translator/glslang_tab_autogen.cpp"
     "src/compiler/translator/glslang_tab_autogen.h"
     "src/compiler/translator/hlsl/TranslatorHLSL.h"
+    "src/compiler/translator/ir/src/builder.h"
+    "src/compiler/translator/ir/src/compile.h"
+    "src/compiler/translator/ir/src/output/ir_to_legacy.h"
+    "src/compiler/translator/ir/src/output/legacy.h"
+    "src/compiler/translator/ir/src/pool_alloc.h"
     "src/compiler/translator/length_limits.h"
     "src/compiler/translator/msl/DriverUniformMetal.h"
     "src/compiler/translator/msl/TranslatorMSL.h"
@@ -284,8 +289,6 @@ set(angle_translator_glsl_apple_sources
 set(angle_translator_hlsl_sources
     "src/compiler/translator/hlsl/ASTMetadataHLSL.cpp"
     "src/compiler/translator/hlsl/ASTMetadataHLSL.h"
-    "src/compiler/translator/hlsl/AtomicCounterFunctionHLSL.cpp"
-    "src/compiler/translator/hlsl/AtomicCounterFunctionHLSL.h"
     "src/compiler/translator/hlsl/BuiltInFunctionEmulatorHLSL.cpp"
     "src/compiler/translator/hlsl/BuiltInFunctionEmulatorHLSL.h"
     "src/compiler/translator/hlsl/ImageFunctionHLSL.cpp"
@@ -294,10 +297,6 @@ set(angle_translator_hlsl_sources
     "src/compiler/translator/hlsl/OutputHLSL.h"
     "src/compiler/translator/hlsl/ResourcesHLSL.cpp"
     "src/compiler/translator/hlsl/ResourcesHLSL.h"
-    "src/compiler/translator/hlsl/ShaderStorageBlockFunctionHLSL.cpp"
-    "src/compiler/translator/hlsl/ShaderStorageBlockFunctionHLSL.h"
-    "src/compiler/translator/hlsl/ShaderStorageBlockOutputHLSL.cpp"
-    "src/compiler/translator/hlsl/ShaderStorageBlockOutputHLSL.h"
     "src/compiler/translator/hlsl/StructureHLSL.cpp"
     "src/compiler/translator/hlsl/StructureHLSL.h"
     "src/compiler/translator/hlsl/TextureFunctionHLSL.cpp"
@@ -307,6 +306,8 @@ set(angle_translator_hlsl_sources
     "src/compiler/translator/hlsl/UtilsHLSL.h"
     "src/compiler/translator/hlsl/blocklayoutHLSL.cpp"
     "src/compiler/translator/hlsl/emulated_builtin_functions_hlsl_autogen.cpp"
+    "src/compiler/translator/tree_ops/hlsl/AddDefaultReturnStatements.cpp"
+    "src/compiler/translator/tree_ops/hlsl/AddDefaultReturnStatements.h"
     "src/compiler/translator/tree_ops/hlsl/AggregateAssignArraysInSSBOs.cpp"
     "src/compiler/translator/tree_ops/hlsl/AggregateAssignArraysInSSBOs.h"
     "src/compiler/translator/tree_ops/hlsl/AggregateAssignStructsInSSBOs.cpp"
@@ -321,12 +322,8 @@ set(angle_translator_hlsl_sources
     "src/compiler/translator/tree_ops/hlsl/RecordUniformBlocksWithLargeArrayMember.h"
     "src/compiler/translator/tree_ops/hlsl/RemoveSwitchFallThrough.cpp"
     "src/compiler/translator/tree_ops/hlsl/RemoveSwitchFallThrough.h"
-    "src/compiler/translator/tree_ops/hlsl/RewriteAtomicFunctionExpressions.cpp"
-    "src/compiler/translator/tree_ops/hlsl/RewriteAtomicFunctionExpressions.h"
     "src/compiler/translator/tree_ops/hlsl/RewriteElseBlocks.cpp"
     "src/compiler/translator/tree_ops/hlsl/RewriteElseBlocks.h"
-    "src/compiler/translator/tree_ops/hlsl/RewriteExpressionsWithShaderStorageBlock.cpp"
-    "src/compiler/translator/tree_ops/hlsl/RewriteExpressionsWithShaderStorageBlock.h"
     "src/compiler/translator/tree_ops/hlsl/RewriteUnaryMinusOperatorInt.cpp"
     "src/compiler/translator/tree_ops/hlsl/RewriteUnaryMinusOperatorInt.h"
     "src/compiler/translator/tree_ops/hlsl/SeparateArrayConstructorStatements.cpp"
@@ -462,6 +459,13 @@ set(angle_translator_lib_wgsl_sources
     "src/compiler/translator/wgsl/Utils.h"
     "src/compiler/translator/wgsl/WGSLProgramPrelude.cpp"
     "src/compiler/translator/wgsl/WGSLProgramPrelude.h"
+)
+
+set(angle_translator_lib_ir_sources
+    "src/compiler/translator/ir/src/builder.cpp"
+    "src/compiler/translator/ir/src/compile.cpp"
+    "src/compiler/translator/ir/src/output/ir_to_legacy.cpp"
+    "src/compiler/translator/ir/src/pool_alloc.cpp"
 )
 
 set(angle_preprocessor_sources

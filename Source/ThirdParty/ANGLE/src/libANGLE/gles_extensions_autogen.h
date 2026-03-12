@@ -344,6 +344,9 @@ struct Extensions
     // GL_OVR_multiview2
     bool multiview2OVR = false;
 
+    // GL_OVR_multiview_multisampled_render_to_texture
+    bool multiviewMultisampledRenderToTextureOVR = false;
+
     // GL_KHR_no_error
     bool noErrorKHR = false;
 

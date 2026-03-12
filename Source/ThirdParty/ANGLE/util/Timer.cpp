@@ -8,11 +8,20 @@
 
 #include "util/Timer.h"
 
+#include "common/debug.h"
 #include "common/system_utils.h"
 
-Timer::Timer() : mRunning(false), mStartTime(0), mStopTime(0) {}
+Timer::Timer()
+    : mRunning(false), mStartTime(0.0), mStopTime(0.0), mStartCpuTime(0.0), mStopCpuTime(0.0)
+{}
 
 void Timer::start()
+{
+    ASSERT(!mRunning);
+    restart();
+}
+
+void Timer::restart()
 {
     mStartTime    = angle::GetCurrentSystemTime();
     mStartCpuTime = angle::GetCurrentProcessCpuTime();
@@ -21,6 +30,7 @@ void Timer::start()
 
 void Timer::stop()
 {
+    ASSERT(mRunning);
     mStopTime    = angle::GetCurrentSystemTime();
     mStopCpuTime = angle::GetCurrentProcessCpuTime();
     mRunning     = false;

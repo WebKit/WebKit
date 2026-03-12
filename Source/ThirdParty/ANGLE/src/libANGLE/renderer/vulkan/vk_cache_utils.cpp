@@ -6731,6 +6731,10 @@ angle::Result DescriptorSetDescBuilder::updateImages(
             {
                 GLuint imageUnit     = imageBinding.boundImageUnits[arrayElement];
                 TextureVk *textureVk = activeImages[imageUnit];
+                if (!textureVk)
+                {
+                    continue;
+                }
 
                 uint32_t infoIndex = writeDescriptorDescs[info.binding].descriptorInfoIndex +
                                      arrayElement + imageUniform.getOuterArrayOffset();
@@ -6759,6 +6763,10 @@ angle::Result DescriptorSetDescBuilder::updateImages(
                 GLuint imageUnit             = imageBinding.boundImageUnits[arrayElement];
                 const gl::ImageUnit &binding = imageUnits[imageUnit];
                 TextureVk *textureVk         = activeImages[imageUnit];
+                if (!textureVk)
+                {
+                    continue;
+                }
 
                 vk::ImageHelper *image         = &textureVk->getImage();
                 const vk::ImageView *imageView = nullptr;
@@ -8021,6 +8029,13 @@ angle::Result RenderPassCache::MakeRenderPass(vk::ErrorContext *context,
     {
         createInfo.dependencyCount = static_cast<uint32_t>(subpassDependencies.size());
         createInfo.pDependencies   = subpassDependencies.data();
+    }
+
+    if (desc.viewCount() && desc.isRenderToTexture())
+    {
+        // GL_OVR_multiview_multisampled_render_to_texture is only implemented
+        // through the VK_EXT_multisampled_render_to_single_sampled extension, and not emulated.
+        ASSERT(isRenderToTextureThroughExtension);
     }
 
     const uint32_t viewMask = angle::BitMask<uint32_t>(desc.viewCount());

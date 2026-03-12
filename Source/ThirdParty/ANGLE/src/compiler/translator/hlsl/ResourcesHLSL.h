@@ -41,18 +41,10 @@ class ResourcesHLSL : angle::NonCopyable
     TString uniformBlocksHeader(
         const ReferencedInterfaceBlocks &referencedInterfaceBlocks,
         const std::map<int, const TInterfaceBlock *> &uniformBlockOptimizedMap);
-    void allocateShaderStorageBlockRegisters(
-        const ReferencedInterfaceBlocks &referencedInterfaceBlocks);
-    TString shaderStorageBlocksHeader(const ReferencedInterfaceBlocks &referencedInterfaceBlocks);
 
     // Used for direct index references
     static TString InterfaceBlockInstanceString(const ImmutableString &instanceName,
                                                 unsigned int arrayIndex);
-
-    const std::map<std::string, unsigned int> &getShaderStorageBlockRegisterMap() const
-    {
-        return mShaderStorageBlockRegisterMap;
-    }
 
     const std::map<std::string, unsigned int> &getUniformBlockRegisterMap() const
     {
@@ -83,10 +75,6 @@ class ResourcesHLSL : angle::NonCopyable
                                                       unsigned int registerIndex,
                                                       unsigned int arrayIndex);
 
-    TString shaderStorageBlockString(const TInterfaceBlock &interfaceBlock,
-                                     const TVariable *instanceVariable,
-                                     unsigned int registerIndex,
-                                     unsigned int arrayIndex);
     TString uniformBlockMembersString(const TInterfaceBlock &interfaceBlock,
                                       TLayoutBlockStorage blockStorage);
     TString uniformBlockStructString(const TInterfaceBlock &interfaceBlock);
@@ -96,9 +84,6 @@ class ResourcesHLSL : angle::NonCopyable
                        const TType &type,
                        const TVariable &variable,
                        const unsigned int registerIndex);
-    void outputAtomicCounterBuffer(TInfoSinkBase &out,
-                                   const int binding,
-                                   const unsigned int registerIndex);
 
     // Returns the uniform's register index
     unsigned int assignUniformRegister(const TType &type,
@@ -140,7 +125,6 @@ class ResourcesHLSL : angle::NonCopyable
 
     const std::vector<ShaderVariable> &mUniforms;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;
-    std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;
     std::map<std::string, bool> mUniformBlockUseStructuredBufferMap;
     unsigned int mReadonlyImage2DRegisterIndex = 0;

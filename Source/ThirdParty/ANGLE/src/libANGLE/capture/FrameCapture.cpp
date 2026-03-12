@@ -6007,7 +6007,11 @@ void CoherentBuffer::removeProtection(PageSharingType sharingType)
 
 bool CoherentBufferTracker::canProtectDirectly(gl::Context *context)
 {
-    gl::BufferID bufferId = context->createBuffer();
+    gl::BufferID bufferId;
+    if (!context->createBuffer(&bufferId))
+    {
+        ERR() << "Failed to allocate buffer ID.";
+    }
 
     gl::BufferBinding targetPacked = gl::BufferBinding::Array;
     context->bindBuffer(targetPacked, bufferId);

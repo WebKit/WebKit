@@ -218,6 +218,7 @@ def angle_builder(name, cpu):
     is_tsan = "-tsan" in name
     is_debug = "-dbg" in name
     is_exp = "-exp" in name
+    is_ir = "-ir" in name
     is_perf = name.endswith("-perf")
     is_pixel10 = "pixel10" in name
     is_s24 = "s24" in name
@@ -285,6 +286,8 @@ def angle_builder(name, cpu):
             short_name = "s24"
         elif is_pixel10:
             short_name = "p10"
+    elif is_ir:
+        short_name = "ir"
     else:
         short_name = "rel"
 
@@ -352,12 +355,11 @@ def angle_builder(name, cpu):
         "android-arm64-exp-test",
         "android-arm64-exp-pixel10-test",
         "android-arm64-exp-s24-test",
-        "linux-exp-test",
-        "mac-exp-test",
-        "win-exp-test",
+        "mac-exp-test",  # temporarily used for AMD Radeon Pro 555X
+        "win-exp-test",  # temporarily used for Intel UHD770
     ]
 
-    if (not is_exp) or (name in active_experimental_builders):
+    if (not is_exp and not is_ir) or (name in active_experimental_builders):
         luci.console_view_entry(
             console_view = "ci",
             builder = "ci/" + name,
@@ -380,8 +382,9 @@ def angle_builder(name, cpu):
         max_concurrent_builds = None
 
         # Don't add experimental bots to CQ.
+        # IR bots are also experimental currently.
         # Also exclude mac-arm64-test for now anglebug.com/42266214
-        add_to_cq = (not is_exp and not name == "mac-arm64-test")
+        add_to_cq = (not is_exp and not is_ir and not name == "mac-arm64-test")
         if migrated_to_chromium_pool:
             if add_to_cq:
                 max_concurrent_builds = 5
@@ -552,6 +555,7 @@ angle_builder("android-arm64-dbg-compile", cpu = "arm64")
 angle_builder("android-arm64-exp-pixel10-test", cpu = "arm64")
 angle_builder("android-arm64-exp-s24-test", cpu = "arm64")
 angle_builder("android-arm64-exp-test", cpu = "arm64")
+angle_builder("android-arm64-ir-test", cpu = "arm64")
 angle_builder("android-arm64-test", cpu = "arm64")
 angle_builder("linux-asan-test", cpu = "x64")
 angle_builder("linux-exp-asan-test", cpu = "x64")
@@ -559,10 +563,12 @@ angle_builder("linux-exp-test", cpu = "x64")
 angle_builder("linux-exp-tsan-test", cpu = "x64")
 angle_builder("linux-tsan-test", cpu = "x64")
 angle_builder("linux-dbg-compile", cpu = "x64")
+angle_builder("linux-ir-test", cpu = "x64")
 angle_builder("linux-test", cpu = "x64")
 angle_builder("mac-dbg-compile", cpu = "x64")
 angle_builder("mac-arm64-test", cpu = "arm64")
 angle_builder("mac-exp-test", cpu = "x64")
+angle_builder("mac-ir-test", cpu = "x64")
 angle_builder("mac-test", cpu = "x64")
 angle_builder("win-asan-test", cpu = "x64")
 angle_builder("win-dbg-compile", cpu = "x64")
@@ -571,6 +577,7 @@ angle_builder("win-msvc-compile", cpu = "x64")
 angle_builder("win-msvc-dbg-compile", cpu = "x64")
 angle_builder("win-msvc-x86-compile", cpu = "x86")
 angle_builder("win-msvc-x86-dbg-compile", cpu = "x86")
+angle_builder("win-ir-test", cpu = "x64")
 angle_builder("win-test", cpu = "x64")
 angle_builder("win-x86-dbg-compile", cpu = "x86")
 angle_builder("win-x86-test", cpu = "x86")

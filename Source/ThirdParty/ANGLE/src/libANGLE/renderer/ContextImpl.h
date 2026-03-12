@@ -280,6 +280,7 @@ class ContextImpl : public GLImplFactory
                                           gl::TextureBarrierVector *textureBarriers);
 
     // AMD_performance_monitor
+    virtual const angle::PerfMonitorCounterGroupsInfo &getPerfMonitorCountersInfo() const;
     virtual const angle::PerfMonitorCounterGroups &getPerfMonitorCounters();
 
     // GL_ANGLE_variable_rasterization_rate_metal

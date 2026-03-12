@@ -406,6 +406,12 @@ bool VertexArray::detachBuffer(const Context *context, BufferID bufferID)
                     setDirtyAttribBit(bindingIndex, DIRTY_ATTRIB_POINTER);
                 }
 
+                for (size_t attribIndex : binding.getBoundAttributesMask())
+                {
+                    VertexAttribute &attrib = mState.mVertexAttributes[attribIndex];
+                    attrib.pointer          = nullptr;
+                }
+
                 mState.mClientMemoryAttribsMask |= binding.getBoundAttributesMask();
             }
 

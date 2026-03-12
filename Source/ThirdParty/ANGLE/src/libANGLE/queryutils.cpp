@@ -1777,7 +1777,8 @@ void QueryInternalFormativ(const Context *context,
         case GL_SAMPLES:
         {
             size_t returnCount   = std::min<size_t>(bufSize, format.sampleCounts.size());
-            auto sampleReverseIt = format.sampleCounts.rbegin();
+            auto sampleCounts    = format.sampleCounts.sampleCounts();
+            auto sampleReverseIt = sampleCounts.rbegin();
             for (size_t sampleIndex = 0; sampleIndex < returnCount; ++sampleIndex)
             {
                 params[sampleIndex] = *sampleReverseIt++;

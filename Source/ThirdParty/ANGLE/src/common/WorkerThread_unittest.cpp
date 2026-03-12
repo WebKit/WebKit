@@ -48,4 +48,36 @@ TEST(WorkerPoolTest, SimpleTask)
     }
 }
 
+// Tests async worker pool application.
+TEST(WorkerPoolTest, AsyncPoolTest)
+{
+    class TestTask : public Closure
+    {
+      public:
+        void operator()() override { fired = true; }
+
+        bool fired = false;
+    };
+    constexpr size_t kTaskCount                             = 4;
+    std::array<std::shared_ptr<TestTask>, kTaskCount> tasks = {
+        {std::make_shared<TestTask>(), std::make_shared<TestTask>(), std::make_shared<TestTask>(),
+         std::make_shared<TestTask>()}};
+    std::array<std::shared_ptr<WaitableEvent>, kTaskCount> waitables;
+
+    {
+        std::shared_ptr<WorkerThreadPool> pool =
+            WorkerThreadPool::Create(2, ANGLEPlatformCurrent());
+
+        waitables = {{pool->postWorkerTask(tasks[0]), pool->postWorkerTask(tasks[1]),
+                      pool->postWorkerTask(tasks[2]), pool->postWorkerTask(tasks[3])}};
+    }
+
+    WaitableEvent::WaitMany(&waitables);
+
+    for (size_t taskIndex = 0; taskIndex < kTaskCount; taskIndex++)
+    {
+        EXPECT_TRUE(tasks[taskIndex]->fired || !waitables[taskIndex]->isReady());
+    }
+}
+
 }  // anonymous namespace

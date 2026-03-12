@@ -4451,23 +4451,18 @@ TEST_P(BlitFramebufferTestES31, BlitNonZeroLevelSource)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferANGLETest);
-ANGLE_INSTANTIATE_TEST(BlitFramebufferANGLETest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_D3D11_PRESENT_PATH_FAST(),
-                       ES2_OPENGL(),
-                       ES3_OPENGL(),
-                       ES2_VULKAN(),
-                       ES3_VULKAN(),
-                       ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
-                       ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
-                       ES3_VULKAN().enable(Feature::EmulatedPrerotation270),
-                       ES3_VULKAN()
-                           .disable(Feature::SupportsExtendedDynamicState)
-                           .disable(Feature::SupportsExtendedDynamicState2),
-                       ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
-                       ES2_METAL(),
-                       ES2_METAL().disable(Feature::HasShaderStencilOutput));
+ANGLE_INSTANTIATE_TEST_ES2_AND(BlitFramebufferANGLETest,
+                               ES2_D3D11_PRESENT_PATH_FAST(),
+                               ES3_OPENGL(),
+                               ES3_VULKAN(),
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation270),
+                               ES3_VULKAN()
+                                   .disable(Feature::SupportsExtendedDynamicState)
+                                   .disable(Feature::SupportsExtendedDynamicState2),
+                               ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+                               ES2_METAL().disable(Feature::HasShaderStencilOutput));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(BlitFramebufferTest,

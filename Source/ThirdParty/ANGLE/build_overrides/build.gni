@@ -12,8 +12,8 @@ declare_args() {
   # dependency for googletest.
   gtest_enable_absl_printers = false
 
-  # Set to default here so that it can be set via gn args
-  use_cxx17 = false
+  # Angle must stay in C++20 for longer due to some downstream dependencies.
+  use_cxx23 = false
 }
 
 if (host_os == "mac" && use_system_xcode == "") {

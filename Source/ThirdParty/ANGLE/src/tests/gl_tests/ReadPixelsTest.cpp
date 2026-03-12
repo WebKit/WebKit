@@ -1556,6 +1556,31 @@ TEST_P(ReadPixelsErrorTest, ColorBufferSnorm16)
                                    {GL_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT});
 }
 
+// The test verifies that glReadnPixels* generates a GL_INVALID_OPERATION error if
+// the buffer size required to store the requested data is greater than bufSize if
+// PBO is bound.
+TEST_P(ReadPixelsErrorTest, PBOBufSizeTest)
+{
+    GLuint PBO;
+    glGenBuffers(1, &PBO);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, PBO);
+    glBufferData(GL_PIXEL_PACK_BUFFER, 4, nullptr, GL_STATIC_DRAW);
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+
+    if (IsGLExtensionEnabled("GL_KHR_robustness"))
+    {
+        glReadnPixelsKHR(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    if (IsGLExtensionEnabled("GL_EXT_robustness"))
+    {
+        glReadnPixelsEXT(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, 2, 0);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    glDeleteBuffers(1, &PBO);
+}
+
 // texture internal format is GL_RGBA32F
 class ReadPixelsFloat32TypePBOTest : public ReadPixelsPBOTest
 {

@@ -106,8 +106,6 @@ CONTEXT_PRIVATE_LIST = [
     'glEnablei',
     'glEnableVertexAttribArray',
     'glFrontFace',
-    'glGenVertexArrays',
-    'glGenVertexArraysOES',
     'glHint',
     'glIsEnabled',
     'glIsEnabledi',

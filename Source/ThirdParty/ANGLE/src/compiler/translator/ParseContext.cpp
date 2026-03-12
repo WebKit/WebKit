@@ -8,6 +8,15 @@
 #    pragma allow_unsafe_buffers
 #endif
 
+// Note: During transition to IR, ParseContext.cpp builds the AST and IR at the same time, which is
+// not efficient.  The AST is used for validation purposes, but a stack that only contains the
+// necessary information needed for validation is sufficient, so for example operations such as
+// constant folding etc don't need to be performed.  Such a stack could be very light, including IR
+// ids that could then be used to query information out of the ir itself.
+//
+// This is best done when an AST-only build is no longer possible so that there wouldn't need to be
+// a fallback to AST maintained at the same time.
+
 #include "compiler/translator/ParseContext.h"
 
 #include <stdarg.h>
@@ -472,10 +481,34 @@ TParseContext::TParseContext(TSymbolTable &symt,
       mHasAnyPreciseType(false),
       mAdvancedBlendEquations(0),
       mFunctionBodyNewScope(false),
-      mOutputType(outputType)
-{}
+      mOutputType(outputType),
+      mIRBuilder(gl::FromGLenum<gl::ShaderType>(type))
+{
+    mDiagnostics->setIRBuilder(&mIRBuilder);
 
-TParseContext::~TParseContext() {}
+    // If not using the IR, don't build it by pretending there's been an error.
+    if (!mCompileOptions.useIR)
+    {
+        mIRBuilder.onError();
+    }
+}
+
+TParseContext::~TParseContext()
+{
+    mDiagnostics->setIRBuilder(nullptr);
+}
+
+ir::IR TParseContext::getIR()
+{
+    // Set advanced blend if specified.  This is not done during parse because multiple statements
+    // accumulate modes.
+    if (mAdvancedBlendEquations.any())
+    {
+        mIRBuilder.setAdvancedBlendEquations(mAdvancedBlendEquations.bits());
+    }
+
+    return ir::Builder::destroy(std::move(mIRBuilder));
+}
 
 void TParseContext::onShaderVersionDeclared(int version)
 {
@@ -672,6 +705,15 @@ void TParseContext::outOfRangeError(bool isError,
 
 void TParseContext::setTreeRoot(TIntermBlock *treeRoot)
 {
+#ifdef ANGLE_IR
+    // When the IR is used, make sure the temporary tree created during parse is not used by anyone.
+    // With IR, eventually this tree doesn't need to be created at all, a stack of node properties
+    // to verify / propagate is sufficient during parse for validation purposes.
+    if (mCompileOptions.useIR)
+    {
+        return;
+    }
+#endif
     mTreeRoot = treeRoot;
     mTreeRoot->setIsTreeRoot();
 }
@@ -1382,6 +1424,16 @@ unsigned int TParseContext::checkIsValidArraySize(const TSourceLoc &line, TInter
         size = static_cast<unsigned int>(signedSize);
     }
 
+#ifdef ANGLE_IR
+    if (mCompileOptions.useIR)
+    {
+        // Pop the array size from the IR too.  IR's evaluation should be equal to the AST constant
+        // fold; when the AST goes away, the size as evaluated by IR is going to be used.
+        const uint32_t sizeAccordingToIr = mIRBuilder.popArraySize();
+        ASSERT(mDiagnostics->numErrors() != 0 || size == sizeAccordingToIr);
+    }
+#endif
+
     if (size == 0u)
     {
         error(line, "array size must be greater than zero", "");
@@ -1572,6 +1624,7 @@ void TParseContext::checkDeclarationIsValidArraySize(const TSourceLoc &line,
 bool TParseContext::declareVariable(const TSourceLoc &line,
                                     const ImmutableString &identifier,
                                     const TType *declarationType,
+                                    GeomTessArray sized,
                                     TVariable **variable)
 {
     ASSERT(*variable == nullptr);
@@ -1583,6 +1636,7 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
     {
         TType *fixedType = new TType(*type);
         fixedType->setQualifier(identifier == "gl_Position" ? EvqPosition : EvqPointSize);
+        fixedType->setTypeId(type->typeId());
         type = fixedType;
     }
 
@@ -1805,7 +1859,46 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
     if (!checkIsNonVoid(line, identifier, type->getBasicType()))
         return false;
 
+    // Declare the variable in IR
+    declareIRVariable(*variable, sized);
+
     return true;
+}
+
+void TParseContext::declareIRVariable(const TVariable *variable, GeomTessArray sized)
+{
+    // If the variable is yet to be sized, don't declare it yet.
+    if (sized == GeomTessArray::Deferred)
+    {
+        mDeferredArrayVariablesToSize.push_back(variable);
+        return;
+    }
+
+    const TType &type = variable->getType();
+    ASSERT(type.isTypeIdSet());
+
+    ir::VariableId variableId;
+    switch (type.getQualifier())
+    {
+        case EvqTemporary:
+        case EvqGlobal:
+        case EvqConst:
+        case EvqParamIn:
+        case EvqParamOut:
+        case EvqParamInOut:
+        case EvqParamConst:
+            // Temporary variables
+            variableId = mIRBuilder.declareTempVariable(variable->name(), type.typeId(), type);
+            break;
+        default:
+            // Interface and built-in variables
+            variableId = mIRBuilder.declareInterfaceVariable(
+                variable->symbolType() == SymbolType::Empty ? kEmptyImmutableString
+                                                            : variable->name(),
+                type.typeId(), type, ir::DeclarationSource::Shader);
+            break;
+    }
+    mVariableToId[variable] = VariableToIdInfo{variableId, VariableToIdInfo::kNoImplicitField};
 }
 
 void TParseContext::parseParameterQualifier(const TSourceLoc &line,
@@ -2744,6 +2837,7 @@ TIntermConstantUnion *TParseContext::addScalarLiteral(const TConstantUnion *cons
     TIntermConstantUnion *node = new TIntermConstantUnion(
         constantUnion, TType(constantUnion->getType(), EbpUndefined, EvqConst));
     node->setLine(line);
+    pushConstant(constantUnion, node->getType());
     return node;
 }
 
@@ -2843,6 +2937,104 @@ const TVariable *TParseContext::getNamedVariable(const TSourceLoc &location,
     return variable;
 }
 
+ir::VariableId TParseContext::declareBuiltInOnFirstUse(const TVariable *variable)
+{
+    if (variable->symbolType() == SymbolType::BuiltIn &&
+        mVariableToId.find(variable) == mVariableToId.end())
+    {
+        const TType *variableType = &variable->getType();
+
+        // For and clip/cull distance, let the IR know that they are not actually sized yet.
+        if (variableType->getQualifier() == EvqClipDistance ||
+            variableType->getQualifier() == EvqCullDistance)
+        {
+            TType *unsizedArrayType = new TType(*variableType);
+            unsizedArrayType->toArrayBaseType();
+            unsizedArrayType->makeArray(0);
+            variableType = unsizedArrayType;
+        }
+
+        const ir::TypeId typeId = getTypeId(*variableType);
+        const ir::VariableId id = mIRBuilder.declareInterfaceVariable(
+            variable->name(), typeId, *variableType, ir::DeclarationSource::Internal);
+        mVariableToId[variable] = VariableToIdInfo{id, VariableToIdInfo::kNoImplicitField};
+
+        switch (variableType->getQualifier())
+        {
+            case EvqClipDistance:
+                mClipDistanceInfo.id = id;
+                break;
+            case EvqCullDistance:
+                mCullDistanceInfo.id = id;
+                break;
+            default:
+                break;
+        }
+
+        return id;
+    }
+
+    if (mDiagnostics->numErrors() > 0)
+    {
+        return {};
+    }
+
+    return mVariableToId.at(variable).id;
+}
+
+void TParseContext::declareFunction(const TFunction *function, FunctionDeclaration declaration)
+{
+    // If the function prototype hasn't been previously encountered, this is a new function that
+    // should be declared to the IR first.
+    if (mFunctionToId.find(function) == mFunctionToId.end())
+    {
+        TVector<ir::VariableId> params;
+        TVector<TQualifier> paramDirections;
+        for (size_t i = 0; i < function->getParamCount(); ++i)
+        {
+            const TVariable *param = function->getParam(i);
+
+            ir::VariableId paramId = mIRBuilder.declareFunctionParam(
+                param->name(), getTypeId(param->getType()), param->getType());
+            mVariableToId[param] = VariableToIdInfo{paramId, VariableToIdInfo::kNoImplicitField};
+
+            params.push_back(paramId);
+            paramDirections.push_back(param->getType().getQualifier());
+        }
+
+        mFunctionToId[function] =
+            mIRBuilder.newFunction(function->name(), angle::Span(params.data(), params.size()),
+                                   angle::Span(paramDirections.data(), paramDirections.size()),
+                                   getTypeId(function->getReturnType()), function->getReturnType());
+    }
+    else if (declaration == FunctionDeclaration::Definition)
+    {
+        TVector<ImmutableString> paramNames;
+        TVector<ir::VariableId> paramIds(function->getParamCount());
+        for (size_t i = 0; i < function->getParamCount(); ++i)
+        {
+            const TVariable *param = function->getParam(i);
+            paramNames.push_back(param->name());
+        }
+        mIRBuilder.updateFunctionParamNames(mFunctionToId[function],
+                                            angle::Span(paramNames.data(), paramNames.size()),
+                                            angle::Span(paramIds.data(), paramIds.size()));
+
+        // When a prototype is previously visited, `declareFunction` has already created the
+        // variables for the function parameters in the |if| above.  When the function prototype is
+        // visited again during function definition, the real argument names are provided (so the
+        // variables should be renamed).  New |TVariable|s are also created by the parser, which
+        // should map to the same IR ids.  At this point, the old |TVariable|s are lost, so the IR
+        // returns the variable ids for the parameters.
+        for (size_t i = 0; i < function->getParamCount(); ++i)
+        {
+            const TVariable *param = function->getParam(i);
+            mVariableToId[param] =
+                VariableToIdInfo{paramIds[i], VariableToIdInfo::kNoImplicitField};
+        }
+    }
+}
+
 TIntermTyped *TParseContext::parseVariableIdentifier(const TSourceLoc &location,
                                                      const ImmutableString &name,
                                                      const TSymbol *symbol)
@@ -2886,7 +3078,8 @@ TIntermTyped *TParseContext::parseVariableIdentifier(const TSourceLoc &location,
              (variableType.getQualifier() == EvqPerVertexIn))
     {
         ASSERT(symbolTable.getGlInVariableWithArraySize() != nullptr);
-        node = new TIntermSymbol(symbolTable.getGlInVariableWithArraySize());
+        variable = symbolTable.getGlInVariableWithArraySize();
+        node     = new TIntermSymbol(variable);
     }
     else
     {
@@ -2906,6 +3099,29 @@ TIntermTyped *TParseContext::parseVariableIdentifier(const TSourceLoc &location,
     }
     ASSERT(node != nullptr);
     node->setLine(location);
+
+    // Push the variable or its equivalent constant.  Note that when the variable is declared as
+    // `const`, the variable is pushed instead of the constant so its precision is retained.
+    if (variableType.getQualifier() == EvqConst &&
+        mVariableToId.find(variable) != mVariableToId.end())
+    {
+        pushVariable(variable);
+    }
+    else if (node->getAsConstantUnion())
+    {
+        pushConstant(node->getAsConstantUnion()->getConstantValue(), variableType);
+    }
+    else if (variable->getConstPointer())
+    {
+        pushConstant(variable->getConstPointer(), variableType);
+    }
+    else if (node->getAsSymbolNode())
+    {
+        // For built-ins, declare them in the IR on first reference.
+        declareBuiltInOnFirstUse(variable);
+        pushVariable(variable);
+    }
+
     return node;
 }
 
@@ -2986,6 +3202,8 @@ bool TParseContext::executeInitializer(const TSourceLoc &line,
         type->sizeUnsizedArrays(initializer->getType().getArraySizes());
     }
 
+    type->setTypeId(getTypeId(*type));
+
     const TQualifier qualifier = type->getQualifier();
 
     bool constError = false;
@@ -3004,7 +3222,7 @@ bool TParseContext::executeInitializer(const TSourceLoc &line,
     }
 
     TVariable *variable = nullptr;
-    if (!declareVariable(line, identifier, type, &variable))
+    if (!declareVariable(line, identifier, type, GeomTessArray::Sized, &variable))
     {
         return false;
     }
@@ -3073,11 +3291,14 @@ bool TParseContext::executeInitializer(const TSourceLoc &line,
             variable->shareConstPointer(initializerConstArray);
             if (initializer->getType().canReplaceWithConstantUnion())
             {
+                mIRBuilder.initialize(mVariableToId.at(variable).id);
                 ASSERT(*initNode == nullptr);
                 return true;
             }
         }
     }
+
+    mIRBuilder.initialize(mVariableToId.at(variable).id);
 
     *initNode = new TIntermBinary(EOpInitialize, intermSymbol, initializer);
     markStaticUseIfSymbol(initializer);
@@ -3497,6 +3718,8 @@ void TParseContext::onLoopConditionBegin(TIntermNode *init, const TSourceLoc &li
     {
         checkESSL100ForLoopInit(init, line);
     }
+
+    mIRBuilder.beginLoopCondition();
 }
 
 void TParseContext::onLoopConditionEnd(TIntermNode *condition, const TSourceLoc &line)
@@ -3529,6 +3752,22 @@ void TParseContext::onLoopConditionEnd(TIntermNode *condition, const TSourceLoc 
             mControlFlow.back().loopConditionConstantTrueSymbol = &conditionSymbol->variable();
         }
     }
+
+    if (condition == nullptr)
+    {
+        // If a condition is not specified, assume it's true (possible with for(..;;..)).
+        mIRBuilder.pushConstantBool(true);
+    }
+    else if (condition->getAsDeclarationNode())
+    {
+        // If a condition is a variable declaration (like while (bool cond = ...)), push the
+        // variable to the stack so it's loaded from.
+        TIntermDeclaration *declaration = condition->getAsDeclarationNode();
+        TIntermBinary *declarator       = declaration->getSequence()->front()->getAsBinaryNode();
+        ASSERT(declarator->getLeft()->getAsSymbolNode());
+        pushVariable(&declarator->getLeft()->getAsSymbolNode()->variable());
+    }
+    mIRBuilder.endLoopCondition();
 }
 
 void TParseContext::onLoopContinueEnd(TIntermNode *statement, const TSourceLoc &line)
@@ -3538,12 +3777,19 @@ void TParseContext::onLoopContinueEnd(TIntermNode *statement, const TSourceLoc &
         checkESSL100ForLoopContinue(statement, line);
     }
 
+    mIRBuilder.endLoopContinue();
     endStatementWithValue(statement);
 }
 
-void TParseContext::onDoLoopBegin() {}
+void TParseContext::onDoLoopBegin()
+{
+    mIRBuilder.beginDoLoop();
+}
 
-void TParseContext::onDoLoopConditionBegin() {}
+void TParseContext::onDoLoopConditionBegin()
+{
+    mIRBuilder.beginDoLoopCondition();
+}
 
 TIntermNode *TParseContext::addLoop(TLoopType type,
                                     TIntermNode *init,
@@ -3578,6 +3824,16 @@ TIntermNode *TParseContext::addLoop(TLoopType type,
         {
             checkIsScalarBool(line, typedCond);
         }
+
+        if (type == ELoopDoWhile)
+        {
+            mIRBuilder.endDoLoop();
+        }
+        else
+        {
+            mIRBuilder.endLoop();
+        }
+
         // In the case of other loops, it was checked before that the condition is a scalar boolean.
         ASSERT(mDiagnostics->numErrors() > 0 || typedCond == nullptr ||
                (typedCond->getBasicType() == EbtBool && !typedCond->isArray() &&
@@ -3589,6 +3845,7 @@ TIntermNode *TParseContext::addLoop(TLoopType type,
     }
 
     ASSERT(type != ELoopDoWhile);
+    mIRBuilder.endLoop();
 
     TIntermDeclaration *declaration = cond->getAsDeclarationNode();
     ASSERT(declaration);
@@ -3618,13 +3875,25 @@ void TParseContext::onIfTrueBlockBegin(TIntermTyped *cond, const TSourceLoc &loc
     ControlFlow flow = {};
     flow.type        = ControlFlowType::If;
     mControlFlow.push_back(flow);
+
+    checkIsScalarBool(loc, cond);
+    mIRBuilder.beginIfTrueBlock();
 }
 
-void TParseContext::onIfTrueBlockEnd() {}
+void TParseContext::onIfTrueBlockEnd()
+{
+    mIRBuilder.endIfTrueBlock();
+}
 
-void TParseContext::onIfFalseBlockBegin() {}
+void TParseContext::onIfFalseBlockBegin()
+{
+    mIRBuilder.beginIfFalseBlock();
+}
 
-void TParseContext::onIfFalseBlockEnd() {}
+void TParseContext::onIfFalseBlockEnd()
+{
+    mIRBuilder.endIfFalseBlock();
+}
 
 TIntermNode *TParseContext::addIfElse(TIntermTyped *cond,
                                       TIntermNodePair code,
@@ -3643,6 +3912,8 @@ TIntermNode *TParseContext::addIfElse(TIntermTyped *cond,
     {
         markStaticUseIfSymbol(code.node2);
     }
+
+    mIRBuilder.endIf();
 
     // For compile time constant conditions, prune the code now.
     if (isScalarBool && cond->getAsConstantUnion())
@@ -3940,7 +4211,8 @@ void TParseContext::checkAtomicCounterOffsetIsValid(bool forceAppend,
 
 void TParseContext::checkGeometryShaderInputAndSetArraySize(const TSourceLoc &location,
                                                             const ImmutableString &token,
-                                                            TType *type)
+                                                            TType *type,
+                                                            GeomTessArray *sizedOut)
 {
     if (type->getQualifier() == EvqPerVertexIn && mShaderType == GL_GEOMETRY_SHADER)
     {
@@ -3972,6 +4244,7 @@ void TParseContext::checkGeometryShaderInputAndSetArraySize(const TSourceLoc &lo
                     "gl_in array",
                     "Deferred");
             mDeferredArrayTypesToSize.push_back(type);
+            *sizedOut = GeomTessArray::Deferred;
         }
     }
     else if (IsGeometryShaderInput(mShaderType, type->getQualifier()))
@@ -3996,6 +4269,7 @@ void TParseContext::checkGeometryShaderInputAndSetArraySize(const TSourceLoc &lo
                         "array input",
                         "Deferred");
                 mDeferredArrayTypesToSize.push_back(type);
+                *sizedOut = GeomTessArray::Deferred;
             }
         }
         else if (type->isArray())
@@ -4011,7 +4285,8 @@ void TParseContext::checkGeometryShaderInputAndSetArraySize(const TSourceLoc &lo
 
 void TParseContext::checkTessellationShaderUnsizedArraysAndSetSize(const TSourceLoc &location,
                                                                    const ImmutableString &token,
-                                                                   TType *type)
+                                                                   TType *type,
+                                                                   GeomTessArray *sizedOut)
 {
     TQualifier qualifier = type->getQualifier();
 
@@ -4110,6 +4385,7 @@ void TParseContext::checkTessellationShaderUnsizedArraysAndSetSize(const TSource
                 if (mTessControlShaderOutputVertices == 0)
                 {
                     mDeferredArrayTypesToSize.push_back(type);
+                    *sizedOut = GeomTessArray::Deferred;
                 }
                 else
                 {
@@ -4190,8 +4466,14 @@ TIntermDeclaration *TParseContext::parseSingleDeclaration(
         }
     }
 
-    checkGeometryShaderInputAndSetArraySize(identifierOrTypeLocation, identifier, type);
-    checkTessellationShaderUnsizedArraysAndSetSize(identifierOrTypeLocation, identifier, type);
+    GeomTessArray sized = GeomTessArray::Sized;
+    checkGeometryShaderInputAndSetArraySize(identifierOrTypeLocation, identifier, type, &sized);
+    checkTessellationShaderUnsizedArraysAndSetSize(identifierOrTypeLocation, identifier, type,
+                                                   &sized);
+    if (sized == GeomTessArray::Sized)
+    {
+        type->setTypeId(getTypeId(*type));
+    }
 
     declarationQualifierErrorCheck(type->getQualifier(), publicType.layoutQualifier,
                                    identifierOrTypeLocation);
@@ -4231,7 +4513,7 @@ TIntermDeclaration *TParseContext::parseSingleDeclaration(
         adjustRedeclaredBuiltInType(identifierOrTypeLocation, identifier, type);
 
         TVariable *variable = nullptr;
-        if (declareVariable(identifierOrTypeLocation, identifier, type, &variable))
+        if (declareVariable(identifierOrTypeLocation, identifier, type, sized, &variable))
         {
             symbol = new TIntermSymbol(variable);
         }
@@ -4268,8 +4550,9 @@ TIntermDeclaration *TParseContext::parseSingleArrayDeclaration(
 
     checkArrayOfArraysInOut(indexLocation, elementType, *arrayType);
 
-    checkGeometryShaderInputAndSetArraySize(indexLocation, identifier, arrayType);
-    checkTessellationShaderUnsizedArraysAndSetSize(indexLocation, identifier, arrayType);
+    GeomTessArray sized = GeomTessArray::Sized;
+    checkGeometryShaderInputAndSetArraySize(indexLocation, identifier, arrayType, &sized);
+    checkTessellationShaderUnsizedArraysAndSetSize(indexLocation, identifier, arrayType, &sized);
 
     checkCanBeDeclaredWithoutInitializer(identifierLocation, identifier, arrayType);
     checkDeclarationIsValidArraySize(identifierLocation, identifier, arrayType);
@@ -4280,12 +4563,16 @@ TIntermDeclaration *TParseContext::parseSingleArrayDeclaration(
     }
 
     adjustRedeclaredBuiltInType(identifierLocation, identifier, arrayType);
+    if (sized == GeomTessArray::Sized)
+    {
+        arrayType->setTypeId(getTypeId(*arrayType));
+    }
 
     TIntermDeclaration *declaration = new TIntermDeclaration();
     declaration->setLine(identifierLocation);
 
     TVariable *variable = nullptr;
-    if (declareVariable(identifierLocation, identifier, arrayType, &variable))
+    if (declareVariable(identifierLocation, identifier, arrayType, sized, &variable))
     {
         TIntermSymbol *symbol = new TIntermSymbol(variable);
         symbol->setLine(identifierLocation);
@@ -4427,6 +4714,16 @@ TIntermGlobalQualifierDeclaration *TParseContext::parseGlobalQualifierDeclaratio
 
     mBuiltInQualified[type.getQualifier()] = true;
 
+    const ir::VariableId id = declareBuiltInOnFirstUse(variable);
+    if (typeQualifier.invariant)
+    {
+        mIRBuilder.markVariableInvariant(id);
+    }
+    if (typeQualifier.precise)
+    {
+        mIRBuilder.markVariablePrecise(id);
+    }
+
     return new TIntermGlobalQualifierDeclaration(intermSymbol, typeQualifier.precise,
                                                  identifierLoc);
 }
@@ -4448,8 +4745,9 @@ void TParseContext::parseDeclarator(TPublicType &publicType,
 
     TType *type = new TType(publicType);
 
-    checkGeometryShaderInputAndSetArraySize(identifierLocation, identifier, type);
-    checkTessellationShaderUnsizedArraysAndSetSize(identifierLocation, identifier, type);
+    GeomTessArray sized = GeomTessArray::Sized;
+    checkGeometryShaderInputAndSetArraySize(identifierLocation, identifier, type, &sized);
+    checkTessellationShaderUnsizedArraysAndSetSize(identifierLocation, identifier, type, &sized);
 
     checkCanBeDeclaredWithoutInitializer(identifierLocation, identifier, type);
     checkDeclarationIsValidArraySize(identifierLocation, identifier, type);
@@ -4460,9 +4758,13 @@ void TParseContext::parseDeclarator(TPublicType &publicType,
     }
 
     adjustRedeclaredBuiltInType(identifierLocation, identifier, type);
+    if (sized == GeomTessArray::Sized)
+    {
+        type->setTypeId(getTypeId(*type));
+    }
 
     TVariable *variable = nullptr;
-    if (declareVariable(identifierLocation, identifier, type, &variable))
+    if (declareVariable(identifierLocation, identifier, type, sized, &variable))
     {
         TIntermSymbol *symbol = new TIntermSymbol(variable);
         symbol->setLine(identifierLocation);
@@ -4492,8 +4794,10 @@ void TParseContext::parseArrayDeclarator(TPublicType &elementType,
         TType *arrayType = new TType(elementType);
         arrayType->makeArrays(arraySizes);
 
-        checkGeometryShaderInputAndSetArraySize(identifierLocation, identifier, arrayType);
-        checkTessellationShaderUnsizedArraysAndSetSize(identifierLocation, identifier, arrayType);
+        GeomTessArray sized = GeomTessArray::Sized;
+        checkGeometryShaderInputAndSetArraySize(identifierLocation, identifier, arrayType, &sized);
+        checkTessellationShaderUnsizedArraysAndSetSize(identifierLocation, identifier, arrayType,
+                                                       &sized);
 
         checkCanBeDeclaredWithoutInitializer(identifierLocation, identifier, arrayType);
         checkDeclarationIsValidArraySize(identifierLocation, identifier, arrayType);
@@ -4506,9 +4810,13 @@ void TParseContext::parseArrayDeclarator(TPublicType &elementType,
         }
 
         adjustRedeclaredBuiltInType(identifierLocation, identifier, arrayType);
+        if (sized == GeomTessArray::Sized)
+        {
+            arrayType->setTypeId(getTypeId(*arrayType));
+        }
 
         TVariable *variable = nullptr;
-        if (declareVariable(identifierLocation, identifier, arrayType, &variable))
+        if (declareVariable(identifierLocation, identifier, arrayType, sized, &variable))
         {
             TIntermSymbol *symbol = new TIntermSymbol(variable);
             symbol->setLine(identifierLocation);
@@ -4589,6 +4897,9 @@ TIntermNode *TParseContext::addEmptyStatement(const TSourceLoc &location)
     // different type of node just for empty statements, that will be pruned from the AST anyway.
     TIntermNode *node = CreateZeroNode(TType(EbtInt, EbpMedium));
     node->setLine(location);
+    // Because the node that is pushed has a value, appendStatement will expect to pop something
+    // from the stack.  So push the same bogus value to the IR too.
+    mIRBuilder.pushConstantInt(0);
     return node;
 }
 
@@ -4692,6 +5003,8 @@ bool TParseContext::parseGeometryShaderInputLayoutQualifier(const TTypeQualifier
             // verifying gl_in's array size, since that could also need to be sized.
             sizeUnsizedArrayTypes(inputArraySize);
             setGeometryShaderInputArraySize(inputArraySize, typeQualifier.line);
+
+            mIRBuilder.setGsPrimitiveIn(mGeometryShaderInputPrimitiveType);
         }
         else if (mGeometryShaderInputPrimitiveType != layoutQualifier.primitiveType)
         {
@@ -4707,6 +5020,7 @@ bool TParseContext::parseGeometryShaderInputLayoutQualifier(const TTypeQualifier
         if (mGeometryShaderInvocations == 0)
         {
             mGeometryShaderInvocations = layoutQualifier.invocations;
+            mIRBuilder.setGsInvocations(mGeometryShaderInvocations);
         }
         else if (mGeometryShaderInvocations != layoutQualifier.invocations)
         {
@@ -4744,6 +5058,7 @@ bool TParseContext::parseGeometryShaderOutputLayoutQualifier(const TTypeQualifie
         if (mGeometryShaderOutputPrimitiveType == EptUndefined)
         {
             mGeometryShaderOutputPrimitiveType = layoutQualifier.primitiveType;
+            mIRBuilder.setGsPrimitiveOut(mGeometryShaderOutputPrimitiveType);
         }
         else if (mGeometryShaderOutputPrimitiveType != layoutQualifier.primitiveType)
         {
@@ -4759,6 +5074,7 @@ bool TParseContext::parseGeometryShaderOutputLayoutQualifier(const TTypeQualifie
         if (mGeometryShaderMaxVertices == -1)
         {
             mGeometryShaderMaxVertices = layoutQualifier.maxVertices;
+            mIRBuilder.setGsMaxVertices(mGeometryShaderMaxVertices);
         }
         else if (mGeometryShaderMaxVertices != layoutQualifier.maxVertices)
         {
@@ -4787,6 +5103,7 @@ bool TParseContext::parseTessControlShaderOutputLayoutQualifier(const TTypeQuali
     if (mTessControlShaderOutputVertices == 0)
     {
         mTessControlShaderOutputVertices = layoutQualifier.vertices;
+        mIRBuilder.setTcsVertices(mTessControlShaderOutputVertices);
 
         // Size any implicitly sized arrays that have already been declared.
         sizeUnsizedArrayTypes(mTessControlShaderOutputVertices);
@@ -4811,6 +5128,7 @@ bool TParseContext::parseTessEvaluationShaderInputLayoutQualifier(
         if (mTessEvaluationShaderInputPrimitiveType == EtetUndefined)
         {
             mTessEvaluationShaderInputPrimitiveType = layoutQualifier.tesPrimitiveType;
+            mIRBuilder.setTesPrimitive(mTessEvaluationShaderInputPrimitiveType);
         }
         else
         {
@@ -4823,6 +5141,7 @@ bool TParseContext::parseTessEvaluationShaderInputLayoutQualifier(
         if (mTessEvaluationShaderInputVertexSpacingType == EtetUndefined)
         {
             mTessEvaluationShaderInputVertexSpacingType = layoutQualifier.tesVertexSpacingType;
+            mIRBuilder.setTesVertexSpacing(mTessEvaluationShaderInputVertexSpacingType);
         }
         else
         {
@@ -4835,6 +5154,7 @@ bool TParseContext::parseTessEvaluationShaderInputLayoutQualifier(
         if (mTessEvaluationShaderInputOrderingType == EtetUndefined)
         {
             mTessEvaluationShaderInputOrderingType = layoutQualifier.tesOrderingType;
+            mIRBuilder.setTesOrdering(mTessEvaluationShaderInputOrderingType);
         }
         else
         {
@@ -4847,6 +5167,7 @@ bool TParseContext::parseTessEvaluationShaderInputLayoutQualifier(
         if (mTessEvaluationShaderInputPointType == EtetUndefined)
         {
             mTessEvaluationShaderInputPointType = layoutQualifier.tesPointType;
+            mIRBuilder.setTesPointMode(mTessEvaluationShaderInputPointType);
         }
         else
         {
@@ -4859,11 +5180,23 @@ bool TParseContext::parseTessEvaluationShaderInputLayoutQualifier(
 
 void TParseContext::sizeUnsizedArrayTypes(uint32_t arraySize)
 {
-    for (TType *type : mDeferredArrayTypesToSize)
+    while (!mDeferredArrayTypesToSize.empty())
     {
+        TType *type = mDeferredArrayTypesToSize.back();
+
+        // Pop the type out of |mDeferredArrayTypesToSize| to satisfy an ASSERT in |getTypeId| that
+        // the type declaration is not deferred!
+        mDeferredArrayTypesToSize.pop_back();
+
         type->sizeOutermostUnsizedArray(arraySize);
+        type->setTypeId(getTypeId(*type));
     }
-    mDeferredArrayTypesToSize.clear();
+
+    for (const TVariable *variable : mDeferredArrayVariablesToSize)
+    {
+        declareIRVariable(variable, GeomTessArray::Sized);
+    }
+    mDeferredArrayVariablesToSize.clear();
 }
 
 void TParseContext::parseGlobalLayoutQualifier(const TTypeQualifierBuilder &typeQualifierBuilder)
@@ -5037,6 +5370,7 @@ void TParseContext::parseGlobalLayoutQualifier(const TTypeQualifierBuilder &type
         }
 
         mEarlyFragmentTestsSpecified = true;
+        mIRBuilder.setEarlyFragmentTests(mEarlyFragmentTestsSpecified);
     }
     else if (typeQualifier.qualifier == EvqFragmentOut)
     {
@@ -5199,6 +5533,8 @@ TIntermFunctionPrototype *TParseContext::addFunctionPrototypeDeclaration(
         error(location, "local function prototype declarations are not allowed", "function");
     }
 
+    // Declare the function to the IR.  It's body is not yet specified.
+    declareFunction(function, FunctionDeclaration::Prototype);
     return prototype;
 }
 
@@ -5244,6 +5580,8 @@ TIntermFunctionDefinition *TParseContext::addFunctionDefinition(
     }
     mCurrentFunction = nullptr;
 
+    mIRBuilder.endFunction();
+
     symbolTable.pop();
     return functionNode;
 }
@@ -5276,6 +5614,11 @@ void TParseContext::parseFunctionDefinitionHeader(const TSourceLoc &location,
         mFunctionBodyNewScope = true;
         symbolTable.push();
     }
+
+    // If the function prototype hasn't been previously encountered, this is a new function that
+    // should be declared to the IR first.
+    declareFunction(function, FunctionDeclaration::Definition);
+    mIRBuilder.beginFunction(mFunctionToId.at(function));
 }
 
 TFunction *TParseContext::parseFunctionDeclarator(const TSourceLoc &location, TFunction *function)
@@ -5578,6 +5921,8 @@ TIntermTyped *TParseContext::addConstructor(TFunctionLookup *fnCall, const TSour
     {
         return CreateZeroNode(type);
     }
+
+    mIRBuilder.construct(getTypeId(type), arguments.size());
 
     TIntermAggregate *constructorNode = TIntermAggregate::CreateConstructor(type, &arguments);
     constructorNode->setLine(line);
@@ -5971,6 +6316,7 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
         error(nameLine, "redefinition of an interface block name", blockName);
     }
 
+    GeomTessArray sized = GeomTessArray::Sized;
     TType *interfaceBlockType =
         new TType(interfaceBlock, typeQualifier.qualifier, blockLayoutQualifier);
     if (arraySizes)
@@ -5978,8 +6324,9 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
         interfaceBlockType->makeArrays(*arraySizes);
         checkDeclarationIsValidArraySize(instanceLine, instanceName, interfaceBlockType);
     }
-    checkGeometryShaderInputAndSetArraySize(instanceLine, instanceName, interfaceBlockType);
-    checkTessellationShaderUnsizedArraysAndSetSize(instanceLine, instanceName, interfaceBlockType);
+    checkGeometryShaderInputAndSetArraySize(instanceLine, instanceName, interfaceBlockType, &sized);
+    checkTessellationShaderUnsizedArraysAndSetSize(instanceLine, instanceName, interfaceBlockType,
+                                                   &sized);
 
     // If this is gl_PerVertex, make sure the instance name is as expected.
     if (interfaceBlockType->getQualifier() == EvqPerVertexOut)
@@ -6020,6 +6367,11 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
         }
     }
 
+    if (sized == GeomTessArray::Sized)
+    {
+        interfaceBlockType->setTypeId(getTypeId(*interfaceBlockType));
+    }
+
     // The instance variable gets created to refer to the interface block type from the AST
     // regardless of if there's an instance name. It's created as an empty symbol if there is no
     // instance name.
@@ -6027,8 +6379,15 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
         new TVariable(&symbolTable, instanceName, interfaceBlockType,
                       instanceName.empty() ? SymbolType::Empty : instanceSymbolType);
 
+    declareIRVariable(instanceVariable, sized);
+
     if (instanceVariable->symbolType() == SymbolType::Empty)
     {
+        // Cannot have an array variable that is yet to be sized but which also has no name (because
+        // there is no way to specify arrayness with [] without a name).
+        ASSERT(sized == GeomTessArray::Sized);
+        const ir::VariableId instanceId = mVariableToId.at(instanceVariable).id;
+
         // define symbols for the members of the interface block
         for (size_t memberIndex = 0; memberIndex < fieldList->size(); ++memberIndex)
         {
@@ -6061,6 +6420,11 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
                 error(field->line(), "redefinition of an interface block member name",
                       field->name());
             }
+
+            // Don't declare variables for fields of nameless interface blocks in the IR, just
+            // remember to implicitly index the instance variable when referenced.
+            mVariableToId[fieldVariable] =
+                VariableToIdInfo{instanceId, static_cast<uint32_t>(memberIndex)};
         }
     }
     else
@@ -6366,6 +6730,21 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
             TIntermBinary *node =
                 new TIntermBinary(EOpIndexDirect, baseExpression, indexExpression);
             node->setLine(location);
+
+            if (baseExpression->isVector() && !baseExpression->isArray())
+            {
+                const uint32_t irIndex = mIRBuilder.popArraySize();
+#ifdef ANGLE_IR
+                ASSERT(!mCompileOptions.useIR || mDiagnostics->numErrors() > 0 ||
+                       irIndex == static_cast<uint32_t>(index));
+#endif
+                mIRBuilder.vectorComponent(irIndex);
+            }
+            else
+            {
+                mIRBuilder.index();
+            }
+
             return expressionOrFoldedResult(node);
         }
     }
@@ -6377,6 +6756,8 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
     {
         checkESSL100ConstantIndex(indexExpression, location);
     }
+
+    mIRBuilder.index();
 
     markStaticUseIfSymbol(indexExpression);
     TIntermBinary *node = new TIntermBinary(EOpIndexIndirect, baseExpression, indexExpression);
@@ -6424,6 +6805,16 @@ TIntermTyped *TParseContext::addFieldSelectionExpression(TIntermTyped *baseExpre
             fieldOffsets.resize(1);
             fieldOffsets[0] = 0;
         }
+
+        if (fieldOffsets.size() == 1)
+        {
+            mIRBuilder.vectorComponent(fieldOffsets[0]);
+        }
+        else
+        {
+            mIRBuilder.vectorComponentMulti(angle::Span(fieldOffsets.data(), fieldOffsets.size()));
+        }
+
         TIntermSwizzle *node = new TIntermSwizzle(baseExpression, fieldOffsets);
         node->setLine(dotLocation);
 
@@ -6451,6 +6842,8 @@ TIntermTyped *TParseContext::addFieldSelectionExpression(TIntermTyped *baseExpre
             }
             if (fieldFound)
             {
+                mIRBuilder.structField(i);
+
                 TIntermTyped *index = CreateIndexNode(i);
                 index->setLine(fieldLocation);
                 TIntermBinary *node =
@@ -6487,6 +6880,8 @@ TIntermTyped *TParseContext::addFieldSelectionExpression(TIntermTyped *baseExpre
             }
             if (fieldFound)
             {
+                mIRBuilder.structField(i);
+
                 TIntermTyped *index = CreateIndexNode(i);
                 index->setLine(fieldLocation);
                 TIntermBinary *node =
@@ -7345,12 +7740,14 @@ TFieldList *TParseContext::addStructDeclaratorList(const TPublicType &typeSpecif
     for (const TDeclarator *declarator : *declaratorList)
     {
         TType *type = new TType(typeSpecifier);
+
         if (declarator->isArray())
         {
             // Don't allow arrays of arrays in ESSL < 3.10.
             checkArrayElementIsNotArray(typeSpecifier.getLine(), typeSpecifier);
             type->makeArrays(*declarator->arraySizes());
         }
+        type->setTypeId(getTypeId(*type));
 
         SymbolType symbolType = SymbolType::UserDefined;
         if (declarator->name() == "gl_Position" || declarator->name() == "gl_PointSize" ||
@@ -7479,6 +7876,11 @@ TTypeSpecifierNonArray TParseContext::addStructure(const TSourceLoc &structLine,
         checkLocationIsNotSpecified(field.line(), field.type()->getLayoutQualifier());
     }
 
+    mSymbolToTypeId[structure] = mIRBuilder.getStructTypeId(
+        structure->symbolType() == SymbolType::Empty ? kEmptyImmutableString : structure->name(),
+        angle::Span<const TField *const>(reorderedFields->data(), reorderedFields->size()), {},
+        false, false, symbolTable.atGlobalLevel());
+
     TTypeSpecifierNonArray typeSpecifierNonArray;
     typeSpecifierNonArray.initializeStruct(structure, true, structLine);
     exitStructDeclaration();
@@ -7496,6 +7898,8 @@ void TParseContext::beginSwitch(const TSourceLoc &line, TIntermTyped *init)
     symbolTable.push();
 
     checkNestingLevel(line);
+
+    mIRBuilder.beginSwitch();
 }
 
 TIntermSwitch *TParseContext::addSwitch(TIntermTyped *init,
@@ -7527,6 +7931,8 @@ TIntermSwitch *TParseContext::addSwitch(TIntermTyped *init,
               "switch");
         return nullptr;
     }
+
+    mIRBuilder.endSwitch();
 
     markStaticUseIfSymbol(init);
     TIntermSwitch *node = new TIntermSwitch(init, statementList);
@@ -7612,6 +8018,8 @@ TIntermCase *TParseContext::addCase(TIntermTyped *condition, const TSourceLoc &l
         error(loc, "case label type does not match switch init-expression type", "case");
     }
 
+    mIRBuilder.beginCase();
+
     TIntermCase *node = new TIntermCase(condition);
     node->setLine(loc);
     return node;
@@ -7623,6 +8031,8 @@ TIntermCase *TParseContext::addDefault(const TSourceLoc &loc)
     {
         return nullptr;
     }
+
+    mIRBuilder.beginDefault();
 
     TIntermCase *node = new TIntermCase(nullptr);
     node->setLine(loc);
@@ -7680,6 +8090,8 @@ TIntermTyped *TParseContext::createUnaryMath(TOperator op,
         unaryOpError(loc, opStr, child->getType());
         return nullptr;
     }
+
+    mIRBuilder.builtIn(op, 1);
 
     markStaticUseIfSymbol(child);
     TIntermUnary *node = new TIntermUnary(op, child, func);
@@ -8096,6 +8508,19 @@ TIntermTyped *TParseContext::addBinaryMathInternal(TOperator op,
         }
     }
 
+    switch (op)
+    {
+        case EOpLogicalAnd:
+            mIRBuilder.endShortCircuitAnd();
+            break;
+        case EOpLogicalOr:
+            mIRBuilder.endShortCircuitOr();
+            break;
+        default:
+            mIRBuilder.builtIn(op, 2);
+            break;
+    }
+
     TIntermBinary *node = new TIntermBinary(op, left, right);
     ASSERT(op != EOpAssign);
     markStaticUseIfSymbol(left);
@@ -8173,16 +8598,40 @@ TIntermTyped *TParseContext::addAssign(TOperator op,
     {
         markStaticUseIfSymbol(left);
     }
+    mIRBuilder.builtIn(op, 2);
+
     markStaticUseIfSymbol(right);
     node->setLine(loc);
     return node;
 }
 
-void TParseContext::onShortCircuitAndBegin(TIntermTyped *left, const TSourceLoc &loc) {}
+void TParseContext::onShortCircuitAndBegin(TIntermTyped *left, const TSourceLoc &loc)
+{
+    if (!left->isScalar() || left->getBasicType() != EbtBool)
+    {
+        error(loc, "Left hand side of && must be a scalar bool", GetOperatorString(EOpLogicalAnd));
+    }
+    mIRBuilder.beginShortCircuitAnd();
+}
 
-void TParseContext::onShortCircuitOrBegin(TIntermTyped *left, const TSourceLoc &loc) {}
+void TParseContext::onShortCircuitOrBegin(TIntermTyped *left, const TSourceLoc &loc)
+{
+    if (!left->isScalar() || left->getBasicType() != EbtBool)
+    {
+        error(loc, "Left hand side of || must be a scalar bool", GetOperatorString(EOpLogicalOr));
+    }
+    mIRBuilder.beginShortCircuitOr();
+}
 
-void TParseContext::onCommaLeftHandSideParsed(TIntermTyped *left) {}
+void TParseContext::onCommaLeftHandSideParsed(TIntermTyped *left)
+{
+    if (left->getBasicType() != EbtVoid)
+    {
+        // The left-hand side's value is discarded, do so before the right-hand side is parsed (and
+        // pushed to the stack).
+        mIRBuilder.endStatementWithValue();
+    }
+}
 
 TIntermTyped *TParseContext::addComma(TIntermTyped *left,
                                       TIntermTyped *right,
@@ -8221,6 +8670,7 @@ TIntermBranch *TParseContext::addBranch(TOperator op, const TSourceLoc &loc)
             {
                 error(loc, "continue statement only allowed in loops", "");
             }
+            mIRBuilder.branchContinue();
             break;
         case EOpBreak:
             if (!isNestedIn(ControlFlowType::Loop) && !isNestedIn(ControlFlowType::Switch))
@@ -8231,6 +8681,7 @@ TIntermBranch *TParseContext::addBranch(TOperator op, const TSourceLoc &loc)
             {
                 mControlFlow.back().hasBreak = true;
             }
+            mIRBuilder.branchBreak();
             break;
         case EOpReturn:
             if (mCurrentFunction->getReturnType().getBasicType() != EbtVoid)
@@ -8246,6 +8697,7 @@ TIntermBranch *TParseContext::addBranch(TOperator op, const TSourceLoc &loc)
             {
                 mControlFlow.back().hasReturn = true;
             }
+            mIRBuilder.branchReturn();
             break;
         case EOpKill:
             if (mShaderType != GL_FRAGMENT_SHADER)
@@ -8257,6 +8709,7 @@ TIntermBranch *TParseContext::addBranch(TOperator op, const TSourceLoc &loc)
                 errorIfPLSDeclared(loc, PLSIllegalOperations::Discard);
             }
             mHasDiscard = true;
+            mIRBuilder.branchDiscard();
             break;
         default:
             UNREACHABLE();
@@ -8286,6 +8739,7 @@ TIntermBranch *TParseContext::addBranch(TOperator op,
         {
             mControlFlow.back().hasReturn = true;
         }
+        mIRBuilder.branchReturnValue();
     }
     TIntermBranch *node = new TIntermBranch(op, expression);
     node->setLine(loc);
@@ -8736,6 +9190,8 @@ TIntermTyped *TParseContext::addMethod(TFunctionLookup *fnCall, const TSourceLoc
                 break;
         }
 
+        mIRBuilder.arrayLength();
+
         TIntermUnary *node = new TIntermUnary(EOpArrayLength, thisNode, nullptr);
         markStaticUseIfSymbol(thisNode);
         node->setLine(loc);
@@ -8770,7 +9226,9 @@ TIntermTyped *TParseContext::addNonConstructorFunctionCallImpl(TFunctionLookup *
             callNode->setLine(loc);
             checkImageMemoryAccessForUserDefinedFunctions(fnCandidate, callNode);
             functionCallRValueLValueErrorCheck(fnCandidate, callNode);
+
             mCallGraph[mCurrentFunction].insert(fnCandidate);
+            mIRBuilder.callFunction(mFunctionToId.at(fnCandidate));
             return callNode;
         }
 
@@ -8839,6 +9297,8 @@ TIntermTyped *TParseContext::addNonConstructorFunctionCallImpl(TFunctionLookup *
             // Some built-in functions have out parameters too.
             functionCallRValueLValueErrorCheck(fnCandidate, callNode);
 
+            mIRBuilder.builtIn(op, fnCandidate->getParamCount());
+
             // See if we can constant fold a built-in. Note that this may be possible
             // even if it is not const-qualified.
             return callNode->fold(mDiagnostics);
@@ -8863,11 +9323,18 @@ TIntermTyped *TParseContext::addNonConstructorFunctionCall(TFunctionLookup *fnCa
     return CreateZeroNode(TType(EbtFloat, EbpMedium, EvqConst));
 }
 
-void TParseContext::onTernaryConditionParsed(TIntermTyped *cond, const TSourceLoc &line) {}
+void TParseContext::onTernaryConditionParsed(TIntermTyped *cond, const TSourceLoc &line)
+{
+    checkIsScalarBool(line, cond);
+    mIRBuilder.beginTernaryTrueExpression();
+}
 
 void TParseContext::onTernaryTrueExpressionParsed(TIntermTyped *trueExpression,
                                                   const TSourceLoc &line)
-{}
+{
+    mIRBuilder.endTernaryTrueExpression(trueExpression->getBasicType());
+    mIRBuilder.beginTernaryFalseExpression();
+}
 
 TIntermTyped *TParseContext::addTernarySelection(TIntermTyped *cond,
                                                  TIntermTyped *trueExpression,
@@ -8887,7 +9354,8 @@ TIntermTyped *TParseContext::addTernarySelection(TIntermTyped *cond,
         error(loc, reasonStream.c_str(), "?:");
         return falseExpression;
     }
-    if (IsOpaqueType(trueExpression->getBasicType()))
+    const TBasicType basicType = trueExpression->getBasicType();
+    if (IsOpaqueType(basicType))
     {
         // ESSL 1.00 section 4.1.7
         // ESSL 3.00.6 section 4.1.7
@@ -8917,13 +9385,12 @@ TIntermTyped *TParseContext::addTernarySelection(TIntermTyped *cond,
         error(loc, "ternary operator is not allowed for arrays in ESSL 1.0 and webgl", "?:");
         return falseExpression;
     }
-    if ((mShaderVersion < 300 || mShaderSpec == SH_WEBGL2_SPEC) &&
-        trueExpression->getBasicType() == EbtStruct)
+    if ((mShaderVersion < 300 || mShaderSpec == SH_WEBGL2_SPEC) && basicType == EbtStruct)
     {
         error(loc, "ternary operator is not allowed for structures in ESSL 1.0 and webgl", "?:");
         return falseExpression;
     }
-    if (trueExpression->getBasicType() == EbtInterfaceBlock)
+    if (basicType == EbtInterfaceBlock)
     {
         error(loc, "ternary operator is not allowed for interface blocks", "?:");
         return falseExpression;
@@ -8931,11 +9398,14 @@ TIntermTyped *TParseContext::addTernarySelection(TIntermTyped *cond,
 
     // WebGL2 section 5.26, the following results in an error:
     // "Ternary operator applied to void, arrays, or structs containing arrays"
-    if (mShaderSpec == SH_WEBGL2_SPEC && trueExpression->getBasicType() == EbtVoid)
+    if (mShaderSpec == SH_WEBGL2_SPEC && basicType == EbtVoid)
     {
         error(loc, "ternary operator is not allowed for void", "?:");
         return falseExpression;
     }
+
+    mIRBuilder.endTernaryFalseExpression(basicType);
+    mIRBuilder.endTernary(basicType);
 
     TIntermTernary *node = new TIntermTernary(cond, trueExpression, falseExpression);
     markStaticUseIfSymbol(cond);
@@ -8945,7 +9415,154 @@ TIntermTyped *TParseContext::addTernarySelection(TIntermTyped *cond,
     return expressionOrFoldedResult(node);
 }
 
-void TParseContext::endStatementWithValue(TIntermNode *statement) {}
+ir::TypeId TParseContext::getTypeId(const TType &type)
+{
+    if (type.isTypeIdSet())
+    {
+        return type.typeId();
+    }
+
+    // Normally, type ids are generated at the same time as types are, except for built-ins where
+    // the type is baked in.  For now, calculate the type ID.
+    const TSymbol *block     = nullptr;
+    const TFieldList *fields = nullptr;
+    ir::TypeId id;
+    if (type.getStruct())
+    {
+        block  = type.getStruct();
+        fields = &type.getStruct()->fields();
+    }
+    else if (type.getInterfaceBlock())
+    {
+        block  = type.getInterfaceBlock();
+        fields = &type.getInterfaceBlock()->fields();
+    }
+
+    if (block)
+    {
+        if (mSymbolToTypeId.find(block) != mSymbolToTypeId.end())
+        {
+            id = mSymbolToTypeId.at(block);
+        }
+        else
+        {
+            TVector<ir::TypeId> fieldTypeIds;
+            for (const TField *field : *fields)
+            {
+                fieldTypeIds.push_back(getTypeId(*field->type()));
+            }
+
+            // Same issue with built-ins where the type id is not baked in.  So the type id of each
+            // field is also calculated here and passed in.
+            id = mIRBuilder.getStructTypeId(
+                block->symbolType() == SymbolType::Empty ? kEmptyImmutableString : block->name(),
+                angle::Span<const TField *const>(fields->data(), fields->size()),
+                angle::Span<ir::TypeId>(fieldTypeIds.data(), fieldTypeIds.size()),
+                block->isInterfaceBlock(), block->symbolType() == SymbolType::BuiltIn, true);
+            mSymbolToTypeId[block] = id;
+        }
+    }
+    else
+    {
+        id = mIRBuilder.getBasicTypeId(type.getBasicType(), type.getNominalSize(),
+                                       type.getSecondarySize());
+    }
+
+    if (type.isArray())
+    {
+        // Make sure array types that are yet to be sized are not added to the IR yet.
+        ASSERT(std::find(mDeferredArrayTypesToSize.begin(), mDeferredArrayTypesToSize.end(),
+                         &type) == mDeferredArrayTypesToSize.end());
+        id = mIRBuilder.getArrayTypeId(id, type.getArraySizes());
+    }
+
+    return id;
+}
+
+void TParseContext::pushVariable(const TVariable *variable)
+{
+    if (mDiagnostics->numErrors() > 0)
+    {
+        return;
+    }
+
+    const VariableToIdInfo &info = mVariableToId.at(variable);
+    mIRBuilder.pushVariable(info.id);
+    if (info.implicitField != VariableToIdInfo::kNoImplicitField)
+    {
+        mIRBuilder.structField(info.implicitField);
+    }
+}
+
+const TConstantUnion *TParseContext::pushConstant(const TConstantUnion *constant, const TType &type)
+{
+    const ir::TypeId typeId = getTypeId(type);
+    if (type.isArray())
+    {
+        TType elementType(type);
+        elementType.toArrayElementType();
+
+        const size_t arraySize = type.getOutermostArraySize();
+        for (size_t i = 0; i < arraySize; ++i)
+        {
+            constant = pushConstant(constant, elementType);
+        }
+        mIRBuilder.construct(typeId, arraySize);
+    }
+    else if (type.getBasicType() == EbtStruct)
+    {
+        const TStructure *structure = type.getStruct();
+
+        for (const TField *field : structure->fields())
+        {
+            const TType *fieldType = field->type();
+            constant               = pushConstant(constant, *fieldType);
+        }
+        mIRBuilder.construct(typeId, structure->fields().size());
+    }
+    else
+    {
+        size_t size = type.getObjectSize();
+        for (size_t i = 0; i < size; ++i, ++constant)
+        {
+            switch (constant->getType())
+            {
+                case EbtFloat:
+                    mIRBuilder.pushConstantFloat(constant->getFConst());
+                    break;
+                case EbtInt:
+                    mIRBuilder.pushConstantInt(constant->getIConst());
+                    break;
+                case EbtUInt:
+                    mIRBuilder.pushConstantUint(constant->getUConst());
+                    break;
+                case EbtBool:
+                    mIRBuilder.pushConstantBool(constant->getBConst());
+                    break;
+                case EbtYuvCscStandardEXT:
+                    mIRBuilder.pushConstantYuvCscStandard(constant->getYuvCscStandardEXTConst());
+                    break;
+                default:
+                    UNREACHABLE();
+            }
+        }
+        if (size > 1)
+        {
+            mIRBuilder.construct(typeId, size);
+        }
+    }
+
+    return constant;
+}
+
+void TParseContext::endStatementWithValue(TIntermNode *statement)
+{
+    TIntermTyped *typed = statement ? statement->getAsTyped() : nullptr;
+    if (typed && typed->getBasicType() != EbtVoid)
+    {
+        mIRBuilder.endStatementWithValue();
+    }
+}
 
 void TParseContext::checkCallGraph()
 {
@@ -9087,8 +9704,10 @@ void TParseContext::checkCallGraph()
 
 bool TParseContext::postParseChecks()
 {
+#ifndef ANGLE_IR
     // If parse failed, we shouldn't reach here.
-    ASSERT(mTreeRoot != nullptr);
+    ASSERT(!mCompileOptions.useIR || mTreeRoot != nullptr);
+#endif
 
     if (mMainFunction == nullptr)
     {
@@ -9153,6 +9772,17 @@ bool TParseContext::postParseChecks()
               "The length() method cannot be called on gl_CullDistance that is not "
               "runtime sized and also has not yet been explicitly sized",
               "gl_CullDistance");
+    }
+
+    if (ir::IsVariableIdValid(mClipDistanceInfo.id) && usedClipDistances > 0 &&
+        !isClipDistanceRedeclared())
+    {
+        mIRBuilder.onGlClipDistanceSized(mClipDistanceInfo.id, usedClipDistances);
+    }
+    if (ir::IsVariableIdValid(mCullDistanceInfo.id) && usedCullDistances > 0 &&
+        !isCullDistanceRedeclared())
+    {
+        mIRBuilder.onGlCullDistanceSized(mCullDistanceInfo.id, usedCullDistances);
     }
 
     ValidateFragColorAndFragData(mShaderType, mShaderVersion, symbolTable, mDiagnostics);

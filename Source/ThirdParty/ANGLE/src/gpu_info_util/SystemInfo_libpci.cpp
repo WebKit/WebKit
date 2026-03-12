@@ -102,7 +102,11 @@ bool GetPCIDevicesWithLibPCI(std::vector<GPUDeviceInfo> *devices)
 
     for (pci_dev *device = access->devices; device != nullptr; device = device->next)
     {
+#if PCI_LIB_VERSION >= 0x030800
+        pci.FillInfo(device, PCI_FILL_IDENT | PCI_FILL_CLASS | PCI_FILL_CLASS_EXT);
+#else
         pci.FillInfo(device, PCI_FILL_IDENT | PCI_FILL_CLASS);
+#endif
 
         // Skip non-GPU devices
         if (device->device_class >> 8 != PCI_BASE_CLASS_DISPLAY)
@@ -119,7 +123,11 @@ bool GetPCIDevicesWithLibPCI(std::vector<GPUDeviceInfo> *devices)
         GPUDeviceInfo info;
         info.vendorId   = device->vendor_id;
         info.deviceId   = device->device_id;
+#if PCI_LIB_VERSION >= 0x030800
+        info.revisionId = device->rev_id;
+#else
         info.revisionId = pci.PCIReadByte(device, PCI_REVISION_ID);
+#endif
 
         devices->push_back(info);
     }

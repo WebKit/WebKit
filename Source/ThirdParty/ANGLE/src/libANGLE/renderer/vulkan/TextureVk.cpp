@@ -2216,7 +2216,7 @@ GLint TextureVk::getImageCompressionRate(const gl::Context *context)
 
     if (!mOwnsImage)
     {
-        return 0;
+        return GL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT;
     }
 
     VkImageSubresource2EXT imageSubresource2      = {};

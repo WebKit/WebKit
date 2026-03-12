@@ -1080,7 +1080,6 @@
 		7BFAF9192DE6F85B00327F7F /* OutputGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DCA2A7CEE9C0016DC59 /* OutputGLSL.cpp */; };
 		7BFAF9252DE6F8B500327F7F /* compiler_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF91B2DE6F8B500327F7F /* compiler_test.cpp */; };
 		7BFAF9262DE6F8B500327F7F /* ShaderCompileTreeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF91F2DE6F8B500327F7F /* ShaderCompileTreeTest.cpp */; };
-		7BFAF9272DE6F8B500327F7F /* ConstantFoldingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF91D2DE6F8B500327F7F /* ConstantFoldingTest.cpp */; };
 		7BFAF9282DE6F95400327F7F /* libutils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BFAF8232DE6EADC00327F7F /* libutils.a */; };
 		7BFAF92D2DE6F99B00327F7F /* angle_unittest_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF92B2DE6F99B00327F7F /* angle_unittest_main.cpp */; };
 		7BFD81842D50CF7C0010ED68 /* span.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BFD81832D50CF7C0010ED68 /* span.h */; };
@@ -2499,11 +2498,8 @@
 		7BFAF8FB2DE6F43700327F7F /* utils.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = utils.xcconfig; sourceTree = "<group>"; };
 		7BFAF91A2DE6F8B500327F7F /* compiler_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compiler_test.h; sourceTree = "<group>"; };
 		7BFAF91B2DE6F8B500327F7F /* compiler_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = compiler_test.cpp; sourceTree = "<group>"; };
-		7BFAF91C2DE6F8B500327F7F /* ConstantFoldingTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConstantFoldingTest.h; sourceTree = "<group>"; };
-		7BFAF91D2DE6F8B500327F7F /* ConstantFoldingTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantFoldingTest.cpp; sourceTree = "<group>"; };
 		7BFAF91E2DE6F8B500327F7F /* ShaderCompileTreeTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderCompileTreeTest.h; sourceTree = "<group>"; };
 		7BFAF91F2DE6F8B500327F7F /* ShaderCompileTreeTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderCompileTreeTest.cpp; sourceTree = "<group>"; };
-		7BFAF9202DE6F8B500327F7F /* ShaderExtensionTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderExtensionTest.h; sourceTree = "<group>"; };
 		7BFAF92B2DE6F99B00327F7F /* angle_unittest_main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = angle_unittest_main.cpp; sourceTree = "<group>"; };
 		7BFAF92C2DE6F99B00327F7F /* angle_unittests_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = angle_unittests_utils.h; sourceTree = "<group>"; };
 		7BFD81832D50CF7C0010ED68 /* span.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = span.h; sourceTree = "<group>"; };
@@ -4067,8 +4063,6 @@
 				7BFAF4D12DE49C3B00327F7F /* ANGLETest.h */,
 				7BFAF91B2DE6F8B500327F7F /* compiler_test.cpp */,
 				7BFAF91A2DE6F8B500327F7F /* compiler_test.h */,
-				7BFAF91D2DE6F8B500327F7F /* ConstantFoldingTest.cpp */,
-				7BFAF91C2DE6F8B500327F7F /* ConstantFoldingTest.h */,
 				7BFAF6682DE5A8F100327F7F /* gl_raii.h */,
 				7BFAF66A2DE5A8F100327F7F /* MultiThreadSteps.cpp */,
 				7BFAF6692DE5A8F100327F7F /* MultiThreadSteps.h */,
@@ -4076,7 +4070,6 @@
 				7BFAF4D22DE49C3B00327F7F /* RenderDoc.h */,
 				7BFAF91F2DE6F8B500327F7F /* ShaderCompileTreeTest.cpp */,
 				7BFAF91E2DE6F8B500327F7F /* ShaderCompileTreeTest.h */,
-				7BFAF9202DE6F8B500327F7F /* ShaderExtensionTest.h */,
 				7BFAF6662DE5A7A200327F7F /* system_info_util.cpp */,
 				7BFAF6652DE5A7A200327F7F /* system_info_util.h */,
 			);
@@ -6312,7 +6305,6 @@
 			files = (
 				7BFAF8302DE6EB6F00327F7F /* angle_features_autogen.cpp in Sources */,
 				7BFAF9252DE6F8B500327F7F /* compiler_test.cpp in Sources */,
-				7BFAF9272DE6F8B500327F7F /* ConstantFoldingTest.cpp in Sources */,
 				7BFAF8282DE6EB3B00327F7F /* crash_handler_posix.cpp in Sources */,
 				7BFAF82C2DE6EB6100327F7F /* EGLWindow.cpp in Sources */,
 				7BFAF82E2DE6EB6100327F7F /* Matrix.cpp in Sources */,

@@ -633,26 +633,6 @@ VkResult AllocateBufferMemoryWithRequirements(ErrorContext *context,
                                               memoryTypeIndexOut, deviceMemoryOut);
 }
 
-angle::Result InitShaderModule(ErrorContext *context,
-                               ShaderModulePtr *shaderModulePtr,
-                               const uint32_t *shaderCode,
-                               size_t shaderCodeSize)
-{
-    ASSERT(!(*shaderModulePtr));
-    VkShaderModuleCreateInfo createInfo = {};
-    createInfo.sType                    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.flags                    = 0;
-    createInfo.codeSize                 = shaderCodeSize;
-    createInfo.pCode                    = shaderCode;
-
-    ShaderModulePtr newShaderModule = ShaderModulePtr::MakeShared(context->getDevice());
-    ANGLE_VK_TRY(context, newShaderModule->init(context->getDevice(), createInfo));
-
-    *shaderModulePtr = std::move(newShaderModule);
-
-    return angle::Result::Continue;
-}
-
 angle::Result InitExternalSharedFDMemory(
     ErrorContext *context,
     const VkExternalMemoryHandleTypeFlagBits externalMemoryHandleType,
@@ -742,6 +722,26 @@ angle::Result InitExternalHostMemory(ErrorContext *context,
                               memoryPropertyFlagsOut, memoryTypeIndexOut, deviceMemoryOut));
 
     *sizeOut = externalMemoryRequirements.size;
+
+    return angle::Result::Continue;
+}
+
+angle::Result InitShaderModule(ErrorContext *context,
+                               ShaderModulePtr *shaderModulePtr,
+                               const uint32_t *shaderCode,
+                               size_t shaderCodeSize)
+{
+    ASSERT(!(*shaderModulePtr));
+    VkShaderModuleCreateInfo createInfo = {};
+    createInfo.sType                    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    createInfo.flags                    = 0;
+    createInfo.codeSize                 = shaderCodeSize;
+    createInfo.pCode                    = shaderCode;
+
+    ShaderModulePtr newShaderModule = ShaderModulePtr::MakeShared(context->getDevice());
+    ANGLE_VK_TRY(context, newShaderModule->init(context->getDevice(), createInfo));
+
+    *shaderModulePtr = std::move(newShaderModule);
 
     return angle::Result::Continue;
 }

@@ -79,18 +79,6 @@ TEST_P(FragDepthTest, CompileFailsESSL100)
     EXPECT_FALSE(TestShaderCompile("", EXTFDPragma, shaderString));
 }
 
-// The GLES SL 3.0 built-in variable gl_FragDepth compiles with GLES SL 3.0.
-TEST_P(FragDepthTest, CompileSucceedsESSL300)
-{
-    static const char shaderString[] =
-        "precision mediump float;\n"
-        "void main() { \n"
-        "    gl_FragDepth = 1.0;\n"
-        "}\n";
-    InitializeCompiler();
-    EXPECT_TRUE(TestShaderCompile(ESSLVersion300, "", shaderString));
-}
-
 // Using #extension GL_EXT_frag_depth in GLSL ES 3.0 shader fails to compile.
 TEST_P(FragDepthTest, ExtensionFDFailsESSL300)
 {

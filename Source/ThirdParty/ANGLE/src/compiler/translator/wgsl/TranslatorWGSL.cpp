@@ -336,11 +336,13 @@ void OutputWGSLTraverser::visitSymbol(TIntermSymbol *symbolNode)
         // Accesses of pipeline variables should be rewritten as struct accesses.
         if (mRewritePipelineVarOutput->IsInputVar(var.uniqueId()))
         {
-            mSink << kBuiltinInputStructName << "." << var.name();
+            mSink << kBuiltinInputStructName << ".";
+            WriteNameOf(mSink, var);
         }
         else if (mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()))
         {
-            mSink << kBuiltinOutputStructName << "." << var.name();
+            mSink << kBuiltinOutputStructName << ".";
+            WriteNameOf(mSink, var);
         }
         else
         {
@@ -529,31 +531,36 @@ OperatorInfo OutputWGSLTraverser::useOperatorAndGetInfo(TIntermNode *current,
             // This should have been done by a preprocessing.
             UNREACHABLE();
             return {"TODO_operator"};
-        case TOperator::EOpAssign:
-            return {"="};
         case TOperator::EOpInitialize:
             return {"="};
+        // Assignments are always statements in WGSL and do not yield a value, so they are
+        // implemented as functions, unless the current expression is a statement and is a scalar
+        // integer, in which case the normal postfix operator will do.
+        case TOperator::EOpAssign:
         // Compound assignments now exist: https://www.w3.org/TR/WGSL/#compound-assignment-sec
         case TOperator::EOpAddAssign:
-            return {"+="};
         case TOperator::EOpSubAssign:
-            return {"-="};
         case TOperator::EOpMulAssign:
-            return {"*="};
         case TOperator::EOpDivAssign:
-            return {"/="};
         case TOperator::EOpIModAssign:
-            return {"%="};
         case TOperator::EOpBitShiftLeftAssign:
-            return {"<<="};
         case TOperator::EOpBitShiftRightAssign:
-            return {">>="};
         case TOperator::EOpBitwiseAndAssign:
-            return {"&="};
         case TOperator::EOpBitwiseXorAssign:
-            return {"^="};
         case TOperator::EOpBitwiseOrAssign:
-            return {"|="};
+        case TOperator::EOpVectorTimesScalarAssign:
+        case TOperator::EOpVectorTimesMatrixAssign:
+        case TOperator::EOpMatrixTimesScalarAssign:
+        case TOperator::EOpMatrixTimesMatrixAssign:
+            if (isStatement(current))
+            {
+                return {GetOperatorString(op)};
+            }
+            else
+            {
+                return OperatorInfo{nullptr, mPrelude->assign(*argType0, *argType1, op)};
+            }
+
         case TOperator::EOpAdd:
             return {"+"};
         case TOperator::EOpSub:
@@ -662,14 +669,6 @@ OperatorInfo OutputWGSLTraverser::useOperatorAndGetInfo(TIntermNode *current,
             {
                 return OperatorInfo{"", mPrelude->preDecrement(*argType0)};
             }
-        case TOperator::EOpVectorTimesScalarAssign:
-            return {"*="};
-        case TOperator::EOpVectorTimesMatrixAssign:
-            return {"*="};
-        case TOperator::EOpMatrixTimesScalarAssign:
-            return {"*="};
-        case TOperator::EOpMatrixTimesMatrixAssign:
-            return {"*="};
         case TOperator::EOpVectorTimesScalar:
             return {"*"};
         case TOperator::EOpVectorTimesMatrix:
@@ -1062,6 +1061,7 @@ const TField &OutputWGSLTraverser::getDirectField(const TIntermTyped &fieldsNode
     return field;
 }
 
+// Indexes arrays but also matrices.
 void OutputWGSLTraverser::emitArrayIndex(TIntermTyped &leftNode, TIntermTyped &rightNode)
 {
     TType leftType = leftNode.getType();
@@ -1091,7 +1091,16 @@ void OutputWGSLTraverser::emitArrayIndex(TIntermTyped &leftNode, TIntermTyped &r
         ASSERT(!needsUnwrapping || !isUniformMatrixNeedingConversion);
     }
 
-    // Emit the left side, which should be of type array.
+    enum class ConversionScope
+    {
+        kNoConversionFunction,
+        kConvertTheIndexedMatrix,
+        kConvertTheWholeArrayIndexExpression,
+    };
+
+    ConversionScope conversionFunctionScope = ConversionScope::kNoConversionFunction;
+
+    // Emit the left side, which should be of type matrix or array (including array of matrices).
     if (needsUnwrapping || isUniformMatrixNeedingConversion || isUniformBoolNeedingConversion)
     {
         if (isUniformMatrixNeedingConversion)
@@ -1100,20 +1109,40 @@ void OutputWGSLTraverser::emitArrayIndex(TIntermTyped &leftNode, TIntermTyped &r
             // array<ANGLE_wrapped_vec2, C>), just convert the entire expression to a WGSL matCx2,
             // instead of converting the entire array of std140 matCx2s into an array of WGSL
             // matCx2s and then indexing into it.
+            //
+            // NOTE: this could also be indexing a column vector of a matrix.
             TType baseType = leftType;
             baseType.toArrayBaseType();
             mSink << MakeMatCx2ConversionFunctionName(&baseType) << "(";
             // Make sure the conversion function referenced here is actually generated in the
             // resulting WGSL.
             mWGSLGenerationMetadataForUniforms->outputMatCx2Conversion.insert(baseType);
+
+            // If this an index of a single matrix, it needs conversion *before* indexing.
+            // Otherwise, if this is a index of an array of matrices, it needs conversion *after*
+            // indexing.
+            if (leftType.isArray())
+            {
+                conversionFunctionScope = ConversionScope::kConvertTheWholeArrayIndexExpression;
+            }
+            else
+            {
+                conversionFunctionScope = ConversionScope::kConvertTheIndexedMatrix;
+            }
         }
         else if (isUniformBoolNeedingConversion)
         {
             // Convert just this one array element into a bool instead of converting the entire
             // array into an array of booleans and indexing into that.
             OutputUniformBoolOrBvecConversion(mSink, leftType);
+            conversionFunctionScope = ConversionScope::kConvertTheWholeArrayIndexExpression;
         }
         emitStructIndexNoUnwrapping(leftNodeBinary);
+
+        if (conversionFunctionScope == ConversionScope::kConvertTheIndexedMatrix)
+        {
+            mSink << ")";
+        }
     }
     else
     {
@@ -1174,7 +1203,7 @@ void OutputWGSLTraverser::emitArrayIndex(TIntermTyped &leftNode, TIntermTyped &r
         mSink << "." << kWrappedStructFieldName;
     }
 
-    if (isUniformMatrixNeedingConversion || isUniformBoolNeedingConversion)
+    if (conversionFunctionScope == ConversionScope::kConvertTheWholeArrayIndexExpression)
     {
         // Close conversion function call
         mSink << ")";
@@ -1273,24 +1302,30 @@ bool OutputWGSLTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
                 mSink << opInfo.wgslWrapperFn->prefix;
             }
 
+            auto emitArgList = [&]() {
+                leftNode.traverse(this);
+                mSink << ", ";
+                rightNode.traverse(this);
+            };
+
             // x * y, x ^ y, etc.
             if (opInfo.IsSymbolicOperator())
             {
                 groupedTraverse(leftNode);
-                if (op != TOperator::EOpComma)
-                {
-                    mSink << " ";
-                }
-                mSink << opInfo.opName << " ";
+                mSink << " " << opInfo.opName << " ";
                 groupedTraverse(rightNode);
+            }
+            else if (opInfo.wgslWrapperFn)
+            {
+                // Any necessary parentheses should be contained in opInfo.wgslWrapperFn->prefix and
+                // opInfo.wgslWrapperFn->suffix.
+                emitArgList();
             }
             // E.g. builtin function calls
             else
             {
                 mSink << opInfo.opName << "(";
-                leftNode.traverse(this);
-                mSink << ", ";
-                rightNode.traverse(this);
+                emitArgList();
                 mSink << ")";
             }
 
@@ -2278,27 +2313,29 @@ void OutputWGSLTraverser::emitVariableDeclaration(const VarDecl &decl,
 
     if (evdConfig.isDeclaration)
     {
-        // "const" and "let" typically don't need to be emitted because they are more for
-        // readability, and the GLSL compiler constant folds most (all?) the consts anyway.
-        // However, pointers in WGSL must be declared with let.
+        // Pointers in WGSL must be declared with let.
         if (evdConfig.emitAsPointer)
         {
             mSink << "let";
         }
+        else if (decl.type.getQualifier() == EvqConst)
+        {
+            mSink << "const";
+        }
         else
         {
             mSink << "var";
-        }
-        if (evdConfig.isGlobalScope)
-        {
-            if (decl.type.getQualifier() == EvqUniform)
+            if (evdConfig.isGlobalScope)
             {
-                ASSERT(IsOpaqueType(decl.type.getBasicType()));
-                mSink << "<uniform>";
-            }
-            else
-            {
-                mSink << "<private>";
+                if (decl.type.getQualifier() == EvqUniform)
+                {
+                    ASSERT(IsOpaqueType(decl.type.getBasicType()));
+                    mSink << "<uniform>";
+                }
+                else
+                {
+                    mSink << "<private>";
+                }
             }
         }
         mSink << " ";

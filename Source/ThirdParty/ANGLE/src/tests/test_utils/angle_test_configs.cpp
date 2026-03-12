@@ -600,21 +600,6 @@ PlatformParameters ES3_D3D11_FL10_1()
     return PlatformParameters(3, 0, egl_platform::D3D11_FL10_1());
 }
 
-PlatformParameters ES31_D3D11()
-{
-    return PlatformParameters(3, 1, egl_platform::D3D11());
-}
-
-PlatformParameters ES31_D3D11_FL11_1()
-{
-    return PlatformParameters(3, 1, egl_platform::D3D11_FL11_1());
-}
-
-PlatformParameters ES31_D3D11_FL11_0()
-{
-    return PlatformParameters(3, 1, egl_platform::D3D11_FL11_0());
-}
-
 PlatformParameters ES3_D3D11_WARP()
 {
     return PlatformParameters(3, 0, egl_platform::D3D11_WARP());

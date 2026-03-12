@@ -114,6 +114,27 @@ bool CanCopyWithDraw(const webgpu::ImageHelper &srcImage, WGPUTextureUsage dstUs
            (dstUsage & WGPUTextureUsage_RenderAttachment) != 0;
 }
 
+bool CanCopyWithTransferForCopyTexture(ContextWgpu *contextWgpu,
+                                       const webgpu::ImageHelper &srcImage,
+                                       angle::FormatID destIntendedFormatID,
+                                       angle::FormatID destActualFormatID,
+                                       WGPUTextureUsage destUsage,
+                                       bool unpackFlipY,
+                                       bool unpackPremultiplyAlpha,
+                                       bool unpackUnmultiplyAlpha)
+{
+    if (unpackFlipY || unpackPremultiplyAlpha != unpackUnmultiplyAlpha)
+    {
+        return false;
+    }
+
+    bool isFormatCompatible = srcImage.getIntendedFormatID() == destIntendedFormatID &&
+                              srcImage.getActualFormatID() == destActualFormatID;
+
+    return isFormatCompatible && (srcImage.getUsage() & WGPUTextureUsage_CopySrc) != 0 &&
+           (destUsage & WGPUTextureUsage_CopyDst) != 0;
+}
+
 }  // namespace
 
 TextureWgpu::TextureWgpu(const gl::TextureState &state)
@@ -323,7 +344,7 @@ angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
         const angle::Format &dstAngleFormat = dstFormat.getIntendedFormat();
 
         return contextWgpu->getUtils()->copyImage(contextWgpu, colorReadRT->getTextureView(),
-                                                  dstView, size, isViewportFlipY, srcFormat.id,
+                                                  dstView, size, isViewportFlipY, srcFormat,
                                                   dstAngleFormat.id, dstActualFormatID);
     }
 
@@ -343,7 +364,29 @@ angle::Result TextureWgpu::copyTexture(const gl::Context *context,
                                        bool unpackUnmultiplyAlpha,
                                        const gl::Texture *source)
 {
-    return angle::Result::Continue;
+    ContextWgpu *contextWgpu       = webgpu::GetImpl(context);
+    TextureWgpu *sourceTextureWgpu = webgpu::GetImpl(source);
+
+    const gl::ImageDesc &srcImageDesc = sourceTextureWgpu->mState.getImageDesc(
+        NonCubeTextureTypeToTarget(source->getType()), sourceLevel);
+
+    const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(internalFormat, type);
+    const webgpu::Format &dstWebgpuFormat =
+        contextWgpu->getFormat(internalFormatInfo.sizedInternalFormat);
+    ANGLE_TRY(redefineLevel(context, dstWebgpuFormat, index, srcImageDesc.size));
+
+    // TODO(crbug.com/438268609): Remove this and implement path to initialize the destination image
+    // then stage a copy update.
+    if (!mImage->isInitialized())
+    {
+        ANGLE_TRY(initializeImageImpl(contextWgpu, dstWebgpuFormat, index.getLevelIndex() + 1,
+                                      gl::LevelIndex(sourceLevel), srcImageDesc.size));
+    }
+
+    return copySubTextureImpl(context, index, gl::kOffsetZero, sourceLevel,
+                              gl::Box(gl::kOffsetZero, srcImageDesc.size), unpackFlipY,
+                              unpackPremultiplyAlpha, unpackUnmultiplyAlpha, dstWebgpuFormat,
+                              internalFormatInfo, sourceTextureWgpu);
 }
 
 angle::Result TextureWgpu::copySubTexture(const gl::Context *context,
@@ -356,7 +399,65 @@ angle::Result TextureWgpu::copySubTexture(const gl::Context *context,
                                           bool unpackUnmultiplyAlpha,
                                           const gl::Texture *source)
 {
-    return angle::Result::Continue;
+    ContextWgpu *contextWgpu       = webgpu::GetImpl(context);
+    TextureWgpu *sourceTextureWgpu = webgpu::GetImpl(source);
+    gl::TextureTarget target       = index.getTarget();
+    gl::LevelIndex dstLevelGL(index.getLevelIndex());
+    const gl::InternalFormat &internalFormat =
+        *mState.getImageDesc(target, dstLevelGL.get()).format.info;
+    const webgpu::Format &dstWebgpuFormat =
+        contextWgpu->getFormat(internalFormat.sizedInternalFormat);
+    const gl::ImageDesc &srcImageDesc = sourceTextureWgpu->mState.getImageDesc(
+        NonCubeTextureTypeToTarget(source->getType()), sourceLevel);
+
+    // TODO(crbug.com/438268609): Remove this and implement path to initialize the destination image
+    // then stage a copy update.
+    if (!mImage->isInitialized())
+    {
+        ANGLE_TRY(initializeImageImpl(contextWgpu, dstWebgpuFormat, index.getLevelIndex() + 1,
+                                      gl::LevelIndex(sourceLevel), srcImageDesc.size));
+        mImage->removeStagedUpdates(dstLevelGL);
+    }
+    return copySubTextureImpl(context, index, destOffset, sourceLevel, sourceBox, unpackFlipY,
+                              unpackPremultiplyAlpha, unpackUnmultiplyAlpha, dstWebgpuFormat,
+                              internalFormat, sourceTextureWgpu);
+}
+
+angle::Result TextureWgpu::copySubTextureImpl(const gl::Context *context,
+                                              const gl::ImageIndex &index,
+                                              const gl::Offset &destOffset,
+                                              GLint sourceLevel,
+                                              const gl::Box &sourceBox,
+                                              bool unpackFlipY,
+                                              bool unpackPremultiplyAlpha,
+                                              bool unpackUnmultiplyAlpha,
+                                              const webgpu::Format &dstWebgpuFormat,
+                                              const gl::InternalFormat &internalFormat,
+                                              TextureWgpu *sourceTextureWgpu)
+{
+    ContextWgpu *contextWgpu = webgpu::GetImpl(context);
+    // We need to ensure both that the source texture is initialized and any updates to it are
+    // staged so we are not copying from a blank texture.
+    ANGLE_TRY(sourceTextureWgpu->ensureImageInitialized(context));
+    ANGLE_TRY(sourceTextureWgpu->getImage()->flushStagedUpdates(contextWgpu));
+    if (CanCopyWithTransferForCopyTexture(
+            contextWgpu, *sourceTextureWgpu->getImage(), dstWebgpuFormat.getIntendedFormatID(),
+            dstWebgpuFormat.getActualImageFormatID(), mImage->getUsage(), unpackFlipY,
+            unpackPremultiplyAlpha, unpackUnmultiplyAlpha))
+    {
+        return mImage->CopyImage(contextWgpu, sourceTextureWgpu->getImage(), index, destOffset,
+                                 gl::LevelIndex(sourceLevel), static_cast<uint32_t>(sourceBox.z),
+                                 sourceBox);
+    }
+
+    // TODO(crbug.com/438268609): Add blit with draw path.
+    const gl::ImageDesc &srcImageDesc = sourceTextureWgpu->mState.getImageDesc(
+        NonCubeTextureTypeToTarget(sourceTextureWgpu->mState.getType()),
+        gl::LevelIndex(sourceLevel).get());
+    return mImage->copyImageCpuReadback(
+        context, index, gl::Rectangle(sourceBox.x, sourceBox.y, sourceBox.width, sourceBox.height),
+        destOffset, gl::Extents(sourceBox.width, sourceBox.height, sourceBox.depth), internalFormat,
+        sourceTextureWgpu->getImage(), srcImageDesc.size);
 }
 
 angle::Result TextureWgpu::copyRenderbufferSubData(const gl::Context *context,

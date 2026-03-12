@@ -894,9 +894,16 @@ bool RewritePixelLocalStorage(TCompiler *compiler,
     // just locking the entire main() function:
     //   - Monomorphize all PLS calls into main().
     //   - Insert begin/end calls around the first/last PLS calls (and outside of flow control).
-    traverser->injectPrePLSCode(compiler, symbolTable, compileOptions, mainBody, 0);
-    traverser->injectPostPLSCode(compiler, symbolTable, compileOptions, mainBody,
-                                 mainBody->getChildCount());
+    const size_t plsBeginPos = 0;
+    traverser->injectPrePLSCode(compiler, symbolTable, compileOptions, mainBody, plsBeginPos);
+
+    size_t plsEndPos = mainBody->getChildCount();
+    if (plsEndPos > 0 && mainBody->getChildNode(plsEndPos - 1)->getAsBranchNode() != nullptr)
+    {
+        // Make sure not to add code after terminating return, if any.
+        --plsEndPos;
+    }
+    traverser->injectPostPLSCode(compiler, symbolTable, compileOptions, mainBody, plsEndPos);
 
     // Assign the global pixel coord at the beginning of main(), if used.
     traverser->injectPixelCoordInitializationCodeIfNeeded(compiler, root, mainBody);

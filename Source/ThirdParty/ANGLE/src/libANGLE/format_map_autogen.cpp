@@ -1271,6 +1271,7 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
                         case GL_RGB565:
                         case GL_SRGB8:
                         case GL_RGB:
+                        case GL_SRGB_EXT:
                         case GL_RGBX8_ANGLE:
                         case GL_RGBX8_SRGB_ANGLEX:
                             return true;
@@ -1410,6 +1411,7 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
                         case GL_RGBA4:
                         case GL_SRGB8_ALPHA8:
                         case GL_RGBA:
+                        case GL_SRGB_ALPHA_EXT:
                         case GL_RGBX8_ANGLE:
                             return true;
                         default:

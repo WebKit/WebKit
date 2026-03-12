@@ -388,6 +388,8 @@ void Renderer::ensureCapsInitialized() const
         getFeatures().enableMultisampledRenderToTexture.enabled;
     mNativeExtensions.multisampledRenderToTexture2EXT =
         getFeatures().enableMultisampledRenderToTexture.enabled;
+    mNativeExtensions.multiviewMultisampledRenderToTextureOVR =
+        getFeatures().supportsMultiviewMultisampleRenderToTexture.enabled;
     mNativeExtensions.textureStorageMultisample2dArrayOES =
         (limitsVk.standardSampleLocations == VK_TRUE);
     mNativeExtensions.copyTextureCHROMIUM           = true;
@@ -735,12 +737,9 @@ void Renderer::ensureCapsInitialized() const
         rx::LimitToInt(limitsVk.maxComputeWorkGroupInvocations);
     mNativeCaps.maxComputeSharedMemorySize = rx::LimitToInt(limitsVk.maxComputeSharedMemorySize);
 
-    GLuint maxUniformBlockSize =
-        rx::LimitToIntAnd(limitsVk.maxUniformBufferRange, mMaxBufferMemorySizeLimit);
-
-    // Clamp the maxUniformBlockSize to 64KB (majority of devices support up to this size
-    // currently), on AMD the maxUniformBufferRange is near uint32_t max.
-    maxUniformBlockSize = std::min(0x10000u, maxUniformBlockSize);
+    const GLuint maxUniformBlockSize = std::min<GLuint>(
+        rx::LimitToIntAnd(limitsVk.maxUniformBufferRange, mMaxBufferMemorySizeLimit),
+        gl::IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE);
 
     const GLuint maxUniformVectors = maxUniformBlockSize / (sizeof(GLfloat) * kComponentsPerVector);
     const GLuint maxUniformComponents = maxUniformVectors * kComponentsPerVector;
@@ -1119,8 +1118,24 @@ void Renderer::ensureCapsInitialized() const
     mNativeExtensions.textureBufferOES = true;
     mNativeExtensions.textureBufferEXT = true;
 
-    mNativeCaps.maxTextureBufferSize =
-        rx::LimitToIntAnd(limitsVk.maxTexelBufferElements, mMaxBufferMemorySizeLimit);
+    {
+        // GLES 3.2's limit for GL_MAX_TEXTURE_BUFFER_SIZE is 65536.  Note that this limit is about
+        // how many texels are addressable by the texture buffer.
+        //
+        // Aiming for 256MB of memory (see https://gitlab.freedesktop.org/mesa/mesa/-/issues/9862),
+        // a buffer of RGBA32 values would need 16 million elements, which is chosen by ANGLE.  This
+        // is far above the minimum requirement.  Note also that it could correspond to a 4k*4k 2D
+        // texture.
+        //
+        // Note additionally that mMaxBufferMemorySizeLimit is a value in bytes, so it's divided by
+        // 16 (for RGBA32) too to get to the maximum texel count that is allowed.  Vulkan's required
+        // limit for maxMemoryAllocationSize is 2^30 for this value, which divided by 16 is 64
+        // million, which is always higher than the desired value of 16 million.
+        constexpr uint32_t kTextureBufferLimit = 16 * 1024 * 1024;
+        ASSERT(kTextureBufferLimit < mMaxBufferMemorySizeLimit);
+        mNativeCaps.maxTextureBufferSize =
+            std::min(limitsVk.maxTexelBufferElements, kTextureBufferLimit);
+    }
 
     mNativeCaps.textureBufferOffsetAlignment =
         rx::LimitToInt(limitsVk.minTexelBufferOffsetAlignment);
@@ -1357,9 +1372,12 @@ void Renderer::ensureCapsInitialized() const
     mNativeExtensions.shadingRateQCOM = mFeatures.supportsFragmentShadingRate.enabled;
 
     // GL_EXT_fragment_shading_rate
-    mNativeExtensions.fragmentShadingRateEXT = mFeatures.supportsFragmentShadingRate.enabled;
-    mNativeExtensions.fragmentShadingRatePrimitiveEXT =
-        mFeatures.supportsPrimitiveFragmentShadingRate.enabled;
+    if (mFeatures.supportFragmentShadingRateExtExtensions.enabled)
+    {
+        mNativeExtensions.fragmentShadingRateEXT = mFeatures.supportsFragmentShadingRate.enabled;
+        mNativeExtensions.fragmentShadingRatePrimitiveEXT =
+            mFeatures.supportsPrimitiveFragmentShadingRate.enabled;
+    }
 
     // GL_QCOM_framebuffer_foveated
     mNativeExtensions.framebufferFoveatedQCOM = mFeatures.supportsFoveatedRendering.enabled;
@@ -1491,6 +1509,9 @@ void Renderer::ensureCapsInitialized() const
             .fragmentShadingRateWithShaderDepthStencilWritesSupport = static_cast<bool>(
             mFragmentShadingRateProperties.fragmentShadingRateNonTrivialCombinerOps);
     }
+
+    // GL_OES_compressed_paletted_texture
+    mNativeExtensions.compressedPalettedTextureOES = true;
 
     // Log any missing extensions required for GLES 3.2.
     LogMissingExtensionsForGLES32(mNativeExtensions);
@@ -1660,7 +1681,6 @@ egl::ConfigSet GenerateConfigs(const GLenum *colorFormats,
 
     gl::SupportedSampleSet colorSampleCounts;
     gl::SupportedSampleSet depthStencilSampleCounts;
-    gl::SupportedSampleSet sampleCounts;
 
     const VkPhysicalDeviceLimits &limits =
         display->getRenderer()->getPhysicalDeviceProperties().limits;
@@ -1676,9 +1696,7 @@ egl::ConfigSet GenerateConfigs(const GLenum *colorFormats,
     colorSampleCounts.insert(0);
     depthStencilSampleCounts.insert(0);
 
-    std::set_intersection(colorSampleCounts.begin(), colorSampleCounts.end(),
-                          depthStencilSampleCounts.begin(), depthStencilSampleCounts.end(),
-                          std::inserter(sampleCounts, sampleCounts.begin()));
+    gl::SupportedSampleSet sampleCounts = colorSampleCounts & depthStencilSampleCounts;
 
     egl::ConfigSet configSet;
 
@@ -1708,7 +1726,7 @@ egl::ConfigSet GenerateConfigs(const GLenum *colorFormats,
                 configSampleCounts = &depthStencilSampleCounts;
             }
 
-            for (EGLint sampleCount : *configSampleCounts)
+            for (EGLint sampleCount : configSampleCounts->sampleCounts())
             {
                 egl::Config config = GenerateDefaultConfig(display, colorFormatInfo,
                                                            depthStencilFormatInfo, sampleCount);

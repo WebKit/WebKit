@@ -384,22 +384,6 @@
       },
     },
 
-    'angle_deqp_gles31_d3d11_gtests': {
-      'angle_deqp_gles31_d3d11_tests': {
-        'args': [
-          '--use-angle=d3d11',
-        ],
-        'merge': {
-          'script': '//scripts/angle_deqp_test_merge.py',
-        },
-        'swarming': {
-          'shards': 2,
-        },
-        'test': 'angle_deqp_gles31_tests',
-        'use_isolated_scripts_api': True,
-      },
-    },
-
     'angle_deqp_gles31_gl_gtests': {
       'angle_deqp_gles31_gl_tests': {
         'args': [
@@ -1673,6 +1657,37 @@
       'angle_cl_profiling_gtests',
     ],
 
+    'linux_nvidia_ir_gtests': [
+      'angle_deqp_egl_gl_gtests',
+      'angle_deqp_egl_vulkan_gtests',
+      'angle_deqp_gles2_gl_gtests',
+      'angle_deqp_gles2_vulkan_gtests',
+      'angle_deqp_gles2_webgpu_gtests',
+      'angle_deqp_gles31_gl_gtests',
+      'angle_deqp_gles31_multisample_vulkan_gtests',
+      'angle_deqp_gles31_vulkan_gtests',
+      'angle_deqp_gles31_vulkan_rotate180_gtests',
+      'angle_deqp_gles31_vulkan_rotate270_gtests',
+      'angle_deqp_gles31_vulkan_rotate90_gtests',
+      'angle_deqp_gles3_gl_gtests',
+      'angle_deqp_gles3_multisample_vulkan_gtests',
+      'angle_deqp_gles3_vulkan_gtests',
+      'angle_deqp_gles3_vulkan_rotate180_gtests',
+      'angle_deqp_gles3_vulkan_rotate270_gtests',
+      'angle_deqp_gles3_vulkan_rotate90_gtests',
+      'angle_deqp_khr_gles2_vulkan_gtests',
+      'angle_deqp_khr_gles31_vulkan_gtests',
+      'angle_deqp_khr_gles32_vulkan_gtests',
+      'angle_deqp_khr_gles3_vulkan_gtests',
+      'angle_deqp_khr_glesext_vulkan_gtests',
+      'angle_deqp_khr_noctx_gles2_vulkan_gtests',
+      'angle_deqp_khr_noctx_gles32_vulkan_gtests',
+      'angle_deqp_khr_single_gles32_vulkan_gtests',
+      'angle_end2end_gtests',
+      'angle_gles1_conformance_gtests',
+      'angle_white_box_gtests',
+    ],
+
     'mac_amd_and_intel_gtests': [
       'angle_deqp_egl_gl_gtests',
       'angle_deqp_egl_metal_gtests',
@@ -1758,7 +1773,6 @@
       'angle_deqp_gles2_gl_gtests',
       'angle_deqp_gles2_vulkan_gtests',
       'angle_deqp_gles2_webgpu_gtests',
-      'angle_deqp_gles31_d3d11_gtests',
       'angle_deqp_gles31_gl_gtests',
       'angle_deqp_gles31_multisample_vulkan_gtests',
       'angle_deqp_gles31_vulkan_gtests',

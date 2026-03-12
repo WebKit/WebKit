@@ -3771,7 +3771,7 @@ bool ValidateGetPerfMonitorCounterInfoAMD(const Context *context,
                                           GLenum pname,
                                           const void *data)
 {
-    const angle::PerfMonitorCounterGroups &groups = context->getPerfMonitorCounterGroups();
+    const angle::PerfMonitorCounterGroupsInfo &groups = context->getPerfMonitorCounterGroups();
 
     if (group >= groups.size())
     {
@@ -3807,7 +3807,7 @@ bool ValidateGetPerfMonitorCounterStringAMD(const Context *context,
                                             const GLsizei *length,
                                             const GLchar *counterString)
 {
-    const angle::PerfMonitorCounterGroups &groups = context->getPerfMonitorCounterGroups();
+    const angle::PerfMonitorCounterGroupsInfo &groups = context->getPerfMonitorCounterGroups();
 
     if (group >= groups.size())
     {
@@ -3832,7 +3832,7 @@ bool ValidateGetPerfMonitorCountersAMD(const Context *context,
                                        GLsizei counterSize,
                                        const GLuint *counters)
 {
-    const angle::PerfMonitorCounterGroups &groups = context->getPerfMonitorCounterGroups();
+    const angle::PerfMonitorCounterGroupsInfo &groups = context->getPerfMonitorCounterGroups();
 
     if (group >= groups.size())
     {
@@ -3850,7 +3850,7 @@ bool ValidateGetPerfMonitorGroupStringAMD(const Context *context,
                                           const GLsizei *length,
                                           const GLchar *groupString)
 {
-    const angle::PerfMonitorCounterGroups &groups = context->getPerfMonitorCounterGroups();
+    const angle::PerfMonitorCounterGroupsInfo &groups = context->getPerfMonitorCounterGroups();
 
     if (group >= groups.size())
     {

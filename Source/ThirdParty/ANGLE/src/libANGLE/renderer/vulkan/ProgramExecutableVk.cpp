@@ -2198,7 +2198,12 @@ void ProgramExecutableVk::updateShaderResourcesWithSharedCacheKey(
             // For simplicity, we do not check if uniform is active or duplicate. The worst case is
             // we unnecessarily delete the cache entry when image bound to inactive uniform is
             // destroyed.
-            activeImages[imageUnit]->onNewDescriptorSet(newSharedCacheKey);
+            TextureVk *textureVk = activeImages[imageUnit];
+            if (!textureVk)
+            {
+                continue;
+            }
+            textureVk->onNewDescriptorSet(newSharedCacheKey);
         }
     }
 }

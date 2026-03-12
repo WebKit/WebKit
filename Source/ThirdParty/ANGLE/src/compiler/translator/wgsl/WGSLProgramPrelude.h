@@ -28,6 +28,8 @@ class WGSLProgramPrelude
     WGSLWrapperFunction postIncrement(const TType &postIncrementedType);
     WGSLWrapperFunction postDecrement(const TType &postDecrementedType);
 
+    WGSLWrapperFunction assign(const TType &dest, const TType &src, TOperator op);
+
     void outputPrelude(TInfoSinkBase &sink);
 
   private:
@@ -39,6 +41,19 @@ class WGSLProgramPrelude
     TMap<TType, FuncId> mPreDecrementedTypes;
     TMap<TType, FuncId> mPostIncrementedTypes;
     TMap<TType, FuncId> mPostDecrementedTypes;
+
+    struct Assignment
+    {
+        TType dest;
+        TType src;
+        TOperator op;
+
+        bool operator<(const Assignment &other) const
+        {
+            return std::tie(dest, src, op) < std::tie(other.dest, other.src, other.op);
+        }
+    };
+    TMap<Assignment, FuncId> mAssigned;
 };
 }  // namespace sh
 

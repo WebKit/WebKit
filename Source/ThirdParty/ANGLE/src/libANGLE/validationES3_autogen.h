@@ -203,8 +203,7 @@ bool ValidateGenTransformFeedbacks(const Context *context,
                                    angle::EntryPoint entryPoint,
                                    GLsizei n,
                                    const TransformFeedbackID *idsPacked);
-bool ValidateGenVertexArrays(const PrivateState &state,
-                             ErrorSet *errors,
+bool ValidateGenVertexArrays(const Context *context,
                              angle::EntryPoint entryPoint,
                              GLsizei n,
                              const VertexArrayID *arraysPacked);

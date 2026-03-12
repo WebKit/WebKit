@@ -283,6 +283,12 @@ class OffsetBindingPointer : public BindingPointer<ObjectType>
         updateOffsetAndSize(newObject, offset, size);
     }
 
+    void assignOffsetAndSize(GLintptr offset, GLsizeiptr size)
+    {
+        mOffset = offset;
+        mSize   = size;
+    }
+
   private:
     ANGLE_INLINE void updateOffsetAndSize(ObjectType *newObject, GLintptr offset, GLsizeiptr size)
     {

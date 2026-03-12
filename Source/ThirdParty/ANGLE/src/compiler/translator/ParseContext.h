@@ -6,6 +6,7 @@
 #ifndef COMPILER_TRANSLATOR_PARSECONTEXT_H_
 #define COMPILER_TRANSLATOR_PARSECONTEXT_H_
 
+#include "common/hash_containers.h"
 #include "compiler/preprocessor/Preprocessor.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/Declarator.h"
@@ -38,6 +39,20 @@ struct ClipCullDistanceInfo
     bool hasArrayLengthMethodCall = false;
     // A location to associate with post-parse errors
     TSourceLoc firstEncounter = kNoSourceLoc;
+    // The IR id of this variable, only needed when !declared
+    ir::VariableId id = ir::kInvalidVariableId;
+};
+
+enum class GeomTessArray
+{
+    Sized,
+    Deferred,
+};
+
+enum class FunctionDeclaration
+{
+    Prototype,
+    Definition,
 };
 
 //
@@ -79,6 +94,8 @@ class TParseContext : angle::NonCopyable
 
     TIntermBlock *getTreeRoot() const { return mTreeRoot; }
     void setTreeRoot(TIntermBlock *treeRoot);
+
+    ir::IR getIR();
 
     bool getFragmentPrecisionHigh() const
     {
@@ -595,6 +612,7 @@ class TParseContext : angle::NonCopyable
     bool declareVariable(const TSourceLoc &line,
                          const ImmutableString &identifier,
                          const TType *type,
+                         GeomTessArray sized,
                          TVariable **variable);
 
     void checkNestingLevel(const TSourceLoc &line);
@@ -675,12 +693,14 @@ class TParseContext : angle::NonCopyable
     // Will set the size of the outermost array according to geometry shader input layout.
     void checkGeometryShaderInputAndSetArraySize(const TSourceLoc &location,
                                                  const ImmutableString &token,
-                                                 TType *type);
+                                                 TType *type,
+                                                 GeomTessArray *sizedOut);
 
     // Similar, for tessellation shaders.
     void checkTessellationShaderUnsizedArraysAndSetSize(const TSourceLoc &location,
                                                         const ImmutableString &token,
-                                                        TType *type);
+                                                        TType *type,
+                                                        GeomTessArray *sizedOut);
 
     // Will size any unsized array type so unsized arrays won't need to be taken into account
     // further along the line in parsing.
@@ -753,6 +773,24 @@ class TParseContext : angle::NonCopyable
     bool isNestedIn(ControlFlowType type) const;
     bool isDirectlyUnderSwitch() const;
     void popControlFlow();
+
+    // Used to derive the IR type id of TType's that are statically allocated, which (currently)
+    // don't have an assigned type id.  Once IR is the only path, static TTypes (used to bake the
+    // built-in variables and functions) can be simplified and the ID predefined and included with
+    // it.
+    ir::TypeId getTypeId(const TType &type);
+    // For built-ins, declare them in the IR on first use.
+    ir::VariableId declareBuiltInOnFirstUse(const TVariable *variable);
+    // Declare the variable to IR on declaration, or in the case of unsized geometry/tessellation
+    // arrays, whenever the size is determined.
+    void declareIRVariable(const TVariable *variable, GeomTessArray sized);
+    // Declare the function to the IR builder.  If it's a definition and a prototype was previously
+    // seen, the parameter names are updated instead.
+    void declareFunction(const TFunction *function, FunctionDeclaration declaration);
+    // Push a variable to the IR builder.
+    void pushVariable(const TVariable *variable);
+    // Push a constant to the IR builder.
+    const TConstantUnion *pushConstant(const TConstantUnion *constant, const TType &type);
 
     // Certain operations become illegal only iff the shader declares pixel local storage uniforms.
     enum class PLSIllegalOperations
@@ -959,6 +997,9 @@ class TParseContext : angle::NonCopyable
     // List of array declarations without an explicit size that have come before layout(vertices=N).
     // Once the vertex count is specified, these arrays are sized.
     TVector<TType *> mDeferredArrayTypesToSize;
+    // For the IR, the variables themselves are declared late instead of having to go through a
+    // retype.
+    TVector<const TVariable *> mDeferredArrayVariablesToSize;
     // Whether the |precise| keyword has been seen in the shader.
     bool mHasAnyPreciseType;
 
@@ -968,6 +1009,23 @@ class TParseContext : angle::NonCopyable
     bool mFunctionBodyNewScope;
 
     ShShaderOutput mOutputType;
+
+    ir::Builder mIRBuilder;
+    // Support for creating the IR while the translator still has the option to not go through the
+    // IR path.  Once AST generation during parse is removed, TParseContext can instead keep track
+    // of IDs directly, instead of TSymbol derivatives, together with an array-based mapping to
+    // validation info including type and variable data.
+    struct VariableToIdInfo
+    {
+        ir::VariableId id;
+        // For nameless interface blocks, the shader directly references the fields.  The IR instead
+        // selects a field from the block variable, which is found in |id|.
+        static constexpr uint32_t kNoImplicitField = 0xFFFF'FFFF;
+        uint32_t implicitField                     = kNoImplicitField;
+    };
+    angle::HashMap<const TSymbol *, ir::TypeId> mSymbolToTypeId;
+    angle::HashMap<const TVariable *, VariableToIdInfo> mVariableToId;
+    angle::HashMap<const TFunction *, ir::FunctionId> mFunctionToId;
 };
 
 int PaParseStrings(size_t count,

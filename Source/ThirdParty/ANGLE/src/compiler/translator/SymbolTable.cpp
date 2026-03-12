@@ -69,6 +69,10 @@ class TSymbolTable::TSymbolTableLevel
 
     bool insert(TSymbol *symbol);
 
+#ifdef ANGLE_IR
+    void redeclare(TSymbol *symbol);
+#endif
+
     // Insert a function using its unmangled name as the key.
     void insertUnmangled(TFunction *function);
 
@@ -90,6 +94,14 @@ bool TSymbolTable::TSymbolTableLevel::insert(TSymbol *symbol)
     tInsertResult result = level.insert(tLevelPair(symbol->getMangledName(), symbol));
     return result.second;
 }
+
+#ifdef ANGLE_IR
+void TSymbolTable::TSymbolTableLevel::redeclare(TSymbol *symbol)
+{
+    // returning true means symbol was added to the table
+    level.insert_or_assign(symbol->getMangledName(), symbol);
+}
+#endif
 
 void TSymbolTable::TSymbolTableLevel::insertUnmangled(TFunction *function)
 {
@@ -337,6 +349,17 @@ bool TSymbolTable::declare(TSymbol *symbol)
     ASSERT(!symbol->isFunction());
     return mTable.back()->insert(symbol);
 }
+
+#ifdef ANGLE_IR
+void TSymbolTable::redeclare(TSymbol *symbol)
+{
+    ASSERT(!mTable.empty());
+    ASSERT(symbol->symbolType() == SymbolType::UserDefined ||
+           (symbol->symbolType() == SymbolType::BuiltIn && IsRedeclarableBuiltIn(symbol->name())));
+    ASSERT(!symbol->isFunction());
+    mTable.back()->redeclare(symbol);
+}
+#endif
 
 bool TSymbolTable::declareInternal(TSymbol *symbol)
 {

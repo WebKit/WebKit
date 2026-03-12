@@ -367,6 +367,10 @@
     void framebufferTextureMultiview(GLenum target, GLenum attachment, TextureID texturePacked,    \
                                      GLint level, GLint baseViewIndex, GLsizei numViews);          \
     /* GL_OVR_multiview2 */                                                                        \
+    /* GL_OVR_multiview_multisampled_render_to_texture */                                          \
+    void framebufferTextureMultisampleMultiview(                                                   \
+        GLenum target, GLenum attachment, TextureID texturePacked, GLint level, GLsizei samples,   \
+        GLint baseViewIndex, GLsizei numViews);                                                    \
     /* GL_QCOM_framebuffer_foveated */                                                             \
     void framebufferFoveationConfig(FramebufferID framebufferPacked, GLuint numLayers,             \
                                     GLuint focalPointsPerLayer, GLuint requestedFeatures,          \

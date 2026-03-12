@@ -717,7 +717,12 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
         case EOpIndexDirectInterfaceBlock:
             if (visit == InVisit)
             {
-                out << ".";
+                if (node->getLeft()->getAsSymbolNode() == nullptr ||
+                    node->getLeft()->getAsSymbolNode()->variable().symbolType() !=
+                        SymbolType::Empty)
+                {
+                    out << ".";
+                }
                 const TInterfaceBlock *interfaceBlock =
                     node->getLeft()->getType().getInterfaceBlock();
                 const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();

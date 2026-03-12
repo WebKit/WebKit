@@ -576,6 +576,14 @@ GPUTestConfig::GPUTestConfig(bool isSwiftShader)
     mConditions[kConditionASan]  = IsASan();
     mConditions[kConditionTSan]  = IsTSan();
     mConditions[kConditionUBSan] = IsUBSan();
+
+#ifdef ANGLE_IR
+    // The IR can be disabled at runtime, but we can't detect that.  For the purposes of test
+    // expectations, especially for deqp, assume that if the IR is built, it's used.
+    mConditions[kConditionIR] = true;
+#else
+    mConditions[kConditionIR] = false;
+#endif
 }
 
 // If the constructor is passed an API, load those conditions as well

@@ -533,12 +533,61 @@ TEST_P(BasicUniformUsageTest, Vec4MultipleDraws)
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
 }
 
-// Named differently to instantiate on different backends.
-using SimpleUniformUsageTest = SimpleUniformTest;
+// Test that we can index a uniform matrix correctly.
+TEST_P(SimpleUniformTest, FloatMatrix2UniformIndexed)
+{
+    constexpr char kFragShader[] = R"(precision mediump float;
+uniform mat2 umat2;
+void main() {
+    gl_FragColor = vec4(umat2[0], umat2[1]);
+})";
+
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), kFragShader);
+    glUseProgram(program);
+
+    GLint uniformLocation = glGetUniformLocation(program, "umat2");
+    ASSERT_NE(uniformLocation, -1);
+
+    std::vector<GLfloat> expected = {{1.0f, 0.0f, 0.0f, 1.0f}};
+    glUniformMatrix2fv(uniformLocation, 1, false, expected.data());
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that we can index a uniform matrix correctly, when that uniform matrix is an array element.
+TEST_P(SimpleUniformTest, FloatMatrix2ArrayUniformDoubleIndexed)
+{
+    constexpr char kFragShader[] = R"(precision mediump float;
+uniform mat2 umat2Array[2];
+void main() {
+    gl_FragColor = vec4(umat2Array[1][0], umat2Array[1][1]);
+})";
+
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), kFragShader);
+    glUseProgram(program);
+
+    GLint uniformLocation = glGetUniformLocation(program, "umat2Array");
+    ASSERT_NE(uniformLocation, -1);
+
+    std::vector<GLfloat> uniformData = {// Data for umat2Array[0]
+                                        0.0f, 0.0f, 1.0f, 1.0f,
+
+                                        // Data for umat2Array[1]
+                                        0.0f, 1.0f, 0.0f, 1.0f};
+
+    glUniformMatrix2fv(uniformLocation, 2, false, uniformData.data());
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
 
 // In std140, the member following a struct will need to be aligned to 16. This tests that backends
 // like WGSL which take std140 buffers correctly align this member.
-TEST_P(SimpleUniformUsageTest, NestedStructAlignedCorrectly)
+TEST_P(SimpleUniformTest, NestedStructAlignedCorrectly)
 {
     constexpr char kFragShader[] = R"(precision mediump float;
 struct NestedUniforms {
@@ -596,7 +645,7 @@ void main() {
 
 // Similarly to the above, tests that structs as array elements are aligned correctly, and nested
 // structs that follow float members are aligned correctly.
-TEST_P(SimpleUniformUsageTest, NestedStructAlignedCorrectly2)
+TEST_P(SimpleUniformTest, NestedStructAlignedCorrectly2)
 {
     constexpr char kFragShader[] = R"(precision mediump float;
 struct NestedUniforms {
@@ -701,7 +750,7 @@ void main() {
 // Tests that arrays in uniforms function corectly. In particular, WGSL requires arrays in uniforms
 // to have a stride a multiple of 16, but some arrays (e.g. vec2[N] or float[N]) will not
 // automatically have stride 16 and need special handling.
-TEST_P(SimpleUniformUsageTest, ArraysInUniforms)
+TEST_P(SimpleUniformTest, ArraysInUniforms)
 {
     constexpr char kFragShader[] = R"(
 precision mediump float;
@@ -774,7 +823,7 @@ void main() {
 }
 
 // Tests that inactive uniforms do not cause buffer offsets to be incorrectly calculated.
-TEST_P(SimpleUniformUsageTest, MiddleInactiveUniform)
+TEST_P(SimpleUniformTest, MiddleInactiveUniform)
 {
     constexpr char kFragShader[] = R"(
 precision mediump float;
@@ -811,10 +860,10 @@ void main() {
     glDeleteProgram(program);
 }
 
-using SimpleUniformUsageTestES3 = SimpleUniformUsageTest;
+using SimpleUniformTestES3 = SimpleUniformTest;
 
 // Tests that making a copy of a struct of uniforms functions correctly.
-TEST_P(SimpleUniformUsageTestES3, CopyOfUniformsWithArrays)
+TEST_P(SimpleUniformTestES3, CopyOfUniformsWithArrays)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -889,7 +938,7 @@ void main() {
 }
 
 // Tests that making a copy of an array from a uniform functions correctly.
-TEST_P(SimpleUniformUsageTestES3, CopyOfArrayInUniform)
+TEST_P(SimpleUniformTestES3, CopyOfArrayInUniform)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -941,7 +990,7 @@ void main() {
 }
 
 // Tests that ternaries function correctly when retrieving an array element from a uniform.
-TEST_P(SimpleUniformUsageTestES3, TernarySelectAnArrayElement)
+TEST_P(SimpleUniformTestES3, TernarySelectAnArrayElement)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1007,7 +1056,7 @@ void main() {
 }
 // Tests that ternaries function correctly when retrieving an array a uniform and then indexing the
 // result of the ternary.
-TEST_P(SimpleUniformUsageTestES3, TernarySelectAnArrayThenIndex)
+TEST_P(SimpleUniformTestES3, TernarySelectAnArrayThenIndex)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1075,7 +1124,7 @@ void main() {
 // Tests that a struct used in the uniform address space can also be used outside of the uniform
 // address space. The WGSL translator changes the type signature of the struct which can cause
 // problems assigning to fields.
-TEST_P(SimpleUniformUsageTestES3, UseUniformStructOutsideOfUniformAddressSpace)
+TEST_P(SimpleUniformTestES3, UseUniformStructOutsideOfUniformAddressSpace)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1123,7 +1172,7 @@ void main() {
 
 // Tests that bools function correctly in a uniform. WGSL does not allow booleans in the uniform
 // address space.
-TEST_P(SimpleUniformUsageTestES3, Bool)
+TEST_P(SimpleUniformTestES3, Bool)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1159,7 +1208,7 @@ void main() {
 }
 
 // Tests that bool in an array in a uniform can be used in a shader.
-TEST_P(SimpleUniformUsageTestES3, BoolInArray)
+TEST_P(SimpleUniformTestES3, BoolInArray)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1204,7 +1253,7 @@ void main() {
 
 // Tests that a uniform array containing bool can be indexed into correctly.
 // The WGSL translator includes some optimizations around this case.
-TEST_P(SimpleUniformUsageTestES3, BoolInArrayWithOptimization)
+TEST_P(SimpleUniformTestES3, BoolInArrayWithOptimization)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1250,7 +1299,7 @@ void main() {
 
 // Tests that matCx2 (matrix with C columns and 2 rows) functions correctly in a
 // uniform. WGSL's matCx2 does not match std140 layout.
-TEST_P(SimpleUniformUsageTestES3, MatCx2)
+TEST_P(SimpleUniformTestES3, MatCx2)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1327,7 +1376,7 @@ void main() {
 }
 
 // Tests that matCx2 in an array in a uniform can be used in a shader.
-TEST_P(SimpleUniformUsageTestES3, MatCx2InArray)
+TEST_P(SimpleUniformTestES3, MatCx2InArray)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1402,7 +1451,7 @@ void main() {
 
 // Tests that a uniform array containing matCx2 can be indexed into correctly.
 // The WGSL translator includes some optimizations around this case..
-TEST_P(SimpleUniformUsageTestES3, MatCx2InArrayWithOptimization)
+TEST_P(SimpleUniformTestES3, MatCx2InArrayWithOptimization)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -1477,7 +1526,7 @@ void main() {
 
 // Tests that matCx2 can be used in a uniform at the same time an array of
 // matCx2s is used in a uniform. (The WGSL translator had trouble with this)
-TEST_P(SimpleUniformUsageTestES3, MatCx2InArrayAndOutOfArray)
+TEST_P(SimpleUniformTestES3, MatCx2InArrayAndOutOfArray)
 {
     constexpr char kFragShader[] = R"(#version 300 es
 precision mediump float;
@@ -3161,14 +3210,13 @@ void main() {
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SimpleUniformTest);
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SimpleUniformUsageTest);
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(UniformTest);
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(BasicUniformUsageTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(UniformTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(SimpleUniformUsageTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(SimpleUniformTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(UniformTestES31);

@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 383
+#if ANGLE_SH_VERSION != 386
 #    error Check if there are added options and update this check.
 #endif
 
@@ -74,7 +74,7 @@
     MACRO(rewriteRepeatedAssignToSwizzled, 37, glsl, none)                    \
     MACRO(emulateGLDrawID, 38, any, none)                                     \
     MACRO(initSharedVariables, 39, any, none)                                 \
-    MACRO(forceAtomicValueResolution, 40, hlsl, none)                         \
+    MACRO(unused, 40, hlsl, none)                                             \
     MACRO(emulateGLBaseVertexBaseInstance, 41, any, none)                     \
     MACRO(wrapSwitchInIfTrue, 42, spirvVk, none)                              \
     MACRO(takeVideoTextureAsExternalOES, 43, glsl, none)                      \
@@ -109,7 +109,8 @@
     MACRO(removeInactiveVariables, 74, any, spirvVk || msl)                   \
     MACRO(ensureLoopForwardProgress, 75, none, msl)                           \
     MACRO(skipAllValidationAndTransforms, 76, none, none)                     \
-    MACRO(transformFloatUniformTo16Bits, 77, none, spirvVk)
+    MACRO(transformFloatUniformTo16Bits, 77, none, spirvVk)                   \
+    MACRO(useIR, 78, none, none)
 
 void filterOptions(ShShaderOutput output, ShCompileOptions &options);
 ShShaderOutput resolveShaderOutput(ShShaderOutput output);

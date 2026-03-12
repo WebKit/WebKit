@@ -257,7 +257,7 @@ class Renderer : angle::NonCopyable
 
     const angle::FeaturesVk &getFeatures() const { return mFeatures; }
     uint32_t getMaxVertexAttribDivisor() const { return mMaxVertexAttribDivisor; }
-    VkDeviceSize getMaxVertexAttribStride() const { return mMaxVertexAttribStride; }
+    VkDeviceSize padVertexAttribBufferSizeIfNeeded(VkDeviceSize bufferSize);
     uint32_t getMaxColorInputAttachmentCount() const { return mMaxColorInputAttachmentCount; }
     ANGLE_INLINE bool isInFlightCommandsEmpty() const
     {
@@ -429,12 +429,10 @@ class Renderer : angle::NonCopyable
     void cleanupPendingSubmissionGarbage();
 
     angle::Result submitCommands(vk::ErrorContext *context,
-                                 vk::ProtectionType protectionType,
-                                 egl::ContextPriority contextPriority,
                                  const vk::Semaphore *signalSemaphore,
                                  const vk::SharedExternalFence *externalFence,
-                                 std::vector<VkImageMemoryBarrier> &&imagesToTransitionToForeign,
-                                 const QueueSerial &submitQueueSerial);
+                                 const QueueSerial &submitQueueSerial,
+                                 CommandsState &&commandsState);
 
     angle::Result submitPriorityDependency(vk::ErrorContext *context,
                                            vk::ProtectionTypes protectionTypes,
@@ -454,22 +452,6 @@ class Renderer : angle::NonCopyable
     angle::Result checkCompletedCommandsAndCleanup(vk::ErrorContext *context);
     angle::Result releaseFinishedCommands(vk::ErrorContext *context);
 
-    angle::Result flushWaitSemaphores(vk::ProtectionType protectionType,
-                                      egl::ContextPriority priority,
-                                      std::vector<VkSemaphore> &&waitSemaphores,
-                                      std::vector<VkPipelineStageFlags> &&waitSemaphoreStageMasks);
-    angle::Result flushRenderPassCommands(vk::Context *context,
-                                          vk::ProtectionType protectionType,
-                                          egl::ContextPriority priority,
-                                          const vk::RenderPass &renderPass,
-                                          VkFramebuffer framebufferOverride,
-                                          vk::RenderPassCommandBufferHelper **renderPassCommands);
-    angle::Result flushOutsideRPCommands(
-        vk::Context *context,
-        vk::ProtectionType protectionType,
-        egl::ContextPriority priority,
-        vk::OutsideRenderPassCommandBufferHelper **outsideRPCommands);
-
     VkResult queuePresent(vk::ErrorContext *context,
                           egl::ContextPriority priority,
                           const VkPresentInfoKHR &presentInfo);
@@ -486,6 +468,8 @@ class Renderer : angle::NonCopyable
     void recycleOutsideRenderPassCommandBufferHelper(
         vk::OutsideRenderPassCommandBufferHelper **commandBuffer);
     void recycleRenderPassCommandBufferHelper(vk::RenderPassCommandBufferHelper **commandBuffer);
+
+    CommandPoolAccess &getCommandPoolAccess() { return mCommandQueue.getCommandPoolAccess(); }
 
     // Process GPU memory reports
     void processMemoryReportCallback(const VkDeviceMemoryReportCallbackDataEXT &callbackData)
@@ -550,7 +534,8 @@ class Renderer : angle::NonCopyable
         return mEnabledDeviceExtensions;
     }
 
-    VkDeviceSize getPreferedBufferBlockSize(uint32_t memoryTypeIndex) const;
+    VkDeviceSize getPreferredInitialBufferBlockSize(uint32_t memoryTypeIndex) const;
+    VkDeviceSize getPreferredLargeBufferBlockSize(uint32_t memoryTypeIndex) const;
 
     size_t getDefaultBufferAlignment() const { return mDefaultBufferAlignment; }
 
@@ -985,6 +970,7 @@ class Renderer : angle::NonCopyable
     vk::ImageMemorySuballocator mImageMemorySuballocator;
 
     vk::MemoryProperties mMemoryProperties;
+    VkDeviceSize mPreferredInitialBufferBlockSize;
     VkDeviceSize mPreferredLargeHeapBlockSize;
 
     // The default alignment for BufferVk object

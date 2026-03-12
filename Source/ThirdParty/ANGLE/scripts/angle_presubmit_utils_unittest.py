@@ -42,7 +42,7 @@ class CommitMessageFormattingCheckTest(unittest.TestCase):
 
 b
 
-Bug: angleproject:4662
+Bug: angleproject:42263262
 Change-Id: I966c79d96175da9eee92ef6da20db50d488137b2
 """
         errors = self.run_check_commit_message_formatting(commit_msg)

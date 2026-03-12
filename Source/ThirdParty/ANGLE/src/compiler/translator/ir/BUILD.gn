@@ -1,0 +1,54 @@
+# Copyright 2024 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../../../gni/angle.gni")
+if (angle_has_build) {
+  import("//build/rust/rust_static_library.gni")
+}
+
+angle_translator_ir_sources = [
+  "src/ast.rs",
+  "src/builder.rs",
+  "src/compile.rs",
+  "src/debug.rs",
+  "src/instruction.rs",
+  "src/ir.rs",
+  "src/lib.rs",
+  "src/output.rs",
+  "src/output/glsl.rs",
+  "src/output/legacy.rs",
+  "src/transform.rs",
+  "src/transform/astify.rs",
+  "src/transform/dealias.rs",
+  "src/transform/propagate_precision.rs",
+  "src/traverser.rs",
+  "src/util.rs",
+  "src/validator.rs",
+]
+
+if (angle_ir) {
+  config("gen_src_include") {
+    include_dirs = [
+      "$root_gen_dir/src",
+      "$root_gen_dir/third_party/angle/src",
+    ]
+  }
+
+  rust_static_library("translator_ir") {
+    # Need unsafe because of FFI
+    allow_unsafe = true
+
+    sources = angle_translator_ir_sources
+    cxx_bindings = [
+      "src/builder.rs",
+      "src/compile.rs",
+      "src/output/legacy.rs",
+    ]
+
+    configs += [
+      "$angle_root:internal_config",
+      ":gen_src_include",
+    ]
+  }
+}

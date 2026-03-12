@@ -240,17 +240,14 @@ uint32_t GetCopyImageToBufferFlags(const angle::Format &srcFormat)
     return CopyImageToBuffer_comp::kSrcIsFloat;
 }
 
-uint32_t GetBlitResolveFlags(bool blitColor,
-                             bool blitDepth,
-                             bool blitStencil,
-                             const angle::Format &intendedFormat)
+uint32_t GetColorBlitResolveFlags(const angle::Format &intendedFormat)
 {
-    if (blitColor)
-    {
-        return GetFormatFlags(intendedFormat, BlitResolve_frag::kBlitColorInt,
-                              BlitResolve_frag::kBlitColorUint, BlitResolve_frag::kBlitColorFloat);
-    }
+    return GetFormatFlags(intendedFormat, BlitResolve_frag::kBlitColorInt,
+                          BlitResolve_frag::kBlitColorUint, BlitResolve_frag::kBlitColorFloat);
+}
 
+uint32_t GetDepthStencilBlitResolveFlags(bool blitDepth, bool blitStencil)
+{
     if (blitDepth)
     {
         if (blitStencil)
@@ -2237,19 +2234,21 @@ angle::Result UtilsVk::clearTexture(ContextVk *contextVk,
     vk::RenderPassDesc renderPassDesc;
     renderPassDesc.setSamples(dst->getSamples());
 
-    if (!isDepthOrStencil)
+    vk::ImageAccess imageAccess;
+    if (isDepthOrStencil)
     {
-        renderPassDesc.packColorAttachment(0, dstActualFormat.id);
+        renderPassDesc.packDepthStencilAttachment(dstActualFormat.id);
+        imageAccess = vk::ImageAccess::DepthWriteStencilWrite;
     }
     else
     {
-        renderPassDesc.packDepthStencilAttachment(dstActualFormat.id);
+        renderPassDesc.packColorAttachment(0, dstActualFormat.id);
+        imageAccess = vk::ImageAccess::ColorWrite;
     }
-    vk::RenderPassCommandBuffer *commandBuffer;
-    vk::ImageAccess imageAccess =
-        isDepthOrStencil ? vk::ImageAccess::DepthWriteStencilWrite : vk::ImageAccess::ColorWrite;
 
-    ANGLE_TRY(startRenderPass(contextVk, dst, &destView.get(), renderPassDesc, renderArea,
+    vk::RenderPassCommandBuffer *commandBuffer;
+
+    ANGLE_TRY(startRenderPass(contextVk, &destView.get(), renderPassDesc, renderArea,
                               params.aspectFlags, &params.clearValue,
                               vk::RenderPassSource::InternalUtils, &commandBuffer));
 
@@ -2463,7 +2462,6 @@ angle::Result UtilsVk::convertVertexBufferImpl(
 }
 
 angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
-                                       vk::ImageHelper *image,
                                        const vk::ImageView *imageView,
                                        const vk::RenderPassDesc &renderPassDesc,
                                        const gl::Rectangle &renderArea,
@@ -2535,15 +2533,18 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
     if (aspectFlags == VK_IMAGE_ASPECT_COLOR_BIT)
     {
         clearValues.storeColor(vk::kAttachmentIndexZero, attachmentClearValue);
+        ANGLE_TRY(contextVk->beginNewRenderPass(
+            std::move(renderPassFramebuffer), renderArea, renderPassDesc, renderPassAttachmentOps,
+            vk::PackedAttachmentCount(1), vk::kAttachmentIndexInvalid, clearValues,
+            commandBufferOut));
     }
     else
     {
         clearValues.storeDepthStencil(vk::kAttachmentIndexZero, attachmentClearValue);
+        ANGLE_TRY(contextVk->beginNewRenderPass(
+            std::move(renderPassFramebuffer), renderArea, renderPassDesc, renderPassAttachmentOps,
+            vk::PackedAttachmentCount(0), vk::kAttachmentIndexZero, clearValues, commandBufferOut));
     }
-
-    ANGLE_TRY(contextVk->beginNewRenderPass(
-        std::move(renderPassFramebuffer), renderArea, renderPassDesc, renderPassAttachmentOps,
-        vk::PackedAttachmentCount(1), vk::kAttachmentIndexInvalid, clearValues, commandBufferOut));
 
     contextVk->addGarbage(&framebuffer);
 
@@ -2761,7 +2762,7 @@ angle::Result UtilsVk::clearImage(ContextVk *contextVk,
     pipelineDesc.setRenderPassDesc(renderPassDesc);
 
     vk::RenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(startRenderPass(contextVk, dst, &destView.get(), renderPassDesc, renderArea,
+    ANGLE_TRY(startRenderPass(contextVk, &destView.get(), renderPassDesc, renderArea,
                               VK_IMAGE_ASPECT_COLOR_BIT, nullptr,
                               vk::RenderPassSource::InternalUtils, &commandBuffer));
 
@@ -2805,85 +2806,33 @@ angle::Result UtilsVk::clearImage(ContextVk *contextVk,
         RenderPassClosureReason::TemporaryForImageClear);
 }
 
-angle::Result UtilsVk::colorBlitResolve(ContextVk *contextVk,
-                                        FramebufferVk *framebuffer,
-                                        vk::ImageHelper *src,
-                                        const vk::ImageView *srcView,
-                                        const BlitResolveParameters &params)
+angle::Result UtilsVk::setupBlitResolveGraphicsProgram(ContextVk *contextVk,
+                                                       const vk::ImageHelper &srcImage,
+                                                       const vk::ImageView *srcColorView,
+                                                       const vk::ImageView *srcDepthView,
+                                                       const vk::ImageView *srcStencilView,
+                                                       const vk::GraphicsPipelineDesc &pipelineDesc,
+                                                       uint32_t flags,
+                                                       uint32_t outputMask,
+                                                       const BlitResolveParameters &params,
+                                                       vk::RenderPassCommandBuffer *commandBuffer,
+                                                       bool blitColor,
+                                                       bool blitDepth,
+                                                       bool blitStencil)
 {
-    // The views passed to this function are already retained, so a render pass cannot be already
-    // open.  Otherwise, this function closes the render pass, which may incur a vkQueueSubmit and
-    // then the views are used in a new command buffer without having been retained for it.
-    // http://crbug.com/1272266#c22
-    //
-    // Note that depth/stencil views for blit are not derived from a |Resource| class and are
-    // retained differently.
-    ASSERT(!contextVk->hasActiveRenderPass());
-
-    return blitResolveImpl(contextVk, framebuffer, src, srcView, nullptr, nullptr, params);
-}
-
-angle::Result UtilsVk::depthStencilBlitResolve(ContextVk *contextVk,
-                                               FramebufferVk *framebuffer,
-                                               vk::ImageHelper *src,
-                                               const vk::ImageView *srcDepthView,
-                                               const vk::ImageView *srcStencilView,
-                                               const BlitResolveParameters &params)
-{
-    return blitResolveImpl(contextVk, framebuffer, src, nullptr, srcDepthView, srcStencilView,
-                           params);
-}
-
-angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
-                                       FramebufferVk *framebuffer,
-                                       vk::ImageHelper *src,
-                                       const vk::ImageView *srcColorView,
-                                       const vk::ImageView *srcDepthView,
-                                       const vk::ImageView *srcStencilView,
-                                       const BlitResolveParameters &params)
-{
-    // Possible ways to resolve color are:
-    //
-    // - vkCmdResolveImage: This is by far the easiest method, but lacks the ability to flip
-    //   images during resolve.
-    // - Manual resolve: A shader can read all samples from input, average them and output.
-    // - Using subpass resolve attachment: A shader can transform the sample colors from source to
-    //   destination coordinates and the subpass resolve would finish the job.
-    //
-    // The first method is unable to handle flipping, so it's not generally applicable.  The last
-    // method would have been great were we able to modify the last render pass that rendered into
-    // source, but still wouldn't be able to handle flipping.  The second method is implemented in
-    // this function for complete control.
-
-    // Possible ways to resolve depth/stencil are:
-    //
-    // - Manual resolve: A shader can read a samples from input and choose that for output.
-    // - Using subpass resolve attachment through VkSubpassDescriptionDepthStencilResolveKHR: This
-    //   requires an extension that's not very well supported.
-    //
-    // The first method is implemented in this function.
-
-    // Possible ways to blit color, depth or stencil are:
-    //
-    // - vkCmdBlitImage: This function works if the source and destination formats have the blit
-    //   feature.
-    // - Manual blit: A shader can sample from the source image and write it to the destination.
-    //
-    // The first method has a serious shortcoming.  GLES allows blit parameters to exceed the
-    // source or destination boundaries.  The actual blit is clipped to these limits, but the
-    // scaling applied is determined solely by the input areas.  Vulkan requires the blit parameters
-    // to be within the source and destination bounds.  This makes it hard to keep the scaling
-    // constant.
-    //
-    // The second method is implemented in this function, which shares code with the resolve method.
+    // Either color is blitted/resolved or depth/stencil, but not both.
+    ASSERT(blitColor != (blitDepth || blitStencil));
     vk::Renderer *renderer = contextVk->getRenderer();
 
-    ANGLE_TRY(ensureBlitResolveResourcesInitialized(contextVk));
-
-    bool isResolve = src->getSamples() > 1;
-    bool isDepthOrStencil = src->isDepthOrStencil();
+    // Note: a different shader is used for 3D color blits, but otherwise the desc sets, parameters
+    // etc are identical.
+    const bool isSrc3D = srcImage.getType() == VK_IMAGE_TYPE_3D;
+    ASSERT(!isSrc3D || (blitColor && srcImage.getSamples() == 1));
 
     BlitResolveShaderParams shaderParams;
+    bool isResolve        = srcImage.getSamples() > 1;
+    bool isDepthOrStencil = srcImage.isDepthOrStencil();
+
     // Note: adjustments made for pre-rotatation in FramebufferVk::blit() affect these
     // Calculate*Offset() functions.
     if (isResolve)
@@ -2899,14 +2848,14 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     shaderParams.invSrcExtent[0] = 1.0f / params.srcExtents[0];
     shaderParams.invSrcExtent[1] = 1.0f / params.srcExtents[1];
     // Depth/stencil copy views are specific to the level/layer, so no need to offset them further.
-    shaderParams.srcMip          = isDepthOrStencil ? 0 : params.srcMip.get();
-    shaderParams.srcLayer        = isDepthOrStencil ? 0 : params.srcLayer;
-    shaderParams.samples         = src->getSamples();
-    shaderParams.invSamples      = 1.0f / shaderParams.samples;
-    shaderParams.outputMask      = framebuffer->getState().getEnabledDrawBuffers().bits();
-    shaderParams.flipX           = params.flipX;
-    shaderParams.flipY           = params.flipY;
-    shaderParams.rotateXY        = 0;
+    shaderParams.srcMip     = isDepthOrStencil ? 0 : params.srcMip.get();
+    shaderParams.srcLayer   = isDepthOrStencil ? 0 : params.srcLayer;
+    shaderParams.samples    = srcImage.getSamples();
+    shaderParams.invSamples = 1.0f / shaderParams.samples;
+    shaderParams.outputMask = outputMask;
+    shaderParams.flipX      = params.flipX;
+    shaderParams.flipY      = params.flipY;
+    shaderParams.rotateXY   = 0;
 
     // Potentially make adjustments for pre-rotation.  Depending on the angle some of the
     // shaderParams need to be adjusted.
@@ -2937,132 +2886,26 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
 
     shaderParams.rotateXY = IsRotatedAspectRatio(params.rotation);
 
-    bool blitColor   = srcColorView != nullptr;
-    bool blitDepth   = srcDepthView != nullptr;
-    bool blitStencil = srcStencilView != nullptr;
-
-    // Either color is blitted/resolved or depth/stencil, but not both.
-    ASSERT(blitColor != (blitDepth || blitStencil));
-
-    // Linear sampling is only valid with color blitting.
-    ASSERT((blitColor && !isResolve) || !params.linear);
-
-    uint32_t flags =
-        GetBlitResolveFlags(blitColor, blitDepth, blitStencil, src->getIntendedFormat());
-    flags |= src->getLayerCount() > 1 && !isDepthOrStencil ? BlitResolve_frag::kSrcIsArray : 0;
-    flags |= isResolve ? BlitResolve_frag::kIsResolve : 0;
-    Function function = Function::BlitResolve;
-
-    // Note: a different shader is used for 3D color blits, but otherwise the desc sets, parameters
-    // etc are identical.
-    const bool isSrc3D = src->getType() == VK_IMAGE_TYPE_3D;
-    ASSERT(!isSrc3D || (blitColor && !isResolve));
-    if (isSrc3D)
-    {
-        flags = GetFormatFlags(src->getIntendedFormat(), Blit3DSrc_frag::kBlitInt,
-                               Blit3DSrc_frag::kBlitUint, Blit3DSrc_frag::kBlitFloat);
-    }
-
-    vk::GraphicsPipelineDesc pipelineDesc;
-    pipelineDesc.initDefaults(contextVk, vk::GraphicsPipelineSubset::Complete,
-                              contextVk->pipelineRobustness(),
-                              contextVk->pipelineProtectedAccess());
-
-    vk::ImageAccess srcImagelayout = src->isDepthOrStencil()
-                                         ? vk::ImageAccess::DepthReadStencilReadFragmentShaderRead
-                                         : vk::ImageAccess::FragmentShaderReadOnly;
-
-    if (blitColor)
-    {
-        constexpr VkColorComponentFlags kAllColorComponents =
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
-            VK_COLOR_COMPONENT_A_BIT;
-
-        pipelineDesc.setColorWriteMasks(
-            gl::BlendStateExt::ColorMaskStorage::GetReplicatedValue(
-                kAllColorComponents, gl::BlendStateExt::ColorMaskStorage::GetMask(
-                                         framebuffer->getRenderPassDesc().colorAttachmentRange())),
-            framebuffer->getEmulatedAlphaAttachmentMask(), ~gl::DrawBufferMask());
-
-        for (size_t colorIndexGL : framebuffer->getState().getEnabledDrawBuffers())
-        {
-            if (&framebuffer->getColorDrawRenderTarget(colorIndexGL)->getImageForWrite() == src)
-            {
-                srcImagelayout = vk::ImageAccess::ColorWriteFragmentShaderFeedback;
-                break;
-            }
-        }
-    }
-    else
-    {
-        pipelineDesc.setColorWriteMasks(0, gl::DrawBufferMask(), gl::DrawBufferMask());
-    }
-    pipelineDesc.setRenderPassDesc(framebuffer->getRenderPassDesc());
-    if (blitDepth)
-    {
-        SetDepthStateForWrite(renderer, &pipelineDesc);
-    }
-
-    if (blitStencil)
-    {
-        SetStencilStateForWrite(renderer, &pipelineDesc);
-    }
-
-    if ((blitDepth || blitStencil) &&
-        &framebuffer->getDepthStencilRenderTarget()->getImageForWrite() == src)
-    {
-        srcImagelayout = vk::ImageAccess::DepthStencilFragmentShaderFeedback;
-    }
-
-    // All deferred clear must have been flushed, otherwise it will conflict with params.blitArea.
-    ASSERT(!framebuffer->hasDeferredClears());
-    vk::RenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(framebuffer->startNewRenderPass(contextVk, params.blitArea, &commandBuffer, nullptr));
-
     VkDescriptorSet descriptorSet;
     ANGLE_TRY(allocateDescriptorSet(contextVk, &contextVk->getStartedRenderPassCommands(),
                                     Function::BlitResolve, &descriptorSet));
-
-    // Pick layout consistent with GetImageReadAccess() to avoid unnecessary layout change.
-    contextVk->onImageRenderPassRead(src->getAspectFlags(), srcImagelayout, src);
-
-    UpdateColorAccess(contextVk, framebuffer->getState().getColorAttachmentsMask(),
-                      framebuffer->getState().getEnabledDrawBuffers());
-    UpdateDepthStencilAccess(contextVk, blitDepth, blitStencil);
-
-    if (srcImagelayout == vk::ImageAccess::ColorWriteFragmentShaderFeedback)
-    {
-        src->setRenderPassUsageFlag(vk::RenderPassUsage::ColorTextureSampler);
-    }
-
-    if (srcImagelayout == vk::ImageAccess::DepthStencilFragmentShaderFeedback)
-    {
-        if (blitDepth)
-        {
-            src->setRenderPassUsageFlag(vk::RenderPassUsage::DepthTextureSampler);
-        }
-        if (blitStencil)
-        {
-            src->setRenderPassUsageFlag(vk::RenderPassUsage::StencilTextureSampler);
-        }
-    }
 
     VkDescriptorImageInfo imageInfos[2] = {};
 
     if (blitColor)
     {
         imageInfos[0].imageView   = srcColorView->getHandle();
-        imageInfos[0].imageLayout = src->getCurrentLayout(renderer);
+        imageInfos[0].imageLayout = srcImage.getCurrentLayout(renderer);
     }
     if (blitDepth)
     {
         imageInfos[0].imageView   = srcDepthView->getHandle();
-        imageInfos[0].imageLayout = src->getCurrentLayout(renderer);
+        imageInfos[0].imageLayout = srcImage.getCurrentLayout(renderer);
     }
     if (blitStencil)
     {
         imageInfos[1].imageView   = srcStencilView->getHandle();
-        imageInfos[1].imageLayout = src->getCurrentLayout(renderer);
+        imageInfos[1].imageLayout = srcImage.getCurrentLayout(renderer);
     }
 
     VkDescriptorImageInfo samplerInfo = {};
@@ -3112,15 +2955,265 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
         ANGLE_TRY(shaderLibrary.getBlitResolve_frag(contextVk, flags, &fragmentShader));
     }
 
+    Function function = Function::BlitResolve;
+
     ANGLE_TRY(setupGraphicsProgram(contextVk, function, vertexShader, fragmentShader,
                                    isSrc3D ? &mBlit3DSrc[flags] : &mBlitResolve[flags],
                                    &pipelineDesc, descriptorSet, &shaderParams,
                                    sizeof(shaderParams), commandBuffer));
 
+    return angle::Result::Continue;
+}
+
+angle::Result UtilsVk::colorBlitResolve(ContextVk *contextVk,
+                                        FramebufferVk *framebuffer,
+                                        vk::ImageHelper *srcImage,
+                                        const vk::ImageView *srcView,
+                                        const BlitResolveParameters &params)
+{
+    // The views passed to this function are already retained, so a render pass cannot be already
+    // open.  Otherwise, this function closes the render pass, which may incur a vkQueueSubmit and
+    // then the views are used in a new command buffer without having been retained for it.
+    // http://crbug.com/1272266#c22
+    //
+    // Note that depth/stencil views for blit are not derived from a |Resource| class and are
+    // retained differently.
+    ASSERT(!contextVk->hasActiveRenderPass());
+    vk::Renderer *renderer = contextVk->getRenderer();
+
+    // Possible ways to resolve color are:
+    //
+    // - vkCmdResolveImage: This is by far the easiest method, but lacks the ability to flip
+    //   images during resolve.
+    // - Manual resolve: A shader can read all samples from input, average them and output.
+    // - Using subpass resolve attachment: A shader can transform the sample colors from source to
+    //   destination coordinates and the subpass resolve would finish the job.
+    //
+    // The first method is unable to handle flipping, so it's not generally applicable.  The last
+    // method would have been great were we able to modify the last render pass that rendered into
+    // source, but still wouldn't be able to handle flipping.  The second method is implemented in
+    // this function for complete control.
+
+    // Possible ways to blit color, depth or stencil are:
+    //
+    // - vkCmdBlitImage: This function works if the source and destination formats have the blit
+    //   feature.
+    // - Manual blit: A shader can sample from the source image and write it to the destination.
+    //
+    // The first method has a serious shortcoming.  GLES allows blit parameters to exceed the
+    // source or destination boundaries.  The actual blit is clipped to these limits, but the
+    // scaling applied is determined solely by the input areas.  Vulkan requires the blit parameters
+    // to be within the source and destination bounds.  This makes it hard to keep the scaling
+    // constant.
+    //
+    // The second method is implemented in this function, which shares code with the resolve method.
+
+    ANGLE_TRY(ensureBlitResolveResourcesInitialized(contextVk));
+
+    bool isResolve = srcImage->getSamples() > 1;
+
+    ASSERT(srcView != nullptr);
+    // Linear sampling is only valid with color blitting.
+    ASSERT(!isResolve || !params.linear);
+
+    uint32_t flags = GetColorBlitResolveFlags(srcImage->getIntendedFormat());
+    flags |= srcImage->getLayerCount() > 1 ? BlitResolve_frag::kSrcIsArray : 0;
+    flags |= isResolve ? BlitResolve_frag::kIsResolve : 0;
+
+    // Note: a different shader is used for 3D color blits, but otherwise the desc sets, parameters
+    // etc are identical.
+    const bool isSrc3D = srcImage->getType() == VK_IMAGE_TYPE_3D;
+    ASSERT(!isSrc3D || !isResolve);
+    if (isSrc3D)
+    {
+        flags = GetFormatFlags(srcImage->getIntendedFormat(), Blit3DSrc_frag::kBlitInt,
+                               Blit3DSrc_frag::kBlitUint, Blit3DSrc_frag::kBlitFloat);
+    }
+
+    vk::GraphicsPipelineDesc pipelineDesc;
+    pipelineDesc.initDefaults(contextVk, vk::GraphicsPipelineSubset::Complete,
+                              contextVk->pipelineRobustness(),
+                              contextVk->pipelineProtectedAccess());
+
+    vk::ImageAccess srcImagelayout = srcImage->isDepthOrStencil()
+                                         ? vk::ImageAccess::DepthReadStencilReadFragmentShaderRead
+                                         : vk::ImageAccess::FragmentShaderReadOnly;
+
+    constexpr VkColorComponentFlags kAllColorComponents =
+        VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
+        VK_COLOR_COMPONENT_A_BIT;
+
+    pipelineDesc.setColorWriteMasks(
+        gl::BlendStateExt::ColorMaskStorage::GetReplicatedValue(
+            kAllColorComponents, gl::BlendStateExt::ColorMaskStorage::GetMask(
+                                     framebuffer->getRenderPassDesc().colorAttachmentRange())),
+        framebuffer->getEmulatedAlphaAttachmentMask(), ~gl::DrawBufferMask());
+
+    for (size_t colorIndexGL : framebuffer->getState().getEnabledDrawBuffers())
+    {
+        if (&framebuffer->getColorDrawRenderTarget(colorIndexGL)->getImageForWrite() == srcImage)
+        {
+            srcImagelayout = vk::ImageAccess::ColorWriteFragmentShaderFeedback;
+            break;
+        }
+    }
+
+    pipelineDesc.setRenderPassDesc(framebuffer->getRenderPassDesc());
+
+    // All deferred clear must have been flushed, otherwise it will conflict with
+    // params.blitArea.
+    ASSERT(!framebuffer->hasDeferredClears());
+    vk::RenderPassCommandBuffer *commandBuffer;
+    ANGLE_TRY(framebuffer->startNewRenderPass(contextVk, params.blitArea, &commandBuffer, nullptr));
+
+    // Pick layout consistent with GetImageReadAccess() to avoid unnecessary layout change.
+    contextVk->onImageRenderPassRead(srcImage->getAspectFlags(), srcImagelayout, srcImage);
+
+    UpdateColorAccess(contextVk, framebuffer->getState().getColorAttachmentsMask(),
+                      framebuffer->getState().getEnabledDrawBuffers());
+
+    if (srcImagelayout == vk::ImageAccess::ColorWriteFragmentShaderFeedback)
+    {
+        srcImage->setRenderPassUsageFlag(vk::RenderPassUsage::ColorTextureSampler);
+    }
+
+    ANGLE_TRY(setupBlitResolveGraphicsProgram(
+        contextVk, *srcImage, srcView, nullptr, nullptr, pipelineDesc, flags,
+        framebuffer->getState().getEnabledDrawBuffers().bits(), params, commandBuffer, true, false,
+        false));
+
     // Set dynamic state
     VkViewport viewport;
-    gl::Rectangle completeRenderArea = framebuffer->getRotatedCompleteRenderArea(contextVk);
-    gl_vk::GetViewport(completeRenderArea, 0.0f, 1.0f, false, false, completeRenderArea.height,
+    gl_vk::GetViewport(params.renderArea, 0.0f, 1.0f, false, false, params.renderArea.height,
+                       &viewport);
+    commandBuffer->setViewport(0, 1, &viewport);
+
+    VkRect2D scissor = gl_vk::GetRect(params.blitArea);
+    commandBuffer->setScissor(0, 1, &scissor);
+
+    SetDepthDynamicStateForUnused(renderer, commandBuffer);
+    SetStencilDynamicStateForUnused(renderer, commandBuffer);
+
+    // Note: this utility starts the render pass directly, thus bypassing
+    // ContextVk::startRenderPass. As such, occlusion queries are not enabled.
+    commandBuffer->draw(3, 0);
+
+    // Don't allow this render pass to be reactivated by the user's draw call due to test flakiness
+    // on win/intel bot.
+    contextVk->disableRenderPassReactivation();
+
+    return angle::Result::Continue;
+}
+
+angle::Result UtilsVk::depthStencilBlitResolve(ContextVk *contextVk,
+                                               vk::ImageHelper *dstImage,
+                                               const vk::ImageView &dstImageView,
+                                               gl::LevelIndex dstImageLevel,
+                                               uint32_t dstImageLayer,
+                                               vk::ImageHelper *srcImage,
+                                               const vk::ImageView *srcDepthView,
+                                               const vk::ImageView *srcStencilView,
+                                               const BlitResolveParameters &params)
+{
+    // Possible ways to resolve depth/stencil are:
+    //
+    // - Manual resolve: A shader can read a samples from input and choose that for output.
+    // - Using subpass resolve attachment through VkSubpassDescriptionDepthStencilResolveKHR: This
+    //   requires an extension that's not very well supported.
+    //
+    // The first method is implemented in this function.
+
+    // Possible ways to blit color, depth or stencil are:
+    //
+    // - vkCmdBlitImage: This function works if the source and destination formats have the blit
+    //   feature.
+    // - Manual blit: A shader can sample from the source image and write it to the destination.
+    //
+    // The first method has a serious shortcoming.  GLES allows blit parameters to exceed the
+    // source or destination boundaries.  The actual blit is clipped to these limits, but the
+    // scaling applied is determined solely by the input areas.  Vulkan requires the blit parameters
+    // to be within the source and destination bounds.  This makes it hard to keep the scaling
+    // constant.
+    //
+    // The second method is implemented in this function, which shares code with the resolve method.
+    vk::Renderer *renderer = contextVk->getRenderer();
+
+    ANGLE_TRY(ensureBlitResolveResourcesInitialized(contextVk));
+
+    bool isResolve   = srcImage->getSamples() > 1;
+    bool blitDepth   = srcDepthView != nullptr;
+    bool blitStencil = srcStencilView != nullptr;
+
+    ASSERT(blitDepth || blitStencil);
+    // Linear sampling is only valid with color blitting.
+    ASSERT(!params.linear);
+
+    uint32_t flags = GetDepthStencilBlitResolveFlags(blitDepth, blitStencil);
+    flags |= isResolve ? BlitResolve_frag::kIsResolve : 0;
+
+    // Note: a different shader is used for 3D color blits, but otherwise the desc sets, parameters
+    // etc are identical.
+    ASSERT(srcImage->getType() != VK_IMAGE_TYPE_3D);
+
+    vk::RenderPassDesc renderPassDesc;
+    renderPassDesc.setSamples(dstImage->getSamples());
+    renderPassDesc.packDepthStencilAttachment(dstImage->getActualFormatID());
+
+    vk::GraphicsPipelineDesc pipelineDesc;
+    pipelineDesc.initDefaults(contextVk, vk::GraphicsPipelineSubset::Complete,
+                              contextVk->pipelineRobustness(),
+                              contextVk->pipelineProtectedAccess());
+
+    vk::ImageAccess srcImagelayout = vk::ImageAccess::DepthReadStencilReadFragmentShaderRead;
+
+    pipelineDesc.setColorWriteMasks(0, gl::DrawBufferMask(), gl::DrawBufferMask());
+    pipelineDesc.setRenderPassDesc(renderPassDesc);
+    if (blitDepth)
+    {
+        SetDepthStateForWrite(renderer, &pipelineDesc);
+    }
+
+    if (blitStencil)
+    {
+        SetStencilStateForWrite(renderer, &pipelineDesc);
+    }
+
+    if (dstImage == srcImage)
+    {
+        srcImagelayout = vk::ImageAccess::DepthStencilFragmentShaderFeedback;
+    }
+
+    vk::RenderPassCommandBuffer *commandBuffer;
+
+    ANGLE_TRY(startRenderPass(contextVk, &dstImageView, renderPassDesc, params.renderArea,
+                              dstImage->getAspectFlags(), nullptr,
+                              vk::RenderPassSource::InternalUtils, &commandBuffer));
+
+    contextVk->onDepthStencilDraw(dstImageLevel, dstImageLayer, 1, dstImage, nullptr, {});
+    // Pick layout consistent with GetImageReadAccess() to avoid unnecessary layout change.
+    contextVk->onImageRenderPassRead(srcImage->getAspectFlags(), srcImagelayout, srcImage);
+
+    UpdateDepthStencilAccess(contextVk, blitDepth, blitStencil);
+
+    if (srcImagelayout == vk::ImageAccess::DepthStencilFragmentShaderFeedback)
+    {
+        if (blitDepth)
+        {
+            srcImage->setRenderPassUsageFlag(vk::RenderPassUsage::DepthTextureSampler);
+        }
+        if (blitStencil)
+        {
+            srcImage->setRenderPassUsageFlag(vk::RenderPassUsage::StencilTextureSampler);
+        }
+    }
+
+    ANGLE_TRY(setupBlitResolveGraphicsProgram(contextVk, *srcImage, nullptr, srcDepthView,
+                                              srcStencilView, pipelineDesc, flags, 0, params,
+                                              commandBuffer, false, blitDepth, blitStencil));
+
+    // Set dynamic state
+    VkViewport viewport;
+    gl_vk::GetViewport(params.renderArea, 0.0f, 1.0f, false, false, params.renderArea.height,
                        &viewport);
     commandBuffer->setViewport(0, 1, &viewport);
 
@@ -3164,18 +3257,21 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
 }
 
 angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
-                                                        FramebufferVk *framebuffer,
-                                                        vk::ImageHelper *src,
+                                                        vk::ImageHelper *dstImage,
+                                                        gl::LevelIndex dstLevelIndex,
+                                                        uint32_t dstLayerIndex,
+                                                        vk::ImageHelper *srcImage,
                                                         const vk::ImageView *srcStencilView,
                                                         const BlitResolveParameters &params)
 {
+    ASSERT((dstImage->getAspectFlags() & VK_IMAGE_ASPECT_STENCIL_BIT) != 0);
     vk::Renderer *renderer = contextVk->getRenderer();
 
     // When VK_EXT_shader_stencil_export is not available, stencil is blitted/resolved into a
     // temporary buffer which is then copied into the stencil aspect of the image.
     ANGLE_TRY(ensureBlitResolveStencilNoExportResourcesInitialized(contextVk));
 
-    bool isResolve = src->getSamples() > 1;
+    bool isResolve = srcImage->getSamples() > 1;
 
     // Create a temporary buffer to blit/resolve stencil into.
     vk::RendererScoped<vk::BufferHelper> blitBuffer(renderer);
@@ -3250,25 +3346,18 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
 
     uint32_t flags = isResolve ? BlitResolveStencilNoExport_comp::kIsResolve : 0;
 
-    RenderTargetVk *depthStencilRenderTarget = framebuffer->getDepthStencilRenderTarget();
-    ASSERT(depthStencilRenderTarget != nullptr);
-    vk::ImageHelper *depthStencilImage = &depthStencilRenderTarget->getImageForWrite();
-
     // Change layouts prior to computation.
     vk::CommandResources resources;
-    if (&depthStencilRenderTarget->getImageForWrite() != src)
+    if (dstImage != srcImage)
     {
-        resources.onImageComputeShaderRead(src->getAspectFlags(), src);
-        resources.onImageTransferWrite(depthStencilRenderTarget->getLevelIndex(), 1,
-                                       depthStencilRenderTarget->getLayerIndex(), 1,
-                                       depthStencilImage->getAspectFlags(), depthStencilImage);
+        resources.onImageComputeShaderRead(srcImage->getAspectFlags(), srcImage);
+        resources.onImageTransferWrite(dstLevelIndex, 1, dstLayerIndex, 1,
+                                       dstImage->getAspectFlags(), dstImage);
     }
     else
     {
-        resources.onImageSelfCopy(depthStencilRenderTarget->getLevelIndex(), 1,
-                                  depthStencilRenderTarget->getLayerIndex(), 1,
-                                  depthStencilRenderTarget->getLevelIndex(), 1, params.srcLayer, 1,
-                                  src->getAspectFlags(), src);
+        resources.onImageSelfCopy(dstLevelIndex, 1, dstLayerIndex, 1, dstLevelIndex, 1,
+                                  params.srcLayer, 1, srcImage->getAspectFlags(), srcImage);
     }
     resources.onBufferComputeShaderWrite(&blitBuffer.get());
 
@@ -3283,7 +3372,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     // Blit/resolve stencil into the buffer.
     VkDescriptorImageInfo imageInfo = {};
     imageInfo.imageView             = srcStencilView->getHandle();
-    imageInfo.imageLayout           = src->getCurrentLayout(renderer);
+    imageInfo.imageLayout           = srcImage->getCurrentLayout(renderer);
 
     VkDescriptorBufferInfo bufferInfo = {};
     bufferInfo.buffer                 = blitBuffer.get().getBuffer().getHandle();
@@ -3342,9 +3431,8 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     region.bufferRowLength             = bufferRowLengthInUints * sizeof(uint32_t);
     region.bufferImageHeight           = params.blitArea.height;
     region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_STENCIL_BIT;
-    region.imageSubresource.mipLevel =
-        depthStencilImage->toVkLevel(depthStencilRenderTarget->getLevelIndex()).get();
-    region.imageSubresource.baseArrayLayer = depthStencilRenderTarget->getLayerIndex();
+    region.imageSubresource.mipLevel       = dstImage->toVkLevel(dstLevelIndex).get();
+    region.imageSubresource.baseArrayLayer = dstLayerIndex;
     region.imageSubresource.layerCount     = 1;
     region.imageOffset.x                   = params.blitArea.x;
     region.imageOffset.y                   = params.blitArea.y;
@@ -3353,9 +3441,8 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     region.imageExtent.height              = params.blitArea.height;
     region.imageExtent.depth               = 1;
 
-    commandBuffer->copyBufferToImage(blitBuffer.get().getBuffer().getHandle(),
-                                     depthStencilImage->getImage(),
-                                     depthStencilImage->getCurrentLayout(renderer), 1, &region);
+    commandBuffer->copyBufferToImage(blitBuffer.get().getBuffer().getHandle(), dstImage->getImage(),
+                                     dstImage->getCurrentLayout(renderer), 1, &region);
 
     return angle::Result::Continue;
 }
@@ -3494,7 +3581,7 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
     }
 
     vk::RenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(startRenderPass(contextVk, dst, destView, renderPassDesc, renderArea,
+    ANGLE_TRY(startRenderPass(contextVk, destView, renderPassDesc, renderArea,
                               VK_IMAGE_ASPECT_COLOR_BIT, nullptr,
                               vk::RenderPassSource::InternalUtils, &commandBuffer));
 
@@ -4268,7 +4355,7 @@ angle::Result UtilsVk::generateMipmapWithDraw(ContextVk *contextVk,
     VkImageUsageFlags imageUsageFlags = image->getUsage();
 
     // Setup shaders for draw
-    uint32_t flags = GetBlitResolveFlags(true, false, false, actualFormat);
+    uint32_t flags = GetColorBlitResolveFlags(actualFormat);
     flags |= layerCount > 1 ? BlitResolve_frag::kSrcIsArray : 0;
     Function function = Function::BlitResolve;
 
@@ -4385,7 +4472,7 @@ angle::Result UtilsVk::generateMipmapWithDraw(ContextVk *contextVk,
                 1, currentLayer, 1, imageUsageFlags, actualFormatID, GL_NONE));
 
             vk::RenderPassCommandBuffer *commandBuffer = nullptr;
-            ANGLE_TRY(startRenderPass(contextVk, image, &dstImageView, renderPassDesc, renderArea,
+            ANGLE_TRY(startRenderPass(contextVk, &dstImageView, renderPassDesc, renderArea,
                                       VK_IMAGE_ASPECT_COLOR_BIT, nullptr,
                                       vk::RenderPassSource::InternalUtils, &commandBuffer));
 
@@ -4750,7 +4837,7 @@ angle::Result UtilsVk::drawOverlay(ContextVk *contextVk,
     // A potential optimization is to reuse the already open render pass if it belongs to the
     // swapchain.
     vk::RenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(startRenderPass(contextVk, dst, destView, renderPassDesc, renderArea,
+    ANGLE_TRY(startRenderPass(contextVk, destView, renderPassDesc, renderArea,
                               VK_IMAGE_ASPECT_COLOR_BIT, nullptr,
                               vk::RenderPassSource::DefaultFramebuffer, &commandBuffer));
 

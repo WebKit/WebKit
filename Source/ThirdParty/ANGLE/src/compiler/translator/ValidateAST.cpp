@@ -780,7 +780,8 @@ void ValidateAST::visitSymbol(TIntermSymbol *node)
             visitVariableNeedingDeclaration(node);
         }
     }
-    if (variable->symbolType() == SymbolType::Empty)
+    if (variable->symbolType() == SymbolType::Empty &&
+        variable->getType().getInterfaceBlock() == nullptr)
     {
         if (!isInDeclaration())
         {

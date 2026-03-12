@@ -59,6 +59,7 @@
     void genQueries(GLsizei n, QueryID *idsPacked);                                                \
     void genSamplers(GLsizei count, SamplerID *samplersPacked);                                    \
     void genTransformFeedbacks(GLsizei n, TransformFeedbackID *idsPacked);                         \
+    void genVertexArrays(GLsizei n, VertexArrayID *arraysPacked);                                  \
     void getActiveUniformBlockName(ShaderProgramID programPacked,                                  \
                                    UniformBlockIndex uniformBlockIndexPacked, GLsizei bufSize,     \
                                    GLsizei *length, GLchar *uniformBlockName);                     \

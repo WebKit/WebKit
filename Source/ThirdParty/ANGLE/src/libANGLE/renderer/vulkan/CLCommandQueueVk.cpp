@@ -79,9 +79,9 @@ VkBufferImageCopy CalculateBufferImageCopyRegion(const size_t bufferOffset,
     return copyRegion;
 }
 
-static constexpr size_t kTimeoutInMS            = 10000;
-static constexpr size_t kSleepInMS              = 500;
-static constexpr size_t kTimeoutCheckIterations = kTimeoutInMS / kSleepInMS;
+constexpr size_t kTimeoutInMS            = 10000;
+constexpr size_t kSleepInMS              = 500;
+constexpr size_t kTimeoutCheckIterations = kTimeoutInMS / kSleepInMS;
 
 DispatchWorkThread::DispatchWorkThread(CLCommandQueueVk *commandQueue)
     : mCommandQueue(commandQueue),
@@ -255,6 +255,9 @@ CLCommandQueueVk::CLCommandQueueVk(const cl::CommandQueue &commandQueue)
       mDevice(&commandQueue.getDevice().getImpl<CLDeviceVk>()),
       mPrintfBuffer(nullptr),
       mComputePassCommands(nullptr),
+      mCommandState(mContext->getRenderer(),
+                    vk::ProtectionType::Unprotected,
+                    convertClToEglPriority(mCommandQueue.getPriority())),
       mQueueSerialIndex(kInvalidQueueSerialIndex),
       mNeedPrintfHandling(false),
       mFinishHandler(this)
@@ -293,6 +296,10 @@ angle::Result CLCommandQueueVk::init()
 
 CLCommandQueueVk::~CLCommandQueueVk()
 {
+    VkDevice vkDevice = mContext->getDevice();
+
+    mCommandState.destroy(vkDevice);
+
     mFinishHandler.terminate();
 
     ASSERT(mComputePassCommands->empty());
@@ -305,8 +312,6 @@ CLCommandQueueVk::~CLCommandQueueVk()
         ASSERT(wasLastUser);
         delete mPrintfBuffer;
     }
-
-    VkDevice vkDevice = mContext->getDevice();
 
     if (mQueueSerialIndex != kInvalidQueueSerialIndex)
     {
@@ -2142,9 +2147,8 @@ angle::Result CLCommandQueueVk::flushComputePassCommands()
     // get hold of the queue serial that is flushed, post the flush the command buffer will be reset
     mLastFlushedQueueSerial = mComputePassCommands->getQueueSerial();
     // Here, we flush our compute cmds to RendererVk's primary command buffer
-    ANGLE_TRY(mContext->getRenderer()->flushOutsideRPCommands(
-        mContext, getProtectionType(), convertClToEglPriority(mCommandQueue.getPriority()),
-        &mComputePassCommands));
+    ANGLE_TRY(
+        mCommandState.flushOutsideRPCommands(mContext, getProtectionType(), &mComputePassCommands));
 
     mContext->getPerfCounters().flushedOutsideRenderPassCommandBuffers++;
 
@@ -2198,8 +2202,7 @@ angle::Result CLCommandQueueVk::submitCommands()
 
     // Kick off renderer submit
     ANGLE_TRY(mContext->getRenderer()->submitCommands(
-        mContext, getProtectionType(), convertClToEglPriority(mCommandQueue.getPriority()), nullptr,
-        nullptr, {}, mLastFlushedQueueSerial));
+        mContext, nullptr, nullptr, mLastFlushedQueueSerial, std::move(mCommandState)));
 
     mLastSubmittedQueueSerial = mLastFlushedQueueSerial;
 

@@ -35,7 +35,6 @@
 
 namespace gl
 {
-enum class BigGLEnum;
 enum class GLESEnum;
 }  // namespace gl
 

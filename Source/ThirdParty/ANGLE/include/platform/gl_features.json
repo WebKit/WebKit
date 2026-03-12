@@ -820,6 +820,14 @@
                 "Some Adreno drivers assume incorrect glSampleCoverage if new FBO is bound with different sample count"
             ],
             "issue": "https://crbug.com/408364831"
+        },
+        {
+            "name": "disable_passthrough_shaders",
+            "category": "Workarounds",
+            "description": [
+                "Some ES2 Mali drivers are unable to query enough information from a linked program to use passthrough shaders."
+            ],
+            "issue": "https://crbug.com/451796659"
         }
     ]
 }

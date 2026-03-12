@@ -326,7 +326,7 @@ void ExpandMatrix(T *target, const GLfloat *value, const bool isFloat16)
             // that shader is not accessing uninitialized memory.
             // If it is the last column, don't touch the remaining of the current column.
             // Because we may pack other data tightly right after the last column. See
-            // http://angleproject:42266878.
+            // http://anglebug.com/42266878.
             // e.g. For example, for a 3*3 matrix, in the target memory, we end up with:
             // Last column:
             // |2-byte half float|2-byte half float|2-byte half float|10-byte untouched|
@@ -363,7 +363,7 @@ void ExpandMatrix(T *target, const GLfloat *value, const bool isFloat16)
             // that shader is not accessing uninitialized memory.
             // If it is the last row, don't touch the remaining of the current row. Because
             // we may pack other data tightly right after the last row. See
-            // http://angleproject:42266878.
+            // http://anglebug.com/42266878.
             // e.g. For example, for a 3*3 matrix, in the target memory, we end up with:
             // Last row:
             // |2-byte half float|2-byte half float|2-byte half float|10-byte untouched|

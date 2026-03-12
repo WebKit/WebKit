@@ -60,36 +60,34 @@ extern const uintptr_t DirtyPointer;
 // AMD_performance_monitor helpers.
 constexpr char kPerfMonitorExtensionName[] = "GL_AMD_performance_monitor";
 
+struct PerfMonitorCounterInfo
+{
+    PerfMonitorCounterInfo() = default;
+    PerfMonitorCounterInfo(const char *name) : name(name) {}
+
+    std::string name;
+};
 struct PerfMonitorCounter
 {
-    PerfMonitorCounter();
-    ~PerfMonitorCounter();
+    PerfMonitorCounter() = default;
+    PerfMonitorCounter(uint64_t value) : value(value) {}
 
-    std::string name;
     uint64_t value;
 };
-using PerfMonitorCounters = std::vector<PerfMonitorCounter>;
+using PerfMonitorCountersInfo = std::vector<PerfMonitorCounterInfo>;
+using PerfMonitorCounters     = std::vector<PerfMonitorCounter>;
 
+struct PerfMonitorCounterGroupInfo
+{
+    std::string name;
+    PerfMonitorCountersInfo counters;
+};
 struct PerfMonitorCounterGroup
 {
-    PerfMonitorCounterGroup();
-    ~PerfMonitorCounterGroup();
-
-    std::string name;
     PerfMonitorCounters counters;
 };
-using PerfMonitorCounterGroups = std::vector<PerfMonitorCounterGroup>;
-
-uint32_t GetPerfMonitorCounterIndex(const PerfMonitorCounters &counters, const std::string &name);
-const PerfMonitorCounter &GetPerfMonitorCounter(const PerfMonitorCounters &counters,
-                                                const std::string &name);
-PerfMonitorCounter &GetPerfMonitorCounter(PerfMonitorCounters &counters, const std::string &name);
-uint32_t GetPerfMonitorCounterGroupIndex(const PerfMonitorCounterGroups &groups,
-                                         const std::string &name);
-const PerfMonitorCounterGroup &GetPerfMonitorCounterGroup(const PerfMonitorCounterGroups &groups,
-                                                          const std::string &name);
-PerfMonitorCounterGroup &GetPerfMonitorCounterGroup(PerfMonitorCounterGroups &groups,
-                                                    const std::string &name);
+using PerfMonitorCounterGroupsInfo = std::vector<PerfMonitorCounterGroupInfo>;
+using PerfMonitorCounterGroups     = std::vector<PerfMonitorCounterGroup>;
 
 struct PerfMonitorTriplet
 {

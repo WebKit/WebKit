@@ -422,6 +422,14 @@ config("angle_uwp_env") {
   }
 }
 
+config("angle_translator_ir") {
+  defines = [ "ANGLE_IR=1" ]
+  include_dirs = [
+    "$root_gen_dir/src",
+    "$root_gen_dir/third_party/angle/src",
+  ]
+}
+
 angle_source_set("cl_includes") {
   sources = cl_includes
   public_configs = [ ":external_config" ]
@@ -818,6 +826,12 @@ angle_static_library("translator") {
     ":preprocessor",
     "$angle_root/src/common/spirv:angle_spirv_headers",
   ]
+
+  if (angle_ir) {
+    deps += [ "$angle_root/src/compiler/translator/ir:translator_ir" ]
+    sources += angle_translator_lib_ir_sources
+    public_configs += [ ":angle_translator_ir" ]
+  }
 
   if (_uses_spirv) {
     deps += [

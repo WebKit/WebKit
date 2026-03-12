@@ -1290,6 +1290,9 @@ EXPORTS
 
     ; GL_OVR_multiview2
 
+    ; GL_OVR_multiview_multisampled_render_to_texture
+    glFramebufferTextureMultisampleMultiviewOVR
+
     ; GL_QCOM_framebuffer_foveated
     glFramebufferFoveationConfigQCOM
     glFramebufferFoveationParametersQCOM

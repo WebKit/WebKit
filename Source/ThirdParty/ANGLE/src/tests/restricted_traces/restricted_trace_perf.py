@@ -269,10 +269,14 @@ def run_trace(trace, args, screenshot_device_dir):
         flags += ['--screenshot-frame', args.screenshot_frame]
     if args.fps_limit != '':
         flags += ['--fps-limit', args.fps_limit]
+    if args.fps_limit_uses_busy_wait:
+        flags.append('--fps-limit-uses-busy-wait')
     if args.track_gpu_time:
         flags.append('--track-gpu-time')
     if args.add_swap_into_gpu_time:
         flags.append('--add-swap-into-gpu-time')
+    if args.add_swap_into_frame_wall_time:
+        flags.append('--add-swap-into-frame-wall-time')
 
     # Build a command that can be run directly over ADB, for example:
     r'''
@@ -445,6 +449,22 @@ def get_gpu_time():
     return gpu_time
 
 
+def get_frame_wall_time():
+    # Pull the results from the device and parse
+    result = run_adb_shell_command_with_run_as('cat ' + _global.storage_dir + '/out.txt')
+    frame_wall_time = '0'
+
+    for line in result.splitlines():
+        # Look for "frame_wall_time" in the line and grab the second to last entry:
+        logging.debug('Checking line: %s' % line)
+
+        if "frame_wall_time" in line:
+            frame_wall_time = line.split()[-2]
+            break
+
+    return frame_wall_time
+
+
 def get_cpu_time():
     # Pull the results from the device and parse
     result = run_adb_shell_command_with_run_as('cat ' + _global.storage_dir + '/out.txt')
@@ -611,7 +631,7 @@ def collect_cpu_inst(done_event, test_fixedtime, results):
         temp_filter_file = run_adb_shell_command('mktemp /data/local/tmp/tmp.XXXXXX').strip()
         run_adb_shell_command(f'echo "CLOCK monotonic\n\
             GLOBAL_BEGIN {start_ns}\n\
-            GLOBAL_END {end_ns}"  > {temp_filter_file}')
+            GLOBAL_END {end_ns}" > {temp_filter_file}')
 
         perf_output = run_adb_shell_command(f'''simpleperf report \
             --sort dso \
@@ -879,10 +899,20 @@ def main():
         action='store_true',
         default=False)
     parser.add_argument(
+        '--fps-limit-uses-busy-wait',
+        help='Use busy wait instead of sleep to limit the framerate.',
+        action='store_true',
+        default=False)
+    parser.add_argument(
         '--track-gpu-time', help='Enables GPU time tracking', action='store_true', default=False)
     parser.add_argument(
         '--add-swap-into-gpu-time',
         help='Adds swap/offscreen blit into the gpu_time tracking',
+        action='store_true',
+        default=False)
+    parser.add_argument(
+        '--add-swap-into-frame-wall-time',
+        help='Adds swap/offscreen blit into the frame_wall_time tracking',
         action='store_true',
         default=False)
 
@@ -946,6 +976,7 @@ def run_traces(args):
         'trace': trace_width,
         'wall_time': 15,
         'gpu_time': 15,
+        'frame_wall_time': 15,
         'cpu_time': 15,
         'gpu_power': 10,
         'cpu_power': 10,
@@ -963,13 +994,15 @@ def run_traces(args):
     if args.walltimeonly:
         print('%-*s' % (trace_width, 'wall_time_per_frame'))
     else:
-        print('%-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s' % (
+        print('%-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*s' % (
             column_width['trace'],
             'trace',
             column_width['wall_time'],
             'wall_time',
             column_width['gpu_time'],
             'gpu_time',
+            column_width['frame_wall_time'],
+            'frame_wall_time',
             column_width['cpu_time'],
             'cpu_time',
             column_width['gpu_power'],
@@ -996,8 +1029,8 @@ def run_traces(args):
             'gles_cpuinst',
         ))
         output_writer.writerow([
-            'trace', 'wall_time(ms)', 'gpu_time(ms)', 'cpu_time(ms)', 'gpu_power(W)',
-            'cpu_power(W)', 'gpu_mem_sustained', 'gpu_mem_peak', 'proc_mem_median',
+            'trace', 'wall_time(ms)', 'gpu_time(ms)', 'frame_wall_time(ms)', 'cpu_time(ms)',
+            'gpu_power(W)', 'cpu_power(W)', 'gpu_mem_sustained', 'gpu_mem_peak', 'proc_mem_median',
             'proc_mem_peak', 'process_cpuinst', 'gfxlib_cpuinst', 'angle_cpuinst',
             'vulkan_cpuinst', 'gles_cpuinst'
         ])
@@ -1014,6 +1047,7 @@ def run_traces(args):
 
     wall_times = defaultdict(dict)
     gpu_times = defaultdict(dict)
+    frame_wall_times = defaultdict(dict)
     cpu_times = defaultdict(dict)
     gpu_powers = defaultdict(dict)
     cpu_powers = defaultdict(dict)
@@ -1175,6 +1209,7 @@ def run_traces(args):
         rows.clear()
         wall_times.clear()
         gpu_times.clear()
+        frame_wall_times.clear()
         cpu_times.clear()
         gpu_powers.clear()
         cpu_powers.clear()
@@ -1319,6 +1354,8 @@ def run_traces(args):
 
                 gpu_time = get_gpu_time() if args.track_gpu_time else '0'
 
+                frame_wall_time = get_frame_wall_time()
+
                 cpu_time = get_cpu_time()
 
                 gpu_mem_sustained, gpu_mem_peak = 0, 0
@@ -1344,6 +1381,10 @@ def run_traces(args):
                 if len(gpu_times[test]) == 0:
                     gpu_times[test] = defaultdict(list)
                 gpu_times[test][renderer].append(safe_cast_float(gpu_time))
+
+                if len(frame_wall_times[test]) == 0:
+                    frame_wall_times[test] = defaultdict(list)
+                frame_wall_times[test][renderer].append(safe_cast_float(frame_wall_time))
 
                 if len(cpu_times[test]) == 0:
                     cpu_times[test] = defaultdict(list)
@@ -1397,7 +1438,7 @@ def run_traces(args):
                     print('%-*s' % (trace_width, wall_time))
                 else:
                     print(
-                        '%-*s %-*s %-*s %-*s %-*s %-*s %-*i %-*i %-*i %-*i %-*s %-*s %-*s %-*s %-*s'
+                        '%-*s %-*s %-*s %-*s %-*s %-*s %-*s %-*i %-*i %-*i %-*i %-*s %-*s %-*s %-*s %-*s'
                         % (
                             column_width['trace'],
                             trace_name,
@@ -1405,6 +1446,8 @@ def run_traces(args):
                             wall_time,
                             column_width['gpu_time'],
                             gpu_time,
+                            column_width['frame_wall_time'],
+                            frame_wall_time,
                             column_width['cpu_time'],
                             cpu_time,
                             column_width['gpu_power'],
@@ -1431,10 +1474,10 @@ def run_traces(args):
                             gles_cpuinst,
                         ))
                     output_writer.writerow([
-                        mode + renderer + '_' + test, wall_time, gpu_time, cpu_time, gpu_power,
-                        cpu_power, gpu_mem_sustained, gpu_mem_peak, proc_mem_median, proc_mem_peak,
-                        process_cpuinst, gfxlib_cpuinst, angle_cpuinst, vulkan_cpuinst,
-                        gles_cpuinst
+                        mode + renderer + '_' + test, wall_time, gpu_time, frame_wall_time,
+                        cpu_time, gpu_power, cpu_power, gpu_mem_sustained, gpu_mem_peak,
+                        proc_mem_median, proc_mem_peak, process_cpuinst, gfxlib_cpuinst,
+                        angle_cpuinst, vulkan_cpuinst, gles_cpuinst
                     ])
 
 
@@ -1461,6 +1504,9 @@ def run_traces(args):
             populate_row(rows, name, results)
 
         for name, results in gpu_times.items():
+            populate_row(rows, name, results)
+
+        for name, results in frame_wall_times.items():
             populate_row(rows, name, results)
 
         for name, results in cpu_times.items():

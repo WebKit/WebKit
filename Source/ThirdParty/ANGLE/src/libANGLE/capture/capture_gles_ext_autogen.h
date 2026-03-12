@@ -2916,6 +2916,17 @@ angle::CallCapture CaptureFramebufferTextureMultiviewOVR(const State &glState,
 
 // GL_OVR_multiview2
 
+// GL_OVR_multiview_multisampled_render_to_texture
+angle::CallCapture CaptureFramebufferTextureMultisampleMultiviewOVR(const State &glState,
+                                                                    bool isCallValid,
+                                                                    GLenum target,
+                                                                    GLenum attachment,
+                                                                    TextureID texturePacked,
+                                                                    GLint level,
+                                                                    GLsizei samples,
+                                                                    GLint baseViewIndex,
+                                                                    GLsizei numViews);
+
 // GL_QCOM_framebuffer_foveated
 angle::CallCapture CaptureFramebufferFoveationConfigQCOM(const State &glState,
                                                          bool isCallValid,

@@ -380,7 +380,9 @@ class RewritePipelineVarOutputBuilder
             TIntermDeclaration *declNode = globalVarIt->second;
             const TVariable *astVar      = &ViewDeclaration(*declNode).symbol.variable();
 
-            const ImmutableString &userVarName = astVar->name();
+            TStringStream userVarNameStream;
+            WriteNameOf(userVarNameStream, *astVar);
+            TString userVarNameStr = userVarNameStream.str();
 
             varsToReplace->insert(astVar->uniqueId().get());
 
@@ -389,7 +391,7 @@ class RewritePipelineVarOutputBuilder
             WriteWgslType(typeStream, astVar->getType(), {});
             TString type = typeStream.str();
             ImmutableString globalStructVar =
-                BuildConcatenatedImmutableString(userVarName, " : ", type.c_str(), ",");
+                BuildConcatenatedImmutableString(userVarNameStr.c_str(), " : ", type.c_str(), ",");
             ioblock->angleGlobalMembers.push_back(globalStructVar);
 
             if (astVar->getType().isArray())
@@ -421,7 +423,7 @@ class RewritePipelineVarOutputBuilder
                     TString rowVecType = rowVecTypeStream.str();
 
                     ImmutableString colVarName =
-                        BuildConcatenatedImmutableString(userVarName, "_col", i);
+                        BuildConcatenatedImmutableString(userVarNameStr.c_str(), "_col", i);
 
                     if (ioType == IOType::Input)
                     {
@@ -446,8 +448,8 @@ class RewritePipelineVarOutputBuilder
                         // ANGLE_output_annotated.outMatArr_col1 = ANGLE_output_global.outMatArr[1];
                         // ANGLE_output_annotated.outMatArr_col2 = ANGLE_output_global.outMatArr[2];
                         ImmutableString extractColVec = BuildConcatenatedImmutableString(
-                            toStruct, '.', colVarName, " = ", fromStruct, '.', userVarName, '[', i,
-                            "];");
+                            toStruct, '.', colVarName, " = ", fromStruct, '.',
+                            userVarNameStr.c_str(), '[', i, "];");
                         ioblock->angleConversionFuncs.push_back(extractColVec);
                     }
                 }
@@ -459,7 +461,7 @@ class RewritePipelineVarOutputBuilder
                     // e.g. ANGLE_input_global.inMat = mat3x3<f32>(ANGLE_input_annotated.inMat_col0,
                     // ANGLE_input_annotated.inMat_col1, ANGLE_input_annotated.inMat_col2);
                     ImmutableString conversion = BuildConcatenatedImmutableString(
-                        toStruct, ".", userVarName, " = ", type.c_str(), '(',
+                        toStruct, ".", userVarNameStr.c_str(), " = ", type.c_str(), '(',
                         colVarList.str().c_str(), ");");
                     ioblock->angleConversionFuncs.push_back(conversion);
                 }
@@ -477,8 +479,9 @@ class RewritePipelineVarOutputBuilder
                 ioblock->angleAnnotatedMembers.push_back(annotatedStructVar);
 
                 // E.g. `ANGLE_input_global._uuserVar = ANGLE_input_annotated._uuserVar;`
-                ImmutableString conversion = BuildConcatenatedImmutableString(
-                    toStruct, ".", userVarName, " = ", fromStruct, ".", userVarName, ";");
+                ImmutableString conversion =
+                    BuildConcatenatedImmutableString(toStruct, ".", userVarNameStr.c_str(), " = ",
+                                                     fromStruct, ".", userVarNameStr.c_str(), ";");
                 ioblock->angleConversionFuncs.push_back(conversion);
             }
         }

@@ -559,7 +559,6 @@ angle::Result Context11::drawElementsIndirect(const gl::Context *context,
             ASSERT(counts[drawID] > 0);                                                        \
             DRAW_CALL(drawType, instanced, bvbi);                                              \
             ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE(instanced);                                    \
-            gl::MarkShaderStorageUsage(context);                                               \
         }                                                                                      \
         /* reset the uniform to zero for non-multi-draw uses of the program */                 \
         ANGLE_SET_DRAW_ID_UNIFORM(hasDrawID)(0);                                               \
@@ -922,19 +921,7 @@ gl::Caps Context11::getNativeCaps() const
     // version:
     // - If current context is ES 3.0 and below, we use D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT(8)
     //   as the value of max draw buffers because UAVs are not used.
-    // - If current context is ES 3.1 and the feature level is 11_0, the RTVs and UAVs share 8
-    //   slots. As ES 3.1 requires at least 1 atomic counter buffer in compute shaders, the value
-    //   of max combined shader output resources is limited to 7, thus only 7 RTV slots can be
-    //   used simultaneously.
-    // - If current context is ES 3.1 and the feature level is 11_1, the RTVs and UAVs share 64
-    //   slots. Currently we allocate 60 slots for combined shader output resources, so we can use
-    //   at most D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT(8) RTVs simultaneously.
-    if (mState.getClientVersion() >= gl::ES_3_1 &&
-        mRenderer->getRenderer11DeviceCaps().featureLevel == D3D_FEATURE_LEVEL_11_0)
-    {
-        caps.maxDrawBuffers      = caps.maxCombinedShaderOutputResources;
-        caps.maxColorAttachments = caps.maxCombinedShaderOutputResources;
-    }
+    // - ES 3.1 is not supported.
 
     return caps;
 }
@@ -964,12 +951,14 @@ angle::Result Context11::dispatchCompute(const gl::Context *context,
                                          GLuint numGroupsY,
                                          GLuint numGroupsZ)
 {
-    return mRenderer->dispatchCompute(context, numGroupsX, numGroupsY, numGroupsZ);
+    UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
 angle::Result Context11::dispatchComputeIndirect(const gl::Context *context, GLintptr indirect)
 {
-    return mRenderer->dispatchComputeIndirect(context, indirect);
+    UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
 angle::Result Context11::triggerDrawCallProgramRecompilation(const gl::Context *context,
@@ -1038,46 +1027,6 @@ angle::Result Context11::triggerDrawCallProgramRecompilation(const gl::Context *
             ERR() << "Error compiling dynamic pixel executable: " << infoLog.str();
             ANGLE_TRY_HR(this, E_FAIL, "Error compiling dynamic pixel executable");
         }
-    }
-
-    // Refresh the program cache entry.
-    gl::Program *program = glState.getProgram();
-    if (mMemoryProgramCache && IsSameExecutable(&program->getExecutable(), executable))
-    {
-        ANGLE_TRY(mMemoryProgramCache->updateProgram(context, program));
-    }
-
-    return angle::Result::Continue;
-}
-
-angle::Result Context11::triggerDispatchCallProgramRecompilation(const gl::Context *context)
-{
-    const auto &glState                 = context->getState();
-    gl::ProgramExecutable *executable   = glState.getProgramExecutable();
-    ProgramExecutableD3D *executableD3D = GetImplAs<ProgramExecutableD3D>(executable);
-
-    executableD3D->updateCachedImage2DBindLayout(context, gl::ShaderType::Compute);
-
-    bool recompileCS = !executableD3D->hasComputeExecutableForCachedImage2DBindLayout();
-
-    if (!recompileCS)
-    {
-        return angle::Result::Continue;
-    }
-
-    // Load the compiler if necessary and recompile the programs.
-    ANGLE_TRY(mRenderer->ensureHLSLCompilerInitialized(this));
-
-    gl::InfoLog infoLog;
-
-    ShaderExecutableD3D *computeExe = nullptr;
-    ANGLE_TRY(executableD3D->getComputeExecutableForImage2DBindLayout(this, mRenderer, &computeExe,
-                                                                      &infoLog));
-    if (!executableD3D->hasComputeExecutableForCachedImage2DBindLayout())
-    {
-        ASSERT(infoLog.getLength() > 0);
-        ERR() << "Dynamic recompilation error log: " << infoLog.str();
-        ANGLE_TRY_HR(this, E_FAIL, "Error compiling dynamic compute executable");
     }
 
     // Refresh the program cache entry.

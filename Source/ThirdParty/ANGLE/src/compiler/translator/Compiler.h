@@ -237,6 +237,9 @@ class TCompiler : public TShHandleBase
         return mShaderVersion == 100 && !IsWebGLBasedSpec(mShaderSpec);
     }
 
+    // Get built-in extensions with default behavior.
+    const TExtensionBehavior &getExtensionBehavior() const;
+
   protected:
     // Add emulated functions to the built-in function emulator.
     virtual void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
@@ -246,8 +249,6 @@ class TCompiler : public TShHandleBase
     [[nodiscard]] virtual bool translate(TIntermBlock *root,
                                          const ShCompileOptions &compileOptions,
                                          PerformanceDiagnostics *perfDiagnostics) = 0;
-    // Get built-in extensions with default behavior.
-    const TExtensionBehavior &getExtensionBehavior() const;
     const char *getSourcePath() const;
     // Relies on collectVariables having been called.
     bool isVaryingDefined(const char *varyingName);

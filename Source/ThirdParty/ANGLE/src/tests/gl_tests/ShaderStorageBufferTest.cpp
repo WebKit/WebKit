@@ -822,7 +822,7 @@ TEST_P(ShaderStorageBufferTest31, VectorSwizzleInColumnMajorMatrixTest)
 // Test that access/write to swizzle vector data in row_major matrix in shader storage block.
 TEST_P(ShaderStorageBufferTest31, VectorSwizzleInRowMajorMatrixTest)
 {
-    ANGLE_SKIP_TEST_IF(IsAndroid());
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsQualcomm());
 
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
@@ -857,8 +857,8 @@ TEST_P(ShaderStorageBufferTest31, ScalarDataInMatrixInSSBOWithRowMajorQualifier)
 {
     // TODO(jiajia.qin@intel.com): Figure out why it fails on Intel Linux platform.
     // http://anglebug.com/40644618
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
-    ANGLE_SKIP_TEST_IF(IsAndroid());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
@@ -873,9 +873,9 @@ void main()
 {
     instanceOut.data[0][0] = instanceIn.data[0][0];
     instanceOut.data[0][1] = instanceIn.data[0][1];
-    instanceOut.data[0][2] = instanceIn.data[0][2];
-    instanceOut.data[1][0] = instanceIn.data[1][0];
-    instanceOut.data[1][1] = instanceIn.data[1][1];
+    instanceOut.data[0].z = instanceIn.data[0].z;
+    instanceOut.data[1].x = instanceIn.data[1].x;
+    instanceOut.data[1].y = instanceIn.data[1].y;
     instanceOut.data[1][2] = instanceIn.data[1][2];
 }
 )";
@@ -894,7 +894,7 @@ void main()
 
 TEST_P(ShaderStorageBufferTest31, VectorDataInMatrixInSSBOWithRowMajorQualifier)
 {
-    ANGLE_SKIP_TEST_IF(IsAndroid());
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsQualcomm());
 
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
@@ -960,8 +960,8 @@ TEST_P(ShaderStorageBufferTest31, ScalarDataInMatrixInStructureInSSBOWithRowMajo
 {
     // TODO(jiajia.qin@intel.com): Figure out why it fails on Intel Linux platform.
     // http://anglebug.com/40644618
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
-    ANGLE_SKIP_TEST_IF(IsAndroid());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
@@ -980,9 +980,9 @@ void main()
 {
     instanceOut.s.data[0][0] = instanceIn.s.data[0][0];
     instanceOut.s.data[0][1] = instanceIn.s.data[0][1];
-    instanceOut.s.data[0][2] = instanceIn.s.data[0][2];
-    instanceOut.s.data[1][0] = instanceIn.s.data[1][0];
-    instanceOut.s.data[1][1] = instanceIn.s.data[1][1];
+    instanceOut.s.data[0].z = instanceIn.s.data[0].z;
+    instanceOut.s.data[1].x = instanceIn.s.data[1].x;
+    instanceOut.s.data[1].y = instanceIn.s.data[1].y;
     instanceOut.s.data[1][2] = instanceIn.s.data[1][2];
 }
 )";
@@ -1788,7 +1788,7 @@ TEST_P(ShaderStorageBufferTest31, LoadAndStoreBooleanValue)
 {
     // TODO(jiajia.qin@intel.com): Figure out why it fails on Intel Linux platform.
     // http://anglebug.com/40644618
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     constexpr char kComputeShaderSource[] = R"(#version 310 es
 layout (local_size_x=1) in;
@@ -1861,7 +1861,7 @@ TEST_P(ShaderStorageBufferTest31, LoadAndStoreBooleanVec3)
 {
     // TODO(jiajia.qin@intel.com): Figure out why it fails on Intel Linux platform.
     // http://anglebug.com/40644618
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsOpenGL());
 
@@ -1925,7 +1925,7 @@ TEST_P(ShaderStorageBufferTest31, LoadAndStoreBooleanVarAndVec2)
 {
     // TODO(jiajia.qin@intel.com): Figure out why it fails on Intel Linux platform.
     // http://anglebug.com/40644618
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsOpenGL());
 

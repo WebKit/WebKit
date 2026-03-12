@@ -3893,6 +3893,95 @@ TEST_P(VertexAttributeTest, VertexAttribPointerCopyBufferFromInvalidAddress)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that there is no crash when two vertex attribute indices are enabled and initialized via
+// glVertexAttribPointer(), but then the corresponding array buffer is deleted and recreated, and
+// for the next draws only one attribute among them is re-initialized via glVertexAttribPointer().
+TEST_P(VertexAttributeTest, VertexAttribPointerCopyBufferFromInvalidAddressAfterArrayBufferDeletion)
+{
+    // clang-format off
+    const GLfloat vertices[] = {
+        // position   // color
+        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // Lower left corner
+        1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // Bottom right corner
+        0.0f,  1.0f,  0.0f, 0.0f, 1.0f, 1.0f   // Top
+        -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  // Extra bottom left
+        1.0f,  -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,  // Extra bottom right
+        0.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f   // Extra top
+    };
+    // clang-format on
+
+    constexpr char kVS[] = R"(
+        attribute highp vec2 position;
+        attribute mediump vec4 color;
+        varying mediump vec4 fragColor;
+        varying highp vec2 fragTexCoord;
+        void main() {
+            gl_Position = vec4(position, 0.0, 1.0);
+            fragColor = color;
+            fragTexCoord = 0.5 * (position + 1.0);
+        }
+    )";
+
+    constexpr char kFS[] = R"(
+        precision mediump float;
+        varying mediump vec4 fragColor;
+        varying highp vec2 fragTexCoord;
+        void main() {
+           if (fragTexCoord.x > 0.5) {
+                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+           } else {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+           }
+        }
+    )";
+
+    mProgram = CompileProgram(kVS, kFS);
+    ASSERT_NE(0u, mProgram);
+    glBindAttribLocation(mProgram, 0, "position");
+    glBindAttribLocation(mProgram, 1, "color");
+    glUseProgram(mProgram);
+    EXPECT_GL_NO_ERROR();
+
+    glGenBuffers(1, &mBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    EXPECT_GL_NO_ERROR();
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (GLvoid *)(2 * sizeof(GLfloat)));
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_TRIANGLES, 3, 3);
+    EXPECT_GL_NO_ERROR();
+
+    // Here the original bound array buffer is deleted, but is recreated with the same data. Next,
+    // the vertex attribute pointer 0 is re-initialized, but vertex attribute pointer 1 is skipped.
+    glDeleteBuffers(1, &mBuffer);
+    glGenBuffers(1, &mBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
+    // Missing VertexAttribPointer at index 1
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_TRIANGLES, 3, 3);
+    EXPECT_GL_NO_ERROR();
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test that default unsigned integer attribute works correctly even if there is a gap in
 // attribute locations.
 TEST_P(VertexAttributeTestES3, DefaultUIntAttribWithGap)

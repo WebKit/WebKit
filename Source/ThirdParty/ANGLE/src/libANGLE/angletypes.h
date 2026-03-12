@@ -546,6 +546,40 @@ struct PixelPackState : PixelStoreStateBase
     bool reverseRowOrder = false;
 };
 
+struct SupportedSampleSet
+{
+  public:
+    // Set a sample count as being supported. Must be a power of 2 and no greater than
+    // IMPLEMENTATION_MAX_SAMPLES
+    void insert(GLuint sampleCount);
+
+    // Reset supported sample counts.
+    void clear();
+
+    // Get the number of supported samples that is at least as many as requested.  Returns 0 if
+    // there are no sample counts available
+    GLuint getNearestSamples(GLuint requestedSamples) const;
+
+    // Get the maximum number of samples supported
+    GLuint getMaxSamples() const;
+
+    // The number of supported sample counts
+    size_t size() const;
+
+    // Generate a list of supported sample counts
+    std::vector<GLint> sampleCounts() const;
+
+    SupportedSampleSet operator&(const SupportedSampleSet &other) const;
+
+  private:
+    // Bitfield of supported sample counts, each bit is represents the next power of 2. An extra bit
+    // is added for the '0' sample count.
+    static constexpr size_t kRequiredBitCount =
+        log2(static_cast<int>(IMPLEMENTATION_MAX_SAMPLES)) + 1;
+    using SupportedSamplesBitSet = angle::BitSet<kRequiredBitCount>;
+    SupportedSamplesBitSet mSupportedSamples;
+};
+
 // Used in VertexArray. For ease of tracking, we add vertex array element buffer to the end of
 // vertex array buffer bindings.
 constexpr uint32_t kElementArrayBufferIndex = MAX_VERTEX_ATTRIB_BINDINGS;
@@ -1141,8 +1175,6 @@ using ActiveTextureArray = std::array<T, IMPLEMENTATION_MAX_ACTIVE_TEXTURES>;
 using ActiveTextureTypeArray = ActiveTextureArray<TextureType>;
 
 using ImageUnitMask = angle::BitSet<IMPLEMENTATION_MAX_IMAGE_UNITS>;
-
-using SupportedSampleSet = std::set<GLuint>;
 
 template <typename T>
 using TransformFeedbackBuffersArray =

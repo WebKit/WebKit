@@ -1008,7 +1008,7 @@ ANGLE_INLINE angle::Result VertexArrayVk::syncDirtyEnabledNonStreamingAttrib(
         vk::BufferHelper &bufferHelper         = bufferVk->getBuffer();
         mCurrentArrayBuffers[attribIndex]      = &bufferHelper;
         mCurrentArrayBufferSerial[attribIndex] = bufferHelper.getBufferSerial();
-        VkDeviceSize bufferSize                = bufferHelper.getSize();
+        VkDeviceSize bufferSize = renderer->padVertexAttribBufferSizeIfNeeded(bufferVk->getSize());
 
         VkDeviceSize bufferOffset;
         if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)

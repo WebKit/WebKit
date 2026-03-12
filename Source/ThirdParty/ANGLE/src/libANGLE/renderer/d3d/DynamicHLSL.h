@@ -38,7 +38,6 @@ namespace rx
 {
 class ProgramD3DMetadata;
 class ShaderD3D;
-struct ShaderStorageBlock;
 
 // This class needs to match OutputHLSL::decorate
 class DecorateVariable final : angle::NonCopyable
@@ -152,7 +151,6 @@ class DynamicHLSL : angle::NonCopyable
         const std::string &sourceShader,
         const gl::InputLayout &inputLayout,
         const std::vector<gl::ProgramInput> &shaderAttributes,
-        const std::vector<rx::ShaderStorageBlock> &shaderStorageBlocks,
         size_t baseUAVRegister);
     static std::string GeneratePixelShaderForOutputSignature(
         RendererD3D *renderer,
@@ -161,7 +159,6 @@ class DynamicHLSL : angle::NonCopyable
         FragDepthUsage fragDepthUsage,
         bool usesSampleMask,
         const std::vector<GLenum> &outputLayout,
-        const std::vector<rx::ShaderStorageBlock> &shaderStorageBlocks,
         size_t baseUAVRegister);
     static std::string GenerateShaderForImage2DBindSignature(
         ProgramExecutableD3D &executableD3D,

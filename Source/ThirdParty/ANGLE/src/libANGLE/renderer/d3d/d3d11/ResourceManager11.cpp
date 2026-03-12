@@ -125,15 +125,6 @@ HRESULT CreateResource(ID3D11Device *device,
 }
 
 HRESULT CreateResource(ID3D11Device *device,
-                       const ShaderData *desc,
-                       void * /*initData*/,
-                       ID3D11ComputeShader **resourceOut)
-{
-    SCOPED_ANGLE_HISTOGRAM_TIMER_US("GPU.ANGLE.D3D11.CreateComputeShaderUs");
-    return device->CreateComputeShader(desc->get(), desc->size(), nullptr, resourceOut);
-}
-
-HRESULT CreateResource(ID3D11Device *device,
                        const D3D11_DEPTH_STENCIL_DESC *desc,
                        void * /*initData*/,
                        ID3D11DepthStencilState **resourceOut)

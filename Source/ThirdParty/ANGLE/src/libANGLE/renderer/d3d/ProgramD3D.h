@@ -102,7 +102,6 @@ class ProgramD3D : public ProgramImpl
     class GetVertexExecutableTask;
     class GetPixelExecutableTask;
     class GetGeometryExecutableTask;
-    class GetComputeExecutableTask;
     class LinkLoadTaskD3D;
     class LinkTaskD3D;
     class LoadTaskD3D;

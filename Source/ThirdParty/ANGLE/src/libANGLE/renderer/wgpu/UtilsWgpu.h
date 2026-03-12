@@ -26,16 +26,16 @@ enum class WgpuPipelineOp : uint8_t
 
 struct PipelineKey
 {
-    angle::FormatID srcFormatID;
-    angle::FormatID dstIntendedFormatID;
+    GLenum srcComponentType;
     angle::FormatID dstActualFormatID;
+    bool dstIntentedFormatHasAlphaBits;
     WgpuPipelineOp op;
 
     bool operator<(const PipelineKey &other) const
     {
-        return std::tie(srcFormatID, dstIntendedFormatID, dstActualFormatID, op) <
-               std::tie(other.srcFormatID, other.dstIntendedFormatID, other.dstActualFormatID,
-                        other.op);
+        return std::tie(srcComponentType, dstActualFormatID, dstIntentedFormatHasAlphaBits, op) <
+               std::tie(other.srcComponentType, other.dstActualFormatID,
+                        other.dstIntentedFormatHasAlphaBits, other.op);
     }
 };
 
@@ -56,7 +56,7 @@ class UtilsWgpu : angle::NonCopyable
                             webgpu::TextureViewHandle dst,
                             const WGPUExtent3D &size,
                             bool flipY,
-                            angle::FormatID srcFormatID,
+                            const angle::Format &srcFormat,
                             angle::FormatID dstIntendedFormatID,
                             angle::FormatID dstActualFormatID);
 
