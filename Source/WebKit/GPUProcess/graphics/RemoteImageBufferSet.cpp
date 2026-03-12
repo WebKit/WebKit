@@ -127,6 +127,16 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
 void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData& inputData, SwapBuffersDisplayRequirement& displayRequirement, bool isSync)
 {
     assertIsCurrent(workQueue());
+
+    // When AllowMultipleLayerTreeCommitPending is enabled, this message can arrive before
+    // EndPrepareForDisplay for the previous frame has been processed. If the previous frame
+    // used CGIOSurfaceContextFlushQueue (via submitDrawingCommands), the front buffer's
+    // IOSurface may still be marked "in use" by the GPU. Flush any pending GPU work now so
+    // that swapBuffersForDisplay can reuse back buffers instead of falling through to a new
+    // IOSurfaceCreate / VM_ALLOCATE allocation. This is a no-op if there is nothing pending.
+    if (RefPtr frontBuffer = m_frontBuffer)
+        frontBuffer->flushDrawingContext();
+
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: ::ensureFrontBufferForDisplay " << " - front "
         << m_frontBuffer << " (in-use " << (m_frontBuffer && protect(m_frontBuffer)->isInUse()) << ") "
         << m_backBuffer << " (in-use " << (m_backBuffer && protect(m_backBuffer)->isInUse()) << ") "
