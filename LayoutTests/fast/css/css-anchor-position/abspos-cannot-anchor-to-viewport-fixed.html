@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test that abspos elements cannot anchor to viewport-fixed elements</title>
+<meta charset="utf-8">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<!--
+  Test: abspos elements should not be able to anchor to viewport-fixed elements.
+
+  Per CSS Anchor Positioning spec, the "initial fixed containing block" is
+  conceptually the parent of the initial containing block in the containing
+  block chain. An absolutely-positioned element can have at most the initial
+  containing block (viewport) as its containing block. A viewport-fixed anchor
+  element uses the initial fixed containing block, which is above the viewport.
+  Therefore, a viewport-fixed anchor is never "strictly laid out before" a
+  non-viewport-fixed anchored element, making it an unacceptable anchor.
+
+  https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element
+  https://drafts.csswg.org/css-position-3/#def-cb
+-->
+
+<style>
+  body { margin: 0; }
+
+  /* Case 1: viewport-fixed anchor, abspos anchored (no positioned ancestor).
+     The abspos should NOT successfully anchor to the fixed element.
+     Since the anchor is unacceptable, left: anchor(...) uses its fallback (0px). */
+  #fixed-anchor {
+    position: fixed;
+    anchor-name: --fixed;
+    left: 100px;
+    top: 0;
+    width: 50px;
+    height: 50px;
+    background: orange;
+  }
+
+  #abspos-target {
+    position: absolute;
+    left: anchor(--fixed right, 0px);
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background: blue;
+  }
+
+  /* Case 2: viewport-fixed anchor, fixed anchored (both viewport-fixed).
+     The fixed anchored element SHOULD successfully anchor to the fixed anchor. */
+  #fixed-anchor-2 {
+    position: fixed;
+    anchor-name: --fixed-2;
+    left: 200px;
+    top: 50px;
+    width: 50px;
+    height: 50px;
+    background: green;
+  }
+
+  #fixed-target {
+    position: fixed;
+    left: anchor(--fixed-2 right);
+    top: 50px;
+    width: 10px;
+    height: 10px;
+    background: purple;
+  }
+
+  /* Case 3: anchor is a descendant of a fixed element but NOT itself fixed.
+     An abspos element SHOULD be able to anchor to it (regression guard).
+     This matches the scenario from WPT anchor-position-002.html case 3. */
+  #transform-container {
+    position: relative;
+    transform: translate(0, 0); /* Creates a containing block */
+  }
+
+  #fixed-parent {
+    position: fixed;
+    left: 300px;
+    top: 100px;
+  }
+
+  #child-anchor {
+    anchor-name: --child;
+    width: 30px;
+    height: 30px;
+    background: red;
+  }
+
+  #abspos-target-2 {
+    position: absolute;
+    left: anchor(--child right);
+    top: 100px;
+    width: 10px;
+    height: 10px;
+    background: cyan;
+  }
+</style>
+
+<!-- Case 1: Fixed anchor + abspos target (should NOT anchor) -->
+<div id="fixed-anchor"></div>
+<div id="abspos-target"></div>
+
+<!-- Case 2: Fixed anchor + fixed target (SHOULD anchor) -->
+<div id="fixed-anchor-2"></div>
+<div id="fixed-target"></div>
+
+<!-- Case 3: Descendant of fixed + abspos target (SHOULD anchor) -->
+<div id="transform-container">
+  <div id="fixed-parent">
+    <div id="child-anchor"></div>
+  </div>
+  <div id="abspos-target-2"></div>
+</div>
+
+<script>
+  test(function() {
+    // Case 1: abspos should NOT anchor to viewport-fixed element.
+    // anchor() should use its fallback value (0px), so left should be 0.
+    const target = document.getElementById('abspos-target');
+    assert_equals(target.offsetLeft, 0,
+      'abspos element should not anchor to a viewport-fixed element; left should be 0 (fallback)');
+  }, 'abspos element cannot anchor to a viewport-fixed element');
+
+  test(function() {
+    // Case 2: fixed element SHOULD anchor to another viewport-fixed element.
+    // left: anchor(--fixed-2 right) = 200px + 50px = 250px
+    const anchor = document.getElementById('fixed-anchor-2');
+    const target = document.getElementById('fixed-target');
+    const anchorRect = anchor.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();

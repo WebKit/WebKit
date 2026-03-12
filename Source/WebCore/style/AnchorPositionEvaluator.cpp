@@ -1157,6 +1157,24 @@ static bool isAcceptableAnchorElement(const RenderBoxModelObject& anchorRenderer
         return true;
     case TopLayerStatus::Same: {
         // "- Both elements are in the same top layer..."
+
+        // Per the CSS spec, a viewport-fixed element (position: fixed using the
+        // viewport as its containing block) actually uses the "initial fixed
+        // containing block", which is conceptually the parent of the initial
+        // containing block in the containing block chain.
+        // https://drafts.csswg.org/css-position-3/#def-cb
+        // An absolutely-positioned element's containing block chain can reach at
+        // most the initial containing block (viewport), never the initial fixed
+        // containing block above it. Therefore, a viewport-fixed anchor element
+        // is never "strictly laid out before" a non-viewport-fixed anchored element.
+        // https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element
+        bool anchorIsViewportFixed = anchorRenderer.isFixedPositioned()
+            && anchorRenderer.container() && anchorRenderer.container()->isRenderView();
+        bool anchoredIsViewportFixed = anchorPositionedRenderer->isFixedPositioned()
+            && containingBlock->isRenderView();
+        if (anchorIsViewportFixed && !anchoredIsViewportFixed)
+            return false;
+
         auto* penultimateElement = penultimateContainingBlockChainElement(anchorRenderer, containingBlock.get());
         if (!penultimateElement)
             return false;

@@ -1,0 +1,5 @@
+
+PASS abspos element cannot anchor to a viewport-fixed element
+PASS fixed element can anchor to a viewport-fixed element
+PASS abspos element can anchor to a descendant of a fixed element
+
