@@ -978,7 +978,6 @@ macro loadStoreAdvanceMCAndMakePointer(instrLenReg, wasmAddrReg, size, scratch, 
     advanceMC(memoryIndexSize + sizeof IPInt::Const32Metadata)
 
 .doneLoadingWasmAddress:
-
     btinz scratch, .memoryIsNotZero
     bpaeq scratch2, boundsCheckingSize, .outOfBounds # scratch2 contains wasm address + size - 1
     addp memoryBase, wasmAddrReg
