@@ -37,7 +37,7 @@ public:
     size_t length() const { return m_array.size(); };
     RefPtr<CSSNumericValue> item(size_t index);
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_array.size(); }
-    const Vector<Ref<CSSNumericValue>>& array() const { return m_array; }
+    const Vector<Ref<CSSNumericValue>>& array() const LIFETIME_BOUND { return m_array; }
     void forEach(Function<void(const CSSNumericValue&, bool first)>);
 
 private:

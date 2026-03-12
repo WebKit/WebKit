@@ -142,7 +142,7 @@ public:
     void setAttachedWindowWidth(unsigned height) override;
 
 #if !PLATFORM(IOS_FAMILY)
-    const WebCore::FloatRect& sheetRect() const { return m_sheetRect; }
+    const WebCore::FloatRect& sheetRect() const LIFETIME_BOUND { return m_sheetRect; }
 #endif
     void setSheetRect(const WebCore::FloatRect&) override;
 

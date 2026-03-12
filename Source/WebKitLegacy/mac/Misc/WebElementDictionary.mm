@@ -51,7 +51,7 @@
 
 using namespace WebCore;
 
-static RetainPtr<CFMutableDictionaryRef>& lookupTable()
+static RetainPtr<CFMutableDictionaryRef>& NODELETE lookupTable()
 {
     static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> lookupTable;
     return lookupTable;

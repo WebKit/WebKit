@@ -76,7 +76,7 @@ public:
     bool wasTerminated() const { return m_wasTerminated; }
 
     String identifier() const { return m_identifier; }
-    const String& name() const { return m_options.name; }
+    const String& name() const LIFETIME_BOUND { return m_options.name; }
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 

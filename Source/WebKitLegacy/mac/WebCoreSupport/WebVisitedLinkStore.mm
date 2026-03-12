@@ -39,7 +39,7 @@ using namespace WebCore;
 
 static bool s_shouldTrackVisitedLinks;
 
-static HashSet<WeakRef<WebVisitedLinkStore>>& visitedLinkStores()
+static HashSet<WeakRef<WebVisitedLinkStore>>& NODELETE visitedLinkStores()
 {
     static NeverDestroyed<HashSet<WeakRef<WebVisitedLinkStore>>> visitedLinkStores;
 

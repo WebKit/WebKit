@@ -47,7 +47,7 @@ public:
     // The successor for this case value is at the same index.
     int64_t caseValue(unsigned index) const { return m_values[index]; }
     
-    const Vector<int64_t>& caseValues() const { return m_values; }
+    const Vector<int64_t>& caseValues() const LIFETIME_BOUND { return m_values; }
 
     CaseCollection cases(const BasicBlock* owner) const { return CaseCollection(this, owner); }
     CaseCollection cases() const { return cases(owner); }

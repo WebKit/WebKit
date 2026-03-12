@@ -75,11 +75,11 @@ struct BackgroundLayer {
     BackgroundLayer(ImageOrNone&&);
     BackgroundLayer(RefPtr<Image>&&);
 
-    const ImageOrNone& image() const { return m_image; }
-    const PositionX& positionX() const { return m_positionX; }
-    const PositionY& positionY() const { return m_positionY; }
-    const BackgroundSize& size() const { return m_size; }
-    const RepeatStyle& repeat() const { return m_repeat; }
+    const ImageOrNone& image() const LIFETIME_BOUND { return m_image; }
+    const PositionX& positionX() const LIFETIME_BOUND { return m_positionX; }
+    const PositionY& positionY() const LIFETIME_BOUND { return m_positionY; }
+    const BackgroundSize& size() const LIFETIME_BOUND { return m_size; }
+    const RepeatStyle& repeat() const LIFETIME_BOUND { return m_repeat; }
     FillAttachment attachment() const { return static_cast<FillAttachment>(m_attachment); }
     FillBox clip() const { return static_cast<FillBox>(m_clip); }
     FillBox origin() const { return static_cast<FillBox>(m_origin); }

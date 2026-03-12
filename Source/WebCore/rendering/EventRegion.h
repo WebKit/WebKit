@@ -137,22 +137,22 @@ public:
     bool contains(const IntRect& rect) const { return m_region.contains(rect); }
     bool intersects(const IntRect& rect) const { return m_region.intersects(rect); }
 
-    const Region& region() const { return m_region; }
+    const Region& region() const LIFETIME_BOUND { return m_region; }
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     bool hasTouchActions() const { return !m_touchActionRegions.isEmpty(); }
     WEBCORE_EXPORT OptionSet<TouchAction> touchActionsForPoint(const IntPoint&) const;
-    const Region* regionForTouchAction(TouchAction) const;
+    const Region* regionForTouchAction(TouchAction) const LIFETIME_BOUND;
 #endif
 
 #if ENABLE(TOUCH_EVENT_REGIONS)
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(EventTrackingRegionsEventType, const IntPoint&) const;
-    const EventTrackingRegions& touchEventListenerRegion() const { return m_touchEventListenerRegion; }
+    const EventTrackingRegions& touchEventListenerRegion() const LIFETIME_BOUND { return m_touchEventListenerRegion; }
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
     WEBCORE_EXPORT OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
-    const Region& NODELETE eventListenerRegionForType(EventListenerRegionType) const;
+    const Region& NODELETE eventListenerRegionForType(EventListenerRegionType) const LIFETIME_BOUND;
 #endif
 
 #if ENABLE(EDITABLE_REGION)
@@ -165,7 +165,7 @@ public:
     void dump(TextStream&) const;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    const Vector<InteractionRegion>& interactionRegions() const { return m_interactionRegions; }
+    const Vector<InteractionRegion>& interactionRegions() const LIFETIME_BOUND { return m_interactionRegions; }
     void appendInteractionRegions(const Vector<InteractionRegion>&);
     void clearInteractionRegions();
 #endif

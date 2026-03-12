@@ -26,6 +26,9 @@
 #import "config.h"
 #import "MediaDeviceRouteController.h"
 
+#import "MediaStrategy.h"
+#import "PlatformStrategies.h"
+
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
 #import "MediaDeviceRoute.h"

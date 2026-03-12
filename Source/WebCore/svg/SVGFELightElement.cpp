@@ -64,8 +64,8 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& doc
 
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
 {
-    for (Ref child : childrenOfType<SVGElement>(*svgElement)) {
-        if (auto* element = dynamicDowncast<SVGFELightElement>(child.get()))
+    for (auto& child : childrenOfType<SVGElement>(*svgElement)) {
+        if (auto* element = dynamicDowncast<SVGFELightElement>(child))
             return const_cast<SVGFELightElement*>(element);
     }
     return nullptr;
@@ -75,34 +75,34 @@ void SVGFELightElement::attributeChanged(const QualifiedName& name, const AtomSt
 {
     switch (name.nodeName()) {
     case AttributeNames::azimuthAttr:
-        Ref { m_azimuth }->setBaseValInternal(newValue.toFloat());
+        m_azimuth->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::elevationAttr:
-        Ref { m_elevation }->setBaseValInternal(newValue.toFloat());
+        m_elevation->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::xAttr:
-        Ref { m_x }->setBaseValInternal(newValue.toFloat());
+        m_x->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::yAttr:
-        Ref { m_y }->setBaseValInternal(newValue.toFloat());
+        m_y->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::zAttr:
-        Ref { m_z }->setBaseValInternal(newValue.toFloat());
+        m_z->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::pointsAtXAttr:
-        Ref { m_pointsAtX }->setBaseValInternal(newValue.toFloat());
+        m_pointsAtX->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::pointsAtYAttr:
-        Ref { m_pointsAtY }->setBaseValInternal(newValue.toFloat());
+        m_pointsAtY->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::pointsAtZAttr:
-        Ref { m_pointsAtZ }->setBaseValInternal(newValue.toFloat());
+        m_pointsAtZ->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::specularExponentAttr:
-        Ref { m_specularExponent }->setBaseValInternal(newValue.toFloat());
+        m_specularExponent->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::limitingConeAngleAttr:
-        Ref { m_limitingConeAngle }->setBaseValInternal(newValue.toFloat());
+        m_limitingConeAngle->setBaseValInternal(newValue.toFloat());
         break;
     default:
         break;

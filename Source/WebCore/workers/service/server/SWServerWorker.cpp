@@ -412,7 +412,7 @@ void SWServerWorker::didFailHeartBeatCheck()
 
 WorkerThreadMode SWServerWorker::workerThreadMode() const
 {
-    if ((m_server && protect(server())->shouldRunServiceWorkersOnMainThreadForTesting()) || serviceWorkerPageIdentifier())
+    if ((m_server && server()->shouldRunServiceWorkersOnMainThreadForTesting()) || serviceWorkerPageIdentifier())
         return WorkerThreadMode::UseMainThread;
     return WorkerThreadMode::CreateNewThread;
 }

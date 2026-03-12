@@ -74,17 +74,17 @@ public:
     LayoutUnit NODELETE unclampedBaseSize() const;
     void setBaseSize(LayoutUnit);
 
-    const LayoutUnit& NODELETE growthLimit() const;
+    const LayoutUnit& NODELETE growthLimit() const LIFETIME_BOUND;
     bool growthLimitIsInfinite() const { return m_growthLimit == infinity; }
     void setGrowthLimit(LayoutUnit);
 
     bool infiniteGrowthPotential() const { return growthLimitIsInfinite() || m_infinitelyGrowable; }
     LayoutUnit growthLimitIfNotInfinite() const;
 
-    const LayoutUnit& plannedSize() const { return m_plannedSize; }
+    const LayoutUnit& plannedSize() const LIFETIME_BOUND { return m_plannedSize; }
     void setPlannedSize(LayoutUnit plannedSize) { m_plannedSize = plannedSize; }
 
-    const LayoutUnit& tempSize() const { return m_tempSize; }
+    const LayoutUnit& tempSize() const LIFETIME_BOUND { return m_tempSize; }
     void NODELETE setTempSize(const LayoutUnit&);
     void NODELETE growTempSize(const LayoutUnit&);
 
@@ -94,7 +94,7 @@ public:
     void NODELETE setGrowthLimitCap(std::optional<LayoutUnit>);
     std::optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
-    const Style::GridTrackSize& NODELETE cachedTrackSize() const;
+    const Style::GridTrackSize& NODELETE cachedTrackSize() const LIFETIME_BOUND;
     void setCachedTrackSize(const Style::GridTrackSize&);
 
 private:
@@ -124,7 +124,7 @@ public:
     void reset();
 
     // Required by RenderGrid. Try to minimize the exposed surface.
-    const Grid& grid() const { return m_grid; }
+    const Grid& grid() const LIFETIME_BOUND { return m_grid; }
 
     const RenderGrid* renderGrid() const { return m_renderGrid; };
 
@@ -141,8 +141,8 @@ public:
     void cacheBaselineAlignedItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType, bool cachingRowSubgridsForRootGrid);
     void clearBaselineItemsCache();
 
-    Vector<UniqueRef<GridTrack>>& tracks(Style::GridTrackSizingDirection direction) { return direction == Style::GridTrackSizingDirection::Columns ? m_columns : m_rows; }
-    const Vector<UniqueRef<GridTrack>>& tracks(Style::GridTrackSizingDirection direction) const { return direction == Style::GridTrackSizingDirection::Columns ? m_columns : m_rows; }
+    Vector<UniqueRef<GridTrack>>& tracks(Style::GridTrackSizingDirection direction) LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_columns : m_rows; }
+    const Vector<UniqueRef<GridTrack>>& tracks(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_columns : m_rows; }
 
     std::optional<LayoutUnit> freeSpace(Style::GridTrackSizingDirection direction) const { return direction == Style::GridTrackSizingDirection::Columns ? m_freeSpaceColumns : m_freeSpaceRows; }
     void NODELETE setFreeSpace(Style::GridTrackSizingDirection, std::optional<LayoutUnit>);

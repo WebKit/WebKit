@@ -32,6 +32,7 @@
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
+#include "PseudoElementUtilitiesInlines.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
@@ -299,7 +300,7 @@ bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const RenderStyle* 
         return false;
     if (!m_updater.renderTreePosition().parent().canHaveGeneratedChildren())
         return false;
-    if (!pseudoElementRendererIsNeeded(style))
+    if (!Style::pseudoElementRendererIsNeeded(*style))
         return false;
     return true;
 }

@@ -1,4 +1,3 @@
-If you find a buggy test, please file a bug and tag one of the suggested reviewers.
 
 PASS If payment method identifier are supported, resolve promise with true.
 PASS If request.[[state]] is "created", then return a promise that resolves to true for known method.

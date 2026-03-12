@@ -86,7 +86,7 @@ public:
 
     WebKit::WebPageProxy& page() { return *m_pageProxy; }
     API::ViewClient& client() const { return *m_client; }
-    const WebCore::IntSize& size() const { return m_size; }
+    const WebCore::IntSize& size() const LIFETIME_BOUND { return m_size; }
     OptionSet<WebCore::ActivityState> viewState() const { return m_viewStateFlags; }
 
     virtual struct wpe_view_backend* backend() const { return nullptr; }

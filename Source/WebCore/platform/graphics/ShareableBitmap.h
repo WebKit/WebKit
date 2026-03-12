@@ -79,7 +79,7 @@ public:
     CGBitmapInfo bitmapInfo() const { return m_bitmapInfo; }
 #endif
 #if USE(SKIA)
-    const SkImageInfo& imageInfo() const { return m_imageInfo; }
+    const SkImageInfo& imageInfo() const LIFETIME_BOUND { return m_imageInfo; }
 #endif
 
     CheckedUint32 sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
@@ -121,7 +121,7 @@ public:
 
     ShareableBitmapHandle& operator=(ShareableBitmapHandle&&) = default;
 
-    SharedMemory::Handle& handle() { return m_handle; }
+    SharedMemory::Handle& handle() LIFETIME_BOUND { return m_handle; }
 
     // Take ownership of the memory for process memory accounting purposes.
     WEBCORE_EXPORT void takeOwnershipOfMemory(MemoryLedger) const;

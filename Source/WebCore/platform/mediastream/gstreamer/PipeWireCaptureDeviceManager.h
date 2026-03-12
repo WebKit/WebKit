@@ -40,7 +40,7 @@ public:
     PipeWireCaptureDeviceManager(OptionSet<CaptureDevice::DeviceType>);
 
     void computeCaptureDevices(CompletionHandler<void()>&&);
-    const Vector<CaptureDevice>& captureDevices() const { return m_devices; }
+    const Vector<CaptureDevice>& captureDevices() const LIFETIME_BOUND { return m_devices; }
     CaptureSourceOrError createCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*);
 
 private:

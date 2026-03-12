@@ -112,6 +112,11 @@ void RemoteMesh::setCameraDistance(float distance)
     m_backing->setCameraDistance(distance);
 }
 
+void RemoteMesh::setBackgroundColor(const WebModel::Float3& color)
+{
+    m_backing->setBackgroundColor(color);
+}
+
 void RemoteMesh::play(bool playing)
 {
     m_backing->play(playing);

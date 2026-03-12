@@ -42,10 +42,10 @@ public:
     virtual ~LegacyInlineTextBox();
 
     RenderSVGInlineText& NODELETE renderer() const;
-    const RenderStyle& lineStyle() const;
+    const RenderStyle& lineStyle() const LIFETIME_BOUND;
 
-    LegacyInlineTextBox* prevTextBox() const { return m_prevTextBox; }
-    LegacyInlineTextBox* nextTextBox() const { return m_nextTextBox; }
+    LegacyInlineTextBox* prevTextBox() const LIFETIME_BOUND { return m_prevTextBox; }
+    LegacyInlineTextBox* nextTextBox() const LIFETIME_BOUND { return m_nextTextBox; }
     void setNextTextBox(LegacyInlineTextBox* n) { m_nextTextBox = n; }
     void setPreviousTextBox(LegacyInlineTextBox* p) { m_prevTextBox = p; }
 

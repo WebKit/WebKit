@@ -88,7 +88,7 @@ void WebDateTimePickerMac::endPicker()
     WebDateTimePicker::endPicker();
 }
 
-void WebDateTimePickerMac::showDateTimePicker(WebCore::DateTimeChooserParameters&& params)
+void WebDateTimePickerMac::platformShowDateTimePicker(WebCore::DateTimeChooserParameters&& params)
 {
     if (m_picker) {
         [m_picker updatePicker:WTF::move(params)];

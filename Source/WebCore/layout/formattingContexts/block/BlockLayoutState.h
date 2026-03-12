@@ -91,18 +91,18 @@ public:
 
     BlockLayoutState(PlacedFloats&, MarginState, std::optional<LineClamp> = { }, TextBoxTrim = { }, Style::TextBoxEdge = CSS::Keyword::Auto { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
 
-    PlacedFloats& placedFloats() { return m_placedFloats; }
-    const PlacedFloats& placedFloats() const { return m_placedFloats; }
+    PlacedFloats& placedFloats() LIFETIME_BOUND { return m_placedFloats; }
+    const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_placedFloats; }
 
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
     Style::TextBoxEdge textBoxEdge() const { return m_textBoxEdge; }
 
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
-    const std::optional<LineGrid>& lineGrid() const { return m_lineGrid; }
+    const std::optional<LineGrid>& lineGrid() const LIFETIME_BOUND { return m_lineGrid; }
 
-    MarginState& marginState() { return m_marginState; }
-    const MarginState& marginState() const { return m_marginState; }
+    MarginState& marginState() LIFETIME_BOUND { return m_marginState; }
+    const MarginState& marginState() const LIFETIME_BOUND { return m_marginState; }
 
 private:
     PlacedFloats& m_placedFloats;

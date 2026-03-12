@@ -67,6 +67,7 @@ public:
     void reportToProfiler(Profiler::Compilation*, LinkBuffer&);
 
 private:
+    void setLinkedStartAndEnd(const LinkBuffer&);
     void dumpHeader(PrintStream&, LinkBuffer&);
     MacroAssembler::Label firstSlowLabel();
     

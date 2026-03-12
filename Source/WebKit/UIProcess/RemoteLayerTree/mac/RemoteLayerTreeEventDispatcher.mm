@@ -342,7 +342,7 @@ PlatformWheelEvent RemoteLayerTreeEventDispatcher::filteredWheelEvent(const Plat
 
 RemoteLayerTreeDrawingAreaProxyMac& RemoteLayerTreeEventDispatcher::drawingAreaMac() const
 {
-    return *downcast<RemoteLayerTreeDrawingAreaProxyMac>(CheckedRef { *m_scrollingCoordinator }->webPageProxy().drawingArea());
+    return *downcast<RemoteLayerTreeDrawingAreaProxyMac>(m_scrollingCoordinator->webPageProxy().drawingArea());
 }
 
 DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const

@@ -55,8 +55,8 @@ auto CSSValueConversion<TextUnderlinePosition>::operator()(BuilderState& state, 
         return CSS::Keyword::Auto { };
 
     TextUnderlinePositionValueEnumSet result;
-    for (Ref item : *list) {
-        switch (item->valueID()) {
+    for (auto& item : *list) {
+        switch (item.valueID()) {
         case CSSValueFromFont:
             if (result.contains(TextUnderlinePositionValue::Under)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();

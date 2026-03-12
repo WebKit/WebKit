@@ -128,7 +128,7 @@ public:
     CachedResource* cachedResource(const URL& url) const;
 
     typedef HashMap<String, CachedResourceHandle<CachedResource>> DocumentResourceMap;
-    const DocumentResourceMap& allCachedResources() const { return m_documentResources; }
+    const DocumentResourceMap& allCachedResources() const LIFETIME_BOUND { return m_documentResources; }
 
     void notifyFinished(const CachedResource&);
     Vector<Ref<SVGImage>> allCachedSVGImages() const;
@@ -171,7 +171,7 @@ public:
 
     void documentDidFinishLoadEvent();
 
-    ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
+    ResourceTimingInformation& resourceTimingInformation() LIFETIME_BOUND { return m_resourceTimingInfo; }
 
     KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker.get(); }
 

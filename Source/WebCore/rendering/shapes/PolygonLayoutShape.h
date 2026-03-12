@@ -43,8 +43,8 @@ public:
     {
     }
 
-    const FloatPoint& vertex1() const override { return m_vertex1; }
-    const FloatPoint& vertex2() const override { return m_vertex2; }
+    const FloatPoint& vertex1() const LIFETIME_BOUND override { return m_vertex1; }
+    const FloatPoint& vertex2() const LIFETIME_BOUND override { return m_vertex2; }
 
     bool isWithinYRange(float y1, float y2) const { return y1 <= minY() && y2 >= maxY(); }
     bool overlapsYRange(float y1, float y2) const { return y2 >= minY() && y1 <= maxY(); }

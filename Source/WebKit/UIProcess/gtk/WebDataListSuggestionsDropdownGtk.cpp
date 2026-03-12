@@ -130,11 +130,11 @@ void WebDataListSuggestionsDropdownGtk::didSelectOption(const String& selectedOp
     if (!m_page)
         return;
 
-    m_page->didSelectOption(selectedOption);
+    m_page->didSelectOption(selectedOption, m_targetFrameID);
     close();
 }
 
-void WebDataListSuggestionsDropdownGtk::show(WebCore::DataListSuggestionInformation&& information)
+void WebDataListSuggestionsDropdownGtk::platformShow(WebCore::DataListSuggestionInformation&& information)
 {
     auto* model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(m_treeView)));
     gtk_list_store_clear(model);
@@ -223,7 +223,7 @@ void WebDataListSuggestionsDropdownGtk::handleKeydownWithIdentifier(const String
         if (hasSelection) {
             GUniqueOutPtr<char> item;
             gtk_tree_model_get(model, &iter, 0, &item.outPtr(), -1);
-            m_page->didSelectOption(String::fromUTF8(item.get()));
+            m_page->didSelectOption(String::fromUTF8(item.get()), m_targetFrameID);
         }
         close();
         return;

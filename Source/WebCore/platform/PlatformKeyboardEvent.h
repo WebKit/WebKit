@@ -86,8 +86,8 @@ namespace WebCore {
         String unmodifiedText() const { return m_unmodifiedText; }
 
         String keyIdentifier() const { return m_keyIdentifier; }
-        const String& key() const { return m_key; }
-        const String& code() const { return m_code; }
+        const String& key() const LIFETIME_BOUND { return m_key; }
+        const String& code() const LIFETIME_BOUND { return m_code; }
 
         // Most compatible Windows virtual key code associated with the event.
         // Zero for Char events.
@@ -99,14 +99,14 @@ namespace WebCore {
         bool handledByInputMethod() const { return m_handledByInputMethod; }
 #endif
 #if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
-        const std::optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const { return m_preeditUnderlines; }
-        const std::optional<uint64_t>& preeditSelectionRangeStart() const { return m_preeditSelectionRangeStart; }
-        const std::optional<uint64_t>& preeditSelectionRangeLength() const { return m_preeditSelectionRangeLength; }
+        const std::optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const LIFETIME_BOUND { return m_preeditUnderlines; }
+        const std::optional<uint64_t>& preeditSelectionRangeStart() const LIFETIME_BOUND { return m_preeditSelectionRangeStart; }
+        const std::optional<uint64_t>& preeditSelectionRangeLength() const LIFETIME_BOUND { return m_preeditSelectionRangeLength; }
 #endif
 #if USE(APPKIT)
-        const Vector<KeypressCommand>& commands() const { return m_commands; }
+        const Vector<KeypressCommand>& commands() const LIFETIME_BOUND { return m_commands; }
 #elif PLATFORM(GTK)
-        const Vector<String>& commands() const { return m_commands; }
+        const Vector<String>& commands() const LIFETIME_BOUND { return m_commands; }
 #endif
 
         bool isAutoRepeat() const { return m_autoRepeat; }

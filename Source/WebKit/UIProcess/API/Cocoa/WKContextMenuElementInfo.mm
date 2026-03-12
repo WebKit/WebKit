@@ -38,7 +38,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContextMenuElementInfo.class, self))
         return;
-    _elementInfo->API::ContextMenuElementInfo::~ContextMenuElementInfo();
+    SUPPRESS_UNCOUNTED_ARG _elementInfo->API::ContextMenuElementInfo::~ContextMenuElementInfo();
     [super dealloc];
 }
 

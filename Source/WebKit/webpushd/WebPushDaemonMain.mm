@@ -165,7 +165,9 @@ int WebPushDaemonMain(int argc, char** argv)
         if (!_set_user_dir_suffix("com.apple.webkit.webpushd")) {
             auto error = errno;
             auto errorMessage = strerror(error);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             os_log_error(OS_LOG_DEFAULT, "Failed to set temp dir: %{public}s (%d)", errorMessage, error);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             exit(1);
         }
         (void)NSTemporaryDirectory();

@@ -1402,6 +1402,7 @@ void HTMLConverter::_fillInBlock(NSTextBlock *block, Element& element, PlatformC
     if (_caches->floatPropertyValueForNode(element, CSSPropertyMaxHeight, result))
         [block setValue:result type:NSTextBlockValueTypeAbsolute forDimension:NSTextBlockDimensionMaximumHeight];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (_caches->floatPropertyValueForNode(element, CSSPropertyPaddingLeft, result))
         [block setWidth:result + extraPadding type:NSTextBlockValueTypeAbsolute forLayer:NSTextBlockLayerPadding edge:NSRectEdgeMinX];
     else
@@ -1463,6 +1464,7 @@ void HTMLConverter::_fillInBlock(NSTextBlock *block, Element& element, PlatformC
         [block setBorderColor:color.get() forEdge:NSRectEdgeMaxX];
     if ((color = _colorForElement(element, CSSPropertyBorderBottomColor)))
         [block setBorderColor:color.get() forEdge:NSRectEdgeMaxY];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static inline BOOL read2DigitNumber(std::span<const char>& p, int8_t& outval)

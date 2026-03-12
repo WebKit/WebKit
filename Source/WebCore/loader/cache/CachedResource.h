@@ -145,9 +145,9 @@ public:
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return false; }
 
-    const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
-    const URL& url() const { return m_resourceRequest.url();}
-    const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
+    const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_resourceRequest; }
+    const URL& url() const LIFETIME_BOUND { return m_resourceRequest.url(); }
+    const String& cachePartition() const LIFETIME_BOUND { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     const CookieJar* cookieJar() const { return m_cookieJar.get(); }
     Type type() const { return m_type; }
@@ -272,7 +272,7 @@ public:
     DataBufferingPolicy dataBufferingPolicy() const { return m_options.dataBufferingPolicy; }
 
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching || m_options.cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch; }
-    const ResourceLoaderOptions& options() const { return m_options; }
+    const ResourceLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
 
     virtual void destroyDecodedData() { }
 

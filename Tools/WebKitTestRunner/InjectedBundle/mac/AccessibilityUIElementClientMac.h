@@ -50,10 +50,14 @@ public:
     JSRetainPtr<JSStringRef> role() override;
     JSRetainPtr<JSStringRef> title() override;
     JSRetainPtr<JSStringRef> description() override;
+    JSRetainPtr<JSStringRef> debugDescription() final;
+    JSRetainPtr<JSStringRef> rawRoleForTesting() final;
     JSRetainPtr<JSStringRef> stringValue() override;
     JSRetainPtr<JSStringRef> domIdentifier() const override;
+    RefPtr<AccessibilityUIElement> parentElement() final;
     unsigned childrenCount() override;
     RefPtr<AccessibilityUIElement> childAtIndex(unsigned) override;
+    JSValueRef uiElementsForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly, unsigned resultsLimit) override;
     int hierarchicalLevel() const override;
     double minValue() override;
     double maxValue() override;

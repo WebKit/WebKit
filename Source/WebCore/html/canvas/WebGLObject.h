@@ -58,14 +58,14 @@ public:
         if (m_object == object)
             return *this;
         m_object = WTF::move(object);
-        if (RefPtr object = m_object)
+        if (auto* object = m_object.get())
             didBind(*object);
         return *this;
     }
     bool operator==(const T* a) const { return a == m_object; }
     bool operator==(const RefPtr<T>& a) const { return a == m_object; }
     explicit operator bool() const { return m_object; }
-    T* get() const { return m_object.get(); }
+    T* get() const LIFETIME_BOUND { return m_object.get(); }
     T* operator->() const { return m_object.get(); }
     T& operator*() const { return *m_object; }
     operator RefPtr<T>() const { return m_object; }

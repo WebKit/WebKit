@@ -209,7 +209,7 @@ PAL::SessionID NetworkMDNSRegister::sessionID() const
 
 std::optional<SharedPreferencesForWebProcess> NetworkMDNSRegister::sharedPreferencesForWebProcess() const
 {
-    RefPtr connectionToWebProcess = m_connection.get();
+    auto* connectionToWebProcess = &m_connection.get();
     if (!connectionToWebProcess)
         return std::nullopt;
 

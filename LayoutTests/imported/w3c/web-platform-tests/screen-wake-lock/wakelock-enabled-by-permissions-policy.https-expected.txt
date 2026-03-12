@@ -1,0 +1,5 @@
+
+PASS Permissions-Policy header "screen-wake-lock=*" allows the top-level document.
+PASS Permissions-Policy header "screen-wake-lock=*" allows same-origin iframes.
+PASS Permissions-Policy header "screen-wake-lock=*" allows cross-origin iframes.
+

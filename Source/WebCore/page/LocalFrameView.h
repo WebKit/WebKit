@@ -32,7 +32,6 @@
 #include <WebCore/LayoutRect.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameViewLayoutContext.h>
-#include <WebCore/Page.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/PaintPhase.h>
 #include <WebCore/RenderPtr.h>
@@ -92,6 +91,8 @@ enum class TiledBackingScrollability : uint8_t;
 Pagination::Mode NODELETE paginationModeForRenderStyle(const RenderStyle&);
 
 enum class LayoutViewportConstraint : bool { Unconstrained, ConstrainedToDocumentRect };
+
+using WeakElementEdges = RectEdges<WeakPtr<Element, WeakPtrImplWithEventTargetData>>;
 
 class LocalFrameView final : public FrameView {
     WTF_MAKE_TZONE_ALLOCATED(LocalFrameView);
@@ -319,6 +320,7 @@ public:
     LayoutRect layoutViewportRectIncludingObscuredInsets() const;
 
     std::optional<LayoutRect> visibleRectOfChild(const Frame&) const final;
+    bool ownerElementOfChildFrameUsesDarkAppearance(const Frame&) const final;
     
     static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
 
@@ -403,6 +405,7 @@ public:
 
     WEBCORE_EXPORT bool NODELETE wasScrolledByUser() const;
     bool wasEverScrolledExplicitlyByUser() const { return m_wasEverScrolledExplicitlyByUser; }
+    bool wasEverScrolledExplicitlyByUserBelowTopEdge() const { return m_wasEverScrolledExplicitlyByUserBelowTopEdge; }
 
     enum class UserScrollType : uint8_t { Explicit, Implicit };
     WEBCORE_EXPORT void setLastUserScrollType(std::optional<UserScrollType>);
@@ -1082,6 +1085,7 @@ private:
 
     std::optional<UserScrollType> m_lastUserScrollType;
     bool m_wasEverScrolledExplicitlyByUser { false };
+    bool m_wasEverScrolledExplicitlyByUserBelowTopEdge { false };
 
     bool m_shouldUpdateWhileOffscreen { true };
     bool m_canHaveScrollbars { true };

@@ -42,7 +42,7 @@ namespace WebCore {
 static inline const RenderObject* rendererFromPosition(const Position& position)
 {
     ASSERT(position.isNotNull());
-    RefPtr<Node> rendererNode;
+    Node* rendererNode = nullptr;
     switch (position.anchorType()) {
     case Position::PositionIsOffsetInAnchor:
         rendererNode = position.computeNodeAfterPosition();
@@ -246,7 +246,7 @@ std::optional<BoundaryPoint> RenderedPosition::boundaryPoint() const
 
 bool renderObjectContainsPosition(const RenderObject* target, const Position& position)
 {
-    for (CheckedPtr renderer = rendererFromPosition(position); renderer && renderer->node(); renderer = renderer->parent()) {
+    for (auto* renderer = rendererFromPosition(position); renderer && renderer->node(); renderer = renderer->parent()) {
         if (renderer == target)
             return true;
     }

@@ -595,7 +595,9 @@ Vector<char> asciiDebug(String& string);
 
 void String::show() const
 {
-    dataLogF("%s\n", asciiDebug(impl()).span().data());
+    auto ascii = asciiDebug(impl());
+    auto span = ascii.span();
+    dataLogF("%.*s\n", static_cast<int>(span.size()), span.data());
 }
 
 String* string(const char* s)

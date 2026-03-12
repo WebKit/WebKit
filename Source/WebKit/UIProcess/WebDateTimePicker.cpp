@@ -27,6 +27,7 @@
 #include "WebDateTimePicker.h"
 
 #include "WebPageProxy.h"
+#include <WebCore/DateTimeChooserParameters.h>
 
 namespace WebKit {
 
@@ -37,6 +38,12 @@ WebDateTimePicker::WebDateTimePicker(WebPageProxy& page)
 
 WebDateTimePicker::~WebDateTimePicker()
 {
+}
+
+void WebDateTimePicker::showDateTimePicker(WebCore::DateTimeChooserParameters&& params)
+{
+    m_frameID = params.rootFrameID;
+    platformShowDateTimePicker(WTF::move(params));
 }
 
 void WebDateTimePicker::endPicker()

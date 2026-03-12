@@ -96,10 +96,10 @@ static RetainPtr<NSMenu> invokeContextMenu(TestWKWebView *webView)
 
 #endif // PLATFORM(MAC)
 
-static void runTest(NSString *input, NSString *expectedHTML, NSString *expectedSelectionPath, NSInteger selectionOffset, NSString *stylesheet = nil)
+static void runTest(NSString *input, NSString *expectedHTML, NSString *expectedSelectionPath, NSInteger selectionOffset, NSString *stylesheet = nil, bool isRTL = false)
 {
     RetainPtr expectedSelection = [SmartListsTestSelectionConfiguration caretSelectionWithPath:expectedSelectionPath offset:selectionOffset];
-    RetainPtr configuration = [[SmartListsTestConfiguration alloc] initWithExpectedHTML:expectedHTML expectedSelection:expectedSelection.get() input:input stylesheet:stylesheet];
+    RetainPtr configuration = adoptNS([[SmartListsTestConfiguration alloc] initWithExpectedHTML:expectedHTML expectedSelection:expectedSelection.get() input:input stylesheet:stylesheet isRTL:isRTL]);
 
     __block bool finished = false;
     __block RetainPtr<SmartListsTestResult> result;
@@ -527,6 +527,17 @@ TEST(SmartLists, GeneratedSmartListsHaveAssociatedClassNames)
     RetainPtr expectedHTML = WTF::makeStringByReplacingAll(expectedHTMLTemplate, "<DASH_MARKER>"_s, dashMarker).createNSString();
 
     runTest(@"* A\n\n1. B\n\n- C", expectedHTML.get(), @"//body/div/div/ul/li/text()", 1, css.createNSString().get());
+}
+
+TEST(SmartLists, OrderedSmartListWithRTL)
+{
+    RetainPtr expectedHTML = @"<body dir=\"rtl\" contenteditable=\"\">"
+    "<ol start=\"1\" style=\"list-style-type: decimal;\" class=\"Apple-decimal-list\" webkitsmartlistmarker=\"1.\">"
+        "<li>تفاحة</li>"
+    "</ol>"
+    "</body>";
+
+    runTest(@"1. تفاحة", expectedHTML.get(), @"//body/ol/li[1]/text()", @"تفاحة".length, nullptr, true);
 }
 
 #endif // ENABLE_SWIFTUI

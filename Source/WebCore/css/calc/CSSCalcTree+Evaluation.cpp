@@ -250,7 +250,7 @@ std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const Evaluat
         result = evaluate(*anchor->fallback, options);
 
     if (!result)
-        protect(options.conversionData->styleBuilderState())->setCurrentPropertyInvalidAtComputedValueTime();
+        options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
 
     return result;
 }
@@ -276,7 +276,7 @@ std::optional<double> evaluate(const IndirectNode<AnchorSize>& anchorSize, const
         result = evaluate(*anchorSize->fallback, options);
 
     if (!result)
-        protect(options.conversionData->styleBuilderState())->setCurrentPropertyInvalidAtComputedValueTime();
+        options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
 
     return result;
 }

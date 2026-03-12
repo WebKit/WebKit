@@ -19,14 +19,15 @@ function test()
 function runTest() {
     window.location.hash ='#target-01';
     document.body.offsetTop;
-    window.history.back(); // This queues up a navigation, so we need to delay the call to notifyDone.
-    if (window.testRunner)
-        setTimeout(function() {
-            // Second setTimeout is because iOS WK2 updates the scroll position after history navigation via the UI process.
+    window.history.back(); // This queues up a navigation, so we need to wait for it to complete.
+    if (window.testRunner) {
+        window.addEventListener('popstate', function() {
+            // Extra setTimeout because iOS WK2 updates the scroll position after history navigation via the UI process.
             setTimeout(function() {
                 testRunner.notifyDone()
             }, 0);
-        }, 0);
+        }, { once: true });
+    }
 }
 </script>
 </head>

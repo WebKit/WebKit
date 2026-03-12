@@ -1528,7 +1528,7 @@ public:
 
     RISCV64Assembler() { }
 
-    AssemblerBuffer& buffer() { return m_buffer; }
+    AssemblerBuffer& buffer() LIFETIME_BOUND { return m_buffer; }
 
     static void* getRelocatedAddress(void* code, AssemblerLabel label)
     {

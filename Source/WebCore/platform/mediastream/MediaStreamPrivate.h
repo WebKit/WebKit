@@ -72,7 +72,7 @@ class MediaStreamPrivate final
 public:
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&);
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, RefPtr<RealtimeMediaSource>&& audioSource, RefPtr<RealtimeMediaSource>&& videoSource);
-    static Ref<MediaStreamPrivate> create(Ref<const Logger>&& logger, const MediaStreamTrackPrivateVector& tracks, String&& id = createVersion4UUIDString()) { return adoptRef(*new MediaStreamPrivate(WTF::move(logger), tracks, WTF::move(id))); }
+    static Ref<MediaStreamPrivate> create(Ref<const Logger>&& logger, MediaStreamTrackPrivateVector&& tracks, String&& id = createVersion4UUIDString()) { return adoptRef(*new MediaStreamPrivate(WTF::move(logger), WTF::move(tracks), WTF::move(id))); }
 
     WEBCORE_EXPORT virtual ~MediaStreamPrivate();
 
@@ -85,7 +85,7 @@ public:
     String id() const { return m_id; }
 
     MediaStreamTrackPrivateVector tracks() const;
-    bool hasTracks() const { return !m_trackSet.isEmpty(); }
+    bool hasTracks() const { return !m_tracks.isEmpty(); }
     void forEachTrack(NOESCAPE const Function<void(const MediaStreamTrackPrivate&)>&) const;
     void forEachTrack(NOESCAPE const Function<void(MediaStreamTrackPrivate&)>&);
     MediaStreamTrackPrivate* activeVideoTrack() { return m_activeVideoTrack.get(); }
@@ -114,7 +114,7 @@ public:
 #endif
 
 private:
-    MediaStreamPrivate(Ref<const Logger>&&, const MediaStreamTrackPrivateVector&, String&&);
+    MediaStreamPrivate(Ref<const Logger>&&, MediaStreamTrackPrivateVector&&, String&&);
 
     // MediaStreamTrackPrivateObserver
     void trackStarted(MediaStreamTrackPrivate&) override;
@@ -137,7 +137,7 @@ private:
     WeakHashSet<MediaStreamPrivateObserver> m_observers;
     String m_id;
     WeakPtr<MediaStreamTrackPrivate> m_activeVideoTrack;
-    MemoryCompactRobinHoodHashMap<String, Ref<MediaStreamTrackPrivate>> m_trackSet;
+    Vector<Ref<MediaStreamTrackPrivate>> m_tracks;
     bool m_isActive { false };
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;

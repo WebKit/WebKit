@@ -200,7 +200,7 @@ private:
 
         Ref<JSC::Breakpoint> createDebuggerBreakpoint(JSC::BreakpointID, JSC::SourceID) const;
 
-        const Protocol::Debugger::BreakpointId& id() const { return m_id; }
+        const Protocol::Debugger::BreakpointId& id() const LIFETIME_BOUND { return m_id; }
 
         bool matchesScriptURL(const String&) const;
 

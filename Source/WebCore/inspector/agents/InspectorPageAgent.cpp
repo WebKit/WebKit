@@ -536,6 +536,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const 
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Page::FrameResourceTree>> InspectorPageAgent::getResourceTree()
 {
     RefPtr localMainFrame = m_inspectedPage->localMainFrame();
+    if (!localMainFrame)
+        return makeUnexpected("Main frame isn't local"_s);
+
     return buildObjectForFrameTree(localMainFrame.get());
 }
 

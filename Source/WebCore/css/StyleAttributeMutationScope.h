@@ -59,7 +59,7 @@ public:
             shouldReadOldValue = true;
 
         if (m_element->isDefinedCustomElement()) [[unlikely]] {
-            CheckedPtr reactionQueue = m_element->reactionQueue();
+            auto* reactionQueue = m_element->reactionQueue();
             if (reactionQueue && reactionQueue->observesStyleAttribute()) {
                 m_isCustomElement = true;
                 shouldReadOldValue = true;

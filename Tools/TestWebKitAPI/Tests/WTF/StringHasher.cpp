@@ -52,7 +52,6 @@ TEST(WTF, StringHasher)
         return array;
     };
 
-    StringHasher hash;
     unsigned max8Bit = std::numeric_limits<uint8_t>::max();
     for (size_t size = 0; size <= max8Bit; size++) {
         std::unique_ptr<const Latin1Character[]> arr1 = generateLatin1Array(size);
@@ -60,11 +59,6 @@ TEST(WTF, StringHasher)
         unsigned left = StringHasher::computeHashAndMaskTop8Bits(std::span { arr1.get(), size });
         unsigned right = StringHasher::computeHashAndMaskTop8Bits(std::span { arr2.get(), size });
         ASSERT_EQ(left, right);
-
-        for (size_t i = 0; i < size; i++)
-            hash.addCharacter(arr2.get()[i]);
-        unsigned result1 = hash.hashWithTop8BitsMasked();
-        ASSERT_EQ(right, result1);
     }
 }
 

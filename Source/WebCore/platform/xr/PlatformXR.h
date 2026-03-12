@@ -364,6 +364,9 @@ struct FrameData {
     static constexpr auto LayerSetupSizeMax = std::numeric_limits<uint16_t>::max();
     struct LayerSetupData {
         std::array<std::array<uint16_t, 2>, 2> physicalSize;
+#if PLATFORM(COCOA)
+        std::array<std::array<uint16_t, 2>, 2> actualSize;
+#endif
         std::array<WebCore::IntRect, 2> viewports;
         RateMapDescription foveationRateMapDesc;
 #if PLATFORM(COCOA)

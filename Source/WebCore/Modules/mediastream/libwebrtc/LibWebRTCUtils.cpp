@@ -313,8 +313,9 @@ RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDi
     case webrtc::RtpTransceiverDirection::kRecvOnly:
         return RTCRtpTransceiverDirection::Recvonly;
     case webrtc::RtpTransceiverDirection::kInactive:
-    case webrtc::RtpTransceiverDirection::kStopped:
         return RTCRtpTransceiverDirection::Inactive;
+    case webrtc::RtpTransceiverDirection::kStopped:
+        return RTCRtpTransceiverDirection::Stopped;
     };
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -331,6 +332,8 @@ webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiver
         return webrtc::RtpTransceiverDirection::kRecvOnly;
     case RTCRtpTransceiverDirection::Inactive:
         return webrtc::RtpTransceiverDirection::kInactive;
+    case RTCRtpTransceiverDirection::Stopped:
+        return webrtc::RtpTransceiverDirection::kStopped;
     };
 
     RELEASE_ASSERT_NOT_REACHED();

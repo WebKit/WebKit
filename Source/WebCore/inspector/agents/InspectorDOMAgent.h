@@ -227,7 +227,7 @@ public:
     void inspect(Node*);
     void focusNode();
 
-    InspectorHistory* history() { return m_history.get(); }
+    InspectorHistory* history() LIFETIME_BOUND { return m_history.get(); }
     Vector<Document*> documents();
     Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&);
     void reset();

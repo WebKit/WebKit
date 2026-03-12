@@ -79,7 +79,7 @@ void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomStr
     }
     case AttributeNames::orientAttr: {
         auto pair = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(*this, newValue);
-        Ref { m_orientAngle }->setBaseValInternal(pair.first);
+        m_orientAngle->setBaseValInternal(pair.first);
         Ref { m_orientType }->setBaseValInternal(pair.second);
         return;
     }
@@ -165,7 +165,7 @@ void SVGMarkerElement::setOrientToAuto()
 
 void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 {
-    Ref { m_orientAngle }->baseVal()->newValueSpecifiedUnits(angle.unitType(), angle.valueInSpecifiedUnits());
+    m_orientAngle->baseVal()->newValueSpecifiedUnits(angle.unitType(), angle.valueInSpecifiedUnits());
     invalidateMarkerResource();
 }
 

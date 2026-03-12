@@ -339,7 +339,7 @@ public:
 
     void detach(VM&);
     bool isDetached() { return !m_contents.m_data; }
-    InlineWatchpointSet& detachingWatchpointSet() { return m_detachingWatchpointSet; }
+    InlineWatchpointSet& detachingWatchpointSet() LIFETIME_BOUND { return m_detachingWatchpointSet; }
 
     static constexpr ptrdiff_t offsetOfSizeInBytes() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_sizeInBytes); }
     static constexpr ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_data); }

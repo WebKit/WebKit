@@ -125,6 +125,11 @@ FUNCTION(allowTLSCertificateChainForLocalPCMTesting)
 ARGUMENTS(WebCore::CertificateInfo)
 END
 
+FUNCTION(fetchRegistrableDomains)
+ARGUMENTS()
+REPLY(Vector<WebCore::RegistrableDomain>)
+END
+
 #undef FUNCTION
 #undef ARGUMENTS
 #undef REPLY
@@ -138,11 +143,22 @@ EMPTY_REPLY(destroyStoreForTesting);
 EMPTY_REPLY(storeUnattributed);
 #undef EMPTY_REPLY
 
-PCM::EncodedMessage toStringForTesting::encodeReply(String reply)
+template<typename T>
+static PCM::EncodedMessage encodeReplyImpl(T&& payload)
 {
     Daemon::Encoder encoder;
-    encoder << reply;
+    encoder << std::forward<T>(payload);
     return encoder.takeBuffer();
+}
+
+PCM::EncodedMessage toStringForTesting::encodeReply(String reply)
+{
+    return encodeReplyImpl(WTF::move(reply));
+}
+
+PCM::EncodedMessage fetchRegistrableDomains::encodeReply(Vector<WebCore::RegistrableDomain> domains)
+{
+    return encodeReplyImpl(WTF::move(domains));
 }
 
 } // namespace MessageInfo
@@ -169,6 +185,7 @@ bool messageTypeSendsReply(MessageType messageType)
     case MessageType::ToStringForTesting:
     case MessageType::Clear:
     case MessageType::ClearForRegistrableDomain:
+    case MessageType::FetchRegistrableDomains:
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -305,6 +322,9 @@ void decodeMessageAndSendToManager(const Daemon::Connection& connection, Message
         break;
     case PCM::MessageType::AllowTLSCertificateChainForLocalPCMTesting:
         handlePCMMessage<MessageInfo::allowTLSCertificateChainForLocalPCMTesting>(encodedMessage);
+        break;
+    case PCM::MessageType::FetchRegistrableDomains:
+        handlePCMMessageWithReply<MessageInfo::fetchRegistrableDomains>(encodedMessage, WTF::move(replySender));
         break;
     }
 }

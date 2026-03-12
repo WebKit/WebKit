@@ -88,7 +88,7 @@ bool MatchResultCache::isUsableAfterInlineStyleChange(const MatchResultCache::En
     if (entry.inlineStyle.ptr() != &currentInlineStyle)
         return false;
 
-    Ref inlineStyle = entry.inlineStyle;
+    auto& inlineStyle = entry.inlineStyle;
 
     // Only allow the same exact properties after a change. This way the previous values in RenderStyle are guranteed to get overwritten.
     // Adding properties could be allowed without other changes. Removal would require resetting the removed property to initial

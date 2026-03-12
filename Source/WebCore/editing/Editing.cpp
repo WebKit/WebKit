@@ -274,8 +274,8 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Cont
         return { };
 
     // position falls before highestRoot.
-    if (position < firstPositionInNode(highestRoot) && highestRoot->hasEditableStyle())
-        return firstPositionInNode(highestRoot);
+    if (auto result = firstPositionInNode(*highestRoot); position < result && highestRoot->hasEditableStyle())
+        return result;
 
     Position candidate = position;
 
@@ -284,13 +284,13 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Cont
         if (!shadowAncestor)
             return { };
 
-        candidate = positionAfterNode(shadowAncestor.get());
+        candidate = positionAfterNode(*shadowAncestor);
     }
 
-    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && protect(candidate.deprecatedNode())->isDescendantOf(*highestRoot))
-        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentAfterNode(protect(candidate.deprecatedNode()).get()) : nextVisuallyDistinctCandidate(candidate);
+    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(*highestRoot))
+        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentAfterNode(*candidate.deprecatedNode()) : nextVisuallyDistinctCandidate(candidate);
 
-    if (candidate.deprecatedNode() && !protect(candidate.deprecatedNode())->isInclusiveDescendantOf(*highestRoot))
+    if (candidate.deprecatedNode() && !candidate.deprecatedNode()->isInclusiveDescendantOf(*highestRoot))
         return { };
 
     return candidate;
@@ -302,8 +302,8 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
         return { };
 
     // When position falls after highestRoot, the result is easy to compute.
-    if (position > lastPositionInNode(highestRoot))
-        return lastPositionInNode(highestRoot);
+    if (auto result = lastPositionInNode(*highestRoot); position > result)
+        return result;
 
     Position candidate = position;
 
@@ -315,10 +315,10 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
         candidate = firstPositionInOrBeforeNode(shadowAncestor.get());
     }
 
-    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && protect(candidate.deprecatedNode())->isDescendantOf(*highestRoot))
-        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentBeforeNode(protect(candidate.deprecatedNode()).get()) : previousVisuallyDistinctCandidate(candidate);
+    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(*highestRoot))
+        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentBeforeNode(*candidate.deprecatedNode()) : previousVisuallyDistinctCandidate(candidate);
 
-    if (candidate.deprecatedNode() && !protect(candidate.deprecatedNode())->isInclusiveDescendantOf(*highestRoot))
+    if (candidate.deprecatedNode() && !candidate.deprecatedNode()->isInclusiveDescendantOf(*highestRoot))
         return { };
     
     return candidate;
@@ -456,7 +456,7 @@ VisiblePosition visiblePositionBeforeNode(Node& node)
         return VisiblePosition(firstPositionInOrBeforeNode(&node));
     ASSERT(node.parentNode());
     ASSERT(!node.parentNode()->isShadowRoot());
-    return positionInParentBeforeNode(&node);
+    return positionInParentBeforeNode(node);
 }
 
 // Returns the visible position at the ending of a node
@@ -466,7 +466,7 @@ VisiblePosition visiblePositionAfterNode(Node& node)
         return VisiblePosition(lastPositionInOrAfterNode(&node));
     ASSERT(node.parentNode());
     ASSERT(!node.parentNode()->isShadowRoot());
-    return positionInParentAfterNode(&node);
+    return positionInParentAfterNode(node);
 }
 
 VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element& element, const IntPoint& point)
@@ -496,7 +496,7 @@ VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element& 
 
 bool isListHTMLElement(Node* node)
 {
-    return node && (is<HTMLUListElement>(*node) || is<HTMLOListElement>(*node) || is<HTMLDListElement>(*node));
+    return isAnyOf<HTMLUListElement, HTMLOListElement, HTMLDListElement>(node);
 }
 
 bool isListItem(const Node& node)
@@ -556,7 +556,7 @@ RefPtr<Node> highestEnclosingNodeOfType(const Position& position, bool (*nodeIsO
 
 static bool hasARenderedDescendant(Node* node, Node* excludedNode)
 {
-    for (RefPtr n = node->firstChild(); n;) {
+    for (auto* n = node->firstChild(); n;) {
         if (n == excludedNode) {
             n = NodeTraversal::nextSkippingChildren(*n, node);
             continue;
@@ -589,8 +589,8 @@ RefPtr<Element> enclosingTableCell(const Position& position)
 
 RefPtr<Element> enclosingAnchorElement(const Position& p)
 {
-    for (RefPtr node = p.deprecatedNode(); node; node = node->parentNode()) {
-        if (RefPtr element = dynamicDowncast<Element>(*node); element && element->isLink())
+    for (auto* node = p.deprecatedNode(); node; node = node->parentNode()) {
+        if (auto* element = dynamicDowncast<Element>(*node); element && element->isLink())
             return element;
     }
     return nullptr;
@@ -603,9 +603,9 @@ RefPtr<HTMLElement> enclosingList(Node* node)
         
     RefPtr root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
-    for (RefPtr ancestor = node->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+    for (auto* ancestor = node->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
         auto* htmlElement = dynamicDowncast<HTMLElement>(*ancestor);
-        if (htmlElement && (is<HTMLUListElement>(*htmlElement) || is<HTMLOListElement>(*htmlElement)))
+        if (htmlElement && (isAnyOf<HTMLUListElement, HTMLOListElement>(*htmlElement)))
             return htmlElement;
         if (ancestor == root)
             return nullptr;
@@ -624,7 +624,7 @@ RefPtr<Node> enclosingListChild(Node* node)
     RefPtr root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
     // FIXME: This function is inappropriately named since it starts with node instead of node->parentNode()
-    for (RefPtr n = node; n && n->parentNode(); n = n->parentNode()) {
+    for (auto* n = node; n && n->parentNode(); n = n->parentNode()) {
         if (is<HTMLLIElement>(*n) || (isListHTMLElement(n->parentNode()) && n != root))
             return n;
         if (n == root || isTableCell(*n))
@@ -677,7 +677,7 @@ bool canMergeLists(Element* firstList, Element* secondList)
         && first->hasEditableStyle() && second->hasEditableStyle() // both lists are editable
         && first->rootEditableElement() == second->rootEditableElement() // don't cross editing boundaries
         // Make sure there is no visible content between this li and the previous list.
-        && isVisiblyAdjacent(positionInParentAfterNode(first), positionInParentBeforeNode(second));
+        && isVisiblyAdjacent(positionInParentAfterNode(*first), positionInParentBeforeNode(*second));
 }
 
 static Node* previousNodeConsideringAtomicNodes(const Node* node)
@@ -729,7 +729,7 @@ Node* nextLeafNode(const Node* nodeArg)
 // FIXME: Do not require renderer, so that this can be used within fragments.
 bool isRenderedTable(const Node* node)
 {
-    RefPtr element = dynamicDowncast<HTMLElement>(node);
+    auto* element = dynamicDowncast<HTMLElement>(node);
     if (!element)
         return false;
     auto* renderer = element->renderer();
@@ -850,25 +850,25 @@ void updatePositionForNodeRemoval(Position& position, Node& node)
     switch (position.anchorType()) {
     case Position::PositionIsBeforeChildren:
         if (node.isShadowIncludingInclusiveAncestorOf(position.containerNode()))
-            position = positionInParentBeforeNode(&node);
+            position = positionInParentBeforeNode(node);
         break;
     case Position::PositionIsAfterChildren:
         if (node.isShadowIncludingInclusiveAncestorOf(position.containerNode()))
-            position = positionInParentBeforeNode(&node);
+            position = positionInParentBeforeNode(node);
         break;
     case Position::PositionIsOffsetInAnchor:
         if (position.containerNode() == node.parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node.computeNodeIndex())
             position.moveToOffset(position.offsetInContainerNode() - 1);
         else if (node.isShadowIncludingInclusiveAncestorOf(position.containerNode()))
-            position = positionInParentBeforeNode(&node);
+            position = positionInParentBeforeNode(node);
         break;
     case Position::PositionIsAfterAnchor:
         if (node.isShadowIncludingInclusiveAncestorOf(position.anchorNode()))
-            position = positionInParentAfterNode(&node);
+            position = positionInParentAfterNode(node);
         break;
     case Position::PositionIsBeforeAnchor:
         if (node.isShadowIncludingInclusiveAncestorOf(position.anchorNode()))
-            position = positionInParentBeforeNode(&node);
+            position = positionInParentBeforeNode(node);
         break;
     }
 }
@@ -889,8 +889,8 @@ int caretMinOffset(const Node& node)
     if (renderer && renderer->isRenderText())
         return renderer->caretMinOffset();
 
-    if (RefPtr pictureElement = dynamicDowncast<HTMLPictureElement>(node)) {
-        if (RefPtr firstImage = childrenOfType<HTMLImageElement>(*pictureElement).first())
+    if (auto* pictureElement = dynamicDowncast<HTMLPictureElement>(node)) {
+        if (auto* firstImage = childrenOfType<HTMLImageElement>(*pictureElement).first())
             return firstImage->computeNodeIndex();
     }
 
@@ -1056,11 +1056,11 @@ bool isNodeVisiblyContainedWithin(Node& node, const SimpleRange& range)
     auto endPosition = makeDeprecatedLegacyPosition(range.end);
 
     bool startIsVisuallySame = visiblePositionBeforeNode(node) == startPosition;
-    if (startIsVisuallySame && positionInParentAfterNode(&node) < endPosition)
+    if (startIsVisuallySame && positionInParentAfterNode(node) < endPosition)
         return true;
 
     bool endIsVisuallySame = visiblePositionAfterNode(node) == endPosition;
-    if (endIsVisuallySame && startPosition < positionInParentBeforeNode(&node))
+    if (endIsVisuallySame && startPosition < positionInParentBeforeNode(node))
         return true;
 
     return startIsVisuallySame && endIsVisuallySame;
@@ -1560,10 +1560,10 @@ EnclosingLayerInfomation computeEnclosingLayer(const SimpleRange& range)
 
         RefPtr graphicsLayer = [layer] -> RefPtr<GraphicsLayer> {
             auto* backing = layer->backing();
-            if (RefPtr scrolledContentsLayer = backing->scrolledContentsLayer())
+            if (auto* scrolledContentsLayer = backing->scrolledContentsLayer())
                 return scrolledContentsLayer;
 
-            if (RefPtr foregroundLayer = backing->foregroundLayer())
+            if (auto* foregroundLayer = backing->foregroundLayer())
                 return foregroundLayer;
 
             if (backing->isFrameLayerWithTiledBacking())

@@ -57,7 +57,7 @@ public:
     static SharedWorker* fromIdentifier(SharedWorkerObjectIdentifier);
     MessagePort& port() const { return m_port.get(); }
 
-    const String& identifierForInspector() const { return m_identifierForInspector; }
+    const String& identifierForInspector() const LIFETIME_BOUND { return m_identifierForInspector; }
 
     void didFinishLoading(const ResourceError&);
 

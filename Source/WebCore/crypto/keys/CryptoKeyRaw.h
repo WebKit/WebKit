@@ -36,7 +36,7 @@ public:
         return adoptRef(*new CryptoKeyRaw(identifier, WTF::move(keyData), usages));
     }
 
-    const Vector<uint8_t>& key() const { return m_key; }
+    const Vector<uint8_t>& key() const LIFETIME_BOUND { return m_key; }
 
 private:
     CryptoKeyRaw(CryptoAlgorithmIdentifier, Vector<uint8_t>&& keyData, CryptoKeyUsageBitmap);

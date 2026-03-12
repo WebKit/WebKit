@@ -41,15 +41,15 @@ async function dispatchMouseActions(actions, pointerType)
                 origin.y = bounds.top + (bounds.height / 2.0);
             }
             logDebug(`eventSender.mouseMoveTo(${action.x + origin.x}, ${action.y + origin.y})`);
-            eventSender.mouseMoveTo(action.x + origin.x, action.y + origin.y, pointerType);
+            await eventSender.asyncMouseMoveTo(action.x + origin.x, action.y + origin.y, pointerType);
             break;
         case "pointerDown":
             logDebug(`eventSender.mouseDown()`);
-            eventSender.mouseDown(action.button, [], pointerType);
+            await eventSender.asyncMouseDown(action.button, [], pointerType);
             break;
         case "pointerUp":
             logDebug(`eventSender.mouseUp()`);
-            eventSender.mouseUp(action.button, [], pointerType);
+            await eventSender.asyncMouseUp(action.button, [], pointerType);
             break;
         case "pause":
             logDebug(`pause(${action.duration})`);
@@ -364,7 +364,7 @@ window.test_driver_internal.send_keys = async function(element, keys)
     }
 
     for (const key of keyList)
-        eventSender.keyDown(key, modifiers);
+        await eventSender.asyncKeyDown(key, modifiers);
 }
 
 /**
@@ -385,9 +385,9 @@ window.test_driver_internal.click = async function (element, coords)
         return;
     }
 
-    eventSender.mouseMoveTo(coords.x, coords.y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(coords.x, coords.y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
 /**

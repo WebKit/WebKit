@@ -48,7 +48,8 @@ public:
     bool containsOnlyASCIIWhitespace() const;
 
     // Like appendData, but optimized for the parser (e.g., no mutation events).
-    void parserAppendData(StringView);
+    // Using the same StringBuilder across calls avoids O(n^2) behavior.
+    void parserAppendData(StringView, StringBuilder&);
 
 protected:
     CharacterData(Document& document, String&& text, NodeType type, OptionSet<TypeFlag> typeFlags = { })

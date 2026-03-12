@@ -79,7 +79,7 @@ public:
     void setFollowSystemSettings(std::optional<bool> followSystemSettings) { m_followSystemSettings = followSystemSettings.value_or(s_followSystemSettingsDefault); }
 
 #if USE(CAIRO)
-    const cairo_font_options_t* fontOptions() const { return m_fontOptions.get(); }
+    const cairo_font_options_t* fontOptions() const LIFETIME_BOUND { return m_fontOptions.get(); }
 #elif USE(SKIA)
     // Custom text settings make text look better at the expense of incorrect blending which is industry standard.
     static constexpr SkScalar s_textContrast { 0 };

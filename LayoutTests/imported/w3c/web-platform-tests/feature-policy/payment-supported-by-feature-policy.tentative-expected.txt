@@ -1,3 +1,0 @@
-
-FAIL document.featurePolicy.features should advertise payment. undefined is not an object (evaluating 'document.featurePolicy.features')
-

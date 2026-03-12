@@ -80,8 +80,11 @@ void GamepadProviderWPE::gamepadDisconnected(WPEGamepad* gamepad)
         return;
 
     auto index = m_gamepadVector.find(device.get());
-    if (index != notFound)
+    if (index != notFound) {
+        auto pad = m_gamepadVector[index];
+        pad->stopEffects({ });
         m_gamepadVector[index] = nullptr;
+    }
 
     for (auto& client : m_clients)
         client.platformGamepadDisconnected(*device);
@@ -135,18 +138,26 @@ void GamepadProviderWPE::stopMonitoringGamepads(GamepadProviderClient& client)
     }
 }
 
-void GamepadProviderWPE::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+void GamepadProviderWPE::playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
 {
-    // Not supported by this provider.
-    notImplemented();
-    completionHandler(false);
+    if (gamepadIndex >= m_gamepadVector.size())
+        return completionHandler(false);
+    auto gamepad = m_gamepadVector[gamepadIndex];
+    if (!gamepad || gamepad->id() != gamepadID)
+        return completionHandler(false);
+
+    gamepad->playEffect(type, parameters, WTF::move(completionHandler));
 }
 
-void GamepadProviderWPE::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+void GamepadProviderWPE::stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
 {
-    // Not supported by this provider.
-    notImplemented();
-    completionHandler();
+    if (gamepadIndex >= m_gamepadVector.size())
+        return completionHandler();
+    auto gamepad = m_gamepadVector[gamepadIndex];
+    if (!gamepad || gamepad->id() != gamepadID)
+        return completionHandler();
+
+    gamepad->stopEffects(WTF::move(completionHandler));
 }
 
 void GamepadProviderWPE::startMonitoringInput()

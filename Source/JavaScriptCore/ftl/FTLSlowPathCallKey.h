@@ -83,7 +83,7 @@ public:
         return nullptr;
     }
     size_t offset() const { return m_offset; }
-    const ScalarRegisterSet& usedRegisters() const { return m_usedRegisters; }
+    const ScalarRegisterSet& usedRegisters() const LIFETIME_BOUND { return m_usedRegisters; }
     RegisterSet argumentRegistersIfClobberingCheckIsEnabled() const
     {
         RELEASE_ASSERT(Options::clobberAllRegsInFTLICSlowPath());

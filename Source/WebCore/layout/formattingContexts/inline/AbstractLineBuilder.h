@@ -59,17 +59,17 @@ protected:
 
     bool isFirstFormattedLineCandidate() const { return m_isFirstFormattedLineCandidate; }
 
-    InlineContentBreaker& inlineContentBreaker() { return m_inlineContentBreaker; }
+    InlineContentBreaker& inlineContentBreaker() LIFETIME_BOUND { return m_inlineContentBreaker; }
 
-    InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    const HorizontalConstraints& rootHorizontalConstraints() const { return m_rootHorizontalConstraints; }
-    const InlineLayoutState& NODELETE layoutState() const;
-    InlineLayoutState& NODELETE layoutState();
-    const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
-    BlockLayoutState& blockLayoutState() { return layoutState().parentBlockLayoutState(); }
+    InlineFormattingContext& formattingContext() LIFETIME_BOUND { return m_inlineFormattingContext; }
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
+    const HorizontalConstraints& rootHorizontalConstraints() const LIFETIME_BOUND { return m_rootHorizontalConstraints; }
+    const InlineLayoutState& NODELETE layoutState() const LIFETIME_BOUND;
+    InlineLayoutState& NODELETE layoutState() LIFETIME_BOUND;
+    const BlockLayoutState& blockLayoutState() const LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
+    BlockLayoutState& blockLayoutState() LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
     const ElementBox& root() const { return m_rootBox; }
-    const RenderStyle& rootStyle() const;
+    const RenderStyle& rootStyle() const LIFETIME_BOUND;
 
 protected:
     Line m_line;

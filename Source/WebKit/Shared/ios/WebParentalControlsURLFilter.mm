@@ -104,7 +104,8 @@ void WebParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<vo
         [protect(ensureWebContentFilter()) allowURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL didAllow, NSError *) mutable {
             RELEASE_LOG(Loading, "WebParentalControlsURLFilter::allowURL result %d.\n", didAllow);
             callOnMainRunLoop([didAllow, completionHandler = WTF::move(completionHandler)] mutable {
-                completionHandler(didAllow);
+                if (completionHandler)
+                    completionHandler(didAllow);
             });
         }).get()];
     });

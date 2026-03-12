@@ -284,7 +284,7 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
     // Scratch data:
     // Legalized buffers and their offsets. For example, uniform buffer's offset=1 is not a valid
     // offset, it will be converted to legal offset and the result is stored in this array.
-    std::vector<std::pair<mtl::BufferRef, uint32_t>> mLegalizedOffsetedUniformBuffers;
+    std::vector<std::pair<mtl::BufferRef, size_t>> mLegalizedOffsetedUniformBuffers;
     // Stores the render stages usage of each uniform buffer. Only used if the buffers are encoded
     // into an argument buffer.
     std::vector<uint32_t> mArgumentBufferRenderStageUsages;

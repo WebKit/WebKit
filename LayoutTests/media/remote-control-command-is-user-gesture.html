@@ -16,7 +16,7 @@
                 run('internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange")');
 
                 waitForEvent('loadedmetadata', loadedmetadata, false, true, document)
-                waitForEventAndEnd('timeupdate')
+                waitForEventAndEnd('playing')
 
                 consoleWrite('* set video.src');
                 video.src = findMediaFile('video', 'content/test');

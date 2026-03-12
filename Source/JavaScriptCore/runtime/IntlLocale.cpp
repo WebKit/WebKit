@@ -230,6 +230,61 @@ String IntlLocale::keywordValue(ASCIILiteral key, bool isBoolean) const
     return result;
 }
 
+// Build an ICU locale ID from the given source, keeping only multi-character
+// keywords (Unicode/Transform extensions). Single-character keywords (from
+// non-Unicode BCP 47 extensions like -a- or -x-) are stripped because
+// uloc_toLanguageTag cannot handle them on some ICU versions.
+static Vector<char, 64> buildLocaleIDWithUnicodeKeywords(const char* localeID)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    Vector<char, 32> baseName(32);
+    auto baseLen = uloc_getBaseName(localeID, baseName.mutableSpan().data(), baseName.size(), &status);
+    if (needsToGrowToProduceCString(status)) {
+        baseName.grow(baseLen + 1);
+        status = U_ZERO_ERROR;
+        uloc_getBaseName(localeID, baseName.mutableSpan().data(), baseName.size(), &status);
+    }
+    ASSERT(U_SUCCESS(status));
+
+    Vector<char, 64> result;
+    result.append(baseName.span().first(baseLen));
+    result.append('\0');
+    result.grow(std::max<size_t>(result.size(), 64));
+
+    status = U_ZERO_ERROR;
+    auto keywords = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(uloc_openKeywords(localeID, &status));
+    if (U_SUCCESS(status) && keywords) {
+        int32_t keyLen;
+        while (const char* key = uenum_next(keywords.get(), &keyLen, &status)) {
+            if (U_FAILURE(status))
+                break;
+            // Skip single-character keywords (non-Unicode BCP 47 extensions).
+            if (keyLen <= 1)
+                continue;
+
+            UErrorCode valStatus = U_ZERO_ERROR;
+            Vector<char, 32> value(32);
+            auto valLen = uloc_getKeywordValue(localeID, key, value.mutableSpan().data(), value.size(), &valStatus);
+            if (needsToGrowToProduceCString(valStatus)) {
+                value.grow(valLen + 1);
+                valStatus = U_ZERO_ERROR;
+                uloc_getKeywordValue(localeID, key, value.mutableSpan().data(), value.size(), &valStatus);
+            }
+            if (U_FAILURE(valStatus))
+                continue;
+
+            UErrorCode setStatus = U_ZERO_ERROR;
+            auto newLen = uloc_setKeywordValue(key, value.span().data(), result.mutableSpan().data(), result.size(), &setStatus);
+            if (needsToGrowToProduceBuffer(setStatus)) {
+                result.grow(newLen + 1);
+                setStatus = U_ZERO_ERROR;
+                uloc_setKeywordValue(key, value.span().data(), result.mutableSpan().data(), result.size(), &setStatus);
+            }
+        }
+    }
+    return result;
+}
+
 // https://tc39.es/ecma402/#sec-Intl.Locale
 void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue, JSValue optionsValue)
 {
@@ -278,6 +333,11 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         throwRangeError(globalObject, scope, "invalid language tag"_s);
         return;
     }
+
+    // Store non-Unicode BCP 47 extensions (like -a- and -x-) for fallback when
+    // ICU's uloc_toLanguageTag fails on non-Unicode keywords. Unicode (-u-) and
+    // Transform (-t-) extensions are handled as ICU keywords and don't need this.
+    m_nonUnicodeExtensions = extractNonUnicodeBCP47Extensions(tag);
 
     String language = intlStringOption(globalObject, options, vm.propertyNames->language, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
@@ -403,48 +463,72 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
 const String& IntlLocale::maximal()
 {
     if (m_maximal.isNull()) {
-        // ICU has a serious bug that it fails to perform uloc_addLikelySubtags when the input localeID is longer than ULOC_FULLNAME_CAPACITY,
-        // and that can be achieved if we add many unicode extensions. While ICU needs to be fixed, we work-around this bug for now: We pass
-        // non-keyword part of ICU locale ID and later, concatenate keyword part to the output.
-        // Note that ICU locale ID consists of Language, Script, Country (unicode language tag's region.
+        // Always maximize only the base name (without keywords/extensions), then
+        // merge extensions back. This avoids ICU issues with long locale IDs
+        // (ULOC_FULLNAME_CAPACITY limitation) and also works around uloc_toLanguageTag
+        // failures with non-Unicode keywords on some ICU versions.
         // FIXME: ICU tracking bug https://unicode-org.atlassian.net/browse/ICU-21639.
+
+        // Extract base name (no keywords).
         UErrorCode status = U_ZERO_ERROR;
-        Vector<char, 32> buffer(32);
-        auto bufferLength = uloc_addLikelySubtags(m_localeID.data(), buffer.mutableSpan().data(), buffer.size(), &status);
+        Vector<char, 32> baseNameID(32);
+        auto baseLen = uloc_getBaseName(m_localeID.data(), baseNameID.mutableSpan().data(), baseNameID.size(), &status);
         if (needsToGrowToProduceCString(status)) {
-            buffer.grow(bufferLength + 1);
+            baseNameID.grow(baseLen + 1);
             status = U_ZERO_ERROR;
-            uloc_addLikelySubtags(m_localeID.data(), buffer.mutableSpan().data(), buffer.size(), &status);
+            uloc_getBaseName(m_localeID.data(), baseNameID.mutableSpan().data(), baseNameID.size(), &status);
+        }
+        ASSERT(U_SUCCESS(status));
+
+        // Maximize base name.
+        status = U_ZERO_ERROR;
+        Vector<char, 32> maxBase(32);
+        auto maxLen = uloc_addLikelySubtags(baseNameID.span().data(), maxBase.mutableSpan().data(), maxBase.size(), &status);
+        if (needsToGrowToProduceCString(status)) {
+            maxBase.grow(maxLen + 1);
+            status = U_ZERO_ERROR;
+            uloc_addLikelySubtags(baseNameID.span().data(), maxBase.mutableSpan().data(), maxBase.size(), &status);
+        }
+        if (U_FAILURE(status)) {
+            m_maximal = toString();
+            return m_maximal;
         }
 
-        if (U_SUCCESS(status))
-            m_maximal = languageTagForLocaleID(buffer.span().data());
-        else {
-            status = U_ZERO_ERROR;
-            Vector<char, 32> baseNameID;
-            auto bufferLength = uloc_getBaseName(m_localeID.data(), baseNameID.mutableSpan().data(), baseNameID.size(), &status);
-            if (needsToGrowToProduceCString(status)) {
-                baseNameID.grow(bufferLength + 1);
-                status = U_ZERO_ERROR;
-                uloc_getBaseName(m_localeID.data(), baseNameID.mutableSpan().data(), baseNameID.size(), &status);
-            }
-            ASSERT(U_SUCCESS(status));
+        // If base name didn't change, return original unchanged.
+        if (equalSpans(baseNameID.span().first(baseLen), maxBase.span().first(maxLen))) {
+            m_maximal = toString();
+            return m_maximal;
+        }
 
-            Vector<char, 32> maximal;
-            status = callBufferProducingFunction(uloc_addLikelySubtags, baseNameID.span().data(), maximal);
-            // We fail if,
-            // 1. uloc_addLikelySubtags still fails.
-            // 2. New maximal locale ID includes newly-added keywords.
-            if (!U_SUCCESS(status) || maximal.find(ULOC_KEYWORD_SEPARATOR) != notFound) {
+        // If no keywords, just convert maximized base to BCP 47.
+        auto keywordSepPos = WTF::find(m_localeID.span(), ULOC_KEYWORD_SEPARATOR);
+        if (keywordSepPos == notFound) {
+            m_maximal = languageTagForLocaleID(maxBase.span().data());
+            if (m_maximal.isNull())
                 m_maximal = toString();
-                return m_maximal;
-            }
+            return m_maximal;
+        }
 
-            auto endOfLanguageScriptRegionVariant = WTF::find(m_localeID.span(), ULOC_KEYWORD_SEPARATOR);
-            if (endOfLanguageScriptRegionVariant != notFound)
-                maximal.appendRange(m_localeID.data() + endOfLanguageScriptRegionVariant, m_localeID.data() + m_localeID.length());
-            maximal.append('\0');
-            m_maximal = languageTagForLocaleID(maximal.span().data());
+        // Has keywords — merge maximized base with original keywords.
+        auto keywords = m_localeID.span().subspan(keywordSepPos);
+        Vector<char, 64> merged;
+        merged.append(maxBase.span().first(maxLen));
+        merged.append(keywords);
+        merged.append('\0');
+
+        m_maximal = languageTagForLocaleID(merged.span().data());
+        if (m_maximal.isNull()) {
+            // uloc_toLanguageTag failed — non-Unicode keywords caused the failure.
+            // Strip non-Unicode (single-char) keywords, convert to BCP 47 (preserving
+            // Unicode extensions like -u-), then append stored non-Unicode extensions.
+            auto cleanID = buildLocaleIDWithUnicodeKeywords(merged.span().data());
+            m_maximal = languageTagForLocaleID(cleanID.span().data());
+            if (m_maximal.isNull())
+                m_maximal = languageTagForLocaleID(maxBase.span().data());
+            if (m_maximal.isNull())
+                m_maximal = baseName();
+            if (!m_nonUnicodeExtensions.isNull())
+                m_maximal = makeString(m_maximal, m_nonUnicodeExtensions);
         }
     }
     return m_maximal;
@@ -454,48 +538,61 @@ const String& IntlLocale::maximal()
 const String& IntlLocale::minimal()
 {
     if (m_minimal.isNull()) {
-        // ICU has a serious bug that it fails to perform uloc_minimizeSubtags when the input localeID is longer than ULOC_FULLNAME_CAPACITY,
-        // and that can be achieved if we add many unicode extensions. While ICU needs to be fixed, we work-around this bug for now: We pass
-        // non-keyword part of ICU locale ID and later, concatenate keyword part to the output.
-        // Note that ICU locale ID consists of Language, Script, Country (unicode language tag's region.
+        // Same approach as maximal(): minimize only the base name, then merge extensions.
         // FIXME: ICU tracking bug https://unicode-org.atlassian.net/browse/ICU-21639.
+
         UErrorCode status = U_ZERO_ERROR;
-        Vector<char, 32> buffer(32);
-        auto bufferLength = uloc_minimizeSubtags(m_localeID.data(), buffer.mutableSpan().data(), buffer.size(), &status);
+        Vector<char, 32> baseNameID(32);
+        auto baseLen = uloc_getBaseName(m_localeID.data(), baseNameID.mutableSpan().data(), baseNameID.size(), &status);
         if (needsToGrowToProduceCString(status)) {
-            buffer.grow(bufferLength + 1);
+            baseNameID.grow(baseLen + 1);
             status = U_ZERO_ERROR;
-            uloc_minimizeSubtags(m_localeID.data(), buffer.mutableSpan().data(), buffer.size(), &status);
+            uloc_getBaseName(m_localeID.data(), baseNameID.mutableSpan().data(), baseNameID.size(), &status);
+        }
+        ASSERT(U_SUCCESS(status));
+
+        status = U_ZERO_ERROR;
+        Vector<char, 32> minBase(32);
+        auto minLen = uloc_minimizeSubtags(baseNameID.span().data(), minBase.mutableSpan().data(), minBase.size(), &status);
+        if (needsToGrowToProduceCString(status)) {
+            minBase.grow(minLen + 1);
+            status = U_ZERO_ERROR;
+            uloc_minimizeSubtags(baseNameID.span().data(), minBase.mutableSpan().data(), minBase.size(), &status);
+        }
+        if (U_FAILURE(status)) {
+            m_minimal = toString();
+            return m_minimal;
         }
 
-        if (U_SUCCESS(status))
-            m_minimal = languageTagForLocaleID(buffer.span().data());
-        else {
-            status = U_ZERO_ERROR;
-            Vector<char, 32> baseNameID;
-            auto bufferLength = uloc_getBaseName(m_localeID.data(), baseNameID.mutableSpan().data(), baseNameID.size(), &status);
-            if (needsToGrowToProduceCString(status)) {
-                baseNameID.grow(bufferLength + 1);
-                status = U_ZERO_ERROR;
-                uloc_getBaseName(m_localeID.data(), baseNameID.mutableSpan().data(), baseNameID.size(), &status);
-            }
-            ASSERT(U_SUCCESS(status));
+        if (equalSpans(baseNameID.span().first(baseLen), minBase.span().first(minLen))) {
+            m_minimal = toString();
+            return m_minimal;
+        }
 
-            Vector<char, 32> minimal;
-            auto status = callBufferProducingFunction(uloc_minimizeSubtags, baseNameID.span().data(), minimal);
-            // We fail if,
-            // 1. uloc_minimizeSubtags still fails.
-            // 2. New minimal locale ID includes newly-added keywords.
-            if (!U_SUCCESS(status) || minimal.find(ULOC_KEYWORD_SEPARATOR) != notFound) {
+        auto keywordSepPos = WTF::find(m_localeID.span(), ULOC_KEYWORD_SEPARATOR);
+        if (keywordSepPos == notFound) {
+            m_minimal = languageTagForLocaleID(minBase.span().data());
+            if (m_minimal.isNull())
                 m_minimal = toString();
-                return m_minimal;
-            }
+            return m_minimal;
+        }
 
-            auto endOfLanguageScriptRegionVariant = WTF::find(m_localeID.span(), ULOC_KEYWORD_SEPARATOR);
-            if (endOfLanguageScriptRegionVariant != notFound)
-                minimal.appendRange(m_localeID.data() + endOfLanguageScriptRegionVariant, m_localeID.data() + m_localeID.length());
-            minimal.append('\0');
-            m_minimal = languageTagForLocaleID(minimal.span().data());
+        auto keywords = m_localeID.span().subspan(keywordSepPos);
+        Vector<char, 64> merged;
+        merged.append(minBase.span().first(minLen));
+        merged.append(keywords);
+        merged.append('\0');
+
+        m_minimal = languageTagForLocaleID(merged.span().data());
+        if (m_minimal.isNull()) {
+            auto cleanID = buildLocaleIDWithUnicodeKeywords(merged.span().data());
+            m_minimal = languageTagForLocaleID(cleanID.span().data());
+            if (m_minimal.isNull())
+                m_minimal = languageTagForLocaleID(minBase.span().data());
+            if (m_minimal.isNull())
+                m_minimal = baseName();
+            if (!m_nonUnicodeExtensions.isNull())
+                m_minimal = makeString(m_minimal, m_nonUnicodeExtensions);
         }
     }
     return m_minimal;
@@ -504,8 +601,19 @@ const String& IntlLocale::minimal()
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.toString
 const String& IntlLocale::toString()
 {
-    if (m_fullString.isNull())
+    if (m_fullString.isNull()) {
         m_fullString = languageTagForLocaleID(m_localeID.data());
+        if (m_fullString.isNull()) {
+            // uloc_toLanguageTag failed — strip non-Unicode keywords and retry,
+            // then append stored non-Unicode BCP 47 extensions.
+            auto cleanID = buildLocaleIDWithUnicodeKeywords(m_localeID.data());
+            m_fullString = languageTagForLocaleID(cleanID.span().data());
+            if (m_fullString.isNull())
+                m_fullString = baseName();
+            if (!m_nonUnicodeExtensions.isNull())
+                m_fullString = makeString(m_fullString, m_nonUnicodeExtensions);
+        }
+    }
     return m_fullString;
 }
 

@@ -78,7 +78,7 @@ bool LargestContentfulPaintData::isExposedForPaintTiming(const Element& element)
 // https://w3c.github.io/largest-contentful-paint/#largest-contentful-paint-candidate
 bool LargestContentfulPaintData::isEligibleForLargestContentfulPaint(const Element& element, float effectiveVisualArea)
 {
-    CheckedPtr renderer = element.renderer();
+    auto* renderer = element.renderer();
     if (!renderer)
         return false;
 

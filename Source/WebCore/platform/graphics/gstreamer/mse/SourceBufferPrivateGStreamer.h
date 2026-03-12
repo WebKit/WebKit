@@ -82,7 +82,7 @@ public:
     void didReceiveAllPendingSamples();
     void appendParsingFailed();
 
-    auto& tracks() const { return m_tracks; }
+    auto& tracks() const LIFETIME_BOUND { return m_tracks; }
 
     ContentType type() const { return m_type; }
 

@@ -67,7 +67,7 @@ void AcceleratedEffectStackUpdater::update()
             continue;
 
         if (!page)
-            page = protect(target->element.document())->page();
+            page = target->element.document().page();
 
         CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(target->renderer());
         if (!renderer || !renderer->isComposited())

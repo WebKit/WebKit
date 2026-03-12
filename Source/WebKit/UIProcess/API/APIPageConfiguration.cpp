@@ -337,7 +337,7 @@ bool PageConfiguration::lockdownModeEnabled() const
 
 bool PageConfiguration::isEnhancedSecurityEnabled() const
 {
-    if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
+    if (auto* policies = m_data.defaultWebsitePolicies.getIfExists())
         return policies->isEnhancedSecurityEnabled();
     return false;
 }
@@ -382,7 +382,7 @@ bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 
 bool PageConfiguration::isLockdownModeExplicitlySet() const
 {
-    if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
+    if (auto* policies = m_data.defaultWebsitePolicies.getIfExists())
         return policies->isLockdownModeExplicitlySet();
     return false;
 }

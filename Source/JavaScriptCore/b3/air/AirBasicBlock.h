@@ -81,8 +81,8 @@ public:
 
     void resize(unsigned size) { m_insts.resize(size); }
 
-    const InstList& insts() const { return m_insts; }
-    InstList& insts() { return m_insts; }
+    const InstList& insts() const LIFETIME_BOUND { return m_insts; }
+    InstList& insts() LIFETIME_BOUND { return m_insts; }
 
     template<typename Inst>
     Inst& appendInst(Inst&& inst)
@@ -103,8 +103,8 @@ public:
     unsigned numSuccessors() const { return m_successors.size(); }
     FrequentedBlock successor(unsigned index) const { return m_successors[index]; }
     FrequentedBlock& successor(unsigned index) { return m_successors[index]; }
-    const SuccessorList& successors() const { return m_successors; }
-    SuccessorList& successors() { return m_successors; }
+    const SuccessorList& successors() const LIFETIME_BOUND { return m_successors; }
+    SuccessorList& successors() LIFETIME_BOUND { return m_successors; }
 
     JS_EXPORT_PRIVATE void setSuccessors(FrequentedBlock);
     JS_EXPORT_PRIVATE void setSuccessors(FrequentedBlock, FrequentedBlock);
@@ -123,8 +123,8 @@ public:
     unsigned numPredecessors() const { return m_predecessors.size(); }
     BasicBlock* predecessor(unsigned index) const { return m_predecessors[index]; }
     BasicBlock*& predecessor(unsigned index) { return m_predecessors[index]; }
-    const PredecessorList& predecessors() const { return m_predecessors; }
-    PredecessorList& predecessors() { return m_predecessors; }
+    const PredecessorList& predecessors() const LIFETIME_BOUND { return m_predecessors; }
+    PredecessorList& predecessors() LIFETIME_BOUND { return m_predecessors; }
 
     bool addPredecessor(BasicBlock*);
     bool removePredecessor(BasicBlock*);

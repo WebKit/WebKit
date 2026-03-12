@@ -6,6 +6,6 @@ PASS A stopped sendonly transceiver should generate an inactive m-section in the
 PASS A stopped inactive transceiver should generate an inactive m-section in the offer
 PASS If a transceiver is stopped locally, setting a locally generated answer should still work
 PASS If a transceiver is stopped remotely, setting a locally generated answer should still work
-FAIL If a transceiver is stopped, transceivers, senders and receivers should disappear after offer/answer assert_equals: expected 0 but got 1
-FAIL If a transceiver is stopped, transceivers should end up in state stopped assert_equals: expected "stopped" but got "inactive"
+PASS If a transceiver is stopped, transceivers, senders and receivers should disappear after offer/answer
+PASS If a transceiver is stopped, transceivers should end up in state stopped
 

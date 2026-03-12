@@ -101,7 +101,7 @@ template<> struct CSSValueConversion<PropertyIdentifier> {
     }
     PropertyIdentifier operator()(BuilderState& state, const CSSValue& value)
     {
-        RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
+        auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
         if (!primitiveValue) [[unlikely]]
             return { .value = CSSPropertyInvalid };
         return this->operator()(state, *primitiveValue);

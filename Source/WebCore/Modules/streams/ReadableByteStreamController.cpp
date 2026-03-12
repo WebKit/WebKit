@@ -223,7 +223,7 @@ ExceptionOr<void> ReadableByteStreamController::start(JSDOMGlobalObject& globalO
         startPromise = DOMPromise::create(globalObject, *promise);
     }
 
-    handleSourcePromise(*startPromise, [weakThis = WeakPtr { *this }](auto& globalObject, auto&& error) {
+    handleSourcePromise(globalObject, *startPromise, [weakThis = WeakPtr { *this }](auto& globalObject, auto&& error) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -410,7 +410,7 @@ ExceptionOr<void> ReadableByteStreamController::enqueue(JSDOMGlobalObject& globa
 // https://streams.spec.whatwg.org/#abstract-opdef-readablebytestreamcontrollerprocessreadrequestsusingqueue
 void ReadableByteStreamController::processReadRequestsUsingQueue(JSDOMGlobalObject& globalObject)
 {
-    RefPtr reader = protect(stream())->defaultReader();
+    RefPtr reader = stream().defaultReader();
 
     ASSERT(reader);
 
@@ -508,7 +508,7 @@ void ReadableByteStreamController::callPullIfNeeded(JSDOMGlobalObject& globalObj
     m_pulling = true;
 
     auto promise = m_pullAlgorithmWrapper(globalObject, *this);
-    handleSourcePromise(promise, [weakThis = WeakPtr { *this }](auto& globalObject, auto&& error) {
+    handleSourcePromise(globalObject, promise, [weakThis = WeakPtr { *this }](auto& globalObject, auto&& error) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -538,11 +538,11 @@ bool ReadableByteStreamController::shouldCallPull()
     if (!m_started)
         return false;
 
-    RefPtr defaultReader = protect(stream())->defaultReader();
+    RefPtr defaultReader = stream().defaultReader();
     if (defaultReader && defaultReader->getNumReadRequests() > 0)
         return true;
 
-    RefPtr byobReader = protect(stream())->byobReader();
+    RefPtr byobReader = stream().byobReader();
     if (byobReader && byobReader->readIntoRequestsSize() > 0)
         return true;
 
@@ -757,7 +757,7 @@ void ReadableByteStreamController::runCancelSteps(JSDOMGlobalObject& globalObjec
     m_queueTotalSize = 0;
 
     auto promise = m_cancelAlgorithmWrapper(globalObject, *this, reason);
-    handleSourcePromise(promise, [callback = WTF::move(callback)](auto&, auto&& reason) mutable {
+    handleSourcePromise(globalObject, promise, [callback = WTF::move(callback)](auto&, auto&& reason) mutable {
         callback(WTF::move(reason));
     });
 }
@@ -991,9 +991,10 @@ void ReadableByteStreamController::handleQueueDrain(JSDOMGlobalObject& globalObj
         callPullIfNeeded(globalObject);
 }
 
-void ReadableByteStreamController::handleSourcePromise(DOMPromise& algorithmPromise, Callback&& callback)
+void ReadableByteStreamController::handleSourcePromise(JSDOMGlobalObject& globalObject, DOMPromise& algorithmPromise, Callback&& callback)
 {
-    algorithmPromise.whenSettledWithResult([callback = WTF::move(callback)](auto* globalObject, bool isFulfilled, auto result) mutable {
+    auto thisValue = toJS(&globalObject, &globalObject, *this);
+    DOMPromise::whenPromiseIsSettled(&globalObject, algorithmPromise.promise(), [callback = WTF::move(callback)](auto* globalObject, bool isFulfilled, auto result) mutable {
         RefPtr context = globalObject ? globalObject->scriptExecutionContext() : nullptr;
         if (!context || context->activeDOMObjectsAreSuspended() || context->activeDOMObjectsAreStopped())
             return;
@@ -1002,7 +1003,7 @@ void ReadableByteStreamController::handleSourcePromise(DOMPromise& algorithmProm
             return;
         }
         callback(*globalObject, { });
-    });
+    }, thisValue.getObject());
 }
 
 template<typename Visitor>

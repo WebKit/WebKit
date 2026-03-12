@@ -116,7 +116,7 @@ static constexpr auto chromeUserAgentScript = "(function() { let userAgent = nav
 
 static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
 {
-    RefPtr loader = document.loader();
+    auto* loader = document.loader();
     if (!loader)
         return { };
 
@@ -991,11 +991,11 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
         if (is<LocalDOMWindow>(eventTarget))
             return true;
 
-        if (RefPtr node = dynamicDowncast<Node>(eventTarget)) {
+        if (auto* node = dynamicDowncast<Node>(eventTarget)) {
             if (is<Document>(*node))
                 return true;
-            Ref document = node->document();
-            return document->documentElement() == node || document->body() == node;
+            auto& document = node->document();
+            return document.documentElement() == node || document.body() == node;
         }
         return false;
     };
@@ -1114,7 +1114,7 @@ bool Quirks::shouldEnableRTCEncodedStreamsQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldEnableRTCEncodedStreamsQuirk) && m_document && protect(m_document)->settings().rtcEncodedStreamsQuirkEnabled();
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldEnableRTCEncodedStreamsQuirk) && m_document && m_document->settings().rtcEncodedStreamsQuirkEnabled();
 }
 #endif
 
@@ -1781,7 +1781,7 @@ bool Quirks::shouldUseEphemeralPartitionedStorageForDOMCookies(const URL& url) c
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    auto firstPartyDomain = RegistrableDomain(protect(m_document)->firstPartyForCookies()).string();
+    auto firstPartyDomain = RegistrableDomain(m_document->firstPartyForCookies()).string();
     auto domain = RegistrableDomain(url).string();
 
     // rdar://113830141
@@ -2090,6 +2090,14 @@ bool Quirks::needsMozillaFileTypeForDataTransfer() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsMozillaFileTypeForDataTransferQuirk);
 }
 
+// spotify.com rdar://171119015
+bool Quirks::shouldLimitHLSPlaybackRate() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldLimitHLSPlaybackRate);
+}
+
 // spotify.com rdar://140707449
 bool Quirks::shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node& target) const
 {
@@ -2098,7 +2106,7 @@ bool Quirks::shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node
     if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor))
         return false;
 
-    if (CheckedPtr style = target.renderStyle()) {
+    if (auto* style = target.renderStyle()) {
         if (style->cursorType() == CursorType::Pointer)
             return true;
     }
@@ -2375,8 +2383,8 @@ bool Quirks::shouldPreventKeyframeEffectAcceleration(const KeyframeEffect& effec
     if (!needsQuirks() || !m_quirksData.isEA)
         return false;
 
-    auto target = Ref { effect }->targetStyleable();
-    return target && Ref { target->element }->localName() == "ea-network-nav"_s;
+    auto target = effect.targetStyleable();
+    return target && target->element.localName() == "ea-network-nav"_s;
 }
 
 bool Quirks::shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk() const
@@ -3223,6 +3231,7 @@ static void handleSpotifyQuirks(QuirksData& quirksData, const URL& quirksURL, co
         // spotify.com rdar://138918575
         QuirksData::SiteSpecificQuirk::NeedsBodyScrollbarWidthNoneDisabledQuirk,
         QuirksData::SiteSpecificQuirk::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor,
+        QuirksData::SiteSpecificQuirk::ShouldLimitHLSPlaybackRate,
     });
 }
 

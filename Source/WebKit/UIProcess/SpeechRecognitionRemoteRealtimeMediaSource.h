@@ -68,8 +68,8 @@ private:
     // WebCore::RealtimeMediaSource
     void startProducingData() final;
     void stopProducingData() final;
-    const WebCore::RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
-    const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
+    const WebCore::RealtimeMediaSourceCapabilities& capabilities() LIFETIME_BOUND final { return m_capabilities; }
+    const WebCore::RealtimeMediaSourceSettings& settings() LIFETIME_BOUND final { return m_settings; }
 
     WebCore::RealtimeMediaSourceIdentifier m_identifier;
     WeakPtr<SpeechRecognitionRemoteRealtimeMediaSourceManager> m_manager;

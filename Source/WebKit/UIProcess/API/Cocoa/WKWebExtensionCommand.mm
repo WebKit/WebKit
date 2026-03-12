@@ -77,7 +77,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 
 - (WKWebExtensionContext *)webExtensionContext
 {
-    if (RefPtr context = protect(*_webExtensionCommand)->extensionContext())
+    if (RefPtr context = _webExtensionCommand->extensionContext())
         return context->wrapper();
     return nil;
 }
@@ -108,7 +108,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 
 - (CocoaModifierFlags)modifierFlags
 {
-    return protect(*_webExtensionCommand)->modifierFlags().toRaw();
+    return _webExtensionCommand->modifierFlags().toRaw();
 }
 
 - (void)setModifierFlags:(CocoaModifierFlags)modifierFlags

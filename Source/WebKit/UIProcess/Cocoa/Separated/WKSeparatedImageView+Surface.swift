@@ -23,7 +23,7 @@
 
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
-internal import CommonCrypto
+internal import CryptoKit
 internal import CoreGraphics
 internal import CoreImage
 import os
@@ -47,97 +47,60 @@ extension WKSeparatedImageView {
         computeHashTask = Task { [weak self] in
             try await Task.sleep(for: SeparatedImageViewConstants.cancellationDelay)
 
-            guard let self, let (data, hash) = await self.computeHash() else { return }
+            guard let self, let cgImage, let newImageHash = await computeHash(cgImage) else { return }
+            guard self.cgImage != nil, imageHash != newImageHash else { return }
 
-            Task { @MainActor [weak self] in
-                try Task.checkCancellation()
+            imageData = nil
+            imageHash = newImageHash
 
-                guard let self, self.cgImage != nil, self.imageHash != hash else { return }
-
-                self.imageData = data
-                self.imageHash = hash
-
-                if let (oldImageHash, cachedMode) = self.cachedViewModeInfo, oldImageHash == hash {
-                    self.viewMode = cachedMode
-                } else {
-                    self.viewMode = .unknown
-                }
-
-                if self.viewMode == .unknown {
-                    Logger.separatedImage.log("\(self.logPrefix) - New image, generated hash.")
-                    Task {
-                        await self.pickViewMode()
-                    }
-                } else {
-                    Logger.separatedImage.log("\(self.logPrefix) - Known image (\(self.viewMode.description)).")
-                }
-
-                self.scheduleUpdate()
+            if let (oldImageHash, cachedMode) = cachedViewModeInfo, oldImageHash == newImageHash {
+                viewMode = cachedMode
+            } else {
+                viewMode = .unknown
             }
+
+            if viewMode == .unknown {
+                Logger.separatedImage.log("\(self.logPrefix) - New image, generated hash.")
+                Task {
+                    await self.pickViewMode()
+                }
+            } else {
+                Logger.separatedImage.log("\(self.logPrefix) - Known image (\(self.viewMode.description)).")
+            }
+
+            self.scheduleUpdate()
         }
+    }
+
+    func ensureImageData() async -> Data? {
+        guard let cgImage else { return nil }
+        if let imageData { return imageData }
+        imageData = await encode(cgImage)
+        return imageData
     }
 
     @concurrent
-    func computeHash() async -> (Data, NSString)? {
-        guard let cgImage = await self.cgImage else { return nil }
-        return cgImageAsDataWithHash(cgImage)
-    }
-}
-
-// TODO: rdar://164555610 - https://github.com/WebKit/WebKit/wiki/Safer-Swift-Guidelines
-class StreamHasher {
-    var hashContext = CC_SHA256_CTX()
-    var outputStream: OutputStream
-
-    init(outputStream: OutputStream) {
-        self.outputStream = outputStream
-        CC_SHA256_Init(&hashContext)
-    }
-}
-
-func cgImageAsDataWithHash(_ cgImage: CGImage) -> (Data, NSString)? {
-    let outputStream = OutputStream(toMemory: ())
-    outputStream.open()
-    defer {
-        outputStream.close()
+    func computeHash(_ cgImage: CGImage) async -> NSString? {
+        guard let provider = cgImage.dataProvider, let cfData = provider.data else { return nil }
+        let digest = SHA256.hash(data: cfData as Data)
+        return NSString(string: digest.description)
     }
 
-    let streamHasher = StreamHasher(outputStream: outputStream)
-    let streamHasherRef = Unmanaged.passRetained(streamHasher).toOpaque()
-
-    var callbacks = CGDataConsumerCallbacks(
-        putBytes: { (info, buffer, count) -> Int in
-            guard let info = info else { return 0 }
-
-            let streamHasher = Unmanaged<StreamHasher>.fromOpaque(info).takeUnretainedValue()
-            let dataBuffer = buffer.assumingMemoryBound(to: UInt8.self)
-
-            CC_SHA256_Update(&streamHasher.hashContext, dataBuffer, CC_LONG(count))
-            return streamHasher.outputStream.write(dataBuffer, maxLength: count)
-        },
-        releaseConsumer: { info in
-            if let info = info {
-                Unmanaged<StreamHasher>.fromOpaque(info).release()
-            }
-        }
-    )
-
-    guard let consumer = CGDataConsumer(info: streamHasherRef, cbks: &callbacks),
-        let destination = CGImageDestinationCreateWithDataConsumer(consumer, UTType.bmp.identifier as CFString, 1, nil)
-    else {
-        return nil
+    @concurrent
+    func encode(_ cgImage: CGImage) async -> Data? {
+        let data = NSMutableData()
+        guard
+            let destination = CGImageDestinationCreateWithData(
+                data as CFMutableData,
+                UTType.bmp.identifier as CFString,
+                1,
+                nil
+            )
+        else { return nil }
+        CGImageDestinationAddImage(destination, cgImage, nil)
+        guard CGImageDestinationFinalize(destination) else { return nil }
+        return data as Data
     }
-
-    CGImageDestinationAddImage(destination, cgImage, nil)
-
-    if CGImageDestinationFinalize(destination), let finalData = outputStream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data {
-        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        CC_SHA256_Final(&hash, &streamHasher.hashContext)
-        let hashString = hash.map { String(format: "%02x", $0) }.joined()
-        return (finalData, NSString(string: hashString))
-    }
-
-    return nil
 }
 
 // Protects access to the shared CIContext, needs to run outside of the MainActor.

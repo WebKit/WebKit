@@ -75,13 +75,13 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
 template<typename T>
 void WebSWServerToContextConnection::sendToParentProcess(T&& message)
 {
-    protect(protect(networkProcess())->parentProcessConnection())->send(WTF::move(message), 0);
+    networkProcess()->parentProcessConnection()->send(WTF::move(message), 0);
 }
 
 template<typename T, typename C>
 void WebSWServerToContextConnection::sendWithAsyncReplyToParentProcess(T&& message, C&& callback)
 {
-    protect(protect(networkProcess())->parentProcessConnection())->sendWithAsyncReply(WTF::move(message), WTF::move(callback), 0);
+    networkProcess()->parentProcessConnection()->sendWithAsyncReply(WTF::move(message), WTF::move(callback), 0);
 }
 
 void WebSWServerToContextConnection::stop()
@@ -242,7 +242,7 @@ void WebSWServerToContextConnection::fireBackgroundFetchClickEvent(ServiceWorker
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     if (!m_processingFunctionalEventCount++)
-        protect(protect(m_connection)->networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
 }
@@ -276,7 +276,7 @@ void WebSWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier se
     SWServerToContextConnection::workerTerminated(serviceWorkerIdentifier);
 
     if (--m_processingFunctionalEventCount)
-        protect(protect(m_connection)->networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 }
 
 void WebSWServerToContextConnection::didFinishActivation(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier)
@@ -496,7 +496,7 @@ void WebSWServerToContextConnection::reportNetworkUsageToWorkerClient(const WebC
 
 std::optional<SharedPreferencesForWebProcess> WebSWServerToContextConnection::sharedPreferencesForWebProcess() const
 {
-    if (RefPtr connection = m_connection.get())
+    if (auto* connection = m_connection.get())
         return connection->sharedPreferencesForWebProcess();
 
     return std::nullopt;

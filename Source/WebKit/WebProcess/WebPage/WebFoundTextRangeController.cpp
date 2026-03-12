@@ -89,13 +89,13 @@ static inline WebFoundTextRange createWebFoundTextRange(SimpleRange& simpleRange
 
 static inline bool canConvertToWebFoundTextRange(SimpleRange& range)
 {
-    Ref document = range.startContainer().document();
+    auto& document = range.startContainer().document();
 
-    RefPtr element = document->documentElement();
+    auto* element = document.documentElement();
     if (!element)
         return false;
 
-    RefPtr frame = document->frame();
+    auto* frame = document.frame();
     if (!frame)
         return false;
 
@@ -135,7 +135,7 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
     HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>> frameMatches;
     for (const auto& [foundTextRange, simpleRange] : WTF::zippedRange(webFoundTextRanges, validSimpleRanges)) {
         m_cachedFoundRanges.add(foundTextRange, simpleRange.makeWeakSimpleRange());
-        const auto frameID = protect(simpleRange.startContainer().document())->frame()->frameID();
+        const auto frameID = simpleRange.startContainer().document().frame()->frameID();
         auto& matches = frameMatches.ensure(frameID, createEmptyVector).iterator->value;
         matches.append(foundTextRange);
     }
@@ -558,7 +558,7 @@ Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRec
 
 WebCore::LocalFrame* WebFoundTextRangeController::frameForFoundTextRange(const WebFoundTextRange& range) const
 {
-    Ref mainFrame = protect(protect(m_webPage.get())->corePage())->mainFrame();
+    Ref mainFrame = m_webPage.get()->corePage()->mainFrame();
 
     if (range.pathToFrame.isEmpty())
         return dynamicDowncast<WebCore::LocalFrame>(mainFrame.ptr());

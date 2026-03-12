@@ -235,6 +235,18 @@ inline bool is(const CheckedRef<ArgType, ArgPtrTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
+template<typename... ExpectedTypes, typename ArgType, typename ArgPtrTraits>
+inline bool isAnyOf(CheckedRef<ArgType, ArgPtrTraits>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType, typename ArgPtrTraits>
+inline bool isAnyOf(const CheckedRef<ArgType, ArgPtrTraits>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
 inline ExpectedType& downcast(CheckedRef<ArgType, ArgPtrTraits>& source)
 {

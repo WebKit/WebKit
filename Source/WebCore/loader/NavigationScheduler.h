@@ -76,6 +76,8 @@ public:
     void cancel(NewLoadInProgress = NewLoadInProgress::No);
     void clear();
 
+    void adjustPendingHistoryNavigationForNewBackForwardEntry();
+
     bool NODELETE hasQueuedNavigation() const;
 
 private:

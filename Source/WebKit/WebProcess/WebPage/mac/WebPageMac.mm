@@ -140,7 +140,7 @@ void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility sh
     // Get the pid for the starting process.
     pid_t pid = legacyPresentingApplicationPID();
     createMockAccessibilityElement(pid);
-    if (protect(corePage())->localMainFrame())
+    if (corePage()->localMainFrame())
         accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
 
     // Close Mach connection to Launch Services.
@@ -866,7 +866,7 @@ std::optional<WebCore::SimpleRange> WebPage::lookupTextAtLocation(FrameIdentifie
 {
     RefPtr currentFrame = WebProcess::singleton().webFrame(frameID);
     RefPtr localCurrentFrame = dynamicDowncast<LocalFrame>(currentFrame->coreFrame());
-    if (!localCurrentFrame || !localCurrentFrame->view() || !protect(localCurrentFrame->view())->renderView())
+    if (!localCurrentFrame || !localCurrentFrame->view() || !localCurrentFrame->view()->renderView())
         return std::nullopt;
 
     return DictionaryLookup::rangeAtHitTestResult(localCurrentFrame->eventHandler().hitTestResultAtPoint(protect(localCurrentFrame->view())->windowToContents(roundedIntPoint(locationInViewCoordinates)), {
@@ -879,13 +879,13 @@ std::optional<WebCore::SimpleRange> WebPage::lookupTextAtLocation(FrameIdentifie
 
 void WebPage::immediateActionDidUpdate()
 {
-    if (RefPtr localMainFrame = protect(corePage())->localMainFrame())
+    if (RefPtr localMainFrame = corePage()->localMainFrame())
         localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
 }
 
 void WebPage::immediateActionDidCancel()
 {
-    RefPtr localMainFrame = protect(corePage())->localMainFrame();
+    RefPtr localMainFrame = corePage()->localMainFrame();
     if (!localMainFrame)
         return;
     ImmediateActionStage lastStage = localMainFrame->eventHandler().immediateActionStage();
@@ -897,7 +897,7 @@ void WebPage::immediateActionDidCancel()
 
 void WebPage::immediateActionDidComplete()
 {
-    if (RefPtr localMainFrame = protect(corePage())->localMainFrame())
+    if (RefPtr localMainFrame = corePage()->localMainFrame())
         localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
 }
 
@@ -977,7 +977,7 @@ void WebPage::didBeginMagnificationGesture()
 void WebPage::didEndMagnificationGesture()
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
-    if (RefPtr localMainFrame = protect(corePage())->localMainFrame())
+    if (RefPtr localMainFrame = corePage()->localMainFrame())
         localMainFrame->eventHandler().didEndMagnificationGesture();
 #endif
 #if ENABLE(PDF_PLUGIN)
@@ -1018,7 +1018,7 @@ void WebPage::setAccentColor(WebCore::Color color)
 #if PLATFORM(MAC)
 void WebPage::setAppUsesCustomAccentColor(bool appUsesCustomAccentColor)
 {
-    protect(corePage())->setAppUsesCustomAccentColor(appUsesCustomAccentColor);
+    corePage()->setAppUsesCustomAccentColor(appUsesCustomAccentColor);
 }
 #endif
 

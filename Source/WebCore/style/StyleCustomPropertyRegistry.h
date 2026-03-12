@@ -50,7 +50,7 @@ public:
     void registerFromStylesheet(const StyleRuleProperty::Descriptor&);
     void clearRegisteredFromStylesheets();
 
-    const RenderStyle& initialValuePrototypeStyle() const;
+    const RenderStyle& initialValuePrototypeStyle() const LIFETIME_BOUND;
 
     bool invalidatePropertiesWithViewportUnits(Document&);
 

@@ -57,7 +57,7 @@ public:
 
     // Offsets of frame records in the trailing array data, in units of Register size.
     // Ordered from lowest to highest (shallowest to deepest frames).
-    const Vector<unsigned>& frameOffsets() const { return m_frameOffsets; }
+    const Vector<unsigned>& frameOffsets() const LIFETIME_BOUND { return m_frameOffsets; }
 
     // Copy the stack data captured by this instance to the memory location identified by
     // 'base' and prepare it for execution by relocating all internal pointers. Link the
@@ -107,8 +107,8 @@ void* relocateReturnPC(void* returnPC, const CallerFrameAndPC* originalFP, const
 // slices.
 class StackSlicerBase {
 public:
-    const String& errorMessage() const { return m_errorMessage; }
-    const Vector<std::unique_ptr<EvacuatedStackSlice>>& slices() const { return m_slices; }
+    const String& errorMessage() const LIFETIME_BOUND { return m_errorMessage; }
+    const Vector<std::unique_ptr<EvacuatedStackSlice>>& slices() const LIFETIME_BOUND { return m_slices; }
 
     // Return the accumulated slices in the order from top to bottom. This places the
     // first slice to execute at the end of the vector, and the vector acts as a stack

@@ -73,7 +73,7 @@ public:
 
     bool isAsync() const { return features() & AwaitFeature; }
 
-    SymbolTable* moduleEnvironmentSymbolTable() { return m_moduleEnvironmentSymbolTable.get(); }
+    SymbolTable* moduleEnvironmentSymbolTable() LIFETIME_BOUND { return m_moduleEnvironmentSymbolTable.get(); }
 
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 

@@ -206,8 +206,8 @@ void IDBTransaction::transitionedToFinishing(IndexedDB::TransactionState state)
     ASSERT(isFinishedOrFinishing());
 
     if (!wasFinishedOrFinishing) {
-        for (Ref request : m_cursorRequests)
-            request->transactionTransitionedToFinishing();
+        for (auto& request : m_cursorRequests)
+            request.transactionTransitionedToFinishing();
     }
 }
 

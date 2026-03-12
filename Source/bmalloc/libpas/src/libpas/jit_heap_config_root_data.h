@@ -35,6 +35,9 @@ struct pas_page_header_table;
 typedef struct jit_heap_config_root_data jit_heap_config_root_data;
 typedef struct pas_page_header_table pas_page_header_table;
 
+/* If the layout of this structure is changed, the value of
+ * pas_crash_report_version in pas_root.h should be incremented.
+ */
 struct jit_heap_config_root_data {
     pas_page_header_table* small_page_header_table;
     /* The JIT heap does not have a medium-segregated heap,

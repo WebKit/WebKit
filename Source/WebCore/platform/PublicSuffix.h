@@ -37,7 +37,7 @@ public:
     static PublicSuffix fromRawString(String&& string) { return PublicSuffix(WTF::move(string)); }
     PublicSuffix() = default;
     bool isValid() const { return !m_string.isEmpty(); }
-    const String& string() const { return m_string; }
+    const String& string() const LIFETIME_BOUND { return m_string; }
     PublicSuffix isolatedCopy() const { return fromRawString(crossThreadCopy(m_string)); }
 
     PublicSuffix(WTF::HashTableDeletedValueType)

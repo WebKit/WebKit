@@ -35,7 +35,7 @@ namespace Style {
 
 auto CSSValueConversion<Resize>::operator()(BuilderState& state, const CSSValue& value) -> Resize
 {
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
+    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
     if (!primitiveValue)
         return Resize::None;
 

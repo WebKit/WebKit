@@ -369,6 +369,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioFormatDescriptionCreate, OS
 #define CMAudioFormatDescriptionCreate softLink_CoreMedia_CMAudioFormatDescriptionCreate
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioFormatDescriptionGetMagicCookie, const void*, (CMAudioFormatDescriptionRef desc, size_t* sizeOut), (desc, sizeOut))
 #define CMAudioFormatDescriptionGetMagicCookie softLink_CoreMedia_CMAudioFormatDescriptionGetMagicCookie
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioFormatDescriptionGetChannelLayout, const AudioChannelLayout*, (CMAudioFormatDescriptionRef desc, size_t* sizeOut), (desc, sizeOut))
+#define CMAudioFormatDescriptionGetChannelLayout softLink_CoreMedia_CMAudioFormatDescriptionGetChannelLayout
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioFormatDescriptionGetStreamBasicDescription, const AudioStreamBasicDescription*, (CMAudioFormatDescriptionRef desc), (desc))
 #define CMAudioFormatDescriptionGetStreamBasicDescription softLink_CoreMedia_CMAudioFormatDescriptionGetStreamBasicDescription
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioFormatDescriptionGetRichestDecodableFormat, const AudioFormatListItem*, (CMAudioFormatDescriptionRef desc), (desc))

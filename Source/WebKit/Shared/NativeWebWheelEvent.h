@@ -84,7 +84,7 @@ public:
 #elif PLATFORM(GTK)
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
-    const MSG* nativeEvent() const { return &m_nativeEvent; }
+    const MSG* nativeEvent() const LIFETIME_BOUND { return &m_nativeEvent; }
 #else
     const void* nativeEvent() const { return nullptr; }
 #endif

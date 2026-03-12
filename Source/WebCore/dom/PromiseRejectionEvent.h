@@ -48,7 +48,7 @@ public:
     virtual ~PromiseRejectionEvent();
 
     DOMPromise& promise() const { return m_promise.get(); }
-    const JSValueInWrappedObject& reason() const { return m_reason; }
+    const JSValueInWrappedObject& reason() const LIFETIME_BOUND { return m_reason; }
 
 private:
     PromiseRejectionEvent(const AtomString&, Init&&, IsTrusted);

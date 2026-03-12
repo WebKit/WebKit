@@ -55,7 +55,7 @@ enum EventTargetInterfaceType VisualViewport::eventTargetInterface() const
 
 ScriptExecutionContext* VisualViewport::scriptExecutionContext() const
 {
-    RefPtr window = this->window();
+    auto* window = this->window();
     return window ? window->document() : nullptr;
 }
 

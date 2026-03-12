@@ -180,7 +180,7 @@ Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(Insertion
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
-    if (!is<HTMLFrameElementBase>(protect(document())->ownerElement()))
+    if (!is<HTMLFrameElementBase>(document().ownerElement()))
         return InsertedIntoAncestorResult::Done;
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }

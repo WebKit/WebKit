@@ -51,7 +51,7 @@
 #include "DocumentQuirks.h"
 #include "DocumentType.h"
 #include "DocumentView.h"
-#include "Editing.h"
+#include "EditingInlines.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "ElementChildIteratorInlines.h"
@@ -624,7 +624,7 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
         auto content = textContentRespectingRange(text);
         appendCharactersReplacingEntities(out, content, entityMaskForText(text));
     } else {
-        const bool useRenderedText = !enclosingElementWithTag(firstPositionInNode(const_cast<Text*>(&text)), selectTag);
+        const bool useRenderedText = !enclosingElementWithTag(firstPositionInNode(const_cast<Text&>(text)), selectTag);
         String content = useRenderedText ? renderedTextRespectingRange(text) : textContentRespectingRange(text);
         StringBuilder buffer;
         appendCharactersReplacingEntities(buffer, content, EntityMaskInPCDATA);
@@ -640,12 +640,12 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
 String StyledMarkupAccumulator::renderedTextRespectingRange(const Text& text)
 {
     TextIteratorBehaviors behaviors;
-    Position start = &text == m_start.containerNode() ? m_start : firstPositionInNode(const_cast<Text*>(&text));
+    Position start = &text == m_start.containerNode() ? m_start : firstPositionInNode(const_cast<Text&>(text));
     Position end;
     if (&text == m_end.containerNode())
         end = m_end;
     else {
-        end = lastPositionInNode(const_cast<Text*>(&text));
+        end = lastPositionInNode(const_cast<Text&>(text));
         if (!m_end.isNull())
             behaviors.add(TextIteratorBehavior::BehavesAsIfNodesFollowing);
     }
@@ -1055,7 +1055,7 @@ static RefPtr<Node> highestAncestorToWrapMarkup(const Position& start, const Pos
 
     RefPtr checkAncestor = specialCommonAncestor ? specialCommonAncestor : RefPtr { &commonAncestor };
     if (checkAncestor->renderer() && checkAncestor->renderer()->containingBlock()) {
-        RefPtr newSpecialCommonAncestor = highestEnclosingNodeOfType(firstPositionInNode(checkAncestor.get()), &isElementPresentational, CanCrossEditingBoundary, protect(checkAncestor->renderer()->containingBlock()->element()).get());
+        RefPtr newSpecialCommonAncestor = highestEnclosingNodeOfType(firstPositionInNode(*checkAncestor), &isElementPresentational, CanCrossEditingBoundary, protect(checkAncestor->renderer()->containingBlock()->element()).get());
         if (newSpecialCommonAncestor)
             specialCommonAncestor = WTF::move(newSpecialCommonAncestor);
     }
@@ -1069,10 +1069,10 @@ static RefPtr<Node> highestAncestorToWrapMarkup(const Position& start, const Pos
     if (!specialCommonAncestor && tabSpanNode(&commonAncestor))
         specialCommonAncestor = commonAncestor;
 
-    if (RefPtr enclosingAnchor = enclosingElementWithTag(firstPositionInNode(specialCommonAncestor ? specialCommonAncestor.get() : &commonAncestor), aTag))
+    if (RefPtr enclosingAnchor = enclosingElementWithTag(firstPositionInNode(specialCommonAncestor ? *specialCommonAncestor : commonAncestor), aTag))
         specialCommonAncestor = WTF::move(enclosingAnchor);
 
-    if (RefPtr enclosingPicture = enclosingElementWithTag(firstPositionInNode(specialCommonAncestor ? specialCommonAncestor.get() : &commonAncestor), pictureTag))
+    if (RefPtr enclosingPicture = enclosingElementWithTag(firstPositionInNode(specialCommonAncestor ? *specialCommonAncestor : commonAncestor), pictureTag))
         specialCommonAncestor = WTF::move(enclosingPicture);
 
     return specialCommonAncestor;
@@ -1096,10 +1096,10 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
     VisiblePosition visibleStart { start };
     VisiblePosition visibleEnd { end };
 
-    RefPtr body = enclosingElementWithTag(firstPositionInNode(commonAncestor.get()), bodyTag);
+    RefPtr body = enclosingElementWithTag(firstPositionInNode(*commonAncestor), bodyTag);
     RefPtr<Element> fullySelectedRoot;
     // FIXME: Do this for all fully selected blocks, not just the body.
-    if (body && VisiblePosition(firstPositionInNode(body.get())) == visibleStart && VisiblePosition(lastPositionInNode(body.get())) == visibleEnd)
+    if (body && VisiblePosition(firstPositionInNode(*body)) == visibleStart && VisiblePosition(lastPositionInNode(*body)) == visibleEnd)
         fullySelectedRoot = body;
     bool needsPositionStyleConversion = body && fullySelectedRoot == body && document->settings().shouldConvertPositionStyleOnCopy();
 
@@ -1110,7 +1110,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
     Position adjustedStart = start;
 
     if (RefPtr pictureElement = enclosingElementWithTag(adjustedStart, pictureTag))
-        adjustedStart = firstPositionInNode(pictureElement.get());
+        adjustedStart = firstPositionInNode(*pictureElement);
 
     if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleStart)) {
         if (visibleStart == visibleEnd.previous())
@@ -1220,7 +1220,7 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
     bodyElement->appendChild(fragment.get());
 
     // SerializeComposedTree::No because there can't be a shadow tree in the pasted fragment.
-    auto result = serializePreservingVisualAppearanceInternal(firstPositionInNode(bodyElement.get()), lastPositionInNode(bodyElement.get()), nullptr,
+    auto result = serializePreservingVisualAppearanceInternal(firstPositionInNode(*bodyElement), lastPositionInNode(*bodyElement), nullptr,
         ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::No, IgnoreUserSelectNone::No, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, StandardFontFamilySerializationMode::Strip, msoListMode, PreserveBaseElement::No, PreserveDirectionForInlineText::No);
 
     if (msoListMode != MSOListMode::Preserve)
@@ -1545,7 +1545,7 @@ static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNod
             collectElementsToRemoveFromFragment(WTF::move(element));
             continue;
         }
-        if (is<HTMLHeadElement>(element) || is<HTMLBodyElement>(element))
+        if (isAnyOf<HTMLHeadElement, HTMLBodyElement>(element))
             toRemove.append(WTF::move(element));
     }
     return toRemove;

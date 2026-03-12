@@ -93,7 +93,9 @@ auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSVal
 auto Blending<LineWidth>::blend(const LineWidth& a, const LineWidth& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const Interpolation::Context& context) -> LineWidth
 {
     auto blendedValue = Style::blend(a.value, b.value, aStyle, bStyle, context);
-    return LineWidth::snapLengthAsBorderWidth(blendedValue, protect(context.client.document())->deviceScaleFactor());
+    if (RefPtr document = context.client.document())
+        return LineWidth::snapLengthAsBorderWidth(blendedValue, document->deviceScaleFactor());
+    return blendedValue;
 }
 
 // MARK: - Evaluate

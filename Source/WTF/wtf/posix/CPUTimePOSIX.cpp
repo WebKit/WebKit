@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-static Seconds timevalToSeconds(const struct timeval& value)
+static Seconds NODELETE timevalToSeconds(const struct timeval& value)
 {
     return Seconds(value.tv_sec) + Seconds::fromMicroseconds(value.tv_usec);
 }

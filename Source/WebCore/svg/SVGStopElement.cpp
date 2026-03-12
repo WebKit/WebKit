@@ -69,7 +69,7 @@ void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomStrin
         if (parsedValue && isPercentage)
             value /= 100.0f;
 
-        Ref { m_offset }->setBaseValInternal(value);
+        m_offset->setBaseValInternal(value);
     }
 
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

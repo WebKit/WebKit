@@ -94,7 +94,7 @@ public:
     static constexpr Assembler::Condition DefaultCondition = Assembler::ConditionInvalid;
     static constexpr Assembler::JumpType DefaultJump = Assembler::JumpNoConditionFixedSize;
 
-    Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink() { return m_assembler.jumpsToLink(); }
+    Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink() LIFETIME_BOUND { return m_assembler.jumpsToLink(); }
     static bool canCompact(JumpType jumpType) { return Assembler::canCompact(jumpType); }
     static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return Assembler::computeJumpType(record, from, to); }
     static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return Assembler::jumpSizeDelta(jumpType, jumpLinkType); }

@@ -35,6 +35,9 @@ struct pas_page_header_table;
 typedef struct pas_basic_heap_config_root_data pas_basic_heap_config_root_data;
 typedef struct pas_page_header_table pas_page_header_table;
 
+/* If the layout of this structure is changed, the value of
+ * pas_crash_report_version in pas_root.h should be incremented.
+ */
 struct pas_basic_heap_config_root_data {
     pas_page_header_table* medium_segregated_page_header_table;
     pas_page_header_table* medium_bitfit_page_header_table;

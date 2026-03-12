@@ -22,6 +22,7 @@
 
 #include "ContainerNodeInlines.h"
 #include "DocumentView.h"
+#include "LegacyRenderSVGModelObjectInlines.h"
 #include "LegacyRenderSVGRoot.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"

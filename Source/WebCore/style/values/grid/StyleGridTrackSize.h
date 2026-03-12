@@ -158,10 +158,10 @@ struct GridTrackSize {
         cacheMinMaxTrackBreadthTypes();
     }
 
-    const GridTrackFitContentLength& fitContentTrackLength() const { ASSERT(m_type == Type::FitContent); return m_fitContentTrackLength; }
+    const GridTrackFitContentLength& fitContentTrackLength() const LIFETIME_BOUND { ASSERT(m_type == Type::FitContent); return m_fitContentTrackLength; }
 
-    const GridTrackBreadth& minTrackBreadth() const { return m_minTrackBreadth; }
-    const GridTrackBreadth& maxTrackBreadth() const { return m_maxTrackBreadth; }
+    const GridTrackBreadth& minTrackBreadth() const LIFETIME_BOUND { return m_minTrackBreadth; }
+    const GridTrackBreadth& maxTrackBreadth() const LIFETIME_BOUND { return m_maxTrackBreadth; }
 
     bool isBreadth() const { return m_type == Type::Breadth; }
     bool isMinMax() const { return m_type == Type::MinMax; }

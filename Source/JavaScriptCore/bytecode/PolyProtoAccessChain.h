@@ -45,7 +45,7 @@ public:
     static RefPtr<PolyProtoAccessChain> tryCreate(JSGlobalObject*, JSCell* base, CacheableIdentifier, const PropertySlot&);
     static RefPtr<PolyProtoAccessChain> tryCreate(JSGlobalObject*, JSCell* base, CacheableIdentifier, JSObject* target);
 
-    const FixedVector<StructureID>& chain() const { return m_chain; }
+    const FixedVector<StructureID>& chain() const LIFETIME_BOUND { return m_chain; }
 
     void dump(Structure* baseStructure, PrintStream& out) const;
 

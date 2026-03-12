@@ -242,7 +242,7 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         return false;
 
     auto target = keyframeEffect->targetStyleable();
-    if (!target || !protect(target->element)->isDescendantOf(Ref { *m_document }))
+    if (!target || !target->element.isDescendantOf(*m_document))
         return false;
 
 IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
@@ -541,7 +541,7 @@ Ref<AcceleratedTimeline> DocumentTimeline::createAcceleratedRepresentation() con
     ASSERT(m_document);
     ASSERT(m_document->window());
     ASSERT(m_document->settings().threadedTimeBasedAnimationsEnabled());
-    Ref window = *Ref { *m_document }->window();
+    Ref window = *m_document->window();
     auto monotonicOriginTime = MonotonicTime::fromRawSeconds(m_originTime.seconds());
     auto convertedOriginTime = m_originTime - window->performance().relativeTimeFromTimeOriginInReducedResolutionSeconds(monotonicOriginTime);
     return AcceleratedTimeline::create(m_acceleratedTimelineIdentifier, convertedOriginTime);

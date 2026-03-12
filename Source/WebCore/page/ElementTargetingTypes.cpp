@@ -27,34 +27,63 @@
 #include "ElementTargetingTypes.h"
 
 #include "SharedBuffer.h"
-#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/JSONValues.h>
 
 namespace WebCore {
 
 Ref<SharedBuffer> serializeTargetedElementSelectors(const TargetedElementSelectors& selectors)
 {
-    static constexpr unsigned currentVersion = 1;
+    Ref rootObject = JSON::Object::create();
+    rootObject->setInteger("version"_s, 1);
 
-    WTF::Persistence::Encoder encoder;
+    Ref selectorsArray = JSON::Array::create();
+    for (auto selectorSet : selectors) {
+        Ref selectorSetArray = JSON::Array::create();
+        for (auto selector : selectorSet)
+            selectorSetArray->pushString(selector);
+        selectorsArray->pushArray(WTF::move(selectorSetArray));
+    }
+    rootObject->setArray("selectors"_s, WTF::move(selectorsArray));
 
-    encoder << currentVersion;
-    encoder << selectors;
-    return SharedBuffer::create(encoder.span());
+    auto jsonString = rootObject->toJSONString();
+    return SharedBuffer::create(jsonString.utf8().span());
 }
 
 std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std::span<const uint8_t> data)
 {
-    static constexpr unsigned maxAllowedVersion = 1;
-
-    WTF::Persistence::Decoder decoder { data };
-
-    std::optional<unsigned> version;
-    decoder >> version;
-    if (!version || *version > maxAllowedVersion)
+    auto jsonString = String::fromUTF8(data);
+    RefPtr parsedValue = JSON::Value::parseJSON(jsonString);
+    if (!parsedValue)
         return { };
 
-    std::optional<TargetedElementSelectors> result;
-    decoder >> result;
+    RefPtr rootObject = parsedValue->asObject();
+    if (!rootObject)
+        return { };
+
+    auto version = rootObject->getInteger("version"_s);
+    if (!version || *version > 1)
+        return { };
+
+    RefPtr selectorsArray = rootObject->getArray("selectors"_s);
+    if (!selectorsArray)
+        return { };
+
+    TargetedElementSelectors result;
+    for (size_t i = 0; i < selectorsArray->length(); ++i) {
+        RefPtr selectorSetArray = selectorsArray->get(i)->asArray();
+        if (!selectorSetArray)
+            return { };
+
+        HashSet<String> selectorSet;
+        for (size_t j = 0; j < selectorSetArray->length(); ++j) {
+            auto selectorString = selectorSetArray->get(j)->asString();
+            if (selectorString.isNull())
+                return { };
+            selectorSet.add(selectorString);
+        }
+        result.append(WTF::move(selectorSet));
+    }
+
     return result;
 }
 

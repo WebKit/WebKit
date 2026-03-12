@@ -56,7 +56,7 @@ public:
     bool isEmpty() const { return m_files.isEmpty(); }
     Vector<String> paths() const;
 
-    const Vector<Ref<File>>& files() const { return m_files; }
+    const Vector<Ref<File>>& files() const LIFETIME_BOUND { return m_files; }
     const File& file(unsigned index) const { return m_files[index].get(); }
 
 private:

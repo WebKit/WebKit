@@ -38,7 +38,7 @@
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
-#if HAVE(WEB_TRANSPORT)
+#if PLATFORM(COCOA)
 SOFT_LINK_FRAMEWORK(Network)
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_local_draining, void, (nw_protocol_metadata_t metadata), (metadata))
 #define nw_webtransport_metadata_set_local_draining softLinknw_webtransport_metadata_set_local_draining
@@ -50,7 +50,11 @@ SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_remote_receive_error_ha
 #define nw_webtransport_metadata_set_remote_receive_error_handler softLinknw_webtransport_metadata_set_remote_receive_error_handler
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_remote_send_error_handler, void, (nw_protocol_metadata_t metadata, nw_webtransport_send_error_handler_t handler, dispatch_queue_t queue), (metadata, handler, queue))
 #define nw_webtransport_metadata_set_remote_send_error_handler softLinknw_webtransport_metadata_set_remote_send_error_handler
-#endif // HAVE(WEB_TRANSPORT)
+SOFT_LINK_WITH_NS_RETURNS_RETAINED(Network, nw_protocol_copy_webtransport_definition, nw_protocol_definition_t, (void), ())
+SOFT_LINK_WITH_NS_RETURNS_RETAINED(Network, nw_webtransport_create_options, nw_protocol_options_t, (void), ())
+SOFT_LINK(Network, nw_webtransport_options_set_is_unidirectional, void, (nw_protocol_options_t options, bool is_unidirectional), (options, is_unidirectional))
+SOFT_LINK(Network, nw_webtransport_options_set_is_datagram, void, (nw_protocol_options_t options, bool is_datagram), (options, is_datagram))
+#endif // PLATFORM(COCOA)
 
 namespace TestWebKitAPI {
 
@@ -217,7 +221,7 @@ void Connection::terminate(CompletionHandler<void()>&& completionHandler)
     nw_connection_cancel(m_connection.get());
 }
 
-#if HAVE(WEB_TRANSPORT)
+#if PLATFORM(COCOA)
 
 void Connection::abortReads(uint64_t errorCode)
 {
@@ -340,6 +344,6 @@ void ConnectionGroup::drainWebTransportSession()
         nw_webtransport_metadata_set_local_draining(metadata.get());
 }
 
-#endif // HAVE(WEB_TRANSPORT)
+#endif // PLATFORM(COCOA)
 
 } // namespace TestWebKitAPI

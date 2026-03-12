@@ -138,7 +138,7 @@ public:
     void addTexture(id<MTLTexture>);
     void addTexture(const Texture&);
     void addSampler(const Sampler&);
-    id<MTLCommandBuffer> _Nullable commandBuffer() const;
+    id<MTLCommandBuffer> _Nullable NODELETE commandBuffer() const;
     void setExistingEncoder(id<MTLCommandEncoder>);
     void generateInvalidEncoderStateError();
     bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
@@ -163,7 +163,7 @@ private:
     CommandEncoder(id<MTLCommandBuffer>, Device&, uint64_t uniqueId);
     CommandEncoder(Device&);
 
-    bool validatePopDebugGroup() const;
+    bool NODELETE validatePopDebugGroup() const;
 
     NSString * _Nullable validateFinishError() const;
     NSString * _Nullable errorValidatingCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);

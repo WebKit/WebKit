@@ -93,7 +93,7 @@ void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomSt
         break;
     }
     case AttributeNames::patternTransformAttr: {
-        Ref { m_patternTransform }->baseVal()->parse(newValue);
+        m_patternTransform->baseVal()->parse(newValue);
         break;
     }
     case AttributeNames::xAttr:

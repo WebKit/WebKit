@@ -48,18 +48,26 @@ public:
     std::optional<FailedCheck> validate();
     std::optional<FailedCheck> validateIO();
 
+    void visit(AST::DiagnosticDirective&) override;
     void visit(AST::Function&) override;
     void visit(AST::Parameter&) override;
     void visit(AST::Variable&) override;
     void visit(AST::Structure&) override;
     void visit(AST::StructureMember&) override;
     void visit(AST::CompoundStatement&) override;
+    void visit(AST::ForStatement&) override;
+    void visit(AST::WhileStatement&) override;
+    void visit(AST::LoopStatement&) override;
+    void visit(AST::Continuing&) override;
+    void visit(AST::SwitchStatement&) override;
+    void visit(AST::IfStatement&) override;
 
 private:
     bool parseBuiltin(AST::Function*, std::optional<Builtin>&, AST::Attribute&);
     bool parseInterpolate(std::optional<AST::Interpolation>&, AST::Attribute&);
     bool parseInvariant(bool&, AST::Attribute&);
     bool parseLocation(AST::Function*, std::optional<unsigned>&, AST::Attribute&, const Type*);
+    bool parseDiagnostic(AST::DiagnosticContainer&, AST::Attribute&);
 
     void validateInterpolation(const SourceSpan&, const std::optional<AST::Interpolation>&, const std::optional<unsigned>&);
     void validateInvariant(const SourceSpan&, const std::optional<Builtin>&, bool);
@@ -69,6 +77,7 @@ private:
     void validateBuiltinIO(const SourceSpan&, const Type*, ShaderStage, Builtin, Direction, Builtins&);
     void validateLocationIO(const SourceSpan&, const Type*, ShaderStage, unsigned, Locations&);
     void validateStructIO(ShaderStage, const Types::Struct&, Direction, Builtins&, Locations&);
+    void validateInterpolationIO(const SourceSpan&, ShaderStage, Direction, const Type*, const std::optional<AST::Interpolation>&);
     void validateAlignment(const SourceSpan&, AddressSpace, const Type*);
 
     template<typename T>
@@ -95,6 +104,19 @@ std::optional<FailedCheck> AttributeValidator::validate()
     if (!hasError()) [[likely]]
         return std::nullopt;
     return FailedCheck { Vector<Error> { result().error() }, { } };
+}
+
+void AttributeValidator::visit(AST::DiagnosticDirective& diagnosticDirective)
+{
+    auto& diagnostic = diagnosticDirective.diagnostic();
+    if (auto& severity = m_shaderModule.severityFor(diagnostic.triggeringRule)) {
+        if (severity != diagnostic.severity) {
+            error(diagnosticDirective.span(), "conflicting diagnostic directive"_s);
+            return;
+        }
+    }
+
+    m_shaderModule.setSeverityFor(diagnostic.triggeringRule, diagnostic.severity);
 }
 
 void AttributeValidator::visit(AST::Function& function)
@@ -142,6 +164,9 @@ void AttributeValidator::visit(AST::Function& function)
             update(attribute.span(), function.m_workgroupSize, workgroupSize);
             continue;
         }
+
+        if (parseDiagnostic(function, attribute))
+            continue;
 
         error(attribute.span(), "invalid attribute for function declaration"_s);
         return;
@@ -560,11 +585,107 @@ void AttributeValidator::visit(AST::StructureMember& member)
 void AttributeValidator::visit(AST::CompoundStatement& statement)
 {
     for (auto& attribute : statement.attributes()) {
-        if (!is<AST::DiagnosticAttribute>(attribute)) [[unlikely]] {
-            error(attribute.span(), "invalid attribute for compound statement"_s);
-            return;
-        }
+        if (parseDiagnostic(statement, attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for compound statement"_s);
+        return;
     }
+
+    AST::Visitor::visit(statement);
+}
+
+void AttributeValidator::visit(AST::ForStatement& statement)
+{
+    for (auto& attribute : statement.attributes()) {
+        if (parseDiagnostic(statement, attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for `for` statement"_s);
+        return;
+    }
+
+    AST::Visitor::visit(statement);
+}
+
+void AttributeValidator::visit(AST::WhileStatement& statement)
+{
+    for (auto& attribute : statement.attributes()) {
+        if (parseDiagnostic(statement, attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for compound statement"_s);
+        return;
+    }
+
+    AST::Visitor::visit(statement);
+}
+
+void AttributeValidator::visit(AST::LoopStatement& statement)
+{
+    for (auto& attribute : statement.attributes()) {
+        if (parseDiagnostic(statement, attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for `loop` statement"_s);
+        return;
+    }
+
+    for (auto& attribute : statement.bodyAttributes()) {
+        if (parseDiagnostic(statement.bodyDiagnostics(), attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for `loop` body"_s);
+        return;
+    }
+
+    AST::Visitor::visit(statement);
+}
+
+void AttributeValidator::visit(AST::Continuing& continuing)
+{
+    for (auto& attribute : continuing.attributes) {
+        if (parseDiagnostic(continuing, attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for `continuing` body"_s);
+        return;
+    }
+
+    AST::Visitor::visit(continuing);
+}
+
+void AttributeValidator::visit(AST::SwitchStatement& statement)
+{
+    for (auto& attribute : statement.attributes()) {
+        if (parseDiagnostic(statement, attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for `switch` statement"_s);
+        return;
+    }
+
+    for (auto& attribute : statement.bodyAttributes()) {
+        if (parseDiagnostic(statement.bodyDiagnostics(), attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for `switch` body"_s);
+        return;
+    }
+
+    AST::Visitor::visit(statement);
+}
+
+void AttributeValidator::visit(AST::IfStatement& statement)
+{
+    for (auto& attribute : statement.attributes()) {
+        if (parseDiagnostic(statement, attribute))
+            continue;
+
+        error(attribute.span(), "invalid attribute for `if` statement"_s);
+        return;
+    }
+
     AST::Visitor::visit(statement);
 }
 
@@ -646,10 +767,38 @@ bool AttributeValidator::parseLocation(AST::Function* function, std::optional<un
     return true;
 }
 
+bool AttributeValidator::parseDiagnostic(AST::DiagnosticContainer& statement, AST::Attribute& attribute)
+{
+    auto* diagnosticAttribute = dynamicDowncast<AST::DiagnosticAttribute>(&attribute);
+    if (!diagnosticAttribute)
+        return false;
+
+    auto& diagnostic = diagnosticAttribute->diagnostic();
+    if (statement.severityFor(diagnostic.triggeringRule)) {
+        error(attribute.span(), "duplicate @diagnostic attribute"_s);
+        return true;
+    }
+
+    statement.setSeverityFor(diagnostic.triggeringRule, diagnostic.severity);
+    return true;
+}
+
 void AttributeValidator::validateInterpolation(const SourceSpan& span, const std::optional<AST::Interpolation>& interpolation, const std::optional<unsigned>& location)
 {
     if (interpolation && !location) [[unlikely]]
         error(span, "@interpolate is only allowed on declarations that have a @location attribute"_s);
+    if (!interpolation)
+        return;
+    auto type = interpolation->type;
+    auto sampling = interpolation->sampling;
+
+    if (type == InterpolationType::Flat) {
+        if (sampling != InterpolationSampling::First && sampling != InterpolationSampling::Either) [[unlikely]]
+            error(span, "flat interpolation attribute must have a sampling parameter of `first` or `either`"_s);
+    } else {
+        if (sampling != InterpolationSampling::Center && sampling != InterpolationSampling::Centroid && sampling != InterpolationSampling::Sample) [[unlikely]]
+            error(span, makeString(toString(type), " interpolation attribute must have a sampling parameter of `center`, `centroid` or `sample`"_s));
+    }
 }
 
 void AttributeValidator::validateInvariant(const SourceSpan& span, const std::optional<Builtin>& builtin, bool invariant)
@@ -713,6 +862,7 @@ std::optional<FailedCheck> AttributeValidator::validateIO()
 
             if (auto location = parameter.location()) {
                 CHECK(validateLocationIO(span, type, entryPoint.stage, *location, locations));
+                CHECK(validateInterpolationIO(span, entryPoint.stage, Direction::Input, type, parameter.interpolation()));
                 continue;
             }
 
@@ -833,6 +983,23 @@ void AttributeValidator::validateLocationIO(const SourceSpan& span, const Type* 
         error(span, "@location("_s, location, ") appears multiple times"_s);
 }
 
+void AttributeValidator::validateInterpolationIO(const SourceSpan& span, ShaderStage stage, Direction direction, const Type* type, const std::optional<AST::Interpolation>& interpolation)
+{
+    if (!(stage == ShaderStage::Vertex && direction == Direction::Output) && !(stage == ShaderStage::Fragment && direction == Direction::Input)) [[unlikely]]
+        return;
+
+    if (!satisfies(type, Constraints::Integer)) {
+        auto* vector = std::get_if<Types::Vector>(type);
+        if (!vector || !satisfies(vector->element, Constraints::Integer)) [[unlikely]]
+            return;
+    }
+
+    if (!interpolation || interpolation->type != InterpolationType::Flat) [[unlikely]] {
+        auto location = stage == ShaderStage::Vertex ? "vertex output"_s : "fragment input"_s;
+        error(span, makeString("integral user-defined "_s, location, " must have a @interpolate(flat) attribute"_s));
+    }
+}
+
 void AttributeValidator::validateStructIO(ShaderStage stage, const Types::Struct& structType, Direction direction, Builtins& builtins, Locations& locations)
 {
     for (auto& member : structType.structure.members()) {
@@ -848,6 +1015,9 @@ void AttributeValidator::validateStructIO(ShaderStage stage, const Types::Struct
 
         if (auto location = member.location()) {
             validateLocationIO(span, type, stage, *location, locations);
+            if (hasError()) [[unlikely]]
+                return;
+            validateInterpolationIO(span, stage, direction, type, member.interpolation());
             if (hasError()) [[unlikely]]
                 return;
             continue;

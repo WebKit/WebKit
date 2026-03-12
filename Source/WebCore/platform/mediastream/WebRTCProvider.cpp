@@ -331,7 +331,7 @@ static String contentTypeFromRTPVideoMimeType(const String& mimeType)
 
 void WebRTCProvider::createDecodingConfiguration(PlatformMediaDecodingConfiguration&& configuration, DecodingConfigurationCallback&& callback)
 {
-    ASSERT(configuration.type == PlatformMediaDecodingType::WebRTC);
+    ASSERT(configuration.type == PlatformMediaDecodingType::MediaStream);
 
     // FIXME: Validate additional parameters, in particular mime type parameters.
     PlatformMediaCapabilitiesDecodingInfo info { { }, WTF::move(configuration) };

@@ -77,7 +77,6 @@ void Highlight::clearFromSetLike()
 {
     for (auto& highlightRange : std::exchange(m_highlightRanges, { }))
         repaintRange(highlightRange->range());
-    m_highlightRanges.clear();
 }
 
 bool Highlight::addToSetLike(AbstractRange& range)

@@ -1401,7 +1401,6 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::StrokeStyle': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::SupportedPluginIdentifier': ['<WebCore/PluginData.h>'],
         'WebCore::SupportsAirPlayVideo': ['<WebCore/MediaSessionHelperIOS.h>'],
-        'WebCore::SupportsSpatialAudioPlayback': ['<WebCore/MediaSessionHelperIOS.h>'],
         'WebCore::SuspendedUnderLock': ['<WebCore/MediaSessionHelperIOS.h>'],
         'WebCore::SWServerConnectionIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::TargetedElementAdjustment': ['<WebCore/ElementTargetingTypes.h>'],

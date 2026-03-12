@@ -7,7 +7,7 @@ FAIL SLD(rollback) must detect InvalidStateError synchronously when chain is emp
 FAIL addIceCandidate must detect InvalidStateError synchronously when chain is empty assert_equals: expected "InvalidStateError" but got "Error"
 PASS replaceTrack must detect InvalidStateError synchronously when chain is empty and transceiver is stopped
 PASS setParameters must detect InvalidStateError synchronously always when transceiver is stopped
-FAIL pc.getStats must detect InvalidAccessError synchronously always assert_equals: expected "InvalidAccessError" but got "Error"
+PASS pc.getStats must detect InvalidAccessError synchronously always
 PASS isOperationsChainEmpty detects empty in stable
 PASS isOperationsChainEmpty detects empty in have-local-offer
 PASS isOperationsChainEmpty detects empty in have-remote-offer

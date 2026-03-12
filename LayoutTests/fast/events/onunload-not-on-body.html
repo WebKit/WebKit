@@ -19,7 +19,7 @@ function unload()
 </head>
 <frameset onload="load()">
      <frame src="data:text/html,<p>loaded frame 0</p>" onunload="unload()" ></frame>
-     <frame src="data:text/html,<script>function unload(){ alert('unload'); }</script><body><p>loaded frame 1</p><object data='resources/greenbox.png' onunload='unload()'></object></body>" ></frame>
      <frame src="data:text/html,<script>function unload(){ alert('unload'); }</script><body onunload='unload()'><p>loaded frame 2</p></body>" ></frame>
+     <frame src="data:text/html,<script>function unload(){ alert('unload'); }</script><body><p>loaded frame 1</p><object data='resources/greenbox.png' onunload='unload()'></object></body>" ></frame>
 </frameset>
 </html>

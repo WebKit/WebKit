@@ -209,6 +209,9 @@ platform/visionos/transforms/separated-video.html [ Failure ]
 ###################################################################################################
 ### START OF Flaky tests
 
+# webkit.org/b/309297 overlay-region/clipping.html
+overlay-region/full-page-horizontal.html [ Pass Failure ]
+
 # webkit.org/b/305613 overlay-region/clipping.html
 overlay-region/clipping.html [ Pass Failure ]
 

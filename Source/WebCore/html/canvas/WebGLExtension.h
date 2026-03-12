@@ -124,7 +124,7 @@ public:
 
     // Only to be used by friend WebCoreOpaqueRoot root(const WebGLExtension<T>*) that cannot be a friend
     // due to C++ warning on some compilers.
-    T* opaqueRoot() const { return m_context.load(); }
+    T* opaqueRoot() const LIFETIME_BOUND { return m_context.load(); }
 
 protected:
     WebGLExtension(T& context, WebGLExtensionName name)

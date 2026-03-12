@@ -164,6 +164,7 @@ private:
     ShouldGoToHistoryItem NODELETE shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const final;
     bool NODELETE supportsAsyncShouldGoToHistoryItem() const final;
     void NODELETE shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const final;
+    void NODELETE dispatchGoToBackForwardItemAtIndex(int steps, FrameLoadType) final;
 
     void NODELETE saveViewStateToItem(HistoryItem&) final;
     bool NODELETE canCachePage() const final;

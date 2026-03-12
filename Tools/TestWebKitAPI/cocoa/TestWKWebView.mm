@@ -1668,14 +1668,23 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
 - (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta
 {
-    RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitPixel, 2, delta.height, delta.width, 0));
+    static constexpr auto phase = static_cast<CGScrollPhase>(0);
+    [self wheelEventAtPoint:pointInWindow wheelDelta:delta phase:phase momentumPhase:kCGMomentumScrollPhaseNone];
+}
+
+- (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta phase:(CGScrollPhase)phase momentumPhase:(CGMomentumScrollPhase)momentumPhase
+{
+    RetainPtr cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitPixel, 2, delta.height, delta.width, 0));
+
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, phase);
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, momentumPhase);
 
     CGPoint locationInGlobalScreenCoordinates = [[self window] convertPointToScreen:pointInWindow];
     locationInGlobalScreenCoordinates.y = [[[NSScreen screens] objectAtIndex:0] frame].size.height - locationInGlobalScreenCoordinates.y;
     CGEventSetLocation(cgScrollEvent.get(), locationInGlobalScreenCoordinates);
-    
-    NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
-    [self scrollWheel:event];
+
+    RetainPtr event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
+    [self scrollWheel:event.get()];
 }
 
 - (NSWindow *)hostWindow

@@ -53,9 +53,9 @@ public:
 
     void load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
 
-    const URL& url() const { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     SharedWorker& worker() { return m_worker.get(); }
-    const WorkerOptions& options() const { return m_options; }
+    const WorkerOptions& options() const LIFETIME_BOUND { return m_options; }
 
 private:
     SharedWorkerScriptLoader(URL&&, SharedWorker&, WorkerOptions&&);

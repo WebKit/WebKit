@@ -512,7 +512,7 @@ std::optional<PlatformLayerIdentifier> GraphicsLayerCA::primaryLayerID() const
 
 std::optional<PlatformLayerIdentifier> GraphicsLayerCA::layerIDIgnoringStructuralLayer() const
 {
-    return protect(m_layer)->layerID();
+    return m_layer->layerID();
 }
 
 PlatformLayer* GraphicsLayerCA::platformLayer() const
@@ -2442,7 +2442,7 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
 
     auto appendLayersFromChildren = [&](PlatformCALayerList& list) {
         for (Ref child : children())
-            list.append(downcast<GraphicsLayerCA>(child)->layerForSuperlayer());
+            list.append(downcast<GraphicsLayerCA>(child.get()).layerForSuperlayer());
     };
 
     auto appendDebugLayers = [&](PlatformCALayerList& list) {
@@ -3865,8 +3865,8 @@ static bool hasBig3DRotation(const GraphicsLayerKeyframeValueList& valueList, co
         for (size_t i = 1; i < valueList.size(); ++i) {
             // Since the shared primitive at this index is a rotation, both of these transform
             // functions should be RotateTransformOperations.
-            RefPtr prevOperation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i - 1).at(animationIndex));
-            RefPtr operation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i).at(animationIndex));
+            auto* prevOperation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i - 1).at(animationIndex));
+            auto* operation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i).at(animationIndex));
             auto angle = std::abs((prevOperation ? prevOperation->angle() : 0.0) - (operation ? operation->angle() : 0.0));
             if (angle > 180.0)
                 return true;
@@ -4135,19 +4135,19 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const GraphicsLayerKeyframe
     } else {
         if (isTransformTypeNumber(transformOpType)) {
             float fromValue;
-            getTransformFunctionValue(RefPtr { startValue.at(functionIndex) }.get(), transformOpType, fromValue);
+            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, fromValue);
             basicAnim->setFromValue(fromValue);
-            
+
             float toValue;
-            getTransformFunctionValue(RefPtr { endValue.at(functionIndex) }.get(), transformOpType, toValue);
+            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, toValue);
             basicAnim->setToValue(toValue);
         } else if (isTransformTypeFloatPoint3D(transformOpType)) {
             FloatPoint3D fromValue;
-            getTransformFunctionValue(RefPtr { startValue.at(functionIndex) }.get(), transformOpType, fromValue);
+            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, fromValue);
             basicAnim->setFromValue(fromValue);
-            
+
             FloatPoint3D toValue;
-            getTransformFunctionValue(RefPtr { endValue.at(functionIndex) }.get(), transformOpType, toValue);
+            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, toValue);
             basicAnim->setToValue(toValue);
         } else {
             TransformationMatrix fromValue;

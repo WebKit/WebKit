@@ -117,7 +117,7 @@ static void addIntrinsicMargins(RenderStyle& style)
 
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
     // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
-    if (style.width().isIntrinsicOrLegacyIntrinsicOrAuto()) {
+    if (style.width().isSizingKeywordOrAuto()) {
         if (style.marginLeft().hasQuirk())
             style.setMarginLeft(intrinsicMargin);
         if (style.marginRight().hasQuirk())
@@ -152,7 +152,7 @@ static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const
     }();
 
     // Outermost <svg> roots are considered to be atomic inline-level.
-    if (RefPtr svgElement = dynamicDowncast<SVGElement>(element); svgElement && svgElement->isOutermostSVGSVGElement())
+    if (auto* svgElement = dynamicDowncast<SVGElement>(element); svgElement && svgElement->isOutermostSVGSVGElement())
         return false;
 
     // There is no other good way to prevent decorations from affecting user agent shadow trees.
@@ -546,7 +546,7 @@ void Adjuster::adjust(RenderStyle& style) const
         // of the value of the position property, with one exception: as for boxes in CSS 2.1, outer ‘svg’ elements
         // must be positioned for z-index to apply to them.
         if (element && element->document().settings().layerBasedSVGEngineEnabled()) {
-            if (RefPtr svgElement = dynamicDowncast<SVGElement>(*element); svgElement && svgElement->isOutermostSVGSVGElement())
+            if (auto* svgElement = dynamicDowncast<SVGElement>(*element); svgElement && svgElement->isOutermostSVGSVGElement())
                 return element->renderer() && element->renderer()->style().position() == PositionType::Static;
 
             return false;

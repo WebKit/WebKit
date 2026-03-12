@@ -52,7 +52,7 @@ public:
     std::optional<double> heading() const { return m_corePosition.heading; }
     std::optional<double> speed() const { return m_corePosition.speed; }
 
-    const WebCore::GeolocationPositionData& corePosition() const { return m_corePosition; }
+    const WebCore::GeolocationPositionData& corePosition() const LIFETIME_BOUND { return m_corePosition; }
 
 private:
     explicit WebGeolocationPosition(WebCore::GeolocationPositionData&& geolocationPosition)

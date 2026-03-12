@@ -60,16 +60,16 @@ public:
 
     ~PipelineLayout();
 
-    void setLabel(String&&);
+    void NODELETE setLabel(String&&);
 
     bool isValid() const { return m_isValid; }
 
-    bool operator==(const PipelineLayout&) const;
+    bool NODELETE operator==(const PipelineLayout&) const;
 
-    bool isAutoLayout() const;
+    bool NODELETE isAutoLayout() const;
     size_t numberOfBindGroupLayouts() const { return m_bindGroupLayouts ? m_bindGroupLayouts->size() : 0; }
-    BindGroupLayout& bindGroupLayout(size_t) const;
-    BindGroupLayout* optionalBindGroupLayout(size_t) const;
+    BindGroupLayout& NODELETE bindGroupLayout(size_t) const;
+    BindGroupLayout* NODELETE optionalBindGroupLayout(size_t) const;
 
     Device& device() const { return m_device; }
     void makeInvalid();

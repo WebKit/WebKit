@@ -39,6 +39,8 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutTreeBuilder.h"
 #include "LegacyInlineTextBox.h"
+#include "LegacyRootInlineBox.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
@@ -262,7 +264,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         if (!shouldCheckPaddingAndContentBox)
             return false;
         // FIXME: Figure out why trunk/rendering comes back with odd values for <tbody> and <td> content box.
-        if (is<RenderTableCell>(renderer) || is<RenderTableSection>(renderer))
+        if (isAnyOf<RenderTableCell, RenderTableSection>(renderer))
             return false;
         // Tables have 0 content box size for some reason when border collapsing is on.
         auto* renderTable = dynamicDowncast<RenderTable>(renderer);

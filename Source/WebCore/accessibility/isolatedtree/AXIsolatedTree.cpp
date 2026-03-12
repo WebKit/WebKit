@@ -762,6 +762,9 @@ void AXIsolatedTree::updateNodeProperties(AccessibilityObject& axObject, const A
         case AXProperty::IsHiddenUntilFoundContainer:
             properties.append({ AXProperty::IsHiddenUntilFoundContainer, axObject.isHiddenUntilFoundContainer() });
             break;
+        case AXProperty::IsARIAHidden:
+            properties.append({ AXProperty::IsARIAHidden, axObject.isARIAHidden() });
+            break;
         case AXProperty::IsIgnored:
             properties.append({ AXProperty::IsIgnored, axObject.isIgnored() });
             break;
@@ -1513,7 +1516,7 @@ void AXIsolatedTree::applyPendingChangesLocked()
     m_pendingAppends.clear();
 
     for (const auto& parentUpdate : m_pendingParentUpdates) {
-        if (RefPtr object = objectForID(parentUpdate.key))
+        if (auto* object = objectForID(parentUpdate.key))
             object->setParent(parentUpdate.value);
     }
     m_pendingParentUpdates.clear();
@@ -1772,6 +1775,8 @@ std::optional<AXPropertyFlag> convertToPropertyFlag(AXProperty property)
         return AXPropertyFlag::HasPlainText;
     case AXProperty::HasPointerEventsNone:
         return AXPropertyFlag::HasPointerEventsNone;
+    case AXProperty::IsARIAHidden:
+        return AXPropertyFlag::IsARIAHidden;
     case AXProperty::IsBlockFlow:
         return AXPropertyFlag::IsBlockFlow;
     case AXProperty::IsEnabled:
@@ -1964,16 +1969,16 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
         if (object.isLocalFrame()) {
-            if (auto* localFrame = dynamicDowncast<AXLocalFrame>(&object)) {
-                if (std::optional frameID = localFrame->frameID())
-                    setProperty(AXProperty::CrossFrameChildFrameID, *frameID);
-            }
+            RefPtr localFrame = dynamicDowncast<AXLocalFrame>(object);
+            if (auto frameID = localFrame ? localFrame->frameID() : std::nullopt)
+                setProperty(AXProperty::CrossFrameChildFrameID, *frameID);
         }
 #endif
     };
 
     bool isIgnored = object.isIgnored();
     setProperty(AXProperty::IsIgnored, isIgnored);
+    setProperty(AXProperty::IsARIAHidden, object.isARIAHidden());
 
     // Do not set any properties in this block, as this is before we reserve capacity for the property vector.
 

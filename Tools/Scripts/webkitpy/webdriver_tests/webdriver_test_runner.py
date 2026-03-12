@@ -91,7 +91,7 @@ class WebDriverTestRunner(object):
         else:
             expectations_file = os.path.join(self._tests_dir, 'TestExpectations.json')
         build_type = 'Debug' if self._port.get_option('debug') else 'Release'
-        self._expectations = TestExpectations(self._port.name(), expectations_file, build_type)
+        self._expectations = TestExpectations(self._port.name(), expectations_file, build_type, self._port.architecture())
         for test in self._expectations._expectations.keys():
             if not os.path.isfile(os.path.join(self._tests_dir, test)):
                 _log.warning('Test %s does not exist' % test)

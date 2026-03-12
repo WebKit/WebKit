@@ -365,7 +365,7 @@ bool Navigator::cookieEnabled() const
 
 bool Navigator::standalone() const
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     return frame && frame->settings().standalone();
 }
 
@@ -396,19 +396,19 @@ GPU* Navigator::gpu()
 
 Page* Navigator::page()
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     return frame ? frame->page() : nullptr;
 }
 
 const Document* Navigator::document() const
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     return frame ? frame->document() : nullptr;
 }
 
 Document* Navigator::document()
 {
-    RefPtr frame = this->frame();
+    auto* frame = this->frame();
     return frame ? frame->document() : nullptr;
 }
 
@@ -432,7 +432,7 @@ void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<Deferre
         return;
     }
 
-    page->badgeClient().setAppBadge(frame.get(), SecurityOriginData::fromFrame(frame.get()), badge);
+    page->badgeClient().setAppBadge(frame.get(), SecurityOriginData::fromLocalFrame(frame.get()), badge);
     promise->resolve();
 }
 

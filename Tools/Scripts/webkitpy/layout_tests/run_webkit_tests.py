@@ -230,6 +230,8 @@ def parse_args(args):
             help="Show all failures in results.html, rather than only regressions"),
         optparse.make_option("--clobber-old-results", action="store_true",
             default=False, help="Clobbers test results from previous runs."),
+        optparse.make_option("--full-diff-context", action="store_true",
+            default=False, help="Show full context in text diffs instead of a few lines around changes"),
         optparse.make_option("--http", action="store_true", dest="http",
             default=True, help="Run HTTP and WebSocket tests (default)"),
         optparse.make_option("--no-http", action="store_false", dest="http",

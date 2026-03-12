@@ -43,7 +43,7 @@ NavigatorWebDriver::~NavigatorWebDriver() = default;
 
 bool NavigatorWebDriver::isControlledByAutomation(const Navigator& navigator)
 {
-    RefPtr frame = navigator.frame();
+    auto* frame = navigator.frame();
     if (!frame || !frame->page())
         return false;
 

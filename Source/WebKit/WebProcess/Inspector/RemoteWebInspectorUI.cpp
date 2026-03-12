@@ -72,7 +72,7 @@ void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const
     m_debuggableInfo = WTF::move(debuggableInfo);
     m_backendCommandsURL = backendCommandsURL;
 
-    protect(protect(m_page)->corePage())->inspectorController().setInspectorFrontendClient(this);
+    m_page->corePage()->inspectorController().setInspectorFrontendClient(this);
 
     m_frontendAPIDispatcher->reset();
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_s, { JSON::Value::create(true) });
@@ -173,7 +173,7 @@ void RemoteWebInspectorUI::bringToFront()
 
 void RemoteWebInspectorUI::closeWindow()
 {
-    protect(protect(m_page)->corePage())->inspectorController().setInspectorFrontendClient(nullptr);
+    m_page->corePage()->inspectorController().setInspectorFrontendClient(nullptr);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = nullptr;

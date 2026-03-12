@@ -517,7 +517,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
 std::pair<const RenderBox&, const RenderLayer*> RenderBoxModelObject::enclosingClippingBoxForStickyPosition() const
 {
     ASSERT(isStickilyPositioned());
-    CheckedPtr clipLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
+    auto* clipLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
     const RenderBox& box = clipLayer ? downcast<RenderBox>(clipLayer->renderer()) : view();
     return { box, clipLayer };
 }
@@ -594,7 +594,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // have already done a similar call to move from the containing block to the scrolling
     // ancestor above, but localToContainerQuad takes care of a lot of complex situations
     // involving inlines, tables, and transformations.
-    if (CheckedPtr parentBox = dynamicDowncast<RenderBox>(*parent()))
+    if (auto* parentBox = dynamicDowncast<RenderBox>(*parent()))
         parentBox->flipForWritingMode(stickyBoxRect);
     auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), &enclosingClippingBox, { } /* ignore transforms */).boundingBox();
 
@@ -837,7 +837,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
     if (view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers))
         return false;
 
-    CheckedPtr rootLayer = view().layer();
+    auto* rootLayer = view().layer();
     if (!rootLayer || !rootLayer->isComposited())
         return false;
 

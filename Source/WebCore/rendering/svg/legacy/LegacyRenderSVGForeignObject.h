@@ -60,7 +60,7 @@ private:
     void updateLogicalWidth() override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
-    const AffineTransform& localToParentTransform() const override;
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override;
     AffineTransform localTransform() const override { return m_localTransform; }
 
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;

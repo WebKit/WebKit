@@ -846,9 +846,9 @@ static void testWebViewSubmitForm(FormClientTest* test, gconstpointer)
 
     test->loadHtml(formHTML, "file:///");
     test->waitUntilLoadFinished();
+    test->submitFormAtPosition(5, 5);
 
 #if !USE(GTK4)
-    test->submitFormAtPosition(5, 5);
     GHashTable* tableValues = test->getTextFieldsAsHashTable();
     g_assert_nonnull(tableValues);
     g_assert_cmpuint(g_hash_table_size(tableValues), ==, 4);

@@ -45,7 +45,7 @@ public:
 
     RenderSVGResourceType resourceType() const override { return SolidColorResourceType; }
 
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
     void setColor(const Color& color) { m_color = color; }
 
 private:

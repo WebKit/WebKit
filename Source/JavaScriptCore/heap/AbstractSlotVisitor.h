@@ -131,10 +131,10 @@ public:
 
     virtual ~AbstractSlotVisitor() = default;
 
-    MarkStackArray& collectorMarkStack() { return m_collectorStack; }
-    MarkStackArray& mutatorMarkStack() { return m_mutatorStack; }
-    const MarkStackArray& collectorMarkStack() const { return m_collectorStack; }
-    const MarkStackArray& mutatorMarkStack() const { return m_mutatorStack; }
+    MarkStackArray& collectorMarkStack() LIFETIME_BOUND { return m_collectorStack; }
+    MarkStackArray& mutatorMarkStack() LIFETIME_BOUND { return m_mutatorStack; }
+    const MarkStackArray& collectorMarkStack() const LIFETIME_BOUND { return m_collectorStack; }
+    const MarkStackArray& mutatorMarkStack() const LIFETIME_BOUND { return m_mutatorStack; }
 
     bool isEmpty() { return m_collectorStack.isEmpty() && m_mutatorStack.isEmpty(); }
 
@@ -210,7 +210,7 @@ public:
 
     virtual void visitAsConstraint(const JSCell*) = 0;
 
-    const char* codeName() const { return m_codeName.data(); }
+    const char* codeName() const LIFETIME_BOUND { return m_codeName.data(); }
 
 protected:
     inline AbstractSlotVisitor(Heap&, CString codeName, ConcurrentPtrHashSet&);

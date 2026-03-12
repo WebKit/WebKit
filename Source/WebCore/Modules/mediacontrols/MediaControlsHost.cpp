@@ -152,7 +152,7 @@ const AtomString& MediaControlsHost::mediaControlsContainerClassName() const
 
 Vector<Ref<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {
-    RefPtr page = protect(m_mediaElement)->document().page();
+    RefPtr page = m_mediaElement->document().page();
     if (!page)
         return { };
 
@@ -161,7 +161,7 @@ Vector<Ref<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& 
 
 Vector<Ref<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList& trackList)
 {
-    RefPtr page = protect(m_mediaElement)->document().page();
+    RefPtr page = m_mediaElement->document().page();
     if (!page)
         return { };
 
@@ -173,7 +173,7 @@ String MediaControlsHost::displayNameForTrack(const std::optional<TextOrAudioTra
     if (!track)
         return emptyString();
 
-    RefPtr page = protect(m_mediaElement)->document().page();
+    RefPtr page = m_mediaElement->document().page();
     if (!page)
         return emptyString();
 
@@ -199,7 +199,7 @@ TextTrack& MediaControlsHost::captionMenuOnItem()
 
 AtomString MediaControlsHost::captionDisplayMode() const
 {
-    RefPtr page = protect(m_mediaElement)->document().page();
+    RefPtr page = m_mediaElement->document().page();
     if (!page)
         return emptyAtom();
 
@@ -299,12 +299,12 @@ bool MediaControlsHost::supportsFullscreen() const
 
 bool MediaControlsHost::isVideoLayerInline() const
 {
-    return protect(m_mediaElement)->isVideoLayerInline();
+    return m_mediaElement->isVideoLayerInline();
 }
 
 bool MediaControlsHost::isInMediaDocument() const
 {
-    return protect(m_mediaElement)->document().isMediaDocument();
+    return m_mediaElement->document().isMediaDocument();
 }
 
 bool MediaControlsHost::userGestureRequired() const
@@ -325,7 +325,7 @@ bool MediaControlsHost::supportsSeeking() const
 bool MediaControlsHost::inWindowFullscreen() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement.get()))
+    if (auto* videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement.get()))
         return videoElement->webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow;
 #endif
     return false;
@@ -340,7 +340,7 @@ bool MediaControlsHost::supportsRewind() const
 
 bool MediaControlsHost::needsChromeMediaControlsPseudoElement() const
 {
-    return protect(protect(m_mediaElement)->document())->quirks().needsChromeMediaControlsPseudoElement();
+    return protect(m_mediaElement->document())->quirks().needsChromeMediaControlsPseudoElement();
 }
 
 bool MediaControlsHost::isMediaControlsMacInlineSizeSpecsEnabled() const
@@ -352,10 +352,19 @@ bool MediaControlsHost::isMediaControlsMacInlineSizeSpecsEnabled() const
 #endif
 }
 
+bool MediaControlsHost::isAVExperienceControllerFullscreenEnabled() const
+{
+#if HAVE(AVEXPERIENCECONTROLLER)
+    return protect(m_mediaElement)->document().settings().isAVExperienceControllerFullscreenEnabled();
+#else
+    return false;
+#endif
+}
+
 String MediaControlsHost::externalDeviceDisplayName() const
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    RefPtr player = protect(m_mediaElement)->player();
+    RefPtr player = m_mediaElement->player();
     if (!player) {
         LOG(Media, "MediaControlsHost::externalDeviceDisplayName - returning \"\" because player is NULL");
         return emptyString();
@@ -374,7 +383,7 @@ auto MediaControlsHost::externalDeviceType() const -> DeviceType
 #if !ENABLE(WIRELESS_PLAYBACK_TARGET)
     return DeviceType::None;
 #else
-    RefPtr player = protect(m_mediaElement)->player();
+    RefPtr player = m_mediaElement->player();
     if (!player) {
         LOG(Media, "MediaControlsHost::externalDeviceType - returning \"none\" because player is NULL");
         return DeviceType::None;
@@ -396,7 +405,7 @@ auto MediaControlsHost::externalDeviceType() const -> DeviceType
 
 bool MediaControlsHost::controlsDependOnPageScaleFactor() const
 {
-    return protect(m_mediaElement)->mediaControlsDependOnPageScaleFactor();
+    return m_mediaElement->mediaControlsDependOnPageScaleFactor();
 }
 
 void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
@@ -898,7 +907,7 @@ auto MediaControlsHost::sourceType() const -> std::optional<SourceType>
 
 bool MediaControlsHost::needsCaptionVisibilityInFullscreenAndPictureInPictureQuirk() const
 {
-    return protect(protect(m_mediaElement)->document())->quirks().ensureCaptionVisibilityInFullscreenAndPictureInPicture();
+    return protect(m_mediaElement->document())->quirks().ensureCaptionVisibilityInFullscreenAndPictureInPicture();
 }
 
 void MediaControlsHost::handleCaptionVisibilityInFullscreenAndPictureInPictureQuirk()
@@ -971,7 +980,7 @@ void MediaControlsHost::restorePreviouslySelectedTextTrackIfNecessary()
     if (!previouslySelectedTextTrack)
         return;
 
-    RefPtr textTracks = protect(m_mediaElement)->textTracks();
+    RefPtr textTracks = m_mediaElement->textTracks();
     for (unsigned i = 0; textTracks && i < textTracks->length(); ++i) {
         RefPtr textTrack = textTracks->item(i);
         ASSERT(textTrack);
@@ -988,7 +997,7 @@ void MediaControlsHost::restorePreviouslySelectedTextTrackIfNecessary()
 #if ENABLE(MEDIA_SESSION)
 RefPtr<MediaSession> MediaControlsHost::mediaSession() const
 {
-    RefPtr window = protect(m_mediaElement)->document().window();
+    RefPtr window = m_mediaElement->document().window();
     if (!window)
         return { };
 
@@ -1006,7 +1015,7 @@ void MediaControlsHost::ensureMediaSessionObserver()
 
 void MediaControlsHost::metadataChanged(const RefPtr<MediaMetadata>&)
 {
-    RefPtr shadowRoot = protect(m_mediaElement)->userAgentShadowRoot();
+    RefPtr shadowRoot = m_mediaElement->userAgentShadowRoot();
     if (!shadowRoot)
         return;
 

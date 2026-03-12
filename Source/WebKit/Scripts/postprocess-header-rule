@@ -29,7 +29,7 @@ if [[ -z "${SCRIPT_HEADER_VISIBILITY}" ]]; then
 fi
 
 for search_path in "${BUILT_PRODUCTS_DIR}" "${SDKROOT}"; do
-    candidate="${search_path}/usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions"
+    candidate="${search_path}${WK_LIBRARY_HEADERS_FOLDER_PATH}/WebKitAdditions/Scripts/postprocess-framework-headers-definitions"
     test -f "${candidate}" && source "${candidate}" && break
 done
 

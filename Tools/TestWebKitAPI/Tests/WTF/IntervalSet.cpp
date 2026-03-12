@@ -534,4 +534,104 @@ TEST(WTF_IntervalSet, EraseLastItemWithInnerNodes)
     EXPECT_EQ(result->second, 999);
 }
 
+TEST(WTF_IntervalSet, MoveConstructor)
+{
+    IntervalSet<Point, Value> original;
+    original.insert({ 10, 20 }, 1);
+    original.insert({ 30, 40 }, 2);
+    original.insert({ 50, 60 }, 3);
+
+    IntervalSet<Point, Value> moved(WTF::move(original));
+
+    // Moved-to set should have all intervals
+    EXPECT_FALSE(moved.isEmpty());
+    auto result = moved.find({ 10, 20 });
+    EXPECT_TRUE(result);
+    EXPECT_EQ(result->first, Interval(10, 20));
+    EXPECT_EQ(result->second, 1);
+    EXPECT_TRUE(moved.hasOverlap({ 30, 40 }));
+    EXPECT_TRUE(moved.hasOverlap({ 50, 60 }));
+
+    // Moved-from set should be empty and reusable
+    EXPECT_TRUE(original.isEmpty());
+    EXPECT_FALSE(original.hasOverlap({ 10, 20 }));
+    EXPECT_FALSE(original.find({ 10, 20 }));
+    original.insert({ 70, 80 }, 7);
+    EXPECT_TRUE(original.hasOverlap({ 70, 80 }));
+}
+
+TEST(WTF_IntervalSet, MoveAssignment)
+{
+    IntervalSet<Point, Value> original;
+    original.insert({ 10, 20 }, 1);
+    original.insert({ 30, 40 }, 2);
+
+    IntervalSet<Point, Value> destination;
+    destination.insert({ 100, 200 }, 99);
+
+    destination = WTF::move(original);
+
+    // Destination should have original's intervals
+    EXPECT_FALSE(destination.isEmpty());
+    auto result = destination.find({ 10, 20 });
+    EXPECT_TRUE(result);
+    EXPECT_EQ(result->second, 1);
+    EXPECT_TRUE(destination.hasOverlap({ 30, 40 }));
+
+    // Old destination content should be gone
+    EXPECT_FALSE(destination.hasOverlap({ 100, 200 }));
+
+    // Moved-from set should be empty and reusable
+    EXPECT_TRUE(original.isEmpty());
+    original.insert({ 70, 80 }, 7);
+    EXPECT_TRUE(original.hasOverlap({ 70, 80 }));
+}
+
+TEST(WTF_IntervalSet, MoveConstructorEmpty)
+{
+    IntervalSet<Point, Value> original;
+    IntervalSet<Point, Value> moved(WTF::move(original));
+
+    EXPECT_TRUE(moved.isEmpty());
+    EXPECT_TRUE(original.isEmpty());
+    original.insert({ 10, 20 }, 1);
+    EXPECT_TRUE(original.hasOverlap({ 10, 20 }));
+}
+
+TEST(WTF_IntervalSet, MoveAssignmentEmpty)
+{
+    IntervalSet<Point, Value> original;
+    IntervalSet<Point, Value> destination;
+    destination.insert({ 10, 20 }, 1);
+
+    destination = WTF::move(original);
+
+    EXPECT_TRUE(destination.isEmpty());
+    EXPECT_TRUE(original.isEmpty());
+    original.insert({ 10, 20 }, 1);
+    EXPECT_TRUE(original.hasOverlap({ 10, 20 }));
+}
+
+TEST(WTF_IntervalSet, MoveConstructorSourceDestructed)
+{
+    IntervalSet<Point, Value> moved;
+    {
+        IntervalSet<Point, Value> original;
+        original.insert({ 10, 20 }, 1);
+        original.insert({ 30, 40 }, 2);
+        original.insert({ 50, 60 }, 3);
+        moved = WTF::move(original);
+        // original is destructed here — nodes should not be freed
+    }
+
+    // Verify moved set is still valid after source destruction
+    EXPECT_FALSE(moved.isEmpty());
+    auto result = moved.find({ 10, 20 });
+    EXPECT_TRUE(result);
+    EXPECT_EQ(result->first, Interval(10, 20));
+    EXPECT_EQ(result->second, 1);
+    EXPECT_TRUE(moved.hasOverlap({ 30, 40 }));
+    EXPECT_TRUE(moved.hasOverlap({ 50, 60 }));
+}
+
 } // namespace TestWebKitAPI

@@ -45,7 +45,7 @@ class FloatingContext {
 public:
     FloatingContext(const ElementBox& formattingContextRoot, const LayoutState&, const PlacedFloats&);
 
-    const PlacedFloats& placedFloats() const { return m_placedFloats; }
+    const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_placedFloats; }
 
     LayoutPoint positionForFloat(const Box&, const BoxGeometry&, const HorizontalConstraints&) const;
     LayoutPoint positionForNonFloatingFloatAvoider(const Box&, const BoxGeometry&) const;
@@ -75,7 +75,7 @@ private:
 
     const ElementBox& root() const { return m_formattingContextRoot; }
     // FIXME: Turn this into an actual geometry cache.
-    const LayoutState& NODELETE containingBlockGeometries() const;
+    const LayoutState& NODELETE containingBlockGeometries() const LIFETIME_BOUND;
 
     void findPositionForFormattingContextRoot(FloatAvoider&, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const;
 

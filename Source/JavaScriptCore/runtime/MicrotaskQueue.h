@@ -156,7 +156,7 @@ public:
 
     MarkedMicrotaskDeque() = default;
 
-    const QueuedTask& front() const { return m_queue.first(); }
+    const QueuedTask& front() const LIFETIME_BOUND { return m_queue.first(); }
 
     QueuedTask dequeue()
     {

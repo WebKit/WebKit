@@ -99,7 +99,7 @@ RefPtr<HTMLElement> HTMLLabelElement::controlForBindings() const
 HTMLFormElement* HTMLLabelElement::form() const
 {
     if (RefPtr element = control()) {
-        if (RefPtr listedElement = element->asValidatedFormListedElement())
+        if (auto* listedElement = element->asValidatedFormListedElement())
             return listedElement->form();
     }
     return nullptr;

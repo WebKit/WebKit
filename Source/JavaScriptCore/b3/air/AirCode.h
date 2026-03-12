@@ -189,7 +189,7 @@ public:
     // Note that this is not the same thing as proc().numEntrypoints(). This value here may be zero
     // until we lower EntrySwitch.
     unsigned numEntrypoints() const { return m_entrypoints.size(); }
-    const Vector<FrequentedBlock>& entrypoints() const { return m_entrypoints; }
+    const Vector<FrequentedBlock>& entrypoints() const LIFETIME_BOUND { return m_entrypoints; }
     const FrequentedBlock& entrypoint(unsigned index) const { return m_entrypoints[index]; }
     bool isEntrypoint(BasicBlock*) const;
     // Note: It is only valid to call this function after LowerEntrySwitch.
@@ -256,7 +256,7 @@ public:
 
     // This is used by phases that optimize the block list. You shouldn't use this unless you really know
     // what you're doing.
-    Vector<std::unique_ptr<BasicBlock>>& blockList() { return m_blocks; }
+    Vector<std::unique_ptr<BasicBlock>>& blockList() LIFETIME_BOUND { return m_blocks; }
 
     // Finds the smallest index' such that at(index') != null and index' >= index.
     JS_EXPORT_PRIVATE unsigned findFirstBlockIndex(unsigned index) const;
@@ -304,11 +304,11 @@ public:
     iterator begin() const LIFETIME_BOUND { return iterator(*this, 0); }
     iterator end() const LIFETIME_BOUND { return iterator(*this, size()); }
 
-    const SparseCollection<StackSlot>& stackSlots() const { return m_stackSlots; }
-    SparseCollection<StackSlot>& stackSlots() { return m_stackSlots; }
+    const SparseCollection<StackSlot>& stackSlots() const LIFETIME_BOUND { return m_stackSlots; }
+    SparseCollection<StackSlot>& stackSlots() LIFETIME_BOUND { return m_stackSlots; }
 
-    const SparseCollection<Special>& specials() const { return m_specials; }
-    SparseCollection<Special>& specials() { return m_specials; }
+    const SparseCollection<Special>& specials() const LIFETIME_BOUND { return m_specials; }
+    SparseCollection<Special>& specials() LIFETIME_BOUND { return m_specials; }
 
     void addFastTmp(Tmp);
 
@@ -352,7 +352,7 @@ public:
         m_disassembler = WTF::move(disassembler);
         forcePreservationOfB3Origins();
     }
-    Disassembler* disassembler() { return m_disassembler.get(); }
+    Disassembler* disassembler() LIFETIME_BOUND { return m_disassembler.get(); }
 
     RegisterSet mutableGPRs();
     ScalarRegisterSet pinnedRegisters() const { return m_pinnedRegs; }

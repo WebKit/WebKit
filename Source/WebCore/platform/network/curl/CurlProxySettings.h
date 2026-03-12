@@ -61,8 +61,8 @@ public:
     bool isEmpty() const { return m_mode == Mode::Custom && m_urlSerializedWithPort.isEmpty() && m_ignoreHosts.isEmpty(); }
 
     Mode mode() const { return m_mode; }
-    const String& url() const { return m_urlSerializedWithPort; }
-    const String& ignoreHosts() const { return m_ignoreHosts; }
+    const String& url() const LIFETIME_BOUND { return m_urlSerializedWithPort; }
+    const String& ignoreHosts() const LIFETIME_BOUND { return m_ignoreHosts; }
 
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
     const String user() const { return m_url.user(); }

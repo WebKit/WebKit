@@ -96,17 +96,17 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
 
 - (WKWebExtension *)webExtension
 {
-    return wrapper(protect(Ref { *_webExtensionContext }->extension()).get());
+    return wrapper(protect(_webExtensionContext->extension()).get());
 }
 
 - (WKWebExtensionController *)webExtensionController
 {
-    return wrapper(protect(Ref { *_webExtensionContext }->extensionController()).get());
+    return wrapper(protect(_webExtensionContext->extensionController()).get());
 }
 
 - (BOOL)isLoaded
 {
-    return Ref { *_webExtensionContext }->isLoaded();
+    return _webExtensionContext->isLoaded();
 }
 
 -(NSArray<NSError *> *)errors
@@ -118,7 +118,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
 
 - (NSURL *)baseURL
 {
-    return Ref { *_webExtensionContext }->baseURL().createNSURL().autorelease();
+    return _webExtensionContext->baseURL().createNSURL().autorelease();
 }
 
 - (void)setBaseURL:(NSURL *)baseURL
@@ -134,7 +134,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
 
 - (NSString *)uniqueIdentifier
 {
-    return Ref { *_webExtensionContext }->uniqueIdentifier().createNSString().autorelease();
+    return _webExtensionContext->uniqueIdentifier().createNSString().autorelease();
 }
 
 - (void)setUniqueIdentifier:(NSString *)uniqueIdentifier
@@ -146,7 +146,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
 
 - (BOOL)isInspectable
 {
-    return Ref { *_webExtensionContext }->isInspectable();
+    return _webExtensionContext->isInspectable();
 }
 
 - (void)setInspectable:(BOOL)inspectable
@@ -295,17 +295,17 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
 
 - (BOOL)hasRequestedOptionalAccessToAllHosts
 {
-    return Ref { *_webExtensionContext }->requestedOptionalAccessToAllHosts();
+    return _webExtensionContext->requestedOptionalAccessToAllHosts();
 }
 
 - (void)setHasRequestedOptionalAccessToAllHosts:(BOOL)requested
 {
-    return Ref { *_webExtensionContext }->setRequestedOptionalAccessToAllHosts(requested);
+    return _webExtensionContext->setRequestedOptionalAccessToAllHosts(requested);
 }
 
 - (BOOL)hasAccessToPrivateData
 {
-    return Ref { *_webExtensionContext }->hasAccessToPrivateData();
+    return _webExtensionContext->hasAccessToPrivateData();
 }
 
 - (void)setHasAccessToPrivateData:(BOOL)hasAccess
@@ -539,7 +539,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
 
 - (BOOL)hasContentModificationRules
 {
-    return Ref { *_webExtensionContext }->hasContentModificationRules();
+    return _webExtensionContext->hasContentModificationRules();
 }
 
 - (void)loadBackgroundContentWithCompletionHandler:(void (^)(NSError *error))completionHandler
@@ -844,7 +844,7 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 
 - (WKWebView *)_backgroundWebView
 {
-    return protect(*_webExtensionContext)->backgroundWebView();
+    return _webExtensionContext->backgroundWebView();
 }
 
 - (NSURL *)_backgroundContentURL

@@ -56,8 +56,8 @@ public:
 
     const ElementBox& root() const { return m_root; }
 
-    LayoutState& NODELETE layoutState();
-    const LayoutState& layoutState() const { return const_cast<FormattingContext&>(*this).layoutState(); }
+    LayoutState& NODELETE layoutState() LIFETIME_BOUND;
+    const LayoutState& layoutState() const LIFETIME_BOUND { return const_cast<FormattingContext&>(*this).layoutState(); }
 
     enum class EscapeReason {
         TableQuirkNeedsGeometryFromEstablishedFormattingContext,
@@ -68,8 +68,8 @@ public:
         BodyStretchesToViewportQuirk,
         TableNeedsAccessToTableWrapper
     };
-    const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
-    BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt);
+    const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const LIFETIME_BOUND;
+    BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) LIFETIME_BOUND;
 
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }

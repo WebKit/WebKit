@@ -35,8 +35,8 @@
 #include "HeapInlines.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "ObjectAdaptiveStructureWatchpoint.h"
+#include "PropertyInlineCacheClearingWatchpoint.h"
 #include "StructureRareDataInlines.h"
-#include "StructureStubClearingWatchpoint.h"
 #include "VM.h"
 
 namespace JSC {

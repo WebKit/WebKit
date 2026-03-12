@@ -124,7 +124,7 @@ class FontCache : public CanMakeCheckedPtr<FontCache> {
     WTF_MAKE_NONCOPYABLE(FontCache);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FontCache);
 public:
-    WEBCORE_EXPORT static CheckedRef<FontCache> forCurrentThread();
+    WEBCORE_EXPORT static FontCache& forCurrentThread();
     static FontCache* forCurrentThreadIfExists();
     static FontCache* forCurrentThreadIfNotDestroyed();
 
@@ -199,11 +199,11 @@ public:
     void prewarm(PrewarmInformation&&);
     static void prewarmGlobally();
 
-    FontCascadeCache& fontCascadeCache() { return m_fontCascadeCache; }
-    SystemFallbackFontCache& systemFallbackFontCache() { return m_systemFallbackFontCache; }
+    FontCascadeCache& fontCascadeCache() LIFETIME_BOUND { return m_fontCascadeCache; }
+    SystemFallbackFontCache& systemFallbackFontCache() LIFETIME_BOUND { return m_systemFallbackFontCache; }
 #if PLATFORM(COCOA)
-    FontFamilySpecificationCoreTextCache& fontFamilySpecificationCoreTextCache() { return m_fontFamilySpecificationCoreTextCache; }
-    SystemFontDatabaseCoreText& systemFontDatabaseCoreText() { return m_systemFontDatabaseCoreText; }
+    FontFamilySpecificationCoreTextCache& fontFamilySpecificationCoreTextCache() LIFETIME_BOUND { return m_fontFamilySpecificationCoreTextCache; }
+    SystemFontDatabaseCoreText& systemFontDatabaseCoreText() LIFETIME_BOUND { return m_systemFontDatabaseCoreText; }
 #endif
 
     bool useBackslashAsYenSignForFamily(const AtomString& family);
@@ -215,7 +215,7 @@ public:
 #if USE(SKIA)
     static Vector<hb_feature_t> computeFeatures(const FontDescription&, const FontCreationContext&);
     WEBCORE_EXPORT SkFontMgr& fontManager() const;
-    SkiaHarfBuzzFontCache& harfBuzzFontCache() { return m_harfBuzzFontCache; }
+    SkiaHarfBuzzFontCache& harfBuzzFontCache() LIFETIME_BOUND { return m_harfBuzzFontCache; }
 #endif
 
     void invalidate();

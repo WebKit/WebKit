@@ -42,11 +42,11 @@ public:
 
     bool operator==(const FEImage&) const;
 
-    const SourceImage& sourceImage() const { return m_sourceImage; }
+    const SourceImage& sourceImage() const LIFETIME_BOUND { return m_sourceImage; }
     void setImageSource(SourceImage&& sourceImage) { m_sourceImage = WTF::move(sourceImage); }
 
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
-    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio; }
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const LIFETIME_BOUND { return m_preserveAspectRatio; }
 
 private:
     FEImage(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);

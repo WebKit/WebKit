@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var promise;
+    var info;
+
+    async function doTest()
+    {
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', audio: { contentType: 'audio/mp4;codecs=ec-3', channels: 6, spatialRendering: true } });");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', audio: { contentType: 'audio/mp4;codecs=ec-3', channels: 2, spatialRendering: true } });");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', false);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="doTest()" />
+</html>

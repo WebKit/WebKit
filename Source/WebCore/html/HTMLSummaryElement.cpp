@@ -58,7 +58,7 @@ RefPtr<HTMLDetailsElement> HTMLSummaryElement::detailsElement() const
     if (auto* parent = dynamicDowncast<HTMLDetailsElement>(parentElement()))
         return parent;
     // Fallback summary element is in the shadow tree.
-    if (RefPtr details = dynamicDowncast<HTMLDetailsElement>(shadowHost()))
+    if (auto* details = dynamicDowncast<HTMLDetailsElement>(shadowHost()))
         return details;
     return nullptr;
 }

@@ -182,6 +182,9 @@ void SpeculativeJIT::compile()
     link(linkBuffer);
     linkOSREntries(linkBuffer);
 
+    collectIRDumpDebugInfo(linkBuffer);
+    collectSourceCodeDumpDebugInfo(linkBuffer);
+
     disassemble(linkBuffer);
 
     auto codeRef = FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data());
@@ -284,6 +287,9 @@ void SpeculativeJIT::compileFunction()
     }
     link(linkBuffer);
     linkOSREntries(linkBuffer);
+
+    collectIRDumpDebugInfo(linkBuffer);
+    collectSourceCodeDumpDebugInfo(linkBuffer);
 
     disassemble(linkBuffer);
 
@@ -6459,20 +6465,79 @@ void SpeculativeJIT::compileArithMod(Node* node)
 #endif // USE(JSVALUE64)
 
     case DoubleRepUse: {
+#if CPU(ARM64)
         SpeculateDoubleOperand op1(this, node->child1());
         SpeculateDoubleOperand op2(this, node->child2());
-        
+        FPRTemporary scratch(this);
+        FPRTemporary result(this);
+        GPRTemporary temp(this);
+
         FPRReg op1FPR = op1.fpr();
         FPRReg op2FPR = op2.fpr();
-        
-        flushRegisters();
-        
-        FPRResult result(this);
+        FPRReg scratchFPR = scratch.fpr();
+        FPRReg resultFPR = result.fpr();
+        GPRReg tempGPR = temp.gpr();
 
-        callOperationWithoutExceptionCheck(Math::fmodDouble, result.fpr(), op1FPR, op2FPR);
-        
-        doubleResult(result.fpr(), node);
+        flushRegisters();
+
+        JumpList slowCases;
+
+        // If both operands are positive integers that fit in int32,
+        // compute remainder inline.
+        // Use roundTowardZeroInt32Double (frint32z) when available — it checks
+        // integrality and int32 range in a single instruction. Otherwise, fall
+        // back to truncateDoubleToInt32 + convertInt32ToDouble round-trip
+        // (fcvtzs + scvtf).
+
+        auto emitInt32Check = [&](FPRReg inputFPR) {
+            if (supportsRoundFloatToIntegerFloat())
+                roundTowardZeroInt32Double(inputFPR, scratchFPR);
+            else {
+                truncateDoubleToInt32(inputFPR, tempGPR);
+                convertInt32ToDouble(tempGPR, scratchFPR);
+            }
+            return branchDouble(DoubleNotEqualOrUnordered, inputFPR, scratchFPR);
+        };
+
+        // Check left is a positive integer in int32 range.
+        slowCases.append(emitInt32Check(op1FPR));
+        slowCases.append(branchDoubleWithZero(DoubleLessThanOrEqualOrUnordered, op1FPR));
+
+        // Check right is a positive integer in int32 range.
+        slowCases.append(emitInt32Check(op2FPR));
+        slowCases.append(branchDoubleWithZero(DoubleLessThanOrEqualOrUnordered, op2FPR));
+
+        // Compute: remainder = left - trunc(left / right) * right
+        divDouble(op1FPR, op2FPR, resultFPR);
+        roundTowardZeroDouble(resultFPR, resultFPR);
+        mulDouble(resultFPR, op2FPR, resultFPR);
+        subDouble(op1FPR, resultFPR, resultFPR);
+
+        // Validate: remainder >= 0 && remainder < right (catches precision errors)
+        slowCases.append(branchDoubleWithZero(DoubleLessThanAndOrdered, resultFPR));
+        slowCases.append(branchDouble(DoubleGreaterThanOrEqualOrUnordered, resultFPR, op2FPR));
+
+        auto done = jump();
+
+        // Slow path: call fmod for non-int32 or imprecise cases.
+        slowCases.link(this);
+        callOperationWithoutExceptionCheck(Math::fmodDouble, resultFPR, op1FPR, op2FPR);
+
+        done.link(this);
+        doubleResult(resultFPR, node);
         return;
+#else
+        SpeculateDoubleOperand op1(this, node->child1());
+        SpeculateDoubleOperand op2(this, node->child2());
+        FPRReg op1FPR = op1.fpr();
+        FPRReg op2FPR = op2.fpr();
+        flushRegisters();
+        FPRResult result(this);
+        FPRReg resultFPR = result.fpr();
+        callOperationWithoutExceptionCheck(Math::fmodDouble, resultFPR, op1FPR, op2FPR);
+        doubleResult(resultFPR, node);
+        return;
+#endif
     }
 
     default:
@@ -15637,8 +15702,8 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
         emitAllocateJSObjectWithKnownSize<JSInternalPromise>(resultGPR, structureGPR, butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSInternalPromise), SlowAllocationResult::UndefinedBehavior);
     else
         emitAllocateJSObjectWithKnownSize<JSPromise>(resultGPR, structureGPR, butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSPromise), SlowAllocationResult::UndefinedBehavior);
-    storeTrustedValue(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)), Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::Flags))));
-    storeTrustedValue(jsUndefined(), Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::ReactionsOrResult))));
+    storeTrustedValue(jsNumber(static_cast<int32_t>(JSPromise::Status::Pending)), Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::Flags))));
+    storeTrustedValue(JSValue(), Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::ReactionsOrResult))));
     mutatorFence(vm());
 
     addSlowPathGenerator(slowPathCall(slowCases, this, node->isInternalPromise() ? operationCreateInternalPromise : operationCreatePromise, resultGPR, LinkableConstant::globalObject(*this, node), calleeGPR));

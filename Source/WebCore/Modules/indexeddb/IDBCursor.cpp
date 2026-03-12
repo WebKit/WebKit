@@ -99,7 +99,7 @@ IDBObjectStore& IDBCursor::effectiveObjectStore() const
 IDBTransaction& IDBCursor::transaction() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
-    return protect(effectiveObjectStore())->transaction();
+    return effectiveObjectStore().transaction();
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue value)
@@ -394,7 +394,7 @@ std::optional<IDBGetResult> IDBCursor::iterateWithPrefetchedRecords(unsigned cou
     auto record = m_prefetchedRecords.takeFirst();
 
     LOG(IndexedDB, "IDBTransaction::iterateWithPrefetchedRecords consumes %u records", count > 0 ? count : 1);
-    return IDBGetResult(record.key, record.primaryKey, IDBValue(record.value), protect(effectiveObjectStore())->keyPath());
+    return IDBGetResult(record.key, record.primaryKey, IDBValue(record.value), effectiveObjectStore().keyPath());
 }
 
 void IDBCursor::clearPrefetchedRecords()

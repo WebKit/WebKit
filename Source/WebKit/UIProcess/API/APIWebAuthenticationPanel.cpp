@@ -46,7 +46,7 @@ WebAuthenticationPanel::WebAuthenticationPanel()
     : m_manager(AuthenticatorManager::create())
     , m_client(WebAuthenticationPanelClient::create())
 {
-    protect(m_manager)->enableNativeSupport();
+    m_manager->enableNativeSupport();
 }
 
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)

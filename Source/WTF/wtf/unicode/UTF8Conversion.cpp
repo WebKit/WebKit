@@ -30,7 +30,6 @@
 #include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/SIMDUTF.h>
-#include <wtf/text/StringHasherInlines.h>
 #include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -187,26 +186,6 @@ CheckedUTF8 checkUTF8(std::span<const char8_t> source)
         orAllData |= character;
     }
     return { source.first(sourceOffset), lengthUTF16, isASCII(orAllData) };
-}
-
-UTF16LengthWithHash computeUTF16LengthWithHash(std::span<const char8_t> source)
-{
-    StringHasher hasher;
-    size_t lengthUTF16 = 0;
-    for (size_t sourceOffset = 0; sourceOffset < source.size(); ) {
-        char32_t character = next(source, sourceOffset);
-        if (character == sentinelCodePoint)
-            return { };
-        if (U_IS_BMP(character)) {
-            hasher.addCharacter(character);
-            ++lengthUTF16;
-        } else {
-            hasher.addCharacter(U16_LEAD(character));
-            hasher.addCharacter(U16_TRAIL(character));
-            lengthUTF16 += 2;
-        }
-    }
-    return { lengthUTF16, hasher.hashWithTop8BitsMasked() };
 }
 
 template<typename CharacterTypeA, typename CharacterTypeB> bool equalInternal(std::span<CharacterTypeA> a, std::span<CharacterTypeB> b)

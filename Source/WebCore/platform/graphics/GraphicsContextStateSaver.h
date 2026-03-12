@@ -61,7 +61,7 @@ public:
         m_saveAndRestore = false;
     }
     
-    GraphicsContext* context() const { return &m_context; }
+    GraphicsContext* context() const LIFETIME_BOUND { return &m_context; }
 
 private:
     GraphicsContext& m_context;

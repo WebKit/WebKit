@@ -46,7 +46,7 @@ public:
     unsigned hash() const { return m_attributedBundleIdentifier.hash(); }
     friend bool operator==(const WebPageNetworkParameters&, const WebPageNetworkParameters&) = default;
 
-    const String& attributedBundleIdentifier() const { return m_attributedBundleIdentifier; }
+    const String& attributedBundleIdentifier() const LIFETIME_BOUND { return m_attributedBundleIdentifier; }
 private:
     String m_attributedBundleIdentifier;
 };

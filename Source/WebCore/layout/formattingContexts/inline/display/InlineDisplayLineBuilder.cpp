@@ -235,7 +235,7 @@ static float truncate(InlineDisplay::Box& displayBox, float contentWidth, float 
     return contentWidth;
 }
 
-static float truncateOverflowingDisplayBoxes(InlineDisplay::Boxes& boxes, size_t startIndex, size_t endIndex, float lineBoxVisualLeft, float lineBoxVisualRight, float ellipsisWidth, const RenderStyle& rootStyle, LineEndingTruncationPolicy lineEndingTruncationPolicy)
+static float truncateOverflowingDisplayBoxes(std::span<InlineDisplay::Box> boxes, size_t startIndex, size_t endIndex, float lineBoxVisualLeft, float lineBoxVisualRight, float ellipsisWidth, const RenderStyle& rootStyle, LineEndingTruncationPolicy lineEndingTruncationPolicy)
 {
     ASSERT(endIndex && startIndex <= endIndex);
     // We gotta truncate some runs.
@@ -269,8 +269,8 @@ static float truncateOverflowingDisplayBoxes(InlineDisplay::Boxes& boxes, size_t
             }
             isFirstContentRun = false;
         }
-        ASSERT_UNUSED(lineEndingTruncationPolicy, lineEndingTruncationPolicy != LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection || truncateRight.has_value() || right(boxes.last()) == visualRightForContentEnd || boxes.last().isInlineBox());
-        return truncateRight.value_or(right(boxes.last()));
+        ASSERT_UNUSED(lineEndingTruncationPolicy, lineEndingTruncationPolicy != LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection || truncateRight.has_value() || right(boxes.back()) == visualRightForContentEnd || boxes.back().isInlineBox());
+        return truncateRight.value_or(right(boxes.back()));
     }
 
     auto truncateLeft = std::optional<float> { };
@@ -291,14 +291,14 @@ static float truncateOverflowingDisplayBoxes(InlineDisplay::Boxes& boxes, size_t
         isFirstContentRun = false;
     }
 
-    ASSERT_UNUSED(lineEndingTruncationPolicy, lineEndingTruncationPolicy != LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection || truncateLeft.has_value() || left(boxes.first()) == visualLeftForContentEnd || boxes.first().isInlineBox());
-    return truncateLeft.value_or(left(boxes.first())) - ellipsisWidth;
+    ASSERT_UNUSED(lineEndingTruncationPolicy, lineEndingTruncationPolicy != LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection || truncateLeft.has_value() || left(boxes.front()) == visualLeftForContentEnd || boxes.front().isInlineBox());
+    return truncateLeft.value_or(left(boxes.front())) - ellipsisWidth;
 }
 
-static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy lineEndingTruncationPolicy, String ellipsisText, const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& displayBoxes)
+static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy lineEndingTruncationPolicy, String ellipsisText, const InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes)
 {
     ASSERT(lineEndingTruncationPolicy != LineEndingTruncationPolicy::NoTruncation);
-    if (displayBoxes.isEmpty())
+    if (displayBoxes.empty())
         return { };
 
     auto needsEllipsis = [&] {
@@ -312,8 +312,8 @@ static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEn
     if (!needsEllipsis())
         return { };
 
-    ASSERT(displayBoxes[0].isRootInlineBox());
-    auto& rootInlineBox = displayBoxes[0];
+    ASSERT(displayBoxes.front().isRootInlineBox());
+    auto& rootInlineBox = displayBoxes.front();
     CheckedRef rootStyle = rootInlineBox.style();
     auto ellipsisWidth = std::max(0.f, rootStyle->fontCascade().width(ellipsisText));
 
@@ -334,10 +334,10 @@ static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEn
     if (!contentNeedsTruncation()) {
         // The content does not overflow the line box. The ellipsis is supposed to be either visually trailing or leading depending on the inline direction.
         if (displayBoxes.size() > 1)
-            ellipsisStart = rootStyle->writingMode().isBidiLTR() ? displayBoxes.last().right() : displayBoxes[1].left() - ellipsisWidth;
+            ellipsisStart = rootStyle->writingMode().isBidiLTR() ? displayBoxes.back().right() : displayBoxes[1].left() - ellipsisWidth;
         else {
             // All we have is the root inline box.
-            ellipsisStart = displayBoxes.first().left();
+            ellipsisStart = rootInlineBox.left();
         }
     } else {
         auto lineBoxVisualLeft = rootStyle->writingMode().isHorizontal() ? displayLine.left() : displayLine.top();
@@ -487,7 +487,7 @@ void InlineDisplayLineBuilder::addLegacyLineClampTrailingLinkBoxIfApplicable(con
     clampedLine.setHasContentAfterEllipsisBox();
 }
 
-std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyEllipsisIfNeeded(LineEndingTruncationPolicy truncationPolicy, InlineDisplay::Line& displayLine, InlineDisplay::Boxes& displayBoxes, bool isLegacyLineClamp)
+std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyEllipsisIfNeeded(LineEndingTruncationPolicy truncationPolicy, InlineDisplay::Line& displayLine, std::span<InlineDisplay::Box> displayBoxes, bool isLegacyLineClamp)
 {
     if (truncationPolicy == LineEndingTruncationPolicy::NoTruncation || !displayBoxes.size())
         return { };

@@ -34,7 +34,7 @@ namespace Style {
 
 auto CSSValueConversion<TextAlignLast>::operator()(BuilderState& state, const CSSValue& value) -> TextAlignLast
 {
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
+    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
     if (!primitiveValue)
         return TextAlignLast::Auto;
 

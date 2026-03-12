@@ -54,7 +54,7 @@ class WebPageProxy;
 class ModelElementController : public RefCountedAndCanMakeWeakPtr<ModelElementController> {
     WTF_MAKE_TZONE_ALLOCATED(ModelElementController);
 public:
-    static Ref<ModelElementController> NODELETE create(WebPageProxy&);
+    static Ref<ModelElementController> create(WebPageProxy&);
 
     WebPageProxy* NODELETE page();
 

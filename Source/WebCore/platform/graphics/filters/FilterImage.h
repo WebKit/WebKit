@@ -67,7 +67,7 @@ public:
 
     bool isAlphaImage() const { return m_isAlphaImage; }
     RenderingMode renderingMode() const { return m_renderingMode; }
-    const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
+    const DestinationColorSpace& colorSpace() const LIFETIME_BOUND { return m_colorSpace; }
 
     size_t memoryCost() const;
 

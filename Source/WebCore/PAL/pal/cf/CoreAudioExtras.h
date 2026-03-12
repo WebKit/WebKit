@@ -60,6 +60,11 @@ inline size_t allocationSize(const AudioBufferList& list)
     return offsetof(AudioBufferList, mBuffers) + sizeof(AudioBuffer) * std::max<uint32_t>(1U, list.mNumberBuffers);
 }
 
+inline size_t allocationSize(const AudioChannelLayout& layout)
+{
+    return offsetof(AudioChannelLayout, mChannelDescriptions) + sizeof(AudioChannelDescription) * std::max<uint32_t>(1U, layout.mNumberChannelDescriptions);
+}
+
 // AudioBufferList is a variable-length struct, so create on the heap with a generic new() operator
 // with a custom size, and initialize the struct manually.
 enum class ShouldZeroMemory : bool { No, Yes };
@@ -73,6 +78,20 @@ inline std::unique_ptr<AudioBufferList, WTF::SystemFree<AudioBufferList>> create
     bufferList->mNumberBuffers = bufferCount;
     ASSERT(allocationSize(*bufferList) == bufferListSize.value());
     return bufferList;
+}
+
+// AudioChannelLayout is a variable-length struct, so create on the heap with a generic new() operator
+// with a custom size, and initialize the struct manually.
+inline std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>> createAudioChannelLayout(uint32_t channelCount, ShouldZeroMemory shouldZeroMemory)
+{
+    CheckedSize channelLayoutSize = offsetof(AudioChannelLayout, mChannelDescriptions);
+    channelLayoutSize += CheckedSize { sizeof(AudioChannelDescription) } * std::max<uint32_t>(1, channelCount);
+    auto channelLayout = adoptSystemMalloc(shouldZeroMemory == ShouldZeroMemory::Yes
+        ? SystemMallocBase<AudioChannelLayout>::zeroedMalloc(channelLayoutSize.value())
+        : SystemMallocBase<AudioChannelLayout>::malloc(channelLayoutSize.value()));
+    channelLayout->mNumberChannelDescriptions = channelCount;
+    ASSERT(allocationSize(*channelLayout) == channelLayoutSize.value());
+    return channelLayout;
 }
 
 } // namespace PAL

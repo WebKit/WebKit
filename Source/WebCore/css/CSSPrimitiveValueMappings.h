@@ -62,6 +62,7 @@
 #include "StyleTextTransform.h"
 #include "StyleTextUnderlinePosition.h"
 #include "StyleTouchAction.h"
+#include "StyleVisualBox.h"
 #include "StyleWebKitLineBoxContain.h"
 #include "StyleWebKitOverflowScrolling.h"
 #include "StyleWebKitTouchCallout.h"
@@ -2425,8 +2426,8 @@ constexpr CSSValueID toCSSValueIDForWebkitMaskSourceType(Style::MaskMode e)
     return CSSValueInvalid;
 }
 
-#define TYPE VisualBox
-#define FOR_EACH(CASE) CASE(ContentBox) CASE(BorderBox) CASE(PaddingBox)
+#define TYPE Style::VisualBox
+#define FOR_EACH(CASE) CASE(BorderBox) CASE(ContentBox) CASE(PaddingBox)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

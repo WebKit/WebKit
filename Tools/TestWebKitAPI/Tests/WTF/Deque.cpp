@@ -188,4 +188,111 @@ TEST(WTF_Deque, MoveAssignmentOperator)
     }
 }
 
+TEST(WTF_Deque, WrapAroundAppendRemove)
+{
+    Deque<int> deque;
+
+    // Fill and drain repeatedly to force m_start to advance and wrap around.
+    for (int round = 0; round < 5; ++round) {
+        for (int i = 0; i < 20; ++i)
+            deque.append(round * 100 + i);
+
+        EXPECT_EQ(20u, deque.size());
+
+        for (int i = 0; i < 20; ++i) {
+            EXPECT_EQ(round * 100 + i, deque.first());
+            deque.removeFirst();
+        }
+
+        EXPECT_TRUE(deque.isEmpty());
+    }
+
+    // Interleave append/removeFirst to keep the deque small but force wrap.
+    for (int i = 0; i < 1000; ++i) {
+        deque.append(i);
+        if (i % 2 == 0)
+            deque.removeFirst();
+    }
+    // Should have 500 elements remaining (the odd iterations didn't remove).
+    EXPECT_EQ(500u, deque.size());
+}
+
+TEST(WTF_Deque, WrapAroundExpansion)
+{
+    Deque<int> deque;
+
+    // Create a wrapped state by appending and removing from front.
+    for (int i = 0; i < 10; ++i)
+        deque.append(i);
+    for (int i = 0; i < 8; ++i)
+        deque.removeFirst();
+    // Now m_start is advanced. Add more to wrap around and trigger expansion.
+    for (int i = 10; i < 30; ++i)
+        deque.append(i);
+
+    EXPECT_EQ(22u, deque.size()); // 2 remaining + 20 new
+
+    // Verify all elements are preserved in order.
+    for (int i = 0; i < 22; ++i) {
+        EXPECT_EQ(8 + i, deque.first());
+        deque.removeFirst();
+    }
+    EXPECT_TRUE(deque.isEmpty());
+}
+
+TEST(WTF_Deque, InlineCapacityNonPowerOfTwo)
+{
+    Deque<int, 5> deque; // Should round up to 8 internally.
+
+    for (int i = 0; i < 7; ++i)
+        deque.append(i);
+
+    EXPECT_EQ(7u, deque.size());
+
+    // Verify elements.
+    for (int i = 0; i < 7; ++i) {
+        EXPECT_EQ(i, deque.first());
+        deque.removeFirst();
+    }
+    EXPECT_TRUE(deque.isEmpty());
+
+    // Now force expansion beyond inline capacity.
+    for (int i = 0; i < 100; ++i)
+        deque.append(i);
+
+    EXPECT_EQ(100u, deque.size());
+
+    for (int i = 0; i < 100; ++i) {
+        EXPECT_EQ(i, deque.first());
+        deque.removeFirst();
+    }
+    EXPECT_TRUE(deque.isEmpty());
+}
+
+TEST(WTF_Deque, StressAppendPrepend)
+{
+    Deque<int> deque;
+
+    // Interleave appends and prepends, verify ordering.
+    for (int i = 0; i < 500; ++i) {
+        deque.append(i);
+        deque.prepend(-i - 1);
+    }
+
+    // Expected: [-500, -499, ..., -1, 0, 1, ..., 499]
+    EXPECT_EQ(1000u, deque.size());
+    EXPECT_EQ(-500, deque.first());
+    EXPECT_EQ(499, deque.last());
+
+    for (int i = 0; i < 500; ++i) {
+        EXPECT_EQ(-500 + i, deque.first());
+        deque.removeFirst();
+    }
+    for (int i = 0; i < 500; ++i) {
+        EXPECT_EQ(i, deque.first());
+        deque.removeFirst();
+    }
+    EXPECT_TRUE(deque.isEmpty());
+}
+
 } // namespace TestWebKitAPI

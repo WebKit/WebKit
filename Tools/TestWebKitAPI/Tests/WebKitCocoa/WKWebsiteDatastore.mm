@@ -251,7 +251,12 @@ TEST(WKWebsiteDataStore, FetchNonPersistentCredentials)
     TestWebKitAPI::Util::run(&done);
 }
 
+// FIXME when webkit.org/b/309374 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WKWebsiteDataStore, DISABLED_FetchPersistentCredentials)
+#else
 TEST(WKWebsiteDataStore, FetchPersistentCredentials)
+#endif
 {
     HTTPServer server(HTTPServer::respondWithChallengeThenOK);
 

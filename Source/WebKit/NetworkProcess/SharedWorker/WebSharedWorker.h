@@ -62,10 +62,10 @@ public:
 
     static WebSharedWorker* fromIdentifier(WebCore::SharedWorkerIdentifier);
 
-    const WebCore::SharedWorkerKey& key() const { return m_key; }
-    const WebCore::WorkerOptions& workerOptions() const { return m_workerOptions; }
-    const WebCore::ClientOrigin& origin() const { return m_key.origin; }
-    const URL& url() const { return m_key.url; }
+    const WebCore::SharedWorkerKey& key() const LIFETIME_BOUND { return m_key; }
+    const WebCore::WorkerOptions& workerOptions() const LIFETIME_BOUND { return m_workerOptions; }
+    const WebCore::ClientOrigin& origin() const LIFETIME_BOUND { return m_key.origin; }
+    const URL& url() const LIFETIME_BOUND { return m_key.url; }
     WebCore::RegistrableDomain topRegistrableDomain() const;
     WebCore::Site topSite() const;
     WebSharedWorkerServerToContextConnection* contextConnection() const;
@@ -83,10 +83,10 @@ public:
     bool isRunning() const { return m_isRunning; }
     void markAsRunning() { m_isRunning = true; }
 
-    const WebCore::WorkerInitializationData& initializationData() const { return m_initializationData; }
+    const WebCore::WorkerInitializationData& initializationData() const LIFETIME_BOUND { return m_initializationData; }
     void setInitializationData(WebCore::WorkerInitializationData&& initializationData) { m_initializationData = WTF::move(initializationData); }
 
-    const WebCore::WorkerFetchResult& fetchResult() const { return m_fetchResult; }
+    const WebCore::WorkerFetchResult& fetchResult() const LIFETIME_BOUND { return m_fetchResult; }
     void setFetchResult(WebCore::WorkerFetchResult&&);
     bool didFinishFetching() const { return !!m_fetchResult.script; }
 

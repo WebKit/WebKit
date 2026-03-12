@@ -23,6 +23,7 @@
 
 #include <span>
 #include <wtf/Compiler.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/text/StringHasher.h>
 
 namespace WTF {

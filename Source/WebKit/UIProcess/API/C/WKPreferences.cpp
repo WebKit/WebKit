@@ -57,7 +57,7 @@ WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
 
 void WKPreferencesStartBatchingUpdates(WKPreferencesRef preferencesRef)
 {
-    protect(toImpl(preferencesRef))->startBatchingUpdates();
+    toImpl(preferencesRef)->startBatchingUpdates();
 }
 
 void WKPreferencesEndBatchingUpdates(WKPreferencesRef preferencesRef)

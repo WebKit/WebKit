@@ -180,14 +180,8 @@
             "/webkit/WebKitWebView/is-playing-audio": {
                 "expected": {"all": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274344"}}
             },
-            "/webkit/WebKitWebView/submit-form": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
-            },
             "/webkit/WebKitWebView/run-async-js-functions": {
                 "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/284812"}}
-            },
-            "/webkit/WebKitWebView/save": {
-                "expected": {"wpe": {"status": ["CRASH", "TIMEOUT"], "bug": "webkit.org/b/289436"}}
             },
             "/webkit/WebKitWebView/title-change": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/304368"}}
@@ -274,6 +268,12 @@
             },
             "ImageBufferTests/AnyTwoImageBufferOptionsTest.PutPixelBufferAffectsDrawOutput/1byteobject011byteobject01": {
                 "expected": {"all": {"status": ["SKIP"], "bug":"webkit.org/b/286456"}}
+            },
+            "GStreamerTest.gstStructureGetters": {
+                "expected": {"wpe:arm64": {"status": ["FAIL"], "bug": "webkit.org/b/309745"}}
+            },
+            "GStreamerTest.gstStructureJSONSerializing": {
+                "expected": {"wpe:arm64": {"status": ["FAIL"], "bug": "webkit.org/b/309745"}}
             }
         }
     },
@@ -415,6 +415,15 @@
             "WTF_DateMath.calculateLocalTimeOffset": {
                 "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/297780"}}
             },
+            "WTF.clampSameSignIntegers": {
+                "expected": {"wpe:arm64": {"status": ["FAIL"], "bug": "webkit.org/b/309746"}}
+            },
+            "WTF.clampUnsignedToSigned": {
+                "expected": {"wpe:arm64": {"status": ["FAIL"], "bug": "webkit.org/b/309746"}}
+            },
+            "WTF.clampSignedToUnsigned": {
+                "expected": {"wpe:arm64": {"status": ["FAIL"], "bug": "webkit.org/b/309746"}}
+            },
             "CompletionHandlerDeathTest.MainThreadHandlerOnThreadAssertsDeathTest": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/299598" }}
             },
@@ -446,6 +455,9 @@
         "subtests": {
             "/jsc/vm": {
                 "expected": {"all": {"slow": true}}
+            },
+            "/jsc/weak-value": {
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/309703"}}
             }
         }
     },

@@ -79,7 +79,7 @@ public:
 
     Ref<FrameState> copy();
 
-    const Vector<AtomString>& documentState() const { return m_documentState; }
+    const Vector<AtomString>& documentState() const LIFETIME_BOUND { return m_documentState; }
     enum class ShouldValidate : bool { No, Yes };
     void setDocumentState(const Vector<AtomString>&, ShouldValidate = ShouldValidate::No);
     static bool validateDocumentState(const Vector<AtomString>&);

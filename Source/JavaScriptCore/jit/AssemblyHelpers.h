@@ -73,7 +73,7 @@ public:
 
     CodeBlock* codeBlock() { return m_codeBlock; }
     VM& vm() { return m_codeBlock->vm(); }
-    AssemblerType_T& assembler() { return m_assembler; }
+    AssemblerType_T& assembler() LIFETIME_BOUND { return m_assembler; }
 
     void prepareCallOperation(VM& vm)
     {

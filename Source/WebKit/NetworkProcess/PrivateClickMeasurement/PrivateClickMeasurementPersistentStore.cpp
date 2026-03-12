@@ -179,6 +179,24 @@ void PersistentStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& at
     });
 }
 
+void PersistentStore::fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
+        RefPtr database = m_database;
+        if (!database) {
+            postTaskReply([completionHandler = WTF::move(completionHandler)]() mutable {
+                completionHandler({ });
+            });
+            return;
+        }
+
+        auto domains = database->fetchRegistrableDomains();
+        postTaskReply([domains = crossThreadCopy(WTF::move(domains)), completionHandler = WTF::move(completionHandler)]() mutable {
+            completionHandler(WTF::move(domains));
+        });
+    });
+}
+
 void PersistentStore::close(CompletionHandler<void()>&& completionHandler)
 {
     postTask([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] () mutable {

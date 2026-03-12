@@ -422,7 +422,7 @@ void RegExp::matchCompareWithInterpreter(StringView s, int startOffset, int* off
         dataLog("RegExp Discrepency for ", toSourceString(), "\n    string input ");
         unsigned segmentLen = s.length() - static_cast<unsigned>(startOffset);
 
-        dataLogF((segmentLen < 150) ? "\"%s\"\n" : "\"%148s...\"\n", s.utf8().data() + startOffset);
+        SAFE_DATALOGF((segmentLen < 150) ? "\"%s\"\n" : "\"%148s...\"\n", s.utf8() + startOffset);
 
         if (jitResult != interpreterResult) {
             dataLogF("    JIT result = %d, interpreted result = %d\n", jitResult, interpreterResult);
@@ -508,7 +508,7 @@ void RegExp::printTraceData()
         memcpy(formattedRegExp, result.utf8().data(), result.length());
         formattedRegExp[result.length()] = '\0';
     } else
-        dataLogF("/%s/%s\n", rawPattern.utf8().data(), Yarr::flagsString(flags()).data());
+        SAFE_DATALOGF("/%s/%s\n", rawPattern.utf8(), Yarr::flagsString(flags()).data());
 
     constexpr int addrWidth = 12;
 #if ENABLE(YARR_JIT)

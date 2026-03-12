@@ -202,8 +202,8 @@ bool CSSValueContainingVector::hasValue(CSSValue& otherValue) const
 
 bool CSSValueContainingVector::hasValue(CSSValueID otherValue) const
 {
-    for (Ref value : *this) {
-        if (WebCore::isValueID(value.get(), otherValue))
+    for (auto& value : *this) {
+        if (WebCore::isValueID(value, otherValue))
             return true;
     }
     return false;

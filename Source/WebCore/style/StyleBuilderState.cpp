@@ -92,7 +92,7 @@ BuilderState::BuilderState(RenderStyle& style, BuilderContext&& context)
 
 float BuilderState::zoomWithTextZoomFactor()
 {
-    if (RefPtr frame = document().frame()) {
+    if (auto* frame = document().frame()) {
         float textZoomFactor = style().textZoom() != TextZoom::Reset ? frame->textZoomFactor() : 1.0f;
         float usedZoom = evaluationTimeZoomEnabled(*this) ? 1.0f : style().usedZoom();
         return usedZoom * textZoomFactor;
@@ -307,7 +307,7 @@ unsigned BuilderState::siblingCount()
 
     ASSERT(element());
 
-    RefPtr parent = element()->parentElement();
+    auto* parent = element()->parentElement();
     if (!parent)
         return 1;
 
@@ -329,7 +329,7 @@ unsigned BuilderState::siblingIndex()
 
     ASSERT(element());
 
-    RefPtr parent = element()->parentElement();
+    auto* parent = element()->parentElement();
     if (!parent)
         return 1;
 

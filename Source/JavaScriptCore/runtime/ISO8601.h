@@ -336,7 +336,7 @@ public:
     int32_t year() const { return m_isoPlainDate.year(); }
     uint8_t month() const { return m_isoPlainDate.month(); }
 
-    const PlainDate& isoPlainDate() const { return m_isoPlainDate; }
+    const PlainDate& isoPlainDate() const LIFETIME_BOUND { return m_isoPlainDate; }
 private:
     PlainDate m_isoPlainDate;
 };
@@ -365,7 +365,7 @@ public:
     uint8_t month() const { return m_isoPlainDate.month(); }
     uint32_t day() const { return m_isoPlainDate.day(); }
 
-    const PlainDate& isoPlainDate() const { return m_isoPlainDate; }
+    const PlainDate& isoPlainDate() const LIFETIME_BOUND { return m_isoPlainDate; }
 private:
     PlainDate m_isoPlainDate;
 };

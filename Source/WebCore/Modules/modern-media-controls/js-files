@@ -40,8 +40,10 @@ controls/macos-fullscreen-media-controls.js
 controls/macos-layout-traits.js
 controls/placard.js
 controls/airplay-placard.js
+controls/fullscreen-placard.js
 controls/invalid-placard.js
 controls/pip-placard.js
+controls/tvos-media-controls.js
 controls/vision-layout-traits.js
 controls/vision-media-controls.js
 controls/vision-slider.js

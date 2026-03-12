@@ -334,7 +334,7 @@ auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRect
     LayoutSize locationOffset;
     if (CheckedPtr modelObject = dynamicDowncast<RenderSVGModelObject>(this))
         locationOffset = modelObject->locationOffsetEquivalent();
-    else if (CheckedPtr svgBlock = dynamicDowncast<RenderSVGBlock>(this))
+    else if (auto* svgBlock = dynamicDowncast<RenderSVGBlock>(this))
         locationOffset = svgBlock->locationOffset();
 
 
@@ -764,6 +764,19 @@ void RenderLayerModelObject::paintSVGMask(PaintInfo& paintInfo, const LayoutPoin
     ASSERT(isSVGLayerAwareRenderer());
     if (auto* referencedMaskerRenderer = svgMaskerResourceFromStyle())
         referencedMaskerRenderer->applyMask(paintInfo, *this, adjustedPaintOffset);
+}
+
+void RenderLayerModelObject::paintSVGEventRegion(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    ASSERT(paintInfo.phase == PaintPhase::EventRegion);
+    if (style().usedVisibility() == Visibility::Hidden || objectBoundingBox().isEmpty())
+        return;
+
+    auto adjustedPaintOffset = paintOffset + currentSVGLayoutLocation();
+    auto coordinateSystemOriginTranslation = adjustedPaintOffset - nominalSVGLayoutLocation();
+    auto eventRegionBounds = strokeBoundingBox();
+    eventRegionBounds.move(coordinateSystemOriginTranslation);
+    paintInfo.eventRegionContext()->unite(FloatRoundedRect(eventRegionBounds), *this, style(), false);
 }
 
 bool rendererNeedsPixelSnapping(const RenderLayerModelObject& renderer)

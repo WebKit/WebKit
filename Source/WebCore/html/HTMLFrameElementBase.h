@@ -77,7 +77,7 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFrameElementBase)
-    static bool isType(const WebCore::HTMLElement& element) { return is<WebCore::HTMLFrameElement>(element) || is<WebCore::HTMLIFrameElement>(element); }
+    static bool isType(const WebCore::HTMLElement& element) { return isAnyOf<WebCore::HTMLFrameElement, WebCore::HTMLIFrameElement>(element); }
     static bool isType(const WebCore::Node& node)
     {
         auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(node);

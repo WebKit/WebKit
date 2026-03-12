@@ -49,7 +49,7 @@ namespace WebCore {
 
 static ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking(const Document& document)
 {
-    if (RefPtr page = document.page())
+    if (auto* page = document.page())
         return page->shouldRelaxThirdPartyCookieBlocking();
     return ShouldRelaxThirdPartyCookieBlocking::No;
 }

@@ -42,7 +42,7 @@ namespace JSC { namespace DFG {
 struct OpInfo {
     OpInfo() : m_value(0) { }
     template<typename IntegralType>
-        requires ((std::integral<IntegralType> || std::is_enum_v<IntegralType>) && sizeof(IntegralType) <= sizeof(uint64_t))
+        requires (IntegralOrEnum<IntegralType> && sizeof(IntegralType) <= sizeof(uint64_t))
     explicit OpInfo(IntegralType value)
         : m_value(static_cast<uint64_t>(value)) { }
     explicit OpInfo(RegisteredStructure structure) : m_value(static_cast<uint64_t>(std::bit_cast<uintptr_t>(structure))) { }

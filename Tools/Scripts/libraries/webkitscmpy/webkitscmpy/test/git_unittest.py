@@ -539,7 +539,6 @@ CommitDate: {time_c}
             )
 
     def test_diff_with_commit_message(self):
-        self.maxDiff = None
         with mocks.local.Git(self.path), OutputCapture():
             repo = local.Git(self.path)
             self.assertEqual(

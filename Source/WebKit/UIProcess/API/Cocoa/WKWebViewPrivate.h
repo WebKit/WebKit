@@ -267,6 +267,7 @@ for this property.
 @property (nonatomic, copy, setter=_setCORSDisablingPatterns:) NSArray<NSString *> *_corsDisablingPatterns WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
 @property (nonatomic, readonly) BOOL _networkRequestsInProgress;
+@property (nonatomic, readonly) BOOL _isUsingBackForwardCache;
 
 @property (nonatomic, readonly, getter=_isShowingNavigationGestureSnapshot) BOOL _showingNavigationGestureSnapshot;
 

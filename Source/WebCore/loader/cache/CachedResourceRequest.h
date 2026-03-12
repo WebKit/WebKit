@@ -53,16 +53,16 @@ public:
     CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, std::optional<ResourceLoadPriority> = std::nullopt, String&& charset = String());
 
     ResourceRequest&& releaseResourceRequest() { return WTF::move(m_resourceRequest); }
-    const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
-    ResourceRequest& resourceRequest() { return m_resourceRequest; }
+    const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_resourceRequest; }
+    ResourceRequest& resourceRequest() LIFETIME_BOUND { return m_resourceRequest; }
 
-    const String& charset() const { return m_charset; }
+    const String& charset() const LIFETIME_BOUND { return m_charset; }
     void setCharset(const String& charset) { m_charset = charset; }
 
-    const ResourceLoaderOptions& options() const { return m_options; }
+    const ResourceLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
     void setOptions(const ResourceLoaderOptions& options) { m_options = options; }
 
-    const std::optional<ResourceLoadPriority>& priority() const { return m_priority; }
+    const std::optional<ResourceLoadPriority>& priority() const LIFETIME_BOUND { return m_priority; }
     void setPriority(std::optional<ResourceLoadPriority>&& priority) { m_priority = WTF::move(priority); }
 
     RequestPriority fetchPriority() const { return m_options.fetchPriority; }

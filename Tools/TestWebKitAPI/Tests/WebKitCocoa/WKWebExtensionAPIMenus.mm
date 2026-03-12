@@ -1608,6 +1608,41 @@ TEST(WKWebExtensionAPIMenus, OnClickAfterUpdate)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIMenus, RemoveAfterBackgroundPageReload)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message) => {",
+        @"  if (message == 'Create') {",
+        @"    browser.menus.create({ id: 'test-item', title: 'Test' }, () => {",
+        @"      browser.test.sendMessage('Created')",
+        @"    })",
+        @"  }",
+        @"",
+        @"  if (message == 'Remove') {",
+        @"    await browser.menus.remove('test-item')",
+        @"    browser.test.sendMessage('Removed')",
+        @"  }",
+        @"})",
+        @"",
+        @"browser.test.sendMessage('Ready')",
+    ]);
+
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Ready"];
+
+    [manager sendTestMessage:@"Create"];
+    [manager runUntilTestMessage:@"Created"];
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return !manager.get().context._backgroundWebView;
+    }));
+
+    [manager sendTestMessage:@"Remove"];
+    [manager runUntilTestMessage:@"Ready"];
+    [manager runUntilTestMessage:@"Removed"];
+}
+
 TEST(WKWebExtensionAPIMenus, ContextMenusNamespace)
 {
     auto *backgroundScript = Util::constructScript(@[

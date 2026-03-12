@@ -45,7 +45,7 @@ public:
         RELEASE_ASSERT(watchpointSet.state() == IsWatched);
     }
 
-    const ObjectPropertyCondition& key() const { return m_key; }
+    const ObjectPropertyCondition& key() const LIFETIME_BOUND { return m_key; }
 
     void install(VM&);
 

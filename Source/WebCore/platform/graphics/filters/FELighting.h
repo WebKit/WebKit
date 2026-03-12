@@ -43,7 +43,7 @@ class FELighting : public FilterEffect {
 public:
     bool operator==(const FELighting&) const;
 
-    const Color& lightingColor() const { return m_lightingColor; }
+    const Color& lightingColor() const LIFETIME_BOUND { return m_lightingColor; }
     bool setLightingColor(const Color&);
 
     float surfaceScale() const { return m_surfaceScale; }

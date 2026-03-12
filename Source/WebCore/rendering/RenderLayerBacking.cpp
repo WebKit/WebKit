@@ -2928,7 +2928,7 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
 {
     float finalOpacity = rendererOpacity;
 
-    for (CheckedPtr curr = m_owningLayer.stackingContext(); curr; curr = curr->stackingContext()) {
+    for (auto* curr = m_owningLayer.stackingContext(); curr; curr = curr->stackingContext()) {
         // If we found a compositing layer, we want to compute opacity
         // relative to it. So we can break here.
         if (curr->isComposited())

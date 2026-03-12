@@ -677,7 +677,7 @@ void WKWebsiteDataStoreSetPerOriginStorageQuota(WKWebsiteDataStoreRef, uint64_t)
 void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRef dataStoreRef)
 {
 #if ENABLE(DEVICE_ORIENTATION)
-    protect(protect(WebKit::toImpl(dataStoreRef))->deviceOrientationAndMotionAccessController())->clearPermissions();
+    protect(WebKit::toImpl(dataStoreRef)->deviceOrientationAndMotionAccessController())->clearPermissions();
 #endif
 }
 

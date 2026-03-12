@@ -85,9 +85,9 @@ void LegacyInlineBox::invalidateParentChildList()
 
 #endif
 
-const RenderStyle& LegacyInlineBox::lineStyle() const
+CheckedRef<const RenderStyle> LegacyInlineBox::lineStyle() const
 {
-    return m_bitfields.firstLine() ? renderer().firstLineStyle() : renderer().style();
+    return m_bitfields.firstLine() ? renderer().firstLineStyle() : CheckedRef { renderer().style() };
 }
 
 void LegacyInlineBox::removeFromParent()
@@ -139,13 +139,13 @@ float LegacyInlineBox::logicalHeight() const
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
 
-    const RenderStyle& lineStyle = this->lineStyle();
+    CheckedRef lineStyle = this->lineStyle();
     if (renderer().isRenderTextOrLineBreak())
-        return lineStyle.metricsOfPrimaryFont().intHeight();
+        return lineStyle->metricsOfPrimaryFont().intHeight();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
-    const FontMetrics& fontMetrics = lineStyle.metricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = lineStyle->metricsOfPrimaryFont();
     float result = fontMetrics.intHeight();
     if (parent())
         result += flowObject->borderAndPaddingLogicalHeight();

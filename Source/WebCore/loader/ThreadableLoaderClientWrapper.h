@@ -92,7 +92,7 @@ public:
             client->didFail(mainContext, error);
     }
 
-    const String& initiator() const { return m_initiator; }
+    const String& initiator() const LIFETIME_BOUND { return m_initiator; }
 
 protected:
     explicit ThreadableLoaderClientWrapper(ThreadableLoaderClient&, const String&);

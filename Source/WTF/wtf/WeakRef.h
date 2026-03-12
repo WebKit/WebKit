@@ -78,11 +78,12 @@ public:
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return m_impl.isHashTableEmptyValue(); }
 
-    WeakPtrImpl& impl() const { return m_impl; }
+    WeakPtrImpl& impl() const LIFETIME_BOUND { return m_impl; }
     Ref<WeakPtrImpl> releaseImpl() { return WTF::move(m_impl); }
 
     T* ptrAllowingHashTableEmptyValue() const
     {
+        static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
             HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
@@ -92,6 +93,7 @@ public:
 
     T* ptr() const
     {
+        static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
             HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
@@ -103,6 +105,7 @@ public:
 
     T& get() const
     {
+        static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
             HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
@@ -205,6 +208,18 @@ template<typename ExpectedType, typename ArgType, typename WeakPtrImpl>
 inline bool is(const WeakRef<ArgType, WeakPtrImpl>& source)
 {
     return is<ExpectedType>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType, typename WeakPtrImpl>
+inline bool isAnyOf(WeakRef<ArgType, WeakPtrImpl>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType, typename WeakPtrImpl>
+inline bool isAnyOf(const WeakRef<ArgType, WeakPtrImpl>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
 }
 
 template<typename Target, typename Source, typename WeakPtrImpl>

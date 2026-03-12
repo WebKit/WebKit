@@ -75,7 +75,7 @@ public:
     // This can be called on a background thread.
     using WorkItem = Function<void()>;
     void scheduleWork(WorkItem&&);
-    const std::optional<const MachSendRight>& webProcessID() const;
+    const std::optional<const MachSendRight>& NODELETE webProcessID() const;
     id<MTLDevice> device() const;
 
 private:

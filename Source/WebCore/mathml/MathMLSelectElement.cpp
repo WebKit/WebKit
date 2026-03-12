@@ -122,10 +122,10 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
     int selection = integralAttribute(MathMLNames::selectionAttr);
     int i;
     for (i = 1; i < selection; i++) {
-        RefPtr nextChild = selectedChild->nextElementSibling();
+        auto* nextChild = selectedChild->nextElementSibling();
         if (!nextChild)
             break;
-        selectedChild = nextChild.get();
+        selectedChild = nextChild;
     }
 
     return i;

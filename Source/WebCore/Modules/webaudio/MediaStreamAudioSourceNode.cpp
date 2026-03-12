@@ -132,7 +132,7 @@ void MediaStreamAudioSourceNode::provideInput(AudioBus& bus, size_t framesToProc
 
 void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
 {
-    Ref outputBus = protect(output(0))->bus();
+    Ref outputBus = output(0)->bus();
 
     // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the MediaStream must be in the middle of

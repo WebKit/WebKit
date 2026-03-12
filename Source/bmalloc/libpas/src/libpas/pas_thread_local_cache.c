@@ -52,6 +52,9 @@
 #if PAS_PLATFORM(PLAYSTATION)
 #include <pthread_np.h>
 #endif
+#if PAS_PLATFORM(LINUX)
+#include <pthread.h>
+#endif
 
 PAS_BEGIN_EXTERN_C;
 

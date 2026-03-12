@@ -1599,6 +1599,9 @@ function :workgroupUniformLoad, {
     must_use: true,
     stage: :compute,
 
+    # @must_use fn workgroupUniformLoad(p : ptr<workgroup, atomic<T>, read_write>) -> T
+    [T].(ptr[workgroup, atomic[T]]) => T,
+
     # @must_use fn workgroupUniformLoad(p : ptr<workgroup, T>) -> T
     [T].(ptr[workgroup, T]) => T,
 }

@@ -1194,7 +1194,7 @@ uint32_t PlatformCALayerRemote::hostingContextID()
 
 unsigned PlatformCALayerRemote::backingStoreBytesPerPixel() const
 {
-    CheckedPtr store = m_properties.backingStoreOrProperties.store.get();
+    auto* store = m_properties.backingStoreOrProperties.store.get();
     return store ? store->bytesPerPixel() : 4;
 }
 

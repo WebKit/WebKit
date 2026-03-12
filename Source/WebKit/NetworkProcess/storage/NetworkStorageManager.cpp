@@ -1468,7 +1468,7 @@ void NetworkStorageManager::resetQuotaForTesting(CompletionHandler<void()>&& com
     workQueue().dispatch([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         assertIsCurrent(workQueue());
         for (auto& manager : m_originStorageManagers.values())
-            protect(manager->quotaManager())->resetQuotaForTesting();
+            manager->quotaManager().resetQuotaForTesting();
         RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
     });
 }
@@ -1478,7 +1478,7 @@ void NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting(WebCore::Cli
     assertIsCurrent(workQueue());
 
     if (CheckedPtr manager = m_originStorageManagers.get(origin))
-        protect(manager->quotaManager())->resetQuotaUpdatedBasedOnUsageForTesting();
+        manager->quotaManager().resetQuotaUpdatedBasedOnUsageForTesting();
 }
 
 void NetworkStorageManager::setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
@@ -1490,7 +1490,7 @@ void NetworkStorageManager::setOriginQuotaRatioEnabledForTesting(bool enabled, C
         if (m_originQuotaRatioEnabled != enabled) {
             m_originQuotaRatioEnabled = enabled;
             for (auto& [origin, manager] : m_originStorageManagers)
-                protect(CheckedRef { *manager }->quotaManager())->updateParametersForTesting(originQuotaManagerParameters(origin));
+                protect(manager->quotaManager())->updateParametersForTesting(originQuotaManagerParameters(origin));
         }
 
         RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
@@ -1756,7 +1756,7 @@ void NetworkStorageManager::establishTransaction(WebCore::IDBDatabaseConnectionI
 
 void NetworkStorageManager::databaseConnectionPendingClose(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
-    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+    if (auto* connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
         connection->connectionPendingCloseFromClient();
 }
 

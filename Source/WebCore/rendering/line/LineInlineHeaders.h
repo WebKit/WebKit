@@ -33,20 +33,20 @@ namespace WebCore {
 
 enum WhitespacePosition : bool { LeadingWhitespace, TrailingWhitespace };
 
-inline const RenderStyle& lineStyle(const RenderObject& renderer, const LineInfo& lineInfo)
+inline CheckedRef<const RenderStyle> lineStyle(const RenderObject& renderer, const LineInfo& lineInfo)
 {
-    return lineInfo.isFirstLine() ? renderer.firstLineStyle() : renderer.style();
+    return lineInfo.isFirstLine() ? renderer.firstLineStyle() : CheckedRef { renderer.style() };
 }
 
 inline bool requiresLineBoxForContent(const RenderInline& flow, const LineInfo& lineInfo)
 {
     RenderElement* parent = flow.parent();
     if (flow.document().inNoQuirksMode()) {
-        const RenderStyle& flowStyle = lineStyle(flow, lineInfo);
-        const RenderStyle& parentStyle = lineStyle(*parent, lineInfo);
-        if (flowStyle.lineHeight() != parentStyle.lineHeight()
-            || flowStyle.verticalAlign() != parentStyle.verticalAlign()
-            || !parentStyle.fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(flowStyle.fontCascade().metricsOfPrimaryFont()))
+        CheckedRef flowStyle = lineStyle(flow, lineInfo);
+        CheckedRef parentStyle = lineStyle(*parent, lineInfo);
+        if (flowStyle->lineHeight() != parentStyle->lineHeight()
+            || flowStyle->verticalAlign() != parentStyle->verticalAlign()
+            || !parentStyle->fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(flowStyle->fontCascade().metricsOfPrimaryFont()))
         return true;
     }
     return false;

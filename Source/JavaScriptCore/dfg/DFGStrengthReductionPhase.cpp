@@ -1616,7 +1616,7 @@ private:
                 break;
 
             if (m_graph.m_plan.isFTL()) {
-                if (Options::useDataICInFTL())
+                if (Options::useHandlerICInFTL())
                     break;
             }
 

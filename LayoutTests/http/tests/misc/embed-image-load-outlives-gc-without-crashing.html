@@ -43,8 +43,8 @@ function removeTheDiv() {
 	setTimeout("forceGC();", 0);
 }
 
-requestAnimationFrame(() => {
+setTimeout(() => {
     setTimeout("removeTheDiv();", 0);
-});
+}, 0);
 
 </script>

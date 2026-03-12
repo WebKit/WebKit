@@ -49,5 +49,5 @@ WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certi
 
 WKStringRef WKCredentialCopyUser(WKCredentialRef credentialRef)
 {
-    return toCopiedAPI(protect(toImpl(credentialRef))->credential().user());
+    return toCopiedAPI(toImpl(credentialRef)->credential().user());
 }

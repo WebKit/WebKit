@@ -95,7 +95,7 @@ void FrameLoader::SubframeLoader::clear()
 bool FrameLoader::SubframeLoader::canCreateSubFrame() const
 {
     Ref frame = m_frame;
-    if (!frame->page() || protect(frame->page())->subframeCount() >= Page::maxNumberOfFrames)
+    if (!frame->page() || frame->page()->subframeCount() >= Page::maxNumberOfFrames)
         return false;
 
     if (frame->tree().depth() >= Page::maxFrameDepth)
@@ -110,7 +110,7 @@ void FrameLoader::SubframeLoader::createFrameIfNecessary(HTMLFrameOwnerElement& 
         return;
     if (!canCreateSubFrame())
         return;
-    protect(m_frame)->loader().client().createFrame(frameName, ownerElement);
+    m_frame->loader().client().createFrame(frameName, ownerElement);
     if (!ownerElement.contentFrame())
         return;
 
@@ -313,7 +313,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     if (!SubframeLoadingDisabler::canLoadFrame(ownerElement))
         return nullptr;
 
-    if (!frame->page() || protect(frame->page())->subframeCount() >= Page::maxNumberOfFrames)
+    if (!frame->page() || frame->page()->subframeCount() >= Page::maxNumberOfFrames)
         return nullptr;
 
     if (frame->tree().depth() >= Page::maxFrameDepth)

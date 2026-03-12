@@ -2374,6 +2374,19 @@ TEST(DragAndDropTests, CanHitTestNestedStageModeModel)
 }
 #endif
 
+TEST(DragAndDropTests, DragEnterAndLeaveRelatedTarget)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"drag-relatedTarget"];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(160, 90) to:CGPointMake(160, 400)];
+
+    EXPECT_WK_STREQ("null", [webView stringByEvaluatingJavaScript:@"enterARelatedTarget"]);
+    EXPECT_WK_STREQ("zoneB", [webView stringByEvaluatingJavaScript:@"leaveARelatedTarget"]);
+    EXPECT_WK_STREQ("zoneA", [webView stringByEvaluatingJavaScript:@"enterBRelatedTarget"]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

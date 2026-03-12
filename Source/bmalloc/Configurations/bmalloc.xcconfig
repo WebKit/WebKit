@@ -86,7 +86,7 @@ MODULES_FOLDER_PATH = $(MODULES_FOLDER_PATH_$(WK_SWIFT_EXPLICIT_MODULES_ALLOW_CX
 MODULES_FOLDER_PATH_YES = swift;
 
 OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS_GENERATE_BMALLOC_MODULEMAP_$(GENERATE_BMALLOC_MODULEMAP)) $(OTHER_SWIFT_FLAGS_WK_SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP_$(WK_SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP));
-OTHER_SWIFT_FLAGS_GENERATE_BMALLOC_MODULEMAP_YES = -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature ExistentialAny -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault;
+OTHER_SWIFT_FLAGS_GENERATE_BMALLOC_MODULEMAP_YES = -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility;
 OTHER_SWIFT_FLAGS_WK_SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP_ = -no-verify-emitted-module-interface;
 OTHER_SWIFT_FLAGS_WK_SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP_YES = -Xcc -std=c++2b;
 

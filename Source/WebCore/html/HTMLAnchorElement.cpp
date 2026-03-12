@@ -368,7 +368,7 @@ bool HTMLAnchorElement::isSystemPreviewLink()
         return false;
 
     if (auto* child = firstElementChild()) {
-        if (is<HTMLImageElement>(child) || is<HTMLPictureElement>(child)) {
+        if (isAnyOf<HTMLImageElement, HTMLPictureElement>(child)) {
             auto numChildren = childElementCount();
             // FIXME: We've documented that it should be the only child, but some early demos have two children.
             return numChildren == 1 || numChildren == 2;

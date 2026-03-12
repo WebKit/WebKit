@@ -56,7 +56,7 @@ public:
     bool isMonotonic() const { return !m_duration; }
     bool isProgressBased() const { return !isMonotonic(); }
 
-    const AnimationCollection& relevantAnimations() const { return m_animations; }
+    const AnimationCollection& relevantAnimations() const LIFETIME_BOUND { return m_animations; }
 
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);
@@ -83,7 +83,7 @@ public:
     virtual bool canBeAccelerated() const { return false; }
     Ref<AcceleratedTimeline> acceleratedRepresentation();
     void runPostRenderingUpdateTasks();
-    const TimelineIdentifier& acceleratedTimelineIdentifier() const { return m_acceleratedTimelineIdentifier; }
+    const TimelineIdentifier& acceleratedTimelineIdentifier() const LIFETIME_BOUND { return m_acceleratedTimelineIdentifier; }
 #endif
 
 protected:

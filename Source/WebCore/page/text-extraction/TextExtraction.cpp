@@ -138,7 +138,7 @@ using TextAndSelectedRangeMap = HashMap<Ref<Text>, TextAndSelectedRange>;
 
 static bool hasEnclosingAutoFilledInput(Node& node)
 {
-    RefPtr input = dynamicDowncast<HTMLInputElement>(node.shadowHost());
+    auto* input = dynamicDowncast<HTMLInputElement>(node.shadowHost());
     if (!input)
         return false;
 
@@ -463,7 +463,7 @@ enum class SkipExtraction : bool {
 
 static bool shouldTreatAsPasswordField(const Element* element)
 {
-    RefPtr input = dynamicDowncast<HTMLInputElement>(element);
+    auto* input = dynamicDowncast<HTMLInputElement>(element);
     return input && input->hasEverBeenPasswordField();
 }
 
@@ -1114,6 +1114,9 @@ static RefPtr<ContainerNode> findLargeContainerAboveNode(Node& node, FloatSize m
     return { };
 }
 
+// FIXME: Consider making this size threshold client-configurable in the future.
+static constexpr FloatSize minimumSizeForLargeContainer { 280, 300 };
+
 #if ENABLE(DATA_DETECTION)
 
 static RefPtr<ContainerNode> findContainerNodeForDataDetectorResults(Node& rootNode, OptionSet<DataDetectorType> types)
@@ -1146,9 +1149,7 @@ static RefPtr<ContainerNode> findContainerNodeForDataDetectorResults(Node& rootN
     if (!commonAncestor)
         return { };
 
-    // FIXME: Consider making this size threshold client-configurable in the future.
-    static constexpr FloatSize minimumSize { 280, 300 };
-    return findLargeContainerAboveNode(*commonAncestor, minimumSize, &rootNode);
+    return findLargeContainerAboveNode(*commonAncestor, minimumSizeForLargeContainer, &rootNode);
 }
 
 #endif // ENABLE(DATA_DETECTION)
@@ -1174,13 +1175,16 @@ Result extractItem(Request&& request, LocalFrame& frame)
         return nodeFromJSHandle(*request.targetNodeHandleIdentifier);
     }();
 
+    bool extractingWithDataDetectors = false;
 #if ENABLE(DATA_DETECTION)
-    if (request.dataDetectorTypes && extractionRootNode)
+    if (request.dataDetectorTypes && extractionRootNode) {
         extractionRootNode = findContainerNodeForDataDetectorResults(*extractionRootNode, request.dataDetectorTypes);
+        extractingWithDataDetectors = true;
+    }
 #endif
 
     if (extractionRootNode)
-        addBoxShadowIfNeeded(*extractionRootNode, "#0088FF"_s);
+        addBoxShadowIfNeeded(*extractionRootNode, extractingWithDataDetectors ? "#0088FF"_s : "#ff8d28"_s);
 
     if (!extractionRootNode)
         return { root, 0 };
@@ -1328,7 +1332,7 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
     };
 
     if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(*renderer)) {
-        if (RefPtr contentDocument = protect(frameRenderer->iframeElement())->contentDocument())
+        if (RefPtr contentDocument = frameRenderer->iframeElement().contentDocument())
             extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
         return;
     }
@@ -1371,7 +1375,7 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
         }
 
         if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(descendant)) {
-            if (RefPtr contentDocument = protect(frameRenderer->iframeElement())->contentDocument())
+            if (RefPtr contentDocument = frameRenderer->iframeElement().contentDocument())
                 extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
             continue;
         }
@@ -1575,16 +1579,24 @@ static std::optional<SimpleRange> searchForText(Node& node, const String& search
         return std::nullopt;
 
     auto searchRange = makeRangeSelectingNodeContents(node);
-    auto foundRange = findPlainText(searchRange, searchText, {
+    auto caseSensitiveRange = findPlainText(searchRange, searchText, {
+        FindOption::DoNotRevealSelection,
+        FindOption::DoNotSetSelection,
+    });
+
+    if (!caseSensitiveRange.collapsed())
+        return { WTF::move(caseSensitiveRange) };
+
+    auto caseInsensitiveRange = findPlainText(searchRange, searchText, {
         FindOption::DoNotRevealSelection,
         FindOption::DoNotSetSelection,
         FindOption::CaseInsensitive,
     });
 
-    if (foundRange.collapsed())
-        return { };
+    if (!caseInsensitiveRange.collapsed())
+        return { WTF::move(caseInsensitiveRange) };
 
-    return { WTF::move(foundRange) };
+    return { };
 }
 
 static String invalidNodeIdentifierDescription(std::optional<NodeIdentifier>&& identifier)
@@ -1733,7 +1745,7 @@ static SelectOptionResult selectOptionByValue(NodeIdentifier identifier, const S
 
 static HTMLElement* documentBodyElement(const LocalFrame& frame)
 {
-    if (RefPtr document = frame.document())
+    if (auto* document = frame.document())
         return document->body();
 
     return nullptr;
@@ -1902,7 +1914,7 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
     if (RefPtr element = dynamicDowncast<Element>(*foundNode); element && element->isTextField())
         elementToFocus = element;
     else if (RefPtr host = foundNode->shadowHost(); host && host->isTextField()) {
-        if (RefPtr formControl = dynamicDowncast<HTMLTextFormControlElement>(host.get()))
+        if (RefPtr formControl = dynamicDowncast<HTMLTextFormControlElement>(host))
             elementToFocus = WTF::move(formControl);
     }
 
@@ -2343,6 +2355,25 @@ RefPtr<Element> elementForExtractedText(const LocalFrame& frame, ExtractedText&&
 
     RefPtr element = dynamicDowncast<Element>(node);
     return element ? element : RefPtr { node->parentElementInComposedTree() };
+}
+
+RefPtr<Element> containerElementForExtractedText(const LocalFrame& frame, ExtractedText&& extractedText)
+{
+    RefPtr element = elementForExtractedText(frame, WTF::move(extractedText));
+    if (!element)
+        return { };
+
+    RefPtr container = findLargeContainerAboveNode(*element, minimumSizeForLargeContainer);
+    if (!container)
+        return element;
+
+    if (RefPtr containerElement = dynamicDowncast<Element>(container))
+        return containerElement;
+
+    if (RefPtr containerElement = container->parentElementInComposedTree())
+        return containerElement;
+
+    return element;
 }
 
 std::optional<SimpleRange> rangeForExtractedText(const LocalFrame& frame, ExtractedText&& extractedText)

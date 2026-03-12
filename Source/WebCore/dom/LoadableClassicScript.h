@@ -60,7 +60,7 @@ public:
 
     bool load(Document&, const URL&);
     bool isAsync() const { return m_isAsync; }
-    const AtomString& integrity() const { return m_integrity; }
+    const AtomString& integrity() const LIFETIME_BOUND { return m_integrity; }
 
 protected:
     LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);

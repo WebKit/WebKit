@@ -110,7 +110,7 @@ public:
         ~ParsedKeyframe();
     };
 
-    const Vector<ParsedKeyframe>& parsedKeyframes() const { return m_parsedKeyframes; }
+    const Vector<ParsedKeyframe>& parsedKeyframes() const LIFETIME_BOUND { return m_parsedKeyframes; }
 
     Element* target() const { return m_target.get(); }
     void setTarget(RefPtr<Element>&&);
@@ -146,9 +146,9 @@ public:
 
     void willChangeRenderer();
 
-    Document& document() const final { return m_document; }
+    Document* document() const final;
     RenderElement* renderer() const final;
-    const RenderStyle& currentStyle() const final;
+    const RenderStyle& currentStyle() const LIFETIME_BOUND final;
     bool triggersStackingContext() const { return m_triggersStackingContext; }
     bool isRunningAccelerated() const;
     bool isAboutToRunAccelerated() const;
@@ -156,11 +156,11 @@ public:
     std::optional<unsigned> transformFunctionListPrefix() const override;
 
     void computeStyleOriginatedAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
-    const BlendingKeyframes& blendingKeyframes() const { return m_blendingKeyframes; }
-    const HashSet<AnimatableCSSProperty>& animatedProperties();
+    const BlendingKeyframes& blendingKeyframes() const LIFETIME_BOUND { return m_blendingKeyframes; }
+    const HashSet<AnimatableCSSProperty>& animatedProperties() LIFETIME_BOUND;
     bool animatesProperty(const AnimatableCSSProperty&) const;
-    const HashSet<AnimatableCSSProperty>& acceleratedProperties() const { return m_acceleratedProperties; }
-    const HashSet<AnimatableCSSProperty>& acceleratedPropertiesWithImplicitKeyframe() const { return m_acceleratedPropertiesWithImplicitKeyframe; }
+    const HashSet<AnimatableCSSProperty>& acceleratedProperties() const LIFETIME_BOUND { return m_acceleratedProperties; }
+    const HashSet<AnimatableCSSProperty>& acceleratedPropertiesWithImplicitKeyframe() const LIFETIME_BOUND { return m_acceleratedPropertiesWithImplicitKeyframe; }
 
     bool animatesMotionPath() const;
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
@@ -198,7 +198,7 @@ public:
 #endif
 
 private:
-    KeyframeEffect(Document&, Element*, const std::optional<Style::PseudoElementIdentifier>&);
+    KeyframeEffect(Element*, const std::optional<Style::PseudoElementIdentifier>&);
     ~KeyframeEffect();
 
     enum class AcceleratedAction : uint8_t { Play, Pause, UpdateProperties, TransformChange, Stop };
@@ -294,12 +294,12 @@ private:
     // KeyframeInterpolation
     CompositeOperation compositeOperation() const final { return m_compositeOperation; }
     IterationCompositeOperation iterationCompositeOperation() const final { return m_iterationCompositeOperation; }
-    const KeyframeInterpolation::Keyframe& keyframeAtIndex(size_t) const final;
+    const KeyframeInterpolation::Keyframe& keyframeAtIndex(size_t) const LIFETIME_BOUND final;
     size_t numberOfKeyframes() const final { return m_blendingKeyframes.size(); }
     const TimingFunction* timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe&) const final;
     bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;
 
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
     BlendingKeyframes m_blendingKeyframes { };
     HashSet<AnimatableCSSProperty> m_animatedProperties;

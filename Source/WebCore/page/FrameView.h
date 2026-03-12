@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/ScrollView.h>
-#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -124,6 +124,12 @@ public:
     // the visible area is not computable. The given child frame must be a
     // direct child of this frame.
     virtual std::optional<LayoutRect> visibleRectOfChild(const Frame&) const = 0;
+
+    // Whether the child frame's owner element (which is in this frame) uses dark
+    // appearance or not. Note that this is _different_ from the child frame's
+    // document's appearance, and they can be different (e.g the owner element
+    // uses dark appearance, but the child frame's document is light).
+    virtual bool ownerElementOfChildFrameUsesDarkAppearance(const Frame&) const = 0;
 
 private:
     ScrollableArea* enclosingScrollableArea() const final;

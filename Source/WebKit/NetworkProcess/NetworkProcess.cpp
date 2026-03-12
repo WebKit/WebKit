@@ -420,16 +420,14 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         connection->connection().setIgnoreInvalidMessageForTesting();
 #endif
 
-    for (auto pageID : parameters.pagesWithRelaxedThirdPartyCookieBlocking)
-        m_pagesWithRelaxedThirdPartyCookieBlocking.add(pageID);
+    m_pagesWithRelaxedThirdPartyCookieBlocking.addAll(parameters.pagesWithRelaxedThirdPartyCookieBlocking);
 
     if (CheckedPtr session = networkSession(sessionID)) {
         Vector<WebCore::RegistrableDomain> allowedSites;
         auto iter = m_allowedFirstPartiesForCookies.find(identifier);
-        if (iter != m_allowedFirstPartiesForCookies.end()) {
-            for (auto& site : iter->value.second)
-                allowedSites.append(site);
-        }
+        if (iter != m_allowedFirstPartiesForCookies.end())
+            allowedSites = copyToVector(iter->value.second);
+
         session->storageManager().startReceivingMessageFromConnection(connection->connection(), allowedSites, connection->sharedPreferencesForWebProcessValue());
     }
 }
@@ -1764,6 +1762,19 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             callbackAggregator->m_websiteData.entries.appendVector(WTF::move(entries));
         });
     }
+
+    if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements) && session) {
+        session->privateClickMeasurement().fetchRegistrableDomains([callbackAggregator](auto&& domains) mutable {
+            for (auto& domain : domains) {
+                WebsiteData::Entry entry {
+                    WebCore::SecurityOriginData::fromURL(URL { makeString("https://"_s, domain.string()) }),
+                    WebsiteDataType::PrivateClickMeasurements,
+                    0
+                };
+                callbackAggregator->m_websiteData.entries.append(WTF::move(entry));
+            }
+        });
+    }
 }
 
 void NetworkProcess::performDeleteWebsiteDataTask(TaskIdentifier taskIdentifier, TaskTrigger trigger)
@@ -2334,7 +2345,14 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
 {
     String suggestedFilename = networkDataTask.suggestedFilename();
 
-    RefPtr { downloadProxyConnection() }->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), networkDataTask = Ref { networkDataTask }] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite, WebKit::UseDownloadPlaceholder usePlaceholder, URL&& alternatePlaceholderURL, SandboxExtension::Handle&& placeholderSandboxExtensionHandle, std::span<const uint8_t> placeholderBookmarkData, std::span<const uint8_t> activityAccessToken) mutable {
+    RefPtr connection = downloadProxyConnection();
+    if (!connection) {
+        RELEASE_LOG_ERROR(Network, "NetworkProcess::findPendingDownloadLocation: No download proxy connection for download %" PRIu64, networkDataTask.pendingDownloadID()->toUInt64());
+        completionHandler(PolicyAction::Ignore);
+        return;
+    }
+
+    connection->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), networkDataTask = Ref { networkDataTask }] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite, WebKit::UseDownloadPlaceholder usePlaceholder, URL&& alternatePlaceholderURL, SandboxExtension::Handle&& placeholderSandboxExtensionHandle, std::span<const uint8_t> placeholderBookmarkData, std::span<const uint8_t> activityAccessToken) mutable {
 #if !HAVE(MODERN_DOWNLOADPROGRESS)
         UNUSED_PARAM(placeholderBookmarkData);
         UNUSED_PARAM(activityAccessToken);

@@ -265,6 +265,7 @@ public:
     WebCore::LayoutSize baseLayoutViewportSize;
     std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart;
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingMouseEvents;
+    Vector<Function<void()>> callbackHandlersAfterProcessingPendingKeyEvents;
     WebCore::FloatSize defaultUnobscuredSize;
     EditorState editorState;
     WebCore::IntSize fixedLayoutSize;

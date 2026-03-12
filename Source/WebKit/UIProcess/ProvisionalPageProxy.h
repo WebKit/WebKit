@@ -108,10 +108,11 @@ public:
     WebProcessProxy& NODELETE process();
     ProcessSwapRequestedByClient processSwapRequestedByClient() const { return m_processSwapRequestedByClient; }
     WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
-    const URL& provisionalURL() const { return m_provisionalLoadURL; }
+    const URL& provisionalURL() const LIFETIME_BOUND { return m_provisionalLoadURL; }
     RefPtr<WebsiteDataStore> replacedDataStoreForWebArchiveLoad() const { return m_replacedDataStoreForWebArchiveLoad; }
 
     bool isProcessSwappingOnNavigationResponse() const { return m_isProcessSwappingOnNavigationResponse; }
+    bool didFailProvisionalLoad() const { return m_didFailProvisionalLoad; }
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     RefPtr<DrawingAreaProxy> takeDrawingArea();
@@ -122,7 +123,7 @@ public:
     Vector<uint8_t> takeAccessibilityToken() { return WTF::move(m_accessibilityToken); }
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    const String& accessibilityPlugID() { return m_accessibilityPlugID; }
+    const String& accessibilityPlugID() LIFETIME_BOUND { return m_accessibilityPlugID; }
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID contextIDForVisibilityPropagationInWebProcess() const { return m_contextIDForVisibilityPropagationInWebProcess; }
@@ -149,7 +150,7 @@ public:
 
     API::WebsitePolicies* mainFrameWebsitePolicies() const { return m_mainFrameWebsitePolicies.get(); }
 
-    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
+    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() LIFETIME_BOUND { return m_messageReceiverRegistration; }
 
     bool needsMainFrameObserver() const { return m_needsMainFrameObserver; }
 
@@ -226,6 +227,7 @@ private:
     bool m_needsDidStartProvisionalLoad { true };
     bool m_shouldClosePage { true };
     bool m_needsMainFrameObserver { false };
+    bool m_didFailProvisionalLoad { false };
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     RefPtr<API::WebsitePolicies> m_mainFrameWebsitePolicies;

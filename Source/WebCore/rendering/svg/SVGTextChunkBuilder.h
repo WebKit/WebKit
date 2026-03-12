@@ -41,7 +41,7 @@ public:
     SVGTextChunkBuilder(SVGTextChunkBuilder&&) = default;
     SVGTextChunkBuilder(const SVGTextChunkBuilder&) = delete;
 
-    const Vector<SVGTextChunk>& textChunks() const { return m_textChunks; }
+    const Vector<SVGTextChunk>& textChunks() const LIFETIME_BOUND { return m_textChunks; }
     unsigned NODELETE totalCharacters() const;
     float totalLength() const;
     float totalAnchorShift() const;

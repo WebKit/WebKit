@@ -56,7 +56,7 @@ public:
 private:
     WorkerFontLoadRequest(URL&&, LoadedFromOpaqueSource);
 
-    const URL& url() const final { return m_url; }
+    const URL& url() const LIFETIME_BOUND final { return m_url; }
     bool isPending() const final { return !m_isLoading && !m_errorOccurred && !m_data; }
     bool isLoading() const final { return m_isLoading; }
     bool errorOccurred() const final { return m_errorOccurred; }

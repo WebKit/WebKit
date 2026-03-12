@@ -106,6 +106,7 @@ private:
     bool supportsTransform(const WebCore::TransformationMatrix&) const final;
     void setScale(float) final;
     void setCameraDistance(float) final;
+    void setBackgroundColor(const WebModel::Float3&) final;
     void setStageMode(WebCore::StageModeOperation) final;
 #if ENABLE(GPU_PROCESS_MODEL)
     void setRotation(float yaw, float pitch, float roll) final;

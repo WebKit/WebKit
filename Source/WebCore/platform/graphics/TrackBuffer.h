@@ -66,28 +66,28 @@ public:
     void reset();
     void clearSamples();
 
-    const MediaTime& lastDecodeTimestamp() const { return m_lastDecodeTimestamp; }
+    const MediaTime& lastDecodeTimestamp() const LIFETIME_BOUND { return m_lastDecodeTimestamp; }
     void setLastDecodeTimestamp(MediaTime timestamp) { m_lastDecodeTimestamp = WTF::move(timestamp); }
 
-    const MediaTime& greatestFrameDuration() const { return m_greatestFrameDuration; }
+    const MediaTime& greatestFrameDuration() const LIFETIME_BOUND { return m_greatestFrameDuration; }
     void setGreatestFrameDuration(MediaTime duration) { m_greatestFrameDuration = WTF::move(duration); }
-    const MediaTime& lastFrameDuration() const { return m_lastFrameDuration; }
+    const MediaTime& lastFrameDuration() const LIFETIME_BOUND { return m_lastFrameDuration; }
     void setLastFrameDuration(MediaTime duration) { m_lastFrameDuration = WTF::move(duration); }
 
-    const MediaTime& highestPresentationTimestamp() const { return m_highestPresentationTimestamp; }
+    const MediaTime& highestPresentationTimestamp() const LIFETIME_BOUND { return m_highestPresentationTimestamp; }
     void setHighestPresentationTimestamp(MediaTime timestamp) { m_highestPresentationTimestamp = WTF::move(timestamp); }
 
-    const MediaTime& highestEnqueuedPresentationTime() const { return m_highestEnqueuedPresentationTime; }
+    const MediaTime& highestEnqueuedPresentationTime() const LIFETIME_BOUND { return m_highestEnqueuedPresentationTime; }
     void setHighestEnqueuedPresentationTime(MediaTime timestamp) { m_highestEnqueuedPresentationTime = WTF::move(timestamp); }
-    const MediaTime& minimumEnqueuedPresentationTime() const { return m_minimumEnqueuedPresentationTime; }
+    const MediaTime& minimumEnqueuedPresentationTime() const LIFETIME_BOUND { return m_minimumEnqueuedPresentationTime; }
 
-    const DecodeOrderSampleMap::KeyType& lastEnqueuedDecodeKey() const { return m_lastEnqueuedDecodeKey; }
+    const DecodeOrderSampleMap::KeyType& lastEnqueuedDecodeKey() const LIFETIME_BOUND { return m_lastEnqueuedDecodeKey; }
     void setLastEnqueuedDecodeKey(DecodeOrderSampleMap::KeyType key) { m_lastEnqueuedDecodeKey = WTF::move(key); }
 
-    const MediaTime& enqueueDiscontinuityBoundary() const { return m_enqueueDiscontinuityBoundary; }
+    const MediaTime& enqueueDiscontinuityBoundary() const LIFETIME_BOUND { return m_enqueueDiscontinuityBoundary; }
     void setEnqueueDiscontinuityBoundary(MediaTime boundary) { m_enqueueDiscontinuityBoundary = WTF::move(boundary); }
 
-    const MediaTime& roundedTimestampOffset() const { return m_roundedTimestampOffset; }
+    const MediaTime& roundedTimestampOffset() const LIFETIME_BOUND { return m_roundedTimestampOffset; }
     void setRoundedTimestampOffset(MediaTime offset) { m_roundedTimestampOffset = WTF::move(offset); }
     void setRoundedTimestampOffset(const MediaTime&, uint32_t, const MediaTime&);
 
@@ -100,11 +100,11 @@ public:
     bool needsReenqueueing() const { return m_needsReenqueueing; }
     void setNeedsReenqueueing(bool flag) { m_needsReenqueueing = flag; }
 
-    const SampleMap& samples() const { return m_samples; }
-    SampleMap& samples() { return m_samples; }
+    const SampleMap& samples() const LIFETIME_BOUND { return m_samples; }
+    SampleMap& samples() LIFETIME_BOUND { return m_samples; }
     const RefPtr<MediaDescription>& description() const { return m_description; }
-    const PlatformTimeRanges& buffered() const { return m_buffered; }
-    PlatformTimeRanges& buffered() { return m_buffered; }
+    const PlatformTimeRanges& buffered() const LIFETIME_BOUND { return m_buffered; }
+    PlatformTimeRanges& buffered() LIFETIME_BOUND { return m_buffered; }
 
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, uint64_t);
@@ -118,8 +118,8 @@ private:
     friend UniqueRef<TrackBuffer> WTF::makeUniqueRefWithoutFastMallocCheck<TrackBuffer>(RefPtr<WebCore::MediaDescription>&&, const WTF::MediaTime&);
     TrackBuffer(RefPtr<MediaDescription>&&, const MediaTime&);
 
-    const DecodeOrderSampleMap::MapType& decodeQueue() const { return m_decodeQueue; }
-    DecodeOrderSampleMap::MapType& decodeQueue() { return m_decodeQueue; }
+    const DecodeOrderSampleMap::MapType& decodeQueue() const LIFETIME_BOUND { return m_decodeQueue; }
+    DecodeOrderSampleMap::MapType& decodeQueue() LIFETIME_BOUND { return m_decodeQueue; }
     void updateMinimumUpcomingPresentationTime();
     void clearDecodeQueue();
 

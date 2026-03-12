@@ -63,7 +63,7 @@ extension WKSeparatedImageView {
             return .unknown
         }
 
-        guard let imageData = await self.imageData else {
+        guard let imageData = await self.ensureImageData() else {
             try Task.checkCancellation()
             Logger.separatedImage.error("\(logPrefix) - ImageAnalysis result: bad imageData.")
             return .failed

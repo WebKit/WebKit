@@ -31,7 +31,7 @@
 #include "JITMathIC.h"
 #include "JumpTable.h"
 #include "PCToCodeOriginMap.h"
-#include "StructureStubInfo.h"
+#include "PropertyInlineCache.h"
 
 namespace JSC {
 
@@ -66,8 +66,8 @@ CodeLocationLabel<JSInternalPtrTag> BaselineJITCode::getCallLinkDoneLocationForB
     return result->doneLocation;
 }
 
-BaselineJITData::BaselineJITData(unsigned stubInfoSize, unsigned poolSize, CodeBlock* codeBlock)
-    : Base(stubInfoSize, poolSize)
+BaselineJITData::BaselineJITData(unsigned propertyCacheSize, unsigned poolSize, CodeBlock* codeBlock)
+    : Base(propertyCacheSize, poolSize)
     , m_globalObject(codeBlock->globalObject())
     , m_stackOffset(codeBlock->stackPointerOffset() * sizeof(Register))
 {

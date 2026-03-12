@@ -75,7 +75,7 @@ public:
         , m_autoWrap(false)
         , m_autoWrapWasEverTrueOnLine(false)
         , m_collapseWhiteSpace(false)
-        , m_allowImagesToBreak(!block.document().inQuirksMode() || !block.isRenderTableCell() || !m_blockStyle.logicalWidth().isIntrinsicOrLegacyIntrinsicOrAuto())
+        , m_allowImagesToBreak(!block.document().inQuirksMode() || !block.isRenderTableCell() || !m_blockStyle.logicalWidth().isSizingKeywordOrAuto())
         , m_atEnd(false)
         , m_hadUncommittedWidthBeforeCurrent(false)
         , m_lineWhitespaceCollapsingState(resolver.whitespaceCollapsingState())
@@ -84,7 +84,7 @@ public:
 
     RenderObject* currentObject() { return m_current.renderer(); }
     LegacyInlineIterator lineBreak() { return m_lineBreak; }
-    LineWidth& lineWidth() { return m_width; }
+    LineWidth& lineWidth() LIFETIME_BOUND { return m_width; }
     bool atEnd() { return m_atEnd; }
     
     bool fitsOnLineOrHangsAtEnd() const { return m_width.fitsOnLine() || m_hangsAtEnd; }
@@ -342,25 +342,25 @@ inline bool BreakingContext::handleText()
     if (m_autoWrap && m_lastObjectTextWrap == TextWrapMode::NoWrap && m_ignoringSpaces)
         commitLineBreakAtCurrentWidth(renderer);
 
-    const RenderStyle& style = lineStyle(renderer, m_lineInfo);
-    const FontCascade& font = style.fontCascade();
-    bool canHangPunctuationAtStart = style.hangingPunctuation().contains(Style::HangingPunctuationValue::First);
-    bool canHangPunctuationAtEnd = style.hangingPunctuation().contains(Style::HangingPunctuationValue::Last);
-    bool canHangStopOrCommaAtLineEnd = style.hangingPunctuation().contains(Style::HangingPunctuationValue::AllowEnd);
+    CheckedRef style = lineStyle(renderer, m_lineInfo);
+    const FontCascade& font = style->fontCascade();
+    bool canHangPunctuationAtStart = style->hangingPunctuation().contains(Style::HangingPunctuationValue::First);
+    bool canHangPunctuationAtEnd = style->hangingPunctuation().contains(Style::HangingPunctuationValue::Last);
+    bool canHangStopOrCommaAtLineEnd = style->hangingPunctuation().contains(Style::HangingPunctuationValue::AllowEnd);
     int endPunctuationIndex = canHangPunctuationAtEnd && m_collapseWhiteSpace ? renderer.lastCharacterIndexStrippingSpaces() : renderer.text().length() - 1;
 
     float wrapWidthOffset = m_width.uncommittedWidth() + inlineLogicalWidth(renderer, !m_appliedStartWidth, true);
     float wrapW = wrapWidthOffset;
     float charWidth = 0;
-    bool breakNBSP = m_autoWrap && style.nbspMode() == NBSPMode::Space;
+    bool breakNBSP = m_autoWrap && style->nbspMode() == NBSPMode::Space;
     // Auto-wrapping text should wrap in the middle of a word only if it could not wrap before the word,
     // which is only possible if the word is the first thing on the line.
     auto isWrappingAllowed = m_currentTextWrap != TextWrapMode::NoWrap;
-    bool breakWords = isWrappingAllowed && style.breakWords() && !m_width.committedWidth() && !m_width.hasCommittedReplaced();
+    bool breakWords = isWrappingAllowed && style->breakWords() && !m_width.committedWidth() && !m_width.hasCommittedReplaced();
     bool midWordBreak = false;
-    bool breakAnywhere = style.lineBreak() == LineBreak::Anywhere && m_autoWrap;
-    bool breakAll = (style.wordBreak() == WordBreak::BreakAll || breakAnywhere) && m_autoWrap;
-    bool keepAllWords = style.wordBreak() == WordBreak::KeepAll;
+    bool breakAnywhere = style->lineBreak() == LineBreak::Anywhere && m_autoWrap;
+    bool breakAll = (style->wordBreak() == WordBreak::BreakAll || breakAnywhere) && m_autoWrap;
+    bool keepAllWords = style->wordBreak() == WordBreak::KeepAll;
     auto iteratorMode = mapLineBreakToIteratorMode(m_blockStyle.lineBreak());
     auto contentAnalysis = mapWordBreakToContentAnalysis(m_blockStyle.wordBreak());
     bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default
@@ -375,7 +375,7 @@ inline bool BreakingContext::handleText()
         m_renderTextInfo.text = &renderer;
         m_renderTextInfo.font = &font;
         m_renderTextInfo.layout = font.createLayout(renderer, m_width.currentWidth(), m_collapseWhiteSpace);
-        m_renderTextInfo.lineBreakIteratorFactory.resetStringAndReleaseIterator(renderer.text(), Style::toPlatform(style.computedLocale()), iteratorMode, contentAnalysis);
+        m_renderTextInfo.lineBreakIteratorFactory.resetStringAndReleaseIterator(renderer.text(), Style::toPlatform(style->computedLocale()), iteratorMode, contentAnalysis);
     } else if (m_renderTextInfo.layout && m_renderTextInfo.font != &font) {
         m_renderTextInfo.font = &font;
         m_renderTextInfo.layout = font.createLayout(renderer, m_width.currentWidth(), m_collapseWhiteSpace);
@@ -483,7 +483,7 @@ inline bool BreakingContext::handleText()
                 // as candidate width for this line.
                 bool lineWasTooWide = false;
                 auto mayBreakSpaces = m_currentWhitespaceCollapse == WhiteSpaceCollapse::BreakSpaces && m_currentTextWrap == TextWrapMode::Wrap;
-                if (fitsOnLineOrHangsAtEnd() && m_currentCharacterIsWS && style.breakOnlyAfterWhiteSpace() && (!midWordBreak || mayBreakSpaces)) {
+                if (fitsOnLineOrHangsAtEnd() && m_currentCharacterIsWS && style->breakOnlyAfterWhiteSpace() && (!midWordBreak || mayBreakSpaces)) {
                     float charWidth = 0;
                     // Check if line is too big even without the extra space
                     // at the end of the line. If it is not, do nothing.
@@ -543,7 +543,7 @@ inline bool BreakingContext::handleText()
                 midWordBreak &= canBreakMidWord;
             }
 
-            if (!m_ignoringSpaces && style.collapseWhiteSpace()) {
+            if (!m_ignoringSpaces && style->collapseWhiteSpace()) {
                 // If we encounter a newline, or if we encounter a second space,
                 // we need to break up this run and enter a mode where we start collapsing spaces.
                 if (m_currentCharacterIsSpace && previousCharacterIsSpace) {
@@ -593,13 +593,13 @@ inline bool BreakingContext::handleText()
         }
 
         if (!m_currentCharacterIsWS && previousCharacterIsWS) {
-            if (m_autoWrap && style.breakOnlyAfterWhiteSpace())
+            if (m_autoWrap && style->breakOnlyAfterWhiteSpace())
                 m_lineBreak.moveTo(renderer, m_current.offset(), m_current.nextBreakablePosition());
         }
 
         if (m_collapseWhiteSpace && m_currentCharacterIsSpace && !m_ignoringSpaces)
             m_trailingObjects.setTrailingWhitespace(renderer);
-        else if (!style.collapseWhiteSpace() || !m_currentCharacterIsSpace)
+        else if (!style->collapseWhiteSpace() || !m_currentCharacterIsSpace)
             m_trailingObjects.clear();
 
         m_atStart = false;
@@ -699,7 +699,7 @@ inline TrailingObjects::CollapseFirstSpace checkWhitespaceCollapsingTransitions(
         if (currpoint == lBreak) {
             // We hit the line break before the start point. Shave off the start point.
             lineWhitespaceCollapsingState.decrementNumTransitions();
-            if (CheckedPtr renderText = dynamicDowncast<RenderText>(*endpoint.renderer()); renderText && renderText->style().collapseWhiteSpace()) {
+            if (auto* renderText = dynamicDowncast<RenderText>(*endpoint.renderer()); renderText && renderText->style().collapseWhiteSpace()) {
                 lineWhitespaceCollapsingState.decrementTransitionAt(lineWhitespaceCollapsingState.numTransitions() - 1);
                 return TrailingObjects::CollapseFirstSpace::No;
             }

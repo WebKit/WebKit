@@ -45,7 +45,7 @@ public:
     float dy() const { return m_dy; }
     bool setDy(float);
 
-    const Color& shadowColor() const { return m_shadowColor; } 
+    const Color& shadowColor() const LIFETIME_BOUND { return m_shadowColor; } 
     bool setShadowColor(const Color&);
 
     float shadowOpacity() const { return m_shadowOpacity; }

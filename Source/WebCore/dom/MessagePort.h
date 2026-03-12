@@ -92,8 +92,8 @@ public:
     // of the remote port (since it may live cross-process) - those platforms may always return null.
     MessagePort* NODELETE locallyEntangledPort() const;
 
-    const MessagePortIdentifier& identifier() const { return m_identifier; }
-    const MessagePortIdentifier& remoteIdentifier() const { return m_remoteIdentifier; }
+    const MessagePortIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const MessagePortIdentifier& remoteIdentifier() const LIFETIME_BOUND { return m_remoteIdentifier; }
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MessagePort; }

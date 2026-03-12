@@ -77,7 +77,7 @@ void DOMWindowExtension::resumeFromBackForwardCache()
 
     m_disconnectedFrame = nullptr;
 
-    protect(frame())->loader().client().dispatchDidReconnectDOMWindowExtensionToGlobalObject(this);
+    frame()->loader().client().dispatchDidReconnectDOMWindowExtensionToGlobalObject(this);
 }
 
 void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()

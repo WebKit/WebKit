@@ -102,6 +102,7 @@ inline static void configureNSTextBlockFromParagraphStyleCommonTableAttributes(N
     [table setValue:item.minimumHeight type:NSTextBlockValueTypeAbsolute forDimension:NSTextBlockDimensionMinimumHeight];
     [table setValue:item.maximumHeight type:NSTextBlockValueTypeAbsolute forDimension:NSTextBlockDimensionMaximumHeight];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [table setWidth:item.paddingMinXEdge type:NSTextBlockValueTypeAbsolute forLayer:NSTextBlockLayerPadding edge:NSRectEdgeMinX];
     [table setWidth:item.paddingMinYEdge type:NSTextBlockValueTypeAbsolute forLayer:NSTextBlockLayerPadding edge:NSRectEdgeMinY];
     [table setWidth:item.paddingMaxXEdge type:NSTextBlockValueTypeAbsolute forLayer:NSTextBlockLayerPadding edge:NSRectEdgeMaxX];
@@ -131,6 +132,7 @@ inline static void configureNSTextBlockFromParagraphStyleCommonTableAttributes(N
 
     if (item.borderMaxYEdgeColor)
         [table setBorderColor:item.borderMaxYEdgeColor.get() forEdge:NSRectEdgeMaxY];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 inline static NSTextAlignment reconstructNSTextAlignment(ParagraphStyleAlignment alignment)
@@ -589,6 +591,7 @@ inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, Tabl
         auto tableID = tableEnsureResults.iterator->value;
 
         if (tableEnsureResults.isNewEntry) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             newTextTables.append(TextTable {
                 {
                     [nsTable valueForDimension:NSTextBlockDimensionWidth],
@@ -665,6 +668,7 @@ inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, Tabl
                 extractTextTableBlockVerticalAlignment([item verticalAlignment]),
             });
         }
+ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     RetainPtr<NSArray<NSTextTab *>> tabStops = [style tabStops];

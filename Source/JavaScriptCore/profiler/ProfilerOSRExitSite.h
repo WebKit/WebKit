@@ -41,7 +41,7 @@ public:
     {
     }
     
-    const Vector<CodePtr<JSInternalPtrTag>>& codeAddress() const { return m_codeAddresses; }
+    const Vector<CodePtr<JSInternalPtrTag>>& codeAddress() const LIFETIME_BOUND { return m_codeAddresses; }
     
     Ref<JSON::Value> toJSON(Dumper&) const;
 

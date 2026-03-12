@@ -321,6 +321,7 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
             auto propertyID = propertyReference.id();
             auto valueId = primitiveValue->valueID();
 
+            // FIXME: All these should search inside complex values or be set during style resolution
             if (valueId == CSSValueInherit)
                 m_propertiesSetToInherit.add(propertyID);
             else if (valueId == CSSValueCurrentcolor)
@@ -388,11 +389,17 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
             m_hasKeyframeNotUsingRangeOffset = !keyframe.usesRangeOffset();
     };
 
+    auto analyzeCSSWideKeywords = [&] {
+        if (keyframe.hasPropertiesWithRevertRuleOrLayer())
+            m_hasPropertiesWithRevertRuleOrLayer = true;
+    };
+
     analyzeSizeDependentTransform();
     analyzeDiscreteTransformInterval();
     analyzeExplicitlyInheritedKeyframeProperty();
     analyzeKeyframeForExplicitProperties();
     analyzeKeyframeRangeOffset();
+    analyzeCSSWideKeywords();
 }
 
 void BlendingKeyframes::updatedComputedOffsets(NOESCAPE const Function<double(const BlendingKeyframe::Offset&)>& callback)

@@ -404,7 +404,7 @@ void BackForwardCache::markPagesForCaptionPreferencesChanged()
             ASSERT(!m_items.contains(item.key));
             continue;
         }
-        CheckedRef { (*cachedPage).get() }->markForCaptionPreferencesChanged();
+        (*cachedPage).get().markForCaptionPreferencesChanged();
     }
 }
 #endif

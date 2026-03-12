@@ -52,8 +52,8 @@ class PlacedGridItem {
 public:
     PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const BoxGeometry& gridItemGeometry,  const RenderStyle& gridContainerWritingMode);
 
-    const ComputedSizes& inlineAxisSizes() const { return m_inlineAxisSizes; }
-    const ComputedSizes& blockAxisSizes() const { return m_blockAxisSizes; }
+    const ComputedSizes& inlineAxisSizes() const LIFETIME_BOUND { return m_inlineAxisSizes; }
+    const ComputedSizes& blockAxisSizes() const LIFETIME_BOUND { return m_blockAxisSizes; }
 
     size_t columnStartLine() const { return m_gridAreaLines.columnStartLine; }
     size_t columnEndLine() const { return m_gridAreaLines.columnEndLine; }
@@ -61,21 +61,21 @@ public:
     size_t rowEndLine() const { return m_gridAreaLines.rowEndLine; }
 
     const ElementBox& layoutBox() const { return m_layoutBox; }
-    const StyleSelfAlignmentData& inlineAxisAlignment() const { return m_inlineAxisAlignment; }
-    const StyleSelfAlignmentData& blockAxisAlignment() const { return m_blockAxisAlignment; }
+    const StyleSelfAlignmentData& inlineAxisAlignment() const LIFETIME_BOUND { return m_inlineAxisAlignment; }
+    const StyleSelfAlignmentData& blockAxisAlignment() const LIFETIME_BOUND { return m_blockAxisAlignment; }
 
     LayoutUnit usedInlineBorderAndPadding() const { return m_usedInlineBorderAndPadding; }
     LayoutUnit usedBlockBorderAndPadding() const { return m_usedBlockBorderAndPadding; }
 
-    const WritingMode& writingMode() const { return m_writingMode; }
+    const WritingMode& writingMode() const LIFETIME_BOUND { return m_writingMode; }
 
     // FIXME: Add support for grid item's with preferred aspect ratios.
     bool hasPreferredAspectRatio() const { return false; }
     bool isReplacedElement() const { return m_layoutBox->isReplacedBox(); }
 
-    const GridAreaLines& gridAreaLines() const { return m_gridAreaLines; }
+    const GridAreaLines& gridAreaLines() const LIFETIME_BOUND { return m_gridAreaLines; }
 
-    const Style::ZoomFactor& usedZoom() const { return m_usedZoom; }
+    const Style::ZoomFactor& usedZoom() const LIFETIME_BOUND { return m_usedZoom; }
 
 private:
     PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const BoxGeometry& gridItemGeometry,  const RenderStyle& gridContainerWritingMode, const RenderStyle& gridItemWritingMode);

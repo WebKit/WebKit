@@ -54,10 +54,10 @@ public:
     bool rowIndexWasSet() const { return m_rowIndex != unsetRowIndex; }
     unsigned rowIndex() const;
 
-    inline const BorderValue& borderAdjoiningTableStart() const;
-    inline const BorderValue& borderAdjoiningTableEnd() const;
-    const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
-    const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
+    inline const BorderValue& borderAdjoiningTableStart() const LIFETIME_BOUND;
+    inline const BorderValue& borderAdjoiningTableEnd() const LIFETIME_BOUND;
+    const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const LIFETIME_BOUND;
+    const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const LIFETIME_BOUND;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

@@ -43,7 +43,7 @@ public:
     static Ref<WebPageGroupProxy> create(WebPageGroupData&&);
     virtual ~WebPageGroupProxy();
 
-    const String& identifier() const { return m_data.identifier; }
+    const String& identifier() const LIFETIME_BOUND { return m_data.identifier; }
     PageGroupIdentifier pageGroupID() const { return m_data.pageGroupID; }
     // Namespace IDs for local storage namespaces are currently equivalent to web page group IDs.
     WebCore::PageGroup* NODELETE corePageGroup() const;

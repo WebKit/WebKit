@@ -643,7 +643,7 @@ bool TypingCommand::makeEditableRootEmpty()
         removeNode(*child);
 
     addBlockPlaceholderIfNeeded(root.get());
-    setEndingSelection(VisibleSelection(firstPositionInNode(root.get()), Affinity::Downstream, endingSelection().directionality()));
+    setEndingSelection(VisibleSelection(firstPositionInNode(*root), Affinity::Downstream, endingSelection().directionality()));
 
     return true;
 }
@@ -702,7 +702,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
         }
 
         // If we have a caret selection at the beginning of a cell, we have nothing to do.
-        if (enclosingTableCell && visibleStart == firstPositionInNode(enclosingTableCell.get()))
+        if (enclosingTableCell && visibleStart == firstPositionInNode(*enclosingTableCell))
             return;
 
         // If the caret is at the start of a paragraph after a table, move content into the last table cell.
@@ -714,7 +714,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
             selection->modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, granularity);
         // If the caret is just after a table, select the table and don't delete anything.
         } else if (RefPtr table = isFirstPositionAfterTable(visibleStart)) {
-            setEndingSelection(VisibleSelection(positionBeforeNode(table.get()), endingSelection().start(), Affinity::Downstream, endingSelection().directionality()));
+            setEndingSelection(VisibleSelection(positionBeforeNode(*table), endingSelection().start(), Affinity::Downstream, endingSelection().directionality()));
             typingAddedToOpenCommand(Type::DeleteKey);
             return;
         }
@@ -802,14 +802,14 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
         Position downstreamEnd = endingSelection().end().downstream();
         VisiblePosition visibleEnd = endingSelection().visibleEnd();
         auto enclosingTableCell = enclosingNodeOfType(visibleEnd.deepEquivalent(), &isTableCell);
-        if (enclosingTableCell && visibleEnd == lastPositionInNode(enclosingTableCell.get()))
+        if (enclosingTableCell && visibleEnd == lastPositionInNode(*enclosingTableCell))
             return;
         if (visibleEnd == endOfParagraph(visibleEnd))
             downstreamEnd = visibleEnd.next(CannotCrossEditingBoundary).deepEquivalent().downstream();
         // When deleting tables: Select the table first, then perform the deletion
         if (downstreamEnd.containerNode() && downstreamEnd.containerNode()->renderer() && downstreamEnd.containerNode()->renderer()->isRenderTable()
             && downstreamEnd.computeOffsetInContainerNode() <= caretMinOffset(*downstreamEnd.containerNode())) {
-            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(downstreamEnd.containerNode()), Affinity::Downstream, endingSelection().directionality()));
+            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(*downstreamEnd.containerNode()), Affinity::Downstream, endingSelection().directionality()));
             typingAddedToOpenCommand(Type::ForwardDeleteKey);
             return;
         }

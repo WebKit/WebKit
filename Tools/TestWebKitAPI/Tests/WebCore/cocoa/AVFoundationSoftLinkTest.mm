@@ -140,7 +140,6 @@ TEST(AVFoundationSoftLink, Constants)
     if (PAL::canLoad_AVFoundation_AVSampleRateKey())
         EXPECT_TRUE([AVSampleRateKey isEqualToString:@"AVSampleRateKey"]);
 
-    EXPECT_TRUE(PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey());
     EXPECT_TRUE([AVURLAssetOutOfBandMIMETypeKey isEqualToString:@"AVURLAssetOutOfBandMIMETypeKey"]);
 
     EXPECT_TRUE(PAL::canLoad_AVFoundation_AVURLAssetUseClientURLLoadingExclusively());

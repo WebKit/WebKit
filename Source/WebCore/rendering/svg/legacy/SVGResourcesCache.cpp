@@ -21,6 +21,7 @@
 #include "SVGResourcesCache.h"
 
 #include "ElementInlines.h"
+#include "LegacyRenderSVGModelObjectInlines.h"
 #include "LegacyRenderSVGResourceContainer.h"
 #include "RenderElementInlines.h"
 #include "SVGResources.h"

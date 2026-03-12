@@ -587,8 +587,12 @@ auto HashMap<T, U, V, W, MappedTraits, Y, shouldValidateKey, M>::take(const KeyT
 template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y, ShouldValidateKey shouldValidateKey, typename M>
 auto HashMap<T, U, V, W, MappedTraits, Y, shouldValidateKey, M>::take(iterator it) -> MappedTakeType
 {
-    if (it == end())
-        return MappedTraits::take(MappedTraits::emptyValue());
+    if (it == end()) {
+        if constexpr (requires { MappedTraits::emptyTakeValue(); })
+            return MappedTraits::emptyTakeValue();
+        else
+            return MappedTraits::take(MappedTraits::emptyValue());
+    }
     auto value = MappedTraits::take(WTF::move(it->value));
     remove(it);
     return value;
@@ -687,8 +691,12 @@ template<SmartPtr K>
 inline auto HashMap<T, U, V, W, X, Y, shouldValidateKey, M>::take(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) -> MappedTakeType
 {
     iterator it = find(key);
-    if (it == end())
-        return MappedTraits::take(MappedTraits::emptyValue());
+    if (it == end()) {
+        if constexpr (requires { MappedTraits::emptyTakeValue(); })
+            return MappedTraits::emptyTakeValue();
+        else
+            return MappedTraits::take(MappedTraits::emptyValue());
+    }
     auto value = MappedTraits::take(WTF::move(it->value));
     remove(it);
     return value;

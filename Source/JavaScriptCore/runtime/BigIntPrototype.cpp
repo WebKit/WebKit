@@ -70,6 +70,7 @@ void BigIntPrototype::finishCreation(VM& vm, JSGlobalObject*)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+    structure()->setMayBePrototype(true);
 }
 
 // ------------------------------ Functions ---------------------------

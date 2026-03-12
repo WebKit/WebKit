@@ -62,9 +62,9 @@ GStreamerRtpTransceiverBackend::GStreamerRtpTransceiverBackend(GRefPtr<GstWebRTC
     g_object_set(m_rtcTransceiver.get(), "do-nack", TRUE, nullptr);
 }
 
-std::unique_ptr<GStreamerRtpReceiverBackend> GStreamerRtpTransceiverBackend::createReceiverBackend()
+UniqueRef<GStreamerRtpReceiverBackend> GStreamerRtpTransceiverBackend::createReceiverBackend()
 {
-    return WTF::makeUnique<GStreamerRtpReceiverBackend>(GRefPtr(m_rtcTransceiver));
+    return WTF::makeUniqueRef<GStreamerRtpReceiverBackend>(GRefPtr(m_rtcTransceiver));
 }
 
 Ref<GStreamerRtpSenderBackend> GStreamerRtpTransceiverBackend::createSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GStreamerRtpSenderBackend::Source&& source, GUniquePtr<GstStructure>&& initData)

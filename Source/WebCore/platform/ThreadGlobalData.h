@@ -83,7 +83,7 @@ public:
         return *m_MIMETypeRegistryThreadGlobalData;
     }
 
-    ThreadTimers& threadTimers() { return m_threadTimers; }
+    ThreadTimers& threadTimers() LIFETIME_BOUND { return m_threadTimers; }
 
     JSC::JSGlobalObject* currentState() const { return m_currentState; }
     void setCurrentState(JSC::JSGlobalObject* state) { m_currentState = state; }

@@ -92,7 +92,7 @@ public:
     bool listen(const std::optional<String>& host, unsigned port);
     void disconnect();
 
-    const String& visibleHost() const { return m_visibleHost; }
+    const String& visibleHost() const LIFETIME_BOUND { return m_visibleHost; }
 
 private:
 #if USE(INSPECTOR_SOCKET_SERVER)

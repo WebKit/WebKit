@@ -92,7 +92,7 @@ private:
     const Ref<IPC::Connection> m_connection;
     const Ref<WebCore::PlatformMediaResourceLoader> m_platformLoader;
     RemoteMediaResourceLoaderIdentifier m_identifier;
-    HashMap<RemoteMediaResourceIdentifier, RefPtr<WebCore::PlatformMediaResource>> m_mediaResources;
+    HashMap<RemoteMediaResourceIdentifier, Ref<WebCore::PlatformMediaResource>> m_mediaResources;
 };
 
 } // namespace WebKit

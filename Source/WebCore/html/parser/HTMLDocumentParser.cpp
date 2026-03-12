@@ -177,7 +177,7 @@ inline bool HTMLDocumentParser::shouldDelayEnd() const
 
 void HTMLDocumentParser::didBeginYieldingParser()
 {
-    if (RefPtr parserScheduler = m_parserScheduler)
+    if (auto* parserScheduler = m_parserScheduler.get())
         parserScheduler->didBeginYieldingParser();
 }
 
@@ -213,7 +213,7 @@ void HTMLDocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
 
 bool HTMLDocumentParser::isScheduledForResume() const
 {
-    RefPtr scheduler = m_parserScheduler;
+    auto* scheduler = m_parserScheduler.get();
     return scheduler && scheduler->isScheduledForResume();
 }
 
@@ -290,7 +290,7 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
         // how the parser has always handled stopping when the page assigns window.location. What should
         // happen instead is that assigning window.location causes the parser to stop parsing cleanly.
         // The problem is we're not prepared to do that at every point where we run JavaScript.
-        if (!parsingFragment && document()->frame() && protect(protect(document()->frame())->navigationScheduler())->locationChangePending()) [[unlikely]]
+        if (!parsingFragment && document()->frame() && protect(document()->frame()->navigationScheduler())->locationChangePending()) [[unlikely]]
             return false;
 
         if (mode == SynchronousMode::AllowYield && parserScheduler->shouldYieldBeforeToken(session)) [[unlikely]]

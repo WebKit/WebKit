@@ -203,11 +203,7 @@ String DebuggerScope::name() const
     if (!symbolTable)
         return String();
 
-    CodeBlock* codeBlock = symbolTable->rareDataCodeBlock();
-    if (!codeBlock)
-        return String();
-
-    return String::fromUTF8(codeBlock->inferredName().span());
+    return symbolTable->inferredName();
 }
 
 DebuggerLocation DebuggerScope::location() const
@@ -216,12 +212,7 @@ DebuggerLocation DebuggerScope::location() const
     if (!symbolTable)
         return DebuggerLocation();
 
-    CodeBlock* codeBlock = symbolTable->rareDataCodeBlock();
-    if (!codeBlock)
-        return DebuggerLocation();
-
-    ScriptExecutable* executable = codeBlock->ownerExecutable();
-    return DebuggerLocation(executable);
+    return symbolTable->debuggerLocation();
 }
 
 JSValue DebuggerScope::caughtValue(JSGlobalObject* globalObject) const

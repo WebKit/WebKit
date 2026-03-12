@@ -76,8 +76,8 @@ private:
     bool hasClearance(const ElementBox&) const;
 
     bool inQuirksMode() const { return m_inQuirksMode; }
-    const LayoutState& layoutState() const { return m_layoutState; }
-    const BlockFormattingState& formattingState() const { return m_blockFormattingState; }
+    const LayoutState& layoutState() const LIFETIME_BOUND { return m_layoutState; }
+    const BlockFormattingState& formattingState() const LIFETIME_BOUND { return m_blockFormattingState; }
 
     const CheckedRef<const LayoutState> m_layoutState;
     const BlockFormattingState& m_blockFormattingState;

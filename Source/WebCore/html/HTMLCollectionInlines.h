@@ -123,7 +123,7 @@ inline void HTMLCollection::setNamedItemCache(std::unique_ptr<CollectionNamedEle
         Locker locker { m_namedElementCacheAssignmentLock };
         m_namedElementCache = WTF::move(cache);
     }
-    protect(document())->collectionCachedIdNameMap(*this);
+    document().collectionCachedIdNameMap(*this);
 }
 
 inline const CollectionNamedElementCache& HTMLCollection::namedItemCaches() const LIFETIME_BOUND

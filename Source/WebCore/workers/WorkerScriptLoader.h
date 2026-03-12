@@ -79,20 +79,20 @@ public:
 
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
-    const ScriptBuffer& script() const { return m_script; }
-    const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
-    const String& referrerPolicy() const { return m_referrerPolicy; }
-    const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
-    const URL& url() const { return m_url; }
+    const ScriptBuffer& script() const LIFETIME_BOUND { return m_script; }
+    const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const LIFETIME_BOUND { return m_contentSecurityPolicy; }
+    const String& referrerPolicy() const LIFETIME_BOUND { return m_referrerPolicy; }
+    const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const LIFETIME_BOUND { return m_crossOriginEmbedderPolicy; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     const URL& responseURL() const;
     ResourceResponse::Source responseSource() const { return m_responseSource; }
     bool isRedirected() const { return m_isRedirected; }
-    const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
-    const String& responseMIMEType() const { return m_responseMIMEType; }
+    const CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }
+    const String& responseMIMEType() const LIFETIME_BOUND { return m_responseMIMEType; }
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
     bool failed() const { return m_failed; }
     ResourceLoaderIdentifier identifier() const { return *m_identifier; }
-    const ResourceError& error() const { return m_error; }
+    const ResourceError& error() const LIFETIME_BOUND { return m_error; }
 
     WorkerFetchResult fetchResult() const;
 
@@ -129,7 +129,7 @@ public:
     WEBCORE_EXPORT static RefPtr<ServiceWorkerDataManager> serviceWorkerDataManagerFromIdentifier(ScriptExecutionContextIdentifier);
 
     std::optional<ScriptExecutionContextIdentifier> clientIdentifier() const { return m_clientIdentifier; }
-    const String& userAgentForSharedWorker() const { return m_userAgentForSharedWorker; }
+    const String& userAgentForSharedWorker() const LIFETIME_BOUND { return m_userAgentForSharedWorker; }
 
 private:
     friend class RefCounted<WorkerScriptLoader>;

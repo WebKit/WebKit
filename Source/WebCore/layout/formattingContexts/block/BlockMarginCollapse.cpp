@@ -176,18 +176,18 @@ bool BlockMarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter(co
     if (!layoutBox.previousInFlowSibling())
         return false;
 
-    CheckedRef previousInFlowSibling = *layoutBox.previousInFlowSibling();
+    auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
     // Margins between a floated box and any other box do not collapse.
-    if (layoutBox.isFloatingPositioned() || previousInFlowSibling->isFloatingPositioned())
+    if (layoutBox.isFloatingPositioned() || previousInFlowSibling.isFloatingPositioned())
         return false;
 
     // Margins of absolutely positioned boxes do not collapse.
     if ((layoutBox.isOutOfFlowPositioned() && !layoutBox.style().top().isAuto())
-        || (previousInFlowSibling->isOutOfFlowPositioned() && !previousInFlowSibling->style().bottom().isAuto()))
+        || (previousInFlowSibling.isOutOfFlowPositioned() && !previousInFlowSibling.style().bottom().isAuto()))
         return false;
 
     // Margins of inline-block boxes do not collapse.
-    if (layoutBox.isInlineBlockBox() || previousInFlowSibling->isInlineBlockBox())
+    if (layoutBox.isInlineBlockBox() || previousInFlowSibling.isInlineBlockBox())
         return false;
 
     // The bottom margin of an in-flow block-level element always collapses with the top margin of

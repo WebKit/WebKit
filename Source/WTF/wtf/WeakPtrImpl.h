@@ -57,7 +57,7 @@ public:
     }
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    const ThreadLikeAssertion& threadAssertion() const { return m_thread; }
+    const ThreadLikeAssertion& threadAssertion() const LIFETIME_BOUND { return m_thread; }
 #endif
 
     template<typename T>
@@ -114,7 +114,7 @@ public:
     }
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    const ThreadLikeAssertion& threadAssertion() const { return m_thread; }
+    const ThreadLikeAssertion& threadAssertion() const LIFETIME_BOUND { return m_thread; }
 #endif
 
     template<typename T>

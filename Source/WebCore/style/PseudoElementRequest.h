@@ -51,10 +51,10 @@ public:
     {
     }
 
-    const PseudoElementIdentifier& identifier() const { return m_identifier; }
+    const PseudoElementIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
     PseudoElementType type() const { return m_identifier.type; }
-    const AtomString& nameOrPart() const { return m_identifier.nameOrPart; }
-    const std::optional<StyleScrollbarState>& scrollbarState() const { return m_scrollbarState; }
+    const AtomString& nameOrPart() const LIFETIME_BOUND { return m_identifier.nameOrPart; }
+    const std::optional<StyleScrollbarState>& scrollbarState() const LIFETIME_BOUND { return m_scrollbarState; }
 
 private:
     PseudoElementIdentifier m_identifier;

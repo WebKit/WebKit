@@ -40,8 +40,8 @@ public:
     TableFormattingState(LayoutState&, const ElementBox& tableBox);
     ~TableFormattingState();
 
-    TableGrid& tableGrid() { return m_tableGrid; }
-    const TableGrid& tableGrid() const { return m_tableGrid; }
+    TableGrid& tableGrid() LIFETIME_BOUND { return m_tableGrid; }
+    const TableGrid& tableGrid() const LIFETIME_BOUND { return m_tableGrid; }
 
 private:
     const UniqueRef<TableGrid> m_tableGrid;

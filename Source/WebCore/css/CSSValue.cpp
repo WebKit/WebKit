@@ -279,8 +279,8 @@ void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& depen
     // FIXME: Unclear why it's OK that we do not cover CSSValuePair, CSSQuadValue, CSSRectValue, CSSBorderImageSliceValue, CSSBorderImageWidthValue, and others here. Probably should use visitDerived unless they don't allow the primitive values that can have dependencies. May want to base this on a traverseValues or forEachValue function instead.
     // FIXME: Consider a non-recursive algorithm for walking this tree of dependencies.
     if (auto* asList = dynamicDowncast<CSSValueContainingVector>(*this)) {
-        for (Ref listValue : *asList)
-            listValue->collectComputedStyleDependencies(dependencies);
+        for (auto& listValue : *asList)
+            listValue.collectComputedStyleDependencies(dependencies);
         return;
     }
     if (auto* asPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(*this))

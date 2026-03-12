@@ -53,8 +53,8 @@ public:
     explicit FloatRoundedRect(const LayoutRoundedRect&);
     FloatRoundedRect(float x, float y, float width, float height);
 
-    const FloatRect& rect() const { return m_rect; }
-    const CornerRadii& radii() const { return m_radii; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
+    const CornerRadii& radii() const LIFETIME_BOUND { return m_radii; }
     bool isRounded() const { return !m_radii.isZero(); }
     bool isEmpty() const { return m_rect.isEmpty(); }
 

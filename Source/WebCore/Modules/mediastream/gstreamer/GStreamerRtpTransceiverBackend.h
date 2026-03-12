@@ -36,7 +36,7 @@ class GStreamerRtpTransceiverBackend final : public RTCRtpTransceiverBackend {
 public:
     GStreamerRtpTransceiverBackend(GRefPtr<GstWebRTCRTPTransceiver>&&);
 
-    std::unique_ptr<GStreamerRtpReceiverBackend> createReceiverBackend();
+    UniqueRef<GStreamerRtpReceiverBackend> createReceiverBackend();
     Ref<GStreamerRtpSenderBackend> createSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&&, GStreamerRtpSenderBackend::Source&&, GUniquePtr<GstStructure>&&);
 
     GstWebRTCRTPTransceiver* rtcTransceiver() { return m_rtcTransceiver.get(); }

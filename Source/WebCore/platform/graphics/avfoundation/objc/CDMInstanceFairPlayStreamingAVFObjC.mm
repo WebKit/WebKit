@@ -580,7 +580,6 @@ void CDMInstanceFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForCo
     }
 
     ERROR_LOG(LOGIDENTIFIER, "- no responsible session; dropping");
-    ASSERT_NOT_REACHED();
 }
 
 void CDMInstanceFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest* request)

@@ -88,7 +88,7 @@ RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
 
 std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMProxy::sharedPreferencesForWebProcess() const
 {
-    RefPtr factory = m_factory.get();
+    auto* factory = m_factory.get();
     if (!factory)
         return std::nullopt;
 

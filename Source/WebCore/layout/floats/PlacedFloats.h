@@ -83,8 +83,8 @@ public:
         std::optional<size_t> m_placedByLine;
     };
     using List = Vector<Item>;
-    const List& list() const { return m_list; }
-    const Item* last() const { return list().isEmpty() ? nullptr : &m_list.last(); }
+    const List& list() const LIFETIME_BOUND { return m_list; }
+    const Item* last() const LIFETIME_BOUND { return list().isEmpty() ? nullptr : &m_list.last(); }
 
     void add(Item);
     bool remove(const Box&);

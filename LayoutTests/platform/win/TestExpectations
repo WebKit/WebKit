@@ -253,6 +253,7 @@ fast/events/drag-customData.html [ Skip ]
 fast/events/drag-image-with-border-image.html [ Skip ]
 fast/events/drag-in-frames.html [ Skip ]
 fast/events/drag-parent-node.html [ Skip ]
+fast/events/drag-relatedTarget.html [ Skip ]
 fast/events/drag-select-when-zoomed-with-header.html [ Skip ]
 fast/events/drag-select-when-zoomed.html [ Skip ]
 fast/events/drag-to-navigate.html [ Skip ]
@@ -1194,6 +1195,12 @@ webkit.org/b/149630 css3/font-variant-all.html [ ImageOnlyFailure ]
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html [ Skip ]
 webkit.org/b/149771 css3/font-feature-settings-font-face-rendering.html [ Skip ]
+
+# HarfBuzz AAT morx regression: newer HarfBuzz doesn't apply morx feature
+# substitutions (smcp, c2sc, titl) correctly for these test fonts.
+# See also webkit.org/b/216853 (same issue on glib for font-synthesis-small-caps).
+css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
+fast/canvas/fill-text-with-font-features.html [ ImageOnlyFailure ]
 webkit.org/b/149771 css3/font-variant-font-face-override.html [ Skip ]
 webkit.org/b/149774 css3/font-variant-petite-caps-synthesis.html [ Skip ]
 webkit.org/b/149774 css3/font-variant-small-caps-synthesis.html [ Skip ]
@@ -2322,7 +2329,6 @@ imported/w3c/web-platform-tests/navigation-timing [ Skip ]
 imported/w3c/web-platform-tests/notifications [ Skip ]
 imported/w3c/web-platform-tests/page-visibility [ Skip ]
 imported/w3c/web-platform-tests/paint-timing [ Skip ]
-imported/w3c/web-platform-tests/payment-request [ Skip ]
 imported/w3c/web-platform-tests/performance-timeline [ Skip ]
 imported/w3c/web-platform-tests/permissions [ Skip ]
 imported/w3c/web-platform-tests/permissions-policy [ Skip ]
@@ -4451,9 +4457,6 @@ fonts/font-cache-memory-pressure-crash.html [ Failure ]
 # SFrameTransform isn't supported yet
 streams/writable-stream-create-within-multiple-workers-crash.html [ Skip ]
 
-# Timeout only on Buildbot
-http/tests/misc/embed-image-load-outlives-gc-without-crashing.html [ Pass Timeout ]
-
 [ Release ] imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-lookup.html [ Pass Failure ]
 
@@ -4509,9 +4512,6 @@ fast/box-shadow/shadow-repaint.html [ Skip ] # Failure
 fast/css/highlight-text-repaint.html [ Skip ] # Failure
 fast/css/text-underline-offset-repaint.html [ Skip ] # Failure
 fast/flexbox/missing-repaint-when-flext-item-never-had-layout.html [ Skip ] # Failure
-
-fast/canvas/fillText-edge-clip-shadow.html [ ImageOnlyFailure ]
-fast/canvas/fillText-edge-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/286284 fast/canvas/canvas-image-shadow.html [ Failure ]
 webkit.org/b/286284 webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Failure ]

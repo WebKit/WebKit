@@ -47,7 +47,7 @@ public:
     static Ref<DragEvent> createForBindings();
     static Ref<DragEvent> create(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
-        EventTarget* relatedTarget, double force, SyntheticClickType, DataTransfer* = nullptr, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
+        RefPtr<EventTarget>&& relatedTarget, double force, SyntheticClickType, DataTransfer* = nullptr, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
 
     virtual ~DragEvent();
 
@@ -57,7 +57,7 @@ private:
     DragEvent(const AtomString& eventType, Init&&);
     DragEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
-        EventTarget* relatedTarget, double force, SyntheticClickType, DataTransfer*, IsSimulated, IsTrusted);
+        RefPtr<EventTarget>&& relatedTarget, double force, SyntheticClickType, DataTransfer*, IsSimulated, IsTrusted);
     DragEvent();
 
     const RefPtr<DataTransfer> m_dataTransfer;

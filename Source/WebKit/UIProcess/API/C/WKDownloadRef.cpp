@@ -64,7 +64,7 @@ void WKDownloadCancel(WKDownloadRef download, const void* functionContext, WKDow
 
 WKPageRef WKDownloadGetOriginatingPage(WKDownloadRef download)
 {
-    RefPtr originatingPage = protect(toImpl(download))->originatingPage();
+    RefPtr originatingPage = toImpl(download)->originatingPage();
     return toAPI(originatingPage.get());
 }
 

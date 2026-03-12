@@ -37,7 +37,7 @@ namespace Style {
 
 auto CSSValueConversion<RepeatStyle>::operator()(BuilderState& state, const CSSValue& value) -> RepeatStyle
 {
-    if (RefPtr repeatValue = dynamicDowncast<CSSBackgroundRepeatValue>(value)) {
+    if (auto* repeatValue = dynamicDowncast<CSSBackgroundRepeatValue>(value)) {
         return RepeatStyle {
             .values {
                 fromCSSValueID<FillRepeat>(repeatValue->xValue()),
@@ -47,7 +47,7 @@ auto CSSValueConversion<RepeatStyle>::operator()(BuilderState& state, const CSSV
     }
 
     // Values coming from CSS Typed OM may not have been converted to a CSSBackgroundRepeatValue.
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
+    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
     if (!primitiveValue) {
         return RepeatStyle {
             .values {

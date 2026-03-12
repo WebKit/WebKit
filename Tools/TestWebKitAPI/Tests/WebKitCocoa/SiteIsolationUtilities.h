@@ -32,3 +32,4 @@ class WKWebView;
 #endif
 
 bool isSiteIsolationEnabled(WKWebView*);
+bool isUsingBackForwardCache(WKWebView*);

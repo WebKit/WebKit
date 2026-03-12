@@ -40,7 +40,7 @@ static std::unique_ptr<WebCore::NetworkStorageSession>& defaultNetworkStorageSes
     return session;
 }
 
-static HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>>& globalSessionMap()
+static HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>>& NODELETE globalSessionMap()
 {
     static NeverDestroyed<HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>>> map;
     return map;

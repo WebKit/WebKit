@@ -33,28 +33,26 @@ namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const FontTaggedSettings<int>& item)
 {
-    for (unsigned i = 0; i < item.size(); ++i) {
-        auto& variation = item.at(i);
+    for (auto& variation : item) {
         StringBuilder s;
         s.append(variation.tag()[0]);
         s.append(variation.tag()[1]);
         s.append(variation.tag()[2]);
         s.append(variation.tag()[3]);
-        ts.dumpProperty(s.toString(), item.at(i).value());
+        ts.dumpProperty(s.toString(), variation.value());
     }
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const FontTaggedSettings<float>& item)
 {
-    for (unsigned i = 0; i < item.size(); ++i) {
-        auto& variation = item.at(i);
+    for (auto& variation : item) {
         StringBuilder s;
         s.append(variation.tag()[0]);
         s.append(variation.tag()[1]);
         s.append(variation.tag()[2]);
         s.append(variation.tag()[3]);
-        ts.dumpProperty(s.toString(), item.at(i).value());
+        ts.dumpProperty(s.toString(), variation.value());
     }
     return ts;
 }

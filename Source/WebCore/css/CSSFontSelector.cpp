@@ -90,7 +90,7 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
         });
     }
 
-    FontCache::forCurrentThread()->addClient(*this);
+    protect(FontCache::forCurrentThread())->addClient(*this);
     m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);
     LOG(Fonts, "CSSFontSelector %p ctor", this);
 }
@@ -480,7 +480,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     if (!resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
 
-    auto font = FontCache::forCurrentThread()->fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues, fontFeatureValues, 1.0 });
+    auto font = protect(FontCache::forCurrentThread())->fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues, fontFeatureValues, 1.0 });
     if (document && document->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::singleton().logFontLoad(*document, familyForLookup.string(), !!font);
     return { FontRanges { WTF::move(font) }, isGenericFontFamily };
@@ -512,7 +512,7 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     if (!context->settingsValues().fontFallbackPrefersPictographs)
         return nullptr;
     auto& pictographFontFamily = context->settingsValues().fontGenericFamilies.pictographFontFamily();
-    RefPtr font = FontCache::forCurrentThread()->fontForFamily(fontDescription, pictographFontFamily);
+    RefPtr font = protect(FontCache::forCurrentThread())->fontForFamily(fontDescription, pictographFontFamily);
     if (RefPtr document = dynamicDowncast<Document>(context.get()); document && document->settingsValues().webAPIStatisticsEnabled)
         ResourceLoadObserver::singleton().logFontLoad(*document, pictographFontFamily, !!font);
 
@@ -526,7 +526,7 @@ bool CSSFontSelector::isSimpleFontSelectorForDescription() const
         return false;
 
     // FIXME: remove this when we fix counter style rules mutation.
-    if (RefPtr document = dynamicDowncast<Document>(m_context.get())) {
+    if (auto* document = dynamicDowncast<Document>(m_context.get())) {
         if (document->counterStyleRegistry().hasAuthorCounterStyles())
             return false;
     }

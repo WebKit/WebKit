@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LegacyRenderSVGResourceGradientInlines.h"
 #include "LegacyRenderSVGResourceRadialGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGRadialGradientElement.h"

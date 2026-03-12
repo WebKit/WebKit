@@ -66,7 +66,7 @@ unsigned StyleSheetContents::estimatedSizeInBytes() const
     size += ruleCount() * StyleRule::averageSizeInBytes();
 
     for (unsigned i = 0; i < m_importRules.size(); ++i) {
-        if (RefPtr sheet = m_importRules[i]->styleSheet())
+        if (auto* sheet = m_importRules[i]->styleSheet())
             size += sheet->estimatedSizeInBytes();
     }
     return size;
@@ -491,7 +491,7 @@ StyleSheetContents* StyleSheetContents::rootStyleSheet() const
 
 Node* StyleSheetContents::singleOwnerNode() const
 {
-    RefPtr root = rootStyleSheet();
+    auto* root = rootStyleSheet();
     if (!root)
         return nullptr;
     if (root->m_clients.isEmpty())
@@ -502,7 +502,7 @@ Node* StyleSheetContents::singleOwnerNode() const
 
 Document* StyleSheetContents::singleOwnerDocument() const
 {
-    RefPtr ownerNode = singleOwnerNode();
+    auto* ownerNode = singleOwnerNode();
     return ownerNode ? &ownerNode->document() : nullptr;
 }
 

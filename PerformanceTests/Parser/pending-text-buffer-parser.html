@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+var segmentSize = 64;
+var fillerSize = segmentSize - 2;
+var totalSize = 16 * 1024 * 1024;
+
+var filler = "";
+for (var i = 0; i < fillerSize; i++)
+    filler += "A";
+var segment = filler + "<1";
+
+var text = segment;
+while (text.length < totalSize)
+    text = text + text;
+text = text.substring(0, totalSize);
+
+var source = "<!DOCTYPE html><html><body>" + text + "</body></html>";
+text = null;
+
+var blob = new Blob([source], {type: "text/html"});
+source = null;
+var blobURL = URL.createObjectURL(blob);
+
+var iframe = document.createElement("iframe");
+iframe.style.display = "none";
+iframe.sandbox = "";
+document.body.appendChild(iframe);
+
+PerfTestRunner.prepareToMeasureValuesAsync({done: onCompletedRun, unit: "ms"});
+
+iframe.onload = function() {
+    var now = PerfTestRunner.now();
+    if (PerfTestRunner.measureValueAsync(now - then))
+        startNextRun();
+};
+
+function startNextRun() {
+    iframe.onload = function() {
+        iframe.onload = function() {
+            var now = PerfTestRunner.now();
+            if (PerfTestRunner.measureValueAsync(now - then))
+                startNextRun();
+        };
+        then = PerfTestRunner.now();
+        iframe.src = blobURL;
+    };
+    iframe.src = "about:blank";
+}
+
+var then = PerfTestRunner.now();
+iframe.src = blobURL;
+
+function onCompletedRun() {
+    iframe.onload = null;
+    document.body.removeChild(iframe);
+    URL.revokeObjectURL(blobURL);
+}
+
+</script>
+</body>

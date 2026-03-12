@@ -48,7 +48,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:protect(*_item)->url()];
+    return [NSURL _web_URLWithWTFString:_item->url()];
 }
 
 - (NSString *)title
@@ -62,7 +62,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSURL *)initialURL
 {
-    return [NSURL _web_URLWithWTFString:protect(*_item)->originalURL()];
+    return [NSURL _web_URLWithWTFString:_item->originalURL()];
 }
 
 - (WebKit::WebBackForwardListItem&)_item

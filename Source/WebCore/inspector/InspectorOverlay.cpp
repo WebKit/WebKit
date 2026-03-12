@@ -165,7 +165,7 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
         renderer->absoluteQuads(highlight.quads);
         for (auto& quad : highlight.quads)
             contentsQuadToCoordinateSystem(mainView, containingView, quad, coordinateSystem);
-    } else if (is<RenderBox>(*renderer) || is<RenderInline>(*renderer)) {
+    } else if (isAnyOf<RenderBox, RenderInline>(*renderer)) {
         LayoutRect contentBox;
         LayoutRect paddingBox;
         LayoutRect borderBox;
@@ -1141,7 +1141,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
 static bool rendererIsFlexboxItem(RenderObject& renderer)
 {
-    if (CheckedPtr parentFlexRenderer = dynamicDowncast<RenderFlexibleBox>(renderer.parent()))
+    if (auto* parentFlexRenderer = dynamicDowncast<RenderFlexibleBox>(renderer.parent()))
         return !parentFlexRenderer->orderIterator().shouldSkipChild(renderer);
 
     return false;

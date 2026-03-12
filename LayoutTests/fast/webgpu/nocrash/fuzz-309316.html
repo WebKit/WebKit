@@ -1,0 +1,46 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script async type="text/javascript">
+async function run() {
+    globalThis.testRunner?.waitUntilDone();
+    globalThis.testRunner?.dumpAsText();
+
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+    const Shader5 = device.createShaderModule({
+        code: `
+enable f16;
+@group(0) @binding(0) var<uniform> a : array<mat2x3<f16>, 4>;
+@group(0) @binding(1) var<storage, read_write> s: f16;
+var<private> counter = 0;
+fn i() -> i32 { counter++; return counter; }
+@compute @workgroup_size(1)
+fn f() {
+  let p_a       = &a;
+  let p_a_i     = &((*p_a)[i()]);
+  let p_a_i_i   = &((*p_a_i)[i()]);
+  let l_a       : array<mat2x3<f16>, 4> = *p_a;
+  let l_a_i     : mat2x3<f16>           = *p_a_i;
+  let l_a_i_i   : vec3<f16>             = *p_a_i_i;
+  s = (*p_a_i_i).x + l_a[0][0].x + l_a_i[0].x + l_a_i_i.x;
+}
+        `
+    });
+    try { /* newvar{fuzzvar00004:GPUBindGroupLayout} */ var fuzzvar00004 = device.createBindGroupLayout({ label: "fuzzstr_27", entries: [{ binding: 0, buffer: { hasDynamicOffset: true, minBindingSize: 2, type: "read-only-storage" }, visibility: GPUShaderStage.COMPUTE }] }); } catch(e) {}
+try { /* newvar{fuzzvar00005:GPUBindGroupLayout} */ var fuzzvar00005 = fuzzvar00006.getBindGroupLayout(13); } catch(e) {}
+try { /* newvar{fuzzvar00003:GPUPipelineLayout} */ var fuzzvar00003 = device.createPipelineLayout({ label: "fuzzstr_16", bindGroupLayouts: [fuzzvar00004, fuzzvar00005, fuzzvar00005] }); } catch(e) {}
+try { /* newvar{fuzzvar00002:GPUComputePipeline} */ var fuzzvar00002 = device.createComputePipeline({ label: "fuzzstr_29", layout: fuzzvar00003, compute: { constants: {}, entryPoint: "compute_main", module: Shader5 } }); } catch(e) {}
+try { /* newvar{fuzzvar00054:GPUComputePipeline} */ var fuzzvar00054 = await device.createComputePipelineAsync({ label: "fuzzstr_13", layout: "auto", compute: { constants: {}, entryPoint: "f", module: Shader5 } }); } catch(e) {}
+debug('Pass');
+}
+
+async function main() {
+try {
+    await run();
+} catch (e) {
+    debug('Error', e);
+} finally {
+    globalThis.testRunner?.notifyDone();
+}
+}
+main();
+</script>

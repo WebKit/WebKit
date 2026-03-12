@@ -316,6 +316,7 @@
                   },
                   { "name": "Apple-Sequoia-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                  "deployment_target": "15.4",
                   "triggers": [
                       "sequoia-release-tests-wk1", "sequoia-release-tests-wk2",
                       "sequoia-release-applesilicon-tests-wk2",

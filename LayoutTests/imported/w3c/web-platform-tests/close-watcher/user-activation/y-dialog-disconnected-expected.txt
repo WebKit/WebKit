@@ -1,4 +1,4 @@
 b0
 
-FAIL Disconnect dialog with close request assert_false: d1 should now be closed. expected false got true
+PASS Disconnect dialog with close request
 

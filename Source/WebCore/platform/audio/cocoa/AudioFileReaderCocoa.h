@@ -36,17 +36,16 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
 
-using ExtAudioFileRef = struct OpaqueExtAudioFile*;
-using AudioFileID = struct OpaqueAudioFileID*;
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 
 namespace WebCore {
 
 class AudioBus;
 class SourceBufferParserWebM;
-class AudioFileReaderWebMData;
+struct AudioFileReaderData;
+class AudioFileReaderAVFData;
 
-// Wrapper class for AudioFile and ExtAudioFile CoreAudio APIs for reading files and in-memory versions of them...
+// Wrapper class for reading audio files using AVAssetReader and in-memory versions of them...
 
 class AudioFileReader
 #if !RELEASE_LOG_DISABLED
@@ -59,9 +58,6 @@ public:
 
     RefPtr<AudioBus> createBus(float sampleRate, bool mixToMono); // Returns nullptr on error
 
-    size_t dataSize() const { return m_data.size(); }
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return m_data; }
-
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
@@ -72,21 +68,16 @@ public:
 private:
 #if ENABLE(MEDIA_SOURCE)
     bool isMaybeWebM(std::span<const uint8_t>) const;
-    std::unique_ptr<AudioFileReaderWebMData> demuxWebMData(std::span<const uint8_t>) const;
-    std::optional<size_t> decodeWebMData(AudioBufferList&, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const;
+    std::unique_ptr<AudioFileReaderData> demuxWebMData(std::span<const uint8_t>) const;
 #endif
-    static OSStatus readProc(void* clientData, SInt64 position, UInt32 requestCount, void* buffer, UInt32* actualCount);
-    static SInt64 getSizeProc(void* clientData);
-    ssize_t numberOfFrames() const;
+    std::optional<size_t> decodeData(AudioBufferList&, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const;
+    std::unique_ptr<AudioFileReaderData> demuxAVFData(std::span<const uint8_t>) const;
     std::optional<AudioStreamBasicDescription> fileDataFormat() const;
     AudioStreamBasicDescription clientDataFormat(const AudioStreamBasicDescription& inFormat, float sampleRate) const;
 
     std::span<const uint8_t> m_data;
 
-    AudioFileID m_audioFileID = { nullptr };
-    ExtAudioFileRef m_extAudioFileRef = { nullptr };
-
-    std::unique_ptr<AudioFileReaderWebMData> m_webmData;
+    std::unique_ptr<AudioFileReaderData> m_readerData;
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;

@@ -75,7 +75,7 @@ public:
 
     PCToCodeOriginMap* pcToCodeOriginMap() override { return common.m_pcToCodeOriginMap.get(); }
 
-    const RegisterAtOffsetList* calleeSaveRegisters() const { return &m_calleeSaveRegisters; }
+    const RegisterAtOffsetList* calleeSaveRegisters() const LIFETIME_BOUND { return &m_calleeSaveRegisters; }
 
     unsigned numberOfCompiledDFGNodes() const { return m_numberOfCompiledDFGNodes; }
     void setNumberOfCompiledDFGNodes(unsigned numberOfCompiledDFGNodes)

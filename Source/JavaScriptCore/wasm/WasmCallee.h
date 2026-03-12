@@ -115,7 +115,7 @@ class JITCallee : public Callee {
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(JITCallee);
 public:
     friend class Callee;
-    FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
+    FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() LIFETIME_BOUND { return m_wasmToWasmCallsites; }
 
 #if ENABLE(JIT)
     void setEntrypoint(Wasm::Entrypoint&&);
@@ -135,7 +135,7 @@ protected:
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
 
-    const RegisterAtOffsetList* calleeSaveRegistersImpl() { return &m_entrypoint.calleeSaveRegisters; }
+    const RegisterAtOffsetList* calleeSaveRegistersImpl() LIFETIME_BOUND { return &m_entrypoint.calleeSaveRegisters; }
 #else
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
@@ -214,7 +214,7 @@ public:
         return adoptRef(*new JSToWasmICCallee(WTF::move(calleeSaves)));
     }
 
-    const RegisterAtOffsetList* calleeSaveRegistersImpl() { return &m_calleeSaves; }
+    const RegisterAtOffsetList* calleeSaveRegistersImpl() LIFETIME_BOUND { return &m_calleeSaves; }
     CodePtr<JSEntryPtrTag> jsToWasm() { return m_jsToWasmICEntrypoint.code(); }
 
     void setEntrypoint(MacroAssemblerCodeRef<JSEntryPtrTag>&&);
@@ -379,10 +379,10 @@ public:
     bool didStartCompilingOSREntryCallee() const { return m_didStartCompilingOSREntryCallee; }
     void setDidStartCompilingOSREntryCallee(bool value) { m_didStartCompilingOSREntryCallee = value; }
 
-    TierUpCount& tierUpCounter() { return m_tierUpCounter; }
+    TierUpCount& tierUpCounter() LIFETIME_BOUND { return m_tierUpCounter; }
 
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> sharedLoopEntrypoint() { return m_sharedLoopEntrypoint; }
-    const Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints() { return m_loopEntrypoints; }
+    const Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints() LIFETIME_BOUND { return m_loopEntrypoints; }
 
     unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
 
@@ -447,17 +447,17 @@ public:
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
     const uint8_t* bytecode() const { return m_bytecode; }
     const uint8_t* bytecodeEnd() const { return m_bytecodeEnd; }
-    const uint8_t* metadata() const { return m_metadata.span().data(); }
+    const uint8_t* metadata() const LIFETIME_BOUND { return m_metadata.span().data(); }
 
     unsigned numLocals() const { return m_numLocals; }
     unsigned localSizeToAlloc() const { return m_localSizeToAlloc; }
     unsigned rethrowSlots() const { return m_numRethrowSlotsToAlloc; }
 
-    const Vector<FunctionSpaceIndex>& callTargets() const { return m_callTargets; }
+    const Vector<FunctionSpaceIndex>& callTargets() const LIFETIME_BOUND { return m_callTargets; }
     unsigned numCallProfiles() const { return m_callTargets.size(); }
 
-    IPIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
-    const IPIntTierUpCounter& tierUpCounter() const { return m_tierUpCounter; }
+    IPIntTierUpCounter& tierUpCounter() LIFETIME_BOUND { return m_tierUpCounter; }
+    const IPIntTierUpCounter& tierUpCounter() const LIFETIME_BOUND { return m_tierUpCounter; }
 
     FunctionSpaceIndex callTarget(unsigned callProfileIndex) const { return m_callTargets[callProfileIndex]; }
 
@@ -512,7 +512,7 @@ class WasmBuiltinCallee final : public Callee {
 public:
     WasmBuiltinCallee(const WebAssemblyBuiltin*, std::pair<const Name*, RefPtr<NameSection>>&&);
 
-    const WebAssemblyBuiltin* builtin() { return m_builtin.get(); }
+    const WebAssemblyBuiltin* builtin() LIFETIME_BOUND { return m_builtin.get(); }
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_trampoline; };
 
 protected:

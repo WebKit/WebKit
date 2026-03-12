@@ -44,7 +44,7 @@ public:
 
     static constexpr int s_defaultCPUTileSize = 256;
 
-    const IntRect& coverRect() const { return m_coverRect; }
+    const IntRect& coverRect() const LIFETIME_BOUND { return m_coverRect; }
 
     class Update {
         WTF_MAKE_NONCOPYABLE(Update);
@@ -61,9 +61,9 @@ public:
             Ref<CoordinatedTileBuffer> buffer;
         };
 
-        const Vector<uint32_t>& tilesToCreate() const { return m_tilesToCreate; }
-        const Vector<TileUpdate>& tilesToUpdate() const { return m_tilesToUpdate; }
-        const Vector<uint32_t>& tilesToRemove() const { return m_tilesToRemove; }
+        const Vector<uint32_t>& tilesToCreate() const LIFETIME_BOUND { return m_tilesToCreate; }
+        const Vector<TileUpdate>& tilesToUpdate() const LIFETIME_BOUND { return m_tilesToUpdate; }
+        const Vector<uint32_t>& tilesToRemove() const LIFETIME_BOUND { return m_tilesToRemove; }
 
         void appendUpdate(Vector<uint32_t>&&, Vector<TileUpdate>&&, Vector<uint32_t>&&);
         void waitUntilPaintingComplete();

@@ -56,8 +56,8 @@ public:
     Expression& target() { return m_target.get(); }
     const Expression& target() const { return m_target.get(); }
 
-    Expression::List& arguments() { return m_arguments; }
-    const Expression::List& arguments() const { return m_arguments; }
+    Expression::List& arguments() LIFETIME_BOUND { return m_arguments; }
+    const Expression::List& arguments() const LIFETIME_BOUND { return m_arguments; }
 
     bool isConstructor() const { return m_isConstructor; }
 
@@ -93,9 +93,9 @@ public:
         return true;
     }
 
-    const OptionSet<ShaderStage>& visibility() const { return m_visibility; }
+    const OptionSet<ShaderStage>& visibility() const LIFETIME_BOUND { return m_visibility; }
 
-    const String& resolvedTarget() const { return m_resolvedTarget; }
+    const String& resolvedTarget() const LIFETIME_BOUND { return m_resolvedTarget; }
 
     ValidationFunction validationFunction() const { return m_validationFunction; }
 

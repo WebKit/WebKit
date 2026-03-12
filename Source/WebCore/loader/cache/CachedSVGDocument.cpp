@@ -50,7 +50,7 @@ void CachedSVGDocument::setEncoding(const String& chs)
 
 ASCIILiteral CachedSVGDocument::encoding() const
 {
-    return protect(m_decoder)->encoding().name();
+    return m_decoder->encoding().name();
 }
 
 void CachedSVGDocument::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

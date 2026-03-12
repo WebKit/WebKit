@@ -58,7 +58,7 @@ public:
     bool enabled() const { return m_enabled; }
     WEBCORE_TESTSUPPORT_EXPORT void setEnabled(bool);
 
-    const String& blockedString() const { return m_blockedString; }
+    const String& blockedString() const LIFETIME_BOUND { return m_blockedString; }
     WEBCORE_TESTSUPPORT_EXPORT void setBlockedString(const String&);
 
     DecisionPoint decisionPoint() const { return m_decisionPoint; }
@@ -70,9 +70,9 @@ public:
     Decision unblockRequestDecision() const { return m_unblockRequestDecision; }
     WEBCORE_TESTSUPPORT_EXPORT void setUnblockRequestDecision(Decision);
 
-    WEBCORE_TESTSUPPORT_EXPORT const String& unblockRequestURL() const;
+    WEBCORE_TESTSUPPORT_EXPORT const String& unblockRequestURL() const LIFETIME_BOUND;
 
-    const String& modifiedRequestURL() const { return m_modifiedRequestURL; }
+    const String& modifiedRequestURL() const LIFETIME_BOUND { return m_modifiedRequestURL; }
     WEBCORE_TESTSUPPORT_EXPORT void setModifiedRequestURL(const String&);
 
     double willSendRequestDecisionDelay() const { return m_willSendRequestDecisionDelay.value(); }

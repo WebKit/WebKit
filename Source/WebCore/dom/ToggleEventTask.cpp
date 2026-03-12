@@ -27,6 +27,7 @@
 #include "ToggleEventTask.h"
 
 #include "EventNames.h"
+#include "NodeInlines.h"
 #include "TaskSource.h"
 #include "ToggleEvent.h"
 
@@ -47,7 +48,7 @@ void ToggleEventTask::queue(ToggleState oldState, ToggleState newState, Element*
         return;
 
     m_data = { oldState, newState, source };
-    element->queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [task = Ref { *this }, element, newState] {
+    Node::queueTaskKeepingNodeAlive(*element, TaskSource::DOMManipulation, [task = Ref { *this }, newState](auto& element) {
         if (!task->m_data || task->m_data->newState != newState)
             return;
 
@@ -60,7 +61,7 @@ void ToggleEventTask::queue(ToggleState oldState, ToggleState newState, Element*
         init.oldState = stringForState(data.oldState);
         init.newState = stringForState(data.newState);
         init.source = data.source;
-        element->dispatchEvent(ToggleEvent::create(eventNames().toggleEvent, init, Event::IsCancelable::No));
+        element.dispatchEvent(ToggleEvent::create(eventNames().toggleEvent, init, Event::IsCancelable::No));
     });
 }
 

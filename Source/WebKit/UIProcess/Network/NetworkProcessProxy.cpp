@@ -1693,7 +1693,7 @@ void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIde
         return;
 
     uint64_t cookiesVersion = 0;
-    if (RefPtr store = websiteDataStoreFromSessionID(sessionID))
+    if (auto* store = websiteDataStoreFromSessionID(sessionID))
         cookiesVersion = store->cookiesVersion();
     send(Messages::NetworkProcess::PreconnectTo(sessionID, webPageProxyID, webPageID, WTF::move(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain, cookiesVersion), 0);
 }

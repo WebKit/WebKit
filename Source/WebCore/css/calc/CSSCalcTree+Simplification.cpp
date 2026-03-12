@@ -1404,7 +1404,7 @@ std::optional<Child> simplify(Anchor& anchor, const SimplificationOptions& optio
         // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time."
 
         if (!anchor.fallback)
-            protect(options.conversionData->styleBuilderState())->setCurrentPropertyInvalidAtComputedValueTime();
+            options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
 
         // Replace the anchor node with the fallback node.
         return std::exchange(anchor.fallback, { });
@@ -1431,7 +1431,7 @@ std::optional<Child> simplify(AnchorSize& anchorSize, const SimplificationOption
 
     if (!result) {
         if (!anchorSize.fallback)
-            protect(options.conversionData->styleBuilderState())->setCurrentPropertyInvalidAtComputedValueTime();
+            options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
 
         return std::exchange(anchorSize.fallback, { });
     }

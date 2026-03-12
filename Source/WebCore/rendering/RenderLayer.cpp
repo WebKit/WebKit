@@ -1453,7 +1453,7 @@ void RenderLayer::dirtyAncestorChainHasSelfPaintingLayerDescendantStatus()
 
 void RenderLayer::setAncestorChainHasViewportConstrainedDescendant()
 {
-    for (CheckedPtr layer = this; layer; layer = layer->parent()) {
+    for (auto* layer = this; layer; layer = layer->parent()) {
         if (!layer->m_hasViewportConstrainedDescendantStatusDirty && layer->m_hasViewportConstrainedDescendant)
             break;
 
@@ -1464,7 +1464,7 @@ void RenderLayer::setAncestorChainHasViewportConstrainedDescendant()
 
 void RenderLayer::dirtyAncestorChainHasViewportConstrainedDescendantStatus()
 {
-    for (CheckedPtr layer = this; layer; layer = layer->parent()) {
+    for (auto* layer = this; layer; layer = layer->parent()) {
         if (layer->m_hasViewportConstrainedDescendantStatusDirty)
             break;
 

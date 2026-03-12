@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <wtf/Vector.h>
 
@@ -46,6 +47,7 @@ struct DataListSuggestionInformation {
     DataListSuggestionActivationType activationType;
     Vector<DataListSuggestion> suggestions;
     IntRect elementRect;
+    std::optional<FrameIdentifier> rootFrameID;
 };
 
 } // namespace WebCore

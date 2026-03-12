@@ -46,9 +46,9 @@ WidthIterator::WidthIterator(const FontCascade& fontCascade, const TextRun& run,
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
     , m_expansion(run.expansion())
+    , m_glyphBounds { accountForGlyphBounds }
     , m_direction(m_run->direction())
     , m_isAfterExpansion(run.expansionBehavior().left == ExpansionBehavior::Behavior::Forbid)
-    , m_accountForGlyphBounds(accountForGlyphBounds)
     , m_enableKerning(fontCascade.enableKerning())
     , m_requiresShaping(fontCascade.requiresShaping())
     , m_forTextEmphasis(forTextEmphasis)
@@ -373,11 +373,22 @@ static void updateCharacterAndSmallCapsIfNeeded(SmallCapsState& smallCapsState, 
     }
 }
 
+void WidthIterator::GlyphBounds::computeIfNeeded(Glyph glyph, const Font& font, unsigned charIndex, float glyphWidth)
+{
+    if (!shouldCompute)
+        return;
+    auto bounds = font.boundsForGlyph(glyph);
+    if (!charIndex)
+        firstGlyphLeftOverflowX = std::max<float>(0.f, -bounds.x());
+    maxY = std::max(maxY, bounds.maxY());
+    minY = std::min(minY, bounds.y());
+    lastGlyphRightOverflowX = std::max<float>(0.f, bounds.maxX() - glyphWidth);
+}
+
 template <typename TextIterator>
 inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer& glyphBuffer)
 {
     // The core logic here needs to match FontCascade::widthForTextUsingSimplifiedMeasuring()
-    FloatRect bounds;
     auto& fontDescription = m_fontCascade->fontDescription();
     Ref primaryFont = m_fontCascade->primaryFont();
     AdvanceInternalState advanceInternalState(glyphBuffer, primaryFont, textIterator.currentIndex());
@@ -469,11 +480,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         if (FontCascade::treatAsSpace(characterToWrite))
             advanceInternalState.charactersTreatedAsSpace.constructAndAppend(advanceInternalState.currentCharacterIndex, characterToWrite == space, characterToWrite == tabCharacter ? width : advanceInternalState.nextRangeFont->spaceWidth(Font::SyntheticBoldInclusion::Exclude));
 
-        if (m_accountForGlyphBounds) {
-            bounds = Ref { *advanceInternalState.nextRangeFont }->boundsForGlyph(glyph);
-            if (!advanceInternalState.currentCharacterIndex)
-                m_firstGlyphOverflow = std::max<float>(0, -bounds.x());
-        }
+        m_glyphBounds.computeIfNeeded(glyph, Ref { *advanceInternalState.nextRangeFont }, advanceInternalState.currentCharacterIndex, width);
 
         if (m_forTextEmphasis && !FontCascade::canReceiveTextEmphasis(characterToWrite))
             glyph = deletedGlyph;
@@ -485,12 +492,6 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         advanceInternalState.currentCharacterIndex = textIterator.currentIndex();
 
         m_runWidthSoFar += width;
-
-        if (m_accountForGlyphBounds) {
-            m_maxGlyphBoundingBoxY = std::max(m_maxGlyphBoundingBoxY, bounds.maxY());
-            m_minGlyphBoundingBoxY = std::min(m_minGlyphBoundingBoxY, bounds.y());
-            m_lastGlyphOverflow = std::max<float>(0, bounds.maxX() - width);
-        }
     }
     advanceInternalState.rangeFont = advanceInternalState.nextRangeFont;
     commitCurrentFontRange(advanceInternalState);
@@ -599,59 +600,83 @@ void WidthIterator::applyAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphIndexRan
     }
 }
 
-void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth)
+struct CharacterToGlyphMapping {
+    Vector<std::optional<GlyphIndexRange>> characterIndexToGlyphIndexRange;
+    Vector<float> advanceWidths;
+
+    CharacterToGlyphMapping(unsigned length)
+        : characterIndexToGlyphIndexRange(length, std::nullopt)
+        , advanceWidths(length, 0)
+    {
+    }
+};
+
+static CharacterToGlyphMapping buildCharacterToGlyphMapping(const GlyphBuffer& glyphBuffer, unsigned glyphBufferStartIndex, unsigned runLength)
 {
-    Vector<std::optional<GlyphIndexRange>> characterIndexToGlyphIndexRange(m_run->length(), std::nullopt);
-    Vector<float> advanceWidths(m_run->length(), 0);
-    for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); ++i) {
-        auto stringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run->length());
+    CharacterToGlyphMapping mapping(runLength);
+    for (unsigned glyphIndex = glyphBufferStartIndex; glyphIndex < glyphBuffer.size(); ++glyphIndex) {
+        auto stringOffset = glyphBuffer.checkedStringOffsetAt(glyphIndex, runLength);
         if (!stringOffset)
             continue;
-        advanceWidths[stringOffset.value()] += width(glyphBuffer.advanceAt(i));
-        auto& glyphIndexRange = characterIndexToGlyphIndexRange[stringOffset.value()];
+        mapping.advanceWidths[stringOffset.value()] += width(glyphBuffer.advanceAt(glyphIndex));
+        auto& glyphIndexRange = mapping.characterIndexToGlyphIndexRange[stringOffset.value()];
         if (glyphIndexRange)
-            glyphIndexRange->trailingGlyphIndex = i;
+            glyphIndexRange->trailingGlyphIndex = glyphIndex;
         else
-            glyphIndexRange = {{i, i}};
+            glyphIndexRange = { { glyphIndex, glyphIndex } };
     }
+    return mapping;
+}
 
-    // SVG can stretch advances
-    if (m_run->horizontalGlyphStretch() != 1) {
-        for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); ++i) {
-            // All characters' advances get stretched, except apparently tab characters...
-            // This doesn't make much sense, because even tab characters get letter-spacing...
-            auto stringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run->length());
-            if (stringOffset && m_run.get()[stringOffset.value()] == tabCharacter)
-                continue;
+static void applyHorizontalGlyphStretch(GlyphBuffer& glyphBuffer, unsigned glyphBufferStartIndex, const TextRun& run)
+{
+    if (run.horizontalGlyphStretch() == 1)
+        return;
 
-            auto currentAdvance = width(glyphBuffer.advanceAt(i));
-            auto newAdvance = currentAdvance * m_run->horizontalGlyphStretch();
-            glyphBuffer.expandAdvance(i, newAdvance - currentAdvance);
-        }
+    for (unsigned glyphIndex = glyphBufferStartIndex; glyphIndex < glyphBuffer.size(); ++glyphIndex) {
+        // All characters' advances get stretched, except apparently tab characters...
+        // This doesn't make much sense, because even tab characters get letter-spacing...
+        auto stringOffset = glyphBuffer.checkedStringOffsetAt(glyphIndex, run.length());
+        if (stringOffset && run[stringOffset.value()] == tabCharacter)
+            continue;
+
+        auto currentAdvance = width(glyphBuffer.advanceAt(glyphIndex));
+        auto newAdvance = currentAdvance * run.horizontalGlyphStretch();
+        glyphBuffer.expandAdvance(glyphIndex, newAdvance - currentAdvance);
     }
+}
+
+TextSpacing::CharacterClass WidthIterator::applyTextAutospaceIfNeededAndGetCharacterClass(GlyphBuffer& glyphBuffer, const TextAutospace& textAutospace, unsigned characterIndex, GlyphIndexRange glyphIndexRange, TextSpacing::CharacterClass previousCharacterClass)
+{
+    if (textAutospace.isNoAutospace())
+        return TextSpacing::CharacterClass::Undefined;
+
+    auto currentCharacterClass = TextSpacing::characterClass(m_run.get()[characterIndex]);
+    if (textAutospace.shouldApplySpacing(currentCharacterClass, previousCharacterClass)) {
+        auto textAutospaceSpacing = TextAutospace::textAutospaceSize(protect(glyphBuffer.fontAt(glyphIndexRange.leadingGlyphIndex)));
+        glyphBuffer.expandAdvanceToLogicalRight(glyphIndexRange.leadingGlyphIndex, textAutospaceSpacing);
+        m_runWidthSoFar += textAutospaceSpacing;
+    }
+    return currentCharacterClass;
+}
+
+void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth)
+{
+    auto [characterIndexToGlyphIndexRange, advanceWidths] = buildCharacterToGlyphMapping(glyphBuffer, glyphBufferStartIndex, m_run->length());
+    applyHorizontalGlyphStretch(glyphBuffer, glyphBufferStartIndex, m_run);
 
     auto previousCharacterClass = m_run->textSpacingState().lastCharacterClassFromPreviousRun;
     float position = m_run->xPos() + startingRunWidth;
     auto textAutospace = m_fontCascade->textAutospace();
-    for (auto i = characterStartIndex; i < characterDestinationIndex; ++i) {
-        auto& glyphIndexRange = characterIndexToGlyphIndexRange[i];
+    for (auto characterIndex = characterStartIndex; characterIndex < characterDestinationIndex; ++characterIndex) {
+        auto& glyphIndexRange = characterIndexToGlyphIndexRange[characterIndex];
         if (!glyphIndexRange)
             continue;
 
-        auto width = calculateAdditionalWidth(glyphBuffer, i, glyphIndexRange->leadingGlyphIndex, glyphIndexRange->trailingGlyphIndex, position);
+        auto width = calculateAdditionalWidth(glyphBuffer, characterIndex, glyphIndexRange->leadingGlyphIndex, glyphIndexRange->trailingGlyphIndex, position);
         applyAdditionalWidth(glyphBuffer, glyphIndexRange.value(), width.left, width.right, width.leftExpansion, width.rightExpansion);
 
-        auto textAutospaceSpacing = 0.f;
-        auto characterClass = TextSpacing::CharacterClass::Undefined;
-        if (!textAutospace.isNoAutospace()) {
-            characterClass = TextSpacing::characterClass(m_run.get()[i]);
-            if (textAutospace.shouldApplySpacing(characterClass, previousCharacterClass)) {
-                textAutospaceSpacing = TextAutospace::textAutospaceSize(protect(glyphBuffer.fontAt(glyphIndexRange->leadingGlyphIndex)));
-                glyphBuffer.expandAdvanceToLogicalRight(glyphIndexRange->leadingGlyphIndex, textAutospaceSpacing);
-                m_runWidthSoFar += textAutospaceSpacing;
-            }
-        }
-        previousCharacterClass = characterClass;
+        previousCharacterClass = applyTextAutospaceIfNeededAndGetCharacterClass(glyphBuffer, textAutospace, characterIndex, *glyphIndexRange, previousCharacterClass);
 
         m_isAfterExpansion = (ltr() && width.rightExpansion) || (rtl() && width.leftExpansion);
 
@@ -667,7 +692,7 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
         // Also, even if we did the O(n^2) thing, there would still be cases that wouldn't be perfect
         // (because the fundamental concept of tabs isn't really compatible with complex text shaping),
         // so let's choose the fast-wrong approach here instead of the slow-wrong approach.
-        position += advanceWidths[i]
+        position += advanceWidths[characterIndex]
             + width.left
             + width.right
             + width.leftExpansion

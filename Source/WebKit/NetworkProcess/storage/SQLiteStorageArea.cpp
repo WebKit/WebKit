@@ -206,7 +206,7 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
 
     // Since a WorkQueue isn't bound to a specific thread, we need to disable threading check.
     // We will never access the database from different threads simultaneously.
-    protect(m_database)->disableThreadingChecks();
+    m_database->disableThreadingChecks();
 
     if (!createTableIfNecessary()) {
         m_database = nullptr;

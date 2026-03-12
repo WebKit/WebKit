@@ -111,7 +111,7 @@ public:
     virtual ~Blob();
 
     URL url() const { return m_internalURL; }
-    const String& type() const { return m_type; }
+    const String& type() const LIFETIME_BOUND { return m_type; }
 
     WEBCORE_EXPORT unsigned long long size() const;
     virtual bool isFile() const { return false; }

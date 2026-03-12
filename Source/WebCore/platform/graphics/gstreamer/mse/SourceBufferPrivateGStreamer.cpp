@@ -188,7 +188,7 @@ void SourceBufferPrivateGStreamer::flush(TrackID trackId)
         return;
     }
 
-    if (track->type() == TrackPrivateBaseGStreamer::Text) {
+    if (track->type() == GStreamerTrackType::Text) {
         if (player)
             GST_DEBUG_OBJECT(player->pipeline(), "Track is a text stream, so we only need to clear the queue. trackId = '%" PRIu64 "'", track->id());
         track->clearQueue();
@@ -222,7 +222,7 @@ void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, Trac
     auto track = m_tracks[trackId];
 
 #ifndef GST_DISABLE_GST_DEBUG
-    if (player && track->type() == TrackPrivateBaseGStreamer::Text) {
+    if (player && track->type() == GStreamerTrackType::Text) {
         GstMappedBuffer mappedBuffer(gst_sample_get_buffer(gstSample.get()), GST_MAP_READ);
 
         if (mappedBuffer) [[likely]] {
@@ -277,21 +277,21 @@ bool SourceBufferPrivateGStreamer::precheckInitializationSegment(const Initializ
         GRefPtr<GstCaps> initialCaps = videoTrackInfo->initialCaps();
         ASSERT(initialCaps);
         if (!m_tracks.contains(videoTrackInfo->id()))
-            m_tracks.try_emplace(videoTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, videoTrackInfo->id(), WTF::move(initialCaps)));
+            m_tracks.try_emplace(videoTrackInfo->id(), MediaSourceTrackGStreamer::create(GStreamerTrackType::Video, videoTrackInfo->id(), WTF::move(initialCaps)));
     }
     for (auto& trackInfo : segment.audioTracks) {
         auto* audioTrackInfo = static_cast<AudioTrackPrivateGStreamer*>(trackInfo.track.get());
         GRefPtr<GstCaps> initialCaps = audioTrackInfo->initialCaps();
         ASSERT(initialCaps);
         if (!m_tracks.contains(audioTrackInfo->id()))
-            m_tracks.try_emplace(audioTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, audioTrackInfo->id(), WTF::move(initialCaps)));
+            m_tracks.try_emplace(audioTrackInfo->id(), MediaSourceTrackGStreamer::create(GStreamerTrackType::Audio, audioTrackInfo->id(), WTF::move(initialCaps)));
     }
     for (auto& trackInfo : segment.textTracks) {
         auto* textTrackInfo = static_cast<InbandTextTrackPrivateGStreamer*>(trackInfo.track.get());
         GRefPtr<GstCaps> initialCaps = textTrackInfo->initialCaps();
         ASSERT(initialCaps);
         if (!m_tracks.contains(textTrackInfo->id()))
-            m_tracks.try_emplace(textTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, textTrackInfo->id(), WTF::move(initialCaps)));
+            m_tracks.try_emplace(textTrackInfo->id(), MediaSourceTrackGStreamer::create(GStreamerTrackType::Text, textTrackInfo->id(), WTF::move(initialCaps)));
     }
 
     return true;
@@ -409,13 +409,13 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
 
         for (auto& [_, track] : m_tracks) {
             switch (track->type()) {
-            case TrackPrivateBaseGStreamer::Video:
+            case GStreamerTrackType::Video:
                 hasVideo = true;
                 break;
-            case TrackPrivateBaseGStreamer::Audio:
+            case GStreamerTrackType::Audio:
                 hasAudio = true;
                 break;
-            case TrackPrivateBaseGStreamer::Text:
+            case GStreamerTrackType::Text:
                 hasText = true;
                 break;
             default:

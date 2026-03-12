@@ -84,7 +84,7 @@ public:
 
     BackForwardItemIdentifier itemID() const { return m_itemID; }
     BackForwardFrameItemIdentifier frameItemID() const { return m_frameItemID; }
-    const WTF::UUID& uuidIdentifier() const { return m_uuidIdentifier; }
+    const WTF::UUID& uuidIdentifier() const LIFETIME_BOUND { return m_uuidIdentifier; }
     void setUUIDIdentifier(const WTF::UUID& uuidIdentifier) { m_uuidIdentifier = uuidIdentifier; }
 
     // Resets the HistoryItem to its initial state, as returned by create().
@@ -92,20 +92,20 @@ public:
 
     bool operator==(const HistoryItem& other) const { return itemID() == other.itemID(); }
 
-    WEBCORE_EXPORT const String& NODELETE originalURLString() const;
-    WEBCORE_EXPORT const String& NODELETE urlString() const;
-    WEBCORE_EXPORT const String& NODELETE title() const;
+    WEBCORE_EXPORT const String& NODELETE originalURLString() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const String& NODELETE urlString() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const String& NODELETE title() const LIFETIME_BOUND;
     
     WEBCORE_EXPORT bool isInBackForwardCache() const;
     WEBCORE_EXPORT bool hasCachedPageExpired() const;
 
     WEBCORE_EXPORT void setAlternateTitle(const String&);
-    WEBCORE_EXPORT const String& NODELETE alternateTitle() const;
+    WEBCORE_EXPORT const String& NODELETE alternateTitle() const LIFETIME_BOUND;
     
     WEBCORE_EXPORT URL url() const;
     WEBCORE_EXPORT URL originalURL() const;
-    WEBCORE_EXPORT const String& NODELETE referrer() const;
-    WEBCORE_EXPORT const AtomString& NODELETE target() const;
+    WEBCORE_EXPORT const String& NODELETE referrer() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const AtomString& NODELETE target() const LIFETIME_BOUND;
     std::optional<FrameIdentifier> frameID() const { return m_frameID; }
     bool isTargetItem() const { return m_isTargetItem; }
     
@@ -114,7 +114,7 @@ public:
     
     bool lastVisitWasFailure() const { return m_lastVisitWasFailure; }
 
-    WEBCORE_EXPORT const IntPoint& NODELETE scrollPosition() const;
+    WEBCORE_EXPORT const IntPoint& NODELETE scrollPosition() const LIFETIME_BOUND;
     WEBCORE_EXPORT void NODELETE setScrollPosition(const IntPoint&);
     void NODELETE clearScrollPosition();
 
@@ -124,7 +124,7 @@ public:
     WEBCORE_EXPORT float NODELETE pageScaleFactor() const;
     WEBCORE_EXPORT void NODELETE setPageScaleFactor(float);
     
-    WEBCORE_EXPORT const Vector<AtomString>& NODELETE documentState() const;
+    WEBCORE_EXPORT const Vector<AtomString>& NODELETE documentState() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setDocumentState(const Vector<AtomString>&);
     void clearDocumentState();
 
@@ -164,7 +164,7 @@ public:
     WEBCORE_EXPORT HistoryItem* NODELETE childItemWithTarget(const AtomString&);
     WEBCORE_EXPORT HistoryItem* NODELETE childItemWithFrameID(FrameIdentifier);
     HistoryItem* NODELETE childItemWithDocumentSequenceNumber(long long number);
-    WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& NODELETE children() const;
+    WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& NODELETE children() const LIFETIME_BOUND;
     void clearChildren();
 
     bool NODELETE shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;
@@ -188,7 +188,7 @@ public:
     IntRect unobscuredContentRect() const { return m_unobscuredContentRect; }
     void setUnobscuredContentRect(IntRect unobscuredContentRect) { m_unobscuredContentRect = unobscuredContentRect; }
 
-    const FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
+    const FloatBoxExtent& obscuredInsets() const LIFETIME_BOUND { return m_obscuredInsets; }
     void setObscuredInsets(const FloatBoxExtent& insets) { m_obscuredInsets = insets; }
 
     FloatSize minimumLayoutSizeInScrollViewCoordinates() const { return m_minimumLayoutSizeInScrollViewCoordinates; }
@@ -206,7 +206,7 @@ public:
         m_scaleIsInitial = isInitial;
     }
 
-    const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
+    const ViewportArguments& viewportArguments() const LIFETIME_BOUND { return m_viewportArguments; }
     void setViewportArguments(const ViewportArguments& viewportArguments) { m_viewportArguments = viewportArguments; }
 #endif
 
@@ -222,7 +222,7 @@ public:
     String logString() const;
 #endif
 
-    const std::optional<PolicyContainer>& policyContainer() const { return m_policyContainer; }
+    const std::optional<PolicyContainer>& policyContainer() const LIFETIME_BOUND { return m_policyContainer; }
     void setPolicyContainer(const PolicyContainer& policyContainer) { m_policyContainer = policyContainer; }
 
 private:

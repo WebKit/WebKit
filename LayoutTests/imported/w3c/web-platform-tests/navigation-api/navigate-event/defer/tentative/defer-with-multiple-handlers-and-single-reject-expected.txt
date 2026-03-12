@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT
+  navigateEvent.deferPageSwap: rejecting a single handler resumes navigation and ignores
+  other handlers
+ Test timed out
+

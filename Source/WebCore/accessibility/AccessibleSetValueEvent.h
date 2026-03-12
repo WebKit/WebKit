@@ -40,7 +40,7 @@ public:
 
     virtual ~AccessibleSetValueEvent();
 
-    const AtomString& value() const { return m_value; }
+    const AtomString& value() const LIFETIME_BOUND { return m_value; }
 
 private:
     AccessibleSetValueEvent(const AtomString& type, const AtomString& value);

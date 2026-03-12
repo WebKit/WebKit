@@ -2312,7 +2312,7 @@ bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
     if (![m_view.get() hitTest:event.locationInWindow])
         return false;
 
-    if (!protect(page().legacyMainFrameProcess())->isResponsive())
+    if (!page().legacyMainFrameProcess().isResponsive())
         return false;
 
     if (page().editorState().hasPostLayoutData()) {
@@ -4429,7 +4429,7 @@ static void performDragWithLegacyFiles(WebPageProxy& page, Box<Vector<String>>&&
     RefPtr networkProcess = page.websiteDataStore().networkProcessIfExists();
     if (!networkProcess)
         return;
-    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(protect(page.legacyMainFrameProcess())->coreProcessIdentifier(), *fileNames), [page = protect(page), fileNames, dragData, pasteboardName]() mutable {
+    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(page.legacyMainFrameProcess().coreProcessIdentifier(), *fileNames), [page = protect(page), fileNames, dragData, pasteboardName]() mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
         Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
 
@@ -5160,7 +5160,7 @@ FloatBoxExtent WebViewImpl::customSwipeViewsObscuredContentInsets() const
 
 void WebViewImpl::setCustomSwipeViewsObscuredContentInsets(FloatBoxExtent&& insets)
 {
-    protect(ensureGestureController())->setCustomSwipeViewsObscuredContentInsets(WTF::move(insets));
+    ensureGestureController().setCustomSwipeViewsObscuredContentInsets(WTF::move(insets));
 }
 
 bool WebViewImpl::tryToSwipeWithEvent(NSEvent *event, bool ignoringPinnedState)
@@ -6441,7 +6441,7 @@ bool WebViewImpl::completeBackSwipeForTesting()
 
 bool WebViewImpl::didCallEndSwipeGestureForTesting() const
 {
-    RefPtr gestureController = m_gestureController;
+    auto* gestureController = m_gestureController.get();
     return gestureController && gestureController->didCallEndSwipeGesture();
 }
 

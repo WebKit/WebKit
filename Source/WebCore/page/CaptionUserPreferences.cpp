@@ -114,8 +114,8 @@ void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::Capti
 
 RefPtr<Page> CaptionUserPreferences::currentPage() const
 {
-    for (Ref page : m_pageGroup->pages())
-        return page;
+    for (auto& page : m_pageGroup->pages())
+        return &page;
     return nullptr;
 }
 

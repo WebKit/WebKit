@@ -1,0 +1,6 @@
+
+FAIL PaymentRequest.show() aborts if the document is not active. promise_rejects_dom: Inactive document, so must throw InvalidStateError function "function() { throw e; }" threw object "AbortError: The operation was aborted." that is not a DOMException InvalidStateError: property "code" is equal to 20, expected 11
+FAIL PaymentRequest.show() aborts if the document is active, but not fully active. promise_rejects_dom: Active, but not fully active, so must throw InvalidStateError function "function() { throw e; }" threw object "AbortError: The operation was aborted." that is not a DOMException InvalidStateError: property "code" is equal to 20, expected 11
+PASS PaymentRequest.canMakePayment() rejects if the document is not active.
+PASS PaymentRequest.canMakePayment() rejects if the document is active, but not fully active.
+

@@ -31,6 +31,7 @@
 #include "HTMLSpanElement.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "RenderTableCell.h"

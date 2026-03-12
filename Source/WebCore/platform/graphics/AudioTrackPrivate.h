@@ -62,7 +62,7 @@ public:
     using EnabledChangedCallback = Function<void(AudioTrackPrivate&, bool enabled)>;
     void setEnabledChangedCallback(EnabledChangedCallback&& callback) { m_enabledChangedCallback = WTF::move(callback); }
 
-    const PlatformAudioTrackConfiguration& configuration() const { return m_configuration; }
+    const PlatformAudioTrackConfiguration& configuration() const LIFETIME_BOUND { return m_configuration; }
     void setConfiguration(PlatformAudioTrackConfiguration&& configuration)
     {
         if (configuration == m_configuration)

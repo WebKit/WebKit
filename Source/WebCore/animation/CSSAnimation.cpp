@@ -220,7 +220,7 @@ void CSSAnimation::syncStyleOriginatedTimeline()
             styleOriginatedTimelinesController->attachAnimation(*this);
         },
         [&](const Style::ScrollFunction& scrollFunction) {
-            if (RefPtr existingScrollTimeline = dynamicDowncast<ScrollTimeline>(timeline())) {
+            if (auto* existingScrollTimeline = dynamicDowncast<ScrollTimeline>(timeline())) {
                 if (existingScrollTimeline->matchesAnonymousScrollFunctionForSource(scrollFunction, *owningElement()))
                     return;
             }

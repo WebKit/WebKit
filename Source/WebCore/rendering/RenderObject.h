@@ -647,7 +647,7 @@ public:
 
     // Returns the full transform mapping from local coordinates to local coords for the parent SVG renderer
     // This includes any viewport transforms and x/y offsets as well as the transform="" value off the element.
-    virtual const AffineTransform& localToParentTransform() const;
+    virtual const AffineTransform& localToParentTransform() const LIFETIME_BOUND;
 
     // SVG uses FloatPoint precise hit testing, and passes the point in parent
     // coordinates instead of in repaint container coordinates.  Eventually the
@@ -859,14 +859,14 @@ public:
     // the rect that will be painted if this object is passed as the paintingRoot
     WEBCORE_EXPORT LayoutRect paintingRootRect(LayoutRect& topLevelRect);
 
-    inline const RenderStyle& style() const; // Defined in RenderObjectStyle.h.
-    inline const RenderStyle& firstLineStyle() const;
+    inline const RenderStyle& style() const LIFETIME_BOUND; // Defined in RenderObjectStyle.h.
+    inline CheckedRef<const RenderStyle> firstLineStyle() const LIFETIME_BOUND;
     inline WritingMode writingMode() const; // Defined in RenderObjectStyle.h.
     // writingMode().isHorizontal() is cached by isHorizontalWritingMode() above.
 
     // Anonymous blocks that are part of of a continuation chain will return their inline continuation's outline style instead.
     // This is typically only relevant when repainting.
-    virtual const RenderStyle& outlineStyleForRepaint() const;
+    virtual const RenderStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 

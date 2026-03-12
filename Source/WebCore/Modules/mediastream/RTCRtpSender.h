@@ -45,8 +45,10 @@ namespace WebCore {
 
 class MediaStream;
 class RTCDTMFSender;
+class RTCDtlsTransportBackend;
 class RTCEncodedStreamProducer;
 class RTCPeerConnection;
+class RTCRtpTransformBackend;
 
 struct RTCEncodedStreams;
 struct RTCRtpCapabilities;
@@ -77,7 +79,7 @@ public:
     ExceptionOr<void> setMediaStreamIds(const FixedVector<String>&);
     ExceptionOr<void> setStreams(const FixedVector<std::reference_wrapper<MediaStream>>&);
 
-    bool isStopped() const { return !m_backend; }
+    bool isStopped() const { return m_isStopped; }
     void stop();
     void setTrack(Ref<MediaStreamTrack>&&);
     void setTrackToNull();
@@ -87,7 +89,9 @@ public:
     RTCRtpSendParameters getParameters();
     void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&);
 
-    RTCRtpSenderBackend* backend() { return m_backend.get(); }
+    RTCRtpSenderBackend& backend() { return m_backend.get(); }
+    std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend();
+    Ref<RTCRtpTransformBackend> rtcRtpTransformBackend();
 
     void getStats(Ref<DeferredPromise>&&);
 
@@ -111,11 +115,12 @@ private:
     WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
+    bool m_isStopped { false };
     RefPtr<MediaStreamTrack> m_track;
     RefPtr<RTCDtlsTransport> m_transport;
     String m_trackId;
     String m_trackKind;
-    RefPtr<RTCRtpSenderBackend> m_backend;
+    const Ref<RTCRtpSenderBackend> m_backend;
     WeakPtr<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_connection;
     RefPtr<RTCDTMFSender> m_dtmfSender;
     std::unique_ptr<RTCRtpTransform> m_transform;

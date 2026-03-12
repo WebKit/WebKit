@@ -45,7 +45,7 @@ public:
 private:
     WebDataListSuggestionsDropdownMac(WebPageProxy&, NSView *);
 
-    void show(WebCore::DataListSuggestionInformation&&) final;
+    void platformShow(WebCore::DataListSuggestionInformation&&) final;
     void handleKeydownWithIdentifier(const String&) final;
     void close() final;
 

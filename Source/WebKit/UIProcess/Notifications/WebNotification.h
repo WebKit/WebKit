@@ -64,7 +64,7 @@ public:
     const String& lang() const LIFETIME_BOUND { return m_data.language; }
     WebCore::NotificationDirection dir() const { return m_data.direction; }
     const WTF::UUID& coreNotificationID() const LIFETIME_BOUND { return m_data.notificationID; }
-    const std::optional<WTF::UUID>& dataStoreIdentifier() const { return m_dataStoreIdentifier; }
+    const std::optional<WTF::UUID>& dataStoreIdentifier() const LIFETIME_BOUND { return m_dataStoreIdentifier; }
     PAL::SessionID sessionID() const { return m_data.sourceSession; }
 
     const WebCore::NotificationData& data() const LIFETIME_BOUND { return m_data; }

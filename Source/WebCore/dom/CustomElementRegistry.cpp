@@ -184,7 +184,7 @@ void CustomElementRegistry::upgrade(Node& root)
         return;
 
     RefPtr element = dynamicDowncast<Element>(*containerNode);
-    if (element && element->isCustomElementUpgradeCandidate())
+    if (element && element->isCustomElementUpgradeCandidate() && CustomElementRegistry::registryForElement(*element) == this)
         CustomElementReactionQueue::tryToUpgradeElement(*element);
 
     upgradeElementsInShadowIncludingDescendants(*this, *containerNode);

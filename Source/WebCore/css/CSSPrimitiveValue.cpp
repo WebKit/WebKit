@@ -254,7 +254,7 @@ CSSUnitType CSSPrimitiveValue::primitiveType() const
         // so we need to map our internal CSSUnitType::CSS_FONT_FAMILY type here.
         return CSSUnitType::CSS_STRING;
     default:
-        if (RefPtr calcValue = cssCalcValue())
+        if (auto* calcValue = cssCalcValue())
             return calcValue->primitiveType();
 
         return type;

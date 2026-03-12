@@ -243,6 +243,7 @@ struct QuirksData {
 #if PLATFORM(IOS_FAMILY)
         NeedsChromeOSNavigatorUserAgentQuirk,
 #endif
+        ShouldLimitHLSPlaybackRate,
 
         NumberOfQuirks
     };

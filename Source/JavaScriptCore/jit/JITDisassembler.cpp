@@ -52,10 +52,15 @@ JITDisassembler::JITDisassembler(CodeBlock *codeBlock)
 
 JITDisassembler::~JITDisassembler() = default;
 
-void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
+void JITDisassembler::setLinkedStartAndEnd(const LinkBuffer& linkBuffer)
 {
     m_codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
     m_codeEnd = std::bit_cast<uint8_t*>(m_codeStart) + linkBuffer.size();
+}
+
+void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
+{
+    setLinkedStartAndEnd(linkBuffer);
 
     dumpHeader(out, linkBuffer);
     dumpDisassembly(out, linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0].first);
@@ -75,6 +80,8 @@ void JITDisassembler::dump(LinkBuffer& linkBuffer)
 
 void JITDisassembler::reportToProfiler(Profiler::Compilation* compilation, LinkBuffer& linkBuffer)
 {
+    setLinkedStartAndEnd(linkBuffer);
+
     StringPrintStream out;
     
     dumpHeader(out, linkBuffer);

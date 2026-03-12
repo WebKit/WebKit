@@ -88,6 +88,11 @@ void MeshImpl::setCameraDistance(float distance)
     m_backing->setCameraDistance(distance);
 }
 
+void MeshImpl::setBackgroundColor(const WebModel::Float3& color)
+{
+    m_backing->setBackgroundColor(color);
+}
+
 void MeshImpl::play(bool play)
 {
     m_backing->play(play);

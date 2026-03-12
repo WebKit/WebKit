@@ -545,7 +545,7 @@ void HTMLModelElement::createModelPlayer()
 #endif
 
     if (!m_modelPlayerProvider)
-        m_modelPlayerProvider = protect(document().page())->modelPlayerProvider();
+        m_modelPlayerProvider = document().page()->modelPlayerProvider();
     if (RefPtr modelPlayerProvider = m_modelPlayerProvider.get()) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
         m_modelPlayer = modelPlayer.copyRef();
@@ -656,7 +656,7 @@ void HTMLModelElement::reloadModelPlayer()
     ASSERT(animationState && transformState);
 
     if (!m_modelPlayerProvider)
-        m_modelPlayerProvider = protect(protect(document())->page())->modelPlayerProvider();
+        m_modelPlayerProvider = document().page()->modelPlayerProvider();
     if (RefPtr modelPlayerProvider = m_modelPlayerProvider.get()) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
         m_modelPlayer = modelPlayer.copyRef();
@@ -842,7 +842,7 @@ void HTMLModelElement::enterFullscreen()
 
 bool HTMLModelElement::supportsDragging() const
 {
-    RefPtr modelPlayer = m_modelPlayer;
+    auto* modelPlayer = m_modelPlayer.get();
     if (!modelPlayer)
         return true;
 
@@ -868,7 +868,7 @@ void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomStr
     if (name == srcAttr)
         sourcesChanged();
     else if (name == interactiveAttr) {
-        if (RefPtr modelPlayer = m_modelPlayer)
+        if (auto* modelPlayer = m_modelPlayer.get())
             modelPlayer->setInteractionEnabled(isInteractive());
     }
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
@@ -1708,7 +1708,7 @@ Node::InsertedIntoAncestorResult HTMLModelElement::insertedIntoAncestor(Insertio
 #if ENABLE(MODEL_PROCESS)
         document->incrementModelElementCount();
 #endif
-        m_modelPlayerProvider = protect(document->page())->modelPlayerProvider();
+        m_modelPlayerProvider = document->page()->modelPlayerProvider();
         LazyLoadModelObserver::observe(*this);
     }
 

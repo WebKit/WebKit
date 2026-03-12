@@ -76,7 +76,7 @@ public:
     unsigned short buttons() const { return m_buttons; }
     const WebCore::DoublePoint& position() const { return m_position; } // Relative to the view.
     void setPosition(const WebCore::DoublePoint& position) { m_position = position; }
-    const WebCore::DoublePoint& globalPosition() const { return m_globalPosition; }
+    const WebCore::DoublePoint& globalPosition() const LIFETIME_BOUND { return m_globalPosition; }
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }
     float deltaZ() const { return m_deltaZ; }
@@ -91,10 +91,10 @@ public:
     WebMouseEventInputSource inputSource() const { return m_inputSource; }
     WebMouseEventSyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
     WebCore::PointerID pointerId() const { return m_pointerId; }
-    const String& pointerType() const { return m_pointerType; }
+    const String& pointerType() const LIFETIME_BOUND { return m_pointerType; }
     GestureWasCancelled gestureWasCancelled() const { return m_gestureWasCancelled; }
     // Unaccelerated pointer movement
-    const WebCore::DoublePoint& unadjustedMovementDelta() const { return m_unadjustedMovementDelta; }
+    const WebCore::DoublePoint& unadjustedMovementDelta() const LIFETIME_BOUND { return m_unadjustedMovementDelta; }
 
     void setCoalescedEvents(const Vector<WebMouseEvent>& coalescedEvents) { m_coalescedEvents = coalescedEvents; }
     Vector<WebMouseEvent> coalescedEvents() const { return m_coalescedEvents; }

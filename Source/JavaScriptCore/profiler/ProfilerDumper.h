@@ -86,7 +86,7 @@ public:
     }
 
     const Database& database() const { return m_database; }
-    const Keys& keys() const { return m_keys; }
+    const Keys& keys() const LIFETIME_BOUND { return m_keys; }
 
 private:
     const Database& m_database;

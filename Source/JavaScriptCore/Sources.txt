@@ -291,9 +291,9 @@ bytecode/SetPrivateBrandVariant.cpp
 bytecode/SharedJITStubSet.cpp
 bytecode/SpeculatedType.cpp
 bytecode/StructureSet.cpp
-bytecode/StructureStubClearingWatchpoint.cpp
-bytecode/StructureStubInfo.cpp
-bytecode/StubInfoSummary.cpp
+bytecode/PropertyInlineCacheClearingWatchpoint.cpp
+bytecode/PropertyInlineCache.cpp
+bytecode/PropertyInlineCacheSummary.cpp
 bytecode/SuperSampler.cpp
 bytecode/ToThisStatus.cpp
 bytecode/TrackedReferences.cpp
@@ -952,6 +952,7 @@ runtime/JSModuleRecord.cpp
 runtime/JSNativeStdFunction.cpp
 runtime/JSONObject.cpp
 runtime/JSObject.cpp
+runtime/JSPIContext.cpp
 runtime/JSPromise.cpp
 runtime/JSPromiseCombinatorsContext.cpp
 runtime/JSPromiseCombinatorsGlobalContext.cpp

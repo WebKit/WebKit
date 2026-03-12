@@ -73,6 +73,7 @@ public:
     String toString() const { return href(); }
 
     Ref<DOMStringList> ancestorOrigins() const;
+    DOMStringList* cachedAncestorOrigins() const { return m_ancestorOrigins.get(); }
 
     DOMWindow* window() { return m_window.get(); }
 
@@ -86,6 +87,7 @@ private:
     Frame* NODELETE frame();
     const Frame* frame() const;
 
+    mutable RefPtr<DOMStringList> m_ancestorOrigins;
     WeakPtr<DOMWindow, WeakPtrImplWithEventTargetData> m_window;
 };
 

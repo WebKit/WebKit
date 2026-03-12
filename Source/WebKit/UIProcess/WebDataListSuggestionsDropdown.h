@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/DataListSuggestionPicker.h>
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -38,14 +39,17 @@ class WebDataListSuggestionsDropdown : public RefCountedAndCanMakeWeakPtr<WebDat
 public:
     virtual ~WebDataListSuggestionsDropdown();
 
-    virtual void show(WebCore::DataListSuggestionInformation&&) = 0;
+    void show(WebCore::DataListSuggestionInformation&&);
     virtual void handleKeydownWithIdentifier(const String&) = 0;
     virtual void close();
 
 protected:
     explicit WebDataListSuggestionsDropdown(WebPageProxy&);
 
+    virtual void platformShow(WebCore::DataListSuggestionInformation&&) = 0;
+
     WeakPtr<WebPageProxy> m_page;
+    std::optional<WebCore::FrameIdentifier> m_targetFrameID;
 };
 
 } // namespace WebKit

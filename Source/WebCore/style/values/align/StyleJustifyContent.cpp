@@ -79,7 +79,7 @@ StyleContentAlignmentData JustifyContent::resolve(std::optional<StyleContentAlig
 
 auto CSSValueConversion<JustifyContent>::operator()(BuilderState& state, const CSSValue& value) -> JustifyContent
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         // <normal>
         case CSSValueNormal:

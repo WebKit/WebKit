@@ -45,8 +45,8 @@ public:
 
     SourceOrigin() = default;
 
-    const URL& url() const { return m_url; }
-    const String& string() const { return m_url.string(); }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
+    const String& string() const LIFETIME_BOUND { return m_url.string(); }
     bool isNull() const { return url().isNull(); }
 
     ScriptFetcher* fetcher() const { return m_fetcher.get(); }

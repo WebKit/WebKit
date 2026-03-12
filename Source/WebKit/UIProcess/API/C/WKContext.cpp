@@ -475,7 +475,7 @@ bool WKContextJavaScriptConfigurationFileEnabled(WKContextRef contextRef)
 
 void WKContextSetJavaScriptConfigurationFileEnabled(WKContextRef contextRef, bool enable)
 {
-    protect(WebKit::toImpl(contextRef))->setJavaScriptConfigurationFileEnabled(enable);
+    WebKit::toImpl(contextRef)->setJavaScriptConfigurationFileEnabled(enable);
 }
 
 void WKContextGarbageCollectJavaScriptObjects(WKContextRef contextRef)

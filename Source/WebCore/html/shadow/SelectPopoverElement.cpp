@@ -50,7 +50,7 @@ SelectPopoverElement::SelectPopoverElement(Document& document)
 
 HTMLSelectElement* SelectPopoverElement::selectElement() const
 {
-    RefPtr shadowRoot = containingShadowRoot();
+    auto* shadowRoot = containingShadowRoot();
     if (!shadowRoot)
         return nullptr;
     return dynamicDowncast<HTMLSelectElement>(shadowRoot->host());

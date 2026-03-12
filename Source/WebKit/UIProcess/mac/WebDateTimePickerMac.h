@@ -48,7 +48,7 @@ public:
 private:
     WebDateTimePickerMac(WebPageProxy&, NSView *);
 
-    void showDateTimePicker(WebCore::DateTimeChooserParameters&&) final;
+    void platformShowDateTimePicker(WebCore::DateTimeChooserParameters&&) final;
 
     WeakObjCPtr<NSView> m_view;
     RetainPtr<WKDateTimePicker> m_picker;

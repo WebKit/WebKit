@@ -73,7 +73,7 @@ public:
     void clearMatchedRules();
 
     EnumSet<PseudoElementType> matchedPseudoElements() const { return m_matchedPseudoElements; }
-    const Relations& styleRelations() const { return m_styleRelations; }
+    const Relations& styleRelations() const LIFETIME_BOUND { return m_styleRelations; }
 
     void addAuthorKeyframeRules(const StyleRuleKeyframe&);
 

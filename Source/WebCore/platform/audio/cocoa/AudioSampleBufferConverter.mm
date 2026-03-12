@@ -181,6 +181,8 @@ OSStatus AudioSampleBufferConverter::initAudioConverterForSourceFormatDescriptio
     assertIsCurrent(queue());
 
     const auto *audioFormatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription);
+    if (!audioFormatListItem)
+        return kCMSampleBufferError_InvalidMediaFormat;
     m_sourceFormat = audioFormatListItem->mASBD;
 
     if (!m_destinationFormat.mFormatID || !m_destinationFormat.mSampleRate) {
@@ -482,6 +484,10 @@ void AudioSampleBufferConverter::processSampleBuffers()
             setTimeFromSample(buffer.get());
 
         RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(buffer.get());
+        if (!formatDescription) {
+            m_lastError = kCMSampleBufferError_InvalidMediaFormat;
+            return;
+        }
         if (auto error = initAudioConverterForSourceFormatDescription(formatDescription.get(), m_outputCodecType)) {
             m_lastError = error;
             return;

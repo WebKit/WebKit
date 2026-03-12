@@ -305,7 +305,7 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
         return candidatePosition;
     }
     auto candidateInlineItem = inlineItemList[candidatePosition.index];
-    if (&candidateInlineItem.layoutBox() != &damagedContent.layoutBox || (!is<InlineTextItem>(candidateInlineItem) && !is<InlineSoftLineBreakItem>(candidateInlineItem)))
+    if (&candidateInlineItem.layoutBox() != &damagedContent.layoutBox || !isAnyOf<InlineTextItem, InlineSoftLineBreakItem>(candidateInlineItem))
         return candidatePosition;
     if (!damagedContent.offset) {
         // When damage points to "after" the layout box, whatever InlineItem we found is surely before the damage.

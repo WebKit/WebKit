@@ -104,7 +104,7 @@ void BackgroundProcessResponsivenessTimer::timeoutTimerFired()
 
     // This shouldn't happen but still check to be 100% sure we don't report
     // suspended processes as unresponsive.
-    if (protect(m_webProcessProxy)->throttler().isSuspended())
+    if (m_webProcessProxy->throttler().isSuspended())
         return;
 
     if (!m_isResponsive)
@@ -139,14 +139,14 @@ void BackgroundProcessResponsivenessTimer::setResponsive(bool isResponsive)
 bool BackgroundProcessResponsivenessTimer::shouldBeActive() const
 {
 #if !USE(RUNNINGBOARD)
-    Ref webProcess = m_webProcessProxy.get();
-    if (webProcess->visiblePageCount())
+    auto& webProcess = m_webProcessProxy.get();
+    if (webProcess.visiblePageCount())
         return false;
-    if (webProcess->throttler().isSuspended())
+    if (webProcess.throttler().isSuspended())
         return false;
-    if (webProcess->isStandaloneServiceWorkerProcess())
+    if (webProcess.isStandaloneServiceWorkerProcess())
         return true;
-    return webProcess->pageCount();
+    return webProcess.pageCount();
 #else
     // Disable background process responsiveness checking when using RunningBoard since such processes usually get suspended.
     return false;

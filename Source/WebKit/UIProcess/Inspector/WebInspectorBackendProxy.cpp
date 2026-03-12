@@ -51,7 +51,7 @@ void WebInspectorBackendProxy::elementSelectionChanged(bool active)
 
 void WebInspectorBackendProxy::timelineRecordingChanged(bool active)
 {
-    protect(m_proxy)->timelineRecordingChanged(active);
+    m_proxy->timelineRecordingChanged(active);
 }
 
 void WebInspectorBackendProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)

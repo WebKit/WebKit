@@ -86,6 +86,7 @@ ENUM_DEFINE(InterpolationType);
 ENUM_DEFINE(InterpolationSampling);
 ENUM_DEFINE(ShaderStage);
 ENUM_DEFINE(SeverityControl);
+ENUM_DEFINE(TriggeringRule);
 ENUM_DEFINE(Builtin);
 ENUM_DEFINE(Extension);
 ENUM_DEFINE(LanguageFeature);

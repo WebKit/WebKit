@@ -3004,12 +3004,8 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
         clearCanvas();
         drawText(*c, location);
         repaintEntireCanvas = true;
-    } else {
-        auto clipBounds = c->clipBounds();
-        if ((clipBounds.isEmpty() || !clipBounds.intersects(enclosingIntRect(textRect))) && !shouldDrawShadows())
-            return;
+    } else
         drawText(*c, location);
-    }
 
     didDraw(repaintEntireCanvas, targetSwitcher ? targetSwitcher->expandedBounds() : textRect);
 }

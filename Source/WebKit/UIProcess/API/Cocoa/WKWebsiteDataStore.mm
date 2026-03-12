@@ -827,7 +827,7 @@ struct WKWebsiteData {
 
 - (BOOL)_resourceLoadStatisticsDebugMode
 {
-    return protect(*_websiteDataStore)->resourceLoadStatisticsDebugMode();
+    return _websiteDataStore->resourceLoadStatisticsDebugMode();
 }
 
 - (void)_setResourceLoadStatisticsDebugMode:(BOOL)enabled

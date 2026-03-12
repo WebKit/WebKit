@@ -135,7 +135,7 @@ public:
 
 #if ENABLE(DAMAGE_TRACKING)
     void setFrameDamage(WebCore::Damage&&);
-    const std::optional<WebCore::Damage>& frameDamage() const { return m_frameDamage; }
+    const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_frameDamage; }
     const std::optional<WebCore::Damage>& renderTargetDamage();
 #endif
 
@@ -181,7 +181,7 @@ private:
 
 #if ENABLE(DAMAGE_TRACKING)
         void setDamage(WebCore::Damage&& damage) { m_damage = WTF::move(damage); }
-        const std::optional<WebCore::Damage>& damage() { return m_damage; }
+        const std::optional<WebCore::Damage>& damage() LIFETIME_BOUND { return m_damage; }
         void addDamage(const std::optional<WebCore::Damage>&);
 #endif
 

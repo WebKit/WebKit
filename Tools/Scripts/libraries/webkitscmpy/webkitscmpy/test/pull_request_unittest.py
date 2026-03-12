@@ -32,7 +32,7 @@ from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Environment
 from webkitcorepy.mocks import Terminal as MockTerminal
 
-from webkitscmpy import Commit, Contributor, PullRequest, local, mocks, program, remote
+from webkitscmpy import Commit, CommitClassifier, Contributor, PullRequest, local, mocks, program, remote
 
 
 class TestPullRequest(unittest.TestCase):
@@ -1255,6 +1255,76 @@ No pre-PR checks to run""")
                 "Rebased 'eng/1' on 'main!'",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
+            ],
+        )
+
+    def test_github_bugzilla_gardening(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )), patch(
+                'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[GARDENING] Existing commit\nbugs.example.com/show_bug.cgi?id=1'
+                )
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(
+                    name='Gardening',
+                    headers=[{'value': 'GARDENING', 'ratio': 85}],
+                )]),
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Test gardening pull request: https://github.example.com/WebKit/WebKit/pull/1',
+            )
+            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
+            self.assertEqual(gh_issue.project, 'WebKit')
+            self.assertEqual(gh_issue.component, 'Text')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created 'PR 1 | [GARDENING] Existing commit'!\n"
+            'Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n'
+            'https://github.example.com/WebKit/WebKit/pull/1\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Using committed changes...",
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Creating pull-request for 'eng/pr-branch'...",
+                'Checking issue assignee...',
+                'Checking for pull request link in associated issue...',
+                'Syncing PR labels with issue component...',
+                'Synced PR labels with issue component!',
             ],
         )
 

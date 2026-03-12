@@ -35,6 +35,7 @@
 #include "InterpreterInlines.h"
 #include "JSFunctionWithFields.h"
 #include "JSObjectInlines.h"
+#include "JSPIContext.h"
 #include "JSPromise.h"
 #include "JSWebAssemblySuspendError.h"
 #include "PinballCompletion.h"

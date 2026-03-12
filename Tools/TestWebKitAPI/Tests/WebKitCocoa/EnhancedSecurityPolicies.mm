@@ -1407,6 +1407,68 @@ TEST(EnhancedSecurityPolicies, HistoryEventsUseCorrectOriginalRequest)
     EXPECT_WK_STREQ([historyDelegate->lastRedirectDestination absoluteString], destinationURL);
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
+static void runContentRuleListCallbackOccurs(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "hello"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+
+    __block bool ruleListReady = false;
+    __block RetainPtr<WKContentRuleList> contentRuleList;
+
+    NSString *rules = @"[{\"trigger\":{\"url-filter\":\".*\"},\"action\":{\"type\":\"block\"}},{\"trigger\":{\"url-filter\":\"^file:.*\"},\"action\":{\"type\":\"ignore-previous-rules\"}}]";
+
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"BlockingRuleList" encodedContentRuleList:rules completionHandler:^(WKContentRuleList *list, NSError *error) {
+        EXPECT_NULL(error);
+        contentRuleList = list;
+        ruleListReady = true;
+    }];
+    TestWebKitAPI::Util::run(&ruleListReady);
+
+    [[webView.get().configuration userContentController] addContentRuleList:contentRuleList.get()];
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+
+    __block bool receivedActionNotification { false };
+    navigationDelegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        receivedActionNotification = true;
+    };
+
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://insecure.example.internal/"]]];
+
+    TestWebKitAPI::Util::run(&receivedActionNotification);
+    EXPECT_TRUE(receivedActionNotification);
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(ContentRuleListCallbackOccurs)
+
+#endif // ENABLE(CONTENT_EXTENSIONS)
+
+// MARK: - Force Disabled Tests
+
+static void runForceDisabledOverridesHeuristics(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "<script>alert('insecure-page')</script>"_s } },
+    });
+
+    RetainPtr webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"EnhancedSecurityForceDisabled"])
+            [webView.get().configuration.preferences _setEnabled:YES forFeature:feature];
+    }
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
+        { "insecure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(ForceDisabledOverridesHeuristics)
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/EnhancedSecurityPoliciesAdditions.mm>)
 #import <WebKitAdditions/EnhancedSecurityPoliciesAdditions.mm>
 #endif

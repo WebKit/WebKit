@@ -72,7 +72,7 @@ public:
 
     bool isEmpty() const { return m_styleSheetId.isEmpty(); }
 
-    const String& styleSheetId() const { return m_styleSheetId; }
+    const String& styleSheetId() const LIFETIME_BOUND { return m_styleSheetId; }
     unsigned ordinal() const { return m_ordinal; }
 
     // ID type is either Inspector::Protocol::CSS::CSSStyleId or Inspector::Protocol::CSS::CSSRuleId.

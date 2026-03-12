@@ -79,7 +79,7 @@ struct CellProfile {
 
     const char* className() const { return m_className; }
 
-    StackTrace* stackTrace() const { return m_stackTrace.get(); }
+    StackTrace* stackTrace() const LIFETIME_BOUND { return m_stackTrace.get(); }
     void setStackTrace(StackTrace* trace) { m_stackTrace = std::unique_ptr<StackTrace>(trace); }
 
 private:

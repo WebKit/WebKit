@@ -56,9 +56,9 @@ public:
 
     JS_EXPORT_PRIVATE static JSRemoteFunction* tryCreate(JSGlobalObject*, VM&, JSObject* targetCallable);
 
-    JSObject* targetFunction() { return m_targetFunction.get(); }
+    JSObject* targetFunction() LIFETIME_BOUND { return m_targetFunction.get(); }
     JSGlobalObject* targetGlobalObject() { return targetFunction()->globalObject(); }
-    JSString* nameMayBeNull() const { return m_nameMayBeNull.get(); }
+    JSString* nameMayBeNull() const LIFETIME_BOUND { return m_nameMayBeNull.get(); }
     String nameString()
     {
         if (!m_nameMayBeNull)

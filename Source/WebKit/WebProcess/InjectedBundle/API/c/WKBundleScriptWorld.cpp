@@ -53,22 +53,22 @@ void WKBundleScriptWorldClearWrappers(WKBundleScriptWorldRef scriptWorldRef)
 
 void WKBundleScriptWorldMakeAllShadowRootsOpen(WKBundleScriptWorldRef scriptWorldRef)
 {
-    protect(WebKit::toImpl(scriptWorldRef))->makeAllShadowRootsOpen();
+    WebKit::toImpl(scriptWorldRef)->makeAllShadowRootsOpen();
 }
 
 void WKBundleScriptWorldExposeClosedShadowRootsForExtensions(WKBundleScriptWorldRef scriptWorldRef)
 {
-    protect(WebKit::toImpl(scriptWorldRef))->exposeClosedShadowRootsForExtensions();
+    WebKit::toImpl(scriptWorldRef)->exposeClosedShadowRootsForExtensions();
 }
 
 void WKBundleScriptWorldDisableOverrideBuiltinsBehavior(WKBundleScriptWorldRef scriptWorldRef)
 {
-    protect(WebKit::toImpl(scriptWorldRef))->disableOverrideBuiltinsBehavior();
+    WebKit::toImpl(scriptWorldRef)->disableOverrideBuiltinsBehavior();
 }
 
 void WKBundleScriptWorldSetAllowElementUserInfo(WKBundleScriptWorldRef scriptWorldRef)
 {
-    protect(WebKit::toImpl(scriptWorldRef))->setAllowElementUserInfo();
+    WebKit::toImpl(scriptWorldRef)->setAllowElementUserInfo();
 }
 
 WKStringRef WKBundleScriptWorldCopyName(WKBundleScriptWorldRef scriptWorldRef)
@@ -78,5 +78,5 @@ WKStringRef WKBundleScriptWorldCopyName(WKBundleScriptWorldRef scriptWorldRef)
 
 void WKBundleScriptWorldSetAllowJSHandleCreation(WKBundleScriptWorldRef scriptWorldRef)
 {
-    protect(WebKit::toImpl(scriptWorldRef))->setAllowJSHandleCreation();
+    WebKit::toImpl(scriptWorldRef)->setAllowJSHandleCreation();
 }

@@ -41,7 +41,7 @@ static NSTimeInterval WebWindowAnimationDurationFromDuration(NSTimeInterval dura
     return ([[NSApp currentEvent] modifierFlags] & NSEventModifierFlagShift) ? duration * slowMotionFactor : duration;
 }
 
-static NSRect scaledRect(NSRect _initialFrame, NSRect _finalFrame, CGFloat factor)
+static NSRect NODELETE scaledRect(NSRect _initialFrame, NSRect _finalFrame, CGFloat factor)
 {
     NSRect currentRect = _initialFrame;
     currentRect.origin.x += (NSMinX(_finalFrame) - NSMinX(_initialFrame)) * factor;
@@ -51,7 +51,7 @@ static NSRect scaledRect(NSRect _initialFrame, NSRect _finalFrame, CGFloat facto
     return currentRect;
 }
 
-static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
+static CGFloat NODELETE squaredDistance(NSPoint point1, NSPoint point2)
 {
     CGFloat deltaX = point1.x - point2.x;
     CGFloat deltaY = point1.y - point2.y;

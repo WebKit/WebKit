@@ -1,3 +1,3 @@
 
-FAIL xml-stylesheet blocks script execution and rendering assert_equals: XML processing instruction should've blocked script execution and rendering expected "3" but got "auto"
+PASS xml-stylesheet blocks script execution and rendering
 

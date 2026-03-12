@@ -3002,13 +3002,13 @@ struct T0 {
 fn unconst_i32(v: i32) -> i32 { return v; }
 
 struct VertexOutput0 {
-  @location(6) @interpolate(flat, sample) f0: i32,
+  @location(6) @interpolate(flat) f0: i32,
   @invariant @builtin(position) f1: vec4f,
-  @location(10) @interpolate(flat, sample) f2: u32,
-  @location(8) f3: vec2u,
+  @location(10) @interpolate(flat) f2: u32,
+  @location(8) @interpolate(flat) f3: vec2u,
   @location(15) f4: vec2f,
   @location(14) @interpolate(flat) f5: vec2i,
-  @location(3) @interpolate(flat, center) f6: vec4u,
+  @location(3) @interpolate(flat) f6: vec4u,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
@@ -7847,7 +7847,7 @@ alias vec3b = vec3<bool>;
 fn unconst_f16(v: f16) -> f16 { return v; }
 
 struct VertexOutput1 {
-  @location(0) @interpolate(flat, center) f7: vec2i,
+  @location(0) @interpolate(flat) f7: vec2i,
   @invariant @builtin(position) f8: vec4f,
 }
 
@@ -7858,7 +7858,7 @@ fn unconst_f32(v: f32) -> f32 { return v; }
 fn unconst_u32(v: u32) -> u32 { return v; }
 
 struct T0 {
-  @size(304) f0: array<vec2h>,
+  f0: array<vec2h>,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
@@ -7889,7 +7889,7 @@ fn vertex1(@location(12) a0: vec4h) -> VertexOutput1 {
 }
 
 @fragment
-fn fragment0(@location(0) a0: vec2i, @builtin(position) a1: vec4f) -> FragmentOutput0 {
+fn fragment0(@location(0) @interpolate(flat) a0: vec2i, @builtin(position) a1: vec4f) -> FragmentOutput0 {
   var out: FragmentOutput0;
   let ptr7: ptr<storage, array<array<f16, 1>, 19>, read_write> = &(*&buffer78)[0][u32(unconst_u32(176))][u32(unconst_u32(194))][3][u32(unconst_u32(17))][0][u32(unconst_u32(42))][0];
   let ptr8: ptr<storage, f16, read_write> = &(*&buffer78)[0][u32(unconst_u32(15))][u32(unconst_u32(3))][3][0][u32(unconst_u32(132))][0][u32((*&buffer78)[0][u32(unconst_u32(168))][u32(unconst_u32(105))][3][0][0][0][u32(unconst_u32(142))][u32(unconst_u32(202))][u32(unconst_u32(307))])][u32(unconst_u32(176))][0];
@@ -11839,7 +11839,7 @@ struct T0 {
 }
 
 struct T2 {
-  @align(16) @size(16) f0: array<u32>,
+  @align(16) f0: array<u32>,
 }
 
 fn unconst_f32(v: f32) -> f32 { return v; }
@@ -11850,14 +11850,14 @@ alias vec3b = vec3<bool>;
 
 struct FragmentOutput1 {
   @location(2) f0: vec4i,
-  @location(1) @interpolate(flat, sample) f1: vec4u,
+  @location(1) @interpolate(flat) f1: vec4u,
   @location(0) f2: vec4f,
   @builtin(frag_depth) f3: f32,
-  @location(3) @interpolate(flat, center) f4: vec2u,
+  @location(3) @interpolate(flat) f4: vec2u,
 }
 
 struct T1 {
-  @align(16) @size(16) f0: array<mat2x2h>,
+  @align(16) f0: array<mat2x2h>,
 }
 
 fn fn0() -> array<array<mat2x2f, 2>, 1> {
@@ -11882,7 +11882,7 @@ fn unconst_i32(v: i32) -> i32 { return v; }
 fn unconst_f16(v: f16) -> f16 { return v; }
 
 struct FragmentOutput2 {
-  @location(3) @interpolate(flat, sample) f0: u32,
+  @location(3) @interpolate(flat) f0: u32,
   @location(0) @interpolate(perspective) f1: vec2f,
 }
 
@@ -11902,7 +11902,7 @@ fn fn1() -> FragmentOutput1 {
 }
 
 @vertex
-fn vertex2(@location(13) @interpolate(flat, sample) a0: i32) -> @builtin(position) vec4f {
+fn vertex2(@location(13) @interpolate(flat) a0: i32) -> @builtin(position) vec4f {
   var out: vec4f;
   var vf39 = fn1();
   fn1();
@@ -13368,7 +13368,7 @@ struct FragmentOutput4 {
 }
 
 struct T3 {
-  @size(16) f0: array<f32>,
+  f0: array<f32>,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
@@ -13380,11 +13380,7 @@ fn unconst_f32(v: f32) -> f32 { return v; }
 var<workgroup> vw5: array<array<VertexOutput3, 1>, 1>;
 
 struct T0 {
-  @align(16) @size(16) f0: array<array<f32, 1>>,
-}
-
-struct T1 {
-  f0: T0,
+  @align(16) f0: array<array<f32, 1>>,
 }
 
 var<workgroup> vw9: mat3x3h;
@@ -13396,7 +13392,7 @@ var<private> vp6: array<array<vec4u, 1>, 13> = array(array<vec4u, 1>(), array<ve
 alias vec3b = vec3<bool>;
 
 struct T2 {
-  @align(16) @size(16) f0: array<atomic<u32>>,
+  @align(16) f0: array<atomic<u32>>,
 }
 
 var<private> vp7 = array(array(modf(f16(5169.9))));
@@ -13406,10 +13402,10 @@ fn unconst_i32(v: i32) -> i32 { return v; }
 var<workgroup> vw6: mat3x2f;
 
 struct VertexOutput3 {
-  @location(8) @interpolate(flat, sample) f10: vec2u,
+  @location(8) @interpolate(flat) f10: vec2u,
   @location(2) f11: vec2f,
   @location(5) @interpolate(linear, sample) f12: vec4h,
-  @location(6) @interpolate(flat, sample) f13: vec2h,
+  @location(6) @interpolate(flat) f13: vec2h,
   @builtin(position) f14: vec4f,
 }
 
@@ -13436,7 +13432,7 @@ fn fn0() -> mat2x2f {
 }
 
 @vertex
-fn vertex4(@location(3) @interpolate(flat, sample) a0: vec4i, @location(2) @interpolate(perspective) a1: vec4f, @location(5) a2: vec4u, @location(10) a3: f16, @location(7) a4: u32) -> VertexOutput3 {
+fn vertex4(@location(3) @interpolate(flat) a0: vec4i, @location(2) @interpolate(perspective) a1: vec4f, @location(5) a2: vec4u, @location(10) a3: f16, @location(7) a4: u32) -> VertexOutput3 {
   var out: VertexOutput3;
   out.f12 = vec4h(f16(countTrailingZeros(u32(unconst_u32(183)))));
   let ptr43: ptr<private, vec4u> = &vp6[u32(unconst_u32(38))][0];
@@ -13618,7 +13614,7 @@ requires readonly_and_readwrite_storage_textures;
 var<workgroup> vw13: mat4x4h;
 
 struct T3 {
-  @size(224) f0: array<T1>,
+  f0: array<T1>,
 }
 
 fn unconst_i32(v: i32) -> i32 { return v; }
@@ -15544,10 +15540,10 @@ struct T5 {
 }
 
 struct FragmentOutput7 {
-  @location(2) @interpolate(flat, sample) f0: vec4u,
+  @location(2) @interpolate(flat) f0: vec4u,
   @location(0) @interpolate(flat) f1: vec4i,
   @location(1) @interpolate(flat) f2: vec4u,
-  @location(7) @interpolate(flat, center) f3: i32,
+  @location(7) @interpolate(flat) f3: i32,
 }
 
 fn fn0(a0: ptr<function, FragmentOutput6>) -> f32 {
@@ -15579,7 +15575,7 @@ fn fn0(a0: ptr<function, FragmentOutput6>) -> f32 {
 @group(0) @binding(95) var<storage, read_write> buffer151: array<array<array<array<array<atomic<i32>, 1>, 1>, 3>, 1>>;
 
 struct T1 {
-  @size(12) f0: array<u32>,
+  f0: array<u32>,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
@@ -15608,11 +15604,11 @@ fn fn1() -> array<T5, 1> {
 fn unconst_f16(v: f16) -> f16 { return v; }
 
 struct VertexOutput5 {
-  @location(7) f16: vec4i,
+  @location(7) @interpolate(flat) f16: vec4i,
   @location(10) f17: f16,
   @location(2) f18: f32,
-  @location(13) f19: vec2u,
-  @location(6) f20: u32,
+  @location(13) @interpolate(flat) f19: vec2u,
+  @location(6) @interpolate(flat) f20: u32,
   @location(14) f21: vec2f,
   @location(11) @interpolate(flat) f22: vec4u,
   @invariant @builtin(position) f23: vec4f,
@@ -15627,7 +15623,7 @@ struct VertexOutput5 {
 @group(0) @binding(82) var st0: texture_storage_3d<r32float, read_write>;
 
 struct T2 {
-  @size(512) f0: array<atomic<u32>>,
+  f0: array<atomic<u32>>,
 }
 
 @group(0) @binding(13) var sam2: sampler;
@@ -15638,7 +15634,7 @@ var<workgroup> vw15: VertexOutput5;
 
 struct T3 {
   @align(128) @size(256) f0: atomic<i32>,
-  @align(64) @size(2048) f1: array<T0>,
+  @align(64) f1: array<T0>,
 }
 
 struct T4 {
@@ -15647,7 +15643,7 @@ struct T4 {
 
 struct FragmentOutput6 {
   @location(1) f0: vec4u,
-  @location(2) @interpolate(flat, centroid) f1: vec4u,
+  @location(2) @interpolate(flat) f1: vec4u,
   @location(0) @interpolate(flat) f2: vec4i,
   @location(5) @interpolate(perspective) f3: vec4f,
 }
@@ -16210,7 +16206,7 @@ fn unconst_bool(v: bool) -> bool { return v; }
 @group(0) @binding(95) var<storage, read_write> buffer157: array<T1, 6>;
 
 struct T0 {
-  @size(12) f0: array<u32>,
+  f0: array<u32>,
 }
 
 struct T1 {
@@ -16291,7 +16287,7 @@ fn fn0() -> vec2i {
 }
 
 struct FragmentOutput8 {
-  @location(2) @interpolate(flat, center) f0: vec4i,
+  @location(2) @interpolate(flat) f0: vec4i,
   @location(0) @interpolate(linear, centroid) f1: vec4f,
   @location(1) @interpolate(flat) f2: vec4u,
   @location(3) f3: vec2u,
@@ -17767,13 +17763,13 @@ var<workgroup> vw17: mat4x2h;
 @group(0) @binding(95) var<storage, read_write> buffer168: array<array<array<f16, 3>, 2>>;
 
 struct VertexOutput6 {
-  @location(3) @interpolate(flat, centroid) f24: i32,
-  @location(8) @interpolate(flat, centroid) f25: vec2u,
+  @location(3) @interpolate(flat) f24: i32,
+  @location(8) @interpolate(flat) f25: vec2u,
   @location(5) @interpolate(linear, centroid) f26: f32,
   @builtin(position) f27: vec4f,
   @location(12) f28: f32,
-  @location(1) @interpolate(flat, sample) f29: vec4u,
-  @location(15) f30: vec2u,
+  @location(1) @interpolate(flat) f29: vec4u,
+  @location(15) @interpolate(flat) f30: vec2u,
 }
 
 var<workgroup> vw19: atomic<i32>;
@@ -17811,7 +17807,7 @@ fn fn2(a0: VertexOutput6, a1: ptr<uniform, vec2h>) -> array<array<array<array<ar
 @group(0) @binding(93) var<storage, read> buffer167: array<array<array<f16, 1>, 1>, 1>;
 
 struct T1 {
-  @size(16) f0: array<vec2f>,
+  f0: array<vec2f>,
 }
 
 var<workgroup> vw21: VertexOutput6;
@@ -19766,7 +19762,7 @@ fn fn0() {
 @group(0) @binding(0) var<uniform> buffer187: mat4x3f;
 
 struct VertexOutput7 {
-  @location(2) @interpolate(flat, sample) f31: f16,
+  @location(2) @interpolate(flat) f31: f16,
   @invariant @builtin(position) f32: vec4f,
 }
 
@@ -20388,7 +20384,7 @@ struct FragmentOutput10 {
 fn unconst_f32(v: f32) -> f32 { return v; }
 
 struct T1 {
-  @align(8) @size(88) f0: array<u32>,
+  @align(8) f0: array<u32>,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
@@ -20426,7 +20422,7 @@ fn vertex9(@location(12) a0: vec4h) -> VertexOutput8 {
 }
 
 @fragment
-fn fragment11(@location(3) a0: vec4u, @location(14) @interpolate(flat, sample) a1: vec2i, @builtin(position) a2: vec4f, @location(15) a3: vec2f) -> FragmentOutput10 {
+fn fragment11(@location(3) @interpolate(flat) a0: vec4u, @location(14) @interpolate(flat) a1: vec2i, @builtin(position) a2: vec4f, @location(15) a3: vec2f) -> FragmentOutput10 {
   var out: FragmentOutput10;
   fn1();
   out.f0 = unpack4xU8(a0[u32(unconst_u32(63))]);
@@ -21065,7 +21061,7 @@ fn unconst_bool(v: bool) -> bool { return v; }
 fn unconst_u32(v: u32) -> u32 { return v; }
 
 struct T0 {
-  @align(4) @size(12) f0: array<f16>,
+  @align(4) f0: array<f16>,
 }
 
 var<workgroup> vw30: VertexOutput9;
@@ -22816,7 +22812,7 @@ enable f16;
 
 struct T2 {
   @size(8) f0: atomic<u32>,
-  @align(8) @size(80) f1: array<vec2h>,
+  @align(8) f1: array<vec2h>,
 }
 
 @group(0) @binding(0) var<uniform> buffer226: array<VertexOutput10, 1>;
@@ -22837,7 +22833,7 @@ struct FragmentOutput11 {
 }
 
 struct T0 {
-  @align(32) @size(544) f0: array<vec2i>,
+  @align(32) f0: array<vec2i>,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
@@ -22884,7 +22880,7 @@ alias vec3b = vec3<bool>;
 fn unconst_f16(v: f16) -> f16 { return v; }
 
 @vertex
-fn vertex11(@location(0) @interpolate(flat, centroid) a0: vec2i) -> VertexOutput10 {
+fn vertex11(@location(0) @interpolate(flat) a0: vec2i) -> VertexOutput10 {
   var out: VertexOutput10;
   vp22 = mat3x2h(vec2h(buffer226[u32(unconst_u32(121))].f35.yz), vec2h(buffer226[u32(unconst_u32(121))].f35.ga), vec2h(buffer226[u32(unconst_u32(121))].f35.ra));
   vp19.whole *= vp22[u32(unconst_u32(57))][u32(unconst_u32(67))];
@@ -23675,10 +23671,10 @@ struct T0 {
 fn unconst_bool(v: bool) -> bool { return v; }
 
 struct VertexOutput11 {
-  @location(14) @interpolate(flat, sample) f36: vec2u,
+  @location(14) @interpolate(flat) f36: vec2u,
   @location(12) @interpolate(flat) f37: u32,
   @builtin(position) f38: vec4f,
-  @location(5) f39: vec4i,
+  @location(5) @interpolate(flat) f39: vec4i,
   @location(7) @interpolate(linear, sample) f40: f16,
 }
 
@@ -23714,10 +23710,10 @@ fn fn1(a0: VertexOutput11) {
 
 struct FragmentOutput12 {
   @location(3) @interpolate(flat) f0: vec4u,
-  @location(1) @interpolate(flat, centroid) f1: vec4u,
+  @location(1) @interpolate(flat) f1: vec4u,
   @location(0) @interpolate(perspective) f2: vec4f,
   @location(2) @interpolate(flat) f3: vec4i,
-  @location(6) @interpolate(flat, centroid) f4: u32,
+  @location(6) @interpolate(flat) f4: u32,
   @builtin(sample_mask) f5: u32,
 }
 
@@ -23740,7 +23736,7 @@ fn unconst_f16(v: f16) -> f16 { return v; }
 fn unconst_u32(v: u32) -> u32 { return v; }
 
 @vertex @must_use
-fn vertex12(@location(0) @interpolate(flat) a0: i32, @location(2) @interpolate(flat) a1: vec4i, a2: S0, @location(15) @interpolate(flat) a3: vec4h, @location(12) a4: vec2u, @location(10) @interpolate(flat) a5: vec4i, @location(11) @interpolate(flat, centroid) a6: vec4i, @location(3) @interpolate(flat, center) a7: vec4h, @location(5) a8: f32) -> VertexOutput11 {
+fn vertex12(@location(0) @interpolate(flat) a0: i32, @location(2) @interpolate(flat) a1: vec4i, a2: S0, @location(15) @interpolate(flat) a3: vec4h, @location(12) a4: vec2u, @location(10) @interpolate(flat) a5: vec4i, @location(11) @interpolate(flat) a6: vec4i, @location(3) @interpolate(flat) a7: vec4h, @location(5) a8: f32) -> VertexOutput11 {
   var out: VertexOutput11;
   out.f39 -= vec4i(vp26.f39[u32(unconst_u32(414))]);
   out = VertexOutput11(vec2u(u32(a3[u32(unconst_u32(67))])), u32(a3[u32(unconst_u32(67))]), vec4f(f32(a3[u32(unconst_u32(67))])), vec4i(i32(a3[u32(unconst_u32(67))])), a3[u32(unconst_u32(67))]);
@@ -25102,7 +25098,7 @@ var<workgroup> vw36: array<mat2x4f, 1>;
 var<workgroup> vw35: array<mat2x3f, 1>;
 
 struct T0 {
-  @align(8) @size(7488) f0: array<u32>,
+  @align(8) f0: array<u32>,
 }
 
 fn unconst_bool(v: bool) -> bool { return v; }
@@ -25122,7 +25118,7 @@ fn unconst_u32(v: u32) -> u32 { return v; }
 @group(2) @binding(476) var<uniform> buffer247: array<array<array<array<mat2x3h, 1>, 2>, 3>, 15>;
 
 @vertex
-fn vertex13(@builtin(instance_index) a0: u32, @location(4) a1: vec2i, @location(11) @interpolate(flat, center) a2: vec2i) -> @builtin(position) vec4f {
+fn vertex13(@builtin(instance_index) a0: u32, @location(4) a1: vec2i, @location(11) @interpolate(flat) a2: vec2i) -> @builtin(position) vec4f {
   var out: vec4f;
   out = vec4f(reverseBits(vec4u(unconst_u32(512), unconst_u32(96), unconst_u32(12), unconst_u32(412))));
   let vf285: vec4f = quantizeToF16(vec4f(f32(floor(f16(unconst_f16(156.9))))));
@@ -26405,22 +26401,22 @@ fn unconst_f32(v: f32) -> f32 { return v; }
 fn unconst_f16(v: f16) -> f16 { return v; }
 
 struct VertexOutput13 {
-  @location(13) f49: vec4u,
-  @location(10) f50: vec2u,
-  @location(5) @interpolate(flat, centroid) f51: f32,
-  @location(12) @interpolate(flat, center) f52: vec4u,
+  @location(13) @interpolate(flat) f49: vec4u,
+  @location(10) @interpolate(flat) f50: vec2u,
+  @location(5) @interpolate(flat) f51: f32,
+  @location(12) @interpolate(flat) f52: vec4u,
   @location(0) f53: f16,
   @builtin(position) f54: vec4f,
-  @location(11) @interpolate(flat, centroid) f55: u32,
-  @location(7) @interpolate(flat, centroid) f56: vec4h,
+  @location(11) @interpolate(flat) f55: u32,
+  @location(7) @interpolate(flat) f56: vec4h,
   @location(14) @interpolate(perspective, centroid) f57: vec4h,
   @location(1) f58: vec4f,
   @location(9) @interpolate(linear, centroid) f59: vec2f,
-  @location(3) f60: vec4u,
-  @location(4) @interpolate(flat, sample) f61: vec4f,
-  @location(15) @interpolate(flat, sample) f62: vec4u,
+  @location(3) @interpolate(flat) f60: vec4u,
+  @location(4) @interpolate(flat) f61: vec4f,
+  @location(15) @interpolate(flat) f62: vec4u,
   @location(2) f63: f32,
-  @location(6) f64: u32,
+  @location(6) @interpolate(flat) f64: u32,
   @location(8) @interpolate(linear, sample) f65: vec4f,
 }
 
@@ -26431,9 +26427,9 @@ var<workgroup> vw39: atomic<u32>;
 struct VertexOutput12 {
   @location(12) @interpolate(perspective, centroid) f41: vec2h,
   @location(7) @interpolate(perspective, sample) f42: vec4f,
-  @location(0) f43: vec4u,
-  @location(4) f44: vec4i,
-  @location(3) @interpolate(flat, centroid) f45: vec2i,
+  @location(0) @interpolate(flat) f43: vec4u,
+  @location(4) @interpolate(flat) f44: vec4i,
+  @location(3) @interpolate(flat) f45: vec2i,
   @location(9) @interpolate(flat) f46: i32,
   @location(8) @interpolate(flat) f47: f32,
   @builtin(position) f48: vec4f,
@@ -27057,7 +27053,7 @@ var<workgroup> vw41: T0;
 struct FragmentOutput13 {
   @location(1) @interpolate(flat) f0: vec4u,
   @location(2) @interpolate(flat) f1: vec4u,
-  @location(0) @interpolate(flat, center) f2: vec4i,
+  @location(0) @interpolate(flat) f2: vec4i,
 }
 
 struct VertexOutput14 {
@@ -27065,7 +27061,7 @@ struct VertexOutput14 {
 }
 
 struct T1 {
-  @size(88) f0: array<atomic<u32>>,
+  f0: array<atomic<u32>>,
 }
 
 var<workgroup> vw43: atomic<i32>;

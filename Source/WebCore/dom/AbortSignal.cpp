@@ -109,7 +109,7 @@ AbortSignal::~AbortSignal() = default;
 void AbortSignal::addSourceSignal(AbortSignal& signal)
 {
     if (signal.isDependent()) {
-        for (Ref sourceSignal : signal.sourceSignals())
+        for (auto& sourceSignal : signal.sourceSignals())
             addSourceSignal(sourceSignal);
         return;
     }

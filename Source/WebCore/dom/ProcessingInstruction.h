@@ -44,11 +44,11 @@ public:
     void ref() const final { CharacterData::ref(); }
     void deref() const final { CharacterData::deref(); }
 
-    const String& target() const { return m_target; }
+    const String& target() const LIFETIME_BOUND { return m_target; }
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
-    const String& localHref() const { return m_localHref; }
+    const String& localHref() const LIFETIME_BOUND { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
 
     bool isCSS() const { return m_isCSS; }

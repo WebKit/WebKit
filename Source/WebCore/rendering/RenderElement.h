@@ -74,12 +74,12 @@ public:
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
-    const RenderStyle& style() const { return m_style; }
-    const RenderStyle* parentStyle() const { return !m_parent ? nullptr : &m_parent->style(); }
-    const RenderStyle& firstLineStyle() const;
+    const RenderStyle& style() const LIFETIME_BOUND { return m_style; }
+    const RenderStyle* parentStyle() const LIFETIME_BOUND { return !m_parent ? nullptr : &m_parent->style(); }
+    const RenderStyle& firstLineStyle() const LIFETIME_BOUND;
 
     // FIXME: Style shouldn't be mutated.
-    RenderStyle& mutableStyle() { return m_style; }
+    RenderStyle& mutableStyle() LIFETIME_BOUND { return m_style; }
 
     void initializeStyle();
 
@@ -91,7 +91,7 @@ public:
     // The pseudo element style can be cached or uncached. Use the uncached method if the pseudo element
     // has the concept of changing state (like ::-webkit-scrollbar-thumb:hover), or if it takes additional
     // parameters (like ::highlight(name)).
-    const RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&, const RenderStyle* parentStyle = nullptr) const;
+    const RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&, const RenderStyle* parentStyle = nullptr) const LIFETIME_BOUND;
     std::unique_ptr<RenderStyle> getUncachedPseudoStyle(const Style::PseudoElementRequest&, const RenderStyle* parentStyle = nullptr, const RenderStyle* ownStyle = nullptr) const;
 
     // This is null for anonymous renderers.
@@ -129,9 +129,9 @@ public:
     Color selectionForegroundColor() const;
     Color selectionEmphasisMarkColor() const;
 
-    const RenderStyle* spellingErrorPseudoStyle() const;
-    const RenderStyle* grammarErrorPseudoStyle() const;
-    const RenderStyle* targetTextPseudoStyle() const;
+    const RenderStyle* spellingErrorPseudoStyle() const LIFETIME_BOUND;
+    const RenderStyle* grammarErrorPseudoStyle() const LIFETIME_BOUND;
+    const RenderStyle* targetTextPseudoStyle() const LIFETIME_BOUND;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     void didAttachChild(RenderObject& child, RenderObject* beforeChild);
@@ -443,7 +443,7 @@ private:
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();
 
-    const RenderStyle* textSegmentPseudoStyle(PseudoElementType) const;
+    const RenderStyle* textSegmentPseudoStyle(PseudoElementType) const LIFETIME_BOUND;
 
     template<typename> Color selectionColor() const;
 

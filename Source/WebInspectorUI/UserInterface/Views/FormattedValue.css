@@ -67,6 +67,10 @@
     color: hsl(0, 0%, 50%);
 }
 
+.formatted-node {
+    isolation: isolate; /* Create a new stacking context to ensure z-index: -1 for .selection-area works within this boundary instead of an ancestor like .tree-outline.object which obscures the selection area behind a solid color element. */
+}
+
 .formatted-node, .formatted-node-preview {
     white-space: wrap;
 }

@@ -55,7 +55,7 @@ public:
     uint32_t id() { return m_id; }
 #endif
 
-    const Vector<TextureMapperLayer*>& children() const { return m_children; }
+    const Vector<TextureMapperLayer*>& children() const LIFETIME_BOUND { return m_children; }
 
     WEBCORE_EXPORT void setChildren(const Vector<TextureMapperLayer*>&);
     WEBCORE_EXPORT void setMaskLayer(TextureMapperLayer*);
@@ -77,7 +77,7 @@ public:
     FloatSize size() const { return m_state.size; }
     float opacity() const { return m_state.opacity; }
     TransformationMatrix transform() const { return m_state.transform; }
-    const TransformationMatrix& toSurfaceTransform() const { return m_layerTransforms.combined; }
+    const TransformationMatrix& toSurfaceTransform() const LIFETIME_BOUND { return m_layerTransforms.combined; }
     WEBCORE_EXPORT void setContentsVisible(bool);
     WEBCORE_EXPORT void setContentsOpaque(bool);
     WEBCORE_EXPORT void setBackfaceVisibility(bool);

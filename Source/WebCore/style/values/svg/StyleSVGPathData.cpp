@@ -43,7 +43,7 @@ namespace Style {
 
 auto CSSValueConversion<SVGPathData>::operator()(BuilderState& state, const CSSValue& value) -> SVGPathData
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueNone)
             return CSS::Keyword::None { };
 

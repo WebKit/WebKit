@@ -60,7 +60,7 @@ public:
     bool hasRelativeDimensions() const override;
 
     // localToBorderBoxTransform maps local SVG viewport coordinates to local CSS box coordinates.  
-    const AffineTransform& localToBorderBoxTransform() const { return m_localToBorderBoxTransform; }
+    const AffineTransform& localToBorderBoxTransform() const LIFETIME_BOUND { return m_localToBorderBoxTransform; }
 
     // The flag is cleared at the beginning of each layout() pass. Elements then call this
     // method during layout when they are invalidated by a filter.
@@ -91,7 +91,7 @@ private:
 
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
-    const AffineTransform& localToParentTransform() const override;
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override;
 
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox.value_or(FloatRect()); }
     FloatRect strokeBoundingBox() const override;

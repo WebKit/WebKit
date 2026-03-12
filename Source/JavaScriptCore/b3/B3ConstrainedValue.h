@@ -90,7 +90,7 @@ public:
     explicit operator bool() const { return m_value || m_rep; }
 
     Value* value() const { return m_value; }
-    const ValueRep& rep() const { return m_rep; }
+    const ValueRep& rep() const LIFETIME_BOUND { return m_rep; }
 
     void dump(PrintStream& out) const;
 

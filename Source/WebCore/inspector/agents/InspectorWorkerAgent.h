@@ -49,7 +49,7 @@ class InspectorWorkerAgent : public InspectorAgentBase, public Inspector::Worker
 public:
     ~InspectorWorkerAgent();
 
-    Inspector::WorkerFrontendDispatcher& frontendDispatcher() { return m_frontendDispatcher; }
+    Inspector::WorkerFrontendDispatcher& frontendDispatcher() LIFETIME_BOUND { return m_frontendDispatcher; }
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend();

@@ -63,9 +63,9 @@ public:
     bool failed() const { return m_failed; }
     bool retrievedFromServiceWorkerCache() const { return m_retrievedFromServiceWorkerCache; }
 
-    const ScriptBuffer& script() { return m_script; }
-    const URL& responseURL() const { return m_responseURL; }
-    const String& responseMIMEType() const { return m_responseMIMEType; }
+    const ScriptBuffer& script() LIFETIME_BOUND { return m_script; }
+    const URL& responseURL() const LIFETIME_BOUND { return m_responseURL; }
+    const String& responseMIMEType() const LIFETIME_BOUND { return m_responseMIMEType; }
 
 private:
     WorkerModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);

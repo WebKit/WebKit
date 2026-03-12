@@ -1291,7 +1291,7 @@ std::optional<bool> GStreamerMediaEndpoint::isIceGatheringComplete(const String&
     return true;
 }
 
-ExceptionOr<RefPtr<GStreamerRtpSenderBackend>> GStreamerMediaEndpoint::addTrack(MediaStreamTrack& track, const FixedVector<String>& mediaStreamIds)
+ExceptionOr<Ref<GStreamerRtpSenderBackend>> GStreamerMediaEndpoint::addTrack(MediaStreamTrack& track, const FixedVector<String>& mediaStreamIds)
 {
     GStreamerRtpSenderBackend::Source source;
     auto mediaStreamId = mediaStreamIds.isEmpty() ? "-"_s : mediaStreamIds[0];
@@ -1565,7 +1565,7 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
             return;
         }
         const auto& trackId = data.trackId;
-        transceiver = peerConnectionBackend->newRemoteTransceiver(makeUnique<GStreamerRtpTransceiverBackend>(WTF::move(rtcTransceiver)), data.type, trackId.isolatedCopy());
+        transceiver = peerConnectionBackend->addInternalTransceiver(makeUniqueRef<GStreamerRtpTransceiverBackend>(WTF::move(rtcTransceiver)), data.type, trackId.isolatedCopy());
         GST_DEBUG_OBJECT(m_pipeline.get(), "New remote transceiver created for track");
     }
 
@@ -1940,7 +1940,7 @@ ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTran
     }, [](std::nullptr_t&) {
     });
 
-    auto transceiver = makeUnique<GStreamerRtpTransceiverBackend>(WTF::move(rtcTransceiver));
+    auto transceiver = makeUniqueRef<GStreamerRtpTransceiverBackend>(WTF::move(rtcTransceiver));
 
     return GStreamerMediaEndpoint::Backends { transceiver->createSenderBackend(WeakPtr { m_peerConnectionBackend }, WTF::move(source), WTF::move(initData)), transceiver->createReceiverBackend(), WTF::move(transceiver) };
 }
@@ -2412,7 +2412,7 @@ void GStreamerMediaEndpoint::createSessionDescriptionFailed(RTCSdpType sdpType, 
     });
 }
 
-void GStreamerMediaEndpoint::collectTransceivers()
+void GStreamerMediaEndpoint::collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&& currentTransceivers)
 {
     GUniqueOutPtr<GstWebRTCSessionDescription> description;
     g_object_get(m_webrtcBin.get(), "remote-description", &description.outPtr(), nullptr);
@@ -2424,16 +2424,19 @@ void GStreamerMediaEndpoint::collectTransceivers()
         return;
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Collecting transceivers");
-    forEachTransceiver(m_webrtcBin, [&](auto&& transceiver) -> bool {
-        RefPtr existingTransceiver = peerConnectionBackend->existingTransceiver([&](auto& transceiverBackend) {
-            return transceiver.get() == transceiverBackend.rtcTransceiver();
+    forEachTransceiver(m_webrtcBin, [&](auto&& rtcTransceiver) -> bool {
+        auto position = currentTransceivers.findIf([&](auto& transceiver) {
+            return rtcTransceiver.get() == static_cast<GStreamerRtpTransceiverBackend&>(transceiver->backend()).rtcTransceiver();
         });
-        if (existingTransceiver)
+
+        if (position != notFound) {
+            currentTransceivers.removeAt(position);
             return false;
+        }
 
         GUniqueOutPtr<char> midChars;
         unsigned mLineIndex;
-        g_object_get(transceiver.get(), "mid", &midChars.outPtr(), "mlineindex", &mLineIndex, nullptr);
+        g_object_get(rtcTransceiver.get(), "mid", &midChars.outPtr(), "mlineindex", &mLineIndex, nullptr);
         auto mid = GMallocString::unsafeAdoptFromUTF8(WTF::move(midChars));
         if (!mid)
             return false;
@@ -2444,9 +2447,12 @@ void GStreamerMediaEndpoint::collectTransceivers()
             return false;
         }
 
-        existingTransceiver = peerConnectionBackend->newRemoteTransceiver(WTF::makeUnique<GStreamerRtpTransceiverBackend>(WTF::move(transceiver)), m_mediaForMid.get(String(mid.span())), trackIdFromSDPMedia(*media));
+        peerConnectionBackend->addInternalTransceiver(WTF::makeUniqueRef<GStreamerRtpTransceiverBackend>(WTF::move(rtcTransceiver)), m_mediaForMid.get(String(mid.span())), trackIdFromSDPMedia(*media));
         return false;
     });
+
+    for (auto& transceiver : currentTransceivers)
+        peerConnectionBackend->removeTransceiver(transceiver);
 }
 
 GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<GstPad>& pad, const GstStructure* stats)

@@ -228,7 +228,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     // swiping forward will have the correct snapshot.
     if (m_webPageProxyForBackForwardListForCurrentSwipe != page.get()) {
         if (RefPtr currentViewHistoryItem = page->backForwardList().currentItem())
-            backForwardList.currentItem()->setSnapshot(currentViewHistoryItem->snapshot());
+            protect(backForwardList.currentItem())->setSnapshot(currentViewHistoryItem->snapshot());
     }
 
     RetainPtr liveSwipeView = m_liveSwipeView.get();

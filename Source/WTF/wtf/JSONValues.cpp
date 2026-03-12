@@ -339,7 +339,7 @@ bool decodeString(std::span<const CodeUnit> data, String& output)
     return true;
 }
 
-template<typename CodeUnit>
+template<Value::ParsingMode parsingMode = Value::ParsingMode::Strict, typename CodeUnit>
 RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const CodeUnit>& valueTokenEnd, int depth)
 {
     if (depth > stackLimit)
@@ -384,7 +384,7 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
         data = tokenEnd;
         token = parseToken(data, tokenStart, tokenEnd);
         while (token != Token::ArrayEnd) {
-            RefPtr<JSON::Value> arrayNode = buildValue(data, tokenEnd, depth + 1);
+            RefPtr<JSON::Value> arrayNode = buildValue<parsingMode>(data, tokenEnd, depth + 1);
             if (!arrayNode)
                 return nullptr;
             array->pushValue(arrayNode.releaseNonNull());
@@ -395,8 +395,12 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
             if (token == Token::ListSeparator) {
                 data = tokenEnd;
                 token = parseToken(data, tokenStart, tokenEnd);
-                if (token == Token::ArrayEnd)
-                    return nullptr;
+                if (token == Token::ArrayEnd) {
+                    if constexpr (parsingMode != Value::ParsingMode::AllowTrailingCommas)
+                        return nullptr;
+                    else
+                        break;
+                }
             } else if (token != Token::ArrayEnd) {
                 // Unexpected value after list value. Bail out.
                 return nullptr;
@@ -425,7 +429,7 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
                 return nullptr;
             data = tokenEnd;
 
-            RefPtr<JSON::Value> value = buildValue(data, tokenEnd, depth + 1);
+            RefPtr<JSON::Value> value = buildValue<parsingMode>(data, tokenEnd, depth + 1);
             if (!value)
                 return nullptr;
             object->setValue(key, value.releaseNonNull());
@@ -437,8 +441,12 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
             if (token == Token::ListSeparator) {
                 data = tokenEnd;
                 token = parseToken(data, tokenStart, tokenEnd);
-                if (token == Token::ObjectEnd)
-                    return nullptr;
+                if (token == Token::ObjectEnd) {
+                    if constexpr (parsingMode != Value::ParsingMode::AllowTrailingCommas)
+                        return nullptr;
+                    else
+                        break;
+                }
             } else if (token != Token::ObjectEnd) {
                 // Unexpected value after last object value. Bail out.
                 return nullptr;
@@ -510,6 +518,11 @@ Ref<Value> Value::create(const String& value)
 
 RefPtr<Value> Value::parseJSON(StringView json)
 {
+    return parseJSON(json, ParsingMode::Strict);
+}
+
+RefPtr<Value> Value::parseJSON(StringView json, ParsingMode parsingMode)
+{
     auto containsNonSpace = [] (auto span) {
         if (!span.data())
             return false;
@@ -524,13 +537,19 @@ RefPtr<Value> Value::parseJSON(StringView json)
     if (json.is8Bit()) {
         auto data = json.span8();
         std::span<const Latin1Character> tokenEnd;
-        result = buildValue(data, tokenEnd, 0);
+        if (parsingMode == ParsingMode::AllowTrailingCommas)
+            result = buildValue<ParsingMode::AllowTrailingCommas>(data, tokenEnd, 0);
+        else
+            result = buildValue(data, tokenEnd, 0);
         if (containsNonSpace(tokenEnd))
             return nullptr;
     } else {
         auto data = json.span16();
         std::span<const char16_t> tokenEnd;
-        result = buildValue(data, tokenEnd, 0);
+        if (parsingMode == ParsingMode::AllowTrailingCommas)
+            result = buildValue<ParsingMode::AllowTrailingCommas>(data, tokenEnd, 0);
+        else
+            result = buildValue(data, tokenEnd, 0);
         if (containsNonSpace(tokenEnd))
             return nullptr;
     }

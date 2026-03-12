@@ -76,14 +76,14 @@ AnalyserNode::~AnalyserNode()
 
 void AnalyserNode::process(size_t framesToProcess)
 {
-    Ref outputBus = protect(output(0))->bus();
+    Ref outputBus = output(0)->bus();
 
     if (!isInitialized()) {
         outputBus->zero();
         return;
     }
 
-    Ref inputBus = protect(input(0))->bus();
+    Ref inputBus = input(0)->bus();
 
     // Give the analyser the audio which is passing through this AudioNode. This must always
     // be done so that the state of the Analyser reflects the current input.
@@ -154,7 +154,7 @@ void AnalyserNode::updatePullStatus()
 {
     ASSERT(context().isGraphOwner());
 
-    if (protect(output(0))->isConnected()) {
+    if (output(0)->isConnected()) {
         // When an AudioBasicInspectorNode is connected to a downstream node, it
         // will get pulled by the downstream node, thus remove it from the context's
         // automatic pull list.

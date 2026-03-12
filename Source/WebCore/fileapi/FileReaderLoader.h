@@ -92,7 +92,7 @@ public:
     void setEncoding(StringView);
     void setDataType(const String& dataType) { m_dataType = dataType; }
 
-    const URL& url() { return m_urlForReading; }
+    const URL& url() LIFETIME_BOUND { return m_urlForReading; }
 
     bool isCompleted() const;
 

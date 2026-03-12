@@ -48,7 +48,7 @@ public:
     static_assert(sizeof(Type) <= 2);
     static_assert(std::is_pointer<PointerType>::value);
     static_assert(::allowCompactPointers<PointerType>());
-    static_assert(std::is_integral<Type>::value || std::is_enum<Type>::value);
+    static_assert(IntegralOrEnum<Type>);
     using UnsignedType = std::make_unsigned_t<std::conditional_t<std::is_same_v<Type, bool>, uint8_t, Type>>;
     static_assert(sizeof(UnsignedType) == sizeof(Type));
 

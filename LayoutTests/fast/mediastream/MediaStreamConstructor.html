@@ -47,6 +47,10 @@
                 shouldBe('localStream.getAudioTracks().length', '1');
                 shouldBe('localStream.getVideoTracks().length', '1');
 
+                shouldBe('localStream.getTracks().length', '2');
+                shouldBe('localStream.getTracks()[0].kind', '"audio"');
+                shouldBe('localStream.getTracks()[1].kind', '"video"');
+
                 shouldBeTrue("typeof MediaStream === 'function'");
                 shouldBeTrue('checkIdAttribute(localStream.id)');
                 testConstructor(localStream);

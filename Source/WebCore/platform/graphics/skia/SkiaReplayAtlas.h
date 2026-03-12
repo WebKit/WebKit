@@ -53,7 +53,7 @@ public:
 
     ~SkiaReplayAtlas();
 
-    const sk_sp<SkImage>& atlasTexture() const { return m_rewrappedTexture; }
+    const sk_sp<SkImage>& atlasTexture() const LIFETIME_BOUND { return m_rewrappedTexture; }
 
     // Lookup: original raster image -> rect within atlas texture.
     // Returns nullopt if image is not in this atlas.

@@ -39,7 +39,9 @@
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LegacyRootInlineBox.h"
 #include "PointerEventsHitRules.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderIterator.h"
@@ -653,7 +655,7 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
     ASSERT(!document().settings().layerBasedSVGEngineEnabled());
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, usedPointerEvents());
-    if (isVisibleToHitTesting(style(), request) || !hitRules.requireVisible) {
+    if (request.isVisibleForStyle(style()) || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (!style().stroke().isNone() || !hitRules.requireStroke))
             || (hitRules.canHitFill && (!style().fill().isNone() || !hitRules.requireFill))) {
             static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
@@ -684,7 +686,7 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     auto adjustedLocation = accumulatedOffset + location();
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, style().pointerEvents());
-    if (isVisibleToHitTesting(style(), request) || !hitRules.requireVisible) {
+    if (request.isVisibleForStyle(style()) || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (!style().stroke().isNone() || !hitRules.requireStroke))
         || (hitRules.canHitFill && (!style().fill().isNone() || !hitRules.requireFill))) {
             static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
@@ -720,7 +722,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
             PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, usedPointerEvents());
 
             auto& renderer = textBox->renderer();
-            if (!isVisibleToHitTesting(renderer.style(), request) && hitRules.requireVisible)
+            if (!request.isVisibleForStyle(renderer.style()) && hitRules.requireVisible)
                 continue;
 
             bool hitsStroke = hitRules.canHitStroke && (!renderer.style().stroke().isNone() || !hitRules.requireStroke);
@@ -809,6 +811,11 @@ bool RenderSVGText::requiresLayer() const
 void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (paintInfo.phase == PaintPhase::EventRegion) {
+            paintSVGEventRegion(paintInfo, paintOffset);
+            return;
+        }
+
         OptionSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline };
         if (!shouldPaintSVGRenderer(paintInfo, relevantPaintPhases))
             return;
@@ -838,6 +845,14 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         paintInfo.context().translate(coordinateSystemOriginTranslation.width(), coordinateSystemOriginTranslation.height());
 
         RenderBlock::paint(paintInfo, paintOffset);
+        return;
+    }
+
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        if (style().usedVisibility() == Visibility::Hidden || m_objectBoundingBox.isEmpty())
+            return;
+
+        paintInfo.eventRegionContext()->unite(FloatRoundedRect(strokeBoundingBox()), *this, style(), false);
         return;
     }
 

@@ -152,8 +152,8 @@ std::optional<ResizeObservation::BoxSizes> ResizeObservation::elementSizeChanged
 size_t ResizeObservation::targetElementDepth() const
 {
     unsigned depth = 0;
-    for (RefPtr ownerElement = m_target.get(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
-        for (RefPtr parent = ownerElement; parent; parent = parent->parentElementInComposedTree())
+    for (auto* ownerElement = m_target.get(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
+        for (auto* parent = ownerElement; parent; parent = parent->parentElementInComposedTree())
             ++depth;
     }
 

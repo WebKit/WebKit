@@ -179,7 +179,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
     description = ["configuring build"]
     descriptionDone = ["configured build"]
 
-    def __init__(self, platform, configuration, architecture, buildOnly, additionalArguments, device_model, triggers, *args, **kwargs):
+    def __init__(self, platform, configuration, architecture, buildOnly, additionalArguments, device_model, triggers, deployment_target=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.platform = platform
         if platform != 'jsc-only':
@@ -191,6 +191,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         self.additionalArguments = additionalArguments
         self.device_model = device_model
         self.triggers = triggers
+        self.deployment_target = deployment_target
 
     @defer.inlineCallbacks
     def run(self):
@@ -203,6 +204,8 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         self.setProperty("additionalArguments", self.additionalArguments)
         self.setProperty("device_model", self.device_model)
         self.setProperty("triggers", self.triggers)
+        if self.deployment_target:
+            self.setProperty("deployment_target", self.deployment_target)
         yield self._addToLog('stdio', 'Set build properties')
         return defer.returnValue(SUCCESS)
 
@@ -405,6 +408,9 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin, ShellMixin, AddToLogMixin):
                 # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
                 build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym']
                 build_command += ['CLANG_DEBUG_INFORMATION_LEVEL=\\$\\(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only\\)']
+            deployment_target = self.getProperty('deployment_target')
+            if deployment_target and platform == 'mac':
+                build_command += [f'MACOSX_DEPLOYMENT_TARGET={deployment_target}']
 
         build_command += self.customBuildFlag(platform, self.getProperty('fullPlatform'))
 
@@ -1712,11 +1718,11 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
         self.commands = []
 
         build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}')} --configuration {self.build.getProperty('configuration')} --only-smart-pointers "
-        if self.getProperty('platform', '').lower() == 'ios':
-            sdkroot = 'iphonesimulator'
+        sdkroot = 'iphonesimulator' if self.getProperty('platform', '').lower() == 'ios' else 'macosx'
+        # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+        if self.getProperty('platform', '').lower() == 'ios' or self.getProperty('fullPlatform', '').lower() == 'mac-tahoe':
             build_command += f'--toolchains={SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER} --swift-conditions=SWIFT_WEBKIT_TOOLCHAIN '
         else:
-            sdkroot = 'macosx'
             build_command += f"--analyzer-path={os.path.join(self.getProperty('builddir'), 'llvm-project/build/bin/clang')} --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 "
         build_command += f'--scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot={sdkroot} '
         build_command += '2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt'
@@ -2398,4 +2404,6 @@ class BuildSwift(steps.ShellSequence, ShellMixin):
         return {'step': 'Successfully built Swift'}
 
     def doStepIf(self, step):
-        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+        # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+        is_platform_relevant = self.getProperty('fullPlatform', '').lower() in {'ios', 'mac-tahoe'}
+        return is_platform_relevant and self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')

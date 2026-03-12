@@ -98,7 +98,7 @@ public:
         };
     }
 
-    const StopVector& stops() const { return m_stops; }
+    const StopVector& stops() const LIFETIME_BOUND { return m_stops; }
 
 private:
     GradientColorStops(StopVector stops, bool isSorted)

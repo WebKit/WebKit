@@ -95,7 +95,7 @@ private:
     bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine) const;
 
     bool isLineConstrainedByFloat() const { return !m_lineIsConstrainedByFloat.isEmpty(); }
-    const FloatingContext& floatingContext() const { return m_floatingContext; }
+    const FloatingContext& floatingContext() const LIFETIME_BOUND { return m_floatingContext; }
 
 private:
     const FloatingContext& m_floatingContext;

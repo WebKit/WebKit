@@ -173,22 +173,35 @@ std::unique_ptr<ManetteGamepad> ManetteGamepadProvider::removeGamepadForDevice(M
     ASSERT(result);
 
     auto index = m_gamepadVector.find(result.get());
-    if (index != notFound)
+    if (index != notFound) {
+        auto gamepad = m_gamepadVector[index];
+        gamepad->stopEffects({ });
         m_gamepadVector[index] = nullptr;
+    }
 
     return result;
 }
 
-void ManetteGamepadProvider::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+void ManetteGamepadProvider::playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
 {
-    // Not supported by this provider.
-    completionHandler(false);
+    if (gamepadIndex >= m_gamepadVector.size())
+        return completionHandler(false);
+    auto gamepad = m_gamepadVector[gamepadIndex];
+    if (!gamepad || gamepad->id() != gamepadID)
+        return completionHandler(false);
+
+    gamepad->playEffect(type, parameters, WTF::move(completionHandler));
 }
 
-void ManetteGamepadProvider::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+void ManetteGamepadProvider::stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
 {
-    // Not supported by this provider.
-    completionHandler();
+    if (gamepadIndex >= m_gamepadVector.size())
+        return completionHandler();
+    auto gamepad = m_gamepadVector[gamepadIndex];
+    if (!gamepad || gamepad->id() != gamepadID)
+        return completionHandler();
+
+    gamepad->stopEffects(WTF::move(completionHandler));
 }
 
 } // namespace WebCore

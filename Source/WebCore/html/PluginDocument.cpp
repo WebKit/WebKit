@@ -161,7 +161,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>
     // can synchronously redirect data to the plugin.
     protect(frame->view())->flushAnyPendingPostLayoutTasks();
 
-    if (CheckedPtr renderer = Ref { *m_embedElement }->renderWidget()) {
+    if (CheckedPtr renderer = m_embedElement->renderWidget()) {
         if (RefPtr widget = renderer->widget()) {
             renderer = nullptr;
             frame->loader().client().redirectDataToPlugin(*widget);

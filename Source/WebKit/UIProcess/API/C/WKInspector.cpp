@@ -42,17 +42,17 @@ WKTypeID WKInspectorGetTypeID()
 
 WKPageRef WKInspectorGetPage(WKInspectorRef inspectorRef)
 {
-    return toAPI(protect(protect(toImpl(inspectorRef))->inspectedPage()).get());
+    return toAPI(protect(toImpl(inspectorRef)->inspectedPage()).get());
 }
 
 bool WKInspectorIsConnected(WKInspectorRef inspectorRef)
 {
-    return protect(toImpl(inspectorRef))->isConnected();
+    return toImpl(inspectorRef)->isConnected();
 }
 
 bool WKInspectorIsVisible(WKInspectorRef inspectorRef)
 {
-    return protect(toImpl(inspectorRef))->isVisible();
+    return toImpl(inspectorRef)->isVisible();
 }
 
 bool WKInspectorIsFront(WKInspectorRef inspectorRef)
@@ -97,7 +97,7 @@ void WKInspectorShowMainResourceForFrame(WKInspectorRef inspectorRef, WKFrameRef
 
 bool WKInspectorIsAttached(WKInspectorRef inspectorRef)
 {
-    return protect(toImpl(inspectorRef))->isAttached();
+    return toImpl(inspectorRef)->isAttached();
 }
 
 void WKInspectorAttach(WKInspectorRef inspectorRef)
@@ -113,7 +113,7 @@ void WKInspectorDetach(WKInspectorRef inspectorRef)
 
 bool WKInspectorIsProfilingPage(WKInspectorRef inspectorRef)
 {
-    return protect(toImpl(inspectorRef))->isProfilingPage();
+    return toImpl(inspectorRef)->isProfilingPage();
 }
 
 void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
@@ -123,7 +123,7 @@ void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
 
 bool WKInspectorIsElementSelectionActive(WKInspectorRef inspectorRef)
 {
-    return protect(toImpl(inspectorRef))->isElementSelectionActive();
+    return toImpl(inspectorRef)->isElementSelectionActive();
 }
 
 void WKInspectorToggleElementSelection(WKInspectorRef inspectorRef)

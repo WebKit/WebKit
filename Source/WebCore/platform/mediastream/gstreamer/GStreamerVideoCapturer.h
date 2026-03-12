@@ -50,7 +50,7 @@ public:
 private:
     void handleSample(GRefPtr<GstSample>&&);
     bool setSize(const IntSize&);
-    const IntSize& size() const { return m_size; }
+    const IntSize& size() const LIFETIME_BOUND { return m_size; }
 
     bool setFrameRate(double);
     void reconfigure();

@@ -258,7 +258,7 @@ PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl6(uint64_t reason, u
 #else /* PAS_OS(DARWIN) */
 
 #if PAS_ENABLE_TESTING
-PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression)
+static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression)
 {
     pas_panic("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
 }

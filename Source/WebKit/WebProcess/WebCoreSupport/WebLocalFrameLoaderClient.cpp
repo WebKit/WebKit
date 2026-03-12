@@ -448,7 +448,7 @@ void WebLocalFrameLoaderClient::dispatchDidChangeMainDocument()
     webPage->setMainFrameDocumentVisualUpdatesAllowed(true);
 
     std::optional<NavigationIdentifier> navigationID;
-    if (RefPtr documentLoader = m_localFrame->loader().documentLoader())
+    if (auto* documentLoader = m_localFrame->loader().documentLoader())
         navigationID = documentLoader->navigationID();
 
     webPage->send(Messages::WebPageProxy::DidChangeMainDocument(m_frame->frameID(), navigationID));
@@ -1172,6 +1172,7 @@ void WebLocalFrameLoaderClient::dispatchBackForwardItemLoading(const URL& url, c
 void WebLocalFrameLoaderClient::dispatchDecidePolicyForBackForwardNavigationAction(WebCore::FrameLoadRequest&& frameLoadRequest, const String& referer, WebCore::FrameLoadType loadType)
 {
     Ref localFrame = m_localFrame.get();
+    localFrame->loader().setPendingAsyncBackForwardNavigation();
 
     NavigationAction navigationAction { frameLoadRequest, NavigationType::BackForward, nullptr };
 
@@ -1192,12 +1193,21 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForBackForwardNavigationActi
         localFrame->effectiveSandboxFlags(),
         PolicyDecisionMode::Asynchronous,
         [weakLocalFrame = WeakPtr { localFrame.ptr() }, url = request.url(), referer, loadType](PolicyAction action) {
-            if (action != PolicyAction::Use)
-                return;
-
             RefPtr localFrame = weakLocalFrame.get();
             if (!localFrame)
                 return;
+
+            if (action == PolicyAction::LoadWillContinueInAnotherProcess)
+                return;
+
+            if (action == PolicyAction::Ignore) {
+                // Reset the pending async state and re-check completeness
+                // on the parent since this child won't be loading.
+                localFrame->loader().cancelPendingAsyncBackForwardNavigation();
+                if (RefPtr parent = dynamicDowncast<LocalFrame>(localFrame->tree().parent()))
+                    parent->loader().checkCompleted();
+                return;
+            }
 
             RefPtr historyItem = localFrame->loader().requestedHistoryItem();
             if (!historyItem) {
@@ -1415,6 +1425,15 @@ void WebLocalFrameLoaderClient::shouldGoToHistoryItemAsync(HistoryItem& item, Co
     webPage->sendWithAsyncReply(Messages::WebPageProxy::ShouldGoToBackForwardListItem(item.itemID(), item.isInBackForwardCache()), WTF::move(completionHandler));
 }
 
+void WebLocalFrameLoaderClient::dispatchGoToBackForwardItemAtIndex(int steps, FrameLoadType frameLoadType)
+{
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->send(Messages::WebPageProxy::GoToBackForwardItemAtIndex(steps, frameLoadType));
+}
+
 bool WebLocalFrameLoaderClient::shouldFallBack(const ResourceError& error) const
 {
     static NeverDestroyed<const ResourceError> cancelledError(WebKit::cancelledError(ResourceRequest()));
@@ -1513,7 +1532,7 @@ void WebLocalFrameLoaderClient::restoreViewState()
     }
 #else
     // Inform the UI process of the scale factor.
-    double scaleFactor = protect(m_localFrame->loader().history().currentItem())->pageScaleFactor();
+    double scaleFactor = m_localFrame->loader().history().currentItem()->pageScaleFactor();
 
     // A scale factor of 0 means the history item has the default scale factor, thus we do not need to update it.
     RefPtr page = m_frame->page();
@@ -1682,7 +1701,7 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
     if (isMainFrame)
         view->setDelegatedScrollingMode(drawingArea->delegatedScrollingMode());
 
-    protect(webPage->corePage())->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
+    webPage->corePage()->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
 #endif
 
     if (webPage->scrollPinningBehavior() != ScrollPinningBehavior::DoNotPin)
@@ -2077,7 +2096,7 @@ void WebLocalFrameLoaderClient::frameNameChanged(const String& frameName)
 
 bool WebLocalFrameLoaderClient::siteIsolationEnabled() const
 {
-    if (RefPtr coreFrame = m_frame->coreFrame())
+    if (auto* coreFrame = m_frame->coreFrame())
         return coreFrame->settings().siteIsolationEnabled();
     return false;
 }

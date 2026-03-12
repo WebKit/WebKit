@@ -148,8 +148,8 @@ private:
     class CachedImageObserver final : public ImageObserver {
     public:
         static Ref<CachedImageObserver> create(CachedImage& image) { return adoptRef(*new CachedImageObserver(image)); }
-        WeakHashSet<CachedImage>& cachedImages() { return m_cachedImages; }
-        const WeakHashSet<CachedImage>& cachedImages() const { return m_cachedImages; }
+        WeakHashSet<CachedImage>& cachedImages() LIFETIME_BOUND { return m_cachedImages; }
+        const WeakHashSet<CachedImage>& cachedImages() const LIFETIME_BOUND { return m_cachedImages; }
 
     private:
         explicit CachedImageObserver(CachedImage&);

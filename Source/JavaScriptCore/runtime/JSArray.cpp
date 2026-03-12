@@ -36,8 +36,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-const ASCIILiteral LengthExceededTheMaximumArrayLengthError { "Length exceeded the maximum array length"_s };
-
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSArray);
 
 const ClassInfo JSArray::s_info = { "Array"_s, &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArray) };
@@ -766,7 +764,7 @@ std::optional<bool> JSArray::fastIncludes(JSGlobalObject* globalObject, JSValue 
         if (searchElement.isInt32AsAnyInt())
             int32Value = searchElement.asInt32AsAnyInt();
         else if (searchElement.isUndefined()) [[unlikely]]
-            return containsHole(data, length64);
+            return containsHole(data + index, length - index);
         else if (!searchElement.isNumber() || searchElement.asNumber() != 0.0) [[unlikely]]
             return false;
 
@@ -805,7 +803,7 @@ std::optional<bool> JSArray::fastIncludes(JSGlobalObject* globalObject, JSValue 
         auto data = butterfly.contiguousDouble().data();
 
         if (searchElement.isUndefined())
-            return containsHole(data, length64);
+            return containsHole(data + index, length - index);
         if (!searchElement.isNumber())
             return false;
 
@@ -2279,8 +2277,8 @@ static uint64_t calculateFlattenedLength(JSGlobalObject* globalObject, JSArray* 
                 }
             } else {
                 if (element.isObject()) {
-                    auto elementObject = asObject(element);
-                    if (elementObject->isProxy()) [[unlikely]]
+                    JSType type = asObject(element)->type();
+                    if (type == ProxyObjectType || type == DerivedArrayType) [[unlikely]]
                         return std::numeric_limits<uint64_t>::max();
                 }
                 resultLength++;

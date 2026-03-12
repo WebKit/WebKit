@@ -97,7 +97,7 @@ public:
     bool shouldCheckColumnBreaks() const override;
 
     using SpannerMap = SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakPtr<RenderMultiColumnSpannerPlaceholder>>;
-    SpannerMap& spannerMap() { return m_spannerMap; }
+    SpannerMap& spannerMap() LIFETIME_BOUND { return m_spannerMap; }
 
 private:
     ASCIILiteral renderName() const override;

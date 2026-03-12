@@ -535,6 +535,9 @@ template<typename T> concept HasSwitchOn = requires(T t) {
     t.switchOn([](const auto&) {});
 };
 
+template<typename T>
+concept IntegralOrEnum = std::integral<T> || std::is_enum_v<T>;
+
 template<typename Derived, typename Base>
 concept DerivedFromOrConvertibleTo = std::is_base_of_v<Base, Derived> || std::is_convertible_v<Derived, Base>;
 
@@ -1251,6 +1254,11 @@ template<typename T> requires (std::is_pointer_v<T>) inline T safePrintfType(T a
     snprintf(destinationSpan.data(), destinationSpan.size_bytes(), format __VA_OPT__(, SAFE_PRINTF_TYPE(__VA_ARGS__))) \
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#define SAFE_DATALOGF(format, ...) \
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
+    dataLogF(format __VA_OPT__(, SAFE_PRINTF_TYPE(__VA_ARGS__))) \
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 template<typename T>
 concept NonConstByteType = CanBeConstByteType<T> && !std::is_const_v<T>;
 
@@ -1281,7 +1289,7 @@ template<NonConstByteType T, typename U> constexpr auto byteCast(const U& value)
     return ByteCastTraits<U>::template cast<T>(value);
 }
 
-template<typename T> constexpr auto unsignedCast(T value) requires (std::is_integral_v<T> || std::is_enum_v<T>)
+template<IntegralOrEnum T> constexpr auto unsignedCast(T value)
 {
     return static_cast<std::make_unsigned_t<T>>(value);
 }
@@ -1635,6 +1643,8 @@ using WTF::valueOrDefault;
 using WTF::weakOrderingCast;
 using WTF::zeroBytes;
 using WTF::zeroSpan;
+using WTF::DerivedFromOrConvertibleTo;
+using WTF::IntegralOrEnum;
 using WTF::Invocable;
 using WTF::SameSizeUnsignedInteger;
 using WTF::SizedUnsignedTrait;

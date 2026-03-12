@@ -55,7 +55,7 @@ WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef dataRef)
 
 WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef rangeHandleRef)
 {
-    Ref webArchive = API::WebArchive::create(makeSimpleRange(protect(WebKit::toImpl(rangeHandleRef))->coreRange()));
+    Ref webArchive = API::WebArchive::create(makeSimpleRange(WebKit::toImpl(rangeHandleRef)->coreRange()));
     return WebKit::toAPILeakingRef(WTF::move(webArchive));
 }
 

@@ -93,8 +93,8 @@ public:
 
     Ref<PathOperation> clone() const final;
 
-    const Style::URL& url() const { return m_url; }
-    const AtomString& fragment() const { return m_fragment; }
+    const Style::URL& url() const LIFETIME_BOUND { return m_url; }
+    const AtomString& fragment() const LIFETIME_BOUND { return m_fragment; }
 
     std::optional<Path> getPath(const TransformOperationData&, Style::ZoomFactor) const final { return m_path; }
     std::optional<Path> path() const { return m_path; }
@@ -129,7 +129,7 @@ public:
     bool canBlend(const PathOperation&) const final;
     RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
 
-    const Style::BasicShape& shape() const { return m_shape; }
+    const Style::BasicShape& shape() const LIFETIME_BOUND { return m_shape; }
     WindRule windRule() const { return Style::windRule(m_shape); }
     Path pathForReferenceRect(const FloatRect& boundingRect, Style::ZoomFactor zoom) const { return Style::path(m_shape, boundingRect, zoom); }
 
@@ -192,7 +192,7 @@ public:
 
     Ref<PathOperation> clone() const final;
 
-    const Style::RayFunction& ray() const { return m_ray; }
+    const Style::RayFunction& ray() const LIFETIME_BOUND { return m_ray; }
 
     WEBCORE_EXPORT bool canBlend(const PathOperation&) const final;
     RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;

@@ -47,7 +47,7 @@ const FontCascade& TextBox::fontCascade() const
     if (CheckedPtr renderer = dynamicDowncast<RenderCombineText>(this->renderer()); renderer && renderer->isCombined())
         return renderer->textCombineFont();
 
-    return style().fontCascade();
+    return style()->fontCascade();
 }
 
 TextBoxIterator::TextBoxIterator(Box::PathVariant&& pathVariant)

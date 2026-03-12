@@ -110,12 +110,12 @@ public:
 
     explicit constexpr operator bool() const { return !!m_value; }
     
-    constexpr Seconds operator+(Seconds other) const
+    constexpr Seconds NODELETE operator+(Seconds other) const
     {
         return Seconds(value() + other.value());
     }
     
-    constexpr Seconds operator-(Seconds other) const
+    constexpr Seconds NODELETE operator-(Seconds other) const
     {
         return Seconds(value() - other.value());
     }

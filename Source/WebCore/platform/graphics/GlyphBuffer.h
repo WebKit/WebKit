@@ -39,6 +39,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -62,12 +63,12 @@ public:
         m_offsetsInString.clear();
     }
 
-    std::span<const Font*> fonts(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_fonts.mutableSpan().subspan(from, count); }
+    std::span<SingleThreadWeakPtr<const Font>> fonts(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_fonts.mutableSpan().subspan(from, count); }
     std::span<GlyphBufferGlyph> glyphs(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_glyphs.mutableSpan().subspan(from, count); }
     std::span<GlyphBufferAdvance> advances(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_advances.mutableSpan().subspan(from, count); }
     std::span<GlyphBufferOrigin> origins(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_origins.mutableSpan().subspan(from, count); }
     std::span<GlyphBufferStringOffset> offsetsInString(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_offsetsInString.mutableSpan().subspan(from, count); }
-    std::span<const Font* const> fonts(size_t from = 0, size_t count = std::dynamic_extent) const LIFETIME_BOUND { return m_fonts.subspan(from, count); }
+    std::span<const SingleThreadWeakPtr<const Font>> fonts(size_t from = 0, size_t count = std::dynamic_extent) const LIFETIME_BOUND { return m_fonts.subspan(from, count); }
     std::span<const GlyphBufferGlyph> glyphs(size_t from = 0, size_t count = std::dynamic_extent) const LIFETIME_BOUND { return m_glyphs.subspan(from, count); }
     std::span<const GlyphBufferAdvance> advances(size_t from = 0, size_t count = std::dynamic_extent) const LIFETIME_BOUND { return m_advances.subspan(from, count); }
     std::span<const GlyphBufferOrigin> origins(size_t from = 0, size_t count = std::dynamic_extent) const LIFETIME_BOUND { return m_origins.subspan(from, count); }
@@ -263,7 +264,7 @@ private:
         std::swap(m_offsetsInString[index1], m_offsetsInString[index2]);
     }
 
-    Vector<const Font*, glyphBufferInlineCapacity> m_fonts;
+    Vector<SingleThreadWeakPtr<const Font>, glyphBufferInlineCapacity> m_fonts;
     Vector<GlyphBufferGlyph, glyphBufferInlineCapacity> m_glyphs;
     Vector<GlyphBufferAdvance, glyphBufferInlineCapacity> m_advances;
     Vector<GlyphBufferOrigin, glyphBufferInlineCapacity> m_origins;

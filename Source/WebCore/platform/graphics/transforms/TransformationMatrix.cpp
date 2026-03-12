@@ -1009,7 +1009,7 @@ TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double
 static double roundEpsilonToZero(double val)
 {
     if (-DBL_EPSILON < val && val < DBL_EPSILON)
-        return 0.0f;
+        return 0.0;
     return val;
 }
 

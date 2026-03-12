@@ -74,19 +74,19 @@ void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const A
     }
     case AttributeNames::baseFrequencyAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            Ref { m_baseFrequencyX }->setBaseValInternal(result->first);
-            Ref { m_baseFrequencyY }->setBaseValInternal(result->second);
+            m_baseFrequencyX->setBaseValInternal(result->first);
+            m_baseFrequencyY->setBaseValInternal(result->second);
         }
         break;
     case AttributeNames::seedAttr:
-        Ref { m_seed }->setBaseValInternal(newValue.toFloat());
+        m_seed->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::numOctavesAttr: {
         auto result = parseInteger<int>(newValue);
         if (!result)
-            Ref { m_numOctaves }->setBaseValInternal(initialOctavesValue);
+            m_numOctaves->setBaseValInternal(initialOctavesValue);
         else {
-            Ref { m_numOctaves }->setBaseValInternal(*result);
+            m_numOctaves->setBaseValInternal(*result);
 
             if (*result <= 0)
                 protect(protect(document())->svgExtensions())->reportWarning(makeString("feTurbulence: problem parsing numOctaves=\""_s, newValue, "\". numOctaves must be > 0. Filtered element will not be displayed."_s));

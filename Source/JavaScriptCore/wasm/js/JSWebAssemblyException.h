@@ -61,7 +61,7 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     const Wasm::Tag& tag() const { return m_tag.get(); }
-    const FixedVector<uint64_t>& payload() const { return m_payload; }
+    const FixedVector<uint64_t>& payload() const LIFETIME_BOUND { return m_payload; }
     JSValue getArg(JSGlobalObject*, unsigned) const;
 
     static constexpr ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyException, m_payload); }

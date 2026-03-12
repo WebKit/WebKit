@@ -36,7 +36,7 @@ public:
     WEBCORE_EXPORT String text() const;
     WEBCORE_EXPORT void setText(String&&);
 
-    const StringWithDirection& textWithDirection() const { return m_title; }
+    const StringWithDirection& textWithDirection() const LIFETIME_BOUND { return m_title; }
 
     void didFinishInsertingNode() final;
 

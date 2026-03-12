@@ -252,6 +252,7 @@ class Color;
 - (void)sendClickAtPoint:(NSPoint)pointInWindow;
 - (void)rightClickAtPoint:(NSPoint)pointInWindow;
 - (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta;
+- (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta phase:(CGScrollPhase)phase momentumPhase:(CGMomentumScrollPhase)momentumPhase;
 - (BOOL)acceptsFirstMouseAtPoint:(NSPoint)pointInWindow;
 - (NSWindow *)hostWindow;
 - (void)typeCharacter:(char)character modifiers:(NSEventModifierFlags)modifiers;

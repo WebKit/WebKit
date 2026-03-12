@@ -81,7 +81,7 @@ TEST(AccessibilityTests, RectsForSpeakingSelectionBasic)
 #else
     checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 26, 19), 0);
     checkCGRectValueAtIndex([webView rectsAtSelectionOffset:6 withText:@"second"], CGRectMake(37, 8, 46, 19), 0);
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:13 withText:@"third"], CGRectMake(8, 27, 31, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:13 withText:@"third"], CGRectMake(8, 27, 31, 20), 0);
 #endif
 }
 

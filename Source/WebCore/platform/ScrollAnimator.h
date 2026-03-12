@@ -107,7 +107,7 @@ public:
 
     enum NotifyScrollableArea : bool { No, Yes };
     void setCurrentPosition(const FloatPoint&, NotifyScrollableArea = NotifyScrollableArea::No);
-    const FloatPoint& currentPosition() const { return m_currentPosition; }
+    const FloatPoint& currentPosition() const LIFETIME_BOUND { return m_currentPosition; }
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
     WheelEventTestMonitor* wheelEventTestMonitor() const { return m_wheelEventTestMonitor.get(); }

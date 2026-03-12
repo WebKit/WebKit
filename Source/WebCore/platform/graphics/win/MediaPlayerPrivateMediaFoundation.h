@@ -31,14 +31,13 @@
 #include "COMPtr.h"
 #include "MediaPlayerPrivate.h"
 
-#include <D3D9.h>
-#include <Dxva2api.h>
-
-#include <Mfapi.h>
 #include <Mferror.h>
-#include <Mfidl.h>
+#include <d3d9.h>
+#include <dxva2api.h>
 #include <evcode.h>
 #include <evr.h>
+#include <mfapi.h>
+#include <mfidl.h>
 
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
@@ -221,8 +220,8 @@ private:
         void setFrameRate(const MFRatio& fps);
         void setClockRate(float rate) { m_playbackRate = rate; }
 
-        const LONGLONG& lastSampleTime() const { return m_lastSampleTime; }
-        const LONGLONG& frameDuration() const { return m_frameDuration; }
+        const LONGLONG& lastSampleTime() const LIFETIME_BOUND { return m_lastSampleTime; }
+        const LONGLONG& frameDuration() const LIFETIME_BOUND { return m_frameDuration; }
 
         HRESULT startScheduler(IMFClock*);
         HRESULT stopScheduler();

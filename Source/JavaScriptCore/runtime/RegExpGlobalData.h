@@ -34,13 +34,13 @@ class JSGlobalObject;
 
 class RegExpGlobalData {
 public:
-    RegExpCachedResult& cachedResult() { return m_cachedResult; }
+    RegExpCachedResult& cachedResult() LIFETIME_BOUND { return m_cachedResult; }
 
     void setMultiline(bool multiline) { m_multiline = multiline; }
     bool multiline() const { return m_multiline; }
 
     void setInput(JSGlobalObject*, JSString*);
-    JSString* input() { return m_cachedResult.input(); }
+    JSString* input() LIFETIME_BOUND { return m_cachedResult.input(); }
 
     DECLARE_VISIT_AGGREGATE;
 
@@ -58,7 +58,7 @@ public:
     inline MatchResult matchResult() const;
     void resetResultFromCache(JSGlobalObject* owner, RegExp*, JSString*, MatchResult, std::span<const int> ovector);
 
-    RegExpSubstringGlobalAtomCache& substringGlobalAtomCache() { return m_substringGlobalAtomCache; }
+    RegExpSubstringGlobalAtomCache& substringGlobalAtomCache() LIFETIME_BOUND { return m_substringGlobalAtomCache; }
 
 private:
     RegExpCachedResult m_cachedResult;

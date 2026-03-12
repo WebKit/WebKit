@@ -142,9 +142,7 @@ END
 
 IDC_MINIBROWSER ACCELERATORS
 BEGIN
-    "/",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
     "0",            IDM_ACTUAL_SIZE,        VIRTKEY, CONTROL, NOINVERT
-    "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
     "R",            IDM_RELOAD,             VIRTKEY, CONTROL, NOINVERT
     VK_ADD,         IDM_ZOOM_IN,            VIRTKEY, CONTROL, NOINVERT
     VK_OEM_MINUS,   IDM_ZOOM_OUT,           VIRTKEY, CONTROL, NOINVERT

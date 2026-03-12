@@ -511,7 +511,7 @@ void CachedResource::responseReceived(ResourceResponse&& response)
 
 void CachedResource::clearLoader()
 {
-    if (RefPtr loader = m_loader)
+    if (auto* loader = m_loader.get())
         m_identifierForLoadWithoutResourceLoader = loader->identifier();
     else
         ASSERT_NOT_REACHED();

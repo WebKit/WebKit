@@ -63,7 +63,7 @@ public:
     void clear(Style::GridTrackSizingDirection alignmentContextType);
 
 private:
-    const BaselineGroup& baselineGroupForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    const BaselineGroup& baselineGroupForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const LIFETIME_BOUND;
     LayoutUnit marginOverForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
     LayoutUnit marginUnderForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
     LayoutUnit logicalAscentForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType, ItemPosition) const;

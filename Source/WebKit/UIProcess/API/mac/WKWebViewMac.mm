@@ -173,7 +173,7 @@ static WebCore::FloatBoxExtent NODELETE coreBoxExtentsFromEdgeInsets(NSEdgeInset
     if (!page)
         return NO;
 
-    if (!protect(page->legacyMainFrameProcess())->isResponsive())
+    if (!page->legacyMainFrameProcess().isResponsive())
         return NO;
 
     if (page->isSuspended())

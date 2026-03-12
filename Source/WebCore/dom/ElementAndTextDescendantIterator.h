@@ -62,7 +62,7 @@ public:
     unsigned depth() const { return m_depth; }
 
 private:
-    static bool isElementOrText(const Node& node) { return is<Element>(node) || is<Text>(node); }
+    static bool isElementOrText(const Node& node) { return isAnyOf<Element, Text>(node); }
     static Node* firstChild(const Node&);
     static Node* nextSibling(const Node&);
     static Node* previousSibling(const Node&);

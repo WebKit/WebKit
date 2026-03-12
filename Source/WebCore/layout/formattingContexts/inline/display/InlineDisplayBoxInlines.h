@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InlineDisplayBox.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace InlineDisplay {
@@ -35,6 +36,11 @@ inline bool Box::isHorizontal() const { return writingMode().isHorizontal(); }
 inline bool Box::isVisible() const
 {
     return !isFullyTruncated() && style().usedVisibility() == Visibility::Visible;
+}
+
+inline bool Box::isVisibleIgnoringUsedVisibility() const
+{
+    return !isFullyTruncated() && style().visibility() == Visibility::Visible;
 }
 
 }

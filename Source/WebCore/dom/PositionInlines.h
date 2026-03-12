@@ -41,11 +41,19 @@ inline TreeScope* Position::treeScope() const
     return m_anchorNode ? &m_anchorNode->treeScope() : nullptr;
 }
 
-Position lastPositionInNode(Node* anchorNode)
+// firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
+inline Position firstPositionInNode(Node& anchorNode)
 {
-    if (anchorNode->isCharacterDataNode())
-        return Position(anchorNode, anchorNode->length(), Position::PositionIsOffsetInAnchor);
-    return Position(anchorNode, Position::PositionIsAfterChildren);
+    if (anchorNode.isCharacterDataNode())
+        return Position(&anchorNode, 0, Position::PositionIsOffsetInAnchor);
+    return Position(&anchorNode, Position::PositionIsBeforeChildren);
+}
+
+inline Position lastPositionInNode(Node& anchorNode)
+{
+    if (anchorNode.isCharacterDataNode())
+        return Position(&anchorNode, anchorNode.length(), Position::PositionIsOffsetInAnchor);
+    return Position(&anchorNode, Position::PositionIsAfterChildren);
 }
 
 inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode)

@@ -151,7 +151,7 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     if (summary.parentNode() != this)
         return false;
 
-    RefPtr slot = protect(shadowRoot())->findAssignedSlot(summary);
+    RefPtr slot = shadowRoot()->findAssignedSlot(summary);
     return slot && slot == summarySlot.get();
 }
 

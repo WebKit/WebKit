@@ -31,13 +31,16 @@
         history.pushState(null, '', '#1');
         window.scrollTo(0, 0);
         history.back();
-        
-        window.setTimeout(function () {
-            shouldBe('window.scrollX', '123');
-            shouldBe('window.scrollY', '456');
 
-            testManualScrollRestoration();
-        }, 0);
+        window.addEventListener('popstate', function () {
+            // Scroll restoration may happen asynchronously via the UI process.
+            setTimeout(function () {
+                shouldBe('window.scrollX', '123');
+                shouldBe('window.scrollY', '456');
+
+                testManualScrollRestoration();
+            }, 0);
+        }, { once: true });
     }
 
     function testManualScrollRestoration()
@@ -49,13 +52,16 @@
         history.pushState(null, '', '#2');
         window.scrollTo(333, 555);
         history.back();
-        
-        window.setTimeout(function() {
-            shouldBe('window.scrollX', '333');
-            shouldBe('window.scrollY', '555');
-            window.scrollTo(0, 0);
-            finishJSTest();
-        }, 0);
+
+        window.addEventListener('popstate', function() {
+            // Scroll restoration may happen asynchronously via the UI process.
+            setTimeout(function() {
+                shouldBe('window.scrollX', '333');
+                shouldBe('window.scrollY', '555');
+                window.scrollTo(0, 0);
+                finishJSTest();
+            }, 0);
+        }, { once: true });
     }
 
 </script>

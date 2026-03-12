@@ -132,15 +132,20 @@ String Location::origin() const
 
 Ref<DOMStringList> Location::ancestorOrigins() const
 {
-    auto origins = DOMStringList::create();
     RefPtr frame = this->frame();
-    if (!frame)
-        return origins;
-    for (RefPtr ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
-        if (RefPtr origin = ancestor->frameDocumentSecurityOrigin())
-            origins->append(origin->toString());
+    if (!frame) {
+        if (!m_ancestorOrigins || m_ancestorOrigins->length())
+            m_ancestorOrigins = DOMStringList::create();
+        return *m_ancestorOrigins;
     }
-    return origins;
+    if (!m_ancestorOrigins) {
+        m_ancestorOrigins = DOMStringList::create();
+        for (RefPtr ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
+            if (RefPtr origin = ancestor->frameDocumentSecurityOrigin())
+                m_ancestorOrigins->append(origin->toString());
+        }
+    }
+    return *m_ancestorOrigins;
 }
 
 String Location::hash() const

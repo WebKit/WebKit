@@ -212,7 +212,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             addToDefaultStyle(*popoverStyleSheet);
         }
 
-        if ((is<HTMLFormControlElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element)) && !element.document().settings().verticalFormControlsEnabled()) {
+        if (isAnyOf<HTMLFormControlElement, HTMLMeterElement, HTMLProgressElement>(element) && !element.document().settings().verticalFormControlsEnabled()) {
             if (!horizontalFormControlsStyleSheet) {
                 horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet));
                 addToDefaultStyle(*horizontalFormControlsStyleSheet);

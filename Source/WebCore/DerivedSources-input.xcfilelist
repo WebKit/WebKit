@@ -701,6 +701,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/controls-bar.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/controls-bar.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/forward-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/fullscreen-button.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/fullscreen-placard.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/icon-service.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/inline-media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/inline-media-controls.js

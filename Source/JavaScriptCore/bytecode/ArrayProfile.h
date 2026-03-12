@@ -231,8 +231,8 @@ public:
 
     bool mayBeResizableOrGrowableSharedTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray); }
 
-    StructureID* addressOfSpeculationFailureStructureID() { return &m_speculationFailureStructureID; }
-    ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
+    StructureID* addressOfSpeculationFailureStructureID() LIFETIME_BOUND { return &m_speculationFailureStructureID; }
+    ArrayModes* addressOfArrayModes() LIFETIME_BOUND { return &m_observedArrayModes; }
 
     static constexpr ptrdiff_t offsetOfLastSeenStructureID() { return OBJECT_OFFSETOF(ArrayProfile, m_lastSeenStructureID); }
     static constexpr ptrdiff_t offsetOfSpeculationFailureStructureID() { return OBJECT_OFFSETOF(ArrayProfile, m_speculationFailureStructureID); }

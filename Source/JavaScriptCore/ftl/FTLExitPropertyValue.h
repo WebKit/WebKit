@@ -52,7 +52,7 @@ public:
     bool operator!() const { return !m_location; }
     
     DFG::PromotedLocationDescriptor location() const { return m_location; }
-    const ExitValue& value() const { return m_value; }
+    const ExitValue& value() const LIFETIME_BOUND { return m_value; }
     
     ExitPropertyValue withLocalsOffset(int offset) const;
     

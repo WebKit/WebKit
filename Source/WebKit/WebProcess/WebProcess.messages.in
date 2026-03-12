@@ -127,7 +127,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
+    [DeferSendingIfSuspended] SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
 #if PLATFORM(MAC)
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)

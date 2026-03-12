@@ -67,7 +67,7 @@ public:
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
-    RenderLayer& layer() { return m_layer; }
+    RenderLayer& layer() LIFETIME_BOUND { return m_layer; }
 
     void clear();
 

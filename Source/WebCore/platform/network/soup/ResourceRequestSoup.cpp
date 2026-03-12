@@ -91,7 +91,7 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
 
 void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegistryImpl& blobRegistry) const
 {
-    auto formData = httpBody();
+    RefPtr formData = httpBody();
     if (!formData || formData->isEmpty())
         return;
 
@@ -123,7 +123,7 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
 
 GRefPtr<GInputStream> ResourceRequest::createBodyStream() const
 {
-    auto formData = httpBody();
+    RefPtr formData = httpBody();
     if (!formData || formData->isEmpty())
         return nullptr;
 

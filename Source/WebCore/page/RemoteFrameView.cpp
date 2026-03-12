@@ -66,6 +66,14 @@ std::optional<LayoutRect> RemoteFrameView::visibleRectOfChild(const Frame& child
     });
 }
 
+bool RemoteFrameView::ownerElementOfChildFrameUsesDarkAppearance(const Frame& child) const
+{
+    auto maybeInfo = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.getOptional(child.frameID());
+    return maybeInfo.transform([] (auto& info) {
+        return info.useDarkAppearance;
+    }).value_or(false);
+}
+
 // FIXME: Implement all the stubs below.
 
 bool RemoteFrameView::isScrollableOrRubberbandable()

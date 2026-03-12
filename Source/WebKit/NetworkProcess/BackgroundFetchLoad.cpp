@@ -143,7 +143,7 @@ void BackgroundFetchLoad::didReceiveChallenge(AuthenticationChallenge&& challeng
 {
     BGLOAD_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
-        protect(protect(Ref { m_networkLoadChecker }->networkProcess())->authenticationManager())->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
+        protect(protect(m_networkLoadChecker->networkProcess())->authenticationManager())->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
         return;
     }
     WeakPtr weakThis { *this };

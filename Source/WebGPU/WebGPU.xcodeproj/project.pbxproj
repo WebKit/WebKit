@@ -226,6 +226,8 @@
 		97C36CFF29F1730100CFB379 /* Constraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97C36CFD29F1730000CFB379 /* Constraints.cpp */; };
 		97CB27C02F43C25F0024DD32 /* AliasAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = 97CB27BE2F43C25F0024DD32 /* AliasAnalysis.h */; };
 		97CB27C12F43C25F0024DD32 /* AliasAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97CB27BF2F43C25F0024DD32 /* AliasAnalysis.cpp */; };
+		97CB27CC2F579A6F0024DD32 /* UniformityAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97CB27CB2F579A6F0024DD32 /* UniformityAnalysis.cpp */; };
+		97CB27CD2F579A6F0024DD32 /* UniformityAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = 97CB27CA2F579A6F0024DD32 /* UniformityAnalysis.h */; };
 		97D398E32B05106000D8C4AA /* ASTFloat16Literal.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E22B05106000D8C4AA /* ASTFloat16Literal.h */; };
 		97D398E62B06A85B00D8C4AA /* ASTDiagnosticDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E42B06A85B00D8C4AA /* ASTDiagnosticDirective.h */; };
 		97D398E72B06A85B00D8C4AA /* ASTDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E52B06A85B00D8C4AA /* ASTDiagnostic.h */; };
@@ -561,6 +563,8 @@
 		97C36CFD29F1730000CFB379 /* Constraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constraints.cpp; sourceTree = "<group>"; };
 		97CB27BE2F43C25F0024DD32 /* AliasAnalysis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AliasAnalysis.h; sourceTree = "<group>"; };
 		97CB27BF2F43C25F0024DD32 /* AliasAnalysis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AliasAnalysis.cpp; sourceTree = "<group>"; };
+		97CB27CA2F579A6F0024DD32 /* UniformityAnalysis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UniformityAnalysis.h; sourceTree = "<group>"; };
+		97CB27CB2F579A6F0024DD32 /* UniformityAnalysis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UniformityAnalysis.cpp; sourceTree = "<group>"; };
 		97D398E22B05106000D8C4AA /* ASTFloat16Literal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTFloat16Literal.h; sourceTree = "<group>"; };
 		97D398E42B06A85B00D8C4AA /* ASTDiagnosticDirective.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDiagnosticDirective.h; sourceTree = "<group>"; };
 		97D398E52B06A85B00D8C4AA /* ASTDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDiagnostic.h; sourceTree = "<group>"; };
@@ -802,6 +806,8 @@
 				978A9131298BBFD300B37E5E /* Types.h */,
 				978A9136298D40F100B37E5E /* TypeStore.cpp */,
 				978A9135298D40F100B37E5E /* TypeStore.h */,
+				97CB27CB2F579A6F0024DD32 /* UniformityAnalysis.cpp */,
+				97CB27CA2F579A6F0024DD32 /* UniformityAnalysis.h */,
 				97DE28462C348D8A00F4DEC3 /* VisibilityValidator.cpp */,
 				97DE28452C348D8A00F4DEC3 /* VisibilityValidator.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
@@ -1146,6 +1152,7 @@
 				978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */,
 				978A9133298BBFD300B37E5E /* Types.h in Headers */,
 				978A9137298D40F100B37E5E /* TypeStore.h in Headers */,
+				97CB27CD2F579A6F0024DD32 /* UniformityAnalysis.h in Headers */,
 				97DE28472C348D8A00F4DEC3 /* VisibilityValidator.h in Headers */,
 				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
 				97099AC72AC49AAB003B41F8 /* WGSLEnums.h in Headers */,
@@ -1440,6 +1447,7 @@
 				97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */,
 				978A9134298BBFD300B37E5E /* Types.cpp in Sources */,
 				978A9138298D40F100B37E5E /* TypeStore.cpp in Sources */,
+				97CB27CC2F579A6F0024DD32 /* UniformityAnalysis.cpp in Sources */,
 				97DE28482C348D8A00F4DEC3 /* VisibilityValidator.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,
 				97099AC62AC49AAB003B41F8 /* WGSLEnums.cpp in Sources */,

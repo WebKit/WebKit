@@ -68,6 +68,8 @@ public:
     WEBCORE_EXPORT bool addMarker(Node&, DocumentMarker&&);
     void addDraggedContentMarker(const SimpleRange&);
     WEBCORE_EXPORT void addTransparentContentMarker(const SimpleRange&, WTF::UUID);
+    WEBCORE_EXPORT void addDictationStreamingOpacityMarker(const SimpleRange&, float opacity);
+    WEBCORE_EXPORT void removeAllDictationStreamingOpacityMarkers();
 
     void copyMarkers(Node& source, OffsetRange, Node& destination);
     bool hasMarkers() const;

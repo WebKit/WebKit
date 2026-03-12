@@ -120,10 +120,10 @@ public:
     // Table layout always uses the table's writing mode.
     const WritingMode tableWritingMode() const { return table()->writingMode(); }
 
-    inline const BorderValue& borderAdjoiningTableStart() const;
-    inline const BorderValue& borderAdjoiningTableEnd() const;
-    inline const BorderValue& borderAdjoiningCellBefore(const RenderTableCell&);
-    inline const BorderValue& borderAdjoiningCellAfter(const RenderTableCell&);
+    inline const BorderValue& borderAdjoiningTableStart() const LIFETIME_BOUND;
+    inline const BorderValue& borderAdjoiningTableEnd() const LIFETIME_BOUND;
+    inline const BorderValue& borderAdjoiningCellBefore(const RenderTableCell&) LIFETIME_BOUND;
+    inline const BorderValue& borderAdjoiningCellAfter(const RenderTableCell&) LIFETIME_BOUND;
 
     using RenderBlockFlow::nodeAtPoint;
 #if ASSERT_ENABLED

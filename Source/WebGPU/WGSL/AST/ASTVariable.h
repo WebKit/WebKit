@@ -67,11 +67,11 @@ public:
     VariableFlavor& flavor() { return m_flavor; };
 
     VariableRole role() const { return m_role; }
-    VariableRole& role() { return m_role; }
+    VariableRole& role() LIFETIME_BOUND { return m_role; }
 
     Identifier& name() override { return m_name; }
     Identifier& originalName() { return m_originalName; }
-    Attribute::List& attributes() { return m_attributes; }
+    Attribute::List& attributes() LIFETIME_BOUND { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier; }
     Expression* maybeTypeName() { return m_type; }
     Expression* maybeInitializer() { return m_initializer; }

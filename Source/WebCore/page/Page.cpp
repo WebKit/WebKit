@@ -213,6 +213,7 @@
 #include "Widget.h"
 #include "WindowEventLoop.h"
 #include "WindowFeatures.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/VM.h>
 #include <ranges>
@@ -509,7 +510,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
         MemoryPressureHandler::setPageCount(gNonUtilityPageCount);
     }
 
-    protect(storageNamespaceProvider())->setSessionStorageQuota(m_settings->sessionStorageQuota());
+    storageNamespaceProvider().setSessionStorageQuota(m_settings->sessionStorageQuota());
 
 #if PLATFORM(COCOA)
     platformInitialize();
@@ -564,7 +565,7 @@ Page::~Page()
         scrollingCoordinator->pageDestroyed();
 
 #if ENABLE(RESOURCE_USAGE)
-    if (RefPtr resourceUsageOverlay = m_resourceUsageOverlay)
+    if (auto* resourceUsageOverlay = m_resourceUsageOverlay.get())
         resourceUsageOverlay->detachFromPage();
 #endif
 
@@ -606,7 +607,7 @@ uint64_t Page::renderTreeSize() const
 {
     uint64_t total = 0;
     forEachDocument([&] (Document& document) {
-        if (CheckedPtr renderView = document.renderView())
+        if (auto* renderView = document.renderView())
             total += renderView->rendererCount();
     });
     return total;
@@ -631,7 +632,7 @@ void Page::destroyRenderTrees()
 
 OptionSet<DisabledAdaptations> Page::disabledAdaptations() const
 {
-    if (RefPtr localTopDocument = this->localTopDocument())
+    if (auto* localTopDocument = this->localTopDocument())
         return localTopDocument->disabledAdaptations();
     return { };
 }
@@ -969,7 +970,7 @@ void Page::updateTopDocumentSyncData(const DocumentSyncSerializationData& data)
 
 void Page::updateTopDocumentSyncData(Ref<DocumentSyncData>&& data)
 {
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
         // Prefer the main LocalFrame document's data, but if the main LocalFrame
         // has no document, accept the remote pushed data.
         if (localFrame->document())
@@ -1106,7 +1107,7 @@ void Page::refreshPlugins(bool reload)
     WeakHashSet<PluginInfoProvider> pluginInfoProviders;
 
     for (auto& page : allPages())
-        pluginInfoProviders.add(protect(Ref { page.get() }->pluginInfoProvider()));
+        pluginInfoProviders.add(protect(page.get().pluginInfoProvider()));
 
     for (Ref pluginInfoProvider : pluginInfoProviders)
         pluginInfoProvider->refresh(reload);
@@ -2011,9 +2012,9 @@ void Page::setHorizontalScrollElasticity(ScrollElasticity elasticity)
         return;
     
     m_horizontalScrollElasticity = elasticity;
-    
-    RefPtr localMainFrame = this->localMainFrame();
-    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
+
+    auto* localMainFrame = this->localMainFrame();
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->setHorizontalScrollElasticity(elasticity);
 }
 
@@ -2179,7 +2180,9 @@ void Page::syncLocalFrameInfoToRemote()
                 if (CheckedPtr ownerRenderer = child->ownerRenderer())
                     usedZoom = ownerRenderer->style().usedZoom();
 
-                childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo { .visibleRectInParent = visibleRect, .usedZoom = usedZoom });
+                auto useDarkAppearance = frameView->useDarkAppearance();
+
+                childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo { .visibleRectInParent = visibleRect, .usedZoom = usedZoom, .useDarkAppearance = useDarkAppearance });
             }
 
             frame.loader().client().broadcastChildrenFrameLayoutInfoToOtherProcesses(childrenFrameLayoutInfo);
@@ -2308,8 +2311,10 @@ void Page::updateRendering()
 
     runProcessingStep(RenderingUpdateStep::FocusFixup, [&] (Document& document) {
         if (RefPtr focusedElement = document.focusedElement()) {
-            if (!focusedElement->isFocusable())
+            if (!focusedElement->isFocusable()) {
                 document.setFocusedElement(nullptr);
+                document.setFocusNavigationStartingNode(focusedElement.get());
+            }
         }
     });
 
@@ -2343,7 +2348,7 @@ void Page::updateRendering()
 
     for (auto& document : initialDocuments) {
         if (document && document->window())
-            protect(document->window())->unfreezeNowTimestamp();
+            document->window()->unfreezeNowTimestamp();
     }
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::WheelEventMonitorCallbacks);
@@ -2598,7 +2603,7 @@ void Page::prioritizeVisibleResources()
             return LoadSchedulingMode::Prioritized;
         
         // Async script execution may generate more resource loads that benefit from prioritization.
-        if (CheckedPtr scriptRunner = localTopDocument->scriptRunnerIfExists(); scriptRunner && scriptRunner->hasPendingScripts())
+        if (auto* scriptRunner = localTopDocument->scriptRunnerIfExists(); scriptRunner && scriptRunner->hasPendingScripts())
             return LoadSchedulingMode::Prioritized;
         
         // We still haven't finished loading the visible resources.
@@ -3133,7 +3138,7 @@ RefPtr<HTMLMediaElement> Page::bestMediaElementForRemoteControls(MediaElementSes
         return !document || &element->document() == document;
     }, purpose);
 
-    if (RefPtr mediaElementSession = dynamicDowncast<MediaElementSession>(selectedSession.get()))
+    if (auto* mediaElementSession = dynamicDowncast<MediaElementSession>(selectedSession.get()))
         return mediaElementSession->element();
 
     return nullptr;
@@ -4196,6 +4201,19 @@ void Page::clearIDBConnection()
     m_idbConnectionToServer = nullptr;
 }
 
+void Page::clearIDBConnectionOnAllDocuments()
+{
+    clearIDBConnection();
+    forEachDocument([](Document& document) {
+        document.clearIDBConnectionProxy();
+    });
+}
+
+void Page::refreshIDBConnectionForWorkers()
+{
+    WorkerGlobalScope::replaceIDBConnectionProxyOnAllWorkers(idbConnection().proxy());
+}
+
 #if ENABLE(RESOURCE_USAGE)
 void Page::setResourceUsageOverlayVisible(bool visible)
 {
@@ -4343,7 +4361,7 @@ bool Page::useDarkAppearance() const
     if (m_useDarkAppearanceOverride)
         return m_useDarkAppearanceOverride.value();
 
-    if (RefPtr documentLoader = localMainFrame->loader().documentLoader()) {
+    if (auto* documentLoader = localMainFrame->loader().documentLoader()) {
         auto colorSchemePreference = documentLoader->colorSchemePreference();
         if (colorSchemePreference != ColorSchemePreference::NoPreference)
             return colorSchemePreference == ColorSchemePreference::Dark;
@@ -4439,7 +4457,7 @@ LocalFrame* Page::localMainFrame() const
 
 Document* Page::localTopDocument() const
 {
-    if (RefPtr localMainFrame = this->localMainFrame())
+    if (auto* localMainFrame = this->localMainFrame())
         return localMainFrame->document();
     return nullptr;
 }
@@ -4463,7 +4481,7 @@ void Page::didChangeMainDocument(Document* newDocument)
 
     clearSampledPageTopColor();
 
-    protect(m_elementTargetingController)->didChangeMainDocument(newDocument);
+    m_elementTargetingController->didChangeMainDocument(newDocument);
 
     updateActiveNowPlayingSessionNow();
 }
@@ -5137,7 +5155,7 @@ void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& 
     document->setSiteForCookies(originAsURL);
     document->setFirstPartyForCookies(originAsURL);
 
-    if (RefPtr documentLoader = localMainFrame->loader().documentLoader())
+    if (auto* documentLoader = localMainFrame->loader().documentLoader())
         documentLoader->setAdvancedPrivacyProtections(advancedPrivacyProtections);
 
     if (document->settings().storageBlockingPolicy() != StorageBlockingPolicy::BlockThirdParty)
@@ -5380,7 +5398,7 @@ void Page::updateFixedContainerEdges(BoxSideSet sides)
         auto maximumOffset = frameView->maximumScrollOffset();
 
         bool canSampleTopEdge = settings().topContentInsetBackgroundCanChangeAfterScrolling()
-            || (!frameView->wasEverScrolledExplicitlyByUser() && !m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures)
+            || (!frameView->wasEverScrolledExplicitlyByUserBelowTopEdge() && !m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures)
             || document->parsing();
 
         if (scrollOffset.y() < minimumOffset.y() || !canSampleTopEdge)

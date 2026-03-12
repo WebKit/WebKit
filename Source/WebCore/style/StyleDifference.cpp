@@ -57,7 +57,7 @@ public:
             return false;
         // If our width is auto and left or right is specified then this
         // is not just a movement - we need to resize to our container.
-        if ((!a.left().isAuto() || !a.right().isAuto()) && width.isIntrinsicOrLegacyIntrinsicOrAuto())
+        if ((!a.left().isAuto() || !a.right().isAuto()) && width.isSizingKeywordOrAuto())
             return false;
 
         // One of the units is fixed or percent in both directions and stayed

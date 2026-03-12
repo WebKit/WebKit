@@ -65,6 +65,7 @@ public:
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
 
+    Vector<WebCore::RegistrableDomain> fetchRegistrableDomains() const;
 private:
     using UnattributedPrivateClickMeasurement = WebCore::PrivateClickMeasurement;
     using AttributedPrivateClickMeasurement = WebCore::PrivateClickMeasurement;

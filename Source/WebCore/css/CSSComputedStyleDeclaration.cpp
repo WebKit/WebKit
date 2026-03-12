@@ -112,7 +112,7 @@ const Settings* CSSComputedStyleDeclaration::settings() const
 
 const FixedVector<CSSPropertyID>& CSSComputedStyleDeclaration::exposedComputedCSSPropertyIDs() const
 {
-    return protect(protect(element())->document())->exposedComputedCSSPropertyIDs();
+    return protect(element().document())->exposedComputedCSSPropertyIDs();
 }
 
 String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) const

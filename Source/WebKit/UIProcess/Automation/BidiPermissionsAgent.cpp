@@ -87,7 +87,7 @@ void BidiPermissionsAgent::setPermission(Ref<JSON::Object>&& descriptor, const S
         });
 
         for (auto page : allPageProxiesFor(*session)) {
-            auto pageOrigin = RegistrableDomain { protect(page->pageLoadState())->origin() };
+            auto pageOrigin = RegistrableDomain { page->pageLoadState().origin() };
             if (pageOrigin != topFrameOrigin)
                 continue;
 

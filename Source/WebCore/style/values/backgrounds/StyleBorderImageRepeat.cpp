@@ -36,7 +36,7 @@ namespace Style {
 
 auto CSSValueConversion<BorderImageRepeat>::operator()(BuilderState& state, const CSSValue& value) -> BorderImageRepeat
 {
-    if (RefPtr pairValue = dynamicDowncast<CSSValuePair>(value)) {
+    if (auto* pairValue = dynamicDowncast<CSSValuePair>(value)) {
         return BorderImageRepeat {
             toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->first()),
             toStyleFromCSSValue<NinePieceImageRule>(state, pairValue->second()),

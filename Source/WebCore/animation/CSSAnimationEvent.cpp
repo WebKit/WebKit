@@ -32,8 +32,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSAnimationEvent);
 
-CSSAnimationEvent::CSSAnimationEvent(Document& document, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : StyleOriginatedAnimationEvent(EventInterfaceType::CSSAnimationEvent, type, WTF::move(initializer), isTrusted, initializer.elapsedTime, WTF::move(initializer.pseudoElement), document)
+CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : StyleOriginatedAnimationEvent(EventInterfaceType::CSSAnimationEvent, type, WTF::move(initializer), isTrusted, initializer.elapsedTime, WTF::move(initializer.pseudoElement))
     , m_animationName(WTF::move(initializer.animationName))
 {
 }

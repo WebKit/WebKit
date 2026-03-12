@@ -98,8 +98,8 @@ public:
         }
     };
 
-    Vector<ClippingStackEntry>& stack() { return m_stack; }
-    const Vector<ClippingStackEntry>& stack() const { return m_stack; }
+    Vector<ClippingStackEntry>& stack() LIFETIME_BOUND { return m_stack; }
+    const Vector<ClippingStackEntry>& stack() const LIFETIME_BOUND { return m_stack; }
 
 private:
     // Order is ancestors to descendants.

@@ -58,7 +58,7 @@ public:
         m_semaphore.signal();
     }
 
-    const Semaphore& semaphore() const { return m_semaphore; }
+    const Semaphore& semaphore() const LIFETIME_BOUND { return m_semaphore; }
 #endif
 
 private:

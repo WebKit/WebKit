@@ -2130,9 +2130,9 @@ static uint64_t flatIntoArray(JSGlobalObject* globalObject, JSObject* target, JS
         if (!element)
             continue;
 
-        bool elementIsArray = isArray(globalObject, element);
+        bool elementIsArray = depth > 0 && isArray(globalObject, element);
         RETURN_IF_EXCEPTION(scope, { });
-        if (depth > 0 && elementIsArray) {
+        if (elementIsArray) {
             uint64_t newDepth = depth - 1;
             if (depth == std::numeric_limits<uint64_t>::max()) [[unlikely]]
                 newDepth = depth;

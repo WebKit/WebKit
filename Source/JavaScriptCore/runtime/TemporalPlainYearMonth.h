@@ -53,7 +53,7 @@ public:
     static TemporalPlainYearMonth* from(JSGlobalObject*, JSValue, JSValue);
     static TemporalPlainYearMonth* from(JSGlobalObject*, StringView);
 
-    TemporalCalendar* calendar() { return m_calendar.get(this); }
+    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainYearMonth plainYearMonth() const { return m_plainYearMonth; }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_YEAR_MONTH_FIELD(name, capitalizedName) \

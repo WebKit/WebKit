@@ -94,7 +94,7 @@ StyleSelfAlignmentData JustifyItems::resolve() const
 
 auto CSSValueConversion<JustifyItems>::operator()(BuilderState& state, const CSSValue& value) -> JustifyItems
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         // normal
         case CSSValueNormal:

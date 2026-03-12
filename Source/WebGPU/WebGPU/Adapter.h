@@ -63,14 +63,14 @@ public:
     ~Adapter();
 
     size_t enumerateFeatures(WGPUFeatureName* features);
-    bool getLimits(WGPUSupportedLimits&);
+    bool NODELETE getLimits(WGPUSupportedLimits&);
     void getProperties(WGPUAdapterProperties&);
     bool hasFeature(WGPUFeatureName);
     void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback);
 
     bool isValid() const { return m_device; }
     void makeInvalid() { m_device = nil; }
-    bool isXRCompatible() const;
+    bool NODELETE isXRCompatible() const;
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
     ThreadSafeWeakPtr<Instance> weakInstance() const { return m_instance; }

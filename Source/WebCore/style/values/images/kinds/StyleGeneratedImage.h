@@ -43,7 +43,7 @@ namespace Style {
 
 class GeneratedImage : public Image {
 public:
-    const SingleThreadWeakHashCountedSet<RenderElement>& clients() const { return m_clients; }
+    const SingleThreadWeakHashCountedSet<RenderElement>& clients() const LIFETIME_BOUND { return m_clients; }
 
 protected:
     explicit GeneratedImage(Image::Type, bool fixedSize);

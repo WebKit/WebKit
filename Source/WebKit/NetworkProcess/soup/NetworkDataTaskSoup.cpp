@@ -786,7 +786,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 
     if (m_response.httpStatusCode() == 307 || m_response.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
-        auto body = m_firstRequest.httpBody();
+        RefPtr body = m_firstRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
             request.setHTTPBody(WTF::move(body));
 

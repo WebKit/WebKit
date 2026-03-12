@@ -133,6 +133,7 @@ private:
     // DataListSuggestionsClient
     IntRect elementRectInRootViewCoordinates() const final;
     Vector<DataListSuggestion> suggestions() final;
+    std::optional<FrameIdentifier> rootFrameID() const final;
     void didSelectDataListOption(const String&) final;
     void didCloseSuggestions() final;
 

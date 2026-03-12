@@ -31,18 +31,22 @@ test test test test <br>
 <script>
 var output = "This tests that the scrollToMakeVisible accessibility action works as expected on the Mac.\n\n";
 
+var newButtonX, newButtonY, initialButtonX, initialButtonY;
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
-    var button = accessibilityController.accessibleElementById("button");
-    var initialButtonX = button.x;
-    var initialButtonY = button.y;
-
-    output += "Gathered initial button position and now scrolling to make it visible.\n";
-    button.scrollToMakeVisible();
-
-    var newButtonX, newButtonY;
     setTimeout(async function() {
+        await waitFor(() => {
+            return accessibilityController.rootElement.x != 0;
+        });
+
+        var button = accessibilityController.accessibleElementById("button");
+        initialButtonX = button.x;
+        initialButtonY = button.y;
+
+        output += "Gathered initial button position and now scrolling to make it visible.\n";
+        button.scrollToMakeVisible();
+
         await waitFor(() => button.y != initialButtonY);
         newButtonX = button.x;
         newButtonY = button.y;

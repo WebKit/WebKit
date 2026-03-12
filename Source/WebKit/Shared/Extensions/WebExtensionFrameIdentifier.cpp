@@ -43,7 +43,7 @@ WebCore::FrameIdentifier toWebCoreFrameIdentifier(const WebExtensionFrameIdentif
 
 bool matchesFrame(const WebExtensionFrameIdentifier& identifier, const WebFrame& frame)
 {
-    if (RefPtr coreFrame = frame.coreFrame(); coreFrame && coreFrame->isMainFrame() && isMainFrame(identifier))
+    if (auto* coreFrame = frame.coreFrame(); coreFrame && coreFrame->isMainFrame() && isMainFrame(identifier))
         return true;
 
     if (RefPtr page = frame.page(); page && &page->mainWebFrame() == &frame && isMainFrame(identifier))
@@ -70,7 +70,7 @@ WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(std::optional<WebCore:
 
 WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame& frame)
 {
-    if (RefPtr coreFrame = frame.coreFrame(); coreFrame && coreFrame->isMainFrame())
+    if (auto* coreFrame = frame.coreFrame(); coreFrame && coreFrame->isMainFrame())
         return WebExtensionFrameConstants::MainFrameIdentifier;
 
     if (RefPtr page = frame.page(); page && &page->mainWebFrame() == &frame)

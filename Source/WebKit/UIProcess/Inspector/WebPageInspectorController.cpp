@@ -64,7 +64,7 @@ static String getTargetID(const WebFrameProxy& frame)
 
 static String getTargetID(const ProvisionalFrameProxy& provisionalFrame)
 {
-    return FrameInspectorTarget::toTargetID(protect(provisionalFrame.frame())->frameID(), provisionalFrame.process().coreProcessIdentifier());
+    return FrameInspectorTarget::toTargetID(provisionalFrame.frame().frameID(), provisionalFrame.process().coreProcessIdentifier());
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageInspectorController);

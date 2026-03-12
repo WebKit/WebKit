@@ -33,6 +33,8 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#define CACHE_LINE_ALIGNED alignas(64)
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
@@ -48,7 +50,7 @@ enum class LexerFlags : uint8_t {
 bool isLexerKeyword(const Identifier&);
 
 template <typename T>
-class Lexer {
+class CACHE_LINE_ALIGNED Lexer {
     WTF_MAKE_NONCOPYABLE(Lexer);
     WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(Lexer);
 public:
@@ -211,39 +213,36 @@ private:
 
     static constexpr size_t initialReadBufferCapacity = 32;
 
-    int m_lineNumber;
-    int m_lastLineNumber;
-
-    Vector<Latin1Character> m_buffer8;
-    Vector<char16_t> m_buffer16;
-    Vector<char16_t> m_bufferForRawTemplateString16;
-    bool m_hasLineTerminatorBeforeToken;
-    int m_lastToken;
-
-    const SourceCode* m_source;
-    unsigned m_sourceOffset;
+    // Hot fields, grouped to share a cache line. Depending on sizeof(T),
+    // the line may or may not include m_lastLineNumber.
+    VM& m_vm;
+    IdentifierArena* m_arena;
     const T* m_code;
     const T* m_codeStart;
     const T* m_codeEnd;
-    const T* m_codeStartPlusOffset;
     const T* m_lineStart;
-    JSTextPosition m_positionBeforeLastNewline;
-    JSTokenLocation m_lastTokenLocation;
-    bool m_isReparsingFunction;
+    int m_lineNumber;
+    int m_lastToken;
+    T m_current;
+    bool m_hasLineTerminatorBeforeToken;
     bool m_atLineStart;
+    bool m_parsingBuiltinFunction;
+    int m_lastLineNumber;
+
+    JSTokenLocation m_lastTokenLocation;
+    JSTextPosition m_positionBeforeLastNewline;
+    JSParserScriptMode m_scriptMode;
+    Vector<Latin1Character> m_buffer8;
+    Vector<char16_t> m_buffer16;
+    Vector<char16_t> m_bufferForRawTemplateString16;
+    bool m_isReparsingFunction;
     bool m_error;
     String m_lexErrorMessage;
-
     String m_sourceURLDirective;
     String m_sourceMappingURLDirective;
-
-    T m_current;
-
-    IdentifierArena* m_arena;
-
-    VM& m_vm;
-    bool m_parsingBuiltinFunction;
-    JSParserScriptMode m_scriptMode;
+    const SourceCode* m_source;
+    unsigned m_sourceOffset;
+    const T* m_codeStartPlusOffset;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename T>, Lexer<T>);

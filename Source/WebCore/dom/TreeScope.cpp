@@ -409,7 +409,7 @@ RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoin
 
 RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY, HitTestSource source)
 {
-    if (!protect(documentScope())->hasLivingRenderTree())
+    if (!documentScope().hasLivingRenderTree())
         return nullptr;
 
     auto node = nodeFromPoint(LayoutPoint { clientX, clientY }, nullptr, source);
@@ -550,7 +550,7 @@ Element* TreeScope::pointerLockElement() const
     RefPtr element = page->pointerLockController().element();
     if (!element || &element->document() != document.ptr())
         return nullptr;
-    return ancestorElementInThisScope(element.get());
+    return ancestorElementInThisScope(element);
 }
 
 #endif

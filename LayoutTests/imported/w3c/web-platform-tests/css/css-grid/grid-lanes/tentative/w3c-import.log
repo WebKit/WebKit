@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/column-empty-grid-lanes-container-content-editable-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-columns-item-containing-block-is-grid-content-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-columns-item-containing-block-is-grid-content-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-direction-style-map-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-fieldset-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-grid-template-columns-computed-withcontent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/grid-lanes-not-inhibited-001-expected.html

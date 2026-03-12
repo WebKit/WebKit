@@ -188,6 +188,8 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toWellFormed, stringProtoFuncToWellFormed, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
 
     // The constructor will be added later, after StringConstructor has been built
+
+    structure()->setMayBePrototype(true);
 }
 
 StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

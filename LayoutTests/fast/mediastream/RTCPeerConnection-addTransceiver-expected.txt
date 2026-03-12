@@ -8,13 +8,13 @@ PASS pc.getTransceivers().length is 0
 *** Test arguments
 *** 'trackOrKind' argument is mandatory
 PASS pc.addTransceiver() threw exception TypeError: Not enough arguments.
-PASS pc.addTransceiver({}) threw exception TypeError: Type error.
+PASS pc.addTransceiver({}) threw exception TypeError: Kind should be audio or video.
 *** Bad type as first argument
-PASS pc.addTransceiver(null) threw exception TypeError: Type error.
-PASS pc.addTransceiver(null, {}) threw exception TypeError: Type error.
-PASS pc.addTransceiver(stream) threw exception TypeError: Type error.
+PASS pc.addTransceiver(null) threw exception TypeError: Kind should be audio or video.
+PASS pc.addTransceiver(null, {}) threw exception TypeError: Kind should be audio or video.
+PASS pc.addTransceiver(stream) threw exception TypeError: Kind should be audio or video.
 *** Bad track kind
-PASS pc.addTransceiver('foo') threw exception TypeError: Type error.
+PASS pc.addTransceiver('foo') threw exception TypeError: Kind should be audio or video.
 *** Bad direction value
 PASS pc.addTransceiver("audio", {"direction": "foo"}) threw exception TypeError: Type error.
 

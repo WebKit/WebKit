@@ -127,7 +127,7 @@ public:
     WEBCORE_EXPORT void setMuteStatusChangedCallback(Function<void(bool)>&&);
     void handleMuteStatusChangedNotification(bool);
 
-    const std::optional<CAAudioStreamDescription>& microphoneProcFormat() const { return m_microphoneProcFormat; }
+    const std::optional<CAAudioStreamDescription>& microphoneProcFormat() const LIFETIME_BOUND { return m_microphoneProcFormat; }
 
     LongCapabilityRange sampleRateCapacities() const final { return m_sampleRateCapabilities; }
     int actualSampleRate() const final;

@@ -251,7 +251,9 @@ class TwistedAdditions(object):
                 agent = Agent(reactor, connectTimeout=timeout)
 
             body = cls.JSONProducer(json) if json else None
-            response = yield agent.request(typ, url.encode('utf-8'), Headers(headers), body)
+            response_d = agent.request(typ, url.encode('utf-8'), Headers(headers), body)
+            response_d.addTimeout(timeout, reactor, onTimeoutCancel=lambda _1, _2: None)
+            response = yield response_d
             finished = defer.Deferred()
             response.deliverBody(cls.Printer(finished))
 

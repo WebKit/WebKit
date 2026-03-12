@@ -120,7 +120,7 @@ inline Node* next(const Text& current, const Node* stayWithin) { return nextSkip
 
 inline Node* previous(const Node& current, const Node* stayWithin)
 {
-    if (RefPtr previous = current.previousSibling())
+    if (auto* previous = current.previousSibling())
         return deepLastChild(*previous);
     if (current.parentNode() == stayWithin)
         return nullptr;

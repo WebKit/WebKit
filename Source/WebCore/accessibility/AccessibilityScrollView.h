@@ -67,8 +67,7 @@ public:
     AffineTransform frameScreenTransform() const final { return frameGeometry().screenTransform; }
 
     void setInheritedFrameState(InheritedFrameState);
-    const InheritedFrameState& inheritedFrameState() const { return m_inheritedFrameState; }
-    bool isAXHidden() const final;
+    const InheritedFrameState& inheritedFrameState() const LIFETIME_BOUND { return m_inheritedFrameState; }
     bool isARIAHidden() const final;
     void updateHostedFrameInheritedState();
 
@@ -106,7 +105,7 @@ private:
     void setFocused(bool) final;
     bool canSetFocusAttribute() const final;
     bool isFocused() const final;
-    void NODELETE addLocalFrameChild();
+    void addLocalFrameChild();
     void addRemoteFrameChild();
     const AccessibilityScrollView* frameRootScrollView() const;
 

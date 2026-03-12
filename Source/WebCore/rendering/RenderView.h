@@ -97,7 +97,7 @@ public:
     // Return the renderer whose background style is used to paint the root background.
     RenderElement* rendererForRootBackground() const;
 
-    RenderSelection& selection() { return m_selection; }
+    RenderSelection& selection() LIFETIME_BOUND { return m_selection; }
 
     bool printing() const;
 
@@ -130,7 +130,7 @@ public:
         m_legacyPrinting.m_truncatorWidth = 0;
         m_legacyPrinting.m_forcedPageBreak = false;
     }
-    const IntRect& printRect() const { return m_legacyPrinting.m_printRect; }
+    const IntRect& printRect() const LIFETIME_BOUND { return m_legacyPrinting.m_printRect; }
     void setPrintRect(const IntRect& r) { m_legacyPrinting.m_printRect = r; }
     // End deprecated functions.
 
@@ -167,7 +167,7 @@ public:
     void decrementRendersWithOutline() { ASSERT(m_renderersWithOutlineCount > 0); --m_renderersWithOutlineCount; }
     bool hasRenderersWithOutline() const { return m_renderersWithOutlineCount; }
 
-    ImageQualityController& imageQualityController();
+    ImageQualityController& imageQualityController() LIFETIME_BOUND;
 
     void setHasSoftwareFilters(bool hasSoftwareFilters) { m_hasSoftwareFilters = hasSoftwareFilters; }
     bool hasSoftwareFilters() const { return m_hasSoftwareFilters; }
@@ -201,19 +201,19 @@ public:
 
     void registerBoxWithScrollSnapPositions(const RenderBox&);
     void unregisterBoxWithScrollSnapPositions(const RenderBox&);
-    const SingleThreadWeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
+    const SingleThreadWeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() LIFETIME_BOUND { return m_boxesWithScrollSnapPositions; }
 
     void registerContainerQueryBox(const RenderBox&);
     void unregisterContainerQueryBox(const RenderBox&);
-    const SingleThreadWeakHashSet<const RenderBox>& containerQueryBoxes() const { return m_containerQueryBoxes; }
+    const SingleThreadWeakHashSet<const RenderBox>& containerQueryBoxes() const LIFETIME_BOUND { return m_containerQueryBoxes; }
 
     void registerAnchor(const RenderBoxModelObject&);
     void unregisterAnchor(const RenderBoxModelObject&);
-    const SingleThreadWeakHashSet<const RenderBoxModelObject>& anchors() const { return m_anchors; }
+    const SingleThreadWeakHashSet<const RenderBoxModelObject>& anchors() const LIFETIME_BOUND { return m_anchors; }
 
     void registerPositionTryBox(const RenderBox&);
     void unregisterPositionTryBox(const RenderBox&);
-    const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes() const { return m_positionTryBoxes; }
+    const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes() const LIFETIME_BOUND { return m_positionTryBoxes; }
 
     SingleThreadWeakPtr<RenderBlockFlow> NODELETE viewTransitionContainingBlock() const;
     void setViewTransitionContainingBlock(RenderBlockFlow& renderer);

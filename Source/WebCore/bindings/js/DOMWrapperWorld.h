@@ -81,13 +81,13 @@ public:
     void setIsMediaControls() { m_isMediaControls = true; }
     bool isMediaControls() const { return m_isMediaControls; }
 
-    DOMObjectWrapperMap& wrappers() { return m_wrappers; }
+    DOMObjectWrapperMap& wrappers() LIFETIME_BOUND { return m_wrappers; }
 
     Type type() const { return m_type; }
     bool isNormal() const { return m_type == Type::Normal; }
     bool isUser() const { return m_type == Type::User; }
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
 
     JSC::VM& vm() const { return m_vm; }
 

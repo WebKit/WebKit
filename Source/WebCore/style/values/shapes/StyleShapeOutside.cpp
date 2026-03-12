@@ -50,7 +50,7 @@ bool ShapeOutside::Image::isValid() const
 
 auto CSSValueConversion<ShapeOutside>::operator()(BuilderState& state, const CSSValue& value) -> ShapeOutside
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueNone)
             return CSS::Keyword::None { };
 

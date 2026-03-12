@@ -67,7 +67,7 @@ static VisiblePosition beforeStartOfCurrentBlock(const VisiblePosition& visibleP
 {
     auto position = visiblePosition.deepEquivalent();
     Ref blockContainer = nearestBlockAncestor(*protect(position.containerNode()).get());
-    VisiblePosition firstPositionInBlock = firstPositionInNode(blockContainer.ptr());
+    VisiblePosition firstPositionInBlock = firstPositionInNode(blockContainer);
     if (firstPositionInBlock == visiblePosition)
         return visiblePosition.previous();
     return visiblePosition;
@@ -77,7 +77,7 @@ static VisiblePosition afterEndOfCurrentBlock(const VisiblePosition& visiblePosi
 {
     auto position = visiblePosition.deepEquivalent();
     Ref blockContainer = nearestBlockAncestor(*protect(position.containerNode()).get());
-    VisiblePosition lastPositionInBlock = lastPositionInNode(blockContainer.ptr());
+    VisiblePosition lastPositionInBlock = lastPositionInNode(blockContainer);
     if (lastPositionInBlock == visiblePosition)
         return visiblePosition.next();
     return visiblePosition;

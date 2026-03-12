@@ -96,17 +96,17 @@
 
 - (BOOL)isPaired
 {
-    return protect(*_session)->isPaired();
+    return _session->isPaired();
 }
 
 - (BOOL)isPendingTermination
 {
-    return protect(*_session)->isPendingTermination();
+    return _session->isPendingTermination();
 }
 
 - (BOOL)isSimulatingUserInteraction
 {
-    return protect(*_session)->isSimulatingUserInteraction();
+    return _session->isSimulatingUserInteraction();
 }
 
 - (void)terminate

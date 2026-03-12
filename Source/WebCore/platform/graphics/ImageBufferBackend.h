@@ -171,7 +171,7 @@ public:
 
     virtual void prepareForDisplay() { }
 
-    const Parameters& parameters() const { return m_parameters; }
+    const Parameters& parameters() const LIFETIME_BOUND { return m_parameters; }
 
     WEBCORE_EXPORT virtual String debugDescription() const = 0;
 
@@ -182,7 +182,7 @@ protected:
 
     IntSize size() const { return m_parameters.backendSize; };
     float resolutionScale() const { return m_parameters.resolutionScale; }
-    const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
+    const DestinationColorSpace& colorSpace() const LIFETIME_BOUND { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const { return m_parameters.bufferFormat.pixelFormat; }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)

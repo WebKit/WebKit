@@ -65,7 +65,8 @@ public:
 
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);
-    static Ref<MediaStream> create(Document&, const Vector<Ref<MediaStreamTrack>>&);
+    enum class CheckDuplicate : bool { No, Yes };
+    static Ref<MediaStream> create(Document&, Vector<Ref<MediaStreamTrack>>&&, CheckDuplicate = CheckDuplicate::Yes);
 
     enum class AllowEventTracks : bool { No, Yes };
     static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&, AllowEventTracks = AllowEventTracks::No);
@@ -91,7 +92,7 @@ public:
     bool active() const { return m_isActive; }
     bool muted() const { return m_private->muted(); }
 
-    template<typename Function> bool hasMatchingTrack(Function&& function) const { return std::ranges::any_of(m_trackMap.values(), std::forward<Function>(function)); }
+    template<typename Function> bool hasMatchingTrack(Function&& function) const { return std::ranges::any_of(m_tracks, std::forward<Function>(function)); }
 
     MediaStreamPrivate& privateStream() { return m_private.get(); }
 
@@ -112,7 +113,7 @@ public:
     void allowEventTracksForTesting() { m_allowEventTracks = AllowEventTracks::Yes; }
 
 protected:
-    MediaStream(Document&, const Vector<Ref<MediaStreamTrack>>&);
+    MediaStream(Document&, Vector<Ref<MediaStreamTrack>>&&);
     MediaStream(Document&, Ref<MediaStreamPrivate>&&, AllowEventTracks = AllowEventTracks::No);
 
 #if !RELEASE_LOG_DISABLED
@@ -149,14 +150,12 @@ private:
     void setIsActive(bool);
     void statusDidChange();
 
-    MediaStreamTrackVector filteredTracks(NOESCAPE const Function<bool(const MediaStreamTrack&)>&) const;
-
     Document* NODELETE document() const;
     RefPtr<MediaSessionManagerInterface> mediaSessionManager() const;
 
     const Ref<MediaStreamPrivate> m_private;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<MediaStreamTrack>> m_trackMap;
+    Vector<Ref<MediaStreamTrack>> m_tracks;
 
     MediaProducerMediaStateFlags m_state;
 

@@ -823,7 +823,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connect
     if (maybePauseDisplayRefreshCallbacks())
         return;
 
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         page->didUpdateActivityState();
 }
 

@@ -57,7 +57,7 @@ public:
     {
     }
 
-    const Vector<uint8_t>& saltVector() const
+    const Vector<uint8_t>& saltVector() const LIFETIME_BOUND
     {
         if (!m_saltVector.isEmpty() || !salt || !salt->byteLength())
             return m_saltVector;
@@ -67,7 +67,7 @@ public:
         return m_saltVector;
     }
 
-    const Vector<uint8_t>& infoVector() const
+    const Vector<uint8_t>& infoVector() const LIFETIME_BOUND
     {
         if (!m_infoVector.isEmpty() || !info || !info->byteLength())
             return m_infoVector;

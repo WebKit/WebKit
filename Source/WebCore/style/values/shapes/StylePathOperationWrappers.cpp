@@ -59,7 +59,7 @@ RefPtr<PathOperation> CSSValueConversion<RefPtr<PathOperation>>::operator()(Buil
         auto fragment = SVGURIReference::fragmentIdentifierFromIRIString(styleURL, state.document());
 
         Ref treeScope = [&] -> Ref<const TreeScope> {
-            if (RefPtr element = state.element())
+            if (auto* element = state.element())
                 return element->treeScopeForSVGReferences();
             return state.document();
         }();

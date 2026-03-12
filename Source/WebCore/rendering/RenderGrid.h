@@ -90,9 +90,9 @@ public:
     void setNeedsItemPlacement(SubgridDidChange descendantSubgridsNeedItemPlacement = SubgridDidChange::No);
     Vector<LayoutUnit> trackSizesForComputedStyle(Style::GridTrackSizingDirection) const;
 
-    const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
-    const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }
-    const Vector<LayoutUnit>& positions(Style::GridTrackSizingDirection direction) const { return direction == Style::GridTrackSizingDirection::Columns ? columnPositions() : rowPositions(); }
+    const Vector<LayoutUnit>& columnPositions() const LIFETIME_BOUND { return m_columnPositions; }
+    const Vector<LayoutUnit>& rowPositions() const LIFETIME_BOUND { return m_rowPositions; }
+    const Vector<LayoutUnit>& positions(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? columnPositions() : rowPositions(); }
 
     unsigned autoRepeatCountForDirection(Style::GridTrackSizingDirection direction) const { return currentGrid().autoRepeatTracks(direction); }
     unsigned explicitGridStartForDirection(Style::GridTrackSizingDirection direction) const { return currentGrid().explicitGridStart(direction); }
@@ -138,8 +138,8 @@ public:
     bool areMasonryRows() const { return isMasonry(Style::GridTrackSizingDirection::Rows); }
     bool areMasonryColumns() const { return isMasonry(Style::GridTrackSizingDirection::Columns); }
 
-    const Grid& NODELETE currentGrid() const;
-    Grid& currentGrid();
+    const Grid& NODELETE currentGrid() const LIFETIME_BOUND;
+    Grid& currentGrid() LIFETIME_BOUND;
 
     unsigned numTracks(Style::GridTrackSizingDirection) const;
 
@@ -152,7 +152,7 @@ public:
     LayoutUnit NODELETE masonryContentSize() const;
 
     void updateIntrinsicLogicalHeightsForRowSizingFirstPassCacheAvailability();
-    std::optional<GridItemSizeCache>& NODELETE intrinsicLogicalHeightsForRowSizingFirstPass() const;
+    std::optional<GridItemSizeCache>& NODELETE intrinsicLogicalHeightsForRowSizingFirstPass() const LIFETIME_BOUND;
 
     bool shouldCheckExplicitIntrinsicInnerLogicalSize(Style::GridTrackSizingDirection) const;
 
@@ -274,10 +274,10 @@ private:
 
     AutoRepeatType autoRepeatType(Style::GridTrackSizingDirection) const;
 
-    Vector<LayoutUnit>& positions(Style::GridTrackSizingDirection direction) { return direction == Style::GridTrackSizingDirection::Columns ? m_columnPositions : m_rowPositions; }
+    Vector<LayoutUnit>& positions(Style::GridTrackSizingDirection direction) LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_columnPositions : m_rowPositions; }
 
-    ContentAlignmentData& offsetBetweenTracks(Style::GridTrackSizingDirection direction) { return direction == Style::GridTrackSizingDirection::Columns ? m_offsetBetweenColumns : m_offsetBetweenRows; }
-    const ContentAlignmentData& offsetBetweenTracks(Style::GridTrackSizingDirection direction) const { return direction == Style::GridTrackSizingDirection::Columns ? m_offsetBetweenColumns : m_offsetBetweenRows; }
+    ContentAlignmentData& offsetBetweenTracks(Style::GridTrackSizingDirection direction) LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_offsetBetweenColumns : m_offsetBetweenRows; }
+    const ContentAlignmentData& offsetBetweenTracks(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_offsetBetweenColumns : m_offsetBetweenRows; }
 
     bool canCreateIntrinsicLogicalHeightsForRowSizingFirstPassCache() const;
 

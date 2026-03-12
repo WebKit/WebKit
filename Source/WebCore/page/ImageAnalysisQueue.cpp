@@ -171,7 +171,7 @@ void ImageAnalysisQueue::resumeProcessing()
 
         auto allowSnapshots = m_languageIdentifiers.target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
         page->chrome().client().requestTextRecognition(*element, { m_languageIdentifiers.source, m_languageIdentifiers.target, allowSnapshots }, [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }](auto&&) {
-            if (RefPtr page = weakPage.get(); !page || page->imageAnalysisQueueIfExists() != this)
+            if (auto* page = weakPage.get(); !page || page->imageAnalysisQueueIfExists() != this)
                 return;
 
             if (m_pendingRequestCount)

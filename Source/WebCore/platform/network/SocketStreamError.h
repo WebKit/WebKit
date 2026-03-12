@@ -58,8 +58,8 @@ public:
 
     bool isNull() const { return m_isNull; }
     int errorCode() const { return m_errorCode; }
-    const String& failingURL() const { return m_failingURL; }
-    const String& localizedDescription() const { return m_localizedDescription; }
+    const String& failingURL() const LIFETIME_BOUND { return m_failingURL; }
+    const String& localizedDescription() const LIFETIME_BOUND { return m_localizedDescription; }
 
 private:
     int m_errorCode { 0 };

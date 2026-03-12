@@ -130,7 +130,7 @@ static void flattenAssignedNodes(Vector<Ref<Node>>& nodes, const HTMLSlotElement
         for (RefPtr<Node> child = slot.firstChild(); child; child = child->nextSibling()) {
             if (auto* slot = dynamicDowncast<HTMLSlotElement>(*child))
                 flattenAssignedNodes(nodes, *slot);
-            else if (is<Text>(*child) || is<Element>(*child))
+            else if (isAnyOf<Text, Element>(*child))
                 nodes.append(*child);
         }
         return;

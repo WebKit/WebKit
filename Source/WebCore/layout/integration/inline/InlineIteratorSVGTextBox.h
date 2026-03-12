@@ -46,7 +46,7 @@ public:
 
     const RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(TextBox::renderer()); }
 
-    const SVGInlineTextBox* legacyInlineBox() const;
+    const SVGInlineTextBox* legacyInlineBox() const LIFETIME_BOUND;
 
     using Key = std::pair<const RenderSVGInlineText*, unsigned>;
 };
@@ -59,11 +59,11 @@ public:
 
     SVGTextBoxIterator& operator++() { return downcast<SVGTextBoxIterator>(traverseNextTextBox()); }
 
-    const SVGTextBox& operator*() const { return get(); }
-    const SVGTextBox* operator->() const { return &get(); }
+    const SVGTextBox& operator*() const LIFETIME_BOUND { return get(); }
+    const SVGTextBox* operator->() const LIFETIME_BOUND { return &get(); }
 
 private:
-    const SVGTextBox& get() const { return downcast<SVGTextBox>(m_box); }
+    const SVGTextBox& get() const LIFETIME_BOUND { return downcast<SVGTextBox>(m_box); }
 };
 
 SVGTextBoxIterator firstSVGTextBoxFor(const RenderSVGInlineText&);

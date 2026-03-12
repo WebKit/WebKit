@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/AxisConstraint.h>
+#include "AxisConstraint.h"
 
 namespace WebCore {
 namespace Layout {

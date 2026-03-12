@@ -74,9 +74,9 @@ public:
     
     void lastChanceToFinalize();
     
-    JSC::Heap* heap() const { return m_weakSet.heap(); }
+    JSC::Heap* heap() const LIFETIME_BOUND { return m_weakSet.heap(); }
     VM& vm() const { return m_weakSet.vm(); }
-    WeakSet& weakSet() { return m_weakSet; }
+    WeakSet& weakSet() LIFETIME_BOUND { return m_weakSet; }
 
     static constexpr ptrdiff_t offsetOfWeakSet() { return OBJECT_OFFSETOF(PreciseAllocation, m_weakSet); }
 

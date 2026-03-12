@@ -46,9 +46,9 @@ struct HashableActionList {
         , state(Valid)
     {
         std::ranges::sort(actions);
-        SuperFastHash hasher;
-        hasher.addCharactersAssumingAligned(reinterpret_cast<const char16_t*>(actions.span().data()), actions.size() * sizeof(uint64_t) / sizeof(char16_t));
-        hash = hasher.hash();
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        hash = SuperFastHash::computeHash(std::span { reinterpret_cast<const char16_t*>(actions.span().data()), actions.size() * sizeof(uint64_t) / sizeof(char16_t) });
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     bool isEmptyValue() const { return state == Empty; }

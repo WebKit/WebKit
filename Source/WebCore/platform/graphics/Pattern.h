@@ -74,7 +74,7 @@ public:
     WEBCORE_EXPORT RefPtr<NativeImage> tileNativeImage() const;
     WEBCORE_EXPORT RefPtr<ImageBuffer> tileImageBuffer() const;
 
-    const Parameters& parameters() const { return m_parameters; }
+    const Parameters& parameters() const LIFETIME_BOUND { return m_parameters; }
 
     // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransform'
 #if USE(SKIA)

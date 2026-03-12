@@ -110,8 +110,8 @@ struct SVGPaint {
     std::optional<Color> tryAnyColor() const { return hasColor() ? std::make_optional(m_color) : std::nullopt; }
     std::optional<URL> tryAnyURL() const { return hasURL() ? std::make_optional(m_url) : std::nullopt; }
 
-    const Color& colorDisregardingType() const { return m_color; }
-    const URL& urlDisregardingType() const { return m_url; }
+    const Color& colorDisregardingType() const LIFETIME_BOUND { return m_color; }
+    const URL& urlDisregardingType() const LIFETIME_BOUND { return m_url; }
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {

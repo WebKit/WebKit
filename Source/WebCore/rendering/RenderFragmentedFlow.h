@@ -70,7 +70,7 @@ public:
 
     virtual void addFragmentToThread(RenderFragmentContainer*) = 0;
     void removeFragmentFromThread(RenderFragmentContainer&);
-    const RenderFragmentContainerList& renderFragmentContainerList() const { return m_fragmentList; }
+    const RenderFragmentContainerList& renderFragmentContainerList() const LIFETIME_BOUND { return m_fragmentList; }
 
     void updateLogicalWidth() final;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;

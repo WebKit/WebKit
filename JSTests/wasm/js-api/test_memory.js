@@ -407,25 +407,30 @@ test(function() {
     }, TypeError, "WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value");
 
     const memory = new WebAssembly.Memory({initial: 20});
-    assert.eq(Object.keys(memory.type()).length, 2);
+    assert.eq(Object.keys(memory.type()).length, 3);
     assert.eq(memory.type().minimum, 20);
     assert.eq(memory.type().shared, false);
+    assert.eq(memory.type().address, "i32");
 
     const memory2 = new WebAssembly.Memory({minimum:40, maximum: 100});
-    assert.eq(Object.keys(memory2.type()).length, 3);
+    assert.eq(Object.keys(memory2.type()).length, 4);
     assert.eq(memory2.type().minimum, 40);
     assert.eq(memory2.type().maximum, 100);
-    assert.eq(memory.type().shared, false);
+    assert.eq(memory2.type().shared, false);
+    assert.eq(memory2.type().address, "i32");
 
     const memory3 = new WebAssembly.Memory(memory2.type());
     assert.eq(Object.keys(memory2.type()).length, Object.keys(memory3.type()).length);
-    assert.eq(memory2.type().minimum, memory3.type().minimum);
-    assert.eq(memory2.type().maximum, memory3.type().maximum);
-    assert.eq(memory.type().shared, false);
+    assert.eq(memory3.type().minimum, memory2.type().minimum);
+    assert.eq(memory3.type().maximum, memory2.type().maximum);
+    assert.eq(memory3.type().shared, memory2.type().shared);
+    assert.eq(memory3.type().address, memory2.type().address);
 
     const memory4 = new WebAssembly.Memory({minimum: 10, maximum: 20, shared:true});
-    assert.eq(Object.keys(memory4.type()).length, 3);
+    assert.eq(Object.keys(memory4.type()).length, 4);
     assert.eq(memory4.type().minimum, 10);
     assert.eq(memory4.type().maximum, 20);
     assert.eq(memory4.type().shared, true);
+    assert.eq(memory4.type().address, "i32");
+
 })

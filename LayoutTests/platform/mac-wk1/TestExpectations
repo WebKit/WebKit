@@ -168,7 +168,6 @@ http/tests/uri [ Pass ]
 
 # Tests which only run on WebKitLegacy
 accessibility/mac/html-slider-indicator.html [ Pass ]
-accessibility/mac/iframe-with-title-correct-hierarchy.html [ Pass ]
 accessibility/mac/listbox-hit-test.html [ Pass ]
 compositing/images/direct-image-object-fit.html [ Pass ]
 compositing/reflections/direct-image-object-fit-reflected.html [ Pass ]

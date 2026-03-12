@@ -246,7 +246,7 @@ std::optional<bool> GStreamerQuirksManager::isHardwareAccelerated(GstElementFact
         if (!result)
             continue;
 
-        GST_DEBUG("Setting %" GST_PTR_FORMAT " as %s accelerated from quirk %s", factory, quirk->identifier().characters(), *result ? "hardware" : "software");
+        GST_DEBUG("Setting %" GST_PTR_FORMAT " as %s accelerated from quirk %s", factory, *result ? "hardware" : "software",  quirk->identifier().characters());
         return *result;
     }
 

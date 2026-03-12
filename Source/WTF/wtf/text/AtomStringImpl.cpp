@@ -25,9 +25,10 @@
 #include <wtf/text/AtomStringImpl.h>
 
 #include <wtf/Threading.h>
+#include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/AtomStringTable.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/unicode/UTF8Conversion.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(WEB_THREAD)
 #include <wtf/Lock.h>
@@ -106,55 +107,6 @@ struct UTF16BufferTranslator {
         stringImpl->setHash(hash);
         stringImpl->setIsAtom(true);
         location = &stringImpl.leakRef();
-    }
-};
-
-struct HashedUTF8Characters {
-    std::span<const char8_t> characters;
-    Unicode::UTF16LengthWithHash length;
-};
-
-struct HashedUTF8CharactersTranslator {
-    static unsigned NODELETE hash(const HashedUTF8Characters& characters)
-    {
-        return characters.length.hash;
-    }
-
-    static bool equal(const AtomStringTable::StringEntry& passedString, const HashedUTF8Characters& characters)
-    {
-        // This is passed in to it is guaranteed to be valid. We want to extract the raw pointer
-        // here instead of repeatedly calling `PackedPtr::operator->()` which is not free.
-        SUPPRESS_UNCOUNTED_LOCAL auto* string = passedString.get();
-        if (characters.length.lengthUTF16 != string->length())
-            return false;
-
-        // If buffer contains only ASCII characters, UTF-8 and UTF16 lengths are the same.
-        if (characters.length.lengthUTF16 != characters.characters.size()) {
-            if (string->is8Bit())
-                return Unicode::equal(string->span8(), characters.characters);
-            return Unicode::equal(string->span16(), characters.characters);
-        }
-
-        auto charactersLatin1 = byteCast<Latin1Character>(characters.characters);
-        if (string->is8Bit())
-            return WTF::equal(string->span8().data(), charactersLatin1);
-        return WTF::equal(string->span16().data(), charactersLatin1);
-    }
-
-    static void translate(AtomStringTable::StringEntry& location, const HashedUTF8Characters& characters, unsigned hash)
-    {
-        std::span<char16_t> target;
-        auto newString = StringImpl::createUninitialized(characters.length.lengthUTF16, target);
-
-        auto result = Unicode::convert(characters.characters, target);
-        RELEASE_ASSERT(result.code == Unicode::ConversionResultCode::Success);
-
-        if (result.isAllASCII)
-            newString = StringImpl::create(byteCast<Latin1Character>(characters.characters));
-
-        newString->setHash(hash);
-        newString->setIsAtom(true);
-        location = &newString.leakRef();
     }
 };
 
@@ -266,7 +218,7 @@ struct Latin1BufferTranslator {
 template<typename CharType>
 struct BufferFromStaticDataTranslator {
     using Buffer = HashTranslatorCharBuffer<CharType>;
-    static unsigned hash(const Buffer& buf)
+    static unsigned NODELETE hash(const Buffer& buf)
     {
         return buf.hash;
     }
@@ -476,10 +428,12 @@ RefPtr<AtomStringImpl> AtomStringImpl::lookUpSlowCase(StringImpl& string)
 
 RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const char8_t> characters)
 {
-    HashedUTF8Characters buffer { characters, computeUTF16LengthWithHash(characters) };
-    if (!buffer.length.hash)
+    if (charactersAreAllASCII(characters))
+        return add(byteCast<Latin1Character>(characters));
+    auto string = String::fromUTF8(characters);
+    if (string.isNull())
         return nullptr;
-    return addToStringTable<HashedUTF8Characters, HashedUTF8CharactersTranslator>(buffer);
+    return add(string.releaseImpl());
 }
 
 RefPtr<AtomStringImpl> AtomStringImpl::lookUp(std::span<const Latin1Character> characters)

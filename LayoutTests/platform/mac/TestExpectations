@@ -73,6 +73,9 @@ media/media-source/remoteplayback-from-source-element.html [ Pass ]
 # Prior Tahoe, attempting to paint stereo MV-HEVC either errors or crashes.
 [ Sonoma Sequoia ] media/media-source/media-source-paint-stereo-to-canvas.html [ Skip ]
 
+# EWS doesn't have Spatial Audio Playback supported output. Will work on macbooks.
+media/mediacapabilities/mediacapabilities-decodingInfo-spatialRendering.html [ Failure ]
+
 # macOS 14 and above support word-break: auto-phrase.
 # Individually failing tests should be marked in separate expectations.
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Pass ]
@@ -1453,6 +1456,8 @@ webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Skip ]
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Skip ]
 
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-decorations.html [ ImageOnlyFailure ]
+
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
 
 webkit.org/b/206604 animations/animation-welcome-safari.html [ Pass Failure ]
@@ -1619,6 +1624,9 @@ http/tests/media/hls/video-cookie.html [ Skip ]
 webkit.org/b/228189 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Pass Timeout ]
 
 webkit.org/b/230411 http/tests/media/hls/video-controller-getStartDate.html [ Pass Failure ]
+
+# HLS stream fails to become ready to play on headless bots
+http/tests/media/hls/hls-limit-play-rate.html
 
 # rdar://65641438 ([WebGL2] tex-srgb-mipmap test fails on macOS Intel + iOS (but passes on macOS Apple Silicon) (214392))
 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Failure ]

@@ -40,6 +40,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformGamepadWPE);
 PlatformGamepadWPE::PlatformGamepadWPE(WPEGamepad* gamepad, unsigned index)
     : PlatformGamepad(index)
     , m_gamepad(gamepad)
+    , m_effectDelayTimer(RunLoop::currentSingleton(), "PlatformGamepadWPE::EffectDelayTimer"_s, this, &PlatformGamepadWPE::effectDelayTimerFired)
+    , m_effectDurationTimer(RunLoop::currentSingleton(), "PlatformGamepadWPE::EffectDurationTimer"_s, this, &PlatformGamepadWPE::effectDurationTimerFired)
 {
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
 
@@ -53,6 +55,9 @@ PlatformGamepadWPE::PlatformGamepadWPE(WPEGamepad* gamepad, unsigned index)
     m_axisValues.resize(WPE_GAMEPAD_AXIS_RIGHT_Y + 1);
     for (auto& value : m_axisValues)
         value.setValue(0.0);
+
+    if (wpe_gamepad_has_rumble(m_gamepad.get()))
+        m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);
 
     g_signal_connect_swapped(m_gamepad.get(), "button-event", G_CALLBACK(+[](PlatformGamepadWPE* gamepad, WPEGamepadButton button, gboolean isPressed) {
         gamepad->buttonEvent(static_cast<size_t>(button), isPressed);
@@ -79,6 +84,57 @@ void PlatformGamepadWPE::axisEvent(size_t axis, double value)
     m_lastUpdateTime = MonotonicTime::now();
     m_axisValues[axis].setValue(value);
     GamepadProviderWPE::singleton().notifyInput(*this, GamepadProviderWPE::ShouldMakeGamepadsVisible::No);
+}
+
+void PlatformGamepadWPE::playEffect(GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!m_supportedEffectTypes.contains(type))
+        return completionHandler(false);
+
+    if (m_effectCompletionHandler)
+        stopEffects({ });
+
+    m_effectCompletionHandler = WTF::move(completionHandler);
+    if (parameters.startDelay) {
+        m_pendingEffectParameters = parameters;
+        m_effectDelayTimer.startOneShot(Seconds::fromMilliseconds(parameters.startDelay));
+        return;
+    }
+
+    startRumble(parameters);
+}
+
+void PlatformGamepadWPE::stopEffects(CompletionHandler<void()>&& completionHandler)
+{
+    m_effectDelayTimer.stop();
+    m_effectDurationTimer.stop();
+    if (m_effectCompletionHandler)
+        m_effectCompletionHandler(false);
+
+    wpe_gamepad_rumble(m_gamepad.get(), 0, 0, 0);
+
+    if (completionHandler)
+        completionHandler();
+}
+
+void PlatformGamepadWPE::effectDelayTimerFired()
+{
+    startRumble(std::exchange(m_pendingEffectParameters, { }));
+}
+
+void PlatformGamepadWPE::startRumble(const GamepadEffectParameters& parameters)
+{
+    wpe_gamepad_rumble(m_gamepad.get(), parameters.strongMagnitude, parameters.weakMagnitude, static_cast<guint>(parameters.duration));
+
+    if (parameters.duration)
+        m_effectDurationTimer.startOneShot(Seconds::fromMilliseconds(parameters.duration));
+    else
+        m_effectCompletionHandler(true);
+}
+
+void PlatformGamepadWPE::effectDurationTimerFired()
+{
+    m_effectCompletionHandler(true);
 }
 
 } // namespace WebKit

@@ -65,7 +65,7 @@ public:
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
     WEBCORE_EXPORT static bool canDecodeType(const String& mimeType);
 
-    const String& mimeType() const { return m_mimeType; }
+    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
 
     WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&&) final;
     EncodedDataStatus encodedDataStatus() const final;

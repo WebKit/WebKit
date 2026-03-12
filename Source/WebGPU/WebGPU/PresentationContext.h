@@ -57,7 +57,7 @@ public:
 
     virtual ~PresentationContext();
 
-    WGPUTextureFormat getPreferredFormat(const Adapter&);
+    WGPUTextureFormat NODELETE getPreferredFormat(const Adapter&);
 
     virtual void configure(Device&, const WGPUSwapChainDescriptor&);
     virtual void unconfigure();

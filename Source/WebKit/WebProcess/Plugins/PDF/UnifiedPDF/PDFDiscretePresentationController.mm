@@ -1074,7 +1074,7 @@ void PDFDiscretePresentationController::buildRows()
         auto leftPageIndex = layoutRow.pages[0];
 
         row.leftPageContainerLayer = makePageContainerLayer(leftPageIndex);
-        Ref pageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*protect(row.leftPageContainerLayer));
+        Ref pageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*row.leftPageContainerLayer);
         m_layerToRowIndexMap.add(WTF::move(pageBackgroundLayer), rowIndex);
 
         if (row.pages.numPages() == 1) {
@@ -1084,7 +1084,7 @@ void PDFDiscretePresentationController::buildRows()
 
         auto rightPageIndex = layoutRow.pages[1];
         row.rightPageContainerLayer = makePageContainerLayer(rightPageIndex);
-        Ref rightPageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*protect(row.rightPageContainerLayer));
+        Ref rightPageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*row.rightPageContainerLayer);
         m_layerToRowIndexMap.add(WTF::move(rightPageBackgroundLayer), rowIndex);
     };
 
@@ -1532,7 +1532,7 @@ bool PDFDiscretePresentationController::RowData::isPageBackgroundLayer(const Gra
 
 Ref<GraphicsLayer> PDFDiscretePresentationController::RowData::leftPageBackgroundLayer() const
 {
-    return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*protect(leftPageContainerLayer));
+    return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*leftPageContainerLayer);
 }
 
 RefPtr<GraphicsLayer> PDFDiscretePresentationController::RowData::rightPageBackgroundLayer() const
@@ -1540,7 +1540,7 @@ RefPtr<GraphicsLayer> PDFDiscretePresentationController::RowData::rightPageBackg
     if (!rightPageContainerLayer)
         return nullptr;
 
-    return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*protect(rightPageContainerLayer));
+    return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*rightPageContainerLayer);
 }
 
 RefPtr<GraphicsLayer> PDFDiscretePresentationController::RowData::backgroundLayerForPageIndex(PDFDocumentLayout::PageIndex pageIndex) const

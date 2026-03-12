@@ -25,20 +25,15 @@
 
 #pragma once
 
-#include <cstdint>
+#include <stdint.h>
 #include <wtf/Platform.h>
 
-namespace WTF {
+// This file is used in C contexts (it's included by Assertions.h) so we can't put these types in the WTF namespace.
 
 #if CPU(REGISTER64)
-using CPURegister = int64_t;
-using UCPURegister = uint64_t;
+typedef int64_t CPURegister;
+typedef uint64_t UCPURegister;
 #else
-using CPURegister = int32_t;
-using UCPURegister = uint32_t;
+typedef int32_t CPURegister;
+typedef uint32_t UCPURegister;
 #endif
-
-} // namespace WTF
-
-using WTF::CPURegister;
-using WTF::UCPURegister;

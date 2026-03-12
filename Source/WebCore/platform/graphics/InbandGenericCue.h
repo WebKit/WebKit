@@ -97,10 +97,10 @@ public:
     MediaTime endTime() const { return m_cueData.m_endTime; }
     void setEndTime(const MediaTime& endTime) { m_cueData.m_endTime = endTime; }
 
-    const AtomString& id() const { return m_cueData.m_id; }
+    const AtomString& id() const LIFETIME_BOUND { return m_cueData.m_id; }
     void setId(const AtomString& id) { m_cueData.m_id = id; }
 
-    const String& content() const { return m_cueData.m_content; }
+    const String& content() const LIFETIME_BOUND { return m_cueData.m_content; }
     void setContent(const String& content) { m_cueData.m_content = content; }
 
     double line() const { return m_cueData.m_line; }
@@ -118,7 +118,7 @@ public:
     GenericCueData::Alignment align() const { return m_cueData.m_align; }
     void setAlign(GenericCueData::Alignment align) { m_cueData.m_align = align; }
 
-    const String& fontName() const { return m_cueData.m_fontName; }
+    const String& fontName() const LIFETIME_BOUND { return m_cueData.m_fontName; }
     void setFontName(const String& fontName) { m_cueData.m_fontName = fontName; }
 
     double baseFontSize() const { return m_cueData.m_baseFontSize; }
@@ -127,13 +127,13 @@ public:
     double relativeFontSize() const { return m_cueData.m_relativeFontSize; }
     void setRelativeFontSize(double relativeFontSize) { m_cueData.m_relativeFontSize = relativeFontSize; }
 
-    const Color& foregroundColor() const { return m_cueData.m_foregroundColor; }
+    const Color& foregroundColor() const LIFETIME_BOUND { return m_cueData.m_foregroundColor; }
     void setForegroundColor(const Color& color) { m_cueData.m_foregroundColor = color; }
 
-    const Color& backgroundColor() const { return m_cueData.m_backgroundColor; }
+    const Color& backgroundColor() const LIFETIME_BOUND { return m_cueData.m_backgroundColor; }
     void setBackgroundColor(const Color& color) { m_cueData.m_backgroundColor = color; }
 
-    const Color& highlightColor() const { return m_cueData.m_highlightColor; }
+    const Color& highlightColor() const LIFETIME_BOUND { return m_cueData.m_highlightColor; }
     void setHighlightColor(const Color& color) { m_cueData.m_highlightColor = color; }
 
     GenericCueData::Status status() { return m_cueData.m_status; }
@@ -143,7 +143,7 @@ public:
 
     String toJSONString() const;
 
-    const GenericCueData& cueData() const { return m_cueData; }
+    const GenericCueData& cueData() const LIFETIME_BOUND { return m_cueData; }
 
 private:
     InbandGenericCue();

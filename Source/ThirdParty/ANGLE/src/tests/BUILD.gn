@@ -558,6 +558,10 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
     if (angle_ir) {
       configs += [ "${angle_root}:angle_translator_ir" ]
     }
+    
+    if (angle_enable_metal) {
+      sources += angle_white_box_tests_metal_sources
+    }
   }
 }
 

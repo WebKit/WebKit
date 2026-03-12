@@ -51,6 +51,8 @@ interface AccessibilityUIElement {
     readonly attribute DOMString computedRoleString;
     readonly attribute DOMString title;
     readonly attribute DOMString description;
+    readonly attribute DOMString debugDescription;
+    readonly attribute DOMString rawRoleForTesting;
     readonly attribute DOMString language;
     readonly attribute DOMString helpText;
     readonly attribute DOMString valueDescription;
@@ -65,7 +67,7 @@ interface AccessibilityUIElement {
     readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedText;
     readonly attribute DOMString selectedTextRange;
-    readonly attribute DOMString intersectionWithSelectionRange;
+    readonly attribute AccessibilityTextMarkerRange intersectionWithSelectionRange;
     readonly attribute DOMString textInputMarkedRange;
 
     DOMString stringDescriptionOfAttributeValue(DOMString attr);

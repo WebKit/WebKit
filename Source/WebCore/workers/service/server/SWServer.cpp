@@ -1201,7 +1201,7 @@ SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceW
     auto iterator = m_runningOrTerminatingWorkers.find(identifier);
     if (iterator == m_runningOrTerminatingWorkers.end())
         return nullptr;
-    return Ref { iterator->value }->registration();
+    return iterator->value->registration();
 }
 
 void SWServer::updateAppInitiatedValueForWorkers(const ClientOrigin& clientOrigin, LastNavigationWasAppInitiated lastNavigationWasAppInitiated)

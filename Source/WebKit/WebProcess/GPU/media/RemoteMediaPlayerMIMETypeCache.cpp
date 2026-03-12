@@ -81,7 +81,7 @@ MediaPlayerEnums::SupportsType RemoteMediaPlayerMIMETypeCache::supportsTypeAndCo
     MediaPlaybackTargetType targetType = MediaPlaybackTargetType::None;
 #endif
 
-    SupportedTypesAndCodecsKey searchKey { parameters.type.raw(), parameters.isMediaSource, parameters.isMediaStream, parameters.requiresRemotePlayback, targetType };
+    SupportedTypesAndCodecsKey searchKey { parameters.type.raw(), parameters.platformType, parameters.requiresRemotePlayback, targetType };
 
     if (m_supportsTypeAndCodecsCache) {
         auto it = m_supportsTypeAndCodecsCache->find(searchKey);

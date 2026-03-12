@@ -42,6 +42,7 @@ enum class StageModeOperation : bool;
 }
 
 namespace WebModel {
+struct Float3;
 struct Float4x4;
 struct ImageAsset;
 struct MaterialDescriptor;
@@ -75,6 +76,7 @@ public:
     virtual bool supportsTransform(const WebCore::TransformationMatrix&) const { return false; }
     virtual void setScale(float) { }
     virtual void setCameraDistance(float) = 0;
+    virtual void setBackgroundColor(const WebModel::Float3&) { }
     virtual void setStageMode(WebCore::StageModeOperation) { }
     virtual void setRotation(float, float = 0.f, float = 0.f) { }
     virtual void play(bool) = 0;

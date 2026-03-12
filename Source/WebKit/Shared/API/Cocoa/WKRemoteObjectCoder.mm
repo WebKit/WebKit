@@ -765,7 +765,7 @@ static NSString *escapeKey(NSString *key)
 
 - (BOOL)containsValueForKey:(NSString *)key
 {
-    return Ref { *_currentDictionary }->map().contains(escapeKey(key));
+    return _currentDictionary->map().contains(escapeKey(key));
 }
 
 - (id)decodeObjectForKey:(NSString *)key

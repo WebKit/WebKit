@@ -98,30 +98,30 @@ struct BorderData {
     BorderStylesView<false> styles() { return { .data = *this }; }
     BorderStylesView<true> styles() const { return { .data = *this }; }
 
-    BorderValue& left() { return edges.left(); }
-    BorderValue& right() { return edges.right(); }
-    BorderValue& top() { return edges.top(); }
-    BorderValue& bottom() { return edges.bottom(); }
+    BorderValue& left() LIFETIME_BOUND { return edges.left(); }
+    BorderValue& right() LIFETIME_BOUND { return edges.right(); }
+    BorderValue& top() LIFETIME_BOUND { return edges.top(); }
+    BorderValue& bottom() LIFETIME_BOUND { return edges.bottom(); }
 
-    const BorderValue& left() const { return edges.left(); }
-    const BorderValue& right() const { return edges.right(); }
-    const BorderValue& top() const { return edges.top(); }
-    const BorderValue& bottom() const { return edges.bottom(); }
+    const BorderValue& left() const LIFETIME_BOUND { return edges.left(); }
+    const BorderValue& right() const LIFETIME_BOUND { return edges.right(); }
+    const BorderValue& top() const LIFETIME_BOUND { return edges.top(); }
+    const BorderValue& bottom() const LIFETIME_BOUND { return edges.bottom(); }
 
-    Style::BorderRadiusValue& topLeftRadius() { return radii.topLeft(); }
-    Style::BorderRadiusValue& topRightRadius() { return radii.topRight(); }
-    Style::BorderRadiusValue& bottomLeftRadius() { return radii.bottomLeft(); }
-    Style::BorderRadiusValue& bottomRightRadius() { return radii.bottomRight(); }
+    Style::BorderRadiusValue& topLeftRadius() LIFETIME_BOUND { return radii.topLeft(); }
+    Style::BorderRadiusValue& topRightRadius() LIFETIME_BOUND { return radii.topRight(); }
+    Style::BorderRadiusValue& bottomLeftRadius() LIFETIME_BOUND { return radii.bottomLeft(); }
+    Style::BorderRadiusValue& bottomRightRadius() LIFETIME_BOUND { return radii.bottomRight(); }
 
-    const Style::BorderRadiusValue& topLeftRadius() const { return radii.topLeft(); }
-    const Style::BorderRadiusValue& topRightRadius() const { return radii.topRight(); }
-    const Style::BorderRadiusValue& bottomLeftRadius() const { return radii.bottomLeft(); }
-    const Style::BorderRadiusValue& bottomRightRadius() const { return radii.bottomRight(); }
+    const Style::BorderRadiusValue& topLeftRadius() const LIFETIME_BOUND { return radii.topLeft(); }
+    const Style::BorderRadiusValue& topRightRadius() const LIFETIME_BOUND { return radii.topRight(); }
+    const Style::BorderRadiusValue& bottomLeftRadius() const LIFETIME_BOUND { return radii.bottomLeft(); }
+    const Style::BorderRadiusValue& bottomRightRadius() const LIFETIME_BOUND { return radii.bottomRight(); }
 
-    const Style::CornerShapeValue& topLeftCornerShape() const { return cornerShapes.topLeft(); }
-    const Style::CornerShapeValue& topRightCornerShape() const { return cornerShapes.topRight(); }
-    const Style::CornerShapeValue& bottomLeftCornerShape() const { return cornerShapes.bottomLeft(); }
-    const Style::CornerShapeValue& bottomRightCornerShape() const { return cornerShapes.bottomRight(); }
+    const Style::CornerShapeValue& topLeftCornerShape() const LIFETIME_BOUND { return cornerShapes.topLeft(); }
+    const Style::CornerShapeValue& topRightCornerShape() const LIFETIME_BOUND { return cornerShapes.topRight(); }
+    const Style::CornerShapeValue& bottomLeftCornerShape() const LIFETIME_BOUND { return cornerShapes.bottomLeft(); }
+    const Style::CornerShapeValue& bottomRightCornerShape() const LIFETIME_BOUND { return cornerShapes.bottomRight(); }
 
     bool containsCurrentColor() const;
 

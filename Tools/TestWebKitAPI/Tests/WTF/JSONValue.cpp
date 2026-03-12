@@ -667,6 +667,54 @@ TEST(JSONValue, ParseJSON)
     }
 }
 
+TEST(JSONValue, ParseJSONAllowTrailingCommas)
+{
+    {
+        auto value = JSON::Value::parseJSON("[1,]"_s, JSON::Value::ParsingMode::AllowTrailingCommas);
+        EXPECT_TRUE(value);
+        auto array = value->asArray();
+        EXPECT_TRUE(array);
+        EXPECT_EQ(array->length(), 1U);
+    }
+
+    {
+        auto value = JSON::Value::parseJSON("[1, 2, 3,]"_s, JSON::Value::ParsingMode::AllowTrailingCommas);
+        EXPECT_TRUE(value);
+        auto array = value->asArray();
+        EXPECT_TRUE(array);
+        EXPECT_EQ(array->length(), 3U);
+    }
+
+    {
+        auto value = JSON::Value::parseJSON("{\"foo\": \"bar\",}"_s, JSON::Value::ParsingMode::AllowTrailingCommas);
+        EXPECT_TRUE(value);
+        auto object = value->asObject();
+        EXPECT_TRUE(object);
+        EXPECT_EQ(object->size(), 1U);
+        EXPECT_EQ(object->getString("foo"_s), "bar"_s);
+    }
+
+    {
+        auto value = JSON::Value::parseJSON("[{\"foo\":\"bar\"},{\"baz\":false},]"_s, JSON::Value::ParsingMode::AllowTrailingCommas);
+        EXPECT_TRUE(value);
+        auto array = value->asArray();
+        EXPECT_TRUE(array);
+        EXPECT_EQ(array->length(), 2U);
+    }
+
+    {
+        EXPECT_FALSE(JSON::Value::parseJSON("[1,]"_s, JSON::Value::ParsingMode::Strict));
+        EXPECT_FALSE(JSON::Value::parseJSON("{\"foo\": \"bar\",}"_s, JSON::Value::ParsingMode::Strict));
+    }
+
+    {
+        EXPECT_FALSE(JSON::Value::parseJSON("[,]"_s, JSON::Value::ParsingMode::AllowTrailingCommas));
+        EXPECT_FALSE(JSON::Value::parseJSON("{,}"_s, JSON::Value::ParsingMode::AllowTrailingCommas));
+        EXPECT_FALSE(JSON::Value::parseJSON("[1,,2]"_s, JSON::Value::ParsingMode::AllowTrailingCommas));
+        EXPECT_FALSE(JSON::Value::parseJSON("{\"foo\":bar}"_s, JSON::Value::ParsingMode::AllowTrailingCommas));
+    }
+}
+
 TEST(JSONValue, MemoryCost)
 {
     {

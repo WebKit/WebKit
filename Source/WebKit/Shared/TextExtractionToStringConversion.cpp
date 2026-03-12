@@ -434,7 +434,7 @@ public:
         return { m_urlStringStack.last() };
     }
 
-    void NODELETE popURLString()
+    void popURLString()
     {
         if (m_urlStringStack.isEmpty()) {
             ASSERT_NOT_REACHED();

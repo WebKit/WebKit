@@ -367,8 +367,8 @@ ResourceRequest FetchRequest::resourceRequest() const
     if (!isBodyNull())
         request.setHTTPBody(body().bodyAsFormData());
 
-    if (RefPtr context = scriptExecutionContext()) {
-        if (RefPtr document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())
+    if (auto* context = scriptExecutionContext()) {
+        if (auto* document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())
             request.setTargetAddressSpace(m_targetAddressSpace);
     }
 
@@ -387,7 +387,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(JSDOMGlobalObject& globalObje
     clone->cloneBody(globalObject, *this);
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
     clone->m_enableContentExtensionsCheck = m_enableContentExtensionsCheck;
-    if (RefPtr document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())
+    if (auto* document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())
         clone->m_targetAddressSpace = m_targetAddressSpace;
     clone->m_signal->signalFollow(m_signal);
     return clone;

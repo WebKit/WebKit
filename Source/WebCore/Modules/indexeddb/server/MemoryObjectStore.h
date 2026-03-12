@@ -99,7 +99,7 @@ public:
 
     MemoryObjectStoreCursor* maybeOpenCursor(const IDBCursorInfo&, MemoryBackingStoreTransaction&);
 
-    IDBKeyDataSet* orderedKeys() { return m_orderedKeys.get(); }
+    IDBKeyDataSet* orderedKeys() LIFETIME_BOUND { return m_orderedKeys.get(); }
 
     MemoryIndex* indexForIdentifier(IDBIndexIdentifier);
 

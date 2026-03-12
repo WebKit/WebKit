@@ -205,10 +205,10 @@ public:
 
     void visit(const Type*, bool shouldPack = false);
 
-    StringBuilder& stringBuilder() { return m_body; }
-    Indentation<4>& indent() { return m_indent; }
-    unsigned metalAppleGPUFamily() const { return m_deviceState.appleGPUFamily; }
-    bool shaderValidationEnabled() const { return m_deviceState.shaderValidationEnabled; }
+    StringBuilder& NODELETE stringBuilder() { return m_body; }
+    Indentation<4>& NODELETE indent() { return m_indent; }
+    unsigned NODELETE metalAppleGPUFamily() const { return m_deviceState.appleGPUFamily; }
+    bool NODELETE shaderValidationEnabled() const { return m_deviceState.shaderValidationEnabled; }
 
 private:
     void emitNecessaryHelpers();
@@ -458,6 +458,20 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             IndentationScope scope(m_indent);
             m_output.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s,
                 m_indent, "auto result = *ptr;\n"_s,
+                m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s,
+                m_indent, "return result;\n"_s);
+        }
+        m_output.append(m_indent, "}\n\n"_s);
+    }
+
+    if (m_shaderModule.usesWorkgroupUniformLoadAtomic()) {
+        m_output.append(m_indent, "template<typename T>\n"_s,
+            m_indent, (shaderValidationEnabled() ? "[[clang::optnone]] "_s : ""_s), "static T __workgroup_uniform_load(threadgroup atomic<T>* const ptr)\n"_s,
+            m_indent, "{\n"_s);
+        {
+            IndentationScope scope(m_indent);
+            m_output.append(m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s,
+                m_indent, "auto result = atomic_load_explicit(ptr, memory_order_relaxed);\n"_s,
                 m_indent, "threadgroup_barrier(mem_flags::mem_threadgroup);\n"_s,
                 m_indent, "return result;\n"_s);
         }
@@ -1122,6 +1136,7 @@ static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSam
         switch (sampleType) {
         case InterpolationSampling::First:
         case InterpolationSampling::Either:
+            RELEASE_ASSERT_NOT_REACHED();
         case InterpolationSampling::Center:
             return "center_no_perspective"_s;
         case InterpolationSampling::Centroid:
@@ -1133,6 +1148,7 @@ static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSam
         switch (sampleType) {
         case InterpolationSampling::First:
         case InterpolationSampling::Either:
+            RELEASE_ASSERT_NOT_REACHED();
         case InterpolationSampling::Center:
             return "center_perspective"_s;
         case InterpolationSampling::Centroid:
@@ -2000,7 +2016,7 @@ static void emitAtomicExchange(FunctionDefinitionWriter* writer, AST::CallExpres
     atomicFunction("atomic_exchange_explicit"_s, writer, call);
 }
 
-[[noreturn]] static void emitArrayLength(FunctionDefinitionWriter*, AST::CallExpression&)
+[[noreturn]] static void NODELETE emitArrayLength(FunctionDefinitionWriter*, AST::CallExpression&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

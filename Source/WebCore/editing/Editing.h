@@ -140,8 +140,8 @@ enum class SkipDisplayContents : bool { No, Yes };
 Position nextVisuallyDistinctCandidate(const Position&, SkipDisplayContents = SkipDisplayContents::Yes);
 Position previousVisuallyDistinctCandidate(const Position&);
 
-Position firstPositionInOrBeforeNode(Node*);
-inline Position lastPositionInOrAfterNode(Node*);
+inline Position firstPositionInOrBeforeNode(Node*); // Defined in EditingInlines.h
+inline Position lastPositionInOrAfterNode(Node*); // Defined in EditingInlines.h
 
 Position firstEditablePositionAfterPositionInRoot(const Position&, ContainerNode* root);
 Position lastEditablePositionBeforePositionInRoot(const Position&, ContainerNode* root);
@@ -257,13 +257,6 @@ inline bool editingIgnoresContent(const Node& node)
 inline bool positionBeforeOrAfterNodeIsCandidate(Node& node)
 {
     return isRenderedTable(&node) || editingIgnoresContent(node);
-}
-
-inline Position firstPositionInOrBeforeNode(Node* node)
-{
-    if (!node)
-        return { };
-    return editingIgnoresContent(*node) ? positionBeforeNode(node) : firstPositionInNode(node);
 }
 
 }

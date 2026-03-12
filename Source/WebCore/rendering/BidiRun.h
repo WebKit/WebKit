@@ -40,7 +40,7 @@ public:
     ~BidiRun();
 
     RenderObject& renderer() { return m_renderer; }
-    LegacyInlineBox* box() { return m_box; }
+    LegacyInlineBox* box() LIFETIME_BOUND { return m_box; }
     void setBox(LegacyInlineBox* box) { m_box = box; }
 
 private:

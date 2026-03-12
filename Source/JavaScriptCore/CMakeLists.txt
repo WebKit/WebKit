@@ -1170,6 +1170,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCJSValue.h
     runtime/JSCJSValueCellInlines.h
     runtime/JSCJSValueInlines.h
+    runtime/JSPIContext.h
+    runtime/JSPIContextInlines.h
     runtime/JSCPtrTag.h
     runtime/JSCustomGetterFunction.h
     runtime/JSCustomSetterFunction.h

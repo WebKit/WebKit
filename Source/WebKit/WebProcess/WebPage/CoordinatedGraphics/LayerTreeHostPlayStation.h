@@ -143,7 +143,7 @@ private:
 #if USE(CAIRO)
     WebCore::Cairo::PaintingEngine& NODELETE paintingEngine() override;
 #elif USE(SKIA)
-    WebCore::SkiaPaintingEngine& paintingEngine() const override { return *m_skiaPaintingEngine.get(); }
+    WebCore::SkiaPaintingEngine& paintingEngine() const LIFETIME_BOUND override { return *m_skiaPaintingEngine.get(); }
 #endif
     Ref<WebCore::CoordinatedImageBackingStore> imageBackingStore(Ref<WebCore::NativeImage>&&) override;
 

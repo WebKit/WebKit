@@ -81,7 +81,7 @@ void RemoteLayerTreeContext::adoptLayersFromContext(RemoteLayerTreeContext& oldC
 
 float RemoteLayerTreeContext::deviceScaleFactor() const
 {
-    return protect(webPage())->deviceScaleFactor();
+    return webPage().deviceScaleFactor();
 }
 
 std::optional<DrawingAreaIdentifier> RemoteLayerTreeContext::drawingAreaIdentifier() const
@@ -101,7 +101,7 @@ std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeContext::displayCol
 
 UseLosslessCompression RemoteLayerTreeContext::useIOSurfaceLosslessCompression() const
 {
-    return protect(webPage())->isIOSurfaceLosslessCompressionEnabled() ? UseLosslessCompression::Yes : UseLosslessCompression::No;
+    return webPage().isIOSurfaceLosslessCompressionEnabled() ? UseLosslessCompression::Yes : UseLosslessCompression::No;
 }
 
 #if PLATFORM(IOS_FAMILY)

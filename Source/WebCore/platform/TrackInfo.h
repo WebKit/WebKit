@@ -104,14 +104,14 @@ public:
     }
 
     FourCC codecName() const { return m_data.codecName; }
-    const String& codecString() const { return m_data.codecString; }
+    const String& codecString() const LIFETIME_BOUND { return m_data.codecString; }
 
     TrackID trackID() const { return m_data.trackID; };
     void setTrackID(TrackID trackID) { m_data.trackID = trackID; }
 
     using AtomData = TrackInfoAtomData;
 #if ENABLE(ENCRYPTED_MEDIA)
-    const std::optional<EncryptionDataCollection>& encryptionDataCollection() const { return m_data.encryptionData; }
+    const std::optional<EncryptionDataCollection>& encryptionDataCollection() const LIFETIME_BOUND { return m_data.encryptionData; }
 #endif
 
 protected:
@@ -122,8 +122,8 @@ protected:
     }
 
     virtual bool equalTo(const TrackInfo& other) const = 0;
-    const TrackInfoData& trackInfoData() const { return m_data; }
-    TrackInfoData& trackInfoData() { return m_data; }
+    const TrackInfoData& trackInfoData() const LIFETIME_BOUND { return m_data; }
+    TrackInfoData& trackInfoData() LIFETIME_BOUND { return m_data; }
 
 private:
     TrackInfoData m_data;
@@ -162,17 +162,17 @@ class VideoInfo : public TrackInfo {
 public:
     static Ref<VideoInfo> create(VideoInfoData&& data) { return adoptRef(*new VideoInfo(WTF::move(data))); }
 
-    const FloatSize& size() const { return m_data.size; }
+    const FloatSize& size() const LIFETIME_BOUND { return m_data.size; }
     // Size in pixels at which the video is rendered. This is after it has
     // been scaled by its aspect ratio.
-    const FloatSize& displaySize() const { return m_data.displaySize; }
+    const FloatSize& displaySize() const LIFETIME_BOUND { return m_data.displaySize; }
     uint8_t bitDepth() const { return m_data.bitDepth; }
-    const PlatformVideoColorSpace& colorSpace() const { return m_data.colorSpace; }
+    const PlatformVideoColorSpace& colorSpace() const LIFETIME_BOUND { return m_data.colorSpace; }
 
-    const Vector<AtomData>& extensionAtoms() const { return m_data.extensionAtoms; }
+    const Vector<AtomData>& extensionAtoms() const LIFETIME_BOUND { return m_data.extensionAtoms; }
 
 #if PLATFORM(VISION)
-    const std::optional<ImmersiveVideoMetadata>& immersiveVideoMetadata() const { return m_data.immersiveVideoMetadata; }
+    const std::optional<ImmersiveVideoMetadata>& immersiveVideoMetadata() const LIFETIME_BOUND { return m_data.immersiveVideoMetadata; }
 #endif
 
     VideoInfoData toVideoInfoData() const

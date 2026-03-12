@@ -1462,14 +1462,4 @@ TextStream& operator<<(TextStream& ts, VectorEffect value)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, VisualBox visualBox)
-{
-    switch (visualBox) {
-    case VisualBox::BorderBox: ts << "border-box"_s; break;
-    case VisualBox::ContentBox: ts << "content-box"_s; break;
-    case VisualBox::PaddingBox: ts << "padding-box"_s; break;
-    }
-    return ts;
-}
-
 } // namespace WebCore

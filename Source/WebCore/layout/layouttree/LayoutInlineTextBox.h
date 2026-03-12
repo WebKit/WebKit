@@ -47,7 +47,7 @@ public:
     InlineTextBox(String, bool isCombined, EnumSet<ContentCharacteristic>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
-    const String& content() const { return m_content; }
+    const String& content() const LIFETIME_BOUND { return m_content; }
     bool isCombined() const { return m_isCombined; }
     // FIXME: This should not be a box's property.
     bool canUseSimplifiedContentMeasuring() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimplifiedContentMeasuring); }

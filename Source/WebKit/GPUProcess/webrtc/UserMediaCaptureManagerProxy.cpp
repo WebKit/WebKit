@@ -685,7 +685,7 @@ void UserMediaCaptureManagerProxy::removeSource(RealtimeMediaSourceIdentifier id
     Ref source = iterator->value->source();
     m_proxies.remove(iterator);
 
-    for (Ref proxy : m_proxies.values()) {
+    for (auto& proxy : m_proxies.values()) {
         if (proxy->isUsingSource(source))
             return;
     }

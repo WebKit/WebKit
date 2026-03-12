@@ -82,8 +82,8 @@ public:
     void setHostAddress(const String& ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }
     bool isConnected() const;
 
-    const String& sessionID() const { return m_sessionID; }
-    const Capabilities& capabilities() const { return m_capabilities; }
+    const String& sessionID() const LIFETIME_BOUND { return m_sessionID; }
+    const Capabilities& capabilities() const LIFETIME_BOUND { return m_capabilities; }
 
     void connectToBrowser(Function<void (std::optional<String> error)>&&);
     void startAutomationSession(Function<void (bool, std::optional<String>)>&&);

@@ -74,7 +74,7 @@ public:
 #endif
 
 #if USE(SKIA)
-    AffineTransform(const SkMatrix&);
+    WEBCORE_EXPORT AffineTransform(const SkMatrix&);
 #endif
 
     void setMatrix(double a, double b, double c, double d, double e, double f);
@@ -197,7 +197,7 @@ public:
 #endif
 
 #if USE(SKIA)
-    operator SkMatrix() const;
+    WEBCORE_EXPORT operator SkMatrix() const;
 #endif
 
     constexpr std::span<const double, 6> span() const LIFETIME_BOUND;

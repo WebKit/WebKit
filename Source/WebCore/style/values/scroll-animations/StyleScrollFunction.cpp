@@ -38,7 +38,7 @@ namespace Style {
 
 auto CSSValueConversion<ScrollFunction>::operator()(BuilderState& state, const CSSValue& value) -> ScrollFunction
 {
-    RefPtr scrollValue = requiredDowncast<CSSScrollValue>(state, value);
+    auto* scrollValue = requiredDowncast<CSSScrollValue>(state, value);
     if (!scrollValue)
         return ScrollFunction { ScrollFunctionParameters { Scroller::Nearest, ScrollAxis::Block } };
     return this->operator()(state, *scrollValue);

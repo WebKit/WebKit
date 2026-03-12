@@ -140,7 +140,8 @@ struct ResolvedLocale {
 
 ResolvedLocale resolveLocale(JSGlobalObject*, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher, const ResolveLocaleOptions&, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<String> (*localeData)(const String&, RelevantExtensionKey));
 JSValue supportedLocales(JSGlobalObject*, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, JSValue options);
-String removeUnicodeLocaleExtension(const String& locale);
+String removeUnicodeLocaleExtension(StringView locale);
+String extractNonUnicodeBCP47Extensions(StringView locale);
 String bestAvailableLocale(const LocaleSet& availableLocales, const String& requestedLocale);
 template<typename Predicate> String bestAvailableLocale(const String& requestedLocale, Predicate);
 Vector<String> numberingSystemsForLocale(const String& locale);

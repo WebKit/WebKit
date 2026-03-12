@@ -69,7 +69,7 @@ public:
     void didReceiveSyncCDMInstanceMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
     void didReceiveSyncCDMInstanceSessionMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
-    void addProxy(const RemoteCDMIdentifier&, RefPtr<RemoteCDMProxy>&&);
+    void addProxy(const RemoteCDMIdentifier&, Ref<RemoteCDMProxy>&&);
     void removeProxy(const RemoteCDMIdentifier&);
 
     void addInstance(const RemoteCDMInstanceIdentifier&, Ref<RemoteCDMInstanceProxy>&&);
@@ -103,7 +103,7 @@ private:
     void supportsKeySystem(const String& keySystem, CompletionHandler<void(bool)>&&);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
-    HashMap<RemoteCDMIdentifier, RefPtr<RemoteCDMProxy>> m_proxies;
+    HashMap<RemoteCDMIdentifier, Ref<RemoteCDMProxy>> m_proxies;
     HashMap<RemoteCDMInstanceIdentifier, Ref<RemoteCDMInstanceProxy>> m_instances;
     HashMap<RemoteCDMInstanceSessionIdentifier, Ref<RemoteCDMInstanceSessionProxy>> m_sessions;
 

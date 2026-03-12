@@ -28,9 +28,9 @@
 
 namespace WebCore {
 
-FontSelectionAlgorithm::FontSelectionAlgorithm(FontSelectionRequest request, const Vector<Capabilities>& capabilities, std::optional<Capabilities> bounds)
+FontSelectionAlgorithm::FontSelectionAlgorithm(FontSelectionRequest request, Vector<Capabilities>&& capabilities, std::optional<Capabilities> bounds)
     : m_request(request)
-    , m_capabilities(capabilities)
+    , m_capabilities(WTF::move(capabilities))
 {
     ASSERT(!m_capabilities.isEmpty());
     if (bounds)
@@ -157,13 +157,26 @@ void FontSelectionAlgorithm::filterCapability(std::span<bool> eliminated, Distan
         eliminated[i] = eliminated[i] || !(m_capabilities[i].*inclusionRange).includes(value);
 }
 
+const Vector<bool>& FontSelectionAlgorithm::ensureEliminatedCapabilities()
+{
+    if (!m_eliminatedCapabilities) {
+        Vector<bool, 256> eliminated(m_capabilities.size(), false);
+        filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::widthDistance, &Capabilities::width);
+        filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::styleDistance, &Capabilities::slope);
+        filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::weightDistance, &Capabilities::weight);
+        m_eliminatedCapabilities = WTF::move(eliminated);
+    }
+    return *m_eliminatedCapabilities;
+}
+
+const Vector<bool>& FontSelectionAlgorithm::eliminatedCapabilities()
+{
+    return ensureEliminatedCapabilities();
+}
+
 size_t FontSelectionAlgorithm::indexOfBestCapabilities()
 {
-    Vector<bool, 256> eliminated(m_capabilities.size(), false);
-    filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::widthDistance, &Capabilities::width);
-    filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::styleDistance, &Capabilities::slope);
-    filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::weightDistance, &Capabilities::weight);
-    return eliminated.find(false);
+    return ensureEliminatedCapabilities().find(false);
 }
 
 }

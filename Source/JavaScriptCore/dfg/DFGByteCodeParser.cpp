@@ -65,7 +65,6 @@
 #include "JSArrayIterator.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSBoundFunctionInlines.h"
-#include "JSRegExpStringIterator.h"
 #include "JSCInlines.h"
 #include "JSCellButterfly.h"
 #include "JSInternalPromise.h"
@@ -77,6 +76,7 @@
 #include "JSPromiseConstructor.h"
 #include "JSPromisePrototype.h"
 #include "JSPromiseReaction.h"
+#include "JSRegExpStringIterator.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
 #include "JSWrapForValidIterator.h"
@@ -87,6 +87,7 @@
 #include "OpcodeInlines.h"
 #include "PreciseJumpTargets.h"
 #include "PrivateFieldPutKind.h"
+#include "PropertyInlineCache.h"
 #include "PutByIdFlags.h"
 #include "PutByStatus.h"
 #include "RegExpConstructor.h"
@@ -96,7 +97,6 @@
 #include "StackAlignment.h"
 #include "StringConstructor.h"
 #include "StructureID.h"
-#include "StructureStubInfo.h"
 #include "SymbolConstructor.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
@@ -2630,9 +2630,16 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         }
 
         case PowIntrinsic: {
-            if (argumentCountIncludingThis < 3) {
-                // Math.pow() and Math.pow(x) return NaN.
+            if (argumentCountIncludingThis == 1) {
+                // Math.pow() returns NaN.
                 insertChecks();
+                setResult(addToGraph(JSConstant, OpInfo(m_constantNaN)));
+                return CallOptimizationResult::Inlined;
+            }
+            if (argumentCountIncludingThis == 2) {
+                // Math.pow(x) returns NaN, but ToNumber(x) may have side effects.
+                insertChecks();
+                addToGraph(Phantom, Edge(get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), NumberUse));
                 setResult(addToGraph(JSConstant, OpInfo(m_constantNaN)));
                 return CallOptimizationResult::Inlined;
             }
@@ -8145,7 +8152,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* getByVal = addToGraph(Node::VarArg, getByStatus.isMegamorphic() ? GetByValMegamorphic : GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
             m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
             set(bytecode.m_dst, getByVal);
-            if (!getByStatus.isMegamorphic() && getByStatus.observedStructureStubInfoSlowPath())
+            if (!getByStatus.isMegamorphic() && getByStatus.observedPropertyInlineCacheSlowPath())
                 m_graph.m_slowGetByVal.add(getByVal);
 
             NEXT_OPCODE(op_get_by_val);
@@ -8332,7 +8339,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             if (!compiledAsPutPrivateNameById) {
                 Node* putPrivateName = addToGraph(PutPrivateName, OpInfo(), OpInfo(bytecode.m_putKind), base, property, value);
-                if (status.observedStructureStubInfoSlowPath())
+                if (status.observedPropertyInlineCacheSlowPath())
                     m_graph.m_slowPutByVal.add(putPrivateName);
             }
 
@@ -10448,7 +10455,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addVarArgChild(enumerator);
                 Node* getByVal = addToGraph(Node::VarArg, EnumeratorGetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation));
                 set(bytecode.m_dst, getByVal);
-                if (getByStatus.observedStructureStubInfoSlowPath())
+                if (getByStatus.observedPropertyInlineCacheSlowPath())
                     m_graph.m_slowGetByVal.add(getByVal);
 
                 addToGraph(Phantom, propertyName);
@@ -10463,7 +10470,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             addVarArgChild(enumerator);
             Node* getByVal = addToGraph(Node::VarArg, EnumeratorGetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation));
             set(bytecode.m_dst, getByVal);
-            if (getByStatus.observedStructureStubInfoSlowPath())
+            if (getByStatus.observedPropertyInlineCacheSlowPath())
                 m_graph.m_slowGetByVal.add(getByVal);
 
             NEXT_OPCODE(op_enumerator_get_by_val);
@@ -10710,7 +10717,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_lazyOperands.initialize(m_profiledBlock->lazyValueProfiles());
         m_specFailValueProfileBuckets = m_profiledBlock->lazyValueProfiles().speculationFailureValueProfileBucketsMap();
 
-        // We do this while holding the lock because we want to encourage StructureStubInfo's
+        // We do this while holding the lock because we want to encourage PropertyInlineCache's
         // to be potentially added to operations and because the profiled block could be in the
         // middle of LLInt->JIT tier-up in which case we would be adding the info's right now.
         if (m_profiledBlock->hasBaselineJITProfiling()) {
@@ -10965,7 +10972,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
     addVarArgChild(nullptr); // Leave room for length.
     Node* putByVal = addToGraph(Node::VarArg, isDirect ? PutByValDirect : status.isMegamorphic() ? PutByValMegamorphic : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
     m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
-    if (!status.isMegamorphic() && status.observedStructureStubInfoSlowPath())
+    if (!status.isMegamorphic() && status.observedPropertyInlineCacheSlowPath())
         m_graph.m_slowPutByVal.add(putByVal);
 }
 

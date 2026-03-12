@@ -331,7 +331,7 @@ ${implementationClassName}* to${implementationClassName}(JSContextRef context, J
 
 JSClassRef ${className}::${classRefGetter}()
 {
-    static JSClassRef jsClass;
+    SUPPRESS_UNCOUNTED_LOCAL static JSClassRef jsClass;
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionEmpty;
         definition.className = "@{[_publicClassName($idlType)]}";
@@ -383,7 +383,7 @@ EOF
     push (@contents, <<EOF);
 JSClassRef ${className}::${globalClassRefGetter}()
 {
-    static JSClassRef jsClass;
+    SUPPRESS_UNCOUNTED_LOCAL static JSClassRef jsClass;
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionEmpty;
         definition.className = "@{[_publicClassName($idlType)]}";
@@ -1732,7 +1732,7 @@ EOF
         return unless $_->extendedAttributes->{"Dynamic"} or $_->extendedAttributes->{"MainWorldOnly"};
 
         my $name = $_->name;
-        return "    JSPropertyNameAccumulatorAddName(propertyNames, toJSString(\"${name}\"_s).get());\n" unless $hasDynamicProperties;
+        return "    SUPPRESS_UNCOUNTED_ARG JSPropertyNameAccumulatorAddName(propertyNames, toJSString(\"${name}\"_s).get());\n" unless $hasDynamicProperties;
 
         my $condition = &$generateCondition($_);
         my $conditionalString = conditionalString($_);
@@ -1740,7 +1740,7 @@ EOF
         my $content = "";
         $content .= "#if ${conditionalString}\n" if $conditionalString;
         $content .= "    if (${condition})\n";
-        $content .= "        JSPropertyNameAccumulatorAddName(propertyNames, toJSString(\"${name}\"_s).get());\n";
+        $content .= "        SUPPRESS_UNCOUNTED_ARG JSPropertyNameAccumulatorAddName(propertyNames, toJSString(\"${name}\"_s).get());\n";
         $content .= "#endif // ${conditionalString}\n" if $conditionalString;
         $content .= "\n";
         return $content;

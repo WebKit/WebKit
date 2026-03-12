@@ -67,7 +67,7 @@ bool operator==(const FontFamilyName& a, const FontFamilyName& b)
 
 FontCascadeCache& FontCascadeCache::forCurrentThread()
 {
-    return FontCache::forCurrentThread()->fontCascadeCache();
+    return FontCache::forCurrentThread().fontCascadeCache();
 }
 
 void FontCascadeCache::invalidate()

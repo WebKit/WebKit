@@ -61,7 +61,7 @@ class InspectorCanvas final : public RefCountedAndCanMakeWeakPtr<InspectorCanvas
 public:
     static Ref<InspectorCanvas> create(CanvasRenderingContext&);
 
-    const String& identifier() const { return m_identifier; }
+    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     const CanvasRenderingContext& canvasContext() const { return m_context; }
     CanvasRenderingContext& canvasContext() { return m_context; }

@@ -34,16 +34,19 @@ class WhileStatement final : public Statement {
     WGSL_AST_BUILDER_NODE(WhileStatement);
 public:
     NodeKind kind() const final;
+    Attribute::List& attributes() { return m_attributes; }
     Expression& test() { return m_test.get(); }
     CompoundStatement& body() { return m_body.get(); }
 
 private:
-    WhileStatement(SourceSpan span, Expression::Ref&& test, CompoundStatement::Ref&& body)
+    WhileStatement(SourceSpan span, Attribute::List&& attributes, Expression::Ref&& test, CompoundStatement::Ref&& body)
         : Statement(span)
+        , m_attributes(WTF::move(attributes))
         , m_test(WTF::move(test))
         , m_body(WTF::move(body))
     { }
 
+    Attribute::List m_attributes;
     Expression::Ref m_test;
     CompoundStatement::Ref m_body;
 };

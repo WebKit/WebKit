@@ -196,8 +196,8 @@ public:
     {
     }
 
-    const T& lowValue() const { return m_interval.low(); }
-    const T& highValue() const { return m_interval.high(); }
+    const T& lowValue() const LIFETIME_BOUND { return m_interval.low(); }
+    const T& highValue() const LIFETIME_BOUND { return m_interval.high(); }
     void collectIfNeeded(const IntervalType& data) const
     {
         if (data.overlaps(m_interval))

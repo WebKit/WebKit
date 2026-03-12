@@ -56,7 +56,7 @@ public:
     std::tuple<std::optional<int32_t>, std::optional<ParsedMonthCode>, std::optional<int32_t>> static toYearMonth(JSGlobalObject*, JSObject*);
     static TemporalPlainDate* from(JSGlobalObject*, JSValue, Variant<JSObject*, TemporalOverflow>);
 
-    TemporalCalendar* calendar() { return m_calendar.get(this); }
+    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainDate plainDate() const { return m_plainDate; }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD(name, capitalizedName) \

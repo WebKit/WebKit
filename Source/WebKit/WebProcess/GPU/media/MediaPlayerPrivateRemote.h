@@ -564,7 +564,7 @@ private:
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
     WeakPtr<WebCore::MessageClientForTesting> m_internalMessageClient;
-    HashMap<RemoteMediaResourceLoaderIdentifier, RefPtr<RemoteMediaResourceLoaderProxy>> m_mediaResourceLoaders;
+    HashMap<RemoteMediaResourceLoaderIdentifier, Ref<RemoteMediaResourceLoaderProxy>> m_mediaResourceLoaders;
 };
 
 } // namespace WebKit

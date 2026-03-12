@@ -32,6 +32,7 @@
 #include "pas_bitfit_heap.h"
 #include "pas_bitfit_size_class.h"
 #include "pas_heap.h"
+#include <algorithm>
 #include <vector>
 
 using namespace std;

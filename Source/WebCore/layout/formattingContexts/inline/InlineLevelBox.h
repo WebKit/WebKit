@@ -69,7 +69,7 @@ public:
     void setHasContent();
 
     using VerticalAlignment = Variant<CSS::Keyword::Baseline, CSS::Keyword::Sub, CSS::Keyword::Super, CSS::Keyword::Top, CSS::Keyword::TextTop, CSS::Keyword::Middle, CSS::Keyword::Bottom, CSS::Keyword::TextBottom, CSS::Keyword::WebkitBaselineMiddle, InlineLayoutUnit>;
-    const VerticalAlignment& verticalAlign() const { return m_style.verticalAlignment; }
+    const VerticalAlignment& verticalAlign() const LIFETIME_BOUND { return m_style.verticalAlignment; }
     bool hasLineBoxRelativeAlignment() const;
 
     InlineLayoutUnit preferredLineHeight() const;
@@ -77,7 +77,7 @@ public:
 
     inline bool mayStretchLineBox() const;
 
-    const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
+    const FontMetrics& primarymetricsOfPrimaryFont() const LIFETIME_BOUND { return m_style.primaryFontMetrics; }
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
 
     TextBoxTrim textBoxTrim() const { return m_style.textBoxTrim; }
@@ -125,7 +125,7 @@ private:
     friend class InlineFormattingUtils;
     friend class RubyFormattingContext;
 
-    const InlineRect& logicalRect() const { return m_logicalRect; }
+    const InlineRect& logicalRect() const LIFETIME_BOUND { return m_logicalRect; }
     InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
     InlineLayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
     InlineLayoutUnit logicalLeft() const { return m_logicalRect.left(); }

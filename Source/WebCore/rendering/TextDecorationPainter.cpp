@@ -346,19 +346,19 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         }
     };
 
-    auto styleForRenderer = [&] (const RenderObject& renderer) -> const RenderStyle& {
+    auto styleForRenderer = [&] (const RenderObject& renderer) -> CheckedRef<const RenderStyle> {
         if (pseudoElementType && renderer.style().hasPseudoStyle(*pseudoElementType)) {
             if (auto textRenderer = dynamicDowncast<RenderText>(renderer))
                 return *textRenderer->getCachedPseudoStyle({ *pseudoElementType });
             return *downcast<RenderElement>(renderer).getCachedPseudoStyle({ *pseudoElementType });
         }
-        return firstLineStyle ? renderer.firstLineStyle() : renderer.style();
+        return firstLineStyle ? renderer.firstLineStyle() : CheckedRef { renderer.style() };
     };
 
     auto* current = &renderer;
     do {
-        const auto& style = styleForRenderer(*current);
-        extractDecorations(style, style.textDecorationLine());
+        CheckedRef style = styleForRenderer(*current);
+        extractDecorations(style, style->textDecorationLine());
 
         if (current->style().display() == Style::DisplayType::RubyText)
             return;

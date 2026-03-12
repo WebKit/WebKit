@@ -689,6 +689,9 @@ pas_mte_retag_freed_region_if_tagged(
  *                         [-----]    [--------------]            [-----]
  *      Segregated heaps:  ^     ^                   ^                  ^
  *      Bitfit heaps:      ^     ^    ^              ^            ^     ^
+ * Except that PAS_WORKAROUND_RDAR_171662605_UNCONDITIONAL_TAG_ON_ALLOC,
+ * when set, will force tag-on-alloc, as in the 'Tag-on-Alloc/Free' policy
+ * described above.
  *
  * N.b.: the current implementation (as the name RETAG_ON_SCAVENGE
  * implies) does not retag-on-free, but on scavenge. This somewhat weakens
@@ -708,6 +711,7 @@ pas_mte_maybe_tag_allocated_region(
     bool is_known_medium)
 {
     if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_RETAG_ON_SCAVENGE)
+        && !PAS_WORKAROUND_RDAR_171662605_UNCONDITIONAL_TAG_ON_ALLOC
         && initiality == pas_non_initial_allocation
         && mode == pas_non_compact_allocation_mode) {
         /* can assume: size >= 16 && begin % 16 == 0 */

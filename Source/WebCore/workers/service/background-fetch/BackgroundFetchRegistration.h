@@ -54,7 +54,7 @@ public:
 
     static void updateIfExisting(ScriptExecutionContext&, const BackgroundFetchInformation&);
 
-    const String& id() const { return m_information.identifier; }
+    const String& id() const LIFETIME_BOUND { return m_information.identifier; }
     uint64_t uploadTotal() const { return m_information.uploadTotal; }
     uint64_t uploaded() const { return m_information.uploaded; }
     uint64_t downloadTotal() const { return m_information.downloadTotal; }

@@ -58,7 +58,7 @@ public:
     WEBCORE_EXPORT PasteboardCustomData(const PasteboardCustomData&);
     WEBCORE_EXPORT ~PasteboardCustomData();
 
-    const String& origin() const { return m_origin; }
+    const String& origin() const LIFETIME_BOUND { return m_origin; }
     void setOrigin(String&& origin) { m_origin = WTF::move(origin); }
     void setOrigin(const String& origin) { m_origin = origin; }
 
@@ -96,7 +96,7 @@ public:
     Vector<String> orderedTypes() const;
     WEBCORE_EXPORT PasteboardCustomData& operator=(const PasteboardCustomData& otherData);
 
-    const Vector<Entry>& data() const { return m_data; }
+    const Vector<Entry>& data() const LIFETIME_BOUND { return m_data; }
 
 private:
     HashMap<String, String> sameOriginCustomStringData() const;

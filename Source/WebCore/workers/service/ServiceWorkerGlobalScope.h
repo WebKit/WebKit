@@ -84,8 +84,8 @@ public:
 
     void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
-    const ServiceWorkerContextData& contextData() const { return m_contextData; }
-    const CertificateInfo& certificateInfo() const { return m_contextData.certificateInfo; }
+    const ServiceWorkerContextData& contextData() const LIFETIME_BOUND { return m_contextData; }
+    const CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_contextData.certificateInfo; }
 
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
 
@@ -137,7 +137,7 @@ private:
     Type type() const final { return Type::ServiceWorker; }
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
-    NotificationClient* notificationClient() final { return m_notificationClient.get(); }
+    NotificationClient* notificationClient() LIFETIME_BOUND final { return m_notificationClient.get(); }
 
     void resetUserGesture() { m_isProcessingUserGesture = false; }
 

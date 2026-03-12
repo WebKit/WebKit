@@ -646,7 +646,7 @@ static LayoutPoint staticDistance(const RenderBoxModelObject& container, const R
         // We are relative to a RenderBox ancestor unless the containing block itself is an inline box.
         auto* staticPositionContainingBlock = outOfFlowBox.parent();
         for (; staticPositionContainingBlock && !is<RenderBox>(staticPositionContainingBlock) && staticPositionContainingBlock != &container; staticPositionContainingBlock = staticPositionContainingBlock->container()) { }
-        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(staticPositionContainingBlock); renderBox && renderBox->writingMode().isInlineFlipped())
+        if (auto* renderBox = dynamicDowncast<RenderBox>(staticPositionContainingBlock); renderBox && renderBox->writingMode().isInlineFlipped())
             staticPosition.setX(renderBox->logicalWidth() - staticPosition.x());
         return staticPosition;
     };

@@ -46,8 +46,8 @@ public:
 
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
 
-    const SVGFilterExpression& expression() const { return m_expression; }
-    const FilterEffectVector& effects() const { return m_effects; }
+    const SVGFilterExpression& expression() const LIFETIME_BOUND { return m_expression; }
+    const FilterEffectVector& effects() const LIFETIME_BOUND { return m_effects; }
 
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 

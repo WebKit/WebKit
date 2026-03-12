@@ -34,6 +34,8 @@
 #endif
 
 IGNORE_WARNINGS_BEGIN("constant-conversion")
+IGNORE_WARNINGS_BEGIN("uninitialized")
 #include <wtf/simde/arm/neon.h>
 #include <wtf/simde/arm/sve.h>
+IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END

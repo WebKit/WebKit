@@ -42,7 +42,7 @@ class ThreadGlobalData : public WTF::Thread::ClientData {
 public:
     PAL_EXPORT virtual ~ThreadGlobalData();
 
-    ICUConverterWrapper& cachedConverterICU() { return m_cachedConverterICU; }
+    ICUConverterWrapper& cachedConverterICU() LIFETIME_BOUND { return m_cachedConverterICU; }
 
 protected:
     PAL_EXPORT explicit ThreadGlobalData(Type);

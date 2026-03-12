@@ -812,4 +812,16 @@ void PrivateClickMeasurementManager::allowTLSCertificateChainForLocalPCMTesting(
     PCM::NetworkLoader::allowTLSCertificateChainForLocalPCMTesting(certificateInfo);
 }
 
+void PrivateClickMeasurementManager::fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    initializeStore();
+
+    if (!m_store) {
+        completionHandler({ });
+        return;
+    }
+
+    protect(store())->fetchRegistrableDomains(WTF::move(completionHandler));
+}
+
 } // namespace WebKit

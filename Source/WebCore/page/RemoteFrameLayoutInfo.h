@@ -40,6 +40,9 @@ struct RemoteFrameLayoutInfo {
 
     // RenderStyle::usedZoom of the owner renderer of the frame.
     float usedZoom;
+
+    // useDarkAppearance of the owner renderer of the frame.
+    bool useDarkAppearance;
 };
 
 };

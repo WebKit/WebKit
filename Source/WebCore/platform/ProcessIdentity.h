@@ -56,7 +56,7 @@ public:
 
 #if HAVE(TASK_IDENTITY_TOKEN)
     task_id_token_t taskIdToken() const { return m_taskIdToken.sendRight(); }
-    const MachSendRight& taskId() const { return m_taskIdToken; }
+    const MachSendRight& taskId() const LIFETIME_BOUND { return m_taskIdToken; }
 #endif
 
 private:

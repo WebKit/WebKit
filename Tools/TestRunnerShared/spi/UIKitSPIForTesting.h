@@ -556,9 +556,9 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionShouldBeginResult) {
 - (UITextInputArrowKeyHistory *)_moveToStartOfParagraph:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history;
 @end
 
-#if __has_include(<UIFoundation/NSTextTable.h>)
+#if __has_include(<UIFoundation/NSTextTable.h>) && (!PLATFORM(MACCATALYST) || __has_include(<UIKit/NSTextTable.h>))
 #import <UIFoundation/NSTextTable.h>
-#else
+#elifndef __swift__
 
 typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
     NSTextBlockLayerPadding  = -1,
@@ -587,7 +587,7 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 - (NSArray<NSTextBlock *> *)textBlocks;
 @end
 
-#endif // !__has_include(<UIFoundation/NSTextTable.h>)
+#endif
 
 @interface UIResponder (Internal)
 - (void)_share:(id)sender;

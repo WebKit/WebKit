@@ -39,8 +39,8 @@ class InlineContentCache {
     WTF_MAKE_TZONE_ALLOCATED(InlineContentCache);
 public:
     struct InlineItems {
-        InlineItemList& content() { return m_inlineItemList; }
-        const InlineItemList& content() const { return m_inlineItemList; }
+        InlineItemList& content() LIFETIME_BOUND { return m_inlineItemList; }
+        const InlineItemList& content() const LIFETIME_BOUND { return m_inlineItemList; }
 
         struct ContentAttributes {
             bool requiresVisualReordering { false };
@@ -69,12 +69,12 @@ public:
         InlineItemList m_inlineItemList;
         bool m_isPopulatedFromCache { false };
     };
-    const InlineItems& inlineItems() const { return m_inlineItems; }
-    InlineItems& inlineItems() { return m_inlineItems; }
+    const InlineItems& inlineItems() const LIFETIME_BOUND { return m_inlineItems; }
+    InlineItems& inlineItems() LIFETIME_BOUND { return m_inlineItems; }
 
     void setMaximumIntrinsicWidthLineContent(LineLayoutResult&& lineContent) { m_maximumIntrinsicWidthLineContent = WTF::move(lineContent); }
     void clearMaximumIntrinsicWidthLineContent() { m_maximumIntrinsicWidthLineContent = { }; }
-    std::optional<LineLayoutResult>& maximumIntrinsicWidthLineContent() { return m_maximumIntrinsicWidthLineContent; }
+    std::optional<LineLayoutResult>& maximumIntrinsicWidthLineContent() LIFETIME_BOUND { return m_maximumIntrinsicWidthLineContent; }
 
     void setMinimumContentSize(InlineLayoutUnit minimumContentSize) { m_minimumContentSize = minimumContentSize; }
     void setMaximumContentSize(InlineLayoutUnit maximumContentSize) { m_maximumContentSize = maximumContentSize; }
@@ -82,12 +82,12 @@ public:
     std::optional<InlineLayoutUnit> maximumContentSize() const { return m_maximumContentSize; }
     void resetMinimumMaximumContentSizes();
 
-    const InlineBoxBoundaryTextSpacings& inlineBoxBoundaryTextSpacings() const { return m_textSpacingContext.inlineBoxBoundaryTextSpacings; }
+    const InlineBoxBoundaryTextSpacings& inlineBoxBoundaryTextSpacings() const LIFETIME_BOUND { return m_textSpacingContext.inlineBoxBoundaryTextSpacings; }
     void setInlineBoxBoundaryTextSpacings(InlineBoxBoundaryTextSpacings&& spacings) { m_textSpacingContext.inlineBoxBoundaryTextSpacings = WTF::move(spacings); }
-    const TrimmableTextSpacings& trimmableTextSpacings() const { return m_textSpacingContext.trimmableTextSpacings; }
+    const TrimmableTextSpacings& trimmableTextSpacings() const LIFETIME_BOUND { return m_textSpacingContext.trimmableTextSpacings; }
     void setTrimmableTextSpacings(TrimmableTextSpacings&& spacings) { m_textSpacingContext.trimmableTextSpacings = WTF::move(spacings); }
 
-    const TextSpacingContext& textSpacingContext() const { return m_textSpacingContext; }
+    const TextSpacingContext& textSpacingContext() const LIFETIME_BOUND { return m_textSpacingContext; }
 
 private:
     InlineItems m_inlineItems;

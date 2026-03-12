@@ -35,7 +35,7 @@ public:
 
     bool operator==(const FEFlood&) const;
 
-    const Color& floodColor() const { return m_floodColor; }
+    const Color& floodColor() const LIFETIME_BOUND { return m_floodColor; }
     bool setFloodColor(const Color&);
 
     float floodOpacity() const { return m_floodOpacity; }

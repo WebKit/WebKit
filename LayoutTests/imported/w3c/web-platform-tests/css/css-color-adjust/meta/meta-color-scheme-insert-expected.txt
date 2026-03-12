@@ -1,5 +1,0 @@
-
-PASS Initial color-scheme
-FAIL Inserted meta color-scheme applies assert_equals: expected "light" but got "normal"
-FAIL Inserted meta color-scheme before existing in head applies assert_equals: expected "dark" but got "normal"
-

@@ -47,15 +47,22 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_font_shorthand.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_transition_with_timestamp.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_white-space_nowrap.html  [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_white-space_pre-wrap_wrapped.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_font_shorthand.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_transition_with_timestamp.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/lang_object/lang_color.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_font_shorthand.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_transition_with_timestamp.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_white-space_nowrap.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_white-space_pre-wrap_wrapped.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_font_shorthand.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_transition_with_timestamp.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_white-space_nowrap.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_white-space_pre-wrap_wrapped.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
@@ -232,8 +239,6 @@ webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 
 # Needs testRunner.enableAutoResizeMode()
 webkit.org/b/99028 fast/autoresize [ Failure ]
-
-webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFailure Pass ]
 
 # WebGL ANGLE backend failures
 webkit.org/b/245840 webgl/1.0.x/conformance/context/premultiplyalpha-test.html [ Failure ]
@@ -1398,7 +1403,6 @@ webkit.org/b/264680 fast/scrolling/gtk/user-scroll-snapping-interaction.html [ T
 webkit.org/b/264680 http/wpt/service-workers/controlled-sharedworker.https.html [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Crash Failure Pass Timeout ]
-webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Crash Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Crash Failure Pass Timeout ]
 webkit.org/b/264680 inspector/heap/getPreview.html [ Failure Pass ]
 webkit.org/b/264680 media/no-fullscreen-when-hidden.html [ Timeout Pass ]
@@ -1505,7 +1509,7 @@ webkit.org/b/286063 [ Debug ] media/audio-only-video-intrinsic-size.html [ Crash
 webkit.org/b/286063 [ Debug ] storage/indexeddb/cursor-properties.html [ Crash Pass ]
 webkit.org/b/286063 [ Debug ] storage/indexeddb/modern/idbobjectstore-delete-failures-private.html [ Crash Pass ]
 
-webkit.org/b/304278 [ Debug ] inspector/worker/debugger-pause-subworker.html [ Crash Timeout ]
+webkit.org/b/304278 inspector/worker/debugger-pause-subworker.html [ Skip ]
 
 # webkit.org/b/304535 ui-serif, ui-sans-serif, ui-monospace, ui-rounded generic families not implemented on GTK
 imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.html [ ImageOnlyFailure ]
@@ -1546,3 +1550,8 @@ webkit.org/b/309264 http/tests/xmlhttprequest/redirect-cross-origin-post.html [ 
 webkit.org/b/309265 fast/reflections/abs-position-in-reflection.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/309266 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Pass Failure ]
 webkit.org/b/309267 inspector/unit-tests/array-utilities.html [ Pass Failure ]
+
+[ Release ] http/tests/security/video-cross-origin-accessfailure.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/permissions/permissions-garbage-collect.https.html [ Pass Failure ]
+[ Release ] platform/gtk/fast/frames/scrolling-iframe-out-of-viewport.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/preload/prefetch-document.html [ Failure Pass ]

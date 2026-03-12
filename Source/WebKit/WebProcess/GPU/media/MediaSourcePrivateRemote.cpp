@@ -108,9 +108,10 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
     // FIXME: m_mimeTypeCache is a main-thread only object.
     callOnMainRunLoopAndWait([this, &returnedStatus, contentTypeString = contentType.raw().isolatedCopy(), &returnedSourceBuffer, gpuProcessConnection, configuration] {
         ContentType contentType { contentTypeString };
-        MediaEngineSupportParameters parameters;
-        parameters.isMediaSource = true;
-        parameters.type = contentType;
+        MediaEngineSupportParameters parameters {
+            .platformType = PlatformMediaDecodingType::MediaSource,
+            .type = contentType
+        };
         if (m_mimeTypeCache->supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported) {
             returnedStatus = AddStatus::NotSupported;
             return;

@@ -94,7 +94,7 @@ IPC::Connection* WebResourceLoader::messageSenderConnection() const
 uint64_t WebResourceLoader::messageSenderDestinationID() const
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    return protect(resourceLoader())->identifier()->toUInt64();
+    return resourceLoader()->identifier()->toUInt64();
 }
 
 void WebResourceLoader::detachFromCoreLoader()

@@ -186,7 +186,7 @@ static void gatherDecodingInfo(Document& document, PlatformMediaDecodingConfigur
         configuration.pageIdentifier = page->identifier();
 
 #if ENABLE(WEB_RTC)
-    if (configuration.type == PlatformMediaDecodingType::WebRTC) {
+    if (configuration.type == PlatformMediaDecodingType::MediaStream) {
         if (page)
             page->webRTCProvider().createDecodingConfiguration(WTF::move(configuration), WTF::move(decodingCallback));
         return;

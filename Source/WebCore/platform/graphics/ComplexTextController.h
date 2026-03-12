@@ -212,7 +212,6 @@ private:
 
     FloatSize m_totalAdvance;
     float m_runWidthSoFar { 0 };
-    unsigned m_numGlyphsSoFar { 0 };
     unsigned m_currentRun { 0 };
     unsigned m_glyphInCurrentRun { 0 };
     unsigned m_characterInCurrentGlyph { 0 };

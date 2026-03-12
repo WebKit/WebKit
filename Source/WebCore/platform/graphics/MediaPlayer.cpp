@@ -430,7 +430,7 @@ const MediaPlayerFactory* MediaPlayer::mediaEngine(MediaPlayerEnums::MediaEngine
 
 static const MediaPlayerFactory* bestMediaEngineForSupportParameters(const MediaEngineSupportParameters& parameters, const WeakHashSet<const MediaPlayerFactory>& attemptedEngines = { }, const MediaPlayerFactory* current = nullptr)
 {
-    if (parameters.type.isEmpty() && !parameters.isMediaSource && !parameters.isMediaStream)
+    if (parameters.type.isEmpty() && parameters.platformType == PlatformMediaDecodingType::FileOrHLS)
         return nullptr;
 
     // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream"
@@ -587,24 +587,30 @@ bool MediaPlayer::load(MediaStreamPrivate& mediaStream)
 
 CheckedPtr<const MediaPlayerFactory> MediaPlayer::nextBestMediaEngine(const MediaPlayerFactory* current)
 {
-    MediaEngineSupportParameters parameters;
-    parameters.type = m_loadOptions.contentType;
-    parameters.url = m_url;
+    MediaEngineSupportParameters parameters {
+        .platformType = [&] {
 #if ENABLE(MEDIA_SOURCE)
-    parameters.isMediaSource = !!m_mediaSource.get();
+            if (!!m_mediaSource.get())
+                return PlatformMediaDecodingType::MediaSource;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    parameters.isMediaStream = !!m_mediaStream;
+            if (!!m_mediaStream)
+                return PlatformMediaDecodingType::MediaStream;
 #endif
-    parameters.supportsLimitedMatroska = m_loadOptions.supportsLimitedMatroska;
-    parameters.allowedMediaContainerTypes = allowedMediaContainerTypes();
-    parameters.allowedMediaCodecTypes = allowedMediaCodecTypes();
-    parameters.allowedMediaVideoCodecIDs = allowedMediaVideoCodecIDs();
-    parameters.allowedMediaAudioCodecIDs = allowedMediaAudioCodecIDs();
-    parameters.allowedMediaCaptionFormatTypes = allowedMediaCaptionFormatTypes();
+            return PlatformMediaDecodingType::FileOrHLS;
+        }(),
+        .type = m_loadOptions.contentType,
+        .url = m_url,
+        .supportsLimitedMatroska = m_loadOptions.supportsLimitedMatroska,
+        .allowedMediaContainerTypes = allowedMediaContainerTypes(),
+        .allowedMediaCodecTypes = allowedMediaCodecTypes(),
+        .allowedMediaVideoCodecIDs = allowedMediaVideoCodecIDs(),
+        .allowedMediaAudioCodecIDs = allowedMediaAudioCodecIDs(),
+        .allowedMediaCaptionFormatTypes = allowedMediaCaptionFormatTypes(),
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    parameters.playbackTargetType = playbackTargetType();
+        .playbackTargetType = playbackTargetType()
 #endif
+    };
 
     if (m_activeEngineIdentifier) {
         if (current)

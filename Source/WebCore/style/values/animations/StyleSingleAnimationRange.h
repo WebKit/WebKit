@@ -124,7 +124,7 @@ struct SingleAnimationRangeEdge {
     }
 
     Name name() const { return m_name; }
-    const Offset& offset() const { return m_offset; }
+    const Offset& offset() const LIFETIME_BOUND { return m_offset; }
 
     bool hasDefaultOffset() const { return m_offset.isDefault(type); }
 

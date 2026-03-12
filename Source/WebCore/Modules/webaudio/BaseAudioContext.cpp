@@ -1009,11 +1009,11 @@ RefPtr<MediaSessionManagerInterface> BaseAudioContext::mediaSessionManager() con
 
 RefPtr<MediaSessionManagerInterface> BaseAudioContext::mediaSessionManagerIfExists() const
 {
-    RefPtr document = this->document();
+    auto* document = this->document();
     if (!document)
         return nullptr;
 
-    RefPtr page = document->page();
+    auto* page = document->page();
     if (!page)
         return nullptr;
 

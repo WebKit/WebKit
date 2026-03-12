@@ -350,7 +350,7 @@ std::optional<HitTestResult> PolicyChecker::hitTestResult(const NavigationAction
     if (!mouseEventData)
         return std::nullopt;
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    return protect(m_frame)->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
+    return m_frame->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
 }
 
 void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<const FormSubmission>&& formSubmission, const AtomString& frameName, NewWindowPolicyDecisionFunction&& function)
@@ -393,7 +393,7 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
 void PolicyChecker::stopCheck()
 {
     m_javaScriptURLPolicyCheckIdentifier++;
-    protect(m_frame)->loader().client().cancelPolicyCheck();
+    m_frame->loader().client().cancelPolicyCheck();
 }
 
 void PolicyChecker::cannotShowMIMEType(const ResourceResponse& response)
@@ -404,7 +404,7 @@ void PolicyChecker::cannotShowMIMEType(const ResourceResponse& response)
 void PolicyChecker::handleUnimplementablePolicy(const ResourceError& error)
 {
     m_delegateIsHandlingUnimplementablePolicy = true;
-    protect(m_frame)->loader().client().dispatchUnableToImplementPolicy(error);
+    m_frame->loader().client().dispatchUnableToImplementPolicy(error);
     m_delegateIsHandlingUnimplementablePolicy = false;
 }
 

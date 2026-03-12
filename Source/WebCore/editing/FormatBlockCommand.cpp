@@ -111,7 +111,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     }
 
     RefPtr lastChild = blockNode->lastChild();
-    Position lastParagraphInBlockNode = lastChild ? positionAfterNode(lastChild.get()) : Position();
+    Position lastParagraphInBlockNode = lastChild ? positionAfterNode(*lastChild) : Position();
     bool wasEndOfParagraph = isEndOfParagraph(lastParagraphInBlockNode);
 
     moveParagraphWithClones(start, end, blockNode.get(), outerBlock.get());

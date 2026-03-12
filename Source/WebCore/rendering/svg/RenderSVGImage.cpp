@@ -124,6 +124,11 @@ void RenderSVGImage::layout()
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        paintSVGEventRegion(paintInfo, paintOffset);
+        return;
+    }
+
     OptionSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline };
     if (!shouldPaintSVGRenderer(paintInfo, relevantPaintPhases) || !imageResource().cachedImage())
         return;
@@ -210,7 +215,7 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
 
     FloatRect contentBoxRect = borderBoxRectEquivalent();
     FloatRect replacedContentRect(0, 0, image->width(), image->height());
-    protect(imageElement())->preserveAspectRatio().transformRect(contentBoxRect, replacedContentRect);
+    imageElement().preserveAspectRatio().transformRect(contentBoxRect, replacedContentRect);
 
     contentBoxRect.moveBy(paintOffset);
 
@@ -261,7 +266,7 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         return false;
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGImage, request, style().pointerEvents());
-    if (isVisibleToHitTesting(style(), request) || !hitRules.requireVisible) {
+    if (request.isVisibleForStyle(style()) || !hitRules.requireVisible) {
         if (hitRules.canHitFill) {
             if (m_objectBoundingBox.contains(localPoint)) {
                 updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));

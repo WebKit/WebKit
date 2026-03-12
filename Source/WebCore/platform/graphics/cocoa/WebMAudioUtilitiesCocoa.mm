@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #import "CAAudioStreamDescription.h"
+#import "CMUtilities.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
 #import "PlatformMediaSessionManager.h"
@@ -99,14 +100,30 @@ static bool registerDecoderFactory(ASCIILiteral decoderName, OSType decoderType)
 
 static RefPtr<AudioInfo> createAudioInfoForFormat(OSType formatID, Vector<uint8_t>&& magicCookie)
 {
-    AudioStreamBasicDescription asbd { };
-    asbd.mFormatID = formatID;
-    uint32_t size = sizeof(asbd);
-    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, magicCookie.size(), magicCookie.span().data(), &size, &asbd);
-    if (error) {
-        RELEASE_LOG_ERROR(Media, "createAudioFormatDescriptionForFormat failed with error %d (%.4s)", error, (char *)&error);
+    AudioFormatInfo formatInfo { };
+    formatInfo.mASBD.mFormatID = formatID;
+    formatInfo.mMagicCookieSize = magicCookie.size();
+    formatInfo.mMagicCookie = magicCookie.span().data();
+    UInt32 formatListSize;
+    if (auto error = PAL::AudioFormatGetPropertyInfo(kAudioFormatProperty_FormatList, sizeof(formatInfo), &formatInfo, &formatListSize)) {
+        RELEASE_LOG_ERROR(Media, "createAudioFormatDescriptionForFormat::kAudioFormatProperty_FormatList failed with error %d (%.4s)", error, (char *)&error);
         return nullptr;
     }
+    size_t listCount = formatListSize / sizeof(AudioFormatListItem);
+    Vector<AudioFormatListItem> formatList(listCount);
+    if (auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatList, sizeof(formatInfo), &formatInfo, &formatListSize, formatList.mutableSpan().data())) {
+        RELEASE_LOG_ERROR(Media, "createAudioFormatDescriptionForFormat::kAudioFormatProperty_FormatList failed with error %d (%.4s)", error, (char *)&error);
+        return nullptr;
+    }
+    UInt32 itemIndex;
+    UInt32 indexSize = sizeof(itemIndex);
+    if (auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FirstPlayableFormatFromList, formatListSize, formatList.span().data(), &indexSize, &itemIndex)) {
+        RELEASE_LOG_ERROR(Media, "createAudioFormatDescriptionForFormat::kAudioFormatProperty_FirstPlayableFormatFromList failed with error %d (%.4s)", error, (char *)&error);
+        return nullptr;
+    }
+    AudioStreamBasicDescription asbd = formatList[itemIndex].mASBD;
+
+    RELEASE_LOG_DEBUG(Media, "createAudioFormatDescriptionForFormat for layout %s", channelLayoutDescription(formatList[itemIndex].mChannelLayoutTag).ascii().span().data());
 
     return AudioInfo::create({
         {

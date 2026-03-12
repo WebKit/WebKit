@@ -4,8 +4,6 @@ add_custom_target(WebKitTestRunner-forwarding-headers
 list(APPEND WebKitTestRunner_DEPENDENCIES WebKitTestRunner-forwarding-headers)
 
 list(APPEND WebKitTestRunner_SOURCES
-    cairo/TestInvocationCairo.cpp
-
     libwpe/EventSenderProxyClientLibWPE.cpp
     libwpe/EventSenderProxyLibWPE.cpp
     libwpe/PlatformWebViewClientLibWPE.cpp

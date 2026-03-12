@@ -301,8 +301,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     case ScriptType::SpeculationRules: {
         // If the element has a source attribute, queue a task to fire an event named error at the element, and return.
         if (hasSourceAttribute()) {
-            protect(protect(element->document())->eventLoop())->queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }] {
-                protectedThis->dispatchErrorEvent();
+            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
+                element.dispatchErrorEvent();
             });
             return false;
         }
@@ -391,8 +391,8 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     if (m_loadableScript)
         return true;
 
-    document->eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }] {
-        protectedThis->dispatchErrorEvent();
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
+        element.dispatchErrorEvent();
     });
     return false;
 }
@@ -644,7 +644,7 @@ void ScriptElement::setTrustedScriptText(const String& text)
 
 bool isScriptElement(Node& node)
 {
-    return is<HTMLScriptElement>(node) || is<SVGScriptElement>(node);
+    return isAnyOf<HTMLScriptElement, SVGScriptElement>(node);
 }
 
 ScriptElement* dynamicDowncastScriptElement(Element& element)
@@ -710,7 +710,7 @@ void ScriptElement::unregisterSpeculationRules()
     if (!document->settings().speculationRulesPrefetchEnabled())
         return;
 
-    auto removedURLs = document->speculationRules()->unregisterSpeculationRules(element);
+    auto removedURLs = protect(document->speculationRules())->unregisterSpeculationRules(element);
 
     // Remove prefetched resources that were initiated by the removed rules.
     if (RefPtr frame = document->frame()) {

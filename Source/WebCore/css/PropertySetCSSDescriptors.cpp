@@ -285,7 +285,7 @@ void PropertySetCSSDescriptors::didMutate(MutationType type)
 
 CSSStyleSheet* PropertySetCSSDescriptors::parentStyleSheet() const
 {
-    RefPtr strongParentRule = m_parentRule.get();
+    auto* strongParentRule = m_parentRule.get();
     if (!strongParentRule)
         return nullptr;
     return strongParentRule->parentStyleSheet();
@@ -299,7 +299,7 @@ CSSRule* PropertySetCSSDescriptors::parentRule() const
 CSSParserContext PropertySetCSSDescriptors::cssParserContext() const
 {
     RefPtr cssStyleSheet = parentStyleSheet();
-    auto context = cssStyleSheet ? cssStyleSheet->contents().parserContext() : CSSParserContext(protect(propertySet())->cssParserMode());
+    auto context = cssStyleSheet ? cssStyleSheet->contents().parserContext() : CSSParserContext(propertySet().cssParserMode());
 
     context.enclosingRuleType = ruleType();
 

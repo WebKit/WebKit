@@ -1121,6 +1121,11 @@ void WebFrameLoaderClient::shouldGoToHistoryItemAsync(WebCore::HistoryItem&, Com
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void WebFrameLoaderClient::dispatchGoToBackForwardItemAtIndex(int, WebCore::FrameLoadType)
+{
+    // Not needed in WebKitLegacy — single process, useUIProcessForBackForwardItemLoading is never enabled.
+}
+
 bool WebFrameLoaderClient::shouldFallBack(const WebCore::ResourceError& error) const
 {
     // FIXME: Needs to check domain.
@@ -1625,7 +1630,7 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
     return WebCore::ObjectContentType::None;
 }
 
-static AtomString parameterValue(const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, ASCIILiteral name)
+static AtomString NODELETE parameterValue(const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, ASCIILiteral name)
 {
     size_t size = paramNames.size();
     ASSERT(size == paramValues.size());

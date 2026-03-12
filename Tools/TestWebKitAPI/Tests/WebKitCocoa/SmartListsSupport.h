@@ -51,7 +51,7 @@ NS_SWIFT_UI_ACTOR
 NS_SWIFT_UI_ACTOR
 @interface SmartListsTestConfiguration : NSObject
 
-- (instancetype)initWithExpectedHTML:(NSString *)expectedHTML expectedSelection:(SmartListsTestSelectionConfiguration *)expectedSelection input:(NSString *)input stylesheet:(nullable NSString *)stylesheet;
+- (instancetype)initWithExpectedHTML:(NSString *)expectedHTML expectedSelection:(SmartListsTestSelectionConfiguration *)expectedSelection input:(NSString *)input stylesheet:(nullable NSString *)stylesheet isRTL:(BOOL)isRTL;
 
 @end
 

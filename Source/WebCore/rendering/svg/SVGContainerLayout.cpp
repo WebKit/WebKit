@@ -64,7 +64,7 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 
         if (transformChanged) {
             // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
-            if (CheckedPtr text = dynamicDowncast<RenderSVGText>(child))
+            if (auto* text = dynamicDowncast<RenderSVGText>(child))
                 text->setNeedsTextMetricsUpdate();
             needsLayout = true;
         }
@@ -118,7 +118,7 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
         ASSERT(!renderer.isRenderSVGRoot()); // There is only one outermost RenderSVGRoot object
         ASSERT(!renderer.isRenderSVGInline()); // Inlines are only allowed within a RenderSVGText tree
 
-        if (is<RenderSVGModelObject>(renderer) || is<RenderSVGBlock>(renderer))
+        if (isAnyOf<RenderSVGModelObject, RenderSVGBlock>(renderer))
             return;
 
         ASSERT_NOT_REACHED();
@@ -222,13 +222,13 @@ bool SVGContainerLayout::layoutSizeOfNearestViewportChanged() const
 bool SVGContainerLayout::transformToRootChanged(const RenderObject* ancestor)
 {
     while (ancestor) {
-        if (CheckedPtr container = dynamicDowncast<RenderSVGTransformableContainer>(*ancestor))
+        if (auto* container = dynamicDowncast<RenderSVGTransformableContainer>(*ancestor))
             return container->didTransformToRootUpdate();
 
-        if (CheckedPtr container = dynamicDowncast<RenderSVGViewportContainer>(*ancestor))
+        if (auto* container = dynamicDowncast<RenderSVGViewportContainer>(*ancestor))
             return container->didTransformToRootUpdate();
 
-        if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(*ancestor))
+        if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(*ancestor))
             return svgRoot->didTransformToRootUpdate();
         ancestor = ancestor->parent();
     }

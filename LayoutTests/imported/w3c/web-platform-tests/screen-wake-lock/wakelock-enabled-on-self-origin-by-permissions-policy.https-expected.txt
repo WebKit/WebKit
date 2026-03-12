@@ -1,0 +1,6 @@
+
+
+PASS Permissions-Policy header "screen-wake-lock=self" allows the top-level document.
+PASS Permissions-Policy header "screen-wake-lock=self" allows same-origin iframes.
+FAIL Permissions-Policy header "screen-wake-lock=self" disallows cross-origin iframes. assert_false: navigator.wakeLock.request("screen") expected false got true
+

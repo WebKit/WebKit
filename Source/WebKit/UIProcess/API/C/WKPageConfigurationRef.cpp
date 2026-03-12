@@ -88,12 +88,12 @@ void WKPageConfigurationSetPreferences(WKPageConfigurationRef configuration, WKP
 
 WKPageRef WKPageConfigurationGetRelatedPage(WKPageConfigurationRef configuration)
 {
-    return toAPI(protect(protect(toImpl(configuration))->relatedPage()).get());
+    return toAPI(protect(toImpl(configuration)->relatedPage()).get());
 }
 
 void WKPageConfigurationSetRelatedPage(WKPageConfigurationRef configuration, WKPageRef relatedPage)
 {
-    protect(toImpl(configuration))->setRelatedPage(protect(toImpl(relatedPage)));
+    toImpl(configuration)->setRelatedPage(protect(toImpl(relatedPage)));
 }
 
 WKWebsiteDataStoreRef WKPageConfigurationGetWebsiteDataStore(WKPageConfigurationRef configuration)
@@ -108,27 +108,27 @@ void WKPageConfigurationSetWebsiteDataStore(WKPageConfigurationRef configuration
 
 void WKPageConfigurationSetInitialCapitalizationEnabled(WKPageConfigurationRef configuration, bool enabled)
 {
-    protect(toImpl(configuration))->setInitialCapitalizationEnabled(enabled);
+    toImpl(configuration)->setInitialCapitalizationEnabled(enabled);
 }
 
 void WKPageConfigurationSetBackgroundCPULimit(WKPageConfigurationRef configuration, double cpuLimit)
 {
-    protect(toImpl(configuration))->setCPULimit(cpuLimit);
+    toImpl(configuration)->setCPULimit(cpuLimit);
 }
 
 void WKPageConfigurationSetAllowTestOnlyIPC(WKPageConfigurationRef configuration, bool allowTestOnlyIPC)
 {
-    protect(toImpl(configuration))->setAllowTestOnlyIPC(allowTestOnlyIPC);
+    toImpl(configuration)->setAllowTestOnlyIPC(allowTestOnlyIPC);
 }
 
 void WKPageConfigurationSetShouldSendConsoleLogsToUIProcessForTesting(WKPageConfigurationRef configuration, bool should)
 {
-    protect(toImpl(configuration))->setShouldSendConsoleLogsToUIProcessForTesting(should);
+    toImpl(configuration)->setShouldSendConsoleLogsToUIProcessForTesting(should);
 }
 
 void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfigurationRef configuration, uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort)
 {
-    protect(toImpl(configuration))->setPortsForUpgradingInsecureSchemeForTesting(upgradeFromInsecurePort, upgradeToSecurePort);
+    toImpl(configuration)->setPortsForUpgradingInsecureSchemeForTesting(upgradeFromInsecurePort, upgradeToSecurePort);
 }
 
 WKWebsitePoliciesRef WKPageConfigurationGetDefaultWebsitePolicies(WKPageConfigurationRef configuration)

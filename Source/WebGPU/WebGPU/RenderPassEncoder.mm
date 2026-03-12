@@ -64,7 +64,7 @@ else \
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderPassEncoder);
 
-static std::pair<uint64_t, uint32_t> makeKey(uint64_t bufferIdentifier, uint32_t offset)
+static std::pair<uint64_t, uint32_t> NODELETE makeKey(uint64_t bufferIdentifier, uint32_t offset)
 {
     return std::make_pair(bufferIdentifier, offset);
 }
@@ -953,7 +953,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectBufferToValid
     return clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, m_device.get(), m_rasterSampleCount, *this, splitEncoder);
 }
 
-static NSUInteger verticesPerPrimitive(MTLPrimitiveType primitiveType)
+static NSUInteger NODELETE verticesPerPrimitive(MTLPrimitiveType primitiveType)
 {
     switch (primitiveType) {
     case MTLPrimitiveTypePoint:
@@ -1666,7 +1666,7 @@ void RenderPassEncoder::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
-void wgpuRenderPassEncoderReference(WGPURenderPassEncoder renderPassEncoder)
+void NODELETE wgpuRenderPassEncoderReference(WGPURenderPassEncoder renderPassEncoder)
 {
     WebGPU::fromAPI(renderPassEncoder).ref();
 }

@@ -182,8 +182,8 @@ public:
     bool NODELETE isOverflowVisible() const;
 
     void updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle);
-    const RenderStyle& style() const { return m_style; }
-    const RenderStyle& firstLineStyle() const { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
+    const RenderStyle& style() const LIFETIME_BOUND { return m_style; }
+    const RenderStyle& firstLineStyle() const LIFETIME_BOUND { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
     WritingMode writingMode() const { return style().writingMode(); }
 
     // FIXME: Find a better place for random DOM things.

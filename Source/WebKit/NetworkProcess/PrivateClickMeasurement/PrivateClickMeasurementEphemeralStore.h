@@ -60,12 +60,14 @@ public:
     void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&) final;
     void clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, WebCore::PCM::AttributionReportEndpoint) final;
 
+    void fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&) final;
+
     void close(CompletionHandler<void()>&&) final;
 
 private:
     EphemeralStore();
 
-    void NODELETE reset();
+    void reset();
 
     std::optional<WebCore::PrivateClickMeasurement> m_clickMeasurement;
 };

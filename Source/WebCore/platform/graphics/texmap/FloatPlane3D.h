@@ -37,7 +37,7 @@ class FloatPlane3D {
 public:
     FloatPlane3D(const FloatPoint3D&, const FloatPoint3D&);
 
-    const FloatPoint3D& normal() const { return m_normal; }
+    const FloatPoint3D& normal() const LIFETIME_BOUND { return m_normal; }
 
     // Getter for the distance from the origin (plane constant d)
     float distanceConstant() const { return m_distanceConstant; }

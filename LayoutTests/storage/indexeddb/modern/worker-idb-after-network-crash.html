@@ -1,0 +1,87 @@
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+<body>
+<div id="description">
+This test verifies that IndexedDB operations in a dedicated worker recover after
+the network process is terminated, without needing to recreate the worker.
+</div>
+</body>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var worker = new Worker("resources/worker-idb-after-network-crash.js");
+var mainDb;
+
+worker.onmessage = function(event)
+{
+    var data = event.data;
+    debug("[Worker] " + data);
+
+    if (data === "db-ready") {
+        debug("Worker has an open IDB connection. Opening main page DB before crash.");
+
+        // Open a main-page database so we can use its onclose as crash signal.
+        var request = indexedDB.open("main-page-crash-signal-" + Date.now(), 1);
+        request.onupgradeneeded = function(e) {
+            e.target.result.createObjectStore("test", { keyPath: "id" });
+        };
+        request.onsuccess = function(e) {
+            mainDb = e.target.result;
+            mainDb.onclose = function() {
+                debug("Main page DB closed by crash. Verifying main page recovery...");
+                verifyMainPageRecovery();
+            };
+
+            debug("Terminating network process.");
+            if (window.testRunner)
+                testRunner.terminateNetworkProcess();
+        };
+        request.onerror = function(e) {
+            testFailed("Failed to open main page signal DB: " + e.target.error);
+            finishJSTest();
+        };
+
+    } else if (data === "recovery-ok") {
+        testPassed("Worker opened a new IndexedDB database after network process crash");
+        worker.terminate();
+        finishJSTest();
+
+    } else if (data.indexOf("recovery-fail:") === 0) {
+        testFailed("Worker IndexedDB recovery failed: " + data.substring("recovery-fail:".length));
+        worker.terminate();
+        finishJSTest();
+    }
+};
+
+worker.onerror = function(event)
+{
+    testFailed("Worker error: " + event.message);
+    finishJSTest();
+};
+
+function verifyMainPageRecovery()
+{
+    var request = indexedDB.open("main-page-recovery-test-" + Date.now(), 1);
+    request.onupgradeneeded = function(e) {
+        e.target.result.createObjectStore("test", { keyPath: "id" });
+    };
+    request.onsuccess = function(e) {
+        var db = e.target.result;
+        db.close();
+        debug("Main page IDB recovered. Now testing worker...");
+        worker.postMessage("idb-after-crash");
+    };
+    request.onerror = function(e) {
+        testFailed("Main page IDB recovery failed: " + e.target.error);
+        finishJSTest();
+    };
+}
+
+debug("Starting worker and asking it to open an IDB database.");
+worker.postMessage("open-db");
+
+</script>

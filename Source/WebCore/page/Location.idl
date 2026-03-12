@@ -38,6 +38,7 @@
     CustomPut,
     ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable=ReachableFromDOMWindow,
+    JSCustomMarkFunction,
     IsImmutablePrototypeExoticObject,
     LegacyUnforgeable,
     Exposed=Window
@@ -60,5 +61,5 @@
 
     readonly attribute USVString origin;
 
-    [SameObject, CachedAttribute] readonly attribute DOMStringList ancestorOrigins;
+    readonly attribute DOMStringList ancestorOrigins;
 };

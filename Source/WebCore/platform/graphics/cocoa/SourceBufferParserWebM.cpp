@@ -1375,9 +1375,9 @@ WebMParser::ConsumeFrameDataResult WebMParser::AudioTrackData::consumeFrameData(
             PARSER_LOG_ERROR_IF_POSSIBLE("AudioTrackData::consumeFrameData: unable to create contiguous data block");
             return Skip(&reader, bytesRemaining);
         }
-        packetDuration = { static_cast<int64_t>(m_packetDurationParser->framesInPacket(contiguousBuffer->span())), downcast<AudioInfo>(formatDescription())->rate() };
+        packetDuration = { static_cast<int64_t>(m_packetDurationParser->framesInPacket(contiguousBuffer->span())), downcast<AudioInfo>(*formatDescription()).rate() };
     } else if (codec() == CodecType::PCM)
-        packetDuration = { static_cast<int64_t>(metadata.size / sizeof(float) / downcast<AudioInfo>(formatDescription())->channels()), downcast<AudioInfo>(formatDescription())->rate() };
+        packetDuration = { static_cast<int64_t>(metadata.size / sizeof(float) / downcast<AudioInfo>(*formatDescription()).channels()), downcast<AudioInfo>(*formatDescription()).rate() };
     auto trimDuration = MediaTime::zeroTime();
     MediaTime localPresentationTime = presentationTime;
     if (m_remainingTrimDuration.isFinite() && m_remainingTrimDuration > MediaTime::zeroTime()) {

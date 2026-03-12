@@ -43,8 +43,8 @@ enum ObjCBlockConversion {
     /// non-null then `handler` will be called with `.success(T)`. If both arguments are `nil`
     /// the conversion will trap.
     static nonisolated func exclusive<Value>(
-        _ handler: @MainActor @escaping (Result<Value, Error>) -> Void
-    ) -> @MainActor (Value?, Error?) -> Void {
+        _ handler: @MainActor @escaping (Result<Value, any Error>) -> Void
+    ) -> @MainActor (Value?, (any Error)?) -> Void {
         { value, error in
             if let value = value {
                 handler(.success(value))
@@ -61,8 +61,8 @@ enum ObjCBlockConversion {
     /// This performs the same conversion as `Self.exclusive(_:)`, but if the result block is called
     /// with `(nil, nil)` then `handler` is called with `.success(nil)`.
     static nonisolated func treatNilAsSuccess<Value>(
-        _ handler: @MainActor @escaping (Result<Value?, Error>) -> Void
-    ) -> @MainActor (Value?, Error?) -> Void {
+        _ handler: @MainActor @escaping (Result<Value?, any Error>) -> Void
+    ) -> @MainActor (Value?, (any Error)?) -> Void {
         { value, error in
             if let error = error {
                 handler(.failure(error))
@@ -79,8 +79,8 @@ enum ObjCBlockConversion {
     /// is a compatibility behavior for http://webkit.org/b/216198, and should not be adopted by
     /// new code.
     static nonisolated func boxingNilAsAnyForCompatibility(
-        _ handler: @MainActor @escaping (Result<Any, Error>) -> Void
-    ) -> @MainActor (Any?, Error?) -> Void {
+        _ handler: @MainActor @escaping (Result<Any, any Error>) -> Void
+    ) -> @MainActor (Any?, (any Error)?) -> Void {
         { value, error in
             if let error = error {
                 handler(.failure(error))

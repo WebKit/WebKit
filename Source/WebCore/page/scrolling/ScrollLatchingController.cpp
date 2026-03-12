@@ -32,6 +32,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollableArea.h"
 #include <wtf/TZoneMallocInlines.h>

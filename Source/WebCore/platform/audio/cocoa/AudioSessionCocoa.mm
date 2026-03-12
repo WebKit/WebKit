@@ -95,7 +95,6 @@ void AudioSessionCocoa::setEligibleForSmartRouting(bool isEligible, ForceUpdate 
 
 bool AudioSessionCocoa::tryToSetActiveInternal(bool active)
 {
-#if HAVE(AVAUDIOSESSION)
     // FIXME: This is a safer cpp false positive (160259918).
     SUPPRESS_UNRETAINED_ARG static bool supportsSharedInstance = [PAL::getAVAudioSessionClassSingleton() respondsToSelector:@selector(sharedInstance)];
     // FIXME: This is a safer cpp false positive (160259918).
@@ -137,10 +136,6 @@ bool AudioSessionCocoa::tryToSetActiveInternal(bool active)
             RELEASE_LOG_ERROR(Media, "failed to deactivate audio session, error: %@", error.localizedDescription);
     });
     setEligibleForSmartRouting(false);
-#else
-    UNUSED_PARAM(active);
-    notImplemented();
-#endif
     return true;
 }
 

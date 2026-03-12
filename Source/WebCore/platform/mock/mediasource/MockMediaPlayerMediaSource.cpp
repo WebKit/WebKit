@@ -84,7 +84,7 @@ void MockMediaPlayerMediaSource::getSupportedTypes(HashSet<String>& supportedTyp
 
 MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    if (!parameters.isMediaSource)
+    if (parameters.platformType != PlatformMediaDecodingType::MediaSource)
         return MediaPlayer::SupportsType::IsNotSupported;
 
     auto containerType = parameters.type.containerType().convertToASCIILowercase();
@@ -316,7 +316,7 @@ void MockMediaPlayerMediaSource::setNetworkState(MediaPlayer::NetworkState netwo
 
 std::optional<VideoPlaybackQualityMetrics> MockMediaPlayerMediaSource::videoPlaybackQualityMetrics()
 {
-    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    auto* mediaSourcePrivate = m_mediaSourcePrivate.get();
     return mediaSourcePrivate ? mediaSourcePrivate->videoPlaybackQualityMetrics() : std::nullopt;
 }
 

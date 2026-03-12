@@ -107,7 +107,7 @@ public:
 
 private:
     void includeTodayAsOperatingDateIfNecessary() override;
-    const Vector<OperatingDate>& operatingDates() const { return m_operatingDates; }
+    const Vector<OperatingDate>& operatingDates() const LIFETIME_BOUND { return m_operatingDates; }
     void clearOperatingDates() override { m_operatingDates.clear(); }
     void mergeOperatingDates(Vector<OperatingDate>&&);
     bool hasStatisticsExpired(const ResourceLoadStatistics&, OperatingDatesWindow) const;

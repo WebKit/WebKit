@@ -50,16 +50,12 @@ struct RTCRtpCodecCapability;
 class RTCRtpTransceiver final : public RefCounted<RTCRtpTransceiver>, public ScriptWrappable {
     WTF_MAKE_TZONE_ALLOCATED(RTCRtpTransceiver);
 public:
-    static Ref<RTCRtpTransceiver> create(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver, std::unique_ptr<RTCRtpTransceiverBackend>&& backend) { return adoptRef(*new RTCRtpTransceiver(WTF::move(sender), WTF::move(receiver), WTF::move(backend))); }
+    static Ref<RTCRtpTransceiver> create(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver, UniqueRef<RTCRtpTransceiverBackend>&& backend) { return adoptRef(*new RTCRtpTransceiver(WTF::move(sender), WTF::move(receiver), WTF::move(backend))); }
     ~RTCRtpTransceiver();
-
-    bool NODELETE hasSendingDirection() const;
-    void NODELETE enableSendingDirection();
-    void NODELETE disableSendingDirection();
 
     RTCRtpTransceiverDirection direction() const;
     std::optional<RTCRtpTransceiverDirection> currentDirection() const;
-    void setDirection(RTCRtpTransceiverDirection);
+    ExceptionOr<void> setDirection(RTCRtpTransceiverDirection);
     String mid() const;
 
     RTCRtpSender& sender() { return m_sender.get(); }
@@ -68,25 +64,22 @@ public:
     bool stopped() const;
     ExceptionOr<void> stop();
     ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodecCapability>&);
-
-    RTCRtpTransceiverBackend* backend() { return m_backend.get(); }
+    
+    RTCRtpTransceiverBackend& backend() LIFETIME_BOUND { return m_backend.get(); }
     void setConnection(RTCPeerConnection&);
 
     std::optional<RTCRtpTransceiverDirection> firedDirection() const { return m_firedDirection; }
     void setFiredDirection(std::optional<RTCRtpTransceiverDirection> firedDirection) { m_firedDirection = firedDirection; }
 
 private:
-    RTCRtpTransceiver(Ref<RTCRtpSender>&&, Ref<RTCRtpReceiver>&&, std::unique_ptr<RTCRtpTransceiverBackend>&&);
+    RTCRtpTransceiver(Ref<RTCRtpSender>&&, Ref<RTCRtpReceiver>&&, UniqueRef<RTCRtpTransceiverBackend>&&);
 
-    RTCRtpTransceiverDirection m_direction;
+    bool m_isStopping { false };
     std::optional<RTCRtpTransceiverDirection> m_firedDirection;
 
     const Ref<RTCRtpSender> m_sender;
     const Ref<RTCRtpReceiver> m_receiver;
-
-    bool m_stopped { false };
-
-    std::unique_ptr<RTCRtpTransceiverBackend> m_backend;
+    const UniqueRef<RTCRtpTransceiverBackend> m_backend;
     WeakPtr<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_connection;
 };
 
@@ -94,6 +87,7 @@ class RtpTransceiverSet {
 public:
     const Vector<Ref<RTCRtpTransceiver>>& list() const LIFETIME_BOUND { return m_transceivers; }
     void append(Ref<RTCRtpTransceiver>&&);
+    void remove(const RTCRtpTransceiver&);
 
     Vector<std::reference_wrapper<RTCRtpSender>> senders() const;
     Vector<std::reference_wrapper<RTCRtpReceiver>> receivers() const;

@@ -382,7 +382,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setMemoryFootprintPollIntervalForTesting:(NSTimeInterval)pollInterval
 {
-    protect(*_processPoolConfiguration)->setMemoryFootprintPollIntervalForTesting(Seconds { pollInterval });
+    _processPoolConfiguration->setMemoryFootprintPollIntervalForTesting(Seconds { pollInterval });
 }
 
 - (NSTimeInterval)memoryFootprintPollIntervalForTesting

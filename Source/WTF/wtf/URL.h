@@ -147,20 +147,20 @@ public:
     // Unlike user() and password(), encodedUser() and encodedPassword() don't decode escape sequences.
     // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
 
-    WTF_EXPORT_PRIVATE StringView protocol() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView encodedUser() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView encodedPassword() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView host() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE protocol() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE encodedUser() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE encodedPassword() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE host() const LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE std::optional<uint16_t> port() const;
-    WTF_EXPORT_PRIVATE StringView path() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView lastPathComponent() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView query() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView fragmentIdentifier() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE path() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE lastPathComponent() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE query() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE fragmentIdentifier() const LIFETIME_BOUND;
 
-    WTF_EXPORT_PRIVATE StringView queryWithLeadingQuestionMark() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView fragmentIdentifierWithLeadingNumberSign() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView viewWithoutQueryOrFragmentIdentifier() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView viewWithoutFragmentIdentifier() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE queryWithLeadingQuestionMark() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE fragmentIdentifierWithLeadingNumberSign() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE viewWithoutQueryOrFragmentIdentifier() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView NODELETE viewWithoutFragmentIdentifier() const LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE String stringWithoutFragmentIdentifier() const;
 
     WTF_EXPORT_PRIVATE String protocolHostAndPort() const;
@@ -193,7 +193,7 @@ public:
     WTF_EXPORT_PRIVATE bool isAboutBlank() const;
     WTF_EXPORT_PRIVATE bool isAboutSrcDoc() const;
 
-    WTF_EXPORT_PRIVATE bool isMatchingDomain(StringView) const;
+    WTF_EXPORT_PRIVATE bool NODELETE isMatchingDomain(StringView) const;
 
     WTF_EXPORT_PRIVATE bool setProtocol(StringView);
     WTF_EXPORT_PRIVATE bool setHost(StringView);
@@ -297,11 +297,11 @@ static_assert(sizeof(URL) == sizeof(String) + 8 * sizeof(unsigned), "URL should 
 bool operator==(const URL&, const URL&);
 bool operator==(const URL&, const String&);
 
-WTF_EXPORT_PRIVATE bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
+WTF_EXPORT_PRIVATE bool NODELETE equalIgnoringFragmentIdentifier(const URL&, const URL&);
 WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> differingQueryParameters(const URL&, const URL&);
 WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> queryParameters(const URL&);
-WTF_EXPORT_PRIVATE bool isEqualIgnoringQueryAndFragments(const URL&, const URL&);
+WTF_EXPORT_PRIVATE bool NODELETE isEqualIgnoringQueryAndFragments(const URL&, const URL&);
 
 // Returns the parameters that were removed (including duplicates), in the order that they appear in the URL.
 WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, const HashSet<String>&);

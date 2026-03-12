@@ -28,6 +28,8 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
 #include "WebCoreJSClientData.h"
+#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/Lookup.h>
 #include <wtf/RuntimeApplicationChecks.h>
@@ -196,5 +198,14 @@ bool JSLocation::preventExtensions(JSObject*, JSGlobalObject*)
 {
     return false;
 }
+
+template<typename Visitor>
+void JSLocation::visitAdditionalChildren(Visitor& visitor)
+{
+    if (auto* ancestorOrigins = wrapped().cachedAncestorOrigins())
+        addWebCoreOpaqueRoot(visitor, WebCoreOpaqueRoot(ancestorOrigins));
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSLocation);
 
 } // namespace WebCore

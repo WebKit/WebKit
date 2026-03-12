@@ -49,11 +49,11 @@ struct HardwareCapabilities {
 };
 
 std::optional<HardwareCapabilities> hardwareCapabilities(id<MTLDevice>);
-bool isValid(const WGPULimits&);
-WGPULimits defaultLimits();
-bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference);
+bool NODELETE isValid(const WGPULimits&);
+WGPULimits NODELETE defaultLimits();
+bool NODELETE anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference);
 bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference);
 bool isShaderValidationEnabled(id<MTLDevice>);
-bool isWebGPUSwiftEnabled();
+bool NODELETE isWebGPUSwiftEnabled();
 
 } // namespace WebGPU

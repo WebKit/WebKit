@@ -44,7 +44,7 @@
 - (BOOL)blockedLoad
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protect(*_action)->blockedLoad();
+    return _action->blockedLoad();
 #else
     return NO;
 #endif
@@ -53,7 +53,7 @@
 - (BOOL)blockedCookies
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protect(*_action)->blockedCookies();
+    return _action->blockedCookies();
 #else
     return NO;
 #endif
@@ -62,7 +62,7 @@
 - (BOOL)madeHTTPS
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protect(*_action)->madeHTTPS();
+    return _action->madeHTTPS();
 #else
     return NO;
 #endif
@@ -71,7 +71,7 @@
 - (BOOL)redirected
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protect(*_action)->redirected();
+    return _action->redirected();
 #else
     return NO;
 #endif
@@ -80,7 +80,7 @@
 - (BOOL)modifiedHeaders
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return protect(*_action)->modifiedHeaders();
+    return _action->modifiedHeaders();
 #else
     return NO;
 #endif

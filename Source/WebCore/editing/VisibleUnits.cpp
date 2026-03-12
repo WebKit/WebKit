@@ -29,7 +29,7 @@
 
 #include "BoundaryPointInlines.h"
 #include "Document.h"
-#include "Editing.h"
+#include "EditingInlines.h"
 #include "HTMLBRElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -96,7 +96,7 @@ static Position previousLineCandidatePosition(Node* node, const VisiblePosition&
         if (highestEditableRoot(firstPositionInOrBeforeNode(previousNode.get()), editableType) != highestRoot)
             break;
 
-        Position pos = previousNode->hasTagName(HTMLNames::brTag) ? positionBeforeNode(previousNode.get()) :
+        Position pos = previousNode->hasTagName(HTMLNames::brTag) ? positionBeforeNode(*previousNode) :
             makeDeprecatedLegacyPosition(previousNode.get(), caretMaxOffset(*previousNode));
         
         if (pos.isCandidate())
@@ -774,9 +774,9 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
             startBox.traverseLineRightwardOnLine();
     }
 
-    RefPtr startTextNode = dynamicDowncast<Text>(*startNode);
-    return startTextNode ? Position(startTextNode.releaseNonNull(), downcast<InlineIterator::TextBox>(*startBox).start())
-        : positionBeforeNode(startNode.get());
+    if (RefPtr startTextNode = dynamicDowncast<Text>(*startNode))
+        return Position(startTextNode.releaseNonNull(), downcast<InlineIterator::TextBox>(*startBox).start());
+    return positionBeforeNode(*startNode);
 }
 
 static VisiblePosition startOfLine(const VisiblePosition& c, LineEndpointComputationMode mode, bool* reachedBoundary)
@@ -790,7 +790,7 @@ static VisiblePosition startOfLine(const VisiblePosition& c, LineEndpointComputa
     if (mode == UseLogicalOrdering) {
         if (auto editableRoot = highestEditableRoot(c.deepEquivalent())) {
             if (!editableRoot->contains(visPos.deepEquivalent().containerNode())) {
-                VisiblePosition newPosition = firstPositionInNode(editableRoot.get());
+                VisiblePosition newPosition = firstPositionInNode(*editableRoot);
                 if (reachedBoundary)
                     *reachedBoundary = c == newPosition;
                 return newPosition;
@@ -849,7 +849,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
 
     Position pos;
     if (is<HTMLBRElement>(*endNode))
-        pos = positionBeforeNode(endNode.get());
+        pos = positionBeforeNode(*endNode);
     else if (RefPtr endTextNode = dynamicDowncast<Text>(*endNode); endTextNode && is<InlineIterator::TextBox>(*endBox)) {
         auto& endTextBox = downcast<InlineIterator::TextBox>(*endBox);
         int endOffset = endTextBox.start();
@@ -857,8 +857,8 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
             endOffset += endTextBox.length();
         pos = Position(endTextNode.releaseNonNull(), endOffset);
     } else
-        pos = positionAfterNode(endNode.get());
-    
+        pos = positionAfterNode(*endNode);
+
     return VisiblePosition(pos, Affinity::Upstream);
 }
 
@@ -886,7 +886,7 @@ static VisiblePosition endOfLine(const VisiblePosition& c, LineEndpointComputati
 
         if (RefPtr editableRoot = highestEditableRoot(c.deepEquivalent())) {
             if (!editableRoot->contains(visPos.deepEquivalent().containerNode())) {
-                VisiblePosition newPosition = lastPositionInNode(editableRoot.get());
+                VisiblePosition newPosition = lastPositionInNode(*editableRoot);
                 if (reachedBoundary)
                     *reachedBoundary = c == newPosition;
                 return newPosition;
@@ -1002,7 +1002,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
         CheckedRef renderer = box->renderer();
         RefPtr node = renderer->node();
         if (node && editingIgnoresContent(*node))
-            return positionInParentBeforeNode(node.get());
+            return positionInParentBeforeNode(*node);
         // FIXME: The HitTestSource state should be propagated down from calls into JavaScript bindings.
         // For the time being, just err on the side of passing in `Bindings`.
         CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer.get());
@@ -1016,7 +1016,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
     RefPtr rootElement = rootEditableOrDocumentElement(*node, editableType);
     if (!rootElement)
         return VisiblePosition();
-    return firstPositionInNode(rootElement.get());
+    return firstPositionInNode(*rootElement);
 }
 
 VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutUnit lineDirectionPoint, EditableType editableType)
@@ -1064,7 +1064,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
         CheckedRef renderer = box->renderer();
         RefPtr node = renderer->node();
         if (node && editingIgnoresContent(*node))
-            return positionInParentBeforeNode(node.get());
+            return positionInParentBeforeNode(*node);
         // FIXME: The HitTestSource state should be propagated down from calls into JavaScript bindings.
         // For the time being, just err on the side of passing in `Bindings`.
         CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer.get());
@@ -1078,7 +1078,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
     RefPtr rootElement = rootEditableOrDocumentElement(*node, editableType);
     if (!rootElement)
         return VisiblePosition();
-    return lastPositionInNode(rootElement.get());
+    return lastPositionInNode(*rootElement);
 }
 
 // ---------
@@ -1254,7 +1254,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
         return VisiblePosition();
 
     if (isRenderedAsNonInlineTableImageOrHR(startNode.get()))
-        return positionBeforeNode(startNode.get());
+        return positionBeforeNode(*startNode);
 
     RefPtr startBlock = enclosingBlock(startNode.get());
 
@@ -1284,7 +1284,7 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
     RefPtr startNode = p.deprecatedNode();
 
     if (isRenderedAsNonInlineTableImageOrHR(startNode.get()))
-        return positionAfterNode(startNode.get());
+        return positionAfterNode(*startNode);
 
     RefPtr stayInsideBlock = enclosingBlock(startNode.get());
 
@@ -1367,7 +1367,7 @@ VisiblePosition startOfBlock(const VisiblePosition& visiblePosition, EditingBoun
     RefPtr<Node> startBlock;
     if (!position.containerNode() || !(startBlock = enclosingBlock(protect(position.containerNode()), rule)))
         return VisiblePosition();
-    return firstPositionInNode(startBlock.get());
+    return firstPositionInNode(*startBlock);
 }
 
 VisiblePosition endOfBlock(const VisiblePosition& visiblePosition, EditingBoundaryCrossingRule rule)
@@ -1376,7 +1376,7 @@ VisiblePosition endOfBlock(const VisiblePosition& visiblePosition, EditingBounda
     RefPtr<Node> endBlock;
     if (!position.containerNode() || !(endBlock = enclosingBlock(protect(position.containerNode()), rule)))
         return VisiblePosition();
-    return lastPositionInNode(endBlock.get());
+    return lastPositionInNode(*endBlock);
 }
 
 bool inSameBlock(const VisiblePosition& a, const VisiblePosition& b)
@@ -1452,13 +1452,13 @@ bool isEndOfDocument(const VisiblePosition& p)
 VisiblePosition startOfEditableContent(const VisiblePosition& visiblePosition)
 {
     RefPtr highestRoot = highestEditableRoot(visiblePosition.deepEquivalent());
-    return highestRoot ? firstPositionInNode(highestRoot.get()) : VisiblePosition { };
+    return highestRoot ? firstPositionInNode(*highestRoot) : VisiblePosition { };
 }
 
 VisiblePosition endOfEditableContent(const VisiblePosition& visiblePosition)
 {
     RefPtr highestRoot = highestEditableRoot(visiblePosition.deepEquivalent());
-    return highestRoot ? lastPositionInNode(highestRoot.get()) : VisiblePosition { };
+    return highestRoot ? lastPositionInNode(*highestRoot) : VisiblePosition { };
 }
 
 bool isEndOfEditableOrNonEditableContent(const VisiblePosition& p)

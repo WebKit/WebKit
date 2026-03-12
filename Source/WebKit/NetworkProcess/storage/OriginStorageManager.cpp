@@ -282,8 +282,8 @@ bool OriginStorageManager::StorageBucket::isActive() const
     return (fileSystemStorageManager && fileSystemStorageManager->isActive())
         || (m_localStorageManager && m_localStorageManager->isActive())
         || (m_sessionStorageManager && m_sessionStorageManager->isActive())
-        || (m_idbStorageManager && CheckedRef { *m_idbStorageManager }->isActive())
-        || (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->isActive());
+        || (m_idbStorageManager && m_idbStorageManager->isActive())
+        || (m_cacheStorageManager && m_cacheStorageManager->isActive());
 }
 
 bool OriginStorageManager::StorageBucket::hasDataInMemory() const
@@ -291,7 +291,7 @@ bool OriginStorageManager::StorageBucket::hasDataInMemory() const
     return (m_localStorageManager && m_localStorageManager->hasDataInMemory())
         || (m_sessionStorageManager && m_sessionStorageManager->hasDataInMemory())
         || (m_idbStorageManager && CheckedRef { *m_idbStorageManager }->hasDataInMemory())
-        || (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->hasDataInMemory());
+        || (m_cacheStorageManager && m_cacheStorageManager->hasDataInMemory());
 }
 
 bool OriginStorageManager::StorageBucket::isEmpty()
@@ -342,7 +342,7 @@ OptionSet<WebsiteDataType> OriginStorageManager::StorageBucket::fetchDataTypesIn
     }
 
     if (types.contains(WebsiteDataType::DOMCache)) {
-        if (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->hasDataInMemory())
+        if (m_cacheStorageManager && m_cacheStorageManager->hasDataInMemory())
             result.add(WebsiteDataType::DOMCache);
     }
 

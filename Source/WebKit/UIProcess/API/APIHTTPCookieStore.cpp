@@ -203,7 +203,7 @@ void HTTPCookieStore::cookiesDidChange()
 
 WebKit::NetworkProcessProxy* HTTPCookieStore::networkProcessIfExists()
 {
-    if (RefPtr dataStore = m_owningDataStore.get())
+    if (auto* dataStore = m_owningDataStore.get())
         return dataStore->networkProcessIfExists();
     return nullptr;
 }

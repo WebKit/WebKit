@@ -34,8 +34,7 @@ public:
     SVGTransformValue addToSVGTransform(const SVGTransformValue&) const;
 
     static SVGTransformValue addSVGTransforms(const SVGTransformValue&, const SVGTransformValue&, unsigned repeatCount = 1);
-    
-    float distance() const;
+
 private:
     SVGTransformDistance(SVGTransformValue::SVGTransformType, float angle, float cx, float cy, const AffineTransform&);
         

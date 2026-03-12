@@ -60,7 +60,7 @@ public:
     static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject&);
 
     bool needsReordering() const { return m_needsReordering; }
-    Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
+    Vector<SVGTextLayoutAttributes*>& layoutAttributes() LIFETIME_BOUND { return m_layoutAttributes; }
 
     void subtreeChildWasAdded(RenderObject*);
     void subtreeChildWillBeRemoved(RenderObject*, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
@@ -115,7 +115,7 @@ private:
 
     // FIXME: [LBSE] Begin code only needed for legacy SVG engine.
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
-    const AffineTransform& localToParentTransform() const override { return m_localTransform; }
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localTransform; }
     AffineTransform localTransform() const override { return m_localTransform; }
     // FIXME: [LBSE] End code only needed for legacy SVG engine.
 

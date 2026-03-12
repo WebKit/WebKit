@@ -585,7 +585,7 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()
 
 double PlaybackSessionModelMediaElement::playbackStartedTime() const
 {
-    RefPtr mediaElement = m_mediaElement;
+    auto* mediaElement = m_mediaElement.get();
     if (!mediaElement)
         return 0;
 
@@ -835,7 +835,7 @@ bool PlaybackSessionModelMediaElement::isPictureInPictureSupported() const
 
 bool PlaybackSessionModelMediaElement::isPictureInPictureActive() const
 {
-    RefPtr mediaElement = m_mediaElement;
+    auto* mediaElement = m_mediaElement.get();
     if (!mediaElement)
         return false;
 
@@ -844,7 +844,7 @@ bool PlaybackSessionModelMediaElement::isPictureInPictureActive() const
 
 bool PlaybackSessionModelMediaElement::isInWindowFullscreenActive() const
 {
-    RefPtr mediaElement = m_mediaElement;
+    auto* mediaElement = m_mediaElement.get();
     if (!mediaElement)
         return false;
 

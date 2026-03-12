@@ -119,7 +119,7 @@ DOMAudioSession::Type DOMAudioSession::type() const
     if (!document)
         return DOMAudioSession::Type::Auto;
 
-    if (RefPtr page = document->page())
+    if (auto* page = document->page())
         return page->audioSessionType();
 
     return DOMAudioSession::Type::Auto;

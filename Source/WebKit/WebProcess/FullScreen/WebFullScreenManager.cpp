@@ -195,7 +195,7 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
 
 bool WebFullScreenManager::supportsFullScreenForElement(const WebCore::Element& element, bool withKeyboard)
 {
-    if (!protect(m_page->corePage())->isDocumentFullscreenEnabled())
+    if (!m_page->corePage()->isDocumentFullscreenEnabled())
         return false;
 
     if (m_inWindowFullScreenMode && &element != m_element)
@@ -716,7 +716,7 @@ void WebFullScreenManager::didExitFullScreen(CompletionHandler<void()>&& complet
 
     clearElement();
 
-    if (RefPtr localMainFrame = protect(m_page->corePage())->localMainFrame()) {
+    if (RefPtr localMainFrame = m_page->corePage()->localMainFrame()) {
         // Make sure overflow: hidden is unapplied from the root element before restoring.
         RefPtr view = localMainFrame->view();
         view->forceLayout();

@@ -446,8 +446,17 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
         return;
     }
 
+    // Newer versions of curl/OpenSSL report CURLE_RECV_ERROR or CURLE_PARTIAL_FILE
+    // when a server closes the connection to signal end-of-body on responses with
+    // no Content-Length and no chunked encoding. This is valid HTTP/1.1 behavior,
+    // so treat it as success when the response was otherwise complete.
+    // See https://github.com/curl/curl/issues/13036
+    bool isConnectionCloseEndOfBody = (result == CURLE_RECV_ERROR || result == CURLE_PARTIAL_FILE)
+        && m_response.statusCode >= 200 && m_response.statusCode < 400
+        && !m_response.expectedContentLength;
+
     bool isProxyAuthenticationRequired = result == CURLE_RECV_ERROR && m_response.httpConnectCode == 407;
-    if (needToInvokeDidReceiveResponse() && (result == CURLE_OK || isProxyAuthenticationRequired)) {
+    if (needToInvokeDidReceiveResponse() && (result == CURLE_OK || isProxyAuthenticationRequired || isConnectionCloseEndOfBody)) {
         // Processing of didReceiveResponse() has not been completed. (For example, HEAD Method, Proxy authentication, etc.)
         m_mustInvokeCancelTransfer = true;
         invokeDidReceiveResponse(m_response, [this, result]() mutable {
@@ -459,7 +468,7 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
         return;
     }
 
-    if (result == CURLE_OK) {
+    if (result == CURLE_OK || isConnectionCloseEndOfBody) {
         if (m_multipartHandle && !m_multipartHandle->completed()) {
             m_multipartHandle->didCompleteMessage();
             return;

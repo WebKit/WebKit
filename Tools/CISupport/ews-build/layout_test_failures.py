@@ -21,6 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import logging
+
+_log = logging.getLogger(__name__)
 
 
 class LayoutTestFailures(object):
@@ -41,7 +44,7 @@ class LayoutTestFailures(object):
     @classmethod
     def results_from_string(cls, string):
         if not string:
-            print(f'Error while parsing layout-test json, empty json')
+            _log.info('Error while parsing layout-test json, empty json')
             return None
 
         content_string = cls._strip_json_wrapper(string.strip())
@@ -50,7 +53,7 @@ class LayoutTestFailures(object):
         try:
             json_dict = json.loads(content_string)
         except json.JSONDecodeError as e:
-            print(f'Exception while parsing layout-test json: {e}, json data being parsed: {string}')
+            _log.info('Exception while parsing layout-test json: %s, json data being parsed: %s', e, string)
             return None
 
         failing_tests = []

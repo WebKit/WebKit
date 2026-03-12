@@ -1,4 +1,4 @@
 
-FAIL Reuses m-lines in local negotiation assert_equals: Audio m-line gets reused for video transceiver expected 1 but got 2
-FAIL Reuses m-lines in remote negotiation assert_equals: expected 0 but got 1
+PASS Reuses m-lines in local negotiation
+PASS Reuses m-lines in remote negotiation
 

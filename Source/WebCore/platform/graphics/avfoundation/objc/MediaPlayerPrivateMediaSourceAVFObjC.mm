@@ -181,7 +181,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String>& ty
 MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters)
 {
     // This engine does not support non-media-source sources.
-    if (!parameters.isMediaSource)
+    if (parameters.platformType != PlatformMediaDecodingType::MediaSource)
         return MediaPlayer::SupportsType::IsNotSupported;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

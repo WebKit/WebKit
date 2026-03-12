@@ -265,7 +265,7 @@ static inline void invalidateResourcesOfChildren(RenderElement& renderer)
 
 static inline bool NODELETE layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
 {
-    for (CheckedPtr start = &renderer; start; start = start->parent()) {
+    for (auto* start = &renderer; start; start = start->parent()) {
         if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(*start))
             return svgRoot->isLayoutSizeChanged();
         if (auto* container = dynamicDowncast<LegacyRenderSVGViewportContainer>(*start))
@@ -306,7 +306,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
 
         if (transformChanged) {
             // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
-            if (CheckedPtr text = dynamicDowncast<RenderSVGText>(child))
+            if (auto* text = dynamicDowncast<RenderSVGText>(child))
                 text->setNeedsTextMetricsUpdate();
             needsLayout = true;
         }
@@ -315,9 +315,9 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
             if (RefPtr element = dynamicDowncast<SVGElement>(child.node()); element && element->hasRelativeLengths()) {
                 // When the layout size changed and when using relative values tell the LegacyRenderSVGShape to update its shape object
-                if (CheckedPtr shape = dynamicDowncast<LegacyRenderSVGShape>(child))
+                if (auto* shape = dynamicDowncast<LegacyRenderSVGShape>(child))
                     shape->setNeedsShapeUpdate();
-                else if (CheckedPtr svgText = dynamicDowncast<RenderSVGText>(child)) {
+                else if (auto* svgText = dynamicDowncast<RenderSVGText>(child)) {
                     svgText->setNeedsTextMetricsUpdate();
                     svgText->setNeedsPositioningValuesUpdate();
                 }
@@ -573,10 +573,10 @@ void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* 
 
 void SVGRenderSupport::updateAncestorNonScalingStrokeCounts(RenderElement& renderer, int delta)
 {
-    for (CheckedPtr ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
-        if (CheckedPtr container = dynamicDowncast<LegacyRenderSVGContainer>(*ancestor))
+    for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+        if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(*ancestor))
             container->adjustNonScalingStrokeDescendantCount(delta);
-        else if (CheckedPtr root = dynamicDowncast<LegacyRenderSVGRoot>(*ancestor))
+        else if (auto* root = dynamicDowncast<LegacyRenderSVGRoot>(*ancestor))
             root->adjustNonScalingStrokeDescendantCount(delta);
     }
 }

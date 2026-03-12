@@ -43,8 +43,8 @@ public:
     static Ref<CSSAnimation> create(const Styleable&, Style::Animation&&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     ~CSSAnimation() = default;
 
-    const String& animationName() const { return m_animationName.name; }
-    const Style::ScopedName& scopedAnimationName() const { return m_animationName; }
+    const String& animationName() const LIFETIME_BOUND { return m_animationName.name; }
+    const Style::ScopedName& scopedAnimationName() const LIFETIME_BOUND { return m_animationName; }
 
     void effectTimingWasUpdatedUsingBindings(const OptionalEffectTiming&);
     void NODELETE effectKeyframesWereSetUsingBindings();
@@ -54,7 +54,7 @@ public:
 
     void syncStyleOriginatedTimeline();
 
-    const Style::Animation& backingStyleAnimation() const { return m_backingStyleAnimation; }
+    const Style::Animation& backingStyleAnimation() const LIFETIME_BOUND { return m_backingStyleAnimation; }
     void setBackingStyleAnimation(const Style::Animation&);
 
 private:

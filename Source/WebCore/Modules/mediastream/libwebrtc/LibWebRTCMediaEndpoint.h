@@ -107,16 +107,16 @@ public:
     void removeTrack(LibWebRTCRtpSenderBackend&);
 
     struct Backends {
-        RefPtr<LibWebRTCRtpSenderBackend> senderBackend;
-        std::unique_ptr<LibWebRTCRtpReceiverBackend> receiverBackend;
-        std::unique_ptr<LibWebRTCRtpTransceiverBackend> transceiverBackend;
+        Ref<LibWebRTCRtpSenderBackend> senderBackend;
+        UniqueRef<LibWebRTCRtpReceiverBackend> receiverBackend;
+        UniqueRef<LibWebRTCRtpTransceiverBackend> transceiverBackend;
     };
     ExceptionOr<Backends> addTransceiver(const String& trackKind, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
     ExceptionOr<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
     std::unique_ptr<LibWebRTCRtpTransceiverBackend> transceiverBackendFromSender(LibWebRTCRtpSenderBackend&);
 
     void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
-    void collectTransceivers();
+    void collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&&);
 
     std::optional<bool> canTrickleIceCandidates() const;
 

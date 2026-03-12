@@ -107,7 +107,7 @@ public:
         LayoutUnit usedLogicalWidth() const;
 
         void setComputedLogicalWidth(ComputedLogicalWidth&&);
-        const ComputedLogicalWidth& computedLogicalWidth() const { return m_computedLogicalWidth; }
+        const ComputedLogicalWidth& computedLogicalWidth() const LIFETIME_BOUND { return m_computedLogicalWidth; }
 
         const ElementBox* box() const { return m_layoutBox.get(); }
 
@@ -126,8 +126,8 @@ public:
     class Columns {
     public:
         using ColumnList = Vector<Column>;
-        ColumnList& list() { return m_columnList; }
-        const ColumnList& list() const { return m_columnList; }
+        ColumnList& list() LIFETIME_BOUND { return m_columnList; }
+        const ColumnList& list() const LIFETIME_BOUND { return m_columnList; }
         size_t size() const { return m_columnList.size(); }
 
         void addColumn(const ElementBox&);
@@ -165,8 +165,8 @@ public:
     class Rows {
     public:
         using RowList = Vector<Row>;
-        RowList& list() { return m_rowList; }
-        const RowList& list() const { return m_rowList; }
+        RowList& list() LIFETIME_BOUND { return m_rowList; }
+        const RowList& list() const LIFETIME_BOUND { return m_rowList; }
 
         void addRow(const ElementBox&);
 
@@ -182,10 +182,10 @@ public:
         Slot() = default;
         Slot(TableGridCell&, bool isColumnSpanned, bool isRowSpanned);
 
-        const TableGridCell& cell() const { return *m_cell; }
-        TableGridCell& cell() { return *m_cell; }
+        const TableGridCell& cell() const LIFETIME_BOUND { return *m_cell; }
+        TableGridCell& cell() LIFETIME_BOUND { return *m_cell; }
 
-        const IntrinsicWidthConstraints& widthConstraints() const { return m_widthConstraints; }
+        const IntrinsicWidthConstraints& widthConstraints() const LIFETIME_BOUND { return m_widthConstraints; }
         void setWidthConstraints(const IntrinsicWidthConstraints& widthConstraints) { m_widthConstraints = widthConstraints; }
 
         // Initial slot position for a spanning cell.
@@ -206,17 +206,17 @@ public:
         IntrinsicWidthConstraints m_widthConstraints;
     };
 
-    const Columns& columns() const { return m_columns; }
-    Columns& columns() { return m_columns; }
+    const Columns& columns() const LIFETIME_BOUND { return m_columns; }
+    Columns& columns() LIFETIME_BOUND { return m_columns; }
 
-    const Rows& rows() const { return m_rows; }
-    Rows& rows() { return m_rows; }
+    const Rows& rows() const LIFETIME_BOUND { return m_rows; }
+    Rows& rows() LIFETIME_BOUND { return m_rows; }
 
     using Cells = ListHashSet<std::unique_ptr<TableGridCell>>;
-    Cells& cells() { return m_cells; }
+    Cells& cells() LIFETIME_BOUND { return m_cells; }
 
-    Slot* slot(SlotPosition);
-    const Slot* slot(SlotPosition position) const { return m_slotMap.get(position); }
+    Slot* slot(SlotPosition) LIFETIME_BOUND;
+    const Slot* slot(SlotPosition position) const LIFETIME_BOUND { return m_slotMap.get(position); }
     bool isSpanned(SlotPosition);
 
 private:

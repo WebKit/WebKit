@@ -70,7 +70,7 @@ void RenderVideo::willBeDestroyed()
 {
     visibleInViewportStateChanged();
 
-    if (RefPtr player = protect(videoElement())->player())
+    if (RefPtr player = videoElement().player())
         player->renderVideoWillBeDestroyed();
 
     RenderMedia::willBeDestroyed();
@@ -371,7 +371,7 @@ void RenderVideo::acceleratedRenderingStateChanged()
 
 bool RenderVideo::requiresImmediateCompositing() const
 {
-    RefPtr player = protect(videoElement())->player();
+    RefPtr player = videoElement().player();
     return player && player->requiresImmediateCompositing();
 }
 
@@ -392,7 +392,7 @@ bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
 
 bool RenderVideo::hasVideoMetadata() const
 {
-    if (RefPtr player = protect(videoElement())->player())
+    if (RefPtr player = videoElement().player())
         return player->readyState() >= MediaPlayerEnums::ReadyState::HaveMetadata;
     return false;
 }

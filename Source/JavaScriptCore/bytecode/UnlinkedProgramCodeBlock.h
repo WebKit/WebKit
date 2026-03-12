@@ -52,10 +52,10 @@ public:
     static void destroy(JSCell*);
 
     void setVariableDeclarations(const VariableEnvironment& environment) { m_varDeclarations = environment; }
-    const VariableEnvironment& variableDeclarations() const { return m_varDeclarations; }
+    const VariableEnvironment& variableDeclarations() const LIFETIME_BOUND { return m_varDeclarations; }
 
     void setLexicalDeclarations(const VariableEnvironment& environment) { m_lexicalDeclarations = environment; }
-    const VariableEnvironment& lexicalDeclarations() const { return m_lexicalDeclarations; }
+    const VariableEnvironment& lexicalDeclarations() const LIFETIME_BOUND { return m_lexicalDeclarations; }
 
 private:
     friend CachedProgramCodeBlock;

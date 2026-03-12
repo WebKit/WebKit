@@ -49,7 +49,7 @@ public:
     const Expression* maybeY() const { return m_workgroupSize.y; }
     const Expression* maybeZ() const { return m_workgroupSize.z; }
 
-    const WorkgroupSize& workgroupSize() const { return m_workgroupSize; }
+    const WorkgroupSize& workgroupSize() const LIFETIME_BOUND { return m_workgroupSize; }
 
 private:
     WorkgroupSizeAttribute(SourceSpan span, Expression::Ref&& x, Expression::Ptr maybeY, Expression::Ptr maybeZ)

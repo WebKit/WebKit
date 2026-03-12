@@ -34,11 +34,11 @@ public:
     LegacyRenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
     virtual ~LegacyRenderSVGTransformableContainer();
 
-    const AffineTransform& localToParentTransform() const override { return m_localTransform; }
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localTransform; }
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
     bool didTransformToRootUpdate() override { return m_didTransformToRootUpdate; }
 
-    const FloatSize& additionalTranslation() const { return m_additionalTranslation; }
+    const FloatSize& additionalTranslation() const LIFETIME_BOUND { return m_additionalTranslation; }
 
 private:
     SVGGraphicsElement& NODELETE graphicsElement();

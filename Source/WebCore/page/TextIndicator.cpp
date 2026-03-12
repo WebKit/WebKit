@@ -88,7 +88,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, O
             Ref indicatorNode = commonAncestor.releaseNonNull();
 
             for (Ref ancestorElement : ancestorsOfType<Element>(indicatorNode)) {
-                if (CheckedPtr renderer = ancestorElement->renderer(); renderer && protect(renderer->style())->usedUserSelect() == UserSelect::All)
+                if (CheckedPtr renderer = ancestorElement->renderer(); renderer && renderer->style().usedUserSelect() == UserSelect::All)
                     indicatorNode = ancestorElement;
             }
 

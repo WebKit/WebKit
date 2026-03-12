@@ -32,7 +32,7 @@
 namespace JSC {
 
 struct EntryFrame;
-class StructureStubInfo;
+class PropertyInlineCache;
 
 class SuspendExceptionScope {
 public:
@@ -168,7 +168,7 @@ public:
 
 class ICSlowPathCallFrameTracer {
 public:
-    inline ICSlowPathCallFrameTracer(VM&, CallFrame*, StructureStubInfo*);
+    inline ICSlowPathCallFrameTracer(VM&, CallFrame*, PropertyInlineCache*);
 
 #if ASSERT_ENABLED
     ~ICSlowPathCallFrameTracer()

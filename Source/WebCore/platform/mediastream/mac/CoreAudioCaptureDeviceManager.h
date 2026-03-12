@@ -45,7 +45,7 @@ public:
     std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
     std::optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
-    const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
+    const Vector<CaptureDevice>& speakerDevices() const LIFETIME_BOUND { return m_speakerDevices; }
 
     void setFilterTapEnabledDevices(bool doFiltering) { m_filterTapEnabledDevices = doFiltering; }
 

@@ -159,7 +159,7 @@ static inline bool NODELETE isLastOfType(const Element& element, const Qualified
 static inline int NODELETE countElementsBefore(const Element& element)
 {
     int count = 0;
-    for (CheckedPtr<const Element> sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
+    for (auto* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
         unsigned index = sibling->childIndex();
         if (index) {
             count += index;
@@ -521,10 +521,10 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         // element found), the element is the originating element itself. Skip the shadow host
         // traversal and match the rest of the selector against it directly.
         if (!collectedPseudoElements.contains(PseudoElementType::UserAgentPartFallback)) {
-            CheckedPtr host = context.element->shadowHost();
+            auto* host = context.element->shadowHost();
             if (!host)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
-            nextContext.element = host.get();
+            nextContext.element = host;
         }
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
         nextContext.isSubjectOrAdjacentElement = false;
@@ -1696,7 +1696,7 @@ bool SelectorChecker::checkViewTransitionPseudoClass(const CheckingContext& chec
     case PseudoElementType::ViewTransition:
         return false;
     case PseudoElementType::ViewTransitionGroup: {
-        if (RefPtr activeViewTransition = element.document().activeViewTransition()) {
+        if (auto* activeViewTransition = element.document().activeViewTransition()) {
             if (activeViewTransition->namedElements().find(pseudoIdentifier->nameOrPart))
                 return activeViewTransition->namedElements().size() == 1;
         }
@@ -1705,14 +1705,14 @@ bool SelectorChecker::checkViewTransitionPseudoClass(const CheckingContext& chec
     case PseudoElementType::ViewTransitionImagePair:
         return true;
     case PseudoElementType::ViewTransitionOld: {
-        if (RefPtr activeViewTransition = element.document().activeViewTransition()) {
+        if (auto* activeViewTransition = element.document().activeViewTransition()) {
             if (auto* capturedElement = activeViewTransition->namedElements().find(pseudoIdentifier->nameOrPart))
                 return !capturedElement->newElement;
         }
         return false;
     }
     case PseudoElementType::ViewTransitionNew: {
-        if (RefPtr activeViewTransition = element.document().activeViewTransition()) {
+        if (auto* activeViewTransition = element.document().activeViewTransition()) {
             if (auto* capturedElement = activeViewTransition->namedElements().find(pseudoIdentifier->nameOrPart))
                 return !capturedElement->oldImage;
         }

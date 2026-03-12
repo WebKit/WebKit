@@ -41,7 +41,7 @@ public:
     CoreIPCCFArray(CoreIPCCFArray&&);
     ~CoreIPCCFArray();
     RetainPtr<CFArrayRef> createCFArray() const;
-    const Vector<CoreIPCCFType>& array() const { return m_array; }
+    const Vector<CoreIPCCFType>& array() const LIFETIME_BOUND { return m_array; }
 private:
     Vector<CoreIPCCFType> m_array;
 };

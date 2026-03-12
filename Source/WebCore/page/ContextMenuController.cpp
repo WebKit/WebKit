@@ -192,7 +192,7 @@ static void prepareContextForQRCode(ContextMenuContext& context)
 
     RefPtr<Element> element;
     for (Ref lineage : lineageOfType<Element>(*nodeElement)) {
-        if (is<HTMLTableElement>(lineage) || is<HTMLCanvasElement>(lineage) || is<HTMLImageElement>(lineage) || is<SVGSVGElement>(lineage)) {
+        if (isAnyOf<HTMLTableElement, HTMLCanvasElement, HTMLImageElement, SVGSVGElement>(lineage)) {
             element = lineage.ptr();
             break;
         }

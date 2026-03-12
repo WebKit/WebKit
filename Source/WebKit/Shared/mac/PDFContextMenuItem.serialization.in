@@ -41,6 +41,7 @@ struct WebKit::PDFContextMenu {
     WebCore::IntPoint point;
     Vector<WebKit::PDFContextMenuItem> items;
     std::optional<int> openInDefaultViewerTag;
+    WebKit::WebMouseEventInputSource inputSource;
 };
 
 #endif

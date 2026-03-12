@@ -109,7 +109,7 @@ static RefPtr<BitmapTexture> importToTexture(const IntSize& size, const IntSize&
     if (!image)
         return nullptr;
 
-    auto texture = BitmapTexturePool::singleton().createTextureForImage(image, textureFlags);
+    auto texture = BitmapTexturePool::singleton().createTextureForImage(image, size, textureFlags);
     display.destroyEGLImage(image);
     return texture;
 }

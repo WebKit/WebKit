@@ -124,8 +124,8 @@ void WebTransportReceiveStreamSource::doCancel(JSC::JSValue value)
 
     std::optional<uint64_t> errorCode;
     if (auto* jsWebTransportError = JSC::jsDynamicCast<JSWebTransportError*>(value)) {
-        Ref webTransportError = jsWebTransportError->wrapped();
-        if (auto webTransportErrorCode = webTransportError->streamErrorCode())
+        auto& webTransportError = jsWebTransportError->wrapped();
+        if (auto webTransportErrorCode = webTransportError.streamErrorCode())
             errorCode = static_cast<uint64_t>(*webTransportErrorCode);
     }
     session->cancelReceiveStream(*m_identifier, errorCode);

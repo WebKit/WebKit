@@ -190,8 +190,9 @@ bool BitmapTexture::allocateTextureFromMemoryMappedGPUBuffer()
     return false;
 }
 
-BitmapTexture::BitmapTexture(EGLImage image, OptionSet<Flags> flags)
+BitmapTexture::BitmapTexture(EGLImage image, const IntSize& size, OptionSet<Flags> flags)
     : m_flags(flags)
+    , m_size(size)
 {
     determineRenderTargetAndBinding();
 

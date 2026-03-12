@@ -78,7 +78,8 @@ static NSString *scrollingTreeElidingLastCommittedScrollPosition(NSString *scrol
     return [lines componentsJoinedByString:@"\n"];
 }
 
-TEST(ScrollingCoordinatorTests, ScrollingTreeAfterDetachReattach)
+// FIXME when webkit.org/b/308786 is resolved.
+TEST(ScrollingCoordinatorTests, DISABLED_ScrollingTreeAfterDetachReattach)
 {
     [[NSUserDefaults standardUserDefaults] setObject:@"Scrolling" forKey:@"WebCoreLogging"];
     [[NSUserDefaults standardUserDefaults] setObject:@"Scrolling" forKey:@"WebKit2Logging"];

@@ -55,18 +55,18 @@ public:
         void updateMethodType(const String&);
         static ASCIILiteral methodString(Method);
 
-        const String& action() const { return m_action; }
+        const String& action() const LIFETIME_BOUND { return m_action; }
         void parseAction(const String&);
 
-        const AtomString& target() const { return m_target; }
+        const AtomString& target() const LIFETIME_BOUND { return m_target; }
         void setTarget(const AtomString& target) { m_target = target; }
 
-        const String& encodingType() const { return m_encodingType; }
+        const String& encodingType() const LIFETIME_BOUND { return m_encodingType; }
         static String parseEncodingType(const String&);
         void updateEncodingType(const String&);
         bool isMultiPartForm() const { return m_isMultiPartForm; }
 
-        const String& acceptCharset() const { return m_acceptCharset; }
+        const String& acceptCharset() const LIFETIME_BOUND { return m_acceptCharset; }
         void setAcceptCharset(const String& value) { m_acceptCharset = value; }
 
     private:
@@ -84,18 +84,18 @@ public:
     URL requestURL() const;
 
     Method method() const { return m_method; }
-    const URL& action() const { return m_action; }
-    const AtomString& target() const { return m_target; }
-    const String& contentType() const { return m_contentType; }
+    const URL& action() const LIFETIME_BOUND { return m_action; }
+    const AtomString& target() const LIFETIME_BOUND { return m_target; }
+    const String& contentType() const LIFETIME_BOUND { return m_contentType; }
     FormState* state() const { return m_formState.get(); }
     FormData& data() const { return *m_formData; }
     const String boundary() const { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
-    const String& referrer() const { return m_referrer; }
-    const String& origin() const { return m_origin; }
+    const String& referrer() const LIFETIME_BOUND { return m_referrer; }
+    const String& origin() const LIFETIME_BOUND { return m_origin; }
 
-    const String& returnValue() const { return m_returnValue; }
+    const String& returnValue() const LIFETIME_BOUND { return m_returnValue; }
 
     void clearTarget() { m_target = { }; }
     void setReferrer(const String& referrer) { m_referrer = referrer; }

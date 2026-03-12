@@ -118,7 +118,7 @@ PopupMenuStyle SearchInputType::itemStyle(unsigned) const
 PopupMenuStyle SearchInputType::menuStyle() const
 {
     auto defaultStyle = RenderStyle::create();
-    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protect(element())->renderer());
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer());
     CheckedRef style = renderer ? renderer->style() : defaultStyle;
     return PopupMenuStyle(
         style->visitedDependentColorApplyingColorFilter(),
@@ -152,13 +152,13 @@ int SearchInputType::clientInsetRight() const
 
 LayoutUnit SearchInputType::clientPaddingLeft() const
 {
-    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protect(element())->renderer());
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer());
     return renderer ? renderer->clientPaddingLeft() : 0_lu;
 }
 
 LayoutUnit SearchInputType::clientPaddingRight() const
 {
-    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protect(element())->renderer());
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer());
     return renderer ? renderer->clientPaddingRight() : 0_lu;
 }
 
@@ -368,15 +368,15 @@ bool SearchInputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
 float SearchInputType::decorationWidth(float) const
 {
     float width = 0;
-    if (RefPtr resultsButton = m_resultsButton; resultsButton && resultsButton->renderStyle()) {
+    if (auto* resultsButton = m_resultsButton.get(); resultsButton && resultsButton->renderStyle()) {
         // FIXME: Document what invariant holds to allow only using fixed logical widths?
-        CheckedPtr renderStyle = resultsButton->renderStyle();
+        auto* renderStyle = resultsButton->renderStyle();
         if (auto fixedLogicalWidth = renderStyle->logicalWidth().tryFixed())
             width += fixedLogicalWidth->resolveZoom(renderStyle->usedZoomForLength());
     }
-    if (RefPtr cancelButton = m_cancelButton; cancelButton && cancelButton->renderStyle()) {
+    if (auto* cancelButton = m_cancelButton.get(); cancelButton && cancelButton->renderStyle()) {
         // FIXME: Document what invariant holds to allow only using fixed logical widths?
-        CheckedPtr renderStyle = cancelButton->renderStyle();
+        auto* renderStyle = cancelButton->renderStyle();
         if (auto fixedLogicalWidth = renderStyle->logicalWidth().tryFixed())
             width += fixedLogicalWidth->resolveZoom(renderStyle->usedZoomForLength());
     }

@@ -560,6 +560,8 @@ static bool markerTypeFrom(const String& markerType, DocumentMarkerType& result)
 #endif
     else if (equalLettersIgnoringASCIICase(markerType, "transparentcontent"_s))
         result = DocumentMarkerType::TransparentContent;
+    else if (equalLettersIgnoringASCIICase(markerType, "dictationstreamingopacity"_s))
+        result = DocumentMarkerType::DictationStreamingOpacity;
     else
         return false;
 
@@ -693,6 +695,9 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     printContextForTesting() = nullptr;
+
+    MemoryPressureHandler::singleton().endSimulatedMemoryWarning();
+    MemoryPressureHandler::singleton().endSimulatedMemoryPressure();
 
 #if ENABLE(WEB_RTC)
     auto& rtcProvider = page.webRTCProvider();
@@ -1084,7 +1089,7 @@ void Internals::setOverrideResourceLoadPriority(ResourceLoadPriority priority)
 
 void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
 {
-    if (RefPtr localFrame = frame())
+    if (auto* localFrame = frame())
         localFrame->loader().setStrictRawResourceValidationPolicyDisabledForTesting(disabled);
 }
 
@@ -3039,6 +3044,11 @@ bool Internals::hasTransparentContentMarker(int from, int length)
     return hasMarkerFor(DocumentMarkerType::TransparentContent, from, length);
 }
 
+bool Internals::hasDictationStreamingOpacityMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarkerType::DictationStreamingOpacity, from, length);
+}
+
 void Internals::setContinuousSpellCheckingEnabled(bool enabled)
 {
     if (!contextDocument() || !contextDocument()->frame())
@@ -3540,6 +3550,15 @@ ExceptionOr<Ref<DOMRect>> Internals::verticalScrollbarFrameRect(Node* node) cons
         return DOMRect::create(scrollbar->frameRect());
 
     return DOMRect::create();
+}
+
+ExceptionOr<Ref<DOMRect>> Internals::scrollCornerRect(Node* node) const
+{
+    auto areaOrException = scrollableAreaForNode(node);
+    if (areaOrException.hasException())
+        return areaOrException.releaseException();
+
+    return DOMRect::create(areaOrException.returnValue()->scrollCornerRect());
 }
 
 ExceptionOr<Internals::ScrollingNodeID> Internals::scrollingNodeIDForNode(Node* node)
@@ -5348,7 +5367,7 @@ bool Internals::elementIsBlockingDisplaySleep(const HTMLMediaElement& element) c
 
 bool Internals::isPlayerVisibleInViewport(const HTMLMediaElement& element) const
 {
-    RefPtr player = element.player();
+    auto* player = element.player();
     return player && player->isVisibleInViewport();
 }
 
@@ -7134,8 +7153,8 @@ void Internals::reloadWithoutContentExtensions()
 
 void Internals::disableContentExtensionsChecks()
 {
-    RefPtr frame = this->frame();
-    RefPtr loader = frame ? frame->loader().documentLoader() : nullptr;
+    auto* frame = this->frame();
+    auto* loader = frame ? frame->loader().documentLoader() : nullptr;
     if (loader)
         loader->setContentExtensionEnablement({ ContentExtensionDefaultEnablement::Disabled, { } });
 }
@@ -8220,7 +8239,7 @@ void Internals::getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&& 
 
 void Internals::setResourceCachingDisabledByWebInspector(bool disabled)
 {
-    RefPtr document = contextDocument();
+    auto* document = contextDocument();
     if (!document || !document->page())
         return;
 
@@ -8257,7 +8276,7 @@ void Internals::setResourceMonitorNetworkUsageThreshold(size_t threshold, double
 
 bool Internals::shouldSkipResourceMonitorThrottling() const
 {
-    if (RefPtr document = contextDocument())
+    if (auto* document = contextDocument())
         return document->shouldSkipResourceMonitorThrottling();
 
     return false;
@@ -8265,7 +8284,7 @@ bool Internals::shouldSkipResourceMonitorThrottling() const
 
 void Internals::setShouldSkipResourceMonitorThrottling(bool flag)
 {
-    if (RefPtr document = contextDocument())
+    if (auto* document = contextDocument())
         document->setShouldSkipResourceMonitorThrottling(flag);
 }
 #endif
@@ -8309,11 +8328,11 @@ RefPtr<MediaSessionManagerInterface> Internals::sessionManager() const
 
 bool Internals::hasMediaSessionManager() const
 {
-    RefPtr document = contextDocument();
+    auto* document = contextDocument();
     if (!document)
         return false;
 
-    RefPtr page = document->page();
+    auto* page = document->page();
     if (!page)
         return false;
 
@@ -8386,7 +8405,7 @@ ExceptionOr<Ref<WritableStream>> Internals::writableStreamFromMessagePort(JSDOMG
 #if ENABLE(MODEL_ELEMENT)
 void Internals::disableModelLoadDelaysForTesting()
 {
-    RefPtr document = contextDocument();
+    auto* document = contextDocument();
     if (!document || !document->page())
         return;
 

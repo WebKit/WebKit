@@ -61,7 +61,7 @@ public:
         m_ranges.append(OriginRange{label, origin});
     }
 
-    const Vector<OriginRange>& ranges() const  { return m_ranges; }
+    const Vector<OriginRange>& ranges() const LIFETIME_BOUND { return m_ranges; }
 
 private:
     Vector<OriginRange, 0> m_ranges;

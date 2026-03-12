@@ -1639,7 +1639,7 @@ std::optional<IDBDatabaseNameAndVersion> UniqueIDBDatabase::nameAndVersion() con
     if (!m_backingStore)
         return std::nullopt;
 
-    RefPtr versionChangeTransaction = m_versionChangeTransaction;
+    auto* versionChangeTransaction = m_versionChangeTransaction.get();
     if (versionChangeTransaction) {
         if (auto databaseInfo = versionChangeTransaction->originalDatabaseInfo()) {
             // The database is newly created.

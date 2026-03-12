@@ -31,7 +31,10 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/text/StringView.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if ENABLE(BREAKPAD)
@@ -48,24 +51,23 @@ AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()
 }
 
 // The command line is constructed in ProcessLauncher::launchProcess.
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Unix port
 bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 {
     int argIndex = 1; // Start from argv[1], since argv[0] is the program name.
+    std::span argvSpan = unsafeMakeSpan(argv, argc);
 
     // Ensure we have enough arguments for processIdentifier and connectionIdentifier
     if (argc < argIndex + 2)
         return false;
 
-    if (auto processIdentifier = parseInteger<uint64_t>(unsafeSpan(argv[argIndex++]))) {
+    if (auto processIdentifier = parseInteger<uint64_t>(StringView::fromLatin1(argvSpan[argIndex++]))) {
         if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*processIdentifier))
             return false;
         m_parameters.processIdentifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(*processIdentifier);
     } else
         return false;
 
-    if (auto connectionIdentifier = parseInteger<int>(unsafeSpan(argv[argIndex++])))
+    if (auto connectionIdentifier = parseInteger<int>(StringView::fromLatin1(argvSpan[argIndex++])))
         m_parameters.connectionIdentifier = IPC::Connection::Identifier { { *connectionIdentifier, UnixFileDescriptor::Adopt } };
     else
         return false;
@@ -75,8 +77,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ENABLE(DEVELOPER_MODE)
     // Check last remaining options for JSC testing
-    for (; argIndex < argc; ++argIndex) {
-        if (argv[argIndex] && !strcmp(argv[argIndex], "--configure-jsc-for-testing"))
+    for (auto& arg : argvSpan.subspan(argIndex)) {
+        if (CStringView::unsafeFromUTF8(arg) == "--configure-jsc-for-testing"_s)
             JSC::Config::configureForTesting();
     }
 #endif
@@ -84,15 +86,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return true;
 }
 
-IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
 {
-    struct sigaction signalAction;
-    memset(&signalAction, 0, sizeof(signalAction));
+    struct sigaction signalAction { };
     RELEASE_ASSERT(!sigemptyset(&signalAction.sa_mask));
     signalAction.sa_handler = SIG_IGN;
     RELEASE_ASSERT(!sigaction(SIGPIPE, &signalAction, nullptr));
 }
-IGNORE_CLANG_WARNINGS_END
 
 } // namespace WebKit

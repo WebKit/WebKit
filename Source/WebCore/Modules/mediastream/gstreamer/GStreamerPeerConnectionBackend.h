@@ -99,16 +99,17 @@ private:
     GStreamerRtpSenderBackend::Source createSourceForTrack(MediaStreamTrack&);
 
     RefPtr<RTCRtpTransceiver> existingTransceiver(WTF::Function<bool(GStreamerRtpTransceiverBackend&)>&&);
-    Ref<RTCRtpTransceiver> newRemoteTransceiver(std::unique_ptr<GStreamerRtpTransceiverBackend>&&, RealtimeMediaSource::Type, String&&);
+    Ref<RTCRtpTransceiver> addInternalTransceiver(UniqueRef<GStreamerRtpTransceiverBackend>&&, RealtimeMediaSource::Type, String&&);
+    void removeTransceiver(const RTCRtpTransceiver&);
 
-    void collectTransceivers() final;
+    void collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&&) final;
 
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
 
     template<typename T>
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiverFromTrackOrKind(T&& trackOrKind, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag);
 
-    Ref<RTCRtpReceiver> createReceiver(std::unique_ptr<GStreamerRtpReceiverBackend>&&, const String& trackKind, const String& trackId);
+    Ref<RTCRtpReceiver> createReceiver(UniqueRef<GStreamerRtpReceiverBackend>&&, const String& trackKind, const String& trackId);
 
     void suspend() final;
     void resume() final;

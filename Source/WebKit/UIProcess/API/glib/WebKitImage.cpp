@@ -54,17 +54,6 @@ struct _WebKitImagePrivate {
     GRefPtr<GBytes> bytes;
 };
 
-/**
- * WebKitImage:
- *
- * Represents an image as a buffer containing pixel data.
- *
- * Image objects are always created by WebKit, and considered immutable:
- * a copy of the image data needs to be made before modifying the image.
- * Pixel data can be obtained with [id@webkit_image_as_bytes].
- *
- * Since: 2.52
- */
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(
     WebKitImage, webkit_image, G_TYPE_OBJECT, GObject,
     G_IMPLEMENT_INTERFACE(G_TYPE_ICON, webkit_image_gicon_interface_init)

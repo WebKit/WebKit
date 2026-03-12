@@ -97,7 +97,7 @@ void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomStri
     auto parseError = SVGParsingError::None;
     switch (name.nodeName()) {
     case AttributeNames::preserveAspectRatioAttr:
-        Ref { m_preserveAspectRatio }->setBaseValInternal(SVGPreserveAspectRatioValue { newValue });
+        m_preserveAspectRatio->setBaseValInternal(SVGPreserveAspectRatioValue { newValue });
         return;
     case AttributeNames::xAttr:
         Ref { m_x }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));

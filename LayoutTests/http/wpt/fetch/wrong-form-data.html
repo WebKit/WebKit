@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+const urlsToCheck = [
+    ["empty", ""],
+    ["cr", "?value=%0A"],
+    ["cr_", "?value=%0A_"],
+    ["dashes", "?value=-%20-"]
+];
+
+urlsToCheck.forEach(url => {
+    promise_test(async t => {
+    const response = await fetch("resources/wrong-form-data.py" + url[1]);
+    await promise_rejects_js(t, TypeError, response.formData());
+    }, "Validate buggy form data - " + url[0]);
+});
+    </script>
+  </body>
+</html>

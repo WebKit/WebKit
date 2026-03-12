@@ -58,7 +58,7 @@ public:
     RenderSelectionGeometry(RenderObject& renderer, bool clipToVisibleContent);
 
     void repaint();
-    const Vector<FloatQuad>& collectedSelectionQuads() const { return m_collectedSelectionQuads; }
+    const Vector<FloatQuad>& collectedSelectionQuads() const LIFETIME_BOUND { return m_collectedSelectionQuads; }
     LayoutRect rect() const { return m_rect; }
 
 private:

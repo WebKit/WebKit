@@ -303,7 +303,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 #if ENABLE(PDF_PLUGIN)
     if (pluginView) {
         found = pluginView->findString(string, coreOptions, maxMatchCount);
-        if (RefPtr frame = pluginView->frame(); frame && found)
+        if (auto* frame = pluginView->frame(); frame && found)
             idOfFrameContainingString = frame->frameID();
     } else
 #endif
@@ -436,7 +436,7 @@ bool FindController::updateFindIndicator(bool isShowingOverlay, bool shouldAnima
             return { webPage->mainFrame(), pluginView->textIndicatorForCurrentSelection(textIndicatorOptions, presentationTransition) };
 #endif
         if (RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get())) {
-            auto selectedRange = protect(selectedFrame->selection())->selection().toNormalizedRange();
+            auto selectedRange = selectedFrame->selection().selection().toNormalizedRange();
             if (!selectedRange)
                 return { };
 
@@ -444,7 +444,7 @@ bool FindController::updateFindIndicator(bool isShowingOverlay, bool shouldAnima
                 textIndicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
 
             if (selectedRange->collapsed())
-                selectedRange = protect(selectedFrame->selection())->selection().range();
+                selectedRange = selectedFrame->selection().selection().range();
 
             return { selectedFrame, TextIndicator::createWithRange(*selectedRange, textIndicatorOptions, presentationTransition) };
         }

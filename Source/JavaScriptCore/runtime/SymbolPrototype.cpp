@@ -66,6 +66,7 @@ void SymbolPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, symbolProtoFuncValueOf, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+    structure()->setMayBePrototype(true);
 }
 
 // ------------------------------ Functions ---------------------------

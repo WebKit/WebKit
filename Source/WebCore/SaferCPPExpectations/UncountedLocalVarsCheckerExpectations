@@ -51,7 +51,6 @@ bindings/js/StructuredClone.cpp
 css/CSSStyleSheet.cpp
 css/SelectorChecker.cpp
 css/ShorthandSerializer.cpp
-[ iOS ] dom/Node.cpp
 dom/Position.cpp
 dom/Range.cpp
 dom/SpaceSplitString.cpp
@@ -67,7 +66,6 @@ html/HTMLMediaElement.cpp
 html/HTMLOptionElement.cpp
 [ iOS ] html/HTMLPictureElement.cpp
 html/HTMLSelectElement.cpp
-html/MediaElementSession.cpp
 html/OffscreenCanvas.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
@@ -87,7 +85,7 @@ page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 [ iOS ] page/LocalDOMWindow.cpp
 [ iOS ] page/LocalFrameView.cpp
-[ macOS ] page/PointerCaptureController.cpp
+page/PointerCaptureController.cpp
 [ iOS ] page/Quirks.cpp
 [ iOS ] page/cocoa/ContentChangeObserver.cpp
 [ iOS ] page/ios/EventHandlerIOS.mm

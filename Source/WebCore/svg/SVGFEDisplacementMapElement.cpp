@@ -75,7 +75,7 @@ void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, co
         Ref { m_in2 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::scaleAttr:
-        Ref { m_scale }->setBaseValInternal(newValue.toFloat());
+        m_scale->setBaseValInternal(newValue.toFloat());
         break;
     default:
         break;

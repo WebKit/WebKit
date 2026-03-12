@@ -60,7 +60,7 @@ public:
 
 private:
     void NODELETE layoutFormattingContextSubtree(const ElementBox&);
-    LayoutState& NODELETE layoutState();
+    LayoutState& NODELETE layoutState() LIFETIME_BOUND;
 
     const CheckedRef<LayoutState> m_layoutState;
 };

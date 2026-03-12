@@ -32,6 +32,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
 #include "PaintInfo.h"
+#include "PaintInfoInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderInline.h"

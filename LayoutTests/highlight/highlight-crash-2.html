@@ -1,0 +1,31 @@
+<script>
+ function gc()
+ {
+     if (window.GCController)
+         return GCController.collect();
+
+     for (var i = 0; i < 10000; ++i)
+         var s = new String("AAAA");
+ }
+
+ function main() {
+     let d = f.contentDocument;
+     let hr = f.contentWindow.CSS.highlights;
+     let h = new Highlight(d.createRange());
+     g.contentWindow.CSS.highlights.set("g", h);
+     f.remove();
+     hr.set("f", h);
+     hr = 0;
+     d = 0;
+     gc();
+     g.remove();
+ }
+
+ window.testRunner?.dumpAsText();
+ window.onload = main;
+</script>
+<div>
+    This passes if it doesn't crash.
+</div>
+<iframe id="f" src="about:blank"></iframe>
+<iframe id="g" src="about:blank"></iframe>

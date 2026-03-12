@@ -311,13 +311,14 @@ void PageLoadState::didFailProvisionalLoad(const Transaction::Token& token)
 void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore::CertificateInfo& certificateInfo, bool hasInsecureContent, bool usedLegacyTLS, bool wasPrivateRelayed, const String& proxyName, const WebCore::ResourceResponseSource source, const WebCore::SecurityOriginData& origin)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    ASSERT(m_uncommittedState.state == State::Provisional);
+    // State might be set to Finished in didFailProvisionalLoad with content filter error,
+    // but the load might commit with replacement data from content fitler.
+    ASSERT(m_uncommittedState.state == State::Provisional || m_uncommittedState.state == State::Finished);
 
     m_uncommittedState.state = State::Committed;
     m_uncommittedState.hasInsecureContent = hasInsecureContent;
     m_uncommittedState.certificateInfo = certificateInfo;
 
-    ASSERT(!m_uncommittedState.provisionalURL.isNull());
     m_uncommittedState.url = m_uncommittedState.provisionalURL.isNull() ? aboutBlankURL().string() : std::exchange(m_uncommittedState.provisionalURL, { });
     m_uncommittedState.negotiatedLegacyTLS = usedLegacyTLS;
     m_uncommittedState.wasPrivateRelayed = wasPrivateRelayed;
@@ -479,7 +480,7 @@ void PageLoadState::callObserverCallback(void (Observer::*callback)())
     for (auto& observer : copyToVector(m_observers)) {
         // This appears potentially inefficient on the surface (searching in a Vector)
         // but in practice - using only API - there will only ever be (1) observer.
-        if (RefPtr protectedObserver = observer.get(); !protectedObserver || !m_observers.contains(*protectedObserver))
+        if (auto* protectedObserver = observer.get(); !protectedObserver || !m_observers.contains(*protectedObserver))
             continue;
 
         ((*observer).*callback)();

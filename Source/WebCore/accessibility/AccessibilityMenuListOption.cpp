@@ -61,7 +61,7 @@ Element* AccessibilityMenuListOption::actionElement() const
 
 bool AccessibilityMenuListOption::isEnabled() const
 {
-    RefPtr optionElement = this->optionElement();
+    auto* optionElement = this->optionElement();
     return optionElement && !optionElement->ownElementDisabled();
 }
 

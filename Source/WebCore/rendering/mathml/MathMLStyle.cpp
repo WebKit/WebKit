@@ -73,7 +73,7 @@ RenderObject* MathMLStyle::getMathMLParentNode(RenderObject* renderer)
 {
     auto* parentRenderer = renderer->parent();
 
-    while (parentRenderer && !(is<RenderMathMLTable>(parentRenderer) || is<RenderMathMLBlock>(parentRenderer)))
+    while (parentRenderer && !isAnyOf<RenderMathMLTable, RenderMathMLBlock>(parentRenderer))
         parentRenderer = parentRenderer->parent();
 
     return parentRenderer;

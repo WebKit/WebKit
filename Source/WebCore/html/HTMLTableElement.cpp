@@ -85,8 +85,8 @@ ExceptionOr<void> HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&&
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tHead() const
 {
-    for (Ref child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
-        if (child->hasTagName(theadTag))
+    for (auto& child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
+        if (child.hasTagName(theadTag))
             return child;
     }
     return nullptr;
@@ -112,8 +112,8 @@ ExceptionOr<void> HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& n
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tFoot() const
 {
-    for (Ref child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
-        if (child->hasTagName(tfootTag))
+    for (auto& child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
+        if (child.hasTagName(tfootTag))
             return child;
     }
     return nullptr;
@@ -184,9 +184,9 @@ void HTMLTableElement::deleteCaption()
 
 HTMLTableSectionElement* HTMLTableElement::lastBody() const
 {
-    for (RefPtr<Node> child = lastChild(); child; child = child->previousSibling()) {
+    for (auto* child = lastChild(); child; child = child->previousSibling()) {
         if (child->hasTagName(tbodyTag))
-            return downcast<HTMLTableSectionElement>(child.get());
+            return downcast<HTMLTableSectionElement>(child);
     }
     return nullptr;
 }
@@ -274,7 +274,7 @@ static bool setTableCellsChanged(Element& element)
     if (element.hasTagName(tdTag))
         cellChanged = true;
     else if (isTableCellAncestor(element)) {
-        for (Ref child : childrenOfType<Element>(element))
+        for (auto& child : childrenOfType<Element>(element))
             cellChanged |= setTableCellsChanged(child);
     }
 
@@ -444,7 +444,7 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {
         m_sharedCellStyle = nullptr;
         bool cellChanged = false;
-        for (Ref child : childrenOfType<Element>(*this))
+        for (auto& child : childrenOfType<Element>(*this))
             cellChanged |= setTableCellsChanged(child);
         if (cellChanged)
             invalidateStyleForSubtree();

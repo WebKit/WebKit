@@ -2307,16 +2307,28 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         query_body = '{repository(owner:"%s", name:"%s") { pullRequest(number: %s) {timelineItems(itemTypes: LABELED_EVENT, last: 5) {nodes {... on LabeledEvent {actor { login } label { name } createdAt } } } } } }' % (owner, name, pr_number)
         query = {'query': query_body}
 
-        response = yield self.query_graph_ql(query)
-        if 'errors' in response:
-            yield self._addToLog('stdio', response['errors'][0]['message'])
-            return defer.returnValue(FAILURE)
-        if response:
-            yield self._addToLog('stdio', 'Retrieved labels.\n')
-            label_events = response['data']['repository']['pullRequest']['timelineItems']['nodes']
-        else:
-            yield self._addToLog('stdio', 'Failed to retrieve label author.\n')
-            return defer.returnValue(FAILURE)
+        retry = 3
+        for attempt in range(retry + 1):
+            try:
+                response = yield self.query_graph_ql(query)
+                if not response:
+                    yield self._addToLog('stdio', 'Failed to retrieve label author.\n')
+                elif 'errors' in response:
+                    yield self._addToLog('stdio', response['errors'][0]['message'])
+                else:
+                    yield self._addToLog('stdio', 'Retrieved labels.\n')
+                    label_events = response['data']['repository']['pullRequest']['timelineItems']['nodes']
+                    break
+            except Exception as e:
+                yield self._addToLog('stdio', f'Failed to retrieve label author: {e}\n')
+
+            if attempt >= retry:
+                yield self._addToLog('stdio', 'Failed to determine label owner.\n')
+                self.build.addStepsAfterCurrentStep([RemoveLabelsFromPullRequest(alwaysRun=True)])
+                return defer.returnValue(FAILURE)
+            wait_for = (attempt + 1) * 15
+            yield self._addToLog('stdio', f'\nBacking off for {wait_for} seconds before retrying.\n')
+            yield task.deferLater(reactor, wait_for, lambda: None)
 
         owner = None
         label = builder_name.lower()
@@ -2343,7 +2355,7 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         if self.results == SUCCESS:
             return {'step': f"Owner of PR {self.getProperty('github.number')} determined to be {self.getProperty('owners')[0]}\n"}
         elif self.results == FAILURE:
-            return {'step': f"Unable to determine owner of PR {self.getProperty('github.number')}\n"}
+            return {'step': f"Unable to determine owner of PR {self.getProperty('github.number')}\n", 'build': 'Unexpected issue with GitHub API, please try again by re-adding the merge-queue label on the PR\n'}
 
 
 class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
@@ -4175,8 +4187,11 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         platform = self.getProperty('platform')
         self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
 
-        if self.getProperty('use-dump-render-tree', False):
-            self.command += ['--dump-render-tree']
+        driver = self.getProperty('layout-test-driver', None)
+        if driver == 'DumpRenderTree':
+            self.command += ['-1']
+        elif driver == 'WebKitTestRunner':
+            self.command += ['-2']
 
         self.command += ['--results-directory', self.resultDirectory]
         self.command += ['--debug-rwt-logging']
@@ -4297,9 +4312,10 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         if style and style in ['debug', 'release']:
             configuration['style'] = style
 
-        if self.getProperty('use-dump-render-tree', False):
+        driver = self.getProperty('layout-test-driver', None)
+        if driver == 'DumpRenderTree':
             configuration['flavor'] = 'wk1'
-        else:
+        elif driver == 'WebKitTestRunner':
             configuration['flavor'] = 'wk2'
 
         yield self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
@@ -4446,7 +4462,9 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
 
     def setLayoutTestCommand(self):
         if self.layout_test_class == RunWebKit1Tests:
-            self.setProperty('use-dump-render-tree', True)
+            self.setProperty('layout-test-driver', 'DumpRenderTree')
+        else:
+            self.setProperty('layout-test-driver', 'WebKitTestRunner')
         RunWebKitTests.setLayoutTestCommand(self)
 
         self.command += ['--iterations', self.num_iterations]
@@ -4477,6 +4495,7 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
             self.descriptionDone = message
             self.build.results = SUCCESS
             self.setProperty('build_summary', message)
+            self.setProperty('stress_mode_passed', True)
         else:
             self.setProperty('build_summary', self.FAILURE_MSG_IN_STRESS_MODE)
             steps_to_add += [
@@ -4495,6 +4514,31 @@ class RunWebKitTestsInStressGuardmallocMode(RunWebKitTestsInStressMode):
     name = 'run-layout-tests-in-guard-malloc-stress-mode'
     suffix = 'guard-malloc'
     ENABLE_GUARD_MALLOC = True
+
+
+class RunWebKitTestsInSiteIsolationMode(RunWebKitTestsInStressMode):
+    name = 'run-layout-tests-in-site-isolation'
+    suffix = 'site-isolation'
+    FAILURE_MSG_IN_STRESS_MODE = 'Found test failures in site isolation mode'
+
+    def __init__(self, layout_test_class=RunWebKitTests):
+        self.layout_test_class = layout_test_class
+        RunWebKitTests.__init__(self)
+
+    def setLayoutTestCommand(self):
+        if self.layout_test_class == RunWebKit1Tests:
+            self.setProperty('layout-test-driver', 'DumpRenderTree')
+        else:
+            self.setProperty('layout-test-driver', 'WebKitTestRunner')
+        RunWebKitTests.setLayoutTestCommand(self)
+
+        self.command += ['--site-isolation']
+        modified_tests = self.getProperty('modified_tests')
+        if modified_tests:
+            self.command += modified_tests
+
+    def doStepIf(self, step):
+        return self.getProperty('modified_tests', False) and self.getProperty('stress_mode_passed', False)
 
 
 class ReRunWebKitTests(RunWebKitTests):
@@ -4999,7 +5043,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
 class RunWebKit1Tests(RunWebKitTests):
     @defer.inlineCallbacks
     def run(self):
-        self.setProperty('use-dump-render-tree', True)
+        self.setProperty('layout-test-driver', 'DumpRenderTree')
         rc = yield RunWebKitTests.run(self)
         defer.returnValue(rc)
 
@@ -7711,7 +7755,9 @@ class BuildSwift(steps.ShellSequence, ShellMixin):
         return {'step': 'Successfully built Swift'}
 
     def doStepIf(self, step):
-        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+        # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+        platform_matches = self.getProperty('fullPlatform', '') in {'ios-26', 'mac-tahoe'}
+        return platform_matches and self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
 
 
 # FIXME: Share static analyzer steps with build-webkit-org since they have a lot of similarities
@@ -7732,11 +7778,11 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
         self.commands = []
 
         build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{self.output_directory}')} --configuration {self.build.getProperty('configuration')} --only-smart-pointers "
-        if self.getProperty('platform', '').lower() == 'ios':
-            sdkroot = 'iphonesimulator'
+        sdkroot = 'iphonesimulator' if self.getProperty('platform', '').lower() == 'ios' else 'macosx'
+        # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+        if self.getProperty('platform', '').lower() == 'ios' or self.getProperty('fullPlatform', '') == 'mac-tahoe':
             build_command += f'--toolchains={SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER} --swift-conditions=SWIFT_WEBKIT_TOOLCHAIN '
         else:
-            sdkroot = 'macosx'
             build_command += f"--analyzer-path={os.path.join(self.getProperty('builddir'), 'llvm-project/build/bin/clang')} --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 "
         build_command += f'--scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot={sdkroot} '
         if SHOULD_FILTER_LOGS is True:

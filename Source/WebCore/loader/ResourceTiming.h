@@ -46,12 +46,12 @@ public:
     static ResourceTiming fromLoad(CachedResource&, const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
     static ResourceTiming NODELETE fromSynchronousLoad(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
 
-    const URL& url() const { return m_url; }
-    const String& initiatorType() const { return m_initiatorType; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
+    const String& initiatorType() const LIFETIME_BOUND { return m_initiatorType; }
     String deliveryType() const;
-    const ResourceLoadTiming& resourceLoadTiming() const { return m_resourceLoadTiming; }
-    const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
-    NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
+    const ResourceLoadTiming& resourceLoadTiming() const LIFETIME_BOUND { return m_resourceLoadTiming; }
+    const NetworkLoadMetrics& networkLoadMetrics() const LIFETIME_BOUND { return m_networkLoadMetrics; }
+    NetworkLoadMetrics& networkLoadMetrics() LIFETIME_BOUND { return m_networkLoadMetrics; }
     Vector<Ref<PerformanceServerTiming>> populateServerTiming() const;
     bool isSameOriginRequest() const { return m_isSameOriginRequest; }
     ResourceTiming isolatedCopy() const &;

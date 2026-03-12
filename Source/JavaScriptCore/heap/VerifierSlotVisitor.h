@@ -67,7 +67,7 @@ public:
         MarkerData& operator=(MarkerData&&) = default;
 
         ReferrerToken referrer() const { return m_referrer; }
-        StackTrace* stack() const { return m_stack.get(); }
+        StackTrace* stack() const LIFETIME_BOUND { return m_stack.get(); }
 
     private:
         ReferrerToken m_referrer;
@@ -132,7 +132,7 @@ private:
         MarkedBlockData(MarkedBlock*);
 
         MarkedBlock* block() const { return m_block; }
-        const AtomsBitSet& atoms() const { return m_atoms; }
+        const AtomsBitSet& atoms() const LIFETIME_BOUND { return m_atoms; }
 
         bool isMarked(unsigned atomNumber) { return m_atoms.get(atomNumber); }
         bool testAndSetMarked(unsigned atomNumber) { return m_atoms.testAndSet(atomNumber); }

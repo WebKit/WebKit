@@ -1,0 +1,471 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2026 Ian Grunert <ian.grunert@gmail.com>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+Validates that all required tools for building the Windows port from a Linux host are installed.
+"""
+
+import os
+import shutil
+import subprocess
+import sys
+
+WEBKIT_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+WEBKIT_LIBRARIES_WINDOWS = os.path.join(WEBKIT_ROOT, 'WebKitLibraries', 'windows')
+
+VCPKG_DIR = os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'vcpkg')
+XWIN_CACHE_DIR = os.path.join(WEBKIT_LIBRARIES_WINDOWS, '.xwin')
+
+REQUIRED_EXECUTABLES = [
+    ('clang-cl-20', 'LLVM MSVC-compatible C/C++ compiler driver'),
+    ('ninja', 'Build system'),
+    ('lld-link-20', 'LLVM PE/COFF linker'),
+    ('llvm-lib-20', 'LLVM library archiver'),
+    ('llvm-rc-20', 'LLVM resource compiler'),
+    ('llvm-mt-20', 'LLVM manifest tool'),
+    ('llvm-ranlib-20', 'LLVM archive indexer'),
+    ('git', 'Version control (needed for vcpkg)'),
+    ('cmake', 'Build system generator (needed for vcpkg)'),
+    ('wine', 'Wine PE executor (runs Windows .exe during cross-build)'),
+]
+
+CLANG_RT_LIBRARY = 'clang_rt.builtins-x86_64.lib'
+
+INSTALLATION_INSTRUCTIONS = {
+    'clang-cl-20': 'sudo apt-get install clang-20 (from https://apt.llvm.org/) - clang-cl-20 is included with clang-20',
+    'lld-link-20': 'sudo apt-get install lld-20 (from https://apt.llvm.org/)',
+    'llvm-lib-20': 'sudo apt-get install llvm-20 (from https://apt.llvm.org/)',
+    'llvm-rc-20': 'sudo apt-get install llvm-20 (from https://apt.llvm.org/)',
+    'llvm-mt-20': 'sudo apt-get install llvm-20 (from https://apt.llvm.org/)',
+    'llvm-ranlib-20': 'sudo apt-get install llvm-20 (from https://apt.llvm.org/)',
+    'ninja': 'sudo apt-get install ninja-build',
+    'git': 'sudo apt-get install git',
+    'cmake': 'sudo apt-get install cmake',
+    'xwin': f'Download from https://github.com/Jake-Shadle/xwin/releases and extract to {WEBKIT_LIBRARIES_WINDOWS}/',
+    'Windows SDK': f'Run `xwin --cache-dir {WEBKIT_LIBRARIES_WINDOWS}/.xwin splat --preserve-ms-arch-notation --output {WEBKIT_LIBRARIES_WINDOWS}/` (requires xwin)',
+    CLANG_RT_LIBRARY: f"Download clang+llvm-20.1.0-x86_64-pc-windows-msvc.tar.xz from https://github.com/llvm/llvm-project/releases, extract 'lib/clang/20/lib/windows/{CLANG_RT_LIBRARY}', move to {WEBKIT_LIBRARIES_WINDOWS}/",
+    'wine': 'See https://gitlab.winehq.org/wine/wine/-/wikis/Debian-Ubuntu',
+    'vcpkg': f'Clone https://github.com/microsoft/vcpkg into {VCPKG_DIR} and run bootstrap-vcpkg.sh',
+}
+
+
+def check_executable(name):
+    """Check if an executable is on PATH. Returns the path if found, None otherwise."""
+    return shutil.which(name)
+
+
+def check_xwin():
+    """Check for xwin on PATH or in WebKitLibraries/windows/. Returns the path if found, None otherwise."""
+    # First check PATH
+    path = shutil.which('xwin')
+    if path:
+        return path
+
+    # Then check WebKitLibraries/windows/
+    local_path = os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'xwin')
+    if os.path.isfile(local_path) and os.access(local_path, os.X_OK):
+        return local_path
+
+    return None
+
+
+def check_clang_rt():
+    """Check for clang_rt.builtins-x86_64.lib in WebKitLibraries/windows/. Returns the path if found, None otherwise."""
+    path = os.path.join(WEBKIT_LIBRARIES_WINDOWS, CLANG_RT_LIBRARY)
+    if os.path.isfile(path):
+        return path
+    return None
+
+
+
+
+
+def check_vcpkg():
+    """Check if vcpkg is installed at WebKitLibraries/windows/vcpkg/. Returns the path if found, None otherwise."""
+    vcpkg_path = os.path.join(VCPKG_DIR, 'vcpkg')
+    if os.path.isfile(vcpkg_path) and os.access(vcpkg_path, os.X_OK):
+        return vcpkg_path
+    return None
+
+
+def download_vcpkg():
+    """Clone and bootstrap vcpkg into WebKitLibraries/windows/vcpkg/."""
+    print('Cloning vcpkg...')
+    result = subprocess.run(
+        ['git', 'clone', 'https://github.com/microsoft/vcpkg.git', VCPKG_DIR]
+    )
+    if result.returncode != 0:
+        print('Error cloning vcpkg.')
+        return None
+
+    print('Bootstrapping vcpkg...')
+    bootstrap_script = os.path.join(VCPKG_DIR, 'bootstrap-vcpkg.sh')
+    result = subprocess.run([bootstrap_script], cwd=VCPKG_DIR)
+    if result.returncode != 0:
+        print('Error bootstrapping vcpkg.')
+        return None
+
+    vcpkg_path = os.path.join(VCPKG_DIR, 'vcpkg')
+    print(f'Installed vcpkg to {vcpkg_path}')
+    return vcpkg_path
+
+
+def check_windows_sdk():
+    """Check if Windows SDK is present. Returns True if found, False otherwise."""
+    sdk_files = [
+        os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'sdk', 'include', 'um', 'windows.h'),
+        os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'sdk', 'lib', 'um', 'x64', 'kernel32.lib'),
+        os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'crt', 'include', 'vcruntime.h'),
+    ]
+    return all(os.path.isfile(f) for f in sdk_files)
+
+
+def create_lib_symlinks_for_case_sensitivity():
+    """Create symlinks for library files to handle case-sensitivity on Linux.
+
+    Windows is case-insensitive, so libraries may be referenced with different
+    case than they exist on disk. We create symlinks for common patterns.
+    """
+    lib_dirs = [
+        os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'sdk', 'lib', 'um', 'x64'),
+        os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'sdk', 'lib', 'ucrt', 'x64'),
+        os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'crt', 'lib', 'x64'),
+    ]
+
+    # Known CamelCase library names that need specific symlinks
+    # Maps lowercase name to the CamelCase variant(s) needed
+    CAMELCASE_LIBS = {
+        'windowscodecs': ['WindowsCodecs'],
+        'd2d1': ['D2d1'],
+        'dwrite': ['Dwrite', 'DWrite'],
+        'iphlpapi': ['Iphlpapi'],
+        'shlwapi': ['Shlwapi'],
+        'dbghelp': ['DbgHelp'],
+    }
+
+    created = 0
+    for lib_dir in lib_dirs:
+        if not os.path.isdir(lib_dir):
+            continue
+        # Get all actual .lib files (any case extension)
+        lib_files = {}
+        for filename in os.listdir(lib_dir):
+            if filename.lower().endswith('.lib') and os.path.isfile(os.path.join(lib_dir, filename)):
+                base = filename[:-4]  # Remove extension
+                lib_files[filename] = base
+
+        # For each library, create symlinks with different case patterns
+        for filename, base in lib_files.items():
+            # Generate case variants: lowercase.lib, Original.lib, UPPERCASE.lib, Titlecase.lib
+            variants = [
+                base.lower() + '.lib',           # all lowercase
+                base + '.lib',                   # original base + lowercase ext
+                base.upper() + '.lib',           # all uppercase base + lowercase ext
+                base.capitalize() + '.lib',      # title case (first letter upper, rest lower)
+            ]
+
+            # Add known CamelCase variants
+            base_lower = base.lower()
+            if base_lower in CAMELCASE_LIBS:
+                for camel in CAMELCASE_LIBS[base_lower]:
+                    variants.append(camel + '.lib')
+
+            for variant in variants:
+                if variant != filename:
+                    dst_path = os.path.join(lib_dir, variant)
+                    if not os.path.exists(dst_path):
+                        os.symlink(filename, dst_path)
+                        created += 1
+
+    # Also create symlinks for known header case mismatches in the SDK.
+    # Windows is case-insensitive, but .rc files and source code may reference
+    # headers with different case than xwin extracts them.
+    HEADER_CASE_VARIANTS = {
+        # (directory relative to sdk/include, original_name): [variant_names]
+        ('um', 'winver.h'): ['Winver.h'],
+    }
+    for (subdir, original), variants in HEADER_CASE_VARIANTS.items():
+        inc_dir = os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'sdk', 'include', subdir)
+        original_path = os.path.join(inc_dir, original)
+        if not os.path.isfile(original_path):
+            continue
+        for variant in variants:
+            variant_path = os.path.join(inc_dir, variant)
+            if not os.path.exists(variant_path):
+                os.symlink(original, variant_path)
+                created += 1
+
+    if created > 0:
+        print(f'Created {created} case-variant symlinks for library/header files.')
+
+
+def download_windows_sdk(xwin_path):
+    """Download Windows SDK/CRT using xwin splat."""
+    print('Downloading Windows SDK and CRT (this may take a while)...')
+    result = subprocess.run(
+        [xwin_path, '--cache-dir', XWIN_CACHE_DIR, 'splat', '--preserve-ms-arch-notation', '--include-debug-libs', '--output', WEBKIT_LIBRARIES_WINDOWS]
+    )
+    if result.returncode != 0:
+        print('Error downloading SDK.')
+        return False
+    print('Windows SDK and CRT installed successfully.')
+
+    # Create lowercase symlinks for case-sensitive Linux filesystems
+    create_lib_symlinks_for_case_sensitivity()
+
+    return True
+
+
+def download_with_progress(url, dest_path):
+    """Download a file with progress bar display."""
+    import urllib.request
+
+    def reporthook(block_num, block_size, total_size):
+        downloaded = block_num * block_size
+        if total_size > 0:
+            percent = min(100, downloaded * 100 // total_size)
+            downloaded_mb = downloaded / (1024 * 1024)
+            total_mb = total_size / (1024 * 1024)
+            print(f'\rDownloading: {percent}% ({downloaded_mb:.1f}/{total_mb:.1f} MB)', end='', flush=True)
+
+    urllib.request.urlretrieve(url, dest_path, reporthook)
+    print()  # Newline after progress
+
+
+def download_xwin():
+    """Download and install xwin to WebKitLibraries/windows/."""
+    import tarfile
+
+    XWIN_URL = 'https://github.com/Jake-Shadle/xwin/releases/download/0.7.0/xwin-0.7.0-x86_64-unknown-linux-musl.tar.gz'
+    tarball_path = '/tmp/xwin.tar.gz'
+
+    # Download
+    print(f'Downloading {XWIN_URL}...')
+    download_with_progress(XWIN_URL, tarball_path)
+
+    # Create target directory
+    os.makedirs(WEBKIT_LIBRARIES_WINDOWS, exist_ok=True)
+
+    # Extract xwin binary from tarball
+    with tarfile.open(tarball_path, 'r:gz') as tar:
+        for member in tar.getmembers():
+            if member.name.endswith('/xwin'):
+                member.name = 'xwin'  # Strip directory prefix
+                tar.extract(member, WEBKIT_LIBRARIES_WINDOWS)
+                break
+
+    # Make executable
+    xwin_path = os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'xwin')
+    os.chmod(xwin_path, 0o755)
+
+    # Cleanup
+    os.remove(tarball_path)
+
+    print(f'Installed xwin to {xwin_path}')
+    return xwin_path
+
+
+def download_clang_rt():
+    """Download clang_rt.builtins-x86_64.lib from LLVM Windows release."""
+    import tarfile
+
+    LLVM_VERSION = '20.1.0'
+    CLANG_MAJOR_VERSION = '20'
+    ARCHIVE_NAME = f'clang+llvm-{LLVM_VERSION}-x86_64-pc-windows-msvc'
+    LLVM_URL = f'https://github.com/llvm/llvm-project/releases/download/llvmorg-{LLVM_VERSION}/{ARCHIVE_NAME}.tar.xz'
+    archive_path = '/tmp/clang-llvm-win.tar.xz'
+    lib_path_in_archive = f'{ARCHIVE_NAME}/lib/clang/{CLANG_MAJOR_VERSION}/lib/windows/{CLANG_RT_LIBRARY}'
+
+    # Download with progress bar
+    print(f'Downloading {ARCHIVE_NAME}.tar.xz...')
+    download_with_progress(LLVM_URL, archive_path)
+
+    # Create target directory
+    os.makedirs(WEBKIT_LIBRARIES_WINDOWS, exist_ok=True)
+
+    # Extract just the clang_rt library
+    print(f'Extracting {CLANG_RT_LIBRARY}...')
+    with tarfile.open(archive_path, 'r:xz') as tar:
+        member = tar.getmember(lib_path_in_archive)
+        member.name = CLANG_RT_LIBRARY  # Strip directory prefix
+        tar.extract(member, WEBKIT_LIBRARIES_WINDOWS)
+
+    # Cleanup
+    os.remove(archive_path)
+
+    print(f'Installed {CLANG_RT_LIBRARY} to {WEBKIT_LIBRARIES_WINDOWS}')
+    return True
+
+
+def create_dummy_pwsh():
+    """Create a dummy pwsh script to satisfy vcpkg's PowerShell check.
+
+    vcpkg's vcpkg_copy_tool_dependencies.cmake requires PowerShell on Windows.
+    When cross-compiling from Linux, we don't need this functionality (Wine
+    handles DLL resolution), so we provide a dummy that exits successfully.
+
+    Returns the path to the created pwsh script.
+    """
+    bin_dir = os.path.join(WEBKIT_LIBRARIES_WINDOWS, 'bin')
+    pwsh_path = os.path.join(bin_dir, 'pwsh')
+
+    os.makedirs(bin_dir, exist_ok=True)
+
+    with open(pwsh_path, 'w') as f:
+        f.write('#!/bin/sh\n'
+                'case "$1" in\n'
+                '  --version) echo "PowerShell 7.5.4";;\n'
+                'esac\n'
+                'exit 0\n')
+    os.chmod(pwsh_path, 0o755)
+
+    return pwsh_path
+
+
+def get_installation_instructions(missing_items):
+    """Build help text for missing items."""
+    lines = ['\nInstallation instructions:']
+    for item in missing_items:
+        if item in INSTALLATION_INSTRUCTIONS:
+            lines.append(f'  {item}:')
+            lines.append(f'    {INSTALLATION_INSTRUCTIONS[item]}')
+    return '\n'.join(lines)
+
+
+def main():
+    missing = []
+    all_ok = True
+
+    print('Checking Windows cross-build dependencies...\n')
+
+    # Check required executables
+    for name, description in REQUIRED_EXECUTABLES:
+        path = check_executable(name)
+        if path:
+            print(f'[OK]      {name} ({description})')
+            print(f'          {path}')
+        else:
+            print(f'[MISSING] {name} ({description})')
+            missing.append(name)
+            all_ok = False
+
+    # Check xwin (special handling with auto-download prompt)
+    xwin_path = check_xwin()
+    if xwin_path:
+        print('[OK]      xwin (Windows SDK/CRT sysroot tool)')
+        print(f'          {xwin_path}')
+    else:
+        print('[MISSING] xwin (Windows SDK/CRT sysroot tool)')
+        response = input('Would you like to download and install xwin? [Y/n] ')
+        if response.lower() in ('', 'y', 'yes'):
+            xwin_path = download_xwin()
+            print('[OK]      xwin (Windows SDK/CRT sysroot tool)')
+            print(f'          {xwin_path}')
+        else:
+            missing.append('xwin')
+            all_ok = False
+
+    # Check Windows SDK (requires xwin to download)
+    if check_windows_sdk():
+        print('[OK]      Windows SDK/CRT sysroot')
+        print(f'          {os.path.join(WEBKIT_LIBRARIES_WINDOWS, "sdk")}')
+        # Ensure lowercase symlinks exist for case-sensitive filesystems
+        create_lib_symlinks_for_case_sensitivity()
+    else:
+        print('[MISSING] Windows SDK/CRT sysroot')
+        if xwin_path:
+            response = input('Would you like to download the Windows SDK/CRT using xwin? [Y/n] ')
+            if response.lower() in ('', 'y', 'yes'):
+                if download_windows_sdk(xwin_path):
+                    print('[OK]      Windows SDK/CRT sysroot')
+                    print(f'          {os.path.join(WEBKIT_LIBRARIES_WINDOWS, "sdk")}')
+                else:
+                    missing.append('Windows SDK')
+                    all_ok = False
+            else:
+                missing.append('Windows SDK')
+                all_ok = False
+        else:
+            missing.append('Windows SDK')
+            all_ok = False
+
+    # Check clang_rt library
+    clang_rt_path = check_clang_rt()
+    if clang_rt_path:
+        print(f'[OK]      {CLANG_RT_LIBRARY} (Clang runtime builtins)')
+        print(f'          {clang_rt_path}')
+    else:
+        print(f'[MISSING] {CLANG_RT_LIBRARY} (Clang runtime builtins)')
+        response = input(f'Would you like to download {CLANG_RT_LIBRARY}? [Y/n] ')
+        if response.lower() in ('', 'y', 'yes'):
+            if download_clang_rt():
+                print(f'[OK]      {CLANG_RT_LIBRARY} (Clang runtime builtins)')
+                print(f'          {os.path.join(WEBKIT_LIBRARIES_WINDOWS, CLANG_RT_LIBRARY)}')
+            else:
+                missing.append(CLANG_RT_LIBRARY)
+                all_ok = False
+        else:
+            missing.append(CLANG_RT_LIBRARY)
+            all_ok = False
+
+    # Check vcpkg
+    vcpkg_path = check_vcpkg()
+    if vcpkg_path:
+        print('[OK]      vcpkg (C/C++ package manager)')
+        print(f'          {vcpkg_path}')
+    else:
+        print('[MISSING] vcpkg (C/C++ package manager)')
+        response = input('Would you like to clone and bootstrap vcpkg? [Y/n] ')
+        if response.lower() in ('', 'y', 'yes'):
+            vcpkg_path = download_vcpkg()
+            if vcpkg_path:
+                print('[OK]      vcpkg (C/C++ package manager)')
+                print(f'          {vcpkg_path}')
+            else:
+                missing.append('vcpkg')
+                all_ok = False
+        else:
+            missing.append('vcpkg')
+            all_ok = False
+
+    # Create dummy pwsh for vcpkg cross-compilation
+    if all_ok:
+        print()
+        create_dummy_pwsh()
+        print('Created dummy pwsh for vcpkg cross-compilation.')
+
+    # Print summary
+    print()
+    if all_ok:
+        print('All dependencies satisfied.')
+        return 0
+    else:
+        print(f'{len(missing)} missing dependency(ies).')
+        print(get_installation_instructions(missing))
+        return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

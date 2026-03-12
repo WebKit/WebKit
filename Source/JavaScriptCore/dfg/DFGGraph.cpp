@@ -50,6 +50,7 @@
 #include "GetterSetter.h"
 #include "JIT.h"
 #include "JSLexicalEnvironment.h"
+#include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
 #include "ProfilerSupport.h"
@@ -2219,6 +2220,24 @@ void Graph::appendIonGraphPass(const String& passName)
         pass->setObject("lir"_s, WTF::move(ionGraph)); // LIR stands for SpiderMonkey's low-level IR.
     }
     m_ionGraphPasses->pushObject(pass);
+}
+
+UncheckedKeyHashMap<Node*, uint32_t> Graph::collectIRDumpDebugInfo(IRDumpDebugInfo& debugInfo)
+{
+    UncheckedKeyHashMap<Node*, uint32_t> nodeToLineIndex;
+    for (BlockIndex blockIndex = 0; blockIndex < numBlocks(); ++blockIndex) {
+        auto* block = this->block(blockIndex);
+        if (!block)
+            continue;
+        debugInfo.irLines.append({ { }, blockIndex });
+        for (size_t i = 0; i < block->size(); ++i) {
+            Node* node = block->at(i);
+            uint32_t lineIndex = debugInfo.irLines.size();
+            nodeToLineIndex.add(node, lineIndex);
+            debugInfo.irLines.append({ Graph::opName(node->op()), 0 });
+        }
+    }
+    return nodeToLineIndex;
 }
 
 } } // namespace JSC::DFG

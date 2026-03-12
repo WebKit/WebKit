@@ -44,6 +44,7 @@ Modules/webaudio/OfflineAudioDestinationNode.cpp
 Modules/webaudio/OscillatorNode.cpp
 Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
+Modules/webauthn/AuthenticationExtensionsClientOutputs.cpp
 Modules/webauthn/AuthenticatorResponse.cpp
 Modules/webcodecs/WebCodecsAudioData.cpp
 Modules/webcodecs/WebCodecsAudioInternalData.h
@@ -170,7 +171,7 @@ css/CSSStyleSheetObservableArray.cpp
 css/CSSValueList.cpp
 css/DOMMatrixReadOnly.cpp
 css/DeprecatedCSSOMPrimitiveValue.h
-[ macOS ] css/DeprecatedCSSOMRGBColor.h
+css/DeprecatedCSSOMRGBColor.h
 css/FontFace.cpp
 css/FontFaceSet.cpp
 css/ImmutableStyleProperties.cpp
@@ -219,7 +220,6 @@ dom/Element.cpp
 dom/ElementData.cpp
 dom/ElementInternals.cpp
 dom/ElementIteratorInlines.h
-dom/ElementTraversal.h
 dom/EventPath.cpp
 dom/ExtensionStyleSheets.cpp
 dom/GCReachableRef.h
@@ -269,7 +269,6 @@ editing/ModifySelectionListLevel.cpp
 editing/RemoveFormatCommand.cpp
 editing/ReplaceSelectionCommand.cpp
 editing/SpellChecker.cpp
-editing/TextIterator.cpp
 editing/TextManipulationController.cpp
 editing/TypingCommand.cpp
 editing/VisiblePosition.cpp

@@ -55,7 +55,7 @@ public:
     // For testing.
     void evaluateScriptInExtensionTab(const Inspector::ExtensionTabID&, const WTF::String& scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
 
-    InspectorExtensionClient* client() const { return m_client.get(); }
+    InspectorExtensionClient* client() const LIFETIME_BOUND { return m_client.get(); }
     void setClient(UniqueRef<InspectorExtensionClient>&&);
 
 private:

@@ -243,7 +243,7 @@ bool defaultShowModalDialogEnabled()
 #if ENABLE(GAMEPAD)
 bool defaultGamepadVibrationActuatorEnabled()
 {
-#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT) || ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     return true;
 #else
     return false;

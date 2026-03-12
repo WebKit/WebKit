@@ -1,0 +1,80 @@
+<!-- webkit-test-runner [ CSSInternalAutoBaseParsingEnabled=true ] -->
+<meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-9552" />
+<style>
+    /* This is supposed to be in the UA sheet. */
+    progress::slider-track {
+        font: 11px system-ui;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        height: 50%;
+        border: darkgray 1px solid;
+        border-radius: 999em;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #ddd, #eee 20%, #ccc 45%, #ccc 55%, #ddd);
+    }
+
+    progress::slider-fill {
+        height: 100%; 
+        width: 100%; 
+        block-size: 100%;
+        box-sizing: border-box;
+        border-radius: 999em;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #77f, #ccf 20%, #44d 45%, #44d 55%, #77f);
+    }
+
+    /* This is the beginning of the author sheet. */
+    .auto {
+        appearance: auto;
+    }
+
+    .none {
+        appearance: none;
+    }
+
+    .base {
+        appearance: base;
+    }
+
+    progress {
+        width: 100%;
+        height: 100%;
+    }
+
+    .container {
+        width: 400px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+</style>
+<body>
+    <div class="container">
+        <progress class="auto" max="100" value="0">0%</progress>
+    </div>
+    <div class="container">
+        <progress class="none" max="100" value="0">0%</progress>
+    </div>
+    <div class="container">
+        <progress class="base" max="100" value="0">0%</progress>
+    </div>
+    <div class="container">
+        <progress class="auto" max="100" value="40">40%</progress>
+    </div>
+    <div class="container">
+        <progress class="none" max="100" value="40">40%</progress>
+    </div>
+    <div class="container">
+        <progress class="base" max="100" value="40">40%</progress>
+    </div>
+    <div class="container">
+        <progress class="auto" max="100" value="100">100%</progress>
+    </div>
+    <div class="container">
+        <progress class="none" max="100" value="100">100%</progress>
+    </div>
+    <div class="container">
+        <progress class="base" max="100" value="100">100%</progress>
+    </div>
+</body>

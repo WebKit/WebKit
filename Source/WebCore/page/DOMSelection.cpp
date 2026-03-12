@@ -376,7 +376,7 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(Variant<Ref<ShadowRoot>
 
     Ref startNode = range->startContainer();
     unsigned startOffset = range->startOffset();
-    while (startNode->isInShadowTree() && !shadowRootSet.contains(protect(startNode->containingShadowRoot()).get())) {
+    while (startNode->isInShadowTree() && !shadowRootSet.contains(startNode->containingShadowRoot())) {
         RefPtr host = startNode->shadowHost();
         ASSERT(host && host->parentNode());
         startNode = *host->parentNode();
@@ -385,7 +385,7 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(Variant<Ref<ShadowRoot>
 
     Ref endNode = range->endContainer();
     unsigned endOffset = range->endOffset();
-    while (endNode->isInShadowTree() && !shadowRootSet.contains(protect(endNode->containingShadowRoot()).get())) {
+    while (endNode->isInShadowTree() && !shadowRootSet.contains(endNode->containingShadowRoot())) {
         RefPtr host = endNode->shadowHost();
         ASSERT(host && host->parentNode());
         endNode = *host->parentNode();

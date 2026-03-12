@@ -56,11 +56,11 @@ PositionIterator::operator Position() const
         ASSERT(m_nodeAfterPositionInAnchor->parentNode() == anchorNode.get());
         // FIXME: This check is inadaquete because any ancestor could be ignored by editing
         if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))
-            return positionBeforeNode(anchorNode.get());
-        return positionInParentBeforeNode(m_nodeAfterPositionInAnchor.get());
+            return positionBeforeNode(*anchorNode);
+        return positionInParentBeforeNode(*m_nodeAfterPositionInAnchor);
     }
     if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))
-        return atStartOfNode() ? positionBeforeNode(anchorNode.get()) : positionAfterNode(anchorNode.get());
+        return atStartOfNode() ? positionBeforeNode(*anchorNode) : positionAfterNode(*anchorNode);
     if (anchorNode->hasChildNodes())
         return lastPositionInOrAfterNode(anchorNode.get());
     return makeDeprecatedLegacyPosition(WTF::move(anchorNode), m_offsetInAnchor);
@@ -185,7 +185,7 @@ bool PositionIterator::isCandidate() const
         return false;
 
     if (CheckedPtr block = dynamicDowncast<RenderBlock>(*renderer)) {
-        if (is<RenderBlockFlow>(*block) || is<RenderGrid>(*block) || is<RenderFlexibleBox>(*block)) {
+        if (isAnyOf<RenderBlockFlow, RenderGrid, RenderFlexibleBox>(*block)) {
             if (block->logicalHeight() || is<HTMLBodyElement>(*anchorNode) || anchorNode->isRootEditableElement()) {
                 if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))
                     return atStartOfNode() && !Position::nodeIsUserSelectNone(anchorNode.get());

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<style>
+
+@keyframes empty-filter {
+    to { filter: none }
+}
+
+div {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    animation: empty-filter 1s;
+}
+
+</style>
+
+<div>PASS if this does not crash.</div>
+
+<script src="threaded-animations-utils.js"></script>
+<script>
+
+(async function () {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    // Wait for the initial layer tree commit.
+    await threadedAnimationsCommit();
+    // Wait another frame.
+    await new Promise(requestAnimationFrame);
+
+    window.testRunner?.notifyDone();
+})();
+
+</script>

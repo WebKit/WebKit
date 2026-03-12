@@ -73,8 +73,8 @@ protected:
     WEBCORE_EXPORT BlobData* NODELETE blobData() const;
     FileStream* syncStream() const;
     AsyncFileStream* asyncStream() const;
-    Vector<uint8_t>& buffer() { return m_buffer; }
-    const Vector<uint8_t>& buffer() const { return m_buffer; }
+    Vector<uint8_t>& buffer() LIFETIME_BOUND { return m_buffer; }
+    const Vector<uint8_t>& buffer() const LIFETIME_BOUND { return m_buffer; }
 
 private:
     void getSizeForNext();

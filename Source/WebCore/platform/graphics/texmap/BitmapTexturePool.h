@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT Ref<BitmapTexture> acquireTexture(const IntSize&, OptionSet<BitmapTexture::Flags>);
 #if USE(GBM)
-    Ref<BitmapTexture> createTextureForImage(EGLImage, OptionSet<BitmapTexture::Flags>);
+    Ref<BitmapTexture> createTextureForImage(EGLImage, const IntSize&, OptionSet<BitmapTexture::Flags>);
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)

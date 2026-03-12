@@ -602,7 +602,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(std::span<const uint8_t> da
     if (isRemoved() || m_updating)
         return Exception { ExceptionCode::InvalidStateError };
 
-    ALWAYS_LOG(LOGIDENTIFIER, "size = ", data.size(), " maximumBufferSize = ", maximumBufferSize(), " buffered = ", Ref { m_buffered }->ranges(), " streaming = ", protect(m_source)->streaming());
+    ALWAYS_LOG(LOGIDENTIFIER, "size = ", data.size(), " maximumBufferSize = ", maximumBufferSize(), " buffered = ", m_buffered->ranges(), " streaming = ", protect(m_source)->streaming());
 
     // 3. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
     // 3.1. Set the readyState attribute of the parent media source to "open"
@@ -889,7 +889,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext())) {
             if (auto& allowedMediaAudioCodecIDs = document->settings().allowedMediaAudioCodecIDs()) {
                 for (auto& audioTrackInfo : segment.audioTracks) {
-                    if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(RefPtr { audioTrackInfo.description }->codec())))
+                    if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
                         continue;
                     return MediaPromise::createAndReject(PlatformMediaError::AppendError);
                 }
@@ -897,7 +897,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
 
             if (auto& allowedMediaVideoCodecIDs = document->settings().allowedMediaVideoCodecIDs()) {
                 for (auto& videoTrackInfo : segment.videoTracks) {
-                    if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(RefPtr { videoTrackInfo.description }->codec())))
+                    if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
                         continue;
                     return MediaPromise::createAndReject(PlatformMediaError::AppendError);
                 }
@@ -945,7 +945,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
                 source->addAudioTrackMirrorToElement(*audioTrackInfo.track, enabled);
             }
 
-            m_audioCodecs.append(RefPtr { audioTrackInfo.description }->codec().toAtomString());
+            m_audioCodecs.append(audioTrackInfo.description->codec().toAtomString());
 
             // 5.2.8 Create a new track buffer to store coded frames for this track.
             m_private->addTrackBuffer(RefPtr { audioTrackInfo.track }->id(), WTF::move(audioTrackInfo.description));
@@ -992,7 +992,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
                 source->addVideoTrackMirrorToElement(*videoTrackInfo.track, selected);
             }
 
-            m_videoCodecs.append(RefPtr { videoTrackInfo.description }->codec().toAtomString());
+            m_videoCodecs.append(videoTrackInfo.description->codec().toAtomString());
 
             // 5.3.8 Create a new track buffer to store coded frames for this track.
             m_private->addTrackBuffer(RefPtr { videoTrackInfo.track }->id(), WTF::move(videoTrackInfo.description));
@@ -1034,7 +1034,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
                 source->addTextTrackMirrorToElement(textTrackPrivate.get());
             }
 
-            m_textCodecs.append(RefPtr { textTrackInfo.description }->codec().toAtomString());
+            m_textCodecs.append(textTrackInfo.description->codec().toAtomString());
 
             // 5.4.7 Create a new track buffer to store coded frames for this track.
             m_private->addTrackBuffer(textTrackPrivate->id(), WTF::move(textTrackInfo.description));
@@ -1079,8 +1079,8 @@ bool SourceBuffer::validateInitializationSegment(const SourceBufferPrivateClient
 
     // Note: those are checks from step 3.1
     //   * The number of audio, video, and text tracks match what was in the first initialization segment.
-    return segment.audioTracks.size() == protect(audioTracksIfExists())->length()
-        && segment.videoTracks.size() == protect(videoTracksIfExists())->length()
+    return segment.audioTracks.size() == audioTracksIfExists()->length()
+        && segment.videoTracks.size() == videoTracksIfExists()->length()
         && segment.textTracks.size() == protect(textTracksIfExists())->length();
 }
 
@@ -1109,12 +1109,12 @@ void SourceBuffer::appendError(bool decodeError)
 
 bool SourceBuffer::hasAudio() const
 {
-    return m_audioTracks && protect(audioTracksIfExists())->length();
+    return m_audioTracks && audioTracksIfExists()->length();
 }
 
 bool SourceBuffer::hasVideo() const
 {
-    return m_videoTracks && protect(videoTracksIfExists())->length();
+    return m_videoTracks && videoTracksIfExists()->length();
 }
 
 ScriptExecutionContext* SourceBuffer::scriptExecutionContext() const
@@ -1247,7 +1247,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTi
 {
     if (!isRemoved())
         protect(m_source)->setDurationInternal(duration);
-    if (RefPtr textTracks = m_textTracks)
+    if (auto* textTracks = m_textTracks.get())
         textTracks->setDuration(duration);
     return MediaPromise::createAndResolve();
 }

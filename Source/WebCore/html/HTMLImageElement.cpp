@@ -56,6 +56,7 @@
 #include "NodeInlines.h"
 #include "NodeName.h"
 #include "NodeTraversal.h"
+#include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"

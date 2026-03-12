@@ -353,4 +353,27 @@ Vector<MarkedText> MarkedText::collectForDraggedAndTransparentContent(const Docu
     });
 }
 
+Vector<MarkedText> MarkedText::collectForDictationStreamingOpacity(const RenderText& renderer, const TextBoxSelectableRange& selectableRange)
+{
+    if (!renderer.textNode())
+        return { };
+
+    CheckedPtr markerController = renderer.document().markersIfExists();
+    if (!markerController)
+        return { };
+
+    auto markers = markerController->markersFor(*renderer.textNode(), DocumentMarkerType::DictationStreamingOpacity);
+    if (markers.isEmpty())
+        return { };
+
+    Vector<MarkedText> result;
+    result.reserveInitialCapacity(markers.size());
+    for (auto& marker : markers) {
+        auto [clampedStart, clampedEnd] = selectableRange.clamp(marker->startOffset(), marker->endOffset());
+        if (clampedStart < clampedEnd)
+            result.append({ clampedStart, clampedEnd, MarkedText::Type::DictationStreamingOpacity, marker.get() });
+    }
+    return result;
+}
+
 }

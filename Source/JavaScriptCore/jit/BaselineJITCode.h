@@ -28,7 +28,7 @@
 #include "CallLinkInfo.h"
 #include "JITCode.h"
 #include "JITCodeMap.h"
-#include "StructureStubInfo.h"
+#include "PropertyInlineCache.h"
 #include <wtf/ButterflyArray.h>
 #include <wtf/CompactPointerTuple.h>
 
@@ -38,7 +38,7 @@ namespace JSC {
 
 class BinaryArithProfile;
 class UnaryArithProfile;
-struct BaselineUnlinkedStructureStubInfo;
+struct BaselineUnlinkedPropertyInlineCache;
 struct SimpleJumpTable;
 struct StringJumpTable;
 
@@ -90,7 +90,7 @@ class BaselineJITCode : public DirectJITCode, public MathICHolder {
 public:
     BaselineJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck);
     ~BaselineJITCode() override;
-    PCToCodeOriginMap* pcToCodeOriginMap() override { return m_pcToCodeOriginMap.get(); }
+    PCToCodeOriginMap* pcToCodeOriginMap() LIFETIME_BOUND override { return m_pcToCodeOriginMap.get(); }
 
     CodeLocationLabel<JSInternalPtrTag> getCallLinkDoneLocationForBytecodeIndex(BytecodeIndex) const;
 
@@ -100,7 +100,7 @@ public:
     void setFullnessRate(double rate) { m_fullnessRate = rate; }
 
     FixedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;
-    FixedVector<BaselineUnlinkedStructureStubInfo> m_unlinkedStubInfos;
+    FixedVector<BaselineUnlinkedPropertyInlineCache> m_unlinkedPropertyInlineCaches;
     FixedVector<SimpleJumpTable> m_switchJumpTables;
     FixedVector<StringJumpTable> m_stringSwitchJumpTables;
     JITCodeMap m_jitCodeMap;
@@ -115,17 +115,17 @@ public:
     bool m_isShareable { true };
 };
 
-class BaselineJITData final : public ButterflyArray<BaselineJITData, StructureStubInfo, void*> {
+class BaselineJITData final : public ButterflyArray<BaselineJITData, HandlerPropertyInlineCache, void*> {
     friend class LLIntOffsetsExtractor;
 public:
-    using Base = ButterflyArray<BaselineJITData, StructureStubInfo, void*>;
+    using Base = ButterflyArray<BaselineJITData, HandlerPropertyInlineCache, void*>;
 
-    static std::unique_ptr<BaselineJITData> create(unsigned stubInfoSize, unsigned poolSize, CodeBlock* codeBlock)
+    static std::unique_ptr<BaselineJITData> create(unsigned propertyCacheSize, unsigned poolSize, CodeBlock* codeBlock)
     {
-        return std::unique_ptr<BaselineJITData> { createImpl(stubInfoSize, poolSize, codeBlock) };
+        return std::unique_ptr<BaselineJITData> { createImpl(propertyCacheSize, poolSize, codeBlock) };
     }
 
-    explicit BaselineJITData(unsigned poolSize, unsigned stubInfoSize, CodeBlock*);
+    explicit BaselineJITData(unsigned poolSize, unsigned propertyCacheSize, CodeBlock*);
 
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(BaselineJITData, m_globalObject); }
     static constexpr ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(BaselineJITData, m_stackOffset); }
@@ -133,19 +133,19 @@ public:
     static constexpr ptrdiff_t offsetOfJITExecutionActiveThreshold() { return OBJECT_OFFSETOF(BaselineJITData, m_executeCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_activeThreshold); }
     static constexpr ptrdiff_t offsetOfJITExecutionTotalCount() { return OBJECT_OFFSETOF(BaselineJITData, m_executeCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_totalCount); }
 
-    StructureStubInfo& stubInfo(unsigned index)
+    HandlerPropertyInlineCache& propertyCache(unsigned index)
     {
-        auto span = stubInfos();
+        auto span = propertyInlineCaches();
         return span[span.size() - index - 1];
     }
 
-    auto stubInfos() -> decltype(leadingSpan())
+    auto propertyInlineCaches() -> decltype(leadingSpan())
     {
         return leadingSpan();
     }
 
-    BaselineExecutionCounter& executeCounter() { return m_executeCounter; }
-    const BaselineExecutionCounter& executeCounter() const { return m_executeCounter; }
+    BaselineExecutionCounter& executeCounter() LIFETIME_BOUND { return m_executeCounter; }
+    const BaselineExecutionCounter& executeCounter() const LIFETIME_BOUND { return m_executeCounter; }
 
     JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
     intptr_t m_stackOffset { 0 };

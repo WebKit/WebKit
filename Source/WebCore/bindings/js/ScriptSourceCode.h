@@ -79,7 +79,7 @@ public:
 
     bool isEmpty() const { return m_code.length() == 0; }
 
-    const JSC::SourceCode& jsSourceCode() const { return m_code; }
+    const JSC::SourceCode& jsSourceCode() const LIFETIME_BOUND { return m_code; }
 
     JSC::SourceProvider& provider() { return m_provider.get(); }
     StringView source() const { return m_provider->source(); }

@@ -114,8 +114,8 @@ class CachedRawResource;
 
         Document& document() { return *m_document; }
 
-        const ThreadableLoaderOptions& options() const { return m_options; }
-        const String& referrer() const { return m_referrer; }
+        const ThreadableLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
+        const String& referrer() const LIFETIME_BOUND { return m_referrer; }
         bool isLoading() { return m_resource || m_preflightChecker; }
 
         void reportRedirectionWithBadScheme(const URL&);

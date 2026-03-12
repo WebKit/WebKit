@@ -32,10 +32,12 @@
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Vector.h>
 
@@ -981,6 +983,26 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenMaximizeComp
     EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurity, ForceDisabledOverridesSecurityRestrictionMode)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"EnhancedSecurityForceDisabled"])
+            [webViewConfiguration.get().preferences _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    NSString *processVariant = [webView _webContentProcessVariantForFrame:nil];
+    EXPECT_STREQ("standard", processVariant.UTF8String);
 }
 
 #endif

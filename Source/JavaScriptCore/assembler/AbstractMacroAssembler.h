@@ -854,7 +854,7 @@ public:
             m_jumps.shrink(size);
         }
 
-        const JumpVector& jumps() const { return m_jumps; }
+        const JumpVector& jumps() const LIFETIME_BOUND { return m_jumps; }
 
     private:
         JumpVector m_jumps;

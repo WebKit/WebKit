@@ -50,7 +50,7 @@
 
 - (WKWebView *)webView
 {
-    if (RefPtr page = Ref { *_scriptMessage }->page())
+    if (RefPtr page = _scriptMessage->page())
         return page->cocoaView().autorelease();
     return nil;
 }
@@ -62,7 +62,7 @@
 
 - (NSString *)name
 {
-    return Ref { *_scriptMessage }->cocoaName();
+    return _scriptMessage->cocoaName();
 }
 
 - (WKContentWorld *)world

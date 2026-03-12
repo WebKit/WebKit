@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "MediaPlayerPrivateGStreamer.h"
+#include "TrackPrivateBaseGStreamer.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
@@ -1207,23 +1208,22 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
 
     ASSERT(m_isLegacyPlaybin);
 
-    using TrackType = TrackPrivateBaseGStreamer::TrackType;
     Variant<TrackIDHashMap<Ref<AudioTrackPrivateGStreamer>>*, TrackIDHashMap<Ref<VideoTrackPrivateGStreamer>>*, TrackIDHashMap<Ref<InbandTextTrackPrivateGStreamer>>*> variantTracks = static_cast<TrackIDHashMap<Ref<TrackPrivateType>>*>(0);
-    auto type(static_cast<TrackType>(variantTracks.index()));
+    auto type(static_cast<GStreamerTrackType>(variantTracks.index()));
     ASCIILiteral typeName;
     bool* hasType;
     switch (type) {
-    case TrackType::Audio:
+    case GStreamerTrackType::Audio:
         typeName = "audio"_s;
         hasType = &m_hasAudio;
         variantTracks = &m_audioTracks;
         break;
-    case TrackType::Video:
+    case GStreamerTrackType::Video:
         typeName = "video"_s;
         hasType = &m_hasVideo;
         variantTracks = &m_videoTracks;
         break;
-    case TrackType::Text:
+    case GStreamerTrackType::Text:
         typeName = "text"_s;
         hasType = nullptr;
         variantTracks = &m_textTracks;
@@ -1234,7 +1234,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
     auto& tracks = *std::get<TrackIDHashMap<Ref<TrackPrivateType>>*>(variantTracks);
 
     // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
-    if (m_isEndReached && (type == TrackType::Audio || type == TrackType::Video))
+    if (m_isEndReached && (type == GStreamerTrackType::Audio || type == GStreamerTrackType::Video))
         return;
 
     unsigned numberOfTracks = 0;
@@ -1249,7 +1249,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         if (oldHasType != *hasType)
             player->characteristicChanged();
 
-        if (*hasType && type == TrackType::Video)
+        if (*hasType && type == GStreamerTrackType::Video)
             player->sizeChanged();
     }
 
@@ -1283,18 +1283,18 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
 
         auto track = TrackPrivateType::create(*this, i, GRefPtr(pad));
         ASSERT(track->streamId() == streamId);
-        if (!track->trackIndex() && (type == TrackType::Audio || type == TrackType::Video))
+        if (!track->trackIndex() && (type == GStreamerTrackType::Audio || type == GStreamerTrackType::Video))
             track->setActive(true);
 
         Variant<AudioTrackPrivate*, VideoTrackPrivate*, InbandTextTrackPrivate*> variantTrack(&track.get());
         switch (variantTrack.index()) {
-        case TrackType::Audio:
+        case GStreamerTrackType::Audio:
             player->addAudioTrack(*std::get<AudioTrackPrivate*>(variantTrack));
             break;
-        case TrackType::Video:
+        case GStreamerTrackType::Video:
             player->addVideoTrack(*std::get<VideoTrackPrivate*>(variantTrack));
             break;
-        case TrackType::Text:
+        case GStreamerTrackType::Text:
             player->addTextTrack(*std::get<InbandTextTrackPrivate*>(variantTrack));
             break;
         }
@@ -3282,11 +3282,11 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
     MediaPlayer::SupportsType result = MediaPlayer::SupportsType::IsNotSupported;
 #if ENABLE(MEDIA_SOURCE)
     // MediaPlayerPrivateGStreamerMSE is in charge of mediasource playback, not us.
-    if (parameters.isMediaSource)
+    if (parameters.platformType == PlatformMediaDecodingType::MediaSource)
         return result;
 #endif
 
-    if (parameters.isMediaStream) {
+    if (parameters.platformType == PlatformMediaDecodingType::MediaStream) {
 #if ENABLE(MEDIA_STREAM)
         return MediaPlayer::SupportsType::IsSupported;
 #else

@@ -187,7 +187,7 @@ public:
     void noticeVMEntry();
     void shutdown();
     template<typename Visitor> void visit(Visitor&) WTF_REQUIRES_LOCK(m_lock);
-    Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+    Lock& getLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
     void setTimingInterval(Seconds interval) { m_timingInterval = interval; }
     JS_EXPORT_PRIVATE void start();
     void startWithLock() WTF_REQUIRES_LOCK(m_lock);

@@ -32,6 +32,10 @@
 #include "pas_allocation_config.h"
 #include "pas_page_malloc.h"
 
+#if PAS_OS(LINUX) || PAS_OS(DARWIN)
+#include <sys/mman.h>
+#endif
+
 PAS_BEGIN_EXTERN_C;
 
 void pas_committed_pages_vector_construct(pas_committed_pages_vector* vector,
@@ -105,4 +109,3 @@ size_t pas_count_committed_pages(void* object,
 PAS_END_EXTERN_C;
 
 #endif /* LIBPAS_ENABLED */
-

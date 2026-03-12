@@ -70,7 +70,7 @@ public:
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool value) { m_isEnabled = value; }
 
-    const SelectorFilter::Hashes& descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
+    const SelectorFilter::Hashes& descendantSelectorIdentifierHashes() const LIFETIME_BOUND { return m_descendantSelectorIdentifierHashes; }
 
     void disableSelectorFiltering() { m_descendantSelectorIdentifierHashes[0] = 0; }
 

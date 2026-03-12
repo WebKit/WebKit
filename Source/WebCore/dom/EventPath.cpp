@@ -89,8 +89,8 @@ EventPath::EventPath(Node& originalTarget, Event& event)
 
 void EventPath::buildPath(Node& originalTarget, Event& event)
 {
-    EventContext::Type contextType = [&]() {
-        if (is<MouseEvent>(event) || is<FocusEvent>(event))
+    auto contextType = [&] {
+        if (isAnyOf<MouseEvent, FocusEvent>(event))
             return EventContext::Type::MouseOrFocus;
 #if ENABLE(TOUCH_EVENTS)
         if (is<TouchEvent>(event))
@@ -313,10 +313,10 @@ EventPath::EventPath(EventTarget& target)
 
 static Node* NODELETE moveOutOfAllShadowRoots(Node& startingNode)
 {
-    CheckedPtr node = &startingNode;
+    auto* node = &startingNode;
     while (node && node->isInShadowTree())
         node = downcast<ShadowRoot>(node->rootNode()).host();
-    return node.unsafeGet();
+    return node;
 }
 
 RelatedNodeRetargeter::RelatedNodeRetargeter(Ref<Node>&& relatedNode, Node& target)

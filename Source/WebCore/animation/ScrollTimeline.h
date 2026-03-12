@@ -51,7 +51,7 @@ public:
     static Ref<ScrollTimeline> create(Scroller, ScrollAxis);
     static Ref<ScrollTimeline> createInactiveStyleOriginatedTimeline(const AtomString& name);
 
-    const WeakStyleable& sourceStyleable() const { return m_source; }
+    const WeakStyleable& sourceStyleable() const LIFETIME_BOUND { return m_source; }
     virtual RefPtr<Element> bindingsSource() const;
     virtual RefPtr<Element> source() const;
     void setSource(Element*);
@@ -60,7 +60,7 @@ public:
     ScrollAxis axis() const { return m_axis; }
     void setAxis(ScrollAxis axis) { m_axis = axis; }
 
-    const AtomString& name() const { return m_name; }
+    const AtomString& name() const LIFETIME_BOUND { return m_name; }
     void setName(const AtomString& name) { m_name = name; }
 
     bool isInactiveStyleOriginatedTimeline() const { return m_isInactiveStyleOriginatedTimeline; }

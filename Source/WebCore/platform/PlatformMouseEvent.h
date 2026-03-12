@@ -59,11 +59,11 @@ public:
 
     // This position is relative to the enclosing NSWindow in WebKit1, and is WKWebView-relative in WebKit2.
     // Use ScrollView::windowToContents() to convert it to into the contents of a given view.
-    const DoublePoint& position() const { return m_position; }
-    const DoublePoint& globalPosition() const { return m_globalPosition; }
-    const DoublePoint& movementDelta() const { return m_movementDelta; }
+    const DoublePoint& position() const LIFETIME_BOUND { return m_position; }
+    const DoublePoint& globalPosition() const LIFETIME_BOUND { return m_globalPosition; }
+    const DoublePoint& movementDelta() const LIFETIME_BOUND { return m_movementDelta; }
     // Unaccelerated pointer movement
-    const DoublePoint& unadjustedMovementDelta() const { return m_unadjustedMovementDelta; }
+    const DoublePoint& unadjustedMovementDelta() const LIFETIME_BOUND { return m_unadjustedMovementDelta; }
 
     MouseButton button() const { return m_button; }
     unsigned short buttons() const { return m_buttons; }
@@ -72,7 +72,7 @@ public:
     double force() const { return m_force; }
     SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
     PointerID pointerId() const { return m_pointerId; }
-    const String& pointerType() const { return m_pointerType; }
+    const String& pointerType() const LIFETIME_BOUND { return m_pointerType; }
     MouseEventInputSource inputSource() const { return m_inputSource; }
 
     Vector<PlatformMouseEvent> coalescedEvents() const { return m_coalescedEvents; }

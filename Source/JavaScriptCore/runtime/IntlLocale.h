@@ -97,6 +97,7 @@ private:
     String m_script;
     String m_region;
     String m_variants;
+    String m_nonUnicodeExtensions;
     std::optional<String> m_calendar;
     std::optional<String> m_caseFirst;
     std::optional<String> m_collation;

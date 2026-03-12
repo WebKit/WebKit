@@ -44,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-download.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-same-origin-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-same-url.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-userInitiated.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-with-target.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-after-detach.html
@@ -51,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-back-forward.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-navigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-event-canintercept-cross-port.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-get.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-reload.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-requestSubmit.html
@@ -66,6 +68,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-go-0.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-pushState.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-replaceState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-traversal-during-onnavigate-should-reject.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-traversal-during-onnavigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-iframe-location.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-location.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-meta-refresh.html
@@ -96,6 +100,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-detach-in-onnavigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-replaceState-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-after-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/traverseTo-detach.html

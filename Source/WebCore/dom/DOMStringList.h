@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -68,5 +69,7 @@ private:
 
     Vector<String> m_strings;
 };
+
+inline WebCoreOpaqueRoot root(DOMStringList* list) { return WebCoreOpaqueRoot { list }; }
 
 } // namespace WebCore

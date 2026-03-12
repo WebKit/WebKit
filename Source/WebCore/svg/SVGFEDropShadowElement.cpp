@@ -57,8 +57,8 @@ Ref<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& 
 
 void SVGFEDropShadowElement::setStdDeviation(float x, float y)
 {
-    Ref { m_stdDeviationX }->setBaseValInternal(x);
-    Ref { m_stdDeviationY }->setBaseValInternal(y);
+    m_stdDeviationX->setBaseValInternal(x);
+    m_stdDeviationY->setBaseValInternal(y);
     updateSVGRendererForElementChange();
 }
 
@@ -67,18 +67,18 @@ void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const A
     switch (name.nodeName()) {
     case AttributeNames::stdDeviationAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            Ref { m_stdDeviationX }->setBaseValInternal(result->first);
-            Ref { m_stdDeviationY }->setBaseValInternal(result->second);
+            m_stdDeviationX->setBaseValInternal(result->first);
+            m_stdDeviationY->setBaseValInternal(result->second);
         }
         break;
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::dxAttr:
-        Ref { m_dx }->setBaseValInternal(newValue.toFloat());
+        m_dx->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::dyAttr:
-        Ref { m_dy }->setBaseValInternal(newValue.toFloat());
+        m_dy->setBaseValInternal(newValue.toFloat());
         break;
     default:
         break;
@@ -128,7 +128,7 @@ bool SVGFEDropShadowElement::setFilterEffectAttribute(FilterEffect& filterEffect
     case AttributeNames::flood_colorAttr:
         return effect.setShadowColor(protect(renderer()->style())->floodColorResolvingCurrentColor());
     case AttributeNames::flood_opacityAttr:
-        return effect.setShadowOpacity(protect(renderer()->style())->floodOpacity().value.value);
+        return effect.setShadowOpacity(renderer()->style().floodOpacity().value.value);
     default:
         break;
     }

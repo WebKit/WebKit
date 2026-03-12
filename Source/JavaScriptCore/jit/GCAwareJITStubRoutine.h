@@ -36,12 +36,12 @@
 namespace JSC {
 
 class AccessCase;
-class AdaptiveValueStructureStubClearingWatchpoint;
+class AdaptiveValuePropertyInlineCacheClearingWatchpoint;
 class CallLinkInfo;
 class JITStubRoutineSet;
 class OptimizingCallLinkInfo;
-class StructureTransitionStructureStubClearingWatchpoint;
-class WatchpointsOnStructureStubInfo;
+class StructureTransitionPropertyInlineCacheClearingWatchpoint;
+class WatchpointsOnPropertyInlineCache;
 
 // Use this stub routine if you know that your code might be on stack when
 // either GC or other kinds of stub deletion happen. Basicaly, if your stub
@@ -97,13 +97,13 @@ public:
     friend class JITStubRoutine;
     friend class GCAwareJITStubRoutine;
 
-    using Watchpoints = Bag<Variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>>;
+    using Watchpoints = Bag<Variant<StructureTransitionPropertyInlineCacheClearingWatchpoint, AdaptiveValuePropertyInlineCacheClearingWatchpoint>>;
 
     PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<Ref<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, bool isCodeImmutable);
     ~PolymorphicAccessJITStubRoutine();
 
-    const FixedVector<Ref<AccessCase>>& cases() const { return m_cases; }
-    const FixedVector<StructureID>& weakStructures() const { return m_weakStructures; }
+    const FixedVector<Ref<AccessCase>>& cases() const LIFETIME_BOUND { return m_cases; }
+    const FixedVector<StructureID>& weakStructures() const LIFETIME_BOUND { return m_weakStructures; }
 
     unsigned hash() const
     {
@@ -117,7 +117,7 @@ public:
     void addGCAwareWatchpoint();
     void addedToSharedJITStubSet();
 
-    Watchpoints& watchpoints() { return m_watchpoints; }
+    Watchpoints& watchpoints() LIFETIME_BOUND { return m_watchpoints; }
     WatchpointSet& watchpointSet() { return *m_watchpointSet.get(); }
     void invalidate();
 

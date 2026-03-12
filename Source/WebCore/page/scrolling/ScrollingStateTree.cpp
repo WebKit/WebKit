@@ -101,7 +101,7 @@ void ScrollingStateTree::attachDeserializedNodes()
     // into a ScrollingStateTree then move to a std::unique_ptr<ScrollingStateTree> and if we
     // did this in the constructor, createAfterReconstruction would be setting nodes' tree pointers
     // to the wrong ScrollingStateTree.
-    if (RefPtr rootStateNode = m_rootStateNode) {
+    if (auto* rootStateNode = m_rootStateNode.get()) {
         rootStateNode->attachAfterDeserialization(*this);
         ASSERT(rootStateNode->parentPointersAreCorrect());
     }

@@ -552,7 +552,7 @@ double TrackSizingAlgorithm::flexFactorSum(const FlexTracks& flexTracks)
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-find-fr-size
-LayoutUnit TrackSizingAlgorithm::findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit& availableSpace, const LayoutUnit& gapSize)
+LayoutUnit TrackSizingAlgorithm::findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit availableSpace, const LayoutUnit gapSize)
 {
     ASSERT(availableSpace >= 0_lu);
 
@@ -642,7 +642,7 @@ void TrackSizingAlgorithm::expandFlexibleTracksForMinContent(UnsizedTracks&)
 // * For each grid item that crosses a flexible track, the result of finding the size of an fr
 //   using all the grid tracks that the item crosses and a space to fill of the item's max-content contribution.
 void TrackSizingAlgorithm::expandFlexibleTracksForMaxContent(UnsizedTracks& unsizedTracks, const FlexTracks& flexTracks,
-    const LayoutUnit& gapSize, const PlacedGridItems& gridItems, const PlacedGridItemSpanList& gridItemSpanList,
+    const LayoutUnit gapSize, const PlacedGridItems& gridItems, const PlacedGridItemSpanList& gridItemSpanList,
     const TrackSizingGridItemConstraintList& oppositeAxisConstraints, const GridItemSizingFunctions& gridItemSizingFunctions)
 {
     // The used flex fraction is the maximum of:
@@ -675,7 +675,7 @@ void TrackSizingAlgorithm::expandFlexibleTracksForMaxContent(UnsizedTracks& unsi
 // Otherwise, if the free space is a definite length:
 // The used flex fraction is the result of finding the size of an fr using all of the
 // grid tracks and a space to fill of the available grid space (minus gutters).
-void TrackSizingAlgorithm::expandFlexibleTracksForDefiniteLength(UnsizedTracks& unsizedTracks, const FlexTracks& flexTracks, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit& gapSize)
+void TrackSizingAlgorithm::expandFlexibleTracksForDefiniteLength(UnsizedTracks& unsizedTracks, const FlexTracks& flexTracks, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit gapSize)
 {
     ASSERT(availableGridSpace.has_value());
 
@@ -697,7 +697,7 @@ void TrackSizingAlgorithm::expandFlexibleTracksForDefiniteLength(UnsizedTracks& 
 
 // https://drafts.csswg.org/css-grid-1/#algo-flex-tracks
 void TrackSizingAlgorithm::expandFlexibleTracks(UnsizedTracks& unsizedTracks, const AxisConstraint::FreeSpaceScenario& freeSpaceScenario,
-    std::optional<LayoutUnit> availableGridSpace, const LayoutUnit& gapSize, const PlacedGridItems& gridItems,
+    std::optional<LayoutUnit> availableGridSpace, const LayoutUnit gapSize, const PlacedGridItems& gridItems,
     const PlacedGridItemSpanList& gridItemSpanList, const TrackSizingGridItemConstraintList& oppositeAxisConstraints,
     const GridItemSizingFunctions& gridItemSizingFunctions)
 {

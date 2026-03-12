@@ -106,9 +106,10 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);
 
-    MediaEngineSupportParameters parameters;
-    parameters.isMediaSource = true;
-    parameters.type = contentType;
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = contentType
+    };
 
     AddStatus returnedStatus = AddStatus::InvalidState;
     RefPtr<AudioVideoRenderer> renderer;

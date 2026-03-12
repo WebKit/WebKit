@@ -1,4 +1,5 @@
 
 PASS Test onreleased event's basic properties
-PASS Ensure onreleased is called before WakeLockSentinel.release() resolves
+PASS Ensure onrelease is called before WakeLockSentinel.release() resolves
+PASS Ensure onrelease is fired exactly once
 

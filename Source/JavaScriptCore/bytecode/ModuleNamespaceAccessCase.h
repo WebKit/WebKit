@@ -41,8 +41,8 @@ public:
     friend class AccessCase;
     friend class InlineCacheCompiler;
 
-    JSModuleNamespaceObject* moduleNamespaceObject() const { return m_moduleNamespaceObject.get(); }
-    JSModuleEnvironment* moduleEnvironment() const { return m_moduleEnvironment.get(); }
+    JSModuleNamespaceObject* moduleNamespaceObject() const LIFETIME_BOUND { return m_moduleNamespaceObject.get(); }
+    JSModuleEnvironment* moduleEnvironment() const LIFETIME_BOUND { return m_moduleEnvironment.get(); }
     ScopeOffset scopeOffset() const { return m_scopeOffset; }
 
     static Ref<AccessCase> create(VM&, JSCell* owner, CacheableIdentifier, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);

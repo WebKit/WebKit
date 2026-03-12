@@ -461,6 +461,8 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const AtomString& nam
 
 void HTMLConstructionSite::finishedParsing()
 {
+    m_textNodeBuffer = nullptr;
+    m_currentTextNode = nullptr;
     protect(m_document)->finishedParsing();
 }
 
@@ -709,7 +711,14 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
         // FIXME: We're only supposed to append to this text node if it was the last text node inserted by the parser.
         unsigned proposedBreakIndex = std::min(characters.length(), lengthLimit - previousTextChild->length());
         if (unsigned breakIndex = findBreakIndex(characters, 0, proposedBreakIndex)) {
-            previousTextChild->parserAppendData(StringView(characters).left(breakIndex));
+            if (previousTextChild != m_currentTextNode) {
+                if (!m_textNodeBuffer)
+                    m_textNodeBuffer = makeUnique<StringBuilder>();
+                else
+                    m_textNodeBuffer->clear();
+                m_currentTextNode = previousTextChild;
+            }
+            previousTextChild->parserAppendData(StringView(characters).left(breakIndex), *m_textNodeBuffer);
             currentPosition = breakIndex;
         }
     }

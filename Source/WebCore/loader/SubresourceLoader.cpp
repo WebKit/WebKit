@@ -395,7 +395,7 @@ void SubresourceLoader::didReceiveResponse(ResourceResponse&& response, Completi
 #endif
     // Implementing step 10 of https://fetch.spec.whatwg.org/#main-fetch for service worker responses.
     if (response.source() == ResourceResponse::Source::ServiceWorker && response.url() != request().url()) {
-        Ref loader = protect(documentLoader())->cachedResourceLoader();
+        Ref loader = documentLoader()->cachedResourceLoader();
         if (!loader->allowedByContentSecurityPolicy(m_resource->type(), response.url(), options(), ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
             SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_BLOCKED_BY_CONTENT_POLICY);
             cancel(ResourceError({ }, 0, response.url(), { }, ResourceError::Type::General));
@@ -941,7 +941,7 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
     }
 
     ASSERT(options().initiatorContext == InitiatorContext::Document);
-    protect(documentLoader->cachedResourceLoader())->resourceTimingInformation().addResourceTiming(*protect(cachedResource()), *document, WTF::move(resourceTiming));
+    documentLoader->cachedResourceLoader().resourceTimingInformation().addResourceTiming(*cachedResource(), *document, WTF::move(resourceTiming));
 }
 
 const HTTPHeaderMap* SubresourceLoader::originalHeaders() const

@@ -76,7 +76,7 @@ void HTMLSelectedContentElement::didFinishInsertingNode()
             m_isDisabled = true;
             break;
         }
-        if (is<HTMLOptionElement>(ancestor) || is<HTMLSelectedContentElement>(ancestor)) {
+        if (isAnyOf<HTMLOptionElement, HTMLSelectedContentElement>(ancestor)) {
             m_isDisabled = true;
             break;
         }
@@ -85,7 +85,7 @@ void HTMLSelectedContentElement::didFinishInsertingNode()
         return;
 
     if (m_owningSelect != nearestAncestorSelect) {
-        if (RefPtr oldSelect = m_owningSelect)
+        if (auto* oldSelect = m_owningSelect.get())
             oldSelect->unregisterSelectedContentElement();
         m_owningSelect = nearestAncestorSelect;
         nearestAncestorSelect->registerSelectedContentElement();

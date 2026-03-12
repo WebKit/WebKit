@@ -70,7 +70,7 @@ FrameInspectorController::FrameInspectorController(LocalFrame& frame, PageInspec
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef(), &parentPageController.backendDispatcher()))
     , m_executionStopwatch(Stopwatch::create())
 {
-    if (protect(frame.settings())->siteIsolationEnabled())
+    if (frame.settings().siteIsolationEnabled())
         createConsoleAgent();
 }
 
@@ -148,7 +148,7 @@ void FrameInspectorController::createLazyAgents()
     m_didCreateLazyAgents = true;
 
     RefPtr frame = m_frame.get();
-    if (!frame || !protect(frame->settings())->siteIsolationEnabled())
+    if (!frame || !frame->settings().siteIsolationEnabled())
         return;
 
     // Create debugger before agents that depend on it.
@@ -163,7 +163,7 @@ void FrameInspectorController::connectFrontend(Inspector::FrontendChannel& front
     UNUSED_PARAM(isAutomaticInspection);
     UNUSED_PARAM(immediatelyPause);
 
-    if (RefPtr page = m_frame->page())
+    if (auto* page = m_frame->page())
         page->settings().setDeveloperExtrasEnabled(true);
 
     bool connectedFirstFrontend = !m_frontendRouter->hasFrontends();
@@ -216,7 +216,7 @@ void FrameInspectorController::dispatchMessageFromFrontend(const String& message
 
 bool FrameInspectorController::developerExtrasEnabled() const
 {
-    RefPtr page = m_frame->page();
+    auto* page = m_frame->page();
     return page && page->settings().developerExtrasEnabled();
 }
 

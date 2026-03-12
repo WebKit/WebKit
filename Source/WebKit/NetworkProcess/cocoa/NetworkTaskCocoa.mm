@@ -397,7 +397,7 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
 
 ShouldRelaxThirdPartyCookieBlocking NetworkTaskCocoa::shouldRelaxThirdPartyCookieBlocking() const
 {
-    return protect(m_networkSession)->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
+    return m_networkSession->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
 }
 
 } // namespace WebKit

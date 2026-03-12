@@ -1,0 +1,6 @@
+
+FAIL
+  navigateEvent.deferPageSwap: multiple deferring methods should complete before
+  committing
+ assert_array_equals: lengths differ, expected array ["navigate", "handler1", "handler2", "preview1", "preview2", "pagehide"] length 6, got ["navigate", "pagehide"] length 2
+

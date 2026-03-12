@@ -112,7 +112,7 @@ public:
         return withSameClockAndRawSeconds(m_value + other.value());
     }
     
-    TimeWithDynamicClockType operator-(Seconds other) const
+    TimeWithDynamicClockType NODELETE operator-(Seconds other) const
     {
         return withSameClockAndRawSeconds(m_value - other.value());
     }

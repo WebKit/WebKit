@@ -1219,6 +1219,20 @@ class TestExpectations(object):
             expectation_line = self._parser.expectation_for_skipped_test(test_name)
             self._model.add_expectation_line(expectation_line, in_skipped=True)
 
+    def add_test_list_expectations(self, test_list_expectations):
+        # type: (List[Tuple[str, int, str]]) -> None
+        if not test_list_expectations:
+            return
+
+        expectation_lines = []
+        for filename, line_number, raw_line in test_list_expectations:
+            exp_line = TestExpectationParser._tokenize_line(filename, raw_line, line_number)
+            self._parser._parse_line(exp_line)
+            expectation_lines.append(exp_line)
+
+        self._add_expectations(expectation_lines)
+        self._expectations += expectation_lines
+
     @staticmethod
     def list_to_string(
         expectation_lines,  # type: Iterable[TestExpectationLine]

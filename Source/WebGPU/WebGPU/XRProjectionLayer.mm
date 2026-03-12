@@ -200,7 +200,7 @@ Ref<XRProjectionLayer> XRBinding::createXRProjectionLayer(WGPUTextureFormat colo
 
 #pragma mark WGPU Stubs
 
-void wgpuXRProjectionLayerReference(WGPUXRProjectionLayer projectionLayer)
+void NODELETE wgpuXRProjectionLayerReference(WGPUXRProjectionLayer projectionLayer)
 {
     WebGPU::fromAPI(projectionLayer).ref();
 }

@@ -54,7 +54,7 @@ public:
     void setIsShowingDebugOverlay(bool showOverlay) { m_isShowingDebugOverlay = showOverlay; }
     bool isShowingDebugOverlay() const { return m_isShowingDebugOverlay; }
 
-    const FilterGeometry& geometry() const { return m_geometry; }
+    const FilterGeometry& geometry() const LIFETIME_BOUND { return m_geometry; }
 
     FloatSize filterScale() const { return m_geometry.scale; }
     void setFilterScale(const FloatSize& filterScale) { m_geometry.scale = filterScale; }

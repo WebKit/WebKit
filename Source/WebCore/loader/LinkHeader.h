@@ -36,17 +36,17 @@ class LinkHeader {
 public:
     template<typename CharacterType> LinkHeader(StringParsingBuffer<CharacterType>&);
 
-    const String& url() const { return m_url; }
-    const String& rel() const { return m_rel; }
-    const String& as() const { return m_as; }
-    const String& mimeType() const { return m_mimeType; }
-    const String& media() const { return m_media; }
-    const String& crossOrigin() const { return m_crossOrigin; }
-    const String& imageSrcSet() const { return m_imageSrcSet; }
-    const String& imageSizes() const { return m_imageSizes; }
-    const String& nonce() const { return m_nonce; }
-    const String& referrerPolicy() const { return m_referrerPolicy; }
-    const String& fetchPriority() const { return m_fetchPriority; }
+    const String& url() const LIFETIME_BOUND { return m_url; }
+    const String& rel() const LIFETIME_BOUND { return m_rel; }
+    const String& as() const LIFETIME_BOUND { return m_as; }
+    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+    const String& media() const LIFETIME_BOUND { return m_media; }
+    const String& crossOrigin() const LIFETIME_BOUND { return m_crossOrigin; }
+    const String& imageSrcSet() const LIFETIME_BOUND { return m_imageSrcSet; }
+    const String& imageSizes() const LIFETIME_BOUND { return m_imageSizes; }
+    const String& nonce() const LIFETIME_BOUND { return m_nonce; }
+    const String& referrerPolicy() const LIFETIME_BOUND { return m_referrerPolicy; }
+    const String& fetchPriority() const LIFETIME_BOUND { return m_fetchPriority; }
     bool valid() const { return m_isValid; }
     bool isViewportDependent() const { return !media().isEmpty() || !imageSrcSet().isEmpty() || !imageSizes().isEmpty(); }
 

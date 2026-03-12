@@ -62,9 +62,9 @@ public:
 
     bool isFallbackMethod() const;
     void setJavaScriptName(CFStringRef n) { _javaScriptName = n; }
-    CFStringRef javaScriptName() const { return _javaScriptName.get(); }
+    CFStringRef javaScriptName() const LIFETIME_BOUND { return _javaScriptName.get(); }
     
-    SELStructPtr selector() const { return _selector; }
+    SELStructPtr selector() const LIFETIME_BOUND { return _selector; }
 
 private:
     bool isObjcMethod() const final { return true; }
@@ -83,7 +83,7 @@ public:
     virtual unsigned int getLength() const;
 
 #ifdef __OBJC__
-    ObjectStructPtr getObjcArray() const { return _array.get(); }
+    ObjectStructPtr getObjcArray() const LIFETIME_BOUND { return _array.get(); }
 #endif
 
 private:
@@ -114,7 +114,7 @@ public:
 
     DECLARE_INFO;
 
-    const String& propertyName() const { return m_item; }
+    const String& propertyName() const LIFETIME_BOUND { return m_item; }
 
     static ObjectPrototype* createPrototype(VM&, JSGlobalObject& globalObject)
     {

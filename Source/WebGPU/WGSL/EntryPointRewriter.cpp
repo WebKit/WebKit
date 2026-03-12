@@ -137,7 +137,6 @@ void EntryPointRewriter::checkReturnType()
                     SourceSpan::empty(),
                     AST::Identifier::make(returnStructName),
                     AST::StructureMember::List(structType->structure.members()),
-                    AST::Attribute::List { },
                     role
                 );
                 m_shaderModule.append(m_shaderModule.declarations(), returnStruct);
@@ -181,7 +180,6 @@ void EntryPointRewriter::checkReturnType()
         SourceSpan::empty(),
         AST::Identifier::make(returnStructName),
         AST::StructureMember::List({ member }),
-        AST::Attribute::List { },
         role
     );
     m_shaderModule.append(m_shaderModule.declarations(), returnStruct);
@@ -232,7 +230,6 @@ void EntryPointRewriter::constructInputStruct()
         SourceSpan::empty(),
         AST::Identifier::make(m_structTypeName),
         WTF::move(structMembers),
-        AST::Attribute::List { },
         role
     );
     m_shaderModule.append(m_shaderModule.declarations(), structure);

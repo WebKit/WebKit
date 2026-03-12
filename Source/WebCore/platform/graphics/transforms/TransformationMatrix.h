@@ -409,8 +409,8 @@ public:
     WEBCORE_EXPORT operator simd_float4x4() const;
 #endif
 #if USE(SKIA)
-    TransformationMatrix(const SkM44&);
-    operator SkM44() const;
+    WEBCORE_EXPORT TransformationMatrix(const SkM44&);
+    WEBCORE_EXPORT operator SkM44() const;
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))

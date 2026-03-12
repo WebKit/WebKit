@@ -46,7 +46,7 @@ extension WKPreviewWindowController {
         var previewSession: PreviewSession?
         var item: PreviewItem
         var previewConfiguration: PreviewApplication.PreviewConfiguration
-        var windowOpenedContinuation: CheckedContinuation<Void, Error>?
+        var windowOpenedContinuation: CheckedContinuation<Void, any Error>?
 
         init(item: PreviewItem, configuration: PreviewApplication.PreviewConfiguration) {
             self.item = item
@@ -84,12 +84,12 @@ extension WKPreviewWindowController {
     }
 
     @nonobjc
-    private final var windowOpenedContinuation: CheckedContinuation<Void, Error>? {
+    private final var windowOpenedContinuation: CheckedContinuation<Void, any Error>? {
         get { base.windowOpenedContinuation }
         set { base.windowOpenedContinuation = newValue }
     }
 
-    weak var delegate: WKPreviewWindowControllerDelegate?
+    weak var delegate: (any WKPreviewWindowControllerDelegate)?
 
     @objc(initWithURL:sceneID:launchInImmersive:)
     init(url: URL, sceneID: String, launchInImmersive: Bool) {

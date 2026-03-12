@@ -1698,7 +1698,7 @@ private:
                         auto convertToFulfilledPromise = [&](Node* node) {
                             auto* promise = m_insertionSet.insertNode(indexInBlock, SpecPromiseObject, NewInternalFieldObject, node->origin, OpInfo(m_graph.registerStructure(globalObject->promiseStructure())));
                             m_insertionSet.insertNode(indexInBlock, SpecNone, ExitOK, node->origin);
-                            m_insertionSet.insertNode(indexInBlock, SpecNone, PutInternalField, node->origin, OpInfo(static_cast<uint32_t>(JSPromise::Field::Flags)), Edge(promise, KnownCellUse), Edge(m_insertionSet.insertConstant(indexInBlock, node->origin, jsNumber(JSPromise::isFirstResolvingFunctionCalledFlag | static_cast<uint32_t>(JSPromise::Status::Fulfilled)))));
+                            m_insertionSet.insertNode(indexInBlock, SpecNone, PutInternalField, node->origin, OpInfo(static_cast<uint32_t>(JSPromise::Field::Flags)), Edge(promise, KnownCellUse), Edge(m_insertionSet.insertConstant(indexInBlock, node->origin, jsNumber(JSPromise::isFirstResolvingFunctionCalledFlag | static_cast<int32_t>(JSPromise::Status::Fulfilled)))));
                             m_insertionSet.insertNode(indexInBlock, SpecNone, ExitOK, node->origin);
                             m_insertionSet.insertNode(indexInBlock, SpecNone, PutInternalField, node->origin, OpInfo(static_cast<uint32_t>(JSPromise::Field::ReactionsOrResult)), Edge(promise, KnownCellUse), node->child2());
                             m_insertionSet.insertNode(indexInBlock, SpecNone, ExitOK, node->origin);

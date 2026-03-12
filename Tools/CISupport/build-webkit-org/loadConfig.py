@@ -97,7 +97,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
         factoryName = builder.pop('factory')
         factory = globals()[factoryName]
         factorykwargs = {}
-        for key in ['platform', 'configuration', 'architectures', 'triggers', 'additionalArguments', 'device_model']:
+        for key in ['platform', 'configuration', 'architectures', 'triggers', 'additionalArguments', 'device_model', 'deployment_target']:
             value = builder.pop(key, None)
             if value:
                 factorykwargs[key] = value

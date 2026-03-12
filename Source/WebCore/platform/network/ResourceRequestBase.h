@@ -227,7 +227,7 @@ public:
     WEBCORE_EXPORT void setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2 = String(), const String& encoding3 = String());
     void setResponseContentDispositionEncodingFallbackArray(const Vector<String>& array) { m_requestData.m_responseContentDispositionEncodingFallbackArray = array; }
 
-    WEBCORE_EXPORT RefPtr<FormData> httpBody() const;
+    WEBCORE_EXPORT FormData* httpBody() const;
     WEBCORE_EXPORT bool hasUpload() const;
     WEBCORE_EXPORT void setHTTPBody(RefPtr<FormData>&&);
     
@@ -262,7 +262,7 @@ public:
     void setInitiatorIdentifier(const String& identifier) { m_initiatorIdentifier = identifier; }
 
     // Additional information for the Inspector to be able to identify the node that initiated this request.
-    const std::optional<int>& inspectorInitiatorNodeIdentifier() const { return m_inspectorInitiatorNodeIdentifier; }
+    const std::optional<int>& inspectorInitiatorNodeIdentifier() const LIFETIME_BOUND { return m_inspectorInitiatorNodeIdentifier; }
     void setInspectorInitiatorNodeIdentifier(int inspectorInitiatorNodeIdentifier) { m_inspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier; }
 
 #if !PLATFORM(COCOA) && !USE(SOUP)

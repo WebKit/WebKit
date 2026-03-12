@@ -122,6 +122,10 @@
 #include "WebKit-Swift.h"
 #endif
 
+#if PLATFORM(VISION)
+#import "RealitySystemSupportSPI.h"
+#endif
+
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 
 #define FORWARD_ACTION_TO_WKCONTENTVIEW(_action) \

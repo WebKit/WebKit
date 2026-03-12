@@ -114,7 +114,7 @@ public:
     bool reallocatesStorage() const;
     bool makesCalls() const;
     
-    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
+    const ObjectPropertyConditionSet& conditionSet() const LIFETIME_BOUND { return m_conditionSet; }
     
     // We don't support intrinsics for Setters (it would be sweet if we did) but we need this for templated helpers.
     Intrinsic intrinsic() const { return NoIntrinsic; }
@@ -161,7 +161,7 @@ public:
     bool viaGlobalProxy() const { return m_viaGlobalProxy; }
 
     CodePtr<CustomAccessorPtrTag> customAccessorSetter() const { return m_customAccessorSetter; }
-    DOMAttributeAnnotation* domAttribute() const { return m_domAttribute.get(); }
+    DOMAttributeAnnotation* domAttribute() const LIFETIME_BOUND { return m_domAttribute.get(); }
 
 private:
     bool attemptToMergeTransitionWithReplace(const PutByVariant& replace);

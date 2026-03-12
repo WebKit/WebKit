@@ -36,8 +36,8 @@ class MathMLUnderOverElement final : public MathMLScriptsElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLUnderOverElement);
 public:
     static Ref<MathMLUnderOverElement> create(const QualifiedName& tagName, Document&);
-    const BooleanValue& accent();
-    const BooleanValue& accentUnder();
+    const BooleanValue& accent() LIFETIME_BOUND;
+    const BooleanValue& accentUnder() LIFETIME_BOUND;
 
 private:
     MathMLUnderOverElement(const QualifiedName& tagName, Document&);

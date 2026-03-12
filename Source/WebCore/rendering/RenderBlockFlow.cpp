@@ -773,7 +773,7 @@ LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogicalHeig
 
     // Now shift all our content.
     if (CheckedPtr inlineLayout = this->inlineLayout())
-        inlineLayout->shiftLinesBy(space);
+        inlineLayout->shiftLinesByInBlockDirection(space);
     else if (auto* svgTextLayout = this->svgTextLayout()) {
         if (isHorizontalWritingMode())
             svgTextLayout->shiftLineBy(0, space);
@@ -1019,7 +1019,7 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
             }
             continue;
         }
-        if (is<RenderText>(renderer) || is<RenderInline>(renderer))
+        if (isAnyOf<RenderText, RenderInline>(renderer))
             renderer.clearNeedsLayout();
     }
 
@@ -1714,7 +1714,7 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
     // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
     if (grandchildBox->needsLayout()) {
         grandchildBox->computeAndSetBlockDirectionMargins(*this);
-        if (CheckedPtr grandchildBlock = dynamicDowncast<RenderBlock>(*grandchildBox)) {
+        if (auto* grandchildBlock = dynamicDowncast<RenderBlock>(*grandchildBox)) {
             grandchildBlock->setHasMarginBeforeQuirk(grandchildBox->style().marginBefore().hasQuirk());
             grandchildBlock->setHasMarginAfterQuirk(grandchildBox->style().marginAfter().hasQuirk());
         }
@@ -2380,6 +2380,11 @@ void RenderBlockFlow::adjustSizeContainmentChildForPagination(RenderBox& child, 
         fragmentedFlow->updateSpaceShortageForSizeContainment(this, offsetFromLogicalTopOfFirstPage() + offset, spaceShortage);
 }
 
+bool RenderBlockFlow::containsFloats() const
+{
+    return m_floatingObjects && !m_floatingObjects->set().isEmpty();
+}
+
 bool RenderBlockFlow::containsFloat(const RenderBox& renderer) const
 {
     return m_floatingObjects && m_floatingObjects->set().contains<FloatingObjectHashTranslator>(renderer);
@@ -2559,6 +2564,12 @@ void RenderBlockFlow::repaintOverhangingFloats(bool paintAllDescendants)
             renderer.repaintOverhangingFloats(false);
         }
     }
+}
+
+void RenderBlockFlow::dirtyLineFromChangedChild()
+{
+    if (svgTextLayout() && svgTextLayout()->legacyRootBox())
+        svgTextLayout()->legacyRootBox()->markDirty();
 }
 
 void RenderBlockFlow::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& point)
@@ -2969,6 +2980,11 @@ LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelowForBlock(LayoutUnit logic
         return logicalHeight;
 
     return m_floatingObjects->findNextFloatLogicalBottomBelowForBlock(logicalHeight);
+}
+
+LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom() const
+{
+    return lowestFloatLogicalBottom(FloatLeftRight);
 }
 
 LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom(FloatingObject::Type floatType) const
@@ -4034,7 +4050,7 @@ static void setFullRepaintOnParentInlineBoxLayerIfNeeded(const RenderText& rende
     }
     if (!parent->isInline() || !parent->hasLayer())
         return;
-    protect(downcast<RenderLayerModelObject>(*parent).layer())->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
+    downcast<RenderLayerModelObject>(*parent).layer()->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
 }
 
 std::pair<float, float> RenderBlockFlow::inlineContentTopAndBottomIncludingInkOverflow() const
@@ -4122,7 +4138,7 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
         // Inline boxes report normal-child-needs-layout when their children need (any) layout.
         contentNeedsNormalChildLayoutOnly = contentNeedsNormalChildLayoutOnly.value_or(true) && (!renderer.needsLayout() || renderer.needsNormalChildOrSimplifiedLayoutOnly());
 
-        if (is<RenderLineBreak>(renderer) || is<RenderInline>(renderer) || is<RenderText>(renderer))
+        if (isAnyOf<RenderLineBreak, RenderInline, RenderText>(renderer))
             renderer.clearNeedsLayout();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -4354,7 +4370,7 @@ static inline bool resizeTextPermitted(const RenderObject& renderer)
     // We disallow resizing for text input fields and textarea to address <rdar://problem/5792987> and <rdar://problem/8021123>
     for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
         // Get the first non-shadow HTMLElement and see if it's an input.
-        if (RefPtr element = dynamicDowncast<HTMLElement>(ancestor->element()); element && !element->isInShadowTree())
+        if (auto* element = dynamicDowncast<HTMLElement>(ancestor->element()); element && !element->isInShadowTree())
             return !is<HTMLInputElement>(*element) && !is<HTMLTextAreaElement>(*element);
     }
     return true;
@@ -4364,7 +4380,7 @@ static bool NODELETE isNonBlocksOrNonFixedHeightListItems(const RenderObject& re
 {
     if (!renderer.isRenderBlock())
         return true;
-    if (CheckedPtr renderListItem = dynamicDowncast<RenderListItem>(renderer))
+    if (auto* renderListItem = dynamicDowncast<RenderListItem>(renderer))
         return !renderListItem->style().height().isFixed();
     return false;
 }
@@ -4825,7 +4841,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific cirucumstances (in order to match common WinIE renderings). 
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
-    bool allowImagesToBreak = !document().inQuirksMode() || !isRenderTableCell() || !styleToUse.logicalWidth().isIntrinsicOrLegacyIntrinsicOrAuto();
+    bool allowImagesToBreak = !document().inQuirksMode() || !isRenderTableCell() || !styleToUse.logicalWidth().isSizingKeywordOrAuto();
 
     bool oldAutoWrap = styleToUse.textWrapMode() != TextWrapMode::NoWrap;
 
@@ -4853,7 +4869,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     while (RenderObject* child = childIterator.next()) {
         // Interlinear annotations don't participate in inline layout, but they put a minimum width requirement on the associated ruby base.
         auto isInterlinearTypeAnnotation = [&] {
-            if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(*child)) {
+            if (auto* renderBlock = dynamicDowncast<RenderBlock>(*child)) {
                 auto& style = renderBlock->style();
                 return style.display() == Style::DisplayType::RubyText && (!style.isInterCharacterRubyPosition() || styleToUse.writingMode().isVerticalTypographic());
             }

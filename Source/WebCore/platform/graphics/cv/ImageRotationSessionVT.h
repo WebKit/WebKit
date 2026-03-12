@@ -56,10 +56,10 @@ public:
     ImageRotationSessionVT(const RotationProperties&, FloatSize, IsCGImageCompatible, ShouldUseIOSurface = ShouldUseIOSurface::Yes);
     WEBCORE_EXPORT explicit ImageRotationSessionVT(ShouldUseIOSurface = ShouldUseIOSurface::Yes);
 
-    const std::optional<AffineTransform>& transform() const { return m_transform; }
-    const RotationProperties& rotationProperties() const { return m_rotationProperties; }
-    const FloatSize& size() { return m_size; }
-    const FloatSize& rotatedSize() { return m_rotatedSize; }
+    const std::optional<AffineTransform>& transform() const LIFETIME_BOUND { return m_transform; }
+    const RotationProperties& rotationProperties() const LIFETIME_BOUND { return m_rotationProperties; }
+    const FloatSize& size() LIFETIME_BOUND { return m_size; }
+    const FloatSize& rotatedSize() LIFETIME_BOUND { return m_rotatedSize; }
 
     RetainPtr<CVPixelBufferRef> rotate(CVPixelBufferRef);
     RefPtr<VideoFrame> applyRotation(VideoFrame&, IsCGImageCompatible = IsCGImageCompatible::No);

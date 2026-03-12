@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/README.md
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download-aborts-previous-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download-intercept-reject.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download.html
@@ -51,4 +52,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-cross-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-finished-mark-as-handled.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-realms-and-identity.html
-/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-to.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-to.html

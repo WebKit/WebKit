@@ -120,10 +120,10 @@ public:
 
     void appendAuthorStyleSheets(std::span<const Ref<CSSStyleSheet>>);
 
-    ScopeRuleSets& ruleSets() { return m_ruleSets; }
-    const ScopeRuleSets& ruleSets() const { return m_ruleSets; }
+    ScopeRuleSets& ruleSets() LIFETIME_BOUND { return m_ruleSets; }
+    const ScopeRuleSets& ruleSets() const LIFETIME_BOUND { return m_ruleSets; }
 
-    const MQ::MediaQueryEvaluator& mediaQueryEvaluator() const { return m_mediaQueryEvaluator; }
+    const MQ::MediaQueryEvaluator& mediaQueryEvaluator() const LIFETIME_BOUND { return m_mediaQueryEvaluator; }
 
     void addCurrentSVGFontFaceRules();
 
@@ -166,12 +166,12 @@ public:
     void invalidateMatchedDeclarationsCache();
     void clearCachedDeclarationsAffectedByViewportUnits();
 
-    InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
+    InspectorCSSOMWrappers& inspectorCSSOMWrappers() LIFETIME_BOUND { return m_inspectorCSSOMWrappers; }
 
     bool isSharedBetweenShadowTrees() const { return m_isSharedBetweenShadowTrees; }
     void setSharedBetweenShadowTrees() { m_isSharedBetweenShadowTrees = true; }
 
-    const RenderStyle* rootDefaultStyle() const { return m_rootDefaultStyle.get(); }
+    const RenderStyle* rootDefaultStyle() const LIFETIME_BOUND { return m_rootDefaultStyle.get(); }
 
 private:
     Resolver(Document&, ScopeType);

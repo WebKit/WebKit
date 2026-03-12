@@ -289,8 +289,8 @@ void EventLoop::unregisterGroup(EventLoopTaskGroup& group)
 void EventLoop::stopAssociatedGroupsIfNecessary()
 {
     ASSERT(isContextThread());
-    for (CheckedRef group : m_associatedGroups) {
-        if (!group->isReadyToStop())
+    for (auto& group : m_associatedGroups) {
+        if (!group.isReadyToStop())
             return;
     }
     auto associatedGroups = std::exchange(m_associatedGroups, { });
@@ -472,8 +472,8 @@ void EventLoopTaskGroup::suspend()
     // EventLoop::run checks whether each task's group is suspended or not.
     for (Ref timer : m_timers)
         timer->suspend();
-    if (RefPtr eventLoop = m_eventLoop.get())
-        m_eventLoop->invalidateNextTimerFireTimeCache();
+    if (auto* eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::resume()
@@ -629,7 +629,7 @@ void EventLoopTaskGroup::didChangeTimerAlignmentInterval(EventLoopTimerHandle ha
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->didChangeAlignmentInterval();
-    if (RefPtr eventLoop = m_eventLoop.get())
+    if (auto* eventLoop = m_eventLoop.get())
         eventLoop->invalidateNextTimerFireTimeCache();
 }
 
@@ -639,7 +639,7 @@ void EventLoopTaskGroup::setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle 
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->setHasReachedMaxNestingLevel(value);
-    if (RefPtr eventLoop = m_eventLoop.get())
+    if (auto* eventLoop = m_eventLoop.get())
         eventLoop->invalidateNextTimerFireTimeCache();
 }
 
@@ -650,7 +650,7 @@ void EventLoopTaskGroup::adjustTimerNextFireTime(EventLoopTimerHandle handle, Se
         return;
     ASSERT(m_timers.contains(*timer));
     timer->adjustNextFireTime(delta);
-    if (RefPtr eventLoop = m_eventLoop.get())
+    if (auto* eventLoop = m_eventLoop.get())
         eventLoop->invalidateNextTimerFireTimeCache();
 }
 
@@ -661,7 +661,7 @@ void EventLoopTaskGroup::adjustTimerRepeatInterval(EventLoopTimerHandle handle, 
         return;
     ASSERT(m_timers.contains(*timer));
     timer->adjustRepeatInterval(delta);
-    if (RefPtr eventLoop = m_eventLoop.get())
+    if (auto* eventLoop = m_eventLoop.get())
         eventLoop->invalidateNextTimerFireTimeCache();
 }
 

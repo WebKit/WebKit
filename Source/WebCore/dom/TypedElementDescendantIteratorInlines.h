@@ -62,8 +62,8 @@ template<typename ElementType> ElementDescendantIterator<ElementType> ElementDes
     ASSERT(descendant.isDescendantOf(m_root));
     if (auto descendantElement = dynamicDowncast<ElementType>(descendant))
         return ElementDescendantIterator<ElementType>(m_root, descendantElement);
-    RefPtr next = Traversal<ElementType>::next(descendant, m_root.ptr());
-    return ElementDescendantIterator<ElementType>(m_root, next.get());
+    auto* next = Traversal<ElementType>::next(descendant, m_root.ptr());
+    return ElementDescendantIterator<ElementType>(m_root, next);
 }
 
 template<typename ElementType> ElementType* ElementDescendantRange<ElementType>::first() const

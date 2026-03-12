@@ -559,15 +559,6 @@ void MediaSessionManagerInterface::setIsPlayingToAutomotiveHeadUnit(bool isPlayi
     m_isPlayingToAutomotiveHeadUnit = isPlayingToAutomotiveHeadUnit;
 }
 
-void MediaSessionManagerInterface::setSupportsSpatialAudioPlayback(bool supportsSpatialAudioPlayback)
-{
-    if (supportsSpatialAudioPlayback == m_supportsSpatialAudioPlayback)
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER, supportsSpatialAudioPlayback);
-    m_supportsSpatialAudioPlayback = supportsSpatialAudioPlayback;
-}
-
 void MediaSessionManagerInterface::addAudioCaptureSource(AudioCaptureSource& source)
 {
     ASSERT(!m_audioCaptureSources.contains(source));

@@ -91,7 +91,7 @@ public:
     enum class EmptyIdentifierFlag { EmptyIdentifier };
     Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtom()); }
 
-    const AtomString& string() const { return m_string; }
+    const AtomString& string() const LIFETIME_BOUND { return m_string; }
 
     UniquedStringImpl* impl() const { return m_string.impl(); }
     RefPtr<AtomStringImpl> releaseImpl() { return m_string.releaseImpl(); }

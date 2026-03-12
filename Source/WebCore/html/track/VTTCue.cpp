@@ -1021,7 +1021,7 @@ void VTTCue::updateDisplayTree(const MediaTime& movieTime)
 {
     // The display tree may contain WebVTT timestamp objects representing
     // timestamps (processing instructions), along with displayable nodes.
-    if (!track() || !protect(track())->isRendered())
+    if (!track() || !track()->isRendered())
         return;
 
     // Mutating the VTT contents is safe because it's never exposed to author scripts.
@@ -1046,7 +1046,7 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree()
     ASSERT(track());
 
     RefPtr displayTree = displayTreeInternal();
-    if (!displayTree || !m_displayTreeShouldChange || !track() || !protect(track())->isRendered())
+    if (!displayTree || !m_displayTreeShouldChange || !track() || !track()->isRendered())
         return displayTree;
 
     if (region())

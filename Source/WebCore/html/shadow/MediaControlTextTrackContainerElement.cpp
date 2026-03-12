@@ -168,10 +168,10 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         removeChildren();
 
     activeCues.removeAllMatching([] (CueInterval& cueInterval) {
-        Ref cue = *cueInterval.data();
-        if (!cue->isActive() || !cue->isRenderable())
+        auto& cue = *cueInterval.data();
+        if (!cue.isActive() || !cue.isRenderable())
             return true;
-        RefPtr track = cue->track();
+        auto* track = cue.track();
         return !track || !track->isRendered() || track->mode() == TextTrack::Mode::Disabled;
     });
 
@@ -187,7 +187,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         for (auto& interval : activeCues) {
             Ref cue = *interval.data();
 
-            if (protect(cue->track())->isSpoken())
+            if (cue->track()->isSpoken())
                 continue;
 
             if (RefPtr vttCue = dynamicDowncast<VTTCue>(cue))

@@ -40,7 +40,7 @@ public:
 
     static Ref<ModuleScopeData> create() { return adoptRef(*new ModuleScopeData); }
 
-    const IdentifierAliasMap& exportedBindings() const { return m_exportedBindings; }
+    const IdentifierAliasMap& exportedBindings() const LIFETIME_BOUND { return m_exportedBindings; }
 
     bool exportName(const Identifier& exportedName)
     {

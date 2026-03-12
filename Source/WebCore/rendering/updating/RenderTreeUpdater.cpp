@@ -255,7 +255,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         if (auto* renderer = node->renderer())
             renderTreePosition().invalidateNextSibling(*renderer);
-        else if (RefPtr element = dynamicDowncast<Element>(node.get()); element && element->hasDisplayContents())
+        else if (auto* element = dynamicDowncast<Element>(node.get()); element && element->hasDisplayContents())
             renderTreePosition().invalidateNextSibling();
 
         if (RefPtr text = dynamicDowncast<Text>(node.get())) {

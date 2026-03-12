@@ -164,10 +164,8 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
         return Exception { ExceptionCode::InvalidAccessError, "RTCPeerConnection did not create the given sender"_s };
 
     bool shouldAbort = true;
-    RTCRtpTransceiver* senderTransceiver = nullptr;
     for (auto& transceiver : m_transceiverSet.list()) {
         if (&sender == &transceiver->sender()) {
-            senderTransceiver = transceiver.ptr();
             shouldAbort = sender.isStopped() || !sender.track();
             break;
         }
@@ -176,7 +174,6 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
         return { };
 
     sender.setTrackToNull();
-    senderTransceiver->disableSendingDirection();
     protect(*m_backend)->removeTrack(sender);
     return { };
 }
@@ -221,6 +218,21 @@ static std::optional<Exception> validateSendEncodings(Vector<RTCRtpEncodingParam
     return { };
 }
 
+// https://w3c.github.io/webrtc-pc/#dfn-addtransceiver-sendencodings-validation-steps (partial implementation).
+static std::optional<Exception> validateRTCRtpTransceiverInitSendEncodings(const RTCRtpTransceiverInit& init)
+{
+    for (auto& encoding : init.sendEncodings) {
+        if (encoding.rid.length() > 16)
+            return Exception { ExceptionCode::TypeError, "Rid is too long"_s };
+        bool hasInvalidCharacter = encoding.rid.find([](auto character) {
+            return !isASCIIAlphanumeric(character) && character != '-' && character != '_';
+        }) != notFound;
+        if (hasInvalidCharacter)
+            return Exception { ExceptionCode::TypeError, "Rid contains invalid character(s)"_s };
+    }
+    return { };
+}
+
 ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransceiverTrackOrKind&& withTrack, RTCRtpTransceiverInit&& init)
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -231,10 +243,13 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
     if (std::holds_alternative<String>(withTrack)) {
         const String& kind = std::get<String>(withTrack);
         if (kind != "audio"_s && kind != "video"_s)
-            return Exception { ExceptionCode::TypeError };
+            return Exception { ExceptionCode::TypeError, "Kind should be audio or video"_s };
 
         if (isClosed())
-            return Exception { ExceptionCode::InvalidStateError };
+            return Exception { ExceptionCode::InvalidStateError, "RTCPeerConnection is closed"_s };
+
+        if (auto exception = validateRTCRtpTransceiverInitSendEncodings(init))
+            return WTF::move(*exception);
 
         return protect(*m_backend)->addTransceiver(kind, init, PeerConnectionBackend::IgnoreNegotiationNeededFlag::No);
     }
@@ -651,7 +666,10 @@ void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise
                 return;
             }
         }
+        promise->reject(Exception { ExceptionCode::InvalidAccessError, "Selector is invalid"_s });
+        return;
     }
+
     promise->whenSettled([pendingActivity = makePendingActivity(*this)] { });
     protect(*m_backend)->getStats(WTF::move(promise));
 }
@@ -802,6 +820,11 @@ void RTCPeerConnection::addInternalTransceiver(Ref<RTCRtpTransceiver>&& transcei
     ALWAYS_LOG(LOGIDENTIFIER, "Adding internal transceiver with mid "_s, transceiver->mid());
     transceiver->setConnection(*this);
     m_transceiverSet.append(WTF::move(transceiver));
+}
+
+void RTCPeerConnection::removeTransceiver(const RTCRtpTransceiver& transceiver)
+{
+    m_transceiverSet.remove(transceiver);
 }
 
 void RTCPeerConnection::setSignalingState(RTCSignalingState newState)
@@ -1191,27 +1214,25 @@ void RTCPeerConnection::updateDescriptions(PeerConnectionBackend::DescriptionSta
 void RTCPeerConnection::updateTransceiverTransports()
 {
     for (auto& transceiver : m_transceiverSet.list()) {
-        auto& sender = transceiver->sender();
-        if (RefPtr senderBackend = sender.backend())
-            sender.setTransport(getOrCreateDtlsTransport(senderBackend->dtlsTransportBackend()));
+        Ref sender = transceiver->sender();
+        sender->setTransport(getOrCreateDtlsTransport(sender->dtlsTransportBackend()));
 
-        auto& receiver = transceiver->receiver();
-        if (auto* receiverBackend = receiver.backend())
-            receiver.setTransport(getOrCreateDtlsTransport(receiverBackend->dtlsTransportBackend()));
+        Ref receiver = transceiver->receiver();
+        receiver->setTransport(getOrCreateDtlsTransport(receiver->dtlsTransportBackend()));
     }
 }
 
 // https://w3c.github.io/webrtc-pc/#set-description step 4.9.1
 void RTCPeerConnection::updateTransceiversAfterSuccessfulLocalDescription()
 {
-    protect(*m_backend)->collectTransceivers();
+    protect(*m_backend)->collectTransceivers(Vector { m_transceiverSet.list() });
     updateTransceiverTransports();
 }
 
 // https://w3c.github.io/webrtc-pc/#set-description step 4.9.2
 void RTCPeerConnection::updateTransceiversAfterSuccessfulRemoteDescription()
 {
-    protect(*m_backend)->collectTransceivers();
+    protect(*m_backend)->collectTransceivers(Vector { m_transceiverSet.list() });
     updateTransceiverTransports();
 }
 

@@ -27,6 +27,7 @@
 #pragma once
 
 #include <limits>
+#include <wtf/HashFunctions.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -51,8 +52,8 @@ public:
 
     unsigned hash() const { return m_hash; }
 
-    const StringVector& rawStrings() const { return m_rawStrings; }
-    const OptionalStringVector& cookedStrings() const { return m_cookedStrings; }
+    const StringVector& rawStrings() const LIFETIME_BOUND { return m_rawStrings; }
+    const OptionalStringVector& cookedStrings() const LIFETIME_BOUND { return m_cookedStrings; }
 
     bool operator==(const TemplateObjectDescriptor& other) const { return m_hash == other.m_hash && m_rawStrings == other.m_rawStrings; }
 
@@ -91,14 +92,10 @@ inline TemplateObjectDescriptor::TemplateObjectDescriptor(EmptyValueTag)
 
 inline unsigned TemplateObjectDescriptor::calculateHash(const StringVector& rawStrings)
 {
-    SuperFastHash hasher;
-    for (const String& string : rawStrings) {
-        if (string.is8Bit())
-            hasher.addCharacters(string.span8());
-        else
-            hasher.addCharacters(string.span16());
-    }
-    return hasher.hash();
+    unsigned hash = WTF::stringHashingStartValue;
+    for (const String& string : rawStrings)
+        hash = pairIntHash(hash, string.hash());
+    return hash;
 }
 
 } // namespace JSC

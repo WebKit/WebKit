@@ -30,6 +30,7 @@
 #include "DocumentInlines.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
 #include "MediaQueryParser.h"
@@ -265,7 +266,7 @@ Node::InsertedIntoAncestorResult ProcessingInstruction::insertedIntoAncestor(Ins
     CharacterData::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
-    protect(document())->styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
+    document().styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 

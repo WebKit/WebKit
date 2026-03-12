@@ -41,7 +41,7 @@ struct FontFeatureSettings {
     FontFeatureSettings(WebCore::FontFeatureSettings&& platform) : m_platform { WTF::move(platform) } { }
     FontFeatureSettings(const WebCore::FontFeatureSettings& platform) : m_platform { platform } { }
 
-    const WebCore::FontFeatureSettings& platform() const { return m_platform; }
+    const WebCore::FontFeatureSettings& platform() const LIFETIME_BOUND { return m_platform; }
     WebCore::FontFeatureSettings takePlatform() { return WTF::move(m_platform); }
 
     bool operator==(const FontFeatureSettings&) const = default;

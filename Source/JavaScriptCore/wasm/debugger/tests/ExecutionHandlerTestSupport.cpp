@@ -80,7 +80,7 @@ public:
     Workers() = default;
     ~Workers() = default;
 
-    static Workers& singleton()
+    static Workers& NODELETE singleton()
     {
         static Workers* workers = new Workers();
         return *workers;
