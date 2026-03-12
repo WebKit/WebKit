@@ -132,7 +132,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     PrioritizeResourceLoads(Vector<WebCore::ResourceLoaderIdentifier> loadIdentifiers)
 
 #if ENABLE(CONTENT_FILTERING)
-    InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
+    [EnabledBy=AllowTestOnlyMockContentFilterIPC] InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)

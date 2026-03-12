@@ -313,6 +313,16 @@ AllowTestOnlyIPC:
       default: false
   sharedPreferenceForWebProcess: true
 
+AllowTestOnlyMockContentFilterIPC:
+  type: bool
+  status: embedder
+  exposed: [ WebKit ]
+  webcoreBinding: none
+  defaultValue:
+    WebKit:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 AllowTestOnlyOriginAccessAllowListIPC:
   type: bool
   status: embedder
