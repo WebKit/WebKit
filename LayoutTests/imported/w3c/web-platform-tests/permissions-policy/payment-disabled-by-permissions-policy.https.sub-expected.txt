@@ -4,5 +4,5 @@ FAIL permissions policy header "payment=()" disallows Payment Request API in top
         new PaymentRequest(supportedInstruments, details);
       }" did not throw
 FAIL permissions policy header "payment=()" disallows Payment Request API in same-origin iframes. assert_false: PaymentRequest() expected false got true
-PASS permissions policy header "payment=()" disallows Payment Request API in cross-origin iframes.
+FAIL permissions policy header "payment=()" disallows Payment Request API in cross-origin iframes. assert_false: PaymentRequest() expected false got true
 

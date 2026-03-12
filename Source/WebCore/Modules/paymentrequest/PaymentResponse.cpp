@@ -70,14 +70,19 @@ void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
 
 void PaymentResponse::complete(Document& document, std::optional<PaymentComplete>&& result, std::optional<PaymentCompleteDetails>&& details, DOMPromiseDeferred<void>&& promise)
 {
+    if (!document.isFullyActive()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s });
+        return;
+    }
+
     if (m_state == State::Stopped) {
-        promise.reject(Exception { ExceptionCode::AbortError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_s });
         return;
     }
 
     RefPtr request = m_request.get();
     if (!request) {
-        promise.reject(Exception { ExceptionCode::AbortError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_s });
         return;
     }
 
@@ -109,16 +114,21 @@ void PaymentResponse::complete(Document& document, std::optional<PaymentComplete
     promise.settle(WTF::move(exception));
 }
 
-void PaymentResponse::retry(PaymentValidationErrors&& errors, DOMPromiseDeferred<void>&& promise)
+void PaymentResponse::retry(const Document& document, PaymentValidationErrors&& errors, DOMPromiseDeferred<void>&& promise)
 {
+    if (!document.isFullyActive()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s });
+        return;
+    }
+
     if (m_state == State::Stopped) {
-        promise.reject(Exception { ExceptionCode::AbortError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_s });
         return;
     }
 
     RefPtr request = m_request.get();
     if (!request) {
-        promise.reject(Exception { ExceptionCode::AbortError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_s });
         return;
     }
 

@@ -375,7 +375,12 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 {
     RefPtr frame = document.frame();
     if (!frame) {
-        promise.reject(Exception { ExceptionCode::AbortError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document does not have a frame."_s });
+        return;
+    }
+
+    if (!document.isFullyActive()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s });
         return;
     }
 
@@ -527,6 +532,11 @@ void PaymentRequest::canMakePayment(Document& document, CanMakePaymentPromise&& 
 {
     if (m_state != State::Created) {
         promise.reject(Exception { ExceptionCode::InvalidStateError });
+        return;
+    }
+
+    if (!document.isFullyActive()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s });
         return;
     }
 

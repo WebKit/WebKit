@@ -9,8 +9,8 @@ pagehide - entering cache
 pageshow - from cache
 PASS Page did enter and was restored from the back/forward cache
 Testing that PaymentResponse is now in the Closed state.
-PASS response.complete() rejected promise  with AbortError: The operation was aborted..
-PASS response.retry() rejected promise  with AbortError: The operation was aborted..
+PASS response.complete() rejected promise  with InvalidStateError: The payment response object is closed..
+PASS response.retry() rejected promise  with InvalidStateError: The payment response object is closed..
 PASS successfullyParsed is true
 
 TEST COMPLETE

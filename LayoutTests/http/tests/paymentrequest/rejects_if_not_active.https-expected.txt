@@ -2,4 +2,6 @@
 PASS PaymentRequest.show() aborts if the document is not active
 PASS PaymentRequest.show() aborts if the document is active, but not fully active
 PASS If a payment request is showing, but its document is navigated away (so no longer fully active), the payment request aborts.
+PASS PaymentRequest.canMakePayment() rejects if the document is not active
+PASS PaymentRequest.canMakePayment() rejects if the document is active, but not fully active
 

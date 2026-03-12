@@ -12873,6 +12873,8 @@
         "web-platform-tests/mimesniff/sniffing/support/rss.html",
         "web-platform-tests/page-lifecycle/set-composited-layer-position-ref.html",
         "web-platform-tests/payment-request/show-method-postmessage-iframe.html",
+        "web-platform-tests/permissions-policy/resources/permissions-policy-payment-extension.html",
+        "web-platform-tests/permissions-policy/resources/permissions-policy-payment.html",
         "web-platform-tests/permissions/feature-policy-permissions-query.html",
         "web-platform-tests/quirks/body-fills-html-quirk-ref.html",
         "web-platform-tests/quirks/body-fills-html-quirk-ref2.html",
