@@ -1,0 +1,4 @@
+This content should be visible and correctly painted after backdrop opacity transition.
+(repaint rects
+  (rect 0 0 800 600)
+)

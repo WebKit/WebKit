@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    /* Simulate MUI modal structure */
+    .modal-root {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1300;
+    }
+    .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        /* Force compositing */
+        will-change: opacity;
+    }
+    .modal-content {
+        /* Intentionally no position or transform — triggers the bug */
+        width: 200px;
+        height: 200px;
+        background: green;
+        margin: 50px;
+    }
+</style>
+</head>
+<body>
+<div class="modal-root">
+    <div id="backdrop" class="backdrop"></div>
+    <div class="modal-content">This content should be visible and correctly painted after backdrop opacity transition.</div>
+</div>
+<pre id="result"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function timerAfterRAF(callback) {
+    return requestAnimationFrame(() => setTimeout(callback, 0));
+}
+
+function runTest() {
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    document.getElementById("backdrop").style.opacity = 0.5;
+
+    timerAfterRAF(() => {
+        if (window.internals) {
+            result.innerText = internals.repaintRectsAsText();
+            internals.stopTrackingRepaints();
+        }

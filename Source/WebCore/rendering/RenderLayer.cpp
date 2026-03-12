@@ -1292,7 +1292,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
         if (mode == Verify) {
             WeakPtr repaintContainer = renderer().containerForRepaint().renderer.get();
             LAYER_POSITIONS_ASSERT(repaintRects() || (isSubtreeVisibilityHiddenOrOpacityZero() || !isSelfPaintingLayer()));
-            if (isSubtreeVisibilityHiddenOrOpacityZero())
+            if (!hasVisibleContent() && !hasVisibleDescendant())
                 LAYER_POSITIONS_ASSERT(!m_repaintContainer);
             else
                 LAYER_POSITIONS_ASSERT(m_repaintContainer == repaintContainer);
@@ -1489,7 +1489,12 @@ void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintConta
     else
         setRepaintRects(renderer().rectsForRepaintingAfterLayout(repaintContainer, RepaintOutlineBounds::Yes));
 
-    if (isSubtreeVisibilityHiddenOrOpacityZero())
+    // Only null the repaint container when the entire subtree is truly invisible
+    // (no visible content and no visible descendants). A composited layer with
+    // opacity:0 still needs a valid repaint container so that compositing change
+    // notifications reach the correct composited layer backing rather than
+    // falling back to the root view.
+    if (!hasVisibleContent() && !hasVisibleDescendant())
         m_repaintContainer = nullptr;
     else
         m_repaintContainer = repaintContainer;
