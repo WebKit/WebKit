@@ -27,6 +27,7 @@
 #include "InlineItemsBuilder.h"
 
 #include "FontCascade.h"
+#include "InlineFormattingUtils.h"
 #include "InlineSoftLineBreakItem.h"
 #include "RenderObjectInlines.h"
 #include "RenderStyle+GettersInlines.h"
@@ -830,6 +831,12 @@ void InlineItemsBuilder::computeInlineTextItemWidthsAndTextSpacing(InlineItemLis
                     GlyphOverflow glyphOverflow;
                     glyphOverflow.computeBounds = true;
                     width = TextUtil::width(*inlineTextItem, fontCascade.get(), start, start + inlineTextItem->length(), { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState, &glyphOverflow);
+                    // Convert raw glyph bounds to overflow deltas (extent beyond font metrics).
+                    // This mirrors the conversion in nonWhitespaceContentWidth().
+                    auto& fontMetrics = fontCascade->metricsOfPrimaryFont();
+                    auto& inlineTextBox = inlineTextItem->inlineTextBox();
+                    glyphOverflow.top = std::max(0.f, InlineFormattingUtils::snapToInt(glyphOverflow.top, inlineTextBox) - InlineFormattingUtils::ascent(fontMetrics, FontBaseline::Alphabetic, inlineTextBox));
+                    glyphOverflow.bottom = std::max(0.f, InlineFormattingUtils::snapToInt(glyphOverflow.bottom, inlineTextBox) - InlineFormattingUtils::descent(fontMetrics, FontBaseline::Alphabetic, inlineTextBox));
                     inlineTextItem->setGlyphOverflow(std::clamp(glyphOverflow.top, 0_lu, 31_lu), std::clamp(glyphOverflow.bottom, 0_lu, 7_lu));
                 } else
                     width = TextUtil::width(*inlineTextItem, fontCascade.get(), start, start + inlineTextItem->length(), { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState);

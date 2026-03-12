@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+.test {
+    font-family: Ahem;
+    font-size: 40px;
+    -webkit-font-smoothing: none;
+    line-height: 1;
+    overflow: hidden;
+    width: 400px;
+    background: white;
+    margin: 10px 0;
+}
+</style>
+</head>
+<body>
+<!-- Test that bidi text with fallback fonts does not produce inflated glyph overflow.
+     The Arabic character U+62A is not in Ahem, so it uses a system fallback font.
+     The dir="rtl" triggers contentRequiresVisualReordering(), which uses
+     computeInlineTextItemWidthsAndTextSpacing() for glyph overflow computation.
+     Without the fix, raw glyph bounds are stored as overflow deltas, causing
+     ~32px of spurious vertical ink overflow inflation per character.
+     With the fix, the overflow deltas are correctly computed as raw_bound minus
+     font_metric, producing near-zero overflow for normal glyphs. -->
+<div class="test">abc</div>
+<div class="test" dir="rtl">&#x62a; abc &#x62a;</div>
+<div class="test">abc</div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+.test {
+    font-family: Ahem;
+    font-size: 40px;
+    -webkit-font-smoothing: none;
+    line-height: 1;
+    overflow: hidden;
+    width: 400px;
+    background: white;
+    margin: 10px 0;
+}
+</style>
+</head>
+<body>
+<!-- Reference: Same content rendered without bidi context to show expected
+     non-inflated rendering. The overflow:hidden should not clip any content
+     because glyph overflow should be minimal (near-zero deltas). -->
+<div class="test">abc</div>
+<div class="test" dir="rtl">&#x62a; abc &#x62a;</div>
+<div class="test">abc</div>
+</body>
+</html>
