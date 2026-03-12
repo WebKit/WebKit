@@ -1,0 +1,4 @@
+This text should be repainted away
+(repaint rects
+  (rect 8 13 100 100)
+)

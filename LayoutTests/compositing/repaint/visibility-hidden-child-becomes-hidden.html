@@ -1,0 +1,42 @@
+<!doctype HTML>
+<html>
+
+  <div id=parent style="visibility:hidden; position:absolute; transform: translateX(0px)">
+    <div id=child style="visibility:visible; width: 100px; height: 100px; background: green; position:relative">This text should be repainted away</div>
+  </div>
+
+<pre id=result></pre>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function timerAfterRAF(callback) {
+    return requestAnimationFrame(() => setTimeout(callback, 0));
+}
+
+function runTest() {
+    // First ensure the child is rendered visible.
+    timerAfterRAF(() => {
+        // Now hide the child and track repaints for the transition.
+        if (window.internals)
+            internals.startTrackingRepaints();
+
+        child.style.visibility = 'hidden';
+
+        timerAfterRAF(() => {
+            if (window.internals) {
+                result.innerText = internals.repaintRectsAsText();
+                internals.stopTrackingRepaints();
+            }
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+}
+
+window.addEventListener('load', () => {
+    timerAfterRAF(runTest);
+}, false);

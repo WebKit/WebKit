@@ -1315,6 +1315,13 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
             auto needsFullRepaint = repaintStatus() == RepaintStatus::NeedsFullRepaint ? RequiresFullRepaint::Yes : RequiresFullRepaint::No;
             auto resolvedOldRects = valueOrDefault(oldRects);
             renderer().repaintAfterLayoutIfNeeded(WTF::move(repaintContainer), needsFullRepaint, resolvedOldRects, *newRects);
+        } else if (checkForRepaint && shouldRepaintAfterLayout() && oldRects && !newRects) {
+            // The layer transitioned from having tracked repaint rects to being fully hidden
+            // (isSubtreeVisibilityHiddenOrOpacityZero() now returns true). This happens when a
+            // visibility:hidden layer had visible descendant layers that subsequently became hidden.
+            // Invalidate the old region to clear visual artifacts from previously-visible content.
+            if (!oldRects->clippedOverflowRect.isEmpty())
+                renderer().repaintUsingContainer(repaintContainer.get(), oldRects->clippedOverflowRect);
         }
     };
 
