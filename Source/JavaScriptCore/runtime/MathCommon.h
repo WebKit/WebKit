@@ -240,12 +240,27 @@ inline std::optional<double> safeReciprocalForDivByConst(double constant)
     return reciprocal;
 }
 
-ALWAYS_INLINE bool canBeStrictInt32(double value)
+ALWAYS_INLINE std::optional<int32_t> tryConvertToStrictInt32(double value)
 {
+#if HAVE(FJCVTZS_INSTRUCTION)
+    int32_t result;
+    bool isExact;
+    __asm__(
+        "fjcvtzs %w0, %d2"
+        : "=r" (result), "=@cceq" (isExact)
+        : "w" (value)
+        : "cc");
+    if (isExact)
+        return value;
+    return std::nullopt;
+#else
     if (std::isinf(value) || std::isnan(value))
-        return false;
+        return std::nullopt;
     const int32_t asInt32 = static_cast<int32_t>(value);
-    return !(asInt32 != value || (!asInt32 && std::signbit(value))); // true for -0.0
+    if (!(asInt32 != value || (!asInt32 && std::signbit(value)))) // true for -0.0
+        return asInt32;
+    return std::nullopt;
+#endif
 }
 
 ALWAYS_INLINE bool canBeInt32(double value)

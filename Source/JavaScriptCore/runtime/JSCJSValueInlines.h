@@ -64,8 +64,8 @@ inline JSValue jsNumber(const MediaTime& t)
 
 inline JSValue::JSValue(double d)
 {
-    if (canBeStrictInt32(d)) {
-        *this = JSValue(static_cast<int32_t>(d));
+    if (auto int32Value = tryConvertToStrictInt32(d)) {
+        *this = JSValue(int32Value.value());
         return;
     }
     *this = JSValue(EncodeAsDouble, d);
