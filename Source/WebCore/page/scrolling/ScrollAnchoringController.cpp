@@ -118,8 +118,16 @@ void ScrollAnchoringController::scrollPositionDidChange()
     if (m_isUpdatingScrollPositionForAnchoring)
         return;
 
-    LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::scrollPositionChanged() to " << m_owningScrollableArea->scrollPosition() << " - clearing scroll anchor");
+    LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::scrollPositionChanged() to "
+        << m_owningScrollableArea->scrollPosition() << " - clearing scroll anchor"
+        << " (programmatic: " << (m_owningScrollableArea->currentScrollType() == ScrollType::Programmatic) << ")");
     clearAnchor();
+
+    // When a programmatic scroll (e.g. scrollTo() from JS) sets a new position, suppress
+    // anchor selection for the next layout pass so scroll anchoring does not undo it.
+    if (m_owningScrollableArea->currentScrollType() == ScrollType::Programmatic)
+        m_suppressAnchorSelectionAfterProgrammaticScroll = true;
+
     updateScrollableAreaRegistration();
 }
 
@@ -582,6 +590,13 @@ void ScrollAnchoringController::updateBeforeLayout()
     }
 
     if (!m_anchorObject) {
+        if (m_suppressAnchorSelectionAfterProgrammaticScroll) {
+            m_suppressAnchorSelectionAfterProgrammaticScroll = false;
+            LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController " << this
+                << " updateBeforeLayout() - suppressed anchor selection after programmatic scroll");
+            return;
+        }
+
         RefPtr document = frameView().frame().document();
         if (!document)
             return;

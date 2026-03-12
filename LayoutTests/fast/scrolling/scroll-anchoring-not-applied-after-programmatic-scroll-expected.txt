@@ -1,0 +1,7 @@
+PASS scroller.scrollTop is 100
+PASS observerFired is true
+PASS scroller.scrollTop is 250
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

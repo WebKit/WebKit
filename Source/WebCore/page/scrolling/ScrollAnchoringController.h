@@ -118,6 +118,7 @@ private:
     bool m_isUpdatingScrollPositionForAnchoring { false };
     bool m_isQueuedForScrollPositionUpdate { false };
     bool m_anchoringSuppressedByStyleChange { false };
+    bool m_suppressAnchorSelectionAfterProgrammaticScroll { false };
     unsigned m_inScrollEventCount { 0 };
     unsigned m_suppressionCount { 0 };
 };

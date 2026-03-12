@@ -1,0 +1,85 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .scroller {
+            width: 300px;
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid black;
+        }
+        .changing {
+            height: 200px;
+            background-color: orange;
+        }
+        .anchor {
+            height: 200px;
+            background-color: limegreen;
+        }
+        .spacer {
+            height: 1000px;
+            background-color: lightblue;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        // This test simulates the facebook.com pattern where:
+        // 1. Page is scrolled so scroll anchoring is active.
+        // 2. A ResizeObserver fires when an element changes size.
+        // 3. The ResizeObserver callback calls scrollTo() to a specific position.
+        // 4. A subsequent layout should NOT undo the programmatic scroll position.
+
+        const targetScrollTop = 250;
+        let observerFired = false;
+
+        window.addEventListener('load', async () => {
+            const scroller = document.querySelector('.scroller');
+            const changing = document.querySelector('.changing');
+
+            // Step 1: Scroll so that anchoring can become active.
+            scroller.scrollTop = 100;
+            await UIHelper.renderingUpdate();
+
+            shouldBe('scroller.scrollTop', '100');
+
+            // Step 2: Set up a ResizeObserver that calls scrollTo() when the
+            // .changing element resizes (simulating the facebook pattern).
+            const observer = new ResizeObserver(() => {
+                if (!observerFired) {
+                    observerFired = true;
+                    // This programmatic scrollTo should NOT be undone by scroll anchoring.
+                    scroller.scrollTo(0, targetScrollTop);
+                }
+            });
+            observer.observe(changing);
+
+            // Step 3: Change the size of the element above the anchor.
+            // This triggers the ResizeObserver and also triggers scroll anchoring
+            // (since the element above the anchor grew, anchoring would normally
+            // push the scroll position to compensate).
+            changing.style.height = '400px';
+
+            await UIHelper.renderingUpdate();
+
+            // Step 4: The ResizeObserver callback called scrollTo(0, 250).
+            // Scroll anchoring should NOT have overridden this to a different value.
+            // Without the fix, scrollTop would be != 250 because anchoring would
+            // compensate for the 200px growth of .changing.
+            shouldBeTrue('observerFired');
+            shouldBe('scroller.scrollTop', String(targetScrollTop));
+
+            observer.disconnect();
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="changing"></div>
+        <div class="anchor"></div>
