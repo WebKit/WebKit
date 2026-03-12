@@ -30,6 +30,7 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "AutomationProtocolObjects.h"
+#include "BidiBrowserAgent.h"
 #include "FrameTreeNodeData.h"
 #include "Logging.h"
 #include "PageLoadState.h"
@@ -124,11 +125,30 @@ void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    // FIXME: implement `referenceContext` option.
     // FIXME: implement `background` option.
-    // FIXME: implement `userContext` option.
 
-    session->createBrowsingContext(browsingContextPresentationFromCreateType(createType), [callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) {
+    String userContextID = optionalUserContext;
+
+    if (!optionalReferenceContext.isEmpty()) {
+        auto handles = session->extractBrowsingContextHandles(optionalReferenceContext);
+        ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+
+        auto [pageHandle, frameHandle] = handles.value();
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!frameHandle.isEmpty(), InvalidParameter);
+
+        RefPtr referencePage = session->webPageProxyForHandle(pageHandle);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!referencePage, FrameNotFound);
+
+        if (userContextID.isEmpty())
+            userContextID = session->getUserContextIDForPage(*referencePage);
+    }
+
+    if (userContextID.isEmpty())
+        userContextID = defaultUserContextID();
+
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!session->hasUserContextID(userContextID), NoSuchUserContext, "no such user context"_s);
+
+    session->createBrowsingContextForUserContext(browsingContextPresentationFromCreateType(createType), userContextID, [callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
@@ -153,17 +173,20 @@ Inspector::Protocol::BidiBrowsingContext::BrowsingContext BidiBrowsingContextAge
     return session->handleForWebFrameID(frameID);
 }
 
-Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, const WebPageProxy& page, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
 {
     // https://w3c.github.io/webdriver-bidi/#get-the-navigable-info
 
-    // FIXME: Properly support different user contexts, which will likely map to different WebAutomationSessions.
-    // https://bugs.webkit.org/show_bug.cgi?id=288104
+    RefPtr session = m_session.get();
+    auto [clientWindow, userContext] = session
+        ? session->getClientWindowAndUserContext(page)
+        : std::pair<String, String>(defaultClientWindowID(), defaultUserContextID());
+
     auto info = Inspector::Protocol::BidiBrowsingContext::Info::create()
         .setContext(getBrowsingContextID(tree.info.frameID))
         .setUrl(tree.info.request.url().string())
-        .setClientWindow("placeholder_window"_s)
-        .setUserContext("default"_s)
+        .setClientWindow(clientWindow)
+        .setUserContext(userContext)
         .setChildrenIsNull()
         .setOriginalOpenerIsNull()
         .release();
@@ -186,7 +209,7 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::ge
     auto childrenInfo = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
     auto newDepth = maxDepth ? std::optional<uint64_t>(*maxDepth - 1) : std::nullopt;
     for (auto& child : tree.children)
-        childrenInfo->addItem(getNavigableInfo(child, newDepth, IncludeParentID::No));
+        childrenInfo->addItem(getNavigableInfo(child, page, newDepth, IncludeParentID::No));
 
     info->setChildren(WTF::move(childrenInfo));
     return info;
@@ -204,7 +227,7 @@ void BidiBrowsingContextAgent::getNextTree(Vector<Ref<WebPageProxy>>&& pagesToPr
     Ref webPageProxy = pagesToProcess.takeLast();
     webPageProxy->getAllFrameTrees([this, pagesToProcess = WTF::move(pagesToProcess), resultsObject = WTF::move(resultsObject), callback = WTF::move(callback), maxDepth, protectedPage = Ref { webPageProxy }](Vector<WebKit::FrameTreeNodeData>&& trees) mutable {
         for (auto& tree : trees) {
-            auto infoTree = getNavigableInfo(tree, maxDepth, IncludeParentID::Yes);
+            auto infoTree = getNavigableInfo(tree, protectedPage.get(), maxDepth, IncludeParentID::Yes);
             resultsObject->addItem(WTF::move(infoTree));
         }
         getNextTree(WTF::move(pagesToProcess), WTF::move(resultsObject), maxDepth, WTF::move(callback));

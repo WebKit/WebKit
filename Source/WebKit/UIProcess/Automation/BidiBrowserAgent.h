@@ -28,6 +28,7 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "WebDriverBidiBackendDispatchers.h"
+#include "WebPageProxyIdentifier.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
@@ -46,6 +47,9 @@ class WebPageProxy;
 class WebProcessPool;
 class WebsiteDataStore;
 
+const String& defaultClientWindowID();
+const String& defaultUserContextID();
+
 class BidiBrowserAgent final : public Inspector::BidiBrowserBackendDispatcherHandler {
     WTF_MAKE_TZONE_ALLOCATED(BidiBrowserAgent);
 public:
@@ -54,6 +58,10 @@ public:
 
     void didCreatePage(WebPageProxy&);
     void willClosePage(const WebPageProxy&);
+
+    String getUserContextIDForPage(const WebPageProxy&) const;
+    bool hasUserContext(const String&) const;
+    void setUserContextIDForPage(const WebPageProxy&, const String&);
 
 private:
     struct BidiUserContextDeletionRecord;
@@ -70,6 +78,7 @@ private:
     Ref<Inspector::BidiBrowserBackendDispatcher> m_browserDomainDispatcher;
     HashMap<String, std::unique_ptr<BidiUserContext>> m_userContexts;
     HashMap<String, std::unique_ptr<BidiUserContextDeletionRecord>> m_userContextsPendingDeletion;
+    HashMap<WebPageProxyIdentifier, String> m_pageUserContextOverrides;
 };
 
 } // namespace WebKit
