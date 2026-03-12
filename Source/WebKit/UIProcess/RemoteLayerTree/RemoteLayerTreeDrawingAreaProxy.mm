@@ -771,8 +771,11 @@ bool ProcessState::canSendDisplayDidRefresh(RemoteLayerTreeDrawingAreaProxy& dra
 {
     if (pendingCommits.size() >= 2)
         return false;
-    if (pendingCommits.size() == 1)
-        return drawingArea.allowMultipleCommitLayerTreePending() && pendingCommits[0].pendingMessage == PendingCommitMessage::CommitLayerTree && delayedCommits >= 4;
+    if (pendingCommits.size() == 1) {
+        // Allow sending DisplayDidRefresh once the outstanding commit has advanced
+        // to CommitLayerTree state, restoring the pre-307235@main behaviour.
+        return pendingCommits[0].pendingMessage == PendingCommitMessage::CommitLayerTree;
+    }
     return true;
 }
 
