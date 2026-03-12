@@ -13979,14 +13979,14 @@ IGNORE_CLANG_WARNINGS_END
         auto* instance = wasmFunction->instance();
         arguments.append(ConstrainedValue(frozenPointer(m_graph.freeze(instance)), ValueRep::reg(GPRInfo::wasmContextInstancePointer)));
         if (instance->module().moduleInformation().memoryCount()) {
-            auto mode = instance->memoryMode();
-            if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance->memory()->sharingMode() == MemorySharingMode::Shared)) {
+            auto mode = instance->memory0Mode();
+            if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance->memory(0)->sharingMode() == MemorySharingMode::Shared)) {
                 // Capacity and basePointer will not be changed.
                 if (mode == MemoryMode::BoundsChecking) {
-                    arguments.append(ConstrainedValue(m_out.constInt64(instance->memory()->mappedCapacity()), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
+                    arguments.append(ConstrainedValue(m_out.constInt64(instance->memory(0)->mappedCapacity()), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
                     wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints = true;
                 }
-                arguments.append(ConstrainedValue(m_out.constIntPtr(instance->memory()->basePointer()), ValueRep::reg(GPRInfo::wasmBaseMemoryPointer)));
+                arguments.append(ConstrainedValue(m_out.constIntPtr(instance->memory(0)->basePointer()), ValueRep::reg(GPRInfo::wasmBaseMemoryPointer)));
                 wasmBaseMemoryPointerConfiguredAsInputContraints = true;
             }
         }
@@ -14063,8 +14063,8 @@ IGNORE_CLANG_WARNINGS_END
                 static_assert(noOverlap(GPRInfo::wasmBoundsCheckingSizeRegister, GPRInfo::wasmBaseMemoryPointer, scratchGPR));
                 ASSERT(!RegisterSet::macroClobberedGPRs().contains(scratchGPR, IgnoreVectors));
                 if (instance->module().moduleInformation().memoryCount()) {
-                    auto mode = instance->memoryMode();
-                    if (!(mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance->memory()->sharingMode() == MemorySharingMode::Shared))) {
+                    auto mode = instance->memory0Mode();
+                    if (!(mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance->memory(0)->sharingMode() == MemorySharingMode::Shared))) {
                         // We always clobber GPRInfo::wasmBoundsCheckingSizeRegister regardless of mode. It is OK since patchpoint already said it is clobbered.
                         if (isARM64E())
                             jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);

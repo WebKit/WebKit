@@ -278,7 +278,7 @@ function invalidMemoryFillUnreachable() {
   */
   assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0e\x01\x0c\x00\x0f\x41\x00\x41\x0b\x41\x03\xfc\x0b\x01\x0b"),
   WebAssembly.CompileError,
-  "WebAssembly.Module doesn't parse at byte 11: memory.fill: illegal memory index 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+  "WebAssembly.Module doesn't validate: memory index 1 is out of range, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
 }
 
 function validMemoryCopyUnreachable() {
@@ -307,7 +307,7 @@ function invalidMemoryCopyUnreachable() {
   */
   assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0f\x01\x0d\x00\x0f\x41\x03\x41\x00\x41\x01\xfc\x0a\x01\x00\x0b"),
   WebAssembly.CompileError,
-  "WebAssembly.Module doesn't parse at byte 11: memory.copy: illegal dst memory index 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+  "WebAssembly.Module doesn't validate: memory index 1 is out of range, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
 
   /*
   (module
@@ -320,7 +320,7 @@ function invalidMemoryCopyUnreachable() {
   */
   assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0f\x01\x0d\x00\x0f\x41\x03\x41\x00\x41\x01\xfc\x0a\x00\x01\x0b"),
   WebAssembly.CompileError,
-  "WebAssembly.Module doesn't parse at byte 12: memory.copy: illegal src memory index 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+  "WebAssembly.Module doesn't validate: memory index 1 is out of range, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
 }
 
 function validMemoryInitUnreachable() {

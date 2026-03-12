@@ -285,12 +285,12 @@ public:
     [[nodiscard]] PartialResult addMemoryCopy(ExpressionType, ExpressionType, ExpressionType, uint8_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType, ExpressionType, ExpressionType, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addDataDrop(unsigned) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult truncTrapping(OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
     [[nodiscard]] PartialResult truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
@@ -686,17 +686,17 @@ public:
     [[nodiscard]] PartialResult addCrash() CONST_EXPR_STUB
     bool usesSIMD() { return false; }
     void notifyFunctionUsesSIMD() { }
-    [[nodiscard]] PartialResult addSIMDLoad(ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addSIMDStore(ExpressionType, ExpressionType, uint32_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDLoad(ExpressionType, uint32_t, ExpressionType&, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDStore(ExpressionType, ExpressionType, uint32_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDShuffle(v128_t, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] ExpressionType addConstant(v128_t vector)
     {
         RELEASE_ASSERT(Options::useWasmSIMD());

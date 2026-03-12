@@ -88,7 +88,6 @@ async function test() {
         m1array[6] = 0xC6;
         m1array[7] = 0xC7;
 
-        // test that loads from memory 1 restore default (memory 0) base and size registers
         assert.eq(instance.exports.test_load_m1_then_m0(), 0x40404040);
 
         assert.eq(instance.exports.i32_load_m1(0), 0xC3C2C1C0 - 0x100000000);

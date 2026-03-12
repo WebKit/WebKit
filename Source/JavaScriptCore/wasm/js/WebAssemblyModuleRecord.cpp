@@ -528,13 +528,13 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         // runnable due to the IPInt tier code being shared among all modes. However,
         // if IPInt is disabled, it is possible that the code needs to be compiled at
         // this point when we know which memory mode to use.
-        Wasm::CalleeGroup* calleeGroup = m_instance->calleeGroup();
+        RefPtr<Wasm::CalleeGroup> calleeGroup = m_instance->calleeGroup();
         if (!calleeGroup || !calleeGroup->runnable()) {
-            calleeGroup = m_instance->module().compileSync(vm, m_instance->memory()->mode()).unsafePtr();
+            calleeGroup = m_instance->module().compileSync(vm, m_instance->memory0Mode());
             if (!calleeGroup->runnable())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, calleeGroup->errorMessage()));
         }
-        RELEASE_ASSERT(calleeGroup->isSafeToRun(m_instance->memory()->mode()));
+        RELEASE_ASSERT(calleeGroup->isSafeToRun(m_instance->memory0Mode()));
     }
 
     // This needs to be looked up after the memory is initialized, as the codeBlock depends on the memory mode.
@@ -893,7 +893,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     };
 
     auto forEachActiveDataSegment = [&] (auto fn) {
-        auto& wasmMemory = m_instance->memory()->memory();
+        auto& wasmMemory = m_instance->memory(0)->memory();
         uint8_t* memory = static_cast<uint8_t*>(wasmMemory.basePointer());
         uint64_t sizeInBytes = wasmMemory.size();
 

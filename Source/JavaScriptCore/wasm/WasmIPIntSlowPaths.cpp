@@ -142,9 +142,9 @@ static inline RefPtr<Wasm::JITCallee> jitCompileAndSetHeuristics(Wasm::IPIntCall
         return nullptr;
     }
 
-    MemoryMode memoryMode = instance->memory()->mode();
+    MemoryMode memoryMode = instance->memory0Mode();
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
-    ASSERT(instance->memoryMode() == memoryMode);
+    ASSERT(instance->memory0Mode() == memoryMode);
     ASSERT(memoryMode == calleeGroup.mode());
 
     Wasm::FunctionCodeIndex functionIndex = callee.functionIndex();
@@ -1185,10 +1185,14 @@ WASM_IPINT_EXTERN_CPP_DECL(get_global_64, unsigned index)
 #endif
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait32, uint64_t pointerWithOffset, uint32_t value, uint64_t timeout)
+WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait32, IPIntStackEntry* args)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    int32_t result = Wasm::memoryAtomicWait32(instance, pointerWithOffset, value, timeout);
+    uint8_t memoryIndex = args[0].i32;
+    uint64_t timeout = args[1].i64;
+    uint32_t value = args[2].i32;
+    uint64_t pointerWithOffset = args[3].i64;
+    int32_t result = Wasm::memoryAtomicWait32(instance, pointerWithOffset, value, timeout, memoryIndex);
     WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<intptr_t>(result)), nullptr);
 #else
     UNUSED_PARAM(instance);
@@ -1199,10 +1203,14 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait32, uint64_t pointerWithOffset, uin
 #endif
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait64, uint64_t pointerWithOffset, uint64_t value, uint64_t timeout)
+WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait64, IPIntStackEntry* args)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    int32_t result = Wasm::memoryAtomicWait64(instance, pointerWithOffset, value, timeout);
+    uint8_t memoryIndex = args[0].i32;
+    uint64_t timeout = args[1].i64;
+    uint64_t value = args[2].i64;
+    uint64_t pointerWithOffset = args[3].i64;
+    int32_t result = Wasm::memoryAtomicWait64(instance, pointerWithOffset, value, timeout, memoryIndex);
     WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<intptr_t>(result)), nullptr);
 #else
     UNUSED_PARAM(instance);
@@ -1213,10 +1221,14 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait64, uint64_t pointerWithOffset, uin
 #endif
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_notify, unsigned base, unsigned offset, int32_t count)
+WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_notify, IPIntStackEntry* args)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    int32_t result = Wasm::memoryAtomicNotify(instance, base, offset, count);
+    unsigned offset = args[0].i32;
+    uint8_t memoryIndex = args[1].i32;
+    int32_t count = args[2].i32;
+    unsigned base = args[3].i32;
+    int32_t result = Wasm::memoryAtomicNotify(instance, base, offset, count, memoryIndex);
     WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<intptr_t>(result)), nullptr);
 #else
     UNUSED_PARAM(instance);

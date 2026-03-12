@@ -233,7 +233,7 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
     scope.release();
     auto ticket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::ImminentlyScheduled, vm, instance, WTF::move(dependencies));
     // Note: This completion task may or may not get called immediately.
-    module->module().compileAsync(vm, instance->memoryMode(), createSharedTask<Wasm::CalleeGroup::CallbackType>([ticket, promise, instance, module, resolveKind, creationMode, &vm, alwaysAsync] (Ref<Wasm::CalleeGroup>&& calleeGroup, bool isAsync) mutable {
+    module->module().compileAsync(vm, instance->memory0Mode(), createSharedTask<Wasm::CalleeGroup::CallbackType>([ticket, promise, instance, module, resolveKind, creationMode, &vm, alwaysAsync] (Ref<Wasm::CalleeGroup>&& calleeGroup, bool isAsync) mutable {
         auto callback = [promise, instance, module, resolveKind, creationMode, &vm, calleeGroup = WTF::move(calleeGroup)](DeferredWorkTimer::Ticket) mutable {
             auto scope = DECLARE_THROW_SCOPE(vm);
             JSGlobalObject* globalObject = instance->globalObject();

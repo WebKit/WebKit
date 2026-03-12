@@ -253,10 +253,10 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
     // If IPInt is disabled, we instead defer compilation to module evaluation.
     // If the code is already compiled, e.g. the module was already instantiated before, we do not re-initialize.
     if (module().moduleInformation().hasMemoryImport())
-        module().copyInitialCalleeGroupToAllMemoryModes(memoryMode());
+        module().copyInitialCalleeGroupToAllMemoryModes(memory0Mode());
 
 
-    RELEASE_ASSERT(wasmCalleeGroup->isSafeToRun(memoryMode()));
+    RELEASE_ASSERT(wasmCalleeGroup->isSafeToRun(memory0Mode()));
 
     for (unsigned importFunctionNum = 0; importFunctionNum < numImportFunctions(); ++importFunctionNum) {
         auto functionSpaceIndex = FunctionSpaceIndex(importFunctionNum);

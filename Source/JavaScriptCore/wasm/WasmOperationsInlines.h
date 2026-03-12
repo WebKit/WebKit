@@ -754,62 +754,62 @@ static inline int32_t waitImpl(VM& vm, ValueType* pointer, ValueType expectedVal
     return -1;
 }
 
-inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, uint64_t offsetInMemory, int32_t value, int64_t timeoutInNanoseconds)
+inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, uint64_t offsetInMemory, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
 {
     VM& vm = instance->vm();
     if (offsetInMemory & (0x4 - 1))
         return -1;
-    if (!instance->memory())
+    if (!instance->moduleInformation().memoryCount())
         return -1;
-    if (offsetInMemory >= instance->memory()->memory().size())
+    if (offsetInMemory >= instance->memory(memoryIndex)->memory().size())
         return -1;
-    if (instance->memory()->sharingMode() != MemorySharingMode::Shared)
+    if (instance->memory(memoryIndex)->sharingMode() != MemorySharingMode::Shared)
         return -1;
     if (!vm.m_typedArrayController->isAtomicsWaitAllowedOnCurrentThread())
         return -1;
-    int32_t* pointer = std::bit_cast<int32_t*>(std::bit_cast<uint8_t*>(instance->memory()->basePointer()) + offsetInMemory);
+    int32_t* pointer = std::bit_cast<int32_t*>(std::bit_cast<uint8_t*>(instance->memory(memoryIndex)->basePointer()) + offsetInMemory);
     return waitImpl<int32_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds)
+inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
 {
-    return memoryAtomicWait32(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds);
+    return memoryAtomicWait32(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds, memoryIndex);
 }
 
-inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, uint64_t offsetInMemory, int64_t value, int64_t timeoutInNanoseconds)
+inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, uint64_t offsetInMemory, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
 {
     VM& vm = instance->vm();
     if (offsetInMemory & (0x8 - 1))
         return -1;
-    if (!instance->memory())
+    if (!instance->moduleInformation().memoryCount())
         return -1;
-    if (offsetInMemory >= instance->memory()->memory().size())
+    if (offsetInMemory >= instance->memory(memoryIndex)->memory().size())
         return -1;
-    if (instance->memory()->sharingMode() != MemorySharingMode::Shared)
+    if (instance->memory(memoryIndex)->sharingMode() != MemorySharingMode::Shared)
         return -1;
     if (!vm.m_typedArrayController->isAtomicsWaitAllowedOnCurrentThread())
         return -1;
-    int64_t* pointer = std::bit_cast<int64_t*>(std::bit_cast<uint8_t*>(instance->memory()->basePointer()) + offsetInMemory);
+    int64_t* pointer = std::bit_cast<int64_t*>(std::bit_cast<uint8_t*>(instance->memory(memoryIndex)->basePointer()) + offsetInMemory);
     return waitImpl<int64_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds)
+inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
 {
-    return memoryAtomicWait64(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds);
+    return memoryAtomicWait64(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds, memoryIndex);
 }
 
-inline int32_t memoryAtomicNotify(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t countValue)
+inline int32_t memoryAtomicNotify(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t countValue, uint8_t memoryIndex)
 {
     uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
     if (offsetInMemory & (0x4 - 1))
         return -1;
-    if (!instance->memory())
+    if (!instance->moduleInformation().memoryCount())
         return -1;
-    if (offsetInMemory >= instance->memory()->memory().size())
+    if (offsetInMemory >= instance->memory(memoryIndex)->memory().size())
         return -1;
-    if (instance->memory()->sharingMode() != MemorySharingMode::Shared)
+    if (instance->memory(memoryIndex)->sharingMode() != MemorySharingMode::Shared)
         return 0;
-    uint8_t* pointer = std::bit_cast<uint8_t*>(instance->memory()->basePointer()) + offsetInMemory;
+    uint8_t* pointer = std::bit_cast<uint8_t*>(instance->memory(memoryIndex)->basePointer()) + offsetInMemory;
     unsigned count = UINT_MAX;
     if (countValue >= 0)
         count = static_cast<unsigned>(countValue);

@@ -91,14 +91,6 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     FunctionCodeIndex toCodeIndex(FunctionSpaceIndex index) const { ASSERT(importFunctionCount() <= index && index < functionIndexSpaceSize()); return FunctionCodeIndex(index - importFunctionCount()); }
     FunctionSpaceIndex toSpaceIndex(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); return FunctionSpaceIndex(index + importFunctionCount()); }
 
-    // FIXME(wasm-multimemory): delete this method by the time multimemory is finished:
-    // it will expose code that assumes there is only one memory
-    const MemoryInformation& theOnlyMemory() const
-    {
-        RELEASE_ASSERT(memories.size() > 0);
-        return memories[0];
-    }
-
     uint32_t memoryCount() const { return memories.size(); }
     uint32_t tableCount() const { return tables.size(); }
     uint32_t elementCount() const { return elements.size(); }

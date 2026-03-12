@@ -172,7 +172,7 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64
     else
         m_jit.addZeroExtend64(wasmBaseMemoryPointer, pointerLocation.asGPR(), wasmScratchGPR);
 #else
-    if (m_info.theOnlyMemory().isMemory64())
+    if (m_info.memory(memoryIndex).isMemory64())
         m_jit.addPtr(wasmBaseMemoryPointer, pointerLocation.asGPR(), wasmScratchGPR);
     else {
         m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);

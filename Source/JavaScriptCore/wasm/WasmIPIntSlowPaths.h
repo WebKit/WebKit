@@ -136,9 +136,9 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(set_global_ref, uint32_t globalIndex, JSValue 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(get_global_64, unsigned);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(set_global_64, unsigned, uint64_t);
 
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait32, uint64_t, uint32_t, uint64_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, uint64_t, uint64_t, uint64_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, unsigned, unsigned, int32_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait32, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, IPIntStackEntry*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, IPIntStackEntry*);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(check_stack_and_vm_traps, void* candidateNewStackPointer, Wasm::IPIntCallee*);
 WASM_IPINT_EXTERN_CPP_DECL(unreachable_breakpoint_handler, CallFrame*, Register*);

@@ -101,10 +101,6 @@ public:
     
     WebAssemblyModuleRecord* moduleRecord() LIFETIME_BOUND { return m_moduleRecord.get(); }
 
-    // FIXME(wasm-multimemory): eventually get rid of memory() with no parameters
-    // Temporarily keep memory() so the code still compiles
-    JSWebAssemblyMemory* memory() const { return m_memories[0].get(); }
-
     JSWebAssemblyMemory* memory(unsigned i) const { return m_memories[i].get(); }
 
     void updateCachedMemoryBaseSizePair(unsigned i)
@@ -143,7 +139,7 @@ public:
         m_memories[0].set(vm, this, value);
     }
 
-    MemoryMode memoryMode() const { return memory()->memory().mode(); }
+    MemoryMode memory0Mode() const { return memory(0)->memory().mode(); }
 
     struct WasmMemoryBaseAndSize {
         void* base;
@@ -183,7 +179,7 @@ public:
     Wasm::Module& module() const { return m_module.get(); }
     SourceTaintedOrigin taintedness() const { return m_sourceProvider->sourceTaintedOrigin(); }
     URL sourceURL() const { return m_sourceProvider->sourceOrigin().url(); }
-    Wasm::CalleeGroup* calleeGroup() const { return module().calleeGroupFor(memoryMode()); }
+    Wasm::CalleeGroup* calleeGroup() const { return module().calleeGroupFor(memory0Mode()); }
     Wasm::Table* table(unsigned);
     void setTable(unsigned, Ref<Wasm::Table>&&);
     const Wasm::Element* elementAt(unsigned) const;

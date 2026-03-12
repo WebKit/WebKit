@@ -262,6 +262,8 @@ private:
     [[nodiscard]] PartialResult parseTableIndex(unsigned&);
     [[nodiscard]] PartialResult parseElementIndex(unsigned&);
     [[nodiscard]] PartialResult parseDataSegmentIndex(unsigned&);
+    [[nodiscard]] PartialResult parseMemoryIndex(uint8_t&);
+    [[nodiscard]] PartialResult parseMemoryIndexAndFixupAlignment(uint32_t&, uint8_t&);
 
     [[nodiscard]] PartialResult parseIndexForLocal(uint32_t&);
     [[nodiscard]] PartialResult parseIndexForGlobal(uint32_t&);
@@ -711,16 +713,10 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
 
-    bool hasMemoryIndex = alignment & (1 << 6);
-    alignment = alignment & 0b111111;
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds load's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
+    uint8_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
 
-    uint32_t memoryIndex = 0;
-    if (hasMemoryIndex) {
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get memory index"_s);
-        RELEASE_ASSERT(memoryIndex < 256);
-        WASM_VALIDATOR_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory index "_s, memoryIndex, " is out of range"_s);
-    }
+    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds load's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
 
     if (m_info.memory(memoryIndex).isMemory64())
         WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
@@ -738,7 +734,7 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
         WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset, static_cast<uint8_t>(memoryIndex)));
+    WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset, memoryIndex));
     m_expressionStack.constructAndAppend(memoryType, result);
     return { };
 }
@@ -754,16 +750,10 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
 
-    bool hasMemoryIndex = alignment & (1 << 6);
-    alignment = alignment & 0b111111;
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds store's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
+    uint8_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
 
-    uint32_t memoryIndex = 0;
-    if (hasMemoryIndex) {
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get memory index"_s);
-        RELEASE_ASSERT(memoryIndex < 256);
-        WASM_VALIDATOR_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory index "_s, memoryIndex, " is out of range"_s);
-    }
+    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds store's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
 
     if (m_info.memory(memoryIndex).isMemory64())
         WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get store offset"_s);
@@ -782,7 +772,7 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
 
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch"_s);
 
-    WASM_TRY_ADD_TO_CONTEXT(store(static_cast<StoreOpType>(m_currentOpcode), pointer, value, offset, static_cast<uint8_t>(memoryIndex)));
+    WASM_TRY_ADD_TO_CONTEXT(store(static_cast<StoreOpType>(m_currentOpcode), pointer, value, offset, memoryIndex));
     return { };
 }
 
@@ -809,6 +799,8 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
     uint32_t offset;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
+    uint8_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
@@ -816,7 +808,7 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
     WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), static_cast<unsigned>(op), " pointer type mismatch"_s);
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(atomicLoad(op, memoryType, pointer, result, offset));
+    WASM_TRY_ADD_TO_CONTEXT(atomicLoad(op, memoryType, pointer, result, offset, memoryIndex));
     m_expressionStack.constructAndAppend(memoryType, result);
     return { };
 }
@@ -831,6 +823,8 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
     TypedExpression value;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
+    uint8_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
@@ -839,7 +833,7 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
     WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch"_s);
 
-    WASM_TRY_ADD_TO_CONTEXT(atomicStore(op, memoryType, pointer, value, offset));
+    WASM_TRY_ADD_TO_CONTEXT(atomicStore(op, memoryType, pointer, value, offset, memoryIndex));
     return { };
 }
 
@@ -853,6 +847,8 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
     TypedExpression pointer;
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
+    uint8_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
@@ -862,7 +858,7 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch"_s);
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(atomicBinaryRMW(op, memoryType, pointer, value, result, offset));
+    WASM_TRY_ADD_TO_CONTEXT(atomicBinaryRMW(op, memoryType, pointer, value, result, offset, memoryIndex));
     m_expressionStack.constructAndAppend(memoryType, result);
     return { };
 }
@@ -878,6 +874,8 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     TypedExpression expected;
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
+    uint8_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment !=  memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
@@ -889,7 +887,7 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch"_s);
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(atomicCompareExchange(op, memoryType, pointer, expected, value, result, offset));
+    WASM_TRY_ADD_TO_CONTEXT(atomicCompareExchange(op, memoryType, pointer, expected, value, result, offset, memoryIndex));
     m_expressionStack.constructAndAppend(memoryType, result);
     return { };
 }
@@ -905,6 +903,8 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     TypedExpression value;
     TypedExpression timeout;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
+    uint8_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(timeout, "timeout"_s);
@@ -916,7 +916,7 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     WASM_VALIDATOR_FAIL_IF(!timeout.type().isI64(), static_cast<unsigned>(op), " timeout type mismatch"_s);
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(atomicWait(op, pointer, value, timeout, result, offset));
+    WASM_TRY_ADD_TO_CONTEXT(atomicWait(op, pointer, value, timeout, result, offset, memoryIndex));
     m_expressionStack.constructAndAppend(Types::I32, result);
     return { };
 }
@@ -931,6 +931,8 @@ auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
     TypedExpression pointer;
     TypedExpression count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
+    uint8_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "count"_s);
@@ -940,7 +942,7 @@ auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
     WASM_VALIDATOR_FAIL_IF(!count.type().isI32(), static_cast<unsigned>(op), " count type mismatch"_s); // The spec's definition is saying i64, but all implementations (including tests) are using i32. So looks like the spec is wrong.
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(atomicNotify(op, pointer, count, result, offset));
+    WASM_TRY_ADD_TO_CONTEXT(atomicNotify(op, pointer, count, result, offset, memoryIndex));
     m_expressionStack.constructAndAppend(Types::I32, result);
     return { };
 }
@@ -974,7 +976,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     UNUSED_VARIABLE(pushUnreachable);
     UNUSED_PARAM(optionalRelation);
 
-    auto parseMemOp = [&] (uint32_t& offset, TypedExpression& pointer) -> PartialResult {
+    auto parseMemOp = [&] (uint32_t& offset, TypedExpression& pointer, uint8_t& memoryIndex) -> PartialResult {
         uint32_t maxAlignment;
         switch (op) {
         case SIMDLaneOperation::LoadLane8:
@@ -1016,6 +1018,9 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         uint32_t alignment;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get simd memory op alignment"_s);
+
+        WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get simd memory index"_s);
+
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get simd memory op offset"_s);
 
         WASM_VALIDATOR_FAIL_IF(alignment > maxAlignment, "alignment: "_s, alignment, " can't be larger than max alignment for simd operation: "_s, maxAlignment);
@@ -1133,7 +1138,8 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::Load: {
         uint32_t offset;
         TypedExpression pointer;
-        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer));
+        uint8_t memoryIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer, memoryIndex));
 
         if constexpr (!isReachable)
             return { };
@@ -1141,9 +1147,9 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         if (Context::tierSupportsSIMD()) {
             ExpressionType result;
             if (op == SIMDLaneOperation::Load)
-                WASM_TRY_ADD_TO_CONTEXT(addSIMDLoad(pointer, offset, result));
+                WASM_TRY_ADD_TO_CONTEXT(addSIMDLoad(pointer, offset, result, memoryIndex));
             else
-                WASM_TRY_ADD_TO_CONTEXT(addSIMDLoadSplat(op, pointer, offset, result));
+                WASM_TRY_ADD_TO_CONTEXT(addSIMDLoadSplat(op, pointer, offset, result, memoryIndex));
             m_expressionStack.constructAndAppend(Types::V128, result);
             return { };
         }
@@ -1159,13 +1165,14 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         uint32_t offset;
         TypedExpression pointer;
-        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer));
+        uint8_t memoryIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer, memoryIndex));
 
         if constexpr (!isReachable)
             return { };
 
         if (Context::tierSupportsSIMD())
-            WASM_TRY_ADD_TO_CONTEXT(addSIMDStore(val, pointer, offset));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDStore(val, pointer, offset, memoryIndex));
         return { };
     }
     case SIMDLaneOperation::LoadLane8:
@@ -1196,7 +1203,8 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
             WASM_VALIDATOR_FAIL_IF(!vector.type().isV128(), "load_lane input must be a vector"_s);
         }
 
-        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer));
+        uint8_t memoryIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer, memoryIndex));
         WASM_FAIL_IF_HELPER_FAILS(parseImmLaneIdx(laneCount, laneIndex));
 
         if constexpr (!isReachable)
@@ -1204,7 +1212,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         if (Context::tierSupportsSIMD()) {
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addSIMDLoadLane(op, pointer, vector, offset, laneIndex, result));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDLoadLane(op, pointer, vector, offset, laneIndex, result, memoryIndex));
             m_expressionStack.constructAndAppend(Types::V128, result);
             return { };
         }
@@ -1238,14 +1246,15 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
             WASM_VALIDATOR_FAIL_IF(!vector.type().isV128(), "store_lane input must be a vector"_s);
         }
 
-        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer));
+        uint8_t memoryIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer, memoryIndex));
         WASM_FAIL_IF_HELPER_FAILS(parseImmLaneIdx(laneCount, laneIndex));
 
         if constexpr (!isReachable)
             return { };
 
         if (Context::tierSupportsSIMD())
-            WASM_TRY_ADD_TO_CONTEXT(addSIMDStoreLane(op, pointer, vector, offset, laneIndex));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDStoreLane(op, pointer, vector, offset, laneIndex, memoryIndex));
         return { };
     }
     case SIMDLaneOperation::LoadExtend8U:
@@ -1256,15 +1265,16 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::LoadExtend32S: {
         uint32_t offset;
         TypedExpression pointer;
+        uint8_t memoryIndex;
 
-        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer));
+        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer, memoryIndex));
 
         if constexpr (!isReachable)
             return { };
 
         if (Context::tierSupportsSIMD()) {
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addSIMDLoadExtend(op, pointer, offset, result));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDLoadExtend(op, pointer, offset, result, memoryIndex));
             m_expressionStack.constructAndAppend(Types::V128, result);
             return { };
         }
@@ -1274,15 +1284,16 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::LoadPad64: {
         uint32_t offset;
         TypedExpression pointer;
+        uint8_t memoryIndex;
 
-        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer));
+        WASM_FAIL_IF_HELPER_FAILS(parseMemOp(offset, pointer, memoryIndex));
 
         if constexpr (!isReachable)
             return { };
 
         if (Context::tierSupportsSIMD()) {
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addSIMDLoadPad(op, pointer, offset, result));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDLoadPad(op, pointer, offset, result, memoryIndex));
             m_expressionStack.constructAndAppend(Types::V128, result);
             return { };
         }
@@ -1642,6 +1653,26 @@ auto FunctionParser<Context>::parseDataSegmentIndex(unsigned& result) -> Partial
 }
 
 template<typename Context>
+auto FunctionParser<Context>::parseMemoryIndex(uint8_t& result) -> PartialResult {
+    uint32_t memoryIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get memory index"_s);
+    RELEASE_ASSERT(memoryIndex < 256);
+    WASM_VALIDATOR_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory index "_s, memoryIndex, " is out of range"_s);
+    result = memoryIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseMemoryIndexAndFixupAlignment(uint32_t& alignment, uint8_t& result) -> PartialResult {
+    bool hasMemoryIndex = alignment & (1 << 6);
+    alignment = alignment & 0b111111;
+    result = 0;
+    if (hasMemoryIndex)
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(result));
+    return { };
+}
+
+template<typename Context>
 auto FunctionParser<Context>::parseTableInitImmediates(TableInitImmediates& result) -> PartialResult
 {
     unsigned elementIndex;
@@ -1691,19 +1722,15 @@ auto FunctionParser<Context>::parseAnnotatedSelectImmediates(AnnotatedSelectImme
 template<typename Context>
 auto FunctionParser<Context>::parseMemoryFillImmediate(uint8_t& memoryIndex) -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(!parseUInt8(memoryIndex), "memory.fill: can't parse memory index"_s);
-    WASM_PARSER_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory.fill: illegal memory index "_s, memoryIndex);
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
     return { };
 }
 
 template<typename Context>
 auto FunctionParser<Context>::parseMemoryCopyImmediates(uint8_t& dstMemoryIndex, uint8_t& srcMemoryIndex) -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(!parseUInt8(dstMemoryIndex), "memory.copy: can't parse dst memory index"_s);
-    WASM_PARSER_FAIL_IF(dstMemoryIndex >= m_info.memoryCount(), "memory.copy: illegal dst memory index "_s, dstMemoryIndex);
-
-    WASM_PARSER_FAIL_IF(!parseUInt8(srcMemoryIndex), "memory.copy: can't parse src memory index"_s);
-    WASM_PARSER_FAIL_IF(srcMemoryIndex >= m_info.memoryCount(), "memory.copy: illegal src memory index "_s, srcMemoryIndex);
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(dstMemoryIndex));
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(srcMemoryIndex));
     return { };
 }
 
@@ -1713,9 +1740,8 @@ auto FunctionParser<Context>::parseMemoryInitImmediates(MemoryInitImmediates& re
     unsigned dataSegmentIndex;
     WASM_FAIL_IF_HELPER_FAILS(parseDataSegmentIndex(dataSegmentIndex));
 
-    unsigned memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "memory.init: can't parse memory index"_s);
-    WASM_PARSER_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory.init illegal memory index "_s, memoryIndex);
+    uint8_t memoryIndex;
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
 
     result.memoryIndex = memoryIndex;
     result.dataSegmentIndex = dataSegmentIndex;
@@ -3773,9 +3799,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "grow_memory is only valid if a memory is defined or imported"_s);
 
         uint8_t memoryIndex;
-        WASM_PARSER_FAIL_IF(!parseUInt8(memoryIndex), "can't parse memory index for grow_memory"_s);
-        uint32_t memoryIndex32 = memoryIndex;
-        WASM_PARSER_FAIL_IF(memoryIndex >= m_info.memoryCount(), "grow_memory: illegal memory index "_s, memoryIndex32);
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
 
         TypedExpression delta;
         bool isMemory64 = m_info.memory(memoryIndex).isMemory64();
@@ -3798,9 +3822,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "current_memory is only valid if a memory is defined or imported"_s);
 
         uint8_t memoryIndex;
-        WASM_PARSER_FAIL_IF(!parseUInt8(memoryIndex), "can't parse memory index for current_memory"_s);
-        uint32_t memoryIndex32 = memoryIndex;
-        WASM_PARSER_FAIL_IF(memoryIndex >= m_info.memoryCount(), "current_memory: invalid memory index "_s, memoryIndex32);
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addCurrentMemory(result, memoryIndex));
@@ -4032,14 +4054,17 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE)
     FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE) {
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "load/store instruction without memory"_s);
-        uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for "_s, m_currentOpcode, " in unreachable context"_s);
-        // FIXME(wasm-multimemory)
-        if (m_info.theOnlyMemory().isMemory64()) {
+        uint32_t alignment;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get first immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        uint8_t memoryIndex;
+        WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+        if (m_info.memory(memoryIndex).isMemory64()) {
             uint64_t unused64;
             WASM_PARSER_FAIL_IF(!parseVarUInt64(unused64), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
-        } else
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        } else {
+            uint32_t unused32;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused32), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        }
         return { };
     }
 

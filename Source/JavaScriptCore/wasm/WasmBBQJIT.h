@@ -33,6 +33,7 @@
 #include "WasmCompilationContext.h"
 #include "WasmFunctionParser.h"
 #include "WasmLimits.h"
+#include "js/JSWebAssemblyInstance.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -1144,10 +1145,31 @@ public:
 
     // Memory
 
-    inline Location emitCheckAndPreparePointer(Value pointer, uint32_t uoffset, uint32_t sizeOfOperation)
+    inline Location emitCheckAndPreparePointer(Value pointer, uint32_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex)
     {
         ScratchScope<1, 0> scratches(*this);
         Location pointerLocation;
+
+        if (memoryIndex) {
+            // overwrite wasmBaseMemoryPointer and wasmBoundsCheckingSizeRegister
+            m_jit.loadPtr(
+                Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(memoryIndex)),
+                wasmBaseMemoryPointer);
+            m_jit.loadPtr(
+                Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(memoryIndex) + sizeof(void*)),
+                wasmBoundsCheckingSizeRegister);
+        }
+
+        auto restoreBaseAndSizeGPRs = [&]() -> void {
+            // reload wasmBaseMemoryPointer and wasmBoundsCheckingSizeRegister
+            m_jit.loadPtr(
+                Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)),
+                wasmBaseMemoryPointer);
+            m_jit.loadPtr(
+                Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + sizeof(void*)),
+                wasmBoundsCheckingSizeRegister);
+        };
+
         if (pointer.isConst()) {
             pointerLocation = Location::fromGPR(scratches.gpr(0));
             emitMoveConst(pointer, pointerLocation);
@@ -1163,7 +1185,8 @@ public:
 #endif
 
         uint64_t boundary = static_cast<uint64_t>(sizeOfOperation) + uoffset - 1;
-        switch (m_mode) {
+        // conservatively force bounds checking if memoryIndex != 0
+        switch (memoryIndex ? MemoryMode::BoundsChecking : m_mode) {
         case MemoryMode::BoundsChecking: {
             // We're not using signal handling only when the memory is not shared.
             // Regardless of signaling, we must check that no memory access exceeds the current memory size.
@@ -1186,7 +1209,7 @@ public:
             // than the declared 'maximum' will trap, so we can compare against that number. If there was no declared 'maximum' then we still know that
             // any access equal to or greater than 4GiB will trap, no need to add the redzone.
             if (uoffset >= Memory::fastMappedRedzoneBytes()) {
-                uint64_t maximum = m_info.theOnlyMemory().maximum() ? m_info.theOnlyMemory().maximum().bytes() : std::numeric_limits<uint32_t>::max();
+                uint64_t maximum = m_info.memory(memoryIndex).maximum() ? m_info.memory(memoryIndex).maximum().bytes() : std::numeric_limits<uint32_t>::max();
                 m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
                 if (boundary)
                     m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
@@ -1202,6 +1225,9 @@ public:
         m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
         m_jit.addPtr(wasmBaseMemoryPointer, wasmScratchGPR);
 #endif
+
+        if (memoryIndex)
+            restoreBaseAndSizeGPRs();
 
         consume(pointer);
         return Location::fromGPR(wasmScratchGPR);
@@ -1337,23 +1363,23 @@ public:
 
     [[nodiscard]] Value emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint32_t uoffset);
 
-    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t uoffset);
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
 
     void emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value value, uint32_t uoffset);
 
-    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType storeOp, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t uoffset);
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType storeOp, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t uoffset, uint8_t memoryIndex);
 
     Value emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Location pointer, Value value, uint32_t uoffset);
 
-    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t uoffset);
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
 
     [[nodiscard]] Value emitAtomicCompareExchange(ExtAtomicOpType op, Type, Location pointer, Value expected, Value value, uint32_t uoffset);
 
-    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t uoffset);
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t uoffset);
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t uoffset);
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
 
     [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t);
 
@@ -2071,9 +2097,9 @@ public:
 
     void notifyFunctionUsesSIMD();
 
-    PartialResult addSIMDLoad(ExpressionType, uint32_t, ExpressionType&);
+    PartialResult addSIMDLoad(ExpressionType, uint32_t, ExpressionType&, uint8_t);
 
-    PartialResult addSIMDStore(ExpressionType, ExpressionType, uint32_t);
+    PartialResult addSIMDStore(ExpressionType, ExpressionType, uint32_t, uint8_t);
 
     PartialResult addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&);
 
@@ -2083,15 +2109,15 @@ public:
 
     PartialResult addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&);
 
-    PartialResult addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&);
+    PartialResult addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t);
 
-    PartialResult addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&);
+    PartialResult addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&, uint8_t);
 
-    PartialResult addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t);
+    PartialResult addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, uint8_t);
 
-    PartialResult addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&);
+    PartialResult addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t);
 
-    PartialResult addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&);
+    PartialResult addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t);
 
     void materializeVectorConstant(v128_t, Location);
 

@@ -718,7 +718,7 @@ static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement,
 
 static void triggerOMGReplacementCompile(TierUpCount& tierUp, JSWebAssemblyInstance* instance, Wasm::CalleeGroup& calleeGroup, FunctionCodeIndex functionIndex)
 {
-    MemoryMode memoryMode = instance->memory()->mode();
+    MemoryMode memoryMode = instance->memory0Mode();
     bool compile = false;
     {
         Locker locker { tierUp.getLock() };
@@ -923,7 +923,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (CallFram
     ASSERT(callee.compilationMode() == CompilationMode::BBQMode);
 
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
-    ASSERT(instance->memory()->mode() == calleeGroup.mode());
+    ASSERT(instance->memory0Mode() == calleeGroup.mode());
 
     FunctionSpaceIndex functionIndexInSpace = callee.index();
     FunctionCodeIndex functionIndex = calleeGroup.toCodeIndex(functionIndexInSpace);
@@ -968,7 +968,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         return true;
     };
 
-    MemoryMode memoryMode = instance->memory()->mode();
+    MemoryMode memoryMode = instance->memory0Mode();
     ASSERT(memoryMode == calleeGroup.mode());
 
     TierUpCount& tierUp = callee.tierUpCounter();
@@ -1235,7 +1235,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMaterializeBaselineData, void, (C
     ASSERT(callee.compilationMode() == CompilationMode::BBQMode);
 
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
-    ASSERT(instance->memory()->mode() == calleeGroup.mode());
+    ASSERT(instance->memory0Mode() == calleeGroup.mode());
 
     FunctionSpaceIndex functionIndexInSpace = callee.index();
     FunctionCodeIndex functionIndex = calleeGroup.toCodeIndex(functionIndexInSpace);
@@ -1620,19 +1620,19 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGetWasmTableSize, UCPUStrictInt32, (J
     return toUCPUStrictInt32(tableSize(instance, tableIndex));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait32, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait32, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex))
 {
-    return toUCPUStrictInt32(memoryAtomicWait32(instance, base, offset, value, timeoutInNanoseconds));
+    return toUCPUStrictInt32(memoryAtomicWait32(instance, base, offset, value, timeoutInNanoseconds, memoryIndex));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait64, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait64, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex))
 {
-    return toUCPUStrictInt32(memoryAtomicWait64(instance, base, offset, value, timeoutInNanoseconds));
+    return toUCPUStrictInt32(memoryAtomicWait64(instance, base, offset, value, timeoutInNanoseconds, memoryIndex));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicNotify, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t countValue))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicNotify, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t countValue, uint8_t memoryIndex))
 {
-    return toUCPUStrictInt32(memoryAtomicNotify(instance, base, offset, countValue));
+    return toUCPUStrictInt32(memoryAtomicNotify(instance, base, offset, countValue, memoryIndex));
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryInit, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length, uint8_t memoryIndex))

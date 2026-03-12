@@ -71,7 +71,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyInstance, (JSGlobalObject* global
     instance->initializeImports(globalObject, importObject, Wasm::CreationMode::FromJS);
     RETURN_IF_EXCEPTION(scope, { });
 
-    instance->finalizeCreation(vm, globalObject, module->module().compileSync(vm, instance->memoryMode()), Wasm::CreationMode::FromJS);
+    instance->finalizeCreation(vm, globalObject, module->module().compileSync(vm, instance->memory0Mode()), Wasm::CreationMode::FromJS);
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(instance);
 }
