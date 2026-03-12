@@ -55,7 +55,7 @@ struct MaximumSize : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed
     ALWAYS_INLINE bool isMinContent() const { return holdsAlternative<CSS::Keyword::MinContent>(); }
     ALWAYS_INLINE bool isMaxContent() const { return holdsAlternative<CSS::Keyword::MaxContent>(); }
     ALWAYS_INLINE bool isFitContent() const { return holdsAlternative<CSS::Keyword::FitContent>(); }
-    ALWAYS_INLINE bool isFillAvailable() const { return holdsAlternative<CSS::Keyword::WebkitFillAvailable>(); }
+    ALWAYS_INLINE bool isStretch() const { return holdsAlternative<CSS::Keyword::WebkitFillAvailable>(); }
     ALWAYS_INLINE bool isIntrinsicKeyword() const { return holdsAlternative<CSS::Keyword::Intrinsic>(); }
     ALWAYS_INLINE bool isMinIntrinsic() const { return holdsAlternative<CSS::Keyword::MinIntrinsic>(); }
 
@@ -63,20 +63,12 @@ struct MaximumSize : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed
     {
         return holdsAlternative<CSS::Keyword::MinContent>()
             || holdsAlternative<CSS::Keyword::MaxContent>()
-            || holdsAlternative<CSS::Keyword::WebkitFillAvailable>()
             || holdsAlternative<CSS::Keyword::FitContent>();
     }
-    ALWAYS_INLINE bool isLegacyIntrinsic() const
-    {
-        return holdsAlternative<CSS::Keyword::Intrinsic>()
-            || holdsAlternative<CSS::Keyword::MinIntrinsic>();
-    }
+    ALWAYS_INLINE bool isIntrinsicOrStretch() const { return isIntrinsic() || isStretch(); }
     ALWAYS_INLINE bool isSizingKeyword() const // Excludes isNone().
     {
-        return holdsAlternative<CSS::Keyword::MinContent>()
-            || holdsAlternative<CSS::Keyword::MaxContent>()
-            || holdsAlternative<CSS::Keyword::WebkitFillAvailable>()
-            || holdsAlternative<CSS::Keyword::FitContent>()
+        return isIntrinsicOrStretch()
             || holdsAlternative<CSS::Keyword::Intrinsic>()
             || holdsAlternative<CSS::Keyword::MinIntrinsic>();
     }

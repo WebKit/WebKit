@@ -1232,7 +1232,7 @@ template<typename SizeType> bool RenderFlexibleBox::flexItemMainSizeIsDefinite(c
         if (size.isContent())
             return false;
     }
-    if (!mainAxisIsFlexItemInlineAxis(flexItem) && (size.isIntrinsic() || size.isIntrinsicKeyword()))
+    if (!mainAxisIsFlexItemInlineAxis(flexItem) && (size.isIntrinsicOrStretch() || size.isIntrinsicKeyword()))
         return false;
     if (size.isPercentOrCalculated())
         return canComputePercentageFlexBasis(flexItem, size, UpdatePercentageHeightDescendants::No);
@@ -1719,12 +1719,12 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
 {
     auto max = maxMainSizeLengthForFlexItem(flexItem);
     std::optional<LayoutUnit> maxExtent = std::nullopt;
-    if (max.isSpecified() || max.isIntrinsic())
+    if (max.isSpecified() || max.isIntrinsicOrStretch())
         maxExtent = computeMainAxisExtentForFlexItem(flexItem, max);
 
     auto min = minMainSizeLengthForFlexItem(flexItem);
     // Intrinsic sizes in child's block axis are handled by the min-size:auto code path.
-    if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsFlexItemInlineAxis(flexItem))) {
+    if (min.isSpecified() || (min.isIntrinsicOrStretch() && mainAxisIsFlexItemInlineAxis(flexItem))) {
         auto minExtent = computeMainAxisExtentForFlexItem(flexItem, min).value_or(0_lu);
         // We must never return a min size smaller than the min preferred size for tables.
         if (flexItem.isRenderTable() && mainAxisIsFlexItemInlineAxis(flexItem))
@@ -2316,7 +2316,7 @@ bool RenderFlexibleBox::flexItemHasIntrinsicMainAxisSize(const RenderBox& flexIt
     // which has some side effects like calling addPercentHeightDescendant() for example so it is not possible to skip
     // the call for example by moving it to the end of the conditional expression. This is error-prone and we should
     // refactor computePercentageLogicalHeight() at some point so that it only computes stuff without those side effects.
-    if (!flexItemMainSizeIsDefinite(flexItem, flexBasis) || minSize.isIntrinsic() || maxSize.isIntrinsic())
+    if (!flexItemMainSizeIsDefinite(flexItem, flexBasis) || minSize.isIntrinsicOrStretch() || maxSize.isIntrinsicOrStretch())
         return true;
 
     if (shouldApplyMinSizeAutoForFlexItem(flexItem))

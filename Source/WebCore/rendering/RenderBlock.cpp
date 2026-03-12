@@ -3077,7 +3077,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
         // However, intrinsic heights (fit-content, min-content, max-content) are
         // content-dependent and should be treated as indefinite for percentage
         // resolution of children, since the actual height is not yet determined.
-        auto heightIsIntrinsic = style.logicalHeight().isIntrinsic() || style.logicalHeight().isLegacyIntrinsic();
+        auto heightIsIntrinsic = style.logicalHeight().isIntrinsicOrStretch() || style.logicalHeight().isIntrinsicKeyword() || style.logicalHeight().isMinIntrinsic();
         auto hasNonIntrinsicSpecifiedHeight = !style.logicalHeight().isAuto() && !heightIsIntrinsic;
         auto hasDefiniteHeightFromInsets = !style.logicalTop().isAuto() && !style.logicalBottom().isAuto() && style.logicalHeight().isAuto();
         auto isOutOfFlowPositionedWithSpecifiedHeight = isOutOfFlowPositioned() && (hasNonIntrinsicSpecifiedHeight || hasDefiniteHeightFromInsets);

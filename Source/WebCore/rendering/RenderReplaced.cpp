@@ -417,7 +417,7 @@ bool RenderReplaced::hasReplacedLogicalHeight() const
     if (style().logicalHeight().isPercentOrCalculated())
         return !hasAutoHeightOrContainingBlockWithAutoHeight();
 
-    if (style().logicalHeight().isIntrinsic())
+    if (style().logicalHeight().isIntrinsicOrStretch())
         return !style().aspectRatio().hasRatio();
 
     return false;
@@ -429,7 +429,7 @@ bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
 
     // If the actual area occupied by the image has changed and it is not constrained by style then a layout is required.
     bool imageSizeIsConstrained = style().logicalWidth().isSpecified() && style().logicalHeight().isSpecified()
-        && !style().logicalMinWidth().isIntrinsic() && !style().logicalMaxWidth().isIntrinsic()
+        && !style().logicalMinWidth().isIntrinsicOrStretch() && !style().logicalMaxWidth().isIntrinsicOrStretch()
         && !hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants::No);
 
     // FIXME: We only need to recompute the containing block's preferred size
@@ -714,7 +714,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
     auto& style = this->style();
     if (style.logicalWidth().isSpecified())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style.logicalWidth()), shouldComputePreferred);
-    if (style.logicalWidth().isIntrinsic())
+    if (style.logicalWidth().isIntrinsicOrStretch())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style.logicalWidth()), shouldComputePreferred);
 
     RenderBox* contentRenderer = embeddedContentBox();
@@ -783,7 +783,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
                 if (isOutOfFlowPositioned() && !style.logicalLeft().isAuto() && !style.logicalRight().isAuto()) {
                     // Still respect min-width, but ignore max-width if it's an intrinsic keyword.
                     auto& logicalMinWidth = style.logicalMinWidth();
-                    auto minLogicalWidth = logicalMinWidth.isIntrinsic() ? 0_lu : computeReplacedLogicalWidthUsing(logicalMinWidth);
+                    auto minLogicalWidth = logicalMinWidth.isIntrinsicOrStretch() ? 0_lu : computeReplacedLogicalWidthUsing(logicalMinWidth);
                     return std::max(minLogicalWidth, constrainedLogicalWidth);
                 }
 
