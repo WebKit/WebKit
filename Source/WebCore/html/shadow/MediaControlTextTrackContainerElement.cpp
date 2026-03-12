@@ -262,9 +262,9 @@ void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
 
     float fontScale = protect(protect(page->group())->ensureCaptionPreferences())->captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
 
-    // Caption fonts are defined as |size vh| units, so there's no need to
-    // scale by display size. Since |vh| is a decimal percentage, multiply
-    // the scale factor by 100 to achive the final font size.
+    // Caption fonts use max(cqmin, vh) to ensure a minimum viewport-relative
+    // size for small inline players. Since these are percentage-based, multiply
+    // the scale factor by 100 to achieve the final font size for stroke width.
     m_fontSize = lroundf(100 * fontScale);
 }
 

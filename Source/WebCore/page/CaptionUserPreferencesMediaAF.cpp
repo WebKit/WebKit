@@ -517,12 +517,12 @@ String CaptionUserPreferencesMediaAF::captionsFontSizeCSS() const
     bool important = false;
     float fontScale = captionFontSizeScaleAndImportance(important);
 
-    // Caption fonts are defined as |size vh| units, so there's no need to
-    // scale by display size. Since |vh| is a decimal percentage, multiply
-    // the scale factor by 100 to achive the final font size.
+    // Caption fonts use max(cqmin, vh) to ensure a minimum viewport-relative
+    // size for small inline players while using container-relative sizing when
+    // the container is large enough. Multiply the scale factor by 100.
     long fontSize = lroundf(100 * fontScale);
 
-    return makeString("font-size: "_s, fontSize, "cqmin"_s, important ? "!important;"_s : ";"_s);
+    return makeString("font-size: max("_s, fontSize, "cqmin,"_s, fontSize, "vh)"_s, important ? "!important;"_s : ";"_s);
 }
 
 float CaptionUserPreferencesMediaAF::captionFontSizeScaleAndImportance(bool& important) const

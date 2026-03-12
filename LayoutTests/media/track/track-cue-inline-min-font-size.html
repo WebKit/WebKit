@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!-- Tests that WebVTT captions in a small inline video player use a minimum
+     viewport-relative font size, matching the WebVTT spec's 5vh default.
+     With container-only sizing (5cqmin), a 200x100 video would give 5px font.
+     With max(5cqmin, 5vh), the viewport-relative floor ensures readable text. -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <style>
+        /* Small video: 5cqmin = 5% * min(200, 100) = 5px */
+        video { width: 200px; height: 100px; }
+    </style>
+    <script>
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+
+    function firstCueElement() {
+        return internals.shadowRoot(video).querySelector('[useragentpart="-internal-cue-background"]');
+    }
+
+    async function runTest() {
+        consoleWrite("");
+        run("internals.setCaptionDisplayMode('AlwaysOn')");
+
+        findMediaElement();
+        video.src = findMediaFile('video', '../content/test');
+        await waitFor(video, 'canplaythrough', true);
+
+        run('video.textTracks[0].mode = "showing"');
+        await testExpectedEventually('video.textTracks[0].cues.length', '0', '>');
+
+        run('video.currentTime = 0.5');
+        await waitFor(video, 'seeked', true);
+
+        await testExpectedEventually('firstCueElement()', null, '!=');
+
+        // With max(5cqmin, 5vh): 5cqmin = 5px (5% of 100px container min dim).
+        // 5vh depends on the test viewport height (typically 600px in DumpRenderTree),
+        // so 5vh = 30px. The max() should pick the vh value.
+        // We just verify font size is strictly greater than 5px (the cqmin-only value).
+        var fontSize = parseFloat(window.getComputedStyle(firstCueElement()).fontSize);
+        testExpected('fontSize', 5, '>');
+        consoleWrite("Caption font size: " + fontSize + "px (5cqmin-only would be 5px)");
+    }
+    </script>
+</head>
+<body>
+    <video>
+        <track src="captions-webvtt/styling.vtt" kind="captions">
+    </video>
+</body>
+</html>

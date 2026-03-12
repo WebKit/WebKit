@@ -63,7 +63,7 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
 [useragentpart="cue"] ruby > rt { display: ruby-text; }
 
 ::cue {
-    font: 5cqmin/normal sans-serif;
+    font: max(5cqmin, 5vh)/normal sans-serif;
     color: rgba(255, 255, 255, 1);
     background: rgba(0, 0, 0, 0.8);
     white-space: pre-line;
@@ -88,7 +88,7 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
     writing-mode: horizontal-tb;
     background: rgba(0,0,0,0.8);
     overflow-wrap: break-word;
-    font: 5cqmin sans-serif;
+    font: max(5cqmin, 5vh) sans-serif;
     color: rgba(255,255,255,1);
     overflow: hidden;
     min-height: 0px;

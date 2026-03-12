@@ -1,0 +1,10 @@
+
+
+RUN(internals.setCaptionDisplayMode('AlwaysOn'))
+RUN(video.textTracks[0].mode = "showing")
+EXPECTED (video.textTracks[0].cues.length > '0') OK
+RUN(video.currentTime = 0.5)
+EXPECTED (firstCueElement() != 'null') OK
+EXPECTED (fontSize > '5') OK
+Caption font size: 30px (5cqmin-only would be 5px)
+END OF TEST
