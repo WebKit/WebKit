@@ -83,6 +83,7 @@ public:
     WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
 
+    void inspectedPageDidCreateMainFrame();
     void inspectedPageDestroyed();
 
     WEBCORE_EXPORT bool enabled() const;

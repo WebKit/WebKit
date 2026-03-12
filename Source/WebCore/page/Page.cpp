@@ -538,6 +538,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
     if (pageConfiguration.imageTranslationLanguageIdentifiers)
         imageAnalysisQueue().setTranslationLanguageIdentifiers(WTF::move(*pageConfiguration.imageTranslationLanguageIdentifiers));
 #endif
+
+    m_inspectorController->inspectedPageDidCreateMainFrame();
 }
 
 Page::~Page()

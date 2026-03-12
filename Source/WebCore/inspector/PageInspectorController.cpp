@@ -36,6 +36,8 @@
 #include "CommonVM.h"
 #include "DOMWrapperWorld.h"
 #include "EventTargetInlines.h"
+#include "FrameConsoleAgent.h"
+#include "FrameInspectorController.h"
 #include "GraphicsContext.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorBackendClient.h"
@@ -58,7 +60,6 @@
 #include "Page.h"
 #include "PageAuditAgent.h"
 #include "PageCanvasAgent.h"
-#include "PageConsoleAgent.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebugger.h"
 #include "PageDebuggerAgent.h"
@@ -101,12 +102,6 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
     , m_inspectorBackendClient(WTF::move(inspectorBackendClient))
 {
     ASSERT_ARG(inspectorBackendClient, m_inspectorBackendClient);
-
-    auto pageContext = pageAgentContext();
-
-    auto consoleAgent = makeUniqueRef<PageConsoleAgent>(pageContext);
-    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
-    m_agents.append(WTF::move(consoleAgent));
 }
 
 PageInspectorController::~PageInspectorController()
@@ -145,6 +140,22 @@ PageAgentContext PageInspectorController::pageAgentContext()
     };
 
     return pageContext;
+}
+
+void PageInspectorController::inspectedPageDidCreateMainFrame()
+{
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame) {
+        // A remote WebCore::Page doesn't need a console agent because we use frame targets under
+        // site isolation, and the remote page does not surface a inspector target to the frontend.
+        return;
+    }
+
+    auto pageContext = pageAgentContext();
+    FrameAgentContext frameContext { pageContext, *localMainFrame };
+    auto consoleAgent = makeUniqueRef<FrameConsoleAgent>(frameContext);
+    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
+    m_agents.append(WTF::move(consoleAgent));
 }
 
 void PageInspectorController::createLazyAgents()
