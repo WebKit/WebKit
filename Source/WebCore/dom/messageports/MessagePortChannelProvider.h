@@ -53,6 +53,11 @@ public:
     virtual void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&) = 0;
 
     virtual void postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget) = 0;
+
+    // Called when a port is transferred and has pending messages that were already
+    // taken from the provider but not yet dispatched. Returns them so they can be
+    // flushed to the Network process along with the port.
+    virtual void returnUndeliveredMessages(const MessagePortIdentifier&, Vector<MessageWithMessagePorts>&&) { }
 };
 
 } // namespace WebCore
