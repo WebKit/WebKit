@@ -28,6 +28,7 @@ for (let round = 0; round < ROUNDS; round++) {
             ta.with(0, 0x41414141);
             ta.toReversed();
             ta.toSorted();
+            ta.sort((a, b) => a - b);
         } catch (e) {}
     }
 

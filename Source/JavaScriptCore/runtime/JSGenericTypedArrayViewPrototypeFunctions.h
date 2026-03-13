@@ -1525,11 +1525,11 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
 
     auto callData = JSC::getCallDataInline(comparatorValue);
 
-    size_t length = thisObject->length();
+    auto originalSpan = thisObject->typedSpan();
+    size_t length = originalSpan.size();
+
     if (length < 2)
         return JSValue::encode(thisObject);
-
-    auto originalSpan = thisObject->typedSpan();
 
     Vector<typename ViewClass::ElementType, 256> vector;
     auto totalSize = CheckedSize { length } * 2U;
