@@ -114,11 +114,10 @@ void SelectorFilter::pushParentInitializingIfNeeded(Element& parent)
 void SelectorFilter::popParent()
 {
     ASSERT(!m_parentStack.isEmpty());
-    const ParentStackFrame& parentFrame = m_parentStack.last();
+    auto parentFrame = m_parentStack.takeLast();
     size_t count = parentFrame.identifierHashes.size();
     for (size_t i = 0; i < count; ++i)
         m_ancestorIdentifierFilter.remove(parentFrame.identifierHashes[i]);
-    m_parentStack.removeLast();
     if (m_parentStack.isEmpty()) {
         ASSERT(m_ancestorIdentifierFilter.likelyEmpty());
         m_ancestorIdentifierFilter.clear();
