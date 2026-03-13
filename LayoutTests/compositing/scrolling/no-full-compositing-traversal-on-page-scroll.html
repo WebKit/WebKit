@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 4000px;
+            margin: 0;
+        }
+
+        .fixed {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+
+        .composited {
+            transform: translateZ(0);
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            background-color: blue;
+        }
+
+        .scroller {
+            overflow: auto;
+            width: 300px;
+            height: 200px;
+            margin: 20px;
+            border: 1px solid black;
+        }
+
+        .tall-content {
+            height: 2000px;
+            background: linear-gradient(to bottom, red, yellow);
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        description('Test that page scrolling does not trigger a full compositing requirements traversal.');
+        window.jsTestIsAsync = true;
+
+        var updateCount;
+
+        async function runTest()
+        {
+            // Wait for initial compositing to settle.
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+
+            internals.startTrackingCompositingUpdates();
+
+            // Perform a page scroll.
+            window.scrollTo(0, 200);
+            await UIHelper.renderingUpdate();
+
+            updateCount = internals.compositingUpdateCount();
+            shouldBe('updateCount', '0');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', runTest);
+    </script>
+</head>

@@ -1,0 +1,10 @@
+Test that page scrolling does not trigger a full compositing requirements traversal.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS updateCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

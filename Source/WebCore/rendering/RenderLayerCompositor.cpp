@@ -1101,8 +1101,13 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
             }
         }
 
-        // Scrolling can affect overlap. FIXME: avoid for page scrolling.
-        updateRoot->setDescendantsNeedCompositingRequirementsTraversal();
+        // Scrolling can affect overlap, but only non-composited overflow scrolling
+        // can change overlap relationships in a way that requires recomputing
+        // compositing requirements. Page scrolling moves the viewport without
+        // changing content-relative overlap, and composited scrolling is handled
+        // by the compositor thread without affecting the layer hierarchy.
+        if (updateType == CompositingUpdateType::OnScroll && !isPageScroll)
+            updateRoot->setDescendantsNeedCompositingRequirementsTraversal();
     }
 
     if (updateType == CompositingUpdateType::AfterLayout) {
