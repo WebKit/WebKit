@@ -240,19 +240,137 @@ inline std::optional<double> safeReciprocalForDivByConst(double constant)
     return reciprocal;
 }
 
+// The difference from canBeInt32 is that canBeStrictInt32 returns false with -0.0
 ALWAYS_INLINE bool canBeStrictInt32(double value)
 {
-    if (std::isinf(value) || std::isnan(value))
+#if CPU(ARM64)
+    constexpr double int32Min = static_cast<double>(std::numeric_limits<int32_t>::min());
+    constexpr double int32Max = static_cast<double>(std::numeric_limits<int32_t>::max());
+
+    int valueAsInt32;
+    int cond;
+    double int32AsDouble;
+    bool isValidInt32;
+
+    asm (
+        // isValidInt32 = isfinite(value)
+        "fcmp %d[val], %d[val]" "\n"
+        "cset %w[isValidInt32], vc" "\n"
+
+        // cond = (value >= int32Min)
+        // isValidInt32 &= cond
+        "fcmp %d[val], %d[min]" "\n"
+        "cset %w[cond], ge" "\n"
+        "and %w[isValidInt32], %w[isValidInt32], %w[cond]" "\n"
+
+        // cond = (value <= int32Max)
+        // isValidInt32 &= cond
+        "fcmp %d[val], %d[max]" "\n"
+        "cset %w[cond], le" "\n"
+        "and %w[isValidInt32], %w[isValidInt32], %w[cond]" "\n"
+
+        // valueAsInt32 = int32_t(value)
+        // int32AsDouble = double(valueAsInt32)
+        "fcvtzs %w[valueAsInt32], %d[val]" "\n"
+        "scvtf %d[int32AsDouble], %w[valueAsInt32]" "\n"
+
+        // cond = (value == int32AsDouble)
+        // isValidInt32 &= cond
+        "fcmp %d[val], %d[int32AsDouble]" "\n"
+        "cset %w[cond], eq" "\n"
+        "and %w[isValidInt32], %w[isValidInt32], %w[cond]" "\n"
+
+        // cond = (valueAsInt32 == 0 && signbit(value))
+        // isValidInt32 &= !cond
+        "cmp %w[valueAsInt32], #0" "\n"
+        "cset %w[cond], eq" "\n"
+        "fmov x0, %d[val]" "\n"
+        "lsr x0, x0, #63" "\n"
+        "and %w[cond], %w[cond], w0" "\n"
+        "mvn %w[cond], %w[cond]" "\n"
+        "and %w[isValidInt32], %w[isValidInt32], %w[cond]" "\n"
+
+        : [isValidInt32] "=r"(isValidInt32),
+          [valueAsInt32] "=&r"(valueAsInt32),
+          [int32AsDouble] "=&w"(int32AsDouble),
+          [cond] "=&r"(cond)
+        : [val] "w"(value),
+          [min] "w"(int32Min),
+          [max] "w"(int32Max)
+        : "x0", "cc"
+    );
+    return isValidInt32;
+#else
+    if (!std::isfinite(value)
+        || value < static_cast<double>(std::numeric_limits<int32_t>::min())
+        || value > static_cast<double>(std::numeric_limits<int32_t>::max())
+    ) {
         return false;
+    }
     const int32_t asInt32 = static_cast<int32_t>(value);
-    return !(asInt32 != value || (!asInt32 && std::signbit(value))); // true for -0.0
+    return !(asInt32 != value || (!asInt32 && std::signbit(value)));
+#endif
 }
 
+// The difference from canBeStrictInt32 is that canBeInt32 returns true with -0.0
 ALWAYS_INLINE bool canBeInt32(double value)
 {
-    if (std::isinf(value) || std::isnan(value))
+#if CPU(ARM64)
+    constexpr double int32Min = static_cast<double>(std::numeric_limits<int32_t>::min());
+    constexpr double int32Max = static_cast<double>(std::numeric_limits<int32_t>::max());
+
+    double int32AsDouble;
+    int valueAsInt32;
+    int cond;
+    bool isValidInt32;
+
+    asm (
+        // isValidInt32 = isfinite(value)
+        "fcmp %d[val], %d[val]" "\n"
+        "cset %w[isValidInt32], vc" "\n"
+
+        // cond = (value >= int32Min)
+        // isValidInt32 &= cond
+        "fcmp %d[val], %d[min]" "\n"
+        "cset %w[cond], ge" "\n"
+        "and %w[isValidInt32], %w[isValidInt32], %w[cond]" "\n"
+
+        // cond = (value <= int32Max)
+        // isValidInt32 &= cond
+        "fcmp %d[val], %d[max]" "\n"
+        "cset %w[cond], le" "\n"
+        "and %w[isValidInt32], %w[isValidInt32], %w[cond]" "\n"
+
+        // valueAsInt32 = int32_t(value)
+        // int32AsDouble = double(valueAsInt32)
+        "fcvtzs %w[valueAsInt32], %d[val]" "\n"
+        "scvtf %d[int32AsDouble], %w[valueAsInt32]" "\n"
+
+        // cond = (value == int32AsDouble)
+        // isValidInt32 &= cond
+        "fcmp %d[val], %d[int32AsDouble]" "\n"
+        "cset %w[cond], eq" "\n"
+        "and %w[isValidInt32], %w[isValidInt32], %w[cond]" "\n"
+
+        : [isValidInt32] "=r"(isValidInt32),
+          [valueAsInt32] "=&r"(valueAsInt32),
+          [int32AsDouble] "=&w"(int32AsDouble),
+          [cond] "=&r"(cond)
+        : [val] "w"(value),
+          [min] "w"(int32Min),
+          [max] "w"(int32Max)
+        :
+    );
+    return isValidInt32;
+#else
+    if (!std::isfinite(value)
+        || value < static_cast<double>(std::numeric_limits<int32_t>::min())
+        || value > static_cast<double>(std::numeric_limits<int32_t>::max())
+    ) {
         return false;
+    }
     return static_cast<int32_t>(value) == value;
+#endif
 }
 
 extern "C" {
