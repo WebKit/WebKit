@@ -82,6 +82,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
+#include "LocalFrameViewDestructionObserver.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "NodeInlines.h"
@@ -248,6 +249,9 @@ Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame, const IntSize& ini
 
 LocalFrameView::~LocalFrameView()
 {
+    while (WeakPtr destructionObserver = m_destructionObservers.takeAny())
+        destructionObserver->frameViewIsBeingDestroyed();
+
     removeFromAXObjectCache();
     resetScrollbars();
 
@@ -261,6 +265,16 @@ LocalFrameView::~LocalFrameView()
     ASSERT(!m_scrollCorner);
 
     ASSERT(m_frame->view() != this || !m_frame->contentRenderer());
+}
+
+void LocalFrameView::addDestructionObserver(LocalFrameViewDestructionObserver& observer)
+{
+    m_destructionObservers.add(observer);
+}
+
+void LocalFrameView::removeDestructionObserver(LocalFrameViewDestructionObserver& observer)
+{
+    m_destructionObservers.remove(observer);
 }
 
 void LocalFrameView::reset()

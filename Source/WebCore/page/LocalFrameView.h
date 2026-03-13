@@ -61,6 +61,7 @@ class FloatSize;
 class Frame;
 class GraphicsContext;
 class HTMLFrameOwnerElement;
+class LocalFrameViewDestructionObserver;
 class Page;
 class RegionContext;
 class RenderBox;
@@ -106,6 +107,9 @@ public:
     static Ref<LocalFrameView> create(LocalFrame&, const IntSize& initialSize);
 
     virtual ~LocalFrameView();
+
+    void addDestructionObserver(LocalFrameViewDestructionObserver&);
+    void removeDestructionObserver(LocalFrameViewDestructionObserver&);
 
     WEBCORE_EXPORT void setFrameRect(const IntRect&) final;
     Type viewType() const final { return Type::Local; }
@@ -1067,6 +1071,8 @@ private:
     std::unique_ptr<ScrollableAreaSet> m_anchoringScrollableAreas;
     std::unique_ptr<SingleThreadWeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
     mutable std::optional<bool> m_hasAnchorPositionedViewportConstrainedObjects;
+
+    SingleThreadWeakHashSet<LocalFrameViewDestructionObserver> m_destructionObservers;
 
     OptionSet<LayoutMilestone> m_milestonesPendingPaint;
 

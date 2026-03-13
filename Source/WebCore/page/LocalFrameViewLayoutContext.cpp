@@ -29,6 +29,7 @@
 #include "DebugPageOverlays.h"
 #include "Document.h"
 #include "DocumentEnums.h"
+#include "FrameInlines.h"
 #include "InspectorInstrumentation.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"

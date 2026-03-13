@@ -1991,6 +1991,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/LocalFrame.h
     page/LocalFrameInlines.h
     page/LocalFrameView.h
+    page/LocalFrameViewDestructionObserver.h
     page/LocalFrameViewInlines.h
     page/LocalFrameViewLayoutContext.h
     page/LoginStatus.h
