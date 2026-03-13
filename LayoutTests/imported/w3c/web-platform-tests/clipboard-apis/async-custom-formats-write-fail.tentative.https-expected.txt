@@ -1,0 +1,11 @@
+Body needed for test_driver.click()
+
+FAIL navigator.clipboard.write() fails for more than 100 custom formats assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails for custom formats without web prefix assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails for custom formats with web prefix, but invalid MIME types assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails for custom format with web prefix, but different Blob type assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails for custom format with different case than the Blob type assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails for invalid mime type that is different than the Blob type assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails for invalid mime type with web prefix and the Blob type assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails for custom format and Blob type with different case assert_unreached: Should have rejected: undefined Reached unreachable code
+

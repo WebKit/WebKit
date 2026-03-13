@@ -1,0 +1,3 @@
+
+PASS Clear data from dataTransfer
+

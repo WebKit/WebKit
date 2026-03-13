@@ -1,0 +1,7 @@
+Body needed for test_driver.click()
+
+FAIL navigator.clipboard.read() fails for multiple unsanitized formats requested. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.read() fails for unsanitized text/plain requested. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.read() fails for unsanitized image/png requested. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.read() fails for unsanitized image/svg+xml requested. assert_unreached: Should have rejected: undefined Reached unreachable code
+
