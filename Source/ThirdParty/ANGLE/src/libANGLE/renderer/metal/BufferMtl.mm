@@ -14,6 +14,7 @@
 #include "libANGLE/renderer/metal/BufferMtl.h"
 
 #include "common/debug.h"
+#include "common/span.h"
 #include "common/utilities.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -446,13 +447,11 @@ void BufferMtl::clearConversionBuffers()
 }
 
 template <typename T>
-static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, mtl::BufferRef idxBuffer)
+static std::vector<IndexRange> CalculateRestartRanges(angle::Span<const T> bufferData)
 {
     std::vector<IndexRange> result;
-    const T *bufferData       = reinterpret_cast<const T *>(idxBuffer->mapReadOnly(ctx));
-    const size_t numIndices   = idxBuffer->size() / sizeof(T);
     constexpr T restartMarker = std::numeric_limits<T>::max();
-    for (size_t i = 0; i < numIndices; ++i)
+    for (size_t i = 0; i < bufferData.size(); ++i)
     {
         // Find the start of the restart range, i.e. first index with value of restart marker.
         if (bufferData[i] != restartMarker)
@@ -462,10 +461,9 @@ static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, mtl::Buff
         do
         {
             ++i;
-        } while (i < numIndices && bufferData[i] == restartMarker);
+        } while (i < bufferData.size() && bufferData[i] == restartMarker);
         result.emplace_back(restartBegin, i - 1);
     }
-    idxBuffer->unmap(ctx);
     return result;
 }
 
@@ -475,42 +473,46 @@ const std::vector<IndexRange> &BufferMtl::getRestartIndices(ContextMtl *ctx,
     if (!mRestartRangeCache || mRestartRangeCache->indexType != indexType)
     {
         mRestartRangeCache.reset();
+        mtl::BufferRef idxBuffer = getCurrentBuffer();
+        const void *indices  = idxBuffer->mapReadOnly(ctx);
+        size_t size = idxBuffer->size();
         std::vector<IndexRange> ranges;
         switch (indexType)
         {
             case gl::DrawElementsType::UnsignedByte:
-                ranges = calculateRestartRanges<uint8_t>(ctx, getCurrentBuffer());
+                ranges = CalculateRestartRanges<uint8_t>({static_cast<const uint8_t *>(indices), size});
                 break;
             case gl::DrawElementsType::UnsignedShort:
-                ranges = calculateRestartRanges<uint16_t>(ctx, getCurrentBuffer());
+                ranges = CalculateRestartRanges<uint16_t>({static_cast<const uint16_t *>(indices), size / 2});
                 break;
             case gl::DrawElementsType::UnsignedInt:
-                ranges = calculateRestartRanges<uint32_t>(ctx, getCurrentBuffer());
+                ranges = CalculateRestartRanges<uint32_t>({static_cast<const uint32_t *>(indices), size / 4});
                 break;
             default:
                 ASSERT(false);
         }
+        idxBuffer->unmap(ctx);
         mRestartRangeCache.emplace(std::move(ranges), indexType);
     }
     return mRestartRangeCache->ranges;
 }
 
-const std::vector<IndexRange> BufferMtl::getRestartIndicesFromClientData(
-    ContextMtl *ctx,
-    gl::DrawElementsType indexType,
-    mtl::BufferRef idxBuffer)
+const std::vector<IndexRange> BufferMtl::GetRestartIndicesFromClientData(
+    gl::DrawElementsType type,
+    GLint count,
+    const void *indices)
 {
     std::vector<IndexRange> restartIndices;
-    switch (indexType)
+    switch (type)
     {
         case gl::DrawElementsType::UnsignedByte:
-            restartIndices = calculateRestartRanges<uint8_t>(ctx, idxBuffer);
+            restartIndices = CalculateRestartRanges<uint8_t>({static_cast<const uint8_t *>(indices), static_cast<size_t>(count)});
             break;
         case gl::DrawElementsType::UnsignedShort:
-            restartIndices = calculateRestartRanges<uint16_t>(ctx, idxBuffer);
+            restartIndices = CalculateRestartRanges<uint16_t>({static_cast<const uint16_t *>(indices), static_cast<size_t>(count)});
             break;
         case gl::DrawElementsType::UnsignedInt:
-            restartIndices = calculateRestartRanges<uint32_t>(ctx, idxBuffer);
+            restartIndices = CalculateRestartRanges<uint32_t>({static_cast<const uint32_t *>(indices), static_cast<size_t>(count)});
             break;
         default:
             ASSERT(false);

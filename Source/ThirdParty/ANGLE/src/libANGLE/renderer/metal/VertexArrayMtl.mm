@@ -736,44 +736,49 @@ angle::Result VertexArrayMtl::getIndexBuffer(const gl::Context *context,
 }
 
 std::vector<DrawCommandRange> VertexArrayMtl::getDrawIndices(const gl::Context *glContext,
-                                                             gl::DrawElementsType originalIndexType,
-                                                             gl::DrawElementsType indexType,
-                                                             gl::PrimitiveMode primitiveMode,
-                                                             mtl::BufferRef clientBuffer,
-                                                             uint32_t indexCount,
-                                                             size_t offset)
+                                                             gl::PrimitiveMode mode,
+                                                             GLsizei count,
+                                                             gl::DrawElementsType type,
+                                                             const void *indices,
+                                                             gl::PrimitiveMode drawMode,
+                                                             uint32_t drawCount,
+                                                             gl::DrawElementsType drawType,
+                                                             size_t drawOffset)
 {
     ContextMtl *contextMtl = mtl::GetImpl(glContext);
     std::vector<DrawCommandRange> drawCommands;
     // The indexed draw needs to be split to separate draw commands in case primitive restart is
     // enabled and the drawn primitive supports primitive restart. Otherwise the whole indexed draw
     // can be sent as one draw command.
-    bool isSimpleType = primitiveMode == gl::PrimitiveMode::Points ||
-                        primitiveMode == gl::PrimitiveMode::Lines ||
-                        primitiveMode == gl::PrimitiveMode::Triangles;
+    bool isSimpleType = drawMode == gl::PrimitiveMode::Points ||
+                        drawMode == gl::PrimitiveMode::Lines ||
+                        drawMode == gl::PrimitiveMode::Triangles;
     if (!isSimpleType || !glContext->getState().isPrimitiveRestartEnabled())
     {
-        drawCommands.push_back({indexCount, offset});
+        drawCommands.push_back({drawCount, drawOffset});
         return drawCommands;
     }
     const std::vector<IndexRange> *restartIndices;
     std::vector<IndexRange> clientIndexRange;
+    size_t offset;
     const gl::Buffer *glElementArrayBuffer = getElementArrayBuffer();
     if (glElementArrayBuffer)
     {
         BufferMtl *idxBuffer = mtl::GetImpl(glElementArrayBuffer);
-        restartIndices       = &idxBuffer->getRestartIndices(contextMtl, originalIndexType);
+        restartIndices       = &idxBuffer->getRestartIndices(contextMtl, type);
+        offset = static_cast<size_t>(reinterpret_cast<uintptr_t>(indices));
     }
     else
     {
         clientIndexRange =
-            BufferMtl::getRestartIndicesFromClientData(contextMtl, indexType, clientBuffer);
+            BufferMtl::GetRestartIndicesFromClientData(type, count, indices);
         restartIndices = &clientIndexRange;
+        offset = 0;
     }
     // Reminder, offset is in bytes, not elements.
     // Slice draw commands based off of indices.
     uint32_t nIndicesPerPrimitive;
-    switch (primitiveMode)
+    switch (drawMode)
     {
         case gl::PrimitiveMode::Points:
             nIndicesPerPrimitive = 1;
@@ -788,10 +793,9 @@ std::vector<DrawCommandRange> VertexArrayMtl::getDrawIndices(const gl::Context *
             UNREACHABLE();
             return drawCommands;
     }
-    const GLuint indexTypeBytes = gl::GetDrawElementsTypeSize(indexType);
-    uint32_t indicesLeft        = indexCount;
-    size_t currentIndexOffset   = offset / indexTypeBytes;
-
+    const size_t drawTypeBytes = gl::GetDrawElementsTypeSize(drawType);
+    uint32_t indicesLeft        = static_cast<uint32_t>(count);
+    size_t currentIndexOffset   = offset / gl::GetDrawElementsTypeSize(type);
     for (auto &range : *restartIndices)
     {
         if (range.restartBegin > currentIndexOffset)
@@ -804,7 +808,7 @@ std::vector<DrawCommandRange> VertexArrayMtl::getDrawIndices(const gl::Context *
             if (nIndicesInSlice >= nIndicesPerPrimitive)
             {
                 drawCommands.push_back(
-                    {(uint32_t)nIndicesInSlice, currentIndexOffset * indexTypeBytes});
+                    {(uint32_t)nIndicesInSlice, currentIndexOffset * drawTypeBytes});
             }
             // Account for dropped indices due to incomplete primitives.
             size_t indicesUsed = ((range.restartBegin + restartSize) - currentIndexOffset);
@@ -835,7 +839,7 @@ std::vector<DrawCommandRange> VertexArrayMtl::getDrawIndices(const gl::Context *
         }
     }
     if (indicesLeft >= nIndicesPerPrimitive)
-        drawCommands.push_back({indicesLeft, currentIndexOffset * indexTypeBytes});
+        drawCommands.push_back({indicesLeft, currentIndexOffset * drawTypeBytes});
     return drawCommands;
 }
 
