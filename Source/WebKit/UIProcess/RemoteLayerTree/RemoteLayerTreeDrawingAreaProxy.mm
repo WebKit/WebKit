@@ -431,11 +431,12 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
 
     {
         ProcessState& state = processStateForConnection(connection);
-        if (state.canSendDisplayDidRefresh(*this) && completedCommit.delayState == CommitDelayState::Delayed) {
-            LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree - sending missed didRefreshDisplay");
+        if (state.canSendDisplayDidRefresh(*this)) {
+            // Eagerly send DisplayDidRefresh immediately after processing the commit rather
+            // than waiting for the next vsync tick (~4ms at 120Hz, ~8ms at 60Hz). This
+            // eliminates the idle mach_msg wait in the WebContent main thread.
+            LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree - eagerly sending displayDidRefresh after commit");
             didRefreshDisplay(&connection);
-        } else if (!state.pendingCommits.size()) {
-            LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree all pending commits received, waiting for display did refresh");
         }
         if (completedCommit.delayState != CommitDelayState::Delayed && state.delayedCommits)
             state.delayedCommits--;
@@ -772,7 +773,7 @@ bool ProcessState::canSendDisplayDidRefresh(RemoteLayerTreeDrawingAreaProxy& dra
     if (pendingCommits.size() >= 2)
         return false;
     if (pendingCommits.size() == 1)
-        return drawingArea.allowMultipleCommitLayerTreePending() && pendingCommits[0].pendingMessage == PendingCommitMessage::CommitLayerTree && delayedCommits >= 4;
+        return drawingArea.allowMultipleCommitLayerTreePending() && pendingCommits[0].pendingMessage == PendingCommitMessage::CommitLayerTree && delayedCommits >= 1;
     return true;
 }
 

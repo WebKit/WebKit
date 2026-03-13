@@ -459,10 +459,12 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh(MonotonicTime start)
     }
 
     if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap || (m_isScheduled && !m_scheduleRenderingTimer.isActive())) {
-        m_updateStartTime = start;
-        triggerRenderingUpdate();
+        // Clear deferred flags before calling updateRendering() directly, avoiding an extra
+        // runloop wakeup that startRenderingUpdateTimer() would otherwise incur via a 0ms timer.
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
         m_isScheduled = false;
+        m_updateStartTime = start;
+        updateRendering();
     } else if (wasWaitingForBackingStoreSwap && m_updateRenderingTimer.isActive())
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
     else
