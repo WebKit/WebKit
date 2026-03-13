@@ -1,0 +1,9 @@
+This test ensures we don't crash when a popover controller is removed from the DOM and the popover is immediately removed afterwards.
+
+PASS: Popover is open.
+PASS: No crash after removing a popover controller and then the popover.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1972,9 +1972,14 @@ void AXObjectCache::onPopoverToggle(const HTMLElement& popover)
     RefPtr axPopover = get(const_cast<HTMLElement*>(&popover));
     if (!axPopover)
         return;
-    // There may be multiple elements with popovertarget attributes that point at |popover|.
-    for (const auto& invoker : axPopover->controllers())
-        postNotification(dynamicDowncast<AccessibilityObject>(invoker.get()), protectedDocument().get(), AXNotification::ExpandedChanged);
+
+    // Updating the accessibility tree and sending notifications in response to a toggled
+    // popover requires accessing the popover's controllers(), which could resolve relations
+    // at a time that's not safe (i.e. if this function is called downstream of an element
+    // removal). Defer this handling to a time we know it's safe.
+    m_deferredToggledPopovers.append(axPopover.releaseNonNull());
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::deferMenuListValueChange(Element* element)
@@ -5001,6 +5006,10 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
         handleDeferredNotification(notificationData);
     m_deferredNotifications.clear();
 
+    for (auto& toggledPopover : m_deferredToggledPopovers)
+        handleDeferredPopoverToggle(toggledPopover);
+    m_deferredToggledPopovers.clear();
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (m_deferredRegenerateIsolatedTree) {
         if (auto tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
@@ -5034,6 +5043,13 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 #endif
 
     platformPerformDeferredCacheUpdate();
+}
+
+void AXObjectCache::handleDeferredPopoverToggle(AccessibilityObject& axPopover)
+{
+    // There may be multiple elements with popovertarget or commandfor attributes that point at this popover.
+    for (const auto& invoker : axPopover.controllers())
+        postNotification(&downcast<AccessibilityObject>(invoker.get()), document(), AXNotification::ExpandedChanged);
 }
 
 void AXObjectCache::handleDeferredNotification(const DeferredNotificationData& data)

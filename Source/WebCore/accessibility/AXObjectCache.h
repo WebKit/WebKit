@@ -840,6 +840,7 @@ private:
     void handleRowspanChanged(AccessibilityNodeObject&);
 #endif
     void handleDeferredNotification(const DeferredNotificationData&);
+    void handleDeferredPopoverToggle(AccessibilityObject&);
 
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;
@@ -987,6 +988,7 @@ private:
     Vector<WeakPtr<Document, WeakPtrImplWithEventTargetData>> m_deferredDocumentsWithNewRenderTrees;
 #endif
     Vector<DeferredNotificationData> m_deferredNotifications;
+    Vector<Ref<AccessibilityObject>> m_deferredToggledPopovers;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Timer m_buildIsolatedTreeTimer;
