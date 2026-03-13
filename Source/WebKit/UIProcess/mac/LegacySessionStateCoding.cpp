@@ -46,6 +46,7 @@ static const CFStringRef sessionHistoryKey = CFSTR("SessionHistory");
 static const CFStringRef provisionalURLKey = CFSTR("ProvisionalURL");
 static const CFStringRef renderTreeSizeKey = CFSTR("RenderTreeSize");
 static const CFStringRef isAppInitiatedKey = CFSTR("IsAppInitiated");
+static const CFStringRef pageZoomFactorKey = CFSTR("PageZoomFactor");
 
 // Session history keys.
 static const uint32_t sessionHistoryVersion = 1;
@@ -475,6 +476,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     auto sessionHistoryDictionary = encodeSessionHistory(sessionState.backForwardListState);
     auto provisionalURLString = sessionState.provisionalURL.isNull() ? nullptr : sessionState.provisionalURL.string().createCFString();
     RetainPtr<CFNumberRef> renderTreeSizeNumber(adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &sessionState.renderTreeSize)));
+    RetainPtr<CFNumberRef> pageZoomFactorNumber(adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &sessionState.pageZoomFactor)));
     RetainPtr<CFBooleanRef> isAppInitiated = sessionState.isAppInitiated ? kCFBooleanTrue : kCFBooleanFalse;
 
     RetainPtr<CFDictionaryRef> stateDictionary;
@@ -483,12 +485,14 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
             { sessionHistoryKey, sessionHistoryDictionary.get() },
             { provisionalURLKey, provisionalURLString.get() },
             { renderTreeSizeKey, renderTreeSizeNumber.get() },
+            { pageZoomFactorKey, pageZoomFactorNumber.get() },
             { isAppInitiatedKey, isAppInitiated.get() }
         });
     } else {
         stateDictionary = createDictionary({
             { sessionHistoryKey, sessionHistoryDictionary.get() },
             { renderTreeSizeKey, renderTreeSizeNumber.get() },
+            { pageZoomFactorKey, pageZoomFactorNumber.get() },
             { isAppInitiatedKey, isAppInitiated.get() }
         });
     }
@@ -1173,6 +1177,13 @@ bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState& sessi
         sessionState.isAppInitiated = isAppInitiated.get() == kCFBooleanTrue;
     else
         sessionState.isAppInitiated = true;
+
+    if (RetainPtr pageZoomFactorNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionStateDictionary.get(), pageZoomFactorKey))) {
+        double zoomFactor = 1.0;
+        CFNumberGetValue(pageZoomFactorNumber.get(), kCFNumberDoubleType, &zoomFactor);
+        sessionState.pageZoomFactor = zoomFactor;
+    } else
+        sessionState.pageZoomFactor = 1.0;
 
     return true;
 }

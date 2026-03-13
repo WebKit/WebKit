@@ -167,6 +167,7 @@ struct BackForwardListState {
 struct SessionState {
     BackForwardListState backForwardListState;
     uint64_t renderTreeSize;
+    double pageZoomFactor { 1.0 };
     URL provisionalURL;
     bool isAppInitiated { true };
 

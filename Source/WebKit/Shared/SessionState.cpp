@@ -192,6 +192,9 @@ bool SessionState::isEqualForTesting(const SessionState& other) const
     if (provisionalURL != other.provisionalURL)
         return false;
 
+    if (pageZoomFactor != other.pageZoomFactor)
+        return false;
+
     if (isAppInitiated != other.isAppInitiated)
         return false;
 

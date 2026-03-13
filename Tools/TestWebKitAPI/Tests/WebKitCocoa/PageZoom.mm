@@ -26,8 +26,10 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -91,5 +93,38 @@ TEST(WKWebView, MinimumMagnificationPDF)
 }
 
 #endif
+
+#if PLATFORM(MAC)
+
+TEST(WKWebView, PageZoomPreservedAcrossSessionRestore)
+{
+    // Load a page and set a non-default zoom factor.
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body>TEST</body>" baseURL:[NSURL URLWithString:@"https://example.com/"]];
+    [webView setPageZoom:1.5];
+    EXPECT_EQ(1.5, [webView pageZoom]);
+
+    // Save session state.
+    RetainPtr sessionData = [webView _sessionStateData];
+    EXPECT_NOT_NULL(sessionData.get());
+
+    // Create a new web view and restore from session state.
+    RetainPtr restoredWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [restoredWebView _restoreFromSessionStateData:sessionData.get()];
+    [restoredWebView _test_waitForDidFinishNavigation];
+
+    // Verify the zoom factor was restored.
+    EXPECT_EQ(1.5, [restoredWebView pageZoom]);
+}
+
+TEST(WKWebView, PageZoomDefaultAfterOldSessionRestore)
+{
+    // Verify that restoring from a session that has no zoom data defaults to 1.0.
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body>TEST</body>" baseURL:nil];
+    EXPECT_EQ(1.0, [webView pageZoom]);
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI
