@@ -79,7 +79,7 @@ TEST(WebKit, DidRemoveFrameFromHiearchyInBackForwardCache)
     PlatformWebView webView(context.get());
 
     if (!isUsingBackForwardCache(static_cast<WKWebView*>(webView.platformView()))) {
-        WTFLogAlways("WebKit.DidRemoveFrameFromHiearchyInBackForwardCache: Test is skipped as backfoward cache is disabled");
+        WTFLogAlways("WebKit.DidRemoveFrameFromHiearchyInBackForwardCache: Test is skipped as backforward cache is disabled");
         return;
     }
 

@@ -1141,7 +1141,7 @@ TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"ProcessSwap.SuspendedPagesInActivityMonitor: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.SuspendedPagesInActivityMonitor: Test is skipped as backforward cache is disabled");
         return;
     }
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -3498,7 +3498,7 @@ TEST(ProcessSwap, PageCache1)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"ProcessSwap.PageCache1: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.PageCache1: Test is skipped as backforward cache is disabled");
         return;
     }
 
@@ -3732,7 +3732,7 @@ TEST(ProcessSwap, PageCacheAfterProcessSwapByClient)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"ProcessSwap.PageCacheAfterProcessSwapByClient: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.PageCacheAfterProcessSwapByClient: Test is skipped as backforward cache is disabled");
         return;
     }
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -3812,7 +3812,7 @@ TEST(ProcessSwap, PageCacheWhenNavigatingFromJS)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"ProcessSwap.PageCacheWhenNavigatingFromJS: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.PageCacheWhenNavigatingFromJS: Test is skipped as backforward cache is disabled");
         return;
     }
 
@@ -6820,7 +6820,7 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
 
     auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     if (!isUsingBackForwardCache(webView1.get())) {
-        NSLog(@"ProcessSwap.GoBackToSuspendedPageWithMainFrameIDThatIsNotOne: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.GoBackToSuspendedPageWithMainFrameIDThatIsNotOne: Test is skipped as backforward cache is disabled");
         return;
     }
 
