@@ -71,6 +71,8 @@ public:
     void ref() const final;
     void deref() const final;
 
+    unsigned pendingAddRequestsForTesting() const { return m_pendingAddRequests.size(); }
+
 private:
     static Seconds cachedProcessLifetime;
     static Seconds clearingDelayAfterApplicationResignsActive;

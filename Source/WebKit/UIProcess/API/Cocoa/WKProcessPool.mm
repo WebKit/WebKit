@@ -518,6 +518,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _processPool->webProcessCache().size();
 }
 
+- (NSUInteger)_processCachePendingAddRequestsForTesting
+{
+    return _processPool->webProcessCache().pendingAddRequestsForTesting();
+}
+
 - (size_t)_serviceWorkerProcessCount
 {
     return protect(*_processPool)->serviceWorkerProxiesCount();

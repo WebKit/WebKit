@@ -8308,4 +8308,58 @@ TEST(SiteIsolation, CrossSiteIFrameCanReceiveDeviceMotionEvents)
 
 #endif // ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
+TEST(SiteIsolation, ServiceWorkerWebProcessCacheEligibility)
+{
+    static constexpr auto mainScript =
+    "<script>"
+    "function registerServiceWorker()"
+    "{"
+    "   try {"
+    "       navigator.serviceWorker.register('/sw.js').then(function(reg) {"
+    "           if (reg.active) {"
+    "               alert('worker unexpectedly already active');"
+    "               return;"
+    "           }"
+    "           worker = reg.installing;"
+    "           worker.addEventListener('statechange', function() {"
+    "               if (worker.state == 'activated')"
+    "                   alert('successfully registered');"
+    "               });"
+    "           }).catch(function(error) {"
+    "               alert('Registration failed with: ' + error);"
+    "           });"
+    "   } catch(e) {"
+    "       alert('Exception: ' + e);"
+    "   }"
+    "}"
+    "alert('loaded');"
+    "</script>"_s;
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainScript } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, emptyString() } }
+    });
+
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    [processPool _setUseSeparateServiceWorkerProcess: true];
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setProcessPool:processPool.get()];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration.get());
+    [webView loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded");
+
+    // Register a service worker, it should go in webView process.
+    [webView stringByEvaluatingJavaScript:@"registerServiceWorker()"];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
+
+    EXPECT_EQ(0u, processPool.get()._processCacheSize);
+    [processPool _terminateServiceWorkers];
+    EXPECT_EQ(0u, processPool.get()._processCachePendingAddRequestsForTesting);
+}
+
 }

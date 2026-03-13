@@ -1618,7 +1618,7 @@ void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, UserGest
 
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
-    if (isRunningServiceWorkers()) {
+    if (isRunningServiceWorkers() && !protect(processPool())->hasUsedSiteIsolation()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is running workers");
         return false;
     }
