@@ -102,7 +102,8 @@ void ExpressionInfo::Encoder::remap(Vector<unsigned>&& adjustmentLabelPoints, Re
                 cummulativeDelta = 0;
             instPCDelta = remapFunc(instPC) - instPC - cummulativeDelta;
             if (instPCDelta || isAbsInstPC) {
-                adjustInstPC(decoder.currentInfo(), instPCDelta);
+                unsigned infoIndex = static_cast<unsigned>(decoder.currentInfo() - m_expressionInfoEncodedInfo.begin());
+                adjustInstPC(infoIndex, instPCDelta);
 
                 // adjustInstPC() may have resized and reallocated m_expressionInfoEncodedInfo.
                 // So, we need to re-compute endInfo. info will be re-computed at the top of the loop.

@@ -385,11 +385,9 @@ auto ExpressionInfo::Encoder::encodeBasic(const Diff& diff) -> EncodedInfo
     return { word };
 }
 
-void ExpressionInfo::Encoder::adjustInstPC(EncodedInfo* info, unsigned instPCDelta)
+void ExpressionInfo::Encoder::adjustInstPC(unsigned infoIndex, unsigned instPCDelta)
 {
-    unsigned infoIndex = info - &m_expressionInfoEncodedInfo[0];
-    auto* firstInfo = info;
-    unsigned firstValue = firstInfo->value;
+    unsigned firstValue = m_expressionInfoEncodedInfo[infoIndex].value;
 
     unsigned headerBits = firstValue >> headerShift;
     bool isMulti = (firstValue >> multiBitShift) & 1;
@@ -403,7 +401,7 @@ void ExpressionInfo::Encoder::adjustInstPC(EncodedInfo* info, unsigned instPCDel
         unsigned instPC = cast<unsigned, specialValueBits>(firstValue);
         unsigned updatedInstPC = instPC + instPCDelta;
         if (fits<unsigned, specialValueBits>(updatedInstPC)) {
-            *firstInfo = encodeAbsInstPC(updatedInstPC);
+            m_expressionInfoEncodedInfo[infoIndex] = encodeAbsInstPC(updatedInstPC);
             return;
         }
         goto emitExtension;
@@ -417,7 +415,7 @@ void ExpressionInfo::Encoder::adjustInstPC(EncodedInfo* info, unsigned instPCDel
             unsigned candidateInstPC = cast<unsigned, singleValueBits>(firstValue);
             unsigned updatedInstPC = candidateInstPC + instPCDelta;
             if (fieldID == FieldID::InstPC && fits<unsigned, singleValueBits>(updatedInstPC)) {
-                *firstInfo = encodeSingle(FieldID::InstPC, updatedInstPC);
+                m_expressionInfoEncodedInfo[infoIndex] = encodeSingle(FieldID::InstPC, updatedInstPC);
                 return;
             }
             goto emitExtension;
@@ -433,7 +431,7 @@ void ExpressionInfo::Encoder::adjustInstPC(EncodedInfo* info, unsigned instPCDel
             if (fieldID == FieldID::InstPC && fits<unsigned, duoValueBits>(updatedInstPC)) {
                 FieldID fieldID2 = static_cast<FieldID>((firstValue >> duoSecondFieldIDShift) & fieldIDMask);
                 unsigned value2 = cast<unsigned, duoValueBits>(firstValue >> duoSecondValueShift);
-                *firstInfo = encodeDuo(FieldID::InstPC, updatedInstPC, fieldID2, value2);
+                m_expressionInfoEncodedInfo[infoIndex] = encodeDuo(FieldID::InstPC, updatedInstPC, fieldID2, value2);
                 return;
             }
             goto emitExtension;
@@ -455,12 +453,13 @@ void ExpressionInfo::Encoder::adjustInstPC(EncodedInfo* info, unsigned instPCDel
 
         m_expressionInfoEncodedInfo.append({ firstValue }); // MultiWide header.
         for (unsigned i = 1; i < numberOfFields; ++i) {
-            m_expressionInfoEncodedInfo.append(firstInfo[i]);
-            firstInfo[i] = encodeSingle(FieldID::InstPC, 0); // Replace with a no-op.
+            auto fieldValue = m_expressionInfoEncodedInfo[infoIndex + i];
+            m_expressionInfoEncodedInfo.append(fieldValue);
+            m_expressionInfoEncodedInfo[infoIndex + i] = encodeSingle(FieldID::InstPC, 0); // Replace with a no-op.
         }
         // Save the last field in firstValue, and let the extension emitter below append it.
-        firstValue = firstInfo[numberOfFields].value;
-        firstInfo[numberOfFields] = encodeSingle(FieldID::InstPC, 0); // Replace with a no-op.
+        firstValue = m_expressionInfoEncodedInfo[infoIndex + numberOfFields].value;
+        m_expressionInfoEncodedInfo[infoIndex + numberOfFields] = encodeSingle(FieldID::InstPC, 0); // Replace with a no-op.
         goto emitExtension;
     }
 
@@ -471,7 +470,7 @@ void ExpressionInfo::Encoder::adjustInstPC(EncodedInfo* info, unsigned instPCDel
         if (updatedInstPC < maxInstPCValue) {
             unsigned replacement = firstValue & ((1u << instPCShift) - 1);
             replacement |= updatedInstPC << instPCShift;
-            *firstInfo = { replacement };
+            m_expressionInfoEncodedInfo[infoIndex] = { replacement };
             return;
         }
     }
