@@ -475,6 +475,7 @@ class Manager(object):
                         start_time=start_time_for_device,
                         end_time=time.time(),
                         tests_skipped=temp_initial_results.remaining + temp_initial_results.expected_skips,
+                        details={'finished': True},
                     ),
                     results=self._results_to_upload_json_trie(self._expectations[device_type], temp_initial_results),
                 )

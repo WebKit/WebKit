@@ -286,6 +286,7 @@ class Tester(object):
                     start_time=start_time,
                     end_time=end_time,
                     tests_skipped=len(test_runner.tests_run) - len(parallel_tests) - len(serial_tests),
+                    details={'finished': True},
                 ),
                 results=results,
             )

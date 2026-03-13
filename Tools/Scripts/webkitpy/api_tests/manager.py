@@ -349,6 +349,7 @@ class Manager(object):
                     start_time=start_time,
                     end_time=end_time,
                     tests_skipped=len(result_dictionary['Skipped']),
+                    details={'finished': True},
                 ), results={
                     test: Upload.create_test_result(
                         actual=status_to_test_result[result[0]],

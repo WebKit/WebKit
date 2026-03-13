@@ -1206,6 +1206,7 @@ sub uploadResults
             'builder-name' => $builderName,
             'build-number' => $buildNumber,
             'buildbot-worker' => $buildbotWorker,
+            'finished' => JSON::true,
         };
     } else {
         print "    No buildbot details provided, test run will not be linked to CI system\n";
