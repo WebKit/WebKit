@@ -24,13 +24,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import atexit
-import difflib
-import lldb
 import os
-import sys
 import unittest
 
-from lldb_dump_class_layout import LLDBDebuggerInstance, ClassLayoutBase
+from lldb_dump_class_layout import LLDBDebuggerInstance
 from webkitpy.common.system.systemhost import SystemHost
 
 # Build for x86_64.
