@@ -181,6 +181,7 @@
 #include "LargestContentfulPaintData.h"
 #include "LayoutDisallowedScope.h"
 #include "LazyLoadImageObserver.h"
+#include "LazyLoadMediaObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "LoadableSpeculationRules.h"
 #include "LoaderStrategy.h"
@@ -11407,6 +11408,13 @@ LazyLoadImageObserver& Document::lazyLoadImageObserver()
     if (!m_lazyLoadImageObserver)
         m_lazyLoadImageObserver = makeUnique<LazyLoadImageObserver>();
     return *m_lazyLoadImageObserver;
+}
+
+LazyLoadMediaObserver& Document::lazyLoadMediaObserver()
+{
+    if (!m_lazyLoadMediaObserver)
+        m_lazyLoadMediaObserver = makeUnique<LazyLoadMediaObserver>();
+    return *m_lazyLoadMediaObserver;
 }
 
 #if ENABLE(MODEL_ELEMENT)

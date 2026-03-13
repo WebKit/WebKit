@@ -29,6 +29,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "MouseEvent.h"
+#include "RenderStyle+GettersInlines.h"
 #include "ResolvedStyle.h"
 #include "StyleAppearance.h"
 #include <wtf/TZoneMallocInlines.h>

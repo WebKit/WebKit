@@ -62,6 +62,7 @@ typedef (
     const unsigned short NETWORK_NO_SOURCE = 3;
     readonly attribute unsigned short networkState;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString preload;
+    [CEReactions=NotNeeded, EnabledBySetting=LazyMediaLoadingEnabled] attribute [AtomString] DOMString loading;
 
     readonly attribute TimeRanges buffered;
     undefined load();
