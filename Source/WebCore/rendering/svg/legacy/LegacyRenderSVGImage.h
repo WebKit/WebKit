@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
- * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2009 Google, Inc.
+ * Copyright (C) 2009-2015 Google, Inc.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -79,6 +79,8 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) override;
 
     void invalidateBufferedForeground();
+
+    FloatSize computeImageViewportSize() const;
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 

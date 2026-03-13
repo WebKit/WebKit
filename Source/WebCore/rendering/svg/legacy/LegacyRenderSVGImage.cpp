@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007, 2008, 2009 Rob Buis <buis@kde.org>
- * Copyright (C) 2009 Google, Inc.
+ * Copyright (C) 2009-2015 Google, Inc.
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
@@ -116,35 +116,55 @@ FloatRect LegacyRenderSVGImage::calculateObjectBoundingBox() const
     return { imageElement->x().value(lengthContext), imageElement->y().value(lengthContext), concreteWidth, concreteHeight };
 }
 
+static bool containerSizeIsSetForRenderer(CachedImage& cachedImage, const RenderObject* renderer)
+{
+    RefPtr<Image> image = cachedImage.image();
+    // If a container size has been specified for this renderer, then
+    // imageForRenderer() will return the SVGImageForContainer while image()
+    // will return the underlying SVGImage.
+    return !image->isSVGImage() || image != cachedImage.imageForRenderer(renderer);
+}
+
+FloatSize LegacyRenderSVGImage::computeImageViewportSize() const
+{
+    Ref imageElement = this->imageElement();
+    if (imageElement->preserveAspectRatio().align() != SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE)
+        return m_objectBoundingBox.size();
+
+    // Images with preserveAspectRatio=none should force non-uniform scaling. This can be achieved by setting
+    // the image's container size to its viewport size (i.e. if a viewBox is available - use that - else use intrinsic size.)
+    // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
+    Length intrinsicWidth;
+    Length intrinsicHeight;
+    FloatSize intrinsicRatio;
+
+    auto* cachedImage = imageResource().cachedImage();
+    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    return intrinsicRatio;
+}
+
 bool LegacyRenderSVGImage::updateImageViewport()
 {
     FloatRect oldBoundaries = m_objectBoundingBox;
     m_objectBoundingBox = calculateObjectBoundingBox();
 
-    bool updatedViewport = false;
-    URL imageSourceURL = document().completeURL(imageElement().imageSourceURL());
+    bool boundsChanged = oldBoundaries != m_objectBoundingBox;
+    Ref imageElement = this->imageElement();
+    URL imageSourceURL = document().completeURL(imageElement->imageSourceURL());
 
-    // Images with preserveAspectRatio=none should force non-uniform scaling. This can be achieved
-    // by setting the image's container size to its intrinsic size.
-    // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
-    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
-        if (CachedImage* cachedImage = imageResource().cachedImage()) {
-            LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
-            if (intrinsicSize != imageResource().imageSize(style().usedZoom())) {
-                imageResource().setContainerContext(roundedIntSize(intrinsicSize), imageSourceURL);
-                updatedViewport = true;
-            }
+    bool updatedViewport = false;
+    auto* cachedImage = imageResource().cachedImage();
+    if (cachedImage && cachedImage->usesImageContainerSize()) {
+        FloatSize imageViewportSize = computeImageViewportSize();
+        if (LayoutSize(imageViewportSize) != imageResource().imageSize(style().usedZoom())
+            || !containerSizeIsSetForRenderer(*cachedImage, this)) {
+            imageResource().setContainerContext(roundedIntSize(imageViewportSize), imageSourceURL);
+            updatedViewport = true;
         }
     }
 
-    if (oldBoundaries != m_objectBoundingBox) {
-        if (!updatedViewport)
-            imageResource().setContainerContext(enclosingIntRect(m_objectBoundingBox).size(), imageSourceURL);
-        updatedViewport = true;
-        m_needsBoundariesUpdate = true;
-    }
-
-    return updatedViewport;
+    m_needsBoundariesUpdate |= boundsChanged;
+    return updatedViewport || boundsChanged;
 }
 
 void LegacyRenderSVGImage::layout()

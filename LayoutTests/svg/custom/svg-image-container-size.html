@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<script>
+function runAfterLayoutAndPaint(callback, autoNotifyDone) {
+    if (!window.testRunner) {
+        // For manual test. Delay 500ms to allow us to see the visual change
+        // caused by the callback.
+        setTimeout(callback, 500);
+        return;
+    }
+
+    if (autoNotifyDone)
+        testRunner.waitUntilDone();
+
+    // We do requestAnimationFrame and setTimeout to ensure a frame has started
+    // and layout and paint have run. The requestAnimationFrame fires after the
+    // frame has started but before layout and paint. The setTimeout fires
+    // at the beginning of the next frame, meaning that the previous frame has
+    // completed layout and paint.
+    // See http://crrev.com/c/1395193/10/third_party/blink/web_tests/http/tests/resources/run-after-layout-and-paint.js
+    // for more discussions.
+    requestAnimationFrame(function() {
+        setTimeout(function() {
+            callback();
+            if (autoNotifyDone)
+                testRunner.notifyDone();
+        }, 1);
+    });
+}
+</script>
+<script>
+if (window.testRunner)
+  testRunner.waitUntilDone();
+
+function insertSVGImage() {
+    var image = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    image.setAttribute('width', 192);
+    image.setAttribute('height', 64);
+    image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'resources/rgb.svg');
+    image.onload = function() {
+      runAfterLayoutAndPaint(function() {
+        if (window.testRunner)
+          testRunner.notifyDone();
+      });
+    };
+    document.querySelector('g').appendChild(image);
+}
+
+function startTest() {
+  runAfterLayoutAndPaint(insertSVGImage);
+}
+</script>
+<svg width="384" height="128" style="display: block">
+  <g transform="scale(2)"></g>
+</svg>
+<div>
+  <img src="resources/rgb.svg" onload="startTest()" style="width: 384px; height: 128px;">
+</div>

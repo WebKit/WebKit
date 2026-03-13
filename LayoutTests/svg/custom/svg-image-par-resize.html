@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script src="../../fast/repaint/resources/async-text-based-repaint.js"></script>
+<body onload="runRepaintTest()">
+<svg width="300" height="200">
+  <image width="200" height="200" preserveAspectRatio="none"
+         xlink:href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='100%' height='100%' fill='green'/></svg>"></image>
+</svg>
+<script>
+function runRepaintTest() {
+  document.querySelector('image').setAttribute('width', 100);
+  requestAnimationFrame(function() {
+    finishRepaintTest();
+  });
+}
+</script>
+</body>
