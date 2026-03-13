@@ -1388,6 +1388,10 @@ html:focus-visible, body:focus-visible, input[readonly]:focus, embed:focus-visib
     outline: none;
 }
 
+input[readonly] {
+    cursor: text;
+}
+
 #if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
 input:focus-visible, textarea:focus-visible, select:focus-visible {
     outline-offset: -2px;
