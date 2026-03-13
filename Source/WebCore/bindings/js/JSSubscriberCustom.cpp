@@ -33,10 +33,7 @@ namespace WebCore {
 template<typename Visitor>
 void JSSubscriber::visitAdditionalChildren(Visitor& visitor)
 {
-    for (auto* teardown : wrapped().teardownCallbacksConcurrently())
-        teardown->visitJSFunction(visitor);
-
-    wrapped().observerConcurrently()->visitAdditionalChildren(visitor);
+    wrapped().visitAdditionalChildren(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSSubscriber);
