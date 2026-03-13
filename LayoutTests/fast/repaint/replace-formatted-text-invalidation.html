@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!--
+ Tests that replacing innerHTML in a contenteditable div containing bold/underline
+ formatted text produces a repaint rect covering the area previously occupied by
+ the formatted text. Regression test for rdar://158963215, where RenderText::
+ localRectsForRepaint() returned an empty rect when the text had no line boxes
+ (during content replacement), leaving stale composited tile content visible.
+-->
+<style>
+body {
+    font-family: Ahem;
+    font-size: 20px;
+}
+</style>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest()
+{
+    document.getElementById("editor").innerHTML = "";
+}
+onload = runRepaintTest;
+</script>
+<div id="editor" contenteditable="true"><b><u>Hello formatted world</u></b></div>

@@ -1952,7 +1952,16 @@ auto RenderText::localRectsForRepaint(RepaintOutlineBounds) const -> RepaintRect
     LayoutRect overflowRect = linesBoundingBox();
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    overflowRect.move(view().frameView().layoutContext().layoutDelta());
+    if (!overflowRect.isEmpty())
+        overflowRect.move(view().frameView().layoutContext().layoutDelta());
+    else if (auto* block = containingBlock()) {
+        // When the text has no line boxes (e.g., content is being replaced and the new
+        // text hasn't been laid out yet), fall back to the containing block's visual
+        // overflow rect. Without this, the repaint rect is empty and stale composited
+        // content from the previous text may remain visible (rdar://158963215).
+        overflowRect = block->visualOverflowRect();
+        overflowRect.move(view().frameView().layoutContext().layoutDelta());
+    }
 
     return RepaintRects { overflowRect };
 }
