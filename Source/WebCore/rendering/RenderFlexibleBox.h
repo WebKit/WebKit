@@ -279,6 +279,8 @@ private:
 
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
 
+    bool canSkipFlexItemLayoutForWidthChange(const RenderBox& flexItem) const;
+
     void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
     const RenderBox* flexItemForFirstBaseline() const;
     const RenderBox* flexItemForLastBaseline() const;

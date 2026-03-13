@@ -2379,6 +2379,47 @@ bool RenderFlexibleBox::flexItemHasPercentHeightDescendants(const RenderBox& ren
     return false;
 }
 
+bool RenderFlexibleBox::canSkipFlexItemLayoutForWidthChange(const RenderBox& flexItem) const
+{
+    if (!mainAxisIsFlexItemInlineAxis(flexItem))
+        return false;
+
+    if (flexItem.selfNeedsLayout())
+        return false;
+
+    if (!flexItem.everHadLayout())
+        return false;
+
+    for (auto* child = flexItem.firstChild(); child; child = child->nextSibling()) {
+        if (child->needsLayout())
+            return false;
+    }
+
+    if (flexItemHasPercentHeightDescendants(flexItem))
+        return false;
+
+    if (flexItem.hasRelativeLogicalHeight())
+        return false;
+
+    auto& childStyle = flexItem.style();
+
+    if (childStyle.aspectRatio().hasRatio())
+        return false;
+
+    if (flexItem.isHorizontalWritingMode() != isHorizontalWritingMode())
+        return false;
+
+    if (is<RenderFlexibleBox>(flexItem)) {
+        if (childStyle.flexWrap() != FlexWrap::NoWrap)
+            return false;
+    }
+
+    if (flexItem.isRenderReplaced() || is<RenderTable>(flexItem))
+        return false;
+
+    return true;
+}
+
 static LayoutUnit contentAlignmentStartOverflow(LayoutUnit availableFreeSpace, ContentPosition position, ContentDistribution distribution, OverflowAlignment safety, bool isReverse)
 {
     if (availableFreeSpace >= 0 || safety == OverflowAlignment::Safe)
@@ -2483,11 +2524,26 @@ void RenderFlexibleBox::layoutAndPlaceFlexItems(LayoutUnit& crossAxisOffset, Fle
         updateFlexItemDirtyBitsBeforeLayout(forceFlexItemRelayout, flexItem);
         if (!flexItem.needsLayout())
             flexItem.markForPaginationRelayoutIfNeeded();
-        if (flexItem.needsLayout())
-            m_relaidOutFlexItems.add(flexItem);
-        {
-            auto flexLayoutScope = SetForScope(m_afterMainAxisItemSizing, true);
-            flexItem.layoutIfNeeded();
+
+        bool skippedLayout = false;
+        if (flexItem.needsLayout() && !forceFlexItemRelayout
+            && canSkipFlexItemLayoutForWidthChange(flexItem)) {
+            auto newBorderBoxMain = flexLayoutItem.flexedContentSize + flexLayoutItem.mainAxisBorderAndPadding;
+            if (isHorizontalFlow())
+                flexItem.setWidth(newBorderBoxMain);
+            else
+                flexItem.setHeight(newBorderBoxMain);
+            flexItem.clearNeedsLayout();
+            skippedLayout = true;
+        }
+
+        if (!skippedLayout) {
+            if (flexItem.needsLayout())
+                m_relaidOutFlexItems.add(flexItem);
+            {
+                auto flexLayoutScope = SetForScope(m_afterMainAxisItemSizing, true);
+                flexItem.layoutIfNeeded();
+            }
         }
         if (!flexLayoutItem.everHadLayout && flexItem.checkForRepaintDuringLayout()) {
             flexItem.repaint();
