@@ -7770,7 +7770,8 @@
                 "computed-style-storage-container": "struct",
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "PointerEvents",
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "fast-path-inherited": true
             },
             "specification": {
                 "category": "svg",

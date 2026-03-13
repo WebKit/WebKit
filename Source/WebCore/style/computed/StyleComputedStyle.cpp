@@ -94,6 +94,7 @@ void ComputedStyle::fastPathInheritFrom(const ComputedStyle& inheritParent)
     // FIXME: Use this mechanism for other properties too, like variables.
     m_inheritedFlags.visibility = inheritParent.m_inheritedFlags.visibility;
     m_inheritedFlags.hasExplicitlySetColor = inheritParent.m_inheritedFlags.hasExplicitlySetColor;
+    m_inheritedFlags.pointerEvents = inheritParent.m_inheritedFlags.pointerEvents;
 
     if (m_inheritedData.ptr() != inheritParent.m_inheritedData.ptr()) {
         if (m_inheritedData->nonFastPathInheritedEqual(*inheritParent.m_inheritedData)) {
@@ -159,6 +160,8 @@ bool ComputedStyle::fastPathInheritedEqual(const ComputedStyle& other) const
         return false;
     if (m_inheritedFlags.hasExplicitlySetColor != other.m_inheritedFlags.hasExplicitlySetColor)
         return false;
+    if (m_inheritedFlags.pointerEvents != other.m_inheritedFlags.pointerEvents)
+        return false;
     if (m_inheritedData.ptr() == other.m_inheritedData.ptr())
         return true;
     return m_inheritedData->fastPathInheritedEqual(*other.m_inheritedData);
@@ -169,6 +172,7 @@ bool ComputedStyle::nonFastPathInheritedEqual(const ComputedStyle& other) const
     auto withoutFastPathFlags = [](auto flags) {
         flags.visibility = { };
         flags.hasExplicitlySetColor = { };
+        flags.pointerEvents = { };
         return flags;
     };
     if (withoutFastPathFlags(m_inheritedFlags) != withoutFastPathFlags(other.m_inheritedFlags))
