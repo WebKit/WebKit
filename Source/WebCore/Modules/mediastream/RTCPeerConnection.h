@@ -250,6 +250,8 @@ private:
 
     ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> certificatesFromConfiguration(const RTCConfiguration&);
     void chainOperation(Ref<DeferredPromise>&&, Function<void(Ref<DeferredPromise>&&)>&&);
+    void runInParallelStepsToCreateAnOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
+    void runFinalStepsToCreateAnOffer(RTCSessionDescriptionInit&&, PeerConnection::SessionDescriptionPromise&&);
     friend class RTCRtpSender;
 
     ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet);
@@ -283,6 +285,8 @@ private:
     bool m_shouldDelayTasks { false };
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
     bool m_hasPendingOperation { false };
+    bool m_shouldRecreateAnOffer { false };
+    bool m_isCreatingOffer { false };
     std::optional<uint32_t> m_negotiationNeededEventId;
     Vector<Ref<RTCDtlsTransport>> m_dtlsTransports;
     Vector<Ref<RTCIceTransport>> m_iceTransports;

@@ -143,6 +143,9 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
     if (isClosed())
         return Exception { ExceptionCode::InvalidStateError };
 
+    if (m_isCreatingOffer)
+        m_shouldRecreateAnOffer = true;
+
     for (auto& transceiver : m_transceiverSet.list()) {
         if (transceiver->sender().trackId() == track->id())
             return Exception { ExceptionCode::InvalidAccessError };
@@ -239,6 +242,9 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
 
     if (auto exception = validateSendEncodings(init.sendEncodings, isAudioTransceiver(withTrack)))
         return WTF::move(*exception);
+
+    if (m_isCreatingOffer)
+        m_shouldRecreateAnOffer = true;
 
     if (std::holds_alternative<String>(withTrack)) {
         const String& kind = std::get<String>(withTrack);
@@ -340,18 +346,40 @@ void RTCPeerConnection::createOffer(RTCOfferOptions&& options, Ref<DeferredPromi
             promise->reject(ExceptionCode::InvalidStateError);
             return;
         }
-        protect(*m_backend)->createOffer(WTF::move(options), [this, protectedThis = Ref { *this }, promise = PeerConnection::SessionDescriptionPromise(WTF::move(promise))](auto&& result) mutable {
-            if (isClosed())
-                return;
-            if (result.hasException()) {
-                promise.reject(result.releaseException());
-                return;
-            }
-            // https://w3c.github.io/webrtc-pc/#dfn-final-steps-to-create-an-offer steps 4,5 and 6.
-            m_lastCreatedOffer = result.returnValue().sdp;
-            promise.resolve(result.releaseReturnValue());
-        });
+        m_isCreatingOffer = true;
+        m_shouldRecreateAnOffer = false;
+        runInParallelStepsToCreateAnOffer(WTF::move(options), PeerConnection::SessionDescriptionPromise(WTF::move(promise)));
     });
+}
+
+// https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection-createoffer step 5.
+void RTCPeerConnection::runInParallelStepsToCreateAnOffer(RTCOfferOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
+{
+    protect(*m_backend)->createOffer(WTF::move(options), [this, protectedThis = Ref { *this }, promise = WTF::move(promise)](auto&& result) mutable {
+        if (isClosed())
+            return;
+        if (result.hasException()) {
+            m_isCreatingOffer = false;
+            promise.reject(result.releaseException());
+            return;
+        }
+        runFinalStepsToCreateAnOffer(result.releaseReturnValue(), WTF::move(promise));
+    });
+}
+
+// https://w3c.github.io/webrtc-pc/#dfn-final-steps-to-create-an-offer
+void RTCPeerConnection::runFinalStepsToCreateAnOffer(RTCSessionDescriptionInit&& description, PeerConnection::SessionDescriptionPromise&& promise)
+{
+    // Step 2: If connection was modified, restart.
+    if (m_shouldRecreateAnOffer) {
+        m_shouldRecreateAnOffer = false;
+        runInParallelStepsToCreateAnOffer(RTCOfferOptions { }, WTF::move(promise));
+        return;
+    }
+    m_isCreatingOffer = false;
+    // Steps 4, 5 and 6.
+    m_lastCreatedOffer = description.sdp;
+    promise.resolve(WTF::move(description));
 }
 
 void RTCPeerConnection::createAnswer(RTCAnswerOptions&& options, Ref<DeferredPromise>&& promise)
