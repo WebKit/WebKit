@@ -230,6 +230,36 @@ public:
                 m_proc.code().setPrologueForEntrypoint(catchEntrypointIndex, catchPrologueGenerator.copyRef());
             }
 
+            const unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
+            VM* vm = &this->vm();
+
+            Ref<B3::Air::PrologueGenerator> mainPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>(
+                [=](CCallHelpers& jit, B3::Air::Code& code) {
+                    jit.emitFunctionPrologue();
+
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                    // Stack overflow check before frame allocation.
+                    // At this point SP == FP; no callee-saves have been saved.
+                    const unsigned ftlFrameSize = code.frameSize();
+                    const unsigned maxFrameSize = std::max(exitFrameSize, ftlFrameSize);
+
+                    GPRReg scratch = CCallHelpers::selectScratchGPR(GPRInfo::callFrameRegister);
+
+                    jit.jitAssertCodeBlockOnCallFrameWithType(scratch, JITType::FTLJIT);
+
+                    jit.addPtr(CCallHelpers::TrustedImm32(-maxFrameSize), GPRInfo::callFrameRegister, scratch);
+                    auto stackOverflow = jit.branchPtr(CCallHelpers::GreaterThan, CCallHelpers::AbsoluteAddress(vm->addressOfSoftStackLimit()), scratch);
+                    stackOverflow.linkThunk(CodeLocationLabel(vm->getCTIStub(CommonJITThunkID::ThrowStackOverflowAtPrologue).retaggedCode<NoPtrTag>()), &jit);
+
+                    if (ftlFrameSize)
+                        jit.subPtr(CCallHelpers::TrustedImm32(ftlFrameSize), CCallHelpers::stackPointerRegister);
+
+                    jit.emitSave(code.calleeSaveRegisterAtOffsetList());
+                });
+
+            m_proc.code().setPrologueForEntrypoint(0, WTF::move(mainPrologueGenerator));
+
             if (m_graph.m_maxLocalsForCatchOSREntry) {
                 uint32_t numberOfLiveLocals = std::max(*m_graph.m_maxLocalsForCatchOSREntry, 1u); // Make sure we always allocate a non-null catchOSREntryBuffer.
                 m_ftlState.jitCode->common.catchOSREntryBuffer = m_graph.m_vm.scratchBufferForSize(sizeof(JSValue) * numberOfLiveLocals);
@@ -291,43 +321,6 @@ public:
         m_proc.addFastConstant(m_notCellMask->key());
 
         // When running FTL code, we already store CodeBlock to CallFrameSlot::codeBlock.
-
-        // Stack Overflow Check.
-        unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
-        PatchpointValue* stackOverflowHandler = m_out.patchpoint(Void);
-        stackOverflowHandler->appendSomeRegister(m_callFrame);
-        stackOverflowHandler->appendSomeRegister(m_vmValue);
-        stackOverflowHandler->clobber(RegisterSetBuilder::macroClobberedGPRs());
-        stackOverflowHandler->numGPScratchRegisters = 1;
-        stackOverflowHandler->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
-                GPRReg fp = params[0].gpr();
-                GPRReg vmGPR = params[1].gpr();
-                GPRReg scratch = params.gpScratch(0);
-
-                unsigned ftlFrameSize = params.proc().frameSize();
-                unsigned maxFrameSize = std::max(exitFrameSize, ftlFrameSize);
-
-                jit.jitAssertCodeBlockOnCallFrameWithType(scratch, JITType::FTLJIT);
-
-                jit.addPtr(MacroAssembler::TrustedImm32(-maxFrameSize), fp, scratch);
-                MacroAssembler::JumpList stackOverflow;
-                stackOverflow.append(jit.branchPtr(MacroAssembler::GreaterThan, CCallHelpers::Address(vmGPR, VM::offsetOfSoftStackLimit()), scratch));
-
-                params.addLatePath([=] (CCallHelpers& jit) {
-                    AllowMacroScratchRegisterUsage allowScratch(jit);
-
-                    stackOverflow.link(&jit);
-
-                    // FIXME: We would not have to do this if the stack check was part of the Air
-                    // prologue. Then, we would know that there is no way for the callee-saves to
-                    // get clobbered.
-                    // https://bugs.webkit.org/show_bug.cgi?id=172456
-                    jit.emitRestore(params.proc().calleeSaveRegisterAtOffsetList());
-                    jit.jumpThunk(CodeLocationLabel(vm->getCTIStub(CommonJITThunkID::ThrowStackOverflowAtPrologue).retaggedCode<NoPtrTag>()));
-                });
-            });
 
         LBasicBlock firstDFGBasicBlock = lowBlock(m_graph.block(0));
 
