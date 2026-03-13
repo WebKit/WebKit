@@ -1128,7 +1128,7 @@ extension WebGPU.CommandEncoder {
                 mtlAttachment.depthPlane = texture.is3DTexture() ? Int(depthSliceOrArrayLayer) : 0
                 mtlAttachment.slice = 0
                 mtlAttachment.loadAction = loadAction(loadOp: attachment.loadOp)
-                mtlAttachment.storeAction = storeAction(storeOp: attachment.storeOp, hasResolveTarget: attachment.resolveTarget != nil)
+                mtlAttachment.storeAction = storeAction(storeOp: attachment.storeOp, hasResolveTarget: attachment.resolveTarget != nil || attachment.resolveTexture != nil)
 
                 zeroColorTargets = false
                 var textureToClear: MTLTexture? = nil
@@ -1270,12 +1270,17 @@ extension WebGPU.CommandEncoder {
             }
 
             if zeroColorTargets {
-                mtlDescriptor.defaultRasterSampleCount = metalDepthStencilTexture!.sampleCount
-                if mtlDescriptor.defaultRasterSampleCount == 0 {
+                if isDestroyed {
+                    return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "no color targets and depth-stencil texture is destroyed")
+                }
+                // FIMXE: (rdar://170907318) This should be changed to `guard let` when possible.
+                guard var metalDepthStencilTexture, metalDepthStencilTexture.sampleCount > 0 else {
                     return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "no color targets and depth-stencil texture is nil")
                 }
-                mtlDescriptor.renderTargetWidth = metalDepthStencilTexture!.width
-                mtlDescriptor.renderTargetHeight = metalDepthStencilTexture!.height
+
+                mtlDescriptor.defaultRasterSampleCount = metalDepthStencilTexture.sampleCount
+                mtlDescriptor.renderTargetWidth = metalDepthStencilTexture.width
+                mtlDescriptor.renderTargetHeight = metalDepthStencilTexture.height
             }
         }
 
