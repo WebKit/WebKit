@@ -557,8 +557,13 @@ void RenderTable::layout()
 
         LayoutUnit oldLogicalWidth = logicalWidth();
         LayoutUnit oldLogicalHeight = logicalHeight();
-        resetLogicalHeightBeforeLayoutIfNeeded();
+        if (style().hasAspectRatio()) {
+            auto logicalHeightLength = style().logicalHeight();
+            if (logicalHeightLength.isSpecified() && logicalHeightLength.isPossiblyPositive())
+                setLogicalHeight(convertStyleLogicalHeightToComputedHeight(logicalHeightLength));
+        }
         updateLogicalWidth();
+        resetLogicalHeightBeforeLayoutIfNeeded();
 
         if (logicalWidth() != oldLogicalWidth) {
             for (unsigned i = 0; i < m_captions.size(); i++)
