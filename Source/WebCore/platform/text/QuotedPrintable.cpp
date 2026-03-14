@@ -41,7 +41,7 @@ static const size_t maximumLineLength = 76;
 
 static constexpr auto crlfLineEnding = "\r\n"_s;
 
-static size_t lengthOfLineEndingAtIndex(std::span<const uint8_t> input, size_t index)
+static size_t NODELETE lengthOfLineEndingAtIndex(std::span<const uint8_t> input, size_t index)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < input.size());
     if (input[index] == '\n')

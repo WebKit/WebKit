@@ -298,6 +298,11 @@ void VideoPresentationInterfaceIOS::preparedToReturnToInline(bool visible, const
     }
 }
 
+bool VideoPresentationInterfaceIOS::shouldCreateWindow() const
+{
+    return ![[m_parentView window] _isHostedInAnotherProcess] && !m_window && !PAL::currentUserInterfaceIdiomIsVision();
+}
+
 void VideoPresentationInterfaceIOS::doSetup()
 {
     if (m_currentMode.hasVideo() && m_targetMode.hasVideo()) {
@@ -321,7 +326,7 @@ void VideoPresentationInterfaceIOS::doSetup()
     [CATransaction setDisableActions:YES];
 
 #if !PLATFORM(WATCHOS)
-    if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window && !PAL::currentUserInterfaceIdiomIsVision()) {
+    if (shouldCreateWindow()) {
         m_window = adoptNS([PAL::allocUIWindowInstance() initWithWindowScene:[[m_parentView window] windowScene]]);
         [m_window setBackgroundColor:clearUIColor()];
         if (!m_viewController)

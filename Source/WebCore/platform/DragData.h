@@ -127,7 +127,7 @@ public:
     bool containsPromise() const;
 #endif
 
-    bool shouldMatchStyleOnDrop() const;
+    bool NODELETE shouldMatchStyleOnDrop() const;
 
     std::optional<PageIdentifier> pageID() const { return m_pageID; }
 

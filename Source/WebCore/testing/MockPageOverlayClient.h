@@ -38,7 +38,7 @@ enum class LayerTreeAsTextOptions : uint16_t;
 class MockPageOverlayClient final : public PageOverlayClient {
     friend class NeverDestroyed<MockPageOverlayClient>;
 public:
-    static MockPageOverlayClient& singleton();
+    static MockPageOverlayClient& NODELETE singleton();
 
     explicit MockPageOverlayClient();
 

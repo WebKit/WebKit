@@ -115,7 +115,7 @@ public:
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName);
 
     // Only some element types can be disabled: https://html.spec.whatwg.org/multipage/scripting.html#concept-element-disabled
-    bool canBeActuallyDisabled() const;
+    bool NODELETE canBeActuallyDisabled() const;
     virtual bool isActuallyDisabled() const;
 
 #if ENABLE(AUTOCAPITALIZE)

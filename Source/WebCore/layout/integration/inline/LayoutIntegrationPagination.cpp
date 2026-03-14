@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::Line& line, const Layout::BlockLayoutState::LineGrid& lineGrid)
+static LayoutUnit NODELETE computeFirstLineSnapAdjustment(const InlineDisplay::Line& line, const Layout::BlockLayoutState::LineGrid& lineGrid)
 {
     auto gridLineHeight = lineGrid.rowHeight;
 

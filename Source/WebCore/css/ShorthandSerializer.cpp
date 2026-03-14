@@ -67,19 +67,19 @@ private:
         CSSValue& value;
     };
     struct LonghandIteratorBase {
-        void operator++() { ++index; }
-        bool operator==(std::nullptr_t) const { return index >= serializer.length(); }
+        void NODELETE operator++() { ++index; }
+        bool NODELETE operator==(std::nullptr_t) const { return index >= serializer.length(); }
         const ShorthandSerializer& serializer;
         unsigned index { 0 };
     };
     struct LonghandIterator : LonghandIteratorBase {
-        Longhand operator*() const { return { serializer.longhand(index) }; }
+        Longhand NODELETE operator*() const { return { serializer.longhand(index) }; }
     };
     struct LonghandValueIterator : LonghandIteratorBase {
-        CSSValue& operator*() const { return { serializer.longhandValue(index) }; }
+        CSSValue& NODELETE operator*() const { return { serializer.longhandValue(index) }; }
     };
     template<typename IteratorType> struct LonghandRange {
-        IteratorType begin() const { return { { serializer } }; }
+        IteratorType NODELETE begin() const { return { { serializer } }; }
         static constexpr std::nullptr_t NODELETE end() { return nullptr; }
         unsigned NODELETE size() const { return serializer.length(); }
         const ShorthandSerializer& serializer;
@@ -948,7 +948,7 @@ String ShorthandSerializer::serializeColumnBreak() const
     }
 }
 
-static std::optional<CSSValueID> fontWidthKeyword(double value)
+static std::optional<CSSValueID> NODELETE fontWidthKeyword(double value)
 {
     // If the numeric value does not fit in the fixed point FontSelectionValue, don't convert it to a keyword even if it rounds to a keyword value.
     float valueAsFloat = value;
@@ -1087,7 +1087,7 @@ static bool NODELETE isValueIDIncludingList(const CSSValue& value, CSSValueID id
     return isValueID(value, id);
 }
 
-static bool gridAutoFlowContains(CSSValue& autoFlow, CSSValueID id)
+static bool NODELETE gridAutoFlowContains(CSSValue& autoFlow, CSSValueID id)
 {
     if (auto* valueList = dynamicDowncast<CSSValueList>(autoFlow)) {
         for (auto& currentValue : *valueList) {

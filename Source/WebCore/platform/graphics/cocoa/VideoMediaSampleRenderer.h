@@ -73,8 +73,8 @@ public:
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
     using Preferences = VideoRendererPreferences;
-    bool prefersDecompressionSession() const;
-    void setPreferences(Preferences);
+    bool NODELETE prefersDecompressionSession() const;
+    void NODELETE setPreferences(Preferences);
     bool isUsingDecompressionSession() const { return m_isUsingDecompressionSession; }
 
     void setTimebase(RetainPtr<CMTimebaseRef>&&);
@@ -99,7 +99,7 @@ public:
 
     void expectMinimumUpcomingSampleBufferPresentationTime(const MediaTime&);
 
-    WebSampleBufferVideoRendering *renderer() const;
+    WebSampleBufferVideoRendering *NODELETE renderer() const;
 
     template <typename T> T* as() const;
     template <> AVSampleBufferVideoRenderer* as() const;
@@ -115,7 +115,7 @@ public:
     };
     DisplayedPixelBufferEntry copyDisplayedPixelBuffer();
 
-    unsigned totalDisplayedFrames() const;
+    unsigned NODELETE totalDisplayedFrames() const;
     unsigned totalVideoFrames() const;
     unsigned droppedVideoFrames() const;
     unsigned corruptedVideoFrames() const;
@@ -152,7 +152,7 @@ private:
         Displayed
     };
     DecodedFrameResult maybeQueueFrameForDisplay(const MediaTime&, const MediaSample&, FlushId);
-    void flushCompressedSampleQueue();
+    void NODELETE flushCompressedSampleQueue();
     void flushDecodedSampleQueue();
     void cancelTimer();
     void purgeDecodedSampleQueue(FlushId);
@@ -167,8 +167,8 @@ private:
     RetainPtr<CVPixelBufferRef> imageForSample(CMSampleBufferRef) const;
 
     void assignResourceOwner(const MediaSample&);
-    bool areSamplesQueuesReadyForMoreMediaData(size_t waterMark) const;
-    size_t compressedSamplesCount() const;
+    bool NODELETE areSamplesQueuesReadyForMoreMediaData(size_t waterMark) const;
+    size_t NODELETE compressedSamplesCount() const;
     void maybeBecomeReadyForMoreMediaData();
     bool shouldDecodeSample(const MediaSample&);
 
@@ -181,9 +181,9 @@ private:
     void ensureOnDispatcherSync(Function<void()>&&) const;
     dispatch_queue_t dispatchQueue() const;
     RefPtr<WebCoreDecompressionSession> decompressionSession() const;
-    bool useDecompressionSessionForProtectedFallback() const;
-    bool useDecompressionSessionForProtectedContent() const;
-    bool useStereoDecoding() const;
+    bool NODELETE useDecompressionSessionForProtectedFallback() const;
+    bool NODELETE useDecompressionSessionForProtectedContent() const;
+    bool NODELETE useStereoDecoding() const;
 
     // WebAVSampleBufferListenerClient
     void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;

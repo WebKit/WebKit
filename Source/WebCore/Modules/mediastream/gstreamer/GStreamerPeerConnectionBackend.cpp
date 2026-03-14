@@ -156,7 +156,6 @@ bool GStreamerPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration
 
 GStreamerRtpSenderBackend& GStreamerPeerConnectionBackend::backendFromRTPSender(RTCRtpSender& sender)
 {
-    ASSERT(!sender.isStopped());
     return static_cast<GStreamerRtpSenderBackend&>(sender.backend());
 }
 

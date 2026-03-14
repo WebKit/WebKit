@@ -42,7 +42,7 @@ extern "C" {
     void SYSV_ABI NOT_TAIL_CALLED vmEntryCustomSetter(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName, void*);
     EncodedJSValue SYSV_ABI NOT_TAIL_CALLED vmEntryHostFunction(JSGlobalObject*, CallFrame*, void*);
 
-#if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
+#if (CPU(ARM64) || CPU(X86_64)) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
     EncodedJSValue SYSV_ABI NOT_TAIL_CALLED vmEntryToJavaScriptWith0Arguments(void*, VM*, CodeBlock*, JSObject*, JSValue, JSCell*);
     EncodedJSValue SYSV_ABI NOT_TAIL_CALLED vmEntryToJavaScriptWith1Arguments(void*, VM*, CodeBlock*, JSObject*, JSValue, JSCell*, JSValue);
     EncodedJSValue SYSV_ABI NOT_TAIL_CALLED vmEntryToJavaScriptWith2Arguments(void*, VM*, CodeBlock*, JSObject*, JSValue, JSCell*, JSValue, JSValue);

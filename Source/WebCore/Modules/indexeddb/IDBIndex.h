@@ -111,6 +111,6 @@ private:
     const CheckedRef<IDBObjectStore> m_objectStore;
 };
 
-WebCoreOpaqueRoot root(IDBIndex*);
+WebCoreOpaqueRoot NODELETE root(IDBIndex*);
 
 } // namespace WebCore

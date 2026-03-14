@@ -1250,7 +1250,6 @@ public:
     void setSiteForCookies(const URL& url) { m_siteForCookies = url; }
     bool isSameSiteForCookies(const URL&) const;
 
-
     // This is the "HTML body element" as defined by CSSOM View spec, the first body child of the
     // document element. See http://dev.w3.org/csswg/cssom-view/#the-html-body-element.
     WEBCORE_EXPORT HTMLBodyElement* NODELETE body() const;

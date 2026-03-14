@@ -298,7 +298,7 @@ protected:
 
     bool metaDataAvailable() const { return m_readyState >= MediaPlayer::ReadyState::HaveMetadata; }
     MediaTime maxTimeLoaded() const;
-    bool isReadyForVideoSetup() const;
+    bool NODELETE isReadyForVideoSetup() const;
     virtual void setUpVideoRendering();
     virtual void tearDownVideoRendering();
     virtual bool haveBeenAskedToPaint() const { return false; }
@@ -306,7 +306,7 @@ protected:
 
     void mainThreadCallback();
     
-    void invalidateCachedDuration();
+    void NODELETE invalidateCachedDuration();
 
     const String& assetURL() const LIFETIME_BOUND { return m_assetURL.string(); }
 

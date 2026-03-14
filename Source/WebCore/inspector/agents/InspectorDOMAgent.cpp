@@ -1921,7 +1921,7 @@ static String documentBaseURLString(Document* document)
     return document->completeURL(emptyString()).string();
 }
 
-static bool pseudoElementType(PseudoElementType pseudoElementType, Inspector::Protocol::DOM::PseudoType* type)
+static bool NODELETE pseudoElementType(PseudoElementType pseudoElementType, Inspector::Protocol::DOM::PseudoType* type)
 {
     switch (pseudoElementType) {
     case PseudoElementType::Before:
@@ -1935,7 +1935,7 @@ static bool pseudoElementType(PseudoElementType pseudoElementType, Inspector::Pr
     }
 }
 
-static Inspector::Protocol::DOM::ShadowRootType shadowRootType(ShadowRootMode mode)
+static Inspector::Protocol::DOM::ShadowRootType NODELETE shadowRootType(ShadowRootMode mode)
 {
     switch (mode) {
     case ShadowRootMode::UserAgent:
@@ -1950,7 +1950,7 @@ static Inspector::Protocol::DOM::ShadowRootType shadowRootType(ShadowRootMode mo
     return Inspector::Protocol::DOM::ShadowRootType::UserAgent;
 }
 
-static Inspector::Protocol::DOM::CustomElementState customElementState(const Element& element)
+static Inspector::Protocol::DOM::CustomElementState NODELETE customElementState(const Element& element)
 {
     if (element.isDefinedCustomElement())
         return Inspector::Protocol::DOM::CustomElementState::Custom;
@@ -3185,7 +3185,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAllowEditingUserA
 }
 
 #if ENABLE(VIDEO)
-static Inspector::Protocol::DOM::VideoProjectionMetadataKind videoProjectionMetadataKind(VideoProjectionMetadataKind kind)
+static Inspector::Protocol::DOM::VideoProjectionMetadataKind NODELETE videoProjectionMetadataKind(VideoProjectionMetadataKind kind)
 {
     switch (kind) {
     case VideoProjectionMetadataKind::Unknown:

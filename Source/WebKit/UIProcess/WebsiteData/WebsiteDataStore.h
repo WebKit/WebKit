@@ -131,7 +131,7 @@ public:
     static WebsiteDataStore& defaultDataStore();
     static bool NODELETE defaultDataStoreExists();
     static void deleteDefaultDataStoreForTesting();
-    static RefPtr<WebsiteDataStore> existingDataStoreForIdentifier(const WTF::UUID&);
+    static RefPtr<WebsiteDataStore> NODELETE existingDataStoreForIdentifier(const WTF::UUID&);
     
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
@@ -297,7 +297,7 @@ public:
     void removeScreenTimeDataWithInterval(WallTime);
 #endif
 
-    static void setCachedProcessSuspensionDelayForTesting(Seconds);
+    static void NODELETE setCachedProcessSuspensionDelayForTesting(Seconds);
 
 #if !PLATFORM(COCOA)
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
@@ -416,7 +416,7 @@ public:
     }
     static std::optional<double> defaultOriginQuotaRatio();
     static std::optional<double> defaultTotalQuotaRatio();
-    static UnifiedOriginStorageLevel defaultUnifiedOriginStorageLevel();
+    static UnifiedOriginStorageLevel NODELETE defaultUnifiedOriginStorageLevel();
 
 #if USE(GLIB)
     static const String& defaultBaseCacheDirectory();
@@ -539,7 +539,7 @@ private:
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Ref<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
     void platformInitialize();
-    void platformDestroy();
+    void NODELETE platformDestroy();
     void platformSetNetworkParameters(WebsiteDataStoreParameters&);
     void removeRecentSearches(WallTime, CompletionHandler<void()>&&);
 
@@ -573,7 +573,7 @@ private:
 #endif
 
 #if ENABLE(MANAGED_DOMAINS)
-    static const HashSet<WebCore::RegistrableDomain>* managedDomainsIfInitialized();
+    static const HashSet<WebCore::RegistrableDomain>* NODELETE managedDomainsIfInitialized();
     static void forwardManagedDomainsToITPIfInitialized(CompletionHandler<void()>&&);
     void setManagedDomainsForITP(const HashSet<WebCore::RegistrableDomain>&, CompletionHandler<void()>&&);
 #endif

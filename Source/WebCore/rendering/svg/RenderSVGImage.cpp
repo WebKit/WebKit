@@ -76,7 +76,7 @@ SVGImageElement& RenderSVGImage::imageElement() const
 FloatRect RenderSVGImage::calculateObjectBoundingBox() const
 {
     LayoutSize intrinsicSize;
-    if (CachedImage* cachedImage = imageResource().cachedImage())
+    if (RefPtr cachedImage = imageResource().cachedImage())
         intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
 
     Ref imageElement = this->imageElement();
@@ -292,7 +292,7 @@ bool RenderSVGImage::updateImageViewport()
     // by setting the image's container size to its intrinsic size.
     // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
     if (imageElement->preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
-        if (CachedImage* cachedImage = imageResource().cachedImage()) {
+        if (RefPtr cachedImage = imageResource().cachedImage()) {
             LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
             if (intrinsicSize != imageResource().imageSize(style().usedZoom())) {
                 imageResource().setContainerContext(roundedIntSize(intrinsicSize), imageSourceURL);
@@ -369,7 +369,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (CheckedPtr cache = document().existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protect(imageElement()).ptr());
 
-    if (auto* image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
+    if (RefPtr image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
         if (auto styleable = Styleable::fromRenderer(*this))
             protect(document())->didLoadImage(protect(styleable->element).get(), image);
     }

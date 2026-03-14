@@ -23,7 +23,7 @@
 
 #if ENABLE_SWIFTUI
 
-import Foundation
+public import Foundation
 
 extension WebPage {
     /// A type that contains information about a frame on a webpage.

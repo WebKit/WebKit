@@ -52,7 +52,7 @@ public:
     virtual ~CanvasImage();
 
     bool operator==(const Image&) const final;
-    bool equals(const CanvasImage&) const;
+    bool NODELETE equals(const CanvasImage&) const;
 
     static constexpr bool isFixedSize = true;
 

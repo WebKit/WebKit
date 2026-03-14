@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-static void dataProviderReleaseCallback(void* info, const void*, size_t)
+static void NODELETE dataProviderReleaseCallback(void* info, const void*, size_t)
 {
     auto* pixels = static_cast<FragmentedSharedBuffer::DataSegment*>(info);
     pixels->deref(); // Balanced below in ImageBackingStore::image().

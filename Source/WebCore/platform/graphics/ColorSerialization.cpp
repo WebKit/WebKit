@@ -611,13 +611,13 @@ String serializationForRenderTreeAsText(const SRGBA<float>& color, bool useColor
 
 // MARK: SRGBA<uint8_t> overloads
 
-static char decimalDigit(unsigned number)
+static char NODELETE decimalDigit(unsigned number)
 {
     ASSERT(number < 10);
     return '0' + number;
 }
 
-static std::array<char, 4> fractionDigitsForFractionalAlphaValue(uint8_t alpha)
+static std::array<char, 4> NODELETE fractionDigitsForFractionalAlphaValue(uint8_t alpha)
 {
     ASSERT(alpha > 0);
     ASSERT(alpha < 0xFF);

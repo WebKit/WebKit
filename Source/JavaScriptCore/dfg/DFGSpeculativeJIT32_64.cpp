@@ -3866,6 +3866,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArrayIsArray: {
+        compileArrayIsArray(node);
+        break;
+    }
+
     case TypeOf: {
         compileTypeOf(node);
         break;

@@ -51,7 +51,7 @@ public:
     bool nonInheritedEqual(const ComputedStyle&) const;
     bool fastPathInheritedEqual(const ComputedStyle&) const;
     bool nonFastPathInheritedEqual(const ComputedStyle&) const;
-    bool descendantAffectingNonInheritedPropertiesEqual(const ComputedStyle&) const;
+    bool NODELETE descendantAffectingNonInheritedPropertiesEqual(const ComputedStyle&) const;
     bool borderAndBackgroundEqual(const ComputedStyle&) const;
     inline bool containerTypeAndNamesEqual(const ComputedStyle&) const;
     inline bool columnSpanEqual(const ComputedStyle&) const;

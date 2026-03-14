@@ -2585,7 +2585,7 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
         CheckedPtr renderImage = dynamicDowncast<RenderImage>(*element->renderer());
         if (!renderImage)
             return;
-        auto* cachedImage = renderImage->cachedImage();
+        RefPtr cachedImage = renderImage->cachedImage();
         if (!cachedImage)
             return;
         RefPtr<FragmentedSharedBuffer> buffer = cachedImage->resourceBuffer();

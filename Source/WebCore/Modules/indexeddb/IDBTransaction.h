@@ -152,7 +152,7 @@ public:
     void connectionClosedFromServer(const IDBError&);
     void generateIndexKeyForRecord(const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo&, const std::optional<IDBKeyPath>&, const IDBKeyData&, const IDBValue&, std::optional<int64_t> recordID);
 
-    template<typename Visitor> void visitReferencedObjectStores(Visitor&) const;
+    template<typename Visitor> void visitReferencedObjectStoresInGCThread(Visitor&) const;
 
     WEBCORE_EXPORT static std::atomic<unsigned> numberOfIDBTransactions;
 
@@ -261,9 +261,9 @@ private:
     HashMap<Ref<IDBClient::TransactionOperation>, IDBResultData> m_transactionOperationResultMap;
     HashMap<IDBResourceIdentifier, Ref<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
-    mutable Lock m_referencedObjectStoreLock;
-    HashMap<String, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores WTF_GUARDED_BY_LOCK(m_referencedObjectStoreLock);
-    HashMap<IDBObjectStoreIdentifier, std::unique_ptr<IDBObjectStore>> m_deletedObjectStores;
+    mutable Lock m_objectStoresLock;
+    HashMap<String, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores WTF_GUARDED_BY_LOCK(m_objectStoresLock);
+    HashMap<IDBObjectStoreIdentifier, std::unique_ptr<IDBObjectStore>> m_deletedObjectStores WTF_GUARDED_BY_LOCK(m_objectStoresLock);;
 
     HashSet<Ref<IDBRequest>> m_openRequests;
     RefPtr<IDBRequest> m_currentlyCompletingRequest;

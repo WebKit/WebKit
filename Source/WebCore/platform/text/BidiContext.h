@@ -32,7 +32,7 @@ enum BidiEmbeddingSource { FromStyleOrDOM, FromUnicode };
 // Used to keep track of explicit embeddings.
 class BidiContext : public ThreadSafeRefCounted<BidiContext> {
 public:
-    WEBCORE_EXPORT static Ref<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = nullptr);
+    WEBCORE_EXPORT static Ref<BidiContext> NODELETE create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = nullptr);
 
     BidiContext* parent() const { return m_parent.get(); }
     unsigned char level() const { return m_level; }
@@ -45,7 +45,7 @@ public:
 private:
     BidiContext(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
 
-    static Ref<BidiContext> createUncached(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
+    static Ref<BidiContext> NODELETE createUncached(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
 
     unsigned m_level : 6; // The maximium bidi level is 62: http://unicode.org/reports/tr9/#Explicit_Levels_and_Directions
     unsigned m_direction : 5; // Direction
@@ -64,6 +64,6 @@ inline unsigned char nextGreaterEvenLevel(unsigned char level)
     return (level + 2) & ~1;
 }
 
-bool operator==(const BidiContext&, const BidiContext&);
+bool NODELETE operator==(const BidiContext&, const BidiContext&);
 
 } // namespace WebCore

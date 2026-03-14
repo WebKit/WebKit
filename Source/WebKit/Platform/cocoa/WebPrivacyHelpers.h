@@ -191,7 +191,7 @@ private:
 
 class ResourceMonitorURLsController {
 public:
-    static ResourceMonitorURLsController& singleton();
+    static ResourceMonitorURLsController& NODELETE singleton();
 
     void prepare(CompletionHandler<void(WKContentRuleList *, bool)>&&);
     void getSource(CompletionHandler<void(String&&)>&&);

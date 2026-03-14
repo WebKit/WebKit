@@ -264,7 +264,7 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
     }
 
     if (returnedException) {
-        if (globalScope->canIncludeErrorDetails(sourceCode.cachedScript(), sourceCode.url().string())) {
+        if (globalScope->canIncludeErrorDetails(protect(sourceCode.cachedScript()), sourceCode.url().string())) {
             // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
             // Do we need to do anything to handle that properly, if it, say, raises another exception?
             if (returnedExceptionMessage)
@@ -459,7 +459,7 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
     }
 
     if (returnedException) {
-        if (protect(globalScope())->canIncludeErrorDetails(sourceCode.cachedScript(), sourceCode.url().string())) {
+        if (protect(globalScope())->canIncludeErrorDetails(protect(sourceCode.cachedScript()), sourceCode.url().string())) {
             // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
             // Do we need to do anything to handle that properly, if it, say, raises another exception?
             if (returnedExceptionMessage)

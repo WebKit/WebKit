@@ -363,7 +363,7 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
 
     SandboxExtension::Handle sandboxExtensionHandle;
     URL itemURL { item.url() };
-    Ref frameState = navigation.targetFrameItem() ? navigation.targetFrameItem()->copyFrameStateWithChildren() : item.mainFrameState();
+    Ref frameState = navigation.targetFrameItem() ? navigation.targetFrameItem()->copyFrameStateWithChildren() : item.copyMainFrameStateWithChildren();
     page->maybeInitializeSandboxExtensionHandle(process, itemURL, item.resourceDirectoryURL(), true, [
         weakThis = WeakPtr { *this },
         itemURL,

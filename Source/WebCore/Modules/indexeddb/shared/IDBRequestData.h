@@ -67,7 +67,7 @@ public:
     IndexedDB::IndexRecordType NODELETE indexRecordType() const;
     IDBResourceIdentifier NODELETE cursorIdentifier() const;
     uint64_t NODELETE requestedVersion() const;
-    IDBRequestData isolatedCopy();
+    IDBRequestData NODELETE isolatedCopy();
 
 private:
     friend struct IPC::ArgumentCoder<IDBRequestData>;

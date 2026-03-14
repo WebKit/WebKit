@@ -86,6 +86,7 @@ private:
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<WebCore::IDBDatabaseIdentifier, std::unique_ptr<WebCore::IDBServer::UniqueIDBDatabase>> m_databases;
     bool m_useSQLiteMemoryBackingStore { false };
+    bool m_isClosing { false };
 };
 
 } // namespace WebKit

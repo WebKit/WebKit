@@ -1988,7 +1988,7 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, FlexLayoutItem
     return !totalViolation;
 }
 
-inline ContentPosition resolveLeftRightAlignment(ContentPosition position, StyleContentAlignmentData justifyContent, const RenderStyle& style, bool isReversed)
+inline ContentPosition NODELETE resolveLeftRightAlignment(ContentPosition position, StyleContentAlignmentData justifyContent, const RenderStyle& style, bool isReversed)
 {
     if (position == ContentPosition::Left || position == ContentPosition::Right) {
         auto leftRightAxisDirection = RenderFlexibleBox::leftRightAxisDirectionFromStyle(style);

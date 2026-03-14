@@ -34,7 +34,7 @@ class WebProcessProxy;
 
 class UserMediaProcessManager : public WebCore::RealtimeMediaSourceCenterObserver {
 public:
-    static UserMediaProcessManager& singleton();
+    static UserMediaProcessManager& NODELETE singleton();
 
     UserMediaProcessManager();
 

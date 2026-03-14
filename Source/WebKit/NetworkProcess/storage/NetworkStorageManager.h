@@ -153,6 +153,7 @@ public:
     void clearServiceWorkerRegistrations(CompletionHandler<void()>&&);
     void importServiceWorkerRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>&&)>&&);
     void updateServiceWorkerRegistrations(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerScripts>>)>&&);
+    void retrieveServiceWorkerScripts(WebCore::ServiceWorkerIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const URL& mainScriptURL, Vector<URL>&& importedScriptURLs, CompletionHandler<void(std::optional<WebCore::ServiceWorkerScripts>&&)>&&);
     const String& path() const LIFETIME_BOUND { return m_pathNormalizedMainThread; }
     const String& customIDBStoragePath() const LIFETIME_BOUND { return m_customIDBStoragePathNormalizedMainThread; }
 
@@ -162,9 +163,9 @@ private:
     NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, std::optional<IPC::Connection::UniqueID>, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel, bool storageSiteValidationEnabled);
     ~NetworkStorageManager();
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
-    bool isStorageTypeEnabled(IPC::Connection&, WebCore::StorageType) const;
-    bool isStorageAreaTypeEnabled(IPC::Connection&, StorageAreaBase::StorageType) const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess(IPC::Connection&) const;
+    bool NODELETE isStorageTypeEnabled(IPC::Connection&, WebCore::StorageType) const;
+    bool NODELETE isStorageAreaTypeEnabled(IPC::Connection&, StorageAreaBase::StorageType) const;
     bool NODELETE useSQLiteMemoryBackingStore() const;
 
     void writeOriginToFileIfNecessary(const WebCore::ClientOrigin&, StorageAreaBase* = nullptr);
@@ -285,7 +286,7 @@ private:
     const SuspendableWorkQueue& workQueue() const WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
-    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> idbTransaction(const WebCore::IDBRequestData&);
+    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> NODELETE idbTransaction(const WebCore::IDBRequestData&);
     void setStorageSiteValidationEnabledInternal(bool);
     void addAllowedSitesForConnectionInternal(IPC::Connection::UniqueID, const Vector<WebCore::RegistrableDomain>&);
     bool isSiteAllowedForConnection(IPC::Connection::UniqueID, const WebCore::RegistrableDomain&) const;

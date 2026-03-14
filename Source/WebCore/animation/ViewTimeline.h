@@ -56,8 +56,8 @@ struct StickinessAdjustmentData {
         AfterExit
     };
 
-    float entryDistanceAdjustment() const;
-    float exitDistanceAdjustment() const;
+    float NODELETE entryDistanceAdjustment() const;
+    float NODELETE exitDistanceAdjustment() const;
     float NODELETE rangeStartAdjustment() const;
     float NODELETE rangeEndAdjustment() const;
 
@@ -99,7 +99,7 @@ public:
     std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
 
     bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Styleable&) const;
-    WebAnimationTime epsilon() const;
+    WebAnimationTime NODELETE epsilon() const;
 
 private:
     ScrollTimeline::Data computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;

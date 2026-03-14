@@ -165,17 +165,17 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(IPC::Connection& conne
 
     xrCoordinator->requestPermissionOnSessionFeatures(*page, securityOriginData, mode, granted, consentRequired, consentOptional, requiredFeaturesRequested, optionalFeaturesRequested, [weakThis = WeakPtr { *this }, mode, securityOriginData, consentRequired, completionHandler = WTF::move(completionHandler)](std::optional<PlatformXR::Device::FeatureList>&& grantedFeatures) mutable {
         ASSERT(RunLoop::isMain());
-        auto protectedThis = weakThis.get();
-        if (protectedThis && PlatformXR::isImmersive(mode)) {
+        auto* rawThis = weakThis.get();
+        if (rawThis && PlatformXR::isImmersive(mode)) {
             if (checkFeaturesConsent(consentRequired, grantedFeatures)) {
-                protectedThis->m_immersiveSessionMode = mode;
-                protectedThis->m_immersiveSessionGrantedFeatures = grantedFeatures;
-                protectedThis->m_immersiveSessionSecurityOriginData = securityOriginData;
-                protectedThis->setImmersiveSessionState(ImmersiveSessionState::PermissionsGranted, [grantedFeatures = WTF::move(grantedFeatures), completionHandler = WTF::move(completionHandler)](bool) mutable {
+                rawThis->m_immersiveSessionMode = mode;
+                rawThis->m_immersiveSessionGrantedFeatures = grantedFeatures;
+                rawThis->m_immersiveSessionSecurityOriginData = securityOriginData;
+                rawThis->setImmersiveSessionState(ImmersiveSessionState::PermissionsGranted, [grantedFeatures = WTF::move(grantedFeatures), completionHandler = WTF::move(completionHandler)](bool) mutable {
                     completionHandler(WTF::move(grantedFeatures));
                 });
             } else {
-                protectedThis->invalidateImmersiveSessionState();
+                rawThis->invalidateImmersiveSessionState();
                 completionHandler(WTF::move(grantedFeatures));
             }
         } else

@@ -168,11 +168,11 @@ public:
     void startWithServiceWorker();
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
     void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
-    void setWorkerStart(MonotonicTime);
+    void NODELETE setWorkerStart(MonotonicTime);
 
-    void setWorkerRouterEvaluationStart(MonotonicTime);
-    void setWorkerCacheLookupStart(MonotonicTime);
-    void setWorkerMatchedRouterSource(WebCore::RouterSourceEnum);
+    void NODELETE setWorkerRouterEvaluationStart(MonotonicTime);
+    void NODELETE setWorkerCacheLookupStart(MonotonicTime);
+    void NODELETE setWorkerMatchedRouterSource(WebCore::RouterSourceEnum);
     void NODELETE setWorkerFinalRouterSource(WebCore::RouterSourceEnum);
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);

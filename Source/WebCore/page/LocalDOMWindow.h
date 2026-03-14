@@ -140,13 +140,13 @@ public:
 
     WEBCORE_EXPORT static void NODELETE overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
     void setLastActivationTimestamp(MonotonicTime lastActivationTimestamp) { m_lastActivationTimestamp = lastActivationTimestamp; }
-    void consumeLastActivationIfNecessary();
+    void NODELETE consumeLastActivationIfNecessary();
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
     void notifyActivated(MonotonicTime);
     WEBCORE_EXPORT bool hasTransientActivation() const;
     bool hasStickyActivation() const;
     WEBCORE_EXPORT bool consumeTransientActivation();
-    WEBCORE_EXPORT bool hasHistoryActionActivation() const;
+    WEBCORE_EXPORT bool NODELETE hasHistoryActionActivation() const;
     WEBCORE_EXPORT bool consumeHistoryActionUserActivation();
     WEBCORE_EXPORT static Seconds NODELETE transientActivationDuration();
 
@@ -264,7 +264,7 @@ public:
     // Secure Contexts
     bool isSecureContext() const;
 
-    bool crossOriginIsolated() const;
+    bool NODELETE crossOriginIsolated() const;
 
     // Events
     // EventTarget API

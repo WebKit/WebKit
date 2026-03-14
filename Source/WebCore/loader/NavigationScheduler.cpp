@@ -735,10 +735,15 @@ void NavigationScheduler::scheduleFormSubmission(Ref<FormSubmission>&& submissio
     // FIXME: Do we need special handling for form submissions where the URL is the same
     // as the current one except for the fragment part? See scheduleLocationChange above.
 
-    // Handle a location change of a page with no document as a special case.
-    // This may happen when a frame changes the location of another frame.
+    // If the current document hasn't finished loading, or if we're still on the
+    // initial empty document (before any real document has been committed), mark
+    // this navigation as during load so that schedule() will synchronously abort
+    // the current load. This prevents the current document's load event from
+    // racing with the scheduled navigation, and also ensures that
+    // redirectScheduledDuringLoad() returns true in didOpenURL() so a concurrent
+    // navigation (e.g., from window.open) doesn't cancel this form submission.
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame.get());
-    bool duringLoad = localFrame && !localFrame->loader().stateMachine().committedFirstRealDocumentLoad();
+    bool duringLoad = localFrame && (!localFrame->loader().isComplete() || !localFrame->loader().stateMachine().committedFirstRealDocumentLoad());
 
     // If this is a child frame and the form submission was triggered by a script, lock the back/forward list
     // to match IE and Opera.
@@ -848,9 +853,11 @@ void NavigationScheduler::schedule(std::unique_ptr<ScheduledNavigation> redirect
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
 
     // If a redirect was scheduled during a load, then stop the current load.
-    // Otherwise when the current load transitions from a provisional to a 
-    // committed state, pending redirects may be cancelled. 
-    if (redirect->wasDuringLoad()) {
+    // Otherwise when the current load transitions from a provisional to a
+    // committed state, pending redirects may be cancelled.
+    // Only do this when the navigation targets the current frame — navigations
+    // to new windows (e.g., target=_blank) should not abort the current load.
+    if (redirect->wasDuringLoad() && redirect->targetIsCurrentFrame()) {
         if (localFrame) {
             if (RefPtr provisionalDocumentLoader = localFrame->loader().provisionalDocumentLoader())
                 provisionalDocumentLoader->stopLoading();

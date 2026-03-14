@@ -38,10 +38,18 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::List);
 
-static std::pair<RenderBlock*, RenderBlock*> findParentOfEmptyOrFirstLineBox(RenderBlock& blockContainer, const RenderListMarker& marker)
+struct LineBoxParentSearchResult {
+    CheckedPtr<RenderBlock> parent;
+    CheckedPtr<RenderBlock> fallbackParent;
+    // FIXME: handle all block level children, not just replaced elements that got blockified.
+    bool failedDueToBlockification { false };
+};
+
+static LineBoxParentSearchResult findParentOfEmptyOrFirstLineBox(RenderBlock& blockContainer, const RenderListMarker& marker)
 {
     auto inQuirksMode = blockContainer.document().inQuirksMode();
     RenderBlock* fallbackParent = { };
+    bool failedDueToBlockification = false;
 
     for (auto& child : childrenOfType<RenderObject>(blockContainer)) {
         if (&child == &marker)
@@ -49,7 +57,7 @@ static std::pair<RenderBlock*, RenderBlock*> findParentOfEmptyOrFirstLineBox(Ren
 
         if (child.isInline()) {
             if (!is<RenderInline>(child) || !isEmptyInline(downcast<RenderInline>(child)))
-                return { &blockContainer, { } };
+                return { &blockContainer, { }, false };
             fallbackParent = &blockContainer;
         }
 
@@ -62,39 +70,55 @@ static std::pair<RenderBlock*, RenderBlock*> findParentOfEmptyOrFirstLineBox(Ren
         if (is<RenderListItem>(blockContainer) && inQuirksMode && child.node() && isHTMLListElement(*child.node()))
             break;
 
-        if (!is<RenderBlock>(child) || is<RenderTable>(child))
+        if (!is<RenderBlock>(child) || is<RenderTable>(child)) {
+            // FIXME: handle all block level children, not just replaced elements that got blockified.
+            if (!child.isInline() && child.style().originalDisplay().isInlineType())
+                failedDueToBlockification = true;
             break;
+        }
 
         auto& blockChild = downcast<RenderBlock>(child);
-        auto [ nestedParent, nestedFallbackParent ] = findParentOfEmptyOrFirstLineBox(blockChild, marker);
-        if (nestedParent)
-            return { nestedParent, { } };
+        auto nestedResult = findParentOfEmptyOrFirstLineBox(blockChild, marker);
+        if (nestedResult.parent) {
+            // Finding a line box parent is mutually exclusive with blockification failure.
+            ASSERT(!nestedResult.failedDueToBlockification);
+            return { nestedResult.parent, { }, false };
+        }
+
+        // Propagate the blockification failure bit from nested searches so that we know whether the search failed due to blockification or because there was no inline content.
+        failedDueToBlockification |= nestedResult.failedDueToBlockification;
 
         if (!fallbackParent) {
-            if (nestedFallbackParent)
-                fallbackParent = nestedFallbackParent;
+            if (nestedResult.fallbackParent)
+                fallbackParent = nestedResult.fallbackParent;
             else if (auto* firstInFlowChild = blockChild.firstInFlowChild(); !firstInFlowChild || firstInFlowChild == &marker)
                 fallbackParent = &blockChild;
         }
     }
 
-    return { { }, fallbackParent };
+    return { { }, fallbackParent, failedDueToBlockification };
 }
 
-static RenderBlock* parentCandidateForMarker(RenderListItem& listItemRenderer, const RenderListMarker& marker)
+struct MarkerParentSearchResult {
+    CheckedPtr<RenderBlock> parent;
+    bool shouldCollapseAnonymousBlockParent { false };
+};
+
+static MarkerParentSearchResult parentCandidateForMarker(RenderListItem& listItemRenderer, const RenderListMarker& marker)
 {
     if (marker.isInside()) {
         if (auto* firstChild = dynamicDowncast<RenderBlock>(listItemRenderer.firstChild())) {
             if (!firstChild->isAnonymous())
-                return &listItemRenderer;
+                return { &listItemRenderer, false };
             // We may have created this anonymous block for the marker itself. Let's keep it in there.
             if (firstChild->firstChild() == &marker && !marker.nextSibling())
-                return firstChild;
+                return { firstChild, false };
         }
-        return findParentOfEmptyOrFirstLineBox(listItemRenderer, marker).first;
+        auto result = findParentOfEmptyOrFirstLineBox(listItemRenderer, marker);
+        return { result.parent, false };
     }
-    auto [parentCandidate, fallbackParent] = findParentOfEmptyOrFirstLineBox(listItemRenderer, marker);
-    return parentCandidate ? parentCandidate : fallbackParent;
+    auto result = findParentOfEmptyOrFirstLineBox(listItemRenderer, marker);
+    return { result.parent ? result.parent : result.fallbackParent, result.failedDueToBlockification };
 }
 
 static RenderObject* firstNonMarkerChild(RenderBlock& parent)
@@ -135,22 +159,25 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
             return;
         }
 
-        auto* newParent = parentCandidateForMarker(listItemRenderer, *markerRenderer);
-        if (!newParent) {
+        auto searchResult = parentCandidateForMarker(listItemRenderer, *markerRenderer);
+        if (!searchResult.parent) {
             if (currentParent->isAnonymousBlock()) {
-                // If the marker is currently contained inside an anonymous box. then we are the only item in that anonymous box
-                // (since no line box parent was found). It's ok to just leave the marker where it is in this case.
+                // For outside markers, if the search failed because a flex/grid container blockified a replaced
+                // child (e.g., <img>), we should collapse the anonymous block's height so it doesn't inflate the list item.
+                markerRenderer->setShouldCollapseAnonymousBlockParent(searchResult.shouldCollapseAnonymousBlockParent);
+                // If the marker is currently contained inside an anonymous box, we are the only item in that anonymous box
+                // since no line box parent was found. It's ok to just leave the marker where it is in this case.
                 return;
             }
-            newParent = &listItemRenderer;
+            searchResult.parent = &listItemRenderer;
             if (auto* multiColumnFlow = listItemRenderer.multiColumnFlow())
-                newParent = multiColumnFlow;
+                searchResult.parent = multiColumnFlow;
         }
 
-        if (newParent == currentParent)
+        if (searchResult.parent == currentParent)
             return;
 
-        m_builder.attach(*newParent, m_builder.detach(*currentParent, *markerRenderer, WillBeDestroyed::No, RenderTreeBuilder::CanCollapseAnonymousBlock::No), firstNonMarkerChild(*newParent));
+        m_builder.attach(*searchResult.parent, m_builder.detach(*currentParent, *markerRenderer, WillBeDestroyed::No, RenderTreeBuilder::CanCollapseAnonymousBlock::No), firstNonMarkerChild(*searchResult.parent));
         // If current parent is an anonymous block that has lost all its children, destroy it.
         if (currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
             m_builder.destroy(*currentParent);
@@ -160,17 +187,18 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     RenderPtr<RenderListMarker> newMarkerRenderer = WebCore::createRenderer<RenderListMarker>(listItemRenderer, WTF::move(newStyle));
     newMarkerRenderer->initializeStyle();
     listItemRenderer.setMarkerRenderer(*newMarkerRenderer);
-    auto* newParent = parentCandidateForMarker(listItemRenderer, *newMarkerRenderer);
-    if (!newParent) {
-        // If the marker is currently contained inside an anonymous box,
-        // then we are the only item in that anonymous box (since no line box
-        // parent was found). It's ok to just leave the marker where it is
-        // in this case.
-        newParent = &listItemRenderer;
+    auto searchResult = parentCandidateForMarker(listItemRenderer, *newMarkerRenderer);
+    auto shouldCollapseAnonymousBlockParent = !searchResult.parent && !newMarkerRenderer->isInside() && searchResult.shouldCollapseAnonymousBlockParent;
+    if (!searchResult.parent) {
+        searchResult.parent = &listItemRenderer;
         if (auto* multiColumnFlow = listItemRenderer.multiColumnFlow())
-            newParent = multiColumnFlow;
+            searchResult.parent = multiColumnFlow;
     }
-    m_builder.attach(*newParent, WTF::move(newMarkerRenderer), firstNonMarkerChild(*newParent));
+    m_builder.attach(*searchResult.parent, WTF::move(newMarkerRenderer), firstNonMarkerChild(*searchResult.parent));
+    // For outside markers, if the search failed because a flex/grid container blockified a replaced
+    // child (e.g., <img>), we should collapse the anonymous block's height so it doesn't inflate the list item.
+    if (shouldCollapseAnonymousBlockParent)
+        listItemRenderer.markerRenderer()->setShouldCollapseAnonymousBlockParent(true);
 }
 
 }

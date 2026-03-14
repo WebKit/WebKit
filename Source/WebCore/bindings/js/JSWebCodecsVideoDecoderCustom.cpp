@@ -36,13 +36,13 @@
 namespace WebCore {
 
 template <typename Visitor>
-void JSWebCodecsVideoDecoder::visitAdditionalChildren(Visitor& visitor)
+void JSWebCodecsVideoDecoder::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().outputCallbackConcurrently().visitJSFunction(visitor);
-    wrapped().errorCallbackConcurrently().visitJSFunction(visitor);
+    wrapped().outputCallbackConcurrently().visitJSFunctionInGCThread(visitor);
+    wrapped().errorCallbackConcurrently().visitJSFunctionInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWebCodecsVideoDecoder);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSWebCodecsVideoDecoder);
 
 }
 

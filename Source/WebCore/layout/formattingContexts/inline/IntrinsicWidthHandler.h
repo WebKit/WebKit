@@ -53,7 +53,7 @@ private:
     const InlineFormattingContext& NODELETE formattingContext() const LIFETIME_BOUND;
     const InlineContentCache& formattingState() const LIFETIME_BOUND;
     const ElementBox& NODELETE formattingContextRoot() const;
-    const ElementBox& lineBuilerRoot() const;
+    const ElementBox& NODELETE lineBuilerRoot() const;
     const InlineItemList& inlineItemList() const LIFETIME_BOUND { return m_inlineItems.content(); }
 
 private:

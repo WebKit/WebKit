@@ -41,7 +41,7 @@ public:
     static Ref<WebBackForwardListFrameItem> create(WebBackForwardListItem&, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&&);
     ~WebBackForwardListFrameItem();
 
-    static WebBackForwardListFrameItem* itemForID(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier);
+    static WebBackForwardListFrameItem* NODELETE itemForID(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier);
 
     FrameState& frameState() const { return m_frameState; }
     void setFrameState(Ref<FrameState>&&);
@@ -61,14 +61,14 @@ public:
     WebBackForwardListFrameItem* NODELETE childItemForFrameID(WebCore::FrameIdentifier);
     WebBackForwardListFrameItem* NODELETE childItemAtIndex(uint64_t);
 
-    WebBackForwardListItem* backForwardListItem() const;
+    WebBackForwardListItem* NODELETE backForwardListItem() const;
 
     void setChild(Ref<FrameState>&&);
     void clearChildren() { m_children.clear(); }
 
-    void updateFrameID(WebCore::FrameIdentifier);
+    void NODELETE updateFrameID(WebCore::FrameIdentifier);
 
-    void setWasRestoredFromSession();
+    void NODELETE setWasRestoredFromSession();
 
     String loggingString();
 

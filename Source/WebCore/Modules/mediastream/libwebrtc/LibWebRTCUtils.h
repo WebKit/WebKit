@@ -80,7 +80,7 @@ Exception toException(const webrtc::RTCError&);
 RefPtr<RTCError> toRTCError(const webrtc::RTCError&);
 
 RTCPriorityType toRTCPriorityType(webrtc::PriorityValue);
-RTCPriorityType toRTCPriorityType(webrtc::Priority);
+RTCPriorityType NODELETE toRTCPriorityType(webrtc::Priority);
 webrtc::Priority NODELETE fromRTCPriorityType(RTCPriorityType);
 
 inline String fromStdString(const std::string& value)

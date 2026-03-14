@@ -2,6 +2,6 @@
 one
 two
 
-FAIL defaultbutton: Synthetic events should not trigger behaviors of select element. assert_true: Synthetic mouse/pointer events should not close the picker. expected true got false
-FAIL custombutton: Synthetic events should not trigger behaviors of select element. assert_false: Synthetic mouse/pointer events should not open the picker. expected false got true
+PASS defaultbutton: Synthetic events should not trigger behaviors of select element.
+PASS custombutton: Synthetic events should not trigger behaviors of select element.
 

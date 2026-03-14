@@ -753,7 +753,7 @@ public:
     using Identifier = WebPageProxyIdentifier;
 
     Identifier identifier() const { return m_identifier; }
-    static WebPageProxy* fromIdentifier(std::optional<Identifier>);
+    static WebPageProxy* NODELETE fromIdentifier(std::optional<Identifier>);
     WebCore::PageIdentifier webPageIDInMainFrameProcess() const { return m_webPageID; }
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return webPageIDInMainFrameProcess(); }
     WebCore::PageIdentifier webPageIDInProcess(const WebProcessProxy&) const;
@@ -1048,7 +1048,7 @@ public:
 
 #if PLATFORM(MAC)
     void setObscuredContentInsetsAsync(const WebCore::FloatBoxExtent&);
-    WebCore::FloatBoxExtent pendingOrActualObscuredContentInsets() const;
+    WebCore::FloatBoxExtent NODELETE pendingOrActualObscuredContentInsets() const;
 
     void scheduleSetObscuredContentInsetsDispatch();
     void dispatchSetObscuredContentInsets();
@@ -1087,7 +1087,7 @@ public:
     WebCore::Color NODELETE sampledPageTopColor() const;
 
     WebCore::Color underPageBackgroundColor() const;
-    WebCore::Color underPageBackgroundColorIgnoringPlatformColor() const;
+    WebCore::Color NODELETE underPageBackgroundColorIgnoringPlatformColor() const;
     WebCore::Color NODELETE underPageBackgroundColorOverride() const;
     void setUnderPageBackgroundColorOverride(WebCore::Color&&);
 
@@ -1277,9 +1277,9 @@ public:
     void performActionOnElements(uint32_t action, Vector<WebCore::ElementContext>&&);
     void saveImageToLibrary(IPC::Connection&, WebCore::SharedMemoryHandle&& imageHandle, const String& authorizationToken);
     void focusNextFocusedElement(bool isForward, CompletionHandler<void()>&&);
-    void setFocusedElementValue(const WebCore::ElementContext&, const String&);
-    void setFocusedElementSelectedIndex(const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection = false);
-    void setSelectElementIsOpen(const WebCore::ElementContext&, bool isOpen);
+    void setFocusedElementValue(std::optional<WebCore::FrameIdentifier>, const WebCore::ElementContext&, const String&);
+    void setFocusedElementSelectedIndex(std::optional<WebCore::FrameIdentifier>, const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection = false);
+    void setSelectElementIsOpen(std::optional<WebCore::FrameIdentifier>, const WebCore::ElementContext&, bool isOpen);
     void applicationDidEnterBackground();
     void applicationDidFinishSnapshottingAfterEnteringBackground();
     void applicationWillEnterForeground();
@@ -1514,7 +1514,7 @@ public:
     const String& toolTip() const LIFETIME_BOUND { return m_toolTip; }
 
     const String& userAgent() const LIFETIME_BOUND { return m_userAgent; }
-    String userAgentForURL(const URL&);
+    String NODELETE userAgentForURL(const URL&);
     void setApplicationNameForUserAgent(const String&);
     const String& applicationNameForUserAgent() const LIFETIME_BOUND { return m_applicationNameForUserAgent; }
     void setApplicationNameForDesktopUserAgent(const String& applicationName) { m_applicationNameForDesktopUserAgent = applicationName; }
@@ -1618,7 +1618,7 @@ public:
     WebCore::RectEdges<bool> NODELETE pinnedState() const;
     WebCore::RectEdges<bool> pinnedStateIncludingAncestorsAtPoint(WebCore::FloatPoint);
 
-    WebCore::RectEdges<bool> rubberBandableEdgesRespectingHistorySwipe() const;
+    WebCore::RectEdges<bool> NODELETE rubberBandableEdgesRespectingHistorySwipe() const;
     WebCore::RectEdges<bool> NODELETE rubberBandableEdges() const;
     void NODELETE setRubberBandableEdges(WebCore::RectEdges<bool>);
     void NODELETE setRubberBandsAtLeft(bool);
@@ -1957,7 +1957,7 @@ public:
 #endif
 
     const PageLoadState& NODELETE pageLoadState() const LIFETIME_BOUND;
-    PageLoadState& pageLoadState() LIFETIME_BOUND;
+    PageLoadState& NODELETE pageLoadState() LIFETIME_BOUND;
 
 #if PLATFORM(COCOA)
     void handleAlternativeTextUIResult(const String& result);
@@ -2050,7 +2050,7 @@ public:
     void setAutoSizingShouldExpandToViewHeight(bool);
 
     void setViewportSizeForCSSViewportUnits(const WebCore::FloatSize&);
-    WebCore::FloatSize viewportSizeForCSSViewportUnits() const;
+    WebCore::FloatSize NODELETE viewportSizeForCSSViewportUnits() const;
 
     void didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChallengeProxy>&&, NegotiatedLegacyTLS);
     void negotiatedLegacyTLS();
@@ -2602,7 +2602,7 @@ public:
 
 #if ENABLE(WRITING_TOOLS)
 #if PLATFORM(MAC)
-    bool shouldEnableWritingToolsRequestedTool(WebCore::WritingTools::RequestedTool) const;
+    bool NODELETE shouldEnableWritingToolsRequestedTool(WebCore::WritingTools::RequestedTool) const;
 #endif
 #if ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuWritingTools() const;
@@ -2765,7 +2765,7 @@ public:
 #if ENABLE(WRITING_TOOLS)
     void setWritingToolsActive(bool);
 
-    WebCore::WritingTools::Behavior writingToolsBehavior() const;
+    WebCore::WritingTools::Behavior NODELETE writingToolsBehavior() const;
 
     void willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>&, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&&);
 
@@ -3050,7 +3050,7 @@ private:
     void didReceiveTitleForFrame(IPC::Connection&, WebCore::FrameIdentifier, String&&, const UserData&);
     void NODELETE didFirstLayoutForFrame(WebCore::FrameIdentifier, const UserData&);
     void didFirstVisuallyNonEmptyLayoutForFrame(IPC::Connection&, WebCore::FrameIdentifier, const UserData&, WallTime);
-    void mainFramePluginHandlesPageScaleGestureDidChange(bool, double minScale, double maxScale);
+    void NODELETE mainFramePluginHandlesPageScaleGestureDidChange(bool, double minScale, double maxScale);
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
@@ -3360,7 +3360,7 @@ private:
 
     void setEditableElementIsFocused(bool);
 
-    void handleAcceptsFirstMouse(bool);
+    void NODELETE handleAcceptsFirstMouse(bool);
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)

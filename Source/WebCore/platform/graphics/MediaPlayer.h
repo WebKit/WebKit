@@ -508,7 +508,7 @@ public:
     bool playAtHostTime(const MonotonicTime&);
     bool pauseAtHostTime(const MonotonicTime&);
 
-    bool preservesPitch() const;
+    bool NODELETE preservesPitch() const;
     void setPreservesPitch(bool);
 
     void setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm);
@@ -529,11 +529,11 @@ public:
 
     void setVolumeLocked(bool);
 
-    double volume() const;
+    double NODELETE volume() const;
     void setVolume(double);
     bool platformVolumeConfigurationRequired() const { return protect(client())->mediaPlayerPlatformVolumeConfigurationRequired(); }
 
-    bool muted() const;
+    bool NODELETE muted() const;
     void setMuted(bool);
 
     bool hasClosedCaptions() const;
@@ -560,7 +560,7 @@ public:
     MovieLoadType movieLoadType() const;
 
     using MediaPlayerEnums::Preload;
-    Preload preload() const;
+    Preload NODELETE preload() const;
     void setPreload(Preload);
 
     void networkStateChanged();
@@ -703,7 +703,7 @@ public:
     const ContentType& contentType() const LIFETIME_BOUND { return m_loadOptions.contentType; }
     String contentMIMEType() const;
     String contentTypeCodecs() const;
-    bool contentMIMETypeWasInferredFromExtension() const;
+    bool NODELETE contentMIMETypeWasInferredFromExtension() const;
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     void setShouldCheckHardwareSupport(bool);
@@ -769,7 +769,7 @@ public:
 
     void playerContentBoxRectChanged(const LayoutRect&);
 
-    String lastErrorMessage() const;
+    String NODELETE lastErrorMessage() const;
 
     void renderVideoWillBeDestroyed();
 
@@ -797,7 +797,7 @@ public:
     void soundStageSizeDidChange();
 
     void setInFullscreenOrPictureInPicture(bool);
-    bool isInFullscreenOrPictureInPicture() const;
+    bool NODELETE isInFullscreenOrPictureInPicture() const;
 
     PlatformVideoTarget videoTarget() const { return protect(client())->mediaPlayerVideoTarget(); }
     MediaPlayerClientIdentifier clientIdentifier() const { return protect(client())->mediaPlayerClientIdentifier(); }

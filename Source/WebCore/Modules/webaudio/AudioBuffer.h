@@ -83,7 +83,7 @@ public:
 
     size_t memoryCost() const;
 
-    template<typename Visitor> void visitChannelWrappers(Visitor&);
+    template<typename Visitor> void visitChannelWrappersInGCThread(Visitor&);
 
     bool copyTo(AudioBuffer&) const;
 

@@ -399,7 +399,7 @@ static inline WKWebExtensionContextPermissionStatus NODELETE toAPI(WebKit::WebEx
     }
 }
 
-static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtensionContextPermissionStatus status)
+static inline WebKit::WebExtensionContext::PermissionState NODELETE toImpl(WKWebExtensionContextPermissionStatus status)
 {
     switch (status) {
     case WKWebExtensionContextPermissionStatusDeniedExplicitly:
@@ -797,7 +797,7 @@ static inline WebKit::WebExtensionContext::TabSet toImpl(NSArray<id<WKWebExtensi
     extensionContext->didReplaceTab(toImpl(oldTab, extensionContext.get()), toImpl(newTab, extensionContext.get()));
 }
 
-static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWebExtensionTabChangedProperties properties)
+static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> NODELETE toImpl(WKWebExtensionTabChangedProperties properties)
 {
     if (properties == WKWebExtensionTabChangedPropertiesNone)
         return { };

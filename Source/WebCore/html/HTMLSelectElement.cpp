@@ -38,6 +38,7 @@
 #include "DocumentInlines.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementTraversal.h"
 #include "EventHandler.h"
@@ -59,6 +60,7 @@
 #include "KeyboardEvent.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrameInlines.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeName.h"
@@ -1433,6 +1435,9 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 {
     ASSERT(renderer());
     ASSERT(usesMenuList());
+
+    if (!event.isTrusted())
+        return;
 
     auto& eventNames = WebCore::eventNames();
 

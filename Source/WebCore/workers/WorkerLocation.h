@@ -38,7 +38,7 @@ public:
     static Ref<WorkerLocation> create(URL&& url, String&& origin) { return adoptRef(*new WorkerLocation(WTF::move(url), WTF::move(origin))); }
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    String href() const;
+    String NODELETE href() const;
 
     // URI decomposition attributes
     String protocol() const;
@@ -48,7 +48,7 @@ public:
     String pathname() const;
     String search() const;
     String hash() const;
-    String origin() const;
+    String NODELETE origin() const;
 
 private:
     WorkerLocation(URL&& url, String&& origin)
@@ -61,6 +61,6 @@ private:
     String m_origin;
 };
 
-WebCoreOpaqueRoot root(WorkerLocation*);
+WebCoreOpaqueRoot NODELETE root(WorkerLocation*);
 
 } // namespace WebCore

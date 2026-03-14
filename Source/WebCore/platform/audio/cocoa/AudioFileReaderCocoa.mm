@@ -153,7 +153,7 @@ static inline void destroyAudioBufferList(AudioBufferList* bufferList)
     fastFree(bufferList);
 }
 
-static bool validateAudioBufferList(AudioBufferList* bufferList)
+static bool NODELETE validateAudioBufferList(AudioBufferList* bufferList)
 {
     if (!bufferList)
         return false;
@@ -259,10 +259,10 @@ public:
     }
 
     explicit operator bool() const { return !!m_bufferList; }
-    AudioBufferList* operator->() const { return m_bufferList; }
+    AudioBufferList* NODELETE operator->() const { return m_bufferList; }
     operator AudioBufferList*() const { return m_bufferList; }
-    AudioBufferList& operator*() const { ASSERT(m_bufferList); return *m_bufferList; }
-    bool isValid() const { return validateAudioBufferList(m_bufferList); }
+    AudioBufferList& NODELETE operator*() const { ASSERT(m_bufferList); return *m_bufferList; }
+    bool NODELETE isValid() const { return validateAudioBufferList(m_bufferList); }
 private:
     AudioBufferList* m_bufferList;
 };

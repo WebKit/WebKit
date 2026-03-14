@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT static std::optional<DetectedItem> detectItemAroundHitTestResult(const HitTestResult&);
 #endif
     WEBCORE_EXPORT static void detectContentInFrame(LocalFrame*, OptionSet<DataDetectorType>, std::optional<double>, CompletionHandler<void(NSArray *)>&&);
-    WEBCORE_EXPORT static NSArray * detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, std::optional<double> referenceDate);
+    WEBCORE_EXPORT static NSArray *detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, std::optional<double> referenceDate);
     WEBCORE_EXPORT static std::optional<double> extractReferenceDate(NSDictionary *);
     WEBCORE_EXPORT static void removeDataDetectedLinksInDocument(Document&);
 #if PLATFORM(IOS_FAMILY)
@@ -91,7 +91,7 @@ public:
 
     static const String& dataDetectorURLProtocol();
     static bool isDataDetectorURL(const URL&);
-    static bool isDataDetectorAttribute(const QualifiedName&);
+    static bool NODELETE isDataDetectorAttribute(const QualifiedName&);
     static bool isDataDetectorElement(const Element&);
 };
 

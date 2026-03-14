@@ -216,7 +216,7 @@ private:
 
     IPC::Connection* NODELETE encoderConnection(Encoder&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
     void setEncoderConnection(Encoder&, RefPtr<IPC::Connection>&&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
-    IPC::Connection* decoderConnection(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
+    IPC::Connection* NODELETE decoderConnection(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
     void setDecoderConnection(Decoder&, RefPtr<IPC::Connection>&&) WTF_REQUIRES_LOCK(m_connectionLock);
 
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);

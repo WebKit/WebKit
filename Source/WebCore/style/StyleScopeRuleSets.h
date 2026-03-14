@@ -96,7 +96,7 @@ public:
     bool NODELETE hasContainerQueries() const;
     bool NODELETE hasScopeRules() const;
 
-    RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
+    RefPtr<StyleRuleViewTransition> NODELETE viewTransitionRule() const;
 
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&);
 

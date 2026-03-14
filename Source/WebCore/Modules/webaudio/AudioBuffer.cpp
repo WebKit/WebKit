@@ -199,15 +199,15 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
 }
 
 template<typename Visitor>
-void AudioBuffer::visitChannelWrappers(Visitor& visitor)
+void AudioBuffer::visitChannelWrappersInGCThread(Visitor& visitor)
 {
     Locker locker { m_channelsLock };
     for (auto& channelWrapper : m_channelWrappers)
-        channelWrapper.visit(visitor);
+        channelWrapper.visitInGCThread(visitor);
 }
 
-template void AudioBuffer::visitChannelWrappers(JSC::AbstractSlotVisitor&);
-template void AudioBuffer::visitChannelWrappers(JSC::SlotVisitor&);
+template void AudioBuffer::visitChannelWrappersInGCThread(JSC::AbstractSlotVisitor&);
+template void AudioBuffer::visitChannelWrappersInGCThread(JSC::SlotVisitor&);
 
 RefPtr<Float32Array> AudioBuffer::channelData(unsigned channelIndex)
 {

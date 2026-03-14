@@ -1548,7 +1548,7 @@ TextShapingResult FontCascade::layoutComplexText(const TextRun& run, unsigned fr
     return result;
 }
 
-inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
+inline bool NODELETE shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
 {
     // Don't draw anything while we are using custom fonts that are in the process of loading,
     // except if the 'customFontNotReadyAction' argument is set to UseFallbackIfFontNotReady
@@ -1772,7 +1772,7 @@ struct GlyphIterationState {
     float maxX;
 };
 
-static std::optional<float> findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
+static std::optional<float> NODELETE findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
 {
     if ((p1.y() < y && p2.y() > y) || (p1.y() > y && p2.y() < y))
         return p1.x() + (y - p1.y()) * (p2.x() - p1.x()) / (p2.y() - p1.y());
@@ -1843,7 +1843,7 @@ public:
 #endif
     }
 
-    bool containsMorePaths() { return m_index != m_glyphBuffer.size(); }
+    bool NODELETE containsMorePaths() { return m_index != m_glyphBuffer.size(); }
     Path path();
     std::pair<float, float> extents();
     GlyphUnderlineType underlineType();

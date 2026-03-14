@@ -29,13 +29,13 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSNavigateEvent::visitAdditionalChildren(Visitor& visitor)
+void JSNavigateEvent::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     auto& event = wrapped();
-    event.infoWrapper().visit(visitor);
+    event.infoWrapper().visitInGCThread(visitor);
     addWebCoreOpaqueRoot(visitor, &event.signal());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNavigateEvent);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSNavigateEvent);
 
 } // namespace WebCore

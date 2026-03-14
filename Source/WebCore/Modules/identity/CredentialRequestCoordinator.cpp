@@ -260,8 +260,8 @@ void CredentialRequestCoordinator::dismissPickerAndSettle(ExceptionOr<RefPtr<Bas
         if (!success)
             LOG(DigitalCredentials, "Failed to dismiss the credentials picker.");
 
-        if (auto* protectedThis = weakThis.get())
-            protectedThis->setState(PickerState::Idle);
+        if (auto* rawThis = weakThis.get())
+            rawThis->setState(PickerState::Idle);
 
         if (!promise)
             return;
@@ -339,8 +339,8 @@ void CredentialRequestCoordinator::abortPicker(ExceptionOr<JSC::JSValue>&& reaso
             if (!success)
                 LOG(DigitalCredentials, "Failed to dismiss the credentials picker.");
 
-            if (auto* protectedThis = weakThis.get())
-                protectedThis->setState(PickerState::Idle);
+            if (auto* rawThis = weakThis.get())
+                rawThis->setState(PickerState::Idle);
 
             if (!promise)
                 return;

@@ -785,7 +785,7 @@ bool RenderThemeMac::isControlStyled(const RenderStyle& style) const
     return RenderTheme::isControlStyled(style);
 }
 
-static FloatRect inflateRect(const FloatRect& rect, const IntSize& size, std::span<const int, 4> margins, float zoomLevel)
+static FloatRect NODELETE inflateRect(const FloatRect& rect, const IntSize& size, std::span<const int, 4> margins, float zoomLevel)
 {
     // Only do the inflation if the available width/height are too small. Otherwise try to
     // fit the glow/check space into the available box's width/height.

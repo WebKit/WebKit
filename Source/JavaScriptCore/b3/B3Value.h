@@ -480,6 +480,7 @@ protected:
         case VectorAllTrue:
         case VectorExtaddPairwise:
         case VectorDupElement:
+        case VectorReverse:
             return sizeof(Value*);
         case Add:
         case Sub:
@@ -558,6 +559,13 @@ protected:
         case VectorMulByElement:
         case VectorShiftByVector:
         case VectorRelaxedSwizzle:
+        case VectorUnzipEven:
+        case VectorUnzipOdd:
+        case VectorZipLower:
+        case VectorZipHigher:
+        case VectorTransposeEven:
+        case VectorTransposeOdd:
+        case VectorExtractPair:
         case Stitch:
             return 2 * sizeof(Value*);
         case Select:
@@ -728,6 +736,7 @@ private:
         case VectorAllTrue:
         case VectorExtaddPairwise:
         case VectorDupElement:
+        case VectorReverse:
         case VectorRelaxedTruncSat:
             if (numArgs != 1) [[unlikely]]
                 badKind(kind, numArgs);
@@ -798,6 +807,13 @@ private:
         case VectorMulByElement:
         case VectorShiftByVector:
         case VectorRelaxedSwizzle:
+        case VectorUnzipEven:
+        case VectorUnzipOdd:
+        case VectorZipLower:
+        case VectorZipHigher:
+        case VectorTransposeEven:
+        case VectorTransposeOdd:
+        case VectorExtractPair:
         case Stitch:
             if (numArgs != 2) [[unlikely]]
                 badKind(kind, numArgs);

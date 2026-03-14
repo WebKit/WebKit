@@ -781,7 +781,7 @@ static bool imageElementIsDraggable(const HTMLImageElement& image, const LocalFr
     if (!renderImage)
         return false;
 
-    CachedResourceHandle cachedImage = renderImage->cachedImage();
+    RefPtr cachedImage = renderImage->cachedImage();
     return cachedImage && !cachedImage->errorOccurred() && cachedImage->imageForRenderer(renderImage.get());
 }
 
@@ -888,7 +888,7 @@ static CachedImage* getCachedImage(Element& element)
 
 static Image* getImage(Element& element)
 {
-    CachedResourceHandle cachedImage = getCachedImage(element);
+    RefPtr cachedImage = getCachedImage(element);
     // Don't use cachedImage->imageForRenderer() here as that may return BitmapImages for cached SVG Images.
     // Users of getImage() want access to the SVGImage, in order to figure out the filename extensions,
     // which would be empty when asking the cached BitmapImages.
@@ -1347,7 +1347,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         float dy = scale * (originY - mouseDownPoint.y());
         scaledOrigin = IntPoint((int)(dx + 0.5), (int)(dy + 0.5));
     } else {
-        if (CachedResourceHandle cachedImage = getCachedImage(element)) {
+        if (RefPtr cachedImage = getCachedImage(element)) {
             dragImage = DragImage { createDragImageIconForCachedImageFilename(cachedImage->response().suggestedFilename()) };
             if (dragImage) {
                 dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page->deviceScaleFactor()) };

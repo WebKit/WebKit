@@ -54,7 +54,7 @@ private:
     
     PlatformCALayerContentsDelayedReleaser();
 
-    void updateSawOverlappingCommit() WTF_REQUIRES_LOCK(m_lock);
+    void NODELETE updateSawOverlappingCommit() WTF_REQUIRES_LOCK(m_lock);
     void clearRetainedContents();
 
     Vector<RetainPtr<CFTypeRef>> m_retainedContents;

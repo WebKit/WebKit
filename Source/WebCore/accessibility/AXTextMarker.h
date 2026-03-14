@@ -410,7 +410,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    std::optional<NSRange> nsRange() const;
+    std::optional<NSRange> NODELETE nsRange() const;
 #endif
 
     AXTextMarker start() const { return m_start; }

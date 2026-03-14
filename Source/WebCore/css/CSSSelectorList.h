@@ -116,6 +116,6 @@ private:
     FixedVector<CSSSelector> m_selectorArray;
 };
 
-void add(Hasher&, const CSSSelectorList&);
+void NODELETE add(Hasher&, const CSSSelectorList&);
 
 } // namespace WebCore

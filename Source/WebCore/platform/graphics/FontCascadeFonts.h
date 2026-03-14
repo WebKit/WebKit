@@ -172,7 +172,7 @@ private:
 
         GlyphData glyphDataForCharacter(char32_t);
 
-        void setSingleFontPage(RefPtr<GlyphPage>&&);
+        void NODELETE setSingleFontPage(RefPtr<GlyphPage>&&);
         void setGlyphDataForCharacter(char32_t, GlyphData);
 
         bool isNull() const { return !m_singleFont && !m_mixedFont; }

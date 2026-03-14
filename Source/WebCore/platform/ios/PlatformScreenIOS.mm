@@ -216,8 +216,11 @@ float screenPPIFactor()
 
 FloatSize screenSize()
 {
+// FIXME: rdar://172495534 Stop using deprecated `_isClassic` and `UIApplicationSceneClassicModeOriginalPad`.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (PAL::deviceHasIPadCapability() && [[PAL::getUIApplicationClassSingleton() sharedApplication] _isClassic])
         return { 320, 480 };
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (auto data = screenData(primaryScreenDisplayID()))
         return data->screenRect.size();
@@ -227,8 +230,11 @@ FloatSize screenSize()
 
 FloatSize availableScreenSize()
 {
+// FIXME: rdar://172495534 Stop using deprecated `_isClassic` and `UIApplicationSceneClassicModeOriginalPad`.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (PAL::deviceHasIPadCapability() && [[PAL::getUIApplicationClassSingleton() sharedApplication] _isClassic])
         return { 320, 480 };
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (auto data = screenData(primaryScreenDisplayID()))
         return data->screenAvailableRect.size();

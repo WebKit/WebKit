@@ -86,10 +86,10 @@ public:
         return FloatRect(m_rect.maxX() - m_radii.bottomRight().width(), m_rect.maxY() - m_radii.bottomRight().height(), m_radii.bottomRight().width(), m_radii.bottomRight().height());
     }
 
-    bool isRenderable() const;
-    bool xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const;
+    bool NODELETE isRenderable() const;
+    bool NODELETE xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const;
 
-    bool intersectionIsRectangular(const FloatRect&) const;
+    bool NODELETE intersectionIsRectangular(const FloatRect&) const;
 
     Path path() const;
 

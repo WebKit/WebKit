@@ -172,7 +172,7 @@ int windowsKeyCodeForKeyCode(uint16_t keyCode)
     return 0;
 }
 
-int windowsKeyCodeForCharCode(unichar charCode)
+int NODELETE windowsKeyCodeForCharCode(unichar charCode)
 {
     switch (charCode) {
     case 'a': case 'A': return VK_A;

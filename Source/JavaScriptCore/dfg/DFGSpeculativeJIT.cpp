@@ -5016,6 +5016,43 @@ void SpeculativeJIT::compileIsTypedArrayView(Node* node)
     blessedBooleanResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileArrayIsArray(Node* node)
+{
+    // Array.isArray(value):
+    //   if value is not a cell -> false
+    //   if cell type == ArrayType || DerivedArrayType -> true
+    //   if cell type == ProxyObjectType -> call isArraySlow (slow path, may throw)
+    //   else -> false
+    JSValueOperand value(this, node->child1());
+    GPRTemporary result(this);
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+
+    Jump isNotCell = branchIfNotCell(valueRegs);
+
+    // Load the JSType byte into resultGPR, then bias by ArrayType for unsigned range checks.
+    // After sub: 0 -> ArrayType, 1 -> DerivedArrayType (-> true), ProxyObjectType-ArrayType -> slow path, else -> false.
+    static_assert(DerivedArrayType == ArrayType + 1, "ArrayType and DerivedArrayType must be consecutive");
+    static_assert(ProxyObjectType > DerivedArrayType, "ProxyObjectType must be above DerivedArrayType");
+    load8(Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()), resultGPR);
+    sub32(TrustedImm32(ArrayType), resultGPR);
+    Jump isArrayOrDerived = branch32(BelowOrEqual, resultGPR, TrustedImm32(DerivedArrayType - ArrayType));
+    Jump isProxy = branch32(Equal, resultGPR, TrustedImm32(ProxyObjectType - ArrayType));
+
+    isNotCell.link(this);
+    move(TrustedImm32(0), resultGPR);
+    Jump done = jump();
+
+    isArrayOrDerived.link(this);
+    move(TrustedImm32(1), resultGPR);
+
+    addSlowPathGenerator(slowPathCall(isProxy, this, operationArrayIsArray, resultGPR, LinkableConstant::globalObject(*this, node), valueRegs));
+
+    done.link(this);
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileHasStructureWithFlags(Node* node)
 {
     SpeculateCellOperand object(this, node->child1());

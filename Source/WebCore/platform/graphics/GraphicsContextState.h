@@ -79,7 +79,7 @@ public:
 
     WEBCORE_EXPORT GraphicsContextState(const ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
 
-    void repurpose(Purpose);
+    void NODELETE repurpose(Purpose);
     GraphicsContextState clone(Purpose) const;
 
     ChangeFlags changes() const { return m_changeFlags; }

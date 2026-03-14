@@ -53,7 +53,7 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
     m_fontDescription.setWeight((CTFontGetSymbolicTraits(ctFont.get()) & kCTFontTraitBold) ? boldWeightValue() : normalWeightValue());
 }
 
-static const AffineTransform& rotateLeftTransform()
+static const AffineTransform& NODELETE rotateLeftTransform()
 {
     static constexpr AffineTransform result(0, -1, 1, 0, 0, 0);
     return result;

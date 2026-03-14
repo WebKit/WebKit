@@ -86,7 +86,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
 #endif
 
     void didProvideContentKeyRequest(AVContentKeyRequest *);

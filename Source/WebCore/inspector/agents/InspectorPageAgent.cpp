@@ -325,7 +325,7 @@ void InspectorPageAgent::overridePrefersColorScheme(std::optional<Inspector::Pro
 #endif
 }
 
-static Inspector::Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
+static Inspector::Protocol::Page::CookieSameSitePolicy NODELETE cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
 {
     switch (policy) {
     case Cookie::SameSitePolicy::None:
@@ -595,7 +595,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Generi
         success = ResourceUtilities::mainResourceContent(frame, false, &content);
 
     if (!success) {
-        if (auto* resource = ResourceUtilities::cachedResource(frame, kurl)) {
+        if (RefPtr resource = ResourceUtilities::cachedResource(frame, kurl)) {
             if (auto textContent = ResourceUtilities::textContentForCachedResource(*resource)) {
                 content = *textContent;
                 success = true;

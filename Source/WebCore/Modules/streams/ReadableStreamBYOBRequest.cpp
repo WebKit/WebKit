@@ -83,21 +83,21 @@ void ReadableStreamBYOBRequest::setView(JSC::ArrayBufferView* view)
 }
 
 template<typename Visitor>
-void ReadableStreamBYOBRequest::visitAdditionalChildren(Visitor& visitor)
+void ReadableStreamBYOBRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (m_controller)
-        SUPPRESS_UNCOUNTED_ARG m_controller->stream().visitAdditionalChildren(visitor);
+        SUPPRESS_UNCOUNTED_ARG m_controller->stream().visitAdditionalChildrenInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(ReadableStreamBYOBRequest);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(ReadableStreamBYOBRequest);
 
 template<typename Visitor>
-void JSReadableStreamBYOBRequest::visitAdditionalChildren(Visitor& visitor)
+void JSReadableStreamBYOBRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     // Do not ref `wrapped()` here since this function may get called on a GC thread.
-    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildren(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSReadableStreamBYOBRequest);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSReadableStreamBYOBRequest);
 
 } // namespace WebCore

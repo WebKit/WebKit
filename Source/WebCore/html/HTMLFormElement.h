@@ -83,9 +83,9 @@ public:
 
     void submitImplicitly(Event&, bool fromImplicitSubmissionTrigger);
 
-    String name() const;
+    String NODELETE name() const;
 
-    bool noValidate() const;
+    bool NODELETE noValidate() const;
 
     String acceptCharset() const { return m_attributes.acceptCharset(); }
     void setAcceptCharset(const String&);

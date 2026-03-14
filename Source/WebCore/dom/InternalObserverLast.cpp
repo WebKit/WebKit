@@ -72,9 +72,9 @@ private:
         protect(m_promise)->resolve<IDLAny>(m_lastValue.getValue());
     }
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
-        m_lastValue.visit(visitor);
+        m_lastValue.visitInGCThread(visitor);
     }
 
     InternalObserverLast(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)

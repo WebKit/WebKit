@@ -46,7 +46,7 @@ class TrackBuffer final
 {
     WTF_MAKE_TZONE_ALLOCATED(TrackBuffer);
 public:
-    static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&);
+    static UniqueRef<TrackBuffer> NODELETE create(RefPtr<MediaDescription>&&);
     static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&, const MediaTime&);
 
     MediaTime maximumBufferedTime() const;
@@ -62,8 +62,8 @@ public:
     RefPtr<MediaSample> nextSample();
     size_t remainingSamples() const { return decodeQueue().size(); }
 
-    void resetTimestampOffset();
-    void reset();
+    void NODELETE resetTimestampOffset();
+    void NODELETE reset();
     void clearSamples();
 
     const MediaTime& lastDecodeTimestamp() const LIFETIME_BOUND { return m_lastDecodeTimestamp; }

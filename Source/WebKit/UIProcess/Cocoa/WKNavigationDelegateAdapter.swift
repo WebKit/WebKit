@@ -24,7 +24,7 @@
 #if ENABLE_SWIFTUI
 
 import Foundation
-internal import WebKit_Private
+import WebKit_Private
 
 private struct DefaultNavigationDecider: WebPage.NavigationDeciding {
 }

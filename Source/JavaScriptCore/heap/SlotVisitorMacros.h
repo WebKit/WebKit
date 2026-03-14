@@ -110,11 +110,11 @@ public: \
 #define DEFINE_VISIT_OUTPUT_CONSTRAINTS(className) \
     DEFINE_VISIT_OUTPUT_CONSTRAINTS_WITH_MODIFIER(UNUSED_MODIFIER_ARGUMENT, className)
 
-// Macros for visitAdditionalChildren().
+// Macros for visitAdditionalChildrenInGCThread().
 
-#define DEFINE_VISIT_ADDITIONAL_CHILDREN(className) \
-    template void className::visitAdditionalChildren(JSC::AbstractSlotVisitor&); \
-    template void className::visitAdditionalChildren(JSC::SlotVisitor&)
+#define DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(className) \
+    template void className::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&); \
+    template void className::visitAdditionalChildrenInGCThread(JSC::SlotVisitor&)
 
 } // namespace JSC
 

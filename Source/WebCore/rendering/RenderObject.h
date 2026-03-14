@@ -347,7 +347,7 @@ public:
     Layout::Box* layoutBox() { return m_layoutBox.get(); }
     const Layout::Box* layoutBox() const { return m_layoutBox.get(); }
     void NODELETE setLayoutBox(Layout::Box&);
-    void clearLayoutBox();
+    void NODELETE clearLayoutBox();
 
     WEBCORE_EXPORT RenderTheme& theme() const;
 
@@ -394,7 +394,7 @@ public:
     RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth, int& newFixedDepth) const;
 #endif
 
-    WEBCORE_EXPORT RenderLayer* enclosingLayer() const;
+    WEBCORE_EXPORT RenderLayer* NODELETE enclosingLayer() const;
 
     WEBCORE_EXPORT RenderBox& NODELETE enclosingBox() const;
     RenderBoxModelObject& NODELETE enclosingBoxModelObject() const;
@@ -729,7 +729,7 @@ public:
     // instead. Returns the capture state with this adjustment applied.
     bool effectiveCapturedInViewTransition() const;
 
-    inline RenderView& view() const; // Defined in RenderObjectDocument.h
+    inline RenderView& NODELETE view() const LIFETIME_BOUND; // Defined in RenderObjectDocument.h
     inline LocalFrameViewLayoutContext& layoutContext() const;
 
     HostWindow* hostWindow() const;
@@ -786,7 +786,7 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
 
-    bool isComposited() const;
+    bool NODELETE isComposited() const;
 
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter = HitTestAll);
     virtual Node* nodeForHitTest() const;
@@ -1068,7 +1068,7 @@ public:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed = nullptr) const;
     virtual void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const;
 
-    bool shouldUseTransformFromContainer(const RenderElement* container) const;
+    bool NODELETE shouldUseTransformFromContainer(const RenderElement* container) const;
     void getTransformFromContainer(const LayoutSize& offsetInContainer, TransformationMatrix&) const;
     
     void pushOntoTransformState(TransformState&, OptionSet<MapCoordinatesMode>, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const;
@@ -1096,7 +1096,7 @@ protected:
     // Helper functions. Dangerous to use!
     void setPreviousSibling(RenderObject* previous) { m_previous = previous; }
     void setNextSibling(RenderObject* next) { m_next = next; }
-    void setParent(RenderElement*);
+    void NODELETE setParent(RenderElement*);
     //////////////////////////////////////////
 
     inline Node& nodeForNonAnonymous() const; // Defined in RenderObjectInlines.h
@@ -1298,12 +1298,12 @@ private:
         RefPtr<ControlPart> controlPart;
     };
 
-    WEBCORE_EXPORT const RenderObject::RenderObjectRareData& rareData() const;
+    WEBCORE_EXPORT const RenderObject::RenderObjectRareData& NODELETE rareData() const;
     RenderObjectRareData& ensureRareData();
     void removeRareData();
 
     using RareDataMap = SingleThreadWeakHashMap<const RenderObject, std::unique_ptr<RenderObjectRareData>>;
-    static RareDataMap& rareDataMap();
+    static RareDataMap& NODELETE rareDataMap();
 };
 
 class RenderObject::SetLayoutNeededForbiddenScope {

@@ -83,7 +83,7 @@ public:
     CSSStyleProperties& ensureInlineCSSStyleProperties(StyledElement& parentElement);
 
     int NODELETE findPropertyIndex(CSSPropertyID) const;
-    int findCustomPropertyIndex(StringView propertyName) const;
+    int NODELETE findCustomPropertyIndex(StringView propertyName) const;
 
     // Methods for querying and altering CSS custom properties.
     bool setCustomProperty(const String& propertyName, const String& value, CSSParserContext, IsImportant = IsImportant::No);
@@ -98,7 +98,7 @@ private:
     bool removeShorthandProperty(CSSPropertyID, String* returnText);
     bool removePropertyAtIndex(int index, String* returnText);
     CSSProperty* NODELETE findCSSPropertyWithID(CSSPropertyID);
-    CSSProperty* findCustomCSSPropertyWithName(const String&);
+    CSSProperty* NODELETE findCustomCSSPropertyWithName(const String&);
     bool canUpdateInPlace(const CSSProperty&, CSSProperty* toReplace) const;
 
     friend class StyleProperties;

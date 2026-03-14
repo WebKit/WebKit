@@ -17,7 +17,7 @@ fi
 UnifiedSourceCppFileCount=5
 UnifiedSourceCFileCount=0
 UnifiedSourceMmFileCount=0
-UnifiedSourceNonARCMmFileCount=50
+UnifiedSourceNonARCMmFileCount=51
 
 if [ $# -eq 0 ]; then
     echo "Using unified source list files: Sources.txt, SourcesCocoa.txt"

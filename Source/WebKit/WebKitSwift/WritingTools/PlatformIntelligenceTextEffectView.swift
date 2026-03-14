@@ -31,11 +31,11 @@ import AppKit
 // WritingToolsUI is not present in the base system, but WebKit is, so it must be weak-linked.
 // WritingToolsUI need not be soft-linked from WebKitSwift because although WTUI links WebKit, WebKit does not directly link WebKitSwift.
 #if USE_APPLE_INTERNAL_SDK
-@_weakLinked internal import WritingToolsUI_Private._WTTextEffectView
-@_weakLinked internal import WritingToolsUI_Private._WTSweepTextEffect
-@_weakLinked internal import WritingToolsUI_Private._WTReplaceTextEffect
+@_weakLinked import WritingToolsUI_Private._WTTextEffectView
+@_weakLinked import WritingToolsUI_Private._WTSweepTextEffect
+@_weakLinked import WritingToolsUI_Private._WTReplaceTextEffect
 #else
-@_weakLinked internal import WritingToolsUI_Private_SPI
+@_weakLinked import WritingToolsUI_Private_SPI
 #endif // USE_APPLE_INTERNAL_SDK
 
 #else
@@ -50,9 +50,9 @@ import UIKit_SPI
 
 // Work around rdar://145157171 by manually importing the cross-import module.
 #if canImport(_WebKit_SwiftUI)
-internal import _WebKit_SwiftUI
+import _WebKit_SwiftUI
 #endif
-internal import SwiftUI
+import SwiftUI
 
 // MARK: Platform abstraction type aliases
 

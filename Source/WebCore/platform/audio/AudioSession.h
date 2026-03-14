@@ -102,7 +102,7 @@ public:
     static void setSharedSession(Ref<AudioSession>&&);
     static AudioSession& singleton();
 
-    static bool enableMediaPlayback();
+    static bool NODELETE enableMediaPlayback();
 
     using ChangedObserver = WTF::Observer<void(AudioSession&)>;
     static void addAudioSessionChangedObserver(const ChangedObserver&);
@@ -157,8 +157,8 @@ public:
 
     void setRoutingArbitrationClient(AudioSessionRoutingArbitrationClient& client) { m_routingArbitrationClient = client; }
 
-    static bool shouldManageAudioSessionCategory();
-    static void setShouldManageAudioSessionCategory(bool);
+    static bool NODELETE shouldManageAudioSessionCategory();
+    static void NODELETE setShouldManageAudioSessionCategory(bool);
 
     virtual void setHostProcessAttribution(audit_token_t) { };
     virtual void setPresentingProcesses(Vector<audit_token_t>&&) { };
@@ -181,7 +181,7 @@ protected:
 
     Logger& logger();
     ASCIILiteral logClassName() const { return "AudioSession"_s; }
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
     uint64_t logIdentifier() const { return 0; }
 
     mutable RefPtr<Logger> m_logger;

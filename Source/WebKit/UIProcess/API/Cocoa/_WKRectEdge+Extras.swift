@@ -24,7 +24,7 @@
 #if ENABLE_SWIFTUI
 
 import Foundation
-internal import WebKit_Private
+import WebKit_Private
 
 extension _WKRectEdge {
     init(_ cocoaEdge: NSDirectionalRectEdge) {

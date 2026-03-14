@@ -67,8 +67,8 @@ RefPtr<Node> enclosingEmptyListItem(const VisiblePosition&);
 RefPtr<Element> enclosingAnchorElement(const Position&);
 Element* enclosingElementWithTag(const Position&, const QualifiedName&);
 RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-HTMLSpanElement* tabSpanNode(Node*);
-HTMLSpanElement* parentTabSpanNode(Node*);
+HTMLSpanElement* NODELETE tabSpanNode(Node*);
+HTMLSpanElement* NODELETE parentTabSpanNode(Node*);
 RefPtr<Element> isLastPositionBeforeTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 RefPtr<Element> isFirstPositionAfterTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 
@@ -92,18 +92,18 @@ bool editingIgnoresContent(const Node&);
 bool canHaveChildrenForEditing(const Node&);
 bool isAtomicNode(const Node*);
 
-bool isBlock(const Node&);
-bool isBlockFlowElement(const Node&);
-bool isInline(const Node&);
+bool NODELETE isBlock(const Node&);
+bool NODELETE isBlockFlowElement(const Node&);
+bool NODELETE isInline(const Node&);
 bool isMailBlockquote(const Node&);
 bool isRenderedTable(const Node*);
-bool isTableCell(const Node&);
+bool NODELETE isTableCell(const Node&);
 bool isEmptyTableCell(const Node*);
-bool isTableStructureNode(const Node&);
-bool isListHTMLElement(Node*);
-bool isListItem(const Node&);
+bool NODELETE isTableStructureNode(const Node&);
+bool NODELETE isListHTMLElement(Node*);
+bool NODELETE isListItem(const Node&);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
-bool isNonTableCellHTMLBlockElement(const Node*);
+bool NODELETE isNonTableCellHTMLBlockElement(const Node*);
 
 bool isNodeVisiblyContainedWithin(Node&, const SimpleRange&);
 
@@ -222,7 +222,7 @@ bool deprecatedIsEditingWhitespace(char16_t);
 // FIXME: Can't answer this question correctly without being passed the white-space mode.
 bool deprecatedIsCollapsibleWhitespace(char16_t);
 
-bool isAmbiguousBoundaryCharacter(char16_t);
+bool NODELETE isAmbiguousBoundaryCharacter(char16_t);
 
 String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd);
 const String& nonBreakingSpaceString();

@@ -50,11 +50,11 @@ JSValue JSHistory::state(JSGlobalObject& lexicalGlobalObject) const
 }
 
 template<typename Visitor>
-void JSHistory::visitAdditionalChildren(Visitor& visitor)
+void JSHistory::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().cachedStateForGC().visit(visitor);
+    wrapped().cachedStateForGC().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSHistory);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSHistory);
 
 } // namespace WebCore

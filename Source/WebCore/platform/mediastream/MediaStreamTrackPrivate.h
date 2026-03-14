@@ -110,7 +110,7 @@ public:
     bool ended() const { return m_isEnded; }
 
     MediaStreamTrackHintValue contentHint() const { return m_contentHint; }
-    void setContentHint(MediaStreamTrackHintValue);
+    void NODELETE setContentHint(MediaStreamTrackHintValue);
     
     void startProducingData();
     void stopProducingData();
@@ -132,10 +132,10 @@ public:
 
     Ref<MediaStreamTrackPrivate> clone();
 
-    WEBCORE_EXPORT RealtimeMediaSource& source();
+    WEBCORE_EXPORT RealtimeMediaSource& NODELETE source();
     const RealtimeMediaSource& source() const;
-    RealtimeMediaSource& sourceForProcessor();
-    bool hasSource(const RealtimeMediaSource*) const;
+    RealtimeMediaSource& NODELETE sourceForProcessor();
+    bool NODELETE hasSource(const RealtimeMediaSource*) const;
 
     RealtimeMediaSource::Type type() const { return m_type; }
     CaptureDevice::DeviceType deviceType() const { return m_deviceType; }

@@ -33,7 +33,7 @@ namespace PAL {
 
 PAL_EXPORT bool isLockdownModeEnabled();
 PAL_EXPORT bool isLockdownModeEnabledForCurrentProcess();
-PAL_EXPORT void setLockdownModeEnabledForCurrentProcess(bool);
+PAL_EXPORT void NODELETE setLockdownModeEnabledForCurrentProcess(bool);
 
 }
 

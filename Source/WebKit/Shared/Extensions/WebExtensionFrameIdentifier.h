@@ -80,7 +80,7 @@ bool matchesFrame(const WebExtensionFrameIdentifier&, const WebFrame&);
 
 WebExtensionFrameIdentifier NODELETE toWebExtensionFrameIdentifier(std::optional<WebCore::FrameIdentifier>);
 WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame&);
-WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const FrameInfoData&);
+WebExtensionFrameIdentifier NODELETE toWebExtensionFrameIdentifier(const FrameInfoData&);
 
 #ifdef __OBJC__
 WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *);

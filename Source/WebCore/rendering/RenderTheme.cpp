@@ -554,7 +554,7 @@ static void updateMeterPartForRenderer(MeterPart& meterPart, const RenderMeter& 
     meterPart.setMaximum(element->max());
 }
 
-static void updateProgressBarPartForRenderer(ProgressBarPart& progressBarPart, const RenderProgress& renderProgress)
+static void NODELETE updateProgressBarPartForRenderer(ProgressBarPart& progressBarPart, const RenderProgress& renderProgress)
 {
     progressBarPart.setPosition(renderProgress.position());
     progressBarPart.setAnimationStartTime(renderProgress.animationStartTime().secondsSinceEpoch());

@@ -1,0 +1,32 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script async type="text/javascript">
+async function run() {
+    globalThis.testRunner?.waitUntilDone();
+    globalThis.testRunner?.dumpAsText();
+
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+    const shaderModule = device.createShaderModule({
+        code: `
+struct S { x: vec3u }
+override ov: f32 = 1.0;
+@group(0) @binding(0) var<storage, read_write> buf: S;
+@compute @workgroup_size(1)
+fn main() { buf = S(vec3u(u32(ov))); }
+`,
+    });
+    try { device.createComputePipeline({ layout: 'auto', compute: { module: shaderModule } }); } catch(e) { }
+    debug('Pass');
+}
+
+async function main() {
+try {
+    await run();
+} catch (e) {
+    debug('Error', e);
+} finally {
+    globalThis.testRunner?.notifyDone();
+}
+}
+main();
+</script>

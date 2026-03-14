@@ -114,6 +114,12 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
     }
 
     GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
+    if (!element) {
+        GST_WARNING("Unable to create decoder for codec %s", codecName.utf8().data());
+        callback(makeUnexpected(makeString("Unable to create decoder for codec "_s, codecName)));
+        return;
+    }
+
     Ref decoder = adoptRef(*new GStreamerVideoDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     Ref internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {

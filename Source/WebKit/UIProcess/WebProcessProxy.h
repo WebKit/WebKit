@@ -259,8 +259,8 @@ public:
 
     static RefPtr<WebProcessProxy> processForIdentifier(WebCore::ProcessIdentifier);
     static Ref<WebProcessProxy> fromConnection(const IPC::Connection&);
-    static WebPageProxy* webPage(WebPageProxyIdentifier);
-    static WebPageProxy* webPage(WebCore::PageIdentifier);
+    static WebPageProxy* NODELETE webPage(WebPageProxyIdentifier);
+    static WebPageProxy* NODELETE webPage(WebCore::PageIdentifier);
     static WebPageProxy* audioCapturingWebPage();
 #if ENABLE(WEBXR)
     static WebPageProxy* webPageWithActiveXRSession();
@@ -470,8 +470,8 @@ public:
     void unregisterRemoteWorkerClientProcess(RemoteWorkerType, WebProcessProxy&);
     void updateRemoteWorkerProcessAssertion(RemoteWorkerType);
     bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->remoteWorkerPageProxyID == pageProxyID; }
-    bool hasServiceWorkerForegroundActivityForTesting() const;
-    bool hasServiceWorkerBackgroundActivityForTesting() const;
+    bool NODELETE hasServiceWorkerForegroundActivityForTesting() const;
+    bool NODELETE hasServiceWorkerBackgroundActivityForTesting() const;
     void startServiceWorkerBackgroundProcessing();
     void endServiceWorkerBackgroundProcessing();
     void setThrottleStateForTesting(ProcessThrottleState);
@@ -613,6 +613,10 @@ public:
     void setIneligbleForWebProcessCache() { m_isEligibleForWebProcessCache = false; }
     bool isEligibleForWebProcessCache() const { return m_isEligibleForWebProcessCache; }
 
+    void incrementFrameProcessCount() { ++m_frameProcessCount; }
+    void decrementFrameProcessCount() { --m_frameProcessCount; }
+    uint64_t frameProcessCount() const { return m_frameProcessCount; }
+
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -666,7 +670,7 @@ private:
     static void registerNotifyObservers();
 #endif
 
-    ProcessTerminationReason terminationReason() const;
+    ProcessTerminationReason NODELETE terminationReason() const;
 
     // IPC message handlers.
     void didDestroyUserGestureToken(WebCore::PageIdentifier, WebCore::UserGestureTokenIdentifier);
@@ -731,7 +735,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    bool messageSourceIsValidWebContentProcess();
+    bool NODELETE messageSourceIsValidWebContentProcess();
 #endif
 
     bool shouldTakeNearSuspendedAssertion() const;
@@ -801,6 +805,7 @@ private:
     WeakHashSet<SuspendedPageProxy> m_suspendedPages;
     UserInitiatedActionMap m_userInitiatedActionMap;
     HashMap<WebCore::PageIdentifier, UserInitiatedActionByAuthorizationTokenMap> m_userInitiatedActionByAuthorizationTokenMap;
+    uint64_t m_frameProcessCount { 0 };
 
     WeakHashMap<VisitedLinkStore, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;
 

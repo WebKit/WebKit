@@ -231,6 +231,9 @@ PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_reallocation_did_fail(const char
                                                                       size_t old_size,
                                                                       size_t new_size);
 
+PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
+PAS_IGNORE_WARNINGS_BEGIN("return-type")
+
 #if PAS_OS(DARWIN) && PAS_VA_OPT_SUPPORTED
 
 #define PAS_VA_COUNT6(x, ...) + 1
@@ -278,15 +281,11 @@ static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(
 PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression);
 PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int line, const char* function, const char* expression, uint64_t extra);
 
-PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
-
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
     const char* filename, int line, const char* function, const char* expression)
 {
     pas_assertion_failed(filename, line, function, expression);
 }
-
-PAS_IGNORE_WARNINGS_END
 
 #if PAS_OS(DARWIN) && PAS_VA_OPT_SUPPORTED
 
@@ -315,8 +314,6 @@ PAS_NEVER_INLINE void pas_report_assertion_failed(
 #define PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression) \
     PAS_UNUSED_ASSERTION_FAILED_ARGS(filename, line, function, expression)
 #endif
-
-PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
 
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer1(
     const char* filename, int line, const char* function, const char* expression, uint64_t misc1)
@@ -359,8 +356,6 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
     PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression);
     pas_crash_with_info_impl6((uint64_t)line, misc1, misc2, misc3, misc4, misc5, misc6);
 }
-
-PAS_IGNORE_WARNINGS_END
 
 /* The count argument will always be computed with PAS_VA_NUM_ARGS in the client.
    Hence, it is always a constant, and the following cascade of if statements will
@@ -485,6 +480,9 @@ PAS_IGNORE_WARNINGS_END
     } while (0)
 
 #define PAS_ASSERT_NOT_REACHED(...) PAS_ASSERT(!"Should not be reached", __VA_ARGS__)
+
+PAS_IGNORE_WARNINGS_END
+PAS_IGNORE_WARNINGS_END
 
 static inline bool pas_is_power_of_2(uintptr_t value)
 {

@@ -1403,7 +1403,7 @@ std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> WebFrame::originat
 }
 
 #if ENABLE(CONTEXT_MENU_EVENT)
-static bool isContextClick(const PlatformMouseEvent& event)
+static bool NODELETE isContextClick(const PlatformMouseEvent& event)
 {
 #if USE(APPKIT)
     return WebEventFactory::shouldBeHandledAsContextClick(event);
@@ -1633,7 +1633,7 @@ void WebFrame::findFocusableElementContinuingFromFrame(WebCore::FocusDirection d
     }
 }
 
-static RefPtr<Node> nodeFromJSHandleIdentifier(JSHandleIdentifier identifier)
+static RefPtr<Node> NODELETE nodeFromJSHandleIdentifier(JSHandleIdentifier identifier)
 {
     auto* object = WebKitJSHandle::objectForIdentifier(identifier);
     if (!object)

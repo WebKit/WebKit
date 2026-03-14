@@ -5,6 +5,6 @@ EVENT(sourceopen)
 RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
 RUN(sourceBuffer.appendBuffer(loader.initSegment()))
 EVENT(update)
-EXPECTED (video.duration == '10') OK
+EXPECTED (video.duration == '10.049') OK
 END OF TEST
 

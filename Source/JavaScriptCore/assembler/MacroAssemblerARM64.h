@@ -6334,6 +6334,18 @@ public:
 #endif
     }
 
+    ALWAYS_INLINE static bool supportsSHA3()
+    {
+#if HAVE(SHA3_INSTRUCTION)
+        return true;
+#else
+        if (s_sha3CheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+
+        return s_sha3CheckState == CPUIDCheckState::Set;
+#endif
+    }
+
     void convertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID src, RegisterID dest)
     {
         m_assembler.fjcvtzs(dest, src); // This zero extends.
@@ -6701,6 +6713,13 @@ public:
         m_assembler.vectorEor(dest, left, right);
     }
 
+    void vectorXorRotateRight64(FPRegisterID a, FPRegisterID b, TrustedImm32 rotate, FPRegisterID dest)
+    {
+        ASSERT(supportsSHA3());
+        ASSERT(rotate.m_value >= 0 && rotate.m_value < 64);
+        m_assembler.xar(dest, a, b, static_cast<uint8_t>(rotate.m_value));
+    }
+
     void moveZeroToVector(FPRegisterID dest)
     {
         m_assembler.movi<128, 8>(dest, 0);
@@ -6869,16 +6888,58 @@ public:
         m_assembler.addv(dest, input, simdInfo.lane);
     }
 
-    void vectorZipUpper(SIMDInfo simdInfo, FPRegisterID n, FPRegisterID m, FPRegisterID dest)
+    void vectorZipLower(SIMDInfo simdInfo, FPRegisterID n, FPRegisterID m, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsIntegral(simdInfo.lane));
         m_assembler.zip1(dest, n, m, simdInfo.lane);
+    }
+
+    void vectorZipHigher(SIMDInfo simdInfo, FPRegisterID n, FPRegisterID m, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        m_assembler.zip2(dest, n, m, simdInfo.lane);
     }
 
     void vectorUnzipEven(SIMDInfo simdInfo, FPRegisterID n, FPRegisterID m, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsIntegral(simdInfo.lane));
         m_assembler.uzip1(dest, n, m, simdInfo.lane);
+    }
+
+    void vectorUnzipOdd(SIMDInfo simdInfo, FPRegisterID n, FPRegisterID m, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        m_assembler.uzip2(dest, n, m, simdInfo.lane);
+    }
+
+    void vectorTransposeEven(SIMDInfo simdInfo, FPRegisterID n, FPRegisterID m, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        m_assembler.trn1(dest, n, m, simdInfo.lane);
+    }
+
+    void vectorTransposeOdd(SIMDInfo simdInfo, FPRegisterID n, FPRegisterID m, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        m_assembler.trn2(dest, n, m, simdInfo.lane);
+    }
+
+    void vectorReverse(SIMDInfo simdInfo, TrustedImm32 groupSize, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        switch (groupSize.m_value) {
+        case 2:
+            m_assembler.rev16(dest, input, simdInfo.lane);
+            break;
+        case 4:
+            m_assembler.rev32(dest, input, simdInfo.lane);
+            break;
+        case 8:
+            m_assembler.rev64(dest, input, simdInfo.lane);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     void reverseBits64(RegisterID src, RegisterID dest)
@@ -8027,6 +8088,7 @@ protected:
     JS_EXPORT_PRIVATE static CPUIDCheckState s_jscvtCheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_float16CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_frintCheckState;
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_sha3CheckState;
 
     CachedTempRegister m_dataMemoryTempRegister;
     CachedTempRegister m_cachedMemoryTempRegister;

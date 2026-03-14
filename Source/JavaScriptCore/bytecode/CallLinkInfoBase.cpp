@@ -30,6 +30,7 @@
 #include "CallLinkInfo.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunctionInlines.h"
+#include "MicrotaskCall.h"
 #include "PolymorphicCallStubRoutine.h"
 
 namespace JSC {
@@ -50,6 +51,9 @@ void CallLinkInfoBase::unlinkOrUpgrade(VM& vm, CodeBlock* oldCodeBlock, CodeBloc
 #endif
     case CallSiteType::CachedCall:
         static_cast<CachedCall*>(this)->unlinkOrUpgradeImpl(vm, oldCodeBlock, newCodeBlock);
+        break;
+    case CallSiteType::MicrotaskCall:
+        static_cast<MicrotaskCall*>(this)->unlinkOrUpgradeImpl(vm, oldCodeBlock, newCodeBlock);
         break;
     }
 }

@@ -486,7 +486,7 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
         },
         [&]([[maybe_unused]] const Ref<HTMLImageElement>& imageElement) -> ResultType {
 #if PLATFORM(COCOA)
-            auto* cachedImage = imageElement->cachedImage();
+            RefPtr cachedImage = imageElement->cachedImage();
             if (!cachedImage)
                 return callback({ }, 0, 0);
             RefPtr image = dynamicDowncast<BitmapImage>(cachedImage->image());

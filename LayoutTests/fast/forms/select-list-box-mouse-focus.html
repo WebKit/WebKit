@@ -1,14 +1,15 @@
+<script src="../../resources/ui-helper.js"></script>
 <script>
-function test()
+async function test()
 {
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
     var select = document.getElementById("select");
-    var x = select.clientLeft + 10;
-    var y = select.clientTop + 10;
-    var event = document.createEvent("MouseEvent");
-    event.initMouseEvent("mousedown", true, true, document.defaultView, 1, x, y, x, y, false, false, false, false, 0, document);
-    select.dispatchEvent(event);
+    await UIHelper.activateElement(select);
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 function reportFocus()
 {

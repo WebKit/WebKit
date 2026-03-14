@@ -113,7 +113,7 @@ public:
 
     std::optional<WebCore::ScrollingNodeID> NODELETE rootScrollingNodeID() const;
 
-    const RemoteLayerTreeHost* layerTreeHost() const;
+    const RemoteLayerTreeHost* NODELETE layerTreeHost() const;
     WebPageProxy& NODELETE webPageProxy() const;
 
     virtual void stickyScrollingTreeNodeBeganSticking(WebCore::ScrollingNodeID);

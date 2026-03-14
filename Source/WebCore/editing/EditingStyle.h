@@ -111,7 +111,7 @@ public:
     MutableStyleProperties* style() const { return m_mutableStyle.get(); }
     Ref<MutableStyleProperties> styleWithResolvedTextDecorations() const;
     std::optional<WritingDirection> textDirection() const;
-    bool isEmpty() const;
+    bool NODELETE isEmpty() const;
     void setStyle(RefPtr<MutableStyleProperties>&&);
     void overrideWithStyle(const StyleProperties&);
     void overrideTypingStyleAt(const EditingStyle&, const Position&);

@@ -794,7 +794,7 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
 }
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-static double connectionTimesMovingAverage(const Deque<Seconds, 25>& connectionTimes)
+static double NODELETE connectionTimesMovingAverage(const Deque<Seconds, 25>& connectionTimes)
 {
     constexpr double alphaSmoothing { 0.75 };
     // EWMA:

@@ -67,7 +67,7 @@ public:
     bool NODELETE isInspectable() const;
     void NODELETE setInspectable(bool);
 
-    OptionSet<WebKit::ContentWorldOption> optionSet() const;
+    OptionSet<WebKit::ContentWorldOption> NODELETE optionSet() const;
 
 private:
     struct Data {

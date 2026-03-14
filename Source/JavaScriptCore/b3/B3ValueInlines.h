@@ -256,6 +256,14 @@ namespace JSC { namespace B3 {
     case VectorExtaddPairwise: \
     case VectorMulSat: \
     case VectorSwizzle: \
+    case VectorUnzipEven: \
+    case VectorUnzipOdd: \
+    case VectorZipLower: \
+    case VectorZipHigher: \
+    case VectorTransposeEven: \
+    case VectorTransposeOdd: \
+    case VectorReverse: \
+    case VectorExtractPair: \
     case VectorRelaxedSwizzle: \
     case VectorMulByElement: \
     case VectorShiftByVector: \

@@ -78,7 +78,7 @@ public:
 
     enum class SuppressEvents : bool { No, Yes };
 
-    bool operator==(const WebExtensionCommand&) const;
+    bool NODELETE operator==(const WebExtensionCommand&) const;
 
     WebExtensionCommandParameters parameters() const;
 

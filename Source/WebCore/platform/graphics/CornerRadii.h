@@ -90,10 +90,10 @@ public:
     const FloatSize& bottomRight() const LIFETIME_BOUND { return m_bottomRight; }
 
     bool isZero() const { return m_topLeft.isZero() && m_topRight.isZero() && m_bottomLeft.isZero() && m_bottomRight.isZero(); }
-    bool hasEvenCorners() const;
+    bool NODELETE hasEvenCorners() const;
     bool isUniformCornerRadius() const; // Including no radius.
 
-    void scale(float factor);
+    void NODELETE scale(float factor);
     void scale(float horizontalFactor, float verticalFactor);
     void expandEvenIfZero(float size);
     void expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth);

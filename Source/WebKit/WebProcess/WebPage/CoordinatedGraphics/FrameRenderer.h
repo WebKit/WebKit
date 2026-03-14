@@ -83,7 +83,7 @@ protected:
     virtual bool canUpdateRendering() const = 0;
     virtual void updateRendering() = 0;
 
-    void scheduleRenderingUpdateRunLoopObserver();
+    virtual void scheduleRenderingUpdateRunLoopObserver();
     void invalidateRenderingUpdateRunLoopObserver();
     void renderingUpdateRunLoopObserverFired();
 

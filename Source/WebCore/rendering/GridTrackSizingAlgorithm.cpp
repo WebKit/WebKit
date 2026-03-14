@@ -141,14 +141,14 @@ static bool NODELETE hasRelativeMarginOrPaddingForGridItem(const RenderBox& grid
     return gridItem.style().marginBefore().isPercentOrCalculated() || gridItem.style().marginAfter().isPercentOrCalculated() || gridItem.style().paddingBefore().isPercentOrCalculated() || gridItem.style().paddingAfter().isPercentOrCalculated();
 }
 
-static bool hasRelativeOrIntrinsicSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
+static bool NODELETE hasRelativeOrIntrinsicSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
 {
     if (direction == Style::GridTrackSizingDirection::Columns)
         return gridItem.hasRelativeLogicalWidth() || gridItem.style().logicalWidth().isSizingKeywordOrAuto();
     return gridItem.hasRelativeLogicalHeight() || gridItem.style().logicalHeight().isSizingKeywordOrAuto();
 }
 
-static bool shouldClearOverridingContainingBlockContentSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
+static bool NODELETE shouldClearOverridingContainingBlockContentSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
 {
     return hasRelativeOrIntrinsicSizeForGridItem(gridItem, direction) || hasRelativeMarginOrPaddingForGridItem(gridItem, direction);
 }

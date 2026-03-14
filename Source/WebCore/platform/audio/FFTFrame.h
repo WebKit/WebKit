@@ -59,7 +59,7 @@ public:
     FFTFrame(const FFTFrame& frame);
     ~FFTFrame();
 
-    static void initialize();
+    static void NODELETE initialize();
     void doFFT(std::span<const float> data);
     void doInverseFFT(std::span<float> data);
     void multiply(const FFTFrame& frame); // multiplies ourself with frame : effectively operator*=()
@@ -70,8 +70,8 @@ public:
     const AudioFloatArray& realData() const LIFETIME_BOUND { return m_realData; }
     const AudioFloatArray& imagData() const LIFETIME_BOUND { return m_imagData; }
 
-    static int minFFTSize();
-    static int maxFFTSize();
+    static int NODELETE minFFTSize();
+    static int NODELETE maxFFTSize();
 
     void print(); // for debugging
 

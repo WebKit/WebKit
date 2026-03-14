@@ -74,7 +74,7 @@ DEFINE_TYPE_WRAPPER_GET(BorderImageRepeat, values);
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<BorderImageRepeat> { auto operator()(BuilderState&, const CSSValue&) -> BorderImageRepeat; };
+template<> struct CSSValueConversion<BorderImageRepeat> { BorderImageRepeat NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

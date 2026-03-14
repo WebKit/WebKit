@@ -63,7 +63,7 @@ class WebPasteboardProxy : public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebPasteboardProxy);
     friend NeverDestroyed<WebPasteboardProxy>;
 public:
-    static WebPasteboardProxy& singleton();
+    static WebPasteboardProxy& NODELETE singleton();
 
     void addWebProcessProxy(WebProcessProxy&);
     void removeWebProcessProxy(WebProcessProxy&);

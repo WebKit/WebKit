@@ -564,7 +564,7 @@ static inline bool colorNeedsAntiAliasAtCorner(BoxSide side, BoxSide adjacentSid
 }
 
 // This assumes that we draw in order: top, bottom, left, right.
-static inline bool willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const BorderEdges& edges)
+static inline bool NODELETE willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const BorderEdges& edges)
 {
     switch (side) {
     case BoxSide::Top:

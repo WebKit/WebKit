@@ -1170,7 +1170,7 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
     return result;
 }
 
-static LayoutPoint flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
+static LayoutPoint NODELETE flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
 {
     if (root.writingMode().isBlockFlipped())
         return root.flipForWritingModeForChild(childRenderer, contentOffset);

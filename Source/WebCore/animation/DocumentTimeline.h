@@ -80,10 +80,10 @@ public:
     WEBCORE_EXPORT Seconds animationInterval() const;
     void suspendAnimations() override;
     void resumeAnimations() override;
-    WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
+    WEBCORE_EXPORT unsigned NODELETE numberOfActiveAnimationsForTesting() const;
     WEBCORE_EXPORT unsigned NODELETE numberOfAnimationTimelineInvalidationsForTesting() const;
 
-    Seconds convertTimelineTimeToOriginRelativeTime(Seconds) const;
+    Seconds NODELETE convertTimelineTimeToOriginRelativeTime(Seconds) const;
 
     std::optional<FramesPerSecond> NODELETE maximumFrameRate() const;
 

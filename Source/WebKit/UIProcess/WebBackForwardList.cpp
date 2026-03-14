@@ -439,7 +439,7 @@ BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool
             continue;
         }
 
-        backForwardListState.items.append({ entry->mainFrameState(), entry->navigatedFrameID() });
+        backForwardListState.items.append({ entry->copyMainFrameStateWithChildren(), entry->navigatedFrameID() });
     }
 
     if (backForwardListState.items.isEmpty())
@@ -591,7 +591,7 @@ Ref<FrameState> WebBackForwardList::completeFrameStateForNavigation(Ref<FrameSta
     if (!mainFrameItem->childItemForFrameID(*navigatedFrameID))
         return navigatedFrameState;
 
-    Ref frameState = currentItem->mainFrameState();
+    Ref frameState = currentItem->copyMainFrameStateWithChildren();
     setBackForwardItemIdentifier(frameState, *navigatedFrameState->itemID);
     frameState->replaceChildFrameState(WTF::move(navigatedFrameState));
     return frameState;
@@ -747,7 +747,7 @@ void WebBackForwardList::backForwardItemAtIndex(int32_t index, FrameIdentifier f
     if (RefPtr item = itemAtIndex(index)) {
         if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
             return completionHandler(frameItem->copyFrameStateWithChildren());
-        completionHandler(item->mainFrameState());
+        completionHandler(item->copyMainFrameStateWithChildren());
     } else
         completionHandler(nullptr);
 }

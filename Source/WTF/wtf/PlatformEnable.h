@@ -734,16 +734,8 @@
 #endif
 
 #if USE(JSVALUE32_64)
-#if CPU(ARM_THUMB2) && CPU(ARM_HARDFP) && OS(LINUX)
-/* On ARMv7 Linux the JIT is enabled unless explicitly disabled. */
-#if !defined(ENABLE_JIT)
-#define ENABLE_JIT 1
-#endif
-#else
-/* Disable JIT on all other 32bit architectures. */
 #undef ENABLE_JIT
 #define ENABLE_JIT 0
-#endif
 #endif
 
 #if CPU(RISCV64)
@@ -774,6 +766,8 @@
 #if USE(JSVALUE32_64)
 #undef ENABLE_FTL_JIT
 #define ENABLE_FTL_JIT 0
+#undef ENABLE_DFG_JIT
+#define ENABLE_DFG_JIT 0
 #endif
 
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
@@ -802,13 +796,7 @@
 #define ENABLE_DFG_JIT 1
 #endif
 
-/* Enable the DFG JIT on ARMv7.  Only tested on iOS, Linux, and FreeBSD. */
-#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD))
-#define ENABLE_DFG_JIT 1
-#endif
-
-/* Enable the DFG JIT on MIPS. */
-#if CPU(MIPS)
+#if CPU(ARM64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD))
 #define ENABLE_DFG_JIT 1
 #endif
 
@@ -865,8 +853,8 @@
 #endif
 
 /* WebAssembly Debugger - GDB Remote Protocol debugging for WebAssembly.
- * Restricted to macOS ARM64 only. Supports JSC shell TCP socket mode and WebKit RWI integration. */
-#if !defined(ENABLE_WEBASSEMBLY_DEBUGGER) && PLATFORM(MAC) && CPU(ARM64) && ENABLE(WEBASSEMBLY)
+ * Restricted to macOS only. Supports JSC shell TCP socket mode and WebKit RWI integration. */
+#if !defined(ENABLE_WEBASSEMBLY_DEBUGGER) && PLATFORM(MAC) && ENABLE(WEBASSEMBLY)
 #define ENABLE_WEBASSEMBLY_DEBUGGER 1
 #endif
 

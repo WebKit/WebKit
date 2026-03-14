@@ -1310,11 +1310,6 @@ webkit.org/b/308540 fast/repaint/border-radius-partial-repaint-corner.html [ Pas
 webkit.org/b/309744 [ arm64 ] fast/events/monotonic-event-time.html [ Failure ]
 webkit.org/b/309627 [ arm64 ] fast/forms/textarea/textarea-placeholder-paint-order-2.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/309360 [ arm64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_annexb [ Crash ]
-webkit.org/b/309360 [ arm64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_avc [ Crash ]
-webkit.org/b/309360 [ arm64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_annexb [ Crash ]
-webkit.org/b/309360 [ arm64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_avc [ Crash ]
-
 webkit.org/b/309369 [ arm64 ] svg/custom/image-with-transform-clip-filter.svg [ Failure ]
 webkit.org/b/309369 [ arm64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 webkit.org/b/309369 [ arm64 ] svg/filters/feImage-preserveAspectRatio-all.svg [ Failure ]
@@ -1346,6 +1341,8 @@ webkit.org/b/309634 [ arm64 ] http/tests/xmlhttprequest/binary-x-user-defined.ht
 webkit.org/b/309635 [ arm64 ] webgl/2.0.0/conformance2/textures/video/tex-2d-r8-red-unsigned_byte.html [ Pass Failure ]
 
 webkit.org/b/309636 [ arm64 ] webgl/tex-2d-video-no-change-wrap.html [ Pass Failure ]
+
+webkit.org/b/309863 [ arm64 ] media/video-seek-have-nothing.html [ Pass Failure ]
 
 webkit.org/b/309575 imported/w3c/web-platform-tests/uievents/textInput/enter-textarea-contenteditable.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-wake-lock/chrome-bug-1348019.https.html [ Skip ]

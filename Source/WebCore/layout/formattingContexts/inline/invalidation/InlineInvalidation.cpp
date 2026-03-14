@@ -452,7 +452,7 @@ bool InlineInvalidation::updateInlineDamage(const InvalidatedLine& invalidatedLi
     return true;
 }
 
-static bool isSupportedContent(const Box& layoutBox)
+static bool NODELETE isSupportedContent(const Box& layoutBox)
 {
     return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox() || layoutBox.isReplacedBox() || layoutBox.isInlineBox();
 }

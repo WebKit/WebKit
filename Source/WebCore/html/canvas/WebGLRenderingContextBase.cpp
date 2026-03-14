@@ -859,6 +859,8 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 
 RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 {
+    if (isContextLost())
+        return nullptr;
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)
         return nullptr;

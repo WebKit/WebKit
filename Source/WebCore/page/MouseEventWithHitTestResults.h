@@ -35,7 +35,7 @@ public:
     const HitTestResult& hitTestResult() const LIFETIME_BOUND { return m_hitTestResult; }
     LayoutPoint localPoint() const { return m_hitTestResult.localPoint(); }
     Scrollbar* scrollbar() const { return m_hitTestResult.scrollbar(); }
-    bool isOverLink() const;
+    bool NODELETE isOverLink() const;
     bool isOverWidget() const { return m_hitTestResult.isOverWidget(); }
     Node* targetNode() const { return m_hitTestResult.targetNode(); }
 

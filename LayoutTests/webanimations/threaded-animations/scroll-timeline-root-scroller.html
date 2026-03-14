@@ -35,6 +35,7 @@ const scrollAndCheckTimeline = async (scroller, progress) => {
 
     window.scrollTo(0, scrollTop);
     await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
 
     const expectedTimelineTime = `${(progress * 100).toFixed(2)}%`;
 

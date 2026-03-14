@@ -643,7 +643,7 @@ JSC::JSValue ReadableStream::storedError(JSDOMGlobalObject& globalObject) const
     return m_controller->storedError();
 }
 
-void ReadableStream::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor, VisitTeedChildren visitTeedChildren)
+void ReadableStream::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor, VisitTeedChildren visitTeedChildren)
 {
     {
         Locker lock(m_gcLock);
@@ -661,7 +661,7 @@ void ReadableStream::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor, 
         m_dependencyToVisit->visit(visitor);
 
     if (m_controller)
-        m_controller->visitDirectChildren(visitor);
+        m_controller->visitDirectChildrenInGCThread(visitor);
 }
 
 void ReadableStream::setTeedBranches(ReadableStream& branch0, ReadableStream& branch1)
@@ -852,11 +852,11 @@ ExceptionOr<Ref<ReadableStream>> ReadableStream::runTransferReceivingSteps(JSDOM
 }
 
 template<typename Visitor>
-void JSReadableStream::visitAdditionalChildren(Visitor& visitor)
+void JSReadableStream::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildren(visitor, ReadableStream::VisitTeedChildren::Yes);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor, ReadableStream::VisitTeedChildren::Yes);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSReadableStream);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSReadableStream);
 
 } // namespace WebCore

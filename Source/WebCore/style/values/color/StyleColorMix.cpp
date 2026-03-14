@@ -122,7 +122,7 @@ static bool NODELETE sumTo100Percent(const ColorMix::Component::Percentage& a, c
     return a.value + b.value == 100.0;
 }
 
-static std::optional<ColorMix::Component::Percentage> subtractFrom100Percent(const ColorMix::Component::Percentage& percentage)
+static std::optional<ColorMix::Component::Percentage> NODELETE subtractFrom100Percent(const ColorMix::Component::Percentage& percentage)
 {
     return ColorMix::Component::Percentage { 100.0 - percentage.value };
 }

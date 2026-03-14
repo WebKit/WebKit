@@ -98,8 +98,8 @@ public:
         m_location.move(-box.left(), -box.top());
         m_size.expand(box.left() + box.right(), box.top() + box.bottom());
     }
-    void expandToInfiniteY();
-    void expandToInfiniteX();
+    void NODELETE expandToInfiniteY();
+    void NODELETE expandToInfiniteX();
     template<typename T, typename U> void expand(T dw, U dh) { m_size.expand(dw, dh); }
     void contract(const LayoutSize& size) { m_size -= size; }
     void contract(const LayoutBoxExtent& box)
@@ -211,7 +211,7 @@ public:
     template<typename T> void inflateY(T dy) { inflateY(LayoutUnit(dy)); }
     template<typename T> void inflate(T d) { inflateX(d); inflateY(d); }
 
-    WEBCORE_EXPORT void scale(float);
+    WEBCORE_EXPORT void NODELETE scale(float);
     void scale(float xScale, float yScale);
 
     LayoutRect transposedRect() const { return LayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }
@@ -278,7 +278,7 @@ inline IntRect snappedIntRect(LayoutPoint location, LayoutSize size)
     return IntRect(roundedIntPoint(location), snappedIntSize(size, location));
 }
 
-WEBCORE_EXPORT IntRect enclosingIntRect(const LayoutRect&);
+WEBCORE_EXPORT IntRect NODELETE enclosingIntRect(const LayoutRect&);
 WEBCORE_EXPORT LayoutRect enclosingLayoutRect(const FloatRect&);
 
 // Device pixel snapping functions.

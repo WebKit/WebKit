@@ -49,7 +49,7 @@ public:
     static RefPtr<CSSCustomPropertyValue> parseDeclarationValue(const AtomString&, CSSParserTokenRange, const CSSParserContext&);
     static RefPtr<const Style::CustomProperty> parseInitialValueForUniversalSyntax(const AtomString&, CSSParserTokenRange);
 
-    static bool isValidVariableName(const CSSParserToken&);
+    static bool NODELETE isValidVariableName(const CSSParserToken&);
 };
 
 } // namespace WebCore

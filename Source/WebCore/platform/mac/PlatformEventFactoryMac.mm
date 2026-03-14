@@ -206,7 +206,7 @@ int clickCountForEvent(NSEvent *event)
     }
 }
 
-static PlatformWheelEventPhase phaseFromNSEventPhase(NSEventPhase eventPhase)
+static PlatformWheelEventPhase NODELETE phaseFromNSEventPhase(NSEventPhase eventPhase)
 {
     switch (eventPhase) {
     case NSEventPhaseNone:

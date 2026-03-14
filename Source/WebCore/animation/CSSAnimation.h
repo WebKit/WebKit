@@ -46,7 +46,7 @@ public:
     const String& animationName() const LIFETIME_BOUND { return m_animationName.name; }
     const Style::ScopedName& scopedAnimationName() const LIFETIME_BOUND { return m_animationName; }
 
-    void effectTimingWasUpdatedUsingBindings(const OptionalEffectTiming&);
+    void NODELETE effectTimingWasUpdatedUsingBindings(const OptionalEffectTiming&);
     void NODELETE effectKeyframesWereSetUsingBindings();
     void NODELETE effectCompositeOperationWasSetUsingBindings();
     void keyframesRuleDidChange();

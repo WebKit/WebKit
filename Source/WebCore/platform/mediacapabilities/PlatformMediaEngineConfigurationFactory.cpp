@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-static bool& mockEnabled()
+static bool& NODELETE mockEnabled()
 {
     static bool enabled;
     return enabled;

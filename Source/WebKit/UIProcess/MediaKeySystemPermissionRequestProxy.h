@@ -51,7 +51,7 @@ public:
     void allow();
     void deny();
 
-    void invalidate();
+    void NODELETE invalidate();
 
     WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID() const { return m_mediaKeySystemID; }
     WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }

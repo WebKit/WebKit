@@ -89,7 +89,6 @@ jit/BaselineJITPlan.cpp
 jit/ExecutableAllocator.cpp
 jit/GCAwareJITStubRoutine.cpp
 jit/ICStats.cpp
-jit/ICStats.h
 jit/JIT.cpp
 jit/JITSafepoint.cpp
 jit/JITWorklist.cpp

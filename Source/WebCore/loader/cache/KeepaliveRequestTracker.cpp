@@ -37,7 +37,10 @@ Ref<KeepaliveRequestTracker> KeepaliveRequestTracker::create()
 
 KeepaliveRequestTracker::~KeepaliveRequestTracker()
 {
-    auto inflightRequests = WTF::move(m_inflightKeepaliveRequests);
+    auto inflightRequests = WTF::map(m_inflightKeepaliveRequests, [](auto& request) {
+        return RefPtr { request.get() };
+    });
+    m_inflightKeepaliveRequests.clear();
     for (auto& resource : inflightRequests)
         resource->removeClient(*this);
 }

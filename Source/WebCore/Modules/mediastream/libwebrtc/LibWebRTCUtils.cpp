@@ -107,7 +107,7 @@ static inline double NODELETE toWebRTCBitRatePriority(RTCPriorityType priority)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline RTCPriorityType fromWebRTCBitRatePriority(double priority)
+static inline RTCPriorityType NODELETE fromWebRTCBitRatePriority(double priority)
 {
     if (priority < 0.7)
         return RTCPriorityType::VeryLow;

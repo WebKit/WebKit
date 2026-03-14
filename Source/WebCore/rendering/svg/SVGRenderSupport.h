@@ -111,7 +111,7 @@ public:
     static void updateMaskedAncestorShouldIsolateBlending(const RenderElement&);
 
     static LegacyRenderSVGRoot* NODELETE findTreeRootObject(RenderElement&);
-    static const LegacyRenderSVGRoot* findTreeRootObject(const RenderElement&);
+    static const LegacyRenderSVGRoot* NODELETE findTreeRootObject(const RenderElement&);
 
 private:
     // This class is not constructable.

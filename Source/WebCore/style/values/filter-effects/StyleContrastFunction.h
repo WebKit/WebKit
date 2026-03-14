@@ -45,7 +45,7 @@ struct Contrast {
 
     Parameter value;
 
-    static Contrast passthroughForInterpolation();
+    static Contrast NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }

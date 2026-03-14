@@ -61,7 +61,7 @@ Ref<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagNam
     return adoptRef(*new HTMLTableRowElement(tagName, document));
 }
 
-static inline RefPtr<HTMLTableElement> findTable(const HTMLTableRowElement& row)
+static inline RefPtr<HTMLTableElement> NODELETE findTable(const HTMLTableRowElement& row)
 {
     auto* parent = row.parentNode();
     if (auto* table = dynamicDowncast<HTMLTableElement>(parent))

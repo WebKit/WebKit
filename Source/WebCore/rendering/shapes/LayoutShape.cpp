@@ -66,7 +66,7 @@ static Ref<LayoutShape> createPolygonShape(Vector<FloatPoint>&& vertices, float 
     return adoptRef(*new PolygonLayoutShape(WTF::move(vertices), boxLogicalWidth));
 }
 
-static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
+static inline FloatRect NODELETE physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
         return rect;
@@ -75,7 +75,7 @@ static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logic
     return rect.transposedRect();
 }
 
-static inline FloatPoint physicalPointToLogical(const FloatPoint& point, float logicalBoxHeight, WritingMode writingMode)
+static inline FloatPoint NODELETE physicalPointToLogical(const FloatPoint& point, float logicalBoxHeight, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
         return point;
@@ -84,7 +84,7 @@ static inline FloatPoint physicalPointToLogical(const FloatPoint& point, float l
     return point.transposedPoint();
 }
 
-static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode writingMode)
+static inline FloatSize NODELETE physicalSizeToLogical(const FloatSize& size, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
         return size;

@@ -43,7 +43,7 @@ public:
     HasSelectorFilter(const Element&, Type);
 
     Type type() const { return m_type; }
-    static std::optional<Type> typeForMatchElement(MatchElement);
+    static std::optional<Type> NODELETE typeForMatchElement(MatchElement);
 
     using Key = unsigned;
     static Key makeKey(const CSSSelector& hasSelector);

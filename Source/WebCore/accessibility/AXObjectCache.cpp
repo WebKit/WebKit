@@ -3482,7 +3482,7 @@ void AXObjectCache::updateCachedTextOfAssociatedObjects(AccessibilityObject& obj
 #endif
 }
 
-static bool hasAnyARIALabelling(Element& element)
+static bool NODELETE hasAnyARIALabelling(Element& element)
 {
     return element.hasAttributeWithoutSynchronization(aria_labelAttr)
         || element.hasAttributeWithoutSynchronization(aria_labelledbyAttr)
@@ -4384,7 +4384,7 @@ char32_t AXObjectCache::characterBefore(const CharacterOffset& characterOffset)
     return characterForCharacterOffset(characterOffset);
 }
 
-static bool characterOffsetNodeIsBR(const CharacterOffset& characterOffset)
+static bool NODELETE characterOffsetNodeIsBR(const CharacterOffset& characterOffset)
 {
     if (characterOffset.isNull())
         return false;

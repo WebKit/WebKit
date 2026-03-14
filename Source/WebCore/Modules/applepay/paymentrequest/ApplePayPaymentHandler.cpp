@@ -78,7 +78,7 @@
 
 namespace WebCore {
 
-static inline PaymentCoordinator& paymentCoordinator(Document& document)
+static inline PaymentCoordinator& NODELETE paymentCoordinator(Document& document)
 {
     ASSERT(document.page());
     return document.page()->paymentCoordinator();

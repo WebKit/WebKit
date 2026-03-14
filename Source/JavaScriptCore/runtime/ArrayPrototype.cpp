@@ -1993,7 +1993,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncCopyWithin, (JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(scope, { });
 
     if (finalIndex < from)
-        return JSValue::encode(thisValue);
+        return JSValue::encode(thisObject);
 
     ASSERT(to <= length);
     ASSERT(from <= length);

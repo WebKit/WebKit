@@ -45,7 +45,7 @@ struct AcceleratedEffectOffsetPosition {
 
 // MARK: - Blending
 
-bool canBlend(const AcceleratedEffectOffsetPosition&, const AcceleratedEffectOffsetPosition&);
+bool NODELETE canBlend(const AcceleratedEffectOffsetPosition&, const AcceleratedEffectOffsetPosition&);
 AcceleratedEffectOffsetPosition blend(const AcceleratedEffectOffsetPosition&, const AcceleratedEffectOffsetPosition&, const BlendingContext&);
 
 } // namespace WebCore

@@ -235,7 +235,7 @@ do { \
         RELEASE_LOG_FORWARDABLE(Media, HTMLMEDIAELEMENT_##formatString, (thisPtr)->logIdentifier(), ##__VA_ARGS__); \
         if ((thisPtr)->logger().hasEnabledInspector()) { \
             std::array<char, 1024> buffer { }; \
-            SAFE_SPRINTF(std::span { buffer }, MESSAGE_HTMLMEDIAELEMENT_##formatString, (thisPtr)->logIdentifier(), ##__VA_ARGS__); \
+            SAFE_SPRINTF(std::span { buffer }, MESSAGE_WITHOUT_PUBLIC_STRING_MODIFIER_HTMLMEDIAELEMENT_##formatString, (thisPtr)->logIdentifier(), ##__VA_ARGS__); \
             (thisPtr)->logger().toObservers((thisPtr)->logChannel(), WTFLogLevel::Always, String::fromUTF8(buffer.data())); \
         } \
     } \
@@ -494,7 +494,7 @@ static bool NODELETE mediaSessionMayBeConfusedWithMainContent(const MediaElement
     return true;
 }
 
-static bool defaultVolumeLocked()
+SUPPRESS_NODELETE static bool NODELETE defaultVolumeLocked()
 {
 #if PLATFORM(IOS)
     return PAL::currentUserInterfaceIdiomIsSmallScreen();
@@ -7533,11 +7533,11 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
         auto fullscreenCheckType = m_ignoreFullscreenPermissionsPolicy ? DocumentFullscreen::ExemptIFrameAllowFullscreenRequirement : DocumentFullscreen::EnforceIFrameAllowFullscreenRequirement;
         m_ignoreFullscreenPermissionsPolicy = false;
         protect(protect(document())->fullscreen())->requestFullscreen(*this, fullscreenCheckType, [weakThis = WeakPtr { *this }](ExceptionOr<void> result) {
-            auto* protectedThis = weakThis.get();
-            if (!protectedThis || !result.hasException())
+            auto* rawThis = weakThis.get();
+            if (!rawThis || !result.hasException())
                 return;
-            protectedThis->m_changingVideoFullscreenMode = false;
-            protectedThis->m_waitingToEnterFullscreen = false;
+            rawThis->m_changingVideoFullscreenMode = false;
+            rawThis->m_waitingToEnterFullscreen = false;
         }, mode);
         return;
     }

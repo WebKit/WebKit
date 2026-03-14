@@ -5273,7 +5273,7 @@ void RenderBox::updateFloatPainterAfterSelfPaintingLayerChange()
 }
 
 using ShapeOutsideInfoMap = SingleThreadWeakHashMap<const RenderBox, std::unique_ptr<ShapeOutsideInfo>>;
-static ShapeOutsideInfoMap& shapeOutsideInfoMap()
+static ShapeOutsideInfoMap& NODELETE shapeOutsideInfoMap()
 {
     static NeverDestroyed<ShapeOutsideInfoMap> staticInfoMap;
     return staticInfoMap;

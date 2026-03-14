@@ -58,7 +58,6 @@ PACKAGES+=(
     libgpg-error-dev
     libjson-glib-dev
     libmtdev-dev
-    libp11-kit-dev
     libpciaccess-dev
     libtiff5-dev
     libudev-dev

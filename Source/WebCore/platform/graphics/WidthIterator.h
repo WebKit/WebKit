@@ -55,7 +55,7 @@ public:
 
     void advance(unsigned to, GlyphBuffer&);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
-    void finalize(GlyphBuffer&);
+    void NODELETE finalize(GlyphBuffer&);
 
     float maxGlyphBoundingBoxY() const { ASSERT(m_glyphBounds.shouldCompute); return m_glyphBounds.maxY; }
     float minGlyphBoundingBoxY() const { ASSERT(m_glyphBounds.shouldCompute); return m_glyphBounds.minY; }
@@ -81,10 +81,11 @@ private:
     };
     ApplyFontTransformsResult applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, const Font&, CharactersTreatedAsSpace&);
     void commitCurrentFontRange(AdvanceInternalState&);
+    void commitIgnorable(char32_t characterToWrite, AdvanceInternalState&, const Font& primaryFont);
     void startNewFontRangeIfNeeded(AdvanceInternalState&, SmallCapsState&, const FontCascadeDescription&);
-    void applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
+    void NODELETE applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
 
-    bool hasExtraSpacing() const;
+    bool NODELETE hasExtraSpacing() const;
     void applyExtraSpacingAfterShaping(GlyphBuffer&, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth);
     TextSpacing::CharacterClass applyTextAutospaceIfNeededAndGetCharacterClass(GlyphBuffer&, const TextAutospace&, unsigned characterIndex, GlyphIndexRange, TextSpacing::CharacterClass previousCharacterClass);
     void applyCSSVisibilityRules(GlyphBuffer&, unsigned glyphBufferStartIndex);
@@ -105,7 +106,7 @@ private:
         void computeIfNeeded(Glyph, const Font&, unsigned charIndex, float glyphWidth);
     };
     AdditionalWidth calculateAdditionalWidth(GlyphBuffer&, GlyphBufferStringOffset currentCharacterIndex, unsigned leadingGlyphIndex, unsigned trailingGlyphIndex, float position) const;
-    void applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
+    void NODELETE applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
 
     TextDirection direction() const { return m_direction; }
     bool rtl() const { return m_direction == TextDirection::RTL; }

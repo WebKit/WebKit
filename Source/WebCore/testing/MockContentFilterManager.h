@@ -31,7 +31,7 @@ namespace WebCore {
 
 class MockContentFilterManager {
 public:
-    WEBCORE_TESTSUPPORT_EXPORT static MockContentFilterManager& singleton();
+    WEBCORE_TESTSUPPORT_EXPORT static MockContentFilterManager& NODELETE singleton();
 
     WEBCORE_TESTSUPPORT_EXPORT void setClient(RefPtr<MockContentFilterSettingsClient>);
     

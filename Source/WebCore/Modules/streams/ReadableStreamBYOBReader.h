@@ -75,7 +75,7 @@ public:
     void read(JSDOMGlobalObject&, JSC::ArrayBufferView&, uint64_t, Ref<ReadableStreamReadIntoRequest>&&);
 
     bool NODELETE isReachableFromOpaqueRoots() const;
-    template<typename Visitor> void visitAdditionalChildren(Visitor&);
+    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     explicit ReadableStreamBYOBReader(Ref<DOMPromise>&&, Ref<DeferredPromise>&&);

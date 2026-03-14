@@ -227,7 +227,7 @@ class EmptyChromeClient : public ChromeClient {
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final;
 };
 
-DiagnosticLoggingClient& emptyDiagnosticLoggingClient();
+DiagnosticLoggingClient& NODELETE emptyDiagnosticLoggingClient();
 WEBCORE_EXPORT PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier>, PAL::SessionID);
 
 class EmptyCryptoClient: public CryptoClient {

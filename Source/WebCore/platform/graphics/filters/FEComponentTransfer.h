@@ -79,12 +79,12 @@ public:
     ComponentTransferFunction blueFunction() const { return m_functions[ComponentTransferChannel::Blue]; }
     ComponentTransferFunction alphaFunction() const { return m_functions[ComponentTransferChannel::Alpha]; }
 
-    bool setType(ComponentTransferChannel, ComponentTransferType);
-    bool setSlope(ComponentTransferChannel, float);
-    bool setIntercept(ComponentTransferChannel, float);
-    bool setAmplitude(ComponentTransferChannel, float);
-    bool setExponent(ComponentTransferChannel, float);
-    bool setOffset(ComponentTransferChannel, float);
+    bool NODELETE setType(ComponentTransferChannel, ComponentTransferType);
+    bool NODELETE setSlope(ComponentTransferChannel, float);
+    bool NODELETE setIntercept(ComponentTransferChannel, float);
+    bool NODELETE setAmplitude(ComponentTransferChannel, float);
+    bool NODELETE setExponent(ComponentTransferChannel, float);
+    bool NODELETE setOffset(ComponentTransferChannel, float);
     bool setTableValues(ComponentTransferChannel, Vector<float>&&);
 
 private:

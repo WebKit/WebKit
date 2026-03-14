@@ -32,11 +32,11 @@
 namespace WebCore {
 
 template <typename Visitor>
-void JSStylePropertyMapReadOnly::visitAdditionalChildren(Visitor& visitor)
+void JSStylePropertyMapReadOnly::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (auto* computedStylePropertyMap = dynamicDowncast<ComputedStylePropertyMapReadOnly>(wrapped()))
         addWebCoreOpaqueRoot(visitor, computedStylePropertyMap->elementConcurrently());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSStylePropertyMapReadOnly);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSStylePropertyMapReadOnly);
 }

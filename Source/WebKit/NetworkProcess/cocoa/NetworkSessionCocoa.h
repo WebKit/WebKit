@@ -141,7 +141,7 @@ public:
     bool deviceManagementRestrictionsEnabled() const { return m_deviceManagementRestrictionsEnabled; }
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
 
-    DMFWebsitePolicyMonitor *deviceManagementPolicyMonitor();
+    DMFWebsitePolicyMonitor *NODELETE deviceManagementPolicyMonitor();
 
     CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
 

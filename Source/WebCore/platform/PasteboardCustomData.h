@@ -68,7 +68,7 @@ public:
 
     String readString(const String& type) const;
     RefPtr<SharedBuffer> readBuffer(const String& type) const;
-    String readStringInCustomData(const String& type) const;
+    String NODELETE readStringInCustomData(const String& type) const;
 
     void writeString(const String& type, const String& value);
     void writeData(const String& type, Ref<SharedBuffer>&& data);
@@ -90,7 +90,7 @@ public:
     void forEachPlatformStringOrBuffer(NOESCAPE const Function<void(const String& type, const Variant<String, Ref<SharedBuffer>>& data)>&) const;
     void forEachCustomString(NOESCAPE const Function<void(const String& type, const String& data)>&) const;
 
-    bool hasData() const;
+    bool NODELETE hasData() const;
     bool hasSameOriginCustomData() const;
 
     Vector<String> orderedTypes() const;

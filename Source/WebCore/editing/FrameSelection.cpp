@@ -167,12 +167,12 @@ IntRect DragCaretController::editableElementRectInRootViewCoordinates() const
     return { };
 }
 
-static inline bool shouldAlwaysUseDirectionalSelection(Document* document)
+static inline bool NODELETE shouldAlwaysUseDirectionalSelection(Document* document)
 {
     return !document || document->editingBehavior().shouldConsiderSelectionAsDirectional();
 }
 
-static inline bool isPageActive(Document* document)
+static inline bool NODELETE isPageActive(Document* document)
 {
     return document && document->page() && document->page()->focusController().isActive();
 }
@@ -1371,7 +1371,7 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
     return pos;
 }
 
-static bool isBoundary(TextGranularity granularity)
+static bool NODELETE isBoundary(TextGranularity granularity)
 {
     return granularity == TextGranularity::LineBoundary || granularity == TextGranularity::ParagraphBoundary || granularity == TextGranularity::DocumentBoundary;
 }
@@ -1444,7 +1444,7 @@ AXTextStateChangeIntent FrameSelection::textSelectionIntent(Alteration alter, Se
     return intent;
 }
 
-static AXTextSelection textSelectionWithDirectionAndGranularity(SelectionDirection direction, TextGranularity granularity)
+static AXTextSelection NODELETE textSelectionWithDirectionAndGranularity(SelectionDirection direction, TextGranularity granularity)
 {
     // FIXME: Account for BIDI in SelectionDirection::Right & SelectionDirection::Left. (In a RTL block, Right would map to Previous/Beginning and Left to Next/End.)
     AXTextSelectionDirection intentDirection = AXTextSelectionDirection::Unknown;
@@ -1846,7 +1846,7 @@ RenderBlock* DragCaretController::caretRenderer() const
     return rendererForCaretPainting(m_position.deepEquivalent().deprecatedNode());
 }
 
-static bool isNonOrphanedCaret(const VisibleSelection& selection)
+static bool NODELETE isNonOrphanedCaret(const VisibleSelection& selection)
 {
     return selection.isCaret() && !selection.start().isOrphan() && !selection.end().isOrphan();
 }
@@ -3051,7 +3051,7 @@ void FrameSelection::setCaretColor(const Color& caretColor)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-static bool containsEndpoints(const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document, const std::optional<SimpleRange>& range)
+static bool NODELETE containsEndpoints(const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document, const std::optional<SimpleRange>& range)
 {
     return document && range && document->contains(range->start.container) && document->contains(range->end.container);
 }

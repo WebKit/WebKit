@@ -81,7 +81,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
         return protect(renderVideo->videoElement())->bitmapImageForCurrentTimeSync();
 #endif // ENABLE(VIDEO)
 
-    auto* cachedImage = renderImage.cachedImage();
+    RefPtr cachedImage = renderImage.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return { };
 

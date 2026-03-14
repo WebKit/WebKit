@@ -520,7 +520,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdGaveUp, EncodedJSValue, (EncodedJSValue
     CacheableIdentifier identifier = propertyCache->identifier();
     JSValue result = baseValue.get(globalObject, identifier, slot);
 
-    LOG_IC((vm, ICEvent::OperationGetById, baseValue.classInfoOrNull(), identifier, baseValue == slot.slotBase()));
+    LOG_IC((ICEvent::OperationGetByIdGaveUp, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
 
     OPERATION_RETURN(scope, JSValue::encode(result));
 }
@@ -539,7 +539,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdGeneric, EncodedJSValue, (JSGlobalObjec
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     JSValue result = baseValue.get(globalObject, identifier, slot);
     
-    LOG_IC((vm, ICEvent::OperationGetByIdGeneric, baseValue.classInfoOrNull(), identifier, baseValue == slot.slotBase()));
+    LOG_IC((ICEvent::OperationGetByIdGeneric, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
     
     OPERATION_RETURN(scope, JSValue::encode(result));
 }
@@ -560,7 +560,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdOptimize, EncodedJSValue, (EncodedJSVal
 
     OPERATION_RETURN(scope, JSValue::encode(baseValue.getPropertySlot(globalObject, identifier, [&] (bool found, PropertySlot& slot) -> JSValue {
         
-        LOG_IC((vm, ICEvent::OperationGetByIdOptimize, baseValue.classInfoOrNull(), identifier, baseValue == slot.slotBase()));
+        LOG_IC((ICEvent::OperationGetByIdOptimize, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
         
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (propertyCache->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
@@ -587,7 +587,11 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisGaveUp, EncodedJSValue, (Encode
     JSValue thisValue = JSValue::decode(thisEncoded);
     PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
 
-    OPERATION_RETURN(scope, JSValue::encode(baseValue.get(globalObject, identifier, slot)));
+    JSValue result = baseValue.get(globalObject, identifier, slot);
+
+    LOG_IC((ICEvent::OperationGetByIdWithThisGaveUp, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
+
+    OPERATION_RETURN(scope, JSValue::encode(result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue thisEncoded, uintptr_t rawCacheableIdentifier))
@@ -605,7 +609,11 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisGeneric, EncodedJSValue, (JSGlo
     JSValue thisValue = JSValue::decode(thisEncoded);
     PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
 
-    OPERATION_RETURN(scope, JSValue::encode(baseValue.get(globalObject, identifier, slot)));
+    JSValue result = baseValue.get(globalObject, identifier, slot);
+
+    LOG_IC((ICEvent::OperationGetByIdWithThisGeneric, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
+
+    OPERATION_RETURN(scope, JSValue::encode(result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisOptimize, EncodedJSValue, (EncodedJSValue base, EncodedJSValue thisEncoded, PropertyInlineCache* propertyCache))
@@ -625,7 +633,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisOptimize, EncodedJSValue, (Enco
 
     PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
     OPERATION_RETURN(scope, JSValue::encode(baseValue.getPropertySlot(globalObject, identifier, slot, [&] (bool found, PropertySlot& slot) -> JSValue {
-        LOG_IC((vm, ICEvent::OperationGetByIdWithThisOptimize, baseValue.classInfoOrNull(), identifier, baseValue == slot.slotBase()));
+        LOG_IC((ICEvent::OperationGetByIdWithThisOptimize, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
         
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (propertyCache->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
@@ -680,7 +688,7 @@ JSC_DEFINE_JIT_OPERATION(operationInByIdGaveUp, EncodedJSValue, (EncodedJSValue 
     }
     JSObject* baseObject = asObject(baseValue);
 
-    LOG_IC((vm, ICEvent::OperationInByIdGeneric, baseObject->classInfo(), identifier));
+    LOG_IC((ICEvent::OperationInByIdGeneric, baseObject->classInfo()));
 
     scope.release();
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
@@ -706,7 +714,7 @@ JSC_DEFINE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (EncodedJSValu
     }
     JSObject* baseObject = asObject(baseValue);
 
-    LOG_IC((vm, ICEvent::OperationInByIdOptimize, baseObject->classInfo(), identifier));
+    LOG_IC((ICEvent::OperationInByIdOptimize, baseObject->classInfo()));
 
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
     bool found = baseObject->getPropertySlot(globalObject, identifier, slot);
@@ -1142,7 +1150,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictGaveUp, void, (EncodedJSValue enc
     PutPropertySlot slot(baseValue, true, callFrame->codeBlock()->putByIdContext());
     baseValue.putInline(globalObject, identifier, JSValue::decode(encodedValue), slot);
     
-    LOG_IC((vm, ICEvent::OperationPutByIdStrict, baseValue.classInfoOrNull(), identifier, slot.base() == baseValue));
+    LOG_IC((ICEvent::OperationPutByIdStrictGaveUp, baseValue.classInfoOrNull(), slot.base() == baseValue));
     OPERATION_RETURN(scope);
 }
 
@@ -1163,7 +1171,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSloppyGaveUp, void, (EncodedJSValue enc
     PutPropertySlot slot(baseValue, false, callFrame->codeBlock()->putByIdContext());
     baseValue.putInline(globalObject, identifier, JSValue::decode(encodedValue), slot);
 
-    LOG_IC((vm, ICEvent::OperationPutByIdSloppy, baseValue.classInfoOrNull(), identifier, slot.base() == baseValue));
+    LOG_IC((ICEvent::OperationPutByIdSloppyGaveUp, baseValue.classInfoOrNull(), slot.base() == baseValue));
     OPERATION_RETURN(scope);
 }
 
@@ -1360,7 +1368,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectStrictGaveUp, void, (EncodedJSVal
     PutPropertySlot slot(baseValue, true, callFrame->codeBlock()->putByIdContext());
     CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), identifier, JSValue::decode(encodedValue), slot);
 
-    LOG_IC((vm, ICEvent::OperationPutByIdDirectStrict, baseValue.classInfoOrNull(), identifier, slot.base() == baseValue));
+    LOG_IC((ICEvent::OperationPutByIdDirectStrictGaveUp, baseValue.classInfoOrNull(), slot.base() == baseValue));
     OPERATION_RETURN(scope);
 }
 
@@ -1381,7 +1389,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectSloppyGaveUp, void, (EncodedJSVal
     PutPropertySlot slot(baseValue, false, callFrame->codeBlock()->putByIdContext());
     CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), identifier, JSValue::decode(encodedValue), slot);
 
-    LOG_IC((vm, ICEvent::OperationPutByIdDirectSloppy, baseValue.classInfoOrNull(), identifier, slot.base() == baseValue));
+    LOG_IC((ICEvent::OperationPutByIdDirectSloppyGaveUp, baseValue.classInfoOrNull(), slot.base() == baseValue));
     OPERATION_RETURN(scope);
 }
 
@@ -1406,7 +1414,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictOptimize, void, (EncodedJSValue e
     Structure* structure = CommonSlowPaths::originalStructureBeforePut(baseValue);
     baseValue.putInline(globalObject, identifier, value, slot);
 
-    LOG_IC((vm, ICEvent::OperationPutByIdStrictOptimize, baseValue.classInfoOrNull(), identifier, slot.base() == baseValue));
+    LOG_IC((ICEvent::OperationPutByIdStrictOptimize, baseValue.classInfoOrNull(), slot.base() == baseValue));
 
     OPERATION_RETURN_IF_EXCEPTION(scope);
 
@@ -1439,7 +1447,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSloppyOptimize, void, (EncodedJSValue e
     Structure* structure = CommonSlowPaths::originalStructureBeforePut(baseValue);
     baseValue.putInline(globalObject, identifier, value, slot);
 
-    LOG_IC((vm, ICEvent::OperationPutByIdSloppyOptimize, baseValue.classInfoOrNull(), identifier, slot.base() == baseValue));
+    LOG_IC((ICEvent::OperationPutByIdSloppyOptimize, baseValue.classInfoOrNull(), slot.base() == baseValue));
 
     OPERATION_RETURN_IF_EXCEPTION(scope);
 
@@ -1471,7 +1479,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectStrictOptimize, void, (EncodedJSV
     Structure* structure = nullptr;
     CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, identifier, value, slot, &structure);
 
-    LOG_IC((vm, ICEvent::OperationPutByIdDirectStrictOptimize, baseObject->classInfo(), identifier, slot.base() == baseObject));
+    LOG_IC((ICEvent::OperationPutByIdDirectStrictOptimize, baseObject->classInfo(), slot.base() == baseObject));
 
     OPERATION_RETURN_IF_EXCEPTION(scope);
     
@@ -1503,7 +1511,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectSloppyOptimize, void, (EncodedJSV
     Structure* structure = nullptr;
     CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, identifier, value, slot, &structure);
 
-    LOG_IC((vm, ICEvent::OperationPutByIdDirectSloppyOptimize, baseObject->classInfo(), identifier, slot.base() == baseObject));
+    LOG_IC((ICEvent::OperationPutByIdDirectSloppyOptimize, baseObject->classInfo(), slot.base() == baseObject));
 
     OPERATION_RETURN_IF_EXCEPTION(scope);
     
@@ -1568,6 +1576,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrictGaveUp, void, (
     JSValue baseValue = JSValue::decode(encodedBase);
 
     definePrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [](VM&, CodeBlock*, Structure*, PutPropertySlot&) { });
+
+    LOG_IC((ICEvent::OperationPutByIdDefinePrivateFieldStrictGaveUp, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -1587,7 +1598,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrictOptimize, void,
     
     definePrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [&](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot) {
         JSObject* baseObject = asObject(baseValue);
-        LOG_IC((vm, ICEvent::OperationPutByIdDefinePrivateFieldStrictOptimize, baseObject->classInfo(), identifier, putSlot.base() == baseObject));
+        LOG_IC((ICEvent::OperationPutByIdDefinePrivateFieldStrictOptimize, baseObject->classInfo(), putSlot.base() == baseObject));
 
         ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(propertyCache->accessType));
 
@@ -1612,6 +1623,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrictGaveUp, void, (Enc
     JSValue baseValue = JSValue::decode(encodedBase);
 
     setPrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [](VM&, CodeBlock*, Structure*, PutPropertySlot&) { });
+
+    LOG_IC((ICEvent::OperationPutByIdSetPrivateFieldStrictGaveUp, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -1631,7 +1645,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrictOptimize, void, (E
 
     setPrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [&](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot) {
         JSObject* baseObject = asObject(baseValue);
-        LOG_IC((vm, ICEvent::OperationPutByIdSetPrivateFieldStrictOptimize, baseObject->classInfo(), identifier, putSlot.base() == baseObject));
+        LOG_IC((ICEvent::OperationPutByIdSetPrivateFieldStrictOptimize, baseObject->classInfo(), putSlot.base() == baseObject));
 
         ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(propertyCache->accessType));
 
@@ -1901,6 +1915,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValStrictGaveUp, void, (EncodedJSValue en
     JSValue value = JSValue::decode(encodedValue);
 
     putByVal(globalObject, baseValue, subscript, value, profile, ECMAMode::strict());
+
+    LOG_IC((ICEvent::OperationPutByValStrictGaveUp, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -1916,6 +1933,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValStrictGeneric, void, (JSGlobalObject* 
     JSValue value = JSValue::decode(encodedValue);
 
     putByVal(globalObject, baseValue, subscript, value, nullptr, ECMAMode::strict());
+
+    LOG_IC((ICEvent::OperationPutByValStrictGeneric, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -1934,6 +1954,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValSloppyGaveUp, void, (EncodedJSValue en
     JSValue value = JSValue::decode(encodedValue);
 
     putByVal(globalObject, baseValue, subscript, value, profile, ECMAMode::sloppy());
+
+    LOG_IC((ICEvent::OperationPutByValSloppyGaveUp, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -1949,6 +1972,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValSloppyGeneric, void, (JSGlobalObject* 
     JSValue value = JSValue::decode(encodedValue);
 
     putByVal(globalObject, baseValue, subscript, value, nullptr, ECMAMode::sloppy());
+
+    LOG_IC((ICEvent::OperationPutByValSloppyGeneric, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -2372,6 +2398,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValDefinePrivateFieldGaveUp, void, (Encod
     JSValue value = JSValue::decode(encodedValue);
 
     putPrivateName<true>(globalObject, baseValue, subscript, value);
+
+    LOG_IC((ICEvent::OperationPutByValDefinePrivateFieldGaveUp, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -2387,6 +2416,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValDefinePrivateFieldGeneric, void, (JSGl
     JSValue value = JSValue::decode(encodedValue);
 
     putPrivateName<true>(globalObject, baseValue, subscript, value);
+
+    LOG_IC((ICEvent::OperationPutByValDefinePrivateFieldGeneric, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -2405,6 +2437,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValSetPrivateFieldGaveUp, void, (EncodedJ
     JSValue value = JSValue::decode(encodedValue);
 
     putPrivateName<false>(globalObject, baseValue, subscript, value);
+
+    LOG_IC((ICEvent::OperationPutByValSetPrivateFieldGaveUp, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -2420,6 +2455,9 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValSetPrivateFieldGeneric, void, (JSGloba
     JSValue value = JSValue::decode(encodedValue);
 
     putPrivateName<false>(globalObject, baseValue, subscript, value);
+
+    LOG_IC((ICEvent::OperationPutByValSetPrivateFieldGeneric, baseValue.classInfoOrNull()));
+
     OPERATION_RETURN(scope);
 }
 
@@ -3475,7 +3513,11 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValGaveUp, EncodedJSValue, (EncodedJSValu
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue subscript = JSValue::decode(encodedSubscript);
 
-    OPERATION_RETURN(scope, JSValue::encode(getByVal(globalObject, callFrame, profile, baseValue, subscript)));
+    JSValue result = getByVal(globalObject, callFrame, profile, baseValue, subscript);
+
+    LOG_IC((ICEvent::OperationGetByValGaveUp, baseValue.classInfoOrNull()));
+
+    OPERATION_RETURN(scope, JSValue::encode(result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, PropertyInlineCache* propertyCache, ArrayProfile* profile))
@@ -3506,7 +3548,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (EncodedJSVa
             if (subscript.isSymbol() || !parseIndex(*propertyName.data)) {
                 scope.release();
                 OPERATION_RETURN(scope, JSValue::encode(baseValue.getPropertySlot(globalObject, propertyName.data, [&] (bool found, PropertySlot& slot) -> JSValue {
-                    LOG_IC((vm, ICEvent::OperationGetByValOptimize, baseValue.classInfoOrNull(), propertyName.data, baseValue == slot.slotBase()));
+                    LOG_IC((ICEvent::OperationGetByValOptimize, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
 
                     CacheableIdentifier identifier = CacheableIdentifier::createFromCell(subscript.asCell());
                     if (propertyCache->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
@@ -3731,7 +3773,11 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValGeneric, EncodedJSValue, (JSGlobalObje
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue subscript = JSValue::decode(encodedSubscript);
 
-    OPERATION_RETURN(scope, JSValue::encode(getByVal(globalObject, callFrame, nullptr, baseValue, subscript)));
+    JSValue result = getByVal(globalObject, callFrame, nullptr, baseValue, subscript);
+
+    LOG_IC((ICEvent::OperationGetByValGeneric, baseValue.classInfoOrNull()));
+
+    OPERATION_RETURN(scope, JSValue::encode(result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisGaveUp, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis, PropertyInlineCache* propertyCache, ArrayProfile* profile))
@@ -3748,7 +3794,11 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisGaveUp, EncodedJSValue, (Encod
     JSValue subscript = JSValue::decode(encodedSubscript);
     JSValue thisValue = JSValue::decode(encodedThis);
 
-    OPERATION_RETURN(scope, JSValue::encode(getByValWithThis(globalObject, callFrame, profile, baseValue, subscript, thisValue)));
+    JSValue result = getByValWithThis(globalObject, callFrame, profile, baseValue, subscript, thisValue);
+
+    LOG_IC((ICEvent::OperationGetByValWithThisGaveUp, baseValue.classInfoOrNull()));
+
+    OPERATION_RETURN(scope, JSValue::encode(result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis, PropertyInlineCache* propertyCache, ArrayProfile* profile))
@@ -3781,7 +3831,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (Enc
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
             scope.release();
             OPERATION_RETURN(scope, JSValue::encode(baseValue.getPropertySlot(globalObject, propertyName, slot, [&] (bool found, PropertySlot& slot) -> JSValue {
-                LOG_IC((vm, ICEvent::OperationGetByValWithThisOptimize, baseValue.classInfoOrNull(), propertyName, baseValue == slot.slotBase()));
+                LOG_IC((ICEvent::OperationGetByValWithThisOptimize, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
 
                 CacheableIdentifier identifier = CacheableIdentifier::createFromCell(subscript.asCell());
                 if (propertyCache->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
@@ -3829,7 +3879,11 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisGeneric, EncodedJSValue, (JSGl
     auto propertyName = property.toPropertyKey(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
     PropertySlot slot(thisValue, PropertySlot::PropertySlot::InternalMethodType::Get);
-    OPERATION_RETURN(scope, JSValue::encode(baseValue.get(globalObject, propertyName, slot)));
+    JSValue result = baseValue.get(globalObject, propertyName, slot);
+
+    LOG_IC((ICEvent::OperationGetByValWithThisGeneric, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
+
+    OPERATION_RETURN(scope, JSValue::encode(result));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisMegamorphic, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis, PropertyInlineCache* propertyCache, ArrayProfile* profile))
@@ -3916,7 +3970,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (Encod
         base->getPrivateField(globalObject, fieldName, slot);
         OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        LOG_IC((vm, ICEvent::OperationGetPrivateNameOptimize, baseValue.classInfoOrNull(), fieldName, true));
+        LOG_IC((ICEvent::OperationGetPrivateNameOptimize, baseValue.classInfoOrNull(), true));
 
         CacheableIdentifier identifier = CacheableIdentifier::createFromCell(fieldNameValue.asCell());
         if (propertyCache->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
@@ -3973,7 +4027,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdGaveUp, EncodedJSValue, (Enc
 
     JSValue result = getPrivateName(globalObject, callFrame, baseValue, identifier);
 
-    LOG_IC((vm, ICEvent::OperationGetPrivateNameById, baseValue.classInfoOrNull(), identifier, true));
+    LOG_IC((ICEvent::OperationGetPrivateNameById, baseValue.classInfoOrNull(), true));
 
     OPERATION_RETURN(scope, JSValue::encode(result));
 }
@@ -3998,7 +4052,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (E
         base->getPrivateField(globalObject, identifier, slot);
         OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        LOG_IC((vm, ICEvent::OperationGetPrivateNameByIdOptimize, baseValue.classInfoOrNull(), identifier, true));
+        LOG_IC((ICEvent::OperationGetPrivateNameByIdOptimize, baseValue.classInfoOrNull(), true));
 
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (propertyCache->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
@@ -4023,7 +4077,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (JS
 
     JSValue result = getPrivateName(globalObject, callFrame, baseValue, identifier);
 
-    LOG_IC((vm, ICEvent::OperationGetPrivateNameByIdGeneric, baseValue.classInfoOrNull(), identifier, true));
+    LOG_IC((ICEvent::OperationGetPrivateNameByIdGeneric, baseValue.classInfoOrNull(), true));
 
     OPERATION_RETURN(scope, JSValue::encode(result));
 }

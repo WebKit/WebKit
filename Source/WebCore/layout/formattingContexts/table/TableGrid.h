@@ -215,7 +215,7 @@ public:
     using Cells = ListHashSet<std::unique_ptr<TableGridCell>>;
     Cells& cells() LIFETIME_BOUND { return m_cells; }
 
-    Slot* slot(SlotPosition) LIFETIME_BOUND;
+    Slot* NODELETE slot(SlotPosition) LIFETIME_BOUND;
     const Slot* slot(SlotPosition position) const LIFETIME_BOUND { return m_slotMap.get(position); }
     bool isSpanned(SlotPosition);
 

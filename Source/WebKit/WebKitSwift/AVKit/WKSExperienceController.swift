@@ -25,19 +25,28 @@
 
 import AVKit
 import AVKit_Private
+import os
 @_spi(AVExperienceController) import AVKit
+
+extension Logger {
+    static let experienceController = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
+}
 
 @MainActor
 @objc
 @implementation
 extension WKSExperienceController {
+    weak var delegate: (any WKSExperienceControllerDelegate)?
+
     @nonobjc
     final let experienceController: AVExperienceController
 
     @objc(initWithContentSource:)
     init(contentSource: AVPlayerViewControllerContentSource) {
-        self.experienceController = AVExperienceController(contentSource: contentSource)
+        experienceController = AVExperienceController(contentSource: contentSource)
         super.init()
+        experienceController.delegate = self
+        Logger.experienceController.log("\(#function)")
     }
 
     @objc(enterFullscreenWithCompletionHandler:)

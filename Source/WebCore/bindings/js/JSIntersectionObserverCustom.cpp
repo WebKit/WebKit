@@ -34,14 +34,14 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSIntersectionObserver::visitAdditionalChildren(Visitor& visitor)
+void JSIntersectionObserver::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (auto* callback = wrapped().callbackConcurrently())
-        callback->visitJSFunction(visitor);
+        callback->visitJSFunctionInGCThread(visitor);
     addWebCoreOpaqueRoot(visitor, wrapped().root());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIntersectionObserver);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSIntersectionObserver);
 
 bool JSIntersectionObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {

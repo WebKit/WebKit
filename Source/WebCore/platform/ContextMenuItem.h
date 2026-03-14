@@ -198,27 +198,27 @@ public:
 
     WEBCORE_EXPORT ~ContextMenuItem();
 
-    void setType(ContextMenuItemType);
-    WEBCORE_EXPORT ContextMenuItemType type() const;
+    void NODELETE setType(ContextMenuItemType);
+    WEBCORE_EXPORT ContextMenuItemType NODELETE type() const;
 
-    void setAction(ContextMenuAction);
-    WEBCORE_EXPORT ContextMenuAction action() const;
+    void NODELETE setAction(ContextMenuAction);
+    WEBCORE_EXPORT ContextMenuAction NODELETE action() const;
 
-    void setChecked(bool = true);
-    WEBCORE_EXPORT bool checked() const;
+    void NODELETE setChecked(bool = true);
+    WEBCORE_EXPORT bool NODELETE checked() const;
 
-    void setEnabled(bool = true);
-    WEBCORE_EXPORT bool enabled() const;
+    void NODELETE setEnabled(bool = true);
+    WEBCORE_EXPORT bool NODELETE enabled() const;
 
-    void setIndentationLevel(unsigned);
-    WEBCORE_EXPORT unsigned indentationLevel() const;
+    void NODELETE setIndentationLevel(unsigned);
+    WEBCORE_EXPORT unsigned NODELETE indentationLevel() const;
 
     void setSubMenu(ContextMenu*);
 
     WEBCORE_EXPORT ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems, unsigned indentationLevel = 0);
     ContextMenuItem();
 
-    bool isNull() const;
+    bool NODELETE isNull() const;
 
     void setTitle(String&& title) { m_title = WTF::move(title); }
     void setTitle(const String& title) { m_title = title; }

@@ -109,10 +109,10 @@ public:
     WEBCORE_EXPORT virtual void setVP9HardwareSupportForTesting(std::optional<bool> value) { m_supportsVP9VTBForTesting = value; }
     virtual bool isSupportingVP9HardwareDecoder() const { return m_supportsVP9VTBForTesting.value_or(false); }
 
-    WEBCORE_EXPORT void disableEnumeratingAllNetworkInterfaces();
-    WEBCORE_EXPORT void enableEnumeratingAllNetworkInterfaces();
-    bool isEnumeratingAllNetworkInterfacesEnabled() const;
-    WEBCORE_EXPORT void enableEnumeratingVisibleNetworkInterfaces();
+    WEBCORE_EXPORT void NODELETE disableEnumeratingAllNetworkInterfaces();
+    WEBCORE_EXPORT void NODELETE enableEnumeratingAllNetworkInterfaces();
+    bool NODELETE isEnumeratingAllNetworkInterfacesEnabled() const;
+    WEBCORE_EXPORT void NODELETE enableEnumeratingVisibleNetworkInterfaces();
     bool isEnumeratingVisibleNetworkInterfacesEnabled() const { return m_enableEnumeratingVisibleNetworkInterfaces; }
 
     class SuspendableSocketFactory : public webrtc::PacketSocketFactory {

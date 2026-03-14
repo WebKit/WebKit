@@ -23,8 +23,8 @@
 
 #if os(visionOS)
 
-@_weakLinked internal import SwiftUI
-internal import WebKit_Internal
+@_weakLinked import SwiftUI
+import WebKit_Internal
 
 struct WKSurroundingsEffectView: View {
     @Environment(WKSurroundingsEffectManagerWrapper.self)

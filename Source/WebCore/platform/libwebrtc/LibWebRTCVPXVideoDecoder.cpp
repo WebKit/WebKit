@@ -79,7 +79,7 @@ public:
     void close() { m_isClosed = true; }
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&);
-    bool isVPx() const { return m_type == LibWebRTCVPXVideoDecoder::Type::VP8 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9_P2; }
+    bool NODELETE isVPx() const { return m_type == LibWebRTCVPXVideoDecoder::Type::VP8 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9_P2; }
     int32_t Decoded(webrtc::VideoFrame&) final;
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType) WTF_REQUIRES_LOCK(m_pixelBufferPoolLock);
     CVPixelBufferRef createPixelBuffer(size_t width, size_t height, webrtc::BufferType, bool isFullRange);

@@ -83,7 +83,7 @@ struct Styleable {
     bool isRunningAcceleratedTransformRelatedAnimation() const;
     bool hasRunningAcceleratedAnimations() const;
 
-    bool capturedInViewTransition() const;
+    bool NODELETE capturedInViewTransition() const;
     void setCapturedInViewTransition(AtomString);
 
     KeyframeEffectStack* keyframeEffectStack() const

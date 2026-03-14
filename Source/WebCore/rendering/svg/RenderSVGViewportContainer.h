@@ -38,7 +38,7 @@ public:
     RenderSVGViewportContainer(SVGSVGElement&, RenderStyle&&);
     virtual ~RenderSVGViewportContainer();
 
-    SVGSVGElement& svgSVGElement() const;
+    SVGSVGElement& NODELETE svgSVGElement() const;
     FloatRect viewport() const { return { { }, viewportSize() }; }
     FloatSize viewportSize() const { return m_viewport.size(); }
 

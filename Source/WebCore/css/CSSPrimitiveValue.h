@@ -86,15 +86,15 @@ public:
 
     static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
-    static Ref<CSSPrimitiveValue> createInteger(double);
+    static Ref<CSSPrimitiveValue> NODELETE createInteger(double);
     static Ref<CSSPrimitiveValue> create(Ref<CSSCalc::Value>);
-    static Ref<CSSPrimitiveValue> create(Ref<CSSAttrValue>);
+    static Ref<CSSPrimitiveValue> NODELETE create(Ref<CSSAttrValue>);
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
     CSSValueID valueID() const { return isValueID() ? m_value.valueID : CSSValueInvalid; }
 
-    static Ref<CSSPrimitiveValue> create(CSSPropertyID);
+    static Ref<CSSPrimitiveValue> NODELETE create(CSSPropertyID);
     bool isPropertyID() const { return primitiveUnitType() == CSSUnitType::CSS_PROPERTY_ID; }
     CSSPropertyID propertyID() const { return isPropertyID() ? m_value.propertyID : CSSPropertyInvalid; }
 
@@ -232,7 +232,7 @@ private:
     std::optional<double> doubleValueInternal(CSSUnitType targetUnit, const CSSToLengthConversionData&) const;
     std::optional<double> doubleValueInternalDeprecated(CSSUnitType targetUnit) const;
 
-    bool addDerivedHash(Hasher&) const;
+    bool NODELETE addDerivedHash(Hasher&) const;
 
     ALWAYS_INLINE String serializeInternal(const CSS::SerializationContext&) const;
     NEVER_INLINE String formatNumberValue(ASCIILiteral suffix) const;

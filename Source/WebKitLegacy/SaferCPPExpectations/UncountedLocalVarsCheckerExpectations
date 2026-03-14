@@ -26,7 +26,7 @@ mac/Misc/WebElementDictionary.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Misc/WebSharingServicePickerController.mm
 mac/Plugins/WebPluginContainerCheck.mm
-mac/Plugins/WebPluginController.mm
+[ iOS ] mac/Plugins/WebPluginController.mm
 [ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 mac/WebCoreSupport/WebEditorClient.mm

@@ -174,7 +174,7 @@ public:
     void rejectFinishedPromise(NavigationAPIMethodTracker*);
     NavigationAPIMethodTracker* upcomingTraverseMethodTracker(const String& key) const;
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor&);
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&);
 
     class AbortHandler : public RefCountedAndCanMakeWeakPtr<AbortHandler> {
     public:

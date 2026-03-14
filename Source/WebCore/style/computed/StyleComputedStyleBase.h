@@ -585,7 +585,7 @@ public:
     inline bool hasPseudoStyle(PseudoElementType) const;
     inline void setHasPseudoStyles(EnumSet<PseudoElementType>);
 
-    RenderStyle* getCachedPseudoStyle(const PseudoElementIdentifier&) const;
+    RenderStyle* NODELETE getCachedPseudoStyle(const PseudoElementIdentifier&) const;
     RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
 
     bool hasCachedPseudoStyles() const { return !m_cachedPseudoStyles.isEmpty(); }

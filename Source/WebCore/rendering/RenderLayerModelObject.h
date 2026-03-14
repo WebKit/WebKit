@@ -132,6 +132,10 @@ public:
 
     inline bool shouldUsePositionedClipping() const;
 
+#if ASSERT_ENABLED
+    bool layerAccessPreventedSlow() const;
+#endif
+
 protected:
     RenderLayerModelObject(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     RenderLayerModelObject(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);

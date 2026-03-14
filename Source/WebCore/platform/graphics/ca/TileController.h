@@ -79,12 +79,12 @@ public:
     WEBCORE_EXPORT void setNeedsDisplayInRect(const IntRect&);
 
     WEBCORE_EXPORT void setContentsScale(float);
-    WEBCORE_EXPORT float contentsScale() const;
+    WEBCORE_EXPORT float NODELETE contentsScale() const;
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     WEBCORE_EXPORT bool setNeedsDisplayIfEDRHeadroomExceeds(float);
     WEBCORE_EXPORT void setTonemappingEnabled(bool);
-    WEBCORE_EXPORT bool tonemappingEnabled() const;
+    WEBCORE_EXPORT bool NODELETE tonemappingEnabled() const;
 #endif
 
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }

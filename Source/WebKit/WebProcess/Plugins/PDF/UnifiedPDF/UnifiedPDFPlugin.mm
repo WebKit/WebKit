@@ -1432,7 +1432,18 @@ IntSize UnifiedPDFPlugin::contentsSize() const
 
     auto size = m_documentLayout.scaledContentsSize();
     size.scale(m_scaleFactor);
-    return expandedIntSize(size);
+    auto result = expandedIntSize(size);
+
+    // In sizeToFitContent mode (iOS full-frame PDF), the contents width is
+    // the plugin's visible width. Use it directly to avoid a rounding artifact
+    // where expandedIntSize rounds up by 1 pixel, making the plugin's own
+    // UIScrollView horizontally scrollable and causing rubber-banding.
+    if (shouldSizeToFitContent() && m_size.width() > 0) {
+        ASSERT(std::abs((result - m_size).width()) <= 1);
+        result.setWidth(m_size.width());
+    }
+
+    return result;
 }
 
 unsigned UnifiedPDFPlugin::heightForPageAtIndex(PDFDocumentLayout::PageIndex pageIndex) const

@@ -594,7 +594,7 @@ static bool isSimpleSelectorValidAfterPseudoElement(const MutableCSSSelector& si
     return isPseudoClassValidAfterPseudoElement(simpleSelector.pseudoClass(), compoundPseudoElement.pseudoElement());
 }
 
-static bool atEndIgnoringWhitespace(CSSParserTokenRange range)
+static bool NODELETE atEndIgnoringWhitespace(CSSParserTokenRange range)
 {
     range.consumeWhitespace();
     return range.atEnd();
@@ -1458,7 +1458,7 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
     return CSSSelectorList { WTF::move(result) };
 }
 
-static std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifierFor(CSSSelectorPseudoElement selectorPseudoElement)
+static std::optional<Style::PseudoElementIdentifier> NODELETE pseudoElementIdentifierFor(CSSSelectorPseudoElement selectorPseudoElement)
 {
     auto type = CSSSelector::stylePseudoElementTypeFor(selectorPseudoElement);
     if (!type)

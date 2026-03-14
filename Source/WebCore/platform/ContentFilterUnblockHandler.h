@@ -71,7 +71,7 @@ public:
         bool unblockedAfterRequest
     );
 
-    WEBCORE_EXPORT bool needsUIProcess() const;
+    WEBCORE_EXPORT bool NODELETE needsUIProcess() const;
     WEBCORE_EXPORT bool canHandleRequest(const ResourceRequest&) const;
     WEBCORE_EXPORT void requestUnblockAsync(DecisionHandlerFunction&&, std::optional<URL> requestURL = std::nullopt);
     void wrapWithDecisionHandler(const DecisionHandlerFunction&);
@@ -93,7 +93,7 @@ public:
     RetainPtr<WebFilterEvaluator> webFilterEvaluator() const { return m_webFilterEvaluator; }
 #endif
 
-    WEBCORE_EXPORT void setUnblockedAfterRequest(bool);
+    WEBCORE_EXPORT void NODELETE setUnblockedAfterRequest(bool);
     bool unblockedAfterRequest() const { return m_unblockedAfterRequest; }
 
 private:

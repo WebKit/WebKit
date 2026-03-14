@@ -64,7 +64,7 @@ private:
     // Flex track infrastructure
     static FlexTracks collectFlexTracks(const UnsizedTracks&);
     static bool hasFlexTracks(const UnsizedTracks&);
-    static double flexFactorSum(const FlexTracks&);
+    static double NODELETE flexFactorSum(const FlexTracks&);
     static LayoutUnit findSizeOfFr(const UnsizedTracks&, const LayoutUnit availableSpace, const LayoutUnit gapSize);
 
     // Expand Flexible Tracks (spec section 11.7)

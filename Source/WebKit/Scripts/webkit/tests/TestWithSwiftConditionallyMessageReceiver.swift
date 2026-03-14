@@ -23,7 +23,7 @@
 //
 
 #if ENABLE_SWIFT_TEST_CONDITION
-internal import WebKit_Internal
+import WebKit_Internal
 #endif
 
 #if compiler(>=6.2)

@@ -58,14 +58,14 @@ while (<IN>) {
     chomp;
     s/^\s+//;
     next if /^\#|^$/; # Comment or blank line. Do nothing.
-    if (/^\@begin/ && !$inside) {
+    if (!$inside && /^\@begin/) {
         if (/^\@begin\s*([:_\w]+)\s*\d*\s*$/) {
             $inside = 1;
             $name = $1;
         } else {
             print STDERR "WARNING: \@begin without table name, skipping $_\n";
         }
-    } elsif (/^\@end\s*$/ && $inside) {
+    } elsif ($inside && /^\@end\s*$/) {
         output();
 
         @keys = ();
@@ -74,7 +74,7 @@ while (<IN>) {
         $includeBuiltin = 0;
 
         $inside = 0;
-    } elsif (/^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*(\w*)\s*$/ && $inside) {
+    } elsif ($inside && /^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*(\w*)\s*$/) {
         my $key = $1;
         my $val = $2;
         my $att = $3;

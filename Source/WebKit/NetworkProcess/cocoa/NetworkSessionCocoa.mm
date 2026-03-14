@@ -151,7 +151,7 @@ static NSURLSessionAuthChallengeDisposition NODELETE toNSURLSessionAuthChallenge
     }
 }
 
-static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
+static WebCore::NetworkLoadPriority NODELETE toNetworkLoadPriority(float priority)
 {
     if (priority <= NSURLSessionTaskPriorityLow)
         return WebCore::NetworkLoadPriority::Low;

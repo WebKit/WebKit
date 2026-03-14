@@ -53,7 +53,7 @@ using namespace WebCore;
 
 static const Seconds suspensionTimeout { 10_s };
 
-static WeakHashSet<SuspendedPageProxy>& allSuspendedPages()
+static WeakHashSet<SuspendedPageProxy>& NODELETE allSuspendedPages()
 {
     static NeverDestroyed<WeakHashSet<SuspendedPageProxy>> map;
     return map;

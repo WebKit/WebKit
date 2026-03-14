@@ -73,12 +73,12 @@ public:
     static void registerMediaEngine(MediaEngineRegistrar);
 
     using NativeImageCreator = RefPtr<NativeImage> (*)(const VideoFrame&);
-    WEBCORE_EXPORT static void setNativeImageCreator(NativeImageCreator&&);
+    WEBCORE_EXPORT static void NODELETE setNativeImageCreator(NativeImageCreator&&);
 
     // MediaPlayer Factory Methods
     static bool isAvailable();
     static void getSupportedTypes(HashSet<String>& types);
-    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    static MediaPlayer::SupportsType NODELETE supportsType(const MediaEngineSupportParameters&);
 
     MediaPlayer::NetworkState networkState() const override;
     void setNetworkState(MediaPlayer::NetworkState);

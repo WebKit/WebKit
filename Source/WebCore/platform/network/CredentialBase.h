@@ -39,12 +39,12 @@ enum class CredentialPersistence : uint8_t {
 
 class CredentialBase {
 public:
-    WEBCORE_EXPORT bool isEmpty() const;
+    WEBCORE_EXPORT bool NODELETE isEmpty() const;
     
-    WEBCORE_EXPORT const String& user() const;
-    WEBCORE_EXPORT const String& password() const;
-    WEBCORE_EXPORT bool hasPassword() const;
-    WEBCORE_EXPORT CredentialPersistence persistence() const;
+    WEBCORE_EXPORT const String& NODELETE user() const;
+    WEBCORE_EXPORT const String& NODELETE password() const;
+    WEBCORE_EXPORT bool NODELETE hasPassword() const;
+    WEBCORE_EXPORT CredentialPersistence NODELETE persistence() const;
 
     bool encodingRequiresPlatformData() const { return false; }
 
@@ -58,7 +58,7 @@ public:
         CredentialPersistence persistence;
     };
 
-    WEBCORE_EXPORT NonPlatformData nonPlatformData() const;
+    WEBCORE_EXPORT NonPlatformData NODELETE nonPlatformData() const;
 
 protected:
     WEBCORE_EXPORT CredentialBase();

@@ -334,7 +334,7 @@ static String buildList(const ContainerType& values)
     return builder.toString();
 }
 
-static WeakHashSet<ResourceLoadStatisticsStore>& allStores()
+static WeakHashSet<ResourceLoadStatisticsStore>& NODELETE allStores()
 {
     ASSERT(!RunLoop::isMain());
 

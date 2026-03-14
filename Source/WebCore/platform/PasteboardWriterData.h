@@ -42,7 +42,7 @@ public:
     WEBCORE_EXPORT PasteboardWriterData();
     WEBCORE_EXPORT ~PasteboardWriterData();
 
-    WEBCORE_EXPORT bool isEmpty() const;
+    WEBCORE_EXPORT bool NODELETE isEmpty() const;
 
     struct PlainText {
         bool canSmartCopyOrDelete;

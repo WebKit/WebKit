@@ -27,7 +27,7 @@ import Foundation
 import OSLog
 
 // FIXME: (rdar://150642154) This cannot be used in WebKit.framework due to a dependency cycle.
-internal import MarketplaceKit
+import MarketplaceKit
 
 @objc
 @implementation

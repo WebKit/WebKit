@@ -275,7 +275,7 @@ public:
     void upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>&);
 
     WEBCORE_EXPORT static double defaultTimeoutInterval(); // May return 0 when using platform default.
-    WEBCORE_EXPORT static void setDefaultTimeoutInterval(double);
+    WEBCORE_EXPORT static void NODELETE setDefaultTimeoutInterval(double);
 
     WEBCORE_EXPORT static bool equal(const ResourceRequest&, const ResourceRequest&);
 
@@ -289,13 +289,13 @@ public:
     WEBCORE_EXPORT void setUseAdvancedPrivacyProtections(bool);
 
     bool didFilterLinkDecoration() const { return m_requestData.m_didFilterLinkDecoration; }
-    WEBCORE_EXPORT void setDidFilterLinkDecoration(bool);
+    WEBCORE_EXPORT void NODELETE setDidFilterLinkDecoration(bool);
 
     bool isPrivateTokenUsageByThirdPartyAllowed() const { return m_requestData.m_isPrivateTokenUsageByThirdPartyAllowed; }
-    void setIsPrivateTokenUsageByThirdPartyAllowed(bool);
+    void NODELETE setIsPrivateTokenUsageByThirdPartyAllowed(bool);
 
     bool wasSchemeOptimisticallyUpgraded() const { return m_requestData.m_wasSchemeOptimisticallyUpgraded; }
-    void setWasSchemeOptimisticallyUpgraded(bool);
+    void NODELETE setWasSchemeOptimisticallyUpgraded(bool);
 
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request
@@ -338,7 +338,7 @@ protected:
     bool m_hiddenFromInspector : 1;
 
 private:
-    const ResourceRequest& asResourceRequest() const;
+    const ResourceRequest& NODELETE asResourceRequest() const;
 
     WEBCORE_EXPORT static double s_defaultTimeoutInterval;
 };

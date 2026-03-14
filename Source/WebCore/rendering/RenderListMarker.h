@@ -64,6 +64,7 @@ public:
 
     bool NODELETE isInside() const;
     bool isDisclosureMarker() const;
+    bool shouldPaintInAssociatedListItemLayer() const;
 
     void updateInlineMarginsAndContent();
 
@@ -71,8 +72,20 @@ public:
 
     LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
     const RenderListItem* NODELETE listItem() const;
+    void paintFromAssociatedListItemLayer(PaintInfo&, const LayoutPoint&);
 
     std::pair<float, float> layoutBounds() const { return m_layoutBounds; }
+
+    bool shouldCollapseAnonymousBlockParent() const { return m_shouldCollapseAnonymousBlockParent; }
+    void setShouldCollapseAnonymousBlockParent(bool value)
+    {
+        if (value) {
+            ASSERT(parent());
+            ASSERT(parent()->isAnonymousBlock());
+            ASSERT(!isInside());
+        }
+        m_shouldCollapseAnonymousBlockParent = value;
+    }
 
 private:
     void willBeDestroyed() final;
@@ -110,6 +123,7 @@ private:
     LayoutUnit m_lineOffsetForListItem;
     LayoutUnit m_lineLogicalOffsetForListItem;
     std::pair<float, float> m_layoutBounds;
+    bool m_shouldCollapseAnonymousBlockParent { false };
 };
 
 } // namespace WebCore

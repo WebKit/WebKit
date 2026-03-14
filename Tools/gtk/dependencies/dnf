@@ -53,7 +53,6 @@ PACKAGES+=(
     libevdev-devel
     libgpg-error-devel
     libinput-devel
-    libp11-devel
     libpciaccess-devel
     libtiff-devel
     libunistring-devel

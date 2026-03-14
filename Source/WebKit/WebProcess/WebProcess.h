@@ -246,7 +246,7 @@ public:
     void createWebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
     Awaitable<unsigned> countWebPagesForTesting();
     void removeWebPage(WebCore::PageIdentifier);
-    WebPage* focusedWebPage() const;
+    WebPage* NODELETE focusedWebPage() const;
     bool hasEverHadAnyWebPages() const { return m_hasEverHadAnyWebPages; }
     bool isBroadcastChannelEnabled() const { return m_isBroadcastChannelEnabled; }
 
@@ -272,7 +272,7 @@ public:
 
     void updateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String>&&);
 
-    WebFrame* webFrame(std::optional<WebCore::FrameIdentifier>) const;
+    WebFrame* NODELETE webFrame(std::optional<WebCore::FrameIdentifier>) const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
     void removeWebFrame(WebCore::FrameIdentifier, WebPage*);
 
@@ -313,7 +313,7 @@ public:
     GPUProcessConnection& ensureGPUProcessConnection();
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
     // Returns timeout duration for GPU process connections. Thread-safe.
-    Seconds gpuProcessTimeoutDuration() const;
+    Seconds NODELETE gpuProcessTimeoutDuration() const;
     void gpuProcessConnectionClosed();
     void gpuProcessConnectionDidBecomeUnresponsive();
 
@@ -355,7 +355,7 @@ public:
 
     void registerStorageAreaMap(StorageAreaMap&);
     void unregisterStorageAreaMap(StorageAreaMap&);
-    WeakPtr<StorageAreaMap> storageAreaMap(StorageAreaMapIdentifier) const;
+    WeakPtr<StorageAreaMap> NODELETE storageAreaMap(StorageAreaMapIdentifier) const;
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
@@ -462,7 +462,7 @@ public:
     void disableURLSchemeCheckInDataDetectors() const;
 
 #if PLATFORM(MAC)
-    void updatePageScreenProperties();
+    void NODELETE updatePageScreenProperties();
 #endif
 
     void NODELETE setChildProcessDebuggabilityEnabled(bool);
@@ -612,9 +612,9 @@ private:
     void setOptInCookiePartitioningEnabled(bool);
 #endif
 
-    void platformSetCacheModel(CacheModel);
+    void NODELETE platformSetCacheModel(CacheModel);
 
-    void setEnhancedAccessibility(bool);
+    void NODELETE setEnhancedAccessibility(bool);
     void bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::span<const uint8_t>);
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
@@ -652,13 +652,13 @@ private:
     void setInjectedBundleParameter(const String& key, std::span<const uint8_t>);
     void setInjectedBundleParameters(std::span<const uint8_t>);
 
-    bool areAllPagesSuspended() const;
+    bool NODELETE areAllPagesSuspended() const;
 
     void ensureAutomationSessionProxy(const String& sessionIdentifier);
     void destroyAutomationSessionProxy();
 
     void logDiagnosticMessageForNetworkProcessCrash();
-    bool hasVisibleWebPage() const;
+    bool NODELETE hasVisibleWebPage() const;
     void updateCPULimit();
     enum class CPUMonitorUpdateReason { LimitHasChanged, VisibilityHasChanged };
     void updateCPUMonitorState(CPUMonitorUpdateReason);
@@ -775,7 +775,7 @@ private:
     void initializeLogForwarding(const WebProcessCreationParameters&);
 #endif
 
-    bool isProcessBeingCachedForPerformance();
+    bool NODELETE isProcessBeingCachedForPerformance();
 
     HashMap<WebCore::PageIdentifier, Ref<WebPage>> m_pageMap;
     HashMap<PageGroupIdentifier, Ref<WebPageGroupProxy>> m_pageGroupMap;
@@ -916,7 +916,7 @@ private:
 
     HashMap<StorageAreaMapIdentifier, WeakPtr<StorageAreaMap>> m_storageAreaMaps;
 
-    void updateIsBroadcastChannelEnabled();
+    void NODELETE updateIsBroadcastChannelEnabled();
     
     // Prewarmed WebProcesses do not have an associated sessionID yet, which is why this is an optional.
     // By the time the WebProcess gets a WebPage, it is guaranteed to have a sessionID.

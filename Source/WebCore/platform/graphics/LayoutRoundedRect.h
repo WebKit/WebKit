@@ -52,14 +52,14 @@ public:
     const LayoutSize& topRight() const LIFETIME_BOUND { return m_topRight; }
     const LayoutSize& bottomLeft() const LIFETIME_BOUND { return m_bottomLeft; }
     const LayoutSize& bottomRight() const LIFETIME_BOUND { return m_bottomRight; }
-    void setRadiiForEdges(const LayoutRoundedRectRadii&, RectEdges<bool> includeEdges);
+    void NODELETE setRadiiForEdges(const LayoutRoundedRectRadii&, RectEdges<bool> includeEdges);
 
-    bool isZero() const;
+    bool NODELETE isZero() const;
 
     bool areRenderableInRect(const LayoutRect&) const;
     void makeRenderableInRect(const LayoutRect&);
 
-    void scale(float factor);
+    void NODELETE scale(float factor);
     void expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth);
     void expand(LayoutUnit size) { expand(size, size, size, size); }
     void shrink(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }

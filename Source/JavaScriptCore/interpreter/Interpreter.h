@@ -57,6 +57,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
 
     class ArgList;
     class CachedCall;
+    class MicrotaskCall;
     class CodeBlock;
     class EvalExecutable;
     class Exception;
@@ -125,6 +126,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
     class Interpreter {
         WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(Interpreter);
         friend class CachedCall;
+        friend class MicrotaskCall;
         friend class LLIntOffsetsExtractor;
         friend class JIT;
         friend class VM;
@@ -161,13 +163,14 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
         CodeBlock* prepareForCachedCall(CachedCall&, JSFunction*);
+        CodeBlock* prepareForMicrotaskCall(MicrotaskCall&, JSFunction*);
 
         JSValue executeCachedCall(CachedCall&);
         JSValue executeBoundCall(VM&, JSBoundFunction*, JSCell*, const ArgList&);
         JSValue executeCallImpl(VM&, JSObject*, const CallData&, JSValue, JSCell*, const ArgList&);
 
     public:
-#if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
+#if (CPU(ARM64) || CPU(X86_64)) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
         template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
         JSValue tryCallWithArguments(CachedCall&, JSValue, Args...);
 #endif

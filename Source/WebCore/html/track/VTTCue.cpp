@@ -1418,7 +1418,7 @@ void VTTCue::toJSON(JSON::Object& object) const
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)
-static float mapVideoRateToSpeechRate(float rate)
+static float NODELETE mapVideoRateToSpeechRate(float rate)
 {
     // WebSpeech says to go from .1 -> 10 (default 1)
     // Video rate is 0 -> 2 (default 1). [The spec has no maximum rate, but the default controls only go to 2x, so use that]

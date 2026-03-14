@@ -174,12 +174,13 @@ public:
     enum class ShouldRunInvalidationCallback : bool { No, Yes };
     WEBCORE_EXPORT static void invalidateAllFontCaches(ShouldRunInvalidationCallback = ShouldRunInvalidationCallback::Yes);
 
-    WEBCORE_EXPORT size_t fontCount();
+    WEBCORE_EXPORT size_t NODELETE fontCount();
     WEBCORE_EXPORT size_t inactiveFontCount();
     WEBCORE_EXPORT void purgeInactiveFontData(unsigned count = UINT_MAX);
     void platformPurgeInactiveFontData();
 
     static void releaseNoncriticalMemoryInAllFontCaches();
+    static void releaseCriticalMemoryInAllFontCaches();
 
     void updateFontCascade(const FontCascade&);
 

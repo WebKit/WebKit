@@ -38,7 +38,7 @@ namespace WebCore {
 
 class ISOStringBox final : public ISOBox {
 public:
-    const String& contents() { return m_contents; }
+    const String& NODELETE contents() { return m_contents; }
 
 private:
     bool parse(JSC::DataView& view, unsigned& offset) override
@@ -73,11 +73,11 @@ private:
     String m_contents;
 };
 
-static FourCC vttIdBoxType() { return std::span { "iden" }; }
-static FourCC vttSettingsBoxType() { return std::span { "sttg" }; }
-static FourCC vttPayloadBoxType() { return std::span { "payl" }; }
-static FourCC vttCurrentTimeBoxType() { return std::span { "ctim" }; }
-static FourCC vttCueSourceIDBoxType() { return std::span { "vsid" }; }
+static FourCC NODELETE vttIdBoxType() { return std::span { "iden" }; }
+static FourCC NODELETE vttSettingsBoxType() { return std::span { "sttg" }; }
+static FourCC NODELETE vttPayloadBoxType() { return std::span { "payl" }; }
+static FourCC NODELETE vttCurrentTimeBoxType() { return std::span { "ctim" }; }
+static FourCC NODELETE vttCueSourceIDBoxType() { return std::span { "vsid" }; }
 
 ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration)
     : m_presentationTime(presentationTime)

@@ -40,7 +40,7 @@ bool ShapeOutside::Image::isValid() const
 {
     Ref styleImage = image.value;
     if (styleImage->hasCachedImage()) {
-        auto* cachedImage = styleImage->cachedImage();
+        RefPtr cachedImage = styleImage->cachedImage();
         return cachedImage && cachedImage->hasImage();
     }
     return styleImage->isGeneratedImage();

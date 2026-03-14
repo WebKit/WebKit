@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT IsCallbackRegistered whenSettledWithResult(Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&&);
     JSC::JSValue NODELETE result() const;
 
-    void markAsHandled();
+    void NODELETE markAsHandled();
 
     enum class Status { Pending, Fulfilled, Rejected };
     WEBCORE_EXPORT Status status() const;

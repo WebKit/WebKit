@@ -97,13 +97,13 @@ inline RenderSVGHiddenContainer* RenderLayer::enclosingSVGHiddenOrResourceContai
 
 inline const LayoutPoint& RenderLayer::location() const LIFETIME_BOUND
 {
-    ASSERT(!renderer().view().frameView().layerAccessPrevented());
+    ASSERT(!renderer().layerAccessPreventedSlow());
     return m_topLeft;
 }
 
 inline const IntSize& RenderLayer::size() const LIFETIME_BOUND
 {
-    ASSERT(!renderer().view().frameView().layerAccessPrevented());
+    ASSERT(!renderer().layerAccessPreventedSlow());
     return m_layerSize;
 }
 

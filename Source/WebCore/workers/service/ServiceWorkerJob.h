@@ -75,7 +75,7 @@ public:
 
     WEBCORE_EXPORT static ResourceError validateServiceWorkerResponse(const ServiceWorkerJobData&, const ResourceResponse&);
 
-    bool isRegistering() const;
+    bool NODELETE isRegistering() const;
 
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);

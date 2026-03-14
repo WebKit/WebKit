@@ -104,15 +104,15 @@ class ReplacementFragment {
 public:
     ReplacementFragment(RefPtr<DocumentFragment>&&, const VisibleSelection&);
 
-    DocumentFragment* fragment() { return m_fragment.get(); }
+    DocumentFragment* NODELETE fragment() { return m_fragment.get(); }
 
     Node* firstChild() const;
     Node* lastChild() const;
 
     bool isEmpty() const;
     
-    bool hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
-    bool hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }
+    bool NODELETE hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
+    bool NODELETE hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }
     
     void removeNode(Node&);
     void removeNodePreservingChildren(Node&);
@@ -535,7 +535,7 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
         && shouldMerge(endOfInsertedContent, next);
 }
 
-static bool isMailPasteAsQuotationNode(const Node& node)
+static bool NODELETE isMailPasteAsQuotationNode(const Node& node)
 {
     return node.hasTagName(blockquoteTag) && downcast<Element>(node).attributeWithoutSynchronization(classAttr) == ApplePasteAsQuotation;
 }
@@ -762,7 +762,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
     }
 }
 
-static bool isProhibitedParagraphChild(const QualifiedName& name)
+static bool NODELETE isProhibitedParagraphChild(const QualifiedName& name)
 {
     using namespace ElementNames;
 

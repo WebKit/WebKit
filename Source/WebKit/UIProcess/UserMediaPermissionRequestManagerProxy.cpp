@@ -73,7 +73,7 @@ static const MediaProducerMediaStateFlags activeCaptureMask { MediaProducerMedia
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-static WeakHashSet<UserMediaPermissionRequestManagerProxy>& proxies()
+static WeakHashSet<UserMediaPermissionRequestManagerProxy>& NODELETE proxies()
 {
     static NeverDestroyed<WeakHashSet<UserMediaPermissionRequestManagerProxy>> set;
     return set;

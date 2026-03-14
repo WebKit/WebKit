@@ -161,15 +161,11 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
         return nullptr;
     
     WebCore::ResourceRequest request(url);
-    WebCore::CachedResource* cachedResource = WebCore::MemoryCache::singleton().resourceForRequest(request, PAL::SessionID::defaultSessionID());
-    if (!is<WebCore::CachedImage>(cachedResource))
-        return nullptr;
-
-    auto& cachedImage = downcast<WebCore::CachedImage>(*cachedResource);
-    if (!cachedImage.hasImage())
+    RefPtr cachedImage = dynamicDowncast<WebCore::CachedImage>(WebCore::MemoryCache::singleton().resourceForRequest(request, PAL::SessionID::defaultSessionID()));
+    if (!cachedImage || !cachedImage->hasImage())
         return nullptr;
     
-    auto nativeImage = cachedImage.image()->nativeImage();
+    auto nativeImage = cachedImage->image()->nativeImage();
     if (!nativeImage)
         return nullptr;
 

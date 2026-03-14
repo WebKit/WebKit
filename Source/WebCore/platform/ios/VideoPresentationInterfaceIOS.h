@@ -261,6 +261,7 @@ protected:
     virtual bool willRenderToLayer() const = 0;
     virtual void transferVideoViewToFullscreen() { }
     WEBCORE_EXPORT virtual void returnVideoView();
+    WEBCORE_EXPORT virtual bool shouldCreateWindow() const;
 
 #if PLATFORM(WATCHOS)
     bool m_waitingForPreparedToExit { false };

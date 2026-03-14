@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <WebCore/CachedResourceHandle.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +41,7 @@ public:
 
     void addResourceTiming(CachedResource&, Document&, ResourceTiming&&);
     void removeResourceTiming(CachedResource&);
-    void storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>&, const AtomString&, LocalFrame*);
+    void storeResourceTimingInitiatorInformation(CachedResource&, const AtomString&, LocalFrame*);
 
 private:
     enum AlreadyAdded { NotYetAdded, Added };

@@ -638,6 +638,10 @@ void MacroAssemblerARM64::collectCPUFeatures()
 #define HWCAP_JSCVT (1 << 13)
 #endif
 
+#if !defined(HWCAP_SHA3)
+#define HWCAP_SHA3 (1 << 17)
+#endif
+
 #if !defined(HWCAP2_FRINT)
 #define HWCAP2_FRINT (1 << 8)
 #endif
@@ -646,6 +650,7 @@ void MacroAssemblerARM64::collectCPUFeatures()
         s_jscvtCheckState = (hwcaps & HWCAP_JSCVT) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         s_float16CheckState = ((hwcaps & HWCAP_FPHP) && (hwcaps & HWCAP_ASIMDHP)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         s_frintCheckState = (hwcaps2 & HWCAP2_FRINT) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_sha3CheckState = (hwcaps & HWCAP_SHA3) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
     });
 #endif
 
@@ -663,6 +668,7 @@ void MacroAssemblerARM64::collectCPUFeatures()
         s_jscvtCheckState = checkCPU("hw.optional.arm.FEAT_JSCVT");
         s_float16CheckState = checkCPU("hw.optional.arm.FEAT_FP16");
         s_frintCheckState = checkCPU("hw.optional.arm.FEAT_FRINTTS");
+        s_sha3CheckState = checkCPU("hw.optional.arm.FEAT_SHA3");
     });
 #endif
 
@@ -697,12 +703,21 @@ void MacroAssemblerARM64::collectCPUFeatures()
         s_frintCheckState = CPUIDCheckState::Clear;
 #endif
     }
+
+    if (s_sha3CheckState == CPUIDCheckState::NotChecked) {
+#if HAVE(SHA3_INSTRUCTION)
+        s_sha3CheckState = CPUIDCheckState::Set;
+#else
+        s_sha3CheckState = CPUIDCheckState::Clear;
+#endif
+    }
 }
 
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_lseCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_jscvtCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_float16CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_frintCheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_sha3CheckState = CPUIDCheckState::NotChecked;
 
 } // namespace JSC
 

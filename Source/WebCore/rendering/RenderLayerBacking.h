@@ -198,7 +198,7 @@ public:
     void resumeAnimations();
 
 #if ENABLE(THREADED_ANIMATIONS)
-    const AcceleratedEffectStack* acceleratedEffectStack() const;
+    const AcceleratedEffectStack* NODELETE acceleratedEffectStack() const;
     void updateAcceleratedEffectsAndBaseValues(HashSet<Ref<AcceleratedTimeline>>&);
 #endif
 

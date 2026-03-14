@@ -129,7 +129,7 @@ public:
     void startRTCLogs();
     void NODELETE stopRTCLogs();
 
-    void setPeerConnectionBackend(LibWebRTCPeerConnectionBackend&);
+    void NODELETE setPeerConnectionBackend(LibWebRTCPeerConnectionBackend&);
 
     bool shouldEnableServiceClass() const { return m_rtcSocketFactory && m_rtcSocketFactory->shouldEnableServiceClass(); }
 

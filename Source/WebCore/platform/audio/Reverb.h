@@ -51,7 +51,7 @@ public:
     void reset();
 
     size_t impulseResponseLength() const { return m_impulseResponseLength; }
-    size_t latencyFrames() const;
+    size_t NODELETE latencyFrames() const;
 
 private:
     void initialize(AudioBus& impulseResponseBuffer, size_t renderSliceSize, size_t maxFFTSize, bool useBackgroundThreads, float scale);

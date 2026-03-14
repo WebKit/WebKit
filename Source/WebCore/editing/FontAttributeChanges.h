@@ -87,7 +87,7 @@ public:
     void setFontChanges(const FontChanges& fontChanges) { m_fontChanges = fontChanges; }
 
     WEBCORE_EXPORT Ref<EditingStyle> createEditingStyle() const;
-    WEBCORE_EXPORT EditAction editAction() const;
+    WEBCORE_EXPORT EditAction NODELETE editAction() const;
 
 private:
     friend struct IPC::ArgumentCoder<FontAttributeChanges>;

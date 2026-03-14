@@ -2095,11 +2095,11 @@ public:
 
     void materializeVectorConstant(v128_t, Location);
 
-    ExpressionType addConstant(v128_t);
+    ExpressionType addSIMDConstant(v128_t);
 
-    PartialResult addExtractLane(SIMDInfo, uint8_t, Value, Value&);
+    PartialResult addSIMDExtractLane(SIMDInfo, uint8_t, Value, Value&);
 
-    PartialResult addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&);
+    PartialResult addSIMDReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&);
 
     PartialResult addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&);
 

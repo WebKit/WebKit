@@ -603,7 +603,7 @@ std::optional<ElementUpdate> TreeResolver::resolveAncestorPseudoElement(Element&
     return createAnimatedElementUpdate(WTF::move(*pseudoElementStyle), { element, pseudoElementIdentifier }, changes, resolutionContext);
 }
 
-static bool isChildInBlockFormattingContext(const RenderStyle& style)
+static bool NODELETE isChildInBlockFormattingContext(const RenderStyle& style)
 {
     // FIXME: Incomplete. There should be shared code with layout for this.
     if (style.display() != DisplayType::BlockFlow && style.display() != DisplayType::BlockFlowListItem)

@@ -164,7 +164,7 @@ public:
 
     // https://www.w3.org/TR/css-values-4/#local-urls
     // Empty URLs and fragment-only URLs should not be resolved relative to the base URL.
-    static bool isCSSLocalURL(StringView relativeURL);
+    static bool NODELETE isCSSLocalURL(StringView relativeURL);
 
     enum StaticCSSValueTag { StaticCSSValue };
 

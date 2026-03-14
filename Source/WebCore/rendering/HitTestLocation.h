@@ -38,7 +38,7 @@ public:
     HitTestLocation(const HitTestLocation&, const LayoutSize& offset);
     WEBCORE_EXPORT HitTestLocation(const HitTestLocation&);
     WEBCORE_EXPORT ~HitTestLocation();
-    HitTestLocation& operator=(const HitTestLocation&);
+    HitTestLocation& NODELETE operator=(const HitTestLocation&);
 
     const LayoutPoint& point() const LIFETIME_BOUND { return m_point; }
     IntPoint roundedPoint() const { return roundedIntPoint(m_point); }

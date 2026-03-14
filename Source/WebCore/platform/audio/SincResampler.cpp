@@ -126,7 +126,7 @@ constexpr unsigned kernelSize { 32 };
 constexpr unsigned numberOfKernelOffsets { 32 };
 constexpr unsigned kernelStorageSize { kernelSize * (numberOfKernelOffsets + 1) };
 
-static size_t calculateChunkSize(unsigned blockSize, double scaleFactor)
+static size_t NODELETE calculateChunkSize(unsigned blockSize, double scaleFactor)
 {
     return blockSize / scaleFactor;
 }

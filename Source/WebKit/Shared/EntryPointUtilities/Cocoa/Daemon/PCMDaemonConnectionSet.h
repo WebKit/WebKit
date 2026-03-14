@@ -42,7 +42,7 @@ namespace PCM {
 
 class DaemonConnectionSet {
 public:
-    static DaemonConnectionSet& singleton();
+    static DaemonConnectionSet& NODELETE singleton();
     
     void add(xpc_connection_t);
     void remove(xpc_connection_t);

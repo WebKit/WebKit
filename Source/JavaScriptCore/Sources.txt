@@ -170,6 +170,7 @@ b3/B3PhiChildren.cpp
 b3/B3Procedure.cpp
 b3/B3PureCSE.cpp
 b3/B3ReduceDoubleToFloat.cpp
+b3/B3ReduceSIMDShuffle.cpp
 b3/B3ReduceStrength.cpp
 b3/B3SSACalculator.cpp
 b3/B3SIMDValue.cpp
@@ -627,6 +628,7 @@ interpreter/CachedCall.cpp
 interpreter/CLoopStack.cpp
 interpreter/CallFrame.cpp
 interpreter/Interpreter.cpp
+interpreter/MicrotaskCall.cpp
 interpreter/ShadowChicken.cpp
 interpreter/StackVisitor.cpp
 

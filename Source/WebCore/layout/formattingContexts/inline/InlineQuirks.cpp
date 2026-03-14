@@ -29,6 +29,8 @@
 #include "InlineFormattingContext.h"
 #include "InlineLineBox.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutBoxInlines.h"
+#include "LayoutElementBox.h"
 #include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
@@ -214,8 +216,14 @@ bool InlineQuirks::shouldCollapseLineBoxHeight(const Line::RunList& lineContent,
     if (!lineContent.size() || numberOfOutsideListMarkers != 1)
         return false;
 
-    if (!lineContent[0].isListMarkerOutside()) {
-        ASSERT(lineContent[0].isListMarkerInside());
+    auto& marker = lineContent[0];
+    auto* markerBox = dynamicDowncast<Layout::ElementBox>(marker.layoutBox());
+    ASSERT(markerBox);
+    if (!markerBox)
+        return false;
+
+    if (!marker.isListMarkerOutside()) {
+        ASSERT(marker.isListMarkerInside());
         return false;
     }
 
@@ -229,14 +237,18 @@ bool InlineQuirks::shouldCollapseLineBoxHeight(const Line::RunList& lineContent,
             ++emptyInlineBoxCount;
     }
 
-    if (lineContent[0].isListMarkerOutside() && emptyInlineBoxCount && emptyInlineBoxCount == lineContent.size() - 1) {
-        // This is to handle non-contentful lines introduced by block boxes. They are supposed to be collapsed so that
-        // the block content can be placed next to the list marker.
-        // Regular inline content would never produced a line with inline box only runs. Also inline content like <li><span><br>
-        // is not supposed to produce a collapsed line box.
-        // The underlying issue is the assumption that we shouldn’t collapse when rootBox is a list item (see below).
+    // This is to handle non-contentful lines introduced by block boxes. They are supposed to be collapsed so that
+    // the block content can be placed next to the list marker.
+    // Regular inline content would never produced a line with inline box only runs. Also inline content like <li><span><br>
+    // is not supposed to produce a collapsed line box.
+    // The underlying issue is the assumption that we shouldn’t collapse when rootBox is a list item (see below).
+    if (emptyInlineBoxCount && emptyInlineBoxCount == lineContent.size() - 1)
         return true;
-    }
+
+    // When an outside marker ends up in an anonymous block because blockification (e.g., by a flex/grid container)
+    // prevented finding a line box parent, collapse the line box so it doesn’t inflate the list item.
+    if (markerBox->shouldCollapseAnonymousBlockParentForListMarker())
+        return true;
 
     auto& rootBox = formattingContext().root();
     if (rootBox.isAnonymous() || rootBox.isListItem())

@@ -756,7 +756,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     m_shouldInitializeAccessibility = parameters.shouldInitializeAccessibility;
 #endif
 
-#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR) && CPU(ARM64)
     if (JSC::Options::enableWasmDebugger()) [[unlikely]] {
         bool success = JSC::Wasm::DebugServer::singleton().startRWI([](const String& response) {
             return WebKit::WebProcess::singleton().send(Messages::WebProcessProxy::SendWasmDebuggerResponse(response), 0);

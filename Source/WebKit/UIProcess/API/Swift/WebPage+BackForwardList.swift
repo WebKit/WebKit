@@ -23,7 +23,7 @@
 
 #if ENABLE_SWIFTUI
 
-import Foundation
+public import Foundation
 
 extension WebPage {
     /// An observable representation of a webpage's previously loaded resources.

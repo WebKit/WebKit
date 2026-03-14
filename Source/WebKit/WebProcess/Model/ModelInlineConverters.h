@@ -200,18 +200,17 @@ static WebModel::UpdateMeshDescriptor toCpp(WKBridgeUpdateMesh *update)
     };
 }
 
-#if ENABLE(GPU_PROCESS_MODEL_MATERIALS)
 static WebModel::NodeType toCpp(WKBridgeNodeType nodeType)
 {
     switch (nodeType) {
-    case WKBridgeNodeType::kBuiltin:
+    case WKBridgeNodeTypeBuiltin:
         return WebModel::NodeType::Builtin;
-    case WKBridgeNodeType::kConstant:
+    case WKBridgeNodeTypeConstant:
         return WebModel::NodeType::Constant;
-    case WKBridgeNodeType::kArguments:
+    case WKBridgeNodeTypeArguments:
         return WebModel::NodeType::Arguments;
     default:
-    case WKBridgeNodeType::kResults:
+    case WKBridgeNodeTypeResults:
         return WebModel::NodeType::Results;
     }
 }
@@ -227,138 +226,194 @@ static WebModel::Builtin toCpp(WKBridgeBuiltin *builtin)
 static WebModel::Constant toCpp(WKBridgeConstant constant)
 {
     switch (constant) {
-    case WKBridgeConstant::kBool:
+    case WKBridgeConstantBool:
         return WebModel::Constant::kBool;
-    case WKBridgeConstant::kUchar:
+    case WKBridgeConstantUchar:
         return WebModel::Constant::kUchar;
-    case WKBridgeConstant::kInt:
+    case WKBridgeConstantInt:
         return WebModel::Constant::kInt;
-    case WKBridgeConstant::kUint:
+    case WKBridgeConstantUint:
         return WebModel::Constant::kUint;
-    case WKBridgeConstant::kHalf:
+    case WKBridgeConstantHalf:
         return WebModel::Constant::kHalf;
-    case WKBridgeConstant::kFloat:
+    case WKBridgeConstantFloat:
         return WebModel::Constant::kFloat;
-    case WKBridgeConstant::kTimecode:
+    case WKBridgeConstantTimecode:
         return WebModel::Constant::kTimecode;
-    case WKBridgeConstant::kString:
+    case WKBridgeConstantString:
         return WebModel::Constant::kString;
-    case WKBridgeConstant::kToken:
+    case WKBridgeConstantToken:
         return WebModel::Constant::kToken;
-    case WKBridgeConstant::kAsset:
+    case WKBridgeConstantAsset:
         return WebModel::Constant::kAsset;
-    case WKBridgeConstant::kMatrix2f:
+    case WKBridgeConstantMatrix2f:
         return WebModel::Constant::kMatrix2f;
-    case WKBridgeConstant::kMatrix3f:
+    case WKBridgeConstantMatrix3f:
         return WebModel::Constant::kMatrix3f;
-    case WKBridgeConstant::kMatrix4f:
+    case WKBridgeConstantMatrix4f:
         return WebModel::Constant::kMatrix4f;
-    case WKBridgeConstant::kQuatf:
+    case WKBridgeConstantQuatf:
         return WebModel::Constant::kQuatf;
-    case WKBridgeConstant::kQuath:
+    case WKBridgeConstantQuath:
         return WebModel::Constant::kQuath;
-    case WKBridgeConstant::kFloat2:
+    case WKBridgeConstantFloat2:
         return WebModel::Constant::kFloat2;
-    case WKBridgeConstant::kHalf2:
+    case WKBridgeConstantHalf2:
         return WebModel::Constant::kHalf2;
-    case WKBridgeConstant::kInt2:
+    case WKBridgeConstantInt2:
         return WebModel::Constant::kInt2;
-    case WKBridgeConstant::kFloat3:
+    case WKBridgeConstantFloat3:
         return WebModel::Constant::kFloat3;
-    case WKBridgeConstant::kHalf3:
+    case WKBridgeConstantHalf3:
         return WebModel::Constant::kHalf3;
-    case WKBridgeConstant::kInt3:
+    case WKBridgeConstantInt3:
         return WebModel::Constant::kInt3;
-    case WKBridgeConstant::kFloat4:
+    case WKBridgeConstantFloat4:
         return WebModel::Constant::kFloat4;
-    case WKBridgeConstant::kHalf4:
+    case WKBridgeConstantHalf4:
         return WebModel::Constant::kHalf4;
-    case WKBridgeConstant::kInt4:
+    case WKBridgeConstantInt4:
         return WebModel::Constant::kInt4;
 
-    case WKBridgeConstant::kPoint3f:
+    case WKBridgeConstantPoint3f:
         return WebModel::Constant::kPoint3f;
-    case WKBridgeConstant::kPoint3h:
+    case WKBridgeConstantPoint3h:
         return WebModel::Constant::kPoint3h;
-    case WKBridgeConstant::kNormal3f:
+    case WKBridgeConstantNormal3f:
         return WebModel::Constant::kNormal3f;
-    case WKBridgeConstant::kNormal3h:
+    case WKBridgeConstantNormal3h:
         return WebModel::Constant::kNormal3h;
-    case WKBridgeConstant::kVector3f:
+    case WKBridgeConstantVector3f:
         return WebModel::Constant::kVector3f;
-    case WKBridgeConstant::kVector3h:
+    case WKBridgeConstantVector3h:
         return WebModel::Constant::kVector3h;
-    case WKBridgeConstant::kColor3f:
+    case WKBridgeConstantColor3f:
         return WebModel::Constant::kColor3f;
-    case WKBridgeConstant::kColor3h:
+    case WKBridgeConstantColor3h:
         return WebModel::Constant::kColor3h;
-    case WKBridgeConstant::kColor4f:
+    case WKBridgeConstantColor4f:
         return WebModel::Constant::kColor4f;
-    case WKBridgeConstant::kColor4h:
+    case WKBridgeConstantColor4h:
         return WebModel::Constant::kColor4h;
-    case WKBridgeConstant::kTexCoord2h:
+    case WKBridgeConstantTexCoord2h:
         return WebModel::Constant::kTexCoord2h;
-    case WKBridgeConstant::kTexCoord2f:
+    case WKBridgeConstantTexCoord2f:
         return WebModel::Constant::kTexCoord2f;
-    case WKBridgeConstant::kTexCoord3h:
+    case WKBridgeConstantTexCoord3h:
         return WebModel::Constant::kTexCoord3h;
-    case WKBridgeConstant::kTexCoord3f:
+    case WKBridgeConstantTexCoord3f:
         return WebModel::Constant::kTexCoord3f;
     }
+}
+
+static Vector<WebModel::NumberOrString> toCpp(NSArray<WKBridgeValueString *> *constantValues)
+{
+    Vector<WebModel::NumberOrString> result;
+    result.reserveCapacity(constantValues.count);
+    for (WKBridgeValueString* v in constantValues) {
+        if (v.isString)
+            result.append(String(v.string));
+        else
+            result.append(v.number.doubleValue);
+    }
+
+    return result;
+}
+
+static WebModel::ConstantContainer toCpp(WKBridgeConstantContainer *container)
+{
+    return WebModel::ConstantContainer {
+        .constant = toCpp(container.constant),
+        .constantValues = toCpp(container.constantValues),
+        .name = String(container.name)
+    };
+}
+
+static WebModel::Node toCpp(WKBridgeNode *node)
+{
+    return WebModel::Node {
+        .bridgeNodeType = toCpp(node.bridgeNodeType),
+        .builtin = toCpp(node.builtin),
+        .constant = toCpp(node.constant)
+    };
+}
+
+static WebModel::Edge toCpp(WKBridgeEdge *edge)
+{
+    return WebModel::Edge {
+        .outputNode = String(edge.outputNode),
+        .outputPort = String(edge.outputPort),
+        .inputNode = String(edge.inputNode),
+        .inputPort = String(edge.inputPort)
+    };
 }
 
 static WebModel::DataType toCpp(WKBridgeDataType type)
 {
     switch (type) {
-    case WKBridgeDataType::kBool:
+    case WKBridgeDataTypeBool:
         return WebModel::DataType::kBool;
-    case WKBridgeDataType::kInt:
+    case WKBridgeDataTypeUchar:
+        return WebModel::DataType::kUchar;
+    case WKBridgeDataTypeInt:
         return WebModel::DataType::kInt;
-    case WKBridgeDataType::kInt2:
+    case WKBridgeDataTypeUint:
+        return WebModel::DataType::kUint;
+    case WKBridgeDataTypeInt2:
         return WebModel::DataType::kInt2;
-    case WKBridgeDataType::kInt3:
+    case WKBridgeDataTypeInt3:
         return WebModel::DataType::kInt3;
-    case WKBridgeDataType::kInt4:
+    case WKBridgeDataTypeInt4:
         return WebModel::DataType::kInt4;
-    case WKBridgeDataType::kFloat:
+    case WKBridgeDataTypeFloat:
         return WebModel::DataType::kFloat;
-    case WKBridgeDataType::kColor3f:
+    case WKBridgeDataTypeColor3f:
         return WebModel::DataType::kColor3f;
-    case WKBridgeDataType::kColor3h:
+    case WKBridgeDataTypeColor3h:
         return WebModel::DataType::kColor3h;
-    case WKBridgeDataType::kColor4f:
+    case WKBridgeDataTypeColor4f:
         return WebModel::DataType::kColor4f;
-    case WKBridgeDataType::kColor4h:
+    case WKBridgeDataTypeColor4h:
         return WebModel::DataType::kColor4h;
-    case WKBridgeDataType::kFloat2:
+    case WKBridgeDataTypeFloat2:
         return WebModel::DataType::kFloat2;
-    case WKBridgeDataType::kFloat3:
+    case WKBridgeDataTypeFloat3:
         return WebModel::DataType::kFloat3;
-    case WKBridgeDataType::kFloat4:
+    case WKBridgeDataTypeFloat4:
         return WebModel::DataType::kFloat4;
-    case WKBridgeDataType::kHalf:
+    case WKBridgeDataTypeHalf:
         return WebModel::DataType::kHalf;
-    case WKBridgeDataType::kHalf2:
+    case WKBridgeDataTypeHalf2:
         return WebModel::DataType::kHalf2;
-    case WKBridgeDataType::kHalf3:
+    case WKBridgeDataTypeHalf3:
         return WebModel::DataType::kHalf3;
-    case WKBridgeDataType::kHalf4:
+    case WKBridgeDataTypeHalf4:
         return WebModel::DataType::kHalf4;
-    case WKBridgeDataType::kMatrix2f:
+    case WKBridgeDataTypeMatrix2f:
         return WebModel::DataType::kMatrix2f;
-    case WKBridgeDataType::kMatrix3f:
+    case WKBridgeDataTypeMatrix3f:
         return WebModel::DataType::kMatrix3f;
-    case WKBridgeDataType::kMatrix4f:
+    case WKBridgeDataTypeMatrix4f:
         return WebModel::DataType::kMatrix4f;
-    case WKBridgeDataType::kSurfaceShader:
+    case WKBridgeDataTypeMatrix2h:
+        return WebModel::DataType::kMatrix2h;
+    case WKBridgeDataTypeMatrix3h:
+        return WebModel::DataType::kMatrix3h;
+    case WKBridgeDataTypeMatrix4h:
+        return WebModel::DataType::kMatrix4h;
+    case WKBridgeDataTypeQuat:
+        return WebModel::DataType::kQuat;
+    case WKBridgeDataTypeSurfaceShader:
         return WebModel::DataType::kSurfaceShader;
-    case WKBridgeDataType::kGeometryModifier:
+    case WKBridgeDataTypeGeometryModifier:
         return WebModel::DataType::kGeometryModifier;
-    case WKBridgeDataType::kString:
+    case WKBridgeDataTypePostLightingShader:
+        return WebModel::DataType::kPostLightingShader;
+    case WKBridgeDataTypeString:
         return WebModel::DataType::kString;
-    case WKBridgeDataType::kToken:
+    case WKBridgeDataTypeToken:
         return WebModel::DataType::kToken;
-    case WKBridgeDataType::kAsset:
+    case WKBridgeDataTypeAsset:
         return WebModel::DataType::kAsset;
     default:
         RELEASE_ASSERT_NOT_REACHED("USD file is corrupt");
@@ -367,27 +422,21 @@ static WebModel::DataType toCpp(WKBridgeDataType type)
 
 static WebModel::InputOutput toCpp(WKBridgeInputOutput *inputOutput)
 {
+    std::optional<WebModel::DataType> semanticType;
+    if (inputOutput.hasSemanticType)
+        semanticType = toCpp(inputOutput.semanticType);
+
+    std::optional<WebModel::ConstantContainer> defaultValue;
+    if (inputOutput.defaultValue)
+        defaultValue = toCpp(inputOutput.defaultValue);
+
     return WebModel::InputOutput {
         .type = toCpp(inputOutput.type),
-        .name = toCpp(inputOutput.name)
+        .name = String(inputOutput.name),
+        .semanticType = semanticType,
+        .defaultValue = defaultValue
     };
 }
-
-static WebModel::Primvar toCpp(WKBridgePrimvar *primvar)
-{
-    return WebModel::Primvar {
-        .name = toCpp(primvar.name),
-        .referencedGeomPropName = toCpp(primvar.referencedGeomPropName),
-        .attributeFormat = primvar.attributeFormat
-    };
-}
-
-static WebModel::MaterialGraph toCpp(WKBridgeMaterialGraph *)
-{
-    return WebModel::MaterialGraph {
-    };
-}
-#endif
 
 template<typename T, typename U>
 static Vector<U> toCpp(NSArray<T *> *nsArray)
@@ -398,6 +447,18 @@ static Vector<U> toCpp(NSArray<T *> *nsArray)
         result.append(toCpp(v));
 
     return result;
+}
+
+static WebModel::MaterialGraph toCpp(WKBridgeMaterialGraph *materialGraph)
+{
+    return WebModel::MaterialGraph {
+        .nodes = toCpp<WKBridgeNode, WebModel::Node>(materialGraph.nodes),
+        .edges = toCpp<WKBridgeEdge, WebModel::Edge>(materialGraph.edges),
+        .arguments = toCpp(materialGraph.arguments),
+        .results = toCpp(materialGraph.results),
+        .inputs = toCpp<WKBridgeInputOutput, WebModel::InputOutput>(materialGraph.inputs),
+        .outputs = toCpp<WKBridgeInputOutput, WebModel::InputOutput>(materialGraph.outputs),
+    };
 }
 
 static WebModel::ImageAssetSwizzle convert(MTLTextureSwizzleChannels swizzle)
@@ -439,7 +500,7 @@ static WebModel::UpdateTextureDescriptor toCpp(WKBridgeUpdateTexture *update)
 static WebModel::UpdateMaterialDescriptor toCpp(WKBridgeUpdateMaterial *update)
 {
     return WebModel::UpdateMaterialDescriptor {
-        .materialGraph = makeVector(update.materialGraph),
+        .materialGraph = toCpp(update.materialGraph),
         .identifier = update.identifier
     };
 }

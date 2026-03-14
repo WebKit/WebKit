@@ -415,7 +415,7 @@ void lowerMacros(Code& code)
                 if (simdInfo.lane == SIMDLane::i8x16) {
                     Tmp maskedHi = code.newTmp(FP);
                     insertionSet.insert(instIndex, VectorExtractPair, origin, Arg::simdInfo({ SIMDLane::i8x16, SIMDSignMode::None }), Arg::imm(8), vectorTmp, vectorTmp, maskedHi);
-                    insertionSet.insert(instIndex, VectorZipUpper, origin, Arg::simdInfo({ SIMDLane::i8x16, SIMDSignMode::None }), vectorTmp, maskedHi, vectorTmp);
+                    insertionSet.insert(instIndex, VectorZipLower, origin, Arg::simdInfo({ SIMDLane::i8x16, SIMDSignMode::None }), vectorTmp, maskedHi, vectorTmp);
                     simdInfo.lane = SIMDLane::i16x8;
                 }
                 insertionSet.insert(instIndex, VectorHorizontalAdd, origin, Arg::simdInfo(simdInfo), vectorTmp, vectorTmp);

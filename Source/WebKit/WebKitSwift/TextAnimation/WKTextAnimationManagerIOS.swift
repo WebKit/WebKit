@@ -28,7 +28,7 @@ import OSLog
 #if USE_APPLE_INTERNAL_SDK
 @_spi(TextEffects) import UIKit
 #else
-import UIKit_SPI
+public import UIKit_SPI
 #endif // USE_APPLE_INTERNAL_SDK
 
 @objc

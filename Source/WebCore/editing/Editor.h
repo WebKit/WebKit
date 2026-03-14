@@ -208,14 +208,14 @@ public:
         AsQuotation = 1 << 2,
     };
 
-    WEBCORE_EXPORT EditorClient* client() const;
+    WEBCORE_EXPORT EditorClient* NODELETE client() const;
     WEBCORE_EXPORT TextCheckerClient* textChecker() const;
 
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
     Document& document() const { return m_document; }
 
-    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     void handleKeyboardEvent(KeyboardEvent&);
@@ -236,7 +236,7 @@ public:
     WEBCORE_EXPORT bool canCopy() const;
     WEBCORE_EXPORT bool canDelete() const;
     WEBCORE_EXPORT bool canSmartCopyOrDelete();
-    bool shouldSmartDelete();
+    bool NODELETE shouldSmartDelete();
     bool canCopyFont() const;
 
     enum class FromMenuOrKeyBinding : bool { No, Yes };
@@ -472,7 +472,7 @@ public:
     PAL::KillRing& killRing() const LIFETIME_BOUND { return m_killRing; }
     SpellChecker& spellChecker() const { return m_spellChecker; }
 
-    EditingBehavior behavior() const;
+    EditingBehavior NODELETE behavior() const;
 
     WEBCORE_EXPORT std::optional<SimpleRange> selectedRange();
 
@@ -607,7 +607,7 @@ public:
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 
-    static bool writingSuggestionsSupportsSuffix();
+    static bool NODELETE writingSuggestionsSupportsSuffix();
 #endif
 
 #if PLATFORM(MAC)
@@ -664,7 +664,7 @@ public:
     bool isInsertingTextForWritingSuggestion() const { return m_isInsertingTextForWritingSuggestion; }
 
     RenderInline* NODELETE writingSuggestionRenderer() const;
-    void setWritingSuggestionRenderer(RenderInline&);
+    void NODELETE setWritingSuggestionRenderer(RenderInline&);
 
     WEBCORE_EXPORT void closeTyping();
 

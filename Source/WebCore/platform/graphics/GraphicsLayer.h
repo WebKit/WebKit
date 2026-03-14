@@ -131,8 +131,8 @@ public:
     // Clear the client, and clear the RefPtr, but leave parented.
     WEBCORE_EXPORT static void clear(RefPtr<GraphicsLayer>&);
 
-    WEBCORE_EXPORT void clearClient();
-    WEBCORE_EXPORT void setClient(GraphicsLayerClient&);
+    WEBCORE_EXPORT void NODELETE clearClient();
+    WEBCORE_EXPORT void NODELETE setClient(GraphicsLayerClient&);
 
     Type type() const { return m_type; }
 
@@ -152,7 +152,7 @@ public:
     void setParent(GraphicsLayer*); // Internal use only.
     
     // Returns true if the layer has the given layer as an ancestor (excluding self).
-    bool hasAncestor(GraphicsLayer*) const;
+    bool NODELETE hasAncestor(GraphicsLayer*) const;
     
     const Vector<Ref<GraphicsLayer>>& children() const LIFETIME_BOUND { return m_children; }
     Vector<Ref<GraphicsLayer>>& children() LIFETIME_BOUND { return m_children; }
@@ -230,11 +230,11 @@ public:
     // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
     virtual void syncBoundsOrigin(const FloatPoint& origin) { m_boundsOrigin = origin; }
 
-    WEBCORE_EXPORT const TransformationMatrix& transform() const;
+    WEBCORE_EXPORT const TransformationMatrix& NODELETE transform() const;
     WEBCORE_EXPORT virtual void setTransform(const TransformationMatrix&);
     bool hasNonIdentityTransform() const { return m_transform && !m_transform->isIdentity(); }
 
-    WEBCORE_EXPORT const TransformationMatrix& childrenTransform() const;
+    WEBCORE_EXPORT const TransformationMatrix& NODELETE childrenTransform() const;
     WEBCORE_EXPORT virtual void setChildrenTransform(const TransformationMatrix&);
     bool hasNonIdentityChildrenTransform() const { return m_childrenTransform && !m_childrenTransform->isIdentity(); }
 
@@ -350,13 +350,13 @@ public:
     virtual void setContentsRectClipsDescendants(bool b) { m_contentsRectClipsDescendants = b; }
 
     // Used to lay out video contents within a video layer.
-    MediaPlayerVideoGravity videoGravity() const;
+    MediaPlayerVideoGravity NODELETE videoGravity() const;
     WEBCORE_EXPORT virtual void setVideoGravity(MediaPlayerVideoGravity);
 
     Path shapeLayerPath() const;
     WEBCORE_EXPORT virtual void setShapeLayerPath(const Path&);
 
-    WindRule shapeLayerWindRule() const;
+    WindRule NODELETE shapeLayerWindRule() const;
     WEBCORE_EXPORT virtual void setShapeLayerWindRule(WindRule);
 
     const EventRegion& eventRegion() const LIFETIME_BOUND { return m_eventRegion; }
@@ -516,7 +516,7 @@ public:
     WEBCORE_EXPORT void addRepaintRect(const FloatRect&);
 
     static bool supportsLayerType(Type);
-    static bool supportsContentsTiling();
+    static bool NODELETE supportsContentsTiling();
 
     WEBCORE_EXPORT void updateDebugIndicators();
 

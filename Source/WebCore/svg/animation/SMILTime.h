@@ -86,9 +86,9 @@ inline bool operator!(const SMILTime& a) { return !a.isFinite() || !a.value(); }
 inline auto operator<=>(const SMILTime& a, const SMILTime& b) { return a.value() <=> b.value(); }
 inline auto operator<=>(const SMILTimeWithOrigin& a, const SMILTimeWithOrigin& b) { return a.time() <=> b.time(); }
 
-SMILTime operator+(const SMILTime&, const SMILTime&);
-SMILTime operator-(const SMILTime&, const SMILTime&);
+SMILTime NODELETE operator+(const SMILTime&, const SMILTime&);
+SMILTime NODELETE operator-(const SMILTime&, const SMILTime&);
 // So multiplying times does not make too much sense but SMIL defines it for duration * repeatCount
-SMILTime operator*(const SMILTime&, const SMILTime&);
+SMILTime NODELETE operator*(const SMILTime&, const SMILTime&);
 
 } // namespace WebCore

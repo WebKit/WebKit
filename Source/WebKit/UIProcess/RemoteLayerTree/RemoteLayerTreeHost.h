@@ -90,7 +90,7 @@ public:
     RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 #endif
 
-    void detachFromDrawingArea();
+    void NODELETE detachFromDrawingArea();
     void clearLayers();
 
     // Detach the root layer; it will be reattached upon the next incoming commit.

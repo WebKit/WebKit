@@ -169,7 +169,7 @@ static FloatPointGraph::Polygon walkGraphAndExtractPolygon(FloatPointGraph::Node
     return outPoly;
 }
 
-static FloatPointGraph::Node* findUnvisitedPolygonStartPoint(Vector<FloatPointGraph::Polygon>& polys)
+static FloatPointGraph::Node* NODELETE findUnvisitedPolygonStartPoint(Vector<FloatPointGraph::Polygon>& polys)
 {
     for (auto& poly : polys) {
         for (auto& edge : poly) {

@@ -3464,12 +3464,12 @@ bool LocalFrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const R
             adjustForScrollByAnchor(layer->renderer(), isFixed);
     }
 
-    auto& frameView = renderer.view().frameView();
-    RefPtr ownerElement = frameView.m_frame->document() ? frameView.m_frame->document()->ownerElement() : nullptr;
+    CheckedRef frameView = renderer.view().frameView();
+    RefPtr ownerElement = frameView->m_frame->document() ? frameView->m_frame->document()->ownerElement() : nullptr;
     if (ownerElement && ownerElement->renderer())
-        frameView.scrollRectToVisibleInChildView(adjustedRect, isFixed, adjustedOptions, ownerElement.get());
+        frameView->scrollRectToVisibleInChildView(adjustedRect, isFixed, adjustedOptions, ownerElement.get());
     else
-        frameView.scrollRectToVisibleInTopLevelView(adjustedRect, isFixed, adjustedOptions);
+        frameView->scrollRectToVisibleInTopLevelView(adjustedRect, isFixed, adjustedOptions);
     return true;
 }
 

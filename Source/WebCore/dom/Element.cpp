@@ -1408,7 +1408,7 @@ void Element::scrollTo(double x, double y)
     scrollTo(ScrollToOptions { { ScrollBehavior::Auto }, x, y });
 }
 
-static double localZoomForRenderer(const RenderElement& renderer)
+static double NODELETE localZoomForRenderer(const RenderElement& renderer)
 {
     // FIXME: This does the wrong thing if two opposing zooms are in effect and canceled each
     // other out, but the alternative is that we'd have to crawl up the whole render tree every

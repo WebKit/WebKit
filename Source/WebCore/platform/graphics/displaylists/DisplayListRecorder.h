@@ -96,7 +96,7 @@ protected:
         void rotate(float angleInRadians);
         void scale(const FloatSize&);
         void concatCTM(const AffineTransform&);
-        void setCTM(const AffineTransform&);
+        void NODELETE setCTM(const AffineTransform&);
     };
 
     const Vector<ContextState, 4>& stateStack() const LIFETIME_BOUND { return m_stateStack; }
@@ -111,7 +111,7 @@ protected:
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRotate(float angleInRadians);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForScale(const FloatSize&);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForConcatCTM(const AffineTransform&);
-    WEBCORE_EXPORT void updateStateForSetCTM(const AffineTransform&);
+    WEBCORE_EXPORT void NODELETE updateStateForSetCTM(const AffineTransform&);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(float opacity);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(CompositeOperator, BlendMode);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForEndTransparencyLayer();
@@ -150,7 +150,7 @@ private:
 
     virtual void appendStateChangeItemIfNecessary() = 0;
 
-    const AffineTransform& ctm() const;
+    const AffineTransform& NODELETE ctm() const;
 
     Vector<ContextState, 4> m_stateStack;
     DestinationColorSpace m_colorSpace;

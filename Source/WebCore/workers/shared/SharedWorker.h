@@ -54,7 +54,7 @@ public:
     void deref() const final { AbstractWorker::deref(); }
     USING_CAN_MAKE_WEAKPTR(AbstractWorker);
 
-    static SharedWorker* fromIdentifier(SharedWorkerObjectIdentifier);
+    static SharedWorker* NODELETE fromIdentifier(SharedWorkerObjectIdentifier);
     MessagePort& port() const { return m_port.get(); }
 
     const String& identifierForInspector() const LIFETIME_BOUND { return m_identifierForInspector; }

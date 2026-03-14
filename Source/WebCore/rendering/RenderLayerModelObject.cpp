@@ -29,6 +29,7 @@
 #include "BlendingKeyframes.h"
 #include "ContainerNodeInlines.h"
 #include "InspectorInstrumentation.h"
+#include "LocalFrameView.h"
 #include "MotionPath.h"
 #include "ReferencedSVGResources.h"
 #include "RenderDescendantIterator.h"
@@ -202,8 +203,8 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Render
 
     if (oldStyle && !oldStyle->scrollPaddingEqual(style())) {
         if (isDocumentElementRenderer()) {
-            LocalFrameView& frameView = view().frameView();
-            frameView.updateScrollbarSteps();
+            CheckedRef frameView = view().frameView();
+            frameView->updateScrollbarSteps();
         } else if (CheckedPtr renderLayer = layer())
             renderLayer->updateScrollbarSteps();
     }
@@ -778,6 +779,13 @@ void RenderLayerModelObject::paintSVGEventRegion(PaintInfo& paintInfo, const Lay
     eventRegionBounds.move(coordinateSystemOriginTranslation);
     paintInfo.eventRegionContext()->unite(FloatRoundedRect(eventRegionBounds), *this, style(), false);
 }
+
+#if ASSERT_ENABLED
+bool RenderLayerModelObject::layerAccessPreventedSlow() const
+{
+    return view().frameView().layerAccessPrevented();
+}
+#endif
 
 bool rendererNeedsPixelSnapping(const RenderLayerModelObject& renderer)
 {

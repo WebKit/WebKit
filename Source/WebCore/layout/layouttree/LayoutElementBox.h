@@ -25,13 +25,13 @@
 
 #pragma once
 
+#include <WebCore/CachedImage.h>
 #include <WebCore/LayoutBox.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
-class CachedImage;
 class RenderElement;
 class RenderStyle;
 
@@ -43,16 +43,17 @@ class ElementBox : public Box {
 public:
     ElementBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, EnumSet<BaseTypeFlag> = { ElementBoxFlag });
 
-    enum class ListMarkerAttribute : bool {
+    enum class ListMarkerAttribute : uint8_t {
         Image,
         Outside,
+        ShouldCollapseAnonymousBlockParent,
     };
     ElementBox(ElementAttributes&&, EnumSet<ListMarkerAttribute>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
     struct ReplacedAttributes {
         LayoutSize intrinsicSize;
         std::optional<LayoutUnit> intrinsicRatio { };
-        CachedImage* cachedImage { };
+        WeakPtr<CachedImage> cachedImage { };
     };
     ElementBox(ElementAttributes&&, ReplacedAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
@@ -85,8 +86,8 @@ public:
     bool NODELETE hasIntrinsicWidth() const;
     bool NODELETE hasIntrinsicHeight() const;
     bool NODELETE hasIntrinsicRatio() const;
-    LayoutUnit intrinsicWidth() const;
-    LayoutUnit intrinsicHeight() const;
+    LayoutUnit NODELETE intrinsicWidth() const;
+    LayoutUnit NODELETE intrinsicHeight() const;
     LayoutUnit NODELETE intrinsicRatio() const;
     bool NODELETE hasAspectRatio() const;
 
@@ -94,6 +95,7 @@ public:
 
     bool isListMarkerImage() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Image); }
     bool isListMarkerOutside() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Outside); }
+    bool shouldCollapseAnonymousBlockParentForListMarker() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::ShouldCollapseAnonymousBlockParent); }
 
     // FIXME: This is temporary until after list marker content is accessible by IFC (webkit.org/b/294342)
     void setListMarkerLayoutBounds(std::pair<float, float> layoutBounds) { m_replacedData->layoutBounds = layoutBounds; }
@@ -115,7 +117,7 @@ private:
 
         std::optional<LayoutSize> intrinsicSize;
         std::optional<LayoutUnit> intrinsicRatio;
-        CachedImage* cachedImage { nullptr };
+        WeakPtr<CachedImage> cachedImage;
     };
 
     std::unique_ptr<Box> m_firstChild;

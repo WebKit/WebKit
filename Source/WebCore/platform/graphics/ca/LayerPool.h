@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT LayerPool();
     WEBCORE_EXPORT ~LayerPool();
 
-    static HashSet<CheckedPtr<LayerPool>>& allLayerPools();
+    static HashSet<CheckedPtr<LayerPool>>& NODELETE allLayerPools();
     
     void addLayer(PlatformCALayer&);
     RefPtr<PlatformCALayer> takeLayerWithSize(const IntSize&);

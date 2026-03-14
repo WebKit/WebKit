@@ -49,7 +49,7 @@ struct TextPaintStyle {
     TextPaintStyle() = default;
     TextPaintStyle(const Color&);
 
-    bool operator==(const TextPaintStyle&) const;
+    bool NODELETE operator==(const TextPaintStyle&) const;
 
     Color fillColor;
     Color strokeColor;

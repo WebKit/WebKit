@@ -151,17 +151,17 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
     flushPendingItemsForCallback();
 }
 
-static bool isInPrivateUseArea(char16_t character)
+static bool NODELETE isInPrivateUseArea(char16_t character)
 {
     return 0xE000 <= character && character <= 0xF8FF;
 }
 
-static bool isTokenDelimiter(char16_t character)
+static bool NODELETE isTokenDelimiter(char16_t character)
 {
     return isHTMLLineBreak(character) || isInPrivateUseArea(character);
 }
 
-static bool isNotSpace(char16_t character)
+static bool NODELETE isNotSpace(char16_t character)
 {
     if (character == noBreakSpace)
         return false;
@@ -210,7 +210,7 @@ public:
         return content;
     }
 
-    bool atEnd() const { return !m_text && m_node == m_pastEndNode; }
+    bool NODELETE atEnd() const { return !m_text && m_node == m_pastEndNode; }
 
 private:
     bool shouldAdvanceIteratorPastCurrentNode() const
@@ -278,7 +278,7 @@ static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
     return input.isTextButton();
 }
 
-static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
+static bool NODELETE isAttributeForTextManipulation(const QualifiedName& nameToCheck)
 {
     using namespace HTMLNames;
     static const std::array attributeNames {
@@ -297,7 +297,7 @@ static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
     return false;
 }
 
-static bool canPerformTextManipulationByReplacingEntireTextContent(const Element& element)
+static bool NODELETE canPerformTextManipulationByReplacingEntireTextContent(const Element& element)
 {
     return element.hasTagName(HTMLNames::titleTag) || element.hasTagName(HTMLNames::optionTag);
 }

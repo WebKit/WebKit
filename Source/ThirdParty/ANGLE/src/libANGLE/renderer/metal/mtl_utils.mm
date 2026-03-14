@@ -1191,13 +1191,6 @@ MTLWinding GetFrontfaceWinding(GLenum frontFaceMode, bool invert)
     }
 }
 
-MTLPrimitiveTopologyClass GetPrimitiveTopologyClass(gl::PrimitiveMode mode)
-{
-    // NOTE(hqle): Support layered renderring in future.
-    // In non-layered rendering mode, unspecified is enough.
-    return MTLPrimitiveTopologyClassUnspecified;
-}
-
 MTLPrimitiveType GetPrimitiveType(gl::PrimitiveMode mode)
 {
     switch (mode)

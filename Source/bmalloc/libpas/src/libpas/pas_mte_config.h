@@ -68,6 +68,7 @@
 
 typedef uint64_t Slot;
 
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN;
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -75,6 +76,7 @@ extern Slot g_config[];
 #ifdef __cplusplus
 }
 #endif
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_END;
 
 #define PAS_MTE_ENABLE_FLAG 0
 #define PAS_MTE_MODE_BITS 1

@@ -108,7 +108,7 @@ private:
     virtual void dispatchLoadEvent() = 0;
 
     void updatedHasPendingEvent();
-    void didUpdateCachedImage(RelevantMutation, CachedResourceHandle<CachedImage>&&);
+    void didUpdateCachedImage(RelevantMutation, RefPtr<CachedImage>&&);
 
     void dispatchPendingBeforeLoadEvent();
     void dispatchPendingLoadEvent();

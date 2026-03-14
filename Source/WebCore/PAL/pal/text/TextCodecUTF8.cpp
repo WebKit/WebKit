@@ -71,7 +71,7 @@ void TextCodecUTF8::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-static inline uint8_t nonASCIISequenceLength(uint8_t firstByte)
+static inline uint8_t NODELETE nonASCIISequenceLength(uint8_t firstByte)
 {
     static constexpr std::array<uint8_t, 256> lengths {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -94,7 +94,7 @@ static inline uint8_t nonASCIISequenceLength(uint8_t firstByte)
     return lengths[firstByte];
 }
 
-static inline int decodeNonASCIISequence(std::span<const uint8_t> sequence, uint8_t& length)
+static inline int NODELETE decodeNonASCIISequence(std::span<const uint8_t> sequence, uint8_t& length)
 {
     ASSERT(!isASCII(sequence[0]));
     if (length == 2) {
@@ -167,7 +167,7 @@ static inline int decodeNonASCIISequence(std::span<const uint8_t> sequence, uint
     return ((sequence[0] << 18) + (sequence[1] << 12) + (sequence[2] << 6) + sequence[3]) - 0x03C82080;
 }
 
-static inline std::span<char16_t> appendCharacter(std::span<char16_t> destination, int character)
+static inline std::span<char16_t> NODELETE appendCharacter(std::span<char16_t> destination, int character)
 {
     ASSERT(character != nonCharacter);
     ASSERT(!U_IS_SURROGATE(character));

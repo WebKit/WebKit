@@ -299,9 +299,15 @@ class GetSwiftTagName(shell.ShellCommand, ShellMixin):
 
         log_text = self.log_observer.getStdout().strip()
         if log_text:
-            self.setProperty('canonical_swift_tag', log_text)
-            self.summary = f"Canonical Swift tag name: {self.getProperty('canonical_swift_tag')}"
-            return defer.returnValue(SUCCESS)
+            platform = self.getProperty('platform', '').lower()
+            for line in log_text.splitlines():
+                line = line.strip()
+                if ':' in line:
+                    platform_from_safer_cpp_swift_version, tag = line.split(':', 1)
+                    if platform in platform_from_safer_cpp_swift_version.lower():
+                        self.setProperty('canonical_swift_tag', tag.strip())
+                        self.summary = f"Canonical Swift tag name: {self.getProperty('canonical_swift_tag')}"
+                        return defer.returnValue(SUCCESS)
         return defer.returnValue(FAILURE)
 
     # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled

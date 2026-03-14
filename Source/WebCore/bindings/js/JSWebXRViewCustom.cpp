@@ -44,12 +44,12 @@ JSC::JSValue JSWebXRView::projectionMatrix(JSC::JSGlobalObject& lexicalGlobalObj
 }
 
 template<typename Visitor>
-void JSWebXRView::visitAdditionalChildren(Visitor& visitor)
+void JSWebXRView::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().cachedProjectionMatrix().visit(visitor);
+    wrapped().cachedProjectionMatrix().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWebXRView);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSWebXRView);
 
 } // namespace WebCore
 

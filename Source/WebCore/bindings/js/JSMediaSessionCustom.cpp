@@ -34,12 +34,12 @@
 namespace WebCore {
 
 template <typename Visitor>
-void JSMediaSession::visitAdditionalChildren(Visitor& visitor)
+void JSMediaSession::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    SUPPRESS_UNCOUNTED_ARG wrapped().visitActionHandlers(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitActionHandlersInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMediaSession);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSMediaSession);
 
 }
 

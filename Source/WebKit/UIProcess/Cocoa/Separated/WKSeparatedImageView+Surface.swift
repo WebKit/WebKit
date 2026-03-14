@@ -23,12 +23,12 @@
 
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
-internal import CryptoKit
-internal import CoreGraphics
-internal import CoreImage
+import CryptoKit
+import CoreGraphics
+import CoreImage
 import os
-internal import UniformTypeIdentifiers
-internal import WebKit_Internal
+import UniformTypeIdentifiers
+import WebKit_Internal
 
 extension WKSeparatedImageView {
     func processSurface(_ surface: sending IOSurfaceRef) async {

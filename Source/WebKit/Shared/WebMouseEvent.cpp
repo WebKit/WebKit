@@ -75,7 +75,7 @@ bool WebMouseEvent::isMouseEventType(WebEventType type)
     return type == WebEventType::MouseDown || type == WebEventType::MouseUp || type == WebEventType::MouseMove || type == WebEventType::MouseForceUp || type == WebEventType::MouseForceDown || type == WebEventType::MouseForceChanged;
 }
 
-WebMouseEventButton mouseButton(const WebCore::NavigationAction& navigationAction)
+WebMouseEventButton NODELETE mouseButton(const WebCore::NavigationAction& navigationAction)
 {
     auto& mouseEventData = navigationAction.mouseEventData();
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)

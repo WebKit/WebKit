@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace Layout {
 
-static InlineRect mapLineRectLogicalToVisual(const InlineRect& lineLogicalRect, const LayoutSize formattingRootBorderBoxSize, WritingMode writingMode)
+static InlineRect NODELETE mapLineRectLogicalToVisual(const InlineRect& lineLogicalRect, const LayoutSize formattingRootBorderBoxSize, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
         return lineLogicalRect;

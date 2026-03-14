@@ -228,7 +228,7 @@ private:
 // constant value to use for a custom `areEssentiallyEqual` where we will
 // bail out of -resolveBounds if the _targetVideoFrame is essentially equal
 // to the current video frame.
-static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const FloatRect& b)
+static bool NODELETE areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const FloatRect& b)
 {
     static constexpr double frameValueDeltaTolerance { 0.01 };
     FloatRect delta { FloatPoint { a.location() - b.location() }, a.size() - b.size() };

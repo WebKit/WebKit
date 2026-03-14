@@ -100,7 +100,7 @@ private:
     class VideoFactory : public WebCore::VideoCaptureFactory {
     public:
         explicit VideoFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
-        void setShouldCaptureInGPUProcess(bool);
+        void NODELETE setShouldCaptureInGPUProcess(bool);
 
     private:
         WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, std::optional<WebCore::PageIdentifier>) final;
@@ -112,7 +112,7 @@ private:
     class DisplayFactory : public WebCore::DisplayCaptureFactory {
     public:
         explicit DisplayFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
-        void setShouldCaptureInGPUProcess(bool);
+        void NODELETE setShouldCaptureInGPUProcess(bool);
 
     private:
         WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, std::optional<WebCore::PageIdentifier>) final;

@@ -34,15 +34,15 @@ class WebProcessPool;
 
 // The inspector page groups are used to give different preferences to each
 // inspector level by setting a per-level page group identifier.
-unsigned inspectorLevelForPage(WebPageProxy*);
+unsigned NODELETE inspectorLevelForPage(WebPageProxy*);
 String defaultInspectorPageGroupIdentifierForPage(WebPageProxy*);
 void trackInspectorPage(WebPageProxy& inspectorPage, WebPageProxy* inspectedPage);
 void untrackInspectorPage(WebPageProxy& inspectorPage);
 
 void prepareProcessPoolForInspector(WebProcessPool&);
 WebProcessPool& defaultInspectorProcessPool(unsigned inspectionLevel);
-bool isInspectorProcessPool(WebProcessPool&);
-bool isInspectorPage(WebPageProxy&);
+bool NODELETE isInspectorProcessPool(WebProcessPool&);
+bool NODELETE isInspectorPage(WebPageProxy&);
 
 #if PLATFORM(COCOA)
 CFStringRef bundleIdentifierForSandboxBrokerSingleton();

@@ -212,7 +212,7 @@ static bool fillGlyphPage(GlyphPage& pageToFill, std::span<const char16_t> buffe
     return hasGlyphs;
 }
 
-static std::optional<size_t> codePointSupportIndex(char32_t codePoint)
+static std::optional<size_t> NODELETE codePointSupportIndex(char32_t codePoint)
 {
     // FIXME: Consider reordering these so the most common ones are at the front.
     // Doing this could cause the BitVector to fit inside inline storage and therefore

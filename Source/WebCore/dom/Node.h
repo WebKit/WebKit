@@ -339,7 +339,7 @@ public:
     void NODELETE setUsesEffectiveTextDirection(bool);
 
     // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
-    WEBCORE_EXPORT Element* enclosingLinkEventParentOrSelf();
+    WEBCORE_EXPORT Element* NODELETE enclosingLinkEventParentOrSelf();
 
     // These low-level calls give the caller responsibility for maintaining the integrity of the tree.
     void setPreviousSibling(Node* previous) { m_previousSibling = previous; }
@@ -469,7 +469,7 @@ public:
     ALWAYS_INLINE bool isShadowIncludingInclusiveAncestorOf(const Node& other) const { return this == &other || other.isShadowIncludingDescendantOf(*this); }
     ALWAYS_INLINE bool isShadowIncludingInclusiveAncestorOf(const Node* other) const { return other && isShadowIncludingInclusiveAncestorOf(*other); }
 
-    bool isComposedTreeDescendantOf(const Node&) const;
+    bool NODELETE isComposedTreeDescendantOf(const Node&) const;
 
     // Whether or not a selection can be started in this object
     virtual bool canStartSelection() const;
@@ -612,7 +612,7 @@ public:
     void setContainsSelectionEndPoint(bool value) { setStateFlag(StateFlag::ContainsSelectionEndPoint, value); }
 
     WEBCORE_EXPORT NodeIdentifier nodeIdentifier() const;
-    WEBCORE_EXPORT static Node* fromIdentifier(NodeIdentifier);
+    WEBCORE_EXPORT static Node* NODELETE fromIdentifier(NodeIdentifier);
 
 protected:
     enum class TypeFlag : uint16_t {

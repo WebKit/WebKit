@@ -41,7 +41,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLParserScheduler);
 
-static Seconds parserTimeLimit(Page* page)
+static Seconds NODELETE parserTimeLimit(Page* page)
 {
     // Always yield after exceeding this.
     constexpr auto defaultParserTimeLimit = 500_ms;

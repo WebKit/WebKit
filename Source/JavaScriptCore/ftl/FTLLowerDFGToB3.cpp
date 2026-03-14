@@ -1612,6 +1612,9 @@ private:
         case IsCellWithType:
             compileIsCellWithType();
             break;
+        case ArrayIsArray:
+            compileArrayIsArray();
+            break;
         case MapHash:
             compileMapHash();
             break;
@@ -15095,6 +15098,56 @@ IGNORE_CLANG_WARNINGS_END
             ASSERT(m_node->child1().useKind() == CellUse);
             setBoolean(isCellWithType(lowCell(m_node->child1()), m_node->queriedType(), m_node->speculatedTypeForQuery(), provenType(m_node->child1())));
         }
+    }
+
+    void compileArrayIsArray()
+    {
+        // Array.isArray(value):
+        //   non-cell -> false
+        //   ArrayType | DerivedArrayType -> true
+        //   ProxyObjectType -> slow path (may throw on revoked proxy)
+        //   other cell -> false
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock checkProxyBlock = m_out.newBlock();
+        LBasicBlock slowPathBlock = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(isCell(value, provenType(m_node->child1())), usually(isCellCase), rarely(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, checkProxyBlock);
+        // Bias by ArrayType so a single unsigned range check covers both ArrayType and DerivedArrayType.
+        // adjustedType = typeInfo - ArrayType:
+        //   0 -> ArrayType, 1 -> DerivedArrayType (true), ProxyObjectType-ArrayType -> slow path, else -> false.
+        static_assert(DerivedArrayType == ArrayType + 1, "ArrayType and DerivedArrayType must be consecutive");
+        static_assert(ProxyObjectType > DerivedArrayType, "ProxyObjectType must be above DerivedArrayType");
+        LValue adjustedType = m_out.sub(m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType), m_out.constInt32(ArrayType));
+        ValueFromBlock arrayResult = m_out.anchor(m_out.booleanTrue);
+        m_out.branch(m_out.belowOrEqual(adjustedType, m_out.constInt32(DerivedArrayType - ArrayType)),
+            usually(continuation), unsure(checkProxyBlock));
+
+        m_out.appendTo(checkProxyBlock, slowPathBlock);
+        ValueFromBlock otherCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(m_out.equal(adjustedType, m_out.constInt32(ProxyObjectType - ArrayType)),
+            rarely(slowPathBlock), usually(continuation));
+
+        m_out.appendTo(slowPathBlock, continuation);
+        VM& vm = this->vm();
+        LValue slowResultValue = lazySlowPath(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
+                    operationArrayIsArray, locations[0].directGPR(),
+                    CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
+            }, value);
+        ValueFromBlock slowResult = m_out.anchor(m_out.notNull(slowResultValue));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, notCellResult, arrayResult, otherCellResult, slowResult));
     }
 
     void compileIsObject()

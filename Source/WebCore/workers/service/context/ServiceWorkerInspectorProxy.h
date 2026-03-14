@@ -46,7 +46,7 @@ public:
     explicit ServiceWorkerInspectorProxy(ServiceWorkerThreadProxy&);
     ~ServiceWorkerInspectorProxy();
 
-    void serviceWorkerTerminated();
+    void NODELETE serviceWorkerTerminated();
 
     WEBCORE_EXPORT void connectToWorker(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFromWorker(Inspector::FrontendChannel&);

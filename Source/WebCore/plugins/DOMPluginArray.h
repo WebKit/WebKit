@@ -38,10 +38,10 @@ public:
     static Ref<DOMPluginArray> create(Navigator&, Vector<Ref<DOMPlugin>>&& = { }, Vector<Ref<DOMPlugin>>&& = { });
     ~DOMPluginArray();
 
-    unsigned length() const;
+    unsigned NODELETE length() const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
-    RefPtr<DOMPlugin> item(unsigned index);
-    RefPtr<DOMPlugin> namedItem(const AtomString& propertyName);
+    RefPtr<DOMPlugin> NODELETE item(unsigned index);
+    RefPtr<DOMPlugin> NODELETE namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
     bool isSupportedPropertyName(const AtomString&) const;
 

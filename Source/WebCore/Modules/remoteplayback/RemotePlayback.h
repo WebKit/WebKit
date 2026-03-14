@@ -76,7 +76,7 @@ public:
     };
     State state() const { return m_state; }
 
-    void invalidate();
+    void NODELETE invalidate();
 
     WebCoreOpaqueRoot opaqueRootConcurrently() const;
     Node* NODELETE ownerNode() const;

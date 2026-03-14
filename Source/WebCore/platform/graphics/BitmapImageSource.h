@@ -124,7 +124,7 @@ private:
 
     // Decoding
     bool isLargeForDecoding() const final;
-    bool isDecodingWorkQueueIdle() const;
+    bool NODELETE isDecodingWorkQueueIdle() const;
     bool isCompatibleWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     void stopDecodingWorkQueue() final;
     void decode(Function<void(DecodingStatus)>&& decodeCallback) final;

@@ -34,6 +34,6 @@ class SharedBuffer;
 // If the given buffer is a WOFF file and the current platform has no native support for WOFF
 // fonts, convert it to sfnt. Returns true if the given buffer was converted. If conversion fails,
 // the buffer will be set to nullptr.
-bool convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>&);
+bool NODELETE convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>&);
 
 } // namespace WebCore

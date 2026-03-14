@@ -64,7 +64,7 @@ Ref<PushEvent> PushEvent::create(const AtomString& type, ExtendableEventInit&& i
     return adoptRef(*new PushEvent(type, WTF::move(initializer), WTF::move(data), isTrusted));
 }
 
-static inline RefPtr<PushMessageData> pushMessageDataFromOptionalVector(std::optional<Vector<uint8_t>>&& data)
+static inline RefPtr<PushMessageData> NODELETE pushMessageDataFromOptionalVector(std::optional<Vector<uint8_t>>&& data)
 {
     if (!data)
         return nullptr;

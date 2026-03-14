@@ -73,7 +73,7 @@ public:
     static LineLayout* containing(RenderObject&);
     static const LineLayout* containing(const RenderObject&);
 
-    static bool canUseFor(const RenderBlockFlow&);
+    static bool NODELETE canUseFor(const RenderBlockFlow&);
     static bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
     static bool shouldInvalidateLineLayoutAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
     static bool shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
@@ -105,7 +105,7 @@ public:
 
     LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
-    bool hasEllipsisInBlockDirectionOnLastFormattedLine() const;
+    bool NODELETE hasEllipsisInBlockDirectionOnLastFormattedLine() const;
     bool contains(const RenderElement& renderer) const;
 
     bool NODELETE isPaginated() const;
@@ -113,7 +113,7 @@ public:
     bool NODELETE hasContentfulInlineOrBlockLine() const;
     bool NODELETE hasContentfulInlineLine() const;
     bool isSelfCollapsingContent() const;
-    bool hasInkOverflow() const;
+    bool NODELETE hasInkOverflow() const;
     std::optional<LayoutUnit> firstLineBaseline() const;
     std::optional<LayoutUnit> lastLineBaseline() const;
     LayoutRect firstInlineBoxRect(const RenderInline&) const;
@@ -166,9 +166,9 @@ private:
     void clearInlineContent();
     void releaseCachesAndResetDamage();
 
-    LayoutUnit baselineForLine(const InlineDisplay::Line&) const;
+    LayoutUnit NODELETE baselineForLine(const InlineDisplay::Line&) const;
 
-    bool isContentConsideredStale() const;
+    bool NODELETE isContentConsideredStale() const;
 
 private:
     CheckedPtr<Layout::ElementBox> m_rootLayoutBox;

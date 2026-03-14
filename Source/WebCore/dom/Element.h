@@ -369,7 +369,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<RefPtr<Attr>> setAttributeNodeNS(Attr&);
     WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeAttributeNode(Attr&);
 
-    RefPtr<Attr> attrIfExists(const QualifiedName&);
+    RefPtr<Attr> NODELETE attrIfExists(const QualifiedName&);
     Ref<Attr> ensureAttr(const QualifiedName&);
 
     const Vector<Ref<Attr>>& NODELETE attrNodeList();
@@ -610,7 +610,7 @@ public:
 
     virtual String title() const;
 
-    WEBCORE_EXPORT const AtomString& userAgentPart() const;
+    WEBCORE_EXPORT const AtomString& NODELETE userAgentPart() const;
     WEBCORE_EXPORT void setUserAgentPart(const AtomString&);
 
     // Use Document::registerForDocumentActivationCallbacks() to subscribe to these
@@ -685,33 +685,33 @@ public:
 
     virtual bool childShouldCreateRenderer(const Node&) const;
 
-    KeyframeEffectStack* keyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    KeyframeEffectStack* NODELETE keyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
     KeyframeEffectStack& ensureKeyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>&) LIFETIME_BOUND;
-    bool hasKeyframeEffects(const std::optional<Style::PseudoElementIdentifier>&) const;
+    bool NODELETE hasKeyframeEffects(const std::optional<Style::PseudoElementIdentifier>&) const;
     bool NODELETE mayHaveKeyframeEffects() const;
 
-    const AnimationCollection* animations(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    const AnimationCollection* NODELETE animations(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
     bool hasCompletedTransitionForProperty(const std::optional<Style::PseudoElementIdentifier>&, const AnimatableCSSProperty&) const;
     bool hasRunningTransitionForProperty(const std::optional<Style::PseudoElementIdentifier>&, const AnimatableCSSProperty&) const;
-    bool hasRunningTransitions(const std::optional<Style::PseudoElementIdentifier>&) const;
+    bool NODELETE hasRunningTransitions(const std::optional<Style::PseudoElementIdentifier>&) const;
     AnimationCollection& ensureAnimations(const std::optional<Style::PseudoElementIdentifier>&) LIFETIME_BOUND;
 
-    const AnimatableCSSPropertyToTransitionMap* completedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
-    const AnimatableCSSPropertyToTransitionMap* runningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    const AnimatableCSSPropertyToTransitionMap* NODELETE completedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    const AnimatableCSSPropertyToTransitionMap* NODELETE runningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
 
     AnimatableCSSPropertyToTransitionMap& ensureCompletedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&) LIFETIME_BOUND;
     AnimatableCSSPropertyToTransitionMap& ensureRunningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&) LIFETIME_BOUND;
     CSSAnimationCollection& animationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>&) LIFETIME_BOUND;
     void setAnimationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>&, CSSAnimationCollection&&);
 
-    const RenderStyle* lastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    const RenderStyle* NODELETE lastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
     void setLastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&, std::unique_ptr<const RenderStyle>&&);
-    bool hasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>&) const;
+    bool NODELETE hasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>&) const;
     void setHasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>&, bool);
 
     void cssAnimationsDidUpdate(const std::optional<Style::PseudoElementIdentifier>&);
     void keyframesRuleDidChange(const std::optional<Style::PseudoElementIdentifier>&);
-    bool hasPendingKeyframesUpdate(const std::optional<Style::PseudoElementIdentifier>&) const;
+    bool NODELETE hasPendingKeyframesUpdate(const std::optional<Style::PseudoElementIdentifier>&) const;
     // FIXME: do we need a counter style didChange here? (rdar://103018993).
 
     bool isLink() const { return hasStateFlag(StateFlag::IsLink); }
@@ -1030,7 +1030,7 @@ private:
     inline ElementRareData* elementRareData() const LIFETIME_BOUND;
     ElementRareData& ensureElementRareData() LIFETIME_BOUND;
 
-    ElementAnimationRareData* animationRareData(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    ElementAnimationRareData* NODELETE animationRareData(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
     ElementAnimationRareData& ensureAnimationRareData(const std::optional<Style::PseudoElementIdentifier>&) LIFETIME_BOUND;
 
     virtual int defaultTabIndex() const;

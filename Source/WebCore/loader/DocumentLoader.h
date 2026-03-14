@@ -201,7 +201,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(CachedRawResourceClient);
 
-    WEBCORE_EXPORT static DocumentLoader* fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT static DocumentLoader* NODELETE fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
 
     WEBCORE_EXPORT virtual ~DocumentLoader();
 
@@ -337,7 +337,7 @@ public:
     void setDidCreateGlobalHistoryEntry(bool didCreateGlobalHistoryEntry) { m_didCreateGlobalHistoryEntry = didCreateGlobalHistoryEntry; }
 
     void setDefersLoading(bool);
-    void setMainResourceDataBufferingPolicy(DataBufferingPolicy);
+    void NODELETE setMainResourceDataBufferingPolicy(DataBufferingPolicy);
 
     void startLoadingMainResource();
     WEBCORE_EXPORT void cancelMainResourceLoad(const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);

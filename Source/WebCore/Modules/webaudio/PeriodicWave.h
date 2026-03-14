@@ -96,7 +96,7 @@ private:
     // Maximum possible number of partials (before culling).
     unsigned NODELETE maxNumberOfPartials() const;
 
-    unsigned numberOfPartialsForRange(unsigned rangeIndex) const;
+    unsigned NODELETE numberOfPartialsForRange(unsigned rangeIndex) const;
 
     // Creates tables based on numberOfComponents Fourier coefficients.
     void createBandLimitedTables(std::span<const float> real, std::span<const float> imag, ShouldDisableNormalization = ShouldDisableNormalization::No);

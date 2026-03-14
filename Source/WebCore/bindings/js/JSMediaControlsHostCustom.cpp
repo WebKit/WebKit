@@ -44,12 +44,12 @@ void JSMediaControlsHost::setController(JSC::JSGlobalObject& lexicalGlobalObject
 }
 
 template<typename Visitor>
-void JSMediaControlsHost::visitAdditionalChildren(Visitor& visitor)
+void JSMediaControlsHost::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().controllerWrapper().visit(visitor);
+    wrapped().controllerWrapper().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMediaControlsHost);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSMediaControlsHost);
 
 } // namespace WebCore
 

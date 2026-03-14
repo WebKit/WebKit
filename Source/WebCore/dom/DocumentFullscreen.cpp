@@ -502,8 +502,8 @@ void DocumentFullscreen::exitFullscreen(CompletionHandler<void(ExceptionOr<void>
 
     m_pendingExitFullscreen = true;
     auto resetPendingExitFullscreenScope = makeScopeExit([weakThis = WeakPtr { *this }] {
-        if (auto* protectedThis = weakThis.get())
-            protectedThis->m_pendingExitFullscreen = false;
+        if (auto* rawThis = weakThis.get())
+            rawThis->m_pendingExitFullscreen = false;
     });
 
     Ref exitingDocument = document();
@@ -701,8 +701,8 @@ void DocumentFullscreen::fullyExitFullscreen()
 
     m_pendingExitFullscreen = true;
     auto resetPendingExitFullscreenScope = makeScopeExit([weakThis = WeakPtr { *this }] {
-        if (auto* protectedThis = weakThis.get())
-            protectedThis->m_pendingExitFullscreen = false;
+        if (auto* rawThis = weakThis.get())
+            rawThis->m_pendingExitFullscreen = false;
     });
 
     protect(document())->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }, resetPendingExitFullscreenScope = WTF::move(resetPendingExitFullscreenScope), rootFrameDocument = WTF::move(rootFrameDocument), identifier = LOGIDENTIFIER] mutable {

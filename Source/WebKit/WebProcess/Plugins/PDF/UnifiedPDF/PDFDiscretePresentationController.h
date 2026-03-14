@@ -88,7 +88,7 @@ private:
     std::optional<PDFLayoutRow> visibleRow() const override;
     std::optional<PDFLayoutRow> rowForLayer(const WebCore::GraphicsLayer&) const override;
 
-    WebCore::FloatSize contentsOffsetForPage(PDFDocumentLayout::PageIndex) const;
+    WebCore::FloatSize NODELETE contentsOffsetForPage(PDFDocumentLayout::PageIndex) const;
 
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
 
@@ -189,7 +189,7 @@ private:
     std::array<std::array<float, 2>, 2> layerOpacitiesForStretchOffset(TransitionDirection, WebCore::FloatSize layerOffset, WebCore::FloatSize rowSize) const;
     WebCore::FloatSize layerOffsetForStretch(TransitionDirection, WebCore::FloatSize stretchDistance, WebCore::FloatSize rowSize) const;
     static float NODELETE relevantAxisForDirection(TransitionDirection, WebCore::FloatSize);
-    static void setRelevantAxisForDirection(TransitionDirection, WebCore::FloatSize&, float value);
+    static void NODELETE setRelevantAxisForDirection(TransitionDirection, WebCore::FloatSize&, float value);
 
     struct RowData {
         PDFLayoutRow pages;

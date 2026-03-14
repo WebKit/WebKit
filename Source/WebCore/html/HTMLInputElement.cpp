@@ -1437,7 +1437,7 @@ static inline bool NODELETE isRFC2616TokenCharacter(char16_t ch)
     return isASCII(ch) && ch > ' ' && ch != '"' && ch != '(' && ch != ')' && ch != ',' && ch != '/' && (ch < ':' || ch > '@') && (ch < '[' || ch > ']') && ch != '{' && ch != '}' && ch != 0x7f;
 }
 
-static bool isValidMIMEType(StringView type)
+static bool NODELETE isValidMIMEType(StringView type)
 {
     size_t slashPosition = type.find('/');
     if (slashPosition == notFound || !slashPosition || slashPosition == type.length() - 1)

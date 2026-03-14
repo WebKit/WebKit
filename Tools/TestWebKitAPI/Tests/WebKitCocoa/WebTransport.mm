@@ -29,6 +29,7 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "SiteIsolationUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
@@ -928,6 +929,12 @@ TEST(WebTransport, BackForwardCache)
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
     [webView setNavigationDelegate:delegate.get()];
+
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
+    if (!isUsingBackForwardCache(webView.get())) {
+        NSLog(@"WebTransport.BackForwardCache: Test is skipped as back-forward cache is disabled");
+        return;
+    }
 
     [webView loadRequest:loadingServer.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");

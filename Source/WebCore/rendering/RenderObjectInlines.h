@@ -23,6 +23,7 @@
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/RenderIFrame.h>
 #include <WebCore/RenderObject.h>

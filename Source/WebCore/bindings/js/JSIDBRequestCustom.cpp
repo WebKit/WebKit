@@ -106,12 +106,12 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
 }
 
 template<typename Visitor>
-void JSIDBRequest::visitAdditionalChildren(Visitor& visitor)
+void JSIDBRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     auto& request = wrapped();
-    request.resultWrapper().visit(visitor);
+    request.resultWrapper().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBRequest);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSIDBRequest);
 
 } // namespace WebCore

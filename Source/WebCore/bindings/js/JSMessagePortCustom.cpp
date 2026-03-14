@@ -32,13 +32,13 @@ namespace WebCore {
 using namespace JSC;
 
 template<typename Visitor>
-void JSMessagePort::visitAdditionalChildren(Visitor& visitor)
+void JSMessagePort::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     // If we have a locally entangled port, we can directly mark it as reachable. Ports that are remotely entangled are marked in-use by markActiveObjectsForContext().
     if (auto* port = wrapped().locallyEntangledPort())
         addWebCoreOpaqueRoot(visitor, *port);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMessagePort);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSMessagePort);
 
 } // namespace WebCore

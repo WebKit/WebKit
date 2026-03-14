@@ -1743,7 +1743,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
     auto publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(URL(currentItem->url()));
 
     // We allow stale content when reloading a WebProcess that's been killed or crashed.
-    send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), currentItem->mainFrameState(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, std::nullopt, publicSuffix, { }, WebCore::ProcessSwapDisposition::None }));
+    send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), currentItem->copyMainFrameStateWithChildren(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, std::nullopt, publicSuffix, { }, WebCore::ProcessSwapDisposition::None }));
 
     Ref legacyMainFrameProcess = m_legacyMainFrameProcess;
     legacyMainFrameProcess->startResponsivenessTimer();
@@ -2724,7 +2724,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
 
     process->markProcessAsRecentlyUsed();
 
-    Ref frameState = item->mainFrameState();
+    Ref frameState = item->copyMainFrameStateWithChildren();
     if (protect(preferences())->siteIsolationEnabled()) {
         if (RefPtr frame = WebFrameProxy::webFrame(frameItem.frameID()); frame && frame->page() == this) {
             process = frame->process();
@@ -5754,7 +5754,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         if (currentItem && (navigation->lockBackForwardList() == LockBackForwardList::Yes || navigation->lockHistory() == LockHistory::Yes)) {
             // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
             // it instead of creating a new one.
-            provisionalPage->send(Messages::WebPage::SetCurrentHistoryItemForReattach(currentItem->mainFrameState()));
+            provisionalPage->send(Messages::WebPage::SetCurrentHistoryItemForReattach(currentItem->copyMainFrameStateWithChildren()));
         }
 
         // FIXME: Work out timing of responding with the last policy delegate, etc
@@ -6525,7 +6525,7 @@ void WebPageProxy::setGapBetweenPages(double gap)
     send(Messages::WebPage::SetGapBetweenPages(gap));
 }
 
-static bool scaleFactorIsValid(double scaleFactor)
+static bool NODELETE scaleFactorIsValid(double scaleFactor)
 {
     return scaleFactor > 0 && scaleFactor <= 100;
 }
@@ -13532,7 +13532,7 @@ void WebPageProxy::beginMonitoringCaptureDevices()
     UserMediaProcessManager::singleton().beginMonitoringCaptureDevices();
 }
 
-static WebCore::MediaStreamRequest toUserMediaRequest(WebCore::MediaProducerMediaCaptureKind kind, WebCore::PageIdentifier pageIdentifier)
+static WebCore::MediaStreamRequest NODELETE toUserMediaRequest(WebCore::MediaProducerMediaCaptureKind kind, WebCore::PageIdentifier pageIdentifier)
 {
     switch (kind) {
     case WebCore::MediaProducerMediaCaptureKind::Microphone:
@@ -17496,6 +17496,11 @@ INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::UserMediaAccessWasDenied);
 #endif
 #if PLATFORM(GTK)
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::CollapseSelectionInFrame);
+#endif
+#if PLATFORM(IOS_FAMILY)
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::SetFocusedElementValue);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::SetFocusedElementSelectedIndex);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::SetSelectElementIsOpen);
 #endif
 #undef INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME
 

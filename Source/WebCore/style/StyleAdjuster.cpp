@@ -1002,6 +1002,17 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             style.setDisplayMaintainingOriginalDisplay(DisplayType::None);
     }
 
+    // zillow.com rdar://171279940
+    // FIXME(309831): Remove after rdar://172303198 is implemented.
+    if (documentQuirks.needsZillowFloorplanMarginQuirk()) {
+        if (m_element->hasTagName(imgTag)) {
+            if (RefPtr parent = m_element->parentElement(); parent && parent->idForStyleResolution() == "floorplan_panel"_s) {
+                style.setMarginLeft(CSS::Keyword::Auto { });
+                style.setMarginRight(CSS::Keyword::Auto { });
+            }
+        }
+    }
+
 #if PLATFORM(IOS_FAMILY)
     if (documentQuirks.needsGoogleMapsScrollingQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> className("PUtLdf"_s);

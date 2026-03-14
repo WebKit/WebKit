@@ -1359,15 +1359,15 @@ bool Navigation::RateLimiter::navigationAllowed()
     return false;
 }
 
-void Navigation::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
+void Navigation::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor)
 {
     Locker locker { m_apiMethodTrackersLock };
     if (m_ongoingAPIMethodTracker)
-        m_ongoingAPIMethodTracker->info.visit(visitor);
+        m_ongoingAPIMethodTracker->info.visitInGCThread(visitor);
     if (m_upcomingNonTraverseMethodTracker)
-        m_upcomingNonTraverseMethodTracker->info.visit(visitor);
+        m_upcomingNonTraverseMethodTracker->info.visitInGCThread(visitor);
     for (auto& tracker : m_upcomingTraverseMethodTrackers.values())
-        tracker->info.visit(visitor);
+        tracker->info.visitInGCThread(visitor);
 }
 
 } // namespace WebCore

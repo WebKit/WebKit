@@ -289,7 +289,7 @@ static void testWASMVirtualAddressOperators()
     dataLogLn("VirtualAddress operators tests completed");
 }
 
-static int runAllTests()
+[[maybe_unused]] static int runAllTests()
 {
     dataLogLn("Starting WASM Debugger Test Suite");
     dataLogLn("===============================================");
@@ -336,6 +336,8 @@ static int runAllTests()
     return totalFailures;
 }
 
+#if CPU(ARM64)
+
 int main(int argc, char** argv)
 {
     UNUSED_PARAM(argc);
@@ -355,6 +357,19 @@ int main(int argc, char** argv)
     JSC::Options::setOption("enableWasmDebugger=true");
     return runAllTests();
 }
+
+#else // !CPU(ARM64)
+
+int main(int argc, char** argv)
+{
+    UNUSED_PARAM(argc);
+    UNUSED_PARAM(argv);
+
+    dataLogLn("WASM debugger tests are disabled (only supported on ARM64)");
+    return 0;
+}
+
+#endif // CPU(ARM64)
 
 #if OS(WINDOWS)
 extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])

@@ -63,7 +63,7 @@ public:
 
     // TimerBase's destructor inspects Ref<Thread> m_thread, which won't work if we are moved-from.
     TimerBase(TimerBase&&) = delete;
-    TimerBase& operator=(TimerBase&&) = delete;
+    TimerBase& NODELETE operator=(TimerBase&&) = delete;
 
     WEBCORE_EXPORT void start(Seconds nextFireInterval, Seconds repeatInterval);
 
@@ -105,8 +105,8 @@ private:
 
     WEBCORE_EXPORT void stopSlowCase();
 
-    void checkConsistency() const;
-    void checkHeapIndex() const;
+    void NODELETE checkConsistency() const;
+    void NODELETE checkHeapIndex() const;
 
     void setNextFireTime(MonotonicTime);
 

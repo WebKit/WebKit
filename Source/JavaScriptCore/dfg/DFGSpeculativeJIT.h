@@ -756,6 +756,7 @@ public:
 
     void compileIsCellWithType(Node*);
     void compileIsTypedArrayView(Node*);
+    void compileArrayIsArray(Node*);
 
     void emitCall(Node*);
 

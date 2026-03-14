@@ -60,7 +60,7 @@ class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProx
     WTF_MAKE_NONCOPYABLE(WebExtensionContextProxy);
 
 public:
-    static RefPtr<WebExtensionContextProxy> get(WebExtensionContextIdentifier);
+    static RefPtr<WebExtensionContextProxy> NODELETE get(WebExtensionContextIdentifier);
     static Ref<WebExtensionContextProxy> getOrCreate(const WebExtensionContextParameters&, WebExtensionControllerProxy&, WebPage* = nullptr);
 
     ~WebExtensionContextProxy();
@@ -110,7 +110,7 @@ public:
     std::optional<WebExtensionTabIdentifier> NODELETE tabIdentifier(WebPage&) const;
 
     RefPtr<WebPage> NODELETE backgroundPage() const;
-    void setBackgroundPage(WebPage&);
+    void NODELETE setBackgroundPage(WebPage&);
 
     bool isUnsupportedAPI(const String& propertyPath, const ASCIILiteral& propertyName) const;
 

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class PublicSuffixStore {
 public:
-    WEBCORE_EXPORT static PublicSuffixStore& singleton();
+    WEBCORE_EXPORT static PublicSuffixStore& NODELETE singleton();
 
     // https://url.spec.whatwg.org/#host-public-suffix
     WEBCORE_EXPORT bool isPublicSuffix(StringView domain) const;

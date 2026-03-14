@@ -44,17 +44,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatQuad);
 
-inline float dot(const FloatSize& a, const FloatSize& b)
+inline float NODELETE dot(const FloatSize& a, const FloatSize& b)
 {
     return a.width() * b.width() + a.height() * b.height();
 }
 
-inline float determinant(const FloatSize& a, const FloatSize& b)
+inline float NODELETE determinant(const FloatSize& a, const FloatSize& b)
 {
     return a.width() * b.height() - a.height() * b.width();
 }
 
-inline bool isPointInTriangle(const FloatPoint& p, const FloatPoint& t1, const FloatPoint& t2, const FloatPoint& t3)
+inline bool NODELETE isPointInTriangle(const FloatPoint& p, const FloatPoint& t1, const FloatPoint& t2, const FloatPoint& t3)
 {
     // Compute vectors        
     FloatSize v0 = t3 - t1;
@@ -77,7 +77,7 @@ inline bool isPointInTriangle(const FloatPoint& p, const FloatPoint& t1, const F
     return (u >= 0) && (v >= 0) && (u + v <= 1);
 }
 
-static inline float clampToIntRange(float value)
+static inline float NODELETE clampToIntRange(float value)
 {
     if (std::isinf(value) || std::abs(value) > (static_cast<float>(std::numeric_limits<int>::max()))) [[unlikely]]
         return std::signbit(value) ? std::numeric_limits<int>::min() : (static_cast<float>(std::numeric_limits<int>::max()));
@@ -113,7 +113,7 @@ bool FloatQuad::containsQuad(const FloatQuad& other) const
     return containsPoint(other.p1()) && containsPoint(other.p2()) && containsPoint(other.p3()) && containsPoint(other.p4());
 }
 
-static inline FloatPoint rightMostCornerToVector(const FloatRect& rect, const FloatSize& vector)
+static inline FloatPoint NODELETE rightMostCornerToVector(const FloatRect& rect, const FloatSize& vector)
 {
     // Return the corner of the rectangle that if it is to the left of the vector
     // would mean all of the rectangle is to the left of the vector.
@@ -178,7 +178,7 @@ bool FloatQuad::intersectsRect(const FloatRect& rect) const
 }
 
 // Tests whether the line is contained by or intersected with the circle.
-static inline bool lineIntersectsCircle(const FloatPoint& center, float radius, const FloatPoint& p0, const FloatPoint& p1)
+static inline bool NODELETE lineIntersectsCircle(const FloatPoint& center, float radius, const FloatPoint& p0, const FloatPoint& p1)
 {
     float x0 = p0.x() - center.x(), y0 = p0.y() - center.y();
     float x1 = p1.x() - center.x(), y1 = p1.y() - center.y();

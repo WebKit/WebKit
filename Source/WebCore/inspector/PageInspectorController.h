@@ -80,7 +80,7 @@ public:
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
-    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     void inspectedPageDestroyed();
@@ -90,7 +90,7 @@ public:
 
     WEBCORE_EXPORT void show();
 
-    WEBCORE_EXPORT void setInspectorFrontendClient(InspectorFrontendClient*);
+    WEBCORE_EXPORT void NODELETE setInspectorFrontendClient(InspectorFrontendClient*);
     unsigned inspectionLevel() const;
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
 
@@ -108,7 +108,7 @@ public:
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
     WEBCORE_EXPORT void getHighlight(InspectorOverlay::Highlight&, InspectorOverlay::CoordinateSystem) const;
     void hideHighlight();
-    Node* highlightedNode() const;
+    Node* NODELETE highlightedNode() const;
 
     WEBCORE_EXPORT void setIndicating(bool);
 
@@ -119,8 +119,8 @@ public:
     bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
     WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
-    WEBCORE_EXPORT unsigned gridOverlayCount() const;
-    WEBCORE_EXPORT unsigned flexOverlayCount() const;
+    WEBCORE_EXPORT unsigned NODELETE gridOverlayCount() const;
+    WEBCORE_EXPORT unsigned NODELETE flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;
 
     InspectorBackendClient* inspectorBackendClient() const LIFETIME_BOUND { return m_inspectorBackendClient.get(); }

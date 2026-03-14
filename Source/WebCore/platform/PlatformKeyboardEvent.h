@@ -118,7 +118,7 @@ namespace WebCore {
 
         WEBCORE_EXPORT static bool currentCapsLockState();
         WEBCORE_EXPORT static void getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey);
-        WEBCORE_EXPORT static void setCurrentModifierState(OptionSet<Modifier>);
+        WEBCORE_EXPORT static void NODELETE setCurrentModifierState(OptionSet<Modifier>);
         WEBCORE_EXPORT static OptionSet<Modifier> currentStateOfModifierKeys();
 
 #if PLATFORM(COCOA)

@@ -168,7 +168,7 @@ protected:
         RefPtr<JSON::Array> children;
         TimelineRecordType type;
     };
-    TimelineRecordEntry* lastRecordEntry();
+    TimelineRecordEntry* NODELETE lastRecordEntry();
 
     void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, std::optional<double> startTime = std::nullopt);

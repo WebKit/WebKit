@@ -60,7 +60,7 @@ public:
     bool hasAuthorCounterStyles() const { return !m_authorCounterStyles.isEmpty(); }
     void clearAuthorCounterStyles();
 
-    bool operator==(const CSSCounterStyleRegistry&) const;
+    bool NODELETE operator==(const CSSCounterStyleRegistry&) const;
 
 private:
     static CounterStyleMap& NODELETE userAgentCounterStyles();

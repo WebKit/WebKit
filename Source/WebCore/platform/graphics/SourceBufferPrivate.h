@@ -135,7 +135,7 @@ public:
     WEBCORE_EXPORT Vector<PlatformTimeRanges> trackBuffersRanges() const;
 
     // Methods used by MediaSourcePrivate
-    bool hasReceivedFirstInitializationSegment() const;
+    bool NODELETE hasReceivedFirstInitializationSegment() const;
 
     virtual size_t platformMaximumBufferSize() const { return 0; }
     virtual Ref<GenericPromise> setMaximumBufferSize(size_t);
@@ -245,7 +245,7 @@ private:
     using OperationPromise = NativePromise<void, PlatformMediaError, WTF::PromiseOption::Default | WTF::PromiseOption::NonExclusive>;
 
     void ensureWeakOnDispatcher(Function<void(SourceBufferPrivate&)>&&);
-    MediaPromise& currentAppendProcessing() const;
+    MediaPromise& NODELETE currentAppendProcessing() const;
 
     bool m_hasAudio WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { false };
     bool m_hasVideo WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { false };

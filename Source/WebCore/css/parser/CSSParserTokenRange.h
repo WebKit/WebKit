@@ -97,7 +97,7 @@ public:
         skip(m_tokens, i);
     }
 
-    void trimTrailingWhitespace();
+    void NODELETE trimTrailingWhitespace();
     const CSSParserToken& NODELETE consumeLast() LIFETIME_BOUND;
 
     CSSParserTokenRange consumeAll() { return { std::exchange(m_tokens, std::span<const CSSParserToken> { }) }; }

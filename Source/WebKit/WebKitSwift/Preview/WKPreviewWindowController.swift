@@ -26,10 +26,10 @@
 import OSLog
 
 #if USE_APPLE_INTERNAL_SDK
-@_spi(PreviewApplication) internal import QuickLook
+@_spi(PreviewApplication) import QuickLook
 #else
 // FIXME: rdar://152166678 Rename this back to `QuickLook_SPI`.
-internal import QuickLook_SPI_Temp
+import QuickLook_SPI_Temp
 #endif
 
 @objc

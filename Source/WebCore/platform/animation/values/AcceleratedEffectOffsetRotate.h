@@ -40,8 +40,8 @@ struct AcceleratedEffectOffsetRotate {
 
 // MARK: - Blending
 
-bool canBlend(const AcceleratedEffectOffsetRotate&, const AcceleratedEffectOffsetRotate&);
-AcceleratedEffectOffsetRotate blend(const AcceleratedEffectOffsetRotate&, const AcceleratedEffectOffsetRotate&, const BlendingContext&);
+bool NODELETE canBlend(const AcceleratedEffectOffsetRotate&, const AcceleratedEffectOffsetRotate&);
+AcceleratedEffectOffsetRotate NODELETE blend(const AcceleratedEffectOffsetRotate&, const AcceleratedEffectOffsetRotate&, const BlendingContext&);
 
 } // namespace WebCore
 

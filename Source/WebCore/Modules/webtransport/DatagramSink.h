@@ -38,7 +38,7 @@ public:
     static Ref<DatagramSink> create(WebTransportSession* session) { return adoptRef(*new DatagramSink(session)); }
     ~DatagramSink();
 
-    void attachTo(WebTransportDatagramsWritable&);
+    void NODELETE attachTo(WebTransportDatagramsWritable&);
 
 private:
     DatagramSink(WebTransportSession*);

@@ -68,7 +68,7 @@ public:
     WEBCORE_EXPORT static Ref<Pattern> create(SourceImage&& tileImage, const Parameters& = { });
     WEBCORE_EXPORT ~Pattern();
 
-    WEBCORE_EXPORT const SourceImage& tileImage() const;
+    WEBCORE_EXPORT const SourceImage& NODELETE tileImage() const;
     WEBCORE_EXPORT void setTileImage(SourceImage&&);
 
     WEBCORE_EXPORT RefPtr<NativeImage> tileNativeImage() const;
@@ -83,7 +83,7 @@ public:
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform) const;
 #endif
 
-    void setPatternSpaceTransform(const AffineTransform&);
+    void NODELETE setPatternSpaceTransform(const AffineTransform&);
 
     const AffineTransform& patternSpaceTransform() const { return m_parameters.patternSpaceTransform; };
     bool repeatX() const { return m_parameters.repeatX; }

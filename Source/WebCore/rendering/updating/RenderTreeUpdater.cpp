@@ -95,7 +95,7 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCa
 
 RenderTreeUpdater::~RenderTreeUpdater() = default;
 
-static RefPtr<Element> findRenderingAncestor(Node& node)
+static RefPtr<Element> NODELETE findRenderingAncestor(Node& node)
 {
     for (SUPPRESS_UNCOUNTED_LOCAL auto& ancestor : composedTreeAncestors(node)) {
         if (ancestor.renderer())

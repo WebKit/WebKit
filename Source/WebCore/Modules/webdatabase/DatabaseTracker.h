@@ -116,7 +116,7 @@ public:
     WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskDidFinish();
 #endif
     
-    void setClient(DatabaseManagerClient*);
+    void NODELETE setClient(DatabaseManagerClient*);
 
     // From a secondary thread, must be thread safe with its data
     void scheduleNotifyDatabaseChanged(const SecurityOriginData&, const String& name);

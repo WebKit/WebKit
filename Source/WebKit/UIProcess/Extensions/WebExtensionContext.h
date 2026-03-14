@@ -173,7 +173,7 @@ public:
 
     static bool isURLForAnyExtension(const URL&);
 
-    static WebExtensionContext* get(WebExtensionContextIdentifier);
+    static WebExtensionContext* NODELETE get(WebExtensionContextIdentifier);
 
     explicit WebExtensionContext(Ref<WebExtension>&&);
 
@@ -552,7 +552,7 @@ public:
 #endif
 
     void userGesturePerformed(WebExtensionTab&);
-    bool hasActiveUserGesture(WebExtensionTab&) const;
+    bool NODELETE hasActiveUserGesture(WebExtensionTab&) const;
     void clearUserGesture(WebExtensionTab&);
 
     bool NODELETE inTestingMode() const;
@@ -691,7 +691,7 @@ private:
 
     bool isBackgroundPage(WebCore::FrameIdentifier) const;
     bool isBackgroundPage(WebPageProxyIdentifier) const;
-    bool backgroundContentIsLoaded() const;
+    bool NODELETE backgroundContentIsLoaded() const;
 
     void loadBackgroundWebViewDuringLoad();
     void loadBackgroundWebViewIfNeeded();
@@ -731,7 +731,7 @@ private:
     void unloadInspectorBackgroundPage(WebInspectorUIProxy&);
 
     RefPtr<API::InspectorExtension> inspectorExtension(WebPageProxyIdentifier) const;
-    RefPtr<WebInspectorUIProxy> inspector(const API::InspectorExtension&) const;
+    RefPtr<WebInspectorUIProxy> NODELETE inspector(const API::InspectorExtension&) const;
     HashSet<Ref<WebProcessProxy>> processes(const API::InspectorExtension&) const;
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
@@ -1159,7 +1159,7 @@ private:
     Deque<TestMessage> m_testStartedQueue;
     Deque<TestMessage> m_testFinishedQueue;
 
-    bool hasTestEventListeners(WebExtensionEventListenerType);
+    bool NODELETE hasTestEventListeners(WebExtensionEventListenerType);
     void sendQueuedTestMessagesIfNeeded(WebExtensionEventListenerType);
 #if PLATFORM(COCOA)
     void addTestMessageToQueue(const String& message, id argument, WebExtensionEventListenerType);

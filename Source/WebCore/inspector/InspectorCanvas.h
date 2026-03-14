@@ -65,7 +65,7 @@ public:
 
     const CanvasRenderingContext& canvasContext() const { return m_context; }
     CanvasRenderingContext& canvasContext() { return m_context; }
-    HTMLCanvasElement* canvasElement() const;
+    HTMLCanvasElement* NODELETE canvasElement() const;
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -73,11 +73,11 @@ public:
 
     HashSet<Element*> clientNodes() const;
 
-    void canvasChanged();
+    void NODELETE canvasChanged();
 
     void resetRecordingData();
-    bool hasRecordingData() const;
-    bool currentFrameHasData() const;
+    bool NODELETE hasRecordingData() const;
+    bool NODELETE currentFrameHasData() const;
 
     void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
 
@@ -89,11 +89,11 @@ public:
     void setRecordingName(const String& name) { m_recordingName = name; }
 
     void setBufferLimit(long);
-    bool hasBufferSpace() const;
+    bool NODELETE hasBufferSpace() const;
     long bufferUsed() const { return m_bufferUsed; }
 
     void setFrameCount(long);
-    bool overFrameCount() const;
+    bool NODELETE overFrameCount() const;
 
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);
     Ref<Inspector::Protocol::Recording::Recording> releaseObjectForRecording();

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static ScreenProperties& screenProperties()
+static ScreenProperties& NODELETE screenProperties()
 {
     static NeverDestroyed<ScreenProperties> screenProperties;
     return screenProperties;

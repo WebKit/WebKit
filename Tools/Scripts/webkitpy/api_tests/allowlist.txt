@@ -215,7 +215,6 @@ TestWebKitAPI.AffineTransform
 TestWebKitAPI.AnimatedResize
 TestWebKitAPI.AnimationFrameRate
 TestWebKitAPI.ApduTest
-TestWebKitAPI.AppHighlights
 TestWebKitAPI.AppleLanguagesTest
 TestWebKitAPI.ApplePay
 TestWebKitAPI.ApplicationManifestParserTest

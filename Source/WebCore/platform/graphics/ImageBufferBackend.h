@@ -115,8 +115,8 @@ public:
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
 
-    WEBCORE_EXPORT static IntSize calculateSafeBackendSize(const Parameters&);
-    WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
+    WEBCORE_EXPORT static IntSize NODELETE calculateSafeBackendSize(const Parameters&);
+    WEBCORE_EXPORT static size_t NODELETE calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
     WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const Parameters&);
 
     virtual GraphicsContext& context() = 0;
@@ -186,7 +186,7 @@ protected:
     PixelFormat pixelFormat() const { return m_parameters.bufferFormat.pixelFormat; }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    void convertToLuminanceMaskFloat16();
+    void NODELETE convertToLuminanceMaskFloat16();
 #endif
     void convertToLuminanceMaskUint8();
 

@@ -61,7 +61,7 @@ InspectorAuditResourcesObject::InspectorAuditResourcesObject(InspectorAuditAgent
 
 InspectorAuditResourcesObject::~InspectorAuditResourcesObject()
 {
-    for (auto* cachedResource : m_resources.values())
+    for (RefPtr cachedResource : m_resources.values())
         cachedResource->removeClient(clientForResource(*cachedResource));
 }
 
@@ -75,7 +75,7 @@ ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResou
     if (!frame)
         return Exception { ExceptionCode::NotAllowedError, "Cannot be called with a detached document"_s };
 
-    for (auto* cachedResource : ResourceUtilities::cachedResourcesForFrame(frame)) {
+    for (RefPtr cachedResource : ResourceUtilities::cachedResourcesForFrame(frame)) {
         Resource resource;
         resource.url = cachedResource->url().string();
         resource.mimeType = cachedResource->mimeType();
@@ -109,7 +109,7 @@ ExceptionOr<InspectorAuditResourcesObject::ResourceContent> InspectorAuditResour
     if (!frame)
         return Exception { ExceptionCode::NotAllowedError, "Cannot be called with a detached document"_s };
 
-    auto* cachedResource = m_resources.get(id);
+    RefPtr cachedResource = m_resources.get(id);
     if (!cachedResource)
         return Exception { ExceptionCode::NotFoundError, makeString("Unknown identifier "_s, id) };
 

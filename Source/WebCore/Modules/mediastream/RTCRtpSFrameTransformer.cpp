@@ -46,7 +46,7 @@ static inline void NODELETE writeUInt64(std::span<uint8_t> data, uint64_t value,
         data[i] = (value >> ((valueLength - 1 - i) * 8)) & 0xff;
 }
 
-static inline uint64_t readUInt64(std::span<const uint8_t> data)
+static inline uint64_t NODELETE readUInt64(std::span<const uint8_t> data)
 {
     uint64_t value = 0;
     for (auto byte : data)
@@ -109,7 +109,7 @@ struct SFrameHeaderInfo {
     uint64_t keyId;
     uint64_t counter;
 };
-static inline std::optional<SFrameHeaderInfo> parseSFrameHeader(std::span<const uint8_t> data)
+static inline std::optional<SFrameHeaderInfo> NODELETE parseSFrameHeader(std::span<const uint8_t> data)
 {
     auto* start = data.data();
 

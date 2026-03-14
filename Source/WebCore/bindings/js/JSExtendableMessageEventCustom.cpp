@@ -68,12 +68,12 @@ JSC::JSValue JSExtendableMessageEvent::ports(JSC::JSGlobalObject& lexicalGlobalO
 }
 
 template<typename Visitor>
-void JSExtendableMessageEvent::visitAdditionalChildren(Visitor& visitor)
+void JSExtendableMessageEvent::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().data().visit(visitor);
-    wrapped().cachedPorts().visit(visitor);
+    wrapped().data().visitInGCThread(visitor);
+    wrapped().cachedPorts().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSExtendableMessageEvent);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSExtendableMessageEvent);
 
 }

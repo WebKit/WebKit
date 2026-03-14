@@ -53,9 +53,9 @@ private:
 
     bool isJSTestVoidCallbackFunction() const final { return true; }
 
-    void visitJSFunction(JSC::AbstractSlotVisitor&) override;
+    void visitJSFunctionInGCThread(JSC::AbstractSlotVisitor&) override;
 
-    void visitJSFunction(JSC::SlotVisitor&) override;
+    void visitJSFunctionInGCThread(JSC::SlotVisitor&) override;
 
     JSCallbackData* m_data;
 };

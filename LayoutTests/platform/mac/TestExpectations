@@ -745,8 +745,6 @@ imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [
 
 ## --- End W3C Imported Media Source Tests
 
-# <rdar://problem/18858636>
-media/media-source/media-source-init-segment-duration.html
 # --- End Media Source Tests ---
 
 # --- Start WebVTT Tests ---
@@ -2413,8 +2411,6 @@ webkit.org/b/299322 imported/w3c/web-platform-tests/uievents/mouse/mouse_boundar
 
 [ x86_64 ] imported/w3c/web-platform-tests/svg/fonts/font-size-adjust-scale-text.svg [ Failure Pass ]
 
-webkit.org/b/300137 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Pass Failure ]
-
 webkit.org/b/300337 fast/images/imagebitmap-memory.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/300715
@@ -2501,3 +2497,7 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-r
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-x.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-y.html [ Skip ]
+
+# Cocoa platforms use data URLs for pasted images; blob URL tests are for Glib ports
+editing/pasteboard/paste-image-as-blob-url.html [ Skip ]
+editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Skip ]

@@ -88,7 +88,7 @@ class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExte
 
 public:
     static Ref<WebExtensionController> create(Ref<WebExtensionControllerConfiguration> configuration) { return adoptRef(*new WebExtensionController(configuration)); }
-    static RefPtr<WebExtensionController> get(WebExtensionControllerIdentifier);
+    static RefPtr<WebExtensionController> NODELETE get(WebExtensionControllerIdentifier);
 
     void ref() const final { API::ObjectImpl<API::Object::Type::WebExtensionController>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::WebExtensionController>::deref(); }

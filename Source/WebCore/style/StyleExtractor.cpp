@@ -67,7 +67,7 @@ enum class ForcedLayout : uint8_t { No, Yes, ParentDocument };
 using PhysicalDirection = BoxSide;
 using FlowRelativeDirection = LogicalBoxSide;
 
-static Element* styleElementForNode(Node* node)
+static Element* NODELETE styleElementForNode(Node* node)
 {
     if (!node)
         return nullptr;

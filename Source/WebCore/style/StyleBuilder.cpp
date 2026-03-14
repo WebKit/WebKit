@@ -94,7 +94,7 @@ inline bool NODELETE isValidVisitedLinkProperty(CSSPropertyID id)
     return false;
 }
 
-static auto positionTryFallbackProperties(const BuilderContext& context)
+static const StyleProperties* NODELETE positionTryFallbackProperties(const BuilderContext& context)
 {
     return context.positionTryFallback ? context.positionTryFallback->properties.get() : nullptr;
 }

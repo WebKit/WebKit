@@ -173,8 +173,8 @@ enum TextAlign {
 
 String compositeOperatorName(WebCore::CompositeOperator, WebCore::BlendMode);
 String blendModeName(WebCore::BlendMode);
-bool parseBlendMode(const String&, WebCore::BlendMode&);
-bool parseCompositeAndBlendOperator(const String&, WebCore::CompositeOperator&, WebCore::BlendMode&);
+bool NODELETE parseBlendMode(const String&, WebCore::BlendMode&);
+bool NODELETE parseCompositeAndBlendOperator(const String&, WebCore::CompositeOperator&, WebCore::BlendMode&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::BlendMode);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::CompositeOperator);

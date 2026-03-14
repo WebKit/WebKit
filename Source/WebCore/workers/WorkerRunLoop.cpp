@@ -75,7 +75,7 @@ public:
     void setFireInterval(Seconds interval) final { m_nextFireTime = MonotonicTime::now() + interval; }
     void stop() final { m_nextFireTime = MonotonicTime { }; }
 
-    bool isActive() { return m_sharedTimerFunction && m_nextFireTime; }
+    bool NODELETE isActive() { return m_sharedTimerFunction && m_nextFireTime; }
     Seconds fireTimeDelay() { return std::max(0_s, m_nextFireTime - MonotonicTime::now()); }
     void fire() { m_sharedTimerFunction(); }
 
@@ -93,12 +93,12 @@ public:
     {
     }
 
-    const String mode() const
+    const String NODELETE mode() const
     {
         return m_mode;
     }
 
-    bool isDefaultMode() const
+    bool NODELETE isDefaultMode() const
     {
         return m_defaultMode;
     }

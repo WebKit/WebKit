@@ -137,9 +137,8 @@ namespace JSC {
     inline const Identifier& IdentifierArena::makeNumericIdentifier(VM& vm, double number)
     {
         Identifier token;
-        // This is possible that number can be -0, but it is OK since ToString(-0) is "0".
-        if (canBeInt32(number))
-            token = Identifier::from(vm, static_cast<int32_t>(number));
+        if (auto int32Value = tryConvertToStrictInt32(number))
+            token = Identifier::from(vm, int32Value.value());
         else
             token = Identifier::from(vm, number);
         m_identifiers.append(WTF::move(token));

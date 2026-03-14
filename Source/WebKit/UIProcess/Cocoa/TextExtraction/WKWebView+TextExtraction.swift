@@ -23,15 +23,15 @@
 
 #if HAVE_UIINTELLIGENCESUPPORT_FRAMEWORK
 
-internal import WebKit_Internal
-internal import WebKit_Private
+import WebKit_Internal
+import WebKit_Private
 
-@_spiOnly import UIIntelligenceSupport
+@_spiOnly public import UIIntelligenceSupport
 
 #if canImport(UIKit)
-@_spi(UIIntelligenceSupport) import UIKit
+@_spi(UIIntelligenceSupport) public import UIKit
 #else
-@_spi(UIIntelligenceSupport) import AppKit
+@_spi(UIIntelligenceSupport) public import AppKit
 #endif
 
 private func createEditable(for editable: WKTextExtractionEditable?) -> IntelligenceElement.Text.Editable? {

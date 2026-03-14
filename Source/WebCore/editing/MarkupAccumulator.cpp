@@ -610,7 +610,7 @@ static void appendDocumentType(StringBuilder& result, const DocumentType& docume
     );
 }
 
-static bool isURLAttributeForElement(const Element& element, const Attribute& attribute)
+static bool NODELETE isURLAttributeForElement(const Element& element, const Attribute& attribute)
 {
     return element.isURLAttribute(attribute) || element.isHTMLContentAttribute(attribute);
 }

@@ -37,6 +37,7 @@
 #import "WKBaseScrollView.h"
 #import "WKScrollView.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIScrollView.h>
@@ -342,12 +343,24 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
             scrollView.get().delegate = m_scrollViewDelegate.get();
             scrollView.get().baseScrollViewDelegate = m_scrollViewDelegate.get();
 
+            bool useAdaptiveDecelerationTracking = false;
+#if HAVE(UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR)
+            if (CheckedPtr scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy())
+                useAdaptiveDecelerationTracking = protect(protect(scrollingCoordinatorProxy->webPageProxy())->preferences())->scrollViewAdaptiveDecelerationTrackingEnabled();
+
+            if (useAdaptiveDecelerationTracking) [[unlikely]] {
+                if ([scrollView respondsToSelector:@selector(_setDecelerationTrackingBehavior:)])
+                    [scrollView _setDecelerationTrackingBehavior:_UIScrollViewDecelerationTrackingBehaviorAdaptive];
+            } else
+#endif
+            {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if ([scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
-                [scrollView setTracksImmediatelyWhileDecelerating:NO];
-                [scrollView _setAvoidsJumpOnInterruptedBounce:YES];
-            }
+                if ([scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
+                    scrollView.get().tracksImmediatelyWhileDecelerating = NO;
+                    scrollView.get()._avoidsJumpOnInterruptedBounce = YES;
+                }
 ALLOW_DEPRECATED_DECLARATIONS_END
+            }
         }
 
         bool recomputeInsets = scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::TotalContentsSize);

@@ -46,7 +46,7 @@ public:
         Yes
     };
     WEBCORE_EXPORT UniqueRef<MediaSamplesBlock> convert(const MediaSample&, SetTrackInfo = SetTrackInfo::Yes);
-    WEBCORE_EXPORT RefPtr<const TrackInfo> currentTrackInfo() const;
+    WEBCORE_EXPORT RefPtr<const TrackInfo> NODELETE currentTrackInfo() const;
     WEBCORE_EXPORT void setTrackInfo(Ref<const TrackInfo>&&);
 
     WEBCORE_EXPORT RefPtr<MediaSample> convert(MediaSamplesBlock&&);

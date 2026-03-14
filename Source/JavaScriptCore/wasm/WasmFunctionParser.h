@@ -1021,7 +1021,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
             return { };
 
         if (Context::tierSupportsSIMD()) {
-            m_expressionStack.constructAndAppend(Types::V128, m_context.addConstant(constant));
+            m_expressionStack.constructAndAppend(Types::V128, m_context.addSIMDConstant(constant));
             return { };
         }
         return pushUnreachable(Types::V128);
@@ -1304,7 +1304,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         if (Context::tierSupportsSIMD()) {
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addExtractLane(SIMDInfo { lane, signMode }, laneIdx, v, result));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDExtractLane(SIMDInfo { lane, signMode }, laneIdx, v, result));
             m_expressionStack.constructAndAppend(simdScalarType(lane), result);
             return { };
         }
@@ -1326,7 +1326,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         if (Context::tierSupportsSIMD()) {
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addReplaceLane(SIMDInfo { lane, signMode }, laneIdx, v, s, result));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDReplaceLane(SIMDInfo { lane, signMode }, laneIdx, v, s, result));
             m_expressionStack.constructAndAppend(Types::V128, result);
             return { };
         }

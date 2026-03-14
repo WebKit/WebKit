@@ -431,7 +431,7 @@ TEST(DragAndDropTests, CanDragImageWhenNotFirstResponder)
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 250)];
 
     NSURL *droppedImageURL = [NSURL URLWithString:[webView stringByEvaluatingJavaScript:@"editor.querySelector('img').src"]];
-    EXPECT_WK_STREQ("blob", droppedImageURL.scheme);
+    EXPECT_WK_STREQ("data", droppedImageURL.scheme);
 }
 
 TEST(DragAndDropTests, ContentEditableMoveParagraphs)

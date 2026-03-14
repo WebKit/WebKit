@@ -5703,4 +5703,26 @@ WKRetainPtr<WKTypeRef> TestController::handleAXSearchPredicate(WKDictionaryRef m
 
 #endif // PLATFORM(MAC)
 
+#if !PLATFORM(COCOA)
+void TestController::doAfterProcessingAllPendingMouseEvents(CompletionHandler<void()>&& handler)
+{
+    auto* completionHandler = new CompletionHandler<void()>(WTF::move(handler));
+    WKPageDoAfterProcessingAllPendingMouseEvents(mainWebView()->page(), completionHandler, [](void* userData) {
+        auto* completionHandler = static_cast<CompletionHandler<void()>*>(userData);
+        (*completionHandler)();
+        delete completionHandler;
+    });
+}
+
+void TestController::doAfterProcessingAllPendingKeyEvents(CompletionHandler<void()>&& handler)
+{
+    auto* completionHandler = new CompletionHandler<void()>(WTF::move(handler));
+    WKPageDoAfterProcessingAllPendingKeyEvents(mainWebView()->page(), completionHandler, [](void* userData) {
+        auto* completionHandler = static_cast<CompletionHandler<void()>*>(userData);
+        (*completionHandler)();
+        delete completionHandler;
+    });
+}
+#endif
+
 } // namespace WTR

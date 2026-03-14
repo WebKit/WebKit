@@ -48,7 +48,7 @@ public:
 
     ~ImageFrame();
 
-    static const ImageFrame& defaultFrame();
+    static const ImageFrame& NODELETE defaultFrame();
 
     ImageFrame& operator=(const ImageFrame& other);
 
@@ -56,8 +56,8 @@ public:
     unsigned clearImage(std::optional<ShouldDecodeToHDR> = std::nullopt);
     unsigned clear();
 
-    void setDecodingStatus(DecodingStatus);
-    DecodingStatus decodingStatus() const;
+    void NODELETE setDecodingStatus(DecodingStatus);
+    DecodingStatus NODELETE decodingStatus() const;
 
     bool isInvalid() const { return m_decodingStatus == DecodingStatus::Invalid; }
     bool isPartial() const { return m_decodingStatus == DecodingStatus::Partial; }
@@ -87,8 +87,8 @@ public:
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
     bool hasNativeImage(ShouldDecodeToHDR shouldDecodeToHDR) const { return source(shouldDecodeToHDR).hasNativeImage(); }
-    bool hasNativeImage(ShouldDecodeToHDR, SubsamplingLevel) const;
-    bool hasFullSizeNativeImage(ShouldDecodeToHDR, SubsamplingLevel) const;
+    bool NODELETE hasNativeImage(ShouldDecodeToHDR, SubsamplingLevel) const;
+    bool NODELETE hasFullSizeNativeImage(ShouldDecodeToHDR, SubsamplingLevel) const;
     bool hasDecodedNativeImageCompatibleWithOptions(const DecodingOptions&, SubsamplingLevel) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 

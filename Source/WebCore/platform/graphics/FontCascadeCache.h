@@ -209,14 +209,14 @@ class FontFamilyName {
 public:
     FontFamilyName();
     FontFamilyName(const AtomString&);
-    const AtomString& string() const;
+    const AtomString& NODELETE string() const;
     friend void add(Hasher&, const FontFamilyName&);
 
 private:
     AtomString m_name;
 };
 
-bool operator==(const FontFamilyName&, const FontFamilyName&);
+bool NODELETE operator==(const FontFamilyName&, const FontFamilyName&);
 
 struct FontCascadeCacheKey {
     FontDescriptionKey fontDescriptionKey; // Shared with the lower level FontCache (caching Font objects)
@@ -257,6 +257,7 @@ public:
 
     void invalidate();
     void clearMeasurementCaches();
+    void clearShapedTextCaches();
     void pruneUnreferencedEntries();
     void pruneSystemFallbackFonts();
     Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, FontSelector*);

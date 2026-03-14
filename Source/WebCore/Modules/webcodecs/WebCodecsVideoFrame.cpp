@@ -66,7 +66,7 @@ static MediaTime timestampToMediaTime(int64_t timestamp)
     return MediaTime::createWithDouble(Seconds::fromMicroseconds(timestamp).value());
 }
 
-static int64_t mediaTimeToTimestamp(MediaTime mediaTime)
+static int64_t NODELETE mediaTimeToTimestamp(MediaTime mediaTime)
 {
     return Seconds(mediaTime.toDouble()).microseconds();
 }

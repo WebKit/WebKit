@@ -67,7 +67,7 @@ public:
     void NODELETE updateTexture(const WebModel::UpdateTextureDescriptor&);
     void NODELETE updateMaterial(const WebModel::UpdateMaterialDescriptor&);
     void NODELETE setTransform(const simd_float4x4&);
-    void setCameraDistance(float);
+    void NODELETE setCameraDistance(float);
     void NODELETE setBackgroundColor(const simd_float3&);
     void NODELETE setEnvironmentMap(const WebModel::ImageAsset&);
     void NODELETE play(bool);

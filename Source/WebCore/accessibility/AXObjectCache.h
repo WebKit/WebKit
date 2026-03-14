@@ -849,7 +849,7 @@ private:
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void selectedTextRangeTimerFired();
-    Seconds platformSelectedTextRangeDebounceInterval() const;
+    Seconds NODELETE platformSelectedTextRangeDebounceInterval() const;
     void updateTreeSnapshotTimerFired();
     void processQueuedIsolatedNodeUpdates();
 

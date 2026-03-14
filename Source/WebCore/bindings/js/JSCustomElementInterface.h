@@ -123,7 +123,7 @@ public:
 
     virtual ~JSCustomElementInterface();
 
-    template<typename Visitor> void visitJSFunctions(Visitor&) const;
+    template<typename Visitor> void visitJSFunctionsInGCThread(Visitor&) const;
 private:
     JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
 

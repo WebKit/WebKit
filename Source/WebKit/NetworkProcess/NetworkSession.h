@@ -221,7 +221,7 @@ public:
 
     void removeSoftUpdateLoader(ServiceWorkerSoftUpdateLoader* loader) { m_softUpdateLoaders.remove(loader); }
     void addNavigationPreloaderTask(ServiceWorkerFetchTask&);
-    ServiceWorkerFetchTask* navigationPreloaderTaskFromFetchIdentifier(WebCore::FetchIdentifier);
+    ServiceWorkerFetchTask* NODELETE navigationPreloaderTaskFromFetchIdentifier(WebCore::FetchIdentifier);
     void removeNavigationPreloaderTask(ServiceWorkerFetchTask&);
 
     WebCore::SWServer* swServer() { return m_swServer.get(); }
@@ -268,7 +268,7 @@ public:
     virtual void removeWebPageNetworkParameters(WebPageProxyIdentifier) { }
     virtual size_t countNonDefaultSessionSets() const { return 0; }
 
-    String attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier) const;
+    String NODELETE attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier) const;
 
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     void reportNetworkIssue(WebPageProxyIdentifier, const URL&);

@@ -194,7 +194,7 @@ static std::optional<std::pair<WebCore::RenderImage&, WebCore::Image&>> imageRen
     if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
         return std::nullopt;
 
-    RefPtr image = renderImage->cachedImage()->imageForRenderer(renderImage);
+    RefPtr image = protect(renderImage->cachedImage())->imageForRenderer(renderImage);
     if (!image || image->width() <= 1 || image->height() <= 1)
         return std::nullopt;
 
@@ -242,7 +242,7 @@ static void imagePositionInformation(WebPage& page, WebCore::Element& element, c
 
     auto& [renderImage, image] = *rendererAndImage;
     info.isImage = true;
-    info.imageURL = page.applyLinkDecorationFiltering(protect(element.document())->completeURL(renderImage.cachedImage()->url().string()), WebCore::LinkDecorationFilteringTrigger::Unspecified);
+    info.imageURL = page.applyLinkDecorationFiltering(protect(element.document())->completeURL(protect(renderImage.cachedImage())->url().string()), WebCore::LinkDecorationFilteringTrigger::Unspecified);
     info.imageMIMEType = image.mimeType();
     info.isAnimatedImage = image.isAnimated();
     info.isAnimating = image.isAnimating();
@@ -321,7 +321,7 @@ static void elementPositionInformation(WebPage& page, WebCore::Element& element,
             if (request.includeImageData) {
                 if (auto rendererAndImage = imageRendererAndImage(element)) {
                     auto& [renderImage, image] = *rendererAndImage;
-                    info.imageURL = page.applyLinkDecorationFiltering(document->completeURL(renderImage.cachedImage()->url().string()), WebCore::LinkDecorationFilteringTrigger::Unspecified);
+                    info.imageURL = page.applyLinkDecorationFiltering(document->completeURL(protect(renderImage.cachedImage())->url().string()), WebCore::LinkDecorationFilteringTrigger::Unspecified);
                     info.imageMIMEType = image.mimeType();
                     info.image = createShareableBitmap(renderImage, { WebCore::screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });
                 }

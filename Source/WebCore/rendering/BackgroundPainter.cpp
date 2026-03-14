@@ -555,7 +555,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 if (m_renderer.element())
                     m_renderer.element()->setHasEverPaintedImages(true);
 
-                if (auto* image = bgImage->cachedImage(); image && image->currentFrameIsComplete(&m_renderer)) {
+                if (RefPtr image = bgImage->cachedImage(); image && image->currentFrameIsComplete(&m_renderer)) {
                     if (auto styleable = Styleable::fromRenderer(m_renderer))
                         document().didPaintImage(styleable->element, image, geometry.destinationRect);
                 }
@@ -655,32 +655,32 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
         if (renderer.settings().fixedBackgroundsPaintRelativeToDocument())
             viewportRect = view.unscaledDocumentRect();
         else {
-            LocalFrameView& frameView = view.frameView();
-            bool useFixedLayout = frameView.useFixedLayout() && !frameView.fixedLayoutSize().isEmpty();
+            CheckedRef frameView = view.frameView();
+            bool useFixedLayout = frameView->useFixedLayout() && !frameView->fixedLayoutSize().isEmpty();
 
             if (useFixedLayout) {
                 // Use the fixedLayoutSize() when useFixedLayout() because the rendering will scale
                 // down the frameView to to fit in the current viewport.
-                viewportRect.setSize(frameView.fixedLayoutSize());
+                viewportRect.setSize(frameView->fixedLayoutSize());
             } else
-                viewportRect.setSize(frameView.sizeForVisibleContent());
+                viewportRect.setSize(frameView->sizeForVisibleContent());
 
             if (renderer.fixedBackgroundPaintsInLocalCoordinates()) {
                 if (!useFixedLayout) {
                     // Shifting location by the content insets is needed for layout tests which expect
                     // layout to be shifted when calling window.internals.setObscuredContentInsets().
-                    obscuredContentInsets = frameView.obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
+                    obscuredContentInsets = frameView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
                     viewportRect.setLocation({ -obscuredContentInsets.left(), -obscuredContentInsets.top() });
                 }
-            } else if (useFixedLayout || frameView.frameScaleFactor() != 1) {
+            } else if (useFixedLayout || frameView->frameScaleFactor() != 1) {
                 // scrollPositionForFixedPosition() is adjusted for page scale and it does not include
                 // insets so do not add it to the calculation below.
-                viewportRect.setLocation(frameView.scrollPositionForFixedPosition());
+                viewportRect.setLocation(frameView->scrollPositionForFixedPosition());
             } else {
                 // documentScrollPositionRelativeToViewOrigin() is already adjusted for content insets
                 // so we need to account for that in calculating the phase size
-                obscuredContentInsets = frameView.obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
-                viewportRect.setLocation(frameView.documentScrollPositionRelativeToViewOrigin());
+                obscuredContentInsets = frameView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
+                viewportRect.setLocation(frameView->documentScrollPositionRelativeToViewOrigin());
             }
 
             left += obscuredContentInsets.left();

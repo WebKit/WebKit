@@ -39,7 +39,7 @@ constexpr auto span8(const char(&p)[N])
     return unsafeMakeSpan<const uint8_t, N - 1>(byteCast<uint8_t>(static_cast<const char*>(p)), N - 1);
 }
 
-static bool hasSignatureForMP4(std::span<const uint8_t> sequence)
+static bool NODELETE hasSignatureForMP4(std::span<const uint8_t> sequence)
 {
     // To determine whether a byte sequence matches the signature for MP4, use the following steps:
     // Let sequence be the byte sequence to be matched, where sequence[s] is byte s in sequence and sequence[0] is the first byte in sequence.
@@ -77,7 +77,7 @@ static bool hasSignatureForMP4(std::span<const uint8_t> sequence)
     return false;
 }
 
-static std::optional<std::pair<uint8_t, int64_t>> parseWebMVint(std::span<const uint8_t> sequence)
+static std::optional<std::pair<uint8_t, int64_t>> NODELETE parseWebMVint(std::span<const uint8_t> sequence)
 {
     size_t index = 0;
     // Let mask be 128.
@@ -123,7 +123,7 @@ static std::optional<std::pair<uint8_t, int64_t>> parseWebMVint(std::span<const 
     return std::make_pair(numberSize, parsedNumber);
 }
 
-static bool hasSignatureForWebM(std::span<const uint8_t> sequence)
+static bool NODELETE hasSignatureForWebM(std::span<const uint8_t> sequence)
 {
     // To determine whether a byte sequence matches the signature for WebM, use the following steps:
     //   1. Let sequence be the byte sequence to be matched, where sequence[s] is byte s in sequence and sequence[0] is the first byte in sequence.
@@ -177,7 +177,7 @@ static bool hasSignatureForWebM(std::span<const uint8_t> sequence)
     return false;
 }
 
-static bool matchMP3Header(std::span<const uint8_t> sequence)
+static bool NODELETE matchMP3Header(std::span<const uint8_t> sequence)
 {
     // To match an mp3 header, using a byte sequence sequence of length length at offset s execute these steps:
 
@@ -226,7 +226,7 @@ struct MP3Frame {
     uint8_t pad;
 };
 
-static uint32_t mp3FrameSize(const MP3Frame& frame)
+static uint32_t NODELETE mp3FrameSize(const MP3Frame& frame)
 {
     // To compute an mp3 frame size, execute these steps:
     // If version is 1, let scale be 144, else, let scale be 72.
@@ -240,7 +240,7 @@ static uint32_t mp3FrameSize(const MP3Frame& frame)
     return size;
 }
 
-static MP3Frame parseMP3Frame(std::span<const uint8_t> sequence)
+static MP3Frame NODELETE parseMP3Frame(std::span<const uint8_t> sequence)
 {
     // Let version be sequence[s + 1] & 0x18 >> 3.
     uint8_t version = (sequence[1] & 0x18) >> 3;
@@ -267,7 +267,7 @@ static MP3Frame parseMP3Frame(std::span<const uint8_t> sequence)
     return { version, bitRate, sampleRate, pad };
 }
 
-static bool hasSignatureForMP3WithoutID3(std::span<const uint8_t> sequence)
+static bool NODELETE hasSignatureForMP3WithoutID3(std::span<const uint8_t> sequence)
 {
     // To determine whether a byte sequence matches the signature for MP3 without ID3, use the following steps:
 

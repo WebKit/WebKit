@@ -568,7 +568,7 @@ static HashSet<Ref<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Fixe
     return nodeSet;
 }
 
-static RefPtr<Node> firstPrecedingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
+static RefPtr<Node> NODELETE firstPrecedingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
 {
     for (auto* sibling = context.previousSibling(); sibling; sibling = sibling->previousSibling()) {
         if (!nodeSet.contains(*sibling))
@@ -577,7 +577,7 @@ static RefPtr<Node> firstPrecedingSiblingNotInNodeSet(Node& context, const HashS
     return nullptr;
 }
 
-static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
+static RefPtr<Node> NODELETE firstFollowingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
 {
     for (auto* sibling = context.nextSibling(); sibling; sibling = sibling->nextSibling()) {
         if (!nodeSet.contains(*sibling))
@@ -842,7 +842,7 @@ void Node::inspect()
         page->inspectorController().inspect(this);
 }
 
-static Node::Editability computeEditabilityFromComputedStyle(const RenderStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
+static Node::Editability NODELETE computeEditabilityFromComputedStyle(const RenderStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
 {
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls invalidateStyleForSubtree(), so the assertion

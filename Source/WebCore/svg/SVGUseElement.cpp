@@ -83,7 +83,7 @@ Ref<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document&
 
 SVGUseElement::~SVGUseElement()
 {
-    if (CachedResourceHandle externalDocument = m_externalDocument)
+    if (RefPtr externalDocument = m_externalDocument)
         externalDocument->removeClient(*this);
 }
 
@@ -673,7 +673,7 @@ void SVGUseElement::updateExternalDocument()
     if (externalDocumentURL == (m_externalDocument ? m_externalDocument->url() : URL()))
         return;
 
-    if (CachedResourceHandle externalDocument = m_externalDocument)
+    if (RefPtr externalDocument = m_externalDocument)
         externalDocument->removeClient(*this);
 
     if (externalDocumentURL.isNull())
@@ -686,8 +686,11 @@ void SVGUseElement::updateExternalDocument()
         options.sniffContent = ContentSniffingPolicy::DoNotSniffContent;
         CachedResourceRequest request { ResourceRequest { WTF::move(externalDocumentURL) }, options };
         request.setInitiator(*this);
-        m_externalDocument = protect(document->cachedResourceLoader())->requestSVGDocument(WTF::move(request)).value_or(nullptr);
-        if (CachedResourceHandle externalDocument = m_externalDocument)
+        if (auto result = protect(document->cachedResourceLoader())->requestSVGDocument(WTF::move(request)))
+            m_externalDocument = WTF::move(result.value());
+        else
+            m_externalDocument = nullptr;
+        if (RefPtr externalDocument = m_externalDocument)
             externalDocument->addClient(*this);
     }
 

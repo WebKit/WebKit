@@ -30,12 +30,19 @@
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @class AVPlayerViewControllerContentSource;
+@class WKSExperienceController;
+
+@protocol WKSExperienceControllerDelegate <NSObject>
+- (void)experienceControllerDidExitFullscreen:(WKSExperienceController *)experienceController;
+@end
 
 NS_SWIFT_MAIN_ACTOR
 @interface WKSExperienceController : NSObject
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithContentSource:(AVPlayerViewControllerContentSource *)contentSource NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, weak) id<WKSExperienceControllerDelegate> delegate;
 
 - (void)enterFullscreenWithCompletionHandler:(NS_SWIFT_UI_ACTOR NS_SWIFT_SENDABLE void (^)(BOOL))completionHandler;
 - (void)exitFullscreenWithCompletionHandler:(NS_SWIFT_UI_ACTOR NS_SWIFT_SENDABLE void (^)(BOOL))completionHandler;

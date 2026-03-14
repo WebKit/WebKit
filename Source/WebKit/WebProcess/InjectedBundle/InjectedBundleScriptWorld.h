@@ -49,13 +49,13 @@ public:
     static Ref<InjectedBundleScriptWorld> create(ContentWorldIdentifier, const String& name, Type = Type::Internal);
     static Ref<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
     static RefPtr<InjectedBundleScriptWorld> get(const WebCore::DOMWrapperWorld&);
-    static InjectedBundleScriptWorld* find(const String&);
+    static InjectedBundleScriptWorld* NODELETE find(const String&);
     static InjectedBundleScriptWorld& normalWorldSingleton();
 
     virtual ~InjectedBundleScriptWorld();
 
     const WebCore::DOMWrapperWorld& NODELETE coreWorld() const;
-    WebCore::DOMWrapperWorld& coreWorld();
+    WebCore::DOMWrapperWorld& NODELETE coreWorld();
 
     void clearWrappers();
     void NODELETE setAllowAutofill();

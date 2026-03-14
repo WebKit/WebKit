@@ -575,7 +575,7 @@ void WebChromeClient::rootFrameRemoved(const WebCore::LocalFrame& frame)
         drawingArea->removeRootFrame(frame.frameID());
 }
 
-static bool shouldSuppressJavaScriptDialogs(LocalFrame& frame)
+static bool NODELETE shouldSuppressJavaScriptDialogs(LocalFrame& frame)
 {
     if (frame.opener() && frame.loader().stateMachine().isDisplayingInitialEmptyDocument() && frame.loader().provisionalDocumentLoader())
         return true;

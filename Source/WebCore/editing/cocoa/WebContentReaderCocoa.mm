@@ -74,6 +74,8 @@
 #import <wtf/FileSystem.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/URLParser.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/text/Base64.h>
 
 #if PLATFORM(MAC)
 #import "LocalDefaultSystemAppearance.h"
@@ -90,6 +92,12 @@ SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, 
 #endif
 
 namespace WebCore {
+
+static String dataURLForImageData(std::span<const uint8_t> data, const String& type)
+{
+    auto mimeType = isDeclaredUTI(type) ? MIMETypeFromUTI(type) : type;
+    return makeString("data:"_s, mimeType, ";base64,"_s, base64Encoded(data));
+}
 
 #if PLATFORM(MACCATALYST)
 
@@ -546,15 +554,21 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
         return sanitizedMarkupForFragmentInDocument(WTF::move(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
     }
 
-    HashMap<AtomString, AtomString> blobURLMap;
+    HashMap<AtomString, AtomString> blobOrDataURLMap;
+    bool useDataURLs = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DataURLForPastedImages);
     for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
         auto& subresourceURL = subresource->url();
         if (!shouldReplaceSubresourceURLWithBlobDuringSanitization(subresourceURL))
             continue;
-        Ref data = subresource->data();
-        auto blob = Blob::create(&destinationDocument, data->copyData(), subresource->mimeType());
-        String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
-        blobURLMap.set(AtomString { subresourceURL.string() }, AtomString { blobURL });
+        String replacementURL;
+        if (useDataURLs && MIMETypeRegistry::isSupportedImageMIMEType(subresource->mimeType()))
+            replacementURL = dataURLForImageData(subresource->data().makeContiguous()->span(), subresource->mimeType());
+        else {
+            Ref data = subresource->data();
+            auto blob = Blob::create(&destinationDocument, data->copyData(), subresource->mimeType());
+            replacementURL = DOMURL::createObjectURL(destinationDocument, blob);
+        }
+        blobOrDataURLMap.set(AtomString { subresourceURL.string() }, AtomString { replacementURL });
     }
 
     auto contentOrigin = SecurityOrigin::create(markupAndArchive.mainResource->url());
@@ -578,10 +592,10 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
         auto blob = Blob::create(&destinationDocument, Vector(byteCast<uint8_t>(subframeMarkup.utf8().span())), type);
 
         String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
-        blobURLMap.set(AtomString { subframeURL.string() }, AtomString { subframeBlobURL });
+        blobOrDataURLMap.set(AtomString { subframeURL.string() }, AtomString { subframeBlobURL });
     }
 
-    replaceSubresourceURLs(fragment.get(), WTF::move(blobURLMap));
+    replaceSubresourceURLs(fragment.get(), WTF::move(blobOrDataURLMap));
 
     return sanitizedMarkupForFragmentInDocument(WTF::move(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
 }
@@ -780,8 +794,14 @@ bool WebContentReader::readImage(Ref<FragmentedSharedBuffer>&& buffer, const Str
     Ref document = *frame->document();
     if (shouldReplaceRichContentWithAttachments())
         addFragment(createFragmentForImageAttachment(frame, document, WTF::move(buffer), type, preferredPresentationSize));
-    else
-        addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(document.ptr(), buffer->extractData(), type)), preferredPresentationSize));
+    else {
+        String imageURL;
+        if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DataURLForPastedImages))
+            imageURL = dataURLForImageData(buffer->makeContiguous()->span(), type);
+        else
+            imageURL = DOMURL::createObjectURL(document, Blob::create(document.ptr(), buffer->extractData(), type));
+        addFragment(createFragmentForImageAndURL(document, imageURL, preferredPresentationSize));
+    }
 
     return m_fragment;
 }

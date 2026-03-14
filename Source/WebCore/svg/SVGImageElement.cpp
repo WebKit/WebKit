@@ -75,7 +75,7 @@ CachedImage* SVGImageElement::cachedImage() const
 
 bool SVGImageElement::renderingTaintsOrigin() const
 {
-    CachedResourceHandle cachedImage = this->cachedImage();
+    RefPtr cachedImage = this->cachedImage();
     if (!cachedImage)
         return false;
 

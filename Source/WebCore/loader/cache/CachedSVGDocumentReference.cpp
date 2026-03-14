@@ -47,7 +47,7 @@ CachedSVGDocumentReference::CachedSVGDocumentReference(const Style::URL& locatio
 
 CachedSVGDocumentReference::~CachedSVGDocumentReference()
 {
-    if (CachedResourceHandle document = m_document)
+    if (RefPtr document = m_document)
         document->removeClient(*this);
 }
 
@@ -60,8 +60,11 @@ void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const Resour
     fetchOptions.mode = FetchOptions::Mode::SameOrigin;
     CachedResourceRequest request(ResourceRequest(URL { m_location.resolved }), fetchOptions);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
-    m_document = loader.requestSVGDocument(WTF::move(request)).value_or(nullptr);
-    if (CachedResourceHandle document = m_document)
+    if (auto result = loader.requestSVGDocument(WTF::move(request)))
+        m_document = WTF::move(result.value());
+    else
+        m_document = nullptr;
+    if (RefPtr document = m_document)
         document->addClient(*this);
 
     m_loadRequested = true;

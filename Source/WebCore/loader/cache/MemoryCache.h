@@ -159,7 +159,7 @@ public:
     WEBCORE_EXPORT Statistics getStatistics();
     
     void resourceAccessed(CachedResource&);
-    bool inLiveDecodedResourcesList(CachedResource&) const;
+    bool NODELETE inLiveDecodedResourcesList(CachedResource&) const;
 
     using SecurityOriginSet = HashSet<Ref<SecurityOrigin>>;
     WEBCORE_EXPORT void removeResourcesWithOrigin(const SecurityOrigin&);
@@ -178,7 +178,7 @@ public:
     WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
 
 private:
-    using CachedResourceMap = HashMap<std::pair<URL, String /* partitionName */>, WeakPtr<CachedResource>>;
+    using CachedResourceMap = HashMap<std::pair<URL, String /* partitionName */>, RefPtr<CachedResource>>;
     using LRUList = WeakListHashSet<CachedResource>;
 
     MemoryCache();
@@ -196,7 +196,7 @@ private:
     CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);
 
     CachedResourceMap& ensureSessionResourceMap(PAL::SessionID);
-    CachedResourceMap* sessionResourceMap(PAL::SessionID) const;
+    CachedResourceMap* NODELETE sessionResourceMap(PAL::SessionID) const;
 
     bool m_disabled { false };
     bool m_inPruneResources { false };

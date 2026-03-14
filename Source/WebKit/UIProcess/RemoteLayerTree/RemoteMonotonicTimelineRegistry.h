@@ -40,7 +40,7 @@ public:
 
     bool isEmpty() const { return m_timelines.isEmpty(); }
     void update(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime);
-    RemoteMonotonicTimeline* get(const TimelineID&) const;
+    RemoteMonotonicTimeline* NODELETE get(const TimelineID&) const;
     void advanceCurrentTime(MonotonicTime);
 
 private:

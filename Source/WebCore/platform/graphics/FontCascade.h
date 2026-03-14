@@ -183,8 +183,8 @@ public:
 
     RefPtr<const Font> fontForCombiningCharacterSequence(StringView) const;
 
-    static bool isCJKIdeograph(char32_t);
-    static bool isCJKIdeographOrSymbol(char32_t);
+    static bool NODELETE isCJKIdeograph(char32_t);
+    static bool NODELETE isCJKIdeographOrSymbol(char32_t);
 
     static bool canUseGlyphDisplayList(const RenderStyle&);
 
@@ -194,11 +194,11 @@ public:
 
     // Whether or not there is an expansion opportunity just before the first character
     // Note that this does not take a isAfterExpansion flag; this assumes that isAfterExpansion is false
-    static bool leftExpansionOpportunity(StringView, TextDirection);
-    static bool rightExpansionOpportunity(StringView, TextDirection);
+    static bool NODELETE leftExpansionOpportunity(StringView, TextDirection);
+    static bool NODELETE rightExpansionOpportunity(StringView, TextDirection);
 
-    WEBCORE_EXPORT static void setDisableFontSubpixelAntialiasingForTesting(bool);
-    WEBCORE_EXPORT static bool shouldDisableFontSubpixelAntialiasingForTesting();
+    WEBCORE_EXPORT static void NODELETE setDisableFontSubpixelAntialiasingForTesting(bool);
+    WEBCORE_EXPORT static bool NODELETE shouldDisableFontSubpixelAntialiasingForTesting();
 
     enum class CodePath : uint8_t { Simple, Complex, SimpleWithGlyphOverflow };
     WEBCORE_EXPORT CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
@@ -226,7 +226,7 @@ private:
     void adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     float width(CodePath, const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, FontCascadeFonts::GlyphGeometryCacheEntry*) const;
-    ALWAYS_INLINE bool canHandleRunAsSimpleText(const TextRun&, unsigned from, unsigned to) const;
+    ALWAYS_INLINE bool NODELETE canHandleRunAsSimpleText(const TextRun&, unsigned from, unsigned to) const;
 
     std::optional<GlyphData> getEmphasisMarkGlyphData(const AtomString&) const;
     const Font* fontForEmphasisMark(const AtomString&) const;
@@ -239,7 +239,7 @@ private:
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const Latin1Character>, TextDirection, ExpansionBehavior);
-    static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const char16_t>, TextDirection, ExpansionBehavior);
+    static std::pair<unsigned, bool> NODELETE expansionOpportunityCountInternal(std::span<const char16_t>, TextDirection, ExpansionBehavior);
 
     friend struct WidthIterator;
     friend class ComplexTextController;
@@ -255,8 +255,8 @@ public:
 #endif
 
     // Useful for debugging the different font rendering code paths.
-    WEBCORE_EXPORT static void setForcedCodePath(Markable<CodePath>);
-    static Markable<CodePath> forcedCodePath();
+    WEBCORE_EXPORT static void NODELETE setForcedCodePath(Markable<CodePath>);
+    static Markable<CodePath> NODELETE forcedCodePath();
     static Markable<CodePath> s_forcedCodePath;
 
     FontSelector* fontSelector() const;

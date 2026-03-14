@@ -73,7 +73,7 @@ public:
     WebsiteDataStore& defaultWebsiteDataStore() const;
     void setDefaultWebsiteDataStore(WebsiteDataStore* dataStore) { m_defaultWebsiteDataStore = dataStore; }
 
-    bool operator==(const WebExtensionControllerConfiguration&) const;
+    bool NODELETE operator==(const WebExtensionControllerConfiguration&) const;
 
 #ifdef __OBJC__
     WKWebExtensionControllerConfiguration *wrapper() const { return (WKWebExtensionControllerConfiguration *)API::ObjectImpl<API::Object::Type::WebExtensionControllerConfiguration>::wrapper(); }

@@ -47,7 +47,7 @@ public:
     // Given a number of frames to process (for subsequent call to process()), it returns a span and numberOfSourceFramesNeeded
     // where sample data should be copied. This sample data provides the input to the resampler when process() is called.
     // framesToProcess must be less than or equal to AudioUtilities::renderQuantumSize.
-    std::span<float> getSourceSpan(size_t framesToProcess, size_t* numberOfSourceFramesNeeded);
+    std::span<float> NODELETE getSourceSpan(size_t framesToProcess, size_t* numberOfSourceFramesNeeded);
 
     // process() resamples framesToProcess frames from the source into destination.
     // Each call to process() must be preceded by a call to getSourceSpan() so that source input may be supplied.
@@ -55,10 +55,10 @@ public:
     void process(std::span<float> destination, size_t framesToProcess);
 
     // Resets the processing state.
-    void reset();
+    void NODELETE reset();
 
 private:
-    double rate() const;
+    double NODELETE rate() const;
 
     AudioResampler* m_resampler;
     AudioFloatArray m_sourceBuffer;

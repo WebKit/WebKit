@@ -879,20 +879,6 @@ BlobFileAccessEnforcementEnabled:
       "PLATFORM(COCOA)": true
       default: false
 
-BlockFontServiceInWebContentSandbox:
-  type: bool
-  status: internal
-  category: networking
-  humanReadableName: "Block Font service in the WebContent sandbox"
-  humanReadableDescription: "Block Font service in the WebContent sandbox"
-  webcoreBinding: none
-  condition: HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      "ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)": true
-      default: false
-
 BlockIOKitInWebContentSandbox:
   type: bool
   status: internal
@@ -7137,6 +7123,18 @@ ScrollToTextFragmentMarkingEnabled:
     WebCore:
       default: true
 
+ScrollViewAdaptiveDecelerationTrackingEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Adaptive Deceleration Tracking"
+  humanReadableDescription: "Use adaptive deceleration tracking behavior for scroll views"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  condition: HAVE(UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR)
+  defaultValue:
+    WebKit:
+      default: false
+
 ScrollendEventEnabled:
   type: bool
   status: stable
@@ -7987,17 +7985,17 @@ StorageBlockingPolicy:
 
 SubpixelInlineLayoutEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "Subpixels in inline layout (in block direction)"
   humanReadableDescription: "Subpixels in line layout (in block direction)"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 SupportHDRCompositorTonemappingEnabled:
   type: bool

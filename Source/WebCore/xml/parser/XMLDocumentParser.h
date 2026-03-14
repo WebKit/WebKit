@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "LocalFrameView.h"
 #include "ParserContentPolicy.h"
 #include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
@@ -120,7 +119,7 @@ private:
 
     void end();
 
-    void pauseParsing();
+    void NODELETE pauseParsing();
     void resumeParsing();
 
     bool appendFragmentSource(const String&);

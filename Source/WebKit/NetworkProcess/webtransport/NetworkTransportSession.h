@@ -90,8 +90,8 @@ public:
     void terminate(WebCore::WebTransportSessionErrorCode, CString&&);
     void NODELETE datagramIncomingMaxAgeUpdated(std::optional<double>);
     void NODELETE datagramOutgoingMaxAgeUpdated(std::optional<double>);
-    void datagramIncomingHighWaterMarkUpdated(double);
-    void datagramOutgoingHighWaterMarkUpdated(double);
+    void NODELETE datagramIncomingHighWaterMarkUpdated(double);
+    void NODELETE datagramOutgoingHighWaterMarkUpdated(double);
 
     void receiveDatagram(std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
     void streamReceiveBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);

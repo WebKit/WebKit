@@ -81,8 +81,9 @@ def passing_run(extra_args=None, port_obj=None, tests_included=False, host=None,
     if shared_port:
         port_obj.host.port_factory.get = lambda *args, **kwargs: port_obj
 
-    logging_stream = StringIO()
-    run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+    with OutputCapture():
+        logging_stream = StringIO()
+        run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
     return run_details.exit_code == 0
 
 
@@ -1141,11 +1142,20 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         if not self.should_test_processes:
             return
 
+        import logging
         options, parsed_args = parse_args(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True, print_nothing=False)
         host = MockHost()
         port_obj = host.port_factory.get(port_name=options.platform, options=options)
         logging_stream = StringIO()
-        run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+        # Suppress 'worker/N starting/stopping' messages from webkitcorepy.task_pool
+        # that would leak through message_pool's log forwarding to the parent process.
+        wkc_logger = logging.getLogger('webkitcorepy')
+        saved_level = wkc_logger.level
+        wkc_logger.setLevel(logging.WARNING)
+        try:
+            run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+        finally:
+            wkc_logger.setLevel(saved_level)
         self.assertTrue('text.html passed' in logging_stream.getvalue())
         self.assertTrue('image.html passed' in logging_stream.getvalue())
 

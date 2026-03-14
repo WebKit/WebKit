@@ -94,7 +94,7 @@ static const bool isTextInsertion = true;
 // Related to Editor::selectionForCommand.
 // Certain operations continue to use the target control's selection even if the event handler
 // already moved the selection outside of the text control.
-static LocalFrame* targetFrame(LocalFrame& frame, Event* event)
+static LocalFrame* NODELETE targetFrame(LocalFrame& frame, Event* event)
 {
     if (!event)
         return &frame;
@@ -1227,17 +1227,17 @@ static bool executeYankAndSelect(LocalFrame& frame, Event*, EditorCommandSource,
 
 // Supported functions
 
-static bool supported(LocalFrame*)
+static bool NODELETE supported(LocalFrame*)
 {
     return true;
 }
 
-static bool supportedFromMenuOrKeyBinding(LocalFrame*)
+static bool NODELETE supportedFromMenuOrKeyBinding(LocalFrame*)
 {
     return false;
 }
 
-static bool defaultValueForSupportedCopyCut(LocalFrame& frame)
+static bool NODELETE defaultValueForSupportedCopyCut(LocalFrame& frame)
 {
     auto& settings = frame.settings();
     if (settings.javaScriptCanAccessClipboard())
@@ -1266,7 +1266,7 @@ static bool supportedCopyCut(LocalFrame* frame)
     return client ? client->canCopyCut(frame, defaultValue) : defaultValue;
 }
 
-static bool defaultValueForSupportedPaste(LocalFrame& frame)
+static bool NODELETE defaultValueForSupportedPaste(LocalFrame& frame)
 {
     auto& settings = frame.settings();
     if (settings.javaScriptCanAccessClipboard() && settings.domPasteAllowed())
@@ -1288,7 +1288,7 @@ static bool supportedPaste(LocalFrame* frame)
 
 // Enabled functions
 
-static bool enabled(LocalFrame&, Event*, EditorCommandSource)
+static bool NODELETE enabled(LocalFrame&, Event*, EditorCommandSource)
 {
     return true;
 }
@@ -1300,7 +1300,7 @@ static bool enabledVisibleSelection(LocalFrame& frame, Event* event, EditorComma
     return (selection.isCaret() && selection.isContentEditable()) || selection.isRange();
 }
 
-static bool caretBrowsingEnabled(LocalFrame& frame)
+static bool NODELETE caretBrowsingEnabled(LocalFrame& frame)
 {
     return frame.settings().caretBrowsingEnabled();
 }
@@ -1385,7 +1385,7 @@ static bool enabledCut(LocalFrame& frame, Event*, EditorCommandSource source)
     return false;
 }
 
-static bool enabledClearText(LocalFrame& frame, Event*, EditorCommandSource)
+static bool NODELETE enabledClearText(LocalFrame& frame, Event*, EditorCommandSource)
 {
     UNUSED_PARAM(frame);
     return false;
@@ -1476,7 +1476,7 @@ static bool enabledUndo(LocalFrame& frame, Event*, EditorCommandSource)
 
 // State functions
 
-static TriState stateNone(LocalFrame&, Event*)
+static TriState NODELETE stateNone(LocalFrame&, Event*)
 {
     return TriState::False;
 }
@@ -1563,7 +1563,7 @@ static TriState stateJustifyRight(LocalFrame& frame, Event*)
 
 // Value functions
 
-static String valueNull(LocalFrame&, Event*)
+static String NODELETE valueNull(LocalFrame&, Event*)
 {
     return String();
 }
@@ -1571,7 +1571,7 @@ static String valueNull(LocalFrame&, Event*)
 // The command has no value.
 // https://w3c.github.io/editing/execCommand.html#querycommandvalue()
 // > ... or has no value, return the empty string.
-static String valueAsEmptyString(LocalFrame&, Event*)
+static String NODELETE valueAsEmptyString(LocalFrame&, Event*)
 {
     return emptyString();
 }
@@ -1627,17 +1627,17 @@ static String valueFormatBlock(LocalFrame& frame, Event*)
 
 // allowExecutionWhenDisabled functions
 
-static bool allowExecutionWhenDisabled(LocalFrame&, EditorCommandSource)
+static bool NODELETE allowExecutionWhenDisabled(LocalFrame&, EditorCommandSource)
 {
     return true;
 }
 
-static bool doNotAllowExecutionWhenDisabled(LocalFrame&, EditorCommandSource)
+static bool NODELETE doNotAllowExecutionWhenDisabled(LocalFrame&, EditorCommandSource)
 {
     return false;
 }
 
-static bool allowExecutionWhenDisabledCopyCut(LocalFrame&, EditorCommandSource source)
+static bool NODELETE allowExecutionWhenDisabledCopyCut(LocalFrame&, EditorCommandSource source)
 {
     switch (source) {
     case EditorCommandSource::MenuOrKeyBinding:

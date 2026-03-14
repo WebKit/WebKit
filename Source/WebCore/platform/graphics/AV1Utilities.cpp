@@ -1301,7 +1301,7 @@ static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1Co
     });
 }
 
-static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
+static size_t NODELETE readULEBSize(std::span<const uint8_t> data, size_t& index)
 {
     size_t value = 0;
     for (size_t cptr = 0; cptr < 8; ++cptr) {
@@ -1319,7 +1319,7 @@ static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
     return value;
 }
 
-static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> getSequenceHeaderOBU(std::span<const uint8_t> data)
+static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> NODELETE getSequenceHeaderOBU(std::span<const uint8_t> data)
 {
     size_t index = 0;
     do {

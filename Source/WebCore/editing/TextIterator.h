@@ -68,8 +68,8 @@ bool isRendererReplacedElement(RenderObject*, TextIteratorBehaviors = { });
 class BitStack {
 public:
     void push(bool);
-    void pop();
-    bool top() const;
+    void NODELETE pop();
+    bool NODELETE top() const;
 
 private:
     unsigned m_size { 0 };
@@ -124,7 +124,7 @@ private:
     void init();
     void exitNode(Node*);
     bool shouldRepresentNodeOffsetZero();
-    bool shouldEmitSpaceBeforeAndAfterNode(Node&);
+    bool NODELETE shouldEmitSpaceBeforeAndAfterNode(Node&);
     void representNodeOffsetZero();
     bool handleTextNode();
     bool handleReplacedElement();
@@ -291,7 +291,7 @@ public:
     bool atEnd() const { return !m_didLookAhead && m_underlyingIterator.atEnd(); }
     void advance();
 
-    StringView text() const LIFETIME_BOUND;
+    StringView NODELETE text() const LIFETIME_BOUND;
 
 private:
     TextIterator m_underlyingIterator;

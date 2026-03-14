@@ -324,7 +324,7 @@ angle::Result ContextMtl::drawTriFanArraysWithBaseVertex(const gl::Context *cont
 
     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, first, count, instances,
+    ANGLE_TRY(setupDraw(context, first, count, instances,
                         gl::DrawElementsType::InvalidEnum, reinterpret_cast<const void *>(0), false,
                         &isNoOp));
     if (!isNoOp)
@@ -357,7 +357,7 @@ angle::Result ContextMtl::drawTriFanArraysLegacy(const gl::Context *context,
 
     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, first, count, instances,
+    ANGLE_TRY(setupDraw(context, first, count, instances,
                         gl::DrawElementsType::InvalidEnum, reinterpret_cast<const void *>(0), false,
                         &isNoOp));
     if (!isNoOp)
@@ -424,7 +424,7 @@ angle::Result ContextMtl::drawLineLoopArrays(const gl::Context *context,
 
     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::LineLoop, first, count, instances,
+    ANGLE_TRY(setupDraw(context, first, count, instances,
                         gl::DrawElementsType::InvalidEnum, nullptr, false, &isNoOp));
     if (!isNoOp)
     {
@@ -477,7 +477,7 @@ angle::Result ContextMtl::drawArraysImpl(const gl::Context *context,
 #define DRAW_GENERIC_ARRAY(xfbPass)                                                                \
     {                                                                                              \
         bool isNoOp = false;                                                                       \
-        ANGLE_TRY(setupDraw(context, mode, first, count, instances,                                \
+        ANGLE_TRY(setupDraw(context, first, count, instances,                                      \
                             gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
         if (!isNoOp)                                                                               \
         {                                                                                          \
@@ -566,7 +566,7 @@ angle::Result ContextMtl::drawTriFanElements(const gl::Context *context,
 
         ANGLE_TRY(mTriFanIndexBuffer.commit(this));
         bool isNoOp = false;
-        ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, 0, count, instances, type,
+        ANGLE_TRY(setupDraw(context, 0, count, instances, type,
                             indices, false, &isNoOp));
         if (!isNoOp && genIndicesCount > 0)
         {
@@ -636,7 +636,7 @@ angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
 
         ANGLE_TRY(mLineLoopIndexBuffer.commit(this));
         bool isNoOp = false;
-        ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::LineLoop, 0, count, instances, type,
+        ANGLE_TRY(setupDraw(context, 0, count, instances, type,
                             indices, false, &isNoOp));
         if (!isNoOp && genIndicesCount > 0)
         {
@@ -688,7 +688,7 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     if (xfbPass)                                                                                   \
     {                                                                                              \
         bool isNoOp = false;                                                                       \
-        ANGLE_TRY(setupDraw(context, mode, first, count, instances,                                \
+        ANGLE_TRY(setupDraw(context, first, count, instances,                                      \
                             gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
         if (!isNoOp)                                                                               \
         {                                                                                          \
@@ -715,7 +715,7 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     else                                                                                           \
     {                                                                                              \
         bool isNoOp = false;                                                                       \
-        ANGLE_TRY(setupDraw(context, mode, first, count, instances,                                \
+        ANGLE_TRY(setupDraw(context, first, count, instances,                                      \
                             gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
                                                                                                    \
         if (!isNoOp)                                                                               \
@@ -816,7 +816,7 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     const std::vector<DrawCommandRange> drawCommands = mVertexArray->getDrawIndices(
         context, type, convertedType, mode, idxBuffer, convertedCounti32, convertedOffset);
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, mode, 0, count, instances, type, indices, false, &isNoOp));
+    ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
     if (!isNoOp)
     {
         MTLPrimitiveType mtlType = mtl::GetPrimitiveType(mode);
@@ -2505,7 +2505,6 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
 }
 
 angle::Result ContextMtl::setupDraw(const gl::Context *context,
-                                    gl::PrimitiveMode mode,
                                     GLint firstVertex,
                                     GLsizei vertexOrIndexCount,
                                     GLsizei instances,
@@ -2514,7 +2513,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
                                     bool xfbPass,
                                     bool *isNoOp)
 {
-    ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
+    ANGLE_TRY(setupDrawImpl(context, firstVertex, vertexOrIndexCount, instances,
                             indexTypeOrNone, indices, xfbPass, isNoOp));
     if (*isNoOp)
     {
@@ -2526,7 +2525,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
         // pass state. This would happen for example when there is no more space in the uniform
         // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
         // buffer memory for new usage. In this case, re-run the setup.
-        ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
+        ANGLE_TRY(setupDrawImpl(context, firstVertex, vertexOrIndexCount, instances,
                                 indexTypeOrNone, indices, xfbPass, isNoOp));
 
         if (*isNoOp)
@@ -2555,7 +2554,6 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
 }
 
 angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
-                                        gl::PrimitiveMode mode,
                                         GLint firstVertex,
                                         GLsizei vertexOrIndexCount,
                                         GLsizei instances,
@@ -2616,7 +2614,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
     }
 
     bool isPipelineDescChanged;
-    ANGLE_TRY(checkIfPipelineChanged(context, mode, xfbPass, &isPipelineDescChanged));
+    ANGLE_TRY(checkIfPipelineChanged(context, xfbPass, &isPipelineDescChanged));
 
     bool uniformBuffersDirty = false;
 
@@ -2970,15 +2968,12 @@ angle::Result ContextMtl::handleDirtyDepthBias(const gl::Context *context)
 }
 
 angle::Result ContextMtl::checkIfPipelineChanged(const gl::Context *context,
-                                                 gl::PrimitiveMode primitiveMode,
                                                  bool xfbPass,
                                                  bool *isPipelineDescChanged)
 {
     ASSERT(mRenderEncoder.valid());
-    MTLPrimitiveTopologyClass topologyClass = mtl::GetPrimitiveTopologyClass(primitiveMode);
-
     bool rppChange = mDirtyBits.test(DIRTY_BIT_RENDER_PIPELINE) ||
-                     topologyClass != mRenderPipelineDesc.inputPrimitiveTopology;
+                     MTLPrimitiveTopologyClassUnspecified != mRenderPipelineDesc.inputPrimitiveTopology;
 
     // Obtain RenderPipelineDesc's vertex array descriptor.
     ANGLE_TRY(mVertexArray->setupDraw(context, &mRenderEncoder, &rppChange,
@@ -3008,7 +3003,7 @@ angle::Result ContextMtl::checkIfPipelineChanged(const gl::Context *context,
         {
             mRenderPipelineDesc.rasterizationType = mtl::RenderPipelineRasterization::Enabled;
         }
-        mRenderPipelineDesc.inputPrimitiveTopology = topologyClass;
+        mRenderPipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassUnspecified;
         mRenderPipelineDesc.alphaToCoverageEnabled =
             mState.isSampleAlphaToCoverageEnabled() &&
             mRenderPipelineDesc.outputDescriptor.rasterSampleCount > 1 &&

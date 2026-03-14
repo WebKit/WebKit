@@ -248,7 +248,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(Resourc
 
 DocumentThreadableLoader::~DocumentThreadableLoader()
 {
-    if (CachedResourceHandle resource = m_resource)
+    if (RefPtr resource = m_resource)
         resource->removeClient(*this);
 }
 
@@ -259,7 +259,7 @@ void DocumentThreadableLoader::cancel()
     // Cancel can re-enter and m_resource might be null here as a result.
     if (RefPtr client = m_client.get(); client && m_resource) {
         // FIXME: This error is sent to the client in didFail(), so it should not be an internal one. Use LocalFrameLoaderClient::cancelledError() instead.
-        ResourceError error(errorDomainWebKitInternal, 0, m_resource->url(), "Load cancelled"_s, ResourceError::Type::Cancellation);
+        ResourceError error(errorDomainWebKitInternal, 0, protect(m_resource)->url(), "Load cancelled"_s, ResourceError::Type::Cancellation);
         client->didFail(m_document->identifier(), error); // May destroy the client.
     }
     clearResource();
@@ -274,7 +274,7 @@ void DocumentThreadableLoader::computeIsDone()
         return;
     }
     platformStrategies()->loaderStrategy()->isResourceLoadFinished(*protect(m_resource), [weakThis = WeakPtr { *this }](bool isDone) {
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return;
         if (RefPtr client = protectedThis->m_client.get())
@@ -284,7 +284,7 @@ void DocumentThreadableLoader::computeIsDone()
 
 void DocumentThreadableLoader::setDefersLoading(bool value)
 {
-    if (CachedResourceHandle resource = m_resource)
+    if (RefPtr resource = m_resource)
         resource->setDefersLoading(value);
     if (RefPtr preflightChecker = m_preflightChecker)
         preflightChecker->setDefersLoading(value);
@@ -296,10 +296,8 @@ void DocumentThreadableLoader::clearResource()
     // which could lead to calling CachedResource::removeClient() multiple times for
     // this DocumentThreadableLoader. Save off a copy of m_resource and clear it to
     // prevent the reentrancy.
-    if (CachedResourceHandle resource = m_resource) {
-        m_resource = nullptr;
+    if (RefPtr resource = std::exchange(m_resource, nullptr))
         resource->removeClient(*this);
-    }
     m_preflightChecker = nullptr;
 }
 
@@ -410,7 +408,7 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
     ASSERT(response.type() != ResourceResponse::Type::Error);
 
     // https://fetch.spec.whatwg.org/commit-snapshots/6257e220d70f560a037e46f1b4206325400db8dc/#main-fetch step 17.
-    if (response.source() == ResourceResponse::Source::ServiceWorker && response.url() != m_resource->url()) {
+    if (response.source() == ResourceResponse::Source::ServiceWorker && response.url() != protect(m_resource)->url()) {
         if (!isResponseAllowedByContentSecurityPolicy(response)) {
             reportContentSecurityPolicyError(response.url());
             return;
@@ -478,15 +476,16 @@ void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const Ne
     ASSERT(m_client);
     ASSERT_UNUSED(resource, &resource == m_resource);
 
-    if (m_resource->errorOccurred())
-        didFail(m_resource->resourceLoaderIdentifier(), m_resource->resourceError());
+    RefPtr rawResource = m_resource;
+    if (rawResource->errorOccurred())
+        didFail(rawResource->resourceLoaderIdentifier(), rawResource->resourceError());
     else
-        didFinishLoading(m_resource->resourceLoaderIdentifier(), metrics);
+        didFinishLoading(rawResource->resourceLoaderIdentifier(), metrics);
 }
 
 void DocumentThreadableLoader::didFinishLoading(std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)
 {
-    RefPtr document = m_document.get();
+    RefPtr document = m_document;
     if (!document)
         return;
 
@@ -494,7 +493,7 @@ void DocumentThreadableLoader::didFinishLoading(std::optional<ResourceLoaderIden
     ASSERT(client);
 
     if (m_delayCallbacksForIntegrityCheck) {
-        CachedResourceHandle resource = m_resource;
+        RefPtr resource = m_resource;
         if (!matchIntegrityMetadata(*resource, m_options.integrity)) {
             reportIntegrityMetadataError(*resource, m_options.integrity);
             return;
@@ -535,7 +534,7 @@ void DocumentThreadableLoader::didFail(std::optional<ResourceLoaderIdentifier>, 
     if (m_shouldLogError == ShouldLogError::Yes)
         logError(protect(*m_document), error, m_options.initiatorType);
 
-    RefPtr document = m_document.get();
+    RefPtr document = m_document;
     if (!document)
         return;
     if (RefPtr client = m_client.get())
@@ -598,12 +597,15 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         newRequest.setOrigin(protect(securityOrigin()));
 
         ASSERT(!m_resource);
-        if (CachedResourceHandle resource = std::exchange(m_resource, nullptr))
+        if (RefPtr resource = std::exchange(m_resource, nullptr))
             resource->removeClient(*this);
 
         auto cachedResource = protect(protect(*m_document)->cachedResourceLoader())->requestRawResource(WTF::move(newRequest));
-        m_resource = cachedResource.value_or(nullptr);
-        if (CachedResourceHandle resource = m_resource)
+        if (cachedResource)
+            m_resource = WTF::move(cachedResource.value());
+        else
+            m_resource = nullptr;
+        if (RefPtr resource = m_resource)
             resource->addClient(*this);
         else
             logErrorAndFail(cachedResource.error());

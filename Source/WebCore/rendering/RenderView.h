@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <WebCore/LocalFrameView.h>
 #include <WebCore/Region.h>
 #include <WebCore/RenderBlockFlow.h>
 #include <WebCore/RenderSelection.h>
@@ -33,6 +32,7 @@
 
 namespace WebCore {
 
+class LocalFrameView;
 class ImageQualityController;
 class RenderLayerCompositor;
 class RenderLayoutState;
@@ -72,9 +72,9 @@ public:
     LayoutUnit clientLogicalWidthForFixedPosition() const;
     LayoutUnit clientLogicalHeightForFixedPosition() const;
 
-    float zoomFactor() const;
+    float NODELETE zoomFactor() const;
 
-    LocalFrameView& frameView() const { return m_frameView.get(); }
+    WEBCORE_EXPORT LocalFrameView& NODELETE frameView() const LIFETIME_BOUND;
 
     Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
     const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }
@@ -108,14 +108,14 @@ public:
 
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) const override;
 
-    void setPageLogicalSize(LayoutSize);
+    void NODELETE setPageLogicalSize(LayoutSize);
     LayoutUnit pageOrViewLogicalHeight() const;
 
     // This method is used to assign a page number only when pagination modes have
     // a block progression. This happens with vertical-rl books for example, but it
     // doesn't happen for normal horizontal-tb books. This is a very specialized
     // function and should not be mistaken for a general page number API.
-    unsigned pageNumberForBlockProgressionOffset(int offset) const;
+    unsigned NODELETE pageNumberForBlockProgressionOffset(int offset) const;
 
     unsigned pageCount() const;
 
@@ -216,7 +216,7 @@ public:
     const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes() const LIFETIME_BOUND { return m_positionTryBoxes; }
 
     SingleThreadWeakPtr<RenderBlockFlow> NODELETE viewTransitionContainingBlock() const;
-    void setViewTransitionContainingBlock(RenderBlockFlow& renderer);
+    void NODELETE setViewTransitionContainingBlock(RenderBlockFlow& renderer);
 
     void addViewTransitionGroup(const AtomString&, RenderBox&);
     void removeViewTransitionGroup(const AtomString&);

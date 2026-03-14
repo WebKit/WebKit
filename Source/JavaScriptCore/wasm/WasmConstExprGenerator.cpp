@@ -697,15 +697,15 @@ public:
     [[nodiscard]] PartialResult addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] ExpressionType addConstant(v128_t vector)
+    [[nodiscard]] ExpressionType addSIMDConstant(v128_t vector)
     {
         RELEASE_ASSERT(Options::useWasmSIMD());
         if (m_mode == Mode::Evaluate)
             return ConstExprValue(vector);
         return { };
     }
-    [[nodiscard]] PartialResult addExtractLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDExtractLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSIMDReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDV_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDBitwiseSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB

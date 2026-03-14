@@ -68,12 +68,12 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<OffsetRotate> { auto operator()(BuilderState&, const CSSValue&) -> OffsetRotate; };
+template<> struct CSSValueConversion<OffsetRotate> { OffsetRotate operator()(BuilderState&, const CSSValue&); };
 
 // MARK: - Blending
 
 template<> struct Blending<OffsetRotate> {
-    auto canBlend(const OffsetRotate&, const OffsetRotate&) -> bool;
+    bool NODELETE canBlend(const OffsetRotate&, const OffsetRotate&);
     auto blend(const OffsetRotate&, const OffsetRotate&, const BlendingContext&) -> OffsetRotate;
 };
 
@@ -82,7 +82,7 @@ template<> struct Blending<OffsetRotate> {
 #if ENABLE(THREADED_ANIMATIONS)
 
 template<> struct Evaluation<OffsetRotate, AcceleratedEffectOffsetRotate> {
-    auto operator()(const OffsetRotate&) -> AcceleratedEffectOffsetRotate;
+    AcceleratedEffectOffsetRotate NODELETE operator()(const OffsetRotate&);
 };
 
 #endif

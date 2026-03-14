@@ -695,7 +695,7 @@ public:
     }
 
 private:
-    static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& list()
+    static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& NODELETE list()
     {
         static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>> map;
         return map.get();

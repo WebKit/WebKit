@@ -39,7 +39,7 @@ namespace WebCore::XPath {
 // assume that we aren't dealing with documents that we cannot even traverse in reasonable time).
 const unsigned traversalSortCutoff = 10000;
 
-static inline Node* parentWithDepth(unsigned depth, const Vector<Ref<Node>>& parents)
+static inline Node* NODELETE parentWithDepth(unsigned depth, const Vector<Ref<Node>>& parents)
 {
     ASSERT(parents.size() >= depth + 1);
     return parents[parents.size() - 1 - depth].ptr();

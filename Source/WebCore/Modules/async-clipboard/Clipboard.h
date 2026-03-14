@@ -49,7 +49,7 @@ public:
     enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
-    LocalFrame* frame() const;
+    LocalFrame* NODELETE frame() const;
     Navigator* NODELETE navigator();
 
     using RefCounted::ref;

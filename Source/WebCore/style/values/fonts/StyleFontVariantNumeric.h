@@ -125,7 +125,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<FontVariantNumeric> { auto operator()(BuilderState&, const CSSValue&) -> FontVariantNumeric; };
+template<> struct CSSValueConversion<FontVariantNumeric> { FontVariantNumeric NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

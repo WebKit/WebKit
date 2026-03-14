@@ -180,7 +180,7 @@ class VideoInfo;
 WEBCORE_EXPORT std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView codecString);
 WEBCORE_EXPORT String createAV1CodecParametersString(const AV1CodecConfigurationRecord&);
 
-WEBCORE_EXPORT bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord&);
+WEBCORE_EXPORT bool NODELETE validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord&);
 WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 
 std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t>);

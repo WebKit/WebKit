@@ -43,7 +43,7 @@ ApplePayButtonCocoa::ApplePayButtonCocoa(ApplePayButtonPart& owningPart)
 {
 }
 
-static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
+static PKPaymentButtonType NODELETE toPKPaymentButtonType(ApplePayButtonType type)
 {
     switch (type) {
     case ApplePayButtonType::Plain:
@@ -81,7 +81,7 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
     }
 }
 
-static PKPaymentButtonStyle toPKPaymentButtonStyle(ApplePayButtonStyle style)
+static PKPaymentButtonStyle NODELETE toPKPaymentButtonStyle(ApplePayButtonStyle style)
 {
     switch (style) {
     case ApplePayButtonStyle::White:

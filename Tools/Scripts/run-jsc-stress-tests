@@ -625,28 +625,22 @@ end
 
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
-$isFTLPlatform = !($architecture == "x86" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "playstation")
-# Special case armv7 and windows, we want to run the wasm tests temporarily without B3/Air support
-$isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64"))
+$isFTLPlatform = !($architecture == "x86" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "playstation" || $architecture == "arm")
+# Special case windows, we want to run the wasm tests temporarily without B3/Air support
+$isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || ($hostOS == "windows" && $architecture == "x86_64"))
 $isOMGPlatform = $isFTLPlatform
 $isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64")
 
 $skipLockdown = false
 $skipMiniMode = false
 
-if $platform == "watchos"
+if $platform == "watchos" || $architecture == "arm"
     $jitTests = false
     $isFTLPlatform = false
     $isWasmPlatform = false
     $skipLockdown = true
     $skipMiniMode = true
     $memoryLimited = true
-end
-
-if $architecture == "arm"
-    $isFTLPlatform = false
-    $isWasmPlatform = false
-    $skipLockdown = true
 end
 
 # This is meant for skipping execution of tests than require a lot of address

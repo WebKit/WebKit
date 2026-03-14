@@ -51,7 +51,7 @@ enum class WebMouseEventButton : int8_t {
     Forward,
     None = -2,
 };
-WebMouseEventButton mouseButton(const WebCore::NavigationAction&);
+WebMouseEventButton NODELETE mouseButton(const WebCore::NavigationAction&);
 
 enum class WebMouseEventSyntheticClickType : uint8_t {
     NoTap,

@@ -30,6 +30,7 @@
 import datetime
 import logging
 import unittest
+import warnings
 
 from webkitcorepy import StringIO, OutputCapture
 
@@ -203,8 +204,10 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
             self.assertEqual(actual[key], expected_value, ("Failure for key: %s: Actual='%s' Expected='%s'" % (key, actual[key], expected_value)))
 
     def test_parse_bug_dictionary_from_xml(self):
-        bug = Bugzilla()._parse_bug_dictionary_from_xml(self._single_bug_xml)
-        self._assert_dictionaries_equal(bug, self._expected_example_bug_parsing)
+        with OutputCapture(), warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            bug = Bugzilla()._parse_bug_dictionary_from_xml(self._single_bug_xml)
+            self._assert_dictionaries_equal(bug, self._expected_example_bug_parsing)
 
     _sample_multi_bug_xml = """
 <bugzilla version="3.2.3" urlbase="https://bugs.webkit.org/" maintainer="admin@webkit.org" exporter="eric@webkit.org">
@@ -215,12 +218,13 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
 
     # This could be combined into test_bug_parsing later if desired.
     def test_attachment_parsing(self):
-        bugzilla = Bugzilla()
-        soup = BeautifulSoup(self._example_attachment)
-        attachment_element = soup.find("attachment")
-        attachment = bugzilla._parse_attachment_element(attachment_element, self._expected_example_attachment_parsing['bug_id'])
-        self.assertTrue(attachment)
-        self._assert_dictionaries_equal(attachment, self._expected_example_attachment_parsing)
+        with OutputCapture():
+            bugzilla = Bugzilla()
+            soup = BeautifulSoup(self._example_attachment)
+            attachment_element = soup.find("attachment")
+            attachment = bugzilla._parse_attachment_element(attachment_element, self._expected_example_attachment_parsing['bug_id'])
+            self.assertTrue(attachment)
+            self._assert_dictionaries_equal(attachment, self._expected_example_attachment_parsing)
 
     _sample_attachment_detail_page = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"

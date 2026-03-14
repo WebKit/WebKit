@@ -52,7 +52,7 @@ namespace WebKit {
 struct NetworkResourceLoadParameters {
     void createSandboxExtensionHandlesIfNecessary();
 
-    RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
+    RefPtr<WebCore::SecurityOrigin> NODELETE parentOrigin() const;
     NetworkLoadParameters networkLoadParameters() const;
 
     WebPageProxyIdentifier webPageProxyID;

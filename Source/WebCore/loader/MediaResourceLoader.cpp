@@ -159,7 +159,9 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     if (RefPtr element = m_element.get())
         cachedRequest.setInitiator(*element);
 
-    auto resource = protect(document->cachedResourceLoader())->requestMedia(WTF::move(cachedRequest)).value_or(nullptr);
+    RefPtr<CachedRawResource> resource;
+    if (auto result = protect(document->cachedResourceLoader())->requestMedia(WTF::move(cachedRequest)))
+        resource = WTF::move(result.value());
     if (!resource)
         return nullptr;
 
@@ -300,7 +302,7 @@ void MediaResource::shutdown()
 
     setClient(nullptr);
 
-    if (CachedResourceHandle resource = std::exchange(m_resource, nullptr))
+    if (RefPtr resource = std::exchange(m_resource, nullptr))
         resource->removeClient(*this);
 }
 

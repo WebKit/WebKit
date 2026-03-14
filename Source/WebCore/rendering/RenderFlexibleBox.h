@@ -231,12 +231,12 @@ private:
 
     void initializeMarginTrimState(); 
     // Start margin parallel with the cross axis
-    bool shouldTrimMainAxisMarginStart() const;
+    bool NODELETE shouldTrimMainAxisMarginStart() const;
     // End margin parallel with the cross axis
-    bool shouldTrimMainAxisMarginEnd() const;
+    bool NODELETE shouldTrimMainAxisMarginEnd() const;
     // Margins parallel with the main axis
-    bool shouldTrimCrossAxisMarginStart() const;
-    bool shouldTrimCrossAxisMarginEnd() const;
+    bool NODELETE shouldTrimCrossAxisMarginStart() const;
+    bool NODELETE shouldTrimCrossAxisMarginEnd() const;
     void trimMainAxisMarginStart(const FlexLayoutItem&);
     void trimMainAxisMarginEnd(const FlexLayoutItem&);
     void trimCrossAxisMarginStart(const FlexLayoutItem&);

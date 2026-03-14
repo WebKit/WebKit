@@ -278,7 +278,7 @@ struct LocaleCache {
 };
 
 
-static LocaleCache& localeCache()
+static LocaleCache& NODELETE localeCache()
 {
     static MainThreadNeverDestroyed<LocaleCache> localeCache;
     return localeCache.get();

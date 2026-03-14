@@ -157,7 +157,7 @@ public:
 
     void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
-    bool containsOnlyCollapsibleWhitespace() const;
+    bool NODELETE containsOnlyCollapsibleWhitespace() const;
 
     FontCascade::CodePath fontCodePath() const { return m_fontCodePath; }
     bool canUseSimpleFontCodePath() const { return fontCodePath() == FontCascade::CodePath::Simple; }
@@ -170,9 +170,9 @@ public:
     void setCandidateComputedTextSize(float size) { m_candidateComputedTextSize = size; }
 #endif
 
-    StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
+    StringView NODELETE stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     
-    bool containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
+    bool NODELETE containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
 
     Vector<std::pair<unsigned, unsigned>> contentRangesBetweenOffsetsForType(const DocumentMarkerType, unsigned startOffset, unsigned endOffset) const;
 

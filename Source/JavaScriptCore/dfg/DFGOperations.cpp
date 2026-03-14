@@ -28,6 +28,7 @@
 
 
 #include "ArrayPrototypeInlines.h"
+#include "ArrayConstructor.h"
 #include "ButterflyInlines.h"
 #include "CacheableIdentifierInlines.h"
 #include "ClonedArguments.h"
@@ -2646,6 +2647,18 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsConstructor, size_t, (JSGlobalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     OPERATION_RETURN(scope, JSValue::decode(value).isConstructor());
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArrayIsArray, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = JSValue::decode(encodedValue);
+    ASSERT(value.isCell() && value.asCell()->type() == ProxyObjectType);
+    OPERATION_RETURN(scope, isArraySlow(globalObject, jsCast<ProxyObject*>(value.asCell())));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationTypeOfObject, JSCell*, (JSGlobalObject* globalObject, JSCell* object))

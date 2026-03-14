@@ -235,7 +235,7 @@ public:
 
     virtual void lazyInitialize();
 
-    static bool isSupportedSampleRate(float sampleRate);
+    static bool NODELETE isSupportedSampleRate(float sampleRate);
 
     PeriodicWave& periodicWave(OscillatorType);
 

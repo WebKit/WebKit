@@ -277,12 +277,12 @@ public:
     RenderMultiColumnFlow* multiColumnFlow() const { return hasRareBlockFlowData() ? multiColumnFlowSlowCase() : nullptr; }
     RenderMultiColumnFlow* NODELETE multiColumnFlowSlowCase() const;
     void setMultiColumnFlow(RenderMultiColumnFlow&);
-    void clearMultiColumnFlow();
+    void NODELETE clearMultiColumnFlow();
     bool willCreateColumns(std::optional<unsigned> desiredColumnCount = std::nullopt) const;
     virtual bool requiresColumns(int) const;
 
     bool containsFloats() const override;
-    bool containsFloat(const RenderBox&) const;
+    bool NODELETE containsFloat(const RenderBox&) const;
     bool subtreeContainsFloats() const;
     bool subtreeContainsFloat(const RenderBox&) const;
 

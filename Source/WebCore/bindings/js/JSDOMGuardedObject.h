@@ -44,7 +44,7 @@ public:
 
     bool isSuspended() const { return !m_guarded || !canInvokeCallback(); } // The wrapper world has gone away or active DOM objects have been suspended.
 
-    template<typename Visitor> void visitAggregate(Visitor& visitor) { visitor.append(m_guarded); }
+    template<typename Visitor> void visitAggregateInGCThread(Visitor& visitor) { visitor.append(m_guarded); }
 
     JSC::JSValue guardedObject() const { return m_guarded.get(); }
     JSDOMGlobalObject* globalObject() const { return m_globalObject.get(); }

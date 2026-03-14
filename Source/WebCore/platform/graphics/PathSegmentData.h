@@ -44,11 +44,11 @@ struct PathMoveTo {
 
     bool operator==(const PathMoveTo&) const = default;
 
-    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
-    std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
+    FloatPoint NODELETE calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
+    std::optional<FloatPoint> NODELETE tryGetEndPointWithoutContext() const;
 
-    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void NODELETE extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void NODELETE extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void applyElements(const PathElementApplier&) const;
 
@@ -404,7 +404,7 @@ struct PathCloseSubpath {
 
     void applyElements(const PathElementApplier&) const;
 
-    void transform(const AffineTransform&);
+    void NODELETE transform(const AffineTransform&);
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathCloseSubpath&);

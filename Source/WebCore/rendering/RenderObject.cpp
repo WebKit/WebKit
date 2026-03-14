@@ -2334,7 +2334,7 @@ ScrollAnchoringController* RenderObject::searchParentChainForScrollAnchoringCont
                 return controller;
         }
     }
-    return renderer.view().frameView().scrollAnchoringController();
+    return protect(renderer.view().frameView())->scrollAnchoringController();
 }
 
 void RenderObject::RepaintRects::transform(const TransformationMatrix& matrix)
@@ -2585,7 +2585,7 @@ static void adjustTextDirectionForCoalescedGeometries(const SelectionEndpointDir
     }
 }
 
-static bool shouldRenderSelectionOnSeparateLine(const RenderObject* currentRenderer)
+static bool NODELETE shouldRenderSelectionOnSeparateLine(const RenderObject* currentRenderer)
 {
     if (!currentRenderer)
         return false;

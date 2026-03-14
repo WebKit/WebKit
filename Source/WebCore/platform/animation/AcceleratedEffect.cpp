@@ -146,7 +146,7 @@ static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableCS
     }
 }
 
-static CSSPropertyID cssPropertyFromAcceleratedProperty(AcceleratedEffectProperty property)
+static CSSPropertyID NODELETE cssPropertyFromAcceleratedProperty(AcceleratedEffectProperty property)
 {
     switch (property) {
     case AcceleratedEffectProperty::Opacity:

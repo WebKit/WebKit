@@ -2823,7 +2823,6 @@ void WebPage::selectTextWithGranularityAtPoint(WebCore::IntPoint point, WebCore:
         return;
     }
 
-    ASSERT(!m_selectionChangedHandler);
     if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, { }))
         selectionChangedHandler();
 

@@ -161,7 +161,7 @@ FOR_EACH_BACKGROUND_LAYER_SHORTHAND(DECLARE_COORDINATED_VALUE_LIST_PROPERTY_ACCE
 // MARK: - Blending
 
 template<> struct Blending<BackgroundLayer> {
-    auto canBlend(const BackgroundLayer&, const BackgroundLayer&) -> bool;
+    bool NODELETE canBlend(const BackgroundLayer&, const BackgroundLayer&);
 };
 
 // MARK: - Logging

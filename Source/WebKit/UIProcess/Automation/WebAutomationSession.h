@@ -139,7 +139,7 @@ public:
     public:
         static Ref<Debuggable> create(WebAutomationSession&);
 
-        void sessionDestroyed();
+        void NODELETE sessionDestroyed();
 
     // Inspector::RemoteAutomationTarget API
     String name() const;
@@ -379,8 +379,8 @@ private:
     // The type parameter of the NSArray argument is platform-dependent.
     void sendSynthesizedEventsToPage(WebPageProxy&, NSArray *eventsToSend);
 
-    std::optional<unichar> charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
-    std::optional<unichar> charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
+    std::optional<unichar> NODELETE charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
+    std::optional<unichar> NODELETE charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
 #endif
 
     WeakPtr<WebProcessPool> m_processPool;

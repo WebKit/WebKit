@@ -100,10 +100,10 @@ private:
         protect(m_promise)->resolve<IDLAny>(m_accumulator.getValue());
     }
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
-        m_callback->visitJSFunction(visitor);
-        m_accumulator.visit(visitor);
+        m_callback->visitJSFunctionInGCThread(visitor);
+        m_accumulator.visitInGCThread(visitor);
     }
 
     InternalObserverReduce(ScriptExecutionContext& context, Ref<AbortSignal>&& signal, Ref<ReducerCallback>&& callback, JSC::JSValue initialValue, Ref<DeferredPromise>&& promise)

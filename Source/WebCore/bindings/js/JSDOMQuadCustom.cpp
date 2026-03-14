@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace JSC;
 
 template<typename Visitor>
-void JSDOMQuad::visitAdditionalChildren(Visitor& visitor)
+void JSDOMQuad::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p1()));
     addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p2()));
@@ -42,6 +42,6 @@ void JSDOMQuad::visitAdditionalChildren(Visitor& visitor)
     addWebCoreOpaqueRoot(visitor, const_cast<DOMPoint*>(&wrapped().p4()));
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDOMQuad);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSDOMQuad);
 
 } // namespace WebCore

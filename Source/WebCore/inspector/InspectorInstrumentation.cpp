@@ -905,7 +905,7 @@ void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instru
 }
 
 // JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
-static bool isConsoleAssertMessage(MessageSource source, MessageType type)
+static bool NODELETE isConsoleAssertMessage(MessageSource source, MessageType type)
 {
     return source == MessageSource::ConsoleAPI && type == MessageType::Assert;
 }

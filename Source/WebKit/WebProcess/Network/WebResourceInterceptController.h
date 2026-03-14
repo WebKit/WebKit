@@ -34,7 +34,7 @@ namespace WebKit {
 
 class WebResourceInterceptController {
 public:
-    bool isIntercepting(WebCore::ResourceLoaderIdentifier) const;
+    bool NODELETE isIntercepting(WebCore::ResourceLoaderIdentifier) const;
 
     // Start intercepting a response.
     void beginInterceptingResponse(WebCore::ResourceLoaderIdentifier);

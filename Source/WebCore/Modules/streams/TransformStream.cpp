@@ -164,11 +164,11 @@ ExceptionOr<CreateInternalTransformStreamResult> createInternalTransformStream(J
 }
 
 template<typename Visitor>
-void JSTransformStream::visitAdditionalChildren(Visitor& visitor)
+void JSTransformStream::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().internalTransformStream().visit(visitor);
+    wrapped().internalTransformStream().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSTransformStream);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSTransformStream);
 
 } // namespace WebCore

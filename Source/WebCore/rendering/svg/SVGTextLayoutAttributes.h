@@ -53,7 +53,7 @@ public:
     static bool isEmptyValue(float value) { return std::isnan(value); }
 
     RenderSVGInlineText& NODELETE context();
-    const RenderSVGInlineText& context() const;
+    const RenderSVGInlineText& NODELETE context() const;
     
     SVGCharacterDataMap& characterDataMap() LIFETIME_BOUND { return m_characterDataMap; }
     const SVGCharacterDataMap& characterDataMap() const LIFETIME_BOUND { return m_characterDataMap; }

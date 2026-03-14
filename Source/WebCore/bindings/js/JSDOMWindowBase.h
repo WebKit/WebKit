@@ -61,7 +61,7 @@ public:
     void updateDocument();
 
     DOMWindow& wrapped() const { return m_wrapped; }
-    Document* scriptExecutionContext() const;
+    Document* NODELETE scriptExecutionContext() const;
 
     // Called just before removing this window from the JSWindowProxy.
     void willRemoveFromWindowProxy();
@@ -78,7 +78,7 @@ public:
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
     static JSC::RuntimeFlags NODELETE javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static JSC::JSObject* currentScriptExecutionOwner(JSC::JSGlobalObject*);
-    static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
+    static JSC::ScriptExecutionStatus NODELETE scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
     void printErrorMessage(const String&) const;

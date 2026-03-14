@@ -227,11 +227,36 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data, Complet
             protectedThis->addRegistration(registration.copyRef());
 
             Ref worker = SWServerWorker::create(*protectedThis, registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, WTF::move(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTF::move(data.scriptResourceMap), WTF::move(data.routes));
+            worker->setNeedsScriptLoading();
             registration->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
             worker->setState(ServiceWorkerState::Activated);
         }
         completionHandler();
     });
+}
+
+void SWServer::loadWorkerScripts(const SWServerWorker& worker, CompletionHandler<void()>&& callback)
+{
+    RefPtr store = m_registrationStore;
+    if (!store) {
+        callback();
+        return;
+    }
+
+    store->retrieveWorkerScripts(worker.identifier(), worker.registrationKey(), worker.scriptURL(), worker.importedScriptURLs(),
+        [weakThis = WeakPtr { *this }, workerIdentifier = worker.identifier(), callback = WTF::move(callback)](auto&& result) mutable {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return callback();
+
+            if (RefPtr worker = protectedThis->workerByID(workerIdentifier)) {
+                if (result)
+                    worker->setWorkerScripts(WTF::move(result->mainScript), WTF::move(result->importedScripts));
+                else
+                    worker->didFailToLoadWorkerScripts();
+            }
+            callback();
+        });
 }
 
 void SWServer::didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts)
@@ -1053,6 +1078,16 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
     if (worker.isTerminating()) {
         worker.whenTerminated([weakThis = WeakPtr { *this }, identifier = worker.identifier(), callback = WTF::move(callback)]() mutable {
             RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return callback(nullptr);
+            protectedThis->runServiceWorkerIfNecessary(identifier, WTF::move(callback));
+        });
+        return;
+    }
+
+    if (worker.needsScriptLoading()) {
+        loadWorkerScripts(worker, [weakThis = WeakPtr { *this }, identifier = worker.identifier(), callback = WTF::move(callback)]() mutable {
+            RefPtr protectedThis = weakThis;
             if (!protectedThis)
                 return callback(nullptr);
             protectedThis->runServiceWorkerIfNecessary(identifier, WTF::move(callback));

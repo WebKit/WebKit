@@ -82,7 +82,7 @@ static std::optional<DeviceMotionEvent::RotationRate> NODELETE convert(const Dev
     return DeviceMotionEvent::RotationRate { rotationRate->alpha(), rotationRate->beta(), rotationRate->gamma() };
 }
 
-static RefPtr<DeviceMotionData::Acceleration> convert(std::optional<DeviceMotionEvent::Acceleration>&& acceleration)
+static RefPtr<DeviceMotionData::Acceleration> NODELETE convert(std::optional<DeviceMotionEvent::Acceleration>&& acceleration)
 {
     if (!acceleration)
         return nullptr;
@@ -93,7 +93,7 @@ static RefPtr<DeviceMotionData::Acceleration> convert(std::optional<DeviceMotion
     return DeviceMotionData::Acceleration::create(acceleration->x, acceleration->y, acceleration->z);
 }
 
-static RefPtr<DeviceMotionData::RotationRate> convert(std::optional<DeviceMotionEvent::RotationRate>&& rotationRate)
+static RefPtr<DeviceMotionData::RotationRate> NODELETE convert(std::optional<DeviceMotionEvent::RotationRate>&& rotationRate)
 {
     if (!rotationRate)
         return nullptr;

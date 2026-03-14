@@ -1547,7 +1547,7 @@ static bool overrideSizeChanged(const RenderBox& gridItem, Style::GridTrackSizin
     return true;
 }
 
-static bool hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& gridItem)
+static bool NODELETE hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& gridItem)
 {
     return GridLayoutFunctions::isOrthogonalGridItem(grid, gridItem) ? gridItem.hasRelativeLogicalWidth() || gridItem.style().logicalWidth().isAuto() : gridItem.hasRelativeLogicalHeight();
 }

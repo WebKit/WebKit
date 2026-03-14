@@ -43,7 +43,7 @@ struct ColumnWidth : ValueOrKeyword<Length<CSS::Nonnegative, float>, CSS::Keywor
 // MARK: - Blending
 
 template<> struct Blending<ColumnWidth> {
-    auto canBlend(const ColumnWidth&, const ColumnWidth&) -> bool;
+    bool NODELETE canBlend(const ColumnWidth&, const ColumnWidth&);
     auto blend(const ColumnWidth&, const ColumnWidth&, const BlendingContext&) -> ColumnWidth;
 };
 

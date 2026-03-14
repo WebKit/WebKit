@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static RealtimeMediaSourceSupportedConstraints supportedRealtimeIncomingVideoSourceSettingConstraints()
+static RealtimeMediaSourceSupportedConstraints NODELETE supportedRealtimeIncomingVideoSourceSettingConstraints()
 {
     RealtimeMediaSourceSupportedConstraints constraints;
     constraints.setSupportsWidth(true);

@@ -642,7 +642,7 @@ auto Document::allDocuments() -> DocumentsMap::ValuesIteratorRange
     return allDocumentsMap().values();
 }
 
-static inline IntDegrees currentOrientation(LocalFrame* frame)
+static inline IntDegrees NODELETE currentOrientation(LocalFrame* frame)
 {
 #if ENABLE(ORIENTATION_EVENTS)
     if (frame)
@@ -4125,7 +4125,7 @@ void Document::implicitOpen()
 
 RefPtr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
-    CachedResourceHandle cachedFont = protect(fontLoader())->cachedFont(completeURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
+    RefPtr cachedFont = protect(fontLoader())->cachedFont(completeURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
     if (!cachedFont)
         return nullptr;
     return CachedFontLoadRequest::create(*cachedFont, *this);
@@ -4133,7 +4133,7 @@ RefPtr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG,
 
 void Document::beginLoadingFontSoon(FontLoadRequest& request)
 {
-    CachedResourceHandle font = downcast<CachedFontLoadRequest>(request).cachedFont();
+    RefPtr font = downcast<CachedFontLoadRequest>(request).cachedFont();
     protect(fontLoader())->beginLoadingFontSoon(*font);
 }
 

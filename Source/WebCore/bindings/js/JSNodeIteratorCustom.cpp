@@ -27,12 +27,12 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSNodeIterator::visitAdditionalChildren(Visitor& visitor)
+void JSNodeIterator::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (auto filter = wrapped().filter())
         addWebCoreOpaqueRoot(visitor, *filter);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNodeIterator);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSNodeIterator);
 
 } // namespace WebCore

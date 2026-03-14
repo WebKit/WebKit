@@ -132,7 +132,7 @@ static void contentsQuadToCoordinateSystem(const FrameView* mainView, const Loca
         quad += toIntSize(mainView->scrollPosition());
 }
 
-static Element* effectiveElementForNode(Node& node)
+static Element* NODELETE effectiveElementForNode(Node& node)
 {
     if (!is<Element>(node) || !node.document().frame())
         return nullptr;
@@ -1139,7 +1139,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     }
 }
 
-static bool rendererIsFlexboxItem(RenderObject& renderer)
+static bool NODELETE rendererIsFlexboxItem(RenderObject& renderer)
 {
     if (auto* parentFlexRenderer = dynamicDowncast<RenderFlexibleBox>(renderer.parent()))
         return !parentFlexRenderer->orderIterator().shouldSkipChild(renderer);
@@ -1147,7 +1147,7 @@ static bool rendererIsFlexboxItem(RenderObject& renderer)
     return false;
 }
 
-static bool rendererIsGridItem(RenderObject& renderer)
+static bool NODELETE rendererIsGridItem(RenderObject& renderer)
 {
     if (is<RenderGrid>(renderer.parent()))
         return !renderer.isOutOfFlowPositioned() && !renderer.isExcludedFromNormalLayout();

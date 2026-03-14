@@ -83,7 +83,7 @@ public:
     bool shouldBlockGeolocationRequests();
 
     Navigator* NODELETE navigator();
-    WEBCORE_EXPORT LocalFrame* frame() const;
+    WEBCORE_EXPORT LocalFrame* NODELETE frame() const;
 
 private:
     explicit Geolocation(Navigator&);

@@ -35,12 +35,12 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSNavigator::visitAdditionalChildren(Visitor& visitor)
+void JSNavigator::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, static_cast<NavigatorBase&>(wrapped()));
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNavigator);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSNavigator);
 
 #if ENABLE(MEDIA_STREAM)
 JSC::JSValue JSNavigator::getUserMedia(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)

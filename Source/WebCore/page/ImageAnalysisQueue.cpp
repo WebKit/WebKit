@@ -71,7 +71,7 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
     if (!renderer)
         return;
 
-    CachedResourceHandle cachedImage = renderer->cachedImage();
+    RefPtr cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return;
 
@@ -166,7 +166,7 @@ void ImageAnalysisQueue::resumeProcessing()
         Ref page = *m_page;
         page->resetTextRecognitionResult(*element);
 
-        if (auto* image = element->cachedImage(); image && !image->errorOccurred())
+        if (RefPtr image = element->cachedImage(); image && !image->errorOccurred())
             m_queuedElements.set(*element, image->url());
 
         auto allowSnapshots = m_languageIdentifiers.target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;

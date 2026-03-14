@@ -79,7 +79,7 @@ class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE, pub
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     ~GraphicsContextGLCocoa();
-    IOSurface* displayBufferSurface();
+    IOSurface* NODELETE displayBufferSurface();
 
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
 
@@ -137,9 +137,9 @@ protected:
     bool reshapeDrawingBuffer() final;
     void prepareForDrawingBufferWrite() final;
 
-    IOSurfacePbuffer& drawingBuffer();
-    IOSurfacePbuffer& displayBuffer();
-    IOSurfacePbuffer& surfaceBuffer(SurfaceBuffer);
+    IOSurfacePbuffer& NODELETE drawingBuffer();
+    IOSurfacePbuffer& NODELETE displayBuffer();
+    IOSurfacePbuffer& NODELETE surfaceBuffer(SurfaceBuffer);
     bool bindNextDrawingBuffer();
     void freeDrawingBuffers();
 

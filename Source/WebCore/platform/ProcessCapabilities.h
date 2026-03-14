@@ -31,18 +31,18 @@ namespace WebCore {
 class ProcessCapabilities {
 public:
 #if USE(CG)
-    WEBCORE_EXPORT static void setHEICDecodingEnabled(bool);
-    static bool isHEICDecodingEnabled();
+    WEBCORE_EXPORT static void NODELETE setHEICDecodingEnabled(bool);
+    static bool NODELETE isHEICDecodingEnabled();
 
-    WEBCORE_EXPORT static void setAVIFDecodingEnabled(bool);
-    static bool isAVIFDecodingEnabled();
+    WEBCORE_EXPORT static void NODELETE setAVIFDecodingEnabled(bool);
+    static bool NODELETE isAVIFDecodingEnabled();
 #endif
 
-    WEBCORE_EXPORT static void setHardwareAcceleratedDecodingDisabled(bool);
-    static bool isHardwareAcceleratedDecodingDisabled();
+    WEBCORE_EXPORT static void NODELETE setHardwareAcceleratedDecodingDisabled(bool);
+    static bool NODELETE isHardwareAcceleratedDecodingDisabled();
 
-    WEBCORE_EXPORT static void setCanUseAcceleratedBuffers(bool);
-    static bool canUseAcceleratedBuffers();
+    WEBCORE_EXPORT static void NODELETE setCanUseAcceleratedBuffers(bool);
+    static bool NODELETE canUseAcceleratedBuffers();
 };
 
 } // namespace WebCore

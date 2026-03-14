@@ -48,12 +48,12 @@ public:
     bool marginBeforeCollapsesWithParentMarginBefore(const ElementBox&) const;
     bool marginBeforeCollapsesWithFirstInFlowChildMarginBefore(const ElementBox&) const;
     bool marginBeforeCollapsesWithParentMarginAfter(const ElementBox&) const;
-    bool marginBeforeCollapsesWithPreviousSiblingMarginAfter(const ElementBox&) const;
+    bool NODELETE marginBeforeCollapsesWithPreviousSiblingMarginAfter(const ElementBox&) const;
 
     bool marginAfterCollapsesWithParentMarginAfter(const ElementBox&) const;
     bool marginAfterCollapsesWithLastInFlowChildMarginAfter(const ElementBox&) const;
     bool marginAfterCollapsesWithParentMarginBefore(const ElementBox&) const;
-    bool marginAfterCollapsesWithNextSiblingMarginBefore(const ElementBox&) const;
+    bool NODELETE marginAfterCollapsesWithNextSiblingMarginBefore(const ElementBox&) const;
     bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const ElementBox&) const;
 
     UsedVerticalMargin::PositiveAndNegativePair::Values computedPositiveAndNegativeMargin(UsedVerticalMargin::PositiveAndNegativePair::Values, UsedVerticalMargin::PositiveAndNegativePair::Values) const;
@@ -73,7 +73,7 @@ private:
 
     std::optional<LayoutUnit> NODELETE marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
 
-    bool hasClearance(const ElementBox&) const;
+    bool NODELETE hasClearance(const ElementBox&) const;
 
     bool inQuirksMode() const { return m_inQuirksMode; }
     const LayoutState& layoutState() const LIFETIME_BOUND { return m_layoutState; }

@@ -2919,6 +2919,15 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
+        case ArrayIsArrayIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            setResult(addToGraph(ArrayIsArray, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
+            return CallOptimizationResult::Inlined;
+        }
+
         case AtomicsAddIntrinsic:
         case AtomicsAndIntrinsic:
         case AtomicsCompareExchangeIntrinsic:

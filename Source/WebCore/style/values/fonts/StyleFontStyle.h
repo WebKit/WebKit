@@ -78,14 +78,14 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<FontStyle> { auto operator()(BuilderState&, const CSSValue&) -> FontStyle; };
+template<> struct CSSValueConversion<FontStyle> { FontStyle operator()(BuilderState&, const CSSValue&); };
 // `FontStyle` is special-cased to return a `CSSFontStyleWithAngleValue`.
-template<> struct CSSValueCreation<FontStyle> { auto operator()(CSSValuePool&, const RenderStyle&, const FontStyle&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<FontStyle> { Ref<CSSValue> NODELETE operator()(CSSValuePool&, const RenderStyle&, const FontStyle&); };
 
 // MARK: - Blending
 
 template<> struct Blending<FontStyle> {
-    auto canBlend(const FontStyle&, const FontStyle&) -> bool;
+    bool NODELETE canBlend(const FontStyle&, const FontStyle&);
     auto blend(const FontStyle&, const FontStyle&, const BlendingContext&) -> FontStyle;
 };
 

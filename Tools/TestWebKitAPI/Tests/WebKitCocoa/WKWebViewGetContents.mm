@@ -698,7 +698,7 @@ TEST(WKWebView, RequestAllTextRunsWithSubframes)
 
     Vector<std::pair<const char*, CGRect>> expectedResults {
 #if PLATFORM(MAC)
-        { "Here's to the crazy", CGRectMake(0, 18, 298, 16) },
+        { "Here's to the crazy", CGRectMake(0, 18, 298, 17) },
         { "ones.", CGRectMake(0, 34, 80, 17) },
         { "The round", CGRectMake(9, 84, 144, 16) },
         { "pegs in", CGRectMake(9, 100, 112, 16) },

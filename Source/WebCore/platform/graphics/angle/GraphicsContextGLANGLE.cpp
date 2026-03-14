@@ -65,14 +65,14 @@ namespace WebCore {
 // List of displays ever instantiated from EGL. When terminating all EGL resources, we need to
 // terminate all displays. However, we cannot ask EGL all the displays it has created.
 // We must know all the displays via this set.
-static HashSet<GCGLDisplay>& usedDisplays()
+static HashSet<GCGLDisplay>& NODELETE usedDisplays()
 {
     static NeverDestroyed<HashSet<GCGLDisplay>> s_usedDisplays;
     return s_usedDisplays;
 }
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-static void wipeAlphaChannelFromPixels(std::span<uint8_t> pixels)
+static void NODELETE wipeAlphaChannelFromPixels(std::span<uint8_t> pixels)
 {
     for (size_t i = 0; i < pixels.size(); i += 4)
         pixels[i + 3] = 255;
@@ -156,7 +156,7 @@ static constexpr SortedArrayMap extensionsMapping { std::to_array<std::pair<Comp
     { "GL_QCOM_render_shared_exponent"_s, GCGLExtension::QCOM_render_shared_exponent },
 }) };
 
-static ASCIILiteral extensionName(GCGLExtension extension)
+static ASCIILiteral NODELETE extensionName(GCGLExtension extension)
 {
     size_t index = static_cast<size_t>(extension);
     std::span mapping { extensionsMapping.array() };

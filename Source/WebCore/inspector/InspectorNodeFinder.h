@@ -46,10 +46,10 @@ public:
     const ListHashSet<Node*>& results() const LIFETIME_BOUND { return m_results; }
 
 private:
-    bool checkEquals(const String&, const String&);
+    bool NODELETE checkEquals(const String&, const String&);
     bool checkContains(const String&, const String&);
-    bool checkStartsWith(const String&, const String&);
-    bool checkEndsWith(const String&, const String&);
+    bool NODELETE checkStartsWith(const String&, const String&);
+    bool NODELETE checkEndsWith(const String&, const String&);
 
     bool matchesAttribute(const Attribute&);
     bool matchesElement(const Element&);

@@ -52,7 +52,7 @@ Ref<PlatformRawAudioData> PlatformRawAudioData::create(Ref<MediaSample>&& sample
     return PlatformRawAudioDataCocoa::create(downcast<MediaSampleAVFObjC>(WTF::move(sample)));
 }
 
-static AudioStreamDescription::PCMFormat audioSampleFormatToPCMFormat(AudioSampleFormat format)
+static AudioStreamDescription::PCMFormat NODELETE audioSampleFormatToPCMFormat(AudioSampleFormat format)
 {
     switch (format) {
     case AudioSampleFormat::U8:
@@ -74,7 +74,7 @@ static AudioStreamDescription::PCMFormat audioSampleFormatToPCMFormat(AudioSampl
     }
 }
 
-static CAAudioStreamDescription::IsInterleaved interleavedFormat(AudioSampleFormat format)
+static CAAudioStreamDescription::IsInterleaved NODELETE interleavedFormat(AudioSampleFormat format)
 {
     return isAudioSampleFormatInterleaved(format) ? CAAudioStreamDescription::IsInterleaved::Yes : CAAudioStreamDescription::IsInterleaved::No;
 }

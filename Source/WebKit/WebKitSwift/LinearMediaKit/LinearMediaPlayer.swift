@@ -24,16 +24,16 @@
 #if os(visionOS)
 
 import AVFoundation
-import Combine
-import RealityKit
+public import Combine
+public import RealityKit
 import UIKit
 import os
 
 #if canImport(AVKit, _version: 1270)
 #if USE_APPLE_INTERNAL_SDK
-@_spi(LinearMediaKit) import AVKit
+@_spi(LinearMediaKit) public import AVKit
 #else
-import AVKit_SPI
+public import AVKit_SPI
 #endif
 #else
 import LinearMediaKit

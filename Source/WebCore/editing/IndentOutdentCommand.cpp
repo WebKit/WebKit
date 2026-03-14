@@ -47,7 +47,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isListOrIndentBlockquote(const Node& node)
+static bool NODELETE isListOrIndentBlockquote(const Node& node)
 {
     return node.hasTagName(ulTag) || node.hasTagName(olTag) || node.hasTagName(blockquoteTag);
 }

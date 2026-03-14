@@ -162,22 +162,24 @@ typedef NS_ENUM(NSInteger, WKBridgeSemantic) {
 
 @interface WKBridgeEdge : NSObject
 
-@property (nonatomic, readonly) long upstreamNodeIndex;
-@property (nonatomic, readonly) long downstreamNodeIndex;
-@property (nonatomic, readonly) NSString *upstreamOutputName;
-@property (nonatomic, readonly) NSString *downstreamInputName;
+@property (nonatomic, readonly) NSString *outputNode;
+@property (nonatomic, readonly) NSString *outputPort;
+@property (nonatomic, readonly) NSString *inputNode;
+@property (nonatomic, readonly) NSString *inputPort;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithUpstreamNodeIndex:(long)upstreamNodeIndex
-    downstreamNodeIndex:(long)downstreamNodeIndex
-    upstreamOutputName:(NSString *)upstreamOutputName
-    downstreamInputName:(NSString *)downstreamInputName NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithOutputNode:(NSString *)outputNode
+    outputPort:(NSString *)outputPort
+    inputNode:(NSString *)inputNode
+    inputPort:(NSString *)inputPort NS_DESIGNATED_INITIALIZER;
 
 @end
 
 typedef NS_ENUM(NSInteger, WKBridgeDataType) {
     WKBridgeDataTypeBool,
+    WKBridgeDataTypeUchar,
     WKBridgeDataTypeInt,
+    WKBridgeDataTypeUint,
     WKBridgeDataTypeInt2,
     WKBridgeDataTypeInt3,
     WKBridgeDataTypeInt4,
@@ -196,20 +198,30 @@ typedef NS_ENUM(NSInteger, WKBridgeDataType) {
     WKBridgeDataTypeMatrix2f,
     WKBridgeDataTypeMatrix3f,
     WKBridgeDataTypeMatrix4f,
+    WKBridgeDataTypeMatrix2h,
+    WKBridgeDataTypeMatrix3h,
+    WKBridgeDataTypeMatrix4h,
+    WKBridgeDataTypeQuat,
     WKBridgeDataTypeSurfaceShader,
     WKBridgeDataTypeGeometryModifier,
+    WKBridgeDataTypePostLightingShader,
     WKBridgeDataTypeString,
     WKBridgeDataTypeToken,
     WKBridgeDataTypeAsset
 };
 
+@class WKBridgeConstantContainer;
+
 @interface WKBridgeInputOutput : NSObject
 
 @property (nonatomic, readonly) WKBridgeDataType type;
 @property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) WKBridgeDataType semanticType;
+@property (nonatomic, readonly) BOOL hasSemanticType;
+@property (nonatomic, readonly, nullable) WKBridgeConstantContainer *defaultValue;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithType:(WKBridgeDataType)dataType name:(NSString *)name NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithType:(WKBridgeDataType)dataType name:(NSString *)name semanticType:(WKBridgeDataType)semanticType hasSemanticType:(BOOL)hasSemanticType defaultValue:(nullable WKBridgeConstantContainer *)defaultValue NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -267,6 +279,7 @@ typedef NS_ENUM(NSInteger, WKBridgeNodeType) {
 
 @property (nonatomic, readonly) NSNumber *number;
 @property (nonatomic, readonly) NSString *string;
+@property (nonatomic, readonly) bool isString;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithNumber:(NSNumber *)number;
@@ -295,296 +308,29 @@ typedef NS_ENUM(NSInteger, WKBridgeNodeType) {
 
 @end
 
-NS_SWIFT_SENDABLE
-@interface WKBridgeFunctionReference : NSObject
-
-@property (nonatomic, strong, readonly) NSString *moduleName;
-@property (nonatomic, readonly) NSInteger functionIndex;
-
-- (instancetype)initWithModuleName:(NSString *)moduleName functionIndex:(NSInteger)functionIndex;
-
-@end
-
-@class WKBridgeModuleReference;
-@class WKBridgeTypeDefinition;
-@class WKBridgeFunction;
-@class WKBridgeModuleGraph;
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeModule : NSObject
-
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) NSArray<WKBridgeModuleReference *> *imports;
-@property (nonatomic, readonly) NSArray<WKBridgeTypeDefinition *> *typeDefinitions;
-@property (nonatomic, readonly) NSArray<WKBridgeFunction *> *functions;
-@property (nonatomic, readonly) NSArray<WKBridgeModuleGraph *> *graphs;
-
-- (instancetype)initWithName:(NSString *)name
-    imports:(NSArray<WKBridgeModuleReference *> *)imports
-    typeDefinitions:(NSArray<WKBridgeTypeDefinition *> *)typeDefinitions
-    functions:(NSArray<WKBridgeFunction *> *)functions
-    graphs:(NSArray<WKBridgeModuleGraph *> *)graphs NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeModuleReference : NSObject
-
-@property (nonatomic, strong, readonly) WKBridgeModule *module;
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) NSArray<WKBridgeModuleReference *> *imports;
-@property (nonatomic, readonly) NSArray<WKBridgeTypeDefinition *> *typeDefinitions;
-@property (nonatomic, readonly) NSArray<WKBridgeFunction *> *functions;
-
-- (instancetype)initWithModule:(WKBridgeModule *)module NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@class WKBridgeTypeReference;
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeTypeReference : NSObject
-
-@property (nonatomic, readonly) NSString *moduleName;
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, assign, readonly) NSInteger typeDefIndex;
-
-- (instancetype)initWithModule:(NSString *)moduleName
-    name:(NSString *)name
-    typeDefIndex:(NSInteger)typeDefIndex NS_DESIGNATED_INITIALIZER;
-
-@end
-
-typedef NS_ENUM(NSInteger, WKBridgeTypeStructure) {
-    WKBridgeTypeStructurePrimitive,
-    WKBridgeTypeStructureStruct,
-    WKBridgeTypeStructureEnum
-};
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeStructMember : NSObject
-
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, strong, readonly) WKBridgeTypeReference *type;
-
-- (instancetype)initWithName:(NSString *)name type:(WKBridgeTypeReference *)type NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeEnumCase : NSObject
-
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, assign, readonly) NSInteger value;
-
-- (instancetype)initWithName:(NSString *)name value:(NSInteger)value NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeTypeDefinition : NSObject
-
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, strong, readonly) WKBridgeTypeReference *typeReference;
-@property (nonatomic, assign, readonly) WKBridgeTypeStructure structureType;
-@property (nonatomic, readonly, nullable) NSArray<WKBridgeStructMember *> *structMembers; // nil unless structureType == WKBridgeTypeStructureStruct
-@property (nonatomic, readonly, nullable) NSArray<WKBridgeEnumCase *> *enumCases; // nil unless structureType == WKBridgeTypeStructureEnum
-
-- (instancetype)initWithName:(NSString *)name
-    typeReference:(WKBridgeTypeReference *)typeReference
-    structureType:(WKBridgeTypeStructure)structureType
-    structMembers:(nullable NSArray<WKBridgeStructMember *> *)structMembers
-    enumCases:(nullable NSArray<WKBridgeEnumCase *> *)enumCases NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@class WKBridgeFunctionReference;
-
-typedef NS_ENUM(NSInteger, WKBridgeFunctionKind) {
-    WKBridgeFunctionKindGraph,
-    WKBridgeFunctionKindIntrinsic
-};
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeFunctionArgument : NSObject
-
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, strong, readonly) WKBridgeTypeReference *type;
-
-- (instancetype)initWithName:(NSString *)name type:(WKBridgeTypeReference *)type NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeFunction : NSObject
-
-@property (nonatomic, strong, readonly) NSString *name;
-@property (nonatomic, strong, readonly) NSArray<WKBridgeFunctionArgument *> *arguments;
-@property (nonatomic, strong, readonly) WKBridgeTypeReference *returnType;
-@property (nonatomic, strong, readonly) WKBridgeFunctionReference *functionReference;
-@property (nonatomic, assign, readonly) WKBridgeFunctionKind kind;
-@property (nonatomic, readonly) NSString *kindName; // graph name or stitching function name
-
-- (instancetype)initWithName:(NSString *)name
-    arguments:(NSArray<WKBridgeFunctionArgument *> *)arguments
-    returnType:(WKBridgeTypeReference *)returnType
-    functionReference:(WKBridgeFunctionReference *)functionReference
-    kind:(WKBridgeFunctionKind)kind
-    kindName:(NSString *)kindName NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeNodeID : NSObject
-
-@property (nonatomic, assign, readonly) NSInteger value;
-
-- (instancetype)initWithValue:(NSInteger)value NS_DESIGNATED_INITIALIZER;
-
-@end
-
-typedef NS_ENUM(NSInteger, WKBridgeFunctionCallType) {
-    WKBridgeFunctionCallTypeName,
-    WKBridgeFunctionCallTypeReference
-};
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeFunctionCall : NSObject
-
-@property (nonatomic, assign, readonly) WKBridgeFunctionCallType type;
-@property (nonatomic, readonly, nullable) NSString *name; // if type == WKBridgeFunctionCallTypeName
-@property (nonatomic, strong, readonly, nullable) WKBridgeFunctionReference *reference; // if type == WKBridgeFunctionCallTypeReference
-
-- (instancetype)initWithName:(NSString *)name;
-- (instancetype)initWithReference:(WKBridgeFunctionReference *)reference;
-
-@end
-
-typedef NS_ENUM(NSInteger, WKBridgeNodeInstructionType) {
-    WKBridgeNodeInstructionTypeFunctionCall,
-    WKBridgeNodeInstructionTypeFunctionConstant,
-    WKBridgeNodeInstructionTypeLiteral,
-    WKBridgeNodeInstructionTypeArgument,
-    WKBridgeNodeInstructionTypeElement
-};
-
-typedef NS_ENUM(uint32_t, WKBridgeLiteralType) {
-    WKBridgeLiteralTypeBool,
-    WKBridgeLiteralTypeInt32,
-    WKBridgeLiteralTypeUInt32,
-    WKBridgeLiteralTypeFloat,
-    WKBridgeLiteralTypeFloat2,
-    WKBridgeLiteralTypeFloat3,
-    WKBridgeLiteralTypeFloat4,
-#if defined(__arm64__)
-    WKBridgeLiteralTypeHalf,
-    WKBridgeLiteralTypeHalf2,
-    WKBridgeLiteralTypeHalf3,
-    WKBridgeLiteralTypeHalf4,
-#endif
-    WKBridgeLiteralTypeInt2,
-    WKBridgeLiteralTypeInt3,
-    WKBridgeLiteralTypeInt4,
-    WKBridgeLiteralTypeUInt2,
-    WKBridgeLiteralTypeUInt3,
-    WKBridgeLiteralTypeUInt4,
-    WKBridgeLiteralTypeFloat2x2,
-    WKBridgeLiteralTypeFloat3x3,
-    WKBridgeLiteralTypeFloat4x4,
-#if defined(__arm64__)
-    WKBridgeLiteralTypeHalf2x2,
-    WKBridgeLiteralTypeHalf3x3,
-    WKBridgeLiteralTypeHalf4x4,
-#endif
-};
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeLiteralArchive : NSObject
-
-@property (nonatomic, assign, readonly) WKBridgeLiteralType type;
-@property (nonatomic, readonly) NSArray<NSNumber *> *data; // Array of UInt32
-
-- (instancetype)initWithType:(WKBridgeLiteralType)type data:(NSArray<NSNumber *> *)data NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeLiteral : NSObject
-
-@property (nonatomic, assign, readonly) WKBridgeLiteralType type;
-@property (nonatomic, strong, readonly) WKBridgeLiteralArchive *archive;
-
-- (instancetype)initWithType:(WKBridgeLiteralType)type data:(NSArray<NSNumber *> *)data NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeNodeInstruction : NSObject
-
-@property (nonatomic, assign, readonly) WKBridgeNodeInstructionType type;
-
-// Properties based on type
-@property (nonatomic, strong, readonly, nullable) WKBridgeFunctionCall *functionCall;
-@property (nonatomic, readonly, nullable) NSString *constantName;
-@property (nonatomic, strong, readonly, nullable) WKBridgeLiteral *literal;
-@property (nonatomic, readonly, nullable) NSString *argumentName;
-@property (nonatomic, strong, readonly, nullable) WKBridgeTypeReference *elementType;
-@property (nonatomic, readonly, nullable) NSString *elementName;
-
-- (instancetype)initWithFunctionCall:(WKBridgeFunctionCall *)functionCall;
-- (instancetype)initWithFunctionConstant:(NSString *)name literal:(WKBridgeLiteral *)literal;
-- (instancetype)initWithLiteral:(WKBridgeLiteral *)literal;
-- (instancetype)initWithArgument:(NSString *)argumentName;
-- (instancetype)initWithElementType:(WKBridgeTypeReference *)type elementName:(NSString *)elementName;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeArgumentError : NSObject
-
-@property (nonatomic, readonly) NSString *message;
-@property (nonatomic, strong, readonly) WKBridgeFunctionArgument *argument;
-
-- (instancetype)initWithMessage:(NSString *)message argument:(WKBridgeFunctionArgument *)argument NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
 @interface WKBridgeNode : NSObject
 
-@property (nonatomic, strong, readonly) WKBridgeNodeID *nodeID;
-@property (nonatomic, strong, readonly) WKBridgeNodeInstruction *instruction;
+@property (nonatomic, readonly) WKBridgeNodeType bridgeNodeType;
+@property (nonatomic, readonly, strong, nullable) WKBridgeBuiltin *builtin;
+@property (nonatomic, readonly, nullable) WKBridgeConstantContainer *constant;
 
-- (instancetype)initWithIdentifier:(WKBridgeNodeID *)nodeID
-    instruction:(WKBridgeNodeInstruction *)instruction NS_DESIGNATED_INITIALIZER;
-
-@end
-
-NS_SWIFT_SENDABLE
-@interface WKBridgeGraphEdge : NSObject
-
-@property (nonatomic, strong, readonly) WKBridgeNodeID *source;
-@property (nonatomic, strong, readonly) WKBridgeNodeID *destination;
-@property (nonatomic, readonly) NSString *argument;
-
-- (instancetype)initWithSource:(WKBridgeNodeID *)source
-    destination:(WKBridgeNodeID *)destination
-    argument:(NSString *)argument NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithBridgeNodeType:(WKBridgeNodeType)bridgeNodeType builtin:(WKBridgeBuiltin *)builtin constant:(WKBridgeConstantContainer *)constant NS_DESIGNATED_INITIALIZER;
 
 @end
 
 NS_SWIFT_SENDABLE
-@interface WKBridgeModuleGraph : NSObject
+@interface WKBridgeMaterialGraph : NSObject
 
-@property (nonatomic, strong, readonly) WKBridgeFunctionReference *functionReference;
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) NSArray<WKBridgeFunctionArgument *> *arguments;
-@property (nonatomic, strong, readonly) WKBridgeTypeReference *returnType;
-@property (nonatomic, readonly) NSArray<WKBridgeNode *> *nodes;
-@property (nonatomic, readonly) NSArray<WKBridgeGraphEdge *> *edges;
-@property (nonatomic, readonly) NSInteger index;
+@property (nonatomic, strong, readonly) NSArray<WKBridgeNode *> *nodes;
+@property (nonatomic, strong, readonly) NSArray<WKBridgeEdge *> *edges;
+@property (nonatomic, strong, readonly) WKBridgeNode *arguments;
+@property (nonatomic, strong, readonly) WKBridgeNode *results;
+@property (nonatomic, strong, readonly) NSArray<WKBridgeInputOutput *> *inputs;
+@property (nonatomic, strong, readonly) NSArray<WKBridgeInputOutput *> *outputs;
 
-- (instancetype)initWithIndex:(NSInteger)index function:(WKBridgeFunction *)function NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithNodes:(NSArray<WKBridgeNode *> *)nodes edges:(NSArray<WKBridgeEdge *> *)edges arguments:(WKBridgeNode *)arguments results:(WKBridgeNode *)results inputs:(NSArray<WKBridgeInputOutput *> *)inputs outputs:(NSArray<WKBridgeInputOutput *> *)outputs NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -619,14 +365,11 @@ NS_SWIFT_SENDABLE
 NS_SWIFT_SENDABLE
 @interface WKBridgeUpdateMaterial : NSObject
 
-@property (nonatomic, strong, readonly, nullable) NSData *materialGraph;
+@property (nonatomic, strong, readonly, nullable) WKBridgeMaterialGraph *materialGraph;
 @property (nonatomic, strong, readonly) NSString *identifier;
-@property (nonatomic, strong, readonly, nullable) WKBridgeFunctionReference *geometryModifierFunctionReference;
-@property (nonatomic, strong, readonly, nullable) WKBridgeFunctionReference *surfaceShaderFunctionReference;
-@property (nonatomic, strong, readonly, nullable) WKBridgeModule *shaderGraphModule;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithMaterialGraph:(nullable NSData *)materialGraph identifier:(NSString *)identifier geometryModifierFunctionReference:(nullable WKBridgeFunctionReference *)geometryModifierFunctionReference surfaceShaderFunctionReference:(nullable WKBridgeFunctionReference *)surfaceShaderFunctionReference shaderGraphModule:(nullable WKBridgeModule *)shaderGraphModule NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithMaterialGraph:(nullable WKBridgeMaterialGraph *)materialGraph identifier:(NSString *)identifier NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -696,6 +439,7 @@ NS_SWIFT_SENDABLE
 - (void)loadModelFrom:(NSURL *)url;
 - (void)loadModel:(NSData *)data;
 - (void)update:(double)deltaTime;
+- (void)setLoop:(BOOL)loop;
 - (void)requestCompleted:(NSObject *)request;
 - (void)setCallbacksWithModelUpdatedCallback:(void (^)(WKBridgeUpdateMesh *))modelUpdatedCallback textureUpdatedCallback:(void (^)(WKBridgeUpdateTexture *))textureUpdatedCallback materialUpdatedCallback:(void (^)(WKBridgeUpdateMaterial *))materialUpdatedCallback;
 
@@ -712,6 +456,8 @@ class ProcessIdentity;
 }
 
 namespace WebModel {
+
+using NumberOrString = Variant<String, double>;
 
 struct ImageAssetSwizzle {
     uint8_t red { 0 };
@@ -765,13 +511,137 @@ struct MeshDescriptor {
     long indexType;
 };
 
-struct MaterialDescriptor {
-    Vector<uint8_t> materialGraph;
-    String identifier;
+struct Edge {
+    String outputNode;
+    String outputPort;
+    String inputNode;
+    String inputPort;
+};
+
+enum class DataType : uint8_t {
+    kBool,
+    kUchar,
+    kInt,
+    kUint,
+    kInt2,
+    kInt3,
+    kInt4,
+    kFloat,
+    kColor3f,
+    kColor3h,
+    kColor4f,
+    kColor4h,
+    kFloat2,
+    kFloat3,
+    kFloat4,
+    kHalf,
+    kHalf2,
+    kHalf3,
+    kHalf4,
+    kMatrix2f,
+    kMatrix3f,
+    kMatrix4f,
+    kMatrix2h,
+    kMatrix3h,
+    kMatrix4h,
+    kQuat,
+    kSurfaceShader,
+    kGeometryModifier,
+    kPostLightingShader,
+    kString,
+    kToken,
+    kAsset
+};
+
+struct Primvar {
+    String name;
+    String referencedGeomPropName;
+    uint64_t attributeFormat;
+};
+
+enum class Constant : uint8_t {
+    kBool,
+    kUchar,
+    kInt,
+    kUint,
+    kHalf,
+    kFloat,
+    kTimecode,
+    kString,
+    kToken,
+    kAsset,
+    kMatrix2f,
+    kMatrix3f,
+    kMatrix4f,
+    kQuatf,
+    kQuath,
+    kFloat2,
+    kHalf2,
+    kInt2,
+    kFloat3,
+    kHalf3,
+    kInt3,
+    kFloat4,
+    kHalf4,
+    kInt4,
+    kPoint3f,
+    kPoint3h,
+    kNormal3f,
+    kNormal3h,
+    kVector3f,
+    kVector3h,
+    kColor3f,
+    kColor3h,
+    kColor4f,
+    kColor4h,
+    kTexCoord2h,
+    kTexCoord2f,
+    kTexCoord3h,
+    kTexCoord3f
+};
+
+enum class NodeType : uint8_t {
+    Builtin,
+    Constant,
+    Arguments,
+    Results
+};
+
+struct ConstantContainer {
+    Constant constant;
+    Vector<Variant<String, double>> constantValues;
+    String name;
+};
+
+struct InputOutput {
+    DataType type;
+    String name;
+    std::optional<DataType> semanticType;
+    std::optional<ConstantContainer> defaultValue;
+};
+
+struct Builtin {
+    String definition;
+    String name;
+};
+
+struct Node {
+    NodeType bridgeNodeType;
+    Builtin builtin;
+    ConstantContainer constant;
+};
+
+struct MaterialGraph {
+    Vector<Node> nodes;
+    Vector<Edge> edges;
+    Node arguments;
+    Node results;
+    Vector<InputOutput> inputs;
+    Vector<InputOutput> outputs;
 };
 
 struct UpdateMaterialDescriptor {
-    Vector<uint8_t> materialGraph;
+    MaterialGraph materialGraph;
     String identifier;
 };
 

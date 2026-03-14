@@ -151,7 +151,7 @@ public:
     // 5.1 RTCPeerConnection extensions
     Vector<std::reference_wrapper<RTCRtpSender>> getSenders() const;
     Vector<std::reference_wrapper<RTCRtpReceiver>> getReceivers() const;
-    const Vector<Ref<RTCRtpTransceiver>>& getTransceivers() const;
+    const Vector<Ref<RTCRtpTransceiver>>& NODELETE getTransceivers() const;
 
     const Vector<Ref<RTCRtpTransceiver>>& currentTransceivers() const LIFETIME_BOUND { return m_transceiverSet.list(); }
 

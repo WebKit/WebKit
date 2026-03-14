@@ -75,8 +75,8 @@ public:
     BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
     TableFormattingState& ensureTableFormattingState(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
 
-    BlockFormattingState& formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const LIFETIME_BOUND;
-    TableFormattingState& formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const LIFETIME_BOUND;
+    BlockFormattingState& NODELETE formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const LIFETIME_BOUND;
+    TableFormattingState& NODELETE formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const LIFETIME_BOUND;
 
     FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const LIFETIME_BOUND;
 

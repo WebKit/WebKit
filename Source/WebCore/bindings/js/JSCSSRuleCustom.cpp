@@ -81,11 +81,11 @@ namespace WebCore {
 using namespace JSC;
 
 template<typename Visitor>
-void JSCSSRule::visitAdditionalChildren(Visitor& visitor)
+void JSCSSRule::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSRule);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSCSSRule);
 
 } // namespace WebCore

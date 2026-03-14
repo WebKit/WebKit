@@ -84,7 +84,7 @@ public:
     const String& referrerPolicy() const LIFETIME_BOUND { return m_referrerPolicy; }
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const LIFETIME_BOUND { return m_crossOriginEmbedderPolicy; }
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    const URL& responseURL() const;
+    const URL& NODELETE responseURL() const;
     ResourceResponse::Source responseSource() const { return m_responseSource; }
     bool isRedirected() const { return m_isRedirected; }
     const CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }

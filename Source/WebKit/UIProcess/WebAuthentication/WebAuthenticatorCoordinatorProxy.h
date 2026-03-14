@@ -93,7 +93,7 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    static WeakPtr<WebAuthenticatorCoordinatorProxy>& activeConditionalMediationProxy();
+    static WeakPtr<WebAuthenticatorCoordinatorProxy>& NODELETE activeConditionalMediationProxy();
     void pauseConditionalAssertion(CompletionHandler<void()>&&);
     void unpauseConditionalAssertion();
     void makeActiveConditionalAssertion();

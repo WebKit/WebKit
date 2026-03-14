@@ -23,10 +23,10 @@
 
 #if ENABLE_SWIFTUI
 
-import Foundation
-import Observation
-internal import WebKit_Private
-internal import WebKit_Internal
+public import Foundation
+public import Observation
+import WebKit_Private
+import WebKit_Internal
 
 /// An object that controls and manages the behavior of interactive web content.
 ///

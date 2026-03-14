@@ -207,7 +207,7 @@ public:
 
         bool NODELETE hasTrailingLetterSpacing() const;
         InlineLayoutUnit NODELETE trailingLetterSpacing() const;
-        InlineLayoutUnit removeTrailingLetterSpacing();
+        InlineLayoutUnit NODELETE removeTrailingLetterSpacing();
 
         TrailingWhitespace m_trailingWhitespace { };
         Type m_type { Type::Text };
@@ -263,8 +263,8 @@ private:
     struct TrimmableTrailingContent {
         TrimmableTrailingContent(RunList&);
 
-        void addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableContentOffset, InlineLayoutUnit trimmableWidth);
-        void addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth);
+        void NODELETE addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableContentOffset, InlineLayoutUnit trimmableWidth);
+        void NODELETE addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth);
         InlineLayoutUnit remove();
         InlineLayoutUnit removePartiallyTrimmableContent();
 

@@ -88,7 +88,7 @@ private:
 class ScopedDav1dData {
 public:
     ~ScopedDav1dData() { dav1d_data_unref(&m_data); }
-    Dav1dData& Data() { return m_data; }
+    Dav1dData& NODELETE Data() { return m_data; }
 
 private:
     Dav1dData m_data;
@@ -97,7 +97,7 @@ private:
 class ScopedDav1dPicture {
 public:
     ~ScopedDav1dPicture() { dav1d_picture_unref(&m_picture); }
-    Dav1dPicture& Picture() { return m_picture; }
+    Dav1dPicture& NODELETE Picture() { return m_picture; }
 
 private:
     Dav1dPicture m_picture;
@@ -106,7 +106,7 @@ private:
 constexpr char kDav1dName[] = "dav1d";
 
 // Calling `dav1d_data_wrap` requires a `free_callback` to be registered.
-static void NullFreeCallback(const uint8_t*, void*)
+static void NODELETE NullFreeCallback(const uint8_t*, void*)
 {
 }
 

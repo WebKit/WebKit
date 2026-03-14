@@ -76,7 +76,7 @@ constexpr auto createPCMObservedDomain = "CREATE TABLE PCMObservedDomains ("
 constexpr auto insertObservedDomainQuery = "INSERT INTO PCMObservedDomains (registrableDomain) VALUES (?)"_s;
 constexpr auto clearAllPrivateClickMeasurementQuery = "DELETE FROM PCMObservedDomains WHERE domainID LIKE ?"_s;
 
-static WeakHashSet<Database>& allDatabases()
+static WeakHashSet<Database>& NODELETE allDatabases()
 {
     ASSERT(!RunLoop::isMain());
     static NeverDestroyed<WeakHashSet<Database>> set;

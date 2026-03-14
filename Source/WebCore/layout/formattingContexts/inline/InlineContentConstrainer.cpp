@@ -63,12 +63,12 @@ static size_t NODELETE lastLineBreakingPointOffset()
 
 // Use auto layout if ideal line width is too short relative to the largest inline item.
 // In these situations, text-wrap-pretty does very little of note other than take up time.
-static bool validIdealLineWidth(InlineLayoutUnit maxItemWidth, InlineLayoutUnit idealLineWidth, InlineLayoutUnit maxTextIndent)
+static bool NODELETE validIdealLineWidth(InlineLayoutUnit maxItemWidth, InlineLayoutUnit idealLineWidth, InlineLayoutUnit maxTextIndent)
 {
     return idealLineWidth >= maxItemWidth + maxTextIndent;
 }
 
-static bool validLineWidthPretty(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
+static bool NODELETE validLineWidthPretty(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
 {
     auto difference = candidateLineWidth - idealLineWidth;
     if (difference > 0)
@@ -78,19 +78,19 @@ static bool validLineWidthPretty(InlineLayoutUnit candidateLineWidth, InlineLayo
 
 // Full implementation of the raggedness function defined in:
 // http://www.eprg.org/G53DOC/pdfs/knuth-plass-breaking.pdf
-static float computeRaggedness(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
+static float NODELETE computeRaggedness(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
 {
     auto difference = candidateLineWidth - idealLineWidth;
     auto intermediate = difference / (difference > 0 ? textWrapPrettyStretchability : textWrapPrettyShrinkability);
     return 100 * abs(pow(intermediate, 3));
 };
 
-static float computeCostBalance(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
+static float NODELETE computeCostBalance(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth)
 {
     return computeRaggedness(candidateLineWidth, idealLineWidth);
 };
 
-static float computeCostPretty(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth, size_t breakIndex, size_t numberOfBreakOpportunities, InlineLayoutUnit)
+static float NODELETE computeCostPretty(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit idealLineWidth, size_t breakIndex, size_t numberOfBreakOpportunities, InlineLayoutUnit)
 {
     // FIXME: add support for river minimization.
     // Force max/minimum line width bounds if there are more then lastLinePreferredInlineItemCount items to be laid out after the candidate line.
@@ -116,7 +116,7 @@ static bool NODELETE containsTrailingSoftHyphen(const InlineItem& inlineItem)
     return textItem->hasTrailingSoftHyphen();
 }
 
-static bool containsPreservedTab(const InlineItem& inlineItem)
+static bool NODELETE containsPreservedTab(const InlineItem& inlineItem)
 {
     auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem);
     if (!textItem)
@@ -136,7 +136,7 @@ static bool containsPreservedTab(const InlineItem& inlineItem)
     return false;
 }
 
-static bool cannotConstrainInlineItem(const InlineItem& inlineItem)
+static bool NODELETE cannotConstrainInlineItem(const InlineItem& inlineItem)
 {
     // Out-of-flow items are ignored by inline layout and do not affect constraint calculations.
     if (inlineItem.isOutOfFlow())

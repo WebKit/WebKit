@@ -184,7 +184,7 @@ public:
 
     virtual bool canHaveGlobalPosition() { return true; }
 
-    std::optional<Seconds> convertAnimationTimeToTimelineTime(Seconds) const;
+    std::optional<Seconds> NODELETE convertAnimationTimeToTimelineTime(Seconds) const;
 
     void progressBasedTimelineSourceDidChangeMetrics();
 
@@ -198,7 +198,7 @@ protected:
     void initialize();
     void enqueueAnimationEvent(Ref<AnimationEventBase>&&);
     virtual void animationDidFinish();
-    WebAnimationTime zeroTime() const;
+    WebAnimationTime NODELETE zeroTime() const;
 
     enum class AutoRewind : bool { No, Yes };
     ExceptionOr<void> play(AutoRewind);
@@ -226,12 +226,12 @@ private:
     void setTimelineInternal(RefPtr<AnimationTimeline>&&);
     bool computeRelevance();
     void invalidateEffect();
-    double effectivePlaybackRate() const;
+    double NODELETE effectivePlaybackRate() const;
     void applyPendingPlaybackRate();
     void setEffectiveFrameRate(std::optional<FramesPerSecond>);
     void autoAlignStartTime();
     void maybeMarkAsReady();
-    bool isTimeValid(const std::optional<WebAnimationTime>&) const;
+    bool NODELETE isTimeValid(const std::optional<WebAnimationTime>&) const;
 
     // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;

@@ -24,8 +24,8 @@
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS
 
 import os
-@_weakLinked internal import RealityKit
-internal import WebKit_Internal
+@_weakLinked import RealityKit
+import WebKit_Internal
 
 @objc
 @implementation

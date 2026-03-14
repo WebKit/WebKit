@@ -441,6 +441,16 @@ enum Opcode : uint8_t {
     VectorMulSat,
     VectorSwizzle,
 
+    // Canonical shuffle patterns, lowered from VectorSwizzle in strength reduction.
+    VectorUnzipEven,     // UZP1: extract even-indexed elements from two vectors
+    VectorUnzipOdd,      // UZP2: extract odd-indexed elements from two vectors
+    VectorZipLower,      // ZIP1: interleave low halves of two vectors
+    VectorZipHigher,     // ZIP2: interleave high halves of two vectors
+    VectorTransposeEven, // TRN1: transpose even elements of two vectors
+    VectorTransposeOdd,  // TRN2: transpose odd elements of two vectors
+    VectorReverse,       // REV16/REV32/REV64: reverse elements within groups (unary)
+    VectorExtractPair,   // EXT: extract bytes from concatenation of two vectors (binary + imm)
+
     // Relaxed SIMD
 
     VectorRelaxedSwizzle,

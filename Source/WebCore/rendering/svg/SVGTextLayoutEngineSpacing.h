@@ -33,7 +33,7 @@ class SVGTextLayoutEngineSpacing {
 public:
     SVGTextLayoutEngineSpacing(const FontCascade&);
 
-    float calculateCSSSpacing(char16_t);
+    float NODELETE calculateCSSSpacing(char16_t);
 
 private:
     const CheckedRef<const FontCascade> m_font;

@@ -152,7 +152,7 @@ struct RenderLayerCompositor::CompositingState {
     {
     }
     
-    CompositingState stateForPaintOrderChildren(RenderLayer& layer) const
+    CompositingState NODELETE stateForPaintOrderChildren(RenderLayer& layer) const
     {
         UNUSED_PARAM(layer);
         CompositingState childState(compositingAncestor);
@@ -2127,7 +2127,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, ASCIILiteral 
 }
 #endif
 
-static bool clippingChanged(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+static bool NODELETE clippingChanged(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     return oldStyle.overflowX() != newStyle.overflowX()
         || oldStyle.overflowY() != newStyle.overflowY()
@@ -2165,7 +2165,7 @@ static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle,
         || oldStyle.overscrollBehaviorY() != newStyle.overscrollBehaviorY();
 }
 
-static bool recompositeChangeRequiresChildrenGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+static bool NODELETE recompositeChangeRequiresChildrenGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     return oldStyle.perspective().isNone() != newStyle.perspective().isNone()
         || oldStyle.usedTransformStyle3D() != newStyle.usedTransformStyle3D();

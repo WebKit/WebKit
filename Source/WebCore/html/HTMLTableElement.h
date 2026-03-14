@@ -64,8 +64,8 @@ public:
     WEBCORE_EXPORT Ref<HTMLCollection> rows();
     WEBCORE_EXPORT Ref<HTMLCollection> tBodies();
 
-    const AtomString& rules() const;
-    const AtomString& summary() const;
+    const AtomString& NODELETE rules() const;
+    const AtomString& NODELETE summary() const;
 
     const MutableStyleProperties* additionalCellStyle() const;
     const MutableStyleProperties* additionalGroupStyle(bool rows) const;

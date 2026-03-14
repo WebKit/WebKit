@@ -1082,7 +1082,7 @@ static void pruneEmptyContainersRecursive(Item& item)
     });
 }
 
-static Node* nodeFromJSHandle(JSHandleIdentifier identifier)
+static Node* NODELETE nodeFromJSHandle(JSHandleIdentifier identifier)
 {
     auto* object = WebKitJSHandle::objectForIdentifier(identifier);
     if (!object)
@@ -1284,7 +1284,7 @@ struct TokenAndBlockOffset {
     int offset { 0 };
 };
 
-static IntSize reducePrecision(FloatSize size)
+static IntSize NODELETE reducePrecision(FloatSize size)
 {
     static constexpr auto resolution = 10;
     return {

@@ -353,7 +353,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return completionHandler({ }, { });
 
     const VisibleSelection& selection = frame->selection().selection();
-    if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField()) {
+    if (selection.isNone() || selection.isInPasswordField()) {
         completionHandler({ }, { });
         return;
     }

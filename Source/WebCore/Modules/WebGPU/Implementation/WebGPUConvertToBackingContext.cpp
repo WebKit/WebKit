@@ -745,7 +745,7 @@ WGPUVertexStepMode ConvertToBackingContext::convertToBacking(VertexStepMode vert
     }
 }
 
-static constexpr bool compare(BufferUsage a, unsigned b)
+static constexpr bool NODELETE compare(BufferUsage a, unsigned b)
 {
     return static_cast<unsigned>(a) == b;
 }

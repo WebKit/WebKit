@@ -1131,7 +1131,7 @@ int webProcessThroughputQOS()
     return qos;
 }
 
-static WeakHashSet<LockdownModeObserver>& lockdownModeObservers()
+static WeakHashSet<LockdownModeObserver>& NODELETE lockdownModeObservers()
 {
     RELEASE_ASSERT(isMainRunLoop());
     static NeverDestroyed<WeakHashSet<LockdownModeObserver>> observers;

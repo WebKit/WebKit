@@ -86,20 +86,18 @@ void ResourceTimingInformation::removeResourceTiming(CachedResource& resource)
     m_initiatorMap.remove(resource);
 }
 
-void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorType, LocalFrame* frame)
+void ResourceTimingInformation::storeResourceTimingInitiatorInformation(CachedResource& resource, const AtomString& initiatorType, LocalFrame* frame)
 {
-    ASSERT(resource.get());
-
-    if (resource->type() == CachedResource::Type::MainResource) {
+    if (resource.type() == CachedResource::Type::MainResource) {
         // <iframe>s should report the initial navigation requested by the parent document, but not subsequent navigations.
         ASSERT(frame);
         if (frame->ownerElement()) {
             InitiatorInfo info = { frame->ownerElement()->localName(), NotYetAdded };
-            m_initiatorMap.add(*resource, info);
+            m_initiatorMap.add(resource, info);
         }
     } else {
         InitiatorInfo info = { initiatorType, NotYetAdded };
-        m_initiatorMap.add(*resource, info);
+        m_initiatorMap.add(resource, info);
     }
 }
 

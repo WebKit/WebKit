@@ -23,8 +23,8 @@
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreRenderer, _version: 11) && compiler(>=6.2)
 
-@_weakLinked internal import USDKit
-@_weakLinked @_spi(UsdLoaderAPI) internal import _USDKit_RealityKit
+@_weakLinked import USDKit
+@_weakLinked @_spi(UsdLoaderAPI) import _USDKit_RealityKit
 @_spi(RealityCoreRendererAPI) import RealityKit
 
 func makeParameters(

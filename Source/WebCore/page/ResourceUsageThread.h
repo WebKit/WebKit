@@ -64,7 +64,7 @@ public:
 private:
     friend NeverDestroyed<ResourceUsageThread>;
     ResourceUsageThread();
-    static ResourceUsageThread& singleton();
+    static ResourceUsageThread& NODELETE singleton();
 
     void waitUntilObservers();
     void notifyObservers(ResourceUsageData&&);

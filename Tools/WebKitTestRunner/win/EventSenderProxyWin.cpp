@@ -36,25 +36,6 @@
 
 namespace WTR {
 
-static void runPendingEventsCallback(void* userData)
-{
-    *static_cast<bool*>(userData) = true;
-}
-
-static void waitForPendingKeyEvents(TestController* testController)
-{
-    bool done = false;
-    WKPageDoAfterProcessingAllPendingKeyEvents(testController->mainWebView()->page(), &done, runPendingEventsCallback);
-    testController->runUntil(done, 100_ms);
-}
-
-static void waitForPendingMouseEvents(TestController* testController)
-{
-    bool done = false;
-    WKPageDoAfterProcessingAllPendingMouseEvents(testController->mainWebView()->page(), &done, runPendingEventsCallback);
-    testController->runUntil(done, 100_ms);
-}
-
 LRESULT EventSenderProxy::dispatchMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
     MSG msg { };
@@ -104,10 +85,8 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, 
     }
     WPARAM wparam = 0;
     dispatchMessage(messageType, wparam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
-    if (completionHandler) {
-        waitForPendingMouseEvents(m_testController);
-        completionHandler();
-    }
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingMouseEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
@@ -134,10 +113,8 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WK
     }
     WPARAM wparam = 0;
     dispatchMessage(messageType, wparam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
-    if (completionHandler) {
-        waitForPendingMouseEvents(m_testController);
-        completionHandler();
-    }
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingMouseEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
@@ -146,10 +123,8 @@ void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType, 
     m_position.y = y;
     WPARAM wParam = m_leftMouseButtonDown ? MK_LBUTTON : 0;
     dispatchMessage(WM_MOUSEMOVE, wParam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
-    if (completionHandler) {
-        waitForPendingMouseEvents(m_testController);
-        completionHandler();
-    }
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingMouseEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::mouseScrollBy(int x, int y)
@@ -345,10 +320,8 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 
     if (wkModifiers || needsShiftKeyModifier)
         SetKeyboardState(keyState);
-    if (completionHandler) {
-        waitForPendingKeyEvents(m_testController);
-        completionHandler();
-    }
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingKeyEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)

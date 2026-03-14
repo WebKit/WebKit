@@ -468,7 +468,7 @@ void ViewGestureController::SnapshotRemovalTracker::startWatchdog(Seconds durati
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static bool deltaShouldCancelSwipe(FloatSize delta)
+static bool NODELETE deltaShouldCancelSwipe(FloatSize delta)
 {
     return std::abs(delta.height()) >= std::abs(delta.width()) * minimumScrollEventRatioForSwipe;
 }

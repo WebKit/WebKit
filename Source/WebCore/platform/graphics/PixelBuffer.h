@@ -46,11 +46,11 @@ public:
     static constexpr uint32_t componentsPerPixel(PixelFormat);
     static constexpr uint32_t bytesPerPixel(PixelFormat);
 
-    static CheckedUint32 computePixelCount(const IntSize&);
-    static CheckedUint32 computePixelComponentCount(PixelFormat, const IntSize&);
-    WEBCORE_EXPORT static CheckedUint32 computeBufferSize(PixelFormat, const IntSize&);
+    static CheckedUint32 NODELETE computePixelCount(const IntSize&);
+    static CheckedUint32 NODELETE computePixelComponentCount(PixelFormat, const IntSize&);
+    WEBCORE_EXPORT static CheckedUint32 NODELETE computeBufferSize(PixelFormat, const IntSize&);
 
-    WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
+    WEBCORE_EXPORT static bool NODELETE supportedPixelFormat(PixelFormat);
 
     WEBCORE_EXPORT virtual ~PixelBuffer();
 
@@ -73,7 +73,7 @@ public:
     WEBCORE_EXPORT bool zeroRange(size_t byteOffset, size_t rangeByteLength);
     void zeroFill() { zeroRange(0, bytes().size()); }
 
-    WEBCORE_EXPORT uint8_t item(size_t index) const;
+    WEBCORE_EXPORT uint8_t NODELETE item(size_t index) const;
     void set(size_t index, double value);
 
 protected:

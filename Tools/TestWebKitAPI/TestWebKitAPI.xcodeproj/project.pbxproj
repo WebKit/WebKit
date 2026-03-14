@@ -341,6 +341,7 @@
 		5CA1DEC81F71F70100E71BD3 /* HTTPHeaderField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CA1DEC71F71F40700E71BD3 /* HTTPHeaderField.cpp */; };
 		5CABDBBF2735C9BD00B88BCB /* UnifiedSource16-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB922735C9BA00B88BCB /* UnifiedSource16-nonARC.mm */; };
 		5CABDBC02735C9BD00B88BCB /* UnifiedSource50-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */; };
+		5CABDBC22735C9BE00B88BC0 /* UnifiedSource51-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */; };
 		5CABDBC12735C9BD00B88BCB /* UnifiedSource49-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB942735C9BA00B88BCB /* UnifiedSource49-nonARC.mm */; };
 		5CABDBC22735C9BD00B88BCB /* UnifiedSource40-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB952735C9BA00B88BCB /* UnifiedSource40-nonARC.mm */; };
 		5CABDBC32735C9BD00B88BCB /* UnifiedSource7-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB962735C9BA00B88BCB /* UnifiedSource7-nonARC.mm */; };
@@ -3137,6 +3138,7 @@
 		51EB126124CA6B5F000CB030 /* SteelSeriesNimbus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SteelSeriesNimbus.mm; sourceTree = "<group>"; };
 		51EB126624CB8493000CB030 /* SunLightApplicationGenericNES.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SunLightApplicationGenericNES.mm; sourceTree = "<group>"; };
 		51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerBasic.mm; sourceTree = "<group>"; };
+		51EB12942FDA134640814000 /* ServiceWorkerModuleUnregisterDuringLoad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerModuleUnregisterDuringLoad.mm; sourceTree = "<group>"; };
 		51FA14302AF5BAE00003ACD1 /* IPCSerialization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IPCSerialization.mm; sourceTree = "<group>"; };
 		51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteURL.mm; sourceTree = "<group>"; };
 		520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive_Bundle.cpp; sourceTree = "<group>"; };
@@ -3304,6 +3306,7 @@
 		5CA985512113CB8C0057EB6B /* SafeBrowsing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SafeBrowsing.mm; sourceTree = "<group>"; };
 		5CABDB922735C9BA00B88BCB /* UnifiedSource16-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource16-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource50-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource51-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB942735C9BA00B88BCB /* UnifiedSource49-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource49-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB952735C9BA00B88BCB /* UnifiedSource40-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource40-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB962735C9BA00B88BCB /* UnifiedSource7-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource7-nonARC.mm"; sourceTree = "<group>"; };
@@ -5158,6 +5161,7 @@
 				F4AF63B32C990A47001D782B /* ScriptTrackingPrivacyTests.mm */,
 				FAD420BF2E4AB7AA00069B2E /* SerializedNode.mm */,
 				51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */,
+				51EB12942FDA134640814000 /* ServiceWorkerModuleUnregisterDuringLoad.mm */,
 				466AF38826FE393200CE2EB8 /* ServiceWorkerPagePlugIn.mm */,
 				460C2FC827039D7D0047EF11 /* ServiceWorkerPageProtocol.h */,
 				46A46A192575645600A1B118 /* SessionStorage.mm */,
@@ -5561,6 +5565,7 @@
 				5CABDBA52735C9BB00B88BCB /* UnifiedSource48-nonARC.mm */,
 				5CABDB942735C9BA00B88BCB /* UnifiedSource49-nonARC.mm */,
 				5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */,
+				5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */,
 			);
 			path = "unified-sources";
 			sourceTree = "<group>";
@@ -8322,6 +8327,7 @@
 				5CABDBD22735C9BD00B88BCB /* UnifiedSource48-nonARC.mm in Sources */,
 				5CABDBC12735C9BD00B88BCB /* UnifiedSource49-nonARC.mm in Sources */,
 				5CABDBC02735C9BD00B88BCB /* UnifiedSource50-nonARC.mm in Sources */,
+				5CABDBC22735C9BE00B88BC0 /* UnifiedSource51-nonARC.mm in Sources */,
 				5C6E27A7224EEBEA00128736 /* URLExtras.mm in Sources */,
 				E3A1E77F21B25B39008C6007 /* URLParserTextEncoding.cpp in Sources */,
 				7CCE7F2D1A411B1000447C4C /* UserContentTest.mm in Sources */,

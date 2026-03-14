@@ -96,7 +96,7 @@ public:
 
     // Public to be callable from Obj-C.
     void updateScrollerStyle() final;
-    bool scrollbarPaintTimerIsActive() const;
+    bool NODELETE scrollbarPaintTimerIsActive() const;
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
     void setVisibleScrollerThumbRect(const IntRect&);

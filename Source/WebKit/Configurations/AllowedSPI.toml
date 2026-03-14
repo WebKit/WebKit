@@ -278,6 +278,13 @@ selectors = [
 requires = ["HAVE_PASSKIT_DELEGATED_REQUEST"]
 requires-sdk = ["iOS < 26.4"]
 
+[[not-web-essential]]
+request = "rdar://165006869"
+selectors = [
+    { name = "_setDecelerationTrackingBehavior:", class = "UIScrollView" },
+]
+requires = ["HAVE_UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR"]
+
 [[temporary-usage]]
 request = "rdar://170141943"
 cleanup = "rdar://170141943"

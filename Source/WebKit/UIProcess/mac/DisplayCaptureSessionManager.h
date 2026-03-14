@@ -41,7 +41,7 @@ namespace WebKit {
 
 class DisplayCaptureSessionManager {
 public:
-    static DisplayCaptureSessionManager& singleton();
+    static DisplayCaptureSessionManager& NODELETE singleton();
     static bool isAvailable();
 
     DisplayCaptureSessionManager();

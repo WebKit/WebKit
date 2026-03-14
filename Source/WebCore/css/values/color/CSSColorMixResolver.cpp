@@ -41,7 +41,7 @@ struct ColorMixPercentages {
 
 }
 
-static std::optional<ColorMixPercentages> normalizedMixPercentages(std::optional<ColorMixResolver::Component::Percentage> mixComponents1Percentage, std::optional<ColorMixResolver::Component::Percentage> mixComponents2Percentage)
+static std::optional<ColorMixPercentages> NODELETE normalizedMixPercentages(std::optional<ColorMixResolver::Component::Percentage> mixComponents1Percentage, std::optional<ColorMixResolver::Component::Percentage> mixComponents2Percentage)
 {
     // The percentages are normalized as follows:
 

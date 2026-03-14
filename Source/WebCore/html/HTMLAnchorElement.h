@@ -56,7 +56,7 @@ public:
 
     WEBCORE_EXPORT URL href() const;
 
-    const AtomString& name() const;
+    const AtomString& NODELETE name() const;
 
     WEBCORE_EXPORT String origin() const;
 

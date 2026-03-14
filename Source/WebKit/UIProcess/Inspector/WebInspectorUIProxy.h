@@ -249,7 +249,7 @@ private:
     void platformBringInspectedPageToFront();
     void platformHide();
     bool platformIsFront();
-    void platformAttachAvailabilityChanged(bool);
+    void NODELETE platformAttachAvailabilityChanged(bool);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformOpenURLExternally(const String&);
     void platformInspectedURLChanged(const String&);
@@ -258,7 +258,7 @@ private:
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);
     void platformSetAttachedWindowWidth(unsigned);
-    void platformSetSheetRect(const WebCore::FloatRect&);
+    void NODELETE platformSetSheetRect(const WebCore::FloatRect&);
     void platformStartWindowDrag();
     void platformRevealFileExternally(const String&);
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
@@ -291,7 +291,7 @@ private:
     void setInspectorPageDeveloperExtrasEnabled(bool);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void elementSelectionChanged(bool);
-    void timelineRecordingChanged(bool);
+    void NODELETE timelineRecordingChanged(bool);
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

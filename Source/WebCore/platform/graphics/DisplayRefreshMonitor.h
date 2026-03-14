@@ -89,7 +89,7 @@ protected:
     WEBCORE_EXPORT void displayDidRefresh(const DisplayUpdate&);
 
 private:
-    bool firedAndReachedMaxUnscheduledFireCount() WTF_REQUIRES_LOCK(m_lock);
+    bool NODELETE firedAndReachedMaxUnscheduledFireCount() WTF_REQUIRES_LOCK(m_lock);
 
     virtual void adjustPreferredFramesPerSecond(FramesPerSecond) { }
 

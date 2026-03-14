@@ -105,11 +105,22 @@ int32_t hwPhysicalCPUMax()
 
 #endif // #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
 
-#if CPU(ARM64) && !(CPU(ARM64E) || OS(MAC_OS_X))
+#if CPU(ARM64) && !(CPU(ARM64E) || OS(MACOS))
 bool isARM64_LSE()
 {
 #if ENABLE(ASSEMBLER)
     return MacroAssembler::supportsLSE();
+#else
+    return false;
+#endif
+}
+#endif
+
+#if CPU(ARM64) && !OS(MACOS)
+bool isARM64_SHA3()
+{
+#if ENABLE(ASSEMBLER)
+    return MacroAssembler::supportsSHA3();
 #else
     return false;
 #endif

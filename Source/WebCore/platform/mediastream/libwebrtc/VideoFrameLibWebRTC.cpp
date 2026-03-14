@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static PlatformVideoColorSpace defaultVPXColorSpace()
+static PlatformVideoColorSpace NODELETE defaultVPXColorSpace()
 {
     return { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
 }

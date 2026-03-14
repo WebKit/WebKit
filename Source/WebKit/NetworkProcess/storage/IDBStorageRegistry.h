@@ -53,10 +53,10 @@ public:
     void removeConnectionToClient(IPC::Connection::UniqueID);
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
     void unregisterConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
-    WebCore::IDBServer::UniqueIDBDatabaseConnection* connection(WebCore::IDBDatabaseConnectionIdentifier);
+    WebCore::IDBServer::UniqueIDBDatabaseConnection* NODELETE connection(WebCore::IDBDatabaseConnectionIdentifier);
     void registerTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
     void unregisterTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
-    WebCore::IDBServer::UniqueIDBDatabaseTransaction* transaction(WebCore::IDBResourceIdentifier);
+    WebCore::IDBServer::UniqueIDBDatabaseTransaction* NODELETE transaction(WebCore::IDBResourceIdentifier);
 
 private:
     HashMap<WebCore::IDBConnectionIdentifier, std::unique_ptr<IDBStorageConnectionToClient>> m_connectionsToClient;

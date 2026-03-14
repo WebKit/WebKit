@@ -80,7 +80,7 @@ public:
     FloatSize alignmentOffset() const { return m_alignmentOffset; }
     void setAlignmentOffset(FloatSize offset) { m_alignmentOffset = offset; }
 
-    WEBCORE_EXPORT FloatPoint viewportRelativeLayerPosition(const FloatRect& viewportRect) const;
+    WEBCORE_EXPORT FloatPoint NODELETE viewportRelativeLayerPosition(const FloatRect& viewportRect) const;
 
     const FloatRect& viewportRectAtLastLayout() const LIFETIME_BOUND { return m_viewportRectAtLastLayout; }
     void setViewportRectAtLastLayout(const FloatRect& rect) { m_viewportRectAtLastLayout = rect; }
@@ -154,7 +154,7 @@ public:
     void setStickyOffsetAtLastLayout(FloatSize offset) { m_stickyOffsetAtLastLayout = offset; }
 
     WEBCORE_EXPORT FloatPoint anchorLayerPositionForConstrainingRect(const FloatRect& constrainingRect) const;
-    FloatPoint anchorLayerPositionAtLastLayout() const;
+    FloatPoint NODELETE anchorLayerPositionAtLastLayout() const;
 
     float leftOffset() const { return m_leftOffset; }
     float rightOffset() const { return m_rightOffset; }

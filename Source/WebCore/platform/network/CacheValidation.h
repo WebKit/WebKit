@@ -83,7 +83,7 @@ WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(co
 WEBCORE_EXPORT bool verifyVaryingRequestHeaders(NetworkStorageSession*, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&);
 WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const CookieJar*, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&);
 
-WEBCORE_EXPORT bool isStatusCodeCacheableByDefault(int statusCode);
-WEBCORE_EXPORT bool isStatusCodePotentiallyCacheable(int statusCode);
+WEBCORE_EXPORT bool NODELETE isStatusCodeCacheableByDefault(int statusCode);
+WEBCORE_EXPORT bool NODELETE isStatusCodePotentiallyCacheable(int statusCode);
 
 }

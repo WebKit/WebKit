@@ -743,9 +743,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     auto shouldAllowInstalledFonts = parameters.store.getBoolValueForKey(WebPreferencesKey::shouldAllowUserInstalledFontsKey());
     if (!shouldAllowInstalledFonts || !WTF::MacApplication::isAppleMail())
         sandbox_enable_state_flag("BlockUserInstalledFonts", *auditToken);
-    auto shouldBlockFontService = parameters.store.getBoolValueForKey(WebPreferencesKey::blockFontServiceInWebContentSandboxKey());
-    if (shouldBlockFontService)
-        sandbox_enable_state_flag("BlockFontServiceInWebContentSandbox", *auditToken);
     auto shouldBlockIconServices = parameters.store.getBoolValueForKey(WebPreferencesKey::blockIconServicesInWebContentSandboxKey());
     if (shouldBlockIconServices)
         sandbox_enable_state_flag("BlockIconServicesInWebContentSandbox", *auditToken);
@@ -1834,7 +1831,7 @@ void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()
         scheduleFullEditorStateUpdate();
 }
 
-static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(unsigned options)
+static OptionSet<RenderAsTextFlag> NODELETE toRenderAsTextFlags(unsigned options)
 {
     OptionSet<RenderAsTextFlag> flags;
 
@@ -9227,7 +9224,7 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
         if (!protectedThis)
             return;
 
-        auto cachedImage = renderImage->cachedImage();
+        RefPtr cachedImage = renderImage->cachedImage();
         auto imageURL = cachedImage ? protect(weakElement->document())->completeURL(cachedImage->url().string()) : URL { };
         protectedThis->sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTF::move(imageURL), WTF::move(*bitmapHandle), options.sourceLanguageIdentifier, options.targetLanguageIdentifier), [weakThis, weakElement, resolveAndRemoveHandlerFollowingError = WTF::move(resolveAndRemoveHandlerFollowingError)] (auto&& result) mutable {
             RefPtr protectedThis = weakThis.get();
@@ -9337,7 +9334,7 @@ void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandle
     }
 
     String mimeType;
-    if (auto* cachedImage = renderImage->cachedImage()) {
+    if (RefPtr cachedImage = renderImage->cachedImage()) {
         if (RefPtr image = cachedImage->image())
             mimeType = image->mimeType();
     }

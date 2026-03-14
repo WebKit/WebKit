@@ -578,7 +578,7 @@ HashSet<WebCore::RegistrableDomain> WebsiteDataStore::platformAdditionalDomainsW
 }
 #endif
 
-static WebsiteDataStore::ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
+static WebsiteDataStore::ProcessAccessType NODELETE computeNetworkProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     for (auto dataType : dataTypes) {
         if (WebsiteData::ownerProcess(dataType) == WebsiteDataProcessType::Network)
@@ -847,7 +847,7 @@ void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>
     });
 }
 
-static WebsiteDataStore::ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
+static WebsiteDataStore::ProcessAccessType NODELETE computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     auto processAccessType = WebsiteDataStore::ProcessAccessType::None;
     for (auto dataType : dataTypes) {

@@ -74,15 +74,15 @@ public:
     void connectionClosed(IPC::Connection::UniqueID);
     String typeStoragePath(StorageType) const;
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, FileSystemStorageManager::QuotaCheckFunction&&);
-    FileSystemStorageManager* existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
+    FileSystemStorageManager* NODELETE existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
-    LocalStorageManager* existingLocalStorageManager() { return m_localStorageManager.get(); }
+    LocalStorageManager* NODELETE existingLocalStorageManager() { return m_localStorageManager.get(); }
     SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
-    SessionStorageManager* existingSessionStorageManager() { return m_sessionStorageManager.get(); }
+    SessionStorageManager* NODELETE existingSessionStorageManager() { return m_sessionStorageManager.get(); }
     IDBStorageManager& idbStorageManager(IDBStorageRegistry&, IDBStorageManager::QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
-    IDBStorageManager* existingIDBStorageManager() { return m_idbStorageManager.get(); }
+    IDBStorageManager* NODELETE existingIDBStorageManager() { return m_idbStorageManager.get(); }
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, CacheStorageManager::QuotaCheckFunction&&, Ref<WorkQueue>&&);
-    CacheStorageManager* existingCacheStorageManager() { return m_cacheStorageManager.get(); }
+    CacheStorageManager* NODELETE existingCacheStorageManager() { return m_cacheStorageManager.get(); }
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WorkQueue>&&, BackgroundFetchStoreManager::QuotaCheckFunction&&);
     ServiceWorkerStorageManager& serviceWorkerStorageManager();
     uint64_t cacheStorageSize();

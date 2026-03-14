@@ -174,19 +174,19 @@ private:
         protect(m_subscriber)->complete();
     }
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
-        m_subscriber->visitAdditionalChildren(visitor);
+        m_subscriber->visitAdditionalChildrenInGCThread(visitor);
         if (m_inspector.next)
-            SUPPRESS_UNCOUNTED_ARG m_inspector.next->visitJSFunction(visitor);
+            SUPPRESS_UNCOUNTED_ARG m_inspector.next->visitJSFunctionInGCThread(visitor);
         if (m_inspector.error)
-            SUPPRESS_UNCOUNTED_ARG m_inspector.error->visitJSFunction(visitor);
+            SUPPRESS_UNCOUNTED_ARG m_inspector.error->visitJSFunctionInGCThread(visitor);
         if (m_inspector.complete)
-            SUPPRESS_UNCOUNTED_ARG m_inspector.complete->visitJSFunction(visitor);
+            SUPPRESS_UNCOUNTED_ARG m_inspector.complete->visitJSFunctionInGCThread(visitor);
         if (m_inspector.subscribe)
-            SUPPRESS_UNCOUNTED_ARG m_inspector.subscribe->visitJSFunction(visitor);
+            SUPPRESS_UNCOUNTED_ARG m_inspector.subscribe->visitJSFunctionInGCThread(visitor);
         if (m_inspector.abort)
-            SUPPRESS_UNCOUNTED_ARG m_inspector.abort->visitJSFunction(visitor);
+            SUPPRESS_UNCOUNTED_ARG m_inspector.abort->visitJSFunctionInGCThread(visitor);
     }
 
     void removeAbortHandler()

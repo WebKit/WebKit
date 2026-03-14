@@ -483,6 +483,7 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
             AST::Expression::List { argument }
         );
         call.m_inferredType = argument.inferredType();
+        call.m_resolvedTarget = operation;
         m_shaderModule.replace(expression, call);
         return static_cast<Packing>(Packing::Either ^ packing);
     };

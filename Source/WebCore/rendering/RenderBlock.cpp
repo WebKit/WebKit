@@ -230,7 +230,7 @@ public:
             m_containerMap.remove(renderer);
     }
     
-    TrackedRendererListHashSet* positionedRenderers(const RenderBlock& containingBlock) const
+    TrackedRendererListHashSet* NODELETE positionedRenderers(const RenderBlock& containingBlock) const
     {
         return m_descendantsMap.get(containingBlock);
     }
@@ -243,7 +243,7 @@ private:
     ContainerMap m_containerMap;
 };
 
-static OutOfFlowDescendantsMap& outOfFlowDescendantsMap()
+static OutOfFlowDescendantsMap& NODELETE outOfFlowDescendantsMap()
 {
     static NeverDestroyed<OutOfFlowDescendantsMap> mapForOutOfFlowDescendants;
     return mapForOutOfFlowDescendants;
@@ -1274,7 +1274,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintCarets(paintInfo, paintOffset);
 }
 
-static ContinuationOutlineTableMap* continuationOutlineTable()
+static ContinuationOutlineTableMap* NODELETE continuationOutlineTable()
 {
     static NeverDestroyed<ContinuationOutlineTableMap> table;
     return &table.get();

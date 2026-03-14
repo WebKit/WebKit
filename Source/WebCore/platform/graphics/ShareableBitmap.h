@@ -170,8 +170,8 @@ public:
     IntSize size() const { return m_configuration.size(); }
     IntRect bounds() const { return IntRect(IntPoint(), size()); }
 
-    WEBCORE_EXPORT std::span<const uint8_t> span() const LIFETIME_BOUND;
-    WEBCORE_EXPORT std::span<uint8_t> mutableSpan() LIFETIME_BOUND;
+    WEBCORE_EXPORT std::span<const uint8_t> NODELETE span() const LIFETIME_BOUND;
+    WEBCORE_EXPORT std::span<uint8_t> NODELETE mutableSpan() LIFETIME_BOUND;
     size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
     size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
     const DestinationColorSpace& colorSpace() const { return  m_configuration.colorSpace(); }

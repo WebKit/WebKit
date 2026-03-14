@@ -221,6 +221,8 @@ editing/mac/pasteboard/drag-selections-to-contenteditable.html
 editing/pasteboard/4947130.html
 editing/pasteboard/cleanup-on-move.html
 editing/pasteboard/copy-standalone-image-crash.html
+# webkit.org/b/309400 Times out due to web archive UTI issue on modern macOS
+editing/pasteboard/copy-standalone-image.html [ Skip ]
 editing/pasteboard/drag-drop-paragraph-crasher.html
 editing/pasteboard/emacs-cntl-y-001.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
@@ -799,11 +801,10 @@ webkit.org/b/167607 [ Debug ] http/tests/inspector/worker/blob-script-with-cross
 webkit.org/b/160042 accessibility/mac/value-change/value-change-user-info-contenteditable.html [ Pass Failure ]
 
 # Skipped because ACCESSIBILITY_LOCAL_FRAME is not compatable with relative frames.
-accessibility/mac/iframe-relative-frame.html [ Failure ]
+accessibility/mac/iframe-relative-frame.html [ Skip ]
 
 # Regression from ENABLE(ACCESSIBILITY_LOCAL_FRAME).
 accessibility/mac/visible-content-search-in-scrolled-iframe.html [ Failure ]
-platform/mac-wk2/accessibility/content-inset-scrollview-frame.html [ Failure ]
 
 # Regression from disabling ACCESSIBILITY_LOCAL_FRAME.
 http/tests/site-isolation/accessibility/remote-element-returned.html [ Failure ]
@@ -869,8 +870,6 @@ imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies
 #http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass Timeout ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
 http/tests/storageAccess/deny-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Skip ]
-
-[ x86_64 ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Pass Failure ]
 
 # rdar://140222322 (Supposed to pass on 2025 OSes (Sequoia-aligned) xx.4+, but failing on debug)
 http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Skip ]
@@ -2246,8 +2245,6 @@ webkit.org/b/296816 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/s
 
 webkit.org/b/296814 [ arm64 ] imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/296885 [ Debug arm64 ] fast/scrolling/mac/scrollend-event-user-scroll-basic.html [ Pass Failure ]
-
 # webkit.org/b/296890 [ macOS wk2 ] 3x fast/webgpu/nocrash/fuzz tests (layout-tests) are flaky text failures 
 fast/webgpu/nocrash/fuzz-282097.html [ Pass Failure ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-282086.html [ Pass Failure ]
@@ -2422,7 +2419,7 @@ webkit.org/b/306278 [ arm64 ] media/media-source/media-managedmse-resume-after-r
 
 webkit.org/b/306294 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/306360 http/tests/download/sandboxed-iframe-download-not-allowed.html [ Pass Failure ]
+webkit.org/b/309917 imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/306570 [ Tahoe arm64 ] http/tests/webcodecs/video-decoder-callbacks-do-not-leak.html [ Pass Failure ]
 
@@ -2450,9 +2447,9 @@ webkit.org/b/307088 [ Tahoe Release ] webgl/webgl-and-dom-in-gpup.html [ ImageOn
 
 webkit.org/b/307196 http/tests/geolocation/geolocation-get-current-position-does-not-leak.https.html [ Pass Failure ]
 
-webkit.org/b/307351 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-requestsubmit.html [ Pass Failure ]
-
 webkit.org/b/307377 [ Tahoe Release arm64 ] compositing/webgl/update-composited-canvas-layer.html [ ImageOnlyFailure Pass ]
+
+webkit.orb/b/309833 fast/scrolling/mac/scrollend-event-user-scroll-basic.html [ Failure Pass ]
 
 webkit.org/b/307691 [ Tahoe Release arm64 ] svg/gradients/spreadMethod.svg [ ImageOnlyFailure Pass ]
 
@@ -2480,10 +2477,6 @@ webkit.org/b/309525 [ Release ] media/video-webkit-playsinline.html [ Pass Failu
 
 webkit.org/b/307889 http/tests/multipart/multipart-async-image.html [ Pass Failure ]
 
-# webkit.org/b/309308 2x http/tests/site-isolation/accessibility/hit-test-X-remote-frame.html are constant text failures
-http/tests/site-isolation/accessibility/hit-test-resolving-remote-frame.html [ Failure ]
-http/tests/site-isolation/accessibility/hit-test-returns-remote-frame.html [ Failure ]
-
 webkit.org/b/308240 http/tests/site-isolation/inspector/runtime/evaluate-in-cross-origin-iframe.html [ Failure ]
 webkit.org/b/308240 http/tests/site-isolation/inspector/runtime/execution-context-from-frame-target.html [ Failure ]
 webkit.org/b/308240 http/tests/site-isolation/inspector/runtime/executionContextCreated-frame-target.html [ Failure ]
@@ -2510,3 +2503,5 @@ webkit.org/b/308856 [ Debug ] http/tests/websocket/tests/hybi/handshake-ok-with-
 
 # webkit.org/b/308169 Skip until after macOS 26.4, where AXIntersectionWithSelectionRange returns AXTextMarkerRangeRef.
 [ Tahoe ] accessibility/mac/intersection-with-selection-range.html [ Skip ]
+
+webkit.org/b/309850 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html [ Pass Failure ]

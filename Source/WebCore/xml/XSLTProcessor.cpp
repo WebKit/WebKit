@@ -30,6 +30,7 @@
 #include "CommonAtomStrings.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentFragment.h"
+#include "DocumentView.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"

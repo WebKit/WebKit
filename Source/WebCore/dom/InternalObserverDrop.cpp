@@ -109,9 +109,9 @@ private:
         protect(m_subscriber)->complete();
     }
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
-        m_subscriber->visitAdditionalChildren(visitor);
+        m_subscriber->visitAdditionalChildrenInGCThread(visitor);
     }
 
     InternalObserverDrop(ScriptExecutionContext& context, Ref<Subscriber> subscriber, uint64_t amount)

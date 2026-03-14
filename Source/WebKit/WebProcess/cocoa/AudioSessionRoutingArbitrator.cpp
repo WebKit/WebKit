@@ -42,8 +42,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionRoutingArbitrator);
 
 AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator(WebProcess& process)
     : m_observer(WebCore::AudioSession::ChangedObserver::create([weakThis = WeakPtr { *this }] (AudioSession& session) {
-        if (auto* protectedThis = weakThis.get())
-            session.setRoutingArbitrationClient(*protectedThis);
+        if (auto* rawThis = weakThis.get())
+            session.setRoutingArbitrationClient(*rawThis);
     }))
     , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 {

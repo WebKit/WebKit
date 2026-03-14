@@ -57,7 +57,7 @@ public:
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 
     static RenderSVGText* NODELETE locateRenderSVGTextAncestor(RenderObject&);
-    static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject&);
+    static const RenderSVGText* NODELETE locateRenderSVGTextAncestor(const RenderObject&);
 
     bool needsReordering() const { return m_needsReordering; }
     Vector<SVGTextLayoutAttributes*>& layoutAttributes() LIFETIME_BOUND { return m_layoutAttributes; }

@@ -78,8 +78,8 @@ public:
 #endif
 
 private:
-    LayoutUnit selectionTop() const;
-    LayoutUnit selectionBottom() const;
+    LayoutUnit NODELETE selectionTop() const;
+    LayoutUnit NODELETE selectionBottom() const;
     LayoutUnit selectionHeight() const;
 
 public:

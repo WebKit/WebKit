@@ -61,7 +61,7 @@ FloatRect SliderTrackMac::rectForBounds(const FloatRect& bounds, const ControlSt
     return rect;
 }
 
-static void trackGradientInterpolate(void*, const CGFloat* rawInData, CGFloat* rawOutData)
+static void NODELETE trackGradientInterpolate(void*, const CGFloat* rawInData, CGFloat* rawOutData)
 {
     auto inData = unsafeMakeSpan(rawInData, 1);
     auto outData = unsafeMakeSpan(rawOutData, 4);

@@ -58,7 +58,7 @@
 
 namespace WebCore {
 
-static inline size_t alignTo16Bytes(size_t size)
+static inline size_t NODELETE alignTo16Bytes(size_t size)
 {
     return (size + 15) & ~15;
 }
@@ -95,10 +95,10 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
 
 class MockAudioCaptureInternalUnitState : public ThreadSafeRefCounted<MockAudioCaptureInternalUnitState> {
 public:
-    static Ref<MockAudioCaptureInternalUnitState> create() { return adoptRef(*new MockAudioCaptureInternalUnitState()); }
+    static Ref<MockAudioCaptureInternalUnitState> NODELETE create() { return adoptRef(*new MockAudioCaptureInternalUnitState()); }
 
-    bool isProducingData() const { return m_isProducingData; }
-    void setIsProducingData(bool value) { m_isProducingData = value; }
+    bool NODELETE isProducingData() const { return m_isProducingData; }
+    void NODELETE setIsProducingData(bool value) { m_isProducingData = value; }
 
 private:
     bool m_isProducingData { false };
@@ -125,7 +125,7 @@ private:
     bool setVoiceActivityDetection(bool) final;
     bool canRenderAudio() const final { return false; }
 
-    int sampleRate() const { return m_streamFormat.mSampleRate; }
+    int NODELETE sampleRate() const { return m_streamFormat.mSampleRate; }
     void tick();
 
     void generateSampleBuffers(MonotonicTime);
@@ -134,7 +134,7 @@ private:
 
     void voiceDetected();
 
-    static Seconds renderInterval() { return 20_ms; }
+    static Seconds NODELETE renderInterval() { return 20_ms; }
 
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 
@@ -208,7 +208,7 @@ void MockAudioCaptureUnit::increaseBufferSize()
     s_shouldIncreaseBufferSize = true;
 }
 
-static AudioStreamBasicDescription createAudioFormat(Float64 sampleRate, UInt32 channelCount)
+static AudioStreamBasicDescription NODELETE createAudioFormat(Float64 sampleRate, UInt32 channelCount)
 {
     AudioStreamBasicDescription format;
     const int bytesPerFloat = sizeof(Float32);

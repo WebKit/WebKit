@@ -269,26 +269,11 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_calls.size(); ++i)
         linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
 
-#if USE(JSVALUE32_64)
-    finalizeInlineCaches(m_getByIds, linkBuffer);
-    finalizeInlineCaches(m_getByIdsWithThis, linkBuffer);
-    finalizeInlineCaches(m_getByVals, linkBuffer);
-    finalizeInlineCaches(m_getByValsWithThis, linkBuffer);
-    finalizeInlineCaches(m_putByIds, linkBuffer);
-    finalizeInlineCaches(m_putByVals, linkBuffer);
-    finalizeInlineCaches(m_delByIds, linkBuffer);
-    finalizeInlineCaches(m_delByVals, linkBuffer);
-    finalizeInlineCaches(m_inByIds, linkBuffer);
-    finalizeInlineCaches(m_inByVals, linkBuffer);
-    finalizeInlineCaches(m_instanceOfs, linkBuffer);
-    finalizeInlineCaches(m_privateBrandAccesses, linkBuffer);
-#else
     m_jitCode->m_unlinkedPropertyInlineCaches = FixedVector<UnlinkedPropertyInlineCache>(m_unlinkedPropertyInlineCaches.size());
     if (m_jitCode->m_unlinkedPropertyInlineCaches.size())
         std::move(m_unlinkedPropertyInlineCaches.begin(), m_unlinkedPropertyInlineCaches.end(), m_jitCode->m_unlinkedPropertyInlineCaches.begin());
     ASSERT(m_jitCode->common.m_handlerPropertyInlineCaches.isEmpty());
     ASSERT(m_jitCode->common.m_repatchingPropertyInlineCaches.isEmpty());
-#endif
 
     for (auto& record : m_jsDirectCalls) {
         auto& info = *record.info;
@@ -636,14 +621,9 @@ LinkerIR::Constant JITCompiler::addToConstantPool(LinkerIR::Type type, void* pay
 
 std::tuple<CompileTimePropertyInlineCache, PropertyInlineCacheIndex> JITCompiler::addPropertyInlineCache()
 {
-#if USE(JSVALUE64)
     unsigned index = m_unlinkedPropertyInlineCaches.size();
     DFG::UnlinkedPropertyInlineCache* propertyCache = &m_unlinkedPropertyInlineCaches.alloc();
     return std::tuple { propertyCache, PropertyInlineCacheIndex { index } };
-#else
-    PropertyInlineCache* propertyCache = jitCode()->common.m_handlerPropertyInlineCaches.add();
-    return std::tuple { propertyCache, PropertyInlineCacheIndex(0) };
-#endif
 }
 
 std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::addCallLinkInfo(CodeOrigin codeOrigin)

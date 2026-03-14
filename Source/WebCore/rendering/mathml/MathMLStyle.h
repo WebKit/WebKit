@@ -34,7 +34,7 @@ namespace WebCore {
 
 class MathMLStyle: public RefCounted<MathMLStyle> {
 public:
-    static Ref<MathMLStyle> create();
+    static Ref<MathMLStyle> NODELETE create();
 
     MathVariant mathVariant() const { return m_mathVariant; }
     void setMathVariant(MathVariant mathvariant) { m_mathVariant = mathvariant; }

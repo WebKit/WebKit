@@ -234,8 +234,8 @@ private:
         Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles { };
 #endif
 #if ENABLE(MEDIA_STREAM)
-        Vector<std::unique_ptr<MediaStreamTrackDataHolder>> serializedMediaStreamTracks { };
-        Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> serializedMediaStreamTrackHandles { };
+        Vector<std::unique_ptr<MediaStreamTrackDataHolder>> detachedMediaStreamTracks { };
+        Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> detachedMediaStreamTrackHandles { };
 #endif
         std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray { };
         Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };

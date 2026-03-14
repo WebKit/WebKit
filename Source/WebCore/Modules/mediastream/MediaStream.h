@@ -78,8 +78,8 @@ public:
     void removeTrack(MediaStreamTrack&);
     MediaStreamTrack* getTrackById(String);
 
-    MediaStreamTrack* getFirstAudioTrack() const;
-    MediaStreamTrack* getFirstVideoTrack() const;
+    MediaStreamTrack* NODELETE getFirstAudioTrack() const;
+    MediaStreamTrack* NODELETE getFirstVideoTrack() const;
 
     MediaStreamTrackVector getAudioTracks() const;
     MediaStreamTrackVector getVideoTracks() const;

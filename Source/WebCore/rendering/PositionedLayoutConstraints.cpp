@@ -447,8 +447,8 @@ LayoutUnit PositionedLayoutConstraints::resolveAlignmentShift(LayoutUnit unusedS
             // We didn't modify the m_containingRange to include scrollable area for positioning,
             // but we should allow it for overflow management if we can scroll to reach that overflow.
             if (auto renderView = dynamicDowncast<RenderView>(m_container.get())) {
-                auto& view = renderView->frameView();
-                auto scrollPosition = view.constrainedScrollPosition(ScrollPosition(view.scrollPositionRespectingCustomFixedPosition()));
+                CheckedRef view = renderView->frameView();
+                auto scrollPosition = view->constrainedScrollPosition(ScrollPosition(view->scrollPositionRespectingCustomFixedPosition()));
                 expandToScrollableArea(containingRange, scrollPosition);
             }
         }

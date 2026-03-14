@@ -81,7 +81,7 @@ protected:
 
     virtual void transformInputsColorSpace(std::span<const Ref<FilterImage>> inputs) const;
     
-    void correctPremultipliedInputs(std::span<const Ref<FilterImage>> inputs) const;
+    void NODELETE correctPremultipliedInputs(std::span<const Ref<FilterImage>> inputs) const;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const;
 

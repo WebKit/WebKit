@@ -71,7 +71,7 @@ public:
     void clear();
     void clearForHost(const String&);
 
-    void setOptInCookiePartitioningEnabled(bool);
+    void NODELETE setOptInCookiePartitioningEnabled(bool);
 
 private:
     WebCookieCache() = default;

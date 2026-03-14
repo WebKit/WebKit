@@ -569,7 +569,7 @@ void SVGToOTFFontConverter::appendPOSTTable()
     append32(0); // "Maximum memory usage when a TrueType font is downloaded as a Type 1 font"
 }
 
-static bool isValidStringForCFF(const String& string)
+static bool NODELETE isValidStringForCFF(const String& string)
 {
     for (auto c : StringView(string).codeUnits()) {
         if (c < 33 || c > 126)

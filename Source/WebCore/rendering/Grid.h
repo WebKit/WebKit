@@ -80,7 +80,7 @@ public:
 
     unsigned autoRepeatEmptyTracksCount(Style::GridTrackSizingDirection) const;
     bool NODELETE hasAutoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
-    bool isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, unsigned) const;
+    bool NODELETE isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, unsigned) const;
 
     OrderedTrackIndexSet* NODELETE autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
@@ -124,7 +124,7 @@ public:
     // GridIterator(m_grid, ForColumns, 1) will walk over the rows of the 2nd column.
     GridIterator(const Grid&, Style::GridTrackSizingDirection, unsigned fixedTrackIndex, unsigned varyingTrackIndex = 0);
 
-    static GridIterator createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter);
+    static GridIterator NODELETE createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter);
 
     RenderBox* NODELETE nextGridItem();
     bool isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;

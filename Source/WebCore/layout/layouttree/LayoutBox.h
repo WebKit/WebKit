@@ -202,7 +202,7 @@ public:
     const LayoutShape* shape() const;
     void setShape(RefPtr<const LayoutShape>);
 
-    const ElementBox* associatedRubyAnnotationBox() const;
+    const ElementBox* NODELETE associatedRubyAnnotationBox() const;
 
     RenderObject* rendererForIntegration() const { return m_renderer.get(); }
     void setRendererForIntegration(RenderObject* renderer) { m_renderer = renderer; }

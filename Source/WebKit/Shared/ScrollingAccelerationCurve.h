@@ -71,7 +71,7 @@ private:
 
     void computeIntermediateValuesIfNeeded();
 
-    float evaluateQuartic(float) const;
+    float NODELETE evaluateQuartic(float) const;
 
     struct Parameters {
         float gainLinear { 0 };

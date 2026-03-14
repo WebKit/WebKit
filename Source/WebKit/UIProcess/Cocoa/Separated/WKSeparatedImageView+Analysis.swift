@@ -24,8 +24,8 @@
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
 import os
-@_spi(Private) internal import Vision
-internal import WebKit_Internal
+@_spi(Private) import Vision
+import WebKit_Internal
 
 extension WKSeparatedImageView {
     func pickViewMode() async {

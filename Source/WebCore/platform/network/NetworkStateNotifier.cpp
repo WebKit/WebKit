@@ -36,7 +36,7 @@ namespace WebCore {
 
 static const Seconds updateStateSoonInterval { 2_s };
 
-static bool shouldSuppressThreadSafetyCheck()
+SUPPRESS_NODELETE static bool NODELETE shouldSuppressThreadSafetyCheck()
 {
 #if USE(WEB_THREAD)
     return WebThreadIsEnabled();

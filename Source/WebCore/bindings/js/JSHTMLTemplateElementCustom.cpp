@@ -40,12 +40,12 @@ namespace WebCore {
 using namespace JSC;
 
 template<typename Visitor>
-void JSHTMLTemplateElement::visitAdditionalChildren(Visitor& visitor)
+void JSHTMLTemplateElement::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (SUPPRESS_UNCHECKED_LOCAL auto* content = wrapped().contentIfAvailable())
         addWebCoreOpaqueRoot(visitor, *content);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSHTMLTemplateElement);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSHTMLTemplateElement);
 
 } // namespace WebCore

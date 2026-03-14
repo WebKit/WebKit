@@ -67,7 +67,7 @@ public:
 
     bool NODELETE hasAnyScrollingLayers() const;
     
-    bool equalToClipData(const Vector<CompositedClipData>&) const;
+    bool NODELETE equalToClipData(const Vector<CompositedClipData>&) const;
     bool updateWithClipData(ScrollingCoordinator*, Vector<CompositedClipData>&&);
     
     Vector<CompositedClipData> compositedClipData() const;

@@ -97,8 +97,8 @@ imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-156.xht 
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--cover--height.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/font-palette-23b.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-unicode-range-system-fallback.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/alignment/column-justify-items-center-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/alignment/grid-lanes-align-content-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-justify-items-center-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/grid-lanes-align-content-004.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/out-of-range-color-stop-conic.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ Pass ]
@@ -1927,7 +1927,6 @@ webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure ]
 webkit.org/b/296171 fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
 webkit.org/b/296171 http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip ]
 
-webkit.org/b/306360 http/tests/download/sandboxed-iframe-download-not-allowed.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
@@ -3673,6 +3672,8 @@ fast/url/data-url-mediatype.html [ Skip ]
 
 # Needs Cocoa specific features
 editing/pasteboard/copy-paste-data-detected-links.html [ Skip ]
+editing/pasteboard/paste-image-as-data-url.html [ Skip ]
+editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-data-url.html [ Skip ]
 
 # PDF as image source
 fast/hidpi/pdf-image-scaled.html [ Skip ]
@@ -4038,7 +4039,6 @@ webkit.org/b/175134 fast/text/line-height-minimumFontSize.html [ Failure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-text-zoom.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-visual.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyFailure ]
-webkit.org/b/297177 media/media-source/media-source-init-segment-duration.html [ Failure ]
 webkit.org/b/297178 media/media-source/media-source-paint-stereo-to-canvas.html [ Failure ]
 
 # Flaky failure
@@ -4170,7 +4170,7 @@ webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Slow ]
 webkit.org/b/208368 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Failure Pass ]
 webkit.org/b/209720 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
-webkit.org/b/302127 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/alignment/column-justify-items-end-justify-self-start-001.html [ ImageOnlyFailure ]
+webkit.org/b/302127 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-justify-items-end-justify-self-start-001.html [ ImageOnlyFailure ]
 webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker.html [ Failure Pass ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
@@ -5322,6 +5322,8 @@ webkit.org/b/309570 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html [ Pass Failure ]
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-default-feature-policy.https.sub.html [ Pass Failure ]
+
+webkit.org/b/309893 http/tests/images/heic-as-heif.html [ Pass Timeout ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 

@@ -159,7 +159,7 @@ public:
 
     bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms(); }
     void setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms) { m_state.setShadowsIgnoreTransforms(shadowsIgnoreTransforms); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::ShadowsIgnoreTransforms)); }
-    FloatSize platformShadowOffset(const FloatSize&) const;
+    FloatSize NODELETE platformShadowOffset(const FloatSize&) const;
 
     bool drawLuminanceMask() const { return m_state.drawLuminanceMask(); }
     void setDrawLuminanceMask(bool drawLuminanceMask) { m_state.setDrawLuminanceMask(drawLuminanceMask); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::DrawLuminanceMask)); }
@@ -384,7 +384,7 @@ protected:
 
     float dashedLineCornerWidthForStrokeWidth(float) const;
     float dashedLinePatternWidthForStrokeWidth(float) const;
-    float dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth) const;
+    float NODELETE dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth) const;
     Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const;
 
     struct RectsAndStrokeColor {

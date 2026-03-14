@@ -333,7 +333,7 @@ private:
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     std::span<const ASCIILiteral> sortedTables() final;
     String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
-    std::optional<WallTime> mostRecentUserInteractionTime(const DomainData&);
+    std::optional<WallTime> NODELETE mostRecentUserInteractionTime(const DomainData&);
     void grandfatherDataForDomains(const HashSet<RegistrableDomain>&);
     bool areAllUnpartitionedThirdPartyCookiesBlockedUnder(const TopFrameDomain&);
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const;

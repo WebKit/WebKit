@@ -136,7 +136,7 @@ static Ref<MutableStyleProperties> copyEditingProperties(StyleDeclarationType* s
     return style->copyProperties(std::span { editingProperties }.first(numInheritableEditingProperties));
 }
 
-static inline bool isEditingProperty(int id)
+static inline bool NODELETE isEditingProperty(int id)
 {
     for (auto& editingProperty : editingProperties) {
         if (editingProperty == id)
@@ -296,7 +296,7 @@ public:
     }
 
 private:
-    TextDecorationChange changeInStyle(const EditingStyle& style) const
+    TextDecorationChange NODELETE changeInStyle(const EditingStyle& style) const
     {
         return m_isUnderline ? style.underlineChange() : style.strikeThroughChange();
     }
@@ -358,7 +358,7 @@ public:
     bool valueIsPresentInStyle(Element&, const EditingStyle&) const override;
     void addToStyle(Element*, EditingStyle*) const override;
     virtual RefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
-    inline const QualifiedName& attributeName() const { return m_attrName; }
+    inline const QualifiedName& NODELETE attributeName() const { return m_attrName; }
 
 protected:
     const QualifiedName& m_attrName; // We can store a reference because HTML attribute names are const global.
@@ -536,7 +536,7 @@ static inline Color rgbaBackgroundColorInEffect(Node* node)
     return cssValueToColor(backgroundColorInEffect(node).get());
 }
 
-static int textAlignResolvingStartAndEnd(int textAlign, int direction)
+static int NODELETE textAlignResolvingStartAndEnd(int textAlign, int direction)
 {
     switch (textAlign) {
     case CSSValueCenter:
@@ -1062,7 +1062,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
     return conflicts;
 }
 
-static std::span<const HTMLElementEquivalent* const> htmlElementEquivalents()
+static std::span<const HTMLElementEquivalent* const> NODELETE htmlElementEquivalents()
 {
     static const HTMLElementEquivalent* const equivalents[] = {
         new HTMLFontWeightEquivalent(HTMLNames::bTag),
@@ -1096,7 +1096,7 @@ bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement& element, Edi
     return false;
 }
 
-static std::span<const HTMLAttributeEquivalent* const> htmlAttributeEquivalents()
+static std::span<const HTMLAttributeEquivalent* const> NODELETE htmlAttributeEquivalents()
 {
     static const HTMLAttributeEquivalent* const equivalents[] = {
         // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute
@@ -2119,7 +2119,7 @@ Ref<MutableStyleProperties> getPropertiesNotIn(StyleProperties& styleWithRedunda
     return extractPropertiesNotIn(styleWithRedundantProperties, baseStyle);
 }
 
-static bool isCSSValueLength(CSSPrimitiveValue* value)
+static bool NODELETE isCSSValueLength(CSSPrimitiveValue* value)
 {
     return value->isFontIndependentLength();
 }

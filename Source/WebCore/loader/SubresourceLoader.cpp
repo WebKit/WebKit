@@ -107,8 +107,8 @@ auto SubresourceLoader::RequestCountTracker::operator=(RequestCountTracker&& oth
 
 SubresourceLoader::RequestCountTracker::~RequestCountTracker()
 {
-    RefPtr cachedResourceLoader = m_cachedResourceLoader.get();
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr cachedResourceLoader = m_cachedResourceLoader;
+    RefPtr resource = m_resource;
     if (cachedResourceLoader && resource)
         cachedResourceLoader->decrementRequestCount(*resource);
 }
@@ -246,12 +246,12 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
 
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
-        CachedResourceHandle resource = m_resource.get();
+        RefPtr resource = m_resource;
         if (options().redirect != FetchOptions::Redirect::Follow) {
             if (options().redirect == FetchOptions::Redirect::Error) {
                 ResourceError error { errorDomainWebKitInternal, 0, request().url(), makeString("Not allowed to follow a redirection while loading "_s, request().url().string()), ResourceError::Type::AccessControl };
 
-                if (RefPtr frame = m_frame.get(); frame && frame->document())
+                if (RefPtr frame = m_frame; frame && frame->document())
                     protect(frame->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
 
                 SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCELOAD_CANCELLED_REDIRECT_NOT_ALLOWED);
@@ -284,8 +284,8 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         // Requesting the same original URL a second time can redirect to a unique second resource.
         // Therefore, if a redirect to a different destination URL occurs, we should no longer consider this a revalidation of the first resource.
         // Doing so would have us reusing the resource from the first request if the second request's revalidation succeeds.
-        RefPtr frame = m_frame.get();
-        if (newRequest.isConditional() && resource->resourceToRevalidate() && newRequest.url() != resource->resourceToRevalidate()->response().url()) {
+        RefPtr frame = m_frame;
+        if (newRequest.isConditional() && resource->resourceToRevalidate() && newRequest.url() != protect(resource->resourceToRevalidate())->response().url()) {
             newRequest.makeUnconditional();
             MemoryCache::singleton().revalidationFailed(*resource);
             if (frame && frame->page())
@@ -305,7 +305,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
 
         if (!isPortAllowed(newRequest.url())) {
             SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_USING_BLOCKED_PORT);
-            if (RefPtr frame = m_frame.get())
+            if (RefPtr frame = m_frame)
                 FrameLoader::reportBlockedLoadFailed(*frame, newRequest.url());
             if (frameLoader())
                 cancel(frameLoader()->blockedError(newRequest));
@@ -315,7 +315,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         auto accessControlCheckResult = checkRedirectionCrossOriginAccessControl(request(), redirectResponse, newRequest);
         if (!accessControlCheckResult) {
             auto errorMessage = makeString("Cross-origin redirection to "_s, newRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: "_s, accessControlCheckResult.error());
-            if (RefPtr frame = m_frame.get(); frame && frame->document())
+            if (RefPtr frame = m_frame; frame && frame->document())
                 protect(frame->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
             SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_REDIRECT_DENIED_BY_CORS_POLICY);
             cancel(ResourceError(String(), 0, request().url(), errorMessage, ResourceError::Type::AccessControl));
@@ -423,13 +423,13 @@ void SubresourceLoader::didReceiveResponse(ResourceResponse&& response, Completi
     if (shouldIncludeCertificateInfo())
         response.includeCertificateInfo();
 
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr resource = m_resource;
     if (!resource) {
         ASSERT_NOT_REACHED();
         RELEASE_LOG_FAULT(Loading, "Resource was unexpectedly null in SubresourceLoader::didReceiveResponse");
     }
 
-    RefPtr frame = m_frame.get();
+    RefPtr frame = m_frame;
     if (resource && resource->resourceToRevalidate()) {
         if (response.httpStatusCode() == httpStatus304NotModified) {
             // Existing resource is ok, just use it updating the expiration time.
@@ -515,7 +515,7 @@ void SubresourceLoader::didReceiveResponse(ResourceResponse&& response, Completi
         if (reachedTerminalState())
             return;
 
-        CachedResourceHandle resource = m_resource.get();
+        RefPtr resource = m_resource;
         // FIXME: Main resources have a different set of rules for multipart than images do.
         // Hopefully we can merge those 2 paths.
         if (isResponseMultipart && resource && resource->type() != CachedResource::Type::MainResource) {
@@ -560,7 +560,7 @@ void SubresourceLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, l
         return;
 #endif
 
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr resource = m_resource;
     ASSERT(resource);
 
     if (resource->response().httpStatusCode() >= httpStatus400BadRequest && !resource->shouldIgnoreHTTPStatusCodeErrors())
@@ -584,7 +584,7 @@ void SubresourceLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, l
 
 bool SubresourceLoader::responseHasHTTPStatusCodeError() const
 {
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr resource = m_resource;
     if (resource->response().httpStatusCode() < httpStatus400BadRequest || resource->shouldIgnoreHTTPStatusCodeErrors())
         return false;
     return true;
@@ -745,7 +745,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     Ref protectedThis { *this };
 
     ASSERT(!reachedTerminalState());
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr resource = m_resource;
     if (!resource)
         return;
 
@@ -805,10 +805,10 @@ void SubresourceLoader::didFail(const ResourceError& error)
         return;
 
     ASSERT(!reachedTerminalState());
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr resource = m_resource;
     LOG(ResourceLoading, "Failed to load '%s'.\n", resource->url().string().latin1().data());
 
-    RefPtr frame = m_frame.get();
+    RefPtr frame = m_frame;
     if (frame && frame->document() && error.isAccessControl() && error.domain() != InspectorNetworkAgent::errorDomain() && resource->type() != CachedResource::Type::Ping)
         protect(frame->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
 
@@ -848,7 +848,7 @@ void SubresourceLoader::willCancel(const ResourceError& error)
     ASSERT(!reachedTerminalState());
 
     Ref protectedThis { *this };
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr resource = m_resource;
     LOG(ResourceLoading, "Cancelled load of '%s'.\n", resource->url().string().latin1().data());
 
 #if PLATFORM(IOS_FAMILY)
@@ -868,7 +868,7 @@ void SubresourceLoader::didCancel(LoadWillContinueInAnotherProcess loadWillConti
     if (m_state == Uninitialized || reachedTerminalState())
         return;
 
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr resource = m_resource;
     ASSERT(resource);
 
     if (resource->type() != CachedResource::Type::MainResource)
@@ -918,7 +918,7 @@ void SubresourceLoader::releaseResources()
 
 void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLoadMetrics)
 {
-    CachedResourceHandle resource = m_resource.get();
+    RefPtr resource = m_resource;
     ASSERT(resource);
     if (!resource || !ResourceTimingInformation::shouldAddResourceTiming(*resource))
         return;
@@ -941,7 +941,7 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
     }
 
     ASSERT(options().initiatorContext == InitiatorContext::Document);
-    documentLoader->cachedResourceLoader().resourceTimingInformation().addResourceTiming(*cachedResource(), *document, WTF::move(resourceTiming));
+    documentLoader->cachedResourceLoader().resourceTimingInformation().addResourceTiming(*protect(cachedResource()), *document, WTF::move(resourceTiming));
 }
 
 const HTTPHeaderMap* SubresourceLoader::originalHeaders() const

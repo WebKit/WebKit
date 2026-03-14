@@ -80,7 +80,7 @@ public:
     bool matchesHost(const UserContentURLPattern& other) const { return matchesHost(other.host()); }
     bool matchesPath(const UserContentURLPattern& other) const { return matchesPath(other.path()); }
 
-    WEBCORE_EXPORT bool operator==(const UserContentURLPattern& other) const;
+    WEBCORE_EXPORT bool NODELETE operator==(const UserContentURLPattern& other) const;
 
     static bool matchesPatterns(const URL&, const Vector<String>& allowlist, const Vector<String>& blocklist);
 
@@ -88,8 +88,8 @@ private:
     WEBCORE_EXPORT Error parse(StringView pattern);
     void normalizeHostAndSetMatchSubdomains();
 
-    WEBCORE_EXPORT bool matchesHost(const String&) const;
-    WEBCORE_EXPORT bool matchesPath(const String&) const;
+    WEBCORE_EXPORT bool NODELETE matchesHost(const String&) const;
+    WEBCORE_EXPORT bool NODELETE matchesPath(const String&) const;
 
     String m_scheme;
     String m_host;
@@ -99,6 +99,6 @@ private:
     bool m_matchSubdomains { false };
 };
 
-WEBCORE_EXPORT bool matchesWildcardPattern(const String& pattern, const String& testString);
+WEBCORE_EXPORT bool NODELETE matchesWildcardPattern(const String& pattern, const String& testString);
 
 } // namespace WebCore

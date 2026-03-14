@@ -48,19 +48,19 @@ public:
         }
     }
 
-    GlyphData glyphDataForCharacter(char32_t c) const
+    GlyphData NODELETE glyphDataForCharacter(char32_t c) const
     {
         unsigned index = GlyphPage::indexForCodePoint(c);
         return { m_glyphs[index], m_fonts[index].get() };
     }
 
-    void setGlyphDataForCharacter(char32_t c, GlyphData glyphData)
+    void NODELETE setGlyphDataForCharacter(char32_t c, GlyphData glyphData)
     {
         setGlyphDataForIndex(GlyphPage::indexForCodePoint(c), glyphData);
     }
 
 private:
-    void setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
+    void NODELETE setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
     {
         m_glyphs[index] = glyphData.glyph;
         m_fonts[index] = glyphData.font.get();
@@ -229,12 +229,12 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
     return fontRanges;
 }
 
-static inline bool isInRange(char32_t character, char32_t lowerBound, char32_t upperBound)
+static inline bool NODELETE isInRange(char32_t character, char32_t lowerBound, char32_t upperBound)
 {
     return character >= lowerBound && character <= upperBound;
 }
 
-static bool shouldIgnoreRotation(char32_t character)
+static bool NODELETE shouldIgnoreRotation(char32_t character)
 {
     if (character == 0x000A7 || character == 0x000A9 || character == 0x000AE)
         return true;

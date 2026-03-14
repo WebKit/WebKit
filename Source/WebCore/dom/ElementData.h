@@ -74,7 +74,7 @@ public:
     bool hasClass() const { return !m_classNames.isEmpty(); }
     bool hasName() const { return m_arraySizeAndFlags & s_flagHasNameAttribute; }
 
-    bool isEquivalent(const ElementData* other) const;
+    bool NODELETE isEquivalent(const ElementData* other) const;
 
     bool isUnique() const { return m_arraySizeAndFlags & s_flagIsUnique; }
     static uint32_t isUniqueFlag() { return s_flagIsUnique; }

@@ -1144,7 +1144,7 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot, bool wa
         endingTextControl->didEditInnerTextValue(wasUserEdit);
 }
 
-static inline bool shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
+static inline bool NODELETE shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
 {
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
     bool shouldRemoveIndicator = shouldConsiderApplyingAutocorrection && !autocorrectionWasApplied;
@@ -1190,7 +1190,7 @@ static inline bool didApplyAutocorrection(Document& document, AlternativeTextCon
 #endif
 }
 
-static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarkerType>& markerTypes)
+static inline void NODELETE adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarkerType>& markerTypes)
 {
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
     markerTypes.remove(DocumentMarkerType::CorrectionIndicator);
@@ -3274,7 +3274,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType
 #endif
 }
 
-static bool isAutomaticTextReplacementType(TextCheckingType type)
+static bool NODELETE isAutomaticTextReplacementType(TextCheckingType type)
 {
     switch (type) {
     case TextCheckingType::None:
@@ -4812,7 +4812,7 @@ void Editor::registerAttachmentIdentifier(const String& identifier, const Attach
         if (!renderer)
             return std::nullopt;
 
-        auto* cachedImage = renderer->cachedImage();
+        RefPtr cachedImage = renderer->cachedImage();
         if (!cachedImage || cachedImage->errorOccurred())
             return std::nullopt;
 

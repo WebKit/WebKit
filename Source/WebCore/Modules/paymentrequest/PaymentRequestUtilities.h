@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-bool isValidDecimalMonetaryValue(StringView);
+bool NODELETE isValidDecimalMonetaryValue(StringView);
 
 } // namespace WebCore
 

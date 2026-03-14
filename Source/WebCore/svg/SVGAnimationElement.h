@@ -94,9 +94,9 @@ protected:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    String toValue() const;
-    String byValue() const;
-    String fromValue() const;
+    String NODELETE toValue() const;
+    String NODELETE byValue() const;
+    String NODELETE fromValue() const;
 
     // from SVGSMILElement
     void startedActiveInterval() override;
@@ -129,8 +129,8 @@ private:
     float calculatePercentFromKeyPoints(float percent) const;
     void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;
     float calculatePercentForSpline(float percent, unsigned splineIndex) const;
-    float calculatePercentForFromTo(float percent) const;
-    unsigned calculateKeyTimesIndex(float percent) const;
+    float NODELETE calculatePercentForFromTo(float percent) const;
+    unsigned NODELETE calculateKeyTimesIndex(float percent) const;
 
     void setCalcMode(const AtomString&);
 

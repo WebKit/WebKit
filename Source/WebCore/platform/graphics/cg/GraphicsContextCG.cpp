@@ -82,7 +82,7 @@ static InterpolationQuality coreInterpolationQuality(CGContextRef context)
     return InterpolationQuality::Default;
 }
 
-static CGTextDrawingMode cgTextDrawingMode(TextDrawingModeFlags mode)
+static CGTextDrawingMode NODELETE cgTextDrawingMode(TextDrawingModeFlags mode)
 {
     bool fill = mode.contains(TextDrawingMode::Fill);
     bool stroke = mode.contains(TextDrawingMode::Stroke);
@@ -93,7 +93,7 @@ static CGTextDrawingMode cgTextDrawingMode(TextDrawingModeFlags mode)
     return kCGTextStroke;
 }
 
-static CGBlendMode selectCGBlendMode(CompositeOperator compositeOperator, BlendMode blendMode)
+static CGBlendMode NODELETE selectCGBlendMode(CompositeOperator compositeOperator, BlendMode blendMode)
 {
     switch (blendMode) {
     case BlendMode::Normal:
@@ -665,7 +665,7 @@ void GraphicsContextCG::applyFillPattern()
     CGContextSetFillPattern(cgContext, platformPattern.get(), &patternAlpha);
 }
 
-static inline bool calculateDrawingMode(const GraphicsContext& context, CGPathDrawingMode& mode)
+static inline bool NODELETE calculateDrawingMode(const GraphicsContext& context, CGPathDrawingMode& mode)
 {
     bool shouldFill = context.fillBrush().isVisible();
     bool shouldStroke = context.strokeBrush().isVisible() || (context.strokeStyle() != StrokeStyle::NoStroke);

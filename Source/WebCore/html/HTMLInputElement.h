@@ -69,7 +69,7 @@ public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
-    WEBCORE_EXPORT bool alpha();
+    WEBCORE_EXPORT bool NODELETE alpha();
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);
     String colorSpace();
@@ -135,7 +135,7 @@ public:
     std::optional<Decimal> findClosestTickMarkValue(const Decimal&);
     std::optional<double> listOptionValueAsDouble(const HTMLOptionElement&);
 
-    bool isPresentingAttachedView() const;
+    bool NODELETE isPresentingAttachedView() const;
 
     RefPtr<InputType> NODELETE inputType() const;
 
@@ -174,7 +174,7 @@ public:
 
     bool isDevolvableWidget() const override;
 
-    DateComponentsType dateType() const;
+    DateComponentsType NODELETE dateType() const;
 
     HTMLElement* containerElement() const;
 
@@ -244,7 +244,7 @@ public:
 
     unsigned effectiveMaxLength() const;
 
-    WEBCORE_EXPORT bool multiple() const;
+    WEBCORE_EXPORT bool NODELETE multiple() const;
 
     // AutoFill.
     using AutofillButtonType = WebCore::AutoFillButtonType;
@@ -275,8 +275,8 @@ public:
     bool receiveDroppedFiles(const DragData&);
 #endif
 
-    Icon* icon() const;
-    String displayString() const;
+    Icon* NODELETE icon() const;
+    String NODELETE displayString() const;
 
     // These functions are used for rendering the input active during a drag-and-drop operation.
     bool canReceiveDroppedFiles() const { return m_canReceiveDroppedFiles; }
@@ -351,9 +351,9 @@ public:
     bool hasEverBeenPasswordField() const { return m_hasEverBeenPasswordField; }
 
     float switchAnimationVisuallyOnProgress() const;
-    bool isSwitchVisuallyOn() const;
+    bool NODELETE isSwitchVisuallyOn() const;
     float switchAnimationHeldProgress() const;
-    bool isSwitchHeld() const;
+    bool NODELETE isSwitchHeld() const;
 
     void initializeInputTypeAfterParsingOrCloning();
 
@@ -426,7 +426,7 @@ private:
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
-    bool needsSuspensionCallback();
+    bool NODELETE needsSuspensionCallback();
     void registerForSuspensionCallbackIfNeeded();
     void unregisterForSuspensionCallbackIfNeeded();
 

@@ -68,8 +68,9 @@ void HTMLImageLoader::dispatchLoadEvent()
     }
 #endif
 
-    bool errorOccurred = image()->errorOccurred();
-    if (!errorOccurred && image()->response().httpStatusCode() >= 400)
+    RefPtr image = this->image();
+    bool errorOccurred = image->errorOccurred();
+    if (!errorOccurred && image->response().httpStatusCode() >= 400)
         errorOccurred = is<HTMLObjectElement>(element()); // An <object> considers a 404 to be an error and should fire onerror.
     protect(element())->dispatchEvent(Event::create(errorOccurred ? eventNames().errorEvent : eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
@@ -77,19 +78,19 @@ void HTMLImageLoader::dispatchLoadEvent()
 void HTMLImageLoader::notifyFinished(CachedResource&, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(image());
-    CachedImage& cachedImage = *image();
+    Ref cachedImage = *image();
 
     Ref<Element> protect(element());
     ImageLoader::notifyFinished(cachedImage, metrics, loadWillContinueInAnotherProcess);
 
-    bool loadError = cachedImage.errorOccurred() || cachedImage.response().httpStatusCode() >= 400;
+    bool loadError = cachedImage->errorOccurred() || cachedImage->response().httpStatusCode() >= 400;
     if (!loadError) {
         if (!element().isConnected()) {
             JSC::VM& vm = commonVM();
             JSC::JSLockHolder lock(vm);
             // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
             // https://bugs.webkit.org/show_bug.cgi?id=142595
-            vm.heap.deprecatedReportExtraMemory(cachedImage.encodedSize());
+            vm.heap.deprecatedReportExtraMemory(cachedImage->encodedSize());
         }
     }
 

@@ -122,6 +122,6 @@ WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS[sdk=*26.3*] = ;
 WK_SWIFT_CLANG_DEPLOYMENT_TARGET = $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET_$(WK_PLATFORM_NAME);
 WK_SWIFT_CLANG_DEPLOYMENT_TARGET_macosx = -clang-target $(CURRENT_ARCH)-apple-macos$(MACOSX_DEPLOYMENT_TARGET);
 
-OTHER_SWIFT_FLAGS = $(inherited) -Werror ExistentialAny -enable-upcoming-feature ExistentialAny $(WK_SWIFT_MEMORY_SAFETY_FLAGS) $(WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS) $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET) $(WK_SANITIZER_OTHER_SWIFT_FLAGS);
+OTHER_SWIFT_FLAGS = $(inherited) -Werror ExistentialAny -enable-upcoming-feature ExistentialAny $(WK_SWIFT_MEMORY_SAFETY_FLAGS) $(WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS) $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET) $(WK_SANITIZER_OTHER_SWIFT_FLAGS) -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility;
 
 OTHER_LIBTOOLFLAGS = -no_warning_for_no_symbols;

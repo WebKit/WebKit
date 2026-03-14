@@ -66,15 +66,15 @@ WEBCORE_EXPORT bool registerOpusDecoderIfNeeded();
 static constexpr size_t kOpusHeaderSize = 19;
 static constexpr size_t kOpusMinimumFrameDataSize = 2;
 std::optional<OpusCookieContents> parseOpusPrivateData(std::span<const uint8_t> privateData, std::span<const uint8_t> frameData);
-bool parseOpusTOCData(std::span<const uint8_t> frameData, OpusCookieContents&);
+bool NODELETE parseOpusTOCData(std::span<const uint8_t> frameData, OpusCookieContents&);
 RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents&);
 Vector<uint8_t> createOpusPrivateData(const AudioStreamBasicDescription&, uint16_t preSkip = 0);
 
 #if ENABLE(OPUS)
-WEBCORE_EXPORT void setHasOpusDecoder(bool);
+WEBCORE_EXPORT void NODELETE setHasOpusDecoder(bool);
 #endif
 #if ENABLE(VORBIS)
-WEBCORE_EXPORT void setHasVorbisDecoder(bool);
+WEBCORE_EXPORT void NODELETE setHasVorbisDecoder(bool);
 #endif
 
 }

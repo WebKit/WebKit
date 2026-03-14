@@ -139,9 +139,9 @@ public:
     void ref() const final { API::ObjectImpl<API::Object::Type::Frame>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::Frame>::deref(); }
 
-    static WebFrameProxy* webFrame(std::optional<WebCore::FrameIdentifier>);
+    static WebFrameProxy* NODELETE webFrame(std::optional<WebCore::FrameIdentifier>);
 
-    static bool canCreateFrame(WebCore::FrameIdentifier);
+    static bool NODELETE canCreateFrame(WebCore::FrameIdentifier);
 
     virtual ~WebFrameProxy();
 
@@ -308,11 +308,11 @@ public:
     void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
     void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
-    ProvisionalFrameCreationParameters provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::LayerHostingContextIdentifier>, CommitTiming);
+    ProvisionalFrameCreationParameters NODELETE provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::LayerHostingContextIdentifier>, CommitTiming);
 private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, WebFrameProxy*, IsMainFrame, std::optional<URL>&&);
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
     std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
     Ref<WebCore::SecurityOrigin> securityOrigin() const;
@@ -321,8 +321,8 @@ private:
     RefPtr<WebFrameProxy> deepLastChild();
     WebFrameProxy* NODELETE firstChild() const;
     WebFrameProxy* NODELETE lastChild() const;
-    WebFrameProxy* nextSibling() const;
-    WebFrameProxy* previousSibling() const;
+    WebFrameProxy* NODELETE nextSibling() const;
+    WebFrameProxy* NODELETE previousSibling() const;
 
     WeakPtr<WebPageProxy> m_page;
     Ref<FrameProcess> m_frameProcess;

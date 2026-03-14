@@ -1074,7 +1074,7 @@ bool complexSelectorsEqual(const CSSSelector& complexA, const CSSSelector& compl
     return true;
 }
 
-static void addSimpleSelector(Hasher& hasher, const CSSSelector& simpleSelector)
+static void NODELETE addSimpleSelector(Hasher& hasher, const CSSSelector& simpleSelector)
 {
     // This hash does try to include every possible thing in a selector.
     add(hasher, simpleSelector.match());

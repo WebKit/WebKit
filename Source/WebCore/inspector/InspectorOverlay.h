@@ -146,7 +146,7 @@ public:
     InspectorOverlay(PageInspectorController&, InspectorBackendClient*);
     ~InspectorOverlay();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     using Highlight = InspectorOverlayHighlight;
@@ -192,7 +192,7 @@ public:
     void update();
     void paint(GraphicsContext&);
     void getHighlight(Highlight&, CoordinateSystem);
-    bool shouldShowOverlay() const;
+    bool NODELETE shouldShowOverlay() const;
 
     void hideHighlight();
     void highlightNodeList(RefPtr<NodeList>&&, const Highlight::Config&, const std::optional<Grid::Config>& = std::nullopt, const std::optional<Flex::Config>& = std::nullopt, bool showRulers = false);
@@ -251,7 +251,7 @@ private:
     bool removeGridOverlayForNode(Node&);
     bool removeFlexOverlayForNode(Node&);
 
-    Page& page() const;
+    Page& NODELETE page() const;
 
     const WeakRef<PageInspectorController> m_controller;
     InspectorBackendClient* m_client;

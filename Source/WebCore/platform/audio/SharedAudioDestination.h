@@ -53,7 +53,7 @@ private:
     void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
     void stop(CompletionHandler<void(bool)>&&) final;
     bool isPlaying() final { return m_isPlaying; }
-    unsigned framesPerBuffer() const final;
+    unsigned NODELETE framesPerBuffer() const final;
     MediaTime outputLatency() const final;
 #if PLATFORM(IOS_FAMILY)
     void setSceneIdentifier(const String&) final;

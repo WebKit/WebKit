@@ -46,7 +46,7 @@ public:
     
     bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }
 
-    FloatSize viewToContentsOffset(const FloatPoint& scrollPosition) const;
+    FloatSize NODELETE viewToContentsOffset(const FloatPoint& scrollPosition) const;
 
     FloatRect layoutViewport() const { return m_layoutViewport; };
     void setLayoutViewport(const FloatRect& r) { m_layoutViewport = r; };

@@ -64,7 +64,7 @@ static Vector<String>& NODELETE overrideLanguagesFromBootstrap()
     return languages;
 }
 
-static void stageOverrideLanguagesForMainThread(Vector<String>&& languages)
+static void NODELETE stageOverrideLanguagesForMainThread(Vector<String>&& languages)
 {
     RELEASE_ASSERT(overrideLanguagesFromBootstrap().isEmpty());
     overrideLanguagesFromBootstrap().swap(languages);

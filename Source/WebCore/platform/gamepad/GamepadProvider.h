@@ -42,8 +42,8 @@ class GamepadProvider {
 public:
     virtual ~GamepadProvider() = default;
 
-    WEBCORE_EXPORT static GamepadProvider& singleton();
-    WEBCORE_EXPORT static void setSharedProvider(GamepadProvider&);
+    WEBCORE_EXPORT static GamepadProvider& NODELETE singleton();
+    WEBCORE_EXPORT static void NODELETE setSharedProvider(GamepadProvider&);
 
     virtual void startMonitoringGamepads(GamepadProviderClient&) = 0;
     virtual void stopMonitoringGamepads(GamepadProviderClient&) = 0;

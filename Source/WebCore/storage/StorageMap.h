@@ -40,8 +40,8 @@ public:
     // Quota size measured in bytes.
     WEBCORE_EXPORT explicit StorageMap(unsigned quotaSize);
 
-    WEBCORE_EXPORT unsigned length() const;
-    WEBCORE_EXPORT String key(unsigned index);
+    WEBCORE_EXPORT unsigned NODELETE length() const;
+    WEBCORE_EXPORT String NODELETE key(unsigned index);
     WEBCORE_EXPORT String getItem(const String&) const;
     WEBCORE_EXPORT void setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
     WEBCORE_EXPORT void setItemIgnoringQuota(const String& key, const String& value);
@@ -60,8 +60,8 @@ public:
     static constexpr unsigned noQuota = std::numeric_limits<unsigned>::max();
 
 private:
-    void invalidateIterator();
-    void setIteratorToIndex(unsigned);
+    void NODELETE invalidateIterator();
+    void NODELETE setIteratorToIndex(unsigned);
 
     struct Impl : public RefCounted<Impl> {
         static Ref<Impl> create()

@@ -38,7 +38,9 @@
 
 - (CGSize)intrinsicContentSize
 {
-    return _extrinsicContentSize;
+    if (_extrinsicContentSize.width > 0 && _extrinsicContentSize.height > 0)
+        return _extrinsicContentSize;
+    return [super intrinsicContentSize];
 }
 
 #if !PLATFORM(WATCHOS)

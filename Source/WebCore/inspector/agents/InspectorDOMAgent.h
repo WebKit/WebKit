@@ -187,7 +187,7 @@ public:
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willDestroyDOMNode(Node&);
-    void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
+    void NODELETE willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
     void didRemoveDOMAttr(Element&, const AtomString& name);
     void characterDataModified(CharacterData&);

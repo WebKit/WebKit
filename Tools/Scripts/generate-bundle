@@ -669,7 +669,11 @@ class BundleCreator(object):
 
     def _generate_tls_cafile(self, data_directory):
         cafile_path = os.path.join(data_directory, 'bundle-ca-certificates.pem')
-        retcode, stdout, stderr = self._run_cmd_and_get_output(['trust', 'extract', '--format=pem-bundle', cafile_path])
+        if shutil.which('trust'):
+            retcode, stdout, stderr = self._run_cmd_and_get_output(['trust', 'extract', '--format=pem-bundle', cafile_path])
+        else:
+            _log.warning('trust: command not found, please install p11-kit.')
+            retcode = 127
         # trust fails inside flatpak due to https://gitlab.com/freedesktop-sdk/freedesktop-sdk/-/issues/904
         # fall-back to trying to manually copy the bundle
         if (retcode != 0) or (not os.path.isfile(cafile_path)) or (os.path.getsize(cafile_path) < 100):

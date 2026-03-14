@@ -35,12 +35,12 @@
 namespace WebCore {
 namespace Layout {
 
-static inline InlineLayoutUnit halfOfAFullWidthCharacter(const Box& annotationBox)
+static inline InlineLayoutUnit NODELETE halfOfAFullWidthCharacter(const Box& annotationBox)
 {
     return annotationBox.style().computedFontSize() / 2.f;
 }
 
-static inline size_t baseContentIndex(size_t rubyBaseStart, std::span<InlineDisplay::Box> boxes)
+static inline size_t NODELETE baseContentIndex(size_t rubyBaseStart, std::span<InlineDisplay::Box> boxes)
 {
     auto baseContentIndex = rubyBaseStart + 1;
     if (boxes[baseContentIndex].layoutBox().isRubyAnnotationBox())

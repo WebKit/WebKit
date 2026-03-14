@@ -113,7 +113,7 @@ private:
 };
 
 using KeyStoreIDType = unsigned;
-KeyStoreIDType keyStoreBaseNextID();
+KeyStoreIDType NODELETE keyStoreBaseNextID();
 
 template<typename T>
 class KeyStoreBase {

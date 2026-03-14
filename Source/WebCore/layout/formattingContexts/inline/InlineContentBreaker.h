@@ -97,7 +97,7 @@ public:
         void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
         void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
-        void setTrailingSoftHyphenWidth(InlineLayoutUnit);
+        void NODELETE setTrailingSoftHyphenWidth(InlineLayoutUnit);
         void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_minimumRequiredWidth = minimumRequiredWidth; }
         void setHasShapedContent() { m_hasShapedContent = true; }
         bool hasShapedContent() const { return m_hasShapedContent; }

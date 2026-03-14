@@ -6291,7 +6291,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)updateFocusedElementValue:(NSString *)value
 {
-    protect(_page)->setFocusedElementValue(_focusedElementInformation.elementContext, value);
+    protect(_page)->setFocusedElementValue(_focusedElementInformation.frameID(), _focusedElementInformation.elementContext, value);
     _focusedElementInformation.value = value;
 }
 
@@ -6304,14 +6304,14 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     }();
     auto valueAsString = WebCore::serializationForHTML(color);
 
-    protect(_page)->setFocusedElementValue(_focusedElementInformation.elementContext, valueAsString);
+    protect(_page)->setFocusedElementValue(_focusedElementInformation.frameID(), _focusedElementInformation.elementContext, valueAsString);
     _focusedElementInformation.value = valueAsString;
     _focusedElementInformation.colorValue = color;
 }
 
 - (void)updateFocusedElementSelectedIndex:(uint32_t)index allowsMultipleSelection:(bool)allowsMultipleSelection
 {
-    protect(_page)->setFocusedElementSelectedIndex(_focusedElementInformation.elementContext, index, allowsMultipleSelection);
+    protect(_page)->setFocusedElementSelectedIndex(_focusedElementInformation.frameID(), _focusedElementInformation.elementContext, index, allowsMultipleSelection);
 }
 
 - (void)updateFocusedElementFocusedWithDataListDropdown:(BOOL)value
@@ -6510,7 +6510,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
         RetainPtr inputText = [textSuggestion inputText];
         for (WKBETextSuggestion *dataListTextSuggestion in _dataListTextSuggestions.get()) {
             if ([inputText isEqualToString:dataListTextSuggestion.inputText]) {
-                page->setFocusedElementValue(_focusedElementInformation.elementContext, inputText.get());
+                page->setFocusedElementValue(_focusedElementInformation.frameID(), _focusedElementInformation.elementContext, inputText.get());
                 return;
             }
         }

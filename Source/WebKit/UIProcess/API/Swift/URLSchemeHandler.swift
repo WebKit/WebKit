@@ -23,8 +23,8 @@
 
 #if ENABLE_SWIFTUI
 
-import Foundation
-internal import WebKit_Internal
+public import Foundation
+import WebKit_Internal
 
 /// A type representing a valid URL scheme.
 ///

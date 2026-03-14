@@ -196,7 +196,7 @@ public:
     void NODELETE setCanGoForward(const Transaction::Token&, bool);
 
     void NODELETE didStartProgress(const Transaction::Token&);
-    void didChangeProgress(const Transaction::Token&, double);
+    void NODELETE didChangeProgress(const Transaction::Token&, double);
     void NODELETE didFinishProgress(const Transaction::Token&);
     void NODELETE setNetworkRequestsInProgress(const Transaction::Token&, bool);
     void NODELETE setHTTPFallbackInProgress(const Transaction::Token&, bool);
@@ -206,7 +206,7 @@ public:
 
     bool committedHasInsecureContent() const { return m_committedState.hasInsecureContent; }
 
-    void setHadSafeBrowsingWarning(const Transaction::Token&);
+    void NODELETE setHadSafeBrowsingWarning(const Transaction::Token&);
     bool committedHadSafeBrowsingWarning() const { return m_committedState.hadSafeBrowsingWarning; }
 
     // FIXME: We piggy-back off PageLoadState::Observer so that both WKWebView and WKObservablePageState
@@ -257,7 +257,7 @@ private:
     static bool NODELETE isLoading(const Data&);
     static String NODELETE activeURL(const Data&);
     static bool hasOnlySecureContent(const Data&);
-    static double estimatedProgress(const Data&);
+    static double NODELETE estimatedProgress(const Data&);
 
     WebPageProxy& page() const { return m_webPageProxy.get(); }
 

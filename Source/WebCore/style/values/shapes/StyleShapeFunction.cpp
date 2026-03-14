@@ -295,7 +295,7 @@ public:
     const std::optional<Position>& NODELETE initialMove() const { return m_initialMove; }
 
 private:
-    static Position toPosition(FloatPoint p)
+    static Position NODELETE toPosition(FloatPoint p)
     {
         return { p };
     }
@@ -305,7 +305,7 @@ private:
         return { CoordinatePair::value_type::Dimension { p.x() }, CoordinatePair::value_type::Dimension { p.y() } };
     }
 
-    static Position absoluteOffsetPoint(FloatPoint p)
+    static Position NODELETE absoluteOffsetPoint(FloatPoint p)
     {
         return toPosition(p);
     }
@@ -337,7 +337,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    static AbsoluteControlPoint absoluteControlPoint(const FloatPoint& controlPoint)
+    static AbsoluteControlPoint NODELETE absoluteControlPoint(const FloatPoint& controlPoint)
     {
         return { toPosition(controlPoint), std::nullopt };
     }

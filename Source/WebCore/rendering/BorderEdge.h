@@ -55,7 +55,7 @@ public:
     inline float widthForPainting() const { return m_isPresent ? m_flooredToDevicePixelWidth : 0; }
     void getDoubleBorderStripeWidths(LayoutUnit& outerWidth, LayoutUnit& innerWidth) const;
     bool obscuresBackgroundEdge(float scale) const;
-    bool obscuresBackground() const;
+    bool NODELETE obscuresBackground() const;
 
 private:
     inline float borderWidthInDevicePixel(int logicalPixels) const { return LayoutUnit(logicalPixels / m_devicePixelRatio).toFloat(); }

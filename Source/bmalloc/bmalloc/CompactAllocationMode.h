@@ -57,6 +57,7 @@ BINLINE constexpr pas_allocation_mode asPasAllocationMode(CompactAllocationMode 
         return pas_always_compact_allocation_mode;
     }
     RELEASE_BASSERT_NOT_REACHED();
+    return pas_non_compact_allocation_mode;
 }
 
 #endif

@@ -68,7 +68,7 @@ ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
     return create({ { WTF::move(init.startContainer), init.startOffset }, { WTF::move(init.endContainer), init.endOffset } });
 }
 
-void StaticRange::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const
+void StaticRange::visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const
 {
     addWebCoreOpaqueRoot(visitor, start.container.get());
     addWebCoreOpaqueRoot(visitor, end.container.get());

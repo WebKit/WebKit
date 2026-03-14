@@ -379,7 +379,7 @@ static bool NODELETE hasTwoSignChars(const String& string)
     return false;
 }
 
-static bool hasDecimalSeparator(const String& string)
+static bool NODELETE hasDecimalSeparator(const String& string)
 {
     return string.find('.') != notFound;
 }

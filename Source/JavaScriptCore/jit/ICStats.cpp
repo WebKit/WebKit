@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ICStats.h"
 
+#include <cstdlib>
+#include <mutex>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
@@ -43,9 +45,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return strcmp(m_classInfo->className, other.m_classInfo->className) < 0;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
-    
-    if (m_propertyName != other.m_propertyName)
-        return codePointCompare(m_propertyName.string(), other.m_propertyName.string()) < 0;
 
     if (m_kind != other.m_kind)
         return m_kind < other.m_kind;
@@ -55,7 +54,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void ICEvent::dump(PrintStream& out) const
 {
-    out.print(m_kind, "(", m_classInfo ? m_classInfo->className : "<null>", ", ", m_propertyName, ")");
+    out.print(m_kind, "(", m_classInfo ? m_classInfo->className : "<null>", ")");
     if (m_propertyLocation != Unknown)
         out.print(m_propertyLocation == BaseObject ? " self" : " proto lookup");
 }
@@ -69,6 +68,17 @@ Atomic<ICStats*> ICStats::s_instance;
 
 ICStats::ICStats()
 {
+    std::atexit([] {
+        ICStats* stats = s_instance.load();
+        if (!stats)
+            return;
+        dataLog("ICStats at exit:\n");
+        Locker spectrumLocker { stats->m_spectrum.getLock() };
+        auto list = stats->m_spectrum.buildList(spectrumLocker);
+        for (unsigned i = list.size(); i--;)
+            dataLog("    ", *list[i].key, ": ", list[i].count, "\n");
+    });
+
     m_thread = Thread::create(
         "JSC ICStats"_s,
         [this] () {
@@ -103,22 +113,17 @@ ICStats::~ICStats()
 
 void ICStats::add(const ICEvent& event)
 {
-    m_spectrum.add(event);
+    if (JSC::activeJSGlobalObjectSignpostIntervalCount.load())
+        m_spectrum.add(event);
 }
 
 ICStats& ICStats::singleton()
 {
-    for (;;) {
-        ICStats* result = s_instance.load();
-        if (result)
-            return *result;
-        
-        ICStats* newStats = new ICStats();
-        if (s_instance.compareExchangeWeak(nullptr, newStats))
-            return *newStats;
-        
-        delete newStats;
-    }
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        s_instance.store(new ICStats());
+    });
+    return *s_instance.load();
 }
 
 } // namespace JSC

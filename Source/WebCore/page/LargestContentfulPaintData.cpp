@@ -225,7 +225,8 @@ RefPtr<LargestContentfulPaint> LargestContentfulPaintData::generateLargestConten
         auto& lcpData = element->ensureLargestContentfulPaintData();
 
         // FIXME: This is doing multiple localToAbsolute on the same element, but multiple images per element is rare.
-        for (auto image : imageList) {
+        for (auto weakImage : imageList) {
+            RefPtr image = weakImage;
             if (!image)
                 continue;
             auto findIndex = lcpData.imageData.findIf([&](auto& value) {

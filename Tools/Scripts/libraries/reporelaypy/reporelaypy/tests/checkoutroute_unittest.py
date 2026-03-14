@@ -137,7 +137,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_landing(self, app=None, client=None):
-        with mocks.local.Git(self.path) as repo, OutputCapture():
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://trac.webkit.org')],
@@ -148,7 +148,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_json_details_origin(self, app=None, client=None):
-        with mocks.local.Git(self.path) as repo:
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://trac.webkit.org')],
@@ -162,7 +162,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_json_strip_details_non_origin_commits(self, app=None, client=None):
-        with mocks.local.Git(self.path) as repo:
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             repo.remotes['fork/main'] = repo.remotes.pop('origin/main')
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
@@ -179,7 +179,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_json_invalid(self, app=None, client=None):
-        with mocks.local.Git(self.path) as repo:
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://trac.webkit.org')],
@@ -195,7 +195,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_redirect(self, app=None, client=None):
-        with mocks.local.Git(self.path) as repo:
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://github.com/WebKit/WebKit')],
@@ -210,7 +210,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_invoked_redirect(self, app=None, client=None):
-        with mocks.local.Git(self.path, git_svn=True) as repo, OutputCapture():
+        with OutputCapture(), mocks.local.Git(self.path, git_svn=True) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://github.com/WebKit/WebKit'), Redirector('https://trac.webkit.org')],
@@ -225,7 +225,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_trac(self, app=None, client=None):
-        with mocks.local.Git(self.path, git_svn=True) as repo, OutputCapture():
+        with OutputCapture(), mocks.local.Git(self.path, git_svn=True) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://github.com/WebKit/WebKit')],
@@ -240,7 +240,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_compare(self, app=None, client=None):
-        with mocks.local.Git(self.path) as repo:
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://github.com/WebKit/WebKit')],
@@ -255,7 +255,7 @@ class CheckoutRouteUnittest(testing.PathTestCase):
 
     @mock_app
     def test_compare_trac(self, app=None, client=None):
-        with mocks.local.Git(self.path) as repo:
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
                 Checkout(path=self.path, url=repo.remote, sentinal=False),
                 redirectors=[Redirector('https://github.com/WebKit/WebKit'), Redirector('https://trac.webkit.org')],

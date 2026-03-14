@@ -3813,7 +3813,7 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
         && !stateMachine().isDisplayingInitialEmptyDocument();
 }
 
-static bool itemAllowsScrollRestoration(HistoryItem* historyItem, FrameLoadType loadType)
+static bool NODELETE itemAllowsScrollRestoration(HistoryItem* historyItem, FrameLoadType loadType)
 {
     if (!historyItem)
         return true;
@@ -4827,7 +4827,7 @@ void FrameLoader::tellClientAboutPastMemoryCacheLoads()
     documentLoader->takeMemoryCacheLoadsForClientNotification(pastLoads);
 
     for (auto& pastLoad : pastLoads) {
-        CachedResourceHandle resource = MemoryCache::singleton().resourceForRequest(pastLoad, page->sessionID());
+        RefPtr resource = MemoryCache::singleton().resourceForRequest(pastLoad, page->sessionID());
 
         // FIXME: These loads, loaded from cache, but now gone from the cache by the time
         // Page::setMemoryCacheClientCallsEnabled(true) is called, will not be seen by the client.

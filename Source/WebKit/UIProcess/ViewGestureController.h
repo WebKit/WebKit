@@ -184,7 +184,7 @@ public:
     void endMagnification();
 #endif
 
-    void setAlternateBackForwardListSourcePage(WebPageProxy*);
+    void NODELETE setAlternateBackForwardListSourcePage(WebPageProxy*);
 
     bool canSwipeInDirection(SwipeDirection, DeferToConflictingGestures) const;
 
@@ -230,7 +230,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    static ViewGestureController* controllerForGesture(WebPageProxyIdentifier, GestureID);
+    static ViewGestureController* NODELETE controllerForGesture(WebPageProxyIdentifier, GestureID);
 
     static GestureID NODELETE takeNextGestureID();
     void willBeginGesture(ViewGestureType);
@@ -241,7 +241,7 @@ private:
 
 #if PLATFORM(COCOA)
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
-    std::optional<WebBackForwardList> backForwardListForNavigation() const;
+    std::optional<WebBackForwardList> NODELETE backForwardListForNavigation() const;
 #else
     WebBackForwardList* backForwardListForNavigation() const;
 #endif
@@ -313,7 +313,7 @@ private:
 
     void endMagnificationGesture();
 
-    WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
+    WebCore::FloatPoint NODELETE scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
 
     void startSwipeGesture(PlatformScrollEvent, SwipeDirection);
     void trackSwipeGesture(PlatformScrollEvent, SwipeDirection, RefPtr<WebBackForwardListItem>);
@@ -343,7 +343,7 @@ private:
         bool handleEvent(PlatformScrollEvent);
         void eventWasNotHandledByWebCore(PlatformScrollEvent);
 
-        void reset(ASCIILiteral resetReasonForLogging);
+        void NODELETE reset(ASCIILiteral resetReasonForLogging);
 
         bool shouldIgnorePinnedState() { return m_shouldIgnorePinnedState; }
         void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }

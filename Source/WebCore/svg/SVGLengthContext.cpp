@@ -99,7 +99,7 @@ float SVGLengthContext::resolveLength(const SVGElement* context, SVGUnitTypes::S
     return x.valueAsPercentage();
 }
 
-static inline float dimensionForLengthMode(SVGLengthMode mode, FloatSize viewportSize)
+static inline float NODELETE dimensionForLengthMode(SVGLengthMode mode, FloatSize viewportSize)
 {
     switch (mode) {
     case SVGLengthMode::Width:

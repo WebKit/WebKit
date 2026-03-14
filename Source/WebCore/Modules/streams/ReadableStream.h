@@ -139,9 +139,9 @@ public:
 
     bool isReachableFromOpaqueRoots() const { return m_isSourceReachableFromOpaqueRoot && m_state == State::Readable; }
     enum class VisitTeedChildren : bool { No, Yes };
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor&, VisitTeedChildren = VisitTeedChildren::No);
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&, VisitTeedChildren = VisitTeedChildren::No);
     void setTeedBranches(ReadableStream&, ReadableStream&);
-    void setSourceTeedStream(ReadableStream&);
+    void NODELETE setSourceTeedStream(ReadableStream&);
 
     class DependencyToVisit : public AbstractRefCounted {
     public:

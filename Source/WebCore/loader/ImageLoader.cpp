@@ -129,7 +129,7 @@ static inline bool NODELETE pageIsBeingDismissed(Document& document)
 // https://html.spec.whatwg.org/multipage/images.html#updating-the-image-data:list-of-available-images
 static bool canReuseFromListOfAvailableImages(const CachedResourceRequest& request, Document& document)
 {
-    CachedResourceHandle resource = MemoryCache::singleton().resourceForRequest(request.resourceRequest(), document.page()->sessionID());
+    RefPtr resource = MemoryCache::singleton().resourceForRequest(request.resourceRequest(), document.page()->sessionID());
     if (!resource || resource->stillNeedsLoad() || resource->isPreloaded())
         return false;
 
@@ -156,7 +156,7 @@ ImageLoader::ImageLoader(Element& element)
 
 ImageLoader::~ImageLoader()
 {
-    if (CachedResourceHandle image = m_image)
+    if (RefPtr image = m_image)
         image->removeClient(*this);
 
     ASSERT(m_hasPendingLoadEvent || m_hasPendingErrorEvent || !loadEventSender().hasPendingEvents(*this));
@@ -188,8 +188,7 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
     LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " clearImageWithoutConsideringPendingLoadEvent");
 
     ASSERT(m_failedLoadURL.isEmpty());
-    if (CachedResourceHandle oldImage = m_image) {
-        m_image = nullptr;
+    if (RefPtr oldImage = std::exchange(m_image, nullptr)) {
         m_hasPendingBeforeLoadEvent = false;
         if (m_hasPendingLoadEvent || m_hasPendingErrorEvent) {
             loadEventSender().cancelEvent(*this);
@@ -222,7 +221,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     if (!m_failedLoadURL.isEmpty() && attr == m_failedLoadURL)
         return;
 
-    CachedResourceHandle<CachedImage> newImage;
+    RefPtr<CachedImage> newImage;
 
     // Do not load any image if the 'src' attribute is missing.
     if (attr.isNull()) {
@@ -259,8 +258,8 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 
     // Use URL from original request for same URL loads in order to preserve the original base URL.
     URL imageURL;
-    if (m_image && attr == m_pendingURL)
-        imageURL = m_image->url();
+    if (RefPtr image = m_image; image && attr == m_pendingURL)
+        imageURL = image->url();
     else {
         if (imageElement) {
             // It is possible that attributes are bulk-set via Element::parserSetAttributes. In that case, it is possible that attribute vectors are already configured,
@@ -288,10 +287,10 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         cachedResourceLoader->setAutoLoadImages(false);
         RefPtr page = m_element->document().page();
         // FIXME: We shouldn't do an explicit `new` here.
-        newImage = new CachedImage(WTF::move(request), page->sessionID(), &page->cookieJar());
+        newImage = adoptRef(*new CachedImage(WTF::move(request), page->sessionID(), &page->cookieJar()));
         newImage->setStatus(CachedResource::Pending);
         newImage->setLoading(true);
-        cachedResourceLoader->m_documentResources.set(newImage->url().string(), newImage.get());
+        cachedResourceLoader->m_documentResources.set(newImage->url().string(), *newImage);
         cachedResourceLoader->setAutoLoadImages(autoLoadOtherImages);
     } else {
 #if !LOG_DISABLED
@@ -343,13 +342,13 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     didUpdateCachedImage(relevantMutation, WTF::move(newImage));
 }
 
-void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, CachedResourceHandle<CachedImage>&& newImage)
+void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, RefPtr<CachedImage>&& newImage)
 {
     LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " didUpdateCachedImage " << newImage.get());
 
     Ref document = element().document();
 
-    CachedResourceHandle oldImage = m_image;
+    RefPtr oldImage = m_image;
     if (newImage != oldImage || relevantMutation == RelevantMutation::Yes) {
         LOG_WITH_STREAM(LazyLoading, stream << " switching from old image " << oldImage.get() << " to image " << newImage.get() << " " << (newImage ? newImage->url() : URL()));
 
@@ -467,10 +466,11 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
         return;
     }
 
-    if (m_image->resourceError().isAccessControl()) {
+    RefPtr image = m_image;
+    if (image->resourceError().isAccessControl()) {
         setImageCompleteAndMaybeUpdateRenderer();
 
-        auto imageURL = m_image->url();
+        auto imageURL = image->url();
         clearImageWithoutConsideringPendingLoadEvent();
 
         m_hasPendingErrorEvent = true;
@@ -490,7 +490,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
         return;
     }
 
-    if (m_image->wasCanceled()) {
+    if (image->wasCanceled()) {
         setImageCompleteAndMaybeUpdateRenderer();
 
         if (hasPendingDecodePromises())
@@ -502,7 +502,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
         return;
     }
 
-    protect(m_image->image())->subresourcesAreFinished(protect(document()).ptr(), [this, protectedThis = Ref { *this }]() mutable {
+    protect(image->image())->subresourcesAreFinished(protect(document()).ptr(), [this, protectedThis = Ref { *this }]() mutable {
         // It is technically possible state changed underneath us.
         if (!m_hasPendingLoadEvent)
             return;
@@ -560,7 +560,7 @@ void ImageLoader::updateRenderer()
     // Only update the renderer if it doesn't have an image or if what we have
     // is a complete image. This prevents flickering in the case where a dynamic
     // change is happening between two images.
-    CachedImage* cachedImage = imageResource->cachedImage();
+    RefPtr cachedImage = imageResource->cachedImage();
     if (m_image != cachedImage && (m_imageComplete || !cachedImage))
         imageResource->setCachedImage(protect(m_image));
 }
@@ -622,12 +622,13 @@ void ImageLoader::decode()
         return;
     }
 
-    if (!m_image || !m_image->image() || m_image->errorOccurred()) {
+    RefPtr image = m_image;
+    if (!image || !image->image() || image->errorOccurred()) {
         rejectDecodePromises("Loading error."_s);
         return;
     }
 
-    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(m_image->image());
+    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image->image());
     if (!bitmapImage) {
         resolveDecodePromises();
         return;
@@ -651,7 +652,9 @@ bool ImageLoader::hasPendingActivity() const
 {
     // Because of lazy image loading, an image's load may be deferred indefinitely. To avoid leaking the element, we only
     // protect it once the load has actually started.
-    bool imageWillBeLoadedLater = m_image && !m_image->isLoading() && m_image->stillNeedsLoad();
+    // We are using SUPPRESS_UNCOUNTED_ARG and not ref'ing m_image here because this function
+    // may get called on the GC thread, and it would trip threading assertion in RefCounted.
+    SUPPRESS_UNCOUNTED_ARG bool imageWillBeLoadedLater = m_image && !m_image->isLoading() && m_image->stillNeedsLoad();
     return (m_hasPendingLoadEvent && !imageWillBeLoadedLater) || m_hasPendingErrorEvent;
 }
 

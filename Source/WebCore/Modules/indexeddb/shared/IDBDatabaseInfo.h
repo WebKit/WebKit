@@ -50,10 +50,10 @@ public:
     void setVersion(uint64_t version) { m_version = version; }
     uint64_t version() const { return m_version; }
 
-    bool hasObjectStore(const String& name) const;
+    bool NODELETE hasObjectStore(const String& name) const;
     IDBObjectStoreInfo createNewObjectStore(const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
-    IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier);
+    IDBObjectStoreInfo* NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier);
     IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName);
     const IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
     const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
@@ -75,7 +75,7 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<IDBDatabaseInfo>;
-    IDBObjectStoreInfo* getInfoForExistingObjectStore(const String& objectStoreName);
+    IDBObjectStoreInfo* NODELETE getInfoForExistingObjectStore(const String& objectStoreName);
     IDBObjectStoreInfo* getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
 
     String m_name;

@@ -54,9 +54,9 @@ private:
         EdgeModeType edgeMode;
     };
 
-    static inline void kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, int& deltaRight);
+    static inline void NODELETE kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, int& deltaRight);
 
-    static inline void boxBlurAlphaOnly(const PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize);
+    static inline void NODELETE boxBlurAlphaOnly(const PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize);
     static inline void boxBlur(const PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType);
 
     static inline void boxBlurAccelerated(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight);

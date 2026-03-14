@@ -145,9 +145,9 @@ public:
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
     static bool sizeNeedsClamping(const FloatSize&, FloatSize& scale);
-    static FloatSize clampedSize(const FloatSize&);
+    static FloatSize NODELETE clampedSize(const FloatSize&);
     static FloatSize clampedSize(const FloatSize&, FloatSize& scale);
-    static FloatRect clampedRect(const FloatRect&);
+    static FloatRect NODELETE clampedRect(const FloatRect&);
 
     WEBCORE_EXPORT RefPtr<ImageBuffer> clone() const;
 
@@ -241,7 +241,7 @@ public:
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
     // This value increments when the ImageBuffer gets a new backend, which can happen if, for example, the GPU Process exits.
-    WEBCORE_EXPORT unsigned backendGeneration() const;
+    WEBCORE_EXPORT unsigned NODELETE backendGeneration() const;
 
     WEBCORE_EXPORT virtual String debugDescription() const;
 

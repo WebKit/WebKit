@@ -43,7 +43,7 @@ public:
     static void applyRubyAnnotationAlignmentOffset(std::span<InlineDisplay::Box>, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
 
 private:
-    static InlineLayoutUnit applyExpansionOnRange(Line::RunList&, WTF::Range<size_t>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
+    static InlineLayoutUnit NODELETE applyExpansionOnRange(Line::RunList&, WTF::Range<size_t>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
 };
 
 }

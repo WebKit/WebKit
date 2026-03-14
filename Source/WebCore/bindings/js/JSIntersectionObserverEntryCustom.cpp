@@ -33,7 +33,7 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSIntersectionObserverEntry::visitAdditionalChildren(Visitor& visitor)
+void JSIntersectionObserverEntry::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped().target());
     addWebCoreOpaqueRoot(visitor, wrapped().boundingClientRect());
@@ -41,6 +41,6 @@ void JSIntersectionObserverEntry::visitAdditionalChildren(Visitor& visitor)
     addWebCoreOpaqueRoot(visitor, wrapped().rootBounds());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIntersectionObserverEntry);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSIntersectionObserverEntry);
 
 } // namespace WebCore

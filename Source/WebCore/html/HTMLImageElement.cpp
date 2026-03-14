@@ -593,8 +593,8 @@ unsigned HTMLImageElement::width()
             return optionalWidth.value();
 
         // if the image is available, use its width
-        if (m_imageLoader->image())
-            return m_imageLoader->image()->imageSizeForRenderer(nullptr, 1.0f).width().toUnsigned();
+        if (RefPtr image = m_imageLoader->image())
+            return image->imageSizeForRenderer(nullptr, 1.0f).width().toUnsigned();
     }
 
     CheckedPtr box = renderBox();
@@ -616,8 +616,8 @@ unsigned HTMLImageElement::height()
             return optionalHeight.value();
 
         // if the image is available, use its height
-        if (m_imageLoader->image())
-            return m_imageLoader->image()->imageSizeForRenderer(nullptr, 1.0f).height().toUnsigned();
+        if (RefPtr image = m_imageLoader->image())
+            return image->imageSizeForRenderer(nullptr, 1.0f).height().toUnsigned();
     }
 
     CheckedPtr box = renderBox();
@@ -629,10 +629,11 @@ unsigned HTMLImageElement::height()
 
 float HTMLImageElement::effectiveImageDevicePixelRatio() const
 {
-    if (!m_imageLoader->image())
+    RefPtr cachedImage = m_imageLoader->image();
+    if (!cachedImage)
         return 1.0f;
 
-    RefPtr image = m_imageLoader->image()->image();
+    RefPtr image = cachedImage->image();
     if (image && image->drawsSVGImage())
         return 1.0f;
 
@@ -641,18 +642,14 @@ float HTMLImageElement::effectiveImageDevicePixelRatio() const
 
 unsigned HTMLImageElement::naturalWidth() const
 {
-    if (!m_imageLoader->image())
-        return 0;
-
-    return m_imageLoader->image()->unclampedImageSizeForRenderer(protect(renderer()).get(), effectiveImageDevicePixelRatio()).width().toUnsigned();
+    RefPtr image = m_imageLoader->image();
+    return image ? image->unclampedImageSizeForRenderer(protect(renderer()).get(), effectiveImageDevicePixelRatio()).width().toUnsigned() : 0;
 }
 
 unsigned HTMLImageElement::naturalHeight() const
 {
-    if (!m_imageLoader->image())
-        return 0;
-
-    return m_imageLoader->image()->unclampedImageSizeForRenderer(protect(renderer()).get(), effectiveImageDevicePixelRatio()).height().toUnsigned();
+    RefPtr image = m_imageLoader->image();
+    return image ? image->unclampedImageSizeForRenderer(protect(renderer()).get(), effectiveImageDevicePixelRatio()).height().toUnsigned() : 0;
 }
 
 bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const
@@ -849,7 +846,7 @@ bool HTMLImageElement::allowsOrientationOverride() const
 
 Image* HTMLImageElement::image() const
 {
-    if (auto* cachedImage = this->cachedImage())
+    if (RefPtr cachedImage = this->cachedImage())
         return cachedImage->image();
     return nullptr;
 }
@@ -1054,7 +1051,7 @@ bool HTMLImageElement::originClean(const SecurityOrigin& origin) const
 {
     UNUSED_PARAM(origin);
 
-    auto* cachedImage = this->cachedImage();
+    RefPtr cachedImage = this->cachedImage();
     if (!cachedImage)
         return true;
 

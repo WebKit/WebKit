@@ -1729,9 +1729,57 @@ public:
         insn(0b01'001110'00'0'00000'001110'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
     }
 
+    ALWAYS_INLINE void zip2(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        // ZIP2 is the same encoding as ZIP1 but with op=1 (bit 14).
+        insn(0b01'001110'00'0'00000'011110'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
     ALWAYS_INLINE void uzip1(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
     {
         insn(0b01'001110'00'0'00000'0'0'01'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void uzip2(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        // UZP2 is the same encoding as UZP1 but with op=1 (bit 14).
+        insn(0b01'001110'00'0'00000'0'1'01'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void trn1(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01'001110'00'0'00000'0'0'10'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void trn2(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        // TRN2 is the same encoding as TRN1 but with op=1 (bit 14).
+        insn(0b01'001110'00'0'00000'0'1'10'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    // REV16.16B: reverse bytes within 16-bit groups
+    // REV32.T: reverse elements within 32-bit groups (T = 16B or 8H)
+    // REV64.T: reverse elements within 64-bit groups (T = 16B, 8H, or 4S)
+    // The 'size' field in the encoding is the element size being reversed.
+    // 'op' selects the group size: 00=REV64, 01=REV32, 10=REV16.
+    ALWAYS_INLINE void rev64(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        // REV64: 01001110_ss_10000_0000_10_Rn_Rd, op=00
+        insn(0b01'001110'00'10000'00000'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void rev32(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        // REV32: 01101110_ss_10000_0000_10_Rn_Rd, op=01
+        insn(0b01'101110'00'10000'00000'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void rev16(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
+    {
+        // REV16: 01001110_ss_10000_0001_10_Rn_Rd, op=10
+        // Only valid with i8x16 element size.
+        ASSERT(lane == SIMDLane::i8x16);
+        insn(0b01'001110'00'10000'00001'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
     }
 
     ALWAYS_INLINE void ext(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, uint8_t firstLane, SIMDLane lane)
@@ -2143,6 +2191,12 @@ public:
     ALWAYS_INLINE void vectorUaddlp(FPRegisterID vd, FPRegisterID vn, SIMDLane lane)
     {
         insn(0b011'01110'00'10000'00'0'10'10'00000'00000 | (sizeForIntegralSIMDOp(lane) << 22) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void xar(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, uint8_t imm6)
+    {
+        ASSERT(imm6 < 64);
+        insn(0b11001110100'00000'000000'00000'00000 | (static_cast<uint32_t>(vm) << 16) | (static_cast<uint32_t>(imm6) << 10) | (static_cast<uint32_t>(vn) << 5) | static_cast<uint32_t>(vd));
     }
 
     ALWAYS_INLINE void tbl(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)

@@ -61,7 +61,7 @@ private:
     void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, const String&);
     void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, uint64_t amount);
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&);
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess(const IPC::Connection&);
 
     const Ref<WorkQueue> m_queue;
     HashMap<WebCore::ProcessIdentifier, IPC::Connection::UniqueID> m_webProcessConnections;

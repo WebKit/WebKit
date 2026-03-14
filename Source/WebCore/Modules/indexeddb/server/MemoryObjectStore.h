@@ -63,7 +63,7 @@ public:
     ~MemoryObjectStore();
 
     void transactionFinished(MemoryBackingStoreTransaction&);
-    void writeTransactionStarted(MemoryBackingStoreTransaction&);
+    void NODELETE writeTransactionStarted(MemoryBackingStoreTransaction&);
     void writeTransactionFinished(MemoryBackingStoreTransaction&);
     void transactionAborted(MemoryBackingStoreTransaction&);
     MemoryBackingStoreTransaction* NODELETE writeTransaction();

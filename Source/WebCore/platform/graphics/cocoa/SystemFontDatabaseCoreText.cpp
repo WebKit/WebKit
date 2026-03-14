@@ -203,7 +203,7 @@ static CGFloat mapWeight(FontSelectionValue weight)
     return kCTFontWeightBlack;
 }
 
-static CGFloat mapWidth(FontSelectionValue width)
+static CGFloat NODELETE mapWidth(FontSelectionValue width)
 {
     struct PiecewisePoint {
         FontSelectionValue input;
@@ -377,7 +377,7 @@ static inline FontSelectionValue cssWeightOfSystemFontDescriptor(CTFontDescripto
     return FontSelectionValue(normalizeCTWeight(result));
 }
 
-static CTFontTextStylePlatform fontPlatform()
+static CTFontTextStylePlatform NODELETE fontPlatform()
 {
 #if PLATFORM(VISION)
     if (PAL::currentUserInterfaceIdiomIsVision())

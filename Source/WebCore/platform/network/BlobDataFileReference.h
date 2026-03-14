@@ -47,7 +47,7 @@ public:
 
     const String& path();
     unsigned long long size();
-    std::optional<WallTime> expectedModificationTime();
+    std::optional<WallTime> NODELETE expectedModificationTime();
 
     virtual void prepareForFileAccess();
     virtual void revokeFileAccess();

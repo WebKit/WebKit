@@ -105,7 +105,7 @@ template<> struct CSSValueConversion<ZIndex> { auto operator()(BuilderState&, co
 // MARK: - Blending
 
 template<> struct Blending<ZIndex> {
-    auto canBlend(const ZIndex&, const ZIndex&) -> bool;
+    bool NODELETE canBlend(const ZIndex&, const ZIndex&);
     auto blend(const ZIndex&, const ZIndex&, const BlendingContext&) -> ZIndex;
 };
 

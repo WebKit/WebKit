@@ -53,7 +53,7 @@ public:
     // readIndex is updated with the next readIndex to read from...
     // The assumption is that the buffer's length is evenly divisible by numberOfFrames.
     // FIXME: remove numberOfFrames restriction...
-    std::span<float> directReadFrom(int* readIndex, size_t numberOfFrames);
+    std::span<float> NODELETE directReadFrom(int* readIndex, size_t numberOfFrames);
 
     void reset();
 

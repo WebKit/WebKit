@@ -42,7 +42,7 @@ public:
     virtual ~NamedImage();
 
     bool operator==(const Image&) const final;
-    bool equals(const NamedImage&) const;
+    bool NODELETE equals(const NamedImage&) const;
 
     static constexpr bool isFixedSize = false;
 

@@ -91,7 +91,7 @@ public:
     void notifyCursorsOfValueChange(const IDBKeyData& indexKey, const IDBKeyData& primaryKey);
     void transactionFinished(MemoryBackingStoreTransaction&);
 
-    void writeTransactionStarted(MemoryBackingStoreTransaction&);
+    void NODELETE writeTransactionStarted(MemoryBackingStoreTransaction&);
     void writeTransactionFinished(MemoryBackingStoreTransaction&);
     void transactionAborted(MemoryBackingStoreTransaction&);
 

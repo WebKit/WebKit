@@ -87,7 +87,7 @@ public:
 private:
     InternalAudioEncoderCocoa(const AudioEncoder::Config&, InternalConfig&&, AudioEncoder::DescriptionCallback&&, AudioEncoder::OutputCallback&&);
     static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);
-    Ref<AudioSampleBufferConverter> converter() const { return *m_converter; }
+    Ref<AudioSampleBufferConverter> NODELETE converter() const { return *m_converter; }
     void processEncodedOutputs();
     AudioEncoder::ActiveConfiguration activeConfiguration(CMSampleBufferRef) const;
     Vector<uint8_t> generateDecoderDescriptionFromSample(CMSampleBufferRef) const;

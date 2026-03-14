@@ -42,14 +42,14 @@ public:
     JSValueInWrappedObject(JSC::JSValue = { });
 
     explicit operator bool() const;
-    template<typename Visitor> void visit(Visitor&) const;
+    template<typename Visitor> void visitInGCThread(Visitor&) const;
     void clear();
 
     // If you expect the value you store to be returned by getValue and not cleared under you, you *MUST* use set not setWeakly.
     // The owner parameter is typically the wrapper of the DOM node this class is embedded into but can be any GCed object that
-    // will visit this JSValueInWrappedObject via visitAdditionalChildren/isReachableFromOpaqueRoots.
+    // will visit this JSValueInWrappedObject via visitAdditionalChildrenInGCThread/isReachableFromOpaqueRoots.
     void set(JSC::VM&, const JSC::JSCell* owner, JSC::JSValue);
-    // Only use this if you actually expect this value to be weakly held. If you call visit on this value *DONT* set using setWeakly
+    // Only use this if you actually expect this value to be weakly held. If you call visitInGCThread on this value *DONT* set using setWeakly
     // use set instead. The GC might or might not keep your value around in that case.
     void setWeakly(JSC::JSValue);
     JSC::JSValue getValue(JSC::JSValue nullValue = JSC::jsUndefined()) const;
@@ -80,13 +80,13 @@ inline JSValueInWrappedObject::operator bool() const
 }
 
 template<typename Visitor>
-inline void JSValueInWrappedObject::visit(Visitor& visitor) const
+inline void JSValueInWrappedObject::visitInGCThread(Visitor& visitor) const
 {
     visitor.append(m_cell);
 }
 
-template void JSValueInWrappedObject::visit(JSC::AbstractSlotVisitor&) const;
-template void JSValueInWrappedObject::visit(JSC::SlotVisitor&) const;
+template void JSValueInWrappedObject::visitInGCThread(JSC::AbstractSlotVisitor&) const;
+template void JSValueInWrappedObject::visitInGCThread(JSC::SlotVisitor&) const;
 
 inline void JSValueInWrappedObject::setWeakly(JSC::JSValue value)
 {

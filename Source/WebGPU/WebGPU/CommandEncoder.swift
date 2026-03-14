@@ -23,11 +23,11 @@
 
 private import CxxStdlib
 public import Metal
-internal import WebGPU_Internal.Buffer
-internal import WebGPU_Internal.CommandEncoder
-internal import WebGPU_Internal.CxxBridging
-internal import WebGPU_Internal.QuerySet
-internal import WebGPU_Internal.TextureOrTextureView
+import WebGPU_Internal.Buffer
+import WebGPU_Internal.CommandEncoder
+import WebGPU_Internal.CxxBridging
+import WebGPU_Internal.QuerySet
+import WebGPU_Internal.TextureOrTextureView
 public import WebGPU_Private.WebGPU
 
 typealias String = Swift.String

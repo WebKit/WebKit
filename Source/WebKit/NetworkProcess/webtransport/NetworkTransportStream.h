@@ -71,8 +71,8 @@ public:
     void cancelReceive(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancelSend(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancel(std::optional<WebCore::WebTransportStreamErrorCode>);
-    WebCore::WebTransportSendStreamStats getSendStreamStats();
-    WebCore::WebTransportReceiveStreamStats getReceiveStreamStats();
+    WebCore::WebTransportSendStreamStats NODELETE getSendStreamStats();
+    WebCore::WebTransportReceiveStreamStats NODELETE getReceiveStreamStats();
 
 private:
 #if PLATFORM(COCOA)

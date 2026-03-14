@@ -56,7 +56,7 @@ public:
     // Implements the IDL.
     size_t length() const { return m_strings.size(); }
     String NODELETE item(unsigned index) const;
-    bool contains(const String& str) const;
+    bool NODELETE contains(const String&) const;
 
     operator const Vector<String>&() const LIFETIME_BOUND { return m_strings; }
 

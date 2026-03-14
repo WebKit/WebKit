@@ -391,7 +391,7 @@ public:
     bool isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer&) const;
     bool isLayerForPluginWithScrollCoordinatedContents(const RenderLayer&) const;
 
-    ScrollableArea* scrollableAreaForScrollingNodeID(std::optional<ScrollingNodeID>) const;
+    ScrollableArea* NODELETE scrollableAreaForScrollingNodeID(std::optional<ScrollingNodeID>) const;
 
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 
@@ -625,7 +625,7 @@ private:
 
     bool NODELETE documentUsesTiledBacking() const;
     bool isRootFrameCompositor() const;
-    bool isMainFrameCompositor() const;
+    bool NODELETE isMainFrameCompositor() const;
 
     void updateCompositingForLayerTreeAsTextDump();
 

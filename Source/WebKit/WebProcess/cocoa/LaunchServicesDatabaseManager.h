@@ -33,7 +33,7 @@ namespace WebKit {
 
 class LaunchServicesDatabaseManager : public WebKit::XPCEndpointClient {
 public:
-    static LaunchServicesDatabaseManager& singleton();
+    static LaunchServicesDatabaseManager& NODELETE singleton();
 
     void waitForDatabaseUpdate();
 

@@ -62,8 +62,8 @@ public:
     WindowProxy* NODELETE self() const;
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
-    unsigned length() const;
-    void frameDetached();
+    unsigned NODELETE length() const;
+    void NODELETE frameDetached();
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
 
 private:

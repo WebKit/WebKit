@@ -200,12 +200,12 @@ bool JSLocation::preventExtensions(JSObject*, JSGlobalObject*)
 }
 
 template<typename Visitor>
-void JSLocation::visitAdditionalChildren(Visitor& visitor)
+void JSLocation::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (auto* ancestorOrigins = wrapped().cachedAncestorOrigins())
         addWebCoreOpaqueRoot(visitor, WebCoreOpaqueRoot(ancestorOrigins));
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSLocation);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSLocation);
 
 } // namespace WebCore

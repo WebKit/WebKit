@@ -34,22 +34,22 @@ public:
     bool operator==(const FEDropShadow&) const;
 
     float stdDeviationX() const { return m_stdX; }
-    bool setStdDeviationX(float);
+    bool NODELETE setStdDeviationX(float);
 
     float stdDeviationY() const { return m_stdY; }
-    bool setStdDeviationY(float);
+    bool NODELETE setStdDeviationY(float);
 
     float dx() const { return m_dx; }
-    bool setDx(float);
+    bool NODELETE setDx(float);
 
     float dy() const { return m_dy; }
-    bool setDy(float);
+    bool NODELETE setDy(float);
 
     const Color& shadowColor() const LIFETIME_BOUND { return m_shadowColor; } 
-    bool setShadowColor(const Color&);
+    bool NODELETE setShadowColor(const Color&);
 
     float shadowOpacity() const { return m_shadowOpacity; }
-    bool setShadowOpacity(float);
+    bool NODELETE setShadowOpacity(float);
 
     static IntOutsets calculateOutsets(const FloatSize& offset, const FloatSize& stdDeviation);
 

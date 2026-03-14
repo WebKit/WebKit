@@ -1007,33 +1007,33 @@ void ReadableByteStreamController::handleSourcePromise(JSDOMGlobalObject& global
 }
 
 template<typename Visitor>
-void ReadableByteStreamController::visitDirectChildren(Visitor& visitor)
+void ReadableByteStreamController::visitDirectChildrenInGCThread(Visitor& visitor)
 {
-    m_underlyingSource.visit(visitor);
-    m_storedError.visit(visitor);
+    m_underlyingSource.visitInGCThread(visitor);
+    m_storedError.visitInGCThread(visitor);
 
     Locker lock(m_gcLock);
     if (m_pullAlgorithm)
-        SUPPRESS_UNCOUNTED_ARG m_pullAlgorithm->visitJSFunction(visitor);
+        SUPPRESS_UNCOUNTED_ARG m_pullAlgorithm->visitJSFunctionInGCThread(visitor);
     if (m_cancelAlgorithm)
-        SUPPRESS_UNCOUNTED_ARG m_cancelAlgorithm->visitJSFunction(visitor);
+        SUPPRESS_UNCOUNTED_ARG m_cancelAlgorithm->visitJSFunctionInGCThread(visitor);
 }
 
 template<typename Visitor>
-void ReadableByteStreamController::visitAdditionalChildren(Visitor& visitor)
+void ReadableByteStreamController::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    SUPPRESS_UNCOUNTED_ARG m_stream->visitAdditionalChildren(visitor);
+    SUPPRESS_UNCOUNTED_ARG m_stream->visitAdditionalChildrenInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(ReadableByteStreamController);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(ReadableByteStreamController);
 
 template<typename Visitor>
-void JSReadableByteStreamController::visitAdditionalChildren(Visitor& visitor)
+void JSReadableByteStreamController::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     // Do not ref `wrapped()` here since this function may get called on a GC thread.
-    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildren(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSReadableByteStreamController);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSReadableByteStreamController);
 
 } // namespace WebCore

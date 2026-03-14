@@ -223,12 +223,12 @@ struct LineCandidate {
 
         void setTrailingSoftHyphenWidth(InlineLayoutUnit hyphenWidth) { m_continuousContent.setTrailingSoftHyphenWidth(hyphenWidth); }
 
-        void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_continuousContent.setHangingContentWidth(logicalWidth); }
+        void NODELETE setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_continuousContent.setHangingContentWidth(logicalWidth); }
 
         void NODELETE setHasTrailingClonedDecoration(bool hasClonedDecoration) { m_hasTrailingClonedDecoration = hasClonedDecoration; }
         bool NODELETE hasTrailingClonedDecoration() const { return m_hasTrailingClonedDecoration; }
 
-        void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_continuousContent.setMinimumRequiredWidth(minimumRequiredWidth); }
+        void NODELETE setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_continuousContent.setMinimumRequiredWidth(minimumRequiredWidth); }
 
         std::optional<size_t> NODELETE firstTextRunIndex() const { return m_firstTextRunIndex; }
         std::optional<size_t> NODELETE lastTextRunIndex() const { return m_lastTextRunIndex; }
@@ -1138,7 +1138,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
     applyShapingIfNeeded(lineCandidate);
 }
 
-static inline InlineLayoutUnit availableWidth(const Line& line, InlineLayoutUnit lineWidth, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+static inline InlineLayoutUnit NODELETE availableWidth(const Line& line, InlineLayoutUnit lineWidth, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
 {
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
     // 1. Preferred width computation sums up floats while line breaker subtracts them.
@@ -1512,7 +1512,7 @@ LineBuilder::Result LineBuilder::tryPlacingCandidateInlineContentOnLine(const In
     return result;
 }
 
-static inline InlineLayoutUnit lineBreakingResultContentWidth(const InlineContentBreaker::ContinuousContent::RunList& runs, const InlineContentBreaker::Result::PartialTrailingContent& trailingContent)
+static inline InlineLayoutUnit NODELETE lineBreakingResultContentWidth(const InlineContentBreaker::ContinuousContent::RunList& runs, const InlineContentBreaker::Result::PartialTrailingContent& trailingContent)
 {
     if (trailingContent.trailingRunIndex >= runs.size()) {
         ASSERT_NOT_REACHED();

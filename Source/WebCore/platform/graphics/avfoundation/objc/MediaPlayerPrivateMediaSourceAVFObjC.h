@@ -103,7 +103,7 @@ public:
     void startSeek(const MediaTime&);
     void cancelPendingSeek();
     void completeSeek(const MediaTime&);
-    void setLoadingProgresssed(bool);
+    void NODELETE setLoadingProgresssed(bool);
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const override;
     void durationChanged();
@@ -173,7 +173,7 @@ public:
     const Logger& mediaPlayerLogger() { return logger(); }
 #endif
 
-    bool supportsLimitedMatroska() const;
+    bool NODELETE supportsLimitedMatroska() const;
 
 private:
     // MediaPlayerPrivateInterface
@@ -245,7 +245,7 @@ private:
 
     void setPresentationSize(const IntSize&) final;
 
-    Ref<AudioVideoRenderer> audioVideoRenderer() const;
+    Ref<AudioVideoRenderer> NODELETE audioVideoRenderer() const;
 
 
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by

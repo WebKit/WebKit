@@ -75,7 +75,7 @@ bool defaultShouldPrintBackgrounds()
 
 #if ENABLE(FULLSCREEN_API)
 
-bool defaultVideoFullscreenRequiresElementFullscreen()
+SUPPRESS_NODELETE bool defaultVideoFullscreenRequiresElementFullscreen()
 {
 #if USE(APPLE_INTERNAL_SDK)
     if (videoFullscreenRequiresElementFullscreenFromAdditions())
@@ -123,7 +123,7 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 #endif
 }
 
-bool defaultManageCaptureStatusBarInGPUProcessEnabled()
+SUPPRESS_NODELETE bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 {
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Enable by default for all applications.
@@ -133,7 +133,7 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 #endif
 }
 
-double defaultInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes()
+SUPPRESS_NODELETE double defaultInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes()
 {
     constexpr double inactiveMediaCaptureStreamRepromptIntervalForDesktop = 10;
 
@@ -252,7 +252,7 @@ bool defaultGamepadVibrationActuatorEnabled()
 #endif
 
 #if ENABLE(WEB_AUTHN)
-bool defaultDigitalCredentialsEnabled()
+SUPPRESS_NODELETE bool defaultDigitalCredentialsEnabled()
 {
 #if HAVE(DIGITAL_CREDENTIALS_UI)
     static bool enabled = [] {
@@ -270,7 +270,7 @@ bool defaultDigitalCredentialsEnabled()
 }
 #endif
 
-bool defaultShouldEnableScreenOrientationAPI()
+SUPPRESS_NODELETE bool defaultShouldEnableScreenOrientationAPI()
 {
 #if PLATFORM(MAC)
     return true;
@@ -343,7 +343,7 @@ bool defaultBuiltInNotificationsEnabled()
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-bool defaultDeviceOrientationPermissionAPIEnabled()
+SUPPRESS_NODELETE bool defaultDeviceOrientationPermissionAPIEnabled()
 {
 #if PLATFORM(IOS_FAMILY)
     return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsDeviceOrientationAndMotionPermissionAPI);
@@ -434,7 +434,7 @@ bool defaultTrustedTypesEnabled()
 #endif
 }
 
-bool defaultGetBoundingClientRectZoomedEnabled()
+SUPPRESS_NODELETE bool defaultGetBoundingClientRectZoomedEnabled()
 {
 #if PLATFORM(IOS_FAMILY)
     return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::GetBoundingClientRectZoomed);
@@ -443,7 +443,7 @@ bool defaultGetBoundingClientRectZoomedEnabled()
 #endif
 }
 
-bool defaultFacebookLiveRecordingQuirkEnabled()
+SUPPRESS_NODELETE bool defaultFacebookLiveRecordingQuirkEnabled()
 {
 #if PLATFORM(MAC)
     return true;

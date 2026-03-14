@@ -39,7 +39,7 @@ public:
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
 
-    int minimumDelay() const;
+    int NODELETE minimumDelay() const;
 
     WEBCORE_EXPORT void start();
     WEBCORE_EXPORT void stop() final;

@@ -135,6 +135,7 @@ enum class SDKAlignedBehavior {
     CrashWhenMutatingProcessAssertionsFromBackgroundThread,
     NoFontFaceSetConstructor,
     NoHTMLEnhancedSelectParsingQuirk,
+    DataURLForPastedImages,
 
     NumberOfBehaviors
 };

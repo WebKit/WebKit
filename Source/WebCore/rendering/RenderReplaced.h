@@ -72,7 +72,7 @@ protected:
 
     virtual LayoutUnit minimumReplacedHeight() const { return 0_lu; }
 
-    bool isSelected() const;
+    bool NODELETE isSelected() const;
 
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
@@ -126,7 +126,7 @@ private:
     virtual bool shouldDrawSelectionTint() const;
     
     Color calculateHighlightColor() const;
-    bool isHighlighted(HighlightState, const RenderHighlight&) const;
+    bool NODELETE isHighlighted(HighlightState, const RenderHighlight&) const;
 
     bool hasReplacedLogicalHeight() const;
 

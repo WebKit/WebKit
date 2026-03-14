@@ -553,6 +553,37 @@ public:
                 VALIDATE(value->asSIMDValue()->simdLane() == SIMDLane::i8x16, ("At ", *value));
                 break;
 
+            case VectorUnzipEven:
+            case VectorUnzipOdd:
+            case VectorZipLower:
+            case VectorZipHigher:
+            case VectorTransposeEven:
+            case VectorTransposeOdd:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 2, ("At ", *value));
+                VALIDATE(value->type() == V128, ("At ", *value));
+                VALIDATE(value->child(0)->type() == V128, ("At ", *value));
+                VALIDATE(value->child(1)->type() == V128, ("At ", *value));
+                break;
+
+            case VectorReverse: {
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->type() == V128, ("At ", *value));
+                VALIDATE(value->child(0)->type() == V128, ("At ", *value));
+                unsigned groupSize = value->as<SIMDValue>()->immediate();
+                VALIDATE(groupSize == 2 || groupSize == 4 || groupSize == 8, ("At ", *value));
+                break;
+            }
+
+            case VectorExtractPair:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 2, ("At ", *value));
+                VALIDATE(value->type() == V128, ("At ", *value));
+                VALIDATE(value->child(0)->type() == V128, ("At ", *value));
+                VALIDATE(value->child(1)->type() == V128, ("At ", *value));
+                break;
+
             case VectorMulByElement:
                 VALIDATE(isARM64(), ("At ", *value));
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));

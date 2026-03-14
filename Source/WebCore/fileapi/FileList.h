@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT ~FileList();
 
     unsigned length() const { return m_files.size(); }
-    WEBCORE_EXPORT File* item(unsigned index) const;
+    WEBCORE_EXPORT File* NODELETE item(unsigned index) const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_files.size(); }
 
     bool isEmpty() const { return m_files.isEmpty(); }

@@ -84,7 +84,7 @@ private:
     const String& m_text;
 };
 
-static inline EditAction editActionForTypingCommand(TypingCommand::Type command, TextGranularity granularity, TypingCommand::TextCompositionType compositionType, bool isAutocompletion)
+static inline EditAction NODELETE editActionForTypingCommand(TypingCommand::Type command, TextGranularity granularity, TypingCommand::TextCompositionType compositionType, bool isAutocompletion)
 {
     if (compositionType == TypingCommand::TextCompositionType::Pending) {
         if (command == TypingCommand::Type::InsertText)
@@ -130,7 +130,7 @@ static inline EditAction editActionForTypingCommand(TypingCommand::Type command,
     }
 }
 
-static inline bool editActionIsDeleteByTyping(EditAction action)
+static inline bool NODELETE editActionIsDeleteByTyping(EditAction action)
 {
     switch (action) {
     case EditAction::TypingDeleteSelection:

@@ -222,9 +222,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didEndInteractionWithSystemChrome:) name:_MRUIWindowSceneDidEndRepositioningNotification object:windowScene];
 #endif
 
-#if ENABLE(LINEAR_MEDIA_PLAYER)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_contentSizeCategoryDidChange:) name:UIContentSizeCategoryDidChangeNotification object:nil];
-#endif
+
     _secheuristic.setParameters(WebKit::FullscreenTouchSecheuristicParameters::iosParameters());
     self._webView = webView;
 
@@ -471,13 +470,35 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return videoPresentationManager->controlsManagerInterface();
 }
 
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-- (void)_contentSizeCategoryDidChange:(NSNotification *)notification
+- (void)_updateButtonImages
 {
-    if (_buttonState.contains(FullscreenVideo) && [_enterVideoFullscreenButton superview])
-        [self configureEnvironmentPickerOrFullscreenVideoButtonView];
+    RetainPtr dynamicSymbolConfiguration = [[UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleBody] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithWeight:UIImageSymbolWeightMedium]];
+
+    RetainPtr doneImage = [UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"];
+    [_cancelButton setImage:[[doneImage imageWithConfiguration:dynamicSymbolConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+
+    [_pipButton setImage:[[UIImage systemImageNamed:@"pip.enter" withConfiguration:dynamicSymbolConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [_pipButton setImage:[[UIImage systemImageNamed:@"pip.exit" withConfiguration:dynamicSymbolConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateSelected];
+
+#if PLATFORM(VISION)
+    [_moreActionsButton setImage:[[UIImage systemImageNamed:@"ellipsis" withConfiguration:dynamicSymbolConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+#endif
 }
 
+- (void)_contentSizeCategoryDidChange:(NSNotification *)notification
+{
+    auto alternateFullScreenControlDesignEnabled = protect(protect(*self._webView._page)->preferences())->alternateFullScreenControlDesignEnabled();
+
+    if (alternateFullScreenControlDesignEnabled)
+        [self _updateButtonImages];
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (_buttonState.contains(FullscreenVideo) && [_enterVideoFullscreenButton superview])
+        [self configureEnvironmentPickerOrFullscreenVideoButtonView];
+#endif
+}
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
 - (void)_setTopButtonLabel:(const String&)label
 {
     UIButtonConfiguration *fullscreenButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
@@ -486,7 +507,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     fullscreenButtonConfiguration.titleLineBreakMode = NSLineBreakByClipping;
 
     RetainPtr dynamicImageConfiguration = [[UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleBody] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithWeight:UIImageSymbolWeightMedium]];
-    RetainPtr fixedImageConfiguration = [[UIImageSymbolConfiguration configurationWithPointSize:17 weight:UIImageSymbolWeightMedium] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithWeight:UIImageSymbolWeightMedium]];
     NSString *symbolName = _isImmersiveVideo ? @"pano" : @"cube";
     fullscreenButtonConfiguration.image = [[UIImage systemImageNamed:symbolName withConfiguration:dynamicImageConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
@@ -515,7 +535,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     BOOL shouldUseCompactLayout = actualSpacing < kMinimumSpacing;
 
     if (shouldUseCompactLayout) {
-        fullscreenButtonConfiguration.image = [[UIImage systemImageNamed:symbolName withConfiguration:fixedImageConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        fullscreenButtonConfiguration.image = [[UIImage systemImageNamed:symbolName withConfiguration:dynamicImageConfiguration.get()] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         fullscreenButtonConfiguration.contentInsets = NSDirectionalEdgeInsetsMake(12, 12, 12, 12);
         fullscreenButtonConfiguration.attributedTitle = nil;
 
@@ -807,20 +827,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)loadView
 {
-    CGSize buttonSize;
-    UIImage *doneImage;
-
     // FIXME: Rename `alternateFullScreenControlDesignEnabled` to something that explains it is for visionOS.
     auto alternateFullScreenControlDesignEnabled = protect(protect(*self._webView._page)->preferences())->alternateFullScreenControlDesignEnabled();
-    
-    if (alternateFullScreenControlDesignEnabled) {
-        buttonSize = CGSizeMake(44.0, 44.0);
-        doneImage = [UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"];
-    } else {
-        buttonSize = CGSizeMake(60.0, 47.0);
-        NSBundle *bundle = [NSBundle bundleForClass:self.class];
-        doneImage = [UIImage imageNamed:@"Done" inBundle:bundle compatibleWithTraitCollection:nil];
-    }
     
     [self setView:adoptNS([[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]).get()];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -830,34 +838,33 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _animatingView.get().autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:_animatingView.get()];
 
-    _cancelButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
-    [_cancelButton setImage:[doneImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [_cancelButton sizeToFit];
-    [_cancelButton addTarget:self action:@selector(_cancelAction:) forControlEvents:UIControlEventTouchUpInside];
-#if PLATFORM(APPLETV)
-    [_cancelButton setConfiguration:UIButtonConfiguration.filledButtonConfiguration];
-#endif
-
-    _pipButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
-    [_pipButton setImage:[UIImage systemImageNamed:@"pip.enter"] forState:UIControlStateNormal];
-    [_pipButton setImage:[UIImage systemImageNamed:@"pip.exit"] forState:UIControlStateSelected];
-    [_pipButton sizeToFit];
-    [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
-
     if (alternateFullScreenControlDesignEnabled) {
         UIButtonConfiguration *buttonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
+        buttonConfiguration.contentInsets = NSDirectionalEdgeInsetsMake(12, 12, 12, 12);
+
+        _cancelButton = [WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+        [self _setupButton:_cancelButton.get()];
+        [_cancelButton setDelegate:self];
         [_cancelButton setConfiguration:buttonConfiguration];
+        [_cancelButton addTarget:self action:@selector(_cancelAction:) forControlEvents:UIControlEventTouchUpInside];
+
+        _pipButton = [WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+        [self _setupButton:_pipButton.get()];
+        [_pipButton setDelegate:self];
         [_pipButton setConfiguration:buttonConfiguration];
+        [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
 
 #if PLATFORM(VISION)
         // FIXME: I think PLATFORM(VISION) is always true when `alternateFullScreenControlDesignEnabled` is true.
-        _moreActionsButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
+        _moreActionsButton = [WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+        [self _setupButton:_moreActionsButton.get()];
+        [_moreActionsButton setDelegate:self];
         [_moreActionsButton setConfiguration:buttonConfiguration];
         [_moreActionsButton setMenu:self._webView.fullScreenWindowSceneDimmingAction];
         [_moreActionsButton setShowsMenuAsPrimaryAction:YES];
-        [_moreActionsButton setImage:[[UIImage systemImageNamed:@"ellipsis"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
 #endif
 
+        [self _updateButtonImages];
 #if ENABLE(LINEAR_MEDIA_PLAYER)
         _enterVideoFullscreenButton = [UIButton buttonWithType:UIButtonTypeSystem];
         [self _setupButton:_enterVideoFullscreenButton.get()];
@@ -876,6 +883,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
         [_stackView setSpacing:24.0];
     } else {
+        CGSize buttonSize = CGSizeMake(60.0, 47.0);
+        NSBundle *bundle = [NSBundle bundleForClass:self.class];
+        UIImage *doneImage = [UIImage imageNamed:@"Done" inBundle:bundle compatibleWithTraitCollection:nil];
+
+        _cancelButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
+        [_cancelButton setImage:[doneImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [_cancelButton sizeToFit];
+        [_cancelButton addTarget:self action:@selector(_cancelAction:) forControlEvents:UIControlEventTouchUpInside];
+#if PLATFORM(APPLETV)
+        [_cancelButton setConfiguration:UIButtonConfiguration.filledButtonConfiguration];
+#endif
+        _pipButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
+        [_pipButton setImage:[UIImage systemImageNamed:@"pip.enter"] forState:UIControlStateNormal];
+        [_pipButton setImage:[UIImage systemImageNamed:@"pip.exit"] forState:UIControlStateSelected];
+        [_pipButton sizeToFit];
+        [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
+
         RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
 #if PLATFORM(APPLETV)
         [stackView addArrangedSubview:_cancelButton.get()];

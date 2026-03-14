@@ -63,7 +63,7 @@ public:
     bool isValid() const { return m_isValid; }
     void setIsValid(bool valid) { m_isValid = valid; }
 
-    RenderBoxFragmentInfo* renderBoxFragmentInfo(const RenderBox&) const;
+    RenderBoxFragmentInfo* NODELETE renderBoxFragmentInfo(const RenderBox&) const;
     RenderBoxFragmentInfo* setRenderBoxFragmentInfo(const RenderBox&, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
         bool containingBlockChainIsInset);
     std::unique_ptr<RenderBoxFragmentInfo> takeRenderBoxFragmentInfo(const RenderBox&);

@@ -118,8 +118,8 @@ public:
     using FetchKey = std::pair<SWServerConnectionIdentifier, FetchIdentifier>;
     void addFetchTask(FetchKey, Ref<ServiceWorkerFetch::Client>&&);
     void addFetchEvent(FetchKey, FetchEvent&);
-    RefPtr<ServiceWorkerFetch::Client> fetchTask(FetchKey);
-    bool hasFetchTask() const;
+    RefPtr<ServiceWorkerFetch::Client> NODELETE fetchTask(FetchKey);
+    bool NODELETE hasFetchTask() const;
     void removeFetchTask(FetchKey);
     RefPtr<ServiceWorkerFetch::Client> takeFetchTask(FetchKey);
     void navigationPreloadFailed(FetchKey, ResourceError&&);

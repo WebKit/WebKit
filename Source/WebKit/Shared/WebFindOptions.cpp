@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-WebCore::FindOptions core(OptionSet<FindOptions> options)
+WebCore::FindOptions NODELETE core(OptionSet<FindOptions> options)
 {
     WebCore::FindOptions result;
     if (options.contains(FindOptions::CaseInsensitive))

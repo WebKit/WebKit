@@ -55,7 +55,7 @@ public:
     ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, bool shadowsIgnoreTransforms = false);
     ShadowBlur(const GraphicsDropShadow&, bool shadowsIgnoreTransforms = false);
 
-    void setShadowValues(const FloatSize&, const FloatSize& , const Color&, bool ignoreTransforms = false);
+    void NODELETE setShadowValues(const FloatSize&, const FloatSize& , const Color&, bool ignoreTransforms = false);
 
     void setShadowsIgnoreTransforms(bool ignoreTransforms) { m_shadowsIgnoreTransforms = ignoreTransforms; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
@@ -77,12 +77,12 @@ public:
 
     void blurLayerImage(std::span<uint8_t>, const IntSize&, int stride);
 
-    void clear();
+    void NODELETE clear();
 
     ShadowType type() const { return m_type; }
 
 private:
-    void updateShadowBlurValues();
+    void NODELETE updateShadowBlurValues();
 
     void drawShadowBuffer(GraphicsContext&, ImageBuffer&, const FloatPoint&, const FloatSize&);
 

@@ -127,7 +127,7 @@ public:
     virtual ExceptionOr<void> importScripts(const FixedVector<Variant<Ref<TrustedScriptURL>, String>>& urls);
     WorkerNavigator& navigator();
 
-    void setIsOnline(bool);
+    void NODELETE setIsOnline(bool);
     bool isOnline() const { return m_isOnline; }
 
     ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
@@ -136,7 +136,7 @@ public:
     void clearInterval(int timeoutId);
 
     bool isSecureContext() const final;
-    bool crossOriginIsolated() const;
+    bool NODELETE crossOriginIsolated() const;
 
     WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
     WorkerLocation* optionalLocation() const { return m_location.get(); }
@@ -170,7 +170,7 @@ public:
     static void releaseMemoryInWorkers(Synchronous);
     static void dumpGCHeapForWorkers();
 
-    void setMainScriptSourceProvider(ScriptBufferSourceProvider&);
+    void NODELETE setMainScriptSourceProvider(ScriptBufferSourceProvider&);
     void addImportedScriptSourceProvider(const URL&, ScriptBufferSourceProvider&);
 
     ClientOrigin clientOrigin() const { return { topOrigin().data(), securityOrigin()->data() }; }

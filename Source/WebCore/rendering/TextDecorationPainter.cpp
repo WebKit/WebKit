@@ -64,7 +64,7 @@ static StrokeStyle NODELETE textDecorationStyleToStrokeStyle(TextDecorationStyle
     return strokeStyle;
 }
 
-static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)
+static void NODELETE adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out. For example, with a border width of 3, WebKit will pass us (y1+y2)/2, e.g.,

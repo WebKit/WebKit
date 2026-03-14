@@ -43,7 +43,7 @@ auto LegacyRenderSVGResourceSolidColor::applyResource(RenderElement& renderer, c
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
 
-    bool isRenderingMask = renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask);
+    bool isRenderingMask = protect(renderer.view().frameView())->paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask);
 
     Style::ColorResolver colorResolver { style };
 

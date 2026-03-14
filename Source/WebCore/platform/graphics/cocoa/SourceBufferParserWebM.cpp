@@ -251,7 +251,7 @@ constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
 
 constexpr uint32_t k_us_in_seconds = 1000000000;
 
-static bool isWebmParserAvailable()
+static bool NODELETE isWebmParserAvailable()
 {
     return !!webm::swap;
 }
@@ -383,7 +383,7 @@ public:
         m_currentSegment = m_data.end();
     }
 
-    bool rewindTo(uint64_t rewindToPosition)
+    bool NODELETE rewindTo(uint64_t rewindToPosition)
     {
         ASSERT(rewindToPosition <= m_position);
         if (rewindToPosition > m_position)
@@ -412,7 +412,7 @@ public:
     }
 
 private:
-    void advanceToNextSegment()
+    void NODELETE advanceToNextSegment()
     {
         ASSERT(m_currentSegment != m_data.end());
         if (m_currentSegment == m_data.end())
@@ -449,7 +449,7 @@ public:
     bool isAudio() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kAudio; }
     bool isText() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kSubtitle; }
 
-    const webm::TrackEntry& track() { return m_track; }
+    const webm::TrackEntry& NODELETE track() { return m_track; }
 
 private:
     String extractCodec(const webm::TrackEntry& track) const

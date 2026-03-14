@@ -50,6 +50,6 @@ enum class FindDecorationStyle : uint8_t {
     Highlighted,
 };
 
-WebCore::FindOptions core(OptionSet<FindOptions>);
+WebCore::FindOptions NODELETE core(OptionSet<FindOptions>);
 
 } // namespace WebKit

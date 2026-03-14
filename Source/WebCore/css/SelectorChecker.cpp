@@ -696,7 +696,7 @@ bool SelectorChecker::attributeSelectorMatches(const Element& element, const Qua
     return attributeValueMatches(Attribute(attributeName, attributeValue), selector.match(), selector.value(), caseSensitive);
 }
 
-static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContext& context)
+static bool NODELETE canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContext& context)
 {
     // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
     // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
@@ -755,7 +755,7 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContex
     return false;
 }
 
-static inline bool tagMatches(const Element& element, const CSSSelector& simpleSelector)
+static inline bool NODELETE tagMatches(const Element& element, const CSSSelector& simpleSelector)
 {
     const QualifiedName& tagQName = simpleSelector.tagQName();
 

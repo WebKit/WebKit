@@ -11,12 +11,14 @@ if (window.testRunner) {
 function runTests() {
     let iframe = document.createElement("iframe");
     iframe.src = 'resources/nosniff-html.html';
-    if (window.testRunner) {
-        iframe.onerror = testRunner.notifyDone();
-        iframe.onload = testRunner.notifyDone();
-    }
     document.body.appendChild(iframe);
 }
+
+window.onload = () => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+
 runTests();
 </script>
 </body>

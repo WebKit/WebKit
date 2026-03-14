@@ -99,7 +99,7 @@ public:
     WebExtensionWindowParameters parameters(PopulateTabs = PopulateTabs::No) const;
     WebExtensionWindowParameters minimalParameters() const;
 
-    WebExtensionContext* extensionContext() const;
+    WebExtensionContext* NODELETE extensionContext() const;
 
     bool operator==(const WebExtensionWindow&) const;
 

@@ -50,7 +50,7 @@ struct Box;
 class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeSingleThreadWeakPtr<GlyphDisplayListCacheEntry> {
     WTF_MAKE_TZONE_ALLOCATED(GlyphDisplayListCacheEntry);
     friend struct GlyphDisplayListCacheKeyTranslator;
-    friend void add(Hasher&, const GlyphDisplayListCacheEntry&);
+    friend void NODELETE add(Hasher&, const GlyphDisplayListCacheEntry&);
 public:
     static Ref<GlyphDisplayListCacheEntry> create(Ref<const DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
     {
@@ -96,7 +96,7 @@ class GlyphDisplayListCache {
 public:
     GlyphDisplayListCache() = default;
 
-    static GlyphDisplayListCache& singleton();
+    static GlyphDisplayListCache& NODELETE singleton();
 
     RefPtr<const DisplayList::DisplayList> get(const LegacyInlineTextBox&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
     RefPtr<const DisplayList::DisplayList> get(const InlineDisplay::Box&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
@@ -116,7 +116,7 @@ public:
     }
 
 private:
-    static bool canShareDisplayList(const DisplayList::DisplayList&);
+    static bool NODELETE canShareDisplayList(const DisplayList::DisplayList&);
 
     template<typename LayoutRun>
     RefPtr<const DisplayList::DisplayList> getDisplayList(const LayoutRun&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);

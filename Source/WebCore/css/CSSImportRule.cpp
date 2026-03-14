@@ -124,7 +124,7 @@ CSSStyleSheet* CSSImportRule::styleSheet() const
         return nullptr;
 
     std::optional<bool> isOriginClean;
-    if (const auto* cachedSheet = m_importRule->cachedCSSStyleSheet())
+    if (RefPtr cachedSheet = m_importRule->cachedCSSStyleSheet())
         isOriginClean = cachedSheet->isCORSSameOrigin();
 
     if (!m_styleSheetCSSOMWrapper)

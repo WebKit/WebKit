@@ -26,12 +26,12 @@ import os
 
 #if ENABLE_MODEL_PROCESS
 
-internal import WebKit_Internal
+import WebKit_Internal
 
 #if canImport(_USDKit_RealityKit)
 
 // FIXME: radar://141774327
-@_weakLinked @_spi(Eryx) internal import _USDKit_RealityKit
+@_weakLinked @_spi(Eryx) import _USDKit_RealityKit
 
 extension Logger {
     fileprivate static let usdStageConverter = Logger(subsystem: "com.apple.WebKit", category: "USDStageConverter")

@@ -125,7 +125,7 @@ void RenderBoxModelObject::ContinuationChainNode::insertAfter(ContinuationChainN
 
 using ContinuationChainNodeMap = SingleThreadWeakHashMap<const RenderBoxModelObject, std::unique_ptr<RenderBoxModelObject::ContinuationChainNode>>;
 
-static ContinuationChainNodeMap& continuationChainNodeMap()
+static ContinuationChainNodeMap& NODELETE continuationChainNodeMap()
 {
     static NeverDestroyed<ContinuationChainNodeMap> map;
     return map;
@@ -133,7 +133,7 @@ static ContinuationChainNodeMap& continuationChainNodeMap()
 
 using FirstLetterRemainingTextMap = SingleThreadWeakHashMap<const RenderBoxModelObject, SingleThreadWeakPtr<RenderTextFragment>>;
 
-static FirstLetterRemainingTextMap& firstLetterRemainingTextMap()
+static FirstLetterRemainingTextMap& NODELETE firstLetterRemainingTextMap()
 {
     static NeverDestroyed<FirstLetterRemainingTextMap> map;
     return map;

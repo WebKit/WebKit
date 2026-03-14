@@ -29,6 +29,7 @@
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilityScrollView.h"
 #include "LocalFrameInlines.h"
+#include "LocalFrameView.h"
 
 namespace WebCore {
 

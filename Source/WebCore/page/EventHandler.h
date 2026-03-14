@@ -178,9 +178,9 @@ public:
     WEBCORE_EXPORT void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     RenderBox* NODELETE autoscrollRenderer() const;
     void updateAutoscrollRenderer();
-    bool autoscrollInProgress() const;
+    bool NODELETE autoscrollInProgress() const;
     bool mouseDownWasInSubframe() const { return m_mouseDownWasInSubframe; }
-    bool panScrollInProgress() const;
+    bool NODELETE panScrollInProgress() const;
 
     WEBCORE_EXPORT void dispatchFakeMouseMoveEventSoon();
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
@@ -204,7 +204,7 @@ public:
     void cancelDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
     DragEventTargetData performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles, const HitTestResult&, DragData&&);
     void updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement);
-    static Element* draggedElement();
+    static Element* NODELETE draggedElement();
 #endif
 
     void scheduleHoverStateUpdate();
@@ -218,7 +218,7 @@ public:
     void resizeLayerDestroyed();
 
     // FIXME: Each Frame has an EventHandler, and not every event goes to all frames, so this position can be stale. It should probably be stored on Page.
-    DoublePoint lastKnownMousePosition() const;
+    DoublePoint NODELETE lastKnownMousePosition() const;
     DoublePoint lastKnownMouseGlobalPosition() const { return m_lastKnownMouseGlobalPosition; }
     Cursor currentMouseCursor() const { return m_currentMouseCursor; }
 
@@ -355,10 +355,10 @@ public:
 
     void setActivationEventNumber(int num) { m_activationEventNumber = num; }
 
-    WEBCORE_EXPORT static NSEvent *currentNSEvent();
-    static NSEvent *correspondingPressureEvent();
+    WEBCORE_EXPORT static NSEvent *NODELETE currentNSEvent();
+    static NSEvent *NODELETE correspondingPressureEvent();
 
-    WEBCORE_EXPORT static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const FloatPoint& screenPoint, const FloatRect& screenRect);
+    WEBCORE_EXPORT static IntSize NODELETE autoscrollAdjustmentFactorForScreenBoundaries(const FloatPoint& screenPoint, const FloatRect& screenRect);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -406,7 +406,7 @@ public:
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-    Element* draggingElement() const;
+    Element* NODELETE draggingElement() const;
 #endif
 
     bool canDropCurrentlyDraggedImageAsFile() const;
@@ -433,7 +433,7 @@ public:
 
 private:
 #if ENABLE(DRAG_SUPPORT)
-    static DragState& dragState();
+    static DragState& NODELETE dragState();
     static const Seconds TextDragDelay;
     void setDragStateSource(Element*) const;
     SimpleRange createSimpleRangeFromDragStartSelection() const;
@@ -524,7 +524,7 @@ private:
 #if ENABLE(DRAG_SUPPORT)
     void clearDragState();
 
-    static bool shouldDispatchEventsToDragSourceElement();
+    static bool NODELETE shouldDispatchEventsToDragSourceElement();
     void dispatchEventToDragSourceElement(const AtomString& eventType, const PlatformMouseEvent&);
     bool dispatchDragStartEventOnSourceElement(DataTransfer&);
 

@@ -90,7 +90,7 @@ enum class RuleFlatteningStrategy {
     CommitSelfThenChildren,
 };
 
-static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType styleRuleType)
+static RuleFlatteningStrategy NODELETE flatteningStrategyForStyleRuleType(StyleRuleType styleRuleType)
 {
     switch (styleRuleType) {
     case StyleRuleType::Style:
@@ -211,7 +211,7 @@ static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleR
     }
 }
 
-static std::optional<Inspector::Protocol::CSS::Grouping::Type> protocolGroupingTypeForStyleRuleType(StyleRuleType styleRuleType)
+static std::optional<Inspector::Protocol::CSS::Grouping::Type> NODELETE protocolGroupingTypeForStyleRuleType(StyleRuleType styleRuleType)
 {
     switch (styleRuleType) {
     case StyleRuleType::Style:
@@ -238,12 +238,12 @@ class ParsedStyleSheet {
 public:
     ParsedStyleSheet();
 
-    const String& text() const { ASSERT(m_hasText); return m_text; }
+    const String& NODELETE text() const { ASSERT(m_hasText); return m_text; }
     void setText(const String& text);
-    bool hasText() const { return m_hasText; }
-    RuleSourceDataList* sourceData() const { return m_sourceData.get(); }
+    bool NODELETE hasText() const { return m_hasText; }
+    RuleSourceDataList* NODELETE sourceData() const { return m_sourceData.get(); }
     void setSourceData(std::unique_ptr<RuleSourceDataList>);
-    bool hasSourceData() const { return m_sourceData != nullptr; }
+    bool NODELETE hasSourceData() const { return m_sourceData != nullptr; }
     WebCore::CSSRuleSourceData* ruleSourceDataAt(unsigned) const;
 
 private:
@@ -1476,7 +1476,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyleSheet::buildObjectForStyle
     return result;
 }
 
-static inline bool isNotSpaceOrTab(char16_t character)
+static inline bool NODELETE isNotSpaceOrTab(char16_t character)
 {
     return character != ' ' && character != '\t';
 }

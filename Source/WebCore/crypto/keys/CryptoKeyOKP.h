@@ -55,7 +55,7 @@ public:
     ExceptionOr<Vector<uint8_t>> exportSpki() const;
     ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
-    static std::optional<NamedCurve> namedCurveFromString(const String&);
+    static std::optional<NamedCurve> NODELETE namedCurveFromString(const String&);
     NamedCurve namedCurve() const { return m_curve; }
     String namedCurveString() const;
 

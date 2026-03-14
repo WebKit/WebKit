@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-static inline bool isRenderingMaskImage(const RenderObject& object)
+static inline bool NODELETE isRenderingMaskImage(const RenderObject& object)
 {
     return object.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask);
 }

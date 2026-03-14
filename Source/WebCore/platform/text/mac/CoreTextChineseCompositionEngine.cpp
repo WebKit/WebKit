@@ -44,12 +44,12 @@ static ChineseCompositionRules::ChineseCharacterClass characterToCharacterClass(
     return ChineseCompositionRules::ChineseCharacterClass::HalfWidth;
 }
 
-static inline bool isDigit(UTF32Char character)
+static inline bool NODELETE isDigit(UTF32Char character)
 {
     return character >= 0x0030 && character <= 0x0039;
 }
 
-static inline bool isNarrowFullWidth(UTF32Char character)
+static inline bool NODELETE isNarrowFullWidth(UTF32Char character)
 {
     return character == 0x6708 /* 月 */ || character == 0x65E5 /* 日 */;
 }

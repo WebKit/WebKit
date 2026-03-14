@@ -98,7 +98,7 @@ static inline bool NODELETE isValidProtocolCharacter(char16_t character)
         && character != '{' && character != '}';
 }
 
-static bool isValidProtocolString(StringView protocol)
+static bool NODELETE isValidProtocolString(StringView protocol)
 {
     if (protocol.isEmpty())
         return false;

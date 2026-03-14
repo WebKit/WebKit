@@ -49,9 +49,9 @@ public:
 
     void append(const String& name, const String& value);
     void remove(const String& name, const String& value = { });
-    String get(const String& name) const;
+    String NODELETE get(const String& name) const;
     Vector<String> getAll(const String& name) const;
-    bool has(const String& name, const String& value = { }) const;
+    bool NODELETE has(const String& name, const String& value = { }) const;
     void set(const String& name, const String& value);
     String toString() const;
     void updateFromAssociatedURL();

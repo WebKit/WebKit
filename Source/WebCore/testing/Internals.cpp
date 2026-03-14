@@ -582,7 +582,7 @@ static bool markerTypesFrom(const String& markerType, OptionSet<DocumentMarkerTy
     return true;
 }
 
-static RefPtr<PrintContext>& printContextForTesting()
+static RefPtr<PrintContext>& NODELETE printContextForTesting()
 {
     static NeverDestroyed<RefPtr<PrintContext>> context;
     return context;
@@ -1034,7 +1034,7 @@ bool Internals::isStyleSheetLoadingSubresources(HTMLLinkElement& link)
     return link.sheet() && link.sheet()->contents().isLoadingSubresources();
 }
 
-static ResourceRequestCachePolicy toResourceRequestCachePolicy(Internals::CachePolicy policy)
+static ResourceRequestCachePolicy NODELETE toResourceRequestCachePolicy(Internals::CachePolicy policy)
 {
     switch (policy) {
     case Internals::CachePolicy::UseProtocolCachePolicy:
@@ -1064,7 +1064,7 @@ ExceptionOr<void> Internals::setCanShowModalDialogOverride(bool allow)
     return { };
 }
 
-static ResourceLoadPriority toResourceLoadPriority(Internals::ResourceLoadPriority priority)
+static ResourceLoadPriority NODELETE toResourceLoadPriority(Internals::ResourceLoadPriority priority)
 {
     switch (priority) {
     case Internals::ResourceLoadPriority::ResourceLoadPriorityVeryLow:
@@ -1093,7 +1093,7 @@ void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
         localFrame->loader().setStrictRawResourceValidationPolicyDisabledForTesting(disabled);
 }
 
-static Internals::ResourceLoadPriority toInternalsResourceLoadPriority(ResourceLoadPriority priority)
+static Internals::ResourceLoadPriority NODELETE toInternalsResourceLoadPriority(ResourceLoadPriority priority)
 {
     switch (priority) {
     case ResourceLoadPriority::VeryLow:
@@ -2555,7 +2555,7 @@ void Internals::setAutofilledAndObscured(HTMLInputElement& element, bool enabled
     element.setAutofilledAndObscured(enabled);
 }
 
-static AutoFillButtonType toAutofillButtonType(Internals::AutoFillButtonType type)
+static AutoFillButtonType NODELETE toAutofillButtonType(Internals::AutoFillButtonType type)
 {
     switch (type) {
     case Internals::AutoFillButtonType::None:
@@ -2575,7 +2575,7 @@ static AutoFillButtonType toAutofillButtonType(Internals::AutoFillButtonType typ
     return AutoFillButtonType::None;
 }
 
-static Internals::AutoFillButtonType toInternalsAutofillButtonType(AutoFillButtonType type)
+static Internals::AutoFillButtonType NODELETE toInternalsAutofillButtonType(AutoFillButtonType type)
 {
     switch (type) {
     case AutoFillButtonType::None:
@@ -2917,7 +2917,7 @@ public:
     {
     }
 
-    IterationStatus operator()(StackVisitor& visitor) const
+    IterationStatus NODELETE operator()(StackVisitor& visitor) const
     {
         ++m_iterations;
         if (m_iterations < 2)
@@ -2927,7 +2927,7 @@ public:
         return IterationStatus::Done;
     }
 
-    CodeBlock* codeBlock() const { return m_codeBlock; }
+    CodeBlock* NODELETE codeBlock() const { return m_codeBlock; }
 
 private:
     mutable int m_iterations;
@@ -3437,7 +3437,7 @@ ExceptionOr<bool> Internals::isPageBoxVisible(int pageNumber)
     return document->isPageBoxVisible(pageNumber);
 }
 
-static OptionSet<LayerTreeAsTextOptions> toLayerTreeAsTextOptions(unsigned short flags)
+static OptionSet<LayerTreeAsTextOptions> NODELETE toLayerTreeAsTextOptions(unsigned short flags)
 {
     OptionSet<LayerTreeAsTextOptions> layerTreeFlags;
     if (flags & Internals::LAYER_TREE_INCLUDES_VISIBLE_RECTS)
@@ -3582,7 +3582,7 @@ ExceptionOr<unsigned> Internals::scrollableAreaWidth(Node& node)
     return scrollableArea->contentsSize().width();
 }
 
-static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags(unsigned short flags)
+static OptionSet<PlatformLayerTreeAsTextFlags> NODELETE toPlatformLayerTreeFlags(unsigned short flags)
 {
     OptionSet<PlatformLayerTreeAsTextFlags> platformLayerTreeFlags = { };
     if (flags & Internals::PLATFORM_LAYER_TREE_DEBUG)
@@ -3855,7 +3855,7 @@ ExceptionOr<void> Internals::setElementTracksDisplayListReplay(Element& element,
     return { };
 }
 
-static OptionSet<DisplayList::AsTextFlag> toDisplayListFlags(unsigned short flags)
+static OptionSet<DisplayList::AsTextFlag> NODELETE toDisplayListFlags(unsigned short flags)
 {
     OptionSet<DisplayList::AsTextFlag> displayListFlags;
     if (flags & Internals::DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
@@ -7877,7 +7877,7 @@ constexpr ASCIILiteral string(std::partial_ordering ordering)
     return "unordered"_s;
 }
 
-constexpr TreeType convertType(Internals::TreeType type)
+constexpr TreeType NODELETE convertType(Internals::TreeType type)
 {
     switch (type) {
     case Internals::Tree:

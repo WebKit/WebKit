@@ -45,7 +45,7 @@ public:
     void allow();
     void deny();
     
-    void invalidate();
+    void NODELETE invalidate();
 
     WebProcessProxy* NODELETE process() const;
 

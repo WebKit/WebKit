@@ -10,6 +10,7 @@ Clicking on the select element should then open the popup menu.</p>
   <option>You should see this</option>
 </select>
 <pre id="result"></pre>
+<script src="../../../../resources/ui-helper.js"></script>
 <script>
 
 const select = document.querySelector('select');
@@ -30,32 +31,23 @@ function log(text) {
     document.getElementById('result').textContent += text + '\n';
 }
 
-function clickOnSelectElement() {
-    const event = document.createEvent("MouseEvent");
-    event.initMouseEvent("mousedown", true, true, document.defaultView, 1, select.offsetLeft + 5, select.offsetTop + 5, select.offsetLeft + 5, select.offsetTop + 5, false, false, false, false, 0, document);
-    select.dispatchEvent(event);
-}
-
-function roundTripToUIProcess() {
-    return new Promise((resolve) => {
-        testRunner.runUIScript(`uiController.uiScriptComplete()`, resolve);
-    });
+async function openSelectPopup() {
+    await UIHelper.activateElement(select);
 }
 
 window.onload = async () => {
-    clickOnSelectElement();
-
     if (!window.testRunner)
         return;
 
-    await roundTripToUIProcess();
+    await openSelectPopup();
+    log(internals.isSelectPopupVisible(select) ? 'PASS - popup opened' : 'FAIL - popup failed to open');
+
     document.querySelector('p').focus();
     log(internals.isSelectPopupVisible(select) ? 'FAIL - popup was open after moving the focus' : 'PASS - popup closed by blur');
 
-    clickOnSelectElement();
+    await openSelectPopup();
     log(internals.isSelectPopupVisible(select) ? 'PASS - popup opened after closed by blur' : 'FAIL - popup failed to open for the second time');
 
-    await roundTripToUIProcess();
     document.querySelector('p').focus();
 
     testRunner.notifyDone();

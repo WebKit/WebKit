@@ -96,8 +96,8 @@ public:
 
     WEBCORE_EXPORT void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
-    WEBCORE_EXPORT void setLastNavigationWasAppInitiated(bool);
-    WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
+    WEBCORE_EXPORT void NODELETE setLastNavigationWasAppInitiated(bool);
+    WEBCORE_EXPORT bool NODELETE lastNavigationWasAppInitiated();
 
     WEBCORE_EXPORT void setInspectable(bool);
 

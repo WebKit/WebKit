@@ -74,7 +74,7 @@ template<> struct CSSValueConversion<MaskBorderSource> { auto operator()(Builder
 // MARK: - Blending
 
 template<> struct Blending<MaskBorderSource> {
-    auto canBlend(const MaskBorderSource&, const MaskBorderSource&) -> bool;
+    bool NODELETE canBlend(const MaskBorderSource&, const MaskBorderSource&);
     auto blend(const MaskBorderSource&, const MaskBorderSource&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> MaskBorderSource;
 };
 

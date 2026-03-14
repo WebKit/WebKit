@@ -41,7 +41,7 @@ public:
     ~CSSCanvasValue();
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSCanvasValue&) const;
+    bool NODELETE equals(const CSSCanvasValue&) const;
 
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 

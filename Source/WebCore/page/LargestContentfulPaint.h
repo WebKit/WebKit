@@ -49,10 +49,10 @@ public:
 
     // LargestContentfulPaint
     DOMHighResTimeStamp NODELETE loadTime() const;
-    void setLoadTime(DOMHighResTimeStamp);
+    void NODELETE setLoadTime(DOMHighResTimeStamp);
 
     DOMHighResTimeStamp NODELETE renderTime() const;
-    void setRenderTime(DOMHighResTimeStamp);
+    void NODELETE setRenderTime(DOMHighResTimeStamp);
 
     DOMHighResTimeStamp NODELETE startTime() const final;
 

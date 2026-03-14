@@ -645,7 +645,7 @@ public:
 
     // MARK: DifferenceResult::Repaint
 
-    static bool requiresPainting(const RenderStyle& style)
+    static bool NODELETE requiresPainting(const RenderStyle& style)
     {
         if (style.usedVisibility() == Visibility::Hidden)
             return false;

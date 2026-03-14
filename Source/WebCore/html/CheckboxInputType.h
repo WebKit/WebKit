@@ -89,11 +89,11 @@ private:
     void disabledStateChanged() final;
     Seconds NODELETE switchAnimationStartTime(SwitchAnimationType) const;
     void NODELETE setSwitchAnimationStartTime(SwitchAnimationType, Seconds);
-    bool isSwitchAnimating(SwitchAnimationType) const;
+    bool NODELETE isSwitchAnimating(SwitchAnimationType) const;
     void performSwitchAnimation(SwitchAnimationType);
     void performSwitchVisuallyOnAnimation(SwitchTrigger);
     void setIsSwitchHeld(bool /* isHeld */);
-    void stopSwitchAnimation(SwitchAnimationType);
+    void NODELETE stopSwitchAnimation(SwitchAnimationType);
     float switchAnimationProgress(SwitchAnimationType) const;
     void updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint);
     void switchAnimationTimerFired();

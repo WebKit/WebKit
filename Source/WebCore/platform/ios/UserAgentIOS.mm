@@ -43,6 +43,9 @@
 
 namespace WebCore {
 
+// FIXME: rdar://172495534 Stop using deprecated `_isClassic` and `UIApplicationSceneClassicModeOriginalPad`.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
 static inline bool isClassic()
 {
     return [[PAL::getUIApplicationClassSingleton() sharedApplication] _isClassic];
@@ -57,6 +60,8 @@ static inline bool isClassicPhone()
 {
     return isClassic() && [PAL::getUIApplicationClassSingleton() _classicMode] != UIApplicationSceneClassicModeOriginalPad;
 }
+
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 ASCIILiteral osNameForUserAgent()
 {

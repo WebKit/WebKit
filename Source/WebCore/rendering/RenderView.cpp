@@ -22,6 +22,7 @@
 #include "RenderView.h"
 
 #include "ContainerNodeInlines.h"
+#include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "Element.h"
 #include "FloatQuad.h"
@@ -732,6 +733,12 @@ bool RenderView::shouldPaintBaseBackground() const
         return true;
 
     if (RefPtr parentFrame = frameView->frame().parent()) {
+        if (RefPtr documentLoader = document->loader(); documentLoader && documentLoader->isInitialAboutBlank()) {
+            // https://github.com/w3c/csswg-drafts/issues/9624#issuecomment-1944425637
+            // > RESOLVED: initial about:blank iframes are always transparent
+            return false;
+        }
+
         if (RefPtr parentFrameView = parentFrame->virtualView()) {
             // iframes should fill with a base color if the used color scheme of the
             // element and the used color scheme of the embedded document’s root
@@ -822,6 +829,11 @@ void RenderView::setPageLogicalSize(LayoutSize size)
 float RenderView::zoomFactor() const
 {
     return frameView().frame().pageZoomFactor();
+}
+
+LocalFrameView& RenderView::frameView() const
+{
+    return m_frameView.get();
 }
 
 FloatSize RenderView::sizeForCSSSmallViewportUnits() const
@@ -1003,7 +1015,7 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
+static SVGSVGElement* NODELETE svgSvgElementFrom(RenderElement& renderElement)
 {
     if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
         return svgSvgElement;

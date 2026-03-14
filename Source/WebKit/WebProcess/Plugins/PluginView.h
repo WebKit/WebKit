@@ -118,7 +118,7 @@ public:
 
     void obscuredContentInsetsDidChange();
 
-    void webPageDestroyed();
+    void NODELETE webPageDestroyed();
 
     bool handleEditingCommand(const String& commandName, const String& argument);
     bool isEditingCommandEnabled(const String& commandName);

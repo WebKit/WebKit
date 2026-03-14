@@ -162,8 +162,6 @@ fast/visual-viewport/ios/resize-event-for-keyboard.html [ Skip ]
 fast/visual-viewport/ios/visual-viewport-dimensions-during-scroll-with-keyboard.html [ Skip ]
 scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html [ Skip ]
 
-webkit.org/b/309088 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Failure ]
-
 # Failure only on iPad simulator 
 webkit.org/b/307451 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-keyboard-behavior.optional.html [ Pass Failure ]
 

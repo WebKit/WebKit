@@ -100,7 +100,7 @@ private:
     WeakPtr<CSSCounterStyle> fallback() const { return m_fallbackReference; };
     String fallbackText(int, WritingMode);
     // Generates a CSSCounterStyle object as it was defined by a 'decimal' descriptor. It is used as a last-resource in case we can't resolve fallback references.
-    void applyPadSymbols(String&, int) const;
+    bool applyPadSymbols(String&, int) const;
     void applyNegativeSymbols(String&) const;
     // Initial text representation for the counter, before applying pad and/or negative symbols. Suffix and Prefix are also not considered as described by https://www.w3.org/TR/css-counter-styles-3/#counter-styles.
     String initialRepresentation(int, WritingMode) const;

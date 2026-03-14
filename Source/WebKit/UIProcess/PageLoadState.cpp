@@ -480,7 +480,7 @@ void PageLoadState::callObserverCallback(void (Observer::*callback)())
     for (auto& observer : copyToVector(m_observers)) {
         // This appears potentially inefficient on the surface (searching in a Vector)
         // but in practice - using only API - there will only ever be (1) observer.
-        if (auto* protectedObserver = observer.get(); !protectedObserver || !m_observers.contains(*protectedObserver))
+        if (!observer || !m_observers.contains(*observer))
             continue;
 
         ((*observer).*callback)();

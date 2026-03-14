@@ -74,7 +74,7 @@ struct LengthWrapperData {
         bool hasQuirk;
     };
     WEBCORE_EXPORT LengthWrapperData(IPCData&&);
-    WEBCORE_EXPORT IPCData ipcData() const;
+    WEBCORE_EXPORT IPCData NODELETE ipcData() const;
 
     bool isKnownZero(LengthWrapperDataEvaluationKind) const;
     bool isKnownPositive(LengthWrapperDataEvaluationKind) const;
@@ -102,7 +102,7 @@ private:
     void initialize(const LengthWrapperData&);
     void initialize(LengthWrapperData&&);
 
-    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     union {

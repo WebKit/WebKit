@@ -1779,7 +1779,7 @@ RefPtr<ArchiveResource> DocumentLoader::subresource(const URL& url) const
     if (!isCommitted())
         return nullptr;
     
-    auto* resource = m_cachedResourceLoader->cachedResource(url);
+    RefPtr resource = m_cachedResourceLoader->cachedResource(url);
     if (!resource || !resource->isLoaded())
         return archiveResourceForURL(url);
 
@@ -1995,7 +1995,7 @@ void DocumentLoader::stopLoadingPlugIns()
 void DocumentLoader::stopLoadingSubresources()
 {
     for (auto& loader : copyToVector(m_subresourceLoaders)) {
-        if (CachedResourceHandle cachedResource = loader->cachedResource()) {
+        if (RefPtr cachedResource = loader->cachedResource()) {
             // Don't cancel loaders for prefetch resources, as they need to survive navigation.
             if (cachedResource->options().cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch) {
                 m_subresourceLoaders.remove(loader);

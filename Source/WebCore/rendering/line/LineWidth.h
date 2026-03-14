@@ -45,9 +45,9 @@ class LineWidth {
 public:
     LineWidth(RenderBlockFlow&);
 
-    bool fitsOnLine(bool ignoringTrailingSpace = false) const;
-    bool fitsOnLineIncludingExtraWidth(float extra) const;
-    bool fitsOnLineExcludingTrailingWhitespace(float extra) const;
+    bool NODELETE fitsOnLine(bool ignoringTrailingSpace = false) const;
+    bool NODELETE fitsOnLineIncludingExtraWidth(float extra) const;
+    bool NODELETE fitsOnLineExcludingTrailingWhitespace(float extra) const;
 
     float currentWidth() const { return m_committedWidth + m_uncommittedWidth; }
     // FIXME: We should eventually replace these three functions by ones that work on a higher abstraction.
@@ -70,11 +70,11 @@ public:
         m_hasUncommittedReplaced = true;
     }
     void NODELETE commit();
-    void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
+    void NODELETE setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
 
 private:
     void computeAvailableWidthFromLeftAndRight();
-    bool fitsOnLineExcludingTrailingCollapsedWhitespace() const;
+    bool NODELETE fitsOnLineExcludingTrailingCollapsedWhitespace() const;
     void updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth, float newLineLeft, float newLineRight);
 
     const CheckedRef<RenderBlockFlow> m_block;

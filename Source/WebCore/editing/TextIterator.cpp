@@ -232,7 +232,7 @@ static inline bool fullyClipsContents(const Node& node, TextIteratorBehaviors be
     return box->contentBoxSize().isEmpty();
 }
 
-static inline bool ignoresContainerClip(const Node& node)
+static inline bool NODELETE ignoresContainerClip(const Node& node)
 {
     auto* renderer = node.renderer();
     if (!renderer || renderer->isRenderTextOrLineBreak())
@@ -355,7 +355,7 @@ void TextIteratorCopyableText::appendToStringBuilder(StringBuilder& builder) con
 
 // --------
 
-static Node* firstNode(const BoundaryPoint& point)
+static Node* NODELETE firstNode(const BoundaryPoint& point)
 {
     if (point.container->isCharacterDataNode())
         return point.container.ptr();
@@ -426,14 +426,14 @@ static inline Node* nextNode(TextIteratorBehaviors options, Node& node)
     return NodeTraversal::next(node);
 }
 
-static inline bool isDescendantOf(TextIteratorBehaviors options, Node& node, Node& possibleAncestor)
+static inline bool NODELETE isDescendantOf(TextIteratorBehaviors options, Node& node, Node& possibleAncestor)
 {
     if (options.contains(TextIteratorBehavior::TraversesFlatTree)) [[unlikely]]
         return node.isShadowIncludingDescendantOf(&possibleAncestor);
     return node.isDescendantOf(&possibleAncestor);
 }
 
-static inline Node* parentNodeOrShadowHost(TextIteratorBehaviors options, Node& node)
+static inline Node* NODELETE parentNodeOrShadowHost(TextIteratorBehaviors options, Node& node)
 {
     if (options.contains(TextIteratorBehavior::TraversesFlatTree)) [[unlikely]]
         return node.parentInComposedTree();
@@ -587,7 +587,7 @@ void TextIterator::advance()
     }
 }
 
-static bool hasVisibleTextNode(RenderText& renderer)
+static bool NODELETE hasVisibleTextNode(RenderText& renderer)
 {
     if (renderer.style().visibility() == Visibility::Visible)
         return true;
@@ -887,7 +887,7 @@ static bool shouldEmitTabBeforeNode(Node& node)
     return table && (table->cellBefore(cell.get()) || table->cellAbove(cell.get()));
 }
 
-static bool shouldEmitNewlineForNode(Node* node, bool emitsOriginalText)
+static bool NODELETE shouldEmitNewlineForNode(Node* node, bool emitsOriginalText)
 {
     auto* renderer = node->renderer();
     if (!(renderer ? renderer->isBR() : node->hasTagName(brTag)))
@@ -895,7 +895,7 @@ static bool shouldEmitNewlineForNode(Node* node, bool emitsOriginalText)
     return emitsOriginalText || !(node->isInShadowTree() && is<HTMLInputElement>(*node->shadowHost()));
 }
 
-static bool shouldEmitReplacementInsteadOfNode(const Node& node)
+static bool NODELETE shouldEmitReplacementInsteadOfNode(const Node& node)
 {
     // Placeholders should eventually disappear, so treating them as a line break doesn't make sense
     // as when they are removed the text after it is combined with the text before it.
@@ -1700,7 +1700,7 @@ StringView WordAwareIterator::text() const LIFETIME_BOUND
 
 // --------
 
-static inline char16_t foldQuoteMarkAndReplaceNoBreakSpace(char16_t c)
+static inline char16_t NODELETE foldQuoteMarkAndReplaceNoBreakSpace(char16_t c)
 {
     switch (c) {
     case hebrewPunctuationGershayim:
@@ -1805,7 +1805,7 @@ static UStringSearch* searcher()
     return searcher;
 }
 
-static inline void lockSearcher()
+static inline void NODELETE lockSearcher()
 {
 #ifndef NDEBUG
     ASSERT(!searcherInUse);
@@ -1813,7 +1813,7 @@ static inline void lockSearcher()
 #endif
 }
 
-static inline void unlockSearcher()
+static inline void NODELETE unlockSearcher()
 {
 #ifndef NDEBUG
     ASSERT(searcherInUse);
@@ -1834,7 +1834,7 @@ static inline void unlockSearcher()
 // We refer to the above technique as the "kana workaround". The next few
 // functions are helper functinos for the kana workaround.
 
-static inline bool isKanaLetter(char16_t character)
+static inline bool NODELETE isKanaLetter(char16_t character)
 {
     // Hiragana letters.
     if (character >= 0x3041 && character <= 0x3096)
@@ -1853,7 +1853,7 @@ static inline bool isKanaLetter(char16_t character)
     return false;
 }
 
-static inline bool isSmallKanaLetter(char16_t character)
+static inline bool NODELETE isSmallKanaLetter(char16_t character)
 {
     ASSERT(isKanaLetter(character));
 
@@ -1914,7 +1914,7 @@ static inline bool isSmallKanaLetter(char16_t character)
 
 enum VoicedSoundMarkType { NoVoicedSoundMark, VoicedSoundMark, SemiVoicedSoundMark };
 
-static inline VoicedSoundMarkType composedVoicedSoundMark(char16_t character)
+static inline VoicedSoundMarkType NODELETE composedVoicedSoundMark(char16_t character)
 {
     ASSERT(isKanaLetter(character));
 
@@ -1981,7 +1981,7 @@ static inline VoicedSoundMarkType composedVoicedSoundMark(char16_t character)
     return NoVoicedSoundMark;
 }
 
-static inline bool isCombiningVoicedSoundMark(char16_t character)
+static inline bool NODELETE isCombiningVoicedSoundMark(char16_t character)
 {
     switch (character) {
     case 0x3099: // COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK
@@ -1991,7 +1991,7 @@ static inline bool isCombiningVoicedSoundMark(char16_t character)
     return false;
 }
 
-static inline bool containsKanaLetters(const String& pattern)
+static inline bool NODELETE containsKanaLetters(const String& pattern)
 {
     if (pattern.is8Bit())
         return false;
@@ -2508,7 +2508,7 @@ static inline bool isInsideReplacedElement(TextIterator& iterator, TextIteratorB
     return node && isRendererReplacedElement(protect(node->renderer()), behaviors);
 }
 
-constexpr uint64_t clampedAdd(uint64_t a, uint64_t b)
+constexpr uint64_t NODELETE clampedAdd(uint64_t a, uint64_t b)
 {
     auto sum = a + b;
     return sum >= a ? sum : std::numeric_limits<uint64_t>::max();

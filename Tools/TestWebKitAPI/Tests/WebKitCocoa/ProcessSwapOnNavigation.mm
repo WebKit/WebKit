@@ -993,6 +993,8 @@ TEST(ProcessSwap, Back)
     EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[0]);
     EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[1]);
     EXPECT_WK_STREQ(@"PageShow called. Persisted: false, and window.history.state is: null", receivedMessages.get()[2]);
+
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (isUsingBackForwardCache(webView.get()))
         EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[3]);
     else
@@ -1000,6 +1002,7 @@ TEST(ProcessSwap, Back)
 
     // The number of suspended pages we keep around is determined at runtime.
     if ([processPool _maximumSuspendedPageCount] > 1) {
+        // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
         if (isUsingBackForwardCache(webView.get()))
             EXPECT_WK_STREQ(@"PageShow called. Persisted: true, and window.history.state is: onloadCalled", receivedMessages.get()[4]);
         else
@@ -1140,8 +1143,10 @@ TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"ProcessSwap.SuspendedPagesInActivityMonitor: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.SuspendedPagesInActivityMonitor: Test is skipped as back-forward cache is disabled");
         return;
     }
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -2416,6 +2421,12 @@ static void runNavigationWithLockedHistoryTest(ShouldEnablePSON shouldEnablePSON
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
+    if (!isUsingBackForwardCache(webView.get())) {
+        NSLog(@"ProcessSwap.NavigationWithLockedHistoryWith/WithoutPSON: Test is skipped as back-forward cache is disabled");
+        return;
+    }
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
@@ -2470,6 +2481,11 @@ static void runNavigationWithLockedHistoryTest(ShouldEnablePSON shouldEnablePSON
 TEST(ProcessSwap, NavigationWithLockedHistoryWithPSON)
 {
     runNavigationWithLockedHistoryTest(ShouldEnablePSON::Yes);
+}
+
+TEST(ProcessSwap, NavigationWithLockedHistoryWithoutPSON)
+{
+    runNavigationWithLockedHistoryTest(ShouldEnablePSON::No);
 }
 
 static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
@@ -2548,11 +2564,6 @@ TEST(ProcessSwap, QuickBackForwardNavigationWithoutPSON)
 TEST(ProcessSwap, QuickBackForwardNavigationWithPSON)
 {
     runQuickBackForwardNavigationTest(ShouldEnablePSON::Yes);
-}
-
-TEST(ProcessSwap, NavigationWithLockedHistoryWithoutPSON)
-{
-    runNavigationWithLockedHistoryTest(ShouldEnablePSON::No);
 }
 
 static constexpr auto sessionStorageTestBytes = R"PSONRESOURCE(
@@ -2671,6 +2682,7 @@ TEST(ProcessSwap, ReuseSuspendedProcess)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     const bool backForwardCacheEnabled = isUsingBackForwardCache(webView.get());
     if (backForwardCacheEnabled) {
         // We should have gone back to the webkit.org process for this load since we reuse SuspendedPages' process when possible.
@@ -3468,6 +3480,7 @@ TEST(ProcessSwap, SuspendedPageLimit)
     EXPECT_EQ(5u, seenPIDs.size());
 
     auto expectedProcessCount = 1u;
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (isUsingBackForwardCache(webView.get())) {
         // But not all of those processes should still be alive (1 visible, maximumSuspendedPageCount suspended).
         expectedProcessCount += maximumSuspendedPageCount;
@@ -3497,8 +3510,10 @@ TEST(ProcessSwap, PageCache1)
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"ProcessSwap.PageCache1: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.PageCache1: Test is skipped as back-forward cache is disabled");
         return;
     }
 
@@ -3731,8 +3746,10 @@ TEST(ProcessSwap, PageCacheAfterProcessSwapByClient)
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"ProcessSwap.PageCacheAfterProcessSwapByClient: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.PageCacheAfterProcessSwapByClient: Test is skipped as back-forward cache is disabled");
         return;
     }
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -3811,8 +3828,10 @@ TEST(ProcessSwap, PageCacheWhenNavigatingFromJS)
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (!isUsingBackForwardCache(webView.get())) {
-        NSLog(@"ProcessSwap.PageCacheWhenNavigatingFromJS: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.PageCacheWhenNavigatingFromJS: Test is skipped as back-forward cache is disabled");
         return;
     }
 
@@ -4135,6 +4154,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     EXPECT_EQ(2u + [processPool _prewarmedProcessCountLimit], [processPool _webProcessCount]);
 
     // If page cache is enabled, process for webkit.org will stay active.
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     unsigned expectedActiveProcessCount = isUsingBackForwardCache(webView.get()) ? 2u : 1u;
     EXPECT_EQ(expectedActiveProcessCount, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
@@ -5125,6 +5145,7 @@ static void runAPIControlledProcessSwappingThenBackTest(WithDelay withDelay)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (isUsingBackForwardCache(webView.get()))
         EXPECT_EQ(pid1, [webView _webProcessIdentifier]);
     else
@@ -6819,8 +6840,10 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
 
     auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (!isUsingBackForwardCache(webView1.get())) {
-        NSLog(@"ProcessSwap.GoBackToSuspendedPageWithMainFrameIDThatIsNotOne: Test is skipped as backfoward cache is disabled");
+        NSLog(@"ProcessSwap.GoBackToSuspendedPageWithMainFrameIDThatIsNotOne: Test is skipped as back-forward cache is disabled");
         return;
     }
 

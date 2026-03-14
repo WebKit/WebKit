@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT String formEnctype() const;
     WEBCORE_EXPORT String formMethod() const;
-    bool formNoValidate() const;
+    bool NODELETE formNoValidate() const;
     WEBCORE_EXPORT String formAction() const;
 
     bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
@@ -90,7 +90,7 @@ public:
 
     WEBCORE_EXPORT String autocomplete() const;
 
-    AutofillMantle autofillMantle() const;
+    AutofillMantle NODELETE autofillMantle() const;
 
     WEBCORE_EXPORT AutofillData autofillData() const;
 

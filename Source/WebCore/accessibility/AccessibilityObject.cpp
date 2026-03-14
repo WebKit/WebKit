@@ -1612,7 +1612,7 @@ VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& poi
         return VisiblePosition();
 
 #if PLATFORM(MAC)
-    auto* frameView = &renderView->frameView();
+    CheckedRef frameView = renderView->frameView();
 #endif
 
     RefPtr<Node> innerNode;

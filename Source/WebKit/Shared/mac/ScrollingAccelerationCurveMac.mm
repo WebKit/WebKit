@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-static float fromFixedPoint(float value)
+static float NODELETE fromFixedPoint(float value)
 {
     return value / 65536.0f;
 }

@@ -44,12 +44,12 @@ JSC::JSValue JSWebXRRigidTransform::matrix(JSC::JSGlobalObject& lexicalGlobalObj
 }
 
 template<typename Visitor>
-void JSWebXRRigidTransform::visitAdditionalChildren(Visitor& visitor)
+void JSWebXRRigidTransform::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().cachedMatrix().visit(visitor);
+    wrapped().cachedMatrix().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWebXRRigidTransform);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSWebXRRigidTransform);
 
 } // namespace WebCore
 

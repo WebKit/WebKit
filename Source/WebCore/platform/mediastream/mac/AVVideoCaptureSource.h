@@ -65,7 +65,7 @@ public:
     static NSMutableArray* cameraCaptureDeviceTypes();
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
-    WEBCORE_EXPORT static void setUseAVCaptureDeviceRotationCoordinatorAPI(bool);
+    WEBCORE_EXPORT static void NODELETE setUseAVCaptureDeviceRotationCoordinatorAPI(bool);
 
     void captureSessionBeginInterruption(RetainPtr<NSNotification>);
     void captureSessionEndInterruption(RetainPtr<NSNotification>);
@@ -147,7 +147,7 @@ private:
     void startupTimerFired();
 #endif
 
-    std::optional<double> computeMinZoom() const;
+    std::optional<double> NODELETE computeMinZoom() const;
     std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
 
     void updateWhiteBalanceMode();

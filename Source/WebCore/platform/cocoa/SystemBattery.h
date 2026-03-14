@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT void setSystemHasBattery(bool);
+WEBCORE_EXPORT void NODELETE setSystemHasBattery(bool);
 WEBCORE_EXPORT bool systemHasBattery();
 
-WEBCORE_EXPORT void resetSystemHasAC();
-WEBCORE_EXPORT void setSystemHasAC(bool);
+WEBCORE_EXPORT void NODELETE resetSystemHasAC();
+WEBCORE_EXPORT void NODELETE setSystemHasAC(bool);
 WEBCORE_EXPORT bool systemHasAC();
-WEBCORE_EXPORT std::optional<bool> cachedSystemHasAC();
+WEBCORE_EXPORT std::optional<bool> NODELETE cachedSystemHasAC();
 
 class WEBCORE_EXPORT SystemBatteryStatusTestingOverrides {
 public:

@@ -91,7 +91,7 @@ private:
     void setPreload(MediaPlayer::Preload) final;
     void doPreload();
     void load(const URL&, const LoadOptions&) final;
-    bool needsResourceClient() const;
+    bool NODELETE needsResourceClient() const;
     bool createResourceClientIfNeeded();
 
 #if ENABLE(MEDIA_SOURCE)
@@ -279,12 +279,12 @@ private:
 #endif
 
     using TrackIdentifier = TracksRendererManager::TrackIdentifier;
-    TrackIdentifier trackIdentifierFor(TrackID) const;
-    std::optional<TrackIdentifier> maybeTrackIdentifierFor(TrackID) const;
+    TrackIdentifier NODELETE trackIdentifierFor(TrackID) const;
+    std::optional<TrackIdentifier> NODELETE maybeTrackIdentifierFor(TrackID) const;
 
     void setLayerRequiresFlush();
-    void setAllTracksForReenqueuing();
-    void setTrackForReenqueuing(TrackID);
+    void NODELETE setAllTracksForReenqueuing();
+    void NODELETE setTrackForReenqueuing(TrackID);
 
     // Remote layer support
     WebCore::HostingContext hostingContext() const final;
@@ -346,8 +346,8 @@ private:
     MediaTime m_duration { MediaTime::indefiniteTime() };
     double m_rate { 1 };
 
-    bool isEnabledVideoTrackID(TrackID) const;
-    bool hasSelectedVideo() const;
+    bool NODELETE isEnabledVideoTrackID(TrackID) const;
+    bool NODELETE hasSelectedVideo() const;
     std::optional<TrackID> m_enabledVideoTrackID;
     std::atomic<uint32_t> m_abortCalled { 0 };
     size_t m_contentLength { 0 };

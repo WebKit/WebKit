@@ -111,7 +111,7 @@ bool BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(const ElementBox& l
 }
 
 enum class VerticalMargin { Before, After };
-static inline bool hasQuirkMarginToCollapse(const ElementBox& layoutBox, VerticalMargin verticalMargin)
+static inline bool NODELETE hasQuirkMarginToCollapse(const ElementBox& layoutBox, VerticalMargin verticalMargin)
 {
     if (!layoutBox.isInFlow())
         return false;

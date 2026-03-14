@@ -698,8 +698,10 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
     RetainPtr view = _view.get();
-    if (RefPtr page = [view page])
-        page->setSelectElementIsOpen([view focusedElementInformation].elementContext, true);
+    if (RefPtr page = [view page]) {
+        auto& focusedInfo = [view focusedElementInformation];
+        page->setSelectElementIsOpen(focusedInfo.frameID(), focusedInfo.elementContext, true);
+    }
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
         auto strongSelf = weakSelf.get();
@@ -711,9 +713,10 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
     RetainPtr view = _view.get();
-    auto elementContext = [view focusedElementInformation].elementContext;
+    auto& focusedInfo = [view focusedElementInformation];
+    auto elementContext = focusedInfo.elementContext;
     if (RefPtr page = [view page])
-        page->setSelectElementIsOpen(elementContext, false);
+        page->setSelectElementIsOpen(focusedInfo.frameID(), elementContext, false);
 
     _isAnimatingContextMenuDismissal = YES;
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), elementContext] {
@@ -735,8 +738,10 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
     _selectContextMenuPresenter = nullptr;
     RetainPtr view = _view.get();
     [view _removeContextMenuHintContainerIfPossible];
-    if (RefPtr page = [view page])
-        page->setSelectElementIsOpen([view focusedElementInformation].elementContext, false);
+    if (RefPtr page = [view page]) {
+        auto& focusedInfo = [view focusedElementInformation];
+        page->setSelectElementIsOpen(focusedInfo.frameID(), focusedInfo.elementContext, false);
+    }
 
     if (!_isAnimatingContextMenuDismissal)
         [[view webView] _didDismissContextMenu];

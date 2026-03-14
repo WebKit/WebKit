@@ -58,7 +58,7 @@ protected:
     virtual IntSize cellSize(NSControlSize, const ControlStyle&) const { return { }; };
     virtual IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const { return { }; };
 
-    NSControlSize controlSizeForFont(const ControlStyle&) const;
+    NSControlSize NODELETE controlSizeForFont(const ControlStyle&) const;
     NSControlSize controlSizeForSystemFont(const ControlStyle&) const;
     NSControlSize controlSizeForSize(const FloatSize&, const ControlStyle&) const;
 

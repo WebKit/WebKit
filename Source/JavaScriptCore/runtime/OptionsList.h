@@ -85,7 +85,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useLLInt,  true, Normal, "allows the LLINT to be used if true"_s) \
     v(Bool, useJIT, jitEnabledByDefault(), Normal, "allows the executable pages to be allocated for JIT and thunks if true"_s) \
     v(Bool, useBaselineJIT, true, Normal, "allows the baseline JIT to be used if true"_s) \
-    v(Bool, useDFGJIT, true, Normal, "allows the DFG JIT to be used if true"_s) \
+    v(Bool, useDFGJIT, is64Bit(), Normal, "allows the DFG JIT to be used if true"_s) \
     v(Bool, useRegExpJIT, jitEnabledByDefault() && is64Bit(), Normal, "allows the RegExp JIT to be used if true"_s) \
     v(Bool, useDOMJIT, is64Bit(), Normal, "allows the DOMJIT to be used if true"_s) \
     \
@@ -102,7 +102,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Size, jitMemoryReservationAddress, 0, Restricted, "If non-zero, we will attempt to allocate JIT memory at the address provided and crash if we cannot.") \
     \
     v(Bool, forceCodeBlockLiveness, false, Normal, nullptr) \
-    v(Bool, forceICFailure, false, Normal, nullptr) \
+    v(Bool, forceICFailure, is32Bit(), Normal, nullptr) \
     v(Bool, forceUnlinkedDFG, false, Normal, nullptr) \
     \
     v(Unsigned, repatchCountForCoolDown, 8, Normal, nullptr) \
@@ -520,6 +520,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maxB3TailDupBlockSuccessors, 3, Normal, nullptr) \
     v(Bool, useB3HoistLoopInvariantValues, true, Normal, nullptr) \
     v(Bool, useB3CanonicalizePrePostIncrements, false, Normal, nullptr) \
+    v(Bool, useB3ReduceSIMDShuffle, true, Normal, nullptr) \
     v(Bool, useAirOptimizePairedLoadStore, true, Normal, nullptr) \
     \
     v(Bool, useDollarVM, false, Restricted, "installs the $vm debugging tool in global objects"_s) \

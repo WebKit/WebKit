@@ -77,14 +77,14 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAnimationAgent);
 
-static std::optional<double> protocolValueForSeconds(const Seconds& seconds)
+static std::optional<double> NODELETE protocolValueForSeconds(const Seconds& seconds)
 {
     if (seconds == Seconds::infinity() || seconds == Seconds::nan())
         return std::nullopt;
     return seconds.milliseconds();
 }
 
-static std::optional<Inspector::Protocol::Animation::PlaybackDirection> protocolValueForPlaybackDirection(PlaybackDirection playbackDirection)
+static std::optional<Inspector::Protocol::Animation::PlaybackDirection> NODELETE protocolValueForPlaybackDirection(PlaybackDirection playbackDirection)
 {
     switch (playbackDirection) {
     case PlaybackDirection::Normal:
@@ -101,7 +101,7 @@ static std::optional<Inspector::Protocol::Animation::PlaybackDirection> protocol
     return std::nullopt;
 }
 
-static std::optional<Inspector::Protocol::Animation::FillMode> protocolValueForFillMode(FillMode fillMode)
+static std::optional<Inspector::Protocol::Animation::FillMode> NODELETE protocolValueForFillMode(FillMode fillMode)
 {
     switch (fillMode) {
     case FillMode::None:

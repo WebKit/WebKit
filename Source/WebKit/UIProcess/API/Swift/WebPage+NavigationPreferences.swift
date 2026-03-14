@@ -23,7 +23,7 @@
 
 #if ENABLE_SWIFTUI
 
-import Foundation
+public import Foundation
 
 extension WebPage {
     /// A type that specifies the behaviors to use when loading and rendering page content.

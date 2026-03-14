@@ -40,11 +40,11 @@ public:
 
     [[nodiscard]] RenderStyle NODELETE replace(RenderStyle&&);
 
-    static RenderStyle& defaultStyleSingleton();
+    static RenderStyle& NODELETE defaultStyleSingleton();
 
     // MARK: - Initialization
 
-    WEBCORE_EXPORT static RenderStyle create();
+    WEBCORE_EXPORT static RenderStyle NODELETE create();
     static std::unique_ptr<RenderStyle> createPtr();
     static std::unique_ptr<RenderStyle> createPtrWithRegisteredInitialValues(const Style::CustomPropertyRegistry&);
 
@@ -410,7 +410,7 @@ public:
     static UsedFloat usedFloat(const RenderElement&); // Returns logical left/right (block-relative).
     static UsedClear usedClear(const RenderElement&); // Returns logical left/right (block-relative).
 
-    Style::LineWidth usedColumnRuleWidth() const;
+    Style::LineWidth NODELETE usedColumnRuleWidth() const;
 
     Style::Length<> usedOutlineOffset() const;
     Style::LineWidth usedOutlineWidth() const;

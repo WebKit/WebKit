@@ -192,7 +192,7 @@ bool MutableCSSSelector::hasExplicitPseudoClassScope() const
     return false;
 }
 
-static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList)
+static bool NODELETE selectorListMatchesPseudoElement(const CSSSelectorList* selectorList)
 {
     if (!selectorList)
         return false;

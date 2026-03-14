@@ -86,24 +86,24 @@ public:
     // that is, if two edges are parallel to the x-axis and the other two
     // are parallel to the y-axis. If this method returns true, the
     // corresponding FloatRect can be retrieved with boundingBox().
-    WEBCORE_EXPORT bool isRectilinear() const;
+    WEBCORE_EXPORT bool NODELETE isRectilinear() const;
 
     // Tests whether the given point is inside, or on an edge or corner of this quad.
-    WEBCORE_EXPORT bool containsPoint(const FloatPoint&) const;
+    WEBCORE_EXPORT bool NODELETE containsPoint(const FloatPoint&) const;
 
     // Tests whether the four corners of other are inside, or coincident with the sides of this quad.
     // Note that this only works for convex quads, but that includes all quads that originate
     // from transformed rects.
-    WEBCORE_EXPORT bool containsQuad(const FloatQuad&) const;
+    WEBCORE_EXPORT bool NODELETE containsQuad(const FloatQuad&) const;
 
     // Tests whether any part of the rectangle intersects with this quad.
     // This only works for convex quads.
-    bool intersectsRect(const FloatRect&) const;
+    bool NODELETE intersectsRect(const FloatRect&) const;
 
     // Test whether any part of the circle/ellipse intersects with this quad.
     // Note that these two functions only work for convex quads.
-    bool intersectsCircle(const FloatPoint& center, float radius) const;
-    bool intersectsEllipse(const FloatPoint& center, const FloatSize& radii) const;
+    bool NODELETE intersectsCircle(const FloatPoint& center, float radius) const;
+    bool NODELETE intersectsEllipse(const FloatPoint& center, const FloatSize& radii) const;
 
     // The center of the quad. If the quad is the result of a affine-transformed rectangle this is the same as the original center transformed.
     FloatPoint center() const
@@ -149,7 +149,7 @@ public:
 
     // Tests whether points are in clock-wise, or counter clock-wise order.
     // Note that output is undefined when all points are colinear.
-    bool isCounterclockwise() const;
+    bool NODELETE isCounterclockwise() const;
 
     friend bool operator==(const FloatQuad&, const FloatQuad&) = default;
 

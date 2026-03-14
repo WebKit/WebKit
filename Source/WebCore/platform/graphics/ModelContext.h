@@ -37,7 +37,7 @@ enum class ModelContextDisablePortal : bool { No, Yes };
 
 class ModelContext final : public RefCounted<ModelContext> {
 public:
-    WEBCORE_EXPORT static Ref<ModelContext> create(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, ModelContextDisablePortal, std::optional<Color>);
+    WEBCORE_EXPORT static Ref<ModelContext> NODELETE create(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, ModelContextDisablePortal, std::optional<Color>);
     WEBCORE_EXPORT ~ModelContext();
 
     PlatformLayerIdentifier modelLayerIdentifier() const { return m_modelLayerIdentifier; }

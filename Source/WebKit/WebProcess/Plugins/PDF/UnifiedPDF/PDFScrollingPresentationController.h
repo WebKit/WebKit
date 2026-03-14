@@ -96,7 +96,7 @@ private:
 
     void updatePageBackgroundLayers();
     std::optional<PDFDocumentLayout::PageIndex> NODELETE pageIndexForPageBackgroundLayer(const WebCore::GraphicsLayer&) const;
-    WebCore::GraphicsLayer* backgroundLayerForPage(PDFDocumentLayout::PageIndex) const;
+    WebCore::GraphicsLayer* NODELETE backgroundLayerForPage(PDFDocumentLayout::PageIndex) const;
 
     void didGeneratePreviewForPage(PDFDocumentLayout::PageIndex) override;
 

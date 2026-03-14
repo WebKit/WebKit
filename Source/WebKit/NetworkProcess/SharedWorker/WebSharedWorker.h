@@ -60,7 +60,7 @@ public:
 
     ~WebSharedWorker();
 
-    static WebSharedWorker* fromIdentifier(WebCore::SharedWorkerIdentifier);
+    static WebSharedWorker* NODELETE fromIdentifier(WebCore::SharedWorkerIdentifier);
 
     const WebCore::SharedWorkerKey& key() const LIFETIME_BOUND { return m_key; }
     const WebCore::WorkerOptions& workerOptions() const LIFETIME_BOUND { return m_workerOptions; }

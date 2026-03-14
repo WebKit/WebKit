@@ -122,7 +122,7 @@ private:
 
     static const AtomString& textTrackCueContainerScrollingClass();
 
-    Document* document() const;
+    Document* NODELETE document() const;
 
     String m_id;
     String m_settings;

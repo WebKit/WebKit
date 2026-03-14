@@ -108,7 +108,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& navigationStates()
+static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& NODELETE navigationStates()
 {
     static NeverDestroyed<WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>> navigationStates;
 

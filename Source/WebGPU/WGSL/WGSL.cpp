@@ -177,18 +177,18 @@ std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Exp
         if (function == "array"_s)
             return ConstantArray(WTF::move(arguments));
 
-        if (auto* structType = std::get_if<Types::Struct>(expression.inferredType())) {
-            HashMap<String, ConstantValue> constantFields;
-            for (unsigned i = 0; i < argumentCount; ++i) {
-                auto& argument = arguments[i];
-                auto& member = structType->structure.members()[i];
-                constantFields.set(member.originalName(), argument);
+        if (!function) {
+            if (auto* structType = std::get_if<Types::Struct>(expression.inferredType())) {
+                HashMap<String, ConstantValue> constantFields;
+                for (unsigned i = 0; i < argumentCount; ++i) {
+                    auto& argument = arguments[i];
+                    auto& member = structType->structure.members()[i];
+                    constantFields.set(member.originalName(), argument);
+                }
+                return ConstantStruct { WTF::move(constantFields) };
             }
-            return ConstantStruct { WTF::move(constantFields) };
-        }
-
-        if (!function)
             return std::nullopt;
+        }
 
         auto* overload = module.lookupOverload(function);
         if (!overload || !overload->constantFunction)

@@ -529,7 +529,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     protect(*_pageConfiguration)->setDefaultWebsitePolicies(defaultWebpagePreferences ? defaultWebpagePreferences->_websitePolicies.get() : nullptr);
 }
 
-static NSString *defaultApplicationNameForUserAgent()
+SUPPRESS_NODELETE static NSString *NODELETE defaultApplicationNameForUserAgent()
 {
 #if PLATFORM(IOS_FAMILY)
     return @"Mobile/15E148";

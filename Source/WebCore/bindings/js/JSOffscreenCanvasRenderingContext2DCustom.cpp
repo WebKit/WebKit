@@ -42,12 +42,12 @@ bool JSOffscreenCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::H
 }
 
 template<typename Visitor>
-void JSOffscreenCanvasRenderingContext2D::visitAdditionalChildren(Visitor& visitor)
+void JSOffscreenCanvasRenderingContext2D::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped().canvas());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSOffscreenCanvasRenderingContext2D);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSOffscreenCanvasRenderingContext2D);
 
 } // namespace WebCore
 

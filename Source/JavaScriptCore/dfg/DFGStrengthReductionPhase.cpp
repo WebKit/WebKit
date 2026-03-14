@@ -822,7 +822,11 @@ private:
                     if (otherNode == regExpObjectNode) {
                         if (regExpObjectNodeIsConstant)
                             break;
-                        lastIndex = 0;
+                        // NewRegExp's child1 is the initial lastIndex. Bytecode emits it as 0, but
+                        // ObjectAllocationSinking materializes it with the tracked lastIndex value.
+                        ASSERT(regExpObjectNode->op() == NewRegExp);
+                        if (regExpObjectNode->child1()->isInt32Constant() && regExpObjectNode->child1()->asInt32() >= 0)
+                            lastIndex = regExpObjectNode->child1()->asUInt32();
                         break;
                     }
                     if (otherNode->op() == SetRegExpObjectLastIndex
@@ -916,9 +920,6 @@ private:
                 m_graph.registerStructure(structure);
 
                 FrozenValue* globalObjectFrozenValue = m_graph.freeze(globalObject);
-
-                if (regExpObjectNode && regExpObjectNode->op() == NewRegExp && regExpObjectNode->child1()->isInt32Constant())
-                    lastIndex = regExpObjectNode->child1()->asUInt32();
 
                 MatchResult result;
                 Vector<int> ovector(regExp->offsetVectorSize());

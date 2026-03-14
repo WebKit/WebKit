@@ -103,7 +103,7 @@ private:
     LayoutRange adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis);
     std::pair<bool, bool> containerAllowsInfiniteOverflow() const;
 
-    bool needsGridAreaAdjustmentBeforeStaticPositioning() const;
+    bool NODELETE needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
     void computeStaticPosition();
     LayoutUnit computedBlockStaticDistance() const;

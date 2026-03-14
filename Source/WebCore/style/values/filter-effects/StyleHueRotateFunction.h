@@ -45,7 +45,7 @@ struct HueRotate {
 
     Parameter value;
 
-    static HueRotate passthroughForInterpolation();
+    static HueRotate NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }
@@ -63,7 +63,7 @@ DEFINE_TYPE_WRAPPER_GET(HueRotate, value);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<HueRotate> { auto operator()(const HueRotate&, const RenderStyle&) -> CSS::HueRotate; };
+template<> struct ToCSS<HueRotate> { CSS::HueRotate NODELETE operator()(const HueRotate&, const RenderStyle&); };
 template<> struct ToStyle<CSS::HueRotate> { auto operator()(const CSS::HueRotate&, const BuilderState&) -> HueRotate; };
 
 // MARK: - Evaluation

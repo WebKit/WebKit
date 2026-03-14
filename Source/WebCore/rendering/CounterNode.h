@@ -53,8 +53,8 @@ public:
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
     RenderElement& NODELETE owner() const;
-    void addRenderer(RenderCounter&);
-    void removeRenderer(RenderCounter&);
+    void NODELETE addRenderer(RenderCounter&);
+    void NODELETE removeRenderer(RenderCounter&);
 
     // Invalidates the text in the renderers of this counter, if any.
     void resetRenderers();

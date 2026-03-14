@@ -46,7 +46,7 @@ class LibWebRTCSocketFactory;
 class WebRTCResolver : public RefCounted<WebRTCResolver> {
     WTF_MAKE_TZONE_ALLOCATED(WebRTCResolver);
 public:
-    static Ref<WebRTCResolver> create(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
+    static Ref<WebRTCResolver> NODELETE create(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
     ~WebRTCResolver();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

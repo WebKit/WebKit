@@ -53,7 +53,7 @@ public:
 
     FloatingContext::Constraints floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext&) const;
 
-    static InlineRect flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
+    static InlineRect NODELETE flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
 
     static InlineLayoutUnit horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalRight, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt);
 
@@ -75,8 +75,8 @@ public:
     static InlineLayoutUnit snapToInt(InlineLayoutUnit, const InlineLevelBox&, SnapDirection = SnapDirection::Round);
     static InlineLayoutUnit snapToInt(InlineLayoutUnit, const Box&, SnapDirection = SnapDirection::Round);
 
-    static InlineLayoutUnit ascent(const FontMetrics&, FontBaseline, const InlineLevelBox&);
-    static InlineLayoutUnit descent(const FontMetrics&, FontBaseline, const InlineLevelBox&);
+    static InlineLayoutUnit NODELETE ascent(const FontMetrics&, FontBaseline, const InlineLevelBox&);
+    static InlineLayoutUnit NODELETE descent(const FontMetrics&, FontBaseline, const InlineLevelBox&);
 
     static InlineLayoutUnit ascent(const FontMetrics&, FontBaseline, const Box&);
     static InlineLayoutUnit descent(const FontMetrics&, FontBaseline, const Box&);

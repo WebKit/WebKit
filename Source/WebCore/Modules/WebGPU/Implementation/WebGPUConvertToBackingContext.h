@@ -109,7 +109,7 @@ public:
     virtual ~ConvertToBackingContext() = default;
 
     WGPUAddressMode NODELETE convertToBacking(AddressMode);
-    WGPUBlendFactor convertToBacking(BlendFactor);
+    WGPUBlendFactor NODELETE convertToBacking(BlendFactor);
     WGPUBlendOperation convertToBacking(BlendOperation);
     WGPUBufferBindingType convertToBacking(BufferBindingType);
     WGPUCompareFunction convertToBacking(CompareFunction);

@@ -253,16 +253,16 @@ bool Region::Shape::compareShapes(const Shape& aShape, const Shape& bShape)
 
 struct Region::Shape::CompareContainsOperation {
     static constexpr bool defaultResult = true;
-    inline static bool aOutsideB(bool& /* result */) { return false; }
-    inline static bool bOutsideA(bool& result) { result = false; return true; }
-    inline static bool aOverlapsB(bool& /* result */) { return false; }
+    inline static bool NODELETE aOutsideB(bool& /* result */) { return false; }
+    inline static bool NODELETE bOutsideA(bool& result) { result = false; return true; }
+    inline static bool NODELETE aOverlapsB(bool& /* result */) { return false; }
 };
 
 struct Region::Shape::CompareIntersectsOperation {
     static constexpr bool defaultResult = false;
-    inline static bool aOutsideB(bool& /* result */) { return false; }
-    inline static bool bOutsideA(bool& /* result */) { return false; }
-    inline static bool aOverlapsB(bool& result) { result = true; return true; }
+    inline static bool NODELETE aOutsideB(bool& /* result */) { return false; }
+    inline static bool NODELETE bOutsideA(bool& /* result */) { return false; }
+    inline static bool NODELETE aOverlapsB(bool& result) { result = true; return true; }
 };
 
 Region::Shape::Shape(const IntRect& rect)
@@ -504,7 +504,7 @@ Region::Shape Region::Shape::unionShapes(const Shape& shape1, const Shape& shape
 }
 
 struct Region::Shape::IntersectOperation {
-    static bool trySimpleOperation(const Shape&, const Shape&, Shape&)
+    static bool NODELETE trySimpleOperation(const Shape&, const Shape&, Shape&)
     {
         return false;
     }
@@ -523,7 +523,7 @@ Region::Shape Region::Shape::intersectShapes(const Shape& shape1, const Shape& s
 }
 
 struct Region::Shape::SubtractOperation {
-    static bool trySimpleOperation(const Shape&, const Shape&, Region::Shape&)
+    static bool NODELETE trySimpleOperation(const Shape&, const Shape&, Region::Shape&)
     {
         return false;
     }
@@ -612,7 +612,7 @@ void Region::setShape(Shape&& shape)
         *m_shape = WTF::move(shape);
 }
 
-static std::span<const int> segmentsForSpanSegmentIndices(std::span<const int> segments, size_t start, size_t end)
+static std::span<const int> NODELETE segmentsForSpanSegmentIndices(std::span<const int> segments, size_t start, size_t end)
 {
     if (segments.size() <= end)
         return { };

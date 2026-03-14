@@ -150,7 +150,7 @@ public:
     using SubResourceDomain = RegistrableDomain;
 
     WEBCORE_EXPORT static void permitProcessToUseCookieAPI(bool);
-    WEBCORE_EXPORT static bool processMayUseCookieAPI();
+    WEBCORE_EXPORT static bool NODELETE processMayUseCookieAPI();
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     CredentialStorage& credentialStorage() LIFETIME_BOUND { return m_credentialStorage; }
@@ -238,9 +238,9 @@ public:
     WEBCORE_EXPORT void removeCookiesEnabledStateObserver(CookiesEnabledStateObserver&);
     void cookieEnabledStateMayHaveChanged();
 
-    WEBCORE_EXPORT void setTrackingPreventionEnabled(bool);
-    WEBCORE_EXPORT bool trackingPreventionEnabled() const;
-    WEBCORE_EXPORT void setTrackingPreventionDebugLoggingEnabled(bool);
+    WEBCORE_EXPORT void NODELETE setTrackingPreventionEnabled(bool);
+    WEBCORE_EXPORT bool NODELETE trackingPreventionEnabled() const;
+    WEBCORE_EXPORT void NODELETE setTrackingPreventionDebugLoggingEnabled(bool);
     bool trackingPreventionDebugLoggingEnabled() const { return m_isTrackingPreventionDebugLoggingEnabled; }
     WEBCORE_EXPORT ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecisionForRequest(const ResourceRequest&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker, bool isInitiatedByDedicatedWorker = false) const;
     ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecisionForRequest(const URL& firstPartyForCookies, const URL& resource, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker, bool isInitiatedByDedicatedWorker = false) const;
@@ -248,7 +248,7 @@ public:
     WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker) const;
     WEBCORE_EXPORT bool shouldBlockThirdPartyCookies(const RegistrableDomain&) const;
     WEBCORE_EXPORT bool shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(const RegistrableDomain&) const;
-    WEBCORE_EXPORT static bool shouldBlockCookies(ThirdPartyCookieBlockingDecision);
+    WEBCORE_EXPORT static bool NODELETE shouldBlockCookies(ThirdPartyCookieBlockingDecision);
     WEBCORE_EXPORT void setAllCookiesToSameSiteStrict(const RegistrableDomain&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT static String cookiePartitionIdentifier(const ResourceRequest&);
     static String cookiePartitionIdentifier(const URL&);
@@ -264,19 +264,19 @@ public:
     WEBCORE_EXPORT void setDomainsWithUserInteractionAsFirstParty(const Vector<RegistrableDomain>&);
     WEBCORE_EXPORT void setDomainsWithCrossPageStorageAccess(const HashMap<TopFrameDomain, Vector<SubResourceDomain>>&);
     WEBCORE_EXPORT void grantCrossPageStorageAccess(const TopFrameDomain&, const SubResourceDomain&);
-    WEBCORE_EXPORT void setAgeCapForClientSideCookies(std::optional<Seconds>);
+    WEBCORE_EXPORT void NODELETE setAgeCapForClientSideCookies(std::optional<Seconds>);
     WEBCORE_EXPORT bool hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, std::optional<FrameIdentifier>, std::optional<PageIdentifier>) const;
     WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
     WEBCORE_EXPORT void grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, std::optional<FrameIdentifier>, PageIdentifier);
     WEBCORE_EXPORT void removeStorageAccessForFrame(FrameIdentifier, PageIdentifier);
     WEBCORE_EXPORT void clearPageSpecificDataForResourceLoadStatistics(PageIdentifier);
     WEBCORE_EXPORT void removeAllStorageAccess();
-    WEBCORE_EXPORT void setCacheMaxAgeCapForPrevalentResources(Seconds);
-    WEBCORE_EXPORT void resetCacheMaxAgeCapForPrevalentResources();
+    WEBCORE_EXPORT void NODELETE setCacheMaxAgeCapForPrevalentResources(Seconds);
+    WEBCORE_EXPORT void NODELETE resetCacheMaxAgeCapForPrevalentResources();
     WEBCORE_EXPORT std::optional<Seconds> maxAgeCacheCap(const ResourceRequest&, IsKnownCrossSiteTracker);
     WEBCORE_EXPORT void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, PageIdentifier);
     WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
-    WEBCORE_EXPORT void setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode);
+    WEBCORE_EXPORT void NODELETE setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode);
     WEBCORE_EXPORT void setOptInCookiePartitioningEnabled(bool);
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
@@ -371,7 +371,7 @@ private:
 
     bool m_isTrackingPreventionEnabled = false;
     bool m_isTrackingPreventionDebugLoggingEnabled = false;
-    std::optional<Seconds> clientSideCookieCap(const TopFrameDomain&, RequiresScriptTrackingPrivacy, std::optional<PageIdentifier>) const;
+    std::optional<Seconds> NODELETE clientSideCookieCap(const TopFrameDomain&, RequiresScriptTrackingPrivacy, std::optional<PageIdentifier>) const;
     bool shouldExemptDomainPairFromThirdPartyCookieBlocking(const TopFrameDomain&, const SubResourceDomain&) const;
     HashSet<RegistrableDomain> m_registrableDomainsToBlockAndDeleteCookiesFor;
     HashSet<RegistrableDomain> m_registrableDomainsToBlockButKeepCookiesFor;

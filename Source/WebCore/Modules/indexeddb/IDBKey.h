@@ -72,7 +72,7 @@ public:
         return adoptRef(*new IDBKey(WTF::move(array), sizeEstimate));
     }
 
-    static Ref<IDBKey> createBinary(const ThreadSafeDataBuffer&);
+    static Ref<IDBKey> NODELETE createBinary(const ThreadSafeDataBuffer&);
     static Ref<IDBKey> createBinary(JSC::JSArrayBuffer&);
     static Ref<IDBKey> createBinary(JSC::JSArrayBufferView&);
 

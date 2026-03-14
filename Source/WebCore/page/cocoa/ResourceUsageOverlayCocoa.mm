@@ -82,7 +82,7 @@ public:
         m_data.fill(0);
     }
 
-    void append(T v)
+    void NODELETE append(T v)
     {
         m_data[m_current] = WTF::move(v);
         incrementIndex(m_current);

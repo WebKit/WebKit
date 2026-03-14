@@ -171,7 +171,7 @@ public:
     void clear(RefPtr<Document>&& newDocument, bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true, Function<void()>&& handleDOMWindowCreation = nullptr);
 
     bool isLoading() const;
-    WEBCORE_EXPORT bool frameHasLoaded() const;
+    WEBCORE_EXPORT bool NODELETE frameHasLoaded() const;
 
     WEBCORE_EXPORT int numPendingOrLoadingRequests(bool recurse) const;
 
@@ -282,7 +282,7 @@ public:
     FrameLoaderStateMachine& stateMachine() LIFETIME_BOUND { return m_stateMachine; }
     const FrameLoaderStateMachine& stateMachine() const LIFETIME_BOUND { return m_stateMachine; }
 
-    void advanceStatePastInitialEmptyDocument();
+    void NODELETE advanceStatePastInitialEmptyDocument();
 
     WEBCORE_EXPORT RefPtr<Frame> findFrameForNavigation(const AtomString& name, Document* activeDocument = nullptr);
 

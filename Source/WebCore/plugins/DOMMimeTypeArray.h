@@ -37,10 +37,10 @@ public:
     static Ref<DOMMimeTypeArray> create(Navigator&, Vector<Ref<DOMMimeType>>&& = { });
     ~DOMMimeTypeArray();
 
-    unsigned length() const;
+    unsigned NODELETE length() const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_types.size(); }
-    RefPtr<DOMMimeType> item(unsigned index);
-    RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
+    RefPtr<DOMMimeType> NODELETE item(unsigned index);
+    RefPtr<DOMMimeType> NODELETE namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
 
     bool isSupportedPropertyName(const AtomString&) const;

@@ -131,7 +131,7 @@ static int countDigits(uint64_t x)
     return numberOfDigits;
 }
 
-static uint64_t scaleDown(uint64_t x, int n)
+static uint64_t NODELETE scaleDown(uint64_t x, int n)
 {
     ASSERT(n >= 0);
     while (n > 0 && x) {
@@ -141,7 +141,7 @@ static uint64_t scaleDown(uint64_t x, int n)
     return x;
 }
 
-static uint64_t scaleUp(uint64_t x, int n)
+static uint64_t NODELETE scaleUp(uint64_t x, int n)
 {
     ASSERT(n >= 0);
     ASSERT(n < Decimal::Precision);
@@ -430,7 +430,7 @@ Decimal::AlignedOperands Decimal::alignOperands(const Decimal& lhs, const Decima
     return alignedOperands;
 }
 
-static bool isMultiplePowersOfTen(uint64_t coefficient, int n)
+static bool NODELETE isMultiplePowersOfTen(uint64_t coefficient, int n)
 {
     return !coefficient || !(coefficient % scaleUp(1, n));
 }

@@ -913,6 +913,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     interpreter/EntryFrame.h
     interpreter/FrameTracers.h
     interpreter/Interpreter.h
+    interpreter/MicrotaskCall.h
+    interpreter/MicrotaskCallInlines.h
     interpreter/ProtoCallFrame.h
     interpreter/ProtoCallFrameInlines.h
     interpreter/Register.h

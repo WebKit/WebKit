@@ -40,7 +40,7 @@ using ItemsLayoutRequirements = SingleThreadWeakHashMap<RenderBox, OptionSet<Ite
 class RenderGridLayoutState {
     WTF_MAKE_TZONE_ALLOCATED(RenderGridLayoutState);
 public:
-    bool containsLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement) const;
+    bool NODELETE containsLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement) const;
     void setLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement);
 
     bool needsSecondTrackSizingPass() const { return m_needsSecondTrackSizingPass; }

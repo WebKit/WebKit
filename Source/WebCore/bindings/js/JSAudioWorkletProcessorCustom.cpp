@@ -31,15 +31,15 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSAudioWorkletProcessor::visitAdditionalChildren(Visitor& visitor)
+void JSAudioWorkletProcessor::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     auto& processor = wrapped();
-    processor.jsInputsWrapper().visit(visitor);
-    processor.jsOutputsWrapper().visit(visitor);
-    processor.jsParamValuesWrapper().visit(visitor);
+    processor.jsInputsWrapper().visitInGCThread(visitor);
+    processor.jsOutputsWrapper().visitInGCThread(visitor);
+    processor.jsParamValuesWrapper().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAudioWorkletProcessor);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSAudioWorkletProcessor);
 
 } // namespace WebCore
 

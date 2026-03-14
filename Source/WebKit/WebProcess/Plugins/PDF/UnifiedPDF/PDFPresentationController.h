@@ -140,7 +140,7 @@ protected:
     RefPtr<AsyncPDFRenderer> NODELETE asyncRendererIfExists() const;
     void clearAsyncRenderer();
 
-    bool shouldUseInProcessBackingStore() const;
+    bool NODELETE shouldUseInProcessBackingStore() const;
 
     WebCore::Path shadowPathForLayer(const WebCore::GraphicsLayer&) const;
 

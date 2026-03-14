@@ -188,7 +188,7 @@ webkit.org/b/305553 fast/selectors/selection-window-inactive-stroke-color.html [
 # 9. TESTS FAILING
 # Each test should (eventually) have a bug. Missing test harness features also go here.
 
-webkit.org/b/302127 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/alignment/column-grid-lanes-justify-self-003.html [ ImageOnlyFailure ]
+webkit.org/b/302127 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-grid-lanes-justify-self-003.html [ ImageOnlyFailure ]
 
 # 10. THREADED COMPOSITOR FAILURES
 # Tests that are now failing because of the switch to ThreadedCompositor.
@@ -1555,3 +1555,6 @@ webkit.org/b/309267 inspector/unit-tests/array-utilities.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/permissions/permissions-garbage-collect.https.html [ Pass Failure ]
 [ Release ] platform/gtk/fast/frames/scrolling-iframe-out-of-viewport.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/preload/prefetch-document.html [ Failure Pass ]
+
+webkit.org/b/309892 accessibility/aria-role-on-label.html [ Pass Crash ]
+webkit.org/b/309894 http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Timeout ]

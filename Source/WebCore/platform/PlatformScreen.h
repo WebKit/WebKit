@@ -106,13 +106,13 @@ struct ScreenData;
     
 WEBCORE_EXPORT ScreenProperties collectScreenProperties();
 WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
-WEBCORE_EXPORT const ScreenProperties& getScreenProperties();
+WEBCORE_EXPORT const ScreenProperties& NODELETE getScreenProperties();
 WEBCORE_EXPORT const ScreenData* screenData(PlatformDisplayID screendisplayID);
-WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
+WEBCORE_EXPORT PlatformDisplayID NODELETE primaryScreenDisplayID();
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-WEBCORE_EXPORT void setScreenContentsFormatsForTesting(OptionSet<ContentsFormat>);
-OptionSet<ContentsFormat> screenContentsFormatsForTesting();
+WEBCORE_EXPORT void NODELETE setScreenContentsFormatsForTesting(OptionSet<ContentsFormat>);
+OptionSet<ContentsFormat> NODELETE screenContentsFormatsForTesting();
 
 WEBCORE_EXPORT float currentEDRHeadroomForDisplay(PlatformDisplayID);
 WEBCORE_EXPORT float maxEDRHeadroomForDisplay(PlatformDisplayID);

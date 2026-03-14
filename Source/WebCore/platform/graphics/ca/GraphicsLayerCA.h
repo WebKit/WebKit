@@ -330,9 +330,9 @@ private:
     virtual void setLayerContentsToImageBuffer(PlatformCALayer&, ImageBuffer*) { }
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
-    PlatformCALayer* hostLayerForSublayers() const;
-    PlatformCALayer* layerForSuperlayer() const;
-    PlatformCALayer* animatedLayer(AnimatedProperty) const;
+    PlatformCALayer* NODELETE hostLayerForSublayers() const;
+    PlatformCALayer* NODELETE layerForSuperlayer() const;
+    PlatformCALayer* NODELETE animatedLayer(AnimatedProperty) const;
 
     WEBCORE_EXPORT void setTileCoverage(TileCoverage) override;
 
@@ -340,8 +340,8 @@ private:
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
     using LayerMap = HashMap<CloneID, Ref<PlatformCALayer>>;
-    LayerMap* primaryLayerClones() const;
-    LayerMap* animatedLayerClones(AnimatedProperty) const;
+    LayerMap* NODELETE primaryLayerClones() const;
+    LayerMap* NODELETE animatedLayerClones(AnimatedProperty) const;
     static void clearClones(LayerMap&);
 
     bool createAnimationFromKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
@@ -492,7 +492,7 @@ private:
 
     bool hasCloneLayers() const { return !!m_layerClones; }
     void removeCloneLayers();
-    FloatPoint positionForCloneRootLayer() const;
+    FloatPoint NODELETE positionForCloneRootLayer() const;
 
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
     void updateNames();
@@ -684,9 +684,9 @@ private:
     typedef uint64_t LayerChangeFlags;
     static ASCIILiteral layerChangeAsString(LayerChange);
     static void dumpLayerChangeFlags(TextStream&, LayerChangeFlags);
-    void addUncommittedChanges(LayerChangeFlags);
+    void NODELETE addUncommittedChanges(LayerChangeFlags);
     bool hasDescendantsWithUncommittedChanges() const { return m_hasDescendantsWithUncommittedChanges; }
-    void setHasDescendantsWithUncommittedChanges(bool);
+    void NODELETE setHasDescendantsWithUncommittedChanges(bool);
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };
     void noteLayerPropertyChanged(LayerChangeFlags, ScheduleFlushOrNot = ScheduleFlush);
     void noteSublayersChanged(ScheduleFlushOrNot = ScheduleFlush);

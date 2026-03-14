@@ -179,8 +179,8 @@ public:
     static unsigned positionCountBetweenPositions(const Position&, const Position&);
 
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
-    static bool nodeIsUserSelectNone(const Node*);
-    static bool nodeIsUserSelectAll(const Node*);
+    static bool NODELETE nodeIsUserSelectNone(const Node*);
+    static bool NODELETE nodeIsUserSelectAll(const Node*);
     static RefPtr<Node> rootUserSelectAllForNode(Node*);
 
     void debugPosition(ASCIILiteral msg = ""_s) const;
@@ -193,7 +193,7 @@ public:
 
     // This is a tentative enhancement of operator== to account for different position types.
     // FIXME: Combine this function with operator==
-    bool equals(const Position&) const;
+    bool NODELETE equals(const Position&) const;
 
 private:
     // For creating legacy editing positions: (Anchor type will be determined from editingIgnoresContent(node))

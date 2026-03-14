@@ -101,12 +101,12 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
 }
 
 template<typename Visitor>
-void JSCallbackData::visitJSFunction(Visitor& visitor)
+void JSCallbackData::visitJSFunctionInGCThread(Visitor& visitor)
 {
     visitor.append(m_callback);
 }
 
-template void JSCallbackData::visitJSFunction(JSC::AbstractSlotVisitor&);
-template void JSCallbackData::visitJSFunction(JSC::SlotVisitor&);
+template void JSCallbackData::visitJSFunctionInGCThread(JSC::AbstractSlotVisitor&);
+template void JSCallbackData::visitJSFunctionInGCThread(JSC::SlotVisitor&);
 
 } // namespace WebCore

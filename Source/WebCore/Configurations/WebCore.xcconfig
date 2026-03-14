@@ -278,7 +278,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGES = objective-c++;
 MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = c++23;
 MODULE_VERIFIER_KIND = builtin;
 
-OTHER_SWIFT_FLAGS = $(inherited) -Xcc -std=c++2b -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility;
+OTHER_SWIFT_FLAGS = $(inherited) -Xcc -std=c++2b;
 
 SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 SWIFT_STRICT_CONCURRENCY = complete;

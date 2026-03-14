@@ -95,7 +95,7 @@ public:
 
     OptionSet<BufferInSetType> requestedVolatility() { return m_requestedVolatility; }
     OptionSet<BufferInSetType> confirmedVolatility() { return m_confirmedVolatility; }
-    void clearVolatility();
+    void NODELETE clearVolatility();
     void NODELETE addRequestedVolatility(OptionSet<BufferInSetType> request);
     void NODELETE setConfirmedVolatility(OptionSet<BufferInSetType> types);
 

@@ -144,7 +144,7 @@ public:
         Seconds blockPeriod;
         Seconds swapPeriod;
     };
-    FontLoadTiming fontLoadTiming() const;
+    FontLoadTiming NODELETE fontLoadTiming() const;
     bool shouldIgnoreFontLoadCompletions() const { return m_shouldIgnoreFontLoadCompletions; }
 
     bool purgeable() const;
@@ -171,7 +171,7 @@ private:
     const StyleProperties& properties() const;
     MutableStyleProperties& mutableProperties();
 
-    Document* document() const;
+    Document* NODELETE document() const;
 
     const Variant<Ref<MutableStyleProperties>, Ref<StyleRuleFontFace>> m_propertiesOrCSSConnection;
     RefPtr<CSSValue> m_family;

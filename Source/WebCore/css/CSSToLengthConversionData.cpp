@@ -31,6 +31,7 @@
 #include "config.h"
 #include "CSSToLengthConversionData.h"
 
+#include "DocumentView.h"
 #include "FloatSize.h"
 #include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"

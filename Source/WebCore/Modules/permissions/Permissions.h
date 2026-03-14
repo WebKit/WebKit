@@ -53,7 +53,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 class Permissions : public RefCounted<Permissions> {
     WTF_MAKE_TZONE_ALLOCATED(Permissions);
 public:
-    static Ref<Permissions> create(NavigatorBase&);
+    static Ref<Permissions> NODELETE create(NavigatorBase&);
     ~Permissions();
 
     NavigatorBase* NODELETE navigator();

@@ -61,7 +61,7 @@ public:
     // JSCustomMarkFunction; for JSSubscriberCustom
     Vector<VoidCallback*> teardownCallbacksConcurrently();
     InternalObserver* NODELETE observerConcurrently();
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor&);
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&);
 
 private:
     explicit Subscriber(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);

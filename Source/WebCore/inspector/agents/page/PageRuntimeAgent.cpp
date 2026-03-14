@@ -164,7 +164,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     });
 }
 
-static Inspector::Protocol::Runtime::ExecutionContextType toProtocol(DOMWrapperWorld::Type type)
+static Inspector::Protocol::Runtime::ExecutionContextType NODELETE toProtocol(DOMWrapperWorld::Type type)
 {
     switch (type) {
     case DOMWrapperWorld::Type::Normal:

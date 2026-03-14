@@ -1153,7 +1153,7 @@ void RenderElement::styleDidChange(Style::Difference diff, const RenderStyle* ol
                     }
                 }
             }
-            return renderer.view().frameView().scrollAnchoringController();
+            return protect(renderer.view().frameView())->scrollAnchoringController();
         };
 
         // https://drafts.csswg.org/css-scroll-anchoring/#suppression-triggers

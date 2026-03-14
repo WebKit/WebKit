@@ -290,7 +290,7 @@ static descriptorType& popDescriptorAndAdvance(std::span<uint8_t>& data)
     return consumeAndReinterpretCastTo<descriptorType>(data);
 }
 
-static void setPortDescriptor(std::span<uint8_t>& messageSpan, mach_port_t sendRight)
+static void NODELETE setPortDescriptor(std::span<uint8_t>& messageSpan, mach_port_t sendRight)
 {
     auto& descriptor = popDescriptorAndAdvance<mach_msg_port_descriptor_t>(messageSpan);
     descriptor.name = sendRight;

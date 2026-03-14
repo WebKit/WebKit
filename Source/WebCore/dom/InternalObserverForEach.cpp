@@ -87,9 +87,9 @@ private:
         protect(m_promise)->resolve();
     }
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
-        m_callback->visitJSFunction(visitor);
+        m_callback->visitJSFunctionInGCThread(visitor);
     }
 
     InternalObserverForEach(ScriptExecutionContext& context, Ref<VisitorCallback>&& callback, Ref<AbortSignal>&& signal, Ref<DeferredPromise>&& promise)

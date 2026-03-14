@@ -90,7 +90,7 @@ namespace WebCore {
 
 static const Seconds resetLatchedStateTimeout { 100_ms };
 
-static RetainPtr<NSEvent>& currentNSEventSlot()
+static RetainPtr<NSEvent>& NODELETE currentNSEventSlot()
 {
     static NeverDestroyed<RetainPtr<NSEvent>> event;
     return event;
@@ -101,7 +101,7 @@ NSEvent *EventHandler::currentNSEvent()
     return currentNSEventSlot().get();
 }
 
-static RetainPtr<NSEvent>& correspondingPressureEventSlot()
+static RetainPtr<NSEvent>& NODELETE correspondingPressureEventSlot()
 {
     static NeverDestroyed<RetainPtr<NSEvent>> event;
     return event;
@@ -810,7 +810,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
     return nullptr;
 }
 
-static WeakPtr<ScrollableArea> scrollableAreaForEventTarget(Element* eventTarget)
+static WeakPtr<ScrollableArea> NODELETE scrollableAreaForEventTarget(Element* eventTarget)
 {
     return dynamicDowncast<ScrollView>(EventHandler::widgetForEventTarget(eventTarget));
 }

@@ -67,7 +67,7 @@ struct EventTrackingRegions {
     using EventType = EventTrackingRegionsEventType;
 
     WEBCORE_EXPORT static ASCIILiteral eventName(EventType);
-    WEBCORE_EXPORT static const AtomString& eventNameAtomString(const EventNames&, EventType);
+    WEBCORE_EXPORT static const AtomString& NODELETE eventNameAtomString(const EventNames&, EventType);
 
     // Region for which events can be dispatched without blocking scrolling.
     Region asynchronousDispatchRegion;
@@ -77,7 +77,7 @@ struct EventTrackingRegions {
     using EventSpecificSynchronousDispatchRegions = HashMap<EventType, Region, WTF::IntHash<EventType>, WTF::StrongEnumHashTraits<EventType>>;
     EventSpecificSynchronousDispatchRegions eventSpecificSynchronousDispatchRegions;
 
-    bool isEmpty() const;
+    bool NODELETE isEmpty() const;
 
     void translate(IntSize);
     void uniteSynchronousRegion(EventType, const Region&);

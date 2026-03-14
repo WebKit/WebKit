@@ -204,8 +204,8 @@ public:
     void contentChanged(ContentChangeType, const std::optional<FloatRect>& = std::nullopt);
     bool hasAcceleratedCompositing() const;
 
-    RenderBoxModelObject* continuation() const;
-    WEBCORE_EXPORT RenderInline* inlineContinuation() const;
+    RenderBoxModelObject* NODELETE continuation() const;
+    WEBCORE_EXPORT RenderInline* NODELETE inlineContinuation() const;
 
     static void forRendererAndContinuations(RenderBoxModelObject&, const std::function<void(RenderBoxModelObject&)>&);
 
@@ -238,7 +238,7 @@ public:
     void paintMaskForTextFillBox(GraphicsContext&, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
 
     // For RenderBlocks and RenderInlines with m_style->pseudoElementType() == PseudoElementType::FirstLetter, this tracks their remaining text fragments
-    RenderTextFragment* firstLetterRemainingText() const;
+    RenderTextFragment* NODELETE firstLetterRemainingText() const;
     void setFirstLetterRemainingText(RenderTextFragment&);
     void clearFirstLetterRemainingText();
 
@@ -264,7 +264,7 @@ public:
         void NODELETE insertAfter(ContinuationChainNode&);
     };
 
-    ContinuationChainNode* continuationChainNode() const LIFETIME_BOUND;
+    ContinuationChainNode* NODELETE continuationChainNode() const LIFETIME_BOUND;
 
 protected:
     LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&) const;

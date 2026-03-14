@@ -35,9 +35,9 @@ using ProcessIdentifier = ObjectIdentifier<ProcessIdentifierType>;
 
 namespace Process {
 
-WEBCORE_EXPORT void setIdentifier(ProcessIdentifier);
+WEBCORE_EXPORT void NODELETE setIdentifier(ProcessIdentifier);
 WEBCORE_EXPORT ProcessIdentifier identifier();
-WEBCORE_EXPORT ProcessIdentifier generateIdentifier();
+WEBCORE_EXPORT ProcessIdentifier NODELETE generateIdentifier();
 
 } // namespace Process
 } // namespace WebCore

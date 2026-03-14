@@ -104,13 +104,13 @@ private:
     std::span<uint8_t> grow(size_t alignment, size_t);
 
     std::span<uint8_t> NODELETE capacityBuffer();
-    std::span<const uint8_t> capacityBuffer() const;
+    std::span<const uint8_t> NODELETE capacityBuffer() const;
 
     bool NODELETE hasAttachments() const;
 
     void encodeHeader();
     const OptionSet<MessageFlags>& NODELETE messageFlags() const;
-    OptionSet<MessageFlags>& messageFlags();
+    OptionSet<MessageFlags>& NODELETE messageFlags();
 
     void freeBufferIfNecessary();
 

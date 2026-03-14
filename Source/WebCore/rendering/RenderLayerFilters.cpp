@@ -100,10 +100,10 @@ void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filte
         WTF::switchOn(value,
             [&](const Style::FilterReference& filterReference) {
                 RefPtr documentReference = filterReference.cachedSVGDocumentReference;
-                if (auto* cachedSVGDocument = documentReference ? documentReference->document() : nullptr) {
+                if (RefPtr cachedSVGDocument = documentReference ? documentReference->document() : nullptr) {
                     // Reference is external; wait for notifyFinished().
                     cachedSVGDocument->addClient(*this);
-                    m_externalSVGReferences.append(cachedSVGDocument);
+                    m_externalSVGReferences.append(cachedSVGDocument.releaseNonNull());
                 } else {
                     // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
                     CheckedPtr layer = m_layer.get();

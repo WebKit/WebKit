@@ -201,7 +201,7 @@ static const size_t kMaximumDeviceIdentifierSeedSize = 20;
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
-static WTFLogChannel& logChannel() { return LogEME; }
+static WTFLogChannel& NODELETE logChannel() { return LogEME; }
 #endif
 
 static String initTypeForRequest(AVContentKeyRequest* request)
@@ -335,7 +335,7 @@ bool CDMInstanceFairPlayStreamingAVFObjC::supportsPersistableState()
     return [PAL::getAVContentKeySessionClassSingleton() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)];
 }
 
-bool CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys()
+SUPPRESS_NODELETE bool CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys()
 {
 #if PLATFORM(IOS_FAMILY)
     return PAL::getAVPersistableContentKeyRequestClassSingleton();
@@ -661,7 +661,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
     return nullptr;
 }
 
-static bool isPotentiallyUsableKeyStatus(CDMInstanceSession::KeyStatus status)
+static bool NODELETE isPotentiallyUsableKeyStatus(CDMInstanceSession::KeyStatus status)
 {
     switch (status) {
     case CDMInstanceSession::KeyStatus::Expired:
@@ -1579,7 +1579,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(A
 #endif
 }
 
-static auto requestStatusToCDMStatus(AVContentKeyRequestStatus status)
+static CDMKeyStatus NODELETE requestStatusToCDMStatus(AVContentKeyRequestStatus status)
 {
     switch (status) {
         case AVContentKeyRequestStatusRequestingResponse:
@@ -1649,7 +1649,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::externalProtectionStatusDidChan
 }
 
 #if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
-static std::optional<CDMKeyStatus> keyStatusForContentProtectionStatus(AVExternalContentProtectionStatus status)
+static std::optional<CDMKeyStatus> NODELETE keyStatusForContentProtectionStatus(AVExternalContentProtectionStatus status)
 {
     switch (status) {
     case AVExternalContentProtectionStatusPending:

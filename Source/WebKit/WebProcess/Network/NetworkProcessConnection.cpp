@@ -300,7 +300,7 @@ void NetworkProcessConnection::updateCachedCookiesEnabled()
 #if ENABLE(SHAREABLE_RESOURCE)
 void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, ShareableResource::Handle&& handle)
 {
-    auto* resource = MemoryCache::singleton().resourceForRequest(request, WebProcess::singleton().sessionID());
+    RefPtr resource = MemoryCache::singleton().resourceForRequest(request, WebProcess::singleton().sessionID());
     if (!resource)
         return;
     

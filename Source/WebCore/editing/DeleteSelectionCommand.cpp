@@ -57,7 +57,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isTableRow(const Node& node)
+static bool NODELETE isTableRow(const Node& node)
 {
     return node.hasTagName(trTag);
 }
@@ -81,7 +81,7 @@ static bool isTableRowEmpty(const Node& row)
     return true;
 }
 
-static bool isSpecialHTMLElement(const Node& node)
+static bool NODELETE isSpecialHTMLElement(const Node& node)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 

@@ -75,7 +75,7 @@ public:
         Iterator(IndexValueStore&, IDBKeyDataSet::iterator, IndexValueEntry::Iterator);
         Iterator(IndexValueStore&, CursorDuplicity, IDBKeyDataSet::reverse_iterator, IndexValueEntry::Iterator);
 
-        void invalidate();
+        void NODELETE invalidate();
         bool NODELETE isValid();
 
         const IDBKeyData& NODELETE key();

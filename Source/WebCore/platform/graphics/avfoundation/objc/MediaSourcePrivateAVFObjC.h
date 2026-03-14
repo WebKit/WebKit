@@ -109,7 +109,7 @@ private:
     friend class SourceBufferPrivateAVFObjC;
 
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient&);
-    RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> platformPlayer() const;
+    RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> NODELETE platformPlayer() const;
     void callOnMainThreadWithPlayer(Function<void(MediaPlayerPrivateMediaSourceAVFObjC&)>&&);
 
     void notifyActiveSourceBuffersChanged() final;

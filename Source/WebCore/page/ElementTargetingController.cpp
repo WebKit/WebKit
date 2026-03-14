@@ -97,33 +97,33 @@ static constexpr auto minimumAreaRatioForElementToCoverViewport = 0.95;
 static constexpr auto minimumAreaForInterpolation = 200000;
 static constexpr auto maximumAreaForInterpolation = 800000;
 
-static float linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
+static float NODELETE linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
 {
     auto areaRatio = (viewportArea - minimumAreaForInterpolation) / (maximumAreaForInterpolation - minimumAreaForInterpolation);
     return clampTo(maximumValue - areaRatio * (maximumValue - minimumValue), minimumValue, maximumValue);
 }
 
-static float maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
+static float NODELETE maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.75, 1);
 }
 
-static float maximumAreaRatioForInFlowContent(float viewportArea)
+static float NODELETE maximumAreaRatioForInFlowContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.5, 1);
 }
 
-static float maximumAreaRatioForNearbyTargets(float viewportArea)
+static float NODELETE maximumAreaRatioForNearbyTargets(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.5);
 }
 
-static float minimumAreaRatioForInFlowContent(float viewportArea)
+static float NODELETE minimumAreaRatioForInFlowContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.005, 0.01);
 }
 
-static float maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
+static float NODELETE maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.3);
 }

@@ -32,14 +32,48 @@
 #import "WKSExperienceController.h"
 #import <AVKit/AVPlayerViewControllerContentSource.h>
 #import <WebCore/WebAVPlayerLayer.h>
+#import <WebCore/WebAVPlayerLayerView.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #import "WebKitSwiftSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 
 SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerViewControllerContentSource)
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface WKExperienceControllerDelegate: NSObject <WKSExperienceControllerDelegate>
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithModel:(WebCore::PlaybackSessionModel&)model NS_DESIGNATED_INITIALIZER;
+@end
+
+@implementation WKExperienceControllerDelegate {
+    WeakPtr<WebCore::PlaybackSessionModel> _model;
+}
+
+- (instancetype)initWithModel:(WebCore::PlaybackSessionModel&)model
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _model = model;
+    return self;
+}
+
+- (void)experienceControllerDidExitFullscreen:(nonnull WKSExperienceController *)experienceController
+{
+    if (CheckedPtr model = _model.get())
+        model->exitFullscreen();
+}
+
+@end
+
+NS_ASSUME_NONNULL_END
 
 namespace WebKit {
 
@@ -52,10 +86,16 @@ Ref<VideoPresentationInterfaceAVKit> VideoPresentationInterfaceAVKit::create(Web
 
 VideoPresentationInterfaceAVKit::VideoPresentationInterfaceAVKit(WebCore::PlaybackSessionInterfaceIOS& playbackSessionInterface)
     : VideoPresentationInterfaceIOS { playbackSessionInterface }
+    , m_experienceControllerDelegate { adoptNS([[WKExperienceControllerDelegate alloc] initWithModel:*playbackSessionInterface.playbackSessionModel()]) }
 {
 }
 
 VideoPresentationInterfaceAVKit::~VideoPresentationInterfaceAVKit() = default;
+
+WebAVPlayerLayer *VideoPresentationInterfaceAVKit::fullscreenPlayerLayer()
+{
+    return checked_objc_cast<WebAVPlayerLayer>([m_fullscreenPlayerLayerView playerLayer]);
+}
 
 void VideoPresentationInterfaceAVKit::setupFullscreen(const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, UIView *parentView, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
@@ -73,17 +113,27 @@ void VideoPresentationInterfaceAVKit::finalizeSetup()
 
 void VideoPresentationInterfaceAVKit::setupPlayerViewController()
 {
-    RetainPtr contentSource = playbackSessionInterface().contentSource();
-    if (!m_experienceController) {
-        RetainPtr platformContentSource = [allocAVPlayerViewControllerContentSourceInstance() initWithVideoPlaybackControllable:contentSource.get()];
-        m_experienceController = [allocWKSExperienceControllerInstance() initWithContentSource:platformContentSource.get()];
-    }
+    if (m_experienceController)
+        return;
 
-    [contentSource setVideoLayer:playerLayer()];
+    m_fullscreenPlayerLayerView = adoptNS([WebCore::allocWebAVPlayerLayerViewInstance() init]);
+    [fullscreenPlayerLayer() setPresentationModel:videoPresentationModel()];
+    [playerLayerView() transferVideoViewTo:m_fullscreenPlayerLayerView.get()];
+
+    RetainPtr contentSource = playbackSessionInterface().contentSource();
+    [contentSource setVideoLayer:fullscreenPlayerLayer()];
+
+    RetainPtr platformContentSource = [allocAVPlayerViewControllerContentSourceInstance() initWithVideoPlaybackControllable:contentSource.get()];
+    m_experienceController = [allocWKSExperienceControllerInstance() initWithContentSource:platformContentSource.get()];
+    [m_experienceController setDelegate:m_experienceControllerDelegate.get()];
 }
 
 void VideoPresentationInterfaceAVKit::invalidatePlayerViewController()
 {
+    [m_fullscreenPlayerLayerView transferVideoViewTo:playerLayerView()];
+    [fullscreenPlayerLayer() setPresentationModel:nullptr];
+    m_fullscreenPlayerLayerView = nil;
+    [m_experienceController setDelegate:nil];
     m_experienceController = nil;
 }
 

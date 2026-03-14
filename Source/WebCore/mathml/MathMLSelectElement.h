@@ -38,7 +38,7 @@ public:
     static Ref<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
     static bool isMathMLEncoding(const AtomString& value);
     static bool isSVGEncoding(const AtomString& value);
-    static bool isHTMLEncoding(const AtomString& value);
+    static bool NODELETE isHTMLEncoding(const AtomString& value);
 
 private:
     MathMLSelectElement(const QualifiedName& tagName, Document&);

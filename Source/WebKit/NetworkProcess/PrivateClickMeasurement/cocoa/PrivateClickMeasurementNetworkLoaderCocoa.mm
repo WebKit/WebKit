@@ -35,7 +35,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
-static RetainPtr<SecTrustRef>& allowedLocalTestServerTrust()
+static RetainPtr<SecTrustRef>& NODELETE allowedLocalTestServerTrust()
 {
     static NeverDestroyed<RetainPtr<SecTrustRef>> serverTrust;
     return serverTrust.get();

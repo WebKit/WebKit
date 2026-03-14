@@ -64,7 +64,7 @@ CrossOriginPreflightChecker::CrossOriginPreflightChecker(DocumentThreadableLoade
 
 CrossOriginPreflightChecker::~CrossOriginPreflightChecker()
 {
-    if (CachedResourceHandle resource = m_resource)
+    if (RefPtr resource = m_resource)
         resource->removeClient(*this);
 }
 
@@ -144,8 +144,11 @@ void CrossOriginPreflightChecker::startPreflight()
     preflightRequest.setInitiatorType(AtomString { loader->options().initiatorType });
 
     ASSERT(!m_resource);
-    m_resource = protect(loader->document().cachedResourceLoader())->requestRawResource(WTF::move(preflightRequest)).value_or(nullptr);
-    if (CachedResourceHandle resource = m_resource)
+    if (auto result = protect(loader->document().cachedResourceLoader())->requestRawResource(WTF::move(preflightRequest)))
+        m_resource = WTF::move(result.value());
+    else
+        m_resource = nullptr;
+    if (RefPtr resource = m_resource)
         resource->addClient(*this);
 }
 
@@ -190,7 +193,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
 
 void CrossOriginPreflightChecker::setDefersLoading(bool value)
 {
-    if (CachedResourceHandle resource = m_resource)
+    if (RefPtr resource = m_resource)
         resource->setDefersLoading(value);
 }
 

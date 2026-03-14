@@ -108,10 +108,10 @@ void RenderLayerScrollableArea::clear()
 {
     auto& renderer = m_layer.renderer();
     if (m_registeredScrollableArea)
-        renderer.view().frameView().removeScrollableArea(this);
+        protect(renderer.view().frameView())->removeScrollableArea(this);
     
     if (m_isRegisteredForAnimatedScroll) {
-        renderer.view().frameView().removeScrollableAreaForAnimatedScroll(this);
+        protect(renderer.view().frameView())->removeScrollableAreaForAnimatedScroll(this);
         m_isRegisteredForAnimatedScroll = false;
     }
 
@@ -613,13 +613,13 @@ IntRect RenderLayerScrollableArea::convertFromScrollbarToContainingView(const Sc
     auto& renderer = m_layer.renderer();
     IntRect rect = scrollbarRect;
     rect.move(scrollbarOffset(scrollbar));
-    return renderer.view().frameView().convertFromRendererToContainingView(&renderer, rect);
+    return protect(renderer.view().frameView())->convertFromRendererToContainingView(&renderer, rect);
 }
 
 IntRect RenderLayerScrollableArea::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntRect& parentRect) const
 {
     auto& renderer = m_layer.renderer();
-    IntRect rect = renderer.view().frameView().convertFromContainingViewToRenderer(&renderer, parentRect);
+    IntRect rect = protect(renderer.view().frameView())->convertFromContainingViewToRenderer(&renderer, parentRect);
     rect.move(-scrollbarOffset(scrollbar));
     return rect;
 }
@@ -629,13 +629,13 @@ IntPoint RenderLayerScrollableArea::convertFromScrollbarToContainingView(const S
     auto& renderer = m_layer.renderer();
     IntPoint point = scrollbarPoint;
     point.move(scrollbarOffset(scrollbar));
-    return renderer.view().frameView().convertFromRendererToContainingView(&renderer, point);
+    return protect(renderer.view().frameView())->convertFromRendererToContainingView(&renderer, point);
 }
 
 IntPoint RenderLayerScrollableArea::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntPoint& parentPoint) const
 {
     auto& renderer = m_layer.renderer();
-    IntPoint point = renderer.view().frameView().convertFromContainingViewToRenderer(&renderer, parentPoint);
+    IntPoint point = protect(renderer.view().frameView())->convertFromContainingViewToRenderer(&renderer, parentPoint);
     point.move(-scrollbarOffset(scrollbar));
     return point;
 }
@@ -678,7 +678,7 @@ void RenderLayerScrollableArea::availableContentSizeChanged(AvailableSizeChangeR
 bool RenderLayerScrollableArea::shouldSuspendScrollAnimations() const
 {
     auto& renderer = m_layer.renderer();
-    return renderer.view().frameView().shouldSuspendScrollAnimations();
+    return protect(renderer.view().frameView())->shouldSuspendScrollAnimations();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -896,7 +896,7 @@ Ref<Scrollbar> RenderLayerScrollableArea::createScrollbar(ScrollbarOrientation o
         if (Ref page = m_layer.page(); page->isMonitoringWheelEvents())
             scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
     }
-    renderer.view().frameView().addChild(*widget);
+    protect(renderer.view().frameView())->addChild(*widget);
     return widget.releaseNonNull();
 }
 
@@ -2027,7 +2027,7 @@ void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, Scroll
     } else {
         // If we are here, we were called on a renderer that can be programmatically scrolled, but doesn't
         // have an overflow clip. Which means that it is a document node that can be scrolled.
-        renderer.view().frameView().scrollBy(delta);
+        protect(renderer.view().frameView())->scrollBy(delta);
         if (scrolledArea)
             *scrolledArea = &renderer.view().frameView();
 

@@ -101,6 +101,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -342,6 +343,46 @@ static String directionAttributeAndValue(TextDirection direction)
     return makeString("dir=\""_s, direction == TextDirection::LTR ? "ltr"_s : "rtl"_s, '"');
 }
 
+// Used to identify <img> elements that represent emoji and can be replaced with their Unicode alt text.
+static bool containsOnlyEmoji(StringView text)
+{
+    if (text.isEmpty())
+        return false;
+
+    bool hasEmoji = false;
+    for (auto codePoint : text.codePoints()) {
+        if (isEmojiWithPresentationByDefault(codePoint)) {
+            hasEmoji = true;
+            continue;
+        }
+
+        if (isEmojiRegionalIndicator(codePoint)) {
+            hasEmoji = true;
+            continue;
+        }
+
+        // Non-Latin1 emoji characters (e.g., those needing VS16 for emoji presentation).
+        if (!isLatin1(codePoint) && u_hasBinaryProperty(codePoint, UCHAR_EMOJI)) {
+            hasEmoji = true;
+            continue;
+        }
+
+        // Emoji sequence components: ZWJ, VS16, skin tone modifiers, keycap bases, tag characters.
+        if (u_hasBinaryProperty(codePoint, UCHAR_EMOJI_COMPONENT))
+            continue;
+
+        // Combining Enclosing Keycap completes a keycap emoji sequence.
+        if (codePoint == 0x20E3) {
+            hasEmoji = true;
+            continue;
+        }
+
+        return false;
+    }
+
+    return hasEmoji;
+}
+
 enum class MSOListMode : bool { Preserve, DoNotPreserve };
 class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
@@ -355,8 +396,8 @@ public:
     void wrapWithStyleNode(StyleProperties*, bool isBlock = false);
     String takeResults();
     
-    bool needRelativeStyleWrapper() const { return m_needRelativeStyleWrapper; }
-    bool needClearingDiv() const { return m_needClearingDiv; }
+    bool NODELETE needRelativeStyleWrapper() const { return m_needRelativeStyleWrapper; }
+    bool NODELETE needClearingDiv() const { return m_needClearingDiv; }
 
     using MarkupAccumulator::append;
 
@@ -467,7 +508,7 @@ private:
         return node.hasChildNodes();
     }
 
-    bool isDescendantOf(Node& node, Node& possibleAncestor)
+    bool NODELETE isDescendantOf(Node& node, Node& possibleAncestor)
     {
         if (m_useComposedTree) [[unlikely]]
             return node.isShadowIncludingDescendantOf(&possibleAncestor);
@@ -479,12 +520,12 @@ private:
 
     bool appendNodeToPreserveMSOList(Node&);
 
-    bool shouldAnnotate()
+    bool NODELETE shouldAnnotate()
     {
         return m_annotate == AnnotateForInterchange::Yes;
     }
 
-    bool shouldApplyWrappingStyle(const Node& node) const
+    bool NODELETE shouldApplyWrappingStyle(const Node& node) const
     {
         return m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode() == node.parentNode() && m_wrappingStyle && m_wrappingStyle->style();
     }
@@ -853,6 +894,17 @@ RefPtr<Node> StyledMarkupAccumulator::traverseNodesForSerialization(Node& startN
         if (m_ignoresUserSelectNone && userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(node))
             return false;
 
+        if (shouldEmit) {
+            if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(node)) {
+                auto& alt = imgElement->attributeWithoutSynchronization(altAttr);
+                auto& src = imgElement->attributeWithoutSynchronization(srcAttr);
+                if (!alt.isEmpty() && src.endsWithIgnoringASCIICase(".svg"_s) && containsOnlyEmoji(alt)) {
+                    append(alt);
+                    return false;
+                }
+            }
+        }
+
         ++depth;
         if (shouldEmit)
             startAppendingNode(node);
@@ -1026,7 +1078,7 @@ static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(Node& node)
     return style;
 }
 
-static bool isElementPresentational(const Node& node)
+static bool NODELETE isElementPresentational(const Node& node)
 {
     return node.hasTagName(uTag) || node.hasTagName(sTag) || node.hasTagName(strikeTag)
         || node.hasTagName(iTag) || node.hasTagName(emTag) || node.hasTagName(bTag) || node.hasTagName(strongTag);
@@ -1580,7 +1632,7 @@ ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, co
     return fragment;
 }
 
-static inline RefPtr<Text> singleTextChild(ContainerNode& node)
+static inline RefPtr<Text> NODELETE singleTextChild(ContainerNode& node)
 {
     return node.hasOneChild() ? dynamicDowncast<Text>(node.firstChild()) : nullptr;
 }

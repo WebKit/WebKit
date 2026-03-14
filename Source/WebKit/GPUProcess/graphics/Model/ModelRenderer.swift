@@ -23,9 +23,9 @@
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreRenderer, _version: 11) && compiler(>=6.2)
 
-internal import QuartzCore
-@_weakLinked internal import USDKit
-@_weakLinked @_spi(UsdLoaderAPI) internal import _USDKit_RealityKit
+import QuartzCore
+@_weakLinked import USDKit
+@_weakLinked @_spi(UsdLoaderAPI) import _USDKit_RealityKit
 @_spi(RealityCoreRendererAPI) @_spi(Private) import RealityKit
 import simd
 
@@ -63,7 +63,7 @@ class Renderer {
     }
 
     func createMaterialCompiler(colorPixelFormat: MTLPixelFormat, rasterSampleCount: Int, colorSpace: CGColorSpace? = nil) async throws {
-        #if canImport(RealityCoreRenderer, _version: 9999)
+        #if canImport(RealityCoreRenderer, _version: 12)
         var configuration = _Proto_LowLevelRenderContextStandaloneConfiguration_v1(device: device)
         configuration.memoryOwner = self.memoryOwner
         #else

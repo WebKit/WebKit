@@ -3013,7 +3013,7 @@ std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() co
     return lowestFloatBottom;
 }
 
-static RenderLayer* enclosingFloatPaintingLayer(const RenderBox& renderer)
+static RenderLayer* NODELETE enclosingFloatPaintingLayer(const RenderBox& renderer)
 {
     for (auto& box : lineageOfType<RenderBox>(renderer)) {
         if (box.layer() && box.layer()->isSelfPaintingLayer())
@@ -3297,7 +3297,7 @@ bool RenderBlockFlow::hitTestFloats(const HitTestRequest& request, HitTestResult
 
     LayoutPoint adjustedLocation = accumulatedOffset;
     if (auto* renderView = dynamicDowncast<RenderView>(*this))
-        adjustedLocation += toLayoutSize(renderView->frameView().scrollPosition());
+        adjustedLocation += toLayoutSize(protect(renderView->frameView())->scrollPosition());
 
     for (auto& floatingObject : m_floatingObjects->set() | std::views::reverse) {
         auto* renderer = floatingObject->renderer();
@@ -4517,7 +4517,7 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& re
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
     if (RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow()) {
         LayoutUnit newColumnHeight;
-        if (hasDefiniteLogicalHeight() || view().frameView().pagination().mode != Pagination::Mode::Unpaginated) {
+        if (hasDefiniteLogicalHeight() || protect(view().frameView())->pagination().mode != Pagination::Mode::Unpaginated) {
             auto computedValues = computeLogicalHeight(0_lu, logicalTop());
             newColumnHeight = std::max<LayoutUnit>(computedValues.extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
             if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)

@@ -43,17 +43,17 @@ JSC::JSValue JSPaymentMethodChangeEvent::methodDetails(JSC::JSGlobalObject& lexi
 }
 
 template<typename Visitor>
-void JSPaymentMethodChangeEvent::visitAdditionalChildren(Visitor& visitor)
+void JSPaymentMethodChangeEvent::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     WTF::switchOn(wrapped().methodDetails(), [&visitor](const JSValueInWrappedObject& methodDetails) {
-        methodDetails.visit(visitor);
+        methodDetails.visitInGCThread(visitor);
     }, [](const PaymentMethodChangeEvent::MethodDetailsFunction&) {
     });
 
-    wrapped().cachedMethodDetails().visit(visitor);
+    wrapped().cachedMethodDetails().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSPaymentMethodChangeEvent);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSPaymentMethodChangeEvent);
 
 } // namespace WebCore
 

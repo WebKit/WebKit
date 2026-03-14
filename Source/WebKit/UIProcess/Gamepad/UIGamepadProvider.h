@@ -57,7 +57,7 @@ public:
     Vector<GamepadData> gamepadStates() const;
 
 #if PLATFORM(COCOA)
-    static void setUsesGameControllerFramework();
+    static void NODELETE setUsesGameControllerFramework();
 #endif
 
     Vector<std::optional<GamepadData>> snapshotGamepads();

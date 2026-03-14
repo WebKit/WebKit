@@ -556,7 +556,7 @@ public:
     static void NODELETE setShouldCrashOnMessageCheckFailure(bool);
 
 #if PLATFORM(COCOA)
-    static void setForceUseSharedMemoryForSendingForTesting(bool);
+    static void NODELETE setForceUseSharedMemoryForSendingForTesting(bool);
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -612,7 +612,7 @@ private:
     void processIncomingSyncReply(UniqueRef<Decoder>);
 
     bool canSendOutgoingMessages() const;
-    bool platformCanSendOutgoingMessages() const;
+    bool NODELETE platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
     bool sendOutgoingMessage(UniqueRef<Encoder>&&);
     void connectionDidClose();
@@ -631,7 +631,7 @@ private:
     size_t incomingMessagesDispatchingBatchSize() const;
     CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)> takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID);
 
-    Timeout timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
+    Timeout NODELETE timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
 
     Error sendMessageImpl(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
 

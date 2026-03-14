@@ -38,7 +38,7 @@ public:
     bool setSpecularConstant(float);
 
     float specularExponent() const { return m_specularExponent; }
-    bool setSpecularExponent(float);
+    bool NODELETE setSpecularExponent(float);
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 

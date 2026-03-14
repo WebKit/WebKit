@@ -183,8 +183,8 @@ public:
     void setOriginatorAdvancedPrivacyProtections(OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections) { m_originatorAdvancedPrivacyProtections = advancedPrivacyProtections; }
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
     void setSafeBrowsingCheckOngoing(size_t, bool);
-    bool safeBrowsingCheckOngoing(size_t);
-    bool safeBrowsingCheckOngoing();
+    bool NODELETE safeBrowsingCheckOngoing(size_t);
+    bool NODELETE safeBrowsingCheckOngoing();
     void setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&&);
     RefPtr<WebKit::BrowsingWarning> NODELETE safeBrowsingWarning();
     void setSafeBrowsingCheckTimedOut() { m_safeBrowsingCheckTimedOut = true; }

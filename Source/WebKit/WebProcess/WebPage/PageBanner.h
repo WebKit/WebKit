@@ -58,7 +58,7 @@ public:
 
 #if PLATFORM(MAC)
     static Ref<PageBanner> create(CALayer *, int height, std::unique_ptr<Client>&&);
-    CALayer *layer();
+    CALayer *NODELETE layer();
 #endif
 
     virtual ~PageBanner();

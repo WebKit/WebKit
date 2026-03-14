@@ -155,7 +155,7 @@ public:
     // Used to estimate the maximum height of the flow thread.
     static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }
 
-    bool fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const;
+    bool NODELETE fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const;
 
     bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox&) const;
 
@@ -192,7 +192,7 @@ protected:
     void updateFragmentsFragmentedFlowPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
 
-    bool getFragmentRangeForBoxFromCachedInfo(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool NODELETE getFragmentRangeForBoxFromCachedInfo(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
 
     void removeRenderBoxFragmentInfo(const RenderBox&);
 

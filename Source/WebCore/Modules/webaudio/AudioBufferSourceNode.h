@@ -60,7 +60,7 @@ public:
 
     // numberOfChannels() returns the number of output channels.  This value equals the number of channels from the buffer.
     // If a new buffer is set with a different number of channels, then this value will dynamically change.
-    unsigned numberOfChannels();
+    unsigned NODELETE numberOfChannels();
 
     // Play-state
     ExceptionOr<void> startLater(double when, double grainOffset, std::optional<double> grainDuration);

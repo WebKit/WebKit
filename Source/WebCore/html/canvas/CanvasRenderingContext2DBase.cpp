@@ -749,7 +749,7 @@ void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
     applyShadow();
 }
 
-static bool lineDashSequenceIsValid(const Vector<double>& dash)
+static bool NODELETE lineDashSequenceIsValid(const Vector<double>& dash)
 {
     for (size_t i = 0; i < dash.size(); i++) {
         if (!std::isfinite(dash[i]) || dash[i] < 0)
@@ -1080,7 +1080,7 @@ void CanvasRenderingContext2DBase::beginPath()
     m_path.clear();
 }
 
-static bool validateRectForCanvas(double& x, double& y, double& width, double& height)
+static bool NODELETE validateRectForCanvas(double& x, double& y, double& width, double& height)
 {
     if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(width) || !std::isfinite(height))
         return false;
@@ -1577,7 +1577,7 @@ static inline FloatSize size(CSSStyleImageValue& image)
 }
 
 #if ENABLE(WEB_CODECS)
-static inline FloatSize size(const WebCodecsVideoFrame& frame)
+static inline FloatSize NODELETE size(const WebCodecsVideoFrame& frame)
 {
     return FloatSize { static_cast<float>(frame.displayWidth()), static_cast<float>(frame.displayHeight()) };
 }
@@ -2232,7 +2232,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(HTMLImageElement& imageElement, bool repeatX, bool repeatY)
 {
-    CachedResourceHandle cachedImage = imageElement.cachedImage();
+    RefPtr cachedImage = imageElement.cachedImage();
     
     // If the image loading hasn't started or the image is not complete, it is not fully decodable.
     if (!cachedImage || !imageElement.complete())
@@ -2257,7 +2257,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(SVGImageElement& imageElement, bool repeatX, bool repeatY)
 {
-    CachedResourceHandle cachedImage = imageElement.cachedImage();
+    RefPtr cachedImage = imageElement.cachedImage();
 
     // The image loading hasn't started.
     if (!cachedImage)

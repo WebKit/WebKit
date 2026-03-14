@@ -111,7 +111,7 @@ public:
     WEBCORE_EXPORT RetainPtr<NSData> createNSData() const;
 #endif
 
-    WEBCORE_EXPORT bool containsMappedFileData() const;
+    WEBCORE_EXPORT bool NODELETE containsMappedFileData() const;
 
 private:
     void iterate(NOESCAPE const Function<void(std::span<const uint8_t>)>& apply) const;

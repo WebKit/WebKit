@@ -59,7 +59,7 @@ public:
 class WEBCORE_EXPORT AutomationInstrumentation {
 public:
     static void NODELETE setClient(const AutomationInstrumentationClient&);
-    static void clearClient();
+    static void NODELETE clearClient();
 
     static void addMessageToConsole(const std::unique_ptr<Inspector::ConsoleMessage>&);
 };

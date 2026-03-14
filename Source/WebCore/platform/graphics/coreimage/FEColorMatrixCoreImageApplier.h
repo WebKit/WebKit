@@ -41,7 +41,7 @@ class FEColorMatrixCoreImageApplier final : public FilterEffectConcreteApplier<F
 public:
     FEColorMatrixCoreImageApplier(const FEColorMatrix&);
 
-    static bool supportsCoreImageRendering(const FEColorMatrix&);
+    static bool NODELETE supportsCoreImageRendering(const FEColorMatrix&);
 
 private:
     bool apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const final;

@@ -40,7 +40,7 @@ CFStringRef getUIContentSizeCategoryDidChangeNotificationName()
 }
 #endif
 
-static String& contentSizeCategoryStorage()
+static String& NODELETE contentSizeCategoryStorage()
 {
     static NeverDestroyed<String> contentSizeCategory;
     return contentSizeCategory.get();

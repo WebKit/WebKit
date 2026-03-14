@@ -100,10 +100,10 @@ private:
     void readSamples();
     void readTrackMetadata();
     bool storeSampleBuffer(CMSampleBufferRef);
-    void advanceCursor();
+    void NODELETE advanceCursor();
     void setTrack(AVAssetTrack *);
 
-    const ImageDecoderAVFObjCSample* sampleAtIndex(size_t) const;
+    const ImageDecoderAVFObjCSample* NODELETE sampleAtIndex(size_t) const;
     bool sampleIsComplete(const ImageDecoderAVFObjCSample&) const;
 
     String m_mimeType;

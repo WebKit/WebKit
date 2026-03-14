@@ -53,7 +53,7 @@ public:
 
     virtual ~MediaKeyStatusMap();
 
-    void detachSession();
+    void NODELETE detachSession();
 
     unsigned long NODELETE size();
     bool has(const BufferSource&);

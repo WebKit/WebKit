@@ -38,8 +38,8 @@ public:
     {
     }
 
-    std::optional<uint64_t> read(size_t);
-    std::optional<bool> readBit();
+    std::optional<uint64_t> NODELETE read(size_t);
+    std::optional<bool> NODELETE readBit();
     template <typename T> std::optional<T> read()
     {
         static_assert(std::is_unsigned<T>::value);
@@ -48,8 +48,8 @@ public:
             return { };
         return static_cast<T>(*value);
     }
-    size_t bitOffset() const;
-    bool skipBytes(size_t);
+    size_t NODELETE bitOffset() const;
+    bool NODELETE skipBytes(size_t);
     size_t byteOffset() const { return m_index; }
 
 private:

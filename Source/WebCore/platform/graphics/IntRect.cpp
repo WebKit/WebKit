@@ -134,7 +134,7 @@ void IntRect::scale(float s)
     m_size.setHeight((int)(height() * s));
 }
 
-static inline int distanceToInterval(int pos, int start, int end)
+static inline int NODELETE distanceToInterval(int pos, int start, int end)
 {
     if (pos < start)
         return start - pos;

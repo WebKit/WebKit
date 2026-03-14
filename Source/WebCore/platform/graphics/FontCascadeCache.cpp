@@ -81,6 +81,12 @@ void FontCascadeCache::clearMeasurementCaches()
         value->fonts.get().glyphGeometryCache().clear();
 }
 
+void FontCascadeCache::clearShapedTextCaches()
+{
+    for (auto& value : m_entries.values())
+        value->fonts.get().shapedTextCache().clear();
+}
+
 void FontCascadeCache::pruneUnreferencedEntries()
 {
     m_entries.removeIf([](auto& entry) {

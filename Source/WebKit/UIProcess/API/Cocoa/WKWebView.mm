@@ -380,7 +380,7 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 #endif // PLATFORM(IOS_FAMILY)
 
-static bool shouldRequireUserGestureToLoadVideo()
+SUPPRESS_NODELETE static bool NODELETE shouldRequireUserGestureToLoadVideo()
 {
 #if PLATFORM(IOS_FAMILY)
     static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RequiresUserGestureToLoadVideo);
@@ -5496,7 +5496,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     return _page->shouldUseBackForwardCache();
 }
 
-static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingProgressEvents events)
+static inline OptionSet<WebCore::LayoutMilestone> NODELETE layoutMilestones(_WKRenderingProgressEvents events)
 {
     OptionSet<WebCore::LayoutMilestone> milestones;
 
@@ -5866,7 +5866,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
     downcast<WebKit::FindClient>(_page->findClient()).setDelegate(findDelegate);
 }
 
-static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFindOptions)
+static inline OptionSet<WebKit::FindOptions> NODELETE toFindOptions(_WKFindOptions wkFindOptions)
 {
     OptionSet<WebKit::FindOptions> findOptions;
 
@@ -7319,7 +7319,7 @@ static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClie
     return result;
 }
 
-static OptionSet<WebCore::TextExtraction::EventListenerCategory> coreEventListenerCategories(_WKTextExtractionEventListenerCategory categories)
+static OptionSet<WebCore::TextExtraction::EventListenerCategory> NODELETE coreEventListenerCategories(_WKTextExtractionEventListenerCategory categories)
 {
     OptionSet<WebCore::TextExtraction::EventListenerCategory> coreCategories;
     if (categories & _WKTextExtractionEventListenerCategoryClick)
@@ -7337,7 +7337,7 @@ static OptionSet<WebCore::TextExtraction::EventListenerCategory> coreEventListen
 
 #if ENABLE(DATA_DETECTION)
 
-static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTextExtractionDataDetectorTypes types)
+static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTextExtractionDataDetectorTypes types)
 {
     OptionSet<WebCore::DataDetectorType> coreTypes;
     if (types & _WKTextExtractionDataDetectorMoney)

@@ -61,13 +61,13 @@ public:
 
     BrowsingContextGroup* browsingContextGroup() const { return m_browsingContextGroup.get(); }
 
-    Ref<FrameState> navigatedFrameState() const;
-    Ref<FrameState> mainFrameState() const;
+    const FrameState& mainFrameState() const;
+    Ref<FrameState> copyMainFrameStateWithChildren() const;
 
     const String& NODELETE originalURL() const LIFETIME_BOUND;
     const String& NODELETE url() const LIFETIME_BOUND;
     const String& NODELETE title() const LIFETIME_BOUND;
-    bool wasCreatedByJSWithoutUserInteraction() const;
+    bool NODELETE wasCreatedByJSWithoutUserInteraction() const;
 
     const URL& resourceDirectoryURL() const LIFETIME_BOUND { return m_resourceDirectoryURL; }
     void setResourceDirectoryURL(URL&& url) { m_resourceDirectoryURL = WTF::move(url); }
@@ -90,7 +90,7 @@ public:
 
     std::optional<WebCore::FrameIdentifier> navigatedFrameID() const { return m_navigatedFrameID; }
 
-    WebBackForwardListFrameItem& navigatedFrameItem() const;
+    WebBackForwardListFrameItem& NODELETE navigatedFrameItem() const;
 
     // rdar://168057355
     WebBackForwardListFrameItem* WTF_NONNULL mainFrameItemPtrForSwift() const SWIFT_NAME(mainFrameItem()) { return &mainFrameItem(); }

@@ -120,7 +120,7 @@ private:
 
 struct DeserializedAction : public Action {
     static DeserializedAction deserialize(std::span<const uint8_t>, uint32_t location);
-    static size_t serializedLength(std::span<const uint8_t>, uint32_t location);
+    static size_t NODELETE serializedLength(std::span<const uint8_t>, uint32_t location);
 
     uint32_t actionID() const { return m_actionID; }
 

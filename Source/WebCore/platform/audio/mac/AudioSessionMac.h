@@ -61,10 +61,10 @@ private:
     void handleBufferSizeChange() const;
 
     AudioDeviceID defaultDevice() const;
-    static const AudioObjectPropertyAddress& defaultOutputDeviceAddress();
-    static const AudioObjectPropertyAddress& nominalSampleRateAddress();
-    static const AudioObjectPropertyAddress& bufferSizeAddress();
-    static const AudioObjectPropertyAddress& muteAddress();
+    static const AudioObjectPropertyAddress& NODELETE defaultOutputDeviceAddress();
+    static const AudioObjectPropertyAddress& NODELETE nominalSampleRateAddress();
+    static const AudioObjectPropertyAddress& NODELETE bufferSizeAddress();
+    static const AudioObjectPropertyAddress& NODELETE muteAddress();
 
     bool hasSampleRateObserver() const { return !!m_handleSampleRateChangeBlock; };
     bool hasBufferSizeObserver() const { return !!m_handleBufferSizeChangeBlock; };
@@ -90,7 +90,7 @@ private:
     void addConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
     void removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
 
-    WTFLogChannel& logChannel() const;
+    WTFLogChannel& NODELETE logChannel() const;
     uint64_t logIdentifier() const;
 
     std::optional<bool> m_lastMutedState;

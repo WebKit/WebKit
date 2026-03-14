@@ -80,7 +80,7 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
     };
 }
 
-static constexpr AcceleratedEffectTransformBox toAcceleratedEffectTransformBox(TransformBox transformBox)
+static constexpr AcceleratedEffectTransformBox NODELETE toAcceleratedEffectTransformBox(TransformBox transformBox)
 {
     switch (transformBox) {
     case TransformBox::StrokeBox:   return AcceleratedEffectTransformBox::StrokeBox;
@@ -92,7 +92,7 @@ static constexpr AcceleratedEffectTransformBox toAcceleratedEffectTransformBox(T
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static constexpr TransformBox toTransformBox(AcceleratedEffectTransformBox transformBox)
+static constexpr TransformBox NODELETE toTransformBox(AcceleratedEffectTransformBox transformBox)
 {
     switch (transformBox) {
     case AcceleratedEffectTransformBox::StrokeBox:   return TransformBox::StrokeBox;

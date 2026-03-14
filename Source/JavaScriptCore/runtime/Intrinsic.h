@@ -62,6 +62,7 @@ namespace JSC {
     macro(ArrayKeysIntrinsic) \
     macro(ArrayEntriesIntrinsic) \
     macro(ArrayConstructorOfIntrinsic) \
+    macro(ArrayIsArrayIntrinsic) \
     macro(AsyncIteratorIntrinsic) \
     macro(BooleanConstructorIntrinsic) \
     macro(CharCodeAtIntrinsic) \

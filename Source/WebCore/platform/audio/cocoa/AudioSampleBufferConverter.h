@@ -76,13 +76,13 @@ public:
     CMSampleBufferRef getOutputSampleBuffer() const;
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
 
-    unsigned bitRate() const;
+    unsigned NODELETE bitRate() const;
     unsigned preSkip() const { return m_preSkip; }
 
 private:
     AudioSampleBufferConverter(const Options&);
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
-    UInt32 defaultOutputBitRate(const AudioStreamBasicDescription&) const;
+    UInt32 NODELETE defaultOutputBitRate(const AudioStreamBasicDescription&) const;
 
     static OSStatus audioConverterComplexInputDataProc(AudioConverterRef, UInt32*, AudioBufferList*, AudioStreamPacketDescription**, void*);
 
@@ -95,7 +95,7 @@ private:
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
     Ref<GenericPromise> flushInternal(bool isFinished);
 
-    bool isPCM() const;
+    bool NODELETE isPCM() const;
     void setTimeFromSample(CMSampleBufferRef);
 
     WorkQueue& queue() const { return m_serialDispatchQueue; }

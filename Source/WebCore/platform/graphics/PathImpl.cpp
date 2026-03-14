@@ -34,7 +34,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PathImpl);
 
 using PathImplObserversMap = HashMap<const PathImpl*, WeakHashSet<RenderingResourceObserver>>;
 static DataMutex<PathImplObserversMap>* gLockedPathImplObserversMap;
-static DataMutex<PathImplObserversMap>& lockedPathImplObserversMapSingleton()
+static DataMutex<PathImplObserversMap>& NODELETE lockedPathImplObserversMapSingleton()
 {
     if (!gLockedPathImplObserversMap)
         gLockedPathImplObserversMap = new DataMutex<PathImplObserversMap>;

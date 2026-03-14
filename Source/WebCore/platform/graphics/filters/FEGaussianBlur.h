@@ -36,13 +36,13 @@ public:
     bool operator==(const FEGaussianBlur&) const;
 
     float stdDeviationX() const { return m_stdX; }
-    bool setStdDeviationX(float);
+    bool NODELETE setStdDeviationX(float);
 
     float stdDeviationY() const { return m_stdY; }
-    bool setStdDeviationY(float);
+    bool NODELETE setStdDeviationY(float);
 
     EdgeModeType edgeMode() const { return m_edgeMode; }
-    bool setEdgeMode(EdgeModeType);
+    bool NODELETE setEdgeMode(EdgeModeType);
 
     static IntSize calculateKernelSize(const Filter&, FloatSize stdDeviation);
     static IntSize calculateUnscaledKernelSize(FloatSize stdDeviation);

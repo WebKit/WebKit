@@ -83,7 +83,7 @@ LinkLoader::LinkLoader(LinkLoaderClient& client)
 
 LinkLoader::~LinkLoader()
 {
-    if (CachedResourceHandle cachedLinkResource = m_cachedLinkResource)
+    if (RefPtr cachedLinkResource = m_cachedLinkResource)
         cachedLinkResource->removeClient(*this);
     if (RefPtr client = m_preloadResourceClient)
         client->clear();
@@ -111,7 +111,7 @@ void LinkLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
 {
     ASSERT_UNUSED(resource, m_cachedLinkResource.get() == &resource);
 
-    CachedResourceHandle cachedLinkResource = m_cachedLinkResource;
+    RefPtr cachedLinkResource = m_cachedLinkResource;
     triggerEvents(*cachedLinkResource);
 
     cachedLinkResource->removeClient(*this);
@@ -401,7 +401,9 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
     linkRequest.setIgnoreForRequestCount(true);
     linkRequest.setIsLinkPreload();
 
-    auto cachedLinkResource = protect(document.cachedResourceLoader())->preload(type.value(), WTF::move(linkRequest)).value_or(nullptr);
+    RefPtr<CachedResource> cachedLinkResource;
+    if (auto result = protect(document.cachedResourceLoader())->preload(type.value(), WTF::move(linkRequest)))
+        cachedLinkResource = WTF::move(result.value());
 
     if (cachedLinkResource && cachedLinkResource->type() != *type)
         return nullptr;
@@ -423,10 +425,9 @@ void LinkLoader::prefetchIfNeeded(const LinkLoadParameters& params, Document& do
     std::optional<ResourceLoadPriority> priority;
     CachedResource::Type type = CachedResource::Type::LinkPrefetch;
 
-    if (m_cachedLinkResource) {
-        m_cachedLinkResource->removeClient(*this);
-        m_cachedLinkResource = nullptr;
-    }
+    if (RefPtr resource = std::exchange(m_cachedLinkResource, nullptr))
+        resource->removeClient(*this);
+
     // FIXME: Add further prefetch restrictions/limitations:
     // - third-party iframes cannot trigger prefetches
     // - Number of prefetches of a given page is limited (to 1 maybe?)
@@ -440,8 +441,11 @@ void LinkLoader::prefetchIfNeeded(const LinkLoadParameters& params, Document& do
     options.cachingPolicy = CachingPolicy::DisallowCaching;
     options.referrerPolicy = params.referrerPolicy;
     options.nonce = params.nonce;
-    m_cachedLinkResource = protect(document.cachedResourceLoader())->requestLinkResource(type, CachedResourceRequest(ResourceRequest { document.completeURL(params.href.string()) }, options, priority)).value_or(nullptr);
-    if (CachedResourceHandle cachedLinkResource = m_cachedLinkResource)
+    if (auto result = protect(document.cachedResourceLoader())->requestLinkResource(type, CachedResourceRequest(ResourceRequest { document.completeURL(params.href.string()) }, options, priority)))
+        m_cachedLinkResource = WTF::move(result.value());
+    else
+        m_cachedLinkResource = nullptr;
+    if (RefPtr cachedLinkResource = m_cachedLinkResource)
         cachedLinkResource->addClient(*this);
 }
 

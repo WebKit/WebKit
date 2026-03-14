@@ -56,7 +56,7 @@ enum {
 class CDMFactoryClearKey final : public CDMFactory {
     WTF_MAKE_TZONE_ALLOCATED(CDMFactoryClearKey);
 public:
-    static CDMFactoryClearKey& singleton();
+    static CDMFactoryClearKey& NODELETE singleton();
 
     virtual ~CDMFactoryClearKey();
 
@@ -128,7 +128,7 @@ public:
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
     void storeRecordOfKeyUsage(const String&) final;
 private:
-    CDMInstanceClearKey* parentInstance() const;
+    CDMInstanceClearKey* NODELETE parentInstance() const;
 
     String m_sessionID;
     KeyStore m_keyStore;

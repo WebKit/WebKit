@@ -1,6 +1,13 @@
 
 FAIL Property grid-lanes-direction value 'row' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
 FAIL Property grid-lanes-direction value 'column' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
-FAIL Property grid-lanes-direction value 'row-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
-FAIL Property grid-lanes-direction value 'column-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'row track-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'row fill-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'row track-reverse fill-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'row fill-reverse track-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'column track-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'column fill-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'column track-reverse fill-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'column fill-reverse track-reverse' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes-direction value 'normal' assert_true: grid-lanes-direction doesn't seem to be supported in the computed style expected true got false
 

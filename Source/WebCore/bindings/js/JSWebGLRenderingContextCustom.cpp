@@ -35,13 +35,13 @@ namespace WebCore {
 using namespace JSC;
 
 template<typename Visitor>
-void JSWebGLRenderingContext::visitAdditionalChildren(Visitor& visitor)
+void JSWebGLRenderingContext::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped());
     wrapped().addMembersToOpaqueRoots(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWebGLRenderingContext);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSWebGLRenderingContext);
 
 } // namespace WebCore
 

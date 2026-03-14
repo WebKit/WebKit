@@ -191,7 +191,7 @@ public:
     void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&);
-    bool setCaptureAttributionString();
+    bool NODELETE setCaptureAttributionString();
     bool allowsAudioCapture() const { return m_allowsAudioCapture; }
     bool allowsVideoCapture() const { return m_allowsVideoCapture; }
     bool allowsDisplayCapture() const { return m_allowsDisplayCapture; }
@@ -247,7 +247,7 @@ public:
     using RemoteRenderingBackendMap = HashMap<RemoteRenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
     const RemoteRenderingBackendMap& remoteRenderingBackendMap() const LIFETIME_BOUND { return m_remoteRenderingBackendMap; }
 
-    RemoteRenderingBackend* remoteRenderingBackend(RemoteRenderingBackendIdentifier);
+    RemoteRenderingBackend* NODELETE remoteRenderingBackend(RemoteRenderingBackendIdentifier);
 
 #if HAVE(AUDIT_TOKEN)
     const HashMap<WebCore::PageIdentifier, CoreIPCAuditToken>& presentingApplicationAuditTokens() const LIFETIME_BOUND { return m_presentingApplicationAuditTokens; }

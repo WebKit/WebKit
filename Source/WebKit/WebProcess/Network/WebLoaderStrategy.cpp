@@ -149,9 +149,9 @@ void WebLoaderStrategy::loadResource(LocalFrame& frame, CachedResource& resource
         }
     }
 
-    SubresourceLoader::create(frame, resource, WTF::move(request), options, [this, protectedThis = Ref { *this }, referrerPolicy = options.referrerPolicy, completionHandler = WTF::move(completionHandler), resource = CachedResourceHandle<CachedResource>(&resource), frame = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) mutable {
+    SubresourceLoader::create(frame, resource, WTF::move(request), options, [this, protectedThis = Ref { *this }, referrerPolicy = options.referrerPolicy, completionHandler = WTF::move(completionHandler), resource = Ref { resource }, frame = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) mutable {
         if (loader)
-            scheduleLoad(*loader, resource.get(), referrerPolicy == ReferrerPolicy::NoReferrerWhenDowngrade);
+            scheduleLoad(*loader, resource.ptr(), referrerPolicy == ReferrerPolicy::NoReferrerWhenDowngrade);
         else
             RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 "] WebLoaderStrategy::loadResource: Unable to create SubresourceLoader", this, frame->pageID() ? frame->pageID()->toUInt64() : 0, frame->frameID().toUInt64());
         completionHandler(WTF::move(loader));
@@ -167,7 +167,7 @@ void WebLoaderStrategy::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlug
     });
 }
 
-static Seconds maximumBufferingTime(CachedResource* resource)
+static Seconds NODELETE maximumBufferingTime(CachedResource* resource)
 {
     if (!resource)
         return 0_s;
@@ -294,7 +294,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 
     if (InspectorInstrumentationWebKit::shouldInterceptRequest(resourceLoader)) {
-        InspectorInstrumentationWebKit::interceptRequest(resourceLoader, [this, protectedThis = Ref { *this }, protectedResourceLoader = Ref { resourceLoader }, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, resource](const ResourceRequest& request) {
+        InspectorInstrumentationWebKit::interceptRequest(resourceLoader, [this, protectedThis = Ref { *this }, protectedResourceLoader = Ref { resourceLoader }, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, resource = RefPtr { resource }](const ResourceRequest& request) {
             auto& resourceLoader = protectedResourceLoader.get();
             WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: intercepted URL will be scheduled with the NetworkProcess");
             scheduleLoadFromNetworkProcess(resourceLoader, request, *trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
@@ -618,7 +618,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     if (RefPtr frameLoader = resourceLoader.frameLoader())
         loadParameters.requiredCookiesVersion = frameLoader->requiredCookiesVersion();
 
-    if (CachedResourceHandle handle = resourceLoader.cachedResource())
+    if (RefPtr handle = resourceLoader.cachedResource())
         loadParameters.isInitiatorPrefetch = handle->type() == CachedResource::Type::LinkPrefetch;
 
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;

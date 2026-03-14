@@ -144,7 +144,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderElement* rendererArg,
     ASSERT(m_mapping.isEmpty() || m_mapping[0].m_renderer->isRenderView());
 }
 
-static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& renderer, const RenderLayerModelObject& ancestor)
+static bool NODELETE canMapBetweenRenderersViaLayers(const RenderLayerModelObject& renderer, const RenderLayerModelObject& ancestor)
 {
     for (const RenderElement* current = &renderer; ; current = current->parent()) {
         const RenderStyle& style = current->style();

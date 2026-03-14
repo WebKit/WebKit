@@ -83,7 +83,7 @@ public:
 
     CSSSelector::PseudoClass pseudoClass() const { return m_selector.pseudoClass(); }
 
-    bool matchesPseudoElement() const;
+    bool NODELETE matchesPseudoElement() const;
 
     bool isHostPseudoClass() const { return m_selector.isHostPseudoClass(); }
 

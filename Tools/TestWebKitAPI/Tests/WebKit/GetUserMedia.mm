@@ -551,7 +551,7 @@ function captureAndTransferAudioTrack()
 {
     navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
         const track = stream.getAudioTracks()[0];
-        self.opener.postMessage({ state : "PASS", track }, [track]);
+        self.opener.postMessage({ state : "PASS", track }, "*", [track]);
     });
 }
 
@@ -559,7 +559,7 @@ function captureAndTransferVideoTrack()
 {
     navigator.mediaDevices.getUserMedia({video:true}).then(stream => {
         const track = stream.getVideoTracks()[0];
-        self.opener.postMessage({ state : "PASS", track }, [track]);
+        self.opener.postMessage({ state : "PASS", track }, "*", [track]);
     });
 }
 
@@ -1963,7 +1963,12 @@ TEST(WebKit2, OrientationNotAffectedByCSSOrientation)
 
 #endif
 
+// FIXME when webkit.org/b/309014 is resolved.
+#if PLATFORM(MAC)
+TEST(GetUserMedia, DISABLED_ClearRemoteVideoFrameObjectHeapPixelConformerUnderMemoryPressure)
+#else
 TEST(GetUserMedia, ClearRemoteVideoFrameObjectHeapPixelConformerUnderMemoryPressure)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureAudioInGPUProcessEnabled"));

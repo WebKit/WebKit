@@ -49,7 +49,7 @@ public:
 
     GCGLenum drawingBufferTextureTarget();
     std::tuple<GCGLenum, GCGLenum> drawingBufferTextureBindingPoint();
-    static GCGLint EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
+    static GCGLint NODELETE EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
 
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLANGLE calls done in the thread.
@@ -351,10 +351,10 @@ public:
     // Returns columns, rows of executed read on success.
     std::optional<IntSize> readPixelsWithStatus(IntRect, GCGLenum format, GCGLenum type, GCGLboolean packReverseRowOrder, std::span<uint8_t> data);
 
-    void addError(GCGLErrorCode);
+    void NODELETE addError(GCGLErrorCode);
 
-    EnumSet<GCGLExtension> knownActiveExtensions() const;
-    EnumSet<GCGLExtension> requestableExtensions() const;
+    EnumSet<GCGLExtension> NODELETE knownActiveExtensions() const;
+    EnumSet<GCGLExtension> NODELETE requestableExtensions() const;
 
 protected:
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
@@ -410,9 +410,9 @@ protected:
     bool isExtensionEnabledImpl(ASCIILiteral) const;
 
     // Only for non-WebGL 2.0 contexts.
-    GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
+    GCGLenum NODELETE adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder);
-    bool validateClearBufferv(GCGLenum buffer, size_t valuesSize);
+    bool NODELETE validateClearBufferv(GCGLenum buffer, size_t valuesSize);
     void prepareForDrawingBufferWriteIfBound();
     virtual void prepareForDrawingBufferWrite();
 

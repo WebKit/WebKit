@@ -38,6 +38,7 @@ fast/events/ios/single-tap-verify-user-gesture.html [ Skip ]
 fast/events/ios/ipad [ Skip ]
 fast/forms/ios [ Pass ]
 fast/forms/ios/ipad [ Skip ]
+http/tests/site-isolation/select-in-cross-origin-iframe.html [ Pass ]
 fast/forms/switch [ Pass ]
 fast/snapshot [ Skip ]
 
@@ -3116,6 +3117,7 @@ webkit.org/b/181838 js/slow-stress/Int32Array-alloc-huge-long-lived.html [ Slow 
 webkit.org/b/182592 webgl/webgl-texture-image-buffer-reuse.html [ Skip ]
 
 webkit.org/b/183219 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Skip ]
+editing/pasteboard/paste-image-as-blob-url.html [ Skip ]
 
 [ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.any.html [ Slow ]
 
@@ -3421,7 +3423,7 @@ webkit.org/b/212227 imported/w3c/web-platform-tests/css/css-grid/alignment/self-
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/alignment-in-subgridded-axes-001.html [ Skip ]
-webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-006.html
+webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-006.html
 
 
 fast/text/text-styles/-apple-system [ Pass ]
@@ -7769,9 +7771,9 @@ webkit.org/b/283993 imported/w3c/web-platform-tests/css/css-contain/content-visi
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-and-scroll.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/284595 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-rows-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/track-sizing/auto-repeat/row-auto-repeat-009.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-rows-004-mix2.html [ ImageOnlyFailure ]
+webkit.org/b/284595 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/intrinsic-sizing/grid-lanes-intrinsic-sizing-rows-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-009.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/intrinsic-sizing/grid-lanes-intrinsic-sizing-rows-004-mix2.html [ ImageOnlyFailure ]
 
 # webkit.org/b/284096 (REGRESSION (286687@main): [ iOS ] 2 imported scroll-animations tests are consistently failing.)
 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-responsiveness-from-endpoint.html [ Pass Failure ]
@@ -8277,8 +8279,6 @@ webkit.org/b/299567 editing/text-iterator/hidden-textarea-selection-quirk.html [
 
 webkit.org/b/299501 http/tests/site-isolation/focus-tab-navigation-activeElement.html [ Pass Failure ]
 
-webkit.org/b/300137 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Pass Failure ]
-
 webkit.org/b/300946 http/tests/site-isolation/key-events.html [ Pass Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=301131 [ iOS 26 ] 6x tests (layout-tests) are constant text failures 
@@ -8434,6 +8434,8 @@ webkit.org/b/304427 fast/html/HTMLPluginElement-renderer-destroyed-crash.html [ 
 
 webkit.org/b/304851 imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Failure ]
 
+webkit.org/b/309917 imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html [ ImageOnlyFailure Pass ]
+
 webkit.org/b/304995 [ Release ] imported/w3c/web-platform-tests/largest-contentful-paint/video-poster.html [ Pass Failure ]
 
 webkit.org/b/305404 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-auto-001.html [ Pass ImageOnlyFailure ]
@@ -8447,7 +8449,6 @@ webkit.org/b/305605 media/volume-sleep-disable.html [ Failure ]
 imported/w3c/web-platform-tests/uievents/mouse/layer-coords-transform.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_on_image_map.html [ Skip ]
 
-webkit.org/b/306360 http/tests/download/sandboxed-iframe-download-not-allowed.html [ Pass Failure ]
 
 webkit.org/b/306570 http/tests/webcodecs/video-decoder-callbacks-do-not-leak.html [ Pass Failure ]
 
@@ -8493,8 +8494,6 @@ webkit.org/b/309173 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/309019 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html?include=root-scrollBy-auto [ Pass Failure ]
 
 webkit.org/b/308658 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/308667 webanimations/threaded-animations/scroll-timeline-root-scroller.html [ Pass Failure ]
 
 webkit.org/b/308849 css3/filters/effect-drop-shadow.html [ Skip ]
 

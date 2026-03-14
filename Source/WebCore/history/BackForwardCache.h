@@ -75,7 +75,7 @@ public:
     void markPagesForCaptionPreferencesChanged();
 #endif
 
-    bool isInBackForwardCache(BackForwardFrameItemIdentifier) const;
+    bool NODELETE isInBackForwardCache(BackForwardFrameItemIdentifier) const;
     bool hasCachedPageExpired(BackForwardFrameItemIdentifier) const;
 
 private:

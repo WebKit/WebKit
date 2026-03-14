@@ -78,7 +78,7 @@
 @end
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static RetainPtr<WKProcessPool>& sharedProcessPool()
+static RetainPtr<WKProcessPool>& NODELETE sharedProcessPool()
 {
     static NeverDestroyed<RetainPtr<WKProcessPool>> sharedProcessPool;
     return sharedProcessPool;

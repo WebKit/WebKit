@@ -145,7 +145,7 @@ public:
     float opacity() const override;
     void setOpacity(float) override;
     void setFilters(const FilterOperations&) override;
-    WEBCORE_EXPORT static bool filtersCanBeComposited(const FilterOperations&);
+    WEBCORE_EXPORT static bool NODELETE filtersCanBeComposited(const FilterOperations&);
     void copyFiltersFrom(const PlatformCALayer&) override;
 
     void setBlendMode(BlendMode) override;
@@ -226,7 +226,7 @@ private:
 
     Type type() const final { return Type::Cocoa; }
 
-    bool requiresCustomAppearanceUpdateOnBoundsChange() const;
+    bool NODELETE requiresCustomAppearanceUpdateOnBoundsChange() const;
 
     void updateContentsFormat();
 

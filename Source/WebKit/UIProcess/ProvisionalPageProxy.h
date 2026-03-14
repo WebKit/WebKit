@@ -202,7 +202,7 @@ private:
 #endif
 
     void initializeWebPage(RefPtr<API::WebsitePolicies>&&);
-    bool validateInput(WebCore::FrameIdentifier, const std::optional<WebCore::NavigationIdentifier>& = std::nullopt);
+    bool NODELETE validateInput(WebCore::FrameIdentifier, const std::optional<WebCore::NavigationIdentifier>& = std::nullopt);
 
     WeakPtr<WebPageProxy> m_page;
     WebCore::PageIdentifier m_webPageID;

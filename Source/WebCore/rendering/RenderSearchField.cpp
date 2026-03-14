@@ -123,7 +123,7 @@ void RenderSearchField::showPopup()
     FloatPoint absTopLeft = localToAbsolute(FloatPoint(), UseTransforms);
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
-    protect(protect(m_searchPopup)->popupMenu())->show(absBounds, view().frameView(), -1);
+    protect(protect(m_searchPopup)->popupMenu())->show(absBounds, protect(view().frameView()), -1);
 }
 
 void RenderSearchField::hidePopup()

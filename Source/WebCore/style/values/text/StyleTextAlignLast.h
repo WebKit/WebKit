@@ -45,7 +45,7 @@ enum class TextAlignLast : uint8_t {
 // MARK: - Conversion
 
 // NOTE: Custom conversion is required to resolve `match-parent`.
-template<> struct CSSValueConversion<TextAlignLast> { auto operator()(BuilderState&, const CSSValue&) -> TextAlignLast; };
+template<> struct CSSValueConversion<TextAlignLast> { TextAlignLast NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

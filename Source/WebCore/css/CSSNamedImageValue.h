@@ -44,7 +44,7 @@ public:
     ~CSSNamedImageValue();
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSNamedImageValue&) const;
+    bool NODELETE equals(const CSSNamedImageValue&) const;
 
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 

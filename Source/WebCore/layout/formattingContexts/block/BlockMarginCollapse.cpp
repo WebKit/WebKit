@@ -63,12 +63,12 @@ static bool hasPadding(const Style::PaddingEdge& paddingValue)
     );
 }
 
-static bool hasBorderBefore(const ElementBox& layoutBox)
+static bool NODELETE hasBorderBefore(const ElementBox& layoutBox)
 {
     return hasBorder(layoutBox.style().borderBefore());
 }
 
-static bool hasBorderAfter(const ElementBox& layoutBox)
+static bool NODELETE hasBorderAfter(const ElementBox& layoutBox)
 {
     return hasBorder(layoutBox.style().borderAfter());
 }

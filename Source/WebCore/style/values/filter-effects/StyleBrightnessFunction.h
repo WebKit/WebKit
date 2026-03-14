@@ -46,7 +46,7 @@ struct Brightness {
 
     Parameter value;
 
-    static Brightness passthroughForInterpolation();
+    static Brightness NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }

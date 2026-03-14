@@ -44,7 +44,7 @@ class GamepadData;
 
 class WebGamepadProvider final : public WebCore::GamepadProvider {
 public:
-    static WebGamepadProvider& singleton();
+    static WebGamepadProvider& NODELETE singleton();
 
     void gamepadConnected(const GamepadData&, WebCore::EventMakesGamepadsVisible);
     void gamepadDisconnected(unsigned index);

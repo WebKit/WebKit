@@ -351,7 +351,7 @@ void HTMLLinkElement::process()
         if (!PAL::TextEncoding { charset }.isValid())
             charset = document->charset();
 
-        if (CachedResourceHandle cachedSheet = std::exchange(m_cachedSheet, nullptr)) {
+        if (RefPtr cachedSheet = std::exchange(m_cachedSheet, nullptr)) {
             removePendingSheet();
             cachedSheet->removeClient(*this);
         }
@@ -398,9 +398,11 @@ void HTMLLinkElement::process()
         request.setInitiator(*this);
 
         ASSERT_WITH_SECURITY_IMPLICATION(!m_cachedSheet);
-        m_cachedSheet = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)).value_or(nullptr);
-
-        if (CachedResourceHandle cachedSheet = m_cachedSheet)
+        if (auto result = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)))
+            m_cachedSheet = WTF::move(result.value());
+        else
+            m_cachedSheet = nullptr;
+        if (RefPtr cachedSheet = m_cachedSheet)
             cachedSheet->addClient(*this);
         else {
             // The request may have been denied if (for example) the stylesheet is local and the document is remote.

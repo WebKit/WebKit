@@ -48,7 +48,7 @@ LoadableNonModuleScriptBase::LoadableNonModuleScriptBase(const AtomString& nonce
 
 LoadableNonModuleScriptBase::~LoadableNonModuleScriptBase()
 {
-    if (CachedResourceHandle cachedScript = m_cachedScript)
+    if (RefPtr cachedScript = m_cachedScript)
         cachedScript->removeClient(*this);
 }
 
@@ -82,7 +82,7 @@ std::optional<LoadableScript::Error> LoadableNonModuleScriptBase::takeError()
 bool LoadableNonModuleScriptBase::wasCanceled() const
 {
     ASSERT(m_cachedScript);
-    return m_cachedScript->wasCanceled();
+    return protect(m_cachedScript)->wasCanceled();
 }
 
 void LoadableNonModuleScriptBase::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
@@ -101,7 +101,7 @@ void LoadableNonModuleScriptBase::notifyFinished(CachedResource& resource, const
         };
     }
 
-    CachedResourceHandle cachedScript = m_cachedScript;
+    RefPtr cachedScript = m_cachedScript;
     if (!m_error && !isScriptAllowedByNosniff(cachedScript->response())) {
         m_error = Error {
             ErrorType::Nosniff,
@@ -149,11 +149,10 @@ bool LoadableNonModuleScriptBase::load(Document& document, const URL& sourceURL)
     };
 
     m_weakDocument = document;
-    CachedResourceHandle cachedScript = requestScriptWithCache(document, sourceURL, FetchOptionsDestination::Script, crossOriginMode(), String { integrity() }, priority(), { });
-    m_cachedScript = cachedScript;
-    if (!cachedScript)
+    m_cachedScript = requestScriptWithCache(document, sourceURL, FetchOptionsDestination::Script, crossOriginMode(), String { integrity() }, priority(), { });
+    if (!m_cachedScript)
         return false;
-    cachedScript->addClient(*this);
+    protect(m_cachedScript)->addClient(*this);
     return true;
 }
 
@@ -170,7 +169,7 @@ LoadableClassicScript::LoadableClassicScript(const AtomString& nonce, const Atom
 void LoadableClassicScript::execute(ScriptElement& scriptElement)
 {
     ASSERT(!m_error);
-    scriptElement.executeClassicScript(ScriptSourceCode(protect(cachedScript()).get(), JSC::SourceProviderSourceType::Program, *this));
+    scriptElement.executeClassicScript(ScriptSourceCode(protect(cachedScript()).ptr(), JSC::SourceProviderSourceType::Program, *this));
 }
 
 }

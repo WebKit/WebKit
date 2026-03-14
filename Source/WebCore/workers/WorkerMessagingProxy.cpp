@@ -72,7 +72,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerMessagingProxy);
 // vice versa.
 class WorkerUserGestureForwarder : public ThreadSafeRefCounted<WorkerUserGestureForwarder, WTF::DestructionThread::Main> {
 public:
-    static Ref<WorkerUserGestureForwarder> create(RefPtr<UserGestureToken>&& token) { return *new WorkerUserGestureForwarder(WTF::move(token)); }
+    static Ref<WorkerUserGestureForwarder> NODELETE create(RefPtr<UserGestureToken>&& token) { return *new WorkerUserGestureForwarder(WTF::move(token)); }
 
     ~WorkerUserGestureForwarder()
     {

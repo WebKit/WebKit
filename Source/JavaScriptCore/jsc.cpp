@@ -4413,7 +4413,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
             globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
             globalObject->setInspectable(options.m_inspectable);
 
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && CPU(ARM64)
             if (Options::enableWasmDebugger()) [[unlikely]]
                 Wasm::DebugServer::singleton().start();
 #endif

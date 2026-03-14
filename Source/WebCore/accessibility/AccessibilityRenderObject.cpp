@@ -1170,7 +1170,7 @@ AccessibilityObject* AccessibilityRenderObject::containingTree() const
     });
 }
 
-static AccessibilityObjectInclusion objectInclusionFromAltText(const String& altText)
+static AccessibilityObjectInclusion NODELETE objectInclusionFromAltText(const String& altText)
 {
     // Don't ignore an image that has alt text.
     if (!altText.containsOnly<isASCIIWhitespace>())
@@ -1850,7 +1850,7 @@ int AccessibilityRenderObject::insertionPointLineNumber() const
     return lineForPosition(makeDeprecatedLegacyPosition(selectedTextRange->start));
 }
 
-static void setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType type)
+static void NODELETE setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType type)
 {
     if (!cache)
         return;
@@ -1859,7 +1859,7 @@ static void setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType t
     cache->setIsSynchronizingSelection(true);
 }
 
-static void clearTextSelectionIntent(AXObjectCache* cache)
+static void NODELETE clearTextSelectionIntent(AXObjectCache* cache)
 {
     if (!cache)
         return;
@@ -2728,7 +2728,7 @@ AccessibilitySVGObject* AccessibilityRenderObject::remoteSVGRootElement(CreateIf
     if (!renderImage)
         return nullptr;
 
-    auto* cachedImage = renderImage->cachedImage();
+    RefPtr cachedImage = renderImage->cachedImage();
     if (!cachedImage)
         return nullptr;
 

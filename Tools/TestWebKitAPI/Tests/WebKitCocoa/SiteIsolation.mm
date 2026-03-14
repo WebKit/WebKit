@@ -1014,6 +1014,84 @@ TEST(SiteIsolation, InitialNavigationRedirect)
     [navigationDelegate waitForDidFinishNavigation];
 }
 
+TEST(SiteIsolation, ReuseUncommittedProcessForInitialNavigation)
+{
+    HTTPServer server({
+        { "/example"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView _launchInitialProcessIfNecessary];
+    while (![webView _webProcessIdentifier])
+        Util::spinRunLoop();
+    auto pidBefore = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_EQ(pidBefore, [webView _webProcessIdentifier]);
+}
+
+TEST(SiteIsolation, ReuseUncommittedProcessForSameSiteRedirect)
+{
+    HTTPServer server({
+        { "/redirect"_s, { 302, { { "Location"_s, "https://www.example.com/destination"_s } }, "redirecting..."_s } },
+        { "/destination"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView _launchInitialProcessIfNecessary];
+    while (![webView _webProcessIdentifier])
+        Util::spinRunLoop();
+    auto pidBefore = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/redirect"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_EQ(pidBefore, [webView _webProcessIdentifier]);
+}
+
+TEST(SiteIsolation, ReuseUncommittedProcessForCrossSiteRedirect)
+{
+    HTTPServer server({
+        { "/redirect"_s, { 302, { { "Location"_s, "https://webkit.org/destination"_s } }, "redirecting..."_s } },
+        { "/destination"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView _launchInitialProcessIfNecessary];
+    while (![webView _webProcessIdentifier])
+        Util::spinRunLoop();
+    auto pidBefore = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/redirect"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_EQ(pidBefore, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(webView.get().URL.absoluteString, @"https://webkit.org/destination");
+}
+
+TEST(SiteIsolation, ReuseUncommittedProcessForMultipleRedirects)
+{
+    HTTPServer server({
+        { "/redirect1"_s, { 302, { { "Location"_s, "https://webkit.org/redirect2"_s } }, "redirecting..."_s } },
+        { "/redirect2"_s, { 302, { { "Location"_s, "https://apple.com/destination"_s } }, "redirecting..."_s } },
+        { "/destination"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView _launchInitialProcessIfNecessary];
+    while (![webView _webProcessIdentifier])
+        Util::spinRunLoop();
+    auto pidBefore = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/redirect1"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_EQ(pidBefore, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(webView.get().URL.absoluteString, @"https://apple.com/destination");
+}
+
 void pollUntilOpenedWindowIsClosed(RetainPtr<WKWebView> webView, bool& finished)
 {
     [webView evaluateJavaScript:@"openedWindow.closed" completionHandler:makeBlockPtr([webView, &finished](id result, NSError *error) {

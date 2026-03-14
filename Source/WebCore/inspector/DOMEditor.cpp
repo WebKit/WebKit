@@ -208,7 +208,7 @@ public:
     {
     }
 
-    Node* newNode() const
+    Node* NODELETE newNode() const
     {
         return m_newNode.get();
     }

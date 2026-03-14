@@ -50,25 +50,6 @@
 
 namespace WTR {
 
-static void runPendingEventsCallback(void* userData)
-{
-    *static_cast<bool*>(userData) = true;
-}
-
-static void waitForPendingKeyEvents(TestController* testController)
-{
-    bool done = false;
-    WKPageDoAfterProcessingAllPendingKeyEvents(testController->mainWebView()->page(), &done, runPendingEventsCallback);
-    testController->runUntil(done, 100_ms);
-}
-
-static void waitForPendingMouseEvents(TestController* testController)
-{
-    bool done = false;
-    WKPageDoAfterProcessingAllPendingMouseEvents(testController->mainWebView()->page(), &done, runPendingEventsCallback);
-    testController->runUntil(done, 100_ms);
-}
-
 // WebCore and layout tests assume this value
 static const float pixelsPerScrollTick = 40;
 
@@ -272,10 +253,8 @@ static inline void processKeyEvent(WebKitWebViewBase* webViewBase, WKStringRef k
 void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers, unsigned location, CompletionHandler<void()>&& completionHandler)
 {
     processKeyEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()), keyRef, wkModifiers, location, KeyEventType::Insert);
-    if (completionHandler) {
-        waitForPendingKeyEvents(m_testController);
-        completionHandler();
-    }
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingKeyEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers wkModifiers, unsigned keyLocation)
@@ -315,10 +294,8 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, 
 
     webkitWebViewBaseSynthesizeMouseEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()),
         MouseEventType::Press, gdkButton, m_mouseButtonsCurrentlyDown, m_position.x, m_position.y, webkitModifiersToGDKModifiers(wkModifiers), m_clickCount, toWTFString(pointerType));
-    if (completionHandler) {
-        waitForPendingMouseEvents(m_testController);
-        completionHandler();
-    }
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingMouseEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
@@ -331,10 +308,8 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WK
 
     m_clickPosition = m_position;
     m_clickTime = m_time;
-    if (completionHandler) {
-        waitForPendingMouseEvents(m_testController);
-        completionHandler();
-    }
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingMouseEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
@@ -344,10 +319,8 @@ void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType, 
 
     webkitWebViewBaseSynthesizeMouseEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()),
         MouseEventType::Motion, 0, m_mouseButtonsCurrentlyDown, m_position.x, m_position.y, 0, 0, toWTFString(pointerType));
-    if (completionHandler) {
-        waitForPendingMouseEvents(m_testController);
-        completionHandler();
-    }
+    if (completionHandler)
+        m_testController->doAfterProcessingAllPendingMouseEvents(WTF::move(completionHandler));
 }
 
 void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)

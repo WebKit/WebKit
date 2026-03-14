@@ -24,8 +24,8 @@
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
 import os
-@_weakLinked internal import RealityKit
-internal import WebKit_Internal
+@_weakLinked import RealityKit
+import WebKit_Internal
 
 extension WKSeparatedImageView {
     func startImage3DGeneration() -> Task<Void, any Error> {

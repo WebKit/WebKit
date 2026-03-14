@@ -30,6 +30,7 @@
 #include "CSSCounterStyleRegistry.h"
 #include <cmath>
 #include <wtf/Assertions.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -411,7 +412,8 @@ String CSSCounterStyle::text(int value, WritingMode writingMode)
     auto result = initialRepresentation(value, writingMode);
     if (result.isNull())
         return fallbackText(value, writingMode);
-    applyPadSymbols(result, value);
+    if (!applyPadSymbols(result, value))
+        return fallbackText(value, writingMode);
     if (shouldApplyNegativeSymbols(value))
         applyNegativeSymbols(result);
 
@@ -429,20 +431,34 @@ void CSSCounterStyle::applyNegativeSymbols(String& text) const
     text = negative().m_suffix.text.isEmpty() ? makeString(negative().m_prefix.text, text) : makeString(negative().m_prefix.text, text, negative().m_suffix.text);
 }
 
-void CSSCounterStyle::applyPadSymbols(String& text, int value) const
+bool CSSCounterStyle::applyPadSymbols(String& text, int value) const
 {
-    // FIXME: should we cap pad minimum length?
+    // We limit the max UTF-16 padding length to 150 to match Firefox. This complies with CSS
+    // Counter Styles Level 3, which requires us to support counter representations of at least 60
+    // code points before using the fallback representation.
+    static constexpr unsigned maxPadLength = 150;
+
     if (pad().m_padMinimumLength <= 0)
-        return;
+        return true;
 
     int numberOfSymbolsToAdd = static_cast<int>(pad().m_padMinimumLength - WTF::numGraphemeClusters(text));
     if (shouldApplyNegativeSymbols(value))
         numberOfSymbolsToAdd -= static_cast<int>(WTF::numGraphemeClusters(negative().m_prefix.text) + WTF::numGraphemeClusters(negative().m_suffix.text));
 
-    String padText;
+    if (numberOfSymbolsToAdd <= 0)
+        return true;
+
+    auto totalPadLength = checkedProduct<unsigned>(numberOfSymbolsToAdd, pad().m_padSymbol.text.length());
+    if (totalPadLength.hasOverflowed() || totalPadLength.value() > maxPadLength)
+        return false;
+
+    StringBuilder result;
+    result.reserveCapacity(totalPadLength + text.length());
     for (int i = 0; i < numberOfSymbolsToAdd; ++i)
-        padText = makeString(padText, pad().m_padSymbol.text);
-    text = makeString(padText, text);
+        result.append(pad().m_padSymbol.text);
+    result.append(text);
+    text = result.toString();
+    return true;
 }
 
 bool CSSCounterStyle::isInRange(int value) const

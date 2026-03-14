@@ -130,7 +130,7 @@ struct GridPosition {
     WEBCORE_EXPORT static void NODELETE setMaxPositionForTesting(unsigned);
 
 private:
-    friend void add(Hasher&, const GridPosition&);
+    friend void NODELETE add(Hasher&, const GridPosition&);
 
     enum class GridPositionType : uint8_t {
         Auto,

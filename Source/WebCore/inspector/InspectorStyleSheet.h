@@ -162,7 +162,7 @@ public:
     using StyleDeclarationOrCSSRule = Variant<CSSStyleDeclaration*, CSSRule*>;
 
     static Ref<InspectorStyleSheet> create(InspectorPageAgent*, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
-    static String styleSheetURL(CSSStyleSheet* pageStyleSheet);
+    static String NODELETE styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
     virtual ~InspectorStyleSheet();
 

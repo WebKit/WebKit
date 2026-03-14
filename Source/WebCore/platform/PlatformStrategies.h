@@ -71,8 +71,8 @@ private:
 #endif
 };
 
-bool hasPlatformStrategies();
-WEBCORE_EXPORT PlatformStrategies* platformStrategies();
-WEBCORE_EXPORT void setPlatformStrategies(PlatformStrategies*);
+bool NODELETE hasPlatformStrategies();
+WEBCORE_EXPORT PlatformStrategies* NODELETE platformStrategies();
+WEBCORE_EXPORT void NODELETE setPlatformStrategies(PlatformStrategies*);
     
 } // namespace WebCore

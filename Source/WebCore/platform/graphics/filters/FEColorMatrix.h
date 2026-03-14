@@ -47,13 +47,13 @@ public:
     bool operator==(const FEColorMatrix&) const;
 
     ColorMatrixType type() const { return m_type; }
-    bool setType(ColorMatrixType);
+    bool NODELETE setType(ColorMatrixType);
 
     const Vector<float>& values() const LIFETIME_BOUND { return m_values; }
     bool setValues(const Vector<float>&);
 
-    static void calculateSaturateComponents(std::span<float, 9> components, float value);
-    static void calculateHueRotateComponents(std::span<float, 9> components, float value);
+    static void NODELETE calculateSaturateComponents(std::span<float, 9> components, float value);
+    static void NODELETE calculateHueRotateComponents(std::span<float, 9> components, float value);
     static Vector<float> normalizedFloats(const Vector<float>& values);
 
 private:

@@ -71,22 +71,22 @@ using ScrollMarginBox = MinimallySerializingSpaceSeparatedRectEdges<ScrollMargin
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<ScrollMarginEdge> { auto operator()(BuilderState&, const CSSValue&) -> ScrollMarginEdge; };
+template<> struct CSSValueConversion<ScrollMarginEdge> { ScrollMarginEdge operator()(BuilderState&, const CSSValue&); };
 
 // MARK: - Evaluation
 
 template<> struct Evaluation<ScrollMarginEdge, LayoutUnit> {
-    auto operator()(const ScrollMarginEdge&, LayoutUnit referenceLength, ZoomFactor) -> LayoutUnit;
-    auto operator()(const ScrollMarginEdge&, ZoomFactor) -> LayoutUnit;
+    LayoutUnit NODELETE operator()(const ScrollMarginEdge&, LayoutUnit referenceLength, ZoomFactor);
+    LayoutUnit NODELETE operator()(const ScrollMarginEdge&, ZoomFactor);
 };
 template<> struct Evaluation<ScrollMarginEdge, float> {
-    auto operator()(const ScrollMarginEdge&, float referenceLength, ZoomFactor) -> float;
-    auto operator()(const ScrollMarginEdge&, ZoomFactor) -> float;
+    float NODELETE operator()(const ScrollMarginEdge&, float referenceLength, ZoomFactor);
+    float NODELETE operator()(const ScrollMarginEdge&, ZoomFactor);
 };
 
 // MARK: - Extent
 
-LayoutBoxExtent extentForRect(const ScrollMarginBox&, const LayoutRect&, ZoomFactor);
+LayoutBoxExtent NODELETE extentForRect(const ScrollMarginBox&, const LayoutRect&, ZoomFactor);
 
 } // namespace Style
 } // namespace WebCore

@@ -39,7 +39,7 @@ class CoreAudioCaptureDevice;
 class CoreAudioCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<CoreAudioCaptureDeviceManager>;
 public:
-    WEBCORE_EXPORT static CoreAudioCaptureDeviceManager& singleton();
+    WEBCORE_EXPORT static CoreAudioCaptureDeviceManager& NODELETE singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
     std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);

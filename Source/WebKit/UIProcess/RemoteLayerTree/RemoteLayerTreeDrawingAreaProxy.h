@@ -124,8 +124,8 @@ public:
     void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
 
-    TransactionID nextMainFrameLayerTreeTransactionID() const;
-    TransactionID lastCommittedMainFrameLayerTreeTransactionID() const;
+    TransactionID NODELETE nextMainFrameLayerTreeTransactionID() const;
+    TransactionID NODELETE lastCommittedMainFrameLayerTreeTransactionID() const;
 
     virtual void didRefreshDisplay();
     virtual void setDisplayLinkWantsFullSpeedUpdates(bool) { }
@@ -165,7 +165,7 @@ protected:
     bool shouldCoalesceVisualEditorStateUpdates() const override { return true; }
 
     ProcessState& processStateForConnection(IPC::Connection&);
-    const ProcessState& processStateForIdentifier(WebCore::ProcessIdentifier) const;
+    const ProcessState& NODELETE processStateForIdentifier(WebCore::ProcessIdentifier) const;
     IPC::Connection* connectionForIdentifier(WebCore::ProcessIdentifier);
     void forEachProcessState(NOESCAPE Function<void(ProcessState&, WebProcessProxy&)>&&);
 

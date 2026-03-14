@@ -82,7 +82,7 @@ public:
     void transitionPageToRemotePage(WebPageProxy&, const WebCore::Site& openerSite);
     void transitionProvisionalPageToRemotePage(ProvisionalPageProxy&, const WebCore::Site& provisionalNavigationFailureSite);
 
-    bool hasRemotePages(const WebPageProxy&);
+    bool NODELETE hasRemotePages(const WebPageProxy&);
 
 private:
     BrowsingContextGroup();

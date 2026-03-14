@@ -555,7 +555,7 @@ Element* TreeScope::pointerLockElement() const
 
 #endif
 
-static ALWAYS_INLINE Node* host(TreeScope& treeScope)
+static ALWAYS_INLINE Node* NODELETE host(TreeScope& treeScope)
 {
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope.rootNode()))
         return shadowRoot->host();

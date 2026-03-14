@@ -457,7 +457,7 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             visitor.append(structure);
 
         for (auto& guarded : thisObject->m_guardedObjects)
-            guarded->visitAggregate(visitor);
+            guarded->visitAggregateInGCThread(visitor);
     }
 
     if (thisObject->m_readableStreamByteStrategySize)

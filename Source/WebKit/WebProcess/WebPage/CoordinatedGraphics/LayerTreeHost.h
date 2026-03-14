@@ -107,6 +107,7 @@ private:
     uint64_t surfaceID() const override;
     void updateRenderingWithForcedRepaint() override;
     void scheduleRenderingUpdate() override;
+    void scheduleRenderingUpdateRunLoopObserver() override;
     bool canUpdateRendering() const override;
     void updateRendering() override;
     void suspend() override;

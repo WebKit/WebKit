@@ -62,7 +62,7 @@ private:
     GamepadHapticActuator(Document*, Type, Gamepad&);
 
     Document* NODELETE document();
-    const Document* document() const;
+    const Document* NODELETE document() const;
 
     void stopEffects(CompletionHandler<void()>&&);
     RefPtr<DeferredPromise>& NODELETE promiseForEffectType(EffectType);

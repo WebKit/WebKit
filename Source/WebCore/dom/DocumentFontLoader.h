@@ -47,7 +47,7 @@ public:
     void NODELETE ref() const;
     void deref() const;
 
-    CachedFont* cachedFont(URL&&, bool, bool, LoadedFromOpaqueSource);
+    RefPtr<CachedFont> cachedFont(URL&&, bool, bool, LoadedFromOpaqueSource);
     void beginLoadingFontSoon(CachedFont&);
 
     void loadPendingFonts();

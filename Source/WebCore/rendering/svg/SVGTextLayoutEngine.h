@@ -58,9 +58,9 @@ public:
     SVGTextFragmentMap finishLayout();
 
 private:
-    void updateCharacterPositionIfNeeded(float& x, float& y);
-    void updateCurrentTextPosition(float x, float y, float glyphAdvance);
-    void updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
+    void NODELETE updateCharacterPositionIfNeeded(float& x, float& y);
+    void NODELETE updateCurrentTextPosition(float x, float y, float glyphAdvance);
+    void NODELETE updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
 
     void recordTextFragment(InlineIterator::SVGTextBoxIterator, const Vector<SVGTextMetrics>&);
     bool parentDefinesTextLength(RenderObject*) const;
@@ -68,8 +68,8 @@ private:
     void layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator, const RenderSVGInlineText&, const RenderStyle&);
     void finalizeTransformMatrices(Vector<InlineIterator::SVGTextBoxIterator>&);
 
-    bool currentLogicalCharacterAttributes(SVGTextLayoutAttributes*&);
-    bool currentLogicalCharacterMetrics(SVGTextLayoutAttributes*&, SVGTextMetrics&);
+    bool NODELETE currentLogicalCharacterAttributes(SVGTextLayoutAttributes*&);
+    bool NODELETE currentLogicalCharacterMetrics(SVGTextLayoutAttributes*&, SVGTextMetrics&);
     bool currentVisualCharacterMetrics(const InlineIterator::SVGTextBox&, const Vector<SVGTextMetrics>&, SVGTextMetrics&);
 
     void NODELETE advanceToNextLogicalCharacter(const SVGTextMetrics&);

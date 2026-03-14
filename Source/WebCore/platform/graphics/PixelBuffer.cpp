@@ -56,19 +56,19 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
     return false;
 }
 
-static CheckedUint32 mustFitInInt32(CheckedUint32 uint32)
+static CheckedUint32 NODELETE mustFitInInt32(CheckedUint32 uint32)
 {
     if (!uint32.hasOverflowed() && !isInBounds<int32_t>(uint32.value()))
         uint32.overflowed();
     return uint32;
 }
 
-static CheckedUint32 computeRawPixelCount(const IntSize& size)
+static CheckedUint32 NODELETE computeRawPixelCount(const IntSize& size)
 {
     return CheckedUint32 { size.width() } * size.height();
 }
 
-static CheckedUint32 computeRawPixelComponentCount(PixelFormat pixelFormat, const IntSize& size)
+static CheckedUint32 NODELETE computeRawPixelComponentCount(PixelFormat pixelFormat, const IntSize& size)
 {
     ASSERT(PixelBuffer::supportedPixelFormat(pixelFormat));
     return computeRawPixelCount(size) * PixelBuffer::componentsPerPixel(pixelFormat);

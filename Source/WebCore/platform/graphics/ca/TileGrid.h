@@ -145,10 +145,10 @@ private:
 
     void scheduleCohortRemoval();
     void cohortRemovalTimerFired();
-    TileCohort nextTileCohort() const;
+    TileCohort NODELETE nextTileCohort() const;
     void startedNewCohort(TileCohort);
-    TileCohort newestTileCohort() const;
-    TileCohort oldestTileCohort() const;
+    TileCohort NODELETE newestTileCohort() const;
+    TileCohort NODELETE oldestTileCohort() const;
 
     void removeTiles(const Vector<TileIndex>& toRemove);
 

@@ -49,7 +49,7 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const final;
     int getTrackIndex(TextTrack&);
-    int getTrackIndexRelativeToRenderedTracks(TextTrack&);
+    int NODELETE getTrackIndexRelativeToRenderedTracks(TextTrack&);
     bool contains(TrackBase&) const final;
 
     TextTrack* NODELETE item(unsigned index) const;

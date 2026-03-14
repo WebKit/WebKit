@@ -798,7 +798,7 @@ CommitDate: {time_c}
             self.assertEqual(mock_git.remotes[remote_ref][-1].hash, fetched_commit.hash)
 
     def test_branches_for(self):
-        with mocks.local.Git(
+        with OutputCapture(), mocks.local.Git(
             self.path,
             remotes={
                 'security': 'git@github.example.com:WebKit/WebKit-security.git',

@@ -245,7 +245,7 @@ protected:
     void updateColumnCache() const;
     void invalidateCachedColumns();
 
-    void invalidateCachedColumnOffsets();
+    void NODELETE invalidateCachedColumnOffsets();
     
     void updateLogicalWidth() final;
 

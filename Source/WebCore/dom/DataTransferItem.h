@@ -57,13 +57,13 @@ public:
     ~DataTransferItem();
 
     File* file() { return m_file; }
-    void clearListAndPutIntoDisabledMode();
+    void NODELETE clearListAndPutIntoDisabledMode();
 
     bool NODELETE isFile() const;
     String kind() const;
     String NODELETE type() const;
     void getAsString(Document&, RefPtr<StringCallback>&&) const;
-    File* getAsFile() const;
+    File* NODELETE getAsFile() const;
     RefPtr<FileSystemEntry> getAsEntry(ScriptExecutionContext&) const;
 
 private:

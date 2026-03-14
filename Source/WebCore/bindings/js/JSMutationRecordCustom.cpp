@@ -31,11 +31,11 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSMutationRecord::visitAdditionalChildren(Visitor& visitor)
+void JSMutationRecord::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().visitNodesConcurrently(visitor);
+    wrapped().visitNodesInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMutationRecord);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSMutationRecord);
 
 } // namespace WebCore

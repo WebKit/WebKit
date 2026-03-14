@@ -257,7 +257,7 @@ public:
     {
     }
 
-    InspectorCSSId newRuleId() const { return m_newId; }
+    InspectorCSSId NODELETE newRuleId() const { return m_newId; }
 
 private:
     ExceptionOr<void> perform() final

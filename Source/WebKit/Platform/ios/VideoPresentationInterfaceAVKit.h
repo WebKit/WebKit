@@ -31,6 +31,7 @@
 #include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKSExperienceController;
+OBJC_CLASS WKExperienceControllerDelegate;
 
 namespace WebKit {
 
@@ -47,6 +48,8 @@ public:
 
 private:
     VideoPresentationInterfaceAVKit(WebCore::PlaybackSessionInterfaceIOS&);
+
+    WebAVPlayerLayer *fullscreenPlayerLayer();
 
     // VideoPresentationInterfaceIOS overrides
     bool pictureInPictureWasStartedWhenEnteringBackground() const final { return false; }
@@ -78,8 +81,11 @@ private:
     void setSpatialImmersive(bool) final { }
     void transferVideoViewToFullscreen() final { }
     void returnVideoView() final { }
+    bool shouldCreateWindow() const final { return false; }
 
     RetainPtr<WKSExperienceController> m_experienceController;
+    RetainPtr<WKExperienceControllerDelegate> m_experienceControllerDelegate;
+    RetainPtr<WebAVPlayerLayerView> m_fullscreenPlayerLayerView;
 };
 
 } // namespace WebKit

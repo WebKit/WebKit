@@ -82,7 +82,7 @@ public:
     const Vector<AtomString>& documentState() const LIFETIME_BOUND { return m_documentState; }
     enum class ShouldValidate : bool { No, Yes };
     void setDocumentState(const Vector<AtomString>&, ShouldValidate = ShouldValidate::No);
-    static bool validateDocumentState(const Vector<AtomString>&);
+    static bool NODELETE validateDocumentState(const Vector<AtomString>&);
     void replaceChildFrameState(Ref<FrameState>&&);
 
     String urlString;

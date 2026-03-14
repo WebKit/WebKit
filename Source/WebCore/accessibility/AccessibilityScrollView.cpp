@@ -468,10 +468,13 @@ LayoutRect AccessibilityScrollView::elementRect() const
     auto rect = scrollView->frameRectShrunkByInset();
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-    // For the root scroll view of a subframe (local or remote), the frameRect includes
-    // the iframe's position in the parent page. We want to zero it out.
-    if (isRoot() && !rect.location().isZero())
-        rect.setLocation(IntPoint());
+    // The scrollView's frameRect may include the iframe's position in the parent
+    // page (non-zero for subframes, zero for main frames). Remove that offset
+    // but preserve any inset offset applied by frameRectShrunkByInset().
+    if (isRoot()) {
+        auto frameOrigin = scrollView->frameRect().location();
+        rect.move(-frameOrigin.x(), -frameOrigin.y());
+    }
 #else
     auto offset = remoteFrameOffset();
     if (isRoot() && !offset.isZero())

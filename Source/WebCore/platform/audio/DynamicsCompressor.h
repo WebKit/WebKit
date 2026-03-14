@@ -71,8 +71,8 @@ public:
     void reset();
     void setNumberOfChannels(unsigned);
 
-    void setParameterValue(unsigned parameterID, float value);
-    float parameterValue(unsigned parameterID);
+    void NODELETE setParameterValue(unsigned parameterID, float value);
+    float NODELETE parameterValue(unsigned parameterID);
 
     float sampleRate() const { return m_sampleRate; }
     float nyquist() const { return m_sampleRate / 2; }
@@ -90,7 +90,7 @@ protected:
 
     // m_parameters holds the tweakable compressor parameters.
     std::array<float, ParamLast> m_parameters;
-    void initializeParameters();
+    void NODELETE initializeParameters();
 
     std::span<const std::span<const float>> sourceChannels() const { return m_sourceChannels.span(); }
     std::span<std::span<float>> destinationChannels() { return m_destinationChannels.mutableSpan(); }

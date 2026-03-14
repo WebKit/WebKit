@@ -158,7 +158,7 @@ public:
     void setWebExtensionController(RefPtr<WebKit::WebExtensionController>&&);
 
     WebKit::WebExtensionController* NODELETE weakWebExtensionController() const;
-    void setWeakWebExtensionController(WebKit::WebExtensionController*);
+    void NODELETE setWeakWebExtensionController(WebKit::WebExtensionController*);
 #endif
 
     WebKit::WebPageGroup* NODELETE pageGroup();
@@ -519,7 +519,7 @@ private:
         static WebKit::DragLiftDelay defaultDragLiftDelay();
 #endif
 #if PLATFORM(COCOA)
-        uintptr_t defaultMediaTypesRequiringUserActionForPlayback();
+        uintptr_t NODELETE defaultMediaTypesRequiringUserActionForPlayback();
 #endif
 
         LazyInitializedRef<WebKit::WebProcessPool, createWebProcessPool> processPool;

@@ -62,9 +62,9 @@ public:
     {
     }
 
-    PAL_EXPORT static SessionID generateEphemeralSessionID();
-    PAL_EXPORT static SessionID generatePersistentSessionID();
-    PAL_EXPORT static void enableGenerationProtection();
+    PAL_EXPORT static SessionID NODELETE generateEphemeralSessionID();
+    PAL_EXPORT static SessionID NODELETE generatePersistentSessionID();
+    PAL_EXPORT static void NODELETE enableGenerationProtection();
 
     bool isValid() const { return isValidSessionIDValue(m_identifier); }
     bool isEphemeral() const { return m_identifier & EphemeralSessionMask && m_identifier != HashTableDeletedValueID; }

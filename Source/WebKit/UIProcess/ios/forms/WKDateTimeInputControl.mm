@@ -171,7 +171,8 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 {
     [self setDateTimePickerToInitialValue];
     RetainPtr view = _view.get();
-    protect(*[protect(view) page])->setFocusedElementValue([protect(view) focusedElementInformation].elementContext, { });
+    auto& focusedInfo = [view focusedElementInformation];
+    protect(*[view page])->setFocusedElementValue(focusedInfo.frameID(), focusedInfo.elementContext, { });
 }
 
 - (void)handleDatePickerPresentationDismissal

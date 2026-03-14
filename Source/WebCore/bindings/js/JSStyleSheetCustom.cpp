@@ -32,11 +32,11 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSStyleSheet::visitAdditionalChildren(Visitor& visitor)
+void JSStyleSheet::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSStyleSheet);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSStyleSheet);
 
 } // namespace WebCore

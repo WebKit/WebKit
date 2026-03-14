@@ -62,7 +62,7 @@ static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& docume
     return document.idbConnectionProxy();
 }
 
-static ThreadSafeWeakHashSet<ServiceWorkerThreadProxy>& allServiceWorkerThreadProxies()
+static ThreadSafeWeakHashSet<ServiceWorkerThreadProxy>& NODELETE allServiceWorkerThreadProxies()
 {
     static MainThreadNeverDestroyed<ThreadSafeWeakHashSet<ServiceWorkerThreadProxy>> set;
     return set;

@@ -118,7 +118,7 @@ static const unsigned cMaxScaledTiledLayerMemorySize = 1024 * 1024 * 156;
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
 
-static bool isTransformTypeTransformationMatrix(TransformOperation::Type transformType)
+static bool NODELETE isTransformTypeTransformationMatrix(TransformOperation::Type transformType)
 {
     switch (transformType) {
     case TransformOperation::Type::SkewX:
@@ -136,7 +136,7 @@ static bool isTransformTypeTransformationMatrix(TransformOperation::Type transfo
     }
 }
 
-static bool isTransformTypeFloatPoint3D(TransformOperation::Type transformType)
+static bool NODELETE isTransformTypeFloatPoint3D(TransformOperation::Type transformType)
 {
     switch (transformType) {
     case TransformOperation::Type::Scale:
@@ -149,12 +149,12 @@ static bool isTransformTypeFloatPoint3D(TransformOperation::Type transformType)
     }
 }
 
-static bool isTransformTypeNumber(TransformOperation::Type transformType)
+static bool NODELETE isTransformTypeNumber(TransformOperation::Type transformType)
 {
     return !isTransformTypeTransformationMatrix(transformType) && !isTransformTypeFloatPoint3D(transformType);
 }
 
-static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, float& value)
+static void NODELETE getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, float& value)
 {
     switch (transformType) {
     case TransformOperation::Type::Rotate:
@@ -185,7 +185,7 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     }
 }
 
-static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, FloatPoint3D& value)
+static void NODELETE getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, FloatPoint3D& value)
 {
     switch (transformType) {
     case TransformOperation::Type::Scale:
@@ -231,7 +231,7 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     }
 }
 
-static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOperation(TransformOperation::Type transformType)
+static PlatformCAAnimation::ValueFunctionType NODELETE getValueFunctionNameForTransformOperation(TransformOperation::Type transformType)
 {
     // Use literal strings to avoid link-time dependency on those symbols.
     switch (transformType) {
@@ -264,7 +264,7 @@ static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOp
     }
 }
 
-static bool animatedPropertyIsTransformOrRelated(AnimatedProperty property)
+static bool NODELETE animatedPropertyIsTransformOrRelated(AnimatedProperty property)
 {
     return property == AnimatedProperty::Transform || property == AnimatedProperty::Translate || property == AnimatedProperty::Scale || property == AnimatedProperty::Rotate;
 }
@@ -286,12 +286,12 @@ static bool animationHasStepsTimingFunction(const GraphicsLayerKeyframeValueList
     return false;
 }
 
-static inline bool supportsAcceleratedFilterAnimations()
+static inline bool NODELETE supportsAcceleratedFilterAnimations()
 {
     return true;
 }
 
-static PlatformCALayer::FilterType toPlatformCALayerFilterType(GraphicsLayer::ScalingFilter filter)
+static PlatformCALayer::FilterType NODELETE toPlatformCALayerFilterType(GraphicsLayer::ScalingFilter filter)
 {
     switch (filter) {
     case GraphicsLayer::ScalingFilter::Linear:
@@ -392,7 +392,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAn
 
 using LayerDisplayListHashMap = HashMap<const GraphicsLayerCA*, std::pair<FloatRect, Ref<const DisplayList::DisplayList>>>;
 
-static LayerDisplayListHashMap& layerDisplayListMap()
+static LayerDisplayListHashMap& NODELETE layerDisplayListMap()
 {
     static NeverDestroyed<LayerDisplayListHashMap> sharedHashMap;
     return sharedHashMap;
@@ -1625,7 +1625,7 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
         client().didChangePlatformLayerForLayer(this);
 }
 
-static inline bool accumulatesTransform(const GraphicsLayerCA& layer)
+static inline bool NODELETE accumulatesTransform(const GraphicsLayerCA& layer)
 {
     return !layer.masksToBounds() && (layer.preserves3D() || (layer.parent() && layer.parent()->preserves3D()));
 }
@@ -3788,7 +3788,7 @@ void GraphicsLayerCA::updateContentsNeedsDisplay()
         contentsLayer->setNeedsDisplay();
 }
 
-static bool isKeyframe(const GraphicsLayerKeyframeValueList& list)
+static bool NODELETE isKeyframe(const GraphicsLayerKeyframeValueList& list)
 {
     return list.size() > 1;
 }
@@ -3845,7 +3845,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const GraphicsLayerKeyframeV
     return true;
 }
 
-static const TransformOperations& transformationAnimationValueAt(const GraphicsLayerKeyframeValueList& valueList, unsigned i)
+static const TransformOperations& NODELETE transformationAnimationValueAt(const GraphicsLayerKeyframeValueList& valueList, unsigned i)
 {
     return downcast<GraphicsLayerTransformAnimationValue>(valueList.at(i)).value();
 }

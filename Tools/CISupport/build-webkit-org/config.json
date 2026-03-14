@@ -342,6 +342,7 @@
                   },
                   { "name": "Apple-Sequoia-Debug-Build", "factory": "BuildFactory",
                   "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                  "deployment_target": "15.4",
                   "triggers": [
                       "sequoia-debug-tests-wk1", "sequoia-debug-tests-wk2",
                       "sequoia-debug-applesilicon-tests-wk2", "sequoia-debug-tests-test262"

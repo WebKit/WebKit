@@ -565,7 +565,7 @@ bool StyleSheetContents::traverseSubresources(NOESCAPE const Function<bool(const
         case StyleRuleType::FontFace:
             return uncheckedDowncast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::Import:
-            if (auto* cachedResource = uncheckedDowncast<StyleRuleImport>(rule).cachedCSSStyleSheet())
+            if (RefPtr cachedResource = uncheckedDowncast<StyleRuleImport>(rule).cachedCSSStyleSheet())
                 return handler(*cachedResource);
             return false;
         case StyleRuleType::CounterStyle:

@@ -138,7 +138,7 @@ public:
     void setParent(LegacyInlineFlowBox* par) { m_parent = par; }
 
     const LegacyRootInlineBox& NODELETE root() const;
-    LegacyRootInlineBox& root();
+    LegacyRootInlineBox& NODELETE root();
 
     // x() is the left side of the box in the containing block's coordinate system.
     void setX(float x) { m_topLeft.setX(x); }
@@ -228,7 +228,7 @@ public:
     void flipForWritingMode(FloatRect&) const;
     FloatPoint flipForWritingMode(const FloatPoint&) const;
     void flipForWritingMode(LayoutRect&) const;
-    LayoutPoint flipForWritingMode(const LayoutPoint&) const;
+    LayoutPoint NODELETE flipForWritingMode(const LayoutPoint&) const;
 
     bool knownToHaveNoOverflow() const { return m_bitfields.knownToHaveNoOverflow(); }
     void NODELETE clearKnownToHaveNoOverflow();

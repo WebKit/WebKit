@@ -48,15 +48,15 @@ public:
 
     virtual ~WebAssemblyCachedScriptSourceProvider()
     {
-        m_cachedScript->removeClient(*this);
+        protect(m_cachedScript)->removeClient(*this);
     }
 
     // CachedResourceClient.
     void ref() const final { JSC::BaseWebAssemblySourceProvider::ref(); }
     void deref() const final { JSC::BaseWebAssemblySourceProvider::deref(); }
 
-    unsigned hash() const final { return m_cachedScript->scriptHash(); }
-    StringView source() const final { return m_cachedScript->script(); }
+    unsigned hash() const final { return protect(m_cachedScript)->scriptHash(); }
+    StringView source() const final { return protect(m_cachedScript)->script(); }
     size_t size() const final { return m_buffer ? m_buffer->size() : 0; }
 
     const uint8_t* data() final
@@ -86,9 +86,8 @@ private:
     WebAssemblyCachedScriptSourceProvider(CachedScript* cachedScript, const JSC::SourceOrigin& sourceOrigin, String sourceURL)
         : BaseWebAssemblySourceProvider(sourceOrigin, WTF::move(sourceURL))
         , m_cachedScript(cachedScript)
-        , m_buffer(nullptr)
     {
-        m_cachedScript->addClient(*this);
+        protect(m_cachedScript)->addClient(*this);
     }
 
     CachedResourceHandle<CachedScript> m_cachedScript;

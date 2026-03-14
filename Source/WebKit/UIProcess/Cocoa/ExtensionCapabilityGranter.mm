@@ -264,18 +264,38 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
 
     GRANTER_RELEASE_LOG(capability.environmentIdentifier(), "%{public}s", isActive ? "activating" : "deactivating");
 
-    invokeAsync(protect(granterQueue()), [platformCapability = capability.platformCapability(), platformMediaEnvironment = RetainPtr { capability.platformMediaEnvironment() }, isActive] {
+    invokeAsync(protect(granterQueue()), [kind = capability.kind(), platformCapability = capability.platformCapability(), platformMediaEnvironment = RetainPtr { capability.platformMediaEnvironment() }, isActive] {
 #if USE(EXTENSIONKIT)
         NSError *error = nil;
-        if (isActive)
-            [platformMediaEnvironment activateWithError:&error];
-        else
-            [platformMediaEnvironment suspendWithError:&error];
-        if (error)
-            RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s failed with error: %{public}@", __FUNCTION__, error);
-        else
-            return ExtensionCapabilityActivationPromise::createAndResolve();
+        switch (kind) {
+        case MediaCapability::Kind::MediaPlayback:
+        case MediaCapability::Kind::CameraAndMicCapture:
+            if (isActive)
+                [platformMediaEnvironment activateWithError:&error];
+            else
+                [platformMediaEnvironment suspendWithError:&error];
+            break;
+
+        case MediaCapability::Kind::DisplayCapture:
+#if HAVE(SCREEN_CAPTURE_KIT)
+            if (isActive)
+                [platformCapability activateWithError:&error];
+            else
+                [platformCapability suspendWithError:&error];
+#else
+            UNUSED_PARAM(platformCapability);
+            ASSERT_NOT_REACHED();
+            return ExtensionCapabilityActivationPromise::createAndReject(ExtensionCapabilityGrantError::PlatformError);
 #endif
+            break;
+        }
+
+        if (!error)
+            return ExtensionCapabilityActivationPromise::createAndResolve();
+
+        RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s failed with error: %{public}@", __FUNCTION__, error);
+#endif // USE(EXTENSIONKIT)
+
         return ExtensionCapabilityActivationPromise::createAndReject(ExtensionCapabilityGrantError::PlatformError);
     })->whenSettled(RunLoop::mainSingleton(), [weakCapability = WeakPtr { capability }, isActive](auto&& result) {
         RefPtr capability = weakCapability.get();

@@ -2853,19 +2853,20 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 
 void CodeBlock::didInstallDFGCode()
 {
+#if PLATFORM(MAC)
+    // Always reset — allows quick tier-up recovery after reinstall.
+    // Enable this only on macOS due to perf regression on iOS.
+    unlinkedCodeBlock()->setQuickDFGTierUp(TriState::True);
+#else
+    // Restore old one-shot behavior — once failed, stays disabled.
     if (!unlinkedCodeBlock()->hasQuickDFGTierUpUpdated())
         unlinkedCodeBlock()->setQuickDFGTierUp(TriState::True);
+#endif
 }
 
 void CodeBlock::didDFGJettison(Profiler::JettisonReason reason)
 {
-    if (!Profiler::isSpeculationFailure(reason))
-        return;
-
-    // Only mark as failed if code was already installed and ran (flag = True).
-    // If jettison happens during compilation (flag = Indeterminate), leave it
-    // unchanged - this was environmental (OOM, GC pressure), not a code quality issue.
-    if (unlinkedCodeBlock()->hasQuickDFGTierUpUpdated())
+    if (Profiler::isSpeculationFailure(reason))
         unlinkedCodeBlock()->setQuickDFGTierUp(TriState::False);
 }
 
@@ -2877,25 +2878,18 @@ void CodeBlock::didFailDFGCompilation()
 #if ENABLE(FTL_JIT)
 void CodeBlock::didInstallFTLCode()
 {
-    if (!unlinkedCodeBlock()->hasQuickFTLTierUpUpdated() && unlinkedCodeBlock()->isQuickDFGTierUp())
-        unlinkedCodeBlock()->setQuickFTLTierUp(WTF::TriState::True);
+    unlinkedCodeBlock()->setQuickFTLTierUp(true);
 }
 
 void CodeBlock::didFTLJettison(Profiler::JettisonReason reason)
 {
-    if (!Profiler::isSpeculationFailure(reason))
-        return;
-
-    // Only mark as failed if code was already installed and ran (flag = True).
-    // If jettison happens during compilation (flag = Indeterminate), leave it
-    // unchanged - this was environmental (OOM, GC pressure), not a code quality issue.
-    if (unlinkedCodeBlock()->hasQuickFTLTierUpUpdated())
-        unlinkedCodeBlock()->setQuickFTLTierUp(WTF::TriState::False);
+    if (Profiler::isSpeculationFailure(reason))
+        unlinkedCodeBlock()->setQuickFTLTierUp(false);
 }
 
 void CodeBlock::didFailFTLCompilation()
 {
-    unlinkedCodeBlock()->setQuickFTLTierUp(WTF::TriState::False);
+    unlinkedCodeBlock()->setQuickFTLTierUp(false);
 }
 #endif
 

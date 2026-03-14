@@ -256,7 +256,6 @@ layout/integration/LayoutIntegrationFormattingContextLayout.cpp
 layout/integration/flex/LayoutIntegrationFlexLayout.cpp
 layout/integration/inline/InlineIteratorBox.cpp
 layout/integration/inline/InlineIteratorBoxModernPath.h
-layout/integration/inline/InlineIteratorInlineBox.cpp
 layout/integration/inline/InlineIteratorLineBox.cpp
 layout/integration/inline/InlineIteratorLineBox.h
 layout/integration/inline/InlineIteratorLineBoxInlines.h
@@ -270,7 +269,6 @@ layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/integration/inline/LineSelection.h
 layout/layouttree/FormattingContextBoxIterator.h
-layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainingBlockChainIterator.h
 layout/layouttree/LayoutTreeBuilder.cpp
 loader/ApplicationManifestLoader.cpp
@@ -363,7 +361,6 @@ platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 [ iOS ] platform/ios/PlatformScreenIOS.mm
 platform/ios/PlaybackSessionInterfaceIOS.mm
 [ iOS ] platform/ios/TileControllerMemoryHandlerIOS.cpp
-[ iOS ] platform/ios/VideoPresentationInterfaceIOS.h
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
 platform/ios/WebAVPlayerController.mm
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm

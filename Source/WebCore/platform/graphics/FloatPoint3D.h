@@ -85,7 +85,7 @@ public:
         return !m_x && !m_y && !m_z;
     }
 
-    void normalize();
+    void NODELETE normalize();
 
     float dot(const FloatPoint3D& a) const
     {

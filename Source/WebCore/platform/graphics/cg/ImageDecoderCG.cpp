@@ -121,7 +121,7 @@ static void appendImageSourceOption(CFMutableDictionaryRef options, const IntSiz
     CFDictionarySetValue(options, kCGImageSourceThumbnailMaxPixelSize, maxDimensionNumber.get());
 }
 
-static void appendImageSourceOption(CFMutableDictionaryRef options, ShouldDecodeToHDR shouldDecodeToHDR)
+static void NODELETE appendImageSourceOption(CFMutableDictionaryRef options, ShouldDecodeToHDR shouldDecodeToHDR)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
     if (shouldDecodeToHDR == ShouldDecodeToHDR::Yes)

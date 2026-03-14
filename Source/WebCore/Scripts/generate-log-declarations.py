@@ -36,7 +36,11 @@ def generate_log_client_declarations_file(log_messages, log_client_declarations_
 
         file.write("#pragma once\n\n")
         for log_message in log_messages:
-            file.write("#define MESSAGE_" + log_message[0] + " " + log_message[1] + "\n")
+            message_name = log_message[0]
+            message_format = log_message[1]
+            file.write("#define MESSAGE_" + message_name + " " + message_format + "\n")
+            message_format_without_public_string_modifier = message_format.replace("%{public}s", "%s")
+            file.write("#define MESSAGE_WITHOUT_PUBLIC_STRING_MODIFIER_" + message_name + " " + message_format_without_public_string_modifier + "\n")
 
         file.close()
 

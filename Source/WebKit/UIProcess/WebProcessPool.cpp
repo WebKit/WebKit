@@ -2186,7 +2186,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     }
 
     ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
-    auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, isolatedProcessType, mainFrameSite, processSwapRequestedByClient, lockdownMode, enhancedSecurity, frameInfo, dataStore.copyRef());
+    auto [process, suspendedPage, reason] = processForNavigationInternal(page, frame, navigation, sourceURL, isolatedProcessType, mainFrameSite, processSwapRequestedByClient, lockdownMode, enhancedSecurity, frameInfo, dataStore.copyRef());
 
     // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
     bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != sourceProcess.ptr();
@@ -2243,11 +2243,12 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
     });
 }
 
-std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& pageSourceURL, WebProcessProxy::IsolatedProcessType isolatedProcessType, const Site& mainFrameSite, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore)
+std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebProcessPool::processForNavigationInternal(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, const URL& pageSourceURL, WebProcessProxy::IsolatedProcessType isolatedProcessType, const Site& mainFrameSite, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore)
 {
     auto& targetURL = navigation.currentRequest().url();
     auto targetSite = Site { targetURL };
     Ref pageConfiguration = page.configuration();
+    Ref sourceProcess = frame.process();
 
     auto createNewProcess = [&] () -> Ref<WebProcessProxy> {
         ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
@@ -2281,9 +2282,9 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (navigation.currentRequestIsRedirect() && navigation.originalRequest().url().protocol() != targetURL.protocol() && page.urlSchemeHandlerForScheme(targetURL.protocol().toString()))
         return { createNewProcess(), nullptr, "Redirect to a different scheme for which the app registered a custom handler"_s };
 
-    // FIXME: We ought to be able to re-use processes that haven't committed anything with site isolation enabled, but cross-site redirects are tricky. <rdar://116203552>
     bool siteIsolationEnabled = protect(page.preferences())->siteIsolationEnabled();
-    if (!sourceProcess->hasCommittedAnyProvisionalLoads() && !siteIsolationEnabled) {
+    bool isProcessInUseBySingleFrame = !siteIsolationEnabled || (sourceProcess->frameProcessCount() == 1 && frame.frameProcess().frameCount() <= 1);
+    if (!sourceProcess->hasCommittedAnyProvisionalLoads() && isProcessInUseBySingleFrame) {
         tryPrewarmWithDomainInformation(sourceProcess, targetSite.domain());
         return { WTF::move(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s };
     }

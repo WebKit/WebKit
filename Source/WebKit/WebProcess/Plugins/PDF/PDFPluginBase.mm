@@ -1150,7 +1150,7 @@ std::optional<PageIdentifier> PDFPluginBase::pageIdentifier() const
     return frame && frame->coreLocalFrame() ? frame->coreLocalFrame()->pageID() : std::nullopt;
 }
 
-NSString *PDFPluginBase::stringPasteboardType()
+SUPPRESS_NODELETE NSString *PDFPluginBase::stringPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
     return UTTypeUTF8PlainText.identifier;
@@ -1159,7 +1159,7 @@ NSString *PDFPluginBase::stringPasteboardType()
 #endif
 }
 
-NSString *PDFPluginBase::urlPasteboardType()
+SUPPRESS_NODELETE NSString *PDFPluginBase::urlPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
     return UTTypeURL.identifier;
@@ -1168,7 +1168,7 @@ NSString *PDFPluginBase::urlPasteboardType()
 #endif
 }
 
-NSString *PDFPluginBase::htmlPasteboardType()
+SUPPRESS_NODELETE NSString *PDFPluginBase::htmlPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
     return UTTypeHTML.identifier;
@@ -1177,7 +1177,7 @@ NSString *PDFPluginBase::htmlPasteboardType()
 #endif
 }
 
-NSString *PDFPluginBase::rtfPasteboardType()
+SUPPRESS_NODELETE NSString *PDFPluginBase::rtfPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
     return UTTypeRTF.identifier;

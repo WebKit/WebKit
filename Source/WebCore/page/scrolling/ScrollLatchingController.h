@@ -88,7 +88,7 @@ private:
 
     bool NODELETE hasStateForFrame(const LocalFrame&) const;
     FrameState* NODELETE stateForFrame(const LocalFrame&);
-    const FrameState* stateForFrame(const LocalFrame&) const;
+    const FrameState* NODELETE stateForFrame(const LocalFrame&) const;
 
     bool shouldLatchToScrollableArea(const LocalFrame&, ScrollableArea*, FloatSize) const;
 

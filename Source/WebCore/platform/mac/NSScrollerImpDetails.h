@@ -37,7 +37,7 @@ class WEBCORE_EXPORT ScrollerStyle {
 public:
     static NSScrollerStyle recommendedScrollerStyle();
 
-    static void setUseOverlayScrollbars(bool);
+    static void NODELETE setUseOverlayScrollbars(bool);
     
 private:
     static std::optional<bool> m_useOverlayScrollbars;

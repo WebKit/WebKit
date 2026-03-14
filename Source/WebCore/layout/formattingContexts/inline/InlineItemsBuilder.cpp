@@ -83,7 +83,7 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBr
     return textLength - startPosition;
 }
 
-static inline bool isTextOrLineBreak(const Box& layoutBox)
+static inline bool NODELETE isTextOrLineBreak(const Box& layoutBox)
 {
     return layoutBox.isInFlow() && (layoutBox.isInlineTextBox() || (layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity()));
 }
@@ -225,7 +225,7 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         inlineContentCache().setInlineBoxBoundaryTextSpacings(WTF::move(spacings));
 }
 
-static bool requiresVisualReordering(const Box& layoutBox)
+static bool NODELETE requiresVisualReordering(const Box& layoutBox)
 {
     if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox))
         return inlineTextBox->hasStrongDirectionalityContent();
@@ -236,7 +236,7 @@ static bool requiresVisualReordering(const Box& layoutBox)
     return false;
 }
 
-static inline bool isInlineBoxWithInlineContent(const Box& layoutBox)
+static inline bool NODELETE isInlineBoxWithInlineContent(const Box& layoutBox)
 {
     return layoutBox.isInlineBox() && !layoutBox.isLineBreakBox() && !layoutBox.isOutOfFlowPositioned();
 }

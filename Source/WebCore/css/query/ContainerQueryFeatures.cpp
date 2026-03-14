@@ -42,7 +42,7 @@ namespace WebCore::CQ {
 
 using namespace MQ;
 
-static LayoutUnit unscaledSizeForPrincipleBox(const Style::PreferredSize& computedSize, LayoutUnit usedSize, UsesSVGZoomRulesForLength usesSVGZoomRulesForLength, float usedZoom)
+static LayoutUnit NODELETE unscaledSizeForPrincipleBox(const Style::PreferredSize& computedSize, LayoutUnit usedSize, UsesSVGZoomRulesForLength usesSVGZoomRulesForLength, float usedZoom)
 {
     if (usesSVGZoomRulesForLength == UsesSVGZoomRulesForLength::Yes || !computedSize.isFixed())
         return usedSize;

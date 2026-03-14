@@ -41,14 +41,14 @@ using IntOutsets = RectEdges<int>;
 
 namespace SwitchMacUtilities {
 
-IntSize cellSize(NSControlSize);
-FloatSize visualCellSize(IntSize, const ControlStyle&);
-IntOutsets cellOutsets(NSControlSize);
-IntOutsets visualCellOutsets(NSControlSize, bool);
-FloatRect rectForBounds(const FloatRect&);
-NSString *coreUISizeForControlSize(const NSControlSize);
-float easeInOut(float);
-FloatRect rectWithTransposedSize(const FloatRect&, bool);
+IntSize NODELETE cellSize(NSControlSize);
+FloatSize NODELETE visualCellSize(IntSize, const ControlStyle&);
+IntOutsets NODELETE cellOutsets(NSControlSize);
+IntOutsets NODELETE visualCellOutsets(NSControlSize, bool);
+FloatRect NODELETE rectForBounds(const FloatRect&);
+NSString *NODELETE coreUISizeForControlSize(const NSControlSize);
+float NODELETE easeInOut(float);
+FloatRect NODELETE rectWithTransposedSize(const FloatRect&, bool);
 FloatRect trackRectForBounds(const FloatRect&, const FloatSize&);
 void rotateContextForVerticalWritingMode(GraphicsContext&, const FloatRect&);
 RefPtr<ImageBuffer> trackMaskImage(GraphicsContext&, FloatSize, float, bool, NSString *);

@@ -66,7 +66,7 @@ ProcessingInstruction::~ProcessingInstruction()
     if (RefPtr sheet = m_sheet)
         sheet->clearOwnerNode();
 
-    if (CachedResourceHandle cachedSheet = m_cachedSheet)
+    if (RefPtr cachedSheet = m_cachedSheet)
         cachedSheet->removeClient(*this);
 
     if (isConnected())
@@ -134,9 +134,9 @@ void ProcessingInstruction::checkStyleSheet()
             }
 #endif
         } else {
-            if (CachedResourceHandle cachedSheet = std::exchange(m_cachedSheet, nullptr))
+            if (RefPtr cachedSheet = std::exchange(m_cachedSheet, nullptr))
                 cachedSheet->removeClient(*this);
-            
+
             if (!m_loading) {
                 m_loading = true;
                 document->styleScope().addPendingSheet(*this);
@@ -148,16 +148,22 @@ void ProcessingInstruction::checkStyleSheet()
             if (m_isXSL) {
                 auto options = CachedResourceLoader::defaultCachedResourceOptions();
                 options.mode = FetchOptions::Mode::SameOrigin;
-                m_cachedSheet = protect(document->cachedResourceLoader())->requestXSLStyleSheet({ ResourceRequest(document->completeURL(href)), options }).value_or(nullptr);
+                if (auto result = protect(document->cachedResourceLoader())->requestXSLStyleSheet({ ResourceRequest(document->completeURL(href)), options }))
+                    m_cachedSheet = WTF::move(result.value());
+                else
+                    m_cachedSheet = nullptr;
             } else
 #endif
             {
                 String charset = attributes->get<HashTranslatorASCIILiteral>("charset"_s);
                 CachedResourceRequest request(document->completeURL(href), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, charset.isEmpty() ? String::fromLatin1(document->charset()) : WTF::move(charset));
 
-                m_cachedSheet = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)).value_or(nullptr);
+                if (auto result = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)))
+                    m_cachedSheet = WTF::move(result.value());
+                else
+                    m_cachedSheet = nullptr;
             }
-            if (CachedResourceHandle cachedSheet = m_cachedSheet)
+            if (RefPtr cachedSheet = m_cachedSheet)
                 cachedSheet->addClient(*this);
             else {
                 // The request may have been denied if (for example) the stylesheet is local and the document is remote.
@@ -240,7 +246,7 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
         downcast<XSLStyleSheet>(styleSheet.get()).parseString(sheet);
 #endif
 
-    if (CachedResourceHandle cachedSheet = std::exchange(m_cachedSheet, nullptr))
+    if (RefPtr cachedSheet = std::exchange(m_cachedSheet, nullptr))
         cachedSheet->removeClient(*this);
 
     m_loading = false;

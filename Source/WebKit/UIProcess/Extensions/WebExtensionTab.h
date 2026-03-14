@@ -111,7 +111,7 @@ public:
     WebExtensionTabParameters parameters() const;
     WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties> = { }) const;
 
-    WebExtensionContext* extensionContext() const;
+    WebExtensionContext* NODELETE extensionContext() const;
 
     bool operator==(const WebExtensionTab&) const;
 

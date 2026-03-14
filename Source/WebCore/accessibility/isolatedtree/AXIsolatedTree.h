@@ -478,7 +478,7 @@ public:
     void overrideNodeProperties(AXID, AXPropertyVector&&);
 
     double NODELETE loadingProgress();
-    void updateLoadingProgress(double);
+    void NODELETE updateLoadingProgress(double);
 
     void addUnconnectedNode(Ref<AccessibilityObject>);
     bool isUnconnectedNode(std::optional<AXID> axID) const { return axID && m_unconnectedNodes.contains(*axID); }

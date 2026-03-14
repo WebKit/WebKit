@@ -187,7 +187,7 @@ private:
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&, RenderGridLayoutState&);
     void sizeTrackToFitSingleSpanMasonryGroup(const GridSpan&, MasonryMinMaxTrackSize&, GridTrack&);
 
-    bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
+    bool NODELETE spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
 
     using GridItemsSpanGroupRange = std::span<GridItemWithSpan>;
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(GridItemsSpanGroupRange gridItemsWithSpan, RenderGridLayoutState&);

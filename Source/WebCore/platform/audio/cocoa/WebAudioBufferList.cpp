@@ -61,7 +61,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, s
 
 WebAudioBufferList::~WebAudioBufferList() = default;
 
-static inline std::optional<std::pair<size_t, size_t>> computeBufferSizes(uint32_t numberOfInterleavedChannels, uint32_t bytesPerFrame, uint32_t numberOfChannelStreams, size_t sampleCount)
+static inline std::optional<std::pair<size_t, size_t>> NODELETE computeBufferSizes(uint32_t numberOfInterleavedChannels, uint32_t bytesPerFrame, uint32_t numberOfChannelStreams, size_t sampleCount)
 {
     size_t totalSampleCount;
     bool result = WTF::safeMultiply(sampleCount, numberOfInterleavedChannels, totalSampleCount);

@@ -51,7 +51,7 @@ bool isDelimiter(char16_t c)
         || c == '}' || c == '"';
 }
 
-static bool isVisibleCharacter(char16_t c)
+static bool NODELETE isVisibleCharacter(char16_t c)
 {
     return isTokenCharacter(c) || isDelimiter(c);
 }
@@ -62,12 +62,12 @@ static bool isInRange(char16_t c)
     return c >= min && c <= max;
 }
 
-static bool isOBSText(char16_t c)
+static bool NODELETE isOBSText(char16_t c)
 {
     return isInRange<0x80, 0xFF>(c);
 }
 
-static bool isQuotedTextCharacter(char16_t c)
+static bool NODELETE isQuotedTextCharacter(char16_t c)
 {
     return isTabOrSpace(c)
         || c == 0x21

@@ -816,7 +816,7 @@ RefPtr<CSSValue> consumeFontFaceFontStyle(CSSParserTokenRange& range, CSS::Prope
 
 // MARK: @font-face 'font-feature-settings'
 
-static std::optional<FontTag> consumeFontOpenTypeTag(CSSParserTokenRange& range)
+static std::optional<FontTag> NODELETE consumeFontOpenTypeTag(CSSParserTokenRange& range)
 {
     // <opentype-tag> = <string>
     // https://drafts.csswg.org/css-fonts/#typedef-opentype-tag

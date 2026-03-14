@@ -45,7 +45,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> deleteData(unsigned offset, unsigned count);
     WEBCORE_EXPORT ExceptionOr<void> replaceData(unsigned offset, unsigned count, const String&);
 
-    bool containsOnlyASCIIWhitespace() const;
+    bool NODELETE containsOnlyASCIIWhitespace() const;
 
     // Like appendData, but optimized for the parser (e.g., no mutation events).
     // Using the same StringBuilder across calls avoids O(n^2) behavior.

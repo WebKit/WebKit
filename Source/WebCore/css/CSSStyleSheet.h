@@ -97,7 +97,7 @@ public:
     Document* NODELETE constructorDocument() const;
 
     // For CSSRuleList.
-    unsigned length() const;
+    unsigned NODELETE length() const;
     CSSRule* item(unsigned index);
 
     void clearOwnerNode() final;

@@ -61,7 +61,7 @@ public:
 
     void updateSharedTimer();
     void fireTimersInNestedEventLoop();
-    void breakFireLoopForRenderingUpdate();
+    void NODELETE breakFireLoopForRenderingUpdate();
 
     unsigned nextHeapInsertionCount() { return m_currentHeapInsertionOrder++; }
 

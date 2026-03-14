@@ -48,6 +48,7 @@
 #include "Range.h"
 #include "RenderImage.h"
 #include "SharedBuffer.h"
+#include "SimpleRange.h"
 #include "WebCoreInstanceHandle.h"
 #include "markup.h"
 #include <pal/text/TextEncoding.h>

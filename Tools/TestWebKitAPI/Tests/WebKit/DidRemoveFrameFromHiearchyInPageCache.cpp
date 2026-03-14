@@ -78,8 +78,9 @@ TEST(WebKit, DidRemoveFrameFromHiearchyInBackForwardCache)
 
     PlatformWebView webView(context.get());
 
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
     if (!isUsingBackForwardCache(static_cast<WKWebView*>(webView.platformView()))) {
-        WTFLogAlways("WebKit.DidRemoveFrameFromHiearchyInBackForwardCache: Test is skipped as backfoward cache is disabled");
+        WTFLogAlways("WebKit.DidRemoveFrameFromHiearchyInBackForwardCache: Test is skipped as back-forward cache is disabled");
         return;
     }
 

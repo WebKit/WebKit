@@ -419,7 +419,7 @@ private:
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
-    bool shouldDrawShadows() const;
+    bool NODELETE shouldDrawShadows() const;
 
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;

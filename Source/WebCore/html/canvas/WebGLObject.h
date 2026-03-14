@@ -101,7 +101,7 @@ public:
     virtual ~WebGLObject();
 
     WebGLRenderingContextBase* NODELETE context() const;
-    GraphicsContextGL* graphicsContextGL() const;
+    GraphicsContextGL* NODELETE graphicsContextGL() const;
 
     PlatformGLObject object() const { return m_object; }
 
@@ -121,9 +121,9 @@ public:
     bool isDeleted() const { return m_deleted; }
 
     // True if this object belongs to the context.
-    bool validate(const WebGLRenderingContextBase&) const;
+    bool NODELETE validate(const WebGLRenderingContextBase&) const;
 
-    Lock& objectGraphLockForContext();
+    Lock& NODELETE objectGraphLockForContext();
 
 protected:
     WebGLObject(WebGLRenderingContextBase&, PlatformGLObject);

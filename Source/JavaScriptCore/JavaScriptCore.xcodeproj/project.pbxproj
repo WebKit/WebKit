@@ -813,7 +813,6 @@
 		23968F0E2F295B1B001AED63 /* WebAssemblySuspending.h in Headers */ = {isa = PBXBuildFile; fileRef = 23968F0C2F295B1B001AED63 /* WebAssemblySuspending.h */; };
 		23968F0F2F295B1B001AED63 /* WebAssemblyPromising.h in Headers */ = {isa = PBXBuildFile; fileRef = 23968F0A2F295B1B001AED63 /* WebAssemblyPromising.h */; };
 		23A356912E9790F40039C82A /* PinballCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A3568E2E9790F40039C82A /* PinballCompletion.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F04DFCBEDED74A4E92B8A9DA /* PinballHandlerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8791D173F2EE43A7E6469029 /* PinballHandlerContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23A9696C2E95A903005A36F5 /* EvacuatedStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A969692E95A903005A36F5 /* EvacuatedStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23D7A3E22F3D0F4C00A27B88 /* JSPIContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D7A3E02F3D0F4C00A27B88 /* JSPIContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23D7A3E32F3D0F4C00A27B88 /* JSPIContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D7A3E12F3D0F4C00A27B88 /* JSPIContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1742,6 +1741,8 @@
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FCC26C17A0B6AA00786D1A /* FTLSwitchCase.h */; };
 		AA45D14F2EB82FEB00FCBD16 /* CachedCallInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = AA45D14E2EB82FEB00FCBD16 /* CachedCallInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E30001002EF0001000000004 /* MicrotaskCall.h in Headers */ = {isa = PBXBuildFile; fileRef = E30001002EF0001000000001 /* MicrotaskCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E30001002EF0001000000005 /* MicrotaskCallInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E30001002EF0001000000002 /* MicrotaskCallInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA785BEB2E77BECA0097F688 /* JSPromiseCombinatorsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = AA785BEA2E77BECA0097F688 /* JSPromiseCombinatorsContext.h */; };
 		AA785BEE2E77BED70097F688 /* JSPromiseCombinatorsContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = AA785BED2E77BED70097F688 /* JSPromiseCombinatorsContextInlines.h */; };
 		AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = AD00659D1ECAC7FE000CA926 /* WasmLimits.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2162,6 +2163,7 @@
 		E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7C1ECF13E500978D99 /* SnippetParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A821ECF13FE00978D99 /* Snippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7B1ECF13E500978D99 /* Snippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F429BD2A41742F00C5FEFF /* AirOptimizePairedLoadStore.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F429BB2A41742700C5FEFF /* AirOptimizePairedLoadStore.h */; };
+		E3F5152C2F62AD4300C15A3C /* B3ReduceSIMDShuffle.h in Headers */ = {isa = PBXBuildFile; fileRef = F576E170731B25C8AD83FF16 /* B3ReduceSIMDShuffle.h */; };
 		E3F52B2B2A8D9BB70080E92D /* NativeCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F52B292A8D9BB60080E92D /* NativeCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FB5BEC2F0886090016B5F5 /* AirDominators.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FB5BEB2F0886090016B5F5 /* AirDominators.h */; };
 		E3FB5BEE2F0886E00016B5F5 /* AirNaturalLoops.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FB5BED2F0886E00016B5F5 /* AirNaturalLoops.h */; };
@@ -2169,6 +2171,7 @@
 		E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F04DFCBEDED74A4E92B8A9DA /* PinballHandlerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8791D173F2EE43A7E6469029 /* PinballHandlerContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F300DBB02E259A8B00430A24 /* MARReportCrashPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F300DBAE2E259A7900430A24 /* MARReportCrashPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F323932D2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F323932B2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F395BE252A43C5920083DE3A /* InPlaceInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = F395BE242A43C58B0083DE3A /* InPlaceInterpreter.h */; };
@@ -4007,7 +4010,6 @@
 		23968F0C2F295B1B001AED63 /* WebAssemblySuspending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblySuspending.h; path = js/WebAssemblySuspending.h; sourceTree = "<group>"; };
 		23968F0D2F295B1B001AED63 /* WebAssemblySuspending.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspending.cpp; path = js/WebAssemblySuspending.cpp; sourceTree = "<group>"; };
 		23A3568E2E9790F40039C82A /* PinballCompletion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PinballCompletion.h; sourceTree = "<group>"; };
-		8791D173F2EE43A7E6469029 /* PinballHandlerContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PinballHandlerContext.h; sourceTree = "<group>"; };
 		23A3568F2E9790F40039C82A /* PinballCompletion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PinballCompletion.cpp; sourceTree = "<group>"; };
 		23A969692E95A903005A36F5 /* EvacuatedStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EvacuatedStack.h; sourceTree = "<group>"; };
 		23A9696A2E95A903005A36F5 /* EvacuatedStack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EvacuatedStack.cpp; sourceTree = "<group>"; };
@@ -4777,6 +4779,7 @@
 		73190D962400934900F891C9 /* DeleteByStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteByStatus.cpp; sourceTree = "<group>"; };
 		734B655423F4A33100A069D1 /* DeletePropertySlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeletePropertySlot.h; sourceTree = "<group>"; };
 		73AD062823FF662600F53593 /* DeleteByStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteByStatus.h; sourceTree = "<group>"; };
+		7569FA8AB74C4BA387DB8F97 /* B3ReduceSIMDShuffle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ReduceSIMDShuffle.cpp; path = b3/B3ReduceSIMDShuffle.cpp; sourceTree = "<group>"; };
 		77B25CB2C3094A92A38E1DB3 /* JSModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleLoader.h; sourceTree = "<group>"; };
 		790081361E95A8EC0052D7CD /* WasmModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmModule.cpp; sourceTree = "<group>"; };
 		790081371E95A8EC0052D7CD /* WasmModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmModule.h; sourceTree = "<group>"; };
@@ -4980,6 +4983,7 @@
 		86F75EFD151C062F007C9BA3 /* RegExpMatchesArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpMatchesArray.cpp; sourceTree = "<group>"; };
 		86FA9E8F142BBB2D001773B7 /* JSBoundFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBoundFunction.cpp; sourceTree = "<group>"; };
 		86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBoundFunction.h; sourceTree = "<group>"; };
+		8791D173F2EE43A7E6469029 /* PinballHandlerContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PinballHandlerContext.h; sourceTree = "<group>"; };
 		8852151A9C3842389B3215B7 /* ScriptFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetcher.h; sourceTree = "<group>"; };
 		8AA92D3D2CACA137002D872B /* JSIteratorHelperPrototype.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = JSIteratorHelperPrototype.js; sourceTree = "<group>"; };
 		8AF85BDA2C9CD1E4005E28DA /* JSIteratorHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSIteratorHelper.h; sourceTree = "<group>"; };
@@ -5493,6 +5497,9 @@
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		AA45D14E2EB82FEB00FCBD16 /* CachedCallInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CachedCallInlines.h; sourceTree = "<group>"; };
+		E30001002EF0001000000001 /* MicrotaskCall.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MicrotaskCall.h; sourceTree = "<group>"; };
+		E30001002EF0001000000002 /* MicrotaskCallInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MicrotaskCallInlines.h; sourceTree = "<group>"; };
+		E30001002EF0001000000003 /* MicrotaskCall.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MicrotaskCall.cpp; sourceTree = "<group>"; };
 		AA785BEA2E77BECA0097F688 /* JSPromiseCombinatorsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSPromiseCombinatorsContext.h; sourceTree = "<group>"; };
 		AA785BEC2E77BECF0097F688 /* JSPromiseCombinatorsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseCombinatorsContext.cpp; sourceTree = "<group>"; };
 		AA785BED2E77BED70097F688 /* JSPromiseCombinatorsContextInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSPromiseCombinatorsContextInlines.h; sourceTree = "<group>"; };
@@ -6140,6 +6147,7 @@
 		F3D9C2362A426CB7006EE152 /* WasmIPIntPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmIPIntPlan.cpp; sourceTree = "<group>"; };
 		F3D9C2372A426CB7006EE152 /* WasmIPIntPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmIPIntPlan.h; sourceTree = "<group>"; };
 		F3D9C2382A426CB7006EE152 /* WasmIPIntGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmIPIntGenerator.cpp; sourceTree = "<group>"; };
+		F576E170731B25C8AD83FF16 /* B3ReduceSIMDShuffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ReduceSIMDShuffle.h; path = b3/B3ReduceSIMDShuffle.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* Completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
 		F68EBB8C0255D4C601FF60F7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -6943,6 +6951,8 @@
 				0F725CA61C503DED00AD943A /* B3PureCSE.h */,
 				43422A641C16221E00E2EB98 /* B3ReduceDoubleToFloat.cpp */,
 				43422A651C16221E00E2EB98 /* B3ReduceDoubleToFloat.h */,
+				7569FA8AB74C4BA387DB8F97 /* B3ReduceSIMDShuffle.cpp */,
+				F576E170731B25C8AD83FF16 /* B3ReduceSIMDShuffle.h */,
 				0FEC85B71BE1462F0080FF74 /* B3ReduceStrength.cpp */,
 				0FEC85B81BE1462F0080FF74 /* B3ReduceStrength.h */,
 				4B78E098294427D2003C6682 /* B3SIMDValue.cpp */,
@@ -7222,6 +7232,9 @@
 				1429D7D30ED2128200B89619 /* Interpreter.cpp */,
 				1429D77B0ED20D7300B89619 /* Interpreter.h */,
 				E39D9D841D39000600667282 /* InterpreterInlines.h */,
+				E30001002EF0001000000003 /* MicrotaskCall.cpp */,
+				E30001002EF0001000000001 /* MicrotaskCall.h */,
+				E30001002EF0001000000002 /* MicrotaskCallInlines.h */,
 				65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */,
 				FE1D6D742362649D007A5C26 /* ProtoCallFrameInlines.h */,
 				149B24FF0D8AF6D1009CB8C7 /* Register.h */,
@@ -10984,6 +10997,7 @@
 				0FEC852D1BDACDAC0080FF74 /* B3ProcedureInlines.h in Headers */,
 				0F725CAA1C503DED00AD943A /* B3PureCSE.h in Headers */,
 				43422A671C16267800E2EB98 /* B3ReduceDoubleToFloat.h in Headers */,
+				E3F5152C2F62AD4300C15A3C /* B3ReduceSIMDShuffle.h in Headers */,
 				0FEC85BD1BE1462F0080FF74 /* B3ReduceStrength.h in Headers */,
 				4B78E09F29442801003C6682 /* B3SIMDValue.h in Headers */,
 				0FEC85351BDACDAC0080FF74 /* B3SlotBaseValue.h in Headers */,
@@ -12102,6 +12116,8 @@
 				142F16E021558802003D49C9 /* MetadataTable.h in Headers */,
 				0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */,
 				7C008CE7187631B600955C24 /* Microtask.h in Headers */,
+				E30001002EF0001000000004 /* MicrotaskCall.h in Headers */,
+				E30001002EF0001000000005 /* MicrotaskCallInlines.h in Headers */,
 				E36965F32D76E975005BCC77 /* MicrotaskQueue.h in Headers */,
 				E306C1BC2D79000D0011D5AC /* MicrotaskQueueInlines.h in Headers */,
 				FE2A87601F02381600EB31B2 /* MinimumReservedZoneSize.h in Headers */,

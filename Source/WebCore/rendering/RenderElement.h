@@ -105,7 +105,7 @@ public:
     RenderObject* lastInFlowChild() const;
 
     Layout::ElementBox* NODELETE layoutBox();
-    const Layout::ElementBox* layoutBox() const;
+    const Layout::ElementBox* NODELETE layoutBox() const;
 
     // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     inline bool canContainFixedPositionObjects(const RenderStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
@@ -340,9 +340,9 @@ public:
     inline bool NODELETE isBeforeContent() const;
     inline bool NODELETE isAfterContent() const;
     inline bool NODELETE isBeforeOrAfterContent() const;
-    static bool isBeforeContent(const RenderElement*);
-    static bool isAfterContent(const RenderElement*);
-    static bool isBeforeOrAfterContent(const RenderElement*);
+    static bool NODELETE isBeforeContent(const RenderElement*);
+    static bool NODELETE isAfterContent(const RenderElement*);
+    static bool NODELETE isBeforeOrAfterContent(const RenderElement*);
 
     WritingMode writingMode() const { return style().writingMode(); }
 
@@ -435,7 +435,7 @@ private:
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;
 
-    void clearSubtreeLayoutRootIfNeeded() const;
+    void NODELETE clearSubtreeLayoutRootIfNeeded() const;
     
     bool shouldWillChangeCreateStackingContext() const;
     void issueRepaintForOutlineAuto(float outlineSize);

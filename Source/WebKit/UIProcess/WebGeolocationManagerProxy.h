@@ -112,8 +112,8 @@ private:
 #endif
     };
 
-    bool isUpdating(const PerDomainData&) const;
-    bool isHighAccuracyEnabled(const PerDomainData&) const;
+    bool NODELETE isUpdating(const PerDomainData&) const;
+    bool NODELETE isHighAccuracyEnabled(const PerDomainData&) const;
     void providerStartUpdating(PerDomainData&, const WebCore::RegistrableDomain&);
     void providerStopUpdating(PerDomainData&);
     void providerSetEnabledHighAccuracy(PerDomainData&, bool enabled);

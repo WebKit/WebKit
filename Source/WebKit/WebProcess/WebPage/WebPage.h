@@ -760,16 +760,16 @@ public:
     void didNavigateWithinPageForFrame(WebFrame&);
     void show();
     String userAgent(const URL&) const;
-    String platformUserAgent(const URL&) const;
+    String NODELETE platformUserAgent(const URL&) const;
     bool hasCustomUserAgent() const { return m_hasCustomUserAgent; }
     WebCore::KeyboardUIMode keyboardUIMode();
 
     void setMainFrameDocumentVisualUpdatesAllowed(bool);
 
     bool hasAccessoryMousePointingDevice() const;
-    bool hoverSupportedByPrimaryPointingDevice() const;
+    bool NODELETE hoverSupportedByPrimaryPointingDevice() const;
     bool hoverSupportedByAnyAvailablePointingDevice() const;
-    std::optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const;
+    std::optional<WebCore::PointerCharacteristics> NODELETE pointerCharacteristicsOfPrimaryPointingDevice() const;
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const;
 
     void animationDidFinishForElement(const WebCore::Element&);
@@ -791,15 +791,15 @@ public:
     inline void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
 
     WebColorChooser* NODELETE activeColorChooser() const;
-    void setActiveColorChooser(WebColorChooser*);
+    void NODELETE setActiveColorChooser(WebColorChooser*);
     void didChooseColor(const WebCore::Color&);
     void didEndColorPicker();
 
-    void setActiveDataListSuggestionPicker(WebDataListSuggestionPicker&);
+    void NODELETE setActiveDataListSuggestionPicker(WebDataListSuggestionPicker&);
     void didSelectDataListOption(const String&);
     void didCloseSuggestions();
 
-    void setActiveDateTimeChooser(WebDateTimeChooser&);
+    void NODELETE setActiveDateTimeChooser(WebDateTimeChooser&);
     void didChooseDate(const String&);
     void didEndDateTimePicker();
 
@@ -1312,7 +1312,7 @@ public:
     void platformInitializeAccessibility(ShouldInitializeNSAccessibility);
     void registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken windowToken);
     void registerRemoteFrameAccessibilityTokens(pid_t, WebCore::AccessibilityRemoteToken, WebCore::FrameIdentifier);
-    WKAccessibilityWebPageObject* accessibilityRemoteObject();
+    WKAccessibilityWebPageObject* NODELETE accessibilityRemoteObject();
     WebCore::IntPoint accessibilityRemoteFrameOffset();
     void createMockAccessibilityElement(pid_t);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -1636,7 +1636,7 @@ public:
 
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::LocalFrame&, WebCore::ResourceRequest&&, WebCore::SubstituteData&&, WebCore::ResourceRequest&&);
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::LocalFrame&, WebCore::ResourceRequest&&, WebCore::SubstituteData&&);
-    void updateCachedDocumentLoader(WebCore::DocumentLoader&, WebCore::LocalFrame&);
+    void NODELETE updateCachedDocumentLoader(WebCore::DocumentLoader&, WebCore::LocalFrame&);
 
     void getBytecodeProfile(CompletionHandler<void(const String&)>&&);
     void getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&);
@@ -1841,7 +1841,7 @@ public:
     void completeTextManipulation(const Vector<WebCore::TextManipulationItem>&, CompletionHandler<void(const WebCore::TextManipulationControllerManipulationResult&)>&&);
 
 #if ENABLE(APPLE_PAY)
-    WebPaymentCoordinator* paymentCoordinator();
+    WebPaymentCoordinator* NODELETE paymentCoordinator();
 #endif
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
@@ -1849,8 +1849,8 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void setRemoteObjectRegistry(WebRemoteObjectRegistry*);
-    WebRemoteObjectRegistry* remoteObjectRegistry();
+    void NODELETE setRemoteObjectRegistry(WebRemoteObjectRegistry*);
+    WebRemoteObjectRegistry* NODELETE remoteObjectRegistry();
 #endif
 
     WebPageProxyIdentifier webPageProxyIdentifier() const { return m_webPageProxyIdentifier; }
@@ -2669,7 +2669,7 @@ private:
     void revokeSandboxExtensions(Vector<Ref<SandboxExtension>>& sandboxExtensions);
 
     bool NODELETE hasPendingEditorStateUpdate() const;
-    bool shouldAvoidComputingPostLayoutDataForEditorState() const;
+    bool NODELETE shouldAvoidComputingPostLayoutDataForEditorState() const;
 
     void useRedirectionForCurrentNavigation(WebCore::ResourceResponse&&);
 

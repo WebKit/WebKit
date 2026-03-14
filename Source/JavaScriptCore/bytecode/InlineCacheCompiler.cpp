@@ -41,6 +41,7 @@
 #include "GetterSetter.h"
 #include "GetterSetterAccessCase.h"
 #include "Heap.h"
+#include "ICStats.h"
 #include "InstanceOfAccessCase.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "JIT.h"
@@ -78,17 +79,25 @@ namespace JSC {
 namespace InlineCacheCompilerInternal {
 static constexpr bool verbose = false;
 static constexpr bool traceHandlerExecution = false;
+static constexpr bool traceHandlerStats = false;
 }
 
 template<typename... Args>
-static void traceHandler(CCallHelpers& jit, Args&&... args)
+static void traceHandler(CCallHelpers& jit, ICEvent::Kind kind, Args&&... args)
 {
     if constexpr (InlineCacheCompilerInternal::traceHandlerExecution) {
 #if CPU(ARM64)
-        jit.println("IC: ", std::forward<Args>(args)..., " ", Printer::PCRegister(), " ", CCallHelpers::linkRegister);
+        jit.println("IC: ", kind, std::forward<Args>(args)..., " ", Printer::PCRegister(), " ", CCallHelpers::linkRegister);
 #else
-        jit.println("IC: ", std::forward<Args>(args)..., " ", Printer::PCRegister());
+        jit.println("IC: ", kind, std::forward<Args>(args)..., " ", Printer::PCRegister());
 #endif
+    }
+    if constexpr (InlineCacheCompilerInternal::traceHandlerStats) {
+        if (Options::useICStats()) {
+            jit.probeDebug([=] (Probe::Context&) {
+                ICStats::singleton().add(ICEvent(kind));
+            });
+        }
     }
 }
 
@@ -1328,7 +1337,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdSlowPathCodeGenerator(VM& vm
     using BaselineJITRegisters::GetById::propertyCacheGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetById slow path");
+    traceHandler(jit, ICEvent::GetByIdSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1357,7 +1366,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdWithThisSlowPathCodeGenerato
     using BaselineJITRegisters::GetByIdWithThis::propertyCacheGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetByIdWithThis slow path");
+    traceHandler(jit, ICEvent::GetByIdWithThisSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1387,7 +1396,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValSlowPathCodeGenerator(VM& v
     using BaselineJITRegisters::GetByVal::profileGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetByVal slow path");
+    traceHandler(jit, ICEvent::GetByValSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1416,7 +1425,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getPrivateNameSlowPathCodeGenerator
     using BaselineJITRegisters::PrivateBrand::propertyCacheGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetPrivateName slow path");
+    traceHandler(jit, ICEvent::GetPrivateNameSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1448,7 +1457,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithThisSlowPathCodeGenerat
     using BaselineJITRegisters::GetByValWithThis::profileGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetByValWithThis slow path");
+    traceHandler(jit, ICEvent::GetByValWithThisSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1478,7 +1487,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSlowPathCodeGenerator(VM& vm
     using BaselineJITRegisters::PutById::propertyCacheGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutById slow path");
+    traceHandler(jit, ICEvent::PutByIdSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1509,7 +1518,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSlowPathCodeGenerator(VM& v
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutByVal slow path");
+    traceHandler(jit, ICEvent::PutByValSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1541,7 +1550,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfSlowPathCodeGenerator(VM&
     using BaselineJITRegisters::Instanceof::propertyCacheGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "InstanceOf slow path");
+    traceHandler(jit, ICEvent::InstanceOfSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1569,7 +1578,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByIdSlowPathCodeGenerator(VM& vm
     using BaselineJITRegisters::DelById::propertyCacheGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "DeleteById slow path");
+    traceHandler(jit, ICEvent::DeleteByIdSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -1598,7 +1607,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByValSlowPathCodeGenerator(VM& v
     using BaselineJITRegisters::DelByVal::propertyCacheGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "DeleteByVal slow path");
+    traceHandler(jit, ICEvent::DeleteByValSlowPath);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
@@ -5292,7 +5301,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerImpl(VM& vm)
     using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetById Load ", ownProperty ? "OwnProperty" : "PrototypeProperty", " handler");
+    traceHandler(jit, ownProperty ? ICEvent::GetByIdLoadOwnPropertyHandler : ICEvent::GetByIdLoadPrototypePropertyHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -5332,7 +5341,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandler(VM&)
     using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetById Miss handler");
+    traceHandler(jit, ICEvent::GetByIdMissHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -5396,7 +5405,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomHandlerImpl(VM& vm)
     using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetById Custom ", isAccessor ? "Accessor" : "Value", " handler");
+    traceHandler(jit, isAccessor ? ICEvent::GetByIdCustomAccessorHandler : ICEvent::GetByIdCustomValueHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -5493,7 +5502,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM& vm)
     using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetById Getter handler");
+    traceHandler(jit, ICEvent::GetByIdGetterHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -5520,7 +5529,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&)
     using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetById ProxyObjectLoad handler");
+    traceHandler(jit, ICEvent::GetByIdProxyObjectLoadHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -5596,7 +5605,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdModuleNamespaceLoadHandler(VM&)
     using BaselineJITRegisters::GetById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetById ModuleNamespaceLoad handler");
+    traceHandler(jit, ICEvent::GetByIdModuleNamespaceLoadHandler);
 
     CCallHelpers::JumpList fallThrough;
     CCallHelpers::JumpList failAndIgnore;
@@ -5633,7 +5642,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler(VM&)
     using BaselineJITRegisters::PutById::scratch2GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutById Replace handler");
+    traceHandler(jit, ICEvent::PutByIdReplaceHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -5732,7 +5741,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerImpl(VM& vm
     using BaselineJITRegisters::PutById::scratch4GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutById Transition handler");
+    traceHandler(jit, ICEvent::PutByIdTransitionHandler);
 
     CCallHelpers::JumpList fallThrough;
     CCallHelpers::JumpList allocationFailure;
@@ -5794,7 +5803,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingOutOfLineHand
     using BaselineJITRegisters::PutById::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutById TransitionReallocatingOutOfLine handler");
+    traceHandler(jit, ICEvent::PutByIdTransitionReallocatingOutOfLineHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -5862,7 +5871,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomHandlerImpl(VM& vm)
     using BaselineJITRegisters::PutById::scratch3GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutById Custom ", isAccessor ? "Accessor" : "Value", " handler");
+    traceHandler(jit, isAccessor ? ICEvent::PutByIdCustomAccessorHandler : ICEvent::PutByIdCustomValueHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -5967,7 +5976,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSetterHandlerImpl(VM& vm)
     using BaselineJITRegisters::PutById::scratch2GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutById ", isStrict ? "Strict" : "Sloppy", " Setter handler");
+    traceHandler(jit, isStrict ? ICEvent::PutByIdStrictSetterHandler : ICEvent::PutByIdSloppySetterHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6007,7 +6016,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> inByIdInHandlerImpl(VM&)
     using BaselineJITRegisters::InById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "InById ", hit ? "Hit" : "Miss", " handler");
+    traceHandler(jit, hit ? ICEvent::InByIdHitHandler : ICEvent::InByIdMissHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6047,7 +6056,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteHandler(VM&)
     using BaselineJITRegisters::DelById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "DeleteById Delete handler");
+    traceHandler(jit, ICEvent::DeleteByIdDeleteHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6079,7 +6088,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdIgnoreHandlerImpl(VM&)
     using BaselineJITRegisters::DelById::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "DeleteById ", returnValue ? "Miss" : "NonConfigurable", " handler");
+    traceHandler(jit, returnValue ? ICEvent::DeleteByIdMissHandler : ICEvent::DeleteByIdNonConfigurableHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6120,7 +6129,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfHandlerImpl(VM&)
     using BaselineJITRegisters::Instanceof::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "InstanceOf ", hit ? "Hit" : "Miss", " handler");
+    traceHandler(jit, hit ? ICEvent::InstanceOfHitHandler : ICEvent::InstanceOfMissHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6163,7 +6172,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValLoadHandlerImpl(VM& vm)
     using BaselineJITRegisters::GetByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetByVal Load ", ownProperty ? "OwnProperty" : "PrototypeProperty", isSymbol ? " Symbol" : " String", " handler");
+    traceHandler(jit, ownProperty ? ICEvent::GetByValLoadOwnPropertyHandler : ICEvent::GetByValLoadPrototypePropertyHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6221,7 +6230,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValMissHandlerImpl(VM&)
     using BaselineJITRegisters::GetByVal::profileGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetByVal Miss ", isSymbol ? "Symbol" : "String", " handler");
+    traceHandler(jit, ICEvent::GetByValMissHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6265,7 +6274,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValCustomHandlerImpl(VM& vm)
     using BaselineJITRegisters::GetByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetByVal Custom ", isAccessor ? "Accessor" : "Value", isSymbol ? " Symbol" : " String", " handler");
+    traceHandler(jit, isAccessor ? ICEvent::GetByValCustomAccessorHandler : ICEvent::GetByValCustomValueHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6324,7 +6333,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValGetterHandlerImpl(VM& vm)
     using BaselineJITRegisters::GetByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "GetByVal Getter ", isSymbol ? "Symbol" : "String", " handler");
+    traceHandler(jit, ICEvent::GetByValGetterHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6367,7 +6376,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValReplaceHandlerImpl(VM&)
     using BaselineJITRegisters::PutByVal::scratch2GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutByVal Replace ", isSymbol ? "Symbol" : "String", " handler");
+    traceHandler(jit, ICEvent::PutByValReplaceHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6412,7 +6421,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionHandlerImpl(VM& v
     using BaselineJITRegisters::PutByVal::profileGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutByVal Transition ", isSymbol ? "Symbol" : "String", " handler");
+    traceHandler(jit, ICEvent::PutByValTransitionHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
     CCallHelpers::JumpList allocationFailure;
@@ -6506,7 +6515,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionOutOfLineHandlerI
     using BaselineJITRegisters::PutByVal::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutByVal TransitionOutOfLine ", isSymbol ? "Symbol" : "String", " handler");
+    traceHandler(jit, ICEvent::PutByValTransitionOutOfLineHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6555,7 +6564,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValCustomHandlerImpl(VM& vm)
     using BaselineJITRegisters::PutByVal::profileGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutByVal Custom ", isAccessor ? "Accessor" : "Value", isSymbol ? " Symbol" : " String", " handler");
+    traceHandler(jit, isAccessor ? ICEvent::PutByValCustomAccessorHandler : ICEvent::PutByValCustomValueHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6617,7 +6626,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSetterHandlerImpl(VM& vm)
     using BaselineJITRegisters::PutByVal::profileGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "PutByVal ", isStrict ? "Strict" : "Sloppy", " Setter ", isSymbol ? "Symbol" : "String", " handler");
+    traceHandler(jit, isStrict ? ICEvent::PutByValStrictSetterHandler : ICEvent::PutByValSloppySetterHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6674,7 +6683,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> inByValInHandlerImpl(VM&)
     using BaselineJITRegisters::InByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "InByVal ", hit ? "Hit" : "Miss", isSymbol ? " Symbol" : " String", " handler");
+    traceHandler(jit, hit ? ICEvent::InByValHitHandler : ICEvent::InByValMissHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6733,7 +6742,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValDeleteHandlerImpl(VM&)
     using BaselineJITRegisters::DelByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "DeleteByVal Delete ", isSymbol ? "Symbol" : "String", " handler");
+    traceHandler(jit, ICEvent::DeleteByValDeleteHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6767,7 +6776,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValIgnoreHandlerImpl(VM&)
     using BaselineJITRegisters::DelByVal::resultJSR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "DeleteByVal ", returnValue ? "Miss" : "NonConfigurable", isSymbol ? " Symbol" : " String", " handler");
+    traceHandler(jit, returnValue ? ICEvent::DeleteByValMissHandler : ICEvent::DeleteByValNonConfigurableHandler, isSymbol ? " Symbol" : " String");
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6834,7 +6843,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkPrivateBrandHandler(VM&)
     using BaselineJITRegisters::PrivateBrand::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "CheckPrivateBrand handler");
+    traceHandler(jit, ICEvent::CheckPrivateBrandHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -6861,7 +6870,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&)
     using BaselineJITRegisters::PrivateBrand::scratch1GPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "SetPrivateBrand handler");
+    traceHandler(jit, ICEvent::SetPrivateBrandHandler);
 
     CCallHelpers::JumpList fallThrough;
 
@@ -7650,7 +7659,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
     m_jit = &jit;
 
     emitDataICPrologue(*m_jit);
-    traceHandler(jit, "Compiled handler");
+    traceHandler(jit, ICEvent::CompiledHandler);
 
     m_preservedReusedRegisterState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
@@ -7773,7 +7782,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> InlineCacheCompiler::compileGetByDOM
     m_jit = &jit;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
-    traceHandler(jit, "DOMJIT handler");
+    traceHandler(jit, ICEvent::DOMJITHandler);
 
     CCallHelpers::JumpList fallThrough;
 
