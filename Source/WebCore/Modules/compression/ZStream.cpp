@@ -38,6 +38,7 @@ bool ZStream::initializeIfNecessary(Algorithm algorithm, Operation operation)
 
     switch (operation) {
     case Operation::Compression:
+        m_isCompression = true;
         switch (algorithm) {
         // Values chosen here are based off
         // https://developer.apple.com/documentation/compression/compression_algorithm/compression_zlib?language=objc
@@ -79,8 +80,12 @@ ZStream::ZStream()
 
 ZStream::~ZStream()
 {
-    if (m_isInitialized)
-        deflateEnd(&m_stream);
+    if (m_isInitialized) {
+        if (m_isCompression)
+            deflateEnd(&m_stream);
+        else
+            inflateEnd(&m_stream);
+    }
 }
 
 }

@@ -44,6 +44,7 @@ public:
 private:
     z_stream m_stream;
     bool m_isInitialized { false };
+    bool m_isCompression { false };
 };
 
 }
