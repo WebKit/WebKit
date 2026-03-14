@@ -1051,11 +1051,8 @@ inline bool Document::shouldInvalidateNodeListAndCollectionCachesForAttribute(co
 template <typename InvalidationFunction>
 void Document::invalidateNodeListAndCollectionCaches(InvalidationFunction invalidate)
 {
-    for (RefPtr list : copyToVectorSpecialization<Vector<LiveNodeList*, 8>>(m_listsInvalidatedAtDocument))
-        invalidate(*list);
-
-    for (RefPtr collection : copyToVectorSpecialization<Vector<HTMLCollection*, 8>>(m_collectionsInvalidatedAtDocument))
-        invalidate(*collection);
+    m_listsInvalidatedAtDocument.forEach([&](auto& list) { invalidate(list); });
+    m_collectionsInvalidatedAtDocument.forEach([&](auto& collection) { invalidate(collection); });
 }
 
 void Node::invalidateNodeListAndCollectionCachesInAncestors()

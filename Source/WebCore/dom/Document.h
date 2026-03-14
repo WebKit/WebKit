@@ -2386,8 +2386,8 @@ private:
 
     RefPtr<TextResourceDecoder> m_decoder;
 
-    HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
-    HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
+    WeakHashSet<LiveNodeList> m_listsInvalidatedAtDocument;
+    WeakHashSet<HTMLCollection> m_collectionsInvalidatedAtDocument;
     std::array<unsigned, numNodeListInvalidationTypes> m_nodeListAndCollectionCounts = { };
 
     RefPtr<XPathEvaluator> m_xpathEvaluator;

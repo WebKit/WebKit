@@ -878,8 +878,11 @@ Document::~Document()
     if (m_whenWindowLoadEventOrDestroyed)
         m_whenWindowLoadEventOrDestroyed();
 
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_listsInvalidatedAtDocument.isEmpty());
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_collectionsInvalidatedAtDocument.isEmpty());
+    // isEmptyIgnoringNullReferences() prunes stale (dangling) WeakPtr
+    // entries. If non-empty after pruning, live LiveNodeLists/HTMLCollections
+    // still reference this dying Document, which should be impossible.
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_listsInvalidatedAtDocument.isEmptyIgnoringNullReferences());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_collectionsInvalidatedAtDocument.isEmptyIgnoringNullReferences());
 
     for (unsigned count : m_nodeListAndCollectionCounts)
         ASSERT_UNUSED(count, !count);
@@ -6734,7 +6737,7 @@ void Document::registerNodeListForInvalidation(LiveNodeList& list)
         return;
     ASSERT(!list.isRegisteredForInvalidationAtDocument());
     list.setRegisteredForInvalidationAtDocument(true);
-    m_listsInvalidatedAtDocument.add(&list);
+    m_listsInvalidatedAtDocument.add(list);
 }
 
 void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
@@ -6744,15 +6747,15 @@ void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
         return;
 
     list.setRegisteredForInvalidationAtDocument(false);
-    ASSERT(m_listsInvalidatedAtDocument.contains(&list));
-    m_listsInvalidatedAtDocument.remove(&list);
+    ASSERT(m_listsInvalidatedAtDocument.contains(list));
+    m_listsInvalidatedAtDocument.remove(list);
 }
 
 void Document::registerCollection(HTMLCollection& collection)
 {
     m_nodeListAndCollectionCounts[static_cast<unsigned>(collection.invalidationType())]++;
     if (collection.isRootedAtTreeScope())
-        m_collectionsInvalidatedAtDocument.add(&collection);
+        m_collectionsInvalidatedAtDocument.add(collection);
 }
 
 void Document::unregisterCollection(HTMLCollection& collection)
@@ -6762,7 +6765,7 @@ void Document::unregisterCollection(HTMLCollection& collection)
     if (!collection.isRootedAtTreeScope())
         return;
 
-    m_collectionsInvalidatedAtDocument.remove(&collection);
+    m_collectionsInvalidatedAtDocument.remove(collection);
 }
 
 void Document::collectionCachedIdNameMap(const HTMLCollection& collection)

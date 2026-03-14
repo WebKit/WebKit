@@ -44,7 +44,7 @@ enum class LiveNodeListType : uint8_t {
     LabelsNodeList = 2
 };
 
-class LiveNodeList : public NodeList {
+class LiveNodeList : public NodeList, public CanMakeWeakPtr<LiveNodeList> {
     WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(LiveNodeList);
 public:
     virtual ~LiveNodeList();
