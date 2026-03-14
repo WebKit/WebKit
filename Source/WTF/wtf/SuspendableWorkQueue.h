@@ -41,6 +41,7 @@ public:
     void suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& suspensionCompletionHandler);
     void resume();
     void dispatch(Function<void()>&&) final;
+    void dispatchWithQOS(Function<void()>&&, QOS);
     void dispatchAfter(Seconds, Function<void()>&&) final;
     void dispatchSync(Function<void()>&&) final;
     bool isSuspended() const;

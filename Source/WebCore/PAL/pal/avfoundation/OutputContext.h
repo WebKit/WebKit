@@ -46,7 +46,7 @@ public:
 
     Vector<OutputDevice> outputDevices() const;
 
-    AVOutputContext* platformContext() const { return m_context.get(); }
+    AVOutputContext* platformContext() const LIFETIME_BOUND { return m_context.get(); }
 private:
     friend class NeverDestroyed<OutputContext>;
     OutputContext(RetainPtr<AVOutputContext>&&);

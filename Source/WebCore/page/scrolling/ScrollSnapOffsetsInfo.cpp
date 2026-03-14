@@ -439,7 +439,7 @@ static float convertOffsetUnit(LayoutUnit input, float deviceScaleFactor)
     return roundToDevicePixel(input, deviceScaleFactor, false);
 }
 
-static LayoutUnit convertOffsetUnit(float input, float /* scaleFactor */)
+static LayoutUnit NODELETE convertOffsetUnit(float input, float /* scaleFactor */)
 {
     return LayoutUnit(input);
 }

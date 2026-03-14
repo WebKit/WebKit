@@ -57,7 +57,7 @@ public:
     static inline FloatSize rotateShadowOffset(const SpaceSeparatedPoint<Style::Length<CSS::AllUnzoomed>>& offset, WritingMode, const Style::ZoomFactor&);
 
 protected:
-    auto& textBox() const { return m_textBox; }
+    auto& textBox() const LIFETIME_BOUND { return m_textBox; }
     InlineIterator::TextBoxIterator makeIterator() const;
 
     void paintBackgroundFill();

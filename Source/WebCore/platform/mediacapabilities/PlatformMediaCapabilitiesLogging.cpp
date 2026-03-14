@@ -72,9 +72,9 @@ static String convertEnumerationToString(PlatformMediaCapabilitiesTransferFuncti
 static String convertEnumerationToString(PlatformMediaDecodingType value)
 {
     switch (value) {
-    case PlatformMediaDecodingType::File:           return "file"_s;
+    case PlatformMediaDecodingType::FileOrHLS:      return "file"_s;
     case PlatformMediaDecodingType::MediaSource:    return "media-source"_s;
-    case PlatformMediaDecodingType::WebRTC:         return "webrtc"_s;
+    case PlatformMediaDecodingType::MediaStream:    return "media-stream"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

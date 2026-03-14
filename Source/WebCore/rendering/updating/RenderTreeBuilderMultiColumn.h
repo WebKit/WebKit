@@ -42,7 +42,7 @@ public:
     // Some renderers (column spanners) are moved out of the flow thread to live among column
     // sets. If |child| is such a renderer, resolve it to the placeholder that lives at the original
     // location in the tree.
-    RenderObject* resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
+    RenderObject* NODELETE resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
     void restoreColumnSpannersForContainer(RenderMultiColumnFlow&, const RenderElement& container);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
     void multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow&, RenderObject& relative, RenderTreeBuilder::CanCollapseAnonymousBlock);

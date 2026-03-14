@@ -52,6 +52,7 @@
 #include "pas_thread_local_cache.h"
 #include "pas_utility_heap.h"
 #include "thingy_heap.h"
+#include <mutex>
 #include <set>
 #include <thread>
 #include <vector>

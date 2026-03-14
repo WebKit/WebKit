@@ -103,8 +103,8 @@ public:
     bool isTableFormattingGeometry() const { return formattingContext().isTableFormattingContext(); }
 
 protected:
-    const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
-    const FormattingContext& formattingContext() const { return m_formattingContext; }
+    const LayoutState& layoutState() const LIFETIME_BOUND { return m_formattingContext.layoutState(); }
+    const FormattingContext& formattingContext() const LIFETIME_BOUND { return m_formattingContext; }
 
 private:
     VerticalGeometry outOfFlowReplacedVerticalGeometry(const ElementBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverriddenVerticalValues&) const;

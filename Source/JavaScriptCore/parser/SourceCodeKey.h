@@ -95,7 +95,7 @@ public:
 
     unsigned hash() const { return m_hash; }
 
-    const UnlinkedSourceCode& source() const { return m_sourceCode; }
+    const UnlinkedSourceCode& source() const LIFETIME_BOUND { return m_sourceCode; }
 
     size_t length() const { return m_sourceCode.length(); }
 

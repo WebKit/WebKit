@@ -70,7 +70,7 @@ WEBCORE_EXPORT bool isKeypadEvent(NSEvent *);
 WEBCORE_EXPORT DoublePoint unadjustedMovementForEvent(NSEvent *);
 
 WEBCORE_EXPORT OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *);
-WEBCORE_EXPORT OptionSet<PlatformEvent::Modifier> modifiersForModifierFlags(NSEventModifierFlags);
+WEBCORE_EXPORT OptionSet<PlatformEvent::Modifier> NODELETE modifiersForModifierFlags(NSEventModifierFlags);
 
 WEBCORE_EXPORT void getWheelEventDeltas(NSEvent *, float& deltaX, float& deltaY, BOOL& continuous);
 

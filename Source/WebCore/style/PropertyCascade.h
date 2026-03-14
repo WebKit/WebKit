@@ -91,22 +91,22 @@ public:
     bool isEmpty() const { return m_propertyIsPresent.isEmpty() && !m_seenLogicalGroupPropertyCount; }
 
     bool hasNormalProperty(CSSPropertyID) const;
-    const Property& normalProperty(CSSPropertyID) const;
+    const Property& normalProperty(CSSPropertyID) const LIFETIME_BOUND;
 
     bool hasLogicalGroupProperty(CSSPropertyID) const;
-    const Property& logicalGroupProperty(CSSPropertyID) const;
-    const Property* lastPropertyResolvingLogicalPropertyPair(CSSPropertyID, WritingMode) const;
+    const Property& logicalGroupProperty(CSSPropertyID) const LIFETIME_BOUND;
+    const Property* lastPropertyResolvingLogicalPropertyPair(CSSPropertyID, WritingMode) const LIFETIME_BOUND;
 
     bool hasCustomProperty(const AtomString&) const;
-    const Property& customProperty(const AtomString&) const;
+    const Property& customProperty(const AtomString&) const LIFETIME_BOUND;
 
-    std::span<const CSSPropertyID> logicalGroupPropertyIDs() const;
-    const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
+    std::span<const CSSPropertyID> logicalGroupPropertyIDs() const LIFETIME_BOUND;
+    const HashMap<AtomString, Property>& customProperties() const LIFETIME_BOUND { return m_customProperties; }
 
     const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const;
 
-    PropertyBitSet& propertyIsPresent() { return m_propertyIsPresent; }
-    const PropertyBitSet& propertyIsPresent() const { return m_propertyIsPresent; }
+    PropertyBitSet& propertyIsPresent() LIFETIME_BOUND { return m_propertyIsPresent; }
+    const PropertyBitSet& propertyIsPresent() const LIFETIME_BOUND { return m_propertyIsPresent; }
 
     bool applyLowPriorityOnly() const { return !m_includedProperties.ids.isEmpty(); }
 

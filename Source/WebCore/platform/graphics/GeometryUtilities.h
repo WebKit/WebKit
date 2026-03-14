@@ -35,11 +35,11 @@ namespace WebCore {
 
 class FloatQuad;
 
-float euclidianDistance(const FloatSize&);
+float NODELETE euclidianDistance(const FloatSize&);
 WEBCORE_EXPORT float euclidianDistance(const FloatPoint&, const FloatPoint&);
 
 // Find point where lines through the two pairs of points intersect. Returns false if the lines don't intersect.
-WEBCORE_EXPORT bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection);
+WEBCORE_EXPORT bool NODELETE findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection);
 
 WEBCORE_EXPORT IntRect unionRect(const Vector<IntRect>&);
 WEBCORE_EXPORT IntRect unionRectIgnoringZeroRects(const Vector<IntRect>&);
@@ -47,22 +47,22 @@ WEBCORE_EXPORT FloatRect unionRect(const Vector<FloatRect>&);
 WEBCORE_EXPORT FloatRect unionRectIgnoringZeroRects(const Vector<FloatRect>&);
 
 // Map point from srcRect to an equivalent point in destRect.
-FloatPoint mapPoint(FloatPoint, const FloatRect& srcRect, const FloatRect& destRect);
+FloatPoint NODELETE mapPoint(FloatPoint, const FloatRect& srcRect, const FloatRect& destRect);
 
 // Map rect from srcRect to an equivalent rect in destRect.
-WEBCORE_EXPORT FloatRect mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
+WEBCORE_EXPORT FloatRect NODELETE mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
 
-WEBCORE_EXPORT FloatRect largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect&);
-WEBCORE_EXPORT FloatRect smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRect&);
+WEBCORE_EXPORT FloatRect NODELETE largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect&);
+WEBCORE_EXPORT FloatRect NODELETE smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRect&);
 
-FloatSize sizeWithAreaAndAspectRatio(float area, float aspectRatio);
+FloatSize NODELETE sizeWithAreaAndAspectRatio(float area, float aspectRatio);
 
 // Compute a rect that encloses all points covered by the given rect if it were rotated a full turn around (0,0).
 FloatRect boundsOfRotatingRect(const FloatRect&);
 
-bool ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint&);
+bool NODELETE ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint&);
 
-FloatPoint midPoint(const FloatPoint&, const FloatPoint&);
+FloatPoint NODELETE midPoint(const FloatPoint&, const FloatPoint&);
 
 // -------------
 // |   h\  |s  |
@@ -75,19 +75,19 @@ FloatPoint midPoint(const FloatPoint&, const FloatPoint&);
 // the length from the starting position to the intersection of the ray with the box. Given the above diagram, we are
 // trying to calculate h, with lengthOfPointToSideOfIntersection computing the length of s, and angleOfPointToSideOfIntersection
 // computing a.
-double lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
+double NODELETE lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
 
 // Given a box and a ray (described by an offset from the top left corner of the box and angle from vertical in degrees),
 // compute the closest length from the starting position to the side that the ray intersects with.
-double lengthOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
+double NODELETE lengthOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
 
 // Given a box and a ray (described by an offset from the top left corner of the box and angle from vertical in degrees)
 // compute the acute angle between the ray and the line segment from the starting point to the closest point on the
 // side that the ray intersects with.
-float angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
+float NODELETE angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
 
 // Given a box and an offset from the top left corner, calculate the distance of the point from each side
-RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect&, const FloatPoint&);
+RectEdges<double> NODELETE distanceOfPointToSidesOfRect(const FloatRect&, const FloatPoint&);
 
 float distanceToClosestSide(FloatPoint, FloatSize);
 float distanceToFarthestSide(FloatPoint, FloatSize);
@@ -96,14 +96,14 @@ float distanceToFarthestCorner(FloatPoint, FloatSize);
 
 // Given a box and an offset from the top left corner, construct a coordinate system with this offset as the origin,
 // and return the vertices of the box in this coordinate system
-std::array<FloatPoint, 4> verticesForBox(const FloatRect&, const FloatPoint);
+std::array<FloatPoint, 4> NODELETE verticesForBox(const FloatRect&, const FloatPoint);
 
-float toPositiveAngle(float angle);
-float toRelatedAcuteAngle(float angle);
+float NODELETE toPositiveAngle(float angle);
+float NODELETE toRelatedAcuteAngle(float angle);
 
-float normalizeAngleInRadians(float radians);
+float NODELETE normalizeAngleInRadians(float radians);
 
-WEBCORE_EXPORT FloatRect scaledRectAtOrigin(const FloatRect& sourceRect, float scale, const FloatPoint& origin);
+WEBCORE_EXPORT FloatRect NODELETE scaledRectAtOrigin(const FloatRect& sourceRect, float scale, const FloatPoint& origin);
 
 struct RotatedRect {
     FloatPoint center;

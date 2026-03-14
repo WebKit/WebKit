@@ -692,7 +692,7 @@ void MathOperator::paint(const RenderStyle& style, PaintInfo& info, const Layout
     // Make a copy of the PaintInfo because applyTransform will modify its rect.
     PaintInfo paintInfo(info);
     GraphicsContextStateSaver stateSaver(paintInfo.context());
-    paintInfo.context().setFillColor(style.visitedDependentColorApplyingColorFilter());
+    paintInfo.context().setFillColor(style.visitedDependentTextFillColorApplyingColorFilter());
 
     // For a radical character, we may need some scale transform to stretch it vertically or mirror it.
     if (m_baseCharacter == kRadicalOperator) {

@@ -49,19 +49,13 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 
 void Gradient::paint(GraphicsContext& context)
 {
-    paint(context.platformContext(), context.colorSpace());
+    paint(context.platformContext());
 }
 
-void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColorSpace> colorSpace)
+void Gradient::paint(CGContextRef platformContext)
 {
-    auto ensurePlatformRenderer = [&] {
-        if (m_platformRenderer && m_platformRenderer->colorSpace() == colorSpace)
-            return;
-
-        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops.sorted(), colorSpace };
-    };
-
-    ensurePlatformRenderer();
+    if (!m_platformRenderer)
+        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops.sorted() };
 
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {

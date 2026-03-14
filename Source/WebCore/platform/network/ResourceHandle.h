@@ -111,7 +111,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT NSURLConnection *connection() const;
+    WEBCORE_EXPORT NSURLConnection *NODELETE connection() const;
     id makeDelegate(bool, RefPtr<SynchronousLoaderMessageQueue>&&);
     id delegate();
     void releaseDelegate();
@@ -122,48 +122,48 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
-    bool shouldContentSniff() const;
+    bool NODELETE shouldContentSniff() const;
     static bool shouldContentSniffURL(const URL&);
 
-    ContentEncodingSniffingPolicy contentEncodingSniffingPolicy() const;
+    ContentEncodingSniffingPolicy NODELETE contentEncodingSniffingPolicy() const;
 
-    WEBCORE_EXPORT static void forceContentSniffing();
+    WEBCORE_EXPORT static void NODELETE forceContentSniffing();
 
     bool hasAuthenticationChallenge() const;
     void clearAuthentication();
     WEBCORE_EXPORT virtual void cancel();
 
-    NetworkLoadMetrics* networkLoadMetrics();
+    NetworkLoadMetrics* NODELETE networkLoadMetrics();
     void setNetworkLoadMetrics(Box<NetworkLoadMetrics>&&);
 
-    MonotonicTime startTimeBeforeRedirects() const;
-    bool failsTAOCheck() const;
+    MonotonicTime NODELETE startTimeBeforeRedirects() const;
+    bool NODELETE failsTAOCheck() const;
     void checkTAO(const ResourceResponse&);
-    bool hasCrossOriginRedirect() const;
-    void markAsHavingCrossOriginRedirect();
-    uint16_t redirectCount() const;
-    void incrementRedirectCount();
+    bool NODELETE hasCrossOriginRedirect() const;
+    void NODELETE markAsHavingCrossOriginRedirect();
+    uint16_t NODELETE redirectCount() const;
+    void NODELETE incrementRedirectCount();
 
     // The client may be 0, in which case no callbacks will be made.
-    WEBCORE_EXPORT ResourceHandleClient* client() const;
-    WEBCORE_EXPORT void clearClient();
+    WEBCORE_EXPORT ResourceHandleClient* NODELETE client() const;
+    WEBCORE_EXPORT void NODELETE clearClient();
 
     WEBCORE_EXPORT void setDefersLoading(bool);
 
-    WEBCORE_EXPORT ResourceRequest& firstRequest();
+    WEBCORE_EXPORT ResourceRequest& NODELETE firstRequest();
     WEBCORE_EXPORT const ResourceRequest& firstRequest() const;
-    const String& lastHTTPMethod() const;
+    const String& NODELETE lastHTTPMethod() const;
 
     void failureTimerFired();
 
-    NetworkingContext* context() const;
+    NetworkingContext* NODELETE context() const;
 
     // AuthenticationClient.
     void ref() const override { RefCounted::ref(); }
     void deref() const override { RefCounted::deref(); }
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT static CFStringRef synchronousLoadRunLoopMode();
+    WEBCORE_EXPORT static CFStringRef NODELETE synchronousLoadRunLoopMode();
 #endif
 
     typedef Ref<ResourceHandle> (*BuiltinConstructor)(const ResourceRequest& request, ResourceHandleClient* client);

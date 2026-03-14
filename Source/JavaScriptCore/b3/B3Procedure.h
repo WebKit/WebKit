@@ -173,14 +173,14 @@ public:
     SparseCollection<Air::StackSlot>& stackSlots();
     const SparseCollection<Air::StackSlot>& stackSlots() const;
 
-    SparseCollection<Variable>& variables() { return m_variables; }
-    const SparseCollection<Variable>& variables() const { return m_variables; }
+    SparseCollection<Variable>& variables() LIFETIME_BOUND { return m_variables; }
+    const SparseCollection<Variable>& variables() const LIFETIME_BOUND { return m_variables; }
 
     // Short for variables().remove(). It's better to call this method since it's out of line.
     void deleteVariable(Variable*);
 
-    SparseCollection<Value>& values() { return m_values; }
-    const SparseCollection<Value>& values() const { return m_values; }
+    SparseCollection<Value>& values() LIFETIME_BOUND { return m_values; }
+    const SparseCollection<Value>& values() const LIFETIME_BOUND { return m_values; }
 
     // Short for values().remove(). It's better to call this method since it's out of line.
     void deleteValue(Value*);
@@ -262,7 +262,7 @@ public:
     JS_EXPORT_PRIVATE unsigned frameSize() const;
     JS_EXPORT_PRIVATE RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
 
-    PCToOriginMap& pcToOriginMap() { return m_pcToOriginMap; }
+    PCToOriginMap& pcToOriginMap() LIFETIME_BOUND { return m_pcToOriginMap; }
     PCToOriginMap releasePCToOriginMap()
     {
         RELEASE_ASSERT(needsPCToOriginMap());

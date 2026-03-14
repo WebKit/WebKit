@@ -289,7 +289,7 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef
     auto loadDelegate = pluginContextController->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:willSendRequestForResource:request:redirectResponse:)]) {
-        RetainPtr originalRequest = wrapper(*protect(WebKit::toImpl(request)));
+        RetainPtr originalRequest = wrapper(*WebKit::toImpl(request));
         RetainPtr<NSURLRequest> substituteRequest = [loadDelegate webProcessPlugInBrowserContextController:pluginContextController frame:protect(wrapper(*protect(WebKit::toImpl(frame)))).get() willSendRequestForResource:resourceIdentifier
             request:originalRequest.get() redirectResponse:protect(WebKit::toImpl(redirectResponse)->resourceResponse().nsURLResponse()).get()];
 
@@ -400,7 +400,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 - (WKDOMDocument *)mainFrameDocument
 {
-    RefPtr webCoreMainFrame = dynamicDowncast<WebCore::LocalFrame>(protect(*_page)->mainFrame());
+    RefPtr webCoreMainFrame = dynamicDowncast<WebCore::LocalFrame>(_page->mainFrame());
     if (!webCoreMainFrame)
         return nil;
 
@@ -480,7 +480,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
             auto formDelegate = controller->_formDelegate.get();
             if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:didFocusTextField:inFrame:)])
-                [formDelegate _webProcessPlugInBrowserContextController:controller.get() didFocusTextField:wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)).get() inFrame:protect(wrapper(*frame)).get()];
+                [formDelegate _webProcessPlugInBrowserContextController:controller.get() didFocusTextField:wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:protect(wrapper(*frame)).get()];
         }
 
         void willSendSubmitEvent(WebKit::WebPage*, WebCore::HTMLFormElement* formElement, WebKit::WebFrame* targetFrame, WebKit::WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values) final
@@ -522,7 +522,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
             auto formDelegate = controller->_formDelegate.get();
             if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:textDidChangeInTextField:inFrame:initiatedByUserTyping:)])
-                [formDelegate _webProcessPlugInBrowserContextController:controller.get() textDidChangeInTextField:wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)).get() inFrame:protect(wrapper(*frame)).get() initiatedByUserTyping:initiatedByUserTyping];
+                [formDelegate _webProcessPlugInBrowserContextController:controller.get() textDidChangeInTextField:wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:protect(wrapper(*frame)).get() initiatedByUserTyping:initiatedByUserTyping];
         }
 
         void willBeginInputSession(WebKit::WebPage*, WebCore::Element* element, WebKit::WebFrame* frame, bool userIsInteracting, RefPtr<API::Object>& userData) final
@@ -584,7 +584,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     return _editingDelegate.getAutoreleased();
 }
 
-static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
+static inline WKEditorInsertAction NODELETE toWK(WebCore::EditorInsertAction action)
 {
     switch (action) {
     case WebCore::EditorInsertAction::Typed:
@@ -738,7 +738,7 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
 
 - (NSString *)_groupIdentifier
 {
-    return _page->pageGroup()->identifier().createNSString().autorelease();
+    return _page->pageGroup().identifier().createNSString().autorelease();
 }
 
 @end

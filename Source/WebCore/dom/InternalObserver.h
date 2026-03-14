@@ -50,7 +50,7 @@ public:
 
     virtual void error(JSC::JSValue);
 
-    virtual void visitAdditionalChildren(JSC::AbstractSlotVisitor&) const = 0;
+    virtual void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&) const = 0;
 
 protected:
     bool m_active { true };

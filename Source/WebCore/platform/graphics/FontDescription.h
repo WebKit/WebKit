@@ -51,11 +51,11 @@ public:
     float computedSizeForRangeZoomOption(CSS::RangeZoomOptions option) const { return (evaluationTimeZoomEnabled() && option == CSS::RangeZoomOptions::Unzoomed) ? unzoomedComputedSize() : computedSize(); }
     float unzoomedComputedSize() const { return m_computedSize / m_usedZoomFactor; }
     // Adjusted size regarding @font-face size-adjust but not regarding font-size-adjust. The latter adjustment is done with updateSizeWithFontSizeAdjust() after the font's creation.
-    float adjustedSizeForFontFace(float) const;
+    float NODELETE adjustedSizeForFontFace(float) const;
     std::optional<FontSelectionValue> fontStyleSlope() const { return m_fontSelectionRequest.slope; }
     FontSelectionValue width() const { return m_fontSelectionRequest.width; }
     FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
-    const FontSelectionRequest& fontSelectionRequest() const { return m_fontSelectionRequest; }
+    const FontSelectionRequest& fontSelectionRequest() const LIFETIME_BOUND { return m_fontSelectionRequest; }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
     TextSpacingTrim textSpacingTrim() const { return m_textSpacingTrim; }
     TextAutospace textAutospace() const { return m_textAutospace; }
@@ -67,8 +67,8 @@ public:
     FontOrientation orientation() const { return static_cast<FontOrientation>(m_orientation); }
     NonCJKGlyphOrientation nonCJKGlyphOrientation() const { return static_cast<NonCJKGlyphOrientation>(m_nonCJKGlyphOrientation); }
     FontWidthVariant widthVariant() const { return static_cast<FontWidthVariant>(m_widthVariant); }
-    const FontFeatureSettings& featureSettings() const { return m_featureSettings; }
-    const FontVariationSettings& variationSettings() const { return m_variationSettings; }
+    const FontFeatureSettings& featureSettings() const LIFETIME_BOUND { return m_featureSettings; }
+    const FontVariationSettings& variationSettings() const LIFETIME_BOUND { return m_variationSettings; }
     FontSynthesisLonghandValue fontSynthesisWeight() const { return static_cast<FontSynthesisLonghandValue>(m_fontSynthesisWeight); }
     FontSynthesisLonghandValue fontSynthesisStyle() const { return static_cast<FontSynthesisLonghandValue>(m_fontSynthesisStyle); }
     FontSynthesisLonghandValue fontSynthesisSmallCaps() const { return static_cast<FontSynthesisLonghandValue>(m_fontSynthesisCaps); }
@@ -86,20 +86,20 @@ public:
     FontVariantNumericFraction variantNumericFraction() const { return static_cast<FontVariantNumericFraction>(m_variantNumericFraction); }
     FontVariantNumericOrdinal variantNumericOrdinal() const { return static_cast<FontVariantNumericOrdinal>(m_variantNumericOrdinal); }
     FontVariantNumericSlashedZero variantNumericSlashedZero() const { return static_cast<FontVariantNumericSlashedZero>(m_variantNumericSlashedZero); }
-    const FontVariantAlternates& variantAlternates() const { return m_variantAlternates; }
+    const FontVariantAlternates& variantAlternates() const LIFETIME_BOUND { return m_variantAlternates; }
     FontVariantEastAsianVariant variantEastAsianVariant() const { return static_cast<FontVariantEastAsianVariant>(m_variantEastAsianVariant); }
     FontVariantEastAsianWidth variantEastAsianWidth() const { return static_cast<FontVariantEastAsianWidth>(m_variantEastAsianWidth); }
     FontVariantEastAsianRuby variantEastAsianRuby() const { return static_cast<FontVariantEastAsianRuby>(m_variantEastAsianRuby); }
     FontVariantEmoji variantEmoji() const { return static_cast<FontVariantEmoji>(m_variantEmoji); }
-    FontVariantEastAsianValues variantEastAsian() const;
-    FontVariantNumericValues variantNumeric() const;
-    FontVariantLigaturesValues variantLigatures() const;
+    FontVariantEastAsianValues NODELETE variantEastAsian() const;
+    FontVariantNumericValues NODELETE variantNumeric() const;
+    FontVariantLigaturesValues NODELETE variantLigatures() const;
     FontVariantSettings variantSettings() const;
     FontOpticalSizing opticalSizing() const { return static_cast<FontOpticalSizing>(m_opticalSizing); }
     FontStyleAxis fontStyleAxis() const { return static_cast<FontStyleAxis>(m_fontStyleAxis); }
     AllowUserInstalledFonts shouldAllowUserInstalledFonts() const { return static_cast<AllowUserInstalledFonts>(m_shouldAllowUserInstalledFonts); }
     bool shouldDisableLigaturesForSpacing() const { return m_shouldDisableLigaturesForSpacing; }
-    const FontPalette& fontPalette() const { return m_fontPalette; }
+    const FontPalette& fontPalette() const LIFETIME_BOUND { return m_fontPalette; }
     FontSizeAdjust fontSizeAdjust() const { return m_sizeAdjust; }
 
     void setComputedSize(float s, float zoom = 1.0f) { m_computedSize = clampToFloat(s); m_usedZoomFactor = zoom; }
@@ -137,9 +137,9 @@ public:
     void setVariantEastAsianWidth(FontVariantEastAsianWidth variant) { m_variantEastAsianWidth = std::to_underlying(variant); }
     void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = std::to_underlying(variant); }
     void setVariantEmoji(FontVariantEmoji variant) { m_variantEmoji = std::to_underlying(variant); }
-    void setVariantEastAsian(FontVariantEastAsianValues);
-    void setVariantNumeric(FontVariantNumericValues);
-    void setVariantLigatures(FontVariantLigaturesValues);
+    void NODELETE setVariantEastAsian(FontVariantEastAsianValues);
+    void NODELETE setVariantNumeric(FontVariantNumericValues);
+    void NODELETE setVariantLigatures(FontVariantLigaturesValues);
     void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = std::to_underlying(sizing); }
     void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = std::to_underlying(shouldAllowUserInstalledFonts); }
     void setShouldDisableLigaturesForSpacing(bool shouldDisableLigaturesForSpacing) { m_shouldDisableLigaturesForSpacing = shouldDisableLigaturesForSpacing; }

@@ -26,6 +26,8 @@ import sys
 import time
 import unittest
 
+from webkitcorepy import OutputCapture
+
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.port import Port
@@ -37,78 +39,82 @@ from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTe
 
 class TestWebPlatformTestServer(unittest.TestCase):
     def test_previously_spawned_instance(self):
-        host = MockHost()
-        options = optparse.Values()
-        options.ensure_value("results_directory", "/mock/output_dir")
-        port = Port(host, "test", options)
-        server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
-        server._check_that_all_ports_are_available = lambda: True
-        server._is_server_running_on_all_ports = lambda: True
-        host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
-        host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
+        with OutputCapture():
+            host = MockHost()
+            options = optparse.Values()
+            options.ensure_value("results_directory", "/mock/output_dir")
+            port = Port(host, "test", options)
+            server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
+            server._check_that_all_ports_are_available = lambda: True
+            server._is_server_running_on_all_ports = lambda: True
+            host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
+            host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
 
-        host.filesystem.write_text_file("/mock_output_dir/pid.txt", "0")
-        server.start()
-        server.stop()
+            host.filesystem.write_text_file("/mock_output_dir/pid.txt", "0")
+            server.start()
+            server.stop()
 
     def test_custom_layout_tests_directory(self):
-        host = MockHost()
-        options = optparse.Values()
-        options.ensure_value("layout_tests_dir", "/mock-layout-tests-directory/LayoutTests")
-        options.ensure_value("results_directory", "/mock/output_dir")
-        port = Port(host, "test", options)
-        server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
-        server._check_that_all_ports_are_available = lambda: True
-        server._is_server_running_on_all_ports = lambda: True
-        host.filesystem.write_text_file("/mock-layout-tests-directory/LayoutTests/resources/testharness.js", "0")
-        host.filesystem.write_text_file("/mock-layout-tests-directory/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
+        with OutputCapture():
+            host = MockHost()
+            options = optparse.Values()
+            options.ensure_value("layout_tests_dir", "/mock-layout-tests-directory/LayoutTests")
+            options.ensure_value("results_directory", "/mock/output_dir")
+            port = Port(host, "test", options)
+            server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
+            server._check_that_all_ports_are_available = lambda: True
+            server._is_server_running_on_all_ports = lambda: True
+            host.filesystem.write_text_file("/mock-layout-tests-directory/LayoutTests/resources/testharness.js", "0")
+            host.filesystem.write_text_file("/mock-layout-tests-directory/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
 
-        host.filesystem.write_text_file("/mock_output_dir/pid.txt", "0")
-        server.start()
-        server.stop()
+            host.filesystem.write_text_file("/mock_output_dir/pid.txt", "0")
+            server.start()
+            server.stop()
 
     def test_corrupted_subserver_files(self):
-        host = MockHost()
-        options = optparse.Values()
-        options.ensure_value("results_directory", "/mock/output_dir")
-        port = Port(host, "test", options)
-        server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
-        server._check_that_all_ports_are_available = lambda: True
-        server._is_server_running_on_all_ports = lambda: True
-        host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
-        host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
+        with OutputCapture():
+            host = MockHost()
+            options = optparse.Values()
+            options.ensure_value("results_directory", "/mock/output_dir")
+            port = Port(host, "test", options)
+            server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
+            server._check_that_all_ports_are_available = lambda: True
+            server._is_server_running_on_all_ports = lambda: True
+            host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
+            host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
 
-        host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "0")
-        server.stop()
-        self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
+            host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "0")
+            server.stop()
+            self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
 
-        host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[0,")
-        server.start()
-        self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
-        server.stop()
+            host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[0,")
+            server.start()
+            self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
+            server.stop()
 
-        host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[{'protocol': 'http', 'port': 80 }]")
-        server.start()
-        self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
-        server.stop()
+            host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[{'protocol': 'http', 'port': 80 }]")
+            server.start()
+            self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
+            server.stop()
 
-        host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[{'protocol': 'http', 'port': 80, 'pid': {} }]")
-        server.start()
-        self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
-        server.stop()
+            host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "[{'protocol': 'http', 'port': 80, 'pid': {} }]")
+            server.start()
+            self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
+            server.stop()
 
     def test_server_fails_to_start_throws_exception(self):
-        host = MockHost()
-        options = optparse.Values()
-        options.ensure_value("results_directory", "/mock/output_dir")
-        port = Port(host, "test", options)
-        server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
-        server._check_that_all_ports_are_available = lambda: True
-        server._is_server_running_on_all_ports = lambda: True
-        host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
-        host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
+        with OutputCapture():
+            host = MockHost()
+            options = optparse.Values()
+            options.ensure_value("results_directory", "/mock/output_dir")
+            port = Port(host, "test", options)
+            server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
+            server._check_that_all_ports_are_available = lambda: True
+            server._is_server_running_on_all_ports = lambda: True
+            host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
+            host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
 
-        server.start()
-        server.stop()
-        server._process.poll = lambda: 1
-        self.assertRaises(ServerError, server.start)
+            server.start()
+            server.stop()
+            server._process.poll = lambda: 1
+            self.assertRaises(ServerError, server.start)

@@ -47,7 +47,7 @@ public:
     explicit TextAutoSizingKey(DeletedTag);
     TextAutoSizingKey(const RenderStyle&, unsigned hash);
 
-    const RenderStyle* style() const { ASSERT(!isDeleted()); return m_style.get(); }
+    const RenderStyle* style() const LIFETIME_BOUND { ASSERT(!isDeleted()); return m_style.get(); }
     bool isDeleted() const { return HashTraits<std::unique_ptr<RenderStyle>>::isDeletedValue(m_style); }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 

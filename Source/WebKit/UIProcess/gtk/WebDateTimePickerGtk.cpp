@@ -122,7 +122,7 @@ void WebDateTimePickerGtk::didChooseDate()
     m_page->didChooseDate(calendarDateToString(year, month, day, m_currentDate, m_secondFormat));
 }
 
-void WebDateTimePickerGtk::showDateTimePicker(WebCore::DateTimeChooserParameters&& params)
+void WebDateTimePickerGtk::platformShowDateTimePicker(WebCore::DateTimeChooserParameters&& params)
 {
     if (m_popover) {
         update(WTF::move(params));

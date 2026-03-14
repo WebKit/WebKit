@@ -475,7 +475,7 @@ public:
 
     unsigned NODELETE subframeCount() const;
 
-    void setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator*);
+    void NODELETE setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator*);
     KeyboardScrollingAnimator* currentKeyboardScrollingAnimator() const; // Deinfed in PageInlines.h
 
     bool shouldApplyScreenFingerprintingProtections(Document&) const;
@@ -576,12 +576,11 @@ public:
     // Upon return, indexForSelection will be one of the following:
     // 0 if there is no user selection
     // the index of the first range after the user selection
-    // NoMatchAfterUserSelection if there is no matching text after the user selection.
+    // std::nullopt if there is no matching text after the user selection.
     struct MatchingRanges {
         Vector<SimpleRange> ranges;
-        int indexForSelection { 0 }; // FIXME: Consider std::optional<unsigned> or unsigned for this instead.
+        std::optional<uint32_t> indexForSelection;
     };
-    static constexpr int NoMatchAfterUserSelection = -1;
     WEBCORE_EXPORT MatchingRanges findTextMatches(const String&, FindOptions, unsigned maxCount, bool markMatches = true);
 
 #if PLATFORM(COCOA)
@@ -917,7 +916,7 @@ public:
 
     WEBCORE_EXPORT Color themeColor() const;
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
-    WEBCORE_EXPORT Color sampledPageTopColor() const;
+    WEBCORE_EXPORT Color NODELETE sampledPageTopColor() const;
 
     WEBCORE_EXPORT void updateFixedContainerEdges(EnumSet<BoxSide>);
     const FixedContainerEdges& fixedContainerEdges() const LIFETIME_BOUND { return m_fixedContainerEdgesAndElements.first; }
@@ -1076,6 +1075,8 @@ public:
     IDBClient::IDBConnectionToServer& idbConnection();
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer* NODELETE optionalIDBConnection();
     WEBCORE_EXPORT void clearIDBConnection();
+    WEBCORE_EXPORT void clearIDBConnectionOnAllDocuments();
+    WEBCORE_EXPORT void refreshIDBConnectionForWorkers();
 
     void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
     bool showAllPlugins() const;

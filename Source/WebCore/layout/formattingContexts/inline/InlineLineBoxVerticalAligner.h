@@ -59,10 +59,10 @@ private:
     enum class IsInlineLevelBoxAlignment : bool { No, Yes };
     InlineLayoutUnit logicalTopOffsetFromParentBaseline(const InlineLevelBox&, const InlineLevelBox& parentInlineBox, IsInlineLevelBoxAlignment = IsInlineLevelBoxAlignment::No) const;
 
-    const InlineFormattingUtils& formattingUtils() const { return formattingContext().formattingUtils(); }
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const InlineFormattingUtils& formattingUtils() const LIFETIME_BOUND { return formattingContext().formattingUtils(); }
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
     const ElementBox& rootBox() const { return formattingContext().root(); }
-    const InlineLayoutState& layoutState() const { return formattingContext().layoutState(); }
+    const InlineLayoutState& layoutState() const LIFETIME_BOUND { return formattingContext().layoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;

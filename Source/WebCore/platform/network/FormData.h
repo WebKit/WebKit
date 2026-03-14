@@ -124,7 +124,7 @@ public:
         MultipartFormData // for multipart/form-data
     };
 
-    WEBCORE_EXPORT static Ref<FormData> create();
+    WEBCORE_EXPORT static Ref<FormData> NODELETE create();
     WEBCORE_EXPORT static Ref<FormData> create(std::span<const uint8_t>);
     WEBCORE_EXPORT static Ref<FormData> create(const CString&);
     WEBCORE_EXPORT static Ref<FormData> create(Vector<uint8_t>&&);
@@ -150,13 +150,13 @@ public:
     // Resolve all blob references so we only have file and data.
     // If the FormData has no blob references to resolve, this is returned.
     WEBCORE_EXPORT Ref<FormData> resolveBlobReferences(BlobRegistryImpl* = nullptr);
-    bool containsBlobElement() const;
+    bool NODELETE containsBlobElement() const;
 
     WEBCORE_EXPORT FormDataForUpload prepareForUpload();
 
     bool isEmpty() const { return m_elements.isEmpty(); }
-    const Vector<FormDataElement>& elements() const { return m_elements; }
-    const Vector<uint8_t>& boundary() const { return m_boundary; }
+    const Vector<FormDataElement>& elements() const LIFETIME_BOUND { return m_elements; }
+    const Vector<uint8_t>& boundary() const LIFETIME_BOUND { return m_boundary; }
 
     WEBCORE_EXPORT RefPtr<SharedBuffer> asSharedBuffer() const;
 

@@ -65,7 +65,7 @@ public:
         return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsInfo.horizontalSnapOffsets : m_snapOffsetsInfo.verticalSnapOffsets;
     }
 
-    const LayoutScrollSnapOffsetsInfo& snapOffsetInfo() const { return m_snapOffsetsInfo; }
+    const LayoutScrollSnapOffsetsInfo& snapOffsetInfo() const LIFETIME_BOUND { return m_snapOffsetsInfo; }
     void setSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo& newInfo) { m_snapOffsetsInfo = newInfo; }
 
     ScrollSnapState currentState() const { return m_currentState; }

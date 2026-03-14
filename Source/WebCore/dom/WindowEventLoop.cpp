@@ -134,7 +134,7 @@ void WindowEventLoop::opportunisticallyRunIdleCallbacks(std::optional<MonotonicT
         return; // No need to schedule m_idleTimer since there is a task. didReachTimeToRun() will call this function.
 
     auto hasPendingIdleCallbacks = findMatchingAssociatedContext([&](ScriptExecutionContext& context) {
-        if (RefPtr document = dynamicDowncast<Document>(context))
+        if (auto* document = dynamicDowncast<Document>(context))
             return document->hasPendingIdleCallback();
         return false;
     });

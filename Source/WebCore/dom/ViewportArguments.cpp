@@ -170,7 +170,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     return result;
 }
 
-static FloatSize convertToUserSpace(const FloatSize& deviceSize, float devicePixelRatio)
+static FloatSize NODELETE convertToUserSpace(const FloatSize& deviceSize, float devicePixelRatio)
 {
     FloatSize result = deviceSize;
     if (devicePixelRatio != 1)

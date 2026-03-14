@@ -78,7 +78,7 @@
 @end
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static RetainPtr<WKProcessPool>& sharedProcessPool()
+static RetainPtr<WKProcessPool>& NODELETE sharedProcessPool()
 {
     static NeverDestroyed<RetainPtr<WKProcessPool>> sharedProcessPool;
     return sharedProcessPool;
@@ -249,7 +249,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)_objectForBundleParameter:(NSString *)parameter
 {
-    return [protect(protect(*_processPool)->bundleParameters()) objectForKey:parameter];
+    return [protect((*_processPool).bundleParameters()) objectForKey:parameter];
 }
 
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter
@@ -370,7 +370,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_clearSupportedPlugins
 {
-    protect(*_processPool)->clearSupportedPlugins();
+    (*_processPool).clearSupportedPlugins();
 }
 
 - (void)_terminateServiceWorkers
@@ -594,14 +594,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 + (BOOL)_isMetalDebugDeviceEnabledInGPUProcessForTesting
 {
-    if (RefPtr gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
+    if (auto* gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
         return gpuProcess->isMetalDebugDeviceEnabledForTesting();
     return WebKit::GPUProcessProxy::isMetalDebugDeviceEnabledInNewGPUProcessesForTesting();
 }
 
 + (BOOL)_isMetalShaderValidationEnabledInGPUProcessForTesting
 {
-    if (RefPtr gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
+    if (auto* gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
         return gpuProcess->isMetalShaderValidationEnabledForTesting();
     return WebKit::GPUProcessProxy::isMetalShaderValidationEnabledInNewGPUProcessesForTesting();
 }

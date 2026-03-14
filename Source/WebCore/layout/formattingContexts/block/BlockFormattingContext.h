@@ -53,9 +53,9 @@ public:
     void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
     LayoutUnit usedContentHeight() const override;
 
-    const BlockFormattingState& formattingState() const { return m_blockFormattingState; }
-    const BlockFormattingGeometry& formattingGeometry() const { return m_blockFormattingGeometry; }
-    const BlockFormattingQuirks& formattingQuirks() const { return m_blockFormattingQuirks; }
+    const BlockFormattingState& formattingState() const LIFETIME_BOUND { return m_blockFormattingState; }
+    const BlockFormattingGeometry& formattingGeometry() const LIFETIME_BOUND { return m_blockFormattingGeometry; }
+    const BlockFormattingQuirks& formattingQuirks() const LIFETIME_BOUND { return m_blockFormattingQuirks; }
 
 protected:
     struct ConstraintsPair {
@@ -86,7 +86,7 @@ protected:
     void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
     void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
 
-    BlockFormattingState& formattingState() { return m_blockFormattingState; }
+    BlockFormattingState& formattingState() LIFETIME_BOUND { return m_blockFormattingState; }
     BlockMarginCollapse marginCollapse() const;
 
 #if ASSERT_ENABLED

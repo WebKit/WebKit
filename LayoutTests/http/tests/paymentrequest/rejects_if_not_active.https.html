@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <meta charset=utf-8>
 <link rel="help" href="https://w3c.github.io/payment-request/#show()-method">
-<title>PaymentRequest show() rejects if doc is not fully active</title>
+<link rel="help" href="https://w3c.github.io/payment-request/#canmakepayment-method">
+<title>PaymentRequest methods reject if doc is not fully active</title>
 <script src="/js-test-resources/ui-helper.js"></script>
 <script src="/resources/payment-request.js"></script>
 <script src="/resources/testharness.js"></script>
@@ -74,10 +75,10 @@ promise_test(async t => {
   // So, call .show(), and make sure it rejects appropriately.
   await promise_rejects_dom(
     t,
-    "AbortError",
+    "InvalidStateError",
     firstCtor,
     request1.show(),
-    "Inactive document, so must throw AbortError"
+    "Inactive document, so must throw InvalidStateError"
   );
 
   // request2 has an active document tho, so confirm it's working as expected:
@@ -141,10 +142,10 @@ promise_test(async t => {
   // So, call request.show() and make sure it rejects appropriately.
   await promise_rejects_dom(
     t,
-    "AbortError",
+    "InvalidStateError",
     requestWindow.DOMException,
     request.show(),
-    "Active, but not fully active, so must throw AbortError"
+    "Active, but not fully active, so must throw InvalidStateError"
   );
 
   // We are done, so clean up.
@@ -183,4 +184,92 @@ promise_test(async t => {
   // We are done, so clean up.
   iframe.remove();
 }, "If a payment request is showing, but its document is navigated away (so no longer fully active), the payment request aborts.");
+
+promise_test(async t => {
+  // Check that PaymentRequests can be constructed.
+  new PaymentRequest(validMethods, validDetails);
+  const iframe = document.createElement("iframe");
+  iframe.allowPaymentRequest = true;
+  document.body.appendChild(iframe);
+
+  // We first go to page1.html, grab a PaymentRequest instance.
+  const request1 = await getLoadedPaymentRequest(
+    iframe,
+    "resources/page1.html"
+  );
+  const firstCtor = iframe.contentWindow.DOMException;
+
+  // We navigate the iframe again, putting request1's document into an inactive state.
+  const request2 = await getLoadedPaymentRequest(
+    iframe,
+    "resources/page2.html"
+  );
+
+  // Now, request1's relevant global object's document is no longer active.
+  // So, call .canMakePayment(), and make sure it rejects appropriately.
+  await promise_rejects_dom(
+    t,
+    "InvalidStateError",
+    firstCtor,
+    request1.canMakePayment(),
+    "Inactive document, so must throw InvalidStateError"
+  );
+
+  // request2 has an active document, so confirm it's working as expected:
+  const result = await request2.canMakePayment();
+  assert_true(typeof result === "boolean", "canMakePayment() should return a boolean");
+
+  // We are done, so clean up.
+  iframe.remove();
+}, "PaymentRequest.canMakePayment() rejects if the document is not active");
+
+promise_test(async t => {
+  // check that PaymentRequests can be constructed (smoke test).
+  new PaymentRequest(validMethods, validDetails);
+
+  // We nest two iframes and wait for them to load.
+  const outerIframe = document.createElement("iframe");
+  outerIframe.allowPaymentRequest = true;
+  document.body.appendChild(outerIframe);
+  // Load the outer iframe (we don't care about the awaited request)
+  await getLoadedPaymentRequest(
+    outerIframe,
+    "resources/page1.html"
+  );
+
+  // Now we create the inner iframe
+  const innerIframe = outerIframe.contentDocument.createElement("iframe");
+  innerIframe.allowPaymentRequest = true;
+
+  // nest them
+  outerIframe.contentDocument.body.appendChild(innerIframe);
+
+  // load innerIframe, and get the PaymentRequest instance
+  const request = await getLoadedPaymentRequest(
+    innerIframe,
+    "resources/page2.html"
+  );
+  const requestWindow = innerIframe.contentWindow;
+
+  // Navigate the outer iframe to a new location.
+  // Wait for the load event to fire.
+  await new Promise(resolve => {
+    outerIframe.addEventListener("load", resolve);
+    outerIframe.src = "resources/page2.html";
+  });
+  // Now, request's relevant global object's document is still active
+  // (it is the active document of the inner iframe), but is not fully active
+  // (since the parent of the inner iframe is itself no longer active).
+  // So, call request.canMakePayment() and make sure it rejects appropriately.
+  await promise_rejects_dom(
+    t,
+    "InvalidStateError",
+    requestWindow.DOMException,
+    request.canMakePayment(),
+    "Active, but not fully active, so must throw InvalidStateError"
+  );
+
+  // We are done, so clean up.
+  outerIframe.remove();
+}, "PaymentRequest.canMakePayment() rejects if the document is active, but not fully active");
 </script>

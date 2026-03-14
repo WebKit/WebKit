@@ -42,10 +42,10 @@ auto DOMPromise::whenSettledWithResult(Function<void(JSDOMGlobalObject*, bool, J
 {
     if (isSuspended())
         return IsCallbackRegistered::No;
-    return whenPromiseIsSettled(globalObject(), promise(), WTF::move(callback));
+    return whenPromiseIsSettled(globalObject(), promise(), WTF::move(callback), nullptr);
 }
 
-auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPromise* promise, Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&& callback) -> IsCallbackRegistered
+auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPromise* promise, Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&& callback, JSC::JSObject* protectedWrapper) -> IsCallbackRegistered
 {
     auto& lexicalGlobalObject = *globalObject;
     auto& vm = lexicalGlobalObject.vm();
@@ -59,7 +59,12 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPr
         return JSC::JSValue::encode(JSC::jsUndefined());
     });
 
-    auto* thisHandler = JSC::JSBoundFunction::create(vm, globalObject, handler, promise, { }, 0, jsEmptyString(vm), JSC::makeSource("createWhenPromiseSettledFunction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
+    JSC::MarkedArgumentBuffer boundArgs;
+    if (protectedWrapper)
+        boundArgs.append(protectedWrapper);
+    ASSERT(!boundArgs.hasOverflowed());
+
+    auto* thisHandler = JSC::JSBoundFunction::create(vm, globalObject, handler, promise, boundArgs, protectedWrapper ? 1 : 0, jsEmptyString(vm), JSC::makeSource("createWhenPromiseSettledFunction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
     if (!thisHandler) [[unlikely]]
         return IsCallbackRegistered::No;
 

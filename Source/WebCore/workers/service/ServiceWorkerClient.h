@@ -59,9 +59,9 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const URL& url() const;
-    FrameType frameType() const;
-    Type type() const;
+    const URL& NODELETE url() const;
+    FrameType NODELETE frameType() const;
+    Type NODELETE type() const;
     String id() const;
 
     Identifier identifier() const { return m_data.identifier; }
@@ -69,7 +69,7 @@ public:
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
-    const ServiceWorkerClientData& data() const { return m_data; }
+    const ServiceWorkerClientData& data() const LIFETIME_BOUND { return m_data; }
 
 protected:
     ServiceWorkerClient(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);

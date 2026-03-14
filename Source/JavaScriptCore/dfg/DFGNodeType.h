@@ -458,6 +458,7 @@ namespace JSC { namespace DFG {
     macro(MatchStructure, NodeMustGenerate | NodeResultBoolean) \
     \
     macro(IsCellWithType, NodeResultBoolean) \
+    macro(ArrayIsArray, NodeMustGenerate | NodeResultBoolean) \
     macro(IsEmpty, NodeResultBoolean) \
     macro(IsEmptyStorage, NodeResultBoolean) \
     macro(HasStructureWithFlags, NodeResultBoolean) \
@@ -594,7 +595,7 @@ namespace JSC { namespace DFG {
     macro(MapStorageOrSentinel, NodeResultJS) /* If the map storage is not materialized, return the sentinel. */ \
     macro(MapIterationNext, NodeResultJS) \
     macro(MapIterationEntry, NodeResultJS) \
-    macro(MapIterationEntryKey, NodeResultInt32) \
+    macro(MapIterationEntryKey, NodeResultJS) \
     macro(MapIterationEntryValue, NodeResultJS) \
     macro(MapOrSetSize, NodeResultInt32) \
     macro(SetAdd, NodeMustGenerate) \

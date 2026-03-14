@@ -62,11 +62,11 @@ WebCoreOpaqueRoot root(CSSStyleDeclaration* style)
 }
 
 template<typename Visitor>
-void JSCSSStyleDeclaration::visitAdditionalChildren(Visitor& visitor)
+void JSCSSStyleDeclaration::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSStyleDeclaration);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSCSSStyleDeclaration);
 
 } // namespace WebCore

@@ -99,7 +99,7 @@ Node* Range::commonAncestorContainer() const
 void Range::updateAssociatedSelection()
 {
     if (m_isAssociatedWithSelection)
-        protect(m_ownerDocument)->selection().updateFromAssociatedLiveRange();
+        m_ownerDocument->selection().updateFromAssociatedLiveRange();
 }
 
 void Range::updateAssociatedHighlight()
@@ -285,7 +285,7 @@ static inline Node* NODELETE highestAncestorUnderCommonRoot(Node* node, Node* co
     return node;
 }
 
-static inline Node* childOfCommonRootBeforeOffset(Node* container, unsigned offset, Node* commonRoot)
+static inline Node* NODELETE childOfCommonRootBeforeOffset(Node* container, unsigned offset, Node* commonRoot)
 {
     ASSERT(container);
     ASSERT(commonRoot);
@@ -340,8 +340,8 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
         RangeBoundaryPoint originalEnd(m_end);
 
         // what is the highest node that partially selects the start / end of the range?
-        RefPtr partialStart = highestAncestorUnderCommonRoot(protect(originalStart.container()).ptr(), commonRoot.get());
-        RefPtr partialEnd = highestAncestorUnderCommonRoot(protect(originalEnd.container()).ptr(), commonRoot.get());
+        RefPtr partialStart = highestAncestorUnderCommonRoot(&originalStart.container(), commonRoot.get());
+        RefPtr partialEnd = highestAncestorUnderCommonRoot(&originalEnd.container(), commonRoot.get());
 
         // Start and end containers are different.
         // There are three possibilities here:
@@ -382,10 +382,10 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
         }
 
         // delete all children of commonRoot between the start and end container
-        RefPtr processStart = childOfCommonRootBeforeOffset(protect(originalStart.container()).ptr(), originalStart.offset(), commonRoot.get());
+        RefPtr processStart = childOfCommonRootBeforeOffset(&originalStart.container(), originalStart.offset(), commonRoot.get());
         if (processStart && &originalStart.container() != commonRoot) // processStart contains nodes before m_start.
             processStart = processStart->nextSibling();
-        RefPtr processEnd = childOfCommonRootBeforeOffset(protect(originalEnd.container()).ptr(), originalEnd.offset(), commonRoot.get());
+        RefPtr processEnd = childOfCommonRootBeforeOffset(&originalEnd.container(), originalEnd.offset(), commonRoot.get());
 
         // Collapse the range, making sure that the result is not within a node that was partially selected.
         if (action == Extract || action == Delete) {
@@ -697,7 +697,7 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
         return removeResult.releaseException();
 
     unsigned newOffset = referenceNode ? referenceNode->computeNodeIndex() : parent->countChildNodes();
-    if (RefPtr fragment = dynamicDowncast<DocumentFragment>(node.get()))
+    if (auto* fragment = dynamicDowncast<DocumentFragment>(node.get()))
         newOffset += fragment->countChildNodes();
     else
         ++newOffset;
@@ -735,7 +735,7 @@ ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<Ref<T
         return stringValueHolder.releaseException();
 
     RefPtr<Element> element;
-    if (is<Document>(node) || is<DocumentFragment>(node))
+    if (isAnyOf<Document, DocumentFragment>(node))
         element = nullptr;
     else if (auto* maybeElement = dynamicDowncast<Element>(node.ptr()))
         element = maybeElement;
@@ -896,7 +896,7 @@ String Range::debugDescription() const
 }
 #endif
 
-static inline void boundaryNodeChildrenChanged(RangeBoundaryPoint& boundary, ContainerNode& container)
+static inline void NODELETE boundaryNodeChildrenChanged(RangeBoundaryPoint& boundary, ContainerNode& container)
 {
     if (boundary.childBefore() && &boundary.container() == &container)
         boundary.invalidateOffset();
@@ -928,7 +928,7 @@ static inline void boundaryNodeWillBeRemoved(RangeBoundaryPoint& boundary, Node&
 {
     if (boundary.childBefore() == &nodeToBeRemoved)
         boundary.childBeforeWillBeRemoved();
-    else if (nodeToBeRemoved.contains(protect(boundary.container()).ptr()))
+    else if (nodeToBeRemoved.contains(&boundary.container()))
         boundary.setToBeforeNode(nodeToBeRemoved);
 }
 
@@ -1152,7 +1152,7 @@ RefPtr<Range> createLiveRange(const std::optional<SimpleRange>& range)
     return createLiveRange(*range);
 }
 
-void Range::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const
+void Range::visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const
 {
     addWebCoreOpaqueRoot(visitor, m_start.container());
     addWebCoreOpaqueRoot(visitor, m_end.container());

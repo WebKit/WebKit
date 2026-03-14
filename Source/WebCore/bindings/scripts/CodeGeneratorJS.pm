@@ -3721,21 +3721,21 @@ sub GenerateHeader
     # visit function
     if ($needsVisitChildren) {
         push(@headerContent, "    DECLARE_VISIT_CHILDREN;\n");
-        push(@headerContent, "    template<typename Visitor> void visitAdditionalChildren(Visitor&);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
+        push(@headerContent, "    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
         push(@headerContent, "\n");
 
         if ($interface->extendedAttributes->{JSCustomMarkFunction}) {
-            # We assume that the logic in visitAdditionalChildren is highly volatile, and during a
+            # We assume that the logic in visitAdditionalChildrenInGCThread is highly volatile, and during a
             # concurrent GC or in between eden GCs something may happen that would lead to this
             # logic behaving differently. Since this could mark objects or add opaque roots, this
             # means that after any increment of mutator resumption in a concurrent GC and at least
-            # once during any eden GC we need to re-execute visitAdditionalChildren on any objects
+            # once during any eden GC we need to re-execute visitAdditionalChildrenInGCThread on any objects
             # that we had executed it on before. We do this using the DOM's own MarkingConstraint,
             # which will call visitOutputConstraints on all objects in the DOM's own
             # outputConstraintSubspace. visitOutputConstraints is the name JSC uses for the method
             # that the GC calls to ask an object is it would like to mark anything else after the
             # program resumed since the last call to visitChildren or visitOutputConstraints. Since
-            # this just calls visitAdditionalChildren, you usually don't have to worry about this.
+            # this just calls visitAdditionalChildrenInGCThread, you usually don't have to worry about this.
             push(@headerContent, "    template<typename Visitor> static void visitOutputConstraints(JSCell*, Visitor&);\n");
         }
     }
@@ -5647,7 +5647,7 @@ sub GenerateImplementation
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
-        push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
+        push(@implContent, "    thisObject->visitAdditionalChildrenInGCThread(visitor);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
         if ($interface->extendedAttributes->{GenerateAddOpaqueRoot}) {
             AddToImplIncludes("<wtf/GetPtr.h>");
             AddToImplIncludes("WebCoreOpaqueRootInlines.h");
@@ -5684,7 +5684,7 @@ sub GenerateImplementation
             push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
             push(@implContent, "    Base::visitOutputConstraints(thisObject, visitor);\n");
-            push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n");
+            push(@implContent, "    thisObject->visitAdditionalChildrenInGCThread(visitor);\n");
             push(@implContent, "}\n\n");
             push(@implContent, "template void ${className}::visitOutputConstraints(JSCell*, AbstractSlotVisitor&);\n");
             push(@implContent, "template void ${className}::visitOutputConstraints(JSCell*, SlotVisitor&);\n");
@@ -7417,8 +7417,8 @@ sub GenerateCallbackHeaderContent
     push(@$contentRef, "    bool is${className}() const final { return true; }\n\n");
 
     if (!$generateIsReachable) {
-        push(@$contentRef, "    void visitJSFunction(JSC::AbstractSlotVisitor&) override;\n\n");
-        push(@$contentRef, "    void visitJSFunction(JSC::SlotVisitor&) override;\n\n");
+        push(@$contentRef, "    void visitJSFunctionInGCThread(JSC::AbstractSlotVisitor&) override;\n\n");
+        push(@$contentRef, "    void visitJSFunctionInGCThread(JSC::SlotVisitor&) override;\n\n");
     }
 
     push(@$contentRef, "    JSCallbackData* m_data;\n");
@@ -7657,13 +7657,13 @@ sub GenerateCallbackImplementationContent
     }
 
     if (!$generateIsReachable) {
-        push(@$contentRef, "void ${className}::visitJSFunction(JSC::AbstractSlotVisitor& visitor)\n");
+        push(@$contentRef, "void ${className}::visitJSFunctionInGCThread(JSC::AbstractSlotVisitor& visitor)\n");
         push(@$contentRef, "{\n");
-        push(@$contentRef, "    m_data->visitJSFunction(visitor);\n");
+        push(@$contentRef, "    m_data->visitJSFunctionInGCThread(visitor);\n");
         push(@$contentRef, "}\n\n");
-        push(@$contentRef, "void ${className}::visitJSFunction(JSC::SlotVisitor& visitor)\n");
+        push(@$contentRef, "void ${className}::visitJSFunctionInGCThread(JSC::SlotVisitor& visitor)\n");
         push(@$contentRef, "{\n");
-        push(@$contentRef, "    m_data->visitJSFunction(visitor);\n");
+        push(@$contentRef, "    m_data->visitJSFunctionInGCThread(visitor);\n");
         push(@$contentRef, "}\n\n");
     }
 

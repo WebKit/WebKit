@@ -56,7 +56,7 @@ ProvisionalFrameProxy::~ProvisionalFrameProxy()
     if (!m_frameProcess)
         return;
 
-    if (RefPtr page = protect(m_frame)->page())
+    if (RefPtr page = m_frame->page())
         page->inspectorController().willDestroyProvisionalFrame(*this);
 
     Ref frame = m_frame.get();

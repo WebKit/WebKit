@@ -100,7 +100,7 @@ public:
     const Type* functionType(Vector<const Type*>&&, const Type*, bool mustUse);
     const Type* referenceType(AddressSpace, const Type*, AccessMode, bool isVectorComponent = false);
     const Type* pointerType(AddressSpace, const Type*, AccessMode);
-    const Type* atomicType(const Type*);
+    const Type* NODELETE atomicType(const Type*);
     const Type* typeConstructorType(ASCIILiteral, std::function<Result<const Type*>(AST::ElaboratedTypeExpression&)>&&);
     const Type* frexpResultType(const Type*, const Type*);
     const Type* modfResultType(const Type*, const Type*);

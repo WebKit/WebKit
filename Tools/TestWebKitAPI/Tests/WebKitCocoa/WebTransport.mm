@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if HAVE(WEB_TRANSPORT)
+#if PLATFORM(COCOA)
 
 #import "config.h"
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "SiteIsolationUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
@@ -46,20 +47,10 @@
 #import <wtf/text/StringBuilder.h>
 
 SOFT_LINK_FRAMEWORK(Network)
-
-// FIXME: Replace this soft linking with a HAVE macro once rdar://158191390 is available on all tested OS builds.
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_options_set_allow_joining_before_ready, void, (nw_protocol_options_t options, bool allow), (options, allow))
-
-// FIXME: Replace this soft linking with a HAVE macro once rdar://164265337 is available on all tested OS builds.
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_local_draining, void, (nw_protocol_metadata_t metadata), (metadata))
-
-// FIXME: Replace this soft linking with a HAVE macro once rdar://164514830 is available on all tested OS builds.
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_get_session_closed, bool, (nw_protocol_metadata_t metadata), (metadata))
-
-// FIXME: Replace this soft linking with a HAVE macro once rdar://164917448 is available on all tested OS builds.
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_get_transport_mode, nw_webtransport_transport_mode_t, (nw_protocol_metadata_t metadata), (metadata))
-
-// FIXME: Replace this soft linking with a HAVE macro once rdar://141886375 is available on all tested OS builds.
 SOFT_LINK_MAY_FAIL(Network, nw_connection_abort_reads, void, (nw_connection_t connection, uint64_t error_code), (connection, error_code))
 SOFT_LINK_MAY_FAIL(Network, nw_connection_abort_writes, void, (nw_connection_t connection, uint64_t error_code), (connection, error_code))
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_remote_receive_error_handler, void, (nw_protocol_metadata_t metadata, nw_webtransport_receive_error_handler_t handler, dispatch_queue_t queue), (metadata, handler, queue))
@@ -89,6 +80,9 @@ static void validateChallenge(NSURLAuthenticationChallenge *challenge, uint16_t 
 
 TEST(WebTransport, ClientBidirectional)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
@@ -155,6 +149,9 @@ TEST(WebTransport, ClientBidirectional)
 
 TEST(WebTransport, Datagram)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
         auto request = co_await datagramConnection.awaitableReceiveBytes();
@@ -210,6 +207,9 @@ TEST(WebTransport, Datagram)
 
 TEST(WebTransport, Unidirectional)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
@@ -257,6 +257,9 @@ TEST(WebTransport, Unidirectional)
 
 TEST(WebTransport, ServerBidirectional)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
@@ -304,6 +307,9 @@ TEST(WebTransport, ServerBidirectional)
 
 TEST(WebTransport, NetworkProcessCrash)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
         co_await datagramConnection.awaitableSend(@"abc");
@@ -482,6 +488,9 @@ TEST(WebTransport, NetworkProcessCrash)
 
 TEST(WebTransport, Worker)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer transportServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
@@ -529,6 +538,9 @@ TEST(WebTransport, Worker)
 
 TEST(WebTransport, WorkerAfterNetworkProcessCrash)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer transportServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
@@ -585,6 +597,8 @@ TEST(WebTransport, WorkerAfterNetworkProcessCrash)
 
 TEST(WebTransport, ServiceWorker)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
     if (!canLoadnw_webtransport_options_set_allow_joining_before_ready())
         return;
 
@@ -657,6 +671,8 @@ TEST(WebTransport, ServiceWorker)
 
 TEST(WebTransport, CreateStreamsBeforeReady)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
     if (!canLoadnw_webtransport_options_set_allow_joining_before_ready())
         return;
 
@@ -718,6 +734,9 @@ TEST(WebTransport, CSP)
 TEST(WebTransport, DISABLED_CSP)
 #endif
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer server([](ConnectionGroup group) -> ConnectionTask {
         co_return;
     });
@@ -755,6 +774,9 @@ TEST(WebTransport, DISABLED_CSP)
 
 TEST(WebTransport, ServerCertificateHashes)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     auto runTest = [] (uint64_t certLifetime, bool matchHash = true) {
         NSDictionary* options = @{
             (id)kSecAttrKeyType: (id)kSecAttrKeyTypeECSECPrimeRandom,
@@ -834,6 +856,9 @@ TEST(WebTransport, ServerCertificateHashes)
 
 TEST(WebTransport, ServerConnectionTermination)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto connection = co_await group.receiveIncomingConnection();
         auto request = co_await connection.awaitableReceiveBytes();
@@ -867,6 +892,9 @@ TEST(WebTransport, ServerConnectionTermination)
 
 TEST(WebTransport, BackForwardCache)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
+
     bool serverConnectionTerminatedByClient { false };
     WebTransportServer echoServer([&](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
@@ -902,6 +930,12 @@ TEST(WebTransport, BackForwardCache)
     [delegate allowAnyTLSCertificate];
     [webView setNavigationDelegate:delegate.get()];
 
+    // FIXME: Remove once the back-forward cache is enabled for site isolation: rdar://161762363.
+    if (!isUsingBackForwardCache(webView.get())) {
+        NSLog(@"WebTransport.BackForwardCache: Test is skipped as back-forward cache is disabled");
+        return;
+    }
+
     [webView loadRequest:loadingServer.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
     [webView loadRequest:loadingServer.request("/other"_s)];
@@ -911,6 +945,8 @@ TEST(WebTransport, BackForwardCache)
 
 TEST(WebTransport, ServerDrain)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
     if (!canLoadnw_webtransport_metadata_set_local_draining())
         return;
 
@@ -948,6 +984,8 @@ TEST(WebTransport, ServerDrain)
 // FIXME: Re-enable this test once rdar://157795985 is widely available.
 TEST(WebTransport, DISABLED_ClientStreamAborts)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
     if (!canLoadnw_webtransport_metadata_set_remote_receive_error_handler() || !canLoadnw_webtransport_metadata_set_remote_send_error_handler())
         return;
 
@@ -1008,6 +1046,8 @@ TEST(WebTransport, DISABLED_ClientStreamAborts)
 // FIXME: Re-enable this test once rdar://157795985 is widely available.
 TEST(WebTransport, DISABLED_ServerStreamAborts)
 {
+    if (!WebTransportServer::isAvailable())
+        return;
     if (!canLoadnw_connection_abort_reads() || !canLoadnw_connection_abort_writes())
         return;
 
@@ -1064,4 +1104,4 @@ TEST(WebTransport, DISABLED_ServerStreamAborts)
 
 } // namespace TestWebKitAPI
 
-#endif // HAVE(WEB_TRANSPORT)
+#endif // PLATFORM(COCOA)

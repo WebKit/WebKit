@@ -986,7 +986,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 {
     if (!m_context || !m_mainWebView || !m_mainWebView->viewSupportsOptions(options)) {
         auto contextConfiguration = generateContextConfiguration(options);
-        if (options.siteIsolationEnabled() && options.runInCrossOriginFrame())
+        if (options.siteIsolationEnabled())
             WKContextConfigurationSetPrewarmsProcessesAutomatically(contextConfiguration.get(), false);
         m_preferences = adoptWK(WKPreferencesCreate());
         m_context = adoptWK(WKContextCreateWithConfiguration(contextConfiguration.get()));
@@ -1927,17 +1927,17 @@ constexpr auto eventSenderJS = R"eventSenderJS(
 if (window.eventSender) {
     let post = window.webkit.messageHandlers.webkitTestRunner.postMessage.bind(window.webkit.messageHandlers.webkitTestRunner);
 
-    eventSender.asyncMouseDown = async (button, modifierArray, pointerType, callback) => { // NOLINT
+    eventSender.asyncMouseDown = async (button, modifierArray, pointerType) => { // NOLINT
         await post(['AsyncMouseDown', button, modifierArray, pointerType]);
-        callback?.();
     };
-    eventSender.asyncMouseUp = async (button, modifierArray, pointerType, callback) => { // NOLINT
+    eventSender.asyncMouseUp = async (button, modifierArray, pointerType) => { // NOLINT
         await post(['AsyncMouseUp', button, modifierArray, pointerType]);
-        callback?.();
     };
-    eventSender.asyncMouseMoveTo = async (x, y, pointerType, callback) => { // NOLINT
+    eventSender.asyncMouseMoveTo = async (x, y, pointerType) => { // NOLINT
         await post(['AsyncMouseMoveTo', x, y, pointerType]);
-        callback?.();
+    };
+    eventSender.asyncKeyDown = async (key, modifiers) => { // NOLINT
+        await post(['AsyncKeyDown', key, modifiers]);
     };
 }
 )eventSenderJS";
@@ -2739,9 +2739,8 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         WKArrayAppendItem(array.get(), argument2);
         WKPagePostMessageToInjectedBundle(mainWebView()->page(), toWK("SetMousePosition").get(), array.get());
 
-        m_eventSenderProxy->mouseMoveTo(x, y, pointerType);
-        m_eventSenderProxy->waitForPendingMouseEvents();
-        completionHandler(nullptr);
+        m_eventSenderProxy->mouseMoveTo(x, y, pointerType,
+            [completionHandler = WTF::move(completionHandler)] mutable { completionHandler(nullptr); });
         return;
     }
 
@@ -2749,10 +2748,8 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         const auto button = static_cast<uint64_t>(doubleValue(argument));
         const auto array = arrayValue(argument2);
         const auto pointerType = stringValue(argument3);
-
-        m_eventSenderProxy->mouseDown(button, parseModifierArray(array), pointerType);
-        m_eventSenderProxy->waitForPendingMouseEvents();
-        completionHandler(nullptr);
+        m_eventSenderProxy->mouseDown(button, parseModifierArray(array), pointerType,
+            [completionHandler = WTF::move(completionHandler)] mutable { completionHandler(nullptr); });
         return;
     }
 
@@ -2760,10 +2757,16 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         const auto button = static_cast<uint64_t>(doubleValue(argument));
         const auto array = arrayValue(argument2);
         const auto pointerType = stringValue(argument3);
+        m_eventSenderProxy->mouseUp(button, parseModifierArray(array), pointerType,
+            [completionHandler = WTF::move(completionHandler)] mutable { completionHandler(nullptr); });
+        return;
+    }
 
-        m_eventSenderProxy->mouseUp(button, parseModifierArray(array), pointerType);
-        m_eventSenderProxy->waitForPendingMouseEvents();
-        completionHandler(nullptr);
+    if (WKStringIsEqualToUTF8CString(command, "AsyncKeyDown")) {
+        const auto key = stringValue(argument);
+        const auto array = arrayValue(argument2);
+        m_eventSenderProxy->keyDown(key, parseModifierArray(array), 0,
+            [completionHandler = WTF::move(completionHandler)] mutable { completionHandler(nullptr); });
         return;
     }
 
@@ -3426,6 +3429,9 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
 
     if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsSize"))
         return completionHandler(handleAXCopyAttributeValueAsSize(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXSearchPredicate"))
+        return completionHandler(handleAXSearchPredicate(dictionaryValue(messageBody)).get());
 #endif
 
     completionHandler(protectedCurrentInvocation()->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).get());
@@ -5612,6 +5618,111 @@ WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsSize(WKDictio
     return dictionary;
 }
 
+WKRetainPtr<WKTypeRef> TestController::handleAXSearchPredicate(WKDictionaryRef messageBody)
+{
+    uint64_t elementToken = uint64Value(messageBody, "elementToken");
+    uint64_t startElementToken = uint64Value(messageBody, "startElementToken");
+    bool isDirectionNext = booleanValue(messageBody, "isDirectionNext");
+    uint64_t resultsLimit = uint64Value(messageBody, "resultsLimit");
+    bool visibleOnly = booleanValue(messageBody, "visibleOnly");
+    bool immediateDescendantsOnly = booleanValue(messageBody, "immediateDescendantsOnly");
+    WKStringRef searchKey = stringValue(messageBody, "searchKey");
+    WKStringRef searchText = stringValue(messageBody, "searchText");
+
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
+    if (!element)
+        return nullptr;
+
+    // Build the search predicate parameter dictionary using CF APIs.
+    RetainPtr paramDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    if (startElementToken) {
+        if (AXUIElementRef startElement = static_cast<AXUIElementRef>(getAXElement(startElementToken)))
+            CFDictionarySetValue(paramDictionary.get(), CFSTR("AXStartElement"), startElement);
+    }
+
+    CFDictionarySetValue(paramDictionary.get(), CFSTR("AXDirection"),
+        isDirectionNext ? CFSTR("AXDirectionNext") : CFSTR("AXDirectionPrevious"));
+
+    int resultsLimitInt = static_cast<int>(resultsLimit);
+    RetainPtr resultsLimitNum = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &resultsLimitInt));
+    CFDictionarySetValue(paramDictionary.get(), CFSTR("AXResultsLimit"), resultsLimitNum.get());
+
+    if (searchKey) {
+        RetainPtr searchKeyCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(searchKey).c_str(), kCFStringEncodingUTF8));
+        CFDictionarySetValue(paramDictionary.get(), CFSTR("AXSearchKey"), searchKeyCF.get());
+    }
+
+    if (searchText) {
+        auto searchTextStd = toSTD(searchText);
+        if (!searchTextStd.empty()) {
+            RetainPtr searchTextCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, searchTextStd.c_str(), kCFStringEncodingUTF8));
+            CFDictionarySetValue(paramDictionary.get(), CFSTR("AXSearchText"), searchTextCF.get());
+        }
+    }
+
+    CFDictionarySetValue(paramDictionary.get(), CFSTR("AXVisibleOnly"), visibleOnly ? kCFBooleanTrue : kCFBooleanFalse);
+    CFDictionarySetValue(paramDictionary.get(), CFSTR("AXImmediateDescendantsOnly"), immediateDescendantsOnly ? kCFBooleanTrue : kCFBooleanFalse);
+
+    CFTypeRef resultValue = nullptr;
+    AXError error = AXUIElementCopyParameterizedAttributeValue(element, CFSTR("AXUIElementsForSearchPredicate"), paramDictionary.get(), &resultValue);
+
+    if (error != kAXErrorSuccess || !resultValue)
+        return nullptr;
+
+    RetainPtr result = adoptCF(resultValue);
+
+    if (CFGetTypeID(result.get()) != CFArrayGetTypeID())
+        return nullptr;
+
+    CFArrayRef resultArray = static_cast<CFArrayRef>(result.get());
+    CFIndex count = CFArrayGetCount(resultArray);
+
+    WKRetainPtr tokenArray = adoptWK(WKMutableArrayCreate());
+    for (CFIndex i = 0; i < count; i++) {
+        CFTypeRef item = CFArrayGetValueAtIndex(resultArray, i);
+
+        AXUIElementRef resultElement = nullptr;
+        if (CFGetTypeID(item) == AXUIElementGetTypeID())
+            resultElement = static_cast<AXUIElementRef>(const_cast<void*>(item));
+        else if (CFGetTypeID(item) == CFDictionaryGetTypeID()) {
+            CFTypeRef searchResultElement = CFDictionaryGetValue(static_cast<CFDictionaryRef>(item), CFSTR("AXSearchResultElement"));
+            if (searchResultElement && CFGetTypeID(searchResultElement) == AXUIElementGetTypeID())
+                resultElement = static_cast<AXUIElementRef>(const_cast<void*>(searchResultElement));
+        }
+
+        if (resultElement) {
+            uint64_t token = storeAXElement(resultElement);
+            WKRetainPtr tokenRef = adoptWK(WKUInt64Create(token));
+            WKArrayAppendItem(tokenArray.get(), tokenRef.get());
+        }
+    }
+
+    return tokenArray;
+}
+
 #endif // PLATFORM(MAC)
+
+#if !PLATFORM(COCOA)
+void TestController::doAfterProcessingAllPendingMouseEvents(CompletionHandler<void()>&& handler)
+{
+    auto* completionHandler = new CompletionHandler<void()>(WTF::move(handler));
+    WKPageDoAfterProcessingAllPendingMouseEvents(mainWebView()->page(), completionHandler, [](void* userData) {
+        auto* completionHandler = static_cast<CompletionHandler<void()>*>(userData);
+        (*completionHandler)();
+        delete completionHandler;
+    });
+}
+
+void TestController::doAfterProcessingAllPendingKeyEvents(CompletionHandler<void()>&& handler)
+{
+    auto* completionHandler = new CompletionHandler<void()>(WTF::move(handler));
+    WKPageDoAfterProcessingAllPendingKeyEvents(mainWebView()->page(), completionHandler, [](void* userData) {
+        auto* completionHandler = static_cast<CompletionHandler<void()>*>(userData);
+        (*completionHandler)();
+        delete completionHandler;
+    });
+}
+#endif
 
 } // namespace WTR

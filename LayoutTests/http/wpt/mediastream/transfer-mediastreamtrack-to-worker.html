@@ -35,6 +35,9 @@ promise_test(async test => {
     `);
     test.add_cleanup(() => worker.terminate());
     const track = stream.getVideoTracks()[0];
+
+    assert_throws_dom('DataCloneError', () => worker.postMessage({ track }));
+
     worker.postMessage({ track }, [track]);
 
     const result = await new Promise(resolve => worker.onmessage = e => resolve(e.data));

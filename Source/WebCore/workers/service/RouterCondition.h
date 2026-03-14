@@ -40,7 +40,7 @@ class RouterNotCondition {
 public:
     RouterNotCondition(RouterCondition&&);
 
-    RouterCondition& value() & { return m_value.get(); }
+    RouterCondition& value() & LIFETIME_BOUND { return m_value.get(); }
     RouterCondition&& value() && { return WTF::move(m_value.get()); }
 
 private:

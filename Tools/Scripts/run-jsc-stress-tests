@@ -625,28 +625,22 @@ end
 
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
-$isFTLPlatform = !($architecture == "x86" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "playstation")
-# Special case armv7 and windows, we want to run the wasm tests temporarily without B3/Air support
-$isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64"))
+$isFTLPlatform = !($architecture == "x86" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "playstation" || $architecture == "arm")
+# Special case windows, we want to run the wasm tests temporarily without B3/Air support
+$isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || ($hostOS == "windows" && $architecture == "x86_64"))
 $isOMGPlatform = $isFTLPlatform
 $isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64")
 
 $skipLockdown = false
 $skipMiniMode = false
 
-if $platform == "watchos"
+if $platform == "watchos" || $architecture == "arm"
     $jitTests = false
     $isFTLPlatform = false
     $isWasmPlatform = false
     $skipLockdown = true
     $skipMiniMode = true
     $memoryLimited = true
-end
-
-if $architecture == "arm"
-    $isFTLPlatform = false
-    $isWasmPlatform = false
-    $skipLockdown = true
 end
 
 # This is meant for skipping execution of tests than require a lot of address
@@ -702,7 +696,7 @@ BASE_OPTIONS = ["--validateOptions=true", "--useFTLJIT=false", "--useFunctionDot
 EAGER_OPTIONS = ["--validateOptions=true", "--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--thresholdForOMGOptimizeAfterWarmUp=20", "--thresholdForOMGOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true", "--repatchBufferingCountdown=0"]
 # NOTE: Tests rely on this using scribbleFreeCells.
 NO_CJIT_OPTIONS = ["--validateOptions=true", "--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
-B3O1_OPTIONS = ["--defaultB3OptLevel=1", "--useDataICInFTL=1", "--forceUnlinkedDFG=1"]
+B3O1_OPTIONS = ["--defaultB3OptLevel=1", "--useHandlerICInFTL=1", "--forceUnlinkedDFG=1"]
 B3O0_OPTIONS = ["--maxDFGNodesInBasicBlockForPreciseAnalysis=100", "--defaultB3OptLevel=0"]
 FTL_OPTIONS = ["--validateOptions=true", "--useFTLJIT=true"]
 FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
@@ -1175,7 +1169,7 @@ BASE_MODES = [
         "FTLNoCJIT",
         "misc-ftl-no-cjit",
         [
-            "--useDataICInFTL=true",
+            "--useHandlerICInFTL=true",
             "--allowNonSPTagging=false",
             "--libpasForcePGMWithRate=#{10 + rand(10)}",
         ] +
@@ -1204,7 +1198,7 @@ BASE_MODES = [
             "--useSamplingProfiler=true",
             "--airForceIRCAllocator=true",
             "--airUseGreedyRegAlloc=false", # FIXME: remove with rdar://144792585
-            "--useDataICInFTL=true",
+            "--useHandlerICInFTL=true",
             "--forceUnlinkedDFG=true",
             "--allowNonSPTagging=false",
         ] +
@@ -1267,7 +1261,7 @@ BASE_MODES = [
             "--airForceBriggsAllocator=true",
             "--useRandomizingExecutableIslandAllocation=true",
             "--forcePolyProto=true",
-            "--useDataICInFTL=true",
+            "--useHandlerICInFTL=true",
             "--allowNonSPTagging=false",
         ] +
         FTL_OPTIONS +

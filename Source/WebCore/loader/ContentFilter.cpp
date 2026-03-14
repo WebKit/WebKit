@@ -383,8 +383,8 @@ void ContentFilter::deliverResourceData(const SharedBuffer& buffer)
 
 URL ContentFilter::url()
 {
-    if (m_mainResource)
-        return m_mainResource->url();
+    if (RefPtr mainResource = m_mainResource)
+        return mainResource->url();
     return m_mainResourceURL;
 }
 

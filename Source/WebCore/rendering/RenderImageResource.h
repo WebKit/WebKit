@@ -50,7 +50,7 @@ public:
     void willBeDestroyed();
 
     void clearCachedImage();
-    void setCachedImage(CachedResourceHandle<CachedImage>&&);
+    void setCachedImage(CachedImage*);
     CachedImage* cachedImage() const { return m_styleImage ? m_styleImage->cachedImage() : nullptr; }
 
     void resetAnimation();

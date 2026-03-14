@@ -292,8 +292,8 @@ void WebProcessPool::setSandboxEnabled(bool enabled)
 
     if (!enabled) {
 #if !ENABLE(2022_GLIB_API)
-        if (const char* forceSandbox = getenv("WEBKIT_FORCE_SANDBOX")) {
-            if (!strcmp(forceSandbox, "1"))
+        if (const auto forceSandbox = CStringView::unsafeFromUTF8(getenv("WEBKIT_FORCE_SANDBOX"))) {
+            if (forceSandbox == "1"_s)
                 return;
         }
 #endif

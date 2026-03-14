@@ -144,9 +144,9 @@ public:
     // Can be called in worker threads.
     virtual Ref<RealtimeMediaSource> clone() { return *this; }
 
-    const String& hashedId() const LIFETIME_BOUND;
+    const String& NODELETE hashedId() const LIFETIME_BOUND;
     const String& hashedGroupId() const LIFETIME_BOUND;
-    const MediaDeviceHashSalts& deviceIDHashSalts() const LIFETIME_BOUND;
+    const MediaDeviceHashSalts& NODELETE deviceIDHashSalts() const LIFETIME_BOUND;
 
     const String& persistentID() const LIFETIME_BOUND { return m_device.persistentId(); }
 
@@ -188,7 +188,7 @@ public:
     virtual const IntSize size() const;
     void setSize(const IntSize&);
 
-    IntSize intrinsicSize() const;
+    IntSize NODELETE intrinsicSize() const;
     void setIntrinsicSize(const IntSize&, bool notifyObservers = true);
 
     double frameRate() const { return m_frameRate; }
@@ -285,7 +285,7 @@ public:
     virtual void setInterruptedForTesting(bool);
 
     virtual void setShouldApplyRotation();
-    bool isApplyingRotation() const;
+    bool NODELETE isApplyingRotation() const;
 
     virtual void setIsInBackground(bool);
 

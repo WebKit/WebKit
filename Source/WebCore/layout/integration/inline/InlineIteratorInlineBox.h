@@ -42,7 +42,7 @@ public:
     RectEdges<bool> closedEdges() const;
 
     // FIXME: Remove. For intermediate porting steps only.
-    const LegacyInlineFlowBox* legacyInlineBox() const { return downcast<LegacyInlineFlowBox>(Box::legacyInlineBox()); }
+    const LegacyInlineFlowBox* legacyInlineBox() const LIFETIME_BOUND { return downcast<LegacyInlineFlowBox>(Box::legacyInlineBox()); }
 
     InlineBoxIterator nextInlineBoxLineRightward() const;
     InlineBoxIterator nextInlineBoxLineLeftward() const;
@@ -62,14 +62,14 @@ public:
     InlineBoxIterator(Box::PathVariant&&);
     InlineBoxIterator(const Box&);
 
-    const InlineBox& operator*() const { return get(); }
-    const InlineBox* operator->() const { return &get(); }
+    const InlineBox& operator*() const LIFETIME_BOUND { return get(); }
+    const InlineBox* operator->() const LIFETIME_BOUND { return &get(); }
 
     InlineBoxIterator& traverseInlineBoxLineRightward();
     InlineBoxIterator& traverseInlineBoxLineLeftward();
 
 private:
-    const InlineBox& get() const { return downcast<InlineBox>(m_box); }
+    const InlineBox& get() const LIFETIME_BOUND { return downcast<InlineBox>(m_box); }
 };
 
 InlineBoxIterator lineLeftmostInlineBoxFor(const RenderInline&);

@@ -129,7 +129,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableS
 
 RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
-    if (is<RenderTableCaption>(child) || is<RenderTableSection>(child))
+    if (isAnyOf<RenderTableCaption, RenderTableSection>(child))
         return parent;
 
     if (CheckedPtr tableColumn = dynamicDowncast<RenderTableCol>(child)) {

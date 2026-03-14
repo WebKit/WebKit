@@ -60,8 +60,8 @@ public:
 
     TransformFunctionBase::Type primitiveType() const override { return isRepresentableIn2D() ? Type::Translate : Type::Translate3D; }
 
-    const LengthPercentage& x() const { return m_x; }
-    const LengthPercentage& y() const { return m_y; }
+    const LengthPercentage& x() const LIFETIME_BOUND { return m_x; }
+    const LengthPercentage& y() const LIFETIME_BOUND { return m_y; }
     Length z() const { return m_z; }
 
     bool isIdentity() const override { return m_x.isKnownZero() && m_y.isKnownZero() && m_z.isZero(); }

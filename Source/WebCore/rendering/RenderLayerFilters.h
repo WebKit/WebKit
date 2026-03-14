@@ -57,7 +57,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const LayoutRect& dirtySourceRect() const { return m_dirtySourceRect; }
+    const LayoutRect& dirtySourceRect() const LIFETIME_BOUND { return m_dirtySourceRect; }
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
 
     CSSFilterRenderer* filter() const { return m_filter.get(); }

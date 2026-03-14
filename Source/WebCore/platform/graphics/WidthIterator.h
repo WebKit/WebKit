@@ -34,12 +34,17 @@ namespace WebCore {
 class FontCascade;
 class FontCascadeDescription;
 class Font;
+class TextAutospace;
 class TextRun;
 struct GlyphData;
 struct GlyphIndexRange;
 struct OriginalAdvancesForCharacterTreatedAsSpace;
 struct AdvanceInternalState;
 struct SmallCapsState;
+
+namespace TextSpacing {
+enum class CharacterClass : uint8_t;
+}
 
 using CharactersTreatedAsSpace = Vector<OriginalAdvancesForCharacterTreatedAsSpace, 64>;
 
@@ -50,12 +55,12 @@ public:
 
     void advance(unsigned to, GlyphBuffer&);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
-    void finalize(GlyphBuffer&);
+    void NODELETE finalize(GlyphBuffer&);
 
-    float maxGlyphBoundingBoxY() const { ASSERT(m_accountForGlyphBounds); return m_maxGlyphBoundingBoxY; }
-    float minGlyphBoundingBoxY() const { ASSERT(m_accountForGlyphBounds); return m_minGlyphBoundingBoxY; }
-    float firstGlyphOverflow() const { ASSERT(m_accountForGlyphBounds); return m_firstGlyphOverflow; }
-    float lastGlyphOverflow() const { ASSERT(m_accountForGlyphBounds); return m_lastGlyphOverflow; }
+    float maxGlyphBoundingBoxY() const { ASSERT(m_glyphBounds.shouldCompute); return m_glyphBounds.maxY; }
+    float minGlyphBoundingBoxY() const { ASSERT(m_glyphBounds.shouldCompute); return m_glyphBounds.minY; }
+    float firstGlyphOverflowX() const { ASSERT(m_glyphBounds.shouldCompute); return m_glyphBounds.firstGlyphLeftOverflowX; }
+    float lastGlyphOverflowX() const { ASSERT(m_glyphBounds.shouldCompute); return m_glyphBounds.lastGlyphRightOverflowX; }
 
     const TextRun& run() const { return m_run; }
     float runWidthSoFar() const { return m_runWidthSoFar; }
@@ -76,11 +81,13 @@ private:
     };
     ApplyFontTransformsResult applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, const Font&, CharactersTreatedAsSpace&);
     void commitCurrentFontRange(AdvanceInternalState&);
+    void commitIgnorable(char32_t characterToWrite, AdvanceInternalState&, const Font& primaryFont);
     void startNewFontRangeIfNeeded(AdvanceInternalState&, SmallCapsState&, const FontCascadeDescription&);
-    void applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
+    void NODELETE applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
 
-    bool hasExtraSpacing() const;
+    bool NODELETE hasExtraSpacing() const;
     void applyExtraSpacingAfterShaping(GlyphBuffer&, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth);
+    TextSpacing::CharacterClass applyTextAutospaceIfNeededAndGetCharacterClass(GlyphBuffer&, const TextAutospace&, unsigned characterIndex, GlyphIndexRange, TextSpacing::CharacterClass previousCharacterClass);
     void applyCSSVisibilityRules(GlyphBuffer&, unsigned glyphBufferStartIndex);
 
     struct AdditionalWidth {
@@ -89,8 +96,17 @@ private:
         float leftExpansion;
         float rightExpansion;
     };
+    struct GlyphBounds {
+        bool shouldCompute { false };
+        float maxY { std::numeric_limits<float>::lowest() };
+        float minY { std::numeric_limits<float>::max() };
+        float firstGlyphLeftOverflowX { 0.f };
+        float lastGlyphRightOverflowX { 0.f };
+
+        void computeIfNeeded(Glyph, const Font&, unsigned charIndex, float glyphWidth);
+    };
     AdditionalWidth calculateAdditionalWidth(GlyphBuffer&, GlyphBufferStringOffset currentCharacterIndex, unsigned leadingGlyphIndex, unsigned trailingGlyphIndex, float position) const;
-    void applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
+    void NODELETE applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
 
     TextDirection direction() const { return m_direction; }
     bool rtl() const { return m_direction == TextDirection::RTL; }
@@ -107,14 +123,10 @@ private:
     float m_runWidthSoFar { 0 };
     float m_expansion { 0 };
     float m_expansionPerOpportunity { 0 };
-    float m_maxGlyphBoundingBoxY { std::numeric_limits<float>::lowest() };
-    float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
-    float m_firstGlyphOverflow { 0 };
-    float m_lastGlyphOverflow { 0 };
+    GlyphBounds m_glyphBounds;
     TextDirection m_direction { TextDirection::LTR };
     bool m_containsTabs { false };
     bool m_isAfterExpansion { false };
-    bool m_accountForGlyphBounds { false };
     bool m_enableKerning { false };
     bool m_requiresShaping { false };
     bool m_forTextEmphasis { false };

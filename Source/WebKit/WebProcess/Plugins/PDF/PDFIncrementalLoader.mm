@@ -67,7 +67,7 @@ public:
     }
 
     NetscapePlugInStreamLoader* NODELETE streamLoader() { return m_streamLoader; }
-    void setStreamLoader(NetscapePlugInStreamLoader& loader) { m_streamLoader = loader; }
+    void NODELETE setStreamLoader(NetscapePlugInStreamLoader& loader) { m_streamLoader = loader; }
     void clearStreamLoader();
     void addData(std::span<const uint8_t> data) { m_accumulatedData.append(data); }
 

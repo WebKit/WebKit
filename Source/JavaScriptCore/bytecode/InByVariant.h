@@ -53,14 +53,14 @@ public:
 
     bool isSet() const { return !!m_structureSet.size(); }
     explicit operator bool() const { return isSet(); }
-    const StructureSet& structureSet() const { return m_structureSet; }
-    StructureSet& structureSet() { return m_structureSet; }
+    const StructureSet& structureSet() const LIFETIME_BOUND { return m_structureSet; }
+    StructureSet& structureSet() LIFETIME_BOUND { return m_structureSet; }
 
     // A non-empty condition set means that this is a prototype in-hit/in-miss.
-    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
+    const ObjectPropertyConditionSet& conditionSet() const LIFETIME_BOUND { return m_conditionSet; }
 
     PropertyOffset offset() const { return m_offset; }
-    CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
+    CallLinkStatus* callLinkStatus() const LIFETIME_BOUND { return m_callLinkStatus.get(); }
 
     bool isHit() const { return offset() != invalidOffset; }
 

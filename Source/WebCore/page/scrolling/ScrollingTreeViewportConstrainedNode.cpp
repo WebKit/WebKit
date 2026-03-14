@@ -62,7 +62,7 @@ FloatPoint ScrollingTreeViewportConstrainedNode::computeLayerPosition() const
             return constraints().viewportRelativeLayerPosition(layoutViewport) - overflowScrollDelta;
         }
 
-        if (RefPtr overflowNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(*ancestor)) {
+        if (auto* overflowNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(*ancestor)) {
             // To keep the layer still during async scrolling we adjust by how much the position has changed since layout.
             overflowScrollDelta -= overflowNode->scrollDeltaSinceLastCommit();
             continue;

@@ -164,7 +164,7 @@ public:
     WEBCORE_EXPORT virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize, NotifyUIProcess = NotifyUIProcess::Yes);
 
     WEBCORE_EXPORT bool NODELETE isPrinting() const;
-    WEBCORE_EXPORT RefPtr<Frame> parent() const;
+    WEBCORE_EXPORT RefPtr<Frame> NODELETE parent() const;
 
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);

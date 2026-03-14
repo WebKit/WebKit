@@ -49,7 +49,7 @@ bool ScaleTransformOperation::operator==(const TransformOperation& other) const
     return m_x == s.m_x && m_y == s.m_y && m_z == s.m_z;
 }
 
-static double blendScaleComponent(double from, double to, const BlendingContext& context)
+static double NODELETE blendScaleComponent(double from, double to, const BlendingContext& context)
 {
     switch (context.compositeOperation) {
     case CompositeOperation::Replace:

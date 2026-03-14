@@ -49,7 +49,7 @@ struct WavyStrokeParameters {
     // wider as font size increases.
     float step { 0.f };
 };
-WavyStrokeParameters wavyStrokeParameters(float fontSize);
+WavyStrokeParameters NODELETE wavyStrokeParameters(float fontSize);
 
 struct InkOverflowForDecorations : RectEdges<LayoutUnit> {
     void extendTop(float extendTo)

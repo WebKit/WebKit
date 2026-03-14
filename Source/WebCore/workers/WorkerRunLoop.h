@@ -61,7 +61,7 @@ public:
     void postTask(ScriptExecutionContext::Task&&);
     void postDebuggerTask(ScriptExecutionContext::Task&&);
 
-    WEBCORE_EXPORT static String defaultMode();
+    WEBCORE_EXPORT static String NODELETE defaultMode();
 
     unsigned long createUniqueId() { return ++m_uniqueId; }
 
@@ -94,7 +94,7 @@ public:
         WTF_MAKE_NONCOPYABLE(Task);
     public:
         Task(ScriptExecutionContext::Task&&, const String& mode);
-        const String& mode() const { return m_mode; }
+        const String& mode() const LIFETIME_BOUND { return m_mode; }
 
     private:
         void performTask(WorkerOrWorkletGlobalScope*);
@@ -135,7 +135,7 @@ class WorkerMainRunLoop final : public WorkerRunLoop, public CanMakeWeakPtr<Work
 public:
     WorkerMainRunLoop();
 
-    void setGlobalScope(WorkerOrWorkletGlobalScope&);
+    void NODELETE setGlobalScope(WorkerOrWorkletGlobalScope&);
 
     void terminate() final { m_terminated = true; }
     bool terminated() const final { return m_terminated; }

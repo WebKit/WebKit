@@ -43,7 +43,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/026.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/027.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/028.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/029.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/030.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/031.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/032.html
@@ -56,10 +55,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/039.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/040.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/041.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/042.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/043.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/044.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/045.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/046.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/047.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/048.html
@@ -68,8 +63,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/051.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/052.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/053.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/054.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/055.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/056.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/057.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/058.html
@@ -177,3 +170,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/150-import.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/150-noimport-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/150-noimport.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/non-external-no-import.html

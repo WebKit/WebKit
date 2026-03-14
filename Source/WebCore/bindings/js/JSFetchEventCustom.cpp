@@ -32,11 +32,11 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSFetchEvent::visitAdditionalChildren(Visitor& visitor)
+void JSFetchEvent::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped().request());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSFetchEvent);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSFetchEvent);
 
 } // namespace WebCore

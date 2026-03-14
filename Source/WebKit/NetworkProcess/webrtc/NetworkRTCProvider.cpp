@@ -240,7 +240,7 @@ void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
 #if PLATFORM(COCOA)
 bool NetworkRTCProvider::webRTCInterfaceMonitoringViaNWEnabled() const
 {
-    RefPtr connection = m_connection.get();
+    auto* connection = m_connection.get();
     return connection && connection->webRTCInterfaceMonitoringViaNWEnabled();
 }
 

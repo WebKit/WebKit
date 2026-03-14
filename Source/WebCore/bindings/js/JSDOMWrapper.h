@@ -78,7 +78,7 @@ public:
     using Base = JSDOMObject;
     using DOMWrapped = ImplementationClass;
 
-    ImplementationClass& wrapped() const { return m_wrapped; }
+    ImplementationClass& wrapped() const LIFETIME_BOUND { return m_wrapped; }
     static constexpr ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper, m_wrapped); }
     constexpr static bool hasCustomPtrTraits() { return !std::is_same_v<PtrTraits, RawPtrTraits<ImplementationClass>>; };
     

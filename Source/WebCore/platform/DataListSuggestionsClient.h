@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 
@@ -41,6 +42,7 @@ public:
 
     virtual IntRect elementRectInRootViewCoordinates() const = 0;
     virtual Vector<DataListSuggestion> suggestions() = 0;
+    virtual std::optional<FrameIdentifier> rootFrameID() const = 0;
 
     virtual void didSelectDataListOption(const String&) = 0;
     virtual void didCloseSuggestions() = 0;

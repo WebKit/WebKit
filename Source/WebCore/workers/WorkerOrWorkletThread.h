@@ -62,20 +62,20 @@ public:
     virtual WorkerLoaderProxy* workerLoaderProxy() const = 0;
 
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }
-    WorkerRunLoop& runLoop() { return m_runLoop; }
+    WorkerRunLoop& runLoop() LIFETIME_BOUND { return m_runLoop; }
 
     void start(Function<void(const String&)>&& evaluateCallback = { });
     void stop(Function<void()>&& terminatedCallback = { });
 
     void startRunningDebuggerTasks();
-    void stopRunningDebuggerTasks();
+    void NODELETE stopRunningDebuggerTasks();
 
     void suspend();
     void resume();
 
-    const String& inspectorIdentifier() const { return m_inspectorIdentifier; }
+    const String& inspectorIdentifier() const LIFETIME_BOUND { return m_inspectorIdentifier; }
 
-    static ThreadSafeWeakHashSet<WorkerOrWorkletThread>& workerOrWorkletThreads();
+    static ThreadSafeWeakHashSet<WorkerOrWorkletThread>& NODELETE workerOrWorkletThreads();
     static void releaseFastMallocFreeMemoryInAllThreads();
 
     void addChildThread(WorkerOrWorkletThread&);

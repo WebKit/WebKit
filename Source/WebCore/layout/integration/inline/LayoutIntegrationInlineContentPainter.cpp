@@ -31,6 +31,7 @@
 #include "InlineDisplayBoxInlines.h"
 #include "OutlinePainter.h"
 #include "PaintInfo.h"
+#include "PaintInfoInlines.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"

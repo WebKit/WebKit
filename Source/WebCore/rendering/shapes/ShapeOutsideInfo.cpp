@@ -33,7 +33,7 @@
 #include "BoxLayoutShape.h"
 #include "FloatingObjects.h"
 #include "NullGraphicsContext.h"
-#include "RenderBlockFlow.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentContainer.h"
@@ -323,11 +323,11 @@ static inline bool checkShapeImageOrigin(Document& document, const Style::Image&
         return true;
 
     ASSERT(styleImage.cachedImage());
-    CachedImage& cachedImage = *(styleImage.cachedImage());
-    if (cachedImage.isOriginClean(&document.securityOrigin()))
+    Ref cachedImage = *(styleImage.cachedImage());
+    if (cachedImage->isOriginClean(&document.securityOrigin()))
         return true;
 
-    const URL& url = cachedImage.url();
+    const URL& url = cachedImage->url();
     String urlString = url.isNull() ? "''"_s : url.stringCenterEllipsizedToLength();
     document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Unsafe attempt to load URL "_s, urlString, '.'));
 

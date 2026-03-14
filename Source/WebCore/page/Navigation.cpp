@@ -220,7 +220,7 @@ RefPtr<NavigationActivation> Navigation::createForPageswapEvent(HistoryItem* new
         return nullptr;
 
     // Skip cross-origin requests, or if any cross-origin redirects have been made.
-    bool isSameOrigin = SecurityOrigin::create(documentLoader->documentURL())->isSameOriginAs(protect(protect(protect(window())->document())->securityOrigin()));
+    bool isSameOrigin = SecurityOrigin::create(documentLoader->documentURL())->isSameOriginAs(protect(protect(window()->document())->securityOrigin()));
     if (!isSameOrigin || (!documentLoader->request().isSameSite() && !fromBackForwardCache))
         return nullptr;
 
@@ -269,7 +269,7 @@ Navigation::~Navigation() = default;
 
 ScriptExecutionContext* Navigation::scriptExecutionContext() const
 {
-    RefPtr window = this->window();
+    auto* window = this->window();
     return window ? window->document() : nullptr;
 }
 
@@ -330,7 +330,7 @@ RefPtr<NavigationAPIMethodTracker> Navigation::maybeSetUpcomingNonTraversalTrack
 {
     RefPtr apiMethodTracker = NavigationAPIMethodTracker::create(WTF::move(committed), WTF::move(finished), WTF::move(info), WTF::move(serializedState));
 
-    Ref { apiMethodTracker->finishedPromise }->markAsHandled();
+    apiMethodTracker->finishedPromise->markAsHandled();
 
     // FIXME: We should be able to assert m_upcomingNonTraverseMethodTracker is empty.
     if (!hasEntriesAndEventsDisabled()) {
@@ -347,7 +347,7 @@ RefPtr<NavigationAPIMethodTracker> Navigation::addUpcomingTraverseAPIMethodTrack
     RefPtr apiMethodTracker = NavigationAPIMethodTracker::create(WTF::move(committed), WTF::move(finished), WTF::move(info), nullptr);
     apiMethodTracker->key = key;
 
-    Ref { apiMethodTracker->finishedPromise }->markAsHandled();
+    apiMethodTracker->finishedPromise->markAsHandled();
 
     {
         Locker locker { m_apiMethodTrackersLock };
@@ -451,7 +451,7 @@ Navigation::Result Navigation::performTraversal(const String& key, Navigation::O
         createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::AbortError, "Navigation aborted"_s);
 
     RefPtr frame = this->frame();
-    if (!frame->isMainFrame() && protect(window->document())->canNavigate(protect(protect(frame->page())->mainFrame()).ptr()) != CanNavigateState::Able)
+    if (!frame->isMainFrame() && protect(window->document())->canNavigate(protect(frame->page()->mainFrame()).ptr()) != CanNavigateState::Able)
         return createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::SecurityError, "Invalid state"_s);
 
     RefPtr current = currentEntry();
@@ -1031,7 +1031,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
         // Log a warning once per window when the limit is reached.
         if (!m_rateLimiter.wasReported()) {
             m_rateLimiter.markReported();
-            if (RefPtr document = protect(window())->document())
+            if (RefPtr document = window()->document())
                 document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Excessive navigation attempts blocked."_s);
         }
 
@@ -1044,7 +1044,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
         return DispatchResult::Aborted;
     }
 
-    RefPtr document = protect(window())->document();
+    RefPtr document = window()->document();
 
     RefPtr<NavigationAPIMethodTracker> apiMethodTracker;
     {
@@ -1359,15 +1359,15 @@ bool Navigation::RateLimiter::navigationAllowed()
     return false;
 }
 
-void Navigation::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
+void Navigation::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor)
 {
     Locker locker { m_apiMethodTrackersLock };
     if (m_ongoingAPIMethodTracker)
-        m_ongoingAPIMethodTracker->info.visit(visitor);
+        m_ongoingAPIMethodTracker->info.visitInGCThread(visitor);
     if (m_upcomingNonTraverseMethodTracker)
-        m_upcomingNonTraverseMethodTracker->info.visit(visitor);
+        m_upcomingNonTraverseMethodTracker->info.visitInGCThread(visitor);
     for (auto& tracker : m_upcomingTraverseMethodTrackers.values())
-        tracker->info.visit(visitor);
+        tracker->info.visitInGCThread(visitor);
 }
 
 } // namespace WebCore

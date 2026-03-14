@@ -75,7 +75,6 @@ PACKAGES=(
     mesa-common-dev
     ninja-build
     patch
-    patchelf
     ruby
     $(aptIfExists gi-docgen)
     $(aptIfExists libaom-dev)
@@ -87,6 +86,7 @@ PACKAGES=(
 
     # These are dependencies necessary for running tests.
     apache2
+    binutils
     curl
     fonts-liberation
     hyphen-de
@@ -112,6 +112,7 @@ PACKAGES=(
     libgirepository1.0-dev
     libgles2-mesa-dev
     liborc-0.4-dev
+    libp11-kit-dev
     libproxy-dev
     libpsl-dev
     libssl-dev
@@ -139,4 +140,8 @@ PACKAGES=(
     gstreamer1.0-plugins-good
     gstreamer1.0-plugins-ugly
     gstreamer1.0-pulseaudio
+
+    # These are for generate-bundle script
+    patchelf
+    p11-kit
 )

@@ -40,6 +40,7 @@
 #include <wtf/IterationStatus.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SegmentedVector.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/MakeString.h>
 
@@ -85,10 +86,11 @@ enum class DestructuringKind {
     DestructureToExpressions
 };
 
-enum class DeclarationType { 
-    VarDeclaration, 
+enum class DeclarationType {
+    VarDeclaration,
     LetDeclaration,
-    ConstDeclaration
+    ConstDeclaration,
+    UsingDeclaration,
 };
 
 enum class DeclarationImportType {
@@ -152,8 +154,9 @@ struct Scope {
     WTF_MAKE_NONCOPYABLE(Scope);
 
 public:
-    Scope(const VM& vm, ImplementationVisibility implementationVisibility, LexicallyScopedFeatures lexicallyScopedFeatures, bool isFunction, bool isGeneratorFunction, bool isArrowFunction, bool isAsyncFunction, bool isStaticBlock)
+    Scope(const VM& vm, Scope* containingScope, ImplementationVisibility implementationVisibility, LexicallyScopedFeatures lexicallyScopedFeatures, bool isFunction, bool isGeneratorFunction, bool isArrowFunction, bool isAsyncFunction, bool isStaticBlock)
         : m_vm(vm)
+        , m_containingScope(containingScope)
         , m_implementationVisibility(implementationVisibility)
         , m_lexicallyScopedFeatures(lexicallyScopedFeatures)
         , m_isFunction(isFunction)
@@ -209,6 +212,9 @@ public:
         }
         return nullptr;
     }
+
+    Scope* containingScope() const { return m_containingScope; }
+    bool hasContainingScope() const { return m_containingScope && !isFunctionBoundary(); }
 
     void setSourceParseMode(SourceParseMode mode)
     {
@@ -324,9 +330,9 @@ public:
     bool usesEval() const { return m_usesEval; }
     bool usesImportMeta() const { return m_usesImportMeta; }
 
-    const UncheckedKeyHashSet<UniquedStringImpl*>& closedVariableCandidates() const { return m_closedVariableCandidates; }
-    VariableEnvironment& declaredVariables() { return m_declaredVariables; }
-    VariableEnvironment& lexicalVariables() { return m_lexicalVariables; }
+    const UncheckedKeyHashSet<UniquedStringImpl*>& closedVariableCandidates() const LIFETIME_BOUND { return m_closedVariableCandidates; }
+    VariableEnvironment& declaredVariables() LIFETIME_BOUND { return m_declaredVariables; }
+    VariableEnvironment& lexicalVariables() LIFETIME_BOUND { return m_lexicalVariables; }
     void finalizeLexicalEnvironment()
     {
         if (m_usesEval || m_needsFullActivation)
@@ -450,7 +456,7 @@ public:
     DeclarationStacks::FunctionStack takeFunctionDeclarations() { return WTF::move(m_functionDeclarations); }
     
 
-    DeclarationResultMask declareLexicalVariable(const Identifier* ident, bool isConstant, DeclarationImportType importType = DeclarationImportType::NotImported)
+    DeclarationResultMask declareLexicalVariable(const Identifier* ident, bool isConstant, DeclarationImportType importType = DeclarationImportType::NotImported, bool isUsing = false)
     {
         ASSERT(m_allowsLexicalDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
@@ -461,6 +467,8 @@ public:
             addResult.iterator->value.setIsConst();
         else
             addResult.iterator->value.setIsLet();
+        if (isUsing)
+            addResult.iterator->value.setIsUsing();
 
         if (importType == DeclarationImportType::Imported)
             addResult.iterator->value.setIsImported();
@@ -662,6 +670,8 @@ public:
 
     void setUsesAwait() { m_usesAwait = true; }
     bool usesAwait() const { return m_usesAwait; }
+
+    bool hasUsingDeclaration() const { return m_lexicalVariables.hasUsingDeclaration(); }
 
     bool hasDirectSuper() const { return m_hasDirectSuper; }
     void setHasDirectSuper() { m_hasDirectSuper = true; }
@@ -965,6 +975,7 @@ private:
     }
 
     const VM& m_vm;
+    Scope* m_containingScope;
     ImplementationVisibility m_implementationVisibility;
     LexicallyScopedFeatures m_lexicallyScopedFeatures;
     bool m_shadowsArguments : 1 { false };
@@ -1001,9 +1012,9 @@ private:
     ConstructorKind m_constructorKind { ConstructorKind::None };
     DerivedContextType m_derivedContextType { DerivedContextType::None };
     SuperBinding m_expectedSuperBinding { SuperBinding::NotNeeded };
+    InnerArrowFunctionCodeFeatures m_innerArrowFunctionFeatures { 0 };
     int m_loopDepth { 0 };
     int m_switchDepth { 0 };
-    InnerArrowFunctionCodeFeatures m_innerArrowFunctionFeatures { 0 };
 
     typedef Vector<ScopeLabelInfo, 2> LabelStack;
     std::unique_ptr<LabelStack> m_labels;
@@ -1017,44 +1028,13 @@ private:
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };
 
-typedef Vector<Scope, 10> ScopeStack;
-
-struct ScopeRef {
-    ScopeRef(ScopeStack* scopeStack, unsigned index)
-        : m_scopeStack(scopeStack)
-        , m_index(index)
-    {
-    }
-    Scope* operator->() { return &m_scopeStack->at(m_index); }
-    unsigned index() const { return m_index; }
-
-    bool hasContainingScope()
-    {
-        return m_index && !m_scopeStack->at(m_index).isFunctionBoundary();
-    }
-
-    ScopeRef containingScope()
-    {
-        ASSERT(hasContainingScope());
-        return ScopeRef(m_scopeStack, m_index - 1);
-    }
-
-    bool operator==(const ScopeRef& other) const
-    {
-        ASSERT(other.m_scopeStack == m_scopeStack);
-        return m_index == other.m_index;
-    }
-
-private:
-    ScopeStack* m_scopeStack;
-    unsigned m_index;
-};
+typedef SegmentedVector<Scope, 20, 10> ScopeStack;
 
 enum class ArgumentType { Normal, Spread };
 enum class ParsingContext { Normal, FunctionConstructor };
 
 template <typename LexerType>
-class Parser {
+class CACHE_LINE_ALIGNED Parser {
     WTF_MAKE_NONCOPYABLE(Parser);
     WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(Parser);
 
@@ -1117,35 +1097,36 @@ private:
         bool m_oldAllowsIn;
     };
 
-    struct AutoPopScopeRef : public ScopeRef {
-        AutoPopScopeRef(Parser* parser, ScopeRef scope)
-        : ScopeRef(scope)
-        , m_parser(parser)
+    struct AutoPopScope {
+        AutoPopScope(Parser* parser, Scope* scope)
+            : m_scope(scope)
+            , m_parser(parser)
         {
         }
-        
-        ~AutoPopScopeRef()
+
+        ~AutoPopScope()
         {
             if (m_parser)
-                m_parser->popScope(*this, false);
+                m_parser->popScope(m_scope, false);
         }
-        
-        void setPopped()
-        {
-            m_parser = nullptr;
-        }
-        
+
+        void setPopped() { m_parser = nullptr; }
+
+        Scope* operator->() { return m_scope; }
+        Scope* scope() { return m_scope; }
+
     private:
+        Scope* m_scope;
         Parser* m_parser;
     };
 
     struct AutoCleanupLexicalScope {
-        // We can allocate this object on the stack without actually knowing beforehand if we're 
+        // We can allocate this object on the stack without actually knowing beforehand if we're
         // going to create a new lexical scope. If we decide to create a new lexical scope, we
         // can pass the scope into this obejct and it will take care of the cleanup for us if the parse fails.
         // This is helpful if we may fail from syntax errors after creating a lexical scope conditionally.
         AutoCleanupLexicalScope()
-            : m_scope(nullptr, UINT_MAX)
+            : m_scope(nullptr)
             , m_parser(nullptr)
         {
         }
@@ -1153,13 +1134,13 @@ private:
         ~AutoCleanupLexicalScope()
         {
             // This should only ever be called if we fail from a syntax error. Otherwise
-            // it's the intention that a user of this class pops this scope manually on a 
-            // successful parse. 
+            // it's the intention that a user of this class pops this scope manually on a
+            // successful parse.
             if (isValid())
-                m_parser->popScope(*this, false);
+                m_parser->popScope(m_scope, false);
         }
 
-        void setIsValid(ScopeRef& scope, Parser* parser)
+        void setIsValid(Scope* scope, Parser* parser)
         {
             RELEASE_ASSERT(scope->isLexicalScope());
             m_scope = scope;
@@ -1167,16 +1148,11 @@ private:
         }
 
         bool isValid() const { return !!m_parser; }
-
-        void setPopped()
-        {
-            m_parser = nullptr;
-        }
-
-        ScopeRef& scope() { return m_scope; }
+        void setPopped() { m_parser = nullptr; }
+        Scope* scope() { return m_scope; }
 
     private:
-        ScopeRef m_scope;
+        Scope* m_scope;
         Parser* m_parser;
     };
 
@@ -1189,6 +1165,9 @@ private:
             return DestructuringKind::DestructureToLet;
         case DeclarationType::ConstDeclaration:
             return DestructuringKind::DestructureToConst;
+        case DeclarationType::UsingDeclaration:
+            RELEASE_ASSERT_NOT_REACHED();
+            return DestructuringKind::DestructureToVariables;
         }
 
         RELEASE_ASSERT_NOT_REACHED();
@@ -1203,6 +1182,8 @@ private:
         case DeclarationType::LetDeclaration:
         case DeclarationType::ConstDeclaration:
             return "lexical variable name";
+        case DeclarationType::UsingDeclaration:
+            return "using variable name";
         }
         RELEASE_ASSERT_NOT_REACHED();
         return "invalid";
@@ -1213,6 +1194,8 @@ private:
         switch (type) {
         case DeclarationType::ConstDeclaration:
             return AssignmentContext::ConstDeclarationStatement;
+        case DeclarationType::UsingDeclaration:
+            return AssignmentContext::UsingDeclarationStatement;
         default:
             return AssignmentContext::DeclarationStatement;
         }
@@ -1222,85 +1205,73 @@ private:
     ALWAYS_INLINE FunctionMode functionMode() const { return m_functionMode; }
     ALWAYS_INLINE bool isEvalOrArguments(const Identifier* ident) { return isEvalOrArgumentsIdentifier(m_vm, ident); }
 
-    ScopeRef upperScope(int n)
+    Scope* upperScope(int n)
     {
         ASSERT(m_scopeStack.size() >= size_t(1 + n));
-        return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1 - n);
+        return &m_scopeStack[m_scopeStack.size() - 1 - n];
     }
 
-    ScopeRef currentScope()
+    Scope* currentScope()
     {
-        return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1);
+        return m_currentScope;
     }
 
-    ScopeRef currentVariableScope()
+    Scope* currentVariableScope()
     {
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size());
-        while (!m_scopeStack[i].allowsVarDeclarations()) {
-            i--;
-            ASSERT(i < m_scopeStack.size());
-        }
-        return ScopeRef(&m_scopeStack, i);
+        Scope* scope = currentScope();
+        while (!scope->allowsVarDeclarations())
+            scope = scope->containingScope();
+        return scope;
     }
 
-    ScopeRef currentLexicalDeclarationScope()
+    Scope* currentLexicalDeclarationScope()
     {
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size());
-        while (!m_scopeStack[i].allowsLexicalDeclarations()) {
-            i--;
-            ASSERT(i < m_scopeStack.size());
-        }
-
-        return ScopeRef(&m_scopeStack, i);
+        Scope* scope = currentScope();
+        while (!scope->allowsLexicalDeclarations())
+            scope = scope->containingScope();
+        return scope;
     }
 
-    ScopeRef currentFunctionScope()
+    Scope* currentFunctionScope()
     {
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size());
-        while (i && !m_scopeStack[i].isFunctionBoundary()) {
-            i--;
-            ASSERT(i < m_scopeStack.size());
-        }
+        Scope* scope = currentScope();
+        while (scope->containingScope() && !scope->isFunctionBoundary())
+            scope = scope->containingScope();
         // When reaching the top level scope (it can be non function scope), we return it.
-        return ScopeRef(&m_scopeStack, i);
+        return scope;
     }
 
-    std::optional<ScopeRef> findPrivateNameScope()
+    Scope* findPrivateNameScope()
     {
-        ASSERT(m_scopeStack.size());
-        unsigned i = m_scopeStack.size() - 1;
-        while (i && !m_scopeStack[i].isPrivateNameScope())
-            i--;
-
-        if (m_scopeStack[i].isPrivateNameScope())
-            return ScopeRef(&m_scopeStack, i);
-
-        return std::nullopt;
+        Scope* scope = currentScope();
+        while (scope->containingScope() && !scope->isPrivateNameScope())
+            scope = scope->containingScope();
+        if (scope->isPrivateNameScope())
+            return scope;
+        return nullptr;
     }
 
-    ScopeRef closestParentOrdinaryFunctionNonLexicalScope()
+    Scope* closestParentOrdinaryFunctionNonLexicalScope()
     {
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size() && m_scopeStack.size());
-        while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isGeneratorFunctionBoundary() || m_scopeStack[i].isAsyncFunctionBoundary() || m_scopeStack[i].isArrowFunctionBoundary()))
-            i--;
+        Scope* scope = currentScope();
+        while (scope->containingScope()) {
+            if (scope->isFunctionBoundary() && !scope->isGeneratorFunctionBoundary() && !scope->isAsyncFunctionBoundary() && !scope->isArrowFunctionBoundary())
+                break;
+            scope = scope->containingScope();
+        }
         // When reaching the top level scope (it can be non ordinary function scope), we return it.
-        return ScopeRef(&m_scopeStack, i);
+        return scope;
     }
 
-    ScopeRef closestClassScopeOrTopLevelScope()
+    Scope* closestClassScopeOrTopLevelScope()
     {
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size());
-        while (i && !m_scopeStack[i].isClassScope())
-            i--;
-        return ScopeRef(&m_scopeStack, i);
+        Scope* scope = currentScope();
+        while (scope->containingScope() && !scope->isClassScope())
+            scope = scope->containingScope();
+        return scope;
     }
 
-    ScopeRef pushScope()
+    Scope* pushScope()
     {
         ImplementationVisibility implementationVisibility = m_implementationVisibility;
         LexicallyScopedFeatures lexicallyScopedFeatures = NoLexicallyScopedFeatures;
@@ -1309,17 +1280,18 @@ private:
         bool isArrowFunction = false;
         bool isAsyncFunction = false;
         bool isStaticBlock = false;
-        if (!m_scopeStack.isEmpty()) {
-            implementationVisibility = m_scopeStack.last().implementationVisibility();
-            lexicallyScopedFeatures = m_scopeStack.last().lexicallyScopedFeatures();
-            isFunction = m_scopeStack.last().isFunction();
-            isGeneratorFunction = m_scopeStack.last().isGeneratorFunction();
-            isArrowFunction = m_scopeStack.last().isArrowFunction();
-            isAsyncFunction = m_scopeStack.last().isAsyncFunction();
-            isStaticBlock = m_scopeStack.last().isStaticBlock();
+        Scope* parentScope = m_currentScope;
+        if (parentScope) {
+            implementationVisibility = parentScope->implementationVisibility();
+            lexicallyScopedFeatures = parentScope->lexicallyScopedFeatures();
+            isFunction = parentScope->isFunction();
+            isGeneratorFunction = parentScope->isGeneratorFunction();
+            isArrowFunction = parentScope->isArrowFunction();
+            isAsyncFunction = parentScope->isAsyncFunction();
+            isStaticBlock = parentScope->isStaticBlock();
         }
-        m_scopeStack.constructAndAppend(m_vm, implementationVisibility, lexicallyScopedFeatures, isFunction, isGeneratorFunction, isArrowFunction, isAsyncFunction, isStaticBlock);
-        return currentScope();
+        m_currentScope = &m_scopeStack.alloc(m_vm, parentScope, implementationVisibility, lexicallyScopedFeatures, isFunction, isGeneratorFunction, isArrowFunction, isAsyncFunction, isStaticBlock);
+        return m_currentScope;
     }
 
     void resetImplementationVisibilityIfNeeded()
@@ -1328,84 +1300,80 @@ private:
         // is also a function boundary). If the implementation visibility of that scope is not
         // recursive, reset the implementation visibility of the current scope.
 
-        auto& currentScope = m_scopeStack[m_scopeStack.size() - 1];
-        if (!currentScope.isFunctionBoundary())
+        if (!m_currentScope->isFunctionBoundary())
             return;
 
-        for (auto i = m_scopeStack.size() - 1; i > 0; --i) {
-            const auto& scope = m_scopeStack[i - 1];
-            if (!scope.isFunctionBoundary())
+        for (Scope* scope = m_currentScope->containingScope(); scope; scope = scope->containingScope()) {
+            if (!scope->isFunctionBoundary())
                 continue;
 
-            if (scope.implementationVisibility() != ImplementationVisibility::PrivateRecursive)
-                currentScope.resetImplementationVisibility();
+            if (scope->implementationVisibility() != ImplementationVisibility::PrivateRecursive)
+                m_currentScope->resetImplementationVisibility();
             break;
         }
     }
 
-    std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScopeInternal(ScopeRef& scope, bool shouldTrackClosedVariables)
+    std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScopeInternal(Scope* scope, bool shouldTrackClosedVariables)
     {
-        EXCEPTION_ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
+        EXCEPTION_ASSERT_UNUSED(scope, scope == m_currentScope);
         ASSERT(m_scopeStack.size() > 1);
-        Scope& lastScope = m_scopeStack.last();
+        Scope* lastScope = m_currentScope;
+        Scope* parentScope = lastScope->containingScope();
 
         // Finalize lexical variables.
-        lastScope.finalizeLexicalEnvironment();
-        
-        Scope& parentScope = m_scopeStack[m_scopeStack.size() - 2];
-        parentScope.collectFreeVariables(&lastScope, shouldTrackClosedVariables);
+        lastScope->finalizeLexicalEnvironment();
 
-        if (lastScope.hasSloppyModeFunctionHoistingCandidates())
-            lastScope.bubbleSloppyModeFunctionHoistingCandidates(&parentScope);
+        parentScope->collectFreeVariables(lastScope, shouldTrackClosedVariables);
 
-        if (lastScope.isArrowFunction())
-            lastScope.setInnerArrowFunctionUsesEvalAndUseArgumentsIfNeeded();
-        
-        if (!(lastScope.isFunctionBoundary() && !lastScope.isArrowFunctionBoundary()))
-            parentScope.mergeInnerArrowFunctionFeatures(lastScope.innerArrowFunctionFeatures());
+        if (lastScope->hasSloppyModeFunctionHoistingCandidates())
+            lastScope->bubbleSloppyModeFunctionHoistingCandidates(parentScope);
 
-        if (!lastScope.isFunctionBoundary() && lastScope.needsFullActivation())
-            parentScope.setNeedsFullActivation();
-        std::tuple result { lastScope.takeLexicalEnvironment(), lastScope.takeFunctionDeclarations() };
+        if (lastScope->isArrowFunction())
+            lastScope->setInnerArrowFunctionUsesEvalAndUseArgumentsIfNeeded();
+
+        if (!(lastScope->isFunctionBoundary() && !lastScope->isArrowFunctionBoundary()))
+            parentScope->mergeInnerArrowFunctionFeatures(lastScope->innerArrowFunctionFeatures());
+
+        if (!lastScope->isFunctionBoundary() && lastScope->needsFullActivation())
+            parentScope->setNeedsFullActivation();
+        std::tuple result { lastScope->takeLexicalEnvironment(), lastScope->takeFunctionDeclarations() };
         m_scopeStack.removeLast();
+        m_currentScope = parentScope;
         return result;
     }
-    
-    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(ScopeRef& scope, bool shouldTrackClosedVariables)
+
+    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(Scope* scope, bool shouldTrackClosedVariables)
     {
         return popScopeInternal(scope, shouldTrackClosedVariables);
     }
-    
-    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(AutoPopScopeRef& scope, bool shouldTrackClosedVariables)
+
+    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(AutoPopScope& scope, bool shouldTrackClosedVariables)
     {
         scope.setPopped();
-        return popScopeInternal(scope, shouldTrackClosedVariables);
+        return popScopeInternal(scope.scope(), shouldTrackClosedVariables);
     }
 
     ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(AutoCleanupLexicalScope& cleanupScope, bool shouldTrackClosedVariables)
     {
         RELEASE_ASSERT(cleanupScope.isValid());
-        ScopeRef& scope = cleanupScope.scope();
+        Scope* scope = cleanupScope.scope();
         cleanupScope.setPopped();
         return popScopeInternal(scope, shouldTrackClosedVariables);
     }
 
     NEVER_INLINE DeclarationResultMask declareHoistedVariable(const Identifier* ident)
     {
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size());
+        Scope* scope = currentScope();
         while (true) {
             // Annex B.3.5 exempts `try {} catch (e) { var e; }` from being a syntax error.
-            if (m_scopeStack[i].hasLexicallyDeclaredVariable(*ident) && !m_scopeStack[i].isSimpleCatchParameterScope())
+            if (scope->hasLexicallyDeclaredVariable(*ident) && !scope->isSimpleCatchParameterScope())
                 return DeclarationResult::InvalidDuplicateDeclaration;
 
-            if (m_scopeStack[i].allowsVarDeclarations())
-                return m_scopeStack[i].declareVariable(ident);
+            if (scope->allowsVarDeclarations())
+                return scope->declareVariable(ident);
 
-            m_scopeStack[i].addVariableBeingHoisted(ident);
-
-            i--;
-            ASSERT(i < m_scopeStack.size());
+            scope->addVariableBeingHoisted(ident);
+            scope = scope->containingScope();
         }
     }
     
@@ -1414,30 +1382,31 @@ private:
         if (type == DeclarationType::VarDeclaration)
             return declareHoistedVariable(ident);
 
-        ASSERT(type == DeclarationType::LetDeclaration || type == DeclarationType::ConstDeclaration);
+        ASSERT(type == DeclarationType::LetDeclaration || type == DeclarationType::ConstDeclaration || type == DeclarationType::UsingDeclaration);
         // Lexical variables declared at a top level scope that shadow arguments or vars are not allowed.
         if (!m_lexer->isReparsingFunction() && m_statementDepth == 1 && (hasDeclaredParameter(*ident) || hasDeclaredVariable(*ident)))
             return DeclarationResult::InvalidDuplicateDeclaration;
 
-        ScopeRef scope = currentLexicalDeclarationScope();
-        if (scope->isCatchBlockScope() && scope.containingScope()->hasLexicallyDeclaredVariable(*ident))
+        Scope* scope = currentLexicalDeclarationScope();
+        if (scope->isCatchBlockScope() && scope->containingScope()->hasLexicallyDeclaredVariable(*ident))
             return DeclarationResult::InvalidDuplicateDeclaration;
 
-        return scope->declareLexicalVariable(ident, type == DeclarationType::ConstDeclaration, importType);
+        bool isUsing = type == DeclarationType::UsingDeclaration;
+        return scope->declareLexicalVariable(ident, type == DeclarationType::ConstDeclaration || isUsing, importType, isUsing);
     }
 
-    std::pair<DeclarationResultMask, ScopeRef> declareFunction(const Identifier* ident)
+    std::pair<DeclarationResultMask, Scope*> declareFunction(const Identifier* ident)
     {
         if (m_statementDepth == 1 && !currentScope()->isModuleCode()) {
             // Functions declared at the top-most scope (both in sloppy and strict mode) are declared as vars
             // for backwards compatibility, allowing us to declare functions with the same name more than once, except
             // Module code. Please see https://webkit.org/b/263269 for detailed explanation and ECMA-262 references.
-            ScopeRef variableScope = currentVariableScope();
+            Scope* variableScope = currentVariableScope();
             return std::make_pair(variableScope->declareFunctionAsVar(ident), variableScope);
         }
 
-        ScopeRef lexicalVariableScope = currentLexicalDeclarationScope();
-        if (lexicalVariableScope->isCatchBlockScope() && lexicalVariableScope.containingScope()->hasLexicallyDeclaredVariable(*ident))
+        Scope* lexicalVariableScope = currentLexicalDeclarationScope();
+        if (lexicalVariableScope->isCatchBlockScope() && lexicalVariableScope->containingScope()->hasLexicallyDeclaredVariable(*ident))
             return std::make_pair(DeclarationResult::InvalidDuplicateDeclaration, lexicalVariableScope);
 
         bool isFunctionDeclaration = m_parseMode == SourceParseMode::NormalFunctionMode;
@@ -1446,13 +1415,10 @@ private:
 
     NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
     {
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size());
-        while (!m_scopeStack[i].allowsVarDeclarations()) {
-            i--;
-            ASSERT(i < m_scopeStack.size());
-        }
-        return m_scopeStack[i].hasDeclaredVariable(ident);
+        Scope* scope = currentScope();
+        while (!scope->allowsVarDeclarations())
+            scope = scope->containingScope();
+        return scope->hasDeclaredVariable(ident);
     }
 
     NEVER_INLINE bool hasDeclaredParameter(const Identifier& ident)
@@ -1463,30 +1429,24 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=164087
         ASSERT(!m_lexer->isReparsingFunction());
 
-        unsigned i = m_scopeStack.size() - 1;
-        ASSERT(i < m_scopeStack.size());
-        while (!m_scopeStack[i].allowsVarDeclarations()) {
-            i--;
-            ASSERT(i < m_scopeStack.size());
-        }
+        Scope* scope = currentScope();
+        while (!scope->allowsVarDeclarations())
+            scope = scope->containingScope();
 
-        if (m_scopeStack[i].isGeneratorFunctionBoundary() || m_scopeStack[i].isAsyncFunctionBoundary()) {
+        if (scope->isGeneratorFunctionBoundary() || scope->isAsyncFunctionBoundary()) {
             // The formal parameters which need to be verified for Generators and Async Function bodies occur
             // in the outer wrapper function, so pick the outer scope here.
-            i--;
-            ASSERT(i < m_scopeStack.size());
+            scope = scope->containingScope();
         }
-        return m_scopeStack[i].hasDeclaredParameter(ident);
+        return scope->hasDeclaredParameter(ident);
     }
     
     bool exportName(const Identifier& ident)
     {
-        ASSERT(currentScope().index() == 0);
+        ASSERT(!currentScope()->containingScope());
         ASSERT(m_moduleScopeData);
         return m_moduleScopeData->exportName(ident);
     }
-
-    ScopeStack m_scopeStack;
     
     const SourceProviderCacheItem* findCachedFunctionInfo(int openBracePos) 
     {
@@ -1705,14 +1665,13 @@ private:
     bool strictMode() { return currentScope()->strictMode(); }
     bool isValidStrictMode()
     {
-        int i = m_scopeStack.size() - 1;
-        if (!m_scopeStack[i].isValidStrictMode())
+        if (!m_currentScope->isValidStrictMode())
             return false;
 
         // In the case of Generator or Async function bodies, also check the wrapper function, whose name or
         // arguments may be invalid.
-        if ((m_scopeStack[i].isGeneratorFunctionBoundary() || m_scopeStack[i].isAsyncFunctionBoundary()) && i) [[unlikely]]
-            return m_scopeStack[i - 1].isValidStrictMode();
+        if ((m_currentScope->isGeneratorFunctionBoundary() || m_currentScope->isAsyncFunctionBoundary()) && m_currentScope->containingScope()) [[unlikely]]
+            return m_currentScope->containingScope()->isValidStrictMode();
         return true;
     }
     DeclarationResultMask declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
@@ -1720,34 +1679,34 @@ private:
 
     bool breakIsValid()
     {
-        ScopeRef current = currentScope();
+        Scope* current = currentScope();
         while (!current->breakIsValid()) {
-            if (!current.hasContainingScope() || current->isStaticBlockBoundary())
+            if (!current->hasContainingScope() || current->isStaticBlockBoundary())
                 return false;
-            current = current.containingScope();
+            current = current->containingScope();
         }
         return true;
     }
     bool continueIsValid()
     {
-        ScopeRef current = currentScope();
+        Scope* current = currentScope();
         while (!current->continueIsValid()) {
-            if (!current.hasContainingScope() || current->isStaticBlockBoundary())
+            if (!current->hasContainingScope() || current->isStaticBlockBoundary())
                 return false;
-            current = current.containingScope();
+            current = current->containingScope();
         }
         return true;
     }
     void pushLabel(const Identifier* label, bool isLoop) { currentScope()->pushLabel(label, isLoop); }
-    void popLabel(ScopeRef scope) { scope->popLabel(); }
+    void popLabel(Scope* scope) { scope->popLabel(); }
     ScopeLabelInfo* getLabel(const Identifier* label)
     {
-        ScopeRef current = currentScope();
+        Scope* current = currentScope();
         ScopeLabelInfo* result = nullptr;
         while (!(result = current->getLabel(label))) {
-            if (!current.hasContainingScope())
+            if (!current->hasContainingScope())
                 return nullptr;
-            current = current.containingScope();
+            current = current->containingScope();
         }
         return result;
     }
@@ -1866,7 +1825,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE bool isSimpleAssignmentTarget(TreeBuilder&, TreeExpression, bool ignoreStrictCheck = false);
 
     ALWAYS_INLINE int NODELETE isBinaryOperator(JSTokenType);
-    bool allowAutomaticSemicolon();
+    bool NODELETE allowAutomaticSemicolon();
     
     bool autoSemiColon()
     {
@@ -2091,33 +2050,41 @@ private:
         m_errorMessage = String();
     }
 
+    // Cache line 0 (hot)
     VM& m_vm;
-    const SourceCode* m_source;
-    ParserArena m_parserArena;
-    std::unique_ptr<LexerType> m_lexer;
-
-    ParserState m_parserState;
-    
-    bool m_hasStackOverflow;
-    String m_errorMessage;
-    JSToken m_token;
-    bool m_allowsIn;
+    Scope* m_currentScope { nullptr };
     JSTextPosition m_lastTokenEndPosition;
+    bool m_allowsIn;
+    bool m_immediateParentAllowsFunctionDeclarationInStatement;
+    SourceParseMode m_parseMode;
     int m_statementDepth;
+    JSParserScriptMode m_scriptMode;
+    const SourceCode* m_source;
     RefPtr<SourceProviderCache> m_functionCache;
+    FunctionMode m_functionMode;
+    SuperBinding m_superBinding;
+
+    // Cache line 1 (hot)
+    std::unique_ptr<LexerType> m_lexer;
+    JSToken m_token;
+
+    // Cache line 2 (m_parserState is hot)
+    ParserState m_parserState;
+
+    ConstructorKind m_constructorKindForTopLevelFunctionExpressions { ConstructorKind::None };
     ImplementationVisibility m_implementationVisibility;
     bool m_parsingBuiltin;
-    SourceParseMode m_parseMode;
-    FunctionMode m_functionMode;
-    JSParserScriptMode m_scriptMode;
-    SuperBinding m_superBinding;
-    ConstructorKind m_constructorKindForTopLevelFunctionExpressions { ConstructorKind::None };
     bool m_isEvalContext;
-    bool m_immediateParentAllowsFunctionDeclarationInStatement;
+    bool m_isInsideOrdinaryFunction;
+    bool m_insideSwitchCaseBody { false };
+
+    ParserArena m_parserArena;
+    CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
+    ScopeStack m_scopeStack;
+    bool m_hasStackOverflow;
+    String m_errorMessage;
     RefPtr<ModuleScopeData> m_moduleScopeData;
     DebuggerParseData* m_debuggerParseData;
-    CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
-    bool m_isInsideOrdinaryFunction;
     bool m_seenTaggedTemplateInNonReparsingFunctionMode { false };
     bool m_seenPrivateNameUseInNonReparsingFunctionMode { false };
     bool m_seenArgumentsDotLength { false };

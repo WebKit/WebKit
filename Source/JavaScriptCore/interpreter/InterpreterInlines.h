@@ -127,7 +127,7 @@ ALWAYS_INLINE JSValue Interpreter::executeCachedCall(CachedCall& cachedCall)
     return JSValue::decode(vmEntryToJavaScript(entry, &vm, &cachedCall.m_protoCallFrame));
 }
 
-#if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
+#if (CPU(ARM64) || CPU(X86_64)) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
 template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
 ALWAYS_INLINE JSValue Interpreter::tryCallWithArguments(CachedCall& cachedCall, JSValue thisValue, Args... args)
 {

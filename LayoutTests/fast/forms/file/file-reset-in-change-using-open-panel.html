@@ -6,11 +6,11 @@
 <input id=file1 type=file>
 </form>
 <script>
-function openFilesInElement(element, files) {
+async function openFilesInElement(element, files) {
     testRunner.setOpenPanelFiles(files);
     var centerX = element.offsetLeft + element.offsetWidth / 2;
     var centerY = element.offsetTop + element.offsetHeight / 2;
-    UIHelper.activateAt(centerX, centerY);
+    await UIHelper.activateAt(centerX, centerY);
 }
 
 function handleChange() {

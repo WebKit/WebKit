@@ -22,18 +22,24 @@
 
 #pragma once
 
-#include <WebCore/FloatingObjects.h>
-#include <WebCore/LegacyLineLayout.h>
-#include <WebCore/LineWidth.h>
 #include <WebCore/RenderBlock.h>
 #include <memory>
+#include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
+class FloatingObject;
 class FloatingObjects;
+class LegacyInlineBox;
+class LegacyLineLayout;
+class LegacyRootInlineBox;
 class LineBreaker;
 class RenderMultiColumnFlow;
+enum FloatingObjectType : uint8_t;
+struct FloatingObjectHashFunctions;
+
+using FloatingObjectSet = ListHashSet<std::unique_ptr<FloatingObject>, FloatingObjectHashFunctions>;
 
 namespace LayoutIntegration {
 class LineLayout;
@@ -147,11 +153,7 @@ protected:
     LayoutUnit collapsedMarginBefore() const final { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
     LayoutUnit collapsedMarginAfter() const final { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
-    void dirtyLineFromChangedChild() final
-    {
-        if (svgTextLayout() && svgTextLayout()->legacyRootBox())
-            svgTextLayout()->legacyRootBox()->markDirty();
-    }
+    void dirtyLineFromChangedChild() final;
 
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
 
@@ -275,74 +277,45 @@ public:
     RenderMultiColumnFlow* multiColumnFlow() const { return hasRareBlockFlowData() ? multiColumnFlowSlowCase() : nullptr; }
     RenderMultiColumnFlow* NODELETE multiColumnFlowSlowCase() const;
     void setMultiColumnFlow(RenderMultiColumnFlow&);
-    void clearMultiColumnFlow();
+    void NODELETE clearMultiColumnFlow();
     bool willCreateColumns(std::optional<unsigned> desiredColumnCount = std::nullopt) const;
     virtual bool requiresColumns(int) const;
 
-    bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
-    bool containsFloat(const RenderBox&) const;
+    bool containsFloats() const override;
+    bool NODELETE containsFloat(const RenderBox&) const;
     bool subtreeContainsFloats() const;
     bool subtreeContainsFloat(const RenderBox&) const;
 
     Position positionForPoint(const LayoutPoint&, HitTestSource) override;
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
-    LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const;
+    LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
+    LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
 
     void removeFloatingObjects();
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = nullptr);
 
-    const FloatingObjectSet* floatingObjectSet() const { return m_floatingObjects ? &m_floatingObjects->set() : nullptr; }
+    inline const FloatingObjectSet* floatingObjectSet() const LIFETIME_BOUND; // Defined in RenderBlockFlowInlines.h
 
     FloatingObject& insertFloatingBox(RenderBox&);
 
-    LayoutUnit logicalTopForFloat(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.y() : floatingObject.x(); }
-    LayoutUnit logicalBottomForFloat(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.maxY() : floatingObject.maxX(); }
-    LayoutUnit logicalLeftForFloat(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.x() : floatingObject.y(); }
-    LayoutUnit logicalRightForFloat(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.maxX() : floatingObject.maxY(); }
-    LayoutUnit logicalWidthForFloat(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.width() : floatingObject.height(); }
-    LayoutUnit logicalHeightForFloat(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.height() : floatingObject.width(); }
+    inline LayoutUnit logicalTopForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
+    inline LayoutUnit logicalBottomForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
+    inline LayoutUnit logicalLeftForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
+    inline LayoutUnit logicalRightForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
+    inline LayoutUnit logicalWidthForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
+    inline LayoutUnit logicalHeightForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
 
-    void setLogicalTopForFloat(FloatingObject& floatingObject, LayoutUnit logicalTop)
-    {
-        if (isHorizontalWritingMode())
-            floatingObject.setY(logicalTop);
-        else
-            floatingObject.setX(logicalTop);
-    }
-    void setLogicalLeftForFloat(FloatingObject& floatingObject, LayoutUnit logicalLeft)
-    {
-        if (isHorizontalWritingMode())
-            floatingObject.setX(logicalLeft);
-        else
-            floatingObject.setY(logicalLeft);
-    }
-    void setLogicalHeightForFloat(FloatingObject& floatingObject, LayoutUnit logicalHeight)
-    {
-        if (isHorizontalWritingMode())
-            floatingObject.setHeight(logicalHeight);
-        else
-            floatingObject.setWidth(logicalHeight);
-    }
-    void setLogicalWidthForFloat(FloatingObject& floatingObject, LayoutUnit logicalWidth)
-    {
-        if (isHorizontalWritingMode())
-            floatingObject.setWidth(logicalWidth);
-        else
-            floatingObject.setHeight(logicalWidth);
-    }
-    void setLogicalMarginsForFloat(FloatingObject& floatingObject, LayoutUnit logicalLeftMargin, LayoutUnit logicalBeforeMargin)
-    {
-        if (isHorizontalWritingMode())
-            floatingObject.setMarginOffset(LayoutSize(logicalLeftMargin, logicalBeforeMargin));
-        else
-            floatingObject.setMarginOffset(LayoutSize(logicalBeforeMargin, logicalLeftMargin));
-    }
+    inline void setLogicalTopForFloat(FloatingObject&, LayoutUnit logicalTop); // Defined in RenderBlockFlowInlines.h
+    inline void setLogicalLeftForFloat(FloatingObject&, LayoutUnit logicalLeft); // Defined in RenderBlockFlowInlines.h
+    inline void setLogicalHeightForFloat(FloatingObject&, LayoutUnit logicalHeight); // Defined in RenderBlockFlowInlines.h
+    inline void setLogicalWidthForFloat(FloatingObject&, LayoutUnit logicalWidth); // Defined in RenderBlockFlowInlines.h
+    inline void setLogicalMarginsForFloat(FloatingObject&, LayoutUnit logicalLeftMargin, LayoutUnit logicalBeforeMargin); // Defined in RenderBlockFlowInlines.h
 
     LayoutPoint NODELETE flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    LegacyRootInlineBox* legacyRootBox() const { return svgTextLayout() ? svgTextLayout()->legacyRootBox() : nullptr; }
+    inline LegacyRootInlineBox* legacyRootBox() const; // Defined in RenderBlockFlowInlines.h
 
     void setChildrenInline(bool) final;
 
@@ -366,10 +339,10 @@ public:
 
     bool containsNonZeroBidiLevel() const;
 
-    const LegacyLineLayout* svgTextLayout() const;
-    LegacyLineLayout* svgTextLayout();
-    const LayoutIntegration::LineLayout* inlineLayout() const;
-    LayoutIntegration::LineLayout* inlineLayout();
+    inline const LegacyLineLayout* svgTextLayout() const; // Defined in RenderBlockFlowInlines.h
+    inline LegacyLineLayout* svgTextLayout(); // Defined in RenderBlockFlowInlines.h
+    inline const LayoutIntegration::LineLayout* inlineLayout() const; // Defined in RenderBlockFlowInlines.h
+    inline LayoutIntegration::LineLayout* inlineLayout(); // Defined in RenderBlockFlowInlines.h
 
 #if ENABLE(TREE_DEBUGGING)
     void outputFloatingObjects(WTF::TextStream&, int depth) const;
@@ -517,9 +490,9 @@ private:
     
     PositionWithAffinity positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, HitTestSource) override;
 
-    bool hasSvgTextLayout() const;
+    inline bool hasSvgTextLayout() const; // Defined in RenderBlockFlowInlines.h
 
-    bool hasInlineLayout() const;
+    inline bool hasInlineLayout() const; // Defined in RenderBlockFlowInlines.h
     void layoutInlineContent(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     struct InlineContentStatus {
         bool hasSimpleOutOfFlowContentOnly { false };
@@ -561,8 +534,8 @@ public:
     bool relayoutForPagination();
 
     bool hasRareBlockFlowData() const { return m_rareBlockFlowData.get(); }
-    RenderBlockFlowRareData* rareBlockFlowData() const { ASSERT_WITH_SECURITY_IMPLICATION(hasRareBlockFlowData()); return m_rareBlockFlowData.get(); }
-    RenderBlockFlowRareData& ensureRareBlockFlowData();
+    RenderBlockFlowRareData* rareBlockFlowData() const LIFETIME_BOUND { ASSERT_WITH_SECURITY_IMPLICATION(hasRareBlockFlowData()); return m_rareBlockFlowData.get(); }
+    RenderBlockFlowRareData& ensureRareBlockFlowData() LIFETIME_BOUND;
     void materializeRareBlockFlowData();
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -585,36 +558,6 @@ private:
         std::unique_ptr<LegacyLineLayout>
     > m_lineLayout;
 };
-
-inline bool RenderBlockFlow::hasSvgTextLayout() const
-{
-    return std::holds_alternative<std::unique_ptr<LegacyLineLayout>>(m_lineLayout);
-}
-
-inline const LegacyLineLayout* RenderBlockFlow::svgTextLayout() const
-{
-    return hasSvgTextLayout() ? std::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
-}
-
-inline LegacyLineLayout* RenderBlockFlow::svgTextLayout()
-{
-    return hasSvgTextLayout() ? std::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
-}
-
-inline bool RenderBlockFlow::hasInlineLayout() const
-{
-    return std::holds_alternative<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout);
-}
-
-inline const LayoutIntegration::LineLayout* RenderBlockFlow::inlineLayout() const
-{
-    return hasInlineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
-}
-
-inline LayoutIntegration::LineLayout* RenderBlockFlow::inlineLayout()
-{
-    return hasInlineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
-}
 
 } // namespace WebCore
 

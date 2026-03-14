@@ -73,7 +73,7 @@ public:
     
     // Returns the left and right kernels for the given azimuth index.
     // The interpolated delays based on azimuthBlend: 0 -> 1 are returned in frameDelayL and frameDelayR.
-    void getKernelsFromAzimuth(double azimuthBlend, unsigned azimuthIndex, HRTFKernel* &kernelL, HRTFKernel* &kernelR, double& frameDelayL, double& frameDelayR);
+    void NODELETE getKernelsFromAzimuth(double azimuthBlend, unsigned azimuthIndex, HRTFKernel* &kernelL, HRTFKernel* &kernelR, double& frameDelayL, double& frameDelayR);
     
     // Spacing, in degrees, between every azimuth loaded from resource.
     static constexpr unsigned AzimuthSpacing { 15 };

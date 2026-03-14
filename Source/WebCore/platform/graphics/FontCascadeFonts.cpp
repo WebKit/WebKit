@@ -48,19 +48,19 @@ public:
         }
     }
 
-    GlyphData glyphDataForCharacter(char32_t c) const
+    GlyphData NODELETE glyphDataForCharacter(char32_t c) const
     {
         unsigned index = GlyphPage::indexForCodePoint(c);
         return { m_glyphs[index], m_fonts[index].get() };
     }
 
-    void setGlyphDataForCharacter(char32_t c, GlyphData glyphData)
+    void NODELETE setGlyphDataForCharacter(char32_t c, GlyphData glyphData)
     {
         setGlyphDataForIndex(GlyphPage::indexForCodePoint(c), glyphData);
     }
 
 private:
-    void setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
+    void NODELETE setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
     {
         m_glyphs[index] = glyphData.glyph;
         m_fonts[index] = glyphData.font.get();
@@ -78,7 +78,7 @@ inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPa
 GlyphData FontCascadeFonts::GlyphPageCacheEntry::glyphDataForCharacter(char32_t character)
 {
     ASSERT(!(m_singleFont && m_mixedFont));
-    if (RefPtr singleFont = m_singleFont)
+    if (auto* singleFont = m_singleFont.get())
         return singleFont->glyphDataForCharacter(character);
     if (m_mixedFont)
         return m_mixedFont->glyphDataForCharacter(character);
@@ -105,7 +105,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 
 FontCascadeFonts::FontCascadeFonts()
     : m_cachedPrimaryFont(nullptr)
-    , m_generation(FontCache::forCurrentThread()->generation())
+    , m_generation(FontCache::forCurrentThread().generation())
 {
 #if ASSERT_ENABLED
     if (!isMainThread())
@@ -115,10 +115,10 @@ FontCascadeFonts::FontCascadeFonts()
 
 FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
     : m_cachedPrimaryFont(nullptr)
-    , m_generation(FontCache::forCurrentThread()->generation())
+    , m_generation(FontCache::forCurrentThread().generation())
     , m_isForPlatformFont(true)
 {
-    m_realizedFallbackRanges.append(FontRanges(FontCache::forCurrentThread()->fontForPlatformData(platformData)));
+    m_realizedFallbackRanges.append(FontRanges(protect(FontCache::forCurrentThread())->fontForPlatformData(platformData)));
 }
 
 FontCascadeFonts::~FontCascadeFonts() = default;
@@ -199,7 +199,7 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
         return m_realizedFallbackRanges[index];
 
     ASSERT(index == m_realizedFallbackRanges.size());
-    ASSERT(FontCache::forCurrentThread()->generation() == m_generation);
+    ASSERT(FontCache::forCurrentThread().generation() == m_generation);
 
     m_realizedFallbackRanges.append(FontRanges());
     auto& fontRanges = m_realizedFallbackRanges.last();
@@ -209,7 +209,7 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
         if (fontRanges.isNull() && fontSelector)
             fontRanges = fontSelector->fontRangesForFamily(description, *familyNamesData->at(FamilyNamesIndex::StandardFamily));
         if (fontRanges.isNull())
-            fontRanges = FontRanges(FontCache::forCurrentThread()->lastResortFallbackFont(description));
+            fontRanges = FontRanges(protect(FontCache::forCurrentThread())->lastResortFallbackFont(description));
         return fontRanges;
     }
 
@@ -229,12 +229,12 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
     return fontRanges;
 }
 
-static inline bool isInRange(char32_t character, char32_t lowerBound, char32_t upperBound)
+static inline bool NODELETE isInRange(char32_t character, char32_t lowerBound, char32_t upperBound)
 {
     return character >= lowerBound && character <= upperBound;
 }
 
-static bool shouldIgnoreRotation(char32_t character)
+static bool NODELETE shouldIgnoreRotation(char32_t character)
 {
     if (character == 0x000A7 || character == 0x000A9 || character == 0x000AE)
         return true;

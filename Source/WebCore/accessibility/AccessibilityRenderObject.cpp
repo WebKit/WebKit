@@ -37,6 +37,7 @@
 #include "AXObjectCacheInlines.h"
 #include "AXUtilities.h"
 #include "AccessibilityMediaHelpers.h"
+#include "AccessibilityNodeObjectInlines.h"
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilitySVGObject.h"
 #include "AccessibilitySpinButton.h"
@@ -84,6 +85,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBoxInlines.h"
+#include "LegacyLineLayout.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LineSelection.h"
@@ -97,6 +99,7 @@
 #include "PositionInlines.h"
 #include "ProgressTracker.h"
 #include "Range.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderButton.h"
 #include "RenderElementInlines.h"
 #include "RenderFileUploadControl.h"
@@ -240,7 +243,7 @@ static inline CheckedPtr<RenderObject> firstChildConsideringContinuation(RenderO
 
 static inline RenderObject* lastChildConsideringContinuation(RenderObject& renderer)
 {
-    if (!is<RenderInline>(renderer) && !is<RenderBlock>(renderer))
+    if (!isAnyOf<RenderInline, RenderBlock>(renderer))
         return &renderer;
 
     auto& boxModelObject = uncheckedDowncast<RenderBoxModelObject>(renderer);
@@ -308,7 +311,7 @@ static inline RenderInline* startOfContinuations(RenderObject& renderer)
 
 static inline CheckedPtr<RenderObject> endOfContinuations(RenderObject& renderer)
 {
-    if (!is<RenderInline>(renderer) && !is<RenderBlock>(renderer))
+    if (!isAnyOf<RenderInline, RenderBlock>(renderer))
         return &renderer;
 
     CheckedPtr previous = uncheckedDowncast<RenderBoxModelObject>(&renderer);
@@ -402,7 +405,7 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     if (!m_renderer)
         return AccessibilityNodeObject::nextSibling();
 
-    if (is<RenderView>(m_renderer))
+    if (is<RenderView>(*m_renderer))
         return nullptr;
 
     CheckedPtr<RenderObject> nextSibling;
@@ -679,7 +682,7 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
         return fileUpload->buttonValue();
 
     if (mode.includeListMarkers == IncludeListMarkerText::Yes) {
-        if (CheckedPtr listMarker = dynamicDowncast<RenderListMarker>(*m_renderer))
+        if (auto* listMarker = dynamicDowncast<RenderListMarker>(*m_renderer))
             return listMarker->textWithSuffix();
     }
 
@@ -718,8 +721,12 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
                 // We define the start and end positions for the range as the ones right before and after
                 // the first and the last nodes in the DOM tree that is wrapped inside the anonymous block.
                 auto& firstNodeInBlock = *firstChildRenderer->node();
+                auto& lastNodeInBlock = *lastChildRenderer->node();
                 nodeDocument = firstNodeInBlock.document();
-                textRange = makeSimpleRange(positionInParentBeforeNode(&firstNodeInBlock), positionInParentAfterNode(lastChildRenderer->node()));
+                textRange = makeSimpleRange(
+                    positionInParentBeforeNode(firstNodeInBlock),
+                    positionInParentAfterNode(lastNodeInBlock)
+                );
             }
         }
 #endif // USE(ATSPI)
@@ -766,11 +773,11 @@ bool AccessibilityRenderObject::shouldGetTextFromNode(const TextUnderElementMode
 
     // AccessibilityRenderObject::textUnderElement() calls rangeOfContents() to create the text
     // range. rangeOfContents() does not include CSS-generated content.
-    if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(m_renderer.get()); renderElement && renderElement->isBeforeOrAfterContent())
+    if (auto* renderElement = dynamicDowncast<RenderElement>(m_renderer.get()); renderElement && renderElement->isBeforeOrAfterContent())
         return true;
-    if (RefPtr node = m_renderer->node()) {
-        RefPtr firstChild = node->pseudoAwareFirstChild();
-        RefPtr lastChild = node->pseudoAwareLastChild();
+    if (auto* node = m_renderer->node()) {
+        auto* firstChild = node->pseudoAwareFirstChild();
+        auto* lastChild = node->pseudoAwareLastChild();
         if ((firstChild && firstChild->isPseudoElement()) || (lastChild && lastChild->isPseudoElement()))
             return true;
     }
@@ -906,17 +913,19 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
             // |this| is a stitching of multiple objects, so we need to combine all of their bounding boxes.
 
             CheckedPtr cache = axObjectCache();
-            RefPtr endNode = cache ? lastNode(stitchGroup->members(), *cache) : nullptr;
+            RefPtr endNode = cache ? lastNonAriaHiddenNode(stitchGroup->members(), *cache) : nullptr;
             if (endNode) {
-                if (std::optional range = makeSimpleRange(positionBeforeNode(node.get()), positionAfterNode(endNode.get()))) {
+                if (std::optional range = makeSimpleRange(positionBeforeNode(*node), positionAfterNode(*endNode))) {
                     quads = RenderObject::absoluteTextQuads(*range);
 
                     for (AXID axID : stitchGroup->members()) {
                         if (axID == objectID())
                             break;
                         if (RefPtr object = cache->objectForID(axID)) {
-                            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(object->renderer()))
-                                renderListMarker->absoluteFocusRingQuads(quads);
+                            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(object->renderer())) {
+                                if (!object->isAXHidden())
+                                    renderListMarker->absoluteFocusRingQuads(quads);
+                            }
                         }
                     }
                 }
@@ -1099,7 +1108,7 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
 
         // Table cells that are th cannot have title ui elements, since by definition
         // they are title ui elements
-        if (WebCore::elementName(protect(node()).get()) == ElementName::HTML_th)
+        if (WebCore::elementName(node()) == ElementName::HTML_th)
             return nullptr;
 
         CheckedRef renderCell = downcast<RenderTableCell>(*m_renderer);
@@ -1161,7 +1170,7 @@ AccessibilityObject* AccessibilityRenderObject::containingTree() const
     });
 }
 
-static AccessibilityObjectInclusion objectInclusionFromAltText(const String& altText)
+static AccessibilityObjectInclusion NODELETE objectInclusionFromAltText(const String& altText)
 {
     // Don't ignore an image that has alt text.
     if (!altText.containsOnly<isASCIIWhitespace>())
@@ -1288,7 +1297,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
             return true;
 
         // The alt attribute may be set on a text fragment through CSS, which should be honored.
-        if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderText.get())) {
+        if (auto* renderTextFragment = dynamicDowncast<RenderTextFragment>(renderText.get())) {
             auto altTextInclusion = objectInclusionFromAltText(renderTextFragment->altText());
             if (altTextInclusion == AccessibilityObjectInclusion::IgnoreObject)
                 return true;
@@ -1488,7 +1497,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     // Don't ignore generic focusable elements like <div tabindex=0>
     // unless they're completely empty, with no children.
     if (isGenericFocusableElement() && node->firstChild()) {
-        RefPtr shadowRoot = node->containingShadowRoot();
+        auto* shadowRoot = node->containingShadowRoot();
         if (shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent && is<HTMLInputElement>(shadowRoot->host())) {
             // We do still want to ignore the user-agent generic div rendered within text inputs.
             return true;
@@ -1539,7 +1548,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
 
 int AccessibilityRenderObject::layoutCount() const
 {
-    CheckedPtr view = dynamicDowncast<RenderView>(m_renderer.get());
+    auto* view = dynamicDowncast<RenderView>(m_renderer.get());
     return view ? view->frameView().layoutUpdateCount() : 0;
 }
 
@@ -1647,14 +1656,15 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         if (text.isEmpty())
             return;
 
-        if (textBox->style().textTransform().contains(Style::TextTransformValue::FullSizeKana)) {
+        CheckedRef textBoxStyle = textBox->style();
+        if (textBoxStyle->textTransform().contains(Style::TextTransformValue::FullSizeKana)) {
             // We don't want to serve transformed kana text to AT since it is a visual affordance.
             // Using the original text from the renderer provides the untransformed string.
             text = textBox->renderer().originalText().substring(textBox->start(), textBox->length());
         }
 
-        bool collapseTabs = textBox->style().collapseWhiteSpace();
-        bool collapseNewlines = !textBox->style().preserveNewline();
+        bool collapseTabs = textBoxStyle->collapseWhiteSpace();
+        bool collapseNewlines = !textBoxStyle->preserveNewline();
 
         auto textRun = textBox->textRun(InlineIterator::TextRunMode::Editing);
         auto lineBox = textBox->lineBox();
@@ -1840,7 +1850,7 @@ int AccessibilityRenderObject::insertionPointLineNumber() const
     return lineForPosition(makeDeprecatedLegacyPosition(selectedTextRange->start));
 }
 
-static void setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType type)
+static void NODELETE setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType type)
 {
     if (!cache)
         return;
@@ -1849,7 +1859,7 @@ static void setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType t
     cache->setIsSynchronizingSelection(true);
 }
 
-static void clearTextSelectionIntent(AXObjectCache* cache)
+static void NODELETE clearTextSelectionIntent(AXObjectCache* cache)
 {
     if (!cache)
         return;
@@ -2071,9 +2081,9 @@ bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const 
         return false;
 
     VisibleSelection newSelection = VisibleSelection(range.start, range.end);
-    if (RefPtr newSelectionDocument = newSelection.base().document()) {
-        if (RefPtr newSelectionFrame = newSelectionDocument->frame()) {
-            RefPtr frame = this->frame();
+    if (auto* newSelectionDocument = newSelection.base().document()) {
+        if (auto* newSelectionFrame = newSelectionDocument->frame()) {
+            auto* frame = this->frame();
             if (!frame || (newSelectionFrame != frame && newSelectionDocument != frame->document()))
                 return true;
         }
@@ -2412,7 +2422,7 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
         return true;
 
     // Element-based check for HTMLSelectElement listbox.
-    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(*element); selectElement && !selectElement->usesMenuList())
+    if (auto* selectElement = dynamicDowncast<HTMLSelectElement>(*element); selectElement && !selectElement->usesMenuList())
         return true;
 
     // Textboxes should send out notifications.
@@ -2718,7 +2728,7 @@ AccessibilitySVGObject* AccessibilityRenderObject::remoteSVGRootElement(CreateIf
     if (!renderImage)
         return nullptr;
 
-    auto* cachedImage = renderImage->cachedImage();
+    RefPtr cachedImage = renderImage->cachedImage();
     if (!cachedImage)
         return nullptr;
 

@@ -143,6 +143,13 @@ struct FocusedElementInformation {
     Markable<WebCore::ScrollingNodeID> containerScrollingNodeID;
 
     std::optional<FrameInfoData> frame;
+
+    std::optional<WebCore::FrameIdentifier> frameID() const
+    {
+        if (frame)
+            return frame->frameID;
+        return std::nullopt;
+    }
 };
 #endif
 

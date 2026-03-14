@@ -554,7 +554,7 @@ void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientO
 
     if (contextConnection) {
         auto& connection = downcast<WebSWServerToContextConnection>(*contextConnection);
-        protect(protect(networkProcess())->parentProcessConnection())->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
+        networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
     }
 }
 
@@ -586,7 +586,7 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ScriptExecutionC
         if (!hasMatchingClient(potentiallyRemovedDomain)) {
             if (RefPtr contextConnection = server->contextConnectionForRegistrableDomain(potentiallyRemovedDomain)) {
                 auto& connection = downcast<WebSWServerToContextConnection>(*contextConnection);
-                protect(protect(networkProcess())->parentProcessConnection())->send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
+                networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
             }
         }
     }

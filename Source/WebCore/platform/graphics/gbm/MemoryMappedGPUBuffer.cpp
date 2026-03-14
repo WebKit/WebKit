@@ -82,12 +82,13 @@ std::unique_ptr<MemoryMappedGPUBuffer> MemoryMappedGPUBuffer::create(const IntSi
                 continue;
 
             if (flags.contains(BufferFlag::ForceLinear)) {
-                if (format.modifiers.contains(DRM_FORMAT_MOD_LINEAR)) {
-                    // If a linear buffer is requested - only allow a single modifier.
-                    auto useFormat = format;
+                // If a linear buffer is requested - only allow a single modifier.
+                auto useFormat = format;
+                if (format.modifiers.contains(DRM_FORMAT_MOD_LINEAR))
                     useFormat.modifiers = { DRM_FORMAT_MOD_LINEAR };
-                    return useFormat;
-                }
+                else
+                    useFormat.modifiers = { };
+                return useFormat;
             } else if (flags.contains(BufferFlag::ForceVivanteSuperTiled)) {
                 if (format.modifiers.contains(DRM_FORMAT_MOD_VIVANTE_SUPER_TILED)) {
                     // If a Vivante super-tiled buffer is requested - only allow a single modifier.
@@ -104,8 +105,8 @@ std::unique_ptr<MemoryMappedGPUBuffer> MemoryMappedGPUBuffer::create(const IntSi
 
     auto bufferFormat = negotiateBufferFormat();
 
-    if (flags.contains(BufferFlag::ForceLinear) && (!bufferFormat.has_value() || !bufferFormat->modifiers.contains(DRM_FORMAT_MOD_LINEAR))) {
-        WTFLogAlways("ERROR: ForceLinear flag set but DRM_FORMAT_MOD_LINEAR not supported by the negotiated buffer format. Aborting ..."); // NOLINT
+    if (!bufferFormat.has_value()) {
+        WTFLogAlways("ERROR: Could not negotiate a suitable buffer format. Aborting ..."); // NOLINT
         CRASH();
     }
 

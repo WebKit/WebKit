@@ -190,7 +190,7 @@ void WebEditorClient::toggleSmartInsertDelete()
 
 bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 {
-    if (RefPtr page = m_page.get(); page && page->isControlledByAutomation())
+    if (auto* page = m_page.get(); page && page->isControlledByAutomation())
         return false;
 
     return WebProcess::singleton().textCheckerState().contains(TextCheckerState::AutomaticQuoteSubstitutionEnabled);
@@ -215,7 +215,7 @@ void WebEditorClient::toggleAutomaticLinkDetection()
 
 bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
 {
-    if (RefPtr page = m_page.get(); page && page->isControlledByAutomation())
+    if (auto* page = m_page.get(); page && page->isControlledByAutomation())
         return false;
 
     return WebProcess::singleton().textCheckerState().contains(TextCheckerState::AutomaticDashSubstitutionEnabled);
@@ -229,7 +229,7 @@ void WebEditorClient::toggleAutomaticDashSubstitution()
 
 bool WebEditorClient::isAutomaticTextReplacementEnabled()
 {
-    if (RefPtr page = m_page.get(); page && page->isControlledByAutomation())
+    if (auto* page = m_page.get(); page && page->isControlledByAutomation())
         return false;
 
     return WebProcess::singleton().textCheckerState().contains(TextCheckerState::AutomaticTextReplacementEnabled);
@@ -243,7 +243,7 @@ void WebEditorClient::toggleAutomaticTextReplacement()
 
 bool WebEditorClient::isSmartListsEnabled()
 {
-    if (RefPtr page = m_page.get(); page && page->isControlledByAutomation())
+    if (auto* page = m_page.get(); page && page->isControlledByAutomation())
         return false;
 
     return WebProcess::singleton().textCheckerState().contains(TextCheckerState::SmartListsEnabled);
@@ -257,7 +257,7 @@ void WebEditorClient::toggleSmartLists()
 
 bool WebEditorClient::isAutomaticSpellingCorrectionEnabled()
 {
-    if (RefPtr page = m_page.get(); page && page->isControlledByAutomation())
+    if (auto* page = m_page.get(); page && page->isControlledByAutomation())
         return false;
 
     return WebProcess::singleton().textCheckerState().contains(TextCheckerState::AutomaticSpellingCorrectionEnabled);

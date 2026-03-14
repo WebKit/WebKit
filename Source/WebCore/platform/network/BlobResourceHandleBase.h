@@ -73,13 +73,13 @@ protected:
     WEBCORE_EXPORT BlobData* NODELETE blobData() const;
     FileStream* syncStream() const;
     AsyncFileStream* asyncStream() const;
-    Vector<uint8_t>& buffer() { return m_buffer; }
-    const Vector<uint8_t>& buffer() const { return m_buffer; }
+    Vector<uint8_t>& buffer() LIFETIME_BOUND { return m_buffer; }
+    const Vector<uint8_t>& buffer() const LIFETIME_BOUND { return m_buffer; }
 
 private:
     void getSizeForNext();
-    std::optional<Error> seek();
-    std::optional<Error> adjustAndValidateRangeBounds();
+    std::optional<Error> NODELETE seek();
+    std::optional<Error> NODELETE adjustAndValidateRangeBounds();
     bool consumeData(std::span<const uint8_t>);
     bool readDataAsync(const BlobDataItem&);
     void readFileAsync(const BlobDataItem&);

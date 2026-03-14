@@ -67,6 +67,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteCopyPickableRou
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, MediaRemote, MRUIControllerProvider);
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, MediaRemote, MRNowPlayingActivityActiveRouteIdentifier, NSString *)
 #endif
 
 #if HAVE(AVEXPERIENCECONTROLLER)

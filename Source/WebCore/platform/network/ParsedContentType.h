@@ -49,7 +49,7 @@ public:
 
     // Note that in the case of multiple values for the same name, the last value is returned.
     String parameterValueForName(const String&) const;
-    size_t parameterCount() const;
+    size_t NODELETE parameterCount() const;
 
     WEBCORE_EXPORT String serialize() const;
 

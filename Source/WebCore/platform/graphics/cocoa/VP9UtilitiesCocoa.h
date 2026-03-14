@@ -43,12 +43,12 @@ WEBCORE_EXPORT void registerSupplementalVP9Decoder();
 bool isVP9DecoderAvailable();
 WEBCORE_EXPORT bool vp9HardwareDecoderAvailable();
 WEBCORE_EXPORT bool vp9HardwareDecoderAvailableInProcess();
-WEBCORE_EXPORT void setVP9HardwareDecoderAvailableInProcess(bool);
+WEBCORE_EXPORT void NODELETE setVP9HardwareDecoderAvailableInProcess(bool);
 bool isVP8DecoderAvailable();
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
 std::optional<PlatformMediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration&, bool vp9HardwareDecoderAvailable);
-bool isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
+bool NODELETE isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
 
 struct VP8FrameHeader {
     bool keyframe { false };
@@ -84,11 +84,11 @@ public:
     WEBCORE_EXPORT void setConfigurationChangedCallback(std::function<void(bool)>&&);
     WEBCORE_EXPORT void resetOverridesToDefaultValues();
 
-    WEBCORE_EXPORT void setSWVPDecodersAlwaysEnabled(bool);
+    WEBCORE_EXPORT void NODELETE setSWVPDecodersAlwaysEnabled(bool);
     bool swVPDecodersAlwaysEnabled() const { return m_swVPDecodersAlwaysEnabled; }
 
-    WEBCORE_EXPORT void setShouldEnableVP9Decoder(bool);
-    WEBCORE_EXPORT bool shouldEnableVP9Decoder() const;
+    WEBCORE_EXPORT void NODELETE setShouldEnableVP9Decoder(bool);
+    WEBCORE_EXPORT bool NODELETE shouldEnableVP9Decoder() const;
 
 private:
     std::optional<bool> m_hardwareDecoderDisabled;

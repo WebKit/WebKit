@@ -136,15 +136,15 @@ public:
     virtual void stopAnimation() {}
     virtual void resetAnimation() {}
     virtual bool isAnimating() const { return false; }
-    WEBCORE_EXPORT bool animationPending() const;
+    WEBCORE_EXPORT bool NODELETE animationPending() const;
     std::optional<bool> allowsAnimation() const { return m_allowsAnimation; }
     void setAllowsAnimation(std::optional<bool> allowsAnimation) { m_allowsAnimation = allowsAnimation; }
     static bool systemAllowsAnimationControls() { return gSystemAllowsAnimationControls; }
-    WEBCORE_EXPORT static void setSystemAllowsAnimationControls(bool allowsControls);
+    WEBCORE_EXPORT static void NODELETE setSystemAllowsAnimationControls(bool allowsControls);
 
     // Typically the CachedImage that owns us.
-    RefPtr<ImageObserver> imageObserver() const;
-    void setImageObserver(RefPtr<ImageObserver>&&);
+    RefPtr<ImageObserver> NODELETE imageObserver() const;
+    void NODELETE setImageObserver(RefPtr<ImageObserver>&&);
 
     WEBCORE_EXPORT ImageAdapter& adapter();
     void invalidateAdapter();

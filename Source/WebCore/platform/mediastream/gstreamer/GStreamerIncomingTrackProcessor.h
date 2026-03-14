@@ -47,7 +47,7 @@ public:
 
     bool isDecoding() const { return m_isDecoding; }
     bool isReady() const { return m_isReady; }
-    const String& trackId() const { return m_data.trackId; }
+    const String& trackId() const LIFETIME_BOUND { return m_data.trackId; }
 
 private:
     GStreamerIncomingTrackProcessor();

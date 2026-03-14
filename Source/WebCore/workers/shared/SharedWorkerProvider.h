@@ -31,8 +31,8 @@ class SharedWorkerObjectConnection;
 
 class SharedWorkerProvider {
 public:
-    static SharedWorkerProvider& singleton();
-    WEBCORE_EXPORT static void setSharedProvider(SharedWorkerProvider&);
+    static SharedWorkerProvider& NODELETE singleton();
+    WEBCORE_EXPORT static void NODELETE setSharedProvider(SharedWorkerProvider&);
 
     virtual ~SharedWorkerProvider() { }
     virtual SharedWorkerObjectConnection* sharedWorkerConnection() = 0;

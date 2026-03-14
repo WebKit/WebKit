@@ -57,11 +57,11 @@ LoadableSpeculationRules::LoadableSpeculationRules(Document& document, const URL
 
 LoadableSpeculationRules::~LoadableSpeculationRules()
 {
-    if (m_cachedScript)
-        m_cachedScript->removeClient(*this);
+    if (RefPtr cachedScript = m_cachedScript)
+        cachedScript->removeClient(*this);
 }
 
-CachedResourceHandle<CachedScript> LoadableSpeculationRules::requestSpeculationRules(Document& document, const URL& sourceURL)
+RefPtr<CachedScript> LoadableSpeculationRules::requestSpeculationRules(Document& document, const URL& sourceURL)
 {
     // https://html.spec.whatwg.org/C#the-speculation-rules-header
     // 3.4.2.2.1. Let request be a new request whose URL is url, destination is "speculationrules", and mode is "cors".
@@ -81,7 +81,8 @@ CachedResourceHandle<CachedScript> LoadableSpeculationRules::requestSpeculationR
     request.upgradeInsecureRequestIfNeeded(document);
     request.setPriority(ResourceLoadPriority::Low);
 
-    return protect(document.cachedResourceLoader())->requestScript(WTF::move(request)).value_or(nullptr);
+    auto result = protect(document.cachedResourceLoader())->requestScript(WTF::move(request));
+    return result ? RefPtr { WTF::move(result.value()) } : nullptr;
 }
 
 bool LoadableSpeculationRules::load(Document& document, const URL& url)
@@ -91,11 +92,10 @@ bool LoadableSpeculationRules::load(Document& document, const URL& url)
     if (!url.isValid())
         return false;
 
-    CachedResourceHandle cachedScript = requestSpeculationRules(document, m_url);
-    m_cachedScript = cachedScript;
-    if (!cachedScript)
+    m_cachedScript = requestSpeculationRules(document, m_url);
+    if (!m_cachedScript)
         return false;
-    cachedScript->addClient(*this);
+    protect(m_cachedScript)->addClient(*this);
 
     return true;
 }
@@ -106,13 +106,14 @@ void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const Ne
 {
     ASSERT(&resource == m_cachedScript.get());
 
-    RefPtr document = m_document.get();
+    RefPtr document = m_document;
     if (!document)
         return;
 
     // 1. If bodyBytes is null or failure, then abort these steps.
     // 2. If response's status is not an ok status, then abort these steps.
-    if (m_cachedScript->errorOccurred()) {
+    RefPtr cachedScript = m_cachedScript;
+    if (cachedScript->errorOccurred()) {
         document->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Failed to load speculation rules from "_s, m_url.string()));
         return;
     }
@@ -124,7 +125,7 @@ void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const Ne
     }
 
     // 4. Let bodyText be the result of UTF-8 decoding bodyBytes.
-    String speculationRulesText = m_cachedScript->script(CachedScript::ShouldDecodeAsUTF8Only::Yes).toString();
+    String speculationRulesText = cachedScript->script(CachedScript::ShouldDecodeAsUTF8Only::Yes).toString();
     if (speculationRulesText.isEmpty())
         return;
 

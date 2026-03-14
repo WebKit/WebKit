@@ -76,7 +76,7 @@ constexpr auto createPCMObservedDomain = "CREATE TABLE PCMObservedDomains ("
 constexpr auto insertObservedDomainQuery = "INSERT INTO PCMObservedDomains (registrableDomain) VALUES (?)"_s;
 constexpr auto clearAllPrivateClickMeasurementQuery = "DELETE FROM PCMObservedDomains WHERE domainID LIKE ?"_s;
 
-static WeakHashSet<Database>& allDatabases()
+static WeakHashSet<Database>& NODELETE allDatabases()
 {
     ASSERT(!RunLoop::isMain());
     static NeverDestroyed<WeakHashSet<Database>> set;
@@ -491,6 +491,24 @@ void Database::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::markAttributedPrivateClickMeasurementsAsExpiredForTesting, error message: %" PRIVATE_LOG_STRING, this, m_database->lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
+}
+
+Vector<WebCore::RegistrableDomain> Database::fetchRegistrableDomains() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto statement = m_database->prepareStatement("SELECT registrableDomain FROM PCMObservedDomains;"_s);
+
+    if (!statement)
+        return { };
+
+    Vector<WebCore::RegistrableDomain> domains;
+    while (statement->step() == SQLITE_ROW) {
+        String domainString = statement->columnText(0);
+        if (!domainString.isEmpty())
+            domains.append(WebCore::RegistrableDomain::uncheckedCreateFromHost(domainString));
+    }
+    return domains;
 }
 
 void Database::clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDomain> domain)

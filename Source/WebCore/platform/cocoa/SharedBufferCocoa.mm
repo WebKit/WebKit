@@ -103,7 +103,7 @@ void SharedBufferBuilder::append(NSData *data)
     return append(bridge_cast(data));
 }
 
-static void FreeDataSegment(void* refcon, void*, size_t)
+static void NODELETE FreeDataSegment(void* refcon, void*, size_t)
 {
     auto* buffer = reinterpret_cast<const DataSegment*>(refcon);
     buffer->deref();

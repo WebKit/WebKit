@@ -73,7 +73,7 @@ public:
 
     bool isInitialized() const { return m_isInitialized; }
 
-    const AtomString& type() const { return m_type; }
+    const AtomString& type() const LIFETIME_BOUND { return m_type; }
     void setType(const AtomString& type) { m_type = type; }
 
     enum EventInterfaceType interfaceType() const { return static_cast<enum EventInterfaceType>(m_eventInterface); }

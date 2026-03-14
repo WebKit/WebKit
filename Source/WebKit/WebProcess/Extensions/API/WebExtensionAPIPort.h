@@ -64,7 +64,7 @@ public:
     NSString *name();
     NSDictionary *sender();
 
-    JSValue *error();
+    JSValue *NODELETE error();
     void setError(JSValue *);
 
     WebExtensionAPIEvent& onMessage();

@@ -54,9 +54,9 @@ public:
     WEBCORE_EXPORT void setColSpan(unsigned);
     WEBCORE_EXPORT void setRowSpanForBindings(unsigned);
 
-    String abbr() const;
-    String axis() const;
-    String headers() const;
+    String NODELETE abbr() const;
+    String NODELETE axis() const;
+    String NODELETE headers() const;
     WEBCORE_EXPORT const AtomString& scope() const;
 
     WEBCORE_EXPORT HTMLTableCellElement* cellAbove() const;

@@ -83,7 +83,7 @@ public:
 private:
     ExceptionOr<float> convertValueFromUserUnitsToPercentage(float value, SVGLengthMode) const;
     ExceptionOr<float> convertValueFromPercentageToUserUnits(float value, SVGLengthMode) const;
-    static float convertValueFromPercentageToUserUnits(float value, SVGLengthMode, FloatSize);
+    static float NODELETE convertValueFromPercentageToUserUnits(float value, SVGLengthMode, FloatSize);
 
     ExceptionOr<float> convertValueFromUserUnitsToEXS(float) const;
     ExceptionOr<float> convertValueFromEXSToUserUnits(float) const;

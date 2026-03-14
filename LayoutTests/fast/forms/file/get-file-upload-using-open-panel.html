@@ -14,7 +14,7 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
 
-function startOrVerify()
+async function startOrVerify()
 {
     var query = window.location.search;
     if (query.indexOf('submitted=true') != -1) {
@@ -34,7 +34,7 @@ function startOrVerify()
         var inputElement = document.getElementById("file");
         var centerX = inputElement.offsetLeft + inputElement.offsetWidth / 2;
         var centerY = inputElement.offsetTop + inputElement.offsetHeight / 2;
-        UIHelper.activateAt(centerX, centerY);
+        await UIHelper.activateAt(centerX, centerY);
     }
 }
 

@@ -140,7 +140,7 @@ private:
     RefPtr<ServerOpenDBRequest> takeNextRunnableRequest();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
     bool NODELETE hasAnyOpenConnections() const;
-    bool allConnectionsAreClosedOrClosing() const;
+    bool NODELETE allConnectionsAreClosedOrClosing() const;
 
     void startVersionChangeTransaction();
     void maybeNotifyConnectionsOfVersionChange();

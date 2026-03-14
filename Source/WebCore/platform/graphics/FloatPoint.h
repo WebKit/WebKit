@@ -66,7 +66,7 @@ public:
     static constexpr FloatPoint zero() { return FloatPoint(); }
     constexpr bool isZero() const { return !m_x && !m_y; }
 
-    WEBCORE_EXPORT static FloatPoint narrowPrecision(double x, double y);
+    WEBCORE_EXPORT static FloatPoint NODELETE narrowPrecision(double x, double y);
 
     constexpr float x() const { return m_x; }
     constexpr float y() const { return m_y; }
@@ -134,7 +134,7 @@ public:
 
     void rotate(double angleInRadians, const FloatPoint& aboutPoint);
 
-    WEBCORE_EXPORT void normalize();
+    WEBCORE_EXPORT void NODELETE normalize();
 
     constexpr float dot(const FloatPoint& a) const
     {

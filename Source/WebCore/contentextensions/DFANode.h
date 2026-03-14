@@ -137,7 +137,7 @@ public:
     uint16_t actionsLength() const { return m_actionsLength; }
     uint32_t actionsStart() const { return m_actionsStart; }
 
-    bool canUseFallbackTransition(const DFA&) const;
+    bool NODELETE canUseFallbackTransition(const DFA&) const;
     uint32_t bestFallbackTarget(const DFA&) const;
 
     void setActions(uint32_t start, uint16_t length)

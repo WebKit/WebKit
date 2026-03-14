@@ -46,7 +46,7 @@ using namespace HTMLNames;
 static RefPtr<Node> enclosingBlockToSplitTreeTo(Node* startNode);
 static bool isElementForFormatBlock(const QualifiedName& tagName);
 
-static inline bool isElementForFormatBlock(Node& node)
+static inline bool NODELETE isElementForFormatBlock(Node& node)
 {
     auto* element = dynamicDowncast<Element>(node);
     return element && isElementForFormatBlock(element->tagQName());
@@ -111,7 +111,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     }
 
     RefPtr lastChild = blockNode->lastChild();
-    Position lastParagraphInBlockNode = lastChild ? positionAfterNode(lastChild.get()) : Position();
+    Position lastParagraphInBlockNode = lastChild ? positionAfterNode(*lastChild) : Position();
     bool wasEndOfParagraph = isEndOfParagraph(lastParagraphInBlockNode);
 
     moveParagraphWithClones(start, end, blockNode.get(), outerBlock.get());
@@ -140,7 +140,7 @@ RefPtr<Element> FormatBlockCommand::elementForFormatBlockCommand(const std::opti
     return commonAncestorElement;
 }
 
-bool isElementForFormatBlock(const QualifiedName& tagName)
+bool NODELETE isElementForFormatBlock(const QualifiedName& tagName)
 {
     using namespace ElementNames;
 

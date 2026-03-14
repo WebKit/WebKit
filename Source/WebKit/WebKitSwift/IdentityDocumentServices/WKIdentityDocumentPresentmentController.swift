@@ -23,8 +23,8 @@
 
 #if HAVE_DIGITAL_CREDENTIALS_UI
 
-internal import IdentityDocumentServices
-internal import IdentityDocumentServicesUI
+import IdentityDocumentServices
+import IdentityDocumentServicesUI
 import os
 
 #if canImport(UIKit)
@@ -50,7 +50,7 @@ extension WKIdentityDocumentPresentmentController {
 
         private let controller: IdentityDocumentWebPresentmentController
 
-        private var performRequestTask: Task<IdentityDocumentWebPresentmentResponse, Error>?
+        private var performRequestTask: Task<any IdentityDocumentWebPresentmentResponse, any Error>?
 
         weak var delegate: (any WKIdentityDocumentPresentmentDelegate)?
 

@@ -61,7 +61,7 @@ public:
     // FIXME: Should add a function like this to HashMap so the two kinds of maps are more interchangable.
     template<typename KeyArgument> const ValueType* tryGet(const KeyArgument&) const;
 
-    const std::array<ElementType, N>& array() const { return m_array; }
+    const std::array<ElementType, N>& array() const LIFETIME_BOUND { return m_array; }
 
 private:
     std::array<ElementType, N> m_array;
@@ -72,7 +72,7 @@ public:
     constexpr SortedArraySet(std::array<ElementType, N>&&);
     template<typename KeyArgument> bool contains(const KeyArgument&) const;
 
-    const std::array<ElementType, N>& array() const { return m_array; }
+    const std::array<ElementType, N>& array() const LIFETIME_BOUND { return m_array; }
 
 private:
     std::array<ElementType, N> m_array;

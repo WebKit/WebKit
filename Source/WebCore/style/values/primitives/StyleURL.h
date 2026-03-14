@@ -53,7 +53,7 @@ template<size_t I> const auto& get(const URL& value)
 // Special conversion function for use by filters and font-face code.
 URL toStyleWithScriptExecutionContext(const CSS::URL&, const ScriptExecutionContext&);
 
-template<> struct ToCSS<URL> { auto operator()(const URL&, const RenderStyle&) -> CSS::URL; };
+template<> struct ToCSS<URL> { CSS::URL NODELETE operator()(const URL&, const RenderStyle&); };
 template<> struct ToStyle<CSS::URL> { auto operator()(const CSS::URL&, const BuilderState&) -> URL; };
 
 // `URL` is special-cased to return a `CSSURLValue`.

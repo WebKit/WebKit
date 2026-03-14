@@ -127,11 +127,11 @@ public:
 
     HistoryController& history() const { return m_history; }
 
-    ResourceLoadNotifier& notifier() const { return m_notifier; }
+    ResourceLoadNotifier& notifier() const LIFETIME_BOUND { return m_notifier; }
 
     class SubframeLoader;
-    SubframeLoader& subframeLoader() { return m_subframeLoader; }
-    const SubframeLoader& subframeLoader() const { return m_subframeLoader; }
+    SubframeLoader& subframeLoader() LIFETIME_BOUND { return m_subframeLoader; }
+    const SubframeLoader& subframeLoader() const LIFETIME_BOUND { return m_subframeLoader; }
 
     void setupForMultipartReplace();
 
@@ -171,7 +171,7 @@ public:
     void clear(RefPtr<Document>&& newDocument, bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true, Function<void()>&& handleDOMWindowCreation = nullptr);
 
     bool isLoading() const;
-    WEBCORE_EXPORT bool frameHasLoaded() const;
+    WEBCORE_EXPORT bool NODELETE frameHasLoaded() const;
 
     WEBCORE_EXPORT int numPendingOrLoadingRequests(bool recurse) const;
 
@@ -269,7 +269,7 @@ public:
     void loadDone(LoadCompletionType);
     void subresourceLoadDone(LoadCompletionType);
     void finishedParsing();
-    void checkCompleted();
+    WEBCORE_EXPORT void checkCompleted();
 
     bool isComplete() const { return m_isComplete; }
 
@@ -279,10 +279,10 @@ public:
     void setLoadsSynchronously(bool loadsSynchronously) { m_loadsSynchronously = loadsSynchronously; }
     bool loadsSynchronously() const { return m_loadsSynchronously; }
 
-    FrameLoaderStateMachine& stateMachine() { return m_stateMachine; }
-    const FrameLoaderStateMachine& stateMachine() const { return m_stateMachine; }
+    FrameLoaderStateMachine& stateMachine() LIFETIME_BOUND { return m_stateMachine; }
+    const FrameLoaderStateMachine& stateMachine() const LIFETIME_BOUND { return m_stateMachine; }
 
-    void advanceStatePastInitialEmptyDocument();
+    void NODELETE advanceStatePastInitialEmptyDocument();
 
     WEBCORE_EXPORT RefPtr<Frame> findFrameForNavigation(const AtomString& name, Document* activeDocument = nullptr);
 
@@ -308,7 +308,7 @@ public:
 
     void loadProgressingStatusChanged();
 
-    const URL& previousURL() const { return m_previousURL; }
+    const URL& previousURL() const LIFETIME_BOUND { return m_previousURL; }
 
     bool isHTTPFallbackInProgress() const { return m_navigationUpgradeToHTTPSBehavior == NavigationUpgradeToHTTPSBehavior::HTTPFallback; }
     bool NODELETE shouldNavigateWithHTTP(bool isSameSiteNavigation) const;
@@ -330,7 +330,7 @@ public:
 
     WEBCORE_EXPORT void NODELETE clearTestingOverrides();
 
-    const URL& provisionalLoadErrorBeingHandledURL() const { return m_provisionalLoadErrorBeingHandledURL; }
+    const URL& provisionalLoadErrorBeingHandledURL() const LIFETIME_BOUND { return m_provisionalLoadErrorBeingHandledURL; }
     void setProvisionalLoadErrorBeingHandledURL(const URL& url) { m_provisionalLoadErrorBeingHandledURL = url; }
 
     bool NODELETE shouldSuppressTextInputFromEditing() const;
@@ -359,6 +359,11 @@ public:
     WEBCORE_EXPORT void loadRequestedHistoryItem(FrameLoadType, PolicyAlreadyDecided = PolicyAlreadyDecided::No);
 
     void updateURLAndHistory(const URL&, RefPtr<SerializedScriptValue>&& stateObject, NavigationHistoryBehavior = NavigationHistoryBehavior::Replace);
+
+    WEBCORE_EXPORT void setPendingAsyncBackForwardNavigation();
+    WEBCORE_EXPORT void cancelPendingAsyncBackForwardNavigation();
+    WEBCORE_EXPORT bool shouldProceedWithAsyncBackForwardNavigation();
+    bool isWaitingForAsyncBackForwardNavigation() const { return m_asyncBackForwardNavigationState != AsyncBackForwardNavigationState::None; }
 
     void setRequiredCookiesVersion(uint64_t version) { m_requiredCookiesVersion = version; }
     uint64_t requiredCookiesVersion() const { return m_requiredCookiesVersion; }
@@ -548,6 +553,9 @@ private:
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
+
+    enum class AsyncBackForwardNavigationState : uint8_t { None, Pending, Cancelled };
+    AsyncBackForwardNavigationState m_asyncBackForwardNavigationState { AsyncBackForwardNavigationState::None };
 
     bool m_alwaysAllowLocalWebarchive { false };
 

@@ -115,7 +115,7 @@ const Property& MathMLOperatorElement::dictionaryProperty()
     return m_dictionaryProperty.value();
 }
 
-static const QualifiedName& propertyFlagToAttributeName(MathMLOperatorDictionary::Flag flag)
+static const QualifiedName& NODELETE propertyFlagToAttributeName(MathMLOperatorDictionary::Flag flag)
 {
     switch (flag) {
     case Accent:

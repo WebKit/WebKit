@@ -75,6 +75,7 @@ public:
     virtual void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&) = 0;
     virtual void destroyStoreForTesting(CompletionHandler<void()>&&) = 0;
     virtual void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) = 0;
+    virtual void fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&) = 0;
 };
 
 constexpr auto protocolVersionKey { "version"_s };
@@ -102,7 +103,8 @@ enum class MessageType : uint8_t {
     StartTimerImmediatelyForTesting,
     SetPrivateClickMeasurementAppBundleIDForTesting,
     DestroyStoreForTesting,
-    AllowTLSCertificateChainForLocalPCMTesting
+    AllowTLSCertificateChainForLocalPCMTesting,
+    FetchRegistrableDomains
 };
 
 constexpr auto protocolEncodedMessageKey { "encoded message"_s };

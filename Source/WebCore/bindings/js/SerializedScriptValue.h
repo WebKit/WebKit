@@ -138,7 +138,7 @@ public:
     void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously(bool isEphemeral);
     WEBCORE_EXPORT static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&&);
-    const Vector<uint8_t>& wireBytes() const { return m_internals.data; }
+    const Vector<uint8_t>& wireBytes() const LIFETIME_BOUND { return m_internals.data; }
 
     size_t memoryCost() const { return m_internals.memoryCost; }
 
@@ -234,8 +234,8 @@ private:
         Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles { };
 #endif
 #if ENABLE(MEDIA_STREAM)
-        Vector<std::unique_ptr<MediaStreamTrackDataHolder>> serializedMediaStreamTracks { };
-        Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> serializedMediaStreamTrackHandles { };
+        Vector<std::unique_ptr<MediaStreamTrackDataHolder>> detachedMediaStreamTracks { };
+        Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> detachedMediaStreamTrackHandles { };
 #endif
         std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray { };
         Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };

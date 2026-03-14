@@ -251,11 +251,11 @@ JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject
 }
 
 template<typename Visitor>
-void JSCustomElementRegistry::visitAdditionalChildren(Visitor& visitor)
+void JSCustomElementRegistry::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     wrapped().visitJSCustomElementInterfacesInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCustomElementRegistry);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSCustomElementRegistry);
 
 } // namespace WebCore

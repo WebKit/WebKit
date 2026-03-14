@@ -34,6 +34,7 @@
 #include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "Settings.h"
@@ -108,7 +109,7 @@ void CachedFont::finishLoading(const FragmentedSharedBuffer* data, const Network
 
 void CachedFont::setErrorAndDeleteData()
 {
-    CachedResourceHandle protectedThis { *this };
+    RefPtr protectedThis { *this };
     setEncodedSize(0);
     error(Status::DecodeError);
     if (inCache())

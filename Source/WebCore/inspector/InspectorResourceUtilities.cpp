@@ -112,7 +112,7 @@ Vector<CachedResource*> cachedResourcesForFrame(LocalFrame* frame)
     Vector<CachedResource*> result;
 
     for (auto& cachedResourceHandle : frame->document()->cachedResourceLoader().allCachedResources().values()) {
-        auto* cachedResource = cachedResourceHandle.get();
+        RefPtr cachedResource = cachedResourceHandle;
         if (cachedResource->resourceRequest().hiddenFromInspector())
             continue;
 
@@ -158,7 +158,7 @@ void resourceContent(Inspector::Protocol::ErrorString& errorString, LocalFrame* 
     }
 
     if (!success) {
-        if (auto* resource = cachedResource(frame, url))
+        if (RefPtr resource = cachedResource(frame, url))
             success = cachedResourceContent(*resource, result, base64Encoded);
     }
 
@@ -191,12 +191,12 @@ String sourceMapURLForResource(CachedResource* cachedResource)
     return String();
 }
 
-CachedResource* cachedResource(const LocalFrame* frame, const URL& url)
+RefPtr<CachedResource> cachedResource(const LocalFrame* frame, const URL& url)
 {
     if (url.isNull())
         return nullptr;
 
-    CachedResource* cachedResource = frame->document()->cachedResourceLoader().cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(url));
+    RefPtr cachedResource = frame->document()->cachedResourceLoader().cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(url));
     if (!cachedResource) {
         ResourceRequest request(URL { url });
         request.setDomainForCachePartition(frame->document()->domainForCachePartition());

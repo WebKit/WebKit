@@ -39,6 +39,7 @@
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "NodeName.h"
 #include "RenderSVGTransformableContainer.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGElement.h"
@@ -48,6 +49,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleDisplay.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "XLinkNames.h"
 #include <wtf/RobinHoodHashSet.h>
@@ -81,7 +83,7 @@ Ref<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document&
 
 SVGUseElement::~SVGUseElement()
 {
-    if (CachedResourceHandle externalDocument = m_externalDocument)
+    if (RefPtr externalDocument = m_externalDocument)
         externalDocument->removeClient(*this);
 }
 
@@ -258,7 +260,7 @@ static inline bool NODELETE isDisallowedElement(const SVGElement& element)
 
 static inline bool isDisallowedElement(const Element& element)
 {
-    RefPtr svgElement = dynamicDowncast<SVGElement>(element);
+    auto* svgElement = dynamicDowncast<SVGElement>(element);
     return !svgElement || isDisallowedElement(*svgElement);
 }
 
@@ -318,7 +320,7 @@ void SVGUseElement::updateUserAgentShadowTree()
 
 RefPtr<SVGElement> SVGUseElement::targetClone() const
 {
-    RefPtr root = userAgentShadowRoot();
+    auto* root = userAgentShadowRoot();
     return root ? downcast<SVGElement>(root->firstChild()) : nullptr;
 }
 
@@ -547,7 +549,7 @@ static void cloneDataAndChildren(SVGElement& replacementClone, SVGElement& origi
 
 void SVGUseElement::expandUseElementsInShadowTree() const
 {
-    auto descendants = descendantsOfType<SVGUseElement>(*protect(userAgentShadowRoot()));
+    auto descendants = descendantsOfType<SVGUseElement>(*userAgentShadowRoot());
     for (auto it = descendants.begin(); it; ) {
         Ref originalClone = *it;
         it.dropAssertions();
@@ -581,7 +583,7 @@ void SVGUseElement::expandUseElementsInShadowTree() const
 
 void SVGUseElement::expandSymbolElementsInShadowTree() const
 {
-    auto descendants = descendantsOfType<SVGSymbolElement>(*protect(userAgentShadowRoot()));
+    auto descendants = descendantsOfType<SVGSymbolElement>(*userAgentShadowRoot());
     for (auto it = descendants.begin(); it; ) {
         Ref originalClone = *it;
         it.dropAssertions();
@@ -608,7 +610,7 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
 void SVGUseElement::transferEventListenersToShadowTree() const
 {
     // FIXME: Don't directly add event listeners on each descendant. Copy event listeners on the use element instead.
-    for (Ref descendant : descendantsOfType<SVGElement>(*protect(userAgentShadowRoot()))) {
+    for (Ref descendant : descendantsOfType<SVGElement>(*userAgentShadowRoot())) {
         if (EventTargetData* data = descendant->correspondingElement()->eventTargetData())
             data->eventListenerMap.copyEventListenersNotCreatedFromMarkupToTarget(descendant.ptr());
     }
@@ -671,7 +673,7 @@ void SVGUseElement::updateExternalDocument()
     if (externalDocumentURL == (m_externalDocument ? m_externalDocument->url() : URL()))
         return;
 
-    if (CachedResourceHandle externalDocument = m_externalDocument)
+    if (RefPtr externalDocument = m_externalDocument)
         externalDocument->removeClient(*this);
 
     if (externalDocumentURL.isNull())
@@ -684,8 +686,11 @@ void SVGUseElement::updateExternalDocument()
         options.sniffContent = ContentSniffingPolicy::DoNotSniffContent;
         CachedResourceRequest request { ResourceRequest { WTF::move(externalDocumentURL) }, options };
         request.setInitiator(*this);
-        m_externalDocument = protect(document->cachedResourceLoader())->requestSVGDocument(WTF::move(request)).value_or(nullptr);
-        if (CachedResourceHandle externalDocument = m_externalDocument)
+        if (auto result = protect(document->cachedResourceLoader())->requestSVGDocument(WTF::move(request)))
+            m_externalDocument = WTF::move(result.value());
+        else
+            m_externalDocument = nullptr;
+        if (RefPtr externalDocument = m_externalDocument)
             externalDocument->addClient(*this);
     }
 

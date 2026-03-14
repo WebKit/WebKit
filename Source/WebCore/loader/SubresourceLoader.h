@@ -33,7 +33,6 @@
 #include <WebCore/ResourceLoader.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Platform.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
  
 namespace WebCore {
@@ -62,7 +61,7 @@ public:
     void startLoading() final;
 
     // FIXME: What is an "iOS" original request? Why is it necessary?
-    const ResourceRequest& iOSOriginalRequest() const final { return m_iOSOriginalRequest; }
+    const ResourceRequest& iOSOriginalRequest() const LIFETIME_BOUND final { return m_iOSOriginalRequest; }
 #endif
 
     unsigned redirectCount() const { return m_redirectCount; }
@@ -124,7 +123,7 @@ private:
     public:
         RequestCountTracker(CachedResourceLoader&, const CachedResource&);
         RequestCountTracker(RequestCountTracker&&);
-        RequestCountTracker& operator=(RequestCountTracker&&);
+        RequestCountTracker& NODELETE operator=(RequestCountTracker&&);
         ~RequestCountTracker();
     private:
         WeakPtr<CachedResourceLoader> m_cachedResourceLoader;
@@ -134,7 +133,9 @@ private:
 #if PLATFORM(IOS_FAMILY)
     ResourceRequest m_iOSOriginalRequest;
 #endif
-    WeakPtr<CachedResource> m_resource;
+    // CachedResource has a RefPtr back to this SubresourceLoader via m_loader,
+    // forming a ref-cycle that is broken in releaseResources().
+    RefPtr<CachedResource> m_resource;
     SubresourceLoaderState m_state;
     std::optional<RequestCountTracker> m_requestCountTracker;
     RefPtr<SecurityOrigin> m_origin;

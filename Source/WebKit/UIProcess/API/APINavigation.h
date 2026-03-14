@@ -183,8 +183,8 @@ public:
     void setOriginatorAdvancedPrivacyProtections(OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections) { m_originatorAdvancedPrivacyProtections = advancedPrivacyProtections; }
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
     void setSafeBrowsingCheckOngoing(size_t, bool);
-    bool safeBrowsingCheckOngoing(size_t);
-    bool safeBrowsingCheckOngoing();
+    bool NODELETE safeBrowsingCheckOngoing(size_t);
+    bool NODELETE safeBrowsingCheckOngoing();
     void setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&&);
     RefPtr<WebKit::BrowsingWarning> NODELETE safeBrowsingWarning();
     void setSafeBrowsingCheckTimedOut() { m_safeBrowsingCheckTimedOut = true; }
@@ -203,6 +203,9 @@ public:
 
     void setIsEnhancedSecurityLinkForCurrentSite(bool isEnhancedSecurityLink) { m_isEnhancedSecurityLinkForCurrentSite = isEnhancedSecurityLink; }
     bool isEnhancedSecurityLinkForCurrentSite() const { return m_isEnhancedSecurityLinkForCurrentSite; }
+
+    WebKit::FrameState* backForwardFrameState() const { return m_backForwardFrameState.get(); }
+    void setBackForwardFrameState(RefPtr<WebKit::FrameState>&& frameState) { m_backForwardFrameState = WTF::move(frameState); }
 
 private:
     Navigation(WebCore::ProcessIdentifier);
@@ -243,6 +246,7 @@ private:
     RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
     ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
     RefPtr<WebKit::FrameProcess> m_pendingSharedProcess;
+    RefPtr<WebKit::FrameState> m_backForwardFrameState;
 };
 
 } // namespace API

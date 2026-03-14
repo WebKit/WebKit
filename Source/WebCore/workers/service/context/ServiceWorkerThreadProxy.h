@@ -67,14 +67,14 @@ public:
 
     ServiceWorkerIdentifier identifier() const { return m_serviceWorkerThread->identifier(); }
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }
-    ServiceWorkerInspectorProxy& inspectorProxy() { return m_inspectorProxy; }
+    ServiceWorkerInspectorProxy& inspectorProxy() LIFETIME_BOUND { return m_inspectorProxy; }
 
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
     void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
     WEBCORE_EXPORT RefPtr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 
-    const URL& scriptURL() const { return m_document->url(); }
+    const URL& scriptURL() const LIFETIME_BOUND { return m_document->url(); }
 
     WEBCORE_EXPORT void notifyNetworkStateChange(bool isOnline);
 
@@ -96,8 +96,8 @@ public:
 
     WEBCORE_EXPORT void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
-    WEBCORE_EXPORT void setLastNavigationWasAppInitiated(bool);
-    WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
+    WEBCORE_EXPORT void NODELETE setLastNavigationWasAppInitiated(bool);
+    WEBCORE_EXPORT bool NODELETE lastNavigationWasAppInitiated();
 
     WEBCORE_EXPORT void setInspectable(bool);
 

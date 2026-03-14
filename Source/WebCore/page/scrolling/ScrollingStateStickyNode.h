@@ -64,7 +64,7 @@ private:
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
     OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
 
-    bool hasViewportClippingLayer() const;
+    bool NODELETE hasViewportClippingLayer() const;
 
     StickyPositionViewportConstraints m_constraints;
     LayerRepresentation m_viewportAnchorLayer;

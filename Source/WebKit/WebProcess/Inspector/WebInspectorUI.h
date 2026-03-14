@@ -189,7 +189,7 @@ public:
 private:
     explicit WebInspectorUI(WebPage&);
 
-    void didEstablishConnection();
+    void NODELETE didEstablishConnection();
 
     template<typename T>
     IPC::Error sendToParentProcess(T&& message)

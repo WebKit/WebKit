@@ -68,8 +68,8 @@ public:
     {
     }
 
-    const Arg& src() const { return m_src; }
-    const Arg& dst() const { return m_dst; }
+    const Arg& src() const LIFETIME_BOUND { return m_src; }
+    const Arg& dst() const LIFETIME_BOUND { return m_dst; }
 
     // The width determines the kind of move we do. You can only choose Width32 or Width64 right now.
     // For GP, it picks between Move32 and Move. For FP, it picks between MoveFloat and MoveDouble.

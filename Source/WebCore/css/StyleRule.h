@@ -226,7 +226,7 @@ private:
 
 class StyleRuleFontPaletteValues final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
+    static Ref<StyleRuleFontPaletteValues> NODELETE create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
 
     const AtomString& name() const LIFETIME_BOUND { return m_name; }
     const Vector<AtomString>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }

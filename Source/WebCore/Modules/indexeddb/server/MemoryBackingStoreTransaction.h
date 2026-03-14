@@ -77,7 +77,7 @@ public:
 
     IDBTransactionInfo info() const { return m_info; }
 
-    MemoryCursor* cursor(const IDBResourceIdentifier&) const;
+    MemoryCursor* NODELETE cursor(const IDBResourceIdentifier&) const;
     void addCursor(MemoryCursor&);
 
 private:

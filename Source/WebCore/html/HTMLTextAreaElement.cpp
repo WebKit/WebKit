@@ -318,7 +318,7 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
 
 RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElement() const
 {
-    RefPtr root = userAgentShadowRoot();
+    auto* root = userAgentShadowRoot();
     return root ? downcast<TextControlInnerTextElement>(root->firstChild()) : nullptr;
 }
 

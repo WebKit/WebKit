@@ -23,16 +23,16 @@
 
 #if HAVE_MATERIAL_HOSTING
 
-internal import WebKit_Internal
+import WebKit_Internal
 
 #if USE_APPLE_INTERNAL_SDK
 #if canImport(UIKit)
-@_weakLinked @_spi(Private) @_spi(ForUIKitOnly) internal import SwiftUI
+@_weakLinked @_spi(Private) @_spi(ForUIKitOnly) import SwiftUI
 #else
-@_weakLinked @_spi(Private) @_spi(ForAppKitOnly) internal import SwiftUI
+@_weakLinked @_spi(Private) @_spi(ForAppKitOnly) import SwiftUI
 #endif
 #else
-internal import SwiftUI_SPI
+import SwiftUI_SPI
 #endif
 
 #if canImport(UIKit)

@@ -537,7 +537,7 @@ private:
             static constexpr ElementName tagName = ElementNames::HTML::option;
             static constexpr std::array<CharacterType, 6> tagNameCharacters { 'o', 'p', 't', 'i', 'o', 'n' };
 
-            static RefPtr<HTMLElement> parseChild(ContainerNode&, HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> NODELETE parseChild(ContainerNode&, HTMLFastPathParser& self)
             {
                 // <option> can only contain a text content.
                 return self.didFail(HTMLFastPathResult::FailedOptionWithChild, nullptr);

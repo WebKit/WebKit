@@ -80,7 +80,7 @@ public:
     }
 
     Structure* objectAllocationStructure() { return m_objectAllocationProfile.structure(); }
-    JSObject* objectAllocationPrototype() { return m_objectAllocationProfile.prototype(); }
+    JSObject* objectAllocationPrototype() LIFETIME_BOUND { return m_objectAllocationProfile.prototype(); }
 
     InlineWatchpointSet& allocationProfileWatchpointSet()
     {
@@ -114,7 +114,7 @@ public:
     Structure* getBoundFunctionStructure() { return m_boundFunctionStructureID.get(); }
     void setBoundFunctionStructure(VM& vm, Structure* structure) { m_boundFunctionStructureID.set(vm, this, structure); }
 
-    ExecutableBase* executable() const { return m_executable.get(); }
+    ExecutableBase* executable() const LIFETIME_BOUND { return m_executable.get(); }
 
     bool hasReifiedLength() const { return m_hasReifiedLength; }
     void setHasReifiedLength() { m_hasReifiedLength = true; }

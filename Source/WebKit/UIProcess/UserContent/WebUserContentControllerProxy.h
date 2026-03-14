@@ -82,7 +82,7 @@ public:
     WebUserContentControllerProxy();
     ~WebUserContentControllerProxy();
 
-    static WebUserContentControllerProxy* get(UserContentControllerIdentifier);
+    static WebUserContentControllerProxy* NODELETE get(UserContentControllerIdentifier);
 
     UserContentControllerParameters parametersForProcess(WebProcessProxy&) const;
 

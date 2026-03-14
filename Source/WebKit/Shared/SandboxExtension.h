@@ -63,7 +63,7 @@ public:
 
     [[nodiscard]] bool consume();
     bool invalidate();
-    [[nodiscard]] std::span<const uint8_t> getSerializedFormat();
+    [[nodiscard]] std::span<const uint8_t> NODELETE getSerializedFormat();
 
     SandboxExtensionImpl(SandboxExtensionImpl&& other)
         : m_token(std::exchange(other.m_token, CString()))

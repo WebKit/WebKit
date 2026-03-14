@@ -204,7 +204,7 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
     if (!renderImage)
         return;
 
-    CachedResourceHandle tentativeCachedImage = renderImage->cachedImage();
+    RefPtr tentativeCachedImage = renderImage->cachedImage();
     if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
         return;
 

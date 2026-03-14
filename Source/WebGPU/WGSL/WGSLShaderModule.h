@@ -27,6 +27,7 @@
 
 #include "ASTBuilder.h"
 #include "ASTDeclaration.h"
+#include "ASTDiagnostic.h"
 #include "ASTDirective.h"
 #include "ASTIdentityExpression.h"
 #include "CallGraph.h"
@@ -42,7 +43,7 @@
 
 namespace WGSL {
 
-class ShaderModule {
+class ShaderModule : public AST::DiagnosticContainer {
     WTF_MAKE_TZONE_ALLOCATED(ShaderModule);
 public:
     explicit ShaderModule(const String& source)
@@ -56,13 +57,13 @@ public:
         initializeOverloads();
     }
 
-    const String& source() const { return m_source; }
-    const Configuration& configuration() const { return m_configuration; }
-    AST::Declaration::List& declarations() { return m_declarations; }
-    const AST::Declaration::List& declarations() const { return m_declarations; }
-    AST::Directive::List& directives() { return m_directives; }
-    TypeStore& types() { return m_types; }
-    AST::Builder& astBuilder() { return m_astBuilder; }
+    const String& source() const LIFETIME_BOUND { return m_source; }
+    const Configuration& configuration() const LIFETIME_BOUND { return m_configuration; }
+    AST::Declaration::List& declarations() LIFETIME_BOUND { return m_declarations; }
+    const AST::Declaration::List& declarations() const LIFETIME_BOUND { return m_declarations; }
+    AST::Directive::List& directives() LIFETIME_BOUND { return m_directives; }
+    TypeStore& types() LIFETIME_BOUND { return m_types; }
+    AST::Builder& astBuilder() LIFETIME_BOUND { return m_astBuilder; }
 
     const CallGraph& callGraph() const { return *m_callGraph; }
     void setCallGraph(CallGraph&& callGraph)
@@ -92,6 +93,9 @@ public:
 
     bool usesWorkgroupUniformLoad() const { return m_usesWorkgroupUniformLoad; }
     void setUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = true; }
+
+    bool usesWorkgroupUniformLoadAtomic() const { return m_usesWorkgroupUniformLoadAtomic; }
+    void setUsesWorkgroupUniformLoadAtomic() { m_usesWorkgroupUniformLoadAtomic = true; }
 
     bool usesDivision() const { return m_usesDivision; }
     void setUsesDivision() { m_usesDivision = true; }
@@ -273,7 +277,7 @@ public:
         m_replacements.shrinkCapacity(limit);
     }
 
-    OptionSet<Extension>& enabledExtensions() { return m_enabledExtensions; }
+    OptionSet<Extension>& enabledExtensions() LIFETIME_BOUND { return m_enabledExtensions; }
     OptionSet<LanguageFeature> requiredFeatures() { return m_requiredFeatures; }
     bool containsOverrideID(uint32_t idValue) const
     {
@@ -309,6 +313,7 @@ private:
     bool m_usesPackVector { false };
     bool m_usesUnpackVector { false };
     bool m_usesWorkgroupUniformLoad { false };
+    bool m_usesWorkgroupUniformLoadAtomic { false };
     bool m_usesDivision { false };
     bool m_usesModulo { false };
     bool m_usesFrexp { false };

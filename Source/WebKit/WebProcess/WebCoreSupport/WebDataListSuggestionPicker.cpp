@@ -102,7 +102,7 @@ void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSug
 
     page->setActiveDataListSuggestionPicker(*this);
 
-    WebCore::DataListSuggestionInformation info { type, WTF::move(suggestions), WTF::move(elementRectInRootViewCoordinates) };
+    WebCore::DataListSuggestionInformation info { type, WTF::move(suggestions), WTF::move(elementRectInRootViewCoordinates), client->rootFrameID() };
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowDataListSuggestions(info), page->identifier());
 }
 

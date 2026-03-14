@@ -4,9 +4,9 @@ PASS Can set 'overflow-clip-margin' to CSS-wide keywords: inherit
 PASS Can set 'overflow-clip-margin' to CSS-wide keywords: unset
 PASS Can set 'overflow-clip-margin' to CSS-wide keywords: revert
 PASS Can set 'overflow-clip-margin' to var() references:  var(--A)
-FAIL Can set 'overflow-clip-margin' to the 'border-box' keyword: border-box assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
-FAIL Can set 'overflow-clip-margin' to the 'content-box' keyword: content-box assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
-FAIL Can set 'overflow-clip-margin' to the 'padding-box' keyword: padding-box assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+PASS Can set 'overflow-clip-margin' to the 'border-box' keyword: border-box
+PASS Can set 'overflow-clip-margin' to the 'content-box' keyword: content-box
+PASS Can set 'overflow-clip-margin' to the 'padding-box' keyword: padding-box
 PASS Can set 'overflow-clip-margin' to a length: 0px
 FAIL Can set 'overflow-clip-margin' to a length: -3.14em Invalid values
 PASS Can set 'overflow-clip-margin' to a length: 3.14cm

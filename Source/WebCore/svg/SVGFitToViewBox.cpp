@@ -54,13 +54,13 @@ SVGFitToViewBox::SVGFitToViewBox(SVGElement* contextElement, SVGPropertyAccess a
 
 void SVGFitToViewBox::setViewBox(const FloatRect& viewBox)
 {
-    Ref { m_viewBox }->setBaseValInternal(viewBox);
+    m_viewBox->setBaseValInternal(viewBox);
     m_isViewBoxValid = true;
 }
 
 void SVGFitToViewBox::resetViewBox()
 {
-    Ref { m_viewBox }->setBaseValInternal({ });
+    m_viewBox->setBaseValInternal({ });
     m_isViewBoxValid = false;
 }
 
@@ -120,7 +120,7 @@ template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parse
     auto height = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
 
     if (validate) {
-        Ref document = Ref { m_viewBox }->contextElement()->document();
+        Ref document = m_viewBox->contextElement()->document();
 
         if (!x || !y || !width || !height) {
             protect(document->svgExtensions())->reportWarning(makeString("Problem parsing viewBox=\""_s, stringToParse, "\""_s));

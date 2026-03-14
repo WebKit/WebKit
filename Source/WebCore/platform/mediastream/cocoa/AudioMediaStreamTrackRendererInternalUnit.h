@@ -53,7 +53,7 @@ public:
     WEBCORE_EXPORT static Ref<AudioMediaStreamTrackRendererInternalUnit> create(const String&, Client&);
 
     using CreateFunction = Ref<AudioMediaStreamTrackRendererInternalUnit>(*)(const String&, AudioMediaStreamTrackRendererInternalUnit::Client&);
-    WEBCORE_EXPORT static void setCreateFunction(CreateFunction);
+    WEBCORE_EXPORT static void NODELETE setCreateFunction(CreateFunction);
     virtual void start() = 0;
     virtual void stop() = 0;
     virtual void close() { };

@@ -63,7 +63,7 @@ public:
     ~MemoryObjectStore();
 
     void transactionFinished(MemoryBackingStoreTransaction&);
-    void writeTransactionStarted(MemoryBackingStoreTransaction&);
+    void NODELETE writeTransactionStarted(MemoryBackingStoreTransaction&);
     void writeTransactionFinished(MemoryBackingStoreTransaction&);
     void transactionAborted(MemoryBackingStoreTransaction&);
     MemoryBackingStoreTransaction* NODELETE writeTransaction();
@@ -99,7 +99,7 @@ public:
 
     MemoryObjectStoreCursor* maybeOpenCursor(const IDBCursorInfo&, MemoryBackingStoreTransaction&);
 
-    IDBKeyDataSet* orderedKeys() { return m_orderedKeys.get(); }
+    IDBKeyDataSet* orderedKeys() LIFETIME_BOUND { return m_orderedKeys.get(); }
 
     MemoryIndex* indexForIdentifier(IDBIndexIdentifier);
 

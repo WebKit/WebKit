@@ -80,12 +80,12 @@ var HybridBlobTestUtil = function(testFunc, opt_filePaths, opt_useOpenPanel) {
         await eventSender.asyncMouseUp();
     };
 
-    this.runTestsWithOpenPanel = function()
+    this.runTestsWithOpenPanel = async function()
     {
         this.setupForTests();
 
         testRunner.setOpenPanelFiles(this.testFilePaths);
-        UIHelper.activateAt(10, 10);
+        await UIHelper.activateAt(10, 10);
     };
 
     this.runTests = function() {

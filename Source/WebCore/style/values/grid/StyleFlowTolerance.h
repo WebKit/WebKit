@@ -50,7 +50,7 @@ template<> struct CSSValueConversion<FlowTolerance> {
 // MARK: - Blending
 
 template<> struct Blending<FlowTolerance> {
-    auto canBlend(const FlowTolerance&, const FlowTolerance&) -> bool;
+    bool NODELETE canBlend(const FlowTolerance&, const FlowTolerance&);
     auto blend(const FlowTolerance&, const FlowTolerance&, const BlendingContext&) -> FlowTolerance;
 };
 

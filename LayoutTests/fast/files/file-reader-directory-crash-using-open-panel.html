@@ -27,7 +27,11 @@ if (window.testRunner) {
 }
 
 testRunner.setOpenPanelFiles(['resources']);
-UIHelper.activateAt(input.offsetLeft + 1, input.offsetTop + 1);
+
+async function runTest() {
+    await UIHelper.activateAt(input.offsetLeft + 1, input.offsetTop + 1);
+}
+runTest();
 
 </script>
 </body>

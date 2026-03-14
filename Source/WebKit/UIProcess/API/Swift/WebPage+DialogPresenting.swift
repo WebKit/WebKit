@@ -23,7 +23,7 @@
 
 #if ENABLE_SWIFTUI
 
-import Foundation
+public import Foundation
 
 // MARK: Supporting types
 

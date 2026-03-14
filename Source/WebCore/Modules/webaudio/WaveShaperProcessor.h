@@ -63,7 +63,7 @@ public:
     OverSampleType oversampleForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_oversample; } // Doesn't grab the lock, only safe to call on the main thread.
     OverSampleType oversample() const WTF_REQUIRES_LOCK(m_processLock) { return m_oversample; }
 
-    Lock& processLock() const WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
+    Lock& processLock() const LIFETIME_BOUND WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
 
 private:
     Type processorType() const final { return Type::WaveShaper; }

@@ -347,7 +347,7 @@ public:
     Layout::Box* layoutBox() { return m_layoutBox.get(); }
     const Layout::Box* layoutBox() const { return m_layoutBox.get(); }
     void NODELETE setLayoutBox(Layout::Box&);
-    void clearLayoutBox();
+    void NODELETE clearLayoutBox();
 
     WEBCORE_EXPORT RenderTheme& theme() const;
 
@@ -394,7 +394,7 @@ public:
     RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth, int& newFixedDepth) const;
 #endif
 
-    WEBCORE_EXPORT RenderLayer* enclosingLayer() const;
+    WEBCORE_EXPORT RenderLayer* NODELETE enclosingLayer() const;
 
     WEBCORE_EXPORT RenderBox& NODELETE enclosingBox() const;
     RenderBoxModelObject& NODELETE enclosingBoxModelObject() const;
@@ -647,7 +647,7 @@ public:
 
     // Returns the full transform mapping from local coordinates to local coords for the parent SVG renderer
     // This includes any viewport transforms and x/y offsets as well as the transform="" value off the element.
-    virtual const AffineTransform& localToParentTransform() const;
+    virtual const AffineTransform& localToParentTransform() const LIFETIME_BOUND;
 
     // SVG uses FloatPoint precise hit testing, and passes the point in parent
     // coordinates instead of in repaint container coordinates.  Eventually the
@@ -729,7 +729,7 @@ public:
     // instead. Returns the capture state with this adjustment applied.
     bool effectiveCapturedInViewTransition() const;
 
-    inline RenderView& view() const; // Defined in RenderObjectDocument.h
+    inline RenderView& NODELETE view() const LIFETIME_BOUND; // Defined in RenderObjectDocument.h
     inline LocalFrameViewLayoutContext& layoutContext() const;
 
     HostWindow* hostWindow() const;
@@ -786,7 +786,7 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
 
-    bool isComposited() const;
+    bool NODELETE isComposited() const;
 
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter = HitTestAll);
     virtual Node* nodeForHitTest() const;
@@ -859,14 +859,14 @@ public:
     // the rect that will be painted if this object is passed as the paintingRoot
     WEBCORE_EXPORT LayoutRect paintingRootRect(LayoutRect& topLevelRect);
 
-    inline const RenderStyle& style() const; // Defined in RenderObjectStyle.h.
-    inline const RenderStyle& firstLineStyle() const;
+    inline const RenderStyle& style() const LIFETIME_BOUND; // Defined in RenderObjectStyle.h.
+    inline CheckedRef<const RenderStyle> firstLineStyle() const LIFETIME_BOUND;
     inline WritingMode writingMode() const; // Defined in RenderObjectStyle.h.
     // writingMode().isHorizontal() is cached by isHorizontalWritingMode() above.
 
     // Anonymous blocks that are part of of a continuation chain will return their inline continuation's outline style instead.
     // This is typically only relevant when repainting.
-    virtual const RenderStyle& outlineStyleForRepaint() const;
+    virtual const RenderStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
@@ -1068,7 +1068,7 @@ public:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed = nullptr) const;
     virtual void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const;
 
-    bool shouldUseTransformFromContainer(const RenderElement* container) const;
+    bool NODELETE shouldUseTransformFromContainer(const RenderElement* container) const;
     void getTransformFromContainer(const LayoutSize& offsetInContainer, TransformationMatrix&) const;
     
     void pushOntoTransformState(TransformState&, OptionSet<MapCoordinatesMode>, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const;
@@ -1096,7 +1096,7 @@ protected:
     // Helper functions. Dangerous to use!
     void setPreviousSibling(RenderObject* previous) { m_previous = previous; }
     void setNextSibling(RenderObject* next) { m_next = next; }
-    void setParent(RenderElement*);
+    void NODELETE setParent(RenderElement*);
     //////////////////////////////////////////
 
     inline Node& nodeForNonAnonymous() const; // Defined in RenderObjectInlines.h
@@ -1298,12 +1298,12 @@ private:
         RefPtr<ControlPart> controlPart;
     };
 
-    WEBCORE_EXPORT const RenderObject::RenderObjectRareData& rareData() const;
+    WEBCORE_EXPORT const RenderObject::RenderObjectRareData& NODELETE rareData() const;
     RenderObjectRareData& ensureRareData();
     void removeRareData();
 
     using RareDataMap = SingleThreadWeakHashMap<const RenderObject, std::unique_ptr<RenderObjectRareData>>;
-    static RareDataMap& rareDataMap();
+    static RareDataMap& NODELETE rareDataMap();
 };
 
 class RenderObject::SetLayoutNeededForbiddenScope {

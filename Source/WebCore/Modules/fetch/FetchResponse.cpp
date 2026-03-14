@@ -265,7 +265,7 @@ Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& co
     auto response = adoptRef(*new FetchResponse(&context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     response->suspendIfNeeded();
 
-    protect(response->body().consumer())->setAsLoading();
+    response->body().consumer().setAsLoading();
 
     response->addAbortSteps(request.signal());
 

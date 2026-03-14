@@ -52,11 +52,11 @@ public:
     WebKeyboardEvent(WebEvent&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
 #endif
 
-    const String& text() const { return m_text; }
-    const String& unmodifiedText() const { return m_unmodifiedText; }
-    const String& key() const { return m_key; }
-    const String& code() const { return m_code; }
-    const String& keyIdentifier() const { return m_keyIdentifier; }
+    const String& text() const LIFETIME_BOUND { return m_text; }
+    const String& unmodifiedText() const LIFETIME_BOUND { return m_unmodifiedText; }
+    const String& key() const LIFETIME_BOUND { return m_key; }
+    const String& code() const LIFETIME_BOUND { return m_code; }
+    const String& keyIdentifier() const LIFETIME_BOUND { return m_keyIdentifier; }
     int32_t windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
 #if PLATFORM(WIN)
     void setWindowsVirtualKeyCode(int32_t keyCode) { m_windowsVirtualKeyCode = keyCode; }
@@ -67,13 +67,13 @@ public:
     bool handledByInputMethod() const { return m_handledByInputMethod; }
 #endif
 #if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
-    const std::optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const { return m_preeditUnderlines; }
-    const std::optional<EditingRange>& preeditSelectionRange() const { return m_preeditSelectionRange; }
+    const std::optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const LIFETIME_BOUND { return m_preeditUnderlines; }
+    const std::optional<EditingRange>& preeditSelectionRange() const LIFETIME_BOUND { return m_preeditSelectionRange; }
 #endif
 #if USE(APPKIT)
-    const Vector<WebCore::KeypressCommand>& commands() const { return m_commands; }
+    const Vector<WebCore::KeypressCommand>& commands() const LIFETIME_BOUND { return m_commands; }
 #elif PLATFORM(GTK)
-    const Vector<String>& commands() const { return m_commands; }
+    const Vector<String>& commands() const LIFETIME_BOUND { return m_commands; }
 #endif
     bool isAutoRepeat() const { return m_isAutoRepeat; }
     bool isKeypad() const { return m_isKeypad; }

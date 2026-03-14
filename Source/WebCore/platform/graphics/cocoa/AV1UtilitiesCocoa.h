@@ -36,7 +36,7 @@ struct PlatformMediaCapabilitiesVideoConfiguration;
 
 std::optional<PlatformMediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 WEBCORE_EXPORT bool av1HardwareDecoderAvailable();
-WEBCORE_EXPORT void setAV1HardwareDecoderAvailable(bool);
+WEBCORE_EXPORT void NODELETE setAV1HardwareDecoderAvailable(bool);
 WEBCORE_EXPORT bool av1HardwareDecoderAvailableInProcess();
 }
 

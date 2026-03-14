@@ -753,7 +753,7 @@ public:
     using Identifier = WebPageProxyIdentifier;
 
     Identifier identifier() const { return m_identifier; }
-    static WebPageProxy* fromIdentifier(std::optional<Identifier>);
+    static WebPageProxy* NODELETE fromIdentifier(std::optional<Identifier>);
     WebCore::PageIdentifier webPageIDInMainFrameProcess() const { return m_webPageID; }
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return webPageIDInMainFrameProcess(); }
     WebCore::PageIdentifier webPageIDInProcess(const WebProcessProxy&) const;
@@ -1027,6 +1027,7 @@ public:
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<Ref<WebBackForwardListItem>>&& removed);
     void shouldGoToBackForwardListItem(WebCore::BackForwardItemIdentifier, bool inBackForwardCache, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&);
     void shouldGoToBackForwardListItemSync(WebCore::BackForwardItemIdentifier, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&);
+    void goToBackForwardItemAtIndex(int32_t steps, WebCore::FrameLoadType);
 
     bool shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem&);
 
@@ -1047,7 +1048,7 @@ public:
 
 #if PLATFORM(MAC)
     void setObscuredContentInsetsAsync(const WebCore::FloatBoxExtent&);
-    WebCore::FloatBoxExtent pendingOrActualObscuredContentInsets() const;
+    WebCore::FloatBoxExtent NODELETE pendingOrActualObscuredContentInsets() const;
 
     void scheduleSetObscuredContentInsetsDispatch();
     void dispatchSetObscuredContentInsets();
@@ -1086,7 +1087,7 @@ public:
     WebCore::Color NODELETE sampledPageTopColor() const;
 
     WebCore::Color underPageBackgroundColor() const;
-    WebCore::Color underPageBackgroundColorIgnoringPlatformColor() const;
+    WebCore::Color NODELETE underPageBackgroundColorIgnoringPlatformColor() const;
     WebCore::Color NODELETE underPageBackgroundColorOverride() const;
     void setUnderPageBackgroundColorOverride(WebCore::Color&&);
 
@@ -1118,7 +1119,7 @@ public:
     void setHasModelElement(bool);
 #endif
 
-    void NODELETE setPrivateClickMeasurement(std::nullopt_t);
+    void setPrivateClickMeasurement(std::nullopt_t);
     void setPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&);
     void setPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, String sourceDescription, String purchaser);
     void setPrivateClickMeasurementImmediately(WebCore::PrivateClickMeasurement&&);
@@ -1276,9 +1277,9 @@ public:
     void performActionOnElements(uint32_t action, Vector<WebCore::ElementContext>&&);
     void saveImageToLibrary(IPC::Connection&, WebCore::SharedMemoryHandle&& imageHandle, const String& authorizationToken);
     void focusNextFocusedElement(bool isForward, CompletionHandler<void()>&&);
-    void setFocusedElementValue(const WebCore::ElementContext&, const String&);
-    void setFocusedElementSelectedIndex(const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection = false);
-    void setSelectElementIsOpen(const WebCore::ElementContext&, bool isOpen);
+    void setFocusedElementValue(std::optional<WebCore::FrameIdentifier>, const WebCore::ElementContext&, const String&);
+    void setFocusedElementSelectedIndex(std::optional<WebCore::FrameIdentifier>, const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection = false);
+    void setSelectElementIsOpen(std::optional<WebCore::FrameIdentifier>, const WebCore::ElementContext&, bool isOpen);
     void applicationDidEnterBackground();
     void applicationDidFinishSnapshottingAfterEnteringBackground();
     void applicationWillEnterForeground();
@@ -1383,6 +1384,8 @@ public:
     void addDictationAlternative(WebCore::TextAlternativeWithRange&&);
     void dictationAlternativesAtSelection(CompletionHandler<void(Vector<WebCore::DictationContext>&&)>&&);
     void clearDictationAlternatives(Vector<WebCore::DictationContext>&&);
+    void setDictationStreamingOpacity(const String& hypothesisText, WebCore::CharacterRange streamingRangeInHypothesis, float opacity);
+    void clearDictationStreamingOpacity();
 
     void hasMarkedText(CompletionHandler<void(bool)>&&);
     void getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
@@ -1395,7 +1398,7 @@ public:
 
     void setScrollPerformanceDataCollectionEnabled(bool);
     bool scrollPerformanceDataCollectionEnabled() const { return m_scrollPerformanceDataCollectionEnabled; }
-    RemoteLayerTreeScrollingPerformanceData* scrollingPerformanceData() { return m_scrollingPerformanceData.get(); }
+    RemoteLayerTreeScrollingPerformanceData* scrollingPerformanceData() LIFETIME_BOUND { return m_scrollingPerformanceData.get(); }
 
     void addActivityStateUpdateCompletionHandler(CompletionHandler<void()>&&);
 #endif // PLATFORM(COCOA)
@@ -1464,6 +1467,10 @@ public:
     void didFinishProcessingAllPendingMouseEvents();
     void flushPendingMouseEventCallbacks();
 
+    void doAfterProcessingAllPendingKeyEvents(Function<void()>&&);
+    void didFinishProcessingAllPendingKeyEvents();
+    void flushPendingKeyEventCallbacks();
+
     bool NODELETE isProcessingWheelEvents() const;
     void handleNativeWheelEvent(const NativeWebWheelEvent&);
     void continueWheelEventHandling(const WebWheelEvent&, const WebCore::WheelEventHandlingResult&, std::optional<bool> willStartSwipe);
@@ -1507,7 +1514,7 @@ public:
     const String& toolTip() const LIFETIME_BOUND { return m_toolTip; }
 
     const String& userAgent() const LIFETIME_BOUND { return m_userAgent; }
-    String userAgentForURL(const URL&);
+    String NODELETE userAgentForURL(const URL&);
     void setApplicationNameForUserAgent(const String&);
     const String& applicationNameForUserAgent() const LIFETIME_BOUND { return m_applicationNameForUserAgent; }
     void setApplicationNameForDesktopUserAgent(const String& applicationName) { m_applicationNameForDesktopUserAgent = applicationName; }
@@ -1611,7 +1618,7 @@ public:
     WebCore::RectEdges<bool> NODELETE pinnedState() const;
     WebCore::RectEdges<bool> pinnedStateIncludingAncestorsAtPoint(WebCore::FloatPoint);
 
-    WebCore::RectEdges<bool> rubberBandableEdgesRespectingHistorySwipe() const;
+    WebCore::RectEdges<bool> NODELETE rubberBandableEdgesRespectingHistorySwipe() const;
     WebCore::RectEdges<bool> NODELETE rubberBandableEdges() const;
     void NODELETE setRubberBandableEdges(WebCore::RectEdges<bool>);
     void NODELETE setRubberBandsAtLeft(bool);
@@ -1950,7 +1957,7 @@ public:
 #endif
 
     const PageLoadState& NODELETE pageLoadState() const LIFETIME_BOUND;
-    PageLoadState& pageLoadState() LIFETIME_BOUND;
+    PageLoadState& NODELETE pageLoadState() LIFETIME_BOUND;
 
 #if PLATFORM(COCOA)
     void handleAlternativeTextUIResult(const String& result);
@@ -2043,7 +2050,7 @@ public:
     void setAutoSizingShouldExpandToViewHeight(bool);
 
     void setViewportSizeForCSSViewportUnits(const WebCore::FloatSize&);
-    WebCore::FloatSize viewportSizeForCSSViewportUnits() const;
+    WebCore::FloatSize NODELETE viewportSizeForCSSViewportUnits() const;
 
     void didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChallengeProxy>&&, NegotiatedLegacyTLS);
     void negotiatedLegacyTLS();
@@ -2309,8 +2316,8 @@ public:
 
     WebCore::IntRect syncRootViewToScreen(const WebCore::IntRect& viewRect);
 
-    void didSelectOption(const String&);
-    void didCloseSuggestions();
+    void didSelectOption(const String&, std::optional<WebCore::FrameIdentifier>);
+    void didCloseSuggestions(std::optional<WebCore::FrameIdentifier>);
 
     void didChooseDate(StringView);
     void didEndDateTimePicker();
@@ -2595,7 +2602,7 @@ public:
 
 #if ENABLE(WRITING_TOOLS)
 #if PLATFORM(MAC)
-    bool shouldEnableWritingToolsRequestedTool(WebCore::WritingTools::RequestedTool) const;
+    bool NODELETE shouldEnableWritingToolsRequestedTool(WebCore::WritingTools::RequestedTool) const;
 #endif
 #if ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuWritingTools() const;
@@ -2758,7 +2765,7 @@ public:
 #if ENABLE(WRITING_TOOLS)
     void setWritingToolsActive(bool);
 
-    WebCore::WritingTools::Behavior writingToolsBehavior() const;
+    WebCore::WritingTools::Behavior NODELETE writingToolsBehavior() const;
 
     void willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>&, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&&);
 
@@ -2967,6 +2974,8 @@ public:
     bool hasShownSafeBrowsingWarningAfterLastLoadCommit() const { return m_hasShownSafeBrowsingWarningAfterLastLoadCommit; }
 #endif
 
+    bool shouldUseBackForwardCache() const;
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2978,7 +2987,6 @@ private:
     void removeAllMessageReceivers();
 
     void notifyProcessPoolToPrewarm();
-    bool shouldUseBackForwardCache() const;
 
     bool attachmentElementEnabled();
     bool modelElementEnabled();
@@ -3042,7 +3050,7 @@ private:
     void didReceiveTitleForFrame(IPC::Connection&, WebCore::FrameIdentifier, String&&, const UserData&);
     void NODELETE didFirstLayoutForFrame(WebCore::FrameIdentifier, const UserData&);
     void didFirstVisuallyNonEmptyLayoutForFrame(IPC::Connection&, WebCore::FrameIdentifier, const UserData&, WallTime);
-    void mainFramePluginHandlesPageScaleGestureDidChange(bool, double minScale, double maxScale);
+    void NODELETE mainFramePluginHandlesPageScaleGestureDidChange(bool, double minScale, double maxScale);
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
@@ -3352,7 +3360,7 @@ private:
 
     void setEditableElementIsFocused(bool);
 
-    void handleAcceptsFirstMouse(bool);
+    void NODELETE handleAcceptsFirstMouse(bool);
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
@@ -3689,6 +3697,7 @@ private:
 
     const UniqueRef<WebNavigationState> m_navigationState;
     String m_failingProvisionalLoadURL;
+    bool m_allowsLoadingAlternateHTMLForFailingProvisionalLoadURL { true };
     bool m_isLoadingAlternateHTMLStringForFailingProvisionalLoad { false };
 
     bool m_isCallingCreateNewPage { false };

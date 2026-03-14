@@ -94,7 +94,7 @@ static Vector<uint8_t> createAttestedCredentialDataFromU2fRegisterResponse(const
     return buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, publicKey);
 }
 
-static size_t parseX509Length(const Vector<uint8_t>& u2fData, size_t offset)
+static size_t NODELETE parseX509Length(const Vector<uint8_t>& u2fData, size_t offset)
 {
     if (u2fData.size() <= offset || u2fData[offset] != SequenceMark)
         return 0;

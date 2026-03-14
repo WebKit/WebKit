@@ -60,7 +60,7 @@ public:
     String contextType() const { return m_contextType; }
     MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, String&&, String&&, std::optional<WTF::UUID>&&);
 #endif
-    const std::optional<WTF::UUID>& identifier() const { return m_identifier; }
+    const std::optional<WTF::UUID>& identifier() const LIFETIME_BOUND { return m_identifier; }
 
 private:
     String m_deviceName;

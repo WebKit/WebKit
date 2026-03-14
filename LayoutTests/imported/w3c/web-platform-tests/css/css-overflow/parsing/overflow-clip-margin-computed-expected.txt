@@ -1,16 +1,22 @@
 
 PASS Property overflow-clip-margin value '0px'
-FAIL Property overflow-clip-margin value '10px' assert_equals: expected "10px" but got "0px"
-FAIL Property overflow-clip-margin value 'content-box' assert_equals: expected "content-box" but got "0px"
-FAIL Property overflow-clip-margin value 'content-box 0px' assert_equals: expected "content-box" but got "0px"
-FAIL Property overflow-clip-margin value 'content-box 10px' assert_equals: expected "content-box 10px" but got "0px"
-FAIL Property overflow-clip-margin value '10px content-box' assert_equals: expected "content-box 10px" but got "0px"
+PASS Property overflow-clip-margin value '10px'
+PASS Property overflow-clip-margin value 'content-box'
+PASS Property overflow-clip-margin value 'content-box 0px'
+PASS Property overflow-clip-margin value 'content-box 10px'
+PASS Property overflow-clip-margin value '10px content-box'
 PASS Property overflow-clip-margin value 'padding-box'
 PASS Property overflow-clip-margin value 'padding-box 0px'
-FAIL Property overflow-clip-margin value 'padding-box 10px' assert_equals: expected "10px" but got "0px"
-FAIL Property overflow-clip-margin value '10px padding-box' assert_equals: expected "10px" but got "0px"
-FAIL Property overflow-clip-margin value 'border-box' assert_equals: expected "border-box" but got "0px"
-FAIL Property overflow-clip-margin value 'border-box 0px' assert_equals: expected "border-box" but got "0px"
-FAIL Property overflow-clip-margin value 'border-box 10px' assert_equals: expected "border-box 10px" but got "0px"
-FAIL Property overflow-clip-margin value '10px border-box' assert_equals: expected "border-box 10px" but got "0px"
+PASS Property overflow-clip-margin value 'padding-box 10px'
+PASS Property overflow-clip-margin value '10px padding-box'
+PASS Property overflow-clip-margin value 'border-box'
+PASS Property overflow-clip-margin value 'border-box 0px'
+PASS Property overflow-clip-margin value 'border-box 10px'
+PASS Property overflow-clip-margin value '10px border-box'
+PASS Property overflow-clip-margin value 'calc(100px - 50px)'
+PASS Property overflow-clip-margin value 'calc(100px - 100px)'
+PASS Property overflow-clip-margin value 'calc(0.5em + 100px)'
+PASS Property overflow-clip-margin value 'padding-box calc(0.5em + 100px)'
+PASS Property overflow-clip-margin value 'padding-box calc(100px - 100px)'
+PASS Property overflow-clip-margin value 'border-box calc(0.5em + 100px)'
 

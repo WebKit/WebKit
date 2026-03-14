@@ -36,21 +36,21 @@ public:
     static Ref<DOMPlugin> create(Navigator&, const PluginInfo&);
     ~DOMPlugin();
 
-    const PluginInfo& info() const { return m_info; }
+    const PluginInfo& info() const LIFETIME_BOUND { return m_info; }
 
-    String name() const;
-    String filename() const;
-    String description() const;
+    String NODELETE name() const;
+    String NODELETE filename() const;
+    String NODELETE description() const;
 
-    unsigned length() const;
+    unsigned NODELETE length() const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_mimeTypes.size(); }
-    RefPtr<DOMMimeType> item(unsigned index);
-    RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
+    RefPtr<DOMMimeType> NODELETE item(unsigned index);
+    RefPtr<DOMMimeType> NODELETE namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
     bool isSupportedPropertyName(const AtomString&) const;
 
-    const Vector<Ref<DOMMimeType>>& mimeTypes() const { return m_mimeTypes; }
+    const Vector<Ref<DOMMimeType>>& mimeTypes() const LIFETIME_BOUND { return m_mimeTypes; }
 
     Navigator* navigator() { return m_navigator.get(); }
 

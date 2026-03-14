@@ -97,12 +97,12 @@ private:
     void decreaseBufferedAmount(size_t);
     template<typename T> void sendMessageInternal(T&&, size_t byteLength);
 
-    const WebCore::WebSocketChannelInspector* channelInspector() const final { return &m_inspector; }
+    const WebCore::WebSocketChannelInspector* channelInspector() const LIFETIME_BOUND final { return &m_inspector; }
     WebCore::WebSocketChannelIdentifier progressIdentifier() const final { return m_inspector.progressIdentifier(); }
     bool hasCreatedHandshake() const final { return !m_url.isNull(); }
     bool isConnected() const final { return !m_handshakeResponse.isNull(); }
     WebCore::ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }
-    const WebCore::ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
+    const WebCore::ResourceResponse& serverHandshakeResponse() const LIFETIME_BOUND final { return m_handshakeResponse; }
 
     WeakPtr<WebCore::Document, WebCore::WeakPtrImplWithEventTargetData> m_document;
     ThreadSafeWeakPtr<WebCore::WebSocketChannelClient> m_client;

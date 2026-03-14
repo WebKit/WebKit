@@ -56,8 +56,8 @@ public:
     uint32_t width() const { return m_width; }
     uint32_t height() const { return m_height; }
     uint32_t bufferID() const { return m_bufferID; }
-    const std::optional<drmModeModeInfo>& currentMode() const { return m_currentMode; }
-    const Properties& properties() const { return m_properties; }
+    const std::optional<drmModeModeInfo>& currentMode() const LIFETIME_BOUND { return m_currentMode; }
+    const Properties& properties() const LIFETIME_BOUND { return m_properties; }
 
     bool modeIsCurrent(drmModeModeInfo*) const;
     void setCurrentMode(drmModeModeInfo*);
@@ -90,9 +90,9 @@ public:
     uint32_t encoderID() const { return m_encoderID; }
     uint32_t widthMM() const { return m_widthMM; }
     uint32_t heightMM() const { return m_heightMM; }
-    const Vector<drmModeModeInfo>& modes() const { return m_modes; }
+    const Vector<drmModeModeInfo>& modes() const LIFETIME_BOUND { return m_modes; }
     const std::optional<unsigned> preferredModeIndex() const { return m_preferredModeIndex; }
-    const Properties& properties() const { return m_properties; }
+    const Properties& properties() const LIFETIME_BOUND { return m_properties; }
 
 private:
     uint32_t m_id { 0 };
@@ -136,8 +136,8 @@ public:
     Plane(drmModePlane*, Vector<Format>&&, Properties&&);
 
     uint32_t id() const { return m_id; }
-    const Properties& properties() const { return m_properties; }
-    const Vector<Format>& formats() const { return m_formats; }
+    const Properties& properties() const LIFETIME_BOUND { return m_properties; }
+    const Vector<Format>& formats() const LIFETIME_BOUND { return m_formats; }
 
     bool canBeUsedWithCrtc(const Crtc& crtc) const { return !!(m_possibleCrtcs & (1 << crtc.index())); }
     bool supportsFormat(uint32_t, uint64_t) const;
@@ -159,7 +159,7 @@ public:
     struct gbm_bo* bufferObject() const { return m_bufferObject; }
     uint32_t frameBufferID() const { return m_frameBufferID; }
     void setFenceFD(WTF::UnixFileDescriptor&& fenceFD) { m_fenceFD = WTF::move(fenceFD); }
-    const WTF::UnixFileDescriptor& fenceFD() const { return m_fenceFD; }
+    const WTF::UnixFileDescriptor& fenceFD() const LIFETIME_BOUND { return m_fenceFD; }
 
 private:
     struct gbm_bo* m_bufferObject { nullptr };

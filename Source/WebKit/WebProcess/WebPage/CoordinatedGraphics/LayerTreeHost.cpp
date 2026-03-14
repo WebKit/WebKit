@@ -130,6 +130,14 @@ void LayerTreeHost::scheduleRenderingUpdate()
     scheduleRenderingUpdateRunLoopObserver();
 }
 
+void LayerTreeHost::scheduleRenderingUpdateRunLoopObserver()
+{
+    FrameRenderer::scheduleRenderingUpdateRunLoopObserver();
+
+    // Avoid running any more tasks before the runloop observer fires.
+    WindowEventLoop::breakToAllowRenderingUpdate();
+}
+
 bool LayerTreeHost::canUpdateRendering() const
 {
     return !m_isWaitingForRenderer;

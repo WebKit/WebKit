@@ -50,9 +50,9 @@ public:
 
     IDBIndexInfo createNewIndex(IDBIndexIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
     void addExistingIndex(const IDBIndexInfo&);
-    bool hasIndex(const String& name) const;
+    bool NODELETE hasIndex(const String& name) const;
     bool hasIndex(IDBIndexIdentifier) const;
-    IDBIndexInfo* infoForExistingIndex(const String& name);
+    IDBIndexInfo* NODELETE infoForExistingIndex(const String& name);
     IDBIndexInfo* infoForExistingIndex(IDBIndexIdentifier);
 
     Vector<String> indexNames() const;

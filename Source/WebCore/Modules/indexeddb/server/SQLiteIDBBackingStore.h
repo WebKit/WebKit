@@ -129,7 +129,7 @@ protected:
     SQLiteDatabase* sqliteDB() const { return m_sqliteDB.get(); }
     void setSqliteDB(std::unique_ptr<SQLiteDatabase>&&);
 
-    IDBDatabaseInfo* databaseInfo() const { return m_databaseInfo.get(); }
+    IDBDatabaseInfo* databaseInfo() const LIFETIME_BOUND { return m_databaseInfo.get(); }
     void setDatabaseInfo(std::unique_ptr<IDBDatabaseInfo>&&);
 
 private:

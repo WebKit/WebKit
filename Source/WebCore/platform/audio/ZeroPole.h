@@ -46,7 +46,7 @@ public:
     {
     }
 
-    void process(std::span<const float> source, std::span<float> destination, unsigned framesToProcess);
+    void NODELETE process(std::span<const float> source, std::span<float> destination, unsigned framesToProcess);
 
     // Reset filter state.
     void reset() { m_lastX = 0; m_lastY = 0; }

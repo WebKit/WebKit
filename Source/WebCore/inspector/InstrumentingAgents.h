@@ -146,11 +146,11 @@ class InstrumentingAgents : public WTF::RefCountedAndCanMakeWeakPtr<Instrumentin
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
     WTF_MAKE_TZONE_ALLOCATED(InstrumentingAgents);
 public:
-    static Ref<InstrumentingAgents> create(Inspector::InspectorEnvironment&);
+    static Ref<InstrumentingAgents> NODELETE create(Inspector::InspectorEnvironment&);
     static Ref<InstrumentingAgents> create(Inspector::InspectorEnvironment&, InstrumentingAgents& fallbackAgents);
 
     ~InstrumentingAgents() = default;
-    void reset();
+    void NODELETE reset();
 
     bool developerExtrasEnabled() const;
 

@@ -166,7 +166,7 @@ auto HTMLOptionElement::insertedIntoAncestor(InsertionType insertionType, Contai
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || m_ownerSelect)
         return result;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()), HTMLSelectElement::ExcludeOptGroup::No)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No)) {
         m_ownerSelect = select.get();
         select->setRecalcListItems();
     }
@@ -187,7 +187,7 @@ void HTMLOptionElement::removedFromAncestor(RemovalType removalType, ContainerNo
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || !m_ownerSelect)
         return;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()), HTMLSelectElement::ExcludeOptGroup::No)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No)) {
         ASSERT_UNUSED(select, select == m_ownerSelect.get());
         return;
     }
@@ -272,6 +272,9 @@ bool HTMLOptionElement::accessKeyAction(bool)
 
 void HTMLOptionElement::defaultEventHandler(Event& event)
 {
+    if (!event.isTrusted())
+        return HTMLElement::defaultEventHandler(event);
+
     RefPtr select = ownerSelectElement();
     if (!select || !select->document().settings().htmlEnhancedSelectEnabled() || !select->usesBaseAppearancePicker())
         return HTMLElement::defaultEventHandler(event);
@@ -328,7 +331,7 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
 
 HTMLFormElement* HTMLOptionElement::form() const
 {
-    if (RefPtr selectElement = ownerSelectElement())
+    if (auto* selectElement = ownerSelectElement())
         return selectElement->form();
     return nullptr;
 }
@@ -506,7 +509,7 @@ String HTMLOptionElement::textIndentedToRespectGroupLabel() const
     for (Ref ancestor : ancestorsOfType<HTMLElement>(*this)) {
         if (is<HTMLOptGroupElement>(ancestor))
             return makeString("    "_s, label());
-        if (is<HTMLDataListElement>(ancestor) || is<HTMLSelectElement>(ancestor) || is<HTMLOptionElement>(ancestor) || is<HTMLHRElement>(ancestor))
+        if (isAnyOf<HTMLDataListElement, HTMLSelectElement, HTMLOptionElement, HTMLHRElement>(ancestor))
             return label();
     }
     return label();
@@ -525,7 +528,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
     for (Ref ancestor : ancestorsOfType<HTMLElement>(*this)) {
         if (RefPtr optGroup = dynamicDowncast<HTMLOptGroupElement>(ancestor))
             return optGroup->isDisabledFormControl();
-        if (is<HTMLDataListElement>(ancestor) || is<HTMLSelectElement>(ancestor) || is<HTMLOptionElement>(ancestor) || is<HTMLHRElement>(ancestor))
+        if (isAnyOf<HTMLDataListElement, HTMLSelectElement, HTMLOptionElement, HTMLHRElement>(ancestor))
             return false;
     }
     return false;

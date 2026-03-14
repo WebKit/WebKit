@@ -50,7 +50,7 @@ public:
     }
 
     static StructureChain* create(VM&, JSObject*);
-    StructureID* head() { return m_vector.get(); }
+    StructureID* head() LIFETIME_BOUND { return m_vector.get(); }
     DECLARE_VISIT_CHILDREN;
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

@@ -893,7 +893,7 @@ WebProcess/WebPage/Cocoa/WebCookieJarCocoa.mm @nonARC
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm @nonARC
 WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
 
-WebProcess/WebPage/ios/FindControllerIOS.mm @nonARC
+WebProcess/WebPage/ios/FindIndicatorIOS.cpp
 WebProcess/WebPage/ios/WebPageIOS.mm @nonARC
 
 WebProcess/WebPage/mac/PageBannerMac.mm @nonARC

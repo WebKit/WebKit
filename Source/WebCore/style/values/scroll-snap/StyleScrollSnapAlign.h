@@ -65,7 +65,7 @@ template<size_t I> constexpr const auto& get(const ScrollSnapAlign& value)
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<ScrollSnapAlign> { auto operator()(BuilderState&, const CSSValue&) -> ScrollSnapAlign; };
+template<> struct CSSValueConversion<ScrollSnapAlign> { ScrollSnapAlign NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

@@ -24,8 +24,8 @@
 #if HAVE_APPKIT_GESTURES_SUPPORT && compiler(>=6.2)
 
 import Foundation
-internal import WebKit_Internal
-internal import WebCore_Private
+import WebKit_Internal
+import WebCore_Private
 
 extension WebKit.WebPageProxy {
     @MainActor

@@ -46,7 +46,7 @@ public:
     WEBCORE_EXPORT static MediaSession& mediaSession(Navigator&);
     WEBCORE_EXPORT static RefPtr<MediaSession> mediaSessionIfExists(Navigator&);
     MediaSession& mediaSession();
-    RefPtr<MediaSession> mediaSessionIfExists();
+    RefPtr<MediaSession> NODELETE mediaSessionIfExists();
 
 private:
     static NavigatorMediaSession* from(Navigator&);

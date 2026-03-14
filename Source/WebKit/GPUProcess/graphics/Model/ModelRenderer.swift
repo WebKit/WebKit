@@ -23,9 +23,9 @@
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreRenderer, _version: 11) && compiler(>=6.2)
 
-internal import QuartzCore
-@_weakLinked internal import USDKit
-@_weakLinked @_spi(UsdLoaderAPI) internal import _USDKit_RealityKit
+import QuartzCore
+@_weakLinked import USDKit
+@_weakLinked @_spi(UsdLoaderAPI) import _USDKit_RealityKit
 @_spi(RealityCoreRendererAPI) @_spi(Private) import RealityKit
 import simd
 
@@ -35,10 +35,10 @@ internal struct CameraTransform {
     var scale: simd_float3
 }
 
-nonisolated class Renderer {
-    let device: MTLDevice
-    let commandQueue: MTLCommandQueue
-    var renderContext: _Proto_LowLevelRenderContext_v1?
+class Renderer {
+    let device: any MTLDevice
+    let commandQueue: any MTLCommandQueue
+    var renderContext: (any _Proto_LowLevelRenderContext_v1)?
     var renderer: _Proto_LowLevelRenderer_v1?
     var renderTargetDescriptor: _Proto_LowLevelRenderTarget_v1.Descriptor {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
@@ -47,9 +47,10 @@ nonisolated class Renderer {
     }
     var pose: _Proto_Pose_v1
     var modelDistance: Float = 1.0
+    var clearColor: MTLClearColor = .init(red: 1, green: 1, blue: 1, alpha: 1)
     let memoryOwner: task_id_token_t
 
-    init(device: MTLDevice, memoryOwner: task_id_token_t) throws {
+    init(device: any MTLDevice, memoryOwner: task_id_token_t) throws {
         guard let commandQueue = device.makeCommandQueue() else {
             fatalError("Failed to create command queue.")
         }
@@ -62,7 +63,7 @@ nonisolated class Renderer {
     }
 
     func createMaterialCompiler(colorPixelFormat: MTLPixelFormat, rasterSampleCount: Int, colorSpace: CGColorSpace? = nil) async throws {
-        #if canImport(RealityCoreRenderer, _version: 9999)
+        #if canImport(RealityCoreRenderer, _version: 12)
         var configuration = _Proto_LowLevelRenderContextStandaloneConfiguration_v1(device: device)
         configuration.memoryOwner = self.memoryOwner
         #else
@@ -87,7 +88,7 @@ nonisolated class Renderer {
 
     func render(
         meshInstances: _Proto_LowLevelMeshInstanceArray_v1,
-        texture: MTLTexture
+        texture: any MTLTexture
     ) throws {
         guard let renderer else {
             return
@@ -106,7 +107,7 @@ nonisolated class Renderer {
 
         renderer.cameras[0].pose = pose
         renderer.cameras[0].projection = projection
-        renderer.output.clearColor = .init(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+        renderer.output.clearColor = clearColor
         renderer.output.color = .init(texture: texture)
         renderer.meshInstances = meshInstances
 
@@ -124,6 +125,10 @@ nonisolated class Renderer {
             translation: [0, 0, distance],
             rotation: simd_quatf(angle: 0, axis: [0, 0, 1]),
         )
+    }
+
+    internal func setBackgroundColor(_ color: simd_float3) {
+        clearColor = MTLClearColor(red: Double(color.x), green: Double(color.y), blue: Double(color.z), alpha: 1)
     }
 
     internal func setCameraTransform(_ transform: CameraTransform) {

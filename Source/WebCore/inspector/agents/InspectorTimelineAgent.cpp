@@ -533,7 +533,7 @@ void InspectorTimelineAgent::breakpointActionProbe(JSC::JSGlobalObject*, JSC::Br
     appendRecord(TimelineRecordFactory::createProbeSampleData(actionID, sampleId), TimelineRecordType::ProbeSample, false);
 }
 
-static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType type)
+static Inspector::Protocol::Timeline::EventType NODELETE toProtocol(TimelineRecordType type)
 {
     switch (type) {
     case TimelineRecordType::EventDispatch:

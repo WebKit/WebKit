@@ -43,6 +43,7 @@
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/Page.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/PointerCharacteristics.h>
 #include <WebCore/Range.h>

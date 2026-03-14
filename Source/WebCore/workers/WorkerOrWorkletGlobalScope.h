@@ -62,7 +62,7 @@ public:
     JSC::VM* vmIfExists() const final;
     WorkerInspectorController& inspectorController() const { return m_inspectorController; }
 
-    ScriptModuleLoader& moduleLoader() { return m_moduleLoader; }
+    ScriptModuleLoader& moduleLoader() LIFETIME_BOUND { return m_moduleLoader; }
 
     // ScriptExecutionContext.
     EventLoopTaskGroup& eventLoop() final;

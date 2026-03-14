@@ -30,5 +30,6 @@
     "sendrecv",
     "sendonly",
     "recvonly",
-    "inactive"
+    "inactive",
+    "stopped"
 };

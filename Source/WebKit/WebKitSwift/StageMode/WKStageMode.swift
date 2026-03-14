@@ -58,7 +58,7 @@ extension WKStageModeInteractionDriver {
 
     private let modelEntity: WKRKEntity
 
-    private weak var delegate: WKStageModeInteractionAware?
+    private weak var delegate: (any WKStageModeInteractionAware)?
 
     private var driverInitialized: Bool = false
     private var allowAnimationObservation: Bool = false
@@ -79,9 +79,9 @@ extension WKStageModeInteractionDriver {
     @nonobjc
     private var yawDecelerationAnimationController: AnimationPlaybackController? = nil
     @nonobjc
-    private var pitchAnimationCompletionSubscription: Cancellable? = nil
+    private var pitchAnimationCompletionSubscription: (any Cancellable)? = nil
     @nonobjc
-    private var yawAnimationCompletionSubscription: Cancellable? = nil
+    private var yawAnimationCompletionSubscription: (any Cancellable)? = nil
 
     private var pitchAnimationIsPlaying: Bool {
         pitchSettleAnimationController?.isPlaying ?? false
@@ -100,7 +100,7 @@ extension WKStageModeInteractionDriver {
         driverInitialized && stageModeOperation != .none
     }
 
-    init(model: WKRKEntity, container: REEntityRef, delegate: WKStageModeInteractionAware?) {
+    init(model: WKRKEntity, container: REEntityRef, delegate: (any WKStageModeInteractionAware)?) {
         self.modelEntity = model
         self.interactionContainer = Entity()
         self.turntableInteractionContainer = Entity()

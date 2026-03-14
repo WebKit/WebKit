@@ -151,7 +151,7 @@ public:
 
     // Returns false if there has not been any potential draws since last call.
     // Returns true if there has been potential draws since last call.
-    bool consumeHasDrawn();
+    bool NODELETE consumeHasDrawn();
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     void setMaxEDRHeadroom(std::optional<float>) final;
@@ -167,7 +167,7 @@ private:
     void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
 
     // Returns the platform context for purposes of context state change, not draws.
-    CGContextRef contextForState() const;
+    CGContextRef NODELETE contextForState() const;
 
     const RetainPtr<CGContextRef> m_cgContext;
     mutable std::optional<DestinationColorSpace> m_colorSpace;

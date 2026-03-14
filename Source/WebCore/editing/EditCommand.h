@@ -41,7 +41,7 @@ class Document;
 class Element;
 
 ASCIILiteral inputTypeNameForEditingAction(EditAction);
-bool isInputMethodComposingForEditingAction(EditAction);
+bool NODELETE isInputMethodComposingForEditingAction(EditAction);
 
 using NodeSet = HashSet<Ref<Node>>;
 

@@ -40,11 +40,11 @@ public:
 
     [[nodiscard]] RenderStyle NODELETE replace(RenderStyle&&);
 
-    static RenderStyle& defaultStyleSingleton();
+    static RenderStyle& NODELETE defaultStyleSingleton();
 
     // MARK: - Initialization
 
-    WEBCORE_EXPORT static RenderStyle create();
+    WEBCORE_EXPORT static RenderStyle NODELETE create();
     static std::unique_ptr<RenderStyle> createPtr();
     static std::unique_ptr<RenderStyle> createPtrWithRegisteredInitialValues(const Style::CustomPropertyRegistry&);
 
@@ -200,7 +200,7 @@ public:
     // MARK: - Pseudo element/style
 
     std::optional<PseudoElementType> pseudoElementType() const;
-    const AtomString& pseudoElementNameArgument() const;
+    const AtomString& pseudoElementNameArgument() const LIFETIME_BOUND;
 
     std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
     inline void setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier>&&);
@@ -209,17 +209,17 @@ public:
     inline bool hasPseudoStyle(PseudoElementType) const;
     inline void setHasPseudoStyles(EnumSet<PseudoElementType>);
 
-    RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&) const;
-    RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
+    RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&) const LIFETIME_BOUND;
+    RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>) LIFETIME_BOUND;
 
     bool hasCachedPseudoStyles() const { return m_computedStyle.hasCachedPseudoStyles(); }
-    const Style::PseudoStyleCache& cachedPseudoStyles() const { return m_computedStyle.cachedPseudoStyles(); }
+    const Style::PseudoStyleCache& cachedPseudoStyles() const LIFETIME_BOUND { return m_computedStyle.cachedPseudoStyles(); }
 
     // MARK: - Custom properties
 
-    inline const Style::CustomPropertyData& inheritedCustomProperties() const;
-    inline const Style::CustomPropertyData& nonInheritedCustomProperties() const;
-    const Style::CustomProperty* customPropertyValue(const AtomString&) const;
+    inline const Style::CustomPropertyData& inheritedCustomProperties() const LIFETIME_BOUND;
+    inline const Style::CustomPropertyData& nonInheritedCustomProperties() const LIFETIME_BOUND;
+    const Style::CustomProperty* customPropertyValue(const AtomString&) const LIFETIME_BOUND;
     void setCustomPropertyValue(Ref<const Style::CustomProperty>&&, bool isInherited);
     bool customPropertyValueEqual(const RenderStyle&, const AtomString&) const;
     bool customPropertiesEqual(const RenderStyle&) const;
@@ -248,16 +248,16 @@ public:
     inline FontCascade& mutableFontCascadeWithoutUpdate();
     inline void setFontCascade(FontCascade&&);
 
-    inline const FontCascadeDescription& fontDescription() const;
-    inline FontCascadeDescription& mutableFontDescriptionWithoutUpdate();
+    inline const FontCascadeDescription& fontDescription() const LIFETIME_BOUND;
+    inline FontCascadeDescription& mutableFontDescriptionWithoutUpdate() LIFETIME_BOUND;
     inline void setFontDescription(FontCascadeDescription&&);
     inline bool setFontDescriptionWithoutUpdate(FontCascadeDescription&&);
 
-    inline const FontMetrics& metricsOfPrimaryFont() const;
+    inline const FontMetrics& metricsOfPrimaryFont() const LIFETIME_BOUND;
     inline std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
     inline float computedFontSize() const;
     inline Style::WebkitLocale computedLocale() const;
-    inline const Style::LineHeight& specifiedLineHeight() const;
+    inline const Style::LineHeight& specifiedLineHeight() const LIFETIME_BOUND;
 #if ENABLE(TEXT_AUTOSIZING)
     inline void setSpecifiedLineHeight(Style::LineHeight&&);
 #endif
@@ -275,7 +275,7 @@ public:
 
     // MARK: - Used Counter Directives
 
-    inline const CounterDirectiveMap& usedCounterDirectives() const;
+    inline const CounterDirectiveMap& usedCounterDirectives() const LIFETIME_BOUND;
 
     // MARK: - Writing Modes
 
@@ -285,34 +285,34 @@ public:
 
     // MARK: - Aggregates
 
-    inline Style::Animations& ensureAnimations();
-    inline Style::BackgroundLayers& ensureBackgroundLayers();
-    inline Style::MaskLayers& ensureMaskLayers();
-    inline Style::Transitions& ensureTransitions();
-    inline Style::ScrollTimelines& ensureScrollTimelines();
-    inline Style::ViewTimelines& ensureViewTimelines();
+    inline Style::Animations& ensureAnimations() LIFETIME_BOUND;
+    inline Style::BackgroundLayers& ensureBackgroundLayers() LIFETIME_BOUND;
+    inline Style::MaskLayers& ensureMaskLayers() LIFETIME_BOUND;
+    inline Style::Transitions& ensureTransitions() LIFETIME_BOUND;
+    inline Style::ScrollTimelines& ensureScrollTimelines() LIFETIME_BOUND;
+    inline Style::ViewTimelines& ensureViewTimelines() LIFETIME_BOUND;
 
-    inline const BorderData& border() const;
-    inline const BorderValue& borderBottom() const;
-    inline const BorderValue& borderLeft() const;
-    inline const BorderValue& borderRight() const;
-    inline const BorderValue& borderTop() const;
-    inline const Style::Animations& animations() const;
-    inline const Style::BackgroundLayers& backgroundLayers() const;
-    inline const Style::BorderImage& borderImage() const;
-    inline const Style::BorderRadius& borderRadii() const;
-    inline const Style::InsetBox& insetBox() const;
-    inline const Style::MarginBox& marginBox() const;
-    inline const Style::MaskBorder& maskBorder() const;
-    inline const Style::MaskLayers& maskLayers() const;
-    inline const Style::PaddingBox& paddingBox() const;
-    inline const Style::PerspectiveOrigin& perspectiveOrigin() const;
-    inline const Style::ScrollMarginBox& scrollMarginBox() const;
-    inline const Style::ScrollPaddingBox& scrollPaddingBox() const;
-    inline const Style::ScrollTimelines& scrollTimelines() const;
-    inline const Style::TransformOrigin& transformOrigin() const;
-    inline const Style::Transitions& transitions() const;
-    inline const Style::ViewTimelines& viewTimelines() const;
+    inline const BorderData& border() const LIFETIME_BOUND;
+    inline const BorderValue& borderBottom() const LIFETIME_BOUND;
+    inline const BorderValue& borderLeft() const LIFETIME_BOUND;
+    inline const BorderValue& borderRight() const LIFETIME_BOUND;
+    inline const BorderValue& borderTop() const LIFETIME_BOUND;
+    inline const Style::Animations& animations() const LIFETIME_BOUND;
+    inline const Style::BackgroundLayers& backgroundLayers() const LIFETIME_BOUND;
+    inline const Style::BorderImage& borderImage() const LIFETIME_BOUND;
+    inline const Style::BorderRadius& borderRadii() const LIFETIME_BOUND;
+    inline const Style::InsetBox& insetBox() const LIFETIME_BOUND;
+    inline const Style::MarginBox& marginBox() const LIFETIME_BOUND;
+    inline const Style::MaskBorder& maskBorder() const LIFETIME_BOUND;
+    inline const Style::MaskLayers& maskLayers() const LIFETIME_BOUND;
+    inline const Style::PaddingBox& paddingBox() const LIFETIME_BOUND;
+    inline const Style::PerspectiveOrigin& perspectiveOrigin() const LIFETIME_BOUND;
+    inline const Style::ScrollMarginBox& scrollMarginBox() const LIFETIME_BOUND;
+    inline const Style::ScrollPaddingBox& scrollPaddingBox() const LIFETIME_BOUND;
+    inline const Style::ScrollTimelines& scrollTimelines() const LIFETIME_BOUND;
+    inline const Style::TransformOrigin& transformOrigin() const LIFETIME_BOUND;
+    inline const Style::Transitions& transitions() const LIFETIME_BOUND;
+    inline const Style::ViewTimelines& viewTimelines() const LIFETIME_BOUND;
 
     inline void setBackgroundLayers(Style::BackgroundLayers&&);
     inline void setBorderImage(Style::BorderImage&&);
@@ -335,7 +335,7 @@ public:
     inline CursorType cursorType() const;
 
     // `@page size`
-    inline const Style::PageSize& pageSize() const;
+    inline const Style::PageSize& pageSize() const LIFETIME_BOUND;
     inline void setPageSize(Style::PageSize&&);
 
     // MARK: - Style reset utilities
@@ -353,20 +353,20 @@ public:
     // MARK: - Logical Values
 
     // Logical Inset aliases
-    inline const Style::InsetEdge& logicalLeft() const;
-    inline const Style::InsetEdge& logicalRight() const;
-    inline const Style::InsetEdge& logicalTop() const;
-    inline const Style::InsetEdge& logicalBottom() const;
+    inline const Style::InsetEdge& logicalLeft() const LIFETIME_BOUND;
+    inline const Style::InsetEdge& logicalRight() const LIFETIME_BOUND;
+    inline const Style::InsetEdge& logicalTop() const LIFETIME_BOUND;
+    inline const Style::InsetEdge& logicalBottom() const LIFETIME_BOUND;
 
     // Logical Border (aggregate)
-    const BorderValue& NODELETE borderBefore(const WritingMode) const;
-    const BorderValue& NODELETE borderAfter(const WritingMode) const;
-    const BorderValue& NODELETE borderStart(const WritingMode) const;
-    const BorderValue& NODELETE borderEnd(const WritingMode) const;
-    inline const BorderValue& borderBefore() const;
-    inline const BorderValue& borderAfter() const;
-    inline const BorderValue& borderStart() const;
-    inline const BorderValue& borderEnd() const;
+    const BorderValue& NODELETE borderBefore(const WritingMode) const LIFETIME_BOUND;
+    const BorderValue& NODELETE borderAfter(const WritingMode) const LIFETIME_BOUND;
+    const BorderValue& NODELETE borderStart(const WritingMode) const LIFETIME_BOUND;
+    const BorderValue& NODELETE borderEnd(const WritingMode) const LIFETIME_BOUND;
+    inline const BorderValue& borderBefore() const LIFETIME_BOUND;
+    inline const BorderValue& borderAfter() const LIFETIME_BOUND;
+    inline const BorderValue& borderStart() const LIFETIME_BOUND;
+    inline const BorderValue& borderEnd() const LIFETIME_BOUND;
 
     // Logical Aspect Ratio
     inline Style::Number<CSS::Nonnegative> aspectRatioLogicalWidth() const;
@@ -375,11 +375,11 @@ public:
     inline BoxSizing boxSizingForAspectRatio() const;
 
     // Logical Grid
-    inline const Style::GridTrackSizes& gridAutoList(Style::GridTrackSizingDirection) const;
-    inline const Style::GridTemplateList& gridTemplateList(Style::GridTrackSizingDirection) const;
-    inline const Style::GridPosition& gridItemStart(Style::GridTrackSizingDirection) const;
-    inline const Style::GridPosition& gridItemEnd(Style::GridTrackSizingDirection) const;
-    inline const Style::GapGutter& gap(Style::GridTrackSizingDirection) const;
+    inline const Style::GridTrackSizes& gridAutoList(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
+    inline const Style::GridTemplateList& gridTemplateList(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
+    inline const Style::GridPosition& gridItemStart(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
+    inline const Style::GridPosition& gridItemEnd(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
+    inline const Style::GapGutter& gap(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
     // MARK: - Derived Values
 
@@ -393,7 +393,7 @@ public:
 
     // MARK: - Used Values
 
-    const AtomString& hyphenString() const;
+    const AtomString& hyphenString() const LIFETIME_BOUND;
     float usedStrokeWidth(const IntSize& viewportSize) const;
     Color usedStrokeColor() const;
     Color usedStrokeColorApplyingColorFilter() const;
@@ -410,7 +410,7 @@ public:
     static UsedFloat usedFloat(const RenderElement&); // Returns logical left/right (block-relative).
     static UsedClear usedClear(const RenderElement&); // Returns logical left/right (block-relative).
 
-    Style::LineWidth usedColumnRuleWidth() const;
+    Style::LineWidth NODELETE usedColumnRuleWidth() const;
 
     Style::Length<> usedOutlineOffset() const;
     Style::LineWidth usedOutlineWidth() const;
@@ -487,8 +487,8 @@ public:
 
     // MARK: - Underlying ComputedStyle
 
-    Style::ComputedStyle& computedStyle() { return m_computedStyle; }
-    const Style::ComputedStyle& computedStyle() const { return m_computedStyle; }
+    Style::ComputedStyle& computedStyle() LIFETIME_BOUND { return m_computedStyle; }
+    const Style::ComputedStyle& computedStyle() const LIFETIME_BOUND { return m_computedStyle; }
 
 private:
     friend class Style::DifferenceFunctions;
@@ -496,19 +496,12 @@ private:
     // This constructor is used to implement the replace operation.
     RenderStyle(RenderStyle&, RenderStyle&&);
 
-    const Style::NonInheritedData& nonInheritedData() const { return computedStyle().nonInheritedData(); }
-    const Style::ComputedStyle::NonInheritedFlags& nonInheritedFlags() const { return computedStyle().nonInheritedFlags(); }
-    const Style::InheritedRareData& inheritedRareData() const { return computedStyle().inheritedRareData(); }
-    const Style::InheritedData& inheritedData() const { return computedStyle().inheritedData(); }
-    const Style::ComputedStyle::InheritedFlags& inheritedFlags() const { return computedStyle().inheritedFlags(); }
-    const Style::SVGData& svgData() const { return computedStyle().svgData(); }
+    const Style::NonInheritedData& nonInheritedData() const LIFETIME_BOUND { return computedStyle().nonInheritedData(); }
+    const Style::ComputedStyle::NonInheritedFlags& nonInheritedFlags() const LIFETIME_BOUND { return computedStyle().nonInheritedFlags(); }
+    const Style::InheritedRareData& inheritedRareData() const LIFETIME_BOUND { return computedStyle().inheritedRareData(); }
+    const Style::InheritedData& inheritedData() const LIFETIME_BOUND { return computedStyle().inheritedData(); }
+    const Style::ComputedStyle::InheritedFlags& inheritedFlags() const LIFETIME_BOUND { return computedStyle().inheritedFlags(); }
+    const Style::SVGData& svgData() const LIFETIME_BOUND { return computedStyle().svgData(); }
 };
-
-constexpr BorderStyle collapsedBorderStyle(BorderStyle);
-
-inline bool pseudoElementRendererIsNeeded(const RenderStyle*);
-inline bool isNonVisibleOverflow(Overflow);
-
-inline bool isVisibleToHitTesting(const RenderStyle&, const HitTestRequest&);
 
 } // namespace WebCore

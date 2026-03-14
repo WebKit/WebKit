@@ -299,10 +299,12 @@ void LOLJIT::privateCompileMainPass()
         }
 
         if (m_compilation) [[unlikely]] {
+            JIT_COMMENT(*this, "Execution trace start");
             add64(
                 TrustedImm32(1),
                 AbsoluteAddress(Ref(*m_compilation)->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
                     m_compilation->bytecodes(), m_bytecodeIndex)))->address()));
+            JIT_COMMENT(*this, "First non-trace instruction");
         }
 
         if (Options::eagerlyUpdateTopCallFrame())

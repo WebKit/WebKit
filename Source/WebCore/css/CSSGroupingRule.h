@@ -38,7 +38,7 @@ public:
     WEBCORE_EXPORT CSSRuleList& cssRules() const;
     WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
     WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
-    unsigned length() const;
+    unsigned NODELETE length() const;
     CSSRule* item(unsigned index) const;
     virtual bool isCSSConditionRule() const { return false; }
 

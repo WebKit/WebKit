@@ -145,9 +145,9 @@ public:
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
     static bool sizeNeedsClamping(const FloatSize&, FloatSize& scale);
-    static FloatSize clampedSize(const FloatSize&);
+    static FloatSize NODELETE clampedSize(const FloatSize&);
     static FloatSize clampedSize(const FloatSize&, FloatSize& scale);
-    static FloatRect clampedRect(const FloatRect&);
+    static FloatRect NODELETE clampedRect(const FloatRect&);
 
     WEBCORE_EXPORT RefPtr<ImageBuffer> clone() const;
 
@@ -176,12 +176,12 @@ public:
     
     RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
     PixelFormat pixelFormat() const { return m_parameters.bufferFormat.pixelFormat; }
-    const Parameters& parameters() const { return m_parameters; }
+    const Parameters& parameters() const LIFETIME_BOUND { return m_parameters; }
 
     RenderingMode renderingMode() const { return m_backendInfo.renderingMode; }
     AffineTransform baseTransform() const { return m_backendInfo.baseTransform; }
     size_t memoryCost() const { return m_backendInfo.memoryCost; }
-    const ImageBufferBackend::Info& backendInfo() const { return m_backendInfo; }
+    const ImageBufferBackend::Info& backendInfo() const LIFETIME_BOUND { return m_backendInfo; }
 
     // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage() const;
@@ -241,7 +241,7 @@ public:
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
     // This value increments when the ImageBuffer gets a new backend, which can happen if, for example, the GPU Process exits.
-    WEBCORE_EXPORT unsigned backendGeneration() const;
+    WEBCORE_EXPORT unsigned NODELETE backendGeneration() const;
 
     WEBCORE_EXPORT virtual String debugDescription() const;
 
@@ -255,7 +255,7 @@ protected:
     WEBCORE_EXPORT virtual std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer();
 
     WEBCORE_EXPORT void setBackend(std::unique_ptr<ImageBufferBackend>&&);
-    ImageBufferBackend* backend() const { return m_backend.get(); }
+    ImageBufferBackend* backend() const LIFETIME_BOUND { return m_backend.get(); }
     virtual ImageBufferBackend* ensureBackend() const { return m_backend.get(); }
 
     Parameters m_parameters;

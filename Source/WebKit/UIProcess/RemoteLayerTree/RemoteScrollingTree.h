@@ -110,7 +110,7 @@ public:
 
 #if ENABLE(THREADED_ANIMATIONS)
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&);
-    RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const;
+    RefPtr<const RemoteAnimationTimeline> NODELETE timeline(const TimelineID&) const;
     HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const;
 #endif
 

@@ -162,7 +162,7 @@ static std::optional<float> resolveColorStopPosition(const GradientAngularColorS
     );
 }
 
-static float resolveColorStopPosition(const GradientDeprecatedColorStop::Position& position, ZoomFactor)
+static float NODELETE resolveColorStopPosition(const GradientDeprecatedColorStop::Position& position, ZoomFactor)
 {
     return narrowPrecisionToFloat(position.value.value);
 }
@@ -188,7 +188,7 @@ public:
         return gradientSize.diagonalLength();
     }
 
-    static constexpr float maxExtent(float) { return 1; }
+    static constexpr float NODELETE maxExtent(float) { return 1; }
 
     void normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, ColorInterpolationMethod)
     {
@@ -290,7 +290,7 @@ private:
 class ConicGradientAdapter {
 public:
     static constexpr float NODELETE gradientLength() { return 1; }
-    static constexpr float maxExtent(float) { return 1; }
+    static constexpr float NODELETE maxExtent(float) { return 1; }
 
     void normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, ColorInterpolationMethod colorInterpolationMethod)
     {
@@ -730,7 +730,7 @@ struct DistanceToCorner {
     FloatPoint corner;
 };
 
-static DistanceToCorner findDistanceToClosestCorner(const FloatPoint& p, const FloatSize& size)
+static DistanceToCorner NODELETE findDistanceToClosestCorner(const FloatPoint& p, const FloatSize& size)
 {
     FloatPoint topLeft;
     float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
@@ -764,7 +764,7 @@ static DistanceToCorner findDistanceToClosestCorner(const FloatPoint& p, const F
     return { minDistance, corner };
 }
 
-static DistanceToCorner findDistanceToFarthestCorner(const FloatPoint& p, const FloatSize& size)
+static DistanceToCorner NODELETE findDistanceToFarthestCorner(const FloatPoint& p, const FloatSize& size)
 {
     FloatPoint topLeft;
     float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
@@ -801,7 +801,7 @@ static DistanceToCorner findDistanceToFarthestCorner(const FloatPoint& p, const 
 
 // Compute horizontal radius of ellipse with center at 0,0 which passes through p, and has
 // width/height given by aspectRatio.
-static inline float horizontalEllipseRadius(const FloatSize& p, float aspectRatio)
+static inline float NODELETE horizontalEllipseRadius(const FloatSize& p, float aspectRatio)
 {
     // x^2/a^2 + y^2/b^2 = 1
     // a/b = aspectRatio, b = a/aspectRatio

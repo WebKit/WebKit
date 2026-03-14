@@ -74,7 +74,7 @@ public:
     void dragSessionWillBegin();
     void stageDragItem(const WebCore::DragItem&, DragSourceState::DragPreviewContentType);
     bool hasStagedDragSource() const;
-    const DragSourceState& stagedDragSource() const { return m_stagedDragSource.value(); }
+    const DragSourceState& stagedDragSource() const LIFETIME_BOUND { return m_stagedDragSource.value(); }
     enum class DidBecomeActive : bool { No, Yes };
     void clearStagedDragSource(DidBecomeActive = DidBecomeActive::No);
     UITargetedDragPreview *previewForLifting(UIDragItem *, UIView *contentView, UIView *previewContainer, RefPtr<WebCore::TextIndicator>&&) const;

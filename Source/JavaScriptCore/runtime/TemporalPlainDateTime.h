@@ -51,7 +51,7 @@ public:
     static TemporalPlainDateTime* from(JSGlobalObject*, JSValue, JSObject*);
     static int32_t compare(TemporalPlainDateTime*, TemporalPlainDateTime*);
 
-    TemporalCalendar* calendar() { return m_calendar.get(this); }
+    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainDate plainDate() const { return m_plainDate; }
     ISO8601::PlainTime plainTime() const { return m_plainTime; }
 

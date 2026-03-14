@@ -38,15 +38,15 @@ class SQLiteStatementAutoResetScope {
 public:
     WEBCORE_EXPORT explicit SQLiteStatementAutoResetScope(SQLiteStatement* = nullptr);
     WEBCORE_EXPORT SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&&);
-    WEBCORE_EXPORT SQLiteStatementAutoResetScope& operator=(SQLiteStatementAutoResetScope&&);
+    WEBCORE_EXPORT SQLiteStatementAutoResetScope& NODELETE operator=(SQLiteStatementAutoResetScope&&);
     WEBCORE_EXPORT ~SQLiteStatementAutoResetScope();
 
     explicit operator bool() const { return !!m_statement; }
     bool operator!() const { return !m_statement; }
 
-    WEBCORE_EXPORT CheckedPtr<SQLiteStatement> get();
-    WEBCORE_EXPORT CheckedPtr<SQLiteStatement> operator->();
-    WEBCORE_EXPORT SQLiteStatement& operator*() const;
+    WEBCORE_EXPORT CheckedPtr<SQLiteStatement> NODELETE get();
+    WEBCORE_EXPORT CheckedPtr<SQLiteStatement> NODELETE operator->();
+    WEBCORE_EXPORT SQLiteStatement& NODELETE operator*() const;
 
 private:
     CheckedPtr<SQLiteStatement> m_statement;

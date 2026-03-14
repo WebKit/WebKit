@@ -82,8 +82,8 @@ public:
 
     bool isValid() const { return m_type != ErrorNone; }
     SyntaxErrorType syntaxErrorType() const { return m_syntaxErrorType; }
-    const JSToken& token() const { return m_token; }
-    const String& message() const { return m_message; }
+    const JSToken& token() const LIFETIME_BOUND { return m_token; }
+    const String& message() const LIFETIME_BOUND { return m_message; }
     int line() const { return m_line; }
     ErrorType type() const { return m_type; }
 

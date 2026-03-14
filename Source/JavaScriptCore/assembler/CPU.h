@@ -81,16 +81,24 @@ JS_EXPORT_PRIVATE bool isARM64E_FPAC();
 constexpr bool isARM64E_FPAC() { return false; }
 #endif
 
-#if CPU(ARM64E) || OS(MAC_OS_X)
+#if CPU(ARM64E) || OS(MACOS)
 // ARM64E or all macOS ARM64 CPUs have LSE.
 constexpr bool isARM64_LSE() { return true; }
 #else
 JS_EXPORT_PRIVATE bool isARM64_LSE();
 #endif
 
+#if OS(MACOS)
+// All macOS ARM64 CPUs have SHA3, but ARM64E does not mean SHA3 feature is enabled since A12 chip does not have that.
+constexpr bool isARM64_SHA3() { return true; }
+#else
+JS_EXPORT_PRIVATE bool isARM64_SHA3();
+#endif
+
 #else // not CPU(ARM64)
 constexpr bool isARM64_LSE() { return false; }
 constexpr bool isARM64E_FPAC() { return false; }
+constexpr bool isARM64_SHA3() { return false; }
 #endif
 
 constexpr bool isX86()

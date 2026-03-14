@@ -75,8 +75,8 @@
 #import <WebCore/DocumentQuirks.h>
 #import <WebCore/DocumentView.h>
 #import <WebCore/DragImage.h>
-#import <WebCore/Editing.h>
 #import <WebCore/EditingHTMLConverter.h>
+#import <WebCore/EditingInlines.h>
 #import <WebCore/Editor.h>
 #import <WebCore/ElementAncestorIteratorInlines.h>
 #import <WebCore/EventHandler.h>
@@ -139,6 +139,7 @@
 #import <WebCore/UTIRegistry.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/UserTypingGestureIndicator.h>
+#import <WebCore/VisibleUnits.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <WebCore/markup.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -320,7 +321,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     }
 #endif
     
-    RefPtr localMainFrame = protect(corePage())->localMainFrame();
+    RefPtr localMainFrame = corePage()->localMainFrame();
     if (!localMainFrame)
         return;
     // Find the frame the point is over.
@@ -372,7 +373,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 
     IntRect rangeRect = protect(frame.view())->contentsToWindow(quads[0].enclosingBoundingBox());
 
-    const CheckedPtr style = protect(range.startContainer())->renderStyle();
+    const CheckedPtr style = range.startContainer().renderStyle();
     float scaledAscent = style ? style->metricsOfPrimaryFont().intAscent() * pageScaleFactor() : 0;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
 
@@ -474,7 +475,7 @@ void WebPage::addDictationAlternative(const String& text, DictationContext conte
         return;
     }
 
-    auto firstEditablePosition = firstPositionInNode(editableRoot.get());
+    auto firstEditablePosition = firstPositionInNode(*editableRoot);
     auto selectionEnd = selection.end();
     auto searchRange = makeSimpleRange(firstEditablePosition, selectionEnd);
     if (!searchRange) {
@@ -543,6 +544,57 @@ void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
             return FilterMarkerResult::Keep;
         return setOfContextsToRemove.contains(std::get<WebCore::DocumentMarker::DictationData>(marker.data()).context) ? FilterMarkerResult::Remove : FilterMarkerResult::Keep;
     }, DocumentMarkerType::DictationAlternatives);
+}
+
+std::optional<SimpleRange> WebPage::findDictatedTextRangeBeforeCursor(LocalFrame& frame, const String& text)
+{
+    VisiblePosition position = frame.selection().selection().start();
+    for (auto i = numGraphemeClusters(text); i; --i)
+        position = position.previous();
+    if (position.isNull())
+        position = startOfDocument(protect(frame.document()));
+
+    auto range = makeSimpleRange(position, frame.selection().selection().start());
+    if (!range || plainTextForContext(*range) != text)
+        return std::nullopt;
+    return range;
+}
+
+void WebPage::setDictationStreamingOpacity(const String& hypothesisText, WebCore::CharacterRange streamingRangeInHypothesis, float opacity)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame) {
+        WEBPAGE_RELEASE_LOG(ViewState, "setDictationStreamingOpacity - no focused frame");
+        return;
+    }
+
+    if (frame->selection().isNone() || !frame->selection().selection().isContentEditable()) {
+        WEBPAGE_RELEASE_LOG(ViewState, "setDictationStreamingOpacity - no editable selection");
+        return;
+    }
+
+    auto hypothesisRange = findDictatedTextRangeBeforeCursor(*frame, hypothesisText);
+    if (!hypothesisRange) {
+        WEBPAGE_RELEASE_LOG(ViewState, "setDictationStreamingOpacity - hypothesis text not found, expected length %u", hypothesisText.length());
+        return;
+    }
+
+    auto streamingRange = resolveCharacterRange(*hypothesisRange, streamingRangeInHypothesis);
+    if (streamingRange.collapsed()) {
+        WEBPAGE_RELEASE_LOG(ViewState, "setDictationStreamingOpacity - resolved streaming range is collapsed");
+        return;
+    }
+
+    protect(protect(frame->document())->markers())->addDictationStreamingOpacityMarker(streamingRange, opacity);
+}
+
+void WebPage::clearDictationStreamingOpacity()
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame || !frame->document())
+        return;
+
+    protect(protect(frame->document())->markers())->removeAllDictationStreamingOpacityMarkers();
 }
 
 void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
@@ -759,7 +811,7 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 
 void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
 {
-    RefPtr localFrame = protect(corePage())->localMainFrame();
+    RefPtr localFrame = corePage()->localMainFrame();
     completionHandler(localFrame ? attributedString(makeRangeSelectingNodeContents(*protect(localFrame->document())), IgnoreUserSelectNone::No) : AttributedString { });
 }
 
@@ -1130,10 +1182,10 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
     };
 
     bool hasOptedInToLinkDecorationFiltering = [&] {
-        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().activeDocumentLoader() }.get()))
+        if (isLinkDecorationFilteringEnabled(mainFrame->loader().activeDocumentLoader()))
             return true;
 
-        return isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().policyDocumentLoader() }.get());
+        return isLinkDecorationFilteringEnabled(mainFrame->loader().policyDocumentLoader());
     }();
 
     RefPtr document = mainFrame ? mainFrame->document() : nullptr;
@@ -2441,7 +2493,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
 void WebPage::updateFocusBeforeSelectingTextAtLocation(const IntPoint& point)
 {
     static constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
-    RefPtr localMainFrame = WTF::protect(m_page)->localMainFrame();
+    RefPtr localMainFrame = m_page->localMainFrame();
     if (!localMainFrame)
         return;
 
@@ -2588,7 +2640,7 @@ RefPtr<HTMLAnchorElement> WebPage::containingLinkAnchorElement(Element& element)
     // FIXME: There is code in the drag controller that supports any link, even if it's not an HTMLAnchorElement. Why is this different?
     for (Ref currentElement : lineageOfType<HTMLAnchorElement>(element)) {
         if (currentElement->isLink())
-            return currentElement;
+            return currentElement.ptr();
     }
     return nullptr;
 }
@@ -2771,7 +2823,6 @@ void WebPage::selectTextWithGranularityAtPoint(WebCore::IntPoint point, WebCore:
         return;
     }
 
-    ASSERT(!m_selectionChangedHandler);
     if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, { }))
         selectionChangedHandler();
 
@@ -2986,7 +3037,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
             constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
             auto roundedPoint = IntPoint { m_potentialTapLocation };
             auto result = localRootFrame->eventHandler().hitTestResultAtPoint(roundedPoint, hitType);
-            localRootFrame->eventHandler().setLastTouchedNode(result.innerNode());
+            localRootFrame->eventHandler().setLastTouchedNode(protect(result.innerNode()));
         }
 #endif
 

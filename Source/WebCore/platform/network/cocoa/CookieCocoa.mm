@@ -94,7 +94,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return Cookie::SameSitePolicy::None;
 }
 
-static NSHTTPCookieStringPolicy _Nullable nsSameSitePolicy(Cookie::SameSitePolicy policy)
+static NSHTTPCookieStringPolicy _Nullable NODELETE nsSameSitePolicy(Cookie::SameSitePolicy policy)
 {
     switch (policy) {
     case Cookie::SameSitePolicy::None:

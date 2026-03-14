@@ -52,7 +52,7 @@ public:
 private:
     WeakRef<Download> m_download;
 
-    double measuredThroughputRate() const;
+    double NODELETE measuredThroughputRate() const;
     uint32_t NODELETE testSpeedMultiplier() const;
     
     struct Timestamp {

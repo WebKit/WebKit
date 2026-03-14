@@ -6,6 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS Got local stream.
 PASS localStream.getAudioTracks().length is 1
 PASS localStream.getVideoTracks().length is 1
+PASS localStream.getTracks().length is 2
+PASS localStream.getTracks()[0].kind is "audio"
+PASS localStream.getTracks()[1].kind is "video"
 PASS typeof MediaStream === 'function' is true
 PASS checkIdAttribute(localStream.id) is true
 PASS new MediaStream(document) threw exception TypeError: Type error.

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static bool isValidVPProfile(uint8_t profile)
+static bool NODELETE isValidVPProfile(uint8_t profile)
 {
     return profile <= 3;
 }
@@ -63,20 +63,20 @@ static bool isValidVPLevel(uint8_t level)
     return std::binary_search(std::begin(validLevels), std::end(validLevels), level);
 }
 
-static bool isValidBitDepth(uint8_t bitDepth)
+static bool NODELETE isValidBitDepth(uint8_t bitDepth)
 {
     return bitDepth == 8
         || bitDepth == 10
         || bitDepth == 12;
 }
 
-static bool isValidRange(uint8_t range)
+static bool NODELETE isValidRange(uint8_t range)
 {
     return range == VPConfigurationRange::VideoRange
         || range == VPConfigurationRange::FullRange;
 }
 
-static bool isValidChromaSubsampling(uint8_t subsampling)
+static bool NODELETE isValidChromaSubsampling(uint8_t subsampling)
 {
     return subsampling >= VPConfigurationChromaSubsampling::Subsampling_420_Vertical
         && subsampling <= VPConfigurationChromaSubsampling::Subsampling_444;
@@ -596,7 +596,7 @@ std::optional<VPCodecConfigurationRecord> vPCodecConfigurationRecordFromVPXByteS
     return record;
 }
 
-static PlatformVideoColorPrimaries convertToPlatformVideoColorPrimaries(uint8_t primaries)
+static PlatformVideoColorPrimaries NODELETE convertToPlatformVideoColorPrimaries(uint8_t primaries)
 {
     switch (primaries) {
     case VPConfigurationColorPrimaries::BT_709_6:
@@ -627,7 +627,7 @@ static PlatformVideoColorPrimaries convertToPlatformVideoColorPrimaries(uint8_t 
     }
 }
 
-static PlatformVideoTransferCharacteristics convertToPlatformVideoTransferCharacteristics(uint8_t characteristics)
+static PlatformVideoTransferCharacteristics NODELETE convertToPlatformVideoTransferCharacteristics(uint8_t characteristics)
 {
     switch (characteristics) {
     case VPConfigurationTransferCharacteristics::BT_709_6:
@@ -668,7 +668,7 @@ static PlatformVideoTransferCharacteristics convertToPlatformVideoTransferCharac
     }
 }
 
-static PlatformVideoMatrixCoefficients convertToPlatformVideoMatrixCoefficients(uint8_t coefficients)
+static PlatformVideoMatrixCoefficients NODELETE convertToPlatformVideoMatrixCoefficients(uint8_t coefficients)
 {
     switch (coefficients) {
     case VPConfigurationMatrixCoefficients::Identity:

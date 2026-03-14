@@ -70,7 +70,7 @@ public:
         return m_members.isEmpty() || m_members.contains(representativeID());
     }
 
-    const FixedVector<AXID>& members() const { return m_members; }
+    const FixedVector<AXID>& members() const LIFETIME_BOUND { return m_members; }
     AXID representativeID() const { return m_representativeID; }
 
 private:

@@ -236,7 +236,7 @@ protected:
         bool operator!() const { return !m_structure; }
         
         Structure* structure() const { return m_structure; }
-        void* vector() const { return m_vector.getMayBeNull(); }
+        void* vector() const LIFETIME_BOUND { return m_vector.getMayBeNull(); }
         size_t length() const { return m_length; }
         size_t byteOffset() const { return m_byteOffset; }
         TypedArrayMode mode() const { return m_mode; }

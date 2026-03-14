@@ -29,14 +29,18 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementIterator.h"
 #include "HTMLDivElement.h"
+#include "HTMLLegendElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLSlotElement.h"
+#include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "NodeRenderStyle.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptElement.h"
 #include "StyleResolver.h"
+#include "Text.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -124,7 +128,7 @@ auto HTMLOptGroupElement::insertedIntoAncestor(InsertionType insertionType, Cont
         return result;
 
     if (!m_ownerSelect) {
-        if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()), HTMLSelectElement::ExcludeOptGroup::Yes)) {
+        if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
             m_ownerSelect = select.get();
             select->setRecalcListItems();
         }
@@ -146,7 +150,7 @@ void HTMLOptGroupElement::removedFromAncestor(RemovalType removalType, Container
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || !m_ownerSelect)
         return;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()), HTMLSelectElement::ExcludeOptGroup::Yes)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
         ASSERT_UNUSED(select, select == m_ownerSelect.get());
         return;
     }
@@ -239,16 +243,27 @@ void HTMLOptGroupElement::recalcSelectOptions()
 
 String HTMLOptGroupElement::groupLabelText() const
 {
+    if (document().settings().htmlEnhancedSelectEnabled() && m_legendChildCount) {
+        if (RefPtr legend = childrenOfType<HTMLLegendElement>(*this).first()) {
+            StringBuilder text;
+            for (RefPtr node = legend->firstChild(); node; node = isScriptElement(*node) ? NodeTraversal::nextSkippingChildren(*node, legend.get()) : NodeTraversal::next(*node, legend.get())) {
+                if (auto* textNode = dynamicDowncast<Text>(*node))
+                    text.append(textNode->data());
+            }
+            return text.toString().trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+        }
+    }
+
     String itemText = protect(document())->displayStringModifiedByEncoding(attributeWithoutSynchronization(labelAttr));
-    
+
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
     itemText = itemText.trim(deprecatedIsSpaceOrNewline);
     // We want to collapse our whitespace too.  This will match other browsers.
     itemText = itemText.simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
-        
+
     return itemText;
 }
-    
+
 HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
 {
     if (!document().settings().htmlEnhancedSelectParsingEnabled())
@@ -266,4 +281,4 @@ bool HTMLOptGroupElement::accessKeyAction(bool)
     return false;
 }
 
-} // namespace
+} // namespace WebCore

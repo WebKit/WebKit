@@ -30,6 +30,7 @@
 #include "HTMLNames.h"
 #include "Icon.h"
 #include "InlineIteratorInlineBox.h"
+#include "InlineIteratorTextBox.h"
 #include "LocalizedStrings.h"
 #include "NodeInlines.h"
 #include "PaintInfo.h"
@@ -192,7 +193,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                         textVisualRect.setLocation(buttonTextRenderer->localToContainerPoint(textVisualRect.location(), this));
                         textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, document().deviceScaleFactor()));
 
-                        auto metrics = textBox->style().fontCascade().metricsOfPrimaryFont();
+                        auto metrics = textBox->style()->fontCascade().metricsOfPrimaryFont();
 
                         if (!isHorizontalWritingMode) {
                             if (isBlockFlipped)

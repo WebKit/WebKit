@@ -56,7 +56,7 @@ std::optional<SVGPathSegType> SVGPathSegListSource::parseSVGSegmentType()
 std::optional<SVGPathSource::MoveToSegment> SVGPathSegListSource::parseMoveToSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr moveTo = downcast<SVGPathSegMoveto>(m_segment.get());
+    auto* moveTo = downcast<SVGPathSegMoveto>(m_segment.get());
 
     MoveToSegment segment;
     segment.targetPoint = FloatPoint(moveTo->x(), moveTo->y());
@@ -66,7 +66,7 @@ std::optional<SVGPathSource::MoveToSegment> SVGPathSegListSource::parseMoveToSeg
 std::optional<SVGPathSource::LineToSegment> SVGPathSegListSource::parseLineToSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr lineTo = downcast<SVGPathSegLineto>(m_segment.get());
+    auto* lineTo = downcast<SVGPathSegLineto>(m_segment.get());
 
     LineToSegment segment;
     segment.targetPoint = FloatPoint(lineTo->x(), lineTo->y());
@@ -76,7 +76,7 @@ std::optional<SVGPathSource::LineToSegment> SVGPathSegListSource::parseLineToSeg
 std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathSegListSource::parseLineToHorizontalSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr horizontal = downcast<SVGPathSegLinetoHorizontal>(m_segment.get());
+    auto* horizontal = downcast<SVGPathSegLinetoHorizontal>(m_segment.get());
     
     LineToHorizontalSegment segment;
     segment.x = horizontal->x();
@@ -86,7 +86,7 @@ std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathSegListSource::pars
 std::optional<SVGPathSource::LineToVerticalSegment> SVGPathSegListSource::parseLineToVerticalSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr vertical = downcast<SVGPathSegLinetoVertical>(m_segment.get());
+    auto* vertical = downcast<SVGPathSegLinetoVertical>(m_segment.get());
     
     LineToVerticalSegment segment;
     segment.y = vertical->y();
@@ -96,7 +96,7 @@ std::optional<SVGPathSource::LineToVerticalSegment> SVGPathSegListSource::parseL
 std::optional<SVGPathSource::CurveToCubicSegment> SVGPathSegListSource::parseCurveToCubicSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr cubic = downcast<SVGPathSegCurvetoCubic>(m_segment.get());
+    auto* cubic = downcast<SVGPathSegCurvetoCubic>(m_segment.get());
 
     CurveToCubicSegment segment;
     segment.point1 = FloatPoint(cubic->x1(), cubic->y1());
@@ -108,7 +108,7 @@ std::optional<SVGPathSource::CurveToCubicSegment> SVGPathSegListSource::parseCur
 std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathSegListSource::parseCurveToCubicSmoothSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr cubicSmooth = downcast<SVGPathSegCurvetoCubicSmooth>(m_segment.get());
+    auto* cubicSmooth = downcast<SVGPathSegCurvetoCubicSmooth>(m_segment.get());
 
     CurveToCubicSmoothSegment segment;
     segment.point2 = FloatPoint(cubicSmooth->x2(), cubicSmooth->y2());
@@ -119,7 +119,7 @@ std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathSegListSource::pa
 std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathSegListSource::parseCurveToQuadraticSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr quadratic = downcast<SVGPathSegCurvetoQuadratic>(m_segment.get());
+    auto* quadratic = downcast<SVGPathSegCurvetoQuadratic>(m_segment.get());
 
     CurveToQuadraticSegment segment;
     segment.point1 = FloatPoint(quadratic->x1(), quadratic->y1());
@@ -130,7 +130,7 @@ std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathSegListSource::pars
 std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathSegListSource::parseCurveToQuadraticSmoothSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr quadraticSmooth = downcast<SVGPathSegCurvetoQuadraticSmooth>(m_segment.get());
+    auto* quadraticSmooth = downcast<SVGPathSegCurvetoQuadraticSmooth>(m_segment.get());
 
     CurveToQuadraticSmoothSegment segment;
     segment.targetPoint = FloatPoint(quadraticSmooth->x(), quadraticSmooth->y());
@@ -140,7 +140,7 @@ std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathSegListSource
 std::optional<SVGPathSource::ArcToSegment> SVGPathSegListSource::parseArcToSegment(FloatPoint)
 {
     ASSERT(m_segment);
-    RefPtr arcTo = downcast<SVGPathSegArc>(m_segment.get());
+    auto* arcTo = downcast<SVGPathSegArc>(m_segment.get());
 
     ArcToSegment segment;
     segment.rx = arcTo->r1();

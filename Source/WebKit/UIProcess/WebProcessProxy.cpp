@@ -167,7 +167,7 @@ using namespace WebCore;
 
 static unsigned s_maxProcessCount { 400 };
 
-static WeakListHashSet<WebProcessProxy>& liveProcessesLRU()
+static WeakListHashSet<WebProcessProxy>& NODELETE liveProcessesLRU()
 {
     ASSERT(RunLoop::isMain());
     static NeverDestroyed<WeakListHashSet<WebProcessProxy>> processes;
@@ -475,7 +475,7 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
 
 bool WebProcessProxy::isDummyProcessProxy() const
 {
-    return m_websiteDataStore && protect(processPool())->dummyProcessProxy(m_websiteDataStore->sessionID()) == this;
+    return m_websiteDataStore && processPool().dummyProcessProxy(m_websiteDataStore->sessionID()) == this;
 }
 
 void WebProcessProxy::updateRegistrationWithDataStore()
@@ -588,7 +588,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 #endif
 
     if (processPool().shouldMakeNextWebProcessLaunchFailForTesting()) {
-        protect(processPool())->setShouldMakeNextWebProcessLaunchFailForTesting(false);
+        processPool().setShouldMakeNextWebProcessLaunchFailForTesting(false);
         launchOptions.shouldMakeProcessLaunchFailForTesting = true;
     }
 
@@ -693,7 +693,7 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 #if HAVE(DISPLAY_LINK)
     m_displayLinkClient->setConnection(nullptr);
-    Ref<WebProcessPool> { processPool() }->displayLinks().stopDisplayLinks(m_displayLinkClient.get());
+    processPool().displayLinks().stopDisplayLinks(m_displayLinkClient.get());
 #endif
 }
 
@@ -706,22 +706,22 @@ std::optional<unsigned> WebProcessProxy::nominalFramesPerSecondForDisplay(WebCor
 void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    protect(processPool())->displayLinks().startDisplayLink(m_displayLinkClient.get(), observerID, displayID, preferredFramesPerSecond);
+    processPool().displayLinks().startDisplayLink(m_displayLinkClient.get(), observerID, displayID, preferredFramesPerSecond);
 }
 
 void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
 {
-    protect(processPool())->displayLinks().stopDisplayLink(m_displayLinkClient.get(), observerID, displayID);
+    processPool().displayLinks().stopDisplayLink(m_displayLinkClient.get(), observerID, displayID);
 }
 
 void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
-    protect(processPool())->displayLinks().setDisplayLinkPreferredFramesPerSecond(m_displayLinkClient.get(), observerID, displayID, preferredFramesPerSecond);
+    processPool().displayLinks().setDisplayLinkPreferredFramesPerSecond(m_displayLinkClient.get(), observerID, displayID, preferredFramesPerSecond);
 }
 
 void WebProcessProxy::setDisplayLinkForDisplayWantsFullSpeedUpdates(WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
 {
-    protect(processPool())->displayLinks().setDisplayLinkForDisplayWantsFullSpeedUpdates(m_displayLinkClient.get(), displayID, wantsFullSpeedUpdates);
+    processPool().displayLinks().setDisplayLinkForDisplayWantsFullSpeedUpdates(m_displayLinkClient.get(), displayID, wantsFullSpeedUpdates);
 }
 #endif
 
@@ -731,7 +731,7 @@ void WebProcessProxy::shutDown()
     WEBPROCESSPROXY_RELEASE_LOG(Process, "shutDown:");
 
     if (m_isInProcessCache) {
-        protect(processPool())->webProcessCache().removeProcess(*this, WebProcessCache::ShouldShutDownProcess::No);
+        processPool().webProcessCache().removeProcess(*this, WebProcessCache::ShouldShutDownProcess::No);
         ASSERT(!m_isInProcessCache);
     }
 
@@ -781,7 +781,7 @@ WebPageProxy* WebProcessProxy::webPage(PageIdentifier pageID)
 WebPageProxy* WebProcessProxy::audioCapturingWebPage()
 {
     for (WeakRef page : globalPageMap().values()) {
-        if (protect(page)->hasActiveAudioStream())
+        if (page->hasActiveAudioStream())
             return page.ptr();
     }
     return nullptr;
@@ -883,7 +883,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
-    protect(websiteDataStore())->propagateSettingUpdates();
+    websiteDataStore()->propagateSettingUpdates();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
     // to update our process assertions on the network process since standalone worker processes do not hold
@@ -929,7 +929,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-    protect(websiteDataStore())->propagateSettingUpdates();
+    websiteDataStore()->propagateSettingUpdates();
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(protect(*this));
@@ -1172,7 +1172,7 @@ void WebProcessProxy::gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnec
     if (identifier != m_gpuProcessConnectionIdentifier)
         return;
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessConnectionDidBecomeUnresponsive");
-    if (RefPtr process = protect(processPool())->gpuProcess())
+    if (RefPtr process = processPool().gpuProcess())
         process->childConnectionDidBecomeUnresponsive();
 }
 
@@ -1645,7 +1645,7 @@ void WebProcessProxy::maybeShutDown()
     if (state() == State::Terminated || !canTerminateAuxiliaryProcess())
         return;
 
-    if (canBeAddedToWebProcessCache() && protect(processPool())->webProcessCache().addProcessIfPossible(*this))
+    if (canBeAddedToWebProcessCache() && protect(processPool().webProcessCache())->addProcessIfPossible(*this))
         return;
 
     shutDown();
@@ -1668,7 +1668,7 @@ bool WebProcessProxy::canTerminateAuxiliaryProcess()
         return false;
     }
 
-    if (!protect(processPool())->shouldTerminate(*this)) {
+    if (!processPool().shouldTerminate(*this)) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canTerminateAuxiliaryProcess: returns false because process termination is disabled");
         return false;
     }
@@ -2174,7 +2174,7 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(uint64_t footprint)
         else if (domain != pageDomain)
             domain = "multiple"_s;
 
-        wasPrivateRelayed = wasPrivateRelayed || protect(page->pageLoadState())->wasPrivateRelayed();
+        wasPrivateRelayed = wasPrivateRelayed || page->pageLoadState().wasPrivateRelayed();
         hasAllowedToRunInTheBackgroundActivity = hasAllowedToRunInTheBackgroundActivity || page->hasAllowedToRunInTheBackgroundActivity();
     }
 
@@ -2300,7 +2300,7 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
         m_sharedProcessMainFrameSite = mainFrameSite;
         return;
     }
-    ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
+    ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site || !m_hasCommittedAnyProvisionalLoads) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
     m_site = *site;
 }
 
@@ -2345,12 +2345,12 @@ bool WebProcessProxy::isAssociatedWithPage(WebPageProxyIdentifier pageID) const
 {
     if (m_pageMap.contains(pageID))
         return true;
-    for (Ref provisionalPage : m_provisionalPages) {
-        if (provisionalPage->page() && provisionalPage->page()->identifier() == pageID)
+    for (auto& provisionalPage : m_provisionalPages) {
+        if (provisionalPage.page() && provisionalPage.page()->identifier() == pageID)
             return true;
     }
-    for (Ref suspendedPage : m_suspendedPages) {
-        if (suspendedPage->page() && suspendedPage->page()->identifier() == pageID)
+    for (auto& suspendedPage : m_suspendedPages) {
+        if (suspendedPage.page() && suspendedPage.page()->identifier() == pageID)
             return true;
     }
     return false;

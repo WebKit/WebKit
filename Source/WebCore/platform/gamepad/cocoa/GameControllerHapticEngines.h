@@ -61,7 +61,7 @@ public:
 private:
     explicit GameControllerHapticEngines(GCController *);
 
-    RefPtr<GameControllerHapticEffect>& currentEffectForType(GamepadHapticEffectType);
+    RefPtr<GameControllerHapticEffect>& NODELETE currentEffectForType(GamepadHapticEffectType);
 
     const RetainPtr<CHHapticEngine> m_leftHandleEngine;
     const RetainPtr<CHHapticEngine> m_rightHandleEngine;

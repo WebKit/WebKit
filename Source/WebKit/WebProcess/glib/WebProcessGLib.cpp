@@ -112,6 +112,10 @@ void WebProcess::stopRunLoop()
     if (auto* display = PlatformDisplay::sharedDisplayIfExists())
         display->clearGLContexts();
 
+#if USE(ATSPI)
+    AccessibilityAtspi::singleton().disconnect();
+#endif
+
     AuxiliaryProcess::stopRunLoop();
 }
 

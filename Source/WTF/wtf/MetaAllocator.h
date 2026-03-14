@@ -101,7 +101,7 @@ public:
         Locker locker { m_lock };
         return currentStatistics(locker);
     }
-    WTF_EXPORT_PRIVATE Statistics currentStatistics(const Locker<Lock>&);
+    WTF_EXPORT_PRIVATE Statistics NODELETE currentStatistics(const Locker<Lock>&);
 
     // Add more free space to the allocator. Call this directly from
     // the constructor if you wish to operate the allocator within a
@@ -189,8 +189,8 @@ private:
     
     size_t NODELETE roundUp(size_t sizeInBytes);
     
-    FreeSpaceNode* allocFreeSpaceNode();
-    WTF_EXPORT_PRIVATE void freeFreeSpaceNode(CheckedPtr<FreeSpaceNode>&&);
+    FreeSpaceNode* NODELETE allocFreeSpaceNode();
+    WTF_EXPORT_PRIVATE void NODELETE freeFreeSpaceNode(CheckedPtr<FreeSpaceNode>&&);
     
     size_t m_allocationGranule;
     size_t m_pageSize;

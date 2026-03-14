@@ -1,0 +1,16 @@
+Tests that immediateDescendantsOnly AnyType search correctly finds elements after a cross-process iframe.
+VoiceOver obtains the iframe's FrameHost element via the remote element parent chain.
+Without the fix, the search loops back to the first element.
+
+PASS: frameHost.rawRoleForTesting.includes('FrameHost') === true
+
+Elements after FrameHost (immediateDescendantsOnly=true):
+  1: AXRole: AXButton
+
+PASS: foundButtonAfter === true
+PASS: First result after FrameHost is the button (no loop-back).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+    Button After Iframe

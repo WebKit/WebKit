@@ -139,9 +139,6 @@ SWIFT_OBJC_INTEROP_MODE = $(WK_SWIFT_OBJC_INTEROP_MODE_$(ENABLE_WEBGPU_SWIFT))
 WK_SWIFT_OBJC_INTEROP_MODE_ENABLE_WEBGPU_SWIFT = objcxx;
 SWIFT_LIBRARY_LEVEL = spi;
 
-// FIXME: reenable this once rdar://154887575 lands
-// SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES
-
 // FIXME: broaden SafeInteropWrappers to all of WebKit; rdar://159439903
 OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebGPU/platform-enabled-swift-args.$(arch).resp -Xcc -std=c++2b -Xcc -D__WEBGPU__ -Xcc -DUCHAR_TYPE=char16_t -enable-experimental-feature SafeInteropWrappers -enable-experimental-feature LifetimeDependence -Xcc -fvisibility=hidden -no-verify-emitted-module-interface;
 

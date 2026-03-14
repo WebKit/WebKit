@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableCellElement.h"
+#include "LocalFrame.h"
 #include "MathMLNames.h"
 #include "MouseEvent.h"
 #include "NodeName.h"

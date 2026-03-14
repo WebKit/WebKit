@@ -106,7 +106,7 @@ unsigned WebInspectorUIProxy::inspectionLevel() const
 WebPreferences& WebInspectorUIProxy::inspectorPagePreferences() const
 {
     ASSERT(m_inspectorPage);
-    return protect(inspectorPage())->pageGroup().preferences();
+    return inspectorPage()->pageGroup().preferences();
 }
 
 void WebInspectorUIProxy::invalidate()

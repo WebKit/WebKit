@@ -73,7 +73,7 @@ public:
     using CreateCallback = Function<void(CreateResult&&)>;
 
     using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&);
-    WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
+    WEBCORE_EXPORT static void NODELETE setCreatorCallback(CreatorFunction&&);
 
     static Ref<CreatePromise> create(const String&, const Config&, OutputCallback&&);
     WEBCORE_EXPORT static void createLocalDecoder(const String&, const Config&, CreateCallback&&, OutputCallback&&);

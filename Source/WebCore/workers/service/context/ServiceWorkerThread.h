@@ -58,7 +58,7 @@ public:
     static Ref<ServiceWorkerThread> create(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, const SettingsValues&, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerBadgeProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>);
     virtual ~ServiceWorkerThread();
 
-    WorkerObjectProxy& workerObjectProxy() const;
+    WorkerObjectProxy& NODELETE workerObjectProxy() const;
 
     void start(Function<void(const String&, bool)>&&);
 
@@ -106,9 +106,9 @@ private:
 
     void finishedFiringInstallEvent(bool hasRejectedAnyPromise);
     void finishedFiringActivateEvent();
-    void finishedFiringMessageEvent();
-    void finishedFiringPushSubscriptionChangeEvent();
-    void finishedStarting();
+    void NODELETE finishedFiringMessageEvent();
+    void NODELETE finishedFiringPushSubscriptionChangeEvent();
+    void NODELETE finishedStarting();
 
     void startHeartBeatTimer();
     void heartBeatTimerFired();

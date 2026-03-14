@@ -24,7 +24,7 @@
 #if USE_APPLE_INTERNAL_SDK || (!os(tvOS) && !os(watchOS))
 
 import Foundation
-internal import WebKit_Internal
+import WebKit_Internal
 
 @objc
 @implementation

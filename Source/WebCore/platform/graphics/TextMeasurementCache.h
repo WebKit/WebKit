@@ -87,7 +87,7 @@ private:
             m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(std::span<const char16_t> { m_characters }.first(s_capacity)) | (length << 24);
         }
 
-        const char16_t* characters() const { return m_characters.data(); }
+        const char16_t* characters() const LIFETIME_BOUND { return m_characters.data(); }
         unsigned length() const { return m_hashAndLength >> 24; }
         unsigned hash() const { return m_hashAndLength & 0x00ffffffU; }
 

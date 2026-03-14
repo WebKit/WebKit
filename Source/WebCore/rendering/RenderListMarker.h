@@ -64,6 +64,7 @@ public:
 
     bool NODELETE isInside() const;
     bool isDisclosureMarker() const;
+    bool shouldPaintInAssociatedListItemLayer() const;
 
     void updateInlineMarginsAndContent();
 
@@ -71,6 +72,7 @@ public:
 
     LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
     const RenderListItem* NODELETE listItem() const;
+    void paintFromAssociatedListItemLayer(PaintInfo&, const LayoutPoint&);
 
     std::pair<float, float> layoutBounds() const { return m_layoutBounds; }
 

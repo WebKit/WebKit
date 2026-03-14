@@ -622,7 +622,7 @@ InlineLayoutUnit TextUtil::hyphenWidth(const RenderStyle& style)
     return std::max(0.f, protect(style.fontCascade())->width(StringView { style.hyphenString() }));
 }
 
-static bool isASCIIHangableQuote(char32_t character)
+static bool NODELETE isASCIIHangableQuote(char32_t character)
 {
     return character == quotationMark || character == apostrophe;
 }

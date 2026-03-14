@@ -154,8 +154,8 @@ void AnchorScrollAdjuster::addSnapshot(const RenderBox& scroller)
 
 void AnchorScrollAdjuster::addViewportSnapshot(const RenderView& renderView)
 {
-    auto& view = renderView.frameView();
-    auto position = view.constrainedScrollPosition(ScrollPosition(view.scrollPositionRespectingCustomFixedPosition()));
+    CheckedRef view = renderView.frameView();
+    auto position = view->constrainedScrollPosition(ScrollPosition(view->scrollPositionRespectingCustomFixedPosition()));
     m_scrollSnapshots.insert(0, AnchorScrollSnapshot { position });
     m_adjustForViewport = true;
 }
@@ -165,9 +165,9 @@ LayoutSize AnchorScrollAdjuster::adjustmentForViewport(const RenderView& renderV
     if (m_adjustForViewport) {
         // Viewport snapshot is stored in the first slot.
         ASSERT(m_scrollSnapshots.size() && !m_scrollSnapshots.first().m_scroller);
-        auto& view = renderView.frameView();
+        CheckedRef view = renderView.frameView();
         return m_scrollSnapshots.first().m_scrollSnapshot
-            - view.constrainedScrollPosition(IntPoint(view.scrollPositionRespectingCustomFixedPosition()));
+            - view->constrainedScrollPosition(IntPoint(view->scrollPositionRespectingCustomFixedPosition()));
     }
     return { };
 }
@@ -541,8 +541,8 @@ LayoutRect AnchorPositionEvaluator::computeAnchorRectRelativeToContainingBlock(C
             }
         }
         if (!isFixedAnchor) {
-            auto& view = anchorBox->view().frameView();
-            anchorLocation.moveBy(-view.constrainedScrollPosition(ScrollPosition(view.scrollPositionRespectingCustomFixedPosition())));
+            CheckedRef view = anchorBox->view().frameView();
+            anchorLocation.moveBy(-view->constrainedScrollPosition(ScrollPosition(view->scrollPositionRespectingCustomFixedPosition())));
         }
     }
 

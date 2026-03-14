@@ -35,7 +35,7 @@ namespace RFC8941 {
 class Token {
 public:
     explicit Token(String&& token) : m_token(WTF::move(token)) { }
-    const String& string() const { return m_token; }
+    const String& string() const LIFETIME_BOUND { return m_token; }
 private:
     String m_token;
 };
@@ -47,7 +47,7 @@ public:
     Parameters() = default;
     explicit Parameters(HashMap<String, BareItem>&& parameters)
         : m_parameters(WTF::move(parameters)) { }
-    const HashMap<String, BareItem>& map() const { return m_parameters; }
+    const HashMap<String, BareItem>& map() const LIFETIME_BOUND { return m_parameters; }
     template<typename T> const T* getIf(ASCIILiteral key) const;
 private:
     HashMap<String, BareItem> m_parameters;

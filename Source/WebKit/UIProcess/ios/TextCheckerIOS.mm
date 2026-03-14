@@ -397,16 +397,21 @@ static Vector<TextCheckingResult> convertExtendedCheckingResults(NSArray<NSTextC
 void TextChecker::requestExtendedCheckingOfString(Ref<TextCheckerCompletion>&& textCheckerCompletion, int32_t)
 {
     auto textChecker = textCheckerFor(1);
-    if (![textChecker _doneLoading])
+    if (![textChecker _doneLoading]) {
+        textCheckerCompletion->didFinishCheckingText({ });
         return;
-    if (![textChecker respondsToSelector:@selector(requestProofreadingReviewOfString:range:language:options:completionHandler:)])
+    }
+
+    if (![textChecker respondsToSelector:@selector(requestProofreadingReviewOfString:range:language:options:completionHandler:)]) {
+        textCheckerCompletion->didFinishCheckingText({ });
         return;
+    }
 
     RetainPtr textString = textCheckerCompletion->textCheckingRequestData().text().createNSString();
     NSRange range = NSMakeRange(0, textCheckerCompletion->textCheckingRequestData().text().length());
-    [textChecker requestProofreadingReviewOfString:textString.get() range:range language:nil options:@{ } completionHandler:makeBlockPtr([textCompletion = WTF::move(textCheckerCompletion)](NSArray<NSTextCheckingResult *> *incomingResults) {
+    [textChecker requestProofreadingReviewOfString:textString.get() range:range language:nil options:@{ } completionHandler:makeBlockPtr([textCompletion = WTF::move(textCheckerCompletion)](NSArray<NSTextCheckingResult *> *incomingResults) mutable {
         auto results = convertExtendedCheckingResults(incomingResults);
-        callOnMainRunLoop([textCompletion, results] {
+        callOnMainRunLoop([textCompletion = WTF::move(textCompletion), results = crossThreadCopy(WTF::move(results))] {
             textCompletion->didFinishCheckingText(results);
         });
     }).get()];

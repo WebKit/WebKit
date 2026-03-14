@@ -165,7 +165,7 @@ bool WebBackForwardListFrameItem::sharesAncestor(WebBackForwardListFrameItem& fr
     for (RefPtr currentAncestor = m_parent.get(); currentAncestor; currentAncestor = currentAncestor->m_parent.get())
         currentAncestors.add(currentAncestor->m_identifier);
 
-    for (RefPtr frameItemAncestor = frameItem.m_parent.get(); frameItemAncestor; frameItemAncestor = frameItemAncestor->m_parent.get()) {
+    for (auto* frameItemAncestor = frameItem.m_parent.get(); frameItemAncestor; frameItemAncestor = frameItemAncestor->m_parent.get()) {
         if (currentAncestors.contains(frameItemAncestor->m_identifier))
             return true;
     }

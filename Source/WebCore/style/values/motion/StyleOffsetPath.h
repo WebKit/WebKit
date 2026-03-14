@@ -144,7 +144,7 @@ inline std::optional<BoxPath> OffsetPath::tryBox() const
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<OffsetPath> { auto operator()(BuilderState&, const CSSValue&) -> OffsetPath; };
+template<> struct CSSValueConversion<OffsetPath> { OffsetPath operator()(BuilderState&, const CSSValue&); };
 template<> struct CSSValueCreation<OffsetPath> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const OffsetPath&); };
 
 // MARK: - Serialization
@@ -160,7 +160,7 @@ template<> struct Blending<OffsetPath> {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<OffsetPath> { auto operator()(const OffsetPath&) -> RefPtr<PathOperation>; };
+template<> struct ToPlatform<OffsetPath> { RefPtr<PathOperation> NODELETE operator()(const OffsetPath&); };
 
 } // namespace Style
 } // namespace WebCore

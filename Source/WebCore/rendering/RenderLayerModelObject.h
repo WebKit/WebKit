@@ -54,7 +54,7 @@ public:
     void destroyLayer();
 
     bool NODELETE hasSelfPaintingLayer() const;
-    RenderLayer* layer() const { return m_layer.get(); }
+    RenderLayer* layer() const LIFETIME_BOUND { return m_layer.get(); }
 
     void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
@@ -120,6 +120,7 @@ public:
 
     void paintSVGClippingMask(PaintInfo&, const FloatRect& objectBoundingBox) const;
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
+    void paintSVGEventRegion(PaintInfo&, const LayoutPoint& paintOffset);
 
     TransformationMatrix* NODELETE layerTransform() const;
 
@@ -130,6 +131,10 @@ public:
     virtual void invalidateCachedVisualOverflowRect() { }
 
     inline bool shouldUsePositionedClipping() const;
+
+#if ASSERT_ENABLED
+    bool layerAccessPreventedSlow() const;
+#endif
 
 protected:
     RenderLayerModelObject(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);

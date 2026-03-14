@@ -23,10 +23,10 @@
 
 #if ENABLE_SWIFTUI
 
-internal import SwiftUI
-internal import os
+import SwiftUI
+import os
 @_spi(CrossImportOverlay) import WebKit
-internal import WebKit_Private.WKPreferencesPrivate
+import WebKit_Private.WKPreferencesPrivate
 
 extension Logger {
     fileprivate static let webView = Logger(subsystem: "com.apple.WebKit", category: "SwiftUIWebView")

@@ -23,7 +23,9 @@
         if (window.testRunner) {
             testRunner.setOpenPanelFiles(['foo.txt']);
             testRunner.setOpenPanelFilesMediaIcon(testIconBytes);
-            UIHelper.activateElement(fileInput);
+            (async () => {
+                await UIHelper.activateElement(fileInput);
+            })();
         }
     </script>
     <script src=../../../resources/js-test-post.js></script>

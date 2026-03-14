@@ -41,8 +41,8 @@ public:
     WebXRGamepad(double timestamp, double connectTime, const PlatformXR::FrameData::InputSource&);
 
 private:
-    const Vector<SharedGamepadValue>& axisValues() const final { return m_axes; }
-    const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttons; }
+    const Vector<SharedGamepadValue>& axisValues() const LIFETIME_BOUND final { return m_axes; }
+    const Vector<SharedGamepadValue>& buttonValues() const LIFETIME_BOUND final { return m_buttons; }
 
     Vector<SharedGamepadValue> m_axes;
     Vector<SharedGamepadValue> m_buttons;

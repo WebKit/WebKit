@@ -106,7 +106,7 @@ void WebsiteDataRecord::addResourceLoadStatisticsRegistrableDomain(const WebCore
     resourceLoadStatisticsRegistrableDomains.add(domain);
 }
 
-static inline bool hostIsInDomain(StringView host, StringView domain)
+static inline bool NODELETE hostIsInDomain(StringView host, StringView domain)
 {
     if (!host.endsWithIgnoringASCIICase(domain))
         return false;

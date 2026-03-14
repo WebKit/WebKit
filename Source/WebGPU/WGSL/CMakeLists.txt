@@ -44,6 +44,7 @@ add_custom_target(wgsl-types
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h)
 
 set(wgslc_SOURCES
+    AliasAnalysis.cpp
     AttributeValidator.cpp
     BoundsCheck.cpp
     CallGraph.cpp
@@ -63,6 +64,7 @@ set(wgslc_SOURCES
     TypeCheck.cpp
     TypeStore.cpp
     Types.cpp
+    UniformityAnalysis.cpp
     VisibilityValidator.cpp
     WGSL.cpp
     WGSLEnums.cpp
@@ -81,6 +83,7 @@ set(wgslc_SOURCES
     )
 
 set(wgslc_HEADERS
+    AliasAnalysis.h
     API.h
     AttributeValidator.h
     BoundsCheck.h
@@ -107,6 +110,7 @@ set(wgslc_HEADERS
     TypeCheck.h
     TypeStore.h
     Types.h
+    UniformityAnalysis.h
     VisibilityValidator.h
     WGSL.h
     WGSLEnums.h

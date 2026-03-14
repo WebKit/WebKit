@@ -207,6 +207,7 @@ IDBStorageManager::IDBStorageManager(const String& path, IDBStorageRegistry& reg
 
 IDBStorageManager::~IDBStorageManager()
 {
+    m_isClosing = true;
     for (auto& database : m_databases.values())
         database->immediateClose();
 }
@@ -352,6 +353,8 @@ std::unique_ptr<WebCore::IDBServer::IDBBackingStore> IDBStorageManager::createBa
 
 void IDBStorageManager::requestSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&& completionHandler)
 {
+    if (m_isClosing)
+        return completionHandler(size ? false : true);
     m_quotaCheckFunction(size, WTF::move(completionHandler));
 }
 

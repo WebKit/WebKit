@@ -40,7 +40,7 @@ struct ColumnCount : ValueOrKeyword<Integer<CSS::Range{1,CSS::Range::infinity}, 
 // MARK: - Blending
 
 template<> struct Blending<ColumnCount> {
-    auto canBlend(const ColumnCount&, const ColumnCount&) -> bool;
+    bool NODELETE canBlend(const ColumnCount&, const ColumnCount&);
     auto blend(const ColumnCount&, const ColumnCount&, const BlendingContext&) -> ColumnCount;
 };
 

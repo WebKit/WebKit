@@ -431,7 +431,7 @@ TEST(DragAndDropTests, CanDragImageWhenNotFirstResponder)
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 250)];
 
     NSURL *droppedImageURL = [NSURL URLWithString:[webView stringByEvaluatingJavaScript:@"editor.querySelector('img').src"]];
-    EXPECT_WK_STREQ("blob", droppedImageURL.scheme);
+    EXPECT_WK_STREQ("data", droppedImageURL.scheme);
 }
 
 TEST(DragAndDropTests, ContentEditableMoveParagraphs)
@@ -2373,6 +2373,19 @@ TEST(DragAndDropTests, CanHitTestNestedStageModeModel)
     EXPECT_TRUE([simulator stageModeHitTestValidModel]);
 }
 #endif
+
+TEST(DragAndDropTests, DragEnterAndLeaveRelatedTarget)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"drag-relatedTarget"];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(160, 90) to:CGPointMake(160, 400)];
+
+    EXPECT_WK_STREQ("null", [webView stringByEvaluatingJavaScript:@"enterARelatedTarget"]);
+    EXPECT_WK_STREQ("zoneB", [webView stringByEvaluatingJavaScript:@"leaveARelatedTarget"]);
+    EXPECT_WK_STREQ("zoneA", [webView stringByEvaluatingJavaScript:@"enterBRelatedTarget"]);
+}
 
 } // namespace TestWebKitAPI
 

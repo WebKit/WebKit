@@ -41,6 +41,7 @@
 #include "LineSelection.h"
 #include "LocalFrame.h"
 #include "PositionedLayoutConstraints.h"
+#include "PaintInfoInlines.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
@@ -259,13 +260,9 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
         if (isRenderOrLegacyRenderSVGRoot() && !isSkippedContentRoot(*this))
             paintReplaced(paintInfo, adjustedPaintOffset);
         else if (visibleToHitTesting()) {
-#else
-        if (visibleToHitTesting()) {
-#endif
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
             auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
             paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(document().deviceScaleFactor()), *this, style());
@@ -420,7 +417,7 @@ bool RenderReplaced::hasReplacedLogicalHeight() const
     if (style().logicalHeight().isPercentOrCalculated())
         return !hasAutoHeightOrContainingBlockWithAutoHeight();
 
-    if (style().logicalHeight().isIntrinsic())
+    if (style().logicalHeight().isIntrinsicOrStretch())
         return !style().aspectRatio().hasRatio();
 
     return false;
@@ -432,7 +429,7 @@ bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
 
     // If the actual area occupied by the image has changed and it is not constrained by style then a layout is required.
     bool imageSizeIsConstrained = style().logicalWidth().isSpecified() && style().logicalHeight().isSpecified()
-        && !style().logicalMinWidth().isIntrinsic() && !style().logicalMaxWidth().isIntrinsic()
+        && !style().logicalMinWidth().isIntrinsicOrStretch() && !style().logicalMaxWidth().isIntrinsicOrStretch()
         && !hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants::No);
 
     // FIXME: We only need to recompute the containing block's preferred size
@@ -470,9 +467,11 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         intrinsicSize = RenderReplaced::computeIntrinsicSize();
         preferredAspectRatio = RenderReplaced::preferredAspectRatio();
     } else if (contentRenderer) {
+        bool contentIsRenderReplaced = false;
         if (auto* renderReplaced = dynamicDowncast<RenderReplaced>(contentRenderer)) {
             intrinsicSize = renderReplaced->computeIntrinsicSize();
             preferredAspectRatio = renderReplaced->preferredAspectRatio();
+            contentIsRenderReplaced = true;
         }
         if (style().aspectRatio().isRatio() || (style().aspectRatio().isAutoAndRatio() && preferredAspectRatio.isEmpty()))
             preferredAspectRatio = FloatSize::narrowPrecision(style().aspectRatio().width().value, style().aspectRatio().height().value);
@@ -486,7 +485,20 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         // Update our intrinsic size to match what the content renderer has computed, so that when we
         // constrain the size below, the correct intrinsic size will be obtained for comparison against
         // min and max widths.
-        if (!preferredAspectRatio.isEmpty() && !intrinsicSize.isZero())
+        if (contentIsRenderReplaced && isRenderWidget()) {
+            // For RenderWidget content (e.g. <object> embedding an SVG document), always update
+            // m_intrinsicSize to reflect current intrinsic dimensions, applying CSS default fallback
+            // values (300x150) for dimensions with no intrinsic value (e.g. percentage-sized or
+            // removed attributes). This prevents stale cached sizes when attributes like width/height
+            // are removed. Note: this does not apply to RenderImage (<img src="svg">), which manages
+            // its own intrinsic size via setIntrinsicSize() during image load.
+            auto sizeToCache = intrinsicSize;
+            if (!sizeToCache.width())
+                sizeToCache.setWidth(cDefaultWidth);
+            if (!sizeToCache.height())
+                sizeToCache.setHeight(cDefaultHeight);
+            m_intrinsicSize = LayoutSize(sizeToCache);
+        } else if (!preferredAspectRatio.isEmpty() && !intrinsicSize.isZero())
             m_intrinsicSize = LayoutSize(intrinsicSize);
 
         if (!isHorizontalWritingMode()) {
@@ -681,14 +693,14 @@ void RenderReplaced::computeAspectRatioAdjustedIntrinsicLogicalWidths(LayoutUnit
     maxLogicalWidth = minLogicalWidth;
 }
 
-static inline LayoutUnit resolveWidthForRatio(LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit logicalHeight, double aspectRatio, BoxSizing boxSizing)
+static inline LayoutUnit NODELETE resolveWidthForRatio(LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit logicalHeight, double aspectRatio, BoxSizing boxSizing)
 {
     if (boxSizing == BoxSizing::BorderBox)
         return LayoutUnit((logicalHeight + borderAndPaddingLogicalHeight) * aspectRatio) - borderAndPaddingLogicalWidth;
     return LayoutUnit(logicalHeight * aspectRatio);
 }
 
-static inline bool hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsicWidth, bool hasIntrinsicHeight )
+static inline bool NODELETE hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsicWidth, bool hasIntrinsicHeight )
 {
     if (hasIntrinsicWidth && hasIntrinsicHeight)
         return true;
@@ -702,7 +714,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
     auto& style = this->style();
     if (style.logicalWidth().isSpecified())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style.logicalWidth()), shouldComputePreferred);
-    if (style.logicalWidth().isIntrinsic())
+    if (style.logicalWidth().isIntrinsicOrStretch())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style.logicalWidth()), shouldComputePreferred);
 
     RenderBox* contentRenderer = embeddedContentBox();
@@ -771,7 +783,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
                 if (isOutOfFlowPositioned() && !style.logicalLeft().isAuto() && !style.logicalRight().isAuto()) {
                     // Still respect min-width, but ignore max-width if it's an intrinsic keyword.
                     auto& logicalMinWidth = style.logicalMinWidth();
-                    auto minLogicalWidth = logicalMinWidth.isIntrinsic() ? 0_lu : computeReplacedLogicalWidthUsing(logicalMinWidth);
+                    auto minLogicalWidth = logicalMinWidth.isIntrinsicOrStretch() ? 0_lu : computeReplacedLogicalWidthUsing(logicalMinWidth);
                     return std::max(minLogicalWidth, constrainedLogicalWidth);
                 }
 
@@ -976,8 +988,8 @@ bool RenderReplaced::isContentLikelyVisibleInViewport()
     if (!isVisibleIgnoringGeometry())
         return false;
 
-    auto& frameView = view().frameView();
-    auto visibleRect = LayoutRect(frameView.windowToContents(frameView.windowClipRect()));
+    CheckedRef frameView = view().frameView();
+    auto visibleRect = LayoutRect(frameView->windowToContents(frameView->windowClipRect()));
     auto contentRect = computeRectForRepaint(replacedContentRect(), nullptr);
 
     // Content rectangle may be empty because it is intrinsically sized and the content has not loaded yet.
@@ -1314,16 +1326,19 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
             return percentageOrCalculated(calculatedLogicalHeight);
         },
         [&](const CSS::Keyword::FitContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::WebkitFillAvailable&) -> LayoutUnit {
             return content();
         },
         [&](const CSS::Keyword::MinContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::MaxContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::Intrinsic&) -> LayoutUnit {
             return intrinsicLogicalHeight();

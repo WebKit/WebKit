@@ -45,7 +45,7 @@ class PerfLog {
     WTF_MAKE_NONCOPYABLE(PerfLog);
     friend class LazyNeverDestroyed<PerfLog>;
 public:
-    static void log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag>);
+    static void log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag>, std::unique_ptr<IRDumpDebugInfo>&& = nullptr, std::unique_ptr<SourceCodeDumpDebugInfo>&& = nullptr);
 
 private:
     PerfLog();
@@ -56,6 +56,8 @@ private:
     void flush(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
 
     WTF::FileSystemImpl::FileHandle m_file { };
+    CString m_irDumpDirectory;
+    CString m_sourceCodeDumpDirectory;
     uint64_t m_codeIndex { 0 };
     Lock m_lock;
 };

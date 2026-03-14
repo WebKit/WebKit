@@ -30,7 +30,7 @@
 
 #include "AuxiliaryProcessMain.h"
 #include "GPUProcess.h"
-#include <Objbase.h>
+#include <objbase.h>
 
 namespace WebKit {
 

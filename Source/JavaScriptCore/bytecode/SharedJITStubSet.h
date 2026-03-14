@@ -26,7 +26,7 @@
 #pragma once
 
 #include "DOMJITGetterSetter.h"
-#include "StructureStubInfo.h"
+#include "PropertyInlineCache.h"
 
 namespace JSC {
 
@@ -37,22 +37,22 @@ class SharedJITStubSet {
 public:
     SharedJITStubSet() = default;
 
-    using StructureStubInfoKey = std::tuple<AccessType, bool, bool, bool, bool>;
-    using StatelessCacheKey = std::tuple<StructureStubInfoKey, AccessCase::AccessType>;
-    using DOMJITCacheKey = std::tuple<StructureStubInfoKey, const DOMJIT::GetterSetter*>;
+    using PropertyInlineCacheKey = std::tuple<AccessType, bool, bool, bool, bool>;
+    using StatelessCacheKey = std::tuple<PropertyInlineCacheKey, AccessCase::AccessType>;
+    using DOMJITCacheKey = std::tuple<PropertyInlineCacheKey, const DOMJIT::GetterSetter*>;
 
-    static StructureStubInfoKey stubInfoKey(const StructureStubInfo& stubInfo)
+    static PropertyInlineCacheKey propertyCacheKey(const PropertyInlineCache& propertyCache)
     {
-        return std::tuple { stubInfo.accessType, static_cast<bool>(stubInfo.propertyIsInt32), static_cast<bool>(stubInfo.propertyIsString), static_cast<bool>(stubInfo.propertyIsSymbol), static_cast<bool>(stubInfo.prototypeIsKnownObject) };
+        return std::tuple { propertyCache.accessType, static_cast<bool>(propertyCache.propertyIsInt32), static_cast<bool>(propertyCache.propertyIsString), static_cast<bool>(propertyCache.propertyIsSymbol), static_cast<bool>(propertyCache.prototypeIsKnownObject) };
     }
 
     struct Hash {
         struct Key {
             Key() = default;
 
-            Key(StructureStubInfoKey stubInfoKey, PolymorphicAccessJITStubRoutine* wrapped)
+            Key(PropertyInlineCacheKey propertyCacheKey, PolymorphicAccessJITStubRoutine* wrapped)
                 : m_wrapped(wrapped)
-                , m_stubInfoKey(stubInfoKey)
+                , m_propertyCacheKey(propertyCacheKey)
             { }
 
             Key(WTF::HashTableDeletedValueType)
@@ -64,7 +64,7 @@ public:
             friend bool operator==(const Key&, const Key&) = default;
 
             PolymorphicAccessJITStubRoutine* m_wrapped { nullptr };
-            StructureStubInfoKey m_stubInfoKey { };
+            PropertyInlineCacheKey m_propertyCacheKey { };
         };
 
         using KeyTraits = SimpleClassHashTraits<Key>;
@@ -93,7 +93,7 @@ public:
 
             static bool equal(const Hash::Key a, const Searcher& b)
             {
-                if (a.m_stubInfoKey == b.m_stubInfoKey && Hash::hash(a) == b.m_hash) {
+                if (a.m_propertyCacheKey == b.m_propertyCacheKey && Hash::hash(a) == b.m_hash) {
                     if (a.m_wrapped->cases().size() != 1)
                         return false;
                     const auto& aCase = a.m_wrapped->cases()[0];
@@ -106,14 +106,14 @@ public:
             }
         };
 
-        Searcher(StructureStubInfoKey&& stubInfoKey, Ref<AccessCase>&& accessCase)
-            : m_stubInfoKey(WTF::move(stubInfoKey))
+        Searcher(PropertyInlineCacheKey&& propertyCacheKey, Ref<AccessCase>&& accessCase)
+            : m_propertyCacheKey(WTF::move(propertyCacheKey))
             , m_accessCase(WTF::move(accessCase))
             , m_hash(m_accessCase->hash())
         {
         }
 
-        StructureStubInfoKey m_stubInfoKey;
+        PropertyInlineCacheKey m_propertyCacheKey;
         const Ref<AccessCase> m_accessCase;
         unsigned m_hash { 0 };
     };
@@ -169,7 +169,7 @@ private:
 
 #else
 
-class StructureStubInfo;
+class PropertyInlineCache;
 
 #endif // ENABLE(JIT)
 

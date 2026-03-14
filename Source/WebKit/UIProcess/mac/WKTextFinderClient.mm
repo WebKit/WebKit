@@ -308,7 +308,7 @@ private:
         return;
 
     auto size = image->size();
-    size.scale(1 / protect(_page)->deviceScaleFactor());
+    size.scale(1 / _page->deviceScaleFactor());
     
     auto nativeImage = image->copyNativeImage(WebCore::DontCopyBackingStore);
     if (!nativeImage)

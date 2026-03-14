@@ -762,14 +762,14 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     return { returnValue.releaseReturnValue() };
 }
 
-void JSTestCallbackInterface::visitJSFunction(JSC::AbstractSlotVisitor& visitor)
+void JSTestCallbackInterface::visitJSFunctionInGCThread(JSC::AbstractSlotVisitor& visitor)
 {
-    m_data->visitJSFunction(visitor);
+    m_data->visitJSFunctionInGCThread(visitor);
 }
 
-void JSTestCallbackInterface::visitJSFunction(JSC::SlotVisitor& visitor)
+void JSTestCallbackInterface::visitJSFunctionInGCThread(JSC::SlotVisitor& visitor)
 {
-    m_data->visitJSFunction(visitor);
+    m_data->visitJSFunctionInGCThread(visitor);
 }
 
 JSC::JSValue toJS(TestCallbackInterface& impl)

@@ -73,7 +73,7 @@ void CommandEncoder::generateInvalidEncoderStateError()
     GENERATE_INVALID_ENCODER_STATE_ERROR();
 }
 
-static MTLLoadAction loadAction(WGPULoadOp loadOp)
+static MTLLoadAction NODELETE loadAction(WGPULoadOp loadOp)
 {
     switch (loadOp) {
     case WGPULoadOp_Load:
@@ -88,7 +88,7 @@ static MTLLoadAction loadAction(WGPULoadOp loadOp)
     }
 }
 
-static MTLStoreAction storeAction(WGPUStoreOp storeOp, bool hasResolveTarget = false)
+static MTLStoreAction NODELETE storeAction(WGPUStoreOp storeOp, bool hasResolveTarget = false)
 {
     switch (storeOp) {
     case WGPUStoreOp_Store:
@@ -153,7 +153,7 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
                     auto& value = keyValuePair.second;
                     apiBuffer->takeSlowIndexValidationPath(commandBuffer, key.firstIndex, key.indexCount, key.indexType(), key.primitiveOffset(), value);
                     commandBuffer.addPostCommitHandler([bufferIdentifier, device = Ref { commandBuffer.device() }](id<MTLCommandBuffer>) {
-                        if (RefPtr apiBuffer = device->lookupBuffer(bufferIdentifier))
+                        if (auto* apiBuffer = device->lookupBuffer(bufferIdentifier))
                             apiBuffer->clearMustTakeSlowIndexValidationPath();
                     });
                 }
@@ -226,7 +226,7 @@ static auto timestampWriteIndex(auto writeIndex)
     return writeIndex == WGPU_QUERY_SET_INDEX_UNDEFINED ? 0 : writeIndex;
 }
 
-static NSUInteger timestampWriteIndex(NSUInteger writeIndex, NSUInteger defaultValue, uint32_t offset)
+static NSUInteger NODELETE timestampWriteIndex(NSUInteger writeIndex, NSUInteger defaultValue, uint32_t offset)
 {
     return writeIndex == WGPU_QUERY_SET_INDEX_UNDEFINED ? defaultValue : (writeIndex + offset);
 }
@@ -1513,7 +1513,7 @@ void CommandEncoder::makeSubmitInvalid(NSString* errorString)
         commandBuffer->makeInvalid(errorString ?: m_lastErrorString);
 }
 
-static bool hasValidDimensions(WGPUTextureDimension dimension, NSUInteger width, NSUInteger height, NSUInteger depth)
+static bool NODELETE hasValidDimensions(WGPUTextureDimension dimension, NSUInteger width, NSUInteger height, NSUInteger depth)
 {
     switch (dimension) {
     case WGPUTextureDimension_1D:
@@ -2418,7 +2418,7 @@ void CommandEncoder::rebindSamplersPreCommit(const BindGroup& group)
 
 #pragma mark WGPU Stubs
 
-void wgpuCommandEncoderReference(WGPUCommandEncoder commandEncoder)
+void NODELETE wgpuCommandEncoderReference(WGPUCommandEncoder commandEncoder)
 {
     WebGPU::fromAPI(commandEncoder).ref();
 }

@@ -74,15 +74,15 @@ public:
     void connectionClosed(IPC::Connection::UniqueID);
     String typeStoragePath(StorageType) const;
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, FileSystemStorageManager::QuotaCheckFunction&&);
-    FileSystemStorageManager* existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
+    FileSystemStorageManager* NODELETE existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
-    LocalStorageManager* existingLocalStorageManager() { return m_localStorageManager.get(); }
+    LocalStorageManager* NODELETE existingLocalStorageManager() { return m_localStorageManager.get(); }
     SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
-    SessionStorageManager* existingSessionStorageManager() { return m_sessionStorageManager.get(); }
+    SessionStorageManager* NODELETE existingSessionStorageManager() { return m_sessionStorageManager.get(); }
     IDBStorageManager& idbStorageManager(IDBStorageRegistry&, IDBStorageManager::QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
-    IDBStorageManager* existingIDBStorageManager() { return m_idbStorageManager.get(); }
+    IDBStorageManager* NODELETE existingIDBStorageManager() { return m_idbStorageManager.get(); }
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, CacheStorageManager::QuotaCheckFunction&&, Ref<WorkQueue>&&);
-    CacheStorageManager* existingCacheStorageManager() { return m_cacheStorageManager.get(); }
+    CacheStorageManager* NODELETE existingCacheStorageManager() { return m_cacheStorageManager.get(); }
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WorkQueue>&&, BackgroundFetchStoreManager::QuotaCheckFunction&&);
     ServiceWorkerStorageManager& serviceWorkerStorageManager();
     uint64_t cacheStorageSize();
@@ -282,8 +282,8 @@ bool OriginStorageManager::StorageBucket::isActive() const
     return (fileSystemStorageManager && fileSystemStorageManager->isActive())
         || (m_localStorageManager && m_localStorageManager->isActive())
         || (m_sessionStorageManager && m_sessionStorageManager->isActive())
-        || (m_idbStorageManager && CheckedRef { *m_idbStorageManager }->isActive())
-        || (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->isActive());
+        || (m_idbStorageManager && m_idbStorageManager->isActive())
+        || (m_cacheStorageManager && m_cacheStorageManager->isActive());
 }
 
 bool OriginStorageManager::StorageBucket::hasDataInMemory() const
@@ -291,7 +291,7 @@ bool OriginStorageManager::StorageBucket::hasDataInMemory() const
     return (m_localStorageManager && m_localStorageManager->hasDataInMemory())
         || (m_sessionStorageManager && m_sessionStorageManager->hasDataInMemory())
         || (m_idbStorageManager && CheckedRef { *m_idbStorageManager }->hasDataInMemory())
-        || (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->hasDataInMemory());
+        || (m_cacheStorageManager && m_cacheStorageManager->hasDataInMemory());
 }
 
 bool OriginStorageManager::StorageBucket::isEmpty()
@@ -342,7 +342,7 @@ OptionSet<WebsiteDataType> OriginStorageManager::StorageBucket::fetchDataTypesIn
     }
 
     if (types.contains(WebsiteDataType::DOMCache)) {
-        if (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->hasDataInMemory())
+        if (m_cacheStorageManager && m_cacheStorageManager->hasDataInMemory())
             result.add(WebsiteDataType::DOMCache);
     }
 

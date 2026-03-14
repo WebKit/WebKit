@@ -64,18 +64,18 @@ public:
     using Identifier = ServiceWorkerJobIdentifier;
     Identifier identifier() const { return m_jobData.identifier().jobIdentifier; }
 
-    const ServiceWorkerJobData& data() const { return m_jobData; }
+    const ServiceWorkerJobData& data() const LIFETIME_BOUND { return m_jobData; }
     Ref<DeferredPromise> takePromise();
 
     void fetchScriptWithContext(ScriptExecutionContext&, FetchOptions::Cache);
 
-    const ServiceWorkerOrClientIdentifier& contextIdentifier() { return m_contextIdentifier; }
+    const ServiceWorkerOrClientIdentifier& contextIdentifier() LIFETIME_BOUND { return m_contextIdentifier; }
 
     bool cancelPendingLoad();
 
     WEBCORE_EXPORT static ResourceError validateServiceWorkerResponse(const ServiceWorkerJobData&, const ResourceResponse&);
 
-    bool isRegistering() const;
+    bool NODELETE isRegistering() const;
 
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);

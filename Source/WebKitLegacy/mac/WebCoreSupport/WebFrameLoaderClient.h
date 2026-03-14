@@ -163,6 +163,8 @@ private:
     bool supportsAsyncShouldGoToHistoryItem() const final;
     void shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&) const final;
 
+    void dispatchGoToBackForwardItemAtIndex(int steps, WebCore::FrameLoadType) final;
+
     void loadStorageAccessQuirksIfNeeded() final { }
 
     bool shouldFallBack(const WebCore::ResourceError&) const final;

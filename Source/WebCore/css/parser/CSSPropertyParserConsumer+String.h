@@ -36,7 +36,7 @@ namespace CSSPropertyParserHelpers {
 // MARK: <string>
 // https://drafts.csswg.org/css-values/#strings
 
-StringView consumeStringRaw(CSSParserTokenRange&);
+StringView NODELETE consumeStringRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
 
 } // namespace CSSPropertyParserHelpers

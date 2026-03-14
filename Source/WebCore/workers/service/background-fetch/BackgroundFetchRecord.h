@@ -42,7 +42,7 @@ public:
     ~BackgroundFetchRecord();
     
     using ResponseReadyPromise = DOMPromiseProxy<IDLInterface<FetchResponse>>;
-    ResponseReadyPromise& responseReady() { return m_responseReadyPromise; }
+    ResponseReadyPromise& responseReady() LIFETIME_BOUND { return m_responseReadyPromise; }
     FetchRequest& request() { return m_request; }
 
     void settleResponseReadyPromise(ExceptionOr<Ref<FetchResponse>>&&);

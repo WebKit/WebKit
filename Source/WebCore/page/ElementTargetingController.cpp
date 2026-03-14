@@ -97,33 +97,33 @@ static constexpr auto minimumAreaRatioForElementToCoverViewport = 0.95;
 static constexpr auto minimumAreaForInterpolation = 200000;
 static constexpr auto maximumAreaForInterpolation = 800000;
 
-static float linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
+static float NODELETE linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
 {
     auto areaRatio = (viewportArea - minimumAreaForInterpolation) / (maximumAreaForInterpolation - minimumAreaForInterpolation);
     return clampTo(maximumValue - areaRatio * (maximumValue - minimumValue), minimumValue, maximumValue);
 }
 
-static float maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
+static float NODELETE maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.75, 1);
 }
 
-static float maximumAreaRatioForInFlowContent(float viewportArea)
+static float NODELETE maximumAreaRatioForInFlowContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.5, 1);
 }
 
-static float maximumAreaRatioForNearbyTargets(float viewportArea)
+static float NODELETE maximumAreaRatioForNearbyTargets(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.5);
 }
 
-static float minimumAreaRatioForInFlowContent(float viewportArea)
+static float NODELETE minimumAreaRatioForInFlowContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.005, 0.01);
 }
 
-static float maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
+static float NODELETE maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.3);
 }
@@ -186,7 +186,7 @@ static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Element& ele
 
         unsigned numberOfVisibleChildren = 0;
         for (auto& child : childrenOfType<RenderObject>(ancestor)) {
-            if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(child); renderElement && renderElement->style().usedVisibility() == Visibility::Hidden)
+            if (auto* renderElement = dynamicDowncast<RenderElement>(child); renderElement && renderElement->style().usedVisibility() == Visibility::Hidden)
                 continue;
 
             if (++numberOfVisibleChildren >= 2)
@@ -644,7 +644,7 @@ static String searchableTextForTarget(Element& target)
 static bool hasAudibleMedia(const Element& element)
 {
 #if ENABLE(VIDEO)
-    if (RefPtr media = dynamicDowncast<HTMLMediaElement>(element))
+    if (auto* media = dynamicDowncast<HTMLMediaElement>(element))
         return media->isAudible();
 
     for (Ref media : descendantsOfType<HTMLMediaElement>(element)) {
@@ -668,11 +668,11 @@ static URL urlForElement(const Element& element)
     if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(element))
         return anchor->href();
 
-    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
+    if (auto* image = dynamicDowncast<HTMLImageElement>(element))
         return image->currentURL();
 
 #if ENABLE(VIDEO)
-    if (RefPtr media = dynamicDowncast<HTMLMediaElement>(element))
+    if (auto* media = dynamicDowncast<HTMLMediaElement>(element))
         return media->currentSrc();
 #endif
 
@@ -740,7 +740,7 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
     }
 
     bool isInVisibilityAdjustmentSubtree = [&] {
-        for (RefPtr ancestor = element; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+        for (auto* ancestor = &element; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
             if (adjustedElements.contains(*ancestor))
                 return true;
         }
@@ -1160,7 +1160,7 @@ static IntRect absoluteBoundsForTargetAreaRatio(const Element& element, WeakHash
     auto bounds = absoluteBoundingBoxRect(element);
     bool hasVisualOverflowX = false;
     bool hasVisualOverflowY = false;
-    if (CheckedPtr style = element.renderStyle()) {
+    if (auto* style = element.renderStyle()) {
         hasVisualOverflowX = style->overflowX() == Overflow::Visible;
         hasVisualOverflowY = style->overflowY() == Overflow::Visible;
     }
@@ -1585,7 +1585,7 @@ static void adjustRegionAfterViewportSizeChange(Region& region, FloatSize oldSiz
 
 void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Document& document)
 {
-    if (RefPtr frame = document.frame(); !frame || !frame->isMainFrame())
+    if (auto* frame = document.frame(); !frame || !frame->isMainFrame())
         return;
 
     RefPtr frameView = document.view();
@@ -2049,11 +2049,11 @@ void ElementTargetingController::dispatchVisibilityAdjustmentStateDidChange()
 
 RefPtr<Document> ElementTargetingController::mainDocument() const
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     if (!page)
         return { };
 
-    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    auto* mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     if (!mainFrame)
         return { };
 

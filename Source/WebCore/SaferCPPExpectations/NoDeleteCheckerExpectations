@@ -1,17 +1,16 @@
-[ macOS ] Modules/notifications/NotificationPayload.cpp
-[ macOS ] Modules/streams/ReadableByteStreamController.cpp
-[ macOS ] Modules/streams/ReadableStreamBYOBRequest.cpp
-[ macOS ] Modules/webauthn/cbor/CBORValue.cpp
-[ macOS ] Modules/webtransport/WebTransportDatagramsWritable.cpp
-[ macOS ] css/CSSComputedStyleDeclaration.cpp
-[ macOS ] css/PropertySetCSSDescriptors.cpp
-[ macOS ] css/StyleSheetList.cpp
-[ macOS ] dom/ChildNodeList.cpp
-[ macOS ] dom/Document.cpp
-[ macOS ] dom/Node.cpp
-[ macOS ] loader/EmptyClients.cpp
+Modules/notifications/NotificationPayload.cpp
+Modules/streams/ReadableByteStreamController.cpp
+Modules/streams/ReadableStreamBYOBRequest.cpp
+Modules/webauthn/cbor/CBORValue.cpp
+Modules/webtransport/WebTransportDatagramsWritable.cpp
+css/CSSComputedStyleDeclaration.cpp
+css/PropertySetCSSDescriptors.cpp
+css/StyleSheetList.cpp
+dom/ChildNodeList.cpp
+dom/Document.cpp
+dom/Node.cpp
+loader/EmptyClients.cpp
 page/EventHandler.cpp
 [ iOS ] page/Quirks.cpp
-[ macOS ] page/text-extraction/TextExtraction.cpp
-[ macOS ] rendering/RenderGeometryMap.cpp
-[ iOS ] rendering/ios/RenderThemeIOS.mm
+page/text-extraction/TextExtraction.cpp
+rendering/RenderGeometryMap.cpp

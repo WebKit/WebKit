@@ -1004,7 +1004,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
     // Search open inspectors.
     for (auto [inspector, tab] : openInspectors()) {
         Ref protectedInspector = inspector;
-        if (protect(protectedInspector->inspectorPage())->identifier() == webPageProxyIdentifier) {
+        if (protectedInspector->inspectorPage()->identifier() == webPageProxyIdentifier) {
             if (includeExtensionViews == IncludeExtensionViews::No)
                 return nullptr;
 
@@ -2196,7 +2196,7 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorP
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
         Ref protectedInspector = inspector;
-        result.append({ protect(protectedInspector->inspectorPage())->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
+        result.append({ protectedInspector->inspectorPage()->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
     }
 
     return result;
@@ -2814,7 +2814,7 @@ RefPtr<API::InspectorExtension> WebExtensionContext::inspectorExtension(WebPageP
 
     for (auto [inspector, tab] : openInspectors()) {
         Ref protectedInspector = inspector;
-        if (protect(protectedInspector->inspectorPage())->identifier() == webPageProxyIdentifier) {
+        if (protectedInspector->inspectorPage()->identifier() == webPageProxyIdentifier) {
             const auto& inspectorContext = m_inspectorContextMap.get(inspector);
             return inspectorContext.extension;
         }

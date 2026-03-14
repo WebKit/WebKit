@@ -56,8 +56,8 @@ FilterImage::FilterImage(RefPtr<Image>&& image, Filter&& filter)
 
 FilterImage::~FilterImage()
 {
-    if (m_cachedImage)
-        m_cachedImage->removeClient(*this);
+    if (RefPtr cachedImage = m_cachedImage)
+        cachedImage->removeClient(*this);
 }
 
 bool FilterImage::operator==(const Image& other) const
@@ -93,7 +93,7 @@ bool FilterImage::isPending() const
 
 void FilterImage::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    CachedResourceHandle<WebCore::CachedImage> oldCachedImage = m_cachedImage;
+    RefPtr oldCachedImage = m_cachedImage;
 
     if (RefPtr image = m_image) {
         image->load(cachedResourceLoader, options);
@@ -104,8 +104,8 @@ void FilterImage::load(CachedResourceLoader& cachedResourceLoader, const Resourc
     if (m_cachedImage != oldCachedImage) {
         if (oldCachedImage)
             oldCachedImage->removeClient(*this);
-        if (m_cachedImage)
-            m_cachedImage->addClient(*this);
+        if (RefPtr cachedImage = m_cachedImage)
+            cachedImage->addClient(*this);
     }
 
     for (auto& value : m_filter) {

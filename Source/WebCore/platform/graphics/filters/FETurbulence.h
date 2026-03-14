@@ -44,22 +44,22 @@ public:
     bool operator==(const FETurbulence&) const;
 
     TurbulenceType type() const { return m_type; }
-    bool setType(TurbulenceType);
+    bool NODELETE setType(TurbulenceType);
 
     float baseFrequencyX() const { return m_baseFrequencyX; }
-    bool setBaseFrequencyX(float);
+    bool NODELETE setBaseFrequencyX(float);
 
     float baseFrequencyY() const { return m_baseFrequencyY; }
-    bool setBaseFrequencyY(float);
+    bool NODELETE setBaseFrequencyY(float);
 
     float seed() const { return m_seed; }
-    bool setSeed(float);
+    bool NODELETE setSeed(float);
 
     int numOctaves() const { return m_numOctaves; }
-    bool setNumOctaves(int);
+    bool NODELETE setNumOctaves(int);
 
     bool stitchTiles() const { return m_stitchTiles; }
-    bool setStitchTiles(bool);
+    bool NODELETE setStitchTiles(bool);
 
 private:
     FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, DestinationColorSpace);

@@ -285,7 +285,7 @@ void ScrollingTree::traverseScrollingTreeRecursive(ScrollingTreeNode& node, NOES
 {
     bool scrolledSinceLastCommit = false;
     std::optional<FloatPoint> scrollPosition;
-    if (RefPtr scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(node)) {
+    if (auto* scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(node)) {
         scrollPosition = scrollingNode->currentScrollPosition();
         scrolledSinceLastCommit = scrollingNode->scrolledSinceLastCommit();
     }
@@ -664,7 +664,7 @@ void ScrollingTree::clearLatchedNode()
 FloatBoxExtent ScrollingTree::mainFrameObscuredContentInsets() const
 {
     Locker locker { m_treeStateLock };
-    if (RefPtr rootNode = m_rootNode)
+    if (auto* rootNode = m_rootNode.get())
         return rootNode->obscuredContentInsets();
     return { };
 }

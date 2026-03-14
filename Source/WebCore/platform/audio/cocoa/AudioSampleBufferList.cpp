@@ -264,7 +264,7 @@ struct AudioConverterFromABLContext {
 
 static const OSStatus kRanOutOfInputDataStatus = '!mor';
 
-static OSStatus audioConverterFromABLCallback(AudioConverterRef, UInt32* ioNumberDataPackets, AudioBufferList* ioData, AudioStreamPacketDescription**, void* inRefCon)
+static OSStatus NODELETE audioConverterFromABLCallback(AudioConverterRef, UInt32* ioNumberDataPackets, AudioBufferList* ioData, AudioStreamPacketDescription**, void* inRefCon)
 {
     if (!ioNumberDataPackets || !ioData || !inRefCon) {
         LOG_ERROR("AudioSampleBufferList::audioConverterCallback() invalid input to AudioConverterInput");

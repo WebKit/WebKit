@@ -83,7 +83,7 @@ public:
     void frameNavigated(LocalFrame&);
 
 private:
-    String findAnimationId(WebAnimation&);
+    String NODELETE findAnimationId(WebAnimation&);
     WebAnimation* assertAnimation(Inspector::Protocol::ErrorString&, const String& animationId);
     void bindAnimation(WebAnimation&, RefPtr<Inspector::Protocol::Console::StackTrace> backtrace);
     void animationBindingTimerFired();

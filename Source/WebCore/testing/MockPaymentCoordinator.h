@@ -70,15 +70,15 @@ public:
     void cancelPayment();
 
     void addSetupFeature(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
-    const ApplePaySetupConfiguration& setupConfiguration() const { return m_setupConfiguration; }
+    const ApplePaySetupConfiguration& setupConfiguration() const LIFETIME_BOUND { return m_setupConfiguration; }
 
-    const ApplePayLineItem& total() const { return m_total; }
-    const Vector<ApplePayLineItem>& lineItems() const { return m_lineItems; }
-    const Vector<MockPaymentError>& errors() const { return m_errors; }
-    const Vector<ApplePayShippingMethod>& shippingMethods() const { return m_shippingMethods; }
-    const Vector<String>& supportedCountries() const { return m_supportedCountries; }
-    const MockPaymentContactFields& requiredBillingContactFields() const { return m_requiredBillingContactFields; }
-    const MockPaymentContactFields& requiredShippingContactFields() const { return m_requiredShippingContactFields; }
+    const ApplePayLineItem& total() const LIFETIME_BOUND { return m_total; }
+    const Vector<ApplePayLineItem>& lineItems() const LIFETIME_BOUND { return m_lineItems; }
+    const Vector<MockPaymentError>& errors() const LIFETIME_BOUND { return m_errors; }
+    const Vector<ApplePayShippingMethod>& shippingMethods() const LIFETIME_BOUND { return m_shippingMethods; }
+    const Vector<String>& supportedCountries() const LIFETIME_BOUND { return m_supportedCountries; }
+    const MockPaymentContactFields& requiredBillingContactFields() const LIFETIME_BOUND { return m_requiredBillingContactFields; }
+    const MockPaymentContactFields& requiredShippingContactFields() const LIFETIME_BOUND { return m_requiredShippingContactFields; }
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     ApplePayInstallmentConfiguration installmentConfiguration() const { return m_installmentConfiguration; }
@@ -86,7 +86,7 @@ public:
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     std::optional<bool> supportsCouponCode() const { return m_supportsCouponCode; }
-    const String& couponCode() const { return m_couponCode; }
+    const String& couponCode() const LIFETIME_BOUND { return m_couponCode; }
 #endif
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
@@ -94,23 +94,23 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
-    const std::optional<ApplePayRecurringPaymentRequest>& recurringPaymentRequest() const { return m_recurringPaymentRequest; }
+    const std::optional<ApplePayRecurringPaymentRequest>& recurringPaymentRequest() const LIFETIME_BOUND { return m_recurringPaymentRequest; }
 #endif
 
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
-    const std::optional<ApplePayAutomaticReloadPaymentRequest>& automaticReloadPaymentRequest() const { return m_automaticReloadPaymentRequest; }
+    const std::optional<ApplePayAutomaticReloadPaymentRequest>& automaticReloadPaymentRequest() const LIFETIME_BOUND { return m_automaticReloadPaymentRequest; }
 #endif
 
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
-    const std::optional<Vector<ApplePayPaymentTokenContext>>& multiTokenContexts() const { return m_multiTokenContexts; }
+    const std::optional<Vector<ApplePayPaymentTokenContext>>& multiTokenContexts() const LIFETIME_BOUND { return m_multiTokenContexts; }
 #endif
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
-    const std::optional<ApplePayDeferredPaymentRequest>& deferredPaymentRequest() const { return m_deferredPaymentRequest; }
+    const std::optional<ApplePayDeferredPaymentRequest>& deferredPaymentRequest() const LIFETIME_BOUND { return m_deferredPaymentRequest; }
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    const std::optional<ApplePayDisbursementRequest>& disbursementRequest() const { return m_disbursementRequest; }
+    const std::optional<ApplePayDisbursementRequest>& disbursementRequest() const LIFETIME_BOUND { return m_disbursementRequest; }
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
@@ -118,7 +118,7 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-    const String& merchantCategoryCode() const { return m_merchantCategoryCode; }
+    const String& merchantCategoryCode() const LIFETIME_BOUND { return m_merchantCategoryCode; }
 #endif
 
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)

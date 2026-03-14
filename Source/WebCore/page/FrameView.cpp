@@ -73,7 +73,7 @@ FloatBoxExtent FrameView::obscuredContentInsets(InsetType type) const
     if (!frame->isMainFrame())
         return { };
 
-    if (RefPtr page = frame->page())
+    if (auto* page = frame->page())
         return page->obscuredContentInsets();
 
     return { };

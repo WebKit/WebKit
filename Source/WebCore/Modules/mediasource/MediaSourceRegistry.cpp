@@ -101,7 +101,7 @@ URLRegistrable* MediaSourceRegistry::lookup(const String& url) const
 {
     ASSERT(isMainThread());
     if (auto it = m_mediaSources.find(url); it != m_mediaSources.end())
-        return it->value.first.get();
+        return it->value.first.ptr();
     return nullptr;
 }
 

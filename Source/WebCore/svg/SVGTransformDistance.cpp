@@ -25,8 +25,6 @@
 #include "FloatSize.h"
 #include "SVGTransformValue.h"
 
-#include <math.h>
-
 namespace WebCore {
     
 SVGTransformDistance::SVGTransformDistance()
@@ -199,30 +197,6 @@ SVGTransformValue SVGTransformDistance::addToSVGTransform(const SVGTransformValu
     
     ASSERT_NOT_REACHED();
     return { };
-}
-
-float SVGTransformDistance::distance() const
-{
-    switch (m_type) {
-    case SVGTransformValue::SVG_TRANSFORM_MATRIX:
-        ASSERT_NOT_REACHED();
-#if !ASSERT_ENABLED
-        [[fallthrough]];
-#endif
-    case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
-        return 0;
-    case SVGTransformValue::SVG_TRANSFORM_ROTATE:
-        return std::hypot(m_angle, m_cx, m_cy);
-    case SVGTransformValue::SVG_TRANSFORM_SCALE:
-        return static_cast<float>(std::hypot(m_transform.a(), m_transform.d()));
-    case SVGTransformValue::SVG_TRANSFORM_TRANSLATE:
-        return static_cast<float>(std::hypot(m_transform.e(), m_transform.f()));
-    case SVGTransformValue::SVG_TRANSFORM_SKEWX:
-    case SVGTransformValue::SVG_TRANSFORM_SKEWY:
-        return m_angle;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 }

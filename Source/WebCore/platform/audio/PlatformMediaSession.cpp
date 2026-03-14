@@ -397,7 +397,7 @@ void PlatformMediaSession::clientCharacteristicsChanged(bool positionChanged)
         manager->clientCharacteristicsChanged(*this, positionChanged);
 }
 
-static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)
+static inline bool NODELETE isPlayingAudio(PlatformMediaSession::MediaType mediaType)
 {
 #if ENABLE(VIDEO)
     return mediaType == MediaElementSession::MediaType::VideoAudio || mediaType == MediaElementSession::MediaType::Audio;

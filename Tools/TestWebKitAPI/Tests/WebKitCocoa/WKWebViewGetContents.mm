@@ -343,7 +343,9 @@ TEST(WKWebView, AttributedStringFromTable)
         EXPECT_EQ(cell.columnSpan, static_cast<NSInteger>(1));
         EXPECT_EQ(cell.rowSpan, static_cast<NSInteger>(1));
         EXPECT_EQ(cell.table, expectedTable);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         EXPECT_EQ([cell widthForLayer:NSTextBlockLayerBorder edge:NSRectEdgeMinX], expectedBorderWidth);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (!expectedBackgroundColor)
             EXPECT_NULL(cell.backgroundColor);
@@ -696,7 +698,7 @@ TEST(WKWebView, RequestAllTextRunsWithSubframes)
 
     Vector<std::pair<const char*, CGRect>> expectedResults {
 #if PLATFORM(MAC)
-        { "Here's to the crazy", CGRectMake(0, 18, 298, 16) },
+        { "Here's to the crazy", CGRectMake(0, 18, 298, 17) },
         { "ones.", CGRectMake(0, 34, 80, 17) },
         { "The round", CGRectMake(9, 84, 144, 16) },
         { "pegs in", CGRectMake(9, 100, 112, 16) },

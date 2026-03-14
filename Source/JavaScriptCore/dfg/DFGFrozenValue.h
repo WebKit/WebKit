@@ -67,7 +67,7 @@ public:
     bool operator!() const { return !m_value; }
     
     JSValue value() const { return m_value; }
-    JSCell* cell() const { return m_value.asCell(); }
+    JSCell* cell() const LIFETIME_BOUND { return m_value.asCell(); }
     
     template<typename T>
     T dynamicCast()

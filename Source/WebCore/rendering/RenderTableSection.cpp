@@ -442,7 +442,7 @@ void RenderTableSection::distributeExtraLogicalHeightToAutoRows(LayoutUnit& extr
 
     LayoutUnit totalLogicalHeightAdded;
     for (unsigned r = 0; r < m_grid.size(); ++r) {
-        if (autoRowsCount > 0 && m_grid[r].logicalHeight.isAuto()) {
+        if (autoRowsCount > 0 && m_grid[r].logicalHeight.isAuto() && m_grid[r].rowRenderer) {
             // Recomputing |extraLogicalHeightForRow| guarantees that we properly ditribute round |extraLogicalHeight|.
             LayoutUnit extraLogicalHeightForRow = extraLogicalHeight / autoRowsCount;
             totalLogicalHeightAdded += extraLogicalHeightForRow;
@@ -486,7 +486,7 @@ LayoutUnit RenderTableSection::distributeExtraLogicalHeightToRows(LayoutUnit ext
     unsigned autoRowsCount = 0;
     int totalPercent = 0;
     for (unsigned r = 0; r < totalRows; r++) {
-        if (m_grid[r].logicalHeight.isAuto())
+        if (m_grid[r].logicalHeight.isAuto() && m_grid[r].rowRenderer)
             ++autoRowsCount;
         else if (auto percentageLogicalHeight = m_grid[r].logicalHeight.tryPercentage())
             totalPercent += percentageLogicalHeight->value;

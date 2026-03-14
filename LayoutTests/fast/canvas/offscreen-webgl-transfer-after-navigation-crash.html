@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+function test() {
+    var canvas = document.createElement("canvas");
+    var offscreen = canvas.transferControlToOffscreen();
+    offscreen.getContext("webgl");
+    try { window.navigation.navigate("about:blank"); } catch(e) {}
+    try { offscreen.transferToImageBitmap(); } catch(e) {}
+    testRunner?.notifyDone();
+}
+</script>
+<body onload=test()>
+PASS if no crash.

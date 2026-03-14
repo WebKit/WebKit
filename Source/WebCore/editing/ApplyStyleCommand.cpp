@@ -627,11 +627,11 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
         // Avoid removing the dir attribute and the unicode-bidi and direction properties from the unsplit ancestors.
         Position embeddingRemoveStart = removeStart;
         if (startUnsplitAncestor && nodeFullySelected(*startUnsplitAncestor, removeStart, end))
-            embeddingRemoveStart = positionInParentAfterNode(startUnsplitAncestor.get());
+            embeddingRemoveStart = positionInParentAfterNode(*startUnsplitAncestor);
 
         Position embeddingRemoveEnd = end;
         if (endUnsplitAncestor && nodeFullySelected(*endUnsplitAncestor, removeStart, end))
-            embeddingRemoveEnd = positionInParentBeforeNode(endUnsplitAncestor.get()).downstream();
+            embeddingRemoveEnd = positionInParentBeforeNode(*endUnsplitAncestor).downstream();
 
         if (embeddingRemoveEnd != removeStart || embeddingRemoveEnd != end) {
             styleWithoutEmbedding = style.copy();
@@ -679,8 +679,8 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
         auto embeddingEndNode = highestEmbeddingAncestor(endNode.get(), enclosingBlock(endNode).get());
 
         if (embeddingStartNode || embeddingEndNode) {
-            Position embeddingApplyStart = embeddingStartNode ? positionInParentAfterNode(embeddingStartNode.get()) : start;
-            Position embeddingApplyEnd = embeddingEndNode ? positionInParentBeforeNode(embeddingEndNode.get()) : end;
+            Position embeddingApplyStart = embeddingStartNode ? positionInParentAfterNode(*embeddingStartNode) : start;
+            Position embeddingApplyEnd = embeddingEndNode ? positionInParentBeforeNode(*embeddingEndNode) : end;
             ASSERT(embeddingApplyStart.isNotNull() && embeddingApplyEnd.isNotNull());
 
             if (!embeddingStyle) {
@@ -757,7 +757,7 @@ struct InlineRunToApplyStyle {
         ASSERT(start->parentNode() == end->parentNode());
     }
 
-    bool startAndEndAreStillInDocument()
+    bool NODELETE startAndEndAreStillInDocument()
     {
         return start && end && start->isConnected() && end->isConnected();
     }
@@ -865,7 +865,7 @@ bool ApplyStyleCommand::shouldApplyInlineStyleToRun(EditingStyle& style, Node* r
         // We don't consider m_isInlineElementToRemoveFunction here because we never apply style when m_isInlineElementToRemoveFunction is specified
         if (!style.styleIsPresentInComputedStyleOfNode(*node))
             return true;
-        if (m_styledInlineElement && !enclosingElementWithTag(positionBeforeNode(node.get()), m_styledInlineElement->tagQName()))
+        if (m_styledInlineElement && !enclosingElementWithTag(positionBeforeNode(*node), m_styledInlineElement->tagQName()))
             return true;
     }
     return false;
@@ -1034,7 +1034,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node& node, EditingStyle* sty
 
         if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*node.renderer()); textRenderer && textRenderer->containsOnlyCollapsibleWhitespace())
             return;
-        if (CheckedPtr linebreak = dynamicDowncast<RenderLineBreak>(*node.renderer()); linebreak && !linebreak->style().preserveNewline())
+        if (auto* linebreak = dynamicDowncast<RenderLineBreak>(*node.renderer()); linebreak && !linebreak->style().preserveNewline())
             return;
     }
 
@@ -1197,7 +1197,7 @@ void ApplyStyleCommand::splitTextAtStart(const Position& start, const Position& 
 
     RefPtr text = start.containerText();
     splitTextNode(*text, start.offsetInContainerNode());
-    updateStartEnd(firstPositionInNode(text.get()), newEnd);
+    updateStartEnd(firstPositionInNode(*text), newEnd);
 }
 
 void ApplyStyleCommand::splitTextAtEnd(const Position& start, const Position& end)
@@ -1213,7 +1213,7 @@ void ApplyStyleCommand::splitTextAtEnd(const Position& start, const Position& en
         return;
 
     Position newStart = shouldUpdateStart ? Position(prevNode.copyRef(), start.offsetInContainerNode()) : start;
-    updateStartEnd(newStart, lastPositionInNode(prevNode.get()));
+    updateStartEnd(newStart, lastPositionInNode(*prevNode));
 }
 
 void ApplyStyleCommand::splitTextElementAtStart(const Position& start, const Position& end)
@@ -1227,7 +1227,7 @@ void ApplyStyleCommand::splitTextElementAtStart(const Position& start, const Pos
         newEnd = end;
 
     splitTextNodeContainingElement(*protect(start.containerText()), start.offsetInContainerNode());
-    updateStartEnd(positionBeforeNode(protect(start.containerNode()).get()), newEnd);
+    updateStartEnd(positionBeforeNode(protect(*start.containerNode())), newEnd);
 }
 
 void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Position& end)
@@ -1245,7 +1245,7 @@ void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Posit
         return;
 
     Position newStart = shouldUpdateStart ? Position(firstTextNode.copyRef(), start.offsetInContainerNode()) : start;
-    updateStartEnd(newStart, positionAfterNode(firstTextNode.get()));
+    updateStartEnd(newStart, positionAfterNode(*firstTextNode));
 }
 
 bool ApplyStyleCommand::shouldSplitTextElement(Element* element, EditingStyle& style)
@@ -1421,7 +1421,7 @@ Position ApplyStyleCommand::positionToComputeInlineStyleChange(Node& startNode, 
     // It's okay to obtain the style at the startNode because we've removed all relevant styles from the current run.
     if (!is<Element>(startNode)) {
         dummyElement = createStyleSpanElement(document());
-        insertNodeAt(*dummyElement, positionBeforeNode(&startNode));
+        insertNodeAt(*dummyElement, positionBeforeNode(startNode));
         return firstPositionInOrBeforeNode(dummyElement.get());
     }
 

@@ -66,6 +66,7 @@ PACKAGES=(
     wpebackend-fdo-devel
 
     # These are dependencies necessary for running tests.
+    binutils
     curl
     gdb
     httpd
@@ -90,6 +91,7 @@ PACKAGES=(
     libpsl-devel
     libtheora-devel
     libuuid-devel
+    libp11-devel
     libxcb-devel
     mesa-libEGL-devel
     orc-devel
@@ -111,4 +113,8 @@ PACKAGES=(
     gstreamer1-plugins-good
     gstreamer1-plugins-good-extras
     gstreamer1-plugins-ugly-free
+
+    # These are for generate-bundle script
+    patchelf
+    p11-kit
 )

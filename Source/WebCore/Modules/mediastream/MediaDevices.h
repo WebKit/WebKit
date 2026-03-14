@@ -94,7 +94,7 @@ public:
     void getDisplayMedia(DisplayMediaStreamConstraints&&, Promise&&);
 
     void enumerateDevices(EnumerateDevicesPromise&&);
-    MediaTrackSupportedConstraints getSupportedConstraints();
+    MediaTrackSupportedConstraints NODELETE getSupportedConstraints();
 
     String deviceIdToPersistentId(const String&) const;
 

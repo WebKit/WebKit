@@ -295,7 +295,7 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    WeakPtr<MockDisplayCapturer> latestCapturer() { return m_capturer; }
+    WeakPtr<MockDisplayCapturer> NODELETE latestCapturer() { return m_capturer; }
 #endif
 
 private:

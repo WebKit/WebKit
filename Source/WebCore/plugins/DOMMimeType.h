@@ -34,10 +34,10 @@ public:
     static Ref<DOMMimeType> create(Navigator&, const MimeClassInfo&, DOMPlugin&);
     ~DOMMimeType();
 
-    AtomString type() const;
+    AtomString NODELETE type() const;
     String suffixes() const;
-    String description() const;
-    RefPtr<DOMPlugin> enabledPlugin() const;
+    String NODELETE description() const;
+    RefPtr<DOMPlugin> NODELETE enabledPlugin() const;
 
     Navigator* navigator() { return m_navigator.get(); }
 

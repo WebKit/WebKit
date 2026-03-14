@@ -39,7 +39,7 @@ using namespace CSS::Literals;
 
 // MARK: Core Keyword Resolution
 
-static auto resolveKeyword(CSS::Keyword::Top, const BuilderState&) -> LengthPercentage<CSS::AllUnzoomed>
+static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Top, const BuilderState&)
 {
     return 0_css_percentage;
 }
@@ -49,7 +49,7 @@ static auto resolveKeyword(CSS::Keyword::Top, const BuilderState& state, const C
     return toStyle(length, state);
 }
 
-static auto resolveKeyword(CSS::Keyword::Right, const BuilderState&) -> LengthPercentage<CSS::AllUnzoomed>
+static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Right, const BuilderState&)
 {
     return 100_css_percentage;
 }
@@ -59,7 +59,7 @@ static auto resolveKeyword(CSS::Keyword::Right, const BuilderState& state, const
     return reflect(toStyle(length, state));
 }
 
-static auto resolveKeyword(CSS::Keyword::Bottom, const BuilderState&) -> LengthPercentage<CSS::AllUnzoomed>
+static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Bottom, const BuilderState&)
 {
     return 100_css_percentage;
 }
@@ -69,7 +69,7 @@ static auto resolveKeyword(CSS::Keyword::Bottom, const BuilderState& state, cons
     return reflect(toStyle(length, state));
 }
 
-static auto resolveKeyword(CSS::Keyword::Left, const BuilderState&) -> LengthPercentage<CSS::AllUnzoomed>
+static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Left, const BuilderState&)
 {
     return 0_css_percentage;
 }
@@ -79,7 +79,7 @@ static auto resolveKeyword(CSS::Keyword::Left, const BuilderState& state, const 
     return toStyle(length, state);
 }
 
-static auto resolveKeyword(CSS::Keyword::Center, const BuilderState&) -> LengthPercentage<CSS::AllUnzoomed>
+static LengthPercentage<CSS::AllUnzoomed> NODELETE resolveKeyword(CSS::Keyword::Center, const BuilderState&)
 {
     return 50_css_percentage;
 }

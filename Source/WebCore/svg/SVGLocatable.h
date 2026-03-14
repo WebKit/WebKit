@@ -47,7 +47,6 @@ public:
     virtual AffineTransform getScreenCTM(StyleUpdateStrategy) = 0;
 
     static SVGElement* nearestViewportElement(const SVGElement*);
-    static SVGElement* farthestViewportElement(const SVGElement*);
 
 protected:
     virtual AffineTransform localCoordinateSpaceTransform(CTMScope) const { return AffineTransform(); }

@@ -54,12 +54,12 @@ public:
     void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
 
-    void setFrame(LocalFrame&);
+    void NODELETE setFrame(LocalFrame&);
 
     enum class IsEncodingUserChosen : bool { No, Yes };
     WEBCORE_EXPORT void setEncoding(const String& encoding, IsEncodingUserChosen);
 
-    const String& mimeType() const { return m_mimeType; }
+    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
     void setMIMEType(const String& type) { m_mimeType = type; }
 
     // Exposed for DocumentParser::appendBytes.

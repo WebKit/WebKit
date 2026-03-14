@@ -132,7 +132,7 @@ void RenderLayoutState::computeClipRect(const RenderLayoutState& ancestor, Rende
         return;
 
     auto paintOffsetForClipRect = toLayoutPoint(m_paintOffset + toLayoutSize(renderer.scrollPosition()));
-    LayoutRect clipRect(paintOffsetForClipRect + renderer.view().frameView().layoutContext().layoutDelta(), renderer.cachedSizeForOverflowClip());
+    LayoutRect clipRect(paintOffsetForClipRect + protect(renderer.view().frameView())->layoutContext().layoutDelta(), renderer.cachedSizeForOverflowClip());
     if (m_clipped)
         m_clipRect.intersect(clipRect);
     else
@@ -177,7 +177,7 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
 
     // If we have a new grid to track, then add it to our set.
     if (!renderer.style().lineGrid().isNone()) {
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
+        if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
             establishLineGrid(layoutStateStack, *blockFlow);
     }
 }

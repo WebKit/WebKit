@@ -91,7 +91,7 @@ private:
     private:
         WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, std::optional<WebCore::PageIdentifier>) final;
         WebCore::CaptureDeviceManager& audioCaptureDeviceManager() final { return m_manager->m_noOpCaptureDeviceManager; }
-        const Vector<WebCore::CaptureDevice>& speakerDevices() const final { return m_speakerDevices; }
+        const Vector<WebCore::CaptureDevice>& speakerDevices() const LIFETIME_BOUND final { return m_speakerDevices; }
 
         const CheckedRef<UserMediaCaptureManager> m_manager;
         bool m_shouldCaptureInGPUProcess { false };
@@ -100,7 +100,7 @@ private:
     class VideoFactory : public WebCore::VideoCaptureFactory {
     public:
         explicit VideoFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
-        void setShouldCaptureInGPUProcess(bool);
+        void NODELETE setShouldCaptureInGPUProcess(bool);
 
     private:
         WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, std::optional<WebCore::PageIdentifier>) final;
@@ -112,7 +112,7 @@ private:
     class DisplayFactory : public WebCore::DisplayCaptureFactory {
     public:
         explicit DisplayFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
-        void setShouldCaptureInGPUProcess(bool);
+        void NODELETE setShouldCaptureInGPUProcess(bool);
 
     private:
         WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, std::optional<WebCore::PageIdentifier>) final;

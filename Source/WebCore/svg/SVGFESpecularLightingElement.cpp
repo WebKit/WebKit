@@ -66,18 +66,18 @@ void SVGFESpecularLightingElement::attributeChanged(const QualifiedName& name, c
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::surfaceScaleAttr:
-        Ref { m_surfaceScale }->setBaseValInternal(newValue.toFloat());
+        m_surfaceScale->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::specularConstantAttr:
-        Ref { m_specularConstant }->setBaseValInternal(newValue.toFloat());
+        m_specularConstant->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::specularExponentAttr:
-        Ref { m_specularExponent }->setBaseValInternal(newValue.toFloat());
+        m_specularExponent->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::kernelUnitLengthAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            Ref { m_kernelUnitLengthX }->setBaseValInternal(result->first);
-            Ref { m_kernelUnitLengthY }->setBaseValInternal(result->second);
+            m_kernelUnitLengthX->setBaseValInternal(result->first);
+            m_kernelUnitLengthY->setBaseValInternal(result->second);
         }
         break;
     default:

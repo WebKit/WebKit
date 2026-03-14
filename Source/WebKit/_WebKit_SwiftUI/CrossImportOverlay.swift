@@ -23,8 +23,8 @@
 
 #if ENABLE_SWIFTUI
 
-import SwiftUI
+public import SwiftUI
 // This is a cross-import overlay of WebKit. Do not remove this @_exported import:
-@_exported import WebKit
+@_exported public import WebKit
 
 #endif

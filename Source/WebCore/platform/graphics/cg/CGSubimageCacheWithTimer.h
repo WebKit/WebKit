@@ -69,7 +69,7 @@ public:
     };
 
     struct CacheHash {
-        static unsigned hash(CGImageRef image, const FloatRect& rect)
+        static unsigned NODELETE hash(CGImageRef image, const FloatRect& rect)
         {
             return pairIntHash(PtrHash<CGImageRef>::hash(image),
                 (static_cast<unsigned>(rect.x()) << 16) | static_cast<unsigned>(rect.y()));
@@ -78,7 +78,7 @@ public:
         {
             return hash(key.image.get(), key.rect);
         }
-        static bool equal(const CacheEntry& a, const CacheEntry& b)
+        static bool NODELETE equal(const CacheEntry& a, const CacheEntry& b)
         {
             return a.image == b.image && a.rect == b.rect;
         }
@@ -110,7 +110,7 @@ private:
     RunLoop::Timer m_timer WTF_GUARDED_BY_LOCK(m_lock);
 
     static CGSubimageCacheWithTimer& subimageCache();
-    static bool subimageCacheExists();
+    static bool NODELETE subimageCacheExists();
     static CGSubimageCacheWithTimer* s_cache;
 };
 

@@ -39,7 +39,7 @@ promise_test(async () => {
 
     const worker = new Worker(WORKER_URL);
 
-    worker.postMessage(track);
+    worker.postMessage(track, [track]);
 
     await new Promise(resolve => worker.onmessage = resolve);
 

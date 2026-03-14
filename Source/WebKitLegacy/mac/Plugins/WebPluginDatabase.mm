@@ -59,7 +59,7 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
 
 @implementation WebPluginDatabase
 
-static RetainPtr<WebPluginDatabase>& sharedDatabase()
+static RetainPtr<WebPluginDatabase>& NODELETE sharedDatabase()
 {
     static NeverDestroyed<RetainPtr<WebPluginDatabase>> sharedDatabase;
     return sharedDatabase;
@@ -181,7 +181,7 @@ struct PluginPackageCandidates {
     return [plugins allValues];
 }
 
-static RetainPtr<NSArray>& additionalWebPlugInPaths()
+static RetainPtr<NSArray>& NODELETE additionalWebPlugInPaths()
 {
     static NeverDestroyed<RetainPtr<NSArray>> _additionalWebPlugInPaths;
     return _additionalWebPlugInPaths;

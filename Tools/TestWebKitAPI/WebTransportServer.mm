@@ -26,17 +26,24 @@
 #import "config.h"
 #import "WebTransportServer.h"
 
-#if HAVE(WEB_TRANSPORT)
+#if PLATFORM(COCOA)
 
 #import "HTTPServer.h"
 #import "Utilities.h"
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/darwin/DispatchExtras.h>
+
+SOFT_LINK_FRAMEWORK(Network)
+SOFT_LINK_MAY_FAIL_WITH_NS_RETURNS_RETAINED(Network, nw_parameters_create_webtransport_http, nw_parameters_t, (nw_parameters_configure_protocol_block_t configure_webtransport, nw_parameters_configure_protocol_block_t configure_tls, nw_parameters_configure_protocol_block_t configure_quic, nw_parameters_configure_protocol_block_t configure_tcp), (configure_webtransport, configure_tls, configure_quic, configure_tcp))
+SOFT_LINK(Network, nw_webtransport_options_set_is_datagram, void, (nw_protocol_options_t options, bool is_datagram), (options, is_datagram))
+SOFT_LINK(Network, nw_webtransport_options_set_is_unidirectional, void, (nw_protocol_options_t options, bool is_unidirectional), (options, is_unidirectional))
+SOFT_LINK(Network, nw_webtransport_options_set_connection_max_sessions, void, (nw_protocol_options_t options, uint64_t max_sessions), (options, max_sessions))
 
 namespace TestWebKitAPI {
 
-struct WebTransportServer::Data : public RefCounted<WebTransportServer::Data> {
+struct WebTransportServer::Data : public ThreadSafeRefCounted<WebTransportServer::Data> {
     static Ref<Data> create(Function<ConnectionTask(ConnectionGroup)>&& connectionGroupHandler) { return adoptRef(*new Data(WTF::move(connectionGroupHandler))); }
     Data(Function<ConnectionTask(ConnectionGroup)>&& connectionGroupHandler)
         : connectionGroupHandler(WTF::move(connectionGroupHandler)) { }
@@ -118,6 +125,11 @@ uint16_t WebTransportServer::port() const
 {
     return nw_listener_get_port(m_data->listener.get());
 }
+
+bool WebTransportServer::isAvailable()
+{
+    return canLoadnw_parameters_create_webtransport_http();
+}
 } // namespace TestWebKitAPI
 
-#endif // HAVE(WEB_TRANSPORT)
+#endif // PLATFORM(COCOA)

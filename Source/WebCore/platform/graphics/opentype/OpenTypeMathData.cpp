@@ -70,7 +70,7 @@ struct MathItalicsCorrectionInfo : TableWithCoverage {
     OpenType::UInt16 italicsCorrectionCount;
     OpenType::MathValueRecord italicsCorrection[1]; // There are italicsCorrectionCount italic correction values.
 
-    std::span<const OpenType::MathValueRecord> italicsCorrections() const { return unsafeMakeSpan(italicsCorrection, static_cast<size_t>(italicsCorrectionCount)); }
+    std::span<const OpenType::MathValueRecord> NODELETE italicsCorrections() const { return unsafeMakeSpan(italicsCorrection, static_cast<size_t>(italicsCorrectionCount)); }
 
     int16_t getItalicCorrection(const SharedBuffer& buffer, Glyph glyph) const
     {
@@ -120,7 +120,7 @@ struct GlyphAssembly : TableBase {
         OpenType::UInt16 partFlags;
     } partRecords[1]; // There are partCount GlyphPartRecord's.
 
-    std::span<const GlyphPartRecord> parts() const { return unsafeMakeSpan(partRecords, static_cast<size_t>(partCount)); }
+    std::span<const GlyphPartRecord> NODELETE parts() const { return unsafeMakeSpan(partRecords, static_cast<size_t>(partCount)); }
 
     // PartFlags enumeration currently uses only one bit:
     // 0x0001 If set, the part can be skipped or repeated.
@@ -151,7 +151,7 @@ struct MathGlyphConstruction : TableBase {
         OpenType::UInt16 advanceMeasurement;
     } mathGlyphVariantRecords[1]; // There are variantCount MathGlyphVariantRecord's.
 
-    std::span<const MathGlyphVariantRecord> variantRecords() const { return unsafeMakeSpan(mathGlyphVariantRecords, static_cast<size_t>(variantCount)); }
+    std::span<const MathGlyphVariantRecord> NODELETE variantRecords() const { return unsafeMakeSpan(mathGlyphVariantRecords, static_cast<size_t>(variantCount)); }
 
     void getSizeVariants(const SharedBuffer& buffer, Vector<Glyph>& variants) const
     {
@@ -180,7 +180,7 @@ struct MathVariants : TableWithCoverage {
     OpenType::UInt16 horizontalGlyphCount;
     OpenType::Offset mathGlyphConstructionsOffset[1]; // There are verticalGlyphCount vertical glyph contructions and horizontalGlyphCount vertical glyph contructions.
 
-    std::span<const OpenType::Offset> mathGlyphConstructionsOffsets() const { return unsafeMakeSpan(mathGlyphConstructionsOffset, static_cast<size_t>(verticalGlyphCount) + static_cast<size_t>(horizontalGlyphCount)); }
+    std::span<const OpenType::Offset> NODELETE mathGlyphConstructionsOffsets() const { return unsafeMakeSpan(mathGlyphConstructionsOffset, static_cast<size_t>(verticalGlyphCount) + static_cast<size_t>(horizontalGlyphCount)); }
 
     const MathGlyphConstruction* mathGlyphConstruction(const SharedBuffer& buffer, Glyph glyph, bool isVertical) const
     {

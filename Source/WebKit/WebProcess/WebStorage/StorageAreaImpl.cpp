@@ -102,7 +102,7 @@ bool StorageAreaImpl::contains(const String& key)
 
 StorageType StorageAreaImpl::storageType() const
 {
-    if (RefPtr storageAreaMap = m_storageAreaMap.get())
+    if (auto* storageAreaMap = m_storageAreaMap.get())
         return storageAreaMap->type();
 
     // We probably need an Invalid type.

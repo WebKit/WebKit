@@ -44,7 +44,7 @@ public:
 
     AncestorSubgridIterator& operator++();
     AncestorSubgridIterator NODELETE begin();
-    AncestorSubgridIterator end();
+    AncestorSubgridIterator NODELETE end();
 private:
     AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestor, Style::GridTrackSizingDirection);
     AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestor, std::optional<Style::GridTrackSizingDirection>);

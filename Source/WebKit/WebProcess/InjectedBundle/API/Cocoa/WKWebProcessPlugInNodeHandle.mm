@@ -194,7 +194,7 @@ static _WKAutoFillButtonType NODELETE toWKAutoFillButtonType(WebCore::AutoFillBu
 
 - (BOOL)isSelectElement
 {
-    return protect(*_nodeHandle)->isSelectElement();
+    return _nodeHandle->isSelectElement();
 }
 
 - (BOOL)isSelectableTextNode

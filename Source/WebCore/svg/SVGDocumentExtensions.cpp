@@ -98,7 +98,7 @@ void SVGDocumentExtensions::pauseAnimations()
 void SVGDocumentExtensions::unpauseAnimations()
 {
     // If animations are paused at the document level, don't allow `this` to be unpaused.
-    if (animationsPausedForDocument(protect(m_document)))
+    if (animationsPausedForDocument(m_document))
         return;
 
     for (Ref container : m_timeContainers)

@@ -182,7 +182,7 @@ void Type::dump(PrintStream& out) const
         });
 }
 
-constexpr unsigned primitivePair(Types::Primitive::Kind first, Types::Primitive::Kind second)
+constexpr unsigned NODELETE primitivePair(Types::Primitive::Kind first, Types::Primitive::Kind second)
 {
     static_assert(sizeof(Types::Primitive::Kind) == 1);
     return static_cast<unsigned>(first) << 8 | second;

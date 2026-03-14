@@ -75,7 +75,7 @@ public:
     bool NODELETE inProgressOrReadOnly() const;
 
     SQLiteDatabase* NODELETE sqliteDatabase() const;
-    SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }
+    SQLiteTransaction* sqliteTransaction() const LIFETIME_BOUND { return m_sqliteTransaction.get(); }
     SQLiteIDBBackingStore& backingStore() { return m_backingStore.get(); }
 
     void addBlobFile(const String& temporaryPath, const String& storedFilename);

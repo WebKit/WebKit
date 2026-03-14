@@ -113,7 +113,7 @@ VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNa
     return result;
 }
 
-static std::optional<bool>& overrideEnhanceTextLegibility()
+static std::optional<bool>& NODELETE overrideEnhanceTextLegibility()
 {
     static NeverDestroyed<std::optional<bool>> overrideEnhanceTextLegibility;
     return overrideEnhanceTextLegibility.get();
@@ -169,7 +169,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const St
 
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
-    ASSERT_UNUSED(observer, isMainThread() && observer == FontCache::forCurrentThread().ptr());
+    ASSERT_UNUSED(observer, isMainThread() && observer == &FontCache::forCurrentThread());
 
     ensureOnMainThread([] {
         FontCache::invalidateAllFontCaches();
@@ -218,7 +218,7 @@ Vector<String> FontCache::systemFontFamilies()
     return fontFamilies;
 }
 
-static inline bool isSystemFont(const String& family)
+static inline bool NODELETE isSystemFont(const String& family)
 {
     // String's operator[] handles out-of-bounds by returning 0.
     return family[0] == '.';
@@ -272,7 +272,7 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
 
 class FontCacheAllowlist {
 public:
-    static FontCacheAllowlist& singleton() WTF_REQUIRES_LOCK(lock)
+    static FontCacheAllowlist& NODELETE singleton() WTF_REQUIRES_LOCK(lock)
     {
         static NeverDestroyed<FontCacheAllowlist> allowlist;
         return allowlist;
@@ -1010,7 +1010,7 @@ void FontCache::prewarmGlobally()
 
     FontCache::PrewarmInformation prewarmInfo;
     prewarmInfo.seenFamilies = WTF::move(families);
-    FontCache::forCurrentThread()->prewarm(WTF::move(prewarmInfo));
+    protect(FontCache::forCurrentThread())->prewarm(WTF::move(prewarmInfo));
 #endif
 }
 

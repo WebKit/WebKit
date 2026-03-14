@@ -62,6 +62,7 @@ public:
         DirectCall,
 #endif
         CachedCall,
+        MicrotaskCall,
     };
 
     enum CallType : uint8_t {

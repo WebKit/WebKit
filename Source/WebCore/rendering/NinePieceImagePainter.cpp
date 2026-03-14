@@ -53,7 +53,7 @@ enum ImagePiece {
     MaxPiece
 };
 
-static ImagePiece& operator++(ImagePiece& piece)
+static ImagePiece& NODELETE operator++(ImagePiece& piece)
 {
     piece = static_cast<ImagePiece>(std::to_underlying(piece) + 1);
     return piece;
@@ -168,7 +168,7 @@ static Vector<FloatRect, MaxPiece> computeNineRects(const FloatRect& outer, cons
     return rects;
 }
 
-static FloatSize computeSideTileScale(ImagePiece piece, const Vector<FloatRect, MaxPiece>& destinationRects, const Vector<FloatRect, MaxPiece>& sourceRects)
+static FloatSize NODELETE computeSideTileScale(ImagePiece piece, const Vector<FloatRect, MaxPiece>& destinationRects, const Vector<FloatRect, MaxPiece>& sourceRects)
 {
     ASSERT(!isCornerPiece(piece) && piece != MiddlePiece);
     if (isEmptyPieceRect(piece, destinationRects, sourceRects))
@@ -183,7 +183,7 @@ static FloatSize computeSideTileScale(ImagePiece piece, const Vector<FloatRect, 
     return FloatSize(scale, scale);
 }
 
-static FloatSize computeMiddleTileScale(const Vector<FloatSize, MaxPiece>& scales, const Vector<FloatRect, MaxPiece>& destinationRects, const Vector<FloatRect, MaxPiece>& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
+static FloatSize NODELETE computeMiddleTileScale(const Vector<FloatSize, MaxPiece>& scales, const Vector<FloatRect, MaxPiece>& destinationRects, const Vector<FloatRect, MaxPiece>& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
 {
     FloatSize scale(1, 1);
     if (isEmptyPieceRect(MiddlePiece, destinationRects, sourceRects))

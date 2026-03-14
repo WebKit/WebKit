@@ -1,3 +1,4 @@
+//@skip if !$jitTests
 //@requireOptions("--useLLInt=false", "--forceICFailure=true")
 // Regression test: Ensure that we don't crash when op_get_private_field caching results in
 // giving up on caching.`

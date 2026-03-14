@@ -31,7 +31,7 @@
 #include "CodeBlock.h"
 #include "ICStatusUtils.h"
 #include "InlineCacheCompiler.h"
-#include "StructureStubInfo.h"
+#include "PropertyInlineCache.h"
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -56,8 +56,8 @@ SetPrivateBrandStatus SetPrivateBrandStatus::computeForBaseline(CodeBlock* basel
     SetPrivateBrandStatus result;
 
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfoWithoutExitSiteFeedback(
-        locker, baselineBlock, map.get(CodeOrigin(bytecodeIndex)).stubInfo);
+    result = computeForPropertyInlineCacheWithoutExitSiteFeedback(
+        locker, baselineBlock, map.get(CodeOrigin(bytecodeIndex)).propertyCache);
 
     if (didExit)
         return result.slowVersion();
@@ -71,39 +71,39 @@ SetPrivateBrandStatus SetPrivateBrandStatus::computeForBaseline(CodeBlock* basel
 }
 
 #if ENABLE(JIT)
-SetPrivateBrandStatus::SetPrivateBrandStatus(StubInfoSummary summary, StructureStubInfo& stubInfo)
+SetPrivateBrandStatus::SetPrivateBrandStatus(PropertyInlineCacheSummary summary, PropertyInlineCache& propertyCache)
 {
     switch (summary) {
-    case StubInfoSummary::NoInformation:
+    case PropertyInlineCacheSummary::NoInformation:
         m_state = NoInformation;
         return;
-    case StubInfoSummary::Simple:
-    case StubInfoSummary::Megamorphic:
-    case StubInfoSummary::MakesCalls:
-    case StubInfoSummary::TakesSlowPathAndMakesCalls:
+    case PropertyInlineCacheSummary::Simple:
+    case PropertyInlineCacheSummary::Megamorphic:
+    case PropertyInlineCacheSummary::MakesCalls:
+    case PropertyInlineCacheSummary::TakesSlowPathAndMakesCalls:
         RELEASE_ASSERT_NOT_REACHED();
         return;
-    case StubInfoSummary::TakesSlowPath:
-        m_state = stubInfo.tookSlowPath ? ObservedTakesSlowPath : LikelyTakesSlowPath;
+    case PropertyInlineCacheSummary::TakesSlowPath:
+        m_state = propertyCache.tookSlowPath ? ObservedTakesSlowPath : LikelyTakesSlowPath;
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-SetPrivateBrandStatus SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* block, StructureStubInfo* stubInfo)
+SetPrivateBrandStatus SetPrivateBrandStatus::computeForPropertyInlineCacheWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* block, PropertyInlineCache* propertyCache)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(locker, block->vm(), stubInfo);
+    PropertyInlineCacheSummary summary = PropertyInlineCache::summary(locker, block->vm(), propertyCache);
     if (!isInlineable(summary))
-        return SetPrivateBrandStatus(summary, *stubInfo);
+        return SetPrivateBrandStatus(summary, *propertyCache);
 
     SetPrivateBrandStatus result;
     result.m_state = Simple;
-    switch (stubInfo->cacheType()) {
+    switch (propertyCache->cacheType()) {
     case CacheType::Unset:
         return SetPrivateBrandStatus(NoInformation);
 
     case CacheType::Stub: {
-        auto list = stubInfo->listedAccessCases(locker);
+        auto list = propertyCache->listedAccessCases(locker);
 
         for (unsigned listIndex = 0; listIndex < list.size(); ++listIndex) {
             const AccessCase& access = *list.at(listIndex);
@@ -114,11 +114,11 @@ SetPrivateBrandStatus SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFe
 
             Structure* newStructure = Structure::setBrandTransitionFromExistingStructureConcurrently(structure, access.identifier().uid());
             if (!newStructure)
-                return SetPrivateBrandStatus(JSC::slowVersion(summary), *stubInfo);
+                return SetPrivateBrandStatus(JSC::slowVersion(summary), *propertyCache);
 
             SetPrivateBrandVariant variant(access.identifier(), structure, newStructure);
             if (!result.appendVariant(variant))
-                return SetPrivateBrandStatus(JSC::slowVersion(summary), *stubInfo);
+                return SetPrivateBrandStatus(JSC::slowVersion(summary), *propertyCache);
         }
 
         result.shrinkToFit();
@@ -126,7 +126,7 @@ SetPrivateBrandStatus SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFe
     }
 
     default:
-        return SetPrivateBrandStatus(JSC::slowVersion(summary), *stubInfo);
+        return SetPrivateBrandStatus(JSC::slowVersion(summary), *propertyCache);
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -155,12 +155,12 @@ SetPrivateBrandStatus SetPrivateBrandStatus::computeFor(
             return result;
         };
 
-        if (status.stubInfo) {
+        if (status.propertyCache) {
             SetPrivateBrandStatus result;
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
-                result = computeForStubInfoWithoutExitSiteFeedback(
-                    locker, context->optimizedCodeBlock, status.stubInfo);
+                result = computeForPropertyInlineCacheWithoutExitSiteFeedback(
+                    locker, context->optimizedCodeBlock, status.propertyCache);
             }
             if (result.isSet())
                 return bless(result);

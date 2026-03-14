@@ -37,8 +37,9 @@ namespace WebCore {
 
 void SubresourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler)
 {
-    DiskCacheMonitor::monitorFileBackingStoreCreation(request(), m_resource->sessionID(), [response _CFCachedURLResponse]);
-    if (!m_resource->shouldCacheResponse(response.response))
+    RefPtr resource = m_resource;
+    DiskCacheMonitor::monitorFileBackingStoreCreation(request(), resource->sessionID(), [response _CFCachedURLResponse]);
+    if (!resource->shouldCacheResponse(response.response))
         return completionHandler(nullptr);
     ResourceLoader::willCacheResponseAsync(handle, response, WTF::move(completionHandler));
 }

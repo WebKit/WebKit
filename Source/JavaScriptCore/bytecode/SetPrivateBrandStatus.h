@@ -32,8 +32,8 @@
 #include "ConcurrentJSLock.h"
 #include "ExitFlag.h"
 #include "ICStatusMap.h"
+#include "PropertyInlineCacheSummary.h"
 #include "SetPrivateBrandVariant.h"
-#include "StubInfoSummary.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {
@@ -41,7 +41,7 @@ namespace JSC {
 class AccessCase;
 class CodeBlock;
 class StructureSet;
-class StructureStubInfo;
+class PropertyInlineCache;
 
 class SetPrivateBrandStatus final {
     WTF_MAKE_TZONE_ALLOCATED(SetPrivateBrandStatus);
@@ -76,7 +76,7 @@ public:
     bool operator!() const { return !isSet(); }
     bool observedSlowPath() const { return m_state == ObservedTakesSlowPath; }
     bool isSimple() const { return m_state == Simple; }
-    const Vector<SetPrivateBrandVariant, 1>& variants() { return m_variants; }
+    const Vector<SetPrivateBrandVariant, 1>& variants() LIFETIME_BOUND { return m_variants; }
     CacheableIdentifier singleIdentifier() const;
 
     SetPrivateBrandStatus slowVersion() const;
@@ -94,13 +94,13 @@ public:
     void dump(PrintStream&) const;
 
 private:
-    explicit SetPrivateBrandStatus(StubInfoSummary, StructureStubInfo&);
+    explicit SetPrivateBrandStatus(PropertyInlineCacheSummary, PropertyInlineCache&);
     void merge(const SetPrivateBrandStatus&);
 
     static SetPrivateBrandStatus computeForBaseline(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag);
 #if ENABLE(JIT)
-    static SetPrivateBrandStatus computeForStubInfoWithoutExitSiteFeedback(
-        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*);
+    static SetPrivateBrandStatus computeForPropertyInlineCacheWithoutExitSiteFeedback(
+        const ConcurrentJSLocker&, CodeBlock* profiledBlock, PropertyInlineCache*);
 #endif
 
     Vector<SetPrivateBrandVariant, 1> m_variants;

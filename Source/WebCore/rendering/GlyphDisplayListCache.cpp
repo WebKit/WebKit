@@ -60,12 +60,12 @@ static void add(Hasher& hasher, const GlyphDisplayListCacheKey& key)
 }
 
 struct GlyphDisplayListCacheKeyTranslator {
-    static unsigned hash(const GlyphDisplayListCacheKey& key)
+    static unsigned NODELETE hash(const GlyphDisplayListCacheKey& key)
     {
         return computeHash(key);
     }
 
-    static bool equal(const WeakPtr<GlyphDisplayListCacheEntry, SingleThreadWeakPtrImpl>& entryRef, const GlyphDisplayListCacheKey& key)
+    static bool NODELETE equal(const WeakPtr<GlyphDisplayListCacheEntry, SingleThreadWeakPtrImpl>& entryRef, const GlyphDisplayListCacheKey& key)
     {
         if (!entryRef)
             return false;

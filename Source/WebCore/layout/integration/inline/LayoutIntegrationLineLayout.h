@@ -73,7 +73,7 @@ public:
     static LineLayout* containing(RenderObject&);
     static const LineLayout* containing(const RenderObject&);
 
-    static bool canUseFor(const RenderBlockFlow&);
+    static bool NODELETE canUseFor(const RenderBlockFlow&);
     static bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
     static bool shouldInvalidateLineLayoutAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
     static bool shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
@@ -97,7 +97,7 @@ public:
     void paint(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* layerRenderer = nullptr);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction, const RenderInline* layerRenderer = nullptr);
     void adjustForPagination();
-    void shiftLinesBy(LayoutUnit blockShift);
+    void shiftLinesByInBlockDirection(LayoutUnit blockShift);
 
     void collectOverflow();
     LayoutRect inkOverflowBoundingBoxRectFor(const RenderInline&) const;
@@ -105,7 +105,7 @@ public:
 
     LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
-    bool hasEllipsisInBlockDirectionOnLastFormattedLine() const;
+    bool NODELETE hasEllipsisInBlockDirectionOnLastFormattedLine() const;
     bool contains(const RenderElement& renderer) const;
 
     bool NODELETE isPaginated() const;
@@ -113,7 +113,7 @@ public:
     bool NODELETE hasContentfulInlineOrBlockLine() const;
     bool NODELETE hasContentfulInlineLine() const;
     bool isSelfCollapsingContent() const;
-    bool hasInkOverflow() const;
+    bool NODELETE hasInkOverflow() const;
     std::optional<LayoutUnit> firstLineBaseline() const;
     std::optional<LayoutUnit> lastLineBaseline() const;
     LayoutRect firstInlineBoxRect(const RenderInline&) const;
@@ -139,7 +139,7 @@ public:
     // This is temporary, required by partial bailout check.
     bool NODELETE contentNeedsVisualReordering() const;
     bool isDamaged() const { return !!m_lineDamage; }
-    const Layout::InlineDamage* damage() const { return m_lineDamage.get(); }
+    const Layout::InlineDamage* damage() const LIFETIME_BOUND { return m_lineDamage.get(); }
 #ifndef NDEBUG
     bool hasDetachedContent() const { return m_lineDamage && m_lineDamage->hasDetachedContent(); }
 #endif
@@ -154,21 +154,21 @@ private:
     Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout);
     void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent);
 
-    InlineContent& ensureInlineContent();
+    InlineContent& ensureInlineContent() LIFETIME_BOUND;
 
-    Layout::LayoutState& layoutState() { return *m_layoutState; }
-    const Layout::LayoutState& layoutState() const { return *m_layoutState; }
+    Layout::LayoutState& layoutState() LIFETIME_BOUND { return *m_layoutState; }
+    const Layout::LayoutState& layoutState() const LIFETIME_BOUND { return *m_layoutState; }
 
-    Layout::InlineDamage& ensureLineDamage();
+    Layout::InlineDamage& ensureLineDamage() LIFETIME_BOUND;
 
     const Layout::ElementBox& rootLayoutBox() const { return *m_rootLayoutBox; }
     Layout::ElementBox& rootLayoutBox() { return *m_rootLayoutBox; }
     void clearInlineContent();
     void releaseCachesAndResetDamage();
 
-    LayoutUnit baselineForLine(const InlineDisplay::Line&) const;
+    LayoutUnit NODELETE baselineForLine(const InlineDisplay::Line&) const;
 
-    bool isContentConsideredStale() const;
+    bool NODELETE isContentConsideredStale() const;
 
 private:
     CheckedPtr<Layout::ElementBox> m_rootLayoutBox;

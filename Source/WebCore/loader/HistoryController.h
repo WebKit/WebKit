@@ -120,7 +120,7 @@ private:
     bool NODELETE isReloadTypeWithProvisionalItem(FrameLoadType);
     void recursiveUpdateForCommit();
     void recursiveUpdateForSameDocumentNavigation();
-    static bool itemsAreClones(HistoryItem&, HistoryItem*);
+    static bool NODELETE itemsAreClones(HistoryItem&, HistoryItem*);
     void updateBackForwardListClippedAtTarget(bool doClip);
     void updateCurrentItem();
     bool isFrameLoadComplete() const { return m_frameLoadComplete; }

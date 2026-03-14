@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-static bool isBoxEligibleForNonLineBuilderMinimumWidth(const ElementBox& box)
+static bool NODELETE isBoxEligibleForNonLineBuilderMinimumWidth(const ElementBox& box)
 {
     // Note that hanging trailing content needs line builder (combination of wrapping is allowed but whitespace is preserved).
     auto& style = box.style();
@@ -52,7 +52,7 @@ static bool isContentEligibleForNonLineBuilderMaximumWidth(const ElementBox& roo
     return inlineTextItem && !inlineTextItem->isWhitespace();
 }
 
-static bool isSubtreeEligibleForNonLineBuilderMinimumWidth(const ElementBox& root)
+static bool NODELETE isSubtreeEligibleForNonLineBuilderMinimumWidth(const ElementBox& root)
 {
     auto isSimpleBreakableContent = isBoxEligibleForNonLineBuilderMinimumWidth(root);
     for (auto* child = root.firstChild(); child && isSimpleBreakableContent; child = child->nextSibling()) {
@@ -67,7 +67,7 @@ static bool isSubtreeEligibleForNonLineBuilderMinimumWidth(const ElementBox& roo
     return isSimpleBreakableContent;
 }
 
-static bool isContentEligibleForNonLineBuilderMinimumWidth(const ElementBox& rootBox, const InlineContentCache::InlineItems& inlineItems, bool mayUseSimplifiedTextOnlyInlineLayout)
+static bool NODELETE isContentEligibleForNonLineBuilderMinimumWidth(const ElementBox& rootBox, const InlineContentCache::InlineItems& inlineItems, bool mayUseSimplifiedTextOnlyInlineLayout)
 {
     auto isEligible = (mayUseSimplifiedTextOnlyInlineLayout && isBoxEligibleForNonLineBuilderMinimumWidth(rootBox)) || (!mayUseSimplifiedTextOnlyInlineLayout && isSubtreeEligibleForNonLineBuilderMinimumWidth(rootBox));
     if (!isEligible || !mayUseSimplifiedTextOnlyInlineLayout || !inlineItems.hasInlineBoxes())
@@ -93,7 +93,7 @@ static bool isContentEligibleForNonLineBuilderMinimumWidth(const ElementBox& roo
     return false;
 }
 
-static bool mayUseContentWidthBetweenLineBreaksAsMaximumSize(const ElementBox& rootBox, const InlineItemList& inlineItemList)
+static bool NODELETE mayUseContentWidthBetweenLineBreaksAsMaximumSize(const ElementBox& rootBox, const InlineItemList& inlineItemList)
 {
     if (!TextUtil::shouldPreserveSpacesAndTabs(rootBox))
         return false;

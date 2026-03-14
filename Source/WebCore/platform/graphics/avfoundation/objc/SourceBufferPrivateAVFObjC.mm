@@ -228,7 +228,7 @@ bool SourceBufferPrivateAVFObjC::precheckInitializationSegment(const Initializat
 
     if (!mediaContentTypesRequiringHardwareSupport.isEmpty()) {
         for (auto& info : segment.videoTracks) {
-            auto codec = FourCC::fromString(Ref { *info.description }->codec());
+            auto codec = FourCC::fromString(info.description->codec());
             if (!codec)
                 continue;
             if (!codecsMeetHardwareDecodeRequirements({ { *codec } }, mediaContentTypesRequiringHardwareSupport))
@@ -739,9 +739,10 @@ bool SourceBufferPrivateAVFObjC::canSwitchToType(const ContentType& contentType)
     ASSERT(isOnCreationThread());
     ALWAYS_LOG(LOGIDENTIFIER, contentType);
 
-    MediaEngineSupportParameters parameters;
-    parameters.isMediaSource = true;
-    parameters.type = contentType;
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = contentType
+    };
     if (MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return false;
     RefPtr parser = SourceBufferParser::create(contentType, m_configuration);
@@ -791,7 +792,7 @@ void SourceBufferPrivateAVFObjC::configureParser(SourceBufferParser& parser)
             protectedThis->didProvideContentKeyRequestInitializationDataForTrackID(WTF::move(initData), trackID);
     });
 
-    if (RefPtr webmParser = dynamicDowncast<SourceBufferParserWebM>(parser); webmParser && m_configuration.supportsLimitedMatroska)
+    if (auto* webmParser = dynamicDowncast<SourceBufferParserWebM>(parser); webmParser && m_configuration.supportsLimitedMatroska)
         webmParser->allowLimitedMatroska();
 
 #if !RELEASE_LOG_DISABLED

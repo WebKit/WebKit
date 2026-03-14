@@ -30,6 +30,7 @@
 
 #include "AudioSampleBufferConverter.h"
 #include "AudioSampleFormat.h"
+#include "AudioUtilitiesCocoa.h"
 #include "CAAudioStreamDescription.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
@@ -253,6 +254,7 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
     if (!result)
         return result.error();
 
+    std::span<const uint8_t> description = config.description.span();
     unsigned preSkip = 0;
     auto [codec, format] = *result;
     if (!format) {
@@ -271,25 +273,35 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
         asbd.mFormatID = codec;
         // Attempt to create description with provided cookie.
         bool succeeded = false;
-        if (config.description.size()) {
+        Vector<uint8_t> codecDescription;
+        if (description.size()) {
+            // For MPEG-4 audio codecs, we need to wrap the AudioSpecificConfig in an ES_Descriptor
+            // for CoreMedia tools to properly handle it
+            if (mIsAAC) {
+                codecDescription = createESDescriptor(description);
+                description = codecDescription.span();
+            }
+
             UInt32 size = sizeof(asbd);
-            succeeded = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, config.description.size(), config.description.span().data(), &size, &asbd) == noErr;
+            succeeded = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, description.size(), description.data(), &size, &asbd) == noErr;
             if (codec == kAudioFormatOpus) {
                 if (auto cookie = parseOpusPrivateData(config.description, { }))
                     preSkip = cookie->preSkip;
             }
         }
-        if (!succeeded) {
+        if (!succeeded || !asbd.mSampleRate || !asbd.mChannelsPerFrame) {
             asbd.mSampleRate = double(config.sampleRate);
             asbd.mChannelsPerFrame = uint32_t(config.numberOfChannels);
         } else
-            m_codecDescription = config.description;
+            m_codecDescription = description;
 
         m_inputDescription = asbd;
     } else
         m_inputDescription = CAAudioStreamDescription { double(config.sampleRate), uint32_t(config.numberOfChannels), *format, CAAudioStreamDescription::IsInterleaved::Yes };
 
     lazyInitialize(m_inputFormatDescription, createAudioFormatDescription(*m_inputDescription, m_codecDescription.span()));
+    if (!m_inputFormatDescription)
+        return description.empty() ? "Invalid configuration"_s : "Invalid AudioDecoderConfig's description (extradata)"_s;
 
     // FIXME: we choose to create interleaved AudioData as tests incorrectly requires it (planar is more compatible with WebAudio)
     // https://github.com/w3c/webcodecs/issues/859

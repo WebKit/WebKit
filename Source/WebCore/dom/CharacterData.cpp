@@ -51,9 +51,9 @@ CharacterData::~CharacterData()
 
 static bool canUseSetDataOptimization(const CharacterData& node)
 {
-    Ref document = node.document();
-    return !document->hasListenerType(Document::ListenerType::DOMCharacterDataModified) && !document->hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
-        && !document->hasListenerType(Document::ListenerType::DOMSubtreeModified) && !is<HTMLStyleElement>(node.parentNode());
+    auto& document = node.document();
+    return !document.hasListenerType(Document::ListenerType::DOMCharacterDataModified) && !document.hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
+        && !document.hasListenerType(Document::ListenerType::DOMSubtreeModified) && !is<HTMLStyleElement>(node.parentNode());
 }
 
 void CharacterData::setData(const String& data)
@@ -93,27 +93,32 @@ static ContainerNode::ChildChange NODELETE makeChildChange(CharacterData& charac
     };
 }
 
-void CharacterData::parserAppendData(StringView string)
+void CharacterData::parserAppendData(StringView string, StringBuilder& buffer)
 {
     auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::Parser);
     std::optional<Style::ChildChangeInvalidation> styleInvalidation;
     if (RefPtr parent = parentNode())
         styleInvalidation.emplace(*parent, childChange);
 
-    String oldData = m_data;
-    m_data = makeString(m_data, string);
+    unsigned oldLength = length();
+
+    if (buffer.isEmpty() && !m_data.isEmpty())
+        buffer.append(m_data);
+
+    buffer.append(string);
+    m_data = buffer.toStringPreserveCapacity();
 
     clearStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid);
 
     ASSERT(!renderer() || is<Text>(*this));
     if (auto text = dynamicDowncast<Text>(*this))
-        text->updateRendererAfterContentChange(oldData.length(), 0);
+        text->updateRendererAfterContentChange(oldLength, 0);
 
     notifyParentAfterChange(childChange);
 
     auto mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(*this);
     if (mutationRecipients) [[unlikely]]
-        mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, oldData));
+        mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, m_data.left(oldLength)));
 }
 
 void CharacterData::appendData(const String& data)

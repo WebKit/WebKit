@@ -147,6 +147,7 @@
 #include <WebCore/SharedWorkerThreadProxy.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <WebCore/WebKitJSHandle.h>
+#include <WebCore/WorkerGlobalScope.h>
 #include <algorithm>
 #include <pal/Logging.h>
 #include <wtf/CallbackAggregator.h>
@@ -755,7 +756,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     m_shouldInitializeAccessibility = parameters.shouldInitializeAccessibility;
 #endif
 
-#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR) && CPU(ARM64)
     if (JSC::Options::enableWasmDebugger()) [[unlikely]] {
         bool success = JSC::Wasm::DebugServer::singleton().startRWI([](const String& response) {
             return WebKit::WebProcess::singleton().send(Messages::WebProcessProxy::SendWasmDebuggerResponse(response), 0);
@@ -1183,15 +1184,11 @@ void WebProcess::removeWebFrame(FrameIdentifier frameID, WebPage* page)
     page->send(Messages::WebPageProxy::DidDestroyFrame(frameID));
 }
 
-WebPageGroupProxy* WebProcess::webPageGroup(WebPageGroupData&& pageGroupData)
+WebPageGroupProxy& WebProcess::webPageGroup(WebPageGroupData&& pageGroupData)
 {
-    auto result = m_pageGroupMap.add(pageGroupData.pageGroupID, nullptr);
-    if (result.isNewEntry) {
-        ASSERT(!result.iterator->value);
-        result.iterator->value = WebPageGroupProxy::create(WTF::move(pageGroupData));
-    }
-
-    return result.iterator->value.get();
+    return m_pageGroupMap.ensure(pageGroupData.pageGroupID, [&] {
+        return WebPageGroupProxy::create(WTF::move(pageGroupData));
+    }).iterator->value;
 }
 
 std::optional<WebCore::UserGestureTokenIdentifier> WebProcess::userGestureTokenIdentifier(std::optional<PageIdentifier> pageID, RefPtr<UserGestureToken> token)
@@ -1402,6 +1399,9 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
             for (auto& webPage : m_pageMap.values())
                 webPage->synchronizeCORSDisablingPatternsWithNetworkProcess();
         });
+
+        if (std::exchange(m_needsIDBConnectionRefreshForWorkers, false))
+            refreshIDBConnectionForWorkers();
     }
     
     return *m_networkProcessConnection;
@@ -1451,7 +1451,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
         
         if (RefPtr existingIDBConnectionToServer = connection->existingIDBConnectionToServer()) {
             ASSERT_UNUSED(existingIDBConnectionToServer, idbConnection.get() == &existingIDBConnectionToServer->coreConnectionToServer());
-            corePage->clearIDBConnection();
+            corePage->clearIDBConnectionOnAllDocuments();
         }
     }
 
@@ -1495,6 +1495,14 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     for (auto& weakSession : sessions) {
         if (RefPtr webtransportSession = weakSession.get())
             webtransportSession->didFail(std::nullopt, String(emptyString()));
+    }
+}
+
+void WebProcess::refreshIDBConnectionForWorkers()
+{
+    for (auto& page : m_pageMap.values()) {
+        if (RefPtr corePage = page->corePage())
+            corePage->refreshIDBConnectionForWorkers();
     }
 }
 

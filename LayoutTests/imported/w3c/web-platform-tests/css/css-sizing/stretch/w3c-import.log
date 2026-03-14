@@ -14,11 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/abspos-1-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/abspos-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/abspos-2-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/abspos-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/aspect-ratio-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/aspect-ratio-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/auto-margins-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/auto-margins-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/bfc-next-to-float-1-expected.xht
@@ -53,6 +55,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-line-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-line-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-line-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flex-stretch-min-max-cross-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-auto-minimum-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-auto-minimum-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-auto-minimum-002-expected.html
@@ -61,6 +64,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-flex-base-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-flex-base-size-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-flex-base-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-stretch-minimum-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-stretch-minimum-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-stretch-minimum-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/flexbox-stretch-minimum-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/indefinite-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/indefinite-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/indefinite-3.html
@@ -76,6 +83,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-3-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/positioned-replaced-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/replaced-next-to-float-1-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/replaced-next-to-float-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/replaced-next-to-float-2-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/replaced-next-to-float-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/replaced-stretch-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-block-size-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-inline-size-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-alias-max-block-size-001.tentative.html
@@ -92,3 +104,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-max-inline-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-min-block-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-min-inline-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-quirk-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-quirk-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-quirk-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/stretch/stretch-table-001.html

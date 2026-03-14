@@ -78,7 +78,7 @@ RenderBox* RenderScrollbar::owningRenderer() const
         return frame->ownerRenderer();
 
     ASSERT(m_ownerElement);
-    if (CheckedPtr renderer = m_ownerElement->renderer())
+    if (auto* renderer = m_ownerElement->renderer())
         return &renderer->enclosingBox();
     return nullptr;
 }

@@ -106,7 +106,7 @@ public:
 
     WEBCORE_EXPORT int httpStatusCode() const;
     WEBCORE_EXPORT void setHTTPStatusCode(int);
-    WEBCORE_EXPORT bool isRedirection() const;
+    WEBCORE_EXPORT bool NODELETE isRedirection() const;
 
     WEBCORE_EXPORT const String& httpStatusText() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setHTTPStatusText(String&&);
@@ -206,7 +206,7 @@ public:
         return 1280;
     }
 
-    WEBCORE_EXPORT void setType(Type);
+    WEBCORE_EXPORT void NODELETE setType(Type);
     Type type() const { return m_type; }
 
     void setRedirected(bool isRedirected) { m_isRedirected = isRedirected; }
@@ -254,7 +254,7 @@ protected:
 
 private:
     void parseCacheControlDirectives() const;
-    void updateHeaderParsedState(HTTPHeaderName);
+    void NODELETE updateHeaderParsedState(HTTPHeaderName);
     void sanitizeHTTPHeaderFieldsAccordingToTainting();
 
 protected:

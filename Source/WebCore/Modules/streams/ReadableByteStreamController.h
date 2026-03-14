@@ -101,8 +101,8 @@ public:
 
     bool isPulling() const { return m_pulling; }
 
-    template<typename Visitor> void visitAdditionalChildren(Visitor&);
-    template<typename Visitor> void visitDirectChildren(Visitor&);
+    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
+    template<typename Visitor> void visitDirectChildrenInGCThread(Visitor&);
 
     using PullAlgorithm = Function<Ref<DOMPromise>(JSDOMGlobalObject&, ReadableByteStreamController&)>;
     using CancelAlgorithm = Function<Ref<DOMPromise>(JSDOMGlobalObject&, ReadableByteStreamController&, std::optional<JSC::JSValue>&&)>;
@@ -163,7 +163,7 @@ private:
     void fillReadRequestFromQueue(JSDOMGlobalObject&, Ref<ReadableStreamReadRequest>&&);
     void handleQueueDrain(JSDOMGlobalObject&);
 
-    static void handleSourcePromise(DOMPromise&, Callback&&);
+    void handleSourcePromise(JSDOMGlobalObject&, DOMPromise&, Callback&&);
 
     WeakRef<ReadableStream> m_stream;
     bool m_pullAgain { false };

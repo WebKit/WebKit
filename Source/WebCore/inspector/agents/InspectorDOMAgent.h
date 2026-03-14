@@ -187,7 +187,7 @@ public:
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willDestroyDOMNode(Node&);
-    void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
+    void NODELETE willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
     void didRemoveDOMAttr(Element&, const AtomString& name);
     void characterDataModified(CharacterData&);
@@ -227,7 +227,7 @@ public:
     void inspect(Node*);
     void focusNode();
 
-    InspectorHistory* history() { return m_history.get(); }
+    InspectorHistory* history() LIFETIME_BOUND { return m_history.get(); }
     Vector<Document*> documents();
     Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&);
     void reset();

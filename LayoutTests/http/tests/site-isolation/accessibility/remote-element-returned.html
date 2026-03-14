@@ -17,8 +17,8 @@ function runTest() {
         window.jsTestIsAsync = true;
 
         setTimeout(async function() {
-            // Traverse ScrollView -> WebArea -> ScrollView (of iframe) -> Remote Frame
-            await waitFor(() => accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndexWithRemoteElement(0).isRemoteFrame);
+            // Traverse ScrollView -> WebArea -> Remote Frame
+            await waitFor(() => accessibilityController.rootElement.childAtIndex(0).childAtIndexWithRemoteElement(0).isRemoteFrame);
             output += `Remote frame exists\n`;
             
             debug(output);

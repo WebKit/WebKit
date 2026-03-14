@@ -29,12 +29,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/microphone-reporting.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/midi-reporting.https.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/midi-reporting.https.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/screen-wake-lock-reporting.https.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/screen-wake-lock-reporting.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/serial-reporting.https.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/serial-reporting.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/sync-xhr-reporting.html

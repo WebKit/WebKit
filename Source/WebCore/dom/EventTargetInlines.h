@@ -121,10 +121,10 @@ inline bool EventTarget::containsMatchingEventListener(NOESCAPE const CallbackTy
 }
 
 template<typename Visitor>
-inline void EventTarget::visitJSEventListeners(Visitor& visitor)
+inline void EventTarget::visitJSEventListenersInGCThread(Visitor& visitor)
 {
     if (auto* data = eventTargetDataConcurrently())
-        data->eventListenerMap.visitJSEventListeners(visitor);
+        data->eventListenerMap.visitJSEventListenersInGCThread(visitor);
 }
 
 } // namespace WebCore

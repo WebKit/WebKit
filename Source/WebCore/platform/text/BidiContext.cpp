@@ -76,7 +76,7 @@ Ref<BidiContext> BidiContext::create(unsigned char level, UCharDirection directi
     return *rtlOverrideContext.get();
 }
 
-static inline Ref<BidiContext> copyContextAndRebaselineLevel(BidiContext& context, BidiContext* parent)
+static inline Ref<BidiContext> NODELETE copyContextAndRebaselineLevel(BidiContext& context, BidiContext* parent)
 {
     auto newLevel = parent ? parent->level() : 0;
     if (context.dir() == U_RIGHT_TO_LEFT)

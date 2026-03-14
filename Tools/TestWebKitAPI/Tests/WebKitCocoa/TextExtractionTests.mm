@@ -82,6 +82,7 @@ SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
 
 @interface _WKTextExtractionResult (TextExtractionTests)
 - (_WKJSHandle *)jsHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText;
+- (_WKJSHandle *)containerJSHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText;
 @end
 
 @implementation WKWebView (TextExtractionTests)
@@ -172,6 +173,18 @@ SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
     __block bool done = false;
     __block RetainPtr<_WKJSHandle> result;
     [self requestJSHandleForNodeIdentifier:nodeIdentifier searchText:searchText completionHandler:^(_WKJSHandle *handle) {
+        result = handle;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (_WKJSHandle *)containerJSHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText
+{
+    __block bool done = false;
+    __block RetainPtr<_WKJSHandle> result;
+    [self requestContainerJSHandleForNodeIdentifier:nodeIdentifier searchText:searchText completionHandler:^(_WKJSHandle *handle) {
         result = handle;
         done = true;
     }];
@@ -558,9 +571,10 @@ TEST(TextExtractionTests, NodesToSkip)
     }()];
 
     NSArray<NSString *> *lines = [debugText componentsSeparatedByString:@"\n"];
-    EXPECT_EQ([lines count], 2u);
+    EXPECT_EQ([lines count], 3u);
     EXPECT_WK_STREQ("Test", lines[0]);
-    EXPECT_WK_STREQ("0", lines[1]);
+    EXPECT_WK_STREQ("subject SUBJECT", lines[1]);
+    EXPECT_WK_STREQ("0", lines[2]);
 }
 
 TEST(TextExtractionTests, RequestJSHandleForNodeIdentifier)
@@ -603,6 +617,93 @@ TEST(TextExtractionTests, RequestJSHandleForNodeIdentifier)
     }()];
 
     EXPECT_WK_STREQ(debugTextForBody.get(), @"root,'“The quick brown fox jumped over the lazy dog”'");
+}
+
+TEST(TextExtractionTests, RequestJSHandleForNodeIdentifierCaseSensitive)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugTextForLowercase = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setTargetNode:[extractionResult jsHandleForNodeIdentifier:nil searchText:@"subject"]];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugTextForLowercase.get(), @"root\n\taria-label='Lowercase','subject'");
+
+    RetainPtr debugTextForUppercase = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setTargetNode:[extractionResult jsHandleForNodeIdentifier:nil searchText:@"SUBJECT"]];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugTextForUppercase.get(), @"root\n\taria-label='Uppercase','SUBJECT'");
+}
+
+TEST(TextExtractionTests, RequestContainerJSHandleForNodeIdentifier)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-product"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionAllContainers];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugText1 = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+
+        RetainPtr handle = [extractionResult containerJSHandleForNodeIdentifier:nil searchText:@"Premium Wireless Headphones"];
+        [configuration setTargetNode:handle.get()];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugText2 = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+
+        RetainPtr nodeID = extractNodeIdentifier([extractionResult textContent], @"$99.99");
+        RetainPtr handle = [extractionResult containerJSHandleForNodeIdentifier:nodeID.get() searchText:nil];
+        [configuration setTargetNode:handle.get()];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugText1.get(), debugText2.get());
+    EXPECT_TRUE([debugText1 containsString:@"Sale - 20% Off"]);
+    EXPECT_TRUE([debugText1 containsString:@"In Stock - Ships within 24 hours"]);
+    EXPECT_FALSE([debugText1 containsString:@"Customers Also Bought"]);
 }
 
 TEST(TextExtractionTests, ResolveTargetNodeFromSelectorData)

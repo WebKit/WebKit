@@ -41,8 +41,8 @@ public:
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
     bool characterStartsNewTextChunk(int position) const;
-    SVGTextLayoutAttributes* layoutAttributes() { return &m_layoutAttributes; }
-    const SVGTextLayoutAttributes* layoutAttributes() const { return &m_layoutAttributes; }
+    SVGTextLayoutAttributes* layoutAttributes() LIFETIME_BOUND { return &m_layoutAttributes; }
+    const SVGTextLayoutAttributes* layoutAttributes() const LIFETIME_BOUND { return &m_layoutAttributes; }
 
     // computeScalingFactor() returns the font-size scaling factor, ignoring the text-rendering mode.
     // scalingFactor() takes it into account, and thus returns 1 whenever text-rendering is set to 'geometricPrecision'.
@@ -58,9 +58,9 @@ public:
     FloatRect floatLinesBoundingBox() const;
 
     void removeTextBox(LegacyInlineTextBox& box) { m_legacyLineBoxes.remove(box); }
-    LegacyInlineTextBox* createInlineTextBox() { return m_legacyLineBoxes.createAndAppendLineBox(*this); }
+    LegacyInlineTextBox* createInlineTextBox() LIFETIME_BOUND { return m_legacyLineBoxes.createAndAppendLineBox(*this); }
     void deleteLegacyLineBoxes();
-    LegacyInlineTextBox* firstLegacyTextBox() const { return m_legacyLineBoxes.first(); }
+    LegacyInlineTextBox* firstLegacyTextBox() const LIFETIME_BOUND { return m_legacyLineBoxes.first(); }
     void removeAndDestroyLegacyTextBoxes();
     std::unique_ptr<LegacyInlineTextBox> createTextBox();
 

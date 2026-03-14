@@ -46,7 +46,7 @@ public:
     Seconds NODELETE duration() const;
     void NODELETE setDuration(Seconds);
     std::optional<double> NODELETE effectivePlaybackRate() const;
-    void setPlaybackRate(double);
+    void NODELETE setPlaybackRate(double);
     std::optional<Seconds> NODELETE lastCachedCurrentTime() const;
     std::optional<MonotonicTime> NODELETE lastCachedClockTimestamp() const;
 

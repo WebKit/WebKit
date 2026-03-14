@@ -153,7 +153,7 @@ void BasicWheelEventDeltaFilter::reset()
     m_currentFilteredVelocity = { };
 }
 
-static inline bool deltaIsPredominantlyVertical(const FloatSize& delta)
+static inline bool NODELETE deltaIsPredominantlyVertical(const FloatSize& delta)
 {
     return std::abs(delta.height()) > std::abs(delta.width());
 }

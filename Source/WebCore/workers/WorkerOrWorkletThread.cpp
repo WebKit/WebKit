@@ -119,7 +119,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
         if (!m_globalScope)
             return;
 
-        downcast<WorkerMainRunLoop>(m_runLoop.get()).setGlobalScope(*protect(globalScope()));
+        downcast<WorkerMainRunLoop>(m_runLoop.get()).setGlobalScope(*globalScope());
 
         String exceptionMessage;
         evaluateScriptIfNecessary(exceptionMessage);

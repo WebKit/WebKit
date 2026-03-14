@@ -132,7 +132,7 @@ AffineTransform* SVGGraphicsElement::ensureSupplementalTransform()
 void SVGGraphicsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::transformAttr)
-        Ref { m_transform }->baseVal()->parse(newValue);
+        m_transform->baseVal()->parse(newValue);
 
     SVGTests::parseAttribute(name, newValue);
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -181,8 +181,8 @@ RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(RenderStyle&&
 void SVGGraphicsElement::didAttachRenderers()
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (CheckedPtr svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()); svgRenderer && lineageOfType<RenderSVGHiddenContainer>(*svgRenderer).first()) {
-            if (CheckedPtr layer = svgRenderer->layer())
+        if (auto* svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()); svgRenderer && lineageOfType<RenderSVGHiddenContainer>(*svgRenderer).first()) {
+            if (auto* layer = svgRenderer->layer())
                 layer->dirtyVisibleContentStatus();
         }
     }

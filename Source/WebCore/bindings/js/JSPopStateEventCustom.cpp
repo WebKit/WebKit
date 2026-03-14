@@ -93,11 +93,11 @@ JSValue JSPopStateEvent::state(JSGlobalObject& lexicalGlobalObject) const
 }
 
 template<typename Visitor>
-void JSPopStateEvent::visitAdditionalChildren(Visitor& visitor)
+void JSPopStateEvent::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().state().visit(visitor);
+    wrapped().state().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSPopStateEvent);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSPopStateEvent);
 
 } // namespace WebCore

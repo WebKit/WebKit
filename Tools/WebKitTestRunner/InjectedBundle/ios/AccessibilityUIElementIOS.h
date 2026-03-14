@@ -265,7 +265,7 @@ public:
     void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height) override;
 
     // Selection methods
-    JSRetainPtr<JSStringRef> intersectionWithSelectionRange() override;
+    RefPtr<AccessibilityTextMarkerRange> intersectionWithSelectionRange() override;
     bool setSelectedTextMarkerRange(AccessibilityTextMarkerRange*) override;
     bool setSelectedTextRange(unsigned location, unsigned length) override;
     JSRetainPtr<JSStringRef> textInputMarkedRange() const override;

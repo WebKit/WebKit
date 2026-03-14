@@ -39,6 +39,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashCountedSet.h>
@@ -46,17 +47,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class CachedResource;
+
 class CachedResourceCallback;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedResource> : std::true_type { };
-}
-
-namespace WebCore {
-
 class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
@@ -76,11 +68,9 @@ enum class CachePolicy : uint8_t;
 // A resource that is held in the cache. Classes who want to use this object should derive
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
 // This class also does the actual communication with the loader to obtain the resource from the network.
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResource);
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResourceResponseData);
-class CachedResource : public CanMakeWeakPtr<CachedResource> {
+class CachedResource : public RefCountedAndCanMakeWeakPtr<CachedResource> {
     WTF_MAKE_NONCOPYABLE(CachedResource);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResource, CachedResource);
     friend class MemoryCache;
 
 public:
@@ -128,7 +118,9 @@ public:
     static_assert(static_cast<unsigned>(DecodeError) <= ((1ULL << bitWidthOfStatus) - 1));
 
     CachedResource(CachedResourceRequest&&, Type, PAL::SessionID, const CookieJar*);
-    virtual ~CachedResource();
+    WEBCORE_EXPORT virtual ~CachedResource();
+
+    WEBCORE_EXPORT void deref() const;
 
     virtual void load(CachedResourceLoader&);
 
@@ -141,13 +133,13 @@ public:
     virtual void error(CachedResource::Status);
 
     void setResourceError(const ResourceError& error) { mutableResponseData().m_error = error; }
-    const ResourceError& resourceError() const;
+    const ResourceError& NODELETE resourceError() const;
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return false; }
 
-    const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
-    const URL& url() const { return m_resourceRequest.url();}
-    const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
+    const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_resourceRequest; }
+    const URL& url() const LIFETIME_BOUND { return m_resourceRequest.url(); }
+    const String& cachePartition() const LIFETIME_BOUND { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     const CookieJar* cookieJar() const { return m_cookieJar.get(); }
     Type type() const { return m_type; }
@@ -157,14 +149,12 @@ public:
     static bool shouldUsePingLoad(Type type) { return type == Type::Beacon || type == Type::Ping; }
 
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
-    void setLoadPriority(const std::optional<ResourceLoadPriority>&, RequestPriority);
+    void NODELETE setLoadPriority(const std::optional<ResourceLoadPriority>&, RequestPriority);
 
     WEBCORE_EXPORT void addClient(CachedResourceClient&);
     WEBCORE_EXPORT void removeClient(CachedResourceClient&);
     bool hasClients() const { return !m_clients.isEmptyIgnoringNullReferences() || !m_clientsAwaitingCallback.isEmptyIgnoringNullReferences(); }
     bool hasClient(const CachedResourceClient& client) { return m_clients.contains(client) || m_clientsAwaitingCallback.contains(client); }
-    bool deleteIfPossible();
-
     enum class PreloadResult : uint8_t {
         PreloadNotReferenced,
         PreloadReferenced,
@@ -249,7 +239,7 @@ public:
     void NODELETE setCrossOrigin();
     bool NODELETE isCrossOrigin() const;
     bool NODELETE isCORSCrossOrigin() const;
-    bool isCORSSameOrigin() const;
+    bool NODELETE isCORSSameOrigin() const;
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
 
     void loadFrom(const CachedResource&);
@@ -258,27 +248,23 @@ public:
     SecurityOrigin* origin() { return m_origin.get(); }
     AtomString initiatorType() const { return m_initiatorType; }
 
-    bool canDelete() const { return !hasClients() && !m_loader && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
-    bool hasOneHandle() const { return m_handleCount == 1; }
-
     bool isExpired() const;
 
     void cancelLoad(LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
-    bool wasCanceled() const;
+    bool NODELETE wasCanceled() const;
     bool errorOccurred() const { return m_status == LoadError || m_status == DecodeError; }
-    bool loadFailedOrCanceled() const;
+    bool NODELETE loadFailedOrCanceled() const;
 
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
     DataBufferingPolicy dataBufferingPolicy() const { return m_options.dataBufferingPolicy; }
 
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching || m_options.cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch; }
-    const ResourceLoaderOptions& options() const { return m_options; }
+    const ResourceLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
 
     virtual void destroyDecodedData() { }
 
-    bool isPreloaded() const { return m_preloadCount; }
-    void increasePreloadCount() { ++m_preloadCount; }
-    void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
+    bool isPreloaded() const { return m_isPreloaded; }
+    void setIsPreloaded(bool isPreloaded) { m_isPreloaded = isPreloaded; }
     bool isLinkPreload() const { return m_isLinkPreload; }
     void setLinkPreload() { m_isLinkPreload = true; }
     bool hasUnknownEncoding() { return m_hasUnknownEncoding; }
@@ -345,8 +331,6 @@ private:
     using Callback = CachedResourceCallback;
     template<typename T> friend class CachedResourceClientWalker;
 
-    void deleteThis();
-
     bool addClientToSet(CachedResourceClient&);
 
     void decodedDataDeletionTimerFired();
@@ -411,7 +395,7 @@ private:
     // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved
     // to to be clients of m_resourceToRevalidate and the resource is deleted. If not, the field is zeroed and this
     // resources becomes normal resource load.
-    WeakPtr<CachedResource> m_resourceToRevalidate;
+    RefPtr<CachedResource> m_resourceToRevalidate;
 
     // If this field is non-null, the resource has a proxy for checking whether it is still up to date (see m_resourceToRevalidate).
     WeakPtr<CachedResource> m_proxyResource;
@@ -424,8 +408,6 @@ private:
     RedirectChainCacheStatus m_redirectChainCacheStatus;
 
     unsigned m_accessCount { 0 };
-    unsigned m_handleCount { 0 };
-    unsigned m_preloadCount { 0 };
 
     Type m_type : bitWidthOfType;
 
@@ -442,9 +424,9 @@ private:
     bool m_switchingClientsToRevalidatedResource : 1 { false };
     bool m_ignoreForRequestCount : 1;
     bool m_isHashReportingNeeded : 1 { false };
+    bool m_isPreloaded : 1 { false };
 
 #if ASSERT_ENABLED
-    bool m_deleted { false };
     unsigned m_lruIndex { 0 };
 #endif
 

@@ -9,7 +9,7 @@
         testRunner.waitUntilDone();
     }
 
-    function runTest()
+    async function runTest()
     {
         document.getElementById("target").addEventListener("click", () => {
             const textFile = new File(['This is a text file'], 'TextFile.txt', { type: 'text/plain' });
@@ -24,7 +24,7 @@
             });
         });
 
-        UIHelper.activateAt(50, 50);
+        await UIHelper.activateAt(50, 50);
     }
 </script>
 <style>

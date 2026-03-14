@@ -94,7 +94,7 @@ public:
 
     bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    MonotonicTime startTime() const;
+    MonotonicTime NODELETE startTime() const;
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 

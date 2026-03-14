@@ -42,7 +42,7 @@ public:
     static MediaCapabilities& mediaCapabilities(WorkerNavigator&);
     static WorkerNavigatorMediaCapabilities& from(WorkerNavigator&);
 
-    MediaCapabilities& mediaCapabilities() const;
+    MediaCapabilities& NODELETE mediaCapabilities() const;
 private:
     static ASCIILiteral supplementName() { return "WorkerNavigatorMediaCapabilities"_s; }
     bool isWorkerNavigatorMediaCapabilities() const final { return true; }

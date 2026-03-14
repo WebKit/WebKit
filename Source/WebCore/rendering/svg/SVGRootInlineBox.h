@@ -40,7 +40,7 @@ public:
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
 private:
-    RenderSVGText& renderSVGText() const;
+    RenderSVGText& NODELETE renderSVGText() const;
 
     bool isSVGRootInlineBox() const override { return true; }
 

@@ -85,12 +85,12 @@ private:
         Parent(ContainerNode& root);
         Parent(Element&, const Style::ElementUpdate*);
     };
-    Parent& parent() { return m_parentStack.last(); }
+    Parent& parent() LIFETIME_BOUND { return m_parentStack.last(); }
     Parent& NODELETE renderingParent();
     RenderTreePosition& NODELETE renderTreePosition();
 
-    GeneratedContent& generatedContent() { return m_generatedContent; }
-    ViewTransition& viewTransition() { return m_viewTransition; }
+    GeneratedContent& generatedContent() LIFETIME_BOUND { return m_generatedContent; }
+    ViewTransition& viewTransition() LIFETIME_BOUND { return m_viewTransition; }
 
     void pushParent(Element&, const Style::ElementUpdate*);
     void popParent();

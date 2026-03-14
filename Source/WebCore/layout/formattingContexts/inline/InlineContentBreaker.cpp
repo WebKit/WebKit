@@ -244,11 +244,11 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         // e.g. <div style="white-space: nowrap">no wrap<div style="display: inline-block; white-space: normal">yes wrap</div></div>.
         // While the inline-block has pre-wrap which allows wrapping (for its own content), the content lives in a nowrap context.
         auto& runs = continuousContent.runs();
-        CheckedRef overflowingBox = runs[overflowingRunIndex].inlineItem.layoutBox();
-        CheckedRef styleToUse = overflowingBox->isInlineBox() ? overflowingBox->style() : overflowingBox->parent().style();
+        auto& overflowingBox = runs[overflowingRunIndex].inlineItem.layoutBox();
+        auto& styleToUse = overflowingBox.isInlineBox() ? overflowingBox.style() : overflowingBox.parent().style();
         auto isWrappingAllowed = TextUtil::isWrappingAllowed(styleToUse);
         for (auto index = overflowingRunIndex; !isWrappingAllowed && index--;) {
-            CheckedRef styleToUse = runs[index].inlineItem.layoutBox().parent().style();
+            auto& styleToUse = runs[index].inlineItem.layoutBox().parent().style();
             isWrappingAllowed = TextUtil::isWrappingAllowed(styleToUse);
         }
         return isWrappingAllowed;
@@ -312,7 +312,7 @@ static std::optional<size_t> NODELETE findTrailingRunIndexBeforeBreakableRun(con
     return { };
 }
 
-static bool isBreakableRun(const InlineContentBreaker::ContinuousContent::Run& run)
+static bool NODELETE isBreakableRun(const InlineContentBreaker::ContinuousContent::Run& run)
 {
     if (!run.inlineItem.isText()) {
         // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [inline box end] is the overflown inline item

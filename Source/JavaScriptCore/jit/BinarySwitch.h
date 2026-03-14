@@ -75,7 +75,7 @@ public:
     
     bool advance(MacroAssembler&);
     
-    MacroAssembler::JumpList& fallThrough() { return m_fallThrough; }
+    MacroAssembler::JumpList& fallThrough() LIFETIME_BOUND { return m_fallThrough; }
     
 private:
     void build(unsigned start, bool hardStart, unsigned end);

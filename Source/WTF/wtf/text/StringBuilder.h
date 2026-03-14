@@ -99,7 +99,7 @@ public:
     WTF_EXPORT_PRIVATE bool NODELETE shouldShrinkToFit() const;
     WTF_EXPORT_PRIVATE void shrinkToFit();
 
-    WTF_EXPORT_PRIVATE bool containsOnlyASCII() const;
+    WTF_EXPORT_PRIVATE bool NODELETE containsOnlyASCII() const;
 
 private:
     static unsigned expandedCapacity(unsigned capacity, unsigned requiredCapacity);

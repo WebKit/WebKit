@@ -268,7 +268,7 @@ RefPtr<ImageBuffer> LegacyRenderSVGResourcePattern::createTileImage(GraphicsCont
         contentTransformation = tileImageTransform;
 
     // Draw the content into the ImageBuffer.
-    for (Ref child : childrenOfType<SVGElement>(Ref { *attributes.patternContentElement() })) {
+    for (Ref child : childrenOfType<SVGElement>(*attributes.patternContentElement())) {
         if (!child->renderer())
             continue;
         if (child->renderer()->needsLayout())

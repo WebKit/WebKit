@@ -64,7 +64,7 @@ public:
     JSArrayBuffer* buffer(JSGlobalObject*);
     JSArrayBuffer* toFixedLengthBuffer(JSGlobalObject*);
     JSArrayBuffer* toResizableBuffer(JSGlobalObject*);
-    PageCount grow(VM&, JSGlobalObject*, uint32_t delta);
+    PageCount grow(VM&, JSGlobalObject*, uint64_t delta);
     JS_EXPORT_PRIVATE void growSuccessCallback(VM&, PageCount oldPageCount, PageCount newPageCount);
 
     JSObject* type(JSGlobalObject*);

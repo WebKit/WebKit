@@ -24,6 +24,7 @@
 #include "config.h"
 #include "SharedStringHash.h"
 
+#include <wtf/HashFunctions.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/StringHash.h>
@@ -245,7 +246,7 @@ static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(const URL& b
         // end of the path, *before* the query or anchor.
         SuperFastHash hasher;
         hasher.addCharacters(characters);
-        hasher.addCharacter('/');
+        hasher.addCharacter(static_cast<char16_t>('/'));
         return AlreadyHashed::avoidDeletedValue(hasher.hash());
     }
 

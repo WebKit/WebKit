@@ -3954,13 +3954,13 @@ private:
             return static_cast<T>(u.constPointer);
         }
         template<typename T>
-            requires ((std::integral<T> || std::is_enum_v<T>) && sizeof(T) <= 4)
+            requires (IntegralOrEnum<T> && sizeof(T) <= 4)
         ALWAYS_INLINE T as() const
         {
             return static_cast<T>(u.int32);
         }
         template<typename T>
-            requires ((std::integral<T> || std::is_enum_v<T>) && sizeof(T) == 8)
+            requires (IntegralOrEnum<T> && sizeof(T) == 8)
         ALWAYS_INLINE T as() const
         {
             return static_cast<T>(u.int64);

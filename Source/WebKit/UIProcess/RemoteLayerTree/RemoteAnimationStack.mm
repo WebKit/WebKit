@@ -121,14 +121,22 @@ void RemoteAnimationStack::initEffectsFromMainThread(PlatformLayer *layer)
 
     auto computedValues = computeValues();
 
+    // While m_affectedLayerProperties may contain LayerProperty::Filter, in practice
+    // we could be in a situation where all `filter` values for this animation stack
+    // are `none`. In that case, longestFilterList() will return nullptr, so we can
+    // use this alone to determine whether this stack interpolates `filter`.
     auto* canonicalFilters = longestFilterList();
+
+    // FIXME: If we're only animating a filter property and we haven't found a filter, then
+    // we won't have anything to animate. Ideally, we wouldn't end up in this state where we
+    // have a no-op animation stack. See https://bugs.webkit.org/show_bug.cgi?id=309658.
+    if (!canonicalFilters && m_affectedLayerProperties.containsOnly({ LayerProperty::Filter }))
+        return;
 
     auto numberOfPresentationModifiers = [&]() {
         size_t count = 0;
-        if (m_affectedLayerProperties.contains(LayerProperty::Filter)) {
-            ASSERT(canonicalFilters);
+        if (canonicalFilters)
             count += WebCore::PlatformCAFilters::presentationModifierCount(*canonicalFilters);
-        }
         if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
             count++;
         if (m_affectedLayerProperties.contains(LayerProperty::Transform))
@@ -138,8 +146,8 @@ void RemoteAnimationStack::initEffectsFromMainThread(PlatformLayer *layer)
 
     m_presentationModifierGroup = [CAPresentationModifierGroup groupWithCapacity:numberOfPresentationModifiers];
 
-    if (m_affectedLayerProperties.contains(LayerProperty::Filter)) {
-        WebCore::PlatformCAFilters::presentationModifiers(computedValues.filter, longestFilterList(), m_filterPresentationModifiers, m_presentationModifierGroup);
+    if (canonicalFilters) {
+        WebCore::PlatformCAFilters::presentationModifiers(computedValues.filter, canonicalFilters, m_filterPresentationModifiers, m_presentationModifierGroup);
         for (auto& filterPresentationModifier : m_filterPresentationModifiers)
             [layer addPresentationModifier:filterPresentationModifier.second.get()];
     }
@@ -162,7 +170,8 @@ void RemoteAnimationStack::initEffectsFromMainThread(PlatformLayer *layer)
 
 void RemoteAnimationStack::applyEffects() const
 {
-    ASSERT(m_presentationModifierGroup);
+    if (!m_presentationModifierGroup)
+        return;
 
     auto computedValues = computeValues();
 
@@ -214,7 +223,8 @@ WebCore::AcceleratedEffectValues RemoteAnimationStack::computeValues() const
 void RemoteAnimationStack::clear(PlatformLayer *layer)
 {
 #if PLATFORM(MAC)
-    ASSERT(m_presentationModifierGroup);
+    if (!m_presentationModifierGroup)
+        return;
 
     for (auto& filterPresentationModifier : m_filterPresentationModifiers)
         [layer removePresentationModifier:filterPresentationModifier.second.get()];

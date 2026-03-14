@@ -118,7 +118,7 @@ private:
 
 using SecureTextTimerMap = SingleThreadWeakHashMap<RenderText, std::unique_ptr<SecureTextTimer>>;
 
-static SecureTextTimerMap& secureTextTimers()
+static SecureTextTimerMap& NODELETE secureTextTimers()
 {
     static NeverDestroyed<SecureTextTimerMap> map;
     return map.get();

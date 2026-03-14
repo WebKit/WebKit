@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(WEB_TRANSPORT)
+#if PLATFORM(COCOA)
 
 #import "CoroutineUtilities.h"
 #import "NetworkConnection.h"
@@ -39,6 +39,7 @@ public:
     ~WebTransportServer();
 
     uint16_t port() const;
+    static bool isAvailable();
 private:
     struct Data;
     Ref<Data> m_data;
@@ -48,4 +49,4 @@ private:
 
 } // namespace TestWebKitAPI
 
-#endif // HAVE(WEB_TRANSPORT)
+#endif // PLATFORM(COCOA)

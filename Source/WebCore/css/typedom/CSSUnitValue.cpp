@@ -218,7 +218,7 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     }
 }
 
-static CSS::Range rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
+static CSS::Range NODELETE rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
 {
     // FIXME: Merge with isValueOutOfRangeForProperty.
 

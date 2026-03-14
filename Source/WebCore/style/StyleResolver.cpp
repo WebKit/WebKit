@@ -208,7 +208,7 @@ void Resolver::initialize()
         document().fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&document().fontSelector());
         m_rootDefaultStyle->fontCascade().primaryFont();
-        protect(document().fontSelector())->decrementIsComputingRootStyleFont();
+        document().fontSelector().decrementIsComputingRootStyleFont();
     }
 
     if (m_rootDefaultStyle && view)
@@ -441,6 +441,8 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
 
     Adjuster adjuster(document(), *state.parentStyle(), nullptr, !pseudoElementIdentifier ? &element : nullptr);
     adjuster.adjust(*state.style());
+
+    blendingKeyframe.setHasPropertiesWithRevertRuleOrLayer(builder.state().hasRevertRuleOrLayerInKeyframeStyle());
 
     return state.takeStyle();
 }

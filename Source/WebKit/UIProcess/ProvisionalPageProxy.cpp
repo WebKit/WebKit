@@ -130,12 +130,11 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
     } else if (m_shouldReuseMainFrame)
         m_mainFrame = page.mainFrame();
     else {
-        Ref mainFrame = WebFrameProxy::create(page, m_frameProcess, generateFrameIdentifier(), previousMainFrame->effectiveSandboxFlags(), previousMainFrame->effectiveReferrerPolicy(), previousMainFrame->scrollingMode(), nullptr, IsMainFrame::Yes);
+        // Passing previous frame's url to restore the main frame's committed URL
+        // as some clients may rely on it until the next load is committed.
+        Ref mainFrame = WebFrameProxy::create(page, m_frameProcess, generateFrameIdentifier(), previousMainFrame->effectiveSandboxFlags(), previousMainFrame->effectiveReferrerPolicy(), previousMainFrame->scrollingMode(), nullptr, nullptr, IsMainFrame::Yes, previousMainFrame->url());
         m_mainFrame = mainFrame.copyRef();
-
         m_needsMainFrameObserver = true;
-        // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
-        mainFrame->frameLoadState().setURL(URL { previousMainFrame->url() });
         previousMainFrame->transferNavigationCallbackToFrame(mainFrame);
     }
 
@@ -364,7 +363,7 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
 
     SandboxExtension::Handle sandboxExtensionHandle;
     URL itemURL { item.url() };
-    Ref frameState = navigation.targetFrameItem() ? navigation.targetFrameItem()->copyFrameStateWithChildren() : item.mainFrameState();
+    Ref frameState = navigation.targetFrameItem() ? navigation.targetFrameItem()->copyFrameStateWithChildren() : item.copyMainFrameStateWithChildren();
     page->maybeInitializeSandboxExtensionHandle(process, itemURL, item.resourceDirectoryURL(), true, [
         weakThis = WeakPtr { *this },
         itemURL,
@@ -448,6 +447,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameI
     if (!page)
         return;
 
+    m_didFailProvisionalLoad = true;
     // Make sure the Page's main frame's expectedURL gets cleared since we updated it in didStartProvisionalLoad.
     // When site isolation is enabled, we use the same WebFrameProxy so we don't need this duplicate call.
     // didFailProvisionalLoadForFrameShared will call didFailProvisionalLoad on the same main frame.
@@ -704,6 +704,9 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
         || decoder.messageName() == Messages::WebPageProxy::DidInitiateLoadForResource::name()
         || decoder.messageName() == Messages::WebPageProxy::DidSendRequestForResource::name()
         || decoder.messageName() == Messages::WebPageProxy::DidReceiveResponseForResource::name()
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
+        || decoder.messageName() == Messages::WebPageProxy::ContentRuleListNotification::name()
 #endif
         )
     {

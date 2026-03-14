@@ -23,13 +23,14 @@ target_test({ width: "200px", height: "200px" }, (target, test) => {
         one.end()
     ]).then(() => {
         eventTracker.assertMatchesEvents([
-            { type: "pointerover", button: 0, buttons: 1 },
-            { type: "pointerenter", button: 0, buttons: 1 },
+            { type: "pointerover", button: -1, buttons: 1 },
+            { type: "pointerenter", button: -1, buttons: 1 },
             { type: "pointerdown", button: 0, buttons: 1 },
             { type: "pointermove", button: -1, buttons: 1 },
+            { type: "pointermove", button: -1, buttons: 1 },
             { type: "pointerup", button: 0, buttons: 0 },
-            { type: "pointerout", button: 0, buttons: 0 },
-            { type: "pointerleave", button: 0, buttons: 0 },
+            { type: "pointerout", button: -1, buttons: 0 },
+            { type: "pointerleave", button: -1, buttons: 0 },
         ]);
         test.done();
     });

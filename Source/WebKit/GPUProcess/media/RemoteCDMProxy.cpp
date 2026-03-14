@@ -39,22 +39,19 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RefPtr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& factory, std::unique_ptr<WebCore::CDMPrivate>&& priv)
+Ref<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& factory, UniqueRef<WebCore::CDMPrivate>&& priv)
 {
-    if (!priv)
-        return nullptr;
-
-    auto configuration = makeUniqueRefWithoutFastMallocCheck<RemoteCDMConfiguration, RemoteCDMConfiguration&&>({
+    UniqueRef configuration = makeUniqueRefWithoutFastMallocCheck<RemoteCDMConfiguration, RemoteCDMConfiguration&&>({
         priv->supportedInitDataTypes(),
         priv->supportedRobustnesses(),
         priv->supportsServerCertificates(),
         priv->supportsSessions()
     });
 
-    return adoptRef(new RemoteCDMProxy(factory, WTF::move(priv), WTF::move(configuration)));
+    return adoptRef(*new RemoteCDMProxy(factory, WTF::move(priv), WTF::move(configuration)));
 }
 
-RemoteCDMProxy::RemoteCDMProxy(RemoteCDMFactoryProxy& factory, std::unique_ptr<CDMPrivate>&& priv, UniqueRef<RemoteCDMConfiguration>&& configuration)
+RemoteCDMProxy::RemoteCDMProxy(RemoteCDMFactoryProxy& factory, UniqueRef<CDMPrivate>&& priv, UniqueRef<RemoteCDMConfiguration>&& configuration)
     : m_factory(factory)
     , m_private(WTF::move(priv))
     , m_configuration(WTF::move(configuration))

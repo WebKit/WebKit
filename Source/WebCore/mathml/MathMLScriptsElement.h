@@ -39,8 +39,8 @@ public:
 
     enum class ScriptType { Sub, Super, SubSup, Multiscripts, Under, Over, UnderOver };
     ScriptType scriptType() const { return m_scriptType; }
-    const Length& subscriptShift();
-    const Length& superscriptShift();
+    const Length& subscriptShift() LIFETIME_BOUND;
+    const Length& superscriptShift() LIFETIME_BOUND;
 
 protected:
     MathMLScriptsElement(const QualifiedName& tagName, Document&);

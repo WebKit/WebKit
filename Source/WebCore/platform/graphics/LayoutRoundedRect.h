@@ -48,18 +48,18 @@ public:
     void setTopRight(const LayoutSize& size) { m_topRight = size; }
     void setBottomLeft(const LayoutSize& size) { m_bottomLeft = size; }
     void setBottomRight(const LayoutSize& size) { m_bottomRight = size; }
-    const LayoutSize& topLeft() const { return m_topLeft; }
-    const LayoutSize& topRight() const { return m_topRight; }
-    const LayoutSize& bottomLeft() const { return m_bottomLeft; }
-    const LayoutSize& bottomRight() const { return m_bottomRight; }
-    void setRadiiForEdges(const LayoutRoundedRectRadii&, RectEdges<bool> includeEdges);
+    const LayoutSize& topLeft() const LIFETIME_BOUND { return m_topLeft; }
+    const LayoutSize& topRight() const LIFETIME_BOUND { return m_topRight; }
+    const LayoutSize& bottomLeft() const LIFETIME_BOUND { return m_bottomLeft; }
+    const LayoutSize& bottomRight() const LIFETIME_BOUND { return m_bottomRight; }
+    void NODELETE setRadiiForEdges(const LayoutRoundedRectRadii&, RectEdges<bool> includeEdges);
 
-    bool isZero() const;
+    bool NODELETE isZero() const;
 
     bool areRenderableInRect(const LayoutRect&) const;
     void makeRenderableInRect(const LayoutRect&);
 
-    void scale(float factor);
+    void NODELETE scale(float factor);
     void expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth);
     void expand(LayoutUnit size) { expand(size, size, size, size); }
     void shrink(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
@@ -87,8 +87,8 @@ public:
     LayoutRoundedRect(LayoutUnit, LayoutUnit, LayoutUnit width, LayoutUnit height);
     WEBCORE_EXPORT LayoutRoundedRect(const LayoutRect&, const LayoutSize& topLeft, const LayoutSize& topRight, const LayoutSize& bottomLeft, const LayoutSize& bottomRight);
 
-    const LayoutRect& rect() const { return m_rect; }
-    const Radii& radii() const { return m_radii; }
+    const LayoutRect& rect() const LIFETIME_BOUND { return m_rect; }
+    const Radii& radii() const LIFETIME_BOUND { return m_radii; }
     bool isRounded() const { return !m_radii.isZero(); }
     bool isEmpty() const { return m_rect.isEmpty(); }
 

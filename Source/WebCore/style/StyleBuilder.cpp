@@ -94,7 +94,7 @@ inline bool NODELETE isValidVisitedLinkProperty(CSSPropertyID id)
     return false;
 }
 
-static auto positionTryFallbackProperties(const BuilderContext& context)
+static const StyleProperties* NODELETE positionTryFallbackProperties(const BuilderContext& context)
 {
     return context.positionTryFallback ? context.positionTryFallback->properties.get() : nullptr;
 }
@@ -375,8 +375,10 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     if (isAnyRevert) {
         // In @keyframes, 'revert-layer' and 'revert-rule' roll back the cascaded value to the author level.
         // We can just not apply the property in order to keep the value from the base style.
-        if ((isRevertLayer || isRevertRule) && m_state->m_isBuildingKeyframeStyle)
+        if ((isRevertLayer || isRevertRule) && m_state->m_isBuildingKeyframeStyle) {
+            m_state->m_hasRevertRuleOrLayerInKeyframeStyle = true;
             return;
+        }
 
         auto* rollbackCascade = [&] -> const PropertyCascade* {
             if (isRevert)
@@ -524,8 +526,10 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
             if (isAnyRevert) {
                 // In @keyframes, 'revert-layer' and 'revert-rule' roll back the cascaded value to the author level.
                 // We can just not apply the property in order to keep the value from the base style.
-                if ((isRevertLayer || isRevertRule) && m_state->m_isBuildingKeyframeStyle)
+                if ((isRevertLayer || isRevertRule) && m_state->m_isBuildingKeyframeStyle) {
+                    m_state->m_hasRevertRuleOrLayerInKeyframeStyle = true;
                     return;
+                }
 
                 auto* rollbackCascade = [&] -> const PropertyCascade* {
                     if (isRevert)
@@ -589,7 +593,7 @@ Ref<CSSValue> Builder::resolveInternalAutoBaseFunction(CSSValue& value)
             return true;
         if (m_state->style().appearance() != StyleAppearance::BaseSelect)
             return false;
-        return is<HTMLSelectElement>(m_state->element()) || is<SelectPopoverElement>(m_state->element());
+        return isAnyOf<HTMLSelectElement, SelectPopoverElement>(m_state->element());
     }();
     RefPtr result = const_cast<CSSValue*>(isAppearanceBase ? functionValue->item(1) : functionValue->item(0));
 

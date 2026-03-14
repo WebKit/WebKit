@@ -462,7 +462,7 @@ auto CSSValueConversion<PositionArea>::operator()(BuilderState& state, const CSS
             return CSS::Keyword::None { };
 
         dimPair = positionAreaExpandKeyword(value.valueID());
-    } else if (RefPtr pair = dynamicDowncast<CSSValuePair>(value)) {
+    } else if (auto* pair = dynamicDowncast<CSSValuePair>(value)) {
         const auto& first = pair->first();
         const auto& second = pair->second();
 

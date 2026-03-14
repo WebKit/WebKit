@@ -263,7 +263,7 @@ void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedEleme
 
 bool HTMLFormControlElement::shouldAutocorrect() const
 {
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*this); input
+    if (auto* input = dynamicDowncast<HTMLInputElement>(*this); input
         && (input->isPasswordField() || input->isEmailField() || input->isURLField())) {
         return false;
     }
@@ -381,8 +381,8 @@ void HTMLFormControlElement::handlePopoverTargetAction(const EventTarget* eventT
 
     ASSERT(popover->popoverData());
 
-    if (RefPtr eventTargetNode = dynamicDowncast<Node>(eventTarget)) {
-        if (popover->isShadowIncludingInclusiveAncestorOf(eventTargetNode.get()) && popover->isShadowIncludingDescendantOf(this))
+    if (auto* eventTargetNode = dynamicDowncast<Node>(eventTarget)) {
+        if (popover->isShadowIncludingInclusiveAncestorOf(eventTargetNode) && popover->isShadowIncludingDescendantOf(this))
             return;
     }
 

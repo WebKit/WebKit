@@ -1,0 +1,14 @@
+
+PASS .test 1
+PASS .test 2
+PASS .test 3
+PASS .test 4
+FAIL .test 5 assert_equals:
+<div class="test flex-col" data-expected-width="60" data-expected-height="60">
+  <canvas width="50" height="50" style="height: 0px; min-height: max-content"></canvas>
+</div>
+height expected 60 but got 10
+PASS .test 6
+PASS .test 7
+PASS .test 8
+

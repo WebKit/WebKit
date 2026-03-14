@@ -51,6 +51,7 @@
 #include "OutlinePainter.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "PaintInfoInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
@@ -229,7 +230,7 @@ public:
             m_containerMap.remove(renderer);
     }
     
-    TrackedRendererListHashSet* positionedRenderers(const RenderBlock& containingBlock) const
+    TrackedRendererListHashSet* NODELETE positionedRenderers(const RenderBlock& containingBlock) const
     {
         return m_descendantsMap.get(containingBlock);
     }
@@ -242,7 +243,7 @@ private:
     ContainerMap m_containerMap;
 };
 
-static OutOfFlowDescendantsMap& outOfFlowDescendantsMap()
+static OutOfFlowDescendantsMap& NODELETE outOfFlowDescendantsMap()
 {
     static NeverDestroyed<OutOfFlowDescendantsMap> mapForOutOfFlowDescendants;
     return mapForOutOfFlowDescendants;
@@ -1273,7 +1274,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintCarets(paintInfo, paintOffset);
 }
 
-static ContinuationOutlineTableMap* continuationOutlineTable()
+static ContinuationOutlineTableMap* NODELETE continuationOutlineTable()
 {
     static NeverDestroyed<ContinuationOutlineTableMap> table;
     return &table.get();
@@ -1522,8 +1523,8 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         flippedBlockRect.moveBy(rootBlockPhysicalPosition);
         clipOutOutOfFlowBoxes(paintInfo, flippedBlockRect.location(), outOfFlowBoxes());
         if (isBody() || isDocumentElementRenderer()) { // The <body> must make sure to examine its containingBlock's positioned objects.
-            for (RenderBlock* cb = containingBlock(); cb && !is<RenderView>(*cb); cb = cb->containingBlock())
-                clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(cb->x(), cb->y()), cb->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.
+            for (auto* ancestor = containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock())
+                clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(ancestor->x(), ancestor->y()), ancestor->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.
         }
         clipOutFloatingBoxes(rootBlock, paintInfo, rootBlockPhysicalPosition, offsetFromRootBlock);
     }
@@ -1605,7 +1606,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
         }
 
         // FIXME: Eventually we won't special-case table and other layout roots like this.
-        auto propagatesSelectionToChildren = is<RenderTable>(*curr) || is<RenderFlexibleBox>(*curr) || is<RenderDeprecatedFlexibleBox>(*curr) || is<RenderGrid>(*curr);
+        auto propagatesSelectionToChildren = isAnyOf<RenderTable, RenderFlexibleBox, RenderDeprecatedFlexibleBox, RenderGrid>(*curr);
         auto paintsOwnSelection = curr->shouldPaintSelectionGaps() || propagatesSelectionToChildren;
         bool fillBlockGaps = paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != HighlightState::None);
         if (fillBlockGaps) {
@@ -1716,15 +1717,15 @@ LayoutUnit RenderBlock::logicalLeftSelectionOffset(RenderBlock& rootBlock, Layou
         return logicalLeft;
     }
 
-    RenderBlock* cb = this;
+    auto* containingBlock = this;
     const LogicalSelectionOffsetCaches* currentCache = &cache;
-    while (cb != &rootBlock) {
-        logicalLeft += cb->logicalLeft();
+    while (containingBlock != &rootBlock) {
+        logicalLeft += containingBlock->logicalLeft();
 
         ASSERT(currentCache);
-        auto info = currentCache->containingBlockInfo(*cb);
-        cb = info.block();
-        if (!cb)
+        auto info = currentCache->containingBlockInfo(*containingBlock);
+        containingBlock = info.block();
+        if (!containingBlock)
             break;
         currentCache = info.cache();
     }
@@ -1740,15 +1741,15 @@ LayoutUnit RenderBlock::logicalRightSelectionOffset(RenderBlock& rootBlock, Layo
         return logicalRight;
     }
 
-    RenderBlock* cb = this;
+    auto* containingBlock = this;
     const LogicalSelectionOffsetCaches* currentCache = &cache;
-    while (cb != &rootBlock) {
-        logicalRight += cb->logicalLeft();
+    while (containingBlock != &rootBlock) {
+        logicalRight += containingBlock->logicalLeft();
 
         ASSERT(currentCache);
-        auto info = currentCache->containingBlockInfo(*cb);
-        cb = info.block();
-        if (!cb)
+        auto info = currentCache->containingBlockInfo(*containingBlock);
+        containingBlock = info.block();
+        if (!containingBlock)
             break;
         currentCache = info.cache();
     }
@@ -2561,7 +2562,7 @@ std::pair<RenderObject*, RenderElement*> RenderBlock::firstLetterAndContainer(Re
                 break;
             }
             firstLetter = current.nextSibling();
-        } else if (current.isBlockLevelReplacedOrAtomicInline() || is<RenderButton>(current) || is<RenderMenuList>(current))
+        } else if (current.isBlockLevelReplacedOrAtomicInline() || isAnyOf<RenderButton, RenderMenuList>(current))
             break;
         else if (current.isFlexibleBoxIncludingDeprecated() || current.isRenderGrid())
             return { };
@@ -3076,7 +3077,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
         // However, intrinsic heights (fit-content, min-content, max-content) are
         // content-dependent and should be treated as indefinite for percentage
         // resolution of children, since the actual height is not yet determined.
-        auto heightIsIntrinsic = style.logicalHeight().isIntrinsic() || style.logicalHeight().isLegacyIntrinsic();
+        auto heightIsIntrinsic = style.logicalHeight().isIntrinsicOrStretch() || style.logicalHeight().isIntrinsicKeyword() || style.logicalHeight().isMinIntrinsic();
         auto hasNonIntrinsicSpecifiedHeight = !style.logicalHeight().isAuto() && !heightIsIntrinsic;
         auto hasDefiniteHeightFromInsets = !style.logicalTop().isAuto() && !style.logicalBottom().isAuto() && style.logicalHeight().isAuto();
         auto isOutOfFlowPositionedWithSpecifiedHeight = isOutOfFlowPositioned() && (hasNonIntrinsicSpecifiedHeight || hasDefiniteHeightFromInsets);

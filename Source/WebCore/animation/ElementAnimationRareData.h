@@ -44,15 +44,15 @@ public:
     explicit ElementAnimationRareData();
     ~ElementAnimationRareData();
 
-    KeyframeEffectStack* keyframeEffectStack() { return m_keyframeEffectStack.get(); }
+    KeyframeEffectStack* keyframeEffectStack() LIFETIME_BOUND { return m_keyframeEffectStack.get(); }
     KeyframeEffectStack& ensureKeyframeEffectStack();
 
-    AnimationCollection& animations() { return m_animations; }
-    CSSAnimationCollection& animationsCreatedByMarkup() { return m_animationsCreatedByMarkup; }
+    AnimationCollection& animations() LIFETIME_BOUND { return m_animations; }
+    CSSAnimationCollection& animationsCreatedByMarkup() LIFETIME_BOUND { return m_animationsCreatedByMarkup; }
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
-    AnimatableCSSPropertyToTransitionMap& completedTransitionsByProperty() { return m_completedTransitionsByProperty; }
-    AnimatableCSSPropertyToTransitionMap& runningTransitionsByProperty() { return m_runningTransitionsByProperty; }
-    const RenderStyle* lastStyleChangeEventStyle() const { return m_lastStyleChangeEventStyle.get(); }
+    AnimatableCSSPropertyToTransitionMap& completedTransitionsByProperty() LIFETIME_BOUND { return m_completedTransitionsByProperty; }
+    AnimatableCSSPropertyToTransitionMap& runningTransitionsByProperty() LIFETIME_BOUND { return m_runningTransitionsByProperty; }
+    const RenderStyle* lastStyleChangeEventStyle() const LIFETIME_BOUND { return m_lastStyleChangeEventStyle.get(); }
     void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&&);
     void cssAnimationsDidUpdate() { m_hasPendingKeyframesUpdate = false; }
     void keyframesRuleDidChange() { m_hasPendingKeyframesUpdate = true; }

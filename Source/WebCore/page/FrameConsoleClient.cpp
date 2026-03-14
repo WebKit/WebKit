@@ -368,7 +368,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                 // Only try to do something special for subclasses of Node if they're detached from the DOM tree.
                 if (!node->document().contains(*node)) {
                     auto snapshotImageElement = [&snapshot] (HTMLImageElement& imageElement) {
-                        if (auto* cachedImage = imageElement.cachedImage()) {
+                        if (RefPtr cachedImage = imageElement.cachedImage()) {
                             if (RefPtr image = cachedImage->image(); image && image != &Image::nullImage()) {
                                 snapshot = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
                                 snapshot->context().drawImage(*image, FloatPoint(0, 0));

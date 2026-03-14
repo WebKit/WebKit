@@ -42,7 +42,7 @@ class RemoteImageBufferSetProxyFlushFence : public ThreadSafeRefCounted<RemoteIm
     WTF_MAKE_NONCOPYABLE(RemoteImageBufferSetProxyFlushFence);
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteImageBufferSetProxyFlushFence);
 public:
-    static Ref<RemoteImageBufferSetProxyFlushFence> create(RenderingUpdateID renderingUpdateID, Seconds timeoutDuration)
+    static Ref<RemoteImageBufferSetProxyFlushFence> NODELETE create(RenderingUpdateID renderingUpdateID, Seconds timeoutDuration)
     {
         return adoptRef(*new RemoteImageBufferSetProxyFlushFence { renderingUpdateID, timeoutDuration });
     }

@@ -162,7 +162,7 @@ ServiceWorkerFetchTask::~ServiceWorkerFetchTask()
 
 RefPtr<IPC::Connection> ServiceWorkerFetchTask::serviceWorkerConnection()
 {
-    RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get();
+    auto* serviceWorkerConnection = m_serviceWorkerConnection.get();
     if (!serviceWorkerConnection)
         return { };
 
@@ -172,7 +172,7 @@ RefPtr<IPC::Connection> ServiceWorkerFetchTask::serviceWorkerConnection()
 template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& message)
 {
     Ref loader = *m_loader;
-    return protect(loader->connectionToWebProcess())->connection().send(std::forward<Message>(message), loader->coreIdentifier()) == IPC::Error::NoError;
+    return loader->connectionToWebProcess().connection().send(std::forward<Message>(message), loader->coreIdentifier()) == IPC::Error::NoError;
 }
 
 void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorkerConnection)
@@ -244,7 +244,7 @@ void ServiceWorkerFetchTask::didReceiveRedirectResponse(WebCore::ResourceRespons
 {
     cancelPreloadIfNecessary();
 
-    if (RefPtr loader = m_loader)
+    if (auto* loader = m_loader.get())
         loader->setWorkerFinalRouterSource(RouterSourceEnum::FetchEvent);
 
     processRedirectResponse(WTF::move(response), ShouldSetSource::Yes);
@@ -273,7 +273,7 @@ void ServiceWorkerFetchTask::didReceiveResponse(WebCore::ResourceResponse&& resp
     if (m_preloader && !m_preloader->isServiceWorkerNavigationPreloadEnabled())
         cancelPreloadIfNecessary();
 
-    if (RefPtr loader = m_loader)
+    if (auto* loader = m_loader.get())
         loader->setWorkerFinalRouterSource(RouterSourceEnum::FetchEvent);
 
     processResponse(WTF::move(response), needsContinueDidReceiveResponseMessage, ShouldSetSource::Yes);
@@ -538,7 +538,7 @@ void ServiceWorkerFetchTask::preloadResponseIsReady()
             serviceWorkerConnection->unregisterFetch(*this);
         m_serviceWorkerConnection = nullptr;
 
-        if (RefPtr loader = m_loader)
+        if (auto* loader = m_loader.get())
             loader->setWorkerFinalRouterSource(RouterSourceEnum::Network);
 
         m_isLoadingFromPreloader = true;
@@ -678,7 +678,7 @@ MonotonicTime ServiceWorkerFetchTask::startTime() const
 
 std::optional<SharedPreferencesForWebProcess> ServiceWorkerFetchTask::sharedPreferencesForWebProcess() const
 {
-    RefPtr loader = m_loader.get();
+    auto* loader = m_loader.get();
     if (!loader)
         return std::nullopt;
 
@@ -698,7 +698,7 @@ void ServiceWorkerFetchTask::loadFromCache(NetworkStorageManager& manager, WebCo
 void ServiceWorkerFetchTask::respondWithCacheResponse(std::optional<DOMCacheEngine::Record>&& record)
 {
     if (!record) {
-        if (RefPtr loader = m_loader)
+        if (auto* loader = m_loader.get())
             loader->setWorkerFinalRouterSource(RouterSourceEnum::Network);
         didNotHandle();
         return;
@@ -707,7 +707,7 @@ void ServiceWorkerFetchTask::respondWithCacheResponse(std::optional<DOMCacheEngi
     if (m_isDone)
         return;
 
-    if (RefPtr loader = m_loader)
+    if (auto* loader = m_loader.get())
         loader->setWorkerFinalRouterSource(RouterSourceEnum::Cache);
 
     auto response = std::exchange(record->response, { });

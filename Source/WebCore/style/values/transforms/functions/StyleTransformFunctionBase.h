@@ -161,7 +161,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const TransformFunctionBase&);
 
 // MARK: - Platform
 
-template<> struct ToPlatform<TransformFunctionType> { auto operator()(TransformFunctionType) -> TransformOperationType; };
+template<> struct ToPlatform<TransformFunctionType> { TransformOperationType NODELETE operator()(TransformFunctionType); };
 
 } // namespace Style
 } // namespace WebCore

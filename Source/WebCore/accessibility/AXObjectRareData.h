@@ -41,8 +41,8 @@ public:
     AXObjectRareData() = default;
 
     // Begin table-related methods.
-    const AXCoreObject::AccessibilityChildrenVector& tableRows() const { return m_tableRows; }
-    const AXCoreObject::AccessibilityChildrenVector& tableColumns() const { return m_tableColumns; }
+    const AXCoreObject::AccessibilityChildrenVector& tableRows() const LIFETIME_BOUND { return m_tableRows; }
+    const AXCoreObject::AccessibilityChildrenVector& tableColumns() const LIFETIME_BOUND { return m_tableColumns; }
     unsigned rowCount() const { return m_tableRows.size(); }
     unsigned columnCount() const { return m_tableColumns.size(); }
     void appendColumn(AccessibilityObject& columnObject) { m_tableColumns.append(columnObject); }
@@ -52,8 +52,8 @@ public:
     AccessibilityObject* tableHeaderContainer() const { return m_tableHeaderContainer.get(); }
     void setTableHeaderContainer(AccessibilityObject& object) { m_tableHeaderContainer = object; }
 
-    const Vector<Vector<Markable<AXID>>>& cellSlots() const { return m_cellSlots; }
-    Vector<Vector<Markable<AXID>>>& mutableCellSlots() { return m_cellSlots; }
+    const Vector<Vector<Markable<AXID>>>& cellSlots() const LIFETIME_BOUND { return m_cellSlots; }
+    Vector<Vector<Markable<AXID>>>& mutableCellSlots() LIFETIME_BOUND { return m_cellSlots; }
 
     void resetChildrenDependentTableFields();
     // End table-related methods.

@@ -170,6 +170,7 @@ b3/B3PhiChildren.cpp
 b3/B3Procedure.cpp
 b3/B3PureCSE.cpp
 b3/B3ReduceDoubleToFloat.cpp
+b3/B3ReduceSIMDShuffle.cpp
 b3/B3ReduceStrength.cpp
 b3/B3SSACalculator.cpp
 b3/B3SIMDValue.cpp
@@ -291,9 +292,9 @@ bytecode/SetPrivateBrandVariant.cpp
 bytecode/SharedJITStubSet.cpp
 bytecode/SpeculatedType.cpp
 bytecode/StructureSet.cpp
-bytecode/StructureStubClearingWatchpoint.cpp
-bytecode/StructureStubInfo.cpp
-bytecode/StubInfoSummary.cpp
+bytecode/PropertyInlineCacheClearingWatchpoint.cpp
+bytecode/PropertyInlineCache.cpp
+bytecode/PropertyInlineCacheSummary.cpp
 bytecode/SuperSampler.cpp
 bytecode/ToThisStatus.cpp
 bytecode/TrackedReferences.cpp
@@ -627,6 +628,7 @@ interpreter/CachedCall.cpp
 interpreter/CLoopStack.cpp
 interpreter/CallFrame.cpp
 interpreter/Interpreter.cpp
+interpreter/MicrotaskCall.cpp
 interpreter/ShadowChicken.cpp
 interpreter/StackVisitor.cpp
 
@@ -952,6 +954,7 @@ runtime/JSModuleRecord.cpp
 runtime/JSNativeStdFunction.cpp
 runtime/JSONObject.cpp
 runtime/JSObject.cpp
+runtime/JSPIContext.cpp
 runtime/JSPromise.cpp
 runtime/JSPromiseCombinatorsContext.cpp
 runtime/JSPromiseCombinatorsGlobalContext.cpp

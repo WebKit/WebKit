@@ -782,7 +782,7 @@ void DataTransfer::moveDragState(Ref<DataTransfer>&& other)
     m_dragImage = other->m_dragImage;
     m_dragImageElement = WTF::move(other->m_dragImageElement);
     m_dragImageLoader = WTF::move(other->m_dragImageLoader);
-    if (RefPtr dragImageLoader = m_dragImageLoader)
+    if (auto* dragImageLoader = m_dragImageLoader.get())
         dragImageLoader->moveToDataTransfer(*this);
     m_fileList = WTF::move(other->m_fileList);
 }

@@ -50,6 +50,7 @@ PACKAGES=(
     # These are dependencies necessary for running tests.
     # Note: ruby-json and ruby-highline are available in the AUR.
     apache
+    binutils
     curl
     gdb
     psmisc
@@ -79,4 +80,8 @@ PACKAGES=(
     gst-plugins-base
     gst-plugins-good
     gst-plugins-ugly
+
+    # These are for generate-bundle script
+    patchelf
+    p11-kit
 )

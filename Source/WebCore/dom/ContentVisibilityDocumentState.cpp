@@ -149,7 +149,7 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
         setRelevancyValue(ContentRelevancy::Selected, targetContainsSelection(target));
 
     auto hasTopLayerinSubtree = [](const Element& target) {
-        for (Ref element : target.document().topLayerElements()) {
+        for (auto& element : target.document().topLayerElements()) {
             if (element->isDescendantOf(target))
                 return true;
         }
@@ -168,14 +168,15 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
     auto isSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
     target.invalidateStyle();
     updateAnimations(target, wasSkippedContent, isSkippedContent);
-    target.queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [&, isSkippedContent] {
-        if (target.isConnected()) {
-            ContentVisibilityAutoStateChangeEvent::Init init {
-                { false, false, false },
-                isSkippedContent == IsSkippedContent::Yes
-            };
-            target.dispatchEvent(ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, WTF::move(init)));
-        }
+    Node::queueTaskKeepingNodeAlive(target, TaskSource::DOMManipulation, [isSkippedContent](auto& element) {
+        if (!element.isConnected())
+            return;
+
+        ContentVisibilityAutoStateChangeEvent::Init init {
+            { false, false, false },
+            isSkippedContent == IsSkippedContent::Yes
+        };
+        element.dispatchEvent(ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, WTF::move(init)));
     });
     return true;
 }

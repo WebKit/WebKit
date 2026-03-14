@@ -53,13 +53,13 @@ public:
     static bool isEmptyValue(float value) { return std::isnan(value); }
 
     RenderSVGInlineText& NODELETE context();
-    const RenderSVGInlineText& context() const;
+    const RenderSVGInlineText& NODELETE context() const;
     
-    SVGCharacterDataMap& characterDataMap() { return m_characterDataMap; }
-    const SVGCharacterDataMap& characterDataMap() const { return m_characterDataMap; }
+    SVGCharacterDataMap& characterDataMap() LIFETIME_BOUND { return m_characterDataMap; }
+    const SVGCharacterDataMap& characterDataMap() const LIFETIME_BOUND { return m_characterDataMap; }
 
-    Vector<SVGTextMetrics>& textMetricsValues() { return m_textMetricsValues; }
-    const Vector<SVGTextMetrics>& textMetricsValues() const { return m_textMetricsValues; }
+    Vector<SVGTextMetrics>& textMetricsValues() LIFETIME_BOUND { return m_textMetricsValues; }
+    const Vector<SVGTextMetrics>& textMetricsValues() const LIFETIME_BOUND { return m_textMetricsValues; }
 
 private:
     SingleThreadWeakRef<RenderSVGInlineText> m_context;

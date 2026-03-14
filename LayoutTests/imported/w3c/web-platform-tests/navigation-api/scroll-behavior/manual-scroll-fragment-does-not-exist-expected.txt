@@ -1,3 +1,3 @@
 
-PASS scroll: scroll() should do nothing when the fragment does not exist
+FAIL scroll: scroll() should scroll to beginning of document when the fragment does not exist assert_equals: expected 0 but got 631
 

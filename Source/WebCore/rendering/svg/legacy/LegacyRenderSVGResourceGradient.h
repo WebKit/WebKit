@@ -72,7 +72,7 @@ class LegacyRenderSVGResourceGradient : public LegacyRenderSVGResourceContainer 
 public:
     virtual ~LegacyRenderSVGResourceGradient();
 
-    SVGGradientElement& gradientElement() const { return static_cast<SVGGradientElement&>(LegacyRenderSVGResourceContainer::element()); }
+    inline SVGGradientElement& gradientElement() const; // Defined in LegacyRenderSVGResourceGradientInlines.h
 
     void removeAllClientsFromCache() final;
     void removeAllClientsFromCacheAndMarkForInvalidationIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;

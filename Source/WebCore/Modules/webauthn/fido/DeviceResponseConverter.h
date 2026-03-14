@@ -47,7 +47,7 @@ std::optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>&);
 
 // Parses response code from response received from the authenticator. If
 // unknown response code value is received, then CTAP2_ERR_OTHER is returned.
-WEBCORE_EXPORT CtapDeviceResponseCode getResponseCode(const Vector<uint8_t>&);
+WEBCORE_EXPORT CtapDeviceResponseCode NODELETE getResponseCode(const Vector<uint8_t>&);
 
 // De-serializes CBOR encoded response, checks for valid CBOR map formatting,
 // and converts response to AuthenticatorMakeCredentialResponse object with

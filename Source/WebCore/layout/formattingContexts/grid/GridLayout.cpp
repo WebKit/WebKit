@@ -414,7 +414,7 @@ static Vector<LayoutUnit> rowSizesForFirstIterationColumnSizing(const TrackSizin
 // During track sizing we may need to get different types of size contributions for a grid item.
 // Getting a contribution in a specific dimension may require knowing the available space in
 // the opposite dimension. For each of these cases, the spec defines how to compute the available space.
-static LayoutUnit oppositeAxisConstraintForTrackSizing(Vector<LayoutUnit> oppositeAxisTrackSizes, const WTF::Range<size_t> oppositeAxisSpan)
+static LayoutUnit NODELETE oppositeAxisConstraintForTrackSizing(Vector<LayoutUnit> oppositeAxisTrackSizes, const WTF::Range<size_t> oppositeAxisSpan)
 {
     auto totalAvailableSpaceFromSpannedTracks = 0_lu;
     for (auto oppositeAxisLineIndex : std::views::iota(oppositeAxisSpan.begin(), oppositeAxisSpan.end())) {

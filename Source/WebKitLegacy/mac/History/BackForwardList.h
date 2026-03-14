@@ -48,8 +48,8 @@ public:
 
     void addItem(Ref<WebCore::HistoryItem>&&) override;
     void setChildItem(WebCore::BackForwardFrameItemIdentifier, Ref<WebCore::HistoryItem>&&) final { }
-    void goBack();
-    void goForward();
+    void NODELETE goBack();
+    void NODELETE goForward();
     void goToItem(WebCore::HistoryItem&) override;
 
     RefPtr<WebCore::HistoryItem> backItem();
@@ -61,19 +61,19 @@ public:
     void backListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
     void forwardListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
 
-    int capacity();
+    int NODELETE capacity();
     void setCapacity(int);
-    bool enabled();
+    bool NODELETE enabled();
     void setEnabled(bool);
     unsigned backListCount() const override;
     unsigned forwardListCount() const override;
     bool containsItem(const WebCore::HistoryItem&) const final;
 
     void close() override;
-    bool closed();
+    bool NODELETE closed();
 
     void removeItem(WebCore::HistoryItem&);
-    const Vector<Ref<WebCore::HistoryItem>>& entries() const { return m_entries; }
+    const Vector<Ref<WebCore::HistoryItem>>& entries() const LIFETIME_BOUND { return m_entries; }
 
 #if PLATFORM(IOS_FAMILY)
     unsigned current();

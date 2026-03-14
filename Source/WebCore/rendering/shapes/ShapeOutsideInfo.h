@@ -101,7 +101,7 @@ public:
     bool isShapeDirty() { return !m_shape; }
 
     LayoutRect computedShapePhysicalBoundingBox() const;
-    FloatPoint shapeToRendererPoint(const FloatPoint&) const;
+    FloatPoint NODELETE shapeToRendererPoint(const FloatPoint&) const;
 
     const LayoutShape& computedShape() const;
 

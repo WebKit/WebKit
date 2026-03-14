@@ -9,6 +9,7 @@
 #endif
 
 #include "common/angleutils.h"
+#include "common/SimpleMutex.h"
 #include "common/debug.h"
 
 #include <stdio.h>
@@ -71,7 +72,9 @@ const char *MakeStaticString(const std::string &str)
 {
     // On the heap so that no destructor runs on application exit.
     static std::set<std::string> *strings = new std::set<std::string>;
-    std::set<std::string>::iterator it    = strings->find(str);
+    static angle::SimpleMutex *mutex      = new angle::SimpleMutex;
+    std::lock_guard<angle::SimpleMutex> lock(*mutex);
+    std::set<std::string>::iterator it = strings->find(str);
     if (it != strings->end())
     {
         return it->c_str();

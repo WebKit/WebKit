@@ -164,7 +164,7 @@ bool defaultRemoveBackgroundEnabled()
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-bool defaultTopContentInsetBackgroundCanChangeAfterScrolling()
+SUPPRESS_NODELETE bool defaultTopContentInsetBackgroundCanChangeAfterScrolling()
 {
 #if PLATFORM(IOS_FAMILY)
     return PAL::currentUserInterfaceIdiomIsSmallScreen();

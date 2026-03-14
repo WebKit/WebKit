@@ -39,7 +39,7 @@ public:
     FECompositeSoftwareArithmeticApplier(const FEComposite&);
 
 private:
-    static uint8_t clampByte(int);
+    static uint8_t NODELETE clampByte(int);
 
     template <int b1, int b4>
     static inline void computePixels(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4);

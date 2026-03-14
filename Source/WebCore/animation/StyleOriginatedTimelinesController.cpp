@@ -203,8 +203,8 @@ void StyleOriginatedTimelinesController::registerNamedScrollTimeline(const AtomS
     });
 
     if (existingTimelineIndex != notFound) {
-        Ref existingScrollTimeline = timelines[existingTimelineIndex].get();
-        existingScrollTimeline->setAxis(axis);
+        auto& existingScrollTimeline = timelines[existingTimelineIndex].get();
+        existingScrollTimeline.setAxis(axis);
     } else {
         auto newScrollTimeline = ScrollTimeline::create(name, axis);
         newScrollTimeline->setSource(source);
@@ -317,7 +317,9 @@ void StyleOriginatedTimelinesController::unregisterNamedTimeline(const AtomStrin
     // their `animation-timeline` properly.
     timelines.removeAt(i);
 
-    for (Ref animation : timeline->relevantAnimations()) {
+    // Ensure we iterate on a copy of this timeline's registered animations as calling
+    // CSSAnimation::syncStyleOriginatedTimeline() may mutate it.
+    for (Ref animation : copyToVector(timeline->relevantAnimations())) {
         if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation)) {
             if (cssAnimation->owningElement())
                 cssAnimation->syncStyleOriginatedTimeline();
@@ -503,7 +505,7 @@ void StyleOriginatedTimelinesController::styleableWasRemoved(const Styleable& st
     for (Ref timeline : m_removedTimelines) {
         if (originatingElement(timeline) != styleable)
             continue;
-        for (Ref animation : timeline->relevantAnimations()) {
+        for (Ref animation : copyToVector(timeline->relevantAnimations())) {
             if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation.get())) {
                 if (auto owningElement = cssAnimation->owningElement()) {
                     attachAnimation(*cssAnimation, AllowsDeferral::Yes);

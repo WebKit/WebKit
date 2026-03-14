@@ -31,9 +31,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (117,18) size 1x18
         RenderMenuList {SELECT} at (0,36) size 200x18 [bgcolor=#FFFFFF]
           RenderSelectFallbackButton {DIV} at (0,0) size 200x19
-            RenderText at (8,2) size 60x13
-              text run at (8,2) width 20: "abc"
-              text run at (27,2) width 41 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+            RenderText at (117,2) size 60x13
+              text run at (117,2) width 20: "abc"
+              text run at (136,2) width 41 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
         RenderBR {BR} at (200,34) size 0x19
       RenderBlock {DIV} at (0,179) size 200x20
         RenderText {#text} at (0,1) size 82x19

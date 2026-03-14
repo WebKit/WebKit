@@ -51,7 +51,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpReceiver);
 
-RTCRtpReceiver::RTCRtpReceiver(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
+RTCRtpReceiver::RTCRtpReceiver(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, UniqueRef<RTCRtpReceiverBackend>&& backend)
     : m_track(WTF::move(track))
     , m_backend(WTF::move(backend))
     , m_connection(connection)
@@ -70,13 +70,14 @@ RTCRtpReceiver::~RTCRtpReceiver()
 
 void RTCRtpReceiver::stop()
 {
-    if (!m_backend)
+    if (m_isStopped)
         return;
+
+    m_isStopped = true;
 
     if (m_transform)
         m_transform->detachFromReceiver(*this);
 
-    m_backend = nullptr;
     m_track->stopTrack(MediaStreamTrack::StopMode::PostEvent);
 }
 
@@ -126,7 +127,7 @@ std::optional<RTCRtpTransform::Internal> RTCRtpReceiver::transform()
 
 ExceptionOr<RTCEncodedStreams> RTCRtpReceiver::createEncodedStreams(ScriptExecutionContext& context)
 {
-    if (!m_backend)
+    if (m_isStopped)
         return Exception { ExceptionCode::InvalidStateError };
 
     if (!m_encodedStreamProducer) {
@@ -139,6 +140,16 @@ ExceptionOr<RTCEncodedStreams> RTCRtpReceiver::createEncodedStreams(ScriptExecut
     }
 
     return m_encodedStreamProducer->streams();
+}
+
+std::unique_ptr<RTCDtlsTransportBackend> RTCRtpReceiver::dtlsTransportBackend()
+{
+    return m_backend->dtlsTransportBackend();
+}
+
+Ref<RTCRtpTransformBackend> RTCRtpReceiver::rtcRtpTransformBackend()
+{
+    return m_backend->rtcRtpTransformBackend();
 }
 
 #if !RELEASE_LOG_DISABLED

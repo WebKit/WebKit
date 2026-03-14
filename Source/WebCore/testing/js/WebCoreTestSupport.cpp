@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2015 Google Inc. All rights reserved.
- * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,7 +89,8 @@ void resetInternalsObject(JSContextRef context)
     JSLockHolder lock(lexicalGlobalObject);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
     Ref document = downcast<Document>(*globalObject->scriptExecutionContext());
-    RefPtr page = document->frame()->page();
+    RefPtr page = document->page();
+    RELEASE_ASSERT_WITH_MESSAGE(page, "Frame or Page is nullptr when Document is in a bad state");
     Internals::resetToConsistentState(*page);
     InternalSettings::from(page.get())->resetToConsistentState();
 }

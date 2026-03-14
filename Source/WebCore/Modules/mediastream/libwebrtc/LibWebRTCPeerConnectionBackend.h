@@ -90,10 +90,10 @@ private:
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;
     void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
 
-    RefPtr<RTCRtpTransceiver> existingTransceiver(Function<bool(LibWebRTCRtpTransceiverBackend&)>&&);
-    Ref<RTCRtpTransceiver> newRemoteTransceiver(std::unique_ptr<LibWebRTCRtpTransceiverBackend>&&, RealtimeMediaSource::Type);
+    void addInternalTransceiver(UniqueRef<LibWebRTCRtpTransceiverBackend>&&, RealtimeMediaSource::Type);
+    void removeTransceiver(const RTCRtpTransceiver&);
 
-    void collectTransceivers() final;
+    void collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&&) final;
 
 private:
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
@@ -108,7 +108,7 @@ private:
     template<typename T>
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiverFromTrackOrKind(T&& trackOrKind, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag = IgnoreNegotiationNeededFlag::No);
 
-    Ref<RTCRtpReceiver> createReceiver(std::unique_ptr<LibWebRTCRtpReceiverBackend>&&);
+    Ref<RTCRtpReceiver> createReceiver(UniqueRef<LibWebRTCRtpReceiverBackend>&&);
 
     void suspend() final;
     void resume() final;

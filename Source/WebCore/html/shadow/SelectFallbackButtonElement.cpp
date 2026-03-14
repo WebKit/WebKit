@@ -35,6 +35,7 @@
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
 #include "StyleResolver.h"
+#include "StyleTextAlign.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ SelectFallbackButtonElement::SelectFallbackButtonElement(Document& document)
 
 HTMLSelectElement& SelectFallbackButtonElement::selectElement() const
 {
-    return downcast<HTMLSelectElement>(*protect(containingShadowRoot())->host());
+    return downcast<HTMLSelectElement>(*containingShadowRoot()->host());
 }
 
 void SelectFallbackButtonElement::updateText(HTMLOptionElement* selectedOption, int optionIndex)
@@ -76,10 +77,13 @@ std::optional<Style::UnadjustedStyle> SelectFallbackButtonElement::resolveCustom
     // min-width: 0; is needed for correct shrinking.
     style->setLogicalMinWidth(0_css_px);
 
-    // Set text-align based on the select's direction (not its text-align property).
-    // This matches the old RenderMenuList behavior where text-align followed the
-    // select's bidi direction, not its CSS text-align property.
-    style->setTextAlign(hostStyle->writingMode().isBidiLTR() ? Style::TextAlign::Left : Style::TextAlign::Right);
+    auto hostTextAlign = hostStyle->textAlign();
+    if (hostTextAlign == Style::TextAlign::Start)
+        style->setTextAlign(hostStyle->writingMode().isBidiLTR() ? Style::TextAlign::Left : Style::TextAlign::Right);
+    else if (hostTextAlign == Style::TextAlign::End)
+        style->setTextAlign(hostStyle->writingMode().isBidiLTR() ? Style::TextAlign::Right : Style::TextAlign::Left);
+    else
+        style->setTextAlign(hostTextAlign);
 
     // Apply direction and unicodeBidi from the selected option for proper bidirectional text rendering.
     Ref selectElement = this->selectElement();

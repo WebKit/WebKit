@@ -483,6 +483,11 @@ public:
     void initializeWebProcessAccessibility();
 #endif
 
+#if !PLATFORM(COCOA)
+    void doAfterProcessingAllPendingMouseEvents(CompletionHandler<void()>&&);
+    void doAfterProcessingAllPendingKeyEvents(CompletionHandler<void()>&&);
+#endif
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -586,6 +591,7 @@ private:
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsBoolean(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsPoint(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsSize(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXSearchPredicate(WKDictionaryRef);
 #endif
 
     // WKContextClient

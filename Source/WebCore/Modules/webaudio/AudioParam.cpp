@@ -45,7 +45,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioParam);
 
-static void replaceNaNValues(std::span<float> values, float defaultValue)
+static void NODELETE replaceNaNValues(std::span<float> values, float defaultValue)
 {
     for (auto& value : values) {
         if (std::isnan(value))

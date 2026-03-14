@@ -1,3 +1,0 @@
-
-PASS Meta color-scheme with empty content attribute has no effect.
-

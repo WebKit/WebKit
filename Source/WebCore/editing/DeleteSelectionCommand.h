@@ -67,7 +67,7 @@ private:
     void removeNode(Node&, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable) override;
     void deleteTextFromNode(Text&, unsigned, unsigned) override;
     void removeRedundantBlocks();
-    bool shouldSmartDeleteParagraphSpacers();
+    bool NODELETE shouldSmartDeleteParagraphSpacers();
     void smartDeleteParagraphSpacers();
 
     // This function provides access to original string after the correction has been deleted.

@@ -64,7 +64,7 @@ static StrokeStyle NODELETE textDecorationStyleToStrokeStyle(TextDecorationStyle
     return strokeStyle;
 }
 
-static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)
+static void NODELETE adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out. For example, with a border width of 3, WebKit will pass us (y1+y2)/2, e.g.,
@@ -346,19 +346,19 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         }
     };
 
-    auto styleForRenderer = [&] (const RenderObject& renderer) -> const RenderStyle& {
+    auto styleForRenderer = [&] (const RenderObject& renderer) -> CheckedRef<const RenderStyle> {
         if (pseudoElementType && renderer.style().hasPseudoStyle(*pseudoElementType)) {
             if (auto textRenderer = dynamicDowncast<RenderText>(renderer))
                 return *textRenderer->getCachedPseudoStyle({ *pseudoElementType });
             return *downcast<RenderElement>(renderer).getCachedPseudoStyle({ *pseudoElementType });
         }
-        return firstLineStyle ? renderer.firstLineStyle() : renderer.style();
+        return firstLineStyle ? renderer.firstLineStyle() : CheckedRef { renderer.style() };
     };
 
     auto* current = &renderer;
     do {
-        const auto& style = styleForRenderer(*current);
-        extractDecorations(style, style.textDecorationLine());
+        CheckedRef style = styleForRenderer(*current);
+        extractDecorations(style, style->textDecorationLine());
 
         if (current->style().display() == Style::DisplayType::RubyText)
             return;

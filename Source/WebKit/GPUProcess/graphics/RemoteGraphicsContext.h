@@ -157,7 +157,7 @@ public:
     void applyFillPattern();
 #endif
     void applyDeviceScaleFactor(float);
-    std::optional<WebKit::SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<WebKit::SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
     void beginPage(const WebCore::FloatRect&);
     void endPage();

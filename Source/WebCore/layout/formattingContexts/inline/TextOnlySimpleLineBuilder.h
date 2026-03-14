@@ -55,7 +55,7 @@ private:
     void handleLineEnding(const RenderStyle&, InlineItemPosition, size_t layoutRangeEndIndex);
     size_t revertToTrailingItem(const RenderStyle&, const InlineItemRange&, const InlineTextItem&);
     size_t revertToLastNonOverflowingItem(const RenderStyle&, const InlineItemRange&);
-    InlineLayoutUnit availableWidth() const;
+    InlineLayoutUnit NODELETE availableWidth() const;
 
 private:
     InlineLayoutUnit m_trimmedTrailingWhitespaceWidth { 0.f };

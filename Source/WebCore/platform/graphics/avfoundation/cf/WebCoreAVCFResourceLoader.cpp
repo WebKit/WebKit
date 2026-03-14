@@ -87,7 +87,11 @@ void WebCoreAVCFResourceLoader::startLoading()
         CachingPolicy::DisallowCaching));
 
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
-    m_resource = loader ? loader->requestRawResource(WTF::move(request)).value_or(nullptr) : nullptr;
+    m_resource = nullptr;
+    if (loader) {
+        if (auto result = loader->requestRawResource(WTF::move(request)))
+            m_resource = WTF::move(result.value());
+    }
     if (m_resource)
         m_resource->addClient(*this);
     else {

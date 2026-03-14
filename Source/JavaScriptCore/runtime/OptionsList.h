@@ -41,7 +41,6 @@ namespace JSC {
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8
 
 JS_EXPORT_PRIVATE bool canUseJITCage();
-bool canUseHandlerIC();
 bool canUseWasm();
 bool hasCapacityToUseLargeGigacage();
 
@@ -86,7 +85,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useLLInt,  true, Normal, "allows the LLINT to be used if true"_s) \
     v(Bool, useJIT, jitEnabledByDefault(), Normal, "allows the executable pages to be allocated for JIT and thunks if true"_s) \
     v(Bool, useBaselineJIT, true, Normal, "allows the baseline JIT to be used if true"_s) \
-    v(Bool, useDFGJIT, true, Normal, "allows the DFG JIT to be used if true"_s) \
+    v(Bool, useDFGJIT, is64Bit(), Normal, "allows the DFG JIT to be used if true"_s) \
     v(Bool, useRegExpJIT, jitEnabledByDefault() && is64Bit(), Normal, "allows the RegExp JIT to be used if true"_s) \
     v(Bool, useDOMJIT, is64Bit(), Normal, "allows the DOMJIT to be used if true"_s) \
     \
@@ -103,7 +102,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Size, jitMemoryReservationAddress, 0, Restricted, "If non-zero, we will attempt to allocate JIT memory at the address provided and crash if we cannot.") \
     \
     v(Bool, forceCodeBlockLiveness, false, Normal, nullptr) \
-    v(Bool, forceICFailure, false, Normal, nullptr) \
+    v(Bool, forceICFailure, is32Bit(), Normal, nullptr) \
     v(Bool, forceUnlinkedDFG, false, Normal, nullptr) \
     \
     v(Unsigned, repatchCountForCoolDown, 8, Normal, nullptr) \
@@ -149,6 +148,10 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useGdbJITInfo, false, Normal, "generates GDB JIT API side-data; to use with lldb on macos, add `settings set plugin.jit-loader.gdb.enable on` to .lldbinit") \
     v(Bool, useTextMarkers, false, Normal, "generates text markers side-data") \
     v(OptionString, jitDumpDirectory, nullptr, Normal, "Directory to place JITDump"_s) \
+    v(Bool, useIRDump, false, Normal, "generates IR dump files and JIT_CODE_DEBUG_INFO in JITDump"_s) \
+    v(OptionString, irDumpDirectory, nullptr, Normal, "Directory to place IR dump files"_s) \
+    v(Bool, useSourceCodeDump, false, Normal, "generates source code debug info in JITDump"_s) \
+    v(OptionString, sourceCodeDumpDirectory, nullptr, Normal, "Directory to place dumped source files"_s) \
     v(OptionString, textMarkersDirectory, nullptr, Normal, "Directory to place MarkerTxt") \
     v(OptionRange, bytecodeRangeToJITCompile, nullptr, Normal, "bytecode size range to allow compilation on, e.g. 1:100"_s) \
     v(OptionRange, bytecodeRangeToDFGCompile, nullptr, Normal, "bytecode size range to allow DFG compilation on, e.g. 1:100"_s) \
@@ -517,6 +520,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maxB3TailDupBlockSuccessors, 3, Normal, nullptr) \
     v(Bool, useB3HoistLoopInvariantValues, true, Normal, nullptr) \
     v(Bool, useB3CanonicalizePrePostIncrements, false, Normal, nullptr) \
+    v(Bool, useB3ReduceSIMDShuffle, true, Normal, nullptr) \
     v(Bool, useAirOptimizePairedLoadStore, true, Normal, nullptr) \
     \
     v(Bool, useDollarVM, false, Restricted, "installs the $vm debugging tool in global objects"_s) \
@@ -621,8 +625,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maxNumericHotLoopSize, 225, Normal, nullptr) \
     v(Bool, printEachUnrolledLoop, false, Normal, nullptr) \
     v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \
-    v(Bool, useHandlerIC, canUseHandlerIC(), Normal, nullptr) \
-    v(Bool, useDataICInFTL, false, Normal, nullptr) \
+    v(Bool, useHandlerICInFTL, false, Normal, nullptr) \
     v(Bool, useLLIntICs, true, Normal, "Use property and call ICs in LLInt code."_s) \
     v(Bool, useBaselineJITCodeSharing, is64Bit(), Normal, nullptr) \
     v(Bool, libpasScavengeContinuously, false, Normal, nullptr) \

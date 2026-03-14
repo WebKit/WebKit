@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.21)
 project(libpas)
 
 set(CMAKE_CXX_STANDARD 23 CACHE STRING "C++ standard to be used")
-add_compile_options(-Wall)
+add_compile_options(-Wall -pthread)
+add_compile_definitions(_GNU_SOURCE)
+set(CMAKE_C_STANDARD 23)
 
 # Get sources
 AUX_SOURCE_DIRECTORY( "src/libpas"       libpasSources   )

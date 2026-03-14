@@ -160,7 +160,7 @@ public:
     inline Document* document() const; // Defined in LocalFrameInlines.h
     inline LocalFrameView* view() const; // Defined in DocumentView.h
     WEBCORE_EXPORT RefPtr<const LocalFrame> NODELETE localMainFrame() const;
-    WEBCORE_EXPORT RefPtr<LocalFrame> localMainFrame();
+    WEBCORE_EXPORT RefPtr<LocalFrame> NODELETE localMainFrame();
 
     inline Editor& editor() LIFETIME_BOUND; // Defined in LocalFrameInlines.h
     inline const Editor& editor() const LIFETIME_BOUND; // Defined in LocalFrameInlines.h
@@ -206,10 +206,10 @@ public:
 
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
-    WEBCORE_EXPORT static LocalFrame* frameForWidget(const Widget&);
+    WEBCORE_EXPORT static LocalFrame* NODELETE frameForWidget(const Widget&);
 
     WEBCORE_EXPORT void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize, NotifyUIProcess = NotifyUIProcess::Yes) final;
-    bool shouldUsePrintingLayout() const;
+    bool NODELETE shouldUsePrintingLayout() const;
     WEBCORE_EXPORT FloatSize resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize);
 
     void setDocument(RefPtr<Document>&&);

@@ -97,7 +97,7 @@ public:
 private:
     MediaKeySession(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
-    void updateExpiration(double);
+    void NODELETE updateExpiration(double);
     void sessionClosed();
     String mediaKeysStorageDirectory() const;
     CDMKeyGroupingStrategy NODELETE keyGroupingStrategy() const;

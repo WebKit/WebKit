@@ -147,21 +147,21 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
     m_callback = WTF::move(callback);
     m_exclusionRules = WTF::move(exclusionRules);
 
-    observeParagraphs(firstPositionInNode(document.get()), lastPositionInNode(document.get()));
+    observeParagraphs(firstPositionInNode(*document), lastPositionInNode(*document));
     flushPendingItemsForCallback();
 }
 
-static bool isInPrivateUseArea(char16_t character)
+static bool NODELETE isInPrivateUseArea(char16_t character)
 {
     return 0xE000 <= character && character <= 0xF8FF;
 }
 
-static bool isTokenDelimiter(char16_t character)
+static bool NODELETE isTokenDelimiter(char16_t character)
 {
     return isHTMLLineBreak(character) || isInPrivateUseArea(character);
 }
 
-static bool isNotSpace(char16_t character)
+static bool NODELETE isNotSpace(char16_t character)
 {
     if (character == noBreakSpace)
         return false;
@@ -200,7 +200,7 @@ public:
     {
         CurrentContent content = { m_node.copyRef(), m_text ? m_text.value() : Vector<String> { }, !!m_text };
         if (content.node) {
-            if (CheckedPtr renderer = content.node->renderer()) {
+            if (auto* renderer = content.node->renderer()) {
                 if (renderer->isRenderReplaced()) {
                     content.isTextContent = false;
                     content.isReplacedContent = true;
@@ -210,7 +210,7 @@ public:
         return content;
     }
 
-    bool atEnd() const { return !m_text && m_node == m_pastEndNode; }
+    bool NODELETE atEnd() const { return !m_text && m_node == m_pastEndNode; }
 
 private:
     bool shouldAdvanceIteratorPastCurrentNode() const
@@ -278,7 +278,7 @@ static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
     return input.isTextButton();
 }
 
-static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
+static bool NODELETE isAttributeForTextManipulation(const QualifiedName& nameToCheck)
 {
     using namespace HTMLNames;
     static const std::array attributeNames {
@@ -297,7 +297,7 @@ static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
     return false;
 }
 
-static bool canPerformTextManipulationByReplacingEntireTextContent(const Element& element)
+static bool NODELETE canPerformTextManipulationByReplacingEntireTextContent(const Element& element)
 {
     return element.hasTagName(HTMLNames::titleTag) || element.hasTagName(HTMLNames::optionTag);
 }
@@ -477,7 +477,7 @@ void TextManipulationController::addItemIfPossible(Vector<ManipulationUnit>&& un
 
     ASSERT(end);
     auto startPosition = firstPositionInOrBeforeNode(units[index].node.ptr());
-    auto endPosition = positionAfterNode(units[end - 1].node.ptr());
+    auto endPosition = positionAfterNode(units[end - 1].node);
     Vector<TextManipulationToken> tokens;
     for (; index < end; ++index)
         tokens.appendVector(WTF::move(units[index].tokens));
@@ -505,7 +505,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
         ASSERT(contentNode);
 
         if (RefPtr shadowRoot = contentNode->shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
-            observeParagraphs(firstPositionInNode(shadowRoot.get()), lastPositionInNode(shadowRoot.get()));
+            observeParagraphs(firstPositionInNode(*shadowRoot), lastPositionInNode(*shadowRoot));
 
         while (!enclosingItemBoundaryElements.isEmpty() && !enclosingItemBoundaryElements.last()->contains(contentNode.get())) {
             addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
@@ -642,10 +642,10 @@ void TextManipulationController::scheduleObservationUpdate()
         }
 
         Position start;
-        if (RefPtr element = dynamicDowncast<Element>(commonAncestor.get())) {
+        if (RefPtr element = dynamicDowncast<Element>(commonAncestor)) {
             // Ensure to include the element in the range.
             if (canPerformTextManipulationByReplacingEntireTextContent(*element))
-                start = positionBeforeNode(commonAncestor.get());
+                start = positionBeforeNode(*element);
         }
         if (start.isNull())
             start = firstPositionInOrBeforeNode(commonAncestor.get());

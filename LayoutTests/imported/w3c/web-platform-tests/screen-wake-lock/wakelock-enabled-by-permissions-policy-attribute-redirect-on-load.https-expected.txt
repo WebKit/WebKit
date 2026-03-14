@@ -1,0 +1,4 @@
+
+PASS Permissions-Policy allow="screen-wake-lock" allows same-origin relocation
+PASS Permissions-Policy allow="screen-wake-lock" disallows cross-origin relocation
+

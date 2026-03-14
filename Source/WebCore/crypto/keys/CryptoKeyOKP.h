@@ -55,7 +55,7 @@ public:
     ExceptionOr<Vector<uint8_t>> exportSpki() const;
     ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
-    static std::optional<NamedCurve> namedCurveFromString(const String&);
+    static std::optional<NamedCurve> NODELETE namedCurveFromString(const String&);
     NamedCurve namedCurve() const { return m_curve; }
     String namedCurveString() const;
 
@@ -63,7 +63,7 @@ public:
 
     size_t keySizeInBits() const { return platformKey().size() * 8; }
     size_t keySizeInBytes() const { return platformKey().size(); }
-    const KeyMaterial& platformKey() const { return m_data; }
+    const KeyMaterial& platformKey() const LIFETIME_BOUND { return m_data; }
 
 private:
     CryptoKeyOKP(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, Vector<uint8_t>&&, bool extractable, CryptoKeyUsageBitmap);

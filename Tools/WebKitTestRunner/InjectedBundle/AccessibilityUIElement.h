@@ -141,6 +141,8 @@ public:
     virtual JSRetainPtr<JSStringRef> computedRoleString();
     virtual JSRetainPtr<JSStringRef> title();
     virtual JSRetainPtr<JSStringRef> description();
+    virtual JSRetainPtr<JSStringRef> debugDescription() { return nullptr; }
+    virtual JSRetainPtr<JSStringRef> rawRoleForTesting() { return nullptr; }
     virtual JSRetainPtr<JSStringRef> language();
     virtual JSRetainPtr<JSStringRef> stringValue();
     virtual JSRetainPtr<JSStringRef> dateValue();
@@ -166,7 +168,7 @@ public:
     virtual unsigned numberOfCharacters() const;
     virtual int insertionPointLineNumber();
     virtual JSRetainPtr<JSStringRef> selectedTextRange();
-    virtual JSRetainPtr<JSStringRef> intersectionWithSelectionRange();
+    virtual RefPtr<AccessibilityTextMarkerRange> intersectionWithSelectionRange();
     virtual JSRetainPtr<JSStringRef> textInputMarkedRange() const;
     virtual bool isAtomicLiveRegion() const;
     virtual bool isBusy() const;

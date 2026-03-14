@@ -34,8 +34,8 @@ public:
 
     bool operator==(const SpotLightSource&) const;
 
-    const FloatPoint3D& position() const { return m_position; }
-    const FloatPoint3D& direction() const { return m_pointsAt; }
+    const FloatPoint3D& position() const LIFETIME_BOUND { return m_position; }
+    const FloatPoint3D& direction() const LIFETIME_BOUND { return m_pointsAt; }
     float specularExponent() const { return m_specularExponent; }
     float limitingConeAngle() const { return m_limitingConeAngle; }
 

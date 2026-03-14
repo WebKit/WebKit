@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/animation/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/animation/color-scheme-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/animation/forced-color-adjust-no-interpolation.html

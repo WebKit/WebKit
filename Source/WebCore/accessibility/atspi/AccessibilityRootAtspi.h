@@ -44,7 +44,7 @@ public:
     void unregisterObject();
     void setPath(String&&);
 
-    const String& path() const { return m_path; }
+    const String& path() const LIFETIME_BOUND { return m_path; }
     GVariant* reference() const;
     GVariant* parentReference() const;
     GVariant* applicationReference() const;

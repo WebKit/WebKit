@@ -40,7 +40,7 @@ bool ShapeOutside::Image::isValid() const
 {
     Ref styleImage = image.value;
     if (styleImage->hasCachedImage()) {
-        auto* cachedImage = styleImage->cachedImage();
+        RefPtr cachedImage = styleImage->cachedImage();
         return cachedImage && cachedImage->hasImage();
     }
     return styleImage->isGeneratedImage();
@@ -50,7 +50,7 @@ bool ShapeOutside::Image::isValid() const
 
 auto CSSValueConversion<ShapeOutside>::operator()(BuilderState& state, const CSSValue& value) -> ShapeOutside
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueNone)
             return CSS::Keyword::None { };
 

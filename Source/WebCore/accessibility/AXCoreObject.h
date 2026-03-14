@@ -682,6 +682,8 @@ public:
     bool supportsRequiredAttribute() const;
     virtual bool isExpanded() const = 0;
     virtual bool isVisible() const = 0;
+    virtual bool isARIAHidden() const { return false; }
+    bool isAXHidden() const;
     virtual void setIsExpanded(bool) = 0;
     virtual bool supportsCheckedState() const = 0;
 
@@ -724,6 +726,8 @@ public:
     virtual RenderObject* renderer() const = 0;
 
     virtual bool isIgnored() const = 0;
+    // Returns std::nullopt if we don't have a cached ignored value.
+    virtual std::optional<bool> cachedIsIgnored() const = 0;
 
     unsigned blockquoteLevel() const;
     unsigned headingLevel() const;
@@ -858,6 +862,11 @@ public:
     // TODO: this name is not consistent with the others
     AXCoreObject* parentObjectIncludingCrossFrame() const;
     AXCoreObject* parentObjectUnignoredIncludingCrossFrame() const;
+
+    // Finds the next or previous sibling that is not ignored. Uses the parent's
+    // children() list, so it works for both live objects and isolated objects.
+    AXCoreObject* nextSiblingUnignored() const;
+    AXCoreObject* previousSiblingUnignored() const;
 
     // Finds objects within |this| object matching the given search criteria.
     virtual AccessibilityChildrenVector findMatchingObjectsWithin(AccessibilitySearchCriteria&&);
@@ -1067,9 +1076,9 @@ public:
     // When it is not, it returns unignored children. After ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     // is the default, we should rename this function to childrenIncludingIgnored, and all callers
     // should be audited to either use that, or unignoredChildren.
-    virtual const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) = 0;
+    virtual const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) LIFETIME_BOUND = 0;
 
-    const AccessibilityChildrenVector& childrenIncludingIgnored(bool updateChildrenIfNeeded = true)
+    const AccessibilityChildrenVector& childrenIncludingIgnored(bool updateChildrenIfNeeded = true) LIFETIME_BOUND
     {
         return children(updateChildrenIfNeeded);
     };
@@ -1079,7 +1088,7 @@ public:
     AccessibilityChildrenVector unignoredChildren(bool updateChildrenIfNeeded = true);
     bool hasUnignoredChild();
 #else
-    const AccessibilityChildrenVector& unignoredChildren(bool updateChildrenIfNeeded = true) { return children(updateChildrenIfNeeded); }
+    const AccessibilityChildrenVector& unignoredChildren(bool updateChildrenIfNeeded = true) LIFETIME_BOUND { return children(updateChildrenIfNeeded); }
     bool hasUnignoredChild()
     {
         const auto& children = this->children();
@@ -1127,7 +1136,7 @@ public:
     }
 
     RefPtr<AXCoreObject> previousInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
-    AXCoreObject* previousSiblingIncludingIgnored(bool updateChildrenIfNeeded);
+    RefPtr<AXCoreObject> previousSiblingIncludingIgnored(bool updateChildrenIfNeeded);
     AXCoreObject* deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded);
 
     void setIndexInParent(unsigned index)
@@ -1301,6 +1310,7 @@ public:
     WEBCORE_EXPORT RetainPtr<id> platformElement() const;
 #endif
     void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
+    void setWrapperFrom(const AXCoreObject& other) { m_wrapper = other.m_wrapper; }
     void detachWrapper(AccessibilityDetachmentType);
 
 #if PLATFORM(IOS_FAMILY)

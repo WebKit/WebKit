@@ -54,7 +54,7 @@ public:
     LayoutUnit usedSizeInCrossAxis(const LogicalFlexItem&, LayoutUnit maxAxisConstraint) const;
 
 private:
-    const FlexFormattingContext& formattingContext() const { return m_flexFormattingContext; }
+    const FlexFormattingContext& formattingContext() const LIFETIME_BOUND { return m_flexFormattingContext; }
 
 private:
     const FlexFormattingContext& m_flexFormattingContext;

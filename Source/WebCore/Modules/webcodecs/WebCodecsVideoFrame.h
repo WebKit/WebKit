@@ -114,14 +114,14 @@ public:
     size_t codedWidth() const { return m_data.codedWidth; }
     size_t codedHeight() const { return m_data.codedHeight; }
 
-    DOMRectReadOnly* codedRect() const;
-    DOMRectReadOnly* visibleRect() const;
+    DOMRectReadOnly* NODELETE codedRect() const;
+    DOMRectReadOnly* NODELETE visibleRect() const;
 
     size_t displayWidth() const { return m_data.displayWidth; }
     size_t displayHeight() const { return m_data.displayHeight; }
     std::optional<uint64_t> duration() const { return m_data.duration; }
     int64_t timestamp() const { return m_data.timestamp; }
-    VideoColorSpace& colorSpace() const;
+    VideoColorSpace& NODELETE colorSpace() const;
 
     struct CopyToOptions {
         std::optional<DOMRectInit> rect;

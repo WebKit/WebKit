@@ -68,6 +68,7 @@
 
 typedef uint64_t Slot;
 
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN;
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -75,6 +76,7 @@ extern Slot g_config[];
 #ifdef __cplusplus
 }
 #endif
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_END;
 
 #define PAS_MTE_ENABLE_FLAG 0
 #define PAS_MTE_MODE_BITS 1
@@ -125,6 +127,9 @@ extern Slot g_config[];
 #define PAS_MTE_FEATURE_ZERO_TAG_ALL 4
 #define PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION 5
 #define PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT 6
+
+// FIXME: rdar://171662605
+#define PAS_WORKAROUND_RDAR_171662605_UNCONDITIONAL_TAG_ON_ALLOC (1)
 
 #define PAS_MTE_FEATURE_FORCED(feature) (0)
 #define PAS_MTE_FEATURE_HARDENED_FORCED(feature) (feature == PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION)

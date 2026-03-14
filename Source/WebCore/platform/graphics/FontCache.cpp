@@ -75,11 +75,11 @@ inline void add(Hasher& hasher, const FontPlatformDataCacheKey& key)
 
 struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPlatformDataCacheKey> {
     static constexpr bool emptyValueIsZero = false;
-    static void constructDeletedValue(FontPlatformDataCacheKey& slot)
+    static void NODELETE constructDeletedValue(FontPlatformDataCacheKey& slot)
     {
         new (NotNull, &slot.descriptionKey) FontDescriptionKey(WTF::HashTableDeletedValue);
     }
-    static bool isDeletedValue(const FontPlatformDataCacheKey& key)
+    static bool NODELETE isDeletedValue(const FontPlatformDataCacheKey& key)
     {
         return key.descriptionKey.isHashTableDeletedValue();
     }
@@ -101,7 +101,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     {
         new (NotNull, &slot) FontPlatformData(WTF::HashTableDeletedValue);
     }
-    static bool isDeletedValue(const FontPlatformData& value)
+    static bool NODELETE isDeletedValue(const FontPlatformData& value)
     {
         return value.isHashTableDeletedValue();
     }
@@ -125,7 +125,7 @@ struct FontCache::FontDataCaches {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(FontCache::FontDataCaches);
 
-CheckedRef<FontCache> FontCache::forCurrentThread()
+FontCache& FontCache::forCurrentThread()
 {
     return threadGlobalDataSingleton().fontCache();
 }
@@ -414,7 +414,7 @@ static void dispatchToAllFontCaches(F function)
 {
     ASSERT(isMainThread());
 
-    function(FontCache::forCurrentThread().get());
+    function(protect(FontCache::forCurrentThread()).get());
 
     for (Ref thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
         thread->runLoop().postTask([function](ScriptExecutionContext&) {
@@ -445,6 +445,13 @@ void FontCache::releaseNoncriticalMemoryInAllFontCaches()
 {
     dispatchToAllFontCaches([](FontCache& fontCache) {
         fontCache.releaseNoncriticalMemory();
+    });
+}
+
+void FontCache::releaseCriticalMemoryInAllFontCaches()
+{
+    dispatchToAllFontCaches([](FontCache& fontCache) {
+        fontCache.m_fontCascadeCache.clearShapedTextCaches();
     });
 }
 

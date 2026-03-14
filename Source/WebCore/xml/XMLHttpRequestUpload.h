@@ -57,7 +57,7 @@ private:
     WeakRef<XMLHttpRequest, WeakPtrImplWithEventTargetData> m_request;
 };
 
-WebCoreOpaqueRoot root(XMLHttpRequestUpload*);
+WebCoreOpaqueRoot NODELETE root(XMLHttpRequestUpload*);
     
 } // namespace WebCore
 

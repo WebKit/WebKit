@@ -62,7 +62,7 @@ SRGBA<uint8_t> premultipliedCeiling(SRGBA<uint8_t> color)
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(fastDivideBy255(r * a + 254), fastDivideBy255(g * a + 254), fastDivideBy255(b * a + 254), a);
 }
 
-static inline uint16_t unpremultipliedComponentByte(uint8_t c, uint8_t a)
+static inline uint16_t NODELETE unpremultipliedComponentByte(uint8_t c, uint8_t a)
 {
     return (fastMultiplyBy255(c) + a - 1) / a;
 }

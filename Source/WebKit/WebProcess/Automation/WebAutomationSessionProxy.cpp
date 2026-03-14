@@ -726,7 +726,7 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
         return nullptr;
     }
 
-    if (RefPtr optgroup = dynamicDowncast<WebCore::HTMLOptGroupElement>(element)) {
+    if (auto* optgroup = dynamicDowncast<WebCore::HTMLOptGroupElement>(element)) {
         if (auto* parentElement = optgroup->ownerSelectElement())
             return parentElement;
         return nullptr;
@@ -865,7 +865,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     // Check the case where a non-descendant element hit tests before the target element. For example, a child <option>
     // of a <select> does not obscure the <select>, but two sibling <div> that overlap at the IVCP will obscure each other.
     // Node::isDescendantOf() is not self-inclusive, so that is explicitly checked here.
-    isObscured = elementList[0].ptr() != containerElement && !Ref { elementList[0] }->isShadowIncludingDescendantOf(containerElement.get());
+    isObscured = elementList[0].ptr() != containerElement && !elementList[0]->isShadowIncludingDescendantOf(containerElement.get());
 
     switch (coordinateSystem) {
     case CoordinateSystem::Page:
@@ -1114,7 +1114,7 @@ void WebAutomationSessionProxy::getCookiesForFrame(WebCore::PageIdentifier pageI
     // This returns the same list of cookies as when evaluating `document.cookies` in JavaScript.
     Vector<WebCore::Cookie> foundCookies;
     if (!document->cookieURL().isEmpty())
-        protect(protect(page->corePage())->cookieJar())->getRawCookies(*document, document->cookieURL(), foundCookies);
+        page->corePage()->cookieJar().getRawCookies(*document, document->cookieURL(), foundCookies);
 
     completionHandler(std::nullopt, foundCookies);
 }
@@ -1137,7 +1137,7 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
         return;
     }
 
-    protect(protect(page->corePage())->cookieJar())->deleteCookie(*document, document->cookieURL(), cookieName, [completionHandler = WTF::move(completionHandler)] () mutable {
+    page->corePage()->cookieJar().deleteCookie(*document, document->cookieURL(), cookieName, [completionHandler = WTF::move(completionHandler)] () mutable {
         completionHandler(std::nullopt);
     });
 }

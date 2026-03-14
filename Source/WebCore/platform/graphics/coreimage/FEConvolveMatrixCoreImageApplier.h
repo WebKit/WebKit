@@ -41,7 +41,7 @@ class FEConvolveMatrixCoreImageApplier final : public FilterEffectConcreteApplie
 public:
     FEConvolveMatrixCoreImageApplier(const FEConvolveMatrix&);
 
-    static bool supportsCoreImageRendering(const FEConvolveMatrix&);
+    static bool NODELETE supportsCoreImageRendering(const FEConvolveMatrix&);
 
 private:
     bool apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const final;

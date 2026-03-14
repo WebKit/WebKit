@@ -67,7 +67,7 @@ public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     NSURL *getURL(const String& resourcePath, NSString **outExceptionString);
-    NSDictionary *getManifest();
+    NSDictionary *NODELETE getManifest();
     String getVersion();
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
     void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
@@ -79,9 +79,9 @@ public:
     void openOptionsPage(Ref<WebExtensionCallbackHandler>&&);
     void reload();
 
-    String runtimeIdentifier();
+    String NODELETE runtimeIdentifier();
 
-    JSValue *lastError();
+    JSValue *NODELETE lastError();
 
     void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const String& messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, NSDictionary *options, NSString **outExceptionString);

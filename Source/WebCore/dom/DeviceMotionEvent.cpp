@@ -82,7 +82,7 @@ static std::optional<DeviceMotionEvent::RotationRate> NODELETE convert(const Dev
     return DeviceMotionEvent::RotationRate { rotationRate->alpha(), rotationRate->beta(), rotationRate->gamma() };
 }
 
-static RefPtr<DeviceMotionData::Acceleration> convert(std::optional<DeviceMotionEvent::Acceleration>&& acceleration)
+static RefPtr<DeviceMotionData::Acceleration> NODELETE convert(std::optional<DeviceMotionEvent::Acceleration>&& acceleration)
 {
     if (!acceleration)
         return nullptr;
@@ -93,7 +93,7 @@ static RefPtr<DeviceMotionData::Acceleration> convert(std::optional<DeviceMotion
     return DeviceMotionData::Acceleration::create(acceleration->x, acceleration->y, acceleration->z);
 }
 
-static RefPtr<DeviceMotionData::RotationRate> convert(std::optional<DeviceMotionEvent::RotationRate>&& rotationRate)
+static RefPtr<DeviceMotionData::RotationRate> NODELETE convert(std::optional<DeviceMotionEvent::RotationRate>&& rotationRate)
 {
     if (!rotationRate)
         return nullptr;
@@ -106,20 +106,20 @@ static RefPtr<DeviceMotionData::RotationRate> convert(std::optional<DeviceMotion
 
 std::optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::acceleration() const
 {
-    RefPtr acceleration = m_deviceMotionData->acceleration();
-    return convert(acceleration.get());
+    auto* acceleration = m_deviceMotionData->acceleration();
+    return convert(acceleration);
 }
 
 std::optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::accelerationIncludingGravity() const
 {
-    RefPtr accelerationIncludingGravity = m_deviceMotionData->accelerationIncludingGravity();
-    return convert(accelerationIncludingGravity.get());
+    auto* accelerationIncludingGravity = m_deviceMotionData->accelerationIncludingGravity();
+    return convert(accelerationIncludingGravity);
 }
 
 std::optional<DeviceMotionEvent::RotationRate> DeviceMotionEvent::rotationRate() const
 {
-    RefPtr rotationRate = m_deviceMotionData->rotationRate();
-    return convert(rotationRate.get());
+    auto* rotationRate = m_deviceMotionData->rotationRate();
+    return convert(rotationRate);
 }
 
 std::optional<double> DeviceMotionEvent::interval() const

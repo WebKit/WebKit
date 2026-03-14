@@ -60,9 +60,10 @@ MockMediaSourcePrivate::~MockMediaSourcePrivate() = default;
 
 MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>& outPrivate)
 {
-    MediaEngineSupportParameters parameters;
-    parameters.isMediaSource = true;
-    parameters.type = contentType;
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = contentType
+    };
     if (MockMediaPlayerMediaSource::supportsType(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return AddStatus::NotSupported;
 

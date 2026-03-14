@@ -13,7 +13,7 @@
             let centerX = annotationBounds["x"] + annotationBounds["width"] / 2;
             let centerY = annotationBounds["y"] + annotationBounds["height"] / 2;
 
-            UIHelper.activateAt(centerX, centerY);
+            await UIHelper.activateAt(centerX, centerY);
             await UIHelper.renderingUpdate();
 
             testRunner.notifyDone();

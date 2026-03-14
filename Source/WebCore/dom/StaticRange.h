@@ -61,7 +61,7 @@ public:
     // https://dom.spec.whatwg.org/#staticrange-valid
     bool computeValidity() const;
 
-    void visitNodesConcurrently(JSC::AbstractSlotVisitor&) const;
+    void visitNodesInGCThread(JSC::AbstractSlotVisitor&) const;
 
 private:
     explicit StaticRange(SimpleRange&&);

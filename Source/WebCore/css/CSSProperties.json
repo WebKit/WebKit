@@ -7310,7 +7310,7 @@
             }
         },
         "overflow-clip-margin": {
-            "animation-type": "not animatable",
+            "animation-type": "discrete",
             "animation-type-comment": "FIXME: Current spec animation type is 'see prose'",
             "inherited": false,
             "initial": "0px",

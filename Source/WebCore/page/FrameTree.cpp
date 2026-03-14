@@ -134,13 +134,13 @@ void FrameTree::replaceChild(Frame& oldChild, Frame& newChild)
 
 static bool inScope(Frame& frame, TreeScope& scope)
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
     if (!localFrame)
         return true;
-    RefPtr document = localFrame->document();
+    auto* document = localFrame->document();
     if (!document)
         return false;
-    RefPtr owner = document->ownerElement();
+    auto* owner = document->ownerElement();
     return owner && &owner->treeScope() == &scope;
 }
 
@@ -179,7 +179,7 @@ inline unsigned FrameTree::scopedChildCount(TreeScope* scope) const
         return 0;
 
     unsigned scopedCount = 0;
-    for (RefPtr result = firstChild(); result; result = result->tree().nextSibling()) {
+    for (auto* result = firstChild(); result; result = result->tree().nextSibling()) {
         if (inScope(*result, *scope))
             scopedCount++;
     }

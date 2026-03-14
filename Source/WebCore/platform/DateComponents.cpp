@@ -54,7 +54,7 @@ static constexpr int maximumWeekInMaximumYear = 37; // The week of 275760-09-13
 static constexpr std::array<int, 12> daysInMonth { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 // 'month' is 0-based.
-static int maxDayOfMonth(int year, int month)
+static int NODELETE maxDayOfMonth(int year, int month)
 {
     if (month != 1) // February?
         return daysInMonth[month];
@@ -62,7 +62,7 @@ static int maxDayOfMonth(int year, int month)
 }
 
 // 'month' is 0-based.
-static int dayOfWeek(int year, int month, int day)
+static int NODELETE dayOfWeek(int year, int month, int day)
 {
     int shiftedMonth = month + 2;
     // 2:January, 3:Feburuary, 4:March, ...
@@ -141,7 +141,7 @@ template<typename CharacterType> bool DateComponents::parseYear(StringParsingBuf
     return true;
 }
 
-static bool withinHTMLDateLimits(int year, int month)
+static bool NODELETE withinHTMLDateLimits(int year, int month)
 {
     if (year < DateComponents::minimumYear())
         return false;
@@ -150,7 +150,7 @@ static bool withinHTMLDateLimits(int year, int month)
     return month <= maximumMonthInMaximumYear;
 }
 
-static bool withinHTMLDateLimits(int year, int month, int monthDay)
+static bool NODELETE withinHTMLDateLimits(int year, int month, int monthDay)
 {
     if (year < DateComponents::minimumYear())
         return false;
@@ -161,7 +161,7 @@ static bool withinHTMLDateLimits(int year, int month, int monthDay)
     return monthDay <= maximumDayInMaximumMonth;
 }
 
-static bool withinHTMLDateLimits(int year, int month, int monthDay, int hour, int minute, int second, int millisecond)
+static bool NODELETE withinHTMLDateLimits(int year, int month, int monthDay, int hour, int minute, int second, int millisecond)
 {
     if (year < DateComponents::minimumYear())
         return false;
@@ -663,7 +663,7 @@ bool DateComponents::setMonthsSinceEpoch(double months)
 
 // Offset from January 1st to Monday of the ISO 8601's first week.
 //   ex. If January 1st is Friday, such Monday is 3 days later. Returns 3.
-static int offsetTo1stWeekStart(int year)
+static int NODELETE offsetTo1stWeekStart(int year)
 {
     int offsetTo1stWeekStart = 1 - dayOfWeek(year, 0, 1);
     if (offsetTo1stWeekStart <= -4)

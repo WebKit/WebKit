@@ -113,7 +113,7 @@ const Vector<NavigatorUABrandVersion>& NavigatorUAData::brands() const
     return brandVersion;
 }
 
-bool NavigatorUAData::mobile() const
+SUPPRESS_NODELETE bool NavigatorUAData::mobile() const
 {
     if (overrideFromUserAgentString)
         return mobileOverride;

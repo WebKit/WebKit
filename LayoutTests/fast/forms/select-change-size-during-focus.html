@@ -1,7 +1,8 @@
 <html>
     <head>
+        <script src="../../resources/ui-helper.js"></script>
         <script>
-            function setup() {
+            async function setup() {
                 if (window.testRunner) {
                     window.testRunner.dumpAsText();
                     window.testRunner.waitUntilDone();
@@ -18,9 +19,7 @@
                     }, 0);
                 });
 
-                ev = document.createEvent("MouseEvent");
-                ev.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 20, 20, false, false, false, false, 0, null);
-                s.dispatchEvent(ev);
+                await UIHelper.activateElement(s);
             }
         </script>
     </head>

@@ -51,6 +51,7 @@ class ScrollingCoordinator;
 class StickyPositionViewportConstraints;
 class TiledBacking;
 
+enum class CompositingPolicy : bool;
 enum class ScrollingNodeType : uint8_t;
 
 enum class CompositingUpdateType {
@@ -390,7 +391,7 @@ public:
     bool isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer&) const;
     bool isLayerForPluginWithScrollCoordinatedContents(const RenderLayer&) const;
 
-    ScrollableArea* scrollableAreaForScrollingNodeID(std::optional<ScrollingNodeID>) const;
+    ScrollableArea* NODELETE scrollableAreaForScrollingNodeID(std::optional<ScrollingNodeID>) const;
 
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 
@@ -410,7 +411,7 @@ public:
     
     void didPaintBacking(RenderLayerBacking*);
 
-    const Color& rootExtendedBackgroundColor() const { return m_rootExtendedBackgroundColor; }
+    const Color& rootExtendedBackgroundColor() const LIFETIME_BOUND { return m_rootExtendedBackgroundColor; }
 
     void updateRootContentLayerClipping();
 
@@ -624,7 +625,7 @@ private:
 
     bool NODELETE documentUsesTiledBacking() const;
     bool isRootFrameCompositor() const;
-    bool isMainFrameCompositor() const;
+    bool NODELETE isMainFrameCompositor() const;
 
     void updateCompositingForLayerTreeAsTextDump();
 
@@ -635,7 +636,7 @@ private:
     ChromeClient::CompositingTriggerFlags m_compositingTriggers { static_cast<ChromeClient::CompositingTriggerFlags>(ChromeClient::AllTriggers) };
     bool m_hasAcceleratedCompositing { true };
     
-    CompositingPolicy m_compositingPolicy { CompositingPolicy::Normal };
+    CompositingPolicy m_compositingPolicy;
     PAL::HysteresisActivity m_compositingPolicyHysteresis;
 
     bool m_showDebugBorders { false };

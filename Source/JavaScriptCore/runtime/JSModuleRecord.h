@@ -59,9 +59,9 @@ public:
     Synchronousness link(JSGlobalObject*, JSValue scriptFetcher);
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*, JSValue sentValue, JSValue resumeMode);
 
-    const SourceCode& sourceCode() const { return m_sourceCode; }
-    const VariableEnvironment& declaredVariables() const { return m_declaredVariables; }
-    const VariableEnvironment& lexicalVariables() const { return m_lexicalVariables; }
+    const SourceCode& sourceCode() const LIFETIME_BOUND { return m_sourceCode; }
+    const VariableEnvironment& declaredVariables() const LIFETIME_BOUND { return m_declaredVariables; }
+    const VariableEnvironment& lexicalVariables() const LIFETIME_BOUND { return m_lexicalVariables; }
 
 private:
     JSModuleRecord(VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&, CodeFeatures);

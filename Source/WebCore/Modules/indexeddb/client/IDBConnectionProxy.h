@@ -138,7 +138,7 @@ public:
 
 private:
     void completeOpenDBRequest(const IDBResultData&);
-    bool hasRecordOfTransaction(const IDBTransaction&) const WTF_REQUIRES_LOCK(m_transactionMapLock);
+    bool NODELETE hasRecordOfTransaction(const IDBTransaction&) const WTF_REQUIRES_LOCK(m_transactionMapLock);
 
     void saveOperation(TransactionOperation&);
     std::pair<RefPtr<IDBDatabase>, std::optional<ScriptExecutionContextIdentifier>> databaseFromConnectionIdentifier(IDBDatabaseConnectionIdentifier);

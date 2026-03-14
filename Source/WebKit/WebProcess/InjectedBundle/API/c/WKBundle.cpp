@@ -203,7 +203,7 @@ WKDataRef WKBundleCopyWebNotificationID(WKBundleRef bundleRef, JSContextRef cont
 
 void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundleRef, WKBundlePageRef pageRef, bool enabled)
 {
-    protect(WebKit::toImpl(bundleRef))->setTabKeyCyclesThroughElements(protect(WebKit::toImpl(pageRef)).get(), enabled);
+    WebKit::toImpl(bundleRef)->setTabKeyCyclesThroughElements(WebKit::toImpl(pageRef), enabled);
 }
 
 void WKBundleClearResourceLoadStatistics(WKBundleRef)

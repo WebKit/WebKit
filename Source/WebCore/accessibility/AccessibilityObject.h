@@ -281,12 +281,13 @@ public:
     // Use isIgnored as the word of law when determining if an object is ignored.
     virtual bool computeIsIgnored() const { return true; }
     bool isIgnored() const final;
+    std::optional<bool> cachedIsIgnored() const final;
     inline void recomputeIsIgnored();
     void recomputeIsIgnoredForDescendants(bool includeSelf = false);
     AccessibilityObjectInclusion defaultObjectInclusion() const;
     inline bool isIgnoredByDefault() const;
     bool includeIgnoredInCoreTree() const;
-    virtual bool isARIAHidden() const;
+    bool isARIAHidden() const override;
 
     bool isShowingValidationMessage() const;
     String validationMessage() const;
@@ -564,7 +565,7 @@ public:
 
     void updateRole();
     bool childrenInitialized() const { return m_childrenInitialized; }
-    const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
+    const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) LIFETIME_BOUND final;
     virtual void addChildren() { }
     enum class DescendIfIgnored : bool { No, Yes };
     void insertChild(AccessibilityObject&, unsigned, DescendIfIgnored = DescendIfIgnored::Yes);
@@ -760,7 +761,6 @@ public:
     void mathPostscripts(AccessibilityMathMultiscriptPairs&) override { }
 
     // Visibility.
-    virtual bool isAXHidden() const;
     bool isRenderHidden() const;
     inline bool isHidden() const;
     bool isOnScreen() const final;
@@ -835,8 +835,8 @@ public:
         }
     };
 
-    InlineTextPrediction& lastPresentedTextPrediction() { return m_lastPresentedTextPrediction; }
-    InlineTextPrediction& lastPresentedTextPredictionComplete() { return m_lastPresentedTextPredictionComplete; }
+    InlineTextPrediction& lastPresentedTextPrediction() LIFETIME_BOUND { return m_lastPresentedTextPrediction; }
+    InlineTextPrediction& lastPresentedTextPredictionComplete() LIFETIME_BOUND { return m_lastPresentedTextPredictionComplete; }
     void setLastPresentedTextPrediction(Node&, CompositionState, const String&, size_t, bool);
 #endif // PLATFORM(IOS_FAMILY)
 

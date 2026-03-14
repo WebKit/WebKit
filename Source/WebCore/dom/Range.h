@@ -99,10 +99,10 @@ public:
     enum CompareResults : uint8_t { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
     WEBCORE_EXPORT ExceptionOr<CompareResults> compareNode(Node&) const;
 
-    void nodeChildrenChanged(ContainerNode&);
+    void NODELETE nodeChildrenChanged(ContainerNode&);
     void nodeChildrenWillBeRemoved(ContainerNode&);
     void nodeWillBeRemoved(Node&);
-    bool parentlessNodeMovedToNewDocumentAffectsRange(Node&);
+    bool NODELETE parentlessNodeMovedToNewDocumentAffectsRange(Node&);
     void updateRangeForParentlessNodeMovedToNewDocument(Node&);
 
     void NODELETE textInserted(Node&, unsigned offset, unsigned length);
@@ -129,7 +129,7 @@ public:
     String debugDescription() const;
 #endif
 
-    void visitNodesConcurrently(JSC::AbstractSlotVisitor&) const;
+    void visitNodesInGCThread(JSC::AbstractSlotVisitor&) const;
 
     enum ActionType : uint8_t { Delete, Extract, Clone };
 

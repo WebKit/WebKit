@@ -43,7 +43,7 @@ struct TextOnlyLineBreakResult {
 };
 
 struct CandidateTextContent {
-    void append(InlineLayoutUnit contentWidth)
+    void NODELETE append(InlineLayoutUnit contentWidth)
     {
         logicalWidth += contentWidth;
         ++endIndex;

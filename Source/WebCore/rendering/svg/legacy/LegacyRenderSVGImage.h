@@ -61,7 +61,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderSVGImage"_s; }
     bool canHaveChildren() const override { return false; }
 
-    const AffineTransform& localToParentTransform() const override { return m_localTransform; }
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localTransform; }
 
     void notifyFinished(CachedResource& newImage, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 

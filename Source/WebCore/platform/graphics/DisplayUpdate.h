@@ -44,7 +44,7 @@ struct DisplayUpdate {
         return { (updateIndex + 1) % updatesPerSecond, updatesPerSecond };
     }
     
-    WEBCORE_EXPORT bool relevantForUpdateFrequency(FramesPerSecond) const;
+    WEBCORE_EXPORT bool NODELETE relevantForUpdateFrequency(FramesPerSecond) const;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const DisplayUpdate&);

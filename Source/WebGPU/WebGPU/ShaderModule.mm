@@ -48,7 +48,7 @@ struct ShaderModuleParameters {
     const WGPUShaderModuleCompilationHint* hints;
 };
 
-static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
+static std::optional<ShaderModuleParameters> NODELETE findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
 {
     const auto& wgslCode = descriptor.wgslDescriptor;
     const WGPUShaderModuleCompilationHint* hints = descriptor.hints;
@@ -198,7 +198,7 @@ auto ShaderModule::convertCheckResult(Variant<WGSL::SuccessfulCheck, WGSL::Faile
     });
 }
 
-static MTLDataType metalDataTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize = 1)
+static MTLDataType NODELETE metalDataTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize = 1)
 {
     switch (vectorSize) {
     case 1:
@@ -266,7 +266,7 @@ static MTLDataType metalDataTypeFromPrimitive(const WGSL::Types::Primitive *prim
     }
 }
 
-static WGPUVertexFormat vertexFormatTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize)
+static WGPUVertexFormat NODELETE vertexFormatTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize)
 {
     switch (vectorSize) {
     case 1:
@@ -776,7 +776,7 @@ void ShaderModule::setLabel(String&& label)
         m_library.label = label.createNSString().get();
 }
 
-static auto wgslBindingType(WGPUBufferBindingType bindingType)
+static auto NODELETE wgslBindingType(WGPUBufferBindingType bindingType)
 {
     switch (bindingType) {
     case WGPUBufferBindingType_Uniform:
@@ -792,7 +792,7 @@ static auto wgslBindingType(WGPUBufferBindingType bindingType)
     }
 }
 
-static auto wgslSamplerType(WGPUSamplerBindingType bindingType)
+static auto NODELETE wgslSamplerType(WGPUSamplerBindingType bindingType)
 {
     switch (bindingType) {
     case WGPUSamplerBindingType_Filtering:
@@ -808,7 +808,7 @@ static auto wgslSamplerType(WGPUSamplerBindingType bindingType)
     }
 }
 
-static auto wgslSampleType(WGPUTextureSampleType sampleType)
+static auto NODELETE wgslSampleType(WGPUTextureSampleType sampleType)
 {
     switch (sampleType) {
     case WGPUTextureSampleType_Sint:
@@ -828,7 +828,7 @@ static auto wgslSampleType(WGPUTextureSampleType sampleType)
     }
 }
 
-static auto wgslViewDimension(WGPUTextureViewDimension viewDimension)
+static auto NODELETE wgslViewDimension(WGPUTextureViewDimension viewDimension)
 {
     switch (viewDimension) {
     case WGPUTextureViewDimension_Cube:
@@ -850,7 +850,7 @@ static auto wgslViewDimension(WGPUTextureViewDimension viewDimension)
     }
 }
 
-static WGSL::StorageTextureAccess wgslAccess(WGPUStorageTextureAccess access)
+static WGSL::StorageTextureAccess NODELETE wgslAccess(WGPUStorageTextureAccess access)
 {
     switch (access) {
     case WGPUStorageTextureAccess_WriteOnly:
@@ -865,7 +865,7 @@ static WGSL::StorageTextureAccess wgslAccess(WGPUStorageTextureAccess access)
     }
 }
 
-static WGSL::TexelFormat wgslFormat(WGPUTextureFormat format)
+static WGSL::TexelFormat NODELETE wgslFormat(WGPUTextureFormat format)
 {
     switch (format) {
     case WGPUTextureFormat_BGRA8Unorm:
@@ -1076,7 +1076,7 @@ const String& ShaderModule::defaultComputeEntryPoint() const
 
 #pragma mark WGPU Stubs
 
-void wgpuShaderModuleReference(WGPUShaderModule shaderModule)
+void NODELETE wgpuShaderModuleReference(WGPUShaderModule shaderModule)
 {
     WebGPU::fromAPI(shaderModule).ref();
 }

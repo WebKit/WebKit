@@ -19,7 +19,7 @@
         console.log("Pointer lock failed");
     });
 
-    window.onload = (event) => {
+    window.onload = async (event) => {
         const element = document.getElementById('pointer-lock-element');
         if (element) {
             element.addEventListener('click', () => {
@@ -31,7 +31,7 @@
         }
 
         if (window.eventSender) {
-            UIHelper.activateElement(element);
+            await UIHelper.activateElement(element);
         }
     };
 </script>

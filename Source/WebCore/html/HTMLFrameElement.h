@@ -36,7 +36,7 @@ public:
     static Ref<HTMLFrameElement> create(const QualifiedName&, Document&);
 
     bool hasFrameBorder() const { return m_frameBorder; }
-    bool noResize() const;
+    bool NODELETE noResize() const;
 
     RenderFrame* renderer() const;
 

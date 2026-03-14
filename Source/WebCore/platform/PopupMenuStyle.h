@@ -57,10 +57,10 @@ public:
     {
     }
 
-    const Color& foregroundColor() const { return m_foregroundColor; }
-    const Color& backgroundColor() const { return m_backgroundColor; }
+    const Color& foregroundColor() const LIFETIME_BOUND { return m_foregroundColor; }
+    const Color& backgroundColor() const LIFETIME_BOUND { return m_backgroundColor; }
     const FontCascade& font() const { return m_font; }
-    const String& language() const { return m_language; }
+    const String& language() const LIFETIME_BOUND { return m_language; }
     bool isVisible() const { return m_visible; }
     bool isDisplayNone() const { return m_isDisplayNone; }
     bool hasDefaultAppearance() const { return m_hasDefaultAppearance; }

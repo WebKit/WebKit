@@ -32,6 +32,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollableArea.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -193,7 +194,7 @@ void ScrollLatchingController::removeLatchingStateForFrame(const LocalFrame& fra
         clear();
 }
 
-static bool deltaIsPredominantlyVertical(FloatSize delta)
+static bool NODELETE deltaIsPredominantlyVertical(FloatSize delta)
 {
     return std::abs(delta.height()) > std::abs(delta.width());
 }

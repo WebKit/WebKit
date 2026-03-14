@@ -58,7 +58,7 @@ public:
 private:
     LoadableSpeculationRules(Document&, const URL&);
 
-    CachedResourceHandle<CachedScript> requestSpeculationRules(Document&, const URL& sourceURL);
+    RefPtr<CachedScript> requestSpeculationRules(Document&, const URL& sourceURL);
 
     CachedResourceHandle<CachedScript> m_cachedScript;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;

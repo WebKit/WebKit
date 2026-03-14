@@ -34,11 +34,9 @@ layout/formattingContexts/table/TableFormattingContext.cpp
 layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
-[ iOS ] layout/layouttree/LayoutBox.cpp
 [ iOS ] page/DOMTimer.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
-[ iOS ] page/FocusController.cpp
 page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/LocalFrameView.cpp
@@ -187,7 +185,6 @@ style/computed/StyleComputedStyleBase.cpp
 style/values/grid/StyleGridPositionsResolver.cpp
 style/values/images/kinds/StyleCanvasImage.cpp
 style/values/primitives/StyleLengthResolution.cpp
-style/values/text/StyleTextAlign.cpp
 svg/SVGClipPathElement.cpp
 svg/SVGFilterPrimitiveStandardAttributes.cpp
 svg/SVGGeometryElement.cpp

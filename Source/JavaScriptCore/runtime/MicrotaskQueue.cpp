@@ -34,6 +34,7 @@
 #include "JSMicrotask.h"
 #include "JSMicrotaskDispatcher.h"
 #include "JSObject.h"
+#include "MicrotaskCallInlines.h"
 #include "MicrotaskQueueInlines.h"
 #include "ScriptProfilingScope.h"
 #include "SlotVisitorInlines.h"
@@ -55,9 +56,9 @@ bool QueuedTask::isRunnable() const
     return jsCast<JSGlobalObject*>(dispatcher())->microtaskRunnability() == QueuedTaskResult::Executed;
 }
 
-static bool runMicrotask(JSGlobalObject* globalObject, TopExceptionScope& catchScope, VM& vm, QueuedTask& task)
+static bool runMicrotask(JSGlobalObject* globalObject, TopExceptionScope& catchScope, VM& vm, QueuedTask& task, MicrotaskCall* microtaskCall)
 {
-    runInternalMicrotask(globalObject, vm, task.job(), task.payload(), task.arguments());
+    runInternalMicrotask(globalObject, vm, task.job(), task.payload(), task.arguments(), microtaskCall);
     if (auto* exception = catchScope.exception()) [[unlikely]] {
         if (!catchScope.clearExceptionExceptTermination()) [[unlikely]]
             return false;
@@ -79,7 +80,7 @@ void runMicrotaskWithDebugger(JSGlobalObject* globalObject, VM& vm, QueuedTask& 
             return;
     }
 
-    if (!runMicrotask(globalObject, catchScope, vm, task)) [[unlikely]]
+    if (!runMicrotask(globalObject, catchScope, vm, task, nullptr)) [[unlikely]]
         return;
 
     if (auto* debugger = globalObject->debugger(); debugger && identifier) [[unlikely]] {
@@ -170,6 +171,8 @@ DEFINE_VISIT_AGGREGATE(MarkedMicrotaskDeque);
 template<bool useCallOnEachMicrotask>
 ALWAYS_INLINE std::pair<JSGlobalObject*, bool> MicrotaskQueue::drainImpl(JSGlobalObject* currentGlobalObject, VM& vm, TopExceptionScope& catchScope)
 {
+    MicrotaskCall microtaskCall(vm);
+
     while (!m_queue.isEmpty()) {
         auto& front = m_queue.front();
 
@@ -187,7 +190,7 @@ ALWAYS_INLINE std::pair<JSGlobalObject*, bool> MicrotaskQueue::drainImpl(JSGloba
                 return { globalObject, false };
 
             auto task = m_queue.dequeue();
-            if (!runMicrotask(globalObject, catchScope, vm, task)) [[unlikely]] {
+            if (!runMicrotask(globalObject, catchScope, vm, task, &microtaskCall)) [[unlikely]] {
                 clear();
                 return { nullptr, true };
             }

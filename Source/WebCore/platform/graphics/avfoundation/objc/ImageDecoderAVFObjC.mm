@@ -246,7 +246,7 @@ public:
         return adoptRef(*new ImageDecoderAVFObjCSample(WTF::move(sampleBuffer)));
     }
 
-    CGImageRef image() const { return m_image.get(); }
+    CGImageRef NODELETE image() const { return m_image.get(); }
     void setImage(RetainPtr<CGImageRef>&& image)
     {
         m_image = WTF::move(image);
@@ -314,7 +314,7 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WebCore {
 
-static ImageDecoderAVFObjCSample* toSample(const PresentationOrderSampleMap::value_type& pair)
+static ImageDecoderAVFObjCSample* NODELETE toSample(const PresentationOrderSampleMap::value_type& pair)
 {
     return downcast<ImageDecoderAVFObjCSample>(pair.second.ptr());
 }

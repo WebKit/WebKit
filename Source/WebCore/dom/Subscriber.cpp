@@ -167,14 +167,14 @@ InternalObserver* Subscriber::observerConcurrently()
     return &m_observer.get();
 }
 
-void Subscriber::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
+void Subscriber::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor)
 {
     // We cannot ref `teardown` here as this may get called from a GC thread.
     SUPPRESS_UNRETAINED_ARG for (auto* teardown : teardownCallbacksConcurrently())
-        teardown->visitJSFunction(visitor);
+        teardown->visitJSFunctionInGCThread(visitor);
 
     // We cannot ref the observer here as this may get called from a GC thread.
-    SUPPRESS_UNRETAINED_ARG observerConcurrently()->visitAdditionalChildren(visitor);
+    SUPPRESS_UNRETAINED_ARG observerConcurrently()->visitAdditionalChildrenInGCThread(visitor);
 }
 
 Subscriber::~Subscriber() = default;

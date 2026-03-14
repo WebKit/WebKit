@@ -47,7 +47,7 @@ public:
 private:
     using CoalescedEventSequence = Vector<NativeWebWheelEvent>;
 
-    static bool canCoalesce(const WebWheelEvent&, const WebWheelEvent&);
+    static bool NODELETE canCoalesce(const WebWheelEvent&, const WebWheelEvent&);
     static WebWheelEvent coalesce(const WebWheelEvent&, const WebWheelEvent&);
 
     bool NODELETE shouldDispatchEventNow(const WebWheelEvent&) const;

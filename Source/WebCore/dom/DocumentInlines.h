@@ -41,7 +41,7 @@ namespace WebCore {
 
 inline PAL::TextEncoding Document::textEncoding() const
 {
-    if (RefPtr decoder = this->decoder())
+    if (auto* decoder = this->decoder())
         return decoder->encoding();
     return PAL::TextEncoding();
 }

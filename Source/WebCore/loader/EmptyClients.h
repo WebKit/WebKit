@@ -75,7 +75,7 @@ class EmptyChromeClient : public ChromeClient {
     void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement) final { }
     void focusedFrameChanged(Frame*) final { }
 
-    RefPtr<Page> createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&) final { return nullptr; }
+    RefPtr<Page> createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&) final;
     void show() final { }
 
     bool canRunModal() const final { return false; }
@@ -227,7 +227,7 @@ class EmptyChromeClient : public ChromeClient {
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final;
 };
 
-DiagnosticLoggingClient& emptyDiagnosticLoggingClient();
+DiagnosticLoggingClient& NODELETE emptyDiagnosticLoggingClient();
 WEBCORE_EXPORT PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier>, PAL::SessionID);
 
 class EmptyCryptoClient: public CryptoClient {

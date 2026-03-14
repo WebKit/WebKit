@@ -71,9 +71,9 @@ void RemoteMediaResourceLoaderProxy::requestResource(RemoteMediaResourceIdentifi
     assertIsCurrent(defaultQueue());
     ASSERT(!m_mediaResources.contains(id));
 
-    if (auto resource = m_platformLoader->requestResource(WTF::move(request), options)) {
+    if (RefPtr resource = m_platformLoader->requestResource(WTF::move(request), options)) {
         resource->setClient(adoptRef(*new RemoteMediaResourceProxy(*this, *resource, id)));
-        m_mediaResources.add(id, WTF::move(resource));
+        m_mediaResources.add(id, resource.releaseNonNull());
         return;
     }
 

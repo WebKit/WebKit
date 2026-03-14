@@ -23,8 +23,8 @@
 
 #if HAVE_DIGITAL_CREDENTIALS_UI
 
-internal import IdentityDocumentServices
-internal import IdentityDocumentServicesUI
+import IdentityDocumentServices
+import IdentityDocumentServicesUI
 
 extension WKIdentityDocumentPresentmentMobileDocumentElementInfo {
     convenience init(_ source: ISO18013MobileDocumentRequest.ElementInfo) {

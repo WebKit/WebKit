@@ -28,6 +28,7 @@
 #include "SVGNames.h"
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -86,10 +87,14 @@ private:
     static RefPtr<SVGElement> elementForResourceIDs(TreeScope&, const AtomString& resourceID, const SVGQualifiedNames& tagNames);
 
     void addClientForTarget(SVGElement& targetElement, const AtomString&);
-    void removeClientForTarget(TreeScope&, const AtomString&);
+    void removeClientForTarget(const AtomString&);
 
     const CheckedRef<RenderElement> m_renderer;
-    MemoryCompactRobinHoodHashMap<AtomString, std::unique_ptr<CSSSVGResourceElementClient>> m_elementClients;
+    struct ClientEntry {
+        std::unique_ptr<CSSSVGResourceElementClient> client;
+        WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> targetElement;
+    };
+    MemoryCompactRobinHoodHashMap<AtomString, ClientEntry> m_elementClients;
 };
 
 } // namespace WebCore

@@ -678,7 +678,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(MiscFields);
         def(HeapLocation(IsConstructorLoc, MiscFields, node->child1()), LazyNode(node));
         return;
-        
+
+    case ArrayIsArray:
+        clobberTop();
+        return;
+
     case MatchStructure:
         read(JSCell_structureID);
         return;

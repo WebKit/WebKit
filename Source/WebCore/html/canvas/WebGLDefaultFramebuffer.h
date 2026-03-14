@@ -42,7 +42,7 @@ public:
     PlatformGLObject object() const { return 0; }
     bool hasStencil() const { return m_hasStencil; }
     bool hasDepth() const { return m_hasDepth; }
-    IntSize size() const;
+    IntSize NODELETE size() const;
     void reshape(IntSize);
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
     void NODELETE markBuffersClear(GCGLbitfield clearBuffers);

@@ -26,6 +26,11 @@
 #include "config.h"
 #include "SourceProvider.h"
 
+#include <wtf/FileHandle.h>
+#include <wtf/FileSystem.h>
+#include <wtf/ProcessID.h>
+#include <wtf/text/MakeString.h>
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
@@ -81,6 +86,55 @@ const String& SourceProvider::sourceURLStripped()
         return m_sourceURLStripped;
     m_sourceURLStripped = URL(m_sourceURL).strippedForUseAsReport();
     return m_sourceURLStripped;
+}
+
+CString SourceProvider::sourceCodeDumpFilePath(const CString& dumpDirectory)
+{
+    if (m_sourceCodeDumped.load(std::memory_order_acquire)) {
+        Locker locker { m_sourceCodeDumpLock };
+        return m_sourceCodeDumpFilePath;
+    }
+
+    Locker locker { m_sourceCodeDumpLock };
+    if (m_sourceCodeDumped.load(std::memory_order_relaxed))
+        return m_sourceCodeDumpFilePath;
+
+    auto tryExtractLocalPath = [](const String& urlString) -> String {
+        if (urlString.isNull())
+            return { };
+        if (urlString.startsWith('/'))
+            return urlString;
+        if (urlString.startsWith("file://"_s))
+            return URL(urlString).fileSystemPath();
+        return { };
+    };
+
+    String localPath = tryExtractLocalPath(sourceURL());
+
+    if (!localPath.isNull())
+        m_sourceCodeDumpFilePath = FileSystem::fileSystemRepresentation(localPath);
+    else {
+        auto baseName = makeString("source-"_s, asID(), '-', WTF::getCurrentProcessID());
+        String filePath;
+        FileSystem::FileHandle handle;
+        if (dumpDirectory.isNull()) {
+            auto result = FileSystem::openTemporaryFile(baseName, ".js"_s);
+            filePath = result.first;
+            handle = WTF::move(result.second);
+        } else {
+            filePath = makeString(String::fromUTF8(dumpDirectory.span()), FileSystem::pathSeparator, baseName, ".js"_s);
+            handle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Truncate);
+        }
+        if (handle) {
+            auto sourceText = source().utf8();
+            handle.write(WTF::asByteSpan(sourceText.span()));
+            handle.flush();
+            m_sourceCodeDumpFilePath = FileSystem::fileSystemRepresentation(filePath);
+        }
+    }
+
+    m_sourceCodeDumped.store(true, std::memory_order_release);
+    return m_sourceCodeDumpFilePath;
 }
 
 #if ENABLE(WEBASSEMBLY)

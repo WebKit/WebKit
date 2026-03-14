@@ -50,8 +50,8 @@ private:
     void processNonBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     void processBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     bool processBidiLinesWithNoContent(const LineLayoutResult&, InlineDisplay::Boxes&);
-    void collectInkOverflowForInlineBoxes(InlineDisplay::Boxes&);
-    void collectInkOverflowForTextDecorations(InlineDisplay::Boxes&);
+    void collectInkOverflowForInlineBoxes(std::span<InlineDisplay::Box>);
+    void collectInkOverflowForTextDecorations(std::span<InlineDisplay::Box>);
     void truncateForEllipsisPolicy(LineEndingTruncationPolicy, const LineLayoutResult&, InlineDisplay::Boxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
@@ -62,15 +62,15 @@ private:
     void appendRootInlineBoxDisplayBox(const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&) const;
     void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, InlineDisplay::Boxes&);
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, InlineDisplay::Boxes&);
-    void insertRubyAnnotationBox(const Box& annotationBox, size_t insertionPosition, const InlineRect&, InlineDisplay::Boxes&);
+    void insertRubyAnnotationBoxes(const Vector<size_t>& rubyBaseStartIndexListWithAnnotation, InlineDisplay::Boxes&);
 
-    size_t processRubyBase(size_t rubyBaseStart, InlineDisplay::Boxes&, Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList, Vector<size_t>& rubyBaseStartIndexListWithAnnotation);
-    void processRubyContent(InlineDisplay::Boxes&, const LineLayoutResult&);
+    size_t processRubyBase(size_t rubyBaseStart, std::span<InlineDisplay::Box>, Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList, Vector<size_t>& rubyBaseStartIndexListWithAnnotation);
+    Vector<size_t> processRubyContent(std::span<InlineDisplay::Box>, const LineLayoutResult&);
 
     inline InlineRect mapInlineRectLogicalToVisual(const InlineRect& logicalRect, const InlineRect& containerLogicalRect, WritingMode);
 
     void setInlineBoxGeometry(const Box& inlineBox, Layout::BoxGeometry&, const InlineRect&, bool isFirstInlineBoxFragment);
-    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const HashMap<const Box*, IsFirstLastIndex>&);
+    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, std::span<InlineDisplay::Box>, const HashMap<const Box*, IsFirstLastIndex>&);
     size_t ensureDisplayBoxForContainer(const ElementBox&, DisplayBoxTree&, AncestorStack&, InlineDisplay::Boxes&);
 
     template <typename BoxType, typename LayoutUnitType>
@@ -84,13 +84,13 @@ private:
 
     bool isFirstFormattedLine() const { return lineBox().isFirstFormattedLine(); }
 
-    const LineBox& lineBox() const { return m_lineBox; }
+    const LineBox& lineBox() const LIFETIME_BOUND { return m_lineBox; }
     size_t lineIndex() const { return lineBox().lineIndex(); }
-    const ConstraintsForInlineContent& constraints() const { return m_constraints; }
+    const ConstraintsForInlineContent& constraints() const LIFETIME_BOUND { return m_constraints; }
     const ElementBox& root() const { return m_formattingContext.root(); }
-    const RenderStyle& rootStyle() const { return lineIndex() ? root().style() : root().firstLineStyle(); }
-    InlineFormattingContext& formattingContext() { return m_formattingContext; }
-    const InlineFormattingContext& formattingContext() const { return m_formattingContext; }
+    const RenderStyle& rootStyle() const LIFETIME_BOUND { return lineIndex() ? root().style() : root().firstLineStyle(); }
+    InlineFormattingContext& formattingContext() LIFETIME_BOUND { return m_formattingContext; }
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_formattingContext; }
 
 private:
     InlineFormattingContext& m_formattingContext;

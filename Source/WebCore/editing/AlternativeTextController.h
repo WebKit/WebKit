@@ -116,7 +116,7 @@ private:
     bool shouldStartTimerFor(const DocumentMarker&, int endOffset) const;
     bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition);
 
-    EditorClient* editorClient();
+    EditorClient* NODELETE editorClient();
     
     TextCheckerClient* textChecker();
     FloatRect rootViewRectForRange(const SimpleRange&) const;
@@ -134,9 +134,9 @@ private:
     Position m_positionForLastDeletedAutocorrection;
 #endif
 #if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
-    String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
+    String NODELETE markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
     void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarkerType>);
-    AlternativeTextClient* alternativeTextClient();
+    AlternativeTextClient* NODELETE alternativeTextClient();
 #endif
     void removeCorrectionIndicatorMarkers();
 

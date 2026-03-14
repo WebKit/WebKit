@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LegacyRenderSVGModelObjectInlines.h"
 #include "LegacyRenderSVGResourceMasker.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGMaskElement.h"

@@ -211,9 +211,9 @@ public:
             result.add(UseType::Popover);
         if (m_childIndex)
             result.add(UseType::ChildIndex);
-        if (!m_customStateSet.isEmpty())
+        if (m_customStateSet)
             result.add(UseType::CustomStateSet);
-        if (m_userInfo)
+        if (!m_userInfo.isEmpty())
             result.add(UseType::UserInfo);
         if (m_invokedPopover)
             result.add(UseType::InvokedPopover);

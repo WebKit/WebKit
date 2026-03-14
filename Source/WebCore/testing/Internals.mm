@@ -74,7 +74,7 @@
 - (instancetype)initWithString:(NSString *)fullText;
 @end
 
-static NSRange clampRange(NSRange rangeToClamp, NSRange extentRange)
+static NSRange NODELETE clampRange(NSRange rangeToClamp, NSRange extentRange)
 {
     NSUInteger minRange1 = rangeToClamp.location;
     NSUInteger maxRange1 = NSMaxRange(rangeToClamp);

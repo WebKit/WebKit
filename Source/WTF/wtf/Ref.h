@@ -382,6 +382,12 @@ inline bool is(const Ref<ArgType, PtrTraits, RefDerefTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
+template<typename... ExpectedTypes, typename ArgType, typename PtrTraits, typename RefDerefTraits>
+inline bool isAnyOf(const Ref<ArgType, PtrTraits, RefDerefTraits>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
 template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
 inline Ref<match_constness_t<Source, Target>> uncheckedDowncast(Ref<Source, PtrTraits, RefDerefTraits> source)
 {

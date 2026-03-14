@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static bool isCSPDirectiveName(StringView name)
+static bool NODELETE isCSPDirectiveName(StringView name)
 {
     return equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::baseURI)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::connectSrc)
@@ -180,7 +180,7 @@ static bool schemeIsInHttpFamily(StringView scheme)
     return equalLettersIgnoringASCIICase(scheme, "https"_s) || equalLettersIgnoringASCIICase(scheme, "http"_s);
 }
 
-static bool isRestrictedDirectiveForMode(const String& directive, ContentSecurityPolicyModeForExtension mode)
+static bool NODELETE isRestrictedDirectiveForMode(const String& directive, ContentSecurityPolicyModeForExtension mode)
 {
     switch (mode) {
     case ContentSecurityPolicyModeForExtension::None:
@@ -226,7 +226,7 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
     return true;
 }
 
-static bool extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeForExtension mode, const String& directiveName)
+static bool NODELETE extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeForExtension mode, const String& directiveName)
 {
     return mode != ContentSecurityPolicyModeForExtension::ManifestV3 || !isRestrictedDirectiveForMode(directiveName, mode);
 }

@@ -44,17 +44,17 @@ public:
     static bool isGStreamerEnabled() { return singleton().m_GStreamerEnabled; }
 #endif
 
-    WEBCORE_EXPORT static void setMockScrollbarsEnabled(bool);
+    WEBCORE_EXPORT static void NODELETE setMockScrollbarsEnabled(bool);
     static bool mockScrollbarsEnabled() { return singleton().m_mockScrollbarsEnabled; }
 
-    WEBCORE_EXPORT static void setUsesOverlayScrollbars(bool);
+    WEBCORE_EXPORT static void NODELETE setUsesOverlayScrollbars(bool);
     static bool usesOverlayScrollbars() { return singleton().m_usesOverlayScrollbars; }
 
     static bool lowPowerVideoAudioBufferSizeEnabled() { return singleton().m_lowPowerVideoAudioBufferSizeEnabled; }
     static void setLowPowerVideoAudioBufferSizeEnabled(bool flag) { singleton().m_lowPowerVideoAudioBufferSizeEnabled = flag; }
 
     static bool trackingPreventionEnabled() { return singleton().m_trackingPreventionEnabled; }
-    WEBCORE_EXPORT static void setTrackingPreventionEnabled(bool);
+    WEBCORE_EXPORT static void NODELETE setTrackingPreventionEnabled(bool);
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
@@ -75,8 +75,8 @@ public:
     WEBCORE_EXPORT static bool shouldManageAudioSessionCategory();
 #endif
 
-    WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
-    WEBCORE_EXPORT static bool allowsAnySSLCertificate();
+    WEBCORE_EXPORT static void NODELETE setAllowsAnySSLCertificate(bool);
+    WEBCORE_EXPORT static bool NODELETE allowsAnySSLCertificate();
 
     static void setCustomPasteboardDataEnabled(bool isEnabled) { singleton().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return singleton().m_isCustomPasteboardDataEnabled; }
@@ -114,7 +114,7 @@ public:
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     static void setBuiltInNotificationsEnabled(bool isEnabled) { singleton().m_builtInNotificationsEnabled = isEnabled; }
-    WEBCORE_EXPORT static bool builtInNotificationsEnabled();
+    WEBCORE_EXPORT static bool NODELETE builtInNotificationsEnabled();
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
@@ -128,7 +128,7 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT static DeprecatedGlobalSettings& singleton();
+    WEBCORE_EXPORT static DeprecatedGlobalSettings& NODELETE singleton();
     DeprecatedGlobalSettings() = default;
     ~DeprecatedGlobalSettings() = default;
 

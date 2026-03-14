@@ -42,6 +42,8 @@ typedef struct {
     pas_allocator_index next_index_to_set;
 } initialize_data;
 
+static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
+
 static void set_up_range(initialize_data* data,
                          pas_allocator_index designated_begin,
                          pas_allocator_index designated_end_inclusive,
@@ -50,6 +52,8 @@ static void set_up_range(initialize_data* data,
     pas_allocator_index designated_index;
     pas_segregated_size_directory* directory;
     pas_allocator_index designated_end;
+    if (verbose)
+        pas_log("Setting up range from %u to %u\n", designated_begin, designated_end_inclusive);
 
     PAS_ASSERT(
         designated_end_inclusive * pas_segregated_page_config_min_align(
@@ -75,6 +79,8 @@ static void set_up_range(initialize_data* data,
     directory = NULL;
     
     for (designated_index = designated_begin; designated_index < designated_end; ++designated_index) {
+        if (verbose)
+            pas_log("Index %u\n", designated_index);
         pas_allocator_index target_allocator_index;
         bool result;
 
@@ -94,6 +100,8 @@ static void set_up_range(initialize_data* data,
             directory = pas_segregated_heap_ensure_size_directory_for_size(
                 data->heap, size, 1, pas_force_size_lookup, data->config_ptr, NULL,
                 pas_segregated_size_directory_initial_creation_mode);
+            if (verbose)
+                pas_log("*Directory has object_size %u for size %zu\n", directory->object_size, size);
 
             PAS_ASSERT(directory);
 
@@ -126,6 +134,8 @@ static void set_up_range(initialize_data* data,
     }
 
     data->next_index_to_set = designated_end;
+    if (verbose)
+        pas_log("Done: %u to %u\n", designated_begin, designated_end_inclusive);
 }
 
 void pas_designated_intrinsic_heap_initialize(pas_segregated_heap* heap,

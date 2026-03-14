@@ -31,6 +31,7 @@
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
 #include "GraphicsContext.h"
+#include "PaintInfoInlines.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
@@ -42,6 +43,7 @@
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
 #include "TextUtil.h"
+#include <wtf/Assertions.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -81,6 +83,33 @@ RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style
 
 // Do not add any code in below destructor. Add it to willBeDestroyed() instead.
 RenderListMarker::~RenderListMarker() = default;
+
+bool RenderListMarker::shouldPaintInAssociatedListItemLayer() const
+{
+    if (isInside())
+        return false;
+
+    auto* associatedListItem = listItem();
+    if (!associatedListItem) {
+        ASSERT_NOT_REACHED("Marker must have an associated list item");
+        return false;
+    }
+
+    for (auto* ancestor = parent(); ancestor && ancestor != associatedListItem; ancestor = ancestor->parent()) {
+        if (!ancestor->hasSelfPaintingLayer())
+            continue;
+        if (ancestor->isRenderFragmentedFlow())
+            return false;
+        return ancestor->isPositioned();
+    }
+
+    return false;
+}
+
+void RenderListMarker::paintFromAssociatedListItemLayer(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    paint(paintInfo, paintOffset);
+}
 
 void RenderListMarker::willBeDestroyed()
 {
@@ -191,6 +220,9 @@ void RenderListMarker::paintDisclosureMarker(GraphicsContext& context, const Flo
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Accessibility)
+        return;
+
+    if (shouldPaintInAssociatedListItemLayer() && paintInfo.enclosingSelfPaintingLayer() == enclosingLayer())
         return;
 
     if (style().usedVisibility() != Visibility::Visible)
@@ -467,8 +499,10 @@ void RenderListMarker::updateInlineMargins()
     };
 
     auto [marginStart, marginEnd] = isInside() ? marginsForInsideMarker() : marginsForOutsideMarker();
-    mutableStyle().setMarginStart(Style::MarginEdge::Fixed { marginStart });
-    mutableStyle().setMarginEnd(Style::MarginEdge::Fixed { marginEnd });
+    auto zoom = style().usedZoomForLength().value;
+
+    mutableStyle().setMarginStart(Style::MarginEdge::Fixed { marginStart / zoom });
+    mutableStyle().setMarginEnd(Style::MarginEdge::Fixed { marginEnd / zoom });
 }
 
 bool RenderListMarker::isInside() const

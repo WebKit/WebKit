@@ -132,7 +132,7 @@ static String preferredFilenameForElement(const HTMLImageElement& element)
 
 static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLImageElement& element)
 {
-    if (CachedImage* cachedImage = element.cachedImage()) {
+    if (RefPtr cachedImage = element.cachedImage()) {
         if (RefPtr sharedBuffer = cachedImage->resourceBuffer()) {
             RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->makeContiguous()->createNSData().get()]);
             [wrapper setPreferredFilename:preferredFilenameForElement(element).createNSString().get()];
@@ -142,7 +142,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLImageElement& el
 
     CheckedPtr renderer = element.renderer();
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer)) {
-        CachedResourceHandle image = renderImage->cachedImage();
+        RefPtr image = renderImage->cachedImage();
         if (image && !image->errorOccurred()) {
             RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)image->imageForRenderer(renderer)->adapter().tiffRepresentation()]);
             [wrapper setPreferredFilename:@"image.tiff"];

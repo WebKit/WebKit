@@ -112,7 +112,7 @@ Ref<MouseEvent> MouseEvent::create(
     OptionSet<Modifier> modifiers,
     MouseButton button,
     unsigned short buttons,
-    EventTarget* relatedTarget,
+    RefPtr<EventTarget>&& relatedTarget,
     double force,
     SyntheticClickType syntheticClickType,
     const Vector<Ref<MouseEvent>>& coalescedEvents,
@@ -139,7 +139,7 @@ Ref<MouseEvent> MouseEvent::create(
             modifiers,
             button,
             buttons,
-            relatedTarget,
+            WTF::move(relatedTarget),
             force,
             syntheticClickType,
             coalescedEvents,
@@ -167,7 +167,7 @@ Ref<MouseEvent> MouseEvent::create(
     MouseButton button,
     unsigned short buttons,
     SyntheticClickType syntheticClickType,
-    EventTarget* relatedTarget
+    RefPtr<EventTarget>&& relatedTarget
 )
 {
     if (!std::isfinite(clientX))
@@ -197,7 +197,7 @@ Ref<MouseEvent> MouseEvent::create(
             button,
             buttons,
             syntheticClickType,
-            relatedTarget
+            WTF::move(relatedTarget)
         )
     );
 }
@@ -228,7 +228,7 @@ MouseEvent::MouseEvent(
     OptionSet<Modifier> modifiers,
     MouseButton button,
     unsigned short buttons,
-    EventTarget* relatedTarget,
+    RefPtr<EventTarget>&& relatedTarget,
     double force,
     SyntheticClickType syntheticClickType,
     const Vector<Ref<MouseEvent>>& coalescedEvents,
@@ -258,7 +258,7 @@ MouseEvent::MouseEvent(
     , m_buttons(buttons)
     , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
     , m_buttonDown(button != MouseButton::None)
-    , m_relatedTarget(relatedTarget)
+    , m_relatedTarget(WTF::move(relatedTarget))
     , m_force(force)
     , m_coalescedEvents(coalescedEvents)
     , m_predictedEvents(predictedEvents)
@@ -283,7 +283,7 @@ MouseEvent::MouseEvent(
     MouseButton button,
     unsigned short buttons,
     SyntheticClickType syntheticClickType,
-    EventTarget* relatedTarget
+    RefPtr<EventTarget>&& relatedTarget
 )
     : MouseRelatedEvent(
         eventInterface,
@@ -305,7 +305,7 @@ MouseEvent::MouseEvent(
     , m_buttons(buttons)
     , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
     , m_buttonDown(button != MouseButton::None)
-    , m_relatedTarget(relatedTarget)
+    , m_relatedTarget(WTF::move(relatedTarget))
 {
     initCoordinates(clientLocation);
 }
@@ -342,7 +342,7 @@ void MouseEvent::initMouseEvent(
     bool shiftKey,
     bool metaKey,
     int16_t button,
-    EventTarget* relatedTarget
+    RefPtr<EventTarget>&& relatedTarget
 )
 {
     if (isBeingDispatched())
@@ -364,7 +364,7 @@ void MouseEvent::initMouseEvent(
     m_button = button == std::to_underlying(MouseButton::None) ? std::to_underlying(MouseButton::Left) : button;
     m_syntheticClickType = SyntheticClickType::NoTap;
     m_buttonDown = button != std::to_underlying(MouseButton::None);
-    m_relatedTarget = relatedTarget;
+    m_relatedTarget = WTF::move(relatedTarget);
 
     initCoordinates({ clientX, clientY });
 

@@ -46,7 +46,7 @@ public:
     LayoutUnit verticalSpaceForCellContent(const TableGridCell&, std::optional<LayoutUnit> availableVerticalSpace) const;
 
 private:
-    const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }
+    const TableFormattingContext& formattingContext() const LIFETIME_BOUND { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }
 };
 
 }

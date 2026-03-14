@@ -64,7 +64,7 @@ public:
     void updateFromEvent(const PlatformWheelEvent&) final;
 
 private:
-    std::optional<ScrollEventAxis> dominantAxis() const;
+    std::optional<ScrollEventAxis> NODELETE dominantAxis() const;
 
     void reset();
     void updateWithDelta(FloatSize);

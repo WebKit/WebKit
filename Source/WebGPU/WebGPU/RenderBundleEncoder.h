@@ -104,7 +104,7 @@ public:
     void setVertexBuffer(uint32_t slot, Buffer*, uint64_t offset, uint64_t size);
     void setLabel(String&&);
 
-    bool isValid() const;
+    bool NODELETE isValid() const;
     void replayCommands(RenderPassEncoder&);
 
     static constexpr auto startIndexForFragmentDynamicOffsets = 3;
@@ -118,9 +118,9 @@ private:
     RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, const WGPURenderBundleEncoderDescriptor&, Device&);
     RenderBundleEncoder(Device&, NSString*);
 
-    bool validatePopDebugGroup() const;
+    bool NODELETE validatePopDebugGroup() const;
     id<MTLIndirectRenderCommand> currentRenderCommand();
-    bool replayingCommands() const;
+    bool NODELETE replayingCommands() const;
 
     void makeInvalid(NSString* = nil);
     bool executePreDrawCommands(bool needsValidationLayerWorkaround, bool passWasSplit, uint32_t firstInstance = 0, uint32_t instanceCount = 0);
@@ -137,8 +137,8 @@ private:
     bool runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     NSString* errorValidatingDraw() const;
     NSString* errorValidatingDrawIndexed() const;
-    uint32_t maxVertexBufferIndex() const;
-    uint32_t maxBindGroupIndex() const;
+    uint32_t NODELETE maxVertexBufferIndex() const;
+    uint32_t NODELETE maxBindGroupIndex() const;
     void recordCommand(WTF::Function<bool(void)>&&);
     bool storeVertexBufferCountsForValidation(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes);
     std::pair<uint32_t, uint32_t> computeMininumVertexInstanceCount(bool& needsValidationLayerWorkaround) const;

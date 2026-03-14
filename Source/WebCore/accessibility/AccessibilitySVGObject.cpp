@@ -217,7 +217,7 @@ bool AccessibilitySVGObject::hasTitleOrDescriptionChild() const
     if (!element)
         return false;
 
-    for (const Ref child : childrenOfType<SVGElement>(*element)) {
+    for (const auto& child : childrenOfType<SVGElement>(*element)) {
         if (is<SVGTitleElement>(child) || is<SVGDescElement>(child))
             return true;
     }

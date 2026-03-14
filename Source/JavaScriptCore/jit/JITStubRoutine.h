@@ -94,7 +94,7 @@ public:
     // MacroAssemblerCodeRef is copyable, but at the cost of reference
     // counting churn. Returning a reference is a good way of reducing
     // the churn.
-    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code() const { return m_code; }
+    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code() const LIFETIME_BOUND { return m_code; }
     
     static CodePtr<JITStubRoutinePtrTag> asCodePtr(Ref<JITStubRoutine>&& stubRoutine)
     {

@@ -148,7 +148,7 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagCapitalize();
     WEBCORE_EXPORT String contextMenuItemTagConvertToTraditionalChinese();
     WEBCORE_EXPORT String contextMenuItemTagConvertToSimplifiedChinese();
-    String contextMenuItemTagChangeBack(const String& replacedString);
+    String NODELETE contextMenuItemTagChangeBack(const String& replacedString);
 #endif
     String contextMenuItemTagOpenVideoInNewWindow();
     String contextMenuItemTagOpenAudioInNewWindow();

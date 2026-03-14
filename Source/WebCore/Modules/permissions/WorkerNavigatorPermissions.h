@@ -40,7 +40,7 @@ public:
     explicit WorkerNavigatorPermissions(WorkerNavigator&);
 
     static Permissions& permissions(WorkerNavigator&);
-    Permissions& permissions();
+    Permissions& NODELETE permissions();
 
 private:
     static WorkerNavigatorPermissions& from(WorkerNavigator&);

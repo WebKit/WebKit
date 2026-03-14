@@ -347,7 +347,7 @@ void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSett
 #endif
     }
     if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate)) {
-        protect(m_unit)->setSampleRate(sampleRate());
+        m_unit->setSampleRate(sampleRate());
         shouldReconfigure = true;
     }
     if (shouldReconfigure)
@@ -358,7 +358,7 @@ void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSett
 
 bool CoreAudioCaptureSource::interrupted() const
 {
-    return protect(m_unit)->isSuspended() || RealtimeMediaSource::interrupted();
+    return m_unit->isSuspended() || RealtimeMediaSource::interrupted();
 }
 
 void CoreAudioCaptureSource::delaySamples(Seconds seconds)

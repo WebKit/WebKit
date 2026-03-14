@@ -43,7 +43,9 @@ namespace WebCore {
 
 class DeferredPromise;
 class PeerConnectionBackend;
+class RTCDtlsTransportBackend;
 class RTCEncodedStreamProducer;
+class RTCRtpTransformBackend;
 
 struct RTCEncodedStreams;
 struct RTCRtpCapabilities;
@@ -56,7 +58,7 @@ class RTCRtpReceiver final : public RefCounted<RTCRtpReceiver>
     {
     WTF_MAKE_TZONE_ALLOCATED(RTCRtpReceiver);
 public:
-    static Ref<RTCRtpReceiver> create(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
+    static Ref<RTCRtpReceiver> create(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, UniqueRef<RTCRtpReceiverBackend>&& backend)
     {
         return adoptRef(*new RTCRtpReceiver(connection, WTF::move(track), WTF::move(backend)));
     }
@@ -66,17 +68,18 @@ public:
 
     void stop();
 
-    void setBackend(std::unique_ptr<RTCRtpReceiverBackend>&& backend) { m_backend = WTF::move(backend); }
-    RTCRtpParameters getParameters() { return m_backend ? m_backend->getParameters() : RTCRtpParameters(); }
-    Vector<RTCRtpContributingSource> getContributingSources() const { return m_backend ? m_backend->getContributingSources() : Vector<RTCRtpContributingSource> { }; }
-    Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return m_backend ? m_backend->getSynchronizationSources() : Vector<RTCRtpSynchronizationSource> { }; }
+    RTCRtpParameters getParameters() { return m_backend->getParameters(); }
+    Vector<RTCRtpContributingSource> getContributingSources() const { return m_backend->getContributingSources(); }
+    Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return m_backend->getSynchronizationSources(); }
 
     MediaStreamTrack& track() { return m_track.get(); }
 
     RTCDtlsTransport* transport() { return m_transport.get(); }
     void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
 
-    RTCRtpReceiverBackend* backend() { return m_backend.get(); }
+    RTCRtpReceiverBackend& backend() LIFETIME_BOUND { return m_backend.get(); }
+    std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend();
+    Ref<RTCRtpTransformBackend> rtcRtpTransformBackend();
     void getStats(Ref<DeferredPromise>&&);
 
     std::optional<RTCRtpTransform::Internal> transform();
@@ -87,7 +90,7 @@ public:
     const Vector<WeakPtr<MediaStream>>& associatedStreams() const LIFETIME_BOUND { return m_associatedStreams; }
     void setAssociatedStreams(Vector<WeakPtr<MediaStream>>&& streams) { m_associatedStreams = WTF::move(streams); }
 private:
-    RTCRtpReceiver(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, std::unique_ptr<RTCRtpReceiverBackend>&&);
+    RTCRtpReceiver(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, UniqueRef<RTCRtpReceiverBackend>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -96,9 +99,10 @@ private:
     WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
+    bool m_isStopped { false };
     const Ref<MediaStreamTrack> m_track;
     RefPtr<RTCDtlsTransport> m_transport;
-    std::unique_ptr<RTCRtpReceiverBackend> m_backend;
+    const UniqueRef<RTCRtpReceiverBackend> m_backend;
     WeakPtr<PeerConnectionBackend> m_connection;
     std::unique_ptr<RTCRtpTransform> m_transform;
     const RefPtr<RTCEncodedStreamProducer> m_encodedStreamProducer;

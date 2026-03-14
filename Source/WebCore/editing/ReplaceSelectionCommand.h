@@ -116,7 +116,7 @@ private:
     VisiblePosition positionAtEndOfInsertedContent() const;
 
     bool shouldPerformSmartReplace() const;
-    bool shouldPerformSmartParagraphReplace() const;
+    bool NODELETE shouldPerformSmartParagraphReplace() const;
     void addSpacesForSmartReplace();
     void addNewLinesForSmartReplace();
     void completeHTMLReplacement(const Position& lastPositionToSelect);

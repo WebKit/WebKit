@@ -63,7 +63,7 @@ public:
 
     bool isGeneratedContent() const { return m_isGeneratedContent; }
 
-    const String& altText() const { return m_altText; }
+    const String& altText() const LIFETIME_BOUND { return m_altText; }
     void setAltText(const String& altText) { m_altText = altText; }
 
     void setImageDevicePixelRatio(float factor);

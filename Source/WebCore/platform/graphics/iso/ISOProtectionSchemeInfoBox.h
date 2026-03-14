@@ -39,9 +39,9 @@ public:
 
     static FourCC boxTypeName() { return std::span { "sinf" }; }
 
-    const ISOOriginalFormatBox& originalFormatBox() const { return m_originalFormatBox; }
-    const ISOSchemeTypeBox* schemeTypeBox() const { return m_schemeTypeBox.get(); }
-    const ISOSchemeInformationBox* schemeInformationBox() const { return m_schemeInformationBox.get(); }
+    const ISOOriginalFormatBox& originalFormatBox() const LIFETIME_BOUND { return m_originalFormatBox; }
+    const ISOSchemeTypeBox* schemeTypeBox() const LIFETIME_BOUND { return m_schemeTypeBox.get(); }
+    const ISOSchemeInformationBox* schemeInformationBox() const LIFETIME_BOUND { return m_schemeInformationBox.get(); }
 
     bool parse(JSC::DataView&, unsigned& offset) override;
 

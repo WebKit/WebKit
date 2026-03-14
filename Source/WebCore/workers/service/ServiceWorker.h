@@ -60,7 +60,7 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    const URL& scriptURL() const { return m_data.scriptURL; }
+    const URL& scriptURL() const LIFETIME_BOUND { return m_data.scriptURL; }
 
     State state() const { return m_data.state; }
     
@@ -73,7 +73,7 @@ public:
     ServiceWorkerRegistrationIdentifier registrationIdentifier() const { return m_data.registrationIdentifier; }
     WorkerType workerType() const { return m_data.type; }
 
-    const ServiceWorkerData& data() const { return m_data; }
+    const ServiceWorkerData& data() const LIFETIME_BOUND { return m_data; }
 
 private:
     ServiceWorker(ScriptExecutionContext&, ServiceWorkerData&&);

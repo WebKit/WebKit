@@ -560,6 +560,8 @@ static bool markerTypeFrom(const String& markerType, DocumentMarkerType& result)
 #endif
     else if (equalLettersIgnoringASCIICase(markerType, "transparentcontent"_s))
         result = DocumentMarkerType::TransparentContent;
+    else if (equalLettersIgnoringASCIICase(markerType, "dictationstreamingopacity"_s))
+        result = DocumentMarkerType::DictationStreamingOpacity;
     else
         return false;
 
@@ -580,7 +582,7 @@ static bool markerTypesFrom(const String& markerType, OptionSet<DocumentMarkerTy
     return true;
 }
 
-static RefPtr<PrintContext>& printContextForTesting()
+static RefPtr<PrintContext>& NODELETE printContextForTesting()
 {
     static NeverDestroyed<RefPtr<PrintContext>> context;
     return context;
@@ -693,6 +695,9 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     printContextForTesting() = nullptr;
+
+    MemoryPressureHandler::singleton().endSimulatedMemoryWarning();
+    MemoryPressureHandler::singleton().endSimulatedMemoryPressure();
 
 #if ENABLE(WEB_RTC)
     auto& rtcProvider = page.webRTCProvider();
@@ -1029,7 +1034,7 @@ bool Internals::isStyleSheetLoadingSubresources(HTMLLinkElement& link)
     return link.sheet() && link.sheet()->contents().isLoadingSubresources();
 }
 
-static ResourceRequestCachePolicy toResourceRequestCachePolicy(Internals::CachePolicy policy)
+static ResourceRequestCachePolicy NODELETE toResourceRequestCachePolicy(Internals::CachePolicy policy)
 {
     switch (policy) {
     case Internals::CachePolicy::UseProtocolCachePolicy:
@@ -1059,7 +1064,7 @@ ExceptionOr<void> Internals::setCanShowModalDialogOverride(bool allow)
     return { };
 }
 
-static ResourceLoadPriority toResourceLoadPriority(Internals::ResourceLoadPriority priority)
+static ResourceLoadPriority NODELETE toResourceLoadPriority(Internals::ResourceLoadPriority priority)
 {
     switch (priority) {
     case Internals::ResourceLoadPriority::ResourceLoadPriorityVeryLow:
@@ -1084,11 +1089,11 @@ void Internals::setOverrideResourceLoadPriority(ResourceLoadPriority priority)
 
 void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
 {
-    if (RefPtr localFrame = frame())
+    if (auto* localFrame = frame())
         localFrame->loader().setStrictRawResourceValidationPolicyDisabledForTesting(disabled);
 }
 
-static Internals::ResourceLoadPriority toInternalsResourceLoadPriority(ResourceLoadPriority priority)
+static Internals::ResourceLoadPriority NODELETE toInternalsResourceLoadPriority(ResourceLoadPriority priority)
 {
     switch (priority) {
     case ResourceLoadPriority::VeryLow:
@@ -2550,7 +2555,7 @@ void Internals::setAutofilledAndObscured(HTMLInputElement& element, bool enabled
     element.setAutofilledAndObscured(enabled);
 }
 
-static AutoFillButtonType toAutofillButtonType(Internals::AutoFillButtonType type)
+static AutoFillButtonType NODELETE toAutofillButtonType(Internals::AutoFillButtonType type)
 {
     switch (type) {
     case Internals::AutoFillButtonType::None:
@@ -2570,7 +2575,7 @@ static AutoFillButtonType toAutofillButtonType(Internals::AutoFillButtonType typ
     return AutoFillButtonType::None;
 }
 
-static Internals::AutoFillButtonType toInternalsAutofillButtonType(AutoFillButtonType type)
+static Internals::AutoFillButtonType NODELETE toInternalsAutofillButtonType(AutoFillButtonType type)
 {
     switch (type) {
     case AutoFillButtonType::None:
@@ -2912,7 +2917,7 @@ public:
     {
     }
 
-    IterationStatus operator()(StackVisitor& visitor) const
+    IterationStatus NODELETE operator()(StackVisitor& visitor) const
     {
         ++m_iterations;
         if (m_iterations < 2)
@@ -2922,7 +2927,7 @@ public:
         return IterationStatus::Done;
     }
 
-    CodeBlock* codeBlock() const { return m_codeBlock; }
+    CodeBlock* NODELETE codeBlock() const { return m_codeBlock; }
 
 private:
     mutable int m_iterations;
@@ -3037,6 +3042,11 @@ bool Internals::hasWritingToolsTextSuggestionMarker(int from, int length)
 bool Internals::hasTransparentContentMarker(int from, int length)
 {
     return hasMarkerFor(DocumentMarkerType::TransparentContent, from, length);
+}
+
+bool Internals::hasDictationStreamingOpacityMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarkerType::DictationStreamingOpacity, from, length);
 }
 
 void Internals::setContinuousSpellCheckingEnabled(bool enabled)
@@ -3427,7 +3437,7 @@ ExceptionOr<bool> Internals::isPageBoxVisible(int pageNumber)
     return document->isPageBoxVisible(pageNumber);
 }
 
-static OptionSet<LayerTreeAsTextOptions> toLayerTreeAsTextOptions(unsigned short flags)
+static OptionSet<LayerTreeAsTextOptions> NODELETE toLayerTreeAsTextOptions(unsigned short flags)
 {
     OptionSet<LayerTreeAsTextOptions> layerTreeFlags;
     if (flags & Internals::LAYER_TREE_INCLUDES_VISIBLE_RECTS)
@@ -3542,6 +3552,15 @@ ExceptionOr<Ref<DOMRect>> Internals::verticalScrollbarFrameRect(Node* node) cons
     return DOMRect::create();
 }
 
+ExceptionOr<Ref<DOMRect>> Internals::scrollCornerRect(Node* node) const
+{
+    auto areaOrException = scrollableAreaForNode(node);
+    if (areaOrException.hasException())
+        return areaOrException.releaseException();
+
+    return DOMRect::create(areaOrException.returnValue()->scrollCornerRect());
+}
+
 ExceptionOr<Internals::ScrollingNodeID> Internals::scrollingNodeIDForNode(Node* node)
 {
     auto areaOrException = scrollableAreaForNode(node);
@@ -3563,7 +3582,7 @@ ExceptionOr<unsigned> Internals::scrollableAreaWidth(Node& node)
     return scrollableArea->contentsSize().width();
 }
 
-static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags(unsigned short flags)
+static OptionSet<PlatformLayerTreeAsTextFlags> NODELETE toPlatformLayerTreeFlags(unsigned short flags)
 {
     OptionSet<PlatformLayerTreeAsTextFlags> platformLayerTreeFlags = { };
     if (flags & Internals::PLATFORM_LAYER_TREE_DEBUG)
@@ -3836,7 +3855,7 @@ ExceptionOr<void> Internals::setElementTracksDisplayListReplay(Element& element,
     return { };
 }
 
-static OptionSet<DisplayList::AsTextFlag> toDisplayListFlags(unsigned short flags)
+static OptionSet<DisplayList::AsTextFlag> NODELETE toDisplayListFlags(unsigned short flags)
 {
     OptionSet<DisplayList::AsTextFlag> displayListFlags;
     if (flags & Internals::DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
@@ -5348,7 +5367,7 @@ bool Internals::elementIsBlockingDisplaySleep(const HTMLMediaElement& element) c
 
 bool Internals::isPlayerVisibleInViewport(const HTMLMediaElement& element) const
 {
-    RefPtr player = element.player();
+    auto* player = element.player();
     return player && player->isVisibleInViewport();
 }
 
@@ -7134,8 +7153,8 @@ void Internals::reloadWithoutContentExtensions()
 
 void Internals::disableContentExtensionsChecks()
 {
-    RefPtr frame = this->frame();
-    RefPtr loader = frame ? frame->loader().documentLoader() : nullptr;
+    auto* frame = this->frame();
+    auto* loader = frame ? frame->loader().documentLoader() : nullptr;
     if (loader)
         loader->setContentExtensionEnablement({ ContentExtensionDefaultEnablement::Disabled, { } });
 }
@@ -7858,7 +7877,7 @@ constexpr ASCIILiteral string(std::partial_ordering ordering)
     return "unordered"_s;
 }
 
-constexpr TreeType convertType(Internals::TreeType type)
+constexpr TreeType NODELETE convertType(Internals::TreeType type)
 {
     switch (type) {
     case Internals::Tree:
@@ -8220,7 +8239,7 @@ void Internals::getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&& 
 
 void Internals::setResourceCachingDisabledByWebInspector(bool disabled)
 {
-    RefPtr document = contextDocument();
+    auto* document = contextDocument();
     if (!document || !document->page())
         return;
 
@@ -8257,7 +8276,7 @@ void Internals::setResourceMonitorNetworkUsageThreshold(size_t threshold, double
 
 bool Internals::shouldSkipResourceMonitorThrottling() const
 {
-    if (RefPtr document = contextDocument())
+    if (auto* document = contextDocument())
         return document->shouldSkipResourceMonitorThrottling();
 
     return false;
@@ -8265,7 +8284,7 @@ bool Internals::shouldSkipResourceMonitorThrottling() const
 
 void Internals::setShouldSkipResourceMonitorThrottling(bool flag)
 {
-    if (RefPtr document = contextDocument())
+    if (auto* document = contextDocument())
         document->setShouldSkipResourceMonitorThrottling(flag);
 }
 #endif
@@ -8309,11 +8328,11 @@ RefPtr<MediaSessionManagerInterface> Internals::sessionManager() const
 
 bool Internals::hasMediaSessionManager() const
 {
-    RefPtr document = contextDocument();
+    auto* document = contextDocument();
     if (!document)
         return false;
 
-    RefPtr page = document->page();
+    auto* page = document->page();
     if (!page)
         return false;
 
@@ -8386,7 +8405,7 @@ ExceptionOr<Ref<WritableStream>> Internals::writableStreamFromMessagePort(JSDOMG
 #if ENABLE(MODEL_ELEMENT)
 void Internals::disableModelLoadDelaysForTesting()
 {
-    RefPtr document = contextDocument();
+    auto* document = contextDocument();
     if (!document || !document->page())
         return;
 

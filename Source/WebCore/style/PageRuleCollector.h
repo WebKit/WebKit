@@ -40,7 +40,7 @@ public:
     { }
 
     void matchAllPageRules(int pageIndex);
-    const MatchResult& matchResult() const { return m_result; }
+    const MatchResult& matchResult() const LIFETIME_BOUND { return m_result; }
 
 private:
     bool NODELETE isLeftPage(int pageIndex) const;

@@ -31,6 +31,7 @@
 #include "SVGNames.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include "Settings.h"
+#include "StyleDisplay.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 

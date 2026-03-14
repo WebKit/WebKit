@@ -255,7 +255,7 @@ Position Position::parentAnchoredEquivalent() const
     // FIXME: This should only be necessary for legacy positions, but is also needed for positions before and after Tables
     if (!m_offset && (m_anchorType != PositionIsAfterAnchor && m_anchorType != PositionIsAfterChildren)) {
         if (anchorNode->parentNode() && (editingIgnoresContent(*anchorNode) || isRenderedTable(anchorNode.get())))
-            return positionInParentBeforeNode(anchorNode.get());
+            return positionInParentBeforeNode(*anchorNode);
         return Position(anchorNode.get(), 0, PositionIsOffsetInAnchor);
     }
 
@@ -263,7 +263,7 @@ Position Position::parentAnchoredEquivalent() const
         && (m_anchorType == PositionIsAfterAnchor || m_anchorType == PositionIsAfterChildren || static_cast<unsigned>(m_offset) == anchorNode->countChildNodes())
         && (editingIgnoresContent(*anchorNode) || isRenderedTable(anchorNode.get()))
         && containerNode()) {
-        return positionInParentAfterNode(anchorNode.get());
+        return positionInParentAfterNode(*anchorNode);
     }
 
     return { containerNode(), static_cast<unsigned>(computeOffsetInContainerNode()), PositionIsOffsetInAnchor };
@@ -391,11 +391,11 @@ Position Position::previous(PositionMoveType moveType) const
         return *this;
 
     if (positionBeforeOrAfterNodeIsCandidate(*node))
-        return positionBeforeNode(node.get());
+        return positionBeforeNode(*node);
 
     RefPtr previousSibling = node->previousSibling();
     if (previousSibling && positionBeforeOrAfterNodeIsCandidate(*previousSibling))
-        return positionAfterNode(previousSibling.get());
+        return positionAfterNode(*previousSibling);
 
     return makeContainerOffsetPosition(WTF::move(parent), node->computeNodeIndex());
 }
@@ -440,11 +440,11 @@ Position Position::next(PositionMoveType moveType) const
         return *this;
 
     if (isRenderedTable(node.get()) || editingIgnoresContent(*node))
-        return positionAfterNode(node.get());
+        return positionAfterNode(*node);
 
     RefPtr nextSibling = node->nextSibling();
     if (nextSibling && positionBeforeOrAfterNodeIsCandidate(*nextSibling))
-        return positionBeforeNode(nextSibling.get());
+        return positionBeforeNode(*nextSibling);
 
     return makeContainerOffsetPosition(WTF::move(parent), node->computeNodeIndex() + 1);
 }
@@ -724,7 +724,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         // Return position after tables and nodes which have content that can be ignored.
         if (editingIgnoresContent(currentNode) || isRenderedTable(currentNode.ptr())) {
             if (currentPosition.atEndOfNode())
-                return positionAfterNode(currentNode.ptr());
+                return positionAfterNode(currentNode);
             continue;
         }
 
@@ -834,7 +834,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         // Return position before tables and nodes which have content that can be ignored.
         if (editingIgnoresContent(currentNode) || isRenderedTable(currentNode.ptr())) {
             if (currentPosition.atStartOfNode())
-                return positionBeforeNode(currentNode.ptr());
+                return positionBeforeNode(currentNode);
             continue;
         }
 
@@ -920,7 +920,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&
                 return true;
             continue;
         }
-        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*descendant)) {
+        if (auto* renderBox = dynamicDowncast<RenderBox>(*descendant)) {
             if (roundToInt(renderBox->logicalHeight()))
                 return true;
             continue;
@@ -940,7 +940,7 @@ bool Position::nodeIsUserSelectAll(const Node* node)
 {
     if (!node)
         return false;
-    CheckedPtr renderer = node->renderer();
+    auto* renderer = node->renderer();
     return renderer && renderer->style().usedUserSelect() == UserSelect::All;
 }
 
@@ -998,7 +998,7 @@ bool Position::isCandidate() const
         return false;
 
     if (CheckedPtr block = dynamicDowncast<RenderBlock>(*renderer)) {
-        if (is<RenderBlockFlow>(*block) || is<RenderGrid>(*block) || is<RenderFlexibleBox>(*block)) {
+        if (isAnyOf<RenderBlockFlow, RenderGrid, RenderFlexibleBox>(*block)) {
             if (block->logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || m_anchorNode->isRootEditableElement()) {
                 if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))
                     return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(node.get());
@@ -1574,24 +1574,24 @@ Node* commonInclusiveAncestor(const Position& a, const Position& b)
     return commonInclusiveAncestor<ComposedTree>(*nodeA, *nodeB);
 }
 
-Position positionInParentBeforeNode(Node* node)
+Position positionInParentBeforeNode(Node& node)
 {
-    RefPtr currentNode = node;
-    RefPtr ancestor = node->parentNode();
+    Ref currentNode = node;
+    RefPtr ancestor = node.parentNode();
     while (ancestor && editingIgnoresContent(*ancestor)) {
-        currentNode = ancestor;
+        currentNode = *ancestor;
         ancestor = ancestor->parentNode();
     }
     ASSERT(ancestor);
     return Position(ancestor, currentNode->computeNodeIndex(), Position::PositionIsOffsetInAnchor);
 }
 
-Position positionInParentAfterNode(Node* node)
+Position positionInParentAfterNode(Node& node)
 {
-    RefPtr currentNode = node;
-    RefPtr ancestor = node->parentNode();
+    Ref currentNode = node;
+    RefPtr ancestor = node.parentNode();
     while (ancestor && editingIgnoresContent(*ancestor)) {
-        currentNode = ancestor;
+        currentNode = *ancestor;
         ancestor = ancestor->parentNode();
     }
     ASSERT(ancestor);

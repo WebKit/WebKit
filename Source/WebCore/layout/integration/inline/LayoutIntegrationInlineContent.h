@@ -67,8 +67,8 @@ class InlineContent : public CanMakeWeakPtr<InlineContent> {
 public:
     InlineContent(const RenderBlockFlow& formattingContextRoot);
 
-    InlineDisplay::Content& displayContent() { return m_displayContent; }
-    const InlineDisplay::Content& displayContent() const { return m_displayContent; }
+    InlineDisplay::Content& displayContent()  LIFETIME_BOUND { return m_displayContent; }
+    const InlineDisplay::Content& displayContent() const LIFETIME_BOUND { return m_displayContent; }
     bool NODELETE hasContentfulInFlowBox() const;
     bool NODELETE hasContentfulInlineLevelBox() const;
 
@@ -85,21 +85,21 @@ public:
 
     IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
 
-    const InlineDisplay::Line& lineForBox(const InlineDisplay::Box& box) const { return displayContent().lines[box.lineIndex()]; }
+    const InlineDisplay::Line& lineForBox(const InlineDisplay::Box& box) const LIFETIME_BOUND { return displayContent().lines[box.lineIndex()]; }
     size_t NODELETE indexForBox(const InlineDisplay::Box&) const;
-    const InlineDisplay::Box* firstBoxForLayoutBox(const Layout::Box&) const;
+    const InlineDisplay::Box* firstBoxForLayoutBox(const Layout::Box&) const LIFETIME_BOUND;
     std::optional<size_t> firstBoxIndexForLayoutBox(const Layout::Box&) const;
 
     // Returns a block level box if the line is for block-in-inline.
-    const InlineDisplay::Box* NODELETE blockLevelBoxForLine(const InlineDisplay::Line&) const;
+    const InlineDisplay::Box* NODELETE blockLevelBoxForLine(const InlineDisplay::Line&) const LIFETIME_BOUND;
     bool NODELETE isInlineBoxWrapperForBlockLevelBox(const InlineDisplay::Box&) const;
 
     template<typename Function> void traverseNonRootInlineBoxes(const Layout::Box&, Function&&);
 
     const RenderBlockFlow& NODELETE formattingContextRoot() const;
 
-    const Vector<SVGTextFragment>& NODELETE svgTextFragments(size_t boxIndex) const;
-    Vector<Vector<SVGTextFragment>>& svgTextFragmentsForBoxes() { return m_svgTextFragmentsForBoxes; }
+    const Vector<SVGTextFragment>& NODELETE svgTextFragments(size_t boxIndex) const LIFETIME_BOUND;
+    Vector<Vector<SVGTextFragment>>& svgTextFragmentsForBoxes() LIFETIME_BOUND { return m_svgTextFragmentsForBoxes; }
 
     void shrinkToFit();
     void releaseCaches();
@@ -117,7 +117,7 @@ private:
     void setHasBlockLevelBoxes() { m_hasBlockLevelBoxes = true; }
     void setHasPaintedInlineLevelBoxes() { m_hasPaintedInlineLevelBoxes = true; }
 
-    const Vector<size_t>& nonRootInlineBoxIndexesForLayoutBox(const Layout::Box&) const;
+    const Vector<size_t>& nonRootInlineBoxIndexesForLayoutBox(const Layout::Box&) const LIFETIME_BOUND;
 
     CheckedRef<const RenderBlockFlow> m_formattingContextRoot;
 

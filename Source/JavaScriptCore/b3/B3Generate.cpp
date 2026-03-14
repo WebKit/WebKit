@@ -46,6 +46,7 @@
 #include "B3OptimizeAssociativeExpressionTrees.h"
 #include "B3Procedure.h"
 #include "B3ReduceDoubleToFloat.h"
+#include "B3ReduceSIMDShuffle.h"
 #include "B3ReduceStrength.h"
 #include "B3Validate.h"
 #include "CompilerTimingScope.h"
@@ -84,7 +85,9 @@ void generateToAir(Procedure& procedure)
     
     if (procedure.optLevel() >= 2) {
         reduceDoubleToFloat(procedure);
-        reduceStrength(procedure);
+        reduceStrength(procedure, ReduceStrengthPass::Initial);
+        if (isARM64() && procedure.usesSIMD() && Options::useB3ReduceSIMDShuffle())
+            reduceSIMDShuffle(procedure);
         if (Options::useB3HoistLoopInvariantValues())
             hoistLoopInvariantValues(procedure);
         if (eliminateCommonSubexpressions(procedure))
@@ -99,7 +102,7 @@ void generateToAir(Procedure& procedure)
         // https://bugs.webkit.org/show_bug.cgi?id=150507
     } else if (procedure.optLevel() >= 1) {
         // FIXME: Explore better "quick mode" optimizations.
-        reduceStrength(procedure);
+        reduceStrength(procedure, ReduceStrengthPass::Initial);
     }
 
     // This puts the IR in quirks mode.
@@ -107,7 +110,7 @@ void generateToAir(Procedure& procedure)
 
     if (procedure.optLevel() >= 2) {
         optimizeAssociativeExpressionTrees(procedure);
-        reduceStrength(procedure);
+        reduceStrength(procedure, ReduceStrengthPass::Final);
 
         // FIXME: Add more optimizations here.
         // https://bugs.webkit.org/show_bug.cgi?id=150507

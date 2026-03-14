@@ -72,7 +72,7 @@ public:
     using DecodingFlags = OptionSet<DecodingFlag>;
 
     WEBCORE_EXPORT Ref<DecodingPromise> decodeSample(CMSampleBufferRef, DecodingFlags);
-    WEBCORE_EXPORT void flush();
+    WEBCORE_EXPORT void NODELETE flush();
 
     void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
     bool isHardwareAccelerated() const;

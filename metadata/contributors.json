@@ -3023,6 +3023,16 @@
    },
    {
       "emails" : [
+         "e_melone@apple.com"
+      ],
+      "github" : "emelone16",
+      "name" : "Erik Melone",
+      "nicks" : [
+         "emelone"
+      ]
+   },
+   {
+      "emails" : [
          "eryn_wells@apple.com"
       ],
       "name" : "Eryn Wells",
@@ -5675,6 +5685,7 @@
          "mjs@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript, Performance, Security, Basic types and data structures, FastMalloc, DOM Bindings for JavaScript, Core DOM, HTML DOM, JavaScript DOM Bindings, WebKit API (Mac, Win), HTML Editing, Networking, Tools, New Features / Standards Support, General (probably a good backup on most topics even if not specifically an expert)",
+      "github" : "othermaciej",
       "name" : "Maciej Stachowiak",
       "nicks" : [
          "othermaciej",
@@ -8379,6 +8390,17 @@
       "name" : "Utku Uckun",
       "nicks" : [
          "utkuuckun"
+      ]
+   },
+   {
+      "emails" : [
+         "v_rubanova@apple.com"
+      ],
+      "github" : "valrubanova",
+      "name" : "Valeriia Rubanova",
+      "nicks" : [
+         "vrubanova",
+         "valrubanova"
       ]
    },
    {

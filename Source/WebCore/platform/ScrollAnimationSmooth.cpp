@@ -106,7 +106,7 @@ Seconds ScrollAnimationSmooth::durationFromDistance(const FloatSize& delta) cons
     return std::min(Seconds(distance / animationSpeed), maxAnimationDuration);
 }
 
-inline float linearInterpolation(float progress, float a, float b)
+inline float NODELETE linearInterpolation(float progress, float a, float b)
 {
     return a + progress * (b - a);
 }

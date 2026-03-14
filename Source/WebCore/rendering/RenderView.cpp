@@ -22,6 +22,7 @@
 #include "RenderView.h"
 
 #include "ContainerNodeInlines.h"
+#include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "Element.h"
 #include "FloatQuad.h"
@@ -369,7 +370,7 @@ RenderElement* RenderView::rendererForRootBackground() const
     if (documentRenderer.shouldApplyAnyContainment())
         return nullptr;
 
-    if (RefPtr body = protect(document())->body()) {
+    if (RefPtr body = document().body()) {
         if (auto* renderer = body->renderer()) {
             if (!renderer->shouldApplyAnyContainment())
                 return renderer;
@@ -414,7 +415,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being inside
     // a transform, transparency layer, etc.
     Ref document = this->document();
-    for (RefPtr element = document->ownerElement(); element && element->renderer(); element = protect(element->document())->ownerElement()) {
+    for (RefPtr element = document->ownerElement(); element && element->renderer(); element = element->document().ownerElement()) {
         CheckedPtr layer = element->renderer()->enclosingLayer();
         if (layer->cannotBlitToWindow()) {
             frameView().setCannotBlitToWindow();
@@ -582,7 +583,7 @@ void RenderView::flushAccumulatedRepaintRegion() const
     IntSize rectOffset;
 
     CheckedPtr<RenderBox> iframeOwnerRenderer;
-    if (RefPtr ownerElement = protect(document())->ownerElement()) {
+    if (RefPtr ownerElement = document().ownerElement()) {
         iframeOwnerRenderer = ownerElement->renderBox();
         if (!iframeOwnerRenderer) {
             m_accumulatedRepaintRegion = nullptr;
@@ -709,13 +710,12 @@ bool RenderView::shouldPaintBaseBackground() const
 {
     Ref document = this->document();
     Ref frameView = this->frameView();
-    RefPtr ownerElement = document->ownerElement();
 
     // Fill with a base color if we're the root document.
     if (frameView->frame().isMainFrame())
         return !frameView->isTransparent();
 
-    if (ownerElement && ownerElement->hasTagName(HTMLNames::frameTag))
+    if (RefPtr ownerElement = document->ownerElement(); ownerElement && ownerElement->hasTagName(HTMLNames::frameTag))
         return true;
 
     // Locate the <body> element using the DOM. This is easier than trying
@@ -732,15 +732,21 @@ bool RenderView::shouldPaintBaseBackground() const
     if (is<HTMLFrameSetElement>(*body))
         return true;
 
-    auto* frameRenderer = ownerElement ? ownerElement->renderer() : nullptr;
-    if (!frameRenderer)
-        return false;
+    if (RefPtr parentFrame = frameView->frame().parent()) {
+        if (RefPtr documentLoader = document->loader(); documentLoader && documentLoader->isInitialAboutBlank()) {
+            // https://github.com/w3c/csswg-drafts/issues/9624#issuecomment-1944425637
+            // > RESOLVED: initial about:blank iframes are always transparent
+            return false;
+        }
 
-    // iframes should fill with a base color if the used color scheme of the
-    // element and the used color scheme of the embedded document’s root
-    // element do not match.
-    if (frameView->useDarkAppearance() != frameRenderer->useDarkAppearance())
-        return !frameView->isTransparent();
+        if (RefPtr parentFrameView = parentFrame->virtualView()) {
+            // iframes should fill with a base color if the used color scheme of the
+            // element and the used color scheme of the embedded document’s root
+            // element do not match.
+            if (frameView->useDarkAppearance() != parentFrameView->ownerElementOfChildFrameUsesDarkAppearance(frameView->frame()))
+                return !frameView->isTransparent();
+        }
+    }
 
     return false;
 }
@@ -823,6 +829,11 @@ void RenderView::setPageLogicalSize(LayoutSize size)
 float RenderView::zoomFactor() const
 {
     return frameView().frame().pageZoomFactor();
+}
+
+LocalFrameView& RenderView::frameView() const
+{
+    return m_frameView.get();
 }
 
 FloatSize RenderView::sizeForCSSSmallViewportUnits() const
@@ -1004,7 +1015,7 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
+static SVGSVGElement* NODELETE svgSvgElementFrom(RenderElement& renderElement)
 {
     if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
         return svgSvgElement;

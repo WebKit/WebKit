@@ -42,7 +42,7 @@ enum class WebEventModifier : uint8_t {
     CapsLockKey = 1 << 4,
 };
 
-OptionSet<WebEventModifier> modifiersFromPlatformEventModifiers(OptionSet<WebCore::PlatformEventModifier>);
+OptionSet<WebEventModifier> NODELETE modifiersFromPlatformEventModifiers(OptionSet<WebCore::PlatformEventModifier>);
 OptionSet<WebEventModifier> modifiersForNavigationAction(const WebCore::NavigationAction&);
 
 } // namespace WebKit

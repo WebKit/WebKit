@@ -76,7 +76,7 @@ template<> struct CSSValueConversion<ImageOrNone> { auto operator()(BuilderState
 // MARK: - Blending
 
 template<> struct Blending<ImageOrNone> {
-    auto canBlend(const ImageOrNone&, const ImageOrNone&) -> bool;
+    bool NODELETE canBlend(const ImageOrNone&, const ImageOrNone&);
     auto blend(const ImageOrNone&, const ImageOrNone&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> ImageOrNone;
 };
 

@@ -87,7 +87,7 @@ webrtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::create
 
 void LibWebRTCProvider::disableNonLocalhostConnections()
 {
-    protect(WebProcess::singleton().libWebRTCNetwork())->disableNonLocalhostConnections();
+    WebProcess::singleton().libWebRTCNetwork().disableNonLocalhostConnections();
 }
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)

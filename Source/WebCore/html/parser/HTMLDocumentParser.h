@@ -94,7 +94,7 @@ private:
     bool processingData() const final;
     void prepareToStopParsing() final;
     void stopParsing() final;
-    bool isWaitingForScripts() const;
+    bool NODELETE isWaitingForScripts() const;
     bool isExecutingScript() const final;
     bool hasScriptsWaitingForStylesheets() const final;
     void executeScriptsWaitingForStylesheets() final;

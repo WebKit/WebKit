@@ -77,7 +77,7 @@ bool SVGFEImageElement::renderingTaintsOrigin() const
 
 void SVGFEImageElement::clearResourceReferences()
 {
-    if (CachedResourceHandle cachedImage = std::exchange(m_cachedImage, nullptr))
+    if (RefPtr cachedImage = std::exchange(m_cachedImage, nullptr))
         cachedImage->removeClient(*this);
 
     removeElementReference();
@@ -92,7 +92,7 @@ void SVGFEImageElement::requestImageResource()
     request.setInitiator(*this);
     m_cachedImage = protect(document().cachedResourceLoader())->requestImage(WTF::move(request)).value_or(nullptr);
 
-    if (CachedResourceHandle cachedImage = m_cachedImage)
+    if (RefPtr cachedImage = m_cachedImage)
         cachedImage->addClient(*this);
 }
 
@@ -219,7 +219,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
 
 RefPtr<FilterEffect> SVGFEImageElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const
 {
-    if (CachedResourceHandle cachedImage = m_cachedImage) {
+    if (RefPtr cachedImage = m_cachedImage) {
         RefPtr image = cachedImage->imageForRenderer(renderer());
         if (!image || image->isNull())
             return nullptr;

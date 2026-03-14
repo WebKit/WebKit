@@ -60,6 +60,16 @@ template<> struct ReplyCaller<String> {
         completionHandler(WTF::move(*string));
     }
 };
+template<> struct ReplyCaller<Vector<WebCore::RegistrableDomain>&&> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&& completionHandler)
+    {
+        std::optional<Vector<WebCore::RegistrableDomain>> domains;
+        decoder >> domains;
+        if (!domains)
+            return completionHandler({ });
+        completionHandler(WTF::move(*domains));
+    }
+};
 
 template<MessageType messageType, typename... Args, typename... ReplyArgs>
 void ManagerProxy::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& completionHandler, Args&&... args) const
@@ -169,6 +179,11 @@ void ManagerProxy::destroyStoreForTesting(CompletionHandler<void()>&& completion
 void ManagerProxy::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)
 {
     sendMessage<MessageType::AllowTLSCertificateChainForLocalPCMTesting>(certificateInfo);
+}
+
+void ManagerProxy::fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    sendMessageWithReply<MessageType::FetchRegistrableDomains>(WTF::move(completionHandler));
 }
 
 } // namespace WebKit::PCM

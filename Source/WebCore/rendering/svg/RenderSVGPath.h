@@ -54,7 +54,7 @@ private:
 
     bool NODELETE shouldStrokeZeroLengthSubpath() const;
     Path* zeroLengthLinecapPath(const FloatPoint&) const;
-    FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
+    FloatRect NODELETE zeroLengthSubpathRect(const FloatPoint&, float) const;
     void updateZeroLengthSubpaths();
     void strokeZeroLengthSubpaths(GraphicsContext&) const;
 

@@ -60,7 +60,7 @@ public:
     void deref() const final { HTMLElement::deref(); }
 
     URL href() const;
-    WEBCORE_EXPORT const AtomString& rel() const;
+    WEBCORE_EXPORT const AtomString& NODELETE rel() const;
 
 #if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
     URL environmentMap() const;
@@ -69,13 +69,13 @@ public:
 
     AtomString target() const final;
 
-    const AtomString& type() const;
+    const AtomString& NODELETE type() const;
 
     std::optional<LinkIconType> NODELETE iconType() const;
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
-    bool styleSheetIsLoading() const;
+    bool NODELETE styleSheetIsLoading() const;
 
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }

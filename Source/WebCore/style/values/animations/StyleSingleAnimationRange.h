@@ -41,7 +41,7 @@ enum class SingleAnimationRangeType : bool { Start, End };
 struct SingleAnimationRangeLength : LengthWrapperBase<LengthPercentage<>> {
     using Base::Base;
 
-    static SingleAnimationRangeLength defaultValue(SingleAnimationRangeType);
+    static SingleAnimationRangeLength NODELETE defaultValue(SingleAnimationRangeType);
     bool isDefault(SingleAnimationRangeType) const;
 };
 
@@ -124,7 +124,7 @@ struct SingleAnimationRangeEdge {
     }
 
     Name name() const { return m_name; }
-    const Offset& offset() const { return m_offset; }
+    const Offset& offset() const LIFETIME_BOUND { return m_offset; }
 
     bool hasDefaultOffset() const { return m_offset.isDefault(type); }
 
@@ -165,8 +165,8 @@ struct SingleAnimationRange {
 
     bool operator==(const SingleAnimationRange&) const = default;
 
-    static SingleAnimationRange defaultForScrollTimeline();
-    static SingleAnimationRange defaultForViewTimeline();
+    static SingleAnimationRange NODELETE defaultForScrollTimeline();
+    static SingleAnimationRange NODELETE defaultForViewTimeline();
 
     bool isDefault() const { return start.isNormal() && end.isNormal(); }
 };

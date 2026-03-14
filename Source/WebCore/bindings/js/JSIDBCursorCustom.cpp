@@ -51,15 +51,15 @@ JSC::JSValue JSIDBCursor::primaryKey(JSC::JSGlobalObject& lexicalGlobalObject) c
 }
 
 template<typename Visitor>
-void JSIDBCursor::visitAdditionalChildren(Visitor& visitor)
+void JSIDBCursor::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     auto& cursor = wrapped();
     if (auto* request = cursor.request())
         addWebCoreOpaqueRoot(visitor, *request);
-    cursor.keyWrapper().visit(visitor);
-    cursor.primaryKeyWrapper().visit(visitor);
+    cursor.keyWrapper().visitInGCThread(visitor);
+    cursor.primaryKeyWrapper().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBCursor);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSIDBCursor);
 
 } // namespace WebCore

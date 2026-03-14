@@ -15,10 +15,10 @@ bytecode/InByStatus.cpp
 bytecode/InlineCacheCompiler.cpp
 bytecode/InstanceOfStatus.cpp
 bytecode/PropertyCondition.cpp
+bytecode/PropertyInlineCache.cpp
 bytecode/PutByStatus.cpp
 bytecode/Repatch.cpp
 bytecode/SetPrivateBrandStatus.cpp
-bytecode/StructureStubInfo.cpp
 bytecode/Watchpoint.cpp
 bytecompiler/BytecodeGenerator.cpp
 bytecompiler/BytecodeGeneratorBaseInlines.h
@@ -75,7 +75,6 @@ parser/Parser.h
 parser/SourceProviderCacheItem.h
 parser/SourceTaintedOrigin.cpp
 profiler/ProfilerDatabase.cpp
-[ iOS ] runtime/BrandedStructure.h
 runtime/CachedTypes.cpp
 runtime/DeferredWorkTimer.cpp
 runtime/FileBasedFuzzerAgent.cpp
@@ -102,7 +101,7 @@ runtime/StructureInlines.h
 runtime/SymbolTable.h
 runtime/TypeSet.cpp
 runtime/VMTraps.cpp
-[ macOS ] runtime/WaiterListManager.h
+runtime/WaiterListManager.h
 tools/JSDollarVM.cpp
 wasm/WasmBBQJIT.cpp
 wasm/WasmBBQJIT64.cpp

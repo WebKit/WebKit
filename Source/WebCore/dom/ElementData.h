@@ -51,10 +51,10 @@ public:
     static const unsigned attributeNotFound = static_cast<unsigned>(-1);
 
     void setClassNames(SpaceSplitString&& classNames) const { m_classNames = WTF::move(classNames); }
-    const SpaceSplitString& classNames() const { return m_classNames; }
+    const SpaceSplitString& classNames() const LIFETIME_BOUND { return m_classNames; }
     static constexpr ptrdiff_t classNamesMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_classNames); }
 
-    const AtomString& idForStyleResolution() const { return m_idForStyleResolution; }
+    const AtomString& idForStyleResolution() const LIFETIME_BOUND { return m_idForStyleResolution; }
     static constexpr ptrdiff_t idForStyleResolutionMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_idForStyleResolution); }
     void setIdForStyleResolution(const AtomString& newId) const { m_idForStyleResolution = newId; }
 
@@ -74,7 +74,7 @@ public:
     bool hasClass() const { return !m_classNames.isEmpty(); }
     bool hasName() const { return m_arraySizeAndFlags & s_flagHasNameAttribute; }
 
-    bool isEquivalent(const ElementData* other) const;
+    bool NODELETE isEquivalent(const ElementData* other) const;
 
     bool isUnique() const { return m_arraySizeAndFlags & s_flagIsUnique; }
     static uint32_t isUniqueFlag() { return s_flagIsUnique; }

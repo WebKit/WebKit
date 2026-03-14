@@ -124,7 +124,7 @@ std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCPa
     return info;
 }
 
-static CMVideoCodecType codecType(DoViParameters::Codec codec)
+static CMVideoCodecType NODELETE codecType(DoViParameters::Codec codec)
 {
     switch (codec) {
     case DoViParameters::Codec::AVC1:

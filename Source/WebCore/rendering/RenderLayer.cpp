@@ -174,12 +174,12 @@ using namespace HTMLNames;
 class ClipRects : public RefCounted<ClipRects> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ClipRects);
 public:
-    static Ref<ClipRects> create()
+    static Ref<ClipRects> NODELETE create()
     {
         return adoptRef(*new ClipRects);
     }
 
-    static Ref<ClipRects> create(const ClipRects& other)
+    static Ref<ClipRects> NODELETE create(const ClipRects& other)
     {
         return adoptRef(*new ClipRects(other));
     }
@@ -192,7 +192,7 @@ public:
         m_fixed = false;
     }
 
-    const ClipRect& overflowClipRect() const { return m_overflowClipRect; }
+    const ClipRect& NODELETE overflowClipRect() const { return m_overflowClipRect; }
     void NODELETE setOverflowClipRect(const ClipRect& clipRect) { m_overflowClipRect = clipRect; }
 
     const ClipRect& NODELETE fixedClipRect() const { return m_fixedClipRect; }
@@ -206,7 +206,7 @@ public:
 
     void NODELETE setOverflowClipRectAffectedByRadius() { m_overflowClipRect.setAffectedByRadius(true); }
 
-    bool operator==(const ClipRects& other) const
+    bool NODELETE operator==(const ClipRects& other) const
     {
         return m_overflowClipRect == other.overflowClipRect()
             && m_fixedClipRect == other.fixedClipRect()
@@ -214,7 +214,7 @@ public:
             && m_fixed == other.fixed();
     }
 
-    ClipRects& operator=(const ClipRects& other)
+    ClipRects& NODELETE operator=(const ClipRects& other)
     {
         m_overflowClipRect = other.overflowClipRect();
         m_fixedClipRect = other.fixedClipRect();
@@ -266,7 +266,7 @@ public:
         return m_clipRects[getIndex(context.clipRectsType, context.respectOverflowClip())].get();
     }
 
-    void setClipRects(ClipRectsType clipRectsType, bool respectOverflowClip, RefPtr<ClipRects>&& clipRects)
+    void NODELETE setClipRects(ClipRectsType clipRectsType, bool respectOverflowClip, RefPtr<ClipRects>&& clipRects)
     {
         m_clipRects[getIndex(clipRectsType, respectOverflowClip)] = WTF::move(clipRects);
     }
@@ -1453,7 +1453,7 @@ void RenderLayer::dirtyAncestorChainHasSelfPaintingLayerDescendantStatus()
 
 void RenderLayer::setAncestorChainHasViewportConstrainedDescendant()
 {
-    for (CheckedPtr layer = this; layer; layer = layer->parent()) {
+    for (auto* layer = this; layer; layer = layer->parent()) {
         if (!layer->m_hasViewportConstrainedDescendantStatusDirty && layer->m_hasViewportConstrainedDescendant)
             break;
 
@@ -1464,7 +1464,7 @@ void RenderLayer::setAncestorChainHasViewportConstrainedDescendant()
 
 void RenderLayer::dirtyAncestorChainHasViewportConstrainedDescendantStatus()
 {
-    for (CheckedPtr layer = this; layer; layer = layer->parent()) {
+    for (auto* layer = this; layer; layer = layer->parent()) {
         if (layer->m_hasViewportConstrainedDescendantStatusDirty)
             break;
 
@@ -3475,12 +3475,12 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext& context, bool& 
         return false;
 
     bool documentScrollsOnMainThread = [&]() {
-        auto& frameView = renderer().view().frameView();
+        CheckedRef frameView = renderer().view().frameView();
 #if ENABLE(ASYNC_SCROLLING)
         if (RefPtr scrollingCoordinator = page().scrollingCoordinator())
             return scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(frameView);
 #endif
-        if (frameView.isScrollableOrRubberbandable())
+        if (frameView->isScrollableOrRubberbandable())
             return true;
 
         return false;
@@ -4502,15 +4502,15 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     LayoutRect hitTestArea = renderer().view().documentRect();
     if (!request.ignoreClipping()) {
         const auto& settings = renderer().settings();
+        CheckedRef frameView = renderer().view().frameView();
         if (settings.visualViewportEnabled() && settings.clientCoordinatesRelativeToLayoutViewport()) {
-            auto& frameView = renderer().view().frameView();
-            LayoutRect absoluteLayoutViewportRect = frameView.layoutViewportRect();
-            auto scaleFactor = frameView.frame().frameScaleFactor();
+            LayoutRect absoluteLayoutViewportRect = frameView->layoutViewportRect();
+            auto scaleFactor = frameView->frame().frameScaleFactor();
             if (scaleFactor > 1)
                 absoluteLayoutViewportRect.scale(scaleFactor);
             hitTestArea.intersect(absoluteLayoutViewportRect);
         } else
-            hitTestArea.intersect(renderer().view().frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect));
+            hitTestArea.intersect(frameView->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect));
     }
 
     auto insideLayer = hitTestLayer(this, nullptr, request, result, hitTestArea, hitTestLocation, false);
@@ -5570,9 +5570,9 @@ LayoutRect RenderLayer::localBoundingBox(OptionSet<CalculateLayerBoundsFlag> fla
             // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
             // then it has to be big enough to cover the viewport in order to display the background. This is akin
             // to the code in RenderBox::paintRootBoxFillLayers().
-            auto& frameView = renderer().view().frameView();
-            result.setWidth(std::max(result.width(), frameView.contentsWidth() - result.x()));
-            result.setHeight(std::max(result.height(), frameView.contentsHeight() - result.y()));
+            CheckedRef frameView = renderer().view().frameView();
+            result.setWidth(std::max(result.width(), frameView->contentsWidth() - result.x()));
+            result.setHeight(std::max(result.height(), frameView->contentsHeight() - result.y()));
         }
     }
     return result;

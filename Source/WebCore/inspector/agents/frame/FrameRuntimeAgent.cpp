@@ -167,7 +167,7 @@ String FrameRuntimeAgent::frameIdForProtocol() const
     return makeString("frame-"_s, m_frameIdentifier.toUInt64());
 }
 
-static Inspector::Protocol::Runtime::ExecutionContextType toProtocol(DOMWrapperWorld::Type type)
+static Inspector::Protocol::Runtime::ExecutionContextType NODELETE toProtocol(DOMWrapperWorld::Type type)
 {
     switch (type) {
     case DOMWrapperWorld::Type::Normal:

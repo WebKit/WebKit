@@ -83,7 +83,7 @@ private:
     void controllerDidConnect(GCController *, ConnectionVisibility);
     void controllerDidDisconnect(GCController *);
 
-    unsigned indexForNewlyConnectedDevice();
+    unsigned NODELETE indexForNewlyConnectedDevice();
 
     void inputNotificationTimerFired();
 

@@ -122,7 +122,7 @@ SVGPaintServerOrColor SVGPaintServerHandling::requestPaintServer(const RenderLay
 
 inline void SVGPaintServerHandling::prepareFillOperation(const RenderLayerModelObject& renderer, const RenderStyle& style, const Color& fillColor) const
 {
-    if (renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
+    if (protect(renderer.view().frameView())->paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
         m_context.setAlpha(1);
         m_context.setFillRule(style.clipRule());
     } else {

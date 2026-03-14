@@ -54,9 +54,9 @@ Ref<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
 
     RefPtr<StorageNamespace> storageNamespace;
     if (document.canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::DefaultForThirdParty)
-        storageNamespace = transientLocalStorageNamespace(protect(document.topOrigin()).get(), protect(document.page())->sessionID());
+        storageNamespace = transientLocalStorageNamespace(protect(document.topOrigin()).get(), document.page()->sessionID());
     else
-        storageNamespace = localStorageNamespace(protect(document.page())->sessionID());
+        storageNamespace = localStorageNamespace(document.page()->sessionID());
 
     return storageNamespace->storageArea(protect(document.securityOrigin()).get());
 }

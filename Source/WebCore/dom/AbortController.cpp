@@ -58,11 +58,11 @@ WebCoreOpaqueRoot AbortController::opaqueRoot()
 }
 
 template<typename Visitor>
-void JSAbortController::visitAdditionalChildren(Visitor& visitor)
+void JSAbortController::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().signal().reason().visit(visitor);
+    wrapped().signal().reason().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAbortController);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSAbortController);
 
 }

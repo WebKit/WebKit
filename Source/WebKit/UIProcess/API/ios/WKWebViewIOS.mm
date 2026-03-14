@@ -122,6 +122,10 @@
 #include "WebKit-Swift.h"
 #endif
 
+#if PLATFORM(VISION)
+#import "RealitySystemSupportSPI.h"
+#endif
+
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 
 #define FORWARD_ACTION_TO_WKCONTENTVIEW(_action) \
@@ -219,12 +223,20 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
     [_scrollView setBaseScrollViewDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
+#if HAVE(UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR)
+    if (_page && protect(_page->preferences())->scrollViewAdaptiveDecelerationTrackingEnabled()) [[unlikely]] {
+        if ([_scrollView respondsToSelector:@selector(_setDecelerationTrackingBehavior:)])
+            [_scrollView _setDecelerationTrackingBehavior:_UIScrollViewDecelerationTrackingBehaviorAdaptive];
+    } else
+#endif
+    {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
-        [_scrollView setTracksImmediatelyWhileDecelerating:NO];
-        [_scrollView _setAvoidsJumpOnInterruptedBounce:YES];
-    }
+        if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
+            [_scrollView setTracksImmediatelyWhileDecelerating:NO];
+            [_scrollView _setAvoidsJumpOnInterruptedBounce:YES];
+        }
 ALLOW_DEPRECATED_DECLARATIONS_END
+    }
 
     _scrollViewDefaultAllowedTouchTypes = [_scrollView panGestureRecognizer].allowedTouchTypes;
 

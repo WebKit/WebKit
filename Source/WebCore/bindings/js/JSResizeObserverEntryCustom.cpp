@@ -33,12 +33,12 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSResizeObserverEntry::visitAdditionalChildren(Visitor& visitor)
+void JSResizeObserverEntry::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped().target());
     addWebCoreOpaqueRoot(visitor, wrapped().contentRect());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSResizeObserverEntry);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSResizeObserverEntry);
 
 } // namespace WebCore

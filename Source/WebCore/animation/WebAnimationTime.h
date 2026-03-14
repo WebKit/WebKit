@@ -38,27 +38,27 @@ public:
     WEBCORE_EXPORT WebAnimationTime(const Seconds&);
     WebAnimationTime(const CSSNumberish&);
 
-    static WebAnimationTime fromMilliseconds(double);
-    WEBCORE_EXPORT static WebAnimationTime fromPercentage(double);
+    static WebAnimationTime NODELETE fromMilliseconds(double);
+    WEBCORE_EXPORT static WebAnimationTime NODELETE fromPercentage(double);
 
-    WEBCORE_EXPORT std::optional<Seconds> time() const;
+    WEBCORE_EXPORT std::optional<Seconds> NODELETE time() const;
     WEBCORE_EXPORT std::optional<double> NODELETE percentage() const;
 
     bool NODELETE isValid() const;
-    bool isInfinity() const;
+    bool NODELETE isInfinity() const;
     bool NODELETE isZero() const;
-    bool isNaN() const;
+    bool NODELETE isNaN() const;
 
-    WebAnimationTime matchingZero() const;
-    WebAnimationTime matchingEpsilon() const;
-    WebAnimationTime matchingInfinity() const;
+    WebAnimationTime NODELETE matchingZero() const;
+    WebAnimationTime NODELETE matchingEpsilon() const;
+    WebAnimationTime NODELETE matchingInfinity() const;
 
-    bool approximatelyEqualTo(const WebAnimationTime&) const;
+    bool NODELETE approximatelyEqualTo(const WebAnimationTime&) const;
     bool approximatelyLessThan(const WebAnimationTime&) const;
     bool approximatelyGreaterThan(const WebAnimationTime&) const;
 
-    WebAnimationTime operator+(const WebAnimationTime&) const;
-    WebAnimationTime operator-(const WebAnimationTime&) const;
+    WebAnimationTime NODELETE operator+(const WebAnimationTime&) const;
+    WebAnimationTime NODELETE operator-(const WebAnimationTime&) const;
     double NODELETE operator/(const WebAnimationTime&) const;
     WebAnimationTime& NODELETE operator+=(const WebAnimationTime&);
     WebAnimationTime& NODELETE operator-=(const WebAnimationTime&);
@@ -71,8 +71,8 @@ public:
     WebAnimationTime operator-(const Seconds&) const;
     bool NODELETE operator==(const Seconds&) const;
 
-    WebAnimationTime operator*(double) const;
-    WebAnimationTime operator/(double) const;
+    WebAnimationTime NODELETE operator*(double) const;
+    WebAnimationTime NODELETE operator/(double) const;
 
     WEBCORE_EXPORT operator Seconds() const;
     operator CSSNumberish() const;

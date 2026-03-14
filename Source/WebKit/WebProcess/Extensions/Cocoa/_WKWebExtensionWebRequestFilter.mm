@@ -47,7 +47,7 @@ static NSString *typesKey = @"types";
 
 static NSString *windowIdKey = @"windowId";
 
-_WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const ResourceLoadInfo& resourceLoadInfo)
+_WKWebExtensionWebRequestResourceType NODELETE toWebExtensionWebRequestResourceType(const ResourceLoadInfo& resourceLoadInfo)
 {
     switch (resourceLoadInfo.type) {
     case ResourceLoadInfo::Type::Document:

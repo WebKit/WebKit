@@ -87,7 +87,7 @@ public:
     
     std::unique_ptr<FullBytecodeLiveness> computeFullLiveness(CodeBlock*);
 
-    BytecodeGraph& graph() { return m_graph; }
+    BytecodeGraph& graph() LIFETIME_BOUND { return m_graph; }
 
 private:
     void dumpResults(CodeBlock*);

@@ -49,7 +49,7 @@ FrameInspectorTarget::~FrameInspectorTarget() = default;
 
 String FrameInspectorTarget::identifier() const
 {
-    return toTargetID(protect(m_frame)->frameID(), WebCore::Process::identifier());
+    return toTargetID(m_frame->frameID(), WebCore::Process::identifier());
 }
 
 void FrameInspectorTarget::connect(Inspector::FrontendChannel::ConnectionType connectionType)

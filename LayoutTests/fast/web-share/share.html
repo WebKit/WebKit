@@ -14,16 +14,16 @@
     
         let write = (message) => output.innerHTML += (message + "<br>");
 
-        function runTest()
+        async function runTest()
         {
             document.getElementById("target").addEventListener("click", () => {
                 navigator.share({ title: "Example Page", url: "http://webkit.org", text: "text" }).then((result) => {
                     write("PASS: Share sheet invoked.");
                     testRunner.notifyDone();
-                });    
+                });
             });
-            
-            UIHelper.activateAt(50, 50);
+
+            await UIHelper.activateAt(50, 50);
         }
 
     </script>

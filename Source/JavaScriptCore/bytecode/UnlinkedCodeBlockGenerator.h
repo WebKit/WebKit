@@ -111,7 +111,7 @@ public:
     }
 
     unsigned numberOfConstantIdentifierSets() const { return m_constantIdentifierSets.size(); }
-    const Vector<IdentifierSet>& constantIdentifierSets() { return m_constantIdentifierSets; }
+    const Vector<IdentifierSet>& constantIdentifierSets() LIFETIME_BOUND { return m_constantIdentifierSets; }
     unsigned addSetConstant(IdentifierSet&& set)
     {
         ASSERT(m_vm.heap.isDeferred());
@@ -121,7 +121,7 @@ public:
     }
 
     const WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()]; }
-    const Vector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
+    const Vector<WriteBarrier<Unknown>>& constantRegisters() LIFETIME_BOUND { return m_constantRegisters; }
     ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
 
     SourceCodeRepresentation constantSourceCodeRepresentation(VirtualRegister reg) const

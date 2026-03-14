@@ -56,7 +56,7 @@ public:
     static bool NODELETE shouldInterruptScript(const JSC::JSGlobalObject*);
     static bool NODELETE shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
     static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
-    static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
+    static JSC::ScriptExecutionStatus NODELETE scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
     static void NODELETE reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
 protected:

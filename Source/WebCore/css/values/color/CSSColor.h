@@ -185,24 +185,6 @@ template<> struct Serialize<Color> { void operator()(StringBuilder&, const Seria
 template<> struct ComputedStyleDependenciesCollector<Color> { void operator()(ComputedStyleDependencies&, const Color&); };
 template<> struct CSSValueChildrenVisitor<Color> { IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const Color&); };
 
-template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
-{
-    auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
-    using ResultType = decltype(visitor(std::declval<KeywordColor>()));
-
-    return WTF::switchOn(value,
-        [&](const EmptyToken&) -> ResultType {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&]<typename T>(const T& color) -> ResultType {
-            return visitor(color);
-        },
-        [&]<typename T>(const UniqueRef<T>& color) -> ResultType {
-            return visitor(color.get());
-        }
-    );
-}
-
 } // namespace CSS
 } // namespace WebCore
 

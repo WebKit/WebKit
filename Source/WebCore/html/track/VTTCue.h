@@ -211,7 +211,7 @@ public:
 
     double NODELETE calculateComputedTextPosition() const;
     PositionAlignSetting NODELETE calculateComputedPositionAlignment() const;
-    double calculateMaximumSize() const;
+    double NODELETE calculateMaximumSize() const;
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisUtterance* speechUtterance() const { return m_speechUtterance.get(); }

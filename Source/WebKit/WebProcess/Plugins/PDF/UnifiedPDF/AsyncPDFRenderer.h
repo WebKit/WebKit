@@ -259,8 +259,8 @@ private:
     void ensurePreviewsForCurrentPageCoverage();
 
     static WebCore::FloatRect convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
-    static WebCore::AffineTransform tileToPaintingTransform(float tilingScaleFactor);
-    static WebCore::AffineTransform paintingToTileTransform(float tilingScaleFactor);
+    static WebCore::AffineTransform NODELETE tileToPaintingTransform(float tilingScaleFactor);
+    static WebCore::AffineTransform NODELETE paintingToTileTransform(float tilingScaleFactor);
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
 #endif

@@ -83,7 +83,7 @@ public:
 
     bool isServerMap() const;
 
-    const AtomString& altText() const;
+    const AtomString& NODELETE altText() const;
 
     WEBCORE_EXPORT CachedImage* NODELETE cachedImage() const;
 
@@ -139,7 +139,7 @@ public:
 
     AtomString srcsetForBindings() const;
 
-    bool usesSrcsetOrPicture() const;
+    bool NODELETE usesSrcsetOrPicture() const;
 
     enum LoadingValues { Lazy, Eager };
 

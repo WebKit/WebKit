@@ -48,7 +48,7 @@ bool WebSocketExtensionParser::parsedSuccessfully()
     return m_data.empty() && !m_didFailParsing;
 }
 
-static bool isSeparator(char character)
+static bool NODELETE isSeparator(char character)
 {
     static constexpr auto separatorCharacters = "()<>@,;:\\\"/[]?={} \t"_span;
     return WTF::contains(separatorCharacters, character);

@@ -78,7 +78,7 @@ void RemoteScrollingCoordinator::scheduleTreeStateCommit()
 
 bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const LocalFrameView& frameView) const
 {
-    CheckedPtr renderView = frameView.renderView();
+    auto* renderView = frameView.renderView();
     return renderView && renderView->usesCompositing();
 }
 
@@ -292,19 +292,19 @@ void RemoteScrollingCoordinator::startMonitoringWheelEvents(bool clearLatchingSt
 
 void RemoteScrollingCoordinator::receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase)
 {
-    if (auto monitor = protect(page())->wheelEventTestMonitor())
+    if (auto monitor = page()->wheelEventTestMonitor())
         monitor->receivedWheelEventWithPhases(phase, momentumPhase);
 }
 
 void RemoteScrollingCoordinator::startDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason> reason)
 {
-    if (auto monitor = protect(page())->wheelEventTestMonitor())
+    if (auto monitor = page()->wheelEventTestMonitor())
         monitor->deferForReason(nodeID, reason);
 }
 
 void RemoteScrollingCoordinator::stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason> reason)
 {
-    if (auto monitor = protect(page())->wheelEventTestMonitor())
+    if (auto monitor = page()->wheelEventTestMonitor())
         monitor->removeDeferralForReason(nodeID, reason);
 }
 

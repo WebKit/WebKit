@@ -558,6 +558,15 @@ static void copyPlane(std::span<uint8_t>& destination, const std::span<uint8_t>&
     uint64_t destinationOffset = spanPlaneLayout.destinationOffset;
     uint64_t rowBytes = spanPlaneLayout.sourceWidthBytes;
     for (size_t rowIndex = 0; rowIndex < spanPlaneLayout.sourceHeight; ++rowIndex) {
+        if (sourceOffset + rowBytes > source.size()) {
+            GST_ERROR("Computed sourceOffset doesn't fit in source plane");
+            return;
+        }
+        if (destinationOffset + rowBytes > destination.size()) {
+            GST_ERROR("Computed destinationOffset doesn't fit in destination plane");
+            return;
+        }
+
         memcpySpan(destination.subspan(destinationOffset, rowBytes), source.subspan(sourceOffset, rowBytes));
         sourceOffset += sourceStride;
         destinationOffset += spanPlaneLayout.destinationStride;

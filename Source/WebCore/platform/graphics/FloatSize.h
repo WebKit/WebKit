@@ -61,7 +61,7 @@ public:
     constexpr FloatSize(float width, float height) : m_width(width), m_height(height) { }
     constexpr FloatSize(const IntSize& size) : m_width(size.width()), m_height(size.height()) { }
 
-    static FloatSize narrowPrecision(double width, double height);
+    static FloatSize NODELETE narrowPrecision(double width, double height);
 
     constexpr float width() const { return m_width; }
     constexpr float height() const { return m_height; }
@@ -74,7 +74,7 @@ public:
 
     constexpr bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
     constexpr bool isZero() const;
-    bool isExpressibleAsIntSize() const;
+    bool NODELETE isExpressibleAsIntSize() const;
 
     constexpr float aspectRatio() const { return m_width / m_height; }
     constexpr double aspectRatioDouble() const { return m_width / static_cast<double>(m_height); }

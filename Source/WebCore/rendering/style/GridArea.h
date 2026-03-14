@@ -59,7 +59,7 @@ public:
     GridSpan columns;
     GridSpan rows;
 
-    const GridSpan& span(Style::GridTrackSizingDirection direction) const
+    const GridSpan& span(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND
     {
         return direction == Style::GridTrackSizingDirection::Columns ? columns : rows;
     }

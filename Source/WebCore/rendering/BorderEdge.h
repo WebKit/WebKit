@@ -45,7 +45,7 @@ public:
 
     BorderStyle style() const { return m_style; }
     LayoutUnit width() const { return m_width; }
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
     bool isTransparent() const { return m_isTransparent; }
     bool isPresent() const { return m_isPresent; }
 
@@ -55,7 +55,7 @@ public:
     inline float widthForPainting() const { return m_isPresent ? m_flooredToDevicePixelWidth : 0; }
     void getDoubleBorderStripeWidths(LayoutUnit& outerWidth, LayoutUnit& innerWidth) const;
     bool obscuresBackgroundEdge(float scale) const;
-    bool obscuresBackground() const;
+    bool NODELETE obscuresBackground() const;
 
 private:
     inline float borderWidthInDevicePixel(int logicalPixels) const { return LayoutUnit(logicalPixels / m_devicePixelRatio).toFloat(); }

@@ -480,14 +480,14 @@ void VideoPresentationModelContext::fullscreenMayReturnToInline()
 void VideoPresentationModelContext::didEnterExternalPlayback()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (RefPtr manager = m_manager.get())
+    if (auto* manager = m_manager.get())
         manager->didEnterExternalPlayback(m_contextId);
 }
 
 void VideoPresentationModelContext::didExitExternalPlayback()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (RefPtr manager = m_manager.get())
+    if (auto* manager = m_manager.get())
         manager->didExitExternalPlayback(m_contextId);
 }
 #endif

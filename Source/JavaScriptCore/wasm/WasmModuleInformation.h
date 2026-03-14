@@ -116,7 +116,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
         m_clobberingTailCalls = FixedBitVector(totalNumberOfFunctions);
     }
 
-    const FixedBitVector& referencedFunctions() const { return m_referencedFunctions; }
+    const FixedBitVector& referencedFunctions() const LIFETIME_BOUND { return m_referencedFunctions; }
     bool hasReferencedFunction(FunctionSpaceIndex functionIndexSpace) const { return m_referencedFunctions.test(functionIndexSpace); }
     void addReferencedFunction(FunctionSpaceIndex functionIndexSpace) const { m_referencedFunctions.concurrentTestAndSet(functionIndexSpace); }
 
@@ -181,7 +181,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     }
 
     // FIXME: This should probably be FunctionCodeIndex as calling an import always clobbers the instance.
-    const FixedBitVector& clobberingTailCalls() const { return m_clobberingTailCalls; }
+    const FixedBitVector& clobberingTailCalls() const LIFETIME_BOUND { return m_clobberingTailCalls; }
     bool callCanClobberInstance(FunctionSpaceIndex functionIndexSpace) const { return m_clobberingTailCalls.test(functionIndexSpace); }
     void addClobberingTailCall(FunctionSpaceIndex functionIndexSpace) { m_clobberingTailCalls.concurrentTestAndSet(functionIndexSpace); }
 

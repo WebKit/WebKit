@@ -59,11 +59,11 @@ public:
 
     Identifier& name() { return m_name; }
     Expression& typeName() { return m_typeName.get(); }
-    Attribute::List& attributes() { return m_attributes; }
+    Attribute::List& attributes() LIFETIME_BOUND { return m_attributes; }
 
     const Identifier& name() const { return m_name; }
     const Expression& typeName() const { return m_typeName.get(); }
-    const Attribute::List& attributes() const { return m_attributes; }
+    const Attribute::List& attributes() const LIFETIME_BOUND { return m_attributes; }
 
     bool invariant() const { return m_invariant; }
     std::optional<Builtin> builtin() const { return m_builtin; }

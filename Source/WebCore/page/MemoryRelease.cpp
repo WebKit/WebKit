@@ -129,6 +129,7 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
     }
 
     CSSValuePool::singleton().drain();
+    FontCache::releaseCriticalMemoryInAllFontCaches();
 #if ENABLE(WEB_AUDIO)
     HRTFElevation::clearCache();
 #endif

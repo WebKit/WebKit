@@ -352,7 +352,7 @@ public:
 
     VM& vm() const;
 
-    MarkedSpace& objectSpace() { return m_objectSpace; }
+    MarkedSpace& objectSpace() LIFETIME_BOUND { return m_objectSpace; }
     MachineThreads& machineThreads() { return *m_machineThreads; }
 
     SlotVisitor& collectorSlotVisitor() { return *m_collectorSlotVisitor; }
@@ -464,7 +464,7 @@ public:
     template<typename Functor> void forEachCodeBlock(NOESCAPE const Functor&);
     template<typename Functor> void forEachCodeBlockIgnoringJITPlans(const AbstractLocker& codeBlockSetLocker, NOESCAPE const Functor&);
 
-    HandleSet* handleSet() { return &m_handleSet; }
+    HandleSet* handleSet() LIFETIME_BOUND { return &m_handleSet; }
 
     void willStartIterating();
     void didFinishIterating();
@@ -512,10 +512,10 @@ public:
     void didFreeBlock(size_t capacity);
     
     bool mutatorShouldBeFenced() const { return m_mutatorShouldBeFenced; }
-    const bool* addressOfMutatorShouldBeFenced() const { return &m_mutatorShouldBeFenced; }
+    const bool* addressOfMutatorShouldBeFenced() const LIFETIME_BOUND { return &m_mutatorShouldBeFenced; }
     
     unsigned barrierThreshold() const { return m_barrierThreshold; }
-    const unsigned* addressOfBarrierThreshold() const { return &m_barrierThreshold; }
+    const unsigned* addressOfBarrierThreshold() const LIFETIME_BOUND { return &m_barrierThreshold; }
 
     // If true, the GC believes that the mutator is currently messing with the heap. We call this
     // "having heap access". The GC may block if the mutator is in this state. If false, the GC may
@@ -582,7 +582,7 @@ public:
     
     JS_EXPORT_PRIVATE void addMarkingConstraint(std::unique_ptr<MarkingConstraint>);
     
-    HeapVerifier* verifier() const { return m_verifier.get(); }
+    HeapVerifier* verifier() const LIFETIME_BOUND { return m_verifier.get(); }
     
     void addHeapFinalizerCallback(const HeapFinalizerCallback&);
     void removeHeapFinalizerCallback(const HeapFinalizerCallback&);
@@ -667,7 +667,7 @@ private:
         void finalize(Handle<Unknown>, void* context) final;
     };
 
-    Lock& lock() { return m_lock; }
+    Lock& lock() LIFETIME_BOUND { return m_lock; }
 
     void reportExtraMemoryAllocatedPossiblyFromAlreadyMarkedCell(const JSCell*, size_t);
     JS_EXPORT_PRIVATE void reportExtraMemoryAllocatedSlowCase(GCDeferralContext*, const JSCell*, size_t);

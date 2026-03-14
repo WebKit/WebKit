@@ -566,7 +566,7 @@ static std::optional<CSS::ColorMix::Component> consumeColorMixComponent(CSSParse
     };
 }
 
-static bool hasNonCalculatedZeroPercentage(const CSS::ColorMix::Component& mixComponent)
+static bool NODELETE hasNonCalculatedZeroPercentage(const CSS::ColorMix::Component& mixComponent)
 {
     if (auto percentage = mixComponent.percentage)
         return percentage->isKnownZero();

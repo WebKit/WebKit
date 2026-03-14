@@ -48,9 +48,9 @@
 #include "Disassembler.h"
 #include "DoublePredictionFuzzerAgent.h"
 #include "ErrorInstance.h"
+#include "EvacuatedStack.h"
 #include "EvalCodeBlockInlines.h"
 #include "EvalExecutableInlines.h"
-#include "EvacuatedStack.h"
 #include "Exception.h"
 #include "FTLThunks.h"
 #include "FileBasedFuzzerAgent.h"
@@ -106,6 +106,7 @@
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlockInlines.h"
 #include "ProgramExecutableInlines.h"
+#include "PropertyInlineCache.h"
 #include "PropertyTableInlines.h"
 #include "RandomizingFuzzerAgent.h"
 #include "RegExpCache.h"
@@ -121,7 +122,6 @@
 #include "StrongInlines.h"
 #include "StructureChainInlines.h"
 #include "StructureInlines.h"
-#include "StructureStubInfo.h"
 #include "SubspaceInlines.h"
 #include "SymbolInlines.h"
 #include "SymbolTableInlines.h"
@@ -1901,6 +1901,8 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(m_slowCanConstructBoundExecutable);
     visitor.append(lastCachedString);
     visitor.append(heapBigIntConstantOne);
+    visitor.append(m_cachedBigIntDivisor);
+    visitor.append(m_nextCachedBigIntDivisor);
 
     visitor.append(m_promiseResolvingFunctionResolveExecutable);
     visitor.append(m_promiseResolvingFunctionRejectExecutable);
@@ -2052,10 +2054,5 @@ Wasm::DebugState* VM::debugState()
     return m_debugState.get();
 }
 #endif
-
-JSPIContext::~JSPIContext()
-{
-    ASSERT_WITH_MESSAGE(!limitFrame, "JSPIContext is still active when leaving its scope");
-}
 
 } // namespace JSC

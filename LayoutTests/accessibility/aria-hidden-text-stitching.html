@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Test 1: aria-hidden text between two visible text nodes. -->
+<div role="presentation" id="test1">
+    <span>$45.79<span aria-hidden="true">/mo.</span> per month</span>
+</div>
+
+<!-- Test 2: aria-hidden text between two visible spans. -->
+<div role="presentation" id="test2">
+    <span>Hello<span aria-hidden="true"> hidden </span>world</span>
+</div>
+
+<!-- Test 3: dynamic aria-hidden toggle. -->
+<div role="presentation" id="test3">
+    <span>Start<span id="dynamic-span" aria-hidden="true"> middle </span>end</span>
+</div>
+
+<script>
+var output = "This test ensures aria-hidden text is excluded from stitched accessibility text.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    // Test 1: aria-hidden "/mo." should be excluded, "$45.79" and " per month" should be included.
+    var text1 = webArea.childAtIndex(0);
+    output += expect("platformStaticTextValue(text1).includes('$45.79')", "true");
+    output += expect("platformStaticTextValue(text1).includes('/mo.')", "false");
+    output += expect("platformStaticTextValue(text1).includes('per month')", "true");
+    output += "\n";
+
+    // Test 2: aria-hidden " hidden " should be excluded, "Hello" and "world" should be included.
+    var text2 = webArea.childAtIndex(1);
+    output += expect("platformStaticTextValue(text2).includes('Hello')", "true");
+    output += expect("platformStaticTextValue(text2).includes('hidden')", "false");
+    output += expect("platformStaticTextValue(text2).includes('world')", "true");
+    output += "\n";
+
+    // Test 3: Dynamic aria-hidden toggle — " middle " should be excluded initially.
+    var text3 = webArea.childAtIndex(2);
+    output += expect("platformStaticTextValue(text3).includes('Start')", "true");
+    output += expect("platformStaticTextValue(text3).includes('middle')", "false");
+    output += expect("platformStaticTextValue(text3).includes('end')", "true");
+    output += "\n";
+
+    // Remove aria-hidden — " middle " should now be included.
+    document.getElementById("dynamic-span").removeAttribute("aria-hidden");
+    setTimeout(async function() {
+        output += await expectAsync("platformStaticTextValue(text3).includes('middle')", "true");
+        output += await expectAsync("platformStaticTextValue(text3).includes('Start')", "true");
+        output += await expectAsync("platformStaticTextValue(text3).includes('end')", "true");
+        output += "\n";
+
+        // Re-add aria-hidden — " middle " should be excluded again.
+        document.getElementById("dynamic-span").setAttribute("aria-hidden", "true");
+        output += await expectAsync("platformStaticTextValue(text3).includes('middle')", "false");
+        output += await expectAsync("platformStaticTextValue(text3).includes('Start')", "true");
+        output += await expectAsync("platformStaticTextValue(text3).includes('end')", "true");
+        output += "\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

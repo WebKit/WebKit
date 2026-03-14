@@ -131,7 +131,7 @@ public:
     bool isLength() const { return m_type == GridTrackBreadthType::Length; }
     bool isFlex() const { return m_type == GridTrackBreadthType::Flex; }
 
-    const GridTrackBreadthLength& length() const { ASSERT(isLength()); return m_length; }
+    const GridTrackBreadthLength& length() const LIFETIME_BOUND { ASSERT(isLength()); return m_length; }
     Flex flex() const { ASSERT(isFlex()); return m_flex; }
 
     bool isPercentOrCalculated() const { return m_type == GridTrackBreadthType::Length && m_length.isPercentOrCalculated(); }

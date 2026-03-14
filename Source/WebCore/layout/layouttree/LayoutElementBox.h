@@ -25,13 +25,13 @@
 
 #pragma once
 
+#include <WebCore/CachedImage.h>
 #include <WebCore/LayoutBox.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
-class CachedImage;
 class RenderElement;
 class RenderStyle;
 
@@ -52,7 +52,7 @@ public:
     struct ReplacedAttributes {
         LayoutSize intrinsicSize;
         std::optional<LayoutUnit> intrinsicRatio { };
-        CachedImage* cachedImage { };
+        WeakPtr<CachedImage> cachedImage { };
     };
     ElementBox(ElementAttributes&&, ReplacedAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
@@ -85,8 +85,8 @@ public:
     bool NODELETE hasIntrinsicWidth() const;
     bool NODELETE hasIntrinsicHeight() const;
     bool NODELETE hasIntrinsicRatio() const;
-    LayoutUnit intrinsicWidth() const;
-    LayoutUnit intrinsicHeight() const;
+    LayoutUnit NODELETE intrinsicWidth() const;
+    LayoutUnit NODELETE intrinsicHeight() const;
     LayoutUnit NODELETE intrinsicRatio() const;
     bool NODELETE hasAspectRatio() const;
 
@@ -115,7 +115,7 @@ private:
 
         std::optional<LayoutSize> intrinsicSize;
         std::optional<LayoutUnit> intrinsicRatio;
-        CachedImage* cachedImage { nullptr };
+        WeakPtr<CachedImage> cachedImage;
     };
 
     std::unique_ptr<Box> m_firstChild;

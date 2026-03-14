@@ -67,7 +67,7 @@ bool operator==(const FontFamilyName& a, const FontFamilyName& b)
 
 FontCascadeCache& FontCascadeCache::forCurrentThread()
 {
-    return FontCache::forCurrentThread()->fontCascadeCache();
+    return FontCache::forCurrentThread().fontCascadeCache();
 }
 
 void FontCascadeCache::invalidate()
@@ -79,6 +79,12 @@ void FontCascadeCache::clearMeasurementCaches()
 {
     for (auto& value : m_entries.values())
         value->fonts.get().glyphGeometryCache().clear();
+}
+
+void FontCascadeCache::clearShapedTextCaches()
+{
+    for (auto& value : m_entries.values())
+        value->fonts.get().shapedTextCache().clear();
 }
 
 void FontCascadeCache::pruneUnreferencedEntries()

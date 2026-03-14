@@ -243,7 +243,7 @@ int SVGFontFaceElement::descent() const
 
 String SVGFontFaceElement::fontFamily() const
 {
-    return protect(fontFaceRule())->properties().getPropertyValue(CSSPropertyFontFamily);
+    return fontFaceRule().properties().getPropertyValue(CSSPropertyFontFamily);
 }
 
 SVGFontElement* SVGFontFaceElement::associatedFontElement() const
@@ -286,7 +286,7 @@ void SVGFontFaceElement::rebuildFontFace()
         }
     }
 
-    protect(document())->styleScope().didChangeStyleSheetEnvironment();
+    document().styleScope().didChangeStyleSheetEnvironment();
 }
 
 Node::InsertedIntoAncestorResult SVGFontFaceElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

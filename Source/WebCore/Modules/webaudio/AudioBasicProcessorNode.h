@@ -52,15 +52,15 @@ public:
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;
 
     // Returns the number of channels for both the input and the output.
-    unsigned numberOfChannels();
+    unsigned NODELETE numberOfChannels();
 
 protected:
     double tailTime() const override;
     double latencyTime() const override;
     bool requiresTailProcessing() const override;
 
-    AudioProcessor* processor() { return m_processor.get(); }
-    const AudioProcessor* processor() const { return m_processor.get(); }
+    AudioProcessor* processor() LIFETIME_BOUND { return m_processor.get(); }
+    const AudioProcessor* processor() const LIFETIME_BOUND { return m_processor.get(); }
 
     float noiseInjectionMultiplier() const override { return 0.01; }
 

@@ -52,7 +52,7 @@ namespace WebKit {
 
 class JavaScriptEvaluationResult::JSExtractor {
 public:
-    Map takeMap() { return WTF::move(m_map); }
+    Map NODELETE takeMap() { return WTF::move(m_map); }
     std::optional<JSObjectID> addObjectToMap(JSGlobalContextRef, JSValueRef, size_t nestingLevel);
     bool processContainersWithoutRecursion(JSGlobalContextRef);
 
@@ -87,7 +87,7 @@ private:
 
 class JavaScriptEvaluationResult::APIExtractor {
 public:
-    Map takeMap() { return WTF::move(m_map); }
+    Map NODELETE takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(API::Object&);
 private:
     Value toValue(API::Object&);

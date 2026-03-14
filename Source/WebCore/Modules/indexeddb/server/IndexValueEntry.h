@@ -68,7 +68,7 @@ public:
         const IDBKeyData& NODELETE key() const;
         const ThreadSafeDataBuffer& value() const;
 
-        Iterator& operator++();
+        Iterator& NODELETE operator++();
 
     private:
         IndexValueEntry* m_entry { nullptr };
@@ -77,8 +77,8 @@ public:
         IDBKeyDataSet::reverse_iterator m_reverseIterator;
     };
 
-    Iterator begin() LIFETIME_BOUND;
-    Iterator reverseBegin(CursorDuplicity) LIFETIME_BOUND;
+    Iterator NODELETE begin() LIFETIME_BOUND;
+    Iterator NODELETE reverseBegin(CursorDuplicity) LIFETIME_BOUND;
 
     // Finds the key, or the next higher record after the key.
     Iterator find(const IDBKeyData&) LIFETIME_BOUND;

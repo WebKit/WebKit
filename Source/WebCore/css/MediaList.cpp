@@ -62,9 +62,9 @@ const MQ::MediaQueryList& MediaList::mediaQueries() const
 {
     if (m_detachedMediaQueries)
         return *m_detachedMediaQueries;
-    if (RefPtr rule = dynamicDowncast<CSSImportRule>(m_parentRule.get()))
+    if (auto* rule = dynamicDowncast<CSSImportRule>(m_parentRule.get()))
         return rule->mediaQueries();
-    if (RefPtr rule = dynamicDowncast<CSSMediaRule>(m_parentRule.get()))
+    if (auto* rule = dynamicDowncast<CSSMediaRule>(m_parentRule.get()))
         return rule->mediaQueries();
     return m_parentStyleSheet->mediaQueries();
 }

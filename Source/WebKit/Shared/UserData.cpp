@@ -58,7 +58,7 @@ UserData::~UserData() = default;
 
 static bool shouldTransform(const API::Object& object, const UserData::Transformer& transformer)
 {
-    if (RefPtr array = dynamicDowncast<API::Array>(object)) {
+    if (auto* array = dynamicDowncast<API::Array>(object)) {
         for (const auto& element : array->elements()) {
             if (!element)
                 continue;

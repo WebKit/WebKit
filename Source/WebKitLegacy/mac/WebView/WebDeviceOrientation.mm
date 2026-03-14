@@ -60,7 +60,7 @@ DeviceOrientationData* core(WebDeviceOrientation* orientation)
     return orientation ? orientation->m_internal->m_orientation.get() : 0;
 }
 
-static std::optional<double> convert(bool canProvide, double value)
+static std::optional<double> NODELETE convert(bool canProvide, double value)
 {
     if (!canProvide)
         return std::nullopt;

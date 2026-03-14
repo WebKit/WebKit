@@ -163,7 +163,7 @@ public:
     UpsilonCollection at(Value* value) { return UpsilonCollection(this, value, &m_upsilons[value]); }
     UpsilonCollection operator[](Value* value) { return at(value); }
 
-    const Vector<Value*, 8>& phis() const { return m_phis; }
+    const Vector<Value*, 8>& phis() const LIFETIME_BOUND { return m_phis; }
 
 private:
     IndexMap<Value*, Vector<UpsilonValue*>> m_upsilons;

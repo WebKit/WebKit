@@ -236,7 +236,7 @@ SVGElement* SVGElement::viewportElement(ViewportElementType type) const
     // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwise.
     auto* node = parentNode();
     while (node) {
-        if (is<SVGSVGElement>(*node) || is<SVGImageElement>(*node))
+        if (isAnyOf<SVGSVGElement, SVGImageElement>(*node))
             return dynamicDowncast<SVGElement>(node);
 
         if (type == ViewportElementType::Any && node->hasTagName(SVGNames::symbolTag))
@@ -684,7 +684,7 @@ const RenderStyle* SVGElement::computedStyle(const std::optional<Style::PseudoEl
         return Element::computedStyle(pseudoElementIdentifier);
 
     const RenderStyle* parentStyle = nullptr;
-    if (RefPtr parent = parentOrShadowHostElement()) {
+    if (auto* parent = parentOrShadowHostElement()) {
         if (auto renderer = parent->renderer())
             parentStyle = &renderer->style();
     }

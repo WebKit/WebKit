@@ -58,7 +58,7 @@ MediaSessionManagerInterface::~MediaSessionManagerInterface()
     m_taskGroup.cancel();
 }
 
-static inline unsigned indexFromMediaType(PlatformMediaSession::MediaType type)
+static inline unsigned NODELETE indexFromMediaType(PlatformMediaSession::MediaType type)
 {
     return static_cast<unsigned>(type);
 }
@@ -557,15 +557,6 @@ void MediaSessionManagerInterface::setIsPlayingToAutomotiveHeadUnit(bool isPlayi
 
     ALWAYS_LOG(LOGIDENTIFIER, isPlayingToAutomotiveHeadUnit);
     m_isPlayingToAutomotiveHeadUnit = isPlayingToAutomotiveHeadUnit;
-}
-
-void MediaSessionManagerInterface::setSupportsSpatialAudioPlayback(bool supportsSpatialAudioPlayback)
-{
-    if (supportsSpatialAudioPlayback == m_supportsSpatialAudioPlayback)
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER, supportsSpatialAudioPlayback);
-    m_supportsSpatialAudioPlayback = supportsSpatialAudioPlayback;
 }
 
 void MediaSessionManagerInterface::addAudioCaptureSource(AudioCaptureSource& source)

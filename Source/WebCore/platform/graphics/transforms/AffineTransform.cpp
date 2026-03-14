@@ -96,7 +96,7 @@ double AffineTransform::yScale() const
     return std::hypot(m_transform[2], m_transform[3]);
 }
 
-static double det(const std::array<double, 6>& transform)
+static double NODELETE det(const std::array<double, 6>& transform)
 {
     return transform[0] * transform[3] - transform[1] * transform[2];
 }

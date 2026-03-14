@@ -60,7 +60,7 @@ template<> struct PathComputation<Polygon> { WebCore::Path operator()(const Poly
 template<> struct WindRuleComputation<Polygon> { WebCore::WindRule NODELETE operator()(const Polygon&); };
 
 template<> struct Blending<Polygon> {
-    auto canBlend(const Polygon&, const Polygon&) -> bool;
+    bool NODELETE canBlend(const Polygon&, const Polygon&);
     auto blend(const Polygon&, const Polygon&, const BlendingContext&) -> Polygon;
 };
 

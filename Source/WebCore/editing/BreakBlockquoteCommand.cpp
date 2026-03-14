@@ -74,7 +74,7 @@ void BreakBlockquoteCommand::doApply()
     if (!topBlockquote || !topBlockquote->parentNode())
         return;
 
-    auto breakNode = [&]() -> Ref<HTMLElement> {
+    auto breakNode = [&] -> Ref<HTMLElement> {
         auto lineBreak = HTMLBRElement::create(document());
         RefPtr containerNode = pos.containerNode();
         if (!containerNode || !containerNode->renderStyle())
@@ -99,7 +99,7 @@ void BreakBlockquoteCommand::doApply()
     // Instead, insert the break before the blockquote, unless the position is as the end of the quoted content.
     if (isFirstVisiblePositionInNode(visiblePos, topBlockquote.get()) && !isLastVisPosInNode) {
         insertNodeBefore(breakNode.copyRef(), *topBlockquote);
-        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), Affinity::Downstream, endingSelection().directionality()));
+        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode), Affinity::Downstream, endingSelection().directionality()));
         rebalanceWhitespace();   
         return;
     }
@@ -109,7 +109,7 @@ void BreakBlockquoteCommand::doApply()
 
     // If we're inserting the break at the end of the quoted content, we don't need to break the quote.
     if (isLastVisPosInNode) {
-        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), Affinity::Downstream, endingSelection().directionality()));
+        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode), Affinity::Downstream, endingSelection().directionality()));
         rebalanceWhitespace();
         return;
     }
@@ -206,7 +206,7 @@ void BreakBlockquoteCommand::doApply()
     addBlockPlaceholderIfNeeded(clonedBlockquote.ptr());
 
     // Put the selection right before br or at the first position in div.
-    auto beforeBROrFirstPositionInDiv = isAtomicNode(breakNode.ptr()) ? positionBeforeNode(breakNode.ptr()) : firstPositionInNode(breakNode.ptr());
+    auto beforeBROrFirstPositionInDiv = isAtomicNode(breakNode.ptr()) ? positionBeforeNode(breakNode) : firstPositionInNode(breakNode);
     setEndingSelection(VisibleSelection(beforeBROrFirstPositionInDiv, Affinity::Downstream, endingSelection().directionality()));
     rebalanceWhitespace();
 }

@@ -64,10 +64,9 @@ public:
 
     NodeKind kind() const override;
     StructureRole role() const { return m_role; }
-    StructureRole& role() { return m_role; }
+    StructureRole& role() LIFETIME_BOUND { return m_role; }
     Identifier& name() override { return m_name; }
-    Attribute::List& attributes() { return m_attributes; }
-    StructureMember::List& members() { return m_members; }
+    StructureMember::List& members() LIFETIME_BOUND { return m_members; }
     Structure* original() const { return m_original; }
     Structure* packed() const { return m_packed; }
     const Type* inferredType() const { return m_inferredType; }
@@ -79,10 +78,9 @@ public:
     unsigned alignment() const { return *m_alignment; }
 
 private:
-    Structure(SourceSpan span, Identifier&& name, StructureMember::List&& members, Attribute::List&& attributes, StructureRole role, Structure* original = nullptr)
+    Structure(SourceSpan span, Identifier&& name, StructureMember::List&& members, StructureRole role, Structure* original = nullptr)
         : Declaration(span)
         , m_name(WTF::move(name))
-        , m_attributes(WTF::move(attributes))
         , m_members(WTF::move(members))
         , m_role(role)
         , m_original(original)
@@ -96,7 +94,6 @@ private:
     }
 
     Identifier m_name;
-    Attribute::List m_attributes;
     StructureMember::List m_members;
     StructureRole m_role;
     Structure* m_original;

@@ -110,7 +110,7 @@ public:
     void removeFirstEventListenerCreatedFromMarkup(const AtomString& eventType);
     void copyEventListenersNotCreatedFromMarkupToTarget(EventTarget*);
     
-    template<typename Visitor> void visitJSEventListeners(Visitor&);
+    template<typename Visitor> void visitJSEventListenersInGCThread(Visitor&);
     Lock& lock() LIFETIME_BOUND { return m_lock; }
 
 private:
@@ -136,12 +136,12 @@ private:
 };
 
 template<typename Visitor>
-void EventListenerMap::visitJSEventListeners(Visitor& visitor)
+void EventListenerMap::visitJSEventListenersInGCThread(Visitor& visitor)
 {
     Locker locker { m_lock };
     for (auto& entry : m_entries) {
         for (auto& eventListener : entry.second)
-            eventListener->callback().visitJSFunction(visitor);
+            eventListener->callback().visitJSFunctionInGCThread(visitor);
     }
 }
 

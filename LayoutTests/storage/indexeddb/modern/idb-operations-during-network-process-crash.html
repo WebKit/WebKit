@@ -1,0 +1,143 @@
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+<body>
+<div id="description">
+This test verifies IndexedDB recovers after the network process is terminated
+while active operations are in progress. New indexedDB.open() calls should
+succeed without a page reload.
+</div>
+</body>
+<script>
+
+var db;
+var dbname = setDBNameFromPath() + Date.now();
+var objectStoreName = "testStore";
+var idbRef = window.indexedDB;
+
+// Phase 1: Open database and populate it with initial data.
+function setupDatabase()
+{
+    var request = indexedDB.open(dbname, 1);
+    request.onupgradeneeded = function(event) {
+        db = event.target.result;
+        db.createObjectStore(objectStoreName, { keyPath: "id" });
+    };
+
+    request.onsuccess = function(event) {
+        db = event.target.result;
+        debug("Database opened successfully");
+
+        var tx = db.transaction(objectStoreName, "readwrite");
+        tx.objectStore(objectStoreName).put({ id: "key1", value: "value1" });
+        tx.oncomplete = function() {
+            debug("Initial write completed, terminating network process");
+
+            // Keep db open and listen for onclose as crash signal.
+            db.onclose = function() {
+                debug("Database connection closed by crash");
+                attemptRecovery();
+            };
+
+            if (window.testRunner)
+                testRunner.terminateNetworkProcess();
+        };
+    };
+
+    request.onerror = function(event) {
+        testFailed("Failed to open database: " + event.target.error);
+        finishJSTest();
+    };
+}
+
+// Phase 2: After the crash, attempt to use IndexedDB again WITHOUT reloading.
+function attemptRecovery()
+{
+    debug("Attempting recovery without page reload");
+
+    // Verify window.indexedDB identity.
+    if (idbRef !== window.indexedDB) {
+        testFailed("window.indexedDB returned a different object after crash");
+        finishJSTest();
+        return;
+    }
+    testPassed("window.indexedDB is the same object after crash");
+
+    // Test A: Existing db handle should be dead.
+    try {
+        db.transaction(objectStoreName, "readonly");
+        testFailed("Test A: Transaction on dead connection should have thrown");
+    } catch (e) {
+        testPassed("Test A: Existing connection is dead (" + e.name + ")");
+    }
+
+    // Test B: Re-open the same database with a fresh indexedDB.open().
+    var request = indexedDB.open(dbname, 1);
+    request.onsuccess = function(event) {
+        var newDb = event.target.result;
+        var tx = newDb.transaction(objectStoreName, "readonly");
+        var getReq = tx.objectStore(objectStoreName).get("key1");
+
+        tx.oncomplete = function() {
+            if (getReq.result && getReq.result.value === "value1")
+                testPassed("Test B: Re-opened database and read back data");
+            else
+                testFailed("Test B: Data mismatch: " + JSON.stringify(getReq.result));
+            newDb.close();
+            attemptNewDatabaseOpen();
+        };
+
+        tx.onerror = function(event) {
+            testFailed("Test B: Transaction error: " + event.target.error);
+            newDb.close();
+            attemptNewDatabaseOpen();
+        };
+    };
+
+    request.onerror = function(event) {
+        testFailed("Test B: Failed to re-open database: " + event.target.error);
+        attemptNewDatabaseOpen();
+    };
+}
+
+// Test C: Open an entirely new database.
+function attemptNewDatabaseOpen()
+{
+    var newDbName = dbname + "-recovery";
+    var request = indexedDB.open(newDbName, 1);
+
+    request.onupgradeneeded = function(event) {
+        event.target.result.createObjectStore("recoveryStore", { keyPath: "id" });
+    };
+
+    request.onsuccess = function(event) {
+        var newDb = event.target.result;
+        var tx = newDb.transaction("recoveryStore", "readwrite");
+        tx.objectStore("recoveryStore").put({ id: "test", value: "recovery-succeeded" });
+
+        tx.oncomplete = function() {
+            testPassed("Test C: Created and wrote to a brand new database");
+            newDb.close();
+            finishJSTest();
+        };
+
+        tx.onerror = function(event) {
+            testFailed("Test C: Write error: " + event.target.error);
+            newDb.close();
+            finishJSTest();
+        };
+    };
+
+    request.onerror = function(event) {
+        testFailed("Test C: Failed to open new database: " + event.target.error);
+        finishJSTest();
+    };
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+setupDatabase();
+
+</script>

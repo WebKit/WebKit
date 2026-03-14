@@ -386,13 +386,13 @@ static RefPtr<HTMLInputElement> asFileInput(Node& node)
 
 static bool isEnabledColorInput(Node& node)
 {
-    RefPtr input = dynamicDowncast<HTMLInputElement>(node);
+    auto* input = dynamicDowncast<HTMLInputElement>(node);
     return input && input->isColorControl() && !input->isDisabledFormControl();
 }
 
 static bool isInShadowTreeOfEnabledColorInput(Node& node)
 {
-    RefPtr host = node.shadowHost();
+    auto* host = node.shadowHost();
     return host && isEnabledColorInput(*host);
 }
 
@@ -477,7 +477,7 @@ DragHandlingMethod DragController::tryDocumentDrag(LocalFrame& frame, const Drag
         }
         
         if (!m_fileInputElementUnderMouse)
-            protect(m_page)->dragCaretController().setCaretPosition(m_documentUnderMouse->frame()->visiblePositionForPoint(point));
+            m_page->dragCaretController().setCaretPosition(m_documentUnderMouse->frame()->visiblePositionForPoint(point));
         else
             clearDragCaret();
 
@@ -781,7 +781,7 @@ static bool imageElementIsDraggable(const HTMLImageElement& image, const LocalFr
     if (!renderImage)
         return false;
 
-    CachedResourceHandle cachedImage = renderImage->cachedImage();
+    RefPtr cachedImage = renderImage->cachedImage();
     return cachedImage && !cachedImage->errorOccurred() && cachedImage->imageForRenderer(renderImage.get());
 }
 
@@ -854,7 +854,7 @@ RefPtr<Element> DragController::draggableElement(const LocalFrame* sourceFrame, 
                 return element;
             }
 #if ENABLE(ATTACHMENT_ELEMENT)
-            if (RefPtr attachment = dynamicDowncast<HTMLAttachmentElement>(*element); attachment
+            if (auto* attachment = dynamicDowncast<HTMLAttachmentElement>(*element); attachment
                 && m_dragSourceAction.contains(DragSourceAction::Attachment)
                 && attachment->file()) {
                 state.type.add(DragSourceAction::Attachment);
@@ -888,7 +888,7 @@ static CachedImage* getCachedImage(Element& element)
 
 static Image* getImage(Element& element)
 {
-    CachedResourceHandle cachedImage = getCachedImage(element);
+    RefPtr cachedImage = getCachedImage(element);
     // Don't use cachedImage->imageForRenderer() here as that may return BitmapImages for cached SVG Images.
     // Users of getImage() want access to the SVGImage, in order to figure out the filename extensions,
     // which would be empty when asking the cached BitmapImages.
@@ -1347,7 +1347,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         float dy = scale * (originY - mouseDownPoint.y());
         scaledOrigin = IntPoint((int)(dx + 0.5), (int)(dy + 0.5));
     } else {
-        if (CachedResourceHandle cachedImage = getCachedImage(element)) {
+        if (RefPtr cachedImage = getCachedImage(element)) {
             dragImage = DragImage { createDragImageIconForCachedImageFilename(cachedImage->response().suggestedFilename()) };
             if (dragImage) {
                 dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page->deviceScaleFactor()) };
@@ -1383,9 +1383,9 @@ void DragController::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPo
 
 static RefPtr<Element> containingLinkElement(Element& element)
 {
-    for (Ref currentElement : lineageOfType<Element>(element)) {
-        if (currentElement->isLink())
-            return currentElement;
+    for (auto& currentElement : lineageOfType<Element>(element)) {
+        if (currentElement.isLink())
+            return &currentElement;
     }
     return nullptr;
 }
@@ -1423,7 +1423,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
                 dragPreviewSize = dataTransferImageElement->boundsInRootViewSpace().size();
             else {
                 dragPreviewSize = dragImageSize(item.image.get());
-                if (RefPtr page = frame.page())
+                if (auto* page = frame.page())
                     dragPreviewSize.scale(1 / page->deviceScaleFactor());
             }
             item.dragPreviewFrameInRootViewCoordinates = { dragLocationInRootViewCoordinates, WTF::move(dragPreviewSize) };
@@ -1604,7 +1604,7 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
         return;
     IntPoint framePoint = frameView->windowToContents(windowPoint);
 
-    protect(m_page)->dragCaretController().setCaretPosition(frame->visiblePositionForPoint(framePoint));
+    m_page->dragCaretController().setCaretPosition(frame->visiblePositionForPoint(framePoint));
 }
 
 bool DragController::shouldUseCachedImageForDragImage(const Image& image) const

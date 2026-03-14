@@ -172,9 +172,9 @@ private:
 
     RequestAction getRequestAction(const UserMediaPermissionRequestProxy&);
 
-    bool wasGrantedVideoOrAudioAccess(WebCore::FrameIdentifier);
-    bool wasGrantedAudioAccess(WebCore::FrameIdentifier);
-    bool wasGrantedVideoAccess(WebCore::FrameIdentifier);
+    bool NODELETE wasGrantedVideoOrAudioAccess(WebCore::FrameIdentifier);
+    bool NODELETE wasGrantedAudioAccess(WebCore::FrameIdentifier);
+    bool NODELETE wasGrantedVideoAccess(WebCore::FrameIdentifier);
 
     void computeFilteredDeviceList(WebCore::FrameIdentifier, WebCore::PermissionState, WebCore::PermissionState, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
     void platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);

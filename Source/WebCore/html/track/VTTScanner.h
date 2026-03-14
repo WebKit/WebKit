@@ -105,7 +105,7 @@ public:
     // Scan the character |c|.
     bool NODELETE scan(char);
     // Scan the first |charactersCount| characters of the string |characters|.
-    bool scan(std::span<const Latin1Character> characters);
+    bool NODELETE scan(std::span<const Latin1Character> characters);
 
     // Skip (advance the input pointer) as long as the specified
     // |characterPredicate| returns true, and the input pointer is not passed
@@ -129,7 +129,7 @@ public:
 
     // Scan the string |toMatch|, using the specified |run| as the sequence to
     // match against.
-    bool scanRun(const Run&, const String& toMatch);
+    bool NODELETE scanRun(const Run&, const String& toMatch);
 
     // Skip to the end of the specified |run|.
     void NODELETE skipRun(const Run&);

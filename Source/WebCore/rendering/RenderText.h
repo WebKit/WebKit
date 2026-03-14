@@ -62,24 +62,24 @@ public:
 
     WEBCORE_EXPORT Text* NODELETE textNode() const;
 
-    const RenderStyle& style() const;
+    const RenderStyle& style() const LIFETIME_BOUND;
 
-    const RenderStyle& firstLineStyle() const;
-    const RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&, const RenderStyle* parentStyle = nullptr) const;
+    const RenderStyle& firstLineStyle() const LIFETIME_BOUND;
+    const RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&, const RenderStyle* parentStyle = nullptr) const LIFETIME_BOUND;
 
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
     Color selectionEmphasisMarkColor() const;
     std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
 
-    const RenderStyle* spellingErrorPseudoStyle() const;
-    const RenderStyle* grammarErrorPseudoStyle() const;
-    const RenderStyle* targetTextPseudoStyle() const;
+    const RenderStyle* spellingErrorPseudoStyle() const LIFETIME_BOUND;
+    const RenderStyle* grammarErrorPseudoStyle() const LIFETIME_BOUND;
+    const RenderStyle* targetTextPseudoStyle() const LIFETIME_BOUND;
 
     virtual String originalText() const;
 
 
-    const String& text() const { return m_text; }
+    const String& text() const LIFETIME_BOUND { return m_text; }
     String textWithoutConvertingBackslashToYenSymbol() const;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
@@ -157,7 +157,7 @@ public:
 
     void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
-    bool containsOnlyCollapsibleWhitespace() const;
+    bool NODELETE containsOnlyCollapsibleWhitespace() const;
 
     FontCascade::CodePath fontCodePath() const { return m_fontCodePath; }
     bool canUseSimpleFontCodePath() const { return fontCodePath() == FontCascade::CodePath::Simple; }
@@ -170,9 +170,9 @@ public:
     void setCandidateComputedTextSize(float size) { m_candidateComputedTextSize = size; }
 #endif
 
-    StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
+    StringView NODELETE stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     
-    bool containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
+    bool NODELETE containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
 
     Vector<std::pair<unsigned, unsigned>> contentRangesBetweenOffsetsForType(const DocumentMarkerType, unsigned startOffset, unsigned endOffset) const;
 

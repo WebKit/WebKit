@@ -78,7 +78,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
 }
 #endif
 
-static ThreadSafeWeakHashSet<MockRealtimeVideoSource>& allMockRealtimeVideoSource()
+static ThreadSafeWeakHashSet<MockRealtimeVideoSource>& NODELETE allMockRealtimeVideoSource()
 {
     static NeverDestroyed<ThreadSafeWeakHashSet<MockRealtimeVideoSource>> videoSources;
     return videoSources;

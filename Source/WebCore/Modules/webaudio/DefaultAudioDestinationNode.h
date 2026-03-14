@@ -57,7 +57,7 @@ public:
 
     void setMuted(bool muted) { m_muted = muted; }
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
-    bool isConnected() const;
+    bool NODELETE isConnected() const;
 
 #if PLATFORM(IOS_FAMILY)
     void setSceneIdentifier(const String&) final;

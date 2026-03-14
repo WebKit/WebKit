@@ -59,7 +59,7 @@ struct ClientState {
     {
     }
 
-    bool operator==(const ClientState& other) const
+    bool NODELETE operator==(const ClientState& other) const
     {
         return contextId == other.contextId && &client == &other.client;
     }

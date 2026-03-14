@@ -95,7 +95,7 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCa
 
 RenderTreeUpdater::~RenderTreeUpdater() = default;
 
-static RefPtr<Element> findRenderingAncestor(Node& node)
+static RefPtr<Element> NODELETE findRenderingAncestor(Node& node)
 {
     for (SUPPRESS_UNCOUNTED_LOCAL auto& ancestor : composedTreeAncestors(node)) {
         if (ancestor.renderer())
@@ -255,7 +255,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         if (auto* renderer = node->renderer())
             renderTreePosition().invalidateNextSibling(*renderer);
-        else if (RefPtr element = dynamicDowncast<Element>(node.get()); element && element->hasDisplayContents())
+        else if (auto* element = dynamicDowncast<Element>(node.get()); element && element->hasDisplayContents())
             renderTreePosition().invalidateNextSibling();
 
         if (RefPtr text = dynamicDowncast<Text>(node.get())) {

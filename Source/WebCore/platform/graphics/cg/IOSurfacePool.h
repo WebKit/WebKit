@@ -93,7 +93,7 @@ private:
     // they can't be immediately returned when requested (but will be freed up in the future).
     static constexpr size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
     
-    bool shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
+    bool NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
     void willAddSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
     void didRemoveSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
@@ -114,7 +114,7 @@ private:
 
     void discardAllSurfacesInternal() WTF_REQUIRES_LOCK(m_lock);
 
-    String poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
+    String NODELETE poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
     RunLoop::Timer m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);

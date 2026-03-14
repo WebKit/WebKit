@@ -290,7 +290,7 @@ void PageClientImpl::pageClosed()
 
 void PageClientImpl::scrollingCoordinatorWasCreated()
 {
-    protect(m_impl)->scrollingCoordinatorWasCreated();
+    m_impl->scrollingCoordinatorWasCreated();
 }
 
 void PageClientImpl::didRelaunchProcess()
@@ -1101,7 +1101,7 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
 
 bool PageClientImpl::effectiveUserInterfaceLevelIsElevated() const
 {
-    return protect(m_impl)->effectiveUserInterfaceLevelIsElevated();
+    return m_impl->effectiveUserInterfaceLevelIsElevated();
 }
 
 bool PageClientImpl::useFormSemanticContext() const

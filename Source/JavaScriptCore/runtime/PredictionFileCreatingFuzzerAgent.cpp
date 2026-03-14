@@ -62,7 +62,7 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
     case op_call_varargs:
     case op_tail_call:
     case op_tail_call_varargs:
-        dataLogF("%s:%" PRIx64 "\n", predictionTarget.lookupKey.utf8().data(), original);
+        SAFE_DATALOGF("%s:%" PRIx64 "\n", predictionTarget.lookupKey.utf8(), original);
         break;
 
     default:

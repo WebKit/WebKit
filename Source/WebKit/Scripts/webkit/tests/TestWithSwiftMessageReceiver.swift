@@ -22,7 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-internal import WebKit_Internal
+import WebKit_Internal
 
 #if compiler(>=6.2)
 

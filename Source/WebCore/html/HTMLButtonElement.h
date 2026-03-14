@@ -36,7 +36,7 @@ public:
     static Ref<HTMLButtonElement> create(const QualifiedName&, Document&, HTMLFormElement*);
     static Ref<HTMLButtonElement> create(Document&);
     
-    const AtomString& value() const;
+    const AtomString& NODELETE value() const;
     const AtomString& command() const;
 
     RefPtr<Element> commandForElement() const;

@@ -73,6 +73,9 @@ media/media-source/remoteplayback-from-source-element.html [ Pass ]
 # Prior Tahoe, attempting to paint stereo MV-HEVC either errors or crashes.
 [ Sonoma Sequoia ] media/media-source/media-source-paint-stereo-to-canvas.html [ Skip ]
 
+# EWS doesn't have Spatial Audio Playback supported output. Will work on macbooks.
+media/mediacapabilities/mediacapabilities-decodingInfo-spatialRendering.html [ Failure ]
+
 # macOS 14 and above support word-break: auto-phrase.
 # Individually failing tests should be marked in separate expectations.
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Pass ]
@@ -742,8 +745,6 @@ imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [
 
 ## --- End W3C Imported Media Source Tests
 
-# <rdar://problem/18858636>
-media/media-source/media-source-init-segment-duration.html
 # --- End Media Source Tests ---
 
 # --- Start WebVTT Tests ---
@@ -1453,6 +1454,8 @@ webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Skip ]
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Skip ]
 
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-decorations.html [ ImageOnlyFailure ]
+
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
 
 webkit.org/b/206604 animations/animation-welcome-safari.html [ Pass Failure ]
@@ -1619,6 +1622,9 @@ http/tests/media/hls/video-cookie.html [ Skip ]
 webkit.org/b/228189 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Pass Timeout ]
 
 webkit.org/b/230411 http/tests/media/hls/video-controller-getStartDate.html [ Pass Failure ]
+
+# HLS stream fails to become ready to play on headless bots
+http/tests/media/hls/hls-limit-play-rate.html
 
 # rdar://65641438 ([WebGL2] tex-srgb-mipmap test fails on macOS Intel + iOS (but passes on macOS Apple Silicon) (214392))
 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Failure ]
@@ -1911,13 +1917,6 @@ webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-default-feature-policy.https.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Pass Failure ]
 
-# These tests are flaky due to "Blocked access to external URL" messages because we don't support WPT domains.
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ Failure Pass ]
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html [ Failure Pass ]
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Failure Pass ]
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html [ Failure Pass ]
-imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html [ Failure Pass ]
-
 webkit.org/b/245092 webaudio/offlineaudiocontext-gc.html [ Pass Failure ]
 
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
@@ -1964,7 +1963,6 @@ webkit.org/b/254044 webxr [ Skip ]
 webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
 webkit.org/b/254044 http/tests/webxr [ Skip ]
 webkit.org/b/254044 http/wpt/webxr [ Skip ]
-webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html [ Skip ]
 
 webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
 
@@ -2413,8 +2411,6 @@ webkit.org/b/299322 imported/w3c/web-platform-tests/uievents/mouse/mouse_boundar
 
 [ x86_64 ] imported/w3c/web-platform-tests/svg/fonts/font-size-adjust-scale-text.svg [ Failure Pass ]
 
-webkit.org/b/300137 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Pass Failure ]
-
 webkit.org/b/300337 fast/images/imagebitmap-memory.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/300715
@@ -2501,3 +2497,7 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-r
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-x.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-y.html [ Skip ]
+
+# Cocoa platforms use data URLs for pasted images; blob URL tests are for Glib ports
+editing/pasteboard/paste-image-as-blob-url.html [ Skip ]
+editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Skip ]

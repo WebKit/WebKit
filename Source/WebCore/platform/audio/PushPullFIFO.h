@@ -60,7 +60,7 @@ public:
 
     size_t framesAvailable() const { return m_framesAvailable; }
     size_t length() const { return m_fifoLength; }
-    unsigned numberOfChannels() const;
+    unsigned NODELETE numberOfChannels() const;
     AudioBus& bus() const { return m_fifoBus.get(); }
 
 private:

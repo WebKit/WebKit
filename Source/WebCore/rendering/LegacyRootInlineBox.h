@@ -73,8 +73,8 @@ public:
     }
 
     RenderObject::HighlightState selectionState() const final;
-    const LegacyInlineBox* firstSelectedBox() const;
-    const LegacyInlineBox* lastSelectedBox() const;
+    const LegacyInlineBox* firstSelectedBox() const LIFETIME_BOUND;
+    const LegacyInlineBox* lastSelectedBox() const LIFETIME_BOUND;
 
     void NODELETE removeLineBoxFromRenderObject() final;
 

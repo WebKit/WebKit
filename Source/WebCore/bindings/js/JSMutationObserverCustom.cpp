@@ -40,12 +40,12 @@ namespace WebCore {
 using namespace JSC;
 
 template<typename Visitor>
-void JSMutationObserver::visitAdditionalChildren(Visitor& visitor)
+void JSMutationObserver::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().callback().visitJSFunction(visitor);
+    wrapped().callback().visitJSFunctionInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMutationObserver);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSMutationObserver);
 
 bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {

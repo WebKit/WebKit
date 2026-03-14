@@ -108,8 +108,9 @@
           if (activateMe !== "activate me!") {
             throw new Error("Expected an activate request:" + activateMe);
           }
+          const resultPromise = waitFor(window, "message");
           await userActivation(iframe);
-          const { data } = await waitFor(window, "message");
+          const { data } = await resultPromise;
           const { exceptionMessage, exceptionName, result } = data;
           const msg = `iframe src: "${iframe.src}" with allow="${
             iframe.allow

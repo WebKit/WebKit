@@ -68,13 +68,13 @@ public:
     WEBCORE_EXPORT static Ref<Pattern> create(SourceImage&& tileImage, const Parameters& = { });
     WEBCORE_EXPORT ~Pattern();
 
-    WEBCORE_EXPORT const SourceImage& tileImage() const;
+    WEBCORE_EXPORT const SourceImage& NODELETE tileImage() const;
     WEBCORE_EXPORT void setTileImage(SourceImage&&);
 
     WEBCORE_EXPORT RefPtr<NativeImage> tileNativeImage() const;
     WEBCORE_EXPORT RefPtr<ImageBuffer> tileImageBuffer() const;
 
-    const Parameters& parameters() const { return m_parameters; }
+    const Parameters& parameters() const LIFETIME_BOUND { return m_parameters; }
 
     // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransform'
 #if USE(SKIA)
@@ -83,7 +83,7 @@ public:
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform) const;
 #endif
 
-    void setPatternSpaceTransform(const AffineTransform&);
+    void NODELETE setPatternSpaceTransform(const AffineTransform&);
 
     const AffineTransform& patternSpaceTransform() const { return m_parameters.patternSpaceTransform; };
     bool repeatX() const { return m_parameters.repeatX; }

@@ -47,8 +47,8 @@ public:
     }
 
     bool didEmitFastPath() const { return m_didEmitFastPath; }
-    CCallHelpers::JumpList& endJumpList() { return m_endJumpList; }
-    CCallHelpers::JumpList& slowPathJumpList() { return m_slowPathJumpList; }
+    CCallHelpers::JumpList& endJumpList() LIFETIME_BOUND { return m_endJumpList; }
+    CCallHelpers::JumpList& slowPathJumpList() LIFETIME_BOUND { return m_slowPathJumpList; }
 
 protected:
     SnippetOperand m_leftOperand;

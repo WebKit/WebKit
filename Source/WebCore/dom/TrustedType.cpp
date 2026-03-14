@@ -52,7 +52,7 @@ namespace WebCore {
 using namespace JSC;
 
 struct TrustedTypeVisitor {
-    String operator()(std::monostate)
+    String NODELETE operator()(std::monostate)
     {
         return nullString();
     }
@@ -60,7 +60,7 @@ struct TrustedTypeVisitor {
     {
         return nullString();
     }
-    String operator()(const Ref<TrustedHTML>& value)
+    String NODELETE operator()(const Ref<TrustedHTML>& value)
     {
         return value->toString();
     }

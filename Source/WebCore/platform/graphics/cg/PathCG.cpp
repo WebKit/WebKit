@@ -577,7 +577,7 @@ bool PathCG::contains(const FloatPoint &point, WindRule rule) const
     return CGPathContainsPoint(path.get(), nullptr, point, rule == WindRule::EvenOdd);
 }
 
-static size_t putBytesNowhere(void*, const void*, size_t count)
+static size_t NODELETE putBytesNowhere(void*, const void*, size_t count)
 {
     return count;
 }

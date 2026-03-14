@@ -75,7 +75,7 @@ public:
         : m_location(topLeft), m_size(FloatSize(bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y())) { }
     WEBCORE_EXPORT FloatRect(const IntRect&);
 
-    static FloatRect narrowPrecision(double x, double y, double width, double height);
+    static FloatRect NODELETE narrowPrecision(double x, double y, double width, double height);
 
     constexpr FloatPoint location() const { return m_location; }
     constexpr FloatSize size() const { return m_size; }
@@ -99,7 +99,7 @@ public:
 
     constexpr bool isEmpty() const { return m_size.isEmpty(); }
     constexpr bool isZero() const { return m_size.isZero(); }
-    bool isExpressibleAsIntRect() const;
+    bool NODELETE isExpressibleAsIntRect() const;
 
     constexpr FloatPoint center() const { return location() + size() / 2; }
 
@@ -182,9 +182,9 @@ public:
     constexpr FloatPoint minXMaxYCorner() const { return FloatPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
     constexpr FloatPoint maxXMaxYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
 
-    WEBCORE_EXPORT bool intersects(const FloatRect&) const;
-    WEBCORE_EXPORT bool inclusivelyIntersects(const FloatRect&) const;
-    WEBCORE_EXPORT bool contains(const FloatRect&) const;
+    WEBCORE_EXPORT bool NODELETE intersects(const FloatRect&) const;
+    WEBCORE_EXPORT bool NODELETE inclusivelyIntersects(const FloatRect&) const;
+    WEBCORE_EXPORT bool NODELETE contains(const FloatRect&) const;
     WEBCORE_EXPORT bool contains(const FloatPoint&, ContainsMode = InsideOrOnStroke) const;
 
     WEBCORE_EXPORT void intersect(const FloatRect&);
@@ -216,7 +216,7 @@ public:
     void inflate(float dx, float dy, float dmaxX, float dmaxY);
 
     void scale(float s) { scale(s, s); }
-    WEBCORE_EXPORT void scale(float sx, float sy);
+    WEBCORE_EXPORT void NODELETE scale(float sx, float sy);
     void scale(FloatSize size) { scale(size.width(), size.height()); }
 
     constexpr FloatRect transposedRect() const { return FloatRect(m_location.transposedPoint(), m_size.transposedSize()); }

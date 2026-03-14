@@ -41,7 +41,6 @@
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
-#include <Commctrl.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/Document.h>
 #include <WebCore/Editor.h>
@@ -52,6 +51,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Region.h>
 #include <WebCore/WindowMessageBroadcaster.h>
+#include <commctrl.h>
 #include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/text/StringBuffer.h>

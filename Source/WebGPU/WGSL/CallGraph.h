@@ -52,8 +52,8 @@ public:
         String originalName;
     };
 
-    const Vector<EntryPoint>& entrypoints() const { return m_entrypoints; }
-    const Vector<Callee>& callees(AST::Function& function) const { return m_calleeMap.find(&function)->value; }
+    const Vector<EntryPoint>& entrypoints() const LIFETIME_BOUND { return m_entrypoints; }
+    const Vector<Callee>& callees(AST::Function& function) const LIFETIME_BOUND { return m_calleeMap.find(&function)->value; }
 
 private:
     CallGraph() { }

@@ -27,6 +27,7 @@
 #include "Frame.h"
 
 #include "ContainerNodeInlines.h"
+#include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLFrameOwnerElement.h"
@@ -201,7 +202,7 @@ std::optional<uint64_t> Frame::indexInFrameTreeSiblings() const
         return std::nullopt;
 
     for (uint64_t i = 0; i < tree().parent()->tree().childCount(); i++) {
-        if (RefPtr child = tree().parent()->tree().child(i); child->frameID() == this->frameID())
+        if (auto* child = tree().parent()->tree().child(i); child->frameID() == this->frameID())
             return i;
     }
 
@@ -226,7 +227,7 @@ Vector<uint64_t> Frame::pathToFrame() const
 
 RenderWidget* Frame::ownerRenderer() const
 {
-    RefPtr ownerElement = this->ownerElement();
+    auto* ownerElement = this->ownerElement();
     if (!ownerElement)
         return nullptr;
     // FIXME: If <object> is ever fixed to disassociate itself from frames
@@ -250,7 +251,7 @@ void Frame::updateOpener(Frame& newOpener, NotifyUIProcess notifyUIProcess)
     if (m_opener)
         m_opener->m_openedFrames.remove(*this);
     newOpener.m_openedFrames.add(*this);
-    if (RefPtr page = this->page())
+    if (auto* page = this->page())
         page->setOpenedByDOMWithOpener(true);
     m_opener = newOpener;
 
@@ -393,7 +394,7 @@ float Frame::frameScaleFactor() const
         auto rootZoom = 1.0;
 
         // FIXME: maybe pageZoomFactor should be available in remote frames?
-        if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
             rootZoom = localMainFrame->pageZoomFactor();
 
         if (RefPtr parentFrame = tree().parent())

@@ -96,7 +96,7 @@ void ExtensionStyleSheets::clearPageUserSheet()
 {
     if (m_pageUserSheet) {
         m_pageUserSheet = nullptr;
-        protect(m_document)->styleScope().didChangeExtensionStyleSheets();
+        m_document->styleScope().didChangeExtensionStyleSheets();
     }
 }
 
@@ -104,7 +104,7 @@ void ExtensionStyleSheets::updatePageUserSheet()
 {
     clearPageUserSheet();
     if (pageUserSheet())
-        protect(m_document)->styleScope().didChangeExtensionStyleSheets();
+        m_document->styleScope().didChangeExtensionStyleSheets();
 }
 
 const Vector<Ref<CSSStyleSheet>>& ExtensionStyleSheets::injectedUserStyleSheets() const
@@ -210,7 +210,7 @@ bool ExtensionStyleSheets::hasCachedInjectedStyleSheets() const
 void ExtensionStyleSheets::invalidateInjectedStyleSheetCache()
 {
     m_injectedStyleSheetCacheValid = false;
-    protect(m_document)->styleScope().didChangeExtensionStyleSheets();
+    m_document->styleScope().didChangeExtensionStyleSheets();
 }
 
 void ExtensionStyleSheets::addUserStyleSheet(Ref<StyleSheetContents>&& userSheet)

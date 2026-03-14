@@ -198,11 +198,7 @@ public:
     bool hasAccNameAttribute() const;
     bool hasAttributesRequiredForInclusion() const final;
     bool hasClickHandler() const final;
-    bool hasCursorPointer() const final
-    {
-        CheckedPtr style = this->style();
-        return style && style->cursorType() == CursorType::Pointer && style->pointerEvents() != PointerEvents::None;
-    }
+    inline bool hasCursorPointer() const final; // Defined in AccessibilityNodeObjectInlines.h
     bool showsCursorOnHover() const final;
     bool hasPointerEventsNone() const final;
 

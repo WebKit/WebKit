@@ -51,32 +51,26 @@ static void ensureVideoTrackDebugCategoryInitialized()
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
-    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTF::move(pad), shouldHandleStreamStartEvent)
-    , m_player(WTF::move(player))
+    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Video, this, index, WTF::move(pad), shouldHandleStreamStartEvent)
 {
     ensureVideoTrackDebugCategoryInitialized();
-    installUpdateConfigurationHandlers();
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
-    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTF::move(pad), trackId)
-    , m_player(WTF::move(player))
+    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Video, this, index, WTF::move(pad), trackId)
 {
     ensureVideoTrackDebugCategoryInitialized();
-    installUpdateConfigurationHandlers();
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
-    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, stream)
-    , m_player(WTF::move(player))
+    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Video, this, index, stream)
 {
     ensureVideoTrackDebugCategoryInitialized();
-    installUpdateConfigurationHandlers();
 
-    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
+    auto caps = adoptGRef(gst_stream_get_caps(m_data->m_stream.get()));
     updateConfigurationFromCaps(WTF::move(caps));
 
-    auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
+    auto tags = adoptGRef(gst_stream_get_tags(m_data->m_stream.get()));
     updateConfigurationFromTags(WTF::move(tags));
 }
 
@@ -85,7 +79,7 @@ void VideoTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&
     ASSERT(isMainThread());
     updateConfigurationFromCaps(WTF::move(caps));
 
-    RefPtr player = m_player.get();
+    RefPtr player = m_data->m_player.get();
     if (!player)
         return;
 
@@ -94,7 +88,7 @@ void VideoTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&
         return;
 
     auto configuration = this->configuration();
-    GST_DEBUG_OBJECT(objectForLogging(), "Setting codec to %s", codec.ascii().data());
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Setting codec to %s", codec.ascii().data());
     configuration.codec = WTF::move(codec);
     setConfiguration(WTF::move(configuration));
 }
@@ -102,13 +96,13 @@ void VideoTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&
 void VideoTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>&& tags)
 {
     ASSERT(isMainThread());
-    GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, tags.get());
     if (!tags)
         return;
 
-    if (updateTrackIDFromTags(tags)) {
-        GST_DEBUG_OBJECT(objectForLogging(), "Video track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_trackID);
-        notifyClients([trackID = *m_trackID](auto& client) {
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, tags.get());
+    if (m_data->updateTrackIDFromTags(tags)) {
+        GST_DEBUG_OBJECT(m_data->objectForLogging(), "Video track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_data->m_trackID);
+        notifyClients([trackID = *m_data->m_trackID](auto& client) {
             client.idChanged(trackID);
         });
     }
@@ -117,7 +111,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>
     if (!gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
         return;
 
-    GST_DEBUG_OBJECT(objectForLogging(), "Setting bitrate to %u", bitrate);
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Setting bitrate to %u", bitrate);
     auto configuration = this->configuration();
     configuration.bitrate = bitrate;
     setConfiguration(WTF::move(configuration));
@@ -129,7 +123,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
     if (!caps || !gst_caps_is_fixed(caps.get()))
         return;
 
-    GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, caps.get());
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, caps.get());
     auto configuration = this->configuration();
     auto scopeExit = makeScopeExit([&] {
         setConfiguration(WTF::move(configuration));
@@ -173,23 +167,10 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
 {
-    if (m_stream && gst_stream_get_stream_flags(m_stream.get()) & GST_STREAM_FLAG_SELECT)
+    if (m_data->m_stream && gst_stream_get_stream_flags(m_data->m_stream.get()) & GST_STREAM_FLAG_SELECT)
         return VideoTrackPrivate::Kind::Main;
 
     return VideoTrackPrivate::kind();
-}
-
-void VideoTrackPrivateGStreamer::disconnect()
-{
-    m_taskQueue.startAborting();
-
-    if (m_stream)
-        g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-
-    m_player = nullptr;
-    TrackPrivateBaseGStreamer::disconnect();
-
-    m_taskQueue.finishAborting();
 }
 
 void VideoTrackPrivateGStreamer::setSelected(bool selected)
@@ -198,14 +179,44 @@ void VideoTrackPrivateGStreamer::setSelected(bool selected)
         return;
     VideoTrackPrivate::setSelected(selected);
 
-    RefPtr player = m_player.get();
-    if (player) {
-        // On MSE, the player holds its own set of tracks, independent from the ones SourceBuffer
-        // reported to HTMLMediaElement. We need to synchronize the enabled status of the player
-        // mirror when the element one changed. Fortunately, both share the same trackId.
-        player->mirrorEnabledVideoTrackIfNeeded(*this);
-        player->updateEnabledVideoTrack();
-    }
+    RefPtr player = m_data->m_player.get();
+    if (!player)
+        return;
+
+    // On MSE, the player holds its own set of tracks, independent from the ones SourceBuffer
+    // reported to HTMLMediaElement. We need to synchronize the enabled status of the player
+    // mirror when the element one changed. Fortunately, both share the same trackId.
+    player->mirrorEnabledVideoTrackIfNeeded(*this);
+    player->updateEnabledVideoTrack();
+}
+
+int VideoTrackPrivateGStreamer::trackIndex() const
+{
+    return m_data->m_index;
+}
+
+TrackID VideoTrackPrivateGStreamer::id() const
+{
+    return m_data->m_trackID.value_or(m_data->m_id);
+}
+
+std::optional<String> VideoTrackPrivateGStreamer::trackUID() const
+{
+    auto player = m_data->m_player.get();
+    if (player && player->isMediaStreamPlayer())
+        return m_data->m_gstStreamId;
+
+    return std::nullopt;
+}
+
+String VideoTrackPrivateGStreamer::label() const
+{
+    return m_data->m_label;
+}
+
+String VideoTrackPrivateGStreamer::language() const
+{
+    return m_data->m_language;
 }
 
 #undef GST_CAT_DEFAULT

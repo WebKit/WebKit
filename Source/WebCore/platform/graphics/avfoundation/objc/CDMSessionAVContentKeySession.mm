@@ -372,7 +372,11 @@ RefPtr<ArrayBuffer> CDMSessionAVContentKeySession::cachedKeyForKeyID(const Strin
 
 bool CDMSessionAVContentKeySession::isAnyKeyUsable(const Keys& keys) const
 {
-    auto requestKeys = CDMPrivateFairPlayStreaming::keyIDsForRequest(contentKeyRequest().get());
+    RetainPtr request = contentKeyRequest();
+    if (![request contentKey])
+        return false;
+
+    auto requestKeys = CDMPrivateFairPlayStreaming::keyIDsForRequest(request.get());
     for (auto& requestKey : requestKeys) {
         if (keys.containsIf([&](auto& key) { return arePointingToEqualData(key, requestKey); }))
             return true;
@@ -384,6 +388,8 @@ void CDMSessionAVContentKeySession::attachContentKeyToSample(const MediaSampleAV
 {
     AVContentKey *contentKey = [contentKeyRequest() contentKey];
     ASSERT(contentKey);
+    if (!contentKey)
+        return;
 
     NSError *error = nil;
     if (!AVSampleBufferAttachContentKey(sample.platformSample().cmSampleBuffer(), contentKey, &error))

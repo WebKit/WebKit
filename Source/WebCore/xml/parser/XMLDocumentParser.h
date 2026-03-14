@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "LocalFrameView.h"
 #include "ParserContentPolicy.h"
 #include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
@@ -115,9 +114,12 @@ private:
 
     void notifyFinished(PendingScript&) final;
 
+    bool hasScriptsWaitingForStylesheets() const final;
+    void executeScriptsWaitingForStylesheets() final;
+
     void end();
 
-    void pauseParsing();
+    void NODELETE pauseParsing();
     void resumeParsing();
 
     bool appendFragmentSource(const String&);
@@ -181,6 +183,7 @@ private:
     std::unique_ptr<XMLErrors> m_xmlErrors;
 
     RefPtr<PendingScript> m_pendingScript;
+    RefPtr<PendingScript> m_scriptWaitingForStylesheets;
     TextPosition m_scriptStartPosition;
 
     bool m_parsingFragment { false };

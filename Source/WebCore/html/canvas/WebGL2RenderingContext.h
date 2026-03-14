@@ -207,7 +207,7 @@ public:
     
     // Sync objects
     RefPtr<WebGLSync> fenceSync(GCGLenum condition, GCGLbitfield flags);
-    GCGLboolean isSync(WebGLSync*);
+    GCGLboolean NODELETE isSync(WebGLSync*);
     void deleteSync(WebGLSync*);
     GCGLenum clientWaitSync(WebGLSync&, GCGLbitfield flags, GCGLuint64 timeout);
     void waitSync(WebGLSync&, GCGLbitfield flags, GCGLint64 timeout);
@@ -315,7 +315,7 @@ private:
         ClearBufferfv,
         ClearBufferfi
     };
-    void updateBuffersToAutoClear(ClearBufferCaller, GCGLenum buffer, GCGLint drawbuffer);
+    void NODELETE updateBuffersToAutoClear(ClearBufferCaller, GCGLenum buffer, GCGLint drawbuffer);
 
     WebGLBindingPoint<WebGLFramebuffer> m_readFramebufferBinding;
     WebGLBindingPoint<WebGLTransformFeedback> m_boundTransformFeedback;

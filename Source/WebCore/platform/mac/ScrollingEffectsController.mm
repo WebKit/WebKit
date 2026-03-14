@@ -91,7 +91,7 @@ void ScrollingEffectsController::stopAllTimers()
 #endif
 }
 
-static ScrollEventAxis dominantAxisFavoringVertical(FloatSize delta)
+static ScrollEventAxis NODELETE dominantAxisFavoringVertical(FloatSize delta)
 {
     if (std::abs(delta.height()) >= std::abs(delta.width()))
         return ScrollEventAxis::Vertical;
@@ -99,7 +99,7 @@ static ScrollEventAxis dominantAxisFavoringVertical(FloatSize delta)
     return ScrollEventAxis::Horizontal;
 }
 
-static FloatSize deltaAlignedToAxis(FloatSize delta, ScrollEventAxis axis)
+static FloatSize NODELETE deltaAlignedToAxis(FloatSize delta, ScrollEventAxis axis)
 {
     switch (axis) {
     case ScrollEventAxis::Horizontal: return FloatSize { delta.width(), 0 };
@@ -109,7 +109,7 @@ static FloatSize deltaAlignedToAxis(FloatSize delta, ScrollEventAxis axis)
     return { };
 }
 
-static FloatSize deltaAlignedToDominantAxis(FloatSize delta)
+static FloatSize NODELETE deltaAlignedToDominantAxis(FloatSize delta)
 {
     auto dominantAxis = dominantAxisFavoringVertical(delta);
     return deltaAlignedToAxis(delta, dominantAxis);
@@ -658,7 +658,7 @@ enum class WheelEventStatus {
     Unknown
 };
 
-static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
+static inline WheelEventStatus NODELETE toWheelEventStatus(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
 {
     if (phase == PlatformWheelEventPhase::None) {
         switch (momentumPhase) {

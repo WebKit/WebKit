@@ -495,7 +495,7 @@ public:
     {
     }
 
-    AssemblerBuffer& buffer() { return m_formatter.m_buffer; }
+    AssemblerBuffer& buffer() LIFETIME_BOUND { return m_formatter.m_buffer; }
 
 private:
 

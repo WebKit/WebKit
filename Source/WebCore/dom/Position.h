@@ -179,8 +179,8 @@ public:
     static unsigned positionCountBetweenPositions(const Position&, const Position&);
 
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
-    static bool nodeIsUserSelectNone(const Node*);
-    static bool nodeIsUserSelectAll(const Node*);
+    static bool NODELETE nodeIsUserSelectNone(const Node*);
+    static bool NODELETE nodeIsUserSelectAll(const Node*);
     static RefPtr<Node> rootUserSelectAllForNode(Node*);
 
     void debugPosition(ASCIILiteral msg = ""_s) const;
@@ -193,7 +193,7 @@ public:
 
     // This is a tentative enhancement of operator== to account for different position types.
     // FIXME: Combine this function with operator==
-    bool equals(const Position&) const;
+    bool NODELETE equals(const Position&) const;
 
 private:
     // For creating legacy editing positions: (Anchor type will be determined from editingIgnoresContent(node))
@@ -229,16 +229,16 @@ WEBCORE_EXPORT Position makeDeprecatedLegacyPosition(const BoundaryPoint&);
 
 WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPoint(const Position&);
 
-Position positionInParentBeforeNode(Node*);
-Position positionInParentAfterNode(Node*);
+Position positionInParentBeforeNode(Node&);
+Position positionInParentAfterNode(Node&);
 
 // positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)
-Position positionBeforeNode(Node* anchorNode);
-Position positionAfterNode(Node* anchorNode);
+Position positionBeforeNode(Node& anchorNode);
+Position positionAfterNode(Node& anchorNode);
 
 // firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
-Position firstPositionInNode(Node* anchorNode);
-inline Position lastPositionInNode(Node* anchorNode);
+inline Position firstPositionInNode(Node& anchorNode); // Defined in PositionInlines.h
+inline Position lastPositionInNode(Node& anchorNode); // Defined in PositionInlines.h
 
 bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode);
 
@@ -292,27 +292,17 @@ inline bool operator==(const Position& a, const Position& b)
 }
 
 // positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)
-inline Position positionBeforeNode(Node* anchorNode)
+inline Position positionBeforeNode(Node& anchorNode)
 {
-    ASSERT(anchorNode);
-    return Position(anchorNode, Position::PositionIsBeforeAnchor);
+    return Position(&anchorNode, Position::PositionIsBeforeAnchor);
 }
 
-inline Position positionAfterNode(Node* anchorNode)
+inline Position positionAfterNode(Node& anchorNode)
 {
-    ASSERT(anchorNode);
-    return Position(anchorNode, Position::PositionIsAfterAnchor);
+    return Position(&anchorNode, Position::PositionIsAfterAnchor);
 }
 
-// firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
-inline Position firstPositionInNode(Node* anchorNode)
-{
-    if (anchorNode->isCharacterDataNode())
-        return Position(anchorNode, 0, Position::PositionIsOffsetInAnchor);
-    return Position(anchorNode, Position::PositionIsBeforeChildren);
-}
-
-inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode);
+inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node anchorNode);
 
 } // namespace WebCore
 

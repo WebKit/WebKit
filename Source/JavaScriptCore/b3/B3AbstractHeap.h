@@ -128,7 +128,7 @@ public:
     IndexedAbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset, size_t elementSize);
     ~IndexedAbstractHeap();
 
-    AbstractHeap& atAnyIndex() { return m_heapForAnyIndex; }
+    AbstractHeap& atAnyIndex() LIFETIME_BOUND { return m_heapForAnyIndex; }
 
     const AbstractHeap& at(ptrdiff_t index)
     {
@@ -181,9 +181,9 @@ public:
     NumberedAbstractHeap(AbstractHeap* parent, const char* heapName);
     ~NumberedAbstractHeap();
 
-    AbstractHeap& atAnyNumber() { return m_indexedHeap.atAnyIndex(); }
+    AbstractHeap& atAnyNumber() LIFETIME_BOUND { return m_indexedHeap.atAnyIndex(); }
 
-    const AbstractHeap& at(ptrdiff_t number) { return m_indexedHeap.at(number); }
+    const AbstractHeap& at(ptrdiff_t number) LIFETIME_BOUND { return m_indexedHeap.at(number); }
     const AbstractHeap& operator[](ptrdiff_t number) { return at(number); }
 
     void dump(PrintStream&);
@@ -199,7 +199,7 @@ public:
     AbsoluteAbstractHeap(AbstractHeap* parent, const char* heapName);
     ~AbsoluteAbstractHeap();
 
-    const AbstractHeap& atAnyAddress() { return m_indexedHeap.atAnyIndex(); }
+    const AbstractHeap& atAnyAddress() LIFETIME_BOUND { return m_indexedHeap.atAnyIndex(); }
 
     const AbstractHeap& at(const void* address)
     {

@@ -299,7 +299,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 {
     AX_ASSERT(!isMainThread());
     // FIXME: Can hit this almost 100% of the time on google.com with ENABLE(ACCESSIBILITY_LOCAL_FRAME).
-    AX_BROKEN_ASSERT(!m_isolatedObject || m_isolatedObject->objectID() == newObject.objectID());
+    AX_ASSERT(!m_isolatedObject || m_isolatedObject->objectID() == newObject.objectID());
 
     m_isolatedObject = newObject;
     m_isolatedObjectInitialized = true;

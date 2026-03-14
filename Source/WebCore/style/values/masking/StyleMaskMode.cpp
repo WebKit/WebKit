@@ -32,7 +32,7 @@ namespace Style {
 
 auto CSSValueConversion<MaskMode>::operator()(BuilderState& state, const CSSValue& value) -> MaskMode
 {
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
+    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
     if (!primitiveValue)
         return MaskMode::MatchSource;
 

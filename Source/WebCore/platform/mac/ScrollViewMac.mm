@@ -270,7 +270,7 @@ bool ScrollView::platformIsOffscreen() const
     return ![widget window] || ![[widget window] isVisible];
 }
 
-static inline NSScrollerKnobStyle toNSScrollerKnobStyle(ScrollbarOverlayStyle style)
+static inline NSScrollerKnobStyle NODELETE toNSScrollerKnobStyle(ScrollbarOverlayStyle style)
 {
     switch (style) {
     case ScrollbarOverlayStyle::Dark:

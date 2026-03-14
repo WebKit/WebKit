@@ -70,7 +70,7 @@ private:
     void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
     Ref<MediaSample> createNonDisplayingCopy() const override;
 
-    unsigned generation() const { return m_box.generation(); }
+    unsigned NODELETE generation() const { return m_box.generation(); }
 
     MockSampleBox m_box;
     TrackID m_id;
@@ -222,9 +222,10 @@ bool MockSourceBufferPrivate::canSetMinimumUpcomingPresentationTime(TrackID) con
 
 bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
 {
-    MediaEngineSupportParameters parameters;
-    parameters.isMediaSource = true;
-    parameters.type = contentType;
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = contentType
+    };
     return MockMediaPlayerMediaSource::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 

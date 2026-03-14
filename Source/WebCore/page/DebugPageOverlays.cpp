@@ -118,7 +118,7 @@ private:
 
 bool MouseWheelRegionOverlay::updateRegion()
 {
-    RefPtr page = m_page;
+    auto* page = m_page.get();
     if (!page)
         return false;
 #if ENABLE(WHEEL_EVENT_REGIONS)
@@ -462,7 +462,7 @@ static void drawCheckbox(const String& text, GraphicsContext& context, const Fon
 
 FloatRect InteractionRegionOverlay::rectForSettingAtIndex(unsigned index) const
 {
-    RefPtr mainFrameView = protect(protect(m_page)->mainFrame())->virtualView();
+    RefPtr mainFrameView = protect(m_page->mainFrame())->virtualView();
     if (!mainFrameView)
         return FloatRect();
     auto viewSize = mainFrameView->layoutSize();
@@ -570,7 +570,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
                 clipPaths.append(existingClip);
             } else {
                 auto scaleFactor = 1.f;
-                if (RefPtr page = m_page)
+                if (auto* page = m_page.get())
                     scaleFactor = page->pageScaleFactor();
 
                 if (region->useContinuousCorners) {
@@ -863,11 +863,11 @@ void DebugPageOverlays::hideRegionOverlay(Page& page, RegionType regionType)
 
 void DebugPageOverlays::regionChanged(LocalFrame& frame, RegionType regionType)
 {
-    RefPtr page = frame.page();
+    auto* page = frame.page();
     if (!page)
         return;
 
-    if (RefPtr visualizer = regionOverlayForPage(*page, regionType))
+    if (auto* visualizer = regionOverlayForPage(*page, regionType))
         visualizer->setRegionChanged();
 }
 

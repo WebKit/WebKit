@@ -147,14 +147,14 @@ public:
     // last layout location, in order to repaint correctly.
     // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
     LayoutSize NODELETE layoutDelta() const;
-    void addLayoutDelta(const LayoutSize& delta);
+    void NODELETE addLayoutDelta(const LayoutSize& delta);
 #if ASSERT_ENABLED
     bool layoutDeltaMatches(const LayoutSize& delta);
 #endif
     using LayoutStateStack = Vector<std::unique_ptr<RenderLayoutState>>;
 
     UpdateScrollInfoAfterLayoutTransaction& updateScrollInfoAfterLayoutTransaction() LIFETIME_BOUND;
-    UpdateScrollInfoAfterLayoutTransaction* updateScrollInfoAfterLayoutTransactionIfExists() LIFETIME_BOUND { return m_updateScrollInfoAfterLayoutTransaction.get(); }
+    UpdateScrollInfoAfterLayoutTransaction* NODELETE updateScrollInfoAfterLayoutTransactionIfExists() LIFETIME_BOUND { return m_updateScrollInfoAfterLayoutTransaction.get(); }
     void setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox&, RenderBlock& container);
     Vector<SingleThreadWeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock&);
 
@@ -174,6 +174,8 @@ public:
     void invalidateAnchorDependenciesForScroller(const RenderBox& scroller);
     void removeScrollerFromAnchorScrollAdjusters(const RenderBox& scroller);
 
+    bool repaintsBlocked() const { return m_repaintsBlocked; }
+
 private:
     friend class LayoutFrameScope;
     friend class LayoutStateMaintainer;
@@ -181,6 +183,7 @@ private:
     friend class SubtreeLayoutStateMaintainer;
     friend class FlexPercentResolveDisabler;
     friend class ContentVisibilityOverrideScope;
+    friend class RepaintBlocker;
 
     bool needsLayoutInternal() const;
 
@@ -228,6 +231,9 @@ private:
     void disablePercentHeightResolveFor(const RenderBox& flexItem);
     void enablePercentHeightResolveFor(const RenderBox& flexItem);
 
+    void allowRepaints() { m_repaintsBlocked = false; }
+    void blockRepaints() { m_repaintsBlocked = true; }
+
     LocalFrame& frame() const;
     LocalFrameView& NODELETE view() const;
     RenderView* renderView() const;
@@ -247,6 +253,7 @@ private:
     bool m_visiblityAutoIsIgnored { false };
     bool m_revealedWhenFoundIgnored { false };
     bool m_updateCompositingLayersIsPending { false };
+    bool m_repaintsBlocked { false };
     LayoutPhase m_layoutPhase { LayoutPhase::OutsideLayout };
     enum class LayoutNestedState : uint8_t  { NotInLayout, NotNested, Nested };
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
@@ -289,6 +296,15 @@ private:
         SegmentedVector<std::unique_ptr<RenderObject>, 50> m_renderers;
     };
     mutable DetachedRendererList m_detachedRendererList;
+};
+
+class RepaintBlocker {
+public:
+    explicit RepaintBlocker(Document&);
+    ~RepaintBlocker();
+
+private:
+    const Ref<Document> m_document;
 };
 
 } // namespace WebCore

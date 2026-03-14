@@ -38,8 +38,8 @@ struct ConstraintsForFlexContent {
         LayoutUnit startPosition;
     };
     ConstraintsForFlexContent(const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax);
-    const AxisGeometry& mainAxis() const { return m_mainAxisGeometry; }
-    const AxisGeometry& crossAxis() const { return m_crossAxisGeometry; }
+    const AxisGeometry& mainAxis() const LIFETIME_BOUND { return m_mainAxisGeometry; }
+    const AxisGeometry& crossAxis() const LIFETIME_BOUND { return m_crossAxisGeometry; }
     bool isSizedUnderMinMax() const { return m_isSizedUnderMinMax; }
 
 private:

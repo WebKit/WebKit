@@ -114,9 +114,12 @@ static void webkitFliteSrcConstructed(GObject* object)
     WebKitFliteSrcPrivate* priv = src->priv;
 
     /* We operate in time */
-    gst_base_src_set_format(GST_BASE_SRC(src), GST_FORMAT_TIME);
-    gst_base_src_set_blocksize(GST_BASE_SRC(src), -1);
-    gst_base_src_set_automatic_eos(GST_BASE_SRC(src), FALSE);
+    auto baseSrc = GST_BASE_SRC_CAST(src);
+    gst_base_src_set_format(baseSrc, GST_FORMAT_TIME);
+    gst_base_src_set_blocksize(baseSrc, -1);
+    gst_base_src_set_automatic_eos(baseSrc, FALSE);
+    gst_base_src_set_do_timestamp(baseSrc, TRUE);
+    gst_base_src_set_live(baseSrc, TRUE);
 
     DataMutexLocker members { priv->dataMutex };
     members->adapter = adoptGRef(gst_adapter_new());

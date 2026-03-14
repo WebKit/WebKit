@@ -84,8 +84,8 @@ public:
         m_frameRect = frameRect;
     }
 
-    const IntSize& size() const { return m_size; }
-    const IntRect& frameRect() const { return m_frameRect; }
+    const IntSize& size() const LIFETIME_BOUND { return m_size; }
+    const IntRect& frameRect() const LIFETIME_BOUND { return m_frameRect; }
 
     void clear()
     {

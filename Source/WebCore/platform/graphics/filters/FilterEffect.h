@@ -45,7 +45,7 @@ class FilterEffect : public FilterFunction, public CanMakeThreadSafeCheckedPtr<F
 public:
     virtual bool operator==(const FilterEffect&) const;
 
-    const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
+    const DestinationColorSpace& operatingColorSpace() const LIFETIME_BOUND { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
 
     unsigned numberOfImageInputs() const { return filterType() == FilterEffect::Type::SourceGraphic ? 1 : numberOfEffectInputs(); }
@@ -81,7 +81,7 @@ protected:
 
     virtual void transformInputsColorSpace(std::span<const Ref<FilterImage>> inputs) const;
     
-    void correctPremultipliedInputs(std::span<const Ref<FilterImage>> inputs) const;
+    void NODELETE correctPremultipliedInputs(std::span<const Ref<FilterImage>> inputs) const;
 
     std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const;
 

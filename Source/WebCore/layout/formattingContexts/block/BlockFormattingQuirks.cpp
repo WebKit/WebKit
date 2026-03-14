@@ -111,12 +111,12 @@ bool BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(const ElementBox& l
 }
 
 enum class VerticalMargin { Before, After };
-static inline bool hasQuirkMarginToCollapse(const ElementBox& layoutBox, VerticalMargin verticalMargin)
+static inline bool NODELETE hasQuirkMarginToCollapse(const ElementBox& layoutBox, VerticalMargin verticalMargin)
 {
     if (!layoutBox.isInFlow())
         return false;
-    CheckedRef style = layoutBox.style();
-    return (verticalMargin == VerticalMargin::Before && style->marginBefore().hasQuirk()) || (verticalMargin == VerticalMargin::After && style->marginAfter().hasQuirk());
+    auto& style = layoutBox.style();
+    return (verticalMargin == VerticalMargin::Before && style.marginBefore().hasQuirk()) || (verticalMargin == VerticalMargin::After && style.marginAfter().hasQuirk());
 }
 
 bool BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore(const ElementBox& layoutBox)

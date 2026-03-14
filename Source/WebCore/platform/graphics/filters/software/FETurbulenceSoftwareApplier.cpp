@@ -174,7 +174,7 @@ ColorComponents<float, 4> FETurbulenceSoftwareApplier::noise2D(const PaintingDat
             fraction = position - index;
         }
         
-        void stitch(int size, int wrapSize)
+        void NODELETE stitch(int size, int wrapSize)
         {
             // if (bx0 >= pStitchInfo->nWrapX)
             //   bx0 -= pStitchInfo->nWidth;

@@ -164,6 +164,22 @@ static void wpeGamepadManetteStopInputMonitor(WPEGamepad* gamepad)
     g_signal_handlers_disconnect_by_data(priv->device.get(), gamepad);
 }
 
+static gboolean wpeGamepadManetteHasRumble(WPEGamepad* gamepad)
+{
+    auto* priv = WPE_GAMEPAD_MANETTE(gamepad)->priv;
+    return manette_device_has_rumble(priv->device.get());
+}
+
+static gboolean wpeGamepadManetteRumble(WPEGamepad* gamepad, gdouble strongMagnitude, gdouble weakMagnitude, guint durationMs)
+{
+    auto* priv = WPE_GAMEPAD_MANETTE(gamepad)->priv;
+#if LIBMANETTE_CHECK_VERSION(0, 2, 13)
+    return manette_device_rumble(priv->device.get(), strongMagnitude, weakMagnitude, durationMs);
+#else
+    return manette_device_rumble(priv->device.get(), strongMagnitude * G_MAXUINT16, weakMagnitude * G_MAXUINT16, durationMs);
+#endif
+}
+
 static void wpe_gamepad_manette_class_init(WPEGamepadManetteClass* gamepadManetteClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(gamepadManetteClass);
@@ -173,6 +189,8 @@ static void wpe_gamepad_manette_class_init(WPEGamepadManetteClass* gamepadManett
     WPEGamepadClass* gamepadClass = WPE_GAMEPAD_CLASS(gamepadManetteClass);
     gamepadClass->start_input_monitor = wpeGamepadManetteStartInputMonitor;
     gamepadClass->stop_input_monitor = wpeGamepadManetteStopInputMonitor;
+    gamepadClass->has_rumble = wpeGamepadManetteHasRumble;
+    gamepadClass->rumble = wpeGamepadManetteRumble;
 
     sObjProperties[PROP_DEVICE] =
         g_param_spec_object(

@@ -859,6 +859,8 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 
 RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 {
+    if (isContextLost())
+        return nullptr;
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)
         return nullptr;
@@ -5685,9 +5687,9 @@ void WebGLRenderingContextBase::updateMemoryCost() const
     // Computes only a rough ballpark figure to drive garbage collection.
     size_t newMemoryCost = 0;
     if (m_readDisplayBuffer)
-        newMemoryCost += Ref { *m_readDisplayBuffer }->memoryCost();
+        newMemoryCost += m_readDisplayBuffer->memoryCost();
     if (m_readDrawingBuffer)
-        newMemoryCost += Ref { *m_readDrawingBuffer }->memoryCost();
+        newMemoryCost += m_readDrawingBuffer->memoryCost();
     if (!isContextLost()) {
         size_t area = m_defaultFramebuffer->size().unclampedArea();
         size_t bytesPerSample = 4;

@@ -43,7 +43,7 @@ class Image;
 
 class CSSImageValue final : public CSSValue {
 public:
-    static Ref<CSSImageValue> create();
+    static Ref<CSSImageValue> NODELETE create();
     static Ref<CSSImageValue> create(CSS::URL, AtomString initiatorType = { });
     static Ref<CSSImageValue> create(WTF::URL, AtomString initiatorType = { });
     static Ref<CSSImageValue> create(CachedImage&);

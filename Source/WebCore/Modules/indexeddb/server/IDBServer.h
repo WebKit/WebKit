@@ -109,7 +109,7 @@ public:
 
 private:
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
-    RefPtr<UniqueIDBDatabaseTransaction> idbTransaction(const IDBRequestData&) const;
+    RefPtr<UniqueIDBDatabaseTransaction> NODELETE idbTransaction(const IDBRequestData&) const;
 
     void upgradeFilesIfNecessary();
     String upgradedDatabaseDirectory(const WebCore::IDBDatabaseIdentifier&);

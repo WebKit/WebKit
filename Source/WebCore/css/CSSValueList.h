@@ -62,7 +62,7 @@ public:
     iterator end() const LIFETIME_BOUND { return { this, size() }; }
 
     bool hasValue(CSSValue&) const;
-    bool hasValue(CSSValueID) const;
+    bool NODELETE hasValue(CSSValueID) const;
 
     void serializeItems(StringBuilder&, const CSS::SerializationContext&) const;
     String serializeItems(const CSS::SerializationContext&) const;

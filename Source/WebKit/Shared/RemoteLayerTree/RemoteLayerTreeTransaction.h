@@ -154,7 +154,7 @@ public:
     HashSet<Ref<PlatformCALayerRemote>>& NODELETE changedLayers() LIFETIME_BOUND;
 
     const LayerPropertiesMap& NODELETE changedLayerProperties() const LIFETIME_BOUND;
-    LayerPropertiesMap& changedLayerProperties() LIFETIME_BOUND;
+    LayerPropertiesMap& NODELETE changedLayerProperties() LIFETIME_BOUND;
 
     void setRemoteContextHostedIdentifier(Markable<WebCore::LayerHostingContextIdentifier> identifier) { m_remoteContextHostedIdentifier = identifier; }
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier() const { return m_remoteContextHostedIdentifier; }

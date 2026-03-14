@@ -41,7 +41,7 @@ namespace WebKit {
 
 class WebServiceWorkerProvider final : public WebCore::ServiceWorkerProvider {
 public:
-    static WebServiceWorkerProvider& singleton();
+    static WebServiceWorkerProvider& NODELETE singleton();
 
     void didReceiveServiceWorkerClientRegistrationMatch(IPC::Connection&, IPC::Decoder&);
     void updateThrottleState(bool isThrottleable);

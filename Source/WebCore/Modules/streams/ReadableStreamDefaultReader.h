@@ -73,7 +73,7 @@ public:
     void onClosedPromiseResolution(Function<void()>&&);
 
     bool NODELETE isReachableFromOpaqueRoots() const;
-    template<typename Visitor> void visitAdditionalChildren(Visitor&);
+    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
     ReadableStream* stream() { return m_stream.get(); }
 

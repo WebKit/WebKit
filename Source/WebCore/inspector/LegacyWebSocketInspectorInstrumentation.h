@@ -38,7 +38,7 @@ using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 
 class WEBCORE_EXPORT LegacyWebSocketInspectorInstrumentation {
 public:
-    static bool hasFrontends();
+    static bool NODELETE hasFrontends();
     static void didCreateWebSocket(Document*, WebSocketChannelIdentifier, const URL& requestURL);
     static void willSendWebSocketHandshakeRequest(Document*, WebSocketChannelIdentifier, const ResourceRequest&);
     static void didReceiveWebSocketHandshakeResponse(Document*, WebSocketChannelIdentifier, const ResourceResponse&);

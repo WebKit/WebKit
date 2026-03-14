@@ -61,16 +61,16 @@ public:
     
     void reset();
 
-    const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveScrollSnap() const { return m_nodesWithActiveScrollSnap; }
+    const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveScrollSnap() const LIFETIME_BOUND { return m_nodesWithActiveScrollSnap; }
     void addNodeWithActiveScrollSnap(WebCore::ScrollingNodeID);
     void removeNodeWithActiveScrollSnap(WebCore::ScrollingNodeID);
     
-    const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveUserScrolls() const { return m_nodesWithActiveUserScrolls; }
+    const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveUserScrolls() const LIFETIME_BOUND { return m_nodesWithActiveUserScrolls; }
     void addNodeWithActiveUserScroll(WebCore::ScrollingNodeID);
     void removeNodeWithActiveUserScroll(WebCore::ScrollingNodeID);
     void clearNodesWithActiveUserScroll();
 
-    const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveRubberband() const { return m_nodesWithActiveRubberband; }
+    const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveRubberband() const LIFETIME_BOUND { return m_nodesWithActiveRubberband; }
     void addNodeWithActiveRubberband(WebCore::ScrollingNodeID);
     void removeNodeWithActiveRubberband(WebCore::ScrollingNodeID);
     void clearNodesWithActiveRubberband();

@@ -67,7 +67,7 @@ enum class ForcedLayout : uint8_t { No, Yes, ParentDocument };
 using PhysicalDirection = BoxSide;
 using FlowRelativeDirection = LogicalBoxSide;
 
-static Element* styleElementForNode(Node* node)
+static Element* NODELETE styleElementForNode(Node* node)
 {
     if (!node)
         return nullptr;
@@ -164,17 +164,17 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
         return false;
 
     const auto* currentElement = &element;
-    for (Ref ancestor : composedTreeAncestors(element)) {
-        if (ancestor->styleValidity() != Style::Validity::Valid)
+    for (auto& ancestor : composedTreeAncestors(element)) {
+        if (ancestor.styleValidity() != Style::Validity::Valid)
             return false;
 
-        if (isQueryContainer(ancestor.get()))
+        if (isQueryContainer(ancestor))
             return false;
 
-        if (ancestor->directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())
+        if (ancestor.directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())
             return false;
 
-        currentElement = ancestor.ptr();
+        currentElement = &ancestor;
     }
 
     return true;

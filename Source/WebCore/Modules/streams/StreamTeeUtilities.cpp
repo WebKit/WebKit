@@ -88,9 +88,9 @@ public:
     }
     void visit(JSC::AbstractSlotVisitor& visitor) final
     {
-        m_branch1Reason.visit(visitor);
-        m_branch2Reason.visit(visitor);
-        m_stream->visitAdditionalChildren(visitor);
+        m_branch1Reason.visitInGCThread(visitor);
+        m_branch2Reason.visitInGCThread(visitor);
+        m_stream->visitAdditionalChildrenInGCThread(visitor);
     }
     void NODELETE clearReasons()
     {
@@ -101,8 +101,8 @@ public:
     ReadableStream& NODELETE stream() const { return m_stream; }
     ReadableStream* NODELETE branch1() const { return m_branch1.get(); }
     ReadableStream* NODELETE branch2() const { return m_branch2.get(); }
-    void setBranch1(ReadableStream& stream) { m_branch1 = &stream; }
-    void setBranch2(ReadableStream& stream) { m_branch2 = &stream; }
+    void NODELETE setBranch1(ReadableStream& stream) { m_branch1 = &stream; }
+    void NODELETE setBranch2(ReadableStream& stream) { m_branch2 = &stream; }
 
     ReadableStreamBYOBReader* NODELETE byobReader() const { return m_byobReader.get(); }
     RefPtr<ReadableStreamBYOBReader> takeBYOBReader() { return std::exchange(m_byobReader, { }); }
@@ -449,10 +449,10 @@ private:
         if (!m_state->canceled2() && branch2)
             branch2->controller()->close(*globalObject);
 
-        if (branch1 && protect(branch1->controller())->hasPendingPullIntos())
-            protect(branch1->controller())->respond(*globalObject, 0);
-        if (branch2 && protect(branch2->controller())->hasPendingPullIntos())
-            protect(branch2->controller())->respond(*globalObject, 0);
+        if (branch1 && branch1->controller()->hasPendingPullIntos())
+            branch1->controller()->respond(*globalObject, 0);
+        if (branch2 && branch2->controller()->hasPendingPullIntos())
+            branch2->controller()->respond(*globalObject, 0);
 
         if (!m_state->canceled1() || !m_state->canceled2())
             m_state->resolveCancelPromise();

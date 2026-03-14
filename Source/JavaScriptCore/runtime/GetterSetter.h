@@ -83,7 +83,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    JSObject* getter() const { return m_getter.get(); }
+    JSObject* getter() const LIFETIME_BOUND { return m_getter.get(); }
 
     JSObject* getterConcurrently() const
     {
@@ -95,7 +95,7 @@ public:
     bool isGetterNull() const { return !!jsDynamicCast<NullGetterFunction*>(m_getter.get()); }
     bool isSetterNull() const { return !!jsDynamicCast<NullSetterFunction*>(m_setter.get()); }
 
-    JSObject* setter() const { return m_setter.get(); }
+    JSObject* setter() const LIFETIME_BOUND { return m_setter.get(); }
 
     JSObject* setterConcurrently() const
     {

@@ -106,7 +106,7 @@ static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* itemPrivate)
     return itemPrivate->_historyItem.get();
 }
 
-static HistoryItemMap& historyItemWrappers()
+static HistoryItemMap& NODELETE historyItemWrappers()
 {
     static NeverDestroyed<HistoryItemMap> historyItemWrappers;
     return historyItemWrappers;

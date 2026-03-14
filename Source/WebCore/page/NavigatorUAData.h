@@ -42,7 +42,7 @@ public:
     static Ref<NavigatorUAData> create();
     static Ref<NavigatorUAData> create(Ref<UserAgentStringData>&&);
     const Vector<NavigatorUABrandVersion>& brands() const;
-    bool mobile() const;
+    bool NODELETE mobile() const;
     String platform() const;
     UALowEntropyJSON toJSON() const;
 

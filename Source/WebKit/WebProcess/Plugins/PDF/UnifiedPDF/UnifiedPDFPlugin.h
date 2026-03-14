@@ -233,7 +233,7 @@ public:
 
     bool shouldSizeToFitContent() const final;
 
-    static WebCore::ViewportConfiguration::Parameters viewportParameters();
+    static WebCore::ViewportConfiguration::Parameters NODELETE viewportParameters();
 
     bool hasSelection() const;
 
@@ -261,7 +261,7 @@ private:
     PDFDataDetectorOverlayController& dataDetectorOverlayController() { return *m_dataDetectorOverlayController; }
 #endif
 
-    const PDFDocumentLayout& documentLayout() const { return m_documentLayout; }
+    const PDFDocumentLayout& documentLayout() const LIFETIME_BOUND { return m_documentLayout; }
 
     double scaleForActualSize() const;
     double initialScale() const;
@@ -291,8 +291,8 @@ private:
     // Scale normalization is used to map the internal "scale factor" to the exposed scaleFactor()/setPageScaleFactor()
     // so that scale factor 1 shows at "Actual Size".
     void computeNormalizationFactor();
-    double fromNormalizedScaleFactor(double) const;
-    double toNormalizedScaleFactor(double) const;
+    double NODELETE fromNormalizedScaleFactor(double) const;
+    double NODELETE toNormalizedScaleFactor(double) const;
 
     void didBeginMagnificationGesture() override;
     void didEndMagnificationGesture() override;

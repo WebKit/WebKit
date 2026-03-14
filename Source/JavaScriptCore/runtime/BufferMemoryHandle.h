@@ -153,7 +153,7 @@ public:
     MemorySharingMode sharingMode() const { return m_sharingMode; }
     MemoryMode mode() const { return m_mode; }
     static constexpr ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(BufferMemoryHandle, m_size); }
-    Lock& lock() { return m_lock; }
+    Lock& lock() LIFETIME_BOUND { return m_lock; }
 
     void updateSize(size_t size, std::memory_order order = std::memory_order_seq_cst)
     {
@@ -166,7 +166,7 @@ public:
     static void* nullBasePointer();
 
 #if ENABLE(WEBASSEMBLY)
-    const ThreadSafeWeakHashSet<Wasm::InstanceAnchor>& anchors(const AbstractLocker&) const { return m_anchors; }
+    const ThreadSafeWeakHashSet<Wasm::InstanceAnchor>& anchors(const AbstractLocker&) const LIFETIME_BOUND { return m_anchors; }
     void transferAnchors(BufferMemoryHandle& newHandle);
     void registerInstance(JSWebAssemblyInstance&);
 #endif

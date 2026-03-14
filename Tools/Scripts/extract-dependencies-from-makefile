@@ -48,6 +48,12 @@ class Parser(object):
     reWasConsideredAlready  = re.compile(r"{} was considered already.".format(fileNamePattern))
     rePruningFile           = re.compile(r"Pruning file {}.".format(fileNamePattern))
 
+    # Files to exclude from the input xcfilelist (e.g., stamp files managed
+    # by $(shell ...) that should not be declared as Xcode build inputs).
+    IGNORE_INPUT_FILES = {
+        '.sanitize-flags.stamp',
+    }
+
     def __init__(self):
         self.targets = {}
         self.prereqs = {}
@@ -64,7 +70,7 @@ class Parser(object):
             self.targets[target] = 1
 
     def addPrereq(self, prereq):
-        if prereq != 'all' and prereq != 'force':
+        if prereq != 'all' and prereq != 'force' and prereq not in Parser.IGNORE_INPUT_FILES:
             self.prereqs[prereq] = 1
 
     def doParse(self, input):

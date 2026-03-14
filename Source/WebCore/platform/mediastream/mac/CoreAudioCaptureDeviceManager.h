@@ -39,13 +39,13 @@ class CoreAudioCaptureDevice;
 class CoreAudioCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<CoreAudioCaptureDeviceManager>;
 public:
-    WEBCORE_EXPORT static CoreAudioCaptureDeviceManager& singleton();
+    WEBCORE_EXPORT static CoreAudioCaptureDeviceManager& NODELETE singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
     std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
     std::optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
-    const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
+    const Vector<CaptureDevice>& speakerDevices() const LIFETIME_BOUND { return m_speakerDevices; }
 
     void setFilterTapEnabledDevices(bool doFiltering) { m_filterTapEnabledDevices = doFiltering; }
 

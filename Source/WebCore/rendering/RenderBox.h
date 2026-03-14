@@ -26,7 +26,6 @@
 #include <WebCore/CSSPrimitiveNumeric.h>
 #include <WebCore/FontBaseline.h>
 #include <WebCore/LayoutRange.h>
-#include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderBoxModelObject.h>
 #include <WebCore/RenderOverflow.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
@@ -38,6 +37,7 @@
 namespace WebCore {
 
 class LayoutRoundedRectRadii;
+class LocalFrameView;
 class RenderBlockFlow;
 class RenderBoxFragmentInfo;
 class RenderFragmentContainer;
@@ -232,7 +232,7 @@ public:
     virtual void setScrollTop(int, const ScrollPositionChangeOptions&);
     virtual void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
 
-    const LayoutBoxExtent& marginBox() const { return m_marginBox; }
+    const LayoutBoxExtent& marginBox() const LIFETIME_BOUND { return m_marginBox; }
     LayoutUnit marginTop() const override { return m_marginBox.top(); }
     LayoutUnit marginBottom() const override { return m_marginBox.bottom(); }
     LayoutUnit marginLeft() const override { return m_marginBox.left(); }
@@ -288,8 +288,8 @@ public:
     virtual LayoutUnit maxPreferredLogicalWidth() const;
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const = 0;
 
-    std::optional<LayoutUnit> overridingBorderBoxLogicalWidth() const;
-    std::optional<LayoutUnit> overridingBorderBoxLogicalHeight() const;
+    std::optional<LayoutUnit> NODELETE overridingBorderBoxLogicalWidth() const;
+    std::optional<LayoutUnit> NODELETE overridingBorderBoxLogicalHeight() const;
     void setOverridingBorderBoxLogicalHeight(LayoutUnit);
     void setOverridingBorderBoxLogicalWidth(LayoutUnit);
     void clearOverridingBorderBoxLogicalHeight();
@@ -298,10 +298,10 @@ public:
 
     // Grid item's containing block is not the grid container, but the grid area, for which we don't have a renderer.
     using GridAreaSize = std::optional<LayoutUnit>;
-    std::optional<GridAreaSize> gridAreaContentWidth(WritingMode) const;
-    std::optional<GridAreaSize> gridAreaContentHeight(WritingMode) const;
-    std::optional<GridAreaSize> gridAreaContentLogicalWidth() const;
-    std::optional<GridAreaSize> gridAreaContentLogicalHeight() const;
+    std::optional<GridAreaSize> NODELETE gridAreaContentWidth(WritingMode) const;
+    std::optional<GridAreaSize> NODELETE gridAreaContentHeight(WritingMode) const;
+    std::optional<GridAreaSize> NODELETE gridAreaContentLogicalWidth() const;
+    std::optional<GridAreaSize> NODELETE gridAreaContentLogicalHeight() const;
     void setGridAreaContentLogicalWidth(GridAreaSize);
     void setGridAreaContentLogicalHeight(GridAreaSize);
     void clearGridAreaContentSize();
@@ -310,8 +310,8 @@ public:
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
     // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
     // the initial main size of the flex item before the free space is distributed.
-    std::optional<Style::PreferredSize> overridingLogicalHeightForFlexBasisComputation() const;
-    std::optional<Style::PreferredSize> overridingLogicalWidthForFlexBasisComputation() const;
+    std::optional<Style::PreferredSize> NODELETE overridingLogicalHeightForFlexBasisComputation() const;
+    std::optional<Style::PreferredSize> NODELETE overridingLogicalWidthForFlexBasisComputation() const;
     void setOverridingBorderBoxLogicalHeightForFlexBasisComputation(const Style::PreferredSize&);
     void setOverridingBorderBoxLogicalWidthForFlexBasisComputation(const Style::PreferredSize&);
     void clearOverridingLogicalHeightForFlexBasisComputation();
@@ -528,7 +528,7 @@ public:
     LayoutPoint NODELETE flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
     LayoutUnit flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     LayoutPoint NODELETE flipForWritingMode(const LayoutPoint&) const;
-    LayoutSize flipForWritingMode(const LayoutSize&) const;
+    LayoutSize NODELETE flipForWritingMode(const LayoutSize&) const;
     FloatPoint flipForWritingMode(const FloatPoint&) const;
 
     void flipForWritingMode(LayoutRect&) const;
@@ -603,8 +603,8 @@ public:
 
     bool shouldComputeLogicalHeightFromAspectRatio() const;
 
-    bool shouldIgnoreLogicalMinMaxWidthSizes() const;
-    bool shouldIgnoreLogicalMinMaxHeightSizes() const;
+    bool NODELETE shouldIgnoreLogicalMinMaxWidthSizes() const;
+    bool NODELETE shouldIgnoreLogicalMinMaxHeightSizes() const;
 
     // The explicit intrinsic inner size of contain-intrinsic-size
     std::optional<LayoutUnit> explicitIntrinsicInnerWidth() const;
@@ -614,9 +614,9 @@ public:
 
     void updateFloatPainterAfterSelfPaintingLayerChange();
 
-    bool computeHasTransformRelatedProperty(const RenderStyle&) const;
+    bool NODELETE computeHasTransformRelatedProperty(const RenderStyle&) const;
 
-    ShapeOutsideInfo* shapeOutsideInfo() const;
+    ShapeOutsideInfo* shapeOutsideInfo() const LIFETIME_BOUND;
 
     LayoutUnit computeIntrinsicLogicalWidthUsing(CSS::Keyword::WebkitFillAvailable, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
     LayoutUnit computeIntrinsicLogicalWidthUsing(CSS::Keyword::MinIntrinsic, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
@@ -752,7 +752,7 @@ private:
     // These values are used in shrink-to-fit layout systems.
     // These include tables, positioned objects, floats and flexible boxes.
     virtual void computePreferredLogicalWidths();
-    bool shouldComputePreferredLogicalWidthsFromStyle() const;
+    bool NODELETE shouldComputePreferredLogicalWidthsFromStyle() const;
 
     LayoutRect frameRectForStickyPositioning() const override { return frameRect(); }
 

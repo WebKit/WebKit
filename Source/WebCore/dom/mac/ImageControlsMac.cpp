@@ -103,7 +103,7 @@ bool isInsideImageControls(const Node& node)
     if (!host)
         return false;
 
-    return protect(host->userAgentShadowRoot())->contains(node);
+    return host->userAgentShadowRoot()->contains(node);
 }
 
 void createImageControls(HTMLElement& element)
@@ -125,7 +125,7 @@ void createImageControls(HTMLElement& element)
     controlLayer->appendChild(button);
     controlLayer->setUserAgentPart(UserAgentParts::appleAttachmentControlsContainer());
     
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer()))
+    if (auto* renderImage = dynamicDowncast<RenderImage>(element.renderer()))
         renderImage->setHasShadowControls(true);
 }
 
@@ -134,7 +134,7 @@ static Image* imageFromImageElementNode(Node& node)
     CheckedPtr renderer = dynamicDowncast<RenderImage>(node.renderer());
     if (!renderer)
         return nullptr;
-    CachedResourceHandle image = renderer->cachedImage();
+    RefPtr image = renderer->cachedImage();
     if (!image || image->errorOccurred())
         return nullptr;
     return image->imageForRenderer(renderer.get());
@@ -188,10 +188,10 @@ bool handleEvent(HTMLElement& element, Event& event)
 
 static bool isImageMenuEnabled(HTMLElement& element)
 {
-    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
+    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element))
         return imageElement->isImageMenuEnabled();
 
-    if (RefPtr attachmentElement = dynamicDowncast<HTMLAttachmentElement>(element))
+    if (auto* attachmentElement = dynamicDowncast<HTMLAttachmentElement>(element))
         return attachmentElement->isImageMenuEnabled();
 
     return false;
@@ -245,9 +245,9 @@ void destroyImageControls(HTMLElement& element)
     if (!renderObject)
         return;
 
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(*renderObject))
+    if (auto* renderImage = dynamicDowncast<RenderImage>(*renderObject))
         renderImage->setHasShadowControls(false);
-    else if (CheckedPtr renderAttachment = dynamicDowncast<RenderAttachment>(*renderObject))
+    else if (auto* renderAttachment = dynamicDowncast<RenderAttachment>(*renderObject))
         renderAttachment->setHasShadowControls(false);
 }
 

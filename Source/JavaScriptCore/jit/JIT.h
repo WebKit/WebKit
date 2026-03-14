@@ -59,7 +59,7 @@ namespace JSC {
     class BlockDirectory;
     class Register;
     class StructureChain;
-    class StructureStubInfo;
+    class PropertyInlineCache;
 
     namespace LOL {
         class LOLJIT;
@@ -237,7 +237,7 @@ namespace JSC {
 
     public:
         void loadConstant(unsigned constantIndex, GPRReg);
-        void loadStructureStubInfo(StructureStubInfoIndex, GPRReg);
+        void loadPropertyInlineCache(PropertyInlineCacheIndex, GPRReg);
         static void emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers&);
     private:
         void loadGlobalObject(GPRReg);
@@ -245,7 +245,7 @@ namespace JSC {
         // Assuming GPRInfo::jitDataRegister is available.
         static void loadGlobalObject(CCallHelpers&, GPRReg);
         static void loadConstant(CCallHelpers&, unsigned constantIndex, GPRReg);
-        static void loadStructureStubInfo(CCallHelpers&, StructureStubInfoIndex, GPRReg);
+        static void loadPropertyInlineCache(CCallHelpers&, PropertyInlineCacheIndex, GPRReg);
 
         void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
         void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
@@ -850,7 +850,7 @@ namespace JSC {
         void resetSP();
 
         JITConstantPool::Constant addToConstantPool(JITConstantPool::Type, void* payload = nullptr);
-        std::tuple<BaselineUnlinkedStructureStubInfo*, StructureStubInfoIndex> addUnlinkedStructureStubInfo();
+        std::tuple<BaselineUnlinkedPropertyInlineCache*, PropertyInlineCacheIndex> addUnlinkedPropertyInlineCache();
         BaselineUnlinkedCallLinkInfo* addUnlinkedCallLinkInfo();
 
         BaselineJITPlan& m_plan;
@@ -916,7 +916,7 @@ namespace JSC {
 
         Vector<JITConstantPool::Value> m_constantPool;
         SaSegmentedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;
-        SaSegmentedVector<BaselineUnlinkedStructureStubInfo> m_unlinkedStubInfos;
+        SaSegmentedVector<BaselineUnlinkedPropertyInlineCache> m_unlinkedPropertyInlineCaches;
         FixedVector<SimpleJumpTable> m_switchJumpTables;
         FixedVector<StringJumpTable> m_stringSwitchJumpTables;
 

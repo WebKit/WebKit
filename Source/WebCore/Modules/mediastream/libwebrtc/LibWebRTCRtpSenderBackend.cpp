@@ -137,7 +137,7 @@ RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const
     return toRTCRtpSendParameters(*m_currentParameters);
 }
 
-static bool validateModifiedParameters(const RTCRtpSendParameters& newParameters, const RTCRtpSendParameters& oldParameters)
+static bool NODELETE validateModifiedParameters(const RTCRtpSendParameters& newParameters, const RTCRtpSendParameters& oldParameters)
 {
     if (oldParameters.transactionId != newParameters.transactionId)
         return false;

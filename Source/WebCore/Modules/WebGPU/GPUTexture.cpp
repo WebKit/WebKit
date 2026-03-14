@@ -81,7 +81,7 @@ void GPUTexture::setLabel(String&& label)
     m_backing->setLabel(WTF::move(label));
 }
 
-static WebGPU::TextureViewDescriptor convertToBacking(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor)
+static WebGPU::TextureViewDescriptor NODELETE convertToBacking(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor)
 {
     if (!textureViewDescriptor)
         return WebGPU::TextureViewDescriptor { };

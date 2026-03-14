@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace JSC;
 
 template<typename Visitor>
-void JSWorkerGlobalScope::visitAdditionalChildren(Visitor& visitor)
+void JSWorkerGlobalScope::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (auto* location = wrapped().optionalLocation())
         addWebCoreOpaqueRoot(visitor, *location);
@@ -48,13 +48,13 @@ void JSWorkerGlobalScope::visitAdditionalChildren(Visitor& visitor)
     // We cannot ref the object here as this may get called on a GC thread.
     SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
     
-    // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
+    // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildrenInGCThread() would call this. But
     // even though WorkerGlobalScope is an EventTarget, JSWorkerGlobalScope does not subclass
     // JSEventTarget, so we need to do this here.
-    wrapped().visitJSEventListeners(visitor);
+    wrapped().visitJSEventListenersInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWorkerGlobalScope);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSWorkerGlobalScope);
 
 JSValue JSWorkerGlobalScope::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {

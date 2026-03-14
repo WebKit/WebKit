@@ -140,10 +140,8 @@ HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& docum
 
 HTMLModelElement::~HTMLModelElement()
 {
-    if (m_resource) {
-        m_resource->removeClient(*this);
-        m_resource = nullptr;
-    }
+    if (RefPtr resource = std::exchange(m_resource, nullptr))
+        resource->removeClient(*this);
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     if (m_environmentMapResource) {
@@ -253,10 +251,8 @@ void HTMLModelElement::setSourceURL(const URL& url)
     m_dataComplete = false;
     m_model = nullptr;
 
-    if (m_resource) {
-        m_resource->removeClient(*this);
-        m_resource = nullptr;
-    }
+    if (RefPtr resource = std::exchange(m_resource, nullptr))
+        resource->removeClient(*this);
 
     deleteModelPlayer();
 
@@ -545,7 +541,7 @@ void HTMLModelElement::createModelPlayer()
 #endif
 
     if (!m_modelPlayerProvider)
-        m_modelPlayerProvider = protect(document().page())->modelPlayerProvider();
+        m_modelPlayerProvider = document().page()->modelPlayerProvider();
     if (RefPtr modelPlayerProvider = m_modelPlayerProvider.get()) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
         m_modelPlayer = modelPlayer.copyRef();
@@ -656,7 +652,7 @@ void HTMLModelElement::reloadModelPlayer()
     ASSERT(animationState && transformState);
 
     if (!m_modelPlayerProvider)
-        m_modelPlayerProvider = protect(protect(document())->page())->modelPlayerProvider();
+        m_modelPlayerProvider = document().page()->modelPlayerProvider();
     if (RefPtr modelPlayerProvider = m_modelPlayerProvider.get()) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
         m_modelPlayer = modelPlayer.copyRef();
@@ -842,7 +838,7 @@ void HTMLModelElement::enterFullscreen()
 
 bool HTMLModelElement::supportsDragging() const
 {
-    RefPtr modelPlayer = m_modelPlayer;
+    auto* modelPlayer = m_modelPlayer.get();
     if (!modelPlayer)
         return true;
 
@@ -868,7 +864,7 @@ void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomStr
     if (name == srcAttr)
         sourcesChanged();
     else if (name == interactiveAttr) {
-        if (RefPtr modelPlayer = m_modelPlayer)
+        if (auto* modelPlayer = m_modelPlayer.get())
             modelPlayer->setInteractionEnabled(isInteractive());
     }
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
@@ -1288,14 +1284,15 @@ bool HTMLModelElement::shouldDeferLoading() const
 void HTMLModelElement::modelResourceFinished()
 {
     auto invalidateResourceHandleAndUpdateRenderer = [&] {
-        m_resource->removeClient(*this);
+        protect(m_resource)->removeClient(*this);
         m_resource = nullptr;
 
         if (CheckedPtr renderer = this->renderer())
             renderer->updateFromElement();
     };
 
-    if (m_resource->loadFailedOrCanceled()) {
+    RefPtr resource = m_resource;
+    if (resource->loadFailedOrCanceled()) {
         m_data.reset();
 
         ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -1310,7 +1307,7 @@ void HTMLModelElement::modelResourceFinished()
 
     m_dataComplete = true;
     m_dataMemoryCost.store(m_data.size(), std::memory_order_relaxed);
-    m_model = Model::create(m_data.takeBufferAsContiguous().get(), m_resource->mimeType(), m_resource->url());
+    m_model = Model::create(m_data.takeBufferAsContiguous().get(), resource->mimeType(), resource->url());
 
     ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
@@ -1708,7 +1705,7 @@ Node::InsertedIntoAncestorResult HTMLModelElement::insertedIntoAncestor(Insertio
 #if ENABLE(MODEL_PROCESS)
         document->incrementModelElementCount();
 #endif
-        m_modelPlayerProvider = protect(document->page())->modelPlayerProvider();
+        m_modelPlayerProvider = document->page()->modelPlayerProvider();
         LazyLoadModelObserver::observe(*this);
     }
 
@@ -1789,7 +1786,7 @@ void HTMLModelElement::sourceRequestResource()
     m_data.empty();
 
     m_resource = resource.value();
-    m_resource->addClient(*this);
+    protect(m_resource)->addClient(*this);
 }
 
 void HTMLModelElement::viewportIntersectionChanged(bool isIntersecting)

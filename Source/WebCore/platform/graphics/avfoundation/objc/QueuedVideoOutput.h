@@ -54,7 +54,7 @@ public:
     static RefPtr<QueuedVideoOutput> create(AVPlayerItem*, AVPlayer*);
     ~QueuedVideoOutput();
 
-    bool valid();
+    bool NODELETE valid();
     void invalidate();
     bool hasImageForTime(const MediaTime&) const;
 

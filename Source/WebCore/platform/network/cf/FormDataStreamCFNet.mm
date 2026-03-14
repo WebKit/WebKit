@@ -78,7 +78,7 @@ namespace WebCore {
 
 static void formEventCallback(CFReadStreamRef, CFStreamEventType, void* context);
 
-static CFStringRef formDataPointerPropertyNameSingleton()
+static CFStringRef NODELETE formDataPointerPropertyNameSingleton()
 {
     static CFStringRef formDataPointerPropertyName = CFSTR("WebKitFormDataPointer");
     return formDataPointerPropertyName;

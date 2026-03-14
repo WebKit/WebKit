@@ -39,10 +39,17 @@ WebDataListSuggestionsDropdown::~WebDataListSuggestionsDropdown()
 {
 }
 
+void WebDataListSuggestionsDropdown::show(WebCore::DataListSuggestionInformation&& information)
+{
+    m_targetFrameID = information.rootFrameID;
+    platformShow(WTF::move(information));
+}
+
 void WebDataListSuggestionsDropdown::close()
 {
+    auto targetFrameID = std::exchange(m_targetFrameID, std::nullopt);
     if (auto page = std::exchange(m_page, nullptr))
-        page->didCloseSuggestions();
+        page->didCloseSuggestions(targetFrameID);
 }
 
 } // namespace WebKit

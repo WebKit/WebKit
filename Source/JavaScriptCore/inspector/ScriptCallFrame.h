@@ -47,9 +47,9 @@ public:
     ScriptCallFrame(const String& functionName, const String& scriptName, const String& preRedirectURL, JSC::SourceID, LineColumn);
     JS_EXPORT_PRIVATE ~ScriptCallFrame();
 
-    const String& functionName() const { return m_functionName; }
-    const String& sourceURL() const { return m_scriptName; }
-    const String& preRedirectURL() const { return m_preRedirectURL; }
+    const String& functionName() const LIFETIME_BOUND { return m_functionName; }
+    const String& sourceURL() const LIFETIME_BOUND { return m_scriptName; }
+    const String& preRedirectURL() const LIFETIME_BOUND { return m_preRedirectURL; }
     unsigned lineNumber() const { return m_lineColumn.line; }
     unsigned columnNumber() const { return m_lineColumn.column; }
     JSC::SourceID sourceID() const { return m_sourceID; }

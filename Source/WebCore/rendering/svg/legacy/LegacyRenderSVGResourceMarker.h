@@ -50,7 +50,7 @@ public:
     void layout() override;
     void calcViewport() override;
 
-    const AffineTransform& localToParentTransform() const override;
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override;
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
     OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override { return { }; }

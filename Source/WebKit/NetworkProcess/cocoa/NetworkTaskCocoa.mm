@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
+static inline bool NODELETE computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
 {
     if (session.networkProcess().sessionIsControlledByAutomation(session.sessionID()))
         return true;
@@ -397,7 +397,7 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
 
 ShouldRelaxThirdPartyCookieBlocking NetworkTaskCocoa::shouldRelaxThirdPartyCookieBlocking() const
 {
-    return protect(m_networkSession)->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
+    return m_networkSession->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
 }
 
 } // namespace WebKit

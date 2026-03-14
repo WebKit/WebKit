@@ -30,64 +30,50 @@
 #include "AbortableTaskQueue.h"
 #include "GStreamerCommon.h"
 #include "MainThreadNotifier.h"
+#include "MediaPlayerPrivateGStreamer.h"
 #include <gst/gst.h>
 #include <wtf/Lock.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class TrackPrivateBase;
 using TrackID = uint64_t;
+enum GStreamerTrackType {
+    Audio,
+    Video,
+    Text,
+    Unknown
+};
 
-class TrackPrivateBaseGStreamer {
+class TrackPrivateBaseGStreamer;
+class TrackDataHolder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TrackDataHolder> {
+    WTF_MAKE_TZONE_ALLOCATED(TrackDataHolder);
+    WTF_MAKE_NONCOPYABLE(TrackDataHolder);
+
 public:
-    virtual ~TrackPrivateBaseGStreamer();
+    static Ref<TrackDataHolder> create(TrackPrivateBaseGStreamer& track)
+    {
+        return adoptRef(*new TrackDataHolder(track));
+    }
+    virtual ~TrackDataHolder();
 
-    enum TrackType {
-        Audio,
-        Video,
-        Text,
-        Unknown
-    };
-
-    GstPad* pad() const { return m_pad.get(); }
     void setPad(GRefPtr<GstPad>&&);
+    void setStream(GRefPtr<GstStream>&&);
 
-    virtual void disconnect();
+    void disconnect();
 
-    virtual void setActive(bool) { }
-
-    unsigned index() { return m_index; };
-    void setIndex(unsigned index) { m_index =  index; }
-
-    GstStream* stream() const { return m_stream.get(); }
-
-    // Used for MSE, where the initial caps of the pad are relevant for initializing the matching pad in the
-    // playback pipeline.
-    void setInitialCaps(GRefPtr<GstCaps>&& caps) { m_initialCaps = WTF::move(caps); }
-    const GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
-
-    TrackID streamId() const { return m_id; }
-    const String& gstStreamId() const { return m_gstStreamId; }
-
-    virtual void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) { }
-
-protected:
-    TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
-    TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, TrackID);
-    TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GstStream*);
-
+    void tagsChanged();
     void notifyTrackOfTagsChanged();
-    void notifyTrackOfStreamChanged();
+
+    void streamIdChanged();
+    void streamChanged();
+    void installUpdateConfigurationHandlers();
+    bool updateTrackIDFromTags(const GRefPtr<GstTagList>&);
 
     GstObject* objectForLogging() const;
-
-    virtual void tagsChanged(GRefPtr<GstTagList>&&) { }
-    virtual void capsChanged(TrackID, GRefPtr<GstCaps>&&) { }
-    void installUpdateConfigurationHandlers();
-    virtual void updateConfigurationFromTags(GRefPtr<GstTagList>&&) { }
-
-    static GRefPtr<GstTagList> getAllTags(const GRefPtr<GstPad>&);
 
     enum MainThreadNotification {
         TagsChanged = 1 << 1,
@@ -96,7 +82,8 @@ protected:
     };
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
-    unsigned m_index;
+    // FIXME: this should be optional...
+    unsigned m_index { 0 };
     String m_label;
     String m_language;
     String m_gstStreamId;
@@ -111,23 +98,63 @@ protected:
 
     // Track ID inferred from container-specific-track-id tag.
     std::optional<TrackID> m_trackID;
-    bool updateTrackIDFromTags(const GRefPtr<GstTagList>&);
 
-private:
-    std::optional<String> getLanguageCode(GstTagList*);
-    static String generateUniquePlaybin2StreamID(TrackType, unsigned index);
-    static char prefixForType(TrackType);
-    std::optional<String> getTag(GstTagList* tags, ASCIILiteral tagName);
-
-    void streamChanged();
-    void tagsChanged();
-
-    TrackType m_type;
-    TrackPrivateBase* m_owner;
+    GStreamerTrackType m_type;
+    ThreadSafeWeakPtr<TrackPrivateBase> m_owner;
     Lock m_tagMutex;
-    GRefPtr<GstTagList> m_tags;
+    GRefPtr<GstTagList> m_tags WTF_GUARDED_BY_LOCK(m_tagMutex);
     bool m_shouldUsePadStreamId { true };
     bool m_shouldHandleStreamStartEvent { true };
+
+    ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer> m_player;
+
+    // The owning track, its lifetime is the same as its TrackDataHolder reference.
+    TrackPrivateBaseGStreamer& m_track;
+private:
+    TrackDataHolder(TrackPrivateBaseGStreamer&);
+
+    gulong m_streamTagsNotifyHandlerId { 0 };
+    gulong m_streamCapsNotifyHandlerId { 0 };
+    gulong m_padTagsNotifyHandlerId { 0 };
+    gulong m_padCapsNotifyHandlerId { 0 };
+};
+
+class TrackPrivateBaseGStreamer {
+public:
+    friend class AudioTrackPrivateGStreamer;
+    friend class InbandTextTrackPrivateGStreamer;
+    friend class VideoTrackPrivateGStreamer;
+
+    void disconnect();
+    void setPad(GRefPtr<GstPad>&&);
+    GRefPtr<GstPad> pad() const;
+
+    virtual void setActive(bool) { }
+
+    unsigned index();
+    void setIndex(unsigned);
+
+    GRefPtr<GstStream> stream() const;
+
+    // Used for MSE, where the initial caps of the pad are relevant for initializing the matching pad in the
+    // playback pipeline.
+    void setInitialCaps(GRefPtr<GstCaps>&&);
+    GRefPtr<GstCaps> initialCaps();
+
+    TrackID streamId() const;
+    String gstStreamId() const;
+
+    virtual void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) { }
+    virtual void tagsChanged(GRefPtr<GstTagList>&&) { }
+    virtual void capsChanged(TrackID, GRefPtr<GstCaps>&&) { }
+    virtual void updateConfigurationFromTags(GRefPtr<GstTagList>&&) { }
+
+private:
+    TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, GStreamerTrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
+    TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, GStreamerTrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, TrackID);
+    TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, GStreamerTrackType, TrackPrivateBase*, unsigned index, GstStream*);
+
+    const Ref<TrackDataHolder> m_data;
 };
 
 } // namespace WebCore

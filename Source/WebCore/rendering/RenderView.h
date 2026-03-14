@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <WebCore/LocalFrameView.h>
 #include <WebCore/Region.h>
 #include <WebCore/RenderBlockFlow.h>
 #include <WebCore/RenderSelection.h>
@@ -33,6 +32,7 @@
 
 namespace WebCore {
 
+class LocalFrameView;
 class ImageQualityController;
 class RenderLayerCompositor;
 class RenderLayoutState;
@@ -72,9 +72,9 @@ public:
     LayoutUnit clientLogicalWidthForFixedPosition() const;
     LayoutUnit clientLogicalHeightForFixedPosition() const;
 
-    float zoomFactor() const;
+    float NODELETE zoomFactor() const;
 
-    LocalFrameView& frameView() const { return m_frameView.get(); }
+    WEBCORE_EXPORT LocalFrameView& NODELETE frameView() const LIFETIME_BOUND;
 
     Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
     const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }
@@ -97,7 +97,7 @@ public:
     // Return the renderer whose background style is used to paint the root background.
     RenderElement* rendererForRootBackground() const;
 
-    RenderSelection& selection() { return m_selection; }
+    RenderSelection& selection() LIFETIME_BOUND { return m_selection; }
 
     bool printing() const;
 
@@ -108,14 +108,14 @@ public:
 
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) const override;
 
-    void setPageLogicalSize(LayoutSize);
+    void NODELETE setPageLogicalSize(LayoutSize);
     LayoutUnit pageOrViewLogicalHeight() const;
 
     // This method is used to assign a page number only when pagination modes have
     // a block progression. This happens with vertical-rl books for example, but it
     // doesn't happen for normal horizontal-tb books. This is a very specialized
     // function and should not be mistaken for a general page number API.
-    unsigned pageNumberForBlockProgressionOffset(int offset) const;
+    unsigned NODELETE pageNumberForBlockProgressionOffset(int offset) const;
 
     unsigned pageCount() const;
 
@@ -130,7 +130,7 @@ public:
         m_legacyPrinting.m_truncatorWidth = 0;
         m_legacyPrinting.m_forcedPageBreak = false;
     }
-    const IntRect& printRect() const { return m_legacyPrinting.m_printRect; }
+    const IntRect& printRect() const LIFETIME_BOUND { return m_legacyPrinting.m_printRect; }
     void setPrintRect(const IntRect& r) { m_legacyPrinting.m_printRect = r; }
     // End deprecated functions.
 
@@ -167,7 +167,7 @@ public:
     void decrementRendersWithOutline() { ASSERT(m_renderersWithOutlineCount > 0); --m_renderersWithOutlineCount; }
     bool hasRenderersWithOutline() const { return m_renderersWithOutlineCount; }
 
-    ImageQualityController& imageQualityController();
+    ImageQualityController& imageQualityController() LIFETIME_BOUND;
 
     void setHasSoftwareFilters(bool hasSoftwareFilters) { m_hasSoftwareFilters = hasSoftwareFilters; }
     bool hasSoftwareFilters() const { return m_hasSoftwareFilters; }
@@ -201,22 +201,22 @@ public:
 
     void registerBoxWithScrollSnapPositions(const RenderBox&);
     void unregisterBoxWithScrollSnapPositions(const RenderBox&);
-    const SingleThreadWeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
+    const SingleThreadWeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() LIFETIME_BOUND { return m_boxesWithScrollSnapPositions; }
 
     void registerContainerQueryBox(const RenderBox&);
     void unregisterContainerQueryBox(const RenderBox&);
-    const SingleThreadWeakHashSet<const RenderBox>& containerQueryBoxes() const { return m_containerQueryBoxes; }
+    const SingleThreadWeakHashSet<const RenderBox>& containerQueryBoxes() const LIFETIME_BOUND { return m_containerQueryBoxes; }
 
     void registerAnchor(const RenderBoxModelObject&);
     void unregisterAnchor(const RenderBoxModelObject&);
-    const SingleThreadWeakHashSet<const RenderBoxModelObject>& anchors() const { return m_anchors; }
+    const SingleThreadWeakHashSet<const RenderBoxModelObject>& anchors() const LIFETIME_BOUND { return m_anchors; }
 
     void registerPositionTryBox(const RenderBox&);
     void unregisterPositionTryBox(const RenderBox&);
-    const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes() const { return m_positionTryBoxes; }
+    const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes() const LIFETIME_BOUND { return m_positionTryBoxes; }
 
     SingleThreadWeakPtr<RenderBlockFlow> NODELETE viewTransitionContainingBlock() const;
-    void setViewTransitionContainingBlock(RenderBlockFlow& renderer);
+    void NODELETE setViewTransitionContainingBlock(RenderBlockFlow& renderer);
 
     void addViewTransitionGroup(const AtomString&, RenderBox&);
     void removeViewTransitionGroup(const AtomString&);

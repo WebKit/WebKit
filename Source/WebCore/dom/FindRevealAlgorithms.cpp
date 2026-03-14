@@ -56,9 +56,9 @@ bool revealClosedDetailsAndHiddenUntilFoundAncestors(Node& node)
     auto closedDetailsElementAncestor = [](Node& node) -> RefPtr<HTMLDetailsElement> {
         RefPtr slot = node.assignedSlot();
         if (slot && slot->userAgentPart() == UserAgentParts::detailsContent() && slot->shadowHost()) {
-            Ref details = downcast<HTMLDetailsElement>(*slot->shadowHost());
-            if (!details->hasAttributeWithoutSynchronization(HTMLNames::openAttr))
-                return details;
+            auto& details = downcast<HTMLDetailsElement>(*slot->shadowHost());
+            if (!details.hasAttributeWithoutSynchronization(HTMLNames::openAttr))
+                return &details;
         }
         return nullptr;
     };

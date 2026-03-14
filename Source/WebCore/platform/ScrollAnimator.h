@@ -107,7 +107,7 @@ public:
 
     enum NotifyScrollableArea : bool { No, Yes };
     void setCurrentPosition(const FloatPoint&, NotifyScrollableArea = NotifyScrollableArea::No);
-    const FloatPoint& currentPosition() const { return m_currentPosition; }
+    const FloatPoint& currentPosition() const LIFETIME_BOUND { return m_currentPosition; }
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
     WheelEventTestMonitor* wheelEventTestMonitor() const { return m_wheelEventTestMonitor.get(); }
@@ -115,7 +115,7 @@ public:
     FloatPoint scrollOffsetAdjustedForSnapping(const FloatPoint& offset, ScrollSnapPointSelectionMethod) const;
     float scrollOffsetAdjustedForSnapping(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod) const;
 
-    bool activeScrollSnapIndexDidChange() const;
+    bool NODELETE activeScrollSnapIndexDidChange() const;
     std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned> index);
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);

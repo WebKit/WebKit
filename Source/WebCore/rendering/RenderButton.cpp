@@ -27,6 +27,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"

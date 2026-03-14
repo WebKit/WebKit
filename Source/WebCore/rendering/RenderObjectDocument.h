@@ -40,7 +40,7 @@ inline bool RenderObject::isDocumentElementRenderer() const
     return document().documentElement() == m_node.ptr();
 }
 
-inline RenderView& RenderObject::view() const
+inline RenderView& RenderObject::view() const LIFETIME_BOUND
 {
     return *document().renderView();
 }

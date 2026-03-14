@@ -153,7 +153,7 @@ void WebKitMediaKeys::setMediaElement(HTMLMediaElement* element)
 
 RefPtr<MediaPlayer> WebKitMediaKeys::cdmMediaPlayer(const LegacyCDM*) const
 {
-    if (RefPtr mediaElement = m_mediaElement.get())
+    if (auto* mediaElement = m_mediaElement.get())
         return mediaElement->player();
     return nullptr;
 }

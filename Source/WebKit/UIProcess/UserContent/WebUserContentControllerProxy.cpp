@@ -112,7 +112,7 @@ UserContentControllerParameters WebUserContentControllerProxy::parametersForProc
     Vector<WebJSBufferData> buffers;
     for (auto& [pair, buffer] : m_buffers) {
         if (RefPtr world = API::ContentWorld::worldForIdentifier(pair.first))
-            buffers.append(WebJSBufferData { Ref { buffer }->sharedMemory(), world->worldDataForProcess(process), pair.second });
+            buffers.append(WebJSBufferData { buffer->sharedMemory(), world->worldDataForProcess(process), pair.second });
     }
 
     auto messageHandlers = WTF::map(m_scriptMessageHandlers, [&](auto entry) {

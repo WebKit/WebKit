@@ -48,7 +48,7 @@ public:
     void error(JSC::JSValue) final;
     void complete() final;
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor&) const final;
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&) const final;
 
 protected:
     // ActiveDOMObject

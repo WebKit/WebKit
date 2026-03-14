@@ -28,14 +28,14 @@
 #include "ConcurrentJSLock.h"
 #include "ICStatusMap.h"
 #include "InstanceOfVariant.h"
-#include "StubInfoSummary.h"
+#include "PropertyInlineCacheSummary.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class AccessCase;
 class CodeBlock;
-class StructureStubInfo;
+class PropertyInlineCache;
 
 class InstanceOfStatus final {
     WTF_MAKE_TZONE_ALLOCATED(InstanceOfStatus);
@@ -65,21 +65,21 @@ public:
         ASSERT(state == NoInformation || state == TakesSlowPath || state == Megamorphic);
     }
     
-    explicit InstanceOfStatus(StubInfoSummary summary)
+    explicit InstanceOfStatus(PropertyInlineCacheSummary summary)
     {
         switch (summary) {
-        case StubInfoSummary::NoInformation:
+        case PropertyInlineCacheSummary::NoInformation:
             m_state = NoInformation;
             return;
-        case StubInfoSummary::Simple:
-        case StubInfoSummary::MakesCalls:
+        case PropertyInlineCacheSummary::Simple:
+        case PropertyInlineCacheSummary::MakesCalls:
             RELEASE_ASSERT_NOT_REACHED();
             return;
-        case StubInfoSummary::Megamorphic:
+        case PropertyInlineCacheSummary::Megamorphic:
             m_state = Megamorphic;
             return;
-        case StubInfoSummary::TakesSlowPath:
-        case StubInfoSummary::TakesSlowPathAndMakesCalls:
+        case PropertyInlineCacheSummary::TakesSlowPath:
+        case PropertyInlineCacheSummary::TakesSlowPathAndMakesCalls:
             m_state = TakesSlowPath;
             return;
         }
@@ -89,7 +89,8 @@ public:
     static InstanceOfStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex);
     
 #if ENABLE(DFG_JIT)
-    static InstanceOfStatus computeForStubInfo(const ConcurrentJSLocker&, VM&, StructureStubInfo*);
+    static InstanceOfStatus computeForPropertyInlineCache
+(const ConcurrentJSLocker&, VM&, PropertyInlineCache*);
 #endif
     
     State state() const { return m_state; }
@@ -104,7 +105,7 @@ public:
     JSObject* commonPrototype() const;
     
     size_t numVariants() const { return m_variants.size(); }
-    const Vector<InstanceOfVariant, 2>& variants() const { return m_variants; }
+    const Vector<InstanceOfVariant, 2>& variants() const LIFETIME_BOUND { return m_variants; }
     const InstanceOfVariant& at(size_t index) const { return m_variants[index]; }
     const InstanceOfVariant& operator[](size_t index) const { return at(index); }
 

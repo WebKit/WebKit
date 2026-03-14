@@ -85,12 +85,12 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
 }
 
 template<typename Visitor>
-void JSNode::visitAdditionalChildren(Visitor& visitor)
+void JSNode::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNode);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSNode);
 
 static ALWAYS_INLINE JSValue createWrapperInline(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<Node>&& node)
 {

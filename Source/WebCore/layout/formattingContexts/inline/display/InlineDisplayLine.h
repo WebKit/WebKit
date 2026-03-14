@@ -61,10 +61,10 @@ public:
     float lineBoxHeight() const { return m_lineBoxRect.height(); }
     float lineBoxWidth() const { return m_lineBoxRect.width(); }
 
-    const FloatRect& lineBoxRect() const { return m_lineBoxRect; }
-    const FloatRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
-    const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
-    const FloatRect& inkOverflow() const { return m_inkOverflow; }
+    const FloatRect& lineBoxRect() const LIFETIME_BOUND { return m_lineBoxRect; }
+    const FloatRect& lineBoxLogicalRect() const LIFETIME_BOUND { return m_lineBoxLogicalRect; }
+    const FloatRect& scrollableOverflow() const LIFETIME_BOUND { return m_scrollableOverflow; }
+    const FloatRect& inkOverflow() const LIFETIME_BOUND { return m_inkOverflow; }
 
     float enclosingContentLogicalTop() const { return m_enclosingLogicalTopAndBottom.top; }
     float enclosingContentLogicalBottom() const { return m_enclosingLogicalTopAndBottom.bottom; }

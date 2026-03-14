@@ -61,7 +61,7 @@ public:
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
     void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) { m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy; }
 
-    const AtomString& downloadAttribute() const { return m_downloadAttribute; }
+    const AtomString& downloadAttribute() const LIFETIME_BOUND { return m_downloadAttribute; }
 
     Element* sourceElement() const { return m_sourceElement.get(); }
     void setSourceElement(Element* sourceElement) { m_sourceElement = sourceElement; }
@@ -80,7 +80,7 @@ public:
     bool isFromNavigationAPI() const { return m_isFromNavigationAPI; }
     void setIsFromNavigationAPI(bool isFromNavigationAPI) { m_isFromNavigationAPI = isFromNavigationAPI; }
 
-    const std::optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const { return m_targetBackForwardItemIdentifier; }
+    const std::optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const LIFETIME_BOUND { return m_targetBackForwardItemIdentifier; }
     void setTargetBackForwardItemIdentifier(BackForwardItemIdentifier itemID) { m_targetBackForwardItemIdentifier = itemID; }
 
 protected:
@@ -127,15 +127,15 @@ public:
     WEBCORE_EXPORT Document& NODELETE requester() const;
     const SecurityOrigin& NODELETE requesterSecurityOrigin() const;
 
-    ResourceRequest& resourceRequest() { return m_resourceRequest; }
-    const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
+    ResourceRequest& resourceRequest() LIFETIME_BOUND { return m_resourceRequest; }
+    const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_resourceRequest; }
     ResourceRequest takeResourceRequest() { return std::exchange(m_resourceRequest, { }); }
 
     void setOriginalResourceRequest(ResourceRequest originalResourceRequest) { m_originalResourceRequest = originalResourceRequest; }
     bool hasOriginalResourceRequest() const { return !!m_originalResourceRequest; }
     ResourceRequest takeOriginalResourceRequest() { return m_originalResourceRequest.value_or(ResourceRequest { }); }
 
-    const AtomString& frameName() const { return m_frameName; }
+    const AtomString& frameName() const LIFETIME_BOUND { return m_frameName; }
     void setFrameName(const AtomString& frameName) { m_frameName = frameName; }
 
     void setShouldCheckNewWindowPolicy(bool checkPolicy) { m_shouldCheckNewWindowPolicy = checkPolicy; }
@@ -144,13 +144,13 @@ public:
     void setShouldTreatAsContinuingLoad(ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad) { m_shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad; }
     ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad() const { return m_shouldTreatAsContinuingLoad; }
 
-    const SubstituteData& substituteData() const { return m_substituteData; }
+    const SubstituteData& substituteData() const LIFETIME_BOUND { return m_substituteData; }
     void setSubstituteData(SubstituteData&& data) { m_substituteData = WTF::move(data); }
     bool hasSubstituteData() { return m_substituteData.isValid(); }
     SubstituteData takeSubstituteData() { return std::exchange(m_substituteData, { }); }
 
 
-    const String& clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; }
+    const String& clientRedirectSourceForHistory() const LIFETIME_BOUND { return m_clientRedirectSourceForHistory; }
     void setClientRedirectSourceForHistory(String&& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = WTF::move(clientRedirectSourceForHistory); }
 
     ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }

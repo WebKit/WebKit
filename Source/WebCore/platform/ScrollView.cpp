@@ -759,8 +759,14 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         IntRect oldRect(m_horizontalScrollbar->frameRect());
 
         auto scrollerHalfHeight = m_horizontalScrollbar->height() / 2.f;
-        auto leftOffset = std::max(0.f, cornerRadii.bottomLeft().width() - scrollerHalfHeight);
-        auto rightOffset = std::max(0.f, cornerRadii.bottomRight().width() - scrollerHalfHeight);
+        auto scrollCornerWidth = m_verticalScrollbar ? static_cast<float>(m_verticalScrollbar->occupiedWidth()) : 0.f;
+        auto leftOffset = std::max(0.f, cornerRadii.bottomLeft().width() - (shouldPlaceVerticalScrollbarOnLeft() ? scrollCornerWidth : 0.f));
+        auto rightOffset = std::max(0.f, cornerRadii.bottomRight().width() - (shouldPlaceVerticalScrollbarOnLeft() ? 0.f : scrollCornerWidth));
+
+        if (!m_horizontalScrollbar->isCustomScrollbar()) {
+            leftOffset = std::max(0.f, leftOffset - scrollerHalfHeight);
+            rightOffset = std::max(0.f, rightOffset - scrollerHalfHeight);
+        }
 
         leftOffset = std::max(leftOffset, contentInsets.left());
         rightOffset = std::max(rightOffset, contentInsets.right());
@@ -768,9 +774,11 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         auto horizontalOffset = leftOffset + (shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0.f);
         auto barWidth = width() - (m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0.f) - leftOffset - rightOffset;
 
+        auto horizontalScrollbarY = height() - m_horizontalScrollbar->height() - contentInsets.bottom();
+
         m_horizontalScrollbar->setFrameRect(roundedIntRect({
             horizontalOffset,
-            static_cast<float>(height() - m_horizontalScrollbar->height()),
+            static_cast<float>(horizontalScrollbarY),
             barWidth,
             static_cast<float>(m_horizontalScrollbar->height())
         }));
@@ -797,16 +805,24 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         auto upperCornerRadius = isRTL ? cornerRadii.topLeft().height() : cornerRadii.topRight().height();
         auto lowerCornerRadius = isRTL ? cornerRadii.bottomLeft().height() : cornerRadii.bottomRight().height();
 
-        auto topOffset = std::max(0.f, upperCornerRadius - scrollerHalfWidth);
-        auto bottomOffset = std::max(0.f, lowerCornerRadius - scrollerHalfWidth);
+        auto topOffset = std::max(0.f, upperCornerRadius);
+        auto scrollCornerHeight = m_horizontalScrollbar ? static_cast<float>(m_horizontalScrollbar->occupiedHeight()) : 0.f;
+        auto bottomOffset = std::max(0.f, lowerCornerRadius - scrollCornerHeight);
+
+        if (!m_verticalScrollbar->isCustomScrollbar()) {
+            topOffset = std::max(0.f, topOffset - scrollerHalfWidth);
+            bottomOffset = std::max(0.f, bottomOffset - scrollerHalfWidth);
+        }
 
         topOffset = std::max(topOffset, contentInsets.top());
         bottomOffset = std::max(bottomOffset, contentInsets.bottom());
 
         auto barHeight = height() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0) - topOffset - bottomOffset;
 
+        auto verticalScrollbarX = isRTL ? contentInsets.left() : width() - m_verticalScrollbar->width() - contentInsets.right();
+
         m_verticalScrollbar->setFrameRect(roundedIntRect({
-            shouldPlaceVerticalScrollbarOnLeft() ? 0.f : width() - m_verticalScrollbar->width(),
+            verticalScrollbarX,
             topOffset,
             static_cast<float>(m_verticalScrollbar->width()),
             barHeight
@@ -1366,24 +1382,14 @@ IntRect ScrollView::scrollCornerRect() const
     if (hasOverlayScrollbars())
         return cornerRect;
 
-    auto obscuredContentInsets = this->obscuredContentInsets();
-    int widthTrackedByScrollbar = width() - obscuredContentInsets.left() - obscuredContentInsets.right();
-    int heightTrackedByScrollbar = height() - obscuredContentInsets.top() - obscuredContentInsets.bottom();
+    if (!m_horizontalScrollbar || !m_verticalScrollbar)
+        return cornerRect;
 
-    if (m_horizontalScrollbar && widthTrackedByScrollbar > m_horizontalScrollbar->width()) {
-        // FIXME: This may need to account for non-zero left or right content insets.
-        cornerRect.unite(IntRect(shouldPlaceVerticalScrollbarOnLeft() ? 0 : m_horizontalScrollbar->width(),
-            height() - m_horizontalScrollbar->height(),
-            width() - m_horizontalScrollbar->width(),
-            m_horizontalScrollbar->height()));
-    }
-
-    if (m_verticalScrollbar && heightTrackedByScrollbar > m_verticalScrollbar->height()) {
-        cornerRect.unite(IntRect(shouldPlaceVerticalScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
-            m_verticalScrollbar->height() + obscuredContentInsets.top(),
-            m_verticalScrollbar->width(),
-            heightTrackedByScrollbar - m_verticalScrollbar->height()));
-    }
+    cornerRect = IntRect(
+        m_verticalScrollbar->x(),
+        m_horizontalScrollbar->y(),
+        m_verticalScrollbar->width(),
+        m_horizontalScrollbar->height());
 
     return cornerRect;
 }

@@ -83,7 +83,7 @@ public:
     std::pair<PageIndex, WebCore::FloatPoint> pageIndexAndPagePointForDocumentYOffset(float) const;
 
     // This is not scaled by scale().
-    WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;
+    WebCore::FloatRect NODELETE layoutBoundsForPageAtIndex(PageIndex) const;
     // Bounds of the pages in the row, including document margins. Not scaled.
     WebCore::FloatRect layoutBoundsForRow(PDFLayoutRow) const;
 
@@ -106,7 +106,7 @@ public:
 
     OptionSet<LayoutUpdateChange> updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
     WebCore::FloatSize NODELETE contentsSize() const;
-    WebCore::FloatSize scaledContentsSize() const;
+    WebCore::FloatSize NODELETE scaledContentsSize() const;
 
     void setDisplayMode(PDFDisplayMode displayMode) { m_displayMode = displayMode; }
     PDFDisplayMode displayMode() const { return m_displayMode; }

@@ -414,17 +414,18 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def add_comment_to_issue(cls, issue, pr):
+    def add_comment_to_issue(cls, issue, pr, commit_class=None):
         log.info('Checking issue assignee...')
-        if issue.assignee != issue.tracker.me():
+        if issue.assignee != issue.tracker.me() and commit_class != 'Gardening':
             issue.assign(issue.tracker.me())
             print('Assigning associated issue to {}'.format(issue.tracker.me()))
         log.info('Checking for pull request link in associated issue...')
+        pr_label = 'Test gardening pull request' if commit_class == 'Gardening' else 'Pull request'
         if pr.url and not any([pr.url in comment.content for comment in issue.comments]):
             if issue.opened:
-                issue.add_comment('Pull request: {}'.format(pr.url))
-            else:
-                issue.open(why='Re-opening for pull request {}'.format(pr.url))
+                issue.add_comment('{}: {}'.format(pr_label, pr.url))
+            elif commit_class != 'Gardening':
+                issue.open(why='Re-opening for {} {}'.format(pr_label.lower(), pr.url))
             print('Posted pull request link to {}'.format(issue.link))
 
     @classmethod
@@ -732,10 +733,17 @@ class PullRequest(Command):
             if cls.is_revert_commit(commits[0]) and update_issue:
                 cls.add_comment_to_reverted_commit_bug_tracker(repository, args, pr, commits[0])
 
+        commit_class = None
+        if repository.classifier and repository.classifier.classes and commits:
+            classes = [repository.classifier.classify(commit, repository) for commit in commits]
+            classes = [klass for klass in classes if klass]
+            if classes and len(classes) == len(commits) and len(set(klass.name for klass in classes)) == 1:
+                commit_class = classes[0].name
+
         if issue and update_issue and isinstance(issue.tracker, radar.Tracker) and not_radar:
-            cls.add_comment_to_issue(not_radar, pr)
+            cls.add_comment_to_issue(not_radar, pr, commit_class=commit_class)
         elif issue and update_issue:
-            cls.add_comment_to_issue(issue, pr)
+            cls.add_comment_to_issue(issue, pr, commit_class=commit_class)
 
         if issue and pr._metadata and pr._metadata.get('issue'):
             log.info('Syncing PR labels with issue component...')

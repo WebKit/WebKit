@@ -54,11 +54,11 @@ public:
     
     static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
 
-    JSObject* targetFunction() { return m_targetFunction.get(); }
+    JSObject* targetFunction() LIFETIME_BOUND { return m_targetFunction.get(); }
     JSValue boundThis() { return m_boundThis.get(); }
     unsigned boundArgsLength() const { return m_boundArgsLength; }
     JSArray* boundArgsCopy(JSGlobalObject*);
-    JSString* nameMayBeNull() { return m_nameMayBeNull.get(); }
+    JSString* nameMayBeNull() LIFETIME_BOUND { return m_nameMayBeNull.get(); }
     JSString* name()
     {
         if (m_nameMayBeNull)

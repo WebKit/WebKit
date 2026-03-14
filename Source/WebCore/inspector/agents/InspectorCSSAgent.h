@@ -91,7 +91,7 @@ public:
         const CheckedPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
     };
 
-    static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoElementType(PseudoElementType);
+    static std::optional<Inspector::Protocol::CSS::PseudoId> NODELETE protocolValueForPseudoElementType(PseudoElementType);
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend();
@@ -175,7 +175,7 @@ private:
     InspectorStyleSheet& bindStyleSheet(CSSStyleSheet*);
     InspectorStyleSheet* assertStyleSheetForId(Inspector::Protocol::ErrorString&, const Inspector::Protocol::CSS::StyleSheetId&);
     InspectorStyleSheet* createInspectorStyleSheetForDocument(Document&);
-    Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
+    Inspector::Protocol::CSS::StyleSheetOrigin NODELETE detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(const StyleRule*, Style::Resolver&, Element&);
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(CSSStyleRule*);

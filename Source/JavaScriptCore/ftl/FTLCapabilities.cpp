@@ -322,6 +322,7 @@ inline CapabilityLevel canCompile(Node* node)
     case IsCallable:
     case IsConstructor:
     case IsTypedArrayView:
+    case ArrayIsArray:
     case CheckTypeInfoFlags:
     case HasStructureWithFlags:
     case OverridesHasInstance:

@@ -452,6 +452,7 @@ class TestPrintSwiftVersion(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setup_step(PrintSwiftVersion())
+        self.setProperty('fullPlatform', 'mac-tahoe')
 
     def test_success_with_tag_and_toolchain(self):
         self.configureStep()
@@ -547,6 +548,8 @@ class TestGetSwiftTagName(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setup_step(GetSwiftTagName())
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('platform', 'mac')
 
     def test_success(self):
         self.configureStep()
@@ -555,12 +558,29 @@ class TestGetSwiftTagName(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'cat Tools/CISupport/safer-cpp-swift-version'])
-            .log('stdio', stdout='swift-6.3-DEVELOPMENT-SNAPSHOT\n')
+            .log('stdio', stdout='mac: swift-6.3-DEVELOPMENT-SNAPSHOT\nios: swift-6.3-DEVELOPMENT-SNAPSHOT\n')
             .exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='Canonical Swift tag name: swift-6.3-DEVELOPMENT-SNAPSHOT')
         rc = self.run_step()
         self.expect_property('canonical_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        return rc
+
+    def test_success_ios(self):
+        self.setup_step(GetSwiftTagName())
+        self.setProperty('fullPlatform', 'ios-26')
+        self.setProperty('platform', 'ios')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=60,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'cat Tools/CISupport/safer-cpp-swift-version'])
+            .log('stdio', stdout='mac: swift-6.3-DEVELOPMENT-SNAPSHOT\nios: swift-6.3-ios-SNAPSHOT\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Canonical Swift tag name: swift-6.3-ios-SNAPSHOT')
+        rc = self.run_step()
+        self.expect_property('canonical_swift_tag', 'swift-6.3-ios-SNAPSHOT')
         return rc
 
     def test_failure_empty_file(self):
@@ -571,6 +591,19 @@ class TestGetSwiftTagName(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'cat Tools/CISupport/safer-cpp-swift-version'])
             .log('stdio', stdout='')
+            .exit(0),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to find canonical Swift tag')
+        return self.run_step()
+
+    def test_failure_missing_platform(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=60,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'cat Tools/CISupport/safer-cpp-swift-version'])
+            .log('stdio', stdout='ios: swift-6.3-DEVELOPMENT-SNAPSHOT\n')
             .exit(0),
         )
         self.expect_outcome(result=FAILURE, state_string='Failed to find canonical Swift tag')
@@ -755,6 +788,7 @@ class TestInstallMetalToolchain(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setup_step(InstallMetalToolchain())
+        self.setProperty('fullPlatform', 'mac-tahoe')
 
     def test_success_symlink_created(self):
         self.configureStep()

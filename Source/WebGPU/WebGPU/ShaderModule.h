@@ -83,9 +83,9 @@ public:
     id<MTLLibrary> library() const { return m_library; }
 
     Device& device() const { return m_device; }
-    const String& defaultVertexEntryPoint() const;
-    const String& defaultFragmentEntryPoint() const;
-    const String& defaultComputeEntryPoint() const;
+    const String& NODELETE defaultVertexEntryPoint() const;
+    const String& NODELETE defaultFragmentEntryPoint() const;
+    const String& NODELETE defaultComputeEntryPoint() const;
 
     using VertexStageIn = HashMap<uint32_t, WGPUVertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using FragmentOutputs = HashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;

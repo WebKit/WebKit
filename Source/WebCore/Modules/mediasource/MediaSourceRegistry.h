@@ -55,7 +55,7 @@ public:
 
 private:
     MediaSourceRegistry();
-    MemoryCompactRobinHoodHashMap<String, std::pair<RefPtr<MediaSource>, ScriptExecutionContextIdentifier>> m_mediaSources;
+    MemoryCompactRobinHoodHashMap<String, std::pair<Ref<MediaSource>, ScriptExecutionContextIdentifier>> m_mediaSources;
     HashMap<ScriptExecutionContextIdentifier, HashSet<String>> m_urlsPerContext;
 };
 

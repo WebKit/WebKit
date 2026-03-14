@@ -124,7 +124,7 @@ String animatedPropertyIDAsString(AnimatedProperty property)
 }
 
 using RepaintMap = HashMap<const GraphicsLayer*, Vector<FloatRect>>;
-static RepaintMap& repaintRectMap()
+static RepaintMap& NODELETE repaintRectMap()
 {
     static NeverDestroyed<RepaintMap> map;
     return map;
@@ -808,7 +808,7 @@ void GraphicsLayer::setZPosition(float position)
     m_zPosition = position;
 }
 
-static inline const FilterOperations& filterOperationsAt(const GraphicsLayerKeyframeValueList& valueList, size_t index)
+static inline const FilterOperations& NODELETE filterOperationsAt(const GraphicsLayerKeyframeValueList& valueList, size_t index)
 {
     return downcast<GraphicsLayerFilterAnimationValue>(valueList.at(index)).value();
 }

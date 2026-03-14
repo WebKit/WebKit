@@ -248,6 +248,11 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
     if (!player()->supportsFullscreen())
         return false;
 
+#if HAVE(AVEXPERIENCECONTROLLER)
+    if (document().settings().isAVExperienceControllerFullscreenEnabled())
+        return true;
+#endif
+
 #if ENABLE(FULLSCREEN_API)
 #if PLATFORM(IOS_FAMILY)
     // Fullscreen implemented by player.
@@ -848,9 +853,9 @@ void HTMLVideoElement::setVideoFullscreenStandby(bool value)
         return;
 
     if (videoFullscreenStandby())
-        protect(document().page())->chrome().client().enterVideoFullscreenForVideoElement(*this, VideoFullscreenModeNone, true);
+        document().page()->chrome().client().enterVideoFullscreenForVideoElement(*this, VideoFullscreenModeNone, true);
     else {
-        protect(document().page())->chrome().client().exitVideoFullscreenForVideoElement(*this, [this, protectedThis = Ref { *this }](auto success) mutable {
+        document().page()->chrome().client().exitVideoFullscreenForVideoElement(*this, [this, protectedThis = Ref { *this }](auto success) mutable {
             setVideoFullscreenStandbyInternal(!success);
         });
     }

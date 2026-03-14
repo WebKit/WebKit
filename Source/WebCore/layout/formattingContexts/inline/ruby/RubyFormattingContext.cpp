@@ -35,12 +35,12 @@
 namespace WebCore {
 namespace Layout {
 
-static inline InlineLayoutUnit halfOfAFullWidthCharacter(const Box& annotationBox)
+static inline InlineLayoutUnit NODELETE halfOfAFullWidthCharacter(const Box& annotationBox)
 {
     return annotationBox.style().computedFontSize() / 2.f;
 }
 
-static inline size_t baseContentIndex(size_t rubyBaseStart, const InlineDisplay::Boxes& boxes)
+static inline size_t NODELETE baseContentIndex(size_t rubyBaseStart, std::span<InlineDisplay::Box> boxes)
 {
     auto baseContentIndex = rubyBaseStart + 1;
     if (boxes[baseContentIndex].layoutBox().isRubyAnnotationBox())
@@ -148,9 +148,9 @@ size_t RubyFormattingContext::applyRubyAlignOnBaseContent(size_t rubyBaseStart, 
     }
     CheckedRef rubyBaseLayoutBox = runs[rubyBaseStart].layoutBox();
     auto rubyBaseEnd = [&]() -> std::optional<size_t> {
-        CheckedRef rubyBox = rubyBaseLayoutBox->parent();
+        auto& rubyBox = rubyBaseLayoutBox->parent();
         for (auto index = rubyBaseStart + 1; index < runs.size(); ++index) {
-            if (&runs[index].layoutBox().parent() == rubyBox.ptr())
+            if (&runs[index].layoutBox().parent() == &rubyBox)
                 return index;
         }
         // We somehow managed to break content inside the base.
@@ -205,14 +205,14 @@ InlineLayoutUnit RubyFormattingContext::applyRubyAlignOnAnnotationBox(Line& line
     return InlineContentAligner::applyRubyAlign(inlineFormattingContext.root().style().rubyAlign(), line.runs(), { 0, line.runs().size() }, spaceToDistribute);
 }
 
-void RubyFormattingContext::applyAlignmentOffsetList(InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, RubyBasesMayNeedResizing rubyBasesMayNeedResizing, InlineFormattingContext& inlineFormattingContext)
+void RubyFormattingContext::applyAlignmentOffsetList(std::span<InlineDisplay::Box> displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, RubyBasesMayNeedResizing rubyBasesMayNeedResizing, InlineFormattingContext& inlineFormattingContext)
 {
     if (alignmentOffsetList.isEmpty())
         return;
     InlineContentAligner::applyRubyBaseAlignmentOffset(displayBoxes, alignmentOffsetList, rubyBasesMayNeedResizing == RubyBasesMayNeedResizing::No ? InlineContentAligner::AdjustContentOnlyInsideRubyBase::Yes : InlineContentAligner::AdjustContentOnlyInsideRubyBase::No, inlineFormattingContext);
 }
 
-void RubyFormattingContext::applyAnnotationAlignmentOffset(InlineDisplay::Boxes& displayBoxes, InlineLayoutUnit alignmentOffset, InlineFormattingContext& inlineFormattingContext)
+void RubyFormattingContext::applyAnnotationAlignmentOffset(std::span<InlineDisplay::Box> displayBoxes, InlineLayoutUnit alignmentOffset, InlineFormattingContext& inlineFormattingContext)
 {
     if (!alignmentOffset)
         return;
@@ -384,7 +384,7 @@ void RubyFormattingContext::applyAnnotationContributionToLayoutBounds(LineBox& l
     }
 }
 
-InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes& boxes, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext& inlineFormattingContext)
+InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, std::span<InlineDisplay::Box> boxes, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext& inlineFormattingContext)
 {
     // [root inline box][ruby container][ruby base][ruby annotation]
     ASSERT(rubyBaseStart >= 2);
@@ -432,7 +432,7 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
     return wouldAnnotationOrBaseOverlapAdjacentContent() ? 0.f : overhangValue;
 }
 
-InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes& boxes, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext& inlineFormattingContext)
+InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, std::span<InlineDisplay::Box> boxes, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext& inlineFormattingContext)
 {
     CheckedPtr annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!annotationBox || !hasInterlinearAnnotation(rubyBaseLayoutBox))
@@ -493,7 +493,7 @@ bool RubyFormattingContext::hasInterCharacterAnnotation(const Box& rubyBaseLayou
     return false;
 }
 
-void RubyFormattingContext::applyRubyOverhang(InlineFormattingContext& parentFormattingContext, InlineLayoutUnit lineLogicalHeight, InlineDisplay::Boxes& displayBoxes, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList)
+void RubyFormattingContext::applyRubyOverhang(InlineFormattingContext& parentFormattingContext, InlineLayoutUnit lineLogicalHeight, std::span<InlineDisplay::Box> displayBoxes, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList)
 {
     // FIXME: We are only supposed to apply overhang when annotation box is wider than base, but at this point we can't tell (this needs to be addressed together with annotation box sizing).
     if (interlinearRubyColumnRangeList.isEmpty())

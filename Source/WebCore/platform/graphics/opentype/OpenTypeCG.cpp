@@ -37,7 +37,7 @@
 namespace WebCore {
 namespace OpenType {
 
-static inline short readShortFromTable(std::span<const UInt8> os2Data, CFIndex offset)
+static inline short NODELETE readShortFromTable(std::span<const UInt8> os2Data, CFIndex offset)
 {
     return reinterpretCastSpanStartTo<const OpenType::Int16>(os2Data.subspan(offset));
 }

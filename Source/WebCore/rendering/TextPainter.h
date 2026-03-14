@@ -98,7 +98,6 @@ private:
     const CheckedPtr<const RenderCombineText> m_combinedText;
     RefPtr<const DisplayList::DisplayList> m_glyphDisplayList { nullptr };
     float m_emphasisMarkOffset { 0 };
-    WritingMode m_writingMode;
 };
 
 class ShadowApplier {

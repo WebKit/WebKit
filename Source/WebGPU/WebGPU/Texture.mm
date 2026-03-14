@@ -162,7 +162,7 @@ std::optional<Texture::CompressFormat> Texture::compressedFormatType(WGPUTexture
     }
 }
 
-static std::optional<WGPUTextureFormat> depthSpecificFormat(WGPUTextureFormat textureFormat)
+static std::optional<WGPUTextureFormat> NODELETE depthSpecificFormat(WGPUTextureFormat textureFormat)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
@@ -283,7 +283,7 @@ static std::optional<WGPUTextureFormat> depthSpecificFormat(WGPUTextureFormat te
     }
 }
 
-static std::optional<WGPUTextureFormat> stencilSpecificFormat(WGPUTextureFormat textureFormat)
+static std::optional<WGPUTextureFormat> NODELETE stencilSpecificFormat(WGPUTextureFormat textureFormat)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
@@ -1897,7 +1897,7 @@ WGPUTextureFormat Texture::removeSRGBSuffix(WGPUTextureFormat format)
     }
 }
 
-static bool textureViewFormatCompatible(WGPUTextureFormat format1, WGPUTextureFormat format2)
+static bool NODELETE textureViewFormatCompatible(WGPUTextureFormat format1, WGPUTextureFormat format2)
 {
     // https://gpuweb.github.io/gpuweb/#texture-view-format-compatible
 
@@ -2891,7 +2891,7 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     }
 }
 
-static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures)
+static MTLStorageMode NODELETE storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures)
 {
 
     // FIXME: only perform this check if the texture is a depth/stencil texture.
@@ -3233,7 +3233,7 @@ static WGPUExtent3D computeRenderExtent(const WGPUExtent3D& baseSize, uint32_t m
     return extent;
 }
 
-static MTLPixelFormat resolvedPixelFormat(MTLPixelFormat viewPixelFormat, MTLPixelFormat sourcePixelFormat)
+static MTLPixelFormat NODELETE resolvedPixelFormat(MTLPixelFormat viewPixelFormat, MTLPixelFormat sourcePixelFormat)
 {
     switch (viewPixelFormat) {
     case MTLPixelFormatStencil8:
@@ -4148,7 +4148,7 @@ void Texture::updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t
 
 #pragma mark WGPU Stubs
 
-void wgpuTextureReference(WGPUTexture texture)
+void NODELETE wgpuTextureReference(WGPUTexture texture)
 {
     WebGPU::fromAPI(texture).ref();
 }
@@ -4168,7 +4168,7 @@ void wgpuTextureDestroy(WGPUTexture texture)
     protect(WebGPU::fromAPI(texture))->destroy();
 }
 
-void wgpuTextureUndestroy(WGPUTexture texture)
+void NODELETE wgpuTextureUndestroy(WGPUTexture texture)
 {
     WebGPU::fromAPI(texture).recreateIfNeeded();
 }

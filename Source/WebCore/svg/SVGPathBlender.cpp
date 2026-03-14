@@ -58,7 +58,7 @@ SVGPathBlender::SVGPathBlender(SVGPathSource& fromSource, SVGPathSource& toSourc
 }
 
 // Helper functions
-static inline FloatPoint blendFloatPoint(const FloatPoint& a, const FloatPoint& b, float progress)
+static inline FloatPoint NODELETE blendFloatPoint(const FloatPoint& a, const FloatPoint& b, float progress)
 {
     BlendingContext context { progress };
     return FloatPoint(blend(a.x(), b.x(), context), blend(a.y(), b.y(), context));

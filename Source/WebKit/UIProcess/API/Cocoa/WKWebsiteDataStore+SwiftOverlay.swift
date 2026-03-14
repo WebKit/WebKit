@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import Network
+public import Network
 
 extension WKWebsiteDataStore {
     /// Gets or sets the proxy configurations to be used to override networking in all WKWebViews that use this WKWebsiteDataStore.

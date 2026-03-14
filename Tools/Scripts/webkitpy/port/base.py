@@ -390,10 +390,16 @@ class Port(object):
         in 'unified diff' format."""
         expected_filename = string_utils.decode(string_utils.encode(expected_filename), target_type=str)
         actual_filename = string_utils.decode(string_utils.encode(actual_filename), target_type=str)
+
+        kwargs = {}
+        if self.get_option('full_diff_context'):
+            kwargs['n'] = sys.maxsize
         diff = difflib.unified_diff(expected_text.splitlines(True),
                                     actual_text.splitlines(True),
                                     expected_filename,
-                                    actual_filename)
+                                    actual_filename,
+                                    **kwargs)
+
         result = ""
         for line in diff:
             result += line

@@ -64,10 +64,10 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::pointsAttr);
         InstanceInvalidationGuard guard(*this);
 
-        if (CheckedPtr path = dynamicDowncast<RenderSVGPath>(renderer()))
+        if (auto* path = dynamicDowncast<RenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
 
-        if (CheckedPtr path = dynamicDowncast<LegacyRenderSVGPath>(renderer()))
+        if (auto* path = dynamicDowncast<LegacyRenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();

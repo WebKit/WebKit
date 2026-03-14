@@ -88,7 +88,7 @@ public:
 
     void NODELETE setRenderRange(const RenderRange&);
     bool setRenderRange(const HighlightRange&); // Returns true if successful.
-    const RenderRange& get() const { return m_renderRange; }
+    const RenderRange& get() const LIFETIME_BOUND { return m_renderRange; }
 
     RenderObject* start() const { return m_renderRange.start(); }
     RenderObject* end() const { return m_renderRange.end(); }

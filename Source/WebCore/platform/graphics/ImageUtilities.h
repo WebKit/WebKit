@@ -82,9 +82,9 @@ WEBCORE_EXPORT void decodeImageWithSize(std::span<const uint8_t> data, std::opti
 
 Vector<uint8_t> encodeData(CGImageRef, const String& mimeType, std::optional<double> quality = std::nullopt);
 WEBCORE_EXPORT String encodeDataURL(CGImageRef, const String& mimeType, std::optional<double> quality = std::nullopt);
-WEBCORE_EXPORT uint8_t verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer);
+WEBCORE_EXPORT uint8_t NODELETE verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer);
 RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType);
-CFStringRef jpegUTI();
+CFStringRef NODELETE jpegUTI();
 #endif
 
 // For the implementations, not to be called directly.

@@ -1401,15 +1401,15 @@ TEST(WKUserContentController, FocusedElementRemovedEvent)
     RetainPtr configuration = adoptNS([WKContentWorldConfiguration new]);
     configuration.get().autofillScriptingEnabled = YES;
     RetainPtr autofillWorld = [WKContentWorld worldWithConfiguration:configuration.get()];
-    NSString *pageWorldJS = @"document.querySelector('input').addEventListener('webkitfocusedelementdisconnected', () => alert('fail') )";
-    NSString *autofillWorldJS = @"document.querySelector('input').addEventListener('webkitfocusedelementdisconnected', () => { setTimeout(() => alert('pass'), 50); })";
+    NSString *pageWorldJS = @"document.querySelector('input').addEventListener('webkitfocusedelementdisconnected', () => mainWorldResult.textContent = 'FAIL')";
+    NSString *autofillWorldJS = @"document.querySelector('input').addEventListener('webkitfocusedelementdisconnected', () => autofillWorldResult.textContent = 'PASS')";
     RetainPtr pageWorldScript = adoptNS([[WKUserScript alloc] initWithSource:pageWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]);
     RetainPtr autofillWorldScript = adoptNS([[WKUserScript alloc] initWithSource:autofillWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES inContentWorld:autofillWorld.get()]);
     RetainPtr<WKUserContentController> userContentController = [webView configuration].userContentController;
     [userContentController addUserScript:pageWorldScript.get()];
     [userContentController addUserScript:autofillWorldScript.get()];
 
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><input><script>document.querySelector('input').focus()</script>"];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><input><div id=mainWorldResult>PASS</div><div id=autofillWorldResult>FAIL</div><script>document.querySelector('input').focus()</script>"];
 
     [webView waitForNextPresentationUpdate];
 
@@ -1417,7 +1417,8 @@ TEST(WKUserContentController, FocusedElementRemovedEvent)
 
     [webView waitForNextPresentationUpdate];
 
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"mainWorldResult.textContent;"], "PASS");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"autofillWorldResult.textContent;"], "PASS");
 }
 
 #if WK_HAVE_C_SPI

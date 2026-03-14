@@ -80,9 +80,9 @@ public:
 
     static NSArray *matchingPlatformMenuItems(const MenuItemVector&, const WebExtensionMenuItemContextParameters&, size_t limit = 0);
 
-    bool operator==(const WebExtensionMenuItem&) const;
+    bool NODELETE operator==(const WebExtensionMenuItem&) const;
 
-    WebExtensionMenuItemParameters minimalParameters() const;
+    WebExtensionMenuItemParameters NODELETE minimalParameters() const;
 
     WebExtensionContext* NODELETE extensionContext() const;
 

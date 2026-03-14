@@ -105,7 +105,7 @@ public:
     {
     }
 
-    void setDisableNonLocalhostConnections(bool disableNonLocalhostConnections) { m_disableNonLocalhostConnections = disableNonLocalhostConnections; }
+    void NODELETE setDisableNonLocalhostConnections(bool disableNonLocalhostConnections) { m_disableNonLocalhostConnections = disableNonLocalhostConnections; }
 
     std::unique_ptr<webrtc::AsyncPacketSocket> CreateUdpSocket(const webrtc::Environment& env, const webrtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort) final
     {
@@ -151,7 +151,7 @@ static void doReleaseLogging(webrtc::LoggingSeverity severity, const char* messa
 #endif
 }
 
-static webrtc::LoggingSeverity computeLogLevel(WTFLogLevel level)
+static webrtc::LoggingSeverity NODELETE computeLogLevel(WTFLogLevel level)
 {
 #if !RELEASE_LOG_DISABLED
     switch (level) {

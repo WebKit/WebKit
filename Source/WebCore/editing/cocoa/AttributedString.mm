@@ -102,6 +102,7 @@ inline static void configureNSTextBlockFromParagraphStyleCommonTableAttributes(N
     [table setValue:item.minimumHeight type:NSTextBlockValueTypeAbsolute forDimension:NSTextBlockDimensionMinimumHeight];
     [table setValue:item.maximumHeight type:NSTextBlockValueTypeAbsolute forDimension:NSTextBlockDimensionMaximumHeight];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [table setWidth:item.paddingMinXEdge type:NSTextBlockValueTypeAbsolute forLayer:NSTextBlockLayerPadding edge:NSRectEdgeMinX];
     [table setWidth:item.paddingMinYEdge type:NSTextBlockValueTypeAbsolute forLayer:NSTextBlockLayerPadding edge:NSRectEdgeMinY];
     [table setWidth:item.paddingMaxXEdge type:NSTextBlockValueTypeAbsolute forLayer:NSTextBlockLayerPadding edge:NSRectEdgeMaxX];
@@ -131,6 +132,7 @@ inline static void configureNSTextBlockFromParagraphStyleCommonTableAttributes(N
 
     if (item.borderMaxYEdgeColor)
         [table setBorderColor:item.borderMaxYEdgeColor.get() forEdge:NSRectEdgeMaxY];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 inline static NSTextAlignment reconstructNSTextAlignment(ParagraphStyleAlignment alignment)
@@ -151,7 +153,7 @@ inline static NSTextAlignment reconstructNSTextAlignment(ParagraphStyleAlignment
     return NSTextAlignmentLeft;
 }
 
-inline static NSTextBlockVerticalAlignment reconstructNSTextBlockVerticalAlignment(TextTableBlockVerticalAlignment alignment)
+inline static NSTextBlockVerticalAlignment NODELETE reconstructNSTextBlockVerticalAlignment(TextTableBlockVerticalAlignment alignment)
 {
     switch (alignment) {
     case TextTableBlockVerticalAlignment::Top:
@@ -167,7 +169,7 @@ inline static NSTextBlockVerticalAlignment reconstructNSTextBlockVerticalAlignme
     return NSTextBlockVerticalAlignmentTop;
 }
 
-inline static NSTextTableLayoutAlgorithm reconstructNSTextTableLayoutAlgorithm(TextTableLayoutAlgorithm layout)
+inline static NSTextTableLayoutAlgorithm NODELETE reconstructNSTextTableLayoutAlgorithm(TextTableLayoutAlgorithm layout)
 {
     switch (layout) {
     case TextTableLayoutAlgorithm::Automatic:
@@ -179,7 +181,7 @@ inline static NSTextTableLayoutAlgorithm reconstructNSTextTableLayoutAlgorithm(T
     return NSTextTableLayoutAlgorithmAutomatic;
 }
 
-inline static NSWritingDirection reconstructNSWritingDirection(ParagraphStyleWritingDirection writingDirection)
+inline static NSWritingDirection NODELETE reconstructNSWritingDirection(ParagraphStyleWritingDirection writingDirection)
 {
     switch (writingDirection) {
     case ParagraphStyleWritingDirection::LeftToRight:
@@ -480,7 +482,7 @@ inline static Vector<AttributedString::TextListID> extractListIDs(NSParagraphSty
     });
 }
 
-inline static ParagraphStyleAlignment extractParagraphStyleAlignment(NSTextAlignment alignment)
+inline static ParagraphStyleAlignment NODELETE extractParagraphStyleAlignment(NSTextAlignment alignment)
 {
     switch (alignment) {
     case NSTextAlignmentLeft:
@@ -498,7 +500,7 @@ inline static ParagraphStyleAlignment extractParagraphStyleAlignment(NSTextAlign
     return ParagraphStyleAlignment::Left;
 }
 
-inline static TextTableBlockVerticalAlignment extractTextTableBlockVerticalAlignment(NSTextBlockVerticalAlignment verticalAlignment)
+inline static TextTableBlockVerticalAlignment NODELETE extractTextTableBlockVerticalAlignment(NSTextBlockVerticalAlignment verticalAlignment)
 {
     switch (verticalAlignment) {
     case NSTextBlockVerticalAlignmentTop:
@@ -514,7 +516,7 @@ inline static TextTableBlockVerticalAlignment extractTextTableBlockVerticalAlign
     return TextTableBlockVerticalAlignment::Top;
 }
 
-inline static TextTableLayoutAlgorithm extractTextTableLayoutAlgorithm(NSTextTableLayoutAlgorithm layout)
+inline static TextTableLayoutAlgorithm NODELETE extractTextTableLayoutAlgorithm(NSTextTableLayoutAlgorithm layout)
 {
     switch (layout) {
     case NSTextTableLayoutAlgorithmAutomatic:
@@ -526,7 +528,7 @@ inline static TextTableLayoutAlgorithm extractTextTableLayoutAlgorithm(NSTextTab
     return TextTableLayoutAlgorithm::Automatic;
 }
 
-inline static ParagraphStyleWritingDirection extractParagraphStyleWritingDirection(NSWritingDirection writingDirection)
+inline static ParagraphStyleWritingDirection NODELETE extractParagraphStyleWritingDirection(NSWritingDirection writingDirection)
 {
     switch (writingDirection) {
     case NSWritingDirectionLeftToRight:
@@ -589,6 +591,7 @@ inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, Tabl
         auto tableID = tableEnsureResults.iterator->value;
 
         if (tableEnsureResults.isNewEntry) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             newTextTables.append(TextTable {
                 {
                     [nsTable valueForDimension:NSTextBlockDimensionWidth],
@@ -665,6 +668,7 @@ inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, Tabl
                 extractTextTableBlockVerticalAlignment([item verticalAlignment]),
             });
         }
+ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     RetainPtr<NSArray<NSTextTab *>> tabStops = [style tabStops];

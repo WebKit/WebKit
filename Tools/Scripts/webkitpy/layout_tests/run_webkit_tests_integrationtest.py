@@ -81,8 +81,9 @@ def passing_run(extra_args=None, port_obj=None, tests_included=False, host=None,
     if shared_port:
         port_obj.host.port_factory.get = lambda *args, **kwargs: port_obj
 
-    logging_stream = StringIO()
-    run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+    with OutputCapture():
+        logging_stream = StringIO()
+        run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
     return run_details.exit_code == 0
 
 
@@ -494,6 +495,77 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         host.filesystem.write_text_file(filename, 'LayoutTests/passes/text.html')
         tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
         self.assertEqual(['passes/text.html'], tests_run)
+
+    def test_test_list_with_skip_expectation(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'passes/text.html [ Skip ]\npasses/image.html')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertEqual(['passes/image.html'], tests_run)
+
+    def test_test_list_with_hash_comments(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, '# this is a comment\npasses/text.html\n# another comment')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertEqual(['passes/text.html'], tests_run)
+
+    def test_test_list_with_mixed_content(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename,
+                                        '# comment line\n'
+                                        'passes/text.html\n'
+                                        '// legacy comment\n'
+                                        'passes/image.html [ Failure ]\n'
+                                        '\n'
+                                        'passes/error.html\n')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertIn('passes/text.html', tests_run)
+        self.assertIn('passes/image.html', tests_run)
+        self.assertIn('passes/error.html', tests_run)
+
+    def test_test_list_with_slow_expectation(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'passes/text.html [ Slow ]')
+        results = get_test_results(['--test-list=%s' % filename], host=host)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].test_name, 'passes/text.html')
+        self.assertTrue(results[0].test_input.is_slow)
+
+    def test_test_list_with_failure_expectation(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'failures/unexpected/text.html [ Failure ]')
+        details, _, _ = logging_run(['--test-list=%s' % filename], tests_included=True, host=host)
+        self.assertNotIn('failures/unexpected/text.html', details.initial_results.unexpected_results_by_name)
+
+    def test_test_list_with_double_slash_comments(self):
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, '// this is a legacy comment\npasses/text.html // inline comment')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertEqual(['passes/text.html'], tests_run)
+
+    def test_test_list_skip_not_overridden(self):
+        # Tests marked [ Skip ] in the test-list should stay skipped,
+        # even though being in the test-list makes them "explicitly specified".
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'passes/text.html [ Skip ]\npasses/image.html')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertNotIn('passes/text.html', tests_run)
+        self.assertIn('passes/image.html', tests_run)
+
+    def test_test_list_unskip_with_pass(self):
+        # A test marked [ Skip ] in TestExpectations can be un-skipped
+        # by marking it [ Pass ] in the test-list file.
+        host = MockHost()
+        filename = '/tmp/foo.txt'
+        host.filesystem.write_text_file(filename, 'passes/skipped/skip.html [ Pass ]')
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
+        self.assertIn('passes/skipped/skip.html', tests_run)
 
     def test_missing_and_unexpected_results(self):
         # Test that we update expectations in place. If the expectation
@@ -1070,11 +1142,20 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         if not self.should_test_processes:
             return
 
+        import logging
         options, parsed_args = parse_args(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True, print_nothing=False)
         host = MockHost()
         port_obj = host.port_factory.get(port_name=options.platform, options=options)
         logging_stream = StringIO()
-        run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+        # Suppress 'worker/N starting/stopping' messages from webkitcorepy.task_pool
+        # that would leak through message_pool's log forwarding to the parent process.
+        wkc_logger = logging.getLogger('webkitcorepy')
+        saved_level = wkc_logger.level
+        wkc_logger.setLevel(logging.WARNING)
+        try:
+            run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+        finally:
+            wkc_logger.setLevel(saved_level)
         self.assertTrue('text.html passed' in logging_stream.getvalue())
         self.assertTrue('image.html passed' in logging_stream.getvalue())
 

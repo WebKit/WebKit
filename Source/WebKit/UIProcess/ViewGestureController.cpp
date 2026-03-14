@@ -318,7 +318,7 @@ void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNa
 void ViewGestureController::checkForActiveLoads()
 {
     RefPtr page = m_webPageProxy.get();
-    if (page && protect(page->pageLoadState())->isLoading()) {
+    if (page && page->pageLoadState().isLoading()) {
         if (!m_swipeActiveLoadMonitoringTimer.isActive())
             m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
         return;
@@ -468,7 +468,7 @@ void ViewGestureController::SnapshotRemovalTracker::startWatchdog(Seconds durati
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static bool deltaShouldCancelSwipe(FloatSize delta)
+static bool NODELETE deltaShouldCancelSwipe(FloatSize delta)
 {
     return std::abs(delta.height()) >= std::abs(delta.width()) * minimumScrollEventRatioForSwipe;
 }
@@ -634,7 +634,7 @@ bool ViewGestureController::isPhysicallySwipingLeft(SwipeDirection direction) co
 
 bool ViewGestureController::shouldUseSnapshotForSize(ViewSnapshot& snapshot, FloatSize swipeLayerSize, FloatBoxExtent obscuredContentInsets)
 {
-    RefPtr page = m_webPageProxy.get();
+    auto* page = m_webPageProxy.get();
     if (!page)
         return false;
 
@@ -694,7 +694,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
     RefPtr currentItem = page->backForwardList().currentItem();
 #else
-    RefPtr currentItem = protect(page->backForwardList())->currentItem();
+    RefPtr currentItem = page->backForwardList().currentItem();
 #endif
     // The main frame will not be navigated so hide the snapshot right away.
     if (currentItem && currentItem->itemIsClone(targetItem)) {
@@ -718,7 +718,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
     // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
     // we never show the old page content, instead showing the snapshot background color.
 
-    if (RefPtr snapshot = targetItem.snapshot())
+    if (auto* snapshot = targetItem.snapshot())
         m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
 }
 
@@ -854,7 +854,7 @@ double ViewGestureController::magnification() const
     if (m_activeGestureType == ViewGestureType::Magnification)
         return m_magnification;
 
-    RefPtr page = m_webPageProxy.get();
+    auto* page = m_webPageProxy.get();
     return page ? page->pageScaleFactor() : 1;
 }
 

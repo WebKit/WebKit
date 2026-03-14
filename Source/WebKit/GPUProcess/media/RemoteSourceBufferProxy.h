@@ -66,7 +66,7 @@ public:
     void ref() const final { WebCore::SourceBufferPrivateClient::ref(); }
     void deref() const final { WebCore::SourceBufferPrivateClient::deref(); }
 
-    void setMediaPlayer(RemoteMediaPlayerProxy&);
+    void NODELETE setMediaPlayer(RemoteMediaPlayerProxy&);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 

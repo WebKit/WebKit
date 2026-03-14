@@ -33,7 +33,7 @@ namespace Style {
 
 auto CSSValueConversion<ScrollSnapType>::operator()(BuilderState& state, const CSSValue& value) -> ScrollSnapType
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         case CSSValueNone:
             return CSS::Keyword::None { };

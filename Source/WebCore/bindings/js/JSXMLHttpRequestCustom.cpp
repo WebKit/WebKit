@@ -43,7 +43,7 @@ namespace WebCore {
 using namespace JSC;
 
 template<typename Visitor>
-void JSXMLHttpRequest::visitAdditionalChildren(Visitor& visitor)
+void JSXMLHttpRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (auto* upload = wrapped().optionalUpload())
         addWebCoreOpaqueRoot(visitor, *upload);
@@ -52,7 +52,7 @@ void JSXMLHttpRequest::visitAdditionalChildren(Visitor& visitor)
         addWebCoreOpaqueRoot(visitor, *responseDocument);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSXMLHttpRequest);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSXMLHttpRequest);
 
 JSValue JSXMLHttpRequest::response(JSGlobalObject& lexicalGlobalObject) const
 {

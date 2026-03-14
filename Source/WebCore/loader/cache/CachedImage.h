@@ -30,16 +30,6 @@
 #include <WebCore/SVGImageCache.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/WeakRef.h>
-
-namespace WebCore {
-class CachedImage;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedImage> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -100,7 +90,7 @@ public:
     RevalidationDecision makeRevalidationDecision(CachePolicy) const override;
     void load(CachedResourceLoader&) override;
 
-    bool isOriginClean(SecurityOrigin*);
+    bool NODELETE isOriginClean(SecurityOrigin*);
 
     bool NODELETE isClientWaitingForAsyncDecoding(const CachedImageClient&) const;
     void addClientWaitingForAsyncDecoding(CachedImageClient&);
@@ -148,8 +138,8 @@ private:
     class CachedImageObserver final : public ImageObserver {
     public:
         static Ref<CachedImageObserver> create(CachedImage& image) { return adoptRef(*new CachedImageObserver(image)); }
-        WeakHashSet<CachedImage>& cachedImages() { return m_cachedImages; }
-        const WeakHashSet<CachedImage>& cachedImages() const { return m_cachedImages; }
+        WeakHashSet<CachedImage>& cachedImages() LIFETIME_BOUND { return m_cachedImages; }
+        const WeakHashSet<CachedImage>& cachedImages() const LIFETIME_BOUND { return m_cachedImages; }
 
     private:
         explicit CachedImageObserver(CachedImage&);

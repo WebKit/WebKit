@@ -31,6 +31,7 @@
 #include "LegacyRenderSVGResource.h"
 #include "LocalFrame.h"
 #include "NodeInlines.h"
+#include "PositionInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGText.h"
 #include "SVGElementTypeHelpers.h"
@@ -133,7 +134,7 @@ ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsig
     CheckedRef selection = frame->selection();
 
     // Find selection start
-    VisiblePosition start(firstPositionInNode(const_cast<SVGTextContentElement*>(this)));
+    VisiblePosition start(firstPositionInNode(const_cast<SVGTextContentElement&>(*this)));
     for (unsigned i = 0; i < charnum; ++i)
         start = start.next();
 

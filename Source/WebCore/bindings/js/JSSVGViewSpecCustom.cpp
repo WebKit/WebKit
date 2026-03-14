@@ -32,12 +32,12 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSSVGViewSpec::visitAdditionalChildren(Visitor& visitor)
+void JSSVGViewSpec::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     ASSERT(wrapped().contextElementConcurrently());
     addWebCoreOpaqueRoot(visitor, wrapped().contextElementConcurrently());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSSVGViewSpec);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSSVGViewSpec);
 
 } // namespace WebCore

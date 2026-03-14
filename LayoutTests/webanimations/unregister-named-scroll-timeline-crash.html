@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<style>
+
+#outer {
+    overflow: scroll;
+    width: 200px;
+    height: 200px;
+    scroll-timeline-name: --foo;
+}
+
+#inner {
+    overflow: scroll;
+    width: 200px;
+    height: 400px;
+    scroll-timeline-name: --foo;
+}
+
+@keyframes anim {
+    from { opacity: 0 }
+    to { opacity: 1 }
+}
+
+#target {
+    width: 200px;
+    height: 800px;
+
+    animation: anim;
+    animation-timeline: --foo;
+}
+
+</style>
+
+<div id="outer">
+    <div id="inner">
+        <div id="target"></div>
+    </div>
+</div>
+
+<script>
+
+(async function() {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    // Wait until the animation is ready which guarantees it was associated
+    // with a scroll timeline with #inner as its source.
+    await document.getAnimations()[0].ready;
+
+    // Reset scroll-timeline-name on the #inner element, this will change the
+    // animation timeline to a new scroll timeline with #outer as its source.
+    inner.style.scrollTimelineName = "none";
+
+    // Force a style recalc which would trigger a crash fixed by 309059@main
+    // where we would iterate over the list of animations associated with the
+    // #inner timeline to update those animation's timeline association, which
+    // would change the contents of that list. 
+    getComputedStyle(inner).scrollTimelineName;
+
+    window.testRunner?.notifyDone();
+})();
+
+</script>
+
+<p>PASS if this test doesn't crash</p>

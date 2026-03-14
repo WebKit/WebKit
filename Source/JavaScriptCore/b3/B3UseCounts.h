@@ -37,18 +37,28 @@ class Procedure;
 class UseCounts {
 public:
     JS_EXPORT_PRIVATE UseCounts(Procedure&);
-    JS_EXPORT_PRIVATE ~UseCounts();
+    ~UseCounts() = default;
 
     unsigned numUses(Value* value) const { return m_counts[value].numUses; }
     unsigned numUsingInstructions(Value* value) const { return m_counts[value].numUsingInstructions; }
-    
+
 private:
     struct Counts {
         unsigned numUses { 0 };
         unsigned numUsingInstructions { 0 };
     };
-    
+
     IndexMap<Value*, Counts> m_counts;
+};
+
+class UseCountsWithoutUsingInstructions {
+public:
+    UseCountsWithoutUsingInstructions(Procedure&);
+    ~UseCountsWithoutUsingInstructions() = default;
+
+    unsigned numUses(Value* value) const { return m_counts[value]; }
+private:
+    IndexMap<Value*, unsigned> m_counts;
 };
 
 } } // namespace JSC::B3

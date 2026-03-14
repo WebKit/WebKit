@@ -194,7 +194,7 @@ void ScrollTimeline::setSource(const Styleable& styleable)
 void ScrollTimeline::removeTimelineFromDocument(Element* element)
 {
     if (element) {
-        if (CheckedPtr timelinesController = protect(element->document())->timelinesController())
+        if (CheckedPtr timelinesController = element->document().timelinesController())
             timelinesController->removeTimeline(*this);
     }
 }
@@ -210,7 +210,7 @@ ScrollTimeline::ResolvedScrollDirection ScrollTimeline::resolvedScrollDirection(
 {
     auto writingMode = [&] -> WritingMode {
         if (RefPtr source = this->source()) {
-            if (CheckedPtr renderer = source->renderer())
+            if (auto* renderer = source->renderer())
                 return renderer->style().writingMode();
         }
 
@@ -403,7 +403,7 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
     if (!source || !animation.pending() || animation.isEffectInvalidationSuspended())
         return;
 
-    if (RefPtr page = protect(source->element.document())->page())
+    if (RefPtr page = source->element.document().page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::Animations);
 }
 
@@ -428,7 +428,7 @@ bool ScrollTimeline::canBeAccelerated() const
 void ScrollTimeline::scheduleAcceleratedRepresentationUpdate()
 {
     if (RefPtr source = this->source()) {
-        if (RefPtr page = protect(source->document())->page()) {
+        if (RefPtr page = source->document().page()) {
             if (auto* acceleratedTimelinesUpdater = page->acceleratedTimelinesUpdater())
                 acceleratedTimelinesUpdater->scrollTimelineDidChange(*this);
         }

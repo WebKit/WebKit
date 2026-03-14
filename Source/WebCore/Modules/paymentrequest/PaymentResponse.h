@@ -94,7 +94,7 @@ public:
     void setPayerPhone(const String& payerPhone) { m_payerPhone = payerPhone; }
 
     void complete(Document&, std::optional<PaymentComplete>&&, std::optional<PaymentCompleteDetails>&&, DOMPromiseDeferred<void>&&);
-    void retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
+    void retry(const Document&, PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
     void abortWithException(Exception&&);
     bool hasRetryPromise() const { return !!m_retryPromise; }
     void settleRetryPromise(ExceptionOr<void>&& = { });

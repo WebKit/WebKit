@@ -164,6 +164,7 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0));
     case VectorExtractLane:
     case VectorDupElement:
+    case VectorReverse:
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), static_cast<uint8_t>(u.indices[1]), child(proc, 0));
     case VectorEqual:
     case VectorNotEqual:
@@ -198,10 +199,17 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case VectorMulSat:
     case VectorAvgRound:
     case VectorShiftByVector:
+    case VectorUnzipEven:
+    case VectorUnzipOdd:
+    case VectorZipLower:
+    case VectorZipHigher:
+    case VectorTransposeEven:
+    case VectorTransposeOdd:
     case VectorRelaxedSwizzle:
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0), child(proc, 1));
     case VectorReplaceLane:
     case VectorMulByElement:
+    case VectorExtractPair:
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), static_cast<uint8_t>(u.indices[2]), child(proc, 0), child(proc, 1));
     case VectorRelaxedMAdd:
     case VectorRelaxedNMAdd:

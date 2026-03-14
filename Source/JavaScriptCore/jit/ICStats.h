@@ -47,20 +47,22 @@ namespace JSC {
     macro(InReplaceWithGeneric) \
     macro(InstanceOfAddAccessCase) \
     macro(InstanceOfReplaceWithJump) \
-    macro(OperationGetById) \
+    macro(OperationGetByIdGaveUp) \
     macro(OperationGetByIdGeneric) \
     macro(OperationGetByIdBuildList) \
     macro(OperationGetByIdOptimize) \
     macro(OperationGetByValOptimize) \
     macro(OperationGetByIdWithThisOptimize) \
+    macro(OperationGetByIdWithThisGaveUp) \
+    macro(OperationGetByIdWithThisGeneric) \
     macro(OperationGetByValWithThisOptimize) \
     macro(OperationGenericIn) \
     macro(OperationInByIdGeneric) \
     macro(OperationInByIdOptimize) \
-    macro(OperationPutByIdStrict) \
-    macro(OperationPutByIdSloppy) \
-    macro(OperationPutByIdDirectStrict) \
-    macro(OperationPutByIdDirectSloppy) \
+    macro(OperationPutByIdStrictGaveUp) \
+    macro(OperationPutByIdSloppyGaveUp) \
+    macro(OperationPutByIdDirectStrictGaveUp) \
+    macro(OperationPutByIdDirectSloppyGaveUp) \
     macro(OperationPutByIdStrictOptimize) \
     macro(OperationPutByIdSloppyOptimize) \
     macro(OperationPutByIdDirectStrictOptimize) \
@@ -83,7 +85,87 @@ namespace JSC {
     macro(SetPrivateBrandAddAccessCase) \
     macro(CheckPrivateBrandReplaceWithJump) \
     macro(SetPrivateBrandReplaceWithJump) \
-    macro(OperationPutByIdSetPrivateFieldStrictOptimize)
+    macro(OperationPutByIdSetPrivateFieldStrictOptimize) \
+    macro(OperationPutByIdDefinePrivateFieldStrictGaveUp) \
+    macro(OperationPutByIdSetPrivateFieldStrictGaveUp) \
+    macro(OperationGetByValGaveUp) \
+    macro(OperationGetByValGeneric) \
+    macro(OperationGetByValWithThisGaveUp) \
+    macro(OperationGetByValWithThisGeneric) \
+    macro(OperationPutByValStrictGaveUp) \
+    macro(OperationPutByValStrictGeneric) \
+    macro(OperationPutByValSloppyGaveUp) \
+    macro(OperationPutByValSloppyGeneric) \
+    macro(OperationPutByValDefinePrivateFieldGaveUp) \
+    macro(OperationPutByValDefinePrivateFieldGeneric) \
+    macro(OperationPutByValSetPrivateFieldGaveUp) \
+    macro(OperationPutByValSetPrivateFieldGeneric) \
+    /* JIT execution tracing events */ \
+    /* Slow path handlers */ \
+    macro(GetByIdSlowPath) \
+    macro(GetByIdWithThisSlowPath) \
+    macro(GetByValSlowPath) \
+    macro(GetPrivateNameSlowPath) \
+    macro(GetByValWithThisSlowPath) \
+    macro(PutByIdSlowPath) \
+    macro(PutByValSlowPath) \
+    macro(InstanceOfSlowPath) \
+    macro(DeleteByIdSlowPath) \
+    macro(DeleteByValSlowPath) \
+    /* GetById handlers */ \
+    macro(GetByIdLoadOwnPropertyHandler) \
+    macro(GetByIdLoadPrototypePropertyHandler) \
+    macro(GetByIdMissHandler) \
+    macro(GetByIdCustomAccessorHandler) \
+    macro(GetByIdCustomValueHandler) \
+    macro(GetByIdGetterHandler) \
+    macro(GetByIdProxyObjectLoadHandler) \
+    macro(GetByIdModuleNamespaceLoadHandler) \
+    /* PutById handlers */ \
+    macro(PutByIdReplaceHandler) \
+    macro(PutByIdTransitionHandler) \
+    macro(PutByIdTransitionReallocatingOutOfLineHandler) \
+    macro(PutByIdCustomAccessorHandler) \
+    macro(PutByIdCustomValueHandler) \
+    macro(PutByIdStrictSetterHandler) \
+    macro(PutByIdSloppySetterHandler) \
+    /* InById handlers */ \
+    macro(InByIdHitHandler) \
+    macro(InByIdMissHandler) \
+    /* DeleteById handlers */ \
+    macro(DeleteByIdDeleteHandler) \
+    macro(DeleteByIdMissHandler) \
+    macro(DeleteByIdNonConfigurableHandler) \
+    /* InstanceOf handlers */ \
+    macro(InstanceOfHitHandler) \
+    macro(InstanceOfMissHandler) \
+    /* GetByVal handlers */ \
+    macro(GetByValLoadOwnPropertyHandler) \
+    macro(GetByValLoadPrototypePropertyHandler) \
+    macro(GetByValMissHandler) \
+    macro(GetByValCustomAccessorHandler) \
+    macro(GetByValCustomValueHandler) \
+    macro(GetByValGetterHandler) \
+    /* PutByVal handlers */ \
+    macro(PutByValReplaceHandler) \
+    macro(PutByValTransitionHandler) \
+    macro(PutByValTransitionOutOfLineHandler) \
+    macro(PutByValCustomAccessorHandler) \
+    macro(PutByValCustomValueHandler) \
+    macro(PutByValStrictSetterHandler) \
+    macro(PutByValSloppySetterHandler) \
+    /* InByVal handlers */ \
+    macro(InByValHitHandler) \
+    macro(InByValMissHandler) \
+    /* DeleteByVal handlers */ \
+    macro(DeleteByValDeleteHandler) \
+    macro(DeleteByValMissHandler) \
+    macro(DeleteByValNonConfigurableHandler) \
+    /* Other handlers */ \
+    macro(CheckPrivateBrandHandler) \
+    macro(SetPrivateBrandHandler) \
+    macro(CompiledHandler) \
+    macro(DOMJITHandler)
 
 class ICEvent {
 public:
@@ -99,28 +181,34 @@ public:
         ProtoLookup
     };
 
-    ICEvent()
-    {
-    }
-    
-    ICEvent(VM& vm, Kind kind, const ClassInfo* classInfo, PropertyName propertyName)
+    ICEvent() = default;
+
+    explicit ICEvent(Kind kind)
         : m_kind(kind)
-        , m_classInfo(classInfo)
-        , m_propertyName(Identifier::fromUid(vm, propertyName.uid()))
         , m_propertyLocation(Unknown)
     {
+        ASSERT(kind != InvalidKind);
     }
 
-    ICEvent(VM& vm, Kind kind, const ClassInfo* classInfo, PropertyName propertyName, bool isBaseProperty)
+    ICEvent(Kind kind, const ClassInfo* classInfo)
         : m_kind(kind)
         , m_classInfo(classInfo)
-        , m_propertyName(Identifier::fromUid(vm, propertyName.uid()))
+        , m_propertyLocation(Unknown)
+    {
+        ASSERT(kind != InvalidKind);
+    }
+
+    ICEvent(Kind kind, const ClassInfo* classInfo, bool isBaseProperty)
+        : m_kind(kind)
+        , m_classInfo(classInfo)
         , m_propertyLocation(isBaseProperty ? BaseObject : ProtoLookup)
     {
+        ASSERT(kind != InvalidKind);
     }
     
     ICEvent(WTF::HashTableDeletedValueType)
-        : m_kind(OperationGetById)
+        : m_kind(InvalidKind)
+        , m_propertyLocation(BaseObject)
     {
     }
     
@@ -128,14 +216,14 @@ public:
     {
         return m_kind == other.m_kind
             && m_classInfo == other.m_classInfo
-            && m_propertyName == other.m_propertyName;
+            && m_propertyLocation == other.m_propertyLocation;
     }
     
     bool operator<(const ICEvent& other) const;
     bool operator>(const ICEvent& other) const { return other < *this; }
     bool operator<=(const ICEvent& other) const { return !(*this > other); }
     bool operator>=(const ICEvent& other) const { return !(*this < other); }
-    
+
     explicit operator bool() const
     {
         return *this != ICEvent();
@@ -143,13 +231,10 @@ public:
     
     Kind kind() const { return m_kind; }
     const ClassInfo* classInfo() const { return m_classInfo; }
-    const Identifier& propertyName() const { return m_propertyName; }
     
     unsigned hash() const
     {
-        if (m_propertyName.isNull())
-            return static_cast<unsigned>(m_kind) + static_cast<unsigned>(m_propertyLocation) + WTF::PtrHash<const ClassInfo*>::hash(m_classInfo);
-        return static_cast<unsigned>(m_kind) + static_cast<unsigned>(m_propertyLocation) + WTF::PtrHash<const ClassInfo*>::hash(m_classInfo) + StringHash::hash(m_propertyName.string());
+        return static_cast<unsigned>(m_kind) + static_cast<unsigned>(m_propertyLocation) + WTF::PtrHash<const ClassInfo*>::hash(m_classInfo);
     }
     
     bool isHashTableDeletedValue() const
@@ -167,8 +252,7 @@ private:
     
     Kind m_kind { InvalidKind };
     const ClassInfo* m_classInfo { nullptr };
-    Identifier m_propertyName;
-    PropertyLocation m_propertyLocation;
+    PropertyLocation m_propertyLocation { Unknown };
 };
 
 } // namespace JSC

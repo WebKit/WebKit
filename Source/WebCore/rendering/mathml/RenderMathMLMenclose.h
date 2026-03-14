@@ -46,7 +46,7 @@ private:
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void paint(PaintInfo&, const LayoutPoint&) final;
 
-    LayoutUnit ruleThickness() const;
+    LayoutUnit NODELETE ruleThickness() const;
     bool hasNotation(MathMLMencloseElement::MencloseNotationFlag notationFlag) const { return downcast<MathMLMencloseElement>(element()).hasNotation(notationFlag); }
 
     struct SpaceAroundContent {

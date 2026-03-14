@@ -50,13 +50,13 @@ public:
     WEBCORE_EXPORT ~FileList();
 
     unsigned length() const { return m_files.size(); }
-    WEBCORE_EXPORT File* item(unsigned index) const;
+    WEBCORE_EXPORT File* NODELETE item(unsigned index) const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_files.size(); }
 
     bool isEmpty() const { return m_files.isEmpty(); }
     Vector<String> paths() const;
 
-    const Vector<Ref<File>>& files() const { return m_files; }
+    const Vector<Ref<File>>& files() const LIFETIME_BOUND { return m_files; }
     const File& file(unsigned index) const { return m_files[index].get(); }
 
 private:

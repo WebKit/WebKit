@@ -53,7 +53,7 @@ public:
     static void exitFullscreen(Document&, Ref<DeferredPromise>&&);
     static bool fullscreenEnabled(Document&);
     static bool webkitFullscreenEnabled(Document& document) { return protect(document.fullscreen())->enabledByPermissionsPolicy(); }
-    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(protect(protect(document.fullscreen())->fullscreenElement()).get()); };
+    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(protect(document.fullscreen())->fullscreenElement()); };
     WEBCORE_EXPORT static void webkitExitFullscreen(Document&);
     static bool webkitIsFullScreen(Document& document) { return protect(document.fullscreen())->isFullscreen(); };
     static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return protect(document.fullscreen())->isFullscreenKeyboardInputAllowed(); };

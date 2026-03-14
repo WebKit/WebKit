@@ -35,7 +35,7 @@
 using namespace WebCore;
 
 // Any named groups will live for the lifetime of the process, thanks to the reference held by the RefPtr.
-static HashMap<String, RefPtr<WebViewGroup>>& webViewGroups()
+static HashMap<String, RefPtr<WebViewGroup>>& NODELETE webViewGroups()
 {
     static NeverDestroyed<HashMap<String, RefPtr<WebViewGroup>>> webViewGroups;
 

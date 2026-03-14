@@ -553,7 +553,7 @@ public:
     {
     }
     
-    AssemblerBuffer& buffer() { return m_formatter.m_buffer; }
+    AssemblerBuffer& buffer() LIFETIME_BOUND { return m_formatter.m_buffer; }
 
     // Stack operations:
 
@@ -7440,7 +7440,7 @@ private:
         size_t codeSize() const { return m_buffer.codeSize(); }
         AssemblerLabel label() const { return m_buffer.label(); }
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
-        void* data() const { return m_buffer.data(); }
+        void* data() const LIFETIME_BOUND { return m_buffer.data(); }
 
         unsigned debugOffset() { return m_buffer.debugOffset(); }
 

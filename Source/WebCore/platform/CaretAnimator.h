@@ -99,7 +99,7 @@ public:
     virtual String debugDescription() const = 0;
 
     virtual void setBlinkingSuspended(bool suspended) { m_isBlinkingSuspended = suspended; }
-    bool isBlinkingSuspended() const;
+    bool NODELETE isBlinkingSuspended() const;
 
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     void setPrefersNonBlinkingCursor(bool enabled) { m_prefersNonBlinkingCursor = enabled; }

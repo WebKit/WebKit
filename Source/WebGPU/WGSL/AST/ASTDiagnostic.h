@@ -29,14 +29,25 @@
 
 namespace WGSL::AST {
 
-struct TriggeringRule {
-    Identifier name;
-    std::optional<Identifier> suffix;
-};
-
 struct Diagnostic {
     SeverityControl severity;
     TriggeringRule triggeringRule;
+};
+
+class DiagnosticContainer {
+public:
+    const std::optional<SeverityControl>& severityFor(TriggeringRule rule) const
+    {
+        return m_severities[std::to_underlying(rule)];
+    }
+
+    void setSeverityFor(TriggeringRule rule, SeverityControl severity)
+    {
+        m_severities[std::to_underlying(rule)] = severity;
+    }
+
+private:
+    std::array<std::optional<SeverityControl>, 2> m_severities;
 };
 
 } // namespace WGSL::AST

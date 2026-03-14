@@ -452,7 +452,7 @@ void IDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier d
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
+    auto* databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 

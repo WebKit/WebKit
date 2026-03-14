@@ -39,7 +39,12 @@ class Procedure;
 // add sophisticated optimizations to it. For that reason we have full CSE in a different phase, for
 // example.
 
-JS_EXPORT_PRIVATE bool reduceStrength(Procedure&);
+enum class ReduceStrengthPass : uint8_t {
+    Initial,
+    Final,
+};
+
+JS_EXPORT_PRIVATE bool reduceStrength(Procedure&, ReduceStrengthPass = ReduceStrengthPass::Final);
 
 } } // namespace JSC::B3
 

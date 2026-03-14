@@ -173,7 +173,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     // FIXME: we should use the same path for registration changes as for fetch events.
     ASSERT(globalScope.registration().active()->state() == ServiceWorkerState::Activated || globalScope.registration().active()->state() == ServiceWorkerState::Activating);
 
-    auto formData = request.httpBody();
+    RefPtr formData = request.httpBody();
     std::optional<FetchBody> body;
     if (formData && !formData->isEmpty()) {
         body = FetchBody::fromFormData(globalScope, formData.releaseNonNull());

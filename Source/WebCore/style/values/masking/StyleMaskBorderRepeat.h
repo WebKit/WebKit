@@ -74,7 +74,7 @@ DEFINE_TYPE_WRAPPER_GET(MaskBorderRepeat, values);
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<MaskBorderRepeat> { auto operator()(BuilderState&, const CSSValue&) -> MaskBorderRepeat; };
+template<> struct CSSValueConversion<MaskBorderRepeat> { MaskBorderRepeat NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

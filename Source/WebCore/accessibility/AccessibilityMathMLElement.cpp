@@ -61,7 +61,7 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
     if (m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
-    if (WebCore::elementName(protect(m_renderer->node()).get()) == ElementName::MathML_math)
+    if (WebCore::elementName(m_renderer->node()) == ElementName::MathML_math)
         return AccessibilityRole::DocumentMath;
 
     // It's not clear which role a platform should choose for a math element.

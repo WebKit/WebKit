@@ -62,7 +62,7 @@ HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture(HTMLVideoElem
 HTMLVideoElementPictureInPicture::~HTMLVideoElementPictureInPicture()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (RefPtr videoElement = m_videoElement.ptr())
+    if (auto* videoElement = m_videoElement.ptr())
         videoElement->setPictureInPictureObserver(nullptr);
 }
 

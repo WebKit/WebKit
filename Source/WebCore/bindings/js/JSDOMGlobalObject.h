@@ -65,20 +65,20 @@ public:
 
     static void destroy(JSC::JSCell*);
 
-    Lock& gcLock() WTF_RETURNS_LOCK(m_gcLock) { return m_gcLock; }
+    Lock& gcLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_gcLock) { return m_gcLock; }
 
-    JSDOMStructureMap& structures() WTF_REQUIRES_LOCK(m_gcLock) { return m_structures; }
-    DOMGuardedObjectSet& guardedObjects() WTF_REQUIRES_LOCK(m_gcLock) { return m_guardedObjects; }
-    DOMConstructors& constructors() { return m_constructors; }
+    JSDOMStructureMap& structures() LIFETIME_BOUND WTF_REQUIRES_LOCK(m_gcLock) { return m_structures; }
+    DOMGuardedObjectSet& guardedObjects() LIFETIME_BOUND WTF_REQUIRES_LOCK(m_gcLock) { return m_guardedObjects; }
+    DOMConstructors& constructors() LIFETIME_BOUND { return m_constructors; }
 
     // No locking is necessary for call sites that do not mutate the containers and are not on a GC thread.
-    const JSDOMStructureMap& structures() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_structures; }
-    const DOMGuardedObjectSet& guardedObjects() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_guardedObjects; }
-    const DOMConstructors& constructors() const { ASSERT(!Thread::mayBeGCThread()); return m_constructors; }
+    const JSDOMStructureMap& structures() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_structures; }
+    const DOMGuardedObjectSet& guardedObjects() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_guardedObjects; }
+    const DOMConstructors& constructors() const LIFETIME_BOUND { ASSERT(!Thread::mayBeGCThread()); return m_constructors; }
 
     // The following don't require grabbing the gcLock first and should only be called when the Heap says that mutators don't have to be fenced.
-    inline JSDOMStructureMap& structures(NoLockingNecessaryTag);
-    inline DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag);
+    inline JSDOMStructureMap& structures(NoLockingNecessaryTag) LIFETIME_BOUND;
+    inline DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag) LIFETIME_BOUND;
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -99,7 +99,7 @@ public:
     bool worldIsNormal() const { return m_worldIsNormal; }
     static constexpr ptrdiff_t offsetOfWorldIsNormal() { return OBJECT_OFFSETOF(JSDOMGlobalObject, m_worldIsNormal); }
 
-    JSBuiltinInternalFunctions& builtinInternalFunctions() { return m_builtinInternalFunctions; }
+    JSBuiltinInternalFunctions& builtinInternalFunctions() LIFETIME_BOUND { return m_builtinInternalFunctions; }
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, JSC::Exception*);
     static JSC::JSGlobalObject* deriveShadowRealmGlobalObject(JSC::JSGlobalObject*);

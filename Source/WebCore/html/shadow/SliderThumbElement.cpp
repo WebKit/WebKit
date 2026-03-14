@@ -111,7 +111,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSliderContainer);
 RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     ASSERT(element()->shadowHost());
-    Ref input = downcast<HTMLInputElement>(*protect(element())->shadowHost());
+    Ref input = downcast<HTMLInputElement>(*element()->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
 
     if (input->renderer()->isRenderSlider() && !isVertical && input->hasDataList()) {
@@ -137,7 +137,7 @@ RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeig
 void RenderSliderContainer::layout()
 {
     ASSERT(element()->shadowHost());
-    Ref input = downcast<HTMLInputElement>(*protect(element())->shadowHost());
+    Ref input = downcast<HTMLInputElement>(*element()->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
     CheckedRef mutableStyle = this->mutableStyle();
     mutableStyle->setFlexDirection(isVertical && writingMode().isHorizontal() ? FlexDirection::Column : FlexDirection::Row);
@@ -149,8 +149,8 @@ void RenderSliderContainer::layout()
         mutableStyle->setDirection(TextDirection::LTR);
     }
 
-    CheckedPtr thumb = input->sliderThumbElement() ? protect(input->sliderThumbElement())->renderBox() : nullptr;
-    CheckedPtr track = input->sliderTrackElement() ? protect(input->sliderTrackElement())->renderBox() : nullptr;
+    CheckedPtr thumb = input->sliderThumbElement() ? input->sliderThumbElement()->renderBox() : nullptr;
+    CheckedPtr track = input->sliderTrackElement() ? input->sliderTrackElement()->renderBox() : nullptr;
     // Force a layout to reset the position of the thumb so the code below doesn't move the thumb to the wrong place.
     // FIXME: Make a custom Render class for the track and move the thumb positioning code there.
     if (track)
@@ -247,7 +247,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
         return;
 
     ASSERT(input->sliderTrackElement());
-    CheckedPtr trackRenderer = protect(input->sliderTrackElement())->renderBox();
+    CheckedPtr trackRenderer = input->sliderTrackElement()->renderBox();
     if (!trackRenderer)
         return;
 

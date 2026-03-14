@@ -305,7 +305,7 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
         return candidatePosition;
     }
     auto candidateInlineItem = inlineItemList[candidatePosition.index];
-    if (&candidateInlineItem.layoutBox() != &damagedContent.layoutBox || (!is<InlineTextItem>(candidateInlineItem) && !is<InlineSoftLineBreakItem>(candidateInlineItem)))
+    if (&candidateInlineItem.layoutBox() != &damagedContent.layoutBox || !isAnyOf<InlineTextItem, InlineSoftLineBreakItem>(candidateInlineItem))
         return candidatePosition;
     if (!damagedContent.offset) {
         // When damage points to "after" the layout box, whatever InlineItem we found is surely before the damage.
@@ -452,7 +452,7 @@ bool InlineInvalidation::updateInlineDamage(const InvalidatedLine& invalidatedLi
     return true;
 }
 
-static bool isSupportedContent(const Box& layoutBox)
+static bool NODELETE isSupportedContent(const Box& layoutBox)
 {
     return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox() || layoutBox.isReplacedBox() || layoutBox.isInlineBox();
 }

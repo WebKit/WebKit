@@ -1,5 +1,4 @@
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
-//@ requireOptions("--useDataICInFTL=true")
 
 // Copyright 2008 the V8 project authors. All rights reserved.
 // Copyright 1996 John Maloney and Mario Wolczko.

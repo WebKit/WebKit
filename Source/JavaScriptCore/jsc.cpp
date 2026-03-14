@@ -1058,7 +1058,7 @@ static URL currentWorkingDirectory()
 // FIXME: We may wish to support module specifiers beginning with a (back)slash on Windows. We could either:
 // - align with V8 and SM:  treat '/foo' as './foo'
 // - align with PowerShell: treat '/foo' as 'C:/foo'
-static bool isAbsolutePath(StringView path)
+static bool NODELETE isAbsolutePath(StringView path)
 {
 #if OS(WINDOWS)
     // Just look for local drives like C:\.
@@ -4413,7 +4413,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
             globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
             globalObject->setInspectable(options.m_inspectable);
 
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && CPU(ARM64)
             if (Options::enableWasmDebugger()) [[unlikely]]
                 Wasm::DebugServer::singleton().start();
 #endif

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static bool areContentRangeValuesValid(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength)
+static bool NODELETE areContentRangeValuesValid(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength)
 {
     // From <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html>
     // 14.16 Content-Range

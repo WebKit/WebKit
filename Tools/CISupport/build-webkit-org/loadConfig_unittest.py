@@ -48,8 +48,9 @@ class ConfigDotJSONTest(unittest.TestCase):
     def test_builder_keys(self):
         config = self.get_config()
         valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
-                              'defaultProperties', 'device_model', 'env', 'factory', 'icon', 'locks', 'name', 'platform', 'properties',
-                              'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'workernames', 'workerbuilddir']
+                              'defaultProperties', 'deployment_target', 'device_model', 'env', 'factory', 'icon', 'locks',
+                              'name', 'platform', 'properties', 'remotes', 'runTests', 'shortname', 'tags', 'triggers',
+                              'workernames', 'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:
                 self.assertTrue(key in valid_builder_keys, f"Unexpected key {key} for builder {builder.get('name')}")
@@ -75,6 +76,13 @@ class ConfigDotJSONTest(unittest.TestCase):
         for scheduler in config['schedulers']:
             if scheduler.get('type') == 'Triggerable':
                 self.assertTrue(len(scheduler.get('builderNames')) == 1, f"scheduler {scheduler['name']} triggers multiple builders.")
+
+    def test_deployment_target_on_intended_queues(self):
+        config = self.get_config()
+        for builder in config['builders']:
+            if builder.get('deployment_target'):
+                self.assertTrue(builder.get('platform').startswith('mac-'),
+                                f'custom deployment target only implemented for macOS builders, but found on "{builder["name"]}" with platform "{builder["platform"]}"')
 
 
 class TagsForBuilderTest(unittest.TestCase):

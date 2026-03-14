@@ -44,7 +44,7 @@ struct EOTHeader {
     EOTHeader();
 
     size_t size() const { return m_buffer.size(); }
-    const uint8_t* data() const { return m_buffer.span().data(); }
+    const uint8_t* data() const LIFETIME_BOUND { return m_buffer.span().data(); }
 
     EOTPrefix* prefix() { return reinterpret_cast<EOTPrefix*>(m_buffer.mutableSpan().data()); }
     void updateEOTSize(size_t);

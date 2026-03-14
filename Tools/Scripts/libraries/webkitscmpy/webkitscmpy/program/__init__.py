@@ -34,6 +34,7 @@ from .clone import Clone
 from .command import Command
 from .commit import Commit
 from .conflict import Conflict
+from .diff import Diff
 from .squash import Squash
 from .checkout import Checkout
 from .classify import Classify
@@ -94,7 +95,7 @@ def main(
 
     programs = [
         Blame, Branch, Canonicalize, Checkout,
-        Clean, Clone, Conflict, Find, Info, Land, Log, Pull,
+        Clean, Clone, Conflict, Diff, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,

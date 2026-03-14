@@ -107,7 +107,7 @@ public:
 #endif
 
     // InspectorInstrumentation
-    void willRecalculateStyle();
+    void NODELETE willRecalculateStyle();
     void didRecalculateStyle();
     void willSendRequest(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
     void willSendRequestOfType(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, InspectorInstrumentation::LoadType);
@@ -117,8 +117,8 @@ public:
     void didFailLoading(ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource&);
     void didReceiveThreadableLoaderResponse(ResourceLoaderIdentifier, DocumentThreadableLoader&);
-    void willLoadXHRSynchronously();
-    void didLoadXHRSynchronously();
+    void NODELETE willLoadXHRSynchronously();
+    void NODELETE didLoadXHRSynchronously();
     void didReceiveScriptResponse(ResourceLoaderIdentifier);
     void willDestroyCachedResource(CachedResource&);
     void didCreateWebSocket(WebSocketChannelIdentifier, const URL& requestURL);

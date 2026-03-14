@@ -70,7 +70,7 @@ void RenderVideo::willBeDestroyed()
 {
     visibleInViewportStateChanged();
 
-    if (RefPtr player = protect(videoElement())->player())
+    if (RefPtr player = videoElement().player())
         player->renderVideoWillBeDestroyed();
 
     RenderMedia::willBeDestroyed();
@@ -261,7 +261,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (paintInfo.phase == PaintPhase::Foreground) {
         page->addRelevantRepaintedObject(*this, rect);
         if (displayingPoster && !context.paintingDisabled())
-            protect(document())->didPaintImage(videoElement.get(), cachedImage(), videoBoxRect);
+            protect(document())->didPaintImage(videoElement.get(), protect(cachedImage()), videoBoxRect);
     }
 
     LayoutRect contentRect = contentBoxRect();
@@ -371,7 +371,7 @@ void RenderVideo::acceleratedRenderingStateChanged()
 
 bool RenderVideo::requiresImmediateCompositing() const
 {
-    RefPtr player = protect(videoElement())->player();
+    RefPtr player = videoElement().player();
     return player && player->requiresImmediateCompositing();
 }
 
@@ -392,7 +392,7 @@ bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
 
 bool RenderVideo::hasVideoMetadata() const
 {
-    if (RefPtr player = protect(videoElement())->player())
+    if (RefPtr player = videoElement().player())
         return player->readyState() >= MediaPlayerEnums::ReadyState::HaveMetadata;
     return false;
 }

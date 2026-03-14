@@ -51,7 +51,7 @@ public:
     CodeOrigin origin() const { return m_origin; }
     
     ExitValue get(DFG::PromotedLocationDescriptor) const;
-    const Vector<ExitPropertyValue>& properties() const { return m_properties; }
+    const Vector<ExitPropertyValue>& properties() const LIFETIME_BOUND { return m_properties; }
     
     void accountForLocalsOffset(int offset);
     

@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-static inline bool isRenderingMaskImage(const RenderObject& object)
+static inline bool NODELETE isRenderingMaskImage(const RenderObject& object)
 {
     return object.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask);
 }
@@ -151,9 +151,6 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         resources = SVGResourcesCache::cachedResourcesForRenderer(*m_renderer);
 
     if (!resources) {
-        if (style.filter().isReferenceFilter())
-            return;
-
         m_renderingFlags |= RenderingPrepared;
         return;
     }

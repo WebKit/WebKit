@@ -75,7 +75,7 @@ public:
     JSValue formatRangeToParts(JSGlobalObject*, double startDate, double endDate);
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
-    JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
+    JSBoundFunction* boundFormat() const LIFETIME_BOUND { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
 
     static IntlDateTimeFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);

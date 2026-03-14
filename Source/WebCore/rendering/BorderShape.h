@@ -68,7 +68,7 @@ public:
     LayoutRect innerEdgeRect() const { return m_innerEdgeRect.rect(); }
 
     // Takes `closedEdges` into account.
-    const RectEdges<LayoutUnit>& borderWidths() const { return m_borderWidths; }
+    const RectEdges<LayoutUnit>& borderWidths() const LIFETIME_BOUND { return m_borderWidths; }
 
     LayoutRoundedRect NODELETE deprecatedRoundedRect() const;
     LayoutRoundedRect NODELETE deprecatedInnerRoundedRect() const;
@@ -83,11 +83,11 @@ public:
     // meaning border painting can use simpler rectangular paths.
     bool allCornersClippedOut(const LayoutRect&) const;
 
-    const LayoutRoundedRectRadii& radii() const { return m_borderRect.radii(); }
+    const LayoutRoundedRectRadii& radii() const LIFETIME_BOUND { return m_borderRect.radii(); }
     void setRadii(const LayoutRoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
 
     // Note that the inner edge isn't necessarily a rounded rect, but the radii still represent where the straight edge sections terminate.
-    const LayoutRoundedRectRadii& innerEdgeRadii() const { return m_innerEdgeRect.radii(); }
+    const LayoutRoundedRectRadii& innerEdgeRadii() const LIFETIME_BOUND { return m_innerEdgeRect.radii(); }
 
     FloatRect snappedOuterRect(float deviceScaleFactor) const;
     FloatRect snappedInnerRect(float deviceScaleFactor) const;

@@ -77,9 +77,9 @@ public:
     enum class Appearance : uint8_t { Default, Light, Dark, Both };
 #endif
 
-    bool operator==(const WebExtensionAction&) const;
+    bool NODELETE operator==(const WebExtensionAction&) const;
 
-    WebExtensionContext* extensionContext() const;
+    WebExtensionContext* NODELETE extensionContext() const;
     RefPtr<WebExtensionTab> tab() const { return m_tab.value_or(nullptr).get(); }
     RefPtr<WebExtensionWindow> window() const { return m_window.value_or(nullptr).get(); }
 

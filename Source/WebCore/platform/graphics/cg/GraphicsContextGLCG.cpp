@@ -69,7 +69,7 @@ enum AlphaFormat {
 };
 
 // This returns SourceFormatNumFormats if the combination of input parameters is unsupported.
-static GraphicsContextGL::DataFormat getSourceDataFormat(unsigned componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
+static GraphicsContextGL::DataFormat NODELETE getSourceDataFormat(unsigned componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
 {
     static const std::array formatTableBase = { // componentsPerPixel x AlphaFormat
         //           AlphaFormatNone             AlphaFormatFirst            AlphaFormatLast
@@ -97,12 +97,12 @@ static GraphicsContextGL::DataFormat getSourceDataFormat(unsigned componentsPerP
 }
 
 namespace {
-uint8_t convertColor16LittleTo8(uint16_t value)
+uint8_t NODELETE convertColor16LittleTo8(uint16_t value)
 {
     return value >> 8;
 }
 
-uint8_t convertColor16BigTo8(uint16_t value)
+uint8_t NODELETE convertColor16BigTo8(uint16_t value)
 {
     return static_cast<uint8_t>(value & 0x00FF);
 }
@@ -290,7 +290,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataF
     }
 }
 
-void convert16BitFormatToRGBA8(GraphicsContextGL::DataFormat srcFormat, std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+void NODELETE convert16BitFormatToRGBA8(GraphicsContextGL::DataFormat srcFormat, std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
 #define CONVERT16BITFORMATTORGBA8(SrcFormat) \
     case SrcFormat: \

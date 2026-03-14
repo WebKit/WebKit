@@ -202,12 +202,12 @@ FloatPoint midPoint(const FloatPoint& first, const FloatPoint& second)
     return { std::midpoint(first.x(), second.x()), std::midpoint(first.y(), second.y()) };
 }
 
-static float dotProduct(const FloatSize& u, const FloatSize& v)
+static float NODELETE dotProduct(const FloatSize& u, const FloatSize& v)
 {
     return u.width() * v.width() + u.height() * v.height();
 }
 
-static float angleBetweenVectors(const FloatSize& u, const FloatSize& v)
+static float NODELETE angleBetweenVectors(const FloatSize& u, const FloatSize& v)
 {
     auto magnitudes = u.diagonalLength() * v.diagonalLength();
     return magnitudes ? acos(clampTo<float>(dotProduct(u, v) / magnitudes, -1, 1)) : 0;
@@ -347,7 +347,7 @@ double lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, con
 }
 
 // Get the side of box the ray intersects with
-static BoxSide intersectionSide(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)
+static BoxSide NODELETE intersectionSide(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)
 {
     auto position = ray.first;
     auto angleInRadians = deg2rad(ray.second);

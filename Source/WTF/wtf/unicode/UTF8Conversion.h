@@ -47,11 +47,11 @@ template<typename CharacterType> struct ConversionResult {
 
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convert(std::span<const char8_t>, std::span<char16_t>);
 WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const char16_t>, std::span<char8_t>);
-WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const Latin1Character>, std::span<char8_t>);
+WTF_EXPORT_PRIVATE ConversionResult<char8_t> NODELETE convert(std::span<const Latin1Character>, std::span<char8_t>);
 
 // Invalid sequences are converted to the replacement character.
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char8_t>, std::span<char16_t>);
-WTF_EXPORT_PRIVATE ConversionResult<char8_t> convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
+WTF_EXPORT_PRIVATE ConversionResult<char8_t> NODELETE convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
 
 WTF_EXPORT_PRIVATE bool equal(std::span<const char16_t>, std::span<const char8_t>);
 WTF_EXPORT_PRIVATE bool equal(std::span<const Latin1Character>, std::span<const char8_t>);
@@ -65,14 +65,6 @@ struct CheckedUTF8 {
     bool isAllASCII { };
 };
 WTF_EXPORT_PRIVATE CheckedUTF8 checkUTF8(std::span<const char8_t>);
-
-// The computeUTF16LengthWithHash function returns a length and hash of 0 if the
-// source is exhausted or invalid. The hash is of the computeHashAndMaskTop8Bits variety.
-struct UTF16LengthWithHash {
-    size_t lengthUTF16 { };
-    unsigned hash { };
-};
-WTF_EXPORT_PRIVATE UTF16LengthWithHash computeUTF16LengthWithHash(std::span<const char8_t>);
 
 } // namespace Unicode
 } // namespace WTF

@@ -71,7 +71,7 @@ void RuleSet::addToRuleSet(const AtomString& key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomString& name)
+static unsigned NODELETE rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomString& name)
 {
     if (const auto* rules = map.get(name))
         return rules->size();
@@ -80,7 +80,7 @@ static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomStr
 
 // FIXME: Maybe we can unify both following functions
 
-static bool hasHostOrScopePseudoClassSubjectInSelectorList(const CSSSelectorList* selectorList)
+static bool NODELETE hasHostOrScopePseudoClassSubjectInSelectorList(const CSSSelectorList* selectorList)
 {
     if (!selectorList)
         return false;

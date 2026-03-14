@@ -613,7 +613,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 @end
 
 #if ENABLE(DRAG_SUPPORT)
-static OptionSet<WebCore::DragDestinationAction> coreDragDestinationActionMask(WebDragDestinationAction actionMask)
+static OptionSet<WebCore::DragDestinationAction> NODELETE coreDragDestinationActionMask(WebDragDestinationAction actionMask)
 {
     OptionSet<WebCore::DragDestinationAction> result;
     if (actionMask & WebDragDestinationActionDHTML)
@@ -634,7 +634,7 @@ typedef NS_OPTIONS(NSUInteger, _UIDragOperation) {
 };
 #endif
 
-OptionSet<WebCore::DragOperation> coreDragOperationMask(CocoaDragOperation operation)
+OptionSet<WebCore::DragOperation> NODELETE coreDragOperationMask(CocoaDragOperation operation)
 {
     OptionSet<WebCore::DragOperation> result;
 
@@ -662,7 +662,7 @@ OptionSet<WebCore::DragOperation> coreDragOperationMask(CocoaDragOperation opera
 }
 
 #if USE(APPKIT)
-static NSDragOperation kit(std::optional<WebCore::DragOperation> dragOperation)
+static NSDragOperation NODELETE kit(std::optional<WebCore::DragOperation> dragOperation)
 {
     if (!dragOperation)
         return NSDragOperationNone;
@@ -711,7 +711,7 @@ static _UIDragOperation kit(std::optional<WebCore::DragOperation> dragOperation)
 }
 #endif // USE(APPKIT)
 
-WebDragSourceAction kit(std::optional<WebCore::DragSourceAction> action)
+WebDragSourceAction NODELETE kit(std::optional<WebCore::DragSourceAction> action)
 {
     if (!action)
         return WebDragSourceActionNone;
@@ -742,7 +742,7 @@ WebDragSourceAction kit(std::optional<WebCore::DragSourceAction> action)
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-WebCore::FindOptions coreOptions(WebFindOptions options)
+WebCore::FindOptions NODELETE coreOptions(WebFindOptions options)
 {
     WebCore::FindOptions findOptions;
     if (options & WebFindOptionsCaseInsensitive)
@@ -760,7 +760,7 @@ WebCore::FindOptions coreOptions(WebFindOptions options)
     return findOptions;
 }
 
-OptionSet<WebCore::LayoutMilestone> coreLayoutMilestones(WebLayoutMilestones milestones)
+OptionSet<WebCore::LayoutMilestone> NODELETE coreLayoutMilestones(WebLayoutMilestones milestones)
 {
     OptionSet<WebCore::LayoutMilestone> layoutMilestone;
     if (milestones & WebDidFirstLayout)
@@ -772,14 +772,14 @@ OptionSet<WebCore::LayoutMilestone> coreLayoutMilestones(WebLayoutMilestones mil
     return layoutMilestone;
 }
 
-WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
+WebLayoutMilestones NODELETE kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     return (milestones & WebCore::LayoutMilestone::DidFirstLayout ? WebDidFirstLayout : 0)
         | (milestones & WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout ? WebDidFirstVisuallyNonEmptyLayout : 0)
         | (milestones & WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold ? WebDidHitRelevantRepaintedObjectsAreaThreshold : 0);
 }
 
-static WebPageVisibilityState kit(WebCore::VisibilityState visibilityState)
+static WebPageVisibilityState NODELETE kit(WebCore::VisibilityState visibilityState)
 {
     switch (visibilityState) {
     case WebCore::VisibilityState::Visible:
@@ -792,7 +792,7 @@ static WebPageVisibilityState kit(WebCore::VisibilityState visibilityState)
     return WebPageVisibilityStateVisible;
 }
 
-static WebCore::StorageBlockingPolicy core(WebStorageBlockingPolicy storageBlockingPolicy)
+static WebCore::StorageBlockingPolicy NODELETE core(WebStorageBlockingPolicy storageBlockingPolicy)
 {
     switch (storageBlockingPolicy) {
     case WebAllowAllStorage:
@@ -935,7 +935,7 @@ enum { WebViewVersion = 4 };
 
 #define timedLayoutSize 4096
 
-static RetainPtr<NSMutableSet>& schemesWithRepresentationsSet()
+static RetainPtr<NSMutableSet>& NODELETE schemesWithRepresentationsSet()
 {
     static NeverDestroyed<RetainPtr<NSMutableSet>> schemesWithRepresentationsSet;
     return schemesWithRepresentationsSet;
@@ -1275,7 +1275,7 @@ static CFSetCallBacks NonRetainingSetCallbacks = {
     CFHash
 };
 
-static RetainPtr<CFMutableSetRef>& allWebViewsSet()
+static RetainPtr<CFMutableSetRef>& NODELETE allWebViewsSet()
 {
     static NeverDestroyed<RetainPtr<CFMutableSetRef>> allWebViewsSet;
     return allWebViewsSet;
@@ -6811,7 +6811,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return nil;
 }
 
-constexpr WebCore::TextCheckingType coreTextCheckingType(NSTextCheckingType type)
+constexpr WebCore::TextCheckingType NODELETE coreTextCheckingType(NSTextCheckingType type)
 {
     switch (type) {
     case NSTextCheckingTypeCorrection:
@@ -9337,7 +9337,7 @@ FORWARD(toggleUnderline)
     return self._isRichlyEditable ? _private->_richTextTouchBar.get() : _private->_plainTextTouchBar.get();
 }
 
-static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle* style)
+static NSTextAlignment NODELETE nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle* style)
 {
     NSTextAlignment textAlignment;
     switch (style->textAlign()) {

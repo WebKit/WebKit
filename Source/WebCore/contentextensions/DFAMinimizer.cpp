@@ -398,9 +398,9 @@ struct ActionKey {
         , actionsLength(actionsLength)
         , state(Valid)
     {
-        SuperFastHash hasher;
-        hasher.addCharactersAssumingAligned(reinterpret_cast<const char16_t*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(char16_t));
-        hash = hasher.hash();
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        hash = SuperFastHash::computeHash(std::span { reinterpret_cast<const char16_t*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(char16_t) });
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     bool NODELETE isEmptyValue() const { return state == Empty; }

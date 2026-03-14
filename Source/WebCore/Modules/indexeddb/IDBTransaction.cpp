@@ -156,7 +156,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
     if (isFinishedOrFinishing())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished."_s };
 
-    Locker locker { m_referencedObjectStoreLock };
+    Locker locker { m_objectStoresLock };
 
     if (RefPtr store = m_referencedObjectStores.get(objectStoreName))
         return store.releaseNonNull();
@@ -206,8 +206,8 @@ void IDBTransaction::transitionedToFinishing(IndexedDB::TransactionState state)
     ASSERT(isFinishedOrFinishing());
 
     if (!wasFinishedOrFinishing) {
-        for (Ref request : m_cursorRequests)
-            request->transactionTransitionedToFinishing();
+        for (auto& request : m_cursorRequests)
+            request.transactionTransitionedToFinishing();
     }
 }
 
@@ -233,7 +233,7 @@ void IDBTransaction::abortInternal()
     m_database->willAbortTransaction(*this);
 
     if (isVersionChange()) {
-        Locker locker { m_referencedObjectStoreLock };
+        Locker locker { m_objectStoresLock };
 
         auto& info = m_database->info();
         Vector<IDBObjectStoreIdentifier> identifiersToRemove;
@@ -657,7 +657,7 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
     ASSERT(scriptExecutionContext());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    Locker locker { m_referencedObjectStoreLock };
+    Locker locker { m_objectStoresLock };
 
     auto objectStore = IDBObjectStore::create(*protect(scriptExecutionContext()), info, *this);
     Ref objectStoreRef { objectStore.get() };
@@ -693,7 +693,7 @@ void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, const String
 {
     LOG(IndexedDB, "IDBTransaction::renameObjectStore");
 
-    Locker locker { m_referencedObjectStoreLock };
+    Locker locker { m_objectStoresLock };
 
     ASSERT(isVersionChange());
     ASSERT(scriptExecutionContext());
@@ -781,7 +781,7 @@ void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
 void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameIndex");
-    Locker locker { m_referencedObjectStoreLock };
+    Locker locker { m_objectStoresLock };
 
     ASSERT(isVersionChange());
     ASSERT(scriptExecutionContext());
@@ -1345,7 +1345,7 @@ void IDBTransaction::deleteObjectStore(const String& objectStoreName)
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(isVersionChange());
 
-    Locker locker { m_referencedObjectStoreLock };
+    Locker locker { m_objectStoresLock };
 
     if (auto objectStore = m_referencedObjectStores.take(objectStoreName)) {
         objectStore->markAsDeleted();
@@ -1497,17 +1497,17 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
 }
 
 template<typename Visitor>
-void IDBTransaction::visitReferencedObjectStores(Visitor& visitor) const
+void IDBTransaction::visitReferencedObjectStoresInGCThread(Visitor& visitor) const
 {
-    Locker locker { m_referencedObjectStoreLock };
+    Locker locker { m_objectStoresLock };
     for (auto& objectStore : m_referencedObjectStores.values())
         SUPPRESS_UNCHECKED_ARG addWebCoreOpaqueRoot(visitor, objectStore.get());
     for (auto& objectStore : m_deletedObjectStores.values())
         SUPPRESS_UNCHECKED_ARG addWebCoreOpaqueRoot(visitor, objectStore.get());
 }
 
-template void IDBTransaction::visitReferencedObjectStores(JSC::AbstractSlotVisitor&) const;
-template void IDBTransaction::visitReferencedObjectStores(JSC::SlotVisitor&) const;
+template void IDBTransaction::visitReferencedObjectStoresInGCThread(JSC::AbstractSlotVisitor&) const;
+template void IDBTransaction::visitReferencedObjectStoresInGCThread(JSC::SlotVisitor&) const;
 
 void IDBTransaction::handlePendingOperations()
 {

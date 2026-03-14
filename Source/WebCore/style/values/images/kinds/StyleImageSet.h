@@ -48,7 +48,7 @@ private:
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
 
     ImageWithScale bestImageForScaleFactor();
-    void updateDeviceScaleFactor(const Document&);
+    void NODELETE updateDeviceScaleFactor(const Document&);
 
     bool m_accessedBestFitImage { false };
     ImageWithScale m_bestFitImage;

@@ -13,6 +13,13 @@
         .display-toggle {
             display: -internal-auto-base(none, block);
         }
+        /* Test argument parsing with braces */
+        .position-try-fallbacks {
+            position-try-fallbacks: -internal-auto-base({block-start span-inline-end, block-end span-inline-start}, {
+                block-end span-inline-end,   /* First try above and span-right. */
+                block-start span-inline-start,   /* Then below but span-left. */
+                block-start span-inline-start });
+        }
         select {
             all: unset; /* Remove all UA styles */
             display: inline-block;
@@ -31,8 +38,17 @@
     <div class="display-toggle" style="appearance: base-select">This should be hidden (base-select on non-select).</div>
     <div class="display-toggle" style="appearance: base">This should be visible (base).</div>
 
+    <div class="position-try-fallbacks"></div>
+    <div class="position-try-fallbacks" style="appearance: base"></div>
+
     <select style="appearance: base-select"><option>This select should be green with white text. (base-select)</option></select>
     <select style="appearance: base"><option>This select should be green with white text. (base)</option></select>
     <select><option>This select should be red with white text. (default)</option></select>
+
+    <script>
+        document.querySelectorAll(".position-try-fallbacks").forEach(element => {
+            element.textContent = getComputedStyle(element).positionTryFallbacks;
+        });
+    </script>
 </body>
 </html>

@@ -49,8 +49,8 @@ private:
     float maxValueForRange() const final;
     float minValueForRange() const final;
 
-    HTMLProgressElement* progressElement() const;
-    HTMLMeterElement* meterElement() const;
+    HTMLProgressElement* NODELETE progressElement() const;
+    HTMLMeterElement* NODELETE meterElement() const;
 
     bool computeIsIgnored() const final;
 };

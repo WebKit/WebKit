@@ -391,6 +391,12 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'get-llvm-version',
             'print-clang-version',
             'checkout-llvm-project',
+            'get-swift-tag-name',
+            'print-swift-version',
+            'checkout-swift-project',
+            'update-swift-checkouts',
+            'build-swift',
+            'install-metal-toolchain',
             'update-clang',
             'scan-build'
         ],
@@ -776,6 +782,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'update-swift-checkouts',
             'build-swift',
             'install-metal-toolchain',
+            'update-clang',
             'scan-build'
         ],
         'Apple-iPadOS-26-Simulator-Release-WK2-Tests': [

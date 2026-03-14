@@ -3,8 +3,8 @@
 <script src="../../../resources/ui-helper.js"></script>
 <iframe srcdoc="<input type=checkbox switch onclick=parent.end()>"></iframe>
 <script>
-window.onload = () => {
-    UIHelper.activateAt(20, 20);
+window.onload = async () => {
+    await UIHelper.activateAt(20, 20);
 }
 function end() {
     setTimeout(() => {

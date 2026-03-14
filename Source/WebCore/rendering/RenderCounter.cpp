@@ -54,7 +54,7 @@ using CounterMaps = SingleThreadWeakHashMap<RenderElement, std::unique_ptr<Count
 
 static CounterNode* makeCounterNode(RenderElement&, const AtomString& identifier, bool alwaysCreateCounter);
 
-static CounterMaps& counterMaps()
+static CounterMaps& NODELETE counterMaps()
 {
     static NeverDestroyed<CounterMaps> staticCounterMaps;
     return staticCounterMaps;

@@ -165,7 +165,7 @@ void ResizeObserver::deliverObservations()
 
     auto entries = WTF::compactMap(m_activeObservations, [](auto& observation) -> RefPtr<ResizeObserverEntry> {
         RefPtr target = observation->target();
-        ASSERT(target); // The target is supposed to be kept alive via `m_activeObservationTargets` and JSResizeObserver::visitAdditionalChildren().
+        ASSERT(target); // The target is supposed to be kept alive via `m_activeObservationTargets` and JSResizeObserver::visitAdditionalChildrenInGCThread().
         if (!target)
             return nullptr;
         return ResizeObserverEntry::create(target.releaseNonNull(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize());
@@ -174,7 +174,7 @@ void ResizeObserver::deliverObservations()
 
     // Use GCReachableRef here to make sure the targets and their JS wrappers are kept alive while we deliver.
     // It is important since m_activeObservationTargets / m_targetsWaitingForFirstObservation will get cleared and
-    // thus JSResizeObserver::visitAdditionalChildren() won't be able to visit them on a GC thread.
+    // thus JSResizeObserver::visitAdditionalChildrenInGCThread() won't be able to visit them on a GC thread.
     Vector<GCReachableRef<Element>> activeObservationTargets;
     Vector<GCReachableRef<Element>> targetsWaitingForFirstObservation;
     {
@@ -182,14 +182,14 @@ void ResizeObserver::deliverObservations()
         activeObservationTargets = WTF::compactMap(m_activeObservationTargets, [](auto& weakTarget) -> std::optional<GCReachableRef<Element>> {
             if (weakTarget)
                 return GCReachableRef<Element> { *weakTarget };
-            ASSERT_NOT_REACHED(); // Targets are supposed to be kept alive via JSResizeObserver::visitAdditionalChildren().
+            ASSERT_NOT_REACHED(); // Targets are supposed to be kept alive via JSResizeObserver::visitAdditionalChildrenInGCThread().
             return std::nullopt;
         });
         m_activeObservationTargets = { };
         targetsWaitingForFirstObservation = WTF::compactMap(m_targetsWaitingForFirstObservation, [](auto& weakTarget) -> std::optional<GCReachableRef<Element>> {
             if (weakTarget)
                 return GCReachableRef<Element> { *weakTarget };
-            ASSERT_NOT_REACHED(); // Targets are supposed to be kept alive via JSResizeObserver::visitAdditionalChildren().
+            ASSERT_NOT_REACHED(); // Targets are supposed to be kept alive via JSResizeObserver::visitAdditionalChildrenInGCThread().
             return std::nullopt;
         });
         m_targetsWaitingForFirstObservation = { };

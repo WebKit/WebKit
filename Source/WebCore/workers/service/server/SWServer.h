@@ -207,10 +207,10 @@ public:
     WEBCORE_EXPORT void removeConnection(SWServerConnectionIdentifier);
     Connection* connection(SWServerConnectionIdentifier identifier) const { return m_connections.get(identifier); }
 
-    const HashMap<SWServerConnectionIdentifier, Ref<Connection>>& connections() const { return m_connections; }
+    const HashMap<SWServerConnectionIdentifier, Ref<Connection>>& connections() const LIFETIME_BOUND { return m_connections; }
     WEBCORE_EXPORT bool canHandleScheme(StringView) const;
 
-    SWOriginStore& originStore() { return m_originStore; }
+    SWOriginStore& originStore() LIFETIME_BOUND { return m_originStore; }
 
     void refreshImportedScriptsFinished(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const Vector<std::pair<URL, ScriptBuffer>>&, const std::optional<ProcessIdentifier>&);
     void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&, const String& message);
@@ -236,6 +236,7 @@ public:
     void registrationStoreImportComplete();
     void registrationStoreDatabaseFailedToOpen();
     void storeRegistrationForWorker(SWServerWorker&);
+    void loadWorkerScripts(const SWServerWorker&, CompletionHandler<void()>&&);
 
     WEBCORE_EXPORT void getOriginsWithRegistrations(CompletionHandler<void(const HashSet<SecurityOriginData>&)>&&);
 
@@ -280,7 +281,7 @@ public:
     enum class ShouldDelayRemoval : bool { No, Yes };
     ShouldDelayRemoval removeContextConnectionIfPossible(const RegistrableDomain&);
 
-    std::optional<ServiceWorkerRegistrationIdentifier> clientIdentifierToControllingRegistration(ScriptExecutionContextIdentifier) const;
+    std::optional<ServiceWorkerRegistrationIdentifier> NODELETE clientIdentifierToControllingRegistration(ScriptExecutionContextIdentifier) const;
     WEBCORE_EXPORT void forEachClientForOrigin(const ClientOrigin&, NOESCAPE const Function<void(ServiceWorkerClientData&)>&);
     void forEachClientForOrigin(const ClientOrigin&, NOESCAPE const Function<void(const ServiceWorkerClientData&)>&) const;
 
@@ -318,7 +319,7 @@ public:
 private:
     SWServer(SWServerDelegate&, UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, ServiceWorkerIsInspectable);
 
-    unsigned maxRegistrationCount();
+    unsigned NODELETE maxRegistrationCount();
     bool allowLoopbackIPAddress(const String&);
     void validateRegistrationDomain(RegistrableDomain, ServiceWorkerJobType, bool, CompletionHandler<void(bool)>&&);
 

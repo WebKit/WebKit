@@ -1,6 +1,6 @@
 
 PASS permissions policy header "payment=*" allows Payment Request API the top-level document.
 PASS permissions policy header "payment=*" allows Payment Request API same-origin iframes.
-PASS permissions policy header "payment=*" disallows Payment Request API cross-origin iframes.
+PASS Payment Request API is disabled in cross-origin iframe if allow="payment" is not set and permissions policy header "payment=*".
 PASS permissions policy header "payment=*" allow="payment" allows Payment Request in cross-origin iframes.
 

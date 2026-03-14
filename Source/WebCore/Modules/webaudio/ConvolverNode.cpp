@@ -109,7 +109,7 @@ void ConvolverNode::process(size_t framesToProcess)
         // Note that we can handle the case where nothing is connected to the input, in which case we'll just feed silence into the convolver.
         // FIXME: If we wanted to get fancy we could try to factor in the 'tail time' and stop processing once the tail dies down if
         // we keep getting fed silence.
-        m_reverb->process(protect(input(0))->bus(), outputBus, framesToProcess);
+        m_reverb->process(input(0)->bus(), outputBus, framesToProcess);
     }
 }
 

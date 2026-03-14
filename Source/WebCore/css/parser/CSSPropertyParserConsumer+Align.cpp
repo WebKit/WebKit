@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static RefPtr<CSSValue> consumeAlignmentBaseline(CSSParserTokenRange& range, CSS::PropertyParserState&)
+static RefPtr<CSSValue> NODELETE consumeAlignmentBaseline(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
     ASSERT(range.peek().id() == CSSValueBaseline);
 

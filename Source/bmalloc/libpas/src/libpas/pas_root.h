@@ -70,6 +70,24 @@ typedef struct pas_tiny_large_map_second_level_hashtable_in_flux_stash pas_tiny_
 typedef struct pas_ptr_hash_map pas_ptr_hash_map;
 typedef struct pas_ptr_hash_map_in_flux_stash pas_ptr_hash_map_in_flux_stash;
 
+/* This structure is ABI: if some process A attempts to enumerate
+ * the heap-data of a second process B, and that second process uses libpas,
+ * then it will eventually call into pas_root_enumerate_for_libmalloc,
+ * which relies on the layout of this structure.
+ * It is possible for the two processes to have different layouts for this
+ * structure: e.g. if process A is ReportCrash and was built with the system's
+ * WebKit.framework, while process B is a locally built Safari using a
+ * tip-of-tree build of WebKit.framework, the two structs could be different.
+ *
+ * If A's version is older than B's, this can be made safe by only appending
+ * fields to this struct (and its descendents).
+ * However, if B's version is older than A's, then that would be unsafe.
+ *
+ * As such, pas_crash_report_version should be incremented whenever the
+ * layout of this structure, or those of its child structures as visible
+ * to the enumerator, are modified.
+ * This includes the per-heap roots, e.g. pas_basic_heap_config_root_data
+ */
 struct pas_root {
     uintptr_t magic;
     uintptr_t* compact_heap_reservation_base;

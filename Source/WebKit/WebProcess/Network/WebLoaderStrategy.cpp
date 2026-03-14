@@ -149,9 +149,9 @@ void WebLoaderStrategy::loadResource(LocalFrame& frame, CachedResource& resource
         }
     }
 
-    SubresourceLoader::create(frame, resource, WTF::move(request), options, [this, protectedThis = Ref { *this }, referrerPolicy = options.referrerPolicy, completionHandler = WTF::move(completionHandler), resource = CachedResourceHandle<CachedResource>(&resource), frame = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) mutable {
+    SubresourceLoader::create(frame, resource, WTF::move(request), options, [this, protectedThis = Ref { *this }, referrerPolicy = options.referrerPolicy, completionHandler = WTF::move(completionHandler), resource = Ref { resource }, frame = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) mutable {
         if (loader)
-            scheduleLoad(*loader, resource.get(), referrerPolicy == ReferrerPolicy::NoReferrerWhenDowngrade);
+            scheduleLoad(*loader, resource.ptr(), referrerPolicy == ReferrerPolicy::NoReferrerWhenDowngrade);
         else
             RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 "] WebLoaderStrategy::loadResource: Unable to create SubresourceLoader", this, frame->pageID() ? frame->pageID()->toUInt64() : 0, frame->frameID().toUInt64());
         completionHandler(WTF::move(loader));
@@ -167,7 +167,7 @@ void WebLoaderStrategy::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlug
     });
 }
 
-static Seconds maximumBufferingTime(CachedResource* resource)
+static Seconds NODELETE maximumBufferingTime(CachedResource* resource)
 {
     if (!resource)
         return 0_s;
@@ -225,7 +225,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     std::optional<WebPageProxyIdentifier> webPageProxyID;
     if (RefPtr webFrameLoaderClient = dynamicDowncast<WebLocalFrameLoaderClient>(frameLoaderClient))
         webPageProxyID = webFrameLoaderClient->webPageProxyID();
-    else if (RefPtr workerFrameLoaderClient = dynamicDowncast<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
+    else if (auto* workerFrameLoaderClient = dynamicDowncast<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
         webPageProxyID = workerFrameLoaderClient->webPageProxyID();
 
     auto trackingParameters = webPageProxyID && pageID ? std::optional(WebResourceLoader::TrackingParameters {
@@ -294,7 +294,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 
     if (InspectorInstrumentationWebKit::shouldInterceptRequest(resourceLoader)) {
-        InspectorInstrumentationWebKit::interceptRequest(resourceLoader, [this, protectedThis = Ref { *this }, protectedResourceLoader = Ref { resourceLoader }, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, resource](const ResourceRequest& request) {
+        InspectorInstrumentationWebKit::interceptRequest(resourceLoader, [this, protectedThis = Ref { *this }, protectedResourceLoader = Ref { resourceLoader }, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, resource = RefPtr { resource }](const ResourceRequest& request) {
             auto& resourceLoader = protectedResourceLoader.get();
             WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: intercepted URL will be scheduled with the NetworkProcess");
             scheduleLoadFromNetworkProcess(resourceLoader, request, *trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
@@ -410,7 +410,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
 
         if (RefPtr webPage = WebPage::fromCorePage(*page)) {
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-            if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
+            if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
                 parameters.pageHasLoadedWebExtensions = extensionControllerProxy->hasLoadedContexts();
 #endif
         }
@@ -618,7 +618,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     if (RefPtr frameLoader = resourceLoader.frameLoader())
         loadParameters.requiredCookiesVersion = frameLoader->requiredCookiesVersion();
 
-    if (CachedResourceHandle handle = resourceLoader.cachedResource())
+    if (RefPtr handle = resourceLoader.cachedResource())
         loadParameters.isInitiatorPrefetch = handle->type() == CachedResource::Type::LinkPrefetch;
 
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
@@ -641,7 +641,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
 void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader& resourceLoader)
 {
-    m_internallyFailedResourceLoaders.add(&resourceLoader);
+    m_internallyFailedResourceLoaders.add(resourceLoader);
     m_internallyFailedLoadTimer.startOneShot(0_s);
 }
 

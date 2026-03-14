@@ -45,9 +45,9 @@ public:
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
-    const TableFormattingGeometry& formattingGeometry() const { return m_tableFormattingGeometry; }
-    const TableFormattingQuirks& formattingQuirks() const { return m_tableFormattingQuirks; }
-    const TableFormattingState& formattingState() const { return m_tableFormattingState; }
+    const TableFormattingGeometry& formattingGeometry() const LIFETIME_BOUND { return m_tableFormattingGeometry; }
+    const TableFormattingQuirks& formattingQuirks() const LIFETIME_BOUND { return m_tableFormattingQuirks; }
+    const TableFormattingState& formattingState() const LIFETIME_BOUND { return m_tableFormattingState; }
 
 private:
     class TableLayout {
@@ -59,7 +59,7 @@ private:
         DistributedSpaces distributedVerticalSpace(std::optional<LayoutUnit> availableVerticalSpace);
 
     private:
-        const TableFormattingContext& formattingContext() const { return m_formattingContext; }
+        const TableFormattingContext& formattingContext() const LIFETIME_BOUND { return m_formattingContext; }
 
         const TableFormattingContext& m_formattingContext;
         const TableGrid& m_grid;
@@ -75,7 +75,7 @@ private:
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
     void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace);
 
-    TableFormattingState& formattingState() { return m_tableFormattingState; }
+    TableFormattingState& formattingState() LIFETIME_BOUND { return m_tableFormattingState; }
 
     TableFormattingState& m_tableFormattingState;
     const TableFormattingGeometry m_tableFormattingGeometry;

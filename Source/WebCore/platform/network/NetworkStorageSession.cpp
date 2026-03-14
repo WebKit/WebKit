@@ -47,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkStorageSession);
 
-static HashSet<OrganizationStorageAccessPromptQuirk>& updatableStorageAccessPromptQuirks()
+static HashSet<OrganizationStorageAccessPromptQuirk>& NODELETE updatableStorageAccessPromptQuirks()
 {
     ASSERT(RunLoop::isMain());
     // FIXME: Move this isn't an instance of a class, probably as a member of NetworkStorageSession.

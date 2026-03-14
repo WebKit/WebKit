@@ -92,7 +92,7 @@ template<typename... F> decltype(auto) GridAutoFlow::switchOn(F&&... f) const
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<GridAutoFlow> { auto operator()(BuilderState&, const CSSValue&) -> GridAutoFlow; };
+template<> struct CSSValueConversion<GridAutoFlow> { GridAutoFlow NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

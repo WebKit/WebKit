@@ -67,7 +67,7 @@ private:
         protect(m_promise)->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
     }
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor&) const final
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&) const final
     {
     }
 

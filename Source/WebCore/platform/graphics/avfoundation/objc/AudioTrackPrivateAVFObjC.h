@@ -66,11 +66,11 @@ public:
 
     virtual void setEnabled(bool);
 
-    AVPlayerItemTrack* playerItemTrack();
+    AVPlayerItemTrack* NODELETE playerItemTrack();
 
-    AVAssetTrack* assetTrack();
+    AVAssetTrack* NODELETE assetTrack();
 
-    MediaSelectionOptionAVFObjC* mediaSelectionOption();
+    MediaSelectionOptionAVFObjC* NODELETE mediaSelectionOption();
 
 private:
     friend class MediaPlayerPrivateAVFoundationObjC;

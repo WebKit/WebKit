@@ -42,7 +42,7 @@ public:
 
     FloatRect calculateBoundaries() const;
 
-    const Vector<SVGTextFragment>& textFragments() const { return m_textFragments; }
+    const Vector<SVGTextFragment>& textFragments() const LIFETIME_BOUND { return m_textFragments; }
     void setTextFragments(Vector<SVGTextFragment>&&);
 
     void dirtyOwnLineBoxes() override;

@@ -216,7 +216,7 @@ void PageSerializer::serializeFrame(LocalFrame* frame)
 
         if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(*element)) {
             auto url = document->completeURL(imageElement->attributeWithoutSynchronization(HTMLNames::srcAttr));
-            auto* cachedImage = imageElement->cachedImage();
+            RefPtr cachedImage = imageElement->cachedImage();
             addImageToResources(cachedImage, imageElement->renderer(), url);
         } else if (RefPtr linkElement = dynamicDowncast<HTMLLinkElement>(*element)) {
             if (RefPtr sheet = linkElement->sheet()) {
@@ -311,7 +311,7 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
         if (!cssValue)
             continue;
 
-        auto* image = cssValue->cachedImage();
+        RefPtr image = cssValue->cachedImage();
         if (!image)
             continue;
 

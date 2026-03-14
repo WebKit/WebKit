@@ -62,7 +62,7 @@ public:
             return Ref { singleton.get() };
         }
 
-        const Bytes& bytes() const { return m_bytes; }
+        const Bytes& bytes() const LIFETIME_BOUND { return m_bytes; }
 
         void append(uint8_t byte)
         {

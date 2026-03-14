@@ -58,14 +58,14 @@ public:
         if (m_object == object)
             return *this;
         m_object = WTF::move(object);
-        if (RefPtr object = m_object)
+        if (auto* object = m_object.get())
             didBind(*object);
         return *this;
     }
     bool operator==(const T* a) const { return a == m_object; }
     bool operator==(const RefPtr<T>& a) const { return a == m_object; }
     explicit operator bool() const { return m_object; }
-    T* get() const { return m_object.get(); }
+    T* get() const LIFETIME_BOUND { return m_object.get(); }
     T* operator->() const { return m_object.get(); }
     T& operator*() const { return *m_object; }
     operator RefPtr<T>() const { return m_object; }
@@ -101,7 +101,7 @@ public:
     virtual ~WebGLObject();
 
     WebGLRenderingContextBase* NODELETE context() const;
-    GraphicsContextGL* graphicsContextGL() const;
+    GraphicsContextGL* NODELETE graphicsContextGL() const;
 
     PlatformGLObject object() const { return m_object; }
 
@@ -121,9 +121,9 @@ public:
     bool isDeleted() const { return m_deleted; }
 
     // True if this object belongs to the context.
-    bool validate(const WebGLRenderingContextBase&) const;
+    bool NODELETE validate(const WebGLRenderingContextBase&) const;
 
-    Lock& objectGraphLockForContext();
+    Lock& NODELETE objectGraphLockForContext();
 
 protected:
     WebGLObject(WebGLRenderingContextBase&, PlatformGLObject);

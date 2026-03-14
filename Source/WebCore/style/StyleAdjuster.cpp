@@ -117,7 +117,7 @@ static void addIntrinsicMargins(RenderStyle& style)
 
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
     // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
-    if (style.width().isIntrinsicOrLegacyIntrinsicOrAuto()) {
+    if (style.width().isSizingKeywordOrAuto()) {
         if (style.marginLeft().hasQuirk())
             style.setMarginLeft(intrinsicMargin);
         if (style.marginRight().hasQuirk())
@@ -152,7 +152,7 @@ static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const
     }();
 
     // Outermost <svg> roots are considered to be atomic inline-level.
-    if (RefPtr svgElement = dynamicDowncast<SVGElement>(element); svgElement && svgElement->isOutermostSVGSVGElement())
+    if (auto* svgElement = dynamicDowncast<SVGElement>(element); svgElement && svgElement->isOutermostSVGSVGElement())
         return false;
 
     // There is no other good way to prevent decorations from affecting user agent shadow trees.
@@ -546,7 +546,7 @@ void Adjuster::adjust(RenderStyle& style) const
         // of the value of the position property, with one exception: as for boxes in CSS 2.1, outer ‘svg’ elements
         // must be positioned for z-index to apply to them.
         if (element && element->document().settings().layerBasedSVGEngineEnabled()) {
-            if (RefPtr svgElement = dynamicDowncast<SVGElement>(*element); svgElement && svgElement->isOutermostSVGSVGElement())
+            if (auto* svgElement = dynamicDowncast<SVGElement>(*element); svgElement && svgElement->isOutermostSVGSVGElement())
                 return element->renderer() && element->renderer()->style().position() == PositionType::Static;
 
             return false;
@@ -1000,6 +1000,17 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         static MainThreadNeverDestroyed<const AtomString> unsupportedClassName("unsupported-scenario-container"_s);
         if (is<HTMLDivElement>(*m_element) && (m_element->hasClassName(overlayClassName) || m_element->hasClassName(unsupportedClassName)))
             style.setDisplayMaintainingOriginalDisplay(DisplayType::None);
+    }
+
+    // zillow.com rdar://171279940
+    // FIXME(309831): Remove after rdar://172303198 is implemented.
+    if (documentQuirks.needsZillowFloorplanMarginQuirk()) {
+        if (m_element->hasTagName(imgTag)) {
+            if (RefPtr parent = m_element->parentElement(); parent && parent->idForStyleResolution() == "floorplan_panel"_s) {
+                style.setMarginLeft(CSS::Keyword::Auto { });
+                style.setMarginRight(CSS::Keyword::Auto { });
+            }
+        }
     }
 
 #if PLATFORM(IOS_FAMILY)

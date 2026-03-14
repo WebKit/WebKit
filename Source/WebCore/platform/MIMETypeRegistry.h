@@ -131,7 +131,7 @@ public:
     WEBCORE_EXPORT static bool isTextMIMEType(const String& mimeType);
 
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> supportedImageMIMETypes();
-    static HashSet<String, ASCIICaseInsensitiveHash>& additionalSupportedImageMIMETypes();
+    static HashSet<String, ASCIICaseInsensitiveHash>& NODELETE additionalSupportedImageMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
     WEBCORE_EXPORT static const HashSet<String>& supportedMediaMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> pdfMIMETypes();

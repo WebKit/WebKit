@@ -337,7 +337,7 @@ double WebInspectorUI::pageZoomFactor() const
 #if ENABLE(INSPECTOR_TELEMETRY)
 bool WebInspectorUI::supportsDiagnosticLogging()
 {
-    RefPtr page = m_page.get();
+    auto* page = &m_page.get();
     return page && page->corePage()->settings().diagnosticLoggingEnabled();
 }
 

@@ -73,7 +73,7 @@ public:
 
     virtual String oldValue() { return String(); }
 
-    virtual void visitNodesConcurrently(JSC::AbstractSlotVisitor&) const = 0;
+    virtual void visitNodesInGCThread(JSC::AbstractSlotVisitor&) const = 0;
 };
 
 } // namespace WebCore

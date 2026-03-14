@@ -39,7 +39,7 @@ namespace WebCore::XPath {
 // assume that we aren't dealing with documents that we cannot even traverse in reasonable time).
 const unsigned traversalSortCutoff = 10000;
 
-static inline Node* parentWithDepth(unsigned depth, const Vector<Ref<Node>>& parents)
+static inline Node* NODELETE parentWithDepth(unsigned depth, const Vector<Ref<Node>>& parents)
 {
     ASSERT(parents.size() >= depth + 1);
     return parents[parents.size() - 1 - depth].ptr();
@@ -96,7 +96,7 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Ref<Node>>>& par
         unsigned sortedEnd = from;
         // FIXME: namespace nodes are not implemented.
         for (unsigned i = sortedEnd; i < to; ++i) {
-            if (RefPtr attr = dynamicDowncast<Attr>(parentMatrix[i][0].get()); attr && attr->ownerElement() == commonAncestor)
+            if (auto* attr = dynamicDowncast<Attr>(parentMatrix[i][0].get()); attr && attr->ownerElement() == commonAncestor)
                 parentMatrix[i].swap(parentMatrix[sortedEnd++]);
         }
         if (sortedEnd != from) {

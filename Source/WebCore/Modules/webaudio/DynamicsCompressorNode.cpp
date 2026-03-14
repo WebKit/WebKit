@@ -91,7 +91,7 @@ void DynamicsCompressorNode::process(size_t framesToProcess)
     m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamAttack, attack);
     m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamRelease, release);
 
-    m_dynamicsCompressor->process(protect(input(0))->bus(), outputBus, framesToProcess);
+    m_dynamicsCompressor->process(input(0)->bus(), outputBus, framesToProcess);
 
     setReduction(m_dynamicsCompressor->parameterValue(DynamicsCompressor::ParamReduction));
 }

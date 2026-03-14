@@ -37,9 +37,10 @@ def check_repeated_keys(args):
 
 class TestExpectations(object):
 
-    def __init__(self, port_name, expectations_file, build_type='Release'):
+    def __init__(self, port_name, expectations_file, build_type='Release', architecture=None):
         self._port_name = port_name
         self._build_type = build_type
+        self._architecture = architecture
         if os.path.isfile(expectations_file):
             with open(expectations_file, 'r') as fd:
                 self._expectations = self._load_expectation_string(fd.read())
@@ -50,20 +51,17 @@ class TestExpectations(object):
         return json.loads(expectations, object_pairs_hook=check_repeated_keys)
 
     def _port_name_for_expected(self, expected):
-        if self._port_name in expected:
-            return self._port_name
-
-        name_with_build = self._port_name + '@' + self._build_type
-        if name_with_build in expected:
-            return name_with_build
-
-        if 'all' in expected:
-            return 'all'
-
-        name_with_build = 'all@' + self._build_type
-        if name_with_build in expected:
-            return name_with_build
-
+        for port in [self._port_name, 'all']:
+            candidates = [port]
+            if self._build_type:
+                candidates.append('%s@%s' % (port, self._build_type))
+            if self._architecture:
+                candidates.append('%s:%s' % (port, self._architecture))
+            if self._build_type and self._architecture:
+                candidates.append('%s@%s:%s' % (port, self._build_type, self._architecture))
+            for key in reversed(candidates):
+                if key in expected:
+                    return key
         return None
 
     def _expected_value(self, expected, value, default):

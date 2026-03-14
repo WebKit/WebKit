@@ -95,7 +95,6 @@ dom/DocumentFullscreen.cpp
 dom/Element.cpp
 dom/ElementInternals.cpp
 dom/ElementIteratorInlines.h
-dom/ElementTraversal.h
 dom/EventLoop.cpp
 dom/IdTargetObserver.cpp
 dom/IdleCallbackController.cpp
@@ -145,7 +144,6 @@ editing/ReplaceSelectionCommand.cpp
 editing/SimplifyMarkupCommand.cpp
 editing/SpellChecker.cpp
 editing/TextInsertionBaseCommand.cpp
-editing/TextIterator.cpp
 editing/TextManipulationController.cpp
 editing/TypingCommand.cpp
 editing/VisiblePosition.cpp
@@ -204,7 +202,6 @@ inspector/InspectorResourceUtilities.cpp
 inspector/InspectorStyleSheet.cpp
 inspector/PageDebugger.cpp
 inspector/WorkerDebugger.cpp
-inspector/agents/InspectorAnimationAgent.cpp
 inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorCanvasAgent.cpp
 inspector/agents/InspectorDOMAgent.cpp
@@ -259,19 +256,19 @@ layout/integration/LayoutIntegrationFormattingContextLayout.cpp
 layout/integration/flex/LayoutIntegrationFlexLayout.cpp
 layout/integration/inline/InlineIteratorBox.cpp
 layout/integration/inline/InlineIteratorBoxModernPath.h
-layout/integration/inline/InlineIteratorInlineBox.cpp
 layout/integration/inline/InlineIteratorLineBox.cpp
 layout/integration/inline/InlineIteratorLineBox.h
 layout/integration/inline/InlineIteratorLineBoxInlines.h
 layout/integration/inline/InlineIteratorLineBoxLegacyPath.h
+layout/integration/inline/InlineIteratorLineBoxLegacyPathInlines.h
 layout/integration/inline/InlineIteratorLogicalOrderTraversal.cpp
+layout/integration/inline/InlineIteratorLogicalOrderTraversal.h
 layout/integration/inline/InlineIteratorSVGTextBox.cpp
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp
 layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/integration/inline/LineSelection.h
 layout/layouttree/FormattingContextBoxIterator.h
-layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainingBlockChainIterator.h
 layout/layouttree/LayoutTreeBuilder.cpp
 loader/ApplicationManifestLoader.cpp
@@ -364,7 +361,6 @@ platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 [ iOS ] platform/ios/PlatformScreenIOS.mm
 platform/ios/PlaybackSessionInterfaceIOS.mm
 [ iOS ] platform/ios/TileControllerMemoryHandlerIOS.cpp
-[ iOS ] platform/ios/VideoPresentationInterfaceIOS.h
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
 platform/ios/WebAVPlayerController.mm
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm

@@ -48,6 +48,7 @@ WEBCORE_EXPORT InteractionDescription interactionDescription(const Interaction&,
 
 WEBCORE_EXPORT std::optional<SimpleRange> rangeForExtractedText(const LocalFrame&, ExtractedText&&);
 WEBCORE_EXPORT RefPtr<Element> elementForExtractedText(const LocalFrame&, ExtractedText&&);
+WEBCORE_EXPORT RefPtr<Element> containerElementForExtractedText(const LocalFrame&, ExtractedText&&);
 
 WEBCORE_EXPORT Vector<FilterRule> extractRules(Vector<FilterRuleData>&&);
 WEBCORE_EXPORT void applyRules(const String&, std::optional<NodeIdentifier>&& containerNodeID, const Vector<FilterRule>&, Page&, CompletionHandler<void(const String&)>&&);

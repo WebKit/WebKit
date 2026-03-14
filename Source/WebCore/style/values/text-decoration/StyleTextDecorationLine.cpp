@@ -75,7 +75,7 @@ auto CSSValueConversion<TextDecorationLine>::operator()(BuilderState& state, con
         return CSS::Keyword::None { };
     };
 
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->isValueID()) {
             switch (primitiveValue->valueID()) {
             case CSSValueNone:
@@ -91,11 +91,11 @@ auto CSSValueConversion<TextDecorationLine>::operator()(BuilderState& state, con
         return invalidValue();
     }
 
-    if (RefPtr valueList = dynamicDowncast<CSSValueList>(value)) {
+    if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
         OptionSet<TextDecorationLine::Flag> flags;
 
-        for (Ref item : *valueList) {
-            RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, item);
+        for (auto& item : *valueList) {
+            auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, item);
             if (!primitiveValue)
                 return invalidValue();
 

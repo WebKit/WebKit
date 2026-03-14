@@ -35,7 +35,7 @@ class TimingFunction;
 
 namespace Style {
 
-CSS::SpringEasingFunction toCSSSpringEasingFunction(const SpringTimingFunction&, const RenderStyle&);
+CSS::SpringEasingFunction NODELETE toCSSSpringEasingFunction(const SpringTimingFunction&, const RenderStyle&);
 
 Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::SpringEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::SpringEasingFunction&);

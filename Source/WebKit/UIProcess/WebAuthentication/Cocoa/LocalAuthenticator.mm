@@ -85,7 +85,7 @@ static void updateQueryIfNecessary(NSMutableDictionary *dictionary)
     [dictionary setObject:@YES forKey:(__bridge id)kSecAttrSynchronizable];
 }
 
-static inline RefPtr<ArrayBuffer> alternateBlobIfNecessary(const WebKit::WebAuthenticationRequestData& requestData)
+static inline RefPtr<ArrayBuffer> NODELETE alternateBlobIfNecessary(const WebKit::WebAuthenticationRequestData& requestData)
 {
 #if HAVE(WEB_AUTHN_PRF_API)
     return nullptr;

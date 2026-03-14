@@ -8,6 +8,6 @@ FAIL gathering state and candidate callbacks should fire in the correct order as
 PASS setLocalDescription(reoffer) with a restarted transport should cause iceGatheringState to go to "gathering" and then "complete"
 PASS setLocalDescription(reoffer) with two restarted transports should cause iceGatheringState to go to "gathering" and then "complete"
 PASS sRD does not cause ICE gathering state changes
-FAIL renegotiation that closes all transports should result in ICE gathering state "new" assert_equals: PC2 transceivers should be invisible after negotiation expected 0 but got 1
+PASS renegotiation that closes all transports should result in ICE gathering state "new"
 PASS connection with one data channel should eventually have connected connection state
 

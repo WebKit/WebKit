@@ -1093,7 +1093,7 @@ void Device::makeSubmitInvalidClearingEncoders(TrackedResourceContainer& command
 
 #pragma mark WGPU Stubs
 
-void wgpuDeviceReference(WGPUDevice device)
+void NODELETE wgpuDeviceReference(WGPUDevice device)
 {
     WebGPU::fromAPI(device).ref();
 }

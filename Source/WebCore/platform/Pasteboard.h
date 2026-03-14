@@ -237,7 +237,7 @@ public:
     virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType, std::optional<size_t> itemIndex = std::nullopt);
     virtual WEBCORE_EXPORT void read(PasteboardFileReader&, std::optional<size_t> itemIndex = std::nullopt);
 
-    static bool canWriteTrustworthyWebURLsPboardType();
+    static bool NODELETE canWriteTrustworthyWebURLsPboardType();
 
     virtual WEBCORE_EXPORT void write(const Color&);
     virtual WEBCORE_EXPORT void write(const PasteboardURL&);
@@ -334,7 +334,7 @@ public:
     RefPtr<WebCore::SharedBuffer> readBuffer(std::optional<size_t> index, const String& type);
     URL readURL(size_t index, String& title);
 
-    const PasteboardContext* context() const { return m_context.get(); }
+    const PasteboardContext* context() const LIFETIME_BOUND { return m_context.get(); }
 
 private:
 #if PLATFORM(IOS_FAMILY)

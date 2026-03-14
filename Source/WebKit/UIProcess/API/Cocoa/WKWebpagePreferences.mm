@@ -831,7 +831,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSURLRequest *)alternateRequest
 {
-    return protect(protect(*_websitePolicies)->alternateRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).autorelease();
+    return protect(_websitePolicies->alternateRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).autorelease();
 }
 
 - (NSURLRequest *)_alternateRequest

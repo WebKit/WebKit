@@ -390,7 +390,7 @@ ExceptionOr<void> ContainerNode::removeSelfOrChildNodesForInsertion(Node& child,
 void ContainerNode::removeDetachedChildren()
 {
     if (connectedSubframeCount()) {
-        for (RefPtr child = firstChild(); child; child = child->nextSibling())
+        for (auto* child = firstChild(); child; child = child->nextSibling())
             child->updateAncestorConnectedSubframeCountForRemoval();
     }
     // FIXME: We should be able to ASSERT(!attached()) here: https://bugs.webkit.org/show_bug.cgi?id=107801
@@ -442,7 +442,7 @@ static inline bool isChildTypeAllowed(ContainerNode& newParent, Node& child)
     if (!child.isDocumentFragment())
         return newParent.childTypeAllowed(child.nodeType());
 
-    for (RefPtr node = child.firstChild(); node; node = node->nextSibling()) {
+    for (auto* node = child.firstChild(); node; node = node->nextSibling()) {
         if (!newParent.childTypeAllowed(node->nodeType()))
             return false;
     }

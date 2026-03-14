@@ -61,16 +61,6 @@
 - (void)findAndDismissContextMenus;
 #endif
 @end
-
-// Simple delegate for testing
-@interface TestContextMenuDelegate : NSObject <UIContextMenuInteractionDelegate>
-@end
-
-@implementation TestContextMenuDelegate
-- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
-    return nil;
-}
-@end
 #endif
 
 #if PLATFORM(MAC)

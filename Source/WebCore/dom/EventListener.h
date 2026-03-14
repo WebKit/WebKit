@@ -55,8 +55,8 @@ public:
 
     virtual void handleEvent(ScriptExecutionContext&, Event&) = 0;
 
-    virtual void visitJSFunction(JSC::AbstractSlotVisitor&) { }
-    virtual void visitJSFunction(JSC::SlotVisitor&) { }
+    virtual void visitJSFunctionInGCThread(JSC::AbstractSlotVisitor&) { }
+    virtual void visitJSFunctionInGCThread(JSC::SlotVisitor&) { }
 
     virtual bool isAttribute() const { return false; }
     Type type() const { return m_type; }

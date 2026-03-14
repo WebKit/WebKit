@@ -104,7 +104,7 @@ void ApplyBlockElementCommand::doApply()
         // using an extra newline to represent a large margin.
         // FIXME: Add a new TextIteratorBehavior to suppress it.
         if (start.isNotNull() && end.isNull())
-            end = lastPositionInNode(endScope.get());
+            end = lastPositionInNode(*endScope);
         if (start.isNotNull() && end.isNotNull()) {
             VisibleSelection selection { start, end, endingSelection().directionality() };
             // Use canonicalized positions for start & end.
@@ -123,7 +123,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         insertNodeAt(blockquote.copyRef(), start);
         auto placeholder = HTMLBRElement::create(document());
         appendNode(placeholder.copyRef(), WTF::move(blockquote));
-        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.ptr()), Affinity::Downstream, endingSelection().directionality()));
+        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder), Affinity::Downstream, endingSelection().directionality()));
         return;
     }
 
@@ -180,7 +180,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
 
 static bool isNewLineAtPosition(const Position& position)
 {
-    RefPtr textNode = dynamicDowncast<Text>(position.containerNode());
+    auto* textNode = dynamicDowncast<Text>(position.containerNode());
     if (!textNode)
         return false;
     unsigned offset = position.offsetInContainerNode();
@@ -189,7 +189,7 @@ static bool isNewLineAtPosition(const Position& position)
     return textNode->data()[offset] == '\n';
 }
 
-const RenderStyle* ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
+CheckedPtr<const RenderStyle> ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
 {
     RefPtr node = position.containerNode();
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !node->isTextNode())
@@ -197,7 +197,7 @@ const RenderStyle* ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(cons
 
     document().updateStyleIfNeeded();
 
-    if (CheckedPtr renderText = dynamicDowncast<RenderText>(node->renderer()))
+    if (auto* renderText = dynamicDowncast<RenderText>(node->renderer()))
         return &renderText->style();
     return { };
 }
@@ -225,7 +225,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
             RefPtr startText = start.containerText();
             ASSERT(startText);
             splitTextNode(*startText, startOffset);
-            start = firstPositionInNode(startText.get());
+            start = firstPositionInNode(*startText);
             if (isStartAndEndOnSameNode) {
                 ASSERT(end.offsetInContainerNode() >= startOffset);
                 end = Position(startText.get(), end.offsetInContainerNode() - startOffset);
@@ -270,7 +270,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
                 else
                     m_endOfLastParagraph = Position(endContainer.get(), m_endOfLastParagraph.offsetInContainerNode() - endOffset);
             }
-            end = lastPositionInNode(endContainer->previousSibling());
+            end = lastPositionInNode(*endContainer->previousSibling());
         }
     }
 }
@@ -287,7 +287,7 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
     style = nullptr;
 
     RefPtr text = position.containerText();
-    if (!preserveNewLine || !position.offsetInContainerNode() || !isNewLineAtPosition(firstPositionInNode(text.get())))
+    if (!preserveNewLine || !position.offsetInContainerNode() || !isNewLineAtPosition(firstPositionInNode(*text)))
         return endOfNextParagraph;
 
     // \n at the beginning of the text node immediately following the current paragraph is trimmed by moveParagraphWithClones.

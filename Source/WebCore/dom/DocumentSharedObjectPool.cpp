@@ -58,7 +58,7 @@ DocumentSharedObjectPool::~DocumentSharedObjectPool()
 }
 
 struct DocumentSharedObjectPool::ShareableElementDataHash {
-    static unsigned hash(const Ref<ShareableElementData>& data)
+    static unsigned NODELETE hash(const Ref<ShareableElementData>& data)
     {
         return computeHash(data->attributes());
     }
@@ -73,7 +73,7 @@ struct DocumentSharedObjectPool::ShareableElementDataHash {
 };
 
 struct AttributeSpanTranslator {
-    static unsigned hash(std::span<const Attribute> attributes)
+    static unsigned NODELETE hash(std::span<const Attribute> attributes)
     {
         return computeHash(attributes);
     }

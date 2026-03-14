@@ -67,7 +67,7 @@ public:
         return MacroAssembler::Call();
     }
 
-    const NodeOrigin& origin() const  { return m_origin; }
+    const NodeOrigin& origin() const LIFETIME_BOUND { return m_origin; }
     Node* currentNode() const { return m_currentNode; }
 
 protected:
@@ -284,14 +284,14 @@ template<typename JumpType, typename FunctionType, typename ResultType, typename
 class CallResultAndArgumentsSlowPathICGenerator final : public CallSlowPathGenerator<JumpType, FunctionType, ResultType> {
 public:
     CallResultAndArgumentsSlowPathICGenerator(
-        JumpType from, SpeculativeJIT* jit, StructureStubInfoIndex stubInfoConstant, GPRReg stubInfoGPR, CCallHelpers::Address slowPathOperationAddress, FunctionType function,
+        JumpType from, SpeculativeJIT* jit, PropertyInlineCacheIndex propertyCacheConstant, GPRReg propertyCacheGPR, CCallHelpers::Address slowPathOperationAddress, FunctionType function,
         SpillRegistersMode spillMode, ExceptionCheckRequirement requirement, ResultType result, Arguments... arguments)
         : CallSlowPathGenerator<JumpType, FunctionType, ResultType>(from, jit, spillMode, requirement, result)
-        , m_stubInfoGPR(stubInfoGPR)
+        , m_propertyCacheGPR(propertyCacheGPR)
         , m_slowPathOperationAddress(slowPathOperationAddress)
         , m_function(function)
         , m_arguments(std::forward<Arguments>(arguments)...)
-        , m_stubInfoConstant(stubInfoConstant)
+        , m_propertyCacheConstant(propertyCacheConstant)
     {
     }
 
@@ -300,7 +300,7 @@ private:
     void unpackAndGenerate(SpeculativeJIT* jit, std::index_sequence<ArgumentsIndex...>)
     {
         this->setUp(jit);
-        jit->loadStructureStubInfo(m_stubInfoConstant, m_stubInfoGPR);
+        jit->loadPropertyInlineCache(m_propertyCacheConstant, m_propertyCacheGPR);
         jit->setupArguments<FunctionType>(std::get<ArgumentsIndex>(m_arguments)...);
         jit->appendCall(m_slowPathOperationAddress);
         this->tearDown(jit);
@@ -311,28 +311,28 @@ private:
         unpackAndGenerate(jit, std::make_index_sequence<std::tuple_size<std::tuple<Arguments...>>::value>());
     }
 
-    GPRReg m_stubInfoGPR;
+    GPRReg m_propertyCacheGPR;
     CCallHelpers::Address m_slowPathOperationAddress;
     FunctionType m_function;
     std::tuple<Arguments...> m_arguments;
-    StructureStubInfoIndex m_stubInfoConstant;
+    PropertyInlineCacheIndex m_propertyCacheConstant;
 };
 
 template<typename JumpType, typename FunctionType, typename ResultType, typename... Arguments>
 inline std::unique_ptr<SlowPathGenerator> slowPathICCall(
-    JumpType from, SpeculativeJIT* jit, StructureStubInfoIndex stubInfoConstant, GPRReg stubInfoGPR, CCallHelpers::Address slowPathOperationAddress, FunctionType function,
+    JumpType from, SpeculativeJIT* jit, PropertyInlineCacheIndex propertyCacheConstant, GPRReg propertyCacheGPR, CCallHelpers::Address slowPathOperationAddress, FunctionType function,
     SpillRegistersMode spillMode, ExceptionCheckRequirement requirement,
     ResultType result, Arguments... arguments)
 {
-    return makeUniqueWithoutFastMallocCheck<CallResultAndArgumentsSlowPathICGenerator<JumpType, FunctionType, ResultType, Arguments...>>(from, jit, stubInfoConstant, stubInfoGPR, slowPathOperationAddress, function, spillMode, requirement, result, arguments...);
+    return makeUniqueWithoutFastMallocCheck<CallResultAndArgumentsSlowPathICGenerator<JumpType, FunctionType, ResultType, Arguments...>>(from, jit, propertyCacheConstant, propertyCacheGPR, slowPathOperationAddress, function, spillMode, requirement, result, arguments...);
 }
 
 template<typename JumpType, typename FunctionType, typename ResultType, typename... Arguments>
 inline std::unique_ptr<SlowPathGenerator> slowPathICCall(
-    JumpType from, SpeculativeJIT* jit, StructureStubInfoIndex stubInfoConstant, GPRReg stubInfoGPR, CCallHelpers::Address slowPathOperationAddress, FunctionType function,
+    JumpType from, SpeculativeJIT* jit, PropertyInlineCacheIndex propertyCacheConstant, GPRReg propertyCacheGPR, CCallHelpers::Address slowPathOperationAddress, FunctionType function,
     ResultType result, Arguments... arguments)
 {
-    return slowPathICCall(from, jit, stubInfoConstant, stubInfoGPR, slowPathOperationAddress, function, NeedToSpill, ExceptionCheckRequirement::CheckNeeded, result, arguments...);
+    return slowPathICCall(from, jit, propertyCacheConstant, propertyCacheGPR, slowPathOperationAddress, function, NeedToSpill, ExceptionCheckRequirement::CheckNeeded, result, arguments...);
 }
 
 } } // namespace JSC::DFG

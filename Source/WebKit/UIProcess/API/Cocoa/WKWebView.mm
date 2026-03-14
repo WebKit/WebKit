@@ -380,7 +380,7 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 #endif // PLATFORM(IOS_FAMILY)
 
-static bool shouldRequireUserGestureToLoadVideo()
+SUPPRESS_NODELETE static bool NODELETE shouldRequireUserGestureToLoadVideo()
 {
 #if PLATFORM(IOS_FAMILY)
     static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RequiresUserGestureToLoadVideo);
@@ -1162,12 +1162,12 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 
 - (NSString *)title
 {
-    return protect(_page->pageLoadState())->title().createNSString().autorelease();
+    return _page->pageLoadState().title().createNSString().autorelease();
 }
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:protect(_page->pageLoadState())->activeURL()];
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().activeURL()];
 }
 
 - (NSURL *)_resourceDirectoryURL
@@ -1177,12 +1177,12 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 
 - (BOOL)isLoading
 {
-    return protect(_page->pageLoadState())->isLoading();
+    return _page->pageLoadState().isLoading();
 }
 
 - (double)estimatedProgress
 {
-    return protect(_page->pageLoadState())->estimatedProgress();
+    return _page->pageLoadState().estimatedProgress();
 }
 
 - (BOOL)hasOnlySecureContent
@@ -1211,13 +1211,13 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 - (BOOL)canGoBack
 {
     [self _didAccessBackForwardList];
-    return protect(_page->pageLoadState())->canGoBack();
+    return _page->pageLoadState().canGoBack();
 }
 
 - (BOOL)canGoForward
 {
     [self _didAccessBackForwardList];
-    return protect(_page->pageLoadState())->canGoForward();
+    return _page->pageLoadState().canGoForward();
 }
 
 - (WKNavigation *)goBack
@@ -3997,7 +3997,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (BOOL)_negotiatedLegacyTLS
 {
-    return protect(_page->pageLoadState())->hasNegotiatedLegacyTLS();
+    return _page->pageLoadState().hasNegotiatedLegacyTLS();
 }
 
 - (BOOL)_wasPrivateRelayed
@@ -5099,7 +5099,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (BOOL)_webProcessIsResponsive
 {
-    return protect(_page->legacyMainFrameProcess())->isResponsive();
+    return _page->legacyMainFrameProcess().isResponsive();
 }
 
 - (void)_killWebContentProcess
@@ -5277,7 +5277,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 - (void)_clearBackForwardCache
 {
     THROW_IF_SUSPENDED;
-    protect(_page->configuration().processPool())->backForwardCache().removeEntriesForPage(*_page);
+    _page->configuration().processPool().backForwardCache().removeEntriesForPage(*_page);
 }
 
 + (BOOL)_handlesSafeBrowsing
@@ -5491,7 +5491,12 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     return _page->pageLoadState().networkRequestsInProgress();
 }
 
-static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingProgressEvents events)
+- (BOOL)_isUsingBackForwardCache
+{
+    return _page->shouldUseBackForwardCache();
+}
+
+static inline OptionSet<WebCore::LayoutMilestone> NODELETE layoutMilestones(_WKRenderingProgressEvents events)
 {
     OptionSet<WebCore::LayoutMilestone> milestones;
 
@@ -5861,7 +5866,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
     downcast<WebKit::FindClient>(_page->findClient()).setDelegate(findDelegate);
 }
 
-static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFindOptions)
+static inline OptionSet<WebKit::FindOptions> NODELETE toFindOptions(_WKFindOptions wkFindOptions)
 {
     OptionSet<WebKit::FindOptions> findOptions;
 
@@ -6635,7 +6640,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     if (!_page || !_page->hasRunningProcess())
         return _WKWebProcessStateNotRunning;
 
-    switch (protect(_page->legacyMainFrameProcess())->throttleStateForStatistics()) {
+    switch (_page->legacyMainFrameProcess().throttleStateForStatistics()) {
     case WebKit::ProcessThrottleState::Foreground:
         return _WKWebProcessStateForeground;
     case WebKit::ProcessThrottleState::Background:
@@ -6659,7 +6664,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 
 - (audit_token_t)presentingApplicationAuditToken
 {
-    return protect(_page)->presentingApplicationAuditToken().value_or(audit_token_t { });
+    return _page->presentingApplicationAuditToken().value_or(audit_token_t { });
 }
 
 - (void)setPresentingApplicationAuditToken:(audit_token_t)presentingApplicationAuditToken
@@ -7314,7 +7319,7 @@ static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClie
     return result;
 }
 
-static OptionSet<WebCore::TextExtraction::EventListenerCategory> coreEventListenerCategories(_WKTextExtractionEventListenerCategory categories)
+static OptionSet<WebCore::TextExtraction::EventListenerCategory> NODELETE coreEventListenerCategories(_WKTextExtractionEventListenerCategory categories)
 {
     OptionSet<WebCore::TextExtraction::EventListenerCategory> coreCategories;
     if (categories & _WKTextExtractionEventListenerCategoryClick)
@@ -7332,7 +7337,7 @@ static OptionSet<WebCore::TextExtraction::EventListenerCategory> coreEventListen
 
 #if ENABLE(DATA_DETECTION)
 
-static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTextExtractionDataDetectorTypes types)
+static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTextExtractionDataDetectorTypes types)
 {
     OptionSet<WebCore::DataDetectorType> coreTypes;
     if (types & _WKTextExtractionDataDetectorMoney)
@@ -7712,6 +7717,28 @@ static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTextExtract
         return completion(nil);
 
     targetFrame->requestJSHandleForExtractedText({ String { searchText }, WTF::move(nodeIdentifier) }, [completion = makeBlockPtr(completion)](auto&& info) {
+        completion(info ? wrapper(API::JSHandle::create(WTF::move(*info))).get() : nil);
+    });
+}
+
+- (void)_requestContainerJSHandleForNodeIdentifier:(NSString *)nodeIdentifierString searchText:(NSString *)searchText completionHandler:(void (^)(_WKJSHandle *))completion
+{
+    auto identifiers = WebKit::parseFrameAndNodeIdentifiers(String { nodeIdentifierString });
+    if (!identifiers && !searchText.length)
+        return completion(nil);
+
+    RefPtr targetFrame = _page->mainFrame();
+    std::optional<WebCore::NodeIdentifier> nodeIdentifier;
+    if (identifiers) {
+        nodeIdentifier = identifiers->nodeIdentifier;
+        if (identifiers->frameIdentifier)
+            targetFrame = WebKit::WebFrameProxy::webFrame(identifiers->frameIdentifier);
+    }
+
+    if (!targetFrame)
+        return completion(nil);
+
+    targetFrame->requestContainerJSHandleForExtractedText({ searchText, WTF::move(nodeIdentifier) }, [completion = makeBlockPtr(completion)](auto&& info) {
         completion(info ? wrapper(API::JSHandle::create(WTF::move(*info))).get() : nil);
     });
 }

@@ -87,7 +87,7 @@ public:
     virtual ~CoordinatedPlatformLayer();
 
     PlatformLayerIdentifier id() const { return m_id; }
-    Lock& lock() { return m_lock; }
+    Lock& lock() LIFETIME_BOUND { return m_lock; }
 
     Client& client() const { ASSERT(m_client); return *m_client; }
     void invalidateClient();

@@ -94,7 +94,7 @@ public:
     size_t keySizeInBytes() const { return std::ceil(keySizeInBits() / 8.); }
     NamedCurve namedCurve() const { return m_curve; }
     String namedCurveString() const;
-    const PlatformECKeyContainer& platformKey() const { return m_platformKey; }
+    const PlatformECKeyContainer& platformKey() const LIFETIME_BOUND { return m_platformKey; }
 
     static bool NODELETE isValidECAlgorithm(CryptoAlgorithmIdentifier);
 

@@ -41,7 +41,7 @@ namespace Style {
 
 auto CSSValueConversion<FontFeatureSettings>::operator()(BuilderState& state, const CSSValue& value) -> FontFeatureSettings
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (auto valueID = primitiveValue->valueID(); valueID) {
         case CSSValueNormal:
             return CSS::Keyword::Normal { };

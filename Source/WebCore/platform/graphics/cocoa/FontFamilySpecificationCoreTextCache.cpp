@@ -35,7 +35,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FontFamilySpecificationCoreTextCache);
 
 FontFamilySpecificationCoreTextCache& FontFamilySpecificationCoreTextCache::forCurrentThread()
 {
-    return FontCache::forCurrentThread()->fontFamilySpecificationCoreTextCache();
+    return FontCache::forCurrentThread().fontFamilySpecificationCoreTextCache();
 }
 
 void FontFamilySpecificationCoreTextCache::clear()

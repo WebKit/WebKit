@@ -90,7 +90,7 @@ namespace WebCore {
 
 static const Seconds resetLatchedStateTimeout { 100_ms };
 
-static RetainPtr<NSEvent>& currentNSEventSlot()
+static RetainPtr<NSEvent>& NODELETE currentNSEventSlot()
 {
     static NeverDestroyed<RetainPtr<NSEvent>> event;
     return event;
@@ -101,7 +101,7 @@ NSEvent *EventHandler::currentNSEvent()
     return currentNSEventSlot().get();
 }
 
-static RetainPtr<NSEvent>& correspondingPressureEventSlot()
+static RetainPtr<NSEvent>& NODELETE correspondingPressureEventSlot()
 {
     static NeverDestroyed<RetainPtr<NSEvent>> event;
     return event;
@@ -786,7 +786,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
         if (is<HTMLIFrameElement>(*candidate))
             continue;
 
-        if (is<HTMLHtmlElement>(*candidate) || is<HTMLDocument>(*candidate))
+        if (isAnyOf<HTMLHtmlElement, HTMLDocument>(*candidate))
             return nullptr;
 
         CheckedPtr box = candidate->renderBox();
@@ -810,7 +810,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
     return nullptr;
 }
 
-static WeakPtr<ScrollableArea> scrollableAreaForEventTarget(Element* eventTarget)
+static WeakPtr<ScrollableArea> NODELETE scrollableAreaForEventTarget(Element* eventTarget)
 {
     return dynamicDowncast<ScrollView>(EventHandler::widgetForEventTarget(eventTarget));
 }
@@ -823,11 +823,11 @@ static bool eventTargetIsPlatformWidget(Element* eventTarget)
 
 static WeakPtr<ScrollableArea> scrollableAreaForContainerNode(ContainerNode& container)
 {
-    CheckedPtr box = container.renderBox();
+    auto* box = container.renderBox();
     if (!box)
         return { };
 
-    CheckedPtr scrollableAreaPtr = scrollableAreaForBox(*box);
+    auto* scrollableAreaPtr = scrollableAreaForBox(*box);
     if (!scrollableAreaPtr)
         return { };
     

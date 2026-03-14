@@ -89,7 +89,7 @@ auto CSSValueConversion<Display>::operator()(BuilderState& state, const CSSValue
     using enum CSSPropertyParserHelpers::DisplayOutside;
     using enum CSSPropertyParserHelpers::DisplayInside;
 
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
         // [ <display-outside> || <display-inside> ]
         case CSSValueBlock:

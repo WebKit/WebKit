@@ -62,9 +62,9 @@ DragSource::DragSource(GtkWidget* webView)
             break;
         }
         case DragTargetType::NetscapeURL: {
-            CString urlString = drag.m_selectionData->url().string().utf8();
-            GUniquePtr<gchar> url(g_strdup_printf("%s\n%s", urlString.data(), drag.m_selectionData->hasText() ? drag.m_selectionData->text().utf8().data() : urlString.data()));
-            gtk_selection_data_set(data, gdk_atom_intern_static_string("_NETSCAPE_URL"), 8, reinterpret_cast<const guchar*>(url.get()), strlen(url.get()));
+            auto urlString = drag.m_selectionData->url().string();
+            auto url = makeString(urlString, '\n', drag.m_selectionData->hasText() ? drag.m_selectionData->text() : urlString).utf8();
+            gtk_selection_data_set(data, gdk_atom_intern_static_string("_NETSCAPE_URL"), 8, reinterpret_cast<const guchar*>(url.data()), url.length());
             break;
         }
         case DragTargetType::Image: {

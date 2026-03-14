@@ -476,7 +476,7 @@ static std::pair<FloatPoint, FloatPoint> startAndEndPointsForCorner(const FloatP
 
 enum class PainterCornerType : uint8_t { TopLeft, TopRight, BottomRight, BottomLeft, Other };
 
-static PainterCornerType cornerType(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge)
+static PainterCornerType NODELETE cornerType(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge)
 {
     auto fromEdgeVector = *fromEdge.second - *fromEdge.first;
     auto toEdgeVector = *toEdge.second - *toEdge.first;
@@ -492,7 +492,7 @@ static PainterCornerType cornerType(const FloatPointGraph::Edge& fromEdge, const
     return PainterCornerType::Other;
 }
 
-static PainterCornerType cornerTypeForMultiline(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const Vector<FloatPoint>& corners)
+static PainterCornerType NODELETE cornerTypeForMultiline(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const Vector<FloatPoint>& corners)
 {
     auto corner = cornerType(fromEdge, toEdge);
     if (corner == PainterCornerType::TopLeft && corners.at(0) == *fromEdge.second)
@@ -506,7 +506,7 @@ static PainterCornerType cornerTypeForMultiline(const FloatPointGraph::Edge& fro
     return PainterCornerType::Other;
 }
 
-static std::pair<FloatPoint, FloatPoint> controlPointsForBezierCurve(PainterCornerType cornerType, const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
+static std::pair<FloatPoint, FloatPoint> NODELETE controlPointsForBezierCurve(PainterCornerType cornerType, const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
 {
     FloatPoint cp1;
     FloatPoint cp2;
@@ -562,7 +562,7 @@ static CornerRadii adjustedRadiiForHuggingCurve(const CornerRadii& inputRadii, f
     };
 }
 
-static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& poly)
+static std::optional<FloatRect> NODELETE rectFromPolygon(const FloatPointGraph::Polygon& poly)
 {
     if (poly.size() != 4)
         return std::optional<FloatRect>();

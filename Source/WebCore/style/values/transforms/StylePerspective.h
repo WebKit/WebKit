@@ -49,7 +49,7 @@ template<> struct CSSValueConversion<Perspective> { auto operator()(BuilderState
 // MARK: - Blending
 
 template<> struct Blending<Perspective> {
-    auto canBlend(const Perspective&, const Perspective&) -> bool;
+    bool NODELETE canBlend(const Perspective&, const Perspective&);
     auto blend(const Perspective&, const Perspective&, const BlendingContext&) -> Perspective;
 };
 

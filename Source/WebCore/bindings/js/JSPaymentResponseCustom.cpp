@@ -39,12 +39,12 @@ JSC::JSValue JSPaymentResponse::details(JSC::JSGlobalObject& lexicalGlobalObject
 }
 
 template<typename Visitor>
-void JSPaymentResponse::visitAdditionalChildren(Visitor& visitor)
+void JSPaymentResponse::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().cachedDetails().visit(visitor);
+    wrapped().cachedDetails().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSPaymentResponse);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSPaymentResponse);
 
 } // namespace WebCore
 

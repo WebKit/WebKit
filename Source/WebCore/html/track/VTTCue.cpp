@@ -1021,7 +1021,7 @@ void VTTCue::updateDisplayTree(const MediaTime& movieTime)
 {
     // The display tree may contain WebVTT timestamp objects representing
     // timestamps (processing instructions), along with displayable nodes.
-    if (!track() || !protect(track())->isRendered())
+    if (!track() || !track()->isRendered())
         return;
 
     // Mutating the VTT contents is safe because it's never exposed to author scripts.
@@ -1046,7 +1046,7 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree()
     ASSERT(track());
 
     RefPtr displayTree = displayTreeInternal();
-    if (!displayTree || !m_displayTreeShouldChange || !track() || !protect(track())->isRendered())
+    if (!displayTree || !m_displayTreeShouldChange || !track() || !track()->isRendered())
         return displayTree;
 
     if (region())
@@ -1418,7 +1418,7 @@ void VTTCue::toJSON(JSON::Object& object) const
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)
-static float mapVideoRateToSpeechRate(float rate)
+static float NODELETE mapVideoRateToSpeechRate(float rate)
 {
     // WebSpeech says to go from .1 -> 10 (default 1)
     // Video rate is 0 -> 2 (default 1). [The spec has no maximum rate, but the default controls only go to 2x, so use that]

@@ -75,17 +75,17 @@ static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_webkit);
 #endif
 
 template<typename Visitor>
-void JSDOMWindow::visitAdditionalChildren(Visitor& visitor)
+void JSDOMWindow::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, wrapped());
 
-    // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
+    // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildrenInGCThread() would call this. But
     // even though DOMWindow is an EventTarget, JSDOMWindow does not subclass JSEventTarget, so we need
     // to do this here.
-    SUPPRESS_UNCOUNTED_ARG wrapped().visitJSEventListeners(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitJSEventListenersInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDOMWindow);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSDOMWindow);
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_webkit, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))

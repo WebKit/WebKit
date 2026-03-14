@@ -67,8 +67,8 @@ void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const A
         break;
     case AttributeNames::radiusAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            Ref { m_radiusX }->setBaseValInternal(result->first);
-            Ref { m_radiusY }->setBaseValInternal(result->second);
+            m_radiusX->setBaseValInternal(result->first);
+            m_radiusY->setBaseValInternal(result->second);
         }
         break;
     default:

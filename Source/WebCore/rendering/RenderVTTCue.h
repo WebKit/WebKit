@@ -56,12 +56,12 @@ private:
     bool shouldSwitchDirection(const InlineIterator::InlineBox&, LayoutUnit) const;
 
     void NODELETE moveBoxesByStep(LayoutUnit);
-    bool switchDirection(bool&, LayoutUnit&);
+    bool NODELETE switchDirection(bool&, LayoutUnit&);
     void moveIfNecessaryToKeepWithinContainer();
     bool findNonOverlappingPosition(int& x, int& y) const;
 
     bool initializeLayoutParameters(LayoutUnit&, LayoutUnit&);
-    void placeBoxInDefaultPosition(LayoutUnit, bool&);
+    void NODELETE placeBoxInDefaultPosition(LayoutUnit, bool&);
     void repositionCueSnapToLinesSet();
     void repositionCueSnapToLinesNotSet();
     void repositionGenericCue();

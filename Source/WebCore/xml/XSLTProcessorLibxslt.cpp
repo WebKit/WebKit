@@ -93,7 +93,7 @@ void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
 
 // FIXME: There seems to be no way to control the ctxt pointer for loading here, thus we have globals.
 static XSLTProcessor* globalProcessor = nullptr;
-static WeakPtr<CachedResourceLoader>& globalCachedResourceLoader()
+static WeakPtr<CachedResourceLoader>& NODELETE globalCachedResourceLoader()
 {
     static NeverDestroyed<WeakPtr<CachedResourceLoader>> globalCachedResourceLoader;
     return globalCachedResourceLoader;

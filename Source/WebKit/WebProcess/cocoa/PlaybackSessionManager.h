@@ -141,8 +141,8 @@ public:
     void mediaEngineChanged(WebCore::HTMLMediaElement&);
     WebCore::HTMLMediaElementIdentifier contextIdForMediaElement(WebCore::HTMLMediaElement&);
 
-    WebCore::HTMLMediaElement* mediaElementWithContextId(WebCore::HTMLMediaElementIdentifier) const;
-    WebCore::HTMLMediaElement* currentPlaybackControlsElement() const;
+    WebCore::HTMLMediaElement* NODELETE mediaElementWithContextId(WebCore::HTMLMediaElementIdentifier) const;
+    WebCore::HTMLMediaElement* NODELETE currentPlaybackControlsElement() const;
 
 #if HAVE(PIP_SKIP_PREROLL)
     void actionHandlersChanged() final;

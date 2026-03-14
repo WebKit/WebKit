@@ -45,10 +45,11 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> deleteData(unsigned offset, unsigned count);
     WEBCORE_EXPORT ExceptionOr<void> replaceData(unsigned offset, unsigned count, const String&);
 
-    bool containsOnlyASCIIWhitespace() const;
+    bool NODELETE containsOnlyASCIIWhitespace() const;
 
     // Like appendData, but optimized for the parser (e.g., no mutation events).
-    void parserAppendData(StringView);
+    // Using the same StringBuilder across calls avoids O(n^2) behavior.
+    void parserAppendData(StringView, StringBuilder&);
 
 protected:
     CharacterData(Document& document, String&& text, NodeType type, OptionSet<TypeFlag> typeFlags = { })

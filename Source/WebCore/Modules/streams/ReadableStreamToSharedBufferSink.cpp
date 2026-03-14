@@ -50,7 +50,7 @@ public:
         return context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()): nullptr;
     }
 
-    ScriptExecutionContext* context() const { return m_context.get(); }
+    ScriptExecutionContext* NODELETE context() const { return m_context.get(); }
 
 private:
     SinkReadRequest(ReadableStreamToSharedBufferSink& sink, ScriptExecutionContext& context)

@@ -127,7 +127,7 @@ static URLSchemesMap& localURLSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
     return localSchemes;
 }
 
-static URLSchemesMap& displayIsolatedURLSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
+static URLSchemesMap& NODELETE displayIsolatedURLSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> displayIsolatedSchemes;
@@ -193,7 +193,7 @@ static URLSchemesMap& emptyDocumentSchemes()
     return emptyDocumentSchemes;
 }
 
-static URLSchemesMap& schemesForbiddenFromDomainRelaxation()
+static URLSchemesMap& NODELETE schemesForbiddenFromDomainRelaxation()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> schemes;
@@ -214,7 +214,7 @@ static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes() WTF_REQUIRES_LOCK(sche
     return canDisplayOnlyIfCanRequestSchemes;
 }
 
-static URLSchemesMap& notAllowingJavascriptURLsSchemes()
+static URLSchemesMap& NODELETE notAllowingJavascriptURLsSchemes()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> notAllowingJavascriptURLsSchemes;
@@ -239,7 +239,7 @@ void LegacySchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme
     localURLSchemes().remove(scheme);
 }
 
-static MemoryCompactRobinHoodHashSet<String>& schemesHandledBySchemeHandler() WTF_REQUIRES_LOCK(schemeRegistryLock)
+static MemoryCompactRobinHoodHashSet<String>& NODELETE schemesHandledBySchemeHandler() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> set;
@@ -261,7 +261,7 @@ bool LegacySchemeRegistry::schemeIsHandledBySchemeHandler(StringView scheme)
     return schemesHandledBySchemeHandler().contains<StringViewHashTranslator>(scheme);
 }
 
-static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
+static URLSchemesMap& NODELETE schemesAllowingDatabaseAccessInPrivateBrowsing()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> schemesAllowingDatabaseAccessInPrivateBrowsing;
@@ -290,7 +290,7 @@ static std::span<const ASCIILiteral> builtinCSPBypassingSchemes()
 }
 #endif
 
-static URLSchemesMap& ContentSecurityPolicyBypassingSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
+static URLSchemesMap& NODELETE ContentSecurityPolicyBypassingSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
 #if ENABLE(PDFJS)
@@ -301,14 +301,14 @@ static URLSchemesMap& ContentSecurityPolicyBypassingSchemes() WTF_REQUIRES_LOCK(
     return schemes;
 }
 
-static URLSchemesMap& cachePartitioningSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
+static URLSchemesMap& NODELETE cachePartitioningSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> schemes;
     return schemes;
 }
 
-static URLSchemesMap& alwaysRevalidatedSchemes()
+static URLSchemesMap& NODELETE alwaysRevalidatedSchemes()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> schemes;

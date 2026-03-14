@@ -39,7 +39,7 @@ namespace WebCore {
 namespace Style {
 
 // Out of line to avoid inclusion of RenderStyle+GettersInlines.h
-float adjustForZoom(float, const RenderStyle&);
+float NODELETE adjustForZoom(float, const RenderStyle&);
 bool NODELETE evaluationTimeZoomEnabled(const RenderStyle&);
 bool NODELETE evaluationTimeZoomEnabled(const BuilderState&);
 
@@ -122,7 +122,7 @@ template<CSS::Numeric T> struct CSSToRawMapping {
 
 double canonicalizeLength(double, CSS::LengthUnit, NoConversionDataRequiredToken);
 double canonicalizeLength(double, CSS::LengthUnit, const CSSToLengthConversionData&);
-float clampLengthToAllowedLimits(double);
+float NODELETE clampLengthToAllowedLimits(double);
 float canonicalizeAndClampLength(double, CSS::LengthUnit, NoConversionDataRequiredToken);
 float canonicalizeAndClampLength(double, CSS::LengthUnit, const CSSToLengthConversionData&);
 

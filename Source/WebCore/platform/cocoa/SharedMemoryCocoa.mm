@@ -45,7 +45,7 @@
 namespace WebCore {
 
 #if HAVE(MACH_MEMORY_ENTRY)
-static int toVMMemoryLedger(MemoryLedger memoryLedger)
+static int NODELETE toVMMemoryLedger(MemoryLedger memoryLedger)
 {
     switch (memoryLedger) {
     case MemoryLedger::None:
@@ -93,12 +93,12 @@ void SharedMemoryHandle::setOwnershipOfMemory(const ProcessIdentity& processIden
 #endif
 }
 
-static inline void* toPointer(mach_vm_address_t address)
+static inline void* NODELETE toPointer(mach_vm_address_t address)
 {
     return reinterpret_cast<void*>(static_cast<uintptr_t>(address));
 }
 
-static inline mach_vm_address_t toVMAddress(void* pointer)
+static inline mach_vm_address_t NODELETE toVMAddress(void* pointer)
 {
     return static_cast<mach_vm_address_t>(reinterpret_cast<uintptr_t>(pointer));
 }
@@ -122,7 +122,7 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     return WTF::move(sharedMemory);
 }
 
-static inline vm_prot_t machProtection(SharedMemory::Protection protection)
+static inline vm_prot_t NODELETE machProtection(SharedMemory::Protection protection)
 {
     switch (protection) {
     case SharedMemory::Protection::ReadOnly:

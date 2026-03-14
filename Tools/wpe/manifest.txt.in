@@ -121,6 +121,6 @@ directory ${CMAKE_BINARY_DIR}/Documentation/wpe-javascriptcore-${WPE_API_VERSION
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-webkit-${WPE_API_VERSION} Documentation/wpe-webkit-${WPE_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/${WPE_WEB_PROCESS_EXTENSION_PC_MODULE} Documentation/wpe-web-extension-${WPE_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-platform-${WPE_API_VERSION} Documentation/wpe-platform-${WPE_API_VERSION}
-directory ${CMAKE_BINARY_DIR}/Documentation/wpe-drm-headless-${WPE_API_VERSION} Documentation/wpe-platform-drm-${WPE_API_VERSION}
+directory ${CMAKE_BINARY_DIR}/Documentation/wpe-platform-drm-${WPE_API_VERSION} Documentation/wpe-platform-drm-${WPE_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-platform-headless-${WPE_API_VERSION} Documentation/wpe-platform-headless-${WPE_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-platform-wayland-${WPE_API_VERSION} Documentation/wpe-platform-wayland-${WPE_API_VERSION}

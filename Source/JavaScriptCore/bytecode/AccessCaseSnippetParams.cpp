@@ -28,7 +28,7 @@
 
 #include "InlineCacheCompiler.h"
 #include "LinkBuffer.h"
-#include "StructureStubInfo.h"
+#include "PropertyInlineCache.h"
 
 #if ENABLE(JIT)
 

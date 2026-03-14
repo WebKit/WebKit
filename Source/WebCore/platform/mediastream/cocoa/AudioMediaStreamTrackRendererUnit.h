@@ -51,7 +51,7 @@ class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRender
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AudioMediaStreamTrackRendererUnit);
 public:
     WEBCORE_EXPORT static AudioMediaStreamTrackRendererUnit& singleton();
-    static bool supportsPerDeviceRendering();
+    static bool NODELETE supportsPerDeviceRendering();
 
     ~AudioMediaStreamTrackRendererUnit();
 

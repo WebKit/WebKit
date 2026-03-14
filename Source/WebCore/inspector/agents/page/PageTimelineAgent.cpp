@@ -262,7 +262,7 @@ void PageTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clipR
 
     ASSERT(entry->type == TimelineRecordType::Paint);
 
-    auto clipQuadInRootView = renderer.view().frameView().contentsToRootView(renderer.localToAbsoluteQuad({ clipRect }));
+    auto clipQuadInRootView = protect(renderer.view().frameView())->contentsToRootView(renderer.localToAbsoluteQuad({ clipRect }));
     entry->data = TimelineRecordFactory::createPaintData(clipQuadInRootView);
 
     didCompleteCurrentRecord(TimelineRecordType::Paint);

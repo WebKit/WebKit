@@ -52,7 +52,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     const AtomString& kind();
-    bool isDefault() const;
+    bool NODELETE isDefault() const;
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
     ReadyState NODELETE readyState() const;

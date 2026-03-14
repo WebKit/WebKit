@@ -80,9 +80,6 @@
         BCRASH(); \
 } while (0)
 
-#define RELEASE_BASSERT(x) BASSERT_IMPL(x)
-#define RELEASE_BASSERT_NOT_REACHED() BCRASH()
-
 #if BUSE(OS_LOG)
 #define BMALLOC_LOGGING_PREFIX "bmalloc: "
 #define BLOG_ERROR(format, ...) os_log_error(OS_LOG_DEFAULT, BMALLOC_LOGGING_PREFIX format, __VA_ARGS__)
@@ -103,7 +100,20 @@
 
 #define BUNUSED(x) ((void)x)
 
+#if BUSE(LIBPAS)
+
+#include "pas_utils.h"
+
+#define BASSERT(x) PAS_TESTING_ASSERT(x)
+#define RELEASE_BASSERT(x) PAS_ASSERT(x)
+#define RELEASE_BASSERT_NOT_REACHED() PAS_ASSERT_NOT_REACHED()
+
+#else // !BUSE(LIBPAS)
+
 // ===== Release build =====
+
+#define RELEASE_BASSERT(x) BASSERT_IMPL(x)
+#define RELEASE_BASSERT_NOT_REACHED() BCRASH()
 
 #if defined(NDEBUG)
 
@@ -123,3 +133,5 @@
 #define IF_DEBUG(x) (x)
 
 #endif // !defined(NDEBUG)
+
+#endif // BUSE(LIBPAS)

@@ -32,11 +32,11 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSWorkerNavigator::visitAdditionalChildren(Visitor& visitor)
+void JSWorkerNavigator::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, static_cast<NavigatorBase&>(wrapped()));
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWorkerNavigator);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSWorkerNavigator);
 
 } // namespace WebCore

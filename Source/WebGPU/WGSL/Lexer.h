@@ -44,7 +44,7 @@ public:
     }
 
     Vector<Token> lex();
-    bool isAtEndOfFile() const;
+    bool NODELETE isAtEndOfFile() const;
 
 private:
     Token nextToken();
@@ -52,17 +52,17 @@ private:
     unsigned currentOffset() const { return m_currentPosition.offset; }
     unsigned currentTokenLength() const { return currentOffset() - m_tokenStartingPosition.offset; }
 
-    Token makeToken(TokenType);
-    Token makeFloatToken(TokenType, double);
-    Token makeIntegerToken(TokenType, int64_t);
-    Token makeIdentifierToken(String&&);
+    Token NODELETE makeToken(TokenType);
+    Token NODELETE makeFloatToken(TokenType, double);
+    Token NODELETE makeIntegerToken(TokenType, int64_t);
+    Token NODELETE makeIdentifierToken(String&&);
 
-    T shift(unsigned = 1);
-    T peek(unsigned = 0);
-    void newLine();
-    bool skipBlockComments();
-    bool skipLineComment();
-    bool skipWhitespaceAndComments();
+    T NODELETE shift(unsigned = 1);
+    T NODELETE peek(unsigned = 0);
+    void NODELETE newLine();
+    bool NODELETE skipBlockComments();
+    bool NODELETE skipLineComment();
+    bool NODELETE skipWhitespaceAndComments();
 
     StringParsingBuffer<T> m_code;
     T m_current;

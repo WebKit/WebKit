@@ -1026,19 +1026,19 @@ void WebPageProxy::focusNextFocusedElement(bool isForward, CompletionHandler<voi
     }, webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::setFocusedElementValue(const WebCore::ElementContext& context, const String& value)
+void WebPageProxy::setFocusedElementValue(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::ElementContext& context, const String& value)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetFocusedElementValue(context, value), webPageIDInMainFrameProcess());
+    sendToProcessContainingFrame(frameID, Messages::WebPage::SetFocusedElementValue(context, value));
 }
 
-void WebPageProxy::setFocusedElementSelectedIndex(const WebCore::ElementContext& context, uint32_t index, bool allowMultipleSelection)
+void WebPageProxy::setFocusedElementSelectedIndex(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::ElementContext& context, uint32_t index, bool allowMultipleSelection)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetFocusedElementSelectedIndex(context, index, allowMultipleSelection), webPageIDInMainFrameProcess());
+    sendToProcessContainingFrame(frameID, Messages::WebPage::SetFocusedElementSelectedIndex(context, index, allowMultipleSelection));
 }
 
-void WebPageProxy::setSelectElementIsOpen(const WebCore::ElementContext& context, bool isOpen)
+void WebPageProxy::setSelectElementIsOpen(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::ElementContext& context, bool isOpen)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetSelectElementIsOpen(context, isOpen), webPageIDInMainFrameProcess());
+    sendToProcessContainingFrame(frameID, Messages::WebPage::SetSelectElementIsOpen(context, isOpen));
 }
 
 void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)

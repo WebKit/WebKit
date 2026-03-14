@@ -39,7 +39,7 @@ Element* DocumentOrShadowRootPictureInPicture::pictureInPictureElement(TreeScope
 {
     // The pictureInPictureElement attribute’s getter must run these steps:
     // 1. If this is a shadow root and its host is not connected, return null and abort these steps.
-    if (RefPtr shadowHost = treeScope.rootNode().shadowHost(); shadowHost && shadowHost->isConnected())
+    if (auto* shadowHost = treeScope.rootNode().shadowHost(); shadowHost && shadowHost->isConnected())
         return nullptr;
 
     // 2. Let candidate be the result of retargeting Picture-in-Picture element against this.

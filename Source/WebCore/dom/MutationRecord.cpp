@@ -43,7 +43,7 @@ namespace WebCore {
 
 namespace {
 
-static void visitNodeList(JSC::AbstractSlotVisitor& visitor, NodeList& nodeList)
+static void visitNodeListInGCThread(JSC::AbstractSlotVisitor& visitor, NodeList& nodeList)
 {
     ASSERT(!nodeList.isLiveNodeList());
     unsigned length = nodeList.length();
@@ -72,13 +72,13 @@ private:
     Node* previousSibling() override { return m_previousSibling.get(); }
     Node* nextSibling() override { return m_nextSibling.get(); }
 
-    void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
+    void visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
         addWebCoreOpaqueRoot(visitor, m_target.get());
         // We cannot ref m_addedNodes here as this function may get called from a GC thread.
-        SUPPRESS_UNRETAINED_ARG visitNodeList(visitor, m_addedNodes.get());
+        SUPPRESS_UNRETAINED_ARG visitNodeListInGCThread(visitor, m_addedNodes.get());
         // We cannot ref m_removedNodes here as this function may get called from a GC thread.
-        SUPPRESS_UNRETAINED_ARG visitNodeList(visitor, m_removedNodes.get());
+        SUPPRESS_UNRETAINED_ARG visitNodeListInGCThread(visitor, m_removedNodes.get());
     }
     
     const Ref<ContainerNode> m_target;
@@ -109,7 +109,7 @@ private:
         return *nodeList;
     }
 
-    void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
+    void visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
         addWebCoreOpaqueRoot(visitor, m_target.get());
     }
@@ -168,9 +168,9 @@ private:
 
     String oldValue() override { return String(); }
 
-    void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
+    void visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
-        m_record->visitNodesConcurrently(visitor);
+        m_record->visitNodesInGCThread(visitor);
     }
 
     const Ref<MutationRecord> m_record;

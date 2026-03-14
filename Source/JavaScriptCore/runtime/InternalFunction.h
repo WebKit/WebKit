@@ -78,7 +78,7 @@ public:
         return OBJECT_OFFSETOF(InternalFunction, m_globalObject);
     }
 
-    JSGlobalObject* globalObject() const { return m_globalObject.get(); }
+    JSGlobalObject* globalObject() const LIFETIME_BOUND { return m_globalObject.get(); }
 
 protected:
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct = nullptr);

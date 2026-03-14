@@ -264,7 +264,7 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
     }
 
     if (returnedException) {
-        if (globalScope->canIncludeErrorDetails(sourceCode.cachedScript(), sourceCode.url().string())) {
+        if (globalScope->canIncludeErrorDetails(protect(sourceCode.cachedScript()), sourceCode.url().string())) {
             // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
             // Do we need to do anything to handle that properly, if it, say, raises another exception?
             if (returnedExceptionMessage)
@@ -417,7 +417,8 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
     globalScope->eventLoop().performMicrotaskCheckpoint(*m_vm);
 
     // Drive RunLoop until we get either of "Worker is terminated", "Loading is done", or "Loading is failed".
-    WorkerRunLoop& runLoop = globalScope->workerOrWorkletThread()->runLoop();
+    RefPtr workerOrWorkletThread = globalScope->workerOrWorkletThread();
+    auto& runLoop = workerOrWorkletThread->runLoop();
 
     // We do not want to receive messages that are not related to asynchronous resource loading.
     // Otherwise, a worker discards some messages from the main thread here in a racy way.
@@ -458,7 +459,7 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
     }
 
     if (returnedException) {
-        if (protect(globalScope())->canIncludeErrorDetails(sourceCode.cachedScript(), sourceCode.url().string())) {
+        if (protect(globalScope())->canIncludeErrorDetails(protect(sourceCode.cachedScript()), sourceCode.url().string())) {
             // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
             // Do we need to do anything to handle that properly, if it, say, raises another exception?
             if (returnedExceptionMessage)

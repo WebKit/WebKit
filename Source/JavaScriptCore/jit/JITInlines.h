@@ -588,14 +588,14 @@ ALWAYS_INLINE void JIT::loadGlobalObject(GPRReg result)
     loadGlobalObject(*this, result);
 }
 
-ALWAYS_INLINE void JIT::loadStructureStubInfo(CCallHelpers& jit, StructureStubInfoIndex index, GPRReg result)
+ALWAYS_INLINE void JIT::loadPropertyInlineCache(CCallHelpers& jit, PropertyInlineCacheIndex index, GPRReg result)
 {
-    jit.subPtr(GPRInfo::jitDataRegister, TrustedImm32(static_cast<uintptr_t>(index.m_index + 1) * sizeof(StructureStubInfo)), result);
+    jit.subPtr(GPRInfo::jitDataRegister, TrustedImm32(static_cast<uintptr_t>(index.m_index + 1) * sizeof(HandlerPropertyInlineCache)), result);
 }
 
-ALWAYS_INLINE void JIT::loadStructureStubInfo(StructureStubInfoIndex index, GPRReg result)
+ALWAYS_INLINE void JIT::loadPropertyInlineCache(PropertyInlineCacheIndex index, GPRReg result)
 {
-    loadStructureStubInfo(*this, index, result);
+    loadPropertyInlineCache(*this, index, result);
 }
 
 ALWAYS_INLINE static void loadAddrOfCodeBlockConstantBuffer(JIT &jit, GPRReg dst)

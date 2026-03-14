@@ -52,7 +52,7 @@ struct FontVariantAlternates {
     {
     }
 
-    const Platform& platform() const { return m_platform; }
+    const Platform& platform() const LIFETIME_BOUND { return m_platform; }
     Platform takePlatform() { return WTF::move(m_platform); }
 
     bool isNormal() const { return m_platform.isNormal(); }

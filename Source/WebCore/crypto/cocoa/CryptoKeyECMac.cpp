@@ -48,7 +48,7 @@ static constexpr std::array<uint8_t, 3> PrivateKeyVersion { 0x02, 0x01, 0x01 };
 // Tagged type [1]
 static const unsigned char TaggedType1 = 0xa1;
 
-static constexpr size_t sizeCeil(float f)
+static constexpr size_t NODELETE sizeCeil(float f)
 {
     auto s = static_cast<size_t>(f);
     return f > s ? s + 1 : s;
@@ -69,20 +69,20 @@ static constexpr size_t NODELETE keySizeInBitsFromNamedCurve(CryptoKeyEC::NamedC
     return 0;
 }
 
-static constexpr size_t keySizeInBytesFromNamedCurve(CryptoKeyEC::NamedCurve curve)
+static constexpr size_t NODELETE keySizeInBytesFromNamedCurve(CryptoKeyEC::NamedCurve curve)
 {
     return sizeCeil(keySizeInBitsFromNamedCurve(curve) / 8.);
 }
 
 // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
 // We only support uncompressed point format.
-static constexpr bool doesUncompressedPointMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_t size)
+static constexpr bool NODELETE doesUncompressedPointMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_t size)
 {
     return (keySizeInBytesFromNamedCurve(curve) * 2 + 1) == size;
 }
 
 // Per Section 2.3.5 of http://www.secg.org/sec1-v2.pdf
-static constexpr bool doesFieldElementMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_t size)
+static constexpr bool NODELETE doesFieldElementMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_t size)
 {
     return keySizeInBytesFromNamedCurve(curve) == size;
 }

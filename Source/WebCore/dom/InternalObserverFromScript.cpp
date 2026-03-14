@@ -70,16 +70,16 @@ void InternalObserverFromScript::complete()
     m_active = false;
 }
 
-void InternalObserverFromScript::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const
+void InternalObserverFromScript::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const
 {
     if (RefPtr next = m_next)
-        next->visitJSFunction(visitor);
+        next->visitJSFunctionInGCThread(visitor);
 
     if (RefPtr error = m_error)
-        error->visitJSFunction(visitor);
+        error->visitJSFunctionInGCThread(visitor);
 
     if (RefPtr complete = m_complete)
-        complete->visitJSFunction(visitor);
+        complete->visitJSFunctionInGCThread(visitor);
 }
 
 InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& context, RefPtr<JSSubscriptionObserverCallback> callback)

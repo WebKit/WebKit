@@ -40,7 +40,7 @@ struct FontVariationSettings {
     FontVariationSettings(WebCore::FontVariationSettings&& platform) : m_platform { WTF::move(platform) } { }
     FontVariationSettings(const WebCore::FontVariationSettings& platform) : m_platform { platform } { }
 
-    const WebCore::FontVariationSettings& platform() const { return m_platform; }
+    const WebCore::FontVariationSettings& platform() const LIFETIME_BOUND { return m_platform; }
     WebCore::FontVariationSettings takePlatform() { return WTF::move(m_platform); }
 
     bool operator==(const FontVariationSettings&) const = default;
@@ -61,7 +61,7 @@ template<> struct Serialize<FontVariationSettings> { void operator()(StringBuild
 // MARK: - Blending
 
 template<> struct Blending<FontVariationSettings> {
-    auto canBlend(const FontVariationSettings&, const FontVariationSettings&) -> bool;
+    bool NODELETE canBlend(const FontVariationSettings&, const FontVariationSettings&);
     auto blend(const FontVariationSettings&, const FontVariationSettings&, const BlendingContext&) -> FontVariationSettings;
 };
 

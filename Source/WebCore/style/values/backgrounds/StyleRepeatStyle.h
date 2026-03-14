@@ -58,7 +58,7 @@ struct RepeatStyle {
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<RepeatStyle> { auto operator()(BuilderState&, const CSSValue&) -> RepeatStyle; };
+template<> struct CSSValueConversion<RepeatStyle> { RepeatStyle NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

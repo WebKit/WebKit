@@ -66,17 +66,18 @@ private:
     {
     }
 
-    const URL& url() const final { return m_font->url(); }
+    URL url() const final { return protect(m_font)->url(); }
     bool isPending() const final { return m_font->status() == CachedResource::Status::Pending; }
     bool isLoading() const final { return m_font->isLoading(); }
     bool errorOccurred() const final { return m_font->errorOccurred(); }
 
     bool ensureCustomFontData() final
     {
-        bool result = m_font->ensureCustomFontData();
-        if (!result && m_font->didRefuseToParseCustomFontWithSafeFontParser()) {
+        RefPtr font = m_font;
+        bool result = font->ensureCustomFontData();
+        if (!result && font->didRefuseToParseCustomFontWithSafeFontParser()) {
             if (RefPtr context = m_context.get()) {
-                auto message = makeString("[Lockdown Mode] This font wasn't parsed: "_s, m_font->url().string());
+                auto message = makeString("[Lockdown Mode] This font wasn't parsed: "_s, font->url().string());
                 context->addConsoleMessage(MessageSource::Security, MessageLevel::Info, message);
             }
         }

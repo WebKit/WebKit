@@ -237,7 +237,7 @@ void SQLiteDatabase::enableAutomaticWALTruncation()
     sqlite3_wal_hook(m_db, walAutomaticTruncationHook, nullptr);
 }
 
-static int checkpointModeValue(SQLiteDatabase::CheckpointMode mode)
+static int NODELETE checkpointModeValue(SQLiteDatabase::CheckpointMode mode)
 {
     switch (mode) {
     case SQLiteDatabase::CheckpointMode::Full:

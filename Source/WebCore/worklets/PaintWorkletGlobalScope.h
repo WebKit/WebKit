@@ -64,7 +64,7 @@ public:
     double devicePixelRatio() const;
 
     HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() WTF_REQUIRES_LOCK(m_paintDefinitionLock);
-    Lock& paintDefinitionLock() WTF_RETURNS_LOCK(m_paintDefinitionLock) { return m_paintDefinitionLock; }
+    Lock& paintDefinitionLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_paintDefinitionLock) { return m_paintDefinitionLock; }
 
     void prepareForDestruction() final
     {

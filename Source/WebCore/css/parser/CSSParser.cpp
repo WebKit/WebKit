@@ -1263,7 +1263,7 @@ RefPtr<StyleRuleScope> CSSParser::consumeScopeRule(CSSParserTokenRange prelude, 
     auto rules = consumeNestedGroupRules(block);
     m_ancestorRuleTypeStack.removeLast();
     Ref rule = StyleRuleScope::create(WTF::move(scopeStart), WTF::move(scopeEnd), WTF::move(rules));
-    if (RefPtr styleSheet = m_styleSheet)
+    if (auto* styleSheet = m_styleSheet.get())
         rule->setStyleSheetContents(*styleSheet);
     return rule;
 }

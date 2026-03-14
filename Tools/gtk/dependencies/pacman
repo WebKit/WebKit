@@ -80,7 +80,6 @@ PACKAGES+=(
     libxkbcommon-x11
     libxkbfile
     mtdev
-    p11-kit
     perl-xml-libxm
     python2
     python2-lxml

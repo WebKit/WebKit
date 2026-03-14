@@ -946,6 +946,9 @@ fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-masking/clip/clip-rect-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-position/position-fixed-scroll-nested-fixed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-combine-emphasis.html [ ImageOnlyFailure ]
+webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-negcoord.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html [ ImageOnlyFailure ]
@@ -1017,7 +1020,7 @@ compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
 compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
 compositing/tile-coverage-subpixel-empty-rect.html [ Failure ]
 compositing/tiling/tiled-layers-limit-contents-scale.html [ Failure ]
-compositing/video/video-object-fit.html [ Failure ]
+webkit.org/b/309572 compositing/video/video-object-fit.html [ Failure Timeout ]
 compositing/visible-rect/2d-transformed.html [ Failure ]
 compositing/visible-rect/3d-transform-style.html [ Failure ]
 compositing/visible-rect/3d-transformed.html [ Failure ]
@@ -1104,9 +1107,9 @@ webkit.org/b/287572 fast/lists/list-marker-before-float-rtl.html [ ImageOnlyFail
 webkit.org/b/287572 fast/multicol/border-radius-overflow-columns.html [ ImageOnlyFailure ]
 webkit.org/b/287572 fast/multicol/client-rects.html [ ImageOnlyFailure ]
 webkit.org/b/287572 fast/text/empty-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/287572 fast/text/multiple-text-shadow-overflow-layout-rect.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/mozilla/svg/markers-and-group-opacity-01.svg [ ImageOnlyFailure ]
 webkit.org/b/309128 imported/mozilla/svg/as-image/list-simple-1.html [ ImageOnlyFailure ]
+imported/mozilla/svg/text/text-shadow.svg [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-parent.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-sibling.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-parent.html [ ImageOnlyFailure ]
@@ -1215,8 +1218,6 @@ webkit.org/b/287572 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOn
 
 imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent.html [ ImageOnlyFailure ]
 
-webkit.org/b/254518 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html [ Failure Pass ]
-
 # The Digital Credentials API is not supported on WPE port.
 http/tests/digital-credentials/ [ Skip ]
 http/wpt/identity/ [ Skip ]
@@ -1305,3 +1306,44 @@ webkit.org/b/308148 imported/w3c/web-platform-tests/css/css-conditional/containe
 webkit.org/b/308479 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-text-to-the-canvas/canvas.2d.disconnected-font-size-math.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/308540 fast/repaint/border-radius-partial-repaint-corner.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/309744 [ arm64 ] fast/events/monotonic-event-time.html [ Failure ]
+webkit.org/b/309627 [ arm64 ] fast/forms/textarea/textarea-placeholder-paint-order-2.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/309369 [ arm64 ] svg/custom/image-with-transform-clip-filter.svg [ Failure ]
+webkit.org/b/309369 [ arm64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
+webkit.org/b/309369 [ arm64 ] svg/filters/feImage-preserveAspectRatio-all.svg [ Failure ]
+webkit.org/b/309369 [ arm64 ] svg/filters/feImage-preserveAspectratio.svg [ Failure ]
+webkit.org/b/309369 [ arm64 ] svg/W3C-SVG-1.1/extend-namespace-01-f.svg [ Failure ]
+webkit.org/b/309369 [ arm64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
+
+webkit.org/b/309369 [ arm64 ] imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-003.html [ ImageOnlyFailure ]
+
+webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Failure ]
+webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Failure ]
+webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolution-mono-mono.html [ Failure ]
+webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
+webkit.org/b/309372 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
+webkit.org/b/309372 [ arm64 ] webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
+
+webkit.org/b/309376 [ arm64 ] compositing/animation/animation-backing.html [ Failure Pass ]
+
+webkit.org/b/309377 [ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure Pass ]
+
+webkit.org/b/309381 [ arm64 ] webgl/2.0.y/conformance2/rendering/blitframebuffer-filter-srgb.html [ Failure ]
+
+webkit.org/b/309382 [ arm64 ] fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
+
+webkit.org/b/309633 [ arm64 ] fast/text/hyphenate-locale.html [ Failure ]
+
+webkit.org/b/309634 [ arm64 ] http/tests/xmlhttprequest/binary-x-user-defined.html [ Failure ]
+
+webkit.org/b/309635 [ arm64 ] webgl/2.0.0/conformance2/textures/video/tex-2d-r8-red-unsigned_byte.html [ Pass Failure ]
+
+webkit.org/b/309636 [ arm64 ] webgl/tex-2d-video-no-change-wrap.html [ Pass Failure ]
+
+webkit.org/b/309863 [ arm64 ] media/video-seek-have-nothing.html [ Pass Failure ]
+
+webkit.org/b/309575 imported/w3c/web-platform-tests/uievents/textInput/enter-textarea-contenteditable.html [ Pass Failure ]
+imported/w3c/web-platform-tests/screen-wake-lock/chrome-bug-1348019.https.html [ Skip ]
+imported/w3c/web-platform-tests/screen-wake-lock/wakelock-document-hidden.https.html [ Skip ]

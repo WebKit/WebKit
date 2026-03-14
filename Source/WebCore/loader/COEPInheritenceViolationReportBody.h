@@ -39,8 +39,8 @@ public:
     WEBCORE_EXPORT static Ref<COEPInheritenceViolationReportBody> create(COEPDisposition, const URL& blockedURL, const String& type);
 
     String disposition() const;
-    const String& type() const final { return m_type; }
-    const String& blockedURL() const { return m_blockedURL.string(); }
+    const String& type() const LIFETIME_BOUND final { return m_type; }
+    const String& blockedURL() const LIFETIME_BOUND { return m_blockedURL.string(); }
 
 private:
     friend struct IPC::ArgumentCoder<COEPInheritenceViolationReportBody>;

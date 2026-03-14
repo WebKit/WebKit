@@ -118,7 +118,7 @@ protected:
 
 inline bool PlatformMediaSessionClient::isRemoteSessionClientProxy() const { return false; }
 
-PlatformMediaSessionClient& emptyPlatformMediaSessionClient();
+PlatformMediaSessionClient& NODELETE emptyPlatformMediaSessionClient();
 
 class WEBCORE_EXPORT PlatformMediaSessionInterface
     : public RefCountedAndCanMakeWeakPtr<PlatformMediaSessionInterface>

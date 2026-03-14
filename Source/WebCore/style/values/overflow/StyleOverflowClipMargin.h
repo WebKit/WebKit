@@ -29,6 +29,7 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleValueTypes.h>
+#include <WebCore/StyleVisualBox.h>
 
 namespace WebCore {
 namespace Style {
@@ -40,6 +41,21 @@ struct OverflowClipMargin {
 
     OverflowClipMargin(CSS::ValueLiteral<CSS::LengthUnit::Px> length)
         : m_value { length }
+    {
+    }
+
+    OverflowClipMargin(Length length)
+        : m_value { length }
+    {
+    }
+
+    OverflowClipMargin(VisualBox referenceBox)
+        : m_value { referenceBox }
+    {
+    }
+
+    OverflowClipMargin(VisualBox referenceBox, Length length)
+        : m_value { SpaceSeparatedTuple { referenceBox, length } }
     {
     }
 

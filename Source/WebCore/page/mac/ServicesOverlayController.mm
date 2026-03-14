@@ -684,12 +684,12 @@ void ServicesOverlayController::scheduleRenderingUpdate(OptionSet<RenderingUpdat
 
 float ServicesOverlayController::deviceScaleFactor() const
 {
-    return protect(m_page)->deviceScaleFactor();
+    return m_page->deviceScaleFactor();
 }
 
 RefPtr<GraphicsLayer> ServicesOverlayController::createGraphicsLayer(GraphicsLayerClient& client)
 {
-    return GraphicsLayer::create(protect(m_page)->chrome().client().graphicsLayerFactory(), client);
+    return GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), client);
 }
 
 #endif

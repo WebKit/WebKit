@@ -67,7 +67,7 @@ public:
 
     bool NODELETE hasAnyScrollingLayers() const;
     
-    bool equalToClipData(const Vector<CompositedClipData>&) const;
+    bool NODELETE equalToClipData(const Vector<CompositedClipData>&) const;
     bool updateWithClipData(ScrollingCoordinator*, Vector<CompositedClipData>&&);
     
     Vector<CompositedClipData> compositedClipData() const;
@@ -98,8 +98,8 @@ public:
         }
     };
 
-    Vector<ClippingStackEntry>& stack() { return m_stack; }
-    const Vector<ClippingStackEntry>& stack() const { return m_stack; }
+    Vector<ClippingStackEntry>& stack() LIFETIME_BOUND { return m_stack; }
+    const Vector<ClippingStackEntry>& stack() const LIFETIME_BOUND { return m_stack; }
 
 private:
     // Order is ancestors to descendants.

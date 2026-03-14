@@ -50,7 +50,7 @@ NavigatorBeacon::NavigatorBeacon(Navigator& navigator)
 NavigatorBeacon::~NavigatorBeacon()
 {
     for (auto& beacon : m_inflightBeacons)
-        beacon->removeClient(*this);
+        RefPtr { beacon }->removeClient(*this);
 }
 
 void NavigatorBeacon::ref() const
@@ -160,15 +160,15 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
         }
     }
 
-    auto cachedResource = protect(document.cachedResourceLoader())->requestBeaconResource({ WTF::move(request), options });
-    if (!cachedResource) {
-        logError(cachedResource.error());
+    auto cachedResourceOrError = protect(document.cachedResourceLoader())->requestBeaconResource({ WTF::move(request), options });
+    if (!cachedResourceOrError) {
+        logError(cachedResourceOrError.error());
         return false;
     }
-
-    ASSERT(!m_inflightBeacons.contains(cachedResource.value().get()));
-    m_inflightBeacons.append(cachedResource.value().get());
-    cachedResource.value()->addClient(*this);
+    Ref cachedResource = WTF::move(cachedResourceOrError.value());
+    ASSERT(!m_inflightBeacons.contains(cachedResource.ptr()));
+    m_inflightBeacons.append(cachedResource.copyRef());
+    cachedResource->addClient(*this);
     return true;
 }
 

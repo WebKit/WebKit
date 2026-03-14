@@ -53,6 +53,7 @@ function test()
     }
 
     async function teardown() {
+        await PageAgent.setShowPaintRects(false);  
         writeDeferredTestOutputToPage();
     }
 

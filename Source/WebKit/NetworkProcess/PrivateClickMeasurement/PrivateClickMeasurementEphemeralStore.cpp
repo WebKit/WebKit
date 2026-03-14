@@ -150,6 +150,18 @@ void EphemeralStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& att
     m_clickMeasurement = WTF::move(attributionToClear);
 }
 
+void EphemeralStore::fetchRegistrableDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    Vector<WebCore::RegistrableDomain> domains;
+
+    if (m_clickMeasurement) {
+        domains.append(m_clickMeasurement->sourceSite().registrableDomain);
+        domains.append(m_clickMeasurement->destinationSite().registrableDomain);
+    }
+
+    completionHandler(WTF::move(domains));
+}
+
 void EphemeralStore::close(CompletionHandler<void()>&& completionHandler)
 {
     reset();

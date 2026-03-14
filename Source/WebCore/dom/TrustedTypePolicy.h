@@ -64,7 +64,7 @@ public:
         return m_options;
         IGNORE_CLANG_WARNINGS_END
     }
-    Lock& lock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+    Lock& lock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
 private:
     TrustedTypePolicy(const String&, const TrustedTypePolicyOptions&);

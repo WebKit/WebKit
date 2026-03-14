@@ -57,11 +57,11 @@ public:
     // On a thread different then main, we should set the thread's instance of the SharedTimer.
     void setSharedTimer(SharedTimer*);
 
-    ThreadTimerHeap& timerHeap() { return m_timerHeap; }
+    ThreadTimerHeap& timerHeap() LIFETIME_BOUND { return m_timerHeap; }
 
     void updateSharedTimer();
     void fireTimersInNestedEventLoop();
-    void breakFireLoopForRenderingUpdate();
+    void NODELETE breakFireLoopForRenderingUpdate();
 
     unsigned nextHeapInsertionCount() { return m_currentHeapInsertionOrder++; }
 

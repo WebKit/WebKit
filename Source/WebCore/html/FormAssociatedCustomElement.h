@@ -64,7 +64,7 @@ public:
     bool computeValidity() const final;
     bool appendFormData(DOMFormData&) final;
 
-    void willUpgrade();
+    void NODELETE willUpgrade();
     void didUpgrade();
 
     const AtomString& formControlType() const final;

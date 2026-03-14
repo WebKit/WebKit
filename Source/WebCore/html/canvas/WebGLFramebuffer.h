@@ -120,7 +120,7 @@ private:
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
 
     // Check if the framebuffer is currently bound to the given target.
-    bool isBound(GCGLenum target) const;
+    bool NODELETE isBound(GCGLenum target) const;
 
     void setAttachmentInternal(GCGLenum attachment, AttachmentEntry);
     // If a given attachment point for the currently bound framebuffer is not

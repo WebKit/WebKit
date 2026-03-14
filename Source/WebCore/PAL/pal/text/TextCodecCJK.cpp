@@ -820,7 +820,7 @@ static Vector<uint8_t> big5Encode(StringView string, Function<void(char32_t, Vec
 }
 
 // https://encoding.spec.whatwg.org/index-gb18030-ranges.txt
-static const std::array<std::pair<uint32_t, char32_t>, 207>& gb18030Ranges()
+static const std::array<std::pair<uint32_t, char32_t>, 207>& NODELETE gb18030Ranges()
 {
     static std::array<std::pair<uint32_t, char32_t>, 207> ranges { {
         { 0, 0x0080 }, { 36, 0x00A5 }, { 38, 0x00A9 }, { 45, 0x00B2 }, { 50, 0x00B8 }, { 81, 0x00D8 }, { 89, 0x00E2 }, { 95, 0x00EB },
@@ -897,7 +897,7 @@ static const GB18030EncodeIndex& gb18030EncodeIndex()
 // https://unicode-org.atlassian.net/browse/ICU-22357
 // The 2-byte values are handled correctly by values from gb18030()
 // but these need to be exceptions from gb18030Ranges().
-static std::optional<uint16_t> gb18030AsymmetricEncode(char16_t codePoint)
+static std::optional<uint16_t> NODELETE gb18030AsymmetricEncode(char16_t codePoint)
 {
     switch (codePoint) {
     case 0xE81E: return 0xFE59;

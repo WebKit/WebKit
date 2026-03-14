@@ -69,7 +69,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     }
 
     Vector<Ref<HTMLElement>> dataDetectorResultElements;
-    for (Ref child : descendantsOfType<HTMLElement>(*protect(overlayHost.userAgentShadowRoot()))) {
+    for (Ref child : descendantsOfType<HTMLElement>(*overlayHost.userAgentShadowRoot())) {
         if (ImageOverlay::isDataDetectorResult(child) && child->renderer())
             dataDetectorResultElements.append(child);
     }
@@ -171,7 +171,7 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
     if (!renderer)
         return false;
 
-    protect(m_page)->chrome().client().handleClickForDataDetectionResult({ WTF::move(dataDetectionResult), frameView->contentsToWindow(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToWindow(locationInContents));
+    m_page->chrome().client().handleClickForDataDetectionResult({ WTF::move(dataDetectionResult), frameView->contentsToWindow(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToWindow(locationInContents));
     return true;
 }
 
@@ -251,12 +251,12 @@ void ImageOverlayController::scheduleRenderingUpdate(OptionSet<RenderingUpdateSt
 
 float ImageOverlayController::deviceScaleFactor() const
 {
-    return protect(m_page)->deviceScaleFactor();
+    return m_page->deviceScaleFactor();
 }
 
 RefPtr<GraphicsLayer> ImageOverlayController::createGraphicsLayer(GraphicsLayerClient& client)
 {
-    return GraphicsLayer::create(protect(m_page)->chrome().client().graphicsLayerFactory(), client);
+    return GraphicsLayer::create(m_page->chrome().client().graphicsLayerFactory(), client);
 }
 
 #endif

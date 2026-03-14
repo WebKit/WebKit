@@ -389,7 +389,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSURL *)_requiredWebExtensionBaseURL
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return protect(*_pageConfiguration)->requiredWebExtensionBaseURL().createNSURL().autorelease();
+    return _pageConfiguration->requiredWebExtensionBaseURL().createNSURL().autorelease();
 #else
     return nil;
 #endif
@@ -405,7 +405,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WKWebExtensionController *)_strongWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return wrapper(protect(protect(*_pageConfiguration)->webExtensionController()).get());
+    return wrapper(protect(_pageConfiguration->webExtensionController()).get());
 #else
     return nil;
 #endif
@@ -414,7 +414,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WKWebExtensionController *)_weakWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return wrapper(protect(protect(*_pageConfiguration)->weakWebExtensionController()).get());
+    return wrapper(protect(_pageConfiguration->weakWebExtensionController()).get());
 #else
     return nil;
 #endif
@@ -529,7 +529,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     protect(*_pageConfiguration)->setDefaultWebsitePolicies(defaultWebpagePreferences ? defaultWebpagePreferences->_websitePolicies.get() : nullptr);
 }
 
-static NSString *defaultApplicationNameForUserAgent()
+SUPPRESS_NODELETE static NSString *NODELETE defaultApplicationNameForUserAgent()
 {
 #if PLATFORM(IOS_FAMILY)
     return @"Mobile/15E148";
@@ -653,7 +653,7 @@ static NSString *defaultApplicationNameForUserAgent()
 - (WKWebView *)_relatedWebView
 {
     // FIXME: Remove when rdar://134318457, rdar://134318538 and rdar://125369363 are complete.
-    if (RefPtr page = protect(*_pageConfiguration)->relatedPage())
+    if (RefPtr page = _pageConfiguration->relatedPage())
         return page->cocoaView().autorelease();
     return nil;
 }
@@ -675,17 +675,17 @@ static NSString *defaultApplicationNameForUserAgent()
         || [bundleID isEqualToString:@"com.apple.Music"]
 #endif
     );
-    protect(*_pageConfiguration)->setAllowPostingLegacySynchronousMessages(allow);
+    _pageConfiguration->setAllowPostingLegacySynchronousMessages(allow);
 }
 
 - (BOOL)_allowPostingLegacySynchronousMessages
 {
-    return protect(*_pageConfiguration)->allowPostingLegacySynchronousMessages();
+    return _pageConfiguration->allowPostingLegacySynchronousMessages();
 }
 
 - (WKWebView *)_webViewToCloneSessionStorageFrom
 {
-    if (RefPtr page = protect(*_pageConfiguration)->pageToCloneSessionStorageFrom())
+    if (RefPtr page = _pageConfiguration->pageToCloneSessionStorageFrom())
         return page->cocoaView().autorelease();
     return nil;
 }
@@ -693,14 +693,14 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setWebViewToCloneSessionStorageFrom:(WKWebView *)webViewToCloneSessionStorageFrom
 {
     if (webViewToCloneSessionStorageFrom)
-        protect(*_pageConfiguration)->setPageToCloneSessionStorageFrom(webViewToCloneSessionStorageFrom->_page.get());
+        _pageConfiguration->setPageToCloneSessionStorageFrom(webViewToCloneSessionStorageFrom->_page.get());
     else
-        protect(*_pageConfiguration)->setPageToCloneSessionStorageFrom(nullptr);
+        _pageConfiguration->setPageToCloneSessionStorageFrom(nullptr);
 }
 
 - (WKWebView *)_alternateWebViewForNavigationGestures
 {
-    if (RefPtr page = protect(*_pageConfiguration)->alternateWebViewForNavigationGestures())
+    if (RefPtr page = _pageConfiguration->alternateWebViewForNavigationGestures())
         return page->cocoaView().autorelease();
     return nil;
 }
@@ -708,9 +708,9 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAlternateWebViewForNavigationGestures:(WKWebView *)alternateView
 {
     if (alternateView)
-        protect(*_pageConfiguration)->setAlternateWebViewForNavigationGestures(alternateView->_page.get());
+        _pageConfiguration->setAlternateWebViewForNavigationGestures(alternateView->_page.get());
     else
-        protect(*_pageConfiguration)->setAlternateWebViewForNavigationGestures(nullptr);
+        _pageConfiguration->setAlternateWebViewForNavigationGestures(nullptr);
 }
 
 - (NSString *)_groupIdentifier
@@ -750,7 +750,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)_setIncrementalRenderingSuppressionTimeout:(NSTimeInterval)incrementalRenderingSuppressionTimeout
 {
-    protect(*_pageConfiguration)->setIncrementalRenderingSuppressionTimeout(incrementalRenderingSuppressionTimeout);
+    _pageConfiguration->setIncrementalRenderingSuppressionTimeout(incrementalRenderingSuppressionTimeout);
 }
 
 - (BOOL)_allowsJavaScriptMarkup
@@ -931,7 +931,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)_setClickInteractionDriverForTesting:(id<_UIClickInteractionDriving>)driver
 {
-    _pageConfiguration->setClickInteractionDriverForTesting((NSObject<_UIClickInteractionDriving> *)driver);
+    protect(_pageConfiguration.get())->setClickInteractionDriverForTesting((NSObject<_UIClickInteractionDriving> *)driver);
 }
 
 - (id <_UIClickInteractionDriving>)_clickInteractionDriverForTesting
@@ -1070,7 +1070,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (WKWebsiteDataStore *)_websiteDataStoreIfExists
 {
-    return wrapper(protect(protect(*_pageConfiguration)->websiteDataStoreIfExists()).get());
+    return wrapper(protect(_pageConfiguration->websiteDataStoreIfExists()).get());
 }
 
 - (NSArray<NSString *> *)_corsDisablingPatterns
@@ -1229,7 +1229,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (_WKApplicationManifest *)_applicationManifest
 {
-    return wrapper(protect(protect(*_pageConfiguration)->applicationManifest()).get());
+    return wrapper(protect(_pageConfiguration->applicationManifest()).get());
 }
 
 - (void)_setApplicationManifest:(_WKApplicationManifest *)applicationManifest
@@ -1299,7 +1299,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setCPULimit:(double)cpuLimit
 {
-    protect(*_pageConfiguration)->setCPULimit(cpuLimit);
+    _pageConfiguration->setCPULimit(cpuLimit);
 }
 
 - (double)_cpuLimit
@@ -1321,7 +1321,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setApplePayEnabled:(BOOL)applePayEnabled
 {
 #if ENABLE(APPLE_PAY)
-    protect(*_pageConfiguration)->setApplePayEnabled(applePayEnabled);
+    _pageConfiguration->setApplePayEnabled(applePayEnabled);
 #endif
 }
 
@@ -1481,7 +1481,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     allowed |= WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
-    allowed |= protect(*_pageConfiguration)->requiredWebExtensionBaseURL().isValid();
+    allowed |= _pageConfiguration->requiredWebExtensionBaseURL().isValid();
 #endif
 
     if (!allowed)
@@ -1502,7 +1502,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setSampledPageTopColorMaxDifference:(double)value
 {
-    protect(*_pageConfiguration)->setSampledPageTopColorMaxDifference(value);
+    _pageConfiguration->setSampledPageTopColorMaxDifference(value);
 }
 
 - (double)_sampledPageTopColorMaxDifference
@@ -1512,7 +1512,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setSampledPageTopColorMinHeight:(double)value
 {
-    protect(*_pageConfiguration)->setSampledPageTopColorMinHeight(value);
+    _pageConfiguration->setSampledPageTopColorMinHeight(value);
 }
 
 - (double)_sampledPageTopColorMinHeight

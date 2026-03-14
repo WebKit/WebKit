@@ -85,6 +85,7 @@ AVExperienceControllerFullscreenEnabled:
   status: unstable
   category: media
   getter: isAVExperienceControllerFullscreenEnabled
+  webcoreGetter: isAVExperienceControllerFullscreenEnabled
   humanReadableName: "AVExperienceController Fullscreen"
   humanReadableDescription: "Enable fullscreen video via AVExperienceController"
   condition: HAVE(AVEXPERIENCECONTROLLER)
@@ -878,20 +879,6 @@ BlobFileAccessEnforcementEnabled:
       "PLATFORM(COCOA)": true
       default: false
 
-BlockFontServiceInWebContentSandbox:
-  type: bool
-  status: internal
-  category: networking
-  humanReadableName: "Block Font service in the WebContent sandbox"
-  humanReadableDescription: "Block Font service in the WebContent sandbox"
-  webcoreBinding: none
-  condition: HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      "ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)": true
-      default: false
-
 BlockIOKitInWebContentSandbox:
   type: bool
   status: internal
@@ -942,20 +929,6 @@ BlockMobileAssetInWebContentSandbox:
   humanReadableDescription: "Block MobileAsset service in the WebContent sandbox"
   webcoreBinding: none
   condition: HAVE(SANDBOX_STATE_FLAGS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      "ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)": true
-      default: false
-
-BlockMobileGestaltInWebContentSandbox:
-  type: bool
-  status: internal
-  category: networking
-  humanReadableName: "Block MobileGestalt service in the WebContent sandbox"
-  humanReadableDescription: "Block MobileGestalt service in the WebContent sandbox"
-  webcoreBinding: none
-  condition: HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(IOS)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
@@ -1391,17 +1364,17 @@ CSSRubyDisplayTypesInAuthorStylesEnabled:
 
 CSSScrollAnchoringEnabled:
   type: bool
-  status: stable
+  status: preview
   category: css
   humanReadableName: "CSS Scroll Anchoring"
   humanReadableDescription: "Enable CSS Scroll Anchoring"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 CSSScrollbarColorEnabled:
   type: bool
@@ -2718,6 +2691,21 @@ EncryptedMediaAPIEnabled:
       default: false
   sharedPreferenceForWebProcess: true
   mediaPlaybackRelated: true
+
+EnhancedSecurityForceDisabled:
+  type: bool
+  status: internal
+  category: security
+  defaultsOverridable: true
+  humanReadableName: "Force disable Enhanced Security"
+  humanReadableDescription: "Disables Enhanced Security for all navigations"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 EnhancedSecurityHeuristicsEnabled:
   type: bool
@@ -7135,6 +7123,18 @@ ScrollToTextFragmentMarkingEnabled:
     WebCore:
       default: true
 
+ScrollViewAdaptiveDecelerationTrackingEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Adaptive Deceleration Tracking"
+  humanReadableDescription: "Use adaptive deceleration tracking behavior for scroll views"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  condition: HAVE(UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR)
+  defaultValue:
+    WebKit:
+      default: false
+
 ScrollendEventEnabled:
   type: bool
   status: stable
@@ -7985,17 +7985,17 @@ StorageBlockingPolicy:
 
 SubpixelInlineLayoutEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "Subpixels in inline layout (in block direction)"
   humanReadableDescription: "Subpixels in line layout (in block direction)"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 SupportHDRCompositorTonemappingEnabled:
   type: bool
@@ -8368,7 +8368,7 @@ ThreadedTimeBasedAnimationsAtHighFrameRateEnabled:
 
 ThreadedTimeBasedAnimationsEnabled:
   type: bool
-  status: preview
+  status: stable
   category: animation
   humanReadableName: "Threaded Time-based Animations"
   humanReadableDescription: "Run qualifying time-based animations on a separate thread"
@@ -8377,9 +8377,9 @@ ThreadedTimeBasedAnimationsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 TiledScrollingIndicatorVisible:
@@ -8735,15 +8735,11 @@ UseGPUProcessForWebGLEnabled:
   status: internal
   humanReadableName: "GPU Process: WebGL"
   humanReadableDescription: "Process all WebGL operations in GPU Process"
+  webcoreBinding: none
   condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
-      "ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_WEBGL_BY_DEFAULT)": true
-      "USE(GRAPHICS_LAYER_WC)": true
-      default: false
-    WebCore:
       "ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_WEBGL_BY_DEFAULT)": true
       "USE(GRAPHICS_LAYER_WC)": true
       default: false
@@ -10012,11 +10008,9 @@ WebTransportEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "HAVE(COMPLETE_WEB_TRANSPORT)": true
-      default: false
+      default: true
     WebCore:
-      "HAVE(COMPLETE_WEB_TRANSPORT)": true
-      default: false
+      default: true
   sharedPreferenceForWebProcess: true
   richJavaScript: true
   disableInLockdownMode: true

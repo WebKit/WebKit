@@ -146,17 +146,17 @@ public:
     bool avoidsUnsafeArea() const { return m_configuration.avoidsUnsafeArea; }
 
     // Matches a width=device-width, initial-scale=1 viewport.
-    WEBCORE_EXPORT Parameters nativeWebpageParameters();
-    static Parameters nativeWebpageParametersWithoutShrinkToFit();
-    static Parameters nativeWebpageParametersWithShrinkToFit();
+    WEBCORE_EXPORT Parameters NODELETE nativeWebpageParameters();
+    static Parameters NODELETE nativeWebpageParametersWithoutShrinkToFit();
+    static Parameters NODELETE nativeWebpageParametersWithShrinkToFit();
 #if ENABLE(PDF_PLUGIN)
     WEBCORE_EXPORT static Parameters pluginDocumentParameters();
 #endif
-    WEBCORE_EXPORT static Parameters webpageParameters();
-    WEBCORE_EXPORT static Parameters textDocumentParameters();
-    WEBCORE_EXPORT static Parameters imageDocumentParameters();
-    WEBCORE_EXPORT static Parameters xhtmlMobileParameters();
-    WEBCORE_EXPORT static Parameters testingParameters();
+    WEBCORE_EXPORT static Parameters NODELETE webpageParameters();
+    WEBCORE_EXPORT static Parameters NODELETE textDocumentParameters();
+    WEBCORE_EXPORT static Parameters NODELETE imageDocumentParameters();
+    WEBCORE_EXPORT static Parameters NODELETE xhtmlMobileParameters();
+    WEBCORE_EXPORT static Parameters NODELETE testingParameters();
 
     String description() const;
 #if !LOG_DISABLED
@@ -165,16 +165,16 @@ public:
 
 private:
     void updateConfiguration();
-    double viewportArgumentsLength(double length) const;
+    double NODELETE viewportArgumentsLength(double length) const;
     double initialScaleFromSize(double width, double height, bool shouldIgnoreScalingConstraints) const;
 
-    bool shouldOverrideDeviceWidthAndShrinkToFit() const;
-    bool shouldIgnoreScalingConstraintsRegardlessOfContentSize() const;
+    bool NODELETE shouldOverrideDeviceWidthAndShrinkToFit() const;
+    bool NODELETE shouldIgnoreScalingConstraintsRegardlessOfContentSize() const;
     bool shouldIgnoreScalingConstraints() const;
     bool shouldIgnoreVerticalScalingConstraints() const;
     bool shouldIgnoreHorizontalScalingConstraints() const;
-    void updateDefaultConfiguration();
-    bool canOverrideConfigurationParameters() const;
+    void NODELETE updateDefaultConfiguration();
+    bool NODELETE canOverrideConfigurationParameters() const;
 
     constexpr bool layoutSizeIsExplicitlyScaled() const
     {

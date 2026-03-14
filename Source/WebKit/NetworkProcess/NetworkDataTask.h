@@ -124,7 +124,7 @@ public:
         ASSERT(!m_pendingDownloadID);
         m_pendingDownloadID = downloadID;
     }
-    void setPendingDownload(PendingDownload&);
+    void NODELETE setPendingDownload(PendingDownload&);
 
     virtual void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) { m_pendingDownloadLocation = filename; }
     const String& pendingDownloadLocation() const LIFETIME_BOUND { return m_pendingDownloadLocation; }

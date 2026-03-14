@@ -65,7 +65,7 @@ public:
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
     WEBCORE_EXPORT static bool canDecodeType(const String& mimeType);
 
-    const String& mimeType() const { return m_mimeType; }
+    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
 
     WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&&) final;
     EncodedDataStatus encodedDataStatus() const final;
@@ -100,10 +100,10 @@ private:
     void readSamples();
     void readTrackMetadata();
     bool storeSampleBuffer(CMSampleBufferRef);
-    void advanceCursor();
+    void NODELETE advanceCursor();
     void setTrack(AVAssetTrack *);
 
-    const ImageDecoderAVFObjCSample* sampleAtIndex(size_t) const;
+    const ImageDecoderAVFObjCSample* NODELETE sampleAtIndex(size_t) const;
     bool sampleIsComplete(const ImageDecoderAVFObjCSample&) const;
 
     String m_mimeType;

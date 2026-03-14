@@ -178,7 +178,7 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
         .release();
 }
 
-static Inspector::Protocol::Network::Metrics::Priority toProtocol(NetworkLoadPriority priority)
+static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
 {
     switch (priority) {
     case NetworkLoadPriority::Low:
@@ -239,7 +239,7 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
     return metrics;
 }
 
-static Inspector::Protocol::Network::ReferrerPolicy toProtocol(ReferrerPolicy referrerPolicy)
+static Inspector::Protocol::Network::ReferrerPolicy NODELETE toProtocol(ReferrerPolicy referrerPolicy)
 {
     switch (referrerPolicy) {
     case ReferrerPolicy::EmptyString:
@@ -289,7 +289,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
     return requestObject;
 }
 
-static Inspector::Protocol::Network::Response::Source responseSource(ResourceResponse::Source source)
+static Inspector::Protocol::Network::Response::Source NODELETE responseSource(ResourceResponse::Source source)
 {
     switch (source) {
     case ResourceResponse::Source::DOMCache:
@@ -434,7 +434,7 @@ static ResourceType resourceTypeForCachedResource(const CachedResource* resource
     return ResourceType::Other;
 }
 
-static ResourceType resourceTypeForLoadType(InspectorInstrumentation::LoadType loadType)
+static ResourceType NODELETE resourceTypeForLoadType(InspectorInstrumentation::LoadType loadType)
 {
     switch (loadType) {
     case InspectorInstrumentation::LoadType::Ping:
@@ -465,9 +465,12 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
         }
     }
     if (type == ResourceType::Other) {
+        RefPtr<const CachedResource> updatedCachedResource;
         if (!cachedResource && loader)
-            cachedResource = ResourceUtilities::cachedResource(loader->frame(), request.url());
-        type = resourceTypeForCachedResource(cachedResource);
+            updatedCachedResource = ResourceUtilities::cachedResource(loader->frame(), request.url());
+        else
+            updatedCachedResource = cachedResource;
+        type = resourceTypeForCachedResource(updatedCachedResource);
     }
     willSendRequest(identifier, loader, request, redirectResponse, type, resourceLoader);
 }
@@ -499,7 +502,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
 
     bool isNotModified = response.httpStatusCode() == 304;
 
-    CachedResource* cachedResource = nullptr;
+    RefPtr<CachedResource> cachedResource;
     if (auto* subresourceLoader = dynamicDowncast<SubresourceLoader>(resourceLoader); subresourceLoader && !isNotModified)
         cachedResource = subresourceLoader->cachedResource();
     if (!cachedResource && loader)
@@ -856,7 +859,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::disable()
     return { };
 }
 
-static NetworkStage networkStageFromProtocol(Inspector::Protocol::Network::NetworkStage stage)
+static NetworkStage NODELETE networkStageFromProtocol(Inspector::Protocol::Network::NetworkStage stage)
 {
     switch (stage) {
     case Inspector::Protocol::Network::NetworkStage::Request:
@@ -1298,7 +1301,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequest
     return { };
 }
 
-static ResourceError::Type toResourceErrorType(Inspector::Protocol::Network::ResourceErrorType protocolResourceErrorType)
+static ResourceError::Type NODELETE toResourceErrorType(Inspector::Protocol::Network::ResourceErrorType protocolResourceErrorType)
 {
     switch (protocolResourceErrorType) {
     case Inspector::Protocol::Network::ResourceErrorType::General:

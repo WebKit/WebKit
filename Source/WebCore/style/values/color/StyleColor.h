@@ -209,7 +209,7 @@ template<> struct CSSValueCreation<Color> {
 
 template<> struct Blending<Color> {
     auto equals(const Color&, const Color&, const RenderStyle&, const RenderStyle&) -> bool;
-    auto canBlend(const Color&, const Color&) -> bool;
+    bool NODELETE canBlend(const Color&, const Color&);
     constexpr auto requiresInterpolationForAccumulativeIteration(const Color&, const Color&) -> bool { return true; }
     auto blend(const Color&, const Color&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> Color;
 };

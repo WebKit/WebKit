@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
 <body>
+<script src="../../../../resources/js-test-pre.js"></script>
 <script>
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
 }
 
-window.addEventListener("message", function (e)
-{
-    if (e.data !== 'done')
-        console.log('FAIL: Insecure script was NOT upgraded');
+window.data = null;
+window.addEventListener("message", function (e) {
+    window.data = e.data;
+    shouldBe("window.data", "'done'");
 
     if (window.testRunner)
         testRunner.notifyDone();

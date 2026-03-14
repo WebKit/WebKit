@@ -76,12 +76,12 @@ private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
     Seconds animationDuration() final;
 
-    void initializeInterpolationCoefficientsIfNecessary();
-    void initializeSnapProgressCurve();
+    void NODELETE initializeInterpolationCoefficientsIfNecessary();
+    void NODELETE initializeSnapProgressCurve();
     float animationProgressAfterElapsedTime(Seconds) const;
 
-    FloatPoint linearlyInterpolatedOffsetAtProgress(float progress);
-    FloatPoint cubicallyInterpolatedOffsetAtProgress(float progress) const;
+    FloatPoint NODELETE linearlyInterpolatedOffsetAtProgress(float progress);
+    FloatPoint NODELETE cubicallyInterpolatedOffsetAtProgress(float progress) const;
 
     float m_snapAnimationCurveMagnitude { 0 };
     float m_snapAnimationDecayFactor { 0 };

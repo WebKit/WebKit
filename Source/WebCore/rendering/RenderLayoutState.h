@@ -118,7 +118,7 @@ private:
     // FIXME: webkit.org/b/179440 these functions should be part of the pagination code/LocalFrameViewLayoutContext.
     void computePaginationInformation(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
     void propagateLineGridInfo(const RenderLayoutState& ancestor, RenderBox&);
-    void establishLineGrid(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBlockFlow&);
+    void NODELETE establishLineGrid(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBlockFlow&);
     void computeLineGridPaginationOrigin(const RenderMultiColumnFlow&);
 
     // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173

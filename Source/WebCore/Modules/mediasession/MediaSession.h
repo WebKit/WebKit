@@ -95,7 +95,7 @@ public:
 
     void callActionHandler(const MediaSessionActionDetails&, DOMPromiseDeferred<void>&&);
 
-    template <typename Visitor> void visitActionHandlers(Visitor&) const;
+    template <typename Visitor> void visitActionHandlersInGCThread(Visitor&) const;
 
     ExceptionOr<void> setPositionState(std::optional<MediaPositionState>&&);
     std::optional<MediaPositionState> positionState() const { return m_positionState; }
@@ -221,12 +221,12 @@ inline bool MediaSession::hasActiveActionHandlers() const
 }
 
 template <typename Visitor>
-void MediaSession::visitActionHandlers(Visitor& visitor) const
+void MediaSession::visitActionHandlersInGCThread(Visitor& visitor) const
 {
     Locker lock { m_actionHandlersLock };
     for (auto& actionHandler : m_actionHandlers) {
         // We are not ref'ing here as this function may get called from a GC thread.
-        SUPPRESS_UNCOUNTED_ARG actionHandler.value->visitJSFunction(visitor);
+        SUPPRESS_UNCOUNTED_ARG actionHandler.value->visitJSFunctionInGCThread(visitor);
     }
 }
 

@@ -37,6 +37,7 @@ messages -> RemoteMesh Stream {
     void UpdateMaterial(struct WebModel::UpdateMaterialDescriptor descriptor) -> (bool success)
     void UpdateTransform(struct WebModel::Float4x4 transform)
     void SetCameraDistance(float distance)
+    void SetBackgroundColor(struct WebModel::Float3 color)
     void Play(bool playing)
     void SetEnvironmentMap(struct WebModel::ImageAsset imageAsset)
 }

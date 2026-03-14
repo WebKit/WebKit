@@ -64,7 +64,7 @@ ReferencePathOperation::ReferencePathOperation(const Style::URL& url, const Atom
     , m_url(url)
     , m_fragment(fragment)
 {
-    if (is<SVGPathElement>(element) || is<SVGGeometryElement>(element))
+    if (isAnyOf<SVGPathElement, SVGGeometryElement>(element))
         m_path = pathFromGraphicsElement(*element);
 }
 

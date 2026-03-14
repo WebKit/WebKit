@@ -69,7 +69,7 @@ ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags va
     m_validityStateFlags = validityStateFlags;
     setCustomValidity(validityStateFlags.isValid() ? emptyString() : WTF::move(message));
 
-    if (validationAnchor && !protect(asHTMLElement())->isShadowIncludingInclusiveAncestorOf(*validationAnchor))
+    if (validationAnchor && !asHTMLElement().isShadowIncludingInclusiveAncestorOf(*validationAnchor))
         return Exception { ExceptionCode::NotFoundError };
 
     m_validationAnchor = validationAnchor;
@@ -231,7 +231,7 @@ bool FormAssociatedCustomElement::shouldSaveAndRestoreFormControlState() const
 {
     Ref element = asHTMLElement();
     ASSERT(element->reactionQueue());
-    return element->isDefinedCustomElement() && CheckedRef { *element->reactionQueue() }->hasFormStateRestoreCallback();
+    return element->isDefinedCustomElement() && element->reactionQueue()->hasFormStateRestoreCallback();
 }
 
 FormControlState FormAssociatedCustomElement::saveFormControlState() const

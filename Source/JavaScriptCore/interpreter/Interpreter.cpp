@@ -66,6 +66,7 @@
 #include "JSWebAssemblyException.h"
 #include "LLIntThunks.h"
 #include "LiteralParser.h"
+#include "MicrotaskCall.h"
 #include "ModuleProgramCodeBlock.h"
 #include "NativeCallee.h"
 #include "ProgramCodeBlock.h"
@@ -467,8 +468,10 @@ void Interpreter::getAsyncStackTrace(JSCell* owner, Vector<StackFrame>& results,
     auto getContextValueFromPromise = [&](JSPromise* promise) -> JSValue {
         if (promise && promise->status() == JSPromise::Status::Pending) {
             JSValue reactionsValue = promise->internalField(JSPromise::Field::ReactionsOrResult).get();
-            if (auto* reaction = jsDynamicCast<JSPromiseReaction*>(reactionsValue))
-                return reaction->context();
+            if (reactionsValue) {
+                if (auto* reaction = jsDynamicCast<JSPromiseReaction*>(reactionsValue))
+                    return reaction->context();
+            }
         }
         return JSValue();
     };
@@ -1426,6 +1429,24 @@ CodeBlock* Interpreter::prepareForCachedCall(CachedCall& cachedCall, JSFunction*
 
     cachedCall.m_addressForCall = newCodeBlock->jitCode()->addressForCall();
     newCodeBlock->linkIncomingCall(nullptr, &cachedCall);
+    return newCodeBlock;
+}
+
+CodeBlock* Interpreter::prepareForMicrotaskCall(MicrotaskCall& microtaskCall, JSFunction* function)
+{
+    VM& vm = this->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    // Compile the callee:
+    CodeBlock* newCodeBlock;
+    microtaskCall.functionExecutable()->prepareForExecution<FunctionExecutable>(vm, function, function->scope(), CodeSpecializationKind::CodeForCall, newCodeBlock);
+    RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, { });
+
+    ASSERT(newCodeBlock);
+    newCodeBlock->m_shouldAlwaysBeInlined = false;
+
+    microtaskCall.m_addressForCall = newCodeBlock->jitCode()->addressForCall();
+    newCodeBlock->linkIncomingCall(nullptr, &microtaskCall);
     return newCodeBlock;
 }
 

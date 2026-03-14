@@ -35,17 +35,9 @@
 
 namespace WebCore {
 
-GradientRendererCG::GradientRendererCG(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops, std::optional<DestinationColorSpace> destinationColorSpace)
-    : m_strategy { pickStrategy(colorInterpolationMethod, stops, destinationColorSpace) }
+GradientRendererCG::GradientRendererCG(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops)
+    : m_strategy { pickStrategy(colorInterpolationMethod, stops) }
 {
-}
-
-std::optional<DestinationColorSpace> GradientRendererCG::colorSpace() const
-{
-    if (auto* gradient = std::get_if<Gradient>(&m_strategy))
-        return gradient->colorSpace;
-
-    return { };
 }
 
 // MARK: - Strategy selection.
@@ -60,7 +52,7 @@ static bool anyComponentIsNone(const GradientColorStops& stops)
     return false;
 }
 
-GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops, std::optional<DestinationColorSpace> destinationColorSpace) const
+GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops) const
 {
     return WTF::switchOn(colorInterpolationMethod.colorSpace,
         [&] (const ColorInterpolationMethod::SRGB&) -> Strategy {
@@ -68,7 +60,7 @@ GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolation
             if (anyComponentIsNone(stops))
                 return makeShading(colorInterpolationMethod, stops);
 
-            return makeGradient(colorInterpolationMethod, stops, destinationColorSpace);
+            return makeGradient(colorInterpolationMethod, stops);
         },
         [&] (const auto&) -> Strategy {
             return makeShading(colorInterpolationMethod, stops);
@@ -78,39 +70,7 @@ GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolation
 
 // MARK: - Gradient strategy.
 
-static ColorComponents<float, 4> getResolvedColorComponentsInColorSpace(const Color& color, const DestinationColorSpace& destinationColorSpace)
-{
-    static LazyNeverDestroyed<HashMap<Color, ColorComponents<float, 4>>> colorCache;
-    static LazyNeverDestroyed<DestinationColorSpace> cacheColorSpace;
-    static Lock colorCacheLock;
-
-    auto locker = Locker(colorCacheLock);
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        colorCache.construct();
-        cacheColorSpace.construct(destinationColorSpace);
-    });
-
-    if (cacheColorSpace != destinationColorSpace) {
-        colorCache->clear();
-        cacheColorSpace.get() = destinationColorSpace;
-    }
-
-    auto result = colorCache->ensure(color, [&] {
-        return color.toResolvedColorComponentsInColorSpace(destinationColorSpace);
-    }).iterator->value;
-
-    const size_t maxCacheCount = 32;
-    if (colorCache->size() > maxCacheCount) {
-        auto iteratorToRemove = colorCache->random();
-        colorCache->remove(iteratorToRemove);
-    }
-
-    return result;
-}
-
-GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops, std::optional<DestinationColorSpace> destinationColorSpace) const
+GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops) const
 {
     ASSERT_UNUSED(colorInterpolationMethod, std::holds_alternative<ColorInterpolationMethod::SRGB>(colorInterpolationMethod.colorSpace));
 
@@ -154,19 +114,11 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
         // extended sRGB for all gradients.
         if (hasOnlyBoundedSRGBColorStops(stops)) {
             for (const auto& stop : stops) {
-                if (destinationColorSpace) {
-                    auto [r, g, b, a ] = getResolvedColorComponentsInColorSpace(stop.color, *destinationColorSpace);
-                    colorComponents.appendList({ r, g, b, a });
-                } else {
-                    auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
-                    colorComponents.appendList({ r, g, b, a });
-                }
+                auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
+                colorComponents.appendList({ r, g, b, a });
 
                 locations.append(stop.offset);
             }
-
-            if (destinationColorSpace)
-                return destinationColorSpace->platformColorSpace();
 
             return cachedCGColorSpaceSingleton<ColorSpaceFor<SRGBA<float>>>();
         }
@@ -204,7 +156,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
 
     apply139572277Workaround();
 
-    return Gradient { adoptCF(CGGradientCreateWithColorComponentsAndOptions(cgColorSpace.get(), colorComponents.span().data(), locations.span().data(), numberOfStops, gradientOptionsDictionary(colorInterpolationMethod))), destinationColorSpace };
+    return Gradient { adoptCF(CGGradientCreateWithColorComponentsAndOptions(cgColorSpace.get(), colorComponents.span().data(), locations.span().data(), numberOfStops, gradientOptionsDictionary(colorInterpolationMethod))) };
 }
 
 // MARK: - Shading strategy.

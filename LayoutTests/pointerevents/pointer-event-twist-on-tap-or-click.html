@@ -17,7 +17,9 @@
             finishJSTest();
         });
 
-        UIHelper.activateAt(10, 10);
+        (async () => {
+            await UIHelper.activateAt(10, 10);
+        })();
     }
 </script>
 </html>

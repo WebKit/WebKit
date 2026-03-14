@@ -42,6 +42,7 @@
 #import "AXTextMarker.h"
 #import "AXTreeStore.h"
 #import "AXTreeStoreInlines.h"
+#import "AXUtilities.h"
 #import "AccessibilityObjectInlines.h"
 #import "AccessibilityProgressIndicator.h"
 #import "AccessibilityRenderObject.h"
@@ -1247,7 +1248,9 @@ enum class AttributePrecondition : uint8_t {
     IsExposedTableCell,
     IsTree,
     IsMathElement,
+#if !HAVE(AX_TEXT_MARKER_RANGE_FOR_INTERSECTION_WITH_SELECTION_RANGE)
     IsStaticText,
+#endif
     IsTreeItem,
     IsARIATreeGridRow,
     IsTableRow,
@@ -1483,9 +1486,22 @@ static id handleElementBusyAttribute(WebAccessibilityObjectWrapper*, AXCoreObjec
     return [NSNumber numberWithBool:backingObject.isBusy()];
 }
 
-static id handleIntersectionWithSelectionRangeAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject&)
+static id handleIntersectionWithSelectionRangeAttribute(WebAccessibilityObjectWrapper *, AXCoreObject& backingObject)
 {
-    return [wrapper intersectionWithSelectionRange];
+    auto objectRange = backingObject.textMarkerRange();
+    auto selectionRange = backingObject.selectedTextMarkerRange();
+    auto intersection = selectionRange.intersectionWith(objectRange);
+    if (!intersection.has_value())
+        return nil;
+
+#if HAVE(AX_TEXT_MARKER_RANGE_FOR_INTERSECTION_WITH_SELECTION_RANGE)
+    return intersection->platformData().bridgingAutorelease();
+#else
+    auto intersectionCharacterRange = intersection->characterRange();
+    if (intersectionCharacterRange.has_value())
+        return [NSValue valueWithRange:intersectionCharacterRange.value()];
+    return nil;
+#endif
 }
 
 static id handleDRTSpeechAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject&)
@@ -2218,7 +2234,9 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, AttributeHandlerEntry> cr
     static constexpr AttributePrecondition exposedTableCellPreconditions[] = { AttributePrecondition::IsExposedTableCell };
     static constexpr AttributePrecondition treeItemOrARIATreeGridRowPreconditions[] = { AttributePrecondition::IsTreeItem, AttributePrecondition::IsARIATreeGridRow };
     static constexpr AttributePrecondition mathElementPreconditions[] = { AttributePrecondition::IsMathElement };
+#if !HAVE(AX_TEXT_MARKER_RANGE_FOR_INTERSECTION_WITH_SELECTION_RANGE)
     static constexpr AttributePrecondition staticTextPreconditions[] = { AttributePrecondition::IsStaticText };
+#endif
 
     struct AttributeMapping {
         RetainPtr<NSString> name;
@@ -2258,7 +2276,11 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, AttributeHandlerEntry> cr
         { NSAccessibilityHasPopupAttribute, { handleHasPopupAttribute, { } } },
         { NSAccessibilityLinkedUIElementsAttribute, { handleLinkedUIElementsAttribute, { } } },
         { NSAccessibilityElementBusyAttribute, { handleElementBusyAttribute, { } } },
+#if HAVE(AX_TEXT_MARKER_RANGE_FOR_INTERSECTION_WITH_SELECTION_RANGE)
+        { NSAccessibilityIntersectionWithSelectionRangeAttribute, { handleIntersectionWithSelectionRangeAttribute, { } } },
+#else
         { NSAccessibilityIntersectionWithSelectionRangeAttribute, { handleIntersectionWithSelectionRangeAttribute, staticTextPreconditions } },
+#endif
         { NSAccessibilityDRTSpeechAttributeAttribute, { handleDRTSpeechAttribute, { } } },
         { NSAccessibilityExpandedAttribute, { handleExpandedAttribute, { } } },
         { NSAccessibilitySelectedChildrenAttribute, { handleSelectedChildrenAttribute, { } } },
@@ -2397,8 +2419,10 @@ static bool matchesPrecondition(AXCoreObject& backingObject, AttributePreconditi
         return backingObject.isTree();
     case AttributePrecondition::IsMathElement:
         return backingObject.isMathElement();
+#if !HAVE(AX_TEXT_MARKER_RANGE_FOR_INTERSECTION_WITH_SELECTION_RANGE)
     case AttributePrecondition::IsStaticText:
         return backingObject.isStaticText();
+#endif
     case AttributePrecondition::IsTreeItem:
         return backingObject.isTreeItem();
     case AttributePrecondition::IsARIATreeGridRow:
@@ -2449,6 +2473,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     return nil;
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+
+static String debugDescriptionFrom(AXCoreObject* object)
+{
+    String objectDescription = "null backingObject"_s;
+    if (object)
+        objectDescription = object->debugDescription();
+    return makeString("PID: "_s, getpid(), ", "_s, objectDescription).createNSString().autorelease();
+}
 
 id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString *attributeName)
 {
@@ -2533,6 +2565,12 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
     if ([attributeName isEqualToString:NSAccessibilityPageRelativePositionAttribute])
         return [NSValue valueWithPoint:(CGPoint)backingObject->relativeFrame().location()];
 
+    if ([attributeName isEqualToString:@"_AXDebugDescription"])
+        return debugDescriptionFrom(backingObject.get()).createNSString().autorelease();
+
+    if ([attributeName isEqualToString:@"_AXRawRoleForTesting"])
+        return roleToString(backingObject->role()).createNSString().autorelease();
+
     return nil;
 }
 
@@ -2606,25 +2644,6 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
         return nil;
     }
 #endif // ENABLE(TREE_DEBUGGING)
-
-    return nil;
-}
-
-- (NSValue *)intersectionWithSelectionRange
-{
-    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
-    if (!backingObject)
-        return nil;
-
-    auto objectRange = backingObject->textMarkerRange();
-    auto selectionRange = backingObject->selectedTextMarkerRange();
-
-    auto intersection = selectionRange.intersectionWith(objectRange);
-    if (intersection.has_value()) {
-        auto intersectionCharacterRange = intersection->characterRange();
-        if (intersectionCharacterRange.has_value())
-            return [NSValue valueWithRange:intersectionCharacterRange.value()];
-    }
 
     return nil;
 }
@@ -3219,7 +3238,7 @@ static RenderObject* rendererForView(NSView* view)
     if (!frame)
         return nullptr;
 
-    RefPtr<Node> node = protect(frame->document())->ownerElement();
+    RefPtr<Node> node = frame->document()->ownerElement();
     if (!node)
         return nullptr;
 
@@ -4452,11 +4471,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSString *)debugDescription
 {
-    String backingObjectDescription = "null backingObject"_s;
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
-    if (backingObject)
-        backingObjectDescription = backingObject->debugDescription();
-    return makeString("PID: "_s, getpid(), ", "_s, backingObjectDescription).createNSString().autorelease();
+    return debugDescriptionFrom(backingObject.get()).createNSString().autorelease();
 }
 @end
 

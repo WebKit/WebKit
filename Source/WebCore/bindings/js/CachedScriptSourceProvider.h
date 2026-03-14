@@ -40,7 +40,7 @@ public:
 
     virtual ~CachedScriptSourceProvider()
     {
-        m_cachedScript->removeClient(*this);
+        protect(m_cachedScript)->removeClient(*this);
     }
 
     // CachedResourceClient.
@@ -52,7 +52,7 @@ public:
 
     JSC::CodeBlockHash codeBlockHashConcurrently(int startOffset, int endOffset, JSC::CodeSpecializationKind kind) override
     {
-        return m_cachedScript->codeBlockHashConcurrently(startOffset, endOffset, kind, isModuleType() ? CachedScript::ShouldDecodeAsUTF8Only::Yes : CachedScript::ShouldDecodeAsUTF8Only::No);
+        return protect(m_cachedScript)->codeBlockHashConcurrently(startOffset, endOffset, kind, isModuleType() ? CachedScript::ShouldDecodeAsUTF8Only::Yes : CachedScript::ShouldDecodeAsUTF8Only::No);
     }
 
 private:
@@ -60,7 +60,7 @@ private:
         : SourceProvider(JSC::SourceOrigin { cachedScript->response().url(), WTF::move(scriptFetcher) }, String(cachedScript->response().url().string()), cachedScript->response().isRedirected() ? String(cachedScript->url().string()) : String(), cachedScript->requiresPrivacyProtections() ? JSC::SourceTaintedOrigin::KnownTainted : JSC::SourceTaintedOrigin::Untainted, TextPosition(), sourceType)
         , m_cachedScript(cachedScript)
     {
-        m_cachedScript->addClient(*this);
+        cachedScript->addClient(*this);
     }
 
     CachedResourceHandle<CachedScript> m_cachedScript;
@@ -70,14 +70,14 @@ inline unsigned CachedScriptSourceProvider::hash() const
 {
     // Modules should always be decoded as UTF-8.
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
-    return m_cachedScript->scriptHash(isModuleType() ? CachedScript::ShouldDecodeAsUTF8Only::Yes : CachedScript::ShouldDecodeAsUTF8Only::No);
+    return protect(m_cachedScript)->scriptHash(isModuleType() ? CachedScript::ShouldDecodeAsUTF8Only::Yes : CachedScript::ShouldDecodeAsUTF8Only::No);
 }
 
 inline StringView CachedScriptSourceProvider::source() const
 {
     // Modules should always be decoded as UTF-8.
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
-    return m_cachedScript->script(isModuleType() ? CachedScript::ShouldDecodeAsUTF8Only::Yes : CachedScript::ShouldDecodeAsUTF8Only::No);
+    return protect(m_cachedScript)->script(isModuleType() ? CachedScript::ShouldDecodeAsUTF8Only::Yes : CachedScript::ShouldDecodeAsUTF8Only::No);
 }
 
 } // namespace WebCore

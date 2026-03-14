@@ -12,7 +12,7 @@ function onChange()
     document.forms[0].submit();
 }
 
-function test()
+async function test()
 {
     let tempFilePath = createTempFile(tempFileName, tempFileContent);
 
@@ -26,7 +26,7 @@ function test()
 
         var centerX = input.offsetLeft + input.offsetWidth / 2;
         var centerY = input.offsetTop + input.offsetHeight / 2;
-        UIHelper.activateAt(centerX, centerY);
+        await UIHelper.activateAt(centerX, centerY);
     }
 }
 

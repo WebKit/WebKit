@@ -98,7 +98,7 @@ public:
     const Data& data() const { return m_data; }
     ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
-    const GradientColorStops& stops() const { return m_stops; }
+    const GradientColorStops& stops() const LIFETIME_BOUND { return m_stops; }
     bool isTransient() const { return m_isTransient; }
 
     WEBCORE_EXPORT void addColorStop(GradientColorStop&&);
@@ -116,9 +116,7 @@ public:
 
 #if USE(CG)
     void paint(GraphicsContext&);
-    // If the DestinationColorSpace is present, the gradient may cache a platform renderer using colors converted into this colorspace,
-    // which can be more efficient to render since it avoids colorspace conversions when lower level frameworks render the gradient.
-    void paint(CGContextRef, std::optional<DestinationColorSpace> = { });
+    void paint(CGContextRef);
 #endif
 
 #if USE(SKIA)

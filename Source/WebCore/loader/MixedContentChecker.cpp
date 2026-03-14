@@ -132,7 +132,7 @@ bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destina
 bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpgradable isUpgradable)
 {
     RefPtr<Document> document;
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
         document = localFrame->document();
 
 #if ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS)

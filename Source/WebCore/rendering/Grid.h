@@ -63,7 +63,7 @@ public:
     GridSpan gridItemSpan(const RenderBox&, Style::GridTrackSizingDirection) const;
     GridSpan gridItemSpanIgnoringCollapsedTracks(const RenderBox&, Style::GridTrackSizingDirection) const;
 
-    const GridCell& NODELETE cell(unsigned row, unsigned column) const;
+    const GridCell& NODELETE cell(unsigned row, unsigned column) const LIFETIME_BOUND;
 
     unsigned NODELETE explicitGridStart(Style::GridTrackSizingDirection) const;
     void NODELETE setExplicitGridStart(unsigned rowStart, unsigned columnStart);
@@ -80,12 +80,12 @@ public:
 
     unsigned autoRepeatEmptyTracksCount(Style::GridTrackSizingDirection) const;
     bool NODELETE hasAutoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
-    bool isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, unsigned) const;
+    bool NODELETE isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, unsigned) const;
 
-    OrderedTrackIndexSet* NODELETE autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
+    OrderedTrackIndexSet* NODELETE autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
-    OrderIterator& orderIterator() { return m_orderIterator; }
-    const OrderIterator& orderIterator() const { return m_orderIterator; }
+    OrderIterator& orderIterator() LIFETIME_BOUND { return m_orderIterator; }
+    const OrderIterator& orderIterator() const LIFETIME_BOUND { return m_orderIterator; }
 
     void setNeedsItemsPlacement(bool);
     bool needsItemsPlacement() const { return m_needsItemsPlacement; };
@@ -124,7 +124,7 @@ public:
     // GridIterator(m_grid, ForColumns, 1) will walk over the rows of the 2nd column.
     GridIterator(const Grid&, Style::GridTrackSizingDirection, unsigned fixedTrackIndex, unsigned varyingTrackIndex = 0);
 
-    static GridIterator createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter);
+    static GridIterator NODELETE createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter);
 
     RenderBox* NODELETE nextGridItem();
     bool isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;

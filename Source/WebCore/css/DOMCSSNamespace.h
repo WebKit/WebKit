@@ -45,7 +45,7 @@ public:
     static bool supports(Document&, const String& property, const String& value);
     static bool supports(Document&, const String& conditionText);
     static String escape(const String& ident);
-    static HighlightRegistry& highlights(Document&);
+    static HighlightRegistry& NODELETE highlights(Document&);
 };
 
 }

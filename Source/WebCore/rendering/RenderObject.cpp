@@ -270,7 +270,7 @@ RenderObject::FragmentedFlowState RenderObject::computedFragmentedFlowState(cons
     auto inheritedFlowState = RenderObject::FragmentedFlowState::NotInsideFlow;
     if (is<RenderText>(renderer))
         inheritedFlowState = renderer.parent()->fragmentedFlowState();
-    else if (is<RenderSVGBlock>(renderer) || is<RenderSVGInline>(renderer) || is<LegacyRenderSVGModelObject>(renderer)) {
+    else if (isAnyOf<RenderSVGBlock, RenderSVGInline, LegacyRenderSVGModelObject>(renderer)) {
         // containingBlock() skips svg boundary (SVG root is a RenderReplaced).
         if (CheckedPtr svgRoot = SVGRenderSupport::findTreeRootObject(downcast<RenderElement>(renderer)))
             inheritedFlowState = svgRoot->fragmentedFlowState();
@@ -536,7 +536,7 @@ static inline bool isLayoutBoundary(const RenderElement& renderer)
         return false;
     }
 
-    if (style.width().isIntrinsicOrLegacyIntrinsicOrAuto() || style.height().isIntrinsicOrLegacyIntrinsicOrAuto() || style.height().isPercentOrCalculated())
+    if (style.width().isSizingKeywordOrAuto() || style.height().isSizingKeywordOrAuto() || style.height().isPercentOrCalculated())
         return false;
 
     if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer())
@@ -701,13 +701,13 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
 void RenderObject::setLayerNeedsFullRepaint()
 {
     ASSERT(hasLayer());
-    protect(downcast<RenderLayerModelObject>(*this).layer())->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
+    downcast<RenderLayerModelObject>(*this).layer()->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
 }
 
 void RenderObject::setLayerNeedsFullRepaintForOutOfFlowMovementLayout()
 {
     ASSERT(hasLayer());
-    protect(downcast<RenderLayerModelObject>(*this).layer())->setRepaintStatus(RepaintStatus::NeedsFullRepaintForOutOfFlowMovementLayout);
+    downcast<RenderLayerModelObject>(*this).layer()->setRepaintStatus(RepaintStatus::NeedsFullRepaintForOutOfFlowMovementLayout);
 }
 
 static inline RenderBlock* nearestNonAnonymousContainingBlockIncludingSelf(RenderElement* renderer)
@@ -765,7 +765,7 @@ RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionT
 RenderBlock* RenderObject::containingBlock() const
 {
     // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=270977 for RenderLineBreak special treatment.
-    if (is<RenderText>(*this) || is<RenderLineBreak>(*this))
+    if (isAnyOf<RenderText, RenderLineBreak>(*this))
         return containingBlockForPositionType(PositionType::Static, *this);
 
     auto containingBlockForRenderer = [](const auto& renderer) -> RenderBlock* {
@@ -1036,6 +1036,9 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
 
 void RenderObject::repaint(ForceRepaint forceRepaint) const
 {
+    if (view().frameView().layoutContext().repaintsBlocked())
+        return;
+
     ASSERT(isDescendantOf(&view()) || is<RenderScrollbarPart>(this) || is<RenderReplica>(this));
 
     if (view().printing())
@@ -1649,7 +1652,7 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
     // containingBlock() skips to the non-anonymous containing block.
     // This does mean that computeOutOfFlowPositionedLogicalWidth and computeOutOfFlowPositionedLogicalHeight have to use container().
     // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=270977 for RenderLineBreak special treatment.
-    if (!is<RenderElement>(renderer) || is<RenderText>(renderer) || is<RenderLineBreak>(renderer))
+    if (!is<RenderElement>(renderer) || isAnyOf<RenderText, RenderLineBreak>(renderer))
         return renderer.parent();
 
     auto* renderElement = dynamicDowncast<RenderElement>(renderer);
@@ -1771,7 +1774,7 @@ void RenderObject::willBeDestroyed()
             node->setRenderer({ });
     }
 
-    protect(view())->willDestroyRenderer();
+    view().willDestroyRenderer();
 
     removeRareData();
 }
@@ -2129,7 +2132,7 @@ RenderObject::RenderObjectRareData::~RenderObjectRareData() = default;
 bool RenderObject::hasEmptyVisibleRectRespectingParentFrames() const
 {
     auto enclosingFrameRenderer = [] (const RenderObject& renderer) {
-        RefPtr ownerElement = renderer.document().ownerElement();
+        auto* ownerElement = renderer.document().ownerElement();
         return ownerElement ? ownerElement->renderer() : nullptr;
     };
 
@@ -2331,7 +2334,7 @@ ScrollAnchoringController* RenderObject::searchParentChainForScrollAnchoringCont
                 return controller;
         }
     }
-    return renderer.view().frameView().scrollAnchoringController();
+    return protect(renderer.view().frameView())->scrollAnchoringController();
 }
 
 void RenderObject::RepaintRects::transform(const TransformationMatrix& matrix)
@@ -2582,7 +2585,7 @@ static void adjustTextDirectionForCoalescedGeometries(const SelectionEndpointDir
     }
 }
 
-static bool shouldRenderSelectionOnSeparateLine(const RenderObject* currentRenderer)
+static bool NODELETE shouldRenderSelectionOnSeparateLine(const RenderObject* currentRenderer)
 {
     if (!currentRenderer)
         return false;

@@ -913,6 +913,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     interpreter/EntryFrame.h
     interpreter/FrameTracers.h
     interpreter/Interpreter.h
+    interpreter/MicrotaskCall.h
+    interpreter/MicrotaskCallInlines.h
     interpreter/ProtoCallFrame.h
     interpreter/ProtoCallFrameInlines.h
     interpreter/Register.h
@@ -1170,6 +1172,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCJSValue.h
     runtime/JSCJSValueCellInlines.h
     runtime/JSCJSValueInlines.h
+    runtime/JSPIContext.h
+    runtime/JSPIContextInlines.h
     runtime/JSCPtrTag.h
     runtime/JSCustomGetterFunction.h
     runtime/JSCustomSetterFunction.h

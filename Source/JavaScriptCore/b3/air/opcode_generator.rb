@@ -233,7 +233,7 @@ def isKind(token)
 end
 
 def isArch(token)
-    token =~ /\A((x86)|(x86_32)|(x86_64_avx)|(x86_64)|(arm)|(armv7)|(arm64e)|(arm64_lse)|(arm64)|(32)|(64))\Z/
+    token =~ /\A((x86)|(x86_32)|(x86_64_avx)|(x86_64)|(arm)|(armv7)|(arm64e)|(arm64_lse)|(arm64_sha3)|(arm64)|(32)|(64))\Z/
 end
 
 def isWidth(token)
@@ -341,6 +341,8 @@ class Parser
                 result << "ARM64E"
             when "arm64_lse"
                 result << "ARM64_LSE"
+            when "arm64_sha3"
+                result << "ARM64_SHA3"
             when "32"
                 result << "X86"
                 result << "ARM_THUMB2"
@@ -689,6 +691,7 @@ end
 
 $runTimeArchs = {
     "ARM64_LSE" => "ARM64",
+    "ARM64_SHA3" => "ARM64",
     "X86_64_AVX" => "X86_64"
 }
 def beginArchs(outp, archs)

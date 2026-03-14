@@ -56,7 +56,7 @@ public:
 
     bool NODELETE needsAnchor() const;
     const RenderBoxModelObject* defaultAnchorBox() const { return m_defaultAnchorBox.get(); }
-    const StyleSelfAlignmentData& alignment() const { return m_alignment; }
+    const StyleSelfAlignmentData& alignment() const LIFETIME_BOUND { return m_alignment; }
     ItemPosition resolveAlignmentValue() const; // Convert auto/normal as necessary.
     bool NODELETE alignmentAppliesStretch(ItemPosition normalAlignment) const;
 
@@ -83,7 +83,7 @@ public:
 
     LayoutUnit insetModifiedContainingSize() const { return m_insetModifiedContainingRange.size(); }
     LayoutRange insetModifiedContainingRange() const { return m_insetModifiedContainingRange; }
-    LayoutUnit availableContentSpace() const { return insetModifiedContainingSize() - marginBeforeValue() - bordersPlusPadding() - marginAfterValue(); } // This may be negative.
+    LayoutUnit availableContentSpace() const { return std::max(0_lu, insetModifiedContainingSize() - marginBeforeValue() - bordersPlusPadding() - marginAfterValue()); }
 
     void resolvePosition(RenderBox::LogicalExtentComputedValues&) const;
     LayoutUnit resolveAlignmentShift(const LayoutUnit unusedSpace, const LayoutUnit itemSize) const;
@@ -103,7 +103,7 @@ private:
     LayoutRange adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis);
     std::pair<bool, bool> containerAllowsInfiniteOverflow() const;
 
-    bool needsGridAreaAdjustmentBeforeStaticPositioning() const;
+    bool NODELETE needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
     void computeStaticPosition();
     LayoutUnit computedBlockStaticDistance() const;

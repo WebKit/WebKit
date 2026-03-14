@@ -26,3 +26,6 @@ webkit.org/b/288847 imported/w3c/web-platform-tests/cookiestore/cookieStore_even
 # Digital Credentials tests - Not supported on Sequoia (added in Tahoe)
 http/wpt/identity/ [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
+
+# webkit.org/b/308169 Skip until after macOS 26.4, where AXIntersectionWithSelectionRange returns AXTextMarkerRangeRef.
+accessibility/mac/intersection-with-selection-range.html [ Skip ]

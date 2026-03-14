@@ -876,7 +876,7 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    const URL& url() const final { return m_url; }
+    const URL& url() const LIFETIME_BOUND final { return m_url; }
     WEBCORE_EXPORT void setURL(URL&&);
     WEBCORE_EXPORT const URL& urlForBindings();
 
@@ -897,8 +897,7 @@ public:
     // https://wicg.github.io/nav-speculation/speculation-rules.html#consider-speculation
     void considerSpeculationRules();
     void processSpeculationRules();
-    Ref<const SpeculationRules> NODELETE speculationRules() const;
-    Ref<SpeculationRules> NODELETE speculationRules();
+    SpeculationRules& NODELETE speculationRules() const;
 
     URL baseURLForComplete(const URL& baseURLOverride) const;
     WEBCORE_EXPORT URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
@@ -918,6 +917,7 @@ public:
     bool requiresTrustedTypes() const { return m_requiresTrustedTypes && !shouldBypassMainWorldContentSecurityPolicy(); }
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
+    void clearIDBConnectionProxy();
     StorageConnection* storageConnection();
     SocketProvider* NODELETE socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
@@ -1220,7 +1220,7 @@ public:
     //    document inherits the security context of another document, it
     //    inherits its cookieURL but not its URL.
     //
-    const URL& cookieURL() const final { return m_cookieURL; }
+    const URL& cookieURL() const LIFETIME_BOUND final { return m_cookieURL; }
     void setCookieURL(const URL&);
 
     // The firstPartyForCookies is used to compute whether this document
@@ -1249,20 +1249,6 @@ public:
     const URL& siteForCookies() const LIFETIME_BOUND { return m_siteForCookies; }
     void setSiteForCookies(const URL& url) { m_siteForCookies = url; }
     bool isSameSiteForCookies(const URL&) const;
-
-    // The following implements the rule from HTML 4 for what valid names are.
-    // To get this right for all the XML cases, we probably have to improve this or move it
-    // and make it sensitive to the type of document.
-    static bool NODELETE isValidName(const String&);
-
-    // The following breaks a qualified name into a prefix and a local name.
-    // It also does a validity check, and returns an error if the qualified name is invalid.
-    static ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedName(const AtomString& qualifiedName);
-    static ExceptionOr<QualifiedName> parseQualifiedName(const AtomString& namespaceURI, const AtomString& qualifiedName);
-
-    // Checks to make sure prefix and namespace do not conflict (per DOM Core 3)
-    static bool hasValidNamespaceForElements(const QualifiedName&);
-    static bool hasValidNamespaceForAttributes(const QualifiedName&);
 
     // This is the "HTML body element" as defined by CSSOM View spec, the first body child of the
     // document element. See http://dev.w3.org/csswg/cssom-view/#the-html-body-element.

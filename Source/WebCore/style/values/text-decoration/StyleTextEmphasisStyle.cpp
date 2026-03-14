@@ -110,8 +110,8 @@ auto CSSValueConversion<TextEmphasisStyle>::operator()(BuilderState& state, cons
 
         std::optional<TextEmphasisFill> fill;
         std::optional<TextEmphasisMark> mark;
-        for (Ref item : *list) {
-            auto valueID = item->valueID();
+        for (auto& item : *list) {
+            auto valueID = item.valueID();
             if (valueID == CSSValueFilled || valueID == CSSValueOpen)
                 fill = fromCSSValueID<TextEmphasisFill>(valueID);
             else

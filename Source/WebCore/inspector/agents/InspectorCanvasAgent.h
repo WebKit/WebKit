@@ -112,7 +112,7 @@ public:
     void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasProcessedArguments&& = { });
 
     RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
-    RefPtr<InspectorCanvas> findInspectorCanvas(const CanvasRenderingContext&);
+    RefPtr<InspectorCanvas> NODELETE findInspectorCanvas(const CanvasRenderingContext&);
 
 protected:
     InspectorCanvasAgent(WebAgentContext&);
@@ -147,7 +147,7 @@ private:
 #if ENABLE(WEBGL)
     void unbindProgram(InspectorShaderProgram&);
     RefPtr<InspectorShaderProgram> assertInspectorProgram(Inspector::Protocol::ErrorString&, const String& programId);
-    RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
+    RefPtr<InspectorShaderProgram> NODELETE findInspectorProgram(WebGLProgram&);
 #endif // ENABLE(WEBGL)
 
     const Ref<Inspector::CanvasBackendDispatcher> m_backendDispatcher;

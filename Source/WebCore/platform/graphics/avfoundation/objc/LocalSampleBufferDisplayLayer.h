@@ -61,7 +61,7 @@ public:
 
     CGRect bounds() const;
 
-    PlatformLayer* displayLayer();
+    PlatformLayer* NODELETE displayLayer();
 
     void updateSampleLayerBoundsAndPosition(std::optional<CGRect>);
 

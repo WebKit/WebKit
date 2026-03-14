@@ -65,7 +65,7 @@ public:
 
     class ConnectionStateTracker : public ThreadSafeRefCounted<ConnectionStateTracker> {
     public:
-        static Ref<ConnectionStateTracker> create() { return adoptRef(*new ConnectionStateTracker()); }
+        static Ref<ConnectionStateTracker> NODELETE create() { return adoptRef(*new ConnectionStateTracker()); }
         void NODELETE markAsStopped() { m_isStopped = true; }
         bool NODELETE isStopped() const { return m_isStopped; }
         bool NODELETE shouldLogMissingECN() const { return !m_didLogMissingECN; }

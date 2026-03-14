@@ -30,8 +30,10 @@
 #include "SymbolTable.h"
 
 #include "CodeBlock.h"
+#include "DebuggerLocation.h"
 #include "JSCJSValueInlines.h"
 #include "ResourceExhaustion.h"
+#include "ScriptExecutable.h"
 #include "TypeProfiler.h"
 
 #include <wtf/CommaPrinter.h>
@@ -98,10 +100,8 @@ void SymbolTable::visitChildrenImpl(JSCell* thisCell, Visitor& visitor)
     Base::visitChildren(thisSymbolTable, visitor);
 
     visitor.append(thisSymbolTable->m_arguments);
-    
-    if (auto* rareData = thisSymbolTable->m_rareData.get())
-        visitor.append(rareData->m_codeBlock);
-    
+    visitor.append(thisSymbolTable->m_clonedFrom);
+
     // Save some memory. This is O(n) to rebuild and we do so on the fly.
     ConcurrentJSLocker locker(thisSymbolTable->m_lock);
     thisSymbolTable->m_localToEntry = nullptr;
@@ -213,7 +213,7 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
                 result->m_rareData->m_privateNames.add(name.key, name.value);
         }
     }
-    
+    result->m_clonedFrom.set(vm, result, this);
     return result;
 }
 
@@ -230,19 +230,31 @@ void SymbolTable::prepareForTypeProfiling(const ConcurrentJSLocker&)
     }
 }
 
-CodeBlock* SymbolTable::rareDataCodeBlock()
+String SymbolTable::inferredName()
 {
     if (!m_rareData)
-        return nullptr;
-
-    return m_rareData->m_codeBlock.get();
+        return String();
+    return m_rareData->m_inferredName;
 }
 
-void SymbolTable::setRareDataCodeBlock(CodeBlock* codeBlock)
+DebuggerLocation SymbolTable::debuggerLocation()
+{
+    if (!m_rareData)
+        return DebuggerLocation();
+    return DebuggerLocation(m_rareData->m_debuggerSourceID, m_rareData->m_debuggerLineColumn.line, m_rareData->m_debuggerLineColumn.column);
+}
+
+void SymbolTable::collectDebuggerInfo(CodeBlock* codeBlock)
 {
     auto& rareData = ensureRareData();
-    ASSERT(!rareData.m_codeBlock);
-    rareData.m_codeBlock.set(codeBlock->vm(), this, codeBlock);
+    if (!rareData.m_inferredName.isNull())
+        return;
+    rareData.m_inferredName = String::fromUTF8(codeBlock->inferredName().span());
+    ScriptExecutable* executable = codeBlock->ownerExecutable();
+    if (!executable->isHostFunction()) {
+        rareData.m_debuggerSourceID = executable->sourceID();
+        rareData.m_debuggerLineColumn = { static_cast<unsigned>(executable->firstLine()), executable->startColumn() };
+    }
 }
 
 GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJSLocker&, UniquedStringImpl* key, VM& vm)

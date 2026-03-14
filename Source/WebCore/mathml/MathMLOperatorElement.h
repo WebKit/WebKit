@@ -42,16 +42,16 @@ public:
         bool isVertical { true };
     };
     static OperatorChar parseOperatorChar(const String&);
-    const OperatorChar& operatorChar();
+    const OperatorChar& operatorChar() LIFETIME_BOUND;
     void setOperatorFormDirty() { m_dictionaryProperty = std::nullopt; }
     MathMLOperatorDictionary::Form form() { return dictionaryProperty().form; }
     bool hasProperty(MathMLOperatorDictionary::Flag);
     Length defaultLeadingSpace();
     Length defaultTrailingSpace();
-    const Length& leadingSpace();
-    const Length& trailingSpace();
-    const Length& minSize();
-    const Length& maxSize();
+    const Length& leadingSpace() LIFETIME_BOUND;
+    const Length& trailingSpace() LIFETIME_BOUND;
+    const Length& minSize() LIFETIME_BOUND;
+    const Length& maxSize() LIFETIME_BOUND;
 
 private:
     MathMLOperatorElement(const QualifiedName&, Document&);
@@ -63,7 +63,7 @@ private:
 
     std::optional<MathMLOperatorDictionary::Property> m_dictionaryProperty;
     MathMLOperatorDictionary::Property computeDictionaryProperty();
-    const MathMLOperatorDictionary::Property& dictionaryProperty();
+    const MathMLOperatorDictionary::Property& dictionaryProperty() LIFETIME_BOUND;
 
     struct OperatorProperties {
         unsigned short flags;

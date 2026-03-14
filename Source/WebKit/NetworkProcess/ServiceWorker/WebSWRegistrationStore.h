@@ -58,6 +58,7 @@ private:
     void importRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>&&)>&&);
     void updateRegistration(const WebCore::ServiceWorkerContextData&);
     void removeRegistration(const WebCore::ServiceWorkerRegistrationKey&);
+    void retrieveWorkerScripts(WebCore::ServiceWorkerIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const URL& scriptURL, const Vector<URL>& importedScriptURLs, CompletionHandler<void(std::optional<WebCore::ServiceWorkerScripts>&&)>&&);
 
     void scheduleUpdateIfNecessary();
     void updateToStorage(CompletionHandler<void()>&&);

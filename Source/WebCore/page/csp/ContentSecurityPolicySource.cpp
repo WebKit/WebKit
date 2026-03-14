@@ -84,7 +84,7 @@ bool ContentSecurityPolicySource::schemeMatches(const URL& url) const
     return false;
 }
 
-static bool wildcardMatches(StringView host, const String& hostWithWildcard)
+static bool NODELETE wildcardMatches(StringView host, const String& hostWithWildcard)
 {
     auto hostLength = host.length();
     auto hostWithWildcardLength = hostWithWildcard.length();

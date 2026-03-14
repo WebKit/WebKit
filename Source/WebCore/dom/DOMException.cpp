@@ -81,7 +81,7 @@ auto DOMException::description(ExceptionCode ec) -> const Description&
     return emptyDescription;
 }
 
-static DOMException::LegacyCode legacyCodeFromName(const String& name)
+static DOMException::LegacyCode NODELETE legacyCodeFromName(const String& name)
 {
     for (auto& description : descriptions) {
         if (description.name == name)

@@ -237,7 +237,7 @@ public:
     WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
     WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
 
-    HashSet<SecurityOriginData> takeNavigationRequestsToUpgrade();
+    HashSet<SecurityOriginData> NODELETE takeNavigationRequestsToUpgrade();
     void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);
     void setInsecureNavigationRequestsToUpgrade(HashSet<SecurityOriginData>&&);
 

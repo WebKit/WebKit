@@ -167,7 +167,7 @@ private:
         Vector<HasInvalidationFeature> hasPseudoClasses;
     };
     DoesBreakScope recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject, IsNegation = IsNegation::No, CanBreakScope = CanBreakScope::No);
-    void collectPseudoElementFeatures(const RuleData&);
+    void NODELETE collectPseudoElementFeatures(const RuleData&);
 };
 
 bool NODELETE isHasPseudoClassMatchElement(MatchElement);

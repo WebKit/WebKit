@@ -84,7 +84,7 @@ public:
     bool htmlTextAreaElementLastChangeWasUserEdit();
     bool isTextField() const;
     bool NODELETE isSelectElement() const;
-    bool isSelectableTextNode() const;
+    bool NODELETE isSelectableTextNode() const;
     
     RefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
 

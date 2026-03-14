@@ -84,10 +84,13 @@
         }
         
         state ++;
-        
-        // Do the step in a timeout to give asynchornous history.back/forward()
-        // calls a chance to run.
-        setTimeout(step, 0);
+
+        // For steps after history.back/forward, wait for popstate event.
+        // For other steps, proceed immediately.
+        if (state == 4 || state == 5 || state == 6)
+            window.addEventListener('popstate', step, { once: true });
+        else
+            setTimeout(step, 0);
     }
         
     async function runTests() {

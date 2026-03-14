@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PannerNode);
 
-static void fixNANs(double &x)
+static void NODELETE fixNANs(double &x)
 {
     if (std::isnan(x) || std::isinf(x))
         x = 0.0;

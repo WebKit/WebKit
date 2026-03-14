@@ -47,6 +47,7 @@
 #import "LocalFrameInlines.h"
 #import "Logging.h"
 #import "NodeRenderStyle.h"
+#import "Page.h"
 #import "RenderStyle+GettersInlines.h"
 #import "RenderedDocumentMarker.h"
 #import "TextAnimationTypes.h"
@@ -1169,7 +1170,7 @@ RefPtr<Document> WritingToolsController::document() const
         return nullptr;
     }
 
-    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    auto* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame) {
         ASSERT_NOT_REACHED();
         return nullptr;

@@ -32,7 +32,7 @@
 #include "ICStatusMap.h"
 #include "Instruction.h"
 #include "InstructionStream.h"
-#include "StructureStubInfo.h"
+#include "PropertyInlineCache.h"
 #include "WasmOps.h"
 
 namespace JSC {

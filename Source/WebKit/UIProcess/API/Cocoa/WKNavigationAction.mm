@@ -105,12 +105,12 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 
 - (WKFrameInfo *)sourceFrame
 {
-    return wrapper(protect(*_navigationAction)->sourceFrame());
+    return wrapper(_navigationAction->sourceFrame());
 }
 
 - (WKFrameInfo *)targetFrame
 {
-    return wrapper(protect(_navigationAction->targetFrame()).get());
+    return wrapper(_navigationAction->targetFrame());
 }
 
 - (WKNavigationType)navigationType
@@ -132,7 +132,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 
 - (WKNavigation *)mainFrameNavigation
 {
-    return wrapper(protect(_navigationAction->mainFrameNavigation()).get());
+    return wrapper(_navigationAction->mainFrameNavigation());
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -221,7 +221,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 
 - (_WKUserInitiatedAction *)_userInitiatedAction
 {
-    return wrapper(protect(_navigationAction->userInitiatedAction()).get());
+    return wrapper(_navigationAction->userInitiatedAction());
 }
 
 - (BOOL)isContentRuleListRedirect

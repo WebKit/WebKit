@@ -62,7 +62,7 @@ public:
     const AtomString& familyAt(unsigned i) const { return m_families.get()[i]; }
     RefCountedFixedVector<AtomString>& families() const { return m_families.get(); }
 
-    static bool familyNamesAreEqual(const AtomString&, const AtomString&);
+    static bool NODELETE familyNamesAreEqual(const AtomString&, const AtomString&);
     static unsigned familyNameHash(const AtomString&);
     static String foldedFamilyName(const String&);
 
@@ -88,7 +88,7 @@ public:
         return identifier;
     }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
-    FontSmoothingMode usedFontSmoothing() const;
+    FontSmoothingMode NODELETE usedFontSmoothing() const;
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
 
     void setOneFamily(const AtomString& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = family; }
@@ -114,7 +114,7 @@ public:
     void setIsSpecifiedFont(bool isSpecifiedFont) { m_isSpecifiedFont = isSpecifiedFont; }
 
 #if ENABLE(TEXT_AUTOSIZING)
-    bool familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
+    bool NODELETE familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
 
     bool equalForTextAutoSizing(const FontCascadeDescription& other) const
     {
@@ -125,7 +125,7 @@ public:
     }
 #endif
 
-    WEBCORE_EXPORT void resolveFontSizeAdjustFromFontIfNeeded(const Font&);
+    WEBCORE_EXPORT void NODELETE resolveFontSizeAdjustFromFontIfNeeded(const Font&);
 
 private:
     Ref<RefCountedFixedVector<AtomString>> m_families;

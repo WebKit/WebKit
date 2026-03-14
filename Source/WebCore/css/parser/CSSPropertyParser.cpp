@@ -233,6 +233,16 @@ static bool consumeFunctionArgument(CSSParserTokenRange& range, unsigned index, 
     if (!argument)
         return false;
 
+    // If the argument is a block, strip the braces.
+    if (argument->peek().type() == LeftBraceToken) {
+        auto last = argument->consumeLast();
+        if (last.type() != RightBraceToken)
+            return false;
+        argument->consume(); // Consume left brace.
+        argument->consumeWhitespace();
+        argument->trimTrailingWhitespace();
+    }
+
     const auto& context = state.context;
     auto important = state.important;
     auto ruleType = state.currentRule;

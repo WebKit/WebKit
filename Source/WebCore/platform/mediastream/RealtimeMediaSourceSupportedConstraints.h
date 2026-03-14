@@ -104,7 +104,7 @@ public:
     bool supportsLogicalSurface() const { return m_supportsLogicalSurface; }
     void setSupportsLogicalSurface(bool value) { m_supportsLogicalSurface = value; }
 
-    bool supportsConstraint(MediaConstraintType) const;
+    bool NODELETE supportsConstraint(MediaConstraintType) const;
 
     bool supportsFocusDistance() const { return m_supportsFocusDistance; }
     void setSupportsFocusDistance(bool value) { m_supportsFocusDistance = value; }

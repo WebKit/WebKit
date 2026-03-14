@@ -34,6 +34,7 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SystemFree.h>
 #include <wtf/TZoneMalloc.h>
 
 typedef struct AudioFormatVorbisModeInfo AudioFormatVorbisModeInfo;
@@ -71,7 +72,11 @@ PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef);
 WEBCORE_EXPORT Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef);
 #endif
 
-WEBCORE_EXPORT FourCC computeBoxType(FourCC);
+WEBCORE_EXPORT FourCC NODELETE computeBoxType(FourCC);
+
+WEBCORE_EXPORT std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLayoutTag(UInt32);
+// Retrieve channel layout name string for debugging.
+WEBCORE_EXPORT String channelLayoutDescription(UInt32);
 
 class PacketDurationParser final {
     WTF_MAKE_TZONE_ALLOCATED(PacketDurationParser);
@@ -81,7 +86,7 @@ public:
 
     bool isValid() const { return m_isValid; }
     size_t framesInPacket(std::span<const uint8_t>);
-    void reset();
+    void NODELETE reset();
 
 private:
     uint32_t m_audioFormatID { 0 };

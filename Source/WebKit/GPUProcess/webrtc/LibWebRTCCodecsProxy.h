@@ -123,7 +123,7 @@ private:
         bool useLowLatency { false };
         bool isInvalid { false };
     };
-    Encoder* findEncoder(VideoEncoderIdentifier) WTF_REQUIRES_CAPABILITY(workQueue());
+    Encoder* NODELETE findEncoder(VideoEncoderIdentifier) WTF_REQUIRES_CAPABILITY(workQueue());
 
     const Ref<IPC::Connection> m_connection;
     const Ref<WorkQueue> m_queue;

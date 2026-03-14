@@ -94,12 +94,12 @@ bool containsColorSchemeDependentColor(const ColorMix& unresolved)
 
 namespace ColorMixSerializationDetails {
 
-static bool sumTo100Percent(const ColorMix::Component::Percentage& a, const ColorMix::Component::Percentage& b)
+static bool NODELETE sumTo100Percent(const ColorMix::Component::Percentage& a, const ColorMix::Component::Percentage& b)
 {
     return a.isRaw() && b.isRaw() && a.raw()->value + b.raw()->value == 100.0;
 }
 
-static std::optional<PercentageRaw<>> subtractFrom100Percent(const ColorMix::Component::Percentage& percentage)
+static std::optional<PercentageRaw<>> NODELETE subtractFrom100Percent(const ColorMix::Component::Percentage& percentage)
 {
     return percentage.isRaw() ? std::make_optional(PercentageRaw<> { 100.0 - percentage.raw()->value }) : std::nullopt;
 }

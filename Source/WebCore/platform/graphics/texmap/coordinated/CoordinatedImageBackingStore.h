@@ -39,7 +39,7 @@ public:
     ~CoordinatedImageBackingStore();
 
     bool isSameNativeImage(const NativeImage&);
-    CoordinatedPlatformLayerBuffer* buffer() const { return m_buffer.get(); }
+    CoordinatedPlatformLayerBuffer* buffer() const LIFETIME_BOUND { return m_buffer.get(); }
 
 private:
     explicit CoordinatedImageBackingStore(Ref<NativeImage>&&);

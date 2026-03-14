@@ -47,7 +47,7 @@ void AttachmentAssociatedElement::setAttachmentElement(Ref<HTMLAttachmentElement
 
 HTMLAttachmentElement* AttachmentAssociatedElement::attachmentElement() const
 {
-    if (RefPtr shadowRoot = protect(asHTMLElement())->userAgentShadowRoot())
+    if (RefPtr shadowRoot = asHTMLElement().userAgentShadowRoot())
         return childrenOfType<HTMLAttachmentElement>(*shadowRoot).first();
 
     return nullptr;

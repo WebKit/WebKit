@@ -95,7 +95,7 @@ private:
     bool paused() const final;
     MediaPlayer::NetworkState networkState() const final { return m_networkState; }
     MediaPlayer::ReadyState readyState() const final { return m_readyState; }
-    const PlatformTimeRanges& buffered() const final { return m_buffered; }
+    const PlatformTimeRanges& buffered() const LIFETIME_BOUND final { return m_buffered; }
     bool didLoadingProgress() const final { return m_didLoadingProgress; }
     void paint(GraphicsContext&, const FloatRect&) final { }
     DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }

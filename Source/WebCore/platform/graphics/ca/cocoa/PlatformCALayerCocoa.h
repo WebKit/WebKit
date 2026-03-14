@@ -60,7 +60,7 @@ public:
     void appendSublayer(PlatformCALayer&) override;
     void insertSublayer(PlatformCALayer&, size_t index) override;
     void replaceSublayer(PlatformCALayer& reference, PlatformCALayer&) override;
-    const PlatformCALayerList* customSublayers() const override { return m_customSublayers.get(); }
+    const PlatformCALayerList* customSublayers() const LIFETIME_BOUND override { return m_customSublayers.get(); }
     void adoptSublayers(PlatformCALayer& source) override;
 
     void addAnimationForKey(const String& key, PlatformCAAnimation&) override;
@@ -145,7 +145,7 @@ public:
     float opacity() const override;
     void setOpacity(float) override;
     void setFilters(const FilterOperations&) override;
-    WEBCORE_EXPORT static bool filtersCanBeComposited(const FilterOperations&);
+    WEBCORE_EXPORT static bool NODELETE filtersCanBeComposited(const FilterOperations&);
     void copyFiltersFrom(const PlatformCALayer&) override;
 
     void setBlendMode(BlendMode) override;
@@ -182,7 +182,7 @@ public:
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
-    const EventRegion* eventRegion() const override { return &m_eventRegion; }
+    const EventRegion* eventRegion() const LIFETIME_BOUND override { return &m_eventRegion; }
     void setEventRegion(const EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)
@@ -226,7 +226,7 @@ private:
 
     Type type() const final { return Type::Cocoa; }
 
-    bool requiresCustomAppearanceUpdateOnBoundsChange() const;
+    bool NODELETE requiresCustomAppearanceUpdateOnBoundsChange() const;
 
     void updateContentsFormat();
 

@@ -1,0 +1,6 @@
+test 1
+
+FAIL [data-expected-height] 1 assert_equals:
+<div style="height: 300px; max-height: stretch; min-height: 250px; background: green" data-expected-height="250">test 1</div>
+height expected 250 but got 300
+

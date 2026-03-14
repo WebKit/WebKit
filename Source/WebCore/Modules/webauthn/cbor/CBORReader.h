@@ -122,7 +122,7 @@ private:
     std::optional<CBORValue> readCBORArray(uint64_t length, int maxNestingLevel);
     std::optional<CBORValue> readCBORMap(uint64_t length, int maxNestingLevel);
     bool canConsume(uint64_t bytes);
-    void checkExtraneousData();
+    void NODELETE checkExtraneousData();
     bool checkDuplicateKey(const CBORValue& newKey, const CBORValue::MapValue&);
     bool NODELETE hasValidUTF8Format(const String&);
     bool checkOutOfOrderKey(const CBORValue& newKey, const CBORValue::MapValue&);

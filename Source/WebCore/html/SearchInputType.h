@@ -80,7 +80,7 @@ public:
     HostWindow* hostWindow() const override;
 #endif
 
-    Vector<RecentSearch>& recentSearches() { return m_recentSearches; }
+    Vector<RecentSearch>& recentSearches() LIFETIME_BOUND { return m_recentSearches; }
 
 private:
     explicit SearchInputType(HTMLInputElement&);

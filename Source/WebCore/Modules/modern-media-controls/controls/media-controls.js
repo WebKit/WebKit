@@ -57,6 +57,7 @@ class MediaControls extends LayoutNode
 
         this._placard = null;
         this.invalidPlacard = new InvalidPlacard(this);
+        this.fullscreenPlacard = new FullscreenPlacard(this);
 
         // FIXME: Adwaita layout doesn't have an icon for pip-placard.
         if (this.layoutTraits?.supportsPiP())

@@ -104,7 +104,7 @@ Ref<DOMMatrix> DOMMatrixReadOnly::cloneAsDOMMatrix() const
 }
 
 // https://tc39.github.io/ecma262/#sec-samevaluezero
-static bool sameValueZero(double a, double b)
+static bool NODELETE sameValueZero(double a, double b)
 {
     if (std::isnan(a) && std::isnan(b))
         return true;

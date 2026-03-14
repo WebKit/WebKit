@@ -53,8 +53,8 @@ class Signature;
 class TrackedReferences;
 class VM;
 
-struct StructureStubInfoIndex {
-    explicit StructureStubInfoIndex(unsigned index)
+struct PropertyInlineCacheIndex {
+    explicit PropertyInlineCacheIndex(unsigned index)
         : m_index(index)
     { }
 

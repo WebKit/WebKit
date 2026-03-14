@@ -522,7 +522,7 @@ void WebProcessCache::CachedProcess::evictionTimerFired()
 {
     ASSERT(m_process);
     auto process = m_process.copyRef();
-    protect(process->processPool())->webProcessCache().removeProcess(*process, ShouldShutDownProcess::Yes);
+    process->processPool().webProcessCache().removeProcess(*process, ShouldShutDownProcess::Yes);
 }
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)

@@ -184,7 +184,7 @@ void CustomElementRegistry::upgrade(Node& root)
         return;
 
     RefPtr element = dynamicDowncast<Element>(*containerNode);
-    if (element && element->isCustomElementUpgradeCandidate())
+    if (element && element->isCustomElementUpgradeCandidate() && CustomElementRegistry::registryForElement(*element) == this)
         CustomElementReactionQueue::tryToUpgradeElement(*element);
 
     upgradeElementsInShadowIncludingDescendants(*this, *containerNode);
@@ -265,7 +265,7 @@ void CustomElementRegistry::visitJSCustomElementInterfacesInGCThread(Visitor& vi
 {
     Locker locker { m_constructorMapLock };
     for (const auto& iterator : m_constructorMap)
-        iterator.value->visitJSFunctions(visitor);
+        iterator.value->visitJSFunctionsInGCThread(visitor);
 }
 
 template void CustomElementRegistry::visitJSCustomElementInterfacesInGCThread(JSC::AbstractSlotVisitor&) const;

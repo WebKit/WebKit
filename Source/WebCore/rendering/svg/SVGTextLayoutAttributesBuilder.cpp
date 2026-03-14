@@ -105,7 +105,7 @@ void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderBoxMod
     ASSERT(!is<RenderSVGText>(start) || m_textPositions.isEmpty());
 
     for (auto& child : childrenOfType<RenderObject>(start)) {
-        if (CheckedPtr inlineText = dynamicDowncast<RenderSVGInlineText>(child)) {
+        if (auto* inlineText = dynamicDowncast<RenderSVGInlineText>(child)) {
             processRenderSVGInlineText(*inlineText, m_textLength, lastCharacterWasSpace);
             continue;
         }

@@ -100,7 +100,7 @@ private:
     DebuggerScope(VM&, Structure*, JSScope*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    JSScope* jsScope() const { return m_scope.get(); }
+    JSScope* jsScope() const LIFETIME_BOUND { return m_scope.get(); }
 
     WriteBarrier<JSScope> m_scope;
     WriteBarrier<DebuggerScope> m_next;

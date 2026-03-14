@@ -35,7 +35,7 @@ struct FourCC {
     constexpr FourCC(uint32_t value) : value { value } { }
     constexpr FourCC(std::span<const char, 5> nullTerminatedString);
     constexpr std::array<char, 5> string() const;
-    static std::optional<FourCC> fromString(StringView);
+    static std::optional<FourCC> NODELETE fromString(StringView);
     friend constexpr bool operator==(FourCC, FourCC) = default;
 
     uint32_t value { 0 };

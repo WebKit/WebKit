@@ -52,7 +52,7 @@ ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(Sc
         handle = WTF::move(*trackHandle);
         if (handle->isDetached())
             return Exception { ExceptionCode::TypeError, "Track handle is detached"_s };
-        if (!protect(protect(handle->trackSourceObserver())->source())->isVideo())
+        if (!handle->trackSourceObserver().source().isVideo())
             return Exception { ExceptionCode::TypeError, "Track is not video"_s };
     } else {
         Ref track = std::get<Ref<MediaStreamTrack>>(init.track);
@@ -72,7 +72,7 @@ ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(Sc
 MediaStreamTrackProcessor::MediaStreamTrackProcessor(ScriptExecutionContext& context, Ref<MediaStreamTrackHandle>&& trackHandle, unsigned short maxVideoFramesCount)
     : ContextDestructionObserver(&context)
     , m_trackKeeper(trackHandle->trackKeeper())
-    , m_videoFrameObserverWrapper(VideoFrameObserverWrapper::create(context.identifier(), *this, protect(protect(trackHandle->trackSourceObserver())->source()), maxVideoFramesCount))
+    , m_videoFrameObserverWrapper(VideoFrameObserverWrapper::create(context.identifier(), *this, trackHandle->trackSourceObserver().source(), maxVideoFramesCount))
     , m_trackObserver(TrackObserverWrapper::create(context, *this, WTF::move(trackHandle)))
 {
     m_trackObserver->start();

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "CSSToLengthConversionData.h"
 
+#include "DocumentView.h"
 #include "FloatSize.h"
 #include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
@@ -151,7 +152,7 @@ void CSSToLengthConversionData::setUsesContainerUnits() const
 bool CSSToLengthConversionData::evaluationTimeZoomEnabled() const
 {
     ASSERT(m_style);
-    return CheckedPtr { m_style }->evaluationTimeZoomEnabled();
+    return m_style->evaluationTimeZoomEnabled();
 }
 
 } // namespace WebCore

@@ -25,7 +25,7 @@
 
 import Foundation
 
-@_spi(Private) internal import AuthenticationServices
+@_spi(Private) import AuthenticationServices
 
 @objc
 @implementation

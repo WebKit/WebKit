@@ -95,9 +95,9 @@ public:
     TextTrackList& textTracks();
     TextTrackList* textTracksIfExists() const { return m_textTracks.get(); }
 
-    double appendWindowStart() const;
+    double NODELETE appendWindowStart() const;
     ExceptionOr<void> setAppendWindowStart(double);
-    double appendWindowEnd() const;
+    double NODELETE appendWindowEnd() const;
     ExceptionOr<void> setAppendWindowEnd(double);
 
     ExceptionOr<void> appendBuffer(const BufferSource&);

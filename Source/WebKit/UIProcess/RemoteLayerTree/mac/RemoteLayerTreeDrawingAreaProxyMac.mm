@@ -140,7 +140,7 @@ DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::displayLink()
 {
     ASSERT(m_displayID);
 
-    auto& displayLinks = protect(page())->configuration().processPool().displayLinks();
+    auto& displayLinks = page()->configuration().processPool().displayLinks();
     return displayLinks.displayLinkForDisplay(*m_displayID);
 }
 

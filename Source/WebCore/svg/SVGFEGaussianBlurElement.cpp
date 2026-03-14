@@ -58,8 +58,8 @@ Ref<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedNa
 
 void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
 {
-    Ref { m_stdDeviationX }->setBaseValInternal(x);
-    Ref { m_stdDeviationY }->setBaseValInternal(y);
+    m_stdDeviationX->setBaseValInternal(x);
+    m_stdDeviationY->setBaseValInternal(y);
     updateSVGRendererForElementChange();
 }
 
@@ -68,8 +68,8 @@ void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const
     switch (name.nodeName()) {
     case AttributeNames::stdDeviationAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            Ref { m_stdDeviationX }->setBaseValInternal(result->first);
-            Ref { m_stdDeviationY }->setBaseValInternal(result->second);
+            m_stdDeviationX->setBaseValInternal(result->first);
+            m_stdDeviationY->setBaseValInternal(result->second);
         }
         break;
     case AttributeNames::inAttr:

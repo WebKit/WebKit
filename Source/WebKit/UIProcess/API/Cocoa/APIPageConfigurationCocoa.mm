@@ -48,7 +48,7 @@ WebKit::DragLiftDelay PageConfiguration::Data::defaultDragLiftDelay()
 }
 #endif
 
-uintptr_t PageConfiguration::Data::defaultMediaTypesRequiringUserActionForPlayback()
+SUPPRESS_NODELETE uintptr_t PageConfiguration::Data::defaultMediaTypesRequiringUserActionForPlayback()
 {
 #if PLATFORM(IOS_FAMILY)
 #if !PLATFORM(WATCHOS)

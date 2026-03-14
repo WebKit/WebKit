@@ -114,7 +114,7 @@ std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas, G
     return context;
 }
 
-static GPUPresentationContextDescriptor presentationContextDescriptor(GPUCompositorIntegration& compositorIntegration)
+static GPUPresentationContextDescriptor NODELETE presentationContextDescriptor(GPUCompositorIntegration& compositorIntegration)
 {
     return GPUPresentationContextDescriptor {
         compositorIntegration,
@@ -195,7 +195,7 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, Ref<GPUComposit
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-static float interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
+static float NODELETE interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
 {
     if (headroomForHigh <= headroomForLow || limitHigh <= limitLow)
         return headroomForHigh;
@@ -606,7 +606,7 @@ void GPUCanvasContextCocoa::updateMemoryCost() const
     // Computes only a rough ballpark figure to drive garbage collection.
     size_t newMemoryCost = 0;
     if (m_readDisplayBuffer)
-        newMemoryCost += Ref { *m_readDisplayBuffer }->memoryCost();
+        newMemoryCost += m_readDisplayBuffer->memoryCost();
     if (m_currentTexture)
         newMemoryCost += m_width * m_height * 4;
     CanvasRenderingContext::updateMemoryCost(newMemoryCost);

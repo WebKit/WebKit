@@ -38,10 +38,10 @@ class GetByStatus;
 class InByStatus;
 class PutByStatus;
 class DeleteByStatus;
-class StructureStubInfo;
+class PropertyInlineCache;
 
 struct ICStatus {
-    StructureStubInfo* stubInfo { nullptr };
+    PropertyInlineCache* propertyCache { nullptr };
     CallLinkInfo* callLinkInfo { nullptr };
     CallLinkStatus* callStatus { nullptr };
     GetByStatus* getStatus { nullptr };

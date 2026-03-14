@@ -67,7 +67,7 @@ public:
     void rescheduleIfNeeded(MonotonicTime deadline);
     bool hasImminentlyScheduledWork() const { return m_imminentlyScheduledWorkCount; }
 
-    [[nodiscard]] Ref<ImminentlyScheduledWorkScope> makeScheduledWorkScope();
+    [[nodiscard]] Ref<ImminentlyScheduledWorkScope> NODELETE makeScheduledWorkScope();
 
     class FullGCActivityCallback final : public JSC::FullGCActivityCallback {
     public:

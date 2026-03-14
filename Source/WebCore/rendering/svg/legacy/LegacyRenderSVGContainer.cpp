@@ -28,6 +28,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LocalFrameView.h"
 #include "RenderIterator.h"
 #include "RenderObjectInlines.h"
 #include "RenderTreeBuilder.h"

@@ -8,10 +8,17 @@ Test that WebKit does not crash when we apply style to atomic elements and that 
 |       "2"
 |     <shadow:root>
 |       <div>
+|         style="appearance: inherit;"
 |         useragentpart="-webkit-progress-inner-element"
 |         <div>
 |           useragentpart="-webkit-progress-bar"
 |           <div>
 |             style="inline-size: 0%;"
 |             useragentpart="-webkit-progress-value"
+|       <div>
+|         style="appearance: inherit;"
+|         useragentpart="slider-track"
+|         <div>
+|           style="transform: translate(-100%, 0px);"
+|           useragentpart="slider-fill"
 |   <#selection-focus>

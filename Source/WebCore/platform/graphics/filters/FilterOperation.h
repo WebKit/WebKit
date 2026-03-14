@@ -118,7 +118,7 @@ public:
         return adoptRef(*new DefaultFilterOperation(representedType()));
     }
 
-    Type representedType() const;
+    Type NODELETE representedType() const;
 
 private:
     bool operator==(const FilterOperation&) const override;
@@ -177,7 +177,7 @@ public:
 private:
     bool operator==(const FilterOperation&) const override;
 
-    double passthroughAmount() const;
+    double NODELETE passthroughAmount() const;
 
     BasicColorMatrixFilterOperation(double amount, Type type)
         : FilterOperation(type)
@@ -263,7 +263,7 @@ public:
         return adoptRef(*new DropShadowFilterOperation(m_color, m_location, m_stdDeviation));
     }
 
-    const Color& color() const { return m_color; }
+    const Color& color() const LIFETIME_BOUND { return m_color; }
     int x() const { return m_location.x(); }
     int y() const { return m_location.y(); }
     IntPoint location() const { return m_location; }

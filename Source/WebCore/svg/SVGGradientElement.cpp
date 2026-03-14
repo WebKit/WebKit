@@ -64,7 +64,7 @@ void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomS
         break;
     }
     case AttributeNames::gradientTransformAttr:
-        Ref { m_gradientTransform }->baseVal()->parse(newValue);
+        m_gradientTransform->baseVal()->parse(newValue);
         break;
     case AttributeNames::spreadMethodAttr: {
         auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(*this, newValue);

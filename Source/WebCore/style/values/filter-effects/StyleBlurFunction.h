@@ -47,7 +47,7 @@ struct Blur {
 
     Parameter value;
 
-    static Blur passthroughForInterpolation();
+    static Blur NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return true; }

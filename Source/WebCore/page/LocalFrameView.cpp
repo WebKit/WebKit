@@ -28,6 +28,7 @@
 #include "LocalFrameView.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityRegionContext.h"
 #include "AnchorPositionEvaluator.h"
 #include "BackForwardCache.h"
 #include "BackForwardController.h"
@@ -130,6 +131,7 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SimpleRange.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "TextIndicator.h"
@@ -269,6 +271,7 @@ void LocalFrameView::reset()
     m_updateEmbeddedObjectsTimer.stop();
     m_lastUserScrollType = std::nullopt;
     m_wasEverScrolledExplicitlyByUser = false;
+    m_wasEverScrolledExplicitlyByUserBelowTopEdge = false;
     m_delayedScrollEventTimer.stop();
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
@@ -821,7 +824,7 @@ TiledBacking* LocalFrameView::tiledBacking() const
 
 std::optional<ScrollingNodeID> LocalFrameView::scrollingNodeID() const
 {
-    CheckedPtr renderView = this->renderView();
+    auto* renderView = this->renderView();
     if (!renderView)
         return std::nullopt;
 
@@ -991,7 +994,7 @@ GraphicsLayer* LocalFrameView::graphicsLayerForPlatformWidget(PlatformWidget pla
 
 GraphicsLayer* LocalFrameView::graphicsLayerForPageScale()
 {
-    RefPtr page = m_frame->page();
+    auto* page = m_frame->page();
     if (!page)
         return nullptr;
 
@@ -1000,7 +1003,7 @@ GraphicsLayer* LocalFrameView::graphicsLayerForPageScale()
         return nullptr;
     }
 
-    CheckedPtr renderView = this->renderView();
+    auto* renderView = this->renderView();
     if (!renderView)
         return nullptr;
 
@@ -1268,7 +1271,7 @@ void LocalFrameView::adjustScrollbarsForLayout(bool isFirstLayout)
 
 void LocalFrameView::willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
 {
-    if (!m_frame->document()->isInStyleInterleavedLayout())
+    if (!m_frame->document()->isInStyleInterleavedLayout() && !layoutContext().isLayoutNested())
         updateScrollAnchoringBeforeLayoutForScrollableAreas();
 
     bool subtreeLayout = !is<RenderView>(*layoutRoot);
@@ -1532,7 +1535,7 @@ void LocalFrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObj
         m_embeddedObjectsToUpdate = makeUnique<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>>();
 
     Ref element = embeddedObject.frameOwnerElement();
-    if (RefPtr embedOrObject = dynamicDowncast<HTMLPlugInElement>(element.ptr()))
+    if (auto* embedOrObject = dynamicDowncast<HTMLPlugInElement>(element.ptr()))
         embedOrObject->setNeedsWidgetUpdate(true);
 
     m_embeddedObjectsToUpdate->add(embeddedObject);
@@ -1659,7 +1662,7 @@ bool LocalFrameView::canShowNonOverlayScrollbars() const
         if (!element)
             return false;
 
-        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(element->renderer()))
+        if (auto* renderBox = dynamicDowncast<RenderBox>(element->renderer()))
             return renderBox->style().usesLegacyScrollbarStyle();
 
         return false;
@@ -2080,7 +2083,7 @@ LayoutRect LocalFrameView::layoutViewportRectIncludingObscuredInsets() const
         return layoutViewportRect;
 
     FloatBoxExtent insets;
-    if (RefPtr page = m_frame->page()) {
+    if (auto* page = m_frame->page()) {
 #if PLATFORM(IOS_FAMILY)
         insets = page->obscuredInsets();
 #else
@@ -2136,6 +2139,19 @@ std::optional<LayoutRect> LocalFrameView::visibleRectOfChild(const Frame& child)
     );
 
     return rects.transform([] (const auto& repaintRects) { return repaintRects.clippedOverflowRect; });
+}
+
+bool LocalFrameView::ownerElementOfChildFrameUsesDarkAppearance(const Frame& child) const
+{
+    RefPtr childOwnerRenderer = child.ownerRenderer();
+    if (!childOwnerRenderer)
+        return false;
+
+    // Ensure |child| is a child of this frame.
+    ASSERT(child.tree().parent()->frameID() == m_frame->frameID());
+    ASSERT(childOwnerRenderer->frame().frameID() == m_frame->frameID());
+
+    return childOwnerRenderer->useDarkAppearance();
 }
 
 LayoutRect LocalFrameView::rectForFixedPositionLayout() const
@@ -3448,12 +3464,12 @@ bool LocalFrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const R
             adjustForScrollByAnchor(layer->renderer(), isFixed);
     }
 
-    auto& frameView = renderer.view().frameView();
-    RefPtr ownerElement = frameView.m_frame->document() ? frameView.m_frame->document()->ownerElement() : nullptr;
+    CheckedRef frameView = renderer.view().frameView();
+    RefPtr ownerElement = frameView->m_frame->document() ? frameView->m_frame->document()->ownerElement() : nullptr;
     if (ownerElement && ownerElement->renderer())
-        frameView.scrollRectToVisibleInChildView(adjustedRect, isFixed, adjustedOptions, ownerElement.get());
+        frameView->scrollRectToVisibleInChildView(adjustedRect, isFixed, adjustedOptions, ownerElement.get());
     else
-        frameView.scrollRectToVisibleInTopLevelView(adjustedRect, isFixed, adjustedOptions);
+        frameView->scrollRectToVisibleInTopLevelView(adjustedRect, isFixed, adjustedOptions);
     return true;
 }
 
@@ -3612,7 +3628,7 @@ void LocalFrameView::setViewportConstrainedObjectsNeedLayout()
     for (CheckedRef renderer : *m_viewportConstrainedObjects) {
         renderer->setNeedsLayout();
         if (renderer->hasLayer()) {
-            CheckedPtr layer = downcast<RenderBoxModelObject>(renderer).layer();
+            auto* layer = downcast<RenderBoxModelObject>(renderer).layer();
             layer->setNeedsCompositingGeometryUpdate();
         }
     }
@@ -3934,7 +3950,7 @@ static unsigned countRenderedCharactersInRenderObjectWithThreshold(const RenderE
 {
     unsigned count = 0;
     for (CheckedPtr<const RenderObject> descendant = &renderer; descendant; descendant = descendant->nextInPreOrder()) {
-        if (CheckedPtr renderText = dynamicDowncast<RenderText>(descendant.get())) {
+        if (auto* renderText = dynamicDowncast<RenderText>(descendant.get())) {
             count += renderText->text().length();
             if (count >= threshold)
                 break;
@@ -4104,7 +4120,7 @@ void LocalFrameView::adjustTiledBackingCoverage()
 
 static bool shouldEnableSpeculativeTilingDuringLoading(const LocalFrameView& view)
 {
-    RefPtr page = view.frame().page();
+    auto* page = view.frame().page();
     return page && view.isVisuallyNonEmpty() && !page->progress().isMainLoadProgressing();
 }
 
@@ -4171,7 +4187,7 @@ void LocalFrameView::setNeedsCompositingConfigurationUpdate()
 {
     CheckedPtr renderView = this->renderView();
     if (renderView && renderView->usesCompositing()) {
-        if (CheckedPtr rootLayer = renderView->layer())
+        if (auto* rootLayer = renderView->layer())
             rootLayer->setNeedsCompositingConfigurationUpdate();
         renderView->compositor().scheduleCompositingLayerUpdate();
     }
@@ -4181,7 +4197,7 @@ void LocalFrameView::setNeedsCompositingGeometryUpdate()
 {
     CheckedPtr renderView = this->renderView();
     if (renderView->usesCompositing()) {
-        if (CheckedPtr rootLayer = renderView->layer())
+        if (auto* rootLayer = renderView->layer())
             rootLayer->setNeedsCompositingGeometryUpdate();
         renderView->compositor().scheduleCompositingLayerUpdate();
     }
@@ -4191,7 +4207,7 @@ void LocalFrameView::setDescendantsNeedUpdateBackingAndHierarchyTraversal()
 {
     CheckedPtr renderView = this->renderView();
     if (renderView->usesCompositing()) {
-        if (CheckedPtr rootLayer = renderView->layer())
+        if (auto* rootLayer = renderView->layer())
             rootLayer->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
         renderView->compositor().scheduleCompositingLayerUpdate();
     }
@@ -4607,9 +4623,9 @@ void LocalFrameView::scrollToPendingTextFragmentRange()
                 return;
         }
         if (m_haveCreatedTextIndicator)
-            protect(document->page())->chrome().client().updateTextIndicator(WTF::move(textIndicator));
+            document->page()->chrome().client().updateTextIndicator(WTF::move(textIndicator));
         else {
-            protect(document->page())->chrome().client().setTextIndicator(WTF::move(textIndicator));
+            document->page()->chrome().client().setTextIndicator(WTF::move(textIndicator));
             m_haveCreatedTextIndicator = true;
         }
     }
@@ -4722,7 +4738,8 @@ void LocalFrameView::performPostLayoutTasks()
     updateLayoutViewport();
     viewportContentsChanged();
 
-    adjustScrollAnchoringPositionForScrollableAreas();
+    if (!layoutContext().isLayoutNested())
+        adjustScrollAnchoringPositionForScrollableAreas();
 
     resnapAfterLayout();
 
@@ -5063,7 +5080,7 @@ RenderElement* LocalFrameView::viewportRenderer() const
     if (m_viewportRendererType == ViewportRendererType::None)
         return nullptr;
 
-    RefPtr document = m_frame->document();
+    auto* document = m_frame->document();
     if (!document)
         return nullptr;
 
@@ -5075,7 +5092,7 @@ RenderElement* LocalFrameView::viewportRenderer() const
     }
 
     if (m_viewportRendererType == ViewportRendererType::Body) {
-        RefPtr body = document->body();
+        auto* body = document->body();
         if (!body)
             return nullptr;
         return body->renderer();
@@ -5510,7 +5527,7 @@ LocalFrameView* LocalFrameView::parentFrameView() const
 {
     if (!parent())
         return nullptr;
-    RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
+    auto* parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
     if (!parentFrame)
         return nullptr;
     return parentFrame->view();
@@ -5590,14 +5607,17 @@ void LocalFrameView::setLastUserScrollType(std::optional<UserScrollType> userScr
     if (userScrollType && document)
         document->setGotoAnchorNeededAfterStylesheetsLoad(false);
 
+    if (userScrollType == UserScrollType::Explicit) {
+        m_wasEverScrolledExplicitlyByUser = true;
+        if (scrollOffset().y() > minimumScrollOffset().y())
+            m_wasEverScrolledExplicitlyByUserBelowTopEdge = true;
+    }
+
     m_maintainScrollPositionAnchor = nullptr;
     if (m_lastUserScrollType == userScrollType)
         return;
     m_lastUserScrollType = userScrollType;
     adjustTiledBackingCoverage();
-
-    if (userScrollType == UserScrollType::Explicit)
-        m_wasEverScrolledExplicitlyByUser = true;
 }
 
 void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&, PaintingState& paintingState, RegionContext* regionContext)
@@ -5977,7 +5997,7 @@ void LocalFrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
         auto isMoreContentExpected = [&]() {
             ASSERT(finishedParsingMainDocument);
             // Pending css/font loading means we should wait a little longer. Classic non-async, non-defer scripts are all processed by now.
-            RefPtr documentLoader = m_frame->loader().documentLoader();
+            auto* documentLoader = m_frame->loader().documentLoader();
             if (!documentLoader)
                 return false;
 
@@ -6023,7 +6043,7 @@ bool LocalFrameView::hasContentfulDescendants() const
 
 bool LocalFrameView::isViewForDocumentInFrame() const
 {
-    CheckedPtr renderView = this->renderView();
+    auto* renderView = this->renderView();
     if (!renderView)
         return false;
 
@@ -6449,7 +6469,7 @@ bool LocalFrameView::handleWheelEventForScrolling(const PlatformWheelEvent& whee
 
 bool LocalFrameView::isVerticalDocument() const
 {
-    CheckedPtr renderView = this->renderView();
+    auto* renderView = this->renderView();
     if (!renderView)
         return true;
 
@@ -6458,7 +6478,7 @@ bool LocalFrameView::isVerticalDocument() const
 
 bool LocalFrameView::isFlippedDocument() const
 {
-    CheckedPtr renderView = this->renderView();
+    auto* renderView = this->renderView();
     if (!renderView)
         return false;
 
@@ -7015,7 +7035,7 @@ void LocalFrameView::updateScrollbarSteps()
 OverscrollBehavior LocalFrameView::horizontalOverscrollBehavior() const
 {
     auto* document = m_frame->document();
-    CheckedPtr scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    auto* scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject && renderView())
         return scrollingObject->style().overscrollBehaviorX();
     return OverscrollBehavior::Auto;
@@ -7024,7 +7044,7 @@ OverscrollBehavior LocalFrameView::horizontalOverscrollBehavior() const
 OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
 {
     auto* document = m_frame->document();
-    CheckedPtr scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    auto* scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject && renderView())
         return scrollingObject->style().overscrollBehaviorY();
     return OverscrollBehavior::Auto;
@@ -7033,7 +7053,7 @@ OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
 Color LocalFrameView::scrollbarThumbColorStyle() const
 {
     RefPtr document = m_frame->document();
-    CheckedPtr scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    auto* scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject)
         return scrollingObject->style().usedScrollbarThumbColor();
     return { };
@@ -7042,7 +7062,7 @@ Color LocalFrameView::scrollbarThumbColorStyle() const
 Color LocalFrameView::scrollbarTrackColorStyle() const
 {
     RefPtr document = m_frame->document();
-    CheckedPtr scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    auto* scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject)
         return scrollingObject->style().usedScrollbarTrackColor();
     return { };

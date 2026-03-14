@@ -466,10 +466,10 @@ protected:
 
     String annotationStyle() const;
 
-    static NSString *htmlPasteboardType();
-    static NSString *rtfPasteboardType();
-    static NSString *stringPasteboardType();
-    static NSString *urlPasteboardType();
+    static NSString *NODELETE htmlPasteboardType();
+    static NSString *NODELETE rtfPasteboardType();
+    static NSString *NODELETE stringPasteboardType();
+    static NSString *NODELETE urlPasteboardType();
 
 #if PLATFORM(MAC)
     void writeStringToFindPasteboard(const String&) const;

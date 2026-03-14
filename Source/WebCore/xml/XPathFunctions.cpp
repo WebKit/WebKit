@@ -47,7 +47,7 @@ namespace WebCore::XPath {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Function);
 
-static inline bool isWhitespace(char16_t c)
+static inline bool NODELETE isWhitespace(char16_t c)
 {
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
@@ -383,7 +383,7 @@ Value FunId::evaluate() const
     return Value(WTF::move(result));
 }
 
-static inline String expandedNameLocalPart(Node& node)
+static inline String NODELETE expandedNameLocalPart(Node& node)
 {
     if (auto* pi = dynamicDowncast<ProcessingInstruction>(node))
         return pi->target();
@@ -407,7 +407,7 @@ Value FunLocalName::evaluate() const
         return node ? expandedNameLocalPart(*node) : emptyString();
     }
 
-    return expandedNameLocalPart(*protect(evaluationContext().node));
+    return expandedNameLocalPart(*evaluationContext().node);
 }
 
 Value FunNamespaceURI::evaluate() const
@@ -421,7 +421,7 @@ Value FunNamespaceURI::evaluate() const
         return node ? node->namespaceURI().string() : emptyString();
     }
 
-    return protect(evaluationContext().node)->namespaceURI().string();
+    return evaluationContext().node->namespaceURI().string();
 }
 
 Value FunName::evaluate() const

@@ -92,7 +92,7 @@ private:
     void forEachUserMessageHandler(NOESCAPE const Function<void(const WebCore::UserMessageHandlerDescriptor&)>&) const final;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
-    const WebCore::ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const override { return m_contentExtensionBackend; }
+    const WebCore::ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const LIFETIME_BOUND override { return m_contentExtensionBackend; }
 #endif
 
     // IPC::MessageReceiver.
@@ -140,7 +140,7 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::ContentExtensions::ContentExtensionsBackend m_contentExtensionBackend;
 #endif
-    HashMap<ContentWorldIdentifier, HashMap<String, RefPtr<WebCore::WebKitBuffer>>> m_buffers;
+    HashMap<ContentWorldIdentifier, HashMap<String, Ref<WebCore::WebKitBuffer>>> m_buffers;
 };
 
 } // namespace WebKit

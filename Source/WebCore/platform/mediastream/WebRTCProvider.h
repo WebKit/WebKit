@@ -64,12 +64,12 @@ public:
     void setAV1Support(bool);
     void setH265Support(bool);
     void setVP9Support(bool supportsVP9Profile0, bool supportsVP9Profile2);
-    bool isSupportingAV1() const;
-    bool isSupportingH265() const;
-    bool isSupportingVP9Profile0() const;
-    bool isSupportingVP9Profile2() const;
+    bool NODELETE isSupportingAV1() const;
+    bool NODELETE isSupportingH265() const;
+    bool NODELETE isSupportingVP9Profile0() const;
+    bool NODELETE isSupportingVP9Profile2() const;
 
-    bool isSupportingMDNS() const;
+    bool NODELETE isSupportingMDNS() const;
 
 #if ENABLE(WEB_RTC)
     virtual std::optional<RTCRtpCapabilities> receiverCapabilities(const String&);
@@ -80,7 +80,7 @@ public:
     virtual void clearFactory();
 
     void setPortAllocatorRange(StringView);
-    std::optional<std::pair<int, int>> portAllocatorRange() const;
+    std::optional<std::pair<int, int>> NODELETE portAllocatorRange() const;
 
     virtual bool isLibWebRTCProvider() const { return false; }
     virtual bool isWebCoreLibWebRTCProvider() const { return false; }

@@ -213,7 +213,7 @@ const Logger& RemoteLegacyCDMFactoryProxy::logger() const
 
 std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMFactoryProxy::sharedPreferencesForWebProcess() const
 {
-    if (RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
+    if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
         return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
 
     return std::nullopt;

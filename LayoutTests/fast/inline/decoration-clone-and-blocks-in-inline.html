@@ -1,0 +1,24 @@
+<style>
+.float_box {
+  float: left;
+}
+
+.has_margin {
+  margin-top: 1px;
+}
+
+span  { 
+  -webkit-box-decoration-break: clone;
+  border: 1px solid black;
+}
+</style>
+<div>
+  <div class=float_box></div>
+  <span>
+    <div class=has_margin></div>
+    <br>PASS if no crash or ASSERT.
+  </span>
+</div>
+<script>
+window.testRunner?.dumpAsText()
+</script>

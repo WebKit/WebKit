@@ -416,9 +416,7 @@ void WebExtensionAPIMenus::remove(id identifier, Ref<WebExtensionCallbackHandler
             return;
         }
 
-        m_clickHandlerMap.remove(identifier);
-
-        if (m_clickHandlerMap.isEmpty())
+        if (m_clickHandlerMap.remove(identifier) && m_clickHandlerMap.isEmpty())
             WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(*m_frameIdentifier, WebExtensionEventListenerType::MenusOnClicked, contentWorldType(), 1), extensionContext().identifier());
 
         callback->call();

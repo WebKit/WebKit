@@ -121,7 +121,7 @@ public:
 
     // Returns the number of months from 1970-01.
     // Do not call this for types other than Month.
-    double monthsSinceEpoch() const;
+    double NODELETE monthsSinceEpoch() const;
 
     static inline double invalidMilliseconds() { return std::numeric_limits<double>::quiet_NaN(); }
 
@@ -171,13 +171,13 @@ private:
 
     // Returns the maximum week number in this DateComponents's year.
     // The result is either of 52 and 53.
-    int maxWeekNumberInYear() const;
+    int NODELETE maxWeekNumberInYear() const;
 
-    bool addDay(int);
-    bool addMinute(int);
+    bool NODELETE addDay(int);
+    bool NODELETE addMinute(int);
 
     // Helper for millisecondsSinceEpoch().
-    double millisecondsSinceEpochForTime() const;
+    double NODELETE millisecondsSinceEpochForTime() const;
 
     // Helper for toString().
     String toStringForTime(SecondFormat) const;

@@ -46,7 +46,7 @@ class Filter : public FilterFunction {
     using FilterFunction::createFilterStyles;
 
 public:
-    RenderingMode renderingMode() const;
+    RenderingMode NODELETE renderingMode() const;
 
     OptionSet<FilterRenderingMode> filterRenderingModes() const { return m_filterRenderingModes; }
     WEBCORE_EXPORT void setFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes);
@@ -54,7 +54,7 @@ public:
     void setIsShowingDebugOverlay(bool showOverlay) { m_isShowingDebugOverlay = showOverlay; }
     bool isShowingDebugOverlay() const { return m_isShowingDebugOverlay; }
 
-    const FilterGeometry& geometry() const { return m_geometry; }
+    const FilterGeometry& geometry() const LIFETIME_BOUND { return m_geometry; }
 
     FloatSize filterScale() const { return m_geometry.scale; }
     void setFilterScale(const FloatSize& filterScale) { m_geometry.scale = filterScale; }
@@ -67,7 +67,7 @@ public:
     virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
     virtual FloatPoint3D resolvedPoint3D(const FloatPoint3D& point) const { return point; }
 
-    FloatPoint scaledByFilterScale(const FloatPoint&) const;
+    FloatPoint NODELETE scaledByFilterScale(const FloatPoint&) const;
     FloatSize scaledByFilterScale(const FloatSize&) const;
     FloatRect scaledByFilterScale(const FloatRect&) const;
 

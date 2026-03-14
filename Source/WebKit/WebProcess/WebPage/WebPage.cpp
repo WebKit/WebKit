@@ -609,6 +609,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_drawingArea(DrawingArea::create(*this, parameters))
     , m_webPageTesting(WebPageTesting::create(*this))
     , m_mainFrame(WebFrame::create(*this, parameters.mainFrameIdentifier))
+    , m_pageGroup(WebProcess::singleton().webPageGroup(WTF::move(parameters.pageGroupData)))
 #if ENABLE(TILED_CA_DRAWING_AREA)
     , m_drawingAreaType(parameters.drawingAreaType)
 #endif
@@ -732,11 +733,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     auto shouldBlockWebInspector = parameters.store.getBoolValueForKey(WebPreferencesKey::blockWebInspectorInWebContentSandboxKey());
     if (shouldBlockWebInspector)
         sandbox_enable_state_flag("BlockWebInspectorInWebContentSandbox", *auditToken);
-#if PLATFORM(IOS)
-    auto shouldBlockMobileGestalt = parameters.store.getBoolValueForKey(WebPreferencesKey::blockMobileGestaltInWebContentSandboxKey());
-    if (shouldBlockMobileGestalt)
-        sandbox_enable_state_flag("BlockMobileGestaltInWebContentSandbox", *auditToken);
-#endif
     auto shouldBlockMobileAsset = parameters.store.getBoolValueForKey(WebPreferencesKey::blockMobileAssetInWebContentSandboxKey());
     if (shouldBlockMobileAsset)
         sandbox_enable_state_flag("BlockMobileAssetInWebContentSandbox", *auditToken);
@@ -747,9 +743,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     auto shouldAllowInstalledFonts = parameters.store.getBoolValueForKey(WebPreferencesKey::shouldAllowUserInstalledFontsKey());
     if (!shouldAllowInstalledFonts || !WTF::MacApplication::isAppleMail())
         sandbox_enable_state_flag("BlockUserInstalledFonts", *auditToken);
-    auto shouldBlockFontService = parameters.store.getBoolValueForKey(WebPreferencesKey::blockFontServiceInWebContentSandboxKey());
-    if (shouldBlockFontService)
-        sandbox_enable_state_flag("BlockFontServiceInWebContentSandbox", *auditToken);
     auto shouldBlockIconServices = parameters.store.getBoolValueForKey(WebPreferencesKey::blockIconServicesInWebContentSandboxKey());
     if (shouldBlockIconServices)
         sandbox_enable_state_flag("BlockIconServicesInWebContentSandbox", *auditToken);
@@ -782,8 +775,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         }
     }
 #endif
-
-    m_pageGroup = WebProcess::singleton().webPageGroup(WTF::move(parameters.pageGroupData));
 
     auto frameType = parameters.remotePageParameters ? Frame::FrameType::Remote : Frame::FrameType::Local;
     ASSERT(!parameters.remotePageParameters || parameters.remotePageParameters->frameTreeParameters.frameID == parameters.mainFrameIdentifier);
@@ -1840,7 +1831,7 @@ void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()
         scheduleFullEditorStateUpdate();
 }
 
-static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(unsigned options)
+static OptionSet<RenderAsTextFlag> NODELETE toRenderAsTextFlags(unsigned options)
 {
     OptionSet<RenderAsTextFlag> flags;
 
@@ -1913,7 +1904,7 @@ Ref<API::Array> WebPage::trackedRepaintRects()
 
 PluginView* WebPage::focusedPluginViewForFrame(LocalFrame& frame)
 {
-    RefPtr pluginDocument = dynamicDowncast<PluginDocument>(frame.document());
+    auto* pluginDocument = dynamicDowncast<PluginDocument>(frame.document());
     if (!pluginDocument)
         return nullptr;
 
@@ -1927,7 +1918,7 @@ PluginView* WebPage::pluginViewForFrame(LocalFrame* frame)
 {
     if (!frame)
         return nullptr;
-    RefPtr document = dynamicDowncast<PluginDocument>(frame->document());
+    auto* document = dynamicDowncast<PluginDocument>(frame->document());
     if (!document)
         return nullptr;
     return downcast<PluginView>(document->pluginWidget());
@@ -1962,7 +1953,7 @@ void WebPage::executeEditingCommand(const String& commandName, const String& arg
 void WebPage::setEditable(bool editable)
 {
     protect(corePage())->setEditable(editable);
-    protect(corePage())->setTabKeyCyclesThroughElements(!editable);
+    corePage()->setTabKeyCyclesThroughElements(!editable);
     RefPtr frame = corePage()->focusController().focusedOrMainFrame();
     if (!frame)
         return;
@@ -2447,8 +2438,8 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     m_sandboxExtensionTracker.beginLoad(WTF::move(parameters.sandboxExtensionHandle));
 
     m_lastNavigationWasAppInitiated = parameters.lastNavigationWasAppInitiated;
-    if (RefPtr localMainFrame = protect(corePage())->localMainFrame()) {
-        if (RefPtr documentLoader = localMainFrame->loader().documentLoader())
+    if (RefPtr localMainFrame = corePage()->localMainFrame()) {
+        if (auto* documentLoader = localMainFrame->loader().documentLoader())
             documentLoader->setLastNavigationWasAppInitiated(parameters.lastNavigationWasAppInitiated);
     }
 
@@ -2463,7 +2454,7 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     {
         auto ignoreHistoryItemChangesForScope = m_historyItemClient->ignoreChangesForScope();
         item = toHistoryItem(m_historyItemClient, parameters.frameState);
-        if (RefPtr localMainFrame = protect(corePage())->localMainFrame(); localMainFrame && item)
+        if (RefPtr localMainFrame = corePage()->localMainFrame(); localMainFrame && item)
             localMainFrame->loader().setNavigationUpgradeToHTTPSBehavior(item->url().protocolIs("http"_s) ? NavigationUpgradeToHTTPSBehavior::Disabled : NavigationUpgradeToHTTPSBehavior::BasedOnPolicy);
     }
 
@@ -2480,8 +2471,13 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     if (RefPtr historyItemFrame = WebProcess::singleton().webFrame(item->frameID()); historyItemFrame && historyItemFrame->page() == this)
         targetFrame = historyItemFrame.releaseNonNull();
 
-    if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame())
+    if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame()) {
+        if (!targetLocalFrame->loader().shouldProceedWithAsyncBackForwardNavigation()) {
+            WEBPAGE_RELEASE_LOG(Loading, "goToBackForwardItem: Skipping because pending async back/forward traversal was cancelled");
+            return;
+        }
         protect(corePage())->goToItem(*targetLocalFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad);
+    }
 }
 
 // GoToBackForwardItemWaitingForProcessLaunch should never be sent to the WebProcess. It must always be converted to a GoToBackForwardItem message.
@@ -3011,7 +3007,7 @@ FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame& fram
 
 void WebPage::listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
-    if (RefPtr page = m_page)
+    if (auto* page = m_page.get())
         page->addLayoutMilestones(milestones);
 }
 
@@ -3815,7 +3811,7 @@ void WebPage::setLastKnownMousePosition(WebCore::FrameIdentifier frameID, const 
 
 void WebPage::startDeferringResizeEvents()
 {
-    protect(corePage())->startDeferringResizeEvents();
+    corePage()->startDeferringResizeEvents();
 }
 
 void WebPage::flushDeferredResizeEvents()
@@ -3825,7 +3821,7 @@ void WebPage::flushDeferredResizeEvents()
 
 void WebPage::startDeferringScrollEvents()
 {
-    protect(corePage())->startDeferringScrollEvents();
+    corePage()->startDeferringScrollEvents();
 }
 
 void WebPage::flushDeferredScrollEvents()
@@ -3835,7 +3831,7 @@ void WebPage::flushDeferredScrollEvents()
 
 void WebPage::startDeferringIntersectionObservations()
 {
-    protect(corePage())->startDeferringIntersectionObservations();
+    corePage()->startDeferringIntersectionObservations();
 }
 
 void WebPage::flushDeferredIntersectionObservations()
@@ -3956,7 +3952,7 @@ bool WebPage::handleKeyEventByRelinquishingFocusToChrome(const KeyboardEvent& ev
     // Allow a shift-tab keypress event to relinquish focus even if we don't allow tab to cycle between
     // elements inside the view. We can only do this for shift-tab, not tab itself because
     // tabKeyCyclesThroughElements is used to make tab character insertion work in editable web views.
-    return protect(corePage())->focusController().relinquishFocusToChrome(FocusDirection::Backward);
+    return corePage()->focusController().relinquishFocusToChrome(FocusDirection::Backward);
 }
 
 void WebPage::validateCommand(const String& commandName, CompletionHandler<void(bool, int32_t)>&& completionHandler)
@@ -4728,7 +4724,7 @@ void WebPage::getRenderTreeExternalRepresentation(CompletionHandler<void(const S
 static RefPtr<LocalFrame> frameWithSelection(Page* page)
 {
     for (RefPtr frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
+        auto* localFrame = dynamicDowncast<LocalFrame>(*frame);
         if (!localFrame)
             continue;
         if (localFrame->selection().isRange())
@@ -5138,7 +5134,7 @@ static void detectDataInFrame(const Ref<Frame>& frame, OptionSet<WebCore::DataDe
 void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDetectorTypes, CompletionHandler<void(DataDetectionResult&&)>&& completionHandler)
 {
     auto mainFrameResult = makeUniqueRef<DataDetectionResult>();
-    detectDataInFrame(protect(protect(corePage())->mainFrame()).get(), dataDetectorTypes, m_dataDetectionReferenceDate, WTF::move(mainFrameResult), WTF::move(completionHandler));
+    detectDataInFrame(Ref { corePage()->mainFrame() }, dataDetectorTypes, m_dataDetectionReferenceDate, WTF::move(mainFrameResult), WTF::move(completionHandler));
 }
 
 #endif // ENABLE(DATA_DETECTION)
@@ -5217,7 +5213,7 @@ bool WebPage::shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCo
         return true;
 
     static constexpr unsigned maxDelayedRenderingUpdateCount = 2;
-    RefPtr proxy = m_remoteRenderingBackendProxy;
+    auto* proxy = m_remoteRenderingBackendProxy.get();
     if (proxy && proxy->delayedRenderingUpdateCount() > maxDelayedRenderingUpdateCount)
         return false;
 #endif
@@ -5280,7 +5276,7 @@ void WebPage::willDestroyDecodedDataForAllImages()
 unsigned WebPage::remoteImagesCountForTesting() const
 {
 #if ENABLE(GPU_PROCESS)
-    if (RefPtr renderingBackend = m_remoteRenderingBackendProxy)
+    if (auto* renderingBackend = m_remoteRenderingBackendProxy.get())
         return renderingBackend->nativeImageCountForTesting();
 #endif
     return 0;
@@ -5684,7 +5680,7 @@ void WebPage::didStartDrag(std::optional<FrameIdentifier> frameID)
     m_isStartingDrag = false;
 
     if (RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame()) {
-        if (RefPtr localFrame = frame->coreLocalFrame())
+        if (auto* localFrame = frame->coreLocalFrame())
             localFrame->eventHandler().didStartDrag();
     }
 }
@@ -7121,7 +7117,7 @@ Frame* WebPage::mainFrame() const
 
 RefPtr<WebCore::LocalFrame> WebPage::localMainFrame() const
 {
-    if (RefPtr page = m_page)
+    if (auto* page = m_page.get())
         return page->localMainFrame();
     return nullptr;
 }
@@ -7857,7 +7853,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (coreFrame->isMainFrame() && !usesEphemeralSession()) {
-        if (RefPtr loader = protect(coreFrame->document())->loader(); loader
+        if (RefPtr loader = coreFrame->document()->loader(); loader
             && loader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections))
             WEBPAGE_RELEASE_LOG(AdvancedPrivacyProtections, "didCommitLoad: advanced privacy protections enabled in non-ephemeral session");
     }
@@ -7919,7 +7915,7 @@ void WebPage::didSameDocumentNavigationForFrame(WebFrame& frame)
 {
     RefPtr<API::Object> userData;
 
-    auto navigationID = protect(frame.coreLocalFrame()->loader().documentLoader())->navigationID();
+    auto navigationID = frame.coreLocalFrame()->loader().documentLoader()->navigationID();
 
     if (frame.isMainFrame())
         m_pendingNavigationID = std::nullopt;
@@ -8443,9 +8439,9 @@ WebURLSchemeHandlerProxy* WebPage::urlSchemeHandlerForScheme(StringView scheme)
 
 void WebPage::stopAllURLSchemeTasks()
 {
-    HashSet<RefPtr<WebURLSchemeHandlerProxy>> handlers;
+    HashSet<Ref<WebURLSchemeHandlerProxy>> handlers;
     for (auto& handler : m_schemeToURLSchemeHandlerProxyMap.values())
-        handlers.add(handler.get());
+        handlers.add(handler);
 
     for (auto& handler : handlers)
         handler->stopAllTasks();
@@ -8715,19 +8711,19 @@ void WebPage::systemPreviewActionTriggered(WebCore::SystemPreviewInfo previewInf
 #if ENABLE(SPEECH_SYNTHESIS)
 void WebPage::speakingErrorOccurred()
 {
-    if (auto observer = protect(corePage())->speechSynthesisClient()->observer())
+    if (auto observer = corePage()->speechSynthesisClient()->observer())
         observer->speakingErrorOccurred();
 }
 
 void WebPage::boundaryEventOccurred(bool wordBoundary, unsigned charIndex, unsigned charLength)
 {
-    if (auto observer = protect(corePage())->speechSynthesisClient()->observer())
+    if (auto observer = corePage()->speechSynthesisClient()->observer())
         observer->boundaryEventOccurred(wordBoundary, charIndex, charLength);
 }
 
 void WebPage::voicesDidChange()
 {
-    if (auto observer = protect(corePage())->speechSynthesisClient()->observer())
+    if (auto observer = corePage()->speechSynthesisClient()->observer())
         observer->voicesChanged();
 }
 #endif
@@ -9151,7 +9147,7 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
         return;
     }
 
-    if (protect(corePage())->hasCachedTextRecognitionResult(*htmlElement)) {
+    if (corePage()->hasCachedTextRecognitionResult(*htmlElement)) {
         if (completion) {
             RefPtr<Element> imageOverlayHost;
             if (ImageOverlay::hasOverlay(*htmlElement))
@@ -9228,7 +9224,7 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
         if (!protectedThis)
             return;
 
-        auto cachedImage = renderImage->cachedImage();
+        RefPtr cachedImage = renderImage->cachedImage();
         auto imageURL = cachedImage ? protect(weakElement->document())->completeURL(cachedImage->url().string()) : URL { };
         protectedThis->sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTF::move(imageURL), WTF::move(*bitmapHandle), options.sourceLanguageIdentifier, options.targetLanguageIdentifier), [weakThis, weakElement, resolveAndRemoveHandlerFollowingError = WTF::move(resolveAndRemoveHandlerFollowingError)] (auto&& result) mutable {
             RefPtr protectedThis = weakThis.get();
@@ -9338,7 +9334,7 @@ void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandle
     }
 
     String mimeType;
-    if (auto* cachedImage = renderImage->cachedImage()) {
+    if (RefPtr cachedImage = renderImage->cachedImage()) {
         if (RefPtr image = cachedImage->image())
             mimeType = image->mimeType();
     }
@@ -9845,7 +9841,7 @@ void WebPage::frameWasFocusedInAnotherProcess(std::optional<WebCore::FrameIdenti
 {
     RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
     RefPtr coreFrame = frame ? frame->coreFrame() : nullptr;
-    protect(corePage())->focusController().setFocusedFrame(coreFrame.get(), WebCore::BroadcastFocusedFrame::No);
+    corePage()->focusController().setFocusedFrame(coreFrame.get(), WebCore::BroadcastFocusedFrame::No);
 }
 
 void WebPage::remotePostMessage(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts& message)
@@ -9857,7 +9853,7 @@ void WebPage::remotePostMessage(WebCore::FrameIdentifier source, const WebCore::
     if (!targetFrame->coreLocalFrame())
         return;
 
-    RefPtr targetWindow = protect(targetFrame->coreLocalFrame())->window();
+    RefPtr targetWindow = targetFrame->coreLocalFrame()->window();
     if (!targetWindow)
         return;
 
@@ -10499,7 +10495,7 @@ RefPtr<MediaSessionManagerInterface> WebPage::mediaSessionManager() const
 
 MediaSessionManagerInterface* WebPage::mediaSessionManagerIfExists() const
 {
-    RefPtr page { corePage() };
+    auto* page = corePage();
     return page ? page->mediaSessionManagerIfExists() : nullptr;
 
 }
@@ -10526,10 +10522,8 @@ bool WebPage::hasAccessoryMousePointingDevice() const
 #if ENABLE(VIDEO)
 void WebPage::setCaptionDisplaySettingsPreviewProfileID(const String& profileID)
 {
-    if (RefPtr pageGroup = m_pageGroup) {
-        if (RefPtr captionPreferences = pageGroup->corePageGroup()->captionPreferences())
-            captionPreferences->setCaptionPreviewProfileID(profileID);
-    }
+    if (RefPtr captionPreferences = m_pageGroup->corePageGroup()->captionPreferences())
+        captionPreferences->setCaptionPreviewProfileID(profileID);
 }
 
 void WebPage::showCaptionDisplaySettingsPreview(HTMLMediaElementIdentifier identifier)

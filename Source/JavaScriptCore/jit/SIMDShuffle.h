@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2025-2026 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,43 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+// Canonical shuffle patterns recognized for ARM64 specialized instruction selection.
+enum class CanonicalShuffle : uint8_t {
+    Unknown,
+    Identity,
+    // 64-bit element patterns
+    S64x2UnzipEven,                // UZP1.2D
+    S64x2UnzipOdd,                 // UZP2.2D
+    S64x2Reverse,                  // EXT #8 (unary): swap two 64-bit halves
+    // 32-bit element patterns
+    S32x4UnzipEven,                // UZP1.4S
+    S32x4UnzipOdd,                 // UZP2.4S
+    S32x4ZipLower,                 // ZIP1.4S
+    S32x4ZipHigher,                // ZIP2.4S
+    S32x4TransposeEven,            // TRN1.4S
+    S32x4TransposeOdd,             // TRN2.4S
+    S32x2Reverse,                  // REV64.4S
+    // 16-bit element patterns
+    S16x8UnzipEven,                // UZP1.8H
+    S16x8UnzipOdd,                 // UZP2.8H
+    S16x8ZipLower,                 // ZIP1.8H
+    S16x8ZipHigher,                // ZIP2.8H
+    S16x8TransposeEven,            // TRN1.8H
+    S16x8TransposeOdd,             // TRN2.8H
+    S16x2Reverse,                  // REV32.8H
+    S16x4Reverse,                  // REV64.8H
+    // 8-bit element patterns
+    S8x16UnzipEven,                // UZP1.16B
+    S8x16UnzipOdd,                 // UZP2.16B
+    S8x16ZipLower,                 // ZIP1.16B
+    S8x16ZipHigher,                // ZIP2.16B
+    S8x16TransposeEven,            // TRN1.16B
+    S8x16TransposeOdd,             // TRN2.16B
+    S8x2Reverse,                   // REV16.16B
+    S8x4Reverse,                   // REV32.16B
+    S8x8Reverse,                   // REV64.16B
+};
+
 class SIMDShuffle {
 public:
     static std::optional<unsigned> isOnlyOneSideMask(v128_t pattern)
@@ -55,6 +93,14 @@ public:
                 return std::nullopt;
         }
         return 1;
+    }
+
+    static std::optional<uint8_t> isI8x16SameElement(v128_t pattern)
+    {
+        constexpr unsigned numberOfElements = 16 / sizeof(uint8_t);
+        if (std::all_of(pattern.u8x16, pattern.u8x16 + numberOfElements, [&](auto value) { return value == pattern.u8x16[0]; }))
+            return pattern.u8x16[0];
+        return std::nullopt;
     }
 
     static std::optional<uint8_t> isI8x16DupElement(v128_t pattern)
@@ -158,7 +204,209 @@ public:
         return true;
     }
 
+    // Detect EXT (byte extraction / concatenation) pattern for binary shuffle.
+    // Returns the byte offset if the pattern is {offset, offset+1, ..., 31, 0, 1, ...}
+    // i.e., pattern[i] == (offset + i) % 32 for some offset in [0, 15].
+    // ARM64 EXT instruction: EXT Vd.16B, Vn.16B, Vm.16B, #imm
+    // extracts bytes from the concatenation of Vn:Vm.
+    // Returns {offset, needsSwap}.
+    struct EXTInfo {
+        uint8_t offset;
+        bool needsSwap;
+    };
+    static std::optional<EXTInfo> isEXTWithSwap(v128_t pattern)
+    {
+        uint8_t first = pattern.u8x16[0];
+        if (first >= 32)
+            return std::nullopt;
+        for (unsigned i = 1; i < 16; ++i) {
+            if (pattern.u8x16[i] != ((first + i) % 32))
+                return std::nullopt;
+        }
+        if (first < 16)
+            return EXTInfo { first, false };
+        return EXTInfo { static_cast<uint8_t>(first - 16), true };
+    }
+
+    // Try to match a canonical binary shuffle pattern for ARM64 specialized instructions.
+    static CanonicalShuffle tryMatchCanonicalBinary(v128_t pattern)
+    {
+        return tryMatchCanonicalBinaryImpl(pattern, [](v128_t v) constexpr { return v; });
+    }
+
+    // Try to match a unary shuffle pattern as a binary canonical shuffle.
+    // Binary canonical pattern gets converted to unary canonical pattern with the invariant that both inputs are the same.
+    // TRN2.16B {1,17, 3,19, 5,21, 7,23, 9,25, 11,27, 13,29, 15,31} gets converted to
+    // {1,1, 3,3, 5,5, 7,7, 9,9, 11,11, 13,13, 15,15}.
+    static CanonicalShuffle tryMatchUnaryAsBinaryCanonical(v128_t pattern)
+    {
+        return tryMatchCanonicalBinaryImpl(pattern,
+            [](v128_t v) constexpr {
+                for (unsigned i = 0; i < 16; ++i) {
+                    if (v.u8x16[i] >= 16)
+                        v.u8x16[i] = v.u8x16[i] - 16;
+                }
+                return v;
+            });
+    }
+
+    // Try to match a canonical unary shuffle pattern.
+    static CanonicalShuffle tryMatchCanonicalUnary(v128_t pattern)
+    {
+        // REV64.4S: reverse 32-bit pairs within 64-bit lanes
+        if (bitEquals(pattern, v128_t::fromU8x16(4,5,6,7, 0,1,2,3, 12,13,14,15, 8,9,10,11)))
+            return CanonicalShuffle::S32x2Reverse;
+        // REV64.8H: reverse 16-bit elements within 64-bit lanes
+        if (bitEquals(pattern, v128_t::fromU8x16(6,7, 4,5, 2,3, 0,1, 14,15, 12,13, 10,11, 8,9)))
+            return CanonicalShuffle::S16x4Reverse;
+        // REV32.8H: reverse 16-bit pairs within 32-bit groups
+        if (bitEquals(pattern, v128_t::fromU8x16(2,3, 0,1, 6,7, 4,5, 10,11, 8,9, 14,15, 12,13)))
+            return CanonicalShuffle::S16x2Reverse;
+        // REV64.16B: reverse bytes within 64-bit lanes
+        if (bitEquals(pattern, v128_t::fromU8x16(7,6,5,4,3,2,1,0, 15,14,13,12,11,10,9,8)))
+            return CanonicalShuffle::S8x8Reverse;
+        // REV32.16B: reverse bytes within 32-bit groups
+        if (bitEquals(pattern, v128_t::fromU8x16(3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12)))
+            return CanonicalShuffle::S8x4Reverse;
+        // REV16.16B: reverse bytes within 16-bit groups
+        if (bitEquals(pattern, v128_t::fromU8x16(1,0, 3,2, 5,4, 7,6, 9,8, 11,10, 13,12, 15,14)))
+            return CanonicalShuffle::S8x2Reverse;
+        // S64x2 reverse: swap two 64-bit halves = {8..15, 0..7}
+        if (bitEquals(pattern, v128_t::fromU8x16(8,9,10,11,12,13,14,15, 0,1,2,3,4,5,6,7)))
+            return CanonicalShuffle::S64x2Reverse;
+
+        return CanonicalShuffle::Unknown;
+    }
+
+    // Compose an outer shuffle with an inner shuffle.
+    // Given outer = shuffle(inner_result, other, outerPattern) or
+    //       outer = shuffle(other, inner_result, outerPattern)
+    // where inner_result = shuffle(innerSrc, innerPattern) [unary]
+    // Produces a combined pattern that reads from (innerSrc, other) or (other, innerSrc).
+    //
+    // innerIsChild0: whether the inner shuffle's result is child(0) of the outer.
+    // Returns nullopt if composition is not possible (e.g., indices go out of range).
+    static v128_t composeShuffle(v128_t outerPattern, v128_t innerPattern, bool innerIsChild0)
+    {
+        v128_t result;
+        for (unsigned i = 0; i < 16; ++i) {
+            uint8_t outerIdx = outerPattern.u8x16[i];
+            if (outerIdx >= 32) {
+                // Out of bounds in outer — result is 0 on ARM64 TBL.
+                result.u8x16[i] = 0xFF; // OOB
+                continue;
+            }
+
+            if (innerIsChild0) {
+                if (outerIdx < 16) {
+                    // Reads from inner's output. Chase through inner.
+                    uint8_t innerIdx = innerPattern.u8x16[outerIdx];
+                    if (innerIdx >= 16) {
+                        result.u8x16[i] = 0xFF; // OOB in inner → zero
+                        continue;
+                    }
+                    // innerIdx is 0..15, referring to inner's input.
+                    // In the composed shuffle, inner's input is child0, other is child1.
+                    result.u8x16[i] = innerIdx;
+                } else {
+                    // Reads from the other child (child1 of outer).
+                    // In composed result, other is child1, offset 16..31.
+                    result.u8x16[i] = outerIdx; // stays as 16..31
+                }
+            } else {
+                // inner is child1 of outer
+                if (outerIdx >= 16) {
+                    // Reads from inner's output (which is child1 of outer).
+                    uint8_t innerIdx = innerPattern.u8x16[outerIdx - 16];
+                    if (innerIdx >= 16) {
+                        result.u8x16[i] = 0xFF;
+                        continue;
+                    }
+                    // inner's input becomes child1 in composed result.
+                    result.u8x16[i] = innerIdx + 16;
+                } else {
+                    // Reads from the other child (child0 of outer).
+                    result.u8x16[i] = outerIdx; // stays as 0..15
+                }
+            }
+        }
+        return result;
+    }
+
 private:
+    static CanonicalShuffle tryMatchCanonicalBinaryImpl(v128_t pattern, const Invocable<v128_t(v128_t)> auto& canonicalize)
+    {
+        // 64-bit element patterns
+        // UZP1.2D: {a[lo64], b[lo64]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,1,2,3,4,5,6,7, 16,17,18,19,20,21,22,23))))
+            return CanonicalShuffle::S64x2UnzipEven;
+        // UZP2.2D: {a[hi64], b[hi64]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(8,9,10,11,12,13,14,15, 24,25,26,27,28,29,30,31))))
+            return CanonicalShuffle::S64x2UnzipOdd;
+
+        // 32-bit element patterns
+        // UZP1.4S: {a[0], a[2], b[0], b[2]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,1,2,3, 8,9,10,11, 16,17,18,19, 24,25,26,27))))
+            return CanonicalShuffle::S32x4UnzipEven;
+        // UZP2.4S: {a[1], a[3], b[1], b[3]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(4,5,6,7, 12,13,14,15, 20,21,22,23, 28,29,30,31))))
+            return CanonicalShuffle::S32x4UnzipOdd;
+        // ZIP1.4S: {a[0], b[0], a[1], b[1]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,1,2,3, 16,17,18,19, 4,5,6,7, 20,21,22,23))))
+            return CanonicalShuffle::S32x4ZipLower;
+        // ZIP2.4S: {a[2], b[2], a[3], b[3]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(8,9,10,11, 24,25,26,27, 12,13,14,15, 28,29,30,31))))
+            return CanonicalShuffle::S32x4ZipHigher;
+        // TRN1.4S: {a[0], b[0], a[2], b[2]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,1,2,3, 16,17,18,19, 8,9,10,11, 24,25,26,27))))
+            return CanonicalShuffle::S32x4TransposeEven;
+        // TRN2.4S: {a[1], b[1], a[3], b[3]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(4,5,6,7, 20,21,22,23, 12,13,14,15, 28,29,30,31))))
+            return CanonicalShuffle::S32x4TransposeOdd;
+
+        // 16-bit element patterns
+        // UZP1.8H: {a[0],a[2],a[4],a[6], b[0],b[2],b[4],b[6]}
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,1, 4,5, 8,9, 12,13, 16,17, 20,21, 24,25, 28,29))))
+            return CanonicalShuffle::S16x8UnzipEven;
+        // UZP2.8H
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(2,3, 6,7, 10,11, 14,15, 18,19, 22,23, 26,27, 30,31))))
+            return CanonicalShuffle::S16x8UnzipOdd;
+        // ZIP1.8H
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,1, 16,17, 2,3, 18,19, 4,5, 20,21, 6,7, 22,23))))
+            return CanonicalShuffle::S16x8ZipLower;
+        // ZIP2.8H
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(8,9, 24,25, 10,11, 26,27, 12,13, 28,29, 14,15, 30,31))))
+            return CanonicalShuffle::S16x8ZipHigher;
+        // TRN1.8H
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,1, 16,17, 4,5, 20,21, 8,9, 24,25, 12,13, 28,29))))
+            return CanonicalShuffle::S16x8TransposeEven;
+        // TRN2.8H
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(2,3, 18,19, 6,7, 22,23, 10,11, 26,27, 14,15, 30,31))))
+            return CanonicalShuffle::S16x8TransposeOdd;
+
+        // 8-bit element patterns
+        // UZP1.16B
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,2,4,6,8,10,12,14, 16,18,20,22,24,26,28,30))))
+            return CanonicalShuffle::S8x16UnzipEven;
+        // UZP2.16B
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(1,3,5,7,9,11,13,15, 17,19,21,23,25,27,29,31))))
+            return CanonicalShuffle::S8x16UnzipOdd;
+        // ZIP1.16B
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,16, 1,17, 2,18, 3,19, 4,20, 5,21, 6,22, 7,23))))
+            return CanonicalShuffle::S8x16ZipLower;
+        // ZIP2.16B
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(8,24, 9,25, 10,26, 11,27, 12,28, 13,29, 14,30, 15,31))))
+            return CanonicalShuffle::S8x16ZipHigher;
+        // TRN1.16B
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(0,16, 2,18, 4,20, 6,22, 8,24, 10,26, 12,28, 14,30))))
+            return CanonicalShuffle::S8x16TransposeEven;
+        // TRN2.16B
+        if (bitEquals(pattern, canonicalize(v128_t::fromU8x16(1,17, 3,19, 5,21, 7,23, 9,25, 11,27, 13,29, 15,31))))
+            return CanonicalShuffle::S8x16TransposeOdd;
+
+        return CanonicalShuffle::Unknown;
+    }
+
     static bool isLargerElementShuffle(v128_t pattern, unsigned size)
     {
         unsigned numberOfElements = 16 / size;

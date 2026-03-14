@@ -119,9 +119,9 @@ SVGFontElement* CachedSVGFont::getSVGFontById(const AtomString& fontName) const
     if (fontName.isEmpty())
         return elements.first();
 
-    for (Ref element : elements) {
-        if (element->getIdAttribute() == fontName)
-            return element.unsafePtr();
+    for (auto& element : elements) {
+        if (element.getIdAttribute() == fontName)
+            return &element;
     }
     return nullptr;
 }

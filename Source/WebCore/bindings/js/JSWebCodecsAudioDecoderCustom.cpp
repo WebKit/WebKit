@@ -36,13 +36,13 @@
 namespace WebCore {
 
 template <typename Visitor>
-void JSWebCodecsAudioDecoder::visitAdditionalChildren(Visitor& visitor)
+void JSWebCodecsAudioDecoder::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().outputCallbackConcurrently().visitJSFunction(visitor);
-    wrapped().errorCallbackConcurrently().visitJSFunction(visitor);
+    wrapped().outputCallbackConcurrently().visitJSFunctionInGCThread(visitor);
+    wrapped().errorCallbackConcurrently().visitJSFunctionInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWebCodecsAudioDecoder);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSWebCodecsAudioDecoder);
 
 }
 

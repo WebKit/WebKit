@@ -131,7 +131,7 @@ public:
     static WebsiteDataStore& defaultDataStore();
     static bool NODELETE defaultDataStoreExists();
     static void deleteDefaultDataStoreForTesting();
-    static RefPtr<WebsiteDataStore> existingDataStoreForIdentifier(const WTF::UUID&);
+    static RefPtr<WebsiteDataStore> NODELETE existingDataStoreForIdentifier(const WTF::UUID&);
     
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
@@ -160,7 +160,7 @@ public:
     void registerProcess(WebProcessProxy&);
     void unregisterProcess(WebProcessProxy&);
     
-    const WeakHashSet<WebProcessProxy>& processes() const { return m_processes; }
+    const WeakHashSet<WebProcessProxy>& processes() const LIFETIME_BOUND { return m_processes; }
 
     enum class ShouldRetryOnFailure : bool { No, Yes };
     void getNetworkProcessConnection(WebProcessProxy&, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&, ShouldRetryOnFailure = ShouldRetryOnFailure::Yes);
@@ -297,7 +297,7 @@ public:
     void removeScreenTimeDataWithInterval(WallTime);
 #endif
 
-    static void setCachedProcessSuspensionDelayForTesting(Seconds);
+    static void NODELETE setCachedProcessSuspensionDelayForTesting(Seconds);
 
 #if !PLATFORM(COCOA)
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
@@ -323,7 +323,7 @@ public:
 
 #if USE(CURL)
     void setNetworkProxySettings(WebCore::CurlProxySettings&&);
-    const WebCore::CurlProxySettings& networkProxySettings() const { return m_proxySettings; }
+    const WebCore::CurlProxySettings& networkProxySettings() const LIFETIME_BOUND { return m_proxySettings; }
 #endif
 
 #if USE(SOUP)
@@ -332,7 +332,7 @@ public:
     void setIgnoreTLSErrors(bool);
     bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
     void setNetworkProxySettings(WebCore::SoupNetworkProxySettings&&);
-    const WebCore::SoupNetworkProxySettings& networkProxySettings() const { return m_networkProxySettings; }
+    const WebCore::SoupNetworkProxySettings& networkProxySettings() const LIFETIME_BOUND { return m_networkProxySettings; }
     void setCookiePersistentStorage(const String&, SoupCookiePersistentStorageType);
     void setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy);
 #endif
@@ -416,7 +416,7 @@ public:
     }
     static std::optional<double> defaultOriginQuotaRatio();
     static std::optional<double> defaultTotalQuotaRatio();
-    static UnifiedOriginStorageLevel defaultUnifiedOriginStorageLevel();
+    static UnifiedOriginStorageLevel NODELETE defaultUnifiedOriginStorageLevel();
 
 #if USE(GLIB)
     static const String& defaultBaseCacheDirectory();
@@ -473,7 +473,7 @@ public:
 
     void updateServiceWorkerInspectability();
 
-    HashSet<RefPtr<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;
+    HashSet<Ref<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;
 
     void setServiceWorkerOverridePreferences(WebPreferences* preferences) { m_serviceWorkerOverridePreferences = preferences; }
     WebPreferences* serviceWorkerOverridePreferences() const { return m_serviceWorkerOverridePreferences.get(); }
@@ -501,7 +501,7 @@ public:
     bool operator==(const WebsiteDataStore& other) const { return (m_sessionID == other.sessionID()); }
     void resolveDirectoriesAsynchronously();
 
-    const HashSet<URL>& persistedSiteURLs() const { return m_persistedSiteURLs; }
+    const HashSet<URL>& persistedSiteURLs() const LIFETIME_BOUND { return m_persistedSiteURLs; }
     void setPersistedSiteURLs(HashSet<URL>&&);
 
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
@@ -539,7 +539,7 @@ private:
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Ref<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
     void platformInitialize();
-    void platformDestroy();
+    void NODELETE platformDestroy();
     void platformSetNetworkParameters(WebsiteDataStoreParameters&);
     void removeRecentSearches(WallTime, CompletionHandler<void()>&&);
 
@@ -555,7 +555,7 @@ private:
     void createHandleFromResolvedPathIfPossible(const String& resolvedPath, SandboxExtension::Handle&, SandboxExtension::Type = SandboxExtension::Type::ReadWrite);
 
     // Will create a temporary process pool is none exists yet.
-    HashSet<RefPtr<WebProcessPool>> ensureProcessPools() const;
+    HashSet<Ref<WebProcessPool>> ensureProcessPools() const;
 
     static Vector<WebCore::SecurityOriginData> mediaKeysStorageOrigins(const String& mediaKeysStorageDirectory);
     static void removeMediaKeysStorage(const String& mediaKeysStorageDirectory, WallTime modifiedSince);
@@ -573,7 +573,7 @@ private:
 #endif
 
 #if ENABLE(MANAGED_DOMAINS)
-    static const HashSet<WebCore::RegistrableDomain>* managedDomainsIfInitialized();
+    static const HashSet<WebCore::RegistrableDomain>* NODELETE managedDomainsIfInitialized();
     static void forwardManagedDomainsToITPIfInitialized(CompletionHandler<void()>&&);
     void setManagedDomainsForITP(const HashSet<WebCore::RegistrableDomain>&, CompletionHandler<void()>&&);
 #endif

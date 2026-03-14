@@ -165,7 +165,7 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
 
     // Iterator is not affected if the removed node is the reference node and is the root.
     // or if removed node is not the reference node, or the ancestor of the reference node.
-    Ref root = this->root();
+    auto& root = this->root();
     if (!removedNode.isDescendantOf(root))
         return;
     bool willRemoveReferenceNode = &removedNode == referenceNode.node;
@@ -174,12 +174,12 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
         return;
 
     if (referenceNode.isPointerBeforeNode) {
-        RefPtr node = NodeTraversal::next(removedNode, root.ptr());
+        RefPtr node = NodeTraversal::next(removedNode, &root);
         if (node) {
             // Move out from under the node being removed if the new reference
             // node is a descendant of the node being removed.
             while (node && node->isDescendantOf(removedNode))
-                node = NodeTraversal::next(*node, root.ptr());
+                node = NodeTraversal::next(*node, &root);
             if (node)
                 referenceNode.node = node;
         } else {
@@ -193,7 +193,7 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
                 }
                 if (node) {
                     // Removing last node.
-                    // Need to move the pointer after the node preceding the 
+                    // Need to move the pointer after the node preceding the
                     // new reference node.
                     referenceNode.node = node;
                     referenceNode.isPointerBeforeNode = false;
@@ -213,7 +213,7 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
                 referenceNode.node = WTF::move(node);
         } else {
             // FIXME: This branch doesn't appear to have any LayoutTests.
-            node = NodeTraversal::next(removedNode, root.ptr());
+            node = NodeTraversal::next(removedNode, &root);
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {

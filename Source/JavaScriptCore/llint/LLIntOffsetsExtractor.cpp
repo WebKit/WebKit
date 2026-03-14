@@ -62,6 +62,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "NativeExecutable.h"
 #include "PinballCompletion.h"
+#include "PinballHandlerContext.h"
 #include "PrivateFieldPutKind.h"
 #include "ProtoCallFrame.h"
 #include "PutByIdFlags.h"

@@ -47,7 +47,7 @@ public:
 
     Class parametersClass() const override { return Class::RsaKeyGenParams; }
 
-    const Vector<uint8_t>& publicExponentVector() const
+    const Vector<uint8_t>& publicExponentVector() const LIFETIME_BOUND
     {
         if (!m_publicExponentVector.isEmpty() || !publicExponent->byteLength())
             return m_publicExponentVector;

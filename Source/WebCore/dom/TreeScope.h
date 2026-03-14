@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
-    Element* focusedElementInScope();
+    Element* NODELETE focusedElementInScope();
     Element* pointerLockElement() const;
 
     void setCustomElementRegistry(RefPtr<CustomElementRegistry>&&);
@@ -197,6 +197,6 @@ private:
     std::unique_ptr<SVGResourcesMap> m_svgResourcesMap;
 };
 
-TreeScope* commonTreeScope(Node*, Node*);
+TreeScope* NODELETE commonTreeScope(Node*, Node*);
 
 } // namespace WebCore

@@ -41,7 +41,7 @@ enum class MaskMode : uint8_t {
 // MARK: - Conversion
 
 // NOTE: Custom conversion is required to resolve `auto` value when aliased to `-webkit-mask-source-type`.
-template<> struct CSSValueConversion<MaskMode> { auto operator()(BuilderState&, const CSSValue&) -> MaskMode; };
+template<> struct CSSValueConversion<MaskMode> { MaskMode NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

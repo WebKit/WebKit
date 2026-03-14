@@ -38,6 +38,7 @@
 #include "DocumentInlines.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementTraversal.h"
 #include "EventHandler.h"
@@ -59,6 +60,7 @@
 #include "KeyboardEvent.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrameInlines.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeName.h"
@@ -207,7 +209,7 @@ HTMLSelectElement* HTMLSelectElement::findOwnerSelect(ContainerNode* startNode, 
             return nullptr;
         return findOwnerSelect(startNode->parentNode(), ExcludeOptGroup::Yes);
     }
-    if (is<HTMLDataListElement>(*startNode) || is<HTMLHRElement>(*startNode) || is<HTMLOptionElement>(*startNode))
+    if (isAnyOf<HTMLDataListElement, HTMLHRElement, HTMLOptionElement>(*startNode))
         return nullptr;
     return findOwnerSelect(startNode->parentNode(), excludeOptGroup);
 }
@@ -563,7 +565,7 @@ bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
     if (!HTMLFormControlElement::childShouldCreateRenderer(child))
         return false;
     if (!usesMenuList())
-        return is<HTMLOptionElement>(child) || is<HTMLOptGroupElement>(child) || validationMessageShadowTreeContains(child);
+        return isAnyOf<HTMLOptionElement, HTMLOptGroupElement>(child) || validationMessageShadowTreeContains(child);
     if (child.isInShadowTree() && child.containingShadowRoot() == userAgentShadowRoot())
         return true;
     if (isFirstElementChildButton(child))
@@ -609,7 +611,7 @@ CompletionHandlerCallingScope HTMLSelectElement::optionToSelectFromChildChangeSc
         if (auto* option = dynamicDowncast<HTMLOptionElement>(*change.siblingChanged)) {
             if (option->selectedWithoutUpdate())
                 optionToSelect = option;
-        } else if (RefPtr optGroup = dynamicDowncast<HTMLOptGroupElement>(change.siblingChanged); !parentOptGroup && optGroup)
+        } else if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(change.siblingChanged); !parentOptGroup && optGroup)
             optionToSelect = getLastSelectedOption(*optGroup);
     } else if (parentOptGroup && change.type == ContainerNode::ChildChange::Type::AllChildrenReplaced)
         optionToSelect = getLastSelectedOption(*parentOptGroup);
@@ -654,7 +656,7 @@ void HTMLSelectElement::optionElementChildrenChanged()
 
 void HTMLSelectElement::updateButtonText(HTMLOptionElement* selectedOption, int optionIndex)
 {
-    protect(downcast<SelectFallbackButtonElement>(*protect(m_buttonSlot)->firstChild()))->updateText(selectedOption, optionIndex);
+    protect(downcast<SelectFallbackButtonElement>(*m_buttonSlot->firstChild()))->updateText(selectedOption, optionIndex);
 }
 
 void HTMLSelectElement::setSize(unsigned size)
@@ -987,7 +989,7 @@ void HTMLSelectElement::scrollToSelection()
 
 void HTMLSelectElement::setOptionsChangedOnRenderer()
 {
-    if (CheckedPtr renderer = this->renderer()) {
+    if (auto* renderer = this->renderer()) {
         if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(*renderer))
             renderMenuList->setOptionsChanged(true);
         else if (!usesMenuList())
@@ -1085,10 +1087,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
                         optGroupIt.traverseNextSkippingChildren();
                         continue;
                     }
-                    if (is<HTMLOptGroupElement>(optGroupDescendant)
-                        || is<HTMLDataListElement>(optGroupDescendant)
-                        || is<HTMLSelectElement>(optGroupDescendant)
-                        || is<HTMLHRElement>(optGroupDescendant)) {
+                    if (isAnyOf<HTMLOptGroupElement, HTMLDataListElement, HTMLSelectElement, HTMLHRElement>(optGroupDescendant)) {
                         optGroupIt.traverseNextSkippingChildren();
                         continue;
                     }
@@ -1102,7 +1101,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
                 it.traverseNextSkippingChildren();
                 continue;
             }
-            if (is<HTMLDataListElement>(descendant) || is<HTMLSelectElement>(descendant)) {
+            if (isAnyOf<HTMLDataListElement, HTMLSelectElement>(descendant)) {
                 it.traverseNextSkippingChildren();
                 continue;
             }
@@ -1437,10 +1436,13 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
     ASSERT(renderer());
     ASSERT(usesMenuList());
 
+    if (!event.isTrusted())
+        return;
+
     auto& eventNames = WebCore::eventNames();
 
     bool isBaseSelectPicker = usesBaseAppearancePicker();
-    bool popoverOpen = isBaseSelectPicker && m_popover && protect(m_popover)->isPopoverShowing();
+    bool popoverOpen = isBaseSelectPicker && m_popover && m_popover->isPopoverShowing();
 
     if (event.type() == eventNames.keydownEvent) {
         RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event);

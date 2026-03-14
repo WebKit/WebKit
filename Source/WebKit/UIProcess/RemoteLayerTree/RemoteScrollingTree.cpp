@@ -256,7 +256,7 @@ void RemoteScrollingTree::reportExposedUnfilledArea(MonotonicTime time, unsigned
 {
     ASSERT(isMainRunLoop());
 
-    CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
+    auto* scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get();
     if (!scrollingCoordinatorProxy)
         return;
 

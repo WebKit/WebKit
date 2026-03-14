@@ -1,7 +1,7 @@
 
 PASS sender.getStats() via addTransceiver should return stats report containing outbound-rtp stats
 PASS sender.getStats() via addTrack should return stats report containing outbound-rtp stats
-FAIL sender.getStats() should work on a stopped transceiver but not have outbound-rtp stats assert_false: expected false got true
+PASS sender.getStats() should work on a stopped transceiver but not have outbound-rtp stats
 PASS sender.getStats() should work with a closed PeerConnection but not have outbound-rtp objects
 PASS sender.getStats() should return stats report containing ICE candidate stats
 

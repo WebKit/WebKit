@@ -118,12 +118,12 @@ void WebDragClient::didConcludeEditDrag()
 
 #if USE(APPKIT)
 
-static WebCore::CachedImage* cachedImage(Element& element)
+static RefPtr<WebCore::CachedImage> cachedImage(Element& element)
 {
     CheckedPtr renderImage = dynamicDowncast<WebCore::RenderImage>(element.renderer());
     if (!renderImage)
         return nullptr;
-    auto* image = renderImage->cachedImage();
+    RefPtr image = renderImage->cachedImage();
     if (!image || image->errorOccurred()) 
         return nullptr;
     return image;
@@ -133,7 +133,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 {
     ASSERT(pasteboardName == String(NSPasteboardNameDrag));
 
-    WebCore::CachedImage* image = cachedImage(element);
+    RefPtr image = cachedImage(element);
 
     String extension;
     if (image) {

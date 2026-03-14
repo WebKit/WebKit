@@ -104,7 +104,7 @@ public:
     const IDBDatabaseInfo& NODELETE databaseInfo() const;
     const IDBTransactionInfo& NODELETE transactionInfo() const;
 
-    const IDBKeyData* resultKey() const { return m_resultKey.get(); }
+    const IDBKeyData* resultKey() const LIFETIME_BOUND { return m_resultKey.get(); }
     uint64_t resultInteger() const { return m_resultInteger; }
 
     WEBCORE_EXPORT const IDBGetResult& NODELETE getResult() const;

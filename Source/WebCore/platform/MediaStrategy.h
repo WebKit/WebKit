@@ -61,15 +61,15 @@ public:
 #endif
 #if ENABLE(VIDEO)
     virtual RefPtr<AudioVideoRenderer> createAudioVideoRenderer(WTF::LoggerHelper*, HTMLMediaElementIdentifier, MediaPlayerIdentifier) const;
-    bool hasRemoteRendererFor(MediaPlayerMediaEngineIdentifier) const;
-    void enableRemoteRenderer(MediaPlayerMediaEngineIdentifier, bool);
+    bool NODELETE hasRemoteRendererFor(MediaPlayerMediaEngineIdentifier) const;
+    void NODELETE enableRemoteRenderer(MediaPlayerMediaEngineIdentifier, bool);
 #endif
     virtual std::unique_ptr<NowPlayingManager> createNowPlayingManager() const;
     void resetMediaEngines();
     virtual bool hasThreadSafeMediaSourceSupport() const;
 #if ENABLE(MEDIA_SOURCE)
     virtual void enableMockMediaSource();
-    bool mockMediaSourceEnabled() const;
+    bool NODELETE mockMediaSourceEnabled() const;
     static void addMockMediaSourceEngine();
 #endif
 

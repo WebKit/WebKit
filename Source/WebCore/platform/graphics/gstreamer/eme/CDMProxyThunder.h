@@ -56,7 +56,7 @@ public:
     };
 
     bool decrypt(DecryptionContext&, const GRefPtr<GstCaps>& inputCaps);
-    const String& keySystem() { return m_keySystem; }
+    const String& keySystem() LIFETIME_BOUND { return m_keySystem; }
 
 private:
     BoxPtr<OpenCDMSession> getDecryptionSession(DecryptionContext&) const;

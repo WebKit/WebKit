@@ -110,14 +110,14 @@ public:
     ComputedStyle& style() { return m_style.computedStyle(); }
     const ComputedStyle& style() const { return m_style.computedStyle(); }
 
-    RenderStyle& renderStyle() { return m_style; }
-    const RenderStyle& renderStyle() const { return m_style; }
+    RenderStyle& renderStyle() LIFETIME_BOUND { return m_style; }
+    const RenderStyle& renderStyle() const LIFETIME_BOUND { return m_style; }
 
     const ComputedStyle& parentStyle() const { return m_context.parentStyle->computedStyle(); }
-    const RenderStyle& parentRenderStyle() const { return *m_context.parentStyle; }
+    const RenderStyle& parentRenderStyle() const LIFETIME_BOUND { return *m_context.parentStyle; }
 
     const ComputedStyle* rootElementStyle() const { return m_context.rootElementStyle ? &m_context.rootElementStyle->computedStyle() : nullptr; }
-    const RenderStyle* rootElementRenderStyle() const { return m_context.rootElementStyle; }
+    const RenderStyle* rootElementRenderStyle() const LIFETIME_BOUND { return m_context.rootElementStyle; }
 
     const Document& document() const { return *m_context.document; }
     const Element* element() const { return m_context.element.get(); }
@@ -130,8 +130,8 @@ public:
     bool fontDirty() const { return m_fontDirty; }
     void setFontDirty() { m_fontDirty = true; }
 
-    inline const FontCascadeDescription& fontDescription();
-    inline const FontCascadeDescription& parentFontDescription();
+    inline const FontCascadeDescription& fontDescription() LIFETIME_BOUND;
+    inline const FontCascadeDescription& parentFontDescription() LIFETIME_BOUND;
 
     bool applyPropertyToRegularStyle() const { return m_linkMatch != SelectorChecker::MatchVisited; }
     bool applyPropertyToVisitedLinkStyle() const { return m_linkMatch != SelectorChecker::MatchLink; }
@@ -145,12 +145,13 @@ public:
 
     RefPtr<Image> createStyleImage(const CSSValue&) const;
 
-    const Vector<AtomString>& registeredContentAttributes() const { return m_registeredContentAttributes; }
+    const Vector<AtomString>& registeredContentAttributes() const LIFETIME_BOUND { return m_registeredContentAttributes; }
     void registerContentAttribute(const AtomString& attributeLocalName);
 
-    const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
+    const CSSToLengthConversionData& cssToLengthConversionData() const LIFETIME_BOUND { return m_cssToLengthConversionData; }
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
+    bool hasRevertRuleOrLayerInKeyframeStyle() const { return m_hasRevertRuleOrLayerInKeyframeStyle; }
 
     bool isAuthorOrigin() const
     {
@@ -171,8 +172,8 @@ public:
     unsigned siblingCount();
     unsigned siblingIndex();
 
-    AnchorPositionedStates* anchorPositionedStates() { return m_context.treeResolutionState ? &m_context.treeResolutionState->anchorPositionedStates : nullptr; }
-    const std::optional<BuilderPositionTryFallback>& positionTryFallback() const { return m_context.positionTryFallback; }
+    AnchorPositionedStates* anchorPositionedStates() LIFETIME_BOUND { return m_context.treeResolutionState ? &m_context.treeResolutionState->anchorPositionedStates : nullptr; }
+    const std::optional<BuilderPositionTryFallback>& positionTryFallback() const LIFETIME_BOUND { return m_context.positionTryFallback; }
 
     // FIXME: Copying a FontCascadeDescription is really inefficient. Migrate all callers to
     // setFontDescriptionXXX() variants below, then remove these functions.
@@ -261,6 +262,7 @@ private:
     Vector<AtomString> m_registeredContentAttributes;
 
     bool m_isBuildingKeyframeStyle { false };
+    bool m_hasRevertRuleOrLayerInKeyframeStyle { false };
 };
 
 } // namespace Style

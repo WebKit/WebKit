@@ -75,7 +75,7 @@ header: <WebKit/ModelTypes.h>
 
 header: <WebKit/ModelTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateMaterialDescriptor {
-    Vector<uint8_t> materialGraph;
+    WebModel::MaterialGraph materialGraph;
     String identifier;
 };
 
@@ -150,12 +150,6 @@ header: <WebKit/ModelTypes.h>
 };
 
 header: <WebKit/ModelTypes.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MaterialDescriptor {
-    Vector<uint8_t> materialGraph;
-    String identifier;
-};
-
-header: <WebKit/ModelTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::ImageAssetSwizzle {
     uint8_t red;
     uint8_t green;
@@ -188,5 +182,143 @@ header: <WebKit/ModelTypes.h>
     WebModel::Float3 boundsMax;
 };
 
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Edge {
+    String outputNode;
+    String outputPort;
+    String inputNode;
+    String inputPort;
+};
+
+header: <WebKit/ModelTypes.h>
+[CustomHeader] enum class WebModel::DataType : uint8_t {
+    kBool,
+    kUchar,
+    kInt,
+    kUint,
+    kInt2,
+    kInt3,
+    kInt4,
+    kFloat,
+    kColor3f,
+    kColor3h,
+    kColor4f,
+    kColor4h,
+    kFloat2,
+    kFloat3,
+    kFloat4,
+    kHalf,
+    kHalf2,
+    kHalf3,
+    kHalf4,
+    kMatrix2f,
+    kMatrix3f,
+    kMatrix4f,
+    kMatrix2h,
+    kMatrix3h,
+    kMatrix4h,
+    kQuat,
+    kSurfaceShader,
+    kGeometryModifier,
+    kPostLightingShader,
+    kString,
+    kToken,
+    kAsset
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Primvar {
+    String name;
+    String referencedGeomPropName;
+    uint64_t attributeFormat;
+};
+
+header: <WebKit/ModelTypes.h>
+[CustomHeader] enum class WebModel::Constant : uint8_t {
+    kBool,
+    kUchar,
+    kInt,
+    kUint,
+    kHalf,
+    kFloat,
+    kTimecode,
+    kString,
+    kToken,
+    kAsset,
+    kMatrix2f,
+    kMatrix3f,
+    kMatrix4f,
+    kQuatf,
+    kQuath,
+    kFloat2,
+    kHalf2,
+    kInt2,
+    kFloat3,
+    kHalf3,
+    kInt3,
+    kFloat4,
+    kHalf4,
+    kInt4,
+    kPoint3f,
+    kPoint3h,
+    kNormal3f,
+    kNormal3h,
+    kVector3f,
+    kVector3h,
+    kColor3f,
+    kColor3h,
+    kColor4f,
+    kColor4h,
+    kTexCoord2h,
+    kTexCoord2f,
+    kTexCoord3h,
+    kTexCoord3f
+};
+
+header: <WebKit/ModelTypes.h>
+[CustomHeader] enum class WebModel::NodeType : uint8_t {
+    Builtin,
+    Constant,
+    Arguments,
+    Results
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::ConstantContainer {
+    WebModel::Constant constant;
+    Vector<Variant<String, double>> constantValues;
+    String name;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::InputOutput {
+    WebModel::DataType type;
+    String name;
+    std::optional<WebModel::DataType> semanticType;
+    std::optional<WebModel::ConstantContainer> defaultValue;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Builtin {
+    String definition;
+    String name;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Node {
+    WebModel::NodeType bridgeNodeType;
+    WebModel::Builtin builtin;
+    WebModel::ConstantContainer constant;
+};
+
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MaterialGraph {
+    Vector<WebModel::Node> nodes;
+    Vector<WebModel::Edge> edges;
+    WebModel::Node arguments;
+    WebModel::Node results;
+    Vector<WebModel::InputOutput> inputs;
+    Vector<WebModel::InputOutput> outputs;
+};
 #endif
 

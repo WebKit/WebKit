@@ -75,7 +75,7 @@ bool UnevaluatedCalcBase::equal(const UnevaluatedCalcBase& other) const
 
 bool UnevaluatedCalcBase::requiresConversionData() const
 {
-    return protect(calcValue())->requiresConversionData();
+    return calcValue().requiresConversionData();
 }
 
 void UnevaluatedCalcBase::serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context) const

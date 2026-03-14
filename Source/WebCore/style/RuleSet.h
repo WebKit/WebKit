@@ -94,34 +94,34 @@ public:
 
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&);
 
-    const RuleFeatureSet& features() const { return m_features; }
+    const RuleFeatureSet& features() const LIFETIME_BOUND { return m_features; }
 
-    const RuleDataVector* idRules(const AtomString& key) const { return m_idRules.get(key); }
-    const RuleDataVector* classRules(const AtomString& key) const { return m_classRules.get(key); }
-    const RuleDataVector* attributeRules(const AtomString& key, bool isHTMLName) const;
-    const RuleDataVector* tagRules(const AtomString& key, bool isHTMLName) const;
-    const RuleDataVector* userAgentPartRules(const AtomString& key) const { return m_userAgentPartRules.get(key); }
-    const RuleDataVector& linkPseudoClassRules() const { return m_linkPseudoClassRules; }
-    const RuleDataVector* namedPseudoElementRules(const AtomString& key) const { return m_namedPseudoElementRules.get(key); }
+    const RuleDataVector* idRules(const AtomString& key) const LIFETIME_BOUND { return m_idRules.get(key); }
+    const RuleDataVector* classRules(const AtomString& key) const LIFETIME_BOUND { return m_classRules.get(key); }
+    const RuleDataVector* attributeRules(const AtomString& key, bool isHTMLName) const LIFETIME_BOUND;
+    const RuleDataVector* tagRules(const AtomString& key, bool isHTMLName) const LIFETIME_BOUND;
+    const RuleDataVector* userAgentPartRules(const AtomString& key) const LIFETIME_BOUND { return m_userAgentPartRules.get(key); }
+    const RuleDataVector& linkPseudoClassRules() const LIFETIME_BOUND { return m_linkPseudoClassRules; }
+    const RuleDataVector* namedPseudoElementRules(const AtomString& key) const LIFETIME_BOUND { return m_namedPseudoElementRules.get(key); }
 #if ENABLE(VIDEO)
-    const RuleDataVector& cuePseudoRules() const { return m_cuePseudoRules; }
+    const RuleDataVector& cuePseudoRules() const LIFETIME_BOUND { return m_cuePseudoRules; }
 #endif
-    const RuleDataVector& hostPseudoClassRules() const { return m_hostPseudoClassRules; }
-    const RuleDataVector& slottedPseudoElementRules() const { return m_slottedPseudoElementRules; }
-    const RuleDataVector& partPseudoElementRules() const { return m_partPseudoElementRules; }
-    const RuleDataVector& focusPseudoClassRules() const { return m_focusPseudoClassRules; }
-    const RuleDataVector& focusVisiblePseudoClassRules() const { return m_focusVisiblePseudoClassRules; }
-    const RuleDataVector& fullscreenPseudoClassRules() const { return m_fullscreenPseudoClassRules; }
-    const RuleDataVector& rootElementRules() const { return m_rootElementRules; }
-    const RuleDataVector& universalRules() const { return m_universalRules; }
+    const RuleDataVector& hostPseudoClassRules() const LIFETIME_BOUND { return m_hostPseudoClassRules; }
+    const RuleDataVector& slottedPseudoElementRules() const LIFETIME_BOUND { return m_slottedPseudoElementRules; }
+    const RuleDataVector& partPseudoElementRules() const LIFETIME_BOUND { return m_partPseudoElementRules; }
+    const RuleDataVector& focusPseudoClassRules() const LIFETIME_BOUND { return m_focusPseudoClassRules; }
+    const RuleDataVector& focusVisiblePseudoClassRules() const LIFETIME_BOUND { return m_focusVisiblePseudoClassRules; }
+    const RuleDataVector& fullscreenPseudoClassRules() const LIFETIME_BOUND { return m_fullscreenPseudoClassRules; }
+    const RuleDataVector& rootElementRules() const LIFETIME_BOUND { return m_rootElementRules; }
+    const RuleDataVector& universalRules() const LIFETIME_BOUND { return m_universalRules; }
     // For pseudo-element rules that apply to all elements or all HTML elements like "::marker".
-    const RuleDataVector& universalPseudoElementRules() const { return m_universalPseudoElementRules; }
+    const RuleDataVector& universalPseudoElementRules() const LIFETIME_BOUND { return m_universalPseudoElementRules; }
     // Pseudo element types applying to all elements in HTML namespace.
     EnumSet<PseudoElementType> universalHTMLPseudoElementTypes() const { return m_universalHTMLPseudoElementTypes; }
     // Pseudo element types applying to all elements.
     EnumSet<PseudoElementType> universalPseudoElementTypes() const { return m_universalPseudoElementTypes; }
 
-    const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
+    const Vector<StyleRulePage*>& pageRules() const LIFETIME_BOUND { return m_pageRules; }
 
     unsigned ruleCount() const { return m_ruleCount; }
 
@@ -177,8 +177,8 @@ private:
         CascadeLayerIdentifier parentIdentifier;
         CascadeLayerPriority priority { 0 };
     };
-    CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) { return m_cascadeLayers[identifier - 1]; }
-    const CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) const { return m_cascadeLayers[identifier - 1]; }
+    CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) LIFETIME_BOUND { return m_cascadeLayers[identifier - 1]; }
+    const CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) const LIFETIME_BOUND { return m_cascadeLayers[identifier - 1]; }
     CascadeLayerPriority cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier) const;
 
     struct ScopeAndParent {

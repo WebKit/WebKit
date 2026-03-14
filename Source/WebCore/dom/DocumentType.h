@@ -38,9 +38,9 @@ public:
         return adoptRef(*new DocumentType(document, name, publicId, systemId));
     }
 
-    const String& name() const { return m_name; }
-    const String& publicId() const { return m_publicId; }
-    const String& systemId() const { return m_systemId; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const String& publicId() const LIFETIME_BOUND { return m_publicId; }
+    const String& systemId() const LIFETIME_BOUND { return m_systemId; }
 
 private:
     DocumentType(Document&, const String& name, const String& publicId, const String& systemId);

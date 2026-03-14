@@ -51,6 +51,7 @@ public:
     ALWAYS_INLINE bool isPrivateMethod() const { return m_bits & IsPrivateMethod; }
     ALWAYS_INLINE bool isPrivateSetter() const { return m_bits & IsPrivateSetter; }
     ALWAYS_INLINE bool isPrivateGetter() const { return m_bits & IsPrivateGetter; }
+    ALWAYS_INLINE bool isUsing() const { return m_bits & IsUsing; }
 
     ALWAYS_INLINE void setIsCaptured() { m_bits |= IsCaptured; }
     ALWAYS_INLINE void setIsConst() { m_bits |= IsConst; }
@@ -67,6 +68,7 @@ public:
     ALWAYS_INLINE void setIsPrivateMethod() { m_bits |= IsPrivateMethod; }
     ALWAYS_INLINE void setIsPrivateSetter() { m_bits |= IsPrivateSetter; }
     ALWAYS_INLINE void setIsPrivateGetter() { m_bits |= IsPrivateGetter; }
+    ALWAYS_INLINE void setIsUsing() { m_bits |= IsUsing; }
 
     ALWAYS_INLINE void clearIsVar() { m_bits &= ~IsVar; }
 
@@ -93,6 +95,7 @@ private:
         IsPrivateGetter = 1 << 12,
         IsPrivateSetter = 1 << 13,
         IsFunctionDeclaration = 1 << 14,
+        IsUsing = 1 << 15,
     };
     uint16_t m_bits { 0 };
 };
@@ -194,6 +197,23 @@ public:
     void markVariableAsExported(const UniquedStringImpl* identifier);
 
     bool isEverythingCaptured() const { return m_isEverythingCaptured; }
+    bool hasUsingDeclaration() const
+    {
+        for (auto& pair : m_map) {
+            if (pair.value.isUsing())
+                return true;
+        }
+        return false;
+    }
+    unsigned usingDeclarationCount() const
+    {
+        unsigned count = 0;
+        for (auto& pair : m_map) {
+            if (pair.value.isUsing())
+                count++;
+        }
+        return count;
+    }
     bool isEmpty() const { return !m_map.size() && !privateNamesSize(); }
 
     using PrivateNamesRange = WTF::IteratorRange<PrivateNameEnvironment::iterator>;

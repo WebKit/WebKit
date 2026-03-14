@@ -80,7 +80,7 @@ public:
         move(LayoutSize(x, y), accumulate);
     }
 
-    void move(const LayoutSize&, TransformAccumulation = FlattenTransform);
+    void NODELETE move(const LayoutSize&, TransformAccumulation = FlattenTransform);
     void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
     WEBCORE_EXPORT void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
 
@@ -92,19 +92,19 @@ public:
     WEBCORE_EXPORT std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
     LayoutSize accumulatedOffset() const { return m_accumulatedOffset; }
-    TransformationMatrix* accumulatedTransform() const { return m_accumulatedTransform.get(); }
+    TransformationMatrix* accumulatedTransform() const LIFETIME_BOUND { return m_accumulatedTransform.get(); }
     std::unique_ptr<TransformationMatrix> releaseTrackedTransform();
     TransformDirection direction() const { return m_direction; }
 
-    void flatten();
+    void NODELETE flatten();
 
 private:
-    void translateTransform(const LayoutSize&, TransformDirection);
+    void NODELETE translateTransform(const LayoutSize&, TransformDirection);
     void applyAccumulatedOffset();
 
 
-    bool shouldFlattenBefore(TransformAccumulation accumulate = FlattenTransform);
-    bool shouldFlattenAfter(TransformAccumulation accumulate = FlattenTransform);
+    bool NODELETE shouldFlattenBefore(TransformAccumulation accumulate = FlattenTransform);
+    bool NODELETE shouldFlattenAfter(TransformAccumulation accumulate = FlattenTransform);
     
     TransformDirection inverseDirection() const;
 

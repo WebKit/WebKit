@@ -65,7 +65,7 @@ FloatRoundedRect::FloatRoundedRect(const FloatRect& rect, const FloatSize& topLe
 {
 }
 
-static inline float cornerRectIntercept(float y, const FloatRect& cornerRect)
+static inline float NODELETE cornerRectIntercept(float y, const FloatRect& cornerRect)
 {
     ASSERT(cornerRect.height() > 0);
     return cornerRect.width() * sqrt(1 - (y * y) / (cornerRect.height() * cornerRect.height()));

@@ -114,14 +114,14 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackFunction
     return { };
 }
 
-void JSTestCallbackFunctionWithTypedefs::visitJSFunction(JSC::AbstractSlotVisitor& visitor)
+void JSTestCallbackFunctionWithTypedefs::visitJSFunctionInGCThread(JSC::AbstractSlotVisitor& visitor)
 {
-    m_data->visitJSFunction(visitor);
+    m_data->visitJSFunctionInGCThread(visitor);
 }
 
-void JSTestCallbackFunctionWithTypedefs::visitJSFunction(JSC::SlotVisitor& visitor)
+void JSTestCallbackFunctionWithTypedefs::visitJSFunctionInGCThread(JSC::SlotVisitor& visitor)
 {
-    m_data->visitJSFunction(visitor);
+    m_data->visitJSFunctionInGCThread(visitor);
 }
 
 JSC::JSValue toJS(TestCallbackFunctionWithTypedefs& impl)

@@ -166,7 +166,7 @@ private:
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
     void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
-    void platformSetSheetRect(const WebCore::FloatRect&);
+    void NODELETE platformSetSheetRect(const WebCore::FloatRect&);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformStartWindowDrag();
     void platformOpenURLExternally(const String& url);

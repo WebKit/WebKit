@@ -50,9 +50,9 @@ class PlatformCAFilters {
 public:
     WEBCORE_EXPORT static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&, bool backdropIsOpaque);
     WEBCORE_EXPORT static void setBlendingFiltersOnLayer(PlatformLayer*, const BlendMode);
-    static bool isAnimatedFilterProperty(FilterOperation::Type);
+    static bool NODELETE isAnimatedFilterProperty(FilterOperation::Type);
     static String animatedFilterPropertyName(FilterOperation::Type);
-    static bool isValidAnimatedFilterPropertyName(const String&);
+    static bool NODELETE isValidAnimatedFilterPropertyName(const String&);
 
     WEBCORE_EXPORT static RetainPtr<NSValue> filterValueForOperation(const FilterOperation&);
 
@@ -62,7 +62,7 @@ public:
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static void presentationModifiers(const FilterOperations& initialFilters, const FilterOperations* canonicalFilters, Vector<TypedFilterPresentationModifier>& presentationModifiers, RetainPtr<CAPresentationModifierGroup>&);
     WEBCORE_EXPORT static void updatePresentationModifiers(const FilterOperations& filters, const Vector<TypedFilterPresentationModifier>& presentationModifiers);
-    WEBCORE_EXPORT static size_t presentationModifierCount(const FilterOperations&);
+    WEBCORE_EXPORT static size_t NODELETE presentationModifierCount(const FilterOperations&);
 #endif
 };
 

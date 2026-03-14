@@ -116,8 +116,6 @@ private:
 
     void possiblyChangeAudioCategory();
 
-    std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration&) final;
-
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     static void updateNowPlayingSuppression(const NowPlayingInfo*);
 #endif

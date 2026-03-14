@@ -44,13 +44,13 @@ public:
     bool operator==(const FEDisplacementMap&) const;
 
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector; }
-    bool setXChannelSelector(const ChannelSelectorType);
+    bool NODELETE setXChannelSelector(const ChannelSelectorType);
 
     ChannelSelectorType yChannelSelector() const { return m_yChannelSelector; }
-    bool setYChannelSelector(const ChannelSelectorType);
+    bool NODELETE setYChannelSelector(const ChannelSelectorType);
 
     float scale() const { return m_scale; }
-    bool setScale(float);
+    bool NODELETE setScale(float);
 
     static IntOutsets calculateOutsets(const FloatSize& maxDisplacement);
 

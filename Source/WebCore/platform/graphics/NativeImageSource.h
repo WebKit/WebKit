@@ -41,7 +41,7 @@ private:
     std::optional<Color> singlePixelSolidColor() const final { return m_frame.nativeImage(ShouldDecodeToHDR::No)->singlePixelSolidColor(); }
     bool hasHDRContent() const final { return m_frame.nativeImage(ShouldDecodeToHDR::No)->hasHDRContent(); }
 
-    const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& = std::nullopt) final { return m_frame; }
+    const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& = std::nullopt) LIFETIME_BOUND final { return m_frame; }
 
     RefPtr<NativeImage> primaryNativeImage() final { return m_frame.nativeImage(ShouldDecodeToHDR::No); }
 

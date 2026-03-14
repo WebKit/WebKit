@@ -589,7 +589,7 @@ void ResourceLoader::didReceiveResponse(ResourceResponse&& r, CompletionHandler<
     }
 
     if (r.wasPrivateRelayed() && frame) {
-        if (RefPtr document = frame->document()) {
+        if (auto* document = frame->document()) {
             if (!document->wasPrivateRelayed())
                 document->setWasPrivateRelayed(true);
         }
@@ -833,7 +833,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
         return false;
 
     RefPtr frame = m_frame.get();
-    if (RefPtr page = frame ? frame->page() : nullptr) {
+    if (auto* page = frame ? frame->page() : nullptr) {
         if (!page->canUseCredentialStorage())
             return false;
     }
@@ -960,8 +960,8 @@ LocalFrame* ResourceLoader::frame() const
 #if ENABLE(CONTENT_EXTENSIONS)
 ResourceMonitor* ResourceLoader::resourceMonitorIfExists()
 {
-    RefPtr frame = m_frame;
-    if (RefPtr document = frame ? frame->document() : nullptr)
+    auto* frame = m_frame.get();
+    if (auto* document = frame ? frame->document() : nullptr)
         return document->resourceMonitorIfExists();
     return nullptr;
 }

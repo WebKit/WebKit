@@ -226,17 +226,6 @@ void MediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supports
     });
 }
 
-void MediaSessionHelper::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialPlayback)
-{
-    if (m_activeAudioRouteSupportsSpatialPlayback == supportsSpatialPlayback)
-        return;
-
-    m_activeAudioRouteSupportsSpatialPlayback = supportsSpatialPlayback;
-    m_clients.forEach([&](auto& client) {
-        client.activeAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback);
-    });
-}
-
 void MediaSessionHelper::startMonitoringWirelessRoutes()
 {
     if (m_monitoringWirelessRoutesCount++)
@@ -263,26 +252,6 @@ std::optional<ProcessID> MediaSessionHelper::presentedApplicationPID() const
 
 void MediaSessionHelper::providePresentingApplicationPID(ProcessID)
 {
-}
-
-void MediaSessionHelper::updateActiveAudioRouteSupportsSpatialPlayback()
-{
-#if HAVE(AVAUDIOSESSION)
-    AVAudioSession* audioSession = [PAL::getAVAudioSessionClassSingleton() sharedInstance];
-    for (AVAudioSessionPortDescription* output in audioSession.currentRoute.outputs) {
-        if (output.spatialAudioEnabled) {
-            setActiveAudioRouteSupportsSpatialPlayback(true);
-            return;
-        }
-    }
-#endif // HAVE(AVAUDIOSESSION)
-
-    setActiveAudioRouteSupportsSpatialPlayback(false);
-}
-
-void MediaSessionHelper::setActiveAudioRouteSupportsSpatialPlayback(bool supports)
-{
-    activeAudioRouteSupportsSpatialPlaybackDidChange(supports ? SupportsSpatialAudioPlayback::Yes : SupportsSpatialAudioPlayback::No);
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
@@ -388,7 +357,6 @@ void MediaSessionHelperIOS::mediaServerConnectionDied()
 
 void MediaSessionHelperIOS::updateCarPlayIsConnected()
 {
-#if HAVE(AVAUDIOSESSION)
     AVAudioSession *audioSession = [PAL::getAVAudioSessionClassSingleton() sharedInstance];
     for (AVAudioSessionPortDescription *output in audioSession.currentRoute.outputs) {
         if ([output.portType isEqualToString:AVAudioSessionPortCarAudio]) {
@@ -396,7 +364,6 @@ void MediaSessionHelperIOS::updateCarPlayIsConnected()
             return;
         }
     }
-#endif // HAVE(AVAUDIOSESSION)
 
     setIsPlayingToAutomotiveHeadUnit(false);
 }
@@ -448,7 +415,6 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:PAL::get_UIKit_UIApplicationDidEnterBackgroundNotificationSingleton() object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:WebUIApplicationDidEnterBackgroundNotification object:nil];
     [center addObserver:self selector:@selector(activeOutputDeviceDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotificationSingleton() object:nil];
-    [center addObserver:self selector:@selector(spatialPlaybackCapabilitiesChanged:) name:PAL::get_AVFoundation_AVAudioSessionSpatialPlaybackCapabilitiesChangedNotificationSingleton() object:nil];
 
 #if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     [center addObserver:self selector:@selector(mediaServerConnectionDied:) name:getAVSystemController_ServerConnectionDiedNotificationSingleton() object:nil];
@@ -651,14 +617,6 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
     });
 }
 
-- (void)spatialPlaybackCapabilitiesChanged:(NSNotification *)notification
-{
-    LOG(Media, "-[WebMediaSessionHelper spatialPlaybackCapabilitiesChanged:]");
-    callOnWebThreadOrDispatchAsyncOnMainThread([self, protectedSelf = retainPtr(self)]() {
-        if (RefPtr callback = _callback.get())
-            callback->updateActiveAudioRouteSupportsSpatialPlayback();
-    });
-}
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

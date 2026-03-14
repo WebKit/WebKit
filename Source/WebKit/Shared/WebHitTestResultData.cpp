@@ -125,13 +125,13 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
     if (RefPtr target = hitTestResult.innerNonSharedNode()) {
         if (CheckedPtr renderer = dynamicDowncast<RenderImage>(target->renderer())) {
             imageBitmap = createShareableBitmap(*renderer);
-            if (auto* cachedImage = renderer->cachedImage()) {
+            if (RefPtr cachedImage = renderer->cachedImage()) {
                 if (RefPtr image = cachedImage->image())
                     sourceImageMIMEType = image->mimeType();
             }
 
             imageText = [&]() -> String {
-                if (RefPtr element = dynamicDowncast<Element>(target.get())) {
+                if (auto* element = dynamicDowncast<Element>(target.get())) {
                     auto& title = element->attributeWithoutSynchronization(HTMLNames::titleAttr);
                     if (!title.isEmpty())
                         return title;

@@ -55,7 +55,14 @@ UseCounts::UseCounts(Procedure& procedure)
     }
 }
 
-UseCounts::~UseCounts() = default;
+UseCountsWithoutUsingInstructions::UseCountsWithoutUsingInstructions(Procedure& procedure)
+    : m_counts(procedure.values().size())
+{
+    for (Value* value : procedure.values()) {
+        for (Value* child : value->children())
+            m_counts[child]++;
+    }
+}
 
 } } // namespace JSC::B3
 

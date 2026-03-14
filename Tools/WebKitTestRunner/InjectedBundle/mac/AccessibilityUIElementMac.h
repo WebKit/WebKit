@@ -115,6 +115,8 @@ public:
     JSRetainPtr<JSStringRef> computedRoleString() override;
     JSRetainPtr<JSStringRef> title() override;
     JSRetainPtr<JSStringRef> description() override;
+    JSRetainPtr<JSStringRef> debugDescription() override;
+    JSRetainPtr<JSStringRef> rawRoleForTesting() override;
     JSRetainPtr<JSStringRef> language() override;
     JSRetainPtr<JSStringRef> stringValue() override;
     JSRetainPtr<JSStringRef> dateValue() override;
@@ -140,7 +142,7 @@ public:
     unsigned numberOfCharacters() const override;
     int insertionPointLineNumber() override;
     JSRetainPtr<JSStringRef> selectedTextRange() override;
-    JSRetainPtr<JSStringRef> intersectionWithSelectionRange() override;
+    RefPtr<AccessibilityTextMarkerRange> intersectionWithSelectionRange() override;
     JSRetainPtr<JSStringRef> textInputMarkedRange() const override;
     bool isAtomicLiveRegion() const override;
     bool isBusy() const override;

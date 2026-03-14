@@ -80,7 +80,7 @@ public:
 
     void connect();
     void disconnect();
-    void incrementUseCount();
+    void NODELETE incrementUseCount();
     void decrementUseCount();
 
 private:

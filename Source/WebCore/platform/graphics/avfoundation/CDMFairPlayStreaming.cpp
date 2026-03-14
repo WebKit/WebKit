@@ -64,7 +64,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMFactoryFairPlayStreaming);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivateFairPlayStreaming);
 
 #if !RELEASE_LOG_DISABLED
-static WTFLogChannel& logChannel() { return LogEME; }
+static WTFLogChannel& NODELETE logChannel() { return LogEME; }
 #endif
 
 const Vector<FourCC>& CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes()

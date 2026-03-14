@@ -44,6 +44,7 @@ Modules/webaudio/OfflineAudioDestinationNode.cpp
 Modules/webaudio/OscillatorNode.cpp
 Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
+Modules/webauthn/AuthenticationExtensionsClientOutputs.cpp
 Modules/webauthn/AuthenticatorResponse.cpp
 Modules/webcodecs/WebCodecsAudioData.cpp
 Modules/webcodecs/WebCodecsAudioInternalData.h
@@ -170,7 +171,7 @@ css/CSSStyleSheetObservableArray.cpp
 css/CSSValueList.cpp
 css/DOMMatrixReadOnly.cpp
 css/DeprecatedCSSOMPrimitiveValue.h
-[ macOS ] css/DeprecatedCSSOMRGBColor.h
+css/DeprecatedCSSOMRGBColor.h
 css/FontFace.cpp
 css/FontFaceSet.cpp
 css/ImmutableStyleProperties.cpp
@@ -219,7 +220,6 @@ dom/Element.cpp
 dom/ElementData.cpp
 dom/ElementInternals.cpp
 dom/ElementIteratorInlines.h
-dom/ElementTraversal.h
 dom/EventPath.cpp
 dom/ExtensionStyleSheets.cpp
 dom/GCReachableRef.h
@@ -241,8 +241,6 @@ dom/ProcessingInstruction.cpp
 dom/Range.cpp
 dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
-dom/ShadowRoot.h
-dom/SpaceSplitString.h
 dom/StyledElement.cpp
 dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
@@ -260,7 +258,6 @@ editing/EditorCommand.cpp
 editing/FormatBlockCommand.cpp
 editing/FrameSelection.cpp
 editing/IndentOutdentCommand.cpp
-editing/InsertIntoTextNodeCommand.cpp
 editing/InsertLineBreakCommand.cpp
 editing/InsertListCommand.cpp
 editing/InsertParagraphSeparatorCommand.cpp
@@ -269,7 +266,6 @@ editing/ModifySelectionListLevel.cpp
 editing/RemoveFormatCommand.cpp
 editing/ReplaceSelectionCommand.cpp
 editing/SpellChecker.cpp
-editing/TextIterator.cpp
 editing/TextManipulationController.cpp
 editing/TypingCommand.cpp
 editing/VisiblePosition.cpp
@@ -516,11 +512,8 @@ platform/graphics/controls/SwitchTrackPart.h
 platform/graphics/controls/TextAreaPart.h
 platform/graphics/controls/TextFieldPart.h
 platform/graphics/controls/ToggleButtonPart.h
-platform/graphics/filters/FEDisplacementMap.cpp
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.cpp
 platform/graphics/filters/software/FELightingSoftwareApplier.cpp
-platform/graphics/filters/software/FELightingSoftwareApplierInlines.h
-platform/graphics/filters/software/FELightingSoftwareParallelApplier.cpp
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.cpp
 [ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
 [ Mac ] platform/graphics/mac/PDFDocumentImageMac.mm
@@ -532,7 +525,6 @@ platform/graphics/transforms/TransformOperationsSharedPrimitivesPrefix.h
 [ iOS ] platform/ios/LegacyTileGrid.mm
 [ iOS ] platform/ios/PlatformPasteboardIOS.mm
 [ iOS ] platform/ios/PlatformScreenIOS.mm
-[ iOS ] platform/ios/VideoPresentationInterfaceIOS.h
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 [ iOS ] platform/ios/wak/WAKWindow.mm
@@ -619,7 +611,6 @@ rendering/mathml/RenderMathMLOperator.cpp
 rendering/mathml/RenderMathMLPadded.cpp
 rendering/mathml/RenderMathMLScripts.cpp
 rendering/mathml/RenderMathMLToken.cpp
-rendering/mathml/RenderMathMLUnderOver.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp
@@ -645,7 +636,6 @@ rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilterPrimitive.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp
-rendering/svg/legacy/LegacyRenderSVGResourcePattern.cpp
 rendering/svg/legacy/LegacyRenderSVGRoot.cpp
 rendering/svg/legacy/LegacyRenderSVGShape.cpp
 rendering/svg/legacy/LegacyRenderSVGViewportContainer.cpp

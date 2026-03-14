@@ -53,8 +53,8 @@ public:
     explicit FloatRoundedRect(const LayoutRoundedRect&);
     FloatRoundedRect(float x, float y, float width, float height);
 
-    const FloatRect& rect() const { return m_rect; }
-    const CornerRadii& radii() const { return m_radii; }
+    const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
+    const CornerRadii& radii() const LIFETIME_BOUND { return m_radii; }
     bool isRounded() const { return !m_radii.isZero(); }
     bool isEmpty() const { return m_rect.isEmpty(); }
 
@@ -86,10 +86,10 @@ public:
         return FloatRect(m_rect.maxX() - m_radii.bottomRight().width(), m_rect.maxY() - m_radii.bottomRight().height(), m_radii.bottomRight().width(), m_radii.bottomRight().height());
     }
 
-    bool isRenderable() const;
-    bool xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const;
+    bool NODELETE isRenderable() const;
+    bool NODELETE xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const;
 
-    bool intersectionIsRectangular(const FloatRect&) const;
+    bool NODELETE intersectionIsRectangular(const FloatRect&) const;
 
     Path path() const;
 

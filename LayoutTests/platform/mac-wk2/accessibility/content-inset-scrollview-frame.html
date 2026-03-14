@@ -9,26 +9,29 @@
 <script>
 var output = "This tests that a page with a content inset will not affect the bounds of the main frame scroll view. It will appear as the same as the web area's bounds.\n\n";
 
+var webX, webY, scrollViewX, scrollViewY, scrollViewHeight, newScrollViewHeight, newScrollViewY;
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
     var webArea = accessibilityController.rootElement.childAtIndex(0);
-    var webX = webArea.x;
-    var webY = webArea.y - webArea.height;
-
     var scrollView = webArea.parentElement();
-    var scrollViewX = scrollView.x;
-    // to get what the y that we're expecting, we need to subtract the height, because Cocoa requires the bottom point to be consider the y origin.
-    var scrollViewY = scrollView.y - scrollView.height;
-    var scrollViewHeight = scrollView.height;
 
-    output += "The position of the web area and the scroll view should be the same when there's no content inset.\n";
-    output += expect("webX == scrollViewX && webY == scrollViewY", "true")
-
-    output += "\nSetting the main-frame top content inset to 100px.\n";
-
-    var newScrollViewHeight, newScrollViewY;
     setTimeout(async function() {
+        await waitFor(() => scrollView.y > 0);
+
+        webX = webArea.x;
+        webY = webArea.y - webArea.height;
+
+        scrollViewX = scrollView.x;
+        // to get what the y that we're expecting, we need to subtract the height, because Cocoa requires the bottom point to be consider the y origin.
+        scrollViewY = scrollView.y - scrollView.height;
+        scrollViewHeight = scrollView.height;
+
+        output += "The position of the web area and the scroll view should be the same when there's no content inset.\n";
+        output += expect("webX == scrollViewX && webY == scrollViewY", "true")
+
+        output += "\nSetting the main-frame top content inset to 100px.\n";
+
         if (window.testRunner)
             await testRunner.setObscuredContentInsets(100, 0, 0, 0);
         await waitFor(() => {

@@ -35,12 +35,12 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSMessageChannel::visitAdditionalChildren(Visitor& visitor)
+void JSMessageChannel::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     addWebCoreOpaqueRoot(visitor, wrapped().port1());
     addWebCoreOpaqueRoot(visitor, wrapped().port2());
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMessageChannel);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSMessageChannel);
 
 } // namespace WebCore

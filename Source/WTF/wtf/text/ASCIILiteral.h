@@ -122,9 +122,7 @@ inline constexpr unsigned ASCIILiteral::hash() const
 {
     if (isNull())
         return 0;
-    SuperFastHash hasher;
-    hasher.addCharacters(characters(), length());
-    return hasher.hash();
+    return SuperFastHash::computeHash(span());
 }
 
 struct ASCIILiteralHash {

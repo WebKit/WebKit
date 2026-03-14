@@ -27,7 +27,7 @@
 
 #include <WebCore/CachedResource.h>
 #include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -42,25 +42,31 @@ public:
 
 protected:
     WEBCORE_EXPORT CachedResourceHandleBase();
-    WEBCORE_EXPORT explicit CachedResourceHandleBase(CachedResource*);
-    WEBCORE_EXPORT explicit CachedResourceHandleBase(CachedResource&);
+    WEBCORE_EXPORT explicit CachedResourceHandleBase(RefPtr<CachedResource>&&);
+    WEBCORE_EXPORT explicit CachedResourceHandleBase(Ref<CachedResource>&&);
     WEBCORE_EXPORT CachedResourceHandleBase(const CachedResourceHandleBase&);
 
-    WEBCORE_EXPORT void setResource(CachedResource*);
+    WEBCORE_EXPORT void setResource(RefPtr<CachedResource>&&);
     
 private:
     CachedResourceHandleBase& operator=(const CachedResourceHandleBase&) { return *this; } 
     
     friend class CachedResource;
 
-    WeakPtr<CachedResource> m_resource;
+    RefPtr<CachedResource> m_resource;
 };
     
 template <class R> class CachedResourceHandle : public CachedResourceHandleBase {
 public: 
     CachedResourceHandle() = default;
-    CachedResourceHandle(R& res) : CachedResourceHandleBase(res) { }
-    CachedResourceHandle(R* res) : CachedResourceHandleBase(res) { }
+    CachedResourceHandle(std::nullptr_t) { }
+    CachedResourceHandle(Ref<R>&& res) : CachedResourceHandleBase(Ref<CachedResource> { WTF::move(res) }) { }
+    template<typename U> requires (std::is_base_of_v<R, U> && !std::is_same_v<R, U>)
+    CachedResourceHandle(Ref<U>&& res) : CachedResourceHandleBase(Ref<CachedResource> { WTF::move(res) }) { }
+    CachedResourceHandle(R& res) : CachedResourceHandleBase(Ref<CachedResource> { res }) { }
+    CachedResourceHandle(RefPtr<R>&& res) : CachedResourceHandleBase(WTF::move(res)) { }
+    template<typename U> requires (std::is_base_of_v<R, U> && !std::is_same_v<R, U>)
+    CachedResourceHandle(RefPtr<U>&& res) : CachedResourceHandleBase(RefPtr<CachedResource> { WTF::move(res) }) { }
     CachedResourceHandle(const CachedResourceHandle<R>& o) : CachedResourceHandleBase(o) { }
     template<typename U> CachedResourceHandle(const CachedResourceHandle<U>& o) : CachedResourceHandleBase(o.get()) { }
 
@@ -73,10 +79,17 @@ public:
     }
     R* operator->() const { return get(); }
     R& operator*() const { ASSERT(get()); return *get(); }
+    operator RefPtr<R>() const { return get(); }
 
-    CachedResourceHandle& operator=(R* res) { setResource(res); return *this; } 
-    CachedResourceHandle& operator=(const CachedResourceHandle& o) { setResource(o.get()); return *this; }
-    template<typename U> CachedResourceHandle& operator=(const CachedResourceHandle<U>& o) { setResource(o.get()); return *this; }
+    CachedResourceHandle& operator=(std::nullptr_t) { setResource(nullptr); return *this; }
+    CachedResourceHandle& operator=(R& res) { setResource(Ref<CachedResource> { res }); return *this; }
+    CachedResourceHandle& operator=(Ref<R>&& res) { setResource(Ref<CachedResource> { WTF::move(res) }); return *this; }
+    template<typename U> requires (std::is_base_of_v<R, U> && !std::is_same_v<R, U>)
+    CachedResourceHandle& operator=(Ref<U>&& res) { setResource(Ref<CachedResource> { WTF::move(res) }); return *this; }
+    CachedResourceHandle& operator=(const RefPtr<R>& res) { setResource(RefPtr<CachedResource> { res.get() }); return *this; }
+    CachedResourceHandle& operator=(RefPtr<R>&& res) { setResource(WTF::move(res)); return *this; }
+    CachedResourceHandle& operator=(const CachedResourceHandle& o) { setResource(RefPtr<CachedResource> { o.get() }); return *this; }
+    template<typename U> CachedResourceHandle& operator=(const CachedResourceHandle<U>& o) { setResource(RefPtr<CachedResource> { o.get() }); return *this; }
 
     bool operator==(const CachedResourceHandle& o) const { return operator==(static_cast<const CachedResourceHandleBase&>(o)); }
     bool operator==(const CachedResourceHandleBase& o) const { return get() == o.get(); }
@@ -87,40 +100,22 @@ template <class R, class RR> bool operator==(const CachedResourceHandle<R>& h, c
     return h.get() == res;
 }
 
+template <class R, class RR> bool operator==(const CachedResourceHandle<R>& h, const RefPtr<RR>& ptr)
+{
+    return h.get() == ptr.get();
+}
+
 } // namespace WebCore
 
 namespace WTF {
 
-template<typename T> requires (requires { sizeof(T); } && std::derived_from<T, WebCore::CachedResource>)
-WebCore::CachedResourceHandle<T> protect(T* resource)
-{
-    return WebCore::CachedResourceHandle<T> { resource };
-}
-
-template<typename T> requires (requires { sizeof(T); } && std::derived_from<T, WebCore::CachedResource>)
-WebCore::CachedResourceHandle<T> protect(T& resource)
-{
-    return WebCore::CachedResourceHandle<T> { resource };
-}
-
-template<typename T, typename WeakPtrImpl, typename PtrTraits>
-    requires (requires { sizeof(T); } && std::derived_from<T, WebCore::CachedResource>)
-ALWAYS_INLINE CLANG_POINTER_CONVERSION WebCore::CachedResourceHandle<T> protect(const WeakPtr<T, WeakPtrImpl, PtrTraits>& resource)
-{
-    return WebCore::CachedResourceHandle<T> { resource.get() };
-}
-
-template<typename T, typename WeakPtrImpl>
-    requires (requires { sizeof(T); } && std::derived_from<T, WebCore::CachedResource>)
-ALWAYS_INLINE CLANG_POINTER_CONVERSION WebCore::CachedResourceHandle<T> protect(const WeakRef<T, WeakPtrImpl>& resource)
-{
-    return WebCore::CachedResourceHandle<T> { resource.get() };
-}
+template<typename R> RefPtr(const WebCore::CachedResourceHandle<R>&) -> RefPtr<R, RawPtrTraits<R>, DefaultRefDerefTraits<R>>;
+template<typename R> RefPtr(WebCore::CachedResourceHandle<R>&) -> RefPtr<R, RawPtrTraits<R>, DefaultRefDerefTraits<R>>;
 
 template<typename T>
-WebCore::CachedResourceHandle<T> protect(const WebCore::CachedResourceHandle<T>& handle)
+RefPtr<T> protect(const WebCore::CachedResourceHandle<T>& handle)
 {
-    return handle;
+    return handle.get();
 }
 
 } // namespace WTF

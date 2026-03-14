@@ -28,6 +28,6 @@ document.body.offsetHeight;
 if (window.testRunner) {
   testRunner.dumpAsText();
   testRunner.waitUntilDone();
-  UIHelper.activateElement(click_me);
+  (async () => { await UIHelper.activateElement(click_me); })();
 }
 </script>

@@ -109,7 +109,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<FontVariantEastAsian> { auto operator()(BuilderState&, const CSSValue&) -> FontVariantEastAsian; };
+template<> struct CSSValueConversion<FontVariantEastAsian> { FontVariantEastAsian NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

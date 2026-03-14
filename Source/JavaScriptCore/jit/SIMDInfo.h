@@ -45,6 +45,48 @@ typedef union v128_u {
     constexpr v128_u(uint64_t first, uint64_t second)
         : u64x2 { first, second }
     { }
+
+    static constexpr v128_u fromU8x16(std::integral auto... args)
+    {
+        static_assert(sizeof...(args) == 16, "v128_u requires exactly 16 bytes");
+        const uint8_t d[] = { static_cast<uint8_t>(args)... };
+        uint64_t low = 0;
+        uint64_t high = 0;
+        for (int i = 0; i < 8; ++i) {
+            low  |= (static_cast<uint64_t>(d[i]) << (i * 8));
+            high |= (static_cast<uint64_t>(d[i + 8]) << (i * 8));
+        }
+        return v128_u(low, high);
+    }
+
+    static constexpr v128_u fromU16x8(std::integral auto... args)
+    {
+        static_assert(sizeof...(args) == 8, "v128_u: fromU16x8 requires 8 arguments.");
+        const uint16_t d[] = { static_cast<uint16_t>(args)... };
+        uint64_t low = 0;
+        uint64_t high = 0;
+        for (int i = 0; i < 4; ++i) {
+            low  |= (static_cast<uint64_t>(d[i]) << (i * 16));
+            high |= (static_cast<uint64_t>(d[i + 4]) << (i * 16));
+        }
+        return v128_u(low, high);
+    }
+
+    static constexpr v128_u fromU32x4(std::integral auto... args)
+    {
+        static_assert(sizeof...(args) == 4, "v128_u: fromU32x4 requires 4 arguments.");
+        const uint32_t d[] = { static_cast<uint32_t>(args)... };
+        uint64_t low  = (static_cast<uint64_t>(d[1]) << 32) | d[0];
+        uint64_t high = (static_cast<uint64_t>(d[3]) << 32) | d[2];
+        return v128_u(low, high);
+    }
+
+    static constexpr v128_u fromU64x2(std::integral auto... args)
+    {
+        static_assert(sizeof...(args) == 2, "v128_u: fromU64x2 requires 2 arguments.");
+        const uint64_t d[] = { static_cast<uint64_t>(args)... };
+        return v128_u(d[0], d[1]);
+    }
 } v128_t;
 
 constexpr v128_t vectorAllOnes()

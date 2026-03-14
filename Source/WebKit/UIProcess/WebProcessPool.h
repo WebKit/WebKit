@@ -273,7 +273,7 @@ public:
     DisplayLinkCollection& displayLinks() LIFETIME_BOUND { return m_displayLinks; }
 #endif
 
-    void NODELETE addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
+    void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
     void NODELETE clearSupportedPlugins();
 
     HashSet<ProcessID> prewarmedProcessIdentifiers();
@@ -421,7 +421,7 @@ public:
     static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::Site&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
 
 #if PLATFORM(COCOA)
-    bool processSuppressionEnabled() const;
+    bool NODELETE processSuppressionEnabled() const;
 #endif
 
     void windowServerConnectionStateChanged();
@@ -476,7 +476,7 @@ public:
 
 #if PLATFORM(COCOA)
     bool cookieStoragePartitioningEnabled() const { return m_cookieStoragePartitioningEnabled; }
-    void setCookieStoragePartitioningEnabled(bool);
+    void NODELETE setCookieStoragePartitioningEnabled(bool);
 
     void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&);
 
@@ -555,8 +555,8 @@ public:
 #endif
 
 #if PLATFORM(PLAYSTATION)
-    const String& webProcessPath() const { return m_resolvedPaths.webProcessPath; }
-    const String& networkProcessPath() const { return m_resolvedPaths.networkProcessPath; }
+    const String& webProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.webProcessPath; }
+    const String& networkProcessPath() const LIFETIME_BOUND { return m_resolvedPaths.networkProcessPath; }
     int32_t userId() const { return m_userId; }
 #endif
 
@@ -649,7 +649,7 @@ private:
     void platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, WebProcessProxy::IsolatedProcessType, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, EnhancedSecurity, const FrameInfoData&, Ref<WebsiteDataStore>&&);
+    std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> processForNavigationInternal(WebPageProxy&, WebFrameProxy&, const API::Navigation&, const URL& sourceURL, WebProcessProxy::IsolatedProcessType, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, EnhancedSecurity, const FrameInfoData&, Ref<WebsiteDataStore>&&);
     void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, WebProcessProxy::IsolatedProcessType, const WebCore::Site&, const WebCore::Site& mainFrameSite, const API::Navigation&, WebProcessProxy::LockdownMode, EnhancedSecurity, LoadedWebArchive, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
@@ -771,7 +771,7 @@ private:
 
     void platformLoadResourceMonitorRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
     void platformCompileResourceMonitorRuleList(const String& rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
-    String platformResourceMonitorRuleListSourceForTesting();
+    String NODELETE platformResourceMonitorRuleListSourceForTesting();
 #endif
 
     const Ref<API::ProcessPoolConfiguration> m_configuration;
@@ -785,7 +785,7 @@ private:
 
     HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
-    static WeakHashSet<WebProcessProxy>& remoteWorkerProcesses();
+    static WeakHashSet<WebProcessProxy>& NODELETE remoteWorkerProcesses();
 
     std::optional<WebPreferencesStore> m_remoteWorkerPreferences;
     RefPtr<WebUserContentControllerProxy> m_userContentControllerForRemoteWorkers;

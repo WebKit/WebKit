@@ -15,12 +15,12 @@ function runTest() {
             let annotationBounds = window.internals.pdfAnnotationRectsForTesting(pluginElement)[0];
             let centerX = annotationBounds["x"] + annotationBounds["width"] / 2;
             let centerY = annotationBounds["y"] + annotationBounds["height"] / 2;
-            UIHelper.activateAt(centerX, centerY);
+            await UIHelper.activateAt(centerX, centerY);
 
             let annotationSelectElement = innerDocument.querySelector("#annotationContainer > select");
             annotationSelectElement.selectedIndex = 1;
-            
-            UIHelper.activateAt(0, 0);
+
+            await UIHelper.activateAt(0, 0);
             await UIHelper.renderingUpdate();
             testRunner.notifyDone();
         }, pluginElement);

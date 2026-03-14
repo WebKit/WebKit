@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-static constexpr CFIndex cfRunLoopOrder(RunLoopObserver::WellKnownOrder order)
+static constexpr CFIndex NODELETE cfRunLoopOrder(RunLoopObserver::WellKnownOrder order)
 {
     constexpr auto coreAnimationCommit = 2000000;
     switch (order) {
@@ -55,7 +55,7 @@ static constexpr CFIndex cfRunLoopOrder(RunLoopObserver::WellKnownOrder order)
     return coreAnimationCommit;
 }
 
-static constexpr CFRunLoopActivity cfRunLoopActivity(OptionSet<RunLoopObserver::Activity> activity)
+static constexpr CFRunLoopActivity NODELETE cfRunLoopActivity(OptionSet<RunLoopObserver::Activity> activity)
 {
     CFRunLoopActivity cfActivity { 0 };
     if (activity.contains(RunLoopObserver::Activity::BeforeWaiting))

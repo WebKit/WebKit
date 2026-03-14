@@ -25,10 +25,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-cross-document-forward-pruning.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-javascript-url-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-navigations-in-multiple-windows.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-server-redirect-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-server-redirect.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-srcdoc-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-array-equality.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-in-new-javascript-url-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-in-new-srcdoc-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-mainframe-with-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-when-inactive.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entry-after-detach.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/index-not-in-entries.html

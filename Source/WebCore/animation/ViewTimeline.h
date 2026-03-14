@@ -56,8 +56,8 @@ struct StickinessAdjustmentData {
         AfterExit
     };
 
-    float entryDistanceAdjustment() const;
-    float exitDistanceAdjustment() const;
+    float NODELETE entryDistanceAdjustment() const;
+    float NODELETE exitDistanceAdjustment() const;
     float NODELETE rangeStartAdjustment() const;
     float NODELETE rangeEndAdjustment() const;
 
@@ -79,7 +79,7 @@ public:
     void setSubject(Element*);
     void setSubject(const Styleable&);
 
-    const Style::ViewTimelineInsetItem& insets() const { return m_insets; }
+    const Style::ViewTimelineInsetItem& insets() const LIFETIME_BOUND { return m_insets; }
     void setInsets(const Style::ViewTimelineInsetItem& insets) { m_insets = insets; }
 
     Ref<CSSNumericValue> startOffset() const;
@@ -99,7 +99,7 @@ public:
     std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
 
     bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Styleable&) const;
-    WebAnimationTime epsilon() const;
+    WebAnimationTime NODELETE epsilon() const;
 
 private:
     ScrollTimeline::Data computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;

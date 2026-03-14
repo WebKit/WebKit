@@ -56,8 +56,8 @@ auto CSSValueConversion<SpeakAs>::operator()(BuilderState& state, const CSSValue
         return CSS::Keyword::Normal { };
 
     SpeakAsValueEnumSet result;
-    for (Ref item : *list) {
-        switch (item->valueID()) {
+    for (auto& item : *list) {
+        switch (item.valueID()) {
         case CSSValueSpellOut:
             result.value.add(SpeakAsValue::SpellOut);
             break;

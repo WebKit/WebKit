@@ -1,8 +1,16 @@
 
-FAIL Property grid-lanes value '"a b" 1fr 2fr row normal' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
-FAIL Property grid-lanes value '8px column normal' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
-FAIL Property grid-lanes value '"a b c" 10% 20% 30% row-reverse' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
-FAIL Property grid-lanes value '"a b" 10px 20px column-reverse reverse' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
-FAIL Property grid-lanes value 'min-content row' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
-FAIL Property grid-lanes value 'repeat(5, auto) reverse' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value '"a b" 1fr 2fr row' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value '8px column' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value '8px column track-reverse fill-reverse' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value '"a b c" 10% 20% 30% row track-reverse' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value '"a b" 10px 20px column fill-reverse' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value 'min-content row fill-reverse track-reverse' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value 'repeat(5, auto)' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value 'row track-reverse repeat(3, 1fr) "a b b"' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value '100px 200px' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value '"a b c" row track-reverse 1fr 2fr 3fr' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value 'row fill-reverse minmax(100px, 1fr)' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value 'fit-content(200px) "area" column' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value 'column "a b" [line1] 1fr [line2] 2fr' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
+FAIL Property grid-lanes value 'row repeat(auto-fill, 100px)' assert_true: grid-lanes doesn't seem to be supported in the computed style expected true got false
 

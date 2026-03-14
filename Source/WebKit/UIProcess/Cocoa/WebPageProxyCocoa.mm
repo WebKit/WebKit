@@ -178,7 +178,7 @@ void WebPageProxy::didGeneratePageLoadTiming(const WebPageLoadTiming& timing)
         state->didGeneratePageLoadTiming(timing);
 }
 
-static bool exceedsRenderTreeSizeSizeThreshold(uint64_t thresholdSize, uint64_t committedSize)
+static bool NODELETE exceedsRenderTreeSizeSizeThreshold(uint64_t thresholdSize, uint64_t committedSize)
 {
     const double thesholdSizeFraction = 0.5; // Empirically-derived.
     return committedSize > thresholdSize * thesholdSizeFraction;
@@ -590,6 +590,22 @@ void WebPageProxy::clearDictationAlternatives(Vector<DictationContext>&& alterna
     protect(legacyMainFrameProcess())->send(Messages::WebPage::ClearDictationAlternatives(WTF::move(alternativesToClear)), webPageIDInMainFrameProcess());
 }
 
+void WebPageProxy::setDictationStreamingOpacity(const String& hypothesisText, WebCore::CharacterRange streamingRangeInHypothesis, float opacity)
+{
+    if (!hasRunningProcess())
+        return;
+
+    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetDictationStreamingOpacity(hypothesisText, streamingRangeInHypothesis, opacity), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::clearDictationStreamingOpacity()
+{
+    if (!hasRunningProcess())
+        return;
+
+    protect(legacyMainFrameProcess())->send(Messages::WebPage::ClearDictationStreamingOpacity(), webPageIDInMainFrameProcess());
+}
+
 ResourceError WebPageProxy::errorForUnpermittedAppBoundDomainNavigation(const URL& url)
 {
     return { WKErrorDomain, WKErrorNavigationAppBoundDomain, url, localizedDescriptionForErrorCode(WKErrorNavigationAppBoundDomain).get() };
@@ -601,7 +617,7 @@ WebPageProxy::Internals::~Internals() = default;
 
 std::optional<SharedPreferencesForWebProcess> WebPageProxy::Internals::sharedPreferencesForWebPaymentMessages() const
 {
-    return protect(protect(page)->legacyMainFrameProcess())->sharedPreferencesForWebProcess();
+    return page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 IPC::Connection* WebPageProxy::Internals::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
@@ -621,7 +637,7 @@ void WebPageProxy::Internals::getPaymentCoordinatorEmbeddingUserAgent(WebPagePro
 
 CocoaWindow *WebPageProxy::Internals::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const
 {
-    RefPtr pageClient = protect(page)->pageClient();
+    RefPtr pageClient = page->pageClient();
     return pageClient ? pageClient->platformWindow() : nullptr;
 }
 
@@ -1143,12 +1159,12 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
         return true;
 #endif
 
-    HashSet<RefPtr<const WebPageProxy>> visitedPages;
-    visitedPages.add(this);
-    for (RefPtr page = configuration->relatedPage(); page && !visitedPages.contains(page); page = page->configuration().relatedPage()) {
+    HashSet<Ref<const WebPageProxy>> visitedPages;
+    visitedPages.add(*this);
+    for (RefPtr page = configuration->relatedPage(); page && !visitedPages.contains(*page); page = page->configuration().relatedPage()) {
         if (protect(page->preferences())->useGPUProcessForDOMRenderingEnabled())
             return true;
-        visitedPages.add(page);
+        visitedPages.add(page.releaseNonNull());
     }
 
     return false;

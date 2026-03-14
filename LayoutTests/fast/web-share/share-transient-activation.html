@@ -14,7 +14,7 @@
     
         let write = (message) => output.innerHTML += (message + "<br>");
 
-        function runTest()
+        async function runTest()
         {
             document.getElementById("target").addEventListener("click", () => {
                 fetch("../files/resources/abe.png").then(() => {
@@ -30,8 +30,8 @@
                     testRunner.notifyDone();
                 });
             });
-            
-            UIHelper.activateAt(50, 50);
+
+            await UIHelper.activateAt(50, 50);
         }
 
     </script>

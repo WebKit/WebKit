@@ -234,12 +234,12 @@ private:
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
         bool isRunningTest { false };
     };
-    const Parameters& parameters() const { return m_parameters; }
-    WallTime& endOfGrandfatheringTimestamp() { return m_endOfGrandfatheringTimestamp; }
-    const WallTime& endOfGrandfatheringTimestamp() const { return m_endOfGrandfatheringTimestamp; }
+    const Parameters& parameters() const LIFETIME_BOUND { return m_parameters; }
+    WallTime& endOfGrandfatheringTimestamp() LIFETIME_BOUND { return m_endOfGrandfatheringTimestamp; }
+    const WallTime& endOfGrandfatheringTimestamp() const LIFETIME_BOUND { return m_endOfGrandfatheringTimestamp; }
     void clearEndOfGrandfatheringTimeStamp() { m_endOfGrandfatheringTimestamp = { }; }
-    const RegistrableDomain& debugManualPrevalentResource() const { return m_debugManualPrevalentResource; }
-    const RegistrableDomain& debugStaticPrevalentResource() const { return m_debugStaticPrevalentResource; }
+    const RegistrableDomain& debugManualPrevalentResource() const LIFETIME_BOUND { return m_debugManualPrevalentResource; }
+    const RegistrableDomain& debugStaticPrevalentResource() const LIFETIME_BOUND { return m_debugStaticPrevalentResource; }
     void debugBroadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
     void debugLogDomainsInBatches(ASCIILiteral action, const RegistrableDomainsToBlockCookiesFor&);
     bool debugLoggingEnabled() const { return m_debugLoggingEnabled; }
@@ -333,7 +333,7 @@ private:
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     std::span<const ASCIILiteral> sortedTables() final;
     String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
-    std::optional<WallTime> mostRecentUserInteractionTime(const DomainData&);
+    std::optional<WallTime> NODELETE mostRecentUserInteractionTime(const DomainData&);
     void grandfatherDataForDomains(const HashSet<RegistrableDomain>&);
     bool areAllUnpartitionedThirdPartyCookiesBlockedUnder(const TopFrameDomain&);
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const;

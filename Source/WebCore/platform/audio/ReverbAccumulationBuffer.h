@@ -52,7 +52,7 @@ public:
     int accumulate(std::span<float> source, size_t numberOfFrames, int* readIndex, size_t delayFrames);
 
     size_t readIndex() const { return m_readIndex; }
-    void updateReadIndex(int* readIndex, size_t numberOfFrames) const;
+    void NODELETE updateReadIndex(int* readIndex, size_t numberOfFrames) const;
 
     size_t readTimeFrame() const { return m_readTimeFrame; }
 

@@ -70,11 +70,11 @@ private:
     Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject&, WritingMode, bool isIntrinsicWidthMode = false, bool retainBorderStart = true, bool retainBorderEnd = true);
     Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, WritingMode, bool retainPaddingStart = true, bool retainPaddingEnd = true);
 
-    Layout::LayoutState& layoutState() { return *m_layoutState; }
-    const Layout::LayoutState& layoutState() const { return *m_layoutState; }
+    Layout::LayoutState& layoutState() LIFETIME_BOUND { return *m_layoutState; }
+    const Layout::LayoutState& layoutState() const LIFETIME_BOUND { return *m_layoutState; }
     const Layout::ElementBox& NODELETE rootLayoutBox() const;
-    const RenderBlock& rootRenderer() const;
-    inline WritingMode writingMode() const;
+    const RenderBlock& NODELETE rootRenderer() const;
+    inline WritingMode NODELETE writingMode() const;
 
 private:
     WeakPtr<Layout::LayoutState> m_layoutState;

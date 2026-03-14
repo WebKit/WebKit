@@ -96,7 +96,7 @@
 
 - (BOOL)_webProcessIsResponsive
 {
-    return protect(protect(*_page)->legacyMainFrameProcess())->isResponsive();
+    return (*_page).legacyMainFrameProcess().isResponsive();
 }
 
 - (double)estimatedProgress

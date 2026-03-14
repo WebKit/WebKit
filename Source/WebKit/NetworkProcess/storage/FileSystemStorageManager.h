@@ -46,8 +46,8 @@ public:
     bool NODELETE isActive() const;
     uint64_t allocatedUnusedCapacity() const;
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
-    const String& getPath(WebCore::FileSystemHandleIdentifier);
-    FileSystemStorageHandle::Type getType(WebCore::FileSystemHandleIdentifier);
+    const String& NODELETE getPath(WebCore::FileSystemHandleIdentifier);
+    FileSystemStorageHandle::Type NODELETE getType(WebCore::FileSystemHandleIdentifier);
     void closeHandle(FileSystemStorageHandle&);
     void connectionClosed(IPC::Connection::UniqueID);
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getDirectory(IPC::Connection::UniqueID);

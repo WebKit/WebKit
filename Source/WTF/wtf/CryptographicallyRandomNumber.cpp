@@ -147,7 +147,7 @@ void ARC4RandomNumberGenerator::randomValues(std::span<uint8_t> buffer)
     }
 }
 
-ARC4RandomNumberGenerator& sharedRandomNumberGenerator()
+ARC4RandomNumberGenerator& NODELETE sharedRandomNumberGenerator()
 {
     static NeverDestroyed<ARC4RandomNumberGenerator> randomNumberGenerator;
     return randomNumberGenerator;

@@ -7,7 +7,7 @@ API/tests/testapi.cpp
 BytecodeStructs.h
 bytecode/InlineCacheCompiler.h
 bytecode/SharedJITStubSet.h
-bytecode/StructureStubClearingWatchpoint.h
+bytecode/PropertyInlineCacheClearingWatchpoint.h
 bytecompiler/BytecodeGenerator.h
 bytecompiler/Label.h
 debugger/Debugger.cpp

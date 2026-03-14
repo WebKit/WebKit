@@ -210,7 +210,7 @@ JSC_DEFINE_HOST_FUNCTION(getInternalReadableStream, (JSGlobalObject*, CallFrame*
     auto* readableStream = jsDynamicCast<JSReadableStream*>(callFrame->uncheckedArgument(0));
     if (!readableStream) [[unlikely]]
         return JSValue::encode(jsUndefined());
-    RefPtr internalReadableStream = readableStream->wrapped().internalReadableStream();
+    auto* internalReadableStream = readableStream->wrapped().internalReadableStream();
     if (!internalReadableStream) [[unlikely]]
         return JSValue::encode(JSC::jsUndefined());
     return JSValue::encode(*internalReadableStream);
@@ -457,7 +457,7 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             visitor.append(structure);
 
         for (auto& guarded : thisObject->m_guardedObjects)
-            guarded->visitAggregate(visitor);
+            guarded->visitAggregateInGCThread(visitor);
     }
 
     if (thisObject->m_readableStreamByteStrategySize)

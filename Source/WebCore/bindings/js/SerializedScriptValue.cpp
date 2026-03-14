@@ -1115,8 +1115,8 @@ public:
         Vector<RefPtr<RTCEncodedVideoFrame>> dummyRTCEncodedVideoFrames;
 #endif
 #if ENABLE(MEDIA_STREAM)
-        Vector<RefPtr<MediaStreamTrack>> dummyMediaStreamTracks;
-        Vector<RefPtr<MediaStreamTrackHandle>> dummyMediaStreamTrackHandles;
+        Vector<Ref<MediaStreamTrack>> dummyMediaStreamTracks;
+        Vector<Ref<MediaStreamTrackHandle>> dummyMediaStreamTrackHandles;
 #endif
 #if ENABLE(WEBASSEMBLY)
         WasmModuleArray dummyModules;
@@ -1185,8 +1185,8 @@ public:
             Vector<RefPtr<WebCodecsAudioData>>& serializedAudioData,
 #endif
 #if ENABLE(MEDIA_STREAM)
-            Vector<RefPtr<MediaStreamTrack>>& serializedMediaStreamTracks,
-            Vector<RefPtr<MediaStreamTrackHandle>>& serializedMediaStreamTrackHandles,
+            const Vector<Ref<MediaStreamTrack>>& detachedMediaStreamTracks,
+            const Vector<Ref<MediaStreamTrackHandle>>& detachedMediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
@@ -1224,8 +1224,8 @@ public:
             serializedAudioData,
 #endif
 #if ENABLE(MEDIA_STREAM)
-            serializedMediaStreamTracks,
-            serializedMediaStreamTrackHandles,
+            detachedMediaStreamTracks,
+            detachedMediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
             wasmModules,
@@ -1290,8 +1290,8 @@ private:
             Vector<RefPtr<WebCodecsAudioData>>& serializedAudioData,
 #endif
 #if ENABLE(MEDIA_STREAM)
-            Vector<RefPtr<MediaStreamTrack>>& serializedMediaStreamTracks,
-            Vector<RefPtr<MediaStreamTrackHandle>>& serializedMediaStreamTrackHandles,
+            const Vector<Ref<MediaStreamTrack>>& mediaStreamTracks,
+            const Vector<Ref<MediaStreamTrackHandle>>& mediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
@@ -1321,10 +1321,6 @@ private:
         , m_serializedAudioChunks(serializedAudioChunks)
         , m_serializedAudioData(serializedAudioData)
 #endif
-#if ENABLE(MEDIA_STREAM)
-        , m_serializedMediaStreamTracks(serializedMediaStreamTracks)
-        , m_serializedMediaStreamTrackHandles(serializedMediaStreamTrackHandles)
-#endif
         , m_forStorage(forStorage)
     {
         write(currentVersion());
@@ -1342,6 +1338,10 @@ private:
         fillTransferMap(transformStreams, m_transferredTransformStreams);
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         fillTransferMap(mediaSourceHandles, m_transferredMediaSourceHandles);
+#endif
+#if ENABLE(MEDIA_STREAM)
+        fillTransferMap(mediaStreamTracks, m_transferredMediaStreamTracks);
+        fillTransferMap(mediaStreamTrackHandles, m_transferredMediaStreamTrackHandles);
 #endif
     }
 
@@ -1956,31 +1956,27 @@ private:
     }
 #endif
 #if ENABLE(MEDIA_STREAM)
-    void dumpMediaStreamTrack(JSObject* obj)
+    void dumpMediaStreamTrack(JSObject* obj, SerializationReturnCode& code)
     {
-        Ref track = jsCast<JSMediaStreamTrack*>(obj)->wrapped();
-
-        auto index = m_serializedMediaStreamTracks.find(track.ptr());
-        if (index == notFound) {
-            index = m_serializedMediaStreamTracks.size();
-            m_serializedMediaStreamTracks.append(WTF::move(track));
+        auto index = m_transferredMediaStreamTracks.find(obj);
+        if (index != m_transferredMediaStreamTracks.end()) {
+            write(MediaStreamTrackTag);
+            write(index->value);
+            return;
         }
 
-        write(MediaStreamTrackTag);
-        write(static_cast<uint32_t>(index));
+        code = SerializationReturnCode::DataCloneError;
     }
-    void dumpMediaStreamTrackHandle(JSObject* obj)
+    void dumpMediaStreamTrackHandle(JSObject* obj, SerializationReturnCode& code)
     {
-        Ref handle = jsCast<JSMediaStreamTrackHandle*>(obj)->wrapped();
-
-        auto index = m_serializedMediaStreamTrackHandles.find(handle.ptr());
-        if (index == notFound) {
-            index = m_serializedMediaStreamTrackHandles.size();
-            m_serializedMediaStreamTrackHandles.append(WTF::move(handle));
+        auto index = m_transferredMediaStreamTrackHandles.find(obj);
+        if (index != m_transferredMediaStreamTrackHandles.end()) {
+            write(MediaStreamTrackHandleTag);
+            write(index->value);
+            return;
         }
 
-        write(MediaStreamTrackHandleTag);
-        write(static_cast<uint32_t>(index));
+        code = SerializationReturnCode::DataCloneError;
     }
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
@@ -2351,13 +2347,13 @@ private:
             if (obj->inherits<JSMediaStreamTrack>()) {
                 if (m_forStorage == SerializationForStorage::Yes)
                     return false;
-                dumpMediaStreamTrack(obj);
+                dumpMediaStreamTrack(obj, code);
                 return true;
             }
             if (obj->inherits<JSMediaStreamTrackHandle>()) {
                 if (m_forStorage == SerializationForStorage::Yes)
                     return false;
-                dumpMediaStreamTrackHandle(obj);
+                dumpMediaStreamTrackHandle(obj, code);
                 return true;
             }
 #endif
@@ -2904,8 +2900,8 @@ private:
     Vector<RefPtr<WebCodecsAudioData>>& m_serializedAudioData;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    Vector<RefPtr<MediaStreamTrack>>& m_serializedMediaStreamTracks;
-    Vector<RefPtr<MediaStreamTrackHandle>>& m_serializedMediaStreamTrackHandles;
+    ObjectPoolMap m_transferredMediaStreamTracks;
+    ObjectPoolMap m_transferredMediaStreamTrackHandles;
 #endif
     SerializationForStorage m_forStorage;
 
@@ -3228,8 +3224,8 @@ public:
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
-        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& detachedMediaStreamTracks
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& detachedMediaStreamTrackHandles
 #endif
         , uint64_t exposedMessagePortCount
         )
@@ -3261,8 +3257,8 @@ public:
             , WTF::move(serializedAudioData)
 #endif
 #if ENABLE(MEDIA_STREAM)
-            , WTF::move(serializedMediaStreamTracks)
-            , WTF::move(serializedMediaStreamTrackHandles)
+            , WTF::move(detachedMediaStreamTracks)
+            , WTF::move(detachedMediaStreamTrackHandles)
 #endif
             );
         if (!deserializer.isValid())
@@ -3296,8 +3292,8 @@ public:
             , deserializer.takeSerializedAudioData()
 #endif
 #if ENABLE(MEDIA_STREAM)
-            , deserializer.takeSerializedMediaStreamTracks()
-            , deserializer.takeSerializedMediaStreamTrackHandles()
+            , deserializer.takeDetachedMediaStreamTracks()
+            , deserializer.takeDetachedMediaStreamTrackHandles()
 #endif
             );
             newDeserializer.upgradeVersion();
@@ -3375,8 +3371,8 @@ private:
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData = { }
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks = { }
-        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles = { }
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& detachedMediaStreamTracks = { }
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& detachedMediaStreamTrackHandles = { }
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -3424,10 +3420,10 @@ private:
         , m_audioData(m_serializedAudioData.size())
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , m_serializedMediaStreamTracks(WTF::move(serializedMediaStreamTracks))
-        , m_mediaStreamTracks(m_serializedMediaStreamTracks.size())
-        , m_serializedMediaStreamTrackHandles(WTF::move(serializedMediaStreamTrackHandles))
-        , m_mediaStreamTrackHandles(m_serializedMediaStreamTrackHandles.size())
+        , m_detachedMediaStreamTracks(WTF::move(detachedMediaStreamTracks))
+        , m_mediaStreamTracks(m_detachedMediaStreamTracks.size())
+        , m_detachedMediaStreamTrackHandles(WTF::move(detachedMediaStreamTrackHandles))
+        , m_mediaStreamTrackHandles(m_detachedMediaStreamTrackHandles.size())
 #endif
     {
         unsigned version;
@@ -3462,8 +3458,8 @@ private:
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData = { }
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks = { }
-        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles = { }
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& detachedMediaStreamTracks = { }
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& detachedMediaStreamTrackHandles = { }
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -3514,10 +3510,10 @@ private:
         , m_audioData(m_serializedAudioData.size())
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , m_serializedMediaStreamTracks(WTF::move(serializedMediaStreamTracks))
-        , m_mediaStreamTracks(m_serializedMediaStreamTracks.size())
-        , m_serializedMediaStreamTrackHandles(WTF::move(serializedMediaStreamTrackHandles))
-        , m_mediaStreamTrackHandles(m_serializedMediaStreamTrackHandles.size())
+        , m_detachedMediaStreamTracks(WTF::move(detachedMediaStreamTracks))
+        , m_mediaStreamTracks(m_detachedMediaStreamTracks.size())
+        , m_detachedMediaStreamTrackHandles(WTF::move(detachedMediaStreamTrackHandles))
+        , m_mediaStreamTrackHandles(m_detachedMediaStreamTrackHandles.size())
 #endif
     {
         unsigned version;
@@ -3596,8 +3592,8 @@ private:
     Vector<WebCodecsAudioInternalData> takeSerializedAudioData() { return std::exchange(m_serializedAudioData, { }); }
 #endif
 #if ENABLE(MEDIA_STREAM)
-    Vector<std::unique_ptr<MediaStreamTrackDataHolder>> takeSerializedMediaStreamTracks() { return std::exchange(m_serializedMediaStreamTracks, { }); }
-    Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> takeSerializedMediaStreamTrackHandles() { return std::exchange(m_serializedMediaStreamTrackHandles, { }); }
+    Vector<std::unique_ptr<MediaStreamTrackDataHolder>> takeDetachedMediaStreamTracks() { return std::exchange(m_detachedMediaStreamTracks, { }); }
+    Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> takeDetachedMediaStreamTrackHandles() { return std::exchange(m_detachedMediaStreamTrackHandles, { }); }
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     Vector<RefPtr<DetachedMediaSourceHandle>> takeDetachedMediaSourceHandles() { return std::exchange(m_detachedMediaSourceHandles, { }); }
@@ -4690,7 +4686,7 @@ private:
         return toJSNewlyCreated(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), T::create(x, y, width, height));
     }
 
-    std::optional<DOMPointInit> readDOMPointInit()
+    std::optional<DOMPointInit> NODELETE readDOMPointInit()
     {
         DOMPointInit point;
         if (!read(point.x))
@@ -5019,26 +5015,26 @@ private:
     {
         uint32_t index;
         bool indexSuccessfullyRead = read(index);
-        if (!indexSuccessfullyRead || index >= m_serializedMediaStreamTracks.size()) {
+        if (!indexSuccessfullyRead || index >= m_detachedMediaStreamTracks.size()) {
             fail();
             return JSValue();
         }
 
         if (!m_mediaStreamTracks[index])
-            m_mediaStreamTracks[index] = MediaStreamTrack::create(*protect(executionContext(m_lexicalGlobalObject)), makeUniqueRefFromNonNullUniquePtr(std::exchange(m_serializedMediaStreamTracks.at(index), { })));
+            m_mediaStreamTracks[index] = MediaStreamTrack::create(*protect(executionContext(m_lexicalGlobalObject)), makeUniqueRefFromNonNullUniquePtr(std::exchange(m_detachedMediaStreamTracks.at(index), { })));
         return getJSValue(*m_mediaStreamTracks[index]);
     }
     JSValue readMediaStreamTrackHandle()
     {
         uint32_t index;
         bool indexSuccessfullyRead = read(index);
-        if (!indexSuccessfullyRead || index >= m_serializedMediaStreamTrackHandles.size()) {
+        if (!indexSuccessfullyRead || index >= m_detachedMediaStreamTrackHandles.size()) {
             fail();
             return JSValue();
         }
 
         if (!m_mediaStreamTrackHandles[index])
-            m_mediaStreamTrackHandles[index] = MediaStreamTrackHandle::create(WTF::move(*std::exchange(m_serializedMediaStreamTrackHandles.at(index), { })));
+            m_mediaStreamTrackHandles[index] = MediaStreamTrackHandle::create(WTF::move(*std::exchange(m_detachedMediaStreamTrackHandles.at(index), { })));
 
         return getJSValue(*m_mediaStreamTrackHandles[index]);
     }
@@ -5777,13 +5773,13 @@ private:
     Vector<RefPtr<WebCodecsAudioData>> m_audioData;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    Vector<std::unique_ptr<MediaStreamTrackDataHolder>> m_serializedMediaStreamTracks;
+    Vector<std::unique_ptr<MediaStreamTrackDataHolder>> m_detachedMediaStreamTracks;
     Vector<RefPtr<MediaStreamTrack>> m_mediaStreamTracks;
-    Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> m_serializedMediaStreamTrackHandles;
+    Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> m_detachedMediaStreamTrackHandles;
     Vector<RefPtr<MediaStreamTrackHandle>> m_mediaStreamTrackHandles;
 #endif
 
-    String blobFilePathForBlobURL(const String& blobURL)
+    String NODELETE blobFilePathForBlobURL(const String& blobURL)
     {
         size_t i = 0;
         for (; i < m_blobURLs.size(); ++i) {
@@ -6213,8 +6209,8 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer
     , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
 #if ENABLE(MEDIA_STREAM)
-    , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
-    , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles
+    , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& detachedMediaStreamTracks
+    , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& detachedMediaStreamTrackHandles
 #endif
     , uint64_t exposedMessagePortCount
         )
@@ -6241,8 +6237,8 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer
         , .detachedMediaSourceHandles = WTF::move(detachedMediaSourceHandles)
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , .serializedMediaStreamTracks = WTF::move(serializedMediaStreamTracks)
-        , .serializedMediaStreamTrackHandles = WTF::move(serializedMediaStreamTrackHandles)
+        , .detachedMediaStreamTracks = WTF::move(detachedMediaStreamTracks)
+        , .detachedMediaStreamTrackHandles = WTF::move(detachedMediaStreamTrackHandles)
 #endif
     }
 {
@@ -6278,8 +6274,8 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
-        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& detachedMediaStreamTracks
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& detachedMediaStreamTrackHandles
 #endif
         , uint64_t exposedMessagePortCount
         )
@@ -6306,8 +6302,8 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer
         , .detachedMediaSourceHandles = WTF::move(detachedMediaSourceHandles)
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , .serializedMediaStreamTracks = WTF::move(serializedMediaStreamTracks)
-        , .serializedMediaStreamTrackHandles = WTF::move(serializedMediaStreamTrackHandles)
+        , .detachedMediaStreamTracks = WTF::move(detachedMediaStreamTracks)
+        , .detachedMediaStreamTrackHandles = WTF::move(detachedMediaStreamTrackHandles)
 #endif
         , .sharedBufferContentsArray = WTF::move(sharedBufferContentsArray)
         , .detachedImageBitmaps = WTF::move(detachedImageBitmaps)
@@ -6744,10 +6740,6 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     Vector<Ref<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
     Vector<RefPtr<WebCodecsAudioData>> serializedAudioData;
 #endif
-#if ENABLE(MEDIA_STREAM)
-    Vector<RefPtr<MediaStreamTrack>> serializedMediaStreamTracks;
-    Vector<RefPtr<MediaStreamTrackHandle>> serializedMediaStreamTrackHandles;
-#endif
 
     auto exposedMessagePortsCount = messagePorts.size();
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, messagePorts, arrayBuffers, imageBitmaps,
@@ -6774,8 +6766,8 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         serializedAudioData,
 #endif
 #if ENABLE(MEDIA_STREAM)
-        serializedMediaStreamTracks,
-        serializedMediaStreamTrackHandles,
+        transferredMediaStreamTracks,
+        transferredMediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
         wasmModules,
@@ -6856,12 +6848,12 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         audioData->close();
 #endif
 #if ENABLE(MEDIA_STREAM)
-    auto serializedMediaStreamTrackStorages = map(serializedMediaStreamTracks, [](auto& track) -> std::unique_ptr<MediaStreamTrackDataHolder> {
+    auto detachedMediaStreamTrackStorages = map(transferredMediaStreamTracks, [](auto& track) -> std::unique_ptr<MediaStreamTrackDataHolder> {
         return track->detach().moveToUniquePtr();
     });
     for (auto& track : transferredMediaStreamTracks)
         track->stopTrack();
-    auto serializedMediaStreamTrackHandleStorages = map(serializedMediaStreamTrackHandles, [](auto& handle) -> std::unique_ptr<MediaStreamTrackHandle::DataHolder> {
+    auto detachedMediaStreamTrackHandleStorages = map(transferredMediaStreamTrackHandles, [](auto& handle) -> std::unique_ptr<MediaStreamTrackHandle::DataHolder> {
         return handle->detach().moveToUniquePtr();
     });
 #endif
@@ -6891,8 +6883,8 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
                 , WTF::move(serializedAudioInternalData)
 #endif
 #if ENABLE(MEDIA_STREAM)
-                , WTF::move(serializedMediaStreamTrackStorages)
-                , WTF::move(serializedMediaStreamTrackHandleStorages)
+                , WTF::move(detachedMediaStreamTrackStorages)
+                , WTF::move(detachedMediaStreamTrackHandleStorages)
 #endif
                 , exposedMessagePortsCount
                 ));
@@ -6979,8 +6971,8 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
         , WTF::move(m_internals.serializedAudioData)
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , WTF::move(m_internals.serializedMediaStreamTracks)
-        , WTF::move(m_internals.serializedMediaStreamTrackHandles)
+        , WTF::move(m_internals.detachedMediaStreamTracks)
+        , WTF::move(m_internals.detachedMediaStreamTrackHandles)
 #endif
         , m_internals.exposedMessagePortCount
         );

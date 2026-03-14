@@ -87,7 +87,7 @@ private:
     void requestCompositionForRenderingUpdate();
 
     // CoordinatedPlatformLayer::Client
-    WebCore::SkiaPaintingEngine& paintingEngine() const override { return *m_skiaPaintingEngine.get(); }
+    WebCore::SkiaPaintingEngine& paintingEngine() const LIFETIME_BOUND override { return *m_skiaPaintingEngine.get(); }
     Ref<WebCore::CoordinatedImageBackingStore> imageBackingStore(Ref<WebCore::NativeImage>&&) override;
 
     void attachLayer(WebCore::CoordinatedPlatformLayer&) override;
@@ -107,6 +107,7 @@ private:
     uint64_t surfaceID() const override;
     void updateRenderingWithForcedRepaint() override;
     void scheduleRenderingUpdate() override;
+    void scheduleRenderingUpdateRunLoopObserver() override;
     bool canUpdateRendering() const override;
     void updateRendering() override;
     void suspend() override;

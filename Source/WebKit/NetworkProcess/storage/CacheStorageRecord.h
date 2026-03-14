@@ -39,14 +39,14 @@ public:
     CacheStorageRecordInformation isolatedCopy() &&;
     CacheStorageRecordInformation isolatedCopy() const &;
 
-    const NetworkCache::Key& key() const { return m_key; }
+    const NetworkCache::Key& key() const LIFETIME_BOUND { return m_key; }
     double insertionTime() const { return m_insertionTime; }
     uint64_t identifier() const { return m_identifier; }
     uint64_t updateResponseCounter() const { return m_updateResponseCounter; }
     uint64_t size() const { return m_size; }
-    const URL& url() const { return m_url; }
+    const URL& url() const LIFETIME_BOUND { return m_url; }
     bool hasVaryStar() const { return m_hasVaryStar; }
-    const HashMap<String, String>& varyHeaders() const { return m_varyHeaders; }
+    const HashMap<String, String>& varyHeaders() const LIFETIME_BOUND { return m_varyHeaders; }
 
     void setKey(const NetworkCache::Key& key) { m_key = key; }
     void setSize(uint64_t size) { m_size = size; }

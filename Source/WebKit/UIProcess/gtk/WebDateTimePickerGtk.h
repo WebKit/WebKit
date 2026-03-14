@@ -41,7 +41,7 @@ private:
     WebDateTimePickerGtk(WebPageProxy&);
 
     void endPicker() final;
-    void showDateTimePicker(WebCore::DateTimeChooserParameters&&) final;
+    void platformShowDateTimePicker(WebCore::DateTimeChooserParameters&&) final;
 
     void update(WebCore::DateTimeChooserParameters&&);
     void didChooseDate();

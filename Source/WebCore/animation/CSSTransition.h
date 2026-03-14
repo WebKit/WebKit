@@ -50,11 +50,11 @@ public:
     const AtomString transitionProperty() const;
     AnimatableCSSProperty property() const { return m_property; }
     MonotonicTime generationTime() const { return m_generationTime; }
-    const RenderStyle& targetStyle() const { return *m_targetStyle; }
-    const RenderStyle& reversingAdjustedStartStyle() const { return *m_reversingAdjustedStartStyle; }
+    const RenderStyle& targetStyle() const LIFETIME_BOUND { return *m_targetStyle; }
+    const RenderStyle& reversingAdjustedStartStyle() const LIFETIME_BOUND { return *m_reversingAdjustedStartStyle; }
     double reversingShorteningFactor() const { return m_reversingShorteningFactor; }
 
-    const Style::Transition& backingStyleTransition() const { return m_backingStyleTransition; }
+    const Style::Transition& backingStyleTransition() const LIFETIME_BOUND { return m_backingStyleTransition; }
 
 private:
     CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);

@@ -319,7 +319,7 @@ static void copyImagePixels(const ConstPixelBufferConversionView& source, const 
 #endif
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-static Float16 readFloat16(const std::span<const uint8_t>& span8, size_t offset)
+static Float16 NODELETE readFloat16(const std::span<const uint8_t>& span8, size_t offset)
 {
     union {
         Float16 float16 { };

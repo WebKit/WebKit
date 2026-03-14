@@ -142,7 +142,7 @@ public:
     explicit ScrollingEffectsController(ScrollingEffectsControllerClient&);
     virtual ~ScrollingEffectsController();
 
-    bool usesScrollSnap() const;
+    bool NODELETE usesScrollSnap() const;
     void stopAllTimers();
     void scrollPositionChanged();
 
@@ -172,12 +172,12 @@ public:
     void contentsSizeChanged();
 
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
-    const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
+    const LayoutScrollSnapOffsetsInfo* NODELETE snapOffsetsInfo() const;
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned>);
     void updateActiveScrollSnapIndexForClientOffset();
     void resnapAfterLayout();
 
-    std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    std::optional<unsigned> NODELETE activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset) const;
 
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
@@ -188,10 +188,10 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
 
     bool isScrollSnapInProgress() const;
-    bool isUserScrollInProgress() const;
+    bool NODELETE isUserScrollInProgress() const;
 
 #if PLATFORM(MAC)
-    static FloatSize wheelDeltaBiasingTowardsVertical(const FloatSize&);
+    static FloatSize NODELETE wheelDeltaBiasingTowardsVertical(const FloatSize&);
     static bool isScrollDeltaOpposingStretch(IntSize stretch, ScrollEventAxis, float delta);
 
     // Returns true if handled.
@@ -200,13 +200,13 @@ public:
     void stopRubberBanding();
     void startRubberBandSnapBack();
     void rubberBandTargetOffsetDidChange();
-    bool isRubberBandInProgress() const;
+    bool NODELETE isRubberBandInProgress() const;
     RectEdges<bool> rubberBandingEdges() const { return m_rubberBandingEdges; }
 
     std::optional<RubberbandingState> captureRubberbandingState() const;
     bool restoreRubberbandingState(const RubberbandingState&);
-    bool shouldAttemptRubberbandingRestoration(const RubberbandingState&);
-    FloatSize deltaWithAdditionalAdjustments(const FloatSize& adjustedDelta, bool);
+    bool NODELETE shouldAttemptRubberbandingRestoration(const RubberbandingState&);
+    FloatSize NODELETE deltaWithAdditionalAdjustments(const FloatSize& adjustedDelta, bool);
 #endif
 
 private:
@@ -241,7 +241,7 @@ private:
     bool shouldRubberBandOnSide(BoxSide, FloatSize) const;
     bool isRubberBandInProgressInternal() const;
     void updateRubberBandingState();
-    void updateRubberBandingEdges(IntSize clientStretch);
+    void NODELETE updateRubberBandingEdges(IntSize clientStretch);
 #endif
 
     void startOrStopAnimationCallbacks();

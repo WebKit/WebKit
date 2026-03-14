@@ -125,11 +125,11 @@ public:
     bool canHaveVerticalScrollbar() const { return m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarMode::AlwaysOff; }
     bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarMode::AlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarMode::AlwaysOff; }
 
-    const FloatScrollSnapOffsetsInfo& snapOffsetsInfo() const LIFETIME_BOUND;
-    std::optional<unsigned> currentHorizontalSnapPointIndex() const;
-    std::optional<unsigned> currentVerticalSnapPointIndex() const;
-    void setCurrentHorizontalSnapPointIndex(std::optional<unsigned>);
-    void setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
+    const FloatScrollSnapOffsetsInfo& NODELETE snapOffsetsInfo() const LIFETIME_BOUND;
+    std::optional<unsigned> NODELETE currentHorizontalSnapPointIndex() const;
+    std::optional<unsigned> NODELETE currentVerticalSnapPointIndex() const;
+    void NODELETE setCurrentHorizontalSnapPointIndex(std::optional<unsigned>);
+    void NODELETE setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
 
     bool eventCanScrollContents(const PlatformWheelEvent&) const;
     
@@ -149,7 +149,7 @@ public:
     void scrollbarVisibilityDidChange(ScrollbarOrientation, bool);
     void scrollbarMinimumThumbLengthDidChange(ScrollbarOrientation, int);
 
-    ScrollbarRevealBehavior takeScrollbarRevealBehaviorForNextScrollbarUpdate();
+    ScrollbarRevealBehavior NODELETE takeScrollbarRevealBehaviorForNextScrollbarUpdate();
 
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
@@ -203,7 +203,7 @@ protected:
     bool overscrollBehaviorAllowsVerticalRubberBand() const { return m_scrollableAreaParameters.verticalOverscrollBehavior != OverscrollBehavior::None; }
 
     PlatformWheelEvent eventForPropagation(const PlatformWheelEvent&) const;
-    ScrollPropagationInfo computeScrollPropagation(const FloatSize&) const;
+    ScrollPropagationInfo NODELETE computeScrollPropagation(const FloatSize&) const;
     bool overscrollBehaviorAllowsRubberBand() const { return m_scrollableAreaParameters.horizontalOverscrollBehavior != OverscrollBehavior::None ||  m_scrollableAreaParameters.verticalOverscrollBehavior != OverscrollBehavior::None; }
 
     bool shouldRubberBand(const PlatformWheelEvent&, EventTargeting) const;

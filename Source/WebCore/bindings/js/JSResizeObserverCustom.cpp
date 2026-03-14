@@ -35,11 +35,11 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSResizeObserver::visitAdditionalChildren(Visitor& visitor)
+void JSResizeObserver::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     ResizeObserverCallback* callback = wrapped().callbackConcurrently();
     if (callback)
-        callback->visitJSFunction(visitor);
+        callback->visitJSFunctionInGCThread(visitor);
 
     Locker locker { wrapped().observationTargetsLock() };
 
@@ -54,7 +54,7 @@ void JSResizeObserver::visitAdditionalChildren(Visitor& visitor)
     }
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSResizeObserver);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSResizeObserver);
 
 bool JSResizeObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {

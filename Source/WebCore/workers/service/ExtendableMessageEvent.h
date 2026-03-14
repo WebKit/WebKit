@@ -67,14 +67,14 @@ public:
 
     ~ExtendableMessageEvent();
 
-    JSValueInWrappedObject& data() { return m_data; }
-    JSValueInWrappedObject& cachedPorts() { return m_cachedPorts; }
+    JSValueInWrappedObject& data() LIFETIME_BOUND { return m_data; }
+    JSValueInWrappedObject& cachedPorts() LIFETIME_BOUND { return m_cachedPorts; }
 
     String origin() const;
     const RefPtr<SecurityOrigin> securityOrigin() const;
-    const String& lastEventId() const { return m_lastEventId; }
-    const std::optional<ExtendableMessageEventSource>& source() const { return m_source; }
-    const Vector<Ref<MessagePort>>& ports() const { return m_ports; }
+    const String& lastEventId() const LIFETIME_BOUND { return m_lastEventId; }
+    const std::optional<ExtendableMessageEventSource>& source() const LIFETIME_BOUND { return m_source; }
+    const Vector<Ref<MessagePort>>& ports() const LIFETIME_BOUND { return m_ports; }
 
 private:
     ExtendableMessageEvent(const AtomString&, const Init&, IsTrusted);

@@ -100,7 +100,7 @@ bool RemoteLayerTreeHost::replayDynamicContentScalingDisplayListsIntoBackingStor
 
 bool RemoteLayerTreeHost::threadedAnimationsEnabled() const
 {
-    if (RefPtr page = protect(drawingArea())->page()) {
+    if (RefPtr page = drawingArea().page()) {
         Ref preferences = page->preferences();
         return preferences->threadedScrollDrivenAnimationsEnabled() || preferences->threadedTimeBasedAnimationsEnabled();
     }
@@ -109,7 +109,7 @@ bool RemoteLayerTreeHost::threadedAnimationsEnabled() const
 
 bool RemoteLayerTreeHost::cssUnprefixedBackdropFilterEnabled() const
 {
-    RefPtr page = protect(drawingArea())->page();
+    RefPtr page = drawingArea().page();
     return page && protect(page->preferences())->cssUnprefixedBackdropFilterEnabled();
 }
 
@@ -134,7 +134,7 @@ bool RemoteLayerTreeHost::updateBannerLayers(const std::optional<MainFrameData>&
         return true;
     };
 
-    RefPtr page = protect(drawingArea())->page();
+    RefPtr page = drawingArea().page();
     if (!page)
         return false;
 
@@ -303,7 +303,7 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
 #if HAVE(AVKIT)
     auto videoLayerIter = m_videoLayers.find(layerID);
     if (videoLayerIter != m_videoLayers.end()) {
-        RefPtr page = protect(drawingArea())->page();
+        RefPtr page = drawingArea().page();
         if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr)
             videoManager->willRemoveLayerForID(videoLayerIter->value);
         m_videoLayers.remove(videoLayerIter);
@@ -312,7 +312,7 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
     if (m_modelLayers.contains(layerID)) {
-        RefPtr page = protect(drawingArea())->page();
+        RefPtr page = drawingArea().page();
         if (auto modelPresentationManager = page ? page->modelPresentationManagerProxy() : nullptr)
             modelPresentationManager->invalidateModel(layerID);
         m_modelLayers.remove(layerID);
@@ -478,7 +478,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
 
 #if HAVE(AVKIT)
         if (properties.videoElementData) {
-            RefPtr page = protect(drawingArea())->page();
+            RefPtr page = drawingArea().page();
             if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr) {
                 m_videoLayers.add(*properties.layerID, properties.videoElementData->playerIdentifier);
                 return makeWithLayer(videoManager->createLayerWithID(properties.videoElementData->playerIdentifier, { properties.hostingContextID() }, properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));

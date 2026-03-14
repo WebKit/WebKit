@@ -40,7 +40,7 @@ struct FourCC;
 class CDMFactoryFairPlayStreaming final : public CDMFactory {
     WTF_MAKE_TZONE_ALLOCATED(CDMFactoryFairPlayStreaming);
 public:
-    static CDMFactoryFairPlayStreaming& singleton();
+    static CDMFactoryFairPlayStreaming& NODELETE singleton();
 
     virtual ~CDMFactoryFairPlayStreaming();
 
@@ -107,7 +107,7 @@ public:
     static Vector<Ref<SharedBuffer>> keyIDsForRequest(AVContentKeyRequest *);
 #endif
 
-    const String& mediaKeysHashSalt() const { return m_mediaKeysHashSalt; }
+    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 private:
     String m_mediaKeysHashSalt;

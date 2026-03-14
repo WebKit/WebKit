@@ -59,7 +59,7 @@ void SplitTextNodeContainingElementCommand::doApply()
 
     bool parentRendererIsNoneOrNotInline = false;
     {
-        CheckedPtr parentRenderer = parent->renderer();
+        auto* parentRenderer = parent->renderer();
         parentRendererIsNoneOrNotInline = !parentRenderer || !parentRenderer->isInline();
     }
     if (parentRendererIsNoneOrNotInline) {

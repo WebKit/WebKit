@@ -152,10 +152,9 @@ void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper
 {
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
     if (role() == AccessibilityRole::LocalFrame) {
-        AXIsolatedObject* crossFrameChild = crossFrameChildObject();
-        if (crossFrameChild) {
-            [wrapper attachIsolatedObject:*crossFrameChild];
-            crossFrameChild->setWrapper(wrapper);
+        if (RefPtr child = crossFrameChildObject()) {
+            [wrapper attachIsolatedObject:*child];
+            child->setWrapper(wrapper);
             return;
         }
     }
@@ -298,8 +297,12 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
     Ref stopAfterObject = *this;
 
     if (std::optional stitchGroup = stitchGroupIfRepresentative()) {
-        if (RefPtr lastGroupMember = tree().objectForID(stitchGroup->members().last()))
-            stopAfterObject = lastGroupMember.releaseNonNull();
+        for (auto axID = stitchGroup->members().rbegin(); axID != stitchGroup->members().rend(); ++axID) {
+            if (RefPtr lastGroupMember = tree().objectForID(*axID); lastGroupMember && !lastGroupMember->isAXHidden()) {
+                stopAfterObject = lastGroupMember.releaseNonNull();
+                break;
+            }
+        }
     }
     std::optional<AXID> stopAtID = stopAfterObject->idOfNextSiblingIncludingIgnoredOrParent();
 

@@ -157,6 +157,9 @@ static auto HasCheckedPtrMemberFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::fa
 template<class T>
 struct HasCheckedPtrMemberFunctions : decltype(detail::HasCheckedPtrMemberFunctionsTest<T>(SFINAE_OVERLOAD)) { };
 
+template<typename T>
+concept IsCompleteType = requires { sizeof(T); };
+
 // HasIsolatedCopy()
 namespace detail {
 

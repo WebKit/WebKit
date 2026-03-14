@@ -72,11 +72,7 @@
 #define Modelelement_feature_status Testable
 #endif
 
-#if HAVE(COMPLETE_WEB_TRANSPORT)
 #define Web_transport_status Stable
-#else
-#define Web_transport_status Testable
-#endif
 
 namespace WebKit {
 
@@ -96,7 +92,7 @@ bool defaultTextAutosizingUsesIdempotentMode();
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-bool defaultVideoFullscreenRequiresElementFullscreen();
+bool NODELETE defaultVideoFullscreenRequiresElementFullscreen();
 #endif
 
 #if PLATFORM(MAC)
@@ -110,8 +106,8 @@ bool defaultTextInputClientSelectionUpdatesEnabled();
 
 #if ENABLE(MEDIA_STREAM)
 bool NODELETE defaultCaptureAudioInGPUProcessEnabled();
-bool defaultManageCaptureStatusBarInGPUProcessEnabled();
-double defaultInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes();
+bool NODELETE defaultManageCaptureStatusBarInGPUProcessEnabled();
+double NODELETE defaultInactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes();
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
@@ -141,7 +137,7 @@ bool NODELETE defaultGamepadVibrationActuatorEnabled();
 #endif
 
 #if ENABLE(WEB_AUTHN)
-bool defaultDigitalCredentialsEnabled();
+bool NODELETE defaultDigitalCredentialsEnabled();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -160,7 +156,7 @@ bool defaultShouldTakeNearSuspendedAssertion();
 bool defaultShowModalDialogEnabled();
 bool NODELETE defaultLinearMediaPlayerEnabled();
 
-bool defaultShouldEnableScreenOrientationAPI();
+bool NODELETE defaultShouldEnableScreenOrientationAPI();
 bool defaultPopoverAttributeEnabled();
 bool defaultUseGPUProcessForDOMRenderingEnabled();
 
@@ -174,7 +170,7 @@ bool NODELETE defaultBuiltInNotificationsEnabled();
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-bool defaultDeviceOrientationPermissionAPIEnabled();
+bool NODELETE defaultDeviceOrientationPermissionAPIEnabled();
 #endif
 
 #if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
@@ -184,7 +180,7 @@ bool defaultRequiresPageVisibilityForVideoToBeNowPlaying();
 bool NODELETE defaultCookieStoreAPIEnabled();
 
 bool defaultContentInsetBackgroundFillEnabled();
-bool defaultTopContentInsetBackgroundCanChangeAfterScrolling();
+bool NODELETE defaultTopContentInsetBackgroundCanChangeAfterScrolling();
 
 #if ENABLE(SCREEN_TIME)
 bool defaultScreenTimeEnabled();
@@ -204,8 +200,8 @@ bool defaultMutationEventsEnabled();
 
 bool defaultTrustedTypesEnabled();
 
-bool defaultGetBoundingClientRectZoomedEnabled();
-bool defaultFacebookLiveRecordingQuirkEnabled();
+bool NODELETE defaultGetBoundingClientRectZoomedEnabled();
+bool NODELETE defaultFacebookLiveRecordingQuirkEnabled();
 bool defaultFontFaceSetConstructorEnabled();
 
 #if HAVE(MATERIAL_HOSTING)

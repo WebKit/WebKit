@@ -81,24 +81,24 @@ public:
     void cleanMustHandleValuesIfNecessary();
 
     BytecodeIndex osrEntryBytecodeIndex() const { return m_osrEntryBytecodeIndex; }
-    const Operands<std::optional<JSValue>>& mustHandleValues() const { return m_mustHandleValues; }
+    const Operands<std::optional<JSValue>>& mustHandleValues() const LIFETIME_BOUND { return m_mustHandleValues; }
     Profiler::Compilation* compilation() const { return m_compilation.get(); }
 
-    Finalizer* finalizer() const { return m_finalizer.get(); }
+    Finalizer* finalizer() const LIFETIME_BOUND { return m_finalizer.get(); }
     void setFinalizer(std::unique_ptr<Finalizer>&& finalizer) { m_finalizer = WTF::move(finalizer); }
 
     RefPtr<InlineCallFrameSet> inlineCallFrames() const { return m_inlineCallFrames; }
-    DesiredWatchpoints& watchpoints() { return m_watchpoints; }
-    DesiredIdentifiers& identifiers() { return m_identifiers; }
-    DesiredWeakReferences& weakReferences() { return m_weakReferences; }
-    DesiredTransitions& transitions() { return m_transitions; }
-    RecordedStatuses& recordedStatuses() { return *m_recordedStatuses.get(); }
+    DesiredWatchpoints& watchpoints() LIFETIME_BOUND { return m_watchpoints; }
+    DesiredIdentifiers& identifiers() LIFETIME_BOUND { return m_identifiers; }
+    DesiredWeakReferences& weakReferences() LIFETIME_BOUND { return m_weakReferences; }
+    DesiredTransitions& transitions() LIFETIME_BOUND { return m_transitions; }
+    RecordedStatuses& recordedStatuses() LIFETIME_BOUND { return *m_recordedStatuses.get(); }
 
     bool willTryToTierUp() const { return m_willTryToTierUp; }
     void setWillTryToTierUp(bool willTryToTierUp) { m_willTryToTierUp = willTryToTierUp; }
 
-    UncheckedKeyHashMap<BytecodeIndex, FixedVector<BytecodeIndex>>& tierUpInLoopHierarchy() { return m_tierUpInLoopHierarchy; }
-    Vector<BytecodeIndex>& tierUpAndOSREnterBytecodes() { return m_tierUpAndOSREnterBytecodes; }
+    UncheckedKeyHashMap<BytecodeIndex, FixedVector<BytecodeIndex>>& tierUpInLoopHierarchy() LIFETIME_BOUND { return m_tierUpInLoopHierarchy; }
+    Vector<BytecodeIndex>& tierUpAndOSREnterBytecodes() LIFETIME_BOUND { return m_tierUpAndOSREnterBytecodes; }
 
     DeferredCompilationCallback* callback() const { return m_callback.get(); }
     void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTF::move(callback); }

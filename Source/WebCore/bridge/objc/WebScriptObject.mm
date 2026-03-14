@@ -570,13 +570,12 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
         if (auto* jsHTMLElement = JSC::jsDynamicCast<JSHTMLElement*>(object)) {
             // Plugin elements cache the instance internally.
-            if (RefPtr instance = downcast<ObjcInstance>(pluginInstance(jsHTMLElement->wrapped())))
+            if (auto* instance = downcast<ObjcInstance>(pluginInstance(jsHTMLElement->wrapped())))
                 return instance->getObject();
         } else if (auto* runtimeObject = JSC::jsDynamicCast<ObjCRuntimeObject*>(object)) {
-            RefPtr instance = runtimeObject->getInternalObjCInstance();
-            if (!instance)
-                return nil;
-            return instance->getObject();
+            if (auto* instance = runtimeObject->getInternalObjCInstance())
+                return instance->getObject();
+            return nil;
         }
 
         return [WebScriptObject scriptObjectForJSObject:toRef(object) originRootObject:originRootObject rootObject:rootObject];

@@ -57,7 +57,7 @@ namespace WebCore {
 
 using ScrollbarSet = HashSet<SingleThreadWeakRef<Scrollbar>>;
 
-static ScrollbarSet& scrollbarMap()
+static ScrollbarSet& NODELETE scrollbarMap()
 {
     static NeverDestroyed<ScrollbarSet> instances;
     return instances;
@@ -265,7 +265,7 @@ ScrollbarButtonsPlacement ScrollbarThemeMac::buttonsPlacement() const
     return gButtonPlacement;
 }
 
-inline constexpr unsigned scrollbarWidthToIndex(ScrollbarWidth scrollbarWidth)
+inline constexpr unsigned NODELETE scrollbarWidthToIndex(ScrollbarWidth scrollbarWidth)
 {
     switch (scrollbarWidth) {
     case ScrollbarWidth::Auto:
@@ -296,7 +296,7 @@ bool ScrollbarThemeMac::hasThumb(Scrollbar& scrollbar)
              scrollbar.height()) >= minLengthForThumb;
 }
 
-static IntRect buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation orientation, ScrollbarWidth widthStyle, bool start)
+static IntRect NODELETE buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation orientation, ScrollbarWidth widthStyle, bool start)
 {
     ASSERT(gButtonPlacement != ScrollbarButtonsNone);
 
@@ -434,7 +434,7 @@ int ScrollbarThemeMac::minimumThumbLength(Scrollbar& scrollbar)
         return scrollbar.minimumThumbLength();
 }
 
-static bool shouldCenterOnThumb(const PlatformMouseEvent& evt)
+static bool NODELETE shouldCenterOnThumb(const PlatformMouseEvent& evt)
 {
     if (evt.button() != MouseButton::Left)
         return false;

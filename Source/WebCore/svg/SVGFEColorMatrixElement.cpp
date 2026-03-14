@@ -74,7 +74,7 @@ void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const 
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::valuesAttr:
-        Ref { m_values }->baseVal()->parse(newValue);
+        m_values->baseVal()->parse(newValue);
         break;
     default:
         break;

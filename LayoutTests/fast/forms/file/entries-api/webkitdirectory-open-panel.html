@@ -10,13 +10,13 @@
 description("Tests choosing a folder via the file picker when using webkitdirectory.");
 jsTestIsAsync = true;
 
-function runTest()
+async function runTest()
 {
     testRunner.setOpenPanelFiles(['resources/testFiles']);
 
     inputElement = document.getElementsByTagName('input')[0];
     shouldBeTrue("inputElement.webkitdirectory");
-    UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2,
+    await UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2,
         inputElement.offsetTop + inputElement.offsetHeight / 2);
 }
 

@@ -39,7 +39,7 @@ constexpr auto span8(const char(&p)[N])
     return unsafeMakeSpan<const uint8_t, N - 1>(byteCast<uint8_t>(static_cast<const char*>(p)), N - 1);
 }
 
-static bool hasSignatureForMP4(std::span<const uint8_t> sequence)
+static bool NODELETE hasSignatureForMP4(std::span<const uint8_t> sequence)
 {
     // To determine whether a byte sequence matches the signature for MP4, use the following steps:
     // Let sequence be the byte sequence to be matched, where sequence[s] is byte s in sequence and sequence[0] is the first byte in sequence.
@@ -77,7 +77,7 @@ static bool hasSignatureForMP4(std::span<const uint8_t> sequence)
     return false;
 }
 
-static std::optional<std::pair<uint8_t, int64_t>> parseWebMVint(std::span<const uint8_t> sequence)
+static std::optional<std::pair<uint8_t, int64_t>> NODELETE parseWebMVint(std::span<const uint8_t> sequence)
 {
     size_t index = 0;
     // Let mask be 128.
@@ -123,7 +123,7 @@ static std::optional<std::pair<uint8_t, int64_t>> parseWebMVint(std::span<const 
     return std::make_pair(numberSize, parsedNumber);
 }
 
-static bool hasSignatureForWebM(std::span<const uint8_t> sequence)
+static bool NODELETE hasSignatureForWebM(std::span<const uint8_t> sequence)
 {
     // To determine whether a byte sequence matches the signature for WebM, use the following steps:
     //   1. Let sequence be the byte sequence to be matched, where sequence[s] is byte s in sequence and sequence[0] is the first byte in sequence.
@@ -177,7 +177,7 @@ static bool hasSignatureForWebM(std::span<const uint8_t> sequence)
     return false;
 }
 
-static bool matchMP3Header(std::span<const uint8_t> sequence)
+static bool NODELETE matchMP3Header(std::span<const uint8_t> sequence)
 {
     // To match an mp3 header, using a byte sequence sequence of length length at offset s execute these steps:
 
@@ -186,30 +186,34 @@ static bool matchMP3Header(std::span<const uint8_t> sequence)
         return false;
 
     // If sequence[s] is not equal to 0xff and sequence[s + 1] & 0xe0 is not equal to 0xe0, return false.
-    if (sequence[0] != 0xff || sequence[1] != 0xe0)
+    if (sequence[0] != 0xff || (sequence[1] & 0xe0) != 0xe0)
         return false;
     // Let layer be the result of sequence[s + 1] & 0x06 >> 1.
-    auto layer = sequence[1] & 0x06 >> 1;
+    auto layer = (sequence[1] & 0x06) >> 1;
     // If layer is 0, return false.
     if (!layer)
         return false;
-    // Let bit-rate be sequence[s + 2] & 0xf0 >> 4.
-    auto bitRate = sequence[2] & 0xf0 >> 4;
+    // Let bit-rate-index be sequence[s + 2] & 0xf0 >> 4.
+    auto bitRateIndex = (sequence[2] & 0xf0) >> 4;
     // If bit-rate is 15, return false.
-    if (bitRate == 15)
+    if (bitRateIndex == 15)
         return false;
     // Let sample-rate be sequence[s + 2] & 0x0c >> 2.
-    auto sampleRate = sequence[2] & 0x0c >> 2;
+    auto sampleRate = (sequence[2] & 0x0c) >> 2;
     // If sample-rate is 3, return false.
     if (sampleRate == 3)
         return false;
-    // Let freq be the value given by sample-rate in the table sample-rate.
+    // Let freq be the value given by sample-rate-index in the table sample-rate.
     // const uint32_t sampleRateTable[] = { 44100, 48000, 32000 };
-    // auto freq = sampleRateTable[sampleRate];
+    // auto freq = sampleRateTable[sampleRateIndex];
+
     // Let final-layer be the result of 4 - (sequence[s + 1]).
-    auto finalLayer = 4 - sequence[1];
-    // If final-layer & 0x06 >> 1 is not 3, return false.
-    if ((finalLayer & 0x06 >> 1) != 3)
+    // If final-layer & 0x06 >> 1 is not 3 (layer III), return false.
+    // FIXME: The spec text is incorrect and should be (according to ISO/IEC 11172-3 2.4.2.3: Header layer I: '11', layer II: '10', layer III: '01'):
+    // See https://github.com/whatwg/mimesniff/issues/208
+    // let final-layer be the result of 4 - ((sequence[s + 1] & 0x06) >> 1)
+    // If final-layer is not 3, return false.
+    if (4 - ((sequence[1] & 0x06) >> 1) != 3)
         return false;
     // Return true.
     return true;
@@ -222,11 +226,11 @@ struct MP3Frame {
     uint8_t pad;
 };
 
-static uint32_t mp3FrameSize(const MP3Frame& frame)
+static uint32_t NODELETE mp3FrameSize(const MP3Frame& frame)
 {
     // To compute an mp3 frame size, execute these steps:
-    // If version is 1, let scale be 72, else, let scale be 144.
-    auto scale = frame.version == 1 ? 72u : 144u;
+    // If version is 1, let scale be 144, else, let scale be 72.
+    auto scale = (frame.version == 1) ? 144u : 72u;
     // Let size be bitrate * scale / freq.
     uint32_t size = frame.bitRate * scale / frame.sampleRate;
     // If pad is not zero, increment size by 1.
@@ -236,28 +240,34 @@ static uint32_t mp3FrameSize(const MP3Frame& frame)
     return size;
 }
 
-static MP3Frame parseMP3Frame(std::span<const uint8_t> sequence)
+static MP3Frame NODELETE parseMP3Frame(std::span<const uint8_t> sequence)
 {
     // Let version be sequence[s + 1] & 0x18 >> 3.
-    uint8_t version = sequence[1] & 0x18 >> 3;
+    uint8_t version = (sequence[1] & 0x18) >> 3;
     // Let bitrate-index be sequence[s + 2] & 0xf0 >> 4.
-    auto bitrateIndex = sequence[2] & 0xf0 >> 4;
+    auto bitrateIndex = (sequence[2] & 0xf0) >> 4;
     // If the version & 0x01 is non-zero, let bitrate be the value given by bitrate-index in the table mp2.5-rates
     constexpr std::array mp25ratesTable { 0u, 8000u, 16000u, 24000u, 32000u, 40000u, 48000u, 56000u, 64000u, 80000u, 96000u, 112000u, 128000u, 144000u, 160000u };
     // If version & 0x01 is zero, let bitrate be the value given by bitrate-index in the table mp3-rates
     constexpr std::array mp3ratesTable { 0u, 32000u, 40000u, 48000u, 56000u, 64000u, 80000u, 96000u, 112000u, 128000u, 160000u, 192000u, 224000u, 256000u, 320000u };
-    auto bitRate = (version & 0x1) ? mp25ratesTable[bitrateIndex] : mp3ratesTable[bitrateIndex];
+    auto bitRate = (version & 0x1) ? mp3ratesTable[bitrateIndex] : mp25ratesTable[bitrateIndex];
+    // FIXME: Spec: this is true only ffor mpeg1
     // Let samplerate-index be sequence[s + 2] & 0x0c >> 2.
-    auto sampleRateIndex = sequence[2] & 0x0c >> 2;
+    auto sampleRateIndex = (sequence[2] & 0x0c) >> 2;
     // Let samplerate be the value given by samplerate-index in the sample-rate table.
     constexpr std::array sampleRateTable { 44100u, 48000u, 32000u };
     auto sampleRate = sampleRateTable[sampleRateIndex];
+    // FIXME: https://github.com/whatwg/mimesniff/issues/209 handle MPEG2 and MPEG2.5 sampling rates.
+    if (version == 2) // MPEG2
+        sampleRate >>= 1;
+    else if (!version) // MPEG2.5
+        sampleRate >>= 2;
     // Let pad be sequence[s + 2] & 0x02 >> 1.
-    uint8_t pad = sequence[2] & 0x02 >> 1;
+    uint8_t pad = (sequence[2] & 0x02) >> 1;
     return { version, bitRate, sampleRate, pad };
 }
 
-static bool hasSignatureForMP3WithoutID3(std::span<const uint8_t> sequence)
+static bool NODELETE hasSignatureForMP3WithoutID3(std::span<const uint8_t> sequence)
 {
     // To determine whether a byte sequence matches the signature for MP3 without ID3, use the following steps:
 
@@ -303,6 +313,8 @@ static String mimeTypeFromSnifferEntries(std::span<const uint8_t> sequence)
         { span8("\0x52\x49\x46\x46\x00\x00\x00\x00\x41\x56\x49\x20"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "video/avi"_s },
         // The string "RIFF" followed by four bytes followed by the string "WAVE", the WAVE signature.
         { span8("\x52\x49\x46\x46\x00\x00\x00\x00\x57\x41\x56\x45"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "audio/wave"_s },
+        // Out of W3C spec, fLaC signature
+        { span8("\x66\x4C\x61\x43"), span8("\xFF\xFF\xFF\xFF"), "audio/flac"_s },
     });
 
     // 1. Execute the following steps for each row row in the following table:

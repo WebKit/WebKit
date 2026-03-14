@@ -61,13 +61,13 @@ private:
 
         void writeVideoFrame(VideoFrame&, VideoFrameTimeMetadata);
 
-        void setWritable(WritableStream&);
+        void NODELETE setWritable(WritableStream&);
 
     private:
         explicit Source(ScriptExecutionContextIdentifier);
 
-        const RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
-        const RealtimeMediaSourceSettings& settings() final { return m_settings; }
+        const RealtimeMediaSourceCapabilities& capabilities() LIFETIME_BOUND final { return m_capabilities; }
+        const RealtimeMediaSourceSettings& settings() LIFETIME_BOUND final { return m_settings; }
         void endProducingData() final;
 
         ScriptExecutionContextIdentifier m_contextIdentifier;

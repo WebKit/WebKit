@@ -33,6 +33,7 @@
 #include "WebProcess.h"
 #include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/Page.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ScrollView.h>
 #include <WebCore/TiledBacking.h>

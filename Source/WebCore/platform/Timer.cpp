@@ -90,7 +90,7 @@ public:
     { }
 
     TimerHeapReference operator*() const;
-    Ref<ThreadTimerHeapItem>& operator->() const { return *m_pointer; }
+    Ref<ThreadTimerHeapItem>& NODELETE operator->() const { return *m_pointer; }
 private:
     Ref<ThreadTimerHeapItem>* m_pointer;
 };
@@ -106,7 +106,7 @@ public:
     { }
 
     operator Ref<ThreadTimerHeapItem>&() const { return m_reference; }
-    TimerHeapPointer operator&() const { return &m_reference; }
+    TimerHeapPointer NODELETE operator&() const { return &m_reference; }
     TimerHeapReference& operator=(TimerHeapReference&&);
     TimerHeapReference& operator=(Ref<ThreadTimerHeapItem>&&);
 
@@ -153,7 +153,7 @@ inline void TimerHeapReference::updateHeapIndex()
         m_reference->setHeapIndex(&m_reference - heap.begin());
 }
 
-inline void swap(TimerHeapReference a, TimerHeapReference b)
+inline void NODELETE swap(TimerHeapReference a, TimerHeapReference b)
 {
     a.swap(b);
 }
@@ -177,22 +177,22 @@ public:
         ASSERT(m_index <= m_container.size());
     }
 
-    TimerHeapIterator& operator++() { ++m_index; return *this; }
-    TimerHeapIterator operator++(int) { return TimerHeapIterator(m_container, m_index++); }
+    TimerHeapIterator& NODELETE operator++() { ++m_index; return *this; }
+    TimerHeapIterator NODELETE operator++(int) { return TimerHeapIterator(m_container, m_index++); }
 
-    TimerHeapIterator& operator--() { --m_index; return *this; }
-    TimerHeapIterator operator--(int) { return TimerHeapIterator(m_container, m_index--); }
+    TimerHeapIterator& NODELETE operator--() { --m_index; return *this; }
+    TimerHeapIterator NODELETE operator--(int) { return TimerHeapIterator(m_container, m_index--); }
 
-    TimerHeapIterator& operator+=(ptrdiff_t i) { m_index += i; return *this; }
-    TimerHeapIterator& operator-=(ptrdiff_t i) { m_index -= i; return *this; }
+    TimerHeapIterator& NODELETE operator+=(ptrdiff_t i) { m_index += i; return *this; }
+    TimerHeapIterator& NODELETE operator-=(ptrdiff_t i) { m_index -= i; return *this; }
 
-    TimerHeapReference operator[](ptrdiff_t i) const { return TimerHeapReference(m_container[m_index + i]); }
+    TimerHeapReference NODELETE operator[](ptrdiff_t i) const { return TimerHeapReference(m_container[m_index + i]); }
 
-    TimerHeapReference operator*() const { return TimerHeapReference(m_container[m_index]); }
-    Ref<ThreadTimerHeapItem>& operator->() const { return m_container[m_index]; }
+    TimerHeapReference NODELETE operator*() const { return TimerHeapReference(m_container[m_index]); }
+    Ref<ThreadTimerHeapItem>& NODELETE operator->() const { return m_container[m_index]; }
 
     auto operator<=>(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index <=> other.m_index; }
-    bool operator==(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index == other.m_index; }
+    bool NODELETE operator==(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index == other.m_index; }
 
 #if ASSERT_ENABLED
     bool hasSameContainerAs(TimerHeapIterator other) const
@@ -214,11 +214,11 @@ private:
     size_t m_index;
 };
 
-inline TimerHeapIterator operator+(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index + b); }
-inline TimerHeapIterator operator+(size_t a, TimerHeapIterator b) { return TimerHeapIterator(b.m_container, a + b.m_index); }
+inline TimerHeapIterator NODELETE operator+(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index + b); }
+inline TimerHeapIterator NODELETE operator+(size_t a, TimerHeapIterator b) { return TimerHeapIterator(b.m_container, a + b.m_index); }
 
-inline TimerHeapIterator operator-(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index - b); }
-inline ptrdiff_t operator-(TimerHeapIterator a, TimerHeapIterator b) { ASSERT(a.hasSameContainerAs(b)); return static_cast<ptrdiff_t>(a.m_index) - static_cast<ptrdiff_t>(b.m_index); }
+inline TimerHeapIterator NODELETE operator-(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index - b); }
+inline ptrdiff_t NODELETE operator-(TimerHeapIterator a, TimerHeapIterator b) { ASSERT(a.hasSameContainerAs(b)); return static_cast<ptrdiff_t>(a.m_index) - static_cast<ptrdiff_t>(b.m_index); }
 
 // ----------------
 

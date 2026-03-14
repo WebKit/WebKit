@@ -32,7 +32,7 @@
 
 namespace PAL {
 
-static std::optional<bool>& isEnhancedSecurityEnabledForCurrentProcessCached()
+static std::optional<bool>& NODELETE isEnhancedSecurityEnabledForCurrentProcessCached()
 {
     static NeverDestroyed<std::optional<bool>> cachedIsEnhancedSecurityEnabledForCurrentProcess;
     return cachedIsEnhancedSecurityEnabledForCurrentProcess;

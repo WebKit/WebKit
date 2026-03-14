@@ -72,7 +72,7 @@ public:
 
     bool isEmpty() const { return m_styleSheetId.isEmpty(); }
 
-    const String& styleSheetId() const { return m_styleSheetId; }
+    const String& styleSheetId() const LIFETIME_BOUND { return m_styleSheetId; }
     unsigned ordinal() const { return m_ordinal; }
 
     // ID type is either Inspector::Protocol::CSS::CSSStyleId or Inspector::Protocol::CSS::CSSRuleId.
@@ -162,7 +162,7 @@ public:
     using StyleDeclarationOrCSSRule = Variant<CSSStyleDeclaration*, CSSRule*>;
 
     static Ref<InspectorStyleSheet> create(InspectorPageAgent*, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
-    static String styleSheetURL(CSSStyleSheet* pageStyleSheet);
+    static String NODELETE styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
     virtual ~InspectorStyleSheet();
 

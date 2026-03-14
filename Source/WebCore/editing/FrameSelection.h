@@ -73,9 +73,9 @@ protected:
     explicit CaretBase(CaretVisibility = CaretVisibility::Hidden);
 
     void invalidateCaretRect(Node*, bool caretRectChanged = false, CaretAnimator* = nullptr);
-    void clearCaretRect();
+    void NODELETE clearCaretRect();
     bool updateCaretRect(Document&, const VisiblePosition& caretPosition);
-    bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
+    bool NODELETE shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
     void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, CaretAnimator*) const;
 
     const LayoutRect& localCaretRectWithoutUpdate() const LIFETIME_BOUND { return m_caretLocalRect; }
@@ -233,7 +233,7 @@ public:
 
     WEBCORE_EXPORT void setFocused(bool);
     bool isFocused() const { return m_focused; }
-    WEBCORE_EXPORT bool isFocusedAndActive() const;
+    WEBCORE_EXPORT bool NODELETE isFocusedAndActive() const;
     void pageActivationChanged();
 
     WEBCORE_EXPORT void updateAppearance();

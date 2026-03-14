@@ -58,15 +58,14 @@ public:
     }
 
     Kind kind() const final { return m_kind; }
-    TrackID id() const final { return m_trackID.value_or(m_id); }
+    TrackID id() const final;
     std::optional<String> trackUID() const final { return std::nullopt; }
-    String label() const final { return m_label; }
-    String language() const final { return m_language; }
-    int trackIndex() const final { return m_index; }
+    String label() const final;
+    String language() const final;
+    int trackIndex() const final;
 
     void handleSample(GRefPtr<GstSample>&&);
 
-protected:
     void tagsChanged(GRefPtr<GstTagList>&&) final;
 
 private:

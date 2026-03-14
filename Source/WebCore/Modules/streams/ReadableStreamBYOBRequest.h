@@ -46,10 +46,10 @@ public:
     ExceptionOr<void> respond(JSDOMGlobalObject&, size_t);
     ExceptionOr<void> respondWithNewView(JSDOMGlobalObject&, JSC::ArrayBufferView&);
 
-    void setController(ReadableByteStreamController*);
+    void NODELETE setController(ReadableByteStreamController*);
     void NODELETE setView(JSC::ArrayBufferView*);
 
-    template<typename Visitor> void visitAdditionalChildren(Visitor&);
+    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     ReadableStreamBYOBRequest();

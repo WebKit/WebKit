@@ -89,8 +89,8 @@ public:
 
     // Called on Worker thread when JS exits with termination exception caused by forbidExecution() request,
     // or by Worker thread termination code to prevent future entry into JS.
-    WEBCORE_EXPORT void forbidExecution();
-    bool isExecutionForbidden() const;
+    WEBCORE_EXPORT void NODELETE forbidExecution();
+    bool NODELETE isExecutionForbidden() const;
 
     JSC::VM& vm() { return *m_vm; }
 

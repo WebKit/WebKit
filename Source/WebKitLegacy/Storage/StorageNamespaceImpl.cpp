@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static HashMap<String, WeakRef<StorageNamespaceImpl>>& localStorageNamespaceMap()
+static HashMap<String, WeakRef<StorageNamespaceImpl>>& NODELETE localStorageNamespaceMap()
 {
     static NeverDestroyed<HashMap<String, WeakRef<StorageNamespaceImpl>>> localStorageNamespaceMap;
 

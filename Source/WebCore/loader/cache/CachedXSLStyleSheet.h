@@ -38,7 +38,7 @@ public:
     CachedXSLStyleSheet(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
     virtual ~CachedXSLStyleSheet();
 
-    const String& sheet() const { return m_sheet; }
+    const String& sheet() const LIFETIME_BOUND { return m_sheet; }
 
 private:
     void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) final;

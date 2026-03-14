@@ -74,13 +74,13 @@ public:
     AttachmentAssociatedElement* associatedElement() const;
     AttachmentAssociatedElementType associatedElementType() const;
 
-    WEBCORE_EXPORT String attachmentTitle() const;
-    const AtomString& attachmentSubtitle() const;
-    const AtomString& attachmentActionForDisplay() const;
+    WEBCORE_EXPORT String NODELETE attachmentTitle() const;
+    const AtomString& NODELETE attachmentSubtitle() const;
+    const AtomString& NODELETE attachmentActionForDisplay() const;
     String attachmentTitleForDisplay() const;
-    const AtomString& attachmentSubtitleForDisplay() const;
-    WEBCORE_EXPORT String attachmentType() const;
-    String attachmentPath() const;
+    const AtomString& NODELETE attachmentSubtitleForDisplay() const;
+    WEBCORE_EXPORT String NODELETE attachmentType() const;
+    String NODELETE attachmentPath() const;
     RefPtr<Image> icon() const { return m_icon; }
     void requestIconIfNeededWithSize(const FloatSize&);
     void requestWideLayoutIconIfNeeded();

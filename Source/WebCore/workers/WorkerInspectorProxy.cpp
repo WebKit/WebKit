@@ -45,13 +45,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorProxy);
 using namespace Inspector;
 
 static Lock proxiesPerWorkerGlobalScopeLock;
-static HashMap<ScriptExecutionContextIdentifier, WeakHashSet<WorkerInspectorProxy>>& proxiesPerWorkerGlobalScope() WTF_REQUIRES_LOCK(proxiesPerWorkerGlobalScopeLock)
+static HashMap<ScriptExecutionContextIdentifier, WeakHashSet<WorkerInspectorProxy>>& NODELETE proxiesPerWorkerGlobalScope() WTF_REQUIRES_LOCK(proxiesPerWorkerGlobalScopeLock)
 {
     static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, WeakHashSet<WorkerInspectorProxy>>> proxies;
     return proxies;
 }
 
-static HashMap<PageIdentifier, WeakHashSet<WorkerInspectorProxy>>& proxiesPerPage()
+static HashMap<PageIdentifier, WeakHashSet<WorkerInspectorProxy>>& NODELETE proxiesPerPage()
 {
     static MainThreadNeverDestroyed<HashMap<PageIdentifier, WeakHashSet<WorkerInspectorProxy>>> proxies;
     return proxies;

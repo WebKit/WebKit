@@ -69,7 +69,7 @@ public:
     }
     virtual ~HTMLAllNamedSubCollection();
 
-    bool elementMatches(Element&) const;
+    bool NODELETE elementMatches(Element&) const;
 
 private:
     HTMLAllNamedSubCollection(Document&, CollectionType, const AtomString&);

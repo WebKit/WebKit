@@ -53,7 +53,7 @@ Ref<RealtimeIncomingAudioSourceCocoa> RealtimeIncomingAudioSourceCocoa::create(R
     return adoptRef(*new RealtimeIncomingAudioSourceCocoa(WTF::move(audioTrack), WTF::move(audioTrackId)));
 }
 
-static inline AudioStreamBasicDescription streamDescription(size_t sampleRate, size_t channelCount)
+static inline AudioStreamBasicDescription NODELETE streamDescription(size_t sampleRate, size_t channelCount)
 {
     AudioStreamBasicDescription streamFormat;
     FillOutASBDForLPCM(streamFormat, sampleRate, channelCount, LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::isFloat, LibWebRTCAudioFormat::isBigEndian, LibWebRTCAudioFormat::isNonInterleaved);

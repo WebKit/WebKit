@@ -18,13 +18,13 @@ onload = async () => {
 <p>The suggested filename above should be "*.png" and the download should succeed.</p>
 <a id="blob-url" download="*\">File backed blob URL</a>
 <script>
-function click(elmt)
+async function click(elmt)
 {
     if (!window.eventSender) {
         alert('Click the link to run the test.');
         return;
     }
-    UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+    await UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
 }
 
 async function runTest()
@@ -32,7 +32,7 @@ async function runTest()
     file = await internals.asyncCreateFile("../resources/abe.png");
     var link = document.getElementById("blob-url");
     link.href = window.URL.createObjectURL(file);
-    click(link);
+    await click(link);
 }
 </script>
 </body>

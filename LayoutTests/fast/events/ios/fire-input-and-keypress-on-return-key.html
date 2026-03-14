@@ -28,7 +28,7 @@ function checkKeypressAndDone()
     shouldBeEqualToString("event.key", "Enter");
 }
 
-function runTest()
+async function runTest()
 {
     function handleFocus(event) {
         event.target.addEventListener("input", checkInputEvent, { once: true });
@@ -39,7 +39,7 @@ function runTest()
     let test = document.getElementById("test");
     test.addEventListener("focus", handleFocus, { once: true });
     if (window.testRunner)
-        UIHelper.activateElement(test);
+        await UIHelper.activateElement(test);
 }
 
 description("Tests that pressing the Return key in a content editable elemnent dispatches a DOM input event and DOM keypress event (in that order). To run this test by hand, focus the content editable element below and press the <key>Return<key> key.");

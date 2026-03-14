@@ -253,7 +253,7 @@ inline bool AccessibilityObject::ariaIsMultiline() const
     return equalLettersIgnoringASCIICase(getAttribute(HTMLNames::aria_multilineAttr), "true"_s);
 }
 
-inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool updateChildrenIfNeeded)
+inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool updateChildrenIfNeeded) LIFETIME_BOUND
 {
     if (updateChildrenIfNeeded)
         updateChildrenIfNecessary();

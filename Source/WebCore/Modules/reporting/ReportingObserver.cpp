@@ -68,7 +68,7 @@ static WeakPtr<ReportingScope> reportingScopeForContext(ScriptExecutionContext& 
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext))
         return document->reportingScope();
 
-    if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+    if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
         return workerGlobalScope->reportingScope();
 
     RELEASE_ASSERT_NOT_REACHED();

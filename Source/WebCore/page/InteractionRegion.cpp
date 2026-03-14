@@ -144,7 +144,7 @@ static bool hasInteractiveCursorType(Element& element)
         || cursorType == CursorType::VerticalText;
 }
 
-static bool shouldAllowElement(const Element& element)
+static bool NODELETE shouldAllowElement(const Element& element)
 {
     if (is<HTMLFieldSetElement>(element))
         return false;

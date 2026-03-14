@@ -551,7 +551,7 @@ function captureAndTransferAudioTrack()
 {
     navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
         const track = stream.getAudioTracks()[0];
-        self.opener.postMessage({ state : "PASS", track }, [track]);
+        self.opener.postMessage({ state : "PASS", track }, "*", [track]);
     });
 }
 
@@ -559,7 +559,7 @@ function captureAndTransferVideoTrack()
 {
     navigator.mediaDevices.getUserMedia({video:true}).then(stream => {
         const track = stream.getVideoTracks()[0];
-        self.opener.postMessage({ state : "PASS", track }, [track]);
+        self.opener.postMessage({ state : "PASS", track }, "*", [track]);
     });
 }
 

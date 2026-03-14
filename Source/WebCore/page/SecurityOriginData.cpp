@@ -64,16 +64,20 @@ URL SecurityOriginData::toURL() const
     return URL { toString() };
 }
 
-SecurityOriginData SecurityOriginData::fromFrame(LocalFrame* frame)
+SecurityOriginData SecurityOriginData::fromLocalFrame(LocalFrame* frame)
 {
     if (!frame)
         return SecurityOriginData { };
 
-    RefPtr document = frame->document();
-    if (!document)
-        return SecurityOriginData { };
+    return fromFrame(*frame);
+}
 
-    return document->securityOrigin().data();
+SecurityOriginData SecurityOriginData::fromFrame(const Frame& frame)
+{
+    if (RefPtr securityOrigin = frame.frameDocumentSecurityOrigin())
+        return securityOrigin->data();
+
+    return SecurityOriginData { };
 }
 
 SecurityOriginData SecurityOriginData::fromURL(const URL& url)

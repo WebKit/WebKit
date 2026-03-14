@@ -109,9 +109,9 @@ MarqueeDirection RenderMarquee::direction() const
 {
     // FIXME: Support the CSS3 "auto" value for determining the direction of the marquee.
     // For now just map MarqueeDirection::Auto to MarqueeDirection::Backward
-    CheckedRef layer = m_layer.get();
-    auto result = layer->renderer().style().marqueeDirection();
-    auto writingMode = layer->renderer().writingMode();
+    auto& layer = m_layer.get();
+    auto result = layer.renderer().style().marqueeDirection();
+    auto writingMode = layer.renderer().writingMode();
     if (result == MarqueeDirection::Auto)
         result = MarqueeDirection::Backward;
     if (result == MarqueeDirection::Forward)
@@ -122,7 +122,7 @@ MarqueeDirection RenderMarquee::direction() const
     // Now we have the real direction.  Next we check to see if the increment is negative.
     // If so, then we reverse the direction.
     // FIXME: This will fail for `increment` that uses `calc()`, though this can currently never happen due to the property being internal
-    if (auto& increment = layer->renderer().style().marqueeIncrement(); increment.isKnownNegative())
+    if (auto& increment = layer.renderer().style().marqueeIncrement(); increment.isKnownNegative())
         result = reverseDirection(result);
     
     return result;
@@ -135,7 +135,7 @@ bool RenderMarquee::isHorizontal() const
 
 int RenderMarquee::computePosition(MarqueeDirection dir, bool stopAtContentEdge)
 {
-    CheckedPtr box = protect(layer())->renderBox();
+    CheckedPtr box = layer().renderBox();
     ASSERT(box);
     CheckedRef boxStyle = box->style();
     if (isHorizontal()) {
@@ -216,7 +216,7 @@ void RenderMarquee::updateMarqueePosition()
 {
     bool activate = (m_totalLoops <= 0 || m_currentLoop < m_totalLoops);
     if (activate) {
-        MarqueeBehavior behavior = protect(layer())->renderer().style().marqueeBehavior();
+        MarqueeBehavior behavior = layer().renderer().style().marqueeBehavior();
         m_start = computePosition(direction(), behavior == MarqueeBehavior::Alternate);
         m_end = computePosition(reverseDirection(direction()), behavior == MarqueeBehavior::Alternate || behavior == MarqueeBehavior::Slide);
         if (!m_stopped)

@@ -65,21 +65,21 @@ class PluginData : public RefCounted<PluginData> {
 public:
     static Ref<PluginData> create(Page& page) { return adoptRef(*new PluginData(page)); }
 
-    const Vector<PluginInfo>& plugins() const { return m_plugins; }
-    WEBCORE_EXPORT const Vector<PluginInfo>& webVisiblePlugins() const;
+    const Vector<PluginInfo>& plugins() const LIFETIME_BOUND { return m_plugins; }
+    WEBCORE_EXPORT const Vector<PluginInfo>& webVisiblePlugins() const LIFETIME_BOUND;
     WEBCORE_EXPORT Vector<MimeClassInfo> webVisibleMimeTypes() const;
 
     enum AllowedPluginTypes {
         AllPlugins,
         OnlyApplicationPlugins
     };
-    WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
+    WEBCORE_EXPORT bool NODELETE supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
     WEBCORE_EXPORT bool supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes) const;
     WEBCORE_EXPORT bool supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes, const URL&) const;
 
     String pluginFileForWebVisibleMimeType(const String& mimeType) const;
 
-    const std::optional<PluginInfo>& builtInPDFPlugin() const { return m_builtInPDFPluginInfo; }
+    const std::optional<PluginInfo>& builtInPDFPlugin() const LIFETIME_BOUND { return m_builtInPDFPluginInfo; }
 
     static PluginInfo dummyPDFPluginInfo();
 

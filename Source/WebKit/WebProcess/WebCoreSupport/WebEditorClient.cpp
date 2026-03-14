@@ -80,13 +80,13 @@ bool WebEditorClient::shouldDeleteRange(const std::optional<SimpleRange>& range)
 
 bool WebEditorClient::smartInsertDeleteEnabled()
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     return page && page->isSmartInsertDeleteEnabled();
 }
 
 bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     return page && page->isSelectTrailingWhitespaceEnabled();
 }
 
@@ -722,13 +722,13 @@ void WebEditorClient::requestExtendedCheckingOfString(TextCheckingRequest& reque
 
 void WebEditorClient::willChangeSelectionForAccessibility()
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->willChangeSelectionForAccessibility();
 }
 
 void WebEditorClient::didChangeSelectionForAccessibility()
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->didChangeSelectionForAccessibility();
 }
 

@@ -39,7 +39,7 @@
 namespace PAL {
 
 PAL_EXPORT CMTime toCMTime(const MediaTime&);
-PAL_EXPORT MediaTime toMediaTime(const CMTime&);
+PAL_EXPORT MediaTime NODELETE toMediaTime(const CMTime&);
 
 }
 

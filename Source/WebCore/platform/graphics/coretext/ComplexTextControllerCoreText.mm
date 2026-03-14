@@ -140,7 +140,7 @@ struct ProviderInfo {
     RetainPtr<CFDictionaryRef> attributes;
 };
 
-static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon)
+static const UniChar* NODELETE provideStringAndAttributes(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon)
 {
     ProviderInfo* info = static_cast<struct ProviderInfo*>(refCon);
     if (stringIndex < 0 || static_cast<size_t>(stringIndex) >= info->characters.size())
@@ -276,7 +276,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
                         continue;
                     }
                     FontPlatformData runFontPlatformData(runCTFont.get(), CTFontGetSize(runCTFont.get()));
-                    runFont = FontCache::forCurrentThread()->fontForPlatformData(runFontPlatformData).ptr();
+                    runFont = protect(FontCache::forCurrentThread())->fontForPlatformData(runFontPlatformData).ptr();
                 }
                 if (m_fallbackFonts && runFont != &m_fontCascade->primaryFont())
                     m_fallbackFonts->add(*runFont);

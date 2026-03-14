@@ -53,25 +53,13 @@ static bool NODELETE isViewportElement(const SVGElement* element)
 SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)
 {
     ASSERT(element);
-    for (RefPtr current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
+    for (auto* current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
         auto* svgElement = dynamicDowncast<SVGElement>(*current);
         if (isViewportElement(svgElement))
             return svgElement;
     }
 
     return nullptr;
-}
-
-SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* element)
-{
-    ASSERT(element);
-    SUPPRESS_UNCOUNTED_LOCAL SVGElement* farthest = nullptr;
-    for (RefPtr current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
-        auto* svgElement = dynamicDowncast<SVGElement>(*current);
-        if (isViewportElement(svgElement))
-            farthest = svgElement;
-    }
-    return farthest;
 }
 
 FloatRect SVGLocatable::getBBox(SVGElement* element, StyleUpdateStrategy styleUpdateStrategy)

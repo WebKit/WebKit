@@ -38,7 +38,7 @@ struct Quaternion {
     }
 
     Quaternion slerp(const Quaternion& other, double progress);
-    Quaternion accumulate(const Quaternion& other);
+    Quaternion NODELETE accumulate(const Quaternion& other);
     Quaternion interpolate(const Quaternion& other, double progress, CompositeOperation);
 };
 

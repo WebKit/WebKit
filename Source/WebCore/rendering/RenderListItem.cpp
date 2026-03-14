@@ -90,7 +90,19 @@ RenderStyle RenderListItem::computeMarkerStyle() const
 
 bool isHTMLListElement(const Node& node)
 {
-    return is<HTMLUListElement>(node) || is<HTMLOListElement>(node);
+    return isAnyOf<HTMLUListElement, HTMLOListElement>(node);
+}
+
+static LayoutPoint paintOffsetForMarkerFromAssociatedListItem(const RenderListMarker& marker, const RenderListItem& listItem, const LayoutPoint& listItemPaintOffset)
+{
+    auto markerParentPaintOffset = listItemPaintOffset;
+    for (auto* ancestor = marker.parent(); ancestor && ancestor != &listItem; ancestor = ancestor->parent()) {
+        auto* box = dynamicDowncast<RenderBox>(*ancestor);
+        if (!box)
+            break;
+        markerParentPaintOffset.moveBy(box->location());
+    }
+    return markerParentPaintOffset;
 }
 
 // Returns the enclosing list with respect to the DOM order.
@@ -283,6 +295,9 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     RenderBlockFlow::paint(paintInfo, paintOffset);
+
+    if (auto* marker = markerRenderer(); marker && marker->shouldPaintInAssociatedListItemLayer())
+        marker->paintFromAssociatedListItemLayer(paintInfo, paintOffsetForMarkerFromAssociatedListItem(*marker, *this, paintOffset));
 }
 
 String RenderListItem::markerTextWithoutSuffix() const
@@ -320,7 +335,7 @@ void RenderListItem::updateListMarkerNumbers()
         return;
 
     bool isInReversedOrderedList = false;
-    if (RefPtr orderedList = dynamicDowncast<HTMLOListElement>(*list)) {
+    if (auto* orderedList = dynamicDowncast<HTMLOListElement>(*list)) {
         orderedList->itemCountChanged();
         isInReversedOrderedList = orderedList->isReversed();
     }

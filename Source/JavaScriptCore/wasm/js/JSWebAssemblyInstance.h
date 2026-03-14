@@ -99,7 +99,7 @@ public:
     void initializeImports(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
     void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CalleeGroup>&&, Wasm::CreationMode);
     
-    WebAssemblyModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
+    WebAssemblyModuleRecord* moduleRecord() LIFETIME_BOUND { return m_moduleRecord.get(); }
 
     // FIXME(wasm-multimemory): eventually get rid of memory() with no parameters
     // Temporarily keep memory() so the code still compiles
@@ -150,7 +150,7 @@ public:
         vm.writeBarrier(this, value);
     }
 
-    JSWebAssemblyModule* jsModule() const { return m_jsModule.get(); }
+    JSWebAssemblyModule* jsModule() const LIFETIME_BOUND { return m_jsModule.get(); }
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
 
     void clearJSCallICs(VM&);
@@ -192,7 +192,7 @@ public:
 
     void dataDrop(uint32_t dataSegmentIndex);
 
-    void* cachedMemory() const { return m_cachedMemory.getMayBeNull(); }
+    void* cachedMemory() const LIFETIME_BOUND { return m_cachedMemory.getMayBeNull(); }
     size_t cachedBoundsCheckingSize() const { return m_cachedBoundsCheckingSize; }
     size_t cachedMemorySize() const { return m_cachedMemorySize; }
 
@@ -282,8 +282,8 @@ public:
     }
     void setGlobal(unsigned, JSValue);
     void linkGlobal(unsigned, Ref<Wasm::Global>&&);
-    const BitVector& globalsToMark() { return m_globalsToMark; }
-    const BitVector& globalsToBinding() { return m_globalsToBinding; }
+    const BitVector& globalsToMark() LIFETIME_BOUND { return m_globalsToMark; }
+    const BitVector& globalsToBinding() LIFETIME_BOUND { return m_globalsToBinding; }
     JSValue getFunctionWrapper(unsigned) const;
     typename FunctionWrapperMap::ValuesConstIteratorRange functionWrappers() const { return m_functionWrappers.values(); }
     void setFunctionWrapper(unsigned, JSValue);
@@ -411,7 +411,7 @@ public:
         m_temporaryCallFrame = callFrame;
     }
 
-    void* softStackLimit() const { return m_stackMirror.softStackLimit(); }
+    void* softStackLimit() const LIFETIME_BOUND { return m_stackMirror.softStackLimit(); }
 
     void setFaultPC(Wasm::ExceptionType exception, void* pc)
     {

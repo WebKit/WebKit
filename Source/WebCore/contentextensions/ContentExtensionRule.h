@@ -109,7 +109,7 @@ struct Action {
 
     friend bool operator==(const Action&, const Action&) = default;
 
-    const ActionData& data() const { return m_data; }
+    const ActionData& data() const LIFETIME_BOUND { return m_data; }
 
     WEBCORE_EXPORT Action isolatedCopy() const &;
     WEBCORE_EXPORT Action isolatedCopy() &&;
@@ -120,7 +120,7 @@ private:
 
 struct DeserializedAction : public Action {
     static DeserializedAction deserialize(std::span<const uint8_t>, uint32_t location);
-    static size_t serializedLength(std::span<const uint8_t>, uint32_t location);
+    static size_t NODELETE serializedLength(std::span<const uint8_t>, uint32_t location);
 
     uint32_t actionID() const { return m_actionID; }
 
@@ -139,8 +139,8 @@ public:
     ContentExtensionRule isolatedCopy() const & { return { m_trigger.isolatedCopy(), m_action.isolatedCopy() }; }
     ContentExtensionRule isolatedCopy() && { return { WTF::move(m_trigger).isolatedCopy(), WTF::move(m_action).isolatedCopy() }; }
 
-    const Trigger& trigger() const { return m_trigger; }
-    const Action& action() const { return m_action; }
+    const Trigger& trigger() const LIFETIME_BOUND { return m_trigger; }
+    const Action& action() const LIFETIME_BOUND { return m_action; }
 
     friend bool operator==(const ContentExtensionRule&, const ContentExtensionRule&) = default;
 

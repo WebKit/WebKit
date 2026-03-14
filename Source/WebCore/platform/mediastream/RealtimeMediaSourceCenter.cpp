@@ -321,7 +321,7 @@ Expected<RealtimeMediaSourceCenter::ValidDevices, MediaConstraintType> RealtimeM
 {
     ASSERT(request.type != MediaStreamRequest::Type::DisplayMedia || request.type != MediaStreamRequest::Type::DisplayMediaWithAudio);
     struct {
-        bool operator()(const DeviceInfo& a, const DeviceInfo& b)
+        bool NODELETE operator()(const DeviceInfo& a, const DeviceInfo& b)
         {
             return a.fitnessScore > b.fitnessScore;
         }

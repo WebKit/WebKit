@@ -104,7 +104,9 @@ RefPtr<CachedResourceMediaLoader> CachedResourceMediaLoader::create(WebCoreAVFRe
     loaderOptions.destination = FetchOptions::Destination::Video;
     CachedResourceRequest request(WTF::move(resourceRequest), loaderOptions);
 
-    auto resource = loader.requestMedia(WTF::move(request)).value_or(nullptr);
+    RefPtr<CachedRawResource> resource;
+    if (auto result = loader.requestMedia(WTF::move(request)))
+        resource = WTF::move(result.value());
     if (!resource)
         return nullptr;
     return adoptRef(*new CachedResourceMediaLoader { parent, WTF::move(resource) });

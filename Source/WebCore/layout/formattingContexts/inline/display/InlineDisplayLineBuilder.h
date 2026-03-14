@@ -42,7 +42,7 @@ public:
 
     InlineDisplay::Line build(const LineLayoutResult&, const LineBox&, bool lineIsFullyTruncatedInBlockDirection) const;
 
-    static std::optional<InlineDisplay::Line::Ellipsis> applyEllipsisIfNeeded(LineEndingTruncationPolicy, InlineDisplay::Line&, InlineDisplay::Boxes&, bool isLegacyLineClamp);
+    static std::optional<InlineDisplay::Line::Ellipsis> applyEllipsisIfNeeded(LineEndingTruncationPolicy, InlineDisplay::Line&, std::span<InlineDisplay::Box>, bool isLegacyLineClamp);
     static void addLegacyLineClampTrailingLinkBoxIfApplicable(const InlineFormattingContext&, const InlineLayoutState&, InlineDisplay::Content&);
     static bool hasTrailingLineWithBlockContent(const InlineDisplay::Lines&);
 
@@ -53,9 +53,9 @@ private:
     };
     EnclosingLineGeometry collectEnclosingLineGeometry(const LineLayoutResult&, const LineBox&, const InlineRect& lineBoxRect) const;
 
-    const ConstraintsForInlineContent& constraints() const { return m_constraints; }
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    InlineFormattingContext& formattingContext() { return m_inlineFormattingContext; }
+    const ConstraintsForInlineContent& constraints() const LIFETIME_BOUND { return m_constraints; }
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
+    InlineFormattingContext& formattingContext() LIFETIME_BOUND { return m_inlineFormattingContext; }
     const Box& root() const { return formattingContext().root(); }
 
 private:

@@ -213,9 +213,9 @@ public:
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
     void setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(bool blocked) { m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = blocked; }
 
-    WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration() const;
+    WebPushD::WebPushDaemonConnectionConfiguration NODELETE webPushDaemonConnectionConfiguration() const;
 
-    const String& dataConnectionServiceType() const { return m_dataConnectionServiceType; }
+    const String& dataConnectionServiceType() const LIFETIME_BOUND { return m_dataConnectionServiceType; }
     void setDataConnectionServiceType(String&& type) { m_dataConnectionServiceType = WTF::move(type); }
     
     bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }

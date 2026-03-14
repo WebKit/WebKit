@@ -47,7 +47,7 @@ RemoveFormatCommand::RemoveFormatCommand(Ref<Document>&& document)
 {
 }
 
-static bool isElementForRemoveFormatCommand(const Element* element)
+static bool NODELETE isElementForRemoveFormatCommand(const Element* element)
 {
     using namespace ElementNames;
 

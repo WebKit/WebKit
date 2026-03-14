@@ -476,7 +476,7 @@ public:
     bool containsOnlyLatin1() const;
     template<bool isSpecialCharacter(char16_t)> bool containsOnly() const;
 
-    size_t find(Latin1Character, size_t start = 0);
+    size_t NODELETE find(Latin1Character, size_t start = 0);
     size_t find(char, size_t start = 0);
     size_t find(char16_t, size_t start = 0);
     template<typename CodeUnitMatchFunction>

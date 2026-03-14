@@ -69,7 +69,7 @@ public:
     void setBufferMapCount(int bufferMapCount) { m_bufferMapCount = bufferMapCount; }
     int bufferMapCount() const { return m_bufferMapCount; }
 
-    NSString* lastError() const;
+    NSString* NODELETE lastError() const;
     bool waitForCompletion();
     bool preCommitHandler();
     void postCommitHandler();

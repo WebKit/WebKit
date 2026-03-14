@@ -24,9 +24,9 @@
 #if HAVE_APPKIT_GESTURES_SUPPORT && compiler(>=6.2)
 
 import Foundation
-internal import WebKit_Internal
+import WebKit_Internal
 import AppKit
-internal import WebCore_Private
+import WebCore_Private
 private import CxxStdlib
 
 @objc

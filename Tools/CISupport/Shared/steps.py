@@ -269,6 +269,10 @@ class PrintSwiftVersion(steps.ShellSequence, ShellMixin):
 
         return defer.returnValue(SUCCESS)
 
+    # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+    def doStepIf(self, step):
+        return self.getProperty('fullPlatform', '') in {'ios-26', 'mac-tahoe'}
+
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {'step': 'Failed to print Swift version'}
@@ -295,10 +299,20 @@ class GetSwiftTagName(shell.ShellCommand, ShellMixin):
 
         log_text = self.log_observer.getStdout().strip()
         if log_text:
-            self.setProperty('canonical_swift_tag', log_text)
-            self.summary = f"Canonical Swift tag name: {self.getProperty('canonical_swift_tag')}"
-            return defer.returnValue(SUCCESS)
+            platform = self.getProperty('platform', '').lower()
+            for line in log_text.splitlines():
+                line = line.strip()
+                if ':' in line:
+                    platform_from_safer_cpp_swift_version, tag = line.split(':', 1)
+                    if platform in platform_from_safer_cpp_swift_version.lower():
+                        self.setProperty('canonical_swift_tag', tag.strip())
+                        self.summary = f"Canonical Swift tag name: {self.getProperty('canonical_swift_tag')}"
+                        return defer.returnValue(SUCCESS)
         return defer.returnValue(FAILURE)
+
+    # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+    def doStepIf(self, step):
+        return self.getProperty('fullPlatform', '') in {'ios-26', 'mac-tahoe'}
 
     def getResultSummary(self):
         if self.results != SUCCESS:
@@ -337,7 +351,9 @@ class CheckOutSwiftProject(git.Git, AddToLogMixin):
         return SUCCESS
 
     def doStepIf(self, step):
-        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+        # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+        is_platform_relevant = self.getProperty('fullPlatform', '').lower() in {'ios-26', 'mac-tahoe'}
+        return is_platform_relevant and self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
 
     def getResultSummary(self):
         if self.results == SKIPPED:
@@ -473,6 +489,10 @@ fi
 
         return defer.returnValue(rc)
 
+    # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+    def doStepIf(self, step):
+        return self.getProperty('fullPlatform', '') in {'ios-26', 'mac-tahoe'}
+
     def getResultSummary(self):
         if self.results == SKIPPED:
             return {'step': 'Metal toolchain installation skipped'}
@@ -566,7 +586,9 @@ class UpdateClang(steps.ShellSequence, ShellMixin):
         defer.returnValue(rc)
 
     def doStepIf(self, step):
-        return self.getProperty('current_llvm_revision', '') != self.getProperty('canonical_llvm_revision')
+        # FIXME: Remove conditioning on platform when Sequoia Safer-CPP queue is disabled
+        is_platform_relevant = self.getProperty('fullPlatform', '') not in {'ios-26', 'mac-tahoe'}
+        return is_platform_relevant and self.getProperty('current_llvm_revision', '') != self.getProperty('canonical_llvm_revision')
 
     def getResultSummary(self):
         if self.results == SKIPPED:

@@ -69,7 +69,7 @@ using namespace HTMLNames;
 
 using DOMNodeHandleCache = WeakHashMap<Node, WeakRef<InjectedBundleNodeHandle>, WeakPtrImplWithEventTargetData>;
 
-static DOMNodeHandleCache& domNodeHandleCache()
+static DOMNodeHandleCache& NODELETE domNodeHandleCache()
 {
     static NeverDestroyed<DOMNodeHandleCache> cache;
     return cache;
@@ -240,8 +240,9 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange()
 {
     if (!m_node)
         return nullptr;
-    VisiblePosition start = firstPositionInNode(m_node.get());
-    VisiblePosition end = lastPositionInNode(m_node.get());
+    Ref node = *m_node;
+    VisiblePosition start = firstPositionInNode(node);
+    VisiblePosition end = lastPositionInNode(node);
     return createHandle(makeSimpleRange(start, end));
 }
 
@@ -418,8 +419,8 @@ bool InjectedBundleNodeHandle::isSelectElement() const
 
 bool InjectedBundleNodeHandle::isSelectableTextNode() const
 {
-    if (CheckedPtr renderText = dynamicDowncast<RenderText>(m_node->renderer()))
-        return protect(renderText->style())->usedUserSelect() != UserSelect::None;
+    if (auto* renderText = dynamicDowncast<RenderText>(m_node->renderer()))
+        return renderText->style().usedUserSelect() != UserSelect::None;
     return false;
 }
 

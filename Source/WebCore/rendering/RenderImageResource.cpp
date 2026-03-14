@@ -78,9 +78,9 @@ void RenderImageResource::clearCachedImage()
     m_styleImage = nullptr;
 }
 
-void RenderImageResource::setCachedImage(CachedResourceHandle<CachedImage>&& newImage)
+void RenderImageResource::setCachedImage(CachedImage* newImage)
 {
-    auto existingCachedImage = this->cachedImage();
+    RefPtr existingCachedImage = this->cachedImage();
     if (existingCachedImage == newImage)
         return;
 

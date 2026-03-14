@@ -146,7 +146,7 @@ bool ContextMenuItem::enabled() const
     return m_enabled;
 }
 
-static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
+static bool NODELETE isValidContextMenuAction(WebCore::ContextMenuAction action)
 {
     switch (action) {
     case ContextMenuAction::ContextMenuItemTagNoAction:

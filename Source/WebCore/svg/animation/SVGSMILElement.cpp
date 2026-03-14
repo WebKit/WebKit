@@ -35,6 +35,7 @@
 #include "EventSender.h"
 #include "FloatConversion.h"
 #include "LocalFrameView.h"
+#include "NameValidation.h"
 #include "NodeName.h"
 #include "Page.h"
 #include "SMILTimeContainer.h"
@@ -214,7 +215,7 @@ bool SVGSMILElement::hasPresentationalHintsForAttribute(const QualifiedName& nam
 
 inline QualifiedName SVGSMILElement::constructAttributeName() const
 {
-    auto parseResult = Document::parseQualifiedName(attributeWithoutSynchronization(SVGNames::attributeNameAttr));
+    auto parseResult = NameValidation::parseQualifiedAttributeName(attributeWithoutSynchronization(SVGNames::attributeNameAttr));
     if (parseResult.hasException())
         return anyQName();
 
@@ -273,7 +274,7 @@ Node::InsertedIntoAncestorResult SVGSMILElement::insertedIntoAncestor(InsertionT
         return InsertedIntoAncestorResult::Done;
 
     m_timeContainer = owner->timeContainer();
-    protect(timeContainer())->setDocumentOrderIndexesDirty();
+    timeContainer()->setDocumentOrderIndexesDirty();
 
     // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."
     if (!hasAttributeWithoutSynchronization(SVGNames::beginAttr))

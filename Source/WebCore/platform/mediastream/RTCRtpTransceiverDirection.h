@@ -35,7 +35,8 @@ enum class RTCRtpTransceiverDirection {
     Sendrecv,
     Sendonly,
     Recvonly,
-    Inactive
+    Inactive,
+    Stopped
 };
 
 String convertEnumerationToString(RTCRtpTransceiverDirection); // in JSRTCRtpTransceiverDirection.h

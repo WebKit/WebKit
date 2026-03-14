@@ -35,7 +35,7 @@
 #import "CommonAtomStrings.h"
 #import "DataDetectionResultsStorage.h"
 #import "DocumentView.h"
-#import "Editing.h"
+#import "EditingInlines.h"
 #import "ElementAncestorIteratorInlines.h"
 #import "ElementRareData.h"
 #import "ElementTraversal.h"
@@ -53,6 +53,7 @@
 #import "QualifiedName.h"
 #import "Range.h"
 #import "RenderObject.h"
+#import "RenderStyle+GettersInlines.h"
 #import "StyleProperties.h"
 #import "Text.h"
 #import "TextIterator.h"
@@ -183,11 +184,11 @@ static BOOL resultIsURL(DDResultRef result)
         return NO;
 
     static NeverDestroyed<RetainPtr<NSSet>> urlTypes = [NSSet setWithObjects:
-        bridge_cast(retainPtr(PAL::get_DataDetectorsCore_DDBinderHttpURLKey()).get()),
-        bridge_cast(retainPtr(PAL::get_DataDetectorsCore_DDBinderWebURLKey()).get()),
-        bridge_cast(retainPtr(PAL::get_DataDetectorsCore_DDBinderMailURLKey()).get()),
-        bridge_cast(retainPtr(PAL::get_DataDetectorsCore_DDBinderGenericURLKey()).get()),
-        bridge_cast(retainPtr(PAL::get_DataDetectorsCore_DDBinderEmailKey()).get()),
+        protect(bridge_cast(PAL::get_DataDetectorsCore_DDBinderHttpURLKey())).get(),
+        protect(bridge_cast(PAL::get_DataDetectorsCore_DDBinderWebURLKey())).get(),
+        protect(bridge_cast(PAL::get_DataDetectorsCore_DDBinderMailURLKey())).get(),
+        protect(bridge_cast(PAL::get_DataDetectorsCore_DDBinderGenericURLKey())).get(),
+        protect(bridge_cast(PAL::get_DataDetectorsCore_DDBinderEmailKey())).get(),
         nil];
     RetainPtr type = PAL::softLink_DataDetectorsCore_DDResultGetType(result);
     return [urlTypes.get() containsObject:bridge_cast(type.get())];

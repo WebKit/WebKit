@@ -51,7 +51,7 @@ public:
     JSValue getValueOfUndefinedField(JSGlobalObject*, PropertyName) const;
     virtual bool setValueOfUndefinedField(JSGlobalObject*, PropertyName, JSValue);
 
-    ObjectStructPtr getObject() const { return _instance.get(); }
+    ObjectStructPtr getObject() const LIFETIME_BOUND { return _instance.get(); }
     
     JSValue stringValue(JSGlobalObject*) const;
     JSValue NODELETE numberValue(JSGlobalObject*) const;

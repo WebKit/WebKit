@@ -36,13 +36,13 @@ public:
     WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisVoice> create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
     static Ref<PlatformSpeechSynthesisVoice> create();
 
-    const String& voiceURI() const { return m_voiceURI; }
+    const String& voiceURI() const LIFETIME_BOUND { return m_voiceURI; }
     void setVoiceURI(const String& voiceURI) { m_voiceURI = voiceURI; }
 
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     void setName(const String& name) { m_name = name; }
 
-    const String& lang() const { return m_lang; }
+    const String& lang() const LIFETIME_BOUND { return m_lang; }
     void setLang(const String& lang) { m_lang = lang; }
 
     bool localService() const { return m_localService; }

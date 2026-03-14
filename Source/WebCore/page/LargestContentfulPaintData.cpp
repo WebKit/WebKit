@@ -78,7 +78,7 @@ bool LargestContentfulPaintData::isExposedForPaintTiming(const Element& element)
 // https://w3c.github.io/largest-contentful-paint/#largest-contentful-paint-candidate
 bool LargestContentfulPaintData::isEligibleForLargestContentfulPaint(const Element& element, float effectiveVisualArea)
 {
-    CheckedPtr renderer = element.renderer();
+    auto* renderer = element.renderer();
     if (!renderer)
         return false;
 
@@ -225,7 +225,8 @@ RefPtr<LargestContentfulPaint> LargestContentfulPaintData::generateLargestConten
         auto& lcpData = element->ensureLargestContentfulPaintData();
 
         // FIXME: This is doing multiple localToAbsolute on the same element, but multiple images per element is rare.
-        for (auto image : imageList) {
+        for (auto weakImage : imageList) {
+            RefPtr image = weakImage;
             if (!image)
                 continue;
             auto findIndex = lcpData.imageData.findIf([&](auto& value) {

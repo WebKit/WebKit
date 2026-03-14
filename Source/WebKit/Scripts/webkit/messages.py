@@ -1188,7 +1188,6 @@ def headers_for_type(type, for_implementation_file=False):
         'WebModel::ImageAsset': ['"ModelTypes.h"'],
         'WebModel::ImageAssetSwizzle': ['"ModelTypes.h"'],
         'WebModel::UpdateTextureDescriptor': ['"ModelTypes.h"'],
-        'WebModel::MaterialDescriptor': ['"ModelTypes.h"'],
         'WebModel::UpdateMaterialDescriptor': ['"ModelTypes.h"'],
         'WebModel::MeshPart': ['"ModelTypes.h"'],
         'WebModel::VertexAttributeFormat': ['"ModelTypes.h"'],
@@ -1401,7 +1400,6 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::StrokeStyle': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::SupportedPluginIdentifier': ['<WebCore/PluginData.h>'],
         'WebCore::SupportsAirPlayVideo': ['<WebCore/MediaSessionHelperIOS.h>'],
-        'WebCore::SupportsSpatialAudioPlayback': ['<WebCore/MediaSessionHelperIOS.h>'],
         'WebCore::SuspendedUnderLock': ['<WebCore/MediaSessionHelperIOS.h>'],
         'WebCore::SWServerConnectionIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::TargetedElementAdjustment': ['<WebCore/ElementTargetingTypes.h>'],
@@ -2084,7 +2082,7 @@ def generate_swift_message_handler(receiver):
         result.append('#if %s\n' % convert_enable_macros_to_swift_syntax(receiver.condition))
     if receiver.swift_receiver_build_enabled_by:
         result.append('#if ENABLE_%s\n' % (receiver.swift_receiver_build_enabled_by))
-    result.append('internal import WebKit_Internal\n')
+    result.append('import WebKit_Internal\n')
     if receiver.condition:
         result.append('#endif\n')
     if receiver.swift_receiver_build_enabled_by:

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static inline float ellipseXIntercept(float y, float rx, float ry)
+static inline float NODELETE ellipseXIntercept(float y, float rx, float ry)
 {
     ASSERT(ry > 0);
     return rx * sqrt(1 - (y * y) / (ry * ry));

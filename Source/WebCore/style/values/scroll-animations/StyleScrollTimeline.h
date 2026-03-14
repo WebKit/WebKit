@@ -82,8 +82,8 @@ private:
     };
 
     // Needed by macros to access members.
-    Data& data() { return m_data; }
-    const Data& data() const { return m_data; }
+    Data& data() LIFETIME_BOUND { return m_data; }
+    const Data& data() const LIFETIME_BOUND { return m_data; }
 
     ScrollTimeline(Data&& data)
         : m_data { WTF::move(data) }

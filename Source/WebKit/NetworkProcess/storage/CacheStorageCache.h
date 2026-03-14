@@ -48,8 +48,8 @@ public:
     static Ref<CacheStorageCache> create(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);
 
     ~CacheStorageCache();
-    const String& name() const { return m_name; }
-    const String& uniqueName() const { return m_uniqueName; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const String& uniqueName() const LIFETIME_BOUND { return m_uniqueName; }
     CacheStorageManager* NODELETE manager();
 
     void getSize(CompletionHandler<void(uint64_t)>&&);

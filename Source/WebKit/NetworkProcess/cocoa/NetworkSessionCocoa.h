@@ -141,7 +141,7 @@ public:
     bool deviceManagementRestrictionsEnabled() const { return m_deviceManagementRestrictionsEnabled; }
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
 
-    DMFWebsitePolicyMonitor *deviceManagementPolicyMonitor();
+    DMFWebsitePolicyMonitor *NODELETE deviceManagementPolicyMonitor();
 
     CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
 
@@ -166,7 +166,7 @@ public:
     void removeBlobDataTask(DataTaskIdentifier);
 
 #if HAVE(NW_PROXY_CONFIG)
-    const Vector<RetainPtr<nw_proxy_config_t>>& proxyConfigs() const { return m_nwProxyConfigs; }
+    const Vector<RetainPtr<nw_proxy_config_t>>& proxyConfigs() const LIFETIME_BOUND { return m_nwProxyConfigs; }
 
     void clearProxyConfigData() final;
     void setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>&) final;

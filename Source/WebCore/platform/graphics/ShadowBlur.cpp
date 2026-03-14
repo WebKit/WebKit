@@ -55,7 +55,7 @@ enum {
 };
 
 #if USE(CG)
-static inline int roundUpToMultipleOf32(int d)
+static inline int NODELETE roundUpToMultipleOf32(int d)
 {
     return (1 + (d >> 5)) << 5;
 }
@@ -94,7 +94,7 @@ public:
         return m_imageBuffer;
     }
 
-    bool setCachedShadowValues(const FloatSize& radius, const Color& color, const FloatRect& shadowRect, const CornerRadii& radii, const FloatSize& layerSize) WTF_REQUIRES_LOCK(lock())
+    bool NODELETE setCachedShadowValues(const FloatSize& radius, const Color& color, const FloatRect& shadowRect, const CornerRadii& radii, const FloatSize& layerSize) WTF_REQUIRES_LOCK(lock())
     {
         ASSERT(lock().isHeld());
         if (!m_lastWasInset && m_lastRadius == radius && m_lastColor == color && m_lastShadowRect == shadowRect &&  m_lastRadii == radii && m_lastLayerSize == layerSize)
@@ -110,7 +110,7 @@ public:
         return true;
     }
 
-    bool setCachedInsetShadowValues(const FloatSize& radius, const Color& color, const FloatRect& bounds, const FloatRect& shadowRect, const CornerRadii& radii) WTF_REQUIRES_LOCK(lock())
+    bool NODELETE setCachedInsetShadowValues(const FloatSize& radius, const Color& color, const FloatRect& bounds, const FloatRect& shadowRect, const CornerRadii& radii) WTF_REQUIRES_LOCK(lock())
     {
         ASSERT(lock().isHeld());
         if (m_lastWasInset && m_lastRadius == radius && m_lastColor == color && m_lastInsetBounds == bounds && shadowRect == m_lastShadowRect && radii == m_lastRadii)
@@ -127,7 +127,7 @@ public:
     }
 
     static ScratchBuffer& singleton() WTF_REQUIRES_LOCK(lock());
-    static Lock& lock() WTF_RETURNS_LOCK(s_lock) { return s_lock; }
+    static Lock& NODELETE lock() WTF_RETURNS_LOCK(s_lock) { return s_lock; }
 
 private:
     void scheduleScratchBufferPurge()
@@ -177,7 +177,7 @@ ScratchBuffer& ScratchBuffer::singleton()
     return scratchBuffer;
 }
 
-static float radiusToLegacyRadius(float radius)
+static float NODELETE radiusToLegacyRadius(float radius)
 {
     return radius > 8 ? 8 + 4 * sqrt((radius - 8) / 2) : radius;
 }

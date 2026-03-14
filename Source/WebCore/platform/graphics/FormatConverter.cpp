@@ -51,19 +51,19 @@ constexpr float MaxUInt16Value = UINT16_MAX;
 constexpr double MaxInt32Value = INT32_MAX;
 constexpr double MaxUInt32Value = UINT32_MAX;
 
-int8_t clampMin(int8_t value)
+int8_t NODELETE clampMin(int8_t value)
 {
     constexpr int8_t MinInt8Value = INT8_MIN + 1;
     return value < MinInt8Value ? MinInt8Value : value;
 }
 
-int16_t clampMin(int16_t value)
+int16_t NODELETE clampMin(int16_t value)
 {
     constexpr int16_t MinInt16Value = INT16_MIN + 1;
     return value < MinInt16Value ? MinInt16Value : value;
 }
 
-int32_t clampMin(int32_t value)
+int32_t NODELETE clampMin(int32_t value)
 {
     constexpr int32_t MinInt32Value = INT32_MIN + 1;
     return value < MinInt32Value ? MinInt32Value : value;
@@ -186,7 +186,7 @@ static constexpr std::array<uint8_t, 512> shiftTable {
 24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     13
 };
 
-inline uint16_t convertFloatToHalfFloat(float f)
+inline uint16_t NODELETE convertFloatToHalfFloat(float f)
 {
     unsigned temp = *(reinterpret_cast<unsigned *>(&f));
     unsigned signexp = (temp >> 23) & 0x1ff;

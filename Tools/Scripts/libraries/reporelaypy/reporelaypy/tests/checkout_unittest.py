@@ -36,7 +36,7 @@ class CheckoutUnittest(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.git'))
 
     def test_json(self):
-        with mocks.local.Git(self.path) as repo, OutputCapture():
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             checkout = Checkout(
                 path=self.path,
                 url=repo.remote,
@@ -72,13 +72,13 @@ class CheckoutUnittest(testing.PathTestCase):
 
 
     def test_constructor_sentinal(self):
-        with mocks.local.Git(self.path) as repo, OutputCapture():
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             with open(os.path.join(os.path.dirname(self.path), 'cloned'), 'w') as sentinal:
                 sentinal.write('yes\n')
             Checkout(path=self.path, url=repo.remote, sentinal=True)
 
     def test_constructor_no_sentinal(self):
-        with mocks.local.Git(self.path) as repo, OutputCapture():
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
             Checkout(path=self.path, url=repo.remote, sentinal=False)
 
             with self.assertRaises(Checkout.Exception):

@@ -47,7 +47,7 @@ static std::optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> l
     RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(*startNode, *endNode);
 
     RefPtr<HTMLElement> listToReplace;
-    if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(commonAncestor); is<HTMLUListElement>(htmlElement) || is<HTMLOListElement>(htmlElement))
+    if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(commonAncestor); isAnyOf<HTMLUListElement, HTMLOListElement>(htmlElement))
         listToReplace = htmlElement;
     else
         listToReplace = enclosingList(commonAncestor);

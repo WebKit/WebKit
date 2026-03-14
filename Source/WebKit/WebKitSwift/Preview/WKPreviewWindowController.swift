@@ -26,10 +26,10 @@
 import OSLog
 
 #if USE_APPLE_INTERNAL_SDK
-@_spi(PreviewApplication) internal import QuickLook
+@_spi(PreviewApplication) import QuickLook
 #else
 // FIXME: rdar://152166678 Rename this back to `QuickLook_SPI`.
-internal import QuickLook_SPI_Temp
+import QuickLook_SPI_Temp
 #endif
 
 @objc
@@ -46,7 +46,7 @@ extension WKPreviewWindowController {
         var previewSession: PreviewSession?
         var item: PreviewItem
         var previewConfiguration: PreviewApplication.PreviewConfiguration
-        var windowOpenedContinuation: CheckedContinuation<Void, Error>?
+        var windowOpenedContinuation: CheckedContinuation<Void, any Error>?
 
         init(item: PreviewItem, configuration: PreviewApplication.PreviewConfiguration) {
             self.item = item
@@ -84,12 +84,12 @@ extension WKPreviewWindowController {
     }
 
     @nonobjc
-    private final var windowOpenedContinuation: CheckedContinuation<Void, Error>? {
+    private final var windowOpenedContinuation: CheckedContinuation<Void, any Error>? {
         get { base.windowOpenedContinuation }
         set { base.windowOpenedContinuation = newValue }
     }
 
-    weak var delegate: WKPreviewWindowControllerDelegate?
+    weak var delegate: (any WKPreviewWindowControllerDelegate)?
 
     @objc(initWithURL:sceneID:launchInImmersive:)
     init(url: URL, sceneID: String, launchInImmersive: Bool) {

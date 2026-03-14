@@ -71,7 +71,7 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
     if (!renderer)
         return;
 
-    CachedResourceHandle cachedImage = renderer->cachedImage();
+    RefPtr cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return;
 
@@ -166,12 +166,12 @@ void ImageAnalysisQueue::resumeProcessing()
         Ref page = *m_page;
         page->resetTextRecognitionResult(*element);
 
-        if (auto* image = element->cachedImage(); image && !image->errorOccurred())
+        if (RefPtr image = element->cachedImage(); image && !image->errorOccurred())
             m_queuedElements.set(*element, image->url());
 
         auto allowSnapshots = m_languageIdentifiers.target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
         page->chrome().client().requestTextRecognition(*element, { m_languageIdentifiers.source, m_languageIdentifiers.target, allowSnapshots }, [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }](auto&&) {
-            if (RefPtr page = weakPage.get(); !page || page->imageAnalysisQueueIfExists() != this)
+            if (auto* page = weakPage.get(); !page || page->imageAnalysisQueueIfExists() != this)
                 return;
 
             if (m_pendingRequestCount)

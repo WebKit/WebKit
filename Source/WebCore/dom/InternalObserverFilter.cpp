@@ -134,10 +134,10 @@ private:
         protect(m_subscriber)->complete();
     }
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
-        m_subscriber->visitAdditionalChildren(visitor);
-        m_predicate->visitJSFunction(visitor);
+        m_subscriber->visitAdditionalChildrenInGCThread(visitor);
+        m_predicate->visitJSFunctionInGCThread(visitor);
     }
 
     InternalObserverFilter(ScriptExecutionContext& context, Ref<Subscriber> subscriber, Ref<PredicateCallback> predicate)

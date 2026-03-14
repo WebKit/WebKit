@@ -50,7 +50,7 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint
 
 OptionSet<DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
-    return protect(m_page.get())->allowedDragSourceActions();
+    return m_page.get()->allowedDragSourceActions();
 }
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)

@@ -146,7 +146,7 @@ bool FontCascade::isCurrent(const FontSelector& fontSelector) const
 {
     if (!m_fonts)
         return false;
-    if (m_fonts->generation() != FontCache::forCurrentThread()->generation())
+    if (m_fonts->generation() != FontCache::forCurrentThread().generation())
         return false;
     if (fontSelectorVersion() != fontSelector.version())
         return false;
@@ -169,7 +169,7 @@ void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 {
     m_fontSelector = WTF::move(fontSelector);
-    FontCache::forCurrentThread()->updateFontCascade(*this);
+    protect(FontCache::forCurrentThread())->updateFontCascade(*this);
 }
 
 TextShapingResult FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasis forTextEmphasis) const
@@ -351,8 +351,8 @@ float FontCascade::width(CodePath codePathToUse, const TextRun& run, SingleThrea
     if (glyphOverflow) {
         glyphOverflow->top = std::max<double>(glyphOverflow->top, -it.minGlyphBoundingBoxY() - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().ascent()));
         glyphOverflow->bottom = std::max<double>(glyphOverflow->bottom, it.maxGlyphBoundingBoxY() - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().descent()));
-        glyphOverflow->left = it.firstGlyphOverflow();
-        glyphOverflow->right = it.lastGlyphOverflow();
+        glyphOverflow->left = it.firstGlyphOverflowX();
+        glyphOverflow->right = it.lastGlyphOverflowX();
     }
     return it.runWidthSoFar();
 }
@@ -1158,23 +1158,21 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::sp
         ++count;
         isAfterExpansion = true;
     }
-    if (direction == TextDirection::LTR) {
-        for (auto character : characters) {
+    auto handleExpansionsForCharacters = [&](const auto& range) {
+        for (auto character : range) {
             if (treatAsSpace(character)) {
                 ++count;
                 isAfterExpansion = true;
             } else
                 isAfterExpansion = false;
         }
-    } else {
-        for (auto character : characters | std::views::reverse) {
-            if (treatAsSpace(character)) {
-                ++count;
-                isAfterExpansion = true;
-            } else
-                isAfterExpansion = false;
-        }
-    }
+    };
+
+    if (direction == TextDirection::LTR)
+        handleExpansionsForCharacters(characters);
+    else
+        handleExpansionsForCharacters(characters | std::views::reverse);
+
     if (!isAfterExpansion && expansionBehavior.right == ExpansionBehavior::Behavior::Force) {
         ++count;
         isAfterExpansion = true;
@@ -1344,7 +1342,7 @@ bool FontCascade::isLoadingCustomFonts() const
 
 bool FontCascade::computeUseBackslashAsYenSymbol() const
 {
-    return FontCache::forCurrentThread()->useBackslashAsYenSignForFamily(m_fontDescription.firstFamily());
+    return protect(FontCache::forCurrentThread())->useBackslashAsYenSignForFamily(m_fontDescription.firstFamily());
 }
 
 enum class GlyphUnderlineType : uint8_t {
@@ -1550,7 +1548,7 @@ TextShapingResult FontCascade::layoutComplexText(const TextRun& run, unsigned fr
     return result;
 }
 
-inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
+inline bool NODELETE shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
 {
     // Don't draw anything while we are using custom fonts that are in the process of loading,
     // except if the 'customFontNotReadyAction' argument is set to UseFallbackIfFontNotReady
@@ -1774,7 +1772,7 @@ struct GlyphIterationState {
     float maxX;
 };
 
-static std::optional<float> findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
+static std::optional<float> NODELETE findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
 {
     if ((p1.y() < y && p2.y() > y) || (p1.y() > y && p2.y() < y))
         return p1.x() + (y - p1.y()) * (p2.x() - p1.x()) / (p2.y() - p1.y());
@@ -1845,7 +1843,7 @@ public:
 #endif
     }
 
-    bool containsMorePaths() { return m_index != m_glyphBuffer.size(); }
+    bool NODELETE containsMorePaths() { return m_index != m_glyphBuffer.size(); }
     Path path();
     std::pair<float, float> extents();
     GlyphUnderlineType underlineType();

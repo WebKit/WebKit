@@ -220,7 +220,7 @@ void AudioWorkletGlobalScope::processorIsNoLongerNeeded(AudioWorkletProcessor& p
     m_processors.remove(processor);
 }
 
-void AudioWorkletGlobalScope::visitProcessors(JSC::AbstractSlotVisitor& visitor)
+void AudioWorkletGlobalScope::visitProcessorsInGCThread(JSC::AbstractSlotVisitor& visitor)
 {
     m_processors.forEach([&](auto& processor) {
         addWebCoreOpaqueRoot(visitor, processor);

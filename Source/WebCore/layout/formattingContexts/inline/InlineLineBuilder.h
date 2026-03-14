@@ -89,13 +89,13 @@ private:
     InlineLayoutUnit clonedDecorationAtBreakingPosition(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&) const;
     InlineLayoutUnit placedClonedDecorationWidth(const InlineContentBreaker::ContinuousContent::RunList&) const;
     enum class ShouldResetMarginValues : bool { No, Yes };
-    bool applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues);
+    bool NODELETE applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues);
 
     bool isFloatLayoutSuspended() const { return !m_suspendedFloats.isEmpty(); }
     bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine) const;
 
     bool isLineConstrainedByFloat() const { return !m_lineIsConstrainedByFloat.isEmpty(); }
-    const FloatingContext& floatingContext() const { return m_floatingContext; }
+    const FloatingContext& floatingContext() const LIFETIME_BOUND { return m_floatingContext; }
 
 private:
     const FloatingContext& m_floatingContext;

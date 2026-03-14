@@ -229,7 +229,7 @@ const BufferBindingSizesForBindGroup* ComputePipeline::minimumBufferSizes(uint32
 
 #pragma mark WGPU Stubs
 
-void wgpuComputePipelineReference(WGPUComputePipeline computePipeline)
+void NODELETE wgpuComputePipelineReference(WGPUComputePipeline computePipeline)
 {
     WebGPU::fromAPI(computePipeline).ref();
 }

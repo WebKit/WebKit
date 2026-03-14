@@ -54,7 +54,7 @@ public:
 
     MicrotaskDispatcher* dispatcher() const { return m_dispatcher.ptr(); }
 
-    JSGlobalObject* globalObject() const { return m_globalObject.get(); }
+    JSGlobalObject* globalObject() const LIFETIME_BOUND { return m_globalObject.get(); }
 
     MicrotaskDispatcher::Type cachedType() const { return m_type; }
 

@@ -263,10 +263,10 @@ public:
     void NODELETE scrollingCoordinatorWasCreated();
 
     void setDrawsBackground(bool);
-    bool drawsBackground() const;
+    bool NODELETE drawsBackground() const;
     void setBackgroundColor(NSColor *);
     NSColor *backgroundColor() const;
-    bool isOpaque() const;
+    bool NODELETE isOpaque() const;
 
     void setShouldSuppressFirstResponderChanges(bool);
     bool acceptsFirstMouse(NSEvent *);
@@ -384,14 +384,14 @@ public:
     RetainPtr<NSColor> underlayColor() const;
     RetainPtr<NSColor> pageExtendedBackgroundColor() const;
     
-    _WKRectEdge pinnedState();
-    _WKRectEdge rubberBandingEnabled();
-    void setRubberBandingEnabled(_WKRectEdge);
+    _WKRectEdge NODELETE pinnedState();
+    _WKRectEdge NODELETE rubberBandingEnabled();
+    void NODELETE setRubberBandingEnabled(_WKRectEdge);
 
-    bool alwaysBounceVertical();
-    void setAlwaysBounceVertical(bool);
-    bool alwaysBounceHorizontal();
-    void setAlwaysBounceHorizontal(bool);
+    bool NODELETE alwaysBounceVertical();
+    void NODELETE setAlwaysBounceVertical(bool);
+    bool NODELETE alwaysBounceHorizontal();
+    void NODELETE setAlwaysBounceHorizontal(bool);
 
     void setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
     std::optional<WebCore::ScrollbarOverlayStyle> NODELETE overlayScrollbarStyle() const;
@@ -690,7 +690,7 @@ public:
     NSRect unionRectInVisibleSelectedRangeInScreen() const;
     NSRect documentVisibleRectInScreen() const;
 
-    bool isContentRichlyEditable() const;
+    bool NODELETE isContentRichlyEditable() const;
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     void insertMultiRepresentationHEIC(NSData *, NSString *);
@@ -745,7 +745,7 @@ public:
     NSTouchBar *makeTouchBar();
     void updateTouchBar();
     NSTouchBar *currentTouchBar() const LIFETIME_BOUND { return m_currentTouchBar.get(); }
-    NSCandidateListTouchBarItem *candidateListTouchBarItem() const;
+    NSCandidateListTouchBarItem *NODELETE candidateListTouchBarItem() const;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebCore::PlatformPlaybackSessionInterface* playbackSessionInterface() const;
     bool isPictureInPictureActive();
@@ -759,7 +759,7 @@ public:
 #endif
     void nowPlayingMediaTitleAndArtist(void(^completionHandler)(NSString *, NSString *));
 
-    NSTouchBar *textTouchBar() const;
+    NSTouchBar *NODELETE textTouchBar() const;
     void dismissTextTouchBarPopoverItemWithIdentifier(NSString *);
 
     bool clientWantsMediaPlaybackControlsView() const { return m_clientWantsMediaPlaybackControlsView; }
@@ -875,7 +875,7 @@ private:
     void updateMediaTouchBar();
 
     bool useMediaPlaybackControlsView() const;
-    bool isRichlyEditableForTouchBar() const;
+    bool NODELETE isRichlyEditableForTouchBar() const;
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     void installImageAnalysisOverlayView(RetainPtr<VKCImageAnalysis>&&);
@@ -973,7 +973,7 @@ private:
     int32_t processImageAnalyzerRequest(CocoaImageAnalyzerRequest *, CompletionHandler<void(RetainPtr<CocoaImageAnalysis>&&, NSError *)>&&);
 #endif
 
-    std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
+    std::optional<EditorState::PostLayoutData> NODELETE postLayoutDataForContentEditable();
 
     WeakObjCPtr<WKWebView> m_view;
     const UniqueRef<PageClient> m_pageClient;

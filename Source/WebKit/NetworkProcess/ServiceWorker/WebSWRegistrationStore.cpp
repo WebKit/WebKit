@@ -94,6 +94,14 @@ void WebSWRegistrationStore::removeRegistration(const WebCore::ServiceWorkerRegi
     scheduleUpdateIfNecessary();
 }
 
+void WebSWRegistrationStore::retrieveWorkerScripts(WebCore::ServiceWorkerIdentifier identifier, const WebCore::ServiceWorkerRegistrationKey& registrationKey, const URL& scriptURL, const Vector<URL>& importedScriptURLs, CompletionHandler<void(std::optional<WebCore::ServiceWorkerScripts>&&)>&& callback)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->retrieveServiceWorkerScripts(identifier, registrationKey, scriptURL, Vector<URL> { importedScriptURLs }, WTF::move(callback));
+    else
+        callback(std::nullopt);
+}
+
 void WebSWRegistrationStore::scheduleUpdateIfNecessary()
 {
     ASSERT(RunLoop::isMain());

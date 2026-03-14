@@ -125,6 +125,10 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFileClose, OSStatus, (Audi
 #define AudioFileClose softLink_AudioToolbox_AudioFileClose
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFileOpenWithCallbacks, OSStatus, (void* inClientData, AudioFile_ReadProc inReadFunc, AudioFile_WriteProc inWriteFunc, AudioFile_GetSizeProc inGetSizeFunc, AudioFile_SetSizeProc inSetSizeFunc, AudioFileTypeID inFileTypeHint, AudioFileID* outAudioFile), (inClientData, inReadFunc, inWriteFunc, inGetSizeFunc, inSetSizeFunc, inFileTypeHint, outAudioFile))
 #define AudioFileOpenWithCallbacks softLink_AudioToolbox_AudioFileOpenWithCallbacks
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFileGetPropertyInfo, OSStatus, (AudioFileID inAudioFile, AudioFilePropertyID inPropertyID, UInt32* outDataSize, UInt32 *isWritable), (inAudioFile, inPropertyID, outDataSize, isWritable))
+#define AudioFileGetPropertyInfo softLink_AudioToolbox_AudioFileGetPropertyInfo
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFileGetProperty, OSStatus, (AudioFileID inAudioFile, AudioFilePropertyID inPropertyID, UInt32* ioDataSize, void *outPropertyData), (inAudioFile, inPropertyID, ioDataSize, outPropertyData))
+#define AudioFileGetProperty softLink_AudioToolbox_AudioFileGetProperty
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, ExtAudioFileDispose, OSStatus, (ExtAudioFileRef inExtAudioFile), (inExtAudioFile))
 #define ExtAudioFileDispose softLink_AudioToolbox_ExtAudioFileDispose
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, ExtAudioFileGetProperty, OSStatus, (ExtAudioFileRef inExtAudioFile, ExtAudioFilePropertyID inPropertyID, UInt32* ioPropertyDataSize, void* outPropertyData), (inExtAudioFile, inPropertyID, ioPropertyDataSize, outPropertyData))

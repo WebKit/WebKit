@@ -58,7 +58,7 @@ public:
     ExceptionOr<void> registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&&);
     RefPtr<AudioWorkletProcessor> createProcessor(const String& name, TransferredMessagePort, Ref<SerializedScriptValue>&& options);
     void processorIsNoLongerNeeded(AudioWorkletProcessor&);
-    void visitProcessors(JSC::AbstractSlotVisitor&);
+    void visitProcessorsInGCThread(JSC::AbstractSlotVisitor&);
 
     size_t currentFrame() const { return m_currentFrame; }
 

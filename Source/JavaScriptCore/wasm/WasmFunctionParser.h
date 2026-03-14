@@ -101,7 +101,7 @@ struct FunctionParserTypes {
         Type type() const { return m_type; }
         void setType(Type type) { m_type = type; }
 
-        ExpressionType& value() { return m_value; }
+        ExpressionType& value() LIFETIME_BOUND { return m_value; }
         ExpressionType value() const { return m_value; }
         operator ExpressionType() const { return m_value; }
 
@@ -165,8 +165,8 @@ public:
     const Type& typeOfLocal(uint32_t localIndex) const { return m_locals[localIndex]; }
     bool unreachableBlocks() const { return m_unreachableBlocks; }
 
-    ControlStack& controlStack() { return m_controlStack; }
-    Stack& expressionStack() { return m_expressionStack; }
+    ControlStack& controlStack() LIFETIME_BOUND { return m_controlStack; }
+    Stack& expressionStack() LIFETIME_BOUND { return m_expressionStack; }
 
     ControlEntry& resolveControlRef(ControlRef ref) { return m_controlStack[ref.m_index]; }
 
@@ -1021,7 +1021,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
             return { };
 
         if (Context::tierSupportsSIMD()) {
-            m_expressionStack.constructAndAppend(Types::V128, m_context.addConstant(constant));
+            m_expressionStack.constructAndAppend(Types::V128, m_context.addSIMDConstant(constant));
             return { };
         }
         return pushUnreachable(Types::V128);
@@ -1304,7 +1304,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         if (Context::tierSupportsSIMD()) {
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addExtractLane(SIMDInfo { lane, signMode }, laneIdx, v, result));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDExtractLane(SIMDInfo { lane, signMode }, laneIdx, v, result));
             m_expressionStack.constructAndAppend(simdScalarType(lane), result);
             return { };
         }
@@ -1326,7 +1326,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         if (Context::tierSupportsSIMD()) {
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addReplaceLane(SIMDInfo { lane, signMode }, laneIdx, v, s, result));
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDReplaceLane(SIMDInfo { lane, signMode }, laneIdx, v, s, result));
             m_expressionStack.constructAndAppend(Types::V128, result);
             return { };
         }

@@ -25,9 +25,9 @@
 
 #if ENABLE_BACK_FORWARD_LIST_SWIFT
 
-internal import WebCore_Private
-internal import WebKit_Internal
-internal import wtf
+import WebCore_Private
+import WebKit_Internal
+import wtf
 
 // A note on swift-format-ignore: NeverForceUnwrap:
 // This file currently aims to closely adhere to the C++ original which uses
@@ -66,19 +66,6 @@ extension WebKit.WebBackForwardListItem {
 
     var url: WTF.String {
         getUrlCopy()
-    }
-}
-
-extension WebKit.WebBackForwardListFrameItem {
-    private borrowing func getFrameState() -> WebKit.FrameState {
-        // Safety: FrameState is a SWIFT_SHARED_REFERENCE so this will
-        // result in a reference count increment and no lifetime risk.
-        // FIXME(rdar://168057355): remove this.
-        unsafe __frameStateUnsafe()
-    }
-
-    var frameState: WebKit.FrameState {
-        getFrameState()
     }
 }
 
@@ -558,7 +545,10 @@ final class WebBackForwardList {
                 continue
             }
             backForwardListState.items.append(
-                consuming: WebKit.BackForwardListItemState(frameState: entry.mainFrameState(), navigatedFrameID: entry.navigatedFrameID())
+                consuming: WebKit.BackForwardListItemState(
+                    frameState: entry.copyMainFrameStateWithChildren(),
+                    navigatedFrameID: entry.navigatedFrameID()
+                )
             )
         }
 
@@ -718,7 +708,7 @@ final class WebBackForwardList {
         guard let childFrameItem = parentFrameItem.childItemAtIndex(childFrameIndex) else {
             return nil
         }
-        return childFrameItem.frameState
+        return childFrameItem.frameState()
     }
 
     func loggingString() -> Swift.String {
@@ -767,7 +757,7 @@ final class WebBackForwardList {
         if mainFrameItem.childItemForFrameID(navigatedFrameID) == nil {
             return navigatedFrameState
         }
-        let frameState = currentItem.mainFrameState().ptr()
+        let frameState = currentItem.copyMainFrameStateWithChildren().ptr()
         setBackForwardItemIdentifier(frameState: frameState, itemID: navigatedFrameState.itemID.pointee)
         frameState.replaceChildFrameState(consuming: WebKit.RefFrameState(navigatedFrameState))
         return frameState
@@ -910,13 +900,13 @@ final class WebBackForwardList {
         if let oldFrameID = Optional(fromCxx: oldFrameID) {
             if let newFrameID = Optional(fromCxx: newFrameID) {
                 if !contentsMatch(oldFrameID, newFrameID) {
-                    updateAllFrameIDs(oldFrameID: oldFrameID, newFrameID: newFrameID)
+                    updateFrameIdentifier(oldFrameID: oldFrameID, newFrameID: newFrameID)
                 }
             }
         }
     }
 
-    private func updateAllFrameIDs(oldFrameID: WebCore.FrameIdentifier, newFrameID: WebCore.FrameIdentifier) {
+    func updateFrameIdentifier(oldFrameID: WebCore.FrameIdentifier, newFrameID: WebCore.FrameIdentifier) {
         for entry in entries {
             entry.updateFrameID(oldFrameID, newFrameID)
         }
@@ -990,7 +980,7 @@ final class WebBackForwardList {
             return
         }
         guard let frameItem = item.mainFrameItem().childItemForFrameID(frameID) else {
-            callCompletionHandler(completionHandler, consuming: WebKit.RefPtrFrameState(item.mainFrameState().ptr()))
+            callCompletionHandler(completionHandler, consuming: WebKit.RefPtrFrameState(item.copyMainFrameStateWithChildren().ptr()))
             return
         }
         callCompletionHandler(completionHandler, consuming: WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildren().ptr()))

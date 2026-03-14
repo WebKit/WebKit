@@ -51,7 +51,7 @@ public:
     bool supportsMIMEType(const String& mimeType) const override;
     RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
-    LegacyCDM& cdm() const;
+    LegacyCDM& NODELETE cdm() const;
 
     void invalidateSession(CDMSessionAVContentKeySession*);
 

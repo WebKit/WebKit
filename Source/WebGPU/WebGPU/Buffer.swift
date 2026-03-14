@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 private import CxxStdlib
-internal import WebGPU_Internal.Buffer
+import WebGPU_Internal.Buffer
 
 extension WebGPU.Buffer {
     func copy(from source: Span<UInt8>, offset: Int) {

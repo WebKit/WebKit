@@ -51,9 +51,9 @@ public:
     const SimpleRange& automaticReplacementRange() const LIFETIME_BOUND { return m_automaticReplacementRange; }
     Element* rootEditableElement() const { return m_rootEditableElement.get(); }
 
-    void setCheckerAndIdentifier(SpellChecker*, TextCheckingRequestIdentifier);
+    void NODELETE setCheckerAndIdentifier(SpellChecker*, TextCheckingRequestIdentifier);
     void setExistingResults(const Vector<TextCheckingResult>&);
-    void requesterDestroyed();
+    void NODELETE requesterDestroyed();
 
     const TextCheckingRequestData& data() const LIFETIME_BOUND final;
 
@@ -80,10 +80,10 @@ public:
     explicit SpellChecker(Editor&);
     ~SpellChecker();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
-    bool isAsynchronousEnabled() const;
+    bool NODELETE isAsynchronousEnabled() const;
     bool isCheckable(const SimpleRange&) const;
 
     void requestCheckingFor(Ref<SpellCheckRequest>&&);
@@ -102,7 +102,7 @@ private:
     void didCheckCancel(TextCheckingRequestIdentifier);
     void didCheck(TextCheckingRequestIdentifier, const Vector<TextCheckingResult>&, const Vector<TextCheckingResult>&, const std::optional<SimpleRange>&);
 
-    Document& document() const;
+    Document& NODELETE document() const;
 
     WeakRef<Editor> m_editor;
     Markable<TextCheckingRequestIdentifier> m_lastRequestIdentifier;

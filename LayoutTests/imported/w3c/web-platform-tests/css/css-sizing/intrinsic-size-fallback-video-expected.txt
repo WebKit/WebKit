@@ -1,6 +1,18 @@
 
 PASS .wrapper 1
-PASS .wrapper 2
-PASS .wrapper 3
-PASS .wrapper 4
+FAIL .wrapper 2 assert_equals:
+<div class="wrapper" data-expected-client-width="300">
+  <video style="height: 100px"></video>
+</div>
+clientWidth expected 300 but got 200
+FAIL .wrapper 3 assert_equals:
+<div class="wrapper" data-expected-client-width="300">
+  <video style="max-height: 50px"></video>
+</div>
+clientWidth expected 300 but got 100
+FAIL .wrapper 4 assert_equals:
+<div class="wrapper" data-expected-client-width="300">
+  <video style="min-height: 200px"></video>
+</div>
+clientWidth expected 300 but got 400
 

@@ -44,7 +44,7 @@ public:
     {
     }
     
-    const LayoutRect& rect() const { return m_rect; }
+    const LayoutRect& rect() const LIFETIME_BOUND { return m_rect; }
 
     void reset() { m_rect = LayoutRect::infiniteRect(); }
 

@@ -44,7 +44,7 @@ public:
     operator String&() { return m_id; }
     operator const String&() const { return m_id; }
 
-    const String& id() const { return m_id; }
+    const String& id() const LIFETIME_BOUND { return m_id; }
 
     void dump(PrintStream&) const;
 

@@ -56,12 +56,12 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     void reset();
-    void setController(GeolocationController*);
+    void NODELETE setController(GeolocationController*);
 
     void setPosition(GeolocationPositionData&&);
     void setPositionUnavailableError(const String& errorMessage);
     void setPermission(bool allowed);
-    int numberOfPendingPermissionRequests() const;
+    int NODELETE numberOfPendingPermissionRequests() const;
 
     // GeolocationClient
     void geolocationDestroyed() override;

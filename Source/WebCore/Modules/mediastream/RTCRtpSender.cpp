@@ -76,7 +76,6 @@ RTCRtpSender::RTCRtpSender(RTCPeerConnection& connection, String&& trackKind, Re
     , m_logIdentifier(connection.logIdentifier())
 #endif
 {
-    ASSERT(m_backend);
 }
 
 RTCRtpSender::~RTCRtpSender()
@@ -98,8 +97,7 @@ void RTCRtpSender::stop()
         m_transform->detachFromSender(*this);
 
     m_trackId = { };
-    m_track = nullptr;
-    m_backend = nullptr;
+    m_isStopped = true;
 }
 
 void RTCRtpSender::setTrack(Ref<MediaStreamTrack>&& track)
@@ -176,7 +174,7 @@ ExceptionOr<void> RTCRtpSender::setStreams(const FixedVector<std::reference_wrap
 
 ExceptionOr<void> RTCRtpSender::setMediaStreamIds(const FixedVector<String>& streamIds)
 {
-    if (!m_connection || m_connection->isClosed() || !m_backend)
+    if (!m_connection || m_connection->isClosed() || isStopped())
         return Exception { ExceptionCode::InvalidStateError, "connection is closed"_s };
     m_backend->setMediaStreamIds(streamIds);
     return { };
@@ -203,7 +201,7 @@ std::optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionC
 
 RTCDTMFSender* RTCRtpSender::dtmf()
 {
-    if (!m_dtmfSender && m_connection && m_connection->scriptExecutionContext() && m_backend && m_trackKind == "audio"_s)
+    if (!m_dtmfSender && m_connection && m_connection->scriptExecutionContext() && m_trackKind == "audio"_s)
         m_dtmfSender = RTCDTMFSender::create(*protect(m_connection->scriptExecutionContext()), *this, m_backend->createDTMFBackend());
 
     return m_dtmfSender.get();
@@ -260,7 +258,7 @@ std::optional<RTCRtpTransform::Internal> RTCRtpSender::transform()
 
 ExceptionOr<RTCEncodedStreams> RTCRtpSender::createEncodedStreams(ScriptExecutionContext& context)
 {
-    if (!m_backend)
+    if (isStopped())
         return Exception { ExceptionCode::InvalidStateError };
 
     if (!m_encodedStreamProducer) {
@@ -273,6 +271,16 @@ ExceptionOr<RTCEncodedStreams> RTCRtpSender::createEncodedStreams(ScriptExecutio
     }
 
     return m_encodedStreamProducer->streams();
+}
+
+std::unique_ptr<RTCDtlsTransportBackend> RTCRtpSender::dtlsTransportBackend()
+{
+    return m_backend->dtlsTransportBackend();
+}
+
+Ref<RTCRtpTransformBackend> RTCRtpSender::rtcRtpTransformBackend()
+{
+    return m_backend->rtcRtpTransformBackend();
 }
 
 #if !RELEASE_LOG_DISABLED

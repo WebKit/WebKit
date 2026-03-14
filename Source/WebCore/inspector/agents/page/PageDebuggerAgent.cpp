@@ -105,7 +105,7 @@ String PageDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& scr
         if (!localMainFrame)
             return String();
 
-        CachedResource* resource = ResourceUtilities::cachedResource(localMainFrame.get(), URL({ }, script.url));
+        RefPtr resource = ResourceUtilities::cachedResource(localMainFrame.get(), URL({ }, script.url));
         if (resource) {
             String sourceMapHeader = resource->response().httpHeaderField(StringView { sourceMapHTTPHeader });
             if (!sourceMapHeader.isEmpty())

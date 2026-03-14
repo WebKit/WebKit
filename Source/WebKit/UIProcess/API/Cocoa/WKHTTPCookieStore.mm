@@ -92,7 +92,7 @@ private:
 };
 
 @implementation WKHTTPCookieStore {
-    HashMap<CFTypeRef, RefPtr<WKHTTPCookieStoreObserver>> _observers;
+    HashMap<CFTypeRef, Ref<WKHTTPCookieStoreObserver>> _observers;
 }
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
@@ -102,8 +102,8 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKHTTPCookieStore.class, self))
         return;
 
-    for (RefPtr observer : _observers.values())
-        protect(*_cookieStore)->unregisterObserver(*observer);
+    for (Ref observer : _observers.values())
+        protect(*_cookieStore)->unregisterObserver(observer);
 
     SUPPRESS_UNCOUNTED_ARG _cookieStore->API::HTTPCookieStore::~HTTPCookieStore();
 
@@ -112,7 +112,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)getAllCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
 {
-    bool isOptInCookiePartitioningEnabled = protect(*_cookieStore)->isOptInCookiePartitioningEnabled();
+    bool isOptInCookiePartitioningEnabled = _cookieStore->isOptInCookiePartitioningEnabled();
     protect(*_cookieStore)->cookies([isOptInCookiePartitioningEnabled, handler = adoptNS([completionHandler copy])](const Vector<WebCore::Cookie>& cookies) {
         auto rawHandler = (void (^)(NSArray<NSHTTPCookie *> *))handler.get();
         rawHandler(coreCookiesToNSCookies(cookies, isOptInCookiePartitioningEnabled));
@@ -155,12 +155,13 @@ static std::optional<WebCore::Cookie> makeVectorElement(const WebCore::Cookie*, 
 
 - (void)addObserver:(id<WKHTTPCookieStoreObserver>)observer
 {
-    auto result = _observers.add((__bridge CFTypeRef)observer, nullptr);
+    auto result = _observers.ensure((__bridge CFTypeRef)observer, [&] {
+        return WKHTTPCookieStoreObserver::create(observer);
+    });
     if (!result.isNewEntry)
         return;
 
-    result.iterator->value = WKHTTPCookieStoreObserver::create(observer);
-    protect(*_cookieStore)->registerObserver(Ref { *result.iterator->value }.get());
+    protect(*_cookieStore)->registerObserver(protect(result.iterator->value));
 }
 
 - (void)removeObserver:(id<WKHTTPCookieStoreObserver>)observer
@@ -213,7 +214,7 @@ static WKCookiePolicy NODELETE toWKCookiePolicy(WebCore::HTTPCookieAcceptPolicy 
 
 - (void)getCookiesForURL:(NSURL *)url completionHandler:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
 {
-    bool isOptInCookiePartitioningEnabled = protect(*_cookieStore)->isOptInCookiePartitioningEnabled();
+    bool isOptInCookiePartitioningEnabled = _cookieStore->isOptInCookiePartitioningEnabled();
     protect(*_cookieStore)->cookiesForURL(url, [isOptInCookiePartitioningEnabled, handler = makeBlockPtr(completionHandler)] (const Vector<WebCore::Cookie>& cookies) {
         handler.get()(coreCookiesToNSCookies(cookies, isOptInCookiePartitioningEnabled));
     });

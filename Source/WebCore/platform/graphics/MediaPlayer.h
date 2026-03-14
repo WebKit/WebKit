@@ -40,6 +40,7 @@
 #include <WebCore/MediaPromiseTypes.h>
 #include <WebCore/PlatformDynamicRangeLimit.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/PlatformMediaDecodingType.h>
 #include <WebCore/PlatformTextTrack.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SecurityOriginData.h>
@@ -111,10 +112,9 @@ struct HostingContext;
 struct VideoFrameMetadata;
 
 struct MediaEngineSupportParameters {
+    PlatformMediaDecodingType platformType { PlatformMediaDecodingType::FileOrHLS };
     ContentType type;
     URL url { };
-    bool isMediaSource { false };
-    bool isMediaStream { false };
     bool requiresRemotePlayback { false };
     bool supportsLimitedMatroska { false };
     Vector<ContentType> contentTypesRequiringHardwareSupport { };
@@ -508,7 +508,7 @@ public:
     bool playAtHostTime(const MonotonicTime&);
     bool pauseAtHostTime(const MonotonicTime&);
 
-    bool preservesPitch() const;
+    bool NODELETE preservesPitch() const;
     void setPreservesPitch(bool);
 
     void setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm);
@@ -529,11 +529,11 @@ public:
 
     void setVolumeLocked(bool);
 
-    double volume() const;
+    double NODELETE volume() const;
     void setVolume(double);
     bool platformVolumeConfigurationRequired() const { return protect(client())->mediaPlayerPlatformVolumeConfigurationRequired(); }
 
-    bool muted() const;
+    bool NODELETE muted() const;
     void setMuted(bool);
 
     bool hasClosedCaptions() const;
@@ -560,7 +560,7 @@ public:
     MovieLoadType movieLoadType() const;
 
     using MediaPlayerEnums::Preload;
-    Preload preload() const;
+    Preload NODELETE preload() const;
     void setPreload(Preload);
 
     void networkStateChanged();
@@ -700,10 +700,10 @@ public:
     void setShouldDisableSleep(bool);
     bool shouldDisableSleep() const;
 
-    const ContentType& contentType() const { return m_loadOptions.contentType; }
+    const ContentType& contentType() const LIFETIME_BOUND { return m_loadOptions.contentType; }
     String contentMIMEType() const;
     String contentTypeCodecs() const;
-    bool contentMIMETypeWasInferredFromExtension() const;
+    bool NODELETE contentMIMETypeWasInferredFromExtension() const;
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     void setShouldCheckHardwareSupport(bool);
@@ -769,7 +769,7 @@ public:
 
     void playerContentBoxRectChanged(const LayoutRect&);
 
-    String lastErrorMessage() const;
+    String NODELETE lastErrorMessage() const;
 
     void renderVideoWillBeDestroyed();
 
@@ -797,7 +797,7 @@ public:
     void soundStageSizeDidChange();
 
     void setInFullscreenOrPictureInPicture(bool);
-    bool isInFullscreenOrPictureInPicture() const;
+    bool NODELETE isInFullscreenOrPictureInPicture() const;
 
     PlatformVideoTarget videoTarget() const { return protect(client())->mediaPlayerVideoTarget(); }
     MediaPlayerClientIdentifier clientIdentifier() const { return protect(client())->mediaPlayerClientIdentifier(); }
@@ -809,7 +809,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
     void setSceneIdentifier(const String&);
-    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
 #endif
 
     void setMessageClientForTesting(WeakPtr<MessageClientForTesting>);

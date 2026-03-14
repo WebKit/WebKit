@@ -54,7 +54,7 @@ public:
     void stopAnimation();
     void resetAnimation();
     bool isAnimating() const { return !!m_frameTimer; }
-    bool isAnimationAllowed() const;
+    bool NODELETE isAnimationAllowed() const;
 
     bool hasEverAnimated() const { return !!m_desiredFrameStartTime; }
     unsigned currentFrameIndex() const { return m_currentFrameIndex; }

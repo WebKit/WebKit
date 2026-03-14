@@ -39,7 +39,7 @@ public:
         return adoptRef(*new BeforeTextInsertedEvent(text));
     }
 
-    const String& text() const { return m_text; }
+    const String& text() const LIFETIME_BOUND { return m_text; }
     void setText(const String& s) { m_text = s; }
 
 private:

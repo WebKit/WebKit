@@ -37,7 +37,7 @@ class ReceiveHTTPRequestOperation;
 class ReceiveBytesOperation;
 class SendOperation;
 class ConnectionGroup;
-#if HAVE(WEB_TRANSPORT)
+#if PLATFORM(COCOA)
 class ReceiveIncomingConnectionOperation;
 #endif
 
@@ -57,12 +57,12 @@ public:
     void webSocketHandshake(CompletionHandler<void()>&& = { });
     void terminate(CompletionHandler<void()>&& = { });
     void cancel();
-#if HAVE(WEB_TRANSPORT)
+#if PLATFORM(COCOA)
     void abortReads(uint64_t errorCode);
     void abortWrites(uint64_t errorCode);
     void setRemoteReceiveErrorHandler(CompletionHandler<void(uint64_t)>&&);
     void setRemoteSendErrorHandler(CompletionHandler<void(uint64_t)>&&);
-#endif // HAVE(WEB_TRANSPORT)
+#endif // PLATFORM(COCOA)
 
 private:
     friend class HTTPServer;
@@ -74,7 +74,7 @@ private:
     RetainPtr<nw_connection_t> m_connection;
 };
 
-#if HAVE(WEB_TRANSPORT)
+#if PLATFORM(COCOA)
 
 class ConnectionGroup {
 public:

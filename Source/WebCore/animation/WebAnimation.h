@@ -82,7 +82,7 @@ public:
 
     bool isSkippedContentAnimation() const;
 
-    const String& id() const { return m_id; }
+    const String& id() const LIFETIME_BOUND { return m_id; }
     void setId(String&&);
 
     AnimationEffect* bindingsEffect() const { return effect(); }
@@ -112,10 +112,10 @@ public:
     bool pending() const { return hasPendingPauseTask() || hasPendingPlayTask(); }
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
-    ReadyPromise& ready() { return m_readyPromise.get(); }
+    ReadyPromise& ready() LIFETIME_BOUND { return m_readyPromise.get(); }
 
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
-    FinishedPromise& finished() { return m_finishedPromise.get(); }
+    FinishedPromise& finished() LIFETIME_BOUND { return m_finishedPromise.get(); }
 
     enum class Silently : bool { No, Yes };
     virtual void cancel(Silently = Silently::No);
@@ -138,8 +138,8 @@ public:
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual ReplaceState bindingsReplaceState() const { return replaceState(); }
     virtual bool bindingsPending() const { return pending(); }
-    virtual ReadyPromise& bindingsReady() { return ready(); }
-    virtual FinishedPromise& bindingsFinished() { return finished(); }
+    virtual ReadyPromise& bindingsReady() LIFETIME_BOUND { return ready(); }
+    virtual FinishedPromise& bindingsFinished() LIFETIME_BOUND { return finished(); }
     virtual ExceptionOr<void> bindingsPlay() { return play(); }
     virtual ExceptionOr<void> bindingsPause() { return pause(); }
     std::optional<WebAnimationTime> holdTime() const { return m_holdTime; }
@@ -156,7 +156,7 @@ public:
     virtual void setBindingsRangeEnd(TimelineRangeValue&&);
     void setRangeStart(Style::SingleAnimationRangeStart&&);
     void setRangeEnd(Style::SingleAnimationRangeEnd&&);
-    const Style::SingleAnimationRange& range();
+    const Style::SingleAnimationRange& range() LIFETIME_BOUND;
 
     bool needsTick() const;
     virtual void tick();
@@ -184,7 +184,7 @@ public:
 
     virtual bool canHaveGlobalPosition() { return true; }
 
-    std::optional<Seconds> convertAnimationTimeToTimelineTime(Seconds) const;
+    std::optional<Seconds> NODELETE convertAnimationTimeToTimelineTime(Seconds) const;
 
     void progressBasedTimelineSourceDidChangeMetrics();
 
@@ -198,7 +198,7 @@ protected:
     void initialize();
     void enqueueAnimationEvent(Ref<AnimationEventBase>&&);
     virtual void animationDidFinish();
-    WebAnimationTime zeroTime() const;
+    WebAnimationTime NODELETE zeroTime() const;
 
     enum class AutoRewind : bool { No, Yes };
     ExceptionOr<void> play(AutoRewind);
@@ -226,12 +226,12 @@ private:
     void setTimelineInternal(RefPtr<AnimationTimeline>&&);
     bool computeRelevance();
     void invalidateEffect();
-    double effectivePlaybackRate() const;
+    double NODELETE effectivePlaybackRate() const;
     void applyPendingPlaybackRate();
     void setEffectiveFrameRate(std::optional<FramesPerSecond>);
     void autoAlignStartTime();
     void maybeMarkAsReady();
-    bool isTimeValid(const std::optional<WebAnimationTime>&) const;
+    bool NODELETE isTimeValid(const std::optional<WebAnimationTime>&) const;
 
     // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;

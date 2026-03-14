@@ -38,12 +38,15 @@
 
 #import "Logging.h"
 #import "ParentalControlsContentFilter.h"
-#import <pal/cocoa/WebContentRestrictionsSoftLink.h>
+#import "ParentalControlsURLFilterParameters.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
 #import <wtf/URL.h>
+#import <wtf/WorkQueue.h>
 #import <wtf/cf/NotificationCenterCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
+
+#import <pal/cocoa/WebContentRestrictionsSoftLink.h>
 
 namespace WebCore {
 

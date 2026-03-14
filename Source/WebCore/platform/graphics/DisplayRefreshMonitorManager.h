@@ -40,7 +40,7 @@ class DisplayRefreshMonitorManager {
     friend class NeverDestroyed<DisplayRefreshMonitorManager>;
     friend class DisplayRefreshMonitor;
 public:
-    WEBCORE_EXPORT static DisplayRefreshMonitorManager& sharedManager();
+    WEBCORE_EXPORT static DisplayRefreshMonitorManager& NODELETE sharedManager();
 
     void unregisterClient(DisplayRefreshMonitorClient&);
 
@@ -57,7 +57,7 @@ private:
     DisplayRefreshMonitorManager() = default;
     virtual ~DisplayRefreshMonitorManager();
 
-    void displayMonitorDisplayDidRefresh(DisplayRefreshMonitor&);
+    void NODELETE displayMonitorDisplayDidRefresh(DisplayRefreshMonitor&);
 
     size_t findMonitorForDisplayID(PlatformDisplayID) const;
     DisplayRefreshMonitor* monitorForDisplayID(PlatformDisplayID) const;

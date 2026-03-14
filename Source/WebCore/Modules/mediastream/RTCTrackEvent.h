@@ -59,7 +59,7 @@ public:
 
     RTCRtpReceiver& receiver() const { return m_receiver; }
     MediaStreamTrack& track() const  { return m_track; }
-    const MediaStreamArray& streams() const  { return m_streams; }
+    const MediaStreamArray& streams() const LIFETIME_BOUND { return m_streams; }
     RTCRtpTransceiver& transceiver() const  { return m_transceiver; }
 
 private:

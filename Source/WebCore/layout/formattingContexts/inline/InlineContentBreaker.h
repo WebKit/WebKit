@@ -97,7 +97,7 @@ public:
         void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
         void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
-        void setTrailingSoftHyphenWidth(InlineLayoutUnit);
+        void NODELETE setTrailingSoftHyphenWidth(InlineLayoutUnit);
         void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_minimumRequiredWidth = minimumRequiredWidth; }
         void setHasShapedContent() { m_hasShapedContent = true; }
         bool hasShapedContent() const { return m_hasShapedContent; }
@@ -123,8 +123,8 @@ public:
             InlineLayoutUnit m_contentWidth { 0 };
         };
         using RunList = Vector<Run, 3>;
-        const RunList& runs() const { return m_runs; }
-        RunList& runs() { return m_runs; }
+        const RunList& runs() const LIFETIME_BOUND { return m_runs; }
+        RunList& runs() LIFETIME_BOUND { return m_runs; }
 
     private:
         void appendToRunList(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);

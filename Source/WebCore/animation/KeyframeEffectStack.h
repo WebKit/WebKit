@@ -60,8 +60,8 @@ public:
     bool addEffect(KeyframeEffect&);
     void removeEffect(KeyframeEffect&);
     bool hasEffects() const { return !m_effects.isEmpty(); }
-    const Vector<WeakPtr<KeyframeEffect>>& sortedEffects();
-    const std::optional<Style::Animations>& cssAnimationList() const { return m_cssAnimationList; }
+    const Vector<WeakPtr<KeyframeEffect>>& sortedEffects() LIFETIME_BOUND;
+    const std::optional<Style::Animations>& cssAnimationList() const LIFETIME_BOUND { return m_cssAnimationList; }
     void setCSSAnimationList(std::optional<Style::Animations>&&);
     bool containsProperty(CSSPropertyID) const;
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
@@ -80,7 +80,7 @@ public:
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
     void cascadeDidOverrideProperties(const HashSet<AnimatableCSSProperty>&, const Document&);
 
-    const HashSet<AnimatableCSSProperty>& acceleratedPropertiesOverriddenByCascade() const { return m_acceleratedPropertiesOverriddenByCascade; }
+    const HashSet<AnimatableCSSProperty>& acceleratedPropertiesOverriddenByCascade() const LIFETIME_BOUND { return m_acceleratedPropertiesOverriddenByCascade; }
 
     void applyPendingAcceleratedActions() const;
 

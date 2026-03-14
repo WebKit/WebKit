@@ -88,7 +88,7 @@ public:
     BasicBlockLocation* getBasicBlockLocation(SourceID, int startOffset, int endOffset);
     JS_EXPORT_PRIVATE void dumpData() const;
     Vector<BasicBlockRange> getBasicBlocksForSourceID(SourceID, VM&) const;
-    BasicBlockLocation* dummyBasicBlock() { return &m_dummyBasicBlock; }
+    BasicBlockLocation* dummyBasicBlock() LIFETIME_BOUND { return &m_dummyBasicBlock; }
     JS_EXPORT_PRIVATE bool hasBasicBlockAtTextOffsetBeenExecuted(int, SourceID, VM&); // This function exists for testing.
     JS_EXPORT_PRIVATE size_t basicBlockExecutionCountAtTextOffset(int, SourceID, VM&); // This function exists for testing.
 

@@ -40,7 +40,7 @@ public:
     SegmentedString& operator=(const SegmentedString&) = default;
 
     void clear();
-    void close();
+    void NODELETE close();
 
     void append(SegmentedString&&);
     void append(const SegmentedString&);
@@ -50,10 +50,10 @@ public:
 
     void pushBack(String&&);
 
-    void setExcludeLineNumbers();
+    void NODELETE setExcludeLineNumbers();
 
     bool isEmpty() const { return !m_currentSubstring.length(); }
-    unsigned length() const;
+    unsigned NODELETE length() const;
 
     bool isClosed() const { return m_isClosed; }
 
@@ -71,12 +71,12 @@ public:
 
     char16_t currentCharacter() const { return m_currentCharacter; }
 
-    OrdinalNumber currentColumn() const;
-    OrdinalNumber currentLine() const;
+    OrdinalNumber NODELETE currentColumn() const;
+    OrdinalNumber NODELETE currentLine() const;
 
     // Sets value of line/column variables. Column is specified indirectly by a parameter columnAfterProlog
     // which is a value of column that we should get after a prolog (first prologLength characters) has been consumed.
-    void setCurrentPosition(OrdinalNumber line, OrdinalNumber columnAfterProlog, int prologLength);
+    void NODELETE setCurrentPosition(OrdinalNumber line, OrdinalNumber columnAfterProlog, int prologLength);
 
 private:
     struct Substring {
@@ -118,15 +118,15 @@ private:
     void startNewLine();
 
     void advanceWithoutUpdatingLineNumber();
-    void advanceWithoutUpdatingLineNumber16();
-    void advanceAndUpdateLineNumber16();
+    void NODELETE advanceWithoutUpdatingLineNumber16();
+    void NODELETE advanceAndUpdateLineNumber16();
     void advancePastSingleCharacterSubstringWithoutUpdatingLineNumber();
     void advancePastSingleCharacterSubstring();
-    void advanceEmpty();
+    void NODELETE advanceEmpty();
 
     void updateAdvanceFunctionPointers();
-    void updateAdvanceFunctionPointersForEmptyString();
-    void updateAdvanceFunctionPointersForSingleCharacterSubstring();
+    void NODELETE updateAdvanceFunctionPointersForEmptyString();
+    void NODELETE updateAdvanceFunctionPointersForSingleCharacterSubstring();
 
     void updateAdvanceFunctionPointersIfNecessary();
 

@@ -414,7 +414,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         if (!equalIgnoringASCIICase(lastHTTPMethod, request.httpMethod())) {
             request.setHTTPMethod(lastHTTPMethod);
     
-            auto body = previousRequest.httpBody();
+            RefPtr body = previousRequest.httpBody();
             if (!equalLettersIgnoringASCIICase(lastHTTPMethod, "get"_s) && body && !body->isEmpty())
                 request.setHTTPBody(WTF::move(body));
 

@@ -451,7 +451,7 @@ ScriptExecutionContext* JSCustomElementInterface::scriptExecutionContext() const
 }
 
 template<typename Visitor>
-void JSCustomElementInterface::visitJSFunctions(Visitor& visitor) const
+void JSCustomElementInterface::visitJSFunctionsInGCThread(Visitor& visitor) const
 {
     visitor.append(m_constructor);
     visitor.append(m_connectedCallback);
@@ -464,7 +464,7 @@ void JSCustomElementInterface::visitJSFunctions(Visitor& visitor) const
     visitor.append(m_formStateRestoreCallback);
 }
 
-template void JSCustomElementInterface::visitJSFunctions(JSC::AbstractSlotVisitor&) const;
-template void JSCustomElementInterface::visitJSFunctions(JSC::SlotVisitor&) const;
+template void JSCustomElementInterface::visitJSFunctionsInGCThread(JSC::AbstractSlotVisitor&) const;
+template void JSCustomElementInterface::visitJSFunctionsInGCThread(JSC::SlotVisitor&) const;
 
 } // namespace WebCore

@@ -72,11 +72,11 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
     case AttributeNames::orderAttr: {
         auto result = parseNumberOptionalNumber(newValue);
         if (!result) {
-            Ref { m_orderX }->setBaseValInternal(initialOrderValue);
-            Ref { m_orderY }->setBaseValInternal(initialOrderValue);
+            m_orderX->setBaseValInternal(initialOrderValue);
+            m_orderY->setBaseValInternal(initialOrderValue);
         } else {
-            Ref { m_orderX }->setBaseValInternal(result->first);
-            Ref { m_orderY }->setBaseValInternal(result->second);
+            m_orderX->setBaseValInternal(result->first);
+            m_orderY->setBaseValInternal(result->second);
 
             if (result->first < 1 || result->second < 1)
                 protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Filtered element will not be displayed."_s));
@@ -92,14 +92,14 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         break;
     }
     case AttributeNames::kernelMatrixAttr:
-        Ref { m_kernelMatrix }->baseVal()->parse(newValue);
+        m_kernelMatrix->baseVal()->parse(newValue);
         break;
     case AttributeNames::divisorAttr: {
         auto result = parseNumber(newValue);
         if (!result)
-            Ref { m_divisor }->setBaseValInternal(initialDivisorValue);
+            m_divisor->setBaseValInternal(initialDivisorValue);
         else {
-            Ref { m_divisor }->setBaseValInternal(*result);
+            m_divisor->setBaseValInternal(*result);
 
             if (*result <= 0)
                 protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Filtered element will not be displayed."_s));
@@ -107,22 +107,22 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         break;
     }
     case AttributeNames::biasAttr:
-        Ref { m_bias }->setBaseValInternal(newValue.toFloat());
+        m_bias->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::targetXAttr:
-        Ref { m_targetX }->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
+        m_targetX->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
         break;
     case AttributeNames::targetYAttr:
-        Ref { m_targetY }->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
+        m_targetY->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
         break;
     case AttributeNames::kernelUnitLengthAttr: {
         auto result = parseNumberOptionalNumber(newValue);
         if (!result) {
-            Ref { m_kernelUnitLengthX }->setBaseValInternal(initialKernelUnitLengthValue);
-            Ref { m_kernelUnitLengthY }->setBaseValInternal(initialKernelUnitLengthValue);
+            m_kernelUnitLengthX->setBaseValInternal(initialKernelUnitLengthValue);
+            m_kernelUnitLengthY->setBaseValInternal(initialKernelUnitLengthValue);
         } else {
-            Ref { m_kernelUnitLengthX }->setBaseValInternal(result->first);
-            Ref { m_kernelUnitLengthY }->setBaseValInternal(result->second);
+            m_kernelUnitLengthX->setBaseValInternal(result->first);
+            m_kernelUnitLengthY->setBaseValInternal(result->second);
 
             if (result->first < 0 || result->second < 0)
                 protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Filtered element will not be displayed."_s));
@@ -131,9 +131,9 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
     }
     case AttributeNames::preserveAlphaAttr:
         if (newValue == trueAtom())
-            Ref { m_preserveAlpha }->setBaseValInternal(true);
+            m_preserveAlpha->setBaseValInternal(true);
         else if (newValue == falseAtom())
-            Ref { m_preserveAlpha }->setBaseValInternal(false);
+            m_preserveAlpha->setBaseValInternal(false);
         else
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing preserveAlphaAttr=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
@@ -170,15 +170,15 @@ bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect& filterEf
 
 void SVGFEConvolveMatrixElement::setOrder(float x, float y)
 {
-    Ref { m_orderX }->setBaseValInternal(x);
-    Ref { m_orderY }->setBaseValInternal(y);
+    m_orderX->setBaseValInternal(x);
+    m_orderY->setBaseValInternal(y);
     updateSVGRendererForElementChange();
 }
 
 void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
 {
-    Ref { m_kernelUnitLengthX }->setBaseValInternal(x);
-    Ref { m_kernelUnitLengthY }->setBaseValInternal(y);
+    m_kernelUnitLengthX->setBaseValInternal(x);
+    m_kernelUnitLengthY->setBaseValInternal(y);
     updateSVGRendererForElementChange();
 }
 

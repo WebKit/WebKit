@@ -35,6 +35,8 @@ promise_test(async test => {
     const handle1 = new MediaStreamTrackHandle(stream.getVideoTracks()[0]);
     assert_true(handle1 instanceof MediaStreamTrackHandle);
 
+    assert_throws_dom('DataCloneError', () => worker.postMessage(handle1));
+
     worker.postMessage(handle1, [handle1]);
     const handle2 = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
 

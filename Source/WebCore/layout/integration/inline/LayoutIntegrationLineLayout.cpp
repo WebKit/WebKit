@@ -117,7 +117,7 @@ static bool shouldInvalidateLineLayoutAfterChangeFor(const RenderBlockFlow& root
             }
             return *hasStrongDirectionalityContent;
         }
-        if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(renderer)) {
+        if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
             auto& style = renderInline->style();
             return style.writingMode().isBidiRTL() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
         }
@@ -152,17 +152,17 @@ static bool shouldInvalidateLineLayoutAfterChangeFor(const RenderBlockFlow& root
 
     auto rootHasNonSupportedRenderer = [&] (bool shouldOnlyCheckForRelativeDimension = false) {
         for (CheckedPtr sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {
-            if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(*sibling); inlineBox && !inlineBox->style().textAutospace().isNoAutospace())
+            if (auto* inlineBox = dynamicDowncast<RenderInline>(*sibling); inlineBox && !inlineBox->style().textAutospace().isNoAutospace())
                 return true;
 
             auto siblingHasRelativeDimensions = false;
-            if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*sibling); renderBox && renderBox->hasRelativeDimensions())
+            if (auto* renderBox = dynamicDowncast<RenderBox>(*sibling); renderBox && renderBox->hasRelativeDimensions())
                 siblingHasRelativeDimensions = true;
 
             if (shouldOnlyCheckForRelativeDimension && !siblingHasRelativeDimensions)
                 continue;
 
-            if (siblingHasRelativeDimensions || (!is<RenderText>(*sibling) && !is<RenderLineBreak>(*sibling) && !is<RenderReplaced>(*sibling)))
+            if (siblingHasRelativeDimensions || (!isAnyOf<RenderText, RenderLineBreak, RenderReplaced>(*sibling)))
                 return true;
         }
         return !canUseForLineLayout(rootBlockContainer);
@@ -565,16 +565,16 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             if (box.isInlineBox() || box.isTextOrSoftLineBreak())
                 continue;
 
-            CheckedRef layoutBox = box.layoutBox();
-            if (!layoutBox->isAtomicInlineBox())
+            auto& layoutBox = box.layoutBox();
+            if (!layoutBox.isAtomicInlineBox())
                 continue;
 
-            CheckedRef renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
+            auto& renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
 
-            if (CheckedPtr layer = renderer->layer())
+            if (auto* layer = renderer.layer())
                 layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
-            renderer->setLocation(Layout::toLayoutPoint(box.visualRectIgnoringBlockDirection().location()));
+            renderer.setLocation(Layout::toLayoutPoint(box.visualRectIgnoringBlockDirection().location()));
         }
     }
 
@@ -1170,7 +1170,7 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
     return result;
 }
 
-static LayoutPoint flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
+static LayoutPoint NODELETE flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
 {
     if (root.writingMode().isBlockFlipped())
         return root.flipForWritingModeForChild(childRenderer, contentOffset);
@@ -1186,7 +1186,7 @@ static LayoutRect flippedRectForWritingMode(const RenderBlockFlow& root, const F
 
 bool LineLayout::isContentConsideredStale() const
 {
-    CheckedPtr rootRenderer = m_rootLayoutBox->rendererForIntegration();
+    auto* rootRenderer = m_rootLayoutBox->rendererForIntegration();
     if (!rootRenderer)
         return true;
     if (rootRenderer->normalChildNeedsLayout()) {
@@ -1352,7 +1352,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     return false;
 }
 
-void LineLayout::shiftLinesBy(LayoutUnit blockShift)
+void LineLayout::shiftLinesByInBlockDirection(LayoutUnit blockShift)
 {
     if (!m_inlineContent)
         return;
@@ -1371,18 +1371,18 @@ void LineLayout::shiftLinesBy(LayoutUnit blockShift)
             box.moveHorizontally(blockShift);
 
         if (box.isAtomicInlineBox()) {
-            CheckedRef renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
-            renderer->move(deltaX, deltaY);
+            auto& renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
+            renderer.move(deltaX, deltaY);
         }
     }
 
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
         if (layoutBox->isOutOfFlowPositioned() && layoutBox->style().hasStaticBlockPosition(isHorizontalWritingMode)) {
-            if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(layoutBox->rendererForIntegration())) {
-                if (CheckedPtr layer = layerRenderer->layer())
+            if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(layoutBox->rendererForIntegration())) {
+                if (auto* layer = layerRenderer->layer())
                     layer->setStaticBlockPosition(layer->staticBlockPosition() + blockShift);
             }
-            if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(layoutBox->rendererForIntegration()))
+            if (auto* renderBox = dynamicDowncast<RenderBox>(layoutBox->rendererForIntegration()))
                 renderBox->move(deltaX, deltaY);
         }
     }

@@ -49,7 +49,7 @@ public:
     virtual void dump(PrintStream&) const { }
 
     void registerDirectory(Heap&, BlockDirectory*);
-    BlockDirectory* firstDirectory() const { return m_directories.first(); }
+    BlockDirectory* firstDirectory() const LIFETIME_BOUND { return m_directories.first(); }
 
     void registerSubspace(Subspace*);
 

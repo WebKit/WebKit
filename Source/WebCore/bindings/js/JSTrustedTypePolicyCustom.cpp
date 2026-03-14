@@ -31,7 +31,7 @@
 namespace WebCore {
 
 template<typename Visitor>
-void JSTrustedTypePolicy::visitAdditionalChildren(Visitor& visitor)
+void JSTrustedTypePolicy::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     SUPPRESS_UNCOUNTED_LOCAL CreateHTMLCallback* createHTML = nullptr;
     SUPPRESS_UNCOUNTED_LOCAL CreateScriptCallback* createScript = nullptr;
@@ -43,13 +43,13 @@ void JSTrustedTypePolicy::visitAdditionalChildren(Visitor& visitor)
         createScriptURL = wrapped().options().createScriptURL.get();
     }
     if (createHTML)
-        SUPPRESS_UNCOUNTED_ARG createHTML->visitJSFunction(visitor);
+        SUPPRESS_UNCOUNTED_ARG createHTML->visitJSFunctionInGCThread(visitor);
     if (createScript)
-        SUPPRESS_UNCOUNTED_ARG createScript->visitJSFunction(visitor);
+        SUPPRESS_UNCOUNTED_ARG createScript->visitJSFunctionInGCThread(visitor);
     if (createScriptURL)
-        SUPPRESS_UNCOUNTED_ARG createScriptURL->visitJSFunction(visitor);
+        SUPPRESS_UNCOUNTED_ARG createScriptURL->visitJSFunctionInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSTrustedTypePolicy);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSTrustedTypePolicy);
 
 } // namespace WebCore

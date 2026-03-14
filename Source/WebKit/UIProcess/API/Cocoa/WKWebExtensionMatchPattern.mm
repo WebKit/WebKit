@@ -214,7 +214,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
 
 - (BOOL)matchesAllHosts
 {
-    return protect(*_webExtensionMatchPattern)->matchesAllHosts();
+    return _webExtensionMatchPattern->matchesAllHosts();
 }
 
 - (BOOL)matchesURL:(NSURL *)urlToMatch
@@ -222,7 +222,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
     return [self matchesURL:urlToMatch options:0];
 }
 
-static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(WKWebExtensionMatchPatternOptions options)
+static OptionSet<WebKit::WebExtensionMatchPattern::Options> NODELETE toImpl(WKWebExtensionMatchPatternOptions options)
 {
     OptionSet<WebKit::WebExtensionMatchPattern::Options> result;
 

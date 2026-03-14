@@ -92,8 +92,11 @@ bool ApplicationManifestLoader::startLoading()
     CachedResourceRequest request(WTF::move(resourceRequest), options);
 
     auto cachedResource = protect(frame->document()->cachedResourceLoader())->requestApplicationManifest(WTF::move(request));
-    m_resource = cachedResource.value_or(nullptr);
-    if (CachedResourceHandle resource = m_resource)
+    if (cachedResource)
+        m_resource = WTF::move(cachedResource.value());
+    else
+        m_resource = nullptr;
+    if (RefPtr resource = m_resource)
         resource->addClient(*this);
     else {
         LOG_ERROR("Failed to start load for application manifest at url %s (error: %s)", resourceRequestURL.string().ascii().data(), cachedResource.error().localizedDescription().utf8().data());
@@ -105,14 +108,14 @@ bool ApplicationManifestLoader::startLoading()
 
 void ApplicationManifestLoader::stopLoading()
 {
-    if (CachedResourceHandle resource = std::exchange(m_resource, nullptr))
+    if (RefPtr resource = std::exchange(m_resource, nullptr))
         resource->removeClient(*this);
 }
 
 std::optional<ApplicationManifest>& ApplicationManifestLoader::processManifest()
 {
     if (!m_processedManifest) {
-        if (CachedResourceHandle resource = m_resource) {
+        if (RefPtr resource = m_resource) {
             auto manifestURL = m_url;
             auto documentURL = m_documentLoader->url();
             RefPtr frame = m_documentLoader->frame();

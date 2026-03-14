@@ -47,10 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentNameCollection);
 
 bool WindowNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
 {
-    return is<HTMLEmbedElement>(element)
-        || is<HTMLFormElement>(element)
-        || is<HTMLImageElement>(element)
-        || is<HTMLObjectElement>(element);
+    return isAnyOf<HTMLEmbedElement, HTMLFormElement, HTMLImageElement, HTMLObjectElement>(element);
 }
 
 bool WindowNameCollection::elementMatches(const Element& element, const AtomString& name)
@@ -76,10 +73,7 @@ bool DocumentNameCollection::elementMatchesIfIdAttributeMatch(const Element& ele
 bool DocumentNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
 {
     return isObjectElementForDocumentNameCollection(element)
-        || is<HTMLEmbedElement>(element)
-        || is<HTMLFormElement>(element)
-        || is<HTMLIFrameElement>(element)
-        || is<HTMLImageElement>(element);
+        || isAnyOf<HTMLEmbedElement, HTMLFormElement, HTMLIFrameElement, HTMLImageElement>(element);
 }
 
 bool DocumentNameCollection::elementMatches(const Element& element, const AtomString& name)

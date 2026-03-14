@@ -468,7 +468,7 @@ void WebChromeClient::show()
 
 bool WebChromeClient::canRunModal() const
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     return page && page->canRunModal();
 }
 
@@ -485,7 +485,7 @@ void WebChromeClient::reportProcessCPUTime(Seconds cpuTime, ActivityStateForCPUS
 
 bool WebChromeClient::isPopup() const
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     if (!page)
         return false;
     return page->isPopup();
@@ -514,7 +514,7 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
 
 bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     return page && page->canRunBeforeUnloadConfirmPanel();
 }
 
@@ -575,7 +575,7 @@ void WebChromeClient::rootFrameRemoved(const WebCore::LocalFrame& frame)
         drawingArea->removeRootFrame(frame.frameID());
 }
 
-static bool shouldSuppressJavaScriptDialogs(LocalFrame& frame)
+static bool NODELETE shouldSuppressJavaScriptDialogs(LocalFrame& frame)
 {
     if (frame.opener() && frame.loader().stateMachine().isDisplayingInitialEmptyDocument() && frame.loader().provisionalDocumentLoader())
         return true;
@@ -798,7 +798,7 @@ IntRect WebChromeClient::rootViewToScreen(const IntRect& rect) const
 std::optional<IntPoint> WebChromeClient::screenToRootViewUsingCachedPosition(const IntPoint& screenPoint, const IntSize& viewSize) const
 {
 #if PLATFORM(MAC)
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     if (!page || !page->hasCachedWindowFrame())
         return std::nullopt;
 
@@ -866,7 +866,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 
 void WebChromeClient::intrinsicContentsSizeChanged(const IntSize& size) const
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->scheduleIntrinsicContentSizeUpdate(size);
 }
 
@@ -1464,7 +1464,7 @@ bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullsc
 bool WebChromeClient::supportsVideoFullscreenStandby()
 {
     RefPtr page = m_page.get();
-    return page && protect(page->videoPresentationManager())->supportsVideoFullscreenStandby();
+    return page && page->videoPresentationManager().supportsVideoFullscreenStandby();
 }
 
 void WebChromeClient::setMockVideoPresentationModeEnabled(bool enabled)
@@ -1590,7 +1590,7 @@ void WebChromeClient::exitFullScreenForElement(Element* element, CompletionHandl
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool exitingInWindowFullscreen = false;
     if (element) {
-        if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(*element))
+        if (auto* videoElement = dynamicDowncast<HTMLVideoElement>(*element))
             exitingInWindowFullscreen = videoElement->fullscreenMode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
     }
 #endif
@@ -1664,31 +1664,31 @@ void WebChromeClient::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle
 
 std::optional<ScrollbarOverlayStyle> WebChromeClient::preferredScrollbarOverlayStyle()
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     return page ? page->scrollbarOverlayStyle() : std::nullopt;
 }
 
 Color WebChromeClient::underlayColor() const
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     return page ? page->underlayColor() : Color();
 }
 
 void WebChromeClient::themeColorChanged() const
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->themeColorChanged();
 }
 
 void WebChromeClient::pageExtendedBackgroundColorDidChange() const
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->pageExtendedBackgroundColorDidChange();
 }
 
 void WebChromeClient::sampledPageTopColorChanged() const
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->sampledPageTopColorChanged();
 }
 
@@ -1910,7 +1910,7 @@ void WebChromeClient::handlePDFServiceClick(WebCore::FrameIdentifier frameID, co
 
 bool WebChromeClient::shouldDispatchFakeMouseMoveEvents() const
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     return page && page->shouldDispatchFakeMouseMoveEvents();
 }
 
@@ -2120,13 +2120,13 @@ void WebChromeClient::configureLoggingChannel(const String& channelName, WTFLogC
 
 bool WebChromeClient::userIsInteracting() const
 {
-    RefPtr page = m_page.get();
+    auto* page = m_page.get();
     return page && page->userIsInteracting();
 }
 
 void WebChromeClient::setUserIsInteracting(bool userIsInteracting)
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->setUserIsInteracting(userIsInteracting);
 }
 
@@ -2213,7 +2213,7 @@ void WebChromeClient::textAutosizingUsesIdempotentModeChanged()
 
 bool WebChromeClient::needsScrollGeometryUpdates() const
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         return page->needsScrollGeometryUpdates();
 
     return false;
@@ -2384,7 +2384,7 @@ void WebChromeClient::clearAnimationsForActiveWritingToolsSession()
 
 void WebChromeClient::setIsInRedo(bool isInRedo)
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->setIsInRedo(isInRedo);
 }
 
@@ -2446,7 +2446,7 @@ void WebChromeClient::callAfterPendingSyntheticClick(CompletionHandler<void(Synt
 
 void WebChromeClient::didDispatchClickEvent(const PlatformMouseEvent& event, Node& node)
 {
-    if (RefPtr page = m_page.get())
+    if (auto* page = m_page.get())
         page->didDispatchClickEvent(event, node);
 }
 

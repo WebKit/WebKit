@@ -58,7 +58,7 @@ class AXObjectCache;
 class AccessibilityObject;
 enum class AXStreamOptions : uint16_t;
 
-static constexpr uint16_t lastPropertyFlagIndex = 29;
+static constexpr uint16_t lastPropertyFlagIndex = 30;
 // The most common boolean properties are stored in a bitfield rather than in a HashMap.
 // If you edit these, make sure the corresponding AXProperty is ordered correctly in that
 // enum, and update lastPropertyFlagIndex above.
@@ -72,27 +72,28 @@ enum class AXPropertyFlag : uint32_t {
     HasItalicFont                                 = 1 << 6,
     HasPlainText                                  = 1 << 7,
     HasPointerEventsNone                          = 1 << 8,
-    IsBlockFlow                                   = 1 << 9,
-    IsEnabled                                     = 1 << 10,
-    IsExposedTableCell                            = 1 << 11,
-    IsExposedTableRow                             = 1 << 12,
-    IsGrabbed                                     = 1 << 13,
-    IsHiddenUntilFoundContainer                   = 1 << 14,
-    IsIgnored                                     = 1 << 15,
-    IsInlineText                                  = 1 << 16,
-    IsKeyboardFocusable                           = 1 << 17,
-    IsNonLayerSVGObject                           = 1 << 18,
+    IsARIAHidden                                  = 1 << 9,
+    IsBlockFlow                                   = 1 << 10,
+    IsEnabled                                     = 1 << 11,
+    IsExposedTableCell                            = 1 << 12,
+    IsExposedTableRow                             = 1 << 13,
+    IsGrabbed                                     = 1 << 14,
+    IsHiddenUntilFoundContainer                   = 1 << 15,
+    IsIgnored                                     = 1 << 16,
+    IsInlineText                                  = 1 << 17,
+    IsKeyboardFocusable                           = 1 << 18,
+    IsNonLayerSVGObject                           = 1 << 19,
     // These IsTextEmissionBehavior flags are the variants of enum TextEmissionBehavior.
-    IsTextEmissionBehaviorTab                     = 1 << 19,
-    IsTextEmissionBehaviorNewline                 = 1 << 20,
-    IsTextEmissionBehaviorDoubleNewline           = 1 << 21,
-    IsVisited                                     = 1 << 22,
-    ShowsCursorOnHover                            = 1 << 23,
-    SupportsCheckedState                          = 1 << 24,
-    SupportsDragging                              = 1 << 25,
-    SupportsExpanded                              = 1 << 26,
-    SupportsPath                                  = 1 << 27,
-    SupportsPosInSet                              = 1 << 28,
+    IsTextEmissionBehaviorTab                     = 1 << 20,
+    IsTextEmissionBehaviorNewline                 = 1 << 21,
+    IsTextEmissionBehaviorDoubleNewline           = 1 << 22,
+    IsVisited                                     = 1 << 23,
+    ShowsCursorOnHover                            = 1 << 24,
+    SupportsCheckedState                          = 1 << 25,
+    SupportsDragging                              = 1 << 26,
+    SupportsExpanded                              = 1 << 27,
+    SupportsPath                                  = 1 << 28,
+    SupportsPosInSet                              = 1 << 29,
     SupportsSetSize                               = 1 << lastPropertyFlagIndex
 };
 
@@ -106,26 +107,27 @@ enum class AXProperty : uint16_t {
     HasItalicFont = 6,
     HasPlainText = 7,
     HasPointerEventsNone = 8,
-    IsBlockFlow = 9,
-    IsEnabled = 10,
-    IsExposedTableCell = 11,
-    IsExposedTableRow = 12,
-    IsGrabbed = 13,
-    IsHiddenUntilFoundContainer = 14,
-    IsIgnored = 15,
-    IsInlineText = 16,
-    IsKeyboardFocusable = 17,
-    IsNonLayerSVGObject = 18,
-    IsTextEmissionBehaviorTab = 19,
-    IsTextEmissionBehaviorNewline = 20,
-    IsTextEmissionBehaviorDoubleNewline = 21,
-    IsVisited = 22,
-    ShowsCursorOnHover = 23,
-    SupportsCheckedState = 24,
-    SupportsDragging = 25,
-    SupportsExpanded = 26,
-    SupportsPath = 27,
-    SupportsPosInSet = 28,
+    IsARIAHidden = 9,
+    IsBlockFlow = 10,
+    IsEnabled = 11,
+    IsExposedTableCell = 12,
+    IsExposedTableRow = 13,
+    IsGrabbed = 14,
+    IsHiddenUntilFoundContainer = 15,
+    IsIgnored = 16,
+    IsInlineText = 17,
+    IsKeyboardFocusable = 18,
+    IsNonLayerSVGObject = 19,
+    IsTextEmissionBehaviorTab = 20,
+    IsTextEmissionBehaviorNewline = 21,
+    IsTextEmissionBehaviorDoubleNewline = 22,
+    IsVisited = 23,
+    ShowsCursorOnHover = 24,
+    SupportsCheckedState = 25,
+    SupportsDragging = 26,
+    SupportsExpanded = 27,
+    SupportsPath = 28,
+    SupportsPosInSet = 29,
     SupportsSetSize = lastPropertyFlagIndex,
     // End bool attributes that are matched in order by AXPropertyFlag.
 
@@ -476,7 +478,7 @@ public:
     void overrideNodeProperties(AXID, AXPropertyVector&&);
 
     double NODELETE loadingProgress();
-    void updateLoadingProgress(double);
+    void NODELETE updateLoadingProgress(double);
 
     void addUnconnectedNode(Ref<AccessibilityObject>);
     bool isUnconnectedNode(std::optional<AXID> axID) const { return axID && m_unconnectedNodes.contains(*axID); }
@@ -514,7 +516,7 @@ public:
     AXCoreObject::AccessibilityChildrenVector sortedNonRootWebAreas();
 
     void markMostRecentlyPaintedTextDirty() { m_mostRecentlyPaintedTextIsDirty = true; }
-    const HashMap<AXID, LineRange>& mostRecentlyPaintedText() const { return m_mostRecentlyPaintedText; }
+    const HashMap<AXID, LineRange>& mostRecentlyPaintedText() const LIFETIME_BOUND { return m_mostRecentlyPaintedText; }
 
     // Called on AX thread from WebAccessibilityObjectWrapper methods.
     WEBCORE_EXPORT void applyPendingChanges();

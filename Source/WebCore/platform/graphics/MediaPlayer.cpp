@@ -184,19 +184,19 @@ private:
     explicit NullMediaPlayerPrivate(MediaPlayer&) { }
 };
 
-static const Vector<WebCore::ContentType>& nullContentTypeVector()
+static const Vector<WebCore::ContentType>& NODELETE nullContentTypeVector()
 {
     static NeverDestroyed<Vector<WebCore::ContentType>> vector;
     return vector;
 }
 
-static const std::optional<Vector<String>>& nullOptionalStringVector()
+static const std::optional<Vector<String>>& NODELETE nullOptionalStringVector()
 {
     static NeverDestroyed<std::optional<Vector<String>>> vector;
     return vector;
 }
 
-static const std::optional<Vector<FourCC>>& nullOptionalFourCCVector()
+static const std::optional<Vector<FourCC>>& NODELETE nullOptionalFourCCVector()
 {
     static NeverDestroyed<std::optional<Vector<FourCC>>> vector;
     return vector;
@@ -284,13 +284,13 @@ static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&&);
 
 static Lock mediaEngineVectorLock;
 
-static bool& haveMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
+static bool& NODELETE haveMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
 {
     static bool haveVector;
     return haveVector;
 }
 
-static Vector<std::unique_ptr<MediaPlayerFactory>>& mutableInstalledMediaEnginesVector()
+static Vector<std::unique_ptr<MediaPlayerFactory>>& NODELETE mutableInstalledMediaEnginesVector()
 {
     static NeverDestroyed<Vector<std::unique_ptr<MediaPlayerFactory>>> installedEngines;
     return installedEngines;
@@ -430,7 +430,7 @@ const MediaPlayerFactory* MediaPlayer::mediaEngine(MediaPlayerEnums::MediaEngine
 
 static const MediaPlayerFactory* bestMediaEngineForSupportParameters(const MediaEngineSupportParameters& parameters, const WeakHashSet<const MediaPlayerFactory>& attemptedEngines = { }, const MediaPlayerFactory* current = nullptr)
 {
-    if (parameters.type.isEmpty() && !parameters.isMediaSource && !parameters.isMediaStream)
+    if (parameters.type.isEmpty() && parameters.platformType == PlatformMediaDecodingType::FileOrHLS)
         return nullptr;
 
     // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream"
@@ -587,24 +587,30 @@ bool MediaPlayer::load(MediaStreamPrivate& mediaStream)
 
 CheckedPtr<const MediaPlayerFactory> MediaPlayer::nextBestMediaEngine(const MediaPlayerFactory* current)
 {
-    MediaEngineSupportParameters parameters;
-    parameters.type = m_loadOptions.contentType;
-    parameters.url = m_url;
+    MediaEngineSupportParameters parameters {
+        .platformType = [&] {
 #if ENABLE(MEDIA_SOURCE)
-    parameters.isMediaSource = !!m_mediaSource.get();
+            if (!!m_mediaSource.get())
+                return PlatformMediaDecodingType::MediaSource;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    parameters.isMediaStream = !!m_mediaStream;
+            if (!!m_mediaStream)
+                return PlatformMediaDecodingType::MediaStream;
 #endif
-    parameters.supportsLimitedMatroska = m_loadOptions.supportsLimitedMatroska;
-    parameters.allowedMediaContainerTypes = allowedMediaContainerTypes();
-    parameters.allowedMediaCodecTypes = allowedMediaCodecTypes();
-    parameters.allowedMediaVideoCodecIDs = allowedMediaVideoCodecIDs();
-    parameters.allowedMediaAudioCodecIDs = allowedMediaAudioCodecIDs();
-    parameters.allowedMediaCaptionFormatTypes = allowedMediaCaptionFormatTypes();
+            return PlatformMediaDecodingType::FileOrHLS;
+        }(),
+        .type = m_loadOptions.contentType,
+        .url = m_url,
+        .supportsLimitedMatroska = m_loadOptions.supportsLimitedMatroska,
+        .allowedMediaContainerTypes = allowedMediaContainerTypes(),
+        .allowedMediaCodecTypes = allowedMediaCodecTypes(),
+        .allowedMediaVideoCodecIDs = allowedMediaVideoCodecIDs(),
+        .allowedMediaAudioCodecIDs = allowedMediaAudioCodecIDs(),
+        .allowedMediaCaptionFormatTypes = allowedMediaCaptionFormatTypes(),
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    parameters.playbackTargetType = playbackTargetType();
+        .playbackTargetType = playbackTargetType()
 #endif
+    };
 
     if (m_activeEngineIdentifier) {
         if (current)

@@ -43,12 +43,12 @@ JSC::JSValue JSIDBCursorWithValue::value(JSC::JSGlobalObject& lexicalGlobalObjec
 }
 
 template<typename Visitor>
-void JSIDBCursorWithValue::visitAdditionalChildren(Visitor& visitor)
+void JSIDBCursorWithValue::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    JSIDBCursor::visitAdditionalChildren(visitor);
-    wrapped().valueWrapper().visit(visitor);
+    JSIDBCursor::visitAdditionalChildrenInGCThread(visitor);
+    wrapped().valueWrapper().visitInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBCursorWithValue);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSIDBCursorWithValue);
 
 } // namespace WebCore

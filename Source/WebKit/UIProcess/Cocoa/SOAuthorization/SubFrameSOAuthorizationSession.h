@@ -31,6 +31,7 @@
 #include "NavigationSOAuthorizationSession.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/Deque.h>
+#include <wtf/Markable.h>
 
 namespace WebKit {
 

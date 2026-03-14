@@ -289,19 +289,19 @@ bool JSReadableStreamBYOBReaderOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC
 }
 
 template<typename Visitor>
-void ReadableStreamBYOBReader::visitAdditionalChildren(Visitor& visitor)
+void ReadableStreamBYOBReader::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     if (m_stream)
-        SUPPRESS_UNCOUNTED_ARG m_stream->visitAdditionalChildren(visitor);
+        SUPPRESS_UNCOUNTED_ARG m_stream->visitAdditionalChildrenInGCThread(visitor);
 }
 
 template<typename Visitor>
-void JSReadableStreamBYOBReader::visitAdditionalChildren(Visitor& visitor)
+void JSReadableStreamBYOBReader::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     // Do not ref `wrapped()` here since this function may get called on a GC thread.
-    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildren(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor);
 }
 
-DEFINE_VISIT_ADDITIONAL_CHILDREN(JSReadableStreamBYOBReader);
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSReadableStreamBYOBReader);
 
 } // namespace WebCore

@@ -44,7 +44,7 @@ public:
     ~SharedWorkerGlobalScope();
 
     Type type() const final { return Type::SharedWorker; }
-    const String& name() const { return m_name; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     Ref<SharedWorkerThread> thread();
 
     void postConnectEvent(TransferredMessagePort&&, const SecurityOriginData&);

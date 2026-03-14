@@ -155,7 +155,7 @@ template<> struct CSSValueConversion<ContainIntrinsicSize> { auto operator()(Bui
 // MARK: - Blending
 
 template<> struct Blending<ContainIntrinsicSize> {
-    auto canBlend(const ContainIntrinsicSize&, const ContainIntrinsicSize&) -> bool;
+    bool NODELETE canBlend(const ContainIntrinsicSize&, const ContainIntrinsicSize&);
     auto blend(const ContainIntrinsicSize&, const ContainIntrinsicSize&, const BlendingContext&) -> ContainIntrinsicSize;
 };
 

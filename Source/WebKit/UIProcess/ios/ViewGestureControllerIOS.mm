@@ -228,7 +228,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     // swiping forward will have the correct snapshot.
     if (m_webPageProxyForBackForwardListForCurrentSwipe != page.get()) {
         if (RefPtr currentViewHistoryItem = page->backForwardList().currentItem())
-            backForwardList.currentItem()->setSnapshot(currentViewHistoryItem->snapshot());
+            protect(backForwardList.currentItem())->setSnapshot(currentViewHistoryItem->snapshot());
     }
 
     RetainPtr liveSwipeView = m_liveSwipeView.get();
@@ -249,7 +249,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         WebCore::FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
         swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
         
-        BOOL shouldRestoreScrollPosition = targetItem->mainFrameState()->shouldRestoreScrollPosition;
+        BOOL shouldRestoreScrollPosition = targetItem->mainFrameState().shouldRestoreScrollPosition;
         WebCore::IntPoint currentScrollPosition = WebCore::roundedIntPoint(page->viewScrollPosition());
 
         bool canUseSnapshot = [&] {

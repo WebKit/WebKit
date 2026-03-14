@@ -32,7 +32,9 @@
 #include <JavaScriptCore/ConstantMode.h>
 #include <JavaScriptCore/InferredValue.h>
 #include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/LineColumn.h>
 #include <JavaScriptCore/ScopedArgumentsTable.h>
+#include <JavaScriptCore/SourceID.h>
 #include <JavaScriptCore/TypeLocation.h>
 #include <JavaScriptCore/VarOffset.h>
 #include <JavaScriptCore/VariableEnvironment.h>
@@ -43,7 +45,9 @@
 
 namespace JSC {
 
+class CodeBlock;
 class SymbolTable;
+struct DebuggerLocation;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SymbolTableEntryFatEntry);
 
@@ -744,10 +748,11 @@ public:
 
     void prepareForTypeProfiling(const ConcurrentJSLocker&);
 
-    CodeBlock* rareDataCodeBlock();
-    void setRareDataCodeBlock(CodeBlock*);
+    String inferredName();
+    DebuggerLocation debuggerLocation();
+    void collectDebuggerInfo(CodeBlock*);
     
-    InferredValue<JSScope>& singleton() { return m_singleton; }
+    InferredValue<JSScope>& singleton() LIFETIME_BOUND { return m_singleton; }
 
     void notifyCreation(VM& vm, JSScope* scope, const char* reason)
     {
@@ -770,7 +775,9 @@ public:
         UniqueIDMap m_uniqueIDMap;
         OffsetToVariableMap m_offsetToVariableMap;
         UniqueTypeSetMap m_uniqueTypeSetMap;
-        WriteBarrier<CodeBlock> m_codeBlock;
+        String m_inferredName;
+        SourceID m_debuggerSourceID { 0 };
+        LineColumn m_debuggerLineColumn;
         PrivateNameEnvironment m_privateNames;
     };
 
@@ -800,6 +807,7 @@ private:
     std::unique_ptr<SymbolTableRareData> m_rareData;
 
     WriteBarrier<ScopedArgumentsTable> m_arguments;
+    WriteBarrier<SymbolTable> m_clonedFrom;
     InferredValue<JSScope> m_singleton;
     
     std::unique_ptr<LocalToEntryVec> m_localToEntry;

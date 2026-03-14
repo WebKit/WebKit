@@ -64,7 +64,7 @@ public:
     void setNotchParams(size_t index, double frequency, double Q);
 
     // Resets filter state
-    void reset();
+    void NODELETE reset();
 
     // Filter response at a set of n frequencies. The magnitude and
     // phase response are returned in magResponse and phaseResponse.
@@ -79,7 +79,7 @@ public:
     double tailFrame(size_t coefIndex, double maxFrame);
 
 private:
-    void setNormalizedCoefficients(size_t index, double b0, double b1, double b2, double a0, double a1, double a2);
+    void NODELETE setNormalizedCoefficients(size_t index, double b0, double b1, double b2, double a0, double a1, double a2);
 
     // Filter coefficients. The filter is defined as
     //

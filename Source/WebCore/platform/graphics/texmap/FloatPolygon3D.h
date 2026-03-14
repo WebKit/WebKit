@@ -48,7 +48,7 @@ public:
     const FloatPoint3D& vertexAt(unsigned index) const { return m_vertices[index]; }
     unsigned numberOfVertices() const { return m_vertices.size(); }
 
-    const FloatPoint3D& normal() const { return m_normal; }
+    const FloatPoint3D& normal() const LIFETIME_BOUND { return m_normal; }
 
     std::pair<FloatPolygon3D, FloatPolygon3D> split(const FloatPlane3D&) const;
 

@@ -913,11 +913,11 @@ void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
             return timeline;
         if (RefPtr scrollTimeline = dynamicDowncast<ScrollTimeline>(m_timeline)) {
             if (RefPtr source = scrollTimeline->source())
-                return Ref { source->document() }->existingTimeline();
+                return source->document().existingTimeline();
         }
         if (RefPtr keyframeEffect = this->keyframeEffect()) {
             if (RefPtr target = keyframeEffect->target())
-                return protect(target->document())->existingTimeline();
+                return target->document().existingTimeline();
         }
         return nullptr;
     };
@@ -1994,7 +1994,7 @@ void WebAnimation::setBindingsRangeStart(TimelineRangeValue&& rangeStartValue)
         return;
 
     m_specifiedRangeStart = WTF::move(rangeStart);
-    if (RefPtr effect = this->effect())
+    if (auto* effect = this->effect())
         effect->animationRangeDidChange();
 }
 
@@ -2009,7 +2009,7 @@ void WebAnimation::setBindingsRangeEnd(TimelineRangeValue&& rangeEndValue)
         return;
 
     m_specifiedRangeEnd = WTF::move(rangeEnd);
-    if (RefPtr effect = this->effect())
+    if (auto* effect = this->effect())
         effect->animationRangeDidChange();
 }
 
@@ -2019,7 +2019,7 @@ void WebAnimation::setRangeStart(Style::SingleAnimationRangeStart&& rangeStart)
         return;
 
     m_timelineRange.start = WTF::move(rangeStart);
-    if (RefPtr effect = this->effect())
+    if (auto* effect = this->effect())
         effect->animationRangeDidChange();
 }
 
@@ -2029,7 +2029,7 @@ void WebAnimation::setRangeEnd(Style::SingleAnimationRangeEnd&& rangeEnd)
         return;
 
     m_timelineRange.end = WTF::move(rangeEnd);
-    if (RefPtr effect = this->effect())
+    if (auto* effect = this->effect())
         effect->animationRangeDidChange();
 }
 

@@ -40,7 +40,7 @@ template<typename> class ExceptionOr;
 class StorageManager : public RefCounted<StorageManager> {
     WTF_MAKE_TZONE_ALLOCATED(StorageManager);
 public:
-    static Ref<StorageManager> create(NavigatorBase&);
+    static Ref<StorageManager> NODELETE create(NavigatorBase&);
     ~StorageManager();
     void persisted(DOMPromiseDeferred<IDLBoolean>&&);
     void persist(DOMPromiseDeferred<IDLBoolean>&&);

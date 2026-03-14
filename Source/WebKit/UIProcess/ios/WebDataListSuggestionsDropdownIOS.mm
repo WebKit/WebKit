@@ -108,7 +108,7 @@ WebDataListSuggestionsDropdownIOS::WebDataListSuggestionsDropdownIOS(WebPageProx
 {
 }
 
-void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformation&& information)
+void WebDataListSuggestionsDropdownIOS::platformShow(WebCore::DataListSuggestionInformation&& information)
 {
     if (m_suggestionsControl) {
         [m_suggestionsControl updateWithInformation:WTF::move(information)];
@@ -148,7 +148,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     if (!m_page)
         return;
 
-    protect(m_page)->didSelectOption(selectedOption);
+    protect(m_page)->didSelectOption(selectedOption, m_targetFrameID);
     close();
 }
 

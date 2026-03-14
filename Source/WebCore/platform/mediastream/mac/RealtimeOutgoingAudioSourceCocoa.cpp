@@ -39,7 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeOutgoingAudioSourceCocoa);
 
-static inline AudioStreamBasicDescription libwebrtcAudioFormat(Float64 sampleRate, size_t channelCount)
+static inline AudioStreamBasicDescription NODELETE libwebrtcAudioFormat(Float64 sampleRate, size_t channelCount)
 {
     // FIXME: Microphones can have more than two channels. In such case, we should do the mix down based on AudioChannelLayoutTag.
     size_t libWebRTCChannelCount = channelCount >= 2 ? 2 : channelCount;

@@ -229,7 +229,7 @@ private:
     void cancelGetDisplayMediaPrompt();
 #endif
 #if PLATFORM(MAC)
-    void setScreenProperties(const WebCore::ScreenProperties&);
+    void NODELETE setScreenProperties(const WebCore::ScreenProperties&);
     void updateProcessName();
 #endif
 #if PLATFORM(COCOA)

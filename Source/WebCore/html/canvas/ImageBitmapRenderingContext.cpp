@@ -110,7 +110,7 @@ RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
 RefPtr<ImageBuffer> ImageBitmapRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
     if (!m_buffer) {
-        RefPtr buffer = ImageBuffer::create(protect(canvasBase())->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        RefPtr buffer = ImageBuffer::create(canvasBase().size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
         if (buffer) {
             updateMemoryCost(buffer->memoryCost());
             m_buffer = WTF::move(buffer);

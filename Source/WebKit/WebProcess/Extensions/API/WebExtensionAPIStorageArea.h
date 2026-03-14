@@ -50,16 +50,16 @@ public:
     void remove(WebPageProxyIdentifier, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void clear(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&);
 
-    double quotaBytes();
+    double NODELETE quotaBytes();
 
     // Exposed only by storage.session.
     void setAccessLevel(WebPageProxyIdentifier, NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     // Exposed only by storage.sync.
-    double quotaBytesPerItem();
-    double maxItems();
-    double maxWriteOperationsPerHour();
-    double maxWriteOperationsPerMinute();
+    double NODELETE quotaBytesPerItem();
+    double NODELETE maxItems();
+    double NODELETE maxWriteOperationsPerHour();
+    double NODELETE maxWriteOperationsPerMinute();
 
     WebExtensionAPIEvent& onChanged();
 

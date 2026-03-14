@@ -50,7 +50,7 @@ public:
     static TemporalPlainMonthDay* from(JSGlobalObject*, JSValue, JSValue);
     static TemporalPlainMonthDay* from(JSGlobalObject*, WTF::String);
 
-    TemporalCalendar* calendar() { return m_calendar.get(this); }
+    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainMonthDay plainMonthDay() const { return m_plainMonthDay; }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD(name, capitalizedName) \

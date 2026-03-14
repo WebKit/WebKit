@@ -165,8 +165,8 @@ public:
     WTF_EXPORT_PRIVATE size_t NODELETE find(StringView, unsigned start = 0) const;
     WTF_EXPORT_PRIVATE size_t NODELETE find(AdaptiveStringSearcherTables&, StringView, unsigned start = 0) const;
 
-    size_t reverseFind(char16_t, unsigned index = std::numeric_limits<unsigned>::max()) const;
-    ALWAYS_INLINE size_t reverseFind(ASCIILiteral literal, unsigned start = std::numeric_limits<unsigned>::max()) const { return reverseFind(literal.span8(), start); }
+    size_t NODELETE reverseFind(char16_t, unsigned index = std::numeric_limits<unsigned>::max()) const;
+    ALWAYS_INLINE size_t NODELETE reverseFind(ASCIILiteral literal, unsigned start = std::numeric_limits<unsigned>::max()) const { return reverseFind(literal.span8(), start); }
     WTF_EXPORT_PRIVATE size_t NODELETE reverseFind(StringView, unsigned start = std::numeric_limits<unsigned>::max()) const;
 
     WTF_EXPORT_PRIVATE size_t NODELETE findIgnoringASCIICase(StringView) const;
@@ -231,7 +231,7 @@ private:
 
     WTF_EXPORT_PRIVATE bool NODELETE underlyingStringIsValidImpl() const;
     WTF_EXPORT_PRIVATE void NODELETE setUnderlyingStringImpl(const StringImpl*);
-    WTF_EXPORT_PRIVATE void setUnderlyingStringImpl(const StringView&);
+    WTF_EXPORT_PRIVATE void NODELETE setUnderlyingStringImpl(const StringView&);
 
 #if CHECK_STRINGVIEW_LIFETIME
     bool underlyingStringIsValid() const { return underlyingStringIsValidImpl(); }
@@ -717,7 +717,7 @@ inline size_t StringView::find(CodeUnitMatchFunction&& matchFunction, unsigned s
     return WTF::find(span16(), std::forward<CodeUnitMatchFunction>(matchFunction), start);
 }
 
-inline size_t StringView::reverseFind(char16_t character, unsigned start) const
+SUPPRESS_NODELETE inline size_t StringView::reverseFind(char16_t character, unsigned start) const
 {
     if (is8Bit())
         return WTF::reverseFind(span8(), character, start);
@@ -868,18 +868,18 @@ public:
     using pointer = value_type*;
     using reference = value_type&;
 
-    StringView operator*() const;
+    StringView NODELETE operator*() const;
 
-    WTF_EXPORT_PRIVATE Iterator& operator++();
+    WTF_EXPORT_PRIVATE Iterator& NODELETE operator++();
 
-    bool operator==(const Iterator&) const;
+    bool NODELETE operator==(const Iterator&) const;
 
 private:
     enum PositionTag { AtEnd };
     Iterator(const SplitResult&);
     Iterator(const SplitResult&, PositionTag);
 
-    WTF_EXPORT_PRIVATE void findNextSubstring();
+    WTF_EXPORT_PRIVATE void NODELETE findNextSubstring();
 
     friend SplitResult;
 
@@ -1247,7 +1247,7 @@ inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
     return findInner(haystack.span16().subspan(start), needle.span16(), start);
 }
 
-inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, unsigned start)
+SUPPRESS_NODELETE inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, unsigned start)
 {
     unsigned sourceStringLength = source.length();
     unsigned matchLength = stringToFind.length();

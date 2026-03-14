@@ -46,7 +46,7 @@ public:
 
     static void clearLLIntGetByIdCache(GetByIdModeMetadata&);
 
-    const ObjectPropertyCondition& key() const { return m_key; }
+    const ObjectPropertyCondition& key() const LIFETIME_BOUND { return m_key; }
 
     void fireInternal(VM&, const FireDetail&);
 

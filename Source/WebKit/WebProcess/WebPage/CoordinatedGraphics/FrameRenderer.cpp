@@ -59,9 +59,6 @@ void FrameRenderer::scheduleRenderingUpdateRunLoopObserver()
 
     tracePoint(RenderingUpdateRunLoopObserverStart);
     m_renderingUpdateRunLoopObserver->schedule();
-
-    // Avoid running any more tasks before the runloop observer fires.
-    WindowEventLoop::breakToAllowRenderingUpdate();
 }
 
 void FrameRenderer::invalidateRenderingUpdateRunLoopObserver()

@@ -40,11 +40,11 @@
 #include "DirectArguments.h"
 #include "GetterSetter.h"
 #include "HasOwnPropertyCache.h"
+#include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
 #include "JSPropertyNameEnumerator.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
 #include "SetupVarargsFrame.h"
 #include "SuperSampler.h"
 #include "Watchdog.h"
@@ -169,17 +169,17 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
     }
 }
 
-void SpeculativeJIT::cachedGetById(Node* node, CodeOrigin origin, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier identifier, Jump slowPathTarget , SpillRegistersMode mode, AccessType type)
+void SpeculativeJIT::cachedGetById(Node* node, CodeOrigin origin, JSValueRegs base, JSValueRegs result, GPRReg propertyCacheGPR, GPRReg scratchGPR, CacheableIdentifier identifier, Jump slowPathTarget , SpillRegistersMode mode, AccessType type)
 {
-    cachedGetById(node, origin, base.tagGPR(), base.payloadGPR(), result.tagGPR(), result.payloadGPR(), stubInfoGPR, scratchGPR, identifier, slowPathTarget, mode, type);
+    cachedGetById(node, origin, base.tagGPR(), base.payloadGPR(), result.tagGPR(), result.payloadGPR(), propertyCacheGPR, scratchGPR, identifier, slowPathTarget, mode, type);
 }
 
 void SpeculativeJIT::cachedGetById(
-    Node* node, CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg stubInfoGPR,
+    Node* node, CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg propertyCacheGPR,
     GPRReg scratchGPR, CacheableIdentifier identifier, Jump slowPathTarget, SpillRegistersMode spillMode, AccessType type)
 {
     UNUSED_PARAM(node);
-    UNUSED_PARAM(stubInfoGPR);
+    UNUSED_PARAM(propertyCacheGPR);
     UNUSED_PARAM(scratchGPR);
     // This is a hacky fix for when the register allocator decides to alias the base payload with the result tag. This only happens
     // in the case of GetByIdFlush/GetByIdDirectFlush, which has a relatively expensive register allocation story already so we probably don't need to
@@ -203,9 +203,9 @@ void SpeculativeJIT::cachedGetById(
     }
     
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITGetByIdGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(resultTagGPR, resultPayloadGPR), InvalidGPRReg, type, CacheType::GetByIdSelf);
     
     gen.generateFastPath(*this);
@@ -220,12 +220,12 @@ void SpeculativeJIT::cachedGetById(
         slowPath = slowPathCall(
             slowCases, this, appropriateGetByIdOptimizeFunction(type),
             JSValueRegs(resultTagGPR, resultPayloadGPR),
-            CellValue(basePayloadGPR), TrustedImmPtr(gen.stubInfo()));
+            CellValue(basePayloadGPR), TrustedImmPtr(gen.propertyCache()));
     } else {
         slowPath = slowPathCall(
             slowCases, this, appropriateGetByIdOptimizeFunction(type),
             JSValueRegs(resultTagGPR, resultPayloadGPR),
-            JSValueRegs(baseTagGPROrNone, basePayloadGPR), TrustedImmPtr(gen.stubInfo()));
+            JSValueRegs(baseTagGPROrNone, basePayloadGPR), TrustedImmPtr(gen.propertyCache()));
     }
 
     addGetById(gen, slowPath.get());
@@ -233,18 +233,18 @@ void SpeculativeJIT::cachedGetById(
 }
 
 void SpeculativeJIT::cachedGetByIdWithThis(Node* node,
-    CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg thisTagGPR, GPRReg thisPayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg stubInfoGPR, GPRReg scratchGPR,
+    CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg thisTagGPR, GPRReg thisPayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg propertyCacheGPR, GPRReg scratchGPR,
     CacheableIdentifier identifier, const JumpList& slowPathTarget)
 {
     UNUSED_PARAM(node);
-    UNUSED_PARAM(stubInfoGPR);
+    UNUSED_PARAM(propertyCacheGPR);
     UNUSED_PARAM(scratchGPR);
     RegisterSet usedRegisters = this->usedRegisters();
     
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITGetByIdWithThisGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(resultTagGPR, resultPayloadGPR), JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(thisTagGPR, thisPayloadGPR), InvalidGPRReg);
     
     gen.generateFastPath(*this);
@@ -259,7 +259,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(Node* node,
         slowPath = slowPathCall(
             slowCases, this, operationGetByIdWithThisOptimize,
             JSValueRegs(resultTagGPR, resultPayloadGPR),
-            CellValue(basePayloadGPR), CellValue(thisPayloadGPR), TrustedImmPtr(gen.stubInfo()));
+            CellValue(basePayloadGPR), CellValue(thisPayloadGPR), TrustedImmPtr(gen.propertyCache()));
     } else {
         ASSERT(baseTagGPROrNone != InvalidGPRReg);
         ASSERT(thisTagGPR != InvalidGPRReg);
@@ -267,7 +267,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(Node* node,
         slowPath = slowPathCall(
             slowCases, this, operationGetByIdWithThisOptimize,
             JSValueRegs(resultTagGPR, resultPayloadGPR),
-            JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(thisTagGPR, thisPayloadGPR), TrustedImmPtr(gen.stubInfo()));
+            JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(thisTagGPR, thisPayloadGPR), TrustedImmPtr(gen.propertyCache()));
     }
 
     addGetByIdWithThis(gen, slowPath.get());
@@ -1862,17 +1862,17 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             if (!m_state.forNode(m_graph.varArgChild(node, 0)).isType(SpecCell))
                 slowCases.append(branchIfNotCell(baseRegs));
 
-            auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+            auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
             JITGetByValGenerator gen(
-                codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByVal, usedRegisters,
+                codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByVal, usedRegisters,
                 baseRegs, propertyRegs, resultRegs, InvalidGPRReg, InvalidGPRReg);
 
             if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecString))
-                gen.stubInfo()->propertyIsString = true;
+                gen.propertyCache()->propertyIsString = true;
             else if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecInt32Only))
-                gen.stubInfo()->propertyIsInt32 = true;
+                gen.propertyCache()->propertyIsInt32 = true;
             else if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecSymbol))
-                gen.stubInfo()->propertyIsSymbol = true;
+                gen.propertyCache()->propertyIsSymbol = true;
 
             gen.generateFastPath(*this);
 
@@ -1882,11 +1882,11 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             if (baseRegs.tagGPR() == InvalidGPRReg) {
                 slowPath = slowPathCall(
                     slowCases, this, operationGetByValOptimize,
-                    resultRegs, CellValue(baseRegs.payloadGPR()), propertyRegs, TrustedImmPtr(gen.stubInfo()), nullptr);
+                    resultRegs, CellValue(baseRegs.payloadGPR()), propertyRegs, TrustedImmPtr(gen.propertyCache()), nullptr);
             } else {
                 slowPath = slowPathCall(
                     slowCases, this, operationGetByValOptimize,
-                    resultRegs, baseRegs, propertyRegs, TrustedImmPtr(gen.stubInfo()), nullptr);
+                    resultRegs, baseRegs, propertyRegs, TrustedImmPtr(gen.propertyCache()), nullptr);
             }
 
             addGetByVal(gen, slowPath.get());
@@ -3866,6 +3866,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArrayIsArray: {
+        compileArrayIsArray(node);
+        break;
+    }
+
     case TypeOf: {
         compileTypeOf(node);
         break;
@@ -4281,7 +4286,9 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case CountExecution:
+        JIT_COMMENT(*this, "Execution trace start");
         add64(TrustedImm32(1), AbsoluteAddress(node->executionCounter()->address()));
+        JIT_COMMENT(*this, "First non-trace instruction");
         break;
 
     case SuperSamplerBegin:
@@ -4677,9 +4684,9 @@ void SpeculativeJIT::compileDeleteById(Node* node)
         CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
         RegisterSet usedRegisters = this->usedRegisters();
 
-        auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+        auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
         JITDelByIdGenerator gen(
-            codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, node->ecmaMode().isStrict() ? AccessType::DeleteByIdStrict : AccessType::DeleteByIdSloppy, usedRegisters, node->cacheableIdentifier(),
+            codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, node->ecmaMode().isStrict() ? AccessType::DeleteByIdStrict : AccessType::DeleteByIdSloppy, usedRegisters, node->cacheableIdentifier(),
             JSValueRegs::payloadOnly(baseGPR), resultRegs, InvalidGPRReg);
 
         auto* operation = node->ecmaMode().isStrict() ? operationDeleteByIdStrictOptimize : operationDeleteByIdSloppyOptimize;
@@ -4687,7 +4694,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
         slowCases.append(gen.slowPathJump());
         std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
             slowCases, this, operation,
-            resultGPR, CellValue(baseGPR), TrustedImmPtr(gen.stubInfo()));
+            resultGPR, CellValue(baseGPR), TrustedImmPtr(gen.propertyCache()));
 
         addDelById(gen, slowPath.get());
         addSlowPathGenerator(WTF::move(slowPath));
@@ -4734,9 +4741,9 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
         CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
         RegisterSet usedRegisters = this->usedRegisters();
 
-        auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+        auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
         JITDelByValGenerator gen(
-            codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, node->ecmaMode().isStrict() ? AccessType::DeleteByValStrict : AccessType::DeleteByValSloppy, usedRegisters,
+            codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, node->ecmaMode().isStrict() ? AccessType::DeleteByValStrict : AccessType::DeleteByValSloppy, usedRegisters,
             JSValueRegs::payloadOnly(baseGPR), keyRegs, resultRegs, InvalidGPRReg);
 
         auto* operation = node->ecmaMode().isStrict() ? operationDeleteByValStrictOptimize : operationDeleteByValSloppyOptimize;
@@ -4744,7 +4751,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
         slowCases.append(gen.slowPathJump());
         std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
             slowCases, this, operation,
-            resultGPR, CellValue(baseGPR), keyRegs, TrustedImmPtr(gen.stubInfo()));
+            resultGPR, CellValue(baseGPR), keyRegs, TrustedImmPtr(gen.propertyCache()));
 
         addDelByVal(gen, slowPath.get());
         addSlowPathGenerator(WTF::move(slowPath));
@@ -4782,9 +4789,9 @@ void SpeculativeJIT::compileInById(Node* node)
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITInByIdGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, node->cacheableIdentifier(),
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, node->cacheableIdentifier(),
         JSValueRegs::payloadOnly(baseGPR), resultRegs, InvalidGPRReg);
 
     JumpList slowCases;
@@ -4794,7 +4801,7 @@ void SpeculativeJIT::compileInById(Node* node)
     auto slowPath = slowPathCall(
         slowCases, this, operationInByIdOptimize,
         NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
-        resultRegs, CellValue(baseGPR), TrustedImmPtr(gen.stubInfo()));
+        resultRegs, CellValue(baseGPR), TrustedImmPtr(gen.propertyCache()));
 
     addInById(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
@@ -4820,9 +4827,9 @@ void SpeculativeJIT::compileInByVal(Node* node)
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITInByValGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::InByVal, usedRegisters,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, AccessType::InByVal, usedRegisters,
         JSValueRegs::payloadOnly(baseGPR), keyRegs, resultRegs, InvalidGPRReg, InvalidGPRReg);
 
     gen.generateFastPath(*this);
@@ -4830,7 +4837,7 @@ void SpeculativeJIT::compileInByVal(Node* node)
     auto slowPath = slowPathCall(
         slowCases, this, operationInByValOptimize,
         NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
-        resultRegs, CellValue(baseGPR), keyRegs, TrustedImmPtr(gen.stubInfo()), nullptr);
+        resultRegs, CellValue(baseGPR), keyRegs, TrustedImmPtr(gen.propertyCache()), nullptr);
 
     addInByVal(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
@@ -4858,21 +4865,21 @@ void SpeculativeJIT::compileHasPrivate(Node* node, AccessType type)
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITInByValGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, type, usedRegisters,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, type, usedRegisters,
         JSValueRegs::payloadOnly(baseGPR), JSValueRegs::payloadOnly(propertyOrBrandGPR), resultRegs, InvalidGPRReg, InvalidGPRReg);
 
-    WTF::visit([&](auto* stubInfo) {
-        stubInfo->propertyIsSymbol = true;
-    }, stubInfo);
+    WTF::visit([&](auto* propertyCache) {
+        propertyCache->propertyIsSymbol = true;
+    }, propertyCache);
 
     gen.generateFastPath(*this);
     slowCases.append(gen.slowPathJump());
     auto slowPath = slowPathCall(
         slowCases, this, type == AccessType::HasPrivateName ? operationHasPrivateNameOptimize : operationHasPrivateBrandOptimize,
         NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
-        resultRegs, CellValue(baseGPR), CellValue(propertyOrBrandGPR), TrustedImmPtr(gen.stubInfo()));
+        resultRegs, CellValue(baseGPR), CellValue(propertyOrBrandGPR), TrustedImmPtr(gen.propertyCache()));
 
     addInByVal(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
@@ -4961,19 +4968,19 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         bool isDirect = node->op() == PutByValDirect;
         ECMAMode ecmaMode = node->ecmaMode();
 
-        auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+        auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
         JITPutByValGenerator gen(
-            codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy), usedRegisters,
+            codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy), usedRegisters,
             baseRegs, propertyRegs, valueRegs, InvalidGPRReg, InvalidGPRReg);
 
-        WTF::visit([&](auto* stubInfo) {
+        WTF::visit([&](auto* propertyCache) {
             if (m_state.forNode(child2).isType(SpecString))
-                stubInfo->propertyIsString = true;
+                propertyCache->propertyIsString = true;
             else if (m_state.forNode(child2).isType(SpecInt32Only))
-                stubInfo->propertyIsInt32 = true;
+                propertyCache->propertyIsInt32 = true;
             else if (m_state.forNode(child2).isType(SpecSymbol))
-                stubInfo->propertyIsSymbol = true;
-        }, stubInfo);
+                propertyCache->propertyIsSymbol = true;
+        }, propertyCache);
 
         JumpList slowCases;
 
@@ -4982,7 +4989,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         slowCases.append(gen.slowPathJump());
         auto slowPath = slowPathCall(
             slowCases, this, operation,
-            NoResult, baseRegs, propertyRegs, valueRegs, TrustedImmPtr(gen.stubInfo()), nullptr);
+            NoResult, baseRegs, propertyRegs, valueRegs, TrustedImmPtr(gen.propertyCache()), nullptr);
 
         addPutByVal(gen, slowPath.get());
         addSlowPathGenerator(WTF::move(slowPath));
@@ -5116,26 +5123,26 @@ void SpeculativeJIT::compileGetPrivateNameByVal(Node* node, JSValueRegs baseRegs
     if (!baseIsKnownCell)
         slowCases.append(branchIfNotCell(baseRegs));
 
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITGetByValGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetPrivateName, usedRegisters,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetPrivateName, usedRegisters,
         baseRegs, propertyRegs, resultRegs, InvalidGPRReg, InvalidGPRReg);
 
-    WTF::visit([&](auto* stubInfo) {
-        stubInfo->propertyIsSymbol = true;
-    }, stubInfo);
+    WTF::visit([&](auto* propertyCache) {
+        propertyCache->propertyIsSymbol = true;
+    }, propertyCache);
 
     auto makeSlowPathICCall = [&](auto base, auto) {
         gen.generateFastPath(*this);
         slowCases.append(gen.slowPathJump());
         return slowPathCall(
             slowCases, this, operationGetPrivateNameOptimize,
-            result.regs(), base, CellValue(propertyRegs.payloadGPR()), TrustedImmPtr(gen.stubInfo()));
+            result.regs(), base, CellValue(propertyRegs.payloadGPR()), TrustedImmPtr(gen.propertyCache()));
     };
 
     std::unique_ptr<SlowPathGenerator> slowPath = baseIsKnownCell
-        ? makeSlowPathICCall(CellValue(baseRegs.payloadGPR()), stubInfoConstant)
-        : makeSlowPathICCall(baseRegs, stubInfoConstant);
+        ? makeSlowPathICCall(CellValue(baseRegs.payloadGPR()), propertyCacheConstant)
+        : makeSlowPathICCall(baseRegs, propertyCacheConstant);
 
     addGetByVal(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
@@ -5220,14 +5227,14 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
 
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITPutByValGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, usedRegisters,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, usedRegisters,
         JSValueRegs::payloadOnly(baseGPR), JSValueRegs::payloadOnly(propertyGPR), valueRegs, InvalidGPRReg, InvalidGPRReg);
 
-    WTF::visit([&](auto* stubInfo) {
-        stubInfo->propertyIsSymbol = true;
-    }, stubInfo);
+    WTF::visit([&](auto* propertyCache) {
+        propertyCache->propertyIsSymbol = true;
+    }, propertyCache);
 
     JumpList slowCases;
 
@@ -5236,7 +5243,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
     slowCases.append(gen.slowPathJump());
     auto slowPath = slowPathCall(
         slowCases, this, operation,
-        NoResult, CellValue(baseGPR), CellValue(propertyGPR), valueRegs, TrustedImmPtr(gen.stubInfo()), nullptr);
+        NoResult, CellValue(baseGPR), CellValue(propertyGPR), valueRegs, TrustedImmPtr(gen.propertyCache()), nullptr);
 
     addPutByVal(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
@@ -5279,20 +5286,20 @@ void SpeculativeJIT::compileCheckPrivateBrand(Node* node)
     if (needsTypeCheck(node->child1(), SpecCell))
         slowCases.append(branchIfNotCell(baseRegs));
 
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITPrivateBrandAccessGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::CheckPrivateBrand, usedRegisters,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, AccessType::CheckPrivateBrand, usedRegisters,
         baseRegs, JSValueRegs::payloadOnly(brandGPR), InvalidGPRReg);
 
-    WTF::visit([&](auto* stubInfo) {
-        stubInfo->propertyIsSymbol = true;
-    }, stubInfo);
+    WTF::visit([&](auto* propertyCache) {
+        propertyCache->propertyIsSymbol = true;
+    }, propertyCache);
 
     gen.generateFastPath(*this);
     slowCases.append(gen.slowPathJump());
     auto slowPath = slowPathCall(
         slowCases, this, operationCheckPrivateBrandOptimize, NoResult,
-        baseRegs, CellValue(brandGPR), TrustedImmPtr(gen.stubInfo()));
+        baseRegs, CellValue(brandGPR), TrustedImmPtr(gen.propertyCache()));
 
     addPrivateBrandAccess(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
@@ -5316,20 +5323,20 @@ void SpeculativeJIT::compileSetPrivateBrand(Node* node)
     RegisterSet usedRegisters = this->usedRegisters();
 
     JumpList slowCases;
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITPrivateBrandAccessGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::SetPrivateBrand, usedRegisters,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, AccessType::SetPrivateBrand, usedRegisters,
         JSValueRegs::payloadOnly(baseGPR), JSValueRegs::payloadOnly(brandGPR), InvalidGPRReg);
 
-    WTF::visit([&](auto* stubInfo) {
-        stubInfo->propertyIsSymbol = true;
-    }, stubInfo);
+    WTF::visit([&](auto* propertyCache) {
+        propertyCache->propertyIsSymbol = true;
+    }, propertyCache);
 
     gen.generateFastPath(*this);
     slowCases.append(gen.slowPathJump());
     auto slowPath = slowPathCall(
         slowCases, this, operationSetPrivateBrandOptimize, NoResult,
-        CellValue(baseGPR), CellValue(brandGPR), TrustedImmPtr(gen.stubInfo()));
+        CellValue(baseGPR), CellValue(brandGPR), TrustedImmPtr(gen.propertyCache()));
 
     addPrivateBrandAccess(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
@@ -5337,23 +5344,23 @@ void SpeculativeJIT::compileSetPrivateBrand(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::compileInstanceOfForCells(Node* node, JSValueRegs valueRegs, JSValueRegs prototypeRegs, GPRReg resultGPR, GPRReg stubInfoGPR, Jump slowCase)
+void SpeculativeJIT::compileInstanceOfForCells(Node* node, JSValueRegs valueRegs, JSValueRegs prototypeRegs, GPRReg resultGPR, GPRReg propertyCacheGPR, Jump slowCase)
 {
     CodeOrigin codeOrigin = node->origin.semantic;
     CallSiteIndex callSiteIndex = addCallSite(codeOrigin);
 
     bool prototypeIsKnownObject = m_state.forNode(node->child2()).isType(SpecObject | ~SpecCell);
     RegisterSet usedRegisters = this->usedRegisters();
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITInstanceOfGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, node->origin.semantic, callSiteIndex, usedRegisters, resultGPR,
-        valueRegs.payloadGPR(), prototypeRegs.payloadGPR(), stubInfoGPR, prototypeIsKnownObject);
+        codeBlock(), propertyCache, JITType::DFGJIT, node->origin.semantic, callSiteIndex, usedRegisters, resultGPR,
+        valueRegs.payloadGPR(), prototypeRegs.payloadGPR(), propertyCacheGPR, prototypeIsKnownObject);
     JumpList slowCases;
     slowCases.append(slowCase);
 
     gen.generateFastPath(*this);
     slowCases.append(gen.slowPathJump());
-    auto slowPath = slowPathCall(slowCases, this, operationInstanceOfOptimize, resultGPR, valueRegs, prototypeRegs, TrustedImmPtr(gen.stubInfo()));
+    auto slowPath = slowPathCall(slowCases, this, operationInstanceOfOptimize, resultGPR, valueRegs, prototypeRegs, TrustedImmPtr(gen.propertyCache()));
 
     addInstanceOf(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));
@@ -5436,7 +5443,7 @@ void SpeculativeJIT::compilePutByIdDirect(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier identifier, AccessType accessType, Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg propertyCacheGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier identifier, AccessType accessType, Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     UNUSED_PARAM(node);
     RegisterSet usedRegisters = this->usedRegisters();
@@ -5444,18 +5451,18 @@ void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg bas
         // We've already flushed registers to the stack, we don't need to spill these.
         usedRegisters.remove(baseGPR);
         usedRegisters.remove(valueRegs);
-        if (stubInfoGPR != InvalidGPRReg)
-            usedRegisters.remove(stubInfoGPR);
+        if (propertyCacheGPR != InvalidGPRReg)
+            usedRegisters.remove(propertyCacheGPR);
         if (scratchGPR != InvalidGPRReg)
             usedRegisters.remove(scratchGPR);
         if (scratch2GPR != InvalidGPRReg)
             usedRegisters.remove(scratch2GPR);
     }
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
-    auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+    auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITPutByIdGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
-        JSValueRegs::payloadOnly(baseGPR), valueRegs, stubInfoGPR,
+        codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
+        JSValueRegs::payloadOnly(baseGPR), valueRegs, propertyCacheGPR,
         scratchGPR, accessType);
 
     JumpList slowCases;
@@ -5465,7 +5472,7 @@ void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg bas
     auto* operation = appropriatePutByIdOptimizeFunction(accessType);
     gen.generateFastPath(*this);
     slowCases.append(gen.slowPathJump());
-    auto slowPath = slowPathCall(slowCases, this, operation, NoResult, valueRegs, CellValue(baseGPR), TrustedImmPtr(gen.stubInfo()));
+    auto slowPath = slowPathCall(slowCases, this, operation, NoResult, valueRegs, CellValue(baseGPR), TrustedImmPtr(gen.propertyCache()));
 
     addPutById(gen, slowPath.get());
     addSlowPathGenerator(WTF::move(slowPath));

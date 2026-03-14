@@ -1,6 +1,4 @@
 
 
-Harness Error (FAIL), message = Unhandled rejection: assert_unreached: target1 is removed and should never get pointer capture. Reached unreachable code
-
-FAIL setPointerCapture target removed by lostpointercapture assert_equals: expected "pointerover@button, pointerenter@button, pointerdown@button, pointerout@button, pointerleave@button, pointerover@target0, pointerenter@target0, gotpointercapture@target0, lostpointercapture@target0, pointerout@target0, pointerleave@target0, pointerover@button, pointerenter@button, pointerup@button" but got "pointerover@button, pointerenter@button, pointerdown@button, pointerout@button, pointerleave@button, pointerover@target0, pointerenter@target0, gotpointercapture@target0, lostpointercapture@target0, pointerout@target0, pointerleave@target0, pointerover@target1, pointerenter@target1, gotpointercapture@target1, pointerover@button, pointerenter@button, pointerup@button"
+PASS setPointerCapture target removed by lostpointercapture
 

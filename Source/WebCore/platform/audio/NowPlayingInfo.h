@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/Image.h>
+#include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaUniqueIdentifier.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -65,6 +66,7 @@ struct NowPlayingInfo {
     bool isPlaying { false };
     bool allowsNowPlayingControlsVisibility { false };
     bool isVideo { false };
+    MediaPlayerEnums::VideoFullscreenMode fullscreenMode { MediaPlayerEnums::VideoFullscreenModeNone };
 
     friend bool operator==(const NowPlayingInfo&, const NowPlayingInfo&) = default;
 };

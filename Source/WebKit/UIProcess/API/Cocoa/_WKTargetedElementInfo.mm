@@ -147,7 +147,7 @@
 
 - (BOOL)isSameElement:(_WKTargetedElementInfo *)other
 {
-    return protect(*_info)->isSameElement(protect(*other->_info));
+    return _info->isSameElement(*other->_info);
 }
 
 - (BOOL)isNearbyTarget

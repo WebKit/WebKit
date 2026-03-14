@@ -16,7 +16,7 @@ if (window.testRunner)
 description("Test that bundles are automatically zipped when uploaded with XMLHttpRequest. To test manually, please select a file bundle in the \"Choose File\" input below.");
 jsTestIsAsync = true;
 
-window.onload = function()
+window.onload = async function()
 {
     var fileInput = document.getElementById("fileInput");
 
@@ -28,7 +28,7 @@ window.onload = function()
     var centerX = fileInput.offsetLeft + fileInput.offsetWidth / 2;
     var centerY = fileInput.offsetTop + fileInput.offsetHeight / 2;
     testRunner.setOpenPanelFiles(["resources/document.rtfd"]);
-    UIHelper.activateAt(centerX, centerY);
+    await UIHelper.activateAt(centerX, centerY);
 }
 
 function onchange(event)

@@ -79,7 +79,7 @@ WebBackForwardListItem* WebBackForwardListItem::itemForID(BackForwardItemIdentif
     return allItems().get(identifier);
 }
 
-static const FrameState* childItemWithTarget(const FrameState& frameState, const String& target)
+static const FrameState* NODELETE childItemWithTarget(const FrameState& frameState, const String& target)
 {
     for (auto& child : frameState.children) {
         if (child->target == target)
@@ -95,13 +95,10 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
         return false;
 
     // The following logic must be kept in sync with WebCore::HistoryItem::shouldDoSameDocumentNavigationTo().
-    Ref mainFrameState = this->mainFrameState();
-    Ref otherMainFrameState = other.mainFrameState();
-
-    return mainFrameState->documentSequenceNumber == otherMainFrameState->documentSequenceNumber;
+    return mainFrameState().documentSequenceNumber == other.mainFrameState().documentSequenceNumber;
 }
 
-static bool hasSameFrames(const FrameState& a, const FrameState& b)
+static bool NODELETE hasSameFrames(const FrameState& a, const FrameState& b)
 {
     if (a.target != b.target)
         return false;
@@ -124,8 +121,8 @@ bool WebBackForwardListItem::itemIsClone(const WebBackForwardListItem& other)
     if (this == &other)
         return false;
 
-    Ref mainFrameState = this->mainFrameState();
-    Ref otherMainFrameState = other.mainFrameState();
+    Ref mainFrameState = copyMainFrameStateWithChildren();
+    Ref otherMainFrameState = other.copyMainFrameStateWithChildren();
 
     if (mainFrameState->itemSequenceNumber != otherMainFrameState->itemSequenceNumber)
         return false;
@@ -157,12 +154,12 @@ SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
     return m_backForwardCacheEntry ? m_backForwardCacheEntry->suspendedPage() : nullptr;
 }
 
-Ref<FrameState> WebBackForwardListItem::navigatedFrameState() const
+const FrameState& WebBackForwardListItem::mainFrameState() const
 {
-    return protect(navigatedFrameItem())->copyFrameStateWithChildren();
+    return m_mainFrameItem->frameState();
 }
 
-Ref<FrameState> WebBackForwardListItem::mainFrameState() const
+Ref<FrameState> WebBackForwardListItem::copyMainFrameStateWithChildren() const
 {
     return m_mainFrameItem->copyFrameStateWithChildren();
 }

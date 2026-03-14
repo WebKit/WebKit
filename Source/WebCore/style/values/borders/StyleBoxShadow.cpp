@@ -106,7 +106,7 @@ void Serialize<BoxShadowList>::operator()(StringBuilder& builder, const CSS::Ser
 
 // MARK: - Blending
 
-static inline std::optional<CSS::Keyword::Inset> blendInset(std::optional<CSS::Keyword::Inset> a, std::optional<CSS::Keyword::Inset> b, const BlendingContext& context)
+static inline std::optional<CSS::Keyword::Inset> NODELETE blendInset(std::optional<CSS::Keyword::Inset> a, std::optional<CSS::Keyword::Inset> b, const BlendingContext& context)
 {
     if (a == b)
         return b;

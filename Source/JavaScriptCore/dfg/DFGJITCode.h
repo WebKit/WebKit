@@ -51,7 +51,7 @@ namespace DFG {
 class JITCode;
 class JITCompiler;
 
-struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
+struct UnlinkedPropertyInlineCache : JSC::UnlinkedPropertyInlineCache {
     CodeOrigin codeOrigin;
     ScalarRegisterSet usedRegisters;
     CallSiteIndex callSiteIndex;
@@ -59,7 +59,7 @@ struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     GPRReg m_valueGPR { InvalidGPRReg };
     GPRReg m_extraGPR { InvalidGPRReg };
     GPRReg m_extra2GPR { InvalidGPRReg };
-    GPRReg m_stubInfoGPR { InvalidGPRReg };
+    GPRReg m_propertyCacheGPR { InvalidGPRReg };
 #if USE(JSVALUE32_64)
     GPRReg m_valueTagGPR { InvalidGPRReg };
     GPRReg m_baseTagGPR { InvalidGPRReg };
@@ -153,10 +153,10 @@ private:
     FixedVector<Value> m_constants;
 };
 
-class JITData final : public ButterflyArray<JITData, StructureStubInfo, void*> {
+class JITData final : public ButterflyArray<JITData, HandlerPropertyInlineCache, void*> {
     friend class JSC::LLIntOffsetsExtractor;
 public:
-    using Base = ButterflyArray<JITData, StructureStubInfo, void*>;
+    using Base = ButterflyArray<JITData, HandlerPropertyInlineCache, void*>;
     using ExitVector = FixedVector<MacroAssemblerCodeRef<OSRExitPtrTag>>;
 
     static constexpr ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
@@ -177,21 +177,21 @@ public:
         m_isInvalidated = 1;
     }
 
-    auto stubInfos() -> decltype(leadingSpan())
+    auto propertyInlineCaches() -> decltype(leadingSpan())
     {
         return leadingSpan();
     }
 
-    StructureStubInfo& stubInfo(unsigned index)
+    HandlerPropertyInlineCache& propertyCache(unsigned index)
     {
-        auto span = stubInfos();
+        auto span = propertyInlineCaches();
         return span[span.size() - index - 1];
     }
 
-    FixedVector<OptimizingCallLinkInfo>& callLinkInfos() { return m_callLinkInfos; }
+    FixedVector<OptimizingCallLinkInfo>& callLinkInfos() LIFETIME_BOUND { return m_callLinkInfos; }
 
-    UpperTierExecutionCounter& tierUpCounter() { return m_tierUpCounter; }
-    const UpperTierExecutionCounter& tierUpCounter() const { return m_tierUpCounter; }
+    UpperTierExecutionCounter& tierUpCounter() LIFETIME_BOUND { return m_tierUpCounter; }
+    const UpperTierExecutionCounter& tierUpCounter() const LIFETIME_BOUND { return m_tierUpCounter; }
 
     uint8_t neverExecutedEntry() const { return m_neverExecutedEntry; }
 
@@ -203,7 +203,7 @@ public:
     static constexpr ptrdiff_t offsetOfTierUpTotalCount() { return OBJECT_OFFSETOF(JITData, m_tierUpCounter) + OBJECT_OFFSETOF(UpperTierExecutionCounter, m_totalCount); }
     static constexpr ptrdiff_t offsetOfNeverExecutedEntry() { return OBJECT_OFFSETOF(JITData, m_neverExecutedEntry); }
 
-    explicit JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode&, ExitVector&&);
+    explicit JITData(unsigned propertyCacheSize, unsigned poolSize, const JITCode&, ExitVector&&);
 
     void finalizeUnconditionally()
     {
@@ -272,7 +272,7 @@ public:
 
     RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) final;
 #if ENABLE(FTL_JIT)
-    CodeBlock* osrEntryBlock() { return m_osrEntryBlock.get(); }
+    CodeBlock* osrEntryBlock() LIFETIME_BOUND { return m_osrEntryBlock.get(); }
     void setOSREntryBlock(VM&, const JSCell* owner, CodeBlock* osrEntryBlock);
     void clearOSREntryBlockAndResetThresholds(CodeBlock* dfgCodeBlock);
 #endif
@@ -295,7 +295,7 @@ public:
     FixedVector<DFG::SpeculationRecovery> m_speculationRecovery;
     FixedVector<SimpleJumpTable> m_switchJumpTables;
     FixedVector<StringJumpTable> m_stringSwitchJumpTables;
-    FixedVector<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
+    FixedVector<UnlinkedPropertyInlineCache> m_unlinkedPropertyInlineCaches;
     FixedVector<UnlinkedCallLinkInfo> m_unlinkedCallLinkInfos;
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
@@ -331,7 +331,7 @@ public:
 
 inline std::unique_ptr<JITData> JITData::tryCreate(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode, ExitVector&& exits)
 {
-    auto result = std::unique_ptr<JITData> { createImpl(jitCode.m_unlinkedStubInfos.size(), jitCode.m_linkerIR.size(), jitCode, WTF::move(exits)) };
+    auto result = std::unique_ptr<JITData> { createImpl(jitCode.m_unlinkedPropertyInlineCaches.size(), jitCode.m_linkerIR.size(), jitCode, WTF::move(exits)) };
     if (result->tryInitialize(vm, codeBlock, jitCode))
         return result;
     return nullptr;

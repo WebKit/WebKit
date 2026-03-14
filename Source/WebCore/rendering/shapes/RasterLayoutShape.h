@@ -48,16 +48,16 @@ public:
     }
 
     void initializeBounds();
-    const IntRect& bounds() const { return m_bounds; }
+    const IntRect& bounds() const LIFETIME_BOUND { return m_bounds; }
     bool isEmpty() const { return m_bounds.isEmpty(); }
 
-    IntShapeInterval& intervalAt(int y)
+    IntShapeInterval& intervalAt(int y) LIFETIME_BOUND
     {
         ASSERT(y + m_offset >= 0 && static_cast<unsigned>(y + m_offset) < m_intervals.size());
         return m_intervals[y + m_offset];
     }
 
-    const IntShapeInterval& intervalAt(int y) const
+    const IntShapeInterval& intervalAt(int y) const LIFETIME_BOUND
     {
         ASSERT(y + m_offset >= 0 && static_cast<unsigned>(y + m_offset) < m_intervals.size());
         return m_intervals[y + m_offset];
@@ -99,7 +99,7 @@ public:
     }
 
 private:
-    const RasterShapeIntervals& marginIntervals() const;
+    const RasterShapeIntervals& marginIntervals() const LIFETIME_BOUND;
 
     const std::unique_ptr<RasterShapeIntervals> m_intervals;
     const std::unique_ptr<RasterShapeIntervals> m_marginIntervals;

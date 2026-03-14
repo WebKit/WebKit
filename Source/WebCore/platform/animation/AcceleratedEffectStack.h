@@ -39,7 +39,7 @@ class WEBCORE_EXPORT AcceleratedEffectStack : public RefCounted<AcceleratedEffec
 public:
     static Ref<AcceleratedEffectStack> create();
 
-    bool hasEffects() const;
+    bool NODELETE hasEffects() const;
     const AcceleratedEffects& primaryLayerEffects() const LIFETIME_BOUND { return m_primaryLayerEffects; }
     const AcceleratedEffects& backdropLayerEffects() const LIFETIME_BOUND { return m_backdropLayerEffects; }
     void setEffects(AcceleratedEffects&&);

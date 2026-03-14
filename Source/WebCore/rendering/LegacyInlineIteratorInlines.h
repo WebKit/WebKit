@@ -20,6 +20,7 @@
 #pragma once
 
 #include "LegacyInlineIterator.h"
+#include "LegacyLineLayout.h"
 #include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {

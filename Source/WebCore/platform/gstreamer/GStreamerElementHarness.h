@@ -98,7 +98,7 @@ public:
 
     GstPad* inputPad() const { return m_srcPad.get(); }
     const GRefPtr<GstCaps>& inputCaps() const { return m_inputCaps; }
-    const Vector<RefPtr<Stream>>& outputStreams() const { return m_outputStreams; }
+    const Vector<RefPtr<Stream>>& outputStreams() const LIFETIME_BOUND { return m_outputStreams; }
 
     GstElement* element() const { return m_element.get(); }
 

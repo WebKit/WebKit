@@ -33,7 +33,7 @@ namespace JSC {
 class CallLinkInfo;
 class DirectCallLinkInfo;
 class OptimizingCallLinkInfo;
-class StructureStubInfo;
+class PropertyInlineCache;
 
 enum class GetByKind {
     ById,
@@ -74,32 +74,32 @@ enum class InByKind {
     PrivateName
 };
 
-void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&, GetByKind);
-void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, const PropertySlot&, StructureStubInfo&, GetByKind);
-void repatchArrayPutByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&, PutByKind);
-void repatchPutBy(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, StructureStubInfo&, PutByKind);
-void repatchDeleteBy(JSGlobalObject*, CodeBlock*, DeletePropertySlot&, JSValue, Structure*, CacheableIdentifier, StructureStubInfo&, DelByKind, ECMAMode);
-void repatchArrayInByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&, InByKind);
-void repatchInBy(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound, const PropertySlot&, StructureStubInfo&, InByKind);
-void repatchHasPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound,  StructureStubInfo&);
-void repatchCheckPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, StructureStubInfo&);
-void repatchSetPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, Structure*, CacheableIdentifier, StructureStubInfo&);
-void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue, JSValue prototype, StructureStubInfo&, bool wasFound);
+void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, PropertyInlineCache&, GetByKind);
+void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, const PropertySlot&, PropertyInlineCache&, GetByKind);
+void repatchArrayPutByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, PropertyInlineCache&, PutByKind);
+void repatchPutBy(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, PropertyInlineCache&, PutByKind);
+void repatchDeleteBy(JSGlobalObject*, CodeBlock*, DeletePropertySlot&, JSValue, Structure*, CacheableIdentifier, PropertyInlineCache&, DelByKind, ECMAMode);
+void repatchArrayInByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, PropertyInlineCache&, InByKind);
+void repatchInBy(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound, const PropertySlot&, PropertyInlineCache&, InByKind);
+void repatchHasPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound,  PropertyInlineCache&);
+void repatchCheckPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, PropertyInlineCache&);
+void repatchSetPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, Structure*, CacheableIdentifier, PropertyInlineCache&);
+void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue, JSValue prototype, PropertyInlineCache&, bool wasFound);
 void linkMonomorphicCall(VM&, JSCell*, CallLinkInfo&, CodeBlock*, JSObject* callee, CodePtr<JSEntryPtrTag>);
 void linkDirectCall(DirectCallLinkInfo&, CodeBlock*, CodePtr<JSEntryPtrTag>);
 void linkPolymorphicCall(VM&, JSCell*, CallFrame*, CallLinkInfo&, CallVariant);
-void resetGetBy(CodeBlock*, StructureStubInfo&, GetByKind);
-void resetPutBy(CodeBlock*, StructureStubInfo&, PutByKind);
-void resetDelBy(CodeBlock*, StructureStubInfo&, DelByKind);
-void resetInBy(CodeBlock*, StructureStubInfo&, InByKind);
-void resetHasPrivateBrand(CodeBlock*, StructureStubInfo&);
-void resetInstanceOf(CodeBlock*, StructureStubInfo&);
-void resetCheckPrivateBrand(CodeBlock*, StructureStubInfo&);
-void resetSetPrivateBrand(CodeBlock*, StructureStubInfo&);
+void resetGetBy(CodeBlock*, PropertyInlineCache&, GetByKind);
+void resetPutBy(CodeBlock*, PropertyInlineCache&, PutByKind);
+void resetDelBy(CodeBlock*, PropertyInlineCache&, DelByKind);
+void resetInBy(CodeBlock*, PropertyInlineCache&, InByKind);
+void resetHasPrivateBrand(CodeBlock*, PropertyInlineCache&);
+void resetInstanceOf(CodeBlock*, PropertyInlineCache&);
+void resetCheckPrivateBrand(CodeBlock*, PropertyInlineCache&);
+void resetSetPrivateBrand(CodeBlock*, PropertyInlineCache&);
 
-void repatchGetBySlowPathCall(CodeBlock*, StructureStubInfo&, GetByKind);
-void repatchPutBySlowPathCall(CodeBlock*, StructureStubInfo&, PutByKind);
-void repatchInBySlowPathCall(CodeBlock*, StructureStubInfo&, InByKind);
+void repatchGetBySlowPathCall(CodeBlock*, PropertyInlineCache&, GetByKind);
+void repatchPutBySlowPathCall(CodeBlock*, PropertyInlineCache&, PutByKind);
+void repatchInBySlowPathCall(CodeBlock*, PropertyInlineCache&, InByKind);
 
 void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall<JSInternalPtrTag>, CodePtr<CFunctionPtrTag> newCalleeFunction);
 CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind, JSObject* callee);

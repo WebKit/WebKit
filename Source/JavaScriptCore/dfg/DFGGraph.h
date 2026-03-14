@@ -57,6 +57,7 @@ namespace JSC {
 
 class CodeBlock;
 class CallFrame;
+class IRDumpDebugInfo;
 
 namespace DFG {
 
@@ -1062,8 +1063,8 @@ public:
 
     Profiler::Compilation* compilation() { return m_plan.compilation(); }
 
-    DesiredIdentifiers& identifiers() { return m_plan.identifiers(); }
-    DesiredWatchpoints& watchpoints() { return m_plan.watchpoints(); }
+    DesiredIdentifiers& identifiers() LIFETIME_BOUND { return m_plan.identifiers(); }
+    DesiredWatchpoints& watchpoints() LIFETIME_BOUND { return m_plan.watchpoints(); }
 
     // Returns false if the key is already invalid or unwatchable. If this is a Presence condition,
     // this also makes it cheap to query if the condition holds. Also makes sure that the GC knows
@@ -1296,7 +1297,7 @@ public:
         return result;
     }
 
-    Prefix& prefix() { return m_prefix; }
+    Prefix& prefix() LIFETIME_BOUND { return m_prefix; }
     void nextPhase() { m_prefix.phaseNumber++; }
 
     const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(unsigned index) const { return *m_unlinkedSwitchJumpTables[index]; }
@@ -1320,6 +1321,8 @@ public:
     bool afterFixup() { return m_planStage >= PlanStage::AfterFixup; }
 
     RefPtr<JSON::Array> ionGraphPasses() const { return m_ionGraphPasses; }
+
+    UncheckedKeyHashMap<Node*, uint32_t> collectIRDumpDebugInfo(IRDumpDebugInfo&);
 
     StackCheck m_stackChecker;
     VM& m_vm;

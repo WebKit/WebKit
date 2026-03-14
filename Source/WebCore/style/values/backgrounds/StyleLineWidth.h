@@ -63,7 +63,7 @@ using LineWidthBox = MinimallySerializingSpaceSeparatedRectEdges<Style::LineWidt
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<LineWidth> { auto operator()(BuilderState&, const CSSValue&) -> LineWidth; };
+template<> struct CSSValueConversion<LineWidth> { LineWidth operator()(BuilderState&, const CSSValue&); };
 
 // MARK: - Blending
 
@@ -81,10 +81,10 @@ template<typename Result> struct Evaluation<LineWidth, Result> {
 };
 
 template<> struct Evaluation<LineWidthBox, FloatBoxExtent> {
-    auto operator()(const LineWidthBox&, ZoomNeeded) -> FloatBoxExtent;
+    FloatBoxExtent NODELETE operator()(const LineWidthBox&, ZoomNeeded);
 };
 template<> struct Evaluation<LineWidthBox, LayoutBoxExtent> {
-    auto operator()(const LineWidthBox&, ZoomNeeded) -> LayoutBoxExtent;
+    LayoutBoxExtent NODELETE operator()(const LineWidthBox&, ZoomNeeded);
 };
 
 } // namespace Style

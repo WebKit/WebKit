@@ -1078,7 +1078,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementIOS::selectedTextRange()
     return [rangeDescription createJSStringRef];
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElementIOS::intersectionWithSelectionRange()
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementIOS::intersectionWithSelectionRange()
 {
     return nullptr;
 }

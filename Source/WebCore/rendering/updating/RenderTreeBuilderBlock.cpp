@@ -326,7 +326,7 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
         return;
 
     auto* parent = anonymousBlock.parent();
-    if (is<RenderButton>(*parent) || is<RenderTextControl>(*parent))
+    if (isAnyOf<RenderButton, RenderTextControl>(*parent))
         return;
 
     m_builder.removeFloatingObjects(anonymousBlock);

@@ -59,8 +59,8 @@ private:
     bool blendCurveToQuadraticSmoothSegment(float progress);
     bool blendArcToSegment(float progress);
 
-    float blendAnimatedDimensonalFloat(float from, float to, FloatBlendMode, float progress);
-    FloatPoint blendAnimatedFloatPoint(const FloatPoint& from, const FloatPoint& to, float progress);
+    float NODELETE blendAnimatedDimensonalFloat(float from, float to, FloatBlendMode, float progress);
+    FloatPoint NODELETE blendAnimatedFloatPoint(const FloatPoint& from, const FloatPoint& to, float progress);
 
     SingleThreadWeakRef<SVGPathSource> m_fromSource;
     SingleThreadWeakRef<SVGPathSource> m_toSource;

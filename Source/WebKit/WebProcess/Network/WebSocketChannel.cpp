@@ -152,9 +152,9 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
         return ConnectStatus::KO;
     auto frameID = frame ? std::optional(frame->frameID()) : std::nullopt;
     pageID = mainFrame->pageID();
-    if (RefPtr policySourceDocumentLoader = mainFrame->document() ? protect(mainFrame->document())->loader() : nullptr) {
+    if (RefPtr policySourceDocumentLoader = mainFrame->document() ? mainFrame->document()->loader() : nullptr) {
         if (!policySourceDocumentLoader->request().url().hasSpecialScheme() && protect(frame->document())->url().protocolIsInHTTPFamily())
-            policySourceDocumentLoader = protect(frame->document())->loader();
+            policySourceDocumentLoader = frame->document()->loader();
 
         if (policySourceDocumentLoader) {
             allowPrivacyProxy = policySourceDocumentLoader->allowPrivacyProxy();

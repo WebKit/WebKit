@@ -301,7 +301,7 @@ void RemoteScrollingTreeMac::currentSnapPointIndicesDidChange(ScrollingNodeID no
 void RemoteScrollingTreeMac::reportExposedUnfilledArea(MonotonicTime time, unsigned unfilledArea)
 {
     RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, time, unfilledArea] {
-        if (CheckedPtr scrollingCoordinatorProxy = protectedThis->scrollingCoordinatorProxy())
+        if (auto* scrollingCoordinatorProxy = protectedThis->scrollingCoordinatorProxy())
             scrollingCoordinatorProxy->reportExposedUnfilledArea(time, unfilledArea);
     });
 }

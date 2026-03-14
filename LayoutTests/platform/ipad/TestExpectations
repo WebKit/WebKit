@@ -92,8 +92,6 @@ imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.html
 imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/user-activation/propagation-sameorigin.html  [ Failure ]
 
-webkit.org/b/271712 fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Timeout ]
-
 # webkit.org/b/269496 [ iOS17 ] fast/forms/datalist/datalist-option-labels.html is a flaky timeout
 fast/forms/datalist/datalist-option-labels.html [ Pass Timeout ]
 
@@ -163,8 +161,6 @@ fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html [
 fast/visual-viewport/ios/resize-event-for-keyboard.html [ Skip ]
 fast/visual-viewport/ios/visual-viewport-dimensions-during-scroll-with-keyboard.html [ Skip ]
 scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html [ Skip ]
-
-webkit.org/b/309088 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Failure ]
 
 # Failure only on iPad simulator 
 webkit.org/b/307451 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-keyboard-behavior.optional.html [ Pass Failure ]

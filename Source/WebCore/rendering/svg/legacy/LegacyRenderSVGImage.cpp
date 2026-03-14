@@ -86,7 +86,7 @@ SVGImageElement& LegacyRenderSVGImage::imageElement() const
 FloatRect LegacyRenderSVGImage::calculateObjectBoundingBox() const
 {
     LayoutSize intrinsicSize;
-    if (CachedImage* cachedImage = imageResource().cachedImage())
+    if (RefPtr cachedImage = imageResource().cachedImage())
         intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
 
     Ref imageElement = this->imageElement();
@@ -128,7 +128,7 @@ bool LegacyRenderSVGImage::updateImageViewport()
     // by setting the image's container size to its intrinsic size.
     // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
     if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
-        if (CachedImage* cachedImage = imageResource().cachedImage()) {
+        if (RefPtr cachedImage = imageResource().cachedImage()) {
             LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
             if (intrinsicSize != imageResource().imageSize(style().usedZoom())) {
                 imageResource().setContainerContext(roundedIntSize(intrinsicSize), imageSourceURL);
@@ -184,6 +184,14 @@ void LegacyRenderSVGImage::layout()
 
 void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        if (style().usedVisibility() == Visibility::Hidden || m_objectBoundingBox.isEmpty())
+            return;
+
+        paintInfo.eventRegionContext()->unite(FloatRoundedRect(strokeBoundingBox()), *this, style(), false);
+        return;
+    }
+
     if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhase::Foreground
         || style().usedVisibility() == Visibility::Hidden || !imageResource().cachedImage())
         return;
@@ -232,7 +240,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     auto& context = paintInfo.context();
     context.drawImage(*image, destRect, srcRect, options);
 
-    auto* cachedImage = imageResource().cachedImage();
+    RefPtr cachedImage = imageResource().cachedImage();
     if (cachedImage && !context.paintingDisabled())
         protect(document())->didPaintImage(imageElement(), cachedImage, destRect);
 }
@@ -249,7 +257,7 @@ bool LegacyRenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTe
         return false;
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGImage, request, usedPointerEvents());
-    if (isVisibleToHitTesting(style(), request) || !hitRules.requireVisible) {
+    if (request.isVisibleForStyle(style()) || !hitRules.requireVisible) {
         static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
         SVGVisitedRendererTracking recursionTracking(s_visitedSet);
@@ -296,7 +304,7 @@ void LegacyRenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
 
     repaint();
 
-    if (auto* image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
+    if (RefPtr image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
         if (auto styleable = Styleable::fromRenderer(*this))
             protect(document())->didLoadImage(protect(styleable->element).get(), image);
     }

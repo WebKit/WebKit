@@ -36,7 +36,7 @@ class MathMLFractionElement final : public MathMLRowElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLFractionElement);
 public:
     static Ref<MathMLFractionElement> create(const QualifiedName& tagName, Document&);
-    const Length& lineThickness();
+    const Length& lineThickness() LIFETIME_BOUND;
     enum class FractionAlignment : uint8_t {
         Center,
         Left,

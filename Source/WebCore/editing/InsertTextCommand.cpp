@@ -69,7 +69,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
     if (parentTabSpanNode(pos.anchorNode())) {
         auto textNode = document().createEditingTextNode(String { emptyString() });
         insertNodeAtTabSpanPosition(textNode.copyRef(), pos);
-        return firstPositionInNode(textNode.ptr());
+        return firstPositionInNode(textNode);
     }
 
     // Prepare for text input by looking at the specified position.
@@ -77,7 +77,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
     if (!pos.containerNode()->isTextNode()) {
         auto textNode = document().createEditingTextNode(String { emptyString() });
         insertNodeAt(textNode.copyRef(), pos);
-        return firstPositionInNode(textNode.ptr());
+        return firstPositionInNode(textNode);
     }
 
     return pos;
@@ -143,7 +143,7 @@ bool InsertTextCommand::applySmartListsIfNeeded()
     if (!selectionAllowsSmartLists(m_text, endingSelection()))
         return false;
 
-    auto lineStart = startOfLine(endingSelection().visibleBase());
+    auto lineStart = logicalStartOfLine(endingSelection().visibleBase());
     if (lineStart.isNull() || lineStart.isOrphan()) {
         ASSERT_NOT_REACHED();
         return false;
@@ -234,7 +234,7 @@ void InsertTextCommand::doApply()
     
     // It is possible for the node that contains startPosition to contain only unrendered whitespace,
     // and so deleteInsignificantText could remove it.  Save the position before the node in case that happens.
-    Position positionBeforeStartNode(positionInParentBeforeNode(startPosition.containerNode()));
+    Position positionBeforeStartNode(positionInParentBeforeNode(*startPosition.containerNode()));
 
     if (!document().editor().isInsertingTextForWritingSuggestion())
         deleteInsignificantText(startPosition, startPosition.downstream());
@@ -361,7 +361,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
         insertNodeAt(spanNode.copyRef(), insertPos);
 
     // return the position following the new tab
-    return lastPositionInNode(spanNode.ptr());
+    return lastPositionInNode(spanNode);
 }
 
 }

@@ -36,7 +36,7 @@ class ContentType;
 
 class WEBCORE_EXPORT AVAssetMIMETypeCache final : public MIMETypeCache {
 public:
-    static AVAssetMIMETypeCache& singleton();
+    static AVAssetMIMETypeCache& NODELETE singleton();
 
     using CacheMIMETypesCallback = std::function<void(const Vector<String>&)>;
     void setCacheMIMETypesCallback(CacheMIMETypesCallback&& callback) { m_cacheTypeCallback = WTF::move(callback); }

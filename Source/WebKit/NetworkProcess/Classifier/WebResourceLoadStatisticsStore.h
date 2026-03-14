@@ -218,7 +218,7 @@ public:
     void didCreateNetworkProcess();
 
     NetworkSession* NODELETE networkSession();
-    void invalidateAndCancel();
+    void NODELETE invalidateAndCancel();
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&, CompletionHandler<void()>&&);
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);

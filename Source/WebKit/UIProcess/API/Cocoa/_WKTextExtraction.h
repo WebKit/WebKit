@@ -264,6 +264,18 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
  */
 - (void)requestJSHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
 
+/*!
+ Asynchronously map a node identifier string (corresponding to a `uid` in
+ text extraction output) to a corresponding JS handle to an appropriately-sized
+ container element. If the element matching the node identifier and/or search
+ text is too small, traverses ancestors until it finds a container that meets a
+ minimum size threshold.
+ @param nodeIdentifier  The ID of the node to extract, or the ID of the node to search if `searchText` is additionally specified.
+ @param searchText      Rendered text to search inside the document or node corresponding to `nodeIdentifier`. The resulting element will fully contain this text.
+ At least one of `nodeIdentifier` or `searchText` must be specified.
+ */
+- (void)requestContainerJSHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKTextExtractionAction) {

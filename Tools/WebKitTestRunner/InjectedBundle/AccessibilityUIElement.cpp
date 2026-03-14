@@ -624,7 +624,7 @@ double AccessibilityUIElement::intValue() const
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::intersectionWithSelectionRange()
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::intersectionWithSelectionRange()
 {
     return nullptr;
 }

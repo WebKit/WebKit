@@ -129,10 +129,10 @@ private:
         protect(m_subscriber)->complete();
     }
 
-    void visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor) const final
+    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
-        m_subscriber->visitAdditionalChildren(visitor);
-        m_mapper->visitJSFunction(visitor);
+        m_subscriber->visitAdditionalChildrenInGCThread(visitor);
+        m_mapper->visitJSFunctionInGCThread(visitor);
     }
 
     InternalObserverMap(ScriptExecutionContext& context, Ref<Subscriber> subscriber, Ref<MapperCallback> mapper)

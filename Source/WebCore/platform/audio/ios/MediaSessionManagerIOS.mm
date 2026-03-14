@@ -31,7 +31,6 @@
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlayer.h"
-#import "PlatformMediaConfiguration.h"
 #import "PlatformMediaSession.h"
 #import "SystemMemory.h"
 #import "WebCoreThreadRun.h"
@@ -174,28 +173,6 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange(HasAvailable
 void MediaSessionManageriOS::isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit playingToAutomotiveHeadUnit)
 {
     setIsPlayingToAutomotiveHeadUnit(playingToAutomotiveHeadUnit == PlayingToAutomotiveHeadUnit::Yes);
-}
-
-void MediaSessionManageriOS::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialPlayback)
-{
-    setSupportsSpatialAudioPlayback(supportsSpatialPlayback == SupportsSpatialAudioPlayback::Yes);
-}
-
-std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration& configuration)
-{
-    ASSERT(configuration.audio);
-
-    // Only multichannel audio can be spatially rendered on iOS.
-    if (!configuration.audio || configuration.audio->channels.toDouble() <= 2)
-        return { false };
-
-    auto supportsSpatialAudioPlayback = this->supportsSpatialAudioPlayback();
-    if (supportsSpatialAudioPlayback.has_value())
-        return supportsSpatialAudioPlayback;
-
-    MediaSessionHelper::sharedHelper().updateActiveAudioRouteSupportsSpatialPlayback();
-
-    return this->supportsSpatialAudioPlayback();
 }
 
 void MediaSessionManageriOS::activeAudioRouteDidChange(ShouldPause shouldPause)

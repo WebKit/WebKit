@@ -89,8 +89,8 @@ Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(CSS::URL lo
 
 RefPtr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecutionContext& context, bool isInitiatingElementInUserAgentShadowTree)
 {
-    if (m_cachedFont)
-        return CachedFontLoadRequest::create(*m_cachedFont, context);
+    if (RefPtr cachedFont = m_cachedFont)
+        return CachedFontLoadRequest::create(*cachedFont, context);
 
     bool isFormatSVG;
     if (m_format.isEmpty()) {
@@ -121,7 +121,8 @@ RefPtr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecu
 
 bool CSSFontFaceSrcResourceValue::customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const
 {
-    return m_cachedFont && handler(*m_cachedFont);
+    RefPtr cachedFont = m_cachedFont;
+    return cachedFont && handler(*cachedFont);
 }
 
 bool CSSFontFaceSrcResourceValue::customMayDependOnBaseURL() const

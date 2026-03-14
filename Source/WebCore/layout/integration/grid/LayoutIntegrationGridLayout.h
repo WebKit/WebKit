@@ -66,8 +66,8 @@ private:
     const RenderGrid& gridBoxRenderer() const { return downcast<RenderGrid>(*m_gridBox->rendererForIntegration()); }
     RenderGrid& gridBoxRenderer() { return downcast<RenderGrid>(*m_gridBox->rendererForIntegration()); }
 
-    Layout::LayoutState& layoutState() { return m_layoutState; }
-    const Layout::LayoutState& layoutState() const { return m_layoutState; }
+    Layout::LayoutState& layoutState() LIFETIME_BOUND { return m_layoutState; }
+    const Layout::LayoutState& layoutState() const LIFETIME_BOUND { return m_layoutState; }
 
     const CheckedPtr<Layout::ElementBox> m_gridBox;
     CheckedRef<Layout::LayoutState> m_layoutState;

@@ -78,7 +78,7 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const;
+    bool NODELETE isValid() const;
 
     Device& device() const { return m_device; }
     NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
@@ -86,13 +86,13 @@ public:
     void replayCommands(RenderPassEncoder&) const;
     void updateMinMaxDepths(float minDepth, float maxDepth);
     bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor&, const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
-    bool validatePipeline(const RenderPipeline*);
-    uint64_t drawCount() const;
-    NSString* lastError() const;
-    bool requiresCommandReplay() const;
-    bool makeSubmitInvalid() const;
+    bool NODELETE validatePipeline(const RenderPipeline*);
+    uint64_t NODELETE drawCount() const;
+    NSString* NODELETE lastError() const;
+    bool NODELETE requiresCommandReplay() const;
+    bool NODELETE makeSubmitInvalid() const;
     bool rebindSamplersIfNeeded() const;
-    const Vector<WebGPU::BindableResources>& resources() { return m_resources; }
+    const Vector<WebGPU::BindableResources>& resources() LIFETIME_BOUND { return m_resources; }
 
 private:
     RenderBundle(NSArray<RenderBundleICBWithResources*> *, Vector<WebGPU::BindableResources>&&, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, uint64_t, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&&, Device&);

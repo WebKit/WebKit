@@ -44,6 +44,14 @@ public:
     IndexMap(const IndexMap&) = default;
     IndexMap& operator=(const IndexMap&) = default;
     
+    // Constrained to non-copyable types so that POD types always use the variadic constructor below,
+    // which zero-initializes via fill (unlike Vector::grow).
+    explicit IndexMap(size_t size)
+        requires (!std::is_copy_constructible_v<Value>)
+    {
+        m_vector.grow(size);
+    }
+
     template<typename... Args>
     explicit IndexMap(size_t size, Args&&... args)
         : m_vector(size, Value(std::forward<Args>(args)...))

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="source">Hello <img class="emoji" alt="&#x1F60C;" src="/assets/emoji.svg"> world</div>
+<div id="destination" contenteditable></div>
+<pre id="output"></pre>
+</body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests that emoji img elements with SVG sources are replaced with their Unicode alt text during copy serialization. This ensures clipboard HTML uses native Unicode emoji instead of external SVG references that may fail to load cross-origin.`);
+
+jsTestIsAsync = true;
+getSelection().setBaseAndExtent(source, 0, source, source.childNodes.length);
+
+destination.addEventListener("paste", () => {
+    // Emoji img should be replaced with its Unicode alt text in clipboard HTML.
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("\u{1F60C}")');
+
+    // The img tag and SVG reference should not be in the clipboard HTML.
+    shouldBeFalse('event.clipboardData.getData("text/html").includes("emoji.svg")');
+
+    // Surrounding text should be preserved.
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("Hello")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("world")');
+
+    // Plain text should also contain the emoji.
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("\u{1F60C}")');
+
+    source.style.display = "none";
+    destination.style.display = "none";
+    finishJSTest();
+});
+
+if (window.testRunner) {
+    if (window.internals)
+        internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.execCommand("Copy");
+    destination.focus();
+    testRunner.execCommand("Paste");
+} else {
+    source.addEventListener("copy", () => {
+        setTimeout(() => destination.focus(), 0);
+    });
+}
+
+</script>
+</html>

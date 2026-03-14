@@ -32,6 +32,7 @@
 #include "ExceptionHelpers.h"
 #include "JSFunctionWithFields.h"
 #include "JSObjectInlines.h"
+#include "JSPIContextInlines.h"
 #include "JSPromise.h"
 
 namespace JSC {

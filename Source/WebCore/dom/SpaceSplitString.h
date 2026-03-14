@@ -45,7 +45,7 @@ public:
         return std::ranges::find(tokens, string) != tokens.end();
     }
 
-    bool containsAll(SpaceSplitStringData&);
+    bool NODELETE containsAll(SpaceSplitStringData&);
 
     unsigned size() const { return m_size; }
     static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }

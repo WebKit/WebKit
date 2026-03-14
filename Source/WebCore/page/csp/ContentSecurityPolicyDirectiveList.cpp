@@ -614,14 +614,14 @@ void ContentSecurityPolicyDirectiveList::parseRequireTrustedTypesFor(ParsedDirec
 
     readCharactersForParsing(directive.value, [&](auto buffer) {
         while (buffer.hasCharactersRemaining()) {
-            skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+            skipWhile<isASCIIWhitespace>(buffer);
             if (buffer.atEnd()) {
                 m_policy->reportEmptyRequireTrustedTypesForDirective();
                 continue;
             }
 
             auto begin = buffer.position();
-            if (skipExactlyIgnoringASCIICase(buffer, "'script'"_s) && (buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer)))
+            if (skipExactlyIgnoringASCIICase(buffer, "'script'"_s) && (buffer.atEnd() || isASCIIWhitespace(*buffer)))
                 m_requireTrustedTypesForScript = true;
             else {
                 skipWhile<isNotASCIIWhitespace>(buffer);
@@ -629,7 +629,7 @@ void ContentSecurityPolicyDirectiveList::parseRequireTrustedTypesFor(ParsedDirec
                 continue;
             }
 
-            ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
+            ASSERT(buffer.atEnd() || isASCIIWhitespace(*buffer));
         }
     });
 }

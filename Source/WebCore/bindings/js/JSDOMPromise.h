@@ -54,12 +54,12 @@ public:
     WEBCORE_EXPORT IsCallbackRegistered whenSettledWithResult(Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&&);
     JSC::JSValue NODELETE result() const;
 
-    void markAsHandled();
+    void NODELETE markAsHandled();
 
     enum class Status { Pending, Fulfilled, Rejected };
     WEBCORE_EXPORT Status status() const;
 
-    static IsCallbackRegistered whenPromiseIsSettled(JSDOMGlobalObject*, JSC::JSPromise*, Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&&);
+    static IsCallbackRegistered whenPromiseIsSettled(JSDOMGlobalObject*, JSC::JSPromise*, Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&&, JSC::JSObject* protectedWrapper = nullptr);
 
 private:
     DOMPromise(JSDOMGlobalObject& globalObject, JSC::JSPromise& promise)

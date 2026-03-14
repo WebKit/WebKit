@@ -84,9 +84,9 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_ModuleReady.set(m_vm, jsNumber(static_cast<unsigned>(JSModuleLoader::Status::Ready)));
     m_promiseRejectionReject.set(m_vm, jsNumber(static_cast<unsigned>(JSPromiseRejectionOperation::Reject)));
     m_promiseRejectionHandle.set(m_vm, jsNumber(static_cast<unsigned>(JSPromiseRejectionOperation::Handle)));
-    m_promiseStatePending.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)));
-    m_promiseStateFulfilled.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Fulfilled)));
-    m_promiseStateRejected.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Rejected)));
+    m_promiseStatePending.set(m_vm, jsNumber(static_cast<int32_t>(JSPromise::Status::Pending)));
+    m_promiseStateFulfilled.set(m_vm, jsNumber(static_cast<int32_t>(JSPromise::Status::Fulfilled)));
+    m_promiseStateRejected.set(m_vm, jsNumber(static_cast<int32_t>(JSPromise::Status::Rejected)));
     m_promiseStateMask.set(m_vm, jsNumber(JSPromise::stateMask));
     m_promiseFlagsIsHandled.set(m_vm, jsNumber(JSPromise::isHandledFlag));
     m_promiseFlagsIsFirstResolvingFunctionCalled.set(m_vm, jsNumber(JSPromise::isFirstResolvingFunctionCalledFlag));

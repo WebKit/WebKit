@@ -45,7 +45,7 @@ public:
     FormAssociatedElement* NODELETE asFormAssociatedElement() final;
     FormListedElement* NODELETE asFormListedElement() final;
     ValidatedFormListedElement* NODELETE asValidatedFormListedElement() final;
-    FormAssociatedCustomElement* formAssociatedCustomElementForElementInternals() const;
+    FormAssociatedCustomElement* NODELETE formAssociatedCustomElementForElementInternals() const;
 
     bool matchesValidPseudoClass() const final;
     bool matchesInvalidPseudoClass() const final;

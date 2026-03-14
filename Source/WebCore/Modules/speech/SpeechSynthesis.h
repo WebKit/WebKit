@@ -114,7 +114,7 @@ private:
     
     PlatformSpeechSynthesizer& ensurePlatformSpeechSynthesizer();
 
-    SpeechSynthesisUtterance* currentSpeechUtterance();
+    SpeechSynthesisUtterance* NODELETE currentSpeechUtterance();
 
     RefPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     std::optional<Vector<Ref<SpeechSynthesisVoice>>> m_voiceList;

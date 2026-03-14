@@ -48,7 +48,7 @@ class DatabaseManager {
     WTF_MAKE_NONCOPYABLE(DatabaseManager);
     friend class WTF::NeverDestroyed<DatabaseManager>;
 public:
-    WEBCORE_EXPORT static DatabaseManager& singleton();
+    WEBCORE_EXPORT static DatabaseManager& NODELETE singleton();
 
     WEBCORE_EXPORT void initialize(const String& databasePath);
     WEBCORE_EXPORT void setClient(DatabaseManagerClient*);

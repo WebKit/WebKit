@@ -65,7 +65,7 @@ public:
     JSDOMGlobalObject* globalObject() { return m_globalObject.get(); }
     JSC::JSObject* callback() { return m_callback.get(); }
 
-    template<typename Visitor> void visitJSFunction(Visitor&);
+    template<typename Visitor> void visitJSFunctionInGCThread(Visitor&);
 
     WEBCORE_EXPORT static JSC::JSValue invokeCallback(JSDOMGlobalObject&, JSC::JSObject* callback, JSC::JSValue thisValue, JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException);
 

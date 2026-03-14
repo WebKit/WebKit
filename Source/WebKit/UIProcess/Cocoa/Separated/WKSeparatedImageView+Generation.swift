@@ -24,11 +24,11 @@
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
 import os
-@_weakLinked internal import RealityKit
-internal import WebKit_Internal
+@_weakLinked import RealityKit
+import WebKit_Internal
 
 extension WKSeparatedImageView {
-    func startImage3DGeneration() -> Task<Void, Error> {
+    func startImage3DGeneration() -> Task<Void, any Error> {
         #if canImport(RealityFoundation, _version: 387)
         if let imageHash = self.imageHash, let cachedData = ImagePresentationCache.shared[imageHash] {
             Logger.separatedImage.log("\(self.logPrefix) - Cache Hit for Image Generation.")
@@ -60,7 +60,7 @@ extension WKSeparatedImageView {
 
         try Task.checkCancellation()
 
-        guard let imageData = await self.imageData, let imgSource = CGImageSourceCreateWithData(imageData as CFData, nil),
+        guard let imageData = await self.ensureImageData(), let imgSource = CGImageSourceCreateWithData(imageData as CFData, nil),
             let spatial3DImage = try? await ImagePresentationComponent.Spatial3DImage(imageSource: imgSource)
         else { return }
 
@@ -75,7 +75,7 @@ extension WKSeparatedImageView {
             self.preparePortalEntity()
 
             let start = Date()
-            try await captured.generate()
+            try await unsafe captured.generate()
             Logger.separatedImage.log("\(self.logPrefix) - Generation took \(Date().timeIntervalSince(start))")
             ImagePresentationCache.shared[imageHash] =
                 ImagePresentationCache.StoredData(spatial3DImage: spatial3DImage, desiredViewingModeSpatial: self.desiredViewingModeSpatial)

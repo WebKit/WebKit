@@ -51,7 +51,7 @@ public:
 
     Class parametersClass() const final { return Class::RsaOaepParams; }
 
-    const Vector<uint8_t>& labelVector() const
+    const Vector<uint8_t>& labelVector() const LIFETIME_BOUND
     {
         if (!m_labelVector.isEmpty() || !label)
             return m_labelVector;

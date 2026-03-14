@@ -123,7 +123,7 @@ struct Type {
     static std::optional<Type> multiply(std::optional<Type> a, Type b) { if (!a) return a; return multiply(*a, b); }
     static Type NODELETE invert(Type);
 
-    static std::optional<Type> sameType(Type, Type);
+    static std::optional<Type> NODELETE sameType(Type, Type);
     static std::optional<Type> NODELETE consistentType(Type, Type);
     static std::optional<Type> NODELETE madeConsistent(Type base, Type input);
 

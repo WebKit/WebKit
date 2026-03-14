@@ -41,14 +41,14 @@ public:
     void setClearGapBeforeFirstLine(InlineLayoutUnit verticalGap) { m_clearGapBeforeFirstLine = verticalGap; }
     InlineLayoutUnit clearGapBeforeFirstLine() const { return m_clearGapBeforeFirstLine; }
 
-    const BlockLayoutState& parentBlockLayoutState() const { return m_parentBlockLayoutState; }
-    BlockLayoutState& parentBlockLayoutState() { return m_parentBlockLayoutState; }
+    const BlockLayoutState& parentBlockLayoutState() const LIFETIME_BOUND { return m_parentBlockLayoutState; }
+    BlockLayoutState& parentBlockLayoutState() LIFETIME_BOUND { return m_parentBlockLayoutState; }
 
-    const PlacedFloats& placedFloats() const { return m_parentBlockLayoutState.placedFloats(); }
-    PlacedFloats& placedFloats() { return m_parentBlockLayoutState.placedFloats(); }
+    const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_parentBlockLayoutState.placedFloats(); }
+    PlacedFloats& placedFloats() LIFETIME_BOUND { return m_parentBlockLayoutState.placedFloats(); }
 
     void setAvailableLineWidthOverride(AvailableLineWidthOverride availableLineWidthOverride) { m_availableLineWidthOverride = availableLineWidthOverride; }
-    const AvailableLineWidthOverride& availableLineWidthOverride() const { return m_availableLineWidthOverride; }
+    const AvailableLineWidthOverride& availableLineWidthOverride() const LIFETIME_BOUND { return m_availableLineWidthOverride; }
 
     void setLegacyClampedLineIndex(size_t lineIndex) { m_legacyClampedLineIndex = lineIndex; }
     std::optional<size_t> legacyClampedLineIndex() const { return m_legacyClampedLineIndex; }

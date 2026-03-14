@@ -30,11 +30,15 @@
 #include <WebCore/ContextMenuItem.h>
 
 namespace WebKit {
+
+enum class WebMouseEventInputSource : uint8_t;
+
 enum class ContextMenuItemEnablement : bool { Disabled, Enabled };
 
 enum class ContextMenuItemIsSeparator : bool { No, Yes };
     
 enum class ContextMenuItemHasAction : bool { No, Yes };
+
 struct PDFContextMenuItem {
     String title;
     int state;
@@ -49,6 +53,7 @@ struct PDFContextMenu {
     WebCore::IntPoint point;
     Vector<PDFContextMenuItem> items;
     std::optional<int> openInDefaultViewerTag;
+    WebMouseEventInputSource inputSource;
 };
     
 };

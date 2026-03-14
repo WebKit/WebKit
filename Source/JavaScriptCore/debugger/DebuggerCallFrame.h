@@ -54,7 +54,7 @@ public:
     // line and column are in base 0 e.g. the first line is line 0.
     int line() const { return m_position.m_line.zeroBasedInt(); }
     int column() const { return m_position.m_column.zeroBasedInt(); }
-    JS_EXPORT_PRIVATE const TextPosition& position() const { return m_position; }
+    JS_EXPORT_PRIVATE const TextPosition& position() const LIFETIME_BOUND { return m_position; }
 
     JS_EXPORT_PRIVATE DebuggerScope* scope(VM&);
     JS_EXPORT_PRIVATE String functionName(VM&) const;

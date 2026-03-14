@@ -43,14 +43,14 @@ class CustomPropertyRegistry {
 public:
     CustomPropertyRegistry(Scope&);
 
-    const CSSRegisteredCustomProperty* get(const AtomString&) const;
-    bool isInherited(const AtomString&) const;
+    const CSSRegisteredCustomProperty* NODELETE get(const AtomString&) const;
+    bool NODELETE isInherited(const AtomString&) const;
 
     bool registerFromAPI(CSSRegisteredCustomProperty&&);
     void registerFromStylesheet(const StyleRuleProperty::Descriptor&);
     void clearRegisteredFromStylesheets();
 
-    const RenderStyle& initialValuePrototypeStyle() const;
+    const RenderStyle& initialValuePrototypeStyle() const LIFETIME_BOUND;
 
     bool invalidatePropertiesWithViewportUnits(Document&);
 

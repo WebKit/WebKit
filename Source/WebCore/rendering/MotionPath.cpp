@@ -64,7 +64,7 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
     );
 }
 
-static FloatPoint normalPositionForOffsetPath(const Style::OffsetPath& offsetPath, const FloatRect& referenceRect)
+static FloatPoint NODELETE normalPositionForOffsetPath(const Style::OffsetPath& offsetPath, const FloatRect& referenceRect)
 {
     if (WTF::holdsAlternative<Style::RayPath>(offsetPath) || WTF::holdsAlternative<Style::BasicShapePath>(offsetPath))
         return referenceRect.center();
@@ -217,7 +217,7 @@ static double lengthForRayContainPath(const FloatRect& elementRect, double compu
     return std::max(0.0, computedPathLength - (std::max(elementRect.width(), elementRect.height()) / 2));
 }
 
-static FloatPoint currentOffsetForData(const MotionPathData& data)
+static FloatPoint NODELETE currentOffsetForData(const MotionPathData& data)
 {
     return FloatPoint(data.usedStartingPosition - data.offsetFromContainingBlock);
 }
@@ -242,7 +242,7 @@ std::optional<Path> MotionPath::computePathForRay(const RayPathOperation& rayPat
     return path;
 }
 
-static FloatRoundedRect offsetRectForData(const MotionPathData& data)
+static FloatRoundedRect NODELETE offsetRectForData(const MotionPathData& data)
 {
     auto rect = data.containingBlockBoundingRect;
     auto shiftedPoint = data.offsetFromContainingBlock;

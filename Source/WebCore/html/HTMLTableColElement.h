@@ -38,7 +38,7 @@ public:
     unsigned span() const { return m_span; }
     WEBCORE_EXPORT void setSpan(unsigned);
 
-    String width() const;
+    String NODELETE width() const;
 
 private:
     HTMLTableColElement(const QualifiedName& tagName, Document&);

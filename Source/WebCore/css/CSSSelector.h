@@ -278,14 +278,14 @@ private:
     } m_data;
 };
 
-bool complexSelectorCanMatchPseudoElement(const CSSSelector&);
+bool NODELETE complexSelectorCanMatchPseudoElement(const CSSSelector&);
 bool complexSelectorMatchesElementBackedPseudoElement(const CSSSelector&);
 
 // In the AllowNonElementBackedPseudoElements mode `.foo::before` and `.foo` compare equal.
 enum class ComplexSelectorsEqualMode : bool { Full, IgnoreNonElementBackedPseudoElements };
 bool complexSelectorsEqual(const CSSSelector&, const CSSSelector&, ComplexSelectorsEqualMode = ComplexSelectorsEqualMode::Full);
 
-void addComplexSelector(Hasher&, const CSSSelector&, ComplexSelectorsEqualMode = ComplexSelectorsEqualMode::Full);
+void NODELETE addComplexSelector(Hasher&, const CSSSelector&, ComplexSelectorsEqualMode = ComplexSelectorsEqualMode::Full);
 
 inline bool operator==(const PossiblyQuotedIdentifier& a, const AtomString& b) { return a.identifier == b; }
 

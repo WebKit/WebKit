@@ -1,17 +1,17 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 3741.00)
+  (bounds 800.00 4157.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 3741.00)
+      (bounds 800.00 4157.00)
       (contentsOpaque 1)
       (drawsContent 1)
       (backgroundColor #FFFFFF)
       (event region
-        (rect (0,0) width=800 height=3741)
+        (rect (0,0) width=800 height=4157)
 
       (interaction regions [
-        (interaction (208,56) width=160 height=80)
+        (interaction (206,54) width=164 height=84)
         (clipPath move to (0,0), add line to (160,0), add line to (160,80), add line to (0,80), close subpath),
         (interaction (208,216) width=160 height=80.00)
         (clipPath move to (10,0), add line to (150,0), add curve to (155.52,0) (160,4.48) (160,10), add line to (160,70.00), add curve to (160,75.52) (155.52,80.00) (150,80.00), add line to (10,80.00), add curve to (4.48,80.00) (0,75.52) (0,70.00), add line to (0,10), add curve to (0,4.48) (4.48,0) (10,0), close subpath),
@@ -19,7 +19,7 @@
         (clipPath move to (70,35), add curve to (70,54.33) (54.33,70) (35,70), add curve to (15.67,70) (0,54.33) (0,35), add curve to (0,15.67) (15.67,0) (35,0), add curve to (54.33,0) (70,15.67) (70,35), close subpath),
         (interaction (435,155) width=90 height=50)
         (clipPath move to (90,25), add curve to (90,38.81) (69.85,50) (45,50), add curve to (20.15,50) (0,38.81) (0,25), add curve to (0,11.19) (20.15,0) (45,0), add curve to (69.85,0) (90,11.19) (90,25), close subpath),
-        (interaction (230,160) width=40 height=45)
+        (interaction (223.96,159.39) width=52.07 height=51.73)
         (clipPath move to (20,0), add line to (25,20), add line to (40,20), add line to (30,30), add line to (35,45), add line to (20,35), add line to (5,45), add line to (10,30), add line to (0,20), add line to (15,20), close subpath),
         (interaction (202.67,877.33) width=213.33 height=160)
         (clipPath move to (12,0), add line to (201.33,0), add curve to (207.96,0) (213.33,5.37) (213.33,12), add line to (213.33,148), add curve to (213.33,154.63) (207.96,160) (201.33,160), add line to (12,160), add curve to (5.37,160) (0,154.63) (0,148), add line to (0,12), add curve to (0,5.37) (5.37,0) (12,0), close subpath),
@@ -52,17 +52,18 @@
           (opacity 0.60)
           (drawsContent 1)
           (event region
-            (rect (245,40) width=70 height=16)
-            (rect (8,56) width=160 height=55)
-            (rect (245,56) width=70 height=55)
-            (rect (8,111) width=160 height=25)
-            (rect (235,155) width=90 height=5)
-            (rect (30,160) width=40 height=45)
-            (rect (235,160) width=90 height=45)
+            (rect (245,40) width=70 height=14)
+            (rect (6,54) width=164 height=57)
+            (rect (245,54) width=70 height=57)
+            (rect (6,111) width=164 height=27)
+            (rect (235,155) width=90 height=4)
+            (rect (23,159) width=54 height=46)
+            (rect (235,159) width=90 height=46)
+            (rect (23,205) width=54 height=7)
             (rect (8,216) width=160 height=80)
 
           (interaction regions [
-            (interaction (8,56) width=160 height=80)
+            (interaction (6,54) width=164 height=84)
             (clipPath move to (0,0), add line to (160,0), add line to (160,80), add line to (0,80), close subpath),
             (interaction (8,216) width=160 height=80.00)
             (clipPath move to (10,0), add line to (150,0), add curve to (155.52,0) (160,4.48) (160,10), add line to (160,70.00), add curve to (160,75.52) (155.52,80.00) (150,80.00), add line to (10,80.00), add curve to (4.48,80.00) (0,75.52) (0,70.00), add line to (0,10), add curve to (0,4.48) (4.48,0) (10,0), close subpath),
@@ -70,7 +71,7 @@
             (clipPath move to (70,35), add curve to (70,54.33) (54.33,70) (35,70), add curve to (15.67,70) (0,54.33) (0,35), add curve to (0,15.67) (15.67,0) (35,0), add curve to (54.33,0) (70,15.67) (70,35), close subpath),
             (interaction (235,155) width=90 height=50)
             (clipPath move to (90,25), add curve to (90,38.81) (69.85,50) (45,50), add curve to (20.15,50) (0,38.81) (0,25), add curve to (0,11.19) (20.15,0) (45,0), add curve to (69.85,0) (90,11.19) (90,25), close subpath),
-            (interaction (30,160) width=40 height=45)
+            (interaction (23.96,159.39) width=52.07 height=51.73)
             (clipPath move to (20,0), add line to (25,20), add line to (40,20), add line to (30,30), add line to (35,45), add line to (20,35), add line to (5,45), add line to (10,30), add line to (0,20), add line to (15,20), close subpath)])
           )
         )

@@ -159,7 +159,7 @@ private:
     void setHasAvailableVideoFrame(bool);
     void setHasAvailableAudioSample(TrackIdentifier, bool);
 
-    std::optional<TrackType> typeOf(TrackIdentifier) const;
+    std::optional<TrackType> NODELETE typeOf(TrackIdentifier) const;
 
     void addAudioRenderer(TrackIdentifier);
     void removeAudioRenderer(TrackIdentifier);
@@ -169,14 +169,14 @@ private:
     void applyOnAudioRenderers(NOESCAPE Function<void(AVSampleBufferAudioRenderer *)>&&) const;
 
     Ref<GenericPromise> updateDisplayLayerIfNeeded();
-    bool shouldEnsureLayerOrVideoRenderer() const;
-    WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
+    bool NODELETE shouldEnsureLayerOrVideoRenderer() const;
+    WebSampleBufferVideoRendering *NODELETE layerOrVideoRenderer() const;
     Ref<GenericPromise> ensureLayerOrVideoRenderer();
     void ensureLayer();
     void destroyLayer();
-    void ensureVideoRenderer();
-    void destroyVideoRenderer();
-    void destroyExpiringVideoRenderersIfNeeded();
+    void NODELETE ensureVideoRenderer();
+    void NODELETE destroyVideoRenderer();
+    void NODELETE destroyExpiringVideoRenderersIfNeeded();
     Ref<GenericPromise> setVideoRenderer(WebSampleBufferVideoRendering *);
     void configureHasAvailableVideoFrameCallbackIfNeeded();
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
@@ -188,7 +188,7 @@ private:
         Layer = 0,
         VideoRenderer,
     };
-    AcceleratedVideoMode acceleratedVideoMode() const;
+    AcceleratedVideoMode NODELETE acceleratedVideoMode() const;
 
     void notifyError(PlatformMediaError);
     // WebAVSampleBufferListenerClient
@@ -217,8 +217,8 @@ private:
     void maybePurgeLastPixelBuffer();
     void setNeedsPlaceholderImage(bool);
 
-    bool isEnabledVideoTrackId(TrackIdentifier) const;
-    bool hasSelectedVideo() const;
+    bool NODELETE isEnabledVideoTrackId(TrackIdentifier) const;
+    bool NODELETE hasSelectedVideo() const;
     void flushVideo();
     void flushAudio();
     void flushAudioTrack(TrackIdentifier);
@@ -227,9 +227,9 @@ private:
     void cancelSeekingPromiseIfNeeded();
     void cancelPerformTaskAtTimeObserverIfNeeded();
 
-    bool canUseDecompressionSession() const;
-    bool isUsingDecompressionSession() const;
-    bool willUseDecompressionSessionIfNeeded() const;
+    bool NODELETE canUseDecompressionSession() const;
+    bool NODELETE isUsingDecompressionSession() const;
+    bool NODELETE willUseDecompressionSessionIfNeeded() const;
 
     void sizeWillChangeAtTime(const MediaTime&, const FloatSize&);
     void flushPendingSizeChanges();
@@ -258,7 +258,7 @@ private:
         std::unique_ptr<RequestPromise::AutoRejectProducer> requestPromise;
         Function<void(TrackIdentifier, const MediaTime&)> callbackForReenqueuing;
     };
-    AudioTrackProperties& audioTrackPropertiesFor(TrackIdentifier);
+    AudioTrackProperties& NODELETE audioTrackPropertiesFor(TrackIdentifier);
 
     String toString(TrackIdentifier) const;
     String toString(SeekState) const;

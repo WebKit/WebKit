@@ -370,11 +370,11 @@ TEST(DocumentEditingContext, RequestMarkedText)
         NSArray<NSValue *> *rectValues = context.markedTextRects;
         EXPECT_EQ(5U, rectValues.count);
         if (rectValues.count >= 5) {
-            EXPECT_EQ(CGRectMake(47, 8, 13, 19), [rectValues[0] CGRectValue]);
-            EXPECT_EQ(CGRectMake(59, 8, 9, 19), [rectValues[1] CGRectValue]);
-            EXPECT_EQ(CGRectMake(67, 8, 6, 19), [rectValues[2] CGRectValue]);
-            EXPECT_EQ(CGRectMake(72, 8, 5, 19), [rectValues[3] CGRectValue]);
-            EXPECT_EQ(CGRectMake(76, 8, 9, 19), [rectValues[4] CGRectValue]);
+            EXPECT_EQ(CGRectMake(47, 8, 13, 20), [rectValues[0] CGRectValue]);
+            EXPECT_EQ(CGRectMake(59, 8, 9, 20), [rectValues[1] CGRectValue]);
+            EXPECT_EQ(CGRectMake(67, 8, 6, 20), [rectValues[2] CGRectValue]);
+            EXPECT_EQ(CGRectMake(72, 8, 5, 20), [rectValues[3] CGRectValue]);
+            EXPECT_EQ(CGRectMake(76, 8, 9, 20), [rectValues[4] CGRectValue]);
         }
     }
     [contentView unmarkText];
@@ -393,11 +393,11 @@ TEST(DocumentEditingContext, RequestMarkedText)
         NSArray<NSValue *> *rectValues = context.markedTextRects;
         EXPECT_EQ(5U, rectValues.count);
         if (rectValues.count >= 5) {
-            EXPECT_EQ(CGRectMake(8, 8, 12, 19), [rectValues[0] CGRectValue]);
-            EXPECT_EQ(CGRectMake(19, 8, 8, 19), [rectValues[1] CGRectValue]);
-            EXPECT_EQ(CGRectMake(26, 8, 6, 19), [rectValues[2] CGRectValue]);
-            EXPECT_EQ(CGRectMake(31, 8, 5, 19), [rectValues[3] CGRectValue]);
-            EXPECT_EQ(CGRectMake(35, 8, 9, 19), [rectValues[4] CGRectValue]);
+            EXPECT_EQ(CGRectMake(8, 8, 12, 20), [rectValues[0] CGRectValue]);
+            EXPECT_EQ(CGRectMake(19, 8, 8, 20), [rectValues[1] CGRectValue]);
+            EXPECT_EQ(CGRectMake(26, 8, 6, 20), [rectValues[2] CGRectValue]);
+            EXPECT_EQ(CGRectMake(31, 8, 5, 20), [rectValues[3] CGRectValue]);
+            EXPECT_EQ(CGRectMake(35, 8, 9, 20), [rectValues[4] CGRectValue]);
         }
     }
     [contentView unmarkText];
@@ -416,9 +416,9 @@ TEST(DocumentEditingContext, RequestMarkedText)
         NSArray<NSValue *> *rectValues = context.markedTextRects;
         EXPECT_EQ(3U, rectValues.count);
         if (rectValues.count >= 3) {
-            EXPECT_EQ(CGRectMake(8, 8, 6, 19), [rectValues[0] CGRectValue]);
-            EXPECT_EQ(CGRectMake(13, 8, 9, 19), [rectValues[1] CGRectValue]);
-            EXPECT_EQ(CGRectMake(21, 8, 9, 19), [rectValues[2] CGRectValue]);
+            EXPECT_EQ(CGRectMake(8, 8, 6, 20), [rectValues[0] CGRectValue]);
+            EXPECT_EQ(CGRectMake(13, 8, 9, 20), [rectValues[1] CGRectValue]);
+            EXPECT_EQ(CGRectMake(21, 8, 9, 20), [rectValues[2] CGRectValue]);
         }
     }
     [contentView unmarkText];
@@ -437,9 +437,9 @@ TEST(DocumentEditingContext, RequestMarkedText)
         NSArray<NSValue *> *rectValues = context.markedTextRects;
         EXPECT_EQ(3U, rectValues.count);
         if (rectValues.count >= 3) {
-            EXPECT_EQ(CGRectMake(29, 8, 9, 19), [rectValues[0] CGRectValue]);
-            EXPECT_EQ(CGRectMake(37, 8, 8, 19), [rectValues[1] CGRectValue]);
-            EXPECT_EQ(CGRectMake(44, 8, 6, 19), [rectValues[2] CGRectValue]);
+            EXPECT_EQ(CGRectMake(29, 8, 9, 20), [rectValues[0] CGRectValue]);
+            EXPECT_EQ(CGRectMake(37, 8, 8, 20), [rectValues[1] CGRectValue]);
+            EXPECT_EQ(CGRectMake(44, 8, 6, 20), [rectValues[2] CGRectValue]);
         }
     }
 }

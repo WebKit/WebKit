@@ -578,7 +578,7 @@ HashSet<WebCore::RegistrableDomain> WebsiteDataStore::platformAdditionalDomainsW
 }
 #endif
 
-static WebsiteDataStore::ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
+static WebsiteDataStore::ProcessAccessType NODELETE computeNetworkProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     for (auto dataType : dataTypes) {
         if (WebsiteData::ownerProcess(dataType) == WebsiteDataProcessType::Network)
@@ -847,7 +847,7 @@ void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>
     });
 }
 
-static WebsiteDataStore::ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
+static WebsiteDataStore::ProcessAccessType NODELETE computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     auto processAccessType = WebsiteDataStore::ProcessAccessType::None;
     for (auto dataType : dataTypes) {
@@ -1733,12 +1733,12 @@ void WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources(CompletionHandle
     protect(networkProcess())->resetCacheMaxAgeCapForPrevalentResources(m_sessionID, WTF::move(completionHandler));
 }
 
-HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t limit) const
+HashSet<Ref<WebProcessPool>> WebsiteDataStore::processPools(size_t limit) const
 {
-    HashSet<RefPtr<WebProcessPool>> processPools;
+    HashSet<Ref<WebProcessPool>> processPools;
     for (Ref process : processes()) {
         if (RefPtr processPool = process->processPoolIfExists()) {
-            processPools.add(WTF::move(processPool));
+            processPools.add(processPool.releaseNonNull());
             if (processPools.size() == limit)
                 break;
         }
@@ -1756,7 +1756,7 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t limit) con
     return processPools;
 }
 
-HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::ensureProcessPools() const
+HashSet<Ref<WebProcessPool>> WebsiteDataStore::ensureProcessPools() const
 {
     auto processPools = this->processPools();
     if (processPools.isEmpty())
@@ -1935,7 +1935,7 @@ void WebsiteDataStore::setTrackingPreventionEnabled(bool enabled)
     if (RefPtr networkProcessProxy = m_networkProcess)
         networkProcessProxy->send(Messages::NetworkProcess::SetTrackingPreventionEnabled(m_sessionID, enabled), 0);
 
-    for (RefPtr processPool : processPools())
+    for (Ref processPool : processPools())
         processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(enabled), m_sessionID);
 }
 
@@ -2028,7 +2028,7 @@ void WebsiteDataStore::logTestingEvent(const String& event)
 void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&& callback)
 {
     if (trackingPreventionEnabled()) {
-        for (RefPtr processPool : processPools())
+        for (Ref processPool : processPools())
             processPool->sendToAllProcessesForSession(Messages::WebProcess::ClearResourceLoadStatistics(), m_sessionID);
     }
     callback();
@@ -2653,7 +2653,7 @@ void WebsiteDataStore::openWindowFromServiceWorker(const String& urlString, cons
             return;
         }
 
-        if (!protect(newPage->pageLoadState())->isLoading()) {
+        if (!newPage->pageLoadState().isLoading()) {
             RELEASE_LOG(Loading, "The WKWebView provided in response to a ServiceWorker openWindow request was not in the loading state");
             callback(std::nullopt);
             return;

@@ -42,6 +42,7 @@
 #import <JavaScriptCore/ArrayBuffer.h>
 #import <JavaScriptCore/DataView.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/cf/CoreAudioExtras.h>
 #import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/Expected.h>
 #import <wtf/Scope.h>
@@ -944,6 +945,31 @@ FourCC computeBoxType(FourCC codecType)
         ASSERT_NOT_REACHED();
         return 'baad';
     }
+}
+
+std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLayoutTag(UInt32 channelLayoutTag)
+{
+    if (channelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions || channelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap) {
+        ASSERT_NOT_REACHED();
+        return { nullptr, 0 };
+    }
+
+    auto channelLayout = PAL::createAudioChannelLayout(1, PAL::ShouldZeroMemory::Yes);
+    channelLayout->mChannelLayoutTag = channelLayoutTag;
+    auto channelLayoutSize = PAL::allocationSize(*channelLayout);
+    return { WTF::move(channelLayout), channelLayoutSize };
+}
+
+String channelLayoutDescription(UInt32 channelLayoutTag)
+{
+    auto channelLayout = channelLayoutFromChannelLayoutTag(channelLayoutTag);
+    if (!channelLayout.first)
+        return { };
+    CFStringRef channelLayoutName;
+    UInt32 stringSize = sizeof(channelLayoutName);
+    if (PAL::AudioFormatGetProperty(kAudioFormatProperty_ChannelLayoutName, channelLayout.second, channelLayout.first.get(), &stringSize, &channelLayoutName))
+        return { };
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptCF(channelLayoutName).get(); // The caller is responsible for releasing the returned string.
 }
 
 } // namespace WebCore

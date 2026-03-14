@@ -37,7 +37,7 @@ void AbstractSamplingCounter::dump()
     if (s_abstractSamplingCounterChain != &s_abstractSamplingCounterChainEnd) {
         dataLogF("\nSampling Counter Values:\n");
         for (AbstractSamplingCounter* currCounter = s_abstractSamplingCounterChain; (currCounter != &s_abstractSamplingCounterChainEnd); currCounter = currCounter->m_next)
-            dataLogF("\t%s\t: %lld\n", currCounter->m_name, currCounter->m_counter);
+            SAFE_DATALOGF("\t%s\t: %lld\n", currCounter->m_name, currCounter->m_counter);
         dataLogF("\n\n");
     }
     s_completed = true;

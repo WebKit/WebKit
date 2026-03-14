@@ -34,6 +34,7 @@
 #include "Path.h"
 #include "RenderImage.h"
 #include "RenderStyle+GettersInlines.h"
+#include "RenderText.h"
 #include "RenderView.h"
 #include <wtf/TZoneMallocInlines.h>
 
