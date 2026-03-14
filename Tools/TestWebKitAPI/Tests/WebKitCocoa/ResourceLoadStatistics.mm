@@ -2425,3 +2425,69 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
     EXPECT_FALSE(didSendSite2CookieHeader);
     didSendSite2CookieHeader = false;
 }
+
+// Verify that hasStorageAccess calls its completionHandler even when the ITP
+// database cannot be opened. Before the fix for rdar://171987676 the handler
+// was dropped, which caused the JS promise to never settle.
+TEST(ResourceLoadStatistics, HasStorageAccessWithDatabaseError)
+{
+    using namespace TestWebKitAPI;
+
+    // Create a temp directory where observations.db is itself a *directory*,
+    // which makes SQLiteDatabase::open() fail while the store object still
+    // gets created. This forces ensureResourceStatisticsForRegistrableDomain
+    // to return std::nullopt, exercising the error‐return path.
+    auto *defaultFileManager = [NSFileManager defaultManager];
+    NSURL *itpRootURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"HasStorageAccessWithDatabaseErrorTest"] isDirectory:YES];
+    [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
+    [defaultFileManager createDirectoryAtURL:[itpRootURL URLByAppendingPathComponent:@"observations.db"] withIntermediateDirectories:YES attributes:nil error:nil];
+
+    HTTPServer httpServer({
+        { "/"_s, { "<body></body>"_s } },
+        { "/has-access"_s, { "<body><script>document.hasStorageAccess().then((result) => alert(result ? 'true' : 'false'), (error) => alert('error'));</script></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    storeConfiguration.get().httpsProxy = [NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", httpServer.port()]];
+    storeConfiguration.get()._resourceLoadStatisticsDirectory = itpRootURL;
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+
+    // Wait for the ResourceLoadStatisticsStore to be created on the
+    // background queue. Without this synchronization point the store
+    // may still be null when hasStorageAccess is called, which would
+    // bypass the error path we want to exercise.
+    __block bool done = false;
+    [dataStore _clearResourceLoadStatistics:^(void) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    done = false;
+    [webView evaluateJavaScript:@"let iframe = document.createElement('iframe'); iframe.src = 'https://site2.example/has-access'; document.body.appendChild(iframe); true" completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Without the fix the completionHandler is dropped and this alert never
+    // arrives, causing the test to time out.
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], @"false");
+
+    [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
+}

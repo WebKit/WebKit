@@ -1675,8 +1675,10 @@ void ResourceLoadStatisticsStore::hasStorageAccess(SubFrameDomain&& subFrameDoma
     ASSERT(!RunLoop::isMain());
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subFrameDomain, "hasStorageAccess"_s);
-    if (!result.second)
+    if (!result.second) {
+        completionHandler(false);
         return;
+    }
 
     switch (cookieAccess(subFrameDomain, topFrameDomain, canRequestStorageAccessWithoutUserInteraction)) {
     case CookieAccess::CannotRequest:
@@ -2511,7 +2513,7 @@ std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> Res
         if (!scopedStatement
             || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
             ITP_RELEASE_LOG_DATABASE_ERROR("ensureResourceStatisticsForRegistrableDomain: reason %" PUBLIC_LOG_STRING ", failed to bind parameter", reason.characters());
-            return { AddedRecord::No, 0 };
+            return { AddedRecord::No, std::nullopt };
         }
 
         if (scopedStatement->step() == SQLITE_ROW) {
