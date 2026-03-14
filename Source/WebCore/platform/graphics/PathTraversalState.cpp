@@ -27,11 +27,14 @@
 
 namespace WebCore {
 
-static const float kPathSegmentLengthTolerance = 0.00001f;
-
 static inline float NODELETE distanceLine(const FloatPoint& start, const FloatPoint& end)
 {
     return std::hypot(end.x() - start.x(), end.y() - start.y());
+}
+
+static inline double dotSelf(const FloatPoint& p)
+{
+    return static_cast<double>(p.x()) * p.x() + static_cast<double>(p.y()) * p.y();
 }
 
 struct QuadraticBezier {
@@ -44,17 +47,22 @@ struct QuadraticBezier {
     }
 
     friend bool NODELETE operator==(const QuadraticBezier&, const QuadraticBezier&) = default;
-    
+
+    double magnitudeSquared() const
+    {
+        return (dotSelf(start) + dotSelf(control) + dotSelf(end)) / 9.0;
+    }
+
     float NODELETE approximateDistance() const
     {
         return distanceLine(start, control) + distanceLine(control, end);
     }
-    
+
     bool NODELETE split(QuadraticBezier& left, QuadraticBezier& right) const
     {
         left.control = midPoint(start, control);
         right.control = midPoint(control, end);
-        
+
         FloatPoint leftControlToRightControl = midPoint(left.control, right.control);
         left.end = leftControlToRightControl;
         right.start = leftControlToRightControl;
@@ -62,12 +70,15 @@ struct QuadraticBezier {
         left.start = start;
         right.end = end;
 
+        left.splitDepth = right.splitDepth = splitDepth + 1;
+
         return !(left == *this) && !(right == *this);
     }
-    
+
     FloatPoint start;
     FloatPoint control;
     FloatPoint end;
+    uint16_t splitDepth { 0 };
 };
 
 struct CubicBezier {
@@ -82,79 +93,83 @@ struct CubicBezier {
 
     friend bool NODELETE operator==(const CubicBezier&, const CubicBezier&) = default;
 
+    double magnitudeSquared() const
+    {
+        return (dotSelf(start) + dotSelf(control1) + dotSelf(control2) + dotSelf(end)) / 16.0;
+    }
+
     float NODELETE approximateDistance() const
     {
         return distanceLine(start, control1) + distanceLine(control1, control2) + distanceLine(control2, end);
     }
-        
+
     bool NODELETE split(CubicBezier& left, CubicBezier& right) const
-    {    
+    {
         FloatPoint startToControl1 = midPoint(control1, control2);
-        
+
         left.start = start;
         left.control1 = midPoint(start, control1);
         left.control2 = midPoint(left.control1, startToControl1);
-        
+
         right.control2 = midPoint(control2, end);
         right.control1 = midPoint(right.control2, startToControl1);
         right.end = end;
-        
+
         FloatPoint leftControl2ToRightControl1 = midPoint(left.control2, right.control1);
         left.end = leftControl2ToRightControl1;
         right.start = leftControl2ToRightControl1;
 
+        left.splitDepth = right.splitDepth = splitDepth + 1;
+
         return !(left == *this) && !(right == *this);
     }
-    
+
     FloatPoint start;
     FloatPoint control1;
     FloatPoint control2;
     FloatPoint end;
+    uint16_t splitDepth { 0 };
 };
 
-// FIXME: This function is possibly very slow due to the ifs required for proper path measuring
-// A simple speed-up would be to use an additional boolean template parameter to control whether
-// to use the "fast" version of this function with no PathTraversalState updating, vs. the slow
-// version which does update the PathTraversalState.  We'll have to shark it to see if that's necessary.
-// Another check which is possible up-front (to send us down the fast path) would be to check if
-// approximateDistance() + current total distance > desired distance
 template<class CurveType>
 static float curveLength(const PathTraversalState& traversalState, const CurveType& originalCurve, FloatPoint& previous, FloatPoint& current)
 {
-    static const unsigned curveStackDepthLimit = 20;
+    static const uint16_t curveSplitDepthLimit = 20;
+    static const double pathSegmentLengthToleranceSquared = 1.e-16;
+
+    double curveScaleForToleranceSquared = originalCurve.magnitudeSquared();
+    if (curveScaleForToleranceSquared < pathSegmentLengthToleranceSquared)
+        return 0;
+
     CurveType curve = originalCurve;
-    Vector<CurveType, curveStackDepthLimit> curveStack;
+    Vector<CurveType> curveStack;
+    curveStack.append(curve);
     float totalLength = 0;
 
-    while (true) {
+    do {
         float length = curve.approximateDistance();
-
-        CurveType leftCurve;
-        CurveType rightCurve;
-
-        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() < curveStackDepthLimit && curve.split(leftCurve, rightCurve)) {
+        double lengthDiscrepancy = length - distanceLine(curve.start, curve.end);
+        if ((lengthDiscrepancy * lengthDiscrepancy) / curveScaleForToleranceSquared > pathSegmentLengthToleranceSquared
+            && curve.splitDepth < curveSplitDepthLimit) {
+            CurveType leftCurve;
+            CurveType rightCurve;
+            curve.split(leftCurve, rightCurve);
             curve = leftCurve;
             curveStack.append(rightCurve);
-            continue;
+        } else {
+            totalLength += length;
+            if (traversalState.action() == PathTraversalState::Action::VectorAtLength) {
+                previous = curve.start;
+                current = curve.end;
+                if (traversalState.totalLength() + totalLength > traversalState.desiredLength())
+                    return totalLength;
+            }
+            curve = curveStack.last();
+            curveStack.removeLast();
         }
-
-        totalLength += length;
-        if (traversalState.action() == PathTraversalState::Action::VectorAtLength) {
-            previous = curve.start;
-            current = curve.end;
-            if (traversalState.totalLength() + totalLength > traversalState.desiredLength())
-                break;
-        }
-
-        if (curveStack.isEmpty())
-            break;
-
-        curve = curveStack.last();
-        curveStack.removeLast();
-    }
+    } while (!curveStack.isEmpty());
 
     if (traversalState.action() != PathTraversalState::Action::VectorAtLength) {
-        ASSERT(curve.end == originalCurve.end);
         previous = curve.start;
         current = curve.end;
     }
