@@ -64,6 +64,7 @@
 #include "SVGUseElement.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptElement.h"
 #include "SelectorQuery.h"
 #include "SerializedNode.h"
 #include "SlotAssignment.h"
@@ -582,21 +583,26 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& ref
 
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
-    ChildListMutationScope mutation(*this);
-    for (auto& child : targets) {
-        // Due to arbitrary code running in response to a DOM mutation event it's
-        // possible that "next" is no longer a child of "this".
-        // It's also possible that "child" has been inserted elsewhere.
-        // In either of those cases, we'll just stop.
-        if (next->parentNode() != this)
-            break;
-        if (child->parentNode())
-            break;
+    {
+        CheckedPtr element = dynamicDowncast<Element>(*this);
+        ScriptElement::BatchChildInsertionScope batchScope(element ? dynamicDowncastScriptElement(*element) : nullptr);
 
-        executeNodeInsertionWithScriptAssertion(*this, child.get(), next.ptr(), ChildChange::Source::API, ReplacedAllChildren::No, [&] {
-            child->setTreeScopeRecursively(treeScope());
-            insertBeforeCommon(next, child);
-        });
+        ChildListMutationScope mutation(*this);
+        for (auto& child : targets) {
+            // Due to arbitrary code running in response to a DOM mutation event it's
+            // possible that "next" is no longer a child of "this".
+            // It's also possible that "child" has been inserted elsewhere.
+            // In either of those cases, we'll just stop.
+            if (next->parentNode() != this)
+                break;
+            if (child->parentNode())
+                break;
+
+            executeNodeInsertionWithScriptAssertion(*this, child.get(), next.ptr(), ChildChange::Source::API, ReplacedAllChildren::No, [&] {
+                child->setTreeScopeRecursively(treeScope());
+                insertBeforeCommon(next, child);
+            });
+        }
     }
 
     dispatchSubtreeModifiedEvent();
@@ -722,24 +728,28 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
 
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
-    // Add the new child(ren).
-    for (auto& child : targets) {
-        // Due to arbitrary code running in response to a DOM mutation event it's
-        // possible that "refChild" is no longer a child of "this".
-        // It's also possible that "child" has been inserted elsewhere.
-        // In either of those cases, we'll just stop.
-        if (refChild && refChild->parentNode() != this)
-            break;
-        if (child->parentNode())
-            break;
+    {
+        CheckedPtr element = dynamicDowncast<Element>(*this);
+        ScriptElement::BatchChildInsertionScope batchScope(element ? dynamicDowncastScriptElement(*element) : nullptr);
 
-        executeNodeInsertionWithScriptAssertion(*this, child.get(), refChild.get(), ChildChange::Source::API, ReplacedAllChildren::No, [&] {
-            child->setTreeScopeRecursively(treeScope());
-            if (refChild)
-                insertBeforeCommon(*refChild, child.get());
-            else
-                appendChildCommon(child);
-        });
+        for (auto& child : targets) {
+            // Due to arbitrary code running in response to a DOM mutation event it's
+            // possible that "refChild" is no longer a child of "this".
+            // It's also possible that "child" has been inserted elsewhere.
+            // In either of those cases, we'll just stop.
+            if (refChild && refChild->parentNode() != this)
+                break;
+            if (child->parentNode())
+                break;
+
+            executeNodeInsertionWithScriptAssertion(*this, child.get(), refChild.get(), ChildChange::Source::API, ReplacedAllChildren::No, [&] {
+                child->setTreeScopeRecursively(treeScope());
+                if (refChild)
+                    insertBeforeCommon(*refChild, child.get());
+                else
+                    appendChildCommon(child);
+            });
+        }
     }
 
     dispatchSubtreeModifiedEvent();
@@ -919,20 +929,24 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
 
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
-    // Now actually add the child(ren)
-    ChildListMutationScope mutation(*this);
-    for (auto& child : targets) {
-        // If the child has a parent again, just stop what we're doing, because
-        // that means someone is doing something with DOM mutation -- can't re-parent
-        // a child that already has a parent.
-        if (child->parentNode())
-            break;
+    {
+        CheckedPtr element = dynamicDowncast<Element>(*this);
+        ScriptElement::BatchChildInsertionScope batchScope(element ? dynamicDowncastScriptElement(*element) : nullptr);
 
-        // Append child to the end of the list
-        executeNodeInsertionWithScriptAssertion(*this, child.get(), nullptr, ChildChange::Source::API, ReplacedAllChildren::No, [&] {
-            child->setTreeScopeRecursively(treeScope());
-            appendChildCommon(child);
-        });
+        ChildListMutationScope mutation(*this);
+        for (auto& child : targets) {
+            // If the child has a parent again, just stop what we're doing, because
+            // that means someone is doing something with DOM mutation -- can't re-parent
+            // a child that already has a parent.
+            if (child->parentNode())
+                break;
+
+            // Append child to the end of the list
+            executeNodeInsertionWithScriptAssertion(*this, child.get(), nullptr, ChildChange::Source::API, ReplacedAllChildren::No, [&] {
+                child->setTreeScopeRecursively(treeScope());
+                appendChildCommon(child);
+            });
+        }
     }
 
     dispatchSubtreeModifiedEvent();
@@ -965,19 +979,24 @@ ExceptionOr<void> ContainerNode::insertChildrenBeforeWithoutPreInsertionValidity
 
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
-    ChildListMutationScope mutation(*this);
-    for (auto& child : newChildren) {
-        if (refChild && refChild->parentNode() != this) // Event listeners moved nextChild elsewhere.
-            break;
-        if (child->parentNode()) // Event listeners inserted this child elsewhere.
-            break;
-        executeNodeInsertionWithScriptAssertion(*this, child.get(), refChild.get(), ChildChange::Source::API, ReplacedAllChildren::No, [&] {
-            child->setTreeScopeRecursively(treeScope());
-            if (refChild)
-                insertBeforeCommon(*refChild, child.get());
-            else
-                appendChildCommon(child);
-        });
+    {
+        CheckedPtr element = dynamicDowncast<Element>(*this);
+        ScriptElement::BatchChildInsertionScope batchScope(element ? dynamicDowncastScriptElement(*element) : nullptr);
+
+        ChildListMutationScope mutation(*this);
+        for (auto& child : newChildren) {
+            if (refChild && refChild->parentNode() != this) // Event listeners moved nextChild elsewhere.
+                break;
+            if (child->parentNode()) // Event listeners inserted this child elsewhere.
+                break;
+            executeNodeInsertionWithScriptAssertion(*this, child.get(), refChild.get(), ChildChange::Source::API, ReplacedAllChildren::No, [&] {
+                child->setTreeScopeRecursively(treeScope());
+                if (refChild)
+                    insertBeforeCommon(*refChild, child.get());
+                else
+                    appendChildCommon(child);
+            });
+        }
     }
 
     dispatchSubtreeModifiedEvent();

@@ -63,6 +63,26 @@ public:
 
     void executePendingScript(PendingScript&);
 
+    class BatchChildInsertionScope final {
+        WTF_MAKE_NONCOPYABLE(BatchChildInsertionScope);
+    public:
+        explicit BatchChildInsertionScope(ScriptElement* scriptElement)
+            : m_scriptElement(scriptElement)
+        {
+            if (m_scriptElement) [[unlikely]]
+                ++m_scriptElement->m_batchChildInsertionCount;
+        }
+
+        ~BatchChildInsertionScope()
+        {
+            if (RefPtr scriptElement = m_scriptElement) [[unlikely]]
+                scriptElement->endBatchChildInsertion();
+        }
+
+    private:
+        RefPtr<ScriptElement> m_scriptElement;
+    };
+
     virtual bool hasAsyncAttribute() const = 0;
     virtual bool hasDeferAttribute() const = 0;
     virtual bool hasSourceAttribute() const = 0;
@@ -120,6 +140,7 @@ protected:
     virtual void unblockRendering() { }
 
 private:
+    void endBatchChildInsertion();
     void executeScriptAndDispatchEvent(LoadableScript&);
 
     std::optional<ScriptType> determineScriptType() const;
@@ -155,7 +176,9 @@ private:
     bool m_willExecuteInOrder : 1 { false };
     bool m_childrenChangedByAPI : 1 { false };
     bool m_hasRelevantLoadEventsListener : 1 { false };
+    bool m_needsPrepareAfterBatch : 1 { false };
     ScriptType m_scriptType : bitWidthOfScriptType { ScriptType::Classic };
+    unsigned m_batchChildInsertionCount { 0 };
     AtomString m_characterEncoding;
     AtomString m_fallbackCharacterEncoding;
     RefPtr<LoadableScript> m_loadableScript;

@@ -107,11 +107,24 @@ void ScriptElement::didFinishInsertingNode()
 
 void ScriptElement::childrenChanged(const ContainerNode::ChildChange& childChange)
 {
-    if (m_parserInserted == ParserInserted::No && childChange.isInsertion() && element().isConnected())
-        prepareScript(); // FIXME: Provide a real starting line number here.
+    if (m_parserInserted == ParserInserted::No && childChange.isInsertion() && element().isConnected()) {
+        if (m_batchChildInsertionCount)
+            m_needsPrepareAfterBatch = true;
+        else
+            prepareScript(); // FIXME: Provide a real starting line number here.
+    }
 
     if (childChange.source == ContainerNode::ChildChange::Source::API)
         m_childrenChangedByAPI = true;
+}
+
+void ScriptElement::endBatchChildInsertion()
+{
+    ASSERT(m_batchChildInsertionCount);
+    if (!--m_batchChildInsertionCount && m_needsPrepareAfterBatch) {
+        m_needsPrepareAfterBatch = false;
+        prepareScript();
+    }
 }
 
 void ScriptElement::finishParsingChildren()
