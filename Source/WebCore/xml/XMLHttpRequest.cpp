@@ -59,6 +59,7 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
 #include "XMLHttpRequestUpload.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "markup.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
@@ -179,6 +180,7 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
         // If it is text/html, then the responseType of "document" must have been supplied explicitly.
         if ((m_response.isInHTTPFamily() && !isXML && !isHTML)
             || (isHTML && responseType() == ResponseType::EmptyString)) {
+            Locker locker { m_gcLock };
             m_responseDocument = nullptr;
         } else {
             RefPtr<Document> responseDocument;
@@ -194,6 +196,7 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
             if (m_decoder)
                 responseDocument->setDecoder(m_decoder.copyRef());
 
+            Locker locker { m_gcLock };
             if (!isHTML && !responseDocument->wellFormed())
                 m_responseDocument = nullptr;
             else
@@ -202,6 +205,7 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
         m_createdDocument = true;
     }
 
+    Locker locker { m_gcLock };
     return m_responseDocument.get();
 }
 
@@ -273,6 +277,7 @@ String XMLHttpRequest::responseURL() const
 
 XMLHttpRequestUpload& XMLHttpRequest::upload()
 {
+    Locker locker { m_gcLock };
     if (!m_upload)
         lazyInitialize(m_upload, makeUniqueWithoutRefCountedCheck<XMLHttpRequestUpload>(*this));
     return *m_upload;
@@ -486,6 +491,7 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
         auto converted = replaceUnpairedSurrogatesWithReplacementCharacter(WTF::move(serialized));
         auto encoded = PAL::TextCodecUTF8::encodeUTF8(WTF::move(converted));
         m_requestEntityBody = FormData::create(WTF::move(encoded));
+        Locker locker { m_gcLock };
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }
@@ -508,6 +514,7 @@ ExceptionOr<void> XMLHttpRequest::send(const String& body)
         }
 
         m_requestEntityBody = FormData::create(PAL::TextCodecUTF8::encodeUTF8(body));
+        Locker locker { m_gcLock };
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }
@@ -584,6 +591,7 @@ ExceptionOr<void> XMLHttpRequest::sendBytesData(std::span<const uint8_t> data)
 
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
         m_requestEntityBody = FormData::create(data);
+        Locker locker { m_gcLock };
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }
@@ -599,9 +607,11 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         return Exception { ExceptionCode::NetworkError };
     }
 
-    if (m_async && m_upload && m_upload->hasEventListeners())
-        m_uploadListenerFlag = true;
-
+    {
+        Locker locker { m_gcLock };
+        if (m_async && m_upload && m_upload->hasEventListeners())
+            m_uploadListenerFlag = true;
+    }
     ResourceRequest request(URL { m_url });
     request.setRequester(ResourceRequestRequester::XHR);
     Ref context = *scriptExecutionContext();
@@ -647,9 +657,13 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
 
     if (m_async) {
         m_progressEventThrottle->dispatchProgressEvent(eventNames().loadstartEvent);
-        if (!m_uploadComplete && m_uploadListenerFlag)
-            m_upload->dispatchProgressEvent(eventNames().loadstartEvent, 0, request.httpBody()->lengthInBytes());
-
+        if (!m_uploadComplete && m_uploadListenerFlag) {
+            RefPtr upload = [&] {
+                Locker locker { m_gcLock };
+                return m_upload.get();
+            }();
+            upload->dispatchProgressEvent(eventNames().loadstartEvent, 0, request.httpBody()->lengthInBytes());
+        }
         if (readyState() != OPENED || !m_sendFlag || m_loadingActivity)
             return { };
 
@@ -741,7 +755,10 @@ void XMLHttpRequest::clearResponseBuffers()
     m_responseBuilder.clear();
     m_responseEncoding = String();
     m_createdDocument = false;
-    m_responseDocument = nullptr;
+    {
+        Locker locker { m_gcLock };
+        m_responseDocument = nullptr;
+    }
     m_binaryResponseBuilder.reset();
     m_responseCacheIsValid = false;
 }
@@ -967,18 +984,22 @@ void XMLHttpRequest::didFinishLoading(ScriptExecutionContextIdentifier, std::opt
 
 void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    if (!m_upload)
+    RefPtr upload = [&] {
+        Locker locker { m_gcLock };
+        return m_upload.get();
+    }();
+    if (!upload)
         return;
 
     if (m_uploadListenerFlag)
-        m_upload->dispatchProgressEvent(eventNames().progressEvent, bytesSent, totalBytesToBeSent);
+        upload->dispatchProgressEvent(eventNames().progressEvent, bytesSent, totalBytesToBeSent);
 
     if (bytesSent == totalBytesToBeSent && !m_uploadComplete) {
         m_wasDidSendDataCalledForTotalBytes = true;
         m_uploadComplete = true;
         if (m_uploadListenerFlag) {
-            m_upload->dispatchProgressEvent(eventNames().loadEvent, bytesSent, totalBytesToBeSent);
-            m_upload->dispatchProgressEvent(eventNames().loadendEvent, bytesSent, totalBytesToBeSent);
+            upload->dispatchProgressEvent(eventNames().loadEvent, bytesSent, totalBytesToBeSent);
+            upload->dispatchProgressEvent(eventNames().loadendEvent, bytesSent, totalBytesToBeSent);
         }
     }
 }
@@ -1119,9 +1140,13 @@ void XMLHttpRequest::dispatchErrorEvents(const AtomString& type)
 {
     if (!m_uploadComplete) {
         m_uploadComplete = true;
-        if (m_upload && m_uploadListenerFlag) {
-            m_upload->dispatchProgressEvent(type, 0, 0);
-            m_upload->dispatchProgressEvent(eventNames().loadendEvent, 0, 0);
+        RefPtr upload = [&] {
+            Locker locker { m_gcLock };
+            return m_upload.get();
+        }();
+        if (upload && m_uploadListenerFlag) {
+            upload->dispatchProgressEvent(type, 0, 0);
+            upload->dispatchProgressEvent(eventNames().loadendEvent, 0, 0);
         }
     }
     m_progressEventThrottle->dispatchErrorProgressEvent(type);
@@ -1189,6 +1214,10 @@ void XMLHttpRequest::contextDestroyed()
 
 void XMLHttpRequest::updateHasRelevantEventListener()
 {
+    bool uploadHasRelevantEventListener = [&] {
+        Locker locker { m_gcLock };
+        return m_upload && m_upload->hasRelevantEventListener();
+    }();
     m_hasRelevantEventListener = hasEventListeners(eventNames().abortEvent)
         || hasEventListeners(eventNames().errorEvent)
         || hasEventListeners(eventNames().loadEvent)
@@ -1196,7 +1225,7 @@ void XMLHttpRequest::updateHasRelevantEventListener()
         || hasEventListeners(eventNames().progressEvent)
         || hasEventListeners(eventNames().readystatechangeEvent)
         || hasEventListeners(eventNames().timeoutEvent)
-        || (m_upload && m_upload->hasRelevantEventListener());
+        || uploadHasRelevantEventListener;
 }
 
 void XMLHttpRequest::eventListenersDidChange()
@@ -1233,5 +1262,18 @@ Ref<ThreadableLoader> XMLHttpRequest::LoadingActivity::protectedLoader() const
 {
     return loader;
 }
+
+template<typename Visitor>
+void XMLHttpRequest::visitAdditionalChildren(Visitor& visitor)
+{
+    Locker locker { m_gcLock };
+    if (m_upload)
+        addWebCoreOpaqueRoot(visitor, *m_upload);
+
+    if (m_responseDocument)
+        addWebCoreOpaqueRoot(visitor, *m_responseDocument);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(XMLHttpRequest);
 
 } // namespace WebCore
