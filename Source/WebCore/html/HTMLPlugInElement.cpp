@@ -89,6 +89,12 @@
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ContentExtensionsBackend.h"
+#include "ResourceLoadInfo.h"
+#include "UserContentProvider.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "YouTubePluginReplacement.h"
 #endif
@@ -549,6 +555,20 @@ bool HTMLPlugInElement::canLoadURL(const URL& completeURL) const
         if (contentDocument && !protectedDocument()->protectedSecurityOrigin()->isSameOriginDomain(contentDocument->protectedSecurityOrigin().get()))
             return false;
     }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (completeURL.isValid()) {
+        RefPtr page = document().page();
+        RefPtr frame = document().frame();
+        RefPtr documentLoader = frame ? frame->loader().documentLoader() : nullptr;
+        RefPtr userContentProvider = frame ? frame->userContentProvider() : nullptr;
+        if (page && documentLoader && userContentProvider) {
+            auto results = userContentProvider->processContentRuleListsForLoad(*page, completeURL, ContentExtensions::ResourceType::Other, *documentLoader);
+            if (results.shouldBlock())
+                return false;
+        }
+    }
+#endif
 
     return !isProhibitedSelfReference(completeURL);
 }
