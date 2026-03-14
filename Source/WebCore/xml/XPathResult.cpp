@@ -29,7 +29,10 @@
 
 #include "Document.h"
 #include "ExceptionOr.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "XPathEvaluator.h"
+#include <JavaScriptCore/SlotVisitorMacros.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -49,7 +52,10 @@ XPathResult::XPathResult(Document& document, const XPath::Value& value)
     case XPath::Value::Type::NodeSet:
         m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
         m_nodeSetPosition = 0;
-        m_nodeSet = m_value.toNodeSet();
+        {
+            Locker locker { m_nodeSetLock };
+            m_nodeSet = m_value.toNodeSet();
+        }
         m_document = document;
         m_domTreeVersion = document.domTreeVersion();
         return;
@@ -57,7 +63,21 @@ XPathResult::XPathResult(Document& document, const XPath::Value& value)
     ASSERT_NOT_REACHED();
 }
 
-XPathResult::~XPathResult() = default;
+XPathResult::~XPathResult()
+{
+#if ASSERT_ENABLED
+    if (!m_value.isNodeSet())
+        return;
+
+    auto& valueNodeSet = m_value.toNodeSet();
+    ASSERT(valueNodeSet.size() == m_nodeSet.size());
+    HashSet<const Node*> set;
+    for (auto& node : m_nodeSet)
+        set.add(node.get());
+    for (auto& node : valueNodeSet)
+        ASSERT(set.contains(node.get()));
+#endif
+}
 
 ExceptionOr<void> XPathResult::convertTo(unsigned short type)
 {
@@ -87,7 +107,10 @@ ExceptionOr<void> XPathResult::convertTo(unsigned short type)
     case ORDERED_NODE_ITERATOR_TYPE:
         if (!m_value.isNodeSet())
             return Exception { ExceptionCode::TypeError };
-        m_nodeSet.sort();
+        {
+            Locker locker { m_nodeSetLock };
+            m_nodeSet.sort();
+        }
         m_resultType = type;
         break;
     case ORDERED_NODE_SNAPSHOT_TYPE:
@@ -163,6 +186,7 @@ ExceptionOr<Node*> XPathResult::iterateNext()
     if (invalidIteratorState())
         return Exception { ExceptionCode::InvalidStateError };
 
+    Locker locker { m_nodeSetLock };
     if (m_nodeSetPosition >= m_nodeSet.size())
         return nullptr;
 
@@ -180,5 +204,15 @@ ExceptionOr<Node*> XPathResult::snapshotItem(unsigned index)
 
     return nodes[index];
 }
+
+template<typename Visitor>
+void XPathResult::visitAdditionalChildren(Visitor& visitor)
+{
+    Locker locker { m_nodeSetLock };
+    for (auto& node : m_nodeSet)
+        addWebCoreOpaqueRoot(visitor, node.get());
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(XPathResult);
 
 } // namespace WebCore
