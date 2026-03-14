@@ -75,7 +75,11 @@ ReadableStreamDefaultReader::ReadableStreamDefaultReader(Ref<ReadableStream>&& s
 
 ReadableStreamDefaultReader::~ReadableStreamDefaultReader()
 {
-    RefPtr stream = m_stream;
+    RefPtr<ReadableStream> stream;
+    {
+        Locker locker { m_streamLock };
+        stream = m_stream;
+    }
     if (stream && stream->defaultReader() == this)
         stream->setDefaultReader(nullptr);
 }
@@ -134,7 +138,11 @@ void ReadableStreamDefaultReader::read(JSDOMGlobalObject& globalObject, Ref<Read
         return;
     }
 
-    RefPtr stream = m_stream;
+    RefPtr<ReadableStream> stream;
+    {
+        Locker locker { m_streamLock };
+        stream = m_stream;
+    }
     if (!stream) {
         readRequest->runErrorSteps(Exception { ExceptionCode::TypeError, "stream is undefined"_s });
         return;
@@ -160,17 +168,19 @@ void ReadableStreamDefaultReader::read(JSDOMGlobalObject& globalObject, Ref<Read
 // https://streams.spec.whatwg.org/#default-reader-release-lock
 ExceptionOr<void> ReadableStreamDefaultReader::releaseLock(JSDOMGlobalObject& globalObject)
 {
-    if (!m_stream)
-        return { };
+    {
+        Locker locker { m_streamLock };
+        if (!m_stream)
+            return { };
 
-    if (RefPtr internalReader = this->internalDefaultReader()) {
-        auto result = internalReader->releaseLock();
-        if (!result.hasException()) {
-            RefPtr stream = std::exchange(m_stream, { });
-            stream->setDefaultReader(nullptr);
-            stream = nullptr;
+        if (RefPtr internalReader = this->internalDefaultReader()) {
+            auto result = internalReader->releaseLock();
+            if (!result.hasException()) {
+                RefPtr stream = std::exchange(m_stream, nullptr);
+                stream->setDefaultReader(nullptr);
+            }
+            return result;
         }
-        return result;
     }
 
     genericRelease(globalObject);
@@ -181,7 +191,11 @@ ExceptionOr<void> ReadableStreamDefaultReader::releaseLock(JSDOMGlobalObject& gl
 // https://streams.spec.whatwg.org/#set-up-readable-stream-default-reader
 ExceptionOr<void> ReadableStreamDefaultReader::setup(JSDOMGlobalObject& globalObject)
 {
-    RefPtr stream = m_stream;
+    RefPtr<ReadableStream> stream;
+    {
+        Locker locker { m_streamLock };
+        stream = m_stream;
+    }
 
     if (!stream)
         return Exception { ExceptionCode::TypeError, "stream is undefined"_s };
@@ -208,7 +222,11 @@ ExceptionOr<void> ReadableStreamDefaultReader::setup(JSDOMGlobalObject& globalOb
 // https://streams.spec.whatwg.org/#readable-stream-reader-generic-release
 void ReadableStreamDefaultReader::genericRelease(JSDOMGlobalObject& globalObject)
 {
-    RefPtr stream = m_stream;
+    RefPtr<ReadableStream> stream;
+    {
+        Locker locker { m_streamLock };
+        stream = m_stream;
+    }
 
     ASSERT(stream);
     ASSERT(stream->defaultReader() == this);
@@ -228,6 +246,8 @@ void ReadableStreamDefaultReader::genericRelease(JSDOMGlobalObject& globalObject
         controller->runReleaseSteps();
 
     stream->setDefaultReader(nullptr);
+
+    Locker locker { m_streamLock };
     m_stream = nullptr;
 }
 
@@ -242,7 +262,12 @@ void ReadableStreamDefaultReader::errorReadRequests(const Exception& exception)
 // https://streams.spec.whatwg.org/#generic-reader-cancel
 Ref<DOMPromise> ReadableStreamDefaultReader::cancel(JSDOMGlobalObject& globalObject, JSC::JSValue value)
 {
-    if (!m_stream) {
+    bool hasStream;
+    {
+        Locker locker { m_streamLock };
+        hasStream = m_stream;
+    }
+    if (!hasStream) {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
         deferred->reject(Exception { ExceptionCode::TypeError, "no stream"_s });
         return promise;
@@ -254,7 +279,11 @@ Ref<DOMPromise> ReadableStreamDefaultReader::cancel(JSDOMGlobalObject& globalObj
 // https://streams.spec.whatwg.org/#readable-stream-reader-generic-cancel
 Ref<DOMPromise> ReadableStreamDefaultReader::genericCancel(JSDOMGlobalObject& globalObject, JSC::JSValue value)
 {
-    RefPtr stream = m_stream;
+    RefPtr<ReadableStream> stream;
+    {
+        Locker locker { m_streamLock };
+        stream = m_stream;
+    }
 
     ASSERT(stream);
     ASSERT(stream->defaultReader() == this);
@@ -356,8 +385,15 @@ void ReadableStreamDefaultReader::onClosedPromiseResolution(Function<void()>&& c
     });
 }
 
+ReadableStream* ReadableStreamDefaultReader::stream()
+{
+    Locker locker { m_streamLock };
+    return m_stream.get();
+}
+
 bool ReadableStreamDefaultReader::isReachableFromOpaqueRoots() const
 {
+    Locker locker { m_streamLock };
     return getNumReadRequests() && m_stream && m_stream->isReachableFromOpaqueRoots();
 }
 
@@ -403,6 +439,7 @@ bool JSReadableStreamDefaultReaderOwner::isReachableFromOpaqueRoots(JSC::Handle<
 template<typename Visitor>
 void ReadableStreamDefaultReader::visitAdditionalChildren(Visitor& visitor)
 {
+    Locker locker { m_streamLock };
     if (m_stream)
         SUPPRESS_UNCOUNTED_ARG m_stream->visitAdditionalChildren(visitor);
 }
