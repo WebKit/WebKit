@@ -501,6 +501,8 @@ PASS VIDEO.setAttribute(onwaitingforkey, "unsafe_handler()") calls default polic
 PASS VIDEO.setAttributeNS(onwaitingforkey, "unsafe_handler()") calls default policy
 PASS animation.setAttribute(onbegin, "unsafe_handler()") calls default policy
 PASS animation.setAttributeNS(onbegin, "unsafe_handler()") calls default policy
+PASS animation.setAttribute(onend, "unsafe_handler()") calls default policy
+PASS animation.setAttributeNS(onend, "unsafe_handler()") calls default policy
 PASS animation.setAttribute(onrepeat, "unsafe_handler()") calls default policy
 PASS animation.setAttributeNS(onrepeat, "unsafe_handler()") calls default policy
 PASS DIV.setAttribute("onafterprint", "unsafe_handler()") calls default policy
