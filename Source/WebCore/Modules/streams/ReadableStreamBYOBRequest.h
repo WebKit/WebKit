@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "JSValueInWrappedObject.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -40,22 +41,23 @@ class ReadableByteStreamController;
 
 class ReadableStreamBYOBRequest : public RefCounted<ReadableStreamBYOBRequest> {
 public:
-    static Ref<ReadableStreamBYOBRequest> create();
+    static Ref<ReadableStreamBYOBRequest> create(ReadableByteStreamController&, Ref<JSC::ArrayBufferView>&&);
 
     JSC::ArrayBufferView* view() const;
     ExceptionOr<void> respond(JSDOMGlobalObject&, size_t);
     ExceptionOr<void> respondWithNewView(JSDOMGlobalObject&, JSC::ArrayBufferView&);
 
-    void setController(ReadableByteStreamController*);
-    void setView(JSC::ArrayBufferView*);
+    void clearController();
+    void clearView();
 
     template<typename Visitor> void visitAdditionalChildren(Visitor&);
 
 private:
-    ReadableStreamBYOBRequest();
+    ReadableStreamBYOBRequest(ReadableByteStreamController&, Ref<JSC::ArrayBufferView>&&);
 
     WeakPtr<ReadableByteStreamController> m_controller;
     RefPtr<JSC::ArrayBufferView> m_view;
+    JSValueInWrappedObject m_streamWrapperForGC;
 };
 
 } // namespace WebCore
