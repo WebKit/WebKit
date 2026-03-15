@@ -14,6 +14,10 @@ if (ENABLE_MINIBROWSER)
     add_subdirectory(MiniBrowser/wpe)
 endif ()
 
+if (ENABLE_WPE_PLATFORM AND ENABLE_MINIBROWSER)
+    add_subdirectory(WPEPlatformLauncher)
+endif ()
+
 if (ENABLE_COG)
     include(ExternalProject)
     find_program(MESON_EXE NAMES meson)
