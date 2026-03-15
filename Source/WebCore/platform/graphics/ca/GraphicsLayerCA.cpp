@@ -60,6 +60,7 @@
 #include "TransformOperationsSharedPrimitivesPrefix.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
+#include "VideoLayerContext.h"
 #include <QuartzCore/CATransform3D.h>
 #include <limits.h>
 #include <pal/spi/cf/CFUtilitiesSPI.h>
@@ -379,7 +380,7 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayerHost(LayerHostingCont
     return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, owner);
 }
 
-Ref<PlatformCALayer> GraphicsLayerCA::createPlatformVideoLayer(HTMLVideoElement&, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> GraphicsLayerCA::createPlatformVideoLayer(const VideoLayerContext&, HTMLVideoElement&, PlatformCALayerClient* owner)
 {
     // By default, just make a plain layer; subclasses can override to provide a custom PlatformCALayer for hosting context id.
     return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, owner);
@@ -1531,18 +1532,24 @@ void GraphicsLayerCA::removeModelContents()
 }
 #endif
 
-void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, ContentsLayerPurpose purpose)
+void GraphicsLayerCA::setContentsToVideoLayer(const VideoLayerContext& videoLayerContext, HTMLVideoElement& videoElement, ContentsLayerPurpose purpose)
 {
 #if HAVE(AVKIT)
-    if (auto hostingContextID = videoElement.layerHostingContext().contextID) {
+    auto hostingContextID = videoLayerContext.hostingContext.contextID;
+    if (videoLayerContext.hasHostingContext()) {
         if (m_contentsLayer && !m_contentsDisplayDelegate
+            && m_videoContentsLayerID == m_contentsLayer->layerID()
             && m_layerHostingContextID == hostingContextID
+            && m_videoContentsLayerHostedByUIProcess == videoLayerContext.hostedByUIProcess
             && m_contentsLayerPurpose == purpose) {
                 return;
         }
 
-        m_contentsLayer = createPlatformVideoLayer(videoElement, this);
+        Ref contentsLayer = createPlatformVideoLayer(videoLayerContext, videoElement, this);
+        m_videoContentsLayerID = contentsLayer->layerID();
+        m_contentsLayer = WTF::move(contentsLayer);
         m_layerHostingContextID = hostingContextID;
+        m_videoContentsLayerHostedByUIProcess = videoLayerContext.hostedByUIProcess;
         m_contentsLayerPurpose = purpose;
         m_contentsDisplayDelegate = nullptr;
         updateVideoGravity();
@@ -1550,7 +1557,13 @@ void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, 
         noteLayerPropertyChanged(ContentsPlatformLayerChanged);
         return;
     }
+#else
+    UNUSED_PARAM(videoLayerContext);
 #endif
+    // Reached when the layer is not hosted from another process, so the element's own platform
+    // layer is the contents. This is fetched here rather than carried in the VideoLayerContext
+    // because it lazily creates the layer for a remote renderer, which must not happen on the
+    // hosted path above.
     SUPPRESS_FORWARD_DECL_ARG setContentsToPlatformLayer(videoElement.platformLayer(), purpose);
 }
 

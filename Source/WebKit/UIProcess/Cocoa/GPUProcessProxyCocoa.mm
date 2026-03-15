@@ -32,6 +32,7 @@
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessMessages.h"
 #include "MediaPermissionUtilities.h"
+#include "RemoteLayerHostingManagerProxy.h"
 #include "WebProcessProxy.h"
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cocoa/SpanCocoa.h>
@@ -136,6 +137,11 @@ std::optional<IPC::Connection::AsyncReplyID> GPUProcessProxy::sinkCompletedSnaps
 void GPUProcessProxy::printProcessDrawingCountsForTesting(CompletionHandler<void(uint64_t, uint64_t)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::PrintProcessDrawingCountsForTesting(), WTF::move(completionHandler));
+}
+
+RemoteLayerHostingManagerProxy& GPUProcessProxy::remoteLayerHostingManagerProxy()
+{
+    return m_remoteLayerHostingManagerProxy;
 }
 
 }

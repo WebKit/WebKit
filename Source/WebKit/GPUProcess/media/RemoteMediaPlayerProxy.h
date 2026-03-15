@@ -62,6 +62,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "PlaybackSessionContextIdentifier.h"
 #include "SharedCARingBuffer.h"
 #endif
 
@@ -105,6 +106,7 @@ class RemoteAudioSourceProviderProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteTextTrackProxy;
 class RemoteVideoFrameObjectHeap;
+class RemoteVideoLayerSource;
 class RemoteVideoTrackProxy;
 
 class RemoteMediaPlayerProxy final
@@ -375,7 +377,14 @@ private:
     void bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
     void setShouldDisableHDR(bool);
-    void requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&&);
+    using LayerHostingContextCallback = CompletionHandler<void(WebCore::HostingContext)>;
+    void requestHostingContext(LayerHostingContextCallback&&);
+#if PLATFORM(COCOA)
+    void updateContentLayerForRemoteLayerHosting();
+    void removeContentLayerForRemoteLayerHosting();
+    bool remoteLayerHostingBypassesWebContentProcess() const;
+    std::optional<PlaybackSessionContextIdentifier> remoteLayerHostingIdentifier() const;
+#endif
     void setShouldCheckHardwareSupport(bool);
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);
@@ -457,6 +466,7 @@ private:
 #endif
 #if PLATFORM(COCOA)
     const UniqueRef<LayerHostingContextManager> m_layerHostingContextManager;
+    RefPtr<RemoteVideoLayerSource> m_remoteVideoLayerSource;
 #endif
 };
 

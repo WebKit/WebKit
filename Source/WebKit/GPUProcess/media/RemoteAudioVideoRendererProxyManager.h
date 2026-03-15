@@ -30,6 +30,8 @@
 #include "Connection.h"
 #if PLATFORM(COCOA)
 #include "LayerHostingContextManager.h"
+#include "PlaybackSessionContextIdentifier.h"
+#include "RemoteVideoLayerSource.h"
 #endif
 #include "MessageReceiver.h"
 #include "RemoteAudioVideoRendererIdentifier.h"
@@ -182,6 +184,7 @@ private:
         Markable<WebCore::MediaPlayerIdentifier> playerIdentifier;
 #if PLATFORM(COCOA)
         LayerHostingContextManager layerHostingContextManager;
+        RefPtr<RemoteVideoLayerSource> remoteVideoLayerSource;
 #endif
         HashMap<TrackIdentifier, WebCore::MediaSampleConverter> converters { };
         WebCore::VideoRendererPreferences preferences { };
@@ -193,6 +196,12 @@ private:
     RefPtr<WebCore::AudioVideoRenderer> rendererFor(RemoteAudioVideoRendererIdentifier) const;
     RemoteAudioVideoRendererState stateFor(RemoteAudioVideoRendererIdentifier) const;
     NODELETE RendererContext& contextFor(RemoteAudioVideoRendererIdentifier);
+#if PLATFORM(COCOA)
+    void updateContentLayerForRemoteLayerHosting(RemoteAudioVideoRendererIdentifier);
+    void removeContentLayerForRemoteLayerHosting(RemoteAudioVideoRendererIdentifier);
+    bool remoteLayerHostingBypassesWebContentProcess() const;
+    std::optional<PlaybackSessionContextIdentifier> remoteLayerHostingIdentifier(const RendererContext&) const;
+#endif
     void rendereringModeChanged(RemoteAudioVideoRendererIdentifier);
     void updateCachedVideoMetrics(RemoteAudioVideoRendererIdentifier);
     void maybeUpdateCachedVideoMetrics(RemoteAudioVideoRendererIdentifier);

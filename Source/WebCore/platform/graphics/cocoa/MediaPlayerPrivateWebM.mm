@@ -1988,6 +1988,11 @@ WebCore::HostingContext MediaPlayerPrivateWebM::hostingContext() const
     return m_renderer->hostingContext();
 }
 
+bool MediaPlayerPrivateWebM::supportsUIProcessVideoLayerHosting() const
+{
+    return m_renderer->supportsUIProcessVideoLayerHosting();
+}
+
 Ref<MediaPlayer::HostingContextPromise> MediaPlayerPrivateWebM::requestHostingContext()
 {
     assertIsMainThread();

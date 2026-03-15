@@ -62,6 +62,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TimeRanges.h>
+#import <WebCore/VideoLayerContext.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <mach/mach_port.h>
 #import <wtf/LoggerHelper.h>
@@ -489,7 +490,7 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
         interface->setRootLayer(videoLayer.get());
     }
 
-    auto setupFullscreen = [protectedThis = Ref { *this }, page = WeakPtr { m_page }, contextId = contextId, initialSize = initialSize, videoRect = videoRect, videoElement = WeakPtr { videoElement }, allowsPictureInPicture = allowsPictureInPicture, standby = standby, fullscreenMode = interface->fullscreenMode()] (HostingContext hostingContext, const FloatSize& size) {
+    auto setupFullscreen = [protectedThis = Ref { *this }, page = WeakPtr { m_page }, contextId = contextId, initialSize = initialSize, videoRect = videoRect, videoElement = WeakPtr { videoElement }, allowsPictureInPicture = allowsPictureInPicture, standby = standby, fullscreenMode = interface->fullscreenMode()](HostingContext hostingContext, const FloatSize& size, bool hostedByUIProcess) {
         if (!page || !videoElement)
             return;
         // Re-fetch rather than capturing at call time: this lambda may run after an async
@@ -497,7 +498,7 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
         // (and hence its renderer's hasObjectViewBoxSet()) can change.
         CheckedPtr videoRenderer = videoElement->renderer();
         bool hasObjectViewBox = videoRenderer && videoRenderer->hasObjectViewBoxSet();
-        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, hostingContext, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, protect(videoElement->document())->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), hasObjectViewBox));
+        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, hostingContext, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, protect(videoElement->document())->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), hasObjectViewBox, hostedByUIProcess));
 
         if (RefPtr player = videoElement->player()) {
             if (auto identifier = player->identifier())
@@ -506,6 +507,13 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
     };
 
     HostingContext hostingContext;
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (videoElement.videoLayerContext().hostedByUIProcess) {
+        setupFullscreen({ }, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()), true);
+        return;
+    }
+#endif
+
     bool blockMediaLayerRehosting = videoElement.document().settings().blockMediaLayerRehostingInWebContentProcess() && videoElement.document().page() &&  videoElement.document().page()->chrome().client().isUsingUISideCompositing();
     if (blockMediaLayerRehosting) {
         hostingContext = videoElement.layerHostingContext();
@@ -514,14 +522,14 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
                 if (!result)
                     return;
                 ASSERT(result->contextID);
-                setupFullscreenHandler(*result, FloatSize(videoElement->videoWidth(), videoElement->videoHeight()));
+                setupFullscreenHandler(*result, FloatSize(videoElement->videoWidth(), videoElement->videoHeight()), false);
             });
             return;
         }
     } else
         hostingContext.contextID = interface->layerHostingContext()->contextID();
 
-    setupFullscreen(hostingContext, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()));
+    setupFullscreen(hostingContext, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()), false);
 }
 
 void VideoPresentationManager::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)

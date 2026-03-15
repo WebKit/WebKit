@@ -192,6 +192,9 @@ private:
     // Remote Layers
     Ref<HostingContextPromise> requestHostingContext() final;
     WebCore::HostingContext hostingContext() const final;
+    // RemoteAudioVideoRendererProxyManager in the GPU process registers the renderer's video
+    // layer with RemoteLayerHostingManager.
+    bool supportsUIProcessVideoLayerHosting() const final { return true; }
     void setLayerHostingContext(WebCore::HostingContext&&);
 #if PLATFORM(COCOA)
     WebCore::FloatSize videoLayerSize() const;

@@ -54,6 +54,9 @@
 
 #include <wtf/LoggerHelper.h>
 #if PLATFORM(COCOA)
+#include "PlaybackSessionContextIdentifier.h"
+#include "RemoteLayerHostingManager.h"
+#include "RemoteVideoLayerSource.h"
 #include <wtf/MachSendRightAnnotated.h>
 #endif
 #include <wtf/Markable.h>
@@ -205,6 +208,9 @@ void RemoteAudioVideoRendererProxyManager::shutdown(RemoteAudioVideoRendererIden
 {
     MESSAGE_CHECK(m_renderers.contains(identifier));
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
+#if PLATFORM(COCOA)
+    removeContentLayerForRemoteLayerHosting(identifier);
+#endif
 
     if (RefPtr renderer = rendererFor(identifier))
         renderer->shutdown();
@@ -214,6 +220,9 @@ void RemoteAudioVideoRendererProxyManager::destroy(RemoteAudioVideoRendererIdent
 {
     MESSAGE_CHECK(m_renderers.contains(identifier));
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
+#if PLATFORM(COCOA)
+    removeContentLayerForRemoteLayerHosting(identifier);
+#endif
 
     if (auto iterator = m_renderers.find(identifier); iterator != m_renderers.end()) {
         if (RefPtr renderer = iterator->value.renderer)
@@ -732,6 +741,97 @@ std::optional<FloatRect> RemoteAudioVideoRendererProxyManager::hostedVideoLayerB
 }
 #endif
 
+#if PLATFORM(COCOA)
+bool RemoteAudioVideoRendererProxyManager::remoteLayerHostingBypassesWebContentProcess() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return false;
+
+    if (auto sharedPreferences = connection->sharedPreferencesForWebProcess())
+        return sharedPreferences->remoteLayerHostingBypassesWebContentProcess;
+
+    return false;
+}
+
+class AudioVideoRendererVideoLayerSource final : public RemoteVideoLayerSource {
+public:
+    static Ref<AudioVideoRendererVideoLayerSource> create(AudioVideoRenderer& renderer)
+    {
+        return adoptRef(*new AudioVideoRendererVideoLayerSource(renderer));
+    }
+
+private:
+    explicit AudioVideoRendererVideoLayerSource(AudioVideoRenderer& renderer)
+        : m_renderer(renderer)
+    {
+    }
+
+    PlatformLayer* platformVideoLayer() const final
+    {
+        RefPtr renderer = m_renderer;
+        return renderer ? renderer->platformVideoLayer() : nullptr;
+    }
+
+    void setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRightAnnotated&& fence) final
+    {
+        if (RefPtr renderer = m_renderer)
+            renderer->setVideoLayerSizeFenced(size, WTF::move(fence));
+    }
+
+    ThreadSafeWeakPtr<AudioVideoRenderer> m_renderer;
+};
+
+std::optional<PlaybackSessionContextIdentifier> RemoteAudioVideoRendererProxyManager::remoteLayerHostingIdentifier(const RendererContext& context) const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection || !context.mediaElementIdentifier)
+        return std::nullopt;
+
+    return PlaybackSessionContextIdentifier { *context.mediaElementIdentifier, connection->webProcessIdentifier() };
+}
+
+void RemoteAudioVideoRendererProxyManager::updateContentLayerForRemoteLayerHosting(RemoteAudioVideoRendererIdentifier identifier)
+{
+    auto& context = contextFor(identifier);
+
+    auto contextId = remoteLayerHostingIdentifier(context);
+    if (!contextId)
+        return;
+
+    RefPtr renderer = context.renderer;
+    if (!renderer)
+        return;
+
+    RefPtr source = context.remoteVideoLayerSource;
+    if (!source) {
+        source = AudioVideoRendererVideoLayerSource::create(*renderer);
+        context.remoteVideoLayerSource = source;
+    }
+
+    bool canShowWhileLocked = false;
+#if PLATFORM(IOS_FAMILY)
+    canShowWhileLocked = context.preferences.contains(VideoRendererPreference::CanShowWhileLocked);
+#endif
+    protect(GPUProcess::singleton().remoteLayerHostingManager())->attachSource(*contextId, *source, canShowWhileLocked);
+}
+
+void RemoteAudioVideoRendererProxyManager::removeContentLayerForRemoteLayerHosting(RemoteAudioVideoRendererIdentifier identifier)
+{
+    auto iterator = m_renderers.find(identifier);
+    if (iterator == m_renderers.end())
+        return;
+
+    auto& context = iterator->value;
+    RefPtr source = std::exchange(context.remoteVideoLayerSource, nullptr);
+    if (!source)
+        return;
+
+    if (auto contextId = remoteLayerHostingIdentifier(context))
+        protect(GPUProcess::singleton().remoteLayerHostingManager())->detachSource(*contextId, *source);
+}
+#endif // PLATFORM(COCOA)
+
 void RemoteAudioVideoRendererProxyManager::rendereringModeChanged(RemoteAudioVideoRendererIdentifier identifier)
 {
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
@@ -743,14 +843,18 @@ void RemoteAudioVideoRendererProxyManager::rendereringModeChanged(RemoteAudioVid
 #if PLATFORM(COCOA)
     auto& context = contextFor(identifier);
 
-    bool canShowWhileLocked = false;
+    if (remoteLayerHostingBypassesWebContentProcess())
+        updateContentLayerForRemoteLayerHosting(identifier);
+    else {
+        bool canShowWhileLocked = false;
 #if PLATFORM(IOS_FAMILY)
-    canShowWhileLocked = context.preferences.contains(VideoRendererPreference::CanShowWhileLocked);
+        canShowWhileLocked = context.preferences.contains(VideoRendererPreference::CanShowWhileLocked);
 #endif
 
-    // See webkit.org/b/299655
-    SUPPRESS_FORWARD_DECL_ARG if (auto maybeHostingContext = context.layerHostingContextManager.createHostingContextIfNeeded(context.renderer->platformVideoLayer(), canShowWhileLocked))
-        publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::LayerHostingContextChanged(state, *maybeHostingContext, context.layerHostingContextManager.videoLayerSize()));
+        // See webkit.org/b/299655
+        SUPPRESS_FORWARD_DECL_ARG if (auto maybeHostingContext = context.layerHostingContextManager.createHostingContextIfNeeded(context.renderer->platformVideoLayer(), canShowWhileLocked))
+            publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::LayerHostingContextChanged(state, *maybeHostingContext, context.layerHostingContextManager.videoLayerSize()));
+    }
 #endif
     publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::RenderingModeChanged(state));
 }
@@ -773,6 +877,13 @@ void RemoteAudioVideoRendererProxyManager::setVideoLayerSizeFenced(RemoteAudioVi
     MESSAGE_CHECK(m_renderers.contains(identifier));
 
     auto& context = contextFor(identifier);
+
+    // When the layer is hosted directly by the UI process, RemoteLayerHostingManager is the
+    // only thing that sizes it. The WebContent process only sends this to keep its own
+    // bookkeeping up to date, and must not affect the layer.
+    if (context.remoteVideoLayerSource)
+        return;
+
     context.layerHostingContextManager.setVideoLayerSizeFenced(size, WTF::MachSendRightAnnotated { sendRightAnnotated }, [&] {
         context.renderer->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
     });

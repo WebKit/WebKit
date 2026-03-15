@@ -54,6 +54,7 @@ class GraphicsLayerKeyframeValueList;
 class HTMLVideoElement;
 class NativeImage;
 class TransformState;
+struct VideoLayerContext;
 
 #if ENABLE(MODEL_CONTEXT)
 class ModelContext;
@@ -181,7 +182,7 @@ public:
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(SPATIAL_PORTAL)
     WEBCORE_EXPORT void removeModelContents() override;
 #endif
-    WEBCORE_EXPORT void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) override;
+    WEBCORE_EXPORT void setContentsToVideoLayer(const VideoLayerContext&, HTMLVideoElement&, ContentsLayerPurpose) override;
     WEBCORE_EXPORT void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     WEBCORE_EXPORT PlatformLayerIdentifier setContentsToAsyncDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>, ContentsLayerPurpose);
 
@@ -334,7 +335,7 @@ private:
     virtual Ref<PlatformCALayer> createPlatformCALayer(Ref<WebCore::Model>, PlatformCALayerClient* owner);
 #endif
     virtual Ref<PlatformCALayer> createPlatformCALayerHost(LayerHostingContextIdentifier, PlatformCALayerClient*);
-    WEBCORE_EXPORT virtual Ref<PlatformCALayer> createPlatformVideoLayer(HTMLVideoElement&, PlatformCALayerClient* owner);
+    WEBCORE_EXPORT virtual Ref<PlatformCALayer> createPlatformVideoLayer(const VideoLayerContext&, HTMLVideoElement&, PlatformCALayerClient* owner);
     virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, const String& keyPath);
 
     virtual void setLayerContentsToImageBuffer(PlatformCALayer&, ImageBuffer*) { }
@@ -790,8 +791,10 @@ private:
     bool m_hasEverPainted : 1;
     bool m_hasDescendantsWithRunningTransformAnimations : 1;
     bool m_hasDescendantsWithUncommittedChanges : 1;
-#if ENABLE(AVKIT)
+#if HAVE(AVKIT)
     uint32_t m_layerHostingContextID { 0 };
+    std::optional<PlatformLayerIdentifier> m_videoContentsLayerID;
+    bool m_videoContentsLayerHostedByUIProcess { false };
 #endif
 };
 

@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebKit/WKWebView.h>
