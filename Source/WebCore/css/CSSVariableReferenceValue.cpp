@@ -30,19 +30,24 @@
 #include "config.h"
 #include "CSSVariableReferenceValue.h"
 
+#include "CSSCustomPropertySyntax.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
+#include "CSSTokenizer.h"
 #include "CSSVariableData.h"
 #include "ConstantPropertyMap.h"
 #include "CustomFunctionRegistry.h"
 #include "Document.h"
+#include "Element.h"
+#include "QualifiedName.h"
 #include "RenderStyle+GettersInlines.h"
 #include "StyleBuilder.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -154,6 +159,197 @@ bool CSSVariableReferenceValue::resolveVariableReference(CSSParserTokenRange ran
     return true;
 }
 
+static std::optional<CSSCustomPropertySyntax> parseAttrTypeSyntax(CSSParserTokenRange range)
+{
+    range.consumeWhitespace();
+    if (range.atEnd())
+        return { };
+
+    // type() can contain either a quoted string or bare syntax tokens.
+    if (range.peek().type() == StringToken) {
+        auto syntax = range.consumeIncludingWhitespace().value();
+        if (!range.atEnd())
+            return { };
+        return CSSCustomPropertySyntax::parse(syntax);
+    }
+
+    return CSSCustomPropertySyntax::parse(range.serialize());
+}
+
+static bool isValidAttrUnit(const CSSParserToken& token)
+{
+    if (token.type() == DelimiterToken)
+        return token.delimiter() == '%';
+    if (token.type() != IdentToken)
+        return false;
+    return CSSParserToken::stringToUnitType(token.value()) != CSSUnitType::CSS_UNKNOWN;
+}
+
+// Parses an attribute value as a single number token. Returns the numeric value and type.
+static std::optional<std::pair<double, NumericValueType>> parseAttrValueAsNumber(const AtomString& attributeValue)
+{
+    auto tokenizer = CSSTokenizer::tryCreate(attributeValue.string());
+    if (!tokenizer)
+        return { };
+
+    auto range = tokenizer->tokenRange();
+    range.consumeWhitespace();
+    if (range.peek().type() != NumberToken)
+        return { };
+
+    double value = range.peek().numericValue();
+    auto valueType = range.peek().numericValueType();
+    range.consumeIncludingWhitespace();
+    if (!range.atEnd())
+        return { };
+
+    return { { value, valueType } };
+}
+
+bool CSSVariableReferenceValue::resolveAttrReference(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, Style::Builder& builder, Vector<AtomString, 8>& activeAttrNames) const
+{
+    // <attr()> = attr( <attr-name> <attr-type>? , <declaration-value>?)
+    // <attr-type> = type( <syntax> ) | raw-string | number | <attr-unit>
+    range.consumeWhitespace();
+
+    if (range.peek().type() != IdentToken)
+        return false;
+
+    auto attrName = range.consumeIncludingWhitespace().value().toAtomString();
+
+    // Parse optional <attr-type>.
+    enum class AttrTypeKind { None, Syntax, RawString, Number, Unit };
+    auto attrTypeKind = AttrTypeKind::None;
+    std::optional<CSSCustomPropertySyntax> syntax;
+    CSSParserToken unitToken(IdentToken);
+
+    if (!range.atEnd() && range.peek().type() == FunctionToken && equalLettersIgnoringASCIICase(range.peek().value(), "type"_s)) {
+        attrTypeKind = AttrTypeKind::Syntax;
+        syntax = parseAttrTypeSyntax(range.consumeBlock());
+        range.consumeWhitespace();
+
+        if (!syntax || syntax->containsUnknownType())
+            return false;
+    } else if (!range.atEnd() && range.peek().type() != CommaToken) {
+        if (range.peek().type() == IdentToken && equalLettersIgnoringASCIICase(range.peek().value(), "raw-string"_s)) {
+            attrTypeKind = AttrTypeKind::RawString;
+            range.consumeIncludingWhitespace();
+        } else if (range.peek().type() == IdentToken && equalLettersIgnoringASCIICase(range.peek().value(), "number"_s)) {
+            attrTypeKind = AttrTypeKind::Number;
+            range.consumeIncludingWhitespace();
+        } else if (isValidAttrUnit(range.peek())) {
+            attrTypeKind = AttrTypeKind::Unit;
+            unitToken = range.consumeIncludingWhitespace();
+        } else
+            return false;
+    }
+
+    // Parse optional fallback after comma.
+    bool hasFallback = false;
+    CSSParserTokenRange fallbackRange;
+    if (!range.atEnd() && range.peek().type() == CommaToken) {
+        range.consumeIncludingWhitespace();
+        hasFallback = true;
+        fallbackRange = range;
+    }
+
+    auto resolveFallback = [&]() -> bool {
+        if (!hasFallback)
+            return false;
+        auto fallbackTokens = resolveTokenRange(fallbackRange, builder, activeAttrNames);
+        if (!fallbackTokens)
+            return false;
+        tokens.appendVector(*fallbackTokens);
+        return true;
+    };
+
+    // Get the element and read the attribute value.
+    RefPtr element = builder.state().element();
+    if (!element)
+        return resolveFallback();
+
+    // Cycle detection for nested attr() references.
+    if (activeAttrNames.contains(attrName))
+        return false;
+    activeAttrNames.append(attrName);
+    auto popAttrName = makeScopeExit([&] {
+        activeAttrNames.removeLast();
+    });
+
+    QualifiedName qualifiedName(nullAtom(), attrName.impl(), nullAtom());
+    const AtomString& attributeValue = element->getAttribute(qualifiedName);
+
+    // Step 5: raw-string or omitted type → substitute as CSS string.
+    if (attrTypeKind == AttrTypeKind::None || attrTypeKind == AttrTypeKind::RawString) {
+        if (attributeValue.isNull()) {
+            if (hasFallback)
+                return resolveFallback();
+            // Spec step 7.1: If no fallback and type was omitted, return empty string.
+            if (attrTypeKind == AttrTypeKind::None) {
+                tokens.append(CSSParserToken(StringToken, emptyAtom()));
+                return true;
+            }
+            // raw-string with no fallback: guaranteed-invalid.
+            return false;
+        }
+        tokens.append(CSSParserToken(StringToken, attributeValue));
+        return true;
+    }
+
+    // Step 4: number or <attr-unit>.
+    if (attrTypeKind == AttrTypeKind::Number || attrTypeKind == AttrTypeKind::Unit) {
+        if (!attributeValue.isNull()) {
+            if (parseAttrValueAsNumber(attributeValue)) {
+                // Construct the final value string and tokenize it.
+                // Use AtomString to intern it so token StringViews remain valid.
+                AtomString valueString;
+                if (attrTypeKind == AttrTypeKind::Unit) {
+                    if (unitToken.type() == DelimiterToken)
+                        valueString = AtomString(makeString(attributeValue, '%'));
+                    else
+                        valueString = AtomString(makeString(attributeValue, unitToken.value()));
+                } else
+                    valueString = attributeValue;
+
+                auto valueTokenizer = CSSTokenizer::tryCreate(valueString.string());
+                if (valueTokenizer) {
+                    auto valueRange = valueTokenizer->tokenRange();
+                    valueRange.consumeWhitespace();
+                    while (!valueRange.atEnd())
+                        tokens.append(valueRange.consume());
+                    return true;
+                }
+            }
+        }
+        return resolveFallback();
+    }
+
+    // Step 6: type(<syntax>) — parse attribute value according to the syntax.
+    ASSERT(attrTypeKind == AttrTypeKind::Syntax && syntax);
+
+    if (!attributeValue.isNull()) {
+        auto tokenizer = CSSTokenizer::tryCreate(attributeValue.string());
+        if (tokenizer) {
+            auto attrTokenRange = tokenizer->tokenRange();
+            attrTokenRange.consumeWhitespace();
+            if (!attrTokenRange.atEnd()) {
+                // FIXME: Substitute arbitrary substitution functions (var/attr/env) in the attr value per spec step 6.
+                if (syntax->isUniversal() || CSSPropertyParser::isValidCustomPropertyValueForSyntax(*syntax, attrTokenRange, context())) {
+                    // Re-read tokens for output (validation consumed the range).
+                    auto outputRange = tokenizer->tokenRange();
+                    outputRange.consumeWhitespace();
+                    while (!outputRange.atEnd())
+                        tokens.append(outputRange.consume());
+                    return true;
+                }
+            }
+        }
+    }
+
+    // Attribute value is invalid or missing; use fallback.
+    return resolveFallback();
+}
+
 bool CSSVariableReferenceValue::evaluateDashedFunction(StringView functionName, CSSParserTokenRange, Vector<CSSParserToken>& tokens, Style::Builder& builder) const
 {
     // https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
@@ -187,6 +383,12 @@ bool CSSVariableReferenceValue::evaluateDashedFunction(StringView functionName, 
 
 std::optional<Vector<CSSParserToken>> CSSVariableReferenceValue::resolveTokenRange(CSSParserTokenRange range, Style::Builder& builder) const
 {
+    Vector<AtomString, 8> activeAttrNames;
+    return resolveTokenRange(range, builder, activeAttrNames);
+}
+
+std::optional<Vector<CSSParserToken>> CSSVariableReferenceValue::resolveTokenRange(CSSParserTokenRange range, Style::Builder& builder, Vector<AtomString, 8>& activeAttrNames) const
+{
     Vector<CSSParserToken> tokens;
     bool success = true;
     while (!range.atEnd()) {
@@ -195,6 +397,11 @@ std::optional<Vector<CSSParserToken>> CSSVariableReferenceValue::resolveTokenRan
             auto functionId = token.functionId();
             if (functionId == CSSValueVar || functionId == CSSValueEnv) {
                 if (!resolveVariableReference(range.consumeBlock(), functionId, tokens, builder))
+                    success = false;
+                continue;
+            }
+            if (functionId == CSSValueAttr) {
+                if (!resolveAttrReference(range.consumeBlock(), tokens, builder, activeAttrNames))
                     success = false;
                 continue;
             }

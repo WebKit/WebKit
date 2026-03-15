@@ -198,13 +198,13 @@ FAIL CSS Values and Units Test: CSS inline if() function 100 assert_equals: "if(
 FAIL CSS Values and Units Test: CSS inline if() function 101 assert_equals: "if(style(--x: var(--y)): true_value;
           else: false_value)" should be substituted to "false_value". expected "false_value" but got "if(style(--x: 3): true_value;\n          else: false_value)"
 FAIL CSS Values and Units Test: CSS inline if() function 102 assert_equals: "if(style(--x: attr(data-foo type(<length>))): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: attr(data-foo type(<length>))): true_value;\n          else: false_value)"
+          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: 30px): true_value;\n          else: false_value)"
 FAIL CSS Values and Units Test: CSS inline if() function 103 assert_equals: "if(style(--x: attr(data-foo)): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: attr(data-foo)): true_value;\n          else: false_value)"
+          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: \"30px\"): true_value;\n          else: false_value)"
 FAIL CSS Values and Units Test: CSS inline if() function 104 assert_equals: "if(style(--length: attr(data-foo type(<length>))): true_value;
-          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--length: attr(data-foo type(<length>))): true_value;\n          else: false_value)"
+          else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--length: 30px): true_value;\n          else: false_value)"
 FAIL CSS Values and Units Test: CSS inline if() function 105 assert_equals: "if(style(--length: attr(data-foo type(<length>))): true_value;
-          else: false_value)" should be substituted to "false_value". expected "false_value" but got "if(style(--length: attr(data-foo type(<length>))): true_value;\n          else: false_value)"
+          else: false_value)" should be substituted to "false_value". expected "false_value" but got "if(style(--length: 30px): true_value;\n          else: false_value)"
 FAIL CSS Values and Units Test: CSS inline if() function 106 assert_equals: "if(style(--x: 3): true_value;
           else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: 3): true_value;\n          else: false_value)"
 FAIL CSS Values and Units Test: CSS inline if() function 107 assert_equals: "if(style(--x: 3): true_value;
@@ -334,6 +334,6 @@ FAIL CSS Values and Units Test: CSS inline if() function 198 assert_equals: "if(
 FAIL CSS Values and Units Test: CSS inline if() function 199 assert_equals: "if(style(--x: 1): value1;
           style(--y: green): value2;
           style(--z: 3px): value3;)" should be substituted to "". expected "" but got "if(style(--x: 1): value1;\n          style(--y: green): value2;\n          style(--z: 3px): value3;)"
-FAIL CSS Values and Units Test: CSS inline if() function 200 assert_equals: "if(style(--x: attr(data-attr type(*))): true_value; else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: attr(data-attr type(*))): true_value; else: false_value)"
+FAIL CSS Values and Units Test: CSS inline if() function 200 assert_equals: "if(style(--x: attr(data-attr type(*))): true_value; else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: attr): true_value; else: false_value)"
 FAIL CSS Values and Units Test: CSS inline if() function 201 assert_equals: "if(style(--x: attr): true_value; else: false_value)" should be substituted to "true_value". expected "true_value" but got "if(style(--x: attr): true_value; else: false_value)"
 

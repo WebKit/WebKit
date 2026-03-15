@@ -1,8 +1,8 @@
 Test
 
 PASS Sanity check
-FAIL Attribute in null-namespace is substituted assert_equals: expected "value3" but got "attr(data-x type(*), fallback)"
-FAIL Fallback is taken when attribute does not exist in null-namespace assert_equals: expected "fallback" but got "attr(data-y type(*), fallback)"
-FAIL Attribute in null-namespace is substituted (JS) assert_equals: expected "value8" but got "attr(data-z type(*), fallback)"
-FAIL Fallback is taken when attribute does not does exist in null-namespace (JS) assert_equals: expected "fallback" but got "attr(data-w type(*), fallback)"
+PASS Attribute in null-namespace is substituted
+PASS Fallback is taken when attribute does not exist in null-namespace
+FAIL Attribute in null-namespace is substituted (JS) assert_equals: expected "value8" but got "fallback"
+PASS Fallback is taken when attribute does not does exist in null-namespace (JS)
 

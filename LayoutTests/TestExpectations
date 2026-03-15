@@ -4421,15 +4421,7 @@ imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-003.html [ 
 
 # wpt css-values failures
 webkit.org/b/203320 imported/w3c/web-platform-tests/css/css-values/percentage-rem-low.html [ ImageOnlyFailure ]
-webkit.org/b/203322 imported/w3c/web-platform-tests/css/css-values/attr-color-invalid-cast.html [ ImageOnlyFailure ]
-webkit.org/b/203323 imported/w3c/web-platform-tests/css/css-values/attr-color-valid.html [ ImageOnlyFailure ]
-webkit.org/b/203324 imported/w3c/web-platform-tests/css/css-values/attr-in-max.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-values/attr-in-slotted.html [ ImageOnlyFailure ]
-webkit.org/b/203326 imported/w3c/web-platform-tests/css/css-values/attr-length-invalid-cast.html [ ImageOnlyFailure ]
-webkit.org/b/203327 imported/w3c/web-platform-tests/css/css-values/attr-length-valid-zero-nofallback.html [ ImageOnlyFailure ]
-webkit.org/b/203328 imported/w3c/web-platform-tests/css/css-values/attr-length-valid-zero.html [ ImageOnlyFailure ]
-webkit.org/b/203329 imported/w3c/web-platform-tests/css/css-values/attr-length-valid.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-values/attr-notype-fallback.html [ ImageOnlyFailure ]
+
 webkit.org/b/259025 imported/w3c/web-platform-tests/css/css-values/ic-unit-015.html [ ImageOnlyFailure ]
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-values/ex-unit-004.html [ ImageOnlyFailure ]
 webkit.org/b/242467 imported/w3c/web-platform-tests/css/css-values/calc-text-indent-intrinsic-1.html [ ImageOnlyFailure ]

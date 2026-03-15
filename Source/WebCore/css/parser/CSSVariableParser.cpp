@@ -59,6 +59,7 @@ static bool NODELETE isValidConstantName(const CSSParserToken& token)
 static bool isValidVariableReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidConstantReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidDashedFunction(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidAttrReference(CSSParserTokenRange, const CSSParserContext&);
 
 struct ClassifyBlockResult {
     bool hasReferences { false };
@@ -123,6 +124,12 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
             }
             if (token.functionId() == CSSValueEnv) {
                 if (!isValidConstantReference(block, parserContext))
+                    return { };
+                result.hasReferences = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueAttr) {
+                if (!isValidAttrReference(block, parserContext))
                     return { };
                 result.hasReferences = true;
                 continue;
@@ -225,6 +232,61 @@ bool isValidDashedFunction(CSSParserTokenRange range, const CSSParserContext& pa
         ++index;
     }
     return true;
+}
+
+static bool isValidAttrUnit(const CSSParserToken& token)
+{
+    if (token.type() == DelimiterToken)
+        return token.delimiter() == '%';
+    if (token.type() != IdentToken)
+        return false;
+    return CSSParserToken::stringToUnitType(token.value()) != CSSUnitType::CSS_UNKNOWN;
+}
+
+bool isValidAttrReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    // <attr()> = attr( <attr-name> <attr-type>? , <declaration-value>?)
+    // <attr-name> = [ <ident-token> '|' ]? <ident-token>
+    // <attr-type> = type( <syntax> ) | raw-string | number | <attr-unit>
+    range.consumeWhitespace();
+
+    // Consume <attr-name>.
+    if (range.peek().type() != IdentToken)
+        return false;
+    range.consumeIncludingWhitespace();
+
+    if (range.atEnd())
+        return true;
+
+    // Check for <attr-type>.
+    if (range.peek().type() == FunctionToken && equalLettersIgnoringASCIICase(range.peek().value(), "type"_s)) {
+        range.consumeBlock();
+        range.consumeWhitespace();
+    } else if (range.peek().type() == IdentToken) {
+        auto keyword = range.peek().value();
+        if (equalLettersIgnoringASCIICase(keyword, "raw-string"_s) || equalLettersIgnoringASCIICase(keyword, "number"_s))
+            range.consumeIncludingWhitespace();
+        else if (isValidAttrUnit(range.peek()))
+            range.consumeIncludingWhitespace();
+        else if (range.peek().type() != CommaToken)
+            return false; // Unrecognized keyword.
+    } else if (range.peek().type() == DelimiterToken && isValidAttrUnit(range.peek())) {
+        // '%' delimiter.
+        range.consumeIncludingWhitespace();
+    }
+
+    if (range.atEnd())
+        return true;
+
+    // Optional comma and fallback.
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+        return false;
+
+    if (range.atEnd())
+        return true;
+
+    // Validate fallback value.
+    return !!classifyBlock(range, parserContext);
 }
 
 struct VariableType {
