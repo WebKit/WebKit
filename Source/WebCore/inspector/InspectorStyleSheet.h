@@ -29,6 +29,7 @@
 #include "CSSStyleDeclaration.h"
 #include "Settings.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <optional>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
@@ -140,6 +141,7 @@ private:
 
     Vector<InspectorStyleProperty> collectProperties(bool includeAll);
     Ref<Inspector::Protocol::CSS::CSSStyle> styleWithProperties();
+    std::optional<String> serializedTextForProperty(const CSSPropertySourceData&) const;
     RefPtr<CSSRuleSourceData> extractSourceData() const;
     String shorthandValue(const String& shorthandProperty) const;
     String shorthandPriority(const String& shorthandProperty) const;

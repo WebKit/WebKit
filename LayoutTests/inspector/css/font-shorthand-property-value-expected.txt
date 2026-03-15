@@ -1,0 +1,37 @@
+Testing that the font shorthand property value is serialized correctly in the Web Inspector.
+
+
+== Running test suite: FontShorthandPropertyValue
+-- Running test case: FontShorthandPropertyValue.SerializedCorrectly
+Property name: font
+Property value: 12px sans-serif
+PASS: Property name should be 'font'.
+PASS: Property value should contain '12px'.
+PASS: Property value should contain 'sans-serif'.
+PASS: Property value should not contain newlines.
+
+-- Running test case: FontShorthandPropertyValue.BoldItalic
+Property name: font
+Property value: italic bold 16px serif
+PASS: Property name should be 'font'.
+PASS: Property value should contain 'bold'.
+PASS: Property value should contain 'italic'.
+PASS: Property value should contain '16px'.
+PASS: Property value should contain 'serif'.
+
+-- Running test case: FontShorthandPropertyValue.WithLineHeight
+Property name: font
+Property value: 14px / 1.5 monospace
+PASS: Property name should be 'font'.
+PASS: Property value should contain '14px'.
+PASS: Property value should contain '1.5'.
+PASS: Property value should contain 'monospace'.
+
+-- Running test case: FontShorthandPropertyValue.NormalValuesNotExpanded
+Property name: font
+Property value: 16px fantasy
+PASS: Property name should be 'font'.
+PASS: Property value should not have redundant 'normal' values (got: '16px fantasy').
+PASS: Property value should contain '16px'.
+PASS: Property value should contain 'fantasy'.
+

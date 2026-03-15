@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("FontShorthandPropertyValue");
+
+    function getNodeStyles(selector) {
+        return new Promise((resolve, reject) => {
+            WI.domManager.requestDocument((documentNode) => {
+                documentNode.querySelector(selector, (contentNodeId) => {
+                    if (!contentNodeId) {
+                        InspectorTest.fail("DOM node not found.");
+                        reject();
+                        return;
+                    }
+
+                    let domNode = WI.domManager.nodeForId(contentNodeId);
+                    let nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                    if (nodeStyles.needsRefresh) {
+                        nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                            resolve(nodeStyles);
+                        });
+                    } else
+                        resolve(nodeStyles);
+                });
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "FontShorthandPropertyValue.SerializedCorrectly",
+        description: "Test that the font shorthand property value is serialized correctly in the inspector.",
+        async test() {
+            let nodeStyles = await getNodeStyles("#font-shorthand");
+
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "#font-shorthand")
+                    continue;
+
+                let fontProperty = rule.style.propertyForName("font");
+                InspectorTest.assert(fontProperty, "Should find a 'font' property.");
+
+                InspectorTest.log("Property name: " + fontProperty.name);
+                InspectorTest.log("Property value: " + fontProperty.value);
+
+                InspectorTest.expectEqual(fontProperty.name, "font", "Property name should be 'font'.");
+                InspectorTest.expectThat(fontProperty.value.includes("12px"), "Property value should contain '12px'.");
+                InspectorTest.expectThat(fontProperty.value.includes("sans-serif"), "Property value should contain 'sans-serif'.");
+
+                // The value should be the properly serialized form, not contain raw subproperties.
+                InspectorTest.expectFalse(fontProperty.value.includes("\n"), "Property value should not contain newlines.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "FontShorthandPropertyValue.BoldItalic",
+        description: "Test that the font shorthand with bold and italic is serialized correctly.",
+        async test() {
+            let nodeStyles = await getNodeStyles("#font-bold-italic");
+
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "#font-bold-italic")
+                    continue;
+
+                let fontProperty = rule.style.propertyForName("font");
+                InspectorTest.assert(fontProperty, "Should find a 'font' property.");
+
+                InspectorTest.log("Property name: " + fontProperty.name);
+                InspectorTest.log("Property value: " + fontProperty.value);
+
+                InspectorTest.expectEqual(fontProperty.name, "font", "Property name should be 'font'.");
+                InspectorTest.expectThat(fontProperty.value.includes("bold"), "Property value should contain 'bold'.");
+                InspectorTest.expectThat(fontProperty.value.includes("italic"), "Property value should contain 'italic'.");
+                InspectorTest.expectThat(fontProperty.value.includes("16px"), "Property value should contain '16px'.");
+                InspectorTest.expectThat(fontProperty.value.includes("serif"), "Property value should contain 'serif'.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "FontShorthandPropertyValue.WithLineHeight",
+        description: "Test that the font shorthand with line-height is serialized correctly.",
+        async test() {
+            let nodeStyles = await getNodeStyles("#font-line-height");
+
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "#font-line-height")
+                    continue;
+
+                let fontProperty = rule.style.propertyForName("font");
+                InspectorTest.assert(fontProperty, "Should find a 'font' property.");
+
+                InspectorTest.log("Property name: " + fontProperty.name);
+                InspectorTest.log("Property value: " + fontProperty.value);
+
+                InspectorTest.expectEqual(fontProperty.name, "font", "Property name should be 'font'.");
+                InspectorTest.expectThat(fontProperty.value.includes("14px"), "Property value should contain '14px'.");
+                InspectorTest.expectThat(fontProperty.value.includes("1.5"), "Property value should contain '1.5'.");
+                InspectorTest.expectThat(fontProperty.value.includes("monospace"), "Property value should contain 'monospace'.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "FontShorthandPropertyValue.NormalValuesNotExpanded",
+        description: "Test that the font shorthand does not serialize as 'normal normal normal ...' (Bug 15379).",
+        async test() {
+            let nodeStyles = await getNodeStyles("#font-normal-values");
+
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "#font-normal-values")
+                    continue;
+
+                let fontProperty = rule.style.propertyForName("font");
+                InspectorTest.assert(fontProperty, "Should find a 'font' property.");
+
+                InspectorTest.log("Property name: " + fontProperty.name);
+                InspectorTest.log("Property value: " + fontProperty.value);
+
+                InspectorTest.expectEqual(fontProperty.name, "font", "Property name should be 'font'.");
+
+                // Before the fix, this would serialize as "normal normal normal 16px / normal fantasy"
+                // with redundant 'normal' values. The properly serialized form omits default 'normal' values.
+                let normalCount = (fontProperty.value.match(/normal/g) || []).length;
+                InspectorTest.expectLessThanOrEqual(normalCount, 1, "Property value should not have redundant 'normal' values (got: '" + fontProperty.value + "').");
+                InspectorTest.expectThat(fontProperty.value.includes("16px"), "Property value should contain '16px'.");
+                InspectorTest.expectThat(fontProperty.value.includes("fantasy"), "Property value should contain 'fantasy'.");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the font shorthand property value is serialized correctly in the Web Inspector.</p>
+
+    <style>
+    #font-shorthand {
+        font: 12px sans-serif;
+    }
+
+    #font-bold-italic {
+        font: italic bold 16px serif;
+    }
+
+    #font-line-height {
+        font: 14px / 1.5 monospace;
+    }
+
+    #font-normal-values {
+        font: normal normal normal 16px / normal fantasy;
+    }
+    </style>
+    <div id="font-shorthand"></div>
+    <div id="font-bold-italic"></div>
+    <div id="font-line-height"></div>
+    <div id="font-normal-values"></div>
+</body>
+</html>

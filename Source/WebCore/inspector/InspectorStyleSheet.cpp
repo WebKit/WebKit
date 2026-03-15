@@ -840,6 +840,22 @@ Vector<InspectorStyleProperty> InspectorStyle::collectProperties(bool includeAll
     return result;
 }
 
+std::optional<String> InspectorStyle::serializedTextForProperty(const CSSPropertySourceData& sourceData) const
+{
+    if (!sourceData.parsedOk || sourceData.disabled)
+        return std::nullopt;
+
+    auto propertyID = cssPropertyID(sourceData.name);
+    if (propertyID != CSSPropertyFont)
+        return std::nullopt;
+
+    auto serializedValue = m_style->getPropertyValue(sourceData.name);
+    if (serializedValue.isEmpty())
+        return std::nullopt;
+
+    return serializedValue;
+}
+
 Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties()
 {
     auto properties = collectProperties(false);
@@ -860,9 +876,11 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties()
 
         auto status = styleProperty.disabled ? Inspector::Protocol::CSS::CSSPropertyStatus::Disabled : Inspector::Protocol::CSS::CSSPropertyStatus::Active;
 
+        auto propertyValue = serializedTextForProperty(propertyEntry).value_or(propertyEntry.value);
+
         auto property = Inspector::Protocol::CSS::CSSProperty::create()
             .setName(lowercasePropertyName(name))
-            .setValue(propertyEntry.value)
+            .setValue(propertyValue)
             .release();
 
         propertiesObject->addItem(property.copyRef());
