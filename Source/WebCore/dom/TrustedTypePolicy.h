@@ -52,26 +52,20 @@ class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypeP
 public:
     static Ref<TrustedTypePolicy> create(const String&, const TrustedTypePolicyOptions&);
     ~TrustedTypePolicy();
+
     ExceptionOr<Ref<TrustedHTML>> createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<Ref<TrustedScript>> createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<Ref<TrustedScriptURL>> createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<String> getPolicyValue(TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&, IfMissing = IfMissing::Throw);
-    const String name() const { return m_name; }
+    const String& name() const { return m_name; }
 
-    const TrustedTypePolicyOptions& options() const
-    {
-        IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
-        return m_options;
-        IGNORE_CLANG_WARNINGS_END
-    }
-    Lock& lock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     TrustedTypePolicy(const String&, const TrustedTypePolicyOptions&);
 
-    String m_name;
-    TrustedTypePolicyOptions m_options WTF_GUARDED_BY_LOCK(m_lock);
-    mutable Lock m_lock;
+    const String m_name;
+    const TrustedTypePolicyOptions m_options;
 };
 
 WebCoreOpaqueRoot NODELETE root(TrustedTypePolicy*);

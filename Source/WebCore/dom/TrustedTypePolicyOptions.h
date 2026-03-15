@@ -32,9 +32,9 @@
 namespace WebCore {
 
 struct TrustedTypePolicyOptions {
-    RefPtr<CreateHTMLCallback> createHTML;
-    RefPtr<CreateScriptCallback> createScript;
-    RefPtr<CreateScriptURLCallback> createScriptURL;
+    const RefPtr<CreateHTMLCallback> createHTML;
+    const RefPtr<CreateScriptCallback> createScript;
+    const RefPtr<CreateScriptURLCallback> createScriptURL;
 };
 
 } // namespace WebCore
