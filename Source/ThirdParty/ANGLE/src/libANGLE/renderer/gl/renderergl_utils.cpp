@@ -218,6 +218,10 @@ bool IsHuaweiMaleoon(const FunctionsGL *functions)
            (std::string(nativeGLRenderer).find("Maleoon") != std::string::npos);
 }
 
+bool PrecisionMeetsSpecForHighpFloat(const gl::TypePrecision &precision)
+{
+    return precision.range[0] >= 62 && precision.range[1] >= 62 && precision.precision >= 16;
+}
 }  // namespace
 
 SwapControlData::SwapControlData()
@@ -947,6 +951,12 @@ void GenerateCaps(const FunctionsGL *functions,
         caps->fragmentHighpInt   = QueryTypePrecision(functions, GL_FRAGMENT_SHADER, GL_HIGH_INT);
         caps->fragmentMediumpInt = QueryTypePrecision(functions, GL_FRAGMENT_SHADER, GL_MEDIUM_INT);
         caps->fragmentLowpInt    = QueryTypePrecision(functions, GL_FRAGMENT_SHADER, GL_LOW_INT);
+
+        // highp support is required.
+        if (!PrecisionMeetsSpecForHighpFloat(caps->fragmentHighpFloat))
+        {
+            LimitVersion(maxSupportedESVersion, gl::Version(0, 0));
+        }
     }
     else
     {
@@ -2546,12 +2556,12 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, promotePackedFormatsTo8BitPerChannel, IsApple() && hasAMD);
 
-    // crbug.com/1171371
+    // http://crbug.com/40166134
     // If output variable gl_FragColor is written by fragment shader, it may cause context lost with
     // Adreno 42x and 3xx.
     ANGLE_FEATURE_CONDITION(features, initFragmentOutputVariables, IsAdreno42xOr3xx(functions));
 
-    // http://crbug.com/1144207
+    // http://crbug.com/40155422
     // The Mac bot with Intel Iris GPU seems unaffected by this bug. Exclude the Haswell family for
     // now.
     ANGLE_FEATURE_CONDITION(features, shiftInstancedArrayDataWithOffset,
@@ -2731,6 +2741,10 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // Mali 400 series drivers fail linking shaders when passthrough shaders are enabled. Likely due
     // to not querying correct information from varyings and uniforms.
     ANGLE_FEATURE_CONDITION(features, disablePassthroughShaders, IsAdreno4xx(functions));
+
+    // IMG GL drivers crash in glClearTexImage on various format/type combinations such as packed
+    // types, LUMA and depth stencil.
+    ANGLE_FEATURE_CONDITION(features, disableClearTexImageForRobustInit, IsPowerVR(vendor));
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)

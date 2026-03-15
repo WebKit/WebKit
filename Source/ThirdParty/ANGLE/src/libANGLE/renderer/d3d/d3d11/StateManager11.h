@@ -49,9 +49,6 @@ class ShaderConstants11 : angle::NonCopyable
                          unsigned int samplerIndex,
                          const gl::Texture &texture,
                          const gl::SamplerState &samplerState);
-    bool onImageChange(gl::ShaderType shaderType,
-                       unsigned int imageIndex,
-                       const gl::ImageUnit &imageUnit);
     void onClipOriginChange(bool lowerLeft);
     bool onClipDepthModeChange(bool zeroToOne);
     bool onClipDistancesEnabledChange(const uint32_t value);
@@ -136,17 +133,6 @@ class ShaderConstants11 : angle::NonCopyable
     static_assert(sizeof(SamplerMetadata) == 32u,
                   "Sampler metadata struct must be two 4-vec --> 32 bytes.");
 
-    struct ImageMetadata
-    {
-        ImageMetadata() : layer(0), level(0), padding{0} {}
-
-        int layer;
-        unsigned int level;
-        int padding[2];  // This just pads the struct to 16 bytes
-    };
-    static_assert(sizeof(ImageMetadata) == 16u,
-                  "Image metadata struct must be one 4-vec --> 16 bytes.");
-
     static size_t GetShaderConstantsStructSize(gl::ShaderType shaderType);
 
     // Return true if dirty.
@@ -154,19 +140,12 @@ class ShaderConstants11 : angle::NonCopyable
                                const gl::Texture &texture,
                                const gl::SamplerState &samplerState);
 
-    // Return true if dirty.
-    bool updateImageMetadata(ImageMetadata *data, const gl::ImageUnit &imageUnit);
-
     Vertex mVertex;
     Pixel mPixel;
     gl::ShaderBitSet mShaderConstantsDirty;
 
     gl::ShaderMap<std::vector<SamplerMetadata>> mShaderSamplerMetadata;
     gl::ShaderMap<int> mNumActiveShaderSamplers;
-    gl::ShaderMap<std::vector<ImageMetadata>> mShaderReadonlyImageMetadata;
-    gl::ShaderMap<int> mNumActiveShaderReadonlyImages;
-    gl::ShaderMap<std::vector<ImageMetadata>> mShaderImageMetadata;
-    gl::ShaderMap<int> mNumActiveShaderImages;
 };
 
 class StateManager11 final : angle::NonCopyable
@@ -352,10 +331,6 @@ class StateManager11 final : angle::NonCopyable
                                        int index,
                                        gl::Texture *texture,
                                        const gl::SamplerState &sampler);
-    angle::Result setImageState(const gl::Context *context,
-                                gl::ShaderType type,
-                                int index,
-                                const gl::ImageUnit &imageUnit);
     angle::Result setTextureForImage(const gl::Context *context,
                                      gl::ShaderType type,
                                      int index,

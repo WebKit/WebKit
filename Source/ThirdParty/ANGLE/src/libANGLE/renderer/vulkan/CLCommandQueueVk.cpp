@@ -1617,30 +1617,16 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
         kernelVk.getProgram()->getDeviceProgramData(mCommandQueue.getDevice().getNative());
     ASSERT(devProgramData != nullptr);
 
-    // Set the descriptor set layouts and allocate descriptor sets
-    // The descriptor set layouts are setup in the order of their appearance, as Vulkan requires
-    // them to point to valid handles.
     angle::EnumIterator<DescriptorSetIndex> layoutIndex(DescriptorSetIndex::LiteralSampler);
     for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
     {
         if (!kernelVk.getDescriptorSetLayoutDesc(index).empty())
         {
-            // Setup the descriptor layout
-            ANGLE_CL_IMPL_TRY_ERROR(mContext->getDescriptorSetLayoutCache()->getDescriptorSetLayout(
-                                        mContext, kernelVk.getDescriptorSetLayoutDesc(index),
-                                        &kernelVk.getDescriptorSetLayouts()[*layoutIndex]),
-                                    CL_INVALID_OPERATION);
-            ASSERT(kernelVk.getDescriptorSetLayouts()[*layoutIndex]->valid());
-
-            // Allocate descriptor set
             ANGLE_TRY(mContext->allocateDescriptorSet(&kernelVk, index, layoutIndex,
                                                       mComputePassCommands));
             ++layoutIndex;
         }
     }
-
-    // Setup the pipeline layout
-    ANGLE_CL_IMPL_TRY_ERROR(kernelVk.initPipelineLayout(), CL_INVALID_OPERATION);
 
     // Retain kernel object until we finish executing it later
     mCommandsStateMap.addKernel(mComputePassCommands->getQueueSerial(),

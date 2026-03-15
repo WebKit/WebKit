@@ -267,6 +267,8 @@ bool HasFullTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatI
 bool HasNonRenderableTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID);
 // Checks if it is a ETC texture format
 bool IsETCFormat(angle::FormatID formatID);
+// Checks if it is an ASTC texture format
+bool IsASTC3DFormat(angle::FormatID formatID);
 // Checks if it is a BC texture format
 bool IsBCFormat(angle::FormatID formatID);
 

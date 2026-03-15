@@ -211,14 +211,6 @@
             "issue": "https://issuetracker.google.com/349489248"
         },
         {
-            "name": "reject_webgl_shaders_with_undefined_behavior",
-            "category": "Workarounds",
-            "description": [
-                "Attempts to detect undefined behavior when in WebGL mode and reject shaders if any detected."
-            ],
-            "issue": "http://crbug.com/350528343"
-        },
-        {
             "name": "always_enable_emulated_multidraw_extensions",
             "category": "Workarounds",
             "description": [

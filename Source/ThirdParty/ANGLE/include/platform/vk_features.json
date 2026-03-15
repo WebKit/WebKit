@@ -1956,6 +1956,15 @@
             "issue": "https://anglebug.com/416095435"
         },
         {
+            "name": "supports_astc_3d",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_texture_compression_astc_3d extension",
+                "Enable use of astc_3d"
+            ],
+            "issue": "https://anglebug.com/473593137"
+        },
+        {
             "name": "supports_image_compression_control_swapchain",
             "category": "Features",
             "description": [
@@ -2108,6 +2117,14 @@
             "description": [
                 "VkDevice supports the VK_KHR_shader_atomic_int64 extension "
             ]
+        },
+        {
+            "name": "supports_bind_vertex_buffers_2",
+            "category": "Features",
+            "description": [
+                "Using BindVertexBuffers2 is supported"
+            ],
+            "issue": "https://anglebug.com/474385503"
         },
         {
             "name": "force_size_pointer_for_bound_vertex_buffers",

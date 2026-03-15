@@ -85,7 +85,7 @@ A basic guide to get up and running fixing bugs and performance issues in ANGLE.
   Right-click "Targets" and add `angle_perftests` as a Target Project.
 
 - Run `angle_perftests` with the flag `--gtest_filter=DrawCallPerfBenchmark.Run/d3d11_null` for
-  D3D11, `.../d3d9_null` for D3D9, `.../gl_null` for OpenGL and `.../vulkan_null` for Vulkan.
+  D3D11, `.../d3d9_null` for D3D9, and `.../vulkan_null` for Vulkan.
 
 - Make sure you close all open instances of Chrome, they use a lot of background CPU and GPU. In
   fact, close every process and application you can.

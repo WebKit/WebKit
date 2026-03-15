@@ -1022,7 +1022,7 @@ ANGLE_INLINE angle::Result VertexArrayVk::syncDirtyEnabledNonStreamingAttrib(
         VkDeviceSize bufferSize = renderer->padVertexAttribBufferSizeIfNeeded(bufferVk->getSize());
 
         VkDeviceSize bufferOffset;
-        if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+        if (contextVk->getFeatures().supportsBindVertexBuffers2.enabled)
         {
             mCurrentArrayBufferHandles[attribIndex] = bufferHelper.getBuffer().getHandle();
             bufferOffset                            = bufferHelper.getOffset();
@@ -1213,7 +1213,7 @@ angle::Result VertexArrayVk::syncNeedsConversionAttrib(ContextVk *contextVk,
     VkDeviceSize bufferSize                = bufferHelper->getSize();
 
     VkDeviceSize bufferOffset;
-    if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+    if (contextVk->getFeatures().supportsBindVertexBuffers2.enabled)
     {
         mCurrentArrayBufferHandles[attribIndex] = bufferHelper->getBuffer().getHandle();
         bufferOffset                            = bufferHelper->getOffset();
@@ -1475,7 +1475,7 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
         VkDeviceSize bufferSize                = vertexDataBuffer->getSize();
 
         VkDeviceSize bufferOffset;
-        if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+        if (contextVk->getFeatures().supportsBindVertexBuffers2.enabled)
         {
             mCurrentArrayBufferHandles[attribIndex] = vertexDataBuffer->getBuffer().getHandle();
             bufferOffset                            = vertexDataBuffer->getOffset();
@@ -1575,7 +1575,7 @@ angle::Result VertexArrayVk::updateDefaultAttrib(ContextVk *contextVk, size_t at
     ANGLE_TRY(bufferHelper->flush(contextVk->getRenderer()));
 
     VkDeviceSize bufferOffset;
-    if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+    if (contextVk->getFeatures().supportsBindVertexBuffers2.enabled)
     {
         mCurrentArrayBufferHandles[attribIndex] = bufferHelper->getBuffer().getHandle();
         bufferOffset                            = bufferHelper->getOffset();

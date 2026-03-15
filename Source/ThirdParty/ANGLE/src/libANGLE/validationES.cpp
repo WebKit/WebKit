@@ -3141,12 +3141,6 @@ bool ValidateStateQuery(const Context *context,
             break;
     }
 
-    // pname is valid, but there are no parameters to return
-    if (*numParams == 0)
-    {
-        return false;
-    }
-
     return true;
 }
 
@@ -8497,7 +8491,7 @@ bool ValidateGetInternalFormativBase(const Context *context,
                                      GLenum target,
                                      GLenum internalformat,
                                      GLenum pname,
-                                     GLsizei bufSize,
+                                     GLsizei count,
                                      GLsizei *numParams)
 {
     if (numParams)
@@ -8555,9 +8549,9 @@ bool ValidateGetInternalFormativBase(const Context *context,
             return false;
     }
 
-    if (bufSize < 0)
+    if (count < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kInsufficientBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeCount);
         return false;
     }
 
@@ -8589,8 +8583,8 @@ bool ValidateGetInternalFormativBase(const Context *context,
 
     if (numParams)
     {
-        // glGetInternalFormativ will not overflow bufSize
-        *numParams = std::min(bufSize, maxWriteParams);
+        // glGetInternalFormativ will not overflow count
+        *numParams = std::min(count, maxWriteParams);
     }
 
     return true;

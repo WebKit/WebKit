@@ -492,7 +492,7 @@ angle::Result TextureStorage11::getCachedOrCreateUAVForImage(const gl::Context *
         d3d11::Format::Get(key.format, mRenderer->getRenderer11DeviceCaps()).uavFormat;
     ASSERT(format != DXGI_FORMAT_UNKNOWN);
     d3d11::SharedUAV uav;
-    ANGLE_TRY(createUAVForImage(context, key.level, format, *texture, &uav));
+    ANGLE_TRY(createUAVForImage(context, key, format, *texture, &uav));
     const auto &insertIt = mUavCacheForImage.insert(std::make_pair(key, std::move(uav)));
     *outUAV              = &insertIt.first->second;
     return angle::Result::Continue;
@@ -1511,7 +1511,7 @@ angle::Result TextureStorage11_2D::createSRVForImage(const gl::Context *context,
 }
 
 angle::Result TextureStorage11_2D::createUAVForImage(const gl::Context *context,
-                                                     int level,
+                                                     const ImageKey &key,
                                                      DXGI_FORMAT format,
                                                      const TextureHelper11 &texture,
                                                      d3d11::SharedUAV *outUAV)
@@ -1520,7 +1520,7 @@ angle::Result TextureStorage11_2D::createUAVForImage(const gl::Context *context,
     D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
     uavDesc.Format             = format;
     uavDesc.ViewDimension      = D3D11_UAV_DIMENSION_TEXTURE2D;
-    uavDesc.Texture2D.MipSlice = mTopLevel + level;
+    uavDesc.Texture2D.MipSlice = mTopLevel + key.level;
     ANGLE_TRY(
         mRenderer->allocateResource(GetImplAs<Context11>(context), uavDesc, texture.get(), outUAV));
     outUAV->setLabels("TexStorage2D.UAVForImage", &mKHRDebugLabel);
@@ -1779,7 +1779,7 @@ angle::Result TextureStorage11_External::createSRVForImage(const gl::Context *co
 }
 
 angle::Result TextureStorage11_External::createUAVForImage(const gl::Context *context,
-                                                           int level,
+                                                           const ImageKey &key,
                                                            DXGI_FORMAT format,
                                                            const TextureHelper11 &texture,
                                                            d3d11::SharedUAV *outUAV)
@@ -1844,7 +1844,7 @@ angle::Result TextureStorage11ImmutableBase::createSRVForImage(const gl::Context
 }
 
 angle::Result TextureStorage11ImmutableBase::createUAVForImage(const gl::Context *context,
-                                                               int level,
+                                                               const ImageKey &key,
                                                                DXGI_FORMAT format,
                                                                const TextureHelper11 &texture,
                                                                d3d11::SharedUAV *outUAV)
@@ -2723,7 +2723,7 @@ angle::Result TextureStorage11_Cube::createSRVForImage(const gl::Context *contex
 }
 
 angle::Result TextureStorage11_Cube::createUAVForImage(const gl::Context *context,
-                                                       int level,
+                                                       const ImageKey &key,
                                                        DXGI_FORMAT format,
                                                        const TextureHelper11 &texture,
                                                        d3d11::SharedUAV *outUAV)
@@ -2732,9 +2732,9 @@ angle::Result TextureStorage11_Cube::createUAVForImage(const gl::Context *contex
     D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
     uavDesc.Format                         = format;
     uavDesc.ViewDimension                  = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
-    uavDesc.Texture2DArray.MipSlice        = mTopLevel + level;
-    uavDesc.Texture2DArray.FirstArraySlice = 0;
-    uavDesc.Texture2DArray.ArraySize       = gl::kCubeFaceCount;
+    uavDesc.Texture2DArray.MipSlice        = mTopLevel + key.level;
+    uavDesc.Texture2DArray.FirstArraySlice = key.layered ? 0 : key.layer;
+    uavDesc.Texture2DArray.ArraySize       = key.layered ? gl::kCubeFaceCount : 1;
     ANGLE_TRY(
         mRenderer->allocateResource(GetImplAs<Context11>(context), uavDesc, texture.get(), outUAV));
     outUAV->setLabels("TexStorageCube.UAVForImage", &mKHRDebugLabel);
@@ -3034,7 +3034,7 @@ angle::Result TextureStorage11_3D::createSRVForImage(const gl::Context *context,
 }
 
 angle::Result TextureStorage11_3D::createUAVForImage(const gl::Context *context,
-                                                     int level,
+                                                     const ImageKey &key,
                                                      DXGI_FORMAT format,
                                                      const TextureHelper11 &texture,
                                                      d3d11::SharedUAV *outUAV)
@@ -3043,9 +3043,9 @@ angle::Result TextureStorage11_3D::createUAVForImage(const gl::Context *context,
     D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
     uavDesc.Format                = format;
     uavDesc.ViewDimension         = D3D11_UAV_DIMENSION_TEXTURE3D;
-    uavDesc.Texture3D.MipSlice    = mTopLevel + level;
-    uavDesc.Texture3D.FirstWSlice = 0;
-    uavDesc.Texture3D.WSize       = mTextureDepth;
+    uavDesc.Texture3D.MipSlice    = mTopLevel + key.level;
+    uavDesc.Texture3D.FirstWSlice = key.layered ? 0 : key.layer;
+    uavDesc.Texture3D.WSize       = key.layered ? mTextureDepth : 1;
     ANGLE_TRY(
         mRenderer->allocateResource(GetImplAs<Context11>(context), uavDesc, texture.get(), outUAV));
     outUAV->setLabels("TexStorage3D.UAVForImage", &mKHRDebugLabel);
@@ -3430,7 +3430,7 @@ angle::Result TextureStorage11_2DArray::createSRVForImage(const gl::Context *con
 }
 
 angle::Result TextureStorage11_2DArray::createUAVForImage(const gl::Context *context,
-                                                          int level,
+                                                          const ImageKey &key,
                                                           DXGI_FORMAT format,
                                                           const TextureHelper11 &texture,
                                                           d3d11::SharedUAV *outUAV)
@@ -3439,9 +3439,9 @@ angle::Result TextureStorage11_2DArray::createUAVForImage(const gl::Context *con
     D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
     uavDesc.Format                         = format;
     uavDesc.ViewDimension                  = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
-    uavDesc.Texture2DArray.MipSlice        = mTopLevel + level;
-    uavDesc.Texture2DArray.FirstArraySlice = 0;
-    uavDesc.Texture2DArray.ArraySize       = mTextureDepth;
+    uavDesc.Texture2DArray.MipSlice        = mTopLevel + key.level;
+    uavDesc.Texture2DArray.FirstArraySlice = key.layered ? 0 : key.layer;
+    uavDesc.Texture2DArray.ArraySize       = key.layered ? mTextureDepth : 1;
     ANGLE_TRY(
         mRenderer->allocateResource(GetImplAs<Context11>(context), uavDesc, texture.get(), outUAV));
     outUAV->setLabels("TexStorage2DArray.UAVForImage", &mKHRDebugLabel);
@@ -4303,7 +4303,7 @@ angle::Result TextureStorage11_Buffer::createSRVForImage(const gl::Context *cont
     return angle::Result::Continue;
 }
 angle::Result TextureStorage11_Buffer::createUAVForImage(const gl::Context *context,
-                                                         int level,
+                                                         const ImageKey &key,
                                                          DXGI_FORMAT format,
                                                          const TextureHelper11 &texture,
                                                          d3d11::SharedUAV *outUAV)

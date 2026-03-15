@@ -15,7 +15,6 @@ namespace gl
 {
 
 void CaptureDebugMessageCallback_userParam(const State &glState,
-                                           bool isCallValid,
                                            GLDEBUGPROC callback,
                                            const void *userParam,
                                            ParamCapture *userParamParam)
@@ -24,7 +23,6 @@ void CaptureDebugMessageCallback_userParam(const State &glState,
 }
 
 void CaptureDebugMessageControl_ids(const State &glState,
-                                    bool isCallValid,
                                     GLenum source,
                                     GLenum type,
                                     GLenum severity,
@@ -37,7 +35,6 @@ void CaptureDebugMessageControl_ids(const State &glState,
 }
 
 void CaptureDebugMessageInsert_buf(const State &glState,
-                                   bool isCallValid,
                                    GLenum source,
                                    GLenum type,
                                    GLuint id,
@@ -50,7 +47,6 @@ void CaptureDebugMessageInsert_buf(const State &glState,
 }
 
 void CaptureDrawElementsBaseVertex_indices(const State &glState,
-                                           bool isCallValid,
                                            PrimitiveMode modePacked,
                                            GLsizei count,
                                            DrawElementsType typePacked,
@@ -58,12 +54,10 @@ void CaptureDrawElementsBaseVertex_indices(const State &glState,
                                            GLint basevertex,
                                            ParamCapture *indicesParam)
 {
-    CaptureDrawElements_indices(glState, isCallValid, modePacked, count, typePacked, indices,
-                                indicesParam);
+    CaptureDrawElements_indices(glState, modePacked, count, typePacked, indices, indicesParam);
 }
 
 void CaptureDrawElementsInstancedBaseVertex_indices(const State &glState,
-                                                    bool isCallValid,
                                                     PrimitiveMode modePacked,
                                                     GLsizei count,
                                                     DrawElementsType typePacked,
@@ -76,7 +70,6 @@ void CaptureDrawElementsInstancedBaseVertex_indices(const State &glState,
 }
 
 void CaptureDrawRangeElementsBaseVertex_indices(const State &glState,
-                                                bool isCallValid,
                                                 PrimitiveMode modePacked,
                                                 GLuint start,
                                                 GLuint end,
@@ -90,7 +83,6 @@ void CaptureDrawRangeElementsBaseVertex_indices(const State &glState,
 }
 
 void CaptureGetDebugMessageLog_sources(const State &glState,
-                                       bool isCallValid,
                                        GLuint count,
                                        GLsizei bufSize,
                                        GLenum *sources,
@@ -105,7 +97,6 @@ void CaptureGetDebugMessageLog_sources(const State &glState,
 }
 
 void CaptureGetDebugMessageLog_types(const State &glState,
-                                     bool isCallValid,
                                      GLuint count,
                                      GLsizei bufSize,
                                      GLenum *sources,
@@ -120,7 +111,6 @@ void CaptureGetDebugMessageLog_types(const State &glState,
 }
 
 void CaptureGetDebugMessageLog_ids(const State &glState,
-                                   bool isCallValid,
                                    GLuint count,
                                    GLsizei bufSize,
                                    GLenum *sources,
@@ -135,7 +125,6 @@ void CaptureGetDebugMessageLog_ids(const State &glState,
 }
 
 void CaptureGetDebugMessageLog_severities(const State &glState,
-                                          bool isCallValid,
                                           GLuint count,
                                           GLsizei bufSize,
                                           GLenum *sources,
@@ -150,7 +139,6 @@ void CaptureGetDebugMessageLog_severities(const State &glState,
 }
 
 void CaptureGetDebugMessageLog_lengths(const State &glState,
-                                       bool isCallValid,
                                        GLuint count,
                                        GLsizei bufSize,
                                        GLenum *sources,
@@ -165,7 +153,6 @@ void CaptureGetDebugMessageLog_lengths(const State &glState,
 }
 
 void CaptureGetDebugMessageLog_messageLog(const State &glState,
-                                          bool isCallValid,
                                           GLuint count,
                                           GLsizei bufSize,
                                           GLenum *sources,
@@ -180,7 +167,6 @@ void CaptureGetDebugMessageLog_messageLog(const State &glState,
 }
 
 void CaptureGetObjectLabel_length(const State &glState,
-                                  bool isCallValid,
                                   GLenum identifier,
                                   GLuint name,
                                   GLsizei bufSize,
@@ -192,7 +178,6 @@ void CaptureGetObjectLabel_length(const State &glState,
 }
 
 void CaptureGetObjectLabel_label(const State &glState,
-                                 bool isCallValid,
                                  GLenum identifier,
                                  GLuint name,
                                  GLsizei bufSize,
@@ -204,7 +189,6 @@ void CaptureGetObjectLabel_label(const State &glState,
 }
 
 void CaptureGetObjectPtrLabel_ptr(const State &glState,
-                                  bool isCallValid,
                                   const void *ptr,
                                   GLsizei bufSize,
                                   GLsizei *length,
@@ -215,7 +199,6 @@ void CaptureGetObjectPtrLabel_ptr(const State &glState,
 }
 
 void CaptureGetObjectPtrLabel_length(const State &glState,
-                                     bool isCallValid,
                                      const void *ptr,
                                      GLsizei bufSize,
                                      GLsizei *length,
@@ -226,7 +209,6 @@ void CaptureGetObjectPtrLabel_length(const State &glState,
 }
 
 void CaptureGetObjectPtrLabel_label(const State &glState,
-                                    bool isCallValid,
                                     const void *ptr,
                                     GLsizei bufSize,
                                     GLsizei *length,
@@ -237,7 +219,6 @@ void CaptureGetObjectPtrLabel_label(const State &glState,
 }
 
 void CaptureGetPointerv_params(const State &glState,
-                               bool isCallValid,
                                GLenum pname,
                                void **params,
                                ParamCapture *paramCapture)
@@ -246,7 +227,6 @@ void CaptureGetPointerv_params(const State &glState,
 }
 
 void CaptureGetSamplerParameterIiv_params(const State &glState,
-                                          bool isCallValid,
                                           SamplerID sampler,
                                           GLenum pname,
                                           GLint *params,
@@ -257,7 +237,6 @@ void CaptureGetSamplerParameterIiv_params(const State &glState,
 }
 
 void CaptureGetSamplerParameterIuiv_params(const State &glState,
-                                           bool isCallValid,
                                            SamplerID sampler,
                                            GLenum pname,
                                            GLuint *params,
@@ -268,7 +247,6 @@ void CaptureGetSamplerParameterIuiv_params(const State &glState,
 }
 
 void CaptureGetTexParameterIiv_params(const State &glState,
-                                      bool isCallValid,
                                       TextureType targetPacked,
                                       GLenum pname,
                                       GLint *params,
@@ -280,7 +258,6 @@ void CaptureGetTexParameterIiv_params(const State &glState,
 }
 
 void CaptureGetTexParameterIuiv_params(const State &glState,
-                                       bool isCallValid,
                                        TextureType targetPacked,
                                        GLenum pname,
                                        GLuint *params,
@@ -292,7 +269,6 @@ void CaptureGetTexParameterIuiv_params(const State &glState,
 }
 
 void CaptureGetnUniformfv_params(const State &glState,
-                                 bool isCallValid,
                                  ShaderProgramID program,
                                  UniformLocation location,
                                  GLsizei bufSize,
@@ -303,7 +279,6 @@ void CaptureGetnUniformfv_params(const State &glState,
 }
 
 void CaptureGetnUniformiv_params(const State &glState,
-                                 bool isCallValid,
                                  ShaderProgramID program,
                                  UniformLocation location,
                                  GLsizei bufSize,
@@ -314,7 +289,6 @@ void CaptureGetnUniformiv_params(const State &glState,
 }
 
 void CaptureGetnUniformuiv_params(const State &glState,
-                                  bool isCallValid,
                                   ShaderProgramID program,
                                   UniformLocation location,
                                   GLsizei bufSize,
@@ -325,7 +299,6 @@ void CaptureGetnUniformuiv_params(const State &glState,
 }
 
 void CaptureObjectLabel_label(const State &glState,
-                              bool isCallValid,
                               GLenum identifier,
                               GLuint name,
                               GLsizei length,
@@ -336,7 +309,6 @@ void CaptureObjectLabel_label(const State &glState,
 }
 
 void CaptureObjectPtrLabel_ptr(const State &glState,
-                               bool isCallValid,
                                const void *ptr,
                                GLsizei length,
                                const GLchar *label,
@@ -346,7 +318,6 @@ void CaptureObjectPtrLabel_ptr(const State &glState,
 }
 
 void CaptureObjectPtrLabel_label(const State &glState,
-                                 bool isCallValid,
                                  const void *ptr,
                                  GLsizei length,
                                  const GLchar *label,
@@ -356,7 +327,6 @@ void CaptureObjectPtrLabel_label(const State &glState,
 }
 
 void CapturePushDebugGroup_message(const State &glState,
-                                   bool isCallValid,
                                    GLenum source,
                                    GLuint id,
                                    GLsizei length,
@@ -367,7 +337,6 @@ void CapturePushDebugGroup_message(const State &glState,
 }
 
 void CaptureReadnPixels_data(const State &glState,
-                             bool isCallValid,
                              GLint x,
                              GLint y,
                              GLsizei width,
@@ -382,7 +351,6 @@ void CaptureReadnPixels_data(const State &glState,
 }
 
 void CaptureSamplerParameterIiv_param(const State &glState,
-                                      bool isCallValid,
                                       SamplerID sampler,
                                       GLenum pname,
                                       const GLint *param,
@@ -392,7 +360,6 @@ void CaptureSamplerParameterIiv_param(const State &glState,
 }
 
 void CaptureSamplerParameterIuiv_param(const State &glState,
-                                       bool isCallValid,
                                        SamplerID sampler,
                                        GLenum pname,
                                        const GLuint *param,
@@ -402,7 +369,6 @@ void CaptureSamplerParameterIuiv_param(const State &glState,
 }
 
 void CaptureTexParameterIiv_params(const State &glState,
-                                   bool isCallValid,
                                    TextureType targetPacked,
                                    GLenum pname,
                                    const GLint *params,
@@ -412,7 +378,6 @@ void CaptureTexParameterIiv_params(const State &glState,
 }
 
 void CaptureTexParameterIuiv_params(const State &glState,
-                                    bool isCallValid,
                                     TextureType targetPacked,
                                     GLenum pname,
                                     const GLuint *params,

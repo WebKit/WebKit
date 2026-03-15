@@ -88,6 +88,28 @@ bool CompiledShader::verifyNotInTranslatedSource(const char *expect) const
     return mTranslatedSource.empty() || mTranslatedSource.find(expect) == std::string::npos;
 }
 
+bool CompiledShader::verifyCountInTranslatedSource(const char *expect, size_t expectCount) const
+{
+    if (mTranslatedSource.empty())
+    {
+        return true;
+    }
+
+    size_t count               = 0;
+    std::string::size_type pos = 0;
+    while (true)
+    {
+        pos = mTranslatedSource.find(expect, pos);
+        if (pos == std::string::npos)
+        {
+            break;
+        }
+        ++count;
+        ++pos;
+    }
+    return count == expectCount;
+}
+
 void CompilerTest::testSetUp() {}
 
 void CompilerTest::testTearDown()

@@ -38,8 +38,8 @@ sub-test and its name.
 
 ### Null/No-op Configurations
 
-ANGLE implements a no-op driver for OpenGL, D3D11 and Vulkan. To run on these
-configurations use the `gl_null`, `d3d11_null` or `vulkan_null` test
+ANGLE implements a no-op driver for D3D11 and Vulkan. To run on these
+configurations use the `d3d11_null` or `vulkan_null` test
 configurations. These null drivers will not do any GPU work. They will skip
 the driver entirely. These null configs are useful for diagnosing performance
 overhead in ANGLE code.

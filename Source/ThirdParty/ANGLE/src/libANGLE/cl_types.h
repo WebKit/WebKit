@@ -358,11 +358,11 @@ struct NDRange
     bool nullLocalWorkSize{false};
 };
 
-// Memory property element from cl_khr_external_memory
+// name-value pair for cl_properties lists
 struct NameValueProperty
 {
-    intptr_t name;
-    intptr_t value;
+    cl_properties name;
+    cl_properties value;
 };
 
 // this Defer class provides the user with a closure that executes on its destruction

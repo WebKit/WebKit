@@ -116,14 +116,25 @@ void SetEnabledExtensions(const TExtensionBehavior &behavior, ffi::ExtensionsEna
     extensions->OVR_multiview2      = IsExtensionEnabled(behavior, TExtension::OVR_multiview2);
     extensions->WEBGL_video_texture = IsExtensionEnabled(behavior, TExtension::WEBGL_video_texture);
 }
+
+void SetOptions(TCompiler *compiler, const ShCompileOptions &options, ffi::CompileOptions *opt)
+{
+    opt->shader_version = compiler->getShaderVersion();
+    opt->output         = static_cast<ffi::OutputLanguage>(compiler->getOutputType());
+    opt->is_es1         = compiler->getShaderVersion() == 100;
+
+    opt->initialize_uninitialized_variables = options.initializeUninitializedLocals ||
+                                              options.initOutputVariables || options.initGLPosition;
+    opt->loops_allowed_when_initializing_variables = !options.dontUseLoopsToInitializeVariables;
+    opt->initializer_allowed_on_non_constant_global_variables =
+        !options.forceDeferNonConstGlobalInitializers;
+}
 }  // namespace
 
 Output GenerateAST(IR ir, TCompiler *compiler, const ShCompileOptions &options)
 {
     ffi::CompileOptions opt;
-    opt.shader_version = compiler->getShaderVersion();
-    opt.is_es1 = compiler->getShaderVersion() == 100;
-
+    SetOptions(compiler, options, &opt);
     SetEnabledExtensions(compiler->getExtensionBehavior(), &opt.extensions);
 
     ffi::Output output = ffi::generate_ast(std::move(ir), compiler, GetGlobalPoolAllocator(), opt);

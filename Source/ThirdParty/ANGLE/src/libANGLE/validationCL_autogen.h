@@ -576,6 +576,13 @@ cl_int ValidateCreateImageWithProperties(cl_context context,
                                          const cl_image_desc *image_desc,
                                          const void *host_ptr);
 
+// cl_arm_import_memory
+cl_int ValidateImportMemoryARM(cl_context context,
+                               MemFlags flagsPacked,
+                               const cl_import_properties_arm *properties,
+                               const void *memory,
+                               size_t size);
+
 // cl_khr_external_memory
 cl_int ValidateEnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
                                                    cl_uint num_mem_objects,

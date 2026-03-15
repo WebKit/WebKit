@@ -1232,12 +1232,10 @@ impl<'options> Generator<'options> {
                             (true, false) => ffi::ASTBasicType::USampler2DMS,
                             (true, true) => ffi::ASTBasicType::USampler2DMSArray,
                         }
+                    } else if image_type.is_array {
+                        ffi::ASTBasicType::UImage2DArray
                     } else {
-                        if image_type.is_array {
-                            ffi::ASTBasicType::UImage2DArray
-                        } else {
-                            ffi::ASTBasicType::UImage2D
-                        }
+                        ffi::ASTBasicType::UImage2D
                     }
                 }
             },
@@ -1273,19 +1271,15 @@ impl<'options> Generator<'options> {
                             } else {
                                 ffi::ASTBasicType::SamplerCubeShadow
                             }
+                        } else if image_type.is_array {
+                            ffi::ASTBasicType::SamplerCubeArray
                         } else {
-                            if image_type.is_array {
-                                ffi::ASTBasicType::SamplerCubeArray
-                            } else {
-                                ffi::ASTBasicType::SamplerCube
-                            }
+                            ffi::ASTBasicType::SamplerCube
                         }
+                    } else if image_type.is_array {
+                        ffi::ASTBasicType::ImageCubeArray
                     } else {
-                        if image_type.is_array {
-                            ffi::ASTBasicType::ImageCubeArray
-                        } else {
-                            ffi::ASTBasicType::ImageCube
-                        }
+                        ffi::ASTBasicType::ImageCube
                     }
                 }
                 ImageBasicType::Int => {
@@ -1295,12 +1289,10 @@ impl<'options> Generator<'options> {
                         } else {
                             ffi::ASTBasicType::ISamplerCube
                         }
+                    } else if image_type.is_array {
+                        ffi::ASTBasicType::IImageCubeArray
                     } else {
-                        if image_type.is_array {
-                            ffi::ASTBasicType::IImageCubeArray
-                        } else {
-                            ffi::ASTBasicType::IImageCube
-                        }
+                        ffi::ASTBasicType::IImageCube
                     }
                 }
                 ImageBasicType::Uint => {
@@ -1310,12 +1302,10 @@ impl<'options> Generator<'options> {
                         } else {
                             ffi::ASTBasicType::USamplerCube
                         }
+                    } else if image_type.is_array {
+                        ffi::ASTBasicType::UImageCubeArray
                     } else {
-                        if image_type.is_array {
-                            ffi::ASTBasicType::UImageCubeArray
-                        } else {
-                            ffi::ASTBasicType::UImageCube
-                        }
+                        ffi::ASTBasicType::UImageCube
                     }
                 }
             },
@@ -1584,7 +1574,7 @@ impl<'options> Generator<'options> {
             match decoration {
                 Decoration::PushConstant => layout_qualifier.push_constant = true,
                 Decoration::NonCoherent => layout_qualifier.noncoherent = true,
-                Decoration::YUV => layout_qualifier.yuv = true,
+                Decoration::Yuv => layout_qualifier.yuv = true,
                 Decoration::Location(location) => layout_qualifier.location = location as i32,
                 Decoration::Index(index) => layout_qualifier.index = index as i32,
                 Decoration::InputAttachmentIndex(index) => {
@@ -1957,41 +1947,40 @@ impl ast::Target for Generator<'_> {
         debug_assert!(ir_meta.get_type(variable.type_id).is_pointer());
         if let Type::Struct(_, fields, StructSpecialization::InterfaceBlock) =
             ir_meta.get_type(ir_meta.get_type(variable.type_id).get_element_type_id().unwrap())
+            && symbol_type == ffi::ASTSymbolType::Empty
         {
-            if symbol_type == ffi::ASTSymbolType::Empty {
-                for (index, field) in fields.iter().enumerate() {
-                    let field_name = field.name.name;
-                    let field_symbol_type =
-                        field_symbol_type.unwrap_or_else(|| Self::legacy_symbol_type(&field.name));
+            for (index, field) in fields.iter().enumerate() {
+                let field_name = field.name.name;
+                let field_symbol_type =
+                    field_symbol_type.unwrap_or_else(|| Self::legacy_symbol_type(&field.name));
 
-                    let field_type = self.types[&field.type_id];
-                    let field_ast_type = Self::get_ast_type(
-                        ir_meta.get_shader_type(),
-                        self.options.is_es1,
-                        field.precision,
-                        &field.decorations,
-                        None,
-                        true,
-                    );
+                let field_type = self.types[&field.type_id];
+                let field_ast_type = Self::get_ast_type(
+                    ir_meta.get_shader_type(),
+                    self.options.is_es1,
+                    field.precision,
+                    &field.decorations,
+                    None,
+                    true,
+                );
 
-                    let legacy_field_variable = unsafe {
-                        ffi::make_nameless_block_field_variable(
-                            self.legacy_compiler,
-                            legacy_variable,
-                            index as u32,
-                            &ffi::SymbolName {
-                                name: field_name,
-                                symbol_type: field_symbol_type,
-                                id: SYMBOL_NAME_NO_ID,
-                            },
-                            field_type,
-                            &field_ast_type,
-                        )
-                    };
+                let legacy_field_variable = unsafe {
+                    ffi::make_nameless_block_field_variable(
+                        self.legacy_compiler,
+                        legacy_variable,
+                        index as u32,
+                        &ffi::SymbolName {
+                            name: field_name,
+                            symbol_type: field_symbol_type,
+                            id: SYMBOL_NAME_NO_ID,
+                        },
+                        field_type,
+                        &field_ast_type,
+                    )
+                };
 
-                    self.nameless_block_field_variables
-                        .insert((id, index as u32), legacy_field_variable);
-                }
+                self.nameless_block_field_variables
+                    .insert((id, index as u32), legacy_field_variable);
             }
         }
     }
@@ -2070,7 +2059,7 @@ impl ast::Target for Generator<'_> {
         });
     }
 
-    fn begin_block(&mut self, ir_meta: &IRMeta, variables: &Vec<VariableId>) -> *mut TIntermBlock {
+    fn begin_block(&mut self, ir_meta: &IRMeta, variables: &[VariableId]) -> *mut TIntermBlock {
         let block = unsafe { ffi::make_interm_block() };
         variables.iter().for_each(|&id| {
             let variable = ir_meta.get_variable(id);
@@ -2102,7 +2091,7 @@ impl ast::Target for Generator<'_> {
         _block_result: &mut *mut TIntermBlock,
         result: RegisterId,
         id: TypedId,
-        indices: &Vec<u32>,
+        indices: &[u32],
     ) {
         let expr = unsafe { ffi::swizzle(&self.get_expression(id), indices) };
         self.expressions.insert(result, expr);
@@ -2129,13 +2118,12 @@ impl ast::Target for Generator<'_> {
     ) {
         // When selecting a field of a nameless interface block, the AST expects to see references
         // to the field variables directly.
-        if let Id::Variable(var_id) = id.id {
-            if let Some(&field_variable) = self.nameless_block_field_variables.get(&(var_id, index))
-            {
-                self.expressions.insert(result, field_variable);
-                self.needs_deep_copy.insert(result);
-                return;
-            }
+        if let Id::Variable(var_id) = id.id
+            && let Some(&field_variable) = self.nameless_block_field_variables.get(&(var_id, index))
+        {
+            self.expressions.insert(result, field_variable);
+            self.needs_deep_copy.insert(result);
+            return;
         }
         let expr = unsafe { ffi::select_field(&self.get_expression(id), index) };
         self.expressions.insert(result, expr);
@@ -2157,7 +2145,7 @@ impl ast::Target for Generator<'_> {
         _block_result: &mut *mut TIntermBlock,
         result: RegisterId,
         type_id: TypeId,
-        ids: &Vec<TypedId>,
+        ids: &[TypedId],
     ) {
         let expr = unsafe {
             ffi::construct(
@@ -2195,7 +2183,7 @@ impl ast::Target for Generator<'_> {
         block_result: &mut *mut TIntermBlock,
         result: Option<RegisterId>,
         function_id: FunctionId,
-        params: &Vec<TypedId>,
+        params: &[TypedId],
     ) {
         let params = params.iter().map(|&id| self.get_expression(id)).collect::<Vec<_>>();
         let function = self.functions[&function_id];
@@ -2447,7 +2435,7 @@ impl ast::Target for Generator<'_> {
         block_result: &mut *mut TIntermBlock,
         result: Option<RegisterId>,
         built_in_op: BuiltInOpCode,
-        args: &Vec<TypedId>,
+        args: &[TypedId],
     ) {
         let args = args.iter().map(|&arg| self.get_expression(arg)).collect::<Vec<_>>();
         let (expr, statement) = unsafe {
@@ -2984,7 +2972,7 @@ impl ast::Target for Generator<'_> {
         &mut self,
         block: &mut *mut TIntermBlock,
         value: TypedId,
-        case_ids: &Vec<Option<ConstantId>>,
+        case_ids: &[Option<ConstantId>],
         case_blocks: Vec<*mut TIntermBlock>,
     ) {
         let value = self.get_expression(value);

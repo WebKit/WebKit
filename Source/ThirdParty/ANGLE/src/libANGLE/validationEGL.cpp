@@ -1856,6 +1856,17 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
             }
             break;
 
+        case EGL_CONTEXT_HARDENED_ANGLE:
+            if (!display->getExtensions().createContextWebGLCompatibility)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "Attribute "
+                              "EGL_CONTEXT_HARDENED_ANGLE requires "
+                              "EGL_ANGLE_create_context_webgl_compatibility.");
+                return false;
+            }
+            break;
+
         case EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM:
             if (!display->getExtensions().createContextBindGeneratesResource)
             {
@@ -2091,6 +2102,16 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
             {
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE must be "
+                              "EGL_TRUE or EGL_FALSE.");
+                return false;
+            }
+            break;
+
+        case EGL_CONTEXT_HARDENED_ANGLE:
+            if (value != EGL_TRUE && value != EGL_FALSE)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "EGL_CONTEXT_HARDENED_ANGLE must be "
                               "EGL_TRUE or EGL_FALSE.");
                 return false;
             }

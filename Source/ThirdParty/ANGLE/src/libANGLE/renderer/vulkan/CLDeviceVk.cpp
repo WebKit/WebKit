@@ -229,6 +229,20 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     {
         versionedExtensionList.push_back(
             cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_external_memory"});
+
+        // cl_arm_import_memory is layered on top of cl_arm_import_memory
+        bool reportBaseArmImportMemString = false;
+        if (supportedHandles.test(cl::ExternalMemoryHandle::DmaBuf))
+        {
+            versionedExtensionList.push_back(cl_name_version{
+                .version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_arm_import_memory_dma_buf"});
+            reportBaseArmImportMemString = true;
+        }
+        if (reportBaseArmImportMemString)
+        {
+            versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(1, 11, 0),
+                                                             .name    = "cl_arm_import_memory"});
+        }
     }
     if (mRenderer->getFeatures().supportsShaderFloat16.enabled)
     {

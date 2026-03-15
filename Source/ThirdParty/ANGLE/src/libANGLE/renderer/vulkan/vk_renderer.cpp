@@ -354,6 +354,8 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDraw-None-09549",
     // https://anglebug.com/470128354
     "VUID-vkCmdEndQuery-None-07007",
+    // https://anglebug.com/475549551
+    "VUID-VkGraphicsPipelineCreateInfo-renderPass-09652",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -398,11 +400,6 @@ constexpr const char *kExposeNonConformantSkippedMessages[] = {
 // https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/7849
 constexpr const char *kSkippedMessagesWithVulkanSecondaryCommandBuffer[] = {
     "VUID-vkCmdWaitEvents-srcStageMask-parameter",
-};
-
-// http://issuetracker.google.com/447633563 VVL appears not aware of existence of tile memory heap.
-constexpr const char *kSkippedMessagesWithTileMemoryHeap[] = {
-    "VUID-vkBindImageMemory-memory-01047",
 };
 
 // When using Vulkan secondary command buffers, the command buffer is begun with the current
@@ -2947,6 +2944,7 @@ angle::Result Renderer::initializeMemoryAllocator(vk::ErrorContext *context)
 // - VK_EXT_external_memory_host                       minImportedHostPointerAlignment (property)
 // - VK_QCOM_tile_memory_heap                          tileMemoryHeapFeatures (feature)
 //                                                     tileMemoryHeapProperties (property)
+// - VK_EXT_texture_compression_astc_3d                textureCompressionASTC_3D (feature)
 //
 
 void Renderer::appendDeviceExtensionFeaturesNotPromoted(
@@ -3153,6 +3151,10 @@ void Renderer::appendDeviceExtensionFeaturesNotPromoted(
     {
         vk::AddToPNextChain(deviceProperties, &mExternalMemoryHostProperties);
     }
+    if (ExtensionFound(VK_EXT_TEXTURE_COMPRESSION_ASTC_3D_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mTextureCompressionASTC3DFeatures);
+    }
 
     if (ExtensionFound(VK_QCOM_TILE_MEMORY_HEAP_EXTENSION_NAME, deviceExtensionNames))
     {
@@ -3227,8 +3229,8 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo11(
 //                                          shaderSignedZeroInfNanPreserveFloat64 (property)
 // - VK_KHR_uniform_buffer_standard_layout: uniformBufferStandardLayout (feature)
 // - VK_KHR_buffer_device_address:          bufferDeviceAddress (feature)
-// - VK_KHR_shader_atomic_int64:            shaderBufferAtomicInt64 (feature)
-//                                          shaderSharedAtomicInt64 (feature)
+// - VK_KHR_shader_atomic_int64:            shaderBufferInt64Atomics (feature)
+//                                          shaderSharedInt64Atomics (feature)
 //
 // Note that supportedDepthResolveModes is used just to check if the property struct is populated.
 // ANGLE always uses VK_RESOLVE_MODE_SAMPLE_ZERO_BIT for both depth and stencil, and support for
@@ -3608,6 +3610,10 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mShaderAtomicInt64Features.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
 
+    mTextureCompressionASTC3DFeatures = {};
+    mTextureCompressionASTC3DFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_3D_FEATURES_EXT;
+
 #if defined(ANGLE_PLATFORM_ANDROID)
     mExternalFormatResolveFeatures = {};
     mExternalFormatResolveFeatures.sType =
@@ -3710,6 +3716,7 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mExternalMemoryHostProperties.pNext               = nullptr;
     mBufferDeviceAddressFeatures.pNext                = nullptr;
     mShaderAtomicInt64Features.pNext                  = nullptr;
+    mTextureCompressionASTC3DFeatures.pNext           = nullptr;
 #if defined(ANGLE_PLATFORM_ANDROID)
     mExternalFormatResolveFeatures.pNext   = nullptr;
     mExternalFormatResolveProperties.pNext = nullptr;
@@ -4060,6 +4067,12 @@ void Renderer::enableDeviceExtensionsNotPromoted(const vk::ExtensionNameList &de
     {
         mEnabledDeviceExtensions.push_back(VK_EXT_ASTC_DECODE_MODE_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mPhysicalDeviceAstcDecodeFeatures);
+    }
+
+    if (mFeatures.supportsAstc3d.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_TEXTURE_COMPRESSION_ASTC_3D_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mTextureCompressionASTC3DFeatures);
     }
 
 #if defined(ANGLE_PLATFORM_WINDOWS)
@@ -4570,7 +4583,7 @@ angle::Result Renderer::setupDevice(vk::ErrorContext *context,
     mEnabledFeatures.features.shaderInt64 = mPhysicalDeviceFeatures.shaderInt64;
     // Used to support 64bit-floats in shader code
     mEnabledFeatures.features.shaderFloat64 =
-        mFeatures.supportsShaderFloat64.enabled && mPhysicalDeviceFeatures.shaderFloat64;
+        mFeatures.supportsShaderFloat64.enabled && mPhysicalDeviceFeatures.shaderFloat64 == VK_TRUE;
 
     if (!vk::OutsideRenderPassCommandBuffer::ExecutesInline() ||
         !vk::RenderPassCommandBuffer::ExecutesInline())
@@ -4847,13 +4860,6 @@ void Renderer::initializeValidationMessageSuppressions()
         mSkippedValidationMessages.insert(
             mSkippedValidationMessages.end(), kSkippedMessagesWithDynamicRendering,
             kSkippedMessagesWithDynamicRendering + ArraySize(kSkippedMessagesWithDynamicRendering));
-    }
-
-    if (getFeatures().supportsTileMemoryHeap.enabled)
-    {
-        mSkippedValidationMessages.insert(
-            mSkippedValidationMessages.end(), kSkippedMessagesWithTileMemoryHeap,
-            kSkippedMessagesWithTileMemoryHeap + ArraySize(kSkippedMessagesWithTileMemoryHeap));
     }
 
     // Build the list of syncval errors that are currently expected and should be skipped.
@@ -5652,7 +5658,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // framebuffer.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, preferMSRTSSFlagByDefault,
-        mFeatures.supportsMultisampledRenderToSingleSampled.enabled &&
+        mFeatures.supportsMultisampledRenderToSingleSampled.enabled && !isMesaPanVK &&
             !(isQualcommProprietary && driverVersion < angle::VersionTriple(512, 777, 0)));
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsImage2dViewOf3d,
@@ -5744,10 +5750,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, supportsImageDrmFormatModifier,
         ExtensionFound(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME, deviceExtensionNames));
 
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsExternalMemoryHost,
-        ExtensionFound(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME, deviceExtensionNames));
-
     // http://anglebug.com/42261756
     // Precision qualifiers are disabled for Pixel 2 before the driver included relaxed precision.
     const bool isPixel4 =
@@ -5783,22 +5785,8 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsYUVSamplerConversion,
                             mSamplerYcbcrConversionFeatures.samplerYcbcrConversion != VK_FALSE);
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFloat16,
-                            mShaderFloat16Int8Features.shaderFloat16 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderInt8,
-                            mShaderFloat16Int8Features.shaderInt8 == VK_TRUE);
-
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderIntegerDotProduct,
-                            mShaderIntegerDotProductFeatures.shaderIntegerDotProduct == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFloat64,
-                            mPhysicalDeviceFeatures.shaderFloat64 == VK_TRUE);
-
     ANGLE_FEATURE_CONDITION(&mFeatures, preferCachedNoncoherentForDynamicStreamBufferUsage,
                             IsMeteorLake(mPhysicalDeviceProperties.deviceID));
-
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderAtomicInt64,
-                            mShaderAtomicInt64Features.shaderBufferInt64Atomics == VK_TRUE &&
-                                mShaderAtomicInt64Features.shaderSharedInt64Atomics == VK_TRUE);
 
     // The compute shader used to generate mipmaps needs -
     // 1. subgroup quad operations in compute shader stage.
@@ -6077,41 +6065,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
             !isQualcommProprietary &&
             !(isARMProprietary && driverVersion < angle::VersionTriple(47, 0, 0)));
 
-    // Rounding features from VK_KHR_float_controls extension
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormFtzFp16,
-                            mFloatControlProperties.shaderDenormFlushToZeroFloat16 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormFtzFp32,
-                            mFloatControlProperties.shaderDenormFlushToZeroFloat32 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormFtzFp64,
-                            mFloatControlProperties.shaderDenormFlushToZeroFloat64 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormPreserveFp16,
-                            mFloatControlProperties.shaderDenormPreserveFloat16 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormPreserveFp32,
-                            mFloatControlProperties.shaderDenormPreserveFloat32 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormPreserveFp64,
-                            mFloatControlProperties.shaderDenormPreserveFloat64 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRteFp16,
-                            mFloatControlProperties.shaderRoundingModeRTEFloat16 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRteFp32,
-                            mFloatControlProperties.shaderRoundingModeRTEFloat32 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRteFp64,
-                            mFloatControlProperties.shaderRoundingModeRTEFloat64 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRtzFp16,
-                            mFloatControlProperties.shaderRoundingModeRTZFloat16 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRtzFp32,
-                            mFloatControlProperties.shaderRoundingModeRTZFloat32 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRtzFp64,
-                            mFloatControlProperties.shaderRoundingModeRTZFloat64 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsSignedZeroInfNanPreserveFp16,
-        mFloatControlProperties.shaderSignedZeroInfNanPreserveFloat16 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsSignedZeroInfNanPreserveFp32,
-        mFloatControlProperties.shaderSignedZeroInfNanPreserveFloat32 == VK_TRUE);
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsSignedZeroInfNanPreserveFp64,
-        mFloatControlProperties.shaderSignedZeroInfNanPreserveFloat64 == VK_TRUE);
-
     // Retain debug info in SPIR-V blob.
     ANGLE_FEATURE_CONDITION(&mFeatures, retainSPIRVDebugInfo, getEnableValidationLayers());
 
@@ -6167,9 +6120,10 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // VK_EXT_vertex_input_dynamic_state enables dynamic state for the full vertex input state. As
     // such, when available use supportsVertexInputDynamicState instead of
     // useVertexInputBindingStrideDynamicState.
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, useVertexInputBindingStrideDynamicState,
-        mFeatures.supportsExtendedDynamicState.enabled && !isVertexInputBindingStrideBuggy);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useVertexInputBindingStrideDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled &&
+                                !mFeatures.supportsVertexInputDynamicState.enabled &&
+                                !isVertexInputBindingStrideBuggy);
     // On ARM proprietary drivers prior to r52, |vkCmdSetCullMode| incorrectly culls non-triangle
     // topologies, according to the errata:
     // https://developer.arm.com/documentation/SDEN-3735689/0100/?lang=en
@@ -6192,18 +6146,25 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // On Samsung, it was observed that the combination of primitive topology dynamic state
     // _enabled_ and primitive restart dynamic state _disabled_ is buggy.  However, the feature is
     // not disabled because primitive restart is not disabled outside tests.
-    ANGLE_FEATURE_CONDITION(&mFeatures, usePrimitiveTopologyDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && !isARMProprietary);
+    //
+    // Also seeing rendering issues on PowerVR (http://b/472763050)
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, usePrimitiveTopologyDynamicState,
+        mFeatures.supportsExtendedDynamicState.enabled && !isARMProprietary && !isPowerVR);
     ANGLE_FEATURE_CONDITION(&mFeatures, useStencilOpDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useStencilTestEnableDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled);
+
+    // vkCmdBindVertexBuffers2EXT() requires extended dynamic state.
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsBindVertexBuffers2,
                             mFeatures.supportsExtendedDynamicState.enabled);
 
     // Providing vkCmdBindVertexBuffers2() with a pointer to the sizes of the bound buffers can help
     // with syncval issues and robustness.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, forceSizePointerForBoundVertexBuffers,
-        mEnableValidationLayers && mFeatures.useVertexInputBindingStrideDynamicState.enabled);
+        mEnableValidationLayers && mFeatures.supportsBindVertexBuffers2.enabled);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsExtendedDynamicState2,
                             mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE &&
@@ -6546,29 +6507,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsTimelineSemaphore,
                             mTimelineSemaphoreFeatures.timelineSemaphore == VK_TRUE);
 
-    // 8bit storage features
-    ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitStorageBuffer,
-                            m8BitStorageFeatures.storageBuffer8BitAccess == VK_TRUE);
-
-    ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitUniformAndStorageBuffer,
-                            m8BitStorageFeatures.uniformAndStorageBuffer8BitAccess == VK_TRUE);
-
-    ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitPushConstant,
-                            m8BitStorageFeatures.storagePushConstant8 == VK_TRUE);
-
-    // 16bit storage features
-    ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitStorageBuffer,
-                            m16BitStorageFeatures.storageBuffer16BitAccess == VK_TRUE);
-
-    ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitUniformAndStorageBuffer,
-                            m16BitStorageFeatures.uniformAndStorageBuffer16BitAccess == VK_TRUE);
-
-    ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitPushConstant,
-                            m16BitStorageFeatures.storagePushConstant16 == VK_TRUE);
-
-    ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitInputOutput,
-                            m16BitStorageFeatures.storageInputOutput16 == VK_TRUE);
-
 #if defined(ANGLE_PLATFORM_ANDROID)
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsExternalFormatResolve,
                             mExternalFormatResolveFeatures.externalFormatResolve == VK_TRUE);
@@ -6700,10 +6638,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, supportsAstcHdr3dTextures,
         mFeatures.supportsTextureCompressionAstcHdr.enabled && CanSupportAstcHdr3D(this));
 
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsUniformBufferStandardLayout,
-        mUniformBufferStandardLayoutFeatures.uniformBufferStandardLayout == VK_TRUE);
-
     // http://anglebug.com/42264006
     // GL_EXT_clip_cull_distance also adds features to geometry and tessellation shaders, which are
     // currently disabled.
@@ -6742,11 +6676,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsAngleRgbxInternalFormat, !isSamsung);
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsAppleClipDistance, !isSamsung);
 
-    // Enable the use of below native kernels
-    // Each builtin kernel gets its own feature and condition, for now a single feature condition is
-    // setup
-    ANGLE_FEATURE_CONDITION(&mFeatures, usesNativeBuiltinClKernel, isSamsung);
-
     // Force enable sample usage for AHB images for Samsung
     ANGLE_FEATURE_CONDITION(&mFeatures, forceSampleUsageForAhbBackedImages, isSamsung);
 
@@ -6757,6 +6686,14 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsAstcDecodeModeRgb9e5,
                             mPhysicalDeviceAstcDecodeFeatures.decodeModeSharedExponent == VK_TRUE &&
                                 mFeatures.supportsAstcDecodeMode.enabled);
+
+    // Disable uniformAndStorageBuffer16BitAccess and supportsShaderFloat16 on Samsung devices
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supports16BitUniformAndStorageBuffer,
+        m16BitStorageFeatures.uniformAndStorageBuffer16BitAccess == VK_TRUE && !isSamsung);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFloat16,
+                            mShaderFloat16Int8Features.shaderFloat16 == VK_TRUE && !isSamsung);
 
     // http://anglebug.com/440941211:
     // Disable the feature on Windows Intel because some shaders using 16-bit floats crash
@@ -6788,19 +6725,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
             mPhysicalDeviceGlobalPriorityQueryFeatures.globalPriorityQuery == VK_TRUE &&
             IsAndroid());
 
-    // Set limits to expose to OpenCL.
-    // This information cannot yet be queried from the Vulkan device.
-    if (isSamsung && mFeatures.supportsShaderFloat64.enabled)
-    {
-        mNativeVectorWidthDouble    = 1;
-        mPreferredVectorWidthDouble = 1;
-    }
-    if (isSamsung && mFeatures.supportsShaderFloat16.enabled)
-    {
-        mNativeVectorWidthHalf    = 2;
-        mPreferredVectorWidthHalf = 8;
-    }
-
     // There are use cases where synchronization is not performed properly when texture is modified
     // between different contexts. To avoid rendering artifacts, force submit staged updates for
     // Samsung.
@@ -6810,8 +6734,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // 1. GL_ANGLE_shader_pixel_local_storage
     // 2. GL_ANGLE_shader_pixel_local_storage_coherent
     ANGLE_FEATURE_CONDITION(&mFeatures, supportShaderPixelLocalStorageAngle, !isSamsung);
-
-    ANGLE_FEATURE_CONDITION(&mFeatures, debugClDumpCommandStream, false);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportFragmentShadingRateExtExtensions,
                             mFeatures.supportsFragmentShadingRate.enabled && !isSamsung);
@@ -6825,6 +6747,118 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // VK_QCOM_tile_memory_heap is available
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsTileMemoryHeap,
                             /*mTileMemoryHeapFeatures.tileMemoryHeap == VK_TRUE*/ false);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsAstc3d,
+                            mTextureCompressionASTC3DFeatures.textureCompressionASTC_3D == VK_TRUE);
+
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // Features specific to OpenCL backend
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if (mGlobalOps->getFrontendApi() == GlobalOps::Api::OpenCL)
+    {
+        ANGLE_FEATURE_CONDITION(
+            &mFeatures, supportsExternalMemoryHost,
+            ExtensionFound(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME, deviceExtensionNames));
+
+        ANGLE_FEATURE_CONDITION(
+            &mFeatures, supportsUniformBufferStandardLayout,
+            mUniformBufferStandardLayoutFeatures.uniformBufferStandardLayout == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFloat16,
+                                mShaderFloat16Int8Features.shaderFloat16 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderInt8,
+                                mShaderFloat16Int8Features.shaderInt8 == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(
+            &mFeatures, supportsShaderIntegerDotProduct,
+            mShaderIntegerDotProductFeatures.shaderIntegerDotProduct == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFloat64,
+                                mPhysicalDeviceFeatures.shaderFloat64 == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderAtomicInt64,
+                                mShaderAtomicInt64Features.shaderBufferInt64Atomics == VK_TRUE &&
+                                    mShaderAtomicInt64Features.shaderSharedInt64Atomics == VK_TRUE);
+
+        // Rounding features from VK_KHR_float_controls extension
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormFtzFp16,
+                                mFloatControlProperties.shaderDenormFlushToZeroFloat16 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormFtzFp32,
+                                mFloatControlProperties.shaderDenormFlushToZeroFloat32 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormFtzFp64,
+                                mFloatControlProperties.shaderDenormFlushToZeroFloat64 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormPreserveFp16,
+                                mFloatControlProperties.shaderDenormPreserveFloat16 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormPreserveFp32,
+                                mFloatControlProperties.shaderDenormPreserveFloat32 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormPreserveFp64,
+                                mFloatControlProperties.shaderDenormPreserveFloat64 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRteFp16,
+                                mFloatControlProperties.shaderRoundingModeRTEFloat16 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRteFp32,
+                                mFloatControlProperties.shaderRoundingModeRTEFloat32 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRteFp64,
+                                mFloatControlProperties.shaderRoundingModeRTEFloat64 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRtzFp16,
+                                mFloatControlProperties.shaderRoundingModeRTZFloat16 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRtzFp32,
+                                mFloatControlProperties.shaderRoundingModeRTZFloat32 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsRoundingModeRtzFp64,
+                                mFloatControlProperties.shaderRoundingModeRTZFloat64 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(
+            &mFeatures, supportsSignedZeroInfNanPreserveFp16,
+            mFloatControlProperties.shaderSignedZeroInfNanPreserveFloat16 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(
+            &mFeatures, supportsSignedZeroInfNanPreserveFp32,
+            mFloatControlProperties.shaderSignedZeroInfNanPreserveFloat32 == VK_TRUE);
+        ANGLE_FEATURE_CONDITION(
+            &mFeatures, supportsSignedZeroInfNanPreserveFp64,
+            mFloatControlProperties.shaderSignedZeroInfNanPreserveFloat64 == VK_TRUE);
+
+        // 8bit storage features
+        ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitStorageBuffer,
+                                m8BitStorageFeatures.storageBuffer8BitAccess == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitUniformAndStorageBuffer,
+                                m8BitStorageFeatures.uniformAndStorageBuffer8BitAccess == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(&mFeatures, supports8BitPushConstant,
+                                m8BitStorageFeatures.storagePushConstant8 == VK_TRUE);
+
+        // 16bit storage features
+        ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitStorageBuffer,
+                                m16BitStorageFeatures.storageBuffer16BitAccess == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(
+            &mFeatures, supports16BitUniformAndStorageBuffer,
+            m16BitStorageFeatures.uniformAndStorageBuffer16BitAccess == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitPushConstant,
+                                m16BitStorageFeatures.storagePushConstant16 == VK_TRUE);
+
+        ANGLE_FEATURE_CONDITION(&mFeatures, supports16BitInputOutput,
+                                m16BitStorageFeatures.storageInputOutput16 == VK_TRUE);
+
+        // Enable the use of below native kernels
+        // Each builtin kernel gets its own feature and condition, for now a single feature
+        // condition is setup
+        ANGLE_FEATURE_CONDITION(&mFeatures, usesNativeBuiltinClKernel, isSamsung);
+
+        ANGLE_FEATURE_CONDITION(&mFeatures, debugClDumpCommandStream, false);
+
+        // Set limits to expose to OpenCL.
+        // This information cannot yet be queried from the Vulkan device.
+        if (isSamsung && mFeatures.supportsShaderFloat64.enabled)
+        {
+            mNativeVectorWidthDouble    = 1;
+            mPreferredVectorWidthDouble = 1;
+        }
+        if (isSamsung && mFeatures.supportsShaderFloat16.enabled)
+        {
+            mNativeVectorWidthHalf    = 2;
+            mPreferredVectorWidthHalf = 8;
+        }
+    }
 }
 
 void Renderer::appBasedFeatureOverrides(const vk::ExtensionNameList &extensions) {}

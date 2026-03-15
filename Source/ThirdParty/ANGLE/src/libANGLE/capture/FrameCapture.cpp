@@ -4506,6 +4506,32 @@ void CaptureShareGroupMidExecutionSetup(
     }
 }
 
+// Detects zombie bindings caused by texture ID reuse across shared contexts.
+// Zombie bindings may exist at capture-time but should not be added as part
+// of capture Setup(). See http://issuetracker.google.com/471189378.
+bool IsZombieTextureBinding(const gl::State &state,
+                            gl::TextureType type,
+                            size_t unit,
+                            gl::TextureID textureID)
+{
+    // Texture held by the context's specific hardware sampler slot
+    const gl::Texture *boundTexture = state.getSamplerTexture(static_cast<GLuint>(unit), type);
+
+    if (boundTexture)
+    {
+        uint64_t boundSerial = boundTexture->serial().getValue();
+
+        // Texture from the current Resource Manager state
+        const gl::TextureManager &textureManager = state.getTextureManagerForCapture();
+        const gl::Texture *currentTexture        = textureManager.getTexture(textureID);
+        uint64_t currentSerial                   = currentTexture->serial().getValue();
+
+        // If the ANGLE unique object IDs differ this object has been deleted
+        return (boundSerial != currentSerial);
+    }
+    return false;
+}
+
 void CaptureMidExecutionSetup(const gl::Context *context,
                               std::vector<CallCapture> *setupCalls,
                               StateResetHelper &resetHelper,
@@ -4672,6 +4698,13 @@ void CaptureMidExecutionSetup(const gl::Context *context,
 
             if (apiTextureID != replayTextureID)
             {
+                if (apiTextureID.value &&
+                    IsZombieTextureBinding(apiState, textureType, bindingIndex, apiTextureID))
+                {
+                    INFO() << "Skipping setup of partially deleted/unbound zombie texture.";
+                    continue;
+                }
+
                 if (replayState.getActiveSampler() != bindingIndex)
                 {
                     cap(CaptureActiveTexture(replayState, true,

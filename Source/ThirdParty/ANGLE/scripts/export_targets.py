@@ -134,7 +134,8 @@ LIBRARY_TYPES = ('shared_library', 'static_library')
 def flattened_target(target_name: str, descs: dict, stop_at_lib: bool =True) -> dict:
     flattened = dict(descs[target_name])
 
-    EXPECTED_TYPES = LIBRARY_TYPES + ('source_set', 'group', 'action')
+    EXPECTED_TYPES = LIBRARY_TYPES + ('source_set', 'group', 'action', 'action_foreach',
+                                      'executable')
 
     def pre(k):
         dep = descs[k]
@@ -219,6 +220,7 @@ IGNORED_INCLUDES = {
     b'libANGLE/renderer/vulkan/win32/DisplayVkWin32.h',
     b'libANGLE/renderer/vulkan/xcb/DisplayVkXcb.h',
     b'libANGLE/renderer/vulkan/wayland/DisplayVkWayland.h',
+    b'libANGLE/renderer/wgpu/DisplayWgpu_api.h',
     b'loader_cmake_config.h',
     b'loader_linux.h',
     b'loader_windows.h',

@@ -578,9 +578,9 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpSaturate:
             return "metal::saturate";  // TODO fast vs precise namespace
         case TOperator::EOpMix:
-            if (!argType1->isScalar() && argType2 && argType2->getBasicType() == EbtBool)
+            if (argType2 && argType2->getBasicType() == EbtBool)
             {
-                return "ANGLE_mix_bool";
+                return "metal::select";
             }
             return "metal::mix";
         case TOperator::EOpStep:

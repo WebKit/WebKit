@@ -145,7 +145,6 @@ class TCompiler : public TShHandleBase
     const std::string &getBuiltInResourcesString() const { return mBuiltInResourcesString; }
 
     bool shouldRunLoopAndIndexingValidation(const ShCompileOptions &compileOptions) const;
-    bool shouldLimitTypeSizes() const;
 
     // Get the resources set by InitBuiltInSymbolTable
     const ShBuiltInResources &getResources() const;
@@ -188,7 +187,7 @@ class TCompiler : public TShHandleBase
     AdvancedBlendEquations getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
 
     bool hasPixelLocalStorageUniforms() const { return !mPixelLocalStorageFormats.empty(); }
-    const std::vector<ShPixelLocalStorageFormat> &GetPixelLocalStorageFormats() const
+    const std::vector<ShPixelLocalStorageFormat> &getPixelLocalStorageFormats() const
     {
         return mPixelLocalStorageFormats;
     }
@@ -300,13 +299,10 @@ class TCompiler : public TShHandleBase
 
     bool sortUniforms(TIntermBlock *root);
 
-    bool mVariablesCollected;
-
-    bool mGLPositionInitialized;
-
     // Removes unused function declarations and prototypes from the AST
     bool pruneUnusedFunctions(TIntermBlock *root);
 
+    ShCompileOptions adjustOptions(const ShCompileOptions &compileOptionsIn);
     TIntermBlock *compileTreeImpl(angle::Span<const char *const> shaderStrings,
                                   const ShCompileOptions &compileOptions);
 
@@ -345,6 +341,9 @@ class TCompiler : public TShHandleBase
     TInfoSink mInfoSink;  // Output sink.
     TDiagnostics mDiagnostics;
     const char *mSourcePath;  // Path of source file or NULL
+
+    bool mVariablesCollected;
+    bool mGLPositionInitialized;
 
     // Fragment shader early fragment tests
     bool mEarlyFragmentTestsSpecified;

@@ -346,9 +346,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                        gl::SamplerFormat format,
                                        gl::Texture **textureOut);
 
-    // Recommended to call these methods to end encoding instead of invoking the encoder's
-    // endEncoding() directly.
-    void endRenderEncoding(mtl::RenderCommandEncoder *encoder);
     // Ends any active command encoder
     void endEncoding(bool forceSaveRenderPassContent);
 

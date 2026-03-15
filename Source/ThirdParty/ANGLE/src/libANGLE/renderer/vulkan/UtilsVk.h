@@ -292,6 +292,7 @@ class UtilsVk : angle::NonCopyable
                                    const BlitResolveParameters &params);
 
     angle::Result depthStencilBlitResolve(ContextVk *contextVk,
+                                          vk::RenderPassCommandBufferHelper *renderPassCommands,
                                           vk::ImageHelper *dstImage,
                                           const vk::ImageView &dstImageView,
                                           gl::LevelIndex dstImageLevel,

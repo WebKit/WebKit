@@ -844,6 +844,14 @@
                 "Some ES2 Mali drivers are unable to query enough information from a linked program to use passthrough shaders."
             ],
             "issue": "https://crbug.com/451796659"
+        },
+        {
+            "name": "disable_clear_tex_image_for_robust_init",
+            "category": "Workarounds",
+            "description": [
+                "IMG drivers are unable to handle glClearTexImage with various format combinations."
+            ],
+            "issue": "https://crbug.com/465918231"
         }
     ]
 }

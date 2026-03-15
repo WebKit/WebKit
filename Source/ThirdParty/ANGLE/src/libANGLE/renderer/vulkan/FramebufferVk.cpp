@@ -47,13 +47,15 @@ constexpr unsigned int kEmulatedAlphaValue = 1;
 bool HasSrcBlitFeature(vk::Renderer *renderer, RenderTargetVk *srcRenderTarget)
 {
     angle::FormatID srcFormatID = srcRenderTarget->getImageActualFormatID();
-    return renderer->hasImageFormatFeatureBits(srcFormatID, VK_FORMAT_FEATURE_BLIT_SRC_BIT);
+    return renderer->hasImageFormatFeatureBits(srcFormatID, VK_FORMAT_FEATURE_BLIT_SRC_BIT) &&
+           srcRenderTarget->getImageForCopy().canTransferFrom();
 }
 
 bool HasDstBlitFeature(vk::Renderer *renderer, RenderTargetVk *dstRenderTarget)
 {
     angle::FormatID dstFormatID = dstRenderTarget->getImageActualFormatID();
-    return renderer->hasImageFormatFeatureBits(dstFormatID, VK_FORMAT_FEATURE_BLIT_DST_BIT);
+    return renderer->hasImageFormatFeatureBits(dstFormatID, VK_FORMAT_FEATURE_BLIT_DST_BIT) &&
+           dstRenderTarget->getImageForWrite().canTransferTo();
 }
 
 // Returns false if destination has any channel the source doesn't.  This means that channel was
@@ -1266,13 +1268,35 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
         srcFramebufferVk->restageDeferredClearsForReadFramebuffer(contextVk);
     }
 
-    // We can sometimes end up in a blit with some clear commands saved. Ensure all clear commands
-    // are issued before we issue the blit command.
-    ANGLE_TRY(flushDeferredClears(contextVk));
-
     const bool blitColorBuffer   = (mask & GL_COLOR_BUFFER_BIT) != 0;
     const bool blitDepthBuffer   = (mask & GL_DEPTH_BUFFER_BIT) != 0;
     const bool blitStencilBuffer = (mask & GL_STENCIL_BUFFER_BIT) != 0;
+
+    if (blitDepthBuffer || blitStencilBuffer)
+    {
+        RenderTargetVk *readRenderTarget = srcFramebufferVk->getDepthStencilRenderTarget();
+        RenderTargetVk *drawRenderTarget = mRenderTargetCache.getDepthStencil();
+        vk::ImageHelper &readImage       = readRenderTarget->getImageForCopy();
+        vk::ImageHelper &drawImage       = drawRenderTarget->getImageForWrite();
+
+        if (!readImage.canTransferFrom())
+        {
+            ASSERT(readImage.useTileMemory());
+            readImage.finalizeImageLayoutInShareContexts(renderer, contextVk, {});
+            ANGLE_TRY(readImage.fallbackFromTileMemory(contextVk));
+        }
+
+        if (!drawImage.canTransferTo())
+        {
+            ASSERT(drawImage.useTileMemory());
+            drawImage.finalizeImageLayoutInShareContexts(renderer, contextVk, {});
+            ANGLE_TRY(drawImage.fallbackFromTileMemory(contextVk));
+        }
+    }
+
+    // We can sometimes end up in a blit with some clear commands saved. Ensure all clear commands
+    // are issued before we issue the blit command.
+    ANGLE_TRY(flushDeferredClears(contextVk));
 
     // If a framebuffer contains a mixture of multisampled and multisampled-render-to-texture
     // attachments, this function could be simultaneously doing a blit on one attachment and resolve
@@ -1583,6 +1607,14 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
         RenderTargetVk *readRenderTarget      = srcFramebufferVk->getDepthStencilRenderTarget();
         RenderTargetVk *drawRenderTarget      = mRenderTargetCache.getDepthStencil();
 
+        // glBlitFramebuffer requires that depth/stencil blits have matching formats.
+        ASSERT(AreSrcAndDstFormatsIdentical(readRenderTarget, drawRenderTarget));
+        // Multisampled images are not allowed to have mips.
+        ASSERT(!isDepthStencilResolve || readRenderTarget->getLevelIndex() == gl::LevelIndex(0));
+
+        vk::ImageHelper *srcImage = &readRenderTarget->getImageForCopy();
+        vk::ImageHelper *dstImage = &drawRenderTarget->getImageForWrite();
+
         AdjustBlitAreas(readRenderTarget, &sourceArea, &destArea, &srcFramebufferDimensions,
                         dstFramebufferDimensions, srcFramebufferRotation, &dstFramebufferRotation,
                         rotation, srcFramebufferFlippedY, dstFramebufferFlippedY, isResolve, &flipX,
@@ -1591,152 +1623,153 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
         noClip = blitArea == destArea && stretch[0] == 1.0f && stretch[1] == 1.0f;
         const bool noFlip = !flipX && !flipY;
 
-        // Multisampled images are not allowed to have mips.
-        ASSERT(!isDepthStencilResolve || readRenderTarget->getLevelIndex() == gl::LevelIndex(0));
+        const vk::ImageView *dstDepthStencilView = nullptr;
+        ANGLE_TRY(drawRenderTarget->getImageView(contextVk, &dstDepthStencilView));
 
-        // Similarly, only blit if there's been no clipping or rotating.
-        bool canBlitWithCommand =
-            !isDepthStencilResolve && noClip && HasSrcBlitFeature(renderer, readRenderTarget) &&
-            HasDstBlitFeature(renderer, drawRenderTarget) && rotation == SurfaceRotation::Identity;
+        gl::LevelIndex dstLevelIndex = drawRenderTarget->getLevelIndex();
+        uint32_t dstLayerIndex       = drawRenderTarget->getLayerIndex();
+
+        // Get depth- and stencil-only views for reading.
+        const vk::ImageView *srcDepthView = nullptr;
+        if (blitDepthBuffer)
+        {
+            ANGLE_TRY(readRenderTarget->getDepthOrStencilImageViewForCopy(
+                contextVk, VK_IMAGE_ASPECT_DEPTH_BIT, &srcDepthView));
+        }
+
+        const vk::ImageView *srcStencilView = nullptr;
+        if (blitStencilBuffer)
+        {
+            ANGLE_TRY(readRenderTarget->getDepthOrStencilImageViewForCopy(
+                contextVk, VK_IMAGE_ASPECT_STENCIL_BIT, &srcStencilView));
+        }
+
+        // If shader stencil export is not possible, defer stencil blit/resolve to another pass.
+        const bool hasShaderStencilExport =
+            renderer->getFeatures().supportsShaderStencilExport.enabled;
+
+        // When possible try to use mid render pass blit to avoid breaking current renderPass.
+        bool canBlitWithMidRenderPassDraw =
+            !isDepthStencilResolve && dstImage != srcImage &&
+            contextVk->hasStartedRenderPassWithQueueSerial(mLastRenderPassQueueSerial) &&
+            (!blitStencilBuffer || hasShaderStencilExport) &&
+            !contextVk->getState().isTransformFeedbackActiveUnpaused() &&
+            !contextVk->hasActiveRenderPassQuery();
+        if (canBlitWithMidRenderPassDraw)
+        {
+            // All deferred clear must have been flushed, otherwise it will conflict with
+            // params.blitArea.
+            ASSERT(!hasDeferredClears());
+            // If we have to use standalone renderPass for stencil, then no need for depth to use
+            // midRenderPass.
+            ASSERT(!blitStencilBuffer || hasShaderStencilExport);
+            ASSERT(blitDepthBuffer || (blitStencilBuffer && hasShaderStencilExport));
+            ASSERT(!isDepthStencilResolve);
+
+            AdjustBlitResolveParametersForPreRotation(rotation, srcFramebufferRotation, &params);
+
+            ANGLE_TRY(utilsVk.depthStencilBlitResolve(
+                contextVk, &contextVk->getStartedRenderPassCommands(), dstImage,
+                *dstDepthStencilView, dstLevelIndex, dstLayerIndex, srcImage, srcDepthView,
+                srcStencilView, params));
+
+            return angle::Result::Continue;
+        }
+
         bool areChannelsBlitCompatible =
             AreSrcAndDstDepthStencilChannelsBlitCompatible(readRenderTarget, drawRenderTarget);
 
-        // glBlitFramebuffer requires that depth/stencil blits have matching formats.
-        ASSERT(AreSrcAndDstFormatsIdentical(readRenderTarget, drawRenderTarget));
-
-        if (canBlitWithCommand && areChannelsBlitCompatible)
+        // Similarly, only blit if there's been no clipping or rotating.
+        bool canBlitWithCommand = areChannelsBlitCompatible && !isDepthStencilResolve && noClip &&
+                                  HasSrcBlitFeature(renderer, readRenderTarget) &&
+                                  HasDstBlitFeature(renderer, drawRenderTarget) &&
+                                  rotation == SurfaceRotation::Identity;
+        if (canBlitWithCommand)
         {
-            ANGLE_TRY(blitWithCommand(contextVk, sourceArea, destArea, readRenderTarget,
-                                      drawRenderTarget, filter, false, blitDepthBuffer,
-                                      blitStencilBuffer, flipX, flipY));
+            return blitWithCommand(contextVk, sourceArea, destArea, readRenderTarget,
+                                   drawRenderTarget, filter, false, blitDepthBuffer,
+                                   blitStencilBuffer, flipX, flipY);
         }
-        else
+
+        VkImageAspectFlags resolveAspects = 0;
+        if (blitDepthBuffer)
         {
-            vk::ImageHelper *depthStencilImage = &readRenderTarget->getImageForCopy();
+            resolveAspects |= VK_IMAGE_ASPECT_DEPTH_BIT;
+        }
+        if (blitStencilBuffer)
+        {
+            resolveAspects |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
 
-            VkImageAspectFlags resolveAspects = 0;
-            if (blitDepthBuffer)
-            {
-                resolveAspects |= VK_IMAGE_ASPECT_DEPTH_BIT;
-            }
-            if (blitStencilBuffer)
-            {
-                resolveAspects |= VK_IMAGE_ASPECT_STENCIL_BIT;
-            }
+        // See comment on canResolveWithSubpass for the color path.
+        bool canResolveWithSubpass =
+            isDepthStencilResolve &&
+            !renderer->getFeatures().disableDepthStencilResolveThroughAttachment.enabled &&
+            areChannelsBlitCompatible && mCurrentFramebufferDesc.getLayerCount() == 1 &&
+            contextVk->hasStartedRenderPassWithQueueSerial(
+                srcFramebufferVk->getLastRenderPassQueueSerial()) &&
+            !contextVk->isRenderPassStartedAndUsesImage(
+                drawRenderTarget->getImageForRenderPass()) &&
+            noFlip && rotation == SurfaceRotation::Identity;
+        if (canResolveWithSubpass)
+        {
+            const vk::RenderPassCommandBufferHelper &renderPassCommands =
+                contextVk->getStartedRenderPassCommands();
+            const vk::RenderPassDesc &renderPassDesc = renderPassCommands.getRenderPassDesc();
 
-            // See comment on canResolveWithSubpass for the color path.
-            bool canResolveWithSubpass =
-                isDepthStencilResolve &&
-                !renderer->getFeatures().disableDepthStencilResolveThroughAttachment.enabled &&
-                areChannelsBlitCompatible && mCurrentFramebufferDesc.getLayerCount() == 1 &&
-                contextVk->hasStartedRenderPassWithQueueSerial(
-                    srcFramebufferVk->getLastRenderPassQueueSerial()) &&
-                !contextVk->isRenderPassStartedAndUsesImage(
-                    drawRenderTarget->getImageForRenderPass()) &&
-                noFlip && rotation == SurfaceRotation::Identity;
+            const VkImageAspectFlags srcImageAspects = srcImage->getAspectFlags();
+            const bool resolvesAllAspects = (resolveAspects & srcImageAspects) == srcImageAspects;
 
-            if (canResolveWithSubpass)
-            {
-                const vk::RenderPassCommandBufferHelper &renderPassCommands =
-                    contextVk->getStartedRenderPassCommands();
-                const vk::RenderPassDesc &renderPassDesc = renderPassCommands.getRenderPassDesc();
+            // Make sure that:
+            // - The blit and render areas are identical
+            // - There is no resolve attachment already
+            // Additionally, disable the optimization for a few corner cases that are
+            // unrealistic and inconvenient.
+            //
+            // Note: currently, if two separate `glBlitFramebuffer` calls are made for each
+            // aspect, only the first one is optimized as a resolve attachment.  Applications
+            // should use one `glBlitFramebuffer` call with both aspects if they want to resolve
+            // both.
+            canResolveWithSubpass =
+                blitArea == renderPassCommands.getRenderArea() &&
+                (resolvesAllAspects ||
+                 renderer->getFeatures().supportsDepthStencilIndependentResolveNone.enabled) &&
+                !renderPassDesc.hasDepthStencilResolveAttachment() &&
+                AllowAddingResolveAttachmentsToSubpass(renderPassDesc);
+        }
+        if (canResolveWithSubpass)
+        {
+            return resolveDepthStencilWithSubpass(contextVk, params, resolveAspects);
+        }
 
-                const VkImageAspectFlags depthStencilImageAspects =
-                    depthStencilImage->getAspectFlags();
-                const bool resolvesAllAspects =
-                    (resolveAspects & depthStencilImageAspects) == depthStencilImageAspects;
+        // Now that all flipping is done, adjust the offsets for resolve and prerotation
+        if (isDepthStencilResolve)
+        {
+            AdjustBlitResolveParametersForResolve(sourceArea, destArea, &params);
+        }
+        AdjustBlitResolveParametersForPreRotation(rotation, srcFramebufferRotation, &params);
 
-                // Make sure that:
-                // - The blit and render areas are identical
-                // - There is no resolve attachment already
-                // Additionally, disable the optimization for a few corner cases that are
-                // unrealistic and inconvenient.
-                //
-                // Note: currently, if two separate `glBlitFramebuffer` calls are made for each
-                // aspect, only the first one is optimized as a resolve attachment.  Applications
-                // should use one `glBlitFramebuffer` call with both aspects if they want to resolve
-                // both.
-                canResolveWithSubpass =
-                    blitArea == renderPassCommands.getRenderArea() &&
-                    (resolvesAllAspects ||
-                     renderer->getFeatures().supportsDepthStencilIndependentResolveNone.enabled) &&
-                    !renderPassDesc.hasDepthStencilResolveAttachment() &&
-                    AllowAddingResolveAttachmentsToSubpass(renderPassDesc);
-            }
+        // Blit depth. If shader stencil export is present, blit stencil as well.
+        if (blitDepthBuffer || (blitStencilBuffer && hasShaderStencilExport))
+        {
+            // All deferred clear must have been flushed, otherwise it will conflict with
+            // params.blitArea.
+            ASSERT(!hasDeferredClears());
 
-            if (canResolveWithSubpass)
-            {
-                ANGLE_TRY(resolveDepthStencilWithSubpass(contextVk, params, resolveAspects));
-            }
-            else
-            {
-                // See comment for the draw-based color blit.  The render pass must be flushed
-                // before creating the views.
-                ANGLE_TRY(contextVk->flushCommandsAndEndRenderPass(
-                    RenderPassClosureReason::PrepareForBlit));
+            ANGLE_TRY(utilsVk.depthStencilBlitResolve(
+                contextVk, nullptr, dstImage, *dstDepthStencilView, dstLevelIndex, dstLayerIndex,
+                srcImage, srcDepthView, hasShaderStencilExport ? srcStencilView : nullptr, params));
+        }
 
-                // Now that all flipping is done, adjust the offsets for resolve and prerotation
-                if (isDepthStencilResolve)
-                {
-                    AdjustBlitResolveParametersForResolve(sourceArea, destArea, &params);
-                }
-                AdjustBlitResolveParametersForPreRotation(rotation, srcFramebufferRotation,
-                                                          &params);
-
-                vk::ImageHelper *srcImage = &readRenderTarget->getImageForCopy();
-                // Get depth- and stencil-only views for reading.
-                const vk::ImageView *srcDepthView   = nullptr;
-                const vk::ImageView *srcStencilView = nullptr;
-
-                vk::ImageHelper *dstImage    = &drawRenderTarget->getImageForWrite();
-                gl::LevelIndex dstLevelIndex = drawRenderTarget->getLevelIndex();
-                uint32_t dstLayerIndex       = drawRenderTarget->getLayerIndex();
-
-                if (blitDepthBuffer)
-                {
-                    ANGLE_TRY(readRenderTarget->getDepthOrStencilImageViewForCopy(
-                        contextVk, VK_IMAGE_ASPECT_DEPTH_BIT, &srcDepthView));
-                }
-
-                if (blitStencilBuffer)
-                {
-                    ANGLE_TRY(readRenderTarget->getDepthOrStencilImageViewForCopy(
-                        contextVk, VK_IMAGE_ASPECT_STENCIL_BIT, &srcStencilView));
-                }
-
-                // If shader stencil export is not possible, defer stencil blit/resolve to another
-                // pass.
-                const bool hasShaderStencilExport =
-                    renderer->getFeatures().supportsShaderStencilExport.enabled;
-
-                // Blit depth. If shader stencil export is present, blit stencil as well.
-                if (blitDepthBuffer || (blitStencilBuffer && hasShaderStencilExport))
-                {
-                    // All deferred clear must have been flushed, otherwise it will conflict with
-                    // params.blitArea.
-                    ASSERT(!hasDeferredClears());
-
-                    const vk::ImageView *dstDepthStencilView = nullptr;
-                    ANGLE_TRY(drawRenderTarget->getImageView(contextVk, &dstDepthStencilView));
-
-                    ANGLE_TRY(utilsVk.depthStencilBlitResolve(
-                        contextVk, dstImage, *dstDepthStencilView, dstLevelIndex, dstLayerIndex,
-                        srcImage, srcDepthView, hasShaderStencilExport ? srcStencilView : nullptr,
-                        params));
-                }
-
-                // If shader stencil export is not present, blit stencil through a different path.
-                if (blitStencilBuffer && !hasShaderStencilExport)
-                {
-                    ANGLE_VK_PERF_WARNING(
-                        contextVk, GL_DEBUG_SEVERITY_LOW,
-                        "Inefficient BlitFramebuffer operation on the stencil aspect "
-                        "due to lack of shader stencil export support");
-                    ANGLE_TRY(utilsVk.stencilBlitResolveNoShaderExport(
-                        contextVk, dstImage, dstLevelIndex, dstLayerIndex, srcImage, srcStencilView,
-                        params));
-                }
-            }
+        // If shader stencil export is not present, blit stencil through a different path.
+        if (blitStencilBuffer && !hasShaderStencilExport)
+        {
+            ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_LOW,
+                                  "Inefficient BlitFramebuffer operation on the stencil aspect "
+                                  "due to lack of shader stencil export support");
+            ANGLE_TRY(utilsVk.stencilBlitResolveNoShaderExport(contextVk, dstImage, dstLevelIndex,
+                                                               dstLayerIndex, srcImage,
+                                                               srcStencilView, params));
         }
     }
 

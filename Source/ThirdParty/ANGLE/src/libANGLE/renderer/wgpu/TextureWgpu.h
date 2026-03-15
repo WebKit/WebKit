@@ -245,6 +245,7 @@ class TextureWgpu : public TextureImpl, public angle::ObserverInterface
 
     void setImageHelper(webgpu::ImageHelper *imageHelper, bool ownsImageHelper);
 
+    void resetImageAndReleaseViews();
     bool mOwnsImage             = false;
     webgpu::ImageHelper *mImage = nullptr;
     gl::LevelIndex mCurrentBaseLevel;

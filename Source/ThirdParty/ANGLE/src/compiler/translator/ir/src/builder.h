@@ -66,7 +66,7 @@ inline bool IsVariableIdValid(VariableId id)
 class Builder
 {
   public:
-    Builder(gl::ShaderType shaderType);
+    Builder(gl::ShaderType shaderType, const ShCompileOptions &options);
     static IR destroy(Builder &&builder);
 
     void onError() { mHasError = true; }
@@ -110,7 +110,10 @@ class Builder
     void updateFunctionParamNames(FunctionId id,
                                   const angle::Span<ImmutableString> &paramNames,
                                   const angle::Span<VariableId> &paramIdsOut);
-    VariableId declareFunctionParam(const ImmutableString &name, TypeId typeId, const TType &type);
+    VariableId declareFunctionParam(const ImmutableString &name,
+                                    TypeId typeId,
+                                    const TType &type,
+                                    TQualifier direction);
     void beginFunction(FunctionId id);
     void endFunction();
 
@@ -201,7 +204,7 @@ inline bool IsVariableIdValid(VariableId id)
 class Builder
 {
   public:
-    Builder(gl::ShaderType shaderType) {}
+    Builder(gl::ShaderType shaderType, const ShCompileOptions &options) {}
     static IR destroy(Builder &&builder) { return nullptr; }
 
     void onError() {}
@@ -264,7 +267,10 @@ class Builder
                                   const angle::Span<ImmutableString> &paramNames,
                                   const angle::Span<VariableId> &paramIdsOut)
     {}
-    VariableId declareFunctionParam(const ImmutableString &name, TypeId typeId, const TType &type)
+    VariableId declareFunctionParam(const ImmutableString &name,
+                                    TypeId typeId,
+                                    const TType &type,
+                                    TQualifier direction)
     {
         return 0;
     }

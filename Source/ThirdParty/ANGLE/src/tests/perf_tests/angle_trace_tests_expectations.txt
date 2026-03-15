@@ -6,7 +6,6 @@
 
 42266611 SWIFTSHADER : gangstar_vegas = SKIP
 42266679 SWIFTSHADER : street_fighter_iv_ce = SKIP
-446064595 SWIFTSHADER : dc_dark_legion = SKIP
 42266627 WIN NATIVE : respawnables = SKIP
 42266627 LINUX NATIVE : respawnables = SKIP
 42266627 PIXEL4ORXL NATIVE : respawnables = SKIP
@@ -58,8 +57,6 @@
 42264359 ANDROID PIXEL4ORXL NATIVE : block_craft_3d = SKIP
 42264359 ANDROID PIXEL4ORXL NATIVE : cashman_casino = SKIP
 42264359 ANDROID PIXEL4ORXL NATIVE : lightning_link = SKIP
-446064595 ANDROID PIXEL4ORXL NATIVE : dc_dark_legion = SKIP
-446064595 ANDROID PIXEL6 NATIVE : dc_dark_legion = SKIP
 450251026 ANDROID PIXEL6 VULKAN : black_beacon = SKIP
 42266403 ANDROID PIXEL6 NATIVE : final_fantasy = SKIP
 
@@ -153,41 +150,29 @@
 445419190 WIN INTEL VULKAN : lineage_2m = SKIP
 474664078 WIN INTEL VULKAN : pokemon_go_combat = SKIP
 
-42264147 LINUX NVIDIA NATIVE : car_parking_multiplayer = SKIP
-42264759 LINUX NVIDIA NATIVE : pubg_mobile_battle_royale = SKIP
-40644857 LINUX NVIDIA NATIVE : pubg_mobile_launch = SKIP
-42264759 LINUX NVIDIA NATIVE : pubg_mobile_skydive = SKIP
-461532426 LINUX NVIDIA NATIVE : ace_racer = SKIP
-42265965 LINUX NVIDIA VULKAN : genshin_impact = SKIP
-42265153 LINUX NVIDIA VULKAN : zillow = SKIP
-377923479 LINUX NVIDIA VULKAN : real_racing3 = SKIP
-42265598 LINUX NVIDIA VULKAN : car_chase = SKIP
-42265714 LINUX NVIDIA VULKAN : tessellation = SKIP
-362728695 LINUX NVIDIA VULKAN : life_is_strange = SKIP
-365524876 LINUX NVIDIA VULKAN : critical_ops = SKIP
-369533074 LINUX NVIDIA VULKAN : dota_underlords = SKIP
-382960265 LINUX NVIDIA VULKAN : balatro = SKIP
-385226328 LINUX NVIDIA VULKAN : monopoly_go = SKIP
-474664078 LINUX NVIDIA VULKAN : pokemon_go_combat = SKIP
-42264147 WIN NVIDIA NATIVE : car_parking_multiplayer = SKIP
-42264759 WIN NVIDIA NATIVE : pubg_mobile_battle_royale = SKIP
-42264759 WIN NVIDIA NATIVE : pubg_mobile_skydive = SKIP
-442286938 WIN NVIDIA NATIVE : minecraft_vibrant_visuals = SKIP
-448110252 WIN NVIDIA NATIVE : puzzle_and_dragons = SKIP
-42264199 WIN NVIDIA VULKAN : messenger_lite = SKIP
-42265965 WIN NVIDIA VULKAN : genshin_impact = SKIP
-42265153 WIN NVIDIA VULKAN : zillow = SKIP
-377923479 WIN NVIDIA VULKAN : real_racing3 = SKIP
-42265598 WIN NVIDIA VULKAN : car_chase = SKIP
-42265714 WIN NVIDIA VULKAN : tessellation = SKIP
-42266193 WIN NVIDIA VULKAN : life_is_strange = SKIP
-42266203 WIN NVIDIA VULKAN : survivor_io = SKIP
-42266499 WIN NVIDIA VULKAN : into_the_dead_2 = SKIP
-42266525 WIN NVIDIA VULKAN : street_fighter_duel = SKIP
-42266746 WIN NVIDIA VULKAN : injustice_2 = SKIP
-365524876 WIN NVIDIA VULKAN : critical_ops = SKIP
-369533074 WIN NVIDIA VULKAN : dota_underlords = SKIP
-382960265 WIN NVIDIA VULKAN : balatro = SKIP
+461532426 NVIDIA NATIVE : ace_racer = SKIP
+42264147 NVIDIA NATIVE : car_parking_multiplayer = SKIP
+442286938 NVIDIA NATIVE : minecraft_vibrant_visuals = SKIP
+42264759 NVIDIA NATIVE : pubg_mobile_battle_royale = SKIP
+40644857 NVIDIA NATIVE : pubg_mobile_launch = SKIP
+42264759 NVIDIA NATIVE : pubg_mobile_skydive = SKIP
+448110252 NVIDIA NATIVE : puzzle_and_dragons = SKIP
+382960265 NVIDIA VULKAN : balatro = SKIP
+42265598 NVIDIA VULKAN : car_chase = SKIP
+365524876 NVIDIA VULKAN : critical_ops = SKIP
+369533074 NVIDIA VULKAN : dota_underlords = SKIP
+42265965 NVIDIA VULKAN : genshin_impact = SKIP
+42266746 NVIDIA VULKAN : injustice_2 = SKIP
+42266499 NVIDIA VULKAN : into_the_dead_2 = SKIP
+362728695 NVIDIA VULKAN : life_is_strange = SKIP
+42264199 NVIDIA VULKAN : messenger_lite = SKIP
+385226328 NVIDIA VULKAN : monopoly_go = SKIP
+474664078 NVIDIA VULKAN : pokemon_go_combat = SKIP
+377923479 NVIDIA VULKAN : real_racing3 = SKIP
+42266525 NVIDIA VULKAN : street_fighter_duel = SKIP
+42266203 NVIDIA VULKAN : survivor_io = SKIP
+42265714 NVIDIA VULKAN : tessellation = SKIP
+42265153 NVIDIA VULKAN : zillow = SKIP
 
 // Translator IR failures.  They are mostly due to slight changes in GOLD images, but one or two are real failures.
 // Disabled until later, when we can enable the IR and accept the new GOLD images.

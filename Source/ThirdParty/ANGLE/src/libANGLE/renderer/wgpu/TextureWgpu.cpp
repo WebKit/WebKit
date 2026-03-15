@@ -824,9 +824,7 @@ angle::Result TextureWgpu::redefineLevel(const gl::Context *context,
                                      mImage->getLevelCount(), layerIndex, index,
                                      mImage->getFirstAllocatedLevel(), &mRedefinedLevels))
             {
-                // TODO(anglebug.com/425449020): release any views or references to this
-                // image, including RenderTargets.
-                mImage->resetImage();
+                resetImageAndReleaseViews();
             }
         }
     }
@@ -898,7 +896,7 @@ angle::Result TextureWgpu::respecifyImageStorageIfNecessary(ContextWgpu *context
     {
         ANGLE_TRY(mImage->flushStagedUpdates(contextWgpu));
 
-        mImage->resetImage();
+        resetImageAndReleaseViews();
     }
 
     // Also recreate the image if it's changed in usage, or if any of its levels are redefined and
@@ -909,7 +907,7 @@ angle::Result TextureWgpu::respecifyImageStorageIfNecessary(ContextWgpu *context
     {
         ANGLE_TRY(mImage->flushStagedUpdates(contextWgpu));
 
-        mImage->resetImage();
+        resetImageAndReleaseViews();
     }
 
     return angle::Result::Continue;
@@ -937,7 +935,7 @@ void TextureWgpu::prepareForGenerateMipmap(ContextWgpu *contextWgpu)
     if (IsTextureLevelRedefined(mRedefinedLevels, mState.getType(), baseLevel))
     {
         ASSERT(!mState.getImmutableFormat());
-        mImage->resetImage();
+        resetImageAndReleaseViews();
     }
 }
 
@@ -976,7 +974,7 @@ angle::Result TextureWgpu::maybeUpdateBaseMaxLevels(ContextWgpu *contextWgpu)
     else
     {
         // TODO(liza): Respecify the image once copying images is supported.
-        mImage->resetImage();
+        resetImageAndReleaseViews();
         return angle::Result::Continue;
     }
 
@@ -1046,6 +1044,19 @@ void TextureWgpu::setImageHelper(webgpu::ImageHelper *imageHelper, bool ownsImag
     }
 
     onStateChange(angle::SubjectMessage::SubjectChanged);
+}
+
+void TextureWgpu::resetImageAndReleaseViews()
+{
+    for (auto &renderTargets : mSingleLayerRenderTargets)
+    {
+        for (auto &levelRenderTargets : renderTargets)
+        {
+            levelRenderTargets.clear();
+        }
+        renderTargets.clear();
+    }
+    mImage->resetImage();
 }
 
 }  // namespace rx

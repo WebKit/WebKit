@@ -77,6 +77,8 @@ struct CLExtensions
     bool khrPriorityHints        = false;  // cl_khr_priority_hints
 
     bool armNonUniformWorkGroupSize = false;  // cl_arm_non_uniform_work_group_size
+    bool armImportMemory            = false;  // cl_arm_import_memory
+    bool armImportMemoryDMABuf      = false;  // cl_arm_import_memory_dma_buf
 };
 
 }  // namespace rx

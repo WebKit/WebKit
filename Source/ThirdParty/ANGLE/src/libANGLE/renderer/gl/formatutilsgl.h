@@ -107,8 +107,7 @@ struct CopyTexImageImageFormat
 };
 CopyTexImageImageFormat GetCopyTexImageImageFormat(const FunctionsGL *functions,
                                                    const angle::FeaturesGL &features,
-                                                   GLenum internalFormat,
-                                                   GLenum framebufferType);
+                                                   GLenum internalFormat);
 
 struct TexStorageFormat
 {

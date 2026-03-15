@@ -21,6 +21,8 @@ angle_translator_ir_sources = [
   "src/transform.rs",
   "src/transform/astify.rs",
   "src/transform/dealias.rs",
+  "src/transform/initialize_uninitialized_variables.rs",
+  "src/transform/monomorphize_unsupported_functions.rs",
   "src/transform/propagate_precision.rs",
   "src/transform/prune_unused_variables.rs",
   "src/transform/remove_unused_framebuffer_fetch.rs",

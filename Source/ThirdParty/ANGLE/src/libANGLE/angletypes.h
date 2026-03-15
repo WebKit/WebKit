@@ -1184,6 +1184,7 @@ using ClipDistanceEnableBits = angle::BitSet32<IMPLEMENTATION_MAX_CLIP_DISTANCES
 
 template <typename T>
 using QueryTypeMap = angle::PackedEnumMap<QueryType, T>;
+using QueryTypeBitSet = angle::PackedEnumBitSet<QueryType, uint8_t>;
 
 constexpr size_t kBarrierVectorDefaultSize = 16;
 

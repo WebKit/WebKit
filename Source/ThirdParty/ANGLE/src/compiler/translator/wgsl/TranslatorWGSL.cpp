@@ -2662,6 +2662,7 @@ TranslatorWGSL::TranslatorWGSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutpu
 {}
 
 bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
+                                                   const ShCompileOptions &compileOptions,
                                                    const TVariable **defaultUniformBlockOut)
 {
     if (!PullExpressionsIntoFunctions(this, root))
@@ -2722,13 +2723,47 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
     //
     // This  dramatically simplifies future transformations w.r.t to samplers in structs, array of
     //   arrays of opaque types, atomic counters etc.
-    UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers,
-                                       UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage,
-                                       UnsupportedFunctionArgs::AtomicCounter,
-                                       UnsupportedFunctionArgs::Image};
-    if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), args))
+    if (!compileOptions.useIR)
     {
-        return false;
+        UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers,
+                                           UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage,
+                                           UnsupportedFunctionArgs::AtomicCounter,
+                                           UnsupportedFunctionArgs::Image};
+        if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), args))
+        {
+            return false;
+        }
+    }
+    else
+    {
+        // GatherDefaultUniforms below is relying on the sorting of functions and declarations that
+        // was otherwise done in MonomorphizeUnsupportedFunctions.  This can be removed once more is
+        // ported to IR and no transformation above is inserting a function in the middle of
+        // declarations.
+        TIntermSequence *original = root->getSequence();
+
+        TIntermSequence replacement;
+        TIntermSequence functionDefs;
+
+        // Accumulate non-function-definition declarations in |replacement| and function definitions
+        // in |functionDefs|.
+        for (TIntermNode *node : *original)
+        {
+            if (node->getAsFunctionDefinition() || node->getAsFunctionPrototypeNode())
+            {
+                functionDefs.push_back(node);
+            }
+            else
+            {
+                replacement.push_back(node);
+            }
+        }
+
+        // Append function definitions to |replacement|.
+        replacement.insert(replacement.end(), functionDefs.begin(), functionDefs.end());
+
+        // Replace root's sequence with |replacement|.
+        root->replaceAllChildren(std::move(replacement));
     }
 
     if (aggregateTypesUsedForUniforms > 0)
@@ -2805,7 +2840,7 @@ bool TranslatorWGSL::translate(TIntermBlock *root,
 
     const TVariable *defaultUniformBlock = nullptr;
 
-    if (!preTranslateTreeModifications(root, &defaultUniformBlock))
+    if (!preTranslateTreeModifications(root, compileOptions, &defaultUniformBlock))
     {
         return false;
     }

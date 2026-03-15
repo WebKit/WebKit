@@ -2989,9 +2989,6 @@ angle::Result UtilsVk::colorBlitResolve(ContextVk *contextVk,
     // open.  Otherwise, this function closes the render pass, which may incur a vkQueueSubmit and
     // then the views are used in a new command buffer without having been retained for it.
     // http://crbug.com/1272266#c22
-    //
-    // Note that depth/stencil views for blit are not derived from a |Resource| class and are
-    // retained differently.
     ASSERT(!contextVk->hasActiveRenderPass());
     vk::Renderer *renderer = contextVk->getRenderer();
 
@@ -3112,22 +3109,24 @@ angle::Result UtilsVk::colorBlitResolve(ContextVk *contextVk,
     // ContextVk::startRenderPass. As such, occlusion queries are not enabled.
     commandBuffer->draw(3, 0);
 
-    // Don't allow this render pass to be reactivated by the user's draw call due to test flakiness
-    // on win/intel bot.
+    // The renderPass stared by UtilsVk may not exact the same as FramebufferVk's. So dont try to
+    // reactivate.
     contextVk->disableRenderPassReactivation();
 
     return angle::Result::Continue;
 }
 
-angle::Result UtilsVk::depthStencilBlitResolve(ContextVk *contextVk,
-                                               vk::ImageHelper *dstImage,
-                                               const vk::ImageView &dstImageView,
-                                               gl::LevelIndex dstImageLevel,
-                                               uint32_t dstImageLayer,
-                                               vk::ImageHelper *srcImage,
-                                               const vk::ImageView *srcDepthView,
-                                               const vk::ImageView *srcStencilView,
-                                               const BlitResolveParameters &params)
+angle::Result UtilsVk::depthStencilBlitResolve(
+    ContextVk *contextVk,
+    vk::RenderPassCommandBufferHelper *renderPassCommands,
+    vk::ImageHelper *dstImage,
+    const vk::ImageView &dstImageView,
+    gl::LevelIndex dstImageLevel,
+    uint32_t dstImageLayer,
+    vk::ImageHelper *srcImage,
+    const vk::ImageView *srcDepthView,
+    const vk::ImageView *srcStencilView,
+    const BlitResolveParameters &params)
 {
     // Possible ways to resolve depth/stencil are:
     //
@@ -3151,6 +3150,7 @@ angle::Result UtilsVk::depthStencilBlitResolve(ContextVk *contextVk,
     //
     // The second method is implemented in this function, which shares code with the resolve method.
     vk::Renderer *renderer = contextVk->getRenderer();
+    ASSERT(renderPassCommands == nullptr || renderPassCommands->started());
 
     ANGLE_TRY(ensureBlitResolveResourcesInitialized(contextVk));
 
@@ -3169,9 +3169,20 @@ angle::Result UtilsVk::depthStencilBlitResolve(ContextVk *contextVk,
     // etc are identical.
     ASSERT(srcImage->getType() != VK_IMAGE_TYPE_3D);
 
-    vk::RenderPassDesc renderPassDesc;
-    renderPassDesc.setSamples(dstImage->getSamples());
-    renderPassDesc.packDepthStencilAttachment(dstImage->getActualFormatID());
+    const vk::RenderPassDesc *renderPassDesc;
+    vk::RenderPassDesc standaloneRenderPassDesc;
+    if (renderPassCommands != nullptr)
+    {
+        renderPassCommands->growRenderArea(contextVk, params.renderArea);
+        // If renderPassCommands is not null, use it instead of create a new one.
+        renderPassDesc = &renderPassCommands->getRenderPassDesc();
+    }
+    else
+    {
+        standaloneRenderPassDesc.setSamples(dstImage->getSamples());
+        standaloneRenderPassDesc.packDepthStencilAttachment(dstImage->getActualFormatID());
+        renderPassDesc = &standaloneRenderPassDesc;
+    }
 
     vk::GraphicsPipelineDesc pipelineDesc;
     pipelineDesc.initDefaults(contextVk, vk::GraphicsPipelineSubset::Complete,
@@ -3181,7 +3192,7 @@ angle::Result UtilsVk::depthStencilBlitResolve(ContextVk *contextVk,
     vk::ImageAccess srcImagelayout = vk::ImageAccess::DepthReadStencilReadFragmentShaderRead;
 
     pipelineDesc.setColorWriteMasks(0, gl::DrawBufferMask(), gl::DrawBufferMask());
-    pipelineDesc.setRenderPassDesc(renderPassDesc);
+    pipelineDesc.setRenderPassDesc(*renderPassDesc);
     if (blitDepth)
     {
         SetDepthStateForWrite(renderer, &pipelineDesc);
@@ -3198,12 +3209,20 @@ angle::Result UtilsVk::depthStencilBlitResolve(ContextVk *contextVk,
     }
 
     vk::RenderPassCommandBuffer *commandBuffer;
+    if (renderPassCommands != nullptr)
+    {
+        commandBuffer = &renderPassCommands->getCommandBuffer();
+    }
+    else
+    {
+        ANGLE_TRY(startRenderPass(contextVk, &dstImageView, *renderPassDesc, params.renderArea,
+                                  dstImage->getAspectFlags(), nullptr,
+                                  vk::RenderPassSource::InternalUtils, &commandBuffer));
+        ASSERT(commandBuffer != nullptr);
 
-    ANGLE_TRY(startRenderPass(contextVk, &dstImageView, renderPassDesc, params.renderArea,
-                              dstImage->getAspectFlags(), nullptr,
-                              vk::RenderPassSource::InternalUtils, &commandBuffer));
+        contextVk->onDepthStencilDraw(dstImageLevel, dstImageLayer, 1, dstImage, nullptr, {});
+    }
 
-    contextVk->onDepthStencilDraw(dstImageLevel, dstImageLayer, 1, dstImage, nullptr, {});
     // Pick layout consistent with GetImageReadAccess() to avoid unnecessary layout change.
     contextVk->onImageRenderPassRead(srcImage->getAspectFlags(), srcImagelayout, srcImage);
 
@@ -3263,9 +3282,16 @@ angle::Result UtilsVk::depthStencilBlitResolve(ContextVk *contextVk,
     // ContextVk::startRenderPass. As such, occlusion queries are not enabled.
     commandBuffer->draw(3, 0);
 
-    // Don't allow this render pass to be reactivated by the user's draw call due to test flakiness
-    // on win/intel bot.
-    contextVk->disableRenderPassReactivation();
+    if (renderPassCommands != nullptr)
+    {
+        contextVk->restoreAllGraphicsState();
+    }
+    else
+    {
+        // The renderPass stared by UtilsVk may not exact the same as FramebufferVk's. So dont try
+        // to reactivate.
+        contextVk->disableRenderPassReactivation();
+    }
 
     return angle::Result::Continue;
 }
@@ -3526,8 +3552,8 @@ angle::Result UtilsVk::copyImageFromTileMemory(ContextVk *contextVk,
             vk::ImageHelper::kDefaultImageViewUsageFlags, formatID, GL_NONE));
 
         ANGLE_TRY(depthStencilBlitResolve(
-            contextVk, dstImage, dstDepthStencilImageView.get(), gl::LevelIndex(0), 0, srcImage,
-            blitDepthBuffer ? &srcDepthView.get() : nullptr,
+            contextVk, nullptr, dstImage, dstDepthStencilImageView.get(), gl::LevelIndex(0), 0,
+            srcImage, blitDepthBuffer ? &srcDepthView.get() : nullptr,
             (blitStencilBuffer && hasShaderStencilExport) ? &srcStencilView.get() : nullptr,
             params));
 

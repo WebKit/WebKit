@@ -935,6 +935,7 @@ class Renderer : angle::NonCopyable
     VkPhysicalDeviceShaderAtomicInt64Features mShaderAtomicInt64Features;
     VkPhysicalDeviceTileMemoryHeapFeaturesQCOM mTileMemoryHeapFeatures;
     VkPhysicalDeviceTileMemoryHeapPropertiesQCOM mTileMemoryHeapProperties;
+    VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT mTextureCompressionASTC3DFeatures;
 
     uint32_t mLegacyDitheringVersion = 0;
 

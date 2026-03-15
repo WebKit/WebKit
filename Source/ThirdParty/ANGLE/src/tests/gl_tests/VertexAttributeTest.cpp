@@ -2583,6 +2583,58 @@ void main() {
     ASSERT_GL_NO_ERROR();
 }
 
+// Validate that we can support GL_MAX_ATTRIBS attribs with built-in attribs
+TEST_P(VertexAttributeTestES3, MaxAttribsWithBuiltInAttribs)
+{
+    GLint maxAttribs;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
+    ASSERT_GL_NO_ERROR();
+
+    std::stringstream shaderStream;
+    shaderStream << "#version 300 es" << std::endl << "precision highp float;" << std::endl;
+    for (GLint attribIndex = 1; attribIndex < maxAttribs; ++attribIndex)
+    {
+        shaderStream << "in float a" << attribIndex << ";" << std::endl;
+    }
+    shaderStream << "in vec4 position;" << std::endl;
+    shaderStream << "out float color;" << std::endl
+                 << "void main() {" << std::endl
+                 << "  gl_Position = position;" << std::endl
+                 << "  color = 0.0;" << std::endl;
+    for (GLint attribIndex = 1; attribIndex < maxAttribs; ++attribIndex)
+    {
+        shaderStream << "  color += a" << attribIndex << ";" << std::endl;
+    }
+
+    // Built-In attributes
+    shaderStream << "  color += (float(gl_VertexID) + float(gl_InstanceID))/2.0f;" << std::endl;
+    shaderStream << "}" << std::endl;
+
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "precision highp float;\n"
+        "in float color;\n"
+        "out vec4 FragColor;\n"
+        "void main()\n"
+        "{\n"
+        "    FragColor = vec4(color, 0.0, 0.0, 1.0);\n"
+        "}\n";
+
+    ANGLE_GL_PROGRAM(program, shaderStream.str().c_str(), kFS);
+
+    GLint location = glGetAttribLocation(program, "gl_VertexID");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(location, -1);
+
+    location = 0;
+    location = glGetAttribLocation(program, "gl_InstanceID");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(location, -1);
+
+    drawQuad(program, "position", 0.5f);
+    EXPECT_PIXEL_NEAR(0, 0, 128, 0, 0, 255, 1);
+}
+
 class VertexAttributeTestES31 : public VertexAttributeTestES3
 {
   protected:

@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 392
+#if ANGLE_SH_VERSION != 396
 #    error Check if there are added options and update this check.
 #endif
 
@@ -89,7 +89,7 @@
     MACRO(unused2, 52, none, none)                                            \
     MACRO(addVulkanXfbEmulationSupportCode, 54, spirvVk, none)                \
     MACRO(addVulkanXfbExtensionSupportCode, 55, spirvVk, none)                \
-    MACRO(initFragmentOutputVariables, 56, glsl, none)                        \
+    MACRO(rejectWebglShadersWithLargeVariables, 56, any, none)                \
     MACRO(explicitFragmentLocations, 57, glsl, none)                          \
     MACRO(emulateDithering, 58, spirvVk, none)                                \
     MACRO(roundOutputAfterDithering, 59, spirvVk, none)                       \

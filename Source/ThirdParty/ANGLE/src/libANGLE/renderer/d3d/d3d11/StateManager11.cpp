@@ -258,8 +258,6 @@ void ShaderConstants11::init(const gl::Caps &caps)
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         mShaderSamplerMetadata[shaderType].resize(caps.maxShaderTextureImageUnits[shaderType]);
-        mShaderReadonlyImageMetadata[shaderType].resize(caps.maxShaderImageUniforms[shaderType]);
-        mShaderImageMetadata[shaderType].resize(caps.maxShaderImageUniforms[shaderType]);
     }
 }
 
@@ -286,9 +284,7 @@ size_t ShaderConstants11::getRequiredBufferSize(gl::ShaderType shaderType) const
 {
     ASSERT(shaderType != gl::ShaderType::InvalidEnum);
     return GetShaderConstantsStructSize(shaderType) +
-           mShaderSamplerMetadata[shaderType].size() * sizeof(SamplerMetadata) +
-           mShaderImageMetadata[shaderType].size() * sizeof(ImageMetadata) +
-           mShaderReadonlyImageMetadata[shaderType].size() * sizeof(ImageMetadata);
+           mShaderSamplerMetadata[shaderType].size() * sizeof(SamplerMetadata);
 }
 
 void ShaderConstants11::markDirty()
@@ -361,25 +357,6 @@ bool ShaderConstants11::updateSamplerMetadata(SamplerMetadata *data,
     {
         memcpy(data->intBorderColor, borderColor.colorI.data(), sizeof(data->intBorderColor));
         dirty = true;
-    }
-
-    return dirty;
-}
-
-bool ShaderConstants11::updateImageMetadata(ImageMetadata *data, const gl::ImageUnit &imageUnit)
-{
-    bool dirty = false;
-
-    if (data->layer != static_cast<int>(imageUnit.layer))
-    {
-        data->layer = static_cast<int>(imageUnit.layer);
-        dirty       = true;
-    }
-
-    if (data->level != static_cast<unsigned int>(imageUnit.level))
-    {
-        data->level = static_cast<unsigned int>(imageUnit.level);
-        dirty       = true;
     }
 
     return dirty;
@@ -472,31 +449,6 @@ void ShaderConstants11::onSamplerChange(gl::ShaderType shaderType,
     }
 }
 
-bool ShaderConstants11::onImageChange(gl::ShaderType shaderType,
-                                      unsigned int imageIndex,
-                                      const gl::ImageUnit &imageUnit)
-{
-    ASSERT(shaderType != gl::ShaderType::InvalidEnum);
-    bool dirty = false;
-    if (imageUnit.access == GL_READ_ONLY)
-    {
-        if (updateImageMetadata(&mShaderReadonlyImageMetadata[shaderType][imageIndex], imageUnit))
-        {
-            mNumActiveShaderReadonlyImages[shaderType] = 0;
-            dirty                                      = true;
-        }
-    }
-    else
-    {
-        if (updateImageMetadata(&mShaderImageMetadata[shaderType][imageIndex], imageUnit))
-        {
-            mNumActiveShaderImages[shaderType] = 0;
-            dirty                              = true;
-        }
-    }
-    return dirty;
-}
-
 void ShaderConstants11::onClipOriginChange(bool lowerLeft)
 {
     mVertex.clipControlOrigin = lowerLeft ? -1.0f : 1.0f;
@@ -547,29 +499,17 @@ angle::Result ShaderConstants11::updateBuffer(const gl::Context *context,
 {
     // Re-upload the sampler meta-data if the current program uses more samplers
     // than we previously uploaded.
-    const int numSamplers       = executableD3D.getUsedSamplerRange(shaderType).length();
-    const int numReadonlyImages = executableD3D.getUsedImageRange(shaderType, true).length();
-    const int numImages         = executableD3D.getUsedImageRange(shaderType, false).length();
+    const int numSamplers = executableD3D.getUsedSamplerRange(shaderType).length();
 
-    const bool dirty = mShaderConstantsDirty[shaderType] ||
-                       (mNumActiveShaderSamplers[shaderType] < numSamplers) ||
-                       (mNumActiveShaderReadonlyImages[shaderType] < numReadonlyImages) ||
-                       (mNumActiveShaderImages[shaderType] < numImages);
+    const bool dirty =
+        mShaderConstantsDirty[shaderType] || (mNumActiveShaderSamplers[shaderType] < numSamplers);
 
     const size_t dataSize = GetShaderConstantsStructSize(shaderType);
     const uint8_t *samplerData =
         reinterpret_cast<const uint8_t *>(mShaderSamplerMetadata[shaderType].data());
     const size_t samplerDataSize = sizeof(SamplerMetadata) * numSamplers;
-    const uint8_t *readonlyImageData =
-        reinterpret_cast<const uint8_t *>(mShaderReadonlyImageMetadata[shaderType].data());
-    const size_t readonlyImageDataSize = sizeof(ImageMetadata) * numReadonlyImages;
-    const uint8_t *imageData =
-        reinterpret_cast<const uint8_t *>(mShaderImageMetadata[shaderType].data());
-    const size_t imageDataSize = sizeof(ImageMetadata) * numImages;
 
-    mNumActiveShaderSamplers[shaderType]       = numSamplers;
-    mNumActiveShaderReadonlyImages[shaderType] = numReadonlyImages;
-    mNumActiveShaderImages[shaderType]         = numImages;
+    mNumActiveShaderSamplers[shaderType] = numSamplers;
     mShaderConstantsDirty.set(shaderType, false);
 
     const uint8_t *data = nullptr;
@@ -599,14 +539,8 @@ angle::Result ShaderConstants11::updateBuffer(const gl::Context *context,
                                     0, &mapping));
 
     memcpy(mapping.pData, data, dataSize);
-    memcpy(static_cast<uint8_t *>(mapping.pData) + dataSize, samplerData,
-           sizeof(SamplerMetadata) * numSamplers);
+    memcpy(static_cast<uint8_t *>(mapping.pData) + dataSize, samplerData, samplerDataSize);
 
-    memcpy(static_cast<uint8_t *>(mapping.pData) + dataSize + samplerDataSize, readonlyImageData,
-           readonlyImageDataSize);
-    memcpy(
-        static_cast<uint8_t *>(mapping.pData) + dataSize + samplerDataSize + readonlyImageDataSize,
-        imageData, imageDataSize);
     renderer->getDeviceContext()->Unmap(driverConstantBuffer.get(), 0);
 
     return angle::Result::Continue;
@@ -1020,6 +954,7 @@ void StateManager11::syncState(const gl::Context *context,
                 invalidateProgramUniforms();
                 invalidateProgramUniformBuffers();
                 invalidateDriverUniforms();
+                mInternalDirtyBits.set(DIRTY_BIT_GRAPHICS_UAV_STATE);
                 const gl::ProgramExecutable *executable = state.getProgramExecutable();
                 ASSERT(executable);
                 mExecutableD3D = GetImplAs<ProgramExecutableD3D>(executable);
@@ -2568,21 +2503,6 @@ angle::Result StateManager11::setTextureForSampler(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result StateManager11::setImageState(const gl::Context *context,
-                                            gl::ShaderType type,
-                                            int index,
-                                            const gl::ImageUnit &imageUnit)
-{
-    ASSERT(index < mRenderer->getNativeCaps().maxShaderImageUniforms[type]);
-
-    if (mShaderConstants.onImageChange(type, index, imageUnit))
-    {
-        invalidateDriverUniforms();
-    }
-
-    return angle::Result::Continue;
-}
-
 // For each Direct3D sampler of either the pixel or vertex stage,
 // looks up the corresponding OpenGL texture image unit and texture type,
 // and sets the texture and its addressing/filtering state (or NULL when inactive).
@@ -2661,10 +2581,6 @@ angle::Result StateManager11::getUAVsForRWImages(const gl::Context *context,
         GLint imageUnitIndex = mExecutableD3D->getImageMapping(shaderType, imageIndex, false, caps);
         ASSERT(imageUnitIndex != -1);
         const gl::ImageUnit &imageUnit = glState.getImageUnit(imageUnitIndex);
-        if (!imageUnit.layered)
-        {
-            ANGLE_TRY(setImageState(context, shaderType, imageIndex - imageRange.low(), imageUnit));
-        }
         ANGLE_TRY(getUAVForRWImage(context, shaderType, imageIndex, imageUnit, uavList));
     }
 

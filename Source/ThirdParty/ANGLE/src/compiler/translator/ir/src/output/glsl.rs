@@ -216,7 +216,7 @@ impl Generator {
             Decoration::Buffer => qualifiers.push("buffer".to_string()),
             Decoration::PushConstant => layout_qualifiers.push("push_constant".to_string()),
             Decoration::NonCoherent => qualifiers.push("noncoherent".to_string()),
-            Decoration::YUV => layout_qualifiers.push("yuv".to_string()),
+            Decoration::Yuv => layout_qualifiers.push("yuv".to_string()),
             Decoration::Input => qualifiers.push("in".to_string()),
             Decoration::Output => qualifiers.push("out".to_string()),
             Decoration::InputOutput => qualifiers.push("inout".to_string()),
@@ -339,7 +339,7 @@ impl Generator {
             match name.source {
                 // Make sure unnamed interface blocks remain unnamed.
                 NameSource::ShaderInterface =>
-                    if name.name != "" {
+                    if !name.name.is_empty() {
                         USER_SYMBOL_PREFIX
                     } else {
                         ""
@@ -531,12 +531,12 @@ impl Generator {
     fn declare_variables(
         glsl_variables: &HashMap<VariableId, GlslVariable>,
         block: &mut String,
-        variables: &Vec<VariableId>,
+        variables: &[VariableId],
     ) {
         variables.iter().for_each(|id| {
             let glsl_variable = &glsl_variables[id];
             if !glsl_variable.skip_declaration {
-                write!(block, "{};\n", glsl_variable.declaration_text).unwrap();
+                writeln!(block, "{};", glsl_variable.declaration_text).unwrap();
             }
         });
     }
@@ -551,7 +551,7 @@ impl Generator {
         }
     }
 
-    fn get_swizzle_multi(indices: &Vec<u32>) -> String {
+    fn get_swizzle_multi(indices: &[u32]) -> String {
         indices.iter().map(|&index| Self::get_swizzle(index)).collect::<Vec<_>>().join("")
     }
 
@@ -581,7 +581,7 @@ impl Generator {
             return "".to_string();
         }
 
-        debug_assert!(block.chars().last().unwrap() == '\n');
+        debug_assert!(block.ends_with('\n'));
         // Only 1 and 2 are given, avoid excessive string overhead and handle the two cases.
         let indent = if times == 1 { "  " } else { "    " };
         let replace_with = if times == 1 { "\n  " } else { "\n    " };
@@ -680,7 +680,7 @@ impl ast::Target for Generator {
 
                     // Declare the struct for future use.
                     if *specialization == StructSpecialization::Struct {
-                        write!(self.type_declarations, "struct {};\n", &declaration_text).unwrap();
+                        writeln!(self.type_declarations, "struct {};", &declaration_text).unwrap();
                     }
 
                     (
@@ -820,7 +820,7 @@ impl ast::Target for Generator {
                     &Self::blend_equation_advanced_str(ir_meta.get_advanced_blend_equations());
             }
             ShaderType::TessellationControl => {
-                write!(self.preamble, "layout(vertices = {}) out;\n", ir_meta.get_tcs_vertices())
+                writeln!(self.preamble, "layout(vertices = {}) out;", ir_meta.get_tcs_vertices())
                     .unwrap();
             }
             ShaderType::TessellationEvaluation => {
@@ -855,7 +855,7 @@ impl ast::Target for Generator {
         println!("{}", self.global_variables);
     }
 
-    fn begin_block(&mut self, _ir_meta: &IRMeta, variables: &Vec<VariableId>) -> String {
+    fn begin_block(&mut self, _ir_meta: &IRMeta, variables: &[VariableId]) -> String {
         let mut block = String::new();
         Self::declare_variables(&self.variables, &mut block, variables);
         block
@@ -881,7 +881,7 @@ impl ast::Target for Generator {
         _block_result: &mut String,
         result: RegisterId,
         id: TypedId,
-        indices: &Vec<u32>,
+        indices: &[u32],
     ) {
         let expr = format!("{}.{}", self.get_expression(id), Self::get_swizzle_multi(indices));
         self.expressions.insert(result, expr);
@@ -909,7 +909,7 @@ impl ast::Target for Generator {
         let lhs = self.get_expression(id);
         let field_name = Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, index);
         // Note: if selecting the field of a nameless interface block, just use the field.
-        let expr = if lhs == "" { field_name } else { format!("{}.{}", lhs, field_name) };
+        let expr = if lhs.is_empty() { field_name } else { format!("{}.{}", lhs, field_name) };
         self.expressions.insert(result, expr);
     }
 
@@ -935,7 +935,7 @@ impl ast::Target for Generator {
         _block_result: &mut String,
         result: RegisterId,
         type_id: TypeId,
-        ids: &Vec<TypedId>,
+        ids: &[TypedId],
     ) {
         let type_info = &self.types[&type_id];
         let expr = format!(
@@ -963,7 +963,7 @@ impl ast::Target for Generator {
         block_result: &mut String,
         result: Option<RegisterId>,
         function_id: FunctionId,
-        params: &Vec<TypedId>,
+        params: &[TypedId],
     ) {
         let statement = format!(
             "{}({})",
@@ -975,7 +975,7 @@ impl ast::Target for Generator {
                 self.expressions.insert(result, statement);
             }
             None => {
-                write!(block_result, "{statement};\n").unwrap();
+                writeln!(block_result, "{statement};").unwrap();
             }
         };
     }
@@ -1142,7 +1142,7 @@ impl ast::Target for Generator {
         block_result: &mut String,
         result: Option<RegisterId>,
         built_in_op: BuiltInOpCode,
-        args: &Vec<TypedId>,
+        args: &[TypedId],
     ) {
         let built_in = match built_in_op {
             BuiltInOpCode::Clamp => "clamp",
@@ -1202,7 +1202,7 @@ impl ast::Target for Generator {
         if let Some(result) = result {
             self.expressions.insert(result, expr);
         } else {
-            write!(block_result, "{expr};\n").unwrap();
+            writeln!(block_result, "{expr};").unwrap();
         }
     }
 
@@ -1394,7 +1394,7 @@ impl ast::Target for Generator {
     }
     fn branch_return(&mut self, block: &mut String, value: Option<TypedId>) {
         if let Some(id) = value {
-            write!(block, "return {};\n", self.get_expression(id)).unwrap();
+            writeln!(block, "return {};", self.get_expression(id)).unwrap();
         } else {
             block.push_str("return;\n");
         }
@@ -1413,15 +1413,15 @@ impl ast::Target for Generator {
         false_block: Option<String>,
     ) {
         // The true block should always be present.
-        write!(
+        writeln!(
             block,
-            "if ({}) {{\n{}}}\n",
+            "if ({}) {{\n{}}}",
             self.get_expression(condition),
             Self::indent_block(true_block.unwrap(), 1)
         )
         .unwrap();
         if let Some(false_block) = false_block {
-            write!(block, "else {{\n{}}}\n", Self::indent_block(false_block, 1)).unwrap();
+            writeln!(block, "else {{\n{}}}", Self::indent_block(false_block, 1)).unwrap();
         }
     }
     fn branch_loop(
@@ -1431,9 +1431,9 @@ impl ast::Target for Generator {
         body_block: Option<String>,
     ) {
         // The condition and body blocks should always be present.
-        write!(
+        writeln!(
             block,
-            "for (;;) {{\n{}\n{}}}\n",
+            "for (;;) {{\n{}\n{}}}",
             Self::indent_block(loop_condition_block.unwrap(), 1),
             Self::indent_block(body_block.unwrap(), 1)
         )
@@ -1443,20 +1443,20 @@ impl ast::Target for Generator {
         // The condition and body blocks should always be present.  The difference between
         // DoLoop and Loop is effectively that the condition block is evaluated after the body
         // instead of before.
-        write!(block, "for (;;) {{\n{}}}\n", Self::indent_block(body_block.unwrap(), 1)).unwrap();
+        writeln!(block, "for (;;) {{\n{}}}", Self::indent_block(body_block.unwrap(), 1)).unwrap();
     }
     fn branch_loop_if(&mut self, block: &mut String, condition: TypedId) {
         // The condition block of a loop ends in `if (!condition) break;`
-        write!(block, "if (!({}))\n  break;\n", self.get_expression(condition)).unwrap();
+        writeln!(block, "if (!({}))\n  break;", self.get_expression(condition)).unwrap();
     }
     fn branch_switch(
         &mut self,
         block: &mut String,
         value: TypedId,
-        case_ids: &Vec<Option<ConstantId>>,
+        case_ids: &[Option<ConstantId>],
         case_blocks: Vec<String>,
     ) {
-        write!(block, "switch ({}) {{\n", self.get_expression(value)).unwrap();
+        writeln!(block, "switch ({}) {{", self.get_expression(value)).unwrap();
         case_blocks.into_iter().zip(case_ids).for_each(|(case, &case_id)| {
             let case_line = if let Some(case_id) = case_id {
                 format!("  case {}:\n", self.get_constant_expression(case_id))
@@ -1478,9 +1478,9 @@ impl ast::Target for Generator {
 
     // Take the current AST and place it as the body of the given function.
     fn end_function(&mut self, block_result: String, id: FunctionId) {
-        write!(
+        writeln!(
             self.function_declarations,
-            "{} {{\n{}}}\n",
+            "{} {{\n{}}}",
             self.functions[&id].declaration_text,
             Self::indent_block(block_result, 1),
         )

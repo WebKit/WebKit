@@ -22,6 +22,7 @@ struct FormatDesc
     GLenum format;
     GLsizei blockX;
     GLsizei blockY;
+    GLsizei blockZ;
     GLsizei size;
 
     bool isPVRTC1() const
@@ -191,12 +192,12 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
         // The semantic of this call is to take uncompressed data, compress it on-the-fly,
         // and perform a partial update of an existing GPU-compressed texture. This
         // operation is not supported in OpenGL ES.
-        glTexSubImage3D(target, 0, 0, 0, 0, desc.blockX, desc.blockY, 2, GL_RGBA, GL_UNSIGNED_BYTE,
-                        nullptr);
+        glTexSubImage3D(target, 0, 0, 0, 0, desc.blockX, desc.blockY, desc.blockZ * 2, GL_RGBA,
+                        GL_UNSIGNED_BYTE, nullptr);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
         // Compressed texture extensions never extend TexSubImage3D.
-        glTexSubImage3D(target, 0, 0, 0, 0, desc.blockX, desc.blockY, 2, desc.format,
+        glTexSubImage3D(target, 0, 0, 0, 0, desc.blockX, desc.blockY, desc.blockZ * 2, desc.format,
                         GL_UNSIGNED_BYTE, nullptr);
         EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
@@ -210,8 +211,8 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
         ASSERT(mSupportsUpdates);
 
         // Try whole image update. It is always valid for formats that support updates.
-        glCompressedTexSubImage3D(target, 0, 0, 0, 0, desc.blockX * 2, desc.blockY * 2, 2,
-                                  desc.format, desc.size * 8, data);
+        glCompressedTexSubImage3D(target, 0, 0, 0, 0, desc.blockX * 2, desc.blockY * 2,
+                                  desc.blockZ * 2, desc.format, desc.size * 8, data);
         EXPECT_GL_NO_ERROR();
 
         // Try a whole image update from a pixel unpack buffer.
@@ -224,8 +225,8 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
             glBufferData(GL_PIXEL_UNPACK_BUFFER, 128, data, GL_STREAM_DRAW);
             EXPECT_GL_NO_ERROR();
 
-            glCompressedTexSubImage3D(target, 0, 0, 0, 0, desc.blockX * 2, desc.blockY * 2, 2,
-                                      desc.format, desc.size * 8, nullptr);
+            glCompressedTexSubImage3D(target, 0, 0, 0, 0, desc.blockX * 2, desc.blockY * 2,
+                                      desc.blockZ * 2, desc.format, desc.size * 8, nullptr);
             EXPECT_GL_NO_ERROR();
 
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
@@ -236,66 +237,66 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
 
         // All compressed formats that support partial updates require the offsets to be
         // multiples of block dimensions.
-        glCompressedTexSubImage3D(target, 0, 1, 0, 0, desc.blockX, desc.blockY, 1, desc.format,
-                                  desc.size, data);
+        glCompressedTexSubImage3D(target, 0, 1, 0, 0, desc.blockX, desc.blockY, desc.blockZ,
+                                  desc.format, desc.size, data);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
-        glCompressedTexSubImage3D(target, 0, 0, 1, 0, desc.blockX, desc.blockY, 1, desc.format,
-                                  desc.size, data);
+        glCompressedTexSubImage3D(target, 0, 0, 1, 0, desc.blockX, desc.blockY, desc.blockZ,
+                                  desc.format, desc.size, data);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
         // All compressed formats that support partial updates require the dimensions to be
         // multiples of block dimensions or reach the image boundaries.
-        glCompressedTexSubImage3D(target, 0, 0, 0, 0, desc.blockX - 1, desc.blockY, 1, desc.format,
-                                  desc.size, data);
+        glCompressedTexSubImage3D(target, 0, 0, 0, 0, desc.blockX - 1, desc.blockY, desc.blockZ,
+                                  desc.format, desc.size, data);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
-        glCompressedTexSubImage3D(target, 0, 0, 0, 0, desc.blockX, desc.blockY - 1, 1, desc.format,
-                                  desc.size, data);
+        glCompressedTexSubImage3D(target, 0, 0, 0, 0, desc.blockX, desc.blockY - 1, desc.blockZ,
+                                  desc.format, desc.size, data);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
         // Valid partial updates
         // clang-format off
-        glCompressedTexSubImage3D(target, 0, 0,           0,           0, desc.blockX, desc.blockY, 1, desc.format, desc.size, data);
+        glCompressedTexSubImage3D(target, 0, 0,           0,           0, desc.blockX, desc.blockY, desc.blockZ, desc.format, desc.size, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           0, desc.blockX, desc.blockY, 1, desc.format, desc.size, data);
+        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           0, desc.blockX, desc.blockY, desc.blockZ, desc.format, desc.size, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, 0, desc.blockX, desc.blockY, 1, desc.format, desc.size, data);
+        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, 0, desc.blockX, desc.blockY, desc.blockZ, desc.format, desc.size, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, desc.blockX, desc.blockY, 0, desc.blockX, desc.blockY, 1, desc.format, desc.size, data);
+        glCompressedTexSubImage3D(target, 0, desc.blockX, desc.blockY, 0, desc.blockX, desc.blockY, desc.blockZ, desc.format, desc.size, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           0,           1, desc.blockX, desc.blockY, 1, desc.format, desc.size, data);
+        glCompressedTexSubImage3D(target, 0, 0,           0,           desc.blockZ, desc.blockX, desc.blockY, desc.blockZ, desc.format, desc.size, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           1, desc.blockX, desc.blockY, 1, desc.format, desc.size, data);
+        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           desc.blockZ, desc.blockX, desc.blockY, desc.blockZ, desc.format, desc.size, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, 1, desc.blockX, desc.blockY, 1, desc.format, desc.size, data);
+        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, desc.blockZ, desc.blockX, desc.blockY, desc.blockZ, desc.format, desc.size, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, desc.blockX, desc.blockY, 1, desc.blockX, desc.blockY, 1, desc.format, desc.size, data);
+        glCompressedTexSubImage3D(target, 0, desc.blockX, desc.blockY, desc.blockZ, desc.blockX, desc.blockY, desc.blockZ, desc.format, desc.size, data);
         EXPECT_GL_NO_ERROR();
 
-        glCompressedTexSubImage3D(target, 0, 0,           0,           0, desc.blockX * 2, desc.blockY,     1, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, 0,           0,           0, desc.blockX * 2, desc.blockY,     desc.blockZ, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           0,           0, desc.blockX,     desc.blockY * 2, 1, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, 0,           0,           0, desc.blockX,     desc.blockY * 2, desc.blockZ, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, 0, desc.blockX * 2, desc.blockY,     1, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, 0, desc.blockX * 2, desc.blockY,     desc.blockZ, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           0, desc.blockX,     desc.blockY * 2, 1, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           0, desc.blockX,     desc.blockY * 2, desc.blockZ, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           0,           1, desc.blockX * 2, desc.blockY,     1, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, 0,           0,           desc.blockZ, desc.blockX * 2, desc.blockY,     desc.blockZ, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           0,           1, desc.blockX,     desc.blockY * 2, 1, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, 0,           0,           desc.blockZ, desc.blockX,     desc.blockY * 2, desc.blockZ, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, 1, desc.blockX * 2, desc.blockY,     1, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, desc.blockZ, desc.blockX * 2, desc.blockY,     desc.blockZ, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           1, desc.blockX,     desc.blockY * 2, 1, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           desc.blockZ, desc.blockX,     desc.blockY * 2, desc.blockZ, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           0,           0, desc.blockX,     desc.blockY,     2, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, 0,           0,           0, desc.blockX,     desc.blockY,     desc.blockZ * 2, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           0, desc.blockX,     desc.blockY,     2, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, desc.blockX, 0,           0, desc.blockX,     desc.blockY,     desc.blockZ * 2, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, 0, desc.blockX,     desc.blockY,     2, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, 0,           desc.blockY, 0, desc.blockX,     desc.blockY,     desc.blockZ * 2, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
-        glCompressedTexSubImage3D(target, 0, desc.blockX, desc.blockY, 0, desc.blockX,     desc.blockY,     2, desc.format, desc.size * 2, data);
+        glCompressedTexSubImage3D(target, 0, desc.blockX, desc.blockY, 0, desc.blockX,     desc.blockY,     desc.blockZ * 2, desc.format, desc.size * 2, data);
         EXPECT_GL_NO_ERROR();
         // clang-format on
 
@@ -308,7 +309,8 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
             glBindTexture(target, texture);
             const int newW = desc.blockX * 3;
             const int newH = desc.blockY * 3;
-            glCompressedTexImage3D(target, 0, desc.format, newW, newH, 2, 0, desc.size * 18,
+            const int newD = desc.blockZ * 2;
+            glCompressedTexImage3D(target, 0, desc.format, newW, newH, newD, 0, desc.size * 18,
                                    nullptr);
             EXPECT_GL_NO_ERROR();
 
@@ -355,20 +357,20 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
             }
             else
             {
-                glCompressedTexImage3D(target, 1, desc.format, newW / 2, newH / 2, 1, 0,
+                glCompressedTexImage3D(target, 1, desc.format, newW / 2, newH / 2, newD / 2, 0,
                                        desc.size * 4, nullptr);
                 EXPECT_GL_NO_ERROR();
 
                 // clang-format off
-                glCompressedTexSubImage3D(target, 1, desc.blockX, 0,           0, desc.blockX / 2,     desc.blockY,         1, desc.format, desc.size * 1, data);
+                glCompressedTexSubImage3D(target, 1, desc.blockX, 0,           0, desc.blockX / 2,     desc.blockY,         desc.blockZ, desc.format, desc.size * 1, data);
                 EXPECT_GL_NO_ERROR();
-                glCompressedTexSubImage3D(target, 1, desc.blockX, 0,           0, desc.blockX / 2,     desc.blockY * 3 / 2, 1, desc.format, desc.size * 2, data);
+                glCompressedTexSubImage3D(target, 1, desc.blockX, 0,           0, desc.blockX / 2,     desc.blockY * 3 / 2, desc.blockZ, desc.format, desc.size * 2, data);
                 EXPECT_GL_NO_ERROR();
-                glCompressedTexSubImage3D(target, 1, 0,           desc.blockY, 0, desc.blockX,         desc.blockY / 2,     1, desc.format, desc.size * 1, data);
+                glCompressedTexSubImage3D(target, 1, 0,           desc.blockY, 0, desc.blockX,         desc.blockY / 2,     desc.blockZ, desc.format, desc.size * 1, data);
                 EXPECT_GL_NO_ERROR();
-                glCompressedTexSubImage3D(target, 1, 0,           desc.blockY, 0, desc.blockX * 3 / 2, desc.blockY / 2,     1, desc.format, desc.size * 2, data);
+                glCompressedTexSubImage3D(target, 1, 0,           desc.blockY, 0, desc.blockX * 3 / 2, desc.blockY / 2,     desc.blockZ, desc.format, desc.size * 2, data);
                 EXPECT_GL_NO_ERROR();
-                glCompressedTexSubImage3D(target, 1, desc.blockX, desc.blockY, 0, desc.blockX / 2,     desc.blockY / 2,     1, desc.format, desc.size * 1, data);
+                glCompressedTexSubImage3D(target, 1, desc.blockX, desc.blockY, 0, desc.blockX / 2,     desc.blockY / 2,     desc.blockZ, desc.format, desc.size * 1, data);
                 EXPECT_GL_NO_ERROR();
                 // clang-format on
             }
@@ -498,17 +500,17 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
             // Try compressed enum as internalformat. The semantic of this call is to take
             // uncompressed data and compress it on-the-fly. This operation is not supported in
             // OpenGL ES.
-            glTexImage3D(target, 0, desc.format, desc.blockX, desc.blockX, 1, 0, GL_RGB,
+            glTexImage3D(target, 0, desc.format, desc.blockX, desc.blockX, desc.blockZ, 0, GL_RGB,
                          GL_UNSIGNED_BYTE, nullptr);
             EXPECT_GL_ERROR(GL_INVALID_VALUE);
 
             // Try compressed enum as format. Compressed texture extensions never allow this.
-            glTexImage3D(target, 0, GL_RGB, desc.blockX, desc.blockX, 1, 0, desc.format,
+            glTexImage3D(target, 0, GL_RGB, desc.blockX, desc.blockX, desc.blockZ, 0, desc.format,
                          GL_UNSIGNED_BYTE, nullptr);
             EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
-            glCompressedTexImage3D(target, 0, desc.format, desc.blockX * 2, desc.blockY * 2, 2, 0,
-                                   desc.size * 8, nullptr);
+            glCompressedTexImage3D(target, 0, desc.format, desc.blockX * 2, desc.blockY * 2,
+                                   desc.blockZ * 2, 0, desc.size * 8, nullptr);
             if (compressedFormatEnabled)
             {
                 if (supportsTarget)
@@ -532,7 +534,8 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
             GLTexture texture;
             glBindTexture(target, texture);
 
-            glTexStorage3D(target, 1, desc.format, desc.blockX * 2, desc.blockY * 2, 2);
+            glTexStorage3D(target, 1, desc.format, desc.blockX * 2, desc.blockY * 2,
+                           desc.blockZ * 2);
             if (compressedFormatEnabled)
             {
                 if (supportsTarget)
@@ -553,7 +556,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
         }
     }
 
-    void testSamplerSliced3D(GLenum target)
+    void testSampler3D(GLenum target)
     {
         ASSERT(target == GL_TEXTURE_2D_ARRAY || target == GL_TEXTURE_3D);
 
@@ -561,7 +564,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
         {
             int width                                    = desc.blockX;
             int height                                   = desc.blockY;
-            int depth                                    = 9;
+            int depth                                    = desc.blockZ * 9;
             static GLubyte red_RGBA_ASTC_block_data[144] = {
                 252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
                 252, 253, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255,
@@ -580,8 +583,8 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
             glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-            glCompressedTexImage3D(target, 0, desc.format, width, height, depth, 0,
-                                   desc.size * depth, red_RGBA_ASTC_block_data);
+            glCompressedTexImage3D(target, 0, desc.format, width, height, depth, 0, desc.size * 9,
+                                   red_RGBA_ASTC_block_data);
             EXPECT_GL_NO_ERROR();
 
             float layer = 0.0f;
@@ -682,9 +685,29 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
 
         if (getClientMajorVersion() >= 3)
         {
-            testSamplerSliced3D(GL_TEXTURE_2D_ARRAY);
-            testSamplerSliced3D(GL_TEXTURE_3D);
+            testSampler3D(GL_TEXTURE_2D_ARRAY);
+            testSampler3D(GL_TEXTURE_3D);
         }
+    }
+
+    void test3D()
+    {
+        for (const std::string &extName : mExtNames)
+        {
+            if (!extName.empty())
+            {
+                if (IsGLExtensionRequestable(extName))
+                {
+                    glRequestExtensionANGLE(extName.c_str());
+                }
+                ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(extName));
+            }
+        }
+
+        check3D(GL_TEXTURE_2D_ARRAY, true, mSupports2DArray);
+        check3D(GL_TEXTURE_3D, true, mSupports3D && !mDisableTexture3D);
+
+        testSampler3D(GL_TEXTURE_3D);
     }
 
   private:
@@ -742,6 +765,7 @@ const char kETC2RGBA8[]      = "GL_OES_compressed_ETC2_RGBA8_texture";
 const char kETC2RGBA8SRGB[]  = "GL_OES_compressed_ETC2_sRGB8_alpha8_texture";
 
 const char kASTC[]         = "GL_KHR_texture_compression_astc_ldr";
+const char kASTC3D[]       = "GL_OES_texture_compression_astc";
 const char kASTCSliced3D[] = "GL_KHR_texture_compression_astc_sliced_3d";
 
 const char kPVRTC1[]    = "GL_IMG_texture_compression_pvrtc";
@@ -773,6 +797,7 @@ using CompressedTextureETC2RGBA8Test      = _Test<kETC2RGBA8,      kEmpty, true,
 using CompressedTextureETC2RGBA8SRGBTest  = _Test<kETC2RGBA8SRGB,  kEmpty, true, true, true, false, true>;
 
 using CompressedTextureASTCTest         = _Test<kASTC, kEmpty,        true, true, true, false, false>;
+using CompressedTextureASTC3DTest      = _Test<kASTC3D, kEmpty,        true, true, false, true,  true>;
 using CompressedTextureASTCSliced3DTest = _Test<kASTC, kASTCSliced3D, true, true, true, true,  false>;
 using CompressedTextureSamplerASTCSliced3DTest = _Test<kASTC, kASTCSliced3D, true, true, true, true,  false>;
 
@@ -801,82 +826,106 @@ std::string PrintToStringParamName(
     return nameStr.str();
 }
 
-static const FormatDesc kDXT1Formats[] = {{GL_COMPRESSED_RGB_S3TC_DXT1_EXT, 4, 4, 8},
-                                          {GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, 4, 4, 8}};
+static const FormatDesc kDXT1Formats[] = {{GL_COMPRESSED_RGB_S3TC_DXT1_EXT, 4, 4, 1, 8},
+                                          {GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, 4, 4, 1, 8}};
 
-static const FormatDesc kDXT3Formats[] = {{GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, 4, 4, 16}};
+static const FormatDesc kDXT3Formats[] = {{GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, 4, 4, 1, 16}};
 
-static const FormatDesc kDXT5Formats[] = {{GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, 4, 4, 16}};
+static const FormatDesc kDXT5Formats[] = {{GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, 4, 4, 1, 16}};
 
-static const FormatDesc kS3TCSRGBFormats[] = {{GL_COMPRESSED_SRGB_S3TC_DXT1_EXT, 4, 4, 8},
-                                              {GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT, 4, 4, 8},
-                                              {GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT, 4, 4, 16},
-                                              {GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT, 4, 4, 16}};
+static const FormatDesc kS3TCSRGBFormats[] = {
+    {GL_COMPRESSED_SRGB_S3TC_DXT1_EXT, 4, 4, 1, 8},
+    {GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT, 4, 4, 1, 8},
+    {GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT, 4, 4, 1, 16},
+    {GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT, 4, 4, 1, 16}};
 
-static const FormatDesc kRGTCFormats[] = {{GL_COMPRESSED_RED_RGTC1_EXT, 4, 4, 8},
-                                          {GL_COMPRESSED_SIGNED_RED_RGTC1_EXT, 4, 4, 8},
-                                          {GL_COMPRESSED_RED_GREEN_RGTC2_EXT, 4, 4, 16},
-                                          {GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT, 4, 4, 16}};
+static const FormatDesc kRGTCFormats[] = {{GL_COMPRESSED_RED_RGTC1_EXT, 4, 4, 1, 8},
+                                          {GL_COMPRESSED_SIGNED_RED_RGTC1_EXT, 4, 4, 1, 8},
+                                          {GL_COMPRESSED_RED_GREEN_RGTC2_EXT, 4, 4, 1, 16},
+                                          {GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT, 4, 4, 1, 16}};
 
-static const FormatDesc kBPTCFormats[] = {{GL_COMPRESSED_RGBA_BPTC_UNORM_EXT, 4, 4, 16},
-                                          {GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT, 4, 4, 16},
-                                          {GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT, 4, 4, 16},
-                                          {GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT, 4, 4, 16}};
+static const FormatDesc kBPTCFormats[] = {{GL_COMPRESSED_RGBA_BPTC_UNORM_EXT, 4, 4, 1, 16},
+                                          {GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT, 4, 4, 1, 16},
+                                          {GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT, 4, 4, 1, 16},
+                                          {GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT, 4, 4, 1, 16}};
 
-static const FormatDesc kETC1Formats[] = {{GL_ETC1_RGB8_OES, 4, 4, 8}};
+static const FormatDesc kETC1Formats[] = {{GL_ETC1_RGB8_OES, 4, 4, 1, 8}};
 
 // clang-format off
-static const FormatDesc kEACR11UFormats[]        = {{GL_COMPRESSED_R11_EAC, 4, 4, 8}};
-static const FormatDesc kEACR11SFormats[]        = {{GL_COMPRESSED_SIGNED_R11_EAC, 4, 4, 8}};
-static const FormatDesc kEACRG11UFormats[]       = {{GL_COMPRESSED_RG11_EAC, 4, 4, 16}};
-static const FormatDesc kEACRG11SFormats[]       = {{GL_COMPRESSED_SIGNED_RG11_EAC, 4, 4, 16}};
-static const FormatDesc kETC2RGB8Formats[]       = {{GL_COMPRESSED_RGB8_ETC2, 4, 4, 8}};
-static const FormatDesc kETC2RGB8SRGBFormats[]   = {{GL_COMPRESSED_SRGB8_ETC2, 4, 4, 8}};
-static const FormatDesc kETC2RGB8A1Formats[]     = {{GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, 4, 4, 8}};
-static const FormatDesc kETC2RGB8A1SRGBFormats[] = {{GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, 4, 4, 8}};
-static const FormatDesc kETC2RGBA8Formats[]      = {{GL_COMPRESSED_RGBA8_ETC2_EAC, 4, 4, 16}};
-static const FormatDesc kETC2RGBA8SRGBFormats[]  = {{GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC, 4, 4, 16}};
+static const FormatDesc kEACR11UFormats[]        = {{GL_COMPRESSED_R11_EAC, 4, 4, 1, 8}};
+static const FormatDesc kEACR11SFormats[]        = {{GL_COMPRESSED_SIGNED_R11_EAC, 4, 4, 1, 8}};
+static const FormatDesc kEACRG11UFormats[]       = {{GL_COMPRESSED_RG11_EAC, 4, 4, 1, 16}};
+static const FormatDesc kEACRG11SFormats[]       = {{GL_COMPRESSED_SIGNED_RG11_EAC, 4, 4, 1, 16}};
+static const FormatDesc kETC2RGB8Formats[]       = {{GL_COMPRESSED_RGB8_ETC2, 4, 4, 1, 8}};
+static const FormatDesc kETC2RGB8SRGBFormats[]   = {{GL_COMPRESSED_SRGB8_ETC2, 4, 4, 1, 8}};
+static const FormatDesc kETC2RGB8A1Formats[]     = {{GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, 4, 4, 1, 8}};
+static const FormatDesc kETC2RGB8A1SRGBFormats[] = {{GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, 4, 4, 1, 8}};
+static const FormatDesc kETC2RGBA8Formats[]      = {{GL_COMPRESSED_RGBA8_ETC2_EAC, 4, 4, 1, 16}};
+static const FormatDesc kETC2RGBA8SRGBFormats[]  = {{GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC, 4, 4, 1, 16}};
 // clang-format on
 
-static const FormatDesc kASTCFormats[] = {{GL_COMPRESSED_RGBA_ASTC_4x4_KHR, 4, 4, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_5x4_KHR, 5, 4, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_5x5_KHR, 5, 5, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_6x5_KHR, 6, 5, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_6x6_KHR, 6, 6, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_8x5_KHR, 8, 5, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_8x6_KHR, 8, 6, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_8x8_KHR, 8, 8, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_10x5_KHR, 10, 5, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_10x6_KHR, 10, 6, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_10x8_KHR, 10, 8, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_10x10_KHR, 10, 10, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_12x10_KHR, 12, 10, 16},
-                                          {GL_COMPRESSED_RGBA_ASTC_12x12_KHR, 12, 12, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR, 4, 4, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR, 5, 4, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR, 5, 5, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR, 6, 5, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR, 6, 6, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR, 8, 5, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR, 8, 6, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR, 8, 8, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR, 10, 5, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR, 10, 6, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR, 10, 8, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR, 10, 10, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR, 12, 10, 16},
-                                          {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR, 12, 12, 16}};
+static const FormatDesc kASTCFormats[] = {
+    {GL_COMPRESSED_RGBA_ASTC_4x4_KHR, 4, 4, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_5x4_KHR, 5, 4, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_5x5_KHR, 5, 5, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_6x5_KHR, 6, 5, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_6x6_KHR, 6, 6, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_8x5_KHR, 8, 5, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_8x6_KHR, 8, 6, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_8x8_KHR, 8, 8, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_10x5_KHR, 10, 5, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_10x6_KHR, 10, 6, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_10x8_KHR, 10, 8, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_10x10_KHR, 10, 10, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_12x10_KHR, 12, 10, 1, 16},
+    {GL_COMPRESSED_RGBA_ASTC_12x12_KHR, 12, 12, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR, 4, 4, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR, 5, 4, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR, 5, 5, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR, 6, 5, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR, 6, 6, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR, 8, 5, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR, 8, 6, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR, 8, 8, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR, 10, 5, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR, 10, 6, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR, 10, 8, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR, 10, 10, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR, 12, 10, 1, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR, 12, 12, 1, 16}};
 
-static const FormatDesc kPVRTC1Formats[] = {{GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG, 4, 4, 8},
-                                            {GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG, 8, 4, 8},
-                                            {GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG, 4, 4, 8},
-                                            {GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG, 8, 4, 8}};
+static const FormatDesc kASTC3DFormats[] = {
+    {GL_COMPRESSED_RGBA_ASTC_3x3x3_OES, 3, 3, 3, 16},
+    {GL_COMPRESSED_RGBA_ASTC_4x3x3_OES, 4, 3, 3, 16},
+    {GL_COMPRESSED_RGBA_ASTC_4x4x3_OES, 4, 4, 3, 16},
+    {GL_COMPRESSED_RGBA_ASTC_4x4x4_OES, 4, 4, 4, 16},
+    {GL_COMPRESSED_RGBA_ASTC_5x4x4_OES, 5, 4, 4, 16},
+    {GL_COMPRESSED_RGBA_ASTC_5x5x4_OES, 5, 5, 4, 16},
+    {GL_COMPRESSED_RGBA_ASTC_5x5x5_OES, 5, 5, 5, 16},
+    {GL_COMPRESSED_RGBA_ASTC_6x5x5_OES, 6, 5, 5, 16},
+    {GL_COMPRESSED_RGBA_ASTC_6x6x5_OES, 6, 6, 5, 16},
+    {GL_COMPRESSED_RGBA_ASTC_6x6x6_OES, 6, 6, 6, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_3x3x3_OES, 3, 3, 3, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x3x3_OES, 4, 3, 3, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x3_OES, 4, 4, 3, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x4_OES, 4, 4, 4, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4x4_OES, 5, 4, 4, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x4_OES, 5, 5, 4, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x5_OES, 5, 5, 5, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5x5_OES, 6, 5, 5, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x5_OES, 6, 6, 5, 16},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES, 6, 6, 6, 16}};
+
+static const FormatDesc kPVRTC1Formats[] = {{GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG, 4, 4, 1, 8},
+                                            {GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG, 8, 4, 1, 8},
+                                            {GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG, 4, 4, 1, 8},
+                                            {GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG, 8, 4, 1, 8}};
 
 static const FormatDesc kPVRTC1SRGBFormats[] = {
-    {GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT, 8, 4, 8},
-    {GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT, 4, 4, 8},
-    {GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT, 8, 4, 8},
-    {GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT, 4, 4, 8}};
+    {GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT, 8, 4, 1, 8},
+    {GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT, 4, 4, 1, 8},
+    {GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT, 8, 4, 1, 8},
+    {GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT, 4, 4, 1, 8}};
 
 ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureDXT1Test,
                                  PrintToStringParamName,
@@ -992,6 +1041,11 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureASTCTest,
                                  ANGLE_ALL_TEST_PLATFORMS_ES2,
                                  ANGLE_ALL_TEST_PLATFORMS_ES3);
 
+ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureASTC3DTest,
+                                 PrintToStringParamName,
+                                 testing::ValuesIn(kASTC3DFormats),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
+
 ANGLE_INSTANTIATE_TEST_COMBINE_1(CompressedTextureASTCSliced3DTest,
                                  PrintToStringParamName,
                                  testing::ValuesIn(kASTCFormats),
@@ -1040,6 +1094,7 @@ TEST_P(CompressedTextureETC2RGBA8Test,      Test) { test(); }
 TEST_P(CompressedTextureETC2RGBA8SRGBTest,  Test) { test(); }
 
 TEST_P(CompressedTextureASTCTest,         Test) { test(); }
+TEST_P(CompressedTextureASTC3DTest,       Test) { test3D(); }
 TEST_P(CompressedTextureASTCSliced3DTest, Test) { test(); }
 
 // Check that texture sampling works correctly

@@ -333,7 +333,7 @@ mod const_fold {
     pub fn vector_component_multi(
         ir_meta: &mut IRMeta,
         constant_id: ConstantId,
-        fields: &Vec<u32>,
+        fields: &[u32],
         result_type_id: TypeId,
     ) -> ConstantId {
         let composite_elements = ir_meta.get_constant(constant_id).value.get_composite_elements();
@@ -726,7 +726,7 @@ mod const_fold {
             let column = ir_meta.get_constant(column_id).value.get_composite_elements();
             debug_assert!(column.len() == row_count as usize);
             column.iter().enumerate().for_each(|(row_index, &component)| {
-                transposed_data[row_index as usize].push(component);
+                transposed_data[row_index].push(component);
             });
         });
 
@@ -1132,9 +1132,9 @@ mod const_fold {
         constant_id: ConstantId,
         result_type_id: TypeId,
     ) -> ConstantId {
-        bitcast_helper(ir_meta, constant_id, result_type_id, |ir_meta, value| match value {
-            &ConstantValue::Int(i) => ir_meta.get_constant_int(i.count_ones() as i32),
-            &ConstantValue::Uint(u) => ir_meta.get_constant_int(u.count_ones() as i32),
+        bitcast_helper(ir_meta, constant_id, result_type_id, |ir_meta, value| match *value {
+            ConstantValue::Int(i) => ir_meta.get_constant_int(i.count_ones() as i32),
+            ConstantValue::Uint(u) => ir_meta.get_constant_int(u.count_ones() as i32),
             _ => {
                 panic!("Internal error: The bitCount() built-in only applies to [u]int types");
             }
@@ -1145,11 +1145,11 @@ mod const_fold {
         constant_id: ConstantId,
         result_type_id: TypeId,
     ) -> ConstantId {
-        bitcast_helper(ir_meta, constant_id, result_type_id, |ir_meta, value| match value {
-            &ConstantValue::Int(i) => {
+        bitcast_helper(ir_meta, constant_id, result_type_id, |ir_meta, value| match *value {
+            ConstantValue::Int(i) => {
                 ir_meta.get_constant_int(if i == 0 { -1 } else { i.trailing_zeros() as i32 })
             }
-            &ConstantValue::Uint(u) => {
+            ConstantValue::Uint(u) => {
                 ir_meta.get_constant_int(if u == 0 { -1 } else { u.trailing_zeros() as i32 })
             }
             _ => {
@@ -1163,8 +1163,8 @@ mod const_fold {
         result_type_id: TypeId,
     ) -> ConstantId {
         bitcast_helper(ir_meta, constant_id, result_type_id, |ir_meta, value| {
-            match value {
-                &ConstantValue::Int(i) => {
+            match *value {
+                ConstantValue::Int(i) => {
                     // Note: For negative numbers, look for zero instead of one in value. Using
                     // complement handles the intValue == -1 special case, where the return value
                     // needs to be -1.
@@ -1177,7 +1177,7 @@ mod const_fold {
                         31 - i.leading_zeros() as i32
                     })
                 }
-                &ConstantValue::Uint(u) => ir_meta.get_constant_int(if u == 0 {
+                ConstantValue::Uint(u) => ir_meta.get_constant_int(if u == 0 {
                     -1
                 } else {
                     31 - u.leading_zeros() as i32
@@ -1196,11 +1196,7 @@ mod const_fold {
         let constant = ir_meta.get_constant(constant_id);
         debug_assert!(result_type_id == TYPE_ID_BOOL);
 
-        let any = constant
-            .value
-            .get_composite_elements()
-            .iter()
-            .any(|&component_id| component_id == CONSTANT_ID_TRUE);
+        let any = constant.value.get_composite_elements().contains(&CONSTANT_ID_TRUE);
         ir_meta.get_constant_bool(any)
     }
     fn built_in_all(
@@ -1655,7 +1651,7 @@ mod const_fold {
         constant_id: ConstantId,
         result_type_id: TypeId,
     ) -> ConstantId {
-        pack2x16_helper(ir_meta, constant_id, result_type_id, |f| f32_to_unorm16(f))
+        pack2x16_helper(ir_meta, constant_id, result_type_id, f32_to_unorm16)
     }
     fn unorm16_to_f32(v: u16) -> f32 {
         v as f32 / 65535.
@@ -1665,7 +1661,7 @@ mod const_fold {
         constant_id: ConstantId,
         result_type_id: TypeId,
     ) -> ConstantId {
-        unpack2x16_helper(ir_meta, constant_id, result_type_id, |u| unorm16_to_f32(u))
+        unpack2x16_helper(ir_meta, constant_id, result_type_id, unorm16_to_f32)
     }
     fn f32_to_f16(v: f32) -> u16 {
         let v = v.to_bits();
@@ -1695,14 +1691,14 @@ mod const_fold {
         constant_id: ConstantId,
         result_type_id: TypeId,
     ) -> ConstantId {
-        pack2x16_helper(ir_meta, constant_id, result_type_id, |f| f32_to_f16(f))
+        pack2x16_helper(ir_meta, constant_id, result_type_id, f32_to_f16)
     }
     fn f16_to_f32(v: u16) -> f32 {
         // Based on http://www.fox-toolkit.org/ftp/fasthalffloatconversion.pdf
         // See also Float16ToFloat32.py, this is non-baked copy of that generator.
         let offset = v >> 10;
         let offset = if offset == 0 || offset == 32 { 0 } else { 1024 };
-        let offset = offset + v & 0x3FF;
+        let offset = offset + (v & 0x3FF);
 
         let mantissa = if offset == 0 {
             0
@@ -1711,7 +1707,7 @@ mod const_fold {
             let mut e = 0x38800000;
             while (m & 0x00800000) == 0 {
                 e -= 0x00800000;
-                m = m << 1;
+                m <<= 1;
             }
             m &= !0x00800000;
             m | e
@@ -1741,7 +1737,7 @@ mod const_fold {
         constant_id: ConstantId,
         result_type_id: TypeId,
     ) -> ConstantId {
-        unpack2x16_helper(ir_meta, constant_id, result_type_id, |u| f16_to_f32(u))
+        unpack2x16_helper(ir_meta, constant_id, result_type_id, f16_to_f32)
     }
     fn f32_to_snorm8(v: f32) -> i8 {
         (v.clamp(-1., 1.) * 127.).round() as i8
@@ -1771,7 +1767,7 @@ mod const_fold {
         constant_id: ConstantId,
         result_type_id: TypeId,
     ) -> ConstantId {
-        pack4x8_helper(ir_meta, constant_id, result_type_id, |f| f32_to_unorm8(f))
+        pack4x8_helper(ir_meta, constant_id, result_type_id, f32_to_unorm8)
     }
     fn unorm8_to_f32(v: u8) -> f32 {
         v as f32 / 255.
@@ -1781,7 +1777,7 @@ mod const_fold {
         constant_id: ConstantId,
         result_type_id: TypeId,
     ) -> ConstantId {
-        unpack4x8_helper(ir_meta, constant_id, result_type_id, |u| unorm8_to_f32(u))
+        unpack4x8_helper(ir_meta, constant_id, result_type_id, unorm8_to_f32)
     }
     pub fn built_in_unary(
         ir_meta: &mut IRMeta,
@@ -2215,7 +2211,7 @@ mod const_fold {
         )
     }
     fn ldexp_helper(ir_meta: &mut IRMeta, x: f32, exp: i32) -> ConstantId {
-        let result = if exp > 128 || exp < -126 { 0.0 } else { x * 2.0_f32.powi(exp) };
+        let result = if (-126..=128).contains(&exp) { x * 2.0_f32.powi(exp) } else { 0.0 };
         ir_meta.get_constant_float(result)
     }
     fn built_in_ldexp(
@@ -2412,7 +2408,7 @@ mod const_fold {
     }
     pub fn built_in_clamp(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         // clamp(x, min, max) either accepts scalars for min, max or a vector of matching size with
@@ -2488,7 +2484,7 @@ mod const_fold {
     }
     pub fn built_in_mix(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         // mix(x, y, a) either accepts scalar for a, or a vector of matching size with x and y.
@@ -2567,7 +2563,7 @@ mod const_fold {
     }
     pub fn built_in_smoothstep(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         // smoothstep(edge0, edge1, x) either accepts scalar for edge0 and edge1, or a vector of
@@ -2617,7 +2613,7 @@ mod const_fold {
     }
     pub fn built_in_fma(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         // fma(a, b, c) accepts scalar or vectors of float.
@@ -2656,7 +2652,7 @@ mod const_fold {
     }
     pub fn built_in_faceforward(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         // faceforward(N, I, Nref) accepts scalar or vectors of float.
@@ -2670,7 +2666,7 @@ mod const_fold {
     }
     pub fn built_in_refract(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         // refract(I, N, eta) accepts matching scalars or vectors of float for I and N, and float
@@ -2730,7 +2726,7 @@ mod const_fold {
     }
     pub fn built_in_bitfieldextract(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         // bitfieldExtract(value, offset, bits) accepts a scalar or vector integer for value, and a
@@ -2782,7 +2778,7 @@ mod const_fold {
     }
     pub fn built_in_bitfieldinsert(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         // bitfieldInsert(base, insert, offset, bits) accepts matching integer scalars or vectors
@@ -2819,7 +2815,7 @@ mod const_fold {
     }
     pub fn built_in_rgb_yuv_helper(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         itu601: &[f32; 12],
         itu601_full_range: &[f32; 12],
         itu709: &[f32; 12],
@@ -2852,7 +2848,7 @@ mod const_fold {
     }
     pub fn built_in_rgb_2_yuv(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         let itu601 = [
@@ -2881,7 +2877,7 @@ mod const_fold {
     }
     pub fn built_in_yuv_2_rgb(
         ir_meta: &mut IRMeta,
-        operands: &Vec<ConstantId>,
+        operands: &[ConstantId],
         result_type_id: TypeId,
     ) -> ConstantId {
         let itu601 = [
@@ -2890,8 +2886,8 @@ mod const_fold {
         ];
 
         let itu601_full_range = [
-            1.000000, 1.000000, 1.000000, 0.000000, -0.344100, 1.772000, 1.402000, -0.714100,
-            0.000000, -0.703749, 0.531175, -0.889475,
+            1.000000, 1.000000, 1.000000, 0.000000, -0.344100, 1.772, 1.402, -0.714100, 0.000000,
+            -0.703749, 0.531175, -0.889475,
         ];
 
         let itu709 = [
@@ -3443,7 +3439,7 @@ pub mod precision {
 
     // Take a set of precisions and return the highest per `higher_precision`.
     fn highest_precision(precisions: &mut impl Iterator<Item = Precision>) -> Precision {
-        precisions.reduce(|highest, precision| higher_precision(highest, precision)).unwrap()
+        precisions.reduce(higher_precision).unwrap()
     }
 
     // Constructor precision is derived from its parameters, except for structs.
@@ -3790,7 +3786,7 @@ pub mod precision {
 
         let propagate_by_matching_precision =
             |ids: &mut std::slice::IterMut<'_, TypedId>,
-             to_match: &Vec<Precision>,
+             to_match: &[Precision],
              to_propagate: &mut Vec<(RegisterId, Precision)>| {
                 ids.zip(to_match.iter()).for_each(|(id, &expect)| {
                     propagate_to_id(id, expect, to_propagate);
@@ -4138,10 +4134,10 @@ pub enum Result {
 
 impl Result {
     pub fn get_result_id(&self) -> TypedId {
-        match self {
-            &instruction::Result::Constant(id) => TypedId::from_typed_constant_id(id),
-            &instruction::Result::Register(id) => TypedId::from_register_id(id),
-            &instruction::Result::NoOp(id) => id,
+        match *self {
+            instruction::Result::Constant(id) => TypedId::from_typed_constant_id(id),
+            instruction::Result::Register(id) => TypedId::from_register_id(id),
+            instruction::Result::NoOp(id) => id,
             _ => panic!("Internal error: Expected instruction with value"),
         }
     }
@@ -4384,7 +4380,7 @@ pub fn vector_component(ir_meta: &mut IRMeta, vector: TypedId, component: u32) -
     )
 }
 
-fn merge_swizzle_components(components: &Vec<u32>, to_apply: &Vec<u32>) -> Vec<u32> {
+fn merge_swizzle_components(components: &[u32], to_apply: &[u32]) -> Vec<u32> {
     to_apply.iter().map(|&index| components[index as usize]).collect()
 }
 
@@ -4531,7 +4527,7 @@ pub fn struct_field(ir_meta: &mut IRMeta, struct_id: TypedId, field_index: u32) 
 fn verify_construct_arg_component_count(
     ir_meta: &mut IRMeta,
     type_id: TypeId,
-    args: &Vec<TypedId>,
+    args: &[TypedId],
 ) -> bool {
     let type_info = ir_meta.get_type(type_id);
     match type_info {

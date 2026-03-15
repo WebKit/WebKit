@@ -241,21 +241,6 @@ void main() {
     EXPECT_TRUE(foundInIntermediateTree("coherent specified multiple times"));
 }
 
-TEST_F(ParseTest, LargeArrayIndexNoCrash)
-{
-    mShaderSpec          = SH_WEBGL2_SPEC;
-    const char kShader[] = R"(#version 300 es
-int rr[~1U];
-out int o;
-void main() {
-    o = rr[1];
-})";
-    EXPECT_FALSE(compile(kShader));
-    EXPECT_TRUE(foundErrorInIntermediateTree());
-    EXPECT_TRUE(
-        foundInIntermediateTree("Size of declared variable exceeds implementation-defined limit"));
-}
-
 // Tests that separating variable declaration of multiple instances of a anonymous structure
 // rewrites the expression types for expressions that use the variables. At the time of writing
 // the expression types were left referencing the original anonymous function.

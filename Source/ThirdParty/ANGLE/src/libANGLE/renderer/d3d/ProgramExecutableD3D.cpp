@@ -1375,6 +1375,11 @@ void ProgramExecutableD3D::initAttribLocationsToD3DSemantic(
     int semanticIndex = 0;
     for (const sh::ShaderVariable &attribute : vertexShader->activeAttributes)
     {
+        if (attribute.isBuiltIn())
+        {
+            continue;
+        }
+
         int regCount    = gl::VariableRegisterCount(attribute.type);
         GLuint location = mExecutable->getAttributeLocation(attribute.name);
         ASSERT(location != std::numeric_limits<GLuint>::max());

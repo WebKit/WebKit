@@ -257,7 +257,7 @@ angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
     }
     if (updateDepth || updateStencil)
     {
-        frameBuffer->updateDepthStencilAttachment(CreateNewDepthStencilAttachment(
+        frameBuffer->updateDepthStencilAttachment(CreateNewClearDepthStencilAttachment(
             depthValue, stencilValue, textureView, updateDepth, updateStencil));
     }
     currentLevelQueue->clear();

@@ -162,7 +162,12 @@ std::string DynamicHLSL::GenerateVertexShaderForInputLayout(
         const gl::ProgramInput &shaderAttribute = shaderAttributes[attributeIndex];
         if (!shaderAttribute.name.empty())
         {
-            ASSERT(inputIndex < MAX_VERTEX_ATTRIBS);
+            // Built-in attributes do not count
+            if (!shaderAttribute.isBuiltIn())
+            {
+                ASSERT(inputIndex < MAX_VERTEX_ATTRIBS);
+            }
+
             angle::FormatID vertexFormatID =
                 inputIndex < inputLayout.size() ? inputLayout[inputIndex] : angle::FormatID::NONE;
 
@@ -235,7 +240,10 @@ std::string DynamicHLSL::GenerateVertexShaderForInputLayout(
 
             initStream << ";\n";
 
-            inputIndex += VariableRowCount(TransposeMatrixType(shaderAttribute.getType()));
+            if (!shaderAttribute.isBuiltIn())
+            {
+                inputIndex += VariableRowCount(TransposeMatrixType(shaderAttribute.getType()));
+            }
         }
     }
 

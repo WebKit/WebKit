@@ -31,37 +31,32 @@ CallCapture CaptureGetPlatformIDs(bool isCallValid,
 
     paramBuffer.addValueParam("num_entries", ParamType::Tcl_uint, num_entries);
 
+    ParamCapture platformsParam("platforms", ParamType::Tcl_platform_idPointer);
     if (isCallValid)
     {
-        ParamCapture platformsParam("platforms", ParamType::Tcl_platform_idPointer);
         InitParamValue(ParamType::Tcl_platform_idPointer, platforms, &platformsParam.value);
-        CaptureGetPlatformIDs_platforms(isCallValid, num_entries, platforms, num_platforms,
-                                        &platformsParam);
-        paramBuffer.addParam(std::move(platformsParam));
+        CaptureGetPlatformIDs_platforms(num_entries, platforms, num_platforms, &platformsParam);
     }
     else
     {
-        ParamCapture platformsParam("platforms", ParamType::Tcl_platform_idPointer);
         InitParamValue(ParamType::Tcl_platform_idPointer, static_cast<cl_platform_id *>(nullptr),
                        &platformsParam.value);
-        paramBuffer.addParam(std::move(platformsParam));
     }
+    paramBuffer.addParam(std::move(platformsParam));
 
+    ParamCapture num_platformsParam("num_platforms", ParamType::Tcl_uintPointer);
     if (isCallValid)
     {
-        ParamCapture num_platformsParam("num_platforms", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, num_platforms, &num_platformsParam.value);
-        CaptureGetPlatformIDs_num_platforms(isCallValid, num_entries, platforms, num_platforms,
+        CaptureGetPlatformIDs_num_platforms(num_entries, platforms, num_platforms,
                                             &num_platformsParam);
-        paramBuffer.addParam(std::move(num_platformsParam));
     }
     else
     {
-        ParamCapture num_platformsParam("num_platforms", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, static_cast<cl_uint *>(nullptr),
                        &num_platformsParam.value);
-        paramBuffer.addParam(std::move(num_platformsParam));
     }
+    paramBuffer.addParam(std::move(num_platformsParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -84,40 +79,35 @@ CallCapture CaptureGetPlatformInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TPlatformInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetPlatformInfo_param_value(isCallValid, platform, param_namePacked,
-                                           param_value_size, param_value, param_value_size_ret,
-                                           &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetPlatformInfo_param_value(platform, param_namePacked, param_value_size,
+                                           param_value, param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetPlatformInfo_param_value_size_ret(
-            isCallValid, platform, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetPlatformInfo_param_value_size_ret(platform, param_namePacked, param_value_size,
+                                                    param_value, param_value_size_ret,
+                                                    &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -140,37 +130,33 @@ CallCapture CaptureGetDeviceIDs(bool isCallValid,
     paramBuffer.addValueParam("device_typePacked", ParamType::TDeviceType, device_typePacked);
     paramBuffer.addValueParam("num_entries", ParamType::Tcl_uint, num_entries);
 
+    ParamCapture devicesParam("devices", ParamType::Tcl_device_idPointer);
     if (isCallValid)
     {
-        ParamCapture devicesParam("devices", ParamType::Tcl_device_idPointer);
         InitParamValue(ParamType::Tcl_device_idPointer, devices, &devicesParam.value);
-        CaptureGetDeviceIDs_devices(isCallValid, platform, device_typePacked, num_entries, devices,
-                                    num_devices, &devicesParam);
-        paramBuffer.addParam(std::move(devicesParam));
+        CaptureGetDeviceIDs_devices(platform, device_typePacked, num_entries, devices, num_devices,
+                                    &devicesParam);
     }
     else
     {
-        ParamCapture devicesParam("devices", ParamType::Tcl_device_idPointer);
         InitParamValue(ParamType::Tcl_device_idPointer, static_cast<cl_device_id *>(nullptr),
                        &devicesParam.value);
-        paramBuffer.addParam(std::move(devicesParam));
     }
+    paramBuffer.addParam(std::move(devicesParam));
 
+    ParamCapture num_devicesParam("num_devices", ParamType::Tcl_uintPointer);
     if (isCallValid)
     {
-        ParamCapture num_devicesParam("num_devices", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, num_devices, &num_devicesParam.value);
-        CaptureGetDeviceIDs_num_devices(isCallValid, platform, device_typePacked, num_entries,
-                                        devices, num_devices, &num_devicesParam);
-        paramBuffer.addParam(std::move(num_devicesParam));
+        CaptureGetDeviceIDs_num_devices(platform, device_typePacked, num_entries, devices,
+                                        num_devices, &num_devicesParam);
     }
     else
     {
-        ParamCapture num_devicesParam("num_devices", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, static_cast<cl_uint *>(nullptr),
                        &num_devicesParam.value);
-        paramBuffer.addParam(std::move(num_devicesParam));
     }
+    paramBuffer.addParam(std::move(num_devicesParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -193,39 +179,35 @@ CallCapture CaptureGetDeviceInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TDeviceInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetDeviceInfo_param_value(isCallValid, device, param_namePacked, param_value_size,
-                                         param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetDeviceInfo_param_value(device, param_namePacked, param_value_size, param_value,
+                                         param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetDeviceInfo_param_value_size_ret(isCallValid, device, param_namePacked,
-                                                  param_value_size, param_value,
-                                                  param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetDeviceInfo_param_value_size_ret(device, param_namePacked, param_value_size,
+                                                  param_value, param_value_size_ret,
+                                                  &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -248,91 +230,81 @@ CallCapture CaptureCreateContext(bool isCallValid,
 {
     ParamBuffer paramBuffer;
 
+    ParamCapture propertiesParam("properties", ParamType::Tcl_context_propertiesConstPointer);
     if (isCallValid)
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_context_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_context_propertiesConstPointer, properties,
                        &propertiesParam.value);
-        CaptureCreateContext_properties(isCallValid, properties, num_devices, devices, pfn_notify,
-                                        user_data, errcode_ret, &propertiesParam);
-        paramBuffer.addParam(std::move(propertiesParam));
+        CaptureCreateContext_properties(properties, num_devices, devices, pfn_notify, user_data,
+                                        errcode_ret, &propertiesParam);
     }
     else
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_context_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_context_propertiesConstPointer,
                        static_cast<const cl_context_properties *>(nullptr), &propertiesParam.value);
-        paramBuffer.addParam(std::move(propertiesParam));
     }
+    paramBuffer.addParam(std::move(propertiesParam));
 
     paramBuffer.addValueParam("num_devices", ParamType::Tcl_uint, num_devices);
 
+    ParamCapture devicesParam("devices", ParamType::Tcl_device_idConstPointer);
     if (isCallValid)
     {
-        ParamCapture devicesParam("devices", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer, devices, &devicesParam.value);
-        CaptureCreateContext_devices(isCallValid, properties, num_devices, devices, pfn_notify,
-                                     user_data, errcode_ret, &devicesParam);
-        paramBuffer.addParam(std::move(devicesParam));
+        CaptureCreateContext_devices(properties, num_devices, devices, pfn_notify, user_data,
+                                     errcode_ret, &devicesParam);
     }
     else
     {
-        ParamCapture devicesParam("devices", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer,
                        static_cast<const cl_device_id *>(nullptr), &devicesParam.value);
-        paramBuffer.addParam(std::move(devicesParam));
     }
+    paramBuffer.addParam(std::move(devicesParam));
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_func_type);
         InitParamValue(ParamType::Tcl_context_func_type, pfn_notify, &pfn_notifyParam.value);
-        CaptureCreateContext_pfn_notify(isCallValid, properties, num_devices, devices, pfn_notify,
-                                        user_data, errcode_ret, &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
+        CaptureCreateContext_pfn_notify(properties, num_devices, devices, pfn_notify, user_data,
+                                        errcode_ret, &pfn_notifyParam);
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_func_type);
         InitParamValue(
             ParamType::Tcl_context_func_type,
             static_cast<void(CL_CALLBACK *)(const char *errinfo, const void *private_info,
                                             size_t cb, void *user_data)>(nullptr),
             &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureCreateContext_user_data(isCallValid, properties, num_devices, devices, pfn_notify,
-                                       user_data, errcode_ret, &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
+        CaptureCreateContext_user_data(properties, num_devices, devices, pfn_notify, user_data,
+                                       errcode_ret, &user_dataParam);
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateContext_errcode_ret(isCallValid, properties, num_devices, devices, pfn_notify,
-                                         user_data, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateContext_errcode_ret(properties, num_devices, devices, pfn_notify, user_data,
+                                         errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_context);
     InitParamValue(ParamType::Tcl_context, returnValue, &returnValueCapture.value);
@@ -354,78 +326,67 @@ CallCapture CaptureCreateContextFromType(bool isCallValid,
 {
     ParamBuffer paramBuffer;
 
+    ParamCapture propertiesParam("properties", ParamType::Tcl_context_propertiesConstPointer);
     if (isCallValid)
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_context_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_context_propertiesConstPointer, properties,
                        &propertiesParam.value);
-        CaptureCreateContextFromType_properties(isCallValid, properties, device_typePacked,
-                                                pfn_notify, user_data, errcode_ret,
-                                                &propertiesParam);
-        paramBuffer.addParam(std::move(propertiesParam));
+        CaptureCreateContextFromType_properties(properties, device_typePacked, pfn_notify,
+                                                user_data, errcode_ret, &propertiesParam);
     }
     else
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_context_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_context_propertiesConstPointer,
                        static_cast<const cl_context_properties *>(nullptr), &propertiesParam.value);
-        paramBuffer.addParam(std::move(propertiesParam));
     }
+    paramBuffer.addParam(std::move(propertiesParam));
 
     paramBuffer.addValueParam("device_typePacked", ParamType::TDeviceType, device_typePacked);
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_func_type);
         InitParamValue(ParamType::Tcl_context_func_type, pfn_notify, &pfn_notifyParam.value);
-        CaptureCreateContextFromType_pfn_notify(isCallValid, properties, device_typePacked,
-                                                pfn_notify, user_data, errcode_ret,
-                                                &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
+        CaptureCreateContextFromType_pfn_notify(properties, device_typePacked, pfn_notify,
+                                                user_data, errcode_ret, &pfn_notifyParam);
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_func_type);
         InitParamValue(
             ParamType::Tcl_context_func_type,
             static_cast<void(CL_CALLBACK *)(const char *errinfo, const void *private_info,
                                             size_t cb, void *user_data)>(nullptr),
             &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureCreateContextFromType_user_data(isCallValid, properties, device_typePacked,
-                                               pfn_notify, user_data, errcode_ret, &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
+        CaptureCreateContextFromType_user_data(properties, device_typePacked, pfn_notify, user_data,
+                                               errcode_ret, &user_dataParam);
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateContextFromType_errcode_ret(isCallValid, properties, device_typePacked,
-                                                 pfn_notify, user_data, errcode_ret,
-                                                 &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateContextFromType_errcode_ret(properties, device_typePacked, pfn_notify,
+                                                 user_data, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_context);
     InitParamValue(ParamType::Tcl_context, returnValue, &returnValueCapture.value);
@@ -474,39 +435,35 @@ CallCapture CaptureGetContextInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TContextInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetContextInfo_param_value(isCallValid, context, param_namePacked, param_value_size,
-                                          param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetContextInfo_param_value(context, param_namePacked, param_value_size, param_value,
+                                          param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetContextInfo_param_value_size_ret(
-            isCallValid, context, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetContextInfo_param_value_size_ret(context, param_namePacked, param_value_size,
+                                                   param_value, param_value_size_ret,
+                                                   &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -559,40 +516,36 @@ CallCapture CaptureGetCommandQueueInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TCommandQueueInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetCommandQueueInfo_param_value(isCallValid, command_queue, param_namePacked,
-                                               param_value_size, param_value, param_value_size_ret,
+        CaptureGetCommandQueueInfo_param_value(command_queue, param_namePacked, param_value_size,
+                                               param_value, param_value_size_ret,
                                                &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
         CaptureGetCommandQueueInfo_param_value_size_ret(
-            isCallValid, command_queue, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+            command_queue, param_namePacked, param_value_size, param_value, param_value_size_ret,
+            &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -615,36 +568,32 @@ CallCapture CaptureCreateBuffer(bool isCallValid,
     paramBuffer.addValueParam("flagsPacked", ParamType::TMemFlags, flagsPacked);
     paramBuffer.addValueParam("size", ParamType::Tsize_t, size);
 
+    ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, host_ptr, &host_ptrParam.value);
-        CaptureCreateBuffer_host_ptr(isCallValid, context, flagsPacked, size, host_ptr, errcode_ret,
+        CaptureCreateBuffer_host_ptr(context, flagsPacked, size, host_ptr, errcode_ret,
                                      &host_ptrParam);
-        paramBuffer.addParam(std::move(host_ptrParam));
     }
     else
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &host_ptrParam.value);
-        paramBuffer.addParam(std::move(host_ptrParam));
     }
+    paramBuffer.addParam(std::move(host_ptrParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateBuffer_errcode_ret(isCallValid, context, flagsPacked, size, host_ptr,
-                                        errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateBuffer_errcode_ret(context, flagsPacked, size, host_ptr, errcode_ret,
+                                        &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
     InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
@@ -695,41 +644,37 @@ CallCapture CaptureGetSupportedImageFormats(bool isCallValid,
     paramBuffer.addValueParam("image_typePacked", ParamType::TMemObjectType, image_typePacked);
     paramBuffer.addValueParam("num_entries", ParamType::Tcl_uint, num_entries);
 
+    ParamCapture image_formatsParam("image_formats", ParamType::Tcl_image_formatPointer);
     if (isCallValid)
     {
-        ParamCapture image_formatsParam("image_formats", ParamType::Tcl_image_formatPointer);
         InitParamValue(ParamType::Tcl_image_formatPointer, image_formats,
                        &image_formatsParam.value);
-        CaptureGetSupportedImageFormats_image_formats(isCallValid, context, flagsPacked,
-                                                      image_typePacked, num_entries, image_formats,
-                                                      num_image_formats, &image_formatsParam);
-        paramBuffer.addParam(std::move(image_formatsParam));
+        CaptureGetSupportedImageFormats_image_formats(context, flagsPacked, image_typePacked,
+                                                      num_entries, image_formats, num_image_formats,
+                                                      &image_formatsParam);
     }
     else
     {
-        ParamCapture image_formatsParam("image_formats", ParamType::Tcl_image_formatPointer);
         InitParamValue(ParamType::Tcl_image_formatPointer, static_cast<cl_image_format *>(nullptr),
                        &image_formatsParam.value);
-        paramBuffer.addParam(std::move(image_formatsParam));
     }
+    paramBuffer.addParam(std::move(image_formatsParam));
 
+    ParamCapture num_image_formatsParam("num_image_formats", ParamType::Tcl_uintPointer);
     if (isCallValid)
     {
-        ParamCapture num_image_formatsParam("num_image_formats", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, num_image_formats,
                        &num_image_formatsParam.value);
         CaptureGetSupportedImageFormats_num_image_formats(
-            isCallValid, context, flagsPacked, image_typePacked, num_entries, image_formats,
-            num_image_formats, &num_image_formatsParam);
-        paramBuffer.addParam(std::move(num_image_formatsParam));
+            context, flagsPacked, image_typePacked, num_entries, image_formats, num_image_formats,
+            &num_image_formatsParam);
     }
     else
     {
-        ParamCapture num_image_formatsParam("num_image_formats", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, static_cast<cl_uint *>(nullptr),
                        &num_image_formatsParam.value);
-        paramBuffer.addParam(std::move(num_image_formatsParam));
     }
+    paramBuffer.addParam(std::move(num_image_formatsParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -752,39 +697,35 @@ CallCapture CaptureGetMemObjectInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TMemInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetMemObjectInfo_param_value(isCallValid, memobj, param_namePacked, param_value_size,
-                                            param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetMemObjectInfo_param_value(memobj, param_namePacked, param_value_size, param_value,
+                                            param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetMemObjectInfo_param_value_size_ret(
-            isCallValid, memobj, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetMemObjectInfo_param_value_size_ret(memobj, param_namePacked, param_value_size,
+                                                     param_value, param_value_size_ret,
+                                                     &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -807,39 +748,35 @@ CallCapture CaptureGetImageInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TImageInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetImageInfo_param_value(isCallValid, image, param_namePacked, param_value_size,
-                                        param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetImageInfo_param_value(image, param_namePacked, param_value_size, param_value,
+                                        param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetImageInfo_param_value_size_ret(isCallValid, image, param_namePacked,
-                                                 param_value_size, param_value,
-                                                 param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetImageInfo_param_value_size_ret(image, param_namePacked, param_value_size,
+                                                 param_value, param_value_size_ret,
+                                                 &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -888,39 +825,35 @@ CallCapture CaptureGetSamplerInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TSamplerInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetSamplerInfo_param_value(isCallValid, sampler, param_namePacked, param_value_size,
-                                          param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetSamplerInfo_param_value(sampler, param_namePacked, param_value_size, param_value,
+                                          param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetSamplerInfo_param_value_size_ret(
-            isCallValid, sampler, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetSamplerInfo_param_value_size_ret(sampler, param_namePacked, param_value_size,
+                                                   param_value, param_value_size_ret,
+                                                   &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -942,53 +875,47 @@ CallCapture CaptureCreateProgramWithSource(bool isCallValid,
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
     paramBuffer.addValueParam("count", ParamType::Tcl_uint, count);
 
+    ParamCapture stringsParam("strings", ParamType::TcharConstPointerPointer);
     if (isCallValid)
     {
-        ParamCapture stringsParam("strings", ParamType::TcharConstPointerPointer);
         InitParamValue(ParamType::TcharConstPointerPointer, strings, &stringsParam.value);
-        CaptureCreateProgramWithSource_strings(isCallValid, context, count, strings, lengths,
-                                               errcode_ret, &stringsParam);
-        paramBuffer.addParam(std::move(stringsParam));
+        CaptureCreateProgramWithSource_strings(context, count, strings, lengths, errcode_ret,
+                                               &stringsParam);
     }
     else
     {
-        ParamCapture stringsParam("strings", ParamType::TcharConstPointerPointer);
         InitParamValue(ParamType::TcharConstPointerPointer, static_cast<const char **>(nullptr),
                        &stringsParam.value);
-        paramBuffer.addParam(std::move(stringsParam));
     }
+    paramBuffer.addParam(std::move(stringsParam));
 
+    ParamCapture lengthsParam("lengths", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture lengthsParam("lengths", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, lengths, &lengthsParam.value);
-        CaptureCreateProgramWithSource_lengths(isCallValid, context, count, strings, lengths,
-                                               errcode_ret, &lengthsParam);
-        paramBuffer.addParam(std::move(lengthsParam));
+        CaptureCreateProgramWithSource_lengths(context, count, strings, lengths, errcode_ret,
+                                               &lengthsParam);
     }
     else
     {
-        ParamCapture lengthsParam("lengths", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &lengthsParam.value);
-        paramBuffer.addParam(std::move(lengthsParam));
     }
+    paramBuffer.addParam(std::move(lengthsParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateProgramWithSource_errcode_ret(isCallValid, context, count, strings, lengths,
-                                                   errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateProgramWithSource_errcode_ret(context, count, strings, lengths, errcode_ret,
+                                                   &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_program);
     InitParamValue(ParamType::Tcl_program, returnValue, &returnValueCapture.value);
@@ -1012,90 +939,79 @@ CallCapture CaptureCreateProgramWithBinary(bool isCallValid,
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
     paramBuffer.addValueParam("num_devices", ParamType::Tcl_uint, num_devices);
 
+    ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
     if (isCallValid)
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer, device_list, &device_listParam.value);
-        CaptureCreateProgramWithBinary_device_list(isCallValid, context, num_devices, device_list,
-                                                   lengths, binaries, binary_status, errcode_ret,
+        CaptureCreateProgramWithBinary_device_list(context, num_devices, device_list, lengths,
+                                                   binaries, binary_status, errcode_ret,
                                                    &device_listParam);
-        paramBuffer.addParam(std::move(device_listParam));
     }
     else
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer,
                        static_cast<const cl_device_id *>(nullptr), &device_listParam.value);
-        paramBuffer.addParam(std::move(device_listParam));
     }
+    paramBuffer.addParam(std::move(device_listParam));
 
+    ParamCapture lengthsParam("lengths", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture lengthsParam("lengths", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, lengths, &lengthsParam.value);
-        CaptureCreateProgramWithBinary_lengths(isCallValid, context, num_devices, device_list,
-                                               lengths, binaries, binary_status, errcode_ret,
-                                               &lengthsParam);
-        paramBuffer.addParam(std::move(lengthsParam));
+        CaptureCreateProgramWithBinary_lengths(context, num_devices, device_list, lengths, binaries,
+                                               binary_status, errcode_ret, &lengthsParam);
     }
     else
     {
-        ParamCapture lengthsParam("lengths", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &lengthsParam.value);
-        paramBuffer.addParam(std::move(lengthsParam));
     }
+    paramBuffer.addParam(std::move(lengthsParam));
 
+    ParamCapture binariesParam("binaries", ParamType::TcharUnsignedConstPointerPointer);
     if (isCallValid)
     {
-        ParamCapture binariesParam("binaries", ParamType::TcharUnsignedConstPointerPointer);
         InitParamValue(ParamType::TcharUnsignedConstPointerPointer, binaries, &binariesParam.value);
-        CaptureCreateProgramWithBinary_binaries(isCallValid, context, num_devices, device_list,
-                                                lengths, binaries, binary_status, errcode_ret,
+        CaptureCreateProgramWithBinary_binaries(context, num_devices, device_list, lengths,
+                                                binaries, binary_status, errcode_ret,
                                                 &binariesParam);
-        paramBuffer.addParam(std::move(binariesParam));
     }
     else
     {
-        ParamCapture binariesParam("binaries", ParamType::TcharUnsignedConstPointerPointer);
         InitParamValue(ParamType::TcharUnsignedConstPointerPointer,
                        static_cast<const unsigned char **>(nullptr), &binariesParam.value);
-        paramBuffer.addParam(std::move(binariesParam));
     }
+    paramBuffer.addParam(std::move(binariesParam));
 
+    ParamCapture binary_statusParam("binary_status", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture binary_statusParam("binary_status", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, binary_status, &binary_statusParam.value);
-        CaptureCreateProgramWithBinary_binary_status(isCallValid, context, num_devices, device_list,
-                                                     lengths, binaries, binary_status, errcode_ret,
+        CaptureCreateProgramWithBinary_binary_status(context, num_devices, device_list, lengths,
+                                                     binaries, binary_status, errcode_ret,
                                                      &binary_statusParam);
-        paramBuffer.addParam(std::move(binary_statusParam));
     }
     else
     {
-        ParamCapture binary_statusParam("binary_status", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &binary_statusParam.value);
-        paramBuffer.addParam(std::move(binary_statusParam));
     }
+    paramBuffer.addParam(std::move(binary_statusParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateProgramWithBinary_errcode_ret(isCallValid, context, num_devices, device_list,
-                                                   lengths, binaries, binary_status, errcode_ret,
+        CaptureCreateProgramWithBinary_errcode_ret(context, num_devices, device_list, lengths,
+                                                   binaries, binary_status, errcode_ret,
                                                    &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_program);
     InitParamValue(ParamType::Tcl_program, returnValue, &returnValueCapture.value);
@@ -1144,71 +1060,63 @@ CallCapture CaptureBuildProgram(bool isCallValid,
     paramBuffer.addValueParam("program", ParamType::Tcl_program, program);
     paramBuffer.addValueParam("num_devices", ParamType::Tcl_uint, num_devices);
 
+    ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
     if (isCallValid)
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer, device_list, &device_listParam.value);
-        CaptureBuildProgram_device_list(isCallValid, program, num_devices, device_list, options,
-                                        pfn_notify, user_data, &device_listParam);
-        paramBuffer.addParam(std::move(device_listParam));
+        CaptureBuildProgram_device_list(program, num_devices, device_list, options, pfn_notify,
+                                        user_data, &device_listParam);
     }
     else
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer,
                        static_cast<const cl_device_id *>(nullptr), &device_listParam.value);
-        paramBuffer.addParam(std::move(device_listParam));
     }
+    paramBuffer.addParam(std::move(device_listParam));
 
+    ParamCapture optionsParam("options", ParamType::TcharConstPointer);
     if (isCallValid)
     {
-        ParamCapture optionsParam("options", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, options, &optionsParam.value);
-        CaptureBuildProgram_options(isCallValid, program, num_devices, device_list, options,
-                                    pfn_notify, user_data, &optionsParam);
-        paramBuffer.addParam(std::move(optionsParam));
+        CaptureBuildProgram_options(program, num_devices, device_list, options, pfn_notify,
+                                    user_data, &optionsParam);
     }
     else
     {
-        ParamCapture optionsParam("options", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, static_cast<const char *>(nullptr),
                        &optionsParam.value);
-        paramBuffer.addParam(std::move(optionsParam));
     }
+    paramBuffer.addParam(std::move(optionsParam));
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
         InitParamValue(ParamType::Tcl_program_func_type, pfn_notify, &pfn_notifyParam.value);
-        CaptureBuildProgram_pfn_notify(isCallValid, program, num_devices, device_list, options,
-                                       pfn_notify, user_data, &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
+        CaptureBuildProgram_pfn_notify(program, num_devices, device_list, options, pfn_notify,
+                                       user_data, &pfn_notifyParam);
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
         InitParamValue(
             ParamType::Tcl_program_func_type,
             static_cast<void(CL_CALLBACK *)(cl_program program, void *user_data)>(nullptr),
             &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureBuildProgram_user_data(isCallValid, program, num_devices, device_list, options,
-                                      pfn_notify, user_data, &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
+        CaptureBuildProgram_user_data(program, num_devices, device_list, options, pfn_notify,
+                                      user_data, &user_dataParam);
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1231,39 +1139,35 @@ CallCapture CaptureGetProgramInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TProgramInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetProgramInfo_param_value(isCallValid, program, param_namePacked, param_value_size,
-                                          param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetProgramInfo_param_value(program, param_namePacked, param_value_size, param_value,
+                                          param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetProgramInfo_param_value_size_ret(
-            isCallValid, program, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetProgramInfo_param_value_size_ret(program, param_namePacked, param_value_size,
+                                                   param_value, param_value_size_ret,
+                                                   &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1288,40 +1192,36 @@ CallCapture CaptureGetProgramBuildInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TProgramBuildInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetProgramBuildInfo_param_value(isCallValid, program, device, param_namePacked,
-                                               param_value_size, param_value, param_value_size_ret,
+        CaptureGetProgramBuildInfo_param_value(program, device, param_namePacked, param_value_size,
+                                               param_value, param_value_size_ret,
                                                &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
         CaptureGetProgramBuildInfo_param_value_size_ret(
-            isCallValid, program, device, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+            program, device, param_namePacked, param_value_size, param_value, param_value_size_ret,
+            &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1340,37 +1240,31 @@ CallCapture CaptureCreateKernel(bool isCallValid,
 
     paramBuffer.addValueParam("program", ParamType::Tcl_program, program);
 
+    ParamCapture kernel_nameParam("kernel_name", ParamType::TcharConstPointer);
     if (isCallValid)
     {
-        ParamCapture kernel_nameParam("kernel_name", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, kernel_name, &kernel_nameParam.value);
-        CaptureCreateKernel_kernel_name(isCallValid, program, kernel_name, errcode_ret,
-                                        &kernel_nameParam);
-        paramBuffer.addParam(std::move(kernel_nameParam));
+        CaptureCreateKernel_kernel_name(program, kernel_name, errcode_ret, &kernel_nameParam);
     }
     else
     {
-        ParamCapture kernel_nameParam("kernel_name", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, static_cast<const char *>(nullptr),
                        &kernel_nameParam.value);
-        paramBuffer.addParam(std::move(kernel_nameParam));
     }
+    paramBuffer.addParam(std::move(kernel_nameParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateKernel_errcode_ret(isCallValid, program, kernel_name, errcode_ret,
-                                        &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateKernel_errcode_ret(program, kernel_name, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_kernel);
     InitParamValue(ParamType::Tcl_kernel, returnValue, &returnValueCapture.value);
@@ -1391,37 +1285,33 @@ CallCapture CaptureCreateKernelsInProgram(bool isCallValid,
     paramBuffer.addValueParam("program", ParamType::Tcl_program, program);
     paramBuffer.addValueParam("num_kernels", ParamType::Tcl_uint, num_kernels);
 
+    ParamCapture kernelsParam("kernels", ParamType::Tcl_kernelPointer);
     if (isCallValid)
     {
-        ParamCapture kernelsParam("kernels", ParamType::Tcl_kernelPointer);
         InitParamValue(ParamType::Tcl_kernelPointer, kernels, &kernelsParam.value);
-        CaptureCreateKernelsInProgram_kernels(isCallValid, program, num_kernels, kernels,
-                                              num_kernels_ret, &kernelsParam);
-        paramBuffer.addParam(std::move(kernelsParam));
+        CaptureCreateKernelsInProgram_kernels(program, num_kernels, kernels, num_kernels_ret,
+                                              &kernelsParam);
     }
     else
     {
-        ParamCapture kernelsParam("kernels", ParamType::Tcl_kernelPointer);
         InitParamValue(ParamType::Tcl_kernelPointer, static_cast<cl_kernel *>(nullptr),
                        &kernelsParam.value);
-        paramBuffer.addParam(std::move(kernelsParam));
     }
+    paramBuffer.addParam(std::move(kernelsParam));
 
+    ParamCapture num_kernels_retParam("num_kernels_ret", ParamType::Tcl_uintPointer);
     if (isCallValid)
     {
-        ParamCapture num_kernels_retParam("num_kernels_ret", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, num_kernels_ret, &num_kernels_retParam.value);
-        CaptureCreateKernelsInProgram_num_kernels_ret(isCallValid, program, num_kernels, kernels,
+        CaptureCreateKernelsInProgram_num_kernels_ret(program, num_kernels, kernels,
                                                       num_kernels_ret, &num_kernels_retParam);
-        paramBuffer.addParam(std::move(num_kernels_retParam));
     }
     else
     {
-        ParamCapture num_kernels_retParam("num_kernels_ret", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, static_cast<cl_uint *>(nullptr),
                        &num_kernels_retParam.value);
-        paramBuffer.addParam(std::move(num_kernels_retParam));
     }
+    paramBuffer.addParam(std::move(num_kernels_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1469,21 +1359,18 @@ CallCapture CaptureSetKernelArg(bool isCallValid,
     paramBuffer.addValueParam("arg_index", ParamType::Tcl_uint, arg_index);
     paramBuffer.addValueParam("arg_size", ParamType::Tsize_t, arg_size);
 
+    ParamCapture arg_valueParam("arg_value", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture arg_valueParam("arg_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, arg_value, &arg_valueParam.value);
-        CaptureSetKernelArg_arg_value(isCallValid, kernel, arg_index, arg_size, arg_value,
-                                      &arg_valueParam);
-        paramBuffer.addParam(std::move(arg_valueParam));
+        CaptureSetKernelArg_arg_value(kernel, arg_index, arg_size, arg_value, &arg_valueParam);
     }
     else
     {
-        ParamCapture arg_valueParam("arg_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &arg_valueParam.value);
-        paramBuffer.addParam(std::move(arg_valueParam));
     }
+    paramBuffer.addParam(std::move(arg_valueParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1506,39 +1393,35 @@ CallCapture CaptureGetKernelInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TKernelInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetKernelInfo_param_value(isCallValid, kernel, param_namePacked, param_value_size,
-                                         param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetKernelInfo_param_value(kernel, param_namePacked, param_value_size, param_value,
+                                         param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetKernelInfo_param_value_size_ret(isCallValid, kernel, param_namePacked,
-                                                  param_value_size, param_value,
-                                                  param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetKernelInfo_param_value_size_ret(kernel, param_namePacked, param_value_size,
+                                                  param_value, param_value_size_ret,
+                                                  &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1564,40 +1447,36 @@ CallCapture CaptureGetKernelWorkGroupInfo(bool isCallValid,
                               param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetKernelWorkGroupInfo_param_value(isCallValid, kernel, device, param_namePacked,
+        CaptureGetKernelWorkGroupInfo_param_value(kernel, device, param_namePacked,
                                                   param_value_size, param_value,
                                                   param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
         CaptureGetKernelWorkGroupInfo_param_value_size_ret(
-            isCallValid, kernel, device, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+            kernel, device, param_namePacked, param_value_size, param_value, param_value_size_ret,
+            &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1615,20 +1494,18 @@ CallCapture CaptureWaitForEvents(bool isCallValid,
 
     paramBuffer.addValueParam("num_events", ParamType::Tcl_uint, num_events);
 
+    ParamCapture event_listParam("event_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_listParam("event_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_list, &event_listParam.value);
-        CaptureWaitForEvents_event_list(isCallValid, num_events, event_list, &event_listParam);
-        paramBuffer.addParam(std::move(event_listParam));
+        CaptureWaitForEvents_event_list(num_events, event_list, &event_listParam);
     }
     else
     {
-        ParamCapture event_listParam("event_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_listParam.value);
-        paramBuffer.addParam(std::move(event_listParam));
     }
+    paramBuffer.addParam(std::move(event_listParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1651,39 +1528,35 @@ CallCapture CaptureGetEventInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TEventInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetEventInfo_param_value(isCallValid, event, param_namePacked, param_value_size,
-                                        param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetEventInfo_param_value(event, param_namePacked, param_value_size, param_value,
+                                        param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetEventInfo_param_value_size_ret(isCallValid, event, param_namePacked,
-                                                 param_value_size, param_value,
-                                                 param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetEventInfo_param_value_size_ret(event, param_namePacked, param_value_size,
+                                                 param_value, param_value_size_ret,
+                                                 &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1732,40 +1605,36 @@ CallCapture CaptureGetEventProfilingInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TProfilingInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetEventProfilingInfo_param_value(isCallValid, event, param_namePacked,
-                                                 param_value_size, param_value,
-                                                 param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetEventProfilingInfo_param_value(event, param_namePacked, param_value_size,
+                                                 param_value, param_value_size_ret,
+                                                 &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetEventProfilingInfo_param_value_size_ret(
-            isCallValid, event, param_namePacked, param_value_size, param_value,
-            param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+        CaptureGetEventProfilingInfo_param_value_size_ret(event, param_namePacked, param_value_size,
+                                                          param_value, param_value_size_ret,
+                                                          &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1820,59 +1689,52 @@ CallCapture CaptureEnqueueReadBuffer(bool isCallValid,
     paramBuffer.addValueParam("offset", ParamType::Tsize_t, offset);
     paramBuffer.addValueParam("size", ParamType::Tsize_t, size);
 
+    ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, ptr, &ptrParam.value);
-        CaptureEnqueueReadBuffer_ptr(isCallValid, command_queue, buffer, blocking_read, offset,
-                                     size, ptr, num_events_in_wait_list, event_wait_list, event,
-                                     &ptrParam);
-        paramBuffer.addParam(std::move(ptrParam));
+        CaptureEnqueueReadBuffer_ptr(command_queue, buffer, blocking_read, offset, size, ptr,
+                                     num_events_in_wait_list, event_wait_list, event, &ptrParam);
     }
     else
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &ptrParam.value);
-        paramBuffer.addParam(std::move(ptrParam));
     }
+    paramBuffer.addParam(std::move(ptrParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueReadBuffer_event_wait_list(isCallValid, command_queue, buffer, blocking_read,
-                                                 offset, size, ptr, num_events_in_wait_list,
-                                                 event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueReadBuffer_event_wait_list(command_queue, buffer, blocking_read, offset, size,
+                                                 ptr, num_events_in_wait_list, event_wait_list,
+                                                 event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueReadBuffer_event(isCallValid, command_queue, buffer, blocking_read, offset,
-                                       size, ptr, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueReadBuffer_event(command_queue, buffer, blocking_read, offset, size, ptr,
+                                       num_events_in_wait_list, event_wait_list, event,
                                        &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1901,60 +1763,53 @@ CallCapture CaptureEnqueueWriteBuffer(bool isCallValid,
     paramBuffer.addValueParam("offset", ParamType::Tsize_t, offset);
     paramBuffer.addValueParam("size", ParamType::Tsize_t, size);
 
+    ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, ptr, &ptrParam.value);
-        CaptureEnqueueWriteBuffer_ptr(isCallValid, command_queue, buffer, blocking_write, offset,
-                                      size, ptr, num_events_in_wait_list, event_wait_list, event,
-                                      &ptrParam);
-        paramBuffer.addParam(std::move(ptrParam));
+        CaptureEnqueueWriteBuffer_ptr(command_queue, buffer, blocking_write, offset, size, ptr,
+                                      num_events_in_wait_list, event_wait_list, event, &ptrParam);
     }
     else
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &ptrParam.value);
-        paramBuffer.addParam(std::move(ptrParam));
     }
+    paramBuffer.addParam(std::move(ptrParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueWriteBuffer_event_wait_list(
-            isCallValid, command_queue, buffer, blocking_write, offset, size, ptr,
-            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueWriteBuffer_event_wait_list(command_queue, buffer, blocking_write, offset,
+                                                  size, ptr, num_events_in_wait_list,
+                                                  event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueWriteBuffer_event(isCallValid, command_queue, buffer, blocking_write, offset,
-                                        size, ptr, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueWriteBuffer_event(command_queue, buffer, blocking_write, offset, size, ptr,
+                                        num_events_in_wait_list, event_wait_list, event,
                                         &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -1986,40 +1841,36 @@ CallCapture CaptureEnqueueCopyBuffer(bool isCallValid,
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueCopyBuffer_event_wait_list(
-            isCallValid, command_queue, src_buffer, dst_buffer, src_offset, dst_offset, size,
-            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueCopyBuffer_event_wait_list(command_queue, src_buffer, dst_buffer, src_offset,
+                                                 dst_offset, size, num_events_in_wait_list,
+                                                 event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueCopyBuffer_event(isCallValid, command_queue, src_buffer, dst_buffer,
-                                       src_offset, dst_offset, size, num_events_in_wait_list,
-                                       event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueCopyBuffer_event(command_queue, src_buffer, dst_buffer, src_offset,
+                                       dst_offset, size, num_events_in_wait_list, event_wait_list,
+                                       event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -2048,97 +1899,86 @@ CallCapture CaptureEnqueueReadImage(bool isCallValid,
     paramBuffer.addValueParam("image", ParamType::Tcl_mem, image);
     paramBuffer.addValueParam("blocking_read", ParamType::Tcl_bool, blocking_read);
 
+    ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, origin, &originParam.value);
-        CaptureEnqueueReadImage_origin(isCallValid, command_queue, image, blocking_read, origin,
-                                       region, row_pitch, slice_pitch, ptr, num_events_in_wait_list,
+        CaptureEnqueueReadImage_origin(command_queue, image, blocking_read, origin, region,
+                                       row_pitch, slice_pitch, ptr, num_events_in_wait_list,
                                        event_wait_list, event, &originParam);
-        paramBuffer.addParam(std::move(originParam));
     }
     else
     {
-        ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &originParam.value);
-        paramBuffer.addParam(std::move(originParam));
     }
+    paramBuffer.addParam(std::move(originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
-        CaptureEnqueueReadImage_region(isCallValid, command_queue, image, blocking_read, origin,
-                                       region, row_pitch, slice_pitch, ptr, num_events_in_wait_list,
+        CaptureEnqueueReadImage_region(command_queue, image, blocking_read, origin, region,
+                                       row_pitch, slice_pitch, ptr, num_events_in_wait_list,
                                        event_wait_list, event, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("row_pitch", ParamType::Tsize_t, row_pitch);
     paramBuffer.addValueParam("slice_pitch", ParamType::Tsize_t, slice_pitch);
 
+    ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, ptr, &ptrParam.value);
-        CaptureEnqueueReadImage_ptr(isCallValid, command_queue, image, blocking_read, origin,
-                                    region, row_pitch, slice_pitch, ptr, num_events_in_wait_list,
-                                    event_wait_list, event, &ptrParam);
-        paramBuffer.addParam(std::move(ptrParam));
+        CaptureEnqueueReadImage_ptr(command_queue, image, blocking_read, origin, region, row_pitch,
+                                    slice_pitch, ptr, num_events_in_wait_list, event_wait_list,
+                                    event, &ptrParam);
     }
     else
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &ptrParam.value);
-        paramBuffer.addParam(std::move(ptrParam));
     }
+    paramBuffer.addParam(std::move(ptrParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueReadImage_event_wait_list(isCallValid, command_queue, image, blocking_read,
-                                                origin, region, row_pitch, slice_pitch, ptr,
-                                                num_events_in_wait_list, event_wait_list, event,
-                                                &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueReadImage_event_wait_list(
+            command_queue, image, blocking_read, origin, region, row_pitch, slice_pitch, ptr,
+            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueReadImage_event(isCallValid, command_queue, image, blocking_read, origin,
-                                      region, row_pitch, slice_pitch, ptr, num_events_in_wait_list,
+        CaptureEnqueueReadImage_event(command_queue, image, blocking_read, origin, region,
+                                      row_pitch, slice_pitch, ptr, num_events_in_wait_list,
                                       event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -2167,98 +2007,88 @@ CallCapture CaptureEnqueueWriteImage(bool isCallValid,
     paramBuffer.addValueParam("image", ParamType::Tcl_mem, image);
     paramBuffer.addValueParam("blocking_write", ParamType::Tcl_bool, blocking_write);
 
+    ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, origin, &originParam.value);
         CaptureEnqueueWriteImage_origin(
-            isCallValid, command_queue, image, blocking_write, origin, region, input_row_pitch,
+            command_queue, image, blocking_write, origin, region, input_row_pitch,
             input_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event, &originParam);
-        paramBuffer.addParam(std::move(originParam));
     }
     else
     {
-        ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &originParam.value);
-        paramBuffer.addParam(std::move(originParam));
     }
+    paramBuffer.addParam(std::move(originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
         CaptureEnqueueWriteImage_region(
-            isCallValid, command_queue, image, blocking_write, origin, region, input_row_pitch,
+            command_queue, image, blocking_write, origin, region, input_row_pitch,
             input_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("input_row_pitch", ParamType::Tsize_t, input_row_pitch);
     paramBuffer.addValueParam("input_slice_pitch", ParamType::Tsize_t, input_slice_pitch);
 
+    ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, ptr, &ptrParam.value);
-        CaptureEnqueueWriteImage_ptr(isCallValid, command_queue, image, blocking_write, origin,
-                                     region, input_row_pitch, input_slice_pitch, ptr,
+        CaptureEnqueueWriteImage_ptr(command_queue, image, blocking_write, origin, region,
+                                     input_row_pitch, input_slice_pitch, ptr,
                                      num_events_in_wait_list, event_wait_list, event, &ptrParam);
-        paramBuffer.addParam(std::move(ptrParam));
     }
     else
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &ptrParam.value);
-        paramBuffer.addParam(std::move(ptrParam));
     }
+    paramBuffer.addParam(std::move(ptrParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueWriteImage_event_wait_list(isCallValid, command_queue, image, blocking_write,
-                                                 origin, region, input_row_pitch, input_slice_pitch,
-                                                 ptr, num_events_in_wait_list, event_wait_list,
-                                                 event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueWriteImage_event_wait_list(command_queue, image, blocking_write, origin,
+                                                 region, input_row_pitch, input_slice_pitch, ptr,
+                                                 num_events_in_wait_list, event_wait_list, event,
+                                                 &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
         CaptureEnqueueWriteImage_event(
-            isCallValid, command_queue, image, blocking_write, origin, region, input_row_pitch,
+            command_queue, image, blocking_write, origin, region, input_row_pitch,
             input_slice_pitch, ptr, num_events_in_wait_list, event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -2285,94 +2115,84 @@ CallCapture CaptureEnqueueCopyImage(bool isCallValid,
     paramBuffer.addValueParam("src_image", ParamType::Tcl_mem, src_image);
     paramBuffer.addValueParam("dst_image", ParamType::Tcl_mem, dst_image);
 
+    ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, src_origin, &src_originParam.value);
-        CaptureEnqueueCopyImage_src_origin(isCallValid, command_queue, src_image, dst_image,
-                                           src_origin, dst_origin, region, num_events_in_wait_list,
+        CaptureEnqueueCopyImage_src_origin(command_queue, src_image, dst_image, src_origin,
+                                           dst_origin, region, num_events_in_wait_list,
                                            event_wait_list, event, &src_originParam);
-        paramBuffer.addParam(std::move(src_originParam));
     }
     else
     {
-        ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &src_originParam.value);
-        paramBuffer.addParam(std::move(src_originParam));
     }
+    paramBuffer.addParam(std::move(src_originParam));
 
+    ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, dst_origin, &dst_originParam.value);
-        CaptureEnqueueCopyImage_dst_origin(isCallValid, command_queue, src_image, dst_image,
-                                           src_origin, dst_origin, region, num_events_in_wait_list,
+        CaptureEnqueueCopyImage_dst_origin(command_queue, src_image, dst_image, src_origin,
+                                           dst_origin, region, num_events_in_wait_list,
                                            event_wait_list, event, &dst_originParam);
-        paramBuffer.addParam(std::move(dst_originParam));
     }
     else
     {
-        ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &dst_originParam.value);
-        paramBuffer.addParam(std::move(dst_originParam));
     }
+    paramBuffer.addParam(std::move(dst_originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
-        CaptureEnqueueCopyImage_region(isCallValid, command_queue, src_image, dst_image, src_origin,
-                                       dst_origin, region, num_events_in_wait_list, event_wait_list,
-                                       event, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
+        CaptureEnqueueCopyImage_region(command_queue, src_image, dst_image, src_origin, dst_origin,
+                                       region, num_events_in_wait_list, event_wait_list, event,
+                                       &regionParam);
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueCopyImage_event_wait_list(
-            isCallValid, command_queue, src_image, dst_image, src_origin, dst_origin, region,
-            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueCopyImage_event_wait_list(command_queue, src_image, dst_image, src_origin,
+                                                dst_origin, region, num_events_in_wait_list,
+                                                event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueCopyImage_event(isCallValid, command_queue, src_image, dst_image, src_origin,
-                                      dst_origin, region, num_events_in_wait_list, event_wait_list,
-                                      event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueCopyImage_event(command_queue, src_image, dst_image, src_origin, dst_origin,
+                                      region, num_events_in_wait_list, event_wait_list, event,
+                                      &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -2399,78 +2219,70 @@ CallCapture CaptureEnqueueCopyImageToBuffer(bool isCallValid,
     paramBuffer.addValueParam("src_image", ParamType::Tcl_mem, src_image);
     paramBuffer.addValueParam("dst_buffer", ParamType::Tcl_mem, dst_buffer);
 
+    ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, src_origin, &src_originParam.value);
-        CaptureEnqueueCopyImageToBuffer_src_origin(
-            isCallValid, command_queue, src_image, dst_buffer, src_origin, region, dst_offset,
-            num_events_in_wait_list, event_wait_list, event, &src_originParam);
-        paramBuffer.addParam(std::move(src_originParam));
+        CaptureEnqueueCopyImageToBuffer_src_origin(command_queue, src_image, dst_buffer, src_origin,
+                                                   region, dst_offset, num_events_in_wait_list,
+                                                   event_wait_list, event, &src_originParam);
     }
     else
     {
-        ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &src_originParam.value);
-        paramBuffer.addParam(std::move(src_originParam));
     }
+    paramBuffer.addParam(std::move(src_originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
-        CaptureEnqueueCopyImageToBuffer_region(
-            isCallValid, command_queue, src_image, dst_buffer, src_origin, region, dst_offset,
-            num_events_in_wait_list, event_wait_list, event, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
+        CaptureEnqueueCopyImageToBuffer_region(command_queue, src_image, dst_buffer, src_origin,
+                                               region, dst_offset, num_events_in_wait_list,
+                                               event_wait_list, event, &regionParam);
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("dst_offset", ParamType::Tsize_t, dst_offset);
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueCopyImageToBuffer_event_wait_list(
-            isCallValid, command_queue, src_image, dst_buffer, src_origin, region, dst_offset,
+            command_queue, src_image, dst_buffer, src_origin, region, dst_offset,
             num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueCopyImageToBuffer_event(
-            isCallValid, command_queue, src_image, dst_buffer, src_origin, region, dst_offset,
-            num_events_in_wait_list, event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueCopyImageToBuffer_event(command_queue, src_image, dst_buffer, src_origin,
+                                              region, dst_offset, num_events_in_wait_list,
+                                              event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -2498,77 +2310,69 @@ CallCapture CaptureEnqueueCopyBufferToImage(bool isCallValid,
     paramBuffer.addValueParam("dst_image", ParamType::Tcl_mem, dst_image);
     paramBuffer.addValueParam("src_offset", ParamType::Tsize_t, src_offset);
 
+    ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, dst_origin, &dst_originParam.value);
-        CaptureEnqueueCopyBufferToImage_dst_origin(
-            isCallValid, command_queue, src_buffer, dst_image, src_offset, dst_origin, region,
-            num_events_in_wait_list, event_wait_list, event, &dst_originParam);
-        paramBuffer.addParam(std::move(dst_originParam));
+        CaptureEnqueueCopyBufferToImage_dst_origin(command_queue, src_buffer, dst_image, src_offset,
+                                                   dst_origin, region, num_events_in_wait_list,
+                                                   event_wait_list, event, &dst_originParam);
     }
     else
     {
-        ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &dst_originParam.value);
-        paramBuffer.addParam(std::move(dst_originParam));
     }
+    paramBuffer.addParam(std::move(dst_originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
-        CaptureEnqueueCopyBufferToImage_region(
-            isCallValid, command_queue, src_buffer, dst_image, src_offset, dst_origin, region,
-            num_events_in_wait_list, event_wait_list, event, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
+        CaptureEnqueueCopyBufferToImage_region(command_queue, src_buffer, dst_image, src_offset,
+                                               dst_origin, region, num_events_in_wait_list,
+                                               event_wait_list, event, &regionParam);
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueCopyBufferToImage_event_wait_list(
-            isCallValid, command_queue, src_buffer, dst_image, src_offset, dst_origin, region,
+            command_queue, src_buffer, dst_image, src_offset, dst_origin, region,
             num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueCopyBufferToImage_event(
-            isCallValid, command_queue, src_buffer, dst_image, src_offset, dst_origin, region,
-            num_events_in_wait_list, event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueCopyBufferToImage_event(command_queue, src_buffer, dst_image, src_offset,
+                                              dst_origin, region, num_events_in_wait_list,
+                                              event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -2601,57 +2405,51 @@ CallCapture CaptureEnqueueMapBuffer(bool isCallValid,
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueMapBuffer_event_wait_list(
-            isCallValid, command_queue, buffer, blocking_map, map_flagsPacked, offset, size,
+            command_queue, buffer, blocking_map, map_flagsPacked, offset, size,
             num_events_in_wait_list, event_wait_list, event, errcode_ret, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueMapBuffer_event(isCallValid, command_queue, buffer, blocking_map,
-                                      map_flagsPacked, offset, size, num_events_in_wait_list,
-                                      event_wait_list, event, errcode_ret, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueMapBuffer_event(command_queue, buffer, blocking_map, map_flagsPacked, offset,
+                                      size, num_events_in_wait_list, event_wait_list, event,
+                                      errcode_ret, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureEnqueueMapBuffer_errcode_ret(isCallValid, command_queue, buffer, blocking_map,
-                                            map_flagsPacked, offset, size, num_events_in_wait_list,
-                                            event_wait_list, event, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureEnqueueMapBuffer_errcode_ret(command_queue, buffer, blocking_map, map_flagsPacked,
+                                            offset, size, num_events_in_wait_list, event_wait_list,
+                                            event, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::TvoidPointer);
     InitParamValue(ParamType::TvoidPointer, returnValue, &returnValueCapture.value);
@@ -2682,135 +2480,121 @@ CallCapture CaptureEnqueueMapImage(bool isCallValid,
     paramBuffer.addValueParam("blocking_map", ParamType::Tcl_bool, blocking_map);
     paramBuffer.addValueParam("map_flagsPacked", ParamType::TMapFlags, map_flagsPacked);
 
+    ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, origin, &originParam.value);
-        CaptureEnqueueMapImage_origin(isCallValid, command_queue, image, blocking_map,
-                                      map_flagsPacked, origin, region, image_row_pitch,
-                                      image_slice_pitch, num_events_in_wait_list, event_wait_list,
-                                      event, errcode_ret, &originParam);
-        paramBuffer.addParam(std::move(originParam));
+        CaptureEnqueueMapImage_origin(command_queue, image, blocking_map, map_flagsPacked, origin,
+                                      region, image_row_pitch, image_slice_pitch,
+                                      num_events_in_wait_list, event_wait_list, event, errcode_ret,
+                                      &originParam);
     }
     else
     {
-        ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &originParam.value);
-        paramBuffer.addParam(std::move(originParam));
     }
+    paramBuffer.addParam(std::move(originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
-        CaptureEnqueueMapImage_region(isCallValid, command_queue, image, blocking_map,
-                                      map_flagsPacked, origin, region, image_row_pitch,
-                                      image_slice_pitch, num_events_in_wait_list, event_wait_list,
-                                      event, errcode_ret, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
+        CaptureEnqueueMapImage_region(command_queue, image, blocking_map, map_flagsPacked, origin,
+                                      region, image_row_pitch, image_slice_pitch,
+                                      num_events_in_wait_list, event_wait_list, event, errcode_ret,
+                                      &regionParam);
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
+    ParamCapture image_row_pitchParam("image_row_pitch", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture image_row_pitchParam("image_row_pitch", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, image_row_pitch, &image_row_pitchParam.value);
-        CaptureEnqueueMapImage_image_row_pitch(
-            isCallValid, command_queue, image, blocking_map, map_flagsPacked, origin, region,
-            image_row_pitch, image_slice_pitch, num_events_in_wait_list, event_wait_list, event,
-            errcode_ret, &image_row_pitchParam);
-        paramBuffer.addParam(std::move(image_row_pitchParam));
+        CaptureEnqueueMapImage_image_row_pitch(command_queue, image, blocking_map, map_flagsPacked,
+                                               origin, region, image_row_pitch, image_slice_pitch,
+                                               num_events_in_wait_list, event_wait_list, event,
+                                               errcode_ret, &image_row_pitchParam);
     }
     else
     {
-        ParamCapture image_row_pitchParam("image_row_pitch", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &image_row_pitchParam.value);
-        paramBuffer.addParam(std::move(image_row_pitchParam));
     }
+    paramBuffer.addParam(std::move(image_row_pitchParam));
 
+    ParamCapture image_slice_pitchParam("image_slice_pitch", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture image_slice_pitchParam("image_slice_pitch", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, image_slice_pitch, &image_slice_pitchParam.value);
         CaptureEnqueueMapImage_image_slice_pitch(
-            isCallValid, command_queue, image, blocking_map, map_flagsPacked, origin, region,
-            image_row_pitch, image_slice_pitch, num_events_in_wait_list, event_wait_list, event,
-            errcode_ret, &image_slice_pitchParam);
-        paramBuffer.addParam(std::move(image_slice_pitchParam));
+            command_queue, image, blocking_map, map_flagsPacked, origin, region, image_row_pitch,
+            image_slice_pitch, num_events_in_wait_list, event_wait_list, event, errcode_ret,
+            &image_slice_pitchParam);
     }
     else
     {
-        ParamCapture image_slice_pitchParam("image_slice_pitch", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &image_slice_pitchParam.value);
-        paramBuffer.addParam(std::move(image_slice_pitchParam));
     }
+    paramBuffer.addParam(std::move(image_slice_pitchParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueMapImage_event_wait_list(
-            isCallValid, command_queue, image, blocking_map, map_flagsPacked, origin, region,
-            image_row_pitch, image_slice_pitch, num_events_in_wait_list, event_wait_list, event,
-            errcode_ret, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueMapImage_event_wait_list(command_queue, image, blocking_map, map_flagsPacked,
+                                               origin, region, image_row_pitch, image_slice_pitch,
+                                               num_events_in_wait_list, event_wait_list, event,
+                                               errcode_ret, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueMapImage_event(isCallValid, command_queue, image, blocking_map,
-                                     map_flagsPacked, origin, region, image_row_pitch,
-                                     image_slice_pitch, num_events_in_wait_list, event_wait_list,
-                                     event, errcode_ret, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueMapImage_event(command_queue, image, blocking_map, map_flagsPacked, origin,
+                                     region, image_row_pitch, image_slice_pitch,
+                                     num_events_in_wait_list, event_wait_list, event, errcode_ret,
+                                     &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureEnqueueMapImage_errcode_ret(isCallValid, command_queue, image, blocking_map,
-                                           map_flagsPacked, origin, region, image_row_pitch,
-                                           image_slice_pitch, num_events_in_wait_list,
-                                           event_wait_list, event, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureEnqueueMapImage_errcode_ret(command_queue, image, blocking_map, map_flagsPacked,
+                                           origin, region, image_row_pitch, image_slice_pitch,
+                                           num_events_in_wait_list, event_wait_list, event,
+                                           errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::TvoidPointer);
     InitParamValue(ParamType::TvoidPointer, returnValue, &returnValueCapture.value);
@@ -2833,60 +2617,54 @@ CallCapture CaptureEnqueueUnmapMemObject(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("memobj", ParamType::Tcl_mem, memobj);
 
+    ParamCapture mapped_ptrParam("mapped_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture mapped_ptrParam("mapped_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, mapped_ptr, &mapped_ptrParam.value);
-        CaptureEnqueueUnmapMemObject_mapped_ptr(isCallValid, command_queue, memobj, mapped_ptr,
+        CaptureEnqueueUnmapMemObject_mapped_ptr(command_queue, memobj, mapped_ptr,
                                                 num_events_in_wait_list, event_wait_list, event,
                                                 &mapped_ptrParam);
-        paramBuffer.addParam(std::move(mapped_ptrParam));
     }
     else
     {
-        ParamCapture mapped_ptrParam("mapped_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &mapped_ptrParam.value);
-        paramBuffer.addParam(std::move(mapped_ptrParam));
     }
+    paramBuffer.addParam(std::move(mapped_ptrParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueUnmapMemObject_event_wait_list(isCallValid, command_queue, memobj, mapped_ptr,
+        CaptureEnqueueUnmapMemObject_event_wait_list(command_queue, memobj, mapped_ptr,
                                                      num_events_in_wait_list, event_wait_list,
                                                      event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueUnmapMemObject_event(isCallValid, command_queue, memobj, mapped_ptr,
+        CaptureEnqueueUnmapMemObject_event(command_queue, memobj, mapped_ptr,
                                            num_events_in_wait_list, event_wait_list, event,
                                            &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -2913,101 +2691,87 @@ CallCapture CaptureEnqueueNDRangeKernel(bool isCallValid,
     paramBuffer.addValueParam("kernel", ParamType::Tcl_kernel, kernel);
     paramBuffer.addValueParam("work_dim", ParamType::Tcl_uint, work_dim);
 
+    ParamCapture global_work_offsetParam("global_work_offset", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture global_work_offsetParam("global_work_offset", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, global_work_offset,
                        &global_work_offsetParam.value);
         CaptureEnqueueNDRangeKernel_global_work_offset(
-            isCallValid, command_queue, kernel, work_dim, global_work_offset, global_work_size,
-            local_work_size, num_events_in_wait_list, event_wait_list, event,
-            &global_work_offsetParam);
-        paramBuffer.addParam(std::move(global_work_offsetParam));
+            command_queue, kernel, work_dim, global_work_offset, global_work_size, local_work_size,
+            num_events_in_wait_list, event_wait_list, event, &global_work_offsetParam);
     }
     else
     {
-        ParamCapture global_work_offsetParam("global_work_offset", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &global_work_offsetParam.value);
-        paramBuffer.addParam(std::move(global_work_offsetParam));
     }
+    paramBuffer.addParam(std::move(global_work_offsetParam));
 
+    ParamCapture global_work_sizeParam("global_work_size", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture global_work_sizeParam("global_work_size", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, global_work_size,
                        &global_work_sizeParam.value);
         CaptureEnqueueNDRangeKernel_global_work_size(
-            isCallValid, command_queue, kernel, work_dim, global_work_offset, global_work_size,
-            local_work_size, num_events_in_wait_list, event_wait_list, event,
-            &global_work_sizeParam);
-        paramBuffer.addParam(std::move(global_work_sizeParam));
+            command_queue, kernel, work_dim, global_work_offset, global_work_size, local_work_size,
+            num_events_in_wait_list, event_wait_list, event, &global_work_sizeParam);
     }
     else
     {
-        ParamCapture global_work_sizeParam("global_work_size", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &global_work_sizeParam.value);
-        paramBuffer.addParam(std::move(global_work_sizeParam));
     }
+    paramBuffer.addParam(std::move(global_work_sizeParam));
 
+    ParamCapture local_work_sizeParam("local_work_size", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture local_work_sizeParam("local_work_size", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, local_work_size,
                        &local_work_sizeParam.value);
-        CaptureEnqueueNDRangeKernel_local_work_size(isCallValid, command_queue, kernel, work_dim,
-                                                    global_work_offset, global_work_size,
-                                                    local_work_size, num_events_in_wait_list,
-                                                    event_wait_list, event, &local_work_sizeParam);
-        paramBuffer.addParam(std::move(local_work_sizeParam));
+        CaptureEnqueueNDRangeKernel_local_work_size(
+            command_queue, kernel, work_dim, global_work_offset, global_work_size, local_work_size,
+            num_events_in_wait_list, event_wait_list, event, &local_work_sizeParam);
     }
     else
     {
-        ParamCapture local_work_sizeParam("local_work_size", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &local_work_sizeParam.value);
-        paramBuffer.addParam(std::move(local_work_sizeParam));
     }
+    paramBuffer.addParam(std::move(local_work_sizeParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueNDRangeKernel_event_wait_list(isCallValid, command_queue, kernel, work_dim,
-                                                    global_work_offset, global_work_size,
-                                                    local_work_size, num_events_in_wait_list,
-                                                    event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueNDRangeKernel_event_wait_list(
+            command_queue, kernel, work_dim, global_work_offset, global_work_size, local_work_size,
+            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
         CaptureEnqueueNDRangeKernel_event(
-            isCallValid, command_queue, kernel, work_dim, global_work_offset, global_work_size,
-            local_work_size, num_events_in_wait_list, event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+            command_queue, kernel, work_dim, global_work_offset, global_work_size, local_work_size,
+            num_events_in_wait_list, event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3033,113 +2797,101 @@ CallCapture CaptureEnqueueNativeKernel(bool isCallValid,
 
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
 
+    ParamCapture user_funcParam("user_func", ParamType::Tcl_void_func_type);
     if (isCallValid)
     {
-        ParamCapture user_funcParam("user_func", ParamType::Tcl_void_func_type);
         InitParamValue(ParamType::Tcl_void_func_type, user_func, &user_funcParam.value);
         CaptureEnqueueNativeKernel_user_func(
-            isCallValid, command_queue, user_func, args, cb_args, num_mem_objects, mem_list,
-            args_mem_loc, num_events_in_wait_list, event_wait_list, event, &user_funcParam);
-        paramBuffer.addParam(std::move(user_funcParam));
+            command_queue, user_func, args, cb_args, num_mem_objects, mem_list, args_mem_loc,
+            num_events_in_wait_list, event_wait_list, event, &user_funcParam);
     }
     else
     {
-        ParamCapture user_funcParam("user_func", ParamType::Tcl_void_func_type);
         InitParamValue(ParamType::Tcl_void_func_type,
                        static_cast<void(CL_CALLBACK *)(void *)>(nullptr), &user_funcParam.value);
-        paramBuffer.addParam(std::move(user_funcParam));
     }
+    paramBuffer.addParam(std::move(user_funcParam));
 
+    ParamCapture argsParam("args", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture argsParam("args", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, args, &argsParam.value);
-        CaptureEnqueueNativeKernel_args(
-            isCallValid, command_queue, user_func, args, cb_args, num_mem_objects, mem_list,
-            args_mem_loc, num_events_in_wait_list, event_wait_list, event, &argsParam);
-        paramBuffer.addParam(std::move(argsParam));
+        CaptureEnqueueNativeKernel_args(command_queue, user_func, args, cb_args, num_mem_objects,
+                                        mem_list, args_mem_loc, num_events_in_wait_list,
+                                        event_wait_list, event, &argsParam);
     }
     else
     {
-        ParamCapture argsParam("args", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &argsParam.value);
-        paramBuffer.addParam(std::move(argsParam));
     }
+    paramBuffer.addParam(std::move(argsParam));
 
     paramBuffer.addValueParam("cb_args", ParamType::Tsize_t, cb_args);
     paramBuffer.addValueParam("num_mem_objects", ParamType::Tcl_uint, num_mem_objects);
 
+    ParamCapture mem_listParam("mem_list", ParamType::Tcl_memConstPointer);
     if (isCallValid)
     {
-        ParamCapture mem_listParam("mem_list", ParamType::Tcl_memConstPointer);
         InitParamValue(ParamType::Tcl_memConstPointer, mem_list, &mem_listParam.value);
         CaptureEnqueueNativeKernel_mem_list(
-            isCallValid, command_queue, user_func, args, cb_args, num_mem_objects, mem_list,
-            args_mem_loc, num_events_in_wait_list, event_wait_list, event, &mem_listParam);
-        paramBuffer.addParam(std::move(mem_listParam));
+            command_queue, user_func, args, cb_args, num_mem_objects, mem_list, args_mem_loc,
+            num_events_in_wait_list, event_wait_list, event, &mem_listParam);
     }
     else
     {
-        ParamCapture mem_listParam("mem_list", ParamType::Tcl_memConstPointer);
         InitParamValue(ParamType::Tcl_memConstPointer, static_cast<const cl_mem *>(nullptr),
                        &mem_listParam.value);
-        paramBuffer.addParam(std::move(mem_listParam));
     }
+    paramBuffer.addParam(std::move(mem_listParam));
 
+    ParamCapture args_mem_locParam("args_mem_loc", ParamType::TvoidConstPointerPointer);
     if (isCallValid)
     {
-        ParamCapture args_mem_locParam("args_mem_loc", ParamType::TvoidConstPointerPointer);
         InitParamValue(ParamType::TvoidConstPointerPointer, args_mem_loc, &args_mem_locParam.value);
         CaptureEnqueueNativeKernel_args_mem_loc(
-            isCallValid, command_queue, user_func, args, cb_args, num_mem_objects, mem_list,
-            args_mem_loc, num_events_in_wait_list, event_wait_list, event, &args_mem_locParam);
-        paramBuffer.addParam(std::move(args_mem_locParam));
+            command_queue, user_func, args, cb_args, num_mem_objects, mem_list, args_mem_loc,
+            num_events_in_wait_list, event_wait_list, event, &args_mem_locParam);
     }
     else
     {
-        ParamCapture args_mem_locParam("args_mem_loc", ParamType::TvoidConstPointerPointer);
         InitParamValue(ParamType::TvoidConstPointerPointer, static_cast<const void **>(nullptr),
                        &args_mem_locParam.value);
-        paramBuffer.addParam(std::move(args_mem_locParam));
     }
+    paramBuffer.addParam(std::move(args_mem_locParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueNativeKernel_event_wait_list(
-            isCallValid, command_queue, user_func, args, cb_args, num_mem_objects, mem_list,
-            args_mem_loc, num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+            command_queue, user_func, args, cb_args, num_mem_objects, mem_list, args_mem_loc,
+            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueNativeKernel_event(
-            isCallValid, command_queue, user_func, args, cb_args, num_mem_objects, mem_list,
-            args_mem_loc, num_events_in_wait_list, event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueNativeKernel_event(command_queue, user_func, args, cb_args, num_mem_objects,
+                                         mem_list, args_mem_loc, num_events_in_wait_list,
+                                         event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3162,25 +2914,22 @@ CallCapture CaptureSetCommandQueueProperty(bool isCallValid,
                               propertiesPacked);
     paramBuffer.addValueParam("enable", ParamType::Tcl_bool, enable);
 
+    ParamCapture old_propertiesParam("old_properties",
+                                     ParamType::Tcl_command_queue_propertiesPointer);
     if (isCallValid)
     {
-        ParamCapture old_propertiesParam("old_properties",
-                                         ParamType::Tcl_command_queue_propertiesPointer);
         InitParamValue(ParamType::Tcl_command_queue_propertiesPointer, old_properties,
                        &old_propertiesParam.value);
-        CaptureSetCommandQueueProperty_old_properties(isCallValid, command_queue, propertiesPacked,
-                                                      enable, old_properties, &old_propertiesParam);
-        paramBuffer.addParam(std::move(old_propertiesParam));
+        CaptureSetCommandQueueProperty_old_properties(command_queue, propertiesPacked, enable,
+                                                      old_properties, &old_propertiesParam);
     }
     else
     {
-        ParamCapture old_propertiesParam("old_properties",
-                                         ParamType::Tcl_command_queue_propertiesPointer);
         InitParamValue(ParamType::Tcl_command_queue_propertiesPointer,
                        static_cast<cl_command_queue_properties *>(nullptr),
                        &old_propertiesParam.value);
-        paramBuffer.addParam(std::move(old_propertiesParam));
     }
+    paramBuffer.addParam(std::move(old_propertiesParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3205,60 +2954,53 @@ CallCapture CaptureCreateImage2D(bool isCallValid,
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
     paramBuffer.addValueParam("flagsPacked", ParamType::TMemFlags, flagsPacked);
 
+    ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
     if (isCallValid)
     {
-        ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
         InitParamValue(ParamType::Tcl_image_formatConstPointer, image_format,
                        &image_formatParam.value);
-        CaptureCreateImage2D_image_format(isCallValid, context, flagsPacked, image_format,
-                                          image_width, image_height, image_row_pitch, host_ptr,
-                                          errcode_ret, &image_formatParam);
-        paramBuffer.addParam(std::move(image_formatParam));
+        CaptureCreateImage2D_image_format(context, flagsPacked, image_format, image_width,
+                                          image_height, image_row_pitch, host_ptr, errcode_ret,
+                                          &image_formatParam);
     }
     else
     {
-        ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
         InitParamValue(ParamType::Tcl_image_formatConstPointer,
                        static_cast<const cl_image_format *>(nullptr), &image_formatParam.value);
-        paramBuffer.addParam(std::move(image_formatParam));
     }
+    paramBuffer.addParam(std::move(image_formatParam));
 
     paramBuffer.addValueParam("image_width", ParamType::Tsize_t, image_width);
     paramBuffer.addValueParam("image_height", ParamType::Tsize_t, image_height);
     paramBuffer.addValueParam("image_row_pitch", ParamType::Tsize_t, image_row_pitch);
 
+    ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, host_ptr, &host_ptrParam.value);
-        CaptureCreateImage2D_host_ptr(isCallValid, context, flagsPacked, image_format, image_width,
-                                      image_height, image_row_pitch, host_ptr, errcode_ret,
-                                      &host_ptrParam);
-        paramBuffer.addParam(std::move(host_ptrParam));
+        CaptureCreateImage2D_host_ptr(context, flagsPacked, image_format, image_width, image_height,
+                                      image_row_pitch, host_ptr, errcode_ret, &host_ptrParam);
     }
     else
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &host_ptrParam.value);
-        paramBuffer.addParam(std::move(host_ptrParam));
     }
+    paramBuffer.addParam(std::move(host_ptrParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateImage2D_errcode_ret(isCallValid, context, flagsPacked, image_format,
-                                         image_width, image_height, image_row_pitch, host_ptr,
-                                         errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateImage2D_errcode_ret(context, flagsPacked, image_format, image_width,
+                                         image_height, image_row_pitch, host_ptr, errcode_ret,
+                                         &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
     InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
@@ -3285,23 +3027,21 @@ CallCapture CaptureCreateImage3D(bool isCallValid,
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
     paramBuffer.addValueParam("flagsPacked", ParamType::TMemFlags, flagsPacked);
 
+    ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
     if (isCallValid)
     {
-        ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
         InitParamValue(ParamType::Tcl_image_formatConstPointer, image_format,
                        &image_formatParam.value);
         CaptureCreateImage3D_image_format(
-            isCallValid, context, flagsPacked, image_format, image_width, image_height, image_depth,
+            context, flagsPacked, image_format, image_width, image_height, image_depth,
             image_row_pitch, image_slice_pitch, host_ptr, errcode_ret, &image_formatParam);
-        paramBuffer.addParam(std::move(image_formatParam));
     }
     else
     {
-        ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
         InitParamValue(ParamType::Tcl_image_formatConstPointer,
                        static_cast<const cl_image_format *>(nullptr), &image_formatParam.value);
-        paramBuffer.addParam(std::move(image_formatParam));
     }
+    paramBuffer.addParam(std::move(image_formatParam));
 
     paramBuffer.addValueParam("image_width", ParamType::Tsize_t, image_width);
     paramBuffer.addValueParam("image_height", ParamType::Tsize_t, image_height);
@@ -3309,38 +3049,34 @@ CallCapture CaptureCreateImage3D(bool isCallValid,
     paramBuffer.addValueParam("image_row_pitch", ParamType::Tsize_t, image_row_pitch);
     paramBuffer.addValueParam("image_slice_pitch", ParamType::Tsize_t, image_slice_pitch);
 
+    ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, host_ptr, &host_ptrParam.value);
-        CaptureCreateImage3D_host_ptr(isCallValid, context, flagsPacked, image_format, image_width,
-                                      image_height, image_depth, image_row_pitch, image_slice_pitch,
-                                      host_ptr, errcode_ret, &host_ptrParam);
-        paramBuffer.addParam(std::move(host_ptrParam));
+        CaptureCreateImage3D_host_ptr(context, flagsPacked, image_format, image_width, image_height,
+                                      image_depth, image_row_pitch, image_slice_pitch, host_ptr,
+                                      errcode_ret, &host_ptrParam);
     }
     else
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &host_ptrParam.value);
-        paramBuffer.addParam(std::move(host_ptrParam));
     }
+    paramBuffer.addParam(std::move(host_ptrParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
         CaptureCreateImage3D_errcode_ret(
-            isCallValid, context, flagsPacked, image_format, image_width, image_height, image_depth,
+            context, flagsPacked, image_format, image_width, image_height, image_depth,
             image_row_pitch, image_slice_pitch, host_ptr, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
     InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
@@ -3358,20 +3094,18 @@ CallCapture CaptureEnqueueMarker(bool isCallValid,
 
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueMarker_event(isCallValid, command_queue, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueMarker_event(command_queue, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3391,21 +3125,19 @@ CallCapture CaptureEnqueueWaitForEvents(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("num_events", ParamType::Tcl_uint, num_events);
 
+    ParamCapture event_listParam("event_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_listParam("event_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_list, &event_listParam.value);
-        CaptureEnqueueWaitForEvents_event_list(isCallValid, command_queue, num_events, event_list,
+        CaptureEnqueueWaitForEvents_event_list(command_queue, num_events, event_list,
                                                &event_listParam);
-        paramBuffer.addParam(std::move(event_listParam));
     }
     else
     {
-        ParamCapture event_listParam("event_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_listParam.value);
-        paramBuffer.addParam(std::move(event_listParam));
     }
+    paramBuffer.addParam(std::move(event_listParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3446,20 +3178,18 @@ CallCapture CaptureGetExtensionFunctionAddress(bool isCallValid,
 {
     ParamBuffer paramBuffer;
 
+    ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
     if (isCallValid)
     {
-        ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, func_name, &func_nameParam.value);
-        CaptureGetExtensionFunctionAddress_func_name(isCallValid, func_name, &func_nameParam);
-        paramBuffer.addParam(std::move(func_nameParam));
+        CaptureGetExtensionFunctionAddress_func_name(func_name, &func_nameParam);
     }
     else
     {
-        ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, static_cast<const char *>(nullptr),
                        &func_nameParam.value);
-        paramBuffer.addParam(std::move(func_nameParam));
     }
+    paramBuffer.addParam(std::move(func_nameParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::TvoidPointer);
     InitParamValue(ParamType::TvoidPointer, returnValue, &returnValueCapture.value);
@@ -3482,21 +3212,19 @@ CallCapture CaptureCreateCommandQueue(bool isCallValid,
     paramBuffer.addValueParam("propertiesPacked", ParamType::TCommandQueueProperties,
                               propertiesPacked);
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateCommandQueue_errcode_ret(isCallValid, context, device, propertiesPacked,
-                                              errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateCommandQueue_errcode_ret(context, device, propertiesPacked, errcode_ret,
+                                              &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_command_queue);
     InitParamValue(ParamType::Tcl_command_queue, returnValue, &returnValueCapture.value);
@@ -3521,22 +3249,19 @@ CallCapture CaptureCreateSampler(bool isCallValid,
                               addressing_modePacked);
     paramBuffer.addValueParam("filter_modePacked", ParamType::TFilterMode, filter_modePacked);
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateSampler_errcode_ret(isCallValid, context, normalized_coords,
-                                         addressing_modePacked, filter_modePacked, errcode_ret,
-                                         &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateSampler_errcode_ret(context, normalized_coords, addressing_modePacked,
+                                         filter_modePacked, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_sampler);
     InitParamValue(ParamType::Tcl_sampler, returnValue, &returnValueCapture.value);
@@ -3560,39 +3285,34 @@ CallCapture CaptureEnqueueTask(bool isCallValid,
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueTask_event_wait_list(isCallValid, command_queue, kernel,
-                                           num_events_in_wait_list, event_wait_list, event,
-                                           &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueTask_event_wait_list(command_queue, kernel, num_events_in_wait_list,
+                                           event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueTask_event(isCallValid, command_queue, kernel, num_events_in_wait_list,
-                                 event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueTask_event(command_queue, kernel, num_events_in_wait_list, event_wait_list,
+                                 event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3617,39 +3337,35 @@ CallCapture CaptureCreateSubBuffer(bool isCallValid,
     paramBuffer.addValueParam("buffer_create_type", ParamType::Tcl_buffer_create_type,
                               buffer_create_type);
 
+    ParamCapture buffer_create_infoParam("buffer_create_info", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture buffer_create_infoParam("buffer_create_info", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, buffer_create_info,
                        &buffer_create_infoParam.value);
-        CaptureCreateSubBuffer_buffer_create_info(isCallValid, buffer, flagsPacked,
-                                                  buffer_create_type, buffer_create_info,
-                                                  errcode_ret, &buffer_create_infoParam);
-        paramBuffer.addParam(std::move(buffer_create_infoParam));
+        CaptureCreateSubBuffer_buffer_create_info(buffer, flagsPacked, buffer_create_type,
+                                                  buffer_create_info, errcode_ret,
+                                                  &buffer_create_infoParam);
     }
     else
     {
-        ParamCapture buffer_create_infoParam("buffer_create_info", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &buffer_create_infoParam.value);
-        paramBuffer.addParam(std::move(buffer_create_infoParam));
     }
+    paramBuffer.addParam(std::move(buffer_create_infoParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateSubBuffer_errcode_ret(isCallValid, buffer, flagsPacked, buffer_create_type,
+        CaptureCreateSubBuffer_errcode_ret(buffer, flagsPacked, buffer_create_type,
                                            buffer_create_info, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
     InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
@@ -3669,38 +3385,34 @@ CallCapture CaptureSetMemObjectDestructorCallback(bool isCallValid,
 
     paramBuffer.addValueParam("memobj", ParamType::Tcl_mem, memobj);
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_mem_destructor_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_mem_destructor_func_type);
         InitParamValue(ParamType::Tcl_mem_destructor_func_type, pfn_notify, &pfn_notifyParam.value);
-        CaptureSetMemObjectDestructorCallback_pfn_notify(isCallValid, memobj, pfn_notify, user_data,
+        CaptureSetMemObjectDestructorCallback_pfn_notify(memobj, pfn_notify, user_data,
                                                          &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_mem_destructor_func_type);
         InitParamValue(ParamType::Tcl_mem_destructor_func_type,
                        static_cast<void(CL_CALLBACK *)(cl_mem memobj, void *user_data)>(nullptr),
                        &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureSetMemObjectDestructorCallback_user_data(isCallValid, memobj, pfn_notify, user_data,
+        CaptureSetMemObjectDestructorCallback_user_data(memobj, pfn_notify, user_data,
                                                         &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3718,20 +3430,18 @@ CallCapture CaptureCreateUserEvent(bool isCallValid,
 
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateUserEvent_errcode_ret(isCallValid, context, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateUserEvent_errcode_ret(context, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_event);
     InitParamValue(ParamType::Tcl_event, returnValue, &returnValueCapture.value);
@@ -3772,39 +3482,35 @@ CallCapture CaptureSetEventCallback(bool isCallValid,
     paramBuffer.addValueParam("command_exec_callback_type", ParamType::Tcl_int,
                               command_exec_callback_type);
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_callback_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_callback_func_type);
         InitParamValue(ParamType::Tcl_callback_func_type, pfn_notify, &pfn_notifyParam.value);
-        CaptureSetEventCallback_pfn_notify(isCallValid, event, command_exec_callback_type,
-                                           pfn_notify, user_data, &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
+        CaptureSetEventCallback_pfn_notify(event, command_exec_callback_type, pfn_notify, user_data,
+                                           &pfn_notifyParam);
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_callback_func_type);
         InitParamValue(ParamType::Tcl_callback_func_type,
                        static_cast<void(CL_CALLBACK *)(cl_event event, cl_int event_command_status,
                                                        void *user_data)>(nullptr),
                        &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureSetEventCallback_user_data(isCallValid, event, command_exec_callback_type,
-                                          pfn_notify, user_data, &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
+        CaptureSetEventCallback_user_data(event, command_exec_callback_type, pfn_notify, user_data,
+                                          &user_dataParam);
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3836,121 +3542,109 @@ CallCapture CaptureEnqueueReadBufferRect(bool isCallValid,
     paramBuffer.addValueParam("buffer", ParamType::Tcl_mem, buffer);
     paramBuffer.addValueParam("blocking_read", ParamType::Tcl_bool, blocking_read);
 
+    ParamCapture buffer_originParam("buffer_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture buffer_originParam("buffer_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, buffer_origin, &buffer_originParam.value);
         CaptureEnqueueReadBufferRect_buffer_origin(
-            isCallValid, command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &buffer_originParam);
-        paramBuffer.addParam(std::move(buffer_originParam));
     }
     else
     {
-        ParamCapture buffer_originParam("buffer_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &buffer_originParam.value);
-        paramBuffer.addParam(std::move(buffer_originParam));
     }
+    paramBuffer.addParam(std::move(buffer_originParam));
 
+    ParamCapture host_originParam("host_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture host_originParam("host_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, host_origin, &host_originParam.value);
         CaptureEnqueueReadBufferRect_host_origin(
-            isCallValid, command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &host_originParam);
-        paramBuffer.addParam(std::move(host_originParam));
     }
     else
     {
-        ParamCapture host_originParam("host_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &host_originParam.value);
-        paramBuffer.addParam(std::move(host_originParam));
     }
+    paramBuffer.addParam(std::move(host_originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
         CaptureEnqueueReadBufferRect_region(
-            isCallValid, command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("buffer_row_pitch", ParamType::Tsize_t, buffer_row_pitch);
     paramBuffer.addValueParam("buffer_slice_pitch", ParamType::Tsize_t, buffer_slice_pitch);
     paramBuffer.addValueParam("host_row_pitch", ParamType::Tsize_t, host_row_pitch);
     paramBuffer.addValueParam("host_slice_pitch", ParamType::Tsize_t, host_slice_pitch);
 
+    ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, ptr, &ptrParam.value);
         CaptureEnqueueReadBufferRect_ptr(
-            isCallValid, command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &ptrParam);
-        paramBuffer.addParam(std::move(ptrParam));
     }
     else
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &ptrParam.value);
-        paramBuffer.addParam(std::move(ptrParam));
     }
+    paramBuffer.addParam(std::move(ptrParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueReadBufferRect_event_wait_list(
-            isCallValid, command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
         CaptureEnqueueReadBufferRect_event(
-            isCallValid, command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_read, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -3982,122 +3676,110 @@ CallCapture CaptureEnqueueWriteBufferRect(bool isCallValid,
     paramBuffer.addValueParam("buffer", ParamType::Tcl_mem, buffer);
     paramBuffer.addValueParam("blocking_write", ParamType::Tcl_bool, blocking_write);
 
+    ParamCapture buffer_originParam("buffer_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture buffer_originParam("buffer_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, buffer_origin, &buffer_originParam.value);
         CaptureEnqueueWriteBufferRect_buffer_origin(
-            isCallValid, command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &buffer_originParam);
-        paramBuffer.addParam(std::move(buffer_originParam));
     }
     else
     {
-        ParamCapture buffer_originParam("buffer_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &buffer_originParam.value);
-        paramBuffer.addParam(std::move(buffer_originParam));
     }
+    paramBuffer.addParam(std::move(buffer_originParam));
 
+    ParamCapture host_originParam("host_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture host_originParam("host_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, host_origin, &host_originParam.value);
         CaptureEnqueueWriteBufferRect_host_origin(
-            isCallValid, command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &host_originParam);
-        paramBuffer.addParam(std::move(host_originParam));
     }
     else
     {
-        ParamCapture host_originParam("host_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &host_originParam.value);
-        paramBuffer.addParam(std::move(host_originParam));
     }
+    paramBuffer.addParam(std::move(host_originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
         CaptureEnqueueWriteBufferRect_region(
-            isCallValid, command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("buffer_row_pitch", ParamType::Tsize_t, buffer_row_pitch);
     paramBuffer.addValueParam("buffer_slice_pitch", ParamType::Tsize_t, buffer_slice_pitch);
     paramBuffer.addValueParam("host_row_pitch", ParamType::Tsize_t, host_row_pitch);
     paramBuffer.addValueParam("host_slice_pitch", ParamType::Tsize_t, host_slice_pitch);
 
+    ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, ptr, &ptrParam.value);
         CaptureEnqueueWriteBufferRect_ptr(
-            isCallValid, command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &ptrParam);
-        paramBuffer.addParam(std::move(ptrParam));
     }
     else
     {
-        ParamCapture ptrParam("ptr", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &ptrParam.value);
-        paramBuffer.addParam(std::move(ptrParam));
     }
+    paramBuffer.addParam(std::move(ptrParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueWriteBufferRect_event_wait_list(
-            isCallValid, command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
         CaptureEnqueueWriteBufferRect_event(
-            isCallValid, command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
+            command_queue, buffer, blocking_write, buffer_origin, host_origin, region,
             buffer_row_pitch, buffer_slice_pitch, host_row_pitch, host_slice_pitch, ptr,
             num_events_in_wait_list, event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -4128,59 +3810,53 @@ CallCapture CaptureEnqueueCopyBufferRect(bool isCallValid,
     paramBuffer.addValueParam("src_buffer", ParamType::Tcl_mem, src_buffer);
     paramBuffer.addValueParam("dst_buffer", ParamType::Tcl_mem, dst_buffer);
 
+    ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, src_origin, &src_originParam.value);
         CaptureEnqueueCopyBufferRect_src_origin(
-            isCallValid, command_queue, src_buffer, dst_buffer, src_origin, dst_origin, region,
-            src_row_pitch, src_slice_pitch, dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
+            command_queue, src_buffer, dst_buffer, src_origin, dst_origin, region, src_row_pitch,
+            src_slice_pitch, dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
             event_wait_list, event, &src_originParam);
-        paramBuffer.addParam(std::move(src_originParam));
     }
     else
     {
-        ParamCapture src_originParam("src_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &src_originParam.value);
-        paramBuffer.addParam(std::move(src_originParam));
     }
+    paramBuffer.addParam(std::move(src_originParam));
 
+    ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, dst_origin, &dst_originParam.value);
         CaptureEnqueueCopyBufferRect_dst_origin(
-            isCallValid, command_queue, src_buffer, dst_buffer, src_origin, dst_origin, region,
-            src_row_pitch, src_slice_pitch, dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
+            command_queue, src_buffer, dst_buffer, src_origin, dst_origin, region, src_row_pitch,
+            src_slice_pitch, dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
             event_wait_list, event, &dst_originParam);
-        paramBuffer.addParam(std::move(dst_originParam));
     }
     else
     {
-        ParamCapture dst_originParam("dst_origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &dst_originParam.value);
-        paramBuffer.addParam(std::move(dst_originParam));
     }
+    paramBuffer.addParam(std::move(dst_originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
-        CaptureEnqueueCopyBufferRect_region(
-            isCallValid, command_queue, src_buffer, dst_buffer, src_origin, dst_origin, region,
-            src_row_pitch, src_slice_pitch, dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
-            event_wait_list, event, &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
+        CaptureEnqueueCopyBufferRect_region(command_queue, src_buffer, dst_buffer, src_origin,
+                                            dst_origin, region, src_row_pitch, src_slice_pitch,
+                                            dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
+                                            event_wait_list, event, &regionParam);
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("src_row_pitch", ParamType::Tsize_t, src_row_pitch);
     paramBuffer.addValueParam("src_slice_pitch", ParamType::Tsize_t, src_slice_pitch);
@@ -4189,42 +3865,38 @@ CallCapture CaptureEnqueueCopyBufferRect(bool isCallValid,
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueCopyBufferRect_event_wait_list(
-            isCallValid, command_queue, src_buffer, dst_buffer, src_origin, dst_origin, region,
-            src_row_pitch, src_slice_pitch, dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
+            command_queue, src_buffer, dst_buffer, src_origin, dst_origin, region, src_row_pitch,
+            src_slice_pitch, dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
             event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueCopyBufferRect_event(
-            isCallValid, command_queue, src_buffer, dst_buffer, src_origin, dst_origin, region,
-            src_row_pitch, src_slice_pitch, dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
-            event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueCopyBufferRect_event(command_queue, src_buffer, dst_buffer, src_origin,
+                                           dst_origin, region, src_row_pitch, src_slice_pitch,
+                                           dst_row_pitch, dst_slice_pitch, num_events_in_wait_list,
+                                           event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -4246,60 +3918,52 @@ CallCapture CaptureCreateSubDevices(bool isCallValid,
 
     paramBuffer.addValueParam("in_device", ParamType::Tcl_device_id, in_device);
 
+    ParamCapture propertiesParam("properties",
+                                 ParamType::Tcl_device_partition_propertyConstPointer);
     if (isCallValid)
     {
-        ParamCapture propertiesParam("properties",
-                                     ParamType::Tcl_device_partition_propertyConstPointer);
         InitParamValue(ParamType::Tcl_device_partition_propertyConstPointer, properties,
                        &propertiesParam.value);
-        CaptureCreateSubDevices_properties(isCallValid, in_device, properties, num_devices,
-                                           out_devices, num_devices_ret, &propertiesParam);
-        paramBuffer.addParam(std::move(propertiesParam));
+        CaptureCreateSubDevices_properties(in_device, properties, num_devices, out_devices,
+                                           num_devices_ret, &propertiesParam);
     }
     else
     {
-        ParamCapture propertiesParam("properties",
-                                     ParamType::Tcl_device_partition_propertyConstPointer);
         InitParamValue(ParamType::Tcl_device_partition_propertyConstPointer,
                        static_cast<const cl_device_partition_property *>(nullptr),
                        &propertiesParam.value);
-        paramBuffer.addParam(std::move(propertiesParam));
     }
+    paramBuffer.addParam(std::move(propertiesParam));
 
     paramBuffer.addValueParam("num_devices", ParamType::Tcl_uint, num_devices);
 
+    ParamCapture out_devicesParam("out_devices", ParamType::Tcl_device_idPointer);
     if (isCallValid)
     {
-        ParamCapture out_devicesParam("out_devices", ParamType::Tcl_device_idPointer);
         InitParamValue(ParamType::Tcl_device_idPointer, out_devices, &out_devicesParam.value);
-        CaptureCreateSubDevices_out_devices(isCallValid, in_device, properties, num_devices,
-                                            out_devices, num_devices_ret, &out_devicesParam);
-        paramBuffer.addParam(std::move(out_devicesParam));
+        CaptureCreateSubDevices_out_devices(in_device, properties, num_devices, out_devices,
+                                            num_devices_ret, &out_devicesParam);
     }
     else
     {
-        ParamCapture out_devicesParam("out_devices", ParamType::Tcl_device_idPointer);
         InitParamValue(ParamType::Tcl_device_idPointer, static_cast<cl_device_id *>(nullptr),
                        &out_devicesParam.value);
-        paramBuffer.addParam(std::move(out_devicesParam));
     }
+    paramBuffer.addParam(std::move(out_devicesParam));
 
+    ParamCapture num_devices_retParam("num_devices_ret", ParamType::Tcl_uintPointer);
     if (isCallValid)
     {
-        ParamCapture num_devices_retParam("num_devices_ret", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, num_devices_ret, &num_devices_retParam.value);
-        CaptureCreateSubDevices_num_devices_ret(isCallValid, in_device, properties, num_devices,
-                                                out_devices, num_devices_ret,
-                                                &num_devices_retParam);
-        paramBuffer.addParam(std::move(num_devices_retParam));
+        CaptureCreateSubDevices_num_devices_ret(in_device, properties, num_devices, out_devices,
+                                                num_devices_ret, &num_devices_retParam);
     }
     else
     {
-        ParamCapture num_devices_retParam("num_devices_ret", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, static_cast<cl_uint *>(nullptr),
                        &num_devices_retParam.value);
-        paramBuffer.addParam(std::move(num_devices_retParam));
     }
+    paramBuffer.addParam(std::move(num_devices_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -4348,69 +4012,61 @@ CallCapture CaptureCreateImage(bool isCallValid,
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
     paramBuffer.addValueParam("flagsPacked", ParamType::TMemFlags, flagsPacked);
 
+    ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
     if (isCallValid)
     {
-        ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
         InitParamValue(ParamType::Tcl_image_formatConstPointer, image_format,
                        &image_formatParam.value);
-        CaptureCreateImage_image_format(isCallValid, context, flagsPacked, image_format, image_desc,
-                                        host_ptr, errcode_ret, &image_formatParam);
-        paramBuffer.addParam(std::move(image_formatParam));
+        CaptureCreateImage_image_format(context, flagsPacked, image_format, image_desc, host_ptr,
+                                        errcode_ret, &image_formatParam);
     }
     else
     {
-        ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
         InitParamValue(ParamType::Tcl_image_formatConstPointer,
                        static_cast<const cl_image_format *>(nullptr), &image_formatParam.value);
-        paramBuffer.addParam(std::move(image_formatParam));
     }
+    paramBuffer.addParam(std::move(image_formatParam));
 
+    ParamCapture image_descParam("image_desc", ParamType::Tcl_image_descConstPointer);
     if (isCallValid)
     {
-        ParamCapture image_descParam("image_desc", ParamType::Tcl_image_descConstPointer);
         InitParamValue(ParamType::Tcl_image_descConstPointer, image_desc, &image_descParam.value);
-        CaptureCreateImage_image_desc(isCallValid, context, flagsPacked, image_format, image_desc,
-                                      host_ptr, errcode_ret, &image_descParam);
-        paramBuffer.addParam(std::move(image_descParam));
+        CaptureCreateImage_image_desc(context, flagsPacked, image_format, image_desc, host_ptr,
+                                      errcode_ret, &image_descParam);
     }
     else
     {
-        ParamCapture image_descParam("image_desc", ParamType::Tcl_image_descConstPointer);
         InitParamValue(ParamType::Tcl_image_descConstPointer,
                        static_cast<const cl_image_desc *>(nullptr), &image_descParam.value);
-        paramBuffer.addParam(std::move(image_descParam));
     }
+    paramBuffer.addParam(std::move(image_descParam));
 
+    ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, host_ptr, &host_ptrParam.value);
-        CaptureCreateImage_host_ptr(isCallValid, context, flagsPacked, image_format, image_desc,
-                                    host_ptr, errcode_ret, &host_ptrParam);
-        paramBuffer.addParam(std::move(host_ptrParam));
+        CaptureCreateImage_host_ptr(context, flagsPacked, image_format, image_desc, host_ptr,
+                                    errcode_ret, &host_ptrParam);
     }
     else
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &host_ptrParam.value);
-        paramBuffer.addParam(std::move(host_ptrParam));
     }
+    paramBuffer.addParam(std::move(host_ptrParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateImage_errcode_ret(isCallValid, context, flagsPacked, image_format, image_desc,
-                                       host_ptr, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateImage_errcode_ret(context, flagsPacked, image_format, image_desc, host_ptr,
+                                       errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
     InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
@@ -4432,56 +4088,47 @@ CallCapture CaptureCreateProgramWithBuiltInKernels(bool isCallValid,
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
     paramBuffer.addValueParam("num_devices", ParamType::Tcl_uint, num_devices);
 
+    ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
     if (isCallValid)
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer, device_list, &device_listParam.value);
-        CaptureCreateProgramWithBuiltInKernels_device_list(isCallValid, context, num_devices,
-                                                           device_list, kernel_names, errcode_ret,
-                                                           &device_listParam);
-        paramBuffer.addParam(std::move(device_listParam));
+        CaptureCreateProgramWithBuiltInKernels_device_list(
+            context, num_devices, device_list, kernel_names, errcode_ret, &device_listParam);
     }
     else
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer,
                        static_cast<const cl_device_id *>(nullptr), &device_listParam.value);
-        paramBuffer.addParam(std::move(device_listParam));
     }
+    paramBuffer.addParam(std::move(device_listParam));
 
+    ParamCapture kernel_namesParam("kernel_names", ParamType::TcharConstPointer);
     if (isCallValid)
     {
-        ParamCapture kernel_namesParam("kernel_names", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, kernel_names, &kernel_namesParam.value);
-        CaptureCreateProgramWithBuiltInKernels_kernel_names(isCallValid, context, num_devices,
-                                                            device_list, kernel_names, errcode_ret,
-                                                            &kernel_namesParam);
-        paramBuffer.addParam(std::move(kernel_namesParam));
+        CaptureCreateProgramWithBuiltInKernels_kernel_names(
+            context, num_devices, device_list, kernel_names, errcode_ret, &kernel_namesParam);
     }
     else
     {
-        ParamCapture kernel_namesParam("kernel_names", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, static_cast<const char *>(nullptr),
                        &kernel_namesParam.value);
-        paramBuffer.addParam(std::move(kernel_namesParam));
     }
+    paramBuffer.addParam(std::move(kernel_namesParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateProgramWithBuiltInKernels_errcode_ret(isCallValid, context, num_devices,
-                                                           device_list, kernel_names, errcode_ret,
-                                                           &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateProgramWithBuiltInKernels_errcode_ret(
+            context, num_devices, device_list, kernel_names, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_program);
     InitParamValue(ParamType::Tcl_program, returnValue, &returnValueCapture.value);
@@ -4509,115 +4156,102 @@ CallCapture CaptureCompileProgram(bool isCallValid,
     paramBuffer.addValueParam("program", ParamType::Tcl_program, program);
     paramBuffer.addValueParam("num_devices", ParamType::Tcl_uint, num_devices);
 
+    ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
     if (isCallValid)
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer, device_list, &device_listParam.value);
-        CaptureCompileProgram_device_list(isCallValid, program, num_devices, device_list, options,
+        CaptureCompileProgram_device_list(program, num_devices, device_list, options,
                                           num_input_headers, input_headers, header_include_names,
                                           pfn_notify, user_data, &device_listParam);
-        paramBuffer.addParam(std::move(device_listParam));
     }
     else
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer,
                        static_cast<const cl_device_id *>(nullptr), &device_listParam.value);
-        paramBuffer.addParam(std::move(device_listParam));
     }
+    paramBuffer.addParam(std::move(device_listParam));
 
+    ParamCapture optionsParam("options", ParamType::TcharConstPointer);
     if (isCallValid)
     {
-        ParamCapture optionsParam("options", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, options, &optionsParam.value);
-        CaptureCompileProgram_options(isCallValid, program, num_devices, device_list, options,
-                                      num_input_headers, input_headers, header_include_names,
-                                      pfn_notify, user_data, &optionsParam);
-        paramBuffer.addParam(std::move(optionsParam));
+        CaptureCompileProgram_options(program, num_devices, device_list, options, num_input_headers,
+                                      input_headers, header_include_names, pfn_notify, user_data,
+                                      &optionsParam);
     }
     else
     {
-        ParamCapture optionsParam("options", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, static_cast<const char *>(nullptr),
                        &optionsParam.value);
-        paramBuffer.addParam(std::move(optionsParam));
     }
+    paramBuffer.addParam(std::move(optionsParam));
 
     paramBuffer.addValueParam("num_input_headers", ParamType::Tcl_uint, num_input_headers);
 
+    ParamCapture input_headersParam("input_headers", ParamType::Tcl_programConstPointer);
     if (isCallValid)
     {
-        ParamCapture input_headersParam("input_headers", ParamType::Tcl_programConstPointer);
         InitParamValue(ParamType::Tcl_programConstPointer, input_headers,
                        &input_headersParam.value);
-        CaptureCompileProgram_input_headers(isCallValid, program, num_devices, device_list, options,
+        CaptureCompileProgram_input_headers(program, num_devices, device_list, options,
                                             num_input_headers, input_headers, header_include_names,
                                             pfn_notify, user_data, &input_headersParam);
-        paramBuffer.addParam(std::move(input_headersParam));
     }
     else
     {
-        ParamCapture input_headersParam("input_headers", ParamType::Tcl_programConstPointer);
         InitParamValue(ParamType::Tcl_programConstPointer, static_cast<const cl_program *>(nullptr),
                        &input_headersParam.value);
-        paramBuffer.addParam(std::move(input_headersParam));
     }
+    paramBuffer.addParam(std::move(input_headersParam));
 
+    ParamCapture header_include_namesParam("header_include_names",
+                                           ParamType::TcharConstPointerPointer);
     if (isCallValid)
     {
-        ParamCapture header_include_namesParam("header_include_names",
-                                               ParamType::TcharConstPointerPointer);
         InitParamValue(ParamType::TcharConstPointerPointer, header_include_names,
                        &header_include_namesParam.value);
         CaptureCompileProgram_header_include_names(
-            isCallValid, program, num_devices, device_list, options, num_input_headers,
-            input_headers, header_include_names, pfn_notify, user_data, &header_include_namesParam);
-        paramBuffer.addParam(std::move(header_include_namesParam));
+            program, num_devices, device_list, options, num_input_headers, input_headers,
+            header_include_names, pfn_notify, user_data, &header_include_namesParam);
     }
     else
     {
-        ParamCapture header_include_namesParam("header_include_names",
-                                               ParamType::TcharConstPointerPointer);
         InitParamValue(ParamType::TcharConstPointerPointer, static_cast<const char **>(nullptr),
                        &header_include_namesParam.value);
-        paramBuffer.addParam(std::move(header_include_namesParam));
     }
+    paramBuffer.addParam(std::move(header_include_namesParam));
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
         InitParamValue(ParamType::Tcl_program_func_type, pfn_notify, &pfn_notifyParam.value);
-        CaptureCompileProgram_pfn_notify(isCallValid, program, num_devices, device_list, options,
+        CaptureCompileProgram_pfn_notify(program, num_devices, device_list, options,
                                          num_input_headers, input_headers, header_include_names,
                                          pfn_notify, user_data, &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
         InitParamValue(
             ParamType::Tcl_program_func_type,
             static_cast<void(CL_CALLBACK *)(cl_program program, void *user_data)>(nullptr),
             &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureCompileProgram_user_data(isCallValid, program, num_devices, device_list, options,
+        CaptureCompileProgram_user_data(program, num_devices, device_list, options,
                                         num_input_headers, input_headers, header_include_names,
                                         pfn_notify, user_data, &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -4643,112 +4277,100 @@ CallCapture CaptureLinkProgram(bool isCallValid,
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
     paramBuffer.addValueParam("num_devices", ParamType::Tcl_uint, num_devices);
 
+    ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
     if (isCallValid)
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer, device_list, &device_listParam.value);
-        CaptureLinkProgram_device_list(isCallValid, context, num_devices, device_list, options,
+        CaptureLinkProgram_device_list(context, num_devices, device_list, options,
                                        num_input_programs, input_programs, pfn_notify, user_data,
                                        errcode_ret, &device_listParam);
-        paramBuffer.addParam(std::move(device_listParam));
     }
     else
     {
-        ParamCapture device_listParam("device_list", ParamType::Tcl_device_idConstPointer);
         InitParamValue(ParamType::Tcl_device_idConstPointer,
                        static_cast<const cl_device_id *>(nullptr), &device_listParam.value);
-        paramBuffer.addParam(std::move(device_listParam));
     }
+    paramBuffer.addParam(std::move(device_listParam));
 
+    ParamCapture optionsParam("options", ParamType::TcharConstPointer);
     if (isCallValid)
     {
-        ParamCapture optionsParam("options", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, options, &optionsParam.value);
-        CaptureLinkProgram_options(isCallValid, context, num_devices, device_list, options,
-                                   num_input_programs, input_programs, pfn_notify, user_data,
-                                   errcode_ret, &optionsParam);
-        paramBuffer.addParam(std::move(optionsParam));
+        CaptureLinkProgram_options(context, num_devices, device_list, options, num_input_programs,
+                                   input_programs, pfn_notify, user_data, errcode_ret,
+                                   &optionsParam);
     }
     else
     {
-        ParamCapture optionsParam("options", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, static_cast<const char *>(nullptr),
                        &optionsParam.value);
-        paramBuffer.addParam(std::move(optionsParam));
     }
+    paramBuffer.addParam(std::move(optionsParam));
 
     paramBuffer.addValueParam("num_input_programs", ParamType::Tcl_uint, num_input_programs);
 
+    ParamCapture input_programsParam("input_programs", ParamType::Tcl_programConstPointer);
     if (isCallValid)
     {
-        ParamCapture input_programsParam("input_programs", ParamType::Tcl_programConstPointer);
         InitParamValue(ParamType::Tcl_programConstPointer, input_programs,
                        &input_programsParam.value);
-        CaptureLinkProgram_input_programs(isCallValid, context, num_devices, device_list, options,
+        CaptureLinkProgram_input_programs(context, num_devices, device_list, options,
                                           num_input_programs, input_programs, pfn_notify, user_data,
                                           errcode_ret, &input_programsParam);
-        paramBuffer.addParam(std::move(input_programsParam));
     }
     else
     {
-        ParamCapture input_programsParam("input_programs", ParamType::Tcl_programConstPointer);
         InitParamValue(ParamType::Tcl_programConstPointer, static_cast<const cl_program *>(nullptr),
                        &input_programsParam.value);
-        paramBuffer.addParam(std::move(input_programsParam));
     }
+    paramBuffer.addParam(std::move(input_programsParam));
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
         InitParamValue(ParamType::Tcl_program_func_type, pfn_notify, &pfn_notifyParam.value);
-        CaptureLinkProgram_pfn_notify(isCallValid, context, num_devices, device_list, options,
+        CaptureLinkProgram_pfn_notify(context, num_devices, device_list, options,
                                       num_input_programs, input_programs, pfn_notify, user_data,
                                       errcode_ret, &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
         InitParamValue(
             ParamType::Tcl_program_func_type,
             static_cast<void(CL_CALLBACK *)(cl_program program, void *user_data)>(nullptr),
             &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureLinkProgram_user_data(isCallValid, context, num_devices, device_list, options,
-                                     num_input_programs, input_programs, pfn_notify, user_data,
-                                     errcode_ret, &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
+        CaptureLinkProgram_user_data(context, num_devices, device_list, options, num_input_programs,
+                                     input_programs, pfn_notify, user_data, errcode_ret,
+                                     &user_dataParam);
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureLinkProgram_errcode_ret(isCallValid, context, num_devices, device_list, options,
+        CaptureLinkProgram_errcode_ret(context, num_devices, device_list, options,
                                        num_input_programs, input_programs, pfn_notify, user_data,
                                        errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_program);
     InitParamValue(ParamType::Tcl_program, returnValue, &returnValueCapture.value);
@@ -4788,40 +4410,35 @@ CallCapture CaptureGetKernelArgInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TKernelArgInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetKernelArgInfo_param_value(isCallValid, kernel, arg_index, param_namePacked,
-                                            param_value_size, param_value, param_value_size_ret,
-                                            &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetKernelArgInfo_param_value(kernel, arg_index, param_namePacked, param_value_size,
+                                            param_value, param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
         CaptureGetKernelArgInfo_param_value_size_ret(
-            isCallValid, kernel, arg_index, param_namePacked, param_value_size, param_value,
+            kernel, arg_index, param_namePacked, param_value_size, param_value,
             param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -4847,22 +4464,20 @@ CallCapture CaptureEnqueueFillBuffer(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("buffer", ParamType::Tcl_mem, buffer);
 
+    ParamCapture patternParam("pattern", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture patternParam("pattern", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, pattern, &patternParam.value);
-        CaptureEnqueueFillBuffer_pattern(isCallValid, command_queue, buffer, pattern, pattern_size,
-                                         offset, size, num_events_in_wait_list, event_wait_list,
-                                         event, &patternParam);
-        paramBuffer.addParam(std::move(patternParam));
+        CaptureEnqueueFillBuffer_pattern(command_queue, buffer, pattern, pattern_size, offset, size,
+                                         num_events_in_wait_list, event_wait_list, event,
+                                         &patternParam);
     }
     else
     {
-        ParamCapture patternParam("pattern", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &patternParam.value);
-        paramBuffer.addParam(std::move(patternParam));
     }
+    paramBuffer.addParam(std::move(patternParam));
 
     paramBuffer.addValueParam("pattern_size", ParamType::Tsize_t, pattern_size);
     paramBuffer.addValueParam("offset", ParamType::Tsize_t, offset);
@@ -4870,40 +4485,36 @@ CallCapture CaptureEnqueueFillBuffer(bool isCallValid,
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueFillBuffer_event_wait_list(
-            isCallValid, command_queue, buffer, pattern, pattern_size, offset, size,
-            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueFillBuffer_event_wait_list(command_queue, buffer, pattern, pattern_size,
+                                                 offset, size, num_events_in_wait_list,
+                                                 event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueFillBuffer_event(isCallValid, command_queue, buffer, pattern, pattern_size,
-                                       offset, size, num_events_in_wait_list, event_wait_list,
-                                       event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueFillBuffer_event(command_queue, buffer, pattern, pattern_size, offset, size,
+                                       num_events_in_wait_list, event_wait_list, event,
+                                       &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -4928,93 +4539,83 @@ CallCapture CaptureEnqueueFillImage(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("image", ParamType::Tcl_mem, image);
 
+    ParamCapture fill_colorParam("fill_color", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture fill_colorParam("fill_color", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, fill_color, &fill_colorParam.value);
-        CaptureEnqueueFillImage_fill_color(isCallValid, command_queue, image, fill_color, origin,
-                                           region, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueFillImage_fill_color(command_queue, image, fill_color, origin, region,
+                                           num_events_in_wait_list, event_wait_list, event,
                                            &fill_colorParam);
-        paramBuffer.addParam(std::move(fill_colorParam));
     }
     else
     {
-        ParamCapture fill_colorParam("fill_color", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &fill_colorParam.value);
-        paramBuffer.addParam(std::move(fill_colorParam));
     }
+    paramBuffer.addParam(std::move(fill_colorParam));
 
+    ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, origin, &originParam.value);
-        CaptureEnqueueFillImage_origin(isCallValid, command_queue, image, fill_color, origin,
-                                       region, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueFillImage_origin(command_queue, image, fill_color, origin, region,
+                                       num_events_in_wait_list, event_wait_list, event,
                                        &originParam);
-        paramBuffer.addParam(std::move(originParam));
     }
     else
     {
-        ParamCapture originParam("origin", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &originParam.value);
-        paramBuffer.addParam(std::move(originParam));
     }
+    paramBuffer.addParam(std::move(originParam));
 
+    ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, region, &regionParam.value);
-        CaptureEnqueueFillImage_region(isCallValid, command_queue, image, fill_color, origin,
-                                       region, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueFillImage_region(command_queue, image, fill_color, origin, region,
+                                       num_events_in_wait_list, event_wait_list, event,
                                        &regionParam);
-        paramBuffer.addParam(std::move(regionParam));
     }
     else
     {
-        ParamCapture regionParam("region", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &regionParam.value);
-        paramBuffer.addParam(std::move(regionParam));
     }
+    paramBuffer.addParam(std::move(regionParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueFillImage_event_wait_list(isCallValid, command_queue, image, fill_color,
-                                                origin, region, num_events_in_wait_list,
-                                                event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueFillImage_event_wait_list(command_queue, image, fill_color, origin, region,
+                                                num_events_in_wait_list, event_wait_list, event,
+                                                &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueFillImage_event(isCallValid, command_queue, image, fill_color, origin, region,
+        CaptureEnqueueFillImage_event(command_queue, image, fill_color, origin, region,
                                       num_events_in_wait_list, event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5038,61 +4639,55 @@ CallCapture CaptureEnqueueMigrateMemObjects(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("num_mem_objects", ParamType::Tcl_uint, num_mem_objects);
 
+    ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
     if (isCallValid)
     {
-        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
         InitParamValue(ParamType::Tcl_memConstPointer, mem_objects, &mem_objectsParam.value);
-        CaptureEnqueueMigrateMemObjects_mem_objects(
-            isCallValid, command_queue, num_mem_objects, mem_objects, flagsPacked,
-            num_events_in_wait_list, event_wait_list, event, &mem_objectsParam);
-        paramBuffer.addParam(std::move(mem_objectsParam));
+        CaptureEnqueueMigrateMemObjects_mem_objects(command_queue, num_mem_objects, mem_objects,
+                                                    flagsPacked, num_events_in_wait_list,
+                                                    event_wait_list, event, &mem_objectsParam);
     }
     else
     {
-        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
         InitParamValue(ParamType::Tcl_memConstPointer, static_cast<const cl_mem *>(nullptr),
                        &mem_objectsParam.value);
-        paramBuffer.addParam(std::move(mem_objectsParam));
     }
+    paramBuffer.addParam(std::move(mem_objectsParam));
 
     paramBuffer.addValueParam("flagsPacked", ParamType::TMemMigrationFlags, flagsPacked);
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueMigrateMemObjects_event_wait_list(
-            isCallValid, command_queue, num_mem_objects, mem_objects, flagsPacked,
-            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+            command_queue, num_mem_objects, mem_objects, flagsPacked, num_events_in_wait_list,
+            event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueMigrateMemObjects_event(isCallValid, command_queue, num_mem_objects,
-                                              mem_objects, flagsPacked, num_events_in_wait_list,
-                                              event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueMigrateMemObjects_event(command_queue, num_mem_objects, mem_objects,
+                                              flagsPacked, num_events_in_wait_list, event_wait_list,
+                                              event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5114,39 +4709,34 @@ CallCapture CaptureEnqueueMarkerWithWaitList(bool isCallValid,
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueMarkerWithWaitList_event_wait_list(isCallValid, command_queue,
-                                                         num_events_in_wait_list, event_wait_list,
-                                                         event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueMarkerWithWaitList_event_wait_list(
+            command_queue, num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueMarkerWithWaitList_event(isCallValid, command_queue, num_events_in_wait_list,
+        CaptureEnqueueMarkerWithWaitList_event(command_queue, num_events_in_wait_list,
                                                event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5168,39 +4758,34 @@ CallCapture CaptureEnqueueBarrierWithWaitList(bool isCallValid,
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueBarrierWithWaitList_event_wait_list(isCallValid, command_queue,
-                                                          num_events_in_wait_list, event_wait_list,
-                                                          event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueBarrierWithWaitList_event_wait_list(
+            command_queue, num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueBarrierWithWaitList_event(isCallValid, command_queue, num_events_in_wait_list,
+        CaptureEnqueueBarrierWithWaitList_event(command_queue, num_events_in_wait_list,
                                                 event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5218,21 +4803,19 @@ CallCapture CaptureGetExtensionFunctionAddressForPlatform(bool isCallValid,
 
     paramBuffer.addValueParam("platform", ParamType::Tcl_platform_id, platform);
 
+    ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
     if (isCallValid)
     {
-        ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, func_name, &func_nameParam.value);
-        CaptureGetExtensionFunctionAddressForPlatform_func_name(isCallValid, platform, func_name,
+        CaptureGetExtensionFunctionAddressForPlatform_func_name(platform, func_name,
                                                                 &func_nameParam);
-        paramBuffer.addParam(std::move(func_nameParam));
     }
     else
     {
-        ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, static_cast<const char *>(nullptr),
                        &func_nameParam.value);
-        paramBuffer.addParam(std::move(func_nameParam));
     }
+    paramBuffer.addParam(std::move(func_nameParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::TvoidPointer);
     InitParamValue(ParamType::TvoidPointer, returnValue, &returnValueCapture.value);
@@ -5255,38 +4838,34 @@ CallCapture CaptureCreateCommandQueueWithProperties(bool isCallValid,
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
     paramBuffer.addValueParam("device", ParamType::Tcl_device_id, device);
 
+    ParamCapture propertiesParam("properties", ParamType::Tcl_queue_propertiesConstPointer);
     if (isCallValid)
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_queue_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_queue_propertiesConstPointer, properties,
                        &propertiesParam.value);
-        CaptureCreateCommandQueueWithProperties_properties(isCallValid, context, device, properties,
-                                                           errcode_ret, &propertiesParam);
-        paramBuffer.addParam(std::move(propertiesParam));
+        CaptureCreateCommandQueueWithProperties_properties(context, device, properties, errcode_ret,
+                                                           &propertiesParam);
     }
     else
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_queue_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_queue_propertiesConstPointer,
                        static_cast<const cl_queue_properties *>(nullptr), &propertiesParam.value);
-        paramBuffer.addParam(std::move(propertiesParam));
     }
+    paramBuffer.addParam(std::move(propertiesParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateCommandQueueWithProperties_errcode_ret(
-            isCallValid, context, device, properties, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateCommandQueueWithProperties_errcode_ret(context, device, properties,
+                                                            errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_command_queue);
     InitParamValue(ParamType::Tcl_command_queue, returnValue, &returnValueCapture.value);
@@ -5312,38 +4891,34 @@ CallCapture CaptureCreatePipe(bool isCallValid,
     paramBuffer.addValueParam("pipe_packet_size", ParamType::Tcl_uint, pipe_packet_size);
     paramBuffer.addValueParam("pipe_max_packets", ParamType::Tcl_uint, pipe_max_packets);
 
+    ParamCapture propertiesParam("properties", ParamType::Tcl_pipe_propertiesConstPointer);
     if (isCallValid)
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_pipe_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_pipe_propertiesConstPointer, properties,
                        &propertiesParam.value);
-        CaptureCreatePipe_properties(isCallValid, context, flagsPacked, pipe_packet_size,
-                                     pipe_max_packets, properties, errcode_ret, &propertiesParam);
-        paramBuffer.addParam(std::move(propertiesParam));
+        CaptureCreatePipe_properties(context, flagsPacked, pipe_packet_size, pipe_max_packets,
+                                     properties, errcode_ret, &propertiesParam);
     }
     else
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_pipe_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_pipe_propertiesConstPointer,
                        static_cast<const cl_pipe_properties *>(nullptr), &propertiesParam.value);
-        paramBuffer.addParam(std::move(propertiesParam));
     }
+    paramBuffer.addParam(std::move(propertiesParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreatePipe_errcode_ret(isCallValid, context, flagsPacked, pipe_packet_size,
-                                      pipe_max_packets, properties, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreatePipe_errcode_ret(context, flagsPacked, pipe_packet_size, pipe_max_packets,
+                                      properties, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
     InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
@@ -5366,39 +4941,35 @@ CallCapture CaptureGetPipeInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TPipeInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetPipeInfo_param_value(isCallValid, pipe, param_namePacked, param_value_size,
-                                       param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetPipeInfo_param_value(pipe, param_namePacked, param_value_size, param_value,
+                                       param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
-        CaptureGetPipeInfo_param_value_size_ret(isCallValid, pipe, param_namePacked,
-                                                param_value_size, param_value, param_value_size_ret,
+        CaptureGetPipeInfo_param_value_size_ret(pipe, param_namePacked, param_value_size,
+                                                param_value, param_value_size_ret,
                                                 &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5434,20 +5005,18 @@ CallCapture CaptureSVMFree(bool isCallValid, cl_context context, void *svm_point
 
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
 
+    ParamCapture svm_pointerParam("svm_pointer", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture svm_pointerParam("svm_pointer", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, svm_pointer, &svm_pointerParam.value);
-        CaptureSVMFree_svm_pointer(isCallValid, context, svm_pointer, &svm_pointerParam);
-        paramBuffer.addParam(std::move(svm_pointerParam));
+        CaptureSVMFree_svm_pointer(context, svm_pointer, &svm_pointerParam);
     }
     else
     {
-        ParamCapture svm_pointerParam("svm_pointer", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &svm_pointerParam.value);
-        paramBuffer.addParam(std::move(svm_pointerParam));
     }
+    paramBuffer.addParam(std::move(svm_pointerParam));
 
     return CallCapture(angle::EntryPoint::CLSVMFree, std::move(paramBuffer));
 }
@@ -5462,41 +5031,36 @@ CallCapture CaptureCreateSamplerWithProperties(bool isCallValid,
 
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
 
+    ParamCapture sampler_propertiesParam("sampler_properties",
+                                         ParamType::Tcl_sampler_propertiesConstPointer);
     if (isCallValid)
     {
-        ParamCapture sampler_propertiesParam("sampler_properties",
-                                             ParamType::Tcl_sampler_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_sampler_propertiesConstPointer, sampler_properties,
                        &sampler_propertiesParam.value);
         CaptureCreateSamplerWithProperties_sampler_properties(
-            isCallValid, context, sampler_properties, errcode_ret, &sampler_propertiesParam);
-        paramBuffer.addParam(std::move(sampler_propertiesParam));
+            context, sampler_properties, errcode_ret, &sampler_propertiesParam);
     }
     else
     {
-        ParamCapture sampler_propertiesParam("sampler_properties",
-                                             ParamType::Tcl_sampler_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_sampler_propertiesConstPointer,
                        static_cast<const cl_sampler_properties *>(nullptr),
                        &sampler_propertiesParam.value);
-        paramBuffer.addParam(std::move(sampler_propertiesParam));
     }
+    paramBuffer.addParam(std::move(sampler_propertiesParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateSamplerWithProperties_errcode_ret(isCallValid, context, sampler_properties,
-                                                       errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateSamplerWithProperties_errcode_ret(context, sampler_properties, errcode_ret,
+                                                       &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_sampler);
     InitParamValue(ParamType::Tcl_sampler, returnValue, &returnValueCapture.value);
@@ -5516,21 +5080,18 @@ CallCapture CaptureSetKernelArgSVMPointer(bool isCallValid,
     paramBuffer.addValueParam("kernel", ParamType::Tcl_kernel, kernel);
     paramBuffer.addValueParam("arg_index", ParamType::Tcl_uint, arg_index);
 
+    ParamCapture arg_valueParam("arg_value", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture arg_valueParam("arg_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, arg_value, &arg_valueParam.value);
-        CaptureSetKernelArgSVMPointer_arg_value(isCallValid, kernel, arg_index, arg_value,
-                                                &arg_valueParam);
-        paramBuffer.addParam(std::move(arg_valueParam));
+        CaptureSetKernelArgSVMPointer_arg_value(kernel, arg_index, arg_value, &arg_valueParam);
     }
     else
     {
-        ParamCapture arg_valueParam("arg_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &arg_valueParam.value);
-        paramBuffer.addParam(std::move(arg_valueParam));
     }
+    paramBuffer.addParam(std::move(arg_valueParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5552,21 +5113,19 @@ CallCapture CaptureSetKernelExecInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TKernelExecInfo, param_namePacked);
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, param_value, &param_valueParam.value);
-        CaptureSetKernelExecInfo_param_value(isCallValid, kernel, param_namePacked,
-                                             param_value_size, param_value, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureSetKernelExecInfo_param_value(kernel, param_namePacked, param_value_size,
+                                             param_value, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5594,100 +5153,88 @@ CallCapture CaptureEnqueueSVMFree(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("num_svm_pointers", ParamType::Tcl_uint, num_svm_pointers);
 
+    ParamCapture svm_pointersParam("svm_pointers", ParamType::TvoidPointerPointer);
     if (isCallValid)
     {
-        ParamCapture svm_pointersParam("svm_pointers", ParamType::TvoidPointerPointer);
         InitParamValue(ParamType::TvoidPointerPointer, svm_pointers, &svm_pointersParam.value);
-        CaptureEnqueueSVMFree_svm_pointers(
-            isCallValid, command_queue, num_svm_pointers, svm_pointers, pfn_free_func, user_data,
-            num_events_in_wait_list, event_wait_list, event, &svm_pointersParam);
-        paramBuffer.addParam(std::move(svm_pointersParam));
+        CaptureEnqueueSVMFree_svm_pointers(command_queue, num_svm_pointers, svm_pointers,
+                                           pfn_free_func, user_data, num_events_in_wait_list,
+                                           event_wait_list, event, &svm_pointersParam);
     }
     else
     {
-        ParamCapture svm_pointersParam("svm_pointers", ParamType::TvoidPointerPointer);
         InitParamValue(ParamType::TvoidPointerPointer, static_cast<void **>(nullptr),
                        &svm_pointersParam.value);
-        paramBuffer.addParam(std::move(svm_pointersParam));
     }
+    paramBuffer.addParam(std::move(svm_pointersParam));
 
+    ParamCapture pfn_free_funcParam("pfn_free_func", ParamType::Tcl_svm_free_callback_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_free_funcParam("pfn_free_func",
-                                        ParamType::Tcl_svm_free_callback_func_type);
         InitParamValue(ParamType::Tcl_svm_free_callback_func_type, pfn_free_func,
                        &pfn_free_funcParam.value);
-        CaptureEnqueueSVMFree_pfn_free_func(
-            isCallValid, command_queue, num_svm_pointers, svm_pointers, pfn_free_func, user_data,
-            num_events_in_wait_list, event_wait_list, event, &pfn_free_funcParam);
-        paramBuffer.addParam(std::move(pfn_free_funcParam));
+        CaptureEnqueueSVMFree_pfn_free_func(command_queue, num_svm_pointers, svm_pointers,
+                                            pfn_free_func, user_data, num_events_in_wait_list,
+                                            event_wait_list, event, &pfn_free_funcParam);
     }
     else
     {
-        ParamCapture pfn_free_funcParam("pfn_free_func",
-                                        ParamType::Tcl_svm_free_callback_func_type);
         InitParamValue(
             ParamType::Tcl_svm_free_callback_func_type,
             static_cast<void(CL_CALLBACK *)(cl_command_queue queue, cl_uint num_svm_pointers,
                                             void *svm_pointers[], void *user_data)>(nullptr),
             &pfn_free_funcParam.value);
-        paramBuffer.addParam(std::move(pfn_free_funcParam));
     }
+    paramBuffer.addParam(std::move(pfn_free_funcParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureEnqueueSVMFree_user_data(isCallValid, command_queue, num_svm_pointers, svm_pointers,
+        CaptureEnqueueSVMFree_user_data(command_queue, num_svm_pointers, svm_pointers,
                                         pfn_free_func, user_data, num_events_in_wait_list,
                                         event_wait_list, event, &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueSVMFree_event_wait_list(
-            isCallValid, command_queue, num_svm_pointers, svm_pointers, pfn_free_func, user_data,
-            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueSVMFree_event_wait_list(command_queue, num_svm_pointers, svm_pointers,
+                                              pfn_free_func, user_data, num_events_in_wait_list,
+                                              event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueSVMFree_event(isCallValid, command_queue, num_svm_pointers, svm_pointers,
-                                    pfn_free_func, user_data, num_events_in_wait_list,
-                                    event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueSVMFree_event(command_queue, num_svm_pointers, svm_pointers, pfn_free_func,
+                                    user_data, num_events_in_wait_list, event_wait_list, event,
+                                    &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5712,77 +5259,68 @@ CallCapture CaptureEnqueueSVMMemcpy(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("blocking_copy", ParamType::Tcl_bool, blocking_copy);
 
+    ParamCapture dst_ptrParam("dst_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture dst_ptrParam("dst_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, dst_ptr, &dst_ptrParam.value);
-        CaptureEnqueueSVMMemcpy_dst_ptr(isCallValid, command_queue, blocking_copy, dst_ptr, src_ptr,
-                                        size, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueSVMMemcpy_dst_ptr(command_queue, blocking_copy, dst_ptr, src_ptr, size,
+                                        num_events_in_wait_list, event_wait_list, event,
                                         &dst_ptrParam);
-        paramBuffer.addParam(std::move(dst_ptrParam));
     }
     else
     {
-        ParamCapture dst_ptrParam("dst_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &dst_ptrParam.value);
-        paramBuffer.addParam(std::move(dst_ptrParam));
     }
+    paramBuffer.addParam(std::move(dst_ptrParam));
 
+    ParamCapture src_ptrParam("src_ptr", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture src_ptrParam("src_ptr", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, src_ptr, &src_ptrParam.value);
-        CaptureEnqueueSVMMemcpy_src_ptr(isCallValid, command_queue, blocking_copy, dst_ptr, src_ptr,
-                                        size, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueSVMMemcpy_src_ptr(command_queue, blocking_copy, dst_ptr, src_ptr, size,
+                                        num_events_in_wait_list, event_wait_list, event,
                                         &src_ptrParam);
-        paramBuffer.addParam(std::move(src_ptrParam));
     }
     else
     {
-        ParamCapture src_ptrParam("src_ptr", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &src_ptrParam.value);
-        paramBuffer.addParam(std::move(src_ptrParam));
     }
+    paramBuffer.addParam(std::move(src_ptrParam));
 
     paramBuffer.addValueParam("size", ParamType::Tsize_t, size);
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueSVMMemcpy_event_wait_list(isCallValid, command_queue, blocking_copy, dst_ptr,
-                                                src_ptr, size, num_events_in_wait_list,
-                                                event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueSVMMemcpy_event_wait_list(command_queue, blocking_copy, dst_ptr, src_ptr,
+                                                size, num_events_in_wait_list, event_wait_list,
+                                                event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueSVMMemcpy_event(isCallValid, command_queue, blocking_copy, dst_ptr, src_ptr,
-                                      size, num_events_in_wait_list, event_wait_list, event,
-                                      &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueSVMMemcpy_event(command_queue, blocking_copy, dst_ptr, src_ptr, size,
+                                      num_events_in_wait_list, event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5806,78 +5344,70 @@ CallCapture CaptureEnqueueSVMMemFill(bool isCallValid,
 
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
 
+    ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, svm_ptr, &svm_ptrParam.value);
-        CaptureEnqueueSVMMemFill_svm_ptr(isCallValid, command_queue, svm_ptr, pattern, pattern_size,
-                                         size, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueSVMMemFill_svm_ptr(command_queue, svm_ptr, pattern, pattern_size, size,
+                                         num_events_in_wait_list, event_wait_list, event,
                                          &svm_ptrParam);
-        paramBuffer.addParam(std::move(svm_ptrParam));
     }
     else
     {
-        ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &svm_ptrParam.value);
-        paramBuffer.addParam(std::move(svm_ptrParam));
     }
+    paramBuffer.addParam(std::move(svm_ptrParam));
 
+    ParamCapture patternParam("pattern", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture patternParam("pattern", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, pattern, &patternParam.value);
-        CaptureEnqueueSVMMemFill_pattern(isCallValid, command_queue, svm_ptr, pattern, pattern_size,
-                                         size, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueSVMMemFill_pattern(command_queue, svm_ptr, pattern, pattern_size, size,
+                                         num_events_in_wait_list, event_wait_list, event,
                                          &patternParam);
-        paramBuffer.addParam(std::move(patternParam));
     }
     else
     {
-        ParamCapture patternParam("pattern", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &patternParam.value);
-        paramBuffer.addParam(std::move(patternParam));
     }
+    paramBuffer.addParam(std::move(patternParam));
 
     paramBuffer.addValueParam("pattern_size", ParamType::Tsize_t, pattern_size);
     paramBuffer.addValueParam("size", ParamType::Tsize_t, size);
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueSVMMemFill_event_wait_list(isCallValid, command_queue, svm_ptr, pattern,
-                                                 pattern_size, size, num_events_in_wait_list,
-                                                 event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueSVMMemFill_event_wait_list(command_queue, svm_ptr, pattern, pattern_size,
+                                                 size, num_events_in_wait_list, event_wait_list,
+                                                 event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueSVMMemFill_event(isCallValid, command_queue, svm_ptr, pattern, pattern_size,
-                                       size, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueSVMMemFill_event(command_queue, svm_ptr, pattern, pattern_size, size,
+                                       num_events_in_wait_list, event_wait_list, event,
                                        &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5903,60 +5433,53 @@ CallCapture CaptureEnqueueSVMMap(bool isCallValid,
     paramBuffer.addValueParam("blocking_map", ParamType::Tcl_bool, blocking_map);
     paramBuffer.addValueParam("flagsPacked", ParamType::TMapFlags, flagsPacked);
 
+    ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, svm_ptr, &svm_ptrParam.value);
-        CaptureEnqueueSVMMap_svm_ptr(isCallValid, command_queue, blocking_map, flagsPacked, svm_ptr,
-                                     size, num_events_in_wait_list, event_wait_list, event,
+        CaptureEnqueueSVMMap_svm_ptr(command_queue, blocking_map, flagsPacked, svm_ptr, size,
+                                     num_events_in_wait_list, event_wait_list, event,
                                      &svm_ptrParam);
-        paramBuffer.addParam(std::move(svm_ptrParam));
     }
     else
     {
-        ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &svm_ptrParam.value);
-        paramBuffer.addParam(std::move(svm_ptrParam));
     }
+    paramBuffer.addParam(std::move(svm_ptrParam));
 
     paramBuffer.addValueParam("size", ParamType::Tsize_t, size);
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueSVMMap_event_wait_list(isCallValid, command_queue, blocking_map, flagsPacked,
-                                             svm_ptr, size, num_events_in_wait_list,
-                                             event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueSVMMap_event_wait_list(command_queue, blocking_map, flagsPacked, svm_ptr,
+                                             size, num_events_in_wait_list, event_wait_list, event,
+                                             &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueSVMMap_event(isCallValid, command_queue, blocking_map, flagsPacked, svm_ptr,
-                                   size, num_events_in_wait_list, event_wait_list, event,
-                                   &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueSVMMap_event(command_queue, blocking_map, flagsPacked, svm_ptr, size,
+                                   num_events_in_wait_list, event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -5977,57 +5500,50 @@ CallCapture CaptureEnqueueSVMUnmap(bool isCallValid,
 
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
 
+    ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, svm_ptr, &svm_ptrParam.value);
-        CaptureEnqueueSVMUnmap_svm_ptr(isCallValid, command_queue, svm_ptr, num_events_in_wait_list,
+        CaptureEnqueueSVMUnmap_svm_ptr(command_queue, svm_ptr, num_events_in_wait_list,
                                        event_wait_list, event, &svm_ptrParam);
-        paramBuffer.addParam(std::move(svm_ptrParam));
     }
     else
     {
-        ParamCapture svm_ptrParam("svm_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &svm_ptrParam.value);
-        paramBuffer.addParam(std::move(svm_ptrParam));
     }
+    paramBuffer.addParam(std::move(svm_ptrParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueSVMUnmap_event_wait_list(isCallValid, command_queue, svm_ptr,
-                                               num_events_in_wait_list, event_wait_list, event,
-                                               &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueSVMUnmap_event_wait_list(command_queue, svm_ptr, num_events_in_wait_list,
+                                               event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueSVMUnmap_event(isCallValid, command_queue, svm_ptr, num_events_in_wait_list,
+        CaptureEnqueueSVMUnmap_event(command_queue, svm_ptr, num_events_in_wait_list,
                                      event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6066,37 +5582,33 @@ CallCapture CaptureGetDeviceAndHostTimer(bool isCallValid,
 
     paramBuffer.addValueParam("device", ParamType::Tcl_device_id, device);
 
+    ParamCapture device_timestampParam("device_timestamp", ParamType::Tcl_ulongPointer);
     if (isCallValid)
     {
-        ParamCapture device_timestampParam("device_timestamp", ParamType::Tcl_ulongPointer);
         InitParamValue(ParamType::Tcl_ulongPointer, device_timestamp, &device_timestampParam.value);
-        CaptureGetDeviceAndHostTimer_device_timestamp(isCallValid, device, device_timestamp,
-                                                      host_timestamp, &device_timestampParam);
-        paramBuffer.addParam(std::move(device_timestampParam));
+        CaptureGetDeviceAndHostTimer_device_timestamp(device, device_timestamp, host_timestamp,
+                                                      &device_timestampParam);
     }
     else
     {
-        ParamCapture device_timestampParam("device_timestamp", ParamType::Tcl_ulongPointer);
         InitParamValue(ParamType::Tcl_ulongPointer, static_cast<cl_ulong *>(nullptr),
                        &device_timestampParam.value);
-        paramBuffer.addParam(std::move(device_timestampParam));
     }
+    paramBuffer.addParam(std::move(device_timestampParam));
 
+    ParamCapture host_timestampParam("host_timestamp", ParamType::Tcl_ulongPointer);
     if (isCallValid)
     {
-        ParamCapture host_timestampParam("host_timestamp", ParamType::Tcl_ulongPointer);
         InitParamValue(ParamType::Tcl_ulongPointer, host_timestamp, &host_timestampParam.value);
-        CaptureGetDeviceAndHostTimer_host_timestamp(isCallValid, device, device_timestamp,
-                                                    host_timestamp, &host_timestampParam);
-        paramBuffer.addParam(std::move(host_timestampParam));
+        CaptureGetDeviceAndHostTimer_host_timestamp(device, device_timestamp, host_timestamp,
+                                                    &host_timestampParam);
     }
     else
     {
-        ParamCapture host_timestampParam("host_timestamp", ParamType::Tcl_ulongPointer);
         InitParamValue(ParamType::Tcl_ulongPointer, static_cast<cl_ulong *>(nullptr),
                        &host_timestampParam.value);
-        paramBuffer.addParam(std::move(host_timestampParam));
     }
+    paramBuffer.addParam(std::move(host_timestampParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6114,21 +5626,18 @@ CallCapture CaptureGetHostTimer(bool isCallValid,
 
     paramBuffer.addValueParam("device", ParamType::Tcl_device_id, device);
 
+    ParamCapture host_timestampParam("host_timestamp", ParamType::Tcl_ulongPointer);
     if (isCallValid)
     {
-        ParamCapture host_timestampParam("host_timestamp", ParamType::Tcl_ulongPointer);
         InitParamValue(ParamType::Tcl_ulongPointer, host_timestamp, &host_timestampParam.value);
-        CaptureGetHostTimer_host_timestamp(isCallValid, device, host_timestamp,
-                                           &host_timestampParam);
-        paramBuffer.addParam(std::move(host_timestampParam));
+        CaptureGetHostTimer_host_timestamp(device, host_timestamp, &host_timestampParam);
     }
     else
     {
-        ParamCapture host_timestampParam("host_timestamp", ParamType::Tcl_ulongPointer);
         InitParamValue(ParamType::Tcl_ulongPointer, static_cast<cl_ulong *>(nullptr),
                        &host_timestampParam.value);
-        paramBuffer.addParam(std::move(host_timestampParam));
     }
+    paramBuffer.addParam(std::move(host_timestampParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6148,38 +5657,33 @@ CallCapture CaptureCreateProgramWithIL(bool isCallValid,
 
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
 
+    ParamCapture ilParam("il", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture ilParam("il", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, il, &ilParam.value);
-        CaptureCreateProgramWithIL_il(isCallValid, context, il, length, errcode_ret, &ilParam);
-        paramBuffer.addParam(std::move(ilParam));
+        CaptureCreateProgramWithIL_il(context, il, length, errcode_ret, &ilParam);
     }
     else
     {
-        ParamCapture ilParam("il", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &ilParam.value);
-        paramBuffer.addParam(std::move(ilParam));
     }
+    paramBuffer.addParam(std::move(ilParam));
 
     paramBuffer.addValueParam("length", ParamType::Tsize_t, length);
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateProgramWithIL_errcode_ret(isCallValid, context, il, length, errcode_ret,
-                                               &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateProgramWithIL_errcode_ret(context, il, length, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_program);
     InitParamValue(ParamType::Tcl_program, returnValue, &returnValueCapture.value);
@@ -6197,20 +5701,18 @@ CallCapture CaptureCloneKernel(bool isCallValid,
 
     paramBuffer.addValueParam("source_kernel", ParamType::Tcl_kernel, source_kernel);
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCloneKernel_errcode_ret(isCallValid, source_kernel, errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCloneKernel_errcode_ret(source_kernel, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_kernel);
     InitParamValue(ParamType::Tcl_kernel, returnValue, &returnValueCapture.value);
@@ -6237,59 +5739,53 @@ CallCapture CaptureGetKernelSubGroupInfo(bool isCallValid,
     paramBuffer.addValueParam("param_namePacked", ParamType::TKernelSubGroupInfo, param_namePacked);
     paramBuffer.addValueParam("input_value_size", ParamType::Tsize_t, input_value_size);
 
+    ParamCapture input_valueParam("input_value", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture input_valueParam("input_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, input_value, &input_valueParam.value);
-        CaptureGetKernelSubGroupInfo_input_value(
-            isCallValid, kernel, device, param_namePacked, input_value_size, input_value,
-            param_value_size, param_value, param_value_size_ret, &input_valueParam);
-        paramBuffer.addParam(std::move(input_valueParam));
+        CaptureGetKernelSubGroupInfo_input_value(kernel, device, param_namePacked, input_value_size,
+                                                 input_value, param_value_size, param_value,
+                                                 param_value_size_ret, &input_valueParam);
     }
     else
     {
-        ParamCapture input_valueParam("input_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &input_valueParam.value);
-        paramBuffer.addParam(std::move(input_valueParam));
     }
+    paramBuffer.addParam(std::move(input_valueParam));
 
     paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
 
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
-        CaptureGetKernelSubGroupInfo_param_value(
-            isCallValid, kernel, device, param_namePacked, input_value_size, input_value,
-            param_value_size, param_value, param_value_size_ret, &param_valueParam);
-        paramBuffer.addParam(std::move(param_valueParam));
+        CaptureGetKernelSubGroupInfo_param_value(kernel, device, param_namePacked, input_value_size,
+                                                 input_value, param_value_size, param_value,
+                                                 param_value_size_ret, &param_valueParam);
     }
     else
     {
-        ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &param_valueParam.value);
-        paramBuffer.addParam(std::move(param_valueParam));
     }
+    paramBuffer.addParam(std::move(param_valueParam));
 
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
     if (isCallValid)
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
                        &param_value_size_retParam.value);
         CaptureGetKernelSubGroupInfo_param_value_size_ret(
-            isCallValid, kernel, device, param_namePacked, input_value_size, input_value,
-            param_value_size, param_value, param_value_size_ret, &param_value_size_retParam);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
+            kernel, device, param_namePacked, input_value_size, input_value, param_value_size,
+            param_value, param_value_size_ret, &param_value_size_retParam);
     }
     else
     {
-        ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
         InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
                        &param_value_size_retParam.value);
-        paramBuffer.addParam(std::move(param_value_size_retParam));
     }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6314,78 +5810,70 @@ CallCapture CaptureEnqueueSVMMigrateMem(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("num_svm_pointers", ParamType::Tcl_uint, num_svm_pointers);
 
+    ParamCapture svm_pointersParam("svm_pointers", ParamType::TvoidConstPointerPointer);
     if (isCallValid)
     {
-        ParamCapture svm_pointersParam("svm_pointers", ParamType::TvoidConstPointerPointer);
         InitParamValue(ParamType::TvoidConstPointerPointer, svm_pointers, &svm_pointersParam.value);
-        CaptureEnqueueSVMMigrateMem_svm_pointers(
-            isCallValid, command_queue, num_svm_pointers, svm_pointers, sizes, flagsPacked,
-            num_events_in_wait_list, event_wait_list, event, &svm_pointersParam);
-        paramBuffer.addParam(std::move(svm_pointersParam));
+        CaptureEnqueueSVMMigrateMem_svm_pointers(command_queue, num_svm_pointers, svm_pointers,
+                                                 sizes, flagsPacked, num_events_in_wait_list,
+                                                 event_wait_list, event, &svm_pointersParam);
     }
     else
     {
-        ParamCapture svm_pointersParam("svm_pointers", ParamType::TvoidConstPointerPointer);
         InitParamValue(ParamType::TvoidConstPointerPointer, static_cast<const void **>(nullptr),
                        &svm_pointersParam.value);
-        paramBuffer.addParam(std::move(svm_pointersParam));
     }
+    paramBuffer.addParam(std::move(svm_pointersParam));
 
+    ParamCapture sizesParam("sizes", ParamType::Tsize_tConstPointer);
     if (isCallValid)
     {
-        ParamCapture sizesParam("sizes", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, sizes, &sizesParam.value);
-        CaptureEnqueueSVMMigrateMem_sizes(isCallValid, command_queue, num_svm_pointers,
-                                          svm_pointers, sizes, flagsPacked, num_events_in_wait_list,
-                                          event_wait_list, event, &sizesParam);
-        paramBuffer.addParam(std::move(sizesParam));
+        CaptureEnqueueSVMMigrateMem_sizes(command_queue, num_svm_pointers, svm_pointers, sizes,
+                                          flagsPacked, num_events_in_wait_list, event_wait_list,
+                                          event, &sizesParam);
     }
     else
     {
-        ParamCapture sizesParam("sizes", ParamType::Tsize_tConstPointer);
         InitParamValue(ParamType::Tsize_tConstPointer, static_cast<const size_t *>(nullptr),
                        &sizesParam.value);
-        paramBuffer.addParam(std::move(sizesParam));
     }
+    paramBuffer.addParam(std::move(sizesParam));
 
     paramBuffer.addValueParam("flagsPacked", ParamType::TMemMigrationFlags, flagsPacked);
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
-        CaptureEnqueueSVMMigrateMem_event_wait_list(
-            isCallValid, command_queue, num_svm_pointers, svm_pointers, sizes, flagsPacked,
-            num_events_in_wait_list, event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+        CaptureEnqueueSVMMigrateMem_event_wait_list(command_queue, num_svm_pointers, svm_pointers,
+                                                    sizes, flagsPacked, num_events_in_wait_list,
+                                                    event_wait_list, event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueSVMMigrateMem_event(isCallValid, command_queue, num_svm_pointers,
-                                          svm_pointers, sizes, flagsPacked, num_events_in_wait_list,
-                                          event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueSVMMigrateMem_event(command_queue, num_svm_pointers, svm_pointers, sizes,
+                                          flagsPacked, num_events_in_wait_list, event_wait_list,
+                                          event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6406,39 +5894,34 @@ CallCapture CaptureSetProgramReleaseCallback(bool isCallValid,
 
     paramBuffer.addValueParam("program", ParamType::Tcl_program, program);
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
         InitParamValue(ParamType::Tcl_program_func_type, pfn_notify, &pfn_notifyParam.value);
-        CaptureSetProgramReleaseCallback_pfn_notify(isCallValid, program, pfn_notify, user_data,
+        CaptureSetProgramReleaseCallback_pfn_notify(program, pfn_notify, user_data,
                                                     &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_program_func_type);
         InitParamValue(
             ParamType::Tcl_program_func_type,
             static_cast<void(CL_CALLBACK *)(cl_program program, void *user_data)>(nullptr),
             &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureSetProgramReleaseCallback_user_data(isCallValid, program, pfn_notify, user_data,
-                                                   &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
+        CaptureSetProgramReleaseCallback_user_data(program, pfn_notify, user_data, &user_dataParam);
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6460,21 +5943,19 @@ CallCapture CaptureSetProgramSpecializationConstant(bool isCallValid,
     paramBuffer.addValueParam("spec_id", ParamType::Tcl_uint, spec_id);
     paramBuffer.addValueParam("spec_size", ParamType::Tsize_t, spec_size);
 
+    ParamCapture spec_valueParam("spec_value", ParamType::TvoidConstPointer);
     if (isCallValid)
     {
-        ParamCapture spec_valueParam("spec_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, spec_value, &spec_valueParam.value);
-        CaptureSetProgramSpecializationConstant_spec_value(isCallValid, program, spec_id, spec_size,
-                                                           spec_value, &spec_valueParam);
-        paramBuffer.addParam(std::move(spec_valueParam));
+        CaptureSetProgramSpecializationConstant_spec_value(program, spec_id, spec_size, spec_value,
+                                                           &spec_valueParam);
     }
     else
     {
-        ParamCapture spec_valueParam("spec_value", ParamType::TvoidConstPointer);
         InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
                        &spec_valueParam.value);
-        paramBuffer.addParam(std::move(spec_valueParam));
     }
+    paramBuffer.addParam(std::move(spec_valueParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6496,40 +5977,36 @@ CallCapture CaptureSetContextDestructorCallback(bool isCallValid,
 
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
 
+    ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_destructor_func_type);
     if (isCallValid)
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_destructor_func_type);
         InitParamValue(ParamType::Tcl_context_destructor_func_type, pfn_notify,
                        &pfn_notifyParam.value);
-        CaptureSetContextDestructorCallback_pfn_notify(isCallValid, context, pfn_notify, user_data,
+        CaptureSetContextDestructorCallback_pfn_notify(context, pfn_notify, user_data,
                                                        &pfn_notifyParam);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
     else
     {
-        ParamCapture pfn_notifyParam("pfn_notify", ParamType::Tcl_context_destructor_func_type);
         InitParamValue(
             ParamType::Tcl_context_destructor_func_type,
             static_cast<void(CL_CALLBACK *)(cl_context context, void *user_data)>(nullptr),
             &pfn_notifyParam.value);
-        paramBuffer.addParam(std::move(pfn_notifyParam));
     }
+    paramBuffer.addParam(std::move(pfn_notifyParam));
 
+    ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, user_data, &user_dataParam.value);
-        CaptureSetContextDestructorCallback_user_data(isCallValid, context, pfn_notify, user_data,
+        CaptureSetContextDestructorCallback_user_data(context, pfn_notify, user_data,
                                                       &user_dataParam);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
     else
     {
-        ParamCapture user_dataParam("user_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &user_dataParam.value);
-        paramBuffer.addParam(std::move(user_dataParam));
     }
+    paramBuffer.addParam(std::move(user_dataParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6551,57 +6028,50 @@ CallCapture CaptureCreateBufferWithProperties(bool isCallValid,
 
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
 
+    ParamCapture propertiesParam("properties", ParamType::Tcl_mem_propertiesConstPointer);
     if (isCallValid)
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_mem_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_mem_propertiesConstPointer, properties,
                        &propertiesParam.value);
-        CaptureCreateBufferWithProperties_properties(isCallValid, context, properties, flagsPacked,
-                                                     size, host_ptr, errcode_ret, &propertiesParam);
-        paramBuffer.addParam(std::move(propertiesParam));
+        CaptureCreateBufferWithProperties_properties(context, properties, flagsPacked, size,
+                                                     host_ptr, errcode_ret, &propertiesParam);
     }
     else
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_mem_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_mem_propertiesConstPointer,
                        static_cast<const cl_mem_properties *>(nullptr), &propertiesParam.value);
-        paramBuffer.addParam(std::move(propertiesParam));
     }
+    paramBuffer.addParam(std::move(propertiesParam));
 
     paramBuffer.addValueParam("flagsPacked", ParamType::TMemFlags, flagsPacked);
     paramBuffer.addValueParam("size", ParamType::Tsize_t, size);
 
+    ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, host_ptr, &host_ptrParam.value);
-        CaptureCreateBufferWithProperties_host_ptr(isCallValid, context, properties, flagsPacked,
-                                                   size, host_ptr, errcode_ret, &host_ptrParam);
-        paramBuffer.addParam(std::move(host_ptrParam));
+        CaptureCreateBufferWithProperties_host_ptr(context, properties, flagsPacked, size, host_ptr,
+                                                   errcode_ret, &host_ptrParam);
     }
     else
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &host_ptrParam.value);
-        paramBuffer.addParam(std::move(host_ptrParam));
     }
+    paramBuffer.addParam(std::move(host_ptrParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateBufferWithProperties_errcode_ret(isCallValid, context, properties, flagsPacked,
-                                                      size, host_ptr, errcode_ret,
-                                                      &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateBufferWithProperties_errcode_ret(context, properties, flagsPacked, size,
+                                                      host_ptr, errcode_ret, &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
     InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
@@ -6624,99 +6094,156 @@ CallCapture CaptureCreateImageWithProperties(bool isCallValid,
 
     paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
 
+    ParamCapture propertiesParam("properties", ParamType::Tcl_mem_propertiesConstPointer);
     if (isCallValid)
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_mem_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_mem_propertiesConstPointer, properties,
                        &propertiesParam.value);
-        CaptureCreateImageWithProperties_properties(isCallValid, context, properties, flagsPacked,
-                                                    image_format, image_desc, host_ptr, errcode_ret,
+        CaptureCreateImageWithProperties_properties(context, properties, flagsPacked, image_format,
+                                                    image_desc, host_ptr, errcode_ret,
                                                     &propertiesParam);
-        paramBuffer.addParam(std::move(propertiesParam));
     }
     else
     {
-        ParamCapture propertiesParam("properties", ParamType::Tcl_mem_propertiesConstPointer);
         InitParamValue(ParamType::Tcl_mem_propertiesConstPointer,
                        static_cast<const cl_mem_properties *>(nullptr), &propertiesParam.value);
-        paramBuffer.addParam(std::move(propertiesParam));
     }
+    paramBuffer.addParam(std::move(propertiesParam));
 
     paramBuffer.addValueParam("flagsPacked", ParamType::TMemFlags, flagsPacked);
 
+    ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
     if (isCallValid)
     {
-        ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
         InitParamValue(ParamType::Tcl_image_formatConstPointer, image_format,
                        &image_formatParam.value);
-        CaptureCreateImageWithProperties_image_format(isCallValid, context, properties, flagsPacked,
+        CaptureCreateImageWithProperties_image_format(context, properties, flagsPacked,
                                                       image_format, image_desc, host_ptr,
                                                       errcode_ret, &image_formatParam);
-        paramBuffer.addParam(std::move(image_formatParam));
     }
     else
     {
-        ParamCapture image_formatParam("image_format", ParamType::Tcl_image_formatConstPointer);
         InitParamValue(ParamType::Tcl_image_formatConstPointer,
                        static_cast<const cl_image_format *>(nullptr), &image_formatParam.value);
-        paramBuffer.addParam(std::move(image_formatParam));
     }
+    paramBuffer.addParam(std::move(image_formatParam));
 
+    ParamCapture image_descParam("image_desc", ParamType::Tcl_image_descConstPointer);
     if (isCallValid)
     {
-        ParamCapture image_descParam("image_desc", ParamType::Tcl_image_descConstPointer);
         InitParamValue(ParamType::Tcl_image_descConstPointer, image_desc, &image_descParam.value);
-        CaptureCreateImageWithProperties_image_desc(isCallValid, context, properties, flagsPacked,
-                                                    image_format, image_desc, host_ptr, errcode_ret,
+        CaptureCreateImageWithProperties_image_desc(context, properties, flagsPacked, image_format,
+                                                    image_desc, host_ptr, errcode_ret,
                                                     &image_descParam);
-        paramBuffer.addParam(std::move(image_descParam));
     }
     else
     {
-        ParamCapture image_descParam("image_desc", ParamType::Tcl_image_descConstPointer);
         InitParamValue(ParamType::Tcl_image_descConstPointer,
                        static_cast<const cl_image_desc *>(nullptr), &image_descParam.value);
-        paramBuffer.addParam(std::move(image_descParam));
     }
+    paramBuffer.addParam(std::move(image_descParam));
 
+    ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, host_ptr, &host_ptrParam.value);
-        CaptureCreateImageWithProperties_host_ptr(isCallValid, context, properties, flagsPacked,
-                                                  image_format, image_desc, host_ptr, errcode_ret,
+        CaptureCreateImageWithProperties_host_ptr(context, properties, flagsPacked, image_format,
+                                                  image_desc, host_ptr, errcode_ret,
                                                   &host_ptrParam);
-        paramBuffer.addParam(std::move(host_ptrParam));
     }
     else
     {
-        ParamCapture host_ptrParam("host_ptr", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &host_ptrParam.value);
-        paramBuffer.addParam(std::move(host_ptrParam));
     }
+    paramBuffer.addParam(std::move(host_ptrParam));
 
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
     if (isCallValid)
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
-        CaptureCreateImageWithProperties_errcode_ret(isCallValid, context, properties, flagsPacked,
-                                                     image_format, image_desc, host_ptr,
-                                                     errcode_ret, &errcode_retParam);
-        paramBuffer.addParam(std::move(errcode_retParam));
+        CaptureCreateImageWithProperties_errcode_ret(context, properties, flagsPacked, image_format,
+                                                     image_desc, host_ptr, errcode_ret,
+                                                     &errcode_retParam);
     }
     else
     {
-        ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
         InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
                        &errcode_retParam.value);
-        paramBuffer.addParam(std::move(errcode_retParam));
     }
+    paramBuffer.addParam(std::move(errcode_retParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
     InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
     paramBuffer.addReturnValue(std::move(returnValueCapture));
 
     return CallCapture(angle::EntryPoint::CLCreateImageWithProperties, std::move(paramBuffer));
+}
+
+// cl_arm_import_memory
+CallCapture CaptureImportMemoryARM(bool isCallValid,
+                                   cl_context context,
+                                   MemFlags flagsPacked,
+                                   const cl_import_properties_arm *properties,
+                                   void *memory,
+                                   size_t size,
+                                   cl_int *errcode_ret,
+                                   cl_mem returnValue)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("context", ParamType::Tcl_context, context);
+    paramBuffer.addValueParam("flagsPacked", ParamType::TMemFlags, flagsPacked);
+
+    ParamCapture propertiesParam("properties", ParamType::Tcl_import_properties_armConstPointer);
+    if (isCallValid)
+    {
+        InitParamValue(ParamType::Tcl_import_properties_armConstPointer, properties,
+                       &propertiesParam.value);
+        CaptureImportMemoryARM_properties(context, flagsPacked, properties, memory, size,
+                                          errcode_ret, &propertiesParam);
+    }
+    else
+    {
+        InitParamValue(ParamType::Tcl_import_properties_armConstPointer,
+                       static_cast<const cl_import_properties_arm *>(nullptr),
+                       &propertiesParam.value);
+    }
+    paramBuffer.addParam(std::move(propertiesParam));
+
+    ParamCapture memoryParam("memory", ParamType::TvoidPointer);
+    if (isCallValid)
+    {
+        InitParamValue(ParamType::TvoidPointer, memory, &memoryParam.value);
+        CaptureImportMemoryARM_memory(context, flagsPacked, properties, memory, size, errcode_ret,
+                                      &memoryParam);
+    }
+    else
+    {
+        InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &memoryParam.value);
+    }
+    paramBuffer.addParam(std::move(memoryParam));
+
+    paramBuffer.addValueParam("size", ParamType::Tsize_t, size);
+
+    ParamCapture errcode_retParam("errcode_ret", ParamType::Tcl_intPointer);
+    if (isCallValid)
+    {
+        InitParamValue(ParamType::Tcl_intPointer, errcode_ret, &errcode_retParam.value);
+        CaptureImportMemoryARM_errcode_ret(context, flagsPacked, properties, memory, size,
+                                           errcode_ret, &errcode_retParam);
+    }
+    else
+    {
+        InitParamValue(ParamType::Tcl_intPointer, static_cast<cl_int *>(nullptr),
+                       &errcode_retParam.value);
+    }
+    paramBuffer.addParam(std::move(errcode_retParam));
+
+    ParamCapture returnValueCapture("returnValue", ParamType::Tcl_mem);
+    InitParamValue(ParamType::Tcl_mem, returnValue, &returnValueCapture.value);
+    paramBuffer.addReturnValue(std::move(returnValueCapture));
+
+    return CallCapture(angle::EntryPoint::CLImportMemoryARM, std::move(paramBuffer));
 }
 
 // cl_khr_external_memory
@@ -6734,60 +6261,54 @@ CallCapture CaptureEnqueueAcquireExternalMemObjectsKHR(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("num_mem_objects", ParamType::Tcl_uint, num_mem_objects);
 
+    ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
     if (isCallValid)
     {
-        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
         InitParamValue(ParamType::Tcl_memConstPointer, mem_objects, &mem_objectsParam.value);
         CaptureEnqueueAcquireExternalMemObjectsKHR_mem_objects(
-            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
-            event_wait_list, event, &mem_objectsParam);
-        paramBuffer.addParam(std::move(mem_objectsParam));
+            command_queue, num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list,
+            event, &mem_objectsParam);
     }
     else
     {
-        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
         InitParamValue(ParamType::Tcl_memConstPointer, static_cast<const cl_mem *>(nullptr),
                        &mem_objectsParam.value);
-        paramBuffer.addParam(std::move(mem_objectsParam));
     }
+    paramBuffer.addParam(std::move(mem_objectsParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueAcquireExternalMemObjectsKHR_event_wait_list(
-            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
-            event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+            command_queue, num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list,
+            event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueAcquireExternalMemObjectsKHR_event(
-            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
-            event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueAcquireExternalMemObjectsKHR_event(command_queue, num_mem_objects,
+                                                         mem_objects, num_events_in_wait_list,
+                                                         event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6811,60 +6332,54 @@ CallCapture CaptureEnqueueReleaseExternalMemObjectsKHR(bool isCallValid,
     paramBuffer.addValueParam("command_queue", ParamType::Tcl_command_queue, command_queue);
     paramBuffer.addValueParam("num_mem_objects", ParamType::Tcl_uint, num_mem_objects);
 
+    ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
     if (isCallValid)
     {
-        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
         InitParamValue(ParamType::Tcl_memConstPointer, mem_objects, &mem_objectsParam.value);
         CaptureEnqueueReleaseExternalMemObjectsKHR_mem_objects(
-            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
-            event_wait_list, event, &mem_objectsParam);
-        paramBuffer.addParam(std::move(mem_objectsParam));
+            command_queue, num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list,
+            event, &mem_objectsParam);
     }
     else
     {
-        ParamCapture mem_objectsParam("mem_objects", ParamType::Tcl_memConstPointer);
         InitParamValue(ParamType::Tcl_memConstPointer, static_cast<const cl_mem *>(nullptr),
                        &mem_objectsParam.value);
-        paramBuffer.addParam(std::move(mem_objectsParam));
     }
+    paramBuffer.addParam(std::move(mem_objectsParam));
 
     paramBuffer.addValueParam("num_events_in_wait_list", ParamType::Tcl_uint,
                               num_events_in_wait_list);
 
+    ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
     if (isCallValid)
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, event_wait_list,
                        &event_wait_listParam.value);
         CaptureEnqueueReleaseExternalMemObjectsKHR_event_wait_list(
-            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
-            event_wait_list, event, &event_wait_listParam);
-        paramBuffer.addParam(std::move(event_wait_listParam));
+            command_queue, num_mem_objects, mem_objects, num_events_in_wait_list, event_wait_list,
+            event, &event_wait_listParam);
     }
     else
     {
-        ParamCapture event_wait_listParam("event_wait_list", ParamType::Tcl_eventConstPointer);
         InitParamValue(ParamType::Tcl_eventConstPointer, static_cast<const cl_event *>(nullptr),
                        &event_wait_listParam.value);
-        paramBuffer.addParam(std::move(event_wait_listParam));
     }
+    paramBuffer.addParam(std::move(event_wait_listParam));
 
+    ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
     if (isCallValid)
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, event, &eventParam.value);
-        CaptureEnqueueReleaseExternalMemObjectsKHR_event(
-            isCallValid, command_queue, num_mem_objects, mem_objects, num_events_in_wait_list,
-            event_wait_list, event, &eventParam);
-        paramBuffer.addParam(std::move(eventParam));
+        CaptureEnqueueReleaseExternalMemObjectsKHR_event(command_queue, num_mem_objects,
+                                                         mem_objects, num_events_in_wait_list,
+                                                         event_wait_list, event, &eventParam);
     }
     else
     {
-        ParamCapture eventParam("event", ParamType::Tcl_eventPointer);
         InitParamValue(ParamType::Tcl_eventPointer, static_cast<cl_event *>(nullptr),
                        &eventParam.value);
-        paramBuffer.addParam(std::move(eventParam));
     }
+    paramBuffer.addParam(std::move(eventParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6885,37 +6400,33 @@ CallCapture CaptureIcdGetPlatformIDsKHR(bool isCallValid,
 
     paramBuffer.addValueParam("num_entries", ParamType::Tcl_uint, num_entries);
 
+    ParamCapture platformsParam("platforms", ParamType::Tcl_platform_idPointer);
     if (isCallValid)
     {
-        ParamCapture platformsParam("platforms", ParamType::Tcl_platform_idPointer);
         InitParamValue(ParamType::Tcl_platform_idPointer, platforms, &platformsParam.value);
-        CaptureIcdGetPlatformIDsKHR_platforms(isCallValid, num_entries, platforms, num_platforms,
+        CaptureIcdGetPlatformIDsKHR_platforms(num_entries, platforms, num_platforms,
                                               &platformsParam);
-        paramBuffer.addParam(std::move(platformsParam));
     }
     else
     {
-        ParamCapture platformsParam("platforms", ParamType::Tcl_platform_idPointer);
         InitParamValue(ParamType::Tcl_platform_idPointer, static_cast<cl_platform_id *>(nullptr),
                        &platformsParam.value);
-        paramBuffer.addParam(std::move(platformsParam));
     }
+    paramBuffer.addParam(std::move(platformsParam));
 
+    ParamCapture num_platformsParam("num_platforms", ParamType::Tcl_uintPointer);
     if (isCallValid)
     {
-        ParamCapture num_platformsParam("num_platforms", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, num_platforms, &num_platformsParam.value);
-        CaptureIcdGetPlatformIDsKHR_num_platforms(isCallValid, num_entries, platforms,
-                                                  num_platforms, &num_platformsParam);
-        paramBuffer.addParam(std::move(num_platformsParam));
+        CaptureIcdGetPlatformIDsKHR_num_platforms(num_entries, platforms, num_platforms,
+                                                  &num_platformsParam);
     }
     else
     {
-        ParamCapture num_platformsParam("num_platforms", ParamType::Tcl_uintPointer);
         InitParamValue(ParamType::Tcl_uintPointer, static_cast<cl_uint *>(nullptr),
                        &num_platformsParam.value);
-        paramBuffer.addParam(std::move(num_platformsParam));
     }
+    paramBuffer.addParam(std::move(num_platformsParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
@@ -6933,21 +6444,18 @@ CallCapture CaptureIcdGetFunctionAddressForPlatformKHR(bool isCallValid,
 
     paramBuffer.addValueParam("platform", ParamType::Tcl_platform_id, platform);
 
+    ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
     if (isCallValid)
     {
-        ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, func_name, &func_nameParam.value);
-        CaptureIcdGetFunctionAddressForPlatformKHR_func_name(isCallValid, platform, func_name,
-                                                             &func_nameParam);
-        paramBuffer.addParam(std::move(func_nameParam));
+        CaptureIcdGetFunctionAddressForPlatformKHR_func_name(platform, func_name, &func_nameParam);
     }
     else
     {
-        ParamCapture func_nameParam("func_name", ParamType::TcharConstPointer);
         InitParamValue(ParamType::TcharConstPointer, static_cast<const char *>(nullptr),
                        &func_nameParam.value);
-        paramBuffer.addParam(std::move(func_nameParam));
     }
+    paramBuffer.addParam(std::move(func_nameParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::TvoidPointer);
     InitParamValue(ParamType::TvoidPointer, returnValue, &returnValueCapture.value);
@@ -6966,21 +6474,19 @@ CallCapture CaptureIcdSetPlatformDispatchDataKHR(bool isCallValid,
 
     paramBuffer.addValueParam("platform", ParamType::Tcl_platform_id, platform);
 
+    ParamCapture dispatch_dataParam("dispatch_data", ParamType::TvoidPointer);
     if (isCallValid)
     {
-        ParamCapture dispatch_dataParam("dispatch_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, dispatch_data, &dispatch_dataParam.value);
-        CaptureIcdSetPlatformDispatchDataKHR_dispatch_data(isCallValid, platform, dispatch_data,
+        CaptureIcdSetPlatformDispatchDataKHR_dispatch_data(platform, dispatch_data,
                                                            &dispatch_dataParam);
-        paramBuffer.addParam(std::move(dispatch_dataParam));
     }
     else
     {
-        ParamCapture dispatch_dataParam("dispatch_data", ParamType::TvoidPointer);
         InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
                        &dispatch_dataParam.value);
-        paramBuffer.addParam(std::move(dispatch_dataParam));
     }
+    paramBuffer.addParam(std::move(dispatch_dataParam));
 
     ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
     InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);

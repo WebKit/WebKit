@@ -98,7 +98,6 @@ angle_unittests_compiler_tests_sources = [
   "compiler_tests/GeometryShader_test.cpp",
   "compiler_tests/GlFragDataNotModified_test.cpp",
   "compiler_tests/ImmutableString_test.cpp",
-  "compiler_tests/InitOutputVariables_test.cpp",
   "compiler_tests/IntermNode_test.cpp",
   "compiler_tests/NV_draw_buffers_test.cpp",
   "compiler_tests/OVR_multiview2_test.cpp",
@@ -145,13 +144,6 @@ angle_unittests_msl_sources = [
   "../common/apple/ObjCPtr_test.mm",
   "../tests/compiler_tests/MSLOutput_test.cpp",
 ]
-
-# TODO(crbug.com/426055001): EnsureLoopForwardProgressTest failed on iOS, where
-# GLSL is not enabled.
-if (angle_enable_glsl) {
-  angle_unittests_msl_sources +=
-      [ "../tests/compiler_tests/EnsureLoopForwardProgress_test.cpp" ]
-}
 
 angle_unittests_wgsl_sources = [ "../tests/compiler_tests/WGSLOutput_test.cpp" ]
 

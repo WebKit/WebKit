@@ -15,6 +15,30 @@ mod ffi {
     // TODO(http://anglebug.com/349994211): equivalent to ShBuiltInResources, or at least the parts that the compiler really uses:
     // add as needed.
 
+    // Matching ShShaderOutput
+    #[derive(Copy, Clone)]
+    #[repr(u32)]
+    enum OutputLanguage {
+        Null,
+        Essl,
+        GlslCompatibility,
+        Glsl130,
+        Glsl140,
+        Glsl150Core,
+        Glsl330Core,
+        Glsl400Core,
+        Glsl410Core,
+        Glsl420Core,
+        Glsl430Core,
+        Glsl440Core,
+        Glsl450Core,
+        Hlsl3,
+        Hlsl41,
+        Spirv,
+        Msl,
+        Wgsl,
+    }
+
     // List of enabled extensions
     struct ExtensionsEnabled {
         ANDROID_extension_pack_es31a: bool,
@@ -87,10 +111,20 @@ mod ffi {
 
         // Flags controlling the output:
 
-        // Whether this is an ES1 shader.  This is used while the output is AST.  Eventually, an
-        // enum equivalent to ShShaderOutput should be used to instead indicate what the _output_
-        // version is, not the input.
+        // What is the output of the compiler (SPIR-V, GLSL, WGSL, etc).
+        output: OutputLanguage,
+        // Whether this is an ES1 shader.  This is used while the output is AST.  Currently, the
+        // ESSL output always matches the input shader version.  Once the ESSL output is made
+        // independent (for example outputting ESSL 300 even if the input is ESSL 100), then the
+        // _output_ version should be used by the generator.
         is_es1: bool,
+
+        // Whether uninitialized local and global variables should be zero-initialized.
+        initialize_uninitialized_variables: bool,
+        // Whether loops can be used when zero-initializing variables.
+        loops_allowed_when_initializing_variables: bool,
+        // Whether non-const variables in global scope can have an initializer
+        initializer_allowed_on_non_constant_global_variables: bool,
         // TODO(http://anglebug.com/349994211): equivalent to ShCompileOptions flags
     }
 
@@ -146,6 +180,7 @@ mod ffi {
 }
 
 pub use ffi::CompileOptions as Options;
+pub use ffi::OutputLanguage;
 
 unsafe fn generate_ast(
     mut ir: Box<IR>,
@@ -156,7 +191,10 @@ unsafe fn generate_ast(
     unsafe { ffi::set_global_pool_allocator(allocator) };
 
     // Apply transforms shared by multiple generators:
-    common_transforms(&mut ir, options);
+    common_pre_variable_collection_transforms(&mut ir, options);
+    // TODO(http://anglebug.com/349994211): Run variable collection (reflection info) in between
+    // these two transforms.
+    common_post_variable_collection_transforms(&mut ir, options);
 
     // Passes required before AST can be generated:
     transform::dealias::run(&mut ir);
@@ -169,7 +207,7 @@ unsafe fn generate_ast(
     ffi::Output { ast, variables: vec![] }
 }
 
-fn common_transforms(ir: &mut IR, options: &Options) {
+fn common_pre_variable_collection_transforms(ir: &mut IR, options: &Options) {
     // Turn |inout| variables that are never read from into |out| before collecting variables and
     // before PLS uses them.
     if ir.meta.get_shader_type() == ShaderType::Fragment
@@ -179,10 +217,50 @@ fn common_transforms(ir: &mut IR, options: &Options) {
     {
         transform::remove_unused_framebuffer_fetch::run(ir);
     }
+}
 
+fn common_post_variable_collection_transforms(ir: &mut IR, options: &Options) {
     // Basic dead-code-elimination to avoid outputting variables, constants and types that are not
     // used by the shader.
     transform::prune_unused_variables::run(ir);
+
+    // Run after unused variables are removed, initialize local and output variables if necessary.
+    if options.initialize_uninitialized_variables {
+        let transform_options = transform::initialize_uninitialized_variables::Options {
+            loops_allowed_when_initializing_variables: options
+                .loops_allowed_when_initializing_variables,
+            initializer_allowed_on_non_constant_global_variables: options
+                .initializer_allowed_on_non_constant_global_variables,
+        };
+        transform::initialize_uninitialized_variables::run(ir, &transform_options);
+    }
+
+    // Note: this is a per-generator transformation, not really "common", so it should be moved to
+    // the right section when the IR part of the compilation actually starts to deviate per
+    // generator.  For now, this is run to test the transformation, with a future change calling it
+    // earlier (pre variable collection) for Pixel Local Storage, and later for the rest of the
+    // options.
+    {
+        let transform_options = transform::monomorphize_unsupported_functions::Options {
+            // Samplers in structs are unsupported by most generators.
+            // TODO(http://anglebug.com/349994211): The HLSL generator should also take advantage
+            // of this transformation, instead of dealing with samplers-in-structs independently.
+            struct_containing_samplers: matches!(
+                options.output,
+                OutputLanguage::Spirv | OutputLanguage::Msl | OutputLanguage::Wgsl
+            ),
+            // http://anglebug.com/42265954: The ESSL spec has a bug with images as function
+            // arguments. The recommended workaround is to inline functions that accept image
+            // arguments.
+            image: options.shader_version >= 310,
+            atomic_counter: options.shader_version >= 310
+                && matches!(options.output, OutputLanguage::Spirv),
+            array_of_array_of_sampler_or_image: options.shader_version >= 310
+                && matches!(options.output, OutputLanguage::Spirv),
+            pixel_local_storage: false,
+        };
+        transform::monomorphize_unsupported_functions::run(ir, &transform_options);
+    }
 }
 
 fn initialize_global_pool_index_workaround() {

@@ -260,6 +260,11 @@ std::string UpdateAliasedShaderAttributes(std::string shaderSourceIn,
     std::array<uint8_t, gl::MAX_VERTEX_ATTRIBS> maxComponents{};
     for (auto &attribute : executable.getProgramInputs())
     {
+        if (attribute.isBuiltIn())
+        {
+            continue;
+        }
+
         const int location       = attribute.getLocation();
         const int registers      = gl::VariableRegisterCount(attribute.getType());
         const uint8_t components = gl::VariableColumnCount(attribute.getType());
@@ -274,6 +279,11 @@ std::string UpdateAliasedShaderAttributes(std::string shaderSourceIn,
     std::ostringstream stream;
     for (auto &attribute : executable.getProgramInputs())
     {
+        if (attribute.isBuiltIn())
+        {
+            continue;
+        }
+
         const int location       = attribute.getLocation();
         const int registers      = gl::VariableRegisterCount(attribute.getType());
         const uint8_t components = gl::VariableColumnCount(attribute.getType());
@@ -329,6 +339,11 @@ std::string updateShaderAttributes(std::string shaderSourceIn,
     std::unordered_map<std::string, uint32_t> attributeBindings;
     for (auto &attribute : programAttributes)
     {
+        if (attribute.isBuiltIn())
+        {
+            continue;
+        }
+
         const int registers = gl::VariableRegisterCount(attribute.getType());
         for (int i = 0; i < registers; i++)
         {

@@ -23811,7 +23811,7 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
             ->shareConstPointer(unionArray);
     }
     TType *type_gl_FragData = new TType(EbtFloat, EbpMedium, EvqFragData, 4);
-    if (spec != SH_WEBGL2_SPEC && spec != SH_WEBGL3_SPEC)
+    if (spec != SH_WEBGL2_SPEC)
     {
         type_gl_FragData->makeArray(resources.MaxDrawBuffers);
     }

@@ -862,42 +862,6 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
     }
 }
 
-// ProvokingVertexPipelineDesc
-ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc()
-{
-    memset(this, 0, sizeof(*this));
-}
-ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc(
-    const ProvokingVertexComputePipelineDesc &src)
-{
-    memcpy(this, &src, sizeof(*this));
-}
-ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc(
-    ProvokingVertexComputePipelineDesc &&src)
-{
-    memcpy(this, &src, sizeof(*this));
-}
-ProvokingVertexComputePipelineDesc &ProvokingVertexComputePipelineDesc::operator=(
-    const ProvokingVertexComputePipelineDesc &src)
-{
-    memcpy(this, &src, sizeof(*this));
-    return *this;
-}
-bool ProvokingVertexComputePipelineDesc::operator==(
-    const ProvokingVertexComputePipelineDesc &rhs) const
-{
-    return memcmp(this, &rhs, sizeof(*this)) == 0;
-}
-bool ProvokingVertexComputePipelineDesc::operator!=(
-    const ProvokingVertexComputePipelineDesc &rhs) const
-{
-    return !(*this == rhs);
-}
-size_t ProvokingVertexComputePipelineDesc::hash() const
-{
-    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
-}
-
 // StateCache implementation
 StateCache::StateCache(const angle::FeaturesMtl &features) : mFeatures(features) {}
 

@@ -142,6 +142,11 @@ struct Limitations
     // TODO(http://anglebug.com/42263785): add validation code to front-end.
     bool noShadowSamplerCompareModeNone = false;
 
+    // Metal [[raster_order_group()]] does not work for read_write textures on AMD when the render
+    // pass doesn't have a color attachment on slot 0.
+    // http://anglebug.com/42266263
+    bool noRasterOrderGroupWithoutAttachmentZero = false;
+
     // PVRTC1 textures must be squares.
     bool squarePvrtc1 = false;
 

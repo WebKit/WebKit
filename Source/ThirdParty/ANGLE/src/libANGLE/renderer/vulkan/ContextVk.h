@@ -580,6 +580,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                UniqueSerial imageSiblingSerial)
     {
         ASSERT(mRenderPassCommands->started());
+        if (image && image->useTileMemory())
+        {
+            addImageWithTileMemory(image);
+        }
         mRenderPassCommands->addDepthStencilResolveAttachment(
             image, view, aspects, level, layerStart, layerCount, imageSiblingSerial);
     }
@@ -891,6 +895,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     bool isImageWithTileMemoryFinalized(const vk::ImageHelper *image) const;
     void addImageWithTileMemory(vk::ImageHelper *imageToAdd);
     void removeImageWithTileMemory(const vk::ImageHelper *imageToRemove);
+
+    // Restore all graphics state based on current gl::State.
+    void restoreAllGraphicsState();
+    bool hasActiveRenderPassQuery() const { return mActiveRenderPassQueryBitmask.any(); }
 
   private:
     // Dirty bits.
@@ -1471,6 +1479,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // - Occlusion queries
     // - Transform feedback queries, if not emulated
     gl::QueryTypeMap<QueryVk *> mActiveRenderPassQueries;
+    gl::QueryTypeBitSet mActiveRenderPassQueryBitmask;
 
     // Dirty bits.
     DirtyBits mGraphicsDirtyBits;

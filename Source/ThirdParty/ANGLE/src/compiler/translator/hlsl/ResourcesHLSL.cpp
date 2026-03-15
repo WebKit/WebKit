@@ -583,11 +583,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
                                                 &groupTextureRegisterIndex);
         }
         mReadonlyImageCount = groupTextureRegisterIndex - mReadonlyImage2DRegisterIndex;
-        if (mReadonlyImageCount)
-        {
-            out << "static const uint readonlyImageIndexStart = " << mReadonlyImage2DRegisterIndex
-                << ";\n";
-        }
 
         // Reserve u type register for writable image2D variables.
         mImage2DRegisterIndex = mUAVRegister;
@@ -601,10 +596,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
                                         &groupRWTextureRegisterIndex);
         }
         mImageCount = groupRWTextureRegisterIndex - mImage2DRegisterIndex;
-        if (mImageCount)
-        {
-            out << "static const uint imageIndexStart = " << mImage2DRegisterIndex << ";\n";
-        }
     }
 }
 
@@ -622,31 +613,6 @@ void ResourcesHLSL::samplerMetadataUniforms(TInfoSinkBase &out, unsigned int reg
                "    };\n"
                "    SamplerMetadata samplerMetadata["
             << mSamplerCount << "] : packoffset(c" << regIndex << ");\n";
-    }
-}
-
-void ResourcesHLSL::imageMetadataUniforms(TInfoSinkBase &out, unsigned int regIndex)
-{
-    if (mReadonlyImageCount > 0 || mImageCount > 0)
-    {
-        out << "    struct ImageMetadata\n"
-               "    {\n"
-               "        int layer;\n"
-               "        uint level;\n"
-               "        int2 padding;\n"
-               "    };\n";
-
-        if (mReadonlyImageCount > 0)
-        {
-            out << "    ImageMetadata readonlyImageMetadata[" << mReadonlyImageCount
-                << "] : packoffset(c" << regIndex << ");\n";
-        }
-
-        if (mImageCount > 0)
-        {
-            out << "    ImageMetadata imageMetadata[" << mImageCount << "] : packoffset(c"
-                << regIndex + mReadonlyImageCount << ");\n";
-        }
     }
 }
 

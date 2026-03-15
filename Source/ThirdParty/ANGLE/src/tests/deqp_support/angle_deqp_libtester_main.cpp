@@ -85,7 +85,7 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc,
     }
     catch (const std::exception &e)
     {
-        tcu::die("%s", e.what());
+        ANGLE_UNSAFE_TODO(tcu::die("%s", e.what()));
         return false;
     }
 
@@ -114,7 +114,7 @@ ANGLE_LIBTESTER_EXPORT int deqp_libtester_main(int argc, const char *argv[])
     catch (const std::exception &e)
     {
         deqp_libtester_shutdown_platform();
-        tcu::die("%s", e.what());
+        ANGLE_UNSAFE_TODO(tcu::die("%s", e.what()));
     }
 
     deqp_libtester_shutdown_platform();

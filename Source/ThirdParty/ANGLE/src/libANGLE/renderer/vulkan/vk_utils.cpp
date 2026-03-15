@@ -455,7 +455,6 @@ uint32_t MemoryProperties::findTileMemoryTypeIndex() const
             // There should be only one tile memory heap
             ASSERT(tileMemoryHeapIndex == kInvalidMemoryHeapIndex);
             tileMemoryHeapIndex = heapIndex;
-            break;
         }
     }
 
@@ -470,7 +469,6 @@ uint32_t MemoryProperties::findTileMemoryTypeIndex() const
                 // There should be only one memoryTypeIndex that matches the tile memory heap
                 ASSERT(tileMemoryTypeIndex == kInvalidMemoryTypeIndex);
                 tileMemoryTypeIndex = memoryTypeIndex;
-                break;
             }
         }
     }
@@ -694,7 +692,7 @@ VkResult AllocateImageMemoryFromTileHeap(ErrorContext *context,
     DeviceScoped<DeviceMemory> deviceMemory(device);
     VK_RESULT_TRY(deviceMemory.get().allocate(device, allocInfo));
 
-    VK_RESULT_TRY(image->bindMemory(device, *deviceMemoryOut));
+    VK_RESULT_TRY(image->bindMemory(device, deviceMemory.get()));
 
     renderer->onMemoryAlloc(memoryAllocationType, allocInfo.allocationSize, tileMemoryTypeIndex,
                             deviceMemoryOut->getHandle());

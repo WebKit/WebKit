@@ -3296,14 +3296,18 @@ const void *GraphicsPipelineDesc::getPipelineSubsetMemory(GraphicsPipelineSubset
                       sizeof(PackedVertexInputAttributes) ==
                   sizeof(GraphicsPipelineDesc));
 
+    // Vertex input dynamic state and vertex input binding stride should not be enabled at the same
+    // time. It is preferable to use vertex input over binding stride.
+    ASSERT(!mVertexInput.inputAssembly.bits.useVertexInputBindingStrideDynamicState ||
+           !mVertexInput.inputAssembly.bits.useVertexInputDynamicState);
     size_t vertexInputReduceSize = 0;
-    if (mVertexInput.inputAssembly.bits.useVertexInputBindingStrideDynamicState)
-    {
-        vertexInputReduceSize = sizeof(PackedVertexInputAttributes::strides);
-    }
-    else if (mVertexInput.inputAssembly.bits.useVertexInputDynamicState)
+    if (mVertexInput.inputAssembly.bits.useVertexInputDynamicState)
     {
         vertexInputReduceSize = sizeof(PackedVertexInputAttributes);
+    }
+    else if (mVertexInput.inputAssembly.bits.useVertexInputBindingStrideDynamicState)
+    {
+        vertexInputReduceSize = sizeof(PackedVertexInputAttributes::strides);
     }
 
     switch (subset)

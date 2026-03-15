@@ -691,7 +691,7 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
         }
 
         Framebuffer *framebuffer = state.getDrawFramebuffer();
-        if (mPLSOptions.renderPassNeedsAMDRasterOrderGroupsWorkaround)
+        if (context->getLimitations().noRasterOrderGroupWithoutAttachmentZero)
         {
             // anglebug.com/42266263 -- Metal [[raster_order_group()]] does not work for read_write
             // textures on AMD when the render pass doesn't have a color attachment on slot 0. To
@@ -838,7 +838,7 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
         }
         mSavedImageBindings.clear();
 
-        if (mPLSOptions.renderPassNeedsAMDRasterOrderGroupsWorkaround)
+        if (context->getLimitations().noRasterOrderGroupWithoutAttachmentZero)
         {
             if (!mHadColorAttachment0)
             {

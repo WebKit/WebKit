@@ -801,7 +801,7 @@ angle_static_library("translator") {
     defines += [ "ANGLE_ENABLE_VULKAN" ]
   }
 
-  if (angle_enable_metal) {
+  if (angle_enable_msl) {
     sources += angle_translator_lib_msl_sources
     defines += [ "ANGLE_ENABLE_METAL" ]
   }

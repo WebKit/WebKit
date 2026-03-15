@@ -51,7 +51,7 @@ pub mod visitor {
 
     pub fn for_each_function<State, PreVisit, BlockVisit, PostVisit>(
         state: &mut State,
-        function_entries: &Vec<Option<Block>>,
+        function_entries: &[Option<Block>],
         pre_visit: PreVisit,
         block_visit: BlockVisit,
         post_visit: PostVisit,
@@ -325,14 +325,12 @@ pub fn single_typed_instruction(inst: instruction::Result) -> Vec<Transform> {
 pub mod transformer {
     use super::*;
 
-    pub fn for_each_function<State, PreVisit, TreeTransform>(
+    pub fn for_each_function<State, TreeTransform>(
         state: &mut State,
-        function_entries: &mut Vec<Option<Block>>,
-        pre_visit: PreVisit,
+        function_entries: &mut [Option<Block>],
         tree_transform: &TreeTransform,
     ) where
-        PreVisit: Fn(&mut State, FunctionId),
-        TreeTransform: Fn(&mut State, &mut Block),
+        TreeTransform: Fn(&mut State, FunctionId, &mut Block),
     {
         for (id, entry) in function_entries.iter_mut().enumerate() {
             if entry.is_none() {
@@ -340,11 +338,9 @@ pub mod transformer {
                 continue;
             }
 
-            let func_id = FunctionId { id: id as u32 };
-            pre_visit(state, func_id);
-
             // Let the transformer freely transform the function blocks as it sees fit.
-            tree_transform(state, entry.as_mut().unwrap());
+            let func_id = FunctionId { id: id as u32 };
+            tree_transform(state, func_id, entry.as_mut().unwrap());
         }
     }
 
@@ -391,12 +387,12 @@ pub mod transformer {
 
     pub fn for_each_instruction<State, InstTransform>(
         state: &mut State,
-        function_entries: &mut Vec<Option<Block>>,
+        function_entries: &mut [Option<Block>],
         inst_transform: &InstTransform,
     ) where
         InstTransform: Fn(&mut State, &BlockInstruction) -> Vec<Transform>,
     {
-        for_each_function(state, function_entries, |_, _| {}, &|state, entry| {
+        for_each_function(state, function_entries, &|state, _, entry| {
             for_each_block(
                 state,
                 entry,
@@ -431,17 +427,14 @@ pub mod transformer {
     {
         for (i, instruction) in block.instructions.iter().enumerate() {
             let result = inst_transform(state, instruction);
-            if result.len() > 0 {
-                if result.len() > 0 {
-                    // Transforming branches is not yet supported, but it is allowed to return
-                    // [..., Keep], i.e. it is valid to prepend to the branch instruction.
-                    debug_assert!(
-                        !instruction.is_branch()
-                            || matches!(result.last().unwrap(), Transform::Keep)
-                    );
-                    // Don't return [Keep], just return [].
-                    debug_assert!(!(result.len() == 1 && matches!(result[0], Transform::Keep)));
-                }
+            if !result.is_empty() {
+                // Transforming branches is not yet supported, but it is allowed to return
+                // [..., Keep], i.e. it is valid to prepend to the branch instruction.
+                debug_assert!(
+                    !instruction.is_branch() || matches!(result.last().unwrap(), Transform::Keep)
+                );
+                // Don't return [Keep], just return [].
+                debug_assert!(!(result.len() == 1 && matches!(result[0], Transform::Keep)));
 
                 // If any changes are to be made, use a helper to recreate the block.  This
                 // would move the instructions so far visited as untransformed, and starts
@@ -474,11 +467,11 @@ pub mod transformer {
         InstTransform: Fn(&mut State, &BlockInstruction) -> Vec<Transform>,
     {
         let mut new_block = Block::new();
-        let mut instructions = std::mem::replace(&mut block.instructions, vec![]);
+        let mut instructions = std::mem::take(&mut block.instructions);
 
         // Inherit the block input and variables in the new block.
         new_block.input = block.input;
-        new_block.variables = std::mem::replace(&mut block.variables, vec![]);
+        new_block.variables = std::mem::take(&mut block.variables);
         // Keep the branch targets in a temp block for now.  If the transformation results in a
         // tree of blocks, these branch targets are set to the tail of the merge chain.
         let mut branch_targets = Block::new();
@@ -525,16 +518,16 @@ pub mod transformer {
         new_block.loop_condition = old_block.loop_condition.take();
         new_block.block1 = old_block.block1.take();
         new_block.block2 = old_block.block2.take();
-        new_block.case_blocks = std::mem::replace(&mut old_block.case_blocks, vec![]);
+        new_block.case_blocks = std::mem::take(&mut old_block.case_blocks);
     }
 
     // After visiting an instruction, apply the transformations that are requested by the
     // callback.
-    fn apply_transforms<'block>(
-        new_block: &'block mut Block,
+    fn apply_transforms(
+        new_block: &mut Block,
         instruction: BlockInstruction,
         transform_result: Vec<Transform>,
-    ) -> &'block mut Block {
+    ) -> &mut Block {
         // An empty transformation result means the instruction should be kept as-is.
         if transform_result.is_empty() {
             new_block.instructions.push(instruction);
@@ -572,10 +565,8 @@ pub mod transformer {
                     // Append the instructions/variables of the new block to this block, then
                     // set the branch targets to the `block`'s.  Future transformations
                     // continue in the merge block of the added block (if any).
-                    cur_block
-                        .instructions
-                        .extend(std::mem::replace(&mut block.instructions, vec![]));
-                    cur_block.variables.extend(std::mem::replace(&mut block.variables, vec![]));
+                    cur_block.instructions.extend(std::mem::take(&mut block.instructions));
+                    cur_block.variables.extend(std::mem::take(&mut block.variables));
                     inherit_branch_targets(cur_block, &mut block);
 
                     cur_block = cur_block.get_merge_chain_last_block_mut();

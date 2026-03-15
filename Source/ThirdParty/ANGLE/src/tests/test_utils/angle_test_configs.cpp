@@ -421,12 +421,6 @@ EGLPlatformParameters OPENGL(EGLint major, EGLint minor)
     return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE, major, minor, EGL_DONT_CARE);
 }
 
-EGLPlatformParameters OPENGL_NULL()
-{
-    return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE, EGL_DONT_CARE, EGL_DONT_CARE,
-                                 EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE);
-}
-
 EGLPlatformParameters OPENGLES()
 {
     return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE);
@@ -436,12 +430,6 @@ EGLPlatformParameters OPENGLES(EGLint major, EGLint minor)
 {
     return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE, major, minor,
                                  EGL_DONT_CARE);
-}
-
-EGLPlatformParameters OPENGLES_NULL()
-{
-    return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE, EGL_DONT_CARE,
-                                 EGL_DONT_CARE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE);
 }
 
 EGLPlatformParameters OPENGL_OR_GLES()
@@ -459,15 +447,6 @@ EGLPlatformParameters OPENGL_OR_GLES(EGLint major, EGLint minor)
     return OPENGLES(major, minor);
 #else
     return OPENGL(major, minor);
-#endif
-}
-
-EGLPlatformParameters OPENGL_OR_GLES_NULL()
-{
-#if defined(ANGLE_PLATFORM_ANDROID)
-    return OPENGLES_NULL();
-#else
-    return OPENGL_NULL();
 #endif
 }
 

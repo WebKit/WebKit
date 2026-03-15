@@ -157,7 +157,7 @@ void AddArrayZeroInitSequence(const TIntermTyped *initializedNode,
     // The array elements are assigned one by one to keep the AST compatible with ESSL 1.00 which
     // doesn't have array assignment. We'll do this either with a for loop or just a list of
     // statements assigning to each array index. Note that it is important to have the array init in
-    // the right order to workaround http://crbug.com/709317
+    // the right order to workaround http://crbug.com/40514481
     bool isSmallArray = initializedNode->getOutermostArraySize() <= 1u ||
                         (initializedNode->getBasicType() != EbtStruct &&
                          !initializedNode->getType().isArrayOfArrays() &&

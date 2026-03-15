@@ -49,7 +49,7 @@ pub fn run(ir: &mut IR) {
     // Visit all instructions and mark types, constants and variables that are visited.
     traverser::visitor::for_each_function(
         &mut state,
-        &mut ir.function_entries,
+        &ir.function_entries,
         |state, function_id| {
             state
                 .ir_meta
@@ -69,8 +69,7 @@ pub fn run(ir: &mut IR) {
     traverser::transformer::for_each_function(
         &mut state,
         &mut ir.function_entries,
-        |_, _| {},
-        &|state, entry| {
+        &|state, _, entry| {
             traverser::transformer::for_each_block(
                 state,
                 entry,
@@ -248,7 +247,7 @@ fn mark_referenced_variable_types_and_initializers(ir_meta: &IRMeta, referenced:
     });
 }
 
-fn mark_referenced(id: u32, referenced: &mut Vec<bool>, to_process: &mut Vec<usize>) {
+fn mark_referenced(id: u32, referenced: &mut [bool], to_process: &mut Vec<usize>) {
     let id = id as usize;
     if !referenced[id] {
         referenced[id] = true;
@@ -257,15 +256,14 @@ fn mark_referenced(id: u32, referenced: &mut Vec<bool>, to_process: &mut Vec<usi
 }
 
 // For constants that are live, mark their constituting components as live too.
-fn mark_referenced_constant_components(ir_meta: &IRMeta, referenced: &mut Vec<bool>) {
+fn mark_referenced_constant_components(ir_meta: &IRMeta, referenced: &mut [bool]) {
     let mut to_process = referenced
         .iter()
         .enumerate()
         .filter_map(|(id, is_referenced)| if *is_referenced { Some(id) } else { None })
         .collect::<Vec<_>>();
 
-    while !to_process.is_empty() {
-        let id = to_process.pop().unwrap();
+    while let Some(id) = to_process.pop() {
         let constant = ir_meta.get_constant(ConstantId { id: id as u32 });
         if constant.value.is_composite() {
             let components = constant.value.get_composite_elements();
@@ -279,15 +277,14 @@ fn mark_referenced_constant_components(ir_meta: &IRMeta, referenced: &mut Vec<bo
 // For types that are live, mark their subtypes as live too.  We don't prune basic types (float,
 // uvec4, etc), only structs have any reason to be dead-code-eliminated so that we don't need to
 // unnecessarily declare them.
-fn mark_referenced_type_components(ir_meta: &IRMeta, referenced: &mut Vec<bool>) {
+fn mark_referenced_type_components(ir_meta: &IRMeta, referenced: &mut [bool]) {
     let mut to_process = referenced
         .iter()
         .enumerate()
         .filter_map(|(id, is_referenced)| if *is_referenced { Some(id) } else { None })
         .collect::<Vec<_>>();
 
-    while !to_process.is_empty() {
-        let id = to_process.pop().unwrap();
+    while let Some(id) = to_process.pop() {
         let type_info = ir_meta.get_type(TypeId { id: id as u32 });
         match type_info {
             Type::Scalar(_) | Type::Vector(..) | Type::Matrix(..) | Type::Image(..) => (),

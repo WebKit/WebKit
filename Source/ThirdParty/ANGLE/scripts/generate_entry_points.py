@@ -317,7 +317,7 @@ void GL_APIENTRY GL_{name}({params})
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
+    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
 
     if ({valid_context_check})
     {{{packed_gl_enum_conversions}
@@ -342,7 +342,7 @@ void GL_APIENTRY GL_{name}({params})
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
+    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
 
     if ({valid_context_check})
     {{{packed_gl_enum_conversions}
@@ -366,7 +366,7 @@ TEMPLATE_GLES_ENTRY_POINT_WITH_RETURN = """\
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
+    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
 
     {return_type} returnValue;
     if ({valid_context_check})
@@ -376,6 +376,7 @@ TEMPLATE_GLES_ENTRY_POINT_WITH_RETURN = """\
         if (ANGLE_LIKELY(isCallValid))
         {{
             returnValue = context->{name_lower_no_suffix}({internal_params});
+            {mapbufferrange_return_modification}
         }}
         else
         {{
@@ -398,7 +399,7 @@ TEMPLATE_GLES_CONTEXT_PRIVATE_ENTRY_POINT_WITH_RETURN = """\
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
+    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
 
     {return_type} returnValue;
     if ({valid_context_check})
@@ -432,7 +433,7 @@ void EGLAPIENTRY EGL_{name}({params})
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {{
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+        ANGLE_UNSAFE_TODO(EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
 
         {packed_gl_enum_conversions}
 
@@ -463,7 +464,7 @@ void EGLAPIENTRY EGL_{name}({params})
     Thread *thread = egl::GetCurrentThread();
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 
-    EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+    ANGLE_UNSAFE_TODO(EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
 
     {packed_gl_enum_conversions}
 
@@ -494,7 +495,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
     {return_type} returnValue;
     {{
         {egl_lock}
-        EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+        ANGLE_UNSAFE_TODO(EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
 
         {packed_gl_enum_conversions}
 
@@ -527,7 +528,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {return_type} returnValue;
 
-    EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+    ANGLE_UNSAFE_TODO(EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
 
     {packed_gl_enum_conversions}
 
@@ -552,7 +553,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
 TEMPLATE_CL_ENTRY_POINT_NO_RETURN = """\
 void CL_API_CALL cl{name}({params})
 {{
-    CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+    ANGLE_UNSAFE_TODO(CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
 
     {packed_gl_enum_conversions}
 
@@ -567,7 +568,7 @@ void CL_API_CALL cl{name}({params})
 TEMPLATE_CL_ENTRY_POINT_WITH_RETURN_ERROR = """\
 cl_int CL_API_CALL cl{name}({params})
 {{{initialization}
-    CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+    ANGLE_UNSAFE_TODO(CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
 
     {packed_gl_enum_conversions}
 
@@ -583,7 +584,7 @@ cl_int CL_API_CALL cl{name}({params})
 TEMPLATE_CL_ENTRY_POINT_WITH_ERRCODE_RET = """\
 {return_type} CL_API_CALL cl{name}({params})
 {{{initialization}
-    CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+    ANGLE_UNSAFE_TODO(CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
 
     {packed_gl_enum_conversions}
 
@@ -605,7 +606,7 @@ TEMPLATE_CL_ENTRY_POINT_WITH_ERRCODE_RET = """\
 TEMPLATE_CL_ENTRY_POINT_WITH_RETURN_POINTER = """\
 {return_type} CL_API_CALL cl{name}({params})
 {{{initialization}
-    CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+    ANGLE_UNSAFE_TODO(CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
 
     {packed_gl_enum_conversions}
 
@@ -938,19 +939,17 @@ TEMPLATE_PARAMETER_CAPTURE_VALUE = """paramBuffer.addValueParam("{name}", ParamT
 TEMPLATE_PARAMETER_CAPTURE_GL_ENUM = """paramBuffer.addEnumParam("{name}", {api_enum}::{group}, ParamType::T{type}, {name});"""
 
 TEMPLATE_PARAMETER_CAPTURE_POINTER = """
+    ParamCapture {name}Param("{name}", ParamType::T{type});
     if (isCallValid)
     {{
-        ParamCapture {name}Param("{name}", ParamType::T{type});
         InitParamValue(ParamType::T{type}, {name}, &{name}Param.value);
         {capture_name}({params}, &{name}Param);
-        paramBuffer.addParam(std::move({name}Param));
     }}
     else
     {{
-        ParamCapture {name}Param("{name}", ParamType::T{type});
         InitParamValue(ParamType::T{type}, static_cast<{cast_type}>(nullptr), &{name}Param.value);
-        paramBuffer.addParam(std::move({name}Param));
     }}
+    paramBuffer.addParam(std::move({name}Param));
 """
 
 TEMPLATE_PARAMETER_CAPTURE_POINTER_FUNC = """void {name}({params});"""
@@ -1302,6 +1301,17 @@ TEMPLATE_EVENT_COMMENT = """\
     // Don't run the EVENT() macro on the EXT_debug_marker entry points.
     // It can interfere with the debug events being set by the caller.
     // """
+
+TEMPLATE_MAPBUFFERRANGE_RETURN_MODIFICATION = """\
+#if ANGLE_CAPTURE_ENABLED
+    angle::FrameCaptureShared *frameCaptureShared = context->getShareGroup()->getFrameCaptureShared();
+    if (returnValue != nullptr && frameCaptureShared->enabled())
+    {
+        Buffer *buffer = context->getState().getTargetBuffer(targetPacked);
+        ASSERT(buffer);
+        returnValue = frameCaptureShared->maybeGetShadowMemoryPointer(buffer, length, access);
+    }
+#endif"""
 
 TEMPLATE_CAPTURE_PROTO = "angle::CallCapture Capture%s(%s);"
 
@@ -1675,6 +1685,11 @@ def is_egl_entry_point_accessing_both_sync_and_non_sync_API_resources(cmd_name):
         return True
     return False
 
+
+def is_cmd_map_buffer_range(cmd_name):
+    if cmd_name == "glMapBufferRange" or cmd_name == "glMapBufferRangeEXT":
+        return True
+    return False
 
 def validation_needs_private_state_cache(name):
     return name in VALIDATION_NEEDS_PRIVATE_STATE_CACHE_LIST
@@ -2070,6 +2085,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     return_type = proto[:-len(cmd_name)].strip()
     initialization = "InitBackEnds(%s);\n" % INIT_DICT[cmd_name] if cmd_name in INIT_DICT else ""
     event_comment = TEMPLATE_EVENT_COMMENT if cmd_name in NO_EVENT_MARKER_EXCEPTIONS_LIST else ""
+    mapbufferrange_return_modification = TEMPLATE_MAPBUFFERRANGE_RETURN_MODIFICATION if is_cmd_map_buffer_range(
+        cmd_name) else ""
     name_no_suffix = strip_suffix(api, cmd_name[2:])
     name_lower_no_suffix = name_no_suffix[0:1].lower() + name_no_suffix[1:]
     entry_point_name = "angle::EntryPoint::GL" + strip_api_prefix(cmd_name)
@@ -2121,6 +2138,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             get_constext_lost_error_generator(cmd_name, entry_point_name),
         "event_comment":
             event_comment,
+        "mapbufferrange_return_modification":
+            mapbufferrange_return_modification,
         "labeled_object":
             get_egl_entry_point_labeled_object(ep_to_object, cmd_name, params, packed_enums),
         "context_lock":
@@ -2197,8 +2216,11 @@ def format_capture_method(api, command, cmd_name, proto, params, all_param_types
         api, cmd_name,
         ([context_param_typed, "bool isCallValid"] if api != apis.CL else ["bool isCallValid"]) +
         params, cmd_packed_gl_enums, packed_param_types)
+    params_with_type_param_header = get_internal_params(
+        api, cmd_name, ([context_param_typed] if api != apis.CL else []) + params,
+        cmd_packed_gl_enums, packed_param_types)
     params_just_name = ", ".join(
-        ([context_param_name, "isCallValid"] if api != apis.CL else ["isCallValid"]) +
+        ([context_param_name] if api != apis.CL else []) +
         [just_the_name_packed(param, packed_gl_enums) for param in params])
 
     parameter_captures = []
@@ -2229,7 +2251,8 @@ def format_capture_method(api, command, cmd_name, proto, params, all_param_types
                 cast_type=param_type)
 
             capture_pointer_func = TEMPLATE_PARAMETER_CAPTURE_POINTER_FUNC.format(
-                name=capture_name, params=params_with_type + ", angle::ParamCapture *paramCapture")
+                name=capture_name,
+                params=params_with_type_param_header + ", angle::ParamCapture *paramCapture")
             capture_pointer_funcs += [capture_pointer_func]
         elif capture_param_type in ('GLenum', 'GLbitfield'):
             gl_enum_group = find_gl_enum_group_in_command(command, param_name)

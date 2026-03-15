@@ -124,8 +124,7 @@ pub fn run(ir: &mut IR) {
     traverser::transformer::for_each_function(
         &mut state,
         &mut ir.function_entries,
-        |_, _| {},
-        &|state, entry| {
+        &|state, _, entry| {
             traverser::transformer::for_each_block(
                 state,
                 entry,
@@ -144,8 +143,7 @@ pub fn run(ir: &mut IR) {
     traverser::transformer::for_each_function(
         &mut state,
         &mut ir.function_entries,
-        |_, _| {},
-        &|state, entry| {
+        &|state, _, entry| {
             traverser::transformer::for_each_block(
                 state,
                 entry,
@@ -313,7 +311,7 @@ fn clear_uncached_registers(
     register_info: &mut HashMap<RegisterId, RegisterInfo>,
 ) {
     uncached_registers.iter().for_each(|id| {
-        register_info.get_mut(&id).unwrap().mark_side_effect_if_read = true;
+        register_info.get_mut(id).unwrap().mark_side_effect_if_read = true;
     });
     uncached_registers.clear();
 }
@@ -432,21 +430,19 @@ fn preprocess_block_registers(state: &mut State, block: &Block) {
                     // pointer, in which case mark the load operation as "complex" with "multiple
                     // reads" so it gets cached in a temporary.
                     let load_id = vector_id.id.get_register();
-                    if let OpCode::Load(pointer_id) = state.ir_meta.get_instruction(load_id).op {
-                        if let Id::Register(pointer_id) = pointer_id.id {
-                            if matches!(
-                                state.ir_meta.get_instruction(pointer_id).op,
-                                OpCode::AccessVectorComponentMulti(..)
-                            ) {
-                                let load_register_info =
-                                    state.register_info.get_mut(&load_id).unwrap();
-                                // The ExtractVectorComponent* instruction has already counted as
-                                // one read, so one more is enough.
-                                load_register_info.read_count += 1;
-                                debug_assert!(load_register_info.read_count > 1);
-                                load_register_info.is_complex = true;
-                            }
-                        }
+                    if let OpCode::Load(pointer_id) = state.ir_meta.get_instruction(load_id).op
+                        && let Id::Register(pointer_id) = pointer_id.id
+                        && matches!(
+                            state.ir_meta.get_instruction(pointer_id).op,
+                            OpCode::AccessVectorComponentMulti(..)
+                        )
+                    {
+                        let load_register_info = state.register_info.get_mut(&load_id).unwrap();
+                        // The ExtractVectorComponent* instruction has already counted as
+                        // one read, so one more is enough.
+                        load_register_info.read_count += 1;
+                        debug_assert!(load_register_info.read_count > 1);
+                        load_register_info.is_complex = true;
                     }
                 }
                 _ => {
@@ -513,7 +509,7 @@ fn preprocess_block_registers(state: &mut State, block: &Block) {
     }
 }
 
-fn preprocess_registers(state: &mut State, function_entries: &Vec<Option<Block>>) {
+fn preprocess_registers(state: &mut State, function_entries: &[Option<Block>]) {
     traverser::visitor::for_each_function(
         state,
         function_entries,
@@ -526,7 +522,7 @@ fn preprocess_registers(state: &mut State, function_entries: &Vec<Option<Block>>
     );
 }
 
-fn has_constants_with_higher_precision(operands: &Vec<TypedId>) -> Option<Precision> {
+fn has_constants_with_higher_precision(operands: &[TypedId]) -> Option<Precision> {
     // Check if the highest precision of the constant operands is higher than the highest precision
     // of the non-constant operands.  In that case, any constant that has a precision higher than
     // the non-constant operands must be placed in a temporary variable.
@@ -648,6 +644,12 @@ fn declare_temp_variable_for_constant_operands(
     // `OpCode::Texture` (precision is derived from the sampler argument, the constant precision is
     // irrelevant).  Some `OpCode::Binary` and `OpCode::BuiltIn` instructions also derive their
     // precision from a specific argument, but we won't be too picky here.
+    //
+    // Note: `if let` expressions below are manually implementing `map()`, but that's on purpose.
+    // Using `map()` leads to borrow checker errors due to the closure borrowing `state` and
+    // `params` at the same time.  With the `if`, the borrow checker is able to accept the
+    // implementation due to `params.clone()`.
+    #[allow(clippy::manual_map)]
     let new_op = match &instruction.op {
         OpCode::ConstructVectorFromMultiple(params) => {
             if let Some(non_constant_precision) = has_constants_with_higher_precision(params) {
@@ -705,9 +707,7 @@ fn declare_temp_variable_for_constant_operands(
             }
         }
         &OpCode::Binary(binary_op, lhs, rhs) => {
-            if let Some(non_constant_precision) =
-                has_constants_with_higher_precision(&vec![lhs, rhs])
-            {
+            if let Some(non_constant_precision) = has_constants_with_higher_precision(&[lhs, rhs]) {
                 let lhs = declare_temp_variable_if_high_precision_constant(
                     state,
                     lhs,
@@ -830,32 +830,32 @@ fn replace_merge_input_with_variable<'block>(
 ) -> &'block mut Block {
     // Look at the merge block, if there is an input, it is removed and a variable is added
     // to the current block instead.
-    if let Some(merge_block) = &mut block.merge_block {
-        if let Some(input) = merge_block.input {
-            let variable_id = state.ir_meta.declare_variable(
-                Name::new_temp(""),
-                input.type_id,
-                input.precision,
-                Decorations::new_none(),
-                None,
-                None,
-                VariableScope::Local,
-            );
+    if let Some(merge_block) = &mut block.merge_block
+        && let Some(input) = merge_block.input
+    {
+        let variable_id = state.ir_meta.declare_variable(
+            Name::new_temp(""),
+            input.type_id,
+            input.precision,
+            Decorations::new_none(),
+            None,
+            None,
+            VariableScope::Local,
+        );
 
-            // Add variable to the list of variables to be declared in this block.
-            block.variables.push(variable_id);
+        // Add variable to the list of variables to be declared in this block.
+        block.variables.push(variable_id);
 
-            // Adjust the merge block as well as blocks that can `Merge`.
-            let variable_id = TypedId::from_variable_id(state.ir_meta, variable_id);
-            replace_merge_input_with_variable_in_sub_blocks(
-                state,
-                merge_block,
-                &mut block.block1,
-                &mut block.block2,
-                input,
-                variable_id,
-            );
-        }
+        // Adjust the merge block as well as blocks that can `Merge`.
+        let variable_id = TypedId::from_variable_id(state.ir_meta, variable_id);
+        replace_merge_input_with_variable_in_sub_blocks(
+            state,
+            merge_block,
+            &mut block.block1,
+            &mut block.block2,
+            input,
+            variable_id,
+        );
     }
 
     block

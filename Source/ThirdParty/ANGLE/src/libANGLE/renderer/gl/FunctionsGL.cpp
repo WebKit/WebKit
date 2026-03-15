@@ -65,40 +65,6 @@ static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getInt
     return result;
 }
 
-#if defined(ANGLE_ENABLE_OPENGL_NULL)
-static GLenum INTERNAL_GL_APIENTRY StubCheckFramebufferStatus(GLenum)
-{
-    return GL_FRAMEBUFFER_COMPLETE;
-}
-
-static void INTERNAL_GL_APIENTRY StubGetProgramiv(GLuint program, GLenum pname, GLint *params)
-{
-    switch (pname)
-    {
-        case GL_LINK_STATUS:
-            *params = GL_TRUE;
-            break;
-        case GL_VALIDATE_STATUS:
-            *params = GL_TRUE;
-            break;
-        default:
-            break;
-    }
-}
-
-static void INTERNAL_GL_APIENTRY StubGetShaderiv(GLuint program, GLenum pname, GLint *params)
-{
-    switch (pname)
-    {
-        case GL_COMPILE_STATUS:
-            *params = GL_TRUE;
-            break;
-        default:
-            break;
-    }
-}
-#endif  // defined(ANGLE_ENABLE_OPENGL_NULL)
-
 #define ASSIGN(NAME, FP) FP = reinterpret_cast<decltype(FP)>(loadProcAddress(NAME))
 
 FunctionsGL::FunctionsGL() : version(), standard(), extensions() {}
@@ -137,11 +103,6 @@ void FunctionsGL::initialize(const egl::AttributeMap &displayAttributes)
 
     // Load the entry points
 
-#if defined(ANGLE_ENABLE_OPENGL_NULL)
-    EGLint deviceType =
-        static_cast<EGLint>(displayAttributes.get(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_NONE));
-#endif  // defined(ANGLE_ENABLE_GL_NULL)
-
     switch (standard)
     {
         case STANDARD_GL_DESKTOP:
@@ -153,19 +114,10 @@ void FunctionsGL::initialize(const egl::AttributeMap &displayAttributes)
                 getIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
             }
 
-#if defined(ANGLE_ENABLE_OPENGL_NULL)
-            if (deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
-            {
-                initProcsDesktopGLNULL(version, extensionSet);
-            }
-            else
-#endif  // defined(ANGLE_ENABLE_GL_NULL)
-            {
-                initProcsDesktopGL(version, extensionSet);
-                // Test that ANGLE_ENABLE_GL_DESKTOP_BACKEND has been enabled
-                // See http://anglebug.com/42266631
-                ASSERT(getString != nullptr && getError != nullptr);
-            }
+            initProcsDesktopGL(version, extensionSet);
+            // Test that ANGLE_ENABLE_GL_DESKTOP_BACKEND has been enabled
+            // See http://anglebug.com/42266631
+            ASSERT(getString != nullptr && getError != nullptr);
             break;
         }
 
@@ -173,17 +125,7 @@ void FunctionsGL::initialize(const egl::AttributeMap &displayAttributes)
         {
             // No profiles in GLES
             profile = 0;
-
-#if defined(ANGLE_ENABLE_OPENGL_NULL)
-            if (deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
-            {
-                initProcsGLESNULL(version, extensionSet);
-            }
-            else
-#endif  // defined(ANGLE_ENABLE_GL_NULL)
-            {
-                initProcsGLES(version, extensionSet);
-            }
+            initProcsGLES(version, extensionSet);
             break;
         }
 
@@ -192,17 +134,7 @@ void FunctionsGL::initialize(const egl::AttributeMap &displayAttributes)
             break;
     }
 
-#if defined(ANGLE_ENABLE_OPENGL_NULL)
-    if (deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
-    {
-        initProcsSharedExtensionsNULL(extensionSet);
-        initializeStubFunctionsForNULLDriver(extensionSet);
-    }
-    else
-#endif  // defined(ANGLE_ENABLE_OPENGL_NULL)
-    {
-        initProcsSharedExtensions(extensionSet);
-    }
+    initProcsSharedExtensions(extensionSet);
 }
 
 bool FunctionsGL::isAtLeastGL(const gl::Version &glVersion) const
@@ -239,41 +171,4 @@ bool FunctionsGL::hasGLESExtension(const std::string &ext) const
 {
     return standard == STANDARD_GL_ES && hasExtension(ext);
 }
-
-#if defined(ANGLE_ENABLE_OPENGL_NULL)
-void FunctionsGL::initializeStubFunctionsForNULLDriver(const std::set<std::string> &extensionSet)
-{
-    // This is a quick hack to get the NULL driver working, but we might want to implement a true
-    // NULL/stub driver that never calls into the OS. See Chromium's implementation in
-    // ui/gl/gl_stub_api.cc. This might be useful for testing things like perf scaling due to
-    // the caps returned by the drivers (i.e. number of texture units) or a true NULL back-end
-    // that could be used in a VM for things like fuzzing.
-    // TODO(jmadill): Implement true no-op/stub back-end.
-    ASSIGN("glGetString", getString);
-    ASSIGN("glGetStringi", getStringi);
-    ASSIGN("glGetIntegerv", getIntegerv);
-    ASSIGN("glGetIntegeri_v", getIntegeri_v);
-
-    getProgramiv           = &StubGetProgramiv;
-    getShaderiv            = &StubGetShaderiv;
-    checkFramebufferStatus = &StubCheckFramebufferStatus;
-
-    if (isAtLeastGLES(gl::Version(3, 0)) || isAtLeastGL(gl::Version(4, 2)) ||
-        extensionSet.count("GL_ARB_internalformat_query") > 0)
-    {
-        ASSIGN("glGetInternalformativ", getInternalformativ);
-    }
-
-    if (isAtLeastGL(gl::Version(4, 3)))
-    {
-        ASSIGN("glGetInternalformati64v", getInternalformati64v);
-    }
-
-    if (extensionSet.count("GL_NV_internalformat_sample_query") > 0)
-    {
-        ASSIGN("glGetInternalformatSampleivNV", getInternalformatSampleivNV);
-    }
-}
-#endif  // defined(ANGLE_ENABLE_OPENGL_NULL)
-
 }  // namespace rx

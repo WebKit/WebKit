@@ -381,6 +381,15 @@ class ErrorContext : angle::NonCopyable
 class GlobalOps : angle::NonCopyable
 {
   public:
+    enum class Api : uint8_t
+    {
+        Egl    = 0,
+        OpenCL = 1,
+
+        InvalidEnum = 2,
+        EnumCount   = InvalidEnum,
+    };
+
     virtual ~GlobalOps() = default;
 
     virtual void putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value) = 0;
@@ -390,6 +399,8 @@ class GlobalOps : angle::NonCopyable
         const std::shared_ptr<angle::Closure> &task) = 0;
 
     virtual void notifyDeviceLost() = 0;
+
+    virtual GlobalOps::Api getFrontendApi() const = 0;
 };
 
 class RenderPassDesc;

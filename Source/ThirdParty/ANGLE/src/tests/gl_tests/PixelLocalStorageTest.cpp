@@ -2276,6 +2276,124 @@ TEST_P(PixelLocalStorageTest, TextureLevelsAndLayers)
     }
 }
 
+// Check that PLS works on multiple layers of the same array texture.
+TEST_P(PixelLocalStorageTest, Texture2DArrayMultipleLayers)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    PLSTestTexture tex(GL_RGBA8);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture texArray;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texArray);
+    ASSERT_GL_NO_ERROR();
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 2, GL_R32UI, W * 2, H * 2, 2);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexturePixelLocalStorageANGLE(0, tex, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(1, texArray, 1, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(2, texArray, 1, 1);
+    glViewport(0, 0, W, H);
+    glDrawBuffers(0, nullptr);
+
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+    ASSERT_GL_NO_ERROR();
+
+    // Pass 1: seed the texArray.
+    mProgram.compile(R"(
+    layout(binding=0, rgba8) uniform mediump pixelLocalANGLE pls0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls2;
+    void main()
+    {
+        pixelLocalStoreANGLE(pls1, uvec4(floatBitsToUint(1.)));
+        pixelLocalStoreANGLE(pls2, uvec4(floatBitsToUint(2.)));
+    })");
+    mProgram.drawBoxes({{FULLSCREEN}});
+
+    // Pass 2: read the texArray.
+    mProgram.compile(R"(
+    layout(binding=0, rgba8) uniform mediump pixelLocalANGLE pls0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls2;
+    void main()
+    {
+        float r = uintBitsToFloat(pixelLocalLoadANGLE(pls1).r);
+        float g = uintBitsToFloat(pixelLocalLoadANGLE(pls2).r) - 2.;
+        pixelLocalStoreANGLE(pls0, vec4(r, g, 0, 1));
+    })");
+    mProgram.drawBoxes({{FULLSCREEN}});
+    ASSERT_GL_NO_ERROR();
+
+    glEndPixelLocalStorageANGLE(3,
+                                GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_DONT_CARE, GL_DONT_CARE}));
+
+    attachTexture2DToScratchFBO(tex);
+    EXPECT_PIXEL_RECT_EQ(0, 0, W, H, GLColor::red);
+}
+
+// Check that PLS works on multiple faces of the same cube texture.
+TEST_P(PixelLocalStorageTest, TextureCubeMultipleFaces)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    PLSTestTexture tex(GL_RGBA8);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture texCube;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texCube);
+    ASSERT_GL_NO_ERROR();
+    glTexStorage2D(GL_TEXTURE_CUBE_MAP, 2, GL_R32UI, W * 2, H * 2);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexturePixelLocalStorageANGLE(0, tex, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(1, texCube, 1, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(2, texCube, 1, 5);
+    glViewport(0, 0, W, H);
+    glDrawBuffers(0, nullptr);
+
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+    ASSERT_GL_NO_ERROR();
+
+    // Pass 1: seed the texCube.
+    mProgram.compile(R"(
+    layout(binding=0, rgba8) uniform mediump pixelLocalANGLE pls0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls2;
+    void main()
+    {
+        pixelLocalStoreANGLE(pls1, uvec4(floatBitsToUint(1.)));
+        pixelLocalStoreANGLE(pls2, uvec4(floatBitsToUint(2.)));
+    })");
+    mProgram.drawBoxes({{FULLSCREEN}});
+
+    // Pass 2: read the texCube.
+    mProgram.compile(R"(
+    layout(binding=0, rgba8) uniform mediump pixelLocalANGLE pls0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE pls1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE pls2;
+    void main()
+    {
+        float r = uintBitsToFloat(pixelLocalLoadANGLE(pls1).r);
+        float g = uintBitsToFloat(pixelLocalLoadANGLE(pls2).r) - 2.;
+        pixelLocalStoreANGLE(pls0, vec4(r, g, 0, 1));
+    })");
+    mProgram.drawBoxes({{FULLSCREEN}});
+    ASSERT_GL_NO_ERROR();
+
+    glEndPixelLocalStorageANGLE(3,
+                                GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_DONT_CARE, GL_DONT_CARE}));
+
+    attachTexture2DToScratchFBO(tex);
+    EXPECT_PIXEL_RECT_EQ(0, 0, W, H, GLColor::red);
+}
+
 // Check that cube map faces work as PLS planes.
 TEST_P(PixelLocalStorageTest, TextureCubeFaces)
 {

@@ -177,12 +177,6 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
-    FeatureInfo rejectWebglShadersWithUndefinedBehavior = {
-        "rejectWebglShadersWithUndefinedBehavior",
-        FeatureCategory::FrontendWorkarounds,
-        &members,
-    };
-
     FeatureInfo alwaysEnableEmulatedMultidrawExtensions = {
         "alwaysEnableEmulatedMultidrawExtensions",
         FeatureCategory::FrontendWorkarounds,

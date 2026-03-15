@@ -4,10 +4,6 @@
 
 import("../../../../gni/angle.gni")
 
-declare_args() {
-  angle_enable_gl_null = true
-}
-
 gl_backend_sources = [
   "BlitGL.cpp",
   "BlitGL.h",
@@ -174,12 +170,5 @@ if (angle_enable_cgl) {
     "cgl/PbufferSurfaceCGL.h",
     "cgl/WindowSurfaceCGL.h",
     "cgl/WindowSurfaceCGL.mm",
-  ]
-}
-
-if (angle_enable_gl_null) {
-  gl_backend_sources += [
-    "null_functions.cpp",
-    "null_functions.h",
   ]
 }

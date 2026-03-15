@@ -37,7 +37,6 @@ class ResourcesHLSL : angle::NonCopyable
     // Must be called after uniformsHeader
     void samplerMetadataUniforms(TInfoSinkBase &out, unsigned int regIndex);
     unsigned int getSamplerCount() const { return mSamplerCount; }
-    void imageMetadataUniforms(TInfoSinkBase &out, unsigned int regIndex);
     TString uniformBlocksHeader(
         const ReferencedInterfaceBlocks &referencedInterfaceBlocks,
         const std::map<int, const TInterfaceBlock *> &uniformBlockOptimizedMap);

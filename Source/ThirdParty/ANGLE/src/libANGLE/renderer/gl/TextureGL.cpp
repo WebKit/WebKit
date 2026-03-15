@@ -709,7 +709,12 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
     const gl::InternalFormat &originalInternalFormatInfo =
         gl::GetInternalFormatInfo(internalFormat, type);
     nativegl::CopyTexImageImageFormat copyTexImageFormat =
-        nativegl::GetCopyTexImageImageFormat(functions, features, internalFormat, type);
+        nativegl::GetCopyTexImageImageFormat(functions, features, internalFormat);
+    const gl::InternalFormat &copyInternalFormatInfo =
+        gl::GetInternalFormatInfo(copyTexImageFormat.internalFormat, GL_UNSIGNED_BYTE);
+    nativegl::TexImageFormat initTexImageFormat =
+        nativegl::GetTexImageFormat(functions, features, internalFormat,
+                                    copyInternalFormatInfo.format, copyInternalFormatInfo.type);
 
     stateManager->bindTexture(getType(), mTextureID);
 
@@ -732,8 +737,9 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
     // framebuffer.
     if (requiresInitialization)
     {
-        GLuint pixelBytes =
-            gl::GetInternalFormatInfo(copyTexImageFormat.internalFormat, type).pixelBytes;
+        const gl::InternalFormat &initFormatInfo =
+            gl::GetInternalFormatInfo(initTexImageFormat.format, initTexImageFormat.type);
+        GLuint pixelBytes = initFormatInfo.pixelBytes;
         angle::MemoryBuffer *zero;
         ANGLE_CHECK_GL_ALLOC(
             contextGL,
@@ -744,18 +750,11 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
         ANGLE_TRY(stateManager->setPixelUnpackState(context, unpack));
         ANGLE_TRY(stateManager->setPixelUnpackBuffer(context, nullptr));
 
-        // getImplementationColorReadType aligns the type with ES client version
-        if (type == GL_HALF_FLOAT_OES && functions->standard == STANDARD_GL_DESKTOP)
-        {
-            type = GL_HALF_FLOAT;
-        }
-
         ANGLE_GL_TRY_ALWAYS_CHECK(
             context, functions->texImage2D(ToGLenum(target), static_cast<GLint>(level),
                                            copyTexImageFormat.internalFormat, sourceArea.width,
-                                           sourceArea.height, 0,
-                                           gl::GetUnsizedFormat(copyTexImageFormat.internalFormat),
-                                           type, zero->data()));
+                                           sourceArea.height, 0, initTexImageFormat.format,
+                                           initTexImageFormat.type, zero->data()));
     }
 
     // Clip source area to framebuffer and copy if remaining area is not empty.
@@ -841,15 +840,8 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
             {
                 if (isSelfCopy)
                 {
-                    if (type == GL_HALF_FLOAT_OES && functions->standard == STANDARD_GL_DESKTOP)
-                    {
-                        type = GL_HALF_FLOAT;
-                    }
-
                     // Avoid redefining the texture before the copy, as that would invalidate the
                     // source attachment. Copy through a temporary texture first.
-                    const GLenum unsizedFormat =
-                        gl::GetUnsizedFormat(copyTexImageFormat.internalFormat);
 
                     GLuint tempTex = 0;
                     ANGLE_GL_TRY(context, functions->genTextures(1, &tempTex));
@@ -866,10 +858,10 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
                     ANGLE_GL_TRY(context, functions->texParameteri(
                                               GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
                     ANGLE_GL_TRY_ALWAYS_CHECK(
-                        context,
-                        functions->texImage2D(GL_TEXTURE_2D, 0, copyTexImageFormat.internalFormat,
-                                              clippedArea.width, clippedArea.height, 0,
-                                              unsizedFormat, type, nullptr));
+                        context, functions->texImage2D(
+                                     GL_TEXTURE_2D, 0, copyTexImageFormat.internalFormat,
+                                     clippedArea.width, clippedArea.height, 0,
+                                     initTexImageFormat.format, initTexImageFormat.type, nullptr));
                     ANGLE_GL_TRY(context, functions->copyTexSubImage2D(
                                               GL_TEXTURE_2D, 0, 0, 0, clippedArea.x, clippedArea.y,
                                               clippedArea.width, clippedArea.height));
@@ -890,7 +882,8 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
                         context,
                         functions->texImage2D(ToGLenum(target), static_cast<GLint>(level),
                                               copyTexImageFormat.internalFormat, sourceArea.width,
-                                              sourceArea.height, 0, unsizedFormat, type, nullptr));
+                                              sourceArea.height, 0, initTexImageFormat.format,
+                                              initTexImageFormat.type, nullptr));
 
                     ANGLE_GL_TRY(context,
                                  functions->copyTexSubImage2D(
@@ -906,18 +899,12 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
                 }
                 else if (features.emulateCopyTexImage2D.enabled)
                 {
-                    if (type == GL_HALF_FLOAT_OES && functions->standard == STANDARD_GL_DESKTOP)
-                    {
-                        type = GL_HALF_FLOAT;
-                    }
-
                     ANGLE_GL_TRY_ALWAYS_CHECK(
                         context,
-                        functions->texImage2D(
-                            ToGLenum(target), static_cast<GLint>(level),
-                            copyTexImageFormat.internalFormat, sourceArea.width, sourceArea.height,
-                            0, gl::GetUnsizedFormat(copyTexImageFormat.internalFormat), type,
-                            nullptr));
+                        functions->texImage2D(ToGLenum(target), static_cast<GLint>(level),
+                                              copyTexImageFormat.internalFormat, sourceArea.width,
+                                              sourceArea.height, 0, initTexImageFormat.format,
+                                              initTexImageFormat.type, nullptr));
                     ANGLE_GL_TRY_ALWAYS_CHECK(
                         context,
                         functions->copyTexSubImage2D(ToGLenum(target), static_cast<GLint>(level), 0,
@@ -2367,6 +2354,43 @@ angle::Result TextureGL::initializeContents(const gl::Context *context,
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+    const gl::ImageDesc &desc                    = mState.getImageDesc(imageIndex);
+    const gl::InternalFormat &internalFormatInfo = *desc.format.info;
+
+    // Clearing cube maps with EXT_clear_texture has inconsistent results. The drivers often clear
+    // the entire level when only one face is specified.
+    if (functions->clearTexImage && !internalFormatInfo.compressed &&
+        getType() != gl::TextureType::CubeMap &&
+        !features.disableClearTexImageForRobustInit.enabled)
+    {
+        nativegl::TexSubImageFormat nativeSubImageFormat = nativegl::GetTexSubImageFormat(
+            functions, features, internalFormatInfo.format, internalFormatInfo.type);
+
+        // Some drivers may use color mask state when clearing textures.
+        contextGL->getStateManager()->setColorMask(true, true, true, true);
+
+        // The largest GL data format is 16 bytes (RGBA32F)
+        static constexpr std::array<uint8_t, 16> data = {0};
+        CHECK(internalFormatInfo.pixelBytes <= data.size());
+        if (imageIndex.hasLayer())
+        {
+            ANGLE_GL_TRY(context, functions->clearTexSubImage(
+                                      mTextureID, imageIndex.getLevelIndex(), 0, 0,
+                                      imageIndex.getLayerIndex(), desc.size.width, desc.size.height,
+                                      imageIndex.getLayerCount(), nativeSubImageFormat.format,
+                                      nativeSubImageFormat.type, data.data()));
+        }
+        else
+        {
+            ANGLE_GL_TRY(context, functions->clearTexImage(mTextureID, imageIndex.getLevelIndex(),
+                                                           nativeSubImageFormat.format,
+                                                           nativeSubImageFormat.type, data.data()));
+        }
+
+        contextGL->markWorkSubmitted();
+        return angle::Result::Continue;
+    }
+
     GLenum nativeInternalFormat =
         getLevelInfo(imageIndex.getTarget(), imageIndex.getLevelIndex()).nativeInternalFormat;
     if (features.allowClearForRobustResourceInit.enabled &&
@@ -2389,8 +2413,6 @@ angle::Result TextureGL::initializeContents(const gl::Context *context,
     // Either the texture is not renderable or was incomplete when clearing, fall back to a data
     // upload
     ASSERT(nativegl::SupportsTexImage(getType()));
-    const gl::ImageDesc &desc                    = mState.getImageDesc(imageIndex);
-    const gl::InternalFormat &internalFormatInfo = *desc.format.info;
 
     gl::PixelUnpackState unpackState;
     unpackState.alignment = 1;

@@ -45,7 +45,7 @@ pub fn run(ir: &mut IR) {
 
     traverser::visitor::for_each_function(
         &mut state,
-        &mut ir.function_entries,
+        &ir.function_entries,
         |state, function_id| {
             state.is_in_main =
                 state.ir_meta.get_main_function_id().map(|id| id == function_id).unwrap();
@@ -98,7 +98,7 @@ pub fn run(ir: &mut IR) {
     }
 }
 
-fn read_pointer(ir_meta: &IRMeta, is_read: &mut Vec<bool>, pointer: TypedId) {
+fn read_pointer(ir_meta: &IRMeta, is_read: &mut [bool], pointer: TypedId) {
     let mut pointer = pointer;
     while let Id::Register(register_id) = pointer.id {
         match ir_meta.get_instruction(register_id).op {
@@ -127,7 +127,7 @@ fn read_pointer(ir_meta: &IRMeta, is_read: &mut Vec<bool>, pointer: TypedId) {
 
 fn write_pointer(
     ir_meta: &IRMeta,
-    written_channels: &mut Vec<u8>,
+    written_channels: &mut [u8],
     pointer: TypedId,
     depth: usize,
     is_in_main: bool,

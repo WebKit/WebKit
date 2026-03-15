@@ -27,6 +27,7 @@ struct IcdDispatch : public _cl_icd_dispatch
     clIcdSetPlatformDispatchDataKHR_fn clIcdSetPlatformDispatchDataKHR;
     clEnqueueAcquireExternalMemObjectsKHR_fn clEnqueueAcquireExternalMemObjectsKHR;
     clEnqueueReleaseExternalMemObjectsKHR_fn clEnqueueReleaseExternalMemObjectsKHR;
+    clImportMemoryARM_fn clImportMemoryARM;
 };
 
 const IcdDispatch &GetDispatch();

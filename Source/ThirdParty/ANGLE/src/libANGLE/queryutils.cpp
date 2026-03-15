@@ -1053,7 +1053,7 @@ template <typename ShaderVariableT>
 void GetShaderVariableBufferResourceProperty(const ShaderVariableT &buffer,
                                              GLenum pname,
                                              GLint *params,
-                                             GLsizei bufSize,
+                                             GLsizei count,
                                              GLsizei *outputPosition)
 
 {
@@ -1067,7 +1067,7 @@ void GetShaderVariableBufferResourceProperty(const ShaderVariableT &buffer,
             break;
         case GL_ACTIVE_VARIABLES:
             for (size_t memberIndex = 0;
-                 memberIndex < buffer.memberIndexes.size() && *outputPosition < bufSize;
+                 memberIndex < buffer.memberIndexes.size() && *outputPosition < count;
                  ++memberIndex)
             {
                 params[(*outputPosition)++] = clampCast<GLint>(buffer.memberIndexes[memberIndex]);
@@ -1102,7 +1102,7 @@ void GetShaderVariableBufferResourceProperty(const ShaderVariableT &buffer,
 void GetInterfaceBlockResourceProperty(const InterfaceBlock &block,
                                        GLenum pname,
                                        GLint *params,
-                                       GLsizei bufSize,
+                                       GLsizei count,
                                        GLsizei *outputPosition)
 {
     if (pname == GL_NAME_LENGTH)
@@ -1110,18 +1110,18 @@ void GetInterfaceBlockResourceProperty(const InterfaceBlock &block,
         params[(*outputPosition)++] = clampCast<GLint>(block.nameWithArrayIndex().size() + 1);
         return;
     }
-    GetShaderVariableBufferResourceProperty(block, pname, params, bufSize, outputPosition);
+    GetShaderVariableBufferResourceProperty(block, pname, params, count, outputPosition);
 }
 
 void GetUniformBlockResourceProperty(const Program *program,
                                      GLuint blockIndex,
                                      GLenum pname,
                                      GLint *params,
-                                     GLsizei bufSize,
+                                     GLsizei count,
                                      GLsizei *outputPosition)
 
 {
-    ASSERT(*outputPosition < bufSize);
+    ASSERT(*outputPosition < count);
 
     if (pname == GL_BUFFER_BINDING)
     {
@@ -1130,18 +1130,18 @@ void GetUniformBlockResourceProperty(const Program *program,
     }
 
     const auto &block = program->getExecutable().getUniformBlockByIndex(blockIndex);
-    GetInterfaceBlockResourceProperty(block, pname, params, bufSize, outputPosition);
+    GetInterfaceBlockResourceProperty(block, pname, params, count, outputPosition);
 }
 
 void GetShaderStorageBlockResourceProperty(const Program *program,
                                            GLuint blockIndex,
                                            GLenum pname,
                                            GLint *params,
-                                           GLsizei bufSize,
+                                           GLsizei count,
                                            GLsizei *outputPosition)
 
 {
-    ASSERT(*outputPosition < bufSize);
+    ASSERT(*outputPosition < count);
 
     if (pname == GL_BUFFER_BINDING)
     {
@@ -1151,18 +1151,18 @@ void GetShaderStorageBlockResourceProperty(const Program *program,
     }
 
     const auto &block = program->getExecutable().getShaderStorageBlockByIndex(blockIndex);
-    GetInterfaceBlockResourceProperty(block, pname, params, bufSize, outputPosition);
+    GetInterfaceBlockResourceProperty(block, pname, params, count, outputPosition);
 }
 
 void GetAtomicCounterBufferResourceProperty(const Program *program,
                                             GLuint index,
                                             GLenum pname,
                                             GLint *params,
-                                            GLsizei bufSize,
+                                            GLsizei count,
                                             GLsizei *outputPosition)
 
 {
-    ASSERT(*outputPosition < bufSize);
+    ASSERT(*outputPosition < count);
 
     if (pname == GL_BUFFER_BINDING)
     {
@@ -1171,7 +1171,7 @@ void GetAtomicCounterBufferResourceProperty(const Program *program,
     }
 
     const auto &buffer = program->getExecutable().getAtomicCounterBuffers()[index];
-    GetShaderVariableBufferResourceProperty(buffer, pname, params, bufSize, outputPosition);
+    GetShaderVariableBufferResourceProperty(buffer, pname, params, count, outputPosition);
 }
 
 bool IsTextureEnvEnumParameter(TextureEnvParameter pname)
@@ -1762,21 +1762,23 @@ void QueryInternalFormativ(const Context *context,
                            GLenum internalformat,
                            const TextureCaps &format,
                            GLenum pname,
-                           GLsizei bufSize,
+                           GLsizei count,
                            GLint *params)
 {
+    if (count < 1)
+    {
+        return;
+    }
+
     switch (pname)
     {
         case GL_NUM_SAMPLE_COUNTS:
-            if (bufSize != 0)
-            {
-                *params = clampCast<GLint>(format.sampleCounts.size());
-            }
+            *params = clampCast<GLint>(format.sampleCounts.size());
             break;
 
         case GL_SAMPLES:
         {
-            size_t returnCount   = std::min<size_t>(bufSize, format.sampleCounts.size());
+            size_t returnCount   = std::min<size_t>(count, format.sampleCounts.size());
             auto sampleCounts    = format.sampleCounts.sampleCounts();
             auto sampleReverseIt = sampleCounts.rbegin();
             for (size_t sampleIndex = 0; sampleIndex < returnCount; ++sampleIndex)
@@ -1790,15 +1792,14 @@ void QueryInternalFormativ(const Context *context,
             if (texture != nullptr)
             {
                 *params = texture->getFormatSupportedCompressionRates(context, internalformat,
-                                                                      bufSize, nullptr);
+                                                                      count, nullptr);
             }
             break;
 
         case GL_SURFACE_COMPRESSION_EXT:
             if (texture != nullptr)
             {
-                texture->getFormatSupportedCompressionRates(context, internalformat, bufSize,
-                                                            params);
+                texture->getFormatSupportedCompressionRates(context, internalformat, count, params);
             }
             break;
 
@@ -1936,14 +1937,14 @@ void QueryFramebufferPixelLocalStorageParameteriv(Context *context,
 angle::Result QuerySynciv(const Context *context,
                           const Sync *sync,
                           GLenum pname,
-                          GLsizei bufSize,
+                          GLsizei count,
                           GLsizei *length,
                           GLint *values)
 {
     ASSERT(sync != nullptr || pname == GL_SYNC_STATUS);
 
-    // All queries return one value, exit early if the buffer can't fit anything.
-    if (bufSize < 1)
+    // All queries return one value, exit early if the requested count is less.
+    if (count < 1)
     {
         if (length != nullptr)
         {
@@ -2336,7 +2337,7 @@ void QueryProgramResourceiv(const Program *program,
                             UniformBlockIndex index,
                             GLsizei propCount,
                             const GLenum *props,
-                            GLsizei bufSize,
+                            GLsizei count,
                             GLsizei *length,
                             GLint *params)
 {
@@ -2350,9 +2351,8 @@ void QueryProgramResourceiv(const Program *program,
         *length = 0;
     }
 
-    if (bufSize == 0)
+    if (count < 1)
     {
-        // No room to write the results
         return;
     }
 
@@ -2382,18 +2382,18 @@ void QueryProgramResourceiv(const Program *program,
                 break;
 
             case GL_UNIFORM_BLOCK:
-                GetUniformBlockResourceProperty(program, index.value, props[i], params, bufSize,
+                GetUniformBlockResourceProperty(program, index.value, props[i], params, count,
                                                 &pos);
                 break;
 
             case GL_SHADER_STORAGE_BLOCK:
-                GetShaderStorageBlockResourceProperty(program, index.value, props[i], params,
-                                                      bufSize, &pos);
+                GetShaderStorageBlockResourceProperty(program, index.value, props[i], params, count,
+                                                      &pos);
                 break;
 
             case GL_ATOMIC_COUNTER_BUFFER:
                 GetAtomicCounterBufferResourceProperty(program, index.value, props[i], params,
-                                                       bufSize, &pos);
+                                                       count, &pos);
                 break;
 
             case GL_TRANSFORM_FEEDBACK_VARYING:
@@ -2406,7 +2406,7 @@ void QueryProgramResourceiv(const Program *program,
                 UNREACHABLE();
                 params[i] = GL_INVALID_VALUE;
         }
-        if (pos == bufSize)
+        if (pos == count)
         {
             // Most properties return one value, but GL_ACTIVE_VARIABLES returns an array of values.
             // This checks not to break buffer bounds for such case.

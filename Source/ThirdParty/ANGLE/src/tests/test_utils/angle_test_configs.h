@@ -110,15 +110,12 @@ EGLPlatformParameters METAL();
 
 EGLPlatformParameters OPENGL();
 EGLPlatformParameters OPENGL(EGLint major, EGLint minor);
-EGLPlatformParameters OPENGL_NULL();
 
 EGLPlatformParameters OPENGLES();
 EGLPlatformParameters OPENGLES(EGLint major, EGLint minor);
-EGLPlatformParameters OPENGLES_NULL();
 
 EGLPlatformParameters OPENGL_OR_GLES();
 EGLPlatformParameters OPENGL_OR_GLES(EGLint major, EGLint minor);
-EGLPlatformParameters OPENGL_OR_GLES_NULL();
 
 EGLPlatformParameters VULKAN();
 EGLPlatformParameters VULKAN_NULL();

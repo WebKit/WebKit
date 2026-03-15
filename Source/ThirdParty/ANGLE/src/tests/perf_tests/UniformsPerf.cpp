@@ -521,7 +521,6 @@ ANGLE_INSTANTIATE_TEST(
     VectorUniforms(METAL(), DataMode::REPEAT),
     VectorUniforms(OPENGL_OR_GLES(), DataMode::UPDATE),
     VectorUniforms(OPENGL_OR_GLES(), DataMode::REPEAT),
-    VectorUniforms(OPENGL_OR_GLES_NULL(), DataMode::UPDATE),
     MatrixUniforms(D3D11(), DataMode::UPDATE, DataType::MAT4x4, MatrixLayout::NO_TRANSPOSE),
     MatrixUniforms(METAL(), DataMode::UPDATE, DataType::MAT4x4, MatrixLayout::NO_TRANSPOSE),
     MatrixUniforms(OPENGL_OR_GLES(),

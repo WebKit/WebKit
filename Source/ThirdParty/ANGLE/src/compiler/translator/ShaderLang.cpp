@@ -636,7 +636,7 @@ const std::vector<ShPixelLocalStorageFormat> *GetPixelLocalStorageFormats(const 
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
 
-    return &compiler->GetPixelLocalStorageFormats();
+    return &compiler->getPixelLocalStorageFormats();
 }
 
 uint32_t GetShaderSpecConstUsageBits(const ShHandle handle)

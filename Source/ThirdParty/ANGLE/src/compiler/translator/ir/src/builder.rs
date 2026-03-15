@@ -307,7 +307,7 @@ impl CFGBuilder {
                     // merge block.
                     self.interm_blocks.push(if_block);
                     self.current_block.is_merge_block = true;
-                    self.current_block.block.input = input.map(|id| id.to_register_id());
+                    self.current_block.block.input = input.map(|id| id.as_register_id());
                     None
                 }
             }
@@ -331,7 +331,7 @@ impl CFGBuilder {
                 // If there was a merge parameter, replace the merge input with this id directly.
                 let last_block = self.current_block.block.get_merge_chain_last_block_mut();
                 let terminating_op = last_block.get_terminating_op();
-                let merge_param = if matches!(terminating_op, OpCode::Merge(..)) {
+                if matches!(terminating_op, OpCode::Merge(..)) {
                     let merge_param = terminating_op.get_merge_parameter();
                     last_block.unterminate();
                     merge_param
@@ -340,9 +340,7 @@ impl CFGBuilder {
                     // dead code.
                     self.current_block.new_instructions_are_dead_code = true;
                     None
-                };
-
-                merge_param
+                }
             }
             None => {
                 // The if should be entirely eliminated, as there is nothing to replace it with.
@@ -599,7 +597,7 @@ impl CFGBuilder {
         }
 
         // Expression is not a constant, assume the switch is not no-op.
-        return (true, None);
+        (true, None)
     }
 
     fn end_switch(&mut self) {
@@ -701,10 +699,12 @@ impl CFGBuilder {
 // A helper to build the IR from scratch.  The helper is invoked while parsing the shader, and
 // its main purpose is to maintain in-progress items until completed, and adapt the incoming GLSL
 // syntax to the IR.
-#[cfg_attr(debug_assertions, derive(Debug))]
 pub struct Builder {
     // The IR being built
     ir: IR,
+
+    // Flags controlling the IR generation
+    options: Options,
 
     // The current function that is being built (if any).
     current_function: Option<FunctionId>,
@@ -742,9 +742,10 @@ pub struct Builder {
 }
 
 impl Builder {
-    pub fn new(shader_type: ShaderType) -> Builder {
+    pub fn new(shader_type: ShaderType, options: Options) -> Builder {
         Builder {
             ir: IR::new(shader_type),
+            options,
             current_function: None,
             current_function_cfg: CFGBuilder::new(),
             global_initializers_cfg: CFGBuilder::new(),
@@ -770,12 +771,12 @@ impl Builder {
             util::calculate_function_decl_order(&self.ir.meta, &self.ir.function_entries);
         let function_count = self.ir.function_entries.len();
         // Take all entry blocks out ...
-        let mut function_entries = std::mem::replace(&mut self.ir.function_entries, vec![]);
+        let mut function_entries = std::mem::take(&mut self.ir.function_entries);
         self.ir.function_entries.resize_with(function_count, || None);
         // ... and only place back the ones that are reachable from `main` (i.e. are in the DAG).
         for function_id in function_decl_order {
             let id = function_id.id as usize;
-            self.ir.function_entries[id] = std::mem::replace(&mut function_entries[id], None);
+            self.ir.function_entries[id] = function_entries[id].take();
         }
 
         // `main()` is always reachable from `main()`!
@@ -804,6 +805,66 @@ impl Builder {
         std::mem::replace(&mut self.ir, IR::new(ShaderType::Vertex))
     }
 
+    fn variable_is_private_and_can_be_initialized(
+        &self,
+        type_id: TypeId,
+        decorations: &Decorations,
+        built_in: Option<BuiltIn>,
+    ) -> bool {
+        let type_info = self.ir.meta.get_type(type_id);
+        debug_assert!(!type_info.is_pointer());
+
+        // Some variables cannot be initialized, like uniforms, inputs, etc.
+        !(type_info.is_image()
+            || type_info.is_unsized_array()
+            || built_in.is_some()
+            || decorations.has(Decoration::Input)
+            || decorations.has(Decoration::Output)
+            || decorations.has(Decoration::InputOutput)
+            || decorations.has(Decoration::Uniform)
+            || decorations.has(Decoration::Buffer)
+            || decorations.has(Decoration::Shared))
+    }
+
+    fn built_in_is_output(&self, built_in: BuiltIn) -> bool {
+        // gl_PrimitiveID is an output in geometry shaders, but input in tessellation and fragment
+        // shaders.  gl_Layer is an output in geometry shaders, but input in vertex shaders (for
+        // multiview).
+        //
+        // gl_ClipDistance and gl_CullDistance are inputs in fragment shader, output otherwise.
+        //
+        // gl_TessLevelOuter and gl_TessLevelInner are outputs in tessellation control shaders, but
+        // input in tessellation evaluation shaders.
+        match built_in {
+            BuiltIn::FragColor
+            | BuiltIn::FragData
+            | BuiltIn::FragDepth
+            | BuiltIn::SecondaryFragColorEXT
+            | BuiltIn::SecondaryFragDataEXT
+            | BuiltIn::SampleMask
+            | BuiltIn::Position
+            | BuiltIn::PointSize
+            | BuiltIn::PrimitiveShadingRateEXT
+            | BuiltIn::BoundingBoxOES
+            | BuiltIn::PerVertexOut => true,
+            BuiltIn::PrimitiveID | BuiltIn::LayerOut => {
+                self.ir.meta.get_shader_type() == ShaderType::Geometry
+            }
+            BuiltIn::ClipDistance | BuiltIn::CullDistance => {
+                self.ir.meta.get_shader_type() != ShaderType::Fragment
+            }
+            BuiltIn::TessLevelOuter | BuiltIn::TessLevelInner => {
+                self.ir.meta.get_shader_type() == ShaderType::TessellationControl
+            }
+            _ => false,
+        }
+    }
+
+    fn variable_is_output(&self, decorations: &Decorations, built_in: Option<BuiltIn>) -> bool {
+        decorations.has(Decoration::Output)
+            || built_in.is_some_and(|built_in| self.built_in_is_output(built_in))
+    }
+
     // Internal helper to declare a new variable.
     fn declare_variable(
         &mut self,
@@ -814,6 +875,21 @@ impl Builder {
         built_in: Option<BuiltIn>,
         scope: VariableScope,
     ) -> VariableId {
+        // The declared variable may be uninitialized.  If the build flags indicate the need,
+        // the variable is marked such that it is zero-initialized before output generation.  Note
+        // that function parameters are handled in declare_function_param.
+        let needs_zero_initialization = scope != VariableScope::FunctionParam
+            && ((self.options.initialize_uninitialized_variables
+                && self.variable_is_private_and_can_be_initialized(
+                    type_id,
+                    &decorations,
+                    built_in,
+                ))
+                || (self.options.initialize_output_variables
+                    && self.variable_is_output(&decorations, built_in))
+                || (self.options.initialize_gl_position
+                    && matches!(built_in, Some(BuiltIn::Position))));
+
         let variable_id = self.ir.meta.declare_variable(
             name,
             type_id,
@@ -829,6 +905,10 @@ impl Builder {
         // needing declaration.
         if scope == VariableScope::Local {
             self.current_function_cfg.add_variable_declaration(variable_id);
+        }
+
+        if needs_zero_initialization {
+            self.ir.meta.require_variable_zero_initialization(variable_id);
         }
 
         variable_id
@@ -979,15 +1059,24 @@ impl Builder {
         type_id: TypeId,
         precision: Precision,
         decorations: Decorations,
+        direction: FunctionParamDirection,
     ) -> VariableId {
-        self.declare_variable(
+        let variable_id = self.declare_variable(
             Name::new_temp(name),
             type_id,
             precision,
             decorations,
             None,
             VariableScope::FunctionParam,
-        )
+        );
+
+        if self.options.initialize_uninitialized_variables
+            && direction == FunctionParamDirection::Output
+        {
+            self.ir.meta.require_variable_zero_initialization(variable_id);
+        }
+
+        variable_id
     }
 
     // Once the entire function body is visited, `end_function` puts the graph in the function.
@@ -1059,13 +1148,20 @@ impl Builder {
     pub fn initialize(&mut self, id: VariableId) {
         let value = self.load();
 
-        match value.id {
-            Id::Constant(constant_id) => self.ir.meta.set_variable_initializer(id, constant_id),
-            _ => {
-                let id = TypedId::from_variable_id(&self.ir.meta, id);
-                self.scope().add_void_instruction(OpCode::Store(id, value))
-            }
-        };
+        // For some generators, non-const global variables cannot have an initializer.
+        let initializer_allowed = self.options.initializer_allowed_on_non_const_global_variables
+            || self.current_function.is_some()
+            || self.ir.meta.get_variable(id).is_const;
+
+        if let Id::Constant(constant_id) = value.id
+            && initializer_allowed
+        {
+            self.ir.meta.set_variable_initializer(id, constant_id);
+        } else {
+            self.ir.meta.on_variable_initialized(id);
+            let id = TypedId::from_variable_id(&self.ir.meta, id);
+            self.scope().add_void_instruction(OpCode::Store(id, value));
+        }
     }
 
     // Flow control helpers.
@@ -1651,7 +1747,7 @@ impl Builder {
 
         if let Some(length_variable_id) = length_variable {
             let length = self.ir.meta.get_constant_int(length as i32);
-            self.ir.meta.get_variable_mut(length_variable_id).initializer = Some(length);
+            self.ir.meta.set_variable_initializer(length_variable_id, length);
         }
     }
 
@@ -1677,8 +1773,8 @@ impl Builder {
             (false, false)
         };
 
-        match type_info {
-            &Type::Pointer(type_id) => {
+        match *type_info {
+            Type::Pointer(type_id) => {
                 let array_type_info = self.ir.meta.get_type(type_id);
                 if let &Type::Array(_, size) = array_type_info {
                     // The length is a constant, so push that on the stack.
@@ -1714,7 +1810,7 @@ impl Builder {
                     self.add_instruction(result);
                 }
             }
-            &Type::Array(_, size) => {
+            Type::Array(_, size) => {
                 self.push_constant_int(size as i32);
             }
             _ => panic!("Internal error: length() called on non-array"),
@@ -2599,6 +2695,18 @@ impl Builder {
 
 #[cxx::bridge(namespace = "sh::ir::ffi")]
 pub mod ffi {
+    // Flags controlling the way the IR is built, applying transformations during IR generation.
+    struct BuildOptions {
+        // Whether uninitialized local and global variables should be zero-initialized.
+        initialize_uninitialized_variables: bool,
+        // Whether non-const global variables are allowed to have an initializer.
+        initializer_allowed_on_non_const_global_variables: bool,
+        // Whether output variables should be zero-initialized.
+        initialize_output_variables: bool,
+        // Whether gl_Position should be zero-initialized.
+        initialize_gl_position: bool,
+    }
+
     // The following enums and types must be identical to what's found in BaseTypes.h.  This
     // duplication is not ideal, but necessary during the transition to IR.  Once the translator
     // switches over to IR completely, it can directly use the types exported from here (or better
@@ -2966,7 +3074,7 @@ pub mod ffi {
         #[derive(ExternType)]
         type IR;
 
-        fn builder_new(shader_type: ASTShaderType) -> Box<BuilderWrapper>;
+        fn builder_new(shader_type: ASTShaderType, options: BuildOptions) -> Box<BuilderWrapper>;
         fn builder_finish(mut builder: Box<BuilderWrapper>) -> Box<IR>;
         fn builder_fail(mut builder: Box<BuilderWrapper>) -> Box<IR>;
 
@@ -3029,6 +3137,7 @@ pub mod ffi {
             name: &'static str,
             type_id: TypeId,
             ast_type: &ASTType,
+            direction: ASTQualifier,
         ) -> VariableId;
         fn begin_function(self: &mut BuilderWrapper, id: FunctionId);
         fn end_function(self: &mut BuilderWrapper);
@@ -3283,6 +3392,8 @@ pub mod ffi {
     }
 }
 
+pub use ffi::BuildOptions as Options;
+
 impl From<TypeId> for ffi::TypeId {
     fn from(id: TypeId) -> Self {
         ffi::TypeId { id: id.id }
@@ -3410,7 +3521,7 @@ impl From<ffi::ASTLayoutPrimitiveType> for GeometryPrimitive {
     }
 }
 
-fn builder_new(shader_type: ffi::ASTShaderType) -> Box<BuilderWrapper> {
+fn builder_new(shader_type: ffi::ASTShaderType, options: ffi::BuildOptions) -> Box<BuilderWrapper> {
     let shader_type = match shader_type {
         ffi::ASTShaderType::Vertex => ShaderType::Vertex,
         ffi::ASTShaderType::TessControl => ShaderType::TessellationControl,
@@ -3420,7 +3531,7 @@ fn builder_new(shader_type: ffi::ASTShaderType) -> Box<BuilderWrapper> {
         ffi::ASTShaderType::Compute => ShaderType::Compute,
         _ => panic!("Internal error: Impossible shader type enum value"),
     };
-    Box::new(BuilderWrapper { builder: Builder::new(shader_type) })
+    Box::new(BuilderWrapper { builder: Builder::new(shader_type, options) })
 }
 
 fn builder_finish(mut builder: Box<BuilderWrapper>) -> Box<IR> {
@@ -3970,7 +4081,7 @@ impl BuilderWrapper {
                 .push(Decoration::NumViews(ast_type.layout_qualifier.num_views as u32));
         }
         if ast_type.layout_qualifier.yuv {
-            decorations.decorations.push(Decoration::YUV);
+            decorations.decorations.push(Decoration::Yuv);
         }
         if ast_type.layout_qualifier.noncoherent {
             decorations.decorations.push(Decoration::NonCoherent);
@@ -4246,12 +4357,12 @@ impl BuilderWrapper {
         ast_type: &ffi::ASTType,
         is_declaration_internal: bool,
     ) -> ffi::VariableId {
-        if let Some(built_in) = Self::ast_type_built_in(&ast_type) {
+        if let Some(built_in) = Self::ast_type_built_in(ast_type) {
             let variable_id = self.builder.declare_built_in_variable(
                 built_in,
                 ast_type.type_id.into(),
                 ast_type.precision.into(),
-                Self::ast_type_decorations(&ast_type),
+                Self::ast_type_decorations(ast_type),
             );
 
             if !is_declaration_internal {
@@ -4273,7 +4384,7 @@ impl BuilderWrapper {
                 name,
                 ast_type.type_id.into(),
                 ast_type.precision.into(),
-                Self::ast_type_decorations(&ast_type),
+                Self::ast_type_decorations(ast_type),
             )
         }
         .into()
@@ -4291,7 +4402,7 @@ impl BuilderWrapper {
                 name,
                 ast_type.type_id.into(),
                 ast_type.precision.into(),
-                Self::ast_type_decorations(&ast_type),
+                Self::ast_type_decorations(ast_type),
             )
         }
         .into()
@@ -4338,7 +4449,7 @@ impl BuilderWrapper {
                 params,
                 return_type_id.into(),
                 return_ast_type.precision.into(),
-                Self::ast_type_decorations(&return_ast_type),
+                Self::ast_type_decorations(return_ast_type),
             )
             .into()
     }
@@ -4360,13 +4471,15 @@ impl BuilderWrapper {
         name: &'static str,
         type_id: ffi::TypeId,
         ast_type: &ffi::ASTType,
+        direction: ffi::ASTQualifier,
     ) -> ffi::VariableId {
         self.builder
             .declare_function_param(
                 name,
                 type_id.into(),
                 ast_type.precision.into(),
-                Self::ast_type_decorations(&ast_type),
+                Self::ast_type_decorations(ast_type),
+                Self::function_param_direction(direction),
             )
             .into()
     }

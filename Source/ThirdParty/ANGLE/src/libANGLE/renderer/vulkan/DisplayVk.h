@@ -138,6 +138,7 @@ class DisplayVk : public DisplayImpl, public vk::ErrorContext, public vk::Global
     std::shared_ptr<angle::WaitableEvent> postMultiThreadWorkerTask(
         const std::shared_ptr<angle::Closure> &task) override;
     void notifyDeviceLost() override;
+    GlobalOps::Api getFrontendApi() const override { return GlobalOps::Api::Egl; }
 
     angle::ScratchBuffer mScratchBuffer;
 

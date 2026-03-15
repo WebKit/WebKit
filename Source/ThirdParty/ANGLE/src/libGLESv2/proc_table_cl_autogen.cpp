@@ -141,6 +141,7 @@ const ProcTable &GetProcTable()
          {"clSetContextDestructorCallback", P(::cl::clSetContextDestructorCallback)},
          {"clCreateBufferWithProperties", P(::cl::clCreateBufferWithProperties)},
          {"clCreateImageWithProperties", P(::cl::clCreateImageWithProperties)},
+         {"clImportMemoryARM", P(::cl::clImportMemoryARM)},
          {"clEnqueueAcquireExternalMemObjectsKHR", P(::cl::clEnqueueAcquireExternalMemObjectsKHR)},
          {"clEnqueueReleaseExternalMemObjectsKHR", P(::cl::clEnqueueReleaseExternalMemObjectsKHR)},
          {"clIcdGetFunctionAddressForPlatformKHR", P(::cl::clIcdGetFunctionAddressForPlatformKHR)},

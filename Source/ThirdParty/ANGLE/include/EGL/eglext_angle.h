@@ -186,6 +186,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglStreamPostD3DTextureANGLE(EGLDisplay dpy, EGLSt
 #ifndef EGL_ANGLE_create_context_webgl_compatibility
 #define EGL_ANGLE_create_context_webgl_compatibility 1
 #define EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE 0x33AC
+#define EGL_CONTEXT_HARDENED_ANGLE 0x34F8
 #endif /* EGL_ANGLE_create_context_webgl_compatibility */
 
 #ifndef EGL_ANGLE_display_texture_share_group

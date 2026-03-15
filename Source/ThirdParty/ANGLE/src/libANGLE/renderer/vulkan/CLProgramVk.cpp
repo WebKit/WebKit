@@ -504,8 +504,8 @@ angle::Result CLProgramVk::init(const size_t *lengths,
         // Add device binary to program
         DeviceProgramData deviceBinary;
         deviceBinary.spirvVersion = device->getImpl<CLDeviceVk>().getSpirvVersion();
-        deviceBinary.binaryType  = binaryHeader->binaryType;
-        deviceBinary.buildStatus = binaryHeader->buildStatus;
+        deviceBinary.binaryType   = binaryHeader->binaryType;
+        deviceBinary.buildStatus  = binaryHeader->buildStatus;
         switch (deviceBinary.binaryType)
         {
             case CL_PROGRAM_BINARY_TYPE_EXECUTABLE:
@@ -913,31 +913,28 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
     // Cache original options string
     mProgramOpts = options;
 
-    // Process options and append any other internal (required) options for clspv
-    std::vector<std::string> optionTokens;
-    angle::SplitStringAlongWhitespace(options + " " + internalOptions, &optionTokens);
-    const bool createLibrary     = std::find(optionTokens.begin(), optionTokens.end(),
-                                             "-create-library") != optionTokens.end();
-    std::string processedOptions = ProcessBuildOptions(optionTokens, buildType);
-
     // Build for each associated device
     for (size_t i = 0; i < devices.size(); ++i)
     {
         const cl::RefPointer<cl::Device> &device = devices.at(i);
         DeviceProgramData &deviceProgramData     = mAssociatedDevicePrograms[device->getNative()];
         deviceProgramData.spirvVersion           = device->getImpl<CLDeviceVk>().getSpirvVersion();
-
-        // add clspv compiler options based on device features
-        processedOptions += ClspvGetCompilerOptions(&device->getImpl<CLDeviceVk>());
+        if (buildType != BuildType::BINARY)
+        {
+            // Process options and append any other internal (required) options for clspv
+            std::vector<std::string> optionTokens;
+            angle::SplitStringAlongWhitespace(options + " " + internalOptions, &optionTokens);
+            const bool createLibrary     = std::find(optionTokens.begin(), optionTokens.end(),
+                                                     "-create-library") != optionTokens.end();
+            std::string processedOptions = ProcessBuildOptions(optionTokens, buildType);
+            // add clspv compiler options based on device features
+            processedOptions += ClspvGetCompilerOptions(&device->getImpl<CLDeviceVk>());
 
         cl_uint addressBits;
         ANGLE_CL_IMPL_TRY(
             device->getInfo(cl::DeviceInfo::AddressBits, sizeof(cl_uint), &addressBits, nullptr));
         processedOptions += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
 
-        if (buildType != BuildType::BINARY)
-        {
-            // Invoke clspv
             switch (buildType)
             {
                 case BuildType::BUILD:

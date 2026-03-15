@@ -274,6 +274,9 @@
 40644666 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.shaders.invariance.mediump.subexpression_precision_lowp = FAIL
 // New failures when upgrading to Ubuntu 22/newer driver 535.183.01.
 362486580 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.texture.completeness.cube.npot_mirrored_repeat = FAIL
+362486580 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.texture.completeness.cube.npot_s_repeat = FAIL
+362486580 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.texture.completeness.cube.npot_t_repeat = FAIL
+362486580 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.texture.filtering.cube.linear_mipmap_linear_linear_clamp_etc1 = FAIL
 362486580 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.texture.filtering.cube.linear_mipmap_linear_nearest_clamp_etc1 = FAIL
 // Fails on 431.02 NVIDIA driver
 40644697 VULKAN WIN NVIDIA : dEQP-GLES2.functional.fbo.render.repeated_clear.* = FAIL

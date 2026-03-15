@@ -1484,6 +1484,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo supportsAstc3d = {
+        "supportsAstc3d",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
     FeatureInfo supportsImageCompressionControlSwapchain = {
         "supportsImageCompressionControlSwapchain",
         FeatureCategory::VulkanFeatures,
@@ -1600,6 +1606,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo supportsShaderAtomicInt64 = {
         "supportsShaderAtomicInt64",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsBindVertexBuffers2 = {
+        "supportsBindVertexBuffers2",
         FeatureCategory::VulkanFeatures,
         &members,
     };

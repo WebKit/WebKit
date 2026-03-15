@@ -192,6 +192,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "clIcdGetPlatformIDsKHR";
         case EntryPoint::CLIcdSetPlatformDispatchDataKHR:
             return "clIcdSetPlatformDispatchDataKHR";
+        case EntryPoint::CLImportMemoryARM:
+            return "clImportMemoryARM";
         case EntryPoint::CLLinkProgram:
             return "clLinkProgram";
         case EntryPoint::CLReleaseCommandQueue:

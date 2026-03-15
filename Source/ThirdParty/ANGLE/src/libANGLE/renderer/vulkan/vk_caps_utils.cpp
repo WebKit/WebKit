@@ -356,9 +356,6 @@ void Renderer::ensureCapsInitialized() const
         mNativeLimitations.emulatedAstc = true;
     }
 
-    // Vulkan doesn't support ASTC 3D block textures, which are required by
-    // GL_OES_texture_compression_astc.
-    mNativeExtensions.textureCompressionAstcOES = false;
     // Enable KHR_texture_compression_astc_sliced_3d
     mNativeExtensions.textureCompressionAstcSliced3dKHR =
         mNativeExtensions.textureCompressionAstcLdrKHR &&
@@ -367,6 +364,11 @@ void Renderer::ensureCapsInitialized() const
     // Enable KHR_texture_compression_astc_hdr
     mNativeExtensions.textureCompressionAstcHdrKHR =
         mNativeExtensions.textureCompressionAstcLdrKHR && supportsAstcHdr();
+
+    // Enable GL_OES_texture_compression_astc
+    mNativeExtensions.textureCompressionAstcOES = getFeatures().supportsAstc3d.enabled &&
+                                                  mNativeExtensions.textureCompressionAstcHdrKHR &&
+                                                  mNativeExtensions.textureCompressionAstcLdrKHR;
 
     // Enable EXT_compressed_ETC1_RGB8_sub_texture
     mNativeExtensions.compressedETC1RGB8SubTextureEXT =

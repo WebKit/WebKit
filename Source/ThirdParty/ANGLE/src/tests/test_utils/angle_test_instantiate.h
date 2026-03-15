@@ -47,6 +47,7 @@ bool IsAndroid14OrNewer();
 // GPU vendors.
 bool IsIntel();
 bool IsAMD();
+bool IsSamsung();
 bool IsAppleGPU();
 bool IsARM();
 bool IsNVIDIA();
@@ -146,7 +147,8 @@ struct CombinedPrintToStringParamName
         ES3_VULKAN_SWIFTSHADER()                                                       \
             .enable(Feature::EnableParallelCompileAndLink)                             \
             .disable(Feature::SupportsGraphicsPipelineLibrary)                         \
-            .enable(Feature::VaryingsRequireMatchingPrecisionInSpirv)
+            .enable(Feature::VaryingsRequireMatchingPrecisionInSpirv)                  \
+            .enable(Feature::SimulateTileMemoryForTesting)
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES31                                         \
     ES31_OPENGL(), ES31_OPENGLES(), ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER(), \

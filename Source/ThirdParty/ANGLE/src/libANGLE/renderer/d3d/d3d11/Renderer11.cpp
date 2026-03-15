@@ -418,8 +418,6 @@ Renderer11::Renderer11(egl::Display *display)
       mCreateDebugDevice(false),
       mStateCache(),
       mStateManager(this),
-      mLastHistogramUpdateTime(
-          ANGLEPlatformCurrent()->monotonicallyIncreasingTime(ANGLEPlatformCurrent())),
       mDebug(nullptr),
       mScratchMemoryBuffer(ScratchMemoryBufferLifetime)
 {
@@ -436,7 +434,6 @@ Renderer11::Renderer11(egl::Display *display)
     mRenderer11DeviceCaps.supportsClearView                      = false;
     mRenderer11DeviceCaps.supportsConstantBufferOffsets          = false;
     mRenderer11DeviceCaps.supportsVpRtIndexWriteFromVertexShader = false;
-    mRenderer11DeviceCaps.supportsDXGI1_2                        = false;
     mRenderer11DeviceCaps.allowES3OnFL10_0                       = false;
     mRenderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats  = false;
     mRenderer11DeviceCaps.supportsUAVLoadStoreCommonFormats      = false;
@@ -1112,9 +1109,6 @@ egl::Error Renderer11::initializeDevice()
     ASSERT(!mPixelTransfer);
     mPixelTransfer = new PixelTransfer11(this);
 
-    // Gather stats on DXGI and D3D feature level
-    ANGLE_HISTOGRAM_BOOLEAN("GPU.ANGLE.SupportsDXGI1_2", mRenderer11DeviceCaps.supportsDXGI1_2);
-
     ANGLEFeatureLevel angleFeatureLevel = GetANGLEFeatureLevel(mRenderer11DeviceCaps.featureLevel);
 
     // We don't actually request a 11_1 device, because of complications with the platform
@@ -1231,10 +1225,6 @@ void Renderer11::populateRenderer11DeviceCaps()
     PopulateFormatDeviceCaps(mDevice.Get(), DXGI_FORMAT_B5G5R5A1_UNORM,
                              &mRenderer11DeviceCaps.B5G5R5A1support,
                              &mRenderer11DeviceCaps.B5G5R5A1maxSamples);
-
-    angle::ComPtr<IDXGIAdapter2> dxgiAdapter2;
-    mDxgiAdapter.As(&dxgiAdapter2);
-    mRenderer11DeviceCaps.supportsDXGI1_2 = (dxgiAdapter2 != nullptr);
 }
 
 gl::SupportedSampleSet Renderer11::generateSampleSetForEGLConfig(
@@ -1434,8 +1424,7 @@ void Renderer11::generateDisplayExtensions(egl::DisplayExtensions *outExtensions
     // If present path fast is active then the surface orientation extension isn't supported
     outExtensions->surfaceOrientation = !mPresentPathFastEnabled;
 
-    // D3D11 does not support present with dirty rectangles until DXGI 1.2.
-    outExtensions->postSubBuffer = mRenderer11DeviceCaps.supportsDXGI1_2;
+    outExtensions->postSubBuffer = true;
 
     outExtensions->image                 = true;
     outExtensions->imageBase             = true;
@@ -3971,37 +3960,6 @@ bool Renderer11::isES3Capable() const
 RendererClass Renderer11::getRendererClass() const
 {
     return RENDERER_D3D11;
-}
-
-void Renderer11::onSwap()
-{
-    // Send histogram updates every half hour
-    const double kHistogramUpdateInterval = 30 * 60;
-
-    auto *platform                   = ANGLEPlatformCurrent();
-    const double currentTime         = platform->monotonicallyIncreasingTime(platform);
-    const double timeSinceLastUpdate = currentTime - mLastHistogramUpdateTime;
-
-    if (timeSinceLastUpdate > kHistogramUpdateInterval)
-    {
-        updateHistograms();
-        mLastHistogramUpdateTime = currentTime;
-    }
-}
-
-void Renderer11::updateHistograms()
-{
-    // Update the buffer CPU memory histogram
-    {
-        size_t sizeSum = 0;
-        for (const Buffer11 *buffer : mAliveBuffers)
-        {
-            sizeSum += buffer->getTotalCPUBufferMemoryBytes();
-        }
-        const int kOneMegaByte = 1024 * 1024;
-        ANGLE_HISTOGRAM_MEMORY_MB("GPU.ANGLE.Buffer11CPUMemoryMB",
-                                  static_cast<int>(sizeSum) / kOneMegaByte);
-    }
 }
 
 void Renderer11::onBufferCreate(const Buffer11 *created)

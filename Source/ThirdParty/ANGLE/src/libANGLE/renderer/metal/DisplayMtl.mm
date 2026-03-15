@@ -914,6 +914,21 @@ void DisplayMtl::ensureCapsInitialized() const
 
     // Apple platforms require PVRTC1 textures to be squares.
     mNativeLimitations.squarePvrtc1 = true;
+
+    if (mFeatures.disableProgrammableBlending.enabled || !supportsAppleGPUFamily(1))
+    {
+        const MTLReadWriteTextureTier readWriteTextureTier = [mMetalDevice readWriteTextureSupport];
+        if (readWriteTextureTier != MTLReadWriteTextureTierNone)
+        {
+            const bool rasterOrderGroupsSupported = !mFeatures.disableRasterOrderGroups.enabled &&
+                                                    [mMetalDevice areRasterOrderGroupsSupported];
+
+            if (rasterOrderGroupsSupported && isAMD())
+            {
+                mNativeLimitations.noRasterOrderGroupWithoutAttachmentZero = true;
+            }
+        }
+    }
 }
 
 void DisplayMtl::initializeExtensions() const
@@ -1111,15 +1126,6 @@ void DisplayMtl::initializeExtensions() const
             mNativePLSOptions.supportsNativeRGBA8ImageFormats =
                 !mFeatures.disableRWTextureTier2Support.enabled &&
                 readWriteTextureTier == MTLReadWriteTextureTier2;
-
-            if (rasterOrderGroupsSupported && isAMD())
-            {
-                // anglebug.com/42266263 -- [[raster_order_group()]] does not work for read_write
-                // textures on AMD when the render pass doesn't have a color attachment on slot 0.
-                // To work around this we attach one of the PLS textures to GL_COLOR_ATTACHMENT0, if
-                // there isn't one already.
-                mNativePLSOptions.renderPassNeedsAMDRasterOrderGroupsWorkaround = true;
-            }
 
             mNativeExtensions.shaderPixelLocalStorageANGLE         = true;
             mNativeExtensions.shaderPixelLocalStorageCoherentANGLE = rasterOrderGroupsSupported;
@@ -1327,15 +1333,8 @@ void DisplayMtl::initializeFeatures()
            mFeatures.allowSamplerCompareGradient.enabled);
 
     // Metal compiler optimizations may remove infinite loops causing crashes later in shader
-    // execution. http://crbug.com/1513738
-    ANGLE_FEATURE_CONDITION((&mFeatures), ensureLoopForwardProgress, false);
-
-    // Once not used, injectAsmStatementIntoLoopBodies should be removed and
-    // ensureLoopForwardProgress should default to true.
-    // http://crbug.com/1522730
-    bool shouldUseInjectAsmIntoLoopBodies = !mFeatures.ensureLoopForwardProgress.enabled;
-    ANGLE_FEATURE_CONDITION((&mFeatures), injectAsmStatementIntoLoopBodies,
-                            shouldUseInjectAsmIntoLoopBodies);
+    // execution. http://crbug.com/41486305
+    ANGLE_FEATURE_CONDITION((&mFeatures), ensureLoopForwardProgress, true);
 }
 
 angle::Result DisplayMtl::initializeShaderLibrary()

@@ -3,6 +3,17 @@
 # found in the LICENSE file.
 
 import("//build_overrides/angle.gni")
+if (angle_has_build) {
+  import("//build/config/gclient_args.gni")
+}
+
+if (!defined(checkout_angle_cl_deps)) {
+  checkout_angle_cl_deps = true
+}
+
+if (!defined(checkout_angle_dawn_deps)) {
+  checkout_angle_dawn_deps = true
+}
 
 declare_args() {
   # Extract native libs in ANGLE apk. Useful for flamegraph generation.
@@ -17,6 +28,9 @@ declare_args() {
 
   # Enables OpenCL support, off by default.
   angle_enable_cl = false
+  if (!checkout_angle_cl_deps) {
+    angle_enable_cl = false
+  }
 
   angle_restricted_traces = []
 
@@ -205,7 +219,6 @@ declare_args() {
   angle_enable_null = !is_official_build
   angle_enable_gl_desktop_backend = !is_android && !is_ios
 
-  # http://anglebug.com/40096506
   angle_enable_metal = is_apple
 
   # Enables the OpenCL pass-through back end
@@ -217,7 +230,7 @@ declare_args() {
   angle_enable_wgpu =
       !is_official_build && !(is_android || is_fuchsia || angle_is_winuwp) &&
       (!is_win || is_clang) && (!is_linux || angle_use_x11) &&
-      defined(angle_dawn_dir)
+      defined(angle_dawn_dir) && checkout_angle_dawn_deps
 }
 
 declare_args() {
@@ -259,6 +272,7 @@ declare_args() {
   angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11
   angle_enable_essl = angle_enable_gl || use_ozone
   angle_enable_glsl = angle_enable_gl || use_ozone
+  angle_enable_msl = angle_enable_metal
   angle_enable_trace = false
   angle_enable_trace_android_logcat = false
   angle_enable_trace_events = false

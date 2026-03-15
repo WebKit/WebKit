@@ -831,7 +831,7 @@
             },
             "gl_FragData":{
                 "essl_level":"ESSL1_BUILTINS",
-                "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpMedium, EvqFragData, 4); if (spec != SH_WEBGL2_SPEC && spec != SH_WEBGL3_SPEC) {{ {type_name}->makeArray(resources.MaxDrawBuffers); }} else {{ {type_name}->makeArray(1u); }}"
+                "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpMedium, EvqFragData, 4); if (spec != SH_WEBGL2_SPEC) {{ {type_name}->makeArray(resources.MaxDrawBuffers); }} else {{ {type_name}->makeArray(1u); }}"
             },
             "gl_FragDepth":{
                 "essl_level":"ESSL3_BUILTINS",

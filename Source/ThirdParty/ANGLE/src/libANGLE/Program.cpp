@@ -2102,8 +2102,9 @@ bool Program::linkAttributes(const Caps &caps,
     // Assign locations to attributes that don't have a binding location.
     for (ProgramInput &attribute : mState.mExecutable->mProgramInputs)
     {
-        // Not set by glBindAttribLocation or by location layout qualifier
-        if (attribute.getLocation() == -1)
+        // Not set by glBindAttribLocation or by location layout qualifier and not built-in
+        // attribute
+        if (!attribute.isBuiltIn() && attribute.getLocation() == -1)
         {
             int regs           = VariableRegisterCount(attribute.getType());
             int availableIndex = AllocateFirstFreeBits(&usedLocations, regs, maxAttribs);
@@ -2141,16 +2142,18 @@ bool Program::linkAttributes(const Caps &caps,
 
     for (const ProgramInput &attribute : mState.mExecutable->getProgramInputs())
     {
-        ASSERT(attribute.isActive());
-        ASSERT(attribute.getLocation() != -1);
-        unsigned int regs = static_cast<unsigned int>(VariableRegisterCount(attribute.getType()));
-
-        unsigned int location = static_cast<unsigned int>(attribute.getLocation());
-        for (unsigned int r = 0; r < regs; r++)
+        // Built-in active program inputs don't have a bound attribute.
+        if (!attribute.isBuiltIn())
         {
-            // Built-in active program inputs don't have a bound attribute.
-            if (!attribute.isBuiltIn())
+            ASSERT(attribute.isActive());
+            ASSERT(attribute.getLocation() != -1);
+            unsigned int regs =
+                static_cast<unsigned int>(VariableRegisterCount(attribute.getType()));
+
+            unsigned int location = static_cast<unsigned int>(attribute.getLocation());
+            for (unsigned int r = 0; r < regs; r++)
             {
+
                 mState.mExecutable->mPod.activeAttribLocationsMask.set(location);
                 mState.mExecutable->mPod.maxActiveAttribLocation =
                     std::max(mState.mExecutable->mPod.maxActiveAttribLocation, location + 1);

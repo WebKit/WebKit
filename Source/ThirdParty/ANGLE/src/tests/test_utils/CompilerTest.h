@@ -41,6 +41,9 @@ class CompiledShader
     // Returns true if either the translated source does not exist or it does not contains this
     // substring.
     bool verifyNotInTranslatedSource(const char *expect) const;
+    // Returns true if either the translated source does not exist or it contains this substring
+    // exactly N times.
+    bool verifyCountInTranslatedSource(const char *expect, size_t expectCount) const;
 
   private:
     std::string mInfoLog;

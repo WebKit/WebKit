@@ -360,7 +360,7 @@ ShShaderSpec Compiler::SelectShaderSpec(const State &state)
                 ASSERT(!isWebGL);
                 return SH_GLES3_2_SPEC;
             case 1:
-                return isWebGL ? SH_WEBGL3_SPEC : SH_GLES3_1_SPEC;
+                return SH_GLES3_1_SPEC;
             case 0:
                 return isWebGL ? SH_WEBGL2_SPEC : SH_GLES3_SPEC;
             default:

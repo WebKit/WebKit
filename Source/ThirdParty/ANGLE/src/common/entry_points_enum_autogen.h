@@ -102,6 +102,7 @@ enum class EntryPoint
     CLIcdGetFunctionAddressForPlatformKHR,
     CLIcdGetPlatformIDsKHR,
     CLIcdSetPlatformDispatchDataKHR,
+    CLImportMemoryARM,
     CLLinkProgram,
     CLReleaseCommandQueue,
     CLReleaseContext,

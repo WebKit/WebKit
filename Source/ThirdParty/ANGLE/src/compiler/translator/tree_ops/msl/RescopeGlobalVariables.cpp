@@ -6,7 +6,7 @@
 
 #include <set>
 
-#include "compiler/translator/tree_ops/RescopeGlobalVariables.h"
+#include "compiler/translator/tree_ops/msl/RescopeGlobalVariables.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/util.h"

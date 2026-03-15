@@ -19,8 +19,7 @@ pub fn run(ir: &mut IR) {
     traverser::transformer::for_each_function(
         &mut state,
         &mut ir.function_entries,
-        |_, _| {},
-        &|state, entry| {
+        &|state, _, entry| {
             traverser::transformer::for_each_block(
                 state,
                 entry,
@@ -32,7 +31,7 @@ pub fn run(ir: &mut IR) {
 }
 
 fn dealias_registers<'block>(state: &mut State, block: &'block mut Block) -> &'block mut Block {
-    let instructions = std::mem::replace(&mut block.instructions, vec![]);
+    let instructions = std::mem::take(&mut block.instructions);
     let mut transformed = Vec::with_capacity(instructions.len());
 
     for mut instruction in instructions.into_iter() {

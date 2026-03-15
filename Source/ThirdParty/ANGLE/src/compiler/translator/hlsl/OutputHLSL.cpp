@@ -841,11 +841,8 @@ void OutputHLSL::header(TInfoSinkBase &out,
             if (mOutputType == SH_HLSL_4_1_OUTPUT)
             {
                 out << "    uint dx_Misc : packoffset(c2.w);\n";
-                unsigned int registerIndex = 4;
+                const unsigned int registerIndex = 4;
                 mResourcesHLSL->samplerMetadataUniforms(out, registerIndex);
-                // Sampler metadata struct must be two 4-vec, 32 bytes.
-                registerIndex += mResourcesHLSL->getSamplerCount() * 2;
-                mResourcesHLSL->imageMetadataUniforms(out, registerIndex);
             }
 
             out << "};\n";

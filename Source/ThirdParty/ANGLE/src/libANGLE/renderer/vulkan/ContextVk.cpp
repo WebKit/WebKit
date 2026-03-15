@@ -2363,7 +2363,8 @@ angle::Result ContextVk::handleDirtyGraphicsReadOnlyDepthFeedbackLoopMode(
 angle::Result ContextVk::handleDirtyAnySamplePassedQueryEnd(DirtyBits::Iterator *dirtyBitsIterator,
                                                             DirtyBits dirtyBitMask)
 {
-    if (mRenderPassCommands->started())
+    // If we are using tile memory, don't enable this optimization to prevent fallback.
+    if (mRenderPassCommands->started() && mImagesWithTileMemory.empty())
     {
         // When we switch from query enabled draw to query disabled draw, we do immediate flush to
         // ensure the query result will be ready early so that application thread calling
@@ -2678,11 +2679,9 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
 
     if (maxAttrib > 0)
     {
-        if (getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+        if (getFeatures().supportsBindVertexBuffers2.enabled)
         {
-            // bindVertexBuffers2EXT() requires extended dynamic state or shader object extension.
             // Since the strides are already set in setVertexInput(), they need not be set here.
-            ASSERT(getFeatures().supportsExtendedDynamicState.enabled);
             if (mUseSizePointerForBindingVertexBuffers)
             {
                 const gl::AttribArray<VkDeviceSize> &bufferSizes =
@@ -2747,8 +2746,7 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
                 mismatchingType ? 0 : vertexArrayVk->getCurrentArrayBufferStride(attribIndex);
         }
 
-        // bindVertexBuffers2EXT() requires the extension extended dynamic state or shader object.
-        ASSERT(getFeatures().supportsExtendedDynamicState.enabled);
+        ASSERT(getFeatures().supportsBindVertexBuffers2.enabled);
         if (mUseSizePointerForBindingVertexBuffers)
         {
             const gl::AttribArray<VkDeviceSize> &bufferSizes =
@@ -3731,6 +3729,9 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
                                         const vk::SharedExternalFence *externalFence,
                                         QueueSubmitReason reason)
 {
+    // Since we just about to flush, deferred flush is no longer deferred.
+    mHasDeferredFlush = false;
+
     if (kEnableCommandStreamDiagnostics)
     {
         dumpCommandStreamDiagnostics();
@@ -3784,8 +3785,10 @@ angle::Result ContextVk::onCopyUpdate(VkDeviceSize size, bool *commandBufferWasF
     *commandBufferWasFlushedOut = false;
 
     mTotalBufferToImageCopySize += size;
-    // If the copy size exceeds the specified threshold, submit the outside command buffer.
-    if (mTotalBufferToImageCopySize >= kMaxBufferToImageCopySize)
+    // If the copy size exceeds the specified threshold, submit the outside command buffer. When
+    // there are images with tile memory in use, avoid submission by trying to avoid triggering tile
+    // memory fallback.
+    if (mTotalBufferToImageCopySize >= kMaxBufferToImageCopySize && mImagesWithTileMemory.empty())
     {
         ANGLE_TRY(flushAndSubmitOutsideRenderPassCommands(
             QueueSubmitReason::BufferToImageUpdateLimitReached));
@@ -5585,8 +5588,9 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                     (currentRPCommandCount >= kMinCommandCountToSubmit ||
                      allowExceptionForSubmitAtBoundary);
 
+                // If we are using tile memory, don't enable this optimization to prevent fallback.
                 if ((shouldSubmitAtFBOBoundary || mState.getDrawFramebuffer()->isDefault()) &&
-                    mRenderPassCommands->started())
+                    mRenderPassCommands->started() && mImagesWithTileMemory.empty())
                 {
                     // This will behave as if user called glFlush, but the actual flush will be
                     // triggered at endRenderPass time.
@@ -7612,8 +7616,6 @@ angle::Result ContextVk::flushAndSubmitCommands(const vk::Semaphore *signalSemap
     mHasAnyCommandsPendingSubmission    = false;
     onRenderPassFinished(RenderPassClosureReason::AlreadySpecifiedElsewhere);
 
-    // Since we just flushed, deferred flush is no longer deferred.
-    mHasDeferredFlush = false;
     return angle::Result::Continue;
 }
 
@@ -7798,9 +7800,12 @@ angle::Result ContextVk::beginNewRenderPass(
     const vk::PackedClearValuesArray &clearValues,
     vk::RenderPassCommandBuffer **commandBufferOut)
 {
-    // End any currently outstanding render pass. The render pass is normally closed before reaching
-    // here for various reasons, except typically when UtilsVk needs to start one.
-    ANGLE_TRY(flushCommandsAndEndRenderPass(RenderPassClosureReason::NewRenderPass));
+    if (mRenderPassCommands->started())
+    {
+        // End any currently outstanding render pass. The render pass is normally closed before
+        // reaching here for various reasons, except typically when UtilsVk needs to start one.
+        ANGLE_TRY(flushCommandsAndEndRenderPass(RenderPassClosureReason::NewRenderPass));
+    }
 
     // Now generate queueSerial for the renderPass.
     QueueSerial renderPassQueueSerial;
@@ -8301,6 +8306,7 @@ angle::Result ContextVk::beginRenderPassQuery(QueryVk *queryVk)
 
     ASSERT(mActiveRenderPassQueries[type] == nullptr);
     mActiveRenderPassQueries[type] = queryVk;
+    mActiveRenderPassQueryBitmask.set(type);
 
     return angle::Result::Continue;
 }
@@ -8337,6 +8343,7 @@ angle::Result ContextVk::endRenderPassQuery(QueryVk *queryVk)
 
     ASSERT(mActiveRenderPassQueries[type] == queryVk);
     mActiveRenderPassQueries[type] = nullptr;
+    mActiveRenderPassQueryBitmask.reset(type);
 
     return angle::Result::Continue;
 }
@@ -8421,6 +8428,8 @@ bool ContextVk::isEmulatingRasterizerDiscardDuringPrimitivesGeneratedQuery(
 
 QueryVk *ContextVk::getActiveRenderPassQuery(gl::QueryType queryType) const
 {
+    ASSERT(mActiveRenderPassQueryBitmask[queryType] ==
+           (mActiveRenderPassQueries[queryType] != nullptr));
     return mActiveRenderPassQueries[queryType];
 }
 
@@ -8777,7 +8786,7 @@ angle::Result ContextVk::endRenderPassIfComputeAccessAfterGraphicsImageAccess()
 
             // This is to handle the implicit layout transition in render pass of this image,
             // while it currently be bound and used by current compute program.
-            if (mRenderPassCommands->startedAndUsesImageWithBarrier(image))
+            if (isRenderPassStartedAndUsesImage(image))
             {
                 return flushCommandsAndEndRenderPass(
                     RenderPassClosureReason::GraphicsTextureImageAccessThenComputeAccess);
@@ -8813,7 +8822,7 @@ angle::Result ContextVk::endRenderPassIfComputeAccessAfterGraphicsImageAccess()
         }
 
         // Take care of the read image layout transition require implicit synchronization.
-        if (mRenderPassCommands->startedAndUsesImageWithBarrier(image))
+        if (isRenderPassStartedAndUsesImage(image))
         {
             return flushCommandsAndEndRenderPass(
                 RenderPassClosureReason::GraphicsTextureImageAccessThenComputeAccess);
@@ -9152,5 +9161,14 @@ angle::Result ContextVk::finalizeImagesWithTileMemory()
     mImagesWithTileMemory.clear();
 
     return angle::Result::Continue;
+}
+
+void ContextVk::restoreAllGraphicsState()
+{
+    // Recover states that may have been changed by UtilsVk::depthStencilBlitResolve. We dirty all
+    // states except DIRTY_BIT_RENDER_PASS so that render pass could still reused.
+    DirtyBits allDrawStateDirtyBits =
+        mNewGraphicsCommandBufferDirtyBits & ~DirtyBits{DIRTY_BIT_RENDER_PASS};
+    mGraphicsDirtyBits |= allDrawStateDirtyBits;
 }
 }  // namespace rx

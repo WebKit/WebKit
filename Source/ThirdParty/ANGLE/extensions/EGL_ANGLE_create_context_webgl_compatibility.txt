@@ -9,6 +9,7 @@ Name Strings
 Contributors
 
     Geoff Lang
+    Shahbaz Youssefi
 
 Contacts
 
@@ -54,6 +55,7 @@ New Tokens
     eglCreateContext:
 
         EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE 0x33AC
+        EGL_CONTEXT_HARDENED_ANGLE 0x34F8
 
 Additions to the EGL 1.4 Specification
 
@@ -64,6 +66,12 @@ Additions to the EGL 1.4 Specification
     will provide additional features and validation to be compatible with the
     WebGL specification. The default value of
     EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE is EGL_FALSE.
+
+    EGL_CONTEXT_HARDENED_ANGLE indicates whether additional hardening measures
+    should be applied, such as done by the shader translation.  These hardening
+    measures are a subset of those enabled when
+    EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE is EGL_TRUE, and so it has no effect
+    in that case.
 
 Errors
 
@@ -85,4 +93,5 @@ Revision History
 
     Rev.    Date         Author     Changes
     ----  -------------  ---------  ----------------------------------------
+      2   Jan  12, 2026  syoussefi  Add hardened context creation flag
       1   Sept 16, 2016  geofflang  Initial version

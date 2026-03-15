@@ -53,11 +53,11 @@ fn id_str(id: TypedId) -> String {
     }
 }
 
-fn id_list_str(ids: &Vec<TypedId>) -> String {
+fn id_list_str(ids: &[TypedId]) -> String {
     ids.iter().map(|&id| id_str(id)).collect::<Vec<_>>().join(", ")
 }
 
-fn index_list_str(ids: &Vec<u32>) -> String {
+fn index_list_str(ids: &[u32]) -> String {
     ids.iter().map(|index| index.to_string()).collect::<Vec<_>>().join(", ")
 }
 
@@ -333,7 +333,7 @@ fn decoration_str(decoration: Decoration) -> String {
         Decoration::Buffer => "buffer".to_string(),
         Decoration::PushConstant => "push_constant".to_string(),
         Decoration::NonCoherent => "noncoherent".to_string(),
-        Decoration::YUV => "yuv".to_string(),
+        Decoration::Yuv => "yuv".to_string(),
         Decoration::Input => "input".to_string(),
         Decoration::Output => "output".to_string(),
         Decoration::InputOutput => "input/output".to_string(),
@@ -685,8 +685,8 @@ fn built_in_opcode_str(op: BuiltInOpCode) -> &'static str {
 }
 
 fn texture_opcode_str(op: &TextureOpCode) -> (&'static str, String) {
-    match op {
-        &TextureOpCode::Implicit { is_proj, offset } => (
+    match *op {
+        TextureOpCode::Implicit { is_proj, offset } => (
             "",
             format!(
                 "is_proj:{}{}",
@@ -694,8 +694,8 @@ fn texture_opcode_str(op: &TextureOpCode) -> (&'static str, String) {
                 offset.map(|id| format!(" offset:{}", id_str(id))).unwrap_or("".to_string())
             ),
         ),
-        &TextureOpCode::Compare { compare } => ("Compare", format!("compare:{}", id_str(compare))),
-        &TextureOpCode::Lod { is_proj, lod, offset } => (
+        TextureOpCode::Compare { compare } => ("Compare", format!("compare:{}", id_str(compare))),
+        TextureOpCode::Lod { is_proj, lod, offset } => (
             "Lod",
             format!(
                 "is_proj:{} lod:{}{}",
@@ -704,10 +704,10 @@ fn texture_opcode_str(op: &TextureOpCode) -> (&'static str, String) {
                 offset.map(|id| format!(" offset:{}", id_str(id))).unwrap_or("".to_string())
             ),
         ),
-        &TextureOpCode::CompareLod { compare, lod } => {
+        TextureOpCode::CompareLod { compare, lod } => {
             ("CompareLod", format!("compare:{} lod:{}", id_str(compare), id_str(lod)))
         }
-        &TextureOpCode::Bias { is_proj, bias, offset } => (
+        TextureOpCode::Bias { is_proj, bias, offset } => (
             "Bias",
             format!(
                 "is_proj:{} bias:{}{}",
@@ -716,10 +716,10 @@ fn texture_opcode_str(op: &TextureOpCode) -> (&'static str, String) {
                 offset.map(|id| format!(" offset:{}", id_str(id))).unwrap_or("".to_string())
             ),
         ),
-        &TextureOpCode::CompareBias { compare, bias } => {
+        TextureOpCode::CompareBias { compare, bias } => {
             ("CompareBias", format!("compare:{} bias:{}", id_str(compare), id_str(bias)))
         }
-        &TextureOpCode::Grad { is_proj, dx, dy, offset } => (
+        TextureOpCode::Grad { is_proj, dx, dy, offset } => (
             "Grad",
             format!(
                 "is_proj:{} dx:{} dy:{}{}",
@@ -729,10 +729,10 @@ fn texture_opcode_str(op: &TextureOpCode) -> (&'static str, String) {
                 offset.map(|id| format!(" offset:{}", id_str(id))).unwrap_or("".to_string())
             ),
         ),
-        &TextureOpCode::Gather { offset } => {
+        TextureOpCode::Gather { offset } => {
             ("Gather", offset.map(|id| format!(" offset:{}", id_str(id))).unwrap_or("".to_string()))
         }
-        &TextureOpCode::GatherComponent { component, offset } => (
+        TextureOpCode::GatherComponent { component, offset } => (
             "GatherComponent",
             format!(
                 "component:{}{}",
@@ -740,7 +740,7 @@ fn texture_opcode_str(op: &TextureOpCode) -> (&'static str, String) {
                 offset.map(|id| format!(" offset:{}", id_str(id))).unwrap_or("".to_string())
             ),
         ),
-        &TextureOpCode::GatherRef { refz, offset } => (
+        TextureOpCode::GatherRef { refz, offset } => (
             "GatherRef",
             format!(
                 "refz:{}{}",
@@ -752,104 +752,104 @@ fn texture_opcode_str(op: &TextureOpCode) -> (&'static str, String) {
 }
 
 fn opcode_str(op: &OpCode) -> String {
-    match op {
-        &OpCode::MergeInput => {
+    match *op {
+        OpCode::MergeInput => {
             panic!("Internal error: No block instruction should use MergeInput")
         }
-        &OpCode::Call(id, ref params) => {
+        OpCode::Call(id, ref params) => {
             format!("Call {} With ({})", function_id_str(id), id_list_str(params))
         }
-        &OpCode::Discard => "Discard".to_string(),
-        &OpCode::Return(id) => {
+        OpCode::Discard => "Discard".to_string(),
+        OpCode::Return(id) => {
             format!("Return{}", id.map(|id| format!(" {}", id_str(id))).unwrap_or("".to_string()))
         }
-        &OpCode::Break => "Break".to_string(),
-        &OpCode::Continue => "Continue".to_string(),
-        &OpCode::Passthrough => "Passthrough".to_string(),
-        &OpCode::NextBlock => "NextBlock".to_string(),
-        &OpCode::Merge(id) => {
+        OpCode::Break => "Break".to_string(),
+        OpCode::Continue => "Continue".to_string(),
+        OpCode::Passthrough => "Passthrough".to_string(),
+        OpCode::NextBlock => "NextBlock".to_string(),
+        OpCode::Merge(id) => {
             format!("Merge{}", id.map(|id| format!(" {}", id_str(id))).unwrap_or("".to_string()))
         }
-        &OpCode::If(id) => format!("If {}", id_str(id)),
-        &OpCode::Loop => "Loop".to_string(),
-        &OpCode::DoLoop => "DoLoop".to_string(),
-        &OpCode::LoopIf(id) => format!("LoopIf {}", id_str(id)),
-        &OpCode::Switch(id, _) => format!("Switch {}", id_str(id)),
-        &OpCode::ExtractVectorComponent(id, index) => {
+        OpCode::If(id) => format!("If {}", id_str(id)),
+        OpCode::Loop => "Loop".to_string(),
+        OpCode::DoLoop => "DoLoop".to_string(),
+        OpCode::LoopIf(id) => format!("LoopIf {}", id_str(id)),
+        OpCode::Switch(id, _) => format!("Switch {}", id_str(id)),
+        OpCode::ExtractVectorComponent(id, index) => {
             format!("ExtractVectorComponent {} {index}", id_str(id))
         }
-        &OpCode::ExtractVectorComponentMulti(id, ref indices) => {
+        OpCode::ExtractVectorComponentMulti(id, ref indices) => {
             format!("ExtractVectorComponentMulti {} ({})", id_str(id), index_list_str(indices))
         }
-        &OpCode::ExtractVectorComponentDynamic(id, index) => {
+        OpCode::ExtractVectorComponentDynamic(id, index) => {
             format!("ExtractVectorComponentDynamic {} {}", id_str(id), id_str(index))
         }
-        &OpCode::ExtractMatrixColumn(id, index) => {
+        OpCode::ExtractMatrixColumn(id, index) => {
             format!("ExtractMatrixColumn {} {}", id_str(id), id_str(index))
         }
-        &OpCode::ExtractStructField(id, index) => {
+        OpCode::ExtractStructField(id, index) => {
             format!("ExtractStructField {} {index}", id_str(id))
         }
-        &OpCode::ExtractArrayElement(id, index) => {
+        OpCode::ExtractArrayElement(id, index) => {
             format!("ExtractArrayElement {} {}", id_str(id), id_str(index))
         }
-        &OpCode::ConstructScalarFromScalar(id) => {
+        OpCode::ConstructScalarFromScalar(id) => {
             format!("ConstructScalarFromScalar {}", id_str(id))
         }
-        &OpCode::ConstructVectorFromScalar(id) => {
+        OpCode::ConstructVectorFromScalar(id) => {
             format!("ConstructVectorFromScalar {}", id_str(id))
         }
-        &OpCode::ConstructMatrixFromScalar(id) => {
+        OpCode::ConstructMatrixFromScalar(id) => {
             format!("ConstructMatrixFromScalar {}", id_str(id))
         }
-        &OpCode::ConstructMatrixFromMatrix(id) => {
+        OpCode::ConstructMatrixFromMatrix(id) => {
             format!("ConstructMatrixFromMatrix {}", id_str(id))
         }
-        &OpCode::ConstructVectorFromMultiple(ref ids) => {
+        OpCode::ConstructVectorFromMultiple(ref ids) => {
             format!("ConstructVectorFromMultiple ({})", id_list_str(ids))
         }
-        &OpCode::ConstructMatrixFromMultiple(ref ids) => {
+        OpCode::ConstructMatrixFromMultiple(ref ids) => {
             format!("ConstructMatrixFromMultiple ({})", id_list_str(ids))
         }
-        &OpCode::ConstructStruct(ref ids) => {
+        OpCode::ConstructStruct(ref ids) => {
             format!("ConstructStruct ({})", id_list_str(ids))
         }
-        &OpCode::ConstructArray(ref ids) => {
+        OpCode::ConstructArray(ref ids) => {
             format!("ConstructArray ({})", id_list_str(ids))
         }
-        &OpCode::AccessVectorComponent(id, index) => {
+        OpCode::AccessVectorComponent(id, index) => {
             format!("AccessVectorComponent {} {index}", id_str(id))
         }
-        &OpCode::AccessVectorComponentMulti(id, ref indices) => {
+        OpCode::AccessVectorComponentMulti(id, ref indices) => {
             format!("AccessVectorComponentMulti {} ({})", id_str(id), index_list_str(indices))
         }
-        &OpCode::AccessVectorComponentDynamic(id, index) => {
+        OpCode::AccessVectorComponentDynamic(id, index) => {
             format!("AccessVectorComponentDynamic {} {}", id_str(id), id_str(index))
         }
-        &OpCode::AccessMatrixColumn(id, index) => {
+        OpCode::AccessMatrixColumn(id, index) => {
             format!("AccessMatrixColumn {} {}", id_str(id), id_str(index))
         }
-        &OpCode::AccessStructField(id, index) => {
+        OpCode::AccessStructField(id, index) => {
             format!("AccessStructField {} {index}", id_str(id))
         }
-        &OpCode::AccessArrayElement(id, index) => {
+        OpCode::AccessArrayElement(id, index) => {
             format!("AccessArrayElement {} {}", id_str(id), id_str(index))
         }
-        &OpCode::Load(id) => format!("Load {}", id_str(id)),
-        &OpCode::Store(target, value) => {
+        OpCode::Load(id) => format!("Load {}", id_str(id)),
+        OpCode::Store(target, value) => {
             format!("Store {} {}", id_str(target), id_str(value))
         }
-        &OpCode::Alias(id) => format!("Alias {}", id_str(id)),
-        &OpCode::Unary(unary_op, id) => {
+        OpCode::Alias(id) => format!("Alias {}", id_str(id)),
+        OpCode::Unary(unary_op, id) => {
             format!("{} {}", unary_opcode_str(unary_op), id_str(id))
         }
-        &OpCode::Binary(binary_op, lhs, rhs) => {
+        OpCode::Binary(binary_op, lhs, rhs) => {
             format!("{} {} {}", binary_opcode_str(binary_op), id_str(lhs), id_str(rhs))
         }
-        &OpCode::BuiltIn(built_in_op, ref ids) => {
+        OpCode::BuiltIn(built_in_op, ref ids) => {
             format!("{} ({})", built_in_opcode_str(built_in_op), id_list_str(ids))
         }
-        &OpCode::Texture(ref texture_op, sampler, coord) => {
+        OpCode::Texture(ref texture_op, sampler, coord) => {
             let (variant, params) = texture_opcode_str(texture_op);
             format!(
                 "Texture{} sampler:{} coord:{} {}",
@@ -993,6 +993,9 @@ fn dump_variables(ir_meta: &IRMeta, result: &mut String) {
         let initializer = v
             .initializer
             .map(|constant_id| format!("={}", constant_id_str(constant_id)))
+            .or(ir_meta
+                .variable_needs_zero_initialization(VariableId { id: id as u32 })
+                .then_some("=TO_BE_ZERO_INIT".to_string()))
             .unwrap_or("".to_string());
         let built_in = v
             .built_in
@@ -1099,7 +1102,7 @@ fn dump_block(
     }
 }
 
-fn dump_functions(ir_meta: &IRMeta, function_entries: &Vec<Option<Block>>, result: &mut String) {
+fn dump_functions(ir_meta: &IRMeta, function_entries: &[Option<Block>], result: &mut String) {
     result.push_str("\n\nFunctions:");
 
     traverser::visitor::for_each_function(

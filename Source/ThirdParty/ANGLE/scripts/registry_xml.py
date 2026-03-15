@@ -431,6 +431,9 @@ supported_egl_extensions = [
 check_sorted('supported_egl_extensions', supported_egl_extensions)
 
 supported_cl_extensions = [
+    # OpenCL 1.0
+    "cl_arm_import_memory",
+
     # Since OpenCL 1.1
     "cl_khr_byte_addressable_store",
     "cl_khr_global_int32_base_atomics",
