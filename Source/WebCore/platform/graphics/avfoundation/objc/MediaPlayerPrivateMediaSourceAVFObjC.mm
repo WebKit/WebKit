@@ -1573,6 +1573,11 @@ WebCore::HostingContext MediaPlayerPrivateMediaSourceAVFObjC::hostingContext() c
     return m_renderer->hostingContext();
 }
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::supportsUIProcessVideoLayerHosting() const
+{
+    return m_renderer->supportsUIProcessVideoLayerHosting();
+}
+
 Ref<MediaPlayer::HostingContextPromise> MediaPlayerPrivateMediaSourceAVFObjC::requestHostingContext()
 {
     assertIsMainThread();

@@ -43,6 +43,7 @@
 #import "EditingRange.h"
 #import "FindClient.h"
 #import "FullscreenClient.h"
+#import "GPUProcessProxy.h"
 #import "GlobalFindInPageState.h"
 #import "IconLoadingDelegate.h"
 #import "ImageAnalysisUtilities.h"
@@ -59,6 +60,7 @@
 #import "PlatformWritingToolsUtilities.h"
 #import "ProcessTerminationReason.h"
 #import "ProvisionalPageProxy.h"
+#import "RemoteLayerHostingManagerProxy.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
@@ -6254,6 +6256,57 @@ static inline OptionSet<WebCore::LayoutMilestone> LEGACY_NODELETE layoutMileston
     _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler = makeBlockPtr(completionHandler), connection = protect(_page->legacyMainFrameProcess().connection())](String string) {
         handler(string.createNSString().get(), nil);
     });
+}
+
+- (NSUInteger)_hostedVideoLayerCountForTesting
+{
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (RefPtr gpuProcess = _page->configuration().processPool().gpuProcess())
+        return protect(gpuProcess->remoteLayerHostingManagerProxy())->hostedLayerCountForTesting();
+#endif
+    return 0;
+}
+
+- (NSUInteger)_hostedVideoLayerViewCountForTesting
+{
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (RefPtr gpuProcess = _page->configuration().processPool().gpuProcess())
+        return protect(gpuProcess->remoteLayerHostingManagerProxy())->hostedLayerViewCountForTesting();
+#endif
+    return 0;
+}
+
+- (void)_gpuProcessHostedVideoLayerCountForTesting:(void (^)(NSUInteger))completionHandler
+{
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (RefPtr gpuProcess = _page->configuration().processPool().gpuProcess()) {
+        protect(gpuProcess->remoteLayerHostingManagerProxy())->countGPUProcessRemoteLayersForTesting([handler = makeBlockPtr(completionHandler)](uint64_t count) {
+            handler(count);
+        });
+        return;
+    }
+#endif
+    completionHandler(0);
+}
+
+- (void)_supersedeAndDetachHostedVideoLayerSourcesForTesting:(void (^)(void))completionHandler
+{
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (RefPtr gpuProcess = _page->configuration().processPool().gpuProcess()) {
+        protect(gpuProcess->remoteLayerHostingManagerProxy())->supersedeAndDetachGPUProcessSourcesForTesting(makeBlockPtr(completionHandler));
+        return;
+    }
+#endif
+    completionHandler();
+}
+
+- (NSString *)_gpuProcessRemoteLayerTreeAsTextForTesting
+{
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (RefPtr gpuProcess = _page->configuration().processPool().gpuProcess())
+        return protect(gpuProcess->remoteLayerHostingManagerProxy())->gpuProcessRemoteLayerTreeAsTextForTesting().createNSString().autorelease();
+#endif
+    return @"";
 }
 
 - (void)_getContentsOfAllFramesAsStringWithCompletionHandler:(void (^)(NSString *))completionHandler

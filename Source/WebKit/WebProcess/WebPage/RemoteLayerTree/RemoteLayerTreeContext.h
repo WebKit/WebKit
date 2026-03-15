@@ -40,6 +40,7 @@
 
 namespace WebCore {
 class HTMLVideoElement;
+struct VideoLayerContext;
 enum class GraphicsLayerType : uint8_t;
 enum class UseLosslessCompression : bool;
 }
@@ -65,7 +66,7 @@ public:
 
     void layerDidEnterContext(PlatformCALayerRemote&, WebCore::PlatformCALayer::LayerType);
 #if HAVE(AVKIT)
-    void layerDidEnterContext(PlatformCALayerRemote&, WebCore::PlatformCALayer::LayerType, WebCore::HTMLVideoElement&);
+    void layerDidEnterContext(PlatformCALayerRemote&, WebCore::PlatformCALayer::LayerType, const WebCore::VideoLayerContext&, WebCore::HTMLVideoElement&);
 
     RefPtr<WebCore::HTMLVideoElement> videoElementForLayer(WebCore::PlatformLayerIdentifier) const;
 #endif

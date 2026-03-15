@@ -92,9 +92,9 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(Ref<WebCore::Model> mod
 #endif
 
 #if HAVE(AVKIT)
-Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(WebCore::HTMLVideoElement& videoElement, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(const WebCore::VideoLayerContext& videoLayerContext, WebCore::HTMLVideoElement& videoElement, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
-    return PlatformCALayerRemoteCustom::create(videoElement, owner, context);
+    return PlatformCALayerRemoteCustom::create(videoLayerContext, videoElement, owner, context);
 }
 #endif
 
@@ -151,7 +151,7 @@ void PlatformCALayerRemote::moveToContext(RemoteLayerTreeContext& context)
 #if HAVE(AVKIT)
     RefPtr videoElement = oldContext ? oldContext->videoElementForLayer(layerID()) : nullptr;
     if (videoElement)
-        context.layerDidEnterContext(*this, layerType(), *videoElement);
+        context.layerDidEnterContext(*this, layerType(), videoElement->videoLayerContext(), *videoElement);
     else
 #endif // HAVE(AVKIT)
         context.layerDidEnterContext(*this, layerType());
