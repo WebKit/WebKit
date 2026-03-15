@@ -28,11 +28,17 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
+#import "GPUConnectionToWebProcess.h"
+#import "GPUProcess.h"
 #import "LayerHostingContext.h"
 #import "LayerHostingContextManager.h"
 #import "Logging.h"
 #import "MediaPlayerPrivateRemoteMessages.h"
+#import "PlaybackSessionContextIdentifier.h"
+#import "RemoteLayerHostingManager.h"
+#import "RemoteMediaPlayerManagerProxy.h"
 #import "RemoteVideoFrameObjectHeap.h"
+#import "RemoteVideoLayerSource.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/ColorSpace.h>
 #import <WebCore/FloatRect.h>
@@ -50,6 +56,34 @@
 #endif
 
 namespace WebKit {
+
+class MediaPlayerVideoLayerSource final : public RemoteVideoLayerSource {
+public:
+    static Ref<MediaPlayerVideoLayerSource> create(WebCore::MediaPlayer& player)
+    {
+        return adoptRef(*new MediaPlayerVideoLayerSource(player));
+    }
+
+private:
+    explicit MediaPlayerVideoLayerSource(WebCore::MediaPlayer& player)
+        : m_player(player)
+    {
+    }
+
+    PlatformLayer* platformVideoLayer() const final
+    {
+        RefPtr player = m_player;
+        return player ? player->platformLayer() : nullptr;
+    }
+
+    void setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& fence) final
+    {
+        if (RefPtr player = m_player)
+            player->setVideoLayerSizeFenced(size, WTF::move(fence));
+    }
+
+    ThreadSafeWeakPtr<WebCore::MediaPlayer> m_player;
+};
 
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
@@ -69,17 +103,88 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    if (remoteLayerHostingBypassesWebContentProcess())
+        updateContentLayerForRemoteLayerHosting();
+    else {
+        bool canShowWhileLocked =
+#if PLATFORM(IOS_FAMILY)
+            m_configuration.canShowWhileLocked;
+#else
+            false;
+#endif
+
+        if (auto hostingContext = m_layerHostingContextManager->createHostingContextIfNeeded(protect(m_player)->platformLayer(), canShowWhileLocked))
+            protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextChanged(*hostingContext, m_layerHostingContextManager->videoLayerSize()), m_id);
+    }
+
+    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
+}
+
+bool RemoteMediaPlayerProxy::remoteLayerHostingBypassesWebContentProcess() const
+{
+    RefPtr manager = m_manager;
+    if (!manager)
+        return false;
+
+    RefPtr connection = manager->gpuConnectionToWebProcess();
+    if (!connection)
+        return false;
+
+    if (auto sharedPreferences = connection->sharedPreferencesForWebProcess())
+        return sharedPreferences->remoteLayerHostingBypassesWebContentProcess;
+
+    return false;
+}
+
+std::optional<PlaybackSessionContextIdentifier> RemoteMediaPlayerProxy::remoteLayerHostingIdentifier() const
+{
+    RefPtr manager = m_manager;
+    if (!manager)
+        return std::nullopt;
+
+    RefPtr connection = manager->gpuConnectionToWebProcess();
+    if (!connection)
+        return std::nullopt;
+
+    return PlaybackSessionContextIdentifier { m_clientIdentifier, connection->webProcessIdentifier() };
+}
+
+void RemoteMediaPlayerProxy::updateContentLayerForRemoteLayerHosting()
+{
+    auto identifier = remoteLayerHostingIdentifier();
+    if (!identifier)
+        return;
+
+    RefPtr player = m_player;
+    if (!player)
+        return;
+
+    RefPtr source = m_remoteVideoLayerSource;
+    if (!source) {
+        source = MediaPlayerVideoLayerSource::create(*player);
+        m_remoteVideoLayerSource = source;
+    }
+
     bool canShowWhileLocked =
 #if PLATFORM(IOS_FAMILY)
         m_configuration.canShowWhileLocked;
 #else
         false;
 #endif
+    protect(GPUProcess::singleton().remoteLayerHostingManager())->attachSource(*identifier, *source, canShowWhileLocked);
+}
 
-    if (auto hostingContext = m_layerHostingContextManager->createHostingContextIfNeeded(m_player->platformLayer(), canShowWhileLocked))
-        protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextChanged(*hostingContext, m_layerHostingContextManager->videoLayerSize()), m_id);
+void RemoteMediaPlayerProxy::removeContentLayerForRemoteLayerHosting()
+{
+    RefPtr source = std::exchange(m_remoteVideoLayerSource, nullptr);
+    if (!source)
+        return;
 
-    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
+    auto identifier = remoteLayerHostingIdentifier();
+    if (!identifier)
+        return;
+
+    protect(GPUProcess::singleton().remoteLayerHostingManager())->detachSource(*identifier, *source);
 }
 
 void RemoteMediaPlayerProxy::requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&& completionHandler)
@@ -98,6 +203,13 @@ void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& s
     RELEASE_LOG(Media, "RemoteMediaPlayerProxy::setVideoLayerSizeFenced: send right %d, fence data size %lu", sendRightAnnotated.sendRight.sendRight(), sendRightAnnotated.data.size());
 
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
+
+    // When the layer is hosted directly by the UI process, RemoteLayerHostingManager is the
+    // only thing that sizes it. The WebContent process only sends this to keep its own
+    // bookkeeping up to date, and must not affect the layer.
+    if (m_remoteVideoLayerSource)
+        return;
+
     m_layerHostingContextManager->setVideoLayerSizeFenced(size, WTF::MachSendRightAnnotated { sendRightAnnotated }, [&] {
         m_player->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
     });

@@ -61,6 +61,7 @@
 #include "Settings.h"
 #include "ShareableBitmap.h"
 #include "VideoFrameMetadata.h"
+#include "VideoLayerContext.h"
 #include <wtf/NativePromise.h>
 #include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -367,6 +368,25 @@ unsigned HTMLVideoElement::videoHeight() const
     if (!player)
         return 0;
     return clampToUnsigned(player->naturalSize().height());
+}
+
+VideoLayerContext HTMLVideoElement::videoLayerContext()
+{
+    bool hostedByUIProcess = false;
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (document().settings().remoteLayerHostingBypassesWebContentProcess()) {
+        if (RefPtr player = this->player())
+            hostedByUIProcess = player->supportsUIProcessVideoLayerHosting();
+    }
+#endif
+
+    return VideoLayerContext {
+        .hostingContext = layerHostingContext(),
+        .mediaElementIdentifier = identifier(),
+        .videoLayerSize = videoLayerSize(),
+        .naturalSize = HTMLMediaElement::naturalSize(),
+        .hostedByUIProcess = hostedByUIProcess,
+    };
 }
 
 void HTMLVideoElement::scheduleResizeEvent(const FloatSize& naturalSize)

@@ -1408,6 +1408,11 @@ HostingContext MediaPlayer::hostingContext() const
     return protect(m_private)->hostingContext();
 }
 
+bool MediaPlayer::supportsUIProcessVideoLayerHosting() const
+{
+    return protect(m_private)->supportsUIProcessVideoLayerHosting();
+}
+
 bool MediaPlayer::didPassCORSAccessCheck() const
 {
     return protect(m_private)->didPassCORSAccessCheck();

@@ -70,6 +70,7 @@
 
 #if PLATFORM(COCOA)
 #include "LayerHostingContextManager.h"
+#include "RemoteVideoLayerSource.h"
 #include <WebCore/AudioSourceProviderAVFObjC.h>
 #include <WebCore/VideoFrameCV.h>
 #endif
@@ -140,7 +141,10 @@ RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
 void RemoteMediaPlayerProxy::invalidate()
 {
     m_updateCachedStateMessageTimer.stop();
-    m_player->invalidate();
+#if PLATFORM(COCOA)
+    removeContentLayerForRemoteLayerHosting();
+#endif
+    protect(m_player)->invalidate();
     if (RefPtr sandboxExtension = m_sandboxExtension) {
         sandboxExtension->revoke();
         m_sandboxExtension = nullptr;

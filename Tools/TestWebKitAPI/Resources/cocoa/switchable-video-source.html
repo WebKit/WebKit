@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+const mediaSourceType = 'video/mp4;codecs="avc1.4D4001,mp4a.40.2"';
+
+function post(message)
+{
+    try {
+        window.webkit.messageHandlers.testHandler.postMessage(message);
+    } catch (e) { }
+}
+
+function video()
+{
+    return document.getElementsByTagName('video')[0];
+}
+
+function play()
+{
+    video().play().then(() => post('playing')).catch(() => post('not playing'));
+}
+
+function clearSource()
+{
+    video().srcObject = null;
+}
+
+function loadMediaSource()
+{
+    clearSource();
+    if (!window.MediaSource || !MediaSource.isTypeSupported(mediaSourceType)) {
+        post('media source unsupported');
+        return;
+    }
+
+    const request = new XMLHttpRequest();
+    request.responseType = 'arraybuffer';
+    request.open('GET', 'test-mse.mp4', true);
+    request.onerror = () => post('load failed');
+    request.onload = () => {
+        const source = new MediaSource();
+        source.addEventListener('sourceopen', () => {
+            URL.revokeObjectURL(video().src);
+            const sourceBuffer = source.addSourceBuffer(mediaSourceType);
+            sourceBuffer.addEventListener('updateend', () => {
+                source.endOfStream();
+                play();
+            }, { once: true });
+            sourceBuffer.appendBuffer(request.response);
+        }, { once: true });
+        video().src = URL.createObjectURL(source);
+    };
+    request.send();
+}
+
+function loadFile()
+{
+    clearSource();
+    video().src = 'video-with-audio.mp4';
+    play();
+}
+
+function loadMediaStream()
+{
+    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        video().removeAttribute('src');
+        video().srcObject = stream;
+        play();
+    }).catch(() => post('capture failed'));
+}
+</script>
+</head>
+<body onload="loadMediaSource()">
+    <video webkit-playsinline playsinline></video>
+</body>
+</html>

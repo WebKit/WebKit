@@ -108,6 +108,7 @@
 #include "StyleTransformResolver.h"
 #include "Styleable.h"
 #include "TiledBacking.h"
+#include "VideoLayerContext.h"
 #include "ViewTransition.h"
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -1562,7 +1563,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
             && videoElement->document().page()->chrome().client().isUsingUISideCompositing()
 #endif
             )
-            graphicsLayer->setContentsToVideoElement(videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
+            graphicsLayer->setContentsToVideoLayer(videoElement->videoLayerContext(), videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
         else
             graphicsLayer->setContentsToMediaPlayer(protect(videoElement->player()), GraphicsLayer::ContentsLayerPurpose::Media);
         updateContentsRects();
