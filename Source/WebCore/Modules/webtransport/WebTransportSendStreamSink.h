@@ -26,6 +26,8 @@
 #pragma once
 
 #include "WritableStreamSink.h"
+#include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

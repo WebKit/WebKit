@@ -48,6 +48,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMConvertInterface.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"

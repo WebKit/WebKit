@@ -28,6 +28,7 @@
 #include "ReadableStreamSource.h"
 
 #include "JSDOMPromiseDeferred.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 

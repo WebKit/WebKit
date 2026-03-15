@@ -41,6 +41,8 @@
 #include "EventTargetInlines.h"
 #include "ExceptionOr.h"
 #include "JSCookieListItem.h"
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PublicSuffixStore.h"
 #include "ScriptExecutionContext.h"

@@ -31,6 +31,7 @@
 #include "Exception.h"
 #include "ExceptionCode.h"
 #include "InternalObserver.h"
+#include "JSDOMConvertAny.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSValueInWrappedObject.h"
 #include "Observable.h"

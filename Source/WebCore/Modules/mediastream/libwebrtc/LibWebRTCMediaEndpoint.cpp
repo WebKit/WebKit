@@ -30,6 +30,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCStatsReport.h"
 #include "LibWebRTCDataChannelHandler.h"

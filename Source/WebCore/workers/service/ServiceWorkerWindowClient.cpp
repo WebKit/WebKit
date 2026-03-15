@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ServiceWorkerWindowClient.h"
 
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSServiceWorkerWindowClient.h"
 #include "SWContextManager.h"

@@ -43,6 +43,8 @@
 #include "ImageData.h"
 #include "ImageUtilities.h"
 #include "JSBlob.h"
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"

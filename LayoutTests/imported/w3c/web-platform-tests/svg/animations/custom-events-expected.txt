@@ -1,4 +1,8 @@
 
 PASS custom events with the name 'end' should only call the event listener for the event 'end' and no attribute handlers or IDL listeners
-FAIL custom events with the name 'endEvent' should call 'onend' attribute handlers and IDL property listeners, and 'endEvent' listeners assert_equals: expected 1 but got 0
+PASS custom events with the name 'endEvent' should call 'onend' attribute handlers and IDL property listeners, and 'endEvent' listeners
+PASS custom events with the name 'repeat' should only call the event listener for the event 'repeat' and no attribute handlers or IDL listeners
+PASS custom events with the name 'repeatEvent' should call 'onrepeat' attribute handlers and IDL property listeners, and 'repeatEvent' listeners
+PASS custom events with the name 'begin' should only call the event listener for the event 'begin' and no attribute handlers or IDL listeners
+PASS custom events with the name 'beginEvent' should call 'onbegin' attribute handlers and IDL property listeners, and 'beginEvent' listeners
 

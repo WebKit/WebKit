@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSDOMConvertBoolean.h"
 
-#include "JSDOMPromise.h"
-#include "NavigationHistoryEntry.h"
-#include "NavigationNavigationType.h"
+#include <JavaScriptCore/JSCJSValueCellInlines.h>
 
 namespace WebCore {
 
-class DOMPromise;
-class DeferredPromise;
-class Exception;
+auto Converter<IDLBoolean>::convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value) -> Result
+{
+    auto& vm = lexicalGlobalObject.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-class NavigationTransition final : public RefCounted<NavigationTransition> {
-    WTF_MAKE_TZONE_ALLOCATED(NavigationTransition);
-public:
-    static Ref<NavigationTransition> create(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&&);
+    auto conversionResult = value.toBoolean(&lexicalGlobalObject);
 
-    NavigationNavigationType navigationType() { return m_navigationType; };
-    NavigationHistoryEntry& from() { return m_from; };
-    DOMPromise& finished();
+    RETURN_IF_EXCEPTION(throwScope, Result::exception());
 
-    void resolvePromise();
-    void rejectPromise(Exception&, JSC::JSValue exceptionObject);
-    void rejectPromise(JSC::JSValue exceptionObject);
+    return Result { WTF::move(conversionResult) };
+}
 
-private:
-    explicit NavigationTransition(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished);
-
-    NavigationNavigationType m_navigationType;
-    const Ref<NavigationHistoryEntry> m_from;
-    const Ref<DeferredPromise> m_finished;
-    RefPtr<DOMPromise> m_finishedDOMPromise;
-};
-
-} // namespace WebCore
+}

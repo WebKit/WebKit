@@ -29,6 +29,8 @@
 #include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventLoop.h"
+#include "JSDOMConvertAny.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMPromise.h"
 #include "JSExecState.h"

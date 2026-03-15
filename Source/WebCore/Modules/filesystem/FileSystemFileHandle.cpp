@@ -33,6 +33,7 @@
 #include "FileSystemSyncAccessHandle.h"
 #include "FileSystemWritableFileStream.h"
 #include "FileSystemWritableFileStreamSink.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFile.h"
 #include "JSFileSystemSyncAccessHandle.h"

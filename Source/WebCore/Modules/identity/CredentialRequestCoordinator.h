@@ -29,8 +29,10 @@
 
 #include "ActiveDOMObject.h"
 #include "DigitalCredentialsProtocols.h"
-#include "JSDOMPromiseDeferred.h"
+#include "ExceptionOr.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "UnvalidatedDigitalCredentialRequest.h"
+#include <JavaScriptCore/JSCJSValue.h>
 #include <optional>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Noncopyable.h>
@@ -94,7 +96,7 @@ private:
     bool NODELETE canTransitionTo(PickerState) const;
     PickerState NODELETE currentState() const;
     void NODELETE setState(PickerState);
-    bool hasCurrentPromise() const { return m_currentPromise.has_value(); }
+    bool hasCurrentPromise() const { return !!m_currentPromise; }
     void setCurrentPromise(CredentialPromise&&);
     CredentialPromise* NODELETE currentPromise();
 
@@ -105,7 +107,7 @@ private:
     const Ref<CredentialRequestCoordinatorClient> m_client;
     PickerState m_state { PickerState::Idle };
     RefPtr<AbortSignal> m_abortSignal;
-    std::optional<CredentialPromise> m_currentPromise;
+    std::unique_ptr<CredentialPromise> m_currentPromise;
     std::optional<uint32_t> m_abortAlgorithmIdentifier;
     WeakPtr<Page> m_page;
 };

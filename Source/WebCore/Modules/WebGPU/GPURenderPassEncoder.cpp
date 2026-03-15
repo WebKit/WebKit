@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPURenderPassEncoder.h"
 
+#include "ExceptionOr.h"
 #include "GPUBindGroup.h"
 #include "GPUBuffer.h"
 #include "GPUQuerySet.h"

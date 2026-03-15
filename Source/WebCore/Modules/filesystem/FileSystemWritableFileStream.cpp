@@ -28,6 +28,8 @@
 
 #include "InternalWritableStream.h"
 #include "JSBlob.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemWritableFileStream.h"

@@ -25,30 +25,31 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include <wtf/RefCounted.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Worklet;
 
+using PendingTaskPromise = DOMPromiseDeferred<void>;
+
 // https://drafts.css-houdini.org/worklets/#pending-tasks-struct
 class WorkletPendingTasks : public ThreadSafeRefCounted<WorkletPendingTasks> {
 public:
-    static Ref<WorkletPendingTasks> create(Worklet& worklet, DOMPromiseDeferred<void>&& promise, int counter)
-    {
-        return adoptRef(*new WorkletPendingTasks(worklet, WTF::move(promise), counter));
-    }
+    static Ref<WorkletPendingTasks> create(Worklet&, PendingTaskPromise&&, int counter);
+    ~WorkletPendingTasks();
 
     void abort(Exception&&);
     void decrementCounter();
 
 private:
-    WorkletPendingTasks(Worklet&, DOMPromiseDeferred<void>&&, int counter);
+    WorkletPendingTasks(Worklet&, PendingTaskPromise&&, int counter);
 
     WeakPtr<Worklet> m_worklet;
-    DOMPromiseDeferred<void> m_promise;
+    UniqueRef<PendingTaskPromise> m_promise;
     int m_counter;
 };
 

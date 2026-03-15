@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSImageData.h"
 
-#include "JSDOMConvert.h"
+#include "JSDOMConvertBufferSource.h"
 #include "JSDOMWrapperCache.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/IdentifierInlines.h>

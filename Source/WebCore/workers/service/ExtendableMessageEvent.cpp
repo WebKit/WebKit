@@ -28,7 +28,7 @@
 #include "ExtendableMessageEvent.h"
 
 #include "EventNames.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertInterface.h"
 #include "JSExtendableMessageEvent.h"
 #include "SecurityOrigin.h"
 #include <wtf/TZoneMallocInlines.h>

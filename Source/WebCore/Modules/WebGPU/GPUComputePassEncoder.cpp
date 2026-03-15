@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUComputePassEncoder.h"
 
+#include "ExceptionOr.h"
 #include "GPUBindGroup.h"
 #include "GPUBuffer.h"
 #include "GPUComputePipeline.h"

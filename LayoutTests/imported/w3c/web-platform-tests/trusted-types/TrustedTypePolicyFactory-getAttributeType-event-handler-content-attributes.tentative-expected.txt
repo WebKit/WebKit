@@ -90,5 +90,6 @@ PASS getAttributeType("dummy", "onunload", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onencrypted", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onwaitingforkey", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onbegin", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onend", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onrepeat", "dummyNs", attrNs)
 

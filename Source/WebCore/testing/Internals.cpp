@@ -4816,6 +4816,13 @@ double Internals::effectiveDynamicRangeLimitValue(const HTMLMediaElement& media)
     return media.computePlayerDynamicRangeLimit().value();
 }
 
+#if ENABLE(FULLSCREEN_API)
+bool Internals::isChildOfElementFullscreen(const HTMLMediaElement& media) const
+{
+    return media.isChildOfElementFullscreen();
+}
+#endif
+
 #endif
 
 ExceptionOr<double> Internals::getContextEffectiveDynamicRangeLimitValue(const HTMLCanvasElement& canvas)

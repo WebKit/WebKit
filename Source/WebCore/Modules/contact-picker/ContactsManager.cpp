@@ -34,6 +34,8 @@
 #include "Document.h"
 #include "DocumentPage.h"
 #include "JSContactInfo.h"
+#include "JSDOMConvertEnumeration.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrameInlines.h"
 #include "Navigator.h"

@@ -55,7 +55,6 @@
 #include "InspectorInstrumentation.h"
 #include "JSCompositeOperation.h"
 #include "JSCompositeOperationOrAuto.h"
-#include "JSDOMConvert.h"
 #include "JSKeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "LocalFrameView.h"

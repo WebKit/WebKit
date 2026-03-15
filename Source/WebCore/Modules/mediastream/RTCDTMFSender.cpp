@@ -29,6 +29,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "ContextDestructionObserverInlines.h"
+#include "ExceptionOr.h"
 #include "RTCDTMFSenderBackend.h"
 #include "RTCDTMFToneChangeEvent.h"
 #include "RTCRtpSender.h"

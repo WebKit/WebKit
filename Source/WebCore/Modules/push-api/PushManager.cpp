@@ -31,6 +31,7 @@
 #include "EventLoop.h"
 #include "Exception.h"
 #include "FrameDestructionObserverInlines.h"
+#include "JSDOMConvertEnumeration.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPushPermissionState.h"
 #include "JSPushSubscription.h"

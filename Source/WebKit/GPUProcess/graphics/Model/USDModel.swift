@@ -315,7 +315,7 @@ extension WKBridgeUSDConfiguration {
     @objc(createMaterialCompiler:)
     func createMaterialCompiler() async {
         do {
-            try await self.appRenderer.createMaterialCompiler(colorPixelFormat: .bgra8Unorm_srgb, rasterSampleCount: 4)
+            try await self.appRenderer.createMaterialCompiler(colorPixelFormat: .rgba16Float, rasterSampleCount: 4)
         } catch {
             fatalError("Exception creating renderer \(error)")
         }

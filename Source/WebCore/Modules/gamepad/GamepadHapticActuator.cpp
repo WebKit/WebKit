@@ -34,6 +34,7 @@
 #include "Gamepad.h"
 #include "GamepadEffectParameters.h"
 #include "GamepadProvider.h"
+#include "JSDOMConvertEnumeration.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Settings.h"
 #include <wtf/CompletionHandler.h>

@@ -117,7 +117,11 @@ private:
     WTF::MachSendRight m_displayBuffer;
     const float m_contentsScale;
     bool m_isOpaque;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    WebCore::ContentsFormat m_contentsFormat { WebCore::ContentsFormat::RGBA16F };
+#else
     WebCore::ContentsFormat m_contentsFormat { WebCore::ContentsFormat::RGBA8 };
+#endif
 };
 
 Ref<WebModelPlayer> WebModelPlayer::create(WebCore::Page& page, WebCore::ModelPlayerClient& client)

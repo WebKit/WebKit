@@ -35,6 +35,7 @@
 #include "CDMInstance.h"
 #include "Document.h"
 #include "EventLoop.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaKeys.h"
 #include "MediaKeys.h"

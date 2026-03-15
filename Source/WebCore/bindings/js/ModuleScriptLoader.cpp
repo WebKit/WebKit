@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ModuleScriptLoader.h"
 
-#include "JSDOMPromise.h"
-#include "NavigationHistoryEntry.h"
-#include "NavigationNavigationType.h"
+#include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
 
-class DOMPromise;
-class DeferredPromise;
-class Exception;
+ModuleScriptLoader::ModuleScriptLoader(ModuleScriptLoaderClient& client, DeferredPromise& promise, JSC::ScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
+    : m_client(&client)
+    , m_promise(&promise)
+    , m_scriptFetcher(scriptFetcher)
+    , m_parameters(WTF::move(parameters))
+{
+}
 
-class NavigationTransition final : public RefCounted<NavigationTransition> {
-    WTF_MAKE_TZONE_ALLOCATED(NavigationTransition);
-public:
-    static Ref<NavigationTransition> create(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&&);
+ModuleScriptLoader::~ModuleScriptLoader() = default;
 
-    NavigationNavigationType navigationType() { return m_navigationType; };
-    NavigationHistoryEntry& from() { return m_from; };
-    DOMPromise& finished();
-
-    void resolvePromise();
-    void rejectPromise(Exception&, JSC::JSValue exceptionObject);
-    void rejectPromise(JSC::JSValue exceptionObject);
-
-private:
-    explicit NavigationTransition(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished);
-
-    NavigationNavigationType m_navigationType;
-    const Ref<NavigationHistoryEntry> m_from;
-    const Ref<DeferredPromise> m_finished;
-    RefPtr<DOMPromise> m_finishedDOMPromise;
-};
-
-} // namespace WebCore
+}

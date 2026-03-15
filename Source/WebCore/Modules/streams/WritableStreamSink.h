@@ -26,17 +26,21 @@
 
 #pragma once
 
-#include <WebCore/JSDOMPromiseDeferred.h>
-#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
 class JSValue;
+class JSGlobalObject;
 }
 
 namespace WebCore {
 
+class JSDOMGlobalObject;
+class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class WritableStreamDefaultController;
@@ -48,7 +52,7 @@ public:
     void start(std::unique_ptr<WritableStreamDefaultController>&&);
     virtual void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) = 0;
     virtual void close(JSDOMGlobalObject&) = 0;
-    virtual void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&& promise) { promise.resolve(); }
+    virtual void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&&);
 
     void errorIfNeeded(JSC::JSGlobalObject&, JSC::JSValue);
 
@@ -72,15 +76,5 @@ private:
 
     WriteCallback m_writeCallback;
 };
-
-inline SimpleWritableStreamSink::SimpleWritableStreamSink(WriteCallback&& writeCallback)
-    : m_writeCallback(WTF::move(writeCallback))
-{
-}
-
-inline void SimpleWritableStreamSink::write(ScriptExecutionContext& context, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
-{
-    promise.settle(m_writeCallback(context, value));
-}
 
 } // namespace WebCore

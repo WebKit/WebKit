@@ -63,6 +63,7 @@
 #include "GPUTextureFormat.h"
 #include "GPUUncapturedErrorEvent.h"
 #include "HTMLVideoElement.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
 #include "JSGPUDeviceLostInfo.h"

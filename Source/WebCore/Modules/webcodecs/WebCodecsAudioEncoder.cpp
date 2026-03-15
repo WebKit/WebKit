@@ -34,6 +34,7 @@
 #include "DOMException.h"
 #include "ExceptionOr.h"
 #include "FlacEncoderConfig.h"
+#include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebCodecsAudioEncoderSupport.h"
 #include "Logging.h"

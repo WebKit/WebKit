@@ -34,6 +34,7 @@
 #include "GStreamerRtpTransceiverBackend.h"
 #include "GStreamerSctpTransportBackend.h"
 #include "GStreamerWebRTCUtils.h"
+#include "JSDOMConvert.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCStatsReport.h"
 #include "LogInitialization.h"

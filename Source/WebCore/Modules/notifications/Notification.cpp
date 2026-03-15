@@ -44,6 +44,8 @@
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "FrameDestructionObserverInlines.h"
+#include "JSDOMConvertEnumeration.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
 #include "MessagePort.h"
@@ -56,6 +58,8 @@
 #include "ServiceWorkerGlobalScope.h"
 #include "WindowEventLoop.h"
 #include "WindowFocusAllowedIndicator.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSONObject.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>

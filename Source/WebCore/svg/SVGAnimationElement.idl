@@ -40,8 +40,9 @@
     undefined endElement();
     undefined endElementAt(float offset);
 
-    attribute EventHandler onbegin;
-    attribute EventHandler onrepeat;
+    [ImplementedAs=onbeginEvent] attribute EventHandler onbegin;
+    [ImplementedAs=onendEvent] attribute EventHandler onend;
+    [ImplementedAs=onrepeatEvent] attribute EventHandler onrepeat;
 };
 
 SVGAnimationElement includes SVGTests;

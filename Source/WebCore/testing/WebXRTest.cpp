@@ -29,6 +29,7 @@
 #if ENABLE(WEBXR)
 
 #include "ContextDestructionObserverInlines.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebFakeXRDevice.h"
 #include "JSXRReferenceSpaceType.h"

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "BackgroundFetchEvent.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 
 namespace WebCore {
 

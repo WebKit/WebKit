@@ -273,7 +273,7 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
 #if ENABLE(GPU_PROCESS_MODEL)
 static Vector<UniqueRef<WebCore::IOSurface>> createIOSurfaces(unsigned width, unsigned height)
 {
-    const auto colorFormat = WebCore::IOSurface::Format::BGRA;
+    const auto colorFormat = WebCore::IOSurface::Format::RGBA16F;
     const auto colorSpace = WebCore::DestinationColorSpace::LinearDisplayP3();
 
     Vector<UniqueRef<WebCore::IOSurface>> ioSurfaces;

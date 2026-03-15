@@ -28,7 +28,10 @@
 
 #include "Exception.h"
 #include "IDLTypes.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebTransportError.h"
 #include "ScriptExecutionContextInlines.h"
 #include "WebTransport.h"

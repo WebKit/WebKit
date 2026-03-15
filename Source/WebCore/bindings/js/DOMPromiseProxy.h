@@ -26,12 +26,18 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "JSDOMGlobalObject.h"
+#include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
+
+class JSDOMGlobalObject;
 
 template<typename IDLType>
 class DOMPromiseProxy {

@@ -198,10 +198,7 @@ void VideoPresentationModelVideoElement::documentFullscreenChanged()
         RefPtr fullscreenElement = fullscreen->fullscreenElement();
         if (!fullscreenElement)
             return false;
-        RefPtr ancestor = videoElement->parentNode();
-        while (ancestor && ancestor != fullscreenElement)
-            ancestor = ancestor->parentNode();
-        return !!ancestor.get();
+        return videoElement->isShadowIncludingDescendantOf(*fullscreenElement);
     }();
 
     if (std::exchange(m_isChildOfElementFullscreen, isChildOfElementFullscreen) == isChildOfElementFullscreen)

@@ -30,6 +30,8 @@
 #include "DocumentQuirks.h"
 #include "EventLoop.h"
 #include "FetchResponse.h"
+#include "JSDOMConvertAny.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
 #include "LocalDOMWindow.h"

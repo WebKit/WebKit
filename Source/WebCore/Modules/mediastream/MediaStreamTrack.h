@@ -33,8 +33,9 @@
 #include <WebCore/Blob.h>
 #include <WebCore/EventTarget.h>
 #include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/Exception.h>
 #include <WebCore/IDLTypes.h>
-#include <WebCore/JSDOMPromiseDeferred.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/MediaStreamTrackDataHolder.h>
 #include <WebCore/MediaStreamTrackPrivate.h>

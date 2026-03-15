@@ -1022,7 +1022,9 @@ enum ContentsFormat {
     [Conditional=VIDEO] double effectiveDynamicRangeLimitValue(HTMLMediaElement media);
     double getContextEffectiveDynamicRangeLimitValue(HTMLCanvasElement canvas);
     undefined setPageShouldSuppressHDR(boolean shouldSuppressHDR);
-    
+
+    [Conditional=VIDEO&FULLSCREEN_API] boolean isChildOfElementFullscreen(HTMLMediaElement media);
+
     [Conditional=VIDEO] undefined enterViewerMode(HTMLVideoElement element);
 
     undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);

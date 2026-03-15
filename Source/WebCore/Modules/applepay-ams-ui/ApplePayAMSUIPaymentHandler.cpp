@@ -32,7 +32,6 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentPage.h"
 #include "JSApplePayAMSUIRequest.h"
-#include "JSDOMConvert.h"
 #include "Page.h"
 
 namespace WebCore {

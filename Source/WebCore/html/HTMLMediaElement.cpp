@@ -7722,6 +7722,11 @@ void HTMLMediaElement::documentFullscreenChanged(bool isChildOfElementFullscreen
     m_isChildOfElementFullscreen = isChildOfElementFullscreen;
     updatePlayerDynamicRangeLimit();
 }
+
+bool HTMLMediaElement::isChildOfElementFullscreen() const
+{
+    return m_isChildOfElementFullscreen;
+}
 #endif
 
 PlatformLayer* HTMLMediaElement::platformLayer() const

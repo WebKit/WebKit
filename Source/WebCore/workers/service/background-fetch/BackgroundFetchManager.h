@@ -26,7 +26,7 @@
 #pragma once
 
 #include "BackgroundFetchRegistration.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>

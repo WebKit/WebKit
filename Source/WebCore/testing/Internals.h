@@ -852,6 +852,9 @@ public:
     void NODELETE enableGStreamerHolePunching(HTMLVideoElement&);
 
     double effectiveDynamicRangeLimitValue(const HTMLMediaElement&);
+#if ENABLE(FULLSCREEN_API)
+    bool isChildOfElementFullscreen(const HTMLMediaElement&) const;
+#endif
 #endif
     ExceptionOr<double> getContextEffectiveDynamicRangeLimitValue(const HTMLCanvasElement&);
 

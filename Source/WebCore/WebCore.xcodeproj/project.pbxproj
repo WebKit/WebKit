@@ -20436,6 +20436,7 @@
 		CD225C091C46FBF400140761 /* WebCoreNSURLSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSURLSession.mm; sourceTree = "<group>"; };
 		CD225C0A1C46FBF400140761 /* WebCoreNSURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSURLSession.h; sourceTree = "<group>"; };
 		CD24B8692982DCCA000A53FE /* HTMLMediaElementIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLMediaElementIdentifier.h; sourceTree = "<group>"; };
+		CD25AE222F654B2200EDB3D6 /* JSDOMConvertBoolean.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertBoolean.cpp; sourceTree = "<group>"; };
 		CD27AE4E22A9868700947FF9 /* ImageRotationSessionVT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageRotationSessionVT.h; sourceTree = "<group>"; };
 		CD27AE4F22A9868700947FF9 /* ImageRotationSessionVT.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageRotationSessionVT.mm; sourceTree = "<group>"; };
 		CD27F6E014575C1B0078207D /* MediaController.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaController.idl; sourceTree = "<group>"; };
@@ -21970,6 +21971,7 @@
 		E35B907C23F60677000011FF /* LocalizedDeviceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedDeviceModel.h; sourceTree = "<group>"; };
 		E35B907E23F60677000011FF /* LocalizedDeviceModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDeviceModel.mm; sourceTree = "<group>"; };
 		E364321A25D37A6600F90E2A /* ModuleScriptLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleScriptLoader.h; sourceTree = "<group>"; };
+		E364321B25D37A6600F90E2A /* ModuleScriptLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleScriptLoader.cpp; sourceTree = "<group>"; };
 		E36D701B27B70B23006531B7 /* AttachmentElementClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AttachmentElementClient.h; sourceTree = "<group>"; };
 		E36D701E27B71F04006531B7 /* EmptyAttachmentElementClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyAttachmentElementClient.h; sourceTree = "<group>"; };
 		E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPromise.h; sourceTree = "<group>"; };
@@ -31612,6 +31614,7 @@
 				930841331CDDB15500B0958C /* JSDOMConvert.h */,
 				7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */,
 				7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */,
+				CD25AE222F654B2200EDB3D6 /* JSDOMConvertBoolean.cpp */,
 				7C8E34941E4A338E0054CE23 /* JSDOMConvertBoolean.h */,
 				7C8E34951E4A338E0054CE23 /* JSDOMConvertBufferSource.h */,
 				7C8E34961E4A338E0054CE23 /* JSDOMConvertCallbacks.h */,
@@ -36543,6 +36546,7 @@
 				4BDEA32D218034050052DFCD /* JSWorkletGlobalScopeBase.cpp */,
 				4BDEA32B218033EB0052DFCD /* JSWorkletGlobalScopeBase.h */,
 				709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */,
+				E364321B25D37A6600F90E2A /* ModuleScriptLoader.cpp */,
 				E364321A25D37A6600F90E2A /* ModuleScriptLoader.h */,
 				E35188B325D387CF00A77AF3 /* ModuleScriptLoaderClient.h */,
 				418C395E1C8F0AAB0051C8A3 /* ReadableStreamDefaultController.cpp */,

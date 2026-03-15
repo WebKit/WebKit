@@ -29,6 +29,7 @@
 #include "HTMLLinkElement.h"
 #include "HTMLStyleElement.h"
 #include "JSCSSStyleSheet.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "MediaList.h"

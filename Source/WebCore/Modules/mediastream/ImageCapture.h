@@ -30,7 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "Blob.h"
 #include "Document.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "MediaStreamTrack.h"
 #include "PhotoCapabilities.h"
 #include "PhotoSettings.h"

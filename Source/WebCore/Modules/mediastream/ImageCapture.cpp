@@ -34,6 +34,8 @@
 #include "ImageBitmapOptions.h"
 #include "ImageBuffer.h"
 #include "JSBlob.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSImageBitmap.h"
 #include "JSPhotoCapabilities.h"
 #include "JSPhotoSettings.h"

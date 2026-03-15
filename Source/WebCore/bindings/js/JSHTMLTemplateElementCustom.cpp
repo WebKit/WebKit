@@ -32,7 +32,6 @@
 #include "config.h"
 #include "JSHTMLTemplateElement.h"
 
-#include "JSDOMConvert.h"
 #include "JSDocumentFragment.h"
 #include "WebCoreOpaqueRootInlines.h"
 

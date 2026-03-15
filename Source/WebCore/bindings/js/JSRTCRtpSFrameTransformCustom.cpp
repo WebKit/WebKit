@@ -29,6 +29,8 @@
 #if ENABLE(WEB_RTC)
 
 #include "JSCryptoKey.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNumbers.h"
 #include "JSDOMPromiseDeferred.h"
 #include <JavaScriptCore/JSBigIntInlines.h>
 

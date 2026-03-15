@@ -35,6 +35,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageBitmap.h"
+#include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebCodecsVideoDecoderSupport.h"
 #include "OffscreenCanvas.h"

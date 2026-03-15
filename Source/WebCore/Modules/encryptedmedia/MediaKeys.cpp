@@ -36,6 +36,7 @@
 #include "CDMInstance.h"
 #include "Document.h"
 #include "EventLoop.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "MediaKeySession.h"

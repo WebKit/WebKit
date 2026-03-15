@@ -28,7 +28,7 @@
 #include "BackForwardItemIdentifier.h"
 #include "EventTarget.h"
 #include "EventTargetInterfaces.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "LocalDOMWindowProperty.h"
 #include "NavigateEvent.h"
 #include "NavigationHistoryEntry.h"
@@ -58,10 +58,8 @@ using NavigationAPIMethodTrackerIdentifier = ObjectIdentifier<NavigationAPIMetho
 struct NavigationAPIMethodTracker : public RefCounted<NavigationAPIMethodTracker> {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(NavigationAPIMethodTracker);
 
-    static Ref<NavigationAPIMethodTracker> create(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
-    {
-        return adoptRef(*new NavigationAPIMethodTracker(WTF::move(committed), WTF::move(finished), WTF::move(info), WTF::move(serializedState)));
-    }
+    static Ref<NavigationAPIMethodTracker> create(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState);
+    ~NavigationAPIMethodTracker();
 
     bool operator==(const NavigationAPIMethodTracker& other) const
     {
@@ -78,14 +76,7 @@ struct NavigationAPIMethodTracker : public RefCounted<NavigationAPIMethodTracker
     Ref<DeferredPromise> finishedPromise;
 
 private:
-    explicit NavigationAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
-        : info(info)
-        , serializedState(serializedState)
-        , committedPromise(WTF::move(committed))
-        , finishedPromise(WTF::move(finished))
-        , identifier(NavigationAPIMethodTrackerIdentifier::generate())
-    {
-    }
+    NavigationAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState);
 
     NavigationAPIMethodTrackerIdentifier identifier;
 };

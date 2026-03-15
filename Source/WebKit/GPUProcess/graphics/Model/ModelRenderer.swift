@@ -76,7 +76,7 @@ class Renderer {
             configuration: .init(
                 output: .init(colorPixelFormat: colorPixelFormat),
                 rasterSampleCount: rasterSampleCount,
-                enableTonemap: true,
+                enableTonemap: false,
                 enableColorMatch: colorSpace != nil,
                 hasTransparentContent: false
             ),

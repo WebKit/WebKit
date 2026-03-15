@@ -568,7 +568,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMesh);
 WebMesh::WebMesh(const WebModelCreateMeshDescriptor& descriptor)
 {
     id<MTLDevice> device = MTLCreateSystemDefaultDevice();
-    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm_sRGB width:descriptor.width height:descriptor.height mipmapped:NO];
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA16Float width:descriptor.width height:descriptor.height mipmapped:NO];
     m_textures = [NSMutableArray array];
     for (RetainPtr ioSurface : descriptor.ioSurfaces)
         [m_textures addObject:[device newTextureWithDescriptor:textureDescriptor iosurface:ioSurface.get() plane:0]];

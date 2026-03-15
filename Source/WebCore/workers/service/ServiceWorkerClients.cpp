@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ServiceWorkerClients.h"
 
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSServiceWorkerWindowClient.h"
 #include "Logging.h"

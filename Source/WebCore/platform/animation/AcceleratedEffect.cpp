@@ -306,6 +306,7 @@ AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<
     : m_timelineIdentifier(source.m_timelineIdentifier)
 {
     m_timing = source.m_timing;
+    m_timeline = source.m_timeline;
     m_animationType = source.m_animationType;
     m_compositeOperation = source.m_compositeOperation;
     m_paused = source.m_paused;

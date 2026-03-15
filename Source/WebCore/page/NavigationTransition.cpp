@@ -26,12 +26,18 @@
 #include "config.h"
 #include "NavigationTransition.h"
 
+#include "JSDOMConvertAny.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationTransition);
+
+Ref<NavigationTransition> NavigationTransition::create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished)
+{
+    return adoptRef(*new NavigationTransition(type, WTF::move(fromEntry), WTF::move(finished)));
+}
 
 NavigationTransition::NavigationTransition(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished)
     : m_navigationType(type)

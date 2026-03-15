@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUTexture.h"
 
+#include "ExceptionOr.h"
 #include "GPUDevice.h"
 #include "GPUTextureDescriptor.h"
 #include "GPUTextureView.h"
