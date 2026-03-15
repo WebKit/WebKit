@@ -738,7 +738,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    void setScreenProperties(const WebCore::ScreenProperties&);
+    void setScreenProperties(WebCore::ScreenProperties&&);
 #endif
 
 #if PLATFORM(COCOA)

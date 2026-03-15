@@ -29,56 +29,96 @@
 #if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
 
 #include "ScreenProperties.h"
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-static ScreenProperties& screenProperties()
+static Lock& platformScreenLock()
 {
-    static NeverDestroyed<ScreenProperties> screenProperties;
-    return screenProperties;
+    static Lock lock;
+    return lock;
 }
 
-const ScreenProperties& getScreenProperties()
+Ref<PlatformScreen>& PlatformScreen::instance() WTF_REQUIRES_LOCK(platformScreenLock())
 {
-    return screenProperties();
+    static NeverDestroyed<Ref<PlatformScreen>> platformScreen = PlatformScreen::create({ });
+    static NeverDestroyed<Ref<PlatformScreen>> ref { platformScreen.get() };
+    return ref.get();
 }
 
-PlatformDisplayID primaryScreenDisplayID()
+PlatformScreen::PlatformScreen(ScreenProperties&& properties)
+    : m_properties(WTF::move(properties))
 {
-    return screenProperties().primaryDisplayID;
 }
 
-void setScreenProperties(const ScreenProperties& properties)
+Ref<PlatformScreen> PlatformScreen::create(ScreenProperties&& properties)
 {
-    screenProperties() = properties;
+    return adoptRef(*new PlatformScreen(WTF::move(properties)));
 }
 
-const ScreenData* screenData(PlatformDisplayID screenDisplayID)
+Ref<const PlatformScreen> PlatformScreen::singleton()
 {
-    if (screenProperties().screenDataMap.isEmpty())
+    Locker locker { platformScreenLock() };
+    return instance().get();
+}
+
+const ScreenData* PlatformScreen::screenData(PlatformDisplayID screenDisplayID) const
+{
+    if (m_properties.screenDataMap.isEmpty())
         return nullptr;
 
     // Return property of the first screen if the screen is not found in the map.
     if (auto displayID = screenDisplayID ? screenDisplayID : primaryScreenDisplayID()) {
-        auto properties = screenProperties().screenDataMap.find(displayID);
-        if (properties != screenProperties().screenDataMap.end())
+        auto properties = m_properties.screenDataMap.find(displayID);
+        if (properties != m_properties.screenDataMap.end())
             return &properties->value;
     }
 
     // Last resort: use the first item in the screen list.
-    return &screenProperties().screenDataMap.begin()->value;
+    return &m_properties.screenDataMap.begin()->value;
+}
+
+PlatformDisplayID PlatformScreen::primaryScreenDisplayID() const
+{
+    return m_properties.primaryDisplayID;
+}
+
+const ScreenProperties& PlatformScreen::screenProperties() const
+{
+    return m_properties;
+}
+
+const ScreenDataMap& PlatformScreen::screenDatas() const
+{
+    return screenProperties().screenDataMap;
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-void setScreenContentsFormatsForTesting(OptionSet<ContentsFormat> contentsFormats)
+OptionSet<ContentsFormat> PlatformScreen::screenContentsFormatsForTesting() const
 {
-    screenProperties().screenContentsFormatsForTesting = contentsFormats;
+    return m_properties.screenContentsFormatsForTesting;
+}
+#endif
+
+void PlatformScreen::updateSingletonProperties(ScreenProperties&& properties)
+{
+    Locker locker { platformScreenLock() };
+    Ref<PlatformScreen>& platformScreenRef = PlatformScreen::instance();
+
+    // If we have the only reference, we can update in place
+    if (platformScreenRef->hasOneRef())
+        platformScreenRef->m_properties = WTF::move(properties);
+    else
+        platformScreenRef = PlatformScreen::create(WTF::move(properties));
 }
 
-OptionSet<ContentsFormat> screenContentsFormatsForTesting()
+#if HAVE(SUPPORT_HDR_DISPLAY)
+void PlatformScreen::updateSingletonContentsFormatsForTesting(OptionSet<ContentsFormat> contentsFormats)
 {
-    return screenProperties().screenContentsFormatsForTesting;
+    auto properties = singleton()->screenProperties();
+    properties.screenContentsFormatsForTesting = contentsFormats;
+    updateSingletonProperties(WTF::move(properties));
 }
 #endif
 

@@ -271,7 +271,8 @@ static bool isVP9CodecConfigurationRecordSupported(const VPCodecConfigurationRec
         auto screenSize = FloatSize(overrideForTesting->width, overrideForTesting->height).scaled(overrideForTesting->scale);
         has4kScreen = resolutionCategory(screenSize) >= ResolutionCategory::R_4K;
     } else {
-        for (auto& screenData : getScreenProperties().screenDataMap.values()) {
+        Ref screen = PlatformScreen::singleton();
+        for (auto& screenData : screen->screenDatas().values()) {
             if (resolutionCategory(screenData.screenRect.size().scaled(screenData.scaleFactor)) >= ResolutionCategory::R_4K) {
                 has4kScreen = true;
                 break;
@@ -404,7 +405,8 @@ std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguratio
         auto screenSize = FloatSize(overrideForTesting->width, overrideForTesting->height).scaled(overrideForTesting->scale);
         has4kScreen = resolutionCategory(screenSize) >= ResolutionCategory::R_4K;
     } else {
-        for (auto& screenData : getScreenProperties().screenDataMap.values()) {
+        Ref screen = PlatformScreen::singleton();
+        for (auto& screenData : screen->screenDatas().values()) {
             if (resolutionCategory(screenData.screenRect.size().scaled(screenData.scaleFactor)) >= ResolutionCategory::R_4K) {
                 has4kScreen = true;
                 break;

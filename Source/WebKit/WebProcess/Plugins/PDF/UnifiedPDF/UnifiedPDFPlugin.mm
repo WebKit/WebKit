@@ -1077,7 +1077,8 @@ double UnifiedPDFPlugin::scaleForActualSize() const
     if (!webPage)
         return 1;
 
-    auto* screenData = WebCore::screenData(webPage->corePage()->displayID());
+    Ref screen = PlatformScreen::singleton();
+    auto* screenData = screen->screenData(webPage->corePage()->displayID());
     if (!screenData)
         return 1;
 

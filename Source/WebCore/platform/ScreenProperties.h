@@ -27,13 +27,24 @@
 
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatRect.h>
-#include <WebCore/PlatformScreen.h>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+using PlatformGPUID = uint64_t; // On MAC, global IOKit registryID that can identify a GPU across process boundaries.
+
+using PlatformDisplayID = uint32_t;
+
+enum class DynamicRangeMode : uint8_t {
+    None,
+    Standard,
+    HLG,
+    HDR10,
+    DolbyVisionPQ,
+};
 
 struct ScreenData {
     FloatRect screenAvailableRect;

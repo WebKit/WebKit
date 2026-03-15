@@ -57,7 +57,8 @@ static PlatformDisplayID widgetDisplayID(Widget* widget)
 int screenDepth(Widget* widget)
 {
 #if ENABLE(WPE_PLATFORM)
-    auto* data = screenData(widgetDisplayID(widget));
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(widgetDisplayID(widget));
     return data ? data->screenDepth : 24;
 #else
     UNUSED_PARAM(widget);
@@ -69,7 +70,8 @@ int screenDepth(Widget* widget)
 int screenDepthPerComponent(Widget* widget)
 {
 #if ENABLE(WPE_PLATFORM)
-    auto* data = screenData(widgetDisplayID(widget));
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(widgetDisplayID(widget));
     return data ? data->screenDepthPerComponent : 8;
 #else
     UNUSED_PARAM(widget);
@@ -97,7 +99,8 @@ bool screenHasInvertedColors()
 double screenDPI(PlatformDisplayID screendisplayID)
 {
 #if ENABLE(WPE_PLATFORM)
-    auto* data = screenData(screendisplayID);
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(screendisplayID);
     return data ? data->dpi : 96.;
 #else
     UNUSED_PARAM(screendisplayID);
@@ -120,7 +123,8 @@ double fontDPI()
 FloatRect screenRect(Widget* widget)
 {
 #if ENABLE(WPE_PLATFORM)
-    if (auto* data = screenData(widgetDisplayID(widget)))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto* data = platformScreen->screenData(widgetDisplayID(widget)))
         return data->screenRect;
 #endif
     // WPE can't offer any more useful information about the screen size,
@@ -134,7 +138,8 @@ FloatRect screenRect(Widget* widget)
 FloatRect screenAvailableRect(Widget* widget)
 {
 #if ENABLE(WPE_PLATFORM)
-    if (auto* data = screenData(widgetDisplayID(widget)))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto* data = platformScreen->screenData(widgetDisplayID(widget)))
         return data->screenAvailableRect;
 #endif
     return screenRect(widget);

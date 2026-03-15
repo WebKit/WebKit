@@ -176,7 +176,8 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, Ref<GPUComposit
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (auto* screenData = WebCore::screenData(displayID))
+        Ref screen = PlatformScreen::singleton();
+        if (auto* screenData = screen->screenData(displayID))
             protectedThis->updateScreenHeadroom(screenData->currentEDRHeadroom, screenData->suppressEDR);
     }))
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
@@ -246,7 +247,8 @@ void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenProperties()
 {
     m_currentEDRHeadroom = 1.f;
     m_suppressEDR = false;
-    for (const auto& screenData : WebCore::getScreenProperties().screenDataMap.values()) {
+    Ref screen = PlatformScreen::singleton();
+    for (const auto& screenData : screen->screenDatas().values()) {
         m_currentEDRHeadroom = std::max(m_currentEDRHeadroom, screenData.currentEDRHeadroom);
         m_suppressEDR |= screenData.suppressEDR;
     }

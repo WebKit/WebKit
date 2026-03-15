@@ -552,7 +552,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         });
     }
 
-    WebCore::setScreenProperties(parameters.screenProperties);
+    WebCore::PlatformScreen::updateSingletonProperties(WTF::move(parameters.screenProperties));
 
 #if PLATFORM(MAC)
     scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
@@ -1472,7 +1472,7 @@ void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::S
 #endif
 }
 
-void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
+void WebProcess::setScreenProperties(WebCore::ScreenProperties&& properties)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
     auto propertiesWithStyleAffectingOnly = [](auto properties) {
@@ -1483,12 +1483,12 @@ void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties
         }
         return properties;
     };
-    bool affectsStyle = propertiesWithStyleAffectingOnly(properties) != propertiesWithStyleAffectingOnly(WebCore::getScreenProperties());
+    bool affectsStyle = propertiesWithStyleAffectingOnly(properties) != propertiesWithStyleAffectingOnly(WebCore::PlatformScreen::singleton()->screenProperties());
 #else
     constexpr bool affectsStyle = true;
 #endif
 
-    WebCore::setScreenProperties(properties);
+    WebCore::PlatformScreen::updateSingletonProperties(WTF::move(properties));
     for (auto& page : m_pageMap.values())
         page->screenPropertiesDidChange(affectsStyle);
 #if PLATFORM(MAC)
