@@ -77,6 +77,7 @@ class GraphicsLayerContentsDisplayDelegate;
 class GraphicsLayerFactory;
 class GraphicsLayerKeyframeValueList;
 class HTMLVideoElement;
+struct VideoLayerContext;
 class Image;
 class ImageBuffer;
 class Model;
@@ -406,7 +407,7 @@ public:
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(SPATIAL_PORTAL)
     virtual void removeModelContents() { }
 #endif
-    virtual void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) { }
+    virtual void setContentsToVideoLayer(const VideoLayerContext&, HTMLVideoElement&, ContentsLayerPurpose) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
     WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing);
 #if ENABLE(MODEL_ELEMENT)

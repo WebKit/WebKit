@@ -2712,6 +2712,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/TypedArrayPixelBuffer.h
     platform/graphics/VP9Utilities.h
     platform/graphics/VelocityData.h
+    platform/graphics/VideoLayerContext.h
     platform/graphics/VideoLayerManager.h
     platform/graphics/VideoPlaybackQualityMetrics.h
     platform/graphics/VideoTarget.h

@@ -258,6 +258,7 @@ Tests/WebKit/WKWebView/Proxy.mm @nonARC
 Tests/WebKit/WKWebView/PushAPI.mm @nonARC
 Tests/WebKit/WKWebView/QuickLook.mm @nonARC
 Tests/WebKit/WKWebView/ReloadWithDifferingInitialScale.mm @nonARC
+Tests/WebKit/WKWebView/RemoteLayerHosting.mm @nonARC
 Tests/WebKit/WKWebView/RemoteObjectRegistry.mm @nonARC
 Tests/WebKit/WKWebView/RemoveFullscreenElementFromDOM.mm @nonARC
 Tests/WebKit/WKWebView/RenderedImageWithOptions.mm @nonARC

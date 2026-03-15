@@ -85,6 +85,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
+class RemoteLayerHostingManager;
 class RemoteSnapshot;
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
@@ -122,6 +123,10 @@ public:
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager() const;
+#endif
+
+#if PLATFORM(COCOA)
+    RemoteLayerHostingManager& remoteLayerHostingManager() LIFETIME_BOUND;
 #endif
 
     WebCore::NowPlayingManager& nowPlayingManager() LIFETIME_BOUND;
@@ -308,6 +313,9 @@ private:
 #endif
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable RefPtr<RemoteAudioSessionProxyManager> m_audioSessionManager;
+#endif
+#if PLATFORM(COCOA)
+    const Ref<RemoteLayerHostingManager> m_remoteLayerHostingManager;
 #endif
 #if ENABLE(WEBXR)
     std::optional<WebCore::ProcessIdentity> m_processIdentity;

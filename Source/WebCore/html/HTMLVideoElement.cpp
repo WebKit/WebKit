@@ -75,6 +75,10 @@
 #include "PictureInPictureObserver.h"
 #endif
 
+#if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedPlatformLayerBufferProxy.h"
+#endif
+
 #if RELEASE_LOG_DISABLED
 #define HTMLVIDEOELEMENT_RELEASE_LOG(formatString, ...)
 #else
@@ -313,6 +317,22 @@ unsigned HTMLVideoElement::videoHeight() const
     if (!player())
         return 0;
     return clampToUnsigned(protect(player())->naturalSize().height());
+}
+
+VideoLayerContext HTMLVideoElement::videoLayerContext()
+{
+    bool hostedByUIProcess = false;
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    hostedByUIProcess = document().settings().remoteLayerHostingBypassesWebContentProcess();
+#endif
+
+    return VideoLayerContext {
+        .hostingContext = layerHostingContext(),
+        .mediaElementIdentifier = identifier(),
+        .videoLayerSize = videoLayerSize(),
+        .naturalSize = HTMLMediaElement::naturalSize(),
+        .hostedByUIProcess = hostedByUIProcess,
+    };
 }
 
 void HTMLVideoElement::scheduleResizeEvent(const FloatSize& naturalSize)

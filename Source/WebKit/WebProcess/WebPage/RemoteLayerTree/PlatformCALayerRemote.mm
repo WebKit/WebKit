@@ -90,9 +90,9 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(Ref<WebCore::Model> mod
 #endif
 
 #if HAVE(AVKIT)
-Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(WebCore::HTMLVideoElement& videoElement, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(const WebCore::VideoLayerContext& videoLayerContext, WebCore::HTMLVideoElement& videoElement, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
-    return PlatformCALayerRemoteCustom::create(videoElement, owner, context);
+    return PlatformCALayerRemoteCustom::create(videoLayerContext, videoElement, owner, context);
 }
 #endif
 

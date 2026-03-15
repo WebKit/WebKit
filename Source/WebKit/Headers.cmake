@@ -540,6 +540,7 @@ endif ()
 # FIXME: Eventually add all non-installed headers to this list, so that the
 # per-directory -I paths can be removed.
 set(WebKit_PROJECT_HEADERS
+    GPUProcess/cocoa/RemoteLayerHostingManager.h
     GPUProcess/graphics/Model/Float3.h
     GPUProcess/graphics/Model/Float4x4.h
     GPUProcess/graphics/Model/ModelTypes.h

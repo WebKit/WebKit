@@ -54,6 +54,8 @@
 
 #include <wtf/LoggerHelper.h>
 #if PLATFORM(COCOA)
+#include "PlaybackSessionContextIdentifier.h"
+#include "RemoteLayerHostingManager.h"
 #include <wtf/MachSendRightAnnotated.h>
 #endif
 #include <wtf/Markable.h>
@@ -198,6 +200,10 @@ void RemoteAudioVideoRendererProxyManager::create(RemoteAudioVideoRendererIdenti
 void RemoteAudioVideoRendererProxyManager::shutdown(RemoteAudioVideoRendererIdentifier identifier)
 {
     MESSAGE_CHECK(m_renderers.contains(identifier));
+
+#if PLATFORM(COCOA)
+    removeContentLayerForRemoteLayerHosting(identifier);
+#endif
 
     if (auto iterator = m_renderers.find(identifier); iterator != m_renderers.end())
         m_renderers.remove(iterator);
@@ -698,6 +704,64 @@ RemoteAudioVideoRendererState RemoteAudioVideoRendererProxyManager::stateFor(Rem
     };
 }
 
+#if PLATFORM(COCOA)
+bool RemoteAudioVideoRendererProxyManager::remoteLayerHostingBypassesWebContentProcess() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return false;
+
+    if (auto sharedPreferences = connection->sharedPreferencesForWebProcess())
+        return sharedPreferences->remoteLayerHostingBypassesWebContentProcess;
+
+    return false;
+}
+
+void RemoteAudioVideoRendererProxyManager::updateContentLayerForRemoteLayerHosting(RemoteAudioVideoRendererIdentifier identifier)
+{
+    auto& context = contextFor(identifier);
+
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return;
+
+    if (!context.mediaElementIdentifier)
+        return;
+
+    auto contextId = PlaybackSessionContextIdentifier { *context.mediaElementIdentifier, connection->webProcessIdentifier() };
+
+    RetainPtr platformLayer = context.renderer->platformVideoLayer();
+
+    if (!platformLayer) {
+        protect(connection->gpuProcess().remoteLayerHostingManager())->removeRemoteLayerForPlayer(contextId);
+        return;
+    }
+
+    bool canShowWhileLocked = false;
+#if PLATFORM(IOS_FAMILY)
+    canShowWhileLocked = context.preferences.contains(VideoRendererPreference::CanShowWhileLocked);
+#endif
+    protect(connection->gpuProcess().remoteLayerHostingManager())->createRemoteLayerForPlayer(contextId, WTF::move(platformLayer), canShowWhileLocked);
+}
+
+void RemoteAudioVideoRendererProxyManager::removeContentLayerForRemoteLayerHosting(RemoteAudioVideoRendererIdentifier identifier)
+{
+    auto iterator = m_renderers.find(identifier);
+    if (iterator == m_renderers.end())
+        return;
+
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return;
+
+    if (!iterator->value.mediaElementIdentifier)
+        return;
+
+    auto contextId = PlaybackSessionContextIdentifier { *iterator->value.mediaElementIdentifier, connection->webProcessIdentifier() };
+    protect(connection->gpuProcess().remoteLayerHostingManager())->removeRemoteLayerForPlayer(contextId);
+}
+#endif // PLATFORM(COCOA)
+
 void RemoteAudioVideoRendererProxyManager::rendereringModeChanged(RemoteAudioVideoRendererIdentifier identifier)
 {
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
@@ -709,14 +773,18 @@ void RemoteAudioVideoRendererProxyManager::rendereringModeChanged(RemoteAudioVid
 #if PLATFORM(COCOA)
     auto& context = contextFor(identifier);
 
-    bool canShowWhileLocked = false;
+    if (remoteLayerHostingBypassesWebContentProcess())
+        updateContentLayerForRemoteLayerHosting(identifier);
+    else {
+        bool canShowWhileLocked = false;
 #if PLATFORM(IOS_FAMILY)
-    canShowWhileLocked = context.preferences.contains(VideoRendererPreference::CanShowWhileLocked);
+        canShowWhileLocked = context.preferences.contains(VideoRendererPreference::CanShowWhileLocked);
 #endif
 
-    // See webkit.org/b/299655
-    SUPPRESS_FORWARD_DECL_ARG if (auto maybeHostingContext = context.layerHostingContextManager.createHostingContextIfNeeded(context.renderer->platformVideoLayer(), canShowWhileLocked))
-        publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::LayerHostingContextChanged(state, *maybeHostingContext, context.layerHostingContextManager.videoLayerSize()));
+        // See webkit.org/b/299655
+        SUPPRESS_FORWARD_DECL_ARG if (auto maybeHostingContext = context.layerHostingContextManager.createHostingContextIfNeeded(context.renderer->platformVideoLayer(), canShowWhileLocked))
+            publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::LayerHostingContextChanged(state, *maybeHostingContext, context.layerHostingContextManager.videoLayerSize()));
+    }
 #endif
     publishAndSend(identifier, Messages::AudioVideoRendererRemoteMessageReceiver::RenderingModeChanged(state));
 }

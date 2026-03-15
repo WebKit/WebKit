@@ -141,6 +141,9 @@ RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
 void RemoteMediaPlayerProxy::invalidate()
 {
     m_updateCachedStateMessageTimer.stop();
+#if PLATFORM(COCOA)
+    removeContentLayerForRemoteLayerHosting();
+#endif
     protect(m_player)->invalidate();
     if (RefPtr sandboxExtension = m_sandboxExtension) {
         sandboxExtension->revoke();

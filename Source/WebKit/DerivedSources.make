@@ -183,6 +183,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebLockRegistryProxy \
 	UIProcess/WebPermissionControllerProxy \
 	UIProcess/Cocoa/PlaybackSessionManagerProxy \
+	UIProcess/Cocoa/RemoteLayerHostingManagerProxy \
 	UIProcess/Cocoa/VideoPresentationManagerProxy \
 	UIProcess/ViewGestureController \
 	UIProcess/WebProcessProxy \
@@ -282,6 +283,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/ShapeDetection/RemoteBarcodeDetector \
 	GPUProcess/ShapeDetection/RemoteFaceDetector \
 	GPUProcess/ShapeDetection/RemoteTextDetector \
+	GPUProcess/cocoa/RemoteLayerHostingManager \
 	GPUProcess/graphics/Model/RemoteMesh \
 	GPUProcess/graphics/RemoteGraphicsContext \
 	GPUProcess/graphics/RemoteGraphicsContextGL \

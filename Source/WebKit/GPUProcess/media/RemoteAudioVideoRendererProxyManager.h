@@ -166,6 +166,10 @@ private:
     void attemptToDecrypt(RemoteAudioVideoRendererIdentifier);
 #endif
 
+    void updateContentLayerForRemoteLayerHosting(RemoteAudioVideoRendererIdentifier);
+    void removeContentLayerForRemoteLayerHosting(RemoteAudioVideoRendererIdentifier);
+    bool remoteLayerHostingBypassesWebContentProcess() const;
+
     struct RendererContext {
         RefPtr<WebCore::AudioVideoRenderer> renderer;
         Markable<WebCore::HTMLMediaElementIdentifier> mediaElementIdentifier;

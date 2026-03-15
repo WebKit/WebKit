@@ -54,6 +54,7 @@ $(PROJECT_DIR)/GPUProcess/RemoteSharedResourceCache.messages.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteBarcodeDetector.messages.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteFaceDetector.messages.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteTextDetector.messages.in
+$(PROJECT_DIR)/GPUProcess/cocoa/RemoteLayerHostingManager.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/Model/RemoteMesh.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/PathSegment.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContext.messages.in
@@ -564,6 +565,7 @@ $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiScript.json
 $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiSession.json
 $(PROJECT_DIR)/UIProcess/Automation/protocol/BidiStorage.json
 $(PROJECT_DIR)/UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Cocoa/RemoteLayerHostingManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/VideoPresentationManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Downloads/DownloadProxy.messages.in
 $(PROJECT_DIR)/UIProcess/DrawingAreaProxy.messages.in

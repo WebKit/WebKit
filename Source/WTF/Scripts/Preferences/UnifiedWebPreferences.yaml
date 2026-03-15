@@ -7221,6 +7221,22 @@ RegExpBufferBoundariesEnabled:
     WebKit:
       default: false
 
+RemoteLayerHostingBypassesWebContentProcess:
+  type: bool
+  status: unstable
+  category: media
+  humanReadableName: "GPU Process: Remote Layer Hosting Bypasses WebContent Process"
+  humanReadableDescription: "Host the GPU process video layer directly in the UI process, bypassing the WebContent process"
+  condition: ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 RemoteMediaSessionManagerEnabled:
   type: bool
   status: unstable

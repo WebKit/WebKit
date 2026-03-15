@@ -31,6 +31,7 @@
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/Supplementable.h>
 #include <WebCore/VideoFrameRequestCallback.h>
+#include <WebCore/VideoLayerContext.h>
 #include <memory>
 #include <wtf/Forward.h>
 
@@ -57,6 +58,8 @@ public:
 
     WEBCORE_EXPORT unsigned videoWidth() const;
     WEBCORE_EXPORT unsigned videoHeight() const;
+
+    WEBCORE_EXPORT VideoLayerContext videoLayerContext();
 
     WEBCORE_EXPORT ExceptionOr<void> webkitEnterFullscreen();
     WEBCORE_EXPORT void webkitExitFullscreen();

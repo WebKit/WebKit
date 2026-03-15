@@ -497,6 +497,13 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
     };
 
     HostingContext hostingContext;
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (videoElement.document().settings().remoteLayerHostingBypassesWebContentProcess()) {
+        setupFullscreen({ }, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()));
+        return;
+    }
+#endif
+
     bool blockMediaLayerRehosting = videoElement.document().settings().blockMediaLayerRehostingInWebContentProcess() && videoElement.document().page() &&  videoElement.document().page()->chrome().client().isUsingUISideCompositing();
     if (blockMediaLayerRehosting) {
         hostingContext = videoElement.layerHostingContext();
