@@ -36,8 +36,7 @@ namespace WebCore {
 template<typename Visitor>
 void JSIntersectionObserver::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    if (auto* callback = wrapped().callbackConcurrently())
-        callback->visitJSFunctionInGCThread(visitor);
+    wrapped().callbackConcurrently().visitJSFunctionInGCThread(visitor);
     addWebCoreOpaqueRoot(visitor, wrapped().root());
 }
 
