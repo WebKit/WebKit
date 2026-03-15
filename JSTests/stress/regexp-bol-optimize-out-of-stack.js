@@ -3,7 +3,7 @@
 
 arrayLength = typeof(arrayLength) === 'undefined' ? 50000 : arrayLength;
 
-let expectedException = "SyntaxError: Invalid regular expression: regular expression too large";
+let expectedException = "SyntaxError: Invalid regular expression: too many captures";
 
 function test()
 {

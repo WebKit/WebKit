@@ -48,7 +48,7 @@ public:
     void atomCharacterClassPushNested(bool) { }
     void atomCharacterClassPopNested(bool) { }
     void atomCharacterClassEnd() { }
-    void atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt) { }
+    void atomParenthesesSubpatternBegin(bool, std::optional<String> = std::nullopt) { }
     void atomParentheticalAssertionBegin(bool, MatchDirection) { }
     void atomParentheticalModifierBegin(OptionSet<Flags>, OptionSet<Flags>) { }
     void atomParenthesesEnd() { }
