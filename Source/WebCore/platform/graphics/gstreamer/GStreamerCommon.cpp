@@ -596,6 +596,12 @@ void registerWebKitGStreamerElements()
                 gst_registry_remove_plugin(registry, vaapiPlugin.get());
         }
 
+        // Disable the pipewire device provider, usually the pulseaudio and v4l2 device providers would
+        // be preferred anyway and pipewiresink is currently prone to deadlocks:
+        // https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/5171
+        if (auto pipewireDeviceProviderFactory = adoptGRef(gst_device_provider_factory_find("pipewiredeviceprovider")))
+            gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(pipewireDeviceProviderFactory.get()), GST_RANK_NONE);
+
         // Make sure the quirks are created as early as possible.
         [[maybe_unused]] auto& quirksManager = GStreamerQuirksManager::singleton();
 

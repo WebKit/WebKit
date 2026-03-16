@@ -69,6 +69,7 @@ WTF_DEFINE_GREF_TRAITS_INLINE(GstStreamCollection, gst_object_ref, gst_object_un
 WTF_DEFINE_GREF_TRAITS_INLINE(GstClock, gst_object_ref, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstDeviceMonitor, gst_object_ref, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstDeviceProvider, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstDeviceProviderFactory, gst_object_ref, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstDevice, gst_object_ref, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstTracer, gst_object_ref, gst_object_unref, g_object_is_floating)
 
