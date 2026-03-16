@@ -206,21 +206,21 @@ void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded
         // If we are inside the layout of an LegacyRenderSVGRoot, do not cross the SVG boundary to
         // invalidate the ancestor renderer because it may have finished its layout already.
         if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(object); svgRoot && svgRoot->isInLayout())
-            svgRoot->setNeedsLayout(MarkOnlyThis);
+            svgRoot->setNeedsLayout(MarkingBehavior::OnlyThis);
         else {
             if (CheckedPtr element = dynamicDowncast<RenderElement>(object)) {
                 auto svgRoot = SVGRenderSupport::findTreeRootObject(*element);
                 if (!svgRoot || !svgRoot->isInLayout())
-                    element->setNeedsLayout(MarkContainingBlockChain);
+                    element->setNeedsLayout(MarkingBehavior::ContainingBlockChain);
                 else {
                     // We just want to re-layout the ancestors up to the RenderSVGRoot.
-                    element->setNeedsLayout(MarkOnlyThis);
+                    element->setNeedsLayout(MarkingBehavior::OnlyThis);
                     for (auto current = element->parent(); current != svgRoot; current = current->parent())
-                        current->setNeedsLayout(MarkOnlyThis);
-                    svgRoot->setNeedsLayout(MarkOnlyThis);
+                        current->setNeedsLayout(MarkingBehavior::OnlyThis);
+                    svgRoot->setNeedsLayout(MarkingBehavior::OnlyThis);
                 }
             } else
-                object.setNeedsLayout(MarkOnlyThis);
+                object.setNeedsLayout(MarkingBehavior::OnlyThis);
         }
     }
 

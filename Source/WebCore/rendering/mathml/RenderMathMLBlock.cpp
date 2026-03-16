@@ -168,7 +168,7 @@ void RenderMathMLBlock::layoutItems(RelayoutChildren relayoutChildren)
         LayoutUnit childPreferredSize = childSize + child->horizontalBorderAndPaddingExtent();
 
         if (childPreferredSize != child->width())
-            child->setChildNeedsLayout(MarkOnlyThis);
+            child->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
         updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *child);
         child->layoutIfNeeded();

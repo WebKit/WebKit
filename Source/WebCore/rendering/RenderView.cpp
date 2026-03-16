@@ -98,7 +98,7 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
 
-    setNeedsPreferredWidthsUpdate(MarkOnlyThis);
+    setNeedsPreferredWidthsUpdate(MarkingBehavior::OnlyThis);
     
     setPositionState(PositionType::Absolute); // to 0,0 :)
 
@@ -188,7 +188,7 @@ void RenderView::layout()
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
     bool relayoutChildren = !shouldUsePrintingLayout() && (width() != viewWidth() || height() != viewHeight());
     if (relayoutChildren) {
-        setChildNeedsLayout(MarkOnlyThis);
+        setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
         for (auto& box : childrenOfType<RenderBox>(*this)) {
             if (box.hasRelativeLogicalHeight()
@@ -197,7 +197,7 @@ void RenderView::layout()
                 || box.style().logicalMaxHeight().isPercentOrCalculated()
                 || box.isRenderOrLegacyRenderSVGRoot()
                 )
-                box.setChildNeedsLayout(MarkOnlyThis);
+                box.setChildNeedsLayout(MarkingBehavior::OnlyThis);
         }
     }
 

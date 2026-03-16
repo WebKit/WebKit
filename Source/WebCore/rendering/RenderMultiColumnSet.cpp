@@ -382,7 +382,7 @@ void RenderMultiColumnSet::prepareForLayout(bool initial)
     // Start with "infinite" flow thread portion height until height is known.
     setLogicalBottomInFragmentedFlow(RenderFragmentedFlow::maxLogicalHeight());
 
-    setNeedsLayout(MarkOnlyThis);
+    setNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
 void RenderMultiColumnSet::beginFlow(RenderBlock* container)

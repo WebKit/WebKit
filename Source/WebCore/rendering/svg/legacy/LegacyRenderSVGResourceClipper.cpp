@@ -359,7 +359,7 @@ bool LegacyRenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectB
         IntPoint hitPoint;
         HitTestResult result(hitPoint);
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::SVGClipContent, HitTestRequest::Type::DisallowUserAgentShadowContent };
-        if (renderer->nodeAtFloatPoint(hitType, result, point, HitTestForeground))
+        if (renderer->nodeAtFloatPoint(hitType, result, point, HitTestAction::Foreground))
             return true;
     }
 

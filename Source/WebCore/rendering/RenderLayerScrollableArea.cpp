@@ -1319,7 +1319,7 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
         if (renderer.style().overflowX() == Overflow::Auto || renderer.style().overflowY() == Overflow::Auto) {
             if (!m_inOverflowRelayout) {
                 SetForScope inOverflowRelayoutScope(m_inOverflowRelayout, true);
-                renderer.setNeedsLayout(MarkOnlyThis);
+                renderer.setNeedsLayout(MarkingBehavior::OnlyThis);
                 if (CheckedPtr block = dynamicDowncast<RenderBlock>(renderer)) {
                     // FIXME: Calling layoutBlock here is a bit of a layering violation.
                     auto scope = LayoutScope { *block };
