@@ -38,6 +38,7 @@
 #import "CoreIPCSecTrust.h"
 #import "CoreIPCTypes.h"
 #import "StreamConnectionEncoder.h"
+#import <wtf/RuntimeApplicationChecks.h>
 
 namespace WebKit {
 
@@ -83,7 +84,10 @@ static CFObjectValue variantFromCFType(CFTypeRef cfType)
 }
 
 CoreIPCCFType::CoreIPCCFType(CFTypeRef cfType)
-    : m_object(makeUniqueRefWithoutFastMallocCheck<CFObjectValue>(variantFromCFType(cfType))) { }
+    : m_object(makeUniqueRefWithoutFastMallocCheck<CFObjectValue>(variantFromCFType(cfType)))
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isInWebProcess());
+}
 
 CoreIPCCFType::CoreIPCCFType(CoreIPCCFType&&) = default;
 

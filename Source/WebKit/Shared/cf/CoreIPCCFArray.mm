@@ -30,6 +30,7 @@
 
 #import "CoreIPCCFType.h"
 #import "CoreIPCTypes.h"
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cf/VectorCF.h>
 
 namespace WebKit {
@@ -43,6 +44,8 @@ CoreIPCCFArray::CoreIPCCFArray(CoreIPCCFArray&&) = default;
 
 CoreIPCCFArray::CoreIPCCFArray(CFArrayRef array)
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isInWebProcess());
+
     CFIndex count = array ? CFArrayGetCount(array) : 0;
     for (CFIndex i = 0; i < count; i++) {
         RetainPtr element = CFArrayGetValueAtIndex(array, i);

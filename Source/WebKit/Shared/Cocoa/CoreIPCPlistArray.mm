@@ -34,12 +34,15 @@
 #import "CoreIPCPlistDictionary.h"
 #import "CoreIPCPlistObject.h"
 #import "CoreIPCString.h"
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
 CoreIPCPlistArray::CoreIPCPlistArray(NSArray *array)
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isInWebProcess());
+
     for (id value in array) {
         if (!CoreIPCPlistObject::isPlistType(value))
             continue;

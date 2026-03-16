@@ -30,6 +30,7 @@
 #if PLATFORM(COCOA)
 
 #import "CoreIPCTypes.h"
+#import <wtf/RuntimeApplicationChecks.h>
 
 namespace WebKit {
 
@@ -37,6 +38,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCDictionary);
 
 CoreIPCDictionary::CoreIPCDictionary(NSDictionary *dictionary)
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isInWebProcess());
+
     m_keyValuePairs.reserveInitialCapacity(dictionary.count);
 
     for (id key in dictionary) {
