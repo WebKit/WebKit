@@ -43,8 +43,7 @@ static Lock& platformScreenLock()
 Ref<PlatformScreen>& PlatformScreen::instance() WTF_REQUIRES_LOCK(platformScreenLock())
 {
     static NeverDestroyed<Ref<PlatformScreen>> platformScreen = PlatformScreen::create({ });
-    static NeverDestroyed<Ref<PlatformScreen>> ref { platformScreen.get() };
-    return ref.get();
+    return platformScreen.get();
 }
 
 PlatformScreen::PlatformScreen(ScreenProperties&& properties)
