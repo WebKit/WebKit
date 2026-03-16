@@ -42,7 +42,7 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/UniqueArray.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -108,7 +108,7 @@ private:
 #if USE(GSTREAMER)
     GUniquePtr<GstFFTF32> m_fft;
     GUniquePtr<GstFFTF32> m_inverseFft;
-    UniqueArray<GstFFTF32Complex> m_complexData;
+    Vector<GstFFTF32Complex> m_complexData;
 #endif // USE(GSTREAMER)
 
     AudioFloatArray m_realData;
