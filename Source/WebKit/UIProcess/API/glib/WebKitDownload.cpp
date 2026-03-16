@@ -624,7 +624,9 @@ gdouble webkit_download_get_estimated_progress(WebKitDownload* download)
     if (!contentLength)
         return 0;
 
-    return static_cast<gdouble>(priv->currentSize) / static_cast<gdouble>(contentLength);
+    // We cannot trust that the Content-Length will be correct. If current size
+    // exceeds Content-Length, our estimate will just be 1.0.
+    return std::min(static_cast<gdouble>(priv->currentSize) / static_cast<gdouble>(contentLength), 1.0);
 }
 
 /**
