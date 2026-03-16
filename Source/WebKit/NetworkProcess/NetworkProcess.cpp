@@ -1754,6 +1754,19 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             callbackAggregator->m_websiteData.entries.appendVector(WTF::move(entries));
         });
     }
+
+    if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements) && session) {
+        session->privateClickMeasurement().fetchRegistrableDomains([callbackAggregator](auto&& domains) mutable {
+            for (auto& domain : domains) {
+                WebsiteData::Entry entry {
+                    WebCore::SecurityOriginData::fromURL(URL { makeString("https://"_s, domain.string()) }),
+                    WebsiteDataType::PrivateClickMeasurements,
+                    0
+                };
+                callbackAggregator->m_websiteData.entries.append(WTF::move(entry));
+            }
+        });
+    }
 }
 
 void NetworkProcess::performDeleteWebsiteDataTask(TaskIdentifier taskIdentifier, TaskTrigger trigger)
