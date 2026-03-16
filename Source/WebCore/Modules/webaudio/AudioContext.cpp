@@ -166,8 +166,10 @@ AudioContext::~AudioContext()
 {
     m_mediaSession->invalidateClient();
 
-    if (RefPtr document = this->document())
-        document->removeAudioProducer(*this);
+    if (!isStopped()) {
+        if (RefPtr document = this->document())
+            document->removeAudioProducer(*this);
+    }
 }
 
 void AudioContext::uninitialize()
@@ -183,6 +185,13 @@ void AudioContext::uninitialize()
 #endif
 
     setState(State::Closed);
+}
+
+void AudioContext::stop()
+{
+    if (RefPtr document = this->document())
+        document->removeAudioProducer(*this);
+    BaseAudioContext::stop();
 }
 
 double AudioContext::baseLatency()
