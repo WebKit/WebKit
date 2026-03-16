@@ -121,8 +121,12 @@ GstElement* GStreamerVideoCapturer::createConverter()
     auto* videoconvert = makeGStreamerElement("videoconvert"_s);
     auto* videorate = makeGStreamerElement("videorate"_s, "videorate"_s);
 
-    // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/97#note_56575
-    g_object_set(videorate, "drop-only", TRUE, "average-period", UINT64_C(1), nullptr);
+    // The workaround below doesn't seem necessary anymore in GStreamer 1.28 and beyond.
+    // Fixed by: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/6f623af4d745efaacd0c8639b99536def4a65c78
+    if (!webkitGstCheckVersion(1, 28, 0)) {
+        // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/97#note_56575
+        g_object_set(videorate, "drop-only", TRUE, "average-period", UINT64_C(1), nullptr);
+    }
 
     gst_bin_add_many(GST_BIN_CAST(bin), videoscale, videoconvert, videorate, nullptr);
 
