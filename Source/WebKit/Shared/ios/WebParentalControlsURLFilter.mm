@@ -88,7 +88,10 @@ void WebParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<vo
         [ensureWebContentFilter() allowURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL didAllow, NSError *) mutable {
             RELEASE_LOG(Loading, "WebParentalControlsURLFilter::allowURL result %d.\n", didAllow);
             callOnMainRunLoop([didAllow, completionHandler = WTF::move(completionHandler)] mutable {
-                completionHandler(didAllow);
+                // BEWebContentFilter may call the completion handler more than once (rdar://172157523
+                // was filed for this). Guard against this to avoid a null dereference crash.
+                if (completionHandler)
+                    completionHandler(didAllow);
             });
         }).get()];
     });
