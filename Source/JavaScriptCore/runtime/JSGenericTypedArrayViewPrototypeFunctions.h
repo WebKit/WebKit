@@ -208,22 +208,7 @@ static ALWAYS_INLINE void typedArrayViewForEachImpl(JSGlobalObject* globalObject
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!thisObject->isResizableNonShared()) [[likely]] {
-        // Including GrowableShared. The key invariant here is that we can access element via array[index] if we check isDetached.
-        auto* array = thisObject->typedVector();
-
-        auto loopBody = [&](size_t index) ALWAYS_INLINE_LAMBDA -> IterationStatus {
-            JSValue element = jsUndefined();
-            auto nativeValue = ViewClass::Adaptor::toNativeFromUndefined();
-            if (!thisObject->isDetached()) [[likely]] {
-                nativeValue = array[index];
-                element = ViewClass::Adaptor::toJSValue(globalObject, nativeValue);
-                RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, { });
-            }
-
-            return functor(element, index, nativeValue);
-        };
-
+    auto forEachLoop = [&](auto&& loopBody) ALWAYS_INLINE_LAMBDA {
         if constexpr (direction == ForEachDirection::Forward) {
             for (size_t index = 0; index < length; ++index) {
                 auto status = loopBody(index);
@@ -240,10 +225,35 @@ static ALWAYS_INLINE void typedArrayViewForEachImpl(JSGlobalObject* globalObject
                     return;
             }
         }
+    };
+
+    if (!thisObject->isResizableNonShared()) [[likely]] {
+        // Fixed-length TypedArrays backed by non-shared ArrayBuffers cannot shrink and go out of
+        // bounds, and only need to check for detachment.
+        //
+        // But they may have their vectors move:
+        // - Non-wasteful TypedArrays that don't have a backing ArrayBuffer yet can transition to
+        //   being wasteful, and having an ArrayBuffer and change backing stores.
+        // - BoundsChecking Wasm memories can reallocate.
+        const bool hasStableVector = thisObject->hasArrayBuffer() && !thisObject->possiblySharedBuffer()->isWasmMemory();
+        auto* array = hasStableVector ? thisObject->typedVector() : nullptr;
+
+        forEachLoop([&](size_t index) ALWAYS_INLINE_LAMBDA -> IterationStatus {
+            JSValue element = jsUndefined();
+            auto nativeValue = ViewClass::Adaptor::toNativeFromUndefined();
+            if (!thisObject->isDetached()) [[likely]] {
+                nativeValue = (hasStableVector ? array : thisObject->typedVector())[index];
+                element = ViewClass::Adaptor::toJSValue(globalObject, nativeValue);
+                RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, { });
+            }
+
+            return functor(element, index, nativeValue);
+        });
+
         return;
     }
 
-    auto loopBody = [&](size_t index) ALWAYS_INLINE_LAMBDA -> IterationStatus {
+    forEachLoop([&](size_t index) ALWAYS_INLINE_LAMBDA -> IterationStatus {
         JSValue element = jsUndefined();
         auto nativeValue = ViewClass::Adaptor::toNativeFromUndefined();
         if (!thisObject->isDetached() && thisObject->inBounds(index)) [[likely]] {
@@ -253,24 +263,7 @@ static ALWAYS_INLINE void typedArrayViewForEachImpl(JSGlobalObject* globalObject
         }
 
         return functor(element, index, nativeValue);
-    };
-
-    if constexpr (direction == ForEachDirection::Forward) {
-        for (size_t index = 0; index < length; ++index) {
-            auto status = loopBody(index);
-            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, void());
-            if (IterationStatus::Done == status)
-                return;
-        }
-    } else {
-        size_t index = length;
-        while (index--) {
-            auto status = loopBody(index);
-            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, void());
-            if (IterationStatus::Done == status)
-                return;
-        }
-    }
+    });
 }
 
 template<typename ViewClass>
