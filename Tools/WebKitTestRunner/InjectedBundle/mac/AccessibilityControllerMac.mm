@@ -248,6 +248,13 @@ void AccessibilityController::platformInitializeClientAccessibility()
 {
     setIsolatedTreeMode(true);
 
+    // Pre-initialize accessibility state on the main thread before any sync IPC
+    // calls that would block the main thread. Without this, the first external
+    // AX query would trigger callOnMainRunLoopAndWait in
+    // WKAccessibilityWebPageObject, which deadlocks because the main thread is
+    // blocked on the sync IPC from the test.
+    _WKAccessibilityEnsureInitialized();
+
     // This triggers WebKit's normal accessibility initialization flow via IPC
     WTR::postSynchronousMessage("InitializeWebProcessAccessibility");
 

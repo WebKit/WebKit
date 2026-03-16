@@ -554,6 +554,8 @@ public:
     static void enableAccessibility();
     static void disableAccessibility();
 #if PLATFORM(MAC)
+    WEBCORE_EXPORT static void ensureAccessibilityInitialized();
+    WEBCORE_EXPORT static unsigned primaryScreenHeight();
     WEBCORE_EXPORT static bool isAppleInternalInstall();
 #endif
     static bool forceDeferredSpellChecking();

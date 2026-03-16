@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -24,6 +24,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				80D1077F2F67CBFB004FE853 /* PBXTargetDependency */,
 				E3D8A94E2CC69CAF006B43E3 /* PBXTargetDependency */,
 				A115CCBC1B9D76C400E89159 /* PBXTargetDependency */,
 				A115CCBA1B9D76BF00E89159 /* PBXTargetDependency */,
@@ -46,7 +47,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		00E43E412D9781430060461A /* WebContentCaptivePortalExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = 00E43E3F2D977FC70060461A /* WebContentCaptivePortalExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		00E43E412D9781430060461A /* WebContentCaptivePortalExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = 00E43E3F2D977FC70060461A /* WebContentCaptivePortalExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0F18E6E51D6B9B9E0027E547 /* UIScriptContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6DD1D6B9AAF0027E547 /* UIScriptContext.cpp */; };
 		0F18E6E61D6B9BA20027E547 /* UIScriptControllerShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6DF1D6B9AAF0027E547 /* UIScriptControllerShared.cpp */; };
 		0F18E7181D6BC4560027E547 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E7151D6BC4560027E547 /* JSWrapper.cpp */; };
@@ -132,6 +133,7 @@
 		7CFF9BCB2534AF1D0008009F /* TestCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFF9BC72534AF1D0008009F /* TestCommand.cpp */; };
 		8034C6621487636400AC32E9 /* AccessibilityControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */; };
 		8097338A14874A5A008156D9 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8097338914874A5A008156D9 /* AccessibilityNotificationHandler.mm */; };
+		80D107642F64A62F004FE853 /* WebKitAccessibilityTestHelper.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 80D107632F64A62F004FE853 /* WebKitAccessibilityTestHelper.xcconfig */; };
 		932BB9C0270E27000094CC33 /* ModifierKeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 932BB9BE270E27000094CC33 /* ModifierKeys.mm */; };
 		9376417A210D737200A3DAAE /* WebKitTestRunnerWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93764176210D736000A3DAAE /* WebKitTestRunnerWindow.mm */; };
 		93C78823250C6C2E00C0AA24 /* WPTFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C7881F250C69E400C0AA24 /* WPTFunctions.cpp */; };
@@ -170,9 +172,9 @@
 		E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */; };
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
-		E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC372C08EB01006DFE67 /* GPUExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC392C08F323006DFE67 /* WebContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC372C08EB01006DFE67 /* GPUExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC392C08F323006DFE67 /* WebContentExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E3D8A94C2CC4B003006B43E3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E17D422CC4447B0077C3AE /* main.cpp */; };
 		F4010B7E24DA205300A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7C24DA204800A876E2 /* PoseAsClass.mm */; };
 		F415C22C27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */; };
@@ -204,6 +206,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		80D1077E2F67CBFB004FE853 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 80D1075A2F64A4CF004FE853;
+			remoteInfo = WebKitAccessibilityTestHelper;
+		};
 		A115CCB91B9D76BF00E89159 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -263,6 +272,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		80D107592F64A4CF004FE853 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		CEC209031D36E36A00261596 /* Copy Plug-Ins */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -436,6 +454,8 @@
 		8097338914874A5A008156D9 /* AccessibilityNotificationHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityNotificationHandler.mm; path = mac/AccessibilityNotificationHandler.mm; sourceTree = "<group>"; };
 		80A359B02F2945980018924A /* AccessibilityUIElementClientMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityUIElementClientMac.h; sourceTree = "<group>"; };
 		80A359B12F2945A20018924A /* AccessibilityUIElementMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityUIElementMac.h; sourceTree = "<group>"; };
+		80D1075B2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitAccessibilityTestHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		80D107632F64A62F004FE853 /* WebKitAccessibilityTestHelper.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitAccessibilityTestHelper.xcconfig; sourceTree = "<group>"; };
 		841CC00D181185BF0042E9B6 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		841CC00E181185BF0042E9B6 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* WebKitTestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitTestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -531,6 +551,10 @@
 		F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NSPasteboardAdditions.mm; path = ../TestRunnerShared/mac/NSPasteboardAdditions.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		80D1075C2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WebKitAccessibilityTestHelper; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		2EE52CDD1890A9A80010ED21 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -538,6 +562,13 @@
 			files = (
 				D2D99AFC2AA27BA800000BBF /* Network.framework in Frameworks */,
 				57A0062F22976EF800AD08BD /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80D107582F64A4CF004FE853 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -601,8 +632,10 @@
 				BC25194411D15DBE002EBC01 /* Resources */,
 				2EE52CE81890A9A80010ED21 /* WebKitTestRunnerApp */,
 				7C8A1F5425351EC600C5291E /* Scripts */,
+				80D1075C2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */,
 				2EE52CE11890A9A80010ED21 /* Frameworks */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				80D107632F64A62F004FE853 /* WebKitAccessibilityTestHelper.xcconfig */,
 			);
 			name = WebKitTestRunner;
 			sourceTree = "<group>";
@@ -761,6 +794,7 @@
 				2EE52CE01890A9A80010ED21 /* WebKitTestRunnerApp.app */,
 				BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */,
 				E3D8A94A2CC4AFB3006B43E3 /* WebKitEligibilityUtil */,
+				80D1075B2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1145,6 +1179,28 @@
 			productReference = 2EE52CE01890A9A80010ED21 /* WebKitTestRunnerApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		80D1075A2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 80D107622F64A4CF004FE853 /* Build configuration list for PBXNativeTarget "WebKitAccessibilityTestHelper" */;
+			buildPhases = (
+				80D107572F64A4CF004FE853 /* Sources */,
+				80D107582F64A4CF004FE853 /* Frameworks */,
+				80D107592F64A4CF004FE853 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				80D1075C2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */,
+			);
+			name = WebKitAccessibilityTestHelper;
+			packageProductDependencies = (
+			);
+			productName = WebKitAccessibilityTestHelper;
+			productReference = 80D1075B2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */;
+			productType = "com.apple.product-type.tool";
+		};
 		8DD76F960486AA7600D96B5E /* WebKitTestRunner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "WebKitTestRunner" */;
@@ -1258,6 +1314,7 @@
 				A18510261B9ADE4800744AEB /* WebKitTestRunner (Library) */,
 				5325BDD921DFF4F500A0DEE1 /* Apply Configuration to XCFileLists */,
 				E3D8A9332CC4AFB3006B43E3 /* WebKitEligibilityUtil */,
+				80D1075A2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -1268,6 +1325,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F4B08731D5BE88D00EC1B78 /* Launch.storyboard in Resources */,
+				80D107642F64A62F004FE853 /* WebKitAccessibilityTestHelper.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1399,6 +1457,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		80D107572F64A4CF004FE853 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DD76F990486AA7600D96B5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1517,6 +1582,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		80D1077F2F67CBFB004FE853 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 80D1075A2F64A4CF004FE853 /* WebKitAccessibilityTestHelper */;
+			targetProxy = 80D1077E2F67CBFB004FE853 /* PBXContainerItemProxy */;
+		};
 		A115CCBA1B9D76BF00E89159 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8DD76F960486AA7600D96B5E /* WebKitTestRunner */;
@@ -1666,6 +1736,30 @@
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		80D1075F2F64A4CF004FE853 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 80D107632F64A62F004FE853 /* WebKitAccessibilityTestHelper.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		80D107602F64A4CF004FE853 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 80D107632F64A62F004FE853 /* WebKitAccessibilityTestHelper.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		80D107612F64A4CF004FE853 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 80D107632F64A62F004FE853 /* WebKitAccessibilityTestHelper.xcconfig */;
+			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -1832,6 +1926,16 @@
 				5325BDDA21DFF4F500A0DEE1 /* Debug */,
 				5325BDDB21DFF4F500A0DEE1 /* Release */,
 				5325BDDC21DFF4F500A0DEE1 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		80D107622F64A4CF004FE853 /* Build configuration list for PBXNativeTarget "WebKitAccessibilityTestHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				80D1075F2F64A4CF004FE853 /* Debug */,
+				80D107602F64A4CF004FE853 /* Release */,
+				80D107612F64A4CF004FE853 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

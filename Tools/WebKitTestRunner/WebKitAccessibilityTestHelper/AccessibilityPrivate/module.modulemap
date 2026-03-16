@@ -1,0 +1,8 @@
+module AccessibilityPrivate [system] {
+    explicit module AccessibilityPrivate {
+        header "AccessibilityPrivate.h"
+        export *
+    }
+
+    export *
+}

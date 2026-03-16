@@ -94,6 +94,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Logging.h>
 #include <wtf/MainThread.h>
 #include <wtf/MallocSpan.h>
@@ -5418,132 +5419,64 @@ void TestController::setHasMouseDeviceForTesting(bool)
 #endif
 
 #if PLATFORM(MAC)
-// Client accessibility IPC implementation
+// Client accessibility: forward requests to WebKitAccessibilityTestHelper subprocess
+// via stdin/stdout JSON; that process uses Mac client accessibility APIs to query the
+// accessibility tree similarly to how AT such as VoiceOver does.
 
-// Private API for creating an AXUIElement from a remote token
-extern "C" AXUIElementRef _AXUIElementCreateWithRemoteToken(CFDataRef remoteToken);
-
-uint64_t TestController::storeAXElement(CFTypeRef element)
+static Ref<JSON::Object> buildHelperCommand(const char* command, WKDictionaryRef messageBody = nullptr)
 {
-    if (!element)
-        return 0;
-
-    uint64_t token = m_nextAXElementToken++;
-    m_axElementTokens.set(token, element);
-    return token;
-}
-
-CFTypeRef TestController::getAXElement(uint64_t token)
-{
-    if (!token)
-        return nullptr;
-
-    auto tokenIterator = m_axElementTokens.find(token);
-    if (tokenIterator == m_axElementTokens.end())
-        return nullptr;
-
-    return tokenIterator->value.get();
-}
-
-WKRetainPtr<WKTypeRef> TestController::handleAXGetRoot()
-{
-    CFDataRef remoteToken = getRemoteAccessibilityToken();
-    if (!remoteToken)
-        return nullptr;
-
-    AXUIElementRef webContentElement = _AXUIElementCreateWithRemoteToken(remoteToken);
-    if (!webContentElement)
-        return nullptr;
-
-    // Try to get children
-    CFTypeRef childrenValue = nullptr;
-    AXError error = AXUIElementCopyAttributeValue(webContentElement, kAXChildrenAttribute, &childrenValue);
-    RetainPtr adoptedChildren = adoptCF(childrenValue);
-
-    if (error != kAXErrorSuccess || !childrenValue)
-        return nullptr;
-
-    CFArrayRef children = static_cast<CFArrayRef>(childrenValue);
-    CFIndex childCount = CFArrayGetCount(children);
-    if (!childCount)
-        return nullptr;
-
-    AXUIElementRef child = static_cast<AXUIElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(children, 0)));
-
-    uint64_t token = storeAXElement(child);
-    return adoptWK(WKUInt64Create(token));
-}
-
-RetainPtr<CFTypeRef> TestController::axCopyAttributeValue(WKDictionaryRef messageBody)
-{
-    uint64_t elementToken = uint64Value(messageBody, "elementToken");
-    WKStringRef attributeName = stringValue(messageBody, "attributeName");
-
-    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
-    if (!element)
-        return nullptr;
-
-    RetainPtr attributeNameCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(attributeName).c_str(), kCFStringEncodingUTF8));
-    CFTypeRef value = nullptr;
-    AXError error = AXUIElementCopyAttributeValue(element, attributeNameCF.get(), &value);
-
-    if (error != kAXErrorSuccess || !value)
-        return nullptr;
-
-    return adoptCF(value);
+    auto json = JSON::Object::create();
+    json->setString("command"_s, String::fromLatin1(command));
+    if (messageBody) {
+        json->setInteger("elementId"_s, uint64Value(messageBody, "elementToken"));
+        json->setString("attribute"_s, toWTFString(stringValue(messageBody, "attributeName")));
+    }
+    return json;
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsString(WKDictionaryRef messageBody)
 {
-    RetainPtr value = axCopyAttributeValue(messageBody);
+    auto response = sendAccessibilityHelperCommand(buildHelperCommand("copyAttributeValueAsString", messageBody));
+    if (!response)
+        return nullptr;
+
+    auto value = response->getString("value"_s);
     if (!value)
         return nullptr;
 
-    if (CFGetTypeID(value.get()) != CFStringGetTypeID())
-        return nullptr;
-
-    return toWK(String(static_cast<CFStringRef>(value.get())));
+    return toWK(value);
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsElement(WKDictionaryRef messageBody)
 {
-    RetainPtr value = axCopyAttributeValue(messageBody);
-    if (!value)
+    auto response = sendAccessibilityHelperCommand(buildHelperCommand("copyAttributeValueAsElement", messageBody));
+    if (!response)
         return nullptr;
 
-    if (CFGetTypeID(value.get()) != AXUIElementGetTypeID())
+    auto elementId = response->getInteger("elementId"_s);
+    if (!elementId)
         return nullptr;
 
-    uint64_t token = storeAXElement(value.get());
-    return adoptWK(WKUInt64Create(token));
+    return adoptWK(WKUInt64Create(*elementId));
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsElementArray(WKDictionaryRef messageBody)
 {
-    RetainPtr value = axCopyAttributeValue(messageBody);
-    if (!value)
+    auto response = sendAccessibilityHelperCommand(buildHelperCommand("copyAttributeValueAsElementArray", messageBody));
+    if (!response)
         return nullptr;
 
-    if (CFGetTypeID(value.get()) != CFArrayGetTypeID())
+    auto elementIds = response->getArray("elementIds"_s);
+    if (!elementIds)
         return nullptr;
 
-    CFArrayRef elementArray = static_cast<CFArrayRef>(value.get());
-    CFIndex count = CFArrayGetCount(elementArray);
-
-    Vector<WKTypeRef> tokens;
-    tokens.reserveInitialCapacity(count);
-
-    for (CFIndex i = 0; i < count; i++) {
-        CFTypeRef childElement = CFArrayGetValueAtIndex(elementArray, i);
-        if (CFGetTypeID(childElement) == AXUIElementGetTypeID()) {
-            uint64_t token = storeAXElement(childElement);
-            tokens.append(WKUInt64Create(token));
-        }
-    }
-
-    // Build array from individual elements since Vector::data() is private
     WKRetainPtr result = adoptWK(WKMutableArrayCreate());
-    for (WKTypeRef token : tokens) {
+    for (unsigned i = 0; i < elementIds->length(); i++) {
+        auto value = elementIds->get(i);
+        auto intValue = value->asInteger();
+        if (!intValue)
+            continue;
+        auto token = WKUInt64Create(*intValue);
         WKArrayAppendItem(result.get(), token);
         WKRelease(token);
     }
@@ -5553,152 +5486,99 @@ WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsElementArray(
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsNumber(WKDictionaryRef messageBody)
 {
-    RetainPtr value = axCopyAttributeValue(messageBody);
+    auto response = sendAccessibilityHelperCommand(buildHelperCommand("copyAttributeValueAsNumber", messageBody));
+    if (!response)
+        return nullptr;
+
+    auto value = response->getDouble("value"_s);
     if (!value)
         return nullptr;
 
-    if (CFGetTypeID(value.get()) != CFNumberGetTypeID())
-        return nullptr;
-
-    double doubleValue;
-    CFNumberGetValue(static_cast<CFNumberRef>(value.get()), kCFNumberDoubleType, &doubleValue);
-
-    return adoptWK(WKDoubleCreate(doubleValue));
+    return adoptWK(WKDoubleCreate(*value));
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsBoolean(WKDictionaryRef messageBody)
 {
-    RetainPtr value = axCopyAttributeValue(messageBody);
+    auto response = sendAccessibilityHelperCommand(buildHelperCommand("copyAttributeValueAsBoolean", messageBody));
+    if (!response)
+        return nullptr;
+
+    auto value = response->getBoolean("value"_s);
     if (!value)
         return nullptr;
 
-    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
-        return nullptr;
-
-    bool boolValue = CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
-
-    return adoptWK(WKBooleanCreate(boolValue));
+    return adoptWK(WKBooleanCreate(*value));
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsPoint(WKDictionaryRef messageBody)
 {
-    RetainPtr value = axCopyAttributeValue(messageBody);
-    if (!value)
+    auto response = sendAccessibilityHelperCommand(buildHelperCommand("copyAttributeValueAsPoint", messageBody));
+    if (!response)
         return nullptr;
 
-    if (CFGetTypeID(value.get()) != AXValueGetTypeID())
-        return nullptr;
-
-    CGPoint point;
-    if (!AXValueGetValue(static_cast<AXValueRef>(value.get()), static_cast<AXValueType>(kAXValueCGPointType), &point))
+    auto x = response->getDouble("x"_s);
+    auto y = response->getDouble("y"_s);
+    if (!x || !y)
         return nullptr;
 
     WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
-    setValue(dictionary, "x", point.x);
-    setValue(dictionary, "y", point.y);
+    setValue(dictionary, "x", *x);
+    setValue(dictionary, "y", *y);
     return dictionary;
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsSize(WKDictionaryRef messageBody)
 {
-    RetainPtr value = axCopyAttributeValue(messageBody);
-    if (!value)
+    auto response = sendAccessibilityHelperCommand(buildHelperCommand("copyAttributeValueAsSize", messageBody));
+    if (!response)
         return nullptr;
 
-    if (CFGetTypeID(value.get()) != AXValueGetTypeID())
-        return nullptr;
-
-    CGSize size;
-    if (!AXValueGetValue(static_cast<AXValueRef>(value.get()), static_cast<AXValueType>(kAXValueCGSizeType), &size))
+    auto width = response->getDouble("width"_s);
+    auto height = response->getDouble("height"_s);
+    if (!width || !height)
         return nullptr;
 
     WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
-    setValue(dictionary, "width", size.width);
-    setValue(dictionary, "height", size.height);
+    setValue(dictionary, "width", *width);
+    setValue(dictionary, "height", *height);
     return dictionary;
 }
 
 WKRetainPtr<WKTypeRef> TestController::handleAXSearchPredicate(WKDictionaryRef messageBody)
 {
-    uint64_t elementToken = uint64Value(messageBody, "elementToken");
-    uint64_t startElementToken = uint64Value(messageBody, "startElementToken");
-    bool isDirectionNext = booleanValue(messageBody, "isDirectionNext");
-    uint64_t resultsLimit = uint64Value(messageBody, "resultsLimit");
-    bool visibleOnly = booleanValue(messageBody, "visibleOnly");
-    bool immediateDescendantsOnly = booleanValue(messageBody, "immediateDescendantsOnly");
-    WKStringRef searchKey = stringValue(messageBody, "searchKey");
-    WKStringRef searchText = stringValue(messageBody, "searchText");
+    auto command = JSON::Object::create();
+    command->setString("command"_s, "searchPredicate"_s);
+    command->setInteger("elementId"_s, uint64Value(messageBody, "elementToken"));
+    command->setInteger("startElementId"_s, uint64Value(messageBody, "startElementToken"));
+    command->setBoolean("isDirectionNext"_s, booleanValue(messageBody, "isDirectionNext"));
+    command->setInteger("resultsLimit"_s, uint64Value(messageBody, "resultsLimit"));
+    command->setBoolean("visibleOnly"_s, booleanValue(messageBody, "visibleOnly"));
+    command->setBoolean("immediateDescendantsOnly"_s, booleanValue(messageBody, "immediateDescendantsOnly"));
+    if (auto key = stringValue(messageBody, "searchKey"))
+        command->setString("searchKey"_s, toWTFString(key));
+    if (auto text = stringValue(messageBody, "searchText"))
+        command->setString("searchText"_s, toWTFString(text));
 
-    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
-    if (!element)
+    auto response = sendAccessibilityHelperCommand(command);
+    if (!response)
         return nullptr;
 
-    // Build the search predicate parameter dictionary using CF APIs.
-    RetainPtr paramDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    if (startElementToken) {
-        if (AXUIElementRef startElement = static_cast<AXUIElementRef>(getAXElement(startElementToken)))
-            CFDictionarySetValue(paramDictionary.get(), CFSTR("AXStartElement"), startElement);
-    }
-
-    CFDictionarySetValue(paramDictionary.get(), CFSTR("AXDirection"),
-        isDirectionNext ? CFSTR("AXDirectionNext") : CFSTR("AXDirectionPrevious"));
-
-    int resultsLimitInt = static_cast<int>(resultsLimit);
-    RetainPtr resultsLimitNum = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &resultsLimitInt));
-    CFDictionarySetValue(paramDictionary.get(), CFSTR("AXResultsLimit"), resultsLimitNum.get());
-
-    if (searchKey) {
-        RetainPtr searchKeyCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(searchKey).c_str(), kCFStringEncodingUTF8));
-        CFDictionarySetValue(paramDictionary.get(), CFSTR("AXSearchKey"), searchKeyCF.get());
-    }
-
-    if (searchText) {
-        auto searchTextStd = toSTD(searchText);
-        if (!searchTextStd.empty()) {
-            RetainPtr searchTextCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, searchTextStd.c_str(), kCFStringEncodingUTF8));
-            CFDictionarySetValue(paramDictionary.get(), CFSTR("AXSearchText"), searchTextCF.get());
-        }
-    }
-
-    CFDictionarySetValue(paramDictionary.get(), CFSTR("AXVisibleOnly"), visibleOnly ? kCFBooleanTrue : kCFBooleanFalse);
-    CFDictionarySetValue(paramDictionary.get(), CFSTR("AXImmediateDescendantsOnly"), immediateDescendantsOnly ? kCFBooleanTrue : kCFBooleanFalse);
-
-    CFTypeRef resultValue = nullptr;
-    AXError error = AXUIElementCopyParameterizedAttributeValue(element, CFSTR("AXUIElementsForSearchPredicate"), paramDictionary.get(), &resultValue);
-
-    if (error != kAXErrorSuccess || !resultValue)
+    auto elementIds = response->getArray("elementIds"_s);
+    if (!elementIds)
         return nullptr;
 
-    RetainPtr result = adoptCF(resultValue);
-
-    if (CFGetTypeID(result.get()) != CFArrayGetTypeID())
-        return nullptr;
-
-    CFArrayRef resultArray = static_cast<CFArrayRef>(result.get());
-    CFIndex count = CFArrayGetCount(resultArray);
-
-    WKRetainPtr tokenArray = adoptWK(WKMutableArrayCreate());
-    for (CFIndex i = 0; i < count; i++) {
-        CFTypeRef item = CFArrayGetValueAtIndex(resultArray, i);
-
-        AXUIElementRef resultElement = nullptr;
-        if (CFGetTypeID(item) == AXUIElementGetTypeID())
-            resultElement = static_cast<AXUIElementRef>(const_cast<void*>(item));
-        else if (CFGetTypeID(item) == CFDictionaryGetTypeID()) {
-            CFTypeRef searchResultElement = CFDictionaryGetValue(static_cast<CFDictionaryRef>(item), CFSTR("AXSearchResultElement"));
-            if (searchResultElement && CFGetTypeID(searchResultElement) == AXUIElementGetTypeID())
-                resultElement = static_cast<AXUIElementRef>(const_cast<void*>(searchResultElement));
-        }
-
-        if (resultElement) {
-            uint64_t token = storeAXElement(resultElement);
-            WKRetainPtr tokenRef = adoptWK(WKUInt64Create(token));
-            WKArrayAppendItem(tokenArray.get(), tokenRef.get());
-        }
+    WKRetainPtr result = adoptWK(WKMutableArrayCreate());
+    for (unsigned i = 0; i < elementIds->length(); i++) {
+        auto value = elementIds->get(i);
+        auto intValue = value->asInteger();
+        if (!intValue)
+            continue;
+        auto token = WKUInt64Create(*intValue);
+        WKArrayAppendItem(result.get(), token);
+        WKRelease(token);
     }
 
-    return tokenArray;
+    return result;
 }
 
 #endif // PLATFORM(MAC)

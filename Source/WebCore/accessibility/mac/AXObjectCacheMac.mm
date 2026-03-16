@@ -40,6 +40,7 @@
 #import "DeprecatedGlobalSettings.h"
 #import "DocumentView.h"
 #import "LocalFrameView.h"
+#import "PlatformScreen.h"
 #import "RenderObject.h"
 #import "RenderView.h"
 #import "WebAccessibilityObjectWrapperMac.h"
@@ -794,6 +795,31 @@ void AXObjectCache::initializeAXThreadIfNeeded()
 bool AXObjectCache::isAXThreadInitialized()
 {
     return axThreadInitialized;
+}
+
+static std::atomic<bool> webPageAccessibilityInitialized { false };
+static std::atomic<unsigned> cachedPrimaryScreenHeight { 0 };
+
+void AXObjectCache::ensureAccessibilityInitialized()
+{
+    ASSERT(isMainRunLoop());
+
+    if (webPageAccessibilityInitialized)
+        return;
+
+    if (!accessibilityEnabled())
+        enableAccessibility();
+
+    float roundedHeight = std::round(screenRectForPrimaryScreen().size().height());
+    cachedPrimaryScreenHeight = std::max(0u, static_cast<unsigned>(roundedHeight));
+
+    webPageAccessibilityInitialized = true;
+}
+
+unsigned AXObjectCache::primaryScreenHeight()
+{
+    ASSERT(webPageAccessibilityInitialized);
+    return cachedPrimaryScreenHeight;
 }
 
 bool AXObjectCache::shouldSpellCheck()

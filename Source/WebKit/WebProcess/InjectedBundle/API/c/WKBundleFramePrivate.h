@@ -58,6 +58,13 @@ WK_EXPORT void _WKBundleFrameGenerateTestReport(WKBundleFrameRef, WKStringRef me
 
 WK_EXPORT void* _WKAccessibilityRootObjectForTesting(WKBundleFrameRef frame);
 
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+WK_EXPORT void _WKAccessibilityEnsureInitialized(void);
+#endif
+#endif
+
 #ifdef __cplusplus
 }
 #endif

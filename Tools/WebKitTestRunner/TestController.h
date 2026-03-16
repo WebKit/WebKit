@@ -36,6 +36,7 @@
 #include <vector>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
@@ -481,6 +482,8 @@ public:
 #if PLATFORM(MAC)
     // Client accessibility testing support
     void initializeWebProcessAccessibility();
+    void launchAccessibilityHelper();
+    void shutdownAccessibilityHelper();
 #endif
 
 #if !PLATFORM(COCOA)
@@ -581,11 +584,9 @@ private:
 
 #if PLATFORM(MAC)
     // Client accessibility testing support
-    uint64_t storeAXElement(CFTypeRef);
-    CFTypeRef getAXElement(uint64_t token);
+    RefPtr<JSON::Object> sendAccessibilityHelperCommand(Ref<JSON::Object>);
     CFDataRef getRemoteAccessibilityToken();
     WKRetainPtr<WKTypeRef> handleAXGetRoot();
-    RetainPtr<CFTypeRef> axCopyAttributeValue(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsString(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsElement(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsElementArray(WKDictionaryRef);
@@ -889,9 +890,11 @@ private:
     bool m_useWorkQueue { false };
 
 #if PLATFORM(MAC)
-    // Client accessibility testing support
-    std::atomic<uint64_t> m_nextAXElementToken { 1 };
-    HashMap<uint64_t, RetainPtr<CFTypeRef>> m_axElementTokens;
+    // Client accessibility testing support - helper process
+    RetainPtr<id> m_axHelperTask; // NSTask
+    RetainPtr<id> m_axHelperStdinPipe; // NSPipe
+    RetainPtr<id> m_axHelperStdoutPipe; // NSPipe
+    RetainPtr<id> m_axHelperStdoutHandle; // NSFileHandle
 #endif
 
 #if ENABLE(WPE_PLATFORM)

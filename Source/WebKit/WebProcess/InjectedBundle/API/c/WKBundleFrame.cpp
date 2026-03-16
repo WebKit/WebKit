@@ -348,3 +348,10 @@ void* _WKAccessibilityRootObjectForTesting(WKBundleFrameRef frameRef)
     RefPtr root = cache ? cache->rootObjectForFrame(*protect(protect(WebKit::toImpl(frameRef))->coreLocalFrame())) : nullptr;
     return root ? root->wrapper() : nullptr;
 }
+
+#if PLATFORM(MAC)
+void _WKAccessibilityEnsureInitialized()
+{
+    WebCore::AXObjectCache::ensureAccessibilityInitialized();
+}
+#endif

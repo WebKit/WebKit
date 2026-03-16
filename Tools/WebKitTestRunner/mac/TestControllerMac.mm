@@ -36,7 +36,9 @@
 #import "WebKitTestRunnerPasteboard.h"
 #import <WebCore/RunLoopObserver.h>
 #import <WebKit/WKContextPrivate.h>
+#import <WebKit/WKNumber.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKURLCF.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -46,7 +48,9 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <wtf/JSONValues.h>
 #import <wtf/darwin/DispatchExtras.h>
+#import <wtf/text/CString.h>
 
 @interface NSMenu ()
 - (id)_menuImpl;
@@ -522,6 +526,162 @@ void TestController::initializeWebProcessAccessibility()
     // WebProcessPool::initializeAccessibilityIfNecessary() to send the InitializeAccessibility
     // IPC message to the web content process.
     [platformView accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXGetRoot()
+{
+    WTFLogAlways("handleAXGetRoot: entering");
+    CFDataRef remoteToken = getRemoteAccessibilityToken();
+    if (!remoteToken) {
+        WTFLogAlways("handleAXGetRoot: no remote token");
+        return nullptr;
+    }
+
+    launchAccessibilityHelper();
+
+    RetainPtr nsData = (__bridge NSData *)remoteToken;
+    String base64Token = String::fromUTF8([nsData base64EncodedStringWithOptions:0].UTF8String);
+
+    // Get the remote element from the helper.
+    auto getRoot = JSON::Object::create();
+    getRoot->setString("command"_s, "getRoot"_s);
+    getRoot->setString("token"_s, base64Token);
+
+    auto rootResponse = sendAccessibilityHelperCommand(getRoot);
+    if (!rootResponse)
+        return nullptr;
+
+    auto remoteElementId = rootResponse->getInteger("elementId"_s);
+    if (!remoteElementId)
+        return nullptr;
+
+    // The remote token element is the WKAccessibilityWebPageObject (AXGroup),
+    // which wraps the actual web content. Get its first child to return the
+    // real root of the accessibility tree.
+    auto getChildren = JSON::Object::create();
+    getChildren->setString("command"_s, "copyAttributeValueAsElementArray"_s);
+    getChildren->setInteger("elementId"_s, *remoteElementId);
+    getChildren->setString("attribute"_s, "AXChildren"_s);
+
+    auto childrenResponse = sendAccessibilityHelperCommand(getChildren);
+    if (!childrenResponse)
+        return nullptr;
+
+    auto elementIds = childrenResponse->getArray("elementIds"_s);
+    if (!elementIds || !elementIds->length())
+        return nullptr;
+
+    auto firstChildId = elementIds->get(0)->asInteger();
+    if (!firstChildId)
+        return nullptr;
+
+    return adoptWK(WKUInt64Create(*firstChildId));
+}
+
+void TestController::launchAccessibilityHelper()
+{
+    if (m_axHelperTask)
+        return;
+
+    // Find the helper binary next to the WKTR binary.
+    NSString *wktrPath = [[NSBundle mainBundle] executablePath];
+    NSString *helperPath = [[wktrPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebKitAccessibilityTestHelper"];
+    WTFLogAlways("launchAccessibilityHelper: looking for %s", [helperPath UTF8String]);
+
+    if (![[NSFileManager defaultManager] isExecutableFileAtPath:helperPath]) {
+        WTFLogAlways("launchAccessibilityHelper: helper binary not found");
+        return;
+    }
+
+    auto stdinPipe = adoptNS([[NSPipe alloc] init]);
+    auto stdoutPipe = adoptNS([[NSPipe alloc] init]);
+
+    auto task = adoptNS([[NSTask alloc] init]);
+    [task setExecutableURL:[NSURL fileURLWithPath:helperPath]];
+    [task setStandardInput:stdinPipe.get()];
+    [task setStandardOutput:stdoutPipe.get()];
+    [task setStandardError:[NSFileHandle fileHandleWithStandardError]];
+
+    NSError *error = nil;
+    if (![task launchAndReturnError:&error]) {
+        WTFLogAlways("launchAccessibilityHelper: failed to launch: %s", [[error description] UTF8String]);
+        return;
+    }
+
+    WTFLogAlways("launchAccessibilityHelper: launched pid %d", [task processIdentifier]);
+
+    m_axHelperTask = task;
+    m_axHelperStdinPipe = stdinPipe;
+    m_axHelperStdoutPipe = stdoutPipe;
+    m_axHelperStdoutHandle = [stdoutPipe fileHandleForReading];
+
+    // Verify the helper is running and responsive.
+    auto wirecheck = JSON::Object::create();
+    wirecheck->setString("command"_s, "wirecheck"_s);
+    auto response = sendAccessibilityHelperCommand(wirecheck);
+    if (!response) {
+        WTFLogAlways("launchAccessibilityHelper: wirecheck failed, helper may have crashed");
+        shutdownAccessibilityHelper();
+        return;
+    }
+    WTFLogAlways("launchAccessibilityHelper: wirecheck succeeded");
+}
+
+void TestController::shutdownAccessibilityHelper()
+{
+    if (!m_axHelperTask)
+        return;
+
+    // Close stdin to signal the helper to exit.
+    [[m_axHelperStdinPipe fileHandleForWriting] closeFile];
+    [m_axHelperTask waitUntilExit];
+
+    m_axHelperTask = nil;
+    m_axHelperStdinPipe = nil;
+    m_axHelperStdoutPipe = nil;
+    m_axHelperStdoutHandle = nil;
+}
+
+RefPtr<JSON::Object> TestController::sendAccessibilityHelperCommand(Ref<JSON::Object> command)
+{
+    if (!m_axHelperTask) {
+        WTFLogAlways("sendAccessibilityHelperCommand: no helper task running");
+        return nullptr;
+    }
+
+    // Serialize to JSON and write a single line to the helper's stdin.
+    String jsonString = command->toJSONString();
+    CString utf8 = jsonString.utf8();
+    WTFLogAlways("sendAccessibilityHelperCommand: sending %s", utf8.data());
+
+    NSFileHandle *stdinHandle = [m_axHelperStdinPipe fileHandleForWriting];
+    NSMutableData *lineData = [NSMutableData dataWithBytes:utf8.data() length:utf8.length()];
+    [lineData appendBytes:"\n" length:1];
+    [stdinHandle writeData:lineData];
+
+    // Read one line of response from stdout.
+    // We read byte-by-byte to find the newline delimiter, since NSFileHandle
+    // doesn't have line-oriented reading.
+    NSMutableData *responseData = [NSMutableData data];
+    while (true) {
+        NSData *byte = [m_axHelperStdoutHandle readDataOfLength:1];
+        if (!byte || ![byte length]) {
+            WTFLogAlways("sendAccessibilityHelperCommand: EOF reading response (helper may have crashed)");
+            return nullptr;
+        }
+        const char c = static_cast<const char *>([byte bytes])[0];
+        if (c == '\n')
+            break;
+        [responseData appendData:byte];
+    }
+
+    String responseString = String::fromUTF8(std::span { static_cast<const char*>([responseData bytes]), [responseData length] });
+    WTFLogAlways("sendAccessibilityHelperCommand: received %s", responseString.utf8().data());
+    auto parsed = JSON::Value::parseJSON(responseString);
+    if (!parsed)
+        return nullptr;
+
+    return parsed->asObject();
 }
 
 } // namespace WTR

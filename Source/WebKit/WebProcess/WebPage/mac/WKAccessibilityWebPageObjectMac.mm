@@ -161,22 +161,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString *)attribute
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    static std::atomic<bool> didInitialize { false };
-    static std::atomic<unsigned> screenHeight { 0 };
-    if (!didInitialize) [[unlikely]] {
-        didInitialize = true;
-        callOnMainRunLoopAndWait([protectedSelf = retainPtr(self)] {
-            if (!WebCore::AXObjectCache::accessibilityEnabled())
-                [protectedSelf enableAccessibilityForAllProcesses];
+    if (!WebCore::AXObjectCache::accessibilityEnabled()) {
+        // If accessibility hasn't been initialized yet (e.g. not via
+        // ensureAccessibilityInitialized), do the lazy init. This path
+        // uses callOnMainRunLoopAndWait and may deadlock if the main thread is
+        // blocked, but is kept for the non-test code path.
+        static std::atomic<bool> didInitialize { false };
+        if (!didInitialize) [[unlikely]] {
+            didInitialize = true;
+            callOnMainRunLoopAndWait([protectedSelf = retainPtr(self)] {
+                if (!WebCore::AXObjectCache::accessibilityEnabled())
+                    [protectedSelf enableAccessibilityForAllProcesses];
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-            if (WebCore::AXObjectCache::isIsolatedTreeEnabled())
-                [protectedSelf _buildIsolatedTreeIfNeeded];
+                if (WebCore::AXObjectCache::isIsolatedTreeEnabled())
+                    [protectedSelf _buildIsolatedTreeIfNeeded];
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-
-            float roundedHeight = std::round(WebCore::screenRectForPrimaryScreen().size().height());
-            screenHeight = std::max(0u, static_cast<unsigned>(roundedHeight));
-        });
+            });
+        }
     }
 
     // The following attributes can be handled off the main thread.
@@ -205,8 +207,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
         return [self accessibilityAttributeParentValue].autorelease();
 
-    if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
+    if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute]) {
+        static std::atomic<unsigned> screenHeight { 0 };
+        if (!screenHeight) {
+            callOnMainRunLoopAndWait([&] {
+                float roundedHeight = std::round(WebCore::screenRectForPrimaryScreen().size().height());
+                screenHeight = std::max(0u, static_cast<unsigned>(roundedHeight));
+            });
+        }
         return @(screenHeight.load());
+    }
 
     if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
         return [self accessibilityAttributeWindowValue].autorelease();
