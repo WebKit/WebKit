@@ -628,12 +628,33 @@ InlineLayoutUnit TextUtil::hyphenWidth(const RenderStyle& style)
     return std::max(0.f, style.fontCascade().width(StringView { style.hyphenString() }));
 }
 
+static bool isASCIIHangableQuote(char32_t character)
+{
+    return character == quotationMark || character == apostrophe;
+}
+
+static bool isHangableOpenPunctuation(char32_t character)
+{
+    // https://drafts.csswg.org/css-text-3/#hanging-punctuation-property
+    if (isASCIIHangableQuote(character))
+        return true;
+    return U_GET_GC_MASK(character) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+}
+
+static bool isHangableClosePunctuation(char32_t character)
+{
+    // https://drafts.csswg.org/css-text-3/#hanging-punctuation-property
+    if (isASCIIHangableQuote(character))
+        return true;
+    return U_GET_GC_MASK(character) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+}
+
 bool TextUtil::hasHangablePunctuationStart(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
     if (!inlineTextItem.length() || !style.hangingPunctuation().contains(Style::HangingPunctuationValue::First))
         return false;
     auto leadingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.start()];
-    return U_GET_GC_MASK(leadingCharacter) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+    return isHangableOpenPunctuation(leadingCharacter);
 }
 
 float TextUtil::hangablePunctuationStartWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
@@ -650,7 +671,7 @@ bool TextUtil::hasHangablePunctuationEnd(const InlineTextItem& inlineTextItem, c
     if (!inlineTextItem.length() || !style.hangingPunctuation().contains(Style::HangingPunctuationValue::Last))
         return false;
     auto trailingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.end() - 1];
-    return U_GET_GC_MASK(trailingCharacter) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+    return isHangableClosePunctuation(trailingCharacter);
 }
 
 float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
