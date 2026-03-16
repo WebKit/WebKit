@@ -71,6 +71,13 @@ static HashMap<WTF::UUID, WeakRef<Notification, WeakPtrImplWithEventTargetData>>
     return map;
 }
 
+static Seconds s_persistentNotificationMinimumLifetime { silentPushTimeoutForProduction };
+
+void Notification::setOverridePersistentNotificationMinimumLifetime(Seconds lifetime)
+{
+    s_persistentNotificationMinimumLifetime = lifetime;
+}
+
 static void addNotificationToMapIfNecessary(Notification& notification)
 {
     if (notification.isPersistent())
@@ -130,6 +137,8 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, Notifica
     auto notification = adoptRef(*new Notification(context, data.notificationID, WTF::move(data.title), WTF::move(options), SerializedScriptValue::createFromWireBytes(WTF::move(data.data))));
     notification->suspendIfNeeded();
     notification->m_serviceWorkerRegistrationURL = WTF::move(data.serviceWorkerRegistrationURL);
+    if (data.creationTime)
+        notification->m_creationTime = data.creationTime;
     addNotificationToMapIfNecessary(notification);
     return notification;
 }
@@ -175,6 +184,7 @@ Notification::Notification(ScriptExecutionContext& context, WTF::UUID identifier
     , m_dataForBindings(WTF::move(dataForBindings))
     , m_silent(options.silent)
     , m_state(Idle)
+    , m_creationTime(WallTime::now())
 {
     if (context.isDocument())
         m_notificationSource = NotificationSource::Document;
@@ -284,6 +294,11 @@ void Notification::close()
         stopResourcesLoader();
         break;
     case Showing:
+        if (isPersistent() && WallTime::now() - m_creationTime < s_persistentNotificationMinimumLifetime) {
+            if (RefPtr context = scriptExecutionContext())
+                context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Persistent notifications cannot be closed shortly after they are shown."_s);
+            return;
+        }
         if (auto* client = clientFromContext())
             client->cancel(data());
         break;
@@ -473,7 +488,7 @@ NotificationData Notification::data() const
         identifier(),
         context->identifier(),
         *sessionID,
-        MonotonicTime::now(),
+        m_creationTime,
         m_dataForBindings->wireBytes(),
         m_silent
     };

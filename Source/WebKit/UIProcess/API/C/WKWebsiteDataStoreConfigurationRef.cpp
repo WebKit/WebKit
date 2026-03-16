@@ -214,6 +214,16 @@ void WKWebsiteDataStoreConfigurationClearTotalQuotaRatio(WKWebsiteDataStoreConfi
     WebKit::toImpl(configuration)->setTotalQuotaRatio(std::nullopt);
 }
 
+unsigned WKWebsiteDataStoreConfigurationOverridePersistentNotificationMinimumLifetimeForTesting(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toImpl(configuration)->overridePersistentNotificationMinimumLifetimeForTesting().value_or(0);
+}
+
+void WKWebsiteDataStoreConfigurationSetOverridePersistentNotificationMinimumLifetimeForTesting(WKWebsiteDataStoreConfigurationRef configuration, unsigned lifetime)
+{
+    WebKit::toImpl(configuration)->setOverridePersistentNotificationMinimumLifetimeForTesting(lifetime);
+}
+
 WKStringRef WKWebsiteDataStoreConfigurationCopyResourceMonitorThrottlerDirectory(WKWebsiteDataStoreConfigurationRef configuration)
 {
 #if ENABLE(CONTENT_EXTENSIONS)

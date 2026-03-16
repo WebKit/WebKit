@@ -1426,7 +1426,7 @@ struct WebCore::NotificationData {
     WTF::UUID notificationID;
     std::optional<WebCore::ScriptExecutionContextIdentifier> contextIdentifier;
     PAL::SessionID sourceSession;
-    MonotonicTime creationTime;
+    WallTime creationTime;
     Vector<uint8_t> data;
     std::optional<bool> silent;
 };

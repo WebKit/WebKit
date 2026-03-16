@@ -31,6 +31,16 @@
 
 namespace WTF {
 
+WallTime WallTime::fromSecondsSinceEpoch(Seconds seconds)
+{
+    return WallTime { seconds.value() };
+}
+
+Seconds WallTime::secondsSinceEpoch() const
+{
+    return Seconds { m_value };
+}
+
 MonotonicTime WallTime::approximateMonotonicTime() const
 {
     if (isInfinity())

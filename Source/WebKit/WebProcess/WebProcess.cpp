@@ -126,6 +126,7 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NavigatorGamepad.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/Notification.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PermissionController.h>
@@ -666,6 +667,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     setAlwaysUsesComplexTextCodePath(parameters.shouldAlwaysUseComplexTextCodePath);
 
     setDisableFontSubpixelAntialiasingForTesting(parameters.disableFontSubpixelAntialiasingForTesting);
+
+#if ENABLE(NOTIFICATIONS)
+    if (parameters.overridePersistentNotificationMinimumLifetime)
+        WebCore::Notification::setOverridePersistentNotificationMinimumLifetime(*parameters.overridePersistentNotificationMinimumLifetime);
+#endif
 
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 

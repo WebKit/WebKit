@@ -46,6 +46,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -131,6 +132,8 @@ public:
 
     bool isPersistent() const { return !m_serviceWorkerRegistrationURL.isNull(); }
 
+    WEBCORE_EXPORT static void setOverridePersistentNotificationMinimumLifetime(Seconds);
+
     WEBCORE_EXPORT static void ensureOnNotificationThread(ScriptExecutionContextIdentifier, WTF::UUID notificationIdentifier, Function<void(Notification*)>&&);
     WEBCORE_EXPORT static void ensureOnNotificationThread(const NotificationData&, Function<void(Notification*)>&&);
 
@@ -177,6 +180,7 @@ private:
     };
     NotificationSource m_notificationSource;
     URL m_serviceWorkerRegistrationURL;
+    WallTime m_creationTime;
     std::unique_ptr<NotificationResourcesLoader> m_resourcesLoader;
     RefPtr<NotificationResources> m_resources;
 };

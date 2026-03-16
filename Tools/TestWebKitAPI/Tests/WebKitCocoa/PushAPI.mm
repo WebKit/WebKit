@@ -33,6 +33,7 @@
 #import "Test.h"
 #import "TestNotificationProvider.h"
 #import "TestWKWebView.h"
+#import <WebCore/NotificationData.h>
 #import <WebCore/SWRegistrationDatabase.h>
 #import <WebKit/WKNotificationProvider.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -142,7 +143,12 @@ static bool waitUntilEvaluatesToTrue(const Function<bool()>& f)
 
 static RetainPtr<WKWebViewConfiguration> createConfigurationWithNotificationsEnabled()
 {
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().overridePersistentNotificationMinimumLifetimeForTesting = WebCore::silentPushTimeoutForTesting.value();
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
     [[configuration preferences] _setNotificationsEnabled:YES];
     [[configuration preferences] _setNotificationEventEnabled:YES];
     return configuration;
@@ -1198,6 +1204,9 @@ TEST(PushAPI, callNotificationClose)
     EXPECT_TRUE(pushMessageSuccessful);
 
     terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
+
+    // Wait long enough such that persistent notifications will be allowed to close.
+    TestWebKitAPI::Util::runFor(WebCore::silentPushTimeoutForTesting);
 
     [webView evaluateJavaScript:@"closeNotification()" completionHandler:nil];
 

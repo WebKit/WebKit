@@ -38,6 +38,7 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WebPushDaemonConnectionConfiguration.h"
+#import <WebCore/NotificationData.h>
 #import <WebCore/PushSubscriptionIdentifier.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -754,6 +755,16 @@ async function disableShowNotifications()
     return await promise;
 }
 
+async function enableCloseAfterShow()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "enableCloseAfterShow", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
 async function getNotifications()
 {
     const channel = new MessageChannel();
@@ -780,6 +791,7 @@ async function closeAllNotifications()
 static constexpr auto serviceWorkerScriptSource = R"SWRESOURCE(
 let globalPort;
 let showNotifications = true;
+let closeAfterShow = false;
 
 function notificationToString(n)
 {
@@ -807,6 +819,9 @@ self.addEventListener("message", (event) => {
         });
     } else if (message === "disableShowNotifications") {
         showNotifications = false;
+        port.postMessage(true);
+    } else if (message === "enableCloseAfterShow") {
+        closeAfterShow = true;
         port.postMessage(true);
     } else if (message === "getNotifications" || closeAllNotifications) {
         registration.getNotifications().then((notifications) => {
@@ -870,6 +885,10 @@ self.addEventListener("push", async (event) => {
     try {
         if (showNotifications) {
             await self.registration.showNotification("notification");
+            if (closeAfterShow) {
+                let notifications = await registration.getNotifications();
+                notifications.forEach(n => n.close());
+            }
             navigator.setAppBadge(42);
         }
         if (!event.data) {
@@ -937,6 +956,7 @@ public:
             (NSString *)kCFStreamPropertyHTTPSProxyPort: @(m_server->port())
         }];
         dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+        dataStoreConfiguration.get().overridePersistentNotificationMinimumLifetimeForTesting = WebCore::silentPushTimeoutForTesting.value();
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
         dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
@@ -1115,6 +1135,14 @@ public:
     {
         NSError *error = nil;
         id obj = [m_webView objectByCallingAsyncFunction:@"return await disableShowNotifications()" withArguments:@{ } error:&error];
+        ASSERT_FALSE(error);
+        ASSERT_TRUE([obj isEqual:@YES]);
+    }
+
+    void enableCloseAfterShow()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await enableCloseAfterShow()" withArguments:@{ } error:&error];
         ASSERT_FALSE(error);
         ASSERT_TRUE([obj isEqual:@YES]);
     }
@@ -1905,6 +1933,7 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
     id result = view->getNotifications();
     EXPECT_TRUE([result isEqualToString:@"0 - title: notification body:  tag:  dir: auto silent: null data: null "]);
 
+    Util::runFor(WebCore::silentPushTimeoutForTesting);
     view->closeAllNotifications();
 
     result = view->getNotifications();
@@ -1912,6 +1941,34 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
 
     // The push message handler should set the app badge to 42
     EXPECT_TRUE([view->getAppBadge() isEqual:@42]);
+}
+
+TEST_F(WebPushDBuiltInTest, PushNotificationCloseImmediatelyAfterShowShouldFail)
+{
+    auto& view = webViews().last();
+    view->subscribe();
+
+    // Tell the service worker to close all notifications immediately after showing
+    // them during push event handling.
+    view->enableCloseAfterShow();
+
+    view->injectPushMessage(@{ });
+    auto message = view->fetchPushMessage();
+    ASSERT_TRUE(message);
+
+    // In processing this push message, the SW will call showNotification() but
+    // then immediately try to close all notifications.
+    ASSERT_TRUE(view->expectDecryptedMessage(@"null data", message.get()));
+
+    // So let's verify the expected notification is still open.
+    id result = view->getNotifications();
+    EXPECT_TRUE([result hasPrefix:@"0 - title: notification"]);
+
+    // But after a long enough delay the SW *should* be able to close the notification
+    Util::runFor(WebCore::silentPushTimeoutForTesting);
+    view->closeAllNotifications();
+    result = view->getNotifications();
+    EXPECT_EQ((size_t)[result length], (size_t)0);
 }
 
 TEST_F(WebPushDBuiltInTest, TestPermissionsAfterNotificatonRequestPermission)
@@ -1981,7 +2038,7 @@ TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerCancelledOnShowingNotificatio
             ASSERT_TRUE(v->expectDecryptedMessage(@"null data", message.get()));
         }
 
-        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+        [NSThread sleepForTimeInterval:(WebCore::silentPushTimeoutForTesting.seconds() + 0.5)];
         ASSERT_TRUE(v->hasPushSubscription());
     }
 }
@@ -2018,7 +2075,7 @@ TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerIgnoredForInspectedContexts)
         }
 
         // Should still be subscribed since we don't enforce the silent push timer while being inspected.
-        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+        [NSThread sleepForTimeInterval:(WebCore::silentPushTimeoutForTesting.seconds() + 0.5)];
         ASSERT_TRUE(v->hasPushSubscription());
     }
 }
@@ -3116,7 +3173,7 @@ TEST_F(WebPushDPushNotificationEventTest, Basic)
 
     // After the slew of above messages that were handled by service workers, silent push tracking should *not* have
     // kicked in, and therefore there should still be a push subscription.
-    [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+    [NSThread sleepForTimeInterval:(WebCore::silentPushTimeoutForTesting.seconds() + 0.5)];
     EXPECT_TRUE(webViews().first()->hasPushSubscription());
 }
 

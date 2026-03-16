@@ -1039,8 +1039,11 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 #if ENABLE(NOTIFICATIONS)
     // FIXME: There should be a generic way for supplements to add to the intialization parameters.
-    if (websiteDataStore)
+    if (websiteDataStore) {
+        if (websiteDataStore->configuration().overridePersistentNotificationMinimumLifetimeForTesting())
+            parameters.overridePersistentNotificationMinimumLifetime = Seconds(*websiteDataStore->configuration().overridePersistentNotificationMinimumLifetimeForTesting());
         parameters.notificationPermissions = websiteDataStore->client().notificationPermissions();
+    }
     if (parameters.notificationPermissions.isEmpty())
         parameters.notificationPermissions = protectedSupplement<WebNotificationManagerProxy>()->notificationPermissions();
 #endif

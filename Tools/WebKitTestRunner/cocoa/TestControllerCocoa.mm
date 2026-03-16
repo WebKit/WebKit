@@ -38,6 +38,7 @@
 #import <Foundation/Foundation.h>
 #import <Network/Network.h>
 #import <Security/SecItem.h>
+#import <WebCore/NotificationData.h>
 #import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKContextConfigurationRef.h>
 #import <WebKit/WKContextPrivate.h>
@@ -242,6 +243,11 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
     auto standaloneWebApplicationURL = options.standaloneWebApplicationURL();
     if (useEphemeralSession || standaloneWebApplicationURL.length() || options.enableInAppBrowserPrivacy()) {
         auto websiteDataStoreConfig = useEphemeralSession ? adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]) : adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+
+        // Including any non-trivial value of "persistent notifications have a minimum timeout before being closeable"
+        // is counterproductive for layout tests - especially WPT tests. We cover the behavior in API tests.
+        // So let's just set it to a tiny value for no behavior change in layout tests.
+        websiteDataStoreConfig.get().overridePersistentNotificationMinimumLifetimeForTesting = std::numeric_limits<float>::min();
         if (!useEphemeralSession)
             configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig.get());
         if (standaloneWebApplicationURL.length())

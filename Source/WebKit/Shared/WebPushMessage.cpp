@@ -69,7 +69,7 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
         WTF::UUID::createVersion4(),
         sharedScriptIdentifier,
         PAL::SessionID::defaultSessionID(),
-        MonotonicTime::now(),
+        WallTime::now(),
         WTF::move(dataJSON),
         WTF::move(silent)
     };

@@ -278,6 +278,8 @@ struct WebProcessCreationParameters {
     Seconds memoryFootprintPollIntervalForTesting;
     Vector<uint64_t> memoryFootprintNotificationThresholds;
 
+    std::optional<Seconds> overridePersistentNotificationMinimumLifetime;
+
 #if ENABLE(NOTIFY_BLOCKING)
     Vector<std::pair<String, uint64_t>> notifyState;
 #endif

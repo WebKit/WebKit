@@ -28,10 +28,10 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <optional>
 #include <pal/SessionID.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/Platform.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSDictionary;
@@ -39,6 +39,9 @@ OBJC_CLASS NSDictionary;
 namespace WebCore {
 
 enum class NotificationDirection : uint8_t;
+
+static constexpr Seconds silentPushTimeoutForProduction { 30_s };
+static constexpr Seconds silentPushTimeoutForTesting { 1_s };
 
 struct NotificationData {
     WEBCORE_EXPORT NotificationData isolatedCopy() const &;
@@ -64,7 +67,7 @@ struct NotificationData {
     WTF::UUID notificationID { WTF::UUID::createVersion4() };
     std::optional<ScriptExecutionContextIdentifier> contextIdentifier;
     PAL::SessionID sourceSession { PAL::SessionID::defaultSessionID() };
-    MonotonicTime creationTime;
+    WallTime creationTime;
     Vector<uint8_t> data;
     std::optional<bool> silent;
 };
