@@ -54,9 +54,10 @@ public:
     };
     void enqueueEvent(ScopedEvent&&);
 
+    ~ScopedEventQueue() = default;
+
 private:
     ScopedEventQueue() = default;
-    ~ScopedEventQueue() = delete;
 
     void dispatchEvent(const ScopedEvent&) const;
     void dispatchAllEvents();

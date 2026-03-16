@@ -45,7 +45,7 @@
 namespace WTF {
 
 struct AnyThreadsAccessTraits {
-    static void assertAccess()
+    static constexpr void assertAccess()
     {
     }
 };
@@ -69,47 +69,54 @@ template<typename T, typename AccessTraits> class NeverDestroyed {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
 
-    template<typename... Args> NeverDestroyed(Args&&... args)
+    template<typename... Args> SUPPRESS_NODELETE constexpr NeverDestroyed(Args&&... args)
+        : m_storage(std::forward<Args>(args)...)
     {
         AccessTraits::assertAccess();
-        MaybeRelax<T>(new (storagePointer()) T(std::forward<Args>(args)...));
+        SUPPRESS_UNCOUNTED_ARG MaybeRelax<T>(std::addressof(m_storage.value));
     }
 
-    NeverDestroyed(NeverDestroyed&& other)
+    SUPPRESS_NODELETE constexpr NeverDestroyed(NeverDestroyed&& other)
+        : m_storage(WTF::move(other.m_storage.value))
     {
         AccessTraits::assertAccess();
-        MaybeRelax<T>(new (storagePointer()) T(WTF::move(*other.storagePointer())));
     }
 
-    operator T&() { return *storagePointer(); }
-    T& get() { return *storagePointer(); }
+    constexpr operator T&() { return *storagePointer(); }
+    constexpr T& get() { return *storagePointer(); }
 
-    T* operator->() { return storagePointer(); }
+    constexpr T* operator->() { return storagePointer(); }
 
-    operator const T&() const { return *storagePointer(); }
-    const T& get() const { return *storagePointer(); }
+    constexpr operator const T&() const { return *storagePointer(); }
+    constexpr const T& get() const { return *storagePointer(); }
 
-    const T* operator->() const { return storagePointer(); }
+    constexpr const T* operator->() const { return storagePointer(); }
 
 private:
     using PointerType = typename std::remove_const<T>::type*;
 
-    PointerType storagePointer() const
+    constexpr PointerType storagePointer() const
     {
         AccessTraits::assertAccess();
-        return const_cast<PointerType>(m_storage.get());
+        return const_cast<PointerType>(std::addressof(m_storage.value));
     }
 
     template<typename PtrType, bool ShouldRelax = std::is_base_of<RefCountedBase, PtrType>::value> struct MaybeRelax {
-        explicit MaybeRelax(PtrType*) { }
+        explicit constexpr MaybeRelax(PtrType*) { }
     };
     template<typename PtrType> struct MaybeRelax<PtrType, true> {
         explicit MaybeRelax(PtrType* ptr) { ptr->relaxAdoptionRequirement(); }
     };
 
-    // FIXME: Investigate whether we should allocate a hunk of virtual memory
-    // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
-    AlignedStorage<T> m_storage;
+    // Union-based storage: the destructor intentionally does not destroy
+    // the contained value, which is the purpose of NeverDestroyed.
+    union Storage {
+        template<typename... Args>
+        constexpr Storage(Args&&... args) : value(std::forward<Args>(args)...) { }
+        constexpr ~Storage() { }
+        std::remove_const_t<T> value;
+    };
+    Storage m_storage;
 };
 
 // FIXME: It's messy to have to repeat the whole class just to make this "lazy" version.

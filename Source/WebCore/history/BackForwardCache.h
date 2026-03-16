@@ -82,9 +82,10 @@ public:
     bool NODELETE isInBackForwardCache(BackForwardFrameItemIdentifier) const;
     bool hasCachedPageExpired(BackForwardFrameItemIdentifier) const;
 
+    ~BackForwardCache() = default;
+
 private:
     BackForwardCache();
-    ~BackForwardCache() = delete; // Make sure nobody accidentally calls delete -- WebCore does not delete singletons.
 
     enum class ForceSuspension : bool { No, Yes };
     std::unique_ptr<CachedPage> trySuspendPage(Page&, ForceSuspension);
