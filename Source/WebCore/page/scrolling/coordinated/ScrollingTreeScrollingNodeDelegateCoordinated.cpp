@@ -40,6 +40,11 @@ ScrollingTreeScrollingNodeDelegateCoordinated::ScrollingTreeScrollingNodeDelegat
 
 ScrollingTreeScrollingNodeDelegateCoordinated::~ScrollingTreeScrollingNodeDelegateCoordinated() = default;
 
+FloatPoint ScrollingTreeScrollingNodeDelegateCoordinated::adjustedScrollPosition(const FloatPoint& position) const
+{
+    return position;
+}
+
 void ScrollingTreeScrollingNodeDelegateCoordinated::updateVisibleLengths()
 {
     m_scrollController.contentsSizeChanged();
