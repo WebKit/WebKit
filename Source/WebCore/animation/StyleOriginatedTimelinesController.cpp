@@ -317,7 +317,9 @@ void StyleOriginatedTimelinesController::unregisterNamedTimeline(const AtomStrin
     // their `animation-timeline` properly.
     timelines.removeAt(i);
 
-    for (Ref animation : timeline->relevantAnimations()) {
+    // Ensure we iterate on a copy of this timeline's registered animations as calling
+    // CSSAnimation::syncStyleOriginatedTimeline() may mutate it.
+    for (Ref animation : copyToVector(timeline->relevantAnimations())) {
         if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation)) {
             if (cssAnimation->owningElement())
                 cssAnimation->syncStyleOriginatedTimeline();
