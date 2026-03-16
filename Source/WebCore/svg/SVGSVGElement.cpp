@@ -246,8 +246,13 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
             // FIXME: try to get rid of this custom handling of embedded SVG invalidation, maybe through abstraction.
             if (CheckedPtr renderer = this->renderer()) {
-                if (isEmbeddedThroughFrameContainingSVGDocument(*renderer))
+                if (isEmbeddedThroughFrameContainingSVGDocument(*renderer)) {
                     renderer->checkedView()->setNeedsLayout(MarkOnlyThis);
+                    if (RefPtr frame = document().frame()) {
+                        if (CheckedPtr ownerRenderer = frame->ownerRenderer())
+                            ownerRenderer->setNeedsLayoutAndPreferredWidthsUpdate();
+                    }
+                }
             }
         }
         invalidateResourceImageBuffersIfNeeded();
@@ -266,17 +271,26 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 
             // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
             updateSVGRendererForElementChange();
-            return;
+        } else {
+            if (CheckedPtr renderer = this->renderer()) {
+                renderer->setNeedsTransformUpdate();
+                if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(*renderer))
+                    svgRoot->setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
+            }
+
+            invalidateResourceImageBuffersIfNeeded();
+            updateSVGRendererForElementChange();
         }
 
+        // FIXME: try to get rid of this custom handling of embedded SVG invalidation, maybe through abstraction.
         if (CheckedPtr renderer = this->renderer()) {
-            renderer->setNeedsTransformUpdate();
-            if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(*renderer))
-                svgRoot->setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
+            if (isEmbeddedThroughFrameContainingSVGDocument(*renderer)) {
+                if (RefPtr frame = document().frame()) {
+                    if (CheckedPtr ownerRenderer = frame->ownerRenderer())
+                        ownerRenderer->setNeedsLayoutAndPreferredWidthsUpdate();
+                }
+            }
         }
-
-        invalidateResourceImageBuffersIfNeeded();
-        updateSVGRendererForElementChange();
         return;
     }
 
