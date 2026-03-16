@@ -1556,8 +1556,10 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssembly
     ObjectInitializationScope initializationScope(vm);
     JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), signature->returnCount());
 
-    if (!result)
+    if (!result) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
+        OPERATION_RETURN(scope, nullptr);
+    }
 
     auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature);
     RegisterAtOffsetList registerResults = wasmCallInfo.computeResultsOffsetList();
