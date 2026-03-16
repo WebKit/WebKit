@@ -1345,19 +1345,22 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
             if (isEmptyBucket(oldEntry)) {
                 ASSERT(std::addressof(oldEntry) != entry);
-                oldTable[i].~ValueType();
+                if constexpr (!std::is_trivially_destructible_v<ValueType>)
+                    oldTable[i].~ValueType();
                 continue;
             }
 
             if (isWeakNullBucket(oldEntry)) {
                 ASSERT(std::addressof(oldEntry) != entry);
-                oldEntry.~ValueType();
+                if constexpr (!std::is_trivially_destructible_v<ValueType>)
+                    oldEntry.~ValueType();
                 setKeyCount(keyCount() - 1);
                 continue;
             }
 
             Value* reinsertedEntry = reinsert(WTF::move(oldEntry));
-            oldEntry.~ValueType();
+            if constexpr (!std::is_trivially_destructible_v<ValueType>)
+                oldEntry.~ValueType();
             if (std::addressof(oldEntry) == entry) {
                 ASSERT(!newEntry);
                 newEntry = reinsertedEntry;
