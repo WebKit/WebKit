@@ -22,29 +22,30 @@
 
 #pragma once
 
-#include <wtf/CompactPtr.h>
 #include <wtf/HashSet.h>
-#include <wtf/Packed.h>
+#include <wtf/Lock.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringImpl.h>
 
 namespace WTF {
 
-class StringImpl;
+class AtomStringImpl;
 
 class AtomStringTable {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AtomStringTable);
 public:
-    // If CompactPtr is 32bit, it is more efficient than PackedPtr (6 bytes).
-    // We select underlying implementation based on CompactPtr's efficacy.
-    using StringEntry = std::conditional_t<CompactPtrTraits<StringImpl>::is32Bit, CompactPtr<StringImpl>, PackedPtr<StringImpl>>;
+    using StringEntry = StringImpl*;
     using StringTableImpl = UncheckedKeyHashSet<StringEntry>;
 
-    WTF_EXPORT_PRIVATE ~AtomStringTable();
+    WTF_EXPORT_PRIVATE static AtomStringTable& singleton();
 
     StringTableImpl& table() LIFETIME_BOUND { return m_table; }
+    Lock& lock() LIFETIME_BOUND { return m_lock; }
+
+    WTF_EXPORT_PRIVATE static bool releaseAndRemoveIfNeeded(AtomStringImpl*);
 
 private:
+    Lock m_lock;
     StringTableImpl m_table;
 };
 

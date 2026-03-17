@@ -33,8 +33,6 @@ public:
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(std::span<const char16_t>);
     static RefPtr<AtomStringImpl> lookUp(StringImpl*);
 
-    static void remove(AtomStringImpl*);
-
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const Latin1Character>);
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const char16_t>);
     ALWAYS_INLINE static RefPtr<AtomStringImpl> add(std::span<const char> characters);
@@ -112,38 +110,30 @@ ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(ASCIILiteral literal)
 }
 
 template<typename StringTableProvider>
-ALWAYS_INLINE RefPtr<AtomStringImpl> AtomStringImpl::addWithStringTableProvider(StringTableProvider& stringTableProvider, StringImpl* string)
+ALWAYS_INLINE RefPtr<AtomStringImpl> AtomStringImpl::addWithStringTableProvider(StringTableProvider&, StringImpl* string)
 {
     if (!string)
         return nullptr;
-    return add(*stringTableProvider.atomStringTable(), *string);
+    return add(*string);
 }
 
 ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(StringImpl& string)
 {
-    if (auto* atom = dynamicDowncast<AtomStringImpl>(string)) {
-        ASSERT_WITH_MESSAGE(!string.length() || isInAtomStringTable(&string), "The atom string comes from an other thread!");
+    if (auto* atom = dynamicDowncast<AtomStringImpl>(string))
         return *atom;
-    }
     return addSlowCase(string);
 }
 
 ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(Ref<StringImpl>&& string)
 {
-    if (is<AtomStringImpl>(string)) {
-        ASSERT_WITH_MESSAGE(!string->length() || isInAtomStringTable(string.ptr()), "The atom string comes from an other thread!");
+    if (is<AtomStringImpl>(string))
         return uncheckedDowncast<AtomStringImpl>(WTF::move(string));
-    }
     return addSlowCase(WTF::move(string));
 }
 
-ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(AtomStringTable& stringTable, StringImpl& string)
+ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(AtomStringTable&, StringImpl& string)
 {
-    if (auto* atom = dynamicDowncast<AtomStringImpl>(string)) {
-        ASSERT_WITH_MESSAGE(!string.length() || isInAtomStringTable(&string), "The atom string comes from an other thread!");
-        return *atom;
-    }
-    return addSlowCase(stringTable, string);
+    return add(string);
 }
 
 #if ASSERT_ENABLED

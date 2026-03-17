@@ -43,7 +43,8 @@ ExternalStringImpl::ExternalStringImpl(std::span<const Latin1Character> characte
     , m_free(WTF::move(free))
 {
     ASSERT(m_free);
-    m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
+    auto flags = m_hashAndFlags.load(std::memory_order_relaxed);
+    m_hashAndFlags.store((flags & ~s_hashMaskBufferOwnership) | BufferExternal, std::memory_order_relaxed);
 }
 
 ExternalStringImpl::ExternalStringImpl(std::span<const char16_t> characters, ExternalStringImplFreeFunction&& free)
@@ -51,7 +52,8 @@ ExternalStringImpl::ExternalStringImpl(std::span<const char16_t> characters, Ext
     , m_free(WTF::move(free))
 {
     ASSERT(m_free);
-    m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
+    auto flags = m_hashAndFlags.load(std::memory_order_relaxed);
+    m_hashAndFlags.store((flags & ~s_hashMaskBufferOwnership) | BufferExternal, std::memory_order_relaxed);
 }
 
 } // namespace WTF

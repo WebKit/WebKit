@@ -27,6 +27,7 @@
 #include "SamplingProfiler.h"
 #include <wtf/StackPointer.h>
 #include <wtf/Threading.h>
+#include <wtf/text/AtomStringTable.h>
 #include <wtf/threads/Signals.h>
 
 #if USE(WEB_THREAD)
@@ -66,7 +67,6 @@ JSLock::JSLock(VM* vm)
     : m_lockCount(0)
     , m_lockDropDepth(0)
     , m_vm(vm)
-    , m_entryAtomStringTable(nullptr)
 {
 }
 
@@ -120,9 +120,6 @@ void JSLock::didAcquireLock()
         return;
     
     auto& thread = Thread::currentSingleton();
-    ASSERT(!m_entryAtomStringTable);
-    m_entryAtomStringTable = thread.setCurrentAtomStringTable(m_vm->atomStringTable());
-    ASSERT(m_entryAtomStringTable);
 
     m_vm->setLastStackTop(thread);
 
@@ -257,7 +254,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSLock::dumpInfoAndCrashForLockNotOwned
     updateDumpState(0xBBBB, numZeroBytesInLock, totalZeroBytesInPage, currentZeroBytes);
 
     register VM* vmPtr __asm__("r19") = m_vm;
-    register AtomStringTable* atomStringTable __asm__("x15") = m_entryAtomStringTable;
+    register AtomStringTable* atomStringTable __asm__("x15") = &AtomStringTable::singleton();
     register JSLock* thisPtr __asm__("x14") = this;
     updateDumpState(0xCCCC, vmPtr, atomStringTable, thisPtr);
 
@@ -319,11 +316,6 @@ void JSLock::willReleaseLock()
             if (m_shouldReleaseHeapAccess)
                 protectedVM->heap.releaseAccess();
         }
-    }
-
-    if (m_entryAtomStringTable) {
-        Thread::currentSingleton().setCurrentAtomStringTable(m_entryAtomStringTable);
-        m_entryAtomStringTable = nullptr;
     }
 }
 

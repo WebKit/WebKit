@@ -23,12 +23,52 @@
 #include "config.h"
 #include <wtf/text/AtomStringTable.h>
 
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/AtomStringImpl.h>
+
 namespace WTF {
 
-AtomStringTable::~AtomStringTable()
+struct AtomStringTableRemovalHashTranslator {
+    static unsigned hash(const StringImpl* string) { return string->existingHash(); }
+    static bool equal(const AtomStringTable::StringEntry& a, const StringImpl* b) { return a == b; }
+};
+
+AtomStringTable& AtomStringTable::singleton()
 {
-    for (const auto& string : m_table)
-        string->setIsAtom(false);
+    static LazyNeverDestroyed<AtomStringTable> table;
+    static std::once_flag flag;
+    std::call_once(flag, [&] {
+        table.construct();
+    });
+    return table;
 }
 
+bool AtomStringTable::releaseAndRemoveIfNeeded(AtomStringImpl* string)
+{
+    ASSERT(string->isAtom());
+    auto& table = singleton();
+    Locker locker { table.m_lock };
+
+    // Double check that the refcount is still s_refCountIncrement.
+    // Because Add() could have added a new reference after the load
+    // in StringImpl::deref().
+    auto oldRefCount = string->m_refCount.fetch_sub(
+        StringImpl::s_refCountIncrement, std::memory_order_acq_rel);
+
+    if (oldRefCount != StringImpl::s_refCountIncrement) {
+        // Someone called ref() (via Add()) while we were waiting for the lock.
+        // The decrement brought count from N to N-1 where N > 1.
+        // The string lives on.
+        return false;
+    }
+
+    // Last ref truly gone (refcount is now 0). Remove from table.
+    if (string->length()) {
+        auto iterator = table.m_table.find<AtomStringTableRemovalHashTranslator>(string);
+        ASSERT(iterator != table.m_table.end());
+        table.m_table.remove(iterator);
+    }
+    return true; // Caller should destroy.
 }
+
+} // namespace WTF
