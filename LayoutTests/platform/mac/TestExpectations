@@ -1696,9 +1696,6 @@ webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
 
 webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]
 
-# webkit.org/b/223223 these two tests fail on Apple Silicon only
-[ Debug arm64 ] svg/W3C-SVG-1.1/paths-data-03-f.svg [ Failure ]
-
 # webkit.org/b/223043 the following tests have issues only on Apple Silicon
 webrtc/h264-baseline.html  [ Failure Timeout ]
 
@@ -1910,8 +1907,7 @@ webkit.org/b/243515 svg/compositing/svg-poster-circle.html [ Pass ImageOnlyFailu
 # See also webkit.org/b/252088
 webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ Pass ImageOnlyFailure ]
 
-# The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
-svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
+
 
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html [ Pass Failure ]
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-default-feature-policy.https.sub.html [ Pass Failure ]
@@ -2132,8 +2128,6 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ Imag
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/svg/path/distance/pathlength-circle-mutating.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/svg-percent-stroke-width-viewbox-update.html [ ImageOnlyFailure ]
 
 webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Pass Failure ]
 

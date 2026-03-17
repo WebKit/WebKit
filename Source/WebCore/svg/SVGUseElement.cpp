@@ -232,6 +232,7 @@ static inline bool NODELETE isDisallowedElement(const SVGElement& element)
     switch (element.elementName()) {
     case SVG::a:
     case SVG::circle:
+    case SVG::defs:
     case SVG::desc:
     case SVG::ellipse:
     case SVG::g:

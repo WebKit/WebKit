@@ -2801,8 +2801,13 @@ void Document::resolveStyle(ResolveStyleType type)
     // the time this comment was originally written caused several tests to crash.
 
     // FIXME: Do this user agent shadow tree update per tree scope.
-    for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
-        element->updateUserAgentShadowTree();
+    // Process in a loop since updateUserAgentShadowTree() can call
+    // invalidateDependentShadowTrees() which adds new entries.
+    // Limit iterations to avoid infinite loops with recursive <use> elements.
+    for (unsigned i = 0; i < 16 && !m_elementsWithPendingUserAgentShadowTreeUpdates.isEmptyIgnoringNullReferences(); ++i) {
+        for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
+            element->updateUserAgentShadowTree();
+    }
 
     styleScope().flushPendingUpdate();
     frameView->willRecalcStyle();

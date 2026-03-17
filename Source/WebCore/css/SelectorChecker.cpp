@@ -46,6 +46,7 @@
 #include "Page.h"
 #include "RenderElement.h"
 #include "RuleFeature.h"
+#include "SVGElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "ShadowRoot.h"
 #include "StyleRule.h"
@@ -764,8 +765,20 @@ static inline bool NODELETE tagMatches(const Element& element, const CSSSelector
 
     const AtomString& localName = (element.isHTMLElement() && element.document().isHTMLDocument()) ? simpleSelector.tagLowercaseLocalName() : tagQName.localName();
 
-    if (localName != starAtom() && localName != element.localName())
+    if (localName != starAtom() && localName != element.localName()) {
+        // SVG use shadow tree: element expansion (e.g., symbol→svg) changes the tag name
+        // for rendering purposes, but CSS selectors should match the original element type.
+        // Check the correspondingElement's tag name for expanded elements.
+        if (auto* svgElement = dynamicDowncast<SVGElement>(element)) {
+            if (auto* correspondingElement = svgElement->correspondingElement()) {
+                if (localName == correspondingElement->localName()) {
+                    const AtomString& namespaceURI = tagQName.namespaceURI();
+                    return namespaceURI == starAtom() || namespaceURI == correspondingElement->namespaceURI();
+                }
+            }
+        }
         return false;
+    }
     const AtomString& namespaceURI = tagQName.namespaceURI();
     return namespaceURI == starAtom() || namespaceURI == element.namespaceURI();
 }

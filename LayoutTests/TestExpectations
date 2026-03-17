@@ -2320,7 +2320,6 @@ imported/w3c/web-platform-tests/svg/embedded/image-crossorigin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-near-integral-width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/interact/scripted/tabindex-focus-flag.svg [ Skip ]
-imported/w3c/web-platform-tests/svg/linking/reftests/use-descendant-combinator-003.html [ Skip ]
 webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001.svg [ ImageOnlyFailure ]
 webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002.svg [ ImageOnlyFailure ]
 webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003.svg [ ImageOnlyFailure ]
@@ -2328,7 +2327,7 @@ imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-proper
 imported/w3c/web-platform-tests/svg/render/reftests/render-sync-with-font-size.html [ Skip ]
 imported/w3c/web-platform-tests/svg/render/order/z-index.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/render/reftests/blending-001.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-001.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen.html [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/first-letter.svg [ ImageOnlyFailure ]
@@ -2389,11 +2388,14 @@ imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-rems.tentative.svg
 imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-stretch.tentative.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-viewport-units-with-ICB.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-viewport-units.tentative.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/styling/use-element-attr-selector-transition.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/use-element-attr-selector.html [ ImageOnlyFailure ]
+webkit.org/b/249080 imported/w3c/web-platform-tests/svg/styling/use-element-attr-selector-transition.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/use-element-class-selector-transition.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/styling/use-element-id-selector-transition.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/249080 imported/w3c/web-platform-tests/svg/styling/use-element-id-selector-transition.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/use-element-transitions-dom-mutation.tentative.html [ ImageOnlyFailure ]
+
+# webkit.org/b/249080 SVG <use> shadow tree: minor pixel differences in animation timing
+webkit.org/b/249080 svg/W3C-SVG-1.1/animate-elem-40-t.svg [ ImageOnlyFailure ]
 
 webkit.org/b/201110 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/stacking-context.html [ Skip ]
 webkit.org/b/201110 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/position-svg-root-in-foreign-object.html [ Skip ]
@@ -2620,7 +2622,6 @@ imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-url-f
 imported/w3c/web-platform-tests/svg/animations/scripted/syncbase-after-removal.html [ Skip ]
 imported/w3c/web-platform-tests/svg/animations/scripted/eventbase-after-removal.html [ Skip ]
 imported/w3c/web-platform-tests/svg/animations/media-fragment-override-animation.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/interact/use-instance-hover.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html [ ImageOnlyFailure ]
 
 webkit.org/b/283954 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change-root.html [ ImageOnlyFailure ]
@@ -7954,9 +7955,6 @@ imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-with-use.svg [ Ima
 imported/w3c/web-platform-tests/svg/struct/reftests/currentScale.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/use-encoding.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-target-pseudo-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-001.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-nth-child-of.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/struct/reftests/use-inheritance-nth-last-child-of.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/gradient-in-symbol.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/use-external-svg-resource-no-fragment-id.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform.svg [ ImageOnlyFailure ]
@@ -8107,9 +8105,6 @@ webkit.org/b/293973 [ Debug ] http/tests/ipc/gpu-load-error-empty-user-info-crss
 
 webkit.org/b/297505 ipc/LocalSampleBufferDisplayLayer-LogIdentifier-data-race-uaf.html [ Skip ]
 
-# Fix upstream in WPT by increasing pixel tolerance
-imported/w3c/web-platform-tests/svg/shapes/rect-03.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003.svg [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-003.html [ ImageOnlyFailure ]

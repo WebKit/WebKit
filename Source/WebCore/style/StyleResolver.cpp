@@ -281,7 +281,7 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
         state.setStyle(WTF::move(initialStyle));
     else if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
-        if (&element == document().documentElement() && !context.isSVGUseTreeRoot) {
+        if (&element == document().documentElement()) {
             // Initial values for custom properties are inserted to the document element style. Don't overwrite them.
             state.style()->inheritIgnoringCustomPropertiesFrom(*state.parentStyle());
         } else

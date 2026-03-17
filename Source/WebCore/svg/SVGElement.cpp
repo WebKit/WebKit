@@ -635,15 +635,6 @@ void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
 
 std::optional<Style::UnadjustedStyle> SVGElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)
 {
-    // If the element is in a <use> tree we get the style from the definition tree.
-    if (RefPtr styleElement = this->correspondingElement()) {
-        auto styleElementResolutionContext = resolutionContext;
-        // Can't use the state since we are going to another part of the tree.
-        styleElementResolutionContext.selectorMatchingState = nullptr;
-        styleElementResolutionContext.isSVGUseTreeRoot = true;
-        return styleElement->resolveStyle(styleElementResolutionContext);
-    }
-
     return resolveStyle(resolutionContext);
 }
 
@@ -1040,7 +1031,13 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (attrName == HTMLNames::classAttr) {
-        classAttributeChanged(className(), AttributeModificationReason::Directly);
+        // When this is an instance in a <use> shadow tree and the class attribute
+        // is being animated via SMIL, use the corresponding element's animated
+        // className so that class-based style matching picks up the animated value.
+        auto classValue = className();
+        if (auto* corresponding = correspondingElement())
+            classValue = AtomString { corresponding->className() };
+        classAttributeChanged(classValue, AttributeModificationReason::Directly);
         invalidateInstances();
         return;
     }

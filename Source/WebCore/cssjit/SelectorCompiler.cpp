@@ -159,6 +159,7 @@ using PseudoClassesSet = UncheckedKeyHashSet<CSSSelector::PseudoClass, IntHash<C
     v(operationSynchronizeAllAnimatedSVGAttribute) \
     v(operationEqualIgnoringASCIICaseNonNull) \
     v(operationElementIsTarget) \
+    v(operationMatchesCorrespondingElementLocalName) \
 
 enum class SelectorIndex {
 #define DEFINE_SELECTOR_ENUM(selector) selector,
@@ -236,6 +237,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchron
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl*, const StringImpl*));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsTarget, bool, (const Element*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesCorrespondingElementLocalName, bool, (const Element*, const AtomStringImpl*));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilled, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledAndObscured, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPassword, bool, (const Element&));
@@ -4078,13 +4080,14 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
     if (selectorLocalName != starAtom()) {
         const AtomString& lowercaseLocalName = tagMatchingSelector.tagLowercaseLocalName();
 
+        Assembler::JumpList localNameMismatch;
         if (selectorLocalName == lowercaseLocalName) {
             // Generate localName == element->localName().
             if (nameToMatch.nodeName() == NodeName::Unknown)
-                failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), Assembler::TrustedImmPtr(selectorLocalName.impl())));
+                localNameMismatch.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), Assembler::TrustedImmPtr(selectorLocalName.impl())));
             else {
                 static_assert(sizeof(NodeName) == sizeof(uint16_t));
-                failureCases.append(m_assembler.branch16(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::nodeNameMemoryOffset()), Assembler::TrustedImm32(static_cast<uint16_t>(nameToMatch.nodeName()))));
+                localNameMismatch.append(m_assembler.branch16(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::nodeNameMemoryOffset()), Assembler::TrustedImm32(static_cast<uint16_t>(nameToMatch.nodeName()))));
             }
         } else {
             Assembler::JumpList isHTMLFailureCases;
@@ -4098,8 +4101,25 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
             m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
             skipCaseSensitiveCase.link(&m_assembler);
 
-            failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
+            localNameMismatch.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
         }
+
+        // Fast path matched — skip the slow path.
+        Assembler::Jump localNameMatched = m_assembler.jump();
+
+        // Slow path: SVG use shadow tree element expansion (e.g., symbol→svg) changes
+        // the tag name for rendering. Check the correspondingElement's tag name.
+        localNameMismatch.link(&m_assembler);
+        {
+            LocalRegister expectedLocalName(m_registerAllocator);
+            m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), expectedLocalName);
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(operationMatchesCorrespondingElementLocalName);
+            functionCall.setTwoArguments(elementAddressRegister, expectedLocalName);
+            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
+        }
+
+        localNameMatched.link(&m_assembler);
     }
 
     const AtomString& selectorNamespaceURI = nameToMatch.namespaceURI();
@@ -4472,6 +4492,18 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationElementIsTarget, bool, (const Element
 {
     COUNT_SELECTOR_OPERATION(operationElementIsTarget);
     return element == element->document().cssTarget() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClass::Target);
+}
+
+// SVG use shadow tree: element expansion (e.g., symbol→svg) changes the tag name
+// for rendering purposes, but CSS selectors should match the original element type.
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesCorrespondingElementLocalName, bool, (const Element* element, const AtomStringImpl* expectedLocalName))
+{
+    COUNT_SELECTOR_OPERATION(operationMatchesCorrespondingElementLocalName);
+    auto* svgElement = dynamicDowncast<SVGElement>(*element);
+    if (!svgElement)
+        return false;
+    auto* correspondingElement = svgElement->correspondingElement();
+    return correspondingElement && correspondingElement->localName().impl() == expectedLocalName;
 }
 
 void SelectorCodeGenerator::generateElementIsTarget(Assembler::JumpList& failureCases)

@@ -33,6 +33,7 @@
 #include "CommonAtomStrings.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"
+#include "SVGElement.h"
 #include "ShadowRoot.h"
 #include "StyledElement.h"
 
@@ -49,6 +50,16 @@ static bool NODELETE isExcludedAttribute(const AtomString& name)
 void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
 {
     identifierHashes.append(element.localNameLowercase().impl()->existingHash() * TagNameSalt);
+
+    // SVG use shadow tree: element expansion (e.g., symbol→svg) changes the tag name.
+    // Also add the correspondingElement's tag name so ancestor selectors using the
+    // original tag name are not rejected by the bloom filter.
+    if (auto* svgElement = dynamicDowncast<SVGElement>(element)) {
+        if (auto* correspondingElement = svgElement->correspondingElement()) {
+            if (correspondingElement->localNameLowercase() != element.localNameLowercase())
+                identifierHashes.append(correspondingElement->localNameLowercase().impl()->existingHash() * TagNameSalt);
+        }
+    }
 
     auto& id = element.idForStyleResolution();
     if (!id.isNull())

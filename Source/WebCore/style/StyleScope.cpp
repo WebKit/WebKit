@@ -56,6 +56,7 @@
 #include "RuleSet.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
+#include "SVGUseElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleBuilder.h"
@@ -153,6 +154,12 @@ void Scope::createOrFindSharedShadowTreeResolver()
         m_resolver = Resolver::create(m_document, Resolver::ScopeType::ShadowTree);
 
         m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
+
+        // SVG2 spec 5.6.2: For same-document use elements, document stylesheets
+        // apply within the shadow tree scope, scoped to the shadow tree's DOM structure.
+        if (isForSVGUseShadowTree())
+            m_resolver->appendAuthorStyleSheets(documentScope().activeStyleSheets());
+
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
 
         return Ref { *m_resolver };
@@ -182,6 +189,7 @@ auto Scope::makeResolverSharingKey() -> ResolverSharingKey
     return {
         m_activeStyleSheets.map([&](auto& sheet) { return RefPtr { &sheet->contents() }; }),
         isForUserAgentShadowTree(),
+        isForSVGUseShadowTree(),
         isNonEmptyHashTableValue
     };
 }
@@ -582,7 +590,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
 
     Vector<Ref<CSSStyleSheet>> activeCSSStyleSheets;
 
-    if (!isForUserAgentShadowTree()) {
+    if (!isForUserAgentShadowTree() || isForSVGUseShadowTree()) {
         activeCSSStyleSheets.appendVector(m_document->extensionStyleSheets().injectedAuthorStyleSheets());
         activeCSSStyleSheets.appendVector(m_document->extensionStyleSheets().authorStyleSheetsForTesting());
     }
@@ -737,6 +745,15 @@ void Scope::scheduleUpdate(UpdateType update)
         if (m_shadowRoot) {
             Invalidator::invalidateHostAndSlottedStyleIfNeeded(*m_shadowRoot);
             unshareShadowTreeResolverBeforeMutation();
+        } else {
+            // SVG use shadow tree resolvers include document author stylesheets
+            // and need to be invalidated when those change.
+            m_sharedShadowTreeResolvers.clear();
+            for (auto& shadowRoot : m_document->inDocumentShadowRoots()) {
+                auto& shadowScope = const_cast<ShadowRoot&>(shadowRoot).styleScope();
+                if (shadowScope.isForSVGUseShadowTree())
+                    shadowScope.clearResolver();
+            }
         }
 
         clearResolver();
@@ -947,6 +964,11 @@ Scope& Scope::documentScope()
 bool Scope::isForUserAgentShadowTree() const
 {
     return m_shadowRoot && m_shadowRoot->mode() == ShadowRootMode::UserAgent;
+}
+
+bool Scope::isForSVGUseShadowTree() const
+{
+    return m_shadowRoot && m_shadowRoot->mode() == ShadowRootMode::UserAgent && is<SVGUseElement>(m_shadowRoot->host());
 }
 
 bool Scope::invalidateForLayoutDependencies(LayoutDependencyUpdateContext& context)

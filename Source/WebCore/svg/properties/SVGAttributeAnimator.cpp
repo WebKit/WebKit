@@ -43,7 +43,7 @@ bool SVGAttributeAnimator::isAnimatedStylePropertyAnimator(const SVGElement& tar
 
 void SVGAttributeAnimator::invalidateStyle(SVGElement& targetElement)
 {
-    SVGElement::InstanceInvalidationGuard guard(targetElement);
+    SVGElement::InstanceUpdateBlocker blocker(targetElement);
     targetElement.setPresentationalHintStyleIsDirty();
 }
 
@@ -60,16 +60,16 @@ void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& element,
 void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& targetElement, const String& value)
 {
     ASSERT(m_attributeName != anyQName());
-    
+
     // FIXME: Do we really need to check both isConnected and !parentNode?
     if (!targetElement.isConnected() || !targetElement.parentNode())
         return;
-    
+
     CSSPropertyID id = cssPropertyID(m_attributeName.localName());
-    
+
     SVGElement::InstanceUpdateBlocker blocker(targetElement);
     applyAnimatedStylePropertyChange(targetElement, id, value);
-    
+
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
     for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement.instances()))
         applyAnimatedStylePropertyChange(instance, id, value);

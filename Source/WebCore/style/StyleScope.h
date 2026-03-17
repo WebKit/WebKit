@@ -185,6 +185,7 @@ public:
 private:
     Scope& NODELETE documentScope();
     bool NODELETE isForUserAgentShadowTree() const;
+    bool NODELETE isForSVGUseShadowTree() const;
 
     void didRemovePendingStylesheet();
 
@@ -223,7 +224,7 @@ private:
     void createOrFindSharedShadowTreeResolver();
     void unshareShadowTreeResolverBeforeMutation();
 
-    using ResolverSharingKey = std::tuple<Vector<RefPtr<StyleSheetContents>>, bool, bool>;
+    using ResolverSharingKey = std::tuple<Vector<RefPtr<StyleSheetContents>>, bool, bool, bool>;
     ResolverSharingKey makeResolverSharingKey();
 
     void pendingUpdateTimerFired();

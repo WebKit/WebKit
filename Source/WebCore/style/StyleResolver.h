@@ -86,8 +86,6 @@ struct ResolutionContext {
     const RenderStyle* documentElementStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
     CheckedPtr<TreeResolutionState> treeResolutionState { };
-
-    bool isSVGUseTreeRoot { false };
 };
 
 using KeyframesRuleMap = HashMap<AtomString, Ref<StyleRuleKeyframes>>;
