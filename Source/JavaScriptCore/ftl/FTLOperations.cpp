@@ -77,6 +77,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
         auto scope = DECLARE_THROW_SCOPE(vm);
         // This might be unnecessary because operationMaterializeObjectInOSR does DeferGCForAWhile but its better to be safe.
         JSArray* array = jsCast<JSArray*>(JSValue::decode(*encodedValue));
+
+        // This may be called during a GenericUnwind OSR exit (e.g. stack overflow caught by
+        // try/catch), where vm.exception() is already set. Suspend it so the assertion below
+        // only fires on new exceptions from putDirectIndex; it is restored on scope exit.
+        SuspendExceptionScope suspendException(vm);
+
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location().kind() != ArrayIndexedPropertyPLoc)
