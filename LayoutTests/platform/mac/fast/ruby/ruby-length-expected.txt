@@ -9,23 +9,23 @@ layer at (0,0) size 800x600
         text run at (59,18) width 293: "and one with a ruby text longer than the base."
       RenderBR {BR} at (351,18) size 1x18
       RenderBR {BR} at (0,36) size 0x18
-      RenderText {#text} at (0,64) size 158x18
-        text run at (0,64) width 158: "<ruby> is defined in the "
-      RenderInline {RUBY} at (157,64) size 186x18
-        RenderInline (generated) at (157,64) size 186x18
-          RenderText {#text} at (157,64) size 186x18
-            text run at (157,64) width 186: "Hypertext Markup Language"
-        RenderBlock {RT} at (157,54) size 186x10
-          RenderText {#text} at (77,0) size 31x10
-            text run at (77,0) width 31: "HTML5"
-      RenderText {#text} at (342,64) size 32x18
-        text run at (342,64) width 32: " and "
-      RenderInline {RUBY} at (373,64) size 85x18
-        RenderInline (generated) at (369,64) size 85x18
-          RenderText {#text} at (393,64) size 37x18
-            text run at (393,64) width 37: "CSS3"
-        RenderBlock {RT} at (369,54) size 85x10
-          RenderText {#text} at (0,0) size 84x10
-            text run at (0,0) width 84: "Cascading Style Sheets"
-      RenderText {#text} at (448,64) size 44x18
-        text run at (448,64) width 44: " specs."
+      RenderText {#text} at (0,63) size 158x18
+        text run at (0,63) width 158: "<ruby> is defined in the "
+      RenderInline {RUBY} at (157,63) size 186x18
+        RenderInline (generated) at (157,63) size 186x18
+          RenderText {#text} at (157,63) size 186x18
+            text run at (157,63) width 186: "Hypertext Markup Language"
+        RenderBlock {RT} at (157,54) size 186x9
+          RenderText {#text} at (79,0) size 28x9
+            text run at (79,0) width 28: "HTML5"
+      RenderText {#text} at (342,63) size 32x18
+        text run at (342,63) width 32: " and "
+      RenderInline {RUBY} at (373,63) size 76x18
+        RenderInline (generated) at (369,63) size 76x18
+          RenderText {#text} at (389,63) size 37x18
+            text run at (389,63) width 37: "CSS3"
+        RenderBlock {RT} at (369,54) size 76x9
+          RenderText {#text} at (0,0) size 75x9
+            text run at (0,0) width 75: "Cascading Style Sheets"
+      RenderText {#text} at (440,63) size 44x18
+        text run at (440,63) width 44: " specs."

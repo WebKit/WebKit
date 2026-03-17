@@ -1,0 +1,12 @@
+Tests that font-size: 1rem matches 1em under page and text zoom.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS font-size: 1rem matches 1em under page zoom
+PASS font-size: 1rem matches 1em under text zoom
+PASS font-size: 1rem matches 1em under page and text zoom
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

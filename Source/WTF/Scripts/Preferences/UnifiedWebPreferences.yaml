@@ -5470,9 +5470,9 @@ MinimumLogicalFontSize:
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue:
     WebKitLegacy:
-      default: 9
+      default: 0
     WebKit:
-      default: 9
+      default: 0
     WebCore:
       default: 0
 

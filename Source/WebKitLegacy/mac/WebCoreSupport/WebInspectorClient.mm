@@ -493,7 +493,7 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
     [preferences setJavaScriptEnabled:YES];
     [preferences setLoadsImagesAutomatically:YES];
     [preferences setMinimumFontSize:0];
-    [preferences setMinimumLogicalFontSize:9];
+    [preferences setMinimumLogicalFontSize:0];
     [preferences setTabsToLinks:NO];
     [preferences setUserStyleSheetEnabled:NO];
     [preferences setAllowFileAccessFromFileURLs:YES];
