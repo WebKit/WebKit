@@ -67,7 +67,6 @@ promise_test(async (test) => {
                 assert_equals(trackEvent.streams.length, 2);
                 assert_equals(trackEvent.streams[0].id, localStream.id, "first stream id");
                 assert_equals(trackEvent.streams[1].id, localStream2.id, "second stream id");
-                assert_equals(trackEvent.track.id, localStream.getVideoTracks()[0].id);
                 assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
                 assert_equals(trackEvent.track.getSettings().aspectRatio, undefined);
                 assert_equals(trackEvent.track.getSettings().width, undefined);

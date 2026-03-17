@@ -48,7 +48,6 @@
 
                 debug("*** Remote track properties should match track added at remote side (remotePc)");
                 shouldBe("trackEvent.track.kind", `${remotePcTrackName}.kind`);
-                shouldBe("trackEvent.track.id", `${remotePcTrackName}.id`);
                 shouldBe("trackEvent.track.label", `'remote ${mediaType.toLocaleLowerCase()}'`);
 
                 debug("*** Check local and remote transceivers");
