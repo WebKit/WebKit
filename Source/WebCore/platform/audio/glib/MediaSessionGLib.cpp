@@ -177,15 +177,21 @@ static const GDBusInterfaceVTable gInterfaceVTable = {
     handleMethodCall, handleGetProperty, handleSetProperty, { nullptr }
 };
 
+bool MediaSessionGLib::m_dBusAddressFailed = false;
+
 std::unique_ptr<MediaSessionGLib> MediaSessionGLib::create(MediaSessionManagerGLib& manager, MediaSessionIdentifier identifier)
 {
     if (!manager.areDBusNotificationsEnabled())
         return makeUnique<MediaSessionGLib>(manager, nullptr, identifier);
 
+    if (m_dBusAddressFailed)
+        return nullptr;
+
     GUniqueOutPtr<GError> error;
     GUniquePtr<char> address(g_dbus_address_get_for_bus_sync(G_BUS_TYPE_SESSION, nullptr, &error.outPtr()));
     if (error) {
         g_warning("Unable to get session D-Bus address: %s", error->message);
+        m_dBusAddressFailed = true;
         return nullptr;
     }
     auto connection = adoptGRef(reinterpret_cast<GDBusConnection*>(g_object_new(G_TYPE_DBUS_CONNECTION,

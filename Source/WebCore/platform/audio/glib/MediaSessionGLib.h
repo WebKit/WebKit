@@ -73,6 +73,7 @@ private:
     unsigned m_ownerId { 0 };
     unsigned m_rootRegistrationId { 0 };
     unsigned m_playerRegistrationId { 0 };
+    static bool m_dBusAddressFailed;
 };
 
 String convertEnumerationToString(MediaSessionGLib::MprisRegistrationEligiblilty);
