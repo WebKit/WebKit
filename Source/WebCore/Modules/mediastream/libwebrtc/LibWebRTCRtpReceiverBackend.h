@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,8 +55,11 @@ private:
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() final;
     std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() final;
 
+    double webrtcToWallTimeOffset() const;
+
     const Ref<webrtc::RtpReceiverInterface> m_rtcReceiver;
     const RefPtr<RTCRtpTransformBackend> m_transformBackend;
+    mutable std::optional<double> m_webrtcToWallTimeOffset;
 };
 
 } // namespace WebCore
