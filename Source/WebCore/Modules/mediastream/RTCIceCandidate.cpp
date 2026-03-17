@@ -75,6 +75,7 @@ RTCIceCandidateInit RTCIceCandidate::toJSON() const
     result.candidate = m_candidate;
     result.sdpMid = m_sdpMid;
     result.sdpMLineIndex = m_sdpMLineIndex;
+    result.usernameFragment = m_fields.usernameFragment;
     return result;
 }
 
