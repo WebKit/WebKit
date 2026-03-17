@@ -2,7 +2,7 @@
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
- * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,8 +210,8 @@ static std::optional<Exception> validateSendEncodings(Vector<RTCRtpEncodingParam
         if (encoding.scaleResolutionDownBy && *encoding.scaleResolutionDownBy < 1)
             return Exception { ExceptionCode::RangeError, "scaleResolutionDownBy is below 1"_s };
 
-        if (encoding.maxFramerate && *encoding.maxFramerate <= 0)
-            return Exception { ExceptionCode::RangeError, "maxFrameRate is below or equal 0"_s };
+        if (encoding.maxFramerate && *encoding.maxFramerate < 0)
+            return Exception { ExceptionCode::RangeError, "maxFrameRate is below 0"_s };
 
         if (hasAnyScaleResolutionDownBy) {
             if (!encoding.scaleResolutionDownBy)

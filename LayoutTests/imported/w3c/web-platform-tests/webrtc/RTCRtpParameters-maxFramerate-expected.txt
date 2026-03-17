@@ -14,7 +14,7 @@ PASS setParameters() with maxFramerate undefined->16 should succeed with RTCRtpT
 PASS setParameters() with maxFramerate undefined->16 should succeed without RTCRtpTransceiverInit
 FAIL setParameters() with maxFramerate 24->undefined should succeed with RTCRtpTransceiverInit assert_equals: expected (undefined) undefined but got (number) 24
 FAIL setParameters() with maxFramerate 24->undefined should succeed without RTCRtpTransceiverInit assert_equals: expected (undefined) undefined but got (number) 24
-FAIL setParameters() with maxFramerate 0->16 should succeed with RTCRtpTransceiverInit promise_test: Unhandled rejection with value: object "RangeError: maxFrameRate is below or equal 0"
+PASS setParameters() with maxFramerate 0->16 should succeed with RTCRtpTransceiverInit
 PASS setParameters() with maxFramerate 0->16 should succeed without RTCRtpTransceiverInit
 PASS setParameters() with maxFramerate 24->0 should succeed with RTCRtpTransceiverInit
 PASS setParameters() with maxFramerate 24->0 should succeed without RTCRtpTransceiverInit
