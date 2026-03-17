@@ -1,4 +1,4 @@
-framework module WebCore_Private [system] {
+framework module WebCore_Private {
     module PlatformExportMacros {
         header "PlatformExportMacros.h"
         export *

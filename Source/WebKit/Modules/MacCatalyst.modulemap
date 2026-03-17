@@ -1,4 +1,4 @@
-framework module WebKit [system] {
+framework module WebKit {
   umbrella header "WebKit.h"
   // Use <WebKitLegacy/WebKit.h> if available.
   exclude header "WebKitLegacy.h"

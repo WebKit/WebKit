@@ -1,4 +1,4 @@
-module bmalloc [system] {
+module bmalloc {
     config_macros OS_UNFAIR_LOCK_INLINE
 
     explicit module pas_simple_free_heap_declarations_def {

@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-module WritingToolsUI_Private_SPI [system] {
+module WritingToolsUI_Private_SPI {
     umbrella header "WritingToolsUISPI.h"
     link framework "WritingToolsUI"
     export *

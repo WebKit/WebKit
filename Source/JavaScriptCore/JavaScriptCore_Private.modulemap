@@ -1,4 +1,4 @@
-framework module JavaScriptCore_Private [system] {
+framework module JavaScriptCore_Private {
     // These ad-hoc explicit modules are the exhaustive set of headers that are both private and compatible
     // with both C and C++.
 

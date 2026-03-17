@@ -1,4 +1,4 @@
-module pal [system] {
+module pal {
     explicit module ExportMacros {
         header "ExportMacros.h"
         export *

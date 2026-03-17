@@ -1,4 +1,4 @@
-module WebKit_Internal [system] {
+module WebKit_Internal {
     module AppKitSPI {
         requires cplusplus20
         header "../../Platform/spi/mac/AppKitSPI.h"

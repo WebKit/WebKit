@@ -1,4 +1,4 @@
-module wtf [system] {
+module wtf {
     explicit module Assertions {
         header "Assertions.h"
         export *

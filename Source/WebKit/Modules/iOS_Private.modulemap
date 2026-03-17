@@ -1,6 +1,6 @@
 #include <TargetConditionals.h>
 
-framework module WebKit_Private [system] {
+framework module WebKit_Private {
   umbrella header "WebKitPrivate.h"
   export *
 

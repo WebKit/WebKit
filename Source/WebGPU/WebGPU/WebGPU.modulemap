@@ -1,2 +1,2 @@
-framework module WebGPU [system] {
+framework module WebGPU {
 }

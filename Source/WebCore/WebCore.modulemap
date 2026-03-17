@@ -1,2 +1,2 @@
-framework module WebCore [system] {
+framework module WebCore {
 }

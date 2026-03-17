@@ -1,4 +1,4 @@
-framework module WebGPU_Private [system] {
+framework module WebGPU_Private {
     umbrella "PrivateHeaders"
 
     explicit module * {
