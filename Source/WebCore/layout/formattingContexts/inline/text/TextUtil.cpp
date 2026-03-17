@@ -636,7 +636,7 @@ static bool isASCIIHangableQuote(char32_t character)
 static bool isHangableOpenPunctuation(char32_t character)
 {
     // https://drafts.csswg.org/css-text-3/#hanging-punctuation-property
-    if (isASCIIHangableQuote(character))
+    if (isASCIIHangableQuote(character) || character == ideographicSpace)
         return true;
     return U_GET_GC_MASK(character) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
 }
