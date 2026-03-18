@@ -394,6 +394,8 @@ void WebPopupMenuProxyGtk::hidePopupMenu()
     if (!m_popup)
         return;
 
+    g_signal_handlers_disconnect_by_data(m_popup, this);
+
 #if !USE(GTK4)
     if (m_device) {
         gdk_seat_ungrab(gdk_device_get_seat(m_device));
@@ -425,7 +427,6 @@ void WebPopupMenuProxyGtk::cancelTracking()
     if (!m_popup)
         return;
 
-    g_signal_handlers_disconnect_matched(m_popup, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     hidePopupMenu();
 }
 
