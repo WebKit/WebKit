@@ -118,7 +118,6 @@ style/StyleInvalidationFunctions.h
 style/StyleRelations.cpp
 style/StyleScope.cpp
 [ iOS ] style/StyleScopeRuleSets.cpp
-style/UserAgentStyle.cpp
 style/computed/StyleComputedStyleBase+SettersInlines.h
 style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
 svg/SVGClipPathElement.cpp

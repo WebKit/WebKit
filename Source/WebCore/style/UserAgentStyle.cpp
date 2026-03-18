@@ -71,51 +71,288 @@ namespace Style {
 
 using namespace HTMLNames;
 
-RuleSet* UserAgentStyle::defaultStyle;
-RuleSet* UserAgentStyle::defaultQuirksStyle;
-RuleSet* UserAgentStyle::defaultPrintStyle;
-unsigned UserAgentStyle::defaultStyleVersion;
+namespace {
 
-StyleSheetContents* UserAgentStyle::defaultStyleSheet;
-StyleSheetContents* UserAgentStyle::quirksStyleSheet;
-StyleSheetContents* UserAgentStyle::svgStyleSheet;
-StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
-StyleSheetContents* UserAgentStyle::mathMLCoreExtrasStyleSheet;
-StyleSheetContents* UserAgentStyle::mathMLFontSizeMathStyleSheet;
-StyleSheetContents* UserAgentStyle::mathMLLegacyFontSizeMathStyleSheet;
-StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
-StyleSheetContents* UserAgentStyle::popoverStyleSheet;
-StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
-StyleSheetContents* UserAgentStyle::htmlSwitchControlStyleSheet;
-StyleSheetContents* UserAgentStyle::counterStylesStyleSheet;
-StyleSheetContents* UserAgentStyle::viewTransitionsStyleSheet;
+struct UserAgentStyleState {
+    RefPtr<RuleSet> defaultStyle;
+    RefPtr<RuleSet> defaultQuirksStyle;
+    RefPtr<RuleSet> defaultPrintStyle;
+    unsigned defaultStyleVersion { 0 };
+
+    RefPtr<StyleSheetContents> defaultStyleSheet;
+    RefPtr<StyleSheetContents> quirksStyleSheet;
+    RefPtr<StyleSheetContents> svgStyleSheet;
+    RefPtr<StyleSheetContents> mathMLStyleSheet;
+    RefPtr<StyleSheetContents> mathMLCoreExtrasStyleSheet;
+    RefPtr<StyleSheetContents> mathMLFontSizeMathStyleSheet;
+    RefPtr<StyleSheetContents> mathMLLegacyFontSizeMathStyleSheet;
+    RefPtr<StyleSheetContents> mediaQueryStyleSheet;
+    RefPtr<StyleSheetContents> popoverStyleSheet;
+    RefPtr<StyleSheetContents> horizontalFormControlsStyleSheet;
+    RefPtr<StyleSheetContents> htmlSwitchControlStyleSheet;
+    RefPtr<StyleSheetContents> counterStylesStyleSheet;
+    RefPtr<StyleSheetContents> viewTransitionsStyleSheet;
 #if ENABLE(FULLSCREEN_API)
-StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
+    RefPtr<StyleSheetContents> fullscreenStyleSheet;
 #endif
 #if ENABLE(SERVICE_CONTROLS)
-StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
+    RefPtr<StyleSheetContents> imageControlsStyleSheet;
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-StyleSheetContents* UserAgentStyle::attachmentStyleSheet;
+    RefPtr<StyleSheetContents> attachmentStyleSheet;
+#endif
+};
+
+UserAgentStyleState& userAgentStyleState()
+{
+    static MainThreadNeverDestroyed<UserAgentStyleState> state;
+    return state;
+}
+
+RefPtr<RuleSet>& defaultStyleStorage()
+{
+    return userAgentStyleState().defaultStyle;
+}
+
+RefPtr<RuleSet>& defaultQuirksStyleStorage()
+{
+    return userAgentStyleState().defaultQuirksStyle;
+}
+
+RefPtr<RuleSet>& defaultPrintStyleStorage()
+{
+    return userAgentStyleState().defaultPrintStyle;
+}
+
+RefPtr<StyleSheetContents>& defaultStyleSheetStorage()
+{
+    return userAgentStyleState().defaultStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& quirksStyleSheetStorage()
+{
+    return userAgentStyleState().quirksStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& svgStyleSheetStorage()
+{
+    return userAgentStyleState().svgStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& mathMLStyleSheetStorage()
+{
+    return userAgentStyleState().mathMLStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& mathMLCoreExtrasStyleSheetStorage()
+{
+    return userAgentStyleState().mathMLCoreExtrasStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& mathMLFontSizeMathStyleSheetStorage()
+{
+    return userAgentStyleState().mathMLFontSizeMathStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& mathMLLegacyFontSizeMathStyleSheetStorage()
+{
+    return userAgentStyleState().mathMLLegacyFontSizeMathStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& mediaQueryStyleSheetStorage()
+{
+    return userAgentStyleState().mediaQueryStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& popoverStyleSheetStorage()
+{
+    return userAgentStyleState().popoverStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& horizontalFormControlsStyleSheetStorage()
+{
+    return userAgentStyleState().horizontalFormControlsStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& htmlSwitchControlStyleSheetStorage()
+{
+    return userAgentStyleState().htmlSwitchControlStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& counterStylesStyleSheetStorage()
+{
+    return userAgentStyleState().counterStylesStyleSheet;
+}
+
+RefPtr<StyleSheetContents>& viewTransitionsStyleSheetStorage()
+{
+    return userAgentStyleState().viewTransitionsStyleSheet;
+}
+
+#if ENABLE(FULLSCREEN_API)
+RefPtr<StyleSheetContents>& fullscreenStyleSheetStorage()
+{
+    return userAgentStyleState().fullscreenStyleSheet;
+}
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+RefPtr<StyleSheetContents>& imageControlsStyleSheetStorage()
+{
+    return userAgentStyleState().imageControlsStyleSheet;
+}
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+RefPtr<StyleSheetContents>& attachmentStyleSheetStorage()
+{
+    return userAgentStyleState().attachmentStyleSheet;
+}
+#endif
+
+} // namespace
+
+RuleSet& UserAgentStyle::defaultStyle()
+{
+    ASSERT(defaultStyleStorage());
+    return *defaultStyleStorage();
+}
+
+RefPtr<RuleSet> UserAgentStyle::defaultStyleIfExists()
+{
+    return defaultStyleStorage();
+}
+
+RuleSet& UserAgentStyle::defaultQuirksStyle()
+{
+    ASSERT(defaultQuirksStyleStorage());
+    return *defaultQuirksStyleStorage();
+}
+
+RefPtr<RuleSet> UserAgentStyle::defaultQuirksStyleIfExists()
+{
+    return defaultQuirksStyleStorage();
+}
+
+RuleSet& UserAgentStyle::defaultPrintStyle()
+{
+    ASSERT(defaultPrintStyleStorage());
+    return *defaultPrintStyleStorage();
+}
+
+RefPtr<RuleSet> UserAgentStyle::defaultPrintStyleIfExists()
+{
+    return defaultPrintStyleStorage();
+}
+
+unsigned UserAgentStyle::defaultStyleVersion()
+{
+    return userAgentStyleState().defaultStyleVersion;
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::defaultStyleSheet()
+{
+    return defaultStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::quirksStyleSheet()
+{
+    return quirksStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::svgStyleSheet()
+{
+    return svgStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::mathMLStyleSheet()
+{
+    return mathMLStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::mathMLCoreExtrasStyleSheet()
+{
+    return mathMLCoreExtrasStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::mathMLFontSizeMathStyleSheet()
+{
+    return mathMLFontSizeMathStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::mathMLLegacyFontSizeMathStyleSheet()
+{
+    return mathMLLegacyFontSizeMathStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::mediaQueryStyleSheet()
+{
+    return mediaQueryStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::popoverStyleSheet()
+{
+    return popoverStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::horizontalFormControlsStyleSheet()
+{
+    return horizontalFormControlsStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::htmlSwitchControlStyleSheet()
+{
+    return htmlSwitchControlStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::counterStylesStyleSheet()
+{
+    return counterStylesStyleSheetStorage();
+}
+
+RefPtr<StyleSheetContents> UserAgentStyle::viewTransitionsStyleSheet()
+{
+    return viewTransitionsStyleSheetStorage();
+}
+
+#if ENABLE(FULLSCREEN_API)
+RefPtr<StyleSheetContents> UserAgentStyle::fullscreenStyleSheet()
+{
+    return fullscreenStyleSheetStorage();
+}
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+RefPtr<StyleSheetContents> UserAgentStyle::imageControlsStyleSheet()
+{
+    return imageControlsStyleSheetStorage();
+}
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+RefPtr<StyleSheetContents> UserAgentStyle::attachmentStyleSheet()
+{
+    return attachmentStyleSheetStorage();
+}
 #endif
 
 static const MQ::MediaQueryEvaluator& screenEval()
 {
-    static NeverDestroyed<const MQ::MediaQueryEvaluator> staticScreenEval(screenAtom());
-    return staticScreenEval;
+    static MainThreadNeverDestroyed<const MQ::MediaQueryEvaluator> screenEvaluator(screenAtom());
+    return screenEvaluator;
 }
 
 static const MQ::MediaQueryEvaluator& printEval()
 {
-    static NeverDestroyed<const MQ::MediaQueryEvaluator> staticPrintEval(printAtom());
-    return staticPrintEval;
+    static MainThreadNeverDestroyed<const MQ::MediaQueryEvaluator> printEvaluator(printAtom());
+    return printEvaluator;
 }
 
-static StyleSheetContents* parseUASheet(const String& str)
+static Ref<StyleSheetContents> parseUASheet(const String& str)
 {
     Ref sheet = StyleSheetContents::create(CSSParserContext(UASheetMode));
     sheet->parseString(str);
-    return &sheet.leakRef();
+    return sheet;
 }
 
 void static addToCounterStyleRegistry(StyleSheetContents& sheet)
@@ -138,10 +375,10 @@ void static addUserAgentKeyframes(StyleSheetContents& sheet)
 
 void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
 {
-    RuleSetBuilder screenBuilder(*defaultStyle, screenEval());
+    RuleSetBuilder screenBuilder(defaultStyle(), screenEval());
     screenBuilder.addRulesFromSheet(sheet);
 
-    RuleSetBuilder printBuilder(*defaultPrintStyle, printEval());
+    RuleSetBuilder printBuilder(defaultPrintStyle(), printEval());
     printBuilder.addRulesFromSheet(sheet);
 
     // Build a stylesheet consisting of non-trivial media queries seen in default style.
@@ -155,114 +392,114 @@ void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
             continue;
         if (printEval().evaluate(mediaQuery))
             continue;
-        mediaQueryStyleSheet->parserAppendRule(mediaRule->copy());
+        mediaQueryStyleSheet()->parserAppendRule(mediaRule->copy());
     }
 
-    ++defaultStyleVersion;
+    ++userAgentStyleState().defaultStyleVersion;
 }
 
 void UserAgentStyle::initDefaultStyleSheet()
 {
-    if (defaultStyle)
+    if (defaultStyleIfExists())
         return;
 
-    defaultStyle = &RuleSet::create().leakRef();
-    defaultPrintStyle = &RuleSet::create().leakRef();
-    defaultQuirksStyle = &RuleSet::create().leakRef();
-    mediaQueryStyleSheet = &StyleSheetContents::create(CSSParserContext(UASheetMode)).leakRef();
+    defaultStyleStorage() = RuleSet::create();
+    defaultPrintStyleStorage() = RuleSet::create();
+    defaultQuirksStyleStorage() = RuleSet::create();
+    mediaQueryStyleSheetStorage() = StyleSheetContents::create(CSSParserContext(UASheetMode));
 
     String defaultRules;
-    auto extraDefaultStyleSheet = RenderTheme::singleton().extraDefaultStyleSheet();
-    if (extraDefaultStyleSheet.isEmpty())
+    auto extraDefaultStyleSheetStr = RenderTheme::singleton().extraDefaultStyleSheet();
+    if (extraDefaultStyleSheetStr.isEmpty())
         defaultRules = StringImpl::createWithoutCopying(htmlUserAgentStyleSheet);
     else
-        defaultRules = makeString(std::span { htmlUserAgentStyleSheet }, extraDefaultStyleSheet);
-    defaultStyleSheet = parseUASheet(defaultRules);
-    addToDefaultStyle(*defaultStyleSheet);
+        defaultRules = makeString(std::span { htmlUserAgentStyleSheet }, extraDefaultStyleSheetStr);
+    defaultStyleSheetStorage() = parseUASheet(defaultRules);
+    addToDefaultStyle(*defaultStyleSheet());
 
-    counterStylesStyleSheet = parseUASheet(StringImpl::createWithoutCopying(counterStylesUserAgentStyleSheet));
-    addToCounterStyleRegistry(*counterStylesStyleSheet);
+    counterStylesStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(counterStylesUserAgentStyleSheet));
+    addToCounterStyleRegistry(*counterStylesStyleSheet());
 
-    quirksStyleSheet = parseUASheet(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet));
+    quirksStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet));
 
-    RuleSetBuilder quirkBuilder(*defaultQuirksStyle, screenEval());
-    quirkBuilder.addRulesFromSheet(*quirksStyleSheet);
+    RuleSetBuilder quirkBuilder(defaultQuirksStyle(), screenEval());
+    quirkBuilder.addRulesFromSheet(*quirksStyleSheet());
 
-    ++defaultStyleVersion;
+    ++userAgentStyleState().defaultStyleVersion;
 }
 
 void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 {
     if (is<HTMLElement>(element)) {
         if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
-            if (!htmlSwitchControlStyleSheet && input->isSwitch()) {
-                htmlSwitchControlStyleSheet = parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet));
-                addToDefaultStyle(*htmlSwitchControlStyleSheet);
+            if (!htmlSwitchControlStyleSheet() && input->isSwitch()) {
+                htmlSwitchControlStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet));
+                addToDefaultStyle(*htmlSwitchControlStyleSheet());
             }
         }
 #if ENABLE(ATTACHMENT_ELEMENT)
-        else if (!attachmentStyleSheet && is<HTMLAttachmentElement>(element)) {
-            attachmentStyleSheet = parseUASheet(RenderTheme::singleton().attachmentStyleSheet());
-            addToDefaultStyle(*attachmentStyleSheet);
+        else if (!attachmentStyleSheet() && is<HTMLAttachmentElement>(element)) {
+            attachmentStyleSheetStorage() = parseUASheet(RenderTheme::singleton().attachmentStyleSheet());
+            addToDefaultStyle(*attachmentStyleSheet());
         }
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-        if (!popoverStyleSheet && element.document().settings().popoverAttributeEnabled() && element.hasAttributeWithoutSynchronization(popoverAttr)) {
-            popoverStyleSheet = parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet));
-            addToDefaultStyle(*popoverStyleSheet);
+        if (!popoverStyleSheet() && element.document().settings().popoverAttributeEnabled() && element.hasAttributeWithoutSynchronization(popoverAttr)) {
+            popoverStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet));
+            addToDefaultStyle(*popoverStyleSheet());
         }
 
         if (isAnyOf<HTMLFormControlElement, HTMLMeterElement, HTMLProgressElement>(element) && !element.document().settings().verticalFormControlsEnabled()) {
-            if (!horizontalFormControlsStyleSheet) {
-                horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet));
-                addToDefaultStyle(*horizontalFormControlsStyleSheet);
+            if (!horizontalFormControlsStyleSheet()) {
+                horizontalFormControlsStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet));
+                addToDefaultStyle(*horizontalFormControlsStyleSheet());
             }
         }
 
     } else if (is<SVGElement>(element)) {
-        if (!svgStyleSheet) {
-            svgStyleSheet = parseUASheet(StringImpl::createWithoutCopying(svgUserAgentStyleSheet));
-            addToDefaultStyle(*svgStyleSheet);
+        if (!svgStyleSheet()) {
+            svgStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(svgUserAgentStyleSheet));
+            addToDefaultStyle(*svgStyleSheet());
         }
     }
 #if ENABLE(MATHML)
     else if (is<MathMLElement>(element)) {
-        if (!mathMLStyleSheet) {
-            mathMLStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlUserAgentStyleSheet));
-            addToDefaultStyle(*mathMLStyleSheet);
+        if (!mathMLStyleSheet()) {
+            mathMLStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(mathmlUserAgentStyleSheet));
+            addToDefaultStyle(*mathMLStyleSheet());
         }
-        if (!mathMLCoreExtrasStyleSheet && element.document().settings().coreMathMLEnabled()) {
-            mathMLCoreExtrasStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreExtrasUserAgentStyleSheet));
-            addToDefaultStyle(*mathMLCoreExtrasStyleSheet);
+        if (!mathMLCoreExtrasStyleSheet() && element.document().settings().coreMathMLEnabled()) {
+            mathMLCoreExtrasStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreExtrasUserAgentStyleSheet));
+            addToDefaultStyle(*mathMLCoreExtrasStyleSheet());
         }
         if (element.document().settings().cssMathDepthEnabled()) {
-            if (!mathMLFontSizeMathStyleSheet) {
-                mathMLFontSizeMathStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlFontSizeMathUserAgentStyleSheet));
-                addToDefaultStyle(*mathMLFontSizeMathStyleSheet);
+            if (!mathMLFontSizeMathStyleSheet()) {
+                mathMLFontSizeMathStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(mathmlFontSizeMathUserAgentStyleSheet));
+                addToDefaultStyle(*mathMLFontSizeMathStyleSheet());
             }
         } else {
-            if (!mathMLLegacyFontSizeMathStyleSheet) {
-                mathMLLegacyFontSizeMathStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlLegacyFontSizeMathUserAgentStyleSheet));
-                addToDefaultStyle(*mathMLLegacyFontSizeMathStyleSheet);
+            if (!mathMLLegacyFontSizeMathStyleSheet()) {
+                mathMLLegacyFontSizeMathStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(mathmlLegacyFontSizeMathUserAgentStyleSheet));
+                addToDefaultStyle(*mathMLLegacyFontSizeMathStyleSheet());
             }
         }
     }
 #endif // ENABLE(MATHML)
 
 #if ENABLE(FULLSCREEN_API)
-    if (RefPtr documentFullscreen = element.document().fullscreenIfExists(); !fullscreenStyleSheet && documentFullscreen) {
-        fullscreenStyleSheet = parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet));
-        addToDefaultStyle(*fullscreenStyleSheet);
+    if (RefPtr documentFullscreen = element.document().fullscreenIfExists(); !fullscreenStyleSheet() && documentFullscreen) {
+        fullscreenStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet));
+        addToDefaultStyle(*fullscreenStyleSheet());
     }
 #endif // ENABLE(FULLSCREEN_API)
 
-    if (!viewTransitionsStyleSheet && element.document().settings().viewTransitionsEnabled()) {
-        viewTransitionsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet));
-        addToDefaultStyle(*viewTransitionsStyleSheet);
-        addUserAgentKeyframes(*viewTransitionsStyleSheet);
+    if (!viewTransitionsStyleSheet() && element.document().settings().viewTransitionsEnabled()) {
+        viewTransitionsStyleSheetStorage() = parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet));
+        addToDefaultStyle(*viewTransitionsStyleSheet());
+        addUserAgentKeyframes(*viewTransitionsStyleSheet());
     }
 
-    ASSERT(defaultStyle->features().idsInRules.isEmpty());
+    ASSERT(defaultStyle().features().idsInRules.isEmpty());
 }
 
 } // namespace Style

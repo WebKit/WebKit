@@ -22,6 +22,9 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
 class Element;
@@ -33,32 +36,35 @@ class RuleSet;
 
 class UserAgentStyle {
 public:
-    static RuleSet* defaultStyle;
-    static RuleSet* defaultQuirksStyle;
-    static RuleSet* defaultPrintStyle;
-    static unsigned defaultStyleVersion;
+    static RuleSet& defaultStyle();
+    static RefPtr<RuleSet> defaultStyleIfExists();
+    static RuleSet& defaultQuirksStyle();
+    static RefPtr<RuleSet> defaultQuirksStyleIfExists();
+    static RuleSet& defaultPrintStyle();
+    static RefPtr<RuleSet> defaultPrintStyleIfExists();
+    static unsigned defaultStyleVersion();
 
-    static StyleSheetContents* defaultStyleSheet;
-    static StyleSheetContents* quirksStyleSheet;
-    static StyleSheetContents* svgStyleSheet;
-    static StyleSheetContents* mathMLStyleSheet;
-    static StyleSheetContents* mathMLCoreExtrasStyleSheet;
-    static StyleSheetContents* mathMLFontSizeMathStyleSheet;
-    static StyleSheetContents* mathMLLegacyFontSizeMathStyleSheet;
-    static StyleSheetContents* mediaQueryStyleSheet;
-    static StyleSheetContents* horizontalFormControlsStyleSheet;
-    static StyleSheetContents* htmlSwitchControlStyleSheet;
-    static StyleSheetContents* popoverStyleSheet;
-    static StyleSheetContents* counterStylesStyleSheet;
-    static StyleSheetContents* viewTransitionsStyleSheet;
+    static RefPtr<StyleSheetContents> defaultStyleSheet();
+    static RefPtr<StyleSheetContents> quirksStyleSheet();
+    static RefPtr<StyleSheetContents> svgStyleSheet();
+    static RefPtr<StyleSheetContents> mathMLStyleSheet();
+    static RefPtr<StyleSheetContents> mathMLCoreExtrasStyleSheet();
+    static RefPtr<StyleSheetContents> mathMLFontSizeMathStyleSheet();
+    static RefPtr<StyleSheetContents> mathMLLegacyFontSizeMathStyleSheet();
+    static RefPtr<StyleSheetContents> mediaQueryStyleSheet();
+    static RefPtr<StyleSheetContents> horizontalFormControlsStyleSheet();
+    static RefPtr<StyleSheetContents> htmlSwitchControlStyleSheet();
+    static RefPtr<StyleSheetContents> popoverStyleSheet();
+    static RefPtr<StyleSheetContents> counterStylesStyleSheet();
+    static RefPtr<StyleSheetContents> viewTransitionsStyleSheet();
 #if ENABLE(FULLSCREEN_API)
-    static StyleSheetContents* fullscreenStyleSheet;
+    static RefPtr<StyleSheetContents> fullscreenStyleSheet();
 #endif
 #if ENABLE(SERVICE_CONTROLS)
-    static StyleSheetContents* imageControlsStyleSheet;
+    static RefPtr<StyleSheetContents> imageControlsStyleSheet();
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-    static StyleSheetContents* attachmentStyleSheet;
+    static RefPtr<StyleSheetContents> attachmentStyleSheet();
 #endif
 
     static void initDefaultStyleSheet();

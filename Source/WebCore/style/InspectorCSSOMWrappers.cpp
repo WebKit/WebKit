@@ -129,20 +129,20 @@ void InspectorCSSOMWrappers::maybeCollectFromStyleSheets(const Vector<Ref<CSSSty
 void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& extensionStyleSheets)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
-        collectFromStyleSheetContents(UserAgentStyle::defaultStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::quirksStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::svgStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::mathMLStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::mathMLCoreExtrasStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::mathMLFontSizeMathStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::mathMLLegacyFontSizeMathStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::horizontalFormControlsStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::viewTransitionsStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::htmlSwitchControlStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::defaultStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::quirksStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::svgStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::mathMLStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::mathMLCoreExtrasStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::mathMLFontSizeMathStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::mathMLLegacyFontSizeMathStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::horizontalFormControlsStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::viewTransitionsStyleSheet());
+        collectFromStyleSheetContents(UserAgentStyle::htmlSwitchControlStyleSheet());
 #if ENABLE(FULLSCREEN_API)
-        collectFromStyleSheetContents(UserAgentStyle::fullscreenStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::fullscreenStyleSheet());
 #endif
-        collectFromStyleSheetContents(UserAgentStyle::mediaQueryStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::mediaQueryStyleSheet());
 
         collect(extensionStyleSheets.pageUserSheet());
         collectFromStyleSheets(extensionStyleSheets.injectedUserStyleSheets());
