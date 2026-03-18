@@ -80,8 +80,17 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::open(ScriptExecutionContext& cont
     return openInternal(context, name, version.value_or(0));
 }
 
+Ref<IDBClient::IDBConnectionProxy> IDBFactory::ensureConnectionProxy(ScriptExecutionContext& context)
+{
+    if (RefPtr currentProxy = context.idbConnectionProxy(); currentProxy && currentProxy != m_connectionProxy.ptr())
+        m_connectionProxy = *currentProxy;
+    return m_connectionProxy;
+}
+
 ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, uint64_t version)
 {
+    Ref connectionProxy = ensureConnectionProxy(context);
+
     if (name.isNull())
         return Exception { ExceptionCode::TypeError, "IDBFactory.open() called without a database name"_s };
 
@@ -96,12 +105,14 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::openInternal(ScriptExecutionConte
 
     LOG(IndexedDBOperations, "IDB opening database: %s %" PRIu64, name.utf8().data(), version);
 
-    return m_connectionProxy->openDatabase(context, databaseIdentifier, version);
+    return connectionProxy->openDatabase(context, databaseIdentifier, version);
 }
 
 ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::deleteDatabase(ScriptExecutionContext& context, const String& name)
 {
     LOG(IndexedDB, "IDBFactory::deleteDatabase - %s", name.utf8().data());
+
+    Ref connectionProxy = ensureConnectionProxy(context);
 
     if (name.isNull())
         return Exception { ExceptionCode::TypeError, "IDBFactory.deleteDatabase() called without a database name"_s };
@@ -117,7 +128,7 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::deleteDatabase(ScriptExecutionCon
 
     LOG(IndexedDBOperations, "IDB deleting database: %s", name.utf8().data());
 
-    return m_connectionProxy->deleteDatabase(context, databaseIdentifier);
+    return connectionProxy->deleteDatabase(context, databaseIdentifier);
 }
 
 ExceptionOr<short> IDBFactory::cmp(JSGlobalObject& execState, JSValue firstValue, JSValue secondValue)
@@ -140,6 +151,8 @@ void IDBFactory::databases(ScriptExecutionContext& context, IDBDatabasesResponse
 {
     LOG(IndexedDB, "IDBFactory::databases");
 
+    Ref connectionProxy = ensureConnectionProxy(context);
+
     if (shouldThrowSecurityException(context)) {
         promise.reject(ExceptionCode::SecurityError);
         return;
@@ -147,7 +160,7 @@ void IDBFactory::databases(ScriptExecutionContext& context, IDBDatabasesResponse
 
     ASSERT(context.securityOrigin());
 
-    m_connectionProxy->getAllDatabaseNamesAndVersions(context, [promise = WTF::move(promise)](auto&& result) mutable {
+    connectionProxy->getAllDatabaseNamesAndVersions(context, [promise = WTF::move(promise)](auto&& result) mutable {
         if (!result) {
             promise.reject(Exception { ExceptionCode::UnknownError });
             return;
@@ -161,7 +174,9 @@ void IDBFactory::databases(ScriptExecutionContext& context, IDBDatabasesResponse
 
 void IDBFactory::getAllDatabaseNames(ScriptExecutionContext& context, Function<void(const Vector<String>&)>&& callback)
 {
-    m_connectionProxy->getAllDatabaseNamesAndVersions(context, [callback = WTF::move(callback)](auto&& result) mutable {
+    Ref connectionProxy = ensureConnectionProxy(context);
+
+    connectionProxy->getAllDatabaseNamesAndVersions(context, [callback = WTF::move(callback)](auto&& result) mutable {
         if (!result) {
             callback({ });
             return;

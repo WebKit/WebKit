@@ -914,6 +914,7 @@ public:
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     RefPtr<IDBClient::IDBConnectionProxy> protectedIDBConnectionProxy();
+    void clearIDBConnectionProxy();
     StorageConnection* storageConnection();
     SocketProvider* socketProvider() final;
     RefPtr<SocketProvider> protectedSocketProvider();

@@ -76,8 +76,9 @@ private:
     explicit IDBFactory(IDBClient::IDBConnectionProxy&);
 
     ExceptionOr<Ref<IDBOpenDBRequest>> openInternal(ScriptExecutionContext&, const String& name, uint64_t version);
+    Ref<IDBClient::IDBConnectionProxy> ensureConnectionProxy(ScriptExecutionContext&);
 
-    const Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
+    Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
 };
 
 } // namespace WebCore

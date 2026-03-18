@@ -96,6 +96,8 @@ public:
     const String& inspectorIdentifier() const { return m_inspectorIdentifier; }
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
+    void replaceIDBConnectionProxy(RefPtr<IDBClient::IDBConnectionProxy>&&);
+    WEBCORE_EXPORT static void replaceIDBConnectionProxyOnAllWorkers(RefPtr<IDBClient::IDBConnectionProxy>&&);
     void suspend() final;
     void resume() final;
     GraphicsClient* graphicsClient() final;
@@ -230,7 +232,7 @@ private:
 
     const Ref<SecurityOrigin> m_topOrigin;
 
-    const RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
+    RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
 
     const RefPtr<SocketProvider> m_socketProvider;
 

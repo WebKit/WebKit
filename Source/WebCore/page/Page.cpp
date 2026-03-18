@@ -210,6 +210,7 @@
 #include "Widget.h"
 #include "WindowEventLoop.h"
 #include "WindowFeatures.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/VM.h>
 #include <ranges>
@@ -4232,6 +4233,19 @@ IDBClient::IDBConnectionToServer* Page::optionalIDBConnection()
 void Page::clearIDBConnection()
 {
     m_idbConnectionToServer = nullptr;
+}
+
+void Page::clearIDBConnectionOnAllDocuments()
+{
+    clearIDBConnection();
+    forEachDocument([](Document& document) {
+        document.clearIDBConnectionProxy();
+    });
+}
+
+void Page::refreshIDBConnectionForWorkers()
+{
+    WorkerGlobalScope::replaceIDBConnectionProxyOnAllWorkers(idbConnection().proxy());
 }
 
 #if ENABLE(RESOURCE_USAGE)

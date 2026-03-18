@@ -5073,6 +5073,11 @@ RefPtr<IDBClient::IDBConnectionProxy> Document::protectedIDBConnectionProxy()
     return idbConnectionProxy();
 }
 
+void Document::clearIDBConnectionProxy()
+{
+    m_idbConnectionProxy = nullptr;
+}
+
 StorageConnection* Document::storageConnection()
 {
     return page() ? &page()->storageConnection() : nullptr;
