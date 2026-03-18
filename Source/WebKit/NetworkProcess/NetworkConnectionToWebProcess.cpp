@@ -601,7 +601,7 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
     }
 
     auto identifier = loadParameters.identifier;
-    RELEASE_ASSERT(identifier);
+    MESSAGE_CHECK(identifier);
     RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!m_networkResourceLoaders.contains(*identifier));
 
