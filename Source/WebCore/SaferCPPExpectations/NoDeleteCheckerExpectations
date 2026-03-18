@@ -9,7 +9,6 @@ css/StyleSheetList.cpp
 dom/ChildNodeList.cpp
 dom/Document.cpp
 dom/Node.cpp
-[ macOS ] inspector/InspectorFrontendHost.cpp
 loader/EmptyClients.cpp
 page/EventHandler.cpp
 [ iOS ] page/Quirks.cpp

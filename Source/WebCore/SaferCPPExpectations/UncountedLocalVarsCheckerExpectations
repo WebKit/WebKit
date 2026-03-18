@@ -103,7 +103,7 @@ rendering/RenderLayer.cpp
 [ iOS ] rendering/RenderLayerCompositor.cpp
 [ iOS ] rendering/RenderSelectFallbackButton.cpp
 rendering/RenderTreeAsText.cpp
-rendering/cocoa/RenderThemeCocoa.mm
+[ iOS ] rendering/cocoa/RenderThemeCocoa.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/svg/legacy/LegacyRenderSVGTransformableContainer.cpp
 style/MatchResultCache.cpp

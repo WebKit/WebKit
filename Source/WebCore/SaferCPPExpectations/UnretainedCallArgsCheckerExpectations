@@ -23,7 +23,7 @@ editing/cocoa/FontAttributeChangesCocoa.mm
 editing/cocoa/NodeHTMLConverter.mm
 editing/cocoa/WebContentReaderCocoa.mm
 inspector/agents/page/PageTimelineAgent.cpp
-page/InteractionRegion.cpp
+[ iOS ] page/InteractionRegion.cpp
 page/cocoa/PageCocoa.mm
 page/cocoa/WebTextIndicatorLayer.mm
 [ iOS ] page/ios/EventHandlerIOS.mm
@@ -42,7 +42,7 @@ platform/cf/MainThreadSharedTimerCF.cpp
 platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/LocalizedStringsCocoa.mm
 platform/cocoa/NetworkExtensionContentFilter.mm
-platform/cocoa/ParentalControlsURLFilter.mm
+[ iOS ] platform/cocoa/ParentalControlsURLFilter.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/UserAgentCocoa.mm
@@ -51,7 +51,7 @@ platform/cocoa/WebAVPlayerLayer.mm
 platform/graphics/BitmapImageDescriptor.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
-platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
+[ iOS ] platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
 [ Mac ] platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm
 [ Mac ] platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm

@@ -30,7 +30,7 @@ platform/cocoa/RemoteCommandListenerCocoa.mm
 platform/cocoa/SerializedPlatformDataCueValue.mm
 platform/cocoa/SystemVersion.mm
 [ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
-platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
+[ iOS ] platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
 [ Mac ] platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
@@ -82,10 +82,10 @@ platform/libwebrtc/LibWebRTCVPXVideoDecoder.cpp
 platform/mediastream/mac/AVVideoCaptureSource.mm
 platform/mediastream/mac/CoreAudioCaptureUnit.mm
 platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm
-[ iOS ] platform/network/ios/WebCoreURLResponseIOS.mm
 [ iOS ] platform/network/cocoa/ResourceErrorCocoa.mm
 platform/network/cocoa/ResourceHandleCocoa.mm
 platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm
+[ iOS ] platform/network/ios/WebCoreURLResponseIOS.mm
 [ iOS ] platform/text/mac/TextBoundaries.mm
 rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
