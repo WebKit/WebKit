@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerWebTransportSession.h"
 
+#include "Exception.h"
 #include "ScriptExecutionContext.h"
 #include "WebTransport.h"
 #include "WebTransportConnectionStats.h"

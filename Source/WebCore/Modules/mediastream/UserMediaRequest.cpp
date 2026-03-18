@@ -40,6 +40,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentPage.h"
 #include "ExceptionCode.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaStream.h"
 #include "JSOverconstrainedError.h"

@@ -33,6 +33,7 @@
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 

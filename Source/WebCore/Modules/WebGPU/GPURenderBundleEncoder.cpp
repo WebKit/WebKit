@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPURenderBundleEncoder.h"
 
+#include "ExceptionOr.h"
 #include "GPUBindGroup.h"
 #include "GPUBuffer.h"
 #include "GPURenderBundle.h"

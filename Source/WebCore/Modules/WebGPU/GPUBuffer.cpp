@@ -66,7 +66,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<G
     if (m_mapState == GPUBufferMapState::Unmapped)
         m_mapState = GPUBufferMapState::Pending;
 
-    m_pendingMapPromise = promise;
+    m_pendingMapPromise = makeUnique<MapAsyncPromise>(promise);
     // FIXME: Should this capture a weak pointer to |this| instead?
     m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, size, [promise = WTF::move(promise), protectedThis = Ref { *this }, offset, size](bool success) mutable {
         if (!protectedThis->m_pendingMapPromise) {
@@ -77,7 +77,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<G
             return;
         }
 
-        protectedThis->m_pendingMapPromise = std::nullopt;
+        protectedThis->m_pendingMapPromise = nullptr;
         if (success) {
             protectedThis->m_mapState = GPUBufferMapState::Mapped;
             protectedThis->m_mappedRangeOffset = offset;
@@ -206,7 +206,7 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
     m_mappedPoints.clear();
     if (m_pendingMapPromise) {
         m_pendingMapPromise->reject(Exception { ExceptionCode::AbortError });
-        m_pendingMapPromise = std::nullopt;
+        m_pendingMapPromise = nullptr;
     }
 
     m_mapState = GPUBufferMapState::Unmapped;

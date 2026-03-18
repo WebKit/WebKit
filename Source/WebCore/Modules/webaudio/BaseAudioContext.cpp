@@ -67,6 +67,7 @@
 #include "IIRFilterNode.h"
 #include "IIRFilterOptions.h"
 #include "JSAudioBuffer.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "Logging.h"

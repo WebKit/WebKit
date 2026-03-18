@@ -27,6 +27,7 @@
 #include "WebTransportSendStream.h"
 
 #include "InternalWritableStream.h"
+#include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebTransportSendStreamStats.h"
 #include "ScriptExecutionContextInlines.h"

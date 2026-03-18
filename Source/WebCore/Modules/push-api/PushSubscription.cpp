@@ -28,6 +28,7 @@
 
 #include "EventLoop.h"
 #include "Exception.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PushSubscriptionOptions.h"
 #include "PushSubscriptionOwner.h"

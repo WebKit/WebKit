@@ -37,6 +37,11 @@
 #include "DocumentSecurityOrigin.h"
 #include "ExceptionData.h"
 #include "ExceptionOr.h"
+#include "JSDOMConvertAny.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertJSON.h"
+#include "JSDOMConvertNullable.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDigitalCredential.h"
 #include "Page.h"
 #include "SecurityOriginData.h"
@@ -109,13 +114,13 @@ void CredentialRequestCoordinator::setState(PickerState newState)
 
 void CredentialRequestCoordinator::setCurrentPromise(CredentialPromise&& promise)
 {
-    ASSERT(!m_currentPromise.has_value());
-    m_currentPromise = WTF::move(promise);
+    ASSERT(!m_currentPromise);
+    m_currentPromise = makeUnique<CredentialPromise>(WTF::move(promise));
 }
 
 CredentialPromise* CredentialRequestCoordinator::currentPromise()
 {
-    return m_currentPromise ? &m_currentPromise.value() : nullptr;
+    return m_currentPromise.get();
 }
 
 void CredentialRequestCoordinator::prepareCredentialRequest(const Document& document, CredentialPromise&& promise, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests, RefPtr<AbortSignal> signal)

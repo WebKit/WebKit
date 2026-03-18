@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ReadableStreamReadRequest.h"
 
+#include "JSDOMConvertDictionary.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGuardedObject.h"
 #include "JSDOMPromiseDeferred.h"

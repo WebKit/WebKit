@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebTransportReceiveStream.h"
 
+#include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebTransportReceiveStreamStats.h"
 #include "ScriptExecutionContextInlines.h"

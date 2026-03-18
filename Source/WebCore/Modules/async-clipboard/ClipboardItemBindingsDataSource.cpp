@@ -40,6 +40,7 @@
 #include "ImageBuffer.h"
 #include "ImageUtilities.h"
 #include "JSBlob.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"

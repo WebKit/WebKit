@@ -27,9 +27,12 @@
 #include "JSDOMGuardedObject.h"
 
 #include "JSDOMGlobalObjectInlines.h"
+#include <JavaScriptCore/WeakInlines.h>
 
 namespace WebCore {
 using namespace JSC;
+
+JSDOMGlobalObject* DOMGuardedObject::globalObject() const { return m_globalObject.get(); }
 
 DOMGuardedObject::DOMGuardedObject(JSDOMGlobalObject& globalObject, JSCell& guarded)
     : ActiveDOMCallback(globalObject.scriptExecutionContext())

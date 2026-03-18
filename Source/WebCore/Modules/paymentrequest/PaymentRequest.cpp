@@ -34,6 +34,7 @@
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "FrameDestructionObserverInlines.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPaymentDetailsUpdate.h"

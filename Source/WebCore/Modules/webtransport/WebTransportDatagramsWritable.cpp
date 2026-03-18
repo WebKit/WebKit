@@ -28,6 +28,7 @@
 
 #include "DatagramSink.h"
 #include "InternalWritableStream.h"
+#include "ScriptExecutionContext.h"
 #include "WebTransport.h"
 #include "WebTransportSendGroup.h"
 #include "WebTransportSendOptions.h"

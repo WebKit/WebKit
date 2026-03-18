@@ -22,7 +22,8 @@
 
 #include "FrameDestructionObserverInlines.h"
 #include "JSCSSStyleSheet.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"

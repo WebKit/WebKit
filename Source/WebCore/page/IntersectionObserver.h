@@ -122,7 +122,7 @@ public:
     void appendQueuedEntry(Ref<IntersectionObserverEntry>&&);
     void notify();
 
-    IntersectionObserverCallback* callbackConcurrently() { return m_callback.get(); }
+    IntersectionObserverCallback& callbackConcurrently() { return m_callback; }
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
 private:
@@ -153,7 +153,7 @@ private:
     IntersectionObserverMarginBox m_rootMargin;
     IntersectionObserverMarginBox m_scrollMargin;
     Vector<double> m_thresholds;
-    RefPtr<IntersectionObserverCallback> m_callback;
+    const Ref<IntersectionObserverCallback> m_callback;
     Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> m_observationTargets;
     Vector<GCReachableRef<Element>> m_pendingTargets;
     Vector<Ref<IntersectionObserverEntry>> m_queuedEntries;

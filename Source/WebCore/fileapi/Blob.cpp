@@ -38,6 +38,8 @@
 #include "BlobURL.h"
 #include "ContextDestructionObserverInlines.h"
 #include "File.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PolicyContainer.h"
@@ -51,6 +53,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/CString.h>

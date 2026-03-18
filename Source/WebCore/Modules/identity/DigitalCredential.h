@@ -31,7 +31,6 @@
 #include <WebCore/BasicCredential.h>
 #include <WebCore/DigitalCredentialsProtocols.h>
 #include <WebCore/DigitalCredentialsRequestData.h>
-#include <WebCore/JSDOMPromiseDeferred.h>
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <wtf/RefPtr.h>

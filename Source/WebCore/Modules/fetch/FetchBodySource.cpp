@@ -31,6 +31,7 @@
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableByteStreamController.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 

@@ -52,6 +52,9 @@
 #include "JSCryptoAlgorithmParameters.h"
 #include "JSCryptoKey.h"
 #include "JSCryptoKeyPair.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWrapper.h"
 #include "JSEcKeyParams.h"
@@ -70,6 +73,7 @@
 #include "Settings.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSONObject.h>
+#include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

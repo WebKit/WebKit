@@ -689,6 +689,7 @@ bindings/js/JSDOMBindingSecurity.cpp
 bindings/js/JSDOMBuiltinConstructorBase.cpp
 bindings/js/JSDOMConstructorBase.cpp
 bindings/js/JSDOMConstructorWithDocument.cpp
+bindings/js/JSDOMConvertBoolean.cpp
 bindings/js/JSDOMConvertDate.cpp
 bindings/js/JSDOMConvertNumbers.cpp
 bindings/js/JSDOMConvertStrings.cpp
@@ -797,6 +798,7 @@ bindings/js/JSWorkerNavigatorCustom.cpp
 bindings/js/JSWorkletGlobalScopeBase.cpp
 bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/JSXPathResultCustom.cpp
+bindings/js/ModuleScriptLoader.cpp
 bindings/js/ReadableStreamDefaultController.cpp
 bindings/js/ScheduledAction.cpp
 bindings/js/ScriptCachedFrameData.cpp

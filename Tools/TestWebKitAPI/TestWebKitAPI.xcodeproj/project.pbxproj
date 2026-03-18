@@ -3660,6 +3660,7 @@
 		95C52728275F35E100DA7E40 /* FontShadowTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontShadowTests.cpp; sourceTree = "<group>"; };
 		96E05A012DF7B66F00285827 /* WKWebExtensionAPIBookmarks.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIBookmarks.mm; sourceTree = "<group>"; };
 		9739F73F2E5C548E002E7C61 /* ExponentialRampAtTimeTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExponentialRampAtTimeTest.cpp; sourceTree = "<group>"; };
+		97551BE12F63E71F0056D71C /* VideoInShadowDOMElementFullscreen.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoInShadowDOMElementFullscreen.mm; sourceTree = "<group>"; };
 		97CB27AC2F2918DA0024DD32 /* override-complex-expression.wgsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "override-complex-expression.wgsl"; sourceTree = "<group>"; };
 		97DAA8CD2DF1F325004B3040 /* MetalCompilationTests.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = MetalCompilationTests.mm; sourceTree = "<group>"; };
 		97DAA8CF2DF70B91004B3040 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
@@ -6304,6 +6305,7 @@
 			isa = PBXGroup;
 			children = (
 				A1C0982F2E12FB5800FAC83A /* ElementFullscreen.mm */,
+				97551BE12F63E71F0056D71C /* VideoInShadowDOMElementFullscreen.mm */,
 				A1D8C7942DBFFFB500A6878F /* VideoPresentationMode.mm */,
 			);
 			path = UI;

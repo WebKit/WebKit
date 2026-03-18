@@ -248,7 +248,7 @@ bool IntersectionObserver::isObserving(const Element& element) const
 
 void IntersectionObserver::observe(Element& target)
 {
-    if (!trackingDocument() || !m_callback || isObserving(target))
+    if (!trackingDocument() || isObserving(target))
         return;
 
     target.ensureIntersectionObserverData().registrations.append({ *this, std::nullopt });
@@ -695,9 +695,6 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
 
 std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() const
 {
-    if (!m_callback)
-        return std::nullopt;
-
     RefPtr<LocalDOMWindow> window;
     {
         auto* context = m_callback->scriptExecutionContext();

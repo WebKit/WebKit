@@ -34,6 +34,7 @@
 #include "DocumentView.h"
 #include "EventLoop.h"
 #include "FrameLoader.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"

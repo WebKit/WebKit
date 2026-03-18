@@ -28,6 +28,8 @@
 
 #include "FetchEvent.h"
 #include "FetchRequest.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
 #include "NotificationPayload.h"

@@ -32,6 +32,8 @@
 #include "ExceptionOr.h"
 #include "FileSystemDirectoryHandle.h"
 #include "FileSystemStorageConnection.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemDirectoryHandle.h"
 #include "JSStorageManager.h"

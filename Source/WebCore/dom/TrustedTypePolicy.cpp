@@ -99,29 +99,14 @@ ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeNam
 {
     CallbackResult<String> policyValue(CallbackResultType::UnableToExecute);
     if (trustedTypeName == TrustedType::TrustedHTML) {
-        RefPtr<CreateHTMLCallback> protectedCreateHTML;
-        {
-            Locker locker { lock() };
-            protectedCreateHTML = m_options.createHTML;
-        }
-        if (protectedCreateHTML && protectedCreateHTML->hasCallback())
-            policyValue = protectedCreateHTML->invokeRethrowingException(input, WTF::move(arguments));
+        if (m_options.createHTML && m_options.createHTML->hasCallback())
+            policyValue = m_options.createHTML->invokeRethrowingException(input, WTF::move(arguments));
     } else if (trustedTypeName == TrustedType::TrustedScript) {
-        RefPtr<CreateScriptCallback> protectedCreateScript;
-        {
-            Locker locker { lock() };
-            protectedCreateScript = m_options.createScript;
-        }
-        if (protectedCreateScript && protectedCreateScript->hasCallback())
-            policyValue = protectedCreateScript->invokeRethrowingException(input, WTF::move(arguments));
+        if (m_options.createScript && m_options.createScript->hasCallback())
+            policyValue = m_options.createScript->invokeRethrowingException(input, WTF::move(arguments));
     } else if (trustedTypeName == TrustedType::TrustedScriptURL) {
-        RefPtr<CreateScriptURLCallback> protectedCreateScriptURL;
-        {
-            Locker locker { lock() };
-            protectedCreateScriptURL = m_options.createScriptURL;
-        }
-        if (protectedCreateScriptURL && protectedCreateScriptURL->hasCallback())
-            policyValue = protectedCreateScriptURL->invokeRethrowingException(input, WTF::move(arguments));
+        if (m_options.createScriptURL && m_options.createScriptURL->hasCallback())
+            policyValue = m_options.createScriptURL->invokeRethrowingException(input, WTF::move(arguments));
     } else {
         ASSERT_NOT_REACHED();
         return Exception { ExceptionCode::TypeError };
@@ -149,5 +134,21 @@ WebCoreOpaqueRoot root(TrustedTypePolicy* policy)
 }
 
 TrustedTypePolicy::~TrustedTypePolicy() = default;
+
+template<typename Visitor>
+void TrustedTypePolicy::visitAdditionalChildrenInGCThread(Visitor& visitor)
+{
+    // No need to lock since m_options is const. m_options's RefPtrs cannot
+    // be modified by the main thread while the GC thread is reading them
+    // here.
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* createHTML = m_options.createHTML.get())
+        SUPPRESS_UNCOUNTED_ARG createHTML->visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* createScript = m_options.createScript.get())
+        SUPPRESS_UNCOUNTED_ARG createScript->visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* createScriptURL = m_options.createScriptURL.get())
+        SUPPRESS_UNCOUNTED_ARG createScriptURL->visitJSFunctionInGCThread(visitor);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(TrustedTypePolicy);
 
 } // namespace WebCore

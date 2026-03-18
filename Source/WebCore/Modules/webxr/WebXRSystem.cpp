@@ -35,6 +35,8 @@
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
 #include "IDLTypes.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebXRSession.h"
 #include "JSXRReferenceSpaceType.h"

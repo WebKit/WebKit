@@ -37,12 +37,15 @@
 #include "ExceptionOr.h"
 #include "FrameDestructionObserverInlines.h"
 #include "IDLTypes.h"
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertJSON.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MediationRequirement.h"
 #include "PermissionsPolicy.h"
 #include "VisibilityState.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <JavaScriptCore/JSONObject.h>
 #include <Logging.h>
 #include <wtf/JSONValues.h>
 #include <wtf/UUID.h>

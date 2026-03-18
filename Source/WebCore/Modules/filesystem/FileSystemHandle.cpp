@@ -27,6 +27,7 @@
 #include "FileSystemHandle.h"
 
 #include "FileSystemStorageConnection.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/TZoneMallocInlines.h>
 

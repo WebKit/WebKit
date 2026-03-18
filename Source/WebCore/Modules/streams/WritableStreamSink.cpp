@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WritableStreamSink.h"
 
+#include "JSDOMPromiseDeferred.h"
 #include "JSWritableStreamDefaultController.h"
 #include "JSWritableStreamSink.h"
 #include "WebCoreJSClientData.h"
@@ -77,6 +78,8 @@ static bool invokeWritableStreamDefaultControllerFunction(JSC::JSGlobalObject& l
 WritableStreamSink::WritableStreamSink() = default;
 WritableStreamSink::~WritableStreamSink() = default;
 
+void WritableStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&& promise) { promise.resolve(); }
+
 void WritableStreamSink::start(std::unique_ptr<WritableStreamDefaultController>&& controller)
 {
     m_controller = WTF::move(controller);
@@ -96,6 +99,16 @@ void WritableStreamSink::errorIfNeeded(JSC::JSGlobalObject& globalObject, JSC::J
     auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamDefaultControllerErrorIfNeededPrivateName();
 
     invokeWritableStreamDefaultControllerFunction(globalObject, privateName, arguments);
+}
+
+SimpleWritableStreamSink::SimpleWritableStreamSink(WriteCallback&& writeCallback)
+    : m_writeCallback(WTF::move(writeCallback))
+{
+}
+
+void SimpleWritableStreamSink::write(ScriptExecutionContext& context, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
+{
+    promise.settle(m_writeCallback(context, value));
 }
 
 JSC::JSValue JSWritableStreamSink::start(JSC::JSGlobalObject& globalObject, JSC::CallFrame& callFrame)

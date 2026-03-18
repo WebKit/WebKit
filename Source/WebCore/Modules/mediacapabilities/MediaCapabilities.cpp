@@ -29,6 +29,7 @@
 #include "ContentType.h"
 #include "DocumentPage.h"
 #include "EventLoop.h"
+#include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaCapabilitiesDecodingInfo.h"
 #include "JSMediaCapabilitiesEncodingInfo.h"

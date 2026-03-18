@@ -31,6 +31,10 @@
 
 #include "EventLoop.h"
 #include "FrameRateMonitor.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertUnion.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
 #include "Logging.h"

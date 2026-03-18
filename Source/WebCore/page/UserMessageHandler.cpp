@@ -28,6 +28,7 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
+#include "JSDOMConvertAny.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "SerializedScriptValue.h"

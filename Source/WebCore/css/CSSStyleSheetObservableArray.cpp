@@ -28,7 +28,7 @@
 
 #include "Document.h"
 #include "JSCSSStyleSheet.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertInterface.h"
 #include "ShadowRoot.h"
 #include "TreeScope.h"
 

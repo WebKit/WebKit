@@ -26,6 +26,9 @@
 #include "config.h"
 #include "ReadableByteStreamController.h"
 
+#include "JSDOMConvertAny.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertNullable.h"
 #include "JSDOMException.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromise.h"

@@ -40,6 +40,7 @@
 #include "DocumentPage.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSMediaKeyStatusMap.h"
 #include "Logging.h"
 #include "MediaKeyMessageEvent.h"

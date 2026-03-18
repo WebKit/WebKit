@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUCommandEncoder.h"
 
+#include "ExceptionOr.h"
 #include "GPUBuffer.h"
 #include "GPUCommandBuffer.h"
 #include "GPUQuerySet.h"

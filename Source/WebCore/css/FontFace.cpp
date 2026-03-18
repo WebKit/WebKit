@@ -33,6 +33,8 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "DOMPromiseProxy.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
 #include "JSFontFace.h"
 #include "TrustedFonts.h"
 #include <JavaScriptCore/ArrayBuffer.h>

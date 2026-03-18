@@ -33,6 +33,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
+#include "JSDOMConvertNumbers.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSNodeCustom.h"
 #include "Logging.h"

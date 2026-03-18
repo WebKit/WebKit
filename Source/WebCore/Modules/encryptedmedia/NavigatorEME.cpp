@@ -34,6 +34,7 @@
 #include "CDM.h"
 #include "CDMLogging.h"
 #include "Document.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaKeySystemAccess.h"
 #include "Logging.h"

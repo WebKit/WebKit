@@ -28,7 +28,9 @@
 
 #include "Document.h"
 #include "JSCSSPaintCallback.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertCallbacks.h"
+#include "JSDOMConvertSequences.h"
+#include "JSDOMConvertStrings.h"
 #include "LocalDOMWindow.h"
 #include "RenderView.h"
 #include <wtf/SetForScope.h>

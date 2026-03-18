@@ -94,7 +94,7 @@ private:
     bool NODELETE isJSCallback();
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    JSOrNativeResizeObserverCallback m_JSOrNativeCallback;
+    const JSOrNativeResizeObserverCallback m_JSOrNativeCallback;
     Vector<Ref<ResizeObservation>> m_observations;
 
     Vector<Ref<ResizeObservation>> m_activeObservations;

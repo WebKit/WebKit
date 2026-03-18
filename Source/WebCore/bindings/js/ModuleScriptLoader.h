@@ -26,7 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/ScriptFetcher.h>
-#include <WebCore/JSDOMPromiseDeferred.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/ModuleFetchParameters.h>
 #include <wtf/RefCounted.h>
 
@@ -36,7 +36,7 @@ class ModuleScriptLoaderClient;
 
 class ModuleScriptLoader : public RefCounted<ModuleScriptLoader> {
 public:
-    virtual ~ModuleScriptLoader() = default;
+    virtual ~ModuleScriptLoader();
 
     void clearClient()
     {
@@ -51,13 +51,7 @@ public:
     virtual bool isWorkerModuleScriptLoader() const { return false; }
 
 protected:
-    ModuleScriptLoader(ModuleScriptLoaderClient& client, DeferredPromise& promise, JSC::ScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
-        : m_client(&client)
-        , m_promise(&promise)
-        , m_scriptFetcher(scriptFetcher)
-        , m_parameters(WTF::move(parameters))
-    {
-    }
+    ModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, JSC::ScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
     ModuleScriptLoaderClient* m_client;
     RefPtr<DeferredPromise> m_promise;

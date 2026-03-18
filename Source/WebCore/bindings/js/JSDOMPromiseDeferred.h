@@ -27,9 +27,12 @@
 
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
 #include <WebCore/ExceptionOr.h>
-#include <WebCore/JSDOMConvert.h>
+#include <WebCore/JSDOMConvertBase.h>
+#include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/JSDOMGuardedObject.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/ScriptExecutionContext.h>
 
 namespace WebCore {

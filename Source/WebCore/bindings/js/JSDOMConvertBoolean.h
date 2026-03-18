@@ -35,17 +35,7 @@ template<> struct Converter<IDLBoolean> : DefaultConverter<IDLBoolean> {
     static constexpr bool conversionHasSideEffects = false;
     using Result = ConversionResult<IDLBoolean>;
 
-    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
-    {
-        auto& vm = lexicalGlobalObject.vm();
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-        auto conversionResult = value.toBoolean(&lexicalGlobalObject);
-
-        RETURN_IF_EXCEPTION(throwScope, Result::exception());
-
-        return Result { WTF::move(conversionResult) };
-    }
+    WEBCORE_EXPORT static Result convert(JSC::JSGlobalObject&, JSC::JSValue);
 };
 
 template<> struct JSConverter<IDLBoolean> {

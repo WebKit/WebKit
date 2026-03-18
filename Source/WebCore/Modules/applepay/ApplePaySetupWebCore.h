@@ -29,7 +29,6 @@
 
 #include "ActiveDOMObject.h"
 #include "ApplePaySetupConfiguration.h"
-#include "JSDOMPromiseDeferred.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -62,8 +61,8 @@ private:
     void suspend(ReasonForSuspension) final;
 
     ApplePaySetupConfiguration m_configuration;
-    std::optional<SetupFeaturesPromise> m_setupFeaturesPromise;
-    std::optional<BeginPromise> m_beginPromise;
+    std::unique_ptr<SetupFeaturesPromise> m_setupFeaturesPromise;
+    std::unique_ptr<BeginPromise> m_beginPromise;
 };
 
 } // namespace WebCore

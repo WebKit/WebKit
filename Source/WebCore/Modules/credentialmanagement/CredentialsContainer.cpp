@@ -35,6 +35,8 @@
 #include "DigitalCredential.h"
 #include "DocumentPage.h"
 #include "JSBasicCredential.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNullable.h"
 #include "JSDigitalCredential.h"
 #include "LocalFrame.h"
 #include "Navigator.h"
