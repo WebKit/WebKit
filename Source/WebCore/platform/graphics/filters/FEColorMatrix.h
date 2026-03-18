@@ -49,6 +49,7 @@ public:
     const Vector<float>& values() const { return m_values; }
     bool setValues(const Vector<float>&);
 
+    WEBCORE_EXPORT static bool areValuesValidForType(ColorMatrixType, const Vector<float>& values);
     static void calculateSaturateComponents(std::span<float, 9> components, float value);
     static void calculateHueRotateComponents(std::span<float, 9> components, float value);
     static Vector<float> normalizedFloats(const Vector<float>& values);

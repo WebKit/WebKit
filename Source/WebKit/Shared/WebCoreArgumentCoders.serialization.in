@@ -3880,7 +3880,7 @@ enum class WebCore::ApplePayButtonStyle : uint8_t {
 
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEColorMatrix {
     WebCore::ColorMatrixType type();
-    Vector<float> values();
+    [Validator='WebCore::FEColorMatrix::areValuesValidForType(*type, *values)'] Vector<float> values();
 
     WebCore::DestinationColorSpace operatingColorSpace();
 };

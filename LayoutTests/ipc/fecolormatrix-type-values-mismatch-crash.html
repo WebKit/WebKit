@@ -1,0 +1,123 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+    <script>
+        window.testRunner?.dumpAsText();
+        window.testRunner?.waitUntilDone();
+
+        window.setTimeout(async () => {
+            if (!window.IPC)
+                return window.testRunner?.notifyDone();
+
+            const { CoreIPC } = await import('./coreipc.js');
+
+            const streamConnection = CoreIPC.newStreamConnection();
+
+            const renderingBackendIdentifier = Math.floor(Math.random() * 0x1000000);
+            CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+                renderingBackendIdentifier: renderingBackendIdentifier,
+                connectionHandle: streamConnection
+            });
+            const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+            const didInitializeReply = streamConnection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
+
+            const imageBufferIdentifier = Math.floor(Math.random() * 0x1000000);
+            const contextIdentifier = Math.floor(Math.random() * 0x1000000);
+            remoteRenderingBackend.CreateImageBuffer({
+                logicalSize: {
+                    width: 32,
+                    height: 82
+                },
+                renderingMode: 1,
+                renderingPurpose: 0,
+                resolutionScale: 10,
+                colorSpace: {
+                    serializableColorSpace: {
+                        alias: {
+                            optionalValue: {
+                                m_cgColorSpace: {
+                                    alias: {
+                                        variantType: 'WebCore::ColorSpace',
+                                        variant: 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                pixelFormat: 1,
+                bufferFormat: { pixelFormat: 1, useLosslessCompression: 0 },
+                identifier: imageBufferIdentifier,
+                contextIdentifier: contextIdentifier
+            });
+            const remoteImageBuffer = streamConnection.newInterface("RemoteImageBuffer", imageBufferIdentifier);
+
+            const srgbColorSpace = {serializableColorSpace: {alias: {optionalValue: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}};
+
+            try {
+                remoteImageBuffer.FilteredNativeImage({
+                    filter: {
+                        subclasses: {
+                            variantType: 'WebCore::SVGFilterRenderer',
+                            variant: {
+                                primitiveUnits: 0,
+                                expression: {
+                                    alias: [
+                                        {index: 0, level: 0, geometry: {}},
+                                        {index: 1, level: 0, geometry: {}}
+                                    ]
+                                },
+                                effects: [
+                                    {
+                                        subclasses: {
+                                            variantType: 'WebCore::SourceGraphic',
+                                            variant: {
+                                                operatingColorSpace: srgbColorSpace
+                                            }
+                                        }
+                                    },
+                                    {
+                                        subclasses: {
+                                            variantType: 'WebCore::FEColorMatrix',
+                                            variant: {
+                                                type: 2,    // FECOLORMATRIX_TYPE_SATURATE
+                                                values: [], // Empty â€” should have at least 1 value
+                                                operatingColorSpace: srgbColorSpace
+                                            }
+                                        }
+                                    }
+                                ],
+                                geometry: {
+                                    referenceBox: {
+                                        location: {x: 0, y: 0},
+                                        size: {width: 128, height: 128}
+                                    },
+                                    filterRegion: {
+                                        location: {x: 0, y: 0},
+                                        size: {width: 128, height: 128}
+                                    },
+                                    scale: {width: 1, height: 1}
+                                },
+                                filterRenderingModes: 1,
+                                isShowingDebugOverlay: false,
+                                renderingResourceIdentifierIfExists: {}
+                            }
+                        }
+                    }
+                });
+            } catch(err) {
+                if(!(err instanceof TypeError)) {
+                    console.log("Test failed: expected TypeError, got " + err);
+                }
+            }
+
+            streamConnection.connection.invalidate();
+
+            // Allow some time for the GPUP to receive the FilteredNativeImage message, otherwise we can finish
+            // the test before we detect a possible GPUP crash.
+            setTimeout(()=>{
+                window.testRunner?.notifyDone();
+            }, 500);
+        }, 20);
+    </script>
+    <p>This test passes if WebKit does not crash.</p>
+</body>

@@ -51,16 +51,6 @@ Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName
     return adoptRef(*new SVGFEColorMatrixElement(tagName, document));
 }
 
-bool SVGFEColorMatrixElement::isInvalidValuesLength() const
-{
-    auto filterType = type();
-    auto size = values().size();
-
-    return (filterType == ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX    && size != 20)
-        || (filterType == ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
-        || (filterType == ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE  && size != 1);
-}
-
 void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
@@ -107,7 +97,7 @@ void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
     case AttributeNames::typeAttr:
     case AttributeNames::valuesAttr: {
         InstanceInvalidationGuard guard(*this);
-        if (isInvalidValuesLength())
+        if (!FEColorMatrix::areValuesValidForType(type(), values()))
             markFilterEffectForRebuild();
         else
             primitiveAttributeChanged(attrName);
@@ -144,11 +134,11 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::createFilterEffect(const FilterEff
             break;
         }
     } else {
-        if (isInvalidValuesLength())
-            return nullptr;
-
         filterValues = values();
         filterValues.shrinkToFit();
+
+        if (!FEColorMatrix::areValuesValidForType(type(), filterValues))
+            return nullptr;
     }
 
     return FEColorMatrix::create(filterType, WTF::move(filterValues));
