@@ -9,7 +9,7 @@
     "@slack/web-api": "^5.10.0",
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
-    "eslint": "^7.3.1",
+    "eslint": "^7.32.0",
     "jest": "^26.1.0",
     "node-persist": "^3.1.0",
     "replaceall": "^0.1.6",

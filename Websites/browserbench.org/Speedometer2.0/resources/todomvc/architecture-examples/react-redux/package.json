@@ -3,7 +3,7 @@
   "devDependencies": {
     "enzyme": "^2.4.1",
     "react-addons-test-utils": "^15.3.0",
-    "react-scripts": "^1.0.13"
+    "react-scripts": "^1.1.5"
   },
   "dependencies": {
     "classnames": "^2.2.5",
