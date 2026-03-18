@@ -31,6 +31,8 @@
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, connection, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue)
+
 namespace WebKit {
 
 IDBStorageRegistry::IDBStorageRegistry() = default;
@@ -39,14 +41,16 @@ IDBStorageRegistry::~IDBStorageRegistry() = default;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBStorageRegistry);
 
-WebCore::IDBServer::IDBConnectionToClient& IDBStorageRegistry::ensureConnectionToClient(IPC::Connection::UniqueID connection, WebCore::IDBConnectionIdentifier identifier)
+WebCore::IDBServer::IDBConnectionToClient* IDBStorageRegistry::ensureConnectionToClient(IPC::Connection& ipcConnection, const WebCore::IDBResourceIdentifier& requestIdentifier)
 {
+    MESSAGE_CHECK_WITH_RETURN_VALUE(requestIdentifier.connectionIdentifier(), ipcConnection, nullptr);
+    auto identifier = *requestIdentifier.connectionIdentifier();
     auto addResult = m_connectionsToClient.add(identifier, nullptr);
     if (addResult.isNewEntry)
-        addResult.iterator->value = makeUnique<IDBStorageConnectionToClient>(connection, identifier);
+        addResult.iterator->value = makeUnique<IDBStorageConnectionToClient>(ipcConnection.uniqueID(), identifier);
 
-    ASSERT(addResult.iterator->value->ipcConnection() == connection);
-    return addResult.iterator->value->connectionToClient();
+    MESSAGE_CHECK_WITH_RETURN_VALUE(addResult.iterator->value->ipcConnection() == ipcConnection.uniqueID(), ipcConnection, nullptr);
+    return &addResult.iterator->value->connectionToClient();
 }
 
 void IDBStorageRegistry::removeConnectionToClient(IPC::Connection::UniqueID connection)
@@ -93,16 +97,41 @@ void IDBStorageRegistry::unregisterTransaction(WebCore::IDBServer::UniqueIDBData
     m_transactions.remove(identifier);
 }
 
-WebCore::IDBServer::UniqueIDBDatabaseConnection* IDBStorageRegistry::connection(WebCore::IDBDatabaseConnectionIdentifier identifier)
+bool IDBStorageRegistry::isValidConnectionForIPC(WebCore::IDBServer::UniqueIDBDatabaseConnection& databaseConnection, IPC::Connection& ipcConnection)
 {
-    return m_connections.get(identifier);
+    auto connectionIdentifier = databaseConnection.connectionToClient().identifier();
+    auto it = m_connectionsToClient.find(connectionIdentifier);
+    if (it == m_connectionsToClient.end())
+        return true;
+    return it->value->ipcConnection() == ipcConnection.uniqueID();
 }
 
-WebCore::IDBServer::UniqueIDBDatabaseTransaction* IDBStorageRegistry::transaction(WebCore::IDBResourceIdentifier identifier)
+RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> IDBStorageRegistry::connection(WebCore::IDBDatabaseConnectionIdentifier identifier, IPC::Connection& ipcConnection)
 {
+    RefPtr databaseConnection = m_connections.get(identifier);
+    if (!databaseConnection)
+        return nullptr;
+
+    MESSAGE_CHECK_WITH_RETURN_VALUE(isValidConnectionForIPC(*databaseConnection, ipcConnection), ipcConnection, nullptr);
+
+    return databaseConnection;
+}
+
+RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> IDBStorageRegistry::transaction(WebCore::IDBResourceIdentifier identifier, IPC::Connection& ipcConnection)
+{
+    MESSAGE_CHECK_WITH_RETURN_VALUE(identifier.connectionIdentifier(), ipcConnection, nullptr);
     if (identifier.isEmpty())
         return nullptr;
-    return m_transactions.get(identifier);
+    RefPtr transaction = m_transactions.get(identifier);
+    if (!transaction)
+        return nullptr;
+
+    if (RefPtr databaseConnection = transaction->databaseConnection())
+        MESSAGE_CHECK_WITH_RETURN_VALUE(isValidConnectionForIPC(*databaseConnection, ipcConnection), ipcConnection, nullptr);
+
+    return transaction;
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK_WITH_RETURN_VALUE

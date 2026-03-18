@@ -49,16 +49,18 @@ class IDBStorageRegistry : public CanMakeThreadSafeCheckedPtr<IDBStorageRegistry
 public:
     IDBStorageRegistry();
     ~IDBStorageRegistry();
-    WebCore::IDBServer::IDBConnectionToClient& ensureConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);
+    WebCore::IDBServer::IDBConnectionToClient* ensureConnectionToClient(IPC::Connection&, const WebCore::IDBResourceIdentifier&);
     void removeConnectionToClient(IPC::Connection::UniqueID);
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
     void unregisterConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
-    WebCore::IDBServer::UniqueIDBDatabaseConnection* connection(WebCore::IDBDatabaseConnectionIdentifier);
+    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> connection(WebCore::IDBDatabaseConnectionIdentifier, IPC::Connection&);
     void registerTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
     void unregisterTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
-    WebCore::IDBServer::UniqueIDBDatabaseTransaction* transaction(WebCore::IDBResourceIdentifier);
+    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> transaction(WebCore::IDBResourceIdentifier, IPC::Connection&);
 
 private:
+    bool isValidConnectionForIPC(WebCore::IDBServer::UniqueIDBDatabaseConnection&, IPC::Connection&);
+
     HashMap<WebCore::IDBConnectionIdentifier, std::unique_ptr<IDBStorageConnectionToClient>> m_connectionsToClient;
     HashMap<WebCore::IDBDatabaseConnectionIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection>> m_connections;
     HashMap<WebCore::IDBResourceIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction>> m_transactions;

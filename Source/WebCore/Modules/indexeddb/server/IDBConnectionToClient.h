@@ -48,7 +48,7 @@ class IDBConnectionToClient : public RefCounted<IDBConnectionToClient> {
 public:
     WEBCORE_EXPORT static Ref<IDBConnectionToClient> create(IDBConnectionToClientDelegate&);
 
-    IDBConnectionIdentifier identifier() const;
+    WEBCORE_EXPORT IDBConnectionIdentifier identifier() const;
 
     void didDeleteDatabase(const IDBResultData&);
     void didOpenDatabase(const IDBResultData&);

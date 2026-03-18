@@ -62,7 +62,7 @@ public:
 
     WEBCORE_EXPORT ~UniqueIDBDatabaseTransaction();
 
-    UniqueIDBDatabaseConnection* databaseConnection() const;
+    WEBCORE_EXPORT UniqueIDBDatabaseConnection* databaseConnection() const;
     UniqueIDBDatabase* database() const;
     CheckedPtr<UniqueIDBDatabase> checkedDatabase() const;
     const IDBTransactionInfo& info() const { return m_transactionInfo; }

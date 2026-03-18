@@ -1728,9 +1728,10 @@ void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdenti
 
 void NetworkStorageManager::openDatabase(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
 {
-    MESSAGE_CHECK(requestData.requestIdentifier().connectionIdentifier(), connection);
-    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), *requestData.requestIdentifier().connectionIdentifier());
-    checkedOriginStorageManager(requestData.databaseIdentifier().origin())->checkedIDBStorageManager(*m_idbStorageRegistry)->openDatabase(connectionToClient, requestData);
+    RefPtr connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection, requestData.requestIdentifier());
+    if (!connectionToClient)
+        return;
+    checkedOriginStorageManager(requestData.databaseIdentifier().origin())->checkedIDBStorageManager(*m_idbStorageRegistry)->openDatabase(*connectionToClient, requestData);
 }
 
 void NetworkStorageManager::openDBRequestCancelled(const WebCore::IDBOpenRequestData& requestData)
@@ -1740,26 +1741,27 @@ void NetworkStorageManager::openDBRequestCancelled(const WebCore::IDBOpenRequest
 
 void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
 {
-    MESSAGE_CHECK(requestData.requestIdentifier().connectionIdentifier(), connection);
-    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), *requestData.requestIdentifier().connectionIdentifier());
-    checkedOriginStorageManager(requestData.databaseIdentifier().origin())->checkedIDBStorageManager(*m_idbStorageRegistry)->deleteDatabase(connectionToClient, requestData);
+    RefPtr connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection, requestData.requestIdentifier());
+    if (!connectionToClient)
+        return;
+    checkedOriginStorageManager(requestData.databaseIdentifier().origin())->checkedIDBStorageManager(*m_idbStorageRegistry)->deleteDatabase(*connectionToClient, requestData);
 }
 
-void NetworkStorageManager::establishTransaction(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBTransactionInfo& transactionInfo)
+void NetworkStorageManager::establishTransaction(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBTransactionInfo& transactionInfo)
 {
-    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection))
         connection->establishTransaction(transactionInfo);
 }
 
-void NetworkStorageManager::databaseConnectionPendingClose(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
+void NetworkStorageManager::databaseConnectionPendingClose(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
-    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection))
         connection->connectionPendingCloseFromClient();
 }
 
-void NetworkStorageManager::databaseConnectionClosed(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
+void NetworkStorageManager::databaseConnectionClosed(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
-    RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier);
+    RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection);
     if (!connection)
         return;
 
@@ -1773,57 +1775,55 @@ void NetworkStorageManager::databaseConnectionClosed(WebCore::IDBDatabaseConnect
         checkedOriginStorageManager(databaseIdentifier.origin())->checkedIDBStorageManager(*m_idbStorageRegistry)->tryCloseDatabase(databaseIdentifier);
 }
 
-void NetworkStorageManager::abortOpenAndUpgradeNeeded(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
+void NetworkStorageManager::abortOpenAndUpgradeNeeded(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
 {
     if (transactionIdentifier) {
-        if (RefPtr transaction = m_idbStorageRegistry->transaction(*transactionIdentifier))
+        if (RefPtr transaction = m_idbStorageRegistry->transaction(*transactionIdentifier, ipcConnection))
             transaction->abortWithoutCallback();
     }
 
-    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection))
         connection->connectionClosedFromClient();
 }
 
-void NetworkStorageManager::didFireVersionChangeEvent(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void NetworkStorageManager::didFireVersionChangeEvent(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
-    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection))
         connection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
 }
 
-void NetworkStorageManager::didGenerateIndexKeyForRecord(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IDBIndexInfo& indexInfo, const WebCore::IDBKeyData& key, const WebCore::IndexKey& indexKey, std::optional<int64_t> recordID)
+void NetworkStorageManager::didGenerateIndexKeyForRecord(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IDBIndexInfo& indexInfo, const WebCore::IDBKeyData& key, const WebCore::IndexKey& indexKey, std::optional<int64_t> recordID)
 {
-    if (RefPtr transaction = m_idbStorageRegistry->transaction(transactionIdentifier))
+    if (RefPtr transaction = m_idbStorageRegistry->transaction(transactionIdentifier, connection))
         transaction->didGenerateIndexKeyForRecord(requestIdentifier, indexInfo, key, indexKey, recordID);
 }
 
 void NetworkStorageManager::abortTransaction(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& transactionIdentifier)
 {
-    MESSAGE_CHECK(transactionIdentifier.connectionIdentifier(), connection);
-    if (RefPtr transaction = m_idbStorageRegistry->transaction(transactionIdentifier))
+    if (RefPtr transaction = m_idbStorageRegistry->transaction(transactionIdentifier, connection))
         transaction->abort();
 }
 
 void NetworkStorageManager::commitTransaction(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& transactionIdentifier, uint64_t handledRequestResultsCount)
 {
-    MESSAGE_CHECK(transactionIdentifier.connectionIdentifier(), connection);
-    if (RefPtr transaction = m_idbStorageRegistry->transaction(transactionIdentifier))
+    if (RefPtr transaction = m_idbStorageRegistry->transaction(transactionIdentifier, connection))
         transaction->commit(handledRequestResultsCount);
 }
 
-void NetworkStorageManager::didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
+void NetworkStorageManager::didFinishHandlingVersionChangeTransaction(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
 {
-    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
-        connection->didFinishHandlingVersionChange(transactionIdentifier);
+    if (RefPtr databaseConnection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection))
+        databaseConnection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
-RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> NetworkStorageManager::idbTransaction(const WebCore::IDBRequestData& requestData)
+RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> NetworkStorageManager::idbTransaction(const WebCore::IDBRequestData& requestData, IPC::Connection& connection)
 {
-    return m_idbStorageRegistry->transaction(requestData.transactionIdentifier());
+    return m_idbStorageRegistry->transaction(requestData.transactionIdentifier(), connection);
 }
 
 void NetworkStorageManager::createObjectStore(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBObjectStoreInfo& objectStoreInfo)
 {
-    RefPtr transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData, connection);
     if (!transaction)
         return;
     MESSAGE_CHECK(transaction->isVersionChange(), connection);
@@ -1833,7 +1833,7 @@ void NetworkStorageManager::createObjectStore(IPC::Connection& connection, const
 
 void NetworkStorageManager::deleteObjectStore(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const String& objectStoreName)
 {
-    RefPtr transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData, connection);
     if (!transaction)
         return;
     MESSAGE_CHECK(transaction->isVersionChange(), connection);
@@ -1843,7 +1843,7 @@ void NetworkStorageManager::deleteObjectStore(IPC::Connection& connection, const
 
 void NetworkStorageManager::renameObjectStore(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
 {
-    RefPtr transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData, connection);
     if (!transaction)
         return;
     MESSAGE_CHECK(transaction->isVersionChange(), connection);
@@ -1851,16 +1851,16 @@ void NetworkStorageManager::renameObjectStore(IPC::Connection& connection, const
     transaction->renameObjectStore(requestData, objectStoreIdentifier, newName);
 }
 
-void NetworkStorageManager::clearObjectStore(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier)
+void NetworkStorageManager::clearObjectStore(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
+    if (RefPtr transaction = idbTransaction(requestData, connection))
         transaction->clearObjectStore(requestData, objectStoreIdentifier);
 }
 
 void NetworkStorageManager::createIndex(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBIndexInfo& indexInfo)
 {
     MESSAGE_CHECK(!requestData.requestIdentifier().isEmpty(), connection);
-    RefPtr transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData, connection);
     if (!transaction)
         return;
     MESSAGE_CHECK(transaction->isVersionChange(), connection);
@@ -1870,7 +1870,7 @@ void NetworkStorageManager::createIndex(IPC::Connection& connection, const WebCo
 
 void NetworkStorageManager::deleteIndex(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
-    RefPtr transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData, connection);
     if (!transaction)
         return;
     MESSAGE_CHECK(transaction->isVersionChange(), connection);
@@ -1880,7 +1880,7 @@ void NetworkStorageManager::deleteIndex(IPC::Connection& connection, const WebCo
 
 void NetworkStorageManager::renameIndex(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, const String& newName)
 {
-    RefPtr transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData, connection);
     if (!transaction)
         return;
     MESSAGE_CHECK(transaction->isVersionChange(), connection);
@@ -1891,7 +1891,7 @@ void NetworkStorageManager::renameIndex(IPC::Connection& connection, const WebCo
 void NetworkStorageManager::putOrAdd(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, const WebCore::IndexIDToIndexKeyMap& indexKeys, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     assertIsCurrent(workQueue());
-    RefPtr transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData, connection);
     if (!transaction)
         return;
 
@@ -1923,46 +1923,47 @@ void NetworkStorageManager::putOrAdd(IPC::Connection& connection, const WebCore:
     transaction->putOrAdd(requestData, keyData, value, indexKeys, overwriteMode);
 }
 
-void NetworkStorageManager::getRecord(const WebCore::IDBRequestData& requestData, const WebCore::IDBGetRecordData& getRecordData)
+void NetworkStorageManager::getRecord(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBGetRecordData& getRecordData)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
+    if (RefPtr transaction = idbTransaction(requestData, connection))
         transaction->getRecord(requestData, getRecordData);
 }
 
-void NetworkStorageManager::getAllRecords(const WebCore::IDBRequestData& requestData, const WebCore::IDBGetAllRecordsData& getAllRecordsData)
+void NetworkStorageManager::getAllRecords(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBGetAllRecordsData& getAllRecordsData)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
+    if (RefPtr transaction = idbTransaction(requestData, connection))
         transaction->getAllRecords(requestData, getAllRecordsData);
 }
 
-void NetworkStorageManager::getCount(const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyRangeData& keyRangeData)
+void NetworkStorageManager::getCount(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyRangeData& keyRangeData)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
+    if (RefPtr transaction = idbTransaction(requestData, connection))
         transaction->getCount(requestData, keyRangeData);
 }
 
-void NetworkStorageManager::deleteRecord(const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyRangeData& keyRangeData)
+void NetworkStorageManager::deleteRecord(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyRangeData& keyRangeData)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
+    if (RefPtr transaction = idbTransaction(requestData, connection))
         transaction->deleteRecord(requestData, keyRangeData);
 }
 
-void NetworkStorageManager::openCursor(const WebCore::IDBRequestData& requestData, const WebCore::IDBCursorInfo& cursorInfo)
+void NetworkStorageManager::openCursor(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBCursorInfo& cursorInfo)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
+    if (RefPtr transaction = idbTransaction(requestData, connection))
         transaction->openCursor(requestData, cursorInfo);
 }
 
-void NetworkStorageManager::iterateCursor(const WebCore::IDBRequestData& requestData, const WebCore::IDBIterateCursorData& cursorData)
+void NetworkStorageManager::iterateCursor(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBIterateCursorData& cursorData)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
+    if (RefPtr transaction = idbTransaction(requestData, connection))
         transaction->iterateCursor(requestData, cursorData);
 }
 
 void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::ClientOrigin& origin)
 {
-    MESSAGE_CHECK(requestIdentifier.connectionIdentifier(), connection);
-    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), *requestIdentifier.connectionIdentifier());
+    RefPtr connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection, requestIdentifier);
+    if (!connectionToClient)
+        return;
     auto result = checkedOriginStorageManager(origin)->checkedIDBStorageManager(*m_idbStorageRegistry)->getAllDatabaseNamesAndVersions();
     connectionToClient->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(result));
 }
