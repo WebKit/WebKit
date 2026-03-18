@@ -46,6 +46,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SearchInputType.h"

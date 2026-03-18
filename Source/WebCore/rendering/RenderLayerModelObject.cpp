@@ -37,6 +37,8 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerHTML.h"
+#include "RenderLayerSVG.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderObjectInlines.h"
@@ -110,7 +112,10 @@ void RenderLayerModelObject::destroyLayer()
 void RenderLayerModelObject::createLayer()
 {
     ASSERT(!m_layer);
-    m_layer = RenderLayer::create(*this);
+    if (isSVGLayerAwareRenderer() && document().settings().layerBasedSVGEngineEnabled())
+        m_layer = RenderLayerSVG::create(*this);
+    else
+        m_layer = RenderLayerHTML::create(*this);
     setHasLayer(true);
     m_layer->insertOnlyThisLayer();
 }

@@ -22,6 +22,7 @@
 #include "SVGTextQuery.h"
 
 #include "FloatConversion.h"
+#include "FontCascadeInlines.h"
 #include "LegacyInlineFlowBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderElementInlines.h"

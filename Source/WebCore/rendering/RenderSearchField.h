@@ -27,7 +27,9 @@
 
 namespace WebCore {
 
+class FontSelector;
 class HTMLInputElement;
+class HostWindow;
 
 class RenderSearchField final : public RenderTextControlSingleLine {
     WTF_MAKE_TZONE_ALLOCATED(RenderSearchField);

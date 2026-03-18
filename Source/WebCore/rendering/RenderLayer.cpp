@@ -2,7 +2,7 @@
  * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
- * Copyright (c) 2020, 2021, 2022 Igalia S.L.
+ * Copyright (c) 2020, 2021, 2022, 2026 Igalia S.L.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -315,7 +315,7 @@ static ScrollingScope NODELETE nextScrollingScope()
 
 WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_IMPL(RenderLayer);
 
-RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
+RenderLayer::RenderLayer(RenderLayerModelObject& renderer, RenderLayerType layerType)
     : m_isRenderViewLayer(renderer.isRenderView())
     , m_forcedStackingContext(renderer.isRenderMedia())
     , m_isNormalFlowOnly(false)
@@ -357,6 +357,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     , m_hasNotIsolatedCompositedBlendingDescendants(false)
     , m_hasNotIsolatedBlendingDescendants(false)
     , m_hasNotIsolatedBlendingDescendantsStatusDirty(false)
+    , m_layerType(layerType)
     , m_renderer(renderer)
 {
     setIsNormalFlowOnly(shouldBeNormalFlowOnly());
@@ -1935,17 +1936,8 @@ void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
 
 void RenderLayer::updateAncestorDependentState()
 {
-    m_enclosingSVGHiddenOrResourceContainer = nullptr;
-    auto determineSVGAncestors = [&] (const RenderElement& renderer) {
-        for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
-            if (auto* container = dynamicDowncast<RenderSVGHiddenContainer>(ancestor)) {
-                m_enclosingSVGHiddenOrResourceContainer = container;
-                return;
-            }
-        }
-    };
     if (renderer().document().settings().layerBasedSVGEngineEnabled())
-        determineSVGAncestors(renderer());
+        updateSVGSpecificAncestorState();
 
     bool insideSVGForeignObject = false;
     if (renderer().document().mayHaveRenderedSVGForeignObjects()) {
@@ -3290,33 +3282,6 @@ static inline bool NODELETE shouldSuppressPaintingLayer(RenderLayer* layer)
     return false;
 }
 
-void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, const AffineTransform& layerContentTransform)
-{
-    bool wasPaintingSVGResourceLayer = m_isPaintingSVGResourceLayer;
-    m_isPaintingSVGResourceLayer = true;
-    context.concatCTM(layerContentTransform);
-
-    auto localPaintDirtyRect = LayoutRect::infiniteRect();
-
-    auto* rootPaintingLayer = [&] () {
-        auto* curr = parent();
-        while (curr && !(curr->renderer().isAnonymous() && is<RenderSVGViewportContainer>(curr->renderer())))
-            curr = curr->parent();
-        return curr;
-    }();
-    ASSERT(rootPaintingLayer);
-
-    LayerPaintingInfo paintingInfo(rootPaintingLayer, localPaintDirtyRect, PaintBehavior::Normal, LayoutSize());
-
-    OptionSet<PaintLayerFlag> flags { PaintLayerFlag::TemporaryClipRects };
-    if (!renderer().hasNonVisibleOverflow())
-        flags.add({ PaintLayerFlag::PaintingOverflowContents, PaintLayerFlag::PaintingOverflowContentsRoot });
-
-    paintLayer(context, paintingInfo, flags);
-
-    m_isPaintingSVGResourceLayer = wasPaintingSVGResourceLayer;
-}
-
 static inline bool NODELETE paintForFixedRootBackground(const RenderLayer* layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags)
 {
     return layer->renderer().isDocumentElementRenderer() && (paintFlags & RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly);
@@ -3529,10 +3494,10 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
 
     // Applying clip-path on <clipPath> enforces us to use mask based clipping, so return false here to disable path based clipping.
     // Furthermore if we're the child of a resource container (<clipPath> / <mask> / ...) disabled path based clipping.
-    if (is<RenderSVGResourceClipper>(m_enclosingSVGHiddenOrResourceContainer)) {
-        // If m_isPaintingSVGResourceLayer is true, this function was invoked via paintSVGResourceLayer() -- clipping on <clipPath> is already
+    if (is<RenderSVGResourceClipper>(enclosingSVGHiddenOrResourceContainer())) {
+        // If isPaintingSVGResourceLayer() is true, this function was invoked via paintSVGResourceLayer() -- clipping on <clipPath> is already
         // handled in RenderSVGResourceClipper::applyMaskClipping(), so do not set paintSVGClippingMask to true here.
-        paintFlags.set(PaintLayerFlag::PaintingSVGClippingMask, !m_isPaintingSVGResourceLayer);
+        paintFlags.set(PaintLayerFlag::PaintingSVGClippingMask, !isPaintingSVGResourceLayer());
         return;
     }
 
@@ -3693,25 +3658,6 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     bool isSelfPaintingLayer = this->isSelfPaintingLayer();
     bool isInsideSkippedSubtree = renderer().isSkippedContent();
 
-    auto hasVisibleContent = [&]() -> bool {
-        if (isInsideSkippedSubtree)
-            return false;
-
-        if (!m_hasVisibleContent)
-            return false;
-
-        if (!m_enclosingSVGHiddenOrResourceContainer)
-            return true;
-
-        // Hidden SVG containers (<defs> / <symbol> ...) and their children are never painted directly.
-        if (!is<RenderSVGResourceContainer>(m_enclosingSVGHiddenOrResourceContainer))
-            return false;
-
-        // SVG resource layers and their children are only painted indirectly, via paintSVGResourceLayer().
-        ASSERT(m_enclosingSVGHiddenOrResourceContainer->hasLayer());
-        return m_enclosingSVGHiddenOrResourceContainer->layer()->isPaintingSVGResourceLayer();
-    };
-
     auto shouldSkipNonFixedTopDocumentContent = [&] {
         if (!paintingInfo.paintBehavior.contains(PaintBehavior::FixedAndStickyLayersOnly))
             return false;
@@ -3728,7 +3674,8 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         return true;
     };
 
-    bool shouldPaintContent = hasVisibleContent()
+    bool shouldPaintContent = !isInsideSkippedSubtree
+        && hasVisibleContentForPainting()
         && isSelfPaintingLayer
         && !isPaintingOverlayScrollbars
         && !isCollectingEventRegion
@@ -4742,7 +4689,7 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     // If we're hit testing 'SVG clip content' (aka. RenderSVGResourceClipper) do not early exit.
     if (!request.svgClipContent()) {
         // SVG resource layers and their children are never hit tested.
-        if (is<RenderSVGResourceContainer>(m_enclosingSVGHiddenOrResourceContainer))
+        if (is<RenderSVGResourceContainer>(enclosingSVGHiddenOrResourceContainer()))
             return { };
 
         // Hidden SVG containers (<defs> / <symbol> ...) are never hit tested directly.

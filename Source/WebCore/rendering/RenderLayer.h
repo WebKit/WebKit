@@ -85,6 +85,8 @@ class RenderFragmentedFlow;
 class RenderLayerBacking;
 class RenderLayerCompositor;
 class RenderLayerFilters;
+class RenderLayerHTML;
+class RenderLayerSVG;
 class RenderLayerScrollableArea;
 class RenderMarquee;
 class RenderReplica;
@@ -164,7 +166,9 @@ enum class UpdateBackingSharingFlags {
 
 using ScrollingScope = uint64_t;
 
-class RenderLayer final : public UniquelyOwned<RenderLayer> {
+enum class RenderLayerType : uint8_t { HTML, SVG }; // NOLINT
+
+class RenderLayer : public UniquelyOwned<RenderLayer> {
     WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(RenderLayer, WEBCORE_EXPORT);
 public:
     friend class RenderReplica;
@@ -172,14 +176,13 @@ public:
     friend class RenderLayerBacking;
     friend class RenderLayerCompositor;
     friend class RenderLayerScrollableArea;
+    friend class RenderLayerHTML;
+    friend class RenderLayerSVG;
     friend void ::outputLayerPositionTreeRecursive(TextStream&, const WebCore::RenderLayer&, unsigned, const WebCore::RenderLayer*);
 
-    static UniquelyOwnedPtr<RenderLayer> create(RenderLayerModelObject& modelObject)
-    {
-        return adoptUniquelyOwned(new RenderLayer(modelObject));
-    }
+    WEBCORE_EXPORT virtual ~RenderLayer();
 
-    WEBCORE_EXPORT ~RenderLayer();
+    RenderLayerType layerType() const { return m_layerType; }
 
     WEBCORE_EXPORT RenderLayerScrollableArea* NODELETE scrollableArea() const;
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
@@ -273,8 +276,11 @@ private:
     OptionSet<LayerPositionUpdates> m_layerPositionDirtyBits;
 
 protected:
-    explicit RenderLayer(RenderLayerModelObject&);
+    RenderLayer(RenderLayerModelObject&, RenderLayerType);
     void destroy();
+
+    virtual bool hasVisibleContentForPainting() const { return hasVisibleContent(); }
+    virtual void updateSVGSpecificAncestorState() { }
 
 private:
     // These flags propagate in paint order (z-order tree).
@@ -453,9 +459,9 @@ public:
             || m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty;
     }
 
-    bool isPaintingSVGResourceLayer() const { return m_isPaintingSVGResourceLayer; }
+    virtual bool isPaintingSVGResourceLayer() const { return false; }
 
-    inline RenderSVGHiddenContainer* enclosingSVGHiddenOrResourceContainer() const;
+    virtual RenderSVGHiddenContainer* enclosingSVGHiddenOrResourceContainer() const { return nullptr; }
 
     void repaintIncludingDescendants();
 
@@ -978,7 +984,7 @@ public:
 
     void setIsHiddenByOverflowTruncation(bool);
 
-    void paintSVGResourceLayer(GraphicsContext&, const AffineTransform& contentTransform);
+    virtual void paintSVGResourceLayer(GraphicsContext&, const AffineTransform&) { }
 
     bool ancestorLayerIsDOMParent(const RenderLayer* ancestor) const;
 
@@ -1403,7 +1409,6 @@ private:
 
     bool m_insideSVGForeignObject : 1;
     bool m_isHiddenByOverflowTruncation : 1 { false };
-    bool m_isPaintingSVGResourceLayer : 1 { false };
 
     bool m_hasDescendantNeedingEventRegionUpdate : 1 { false };
 
@@ -1428,6 +1433,7 @@ private:
     bool m_wasOmittedFromZOrderTree : 1 { false };
     bool m_suppressAncestorClippingInsideFilter : 1 { false };
 
+    const RenderLayerType m_layerType;
     const CheckedRef<RenderLayerModelObject> m_renderer;
 
     InlineWeakPtr<RenderLayer> m_parent;
@@ -1479,9 +1485,6 @@ private:
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
     InlineWeakPtr<RenderLayer> m_enclosingPaginationLayer;
-
-    // Pointer to the enclosing RenderSVGHiddenContainer or RenderSVGResourceContainer, if present.
-    SingleThreadWeakPtr<RenderSVGHiddenContainer> m_enclosingSVGHiddenOrResourceContainer;
 
     IntRect m_blockSelectionGapsBounds;
 

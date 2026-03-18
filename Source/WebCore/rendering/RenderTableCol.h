@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderBox.h"
+#include "StyleDisplay.h"
 
 namespace WebCore {
 

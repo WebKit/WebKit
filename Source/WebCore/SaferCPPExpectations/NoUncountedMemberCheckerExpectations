@@ -34,6 +34,7 @@ rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
+rendering/RenderLayerSVG.h
 rendering/RenderLayerScrollableArea.h
 rendering/updating/RenderTreeUpdater.h
 style/ClassChangeInvalidation.cpp

@@ -567,7 +567,9 @@ rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerFilters.cpp
+rendering/RenderLayerHTML.h
 rendering/RenderLayerModelObject.cpp
+rendering/RenderLayerSVG.h
 rendering/RenderLayerScrollableArea.cpp
 rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp

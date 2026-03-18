@@ -90,11 +90,6 @@ inline bool RenderLayer::hasNonOpacityTransparency() const
     return false;
 }
 
-inline RenderSVGHiddenContainer* RenderLayer::enclosingSVGHiddenOrResourceContainer() const
-{
-    return m_enclosingSVGHiddenOrResourceContainer.get();
-}
-
 inline const LayoutPoint& RenderLayer::location() const LIFETIME_BOUND
 {
     ASSERT(!renderer().layerAccessPreventedSlow());
