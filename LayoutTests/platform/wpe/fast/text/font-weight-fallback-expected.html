@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<!-- Reference: the character should be rendered by the system sans-serif font,
-     identical to the test page where the web font lacks the glyph. -->
 <html>
 <head>
 <style>
+@font-face {
+    font-family: "WebFont";
+    font-weight: 300;
+    src: url("../../../../resources/Ahem.otf") format("opentype");
+}
 div {
-    font: normal 100px sans-serif;
+    font: normal 100px 'WebFont', sans-serif;
 }
 </style>
 </head>
