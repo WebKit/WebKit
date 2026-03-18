@@ -1,0 +1,1 @@
+PASS: Successfully navigated to second navigation (GoodBye)

@@ -2434,7 +2434,7 @@ void FrameLoader::commitProvisionalLoad()
     if (!cachedPage && !m_stateMachine.creatingInitialEmptyDocument())
         m_client->makeRepresentation(pdl.get());
 
-    transitionToCommitted(cachedPage.get());
+    transitionToCommitted(pdl.get(), cachedPage.get());
 
     if (pdl && m_documentLoader) {
         // Check if the destination page is allowed to access the previous page's timing information.
@@ -2563,13 +2563,17 @@ IGNORE_GCC_WARNINGS_END
     }
 }
 
-void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
+void FrameLoader::transitionToCommitted(DocumentLoader* provisionalLoader, CachedPage* cachedPage)
 {
     ASSERT(m_client->hasWebView());
     ASSERT(m_state == FrameState::Provisional);
 
     if (m_state != FrameState::Provisional)
         return;
+
+    // Ensure we're committing the loader that was originally captured
+    ASSERT(provisionalLoader);
+    ASSERT(provisionalLoader->isCommitted());
 
     if (RefPtr view = m_frame->view()) {
         if (auto* scrollAnimator = view->existingScrollAnimator())
@@ -2582,10 +2586,9 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     // The call to closeURL() invokes the unload event handler, which can execute arbitrary
     // JavaScript. If the script initiates a new load, we need to abandon the current load,
     // or the two will stomp each other.
-    RefPtr originalProvisionalDocumentLoader = m_provisionalDocumentLoader;
     if (m_documentLoader)
         closeURL();
-    if (originalProvisionalDocumentLoader != m_provisionalDocumentLoader)
+    if (provisionalLoader != m_provisionalDocumentLoader)
         return;
 
     if (RefPtr documentLoader = m_documentLoader)
@@ -2596,10 +2599,11 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     // Setting our document loader invokes the unload event handler of our child frames.
     // Script can do anything. If the script initiates a new load, we need to abandon the
     // current load or the two will stomp each other.
-    setDocumentLoader(m_provisionalDocumentLoader.copyRef());
-    if (originalProvisionalDocumentLoader != m_provisionalDocumentLoader)
+    // Use the captured provisionalLoader parameter, not m_provisionalDocumentLoader
+    setDocumentLoader(RefPtr { provisionalLoader });
+    if (provisionalLoader != m_provisionalDocumentLoader)
         return;
-    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_TRANSITIONTOCOMMITTED, (uint64_t)m_provisionalDocumentLoader.get());
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_TRANSITIONTOCOMMITTED, (uint64_t)provisionalLoader);
     setProvisionalDocumentLoader(nullptr);
 
     // Nothing else can interrupt this commit - set the Provisional->Committed transition in stone

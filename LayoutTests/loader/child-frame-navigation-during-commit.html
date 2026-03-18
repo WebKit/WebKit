@@ -1,0 +1,32 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function load() {
+    window.navigation.navigate("data:,Hello%2C%20World%21");
+}
+
+function load2() {
+    // Navigate to the data URL that contains the test completion logic.
+    var testCode = '<script>' +
+        'if (window.testRunner) {' +
+        '  document.write("PASS: Successfully navigated to second navigation (GoodBye)");' +
+        '  testRunner.notifyDone();' +
+        '}' +
+        '<\/script>';
+    window.navigation.navigate("data:text/html," + encodeURIComponent(testCode));
+}
+</script>
+</head>
+<body>
+<style onload="load()"></style>
+<embed src="data:text/html,foo">
+<svg onload="load2()"></svg>
+</body>
+</html>
