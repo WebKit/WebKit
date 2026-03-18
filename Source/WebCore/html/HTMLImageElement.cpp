@@ -47,7 +47,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
 #include "JSRequestPriority.h"
-#include "LazyLoadImageObserver.h"
+#include "LazyLoadElementObserver.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -513,6 +513,14 @@ std::optional<float> HTMLImageElement::autoSizesLayoutWidth() const
     if (!box)
         return { };
     return box->contentBoxWidth().toFloat();
+}
+
+void HTMLImageElement::lazyLoadIntersectionCallbackInvoked(bool isIntersecting)
+{
+    if (!isIntersecting)
+        return;
+    loadDeferredImage();
+    LazyLoadElementObserver::unobserve(*this, protect(document()));
 }
 
 const AtomString& HTMLImageElement::altText() const

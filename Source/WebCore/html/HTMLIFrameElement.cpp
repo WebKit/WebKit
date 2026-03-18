@@ -33,7 +33,7 @@
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "LazyLoadFrameObserver.h"
+#include "LazyLoadElementObserver.h"
 #include "LocalFrame.h"
 #include "NodeName.h"
 #include "RenderIFrame.h"
@@ -144,8 +144,8 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
     case AttributeNames::loadingAttr:
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
         // do not allow the reverse situation since the eager load is already started.
-        if (m_lazyLoadFrameObserver && !equalLettersIgnoringASCIICase(newValue, "lazy"_s)) {
-            m_lazyLoadFrameObserver->unobserve();
+        if (m_isLazyLoading && !equalLettersIgnoringASCIICase(newValue, "lazy"_s)) {
+            LazyLoadElementObserver::unobserve(*this, protect(document()));
             loadDeferredFrame();
         }
         break;
@@ -175,8 +175,8 @@ String HTMLIFrameElement::referrerPolicyForBindings() const
 
 ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
 {
-    if (m_lazyLoadFrameObserver)
-        return m_lazyLoadFrameObserver->referrerPolicy();
+    if (m_isLazyLoading)
+        return m_deferredReferrerPolicy;
     return referrerPolicyFromAttribute();
 }
 
@@ -220,36 +220,44 @@ bool HTMLIFrameElement::shouldLoadFrameLazily()
         return false;
     URL completeURL = document->completeURL(frameURL());
     auto referrerPolicy = referrerPolicyFromAttribute();
-    if (!m_lazyLoadFrameObserver) {
+    if (!m_isLazyLoading) {
         if (isFrameLazyLoadable(document, completeURL, attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
-            lazyLoadFrameObserver().observe(AtomString { completeURL.string() }, referrerPolicy);
+            m_deferredFrameURL = AtomString { completeURL.string() };
+            m_deferredReferrerPolicy = referrerPolicy;
+            m_isLazyLoading = true;
+            LazyLoadElementObserver::observe(*this);
             return true;
         }
-    } else
-        m_lazyLoadFrameObserver->update(AtomString { completeURL.string() }, referrerPolicy);
+    } else {
+        m_deferredFrameURL = AtomString { completeURL.string() };
+        m_deferredReferrerPolicy = referrerPolicy;
+    }
     return false;
 }
 
 bool HTMLIFrameElement::isLazyLoadObserverActive() const
 {
-    return !!m_lazyLoadFrameObserver;
+    return m_isLazyLoading;
 }
 
 void HTMLIFrameElement::loadDeferredFrame()
 {
     AtomString currentURL = frameURL();
-    setFrameURL(m_lazyLoadFrameObserver->frameURL());
+    setFrameURL(m_deferredFrameURL);
     if (isConnected())
         openURL();
     setFrameURL(currentURL);
-    m_lazyLoadFrameObserver = nullptr;
+    m_isLazyLoading = false;
+    m_deferredFrameURL = nullAtom();
+    m_deferredReferrerPolicy = ReferrerPolicy::EmptyString;
 }
 
-LazyLoadFrameObserver& HTMLIFrameElement::lazyLoadFrameObserver()
+void HTMLIFrameElement::lazyLoadIntersectionCallbackInvoked(bool isIntersecting)
 {
-    if (!m_lazyLoadFrameObserver)
-        m_lazyLoadFrameObserver = makeUnique<LazyLoadFrameObserver>(*this);
-    return *m_lazyLoadFrameObserver;
+    if (!isIntersecting)
+        return;
+    LazyLoadElementObserver::unobserve(*this, protect(document()));
+    loadDeferredFrame();
 }
 
 }

@@ -295,8 +295,7 @@ html/HTMLPlugInElement.cpp
 html/HTMLTextFormControlElement.cpp
 html/HTMLVideoElement.cpp
 html/ImageBitmap.cpp
-html/LazyLoadFrameObserver.cpp
-html/LazyLoadImageObserver.cpp
+html/LazyLoadElementObserver.cpp
 html/LinkIconCollector.cpp
 html/MediaController.cpp
 html/MediaElementSession.cpp

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2026 Squarespace, Inc. www.squarespace.com
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,32 +25,35 @@
  */
 
 #include "config.h"
-#include "LazyLoadModelObserver.h"
+#include "LazyLoadElementObserver.h"
 
-#if ENABLE(MODEL_ELEMENT)
-
-#include "HTMLModelElement.h"
+#include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
-#include "Logging.h"
 #include "NodeDocument.h"
-#include <WebCore/ExceptionOr.h>
+
+#if ENABLE(MODEL_ELEMENT)
+#include "HTMLModelElement.h"
+#endif
+
 #include <limits>
 #include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadModelObserver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadElementObserver);
 
-class LazyModelLoadIntersectionObserverCallback final : public IntersectionObserverCallback {
+class LazyLoadIntersectionObserverCallback final : public IntersectionObserverCallback {
 public:
-    static Ref<LazyModelLoadIntersectionObserverCallback> create(Document& document)
+    static Ref<LazyLoadIntersectionObserverCallback> create(Document& document)
     {
-        return adoptRef(*new LazyModelLoadIntersectionObserverCallback(document));
+        return adoptRef(*new LazyLoadIntersectionObserverCallback(document));
     }
 
 private:
-    LazyModelLoadIntersectionObserverCallback(Document& document)
+    LazyLoadIntersectionObserverCallback(Document& document)
         : IntersectionObserverCallback(&document)
     {
     }
@@ -61,8 +65,14 @@ private:
         ASSERT(!entries.isEmpty());
 
         for (auto& entry : entries) {
-            if (RefPtr element = dynamicDowncast<HTMLModelElement>(entry->target()))
-                element->viewportIntersectionChanged(entry->isIntersecting());
+            if (RefPtr element = dynamicDowncast<HTMLImageElement>(entry->target()))
+                element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
+            else if (RefPtr element = dynamicDowncast<HTMLIFrameElement>(entry->target()))
+                element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
+#if ENABLE(MODEL_ELEMENT)
+            else if (RefPtr element = dynamicDowncast<HTMLModelElement>(entry->target()))
+                element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
+#endif
         }
         return { };
     }
@@ -73,29 +83,26 @@ private:
     }
 };
 
-void LazyLoadModelObserver::observe(Element& element)
+void LazyLoadElementObserver::observe(Element& element)
 {
-    RefPtr document = element.document();
-    if (!document)
-        return;
-
-    auto& observer = document->lazyLoadModelObserver();
-    RefPtr intersectionObserver = observer.intersectionObserver(*document);
+    Ref document = element.document();
+    auto& observer = document->lazyLoadElementObserver();
+    RefPtr intersectionObserver = observer.intersectionObserver(document);
     if (!intersectionObserver)
         return;
     intersectionObserver->observe(element);
 }
 
-void LazyLoadModelObserver::unobserve(Element& element, Document& document)
+void LazyLoadElementObserver::unobserve(Element& element, Document& document)
 {
-    if (auto& intersectionObserver = document.lazyLoadModelObserver().m_observer)
-        intersectionObserver->unobserve(element);
+    if (auto& observer = document.lazyLoadElementObserver().m_observer)
+        observer->unobserve(element);
 }
 
-IntersectionObserver* LazyLoadModelObserver::intersectionObserver(Document& document)
+IntersectionObserver* LazyLoadElementObserver::intersectionObserver(Document& document)
 {
     if (!m_observer) {
-        auto callback = LazyModelLoadIntersectionObserverCallback::create(document);
+        auto callback = LazyLoadIntersectionObserverCallback::create(document);
         static NeverDestroyed<const String> lazyLoadingScrollMarginFallback(MAKE_STATIC_STRING_IMPL("100%"));
         IntersectionObserver::Init options { std::nullopt, { }, lazyLoadingScrollMarginFallback, { } };
         auto observer = IntersectionObserver::create(document, WTF::move(callback), WTF::move(options));
@@ -106,6 +113,9 @@ IntersectionObserver* LazyLoadModelObserver::intersectionObserver(Document& docu
     return m_observer.get();
 }
 
-} // namespace WebCore
+bool LazyLoadElementObserver::isObserved(Element& element) const
+{
+    return m_observer && m_observer->isObserving(protect(element));
+}
 
-#endif // ENABLE(MODEL_ELEMENT)
+}

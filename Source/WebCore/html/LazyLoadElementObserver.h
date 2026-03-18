@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2026 Squarespace, Inc. www.squarespace.com
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +34,8 @@ namespace WebCore {
 class Document;
 class Element;
 
-class LazyLoadImageObserver {
-    WTF_MAKE_TZONE_ALLOCATED(LazyLoadImageObserver);
+class LazyLoadElementObserver {
+    WTF_MAKE_TZONE_ALLOCATED(LazyLoadElementObserver);
 public:
     static void observe(Element&);
     static void unobserve(Element&, Document&);
@@ -47,4 +48,4 @@ private:
     RefPtr<IntersectionObserver> m_observer;
 };
 
-} // namespace
+} // namespace WebCore
