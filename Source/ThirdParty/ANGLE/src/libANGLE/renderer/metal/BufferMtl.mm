@@ -566,13 +566,8 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
     size_t adjustedSize = std::max<size_t>(1, intendedSize);
 
     // Ensures no validation layer issues in std140 with data types like vec3 being 12 bytes vs 16
-    // in MSL.
-    if (target == gl::BufferBinding::Uniform)
-    {
-        // This doesn't work! A buffer can be allocated on ARRAY_BUFFER and used in UNIFORM_BUFFER
-        // TODO(anglebug.com/42266052)
-        adjustedSize = roundUpPow2(adjustedSize, (size_t)16);
-    }
+    // in MSL. Many buffer types can be bound as a uniform buffer, so align all buffer sizes.
+    adjustedSize = roundUpPow2(adjustedSize, (size_t)16);
 
     // Re-create the buffer
     auto storageMode = mtl::Buffer::getStorageModeForUsage(contextMtl, usage);
