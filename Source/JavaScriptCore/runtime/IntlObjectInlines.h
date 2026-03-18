@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2016 Yusuke Suzuki <yusuke.suzuki@sslab.ics.keio.ac.jp>
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -222,12 +223,12 @@ ALWAYS_INLINE bool followedByNonLatinCharacter(std::span<const Latin1Character>,
 }
 
 template<typename CharacterType1, typename CharacterType2>
-UCollationResult compareASCIIWithUCADUCETLevel3(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
+UCollationResult compareASCIIWithUCADUCETLevel3(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2, size_t startPosition)
 {
     auto* data1 = characters1.data();
     auto* data2 = characters2.data();
     ASSERT(characters1.size() == characters2.size());
-    for (size_t position = 0; position < characters1.size(); ++position) {
+    for (size_t position = startPosition; position < characters1.size(); ++position) {
         auto lhs = data1[position];
         auto rhs = data2[position];
         uint8_t leftWeight = ducetLevel3Weights[lhs];
@@ -242,15 +243,22 @@ UCollationResult compareASCIIWithUCADUCETLevel3(std::span<const CharacterType1> 
 template<typename CharacterType1, typename CharacterType2>
 inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
 {
-    if (characters1.size() == characters2.size()) {
-        if (equal(characters1.data(), characters2))
-            return UCOL_EQUAL;
-    }
-
     auto* data1 = characters1.data();
     auto* data2 = characters2.data();
     size_t commonLength = std::min(characters1.size(), characters2.size());
-    for (unsigned position = 0; position < commonLength; ++position) {
+
+    size_t prefixSkip = 0;
+    while (prefixSkip < commonLength) {
+        auto lhs = data1[prefixSkip];
+        // Restrict fast prefix skipping to standard ASCII characters. We cannot
+        // skip non-ASCII characters because they could form a contraction with the
+        // following differing character.
+        if (lhs != data2[prefixSkip] || !isASCII(lhs))
+            break;
+        ++prefixSkip;
+    }
+
+    for (size_t position = prefixSkip; position < commonLength; ++position) {
         auto lhs = data1[position];
         auto rhs = data2[position];
 
@@ -270,7 +278,7 @@ inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const 
     }
 
     if (characters1.size() == characters2.size())
-        return compareASCIIWithUCADUCETLevel3(characters1, characters2);
+        return compareASCIIWithUCADUCETLevel3(characters1, characters2, prefixSkip);
 
     // If the next character is valid, then we do not need to look into the rest of characters.
     if (characters1.size() > characters2.size()) {
