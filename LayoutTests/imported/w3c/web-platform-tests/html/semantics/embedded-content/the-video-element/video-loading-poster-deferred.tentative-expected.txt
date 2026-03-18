@@ -1,0 +1,4 @@
+
+
+FAIL Video with loading=lazy that is not visible in viewport does not load poster image assert_equals: No network requests should be made for poster image expected 0 but got 1
+

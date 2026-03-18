@@ -1,0 +1,4 @@
+
+
+FAIL Video with loading=lazy does not fetch poster while not visible, then fetches poster once scrolled into view assert_equals: Poster should not be fetched when not visible expected 0 but got 1
+
