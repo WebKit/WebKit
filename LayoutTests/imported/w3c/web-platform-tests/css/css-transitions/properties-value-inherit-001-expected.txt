@@ -400,25 +400,25 @@ PASS left length(in) / events
 PASS left percentage(%) / values
 PASS left percentage(%) / events
 PASS color color(rgba) / values
-FAIL color color(rgba) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "color:2s"
+PASS color color(rgba) / events
 PASS font-size length(pt) / values
-FAIL font-size length(pt) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size length(pt) / events
 PASS font-size length(pc) / values
-FAIL font-size length(pc) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size length(pc) / events
 PASS font-size length(px) / values
-FAIL font-size length(px) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size length(px) / events
 PASS font-size length(em) / values
-FAIL font-size length(em) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size length(em) / events
 PASS font-size length(ex) / values
-FAIL font-size length(ex) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size length(ex) / events
 PASS font-size length(mm) / values
-FAIL font-size length(mm) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size length(mm) / events
 PASS font-size length(cm) / values
-FAIL font-size length(cm) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size length(cm) / events
 PASS font-size length(in) / values
-FAIL font-size length(in) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size length(in) / events
 PASS font-size percentage(%) / values
-FAIL font-size percentage(%) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "" but got "font-size:2s"
+PASS font-size percentage(%) / events
 PASS font-weight font-weight(keyword) / values
 PASS font-weight font-weight(keyword) / events
 PASS font-weight font-weight(numeric) / values

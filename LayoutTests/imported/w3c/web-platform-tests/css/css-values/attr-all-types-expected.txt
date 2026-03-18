@@ -41,7 +41,7 @@ PASS CSS Values and Units Test: attr 37
 FAIL CSS Values and Units Test: attr 38 assert_equals: Value 'attr(data-foo type(<number>), 10)', where 'data-foo=attr(' should be valid for the property 'font-weight'. expected "10" but got "400"
 PASS CSS Values and Units Test: attr 39
 PASS CSS Values and Units Test: attr 40
-FAIL CSS Values and Units Test: attr 41 assert_equals: Value 'attr(data-foo type(<percentage>))', where 'data-foo=10%' should be valid for the property 'font-size'. expected "9px" but got "16px"
+FAIL CSS Values and Units Test: attr 41 assert_equals: Value 'attr(data-foo type(<percentage>))', where 'data-foo=10%' should be valid for the property 'font-size'. expected "1.6px" but got "16px"
 FAIL CSS Values and Units Test: attr 42 assert_equals: Value 'attr(data-foo type(<percentage>), 10px)', where 'data-foo=abc' should be valid for the property 'font-size'. expected "10px" but got "16px"
 FAIL CSS Values and Units Test: attr 43 assert_equals: Value 'attr(data-foo type(<percentage> | <length>), 10)', where 'data-foo=10px' should be valid for the property 'font-size'. expected "10px" but got "16px"
 FAIL CSS Values and Units Test: attr 44 assert_equals: Value 'attr(data-foo type(<percentage>), abc)', where 'data-foo=10' should be valid for the property '--x'. expected "abc" but got "attr(data-foo type(<percentage>), abc)"
@@ -66,7 +66,7 @@ FAIL CSS Values and Units Test: attr 62 assert_equals: Value 'attr(data-foo type
 PASS CSS Values and Units Test: attr 63
 FAIL CSS Values and Units Test: attr 64 assert_equals: Value 'attr(data-foo px)', where 'data-foo=10' should be valid for the property 'height'. expected "10px" but got "0px"
 FAIL CSS Values and Units Test: attr 65 assert_equals: Value 'calc(attr(data-foo px) + 1px)', where 'data-foo=10' should be valid for the property 'width'. expected "11px" but got "784px"
-FAIL CSS Values and Units Test: attr 66 assert_equals: Value 'attr(data-foo %)', where 'data-foo=10' should be valid for the property 'font-size'. expected "9px" but got "16px"
+FAIL CSS Values and Units Test: attr 66 assert_equals: Value 'attr(data-foo %)', where 'data-foo=10' should be valid for the property 'font-size'. expected "1.6px" but got "16px"
 FAIL CSS Values and Units Test: attr 67 assert_equals: Value 'attr(data-foo px) 11px', where 'data-foo=10' should be valid for the property '--x'. expected "10px 11px" but got "attr(data-foo px) 11px"
 PASS CSS Values and Units Test: attr 68
 FAIL CSS Values and Units Test: attr 69 assert_equals: Value 'attr(non-existent px, 3px)', where 'data-foo=10' should be valid for the property 'width'. expected "3px" but got "784px"

@@ -3,40 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x42
-        RenderInline {RUBY} at (0,20) size 88x19
-          RenderInline (generated) at (0,20) size 88x19
-            RenderInline {RUBY} at (0,20) size 88x18
-              RenderInline (generated) at (0,20) size 18x18
-                RenderText {#text} at (1,20) size 16x18
-                  text run at (1,20) width 16: "\x{653B}"
-              RenderBlock {RT} at (0,10) size 18x11
-                RenderText {#text} at (0,0) size 18x11
-                  text run at (0,0) width 18: "\x{3053}\x{3046}"
-              RenderInline (generated) at (18,20) size 18x18
-                RenderText {#text} at (19,20) size 16x18
-                  text run at (19,20) width 16: "\x{6BBB}"
-              RenderBlock {RT} at (18,10) size 18x11
-                RenderText {#text} at (0,0) size 18x11
-                  text run at (0,0) width 18: "\x{304B}\x{304F}"
-              RenderInline (generated) at (36,20) size 16x18
-                RenderText {#text} at (36,20) size 16x18
-                  text run at (36,20) width 16: "\x{6A5F}"
-              RenderBlock {RT} at (36,10) size 16x11
-                RenderText {#text} at (3,0) size 10x11
-                  text run at (3,0) width 10: "\x{304D}"
-              RenderInline (generated) at (52,20) size 18x18
-                RenderText {#text} at (53,20) size 16x18
-                  text run at (53,20) width 16: "\x{52D5}"
-              RenderBlock {RT} at (52,10) size 18x11
-                RenderText {#text} at (0,0) size 18x11
-                  text run at (0,0) width 18: "\x{3069}\x{3046}"
-              RenderInline (generated) at (70,20) size 18x18
-                RenderText {#text} at (71,20) size 16x18
-                  text run at (71,20) width 16: "\x{968A}"
-              RenderBlock {RT} at (70,10) size 18x11
-                RenderText {#text} at (0,0) size 18x11
-                  text run at (0,0) width 18: "\x{305F}\x{3044}"
-          RenderBlock {RT} at (0,0) size 88x10
-            RenderText {#text} at (17,0) size 54x10
-              text run at (17,0) width 54: "K\x{14D}kakukid\x{14D}tai"
+      RenderBlock {P} at (0,0) size 784x40
+        RenderInline {RUBY} at (0,19) size 80x19
+          RenderInline (generated) at (0,19) size 80x19
+            RenderInline {RUBY} at (0,19) size 80x18
+              RenderInline (generated) at (0,19) size 16x18
+                RenderText {#text} at (0,19) size 16x18
+                  text run at (0,19) width 16: "\x{653B}"
+              RenderBlock {RT} at (0,9) size 16x11
+                RenderText {#text} at (0,0) size 16x11
+                  text run at (0,0) width 16: "\x{3053}\x{3046}"
+              RenderInline (generated) at (16,19) size 16x18
+                RenderText {#text} at (16,19) size 16x18
+                  text run at (16,19) width 16: "\x{6BBB}"
+              RenderBlock {RT} at (16,9) size 16x11
+                RenderText {#text} at (0,0) size 16x11
+                  text run at (0,0) width 16: "\x{304B}\x{304F}"
+              RenderInline (generated) at (32,19) size 16x18
+                RenderText {#text} at (32,19) size 16x18
+                  text run at (32,19) width 16: "\x{6A5F}"
+              RenderBlock {RT} at (32,9) size 16x11
+                RenderText {#text} at (4,0) size 8x11
+                  text run at (4,0) width 8: "\x{304D}"
+              RenderInline (generated) at (48,19) size 16x18
+                RenderText {#text} at (48,19) size 16x18
+                  text run at (48,19) width 16: "\x{52D5}"
+              RenderBlock {RT} at (48,9) size 16x11
+                RenderText {#text} at (0,0) size 16x11
+                  text run at (0,0) width 16: "\x{3069}\x{3046}"
+              RenderInline (generated) at (64,19) size 16x18
+                RenderText {#text} at (64,19) size 16x18
+                  text run at (64,19) width 16: "\x{968A}"
+              RenderBlock {RT} at (64,9) size 16x11
+                RenderText {#text} at (0,0) size 16x11
+                  text run at (0,0) width 16: "\x{305F}\x{3044}"
+          RenderBlock {RT} at (0,0) size 80x9
+            RenderText {#text} at (16,0) size 48x9
+              text run at (16,0) width 48: "K\x{14D}kakukid\x{14D}tai"

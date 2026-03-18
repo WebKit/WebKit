@@ -4434,7 +4434,6 @@ webkit.org/b/203356 imported/w3c/web-platform-tests/css/css-transitions/properti
 imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-003.html [ Failure Pass ]
 
 # wpt css-values failures
-webkit.org/b/203320 imported/w3c/web-platform-tests/css/css-values/percentage-rem-low.html [ ImageOnlyFailure ]
 webkit.org/b/203322 imported/w3c/web-platform-tests/css/css-values/attr-color-invalid-cast.html [ ImageOnlyFailure ]
 webkit.org/b/203323 imported/w3c/web-platform-tests/css/css-values/attr-color-valid.html [ ImageOnlyFailure ]
 webkit.org/b/203324 imported/w3c/web-platform-tests/css/css-values/attr-in-max.html [ ImageOnlyFailure ]

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>font-size: 1rem should not double-apply page or text zoom</title>
+<script src="../../resources/js-test.js"></script>
+<style>
+html {
+    font-size: 16px;
+}
+
+body {
+    font-size: 16px;
+}
+</style>
+<div id="container"></div>
+<script>
+description("Tests that font-size: 1rem matches 1em under page and text zoom.");
+
+const container = document.getElementById("container");
+
+function flushLayout()
+{
+    document.body.offsetTop;
+}
+
+function createTarget(fontSize)
+{
+    const target = document.createElement("div");
+    target.textContent = fontSize;
+    target.style.fontSize = fontSize;
+    container.appendChild(target);
+    return target;
+}
+
+function testFontSize(message, { pageZoom = 1, textZoom = 1 })
+{
+    if (!window.internals) {
+        testFailed("This test requires window.internals");
+        return;
+    }
+
+    try {
+        internals.setPageZoomFactor(pageZoom);
+        internals.setTextZoomFactor(textZoom);
+
+        const remTarget = createTarget("1rem");
+        const emTarget = createTarget("1em");
+
+        flushLayout();
+
+        const remFontSize = getComputedStyle(remTarget).fontSize;
+        const emFontSize = getComputedStyle(emTarget).fontSize;
+        if (remFontSize === emFontSize)
+            testPassed(message);
+        else
+            testFailed(`${message}: expected "${emFontSize}" but got "${remFontSize}"`);
+    } finally {
+        internals.setTextZoomFactor(1);
+        internals.setPageZoomFactor(1);
+        container.replaceChildren();
+        flushLayout();
+    }
+}
+
+testFontSize("font-size: 1rem matches 1em under page zoom", { pageZoom: 2 });
+testFontSize("font-size: 1rem matches 1em under text zoom", { textZoom: 2 });
+testFontSize("font-size: 1rem matches 1em under page and text zoom", { pageZoom: 2, textZoom: 2 });
+
+container.remove();
+</script>

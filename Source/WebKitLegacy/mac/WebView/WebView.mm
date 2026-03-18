@@ -1796,7 +1796,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     // We are ignoring the preferences object on fast path and just using Settings defaults (everything fancy off).
     // This matches how UIKit sets up the preferences. We need to set  default values for fonts though, <rdar://problem/6850611>.
     // This should be revisited later. There is some risk involved, _preferencesChanged used to show up badly in Shark.
-    _private->page->settings().setMinimumLogicalFontSize(9);
+    _private->page->settings().setMinimumLogicalFontSize(0);
     _private->page->settings().setDefaultFontSize([_private->preferences defaultFontSize]);
     _private->page->settings().setDefaultFixedFontSize(13);
     _private->page->settings().setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
