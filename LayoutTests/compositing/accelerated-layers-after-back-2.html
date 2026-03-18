@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<style>
+  .container {
+      height: 2000px;
+      will-change: transform;
+  }
+</style>
+<script>
+  window.testRunner?.waitUntilDone();
+  
+  window.addEventListener('pageshow', event => {
+      if (event.persisted)
+          window.testRunner?.notifyDone();
+  });
+
+  window.addEventListener('load', () => {
+      document.querySelector('a').focus()
+      setTimeout(() => {
+          window.location.href = 'resources/go-back.html';
+      }, 0);
+  });
+</script>
+
+<div class="container"></div>
+<a href="#">Link</a>

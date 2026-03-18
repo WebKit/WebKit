@@ -3326,15 +3326,6 @@ void LocalFrameView::cancelScheduledScrollToFocusedElement()
     m_delayedScrollToFocusedElementTimer.stop();
 }
 
-void LocalFrameView::scrollToFocusedElementImmediatelyIfNeeded()
-{
-    if (!m_shouldScrollToFocusedElement)
-        return;
-
-    m_delayedScrollToFocusedElementTimer.stop();
-    scrollToFocusedElementInternal();
-}
-
 void LocalFrameView::scrollToFocusedElementTimerFired()
 {
     scrollToFocusedElementInternal();

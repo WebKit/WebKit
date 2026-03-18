@@ -24,6 +24,7 @@ imported/w3c/web-platform-tests/speculation-rules/speculation-tags/same-site-to-
 animations/no-cancelation-when-entering-page-cache.html [ Timeout ]
 animations/resume-after-page-cache.html [ Timeout ]
 compositing/accelerated-layers-after-back.html [ Timeout ]
+compositing/accelerated-layers-after-back-2.html [ Timeout ]
 compositing/iframes/page-cache-layer-tree.html [ Timeout ]
 compositing/page-cache-back-crash.html [ Timeout ]
 compositing/show-composited-iframe-on-back-button.html [ Timeout ]

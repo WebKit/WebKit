@@ -271,7 +271,6 @@ public:
     void restoreScrollbar();
     void scheduleScrollToFocusedElement(SelectionRevealMode);
     void cancelScheduledScrolls();
-    void scrollToFocusedElementImmediatelyIfNeeded();
     void updateLayerPositionsAfterScrolling() final;
     void updateLayerPositionsAfterOverflowScroll(RenderLayer&);
     void updateCompositingLayersAfterScrolling() final;
