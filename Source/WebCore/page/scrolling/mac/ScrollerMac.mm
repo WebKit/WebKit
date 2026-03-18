@@ -316,6 +316,7 @@ ScrollerMac::ScrollerMac(ScrollerPairMac& pair, ScrollbarOrientation orientation
 
 ScrollerMac::~ScrollerMac()
 {
+    [m_scrollerImpDelegate invalidate];
 }
 
 void ScrollerMac::attach()
