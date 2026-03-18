@@ -146,7 +146,7 @@ private:
 
 inline const RuleFeatureSet& ScopeRuleSets::features() const
 {
-    if (m_defaultStyleVersionOnFeatureCollection < UserAgentStyle::defaultStyleVersion)
+    if (m_defaultStyleVersionOnFeatureCollection < UserAgentStyle::defaultStyleVersion())
         collectFeatures();
     return m_features;
 }
@@ -154,7 +154,7 @@ inline const RuleFeatureSet& ScopeRuleSets::features() const
 // FIXME: There should be just the const version.
 inline RuleFeatureSet& ScopeRuleSets::mutableFeatures()
 {
-    if (m_defaultStyleVersionOnFeatureCollection < UserAgentStyle::defaultStyleVersion)
+    if (m_defaultStyleVersionOnFeatureCollection < UserAgentStyle::defaultStyleVersion())
         collectFeatures();
     return m_features;
 }
