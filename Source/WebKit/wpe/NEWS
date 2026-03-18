@@ -1,3 +1,18 @@
+=================
+WPE WebKit 2.52.0
+=================
+
+What's new in WPE WebKit 2.52.0?
+
+  - Avoid continuous D-Bus connection attempts when the bus is not available
+    when trying to setting up the MPRIS MediaSession backend.
+  - Ensure that "scrollend" events are correctly emitted after scroll animations.
+  - Make scrolling with touch input smoother for small movements.
+  - Fix estimated load progress of downloads when the server-provided value for
+    the Content-Length value is wrong.
+  - Fix the build with ENABLE_BREAKPAD set.
+  - Fix several crashes and rendering issues.
+
 ==================
 WPE WebKit 2.51.93
 ==================
