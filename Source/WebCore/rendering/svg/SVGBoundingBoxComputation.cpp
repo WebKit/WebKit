@@ -135,7 +135,7 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
 FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxComputation::DecorationOptions& options, bool* boundingBoxValid) const
 {
     auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
-        if (!child.isTransformed() || !child.hasLayer())
+        if (!child.isTransformed())
             return std::nullopt;
 
         ASSERT(child.isSVGLayerAwareRenderer());
@@ -224,13 +224,11 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     adjustBoxForClippingAndEffects(options, box, { DecorationOption::OverrideBoxWithFilterBox });
 
     if (options.contains(DecorationOption::IncludeClippers) && m_renderer->hasNonVisibleOverflow()) {
-        ASSERT(m_renderer->hasLayer());
-
         ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGResourceMarker>(m_renderer) || is<RenderSVGRoot>(m_renderer));
 
         LayoutRect overflowClipRect;
         if (CheckedPtr svgModelObject = dynamicDowncast<RenderSVGModelObject>(m_renderer.get()))
-            overflowClipRect = svgModelObject->overflowClipRect(svgModelObject->currentSVGLayoutLocation());
+            overflowClipRect = svgModelObject->overflowClipRect(svgModelObject->nominalSVGLayoutLocation());
         else if (CheckedPtr box = dynamicDowncast<RenderBox>(m_renderer.get()))
             overflowClipRect = box->overflowClipRect(box->location());
         else {

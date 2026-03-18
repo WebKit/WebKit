@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <WebCore/AffineTransform.h>
 #include <WebCore/RenderBox.h>
 #include <WebCore/RenderLayerModelObject.h>
 #include <WebCore/SVGBoundingBoxComputation.h>
@@ -51,7 +52,8 @@ class RenderSVGModelObject : public RenderLayerModelObject {
 public:
     virtual ~RenderSVGModelObject();
 
-    bool requiresLayer() const override { return true; }
+    bool requiresLayer() const override;
+    static bool shouldCreateLayersForAllSVGRenderers();
 
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
@@ -59,6 +61,12 @@ public:
     static bool checkEnclosure(RenderElement*, const FloatRect&);
 
     inline SVGElement& element() const;
+
+    // Cached local SVG transform for non-layered elements.
+    // For layered elements, the layer caches the transform instead.
+    // Updated via updateLocalTransform(), analogous to updateLayerTransform() for layered elements.
+    AffineTransform localTransform() const override { return m_localTransform; }
+    void updateLocalTransform();
 
     LayoutRect currentSVGLayoutRect() const { return m_layoutRect; }
     void setCurrentSVGLayoutRect(const LayoutRect& layoutRect) { m_layoutRect = layoutRect; }
@@ -121,6 +129,7 @@ private:
     LayoutSize NODELETE cachedSizeForOverflowClip() const;
 
     LayoutRect m_layoutRect;
+    AffineTransform m_localTransform;
 };
 
 } // namespace WebCore

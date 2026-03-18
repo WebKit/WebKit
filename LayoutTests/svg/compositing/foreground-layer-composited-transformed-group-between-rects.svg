@@ -1,0 +1,10 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Test: A composited, transformed group sandwiched between non-composited rects.
+         Tests that SVG transforms on composited groups don't break paint order. -->
+    <rect x="10" y="10" width="80" height="80" fill="blue"/>
+    <g style="will-change: transform" transform="translate(20,20)">
+        <rect x="90" y="0" width="80" height="80" fill="green"/>
+    </g>
+    <rect x="210" y="10" width="80" height="80" fill="red"/>
+</svg>

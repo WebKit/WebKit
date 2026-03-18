@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CommonAtomStrings.h"
+#include "ExceptionOr.h"
 #include "SVGAngleValue.h"
 #include "SVGPropertyTraits.h"
 

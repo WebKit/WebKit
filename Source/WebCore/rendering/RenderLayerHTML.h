@@ -27,7 +27,7 @@ class RenderLayerHTML final : public RenderLayer {
 public:
     static UniquelyOwnedPtr<RenderLayer> create(CheckedRef<RenderLayerModelObject> renderer)
     {
-        return adoptUniquelyOwned(static_cast<RenderLayer*>(new RenderLayerHTML(renderer)));
+        return adoptUniquelyOwned(static_cast<RenderLayer*>(new RenderLayerHTML(renderer.get())));
     }
 
     WEBCORE_EXPORT ~RenderLayerHTML() final;

@@ -53,6 +53,7 @@ private:
 protected:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { return false; }
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<Style::TransformResolverOption>) const override { }
+    bool requiresLayer() const override { return false; }
     void updateFromStyle() override { }
     bool needsHasSVGTransformFlags() const override { return false; }
 };

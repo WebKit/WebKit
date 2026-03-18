@@ -39,6 +39,7 @@
 #include "SVGTextPathElement.h"
 #include "Settings.h"
 #include "StyleTransformResolver.h"
+#include "TransformationMatrix.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -77,12 +78,15 @@ Path RenderSVGTextPath::layoutPath() const
     // the current 'text' element, including any adjustments to the current user coordinate
     // system due to a possible transform attribute on the current 'text' element.
     // http://www.w3.org/TR/SVG/text.html#TextPathElement
-    if (element->renderer() && document().settings().layerBasedSVGEngineEnabled()) {
-        CheckedRef renderer = downcast<RenderSVGShape>(*element->renderer());
-        if (CheckedPtr layer = renderer->layer()) {
-            const auto& layerTransform = layer->currentTransform(Style::TransformResolver::individualTransformOperations).toAffineTransform();
-            if (!layerTransform.isIdentity())
-                path.transform(layerTransform);
+    if (CheckedPtr shapeRenderer = dynamicDowncast<RenderSVGShape>(element->renderer()); shapeRenderer && document().settings().layerBasedSVGEngineEnabled()) {
+        if (shapeRenderer->isTransformed()) {
+            TransformationMatrix matrix;
+            auto& style = shapeRenderer->style();
+            auto referenceBoxRect = shapeRenderer->transformReferenceBoxRect(style);
+            shapeRenderer->applyTransform(matrix, style, referenceBoxRect, Style::TransformResolver::individualTransformOperations);
+            auto transform = matrix.toAffineTransform();
+            if (!transform.isIdentity())
+                path.transform(transform);
             return path;
         }
     }

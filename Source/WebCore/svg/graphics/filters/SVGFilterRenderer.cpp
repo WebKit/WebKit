@@ -24,6 +24,7 @@
 #include "SVGFilterRenderer.h"
 
 #include "ElementChildIteratorInlines.h"
+#include "FilterImage.h"
 #include "FilterResults.h"
 #include "GeometryUtilities.h"
 #include "Logging.h"
@@ -340,6 +341,22 @@ RefPtr<FilterImage> SVGFilterRenderer::apply(FilterImage* sourceImage, FilterRes
 
             if (!sourceImage)
                 return nullptr;
+
+            // Per the SVG spec, standard inputs (SourceGraphic, SourceAlpha, etc.) use
+            // the filter region as their default primitive subregion. The source image
+            // may come from an outer CSSFilterRenderer whose filter region is the
+            // element's bounding box, which is smaller than this SVG filter's region.
+            // Adjust the primitive subregion to match the SVG filter region so that
+            // downstream effects (e.g., feOffset) are not incorrectly clipped.
+            if (sourceImage->primitiveSubregion() != filterRegion()) {
+                if (RefPtr buffer = sourceImage->imageBuffer()) {
+                    auto adjusted = FilterImage::create(filterRegion(), sourceImage->imageRect(), sourceImage->absoluteImageRect(), Ref { *buffer }, results.allocator());
+                    if (adjusted) {
+                        stack.append(adjusted.releaseNonNull());
+                        continue;
+                    }
+                }
+            }
 
             // Add sourceImage as an input to the SourceGraphic.
             stack.append(Ref { *sourceImage });

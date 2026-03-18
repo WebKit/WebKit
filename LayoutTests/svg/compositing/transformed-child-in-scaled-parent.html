@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<link rel="match" href="transformed-child-in-scaled-parent-expected.html">
+<meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-50">
+</head>
+<body style="margin: 0">
+<svg xmlns="http://www.w3.org/2000/svg">
+  <g style="transform: scale(20)">
+    <g style="transform: translate3d(0, 0, 0)">
+      <rect x="1" y="1" width="4" height="4" fill="blue" stroke="red"/>
+    </g>
+  </g>
+</svg>
+</body>
+</html>

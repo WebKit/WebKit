@@ -1,0 +1,10 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Test: Multiple consecutive composited children with no non-composited content between.
+         Only non-composited content at the edges (before first and after last). -->
+    <rect x="10" y="10" width="50" height="50" fill="blue"/>
+    <rect style="will-change: transform" x="70" y="10" width="50" height="50" fill="green"/>
+    <rect style="will-change: transform" x="130" y="10" width="50" height="50" fill="red"/>
+    <rect style="will-change: transform" x="190" y="10" width="50" height="50" fill="orange"/>
+    <rect x="250" y="10" width="50" height="50" fill="purple"/>
+</svg>

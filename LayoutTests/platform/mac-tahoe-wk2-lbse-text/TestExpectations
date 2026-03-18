@@ -217,6 +217,18 @@ svg/custom/grayscale-gradient-mask.svg                               [ ImageOnly
 svg/custom/grayscale-gradient-mask-2.svg                             [ ImageOnlyFailure ]
 svg/masking/mask-negative-scale.svg                                  [ ImageOnlyFailure ]
 svg/repaint/mask-clip-target-transform.svg                           [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-dom-height-attr.html              [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr.html    [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr.html           [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-dom-width-attr.html               [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-dom-x-attr.html                   [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-dom-y-attr.html                   [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-svgdom-height-prop.html           [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop.html [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop.html        [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-svgdom-width-prop.html            [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-svgdom-x-prop.html                [ ImageOnlyFailure ]
+svg/dynamic-updates/SVGMaskElement-svgdom-y-prop.html                [ ImageOnlyFailure ]
 
 # Hit testing issues
 svg/custom/pointer-events-image-css-transform.svg [ ImageOnlyFailure ]

@@ -165,7 +165,7 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
         if (!document().settings().layerBasedSVGEngineEnabled())
             return std::nullopt;
 
-        if (!(renderer()->isTransformed() || child.isTransformed()) || !child.hasLayer())
+        if (!child.isTransformed())
             return std::nullopt;
 
         ASSERT(child.isSVGLayerAwareRenderer());

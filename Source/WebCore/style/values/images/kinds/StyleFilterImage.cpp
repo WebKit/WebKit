@@ -140,11 +140,14 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
     auto preferredFilterRenderingModes = protect(renderer->page())->preferredFilterRenderingModes(destinationContext);
     auto sourceImageRect = FloatRect { { }, size };
 
+    OptionSet<FilterRenderingOption> options;
+    if (Ref { renderer->settings() }->showDebugBorders())
+        options.add(FilterRenderingOption::ShowDebugOverlay);
     auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(*renderer), m_filter, {
             .referenceBox = sourceImageRect,
             .filterRegion = sourceImageRect,
             .scale = { 1, 1 },
-        }, preferredFilterRenderingModes, Ref { renderer->settings() }->showDebugBorders(), NullGraphicsContext());
+        }, preferredFilterRenderingModes, options, NullGraphicsContext());
     if (!cssFilter)
         return &WebCore::Image::nullImage();
 

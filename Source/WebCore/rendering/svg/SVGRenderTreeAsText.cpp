@@ -232,7 +232,8 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
 {
     auto& style = renderer.style();
 
-    if (!renderer.localTransform().isIdentity())
+    // FIXME: Temporary!
+    if (!renderer.localTransform().isIdentity() && !renderer.document().settings().layerBasedSVGEngineEnabled())
         writeNameValuePair(ts, "transform"_s, renderer.localTransform());
     writeIfNotDefault(ts, "image rendering"_s, style.imageRendering(), Style::ComputedStyle::initialImageRendering());
     writeIfNotDefault(ts, "opacity"_s, style.opacity().value.value, 1.0f);

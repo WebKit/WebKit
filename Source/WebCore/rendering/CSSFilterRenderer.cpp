@@ -42,20 +42,25 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFilterRenderer);
 
-RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const Style::Filter& filter, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, bool showDebugOverlay, const GraphicsContext& destinationContext)
+RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const Style::Filter& filter, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> options, const GraphicsContext& destinationContext)
 {
     bool hasFilterThatMovesPixels = filter.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = filter.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
     auto filterRenderer = adoptRef(*new CSSFilterRenderer(geometry, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 
-    if (!filterRenderer->buildFilterFunctions(renderer, filter, preferredRenderingModes, destinationContext)) {
+    if (!filterRenderer->buildFilterFunctions(renderer, filter, preferredRenderingModes, options, destinationContext)) {
         LOG_WITH_STREAM(Filters, stream << "CSSFilterRenderer::create: failed to build filters " << filter);
         return nullptr;
     }
 
+    if (options.contains(FilterRenderingOption::ApplyToSVGRenderer)) {
+        filterRenderer->expandFilterRegionForSVGReferences();
+        filterRenderer->computeEnclosingFilterRegion();
+    }
+
     filterRenderer->setFilterRenderingModes(preferredRenderingModes);
-    filterRenderer->setIsShowingDebugOverlay(showDebugOverlay);
+    filterRenderer->setIsShowingDebugOverlay(options.contains(FilterRenderingOption::ShowDebugOverlay));
 
     LOG_WITH_STREAM(Filters, stream << "CSSFilterRenderer::create built filter " << filterRenderer.get() << " for " << filter << " supported rendering mode(s) " << filterRenderer->filterRenderingModes());
 
@@ -69,6 +74,7 @@ Ref<CSSFilterRenderer> CSSFilterRenderer::create(Vector<Ref<FilterFunction>>&& f
     // calling supportedFilterRenderingModes() which is a virtual function.
     filter->setFilterRenderingModes(preferredRenderingModes);
     filter->setIsShowingDebugOverlay(showDebugOverlay);
+    filter->computeEnclosingFilterRegion();
     return filter;
 }
 
@@ -119,7 +125,7 @@ static IntOutsets calculateReferenceFilterOutsets(const Style::FilterReference& 
     return SVGFilterRenderer::calculateOutsets(*filterElement, targetBoundingBox);
 }
 
-static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& filter, const Style::FilterReference& filterReference, RenderElement& renderer, OptionSet<FilterRenderingMode> preferredRenderingModes, const GraphicsContext& destinationContext)
+static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& filter, const Style::FilterReference& filterReference, RenderElement& renderer, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> options, const GraphicsContext& destinationContext)
 {
     RefPtr filterElement = referenceFilterElement(filterReference, renderer);
     if (!filterElement)
@@ -132,17 +138,20 @@ static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& 
     if (geometry.filterRegion.isEmpty())
         return nullptr;
 
+    if (options.contains(FilterRenderingOption::ApplyToSVGRenderer))
+        ImageBuffer::sizeNeedsClamping(geometry.filterRegion.size(), geometry.scale);
+
     auto filterRenderer = SVGFilterRenderer::create(contextElement.get(), *filterElement, geometry, preferredRenderingModes, destinationContext);
     if (filterRenderer)
         filterRenderer->setIsShowingDebugOverlay(filter.isShowingDebugOverlay());
     return filterRenderer;
 }
 
-RefPtr<FilterFunction> CSSFilterRenderer::buildFilterFunction(RenderElement& renderer, const Style::FilterValue& filterValue, OptionSet<FilterRenderingMode> preferredRenderingModes, const GraphicsContext& destinationContext)
+RefPtr<FilterFunction> CSSFilterRenderer::buildFilterFunction(RenderElement& renderer, const Style::FilterValue& filterValue, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> options, const GraphicsContext& destinationContext)
 {
     return WTF::switchOn(filterValue,
         [&](const Style::FilterReference& filterReference) -> RefPtr<FilterFunction> {
-            return createReferenceFilter(*this, filterReference, renderer, preferredRenderingModes, destinationContext);
+            return createReferenceFilter(*this, filterReference, renderer, preferredRenderingModes, options, destinationContext);
         },
         [&](const Style::BlurFunction& blurFunction) -> RefPtr<FilterFunction> {
             return Style::evaluate<Ref<FilterEffect>>(blurFunction, renderer.style());
@@ -156,10 +165,10 @@ RefPtr<FilterFunction> CSSFilterRenderer::buildFilterFunction(RenderElement& ren
     );
 }
 
-bool CSSFilterRenderer::buildFilterFunctions(RenderElement& renderer, const Style::Filter& filter, OptionSet<FilterRenderingMode> preferredRenderingModes, const GraphicsContext& destinationContext)
+bool CSSFilterRenderer::buildFilterFunctions(RenderElement& renderer, const Style::Filter& filter, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> options, const GraphicsContext& destinationContext)
 {
     for (auto& value : filter) {
-        auto function = buildFilterFunction(renderer, value, preferredRenderingModes, destinationContext);
+        auto function = buildFilterFunction(renderer, value, preferredRenderingModes, options, destinationContext);
         if (!function)
             continue;
 
@@ -205,6 +214,33 @@ OptionSet<FilterRenderingMode> CSSFilterRenderer::supportedFilterRenderingModes(
     return modes;
 }
 
+void CSSFilterRenderer::expandFilterRegionForSVGReferences()
+{
+    auto expandedRegion = filterRegion();
+    auto minScale = filterScale();
+
+    for (auto& function : m_functions) {
+        RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(function);
+        if (!svgFilter)
+            continue;
+
+        expandedRegion.unite(svgFilter->filterRegion());
+
+        auto candidateScale = svgFilter->filterScale();
+        minScale = { std::min(minScale.width(), candidateScale.width()), std::min(minScale.height(), candidateScale.height()) };
+    }
+
+    Filter::setFilterRegion(expandedRegion);
+    setFilterScale(minScale);
+
+    for (auto& function : m_functions) {
+        if (RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(function))
+            svgFilter->setFilterScale(minScale);
+    }
+
+    clampFilterRegionIfNeeded();
+}
+
 void CSSFilterRenderer::computeEnclosingFilterRegion()
 {
 #if USE(CORE_IMAGE)
@@ -214,6 +250,13 @@ void CSSFilterRenderer::computeEnclosingFilterRegion()
             enclosingFilterRegion.unite(filter->filterRegion());
     }
     setEnclosingFilterRegion(enclosingFilterRegion);
+
+    // Propagate the enclosing filter region to inner filters so that
+    // Core Image coordinate spaces are consistent across the chain.
+    for (auto& function : m_functions) {
+        if (RefPtr filter = dynamicDowncast<Filter>(function))
+            filter->setEnclosingFilterRegion(enclosingFilterRegion);
+    }
 #endif
 }
 

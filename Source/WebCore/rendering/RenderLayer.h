@@ -178,6 +178,7 @@ public:
     friend class RenderLayerScrollableArea;
     friend class RenderLayerHTML;
     friend class RenderLayerSVG;
+    friend class TransformPaintScope;
     friend void ::outputLayerPositionTreeRecursive(TextStream&, const WebCore::RenderLayer&, unsigned, const WebCore::RenderLayer*);
 
     WEBCORE_EXPORT virtual ~RenderLayer();
@@ -281,6 +282,8 @@ protected:
 
     virtual bool hasVisibleContentForPainting() const { return hasVisibleContent(); }
     virtual void updateSVGSpecificAncestorState() { }
+
+    virtual bool shouldFailedFilterProduceTransparentBlack() const { return false; }
 
 private:
     // These flags propagate in paint order (z-order tree).
@@ -460,10 +463,12 @@ public:
     }
 
     virtual bool isPaintingSVGResourceLayer() const { return false; }
+    virtual void dirtySVGChildrenInDOMOrder() { }
 
     virtual RenderSVGHiddenContainer* enclosingSVGHiddenOrResourceContainer() const { return nullptr; }
 
     void repaintIncludingDescendants();
+    void computeRepaintRectsIncludingDescendants();
 
     // Indicate that the layer contents need to be repainted. Only has an effect
     // if layer compositing is being used.
@@ -1040,6 +1045,13 @@ private:
         OptionSet<PaintBehavior> paintBehavior;
         bool requireSecurityOriginAccessForWidgets;
         RegionContext* regionContext { nullptr };
+
+        // Accumulated non-layer SVG transform applied to the graphics context
+        // between rootLayer and the current painting scope. Used to transform
+        // clip rects from rootLayer's coordinate space to the current SVG
+        // coordinate space when non-layer SVG transforms (e.g., from <g transform>
+        // without its own layer) modify the graphics context.
+        std::optional<AffineTransform> nonLayerSVGTransform;
     };
 
     LayoutPoint paintOffsetForRenderer(const LayerFragment& fragment, const LayerPaintingInfo& paintingInfo) const
@@ -1066,7 +1078,6 @@ private:
     }
 
     void computeRepaintRects(const RenderLayerModelObject* repaintContainer);
-    void computeRepaintRectsIncludingDescendants();
 
     void compositingStatusChanged(LayoutUpToDate);
 
@@ -1242,6 +1253,15 @@ private:
         const LayoutRect& hitTestRect, const HitTestLocation&,
         const HitTestingTransformState*, double* zOffsetForDescendants, bool depthSortDescendants);
 
+protected:
+    virtual void paintNegativeZOrderChildren(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
+    virtual void paintForegroundChildren(GraphicsContext&, const LayerPaintingInfo&, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintLayerFlag>, const LayerFragments&, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot);
+    virtual void paintSVGForegroundSplitChildren(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayerFragments&, OptionSet<PaintBehavior>, RenderObject*) { }
+
+    virtual HitLayer hitTestPositiveAndNormalFlowChildren(RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&, const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState*, double* zOffsetForDescendants, bool depthSortDescendants, HitLayer& candidateLayer);
+    virtual HitLayer hitTestNegativeZOrderChildren(RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&, const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState*, double* zOffsetForDescendants, bool depthSortDescendants, HitLayer& candidateLayer);
+
+private:
     Ref<HitTestingTransformState> createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
         const LayoutRect& hitTestRect, const HitTestLocation&,
         const HitTestingTransformState* containerTransformState,

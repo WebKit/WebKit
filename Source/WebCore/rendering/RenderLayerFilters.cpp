@@ -13,7 +13,7 @@
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -39,8 +39,8 @@
 #include "LegacyRenderSVGResourceFilter.h"
 #include "Logging.h"
 #include "RenderObjectInlines.h"
-#include "RenderSVGShape.h"
 #include "RenderStyle+GettersInlines.h"
+#include "StyleTransformResolver.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -156,6 +156,31 @@ IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const F
     return CSSFilterRenderer::calculateOutsets(renderer, filter, targetBoundingBox);
 }
 
+// Walk up the renderer tree to accumulate the full SVG transform scale so the
+// filter buffer is rendered at screen resolution, matching the legacy engine's
+// behavior of using calculateTransformationToOutermostCoordinateSystem().
+static FloatSize accumulatedSVGAncestorTransformScale(const RenderElement& renderer)
+{
+    AffineTransform accumulatedTransform;
+    for (CheckedPtr ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->isTransformed()) {
+            if (CheckedPtr layerModelObject = dynamicDowncast<RenderLayerModelObject>(ancestor.get())) {
+                TransformationMatrix localTransform;
+                auto& style = layerModelObject->style();
+                auto referenceBoxRect = layerModelObject->transformReferenceBoxRect(style);
+                layerModelObject->applyTransform(localTransform, style, referenceBoxRect, Style::TransformResolver::allTransformOperations);
+                accumulatedTransform = localTransform.toAffineTransform() * accumulatedTransform;
+            }
+        }
+        if (ancestor->isRenderSVGRoot())
+            break;
+    }
+    return {
+        narrowPrecisionToFloat(accumulatedTransform.xScale()),
+        narrowPrecisionToFloat(accumulatedTransform.yScale())
+    };
+}
+
 GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect)
 {
     auto preferredFilterRenderingModes = renderer.page().preferredFilterRenderingModes(context);
@@ -164,10 +189,11 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     auto dirtyFilterRegion = dirtyRect;
     auto filterRegion = dirtyRect;
 
-    if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer)) {
-        // In LBSE, the filter region will be recomputed in createReferenceFilter().
-        // FIXME: The LBSE filter geometry is not correct.
-        filterRegion = dirtyFilterRegion = enclosingLayoutRect(shape->objectBoundingBox());
+    // In LBSE, SVG renderers use objectBoundingBox as the initial filter region.
+    // CSSFilterRenderer::expandFilterRegionForSVGReferences() will expand this
+    // to include SVG reference filter regions resolved from <filter> elements.
+    if (renderer.isSVGLayerAwareRenderer()) {
+        filterRegion = dirtyFilterRegion = enclosingLayoutRect(renderer.objectBoundingBox());
     } else {
         if (!outsets.isZero()) {
             // FIXME: This flipping was added for drop-shadow, but it's not obvious that it's correct.
@@ -182,32 +208,62 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
             filterRegion.expand(toLayoutBoxExtent(outsets));
     }
 
-    if (filterRegion.isEmpty())
+    if (filterRegion.isEmpty() && !renderer.isSVGLayerAwareRenderer())
         return nullptr;
 
-    auto geometryReferenceGeometryChanged = [](auto& existingGeometry, auto& newGeometry) {
-        return existingGeometry.referenceBox != newGeometry.referenceBox || existingGeometry.scale != newGeometry.scale;
-    };
+    auto filterScale = m_filterScale;
+    if (renderer.isSVGLayerAwareRenderer()) {
+        auto ancestorScale = accumulatedSVGAncestorTransformScale(renderer);
+        filterScale = {
+            m_filterScale.width() * ancestorScale.width(),
+            m_filterScale.height() * ancestorScale.height()
+        };
+    }
+
+    // For LBSE SVG renderers, use objectBoundingBox as the filter reference box,
+    // matching how the legacy engine computes SVG filter regions.
+    auto referenceBox = filterBoxRect;
+    if (renderer.isSVGLayerAwareRenderer())
+        referenceBox = enclosingLayoutRect(renderer.objectBoundingBox());
 
     auto geometry = FilterGeometry {
-        .referenceBox = filterBoxRect,
+        .referenceBox = referenceBox,
         .filterRegion = filterRegion,
-        .scale = m_filterScale,
+        .scale = filterScale,
     };
 
+    bool needsRebuild = !m_filter
+        || m_filter->geometry().referenceBox != geometry.referenceBox
+        || m_lastUnclampedFilterScale != filterScale
+        || m_preferredFilterRenderingModes != preferredFilterRenderingModes;
+
     bool hasUpdatedBackingStore = false;
-    if (!m_filter || geometryReferenceGeometryChanged(m_filter->geometry(), geometry) || m_preferredFilterRenderingModes != preferredFilterRenderingModes) {
+    if (needsRebuild) {
         // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-        m_filter = CSSFilterRenderer::create(renderer, renderer.style().filter(), geometry, preferredFilterRenderingModes, renderer.settings().showDebugBorders(), context);
+        OptionSet<FilterRenderingOption> options;
+        if (renderer.settings().showDebugBorders())
+            options.add(FilterRenderingOption::ShowDebugOverlay);
+        if (renderer.isSVGLayerAwareRenderer())
+            options.add(FilterRenderingOption::ApplyToSVGRenderer);
+        m_filter = CSSFilterRenderer::create(renderer, renderer.style().filter(), geometry, preferredFilterRenderingModes, options, context);
+        m_lastUnclampedFilterScale = filterScale;
         hasUpdatedBackingStore = true;
-    } else if (filterRegion != m_filter->filterRegion()) {
+    } else if (!renderer.isSVGLayerAwareRenderer() && filterRegion != m_filter->filterRegion()) {
         m_filter->setFilterRegion(filterRegion);
         hasUpdatedBackingStore = true;
     }
 
+    // Read back the expanded filter region from CSSFilterRenderer for SVG renderers.
+    // expandFilterRegionForSVGReferences() may have expanded it to include SVG
+    // reference filter regions and clamped the scale.
+    if (renderer.isSVGLayerAwareRenderer() && m_filter) {
+        filterRegion = enclosingLayoutRect(m_filter->filterRegion());
+        dirtyFilterRegion = filterRegion;
+    }
+
     m_preferredFilterRenderingModes = preferredFilterRenderingModes;
 
-    if (!m_filter)
+    if (!m_filter || filterRegion.isEmpty())
         return nullptr;
 
     Ref filter = *m_filter;
@@ -225,11 +281,29 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
 
     if (!m_targetSwitcher || hasUpdatedBackingStore) {
         FloatRect sourceImageRect;
-        if (is<RenderSVGShape>(renderer))
-            sourceImageRect = renderer.objectBoundingBox();
-        else
+        if (renderer.isSVGLayerAwareRenderer()) {
+            // When the SVG filter region is oversized (scale was clamped to fit
+            // MaxClampedArea), use the element's bounding box for the source
+            // buffer. This avoids allocating a massive buffer with mostly transparent
+            // pixels (e.g., <filter width="200" height="10"> in objectBoundingBox units
+            // creates a 40000x1000 filter region for a 200x100 element).
+            //
+            // For normal-sized filter regions or empty elements (where feFlood/feTile
+            // generate content without reading the source), use the full filter region.
+            bool filterRegionOversized = !referenceBox.isEmpty() && m_filter->filterScale() != m_lastUnclampedFilterScale;
+            sourceImageRect = filterRegionOversized ? FloatRect(referenceBox) : FloatRect(dirtyFilterRegion);
+        } else
             sourceImageRect = dirtyFilterRegion;
-        m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, DestinationColorSpace::SRGB(), { WTF::move(filter) });
+
+        // SVG spec: color-interpolation-filters defaults to linearRGB, so SVG filter
+        // operations should happen in linear color space. Match legacy SVG filter behavior.
+        auto colorSpace = DestinationColorSpace::SRGB();
+#if !USE(CAIRO)
+        if (renderer.isSVGLayerAwareRenderer())
+            colorSpace = DestinationColorSpace::LinearSRGB();
+#endif
+
+        m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, colorSpace, { WTF::move(filter) });
     }
 
     if (!m_targetSwitcher)
@@ -245,7 +319,16 @@ void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
     LOG_WITH_STREAM(Filters, stream << "\nRenderLayerFilters " << this << " applyFilterEffect");
 
     ASSERT(m_targetSwitcher);
-    m_targetSwitcher->endClipAndDrawSourceImage(destinationContext, DestinationColorSpace::SRGB());
+
+    auto colorSpace = DestinationColorSpace::SRGB();
+#if !USE(CAIRO)
+    if (CheckedPtr layer = m_layer.get()) {
+        if (layer->renderer().isSVGLayerAwareRenderer())
+            colorSpace = DestinationColorSpace::LinearSRGB();
+    }
+#endif
+
+    m_targetSwitcher->endClipAndDrawSourceImage(destinationContext, colorSpace);
 
     LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " applyFilterEffect done\n");
 }

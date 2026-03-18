@@ -5370,6 +5370,12 @@ webkit.org/b/310213 http/tests/xmlhttprequest/chunked-progress-event-expectedLen
 
 webkit.org/b/310215 fast/loader/submit-form-while-parsing-2.html [ Pass Failure Timeout ]
 
+webkit.org/b/308565 svg/compositing/anonymous-RenderSVGViewportContainer-no-repaints.html [ Failure ]
+webkit.org/b/308565 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ ImageOnlyFailure ]
+webkit.org/b/308565 svg/compositing/transform-change-repainting-no-viewBox-repaintRects.html [ Failure ]
+webkit.org/b/308565 svg/compositing/transform-change-repainting-viewBox-repaintRects.html [ Failure ]
+webkit.org/b/308565 svg/compositing/transformed-child-in-scaled-parent.html [ ImageOnlyFailure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

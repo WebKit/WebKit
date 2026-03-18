@@ -89,6 +89,7 @@
 #include "SelectionGeometry.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "StyleTransformResolver.h"
 #include "TransformState.h"
 #include "ViewTransition.h"
 #include <algorithm>
@@ -1541,6 +1542,14 @@ void RenderObject::getTransformFromContainer(const LayoutSize& offsetInContainer
     CheckedPtr<RenderLayer> layer;
     if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
+    else {
+        // Non-layered SVG elements: use the renderer's cached local SVG transform.
+        if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(*this)) {
+            auto svgTransform = svgModel->localTransform();
+            if (!svgTransform.isIdentity())
+                transform.multiply(TransformationMatrix(svgTransform));
+        }
+    }
 
     CheckedPtr perspectiveObject = parent();
 

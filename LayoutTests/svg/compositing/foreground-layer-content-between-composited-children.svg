@@ -1,0 +1,11 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Test: Non-composited content between two composited children.
+         This is the key bug scenario: rect C must not be skipped.
+         A=non-composited, B=composited, C=non-composited, D=composited, E=non-composited -->
+    <rect x="10" y="10" width="60" height="60" fill="blue"/>
+    <rect style="will-change: transform" x="80" y="10" width="60" height="60" fill="green"/>
+    <rect x="150" y="10" width="60" height="60" fill="red"/>
+    <rect style="will-change: transform" x="220" y="10" width="60" height="60" fill="orange"/>
+    <rect x="290" y="10" width="60" height="60" fill="purple"/>
+</svg>

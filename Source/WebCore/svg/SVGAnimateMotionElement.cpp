@@ -257,8 +257,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     auto updateTargetElement = [](SVGElement& element) {
         if (element.document().settings().layerBasedSVGEngineEnabled()) {
             if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(element.renderer()))
-                layerRenderer->updateHasSVGTransformFlags();
-            // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
+                layerRenderer->repaintOrRelayoutAfterSVGTransformChange();
             element.updateSVGRendererForElementChange();
             return;
         }

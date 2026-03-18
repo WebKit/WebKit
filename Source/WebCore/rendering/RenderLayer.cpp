@@ -101,6 +101,7 @@
 #include "ReferencedSVGResources.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
@@ -155,6 +156,7 @@
 #include "StyleTranslateTransformFunction.h"
 #include "Styleable.h"
 #include "TransformOperationData.h"
+#include "TransformPaintScope.h"
 #include "TransformationMatrix.h"
 #include "ViewTransition.h"
 #include "WheelEventTestMonitor.h"
@@ -416,6 +418,76 @@ RenderLayer::~RenderLayer()
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(renderer().renderTreeBeingDestroyed() || !firstChild());
 }
 
+void RenderLayer::paintNegativeZOrderChildren(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
+{
+    paintList(negativeZOrderLayers(), context, paintingInfo, paintFlags);
+}
+
+void RenderLayer::paintForegroundChildren(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayerFragments&, OptionSet<PaintBehavior>, RenderObject*)
+{
+    // HTML layers and foreignObject use normal z-order list painting.
+    paintList(normalFlowLayers(), context, paintingInfo, paintFlags);
+    paintList(positiveZOrderLayers(), context, localPaintingInfo, paintFlags);
+}
+
+RenderLayer::HitLayer RenderLayer::hitTestPositiveAndNormalFlowChildren(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffsetForDescendants, bool depthSortDescendants, HitLayer& candidateLayer)
+{
+    // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
+    auto hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, transformState, zOffsetForDescendants, depthSortDescendants);
+    if (hitLayer.layer) {
+        if (!depthSortDescendants)
+            return hitLayer;
+        if (hitLayer.zOffset > candidateLayer.zOffset)
+            candidateLayer = hitLayer;
+    }
+
+    // Now check our overflow objects.
+    {
+        HitTestResult tempResult(result.hitTestLocation());
+        hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, transformState, zOffsetForDescendants, depthSortDescendants);
+
+        if (request.resultIsElementList())
+            result.append(tempResult, request);
+
+        if (hitLayer.layer) {
+            if (!depthSortDescendants || hitLayer.zOffset > candidateLayer.zOffset) {
+                if (!request.resultIsElementList())
+                    result = tempResult;
+
+                candidateLayer = hitLayer;
+            }
+
+            if (!depthSortDescendants)
+                return hitLayer;
+        }
+    }
+
+    return { };
+}
+
+RenderLayer::HitLayer RenderLayer::hitTestNegativeZOrderChildren(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffsetForDescendants, bool depthSortDescendants, HitLayer& candidateLayer)
+{
+    HitTestResult tempResult(result.hitTestLocation());
+    auto hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, transformState, zOffsetForDescendants, depthSortDescendants);
+
+    if (request.resultIsElementList())
+        result.append(tempResult, request);
+
+    if (hitLayer.layer) {
+        if (!depthSortDescendants || hitLayer.zOffset > candidateLayer.zOffset) {
+            if (!request.resultIsElementList())
+                result = tempResult;
+
+            candidateLayer = hitLayer;
+        }
+
+        if (!depthSortDescendants)
+            return hitLayer;
+    }
+
+    return { };
+}
+
 void RenderLayer::removeClipperClientIfNeeded() const
 {
     WTF::switchOn(renderer().style().clipPath(),
@@ -607,7 +679,8 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.shouldApplyPaintContainment()
         || !renderer.style().usedZIndex().isAuto()
         || renderer.style().willChange().canCreateStackingContext()
-        || layer.establishesTopLayer();
+        || layer.establishesTopLayer()
+        || (renderer.isSVGLayerAwareRenderer() && renderer.document().settings().layerBasedSVGEngineEnabled());
 }
 
 bool RenderLayer::shouldBeNormalFlowOnly() const
@@ -734,6 +807,8 @@ void RenderLayer::dirtyZOrderLists()
         m_negZOrderList->clear();
     m_zOrderListsDirty = true;
 
+    dirtySVGChildrenInDOMOrder();
+
     // FIXME: Ideally, we'd only dirty if the lists changed.
     if (hasCompositingDescendant())
         setNeedsCompositingPaintOrderChildrenUpdate();
@@ -775,6 +850,8 @@ void RenderLayer::dirtyNormalFlowList()
     if (m_normalFlowList)
         m_normalFlowList->clear();
     m_normalFlowListDirty = true;
+
+    dirtySVGChildrenInDOMOrder();
 
     if (hasCompositingDescendant())
         setNeedsCompositingPaintOrderChildrenUpdate();
@@ -1936,8 +2013,7 @@ void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
 
 void RenderLayer::updateAncestorDependentState()
 {
-    if (renderer().document().settings().layerBasedSVGEngineEnabled())
-        updateSVGSpecificAncestorState();
+    updateSVGSpecificAncestorState();
 
     bool insideSVGForeignObject = false;
     if (renderer().document().mayHaveRenderedSVGForeignObjects()) {
@@ -2012,8 +2088,10 @@ void RenderLayer::updateDescendantDependentFlags()
 
 bool RenderLayer::computeHasVisibleContent() const
 {
+    // LBSE: The anonymous RenderSVGViewportContainer wrapping all SVG content, is always considered
+    // visible - we always want to visit children of that renderer.
     if (renderer().isAnonymous() && is<RenderSVGViewportContainer>(renderer()))
-        return false;
+        return true;
 
     if (m_isHiddenByOverflowTruncation)
         return false;
@@ -2142,7 +2220,8 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
                 // Omit them when computing our xpos/ypos.
                 if (!is<RenderTableRow>(boxRenderer))
                     localPoint += boxRenderer->topLeftLocationOffset();
-            }
+            } else if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(ancestor))
+                localPoint += svgModelObject->locationOffsetEquivalent();
             ancestor = ancestor->parent();
         }
         if (auto* tableRow = dynamicDowncast<RenderTableRow>(ancestor)) {
@@ -3409,6 +3488,23 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
         return;
     }
     
+    // For a non-transformed SVG root with viewport clip, apply the clip before
+    // painting contents. The transform path above handles this via clipRect.intersect()
+    // but the non-transform path needs it too so that child layers (including those
+    // with filters) are properly clipped to the SVG viewport.
+    GraphicsContextStateSaver svgViewportClipSaver(context, false);
+    if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer())) {
+        if (svgRoot->shouldApplyViewportClip() && parent()) {
+            svgViewportClipSaver.save();
+            auto viewportRect = svgRoot->borderBoxRect();
+            auto offsetFromParent = offsetFromAncestor(paintingInfo.rootLayer);
+            auto offsetForThisLayer = offsetFromParent + paintingInfo.subpixelOffset;
+            auto devicePixelSnappedOffset = toFloatSize(roundPointToDevicePixels(toLayoutPoint(offsetForThisLayer), renderer().document().deviceScaleFactor()));
+            viewportRect.move(devicePixelSnappedOffset.width(), devicePixelSnappedOffset.height());
+            context.clip(snapRectToDevicePixelsIfNeeded(viewportRect, *svgRoot));
+        }
+    }
+
     paintLayerContentsAndReflection(context, paintingInfo, paintFlags);
 }
 
@@ -3629,7 +3725,14 @@ void RenderLayer::applyFilters(GraphicsContext& originalContext, const LayerPain
 
     m_suppressAncestorClippingInsideFilter = false;
 
-    if (needsClipping) {
+    // FIXME: For LBSE SVG renderers, the backgroundRect is not correctly transformed
+    // into the element's local coordinate system when SVG transforms are involved.
+    // This causes the clip to incorrectly cut off filter output that extends beyond
+    // the element's bounding box (e.g., when the SVG filter region has a negative
+    // origin due to the default -10%/-10%/120%/120% filter region expansion).
+    // Skip the ancestor clip for LBSE SVG renderers until the clip rect computation
+    // is fixed; the outermost SVG viewport already provides proper clipping.
+    if (needsClipping && !renderer().isSVGLayerAwareRenderer()) {
         RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
 
         clipToRect(originalContext, stateSaver, regionContextStateSaver, paintingInfo, behavior, backgroundRect);
@@ -3822,6 +3925,14 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         LayerPaintingInfo localPaintingInfo(paintingInfo);
         GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, localPaintFlags, columnAwareOffsetFromRoot, backgroundRect);
+
+        // Per the SVG spec, if a filter is referenced but cannot be applied (non-existent
+        // reference, empty filter, etc.), the element must not be rendered — the filter
+        // produces transparent black, making the element invisible. The CSS Filter Effects
+        // spec differs — a failed filter means "no effect" (painted normally). Therefore
+        // treat SVG renderers differently, obeying to the SVG rules.
+        bool hasFailedFilter = shouldFailedFilterProduceTransparentBlack() && !filterContext && shouldHaveFiltersForPainting(context, localPaintFlags, localPaintingInfo.paintBehavior);
+
         GraphicsContext& currentContext = filterContext ? *filterContext : context;
 
         if (filterContext)
@@ -3872,6 +3983,47 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
                 clipRectOptions.add(ClipRectsOption::Temporary);
             collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers, PaintingClipRects, clipRectOptions, offsetFromRoot);
             updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
+
+            // When painting an SVG layer inside a non-layer SVG transform scope (e.g., a circle
+            // with opacity inside a <use> element), the ancestor clip rects (background/foreground)
+            // are computed in rootLayer coordinate space but the graphics context already has the
+            // non-layer SVG transforms applied. Inverse-map these clip rects through the accumulated
+            // transform so they are in the correct (post-transform) coordinate space. Without this,
+            // the SVGRoot's overflow clip at (0,0) would incorrectly clip content that extends into
+            // negative coordinates in the local SVG space.
+            //
+            // Skip inverse-mapping when rootLayer == this (i.e., after paintLayerByApplyingTransform
+            // set rootLayer to this layer via TransformPaintScope). In that case, the clip rects are
+            // already in the layer's own post-transform coordinate space and do not need adjustment.
+            // This is important for layers with overflow clipping (e.g., foreignObject): the overflow
+            // clip is computed at offsetFromRoot=(0,0) relative to self, and inverse-mapping it through
+            // ancestor non-layer transforms would incorrectly shift it.
+            if (localPaintingInfo.nonLayerSVGTransform && localPaintingInfo.rootLayer != this) {
+                if (auto inverse = localPaintingInfo.nonLayerSVGTransform->inverse()) {
+                    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+                    for (auto& fragment : layerFragments) {
+                        if (!fragment.rects.m_foregroundRect.isInfinite()) {
+                            auto mappedFgRect = LayoutRect(encloseRectToDevicePixels(inverse->mapRect(FloatRect(fragment.rects.m_foregroundRect.rect())), deviceScaleFactor));
+                            fragment.rects.m_foregroundRect = ClipRect(mappedFgRect);
+                        }
+                        if (!fragment.rects.m_backgroundRect.isInfinite()) {
+                            auto mappedBgRect = LayoutRect(encloseRectToDevicePixels(inverse->mapRect(FloatRect(fragment.rects.m_backgroundRect.rect())), deviceScaleFactor));
+                            fragment.rects.m_backgroundRect = ClipRect(mappedBgRect);
+                        }
+                    }
+                }
+            } else if (localPaintingInfo.nonLayerSVGTransform) {
+                // When rootLayer == this, the non-layer SVG transform represents a transform
+                // above rootLayer (e.g., zoom on the outermost SVG viewport container). The
+                // inverse mapping was correctly skipped for this layer's own clip rects. Clear
+                // the transform to prevent it from incorrectly propagating to child layers —
+                // their clip rects are computed relative to rootLayer and the transform above
+                // rootLayer is irrelevant for them. This is important for foreignObject whose
+                // HTML children (e.g., a nested <svg>) would otherwise have their overflow clip
+                // rects incorrectly inverse-mapped, causing content to be clipped too aggressively
+                // when page zoom is active.
+                localPaintingInfo.nonLayerSVGTransform = std::nullopt;
+            }
         }
         
         if (isPaintingCompositedBackground) {
@@ -3882,11 +4034,14 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             }
         }
 
-        // Now walk the sorted list of children with negative z-indices.
         if (shouldPaintNegativeZIndexChildren)
-            paintList(negativeZOrderLayers(), currentContext, paintingInfo, localPaintFlags);
-        
-        if (isPaintingCompositedForeground && shouldPaintContent)
+            paintNegativeZOrderChildren(currentContext, paintingInfo, localPaintFlags);
+
+        // When we have an SVG foreground split, paint children before the first composited child during the background phase (into the primary layer).
+        if (isPaintingCompositedBackground && shouldPaintContent)
+            paintSVGForegroundSplitChildren(currentContext, localPaintingInfo, localPaintFlags, layerFragments, paintBehavior, subtreePaintRootForRenderer);
+
+        if (isPaintingCompositedForeground && shouldPaintContent && !hasFailedFilter)
             paintForegroundForFragments(layerFragments, currentContext, context, paintingInfo.paintDirtyRect, haveTransparency, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
 
         if (isCollectingEventRegion && !isInsideSkippedSubtree)
@@ -3895,16 +4050,11 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         if (isCollectingAccessibilityRegion)
             collectAccessibilityRegionsForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior);
 
-        if (shouldPaintOutline)
+        if (shouldPaintOutline && !hasFailedFilter)
             paintOutlineForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
 
-        if (isPaintingCompositedForeground) {
-            // Paint any child layers that have overflow.
-            paintList(normalFlowLayers(), currentContext, paintingInfo, localPaintFlags);
-
-            // Now walk the sorted list of children with positive z-indices.
-            paintList(positiveZOrderLayers(), currentContext, localPaintingInfo, localPaintFlags);
-        }
+        if (isPaintingCompositedForeground && !hasFailedFilter)
+            paintForegroundChildren(currentContext, paintingInfo, localPaintingInfo, localPaintFlags, layerFragments, paintBehavior, subtreePaintRootForRenderer);
 
         if (m_scrollableArea) {
             if (isPaintingOverlayScrollbars && m_scrollableArea->hasScrollbars())
@@ -3969,13 +4119,6 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     // all we need to do is add the delta to the accumulated pixels coming from ancestor layers.
     // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
     transform.translateRight(alignedOffsetForThisLayer.width(), alignedOffsetForThisLayer.height());
-    // Apply the transform.
-    auto oldTransform = context.getCTM();
-    auto affineTransform = transform.toAffineTransform();
-    context.concatCTM(affineTransform);
-
-    if (paintingInfo.regionContext)
-        paintingInfo.regionContext->pushTransform(affineTransform);
 
     // Only propagate the subpixel offsets to the descendant layers, if we're not the root
     // of a SVG subtree, where no pixel snapping is applied -- only the outermost <svg> layer
@@ -3984,21 +4127,10 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     if (rendererNeedsPixelSnapping(renderer()) && !renderer().isRenderSVGRoot())
         adjustedSubpixelOffset = offsetForThisLayer - LayoutSize(alignedOffsetForThisLayer);
 
-    // Now do a paint with the root layer shifted to be us.
-    LayerPaintingInfo transformedPaintingInfo(paintingInfo);
-    transformedPaintingInfo.rootLayer = this;
-    if (!transformedPaintingInfo.paintDirtyRect.isInfinite())
-        transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
+    TransformPaintScope scope(context, paintingInfo, transform, deviceScaleFactor, adjustedSubpixelOffset, this);
 
     paintFlags.remove(PaintLayerFlag::PaintingOverflowContents);
-
-    transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
-    paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
-
-    if (paintingInfo.regionContext)
-        paintingInfo.regionContext->popTransform();
-
-    context.setCTM(oldTransform);
+    paintLayerContentsAndReflection(context, scope.transformedPaintingInfo(), paintFlags);
 }
 
 void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
@@ -4779,33 +4911,13 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     if (auto* rendererBox = this->renderBox(); rendererBox && !rendererBox->hitTestClipPath(hitTestLocation, toLayoutPoint(offsetFromRoot - toLayoutSize(rendererLocation()))))
         return { };
 
-    // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
-    auto hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, depthSortDescendants);
-    if (hitLayer.layer) {
-        if (!depthSortDescendants)
-            return hitLayer;
-        if (hitLayer.zOffset > candidateLayer.zOffset)
-            candidateLayer = hitLayer;
-    }
-
-    // Now check our overflow objects.
     {
-        HitTestResult tempResult(result.hitTestLocation());
-        hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, depthSortDescendants);
-
-        if (request.resultIsElementList())
-            result.append(tempResult, request);
-
+        auto hitLayer = hitTestPositiveAndNormalFlowChildren(rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, depthSortDescendants, candidateLayer);
         if (hitLayer.layer) {
-            if (!depthSortDescendants || hitLayer.zOffset > candidateLayer.zOffset) {
-                if (!request.resultIsElementList())
-                    result = tempResult;
-
-                candidateLayer = hitLayer;
-            }
-
             if (!depthSortDescendants)
                 return hitLayer;
+            if (hitLayer.zOffset > candidateLayer.zOffset)
+                candidateLayer = hitLayer;
         }
     }
 
@@ -4844,24 +4956,13 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
             result.append(tempResult, request);
     }
 
-    // Now check our negative z-index children.
     {
-        HitTestResult tempResult(result.hitTestLocation());
-        hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, depthSortDescendants);
-
-        if (request.resultIsElementList())
-            result.append(tempResult, request);
-
+        auto hitLayer = hitTestNegativeZOrderChildren(rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, depthSortDescendants, candidateLayer);
         if (hitLayer.layer) {
-            if (!depthSortDescendants || hitLayer.zOffset > candidateLayer.zOffset) {
-                if (!request.resultIsElementList())
-                    result = tempResult;
-
-                candidateLayer = hitLayer;
-            }
-
             if (!depthSortDescendants)
                 return hitLayer;
+            if (hitLayer.zOffset > candidateLayer.zOffset)
+                candidateLayer = hitLayer;
         }
     }
 
@@ -4984,7 +5085,18 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
 
-    if (!renderer().hitTest(request, result, hitTestLocation, toLayoutPoint(layerBounds.location() - rendererLocation()), hitTestFilter)) {
+    if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(renderer()); svgModelObject && transform()) {
+        // When a transform was applied by hitTestLayerByApplyingTransform(), the hit test
+        // coordinates are layer-local (origin at the layer's position). The accumulatedOffset
+        // propagates the nominal/current layout location difference so that children's
+        // coordinateSystemOriginTranslation in nodeAtPoint() correctly maps the layer-local
+        // point into each child's local coordinate system.
+        auto accumulatedOffset = toLayoutPoint(toLayoutSize(svgModelObject->nominalSVGLayoutLocation()) - toLayoutSize(svgModelObject->currentSVGLayoutLocation()));
+        if (!renderer().hitTest(request, result, hitTestLocation, accumulatedOffset, hitTestFilter)) {
+            ASSERT(!result.innerNode() || (request.resultIsElementList() && result.listBasedTestResult().size()));
+            return false;
+        }
+    } else if (!renderer().hitTest(request, result, hitTestLocation, toLayoutPoint(layerBounds.location() - rendererLocation()), hitTestFilter)) {
         // It's wrong to set innerNode, but then claim that you didn't hit anything, unless it is
         // a rect-based test.
         ASSERT(!result.innerNode() || (request.resultIsElementList() && result.listBasedTestResult().size()));
@@ -6178,6 +6290,9 @@ void RenderLayer::styleChanged(Style::Difference diff, const RenderStyle* oldSty
             dirtyStackingContextZOrderLists();
             if (isStackingContext())
                 dirtyZOrderLists();
+            // Also dirty the parent layer's SVG children list since z-index affects sort order.
+            if (parent())
+                parent()->dirtySVGChildrenInDOMOrder();
         }
 
         if (!oldStyle->viewTransitionName().isNone() != renderer().hasViewTransitionName())

@@ -1802,12 +1802,25 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
     LayerListMutationDetector mutationChecker(layer);
 #endif
 
+    bool isSVGForegroundLayerCase = layer.renderer().document().settings().layerBasedSVGEngineEnabled()
+        && layer.renderer().isSVGLayerAwareRenderer()
+        && !layer.renderer().isRenderSVGForeignObject()
+        && layerBacking && layerBacking->foregroundLayer();
+
     auto appendForegroundLayerIfNecessary = [&] {
         // If a negative z-order child is compositing, we get a foreground layer which needs to get parented.
-        if (layer.negativeZOrderLayers().size()) {
+        // For SVG layers, the foreground layer is appended after positive z-order children instead.
+        if (!isSVGForegroundLayerCase && layer.negativeZOrderLayers().size()) {
             if (layerBacking && layerBacking->foregroundLayer())
                 childList.append(Ref { *layerBacking->foregroundLayer() });
         }
+    };
+
+    auto appendSVGForegroundLayerIfNecessary = [&] {
+        // For SVG layers with composited positive z-order children, the foreground layer
+        // paints after all composited children to preserve SVG DOM painting order.
+        if (isSVGForegroundLayerCase)
+            childList.append(Ref { *layerBacking->foregroundLayer() });
     };
 
     if (requireDescendantTraversal) {
@@ -1822,13 +1835,17 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         for (CheckedPtr renderLayer : layer.positiveZOrderLayers())
             updateBackingAndHierarchy(*renderLayer, childList, traversalStateForDescendants, scrollingStateForDescendants, updateLevel);
 
+        appendSVGForegroundLayerIfNecessary();
+
         // Pass needSynchronousScrollingReasonsUpdate back up.
         scrollingTreeState.needSynchronousScrollingReasonsUpdate |= scrollingStateForDescendants.needSynchronousScrollingReasonsUpdate;
         if (scrollingTreeState.parentNodeID == scrollingStateForDescendants.parentNodeID)
             scrollingTreeState.nextChildIndex = scrollingStateForDescendants.nextChildIndex;
 
-    } else if (requiresChildRebuild)
+    } else if (requiresChildRebuild) {
         appendForegroundLayerIfNecessary();
+        appendSVGForegroundLayerIfNecessary();
+    }
 
     if (layerBacking) {
         if (requireDescendantTraversal || requiresChildRebuild) {
@@ -4475,6 +4492,18 @@ bool RenderLayerCompositor::needsContentsCompositingLayer(const RenderLayer& lay
     for (CheckedPtr negativeZOrderLayer : layer.negativeZOrderLayers()) {
         if (negativeZOrderLayer->isComposited() || negativeZOrderLayer->hasCompositingDescendant())
             return true;
+    }
+
+    // SVG layers with composited positive z-order children need a foreground layer
+    // so that subsequent non-composited SVG siblings paint above the composited
+    // content, preserving SVG DOM painting order.
+    if (layer.renderer().document().settings().layerBasedSVGEngineEnabled()
+        && layer.renderer().isSVGLayerAwareRenderer()
+        && !layer.renderer().isRenderSVGForeignObject()) {
+        for (CheckedPtr posLayer : layer.positiveZOrderLayers()) {
+            if (posLayer->isComposited() || posLayer->hasCompositingDescendant())
+                return true;
+        }
     }
 
     return false;

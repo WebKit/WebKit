@@ -758,7 +758,7 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
                 ASSERT(svgRoot->viewportContainer());
                 protect(svgRoot->viewportContainer())->updateHasSVGTransformFlags();
             }
-            updateSVGRendererForElementChange();
+            renderer.setNeedsLayout();
             return;
         }
 

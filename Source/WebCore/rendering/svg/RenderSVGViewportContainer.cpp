@@ -100,7 +100,15 @@ bool RenderSVGViewportContainer::needsHasSVGTransformFlags() const
     if (isOutermostSVGViewportContainer()) {
         if (useSVGSVGElement->useCurrentView())
             return true;
-        return !useSVGSVGElement->currentTranslateValue().isZero() || useSVGSVGElement->renderer()->style().usedZoom() != 1;
+        if (!useSVGSVGElement->currentTranslateValue().isZero() || useSVGSVGElement->renderer()->style().usedZoom() != 1)
+            return true;
+        // Need transform flags when the SVG root has a non-zero content box location
+        // (e.g., due to border or padding), so that the content box offset is propagated
+        // through the transform painting chain to transformed descendants.
+        // Use m_owningSVGRoot instead of parent() since this may be called during
+        // initializeStyle() before the renderer is attached to the tree.
+        if (m_owningSVGRoot)
+            return !m_owningSVGRoot->contentBoxLocation().isZero();
     }
 
     return false;
@@ -114,6 +122,13 @@ void RenderSVGViewportContainer::updateFromStyle()
         setHasNonVisibleOverflow();
 }
 
+bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& point)
+{
+    if (!SVGRenderSupport::isOverflowHidden(*this))
+        return true;
+    return viewport().contains(point);
+}
+
 inline AffineTransform viewBoxToViewTransform(const SVGSVGElement& svgSVGElement, const FloatSize& viewportSize)
 {
     return svgSVGElement.viewBoxToViewTransform(viewportSize.width(), viewportSize.height());
@@ -121,8 +136,6 @@ inline AffineTransform viewBoxToViewTransform(const SVGSVGElement& svgSVGElement
 
 void RenderSVGViewportContainer::updateLayerTransform()
 {
-    ASSERT(hasLayer());
-
     // First update the supplemental layer transform.
     Ref useSVGSVGElement = svgSVGElement();
     auto viewportSize = this->viewportSize();
@@ -136,7 +149,21 @@ void RenderSVGViewportContainer::updateLayerTransform()
 
         // Handle zoom - take effective zoom from outermost <svg> element.
         if (auto scale = useSVGSVGElement->renderer()->style().usedZoom(); scale != 1) {
-            m_supplementalLayerTransform.scale(scale);
+            // The outermost viewport container is positioned at the content box origin
+            // (border + padding offset from the SVG root's border box). In paintLayerByApplyingTransform(),
+            // the layer's positional offset is applied via translateRight AFTER the supplemental transform.
+            // Without compensation, the zoom scale would be applied to this positional offset, causing
+            // the SVG content to be shifted by (zoom - 1) * contentBoxOffset. Wrap the scale with
+            // compensating translations to prevent the positional offset from being scaled.
+            auto contentBoxOffset = downcast<RenderSVGRoot>(*parent()).contentBoxLocation();
+            if (contentBoxOffset != LayoutPoint()) {
+                auto cbx = contentBoxOffset.x().toFloat();
+                auto cby = contentBoxOffset.y().toFloat();
+                m_supplementalLayerTransform.translate(cbx, cby);
+                m_supplementalLayerTransform.scale(scale);
+                m_supplementalLayerTransform.translate(-cbx, -cby);
+            } else
+                m_supplementalLayerTransform.scale(scale);
             viewportSize.scale(1.0 / scale);
         }
     } else if (!m_viewport.location().isZero())
@@ -147,9 +174,10 @@ void RenderSVGViewportContainer::updateLayerTransform()
         hasCurrentViewEmptyViewBox = useSVGSVGElement->currentView().hasEmptyViewBox();
     if (useSVGSVGElement->hasAttribute(SVGNames::viewBoxAttr) || !hasCurrentViewEmptyViewBox) {
         // An empty viewBox disables the rendering -- dirty the visible descendant status!
-        if (useSVGSVGElement->hasEmptyViewBox() && hasCurrentViewEmptyViewBox)
-            layer()->dirtyVisibleContentStatus();
-        else if (!useSVGSVGElement->viewBox().isEmpty() || !hasCurrentViewEmptyViewBox) {
+        if (useSVGSVGElement->hasEmptyViewBox() && hasCurrentViewEmptyViewBox) {
+            if (hasLayer())
+                layer()->dirtyVisibleContentStatus();
+        } else if (!useSVGSVGElement->viewBox().isEmpty() || !hasCurrentViewEmptyViewBox) {
             if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize); !viewBoxTransform.isIdentity()) {
                 if (m_supplementalLayerTransform.isIdentity())
                     m_supplementalLayerTransform = viewBoxTransform;

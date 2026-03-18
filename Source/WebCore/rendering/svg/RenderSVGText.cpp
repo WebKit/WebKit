@@ -50,6 +50,7 @@
 #include "RenderSVGBlockInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGTextPath.h"
 #include "SVGElementTypeHelpers.h"
@@ -804,8 +805,11 @@ PositionWithAffinity RenderSVGText::positionForPoint(const LayoutPoint& pointInC
 
 bool RenderSVGText::requiresLayer() const
 {
-    if (document().settings().layerBasedSVGEngineEnabled())
-        return true;
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (RenderSVGModelObject::shouldCreateLayersForAllSVGRenderers())
+            return true;
+        return RenderSVGBlock::requiresLayer();
+    }
     return false;
 }
 

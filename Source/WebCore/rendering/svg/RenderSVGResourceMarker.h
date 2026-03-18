@@ -45,6 +45,7 @@ public:
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
 private:
+    bool requiresLayer() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderSVGResourceMarker"_s; }
 
     inline SVGMarkerElement& markerElement() const;

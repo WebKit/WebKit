@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="foreignobject-interleaving-expected.html">
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Tests that foreignObject with HTML content paints in correct DOM order
+     relative to SVG siblings, including transformed layer siblings. -->
+<svg width="400" height="200" viewBox="0 0 400 200">
+  <rect x="0" y="0" width="400" height="200" fill="#f0f0f0"/>
+
+  <!-- Non-layer SVG shape -->
+  <circle cx="80" cy="100" r="60" fill="#e74c3c"/>
+
+  <!-- foreignObject with HTML content -->
+  <foreignObject x="120" y="30" width="160" height="140">
+    <div xmlns="http://www.w3.org/1999/xhtml"
+         style="background: rgba(52, 152, 219, 0.8); width: 160px; height: 140px;"></div>
+  </foreignObject>
+
+  <!-- Non-layer SVG shape after foreignObject -->
+  <circle cx="320" cy="100" r="60" fill="#2ecc71"/>
+
+  <!-- Transformed SVG rect (creates layer) -->
+  <rect x="260" y="60" width="80" height="80" fill="rgba(155, 89, 182, 0.7)"
+        style="transform: rotate(10deg);"/>
+</svg>
+</body>
+</html>

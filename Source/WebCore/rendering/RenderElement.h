@@ -365,6 +365,8 @@ protected:
     virtual void styleWillChange(Style::Difference, const RenderStyle& newStyle);
     virtual void styleDidChange(Style::Difference, const RenderStyle* oldStyle);
 
+    void dirtyEnclosingLayerSVGChildrenIfNeeded();
+
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
     void willBeDestroyed() override;

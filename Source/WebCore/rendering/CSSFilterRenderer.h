@@ -39,10 +39,15 @@ struct Filter;
 struct FilterValue;
 }
 
+enum class FilterRenderingOption : uint8_t {
+    ShowDebugOverlay    = 1 << 0,
+    ApplyToSVGRenderer  = 1 << 1,
+};
+
 class CSSFilterRenderer final : public Filter {
     WTF_MAKE_TZONE_ALLOCATED(CSSFilterRenderer);
 public:
-    static RefPtr<CSSFilterRenderer> create(RenderElement&, const Style::Filter&, const FilterGeometry&, OptionSet<FilterRenderingMode>, bool showDebugOverlay, const GraphicsContext& destinationContext);
+    static RefPtr<CSSFilterRenderer> create(RenderElement&, const Style::Filter&, const FilterGeometry&, OptionSet<FilterRenderingMode>, OptionSet<FilterRenderingOption>, const GraphicsContext& destinationContext);
 
     WEBCORE_EXPORT static Ref<CSSFilterRenderer> create(Vector<Ref<FilterFunction>>&&);
     WEBCORE_EXPORT static Ref<CSSFilterRenderer> create(Vector<Ref<FilterFunction>>&&, const FilterGeometry&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, bool showDebugOverlay);
@@ -65,10 +70,11 @@ private:
     CSSFilterRenderer(const FilterGeometry&, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
     CSSFilterRenderer(Vector<Ref<FilterFunction>>&&, const FilterGeometry&);
 
-    RefPtr<FilterFunction> buildFilterFunction(RenderElement&, const Style::FilterValue&, OptionSet<FilterRenderingMode>, const GraphicsContext& destinationContext);
-    bool buildFilterFunctions(RenderElement&, const Style::Filter&, OptionSet<FilterRenderingMode>, const GraphicsContext& destinationContext);
+    RefPtr<FilterFunction> buildFilterFunction(RenderElement&, const Style::FilterValue&, OptionSet<FilterRenderingMode>, OptionSet<FilterRenderingOption>, const GraphicsContext& destinationContext);
+    bool buildFilterFunctions(RenderElement&, const Style::Filter&, OptionSet<FilterRenderingMode>, OptionSet<FilterRenderingOption>, const GraphicsContext& destinationContext);
 
     void computeEnclosingFilterRegion();
+    void expandFilterRegionForSVGReferences();
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const final;
 

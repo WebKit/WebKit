@@ -130,7 +130,7 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) c
             .referenceBox = bounds,
             .filterRegion = filterRegion,
             .scale = { 1, 1 },
-        }, preferredFilterRenderingModes, false, *context);
+        }, preferredFilterRenderingModes, { }, *context);
     if (!filter)
         return nullptr;
 

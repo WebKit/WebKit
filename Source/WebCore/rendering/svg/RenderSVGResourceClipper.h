@@ -56,6 +56,7 @@ private:
 
     void updateFromStyle() final;
 
+    bool requiresLayer() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderSVGResourceClipper"_s; }
 
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;

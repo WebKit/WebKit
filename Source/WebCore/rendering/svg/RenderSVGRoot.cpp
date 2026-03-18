@@ -371,10 +371,15 @@ void RenderSVGRoot::paintContents(PaintInfo& paintInfo, const LayoutPoint& paint
     else if (paintInfo.phase == PaintPhase::ChildBlockBackgrounds)
         paintInfoForChild.phase = PaintPhase::ChildBlockBackground;
 
-    paintInfoForChild.updateSubtreePaintRootForChildren(this);
-    for (auto& child : childrenOfType<RenderElement>(*this)) {
-        if (!child.hasSelfPaintingLayer())
-            child.paint(paintInfoForChild, paintOffset);
+    // When the SVG root has a self-painting layer, children are painted by
+    // paintSVGChildrenInDOMOrder() to ensure correct DOM-order interleaving
+    // of layer and non-layer children.
+    if (!hasSelfPaintingLayer()) {
+        paintInfoForChild.updateSubtreePaintRootForChildren(this);
+        for (auto& child : childrenOfType<RenderElement>(*this)) {
+            if (!child.hasSelfPaintingLayer())
+                child.paint(paintInfoForChild, paintOffset);
+        }
     }
 }
 
@@ -454,16 +459,12 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     auto visualOverflowRect = this->visualOverflowRect();
     visualOverflowRect.moveBy(adjustedLocation);
 
-    // Test SVG content if the point is in our content box or it is inside the visualOverflowRect and the overflow is visible.
-    if (contentBoxRect().contains(adjustedLocation) || (!shouldApplyViewportClip() && locationInContainer.intersects(visualOverflowRect))) {
-        // Check kids first.
-        for (auto* child = lastChild(); child; child = child->previousSibling()) {
-            if (!child->hasLayer() && child->nodeAtPoint(request, result, locationInContainer, adjustedLocation, hitTestAction)) {
-                updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-                return true;
-            }
-        }
-    }
+    // SVG children are hit tested by RenderLayerSVG::hitTestSVGChildrenInDOMOrder(),
+    // which properly inverse-transforms hit test points through non-layer SVG transforms
+    // (e.g., <g transform="scale(200)">). We must NOT iterate children here because
+    // RenderSVGContainer::nodeAtPoint() does not apply inverse transforms, leading to
+    // false positives (e.g., point (0,0) incorrectly matching a path vertex at origin
+    // when the path is actually translated to (100,100) via a parent transform).
 
     // If we didn't early exit above, we've just hit the container <svg> element. Unlike SVG 1.1, 2nd Edition allows container elements to be hit.
     if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && visibleToHitTesting(request)) {

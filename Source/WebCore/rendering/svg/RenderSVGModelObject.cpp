@@ -33,6 +33,7 @@
 #include "RenderSVGModelObject.h"
 
 #include "RenderElementInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
@@ -48,6 +49,7 @@
 #include "SVGUseElement.h"
 #include "StyleTransformResolver.h"
 #include "TransformState.h"
+#include <mutex>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -70,10 +72,59 @@ RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, Rende
 
 RenderSVGModelObject::~RenderSVGModelObject() = default;
 
+bool RenderSVGModelObject::shouldCreateLayersForAllSVGRenderers()
+{
+    static std::once_flag onceFlag;
+    static bool shouldCreateLayers = false;
+
+    std::call_once(onceFlag, [] {
+        if (const char* envString = getenv("WEBKIT_LBSE_FORCE_CREATE_LAYERS")) {
+            auto envStringView = StringView::fromLatin1(envString);
+            if (envStringView == "1"_s)
+                shouldCreateLayers = true;
+        }
+    });
+
+    return shouldCreateLayers;
+}
+
+bool RenderSVGModelObject::requiresLayer() const
+{
+    if (shouldCreateLayersForAllSVGRenderers())
+        return true;
+
+    // SVG renderers don't need layers for plain 2D transforms (SVG transform attribute, CSS
+    // 2D transforms) -- those are handled by paintSVGRendererByApplyingTransform() without layers.
+    // We still need layers for 3D CSS transforms (perspective(), rotateX(), etc.) since those
+    // require compositing, as well as 3D transform contexts (preserve-3d, perspective property)
+    // and all other conditions that normally require layers (grouping effects, z-index, etc.).
+    return createsGroup()
+        || style().transform().has3DOperation()
+        || style().translate().is3DOperation()
+        || style().scale().is3DOperation()
+        || style().rotate().is3DOperation()
+        || style().transformStyle3D() == TransformStyle3D::Preserve3D
+        || !style().perspective().isNone()
+        || hasHiddenBackface()
+        || hasReflection()
+        || !style().specifiedZIndex().isAuto()
+        || style().isolation() != Isolation::Auto;
+}
+
 void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();
     updateHasSVGTransformFlags();
+    if (!hasLayer())
+        updateLocalTransform();
+}
+
+void RenderSVGModelObject::updateLocalTransform()
+{
+    TransformationMatrix transform;
+    auto referenceBoxRect = transformReferenceBoxRect(style());
+    applyTransform(transform, style(), referenceBoxRect, Style::TransformResolver::allTransformOperations);
+    m_localTransform = transform.toAffineTransform();
 }
 
 LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, OverlayScrollbarSizeRelevancy, PaintPhase) const
@@ -283,8 +334,9 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
 LayoutSize RenderSVGModelObject::cachedSizeForOverflowClip() const
 {
     ASSERT(hasNonVisibleOverflow());
-    ASSERT(hasLayer());
-    return layer()->size();
+    if (hasLayer())
+        return layer()->size();
+    return currentSVGLayoutRect().size();
 }
 
 bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const
@@ -310,12 +362,26 @@ bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects,
 
 Path RenderSVGModelObject::computeClipPath(AffineTransform& transform) const
 {
-    if (layer()->isTransformed())
-        transform.multiply(layer()->currentTransform(Style::TransformResolver::individualTransformOperations).toAffineTransform());
+    auto computeRendererTransform = [](CheckedRef<const RenderLayerModelObject> renderer) -> AffineTransform {
+        if (renderer->isTransformed()) {
+            TransformationMatrix matrix;
+            auto& style = renderer->style();
+            auto referenceBoxRect = renderer->transformReferenceBoxRect(style);
+            renderer->applyTransform(matrix, style, referenceBoxRect, Style::TransformResolver::individualTransformOperations);
+            return matrix.toAffineTransform();
+        }
+        return { };
+    };
+
+    if (isTransformed())
+        transform.multiply(computeRendererTransform(*this));
 
     if (RefPtr useElement = dynamicDowncast<SVGUseElement>(protect(element()))) {
-        if (CheckedPtr clipChildRenderer = useElement->rendererClipChild())
-            transform.multiply(protect(downcast<RenderLayerModelObject>(*clipChildRenderer).layer())->currentTransform(Style::TransformResolver::individualTransformOperations).toAffineTransform());
+        if (CheckedPtr clipChildRenderer = useElement->rendererClipChild()) {
+            CheckedRef layerModelObject = downcast<RenderLayerModelObject>(*clipChildRenderer);
+            if (layerModelObject->isTransformed())
+                transform.multiply(computeRendererTransform(layerModelObject.get()));
+        }
         if (RefPtr clipChild = useElement->clipChild())
             return pathFromGraphicsElement(*clipChild);
     }

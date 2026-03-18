@@ -50,6 +50,9 @@ public:
             repaintAllClients();
     }
 
+private:
+    bool requiresLayer() const final { return true; }
+
 protected:
     RefPtr<Pattern> buildPattern(GraphicsContext&, const RenderLayerModelObject&);
 

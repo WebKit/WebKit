@@ -92,7 +92,14 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     GraphicsContextStateSaver stateSaver(context);
 
     auto objectBoundingBox = targetRenderer.objectBoundingBox();
-    auto boundingBoxTopLeftCorner = flooredLayoutPoint(objectBoundingBox.minXMinYCorner());
+
+    // Use the bounding box without child transforms to compute the coordinate system
+    // origin translation. adjustedPaintOffset is based on currentSVGLayoutLocation() which
+    // uses the without-transforms bbox. Using objectBoundingBox() (which includes child
+    // transforms) would create a coordinate mismatch, shifting the mask buffer relative
+    // to the mask content painted via paintSVGResourceLayer().
+    auto boundingBoxWithoutTransformations = targetRenderer.objectBoundingBoxWithoutTransformations();
+    auto boundingBoxTopLeftCorner = flooredLayoutPoint(boundingBoxWithoutTransformations.minXMinYCorner());
     auto coordinateSystemOriginTranslation = adjustedPaintOffset - boundingBoxTopLeftCorner;
     if (!coordinateSystemOriginTranslation.isZero())
         context.translate(coordinateSystemOriginTranslation);
@@ -110,8 +117,9 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
         drawColorSpace = DestinationColorSpace::LinearSRGB();
     }
 
-    RefPtr<ImageBuffer> maskImage = m_masker.get(targetRenderer);
-    bool missingMaskerData = !maskImage;
+    auto it = m_masker.find(targetRenderer);
+    bool missingMaskerData = it == m_masker.end() || it->value.decoratedBounds != decoratedBounds;
+    RefPtr<ImageBuffer> maskImage = missingMaskerData ? nullptr : it->value.maskImage;
     if (missingMaskerData) {
         // FIXME: try to use GraphicsContext::createScaledImageBuffer instead.
         maskImage = createImageBuffer(decoratedBounds, absoluteTransform, maskColorSpace, &context);
@@ -133,7 +141,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 
         if (style().maskType() == MaskType::Luminance)
             maskImage->convertToLuminanceMask();
-        m_masker.set(targetRenderer, maskImage);
+        m_masker.set(targetRenderer, MaskerData { maskImage, decoratedBounds });
     }
     context.setCompositeOperation(CompositeOperator::SourceOver);
 

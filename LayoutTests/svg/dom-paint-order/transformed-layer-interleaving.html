@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="transformed-layer-interleaving-expected.html">
+<meta name="fuzzy" content="maxDifference=1; totalPixels=0-5" />
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Tests that CSS-transformed and SVG-transformed elements (which create layers)
+     interleave correctly with non-layer siblings in DOM order. -->
+<svg width="400" height="200">
+  <!-- Non-layer child -->
+  <rect x="50" y="30" width="120" height="120" fill="orange"/>
+
+  <!-- CSS transform -> creates layer, paints after orange in DOM order -->
+  <rect x="100" y="50" width="120" height="120" fill="purple" style="transform: rotate(15deg);"/>
+
+  <!-- Non-layer child, paints after purple in DOM order -->
+  <rect x="220" y="60" width="80" height="80" fill="cyan"/>
+
+  <!-- SVG transform attribute -> creates layer, paints last in DOM order -->
+  <rect x="200" y="30" width="120" height="120" fill="gold" transform="translate(40, 20)"/>
+</svg>
+</body>
+</html>

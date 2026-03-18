@@ -1,0 +1,15 @@
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=1; totalPixels=80" />
+</head>
+<body style="margin: 0">
+<!-- Test that SVG transform="scale(0.5)" renders identically with and without a RenderLayer -->
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200">
+    <!-- Left: scale(0.5) WITHOUT a layer (no compositing trigger) -->
+    <circle cx="100" cy="100" r="80" fill="green" transform="scale(0.5)"/>
+
+    <!-- Right: scale(0.5) WITH a layer (opacity triggers layer creation) -->
+    <circle cx="300" cy="100" r="80" fill="blue" transform="scale(0.5)" style="opacity: 0.99"/>
+</svg>
+</body>
+</html>

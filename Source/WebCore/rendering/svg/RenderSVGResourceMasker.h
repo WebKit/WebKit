@@ -59,8 +59,13 @@ public:
 private:
     void element() const = delete;
 
+    bool requiresLayer() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderSVGResourceMasker"_s; }
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_masker;
+    struct MaskerData {
+        RefPtr<ImageBuffer> maskImage;
+        FloatRect decoratedBounds;
+    };
+    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, MaskerData> m_masker;
 };
 
 }

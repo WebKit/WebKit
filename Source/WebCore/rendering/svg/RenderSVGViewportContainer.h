@@ -51,6 +51,7 @@ private:
 
     bool isOutermostSVGViewportContainer() const { return isAnonymous(); }
     bool updateLayoutSizeIfNeeded() final;
+    bool pointIsInsideViewportClip(const FloatPoint&) final;
     std::optional<FloatRect> overridenObjectBoundingBoxWithoutTransformations() const final { return std::make_optional(viewport()); }
 
     FloatPoint computeViewportLocation() const;

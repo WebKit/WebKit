@@ -88,8 +88,15 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
         return;
 
     // Invalidate cached visual overflow rect since resource bounds may have changed.
-    if (auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get()))
+    if (CheckedPtr layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get())) {
         layerModelObject->invalidateCachedVisualOverflowRect();
+        // Ensure the post-layout recursiveUpdateLayerPositions() processes this client layer
+        // and generates repaint rects, even if the client's own geometry didn't change.
+        if (layerModelObject->hasLayer()) {
+            CheckedPtr layer = layerModelObject->layer();
+            layer->setSelfAndDescendantsNeedPositionUpdate();
+        }
+    }
 
     // Special case for markers. Markers can be attached to RenderSVGPath object. Marker positions are computed
     // once during layout, or if the shape itself changes. Here we manually update the marker positions without
@@ -98,10 +105,14 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     if (auto* pathClientRenderer = dynamicDowncast<RenderSVGPath>(m_clientRenderer.get()); pathClientRenderer && is<SVGMarkerElement>(element))
         pathClientRenderer->updateMarkerPositions();
 
-    // During layout, skip the repaint - the post-layout phase handles it via updateLayerPositions().
-    // We only need to ensure the cached visual overflow rect is invalidated (done above).
-    if (m_clientRenderer->document().view()->layoutContext().isInLayout())
-        return;
+    // During layout, clients with layers are handled by the post-layout
+    // recursiveUpdateLayerPositions() phase. Clients without layers need a direct repaint.
+    if (m_clientRenderer->document().view()->layoutContext().isInLayout()) {
+        if (auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get())) {
+            if (layerModelObject->hasLayer())
+                return;
+        }
+    }
 
     m_clientRenderer->repaintOldAndNewPositionsForSVGRenderer();
 }

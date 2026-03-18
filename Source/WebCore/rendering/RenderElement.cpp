@@ -1173,6 +1173,14 @@ void RenderElement::styleDidChange(Style::Difference diff, const RenderStyle* ol
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
+void RenderElement::dirtyEnclosingLayerSVGChildrenIfNeeded()
+{
+    if (!hasLayer() && isSVGLayerAwareRenderer() && document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr layer = enclosingLayer())
+            layer->dirtySVGChildrenInDOMOrder();
+    }
+}
+
 void RenderElement::insertedIntoTree()
 {
     // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
@@ -1189,6 +1197,10 @@ void RenderElement::insertedIntoTree()
             parentLayer->dirtyVisibleContentStatus();
     }
 
+    // Dirty the enclosing layer's SVG children list when a non-layer SVG renderer is inserted.
+    // Layer children are handled by RenderLayer::addChild -> dirtyPaintOrderListsOnChildChange.
+    dirtyEnclosingLayerSVGChildrenIfNeeded();
+
     RenderObject::insertedIntoTree();
 }
 
@@ -1200,6 +1212,11 @@ void RenderElement::willBeRemovedFromTree()
         if (CheckedPtr enclosingLayer = parent()->enclosingLayer())
             enclosingLayer->dirtyVisibleContentStatus();
     }
+
+    // Dirty the enclosing layer's SVG children list when a non-layer SVG renderer is removed.
+    // Layer children are handled by RenderLayer::removeChild -> dirtyPaintOrderListsOnChildChange.
+    dirtyEnclosingLayerSVGChildrenIfNeeded();
+
     // Keep our layer hierarchy updated.
     if (firstChild() || hasLayer())
         removeLayers();
@@ -2326,7 +2343,23 @@ bool RenderElement::isViewTransitionRoot() const
 
 bool RenderElement::checkForRepaintDuringLayout() const
 {
-    return everHadLayout() && !hasSelfPaintingLayer() && !document().view()->layoutContext().needsFullRepaint();
+    if (!everHadLayout() || hasSelfPaintingLayer() || document().view()->layoutContext().needsFullRepaint())
+        return false;
+
+    // LBSE: Suppress LayoutRepainter for elements inside SVG hidden/resource containers
+    // (<defs>, <clipPath>, <mask>, <pattern>), which are never painted directly.
+    // Also suppress for anonymous SVG containers (the viewport container child of
+    // RenderSVGRoot) whose children's layers handle their own repaints.
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (isRenderSVGContainer() && isAnonymous())
+            return false;
+        for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+            if (ancestor->isRenderSVGHiddenContainer())
+                return false;
+        }
+    }
+
+    return true;
 }
 
 ImageOrientation RenderElement::imageOrientation() const

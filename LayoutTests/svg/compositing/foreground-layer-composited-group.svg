@@ -1,0 +1,11 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Test: A <g> element that is composited (will-change on the group).
+         Non-composited content before and after the composited group must paint. -->
+    <rect x="10" y="10" width="80" height="80" fill="blue"/>
+    <g style="will-change: transform">
+        <rect x="110" y="10" width="80" height="80" fill="green"/>
+        <circle cx="250" cy="50" r="40" fill="lime"/>
+    </g>
+    <rect x="300" y="10" width="80" height="80" fill="red"/>
+</svg>

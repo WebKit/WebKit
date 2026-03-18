@@ -287,7 +287,8 @@ void SVGGraphicsElement::invalidateResourceImageBuffersIfNeeded()
     if (!document().settings().layerBasedSVGEngineEnabled())
         return;
     if (CheckedPtr svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer())) {
-        if (CheckedPtr container = svgRenderer->enclosingLayer()->enclosingSVGHiddenOrResourceContainer()) {
+        CheckedPtr enclosingLayer = svgRenderer->enclosingLayer();
+        if (CheckedPtr container = enclosingLayer->enclosingSVGHiddenOrResourceContainer()) {
             if (auto* maskRenderer = dynamicDowncast<RenderSVGResourceMasker>(container.get()))
                 maskRenderer->invalidateMask();
             if (auto* patternRenderer = dynamicDowncast<RenderSVGResourcePattern>(container.get()))

@@ -1913,6 +1913,9 @@ webkit.org/b/243515 svg/compositing/outermost-svg-directly-composited-transforme
 # The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
 svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
 
+# The test requires LBSE, but in LBSE this testcase is currently broken, mark it as such.
+svg/compositing/transformed-child-in-scaled-parent.html [ ImageOnlyFailure ]
+
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html [ Pass Failure ]
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-default-feature-policy.https.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Pass Failure ]

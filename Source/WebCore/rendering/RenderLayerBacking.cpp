@@ -3108,7 +3108,12 @@ void RenderLayerBacking::updatePaintingPhases()
 {
     // Phases for m_maskLayer are set elsewhere.
     OptionSet<GraphicsLayerPaintingPhase> primaryLayerPhases = { GraphicsLayerPaintingPhase::Background, GraphicsLayerPaintingPhase::Foreground };
-    
+
+    bool isSVGForegroundLayerCase = renderer().document().settings().layerBasedSVGEngineEnabled()
+        && renderer().isSVGLayerAwareRenderer()
+        && !renderer().isRenderSVGForeignObject()
+        && m_foregroundLayer;
+
     if (m_foregroundLayer) {
         OptionSet<GraphicsLayerPaintingPhase> foregroundLayerPhases { GraphicsLayerPaintingPhase::Foreground };
         
@@ -3116,7 +3121,12 @@ void RenderLayerBacking::updatePaintingPhases()
             foregroundLayerPhases.add(GraphicsLayerPaintingPhase::OverflowContents);
 
         m_foregroundLayer->setPaintingPhase(foregroundLayerPhases);
-        primaryLayerPhases.remove(GraphicsLayerPaintingPhase::Foreground);
+
+        // For SVG DOM order splitting, both the primary and foreground layers need
+        // the Foreground phase. The actual paint split is controlled by the
+        // SVGChildPaintScope parameter in paintSVGChildrenInDOMOrder().
+        if (!isSVGForegroundLayerCase)
+            primaryLayerPhases.remove(GraphicsLayerPaintingPhase::Foreground);
     }
 
     if (m_backgroundLayer) {
