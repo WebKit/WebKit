@@ -33,6 +33,25 @@
 
 #if PAS_ENABLE_BMALLOC
 
+/* In principle, it is not generally kosher to allocate isoheaped objects out of bitfit heaps:
+ * plainly, they're not type-safe, and allow for intra- object type-confusion via UAFs on objects aligned
+ * at different offsets within a given bitfit page.
+ * At present, however, the particularities of our configuration allow for this to be done safely.
+ * Specifically, because we
+ *   1. Never use the array-alloc APIs for iso-heaped objects
+ *   2. Never use realloc for iso-heaped objects
+ *   3. Never use shrink for iso-heaped objects
+ *   4. Already size-segregate *before* calling into any pas_heap for
+ *      allocating an iso-heaped object -- thanks to TZoneMalloc.
+ * we can guarantee that in practice, the bitfit heap belonging to any given iso-heap will only ever see
+ * objects of a single size-class. When this option is enabled, bmalloc will check for MTE enablement at
+ * process launch time; if it is, then bmalloc will change its iso-heap runtime-config to allow bitfit
+ * allocations.
+ *
+ * As to why we'd want to do this, see 309573@main for details; in brief, this enables us to effectively
+ * get retag-on-free without slowing down the small-segregated free-path in the WebContent process. */
+#define BMALLOC_ALLOW_ISO_HEAPED_BITFIT_ALLOCATIONS_UNDER_MTE       1
+
 PAS_BEGIN_EXTERN_C;
 
 PAS_API void* bmalloc_try_allocate(size_t size, pas_allocation_mode allocation_mode);
@@ -66,6 +85,7 @@ PAS_API void* bmalloc_reallocate(void* old_ptr, size_t new_size,
 PAS_BAPI void* bmalloc_try_iso_allocate(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode);
 PAS_BAPI void* bmalloc_iso_allocate(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode);
 
+#if !BMALLOC_ALLOW_ISO_HEAPED_BITFIT_ALLOCATIONS_UNDER_MTE
 PAS_BAPI void* bmalloc_try_iso_allocate_array_by_size(pas_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode);
 PAS_BAPI void* bmalloc_iso_allocate_array_by_size(pas_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode);
 
@@ -90,6 +110,7 @@ PAS_API void* bmalloc_iso_allocate_array_by_count_with_alignment(
 
 PAS_API void* bmalloc_try_iso_reallocate_array_by_count(pas_heap_ref* heap_ref, void* ptr, size_t count, pas_allocation_mode allocation_mode);
 PAS_API void* bmalloc_iso_reallocate_array_by_count(pas_heap_ref* heap_ref, void* ptr, size_t count, pas_allocation_mode allocation_mode);
+#endif /* !PAS_ALLOW_ISO_HEAPED_BITFIT_ALLOCATIONS_UNDER_MTE */
 
 PAS_API pas_heap* bmalloc_heap_ref_get_heap(pas_heap_ref* heap_ref);
 

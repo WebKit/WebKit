@@ -159,6 +159,7 @@ PAS_NEVER_INLINE void* bmalloc_allocate_array_by_size_with_alignment_casual(
     return (void*)bmalloc_iso_allocate_array_impl_casual_case(heap_ref, size, alignment, allocation_mode).begin;
 }
 
+#if !BMALLOC_ALLOW_ISO_HEAPED_BITFIT_ALLOCATIONS_UNDER_MTE
 void* bmalloc_try_iso_allocate_array_by_size(pas_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
 {
     return bmalloc_try_iso_allocate_array_by_size_inline(heap_ref, size, allocation_mode);
@@ -232,6 +233,7 @@ void* bmalloc_iso_reallocate_array_by_count(pas_heap_ref* heap_ref, void* ptr, s
 {
     return bmalloc_iso_reallocate_array_by_count_inline(heap_ref, ptr, count, allocation_mode);
 }
+#endif /* !PAS_ALLOW_ISO_HEAPED_BITFIT_ALLOCATIONS_UNDER_MTE */
 
 pas_heap* bmalloc_heap_ref_get_heap(pas_heap_ref* heap_ref)
 {

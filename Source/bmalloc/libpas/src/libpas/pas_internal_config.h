@@ -147,6 +147,25 @@
 #define PAS_SMALL_SHARED_PAGE_LOG_SHIFT     31
 #define PAS_MEDIUM_SHARED_PAGE_LOG_SHIFT    31
 
+/* In principle, it is not generally kosher to allocate isoheaped objects out of bitfit heaps:
+ * plainly, they're not type-safe, and allow for intra- object type-confusion via UAFs on objects aligned
+ * at different offsets within a given bitfit page.
+ * At present, however, the particularities of our configuration allow for this to be done safely.
+ * Specifically, because we
+ *   1. Never use the array-alloc APIs for iso-heaped objects
+ *   2. Never use realloc for iso-heaped objects
+ *   3. Never use shrink for iso-heaped objects
+ *   4. Already size-segregate *before* calling into any pas_heap for
+ *      allocating an iso-heaped object -- thanks to TZoneMalloc.
+ * we can guarantee that in practice, the bitfit heap belonging to any given iso-heap will only ever see
+ * objects of a single size-class. When this option is enabled, bmalloc will check for MTE enablement at
+ * process launch time; if it is, then bmalloc will change its iso-heap runtime-config to allow bitfit
+ * allocations.
+ *
+ * As to why we'd want to do this, see 309573@main for details; in brief, this enables us to effectively
+ * get retag-on-free without slowing down the small-segregated free-path in the WebContent process. */
+#define PAS_ALLOW_ISO_HEAPED_BITFIT_ALLOCATIONS_UNDER_MTE       1
+
 /* Must be zero; utility doesn't support partials right now (though it could if we hacked deallocation and
    added a shared page directory). */
 #define PAS_UTILITY_BOUND_FOR_PARTIAL_VIEWS                     0

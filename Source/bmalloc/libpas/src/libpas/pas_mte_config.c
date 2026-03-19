@@ -48,6 +48,7 @@
 #include "pas_system_heap.h"
 #include "pas_utility_heap_config.h"
 #include "pas_utils.h"
+#include "bmalloc_heap.h"
 #include "pas_zero_memory.h"
 
 #if PAS_ENABLE_BMALLOC
@@ -106,13 +107,67 @@ static bool get_value_if_available(unsigned* valuePtr, const char* var)
     return false; // Not found.
 }
 
-static void pas_mte_do_initialization(void)
+static void pas_mte_set_configuration_for_webcontent(const char* procname)
+{
+    uint8_t* enabled_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_ENABLE_FLAG);
+    uint8_t* medium_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_MEDIUM_TAGGING_ENABLE_FLAG);
+    uint8_t* lockdown_mode_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_LOCKDOWN_MODE_FLAG);
+    uint8_t* hardened_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_HARDENED_FLAG);
+
+    // For a variety of reasons, a full MTE implementation in the WebContent process is not generally practical.
+    // As such, by default, we disable MTE in the WebContent process while leaving it on in the privileged
+    // processes. However, in certain "extra secure" contexts, this disablement is overridden such that we
+    // treat WebContent like any other process for the purposes of MTE.
+
+    bool wcp_is_hardened = false;
+    bool isEnhancedSecurityWebContentProcess = !strncmp(procname, "com.apple.WebKit.WebContent.EnhancedSecurity", 44);
+    if (*lockdown_mode_byte || isEnhancedSecurityWebContentProcess)
+        wcp_is_hardened = true;
+
+    if (wcp_is_hardened) {
+        *medium_byte = 1;
+        *enabled_byte = 1;
+        *hardened_byte = 1;
+    } else {
+        *medium_byte = 0;
+        *hardened_byte = 0;
+#if !PAS_USE_MTE_IN_WEBCONTENT
+        // Disable tagging in libpas by default in WebContent process
+        *enabled_byte = 0;
+#else
+        *enabled_byte = 1;
+#endif
+    }
+
+#ifndef NDEBUG
+    if (is_env_true("MTE_disableForWebContent")) {
+        PAS_ASSERT(!is_env_true("MTE_overrideEnablementForWebContent"));
+        *enabled_byte = 0;
+        *medium_byte = 0;
+    }
+#endif
+    if (is_env_true("MTE_overrideEnablementForWebContent")) {
+        *enabled_byte = 1;
+        *medium_byte = 1;
+    } else if (is_env_false("MTE_overrideEnablementForWebContent")) {
+        *enabled_byte = 0;
+        *medium_byte = 0;
+    }
+}
+
+static void pas_mte_set_configuration(void)
 {
     uint8_t* enabled_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_ENABLE_FLAG);
     uint8_t* mode_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_MODE_BITS);
     uint8_t* medium_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_MEDIUM_TAGGING_ENABLE_FLAG);
     uint8_t* lockdown_mode_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_LOCKDOWN_MODE_FLAG);
     uint8_t* hardened_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_HARDENED_FLAG);
+
+    *enabled_byte = 0;
+    *mode_byte = 0;
+    *medium_byte = 0;
+    *lockdown_mode_byte = 0;
+    *hardened_byte = 0;
 
     struct proc_bsdinfo info;
     int rc = proc_pidinfo(getpid(), PROC_PIDTBSDINFO, 0, &info, sizeof(info));
@@ -144,53 +199,18 @@ static void pas_mte_do_initialization(void)
     bool isWebContentProcess = !strncmp(name, "com.apple.WebKit.WebContent", 27) || !strncmp(name, "jsc", 3);
 
     if (isWebContentProcess) {
-        // For a variety of reasons, a full MTE implementation in the WebContent process is not generally practical.
-        // As such, by default, we disable MTE in the WebContent process while leaving it on in the privileged
-        // processes. However, in certain "extra secure" contexts, this disablement is overridden such that we
-        // treat WebContent like any other process for the purposes of MTE.
-
-        bool wcp_is_hardened = false;
-        bool isEnhancedSecurityWebContentProcess = !strncmp(name, "com.apple.WebKit.WebContent.EnhancedSecurity", 44);
-        if (*lockdown_mode_byte || isEnhancedSecurityWebContentProcess)
-            wcp_is_hardened = true;
-
-        if (wcp_is_hardened) {
-            *medium_byte = 1;
-            *enabled_byte = 1;
-            *hardened_byte = 1;
-
-            pas_mte_force_nontaggable_user_allocations_into_large_heap();
-        } else {
-            *medium_byte = 0;
-            *hardened_byte = 0;
-#if !PAS_USE_MTE_IN_WEBCONTENT
-            // Disable tagging in libpas by default in WebContent process
-            *enabled_byte = 0;
-#else
-            *enabled_byte = 1;
-#endif
-        }
-
-#ifndef NDEBUG
-        if (is_env_true("MTE_disableForWebContent")) {
-            PAS_ASSERT(!is_env_true("MTE_overrideEnablementForWebContent"));
-            *enabled_byte = 0;
-            *medium_byte = 0;
-        }
-#endif
-        if (is_env_true("MTE_overrideEnablementForWebContent")) {
-            *enabled_byte = 1;
-            *medium_byte = 1;
-        } else if (is_env_false("MTE_overrideEnablementForWebContent")) {
-            *enabled_byte = 0;
-            *medium_byte = 0;
-        }
+        pas_mte_set_configuration_for_webcontent(name);
     } else {
         *medium_byte = 1; // Tag libpas medium objects in privileged processes
         *hardened_byte = 1;
     }
+}
 
-    PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
+static void pas_mte_do_initialization(void)
+{
+    pas_mte_set_configuration();
+    if (PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
+        pas_mte_force_nontaggable_user_allocations_into_large_heap();
     // Retag-on-scavenge functionally supports both segregated and bitfit heaps.
     // However, true to the name, for segregated heaps the retag operation only
     // takes place on the scavenging path.
@@ -206,6 +226,7 @@ static void pas_mte_do_initialization(void)
     // mini-mode because a few stray allocations there won't hurt, but for a
     // security boundary those stray allocations are more of a problem. So we force
     // this here, prior to the creation of such segregated directories.
+    PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
     if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_RETAG_ON_SCAVENGE))
         pas_bmalloc_force_allocations_into_bitfit_heaps_where_available();
     PAS_IGNORE_WARNINGS_END;
@@ -372,6 +393,13 @@ void pas_bmalloc_force_allocations_into_bitfit_heaps_where_available(void)
     bmalloc_primitive_runtime_config.base.max_segregated_object_size = 0;
     bmalloc_intrinsic_runtime_config.base.max_bitfit_object_size = UINT_MAX;
     bmalloc_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
+
+    if (PAS_USE_MTE && BMALLOC_ALLOW_ISO_HEAPED_BITFIT_ALLOCATIONS_UNDER_MTE) {
+        bmalloc_typed_runtime_config.base.max_segregated_object_size = 0;
+        bmalloc_flex_runtime_config.base.max_segregated_object_size = 0;
+        bmalloc_typed_runtime_config.base.max_bitfit_object_size = UINT_MAX;
+        bmalloc_flex_runtime_config.base.max_bitfit_object_size = UINT_MAX;
+    }
 #endif
 
     // If large-object delegation is enabled, we don't want to override that
@@ -384,10 +412,8 @@ void pas_bmalloc_force_allocations_into_bitfit_heaps_where_available(void)
     // So we take the object-delegation path to be a special case and make
     // sure to re-apply after performing the above expansion.
     PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
-#if defined(PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
     if (PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
         pas_mte_force_nontaggable_user_allocations_into_large_heap();
-#endif // defined(PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
     PAS_IGNORE_WARNINGS_END;
 }
 
