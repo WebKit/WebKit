@@ -156,7 +156,7 @@
             "parameters": [
                 { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to reload." },
                 { "name": "ignoreCache", "type": "boolean", "optional": true },
-                { "name": "wait", "$ref": "BidiBrowsingContext.ReadinessState", "optional": true }
+                { "name": "wait", "type": "string", "optional": true, "description": "The readiness state at which the command will return. Expected values are \"none\", \"interactive\", or \"complete\". Parsed manually so omitted and invalid values (for example empty string) can be distinguished for BiDi error handling." }
             ],
             "returns": [
                 { "name": "url", "type": "string", "description": "The URL the browsing context navigated to." },
