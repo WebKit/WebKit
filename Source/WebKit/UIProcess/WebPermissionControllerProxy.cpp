@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPermissionControllerProxy.h"
 
+#include "MessageSenderInlines.h"
 #include "WebPageProxy.h"
 #include "WebPermissionControllerProxyMessages.h"
 #include "WebProcessProxy.h"
@@ -39,6 +40,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
+
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_process->connection(), completion)
 
 namespace WebKit {
 
@@ -67,6 +70,7 @@ void WebPermissionControllerProxy::deref() const
 
 void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
+    MESSAGE_CHECK_COMPLETION(identifier || (source == WebCore::PermissionQuerySource::SharedWorker || source == WebCore::PermissionQuerySource::ServiceWorker), completionHandler(std::nullopt));
     auto webPageProxy = identifier ? m_process->webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
 
     if (!webPageProxy) {
