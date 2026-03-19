@@ -42,6 +42,7 @@
 #include "RenderTextFragment.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
+#include "StyleOriginatedTimelinesController.h"
 #include "StyleTreeResolver.h"
 #include "WritingSuggestionData.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -199,11 +200,17 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
     // cancel any animations that were on it so we do not end up thinking we need to keep
     // the renderer around. We cannot completely rely on needsPseudoElement because
     // we may need to animate a box with display: none.
-    if (!updateStyle)
-        Styleable { current, Style::PseudoElementIdentifier { pseudoElementType } }.cancelStyleOriginatedAnimations();
+
+    bool mayHaveKeyframeEffects = current.mayHaveKeyframeEffects();
+    if (!updateStyle) {
+        if (mayHaveKeyframeEffects)
+            Styleable { current, Style::PseudoElementIdentifier { pseudoElementType } }.cancelStyleOriginatedAnimations();
+        else if (CheckedPtr styleOriginatedTimelinesController = current.document().styleOriginatedTimelinesController())
+            styleOriginatedTimelinesController->unregisterNamedTimelinesAssociatedWithElement(Styleable { current, Style::PseudoElementIdentifier { pseudoElementType } });
+    }
 
     ASSERT(!is<PseudoElement>(current));
-    if (!needsPseudoElement(updateStyle) && !needsPseudoElementForAnimation(current, pseudoElementType)) {
+    if (!needsPseudoElement(updateStyle) && (!mayHaveKeyframeEffects || !needsPseudoElementForAnimation(current, pseudoElementType))) {
         if (pseudoElement) {
             if (pseudoElementType == PseudoElementType::Before)
                 removeBeforePseudoElement(current, m_updater.m_builder);
