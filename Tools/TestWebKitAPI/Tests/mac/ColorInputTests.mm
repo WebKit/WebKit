@@ -35,13 +35,24 @@
 
 namespace TestWebKitAPI {
 
+static bool isShowingColorPicker(TestWKWebView *webView)
+{
+    for (NSView *subview in [webView window].contentView.subviews) {
+        if ([subview isKindOfClass:NSClassFromString(@"WKPopoverColorWell")])
+            return true;
+    }
+    return false;
+}
+
 TEST(ColorInputTests, SetColorUsingColorPicker)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView synchronouslyLoadHTMLString:@"<input type='color' id='color' style='width: 200px; height: 200px;'>"];
 
     [webView sendClickAtPoint:NSMakePoint(50, 350)];
-    [webView waitForNextPresentationUpdate];
+    Util::waitFor([&] {
+        return isShowingColorPicker(webView.get());
+    });
 
     [webView _setSelectedColorForColorPicker:NSColor.redColor];
     [webView waitForNextPresentationUpdate];
@@ -57,7 +68,9 @@ TEST(ColorInputTests, SetColorWithAlphaUsingColorPicker)
     [webView synchronouslyLoadHTMLString:@"<input type='color' id='color' style='width: 200px; height: 200px;'>"];
 
     [webView sendClickAtPoint:NSMakePoint(50, 350)];
-    [webView waitForNextPresentationUpdate];
+    Util::waitFor([&] {
+        return isShowingColorPicker(webView.get());
+    });
 
     NSColor *color = [NSColor colorWithRed:0 green:0 blue:1 alpha:0.5];
     [webView _setSelectedColorForColorPicker:color];
