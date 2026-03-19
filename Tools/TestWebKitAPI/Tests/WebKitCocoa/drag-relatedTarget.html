@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    margin: 0;
+}
+#source {
+    height: 100px;
+    background-color: #aef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+#zoneA {
+    height: 200px;
+    background-color: #fea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#zoneB {
+    height: 200px;
+    background-color: #efa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+</head>
+<body>
+<div id="source" draggable="true">Source</div>
+<div id="zoneA">Zone A</div>
+<div id="zoneB">Zone B</div>
+<script>
+var enterARelatedTarget = "not-fired";
+var leaveARelatedTarget = "not-fired";
+var enterBRelatedTarget = "not-fired";
+
+source.addEventListener("dragstart", function(event) {
+    event.dataTransfer.setData("text/plain", "drag-data");
+});
+
+zoneA.addEventListener("dragenter", function(event) {
+    enterARelatedTarget = event.relatedTarget ? event.relatedTarget.id : "null";
+    event.preventDefault();
+});
+zoneA.addEventListener("dragover", function(event) {
+    event.preventDefault();
+});
+zoneA.addEventListener("dragleave", function(event) {
+    leaveARelatedTarget = event.relatedTarget ? event.relatedTarget.id : "null";
+});
+
+zoneB.addEventListener("dragenter", function(event) {
+    enterBRelatedTarget = event.relatedTarget ? event.relatedTarget.id : "null";
+    event.preventDefault();
+});
+zoneB.addEventListener("dragover", function(event) {
+    event.preventDefault();
+});
+</script>
+</body>
+</html>

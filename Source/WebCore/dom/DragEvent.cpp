@@ -46,10 +46,10 @@ Ref<DragEvent> DragEvent::createForBindings()
 
 Ref<DragEvent> DragEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
-    EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
+    RefPtr<EventTarget>&& relatedTarget, double force, SyntheticClickType syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
 {
     return adoptRef(*new DragEvent(type, canBubble, isCancelable, isComposed, timestamp, WTF::move(view), detail,
-        screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated, isTrusted));
+        screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, WTF::move(relatedTarget), force, syntheticClickType, dataTransfer, isSimulated, isTrusted));
 }
 
 DragEvent::DragEvent(const AtomString& eventType, DragEventInit&& init)
@@ -61,8 +61,8 @@ DragEvent::DragEvent(const AtomString& eventType, DragEventInit&& init)
 DragEvent::DragEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
-    EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
-    : MouseEvent(EventInterfaceType::DragEvent, eventType, canBubble, isCancelable, isComposed, timestamp, WTF::move(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, { }, { }, isSimulated, isTrusted)
+    RefPtr<EventTarget>&& relatedTarget, double force, SyntheticClickType syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
+    : MouseEvent(EventInterfaceType::DragEvent, eventType, canBubble, isCancelable, isComposed, timestamp, WTF::move(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, WTF::move(relatedTarget), force, syntheticClickType, { }, { }, isSimulated, isTrusted)
     , m_dataTransfer(dataTransfer)
 {
 }

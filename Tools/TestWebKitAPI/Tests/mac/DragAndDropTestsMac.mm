@@ -266,6 +266,20 @@ TEST(DragAndDropTests, DragLocationForImageInScrolledSubframe)
     EXPECT_TRUE([dragTypes containsObject:UTTypePNG.identifier]);
 }
 
+
+TEST(DragAndDropTests, DragEnterAndLeaveRelatedTarget)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 320, 500)]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"drag-relatedTarget"];
+
+    [simulator runFrom:NSMakePoint(160, 90) to:NSMakePoint(160, 400)];
+
+    EXPECT_WK_STREQ("null", [webView stringByEvaluatingJavaScript:@"enterARelatedTarget"]);
+    EXPECT_WK_STREQ("zoneB", [webView stringByEvaluatingJavaScript:@"leaveARelatedTarget"]);
+    EXPECT_WK_STREQ("zoneA", [webView stringByEvaluatingJavaScript:@"enterBRelatedTarget"]);
+}
+
 #if ENABLE(IPC_TESTING_API)
 TEST(DragAndDropTests, PasteboardPathnamesRequireDataAccess)
 {
