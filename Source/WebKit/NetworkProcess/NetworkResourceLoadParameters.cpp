@@ -33,17 +33,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static bool networkProcessHasAccessViaSandboxExtension(const String& path)
-{
-#if PLATFORM(IOS_FAMILY)
-    return path.startsWith(WebProcess::singleton().containerTemporaryDirectory());
-#else
-    UNUSED_PARAM(path);
-    return false;
-#endif
-}
-
-bool NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
+void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
 {
     if (request.httpBody()) {
         for (const FormDataElement& element : request.httpBody()->elements()) {
@@ -68,9 +58,7 @@ bool NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
             if (auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly))
                 resourceSandboxExtension = WTF::move(*handle);
         }
-        return resourceSandboxExtension.has_value() || networkProcessHasAccessViaSandboxExtension(path);
     }
-    return true;
 }
 
 RefPtr<SecurityOrigin> NetworkResourceLoadParameters::parentOrigin() const
