@@ -9199,6 +9199,8 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.number', '1234')
         self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -9210,7 +9212,14 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expect_outcome(result=SUCCESS, state_string='Pushed to pull request branch')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
-            return self.run_step()
+            rc = self.run_step()
+
+        def check_injected_update_pull_request(result):
+            self.assertTrue(any(isinstance(step, UpdatePullRequest) for step in next_steps))
+            return result
+
+        rc.addCallback(check_injected_update_pull_request)
+        return rc
 
     def test_success_apple(self):
         GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
@@ -9219,6 +9228,8 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.repo.full_name', 'Contributor/WebKit-apple')
         self.setProperty('remote', 'apple')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -9230,7 +9241,14 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expect_outcome(result=SUCCESS, state_string='Pushed to pull request branch')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
-            return self.run_step()
+            rc = self.run_step()
+
+        def check_injected_update_pull_request(result):
+            self.assertTrue(any(isinstance(step, UpdatePullRequest) for step in next_steps))
+            return result
+
+        rc.addCallback(check_injected_update_pull_request)
+        return rc
 
     def test_success_integration(self):
         GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
@@ -9239,6 +9257,8 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.repo.full_name', 'WebKit/WebKit-integration')
         self.setProperty('remote', 'origin')
         self.setProperty('github.head.ref', 'integration/ci/1234')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -9250,15 +9270,25 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expect_outcome(result=SUCCESS, state_string='Pushed to pull request branch')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
-            return self.run_step()
+            rc = self.run_step()
+
+        def check_injected_update_pull_request(result):
+            self.assertTrue(any(isinstance(step, UpdatePullRequest) for step in next_steps))
+            return result
+
+        rc.addCallback(check_injected_update_pull_request)
+        return rc
 
     def test_failure(self):
         GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         self.setup_step(PushPullRequestBranch())
+        self.assertEqual(PushPullRequestBranch.haltOnFailure, False)
         self.setProperty('github.number', '1234')
         self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('build_summary', 'Test summary.')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -9268,10 +9298,16 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
             .exit(1)
             .log('stdio', stdout="fatal: could not read Username for 'https://github.com': Device not configured\n"),
         )
-        self.expect_outcome(result=FAILURE, state_string='Failed to push to pull request branch')
+        self.expect_outcome(result=WARNINGS, state_string='Failed to push to pull request branch')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
-            return self.run_step()
-        self.expect_property('build_summary', '')
+            rc = self.run_step()
+
+        def check_no_update_pull_request(result):
+            self.assertFalse(any(isinstance(step, UpdatePullRequest) for step in next_steps))
+            return result
+
+        rc.addCallback(check_no_update_pull_request)
+        return rc
 
 
 class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):

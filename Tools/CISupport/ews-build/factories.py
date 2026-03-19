@@ -418,7 +418,6 @@ class MergeQueueFactory(MergeQueueFactoryBase):
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(Canonicalize())
         self.addStep(PushPullRequestBranch())
-        self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())
         self.addStep(SetBuildSummary())
 
@@ -430,7 +429,6 @@ class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
         self.addStep(Canonicalize())
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(PushPullRequestBranch())
-        self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())
         self.addStep(SetBuildSummary())
 
