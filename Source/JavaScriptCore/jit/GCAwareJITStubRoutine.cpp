@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -174,11 +174,12 @@ bool PolymorphicAccessJITStubRoutine::visitWeakImpl(VM& vm)
 
 MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine(
     Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner,
-    const Vector<JSCell*>& cells, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos, bool isCodeImmutable)
+    const Vector<Opaque<JSCell*>>& cells, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos, bool isCodeImmutable)
     : PolymorphicAccessJITStubRoutine(type, code, vm, WTF::move(cases), WTF::move(weakStructures), owner, isCodeImmutable)
     , m_cells(cells.size())
     , m_callLinkInfos(WTF::move(callLinkInfos))
 {
+    ASSERT(vm.heap.isDeferred());
     for (unsigned i = cells.size(); i--;) {
         if (owner)
             m_cells[i].set(vm, owner, cells[i]);
@@ -219,7 +220,7 @@ CallLinkInfo* MarkingGCAwareJITStubRoutine::callLinkInfoAtImpl(const ConcurrentJ
     return nullptr;
 }
 
-GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner, const Vector<JSCell*>& cells, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos,
+GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner, const Vector<Opaque<JSCell*>>& cells, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlerCallSiteIndex, bool isCodeImmutable)
     : MarkingGCAwareJITStubRoutine(JITStubRoutine::Type::GCAwareJITStubRoutineWithExceptionHandlerType, code, vm, WTF::move(cases), WTF::move(weakStructures), owner, cells, WTF::move(callLinkInfos), isCodeImmutable)
     , m_codeBlockWithExceptionHandler(codeBlockForExceptionHandlers)
@@ -228,6 +229,7 @@ GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHan
 #endif
     , m_exceptionHandlerCallSiteIndex(exceptionHandlerCallSiteIndex)
 {
+    ASSERT(vm.heap.isDeferred());
     RELEASE_ASSERT(m_codeBlockWithExceptionHandler);
     ASSERT(!!m_codeBlockWithExceptionHandler->handlerForIndex(exceptionHandlerCallSiteIndex.bits()));
 }
@@ -264,11 +266,12 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
     VM& vm,
     JSCell* owner,
     bool makesCalls,
-    const Vector<JSCell*>& cells,
+    const Vector<Opaque<JSCell*>>& cells,
     Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers,
     DisposableCallSiteIndex exceptionHandlerCallSiteIndex)
 {
+    ASSERT(vm.heap.isDeferred());
     if (!makesCalls) {
         // Allocating CallLinkInfos means we should have calls.
 #if ASSERT_ENABLED

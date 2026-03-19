@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "WebPage.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSWeakObjectMapRefPrivate.h>
+#include <JavaScriptCore/MarkedVector.h>
 
 namespace WebKit {
 
@@ -297,16 +298,11 @@ static JSValueRef fromJSONArray(JSContextRef context, const JSON::Array& array)
     if (!array)
         return JSValueMakeUndefined(context);
 
-    auto globalContext = JSContextGetGlobalContext(context);
-    Vector<Protected<JSValueRef>> retArray;
-    for (Ref value : array)
-        retArray.append(Protected(globalContext, fromJSON(context, value.get())));
-
-    auto rawValues = retArray.map([](const Protected<JSValueRef>& ptr) {
-        return ptr.get();
+    JSC::MarkedVector<JSValueRef> retArray;
+    retArray.fillWith(array, [&] (auto value) {
+        return fromJSON(context, value.get());
     });
-
-    return JSObjectMakeArray(context, rawValues.size(), rawValues.span().data(), nullptr);
+    return JSObjectMakeArray(context, retArray.size(), retArray.span().data(), nullptr);
 }
 
 static JSValueRef fromJSONObject(JSContextRef context, const JSON::Object& object)
@@ -363,7 +359,8 @@ JSValueRef fromArray(JSContextRef context, Vector<Protected<JSValueRef>>&& array
     if (!context)
         return nullptr;
 
-    auto rawValues = array.map([](const Protected<JSValueRef>& ptr) {
+    JSC::MarkedVector<JSValueRef> rawValues;
+    rawValues.fillWith(array, [] (const Protected<JSValueRef>& ptr) {
         return ptr.get();
     });
 

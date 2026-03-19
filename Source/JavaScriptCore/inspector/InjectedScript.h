@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2026 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 #pragma once
 
 #include <JavaScriptCore/InjectedScriptBase.h>
+#include <JavaScriptCore/MarkedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
@@ -60,9 +61,9 @@ public:
         bool returnByValue { false };
         bool generatePreview { false };
         bool saveResult { false };
-        Vector<JSC::JSValue> args;
+        JSC::MarkedVector<JSC::JSValue> args;
     };
-    void execute(Protocol::ErrorString&, const String& functionString, ExecuteOptions&&, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);
+    void execute(Protocol::ErrorString&, const String& functionString, ExecuteOptions&, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);
 
     void evaluate(Protocol::ErrorString&, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);
     void awaitPromise(const String& promiseObjectId, bool returnByValue, bool generatePreview, bool saveResult, AsyncCallCallback&&);
@@ -97,7 +98,7 @@ public:
     JSC::JSObject* createCommandLineAPIObject(JSC::JSValue callFrame = { }) const;
 
 private:
-    JSC::JSValue arrayFromVector(Vector<JSC::JSValue>&&);
+    JSC::JSValue arrayFromVector(JSC::MarkedVector<JSC::JSValue>&);
 
     friend class InjectedScriptModule;
 };

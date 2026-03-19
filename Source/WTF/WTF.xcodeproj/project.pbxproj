@@ -965,6 +965,7 @@
 		FE1E2C42224187C600F6B729 /* PlatformRegisters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */; };
 		FE35D09227DC5ECC009DFA5B /* StackCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */; };
 		FE499A6F2CD153B000E34F32 /* OverflowPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = FE499A6E2CD153B000E34F32 /* OverflowPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE5E6A3B2F513E0300EF357B /* RequireGCAwareContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5E6A3A2F513E0300EF357B /* RequireGCAwareContainer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6997E129D241630078B9C6 /* ReasonSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6997E029D241630078B9C6 /* ReasonSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7ACFEF285DC2F9007FC8E9 /* RawHex.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7ACFEE285DC2F8007FC8E9 /* RawHex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE9B8B1A28B1453D0088C6E1 /* CodePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9B8B1928B1453D0088C6E1 /* CodePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2059,6 +2060,7 @@
 		FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackCheck.cpp; sourceTree = "<group>"; };
 		FE3842342325CC80009DD445 /* ResourceUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsage.h; sourceTree = "<group>"; };
 		FE499A6E2CD153B000E34F32 /* OverflowPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverflowPolicy.h; sourceTree = "<group>"; };
+		FE5E6A3A2F513E0300EF357B /* RequireGCAwareContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequireGCAwareContainer.h; sourceTree = "<group>"; };
 		FE6997E029D241630078B9C6 /* ReasonSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReasonSPI.h; sourceTree = "<group>"; };
 		FE7497E4208FFCAA0003565B /* PtrTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrTag.h; sourceTree = "<group>"; };
 		FE7ACFEE285DC2F8007FC8E9 /* RawHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawHex.h; sourceTree = "<group>"; };
@@ -2660,6 +2662,7 @@
 				46BEB6E922FFDDD500269868 /* RefTrackerMixin.cpp */,
 				46BEB6E922FFDDD50026DEAD /* RefTrackerMixin.h */,
 				3A5BCFA2298768E300E0ABB2 /* RefVector.h */,
+				FE5E6A3A2F513E0300EF357B /* RequireGCAwareContainer.h */,
 				FE3842342325CC80009DD445 /* ResourceUsage.h */,
 				A8A47305151A825B004123FF /* RetainPtr.h */,
 				941C64A62CA5A29400A63214 /* RetainReleaseSwift.h */,
@@ -3815,6 +3818,7 @@
 				DD3DC91D27A4BF8E007E5B61 /* RefPtr.h in Headers */,
 				4BF93AD32C8B53C100F0E06C /* RefTrackerMixin.h in Headers */,
 				3A5BCFA3298768E300E0ABB2 /* RefVector.h in Headers */,
+				FE5E6A3B2F513E0300EF357B /* RequireGCAwareContainer.h in Headers */,
 				DD3DC8C727A4BF8E007E5B61 /* ResourceUsage.h in Headers */,
 				DD3DC92127A4BF8E007E5B61 /* RetainPtr.h in Headers */,
 				941C64A72CA5A2A000A63214 /* RetainReleaseSwift.h in Headers */,

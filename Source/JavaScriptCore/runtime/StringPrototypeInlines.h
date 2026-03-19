@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Apple, Inc. All rights reserved.
+ * Copyright (C) 2019-2024, 2026 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -844,7 +844,7 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArgument
             replacementsAre8Bit &= string->is8Bit();
             totalLength += string->length();
             totalLength += (start - lastIndex);
-            slot = JSValue::encode(jsString);
+            slot = jsString;
 
             lastIndex = end;
             ++index;
@@ -874,7 +874,7 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArgument
             substring.getCharacters8(buffer.subspan(bufferPos));
             bufferPos += substring.length();
 
-            auto replacement = asString(JSValue::decode(slot))->value(globalObject);
+            auto replacement = asString(slot)->value(globalObject);
             StringView { replacement }.getCharacters8(buffer.subspan(bufferPos));
             bufferPos += replacement->length();
 
@@ -909,7 +909,7 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArgument
         substring.getCharacters(buffer.subspan(bufferPos));
         bufferPos += substring.length();
 
-        auto replacement = asString(JSValue::decode(slot))->value(globalObject);
+        auto replacement = asString(slot)->value(globalObject);
         StringView { replacement }.getCharacters(buffer.subspan(bufferPos));
         bufferPos += replacement->length();
 

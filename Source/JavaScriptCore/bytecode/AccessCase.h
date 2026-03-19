@@ -34,6 +34,7 @@
 #include "JITStubRoutine.h"
 #include "JSFunctionInlines.h"
 #include "ObjectPropertyConditionSet.h"
+#include "Opaque.h"
 #include "PolyProtoAccessChain.h"
 #include <wtf/CommaPrinter.h>
 
@@ -314,7 +315,7 @@ public:
 
     static bool canBeShared(const AccessCase&, const AccessCase&);
 
-    void collectDependentCells(VM&, Vector<JSCell*>&) const;
+    void collectDependentCells(VM&, Vector<Opaque<JSCell*>>&) const;
 
     template<typename Func>
     void runWithDowncast(const Func&);

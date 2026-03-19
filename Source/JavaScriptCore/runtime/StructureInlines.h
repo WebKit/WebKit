@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -222,7 +222,8 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
 template<typename Functor>
 void Structure::forEachPropertyConcurrently(const Functor& functor)
 {
-    Vector<Structure*, 8> structures;
+    // It is safe to return the found structures in a Vector because the found structures are being kept alive by this Structure.
+    Vector<Opaque<Structure*>, 8> structures;
     Structure* tableStructure;
     PropertyTable* table;
     
@@ -230,7 +231,7 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
 
     UncheckedKeyHashSet<UniquedStringImpl*> seenProperties;
 
-    for (auto* structure : structures) {
+    for (Structure* structure : structures) {
         if (!structure->m_transitionPropertyName || seenProperties.contains(structure->m_transitionPropertyName.get()))
             continue;
 

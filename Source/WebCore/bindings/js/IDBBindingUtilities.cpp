@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Michael Pruett <michael@68k.org>
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/DateInstance.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <JavaScriptCore/Opaque.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <wtf/AutodrainedPool.h>
 #include <wtf/MessageQueue.h>
@@ -194,7 +195,7 @@ JSValue toJS(JSGlobalObject& lexicalGlobalObject, JSGlobalObject& globalObject, 
 
 static const size_t maximumDepth = 2000;
 
-static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject, JSValue value, Vector<JSArray*>& stack)
+static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject, JSValue value, Vector<Opaque<JSArray*>>& stack)
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -255,7 +256,11 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
 
 static Ref<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    Vector<JSArray*> stack;
+    // It is safe to use Vector<Opaque<JSArray*>> here because the only values that are
+    // inserted into it are array objects (which came from the value argument) and is always
+    // preserved on the stack or in a register while we iterate its elements.
+    EnsureStillAliveScope ensureStillAliveScope(value);
+    Vector<Opaque<JSArray*>> stack;
     RefPtr<IDBKey> key = createIDBKeyFromValue(lexicalGlobalObject, value, stack);
     if (key)
         return *key;

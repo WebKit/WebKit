@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,7 @@
 #include "JSString.h"
 #include "LinkBuffer.h"
 #include "NativeCallee.h"
+#include "Opaque.h"
 #include "OperationResult.h"
 #include "Options.h"
 #include "Parser.h"
@@ -3853,7 +3854,10 @@ JSC_DEFINE_HOST_FUNCTION(functionGetStructureTransitionList, (JSGlobalObject* gl
     RETURN_IF_EXCEPTION(scope, { });
     if (!obj)
         return JSValue::encode(jsNull());
-    Vector<Structure*, 8> structures;
+
+    // It is safe to use a Vector here because the structures are kept alive by obj,
+    // and this structures vector does not escape this function.
+    Vector<Opaque<Structure*>, 8> structures;
 
     for (auto* structure = obj->structure(); structure; structure = structure->previousID())
         structures.append(structure);
@@ -3862,7 +3866,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGetStructureTransitionList, (JSGlobalObject* gl
     RETURN_IF_EXCEPTION(scope, { });
 
     for (size_t i = 0; i < structures.size(); ++i) {
-        auto* structure = structures[structures.size() - i - 1];
+        auto* structure = structures[structures.size() - i - 1].get();
         result->push(globalObject, JSValue(structure->id().bits()));
         RETURN_IF_EXCEPTION(scope, { });
         result->push(globalObject, JSValue(structure->transitionOffset()));

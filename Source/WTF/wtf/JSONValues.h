@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -270,6 +270,7 @@ public:
     using const_iterator = DataStorage::const_iterator;
 
     size_t length() const { return m_map.size(); }
+    size_t size() const { return m_map.size(); }
 
     Ref<Value> NODELETE get(size_t index) const;
 

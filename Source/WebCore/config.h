@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -47,6 +47,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
+#include <wtf/RequireGCAwareContainer.h>
 #endif
 
 #if USE(CG)

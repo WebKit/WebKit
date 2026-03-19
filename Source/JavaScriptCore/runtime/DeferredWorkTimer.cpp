@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ namespace DeferredWorkTimerInternal {
 static constexpr bool verbose = false;
 }
 
-inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies)
+inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSObject* scriptExecutionOwner, Vector<Opaque<JSCell*>>&& dependencies)
     : m_type(type)
     , m_dependencies(WTF::move(dependencies))
     , m_scriptExecutionOwner(scriptExecutionOwner)
@@ -53,7 +53,7 @@ inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSObject* script
     target()->globalObject()->addWeakTicket(this);
 }
 
-inline Ref<DeferredWorkTimer::TicketData> DeferredWorkTimer::TicketData::create(WorkType type, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies)
+inline Ref<DeferredWorkTimer::TicketData> DeferredWorkTimer::TicketData::create(WorkType type, JSObject* scriptExecutionOwner, Vector<Opaque<JSCell*>>&& dependencies)
 {
     return adoptRef(*new TicketData(type, scriptExecutionOwner, WTF::move(dependencies)));
 }
@@ -186,7 +186,7 @@ void DeferredWorkTimer::runRunLoop()
         RunLoop::run();
 }
 
-DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(WorkType type, VM& vm, JSObject* target, Vector<JSCell*>&& dependencies)
+DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(WorkType type, VM& vm, JSObject* target, Vector<Opaque<JSCell*>>&& dependencies)
 {
     ASSERT_UNUSED(vm, vm.currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && vm.heap.worldIsStopped()));
     for (unsigned i = 0; i < dependencies.size(); ++i)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,8 @@ public:
     using const_iterator = typename Storage::const_iterator;
     using reverse_iterator = typename Storage::reverse_iterator;
     using const_reverse_iterator = typename Storage::const_reverse_iterator;
+
+    static_assert(!WTF::requiresGCAwareContainer<T>());
 
     FixedVector() = default;
     FixedVector(const FixedVector& other)

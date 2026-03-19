@@ -431,7 +431,7 @@ void testLoadPreIndex32WithStore()
     // goto loop
     Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<ConstPtrValue>(proc, Origin(), 4));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
-    Value* p3Prime = loopBody->appendNew<Value>(proc, Opaque, Origin(), p3);
+    Value* p3Prime = loopBody->appendNew<Value>(proc, B3::Opaque, Origin(), p3);
     loopBody->appendNew<MemoryValue>(proc, Store, Origin(), loopBody->appendNew<Const32Value>(proc, Origin(), 5), p3Prime);
     Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int32, Origin(), p3));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);

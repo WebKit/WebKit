@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2026 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ InjectedScript::InjectedScript(JSC::JSGlobalObject* globalObject, JSC::JSObject*
 
 InjectedScript::~InjectedScript() = default;
 
-void InjectedScript::execute(Protocol::ErrorString& errorString, const String& functionString, ExecuteOptions&& options, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
+void InjectedScript::execute(Protocol::ErrorString& errorString, const String& functionString, ExecuteOptions& options, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
     ScriptFunctionCall function(globalObject(), injectedScriptObject(), "execute"_s, protect(inspectorEnvironment())->functionCallHandler());
     function.appendArgument(functionString);
@@ -66,7 +66,7 @@ void InjectedScript::execute(Protocol::ErrorString& errorString, const String& f
     function.appendArgument(options.returnByValue);
     function.appendArgument(options.generatePreview);
     function.appendArgument(options.saveResult);
-    function.appendArgument(arrayFromVector(WTF::move(options.args)));
+    function.appendArgument(arrayFromVector(options.args));
     makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
 }
 
@@ -452,7 +452,7 @@ JSC::JSObject* InjectedScript::createCommandLineAPIObject(JSC::JSValue callFrame
     return callResult && callResult.value() ? asObject(callResult.value()) : nullptr;
 }
 
-JSC::JSValue InjectedScript::arrayFromVector(Vector<JSC::JSValue>&& vector)
+JSC::JSValue InjectedScript::arrayFromVector(JSC::MarkedVector<JSC::JSValue>& vector)
 {
     JSC::JSGlobalObject* globalObject = this->globalObject();
     if (!globalObject)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #include "APICast.h"
 #include "JSGlobalObjectInlines.h"
-#include "MarkedJSValueRefArray.h"
+#include "MarkedVector.h"
 #include <JavaScriptCore/JSContextRefPrivate.h>
 #include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
@@ -108,37 +108,8 @@ private:
     JSGlobalContextRef m_context;
 };
 
-template<typename T>
-class APIVector : protected Vector<T> {
-    using Base = Vector<T>;
-public:
-    APIVector(APIContext& context)
-        : Base()
-        , m_context(context)
-    {
-    }
-
-    ~APIVector()
-    {
-        for (auto& value : *this)
-            JSValueUnprotect(m_context, value);
-    }
-
-    using Vector<T>::operator[];
-    using Vector<T>::size;
-    using Vector<T>::begin;
-    using Vector<T>::end;
-    using typename Vector<T>::iterator;
-
-    void append(T value)
-    {
-        JSValueProtect(m_context, value);
-        Base::append(WTF::move(value));
-    }
-
-private:
-    APIContext& m_context;
-};
+template<typename T, size_t passedInlineCapacity = 8, class OverflowHandler = WTF::CrashOnOverflow>
+using MarkedVector = JSC::MarkedVector<T, passedInlineCapacity, OverflowHandler>;
 
 class TestAPI {
 public:
@@ -189,8 +160,8 @@ private:
     bool scriptResultIs(ScriptResult, JSValueRef);
 
     // Ways to make sets of interesting things.
-    APIVector<JSObjectRef> interestingObjects();
-    APIVector<JSValueRef> interestingKeys();
+    void initializeInterestingObjects(MarkedVector<JSObjectRef>&);
+    void initializeInterestingKeys(MarkedVector<JSValueRef>&);
 
     int m_failed { 0 };
     APIContext context;
@@ -274,9 +245,8 @@ void TestAPI::checkJSAndAPIMatch(const JSFunctor& jsFunctor, const APIFunctor& a
     }
 }
 
-APIVector<JSObjectRef> TestAPI::interestingObjects()
+void TestAPI::initializeInterestingObjects(MarkedVector<JSObjectRef>& result)
 {
-    APIVector<JSObjectRef> result(context);
     JSObjectRef array = JSValueToObject(context, evaluateScript(
         "[{}, [], { [Symbol.iterator]: 1 }, new Date(), new String('str'), new Map(), new Set(), new WeakMap(), new WeakSet(), new Error(), new Number(42), new Boolean(), { get length() { throw new Error(); } }];").value(), nullptr);
 
@@ -287,13 +257,10 @@ APIVector<JSObjectRef> TestAPI::interestingObjects()
         ASSERT(object);
         result.append(object);
     }
-
-    return result;
 }
 
-APIVector<JSValueRef> TestAPI::interestingKeys()
+void TestAPI::initializeInterestingKeys(MarkedVector<JSValueRef>& result)
 {
-    APIVector<JSValueRef> result(context);
     JSObjectRef array = JSValueToObject(context, evaluateScript("[{}, [], 1, Symbol.iterator, 'length']").value(), nullptr);
 
     APIString lengthString("length");
@@ -303,8 +270,6 @@ APIVector<JSValueRef> TestAPI::interestingKeys()
         ASSERT(value);
         result.append(value);
     }
-
-    return result;
 }
 
 static const char* isSymbolFunction = "(function isSymbol(symbol) { return typeof(symbol) === 'symbol'; })";
@@ -360,8 +325,10 @@ void TestAPI::symbolsDescription()
 
 void TestAPI::symbolsGetPropertyForKey()
 {
-    auto objects = interestingObjects();
-    auto keys = interestingKeys();
+    MarkedVector<JSObjectRef> objects;
+    initializeInterestingObjects(objects);
+    MarkedVector<JSValueRef> keys;
+    initializeInterestingKeys(keys);
 
     for (auto& object : objects) {
         dataLogLn("\nnext object: ", toJS(context, object));
@@ -379,9 +346,13 @@ void TestAPI::symbolsGetPropertyForKey()
 
 void TestAPI::symbolsSetPropertyForKey()
 {
-    auto jsObjects = interestingObjects();
-    auto apiObjects = interestingObjects();
-    auto keys = interestingKeys();
+    MarkedVector<JSObjectRef> jsObjects;
+    MarkedVector<JSObjectRef> apiObjects;
+    initializeInterestingObjects(jsObjects);
+    initializeInterestingObjects(apiObjects);
+
+    MarkedVector<JSValueRef> keys;
+    initializeInterestingKeys(keys);
 
     JSValueRef theAnswer = JSValueMakeNumber(context, 42);
     for (size_t i = 0; i < jsObjects.size(); i++) {
@@ -416,8 +387,10 @@ void TestAPI::symbolsSetPropertyForKey()
 void TestAPI::symbolsHasPropertyForKey()
 {
     const char* hasFunction = "(function has(object, key) { return key in object; })";
-    auto objects = interestingObjects();
-    auto keys = interestingKeys();
+    MarkedVector<JSObjectRef> objects;
+    initializeInterestingObjects(objects);
+    MarkedVector<JSValueRef> keys;
+    initializeInterestingKeys(keys);
 
     JSValueRef theAnswer = JSValueMakeNumber(context, 42);
     for (auto& object : objects) {
@@ -447,8 +420,10 @@ void TestAPI::symbolsHasPropertyForKey()
 void TestAPI::symbolsDeletePropertyForKey()
 {
     const char* deleteFunction = "(function del(object, key) { return delete object[key]; })";
-    auto objects = interestingObjects();
-    auto keys = interestingKeys();
+    MarkedVector<JSObjectRef> objects;
+    initializeInterestingObjects(objects);
+    MarkedVector<JSValueRef> keys;
+    initializeInterestingKeys(keys);
 
     JSValueRef theAnswer = JSValueMakeNumber(context, 42);
     for (auto& object : objects) {
@@ -658,10 +633,10 @@ void TestAPI::markedJSValueArrayAndGC()
     auto testMarkedJSValueArray = [&] (unsigned count) {
         auto* globalObject = toJS(context);
         JSC::JSLockHolder locker(globalObject->vm());
-        JSC::MarkedJSValueRefArray values(context, count);
+        JSC::MarkedVector<JSValueRef> values(count);
         for (unsigned index = 0; index < count; ++index) {
             JSValueRef string = JSValueMakeString(context, APIString(makeString("Prefix"_s, index)));
-            values[index] = string;
+            values.append(string);
         }
         JSSynchronousGarbageCollectForDebugging(context);
         bool ok = true;

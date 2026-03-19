@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024, 2026 Apple Inc. All rights reserved.
  * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@
 #include "MarkedSpaceInlines.h"
 #include "Microtask.h"
 #include "NativeExecutable.h"
+#include "Opaque.h"
 #include "RegularExpression.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
@@ -797,7 +798,9 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
         JSC::DeferGCForAWhile deferGC(m_debugger.vm());
         m_debugger.vm().notifyDebuggerHookInjected();
 
-        Vector<JSC::NativeExecutable*> newNativeExecutables;
+        // It is safe to use Vector here because we're under the protection of a DeferGCForAWhile scope, and
+        // this vector does not escape this block. It is only used as a scratch buffer within this block.
+        Vector<JSC::Opaque<JSC::NativeExecutable*>> newNativeExecutables;
         {
             Locker locker { s_replacedThunksLock };
             auto& existingReplacedThunks = replacedThunks();
@@ -816,7 +819,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
                 return IterationStatus::Continue;
             });
         }
-        for (auto* nativeExecutable : WTF::move(newNativeExecutables))
+        for (JSC::NativeExecutable* nativeExecutable : WTF::move(newNativeExecutables))
             didCreateNativeExecutable(*nativeExecutable);
     }
 #endif

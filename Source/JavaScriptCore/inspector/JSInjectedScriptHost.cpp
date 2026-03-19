@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,7 @@
 #include "JSWeakSet.h"
 #include "MarkedSpaceInlines.h"
 #include "ObjectConstructor.h"
+#include "Opaque.h"
 #include "PreventCollectionScope.h"
 #include "PropertyNameArray.h"
 #include "ProxyObject.h"
@@ -854,7 +855,7 @@ JSValue JSInjectedScriptHost::queryInstances(JSGlobalObject* globalObject, CallF
 class HeapHolderFinder final : public HeapAnalyzer {
     WTF_MAKE_TZONE_ALLOCATED(HeapHolderFinder);
 public:
-    HeapHolderFinder(HeapProfiler& profiler, JSCell* target)
+    HeapHolderFinder(DeferGC&, HeapProfiler& profiler, JSCell* target)
         : HeapAnalyzer()
         , m_target(target)
     {
@@ -863,29 +864,31 @@ public:
         profiler.vm().heap.collectNow(Sync, CollectionScope::Full);
         profiler.setActiveHeapAnalyzer(nullptr);
 
-        UncheckedKeyHashSet<JSCell*> queue;
+        // It is safe to use UncheckedKeyHashSet here because HeapHolderFinder is only used under
+        // the protection of a DeferGC scope. See JSInjectedScriptHost::queryHolders().
+        UncheckedKeyHashSet<Opaque<JSCell*>> queue;
 
         // Filter `m_holders` based on whether they're reachable from a non-Debugger root.
         UncheckedKeyHashSet<JSCell*> visited;
-        for (auto* root : m_rootsToInclude)
+        for (auto root : m_rootsToInclude)
             queue.add(root);
-        while (auto* from = queue.takeAny()) {
+        while (auto from = queue.takeAny()) {
             if (m_rootsToIgnore.contains(from))
                 continue;
             if (!visited.add(from).isNewEntry)
                 continue;
-            for (auto* to : m_successors.get(from))
+            for (auto to : m_successors.get(from))
                 queue.add(to);
         }
 
         // If a known holder is not an object, also consider all of the holder's holders.
-        for (auto* holder : m_holders)
+        for (auto holder : m_holders)
             queue.add(holder);
-        while (auto* holder = queue.takeAny()) {
+        while (auto holder = queue.takeAny()) {
             if (holder->isObject())
                 continue;
 
-            for (auto* from : m_predecessors.get(holder)) {
+            for (auto from : m_predecessors.get(holder)) {
                 if (!m_holders.contains(from)) {
                     m_holders.add(from);
                     queue.add(from);
@@ -893,12 +896,12 @@ public:
             }
         }
 
-        m_holders.removeIf([&] (auto* holder) {
+        m_holders.removeIf([&] (auto holder) {
             return !holder->isObject() || !visited.contains(holder);
         });
     }
 
-    UncheckedKeyHashSet<JSCell*>& holders() { return m_holders; }
+    UncheckedKeyHashSet<Opaque<JSCell*>>& holders() { return m_holders; }
 
     void analyzeEdge(JSCell* from, JSCell* to, RootMarkReason reason) final
     {
@@ -909,11 +912,11 @@ public:
 
         if (from && from != to) {
             m_successors.ensure(from, [] {
-                return UncheckedKeyHashSet<JSCell*>();
+                return UncheckedKeyHashSet<Opaque<JSCell*>>();
             }).iterator->value.add(to);
 
             m_predecessors.ensure(to, [] {
-                return UncheckedKeyHashSet<JSCell*>();
+                return UncheckedKeyHashSet<Opaque<JSCell*>>();
             }).iterator->value.add(from);
 
             if (to == m_target)
@@ -939,7 +942,7 @@ public:
     {
         Indentation<4> indent;
 
-        UncheckedKeyHashSet<JSCell*> visited;
+        UncheckedKeyHashSet<Opaque<JSCell*>> visited;
 
         Function<void(JSCell*)> visit = [&] (auto* from) {
             auto isFirstVisit = visited.add(from).isNewEntry;
@@ -965,23 +968,26 @@ public:
 
             if (isFirstVisit) {
                 IndentationScope<4> scope(indent);
-                for (auto* to : m_successors.get(from))
-                    visit(to);
+                for (auto to : m_successors.get(from))
+                    visit(to.get());
             }
         };
 
-        for (auto* from : m_rootsToInclude)
-            visit(from);
+        for (auto from : m_rootsToInclude)
+            visit(from.get());
     }
 #endif
 
 private:
     Lock m_mutex;
-    UncheckedKeyHashMap<JSCell*, UncheckedKeyHashSet<JSCell*>> m_predecessors;
-    UncheckedKeyHashMap<JSCell*, UncheckedKeyHashSet<JSCell*>> m_successors;
-    UncheckedKeyHashSet<JSCell*> m_rootsToInclude;
-    UncheckedKeyHashSet<JSCell*> m_rootsToIgnore;
-    UncheckedKeyHashSet<JSCell*> m_holders;
+
+    // It is safe to use UncheckedKeyHashMap and UncheckedKeyHashSet here because HeapHolderFinder is only used
+    // under the protection of a DeferGC scope. See JSInjectedScriptHost::queryHolders().
+    UncheckedKeyHashMap<Opaque<JSCell*>, UncheckedKeyHashSet<Opaque<JSCell*>>> m_predecessors;
+    UncheckedKeyHashMap<Opaque<JSCell*>, UncheckedKeyHashSet<Opaque<JSCell*>>> m_successors;
+    UncheckedKeyHashSet<Opaque<JSCell*>> m_rootsToInclude;
+    UncheckedKeyHashSet<Opaque<JSCell*>> m_rootsToIgnore;
+    UncheckedKeyHashSet<Opaque<JSCell*>> m_holders;
     const JSCell* m_target;
 };
 
@@ -1007,11 +1013,11 @@ JSValue JSInjectedScriptHost::queryHolders(JSGlobalObject* globalObject, CallFra
         PreventCollectionScope preventCollectionScope(vm.heap);
         sanitizeStackForVM(vm);
 
-        HeapHolderFinder holderFinder(vm.ensureHeapProfiler(), target.asCell());
+        HeapHolderFinder holderFinder(deferGC, vm.ensureHeapProfiler(), target.asCell());
 
         auto holders = copyToVector(holderFinder.holders());
         std::ranges::sort(holders);
-        for (auto* holder : holders)
+        for (JSCell* holder : holders)
             result->putDirectIndex(globalObject, result->length(), holder);
     }
 

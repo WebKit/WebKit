@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "MegamorphicCache.h"
 #include "ModuleNamespaceAccessCase.h"
+#include "Opaque.h"
 #include "PropertyInlineCache.h"
 #include "PropertyInlineCacheClearingWatchpoint.h"
 #include "RegExpObject.h"
@@ -4990,7 +4991,8 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
         allGuardedByStructureCheck = false;
     FixedVector<Ref<AccessCase>> keys(WTF::move(cases));
     m_callLinkInfos.resize(keys.size());
-    Vector<JSCell*> cellsToMark;
+    // Is it safe to use a Vector here because we're protected by the GCSafeConcurrentJSLocker, which defers GC.
+    Vector<Opaque<JSCell*>> cellsToMark;
     for (auto& entry : keys) {
         if (!scratchFPR && needsScratchFPR(entry->m_type))
             scratchFPR = allocator.allocateScratchFPR();
@@ -6934,6 +6936,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
     ASSERT(useHandlerIC());
 
     VM& vm = this->vm();
+    ASSERT(vm.heap.isDeferred());
 
     auto connectWatchpointSets = [&](PolymorphicAccessJITStubRoutine& stub, Vector<ObjectPropertyCondition, 64>&& watchedConditions, Vector<WatchpointSet*, 8>&& additionalWatchpointSets) {
         for (auto& condition : watchedConditions)
@@ -7653,7 +7656,9 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
     if (needsScratchFPR(accessCase.m_type))
         m_scratchFPR = allocator.allocateScratchFPR();
 
-    Vector<JSCell*> cellsToMark;
+    // Is is safe to use Vector here because InlineCacheCompiler::compileOneAccessCaseHandler() is only called from
+    // InlineCacheCompiler::compileHandler() while holding a GCSafeConcurrentJSLocker.
+    Vector<Opaque<JSCell*>> cellsToMark;
     bool doesCalls = accessCase.doesCalls(vm);
     if (doesCalls)
         accessCase.collectDependentCells(vm, cellsToMark);

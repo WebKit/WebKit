@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/KeyAtomStringCacheInlines.h>
 #include <JavaScriptCore/MarkedBlockInlines.h>
+#include <JavaScriptCore/Opaque.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
 
@@ -324,7 +325,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
     CharacterType* end = std::to_address(buffer.end()); // We will be working backwards over the rope.
     CharacterType* position = end; // We will be working backwards over the rope.
-    Vector<JSString*, 32, UnsafeVectorOverflow> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
+    Vector<Opaque<JSString*>, 32, UnsafeVectorOverflow> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
 
     workQueue.append(fiber0);
     if (fiber1) {

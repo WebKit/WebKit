@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2022, 2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSExportMacros.h>
+#include <JavaScriptCore/Opaque.h>
 #include <JavaScriptCore/PropertyOffset.h>
 #include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/VM.h>
@@ -120,7 +121,7 @@ public:
     std::tuple<PropertyOffset, unsigned> take(VM&, const KeyType&);
     PropertyOffset updateAttributeIfExists(const KeyType&, unsigned attributes);
 
-    PropertyOffset renumberPropertyOffsets(JSObject*, unsigned inlineCapacity, Vector<JSValue>&);
+    PropertyOffset renumberPropertyOffsets(JSObject*, unsigned inlineCapacity, Vector<Opaque<JSValue>>&);
 
     struct FindResult {
         unsigned entryIndex;

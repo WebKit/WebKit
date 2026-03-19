@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "DFGJITCode.h"
 #include "DFGNode.h"
 #include "JSCJSValueInlines.h"
+#include "Opaque.h"
 #include "RegisterAtOffsetList.h"
 #include "VMInlines.h"
 #include <wtf/CommaPrinter.h>
@@ -283,11 +284,16 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     }
     
     // 4) Reshuffle those registers that need reshuffling.
-    Vector<JSValue> temporaryLocals(entry->m_reshufflings.size());
-    for (unsigned i = entry->m_reshufflings.size(); i--;)
-        temporaryLocals[i] = pivot[VirtualRegister(entry->m_reshufflings[i].fromOffset).toLocal()].asanUnsafeJSValue();
-    for (unsigned i = entry->m_reshufflings.size(); i--;)
-        pivot[VirtualRegister(entry->m_reshufflings[i].toOffset).toLocal()] = temporaryLocals[i];
+    {
+        // It is safe to use Vector here because the vector is only used as a temp buffer for moving stack
+        // values, and there are no GC safe point in the middle of this shuffling where the GC would expect
+        // to read these values off the stack.
+        Vector<Opaque<JSValue>> temporaryLocals(entry->m_reshufflings.size());
+        for (unsigned i = entry->m_reshufflings.size(); i--;)
+            temporaryLocals[i] = pivot[VirtualRegister(entry->m_reshufflings[i].fromOffset).toLocal()].asanUnsafeJSValue();
+        for (unsigned i = entry->m_reshufflings.size(); i--;)
+            pivot[VirtualRegister(entry->m_reshufflings[i].toOffset).toLocal()] = temporaryLocals[i].get();
+    }
     
     // 5) Clear those parts of the call frame that the DFG ain't using. This helps GC on
     //    some programs by eliminating some stale pointer pathologies.

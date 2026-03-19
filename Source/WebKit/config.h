@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2026 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
+#include <wtf/RequireGCAwareContainer.h>
 #endif
 
 // ENABLE_WEBDRIVER_ACTIONS_API represents whether mouse, keyboard, touch or wheel interactions are defined

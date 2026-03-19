@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,6 +57,7 @@
 #include <JavaScriptCore/MetadataTable.h>
 #include <JavaScriptCore/ModuleProgramExecutable.h>
 #include <JavaScriptCore/ObjectAllocationProfile.h>
+#include <JavaScriptCore/Opaque.h>
 #include <JavaScriptCore/Options.h>
 #include <JavaScriptCore/Printer.h>
 #include <JavaScriptCore/ProfilerJettisonReason.h>
@@ -235,7 +236,9 @@ public:
     template <typename Functor> void forEachRelatedCodeBlock(Functor&& functor)
     {
         Functor f(std::forward<Functor>(functor));
-        Vector<CodeBlock*, 4> codeBlocks;
+        // It is safe to use Vector here because the codeBlocks that we populate it with are
+        // alternatives that are already kept alive for this (the root) codeBlock.
+        Vector<Opaque<CodeBlock*>, 4> codeBlocks;
         codeBlocks.append(this);
 
         while (!codeBlocks.isEmpty()) {

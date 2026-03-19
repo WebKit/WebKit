@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Alexey Shvayka <shvaikalesh@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -392,7 +392,8 @@ bool Structure::isValidPrototype(JSValue prototype)
     return prototype.isNull() || (prototype.isObject() && prototype.getObject()->mayBePrototype());
 }
 
-bool Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*& structure, PropertyTable*& table)
+// It is safe to return the found structures in a Vector because the found structures are being kept alive by this Structure.
+bool Structure::findStructuresAndMapForMaterialization(Vector<Opaque<Structure*>, 8>& structures, Structure*& structure, PropertyTable*& table)
 {
     ASSERT(structures.isEmpty());
     table = nullptr;
@@ -423,8 +424,10 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
     ASSERT(!protectPropertyTableWhileTransitioning());
     
     DeferGC deferGC(vm);
-    
-    Vector<Structure*, 8> structures;
+
+    // It is safe to use a Vector here because the found structures are kept alive by this Structure,
+    // and this structures vector does not escape this function.
+    Vector<Opaque<Structure*>, 8> structures;
     Structure* structure;
     PropertyTable* table;
     
@@ -1018,7 +1021,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
         size_t propertyCount = table->size();
 
         // Holds our values compacted by insertion order. This is OK since GC is deferred.
-        Vector<JSValue> values(propertyCount);
+        Vector<Opaque<JSValue>> values(propertyCount);
 
         // Copies out our values from their hashed locations, compacting property table offsets as we go.
         PropertyOffset offset = table->renumberPropertyOffsets(object, m_inlineCapacity, values);
@@ -1188,13 +1191,15 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm)
 
 PropertyOffset Structure::getConcurrently(UniquedStringImpl* uid, unsigned& attributes)
 {
-    Vector<Structure*, 8> structures;
+    // It is safe to use a Vector here because the found structures are kept alive by this Structure,
+    // and this structures vector does not escape this function.
+    Vector<Opaque<Structure*>, 8> structures;
     Structure* tableStructure;
     PropertyTable* table;
 
     bool didFindStructure = findStructuresAndMapForMaterialization(structures, tableStructure, table);
 
-    for (auto* structure : structures) {
+    for (Structure* structure : structures) {
         if (!structure->m_transitionPropertyName)
             continue;
 
