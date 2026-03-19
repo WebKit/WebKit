@@ -14027,6 +14027,7 @@
 		727AFED31A2EA6A0000442E8 /* EXTsRGB.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTsRGB.idl; sourceTree = "<group>"; };
 		728168B22AA024B9005864CB /* SVGResourceImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourceImage.cpp; sourceTree = "<group>"; };
 		728168B32AA024B9005864CB /* SVGResourceImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGResourceImage.h; sourceTree = "<group>"; };
+		7284557E2F4F787C00AE13F7 /* FilterEffectSoftwareParallelApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectSoftwareParallelApplier.h; sourceTree = "<group>"; };
 		72854E5C2B6987B300E0181A /* ImageFrameAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFrameAnimator.cpp; sourceTree = "<group>"; };
 		72854E5D2B6987B300E0181A /* NativeImageSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImageSource.h; sourceTree = "<group>"; };
 		72854E5E2B6987B300E0181A /* ImageFrameAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrameAnimator.h; sourceTree = "<group>"; };
@@ -31091,6 +31092,7 @@
 				72A13AD1274DE48900E2A88E /* FETileSoftwareApplier.h */,
 				72A13AD2274DE51800E2A88E /* FETurbulenceSoftwareApplier.cpp */,
 				72A13AD3274DE51800E2A88E /* FETurbulenceSoftwareApplier.h */,
+				7284557E2F4F787C00AE13F7 /* FilterEffectSoftwareParallelApplier.h */,
 				72A13AD4274DE54E00E2A88E /* SourceAlphaSoftwareApplier.cpp */,
 				72A13AD5274DE54E00E2A88E /* SourceAlphaSoftwareApplier.h */,
 				72A13AD6274DE57800E2A88E /* SourceGraphicSoftwareApplier.cpp */,
