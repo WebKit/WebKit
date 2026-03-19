@@ -73,6 +73,7 @@ addEventListener("load", () => {
       .pointerMove(div3Rect.x + 10, div3Rect.y + 10, {})
       .pointerDown()
       .pointerUp() // The clicked in the child, then it's removed from the DOM tree
+      .pause(250) // Allow the click handler to remove the element before moving
       .pointerMove(bodyRect.x + 10, bodyRect.y + 10, {}) // Then, move onto the <body>
       .send();
     // FYI: Comparing `pointerenter`s before `click` requires additional
@@ -127,6 +128,7 @@ addEventListener("load", () => {
       .pointerMove(rootElementInShadowRect.x + 10, rootElementInShadowRect.y + 10, {})
       .pointerDown()
       .pointerUp() // The clicked root element in the shadow is removed here.
+      .pause(250) // Allow the click handler to remove the element before moving
       .pointerMove(bodyRect.x + 10, bodyRect.y + 10, {}) // Then, move onto the <body>
       .send();
     // FYI: Comparing `pointerenter`s before `click` requires additional
