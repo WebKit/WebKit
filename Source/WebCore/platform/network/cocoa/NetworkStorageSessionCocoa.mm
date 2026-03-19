@@ -81,11 +81,11 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto nsCookies = createNSArray(cookies, [] (auto& cookie) -> NSHTTPCookie * {
         return cookie.createNSHTTPCookie().autorelease();
     });
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [nsCookieStorage() setCookies:nsCookies.get() forURL:url.createNSURL().get() mainDocumentURL:mainDocumentURL.createNSURL().get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
