@@ -63,6 +63,10 @@ enum class MessageSource : uint8_t;
 enum class MessageType : uint8_t;
 enum class ScriptExecutionStatus;
 enum class TrustedTypesEnforcement;
+
+#if ENABLE(RESOURCE_ANALYTICS)
+class SourceOrigin;
+#endif
 }
 
 using JSC::MessageSource;
@@ -336,6 +340,10 @@ public:
     }
 
     WEBCORE_EXPORT JSC::JSGlobalObject* globalObject() const;
+
+#if ENABLE(RESOURCE_ANALYTICS)
+    WEBCORE_EXPORT JSC::SourceOrigin currentSourceOrigin();
+#endif
 
     WEBCORE_EXPORT String domainForCachePartition() const;
     void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTF::move(domain); }

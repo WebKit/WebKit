@@ -6766,6 +6766,21 @@ RequiresUserGestureToLoadVideo:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
+ResourceAnalyticsEnabled:
+  type: bool
+  status: embedder
+  category: dom
+  humanReadableName: "Resource Analytics"
+  humanReadableDescription: "Enable tracking for resource analytics"
+  condition: ENABLE(RESOURCE_ANALYTICS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ResourceLoadSchedulingEnabled:
   type: bool
   status: internal

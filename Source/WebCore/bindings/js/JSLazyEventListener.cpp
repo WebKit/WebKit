@@ -144,6 +144,10 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     if (!globalObject)
         return nullptr;
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    setSourceOriginIfNeeded(executionContext);
+#endif
+
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);

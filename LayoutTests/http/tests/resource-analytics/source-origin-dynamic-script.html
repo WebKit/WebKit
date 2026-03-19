@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ ResourceAnalyticsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that dynamically inserted script elements are tracked with the correct source origin.");
+
+window.jsTestIsAsync = true;
+
+var externalScriptOrigin = "";
+var afterDynamicOrigin = "";
+
+if (window.internals) {
+    var script = document.createElement("script");
+    script.src = "resources/check-origin.js";
+    script.onload = function() {
+        shouldBeTrue("externalScriptOrigin.indexOf('check-origin.js') !== -1");
+
+        afterDynamicOrigin = internals.currentSourceOrigin();
+        shouldBeTrue("afterDynamicOrigin.indexOf('source-origin-dynamic-script.html') !== -1");
+
+        finishJSTest();
+    };
+    document.body.appendChild(script);
+} else {
+    debug("This test requires window.internals.");
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>

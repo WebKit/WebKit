@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ ResourceAnalyticsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that internals.currentSourceOrigin() returns the external script URL when running an external script, and reverts to the page URL afterward.");
+
+var externalScriptOrigin = "";
+</script>
+<script src="resources/check-origin.js"></script>
+<script>
+if (window.internals) {
+    shouldBeTrue("externalScriptOrigin.indexOf('check-origin.js') !== -1");
+
+    var inlineOrigin = internals.currentSourceOrigin();
+    shouldBeTrue("inlineOrigin.indexOf('source-origin-external-script.html') !== -1");
+} else
+    debug("This test requires window.internals.");
+
+</script>
+</body>
+</html>

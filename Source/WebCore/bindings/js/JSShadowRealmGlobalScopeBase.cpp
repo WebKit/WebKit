@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSShadowRealmGlobalScopeBase.h"
 
+#include "DOMWrapperWorld.h"
 #include "EventLoop.h"
 #include "JSShadowRealmGlobalScope.h"
 #include "ScriptModuleLoader.h"

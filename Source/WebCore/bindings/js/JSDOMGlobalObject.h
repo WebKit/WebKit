@@ -37,6 +37,9 @@
 namespace JSC {
 
 enum class JSPromiseRejectionOperation : unsigned;
+#if ENABLE(RESOURCE_ANALYTICS)
+class SourceOrigin;
+#endif
 
 }
 
@@ -48,6 +51,13 @@ class JSBuiltinInternalFunctions;
 class Event;
 class DOMWrapperWorld;
 class ScriptExecutionContext;
+
+#if ENABLE(RESOURCE_ANALYTICS)
+class EventListener;
+class JSDOMGlobalObject;
+class JSDOMSourceOriginChangeObserver;
+class ScheduledAction;
+#endif
 
 using JSDOMStructureMap = HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure>>;
 using DOMGuardedObjectSet = HashSet<DOMGuardedObject*>;
@@ -121,6 +131,13 @@ public:
 
     JSC::JSObject* readableStreamByteStrategySize();
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    void trackEventListenerOrigin(EventListener&, JSC::SourceOrigin&&);
+    JSC::SourceOrigin originForEventListener(const EventListener&) const;
+    void trackScheduledActionOrigin(const ScheduledAction*, JSC::SourceOrigin&&);
+    JSC::SourceOrigin takeScheduledActionOrigin(const ScheduledAction*);
+#endif
+
 protected:
     JSDOMGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&, const JSC::GlobalObjectMethodTable* = nullptr);
     void finishCreation(JSC::VM&);
@@ -151,6 +168,15 @@ protected:
 private:
     void addBuiltinGlobals(JSC::VM&);
     friend JSBuiltinInternalFunctions;
+
+#if ENABLE(RESOURCE_ANALYTICS)
+    friend class JSDOMSourceOriginChangeObserver;
+    void willBeginProgramExecution(const JSC::SourceOrigin&);
+    void didEndProgramExecution(const JSC::SourceOrigin&);
+
+    Vector<JSC::SourceOrigin> m_sourceOriginStack;
+    std::unique_ptr<JSDOMSourceOriginChangeObserver> m_sourceOriginChangeObserver;
+#endif
 
     using CrossOriginMapKey = std::pair<JSC::JSGlobalObject*, void*>;
 

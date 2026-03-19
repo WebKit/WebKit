@@ -34,6 +34,10 @@
 #include <JavaScriptCore/JSPromiseConstructor.h>
 #include <JavaScriptCore/TopExceptionScope.h>
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include <wtf/CompletionHandler.h>
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -50,7 +54,16 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPr
     auto& lexicalGlobalObject = *globalObject;
     auto& vm = lexicalGlobalObject.vm();
     JSLockHolder lock(vm);
-    auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTF::move(callback)] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
+    auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTF::move(callback)
+#if ENABLE(RESOURCE_ANALYTICS)
+        , sourceOrigin = globalObject->hasSourceOriginTracking() ? globalObject->currentSourceOrigin() : JSC::SourceOrigin { }
+#endif
+        ] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
+#if ENABLE(RESOURCE_ANALYTICS)
+        CompletionHandlerCallingScope programScope;
+        if (globalObject->hasSourceOriginTracking()) [[unlikely]]
+            programScope = globalObject->makeProgramExecutionScope(sourceOrigin);
+#endif
         auto* castedThis = JSC::jsDynamicCast<JSC::JSPromise*>(callFrame->thisValue());
         ASSERT(castedThis);
         // We exchange callback so that all captured variables are deallocated after the call. This is quicker than waiting for the handler function to be GCed.

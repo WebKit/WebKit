@@ -92,6 +92,10 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include <wtf/CompletionHandler.h>
+#endif
+
 #if ENABLE(WEBASSEMBLY)
 #include "JSWebAssemblyInstance.h"
 #include "WasmContext.h"
@@ -1018,6 +1022,14 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
         vm.didEnterVM = true;
     });
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (globalObject->hasSourceOriginTracking()) [[unlikely]] {
+        if (auto* provider = source.provider())
+            programScope = globalObject->makeProgramExecutionScope(provider->sourceOrigin());
+    }
+#endif
+
     if (SourceProfiler::g_profilerHook) [[unlikely]]
         SourceProfiler::profile(SourceProfiler::Type::Program, source);
 
@@ -1465,6 +1477,11 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
     ASSERT(vm.currentThreadIsHoldingAPILock());
 
     JSGlobalObject* globalObject = scope->globalObject();
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (globalObject->hasSourceOriginTracking()) [[unlikely]]
+        programScope = globalObject->makeProgramExecutionScope(eval->sourceOrigin());
+#endif
     if (!vm.isSafeToRecurseSoft()) [[unlikely]]
         return throwStackOverflowError(globalObject, throwScope);
 

@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ ResourceAnalyticsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that source origin correctly updates and reverts across multiple external scripts and inline scripts.");
+
+var firstScriptOrigin = "";
+var betweenScriptsOrigin = "";
+</script>
+<script src="resources/check-origin.js"></script>
+<script>
+if (window.internals) {
+    firstScriptOrigin = externalScriptOrigin;
+    betweenScriptsOrigin = internals.currentSourceOrigin();
+}
+</script>
+<script src="resources/second-check-origin.js"></script>
+<script>
+if (window.internals) {
+    shouldBeTrue("firstScriptOrigin.indexOf('check-origin.js') !== -1");
+    shouldBeTrue("betweenScriptsOrigin.indexOf('source-origin-nested-scripts.html') !== -1");
+    shouldBeTrue("externalScriptOrigin.indexOf('second-check-origin.js') !== -1");
+
+    var finalOrigin = internals.currentSourceOrigin();
+    shouldBeTrue("finalOrigin.indexOf('source-origin-nested-scripts.html') !== -1");
+} else
+    debug("This test requires window.internals.");
+
+</script>
+</body>
+</html>

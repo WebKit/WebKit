@@ -33,14 +33,15 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class Document;
+class JSDOMGlobalObject;
 class ScriptExecutionContext;
 class WorkerGlobalScope;
 
 class ScheduledAction {
     WTF_MAKE_TZONE_ALLOCATED(ScheduledAction);
 public:
-    static std::unique_ptr<ScheduledAction> create(DOMWrapperWorld&, JSC::Strong<JSC::JSObject>&&);
-    static std::unique_ptr<ScheduledAction> create(DOMWrapperWorld&, String&&);
+    static std::unique_ptr<ScheduledAction> create(JSDOMGlobalObject&, JSC::Strong<JSC::JSObject>&&);
+    static std::unique_ptr<ScheduledAction> create(JSDOMGlobalObject&, String&&);
     ~ScheduledAction();
 
     void addArguments(FixedVector<JSC::Strong<JSC::Unknown>>&&);
@@ -53,8 +54,8 @@ public:
     void execute(ScriptExecutionContext&);
 
 private:
-    ScheduledAction(DOMWrapperWorld&, JSC::Strong<JSC::JSObject>&&);
-    ScheduledAction(DOMWrapperWorld&, String&&);
+    ScheduledAction(JSDOMGlobalObject&, JSC::Strong<JSC::JSObject>&&);
+    ScheduledAction(JSDOMGlobalObject&, String&&);
 
     void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue, ScriptExecutionContext&);
     void execute(Document&);

@@ -1,0 +1,32 @@
+<!-- webkit-test-runner [ ResourceAnalyticsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<button id="testButton">Click me</button>
+<script>
+description("Tests that event handler callbacks carry the source origin of the script that registered them.");
+
+window.jsTestIsAsync = true;
+
+if (window.internals) {
+    var registrationOrigin = internals.currentSourceOrigin();
+    shouldBeTrue("registrationOrigin.indexOf('source-origin-event-handler.html') !== -1");
+
+    document.getElementById("testButton").addEventListener("click", function() {
+        handlerOrigin = internals.currentSourceOrigin();
+        shouldBeTrue("handlerOrigin.indexOf('source-origin-event-handler.html') !== -1");
+        finishJSTest();
+    });
+
+    document.getElementById("testButton").click();
+} else {
+    debug("This test requires window.internals.");
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>

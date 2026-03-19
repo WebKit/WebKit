@@ -86,6 +86,12 @@
 #include <JavaScriptCore/WebAssemblyCompileOptions.h>
 #include <wtf/text/MakeString.h>
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include "JSDOMSourceOriginChangeObserver.h"
+#include "ScheduledAction.h"
+#include <JavaScriptCore/SourceOriginChangeObserver.h>
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/JSRemoteInspector.h>
 #endif
@@ -360,6 +366,13 @@ void JSDOMGlobalObject::finishCreation(VM& vm)
 
     addBuiltinGlobals(vm);
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    if (RefPtr context = scriptExecutionContext(); context && context->settingsValues().resourceAnalyticsEnabled) {
+        m_sourceOriginChangeObserver = makeUnique<JSDOMSourceOriginChangeObserver>(*this);
+        setSourceOriginChangeObserver(m_sourceOriginChangeObserver.get());
+    }
+#endif
+
     RELEASE_ASSERT(classInfo());
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -378,6 +391,13 @@ void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
     ASSERT(inherits(info()));
 
     addBuiltinGlobals(vm);
+
+#if ENABLE(RESOURCE_ANALYTICS)
+    if (RefPtr context = scriptExecutionContext(); context && context->settingsValues().resourceAnalyticsEnabled) {
+        m_sourceOriginChangeObserver = makeUnique<JSDOMSourceOriginChangeObserver>(*this);
+        setSourceOriginChangeObserver(m_sourceOriginChangeObserver.get());
+    }
+#endif
 
     RELEASE_ASSERT(classInfo());
 
@@ -910,5 +930,43 @@ bool JSDOMGlobalObject::allowsJSHandleCreation() const
         return false;
     return documentLoader->allowsJSHandleCreationInPageWorld();
 }
+
+#if ENABLE(RESOURCE_ANALYTICS)
+void JSDOMGlobalObject::trackEventListenerOrigin(EventListener& listener, JSC::SourceOrigin&& origin)
+{
+    if (m_sourceOriginChangeObserver)
+        m_sourceOriginChangeObserver->trackEventListenerOrigin(listener, WTF::move(origin));
+}
+
+JSC::SourceOrigin JSDOMGlobalObject::originForEventListener(const EventListener& listener) const
+{
+    if (m_sourceOriginChangeObserver)
+        return m_sourceOriginChangeObserver->originForEventListener(listener);
+    return JSC::SourceOrigin { };
+}
+
+void JSDOMGlobalObject::trackScheduledActionOrigin(const ScheduledAction* action, JSC::SourceOrigin&& origin)
+{
+    if (m_sourceOriginChangeObserver)
+        m_sourceOriginChangeObserver->trackScheduledActionOrigin(action, WTF::move(origin));
+}
+
+JSC::SourceOrigin JSDOMGlobalObject::takeScheduledActionOrigin(const ScheduledAction* action)
+{
+    if (m_sourceOriginChangeObserver)
+        return m_sourceOriginChangeObserver->takeScheduledActionOrigin(action);
+    return JSC::SourceOrigin { };
+}
+
+void JSDOMGlobalObject::willBeginProgramExecution(const JSC::SourceOrigin& origin)
+{
+    m_sourceOriginStack.append(origin);
+}
+
+void JSDOMGlobalObject::didEndProgramExecution(const JSC::SourceOrigin&)
+{
+    m_sourceOriginStack.removeLast();
+}
+#endif
 
 } // namespace WebCore

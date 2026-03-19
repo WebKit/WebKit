@@ -1353,6 +1353,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/SlowPathFunction.h
     runtime/SmallStrings.h
     runtime/SourceOrigin.h
+    runtime/SourceOriginChangeObserver.h
     runtime/SparseArrayValueMap.h
     runtime/StableSort.h
     runtime/StackAlignment.h

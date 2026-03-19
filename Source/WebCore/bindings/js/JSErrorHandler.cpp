@@ -45,6 +45,10 @@
 #include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <wtf/Ref.h>
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include <wtf/CompletionHandler.h>
+#endif
+
 namespace WebCore {
 using namespace JSC;
 
@@ -81,6 +85,11 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!globalObject)
         return;
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (globalObject->hasSourceOriginTracking()) [[unlikely]]
+        programScope = globalObject->makeProgramExecutionScope(globalObject->originForEventListener(*this));
+#endif
     auto callData = JSC::getCallData(jsFunction);
     if (callData.type != CallData::Type::None) {
         Ref<JSErrorHandler> protectedThis(*this);

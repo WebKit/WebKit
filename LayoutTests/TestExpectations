@@ -8367,3 +8367,6 @@ imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-021.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-text-shadow-invalidation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-text-shadow.html [ ImageOnlyFailure ]
+
+# ENABLE(RESOURCE_ANALYTICS) is not enabled on release builds
+[ Release ] http/tests/resource-analytics [ Skip ]

@@ -30,6 +30,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMWindow.h"
 #include "JSExecState.h"
 #include "JSExecStateInstrumentation.h"
@@ -45,34 +46,46 @@
 #include <JavaScriptCore/SourceProvider.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include <wtf/CompletionHandler.h>
+#endif
+
 namespace WebCore {
 using namespace JSC;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledAction);
 
-std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, Strong<JSObject>&& function)
+std::unique_ptr<ScheduledAction> ScheduledAction::create(JSDOMGlobalObject& globalObject, Strong<JSObject>&& function)
 {
-    return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTF::move(function)));
+    return std::unique_ptr<ScheduledAction>(new ScheduledAction(globalObject, WTF::move(function)));
 }
 
-std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, String&& code)
+std::unique_ptr<ScheduledAction> ScheduledAction::create(JSDOMGlobalObject& globalObject, String&& code)
 {
-    return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTF::move(code)));
+    return std::unique_ptr<ScheduledAction>(new ScheduledAction(globalObject, WTF::move(code)));
 }
 
-ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, Strong<JSObject>&& function)
-    : m_isolatedWorld(isolatedWorld)
+ScheduledAction::ScheduledAction(JSDOMGlobalObject& globalObject, Strong<JSObject>&& function)
+    : m_isolatedWorld(globalObject.world())
     , m_function(WTF::move(function))
     , m_sourceTaintedOrigin(JSC::SourceTaintedOrigin::Untainted)
 {
+#if ENABLE(RESOURCE_ANALYTICS)
+    if (globalObject.hasSourceOriginTracking()) [[unlikely]]
+        globalObject.trackScheduledActionOrigin(this, globalObject.currentSourceOrigin());
+#endif
 }
 
-ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, String&& code)
-    : m_isolatedWorld(isolatedWorld)
-    , m_function(isolatedWorld.vm())
+ScheduledAction::ScheduledAction(JSDOMGlobalObject& globalObject, String&& code)
+    : m_isolatedWorld(globalObject.world())
+    , m_function(m_isolatedWorld->vm())
     , m_code(WTF::move(code))
-    , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(isolatedWorld.vm(), isolatedWorld.vm().topCallFrame))
+    , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(m_isolatedWorld->vm(), m_isolatedWorld->vm().topCallFrame))
 {
+#if ENABLE(RESOURCE_ANALYTICS)
+    if (globalObject.hasSourceOriginTracking()) [[unlikely]]
+        globalObject.trackScheduledActionOrigin(this, globalObject.currentSourceOrigin());
+#endif
 }
 
 ScheduledAction::~ScheduledAction() = default;
@@ -142,6 +155,13 @@ void ScheduledAction::execute(Document& document)
     if (!frame || !frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript))
         return;
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (window->hasSourceOriginTracking()) [[unlikely]] {
+        auto sourceOrigin = window->takeScheduledActionOrigin(this);
+        programScope = window->makeProgramExecutionScope(sourceOrigin);
+    }
+#endif
     if (m_function)
         executeFunctionInContext(window, &window->proxy(), document);
     else
@@ -155,6 +175,14 @@ void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
 
     CheckedPtr scriptController = workerGlobalScope.script();
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    auto* globalScopeWrapper = scriptController->globalScopeWrapper();
+    CompletionHandlerCallingScope programScope;
+    if (globalScopeWrapper->hasSourceOriginTracking()) [[unlikely]] {
+        auto sourceOrigin = globalScopeWrapper->takeScheduledActionOrigin(this);
+        programScope = globalScopeWrapper->makeProgramExecutionScope(sourceOrigin);
+    }
+#endif
     if (m_function) {
         auto* contextWrapper = scriptController->globalScopeWrapper();
         executeFunctionInContext(contextWrapper, contextWrapper, workerGlobalScope);

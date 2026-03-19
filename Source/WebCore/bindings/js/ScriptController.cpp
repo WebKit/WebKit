@@ -171,6 +171,11 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
 
     Ref protector { m_frame.get() };
     SetForScope sourceURLScope(m_sourceURL, &sourceURL);
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (globalObject.hasSourceOriginTracking()) [[unlikely]]
+        programScope = globalObject.makeProgramExecutionScope(JSC::SourceOrigin { sourceURL });
+#endif
 
     if (RefPtr document = m_frame->document()) {
         if (auto script = document->quirks().scriptToEvaluateBeforeRunningScriptFromURL(sourceURL); !script.isEmpty())
@@ -209,6 +214,11 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (lexicalGlobalObject.hasSourceOriginTracking()) [[unlikely]]
+        programScope = lexicalGlobalObject.makeProgramExecutionScope(JSC::SourceOrigin { topLevelModuleURL });
+#endif
     auto* promise = JSExecState::loadModule(lexicalGlobalObject, topLevelModuleURL, JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTF::move(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
     if (!promise) [[unlikely]]
         return;
@@ -227,6 +237,11 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (lexicalGlobalObject.hasSourceOriginTracking()) [[unlikely]]
+        programScope = lexicalGlobalObject.makeProgramExecutionScope(JSC::SourceOrigin { sourceCode.url() });
+#endif
     auto* promise = JSExecState::loadModule(lexicalGlobalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
     if (!promise) [[unlikely]]
         return;
@@ -282,6 +297,11 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModu
     const bool isWasmModule = moduleRecord.inherits<WebAssemblyModuleRecord>();
 #else
     constexpr bool isWasmModule = false;
+#endif
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (lexicalGlobalObject.hasSourceOriginTracking()) [[unlikely]]
+        programScope = lexicalGlobalObject.makeProgramExecutionScope(JSC::SourceOrigin { sourceURL });
 #endif
     if (isWasmModule) {
         // FIXME: Provide better inspector support for Wasm scripts.
@@ -710,6 +730,11 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
     Ref protector { m_frame.get() };
     SetForScope sourceURLScope(m_sourceURL, &sourceURL);
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (globalObject.hasSourceOriginTracking()) [[unlikely]]
+        programScope = globalObject.makeProgramExecutionScope(JSC::SourceOrigin { sourceURL });
+#endif
     InspectorInstrumentation::willEvaluateScript(protect(m_frame), sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
     NakedPtr<JSC::Exception> evaluationException;

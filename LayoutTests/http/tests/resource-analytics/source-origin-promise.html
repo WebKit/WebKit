@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ ResourceAnalyticsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that source origin tracking works correctly with promises: the origin is available at promise creation time.");
+
+window.jsTestIsAsync = true;
+
+if (window.internals) {
+    var creationOrigin = internals.currentSourceOrigin();
+    shouldBeTrue("creationOrigin.indexOf('source-origin-promise.html') !== -1");
+
+    let p = Promise.resolve("done");
+    p.then(function() {
+        thenOrigin = internals.currentSourceOrigin();
+        shouldBeTrue("thenOrigin.indexOf('source-origin-promise.html') !== -1");
+        finishJSTest();
+    });
+} else {
+    debug("This test requires window.internals.");
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>
