@@ -1221,16 +1221,15 @@ static inline TypeHash typeHash(const TypeDefinition& typeDef)
 WebAssemblyGCTypeDependencies::WebAssemblyGCTypeDependencies(const Ref<const TypeDefinition>& unexpandedType)
 {
     WorkList work;
-    SUPPRESS_UNCHECKED_ARG work.append(unexpandedType->expand());
+    SUPPRESS_UNCHECKED_ARG work.append(unexpandedType.get());
     while (!work.isEmpty())
         SUPPRESS_UNCHECKED_ARG process(work.takeLast(), work);
-    m_typeDefinitions.add(typeHash(unexpandedType));
 }
 
 inline static void appendToWorkIfNeeded(Type type, WebAssemblyGCTypeDependencies::WorkList& work)
 {
     if (isRefWithTypeIndex(type)) {
-        SUPPRESS_UNCHECKED_LOCAL const auto& referencedType = TypeInformation::get(type.index).expand();
+        SUPPRESS_UNCHECKED_LOCAL const auto& referencedType = TypeInformation::get(type.index);
         work.append(referencedType);
     }
 }
@@ -1241,14 +1240,21 @@ void WebAssemblyGCTypeDependencies::process(const TypeDefinition& typeDef, WorkL
         return;
     m_typeDefinitions.add(typeHash(typeDef));
 
-    if (typeDef.is<StructType>()) {
-        SUPPRESS_UNCHECKED_LOCAL auto* structType = typeDef.as<StructType>();
+    SUPPRESS_UNCHECKED_LOCAL const auto& expanded = typeDef.expand();
+    if (&expanded != &typeDef) {
+        if (m_typeDefinitions.contains(typeHash(expanded)))
+            return;
+        m_typeDefinitions.add(typeHash(expanded));
+    }
+
+    if (expanded.is<StructType>()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* structType = expanded.as<StructType>();
         for (unsigned i = 0; i < structType->fieldCount(); ++i)
             process(structType->field(i), work);
-    } else if (typeDef.is<ArrayType>()) {
-        process(typeDef.as<ArrayType>()->elementType(), work);
-    } else if (typeDef.is<FunctionSignature>()) {
-        SUPPRESS_UNCHECKED_LOCAL auto* signature = typeDef.as<FunctionSignature>();
+    } else if (expanded.is<ArrayType>()) {
+        process(expanded.as<ArrayType>()->elementType(), work);
+    } else if (expanded.is<FunctionSignature>()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* signature = expanded.as<FunctionSignature>();
         for (unsigned i = 0; i < signature->argumentCount(); ++i)
             appendToWorkIfNeeded(signature->argumentType(i), work);
         for (unsigned i = 0; i < signature->returnCount(); ++i)
