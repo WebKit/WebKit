@@ -17554,6 +17554,9 @@ IGNORE_CLANG_WARNINGS_END
 
         ObjectMaterializationData& data = m_node->objectMaterializationData();
 
+        // Contiguous element values may be GC cell pointers; keep them live across allocateJSArray
+        // since the butterfly is unowned at allocateCell and the GC won't trace its contents.
+        Vector<LValue> contiguousElementValues;
         for (unsigned i = 0; i < data.m_properties.size(); ++i) {
             // Add two to account for `size` and `butterfly`
             Edge edge = m_graph.varArgChild(m_node, i + 2);
@@ -17562,10 +17565,15 @@ IGNORE_CLANG_WARNINGS_END
             case ALL_DOUBLE_INDEXING_TYPES:
                 m_out.storeDouble(lowDouble(edge), butterfly, m_heaps.indexedDoubleProperties[index]);
                 break;
-            case ALL_INT32_INDEXING_TYPES:
+            case ALL_INT32_INDEXING_TYPES: {
+                LValue value = lowJSValue(edge, ManualOperandSpeculation); // We already speculated it so it is fine.
+                m_out.store64(value, butterfly, m_heaps.forIndexingType(indexingType)->at(index));
+                break;
+            }
             case ALL_CONTIGUOUS_INDEXING_TYPES: {
                 LValue value = lowJSValue(edge, ManualOperandSpeculation); // We already speculated it so it is fine.
                 m_out.store64(value, butterfly, m_heaps.forIndexingType(indexingType)->at(index));
+                contiguousElementValues.append(value);
                 break;
             }
             default:
@@ -17575,6 +17583,8 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         LValue array = allocateJSArray(indexingType, publicLength, butterfly);
+        // Keep contiguous element values live across the GC point in allocateJSArray's slow path.
+        ensureStillAliveHere(contiguousElementValues);
         setJSValue(array);
         mutatorFence();
     }
@@ -25257,15 +25267,21 @@ IGNORE_CLANG_WARNINGS_END
         return true;
     }
 
-    void ensureStillAliveHere(LValue value)
+    void ensureStillAliveHereImpl(const Vector<LValue>& values)
     {
+        if (values.isEmpty())
+            return;
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->effects = Effects::none();
         patchpoint->effects.writesLocalState = true;
         patchpoint->effects.reads = HeapRange::top();
-        patchpoint->append(value, ValueRep::ColdAny);
+        for (LValue value : values)
+            patchpoint->append(value, ValueRep::ColdAny);
         patchpoint->setGenerator([=] (CCallHelpers&, const StackmapGenerationParams&) { });
     }
+
+    void ensureStillAliveHere(const Vector<LValue>& values) { ensureStillAliveHereImpl(values); }
+    void ensureStillAliveHere(LValue value) { ensureStillAliveHereImpl({ value }); }
 
     LValue toButterfly(LValue immutableButterfly)
     {
