@@ -32,8 +32,7 @@ from cassandra.cluster import Cluster, NoHostAvailable
 
 class Docker(object):
 
-    DOCKER_BIN = '/usr/local/bin/docker'
-    DOCKER_COMPOSE = '/usr/local/bin/docker-compose'
+    DOCKER_BIN = 'docker'
     DEFAULT_PROJECT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'docker-compose.yml')
     PS_PORT = re.compile(r'0.0.0.0:(?P<port>\d+)\-\>\d+/tcp')
 
@@ -102,7 +101,7 @@ class Docker(object):
             raise RuntimeError('Cannot start project if Docker is not running')
 
         with open(os.devnull, 'w') as devnull:
-            subprocess.check_call([cls.DOCKER_COMPOSE, '-f', project, 'up', '-d', '--quiet-pull', '--no-color'], stdout=devnull, stderr=devnull)
+            subprocess.check_call([cls.DOCKER_BIN, 'compose', '-f', project, 'up', '-d', '--quiet-pull', '--no-color'], stdout=devnull, stderr=devnull)
 
     @classmethod
     def wait_for_project(cls, project):
@@ -115,7 +114,7 @@ class Docker(object):
         has_cassandra = False
         ports = []
         with open(os.devnull, 'w') as devnull:
-            output = subprocess.check_output([cls.DOCKER_COMPOSE, '-f', project, 'ps'], stderr=devnull).decode('utf-8')
+            output = subprocess.check_output([cls.DOCKER_BIN, 'compose', '-f', project, 'ps'], stderr=devnull).decode('utf-8')
             if len(output.splitlines()) <= 2:
                 raise RuntimeError(f'{project} has not been started, cannot wait for it')
             for line in output.splitlines()[2:]:
@@ -154,7 +153,7 @@ class Docker(object):
         if not cls.is_running():
             return False
         with open(os.devnull, 'w') as devnull:
-            output = subprocess.check_output([cls.DOCKER_COMPOSE, '-f', project, 'ps'], stderr=devnull)
+            output = subprocess.check_output([cls.DOCKER_BIN, 'compose', '-f', project, 'ps'], stderr=devnull)
             return len(output.splitlines()) > 2
 
     @classmethod
@@ -166,7 +165,7 @@ class Docker(object):
             raise RuntimeError('Cannot stop project if Docker is not running')
 
         with open(os.devnull, 'w') as devnull:
-            subprocess.check_call([cls.DOCKER_COMPOSE, '-f', project, 'down'], stdout=devnull, stderr=devnull)
+            subprocess.check_call([cls.DOCKER_BIN, 'compose', '-f', project, 'down'], stdout=devnull, stderr=devnull)
 
     @classmethod
     def instance(cls, project=DEFAULT_PROJECT):
