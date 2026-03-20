@@ -38,7 +38,7 @@ function process_definitions () {
     source "${DEFINITIONS_FILE}"
 }
 
-DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
+DEFINITIONS_PATH=${WK_LIBRARY_HEADERS_FOLDER_PATH}/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
 
 process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
 
