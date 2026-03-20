@@ -12,14 +12,14 @@ layer at (0,0) size 800x600
             text run at (553,3) width 80: "@font-face"
         RenderText {#text} at (0,0) size 778x35
           text run at (633,0) width 145: " rule if they are a better"
-          text run at (0,18) width 73: "match than "
-          text run at (73,18) width 51: "the rule."
-      RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 218x17
-          text run at (0,0) width 218: "This should be Lucida Grande "
-        RenderInline {I} at (218,0) size 197x17
-          RenderText {#text} at (218,0) size 197x17
-            text run at (218,0) width 197: "and this should be Times Italic."
+          text run at (0,19) width 73: "match than "
+          text run at (73,19) width 51: "the rule."
+      RenderBlock {P} at (0,52) size 784x19
+        RenderText {#text} at (0,0) size 196x18
+          text run at (0,0) width 196: "This should be Lucida Grande "
+        RenderInline {I} at (196,0) size 197x18
+          RenderText {#text} at (196,0) size 197x18
+            text run at (196,0) width 197: "and this should be Times Italic."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,86) size 784x18
         RenderText {#text} at (0,0) size 140x17

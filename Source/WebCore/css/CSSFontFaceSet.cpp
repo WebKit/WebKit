@@ -485,8 +485,6 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
         CSSFontFace& candidate = familyFontFaces[i];
         if (candidate.status() == CSSFontFace::Status::Failure)
             continue;
-        if (!isItalic(request.slope) && isItalic(candidate.fontSelectionCapabilities().slope.minimum))
-            continue;
         candidateFontFaces.append(candidate);
     }
 
@@ -494,8 +492,6 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
     if (localIterator != m_locallyInstalledFacesLookupTable.end()) {
         for (auto& candidate : localIterator->value) {
             if (candidate->status() == CSSFontFace::Status::Failure)
-                continue;
-            if (!isItalic(request.slope) && isItalic(candidate->fontSelectionCapabilities().slope.minimum))
                 continue;
             candidateFontFaces.append(candidate);
         }
@@ -509,7 +505,7 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
 
         // Per CSS Fonts 5.2.6: Only faces with the best-matching width, style, and weight are eligible
         // to supply glyphs, even via unicode-range.
-        auto eliminated = fontSelectionAlgorithm.eliminatedCapabilities();
+        const auto& eliminated = fontSelectionAlgorithm.eliminatedCapabilities();
         RELEASE_ASSERT(eliminated.size() == candidateFontFaces.size());
         size_t eliminatedIndex = 0;
         candidateFontFaces.removeAllMatching([&](auto&) {
