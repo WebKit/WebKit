@@ -81,12 +81,29 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
     }();
 
     if constexpr (heightType == HeightType::Max) {
-        if (height.isNone() || height.isMaxContent() || height.isMinContent() || height.isFitContent())
+        if (height.isNone())
             return { };
     } else {
-        if (height.isAuto() || height.isMaxContent() || height.isMinContent() || height.isFitContent())
+        if (height.isAuto())
             return { };
     }
+
+    // https://drafts.csswg.org/css-sizing-3/#sizing-values
+    // For both min and max content: "for a box’s block size, unless otherwise specified, this is equivalent to its automatic size."
+    if (height.isMinContent() || height.isMaxContent()) {
+        auto* elementBox = dynamicDowncast<ElementBox>(layoutBox);
+        if (!elementBox)
+            return { };
+        ASSERT(elementBox->establishesFormattingContext());
+        return contentHeightForFormattingContextRoot(*elementBox);
+    }
+
+    // FIXME:
+    // https://drafts.csswg.org/css-sizing-4/#sizing-values
+    // fit-content: Essentially fit-content(stretch) i.e. min(max-content, max(min-content, stretch)).
+    if (height.isFitContent())
+        return { };
+
     if (auto fixedHeight = height.tryFixed())
         return LayoutUnit { fixedHeight->resolveZoom(layoutBox.style().usedZoomForLength()) };
 
@@ -120,7 +137,8 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
 std::optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
 {
     if (auto height = computedHeightValue<HeightType::Normal>(layoutBox, containingBlockHeight)) {
-        if (layoutBox.style().boxSizing() == BoxSizing::ContentBox)
+        CheckedRef style = layoutBox.style();
+        if (style->boxSizing() == BoxSizing::ContentBox || !style->logicalHeight().isSpecified())
             return height;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         return *height - boxGeometry.verticalBorderAndPadding();
@@ -189,7 +207,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedWidth(const Box& layoutBox
 LayoutUnit FormattingGeometry::contentHeightForFormattingContextRoot(const ElementBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
-    ASSERT(isHeightAuto(formattingContextRoot) || formattingContextRoot.establishesTableFormattingContext() || formattingContextRoot.isTableCell());
+    ASSERT(isHeightAuto(formattingContextRoot) || formattingContextRoot.style().logicalHeight().isIntrinsic() || formattingContextRoot.establishesTableFormattingContext() || formattingContextRoot.isTableCell());
     auto usedContentHeight = LayoutUnit { }; 
     auto hasContent = formattingContextRoot.hasInFlowOrFloatingChild();
     // The used height of the containment box is determined as if performing a normal layout of the box, except that it is treated as having no content.

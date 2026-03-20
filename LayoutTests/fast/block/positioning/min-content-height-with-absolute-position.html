@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+.box {
+    background-color: red;
+    height: min-content;
+    width: min-content;
+    position: absolute;
+}
+.box-inner {
+    max-height: 100%;
+}
+</style>
+<div class="box">
+    <div class="box-inner">This test passes if the background is red.</div>
+</div>
+<script>
+document.body.offsetHeight;
+</script>
