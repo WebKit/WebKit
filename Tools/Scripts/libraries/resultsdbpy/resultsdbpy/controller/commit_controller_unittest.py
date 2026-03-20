@@ -293,3 +293,11 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
         self.assertEqual(200, response.status_code)
         commits = {key: [Commit.from_json(element).revision for element in values] for key, values in response.json().items()}
         self.assertEqual(commits, dict(webkit=[6]))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_find_rejects_after_time(self, client, **kwargs):
+        self.register_all_commits(client)
+        self.assertEqual(400, client.get(self.URL + '/api/commits?after_time=1').status_code)
+        self.assertEqual(400, client.get(self.URL + '/api/commits?before_time=9999999999').status_code)
+        self.assertEqual(400, client.get(self.URL + '/api/commits/find?after_time=1').status_code)

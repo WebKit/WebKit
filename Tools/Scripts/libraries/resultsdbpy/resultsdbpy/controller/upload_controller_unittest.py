@@ -215,3 +215,22 @@ class UploadControllerTest(FlaskTestCase, WaitForDockerTestCase):
             self.assertEqual(1, len(response.json()))
             self.assertEqual(['d8bce26fa65c6fc8f39c17927abb77f69fab82fc'], [result['commits'][1]['hash'] for result in response.json()])
             self.assertEqual([dict(status='ok')], [element['processing']['python-tests'] for element in response.json()])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_suites_rejects_commit_params(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/suites?id=d8bce26fa65c').status_code)
+        self.assertEqual(400, client.get(self.URL + '/api/suites?uuid=160166800001').status_code)
+        self.assertEqual(400, client.get(self.URL + '/api/suites?timestamp=1601668000').status_code)
+        self.assertEqual(400, client.get(self.URL + '/api/suites?repository_id=safari').status_code)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_suites_rejects_limit(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/suites?limit=10').status_code)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_download_rejects_after_time(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/upload?after_time=1').status_code)
+        self.assertEqual(400, client.get(self.URL + '/api/upload?before_time=9999999999').status_code)

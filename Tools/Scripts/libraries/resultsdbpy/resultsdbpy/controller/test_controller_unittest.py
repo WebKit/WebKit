@@ -176,6 +176,21 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
+    def test_list_rejects_branch(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/layout-tests/tests?branch=main').status_code)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_list_rejects_repository_id(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/layout-tests/tests?repository_id=webkit').status_code)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_list_rejects_recent(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/layout-tests/tests?recent=False').status_code)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
     def test_summarize_expectations(self, client, **kwargs):
         self.maxDiff = None
         response = client.get(
