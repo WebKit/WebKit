@@ -548,7 +548,7 @@ struct TmpData {
     {
         out.print("{stage = ", stage, " liveRange = ", liveRange, ", preferredReg = ", preferredReg,
             ", coalescables = ", listDump(coalescables), ", parentGroup = ", parentGroup, ", subGroup0 = ", subGroup0, ", subGroup1 = ", subGroup1,
-            ", useDefCost = ", useDefCost, ", spillability = ", spillability, ", assigned = ", assigned, ", groupSpillSlot = ", pointerDump(groupSpillSlot),
+            ", useDefCost = ", useDefCost, ", spillability = ", spillability, ", assigned = ", assigned, ", spillSlot = ", pointerDump(spillSlot),
             ", splitMetadataIndex = ", splitMetadataIndex, "}");
     }
 
@@ -582,10 +582,10 @@ struct TmpData {
 
     void validate()
     {
-        ASSERT(!(groupSpillSlot && assigned));
+        ASSERT(!(spillSlot && assigned));
         ASSERT(!!assigned == (stage == Stage::Assigned));
         ASSERT(liveRange.intervals().isEmpty() == !liveRange.size());
-        ASSERT_IMPLIES(groupSpillSlot, !parentGroup); // Spill slots are assigned only at the group's root
+        ASSERT_IMPLIES(spillSlot, stage == Stage::Spilled || !parentGroup);
         ASSERT_IMPLIES(stage == Stage::Spilled, spillCost() != unspillableCost);
         ASSERT_IMPLIES(stage == Stage::Spilled, !isGroup()); // Should have been split
         ASSERT_IMPLIES(coalescables.size(), !isGroup()); // Only bottom-most should have coalescables
@@ -593,7 +593,7 @@ struct TmpData {
 
     LiveRange liveRange;
     Vector<CoalescableWith> coalescables;
-    StackSlot* groupSpillSlot { nullptr };
+    StackSlot* spillSlot { nullptr };
     float useDefCost { 0.0f };
     Tmp parentGroup;
     Tmp subGroup0, subGroup1;
@@ -893,10 +893,11 @@ private:
 
     // Returns the root of the spill-group tree. All Tmps in the tree are known to not interfere and
     // will share the same spill slot.
+    template<Bank bank>
     Tmp groupForSpill(Tmp tmp)
     {
-        ASSERT(m_map[tmp].stage == Stage::Spilled);
-        while (Tmp parent = m_map[tmp].parentGroup)
+        ASSERT(m_map.get<bank>(tmp).stage == Stage::Spilled);
+        while (Tmp parent = m_map.get<bank>(tmp).parentGroup)
             tmp = parent;
         return tmp;
     }
@@ -933,11 +934,21 @@ private:
     }
 
     // Returns the stack slot a Tmp should use if spilled. Otherwise, returns nullptr.
+    template<Bank bank>
     StackSlot* spillSlot(Tmp tmp)
     {
-        if (m_map[tmp].stage != Stage::Spilled)
-            return nullptr;
-        return m_map[groupForSpill(tmp)].groupSpillSlot;
+        TmpData& tmpData = m_map.get<bank>(tmp);
+        if (tmpData.stage == Stage::Spilled) {
+            ASSERT(tmpData.spillSlot && tmpData.spillSlot == m_map.get<bank>(groupForSpill<bank>(tmp)).spillSlot);
+            return tmpData.spillSlot;
+        }
+        return nullptr;
+    }
+
+    StackSlot* spillSlot(Tmp tmp)
+    {
+        ASSERT(tmp.isGP() || tmp.isFP());
+        return tmp.isGP() ? spillSlot<GP>(tmp) : spillSlot<FP>(tmp);
     }
 
     float adjustedBlockFrequency(BasicBlock* block)
@@ -2158,29 +2169,39 @@ private:
         return move;
     }
 
+    template<Bank bank>
+    StackSlot* ensureGroupSpillSlot(Tmp tmp)
+    {
+        Tmp group = groupForSpill<bank>(tmp);
+        TmpData& groupData = m_map.get<bank>(group);
+
+        if (!groupData.spillSlot)
+            groupData.spillSlot = m_code.addStackSlot(stackSlotMinimumWidth(m_tmpWidth.requiredWidth(group)), StackSlotKind::Spill);
+        return groupData.spillSlot;
+    }
+
     template <Bank bank>
     void emitSpillCodeAndEnqueueNewTmps()
     {
         m_code.forEachTmp<bank>([&](Tmp tmp) {
             TmpData& tmpData = m_map.get<bank>(tmp);
-            if (tmpData.stage == Stage::Spilled && !spillSlot(tmp)) {
-                Tmp group = groupForSpill(tmp);
-                m_map[group].groupSpillSlot = m_code.addStackSlot(stackSlotMinimumWidth(m_tmpWidth.requiredWidth(group)), StackSlotKind::Spill);
-                ASSERT(spillSlot(tmp));
+            if (tmpData.stage == Stage::Spilled && !tmpData.spillSlot) {
+                tmpData.spillSlot = ensureGroupSpillSlot<bank>(tmp);
+                ASSERT(spillSlot<bank>(tmp));
                 m_stats[bank].numSpillStackSlots++;
             }
             if (tmpData.splitMetadataIndex) {
                 auto& metadata = m_splitMetadata[tmpData.splitMetadataIndex];
                 if (metadata.type == SplitMetadata::Type::IntraBlock) {
                     // Redirect spilled intra-block cluster tmps to the spill slot of the original tmp.
-                    ASSERT(tmpData.stage == Stage::Spilled && spillSlot(tmp));
+                    ASSERT(tmpData.stage == Stage::Spilled && spillSlot<bank>(tmp));
                     for (auto& split : metadata.splits) {
                         Tmp clusterTmp = split.tmp;
                         TmpData& clusterData = m_map.get<bank>(clusterTmp);
                         if (clusterData.stage == Stage::Spilled) {
-                            if (!spillSlot(clusterTmp))
-                                m_map[groupForSpill(clusterTmp)].groupSpillSlot = spillSlot(tmp);
-                            ASSERT(spillSlot(clusterTmp) == spillSlot(tmp));
+                            if (!clusterData.spillSlot)
+                                clusterData.spillSlot = spillSlot<bank>(tmp);
+                            ASSERT(spillSlot<bank>(clusterTmp) == spillSlot<bank>(tmp));
                         }
                     }
                 }
@@ -2215,7 +2236,7 @@ private:
                             return;
                         if (argBank != bank)
                             return;
-                        StackSlot* spilled = spillSlot(arg.tmp());
+                        StackSlot* spilled = spillSlot<bank>(arg.tmp());
                         if (!spilled)
                             return;
                         ASSERT(!arg.isReg());
@@ -2267,7 +2288,7 @@ private:
                             // we need to avoid placing the Tmp's stack address into the instruction.
                             return;
                         }
-                        Width spillWidth = m_tmpWidth.requiredWidth(groupForSpill(arg.tmp()));
+                        Width spillWidth = m_tmpWidth.requiredWidth(groupForSpill<bank>(arg.tmp()));
                         if (Arg::isAnyDef(role) && width < spillWidth) {
                             // Either there are users of this tmp who will use more than width,
                             // or there are producers who will produce more than width non-zero
@@ -2331,7 +2352,7 @@ private:
                 inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank argBank, Width) {
                     if (tmp.isReg() || argBank != bank)
                         return;
-                    StackSlot* spilled = spillSlot(tmp);
+                    StackSlot* spilled = spillSlot<bank>(tmp);
                     if (!spilled)
                         return;
 
