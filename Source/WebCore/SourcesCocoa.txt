@@ -289,12 +289,14 @@ platform/audio/ios/MediaDeviceRoute.mm @nonARC
 platform/audio/ios/MediaDeviceRouteController.mm @nonARC
 platform/audio/ios/MediaSessionHelperIOS.mm @nonARC @no-unify
 platform/audio/ios/MediaSessionManagerIOS.mm @nonARC @no-unify
+platform/audio/ios/SpatialAudioPlaybackHelperIOS.mm @nonARC @no-unify
 platform/audio/mac/AudioBusMac.mm @nonARC
 platform/audio/mac/AudioOutputUnitAdaptorMac.cpp
 platform/audio/mac/AudioHardwareListenerMac.cpp
 platform/audio/mac/AudioSessionMac.mm @nonARC
 platform/audio/mac/FFTFrameMac.cpp
 platform/audio/mac/SharedRoutingArbitrator.mm @nonARC
+platform/audio/mac/SpatialAudioPlaybackHelperMac.cpp
 platform/cf/KeyedDecoderCF.cpp
 platform/cf/KeyedEncoderCF.cpp
 platform/cf/MainThreadSharedTimerCF.cpp

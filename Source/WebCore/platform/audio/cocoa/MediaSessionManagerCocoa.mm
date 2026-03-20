@@ -43,7 +43,6 @@
 #import "SharedBuffer.h"
 #import "VP9UtilitiesCocoa.h"
 #import <pal/SessionID.h>
-#import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Function.h>
 #import <wtf/MathExtras.h>
@@ -675,50 +674,6 @@ void MediaSessionManagerCocoa::audioOutputDeviceChanged()
     AudioSession::singleton().audioOutputDeviceChanged();
     updateSessionState();
 }
-
-#if PLATFORM(MAC)
-std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration& configuration)
-{
-    ASSERT(configuration.audio);
-    if (!configuration.audio)
-        return { false };
-
-    auto supportsSpatialAudioPlayback = this->supportsSpatialAudioPlayback();
-    if (supportsSpatialAudioPlayback.has_value())
-        return supportsSpatialAudioPlayback;
-
-    auto calculateSpatialAudioSupport = [] (const MediaConfiguration& configuration) {
-        if (!PAL::canLoad_AudioToolbox_AudioGetDeviceSpatialPreferencesForContentType())
-            return false;
-
-        SpatialAudioPreferences spatialAudioPreferences { };
-        auto contentType = configuration.video ? kAudioSpatialContentType_Audiovisual : kAudioSpatialContentType_AudioOnly;
-
-        if (noErr != PAL::AudioGetDeviceSpatialPreferencesForContentType(nullptr, static_cast<SpatialContentTypeID>(contentType), &spatialAudioPreferences))
-            return false;
-
-        if (!spatialAudioPreferences.spatialAudioSourceCount)
-            return false;
-
-        auto channelCount = configuration.audio->channels.toDouble();
-        if (channelCount <= 0)
-            return true;
-
-        for (auto& source : std::span { spatialAudioPreferences.spatialAudioSources }.first(spatialAudioPreferences.spatialAudioSourceCount)) {
-            if (source == kSpatialAudioSource_Multichannel && channelCount > 2)
-                return true;
-            if (source == kSpatialAudioSource_MonoOrStereo && channelCount >= 1)
-                return true;
-        }
-
-        return false;
-    };
-
-    setSupportsSpatialAudioPlayback(calculateSpatialAudioSupport(configuration));
-
-    return this->supportsSpatialAudioPlayback();
-}
-#endif
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 

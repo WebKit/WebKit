@@ -135,12 +135,6 @@ void RemoteMediaSessionHelperProxy::activeVideoRouteDidChange(SupportsAirPlayVid
         connection->connection().send(Messages::RemoteMediaSessionHelper::ActiveVideoRouteDidChange(supportsAirPlayVideo, MediaPlaybackTargetContextSerialized { target.get() }), { });
 }
 
-void RemoteMediaSessionHelperProxy::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialPlayback)
-{
-    if (RefPtr connection = m_gpuConnection.get())
-        connection->connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback), { });
-}
-
 std::optional<SharedPreferencesForWebProcess> RemoteMediaSessionHelperProxy::sharedPreferencesForWebProcess() const
 {
     if (RefPtr gpuConnectionToWebProcess = m_gpuConnection.get())

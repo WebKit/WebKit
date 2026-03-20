@@ -72,6 +72,9 @@ media/media-source/remoteplayback-from-source-element.html [ Pass ]
 # Prior Tahoe, attempting to paint stereo MV-HEVC either errors or crashes.
 [ Sonoma Sequoia ] media/media-source/media-source-paint-stereo-to-canvas.html [ Skip ]
 
+# EWS doesn't have Spatial Audio Playback supported output. Will work on macbooks.
+media/mediacapabilities/mediacapabilities-decodingInfo-spatialRendering.html [ Failure ]
+
 # macOS 14 and above support word-break: auto-phrase.
 # Individually failing tests should be marked in separate expectations.
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Pass ]

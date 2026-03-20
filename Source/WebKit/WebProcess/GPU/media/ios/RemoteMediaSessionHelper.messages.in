@@ -36,7 +36,6 @@ messages -> RemoteMediaSessionHelper {
     IsPlayingToAutomotiveHeadUnitDidChange(enum:bool WebCore::PlayingToAutomotiveHeadUnit isPlayingToAutomotiveHeadUnit)
     ActiveAudioRouteDidChange(enum:bool WebCore::ShouldPause shouldPause)
     ActiveVideoRouteDidChange(enum:bool WebCore::SupportsAirPlayVideo supportsAirPlayVideo, WebKit::MediaPlaybackTargetContextSerialized target)
-    ActiveAudioRouteSupportsSpatialPlaybackDidChange(enum:bool WebCore::SupportsSpatialAudioPlayback supportsSpatialPlayback)
 }
 
 #endif

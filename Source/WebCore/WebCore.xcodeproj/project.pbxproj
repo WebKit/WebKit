@@ -2001,6 +2001,7 @@
 		5105F0691D4BA9D900FB80BC /* IDBGetRecordData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5105F0681D4BA54100FB80BC /* IDBGetRecordData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5106D7BE18BDB76F000AB166 /* ContextMenuContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5107004F2D88D3B20056C8A3 /* FrameTreeSyncData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107004D2D88D3B20056C8A3 /* FrameTreeSyncData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5107E2F72F5ABD2A00851C85 /* SpatialAudioPlaybackHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5107E2F62F5ABD1C00851C85 /* SpatialAudioPlaybackHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510A58FA1BACC7F200C19282 /* IDBRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A58F61BACC4A500C19282 /* IDBRequestData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510A91DA24CF3D8C00BFD89C /* HIDGamepadElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91D624CE8EDE00BFD89C /* HIDGamepadElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510A91DC24CF46FE00BFD89C /* SharedGamepadValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91DB24CF441800BFD89C /* SharedGamepadValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2192,6 +2193,7 @@
 		51D444702D09B20A00F26553 /* WebCodecsBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D4446F2D09B1F800F26553 /* WebCodecsBase.h */; };
 		51D7236D1BB6174900478CA3 /* IDBResultData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7236B1BB60BFE00478CA3 /* IDBResultData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D7EFEA1BDE8F8C00E93E10 /* ThreadSafeDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 511FAEA91BDC989A00B4AFE4 /* ThreadSafeDataBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51D8380C2F5ACAA000E06540 /* SpatialAudioPlaybackHelperIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5107E2F52F5ABCA700851C85 /* SpatialAudioPlaybackHelperIOS.mm */; };
 		51DB8C402B7B23AA000AD1BA /* MediaSourceInterfaceProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DB8C3C2B7B1A34000AD1BA /* MediaSourceInterfaceProxy.h */; };
 		51DB8C412B7B23B9000AD1BA /* MediaSourceInterfaceMainThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DB8C3E2B7B2217000AD1BA /* MediaSourceInterfaceMainThread.h */; };
 		51DCE1AB2CF5800D00BE7E84 /* AudioDecoderCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DCE1A92CF5800D00BE7E84 /* AudioDecoderCocoa.h */; };
@@ -12061,6 +12063,8 @@
 		5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuContext.h; sourceTree = "<group>"; };
 		5107004D2D88D3B20056C8A3 /* FrameTreeSyncData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameTreeSyncData.h; sourceTree = "<group>"; };
 		5107004E2D88D3B20056C8A3 /* FrameTreeSyncData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameTreeSyncData.cpp; sourceTree = "<group>"; };
+		5107E2F52F5ABCA700851C85 /* SpatialAudioPlaybackHelperIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SpatialAudioPlaybackHelperIOS.mm; sourceTree = "<group>"; };
+		5107E2F62F5ABD1C00851C85 /* SpatialAudioPlaybackHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpatialAudioPlaybackHelper.h; sourceTree = "<group>"; };
 		510A58EF1BAB720F00C19282 /* IDBServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBServer.cpp; sourceTree = "<group>"; };
 		510A58F01BAB720F00C19282 /* IDBServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBServer.h; sourceTree = "<group>"; };
 		510A58F51BACC4A500C19282 /* IDBRequestData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBRequestData.cpp; sourceTree = "<group>"; };
@@ -12452,6 +12456,7 @@
 		51D7236A1BB60BFE00478CA3 /* IDBResultData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBResultData.cpp; sourceTree = "<group>"; };
 		51D7236B1BB60BFE00478CA3 /* IDBResultData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBResultData.h; sourceTree = "<group>"; };
 		51D7EFEB1BDEFA4700E93E10 /* TransactionOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransactionOperation.cpp; sourceTree = "<group>"; };
+		51D8380B2F5AC99000E06540 /* SpatialAudioPlaybackHelperMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SpatialAudioPlaybackHelperMac.cpp; sourceTree = "<group>"; };
 		51DB8C3C2B7B1A34000AD1BA /* MediaSourceInterfaceProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSourceInterfaceProxy.h; sourceTree = "<group>"; };
 		51DB8C3E2B7B2217000AD1BA /* MediaSourceInterfaceMainThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSourceInterfaceMainThread.h; sourceTree = "<group>"; };
 		51DB8C3F2B7B2217000AD1BA /* MediaSourceInterfaceMainThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceInterfaceMainThread.cpp; sourceTree = "<group>"; };
@@ -38436,6 +38441,7 @@
 				07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */,
 				A13AB05C2EE51E24003C1ED5 /* MockMediaDeviceRouteController.cpp */,
 				A13AB05B2EE51E24003C1ED5 /* MockMediaDeviceRouteController.h */,
+				5107E2F52F5ABCA700851C85 /* SpatialAudioPlaybackHelperIOS.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -38648,6 +38654,7 @@
 				5183EBD42CF73A86005FAC1F /* PlatformRawAudioDataCocoa.h */,
 				CD722A0D2D6917B400F2E1E7 /* SpatialAudioExperienceHelper.h */,
 				CD722A0E2D6917B400F2E1E7 /* SpatialAudioExperienceHelper.mm */,
+				5107E2F62F5ABD1C00851C85 /* SpatialAudioPlaybackHelper.h */,
 				417F7AEB2139BF6400FBA7EC /* WebAudioBufferList.cpp */,
 				417F7AEC2139BF6500FBA7EC /* WebAudioBufferList.h */,
 			);
@@ -42257,6 +42264,7 @@
 				FD3160BA12B0272A00C1A359 /* FFTFrameMac.cpp */,
 				CD36C168260A63D300C8C529 /* SharedRoutingArbitrator.h */,
 				CD36C169260A63D400C8C529 /* SharedRoutingArbitrator.mm */,
+				51D8380B2F5AC99000E06540 /* SpatialAudioPlaybackHelperMac.cpp */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -47071,6 +47079,7 @@
 				72F7E746279B8F7500D82D2D /* SourceImage.h in Headers */,
 				D01A27AE10C9BFD800026A42 /* SpaceSplitString.h in Headers */,
 				CD722A132D693CFF00F2E1E7 /* SpatialAudioExperienceHelper.h in Headers */,
+				5107E2F72F5ABD2A00851C85 /* SpatialAudioPlaybackHelper.h in Headers */,
 				CA3344082D16174C007473A1 /* SpatialBackdropSource.h in Headers */,
 				B9CA3B402CAB1D3E00B2607C /* SpatialImageControls.h in Headers */,
 				B6D814722EE0C6D400397547 /* SpatialImageTypes.h in Headers */,
@@ -49264,6 +49273,7 @@
 				41DF2D5E27A9452A00F25A21 /* SharedVideoFrameInfo.mm in Sources */,
 				A100D94F2AB251C400E00D67 /* SourceBufferParserAVFObjC.mm in Sources */,
 				CDC8B5AA18047FF10016E685 /* SourceBufferPrivateAVFObjC.mm in Sources */,
+				51D8380C2F5ACAA000E06540 /* SpatialAudioPlaybackHelperIOS.mm in Sources */,
 				B9CA3B412CAB1D3E00B2607C /* SpatialImageControls.cpp in Sources */,
 				41514FDB2E92DC40002074EA /* StreamPipeToUtilities.cpp in Sources */,
 				A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */,

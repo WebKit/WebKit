@@ -4097,6 +4097,9 @@ webkit.org/b/251219 fast/images/animated-avif.html [ ImageOnlyFailure ]
 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Failure ]
 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Failure ]
 
+# Simulator doesn't support Spatial Audio Playback
+media/mediacapabilities/mediacapabilities-decodingInfo-spatialRendering.html [ Failure ]
+
 # Screen Orientation API doesn't support nested frames yet
 # TODO: figure out if this still applies.
 # imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]

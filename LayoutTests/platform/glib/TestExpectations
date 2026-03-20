@@ -3295,6 +3295,8 @@ webkit.org/b/201274 media/presentationmodechanged-fired-once.html [ Skip ]
 # Requires unsupported captive portal codec and container restrictions
 webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Skip ]
 webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Skip ]
+# Reports supported for <= 2 channels
+webkit.org/b/309552 media/mediacapabilities/mediacapabilities-decodingInfo-spatialRendering.html [ Failure ]
 
 # These tests require platform support.
 media/media-allowed-codecs.html [ Skip ]

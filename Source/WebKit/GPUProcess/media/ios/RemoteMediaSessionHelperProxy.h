@@ -71,7 +71,6 @@ private:
     void isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit) final;
     void activeAudioRouteDidChange(ShouldPause) final;
     void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<WebCore::MediaPlaybackTarget>&&) final;
-    void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback) final;
 
     bool m_isMonitoringWirelessRoutes { false };
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
