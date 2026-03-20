@@ -21,8 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import atexit
+import json
 import os
-import re
 import socket
 import subprocess
 import time
@@ -34,7 +34,6 @@ class Docker(object):
 
     DOCKER_BIN = 'docker'
     DEFAULT_PROJECT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'docker-compose.yml')
-    PS_PORT = re.compile(r'0.0.0.0:(?P<port>\d+)\-\>\d+/tcp')
 
     _has_docker = None
     _docker_stack = 0
@@ -114,14 +113,17 @@ class Docker(object):
         has_cassandra = False
         ports = []
         with open(os.devnull, 'w') as devnull:
-            output = subprocess.check_output([cls.DOCKER_BIN, 'compose', '-f', project, 'ps'], stderr=devnull).decode('utf-8')
-            if len(output.splitlines()) <= 2:
+            output = subprocess.check_output([cls.DOCKER_BIN, 'compose', '-f', project, 'ps', '--format', 'json'], stderr=devnull).decode('utf-8')
+            containers = json.loads(output)
+            if not containers:
                 raise RuntimeError(f'{project} has not been started, cannot wait for it')
-            for line in output.splitlines()[2:]:
-                if 'cassandra' in line:
+            for container in containers:
+                if 'cassandra' in container.get('Service', ''):
                     has_cassandra = True
-                for match in cls.PS_PORT.findall(line):
-                    ports.append(int(match))
+                for publisher in (container.get('Publishers') or []):
+                    published_port = publisher.get('PublishedPort', 0)
+                    if published_port:
+                        ports.append(published_port)
 
         while True:
             all_ports_open = True
@@ -153,8 +155,9 @@ class Docker(object):
         if not cls.is_running():
             return False
         with open(os.devnull, 'w') as devnull:
-            output = subprocess.check_output([cls.DOCKER_BIN, 'compose', '-f', project, 'ps'], stderr=devnull)
-            return len(output.splitlines()) > 2
+            output = subprocess.check_output([cls.DOCKER_BIN, 'compose', '-f', project, 'ps', '--format', 'json'], stderr=devnull).decode('utf-8')
+            containers = json.loads(output)
+            return bool(containers) and all(c.get('State') == 'running' for c in containers)
 
     @classmethod
     def stop_project(cls, project):
