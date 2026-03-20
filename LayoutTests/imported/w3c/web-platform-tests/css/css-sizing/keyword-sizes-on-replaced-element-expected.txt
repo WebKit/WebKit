@@ -96,13 +96,13 @@ height expected 60 but got 110
 PASS .test 71
 FAIL .test 72 assert_equals:
 <canvas width="100" height="100" class="test max-height" style="max-width: 50px; max-height: fit-content" data-expected-width="60" data-expected-height="60"></canvas>
-height expected 60 but got 110
+height expected 60 but got 70
 FAIL .test 73 assert_equals:
 <canvas width="100" height="100" class="test height" style="min-width: 150px; height: fit-content" data-expected-width="160" data-expected-height="160"></canvas>
 height expected 160 but got 110
 FAIL .test 74 assert_equals:
 <canvas width="100" height="100" class="test min-height" style="min-width: 150px; min-height: fit-content" data-expected-width="160" data-expected-height="160"></canvas>
-height expected 160 but got 110
+width expected 160 but got 170
 PASS .test 75
 PASS .test 76
 PASS .test 77
@@ -113,13 +113,13 @@ height expected 60 but got 110
 PASS .test 80
 FAIL .test 81 assert_equals:
 <canvas width="100" height="100" class="test max-height" style="max-width: 50px; max-height: min-content" data-expected-width="60" data-expected-height="60"></canvas>
-height expected 60 but got 110
+height expected 60 but got 70
 FAIL .test 82 assert_equals:
 <canvas width="100" height="100" class="test height" style="min-width: 150px; height: min-content" data-expected-width="160" data-expected-height="160"></canvas>
 height expected 160 but got 110
 FAIL .test 83 assert_equals:
 <canvas width="100" height="100" class="test min-height" style="min-width: 150px; min-height: min-content" data-expected-width="160" data-expected-height="160"></canvas>
-height expected 160 but got 110
+width expected 160 but got 170
 PASS .test 84
 
 

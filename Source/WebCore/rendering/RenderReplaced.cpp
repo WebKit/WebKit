@@ -1281,16 +1281,19 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
             return percentageOrCalculated(calculatedLogicalHeight);
         },
         [&](const CSS::Keyword::FitContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::WebkitFillAvailable&) -> LayoutUnit {
             return content();
         },
         [&](const CSS::Keyword::MinContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::MaxContent&) -> LayoutUnit {
-            return content();
+            auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+            return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::Intrinsic&) -> LayoutUnit {
             return intrinsicLogicalHeight();
