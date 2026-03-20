@@ -6265,7 +6265,17 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Style-EWS')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'pkill -9 git || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "find .git -name '*.lock' -delete"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.auto', '0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.reflogExpireUnreachable', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.pruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.worktreePruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
@@ -6273,19 +6283,21 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git merge --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git revert --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'switch', '--force', '--detach', 'refs/remotes/origin/main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/main', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git for-each-ref --format='delete %(refname)' | sed -e '\\|^delete refs/remotes/origin/main$|d' -e '\\|^delete refs/tags/|d' | git update-ref --stdin --no-deref"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['git', 'branch', '--no-track', 'main', 'refs/remotes/origin/main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v '^origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'gc', '--force'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
         )
         self.expect_outcome(result=SUCCESS, state_string='Cleaned up git repository')
@@ -6297,7 +6309,17 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('platform', 'win')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\gc.log || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'pkill -9 git || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', "find .git -name '*.lock' -delete"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.auto', '0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.reflogExpireUnreachable', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.pruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.worktreePruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
@@ -6305,19 +6327,21 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             .log('stdio', stdout=''),
             ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git merge --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git revert --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'switch', '--force', '--detach', 'refs/remotes/origin/main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/main', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || exit 0"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', "git for-each-ref --format='delete %(refname)' | sed -e '\\|^delete refs/remotes/origin/main$|d' -e '\\|^delete refs/tags/|d' | git update-ref --stdin --no-deref"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || exit 0"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['git', 'branch', '--no-track', 'main', 'refs/remotes/origin/main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v '^origin$' | xargs -L 1 git remote rm || exit 0"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'gc', '--force'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
         )
         self.expect_outcome(result=SUCCESS, state_string='Cleaned up git repository')
@@ -6328,7 +6352,17 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'pkill -9 git || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "find .git -name '*.lock' -delete"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.auto', '0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.reflogExpireUnreachable', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.pruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.worktreePruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
@@ -6336,19 +6370,21 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git merge --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git revert --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'switch', '--force', '--detach', 'refs/remotes/origin/master'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/master', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'master'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'master'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'master'"),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' master$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git for-each-ref --format='delete %(refname)' | sed -e '\\|^delete refs/remotes/origin/master$|d' -e '\\|^delete refs/tags/|d' | git update-ref --stdin --no-deref"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['git', 'branch', '--no-track', 'master', 'refs/remotes/origin/master'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v '^origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'gc', '--force'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
         )
         self.expect_outcome(result=SUCCESS, state_string='Cleaned up git repository')
@@ -6359,7 +6395,17 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'pkill -9 git || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "find .git -name '*.lock' -delete"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.auto', '0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.reflogExpireUnreachable', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.pruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.worktreePruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
@@ -6367,19 +6413,21 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git merge --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git revert --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'switch', '--force', '--detach', 'refs/remotes/origin/main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/main', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(128)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git for-each-ref --format='delete %(refname)' | sed -e '\\|^delete refs/remotes/origin/main$|d' -e '\\|^delete refs/tags/|d' | git update-ref --stdin --no-deref"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['git', 'branch', '--no-track', 'main', 'refs/remotes/origin/main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v '^origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'gc', '--force'], workdir='wkdir', timeout=300, log_environ=False).exit(128)
             .log('stdio', stdout=''),
         )
         self.expect_outcome(result=FAILURE, state_string='Encountered some issues during cleanup')
@@ -6391,7 +6439,17 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('basename', 'safari-612-branch')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'pkill -9 git || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "find .git -name '*.lock' -delete"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.auto', '0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.reflogExpireUnreachable', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.pruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'config', 'gc.worktreePruneExpire', 'now'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
@@ -6399,19 +6457,21 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git cherry-pick --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git merge --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git revert --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'switch', '--force', '--detach', 'refs/remotes/origin/main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', '--progress', 'origin/main', '-f'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
-            .log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git for-each-ref --format='delete %(refname)' | sed -e '\\|^delete refs/remotes/origin/main$|d' -e '\\|^delete refs/tags/|d' | git update-ref --stdin --no-deref"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['git', 'branch', '--no-track', 'main', 'refs/remotes/origin/main'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
-            ExpectShell(command=['git', 'prune'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git remote | grep -v '^origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['git', 'gc', '--force'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
         )
         self.expect_outcome(result=SUCCESS, state_string='Cleaned up git repository')
