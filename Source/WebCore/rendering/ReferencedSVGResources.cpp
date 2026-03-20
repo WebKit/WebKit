@@ -94,9 +94,8 @@ ReferencedSVGResources::ReferencedSVGResources(RenderElement& renderer)
 
 ReferencedSVGResources::~ReferencedSVGResources()
 {
-    Ref treeScope = m_renderer->treeScopeForSVGReferences();
     for (auto& targetID : copyToVector(m_elementClients.keys()))
-        removeClientForTarget(treeScope, targetID);
+        removeClientForTarget(targetID);
 }
 
 void ReferencedSVGResources::addClientForTarget(SVGElement& targetElement, const AtomString& targetID)
@@ -104,16 +103,15 @@ void ReferencedSVGResources::addClientForTarget(SVGElement& targetElement, const
     m_elementClients.ensure(targetID, [&] {
         auto client = makeUnique<CSSSVGResourceElementClient>(m_renderer);
         targetElement.addReferencingCSSClient(*client);
-        return client;
+        return ClientEntry { WTF::move(client), targetElement };
     });
 }
 
-void ReferencedSVGResources::removeClientForTarget(TreeScope& treeScope, const AtomString& targetID)
+void ReferencedSVGResources::removeClientForTarget(const AtomString& targetID)
 {
-    auto client = m_elementClients.take(targetID);
-
-    if (RefPtr targetElement = dynamicDowncast<SVGElement>(treeScope.getElementById(targetID)))
-        targetElement->removeReferencingCSSClient(*client);
+    auto entry = m_elementClients.take(targetID);
+    if (RefPtr targetElement = entry.targetElement)
+        targetElement->removeReferencingCSSClient(protect(*entry.client));
 }
 
 ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style, const Document& document)
@@ -200,7 +198,7 @@ void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, con
     }
 
     for (auto& targetID : oldKeys)
-        removeClientForTarget(treeScope, targetID);
+        removeClientForTarget(targetID);
 }
 
 // SVG code uses getRenderSVGResourceById<>, but that works in terms of renderers. We need to find resources
