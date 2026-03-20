@@ -1966,8 +1966,11 @@ void Page::setHasBannerViewOverlay(bool hasBannerViewOverlay)
     m_hasBannerViewOverlay = hasBannerViewOverlay;
 
     RefPtr localMainFrame = this->localMainFrame();
-    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr) {
         view->updateExtendBackgroundIfNecessary();
+        if (CheckedPtr renderView = view->renderView())
+            renderView->compositor().updateRootContentLayerClipping();
+    }
 }
 #endif
 

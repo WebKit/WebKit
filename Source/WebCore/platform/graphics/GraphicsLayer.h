@@ -243,7 +243,10 @@ public:
     
     bool masksToBounds() const { return m_masksToBounds; }
     WEBCORE_EXPORT virtual void setMasksToBounds(bool);
-    
+
+    bool masksTopOverflow() const { return m_masksTopOverflow; }
+    WEBCORE_EXPORT virtual void setMasksTopOverflow(bool);
+
     bool drawsContent() const { return m_drawsContent; }
     WEBCORE_EXPORT virtual void setDrawsContent(bool);
 
@@ -640,6 +643,7 @@ protected:
     bool m_preserves3D: 1;
     bool m_backfaceVisibility : 1;
     bool m_masksToBounds : 1;
+    bool m_masksTopOverflow : 1;
     bool m_drawsContent : 1;
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool m_drawsHDRContent : 1 { false };

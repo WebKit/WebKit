@@ -2357,7 +2357,18 @@ static RenderLayerModelObject& NODELETE rendererForCompositingTests(const Render
 
 void RenderLayerCompositor::updateRootContentLayerClipping()
 {
-    RefPtr { m_rootContentsLayer }->setMasksToBounds(!m_renderView.settings().backgroundShouldExtendBeyondPage());
+    if (!m_rootContentsLayer)
+        return;
+
+    RefPtr rootContentsLayer = m_rootContentsLayer;
+    const auto shouldExtendBackground = m_renderView.settings().backgroundShouldExtendBeyondPage();
+    auto hasBannerOverlay = false;
+#if ENABLE(BANNER_VIEW_OVERLAY)
+    hasBannerOverlay = page().hasBannerViewOverlay();
+#endif
+
+    rootContentsLayer->setMasksToBounds(!shouldExtendBackground);
+    rootContentsLayer->setMasksTopOverflow(shouldExtendBackground && hasBannerOverlay);
 }
 
 bool RenderLayerCompositor::updateExplicitBacking(RenderLayer& layer, RequiresCompositingData& queryData, BackingRequired backingRequired)

@@ -1486,6 +1486,8 @@ http/wpt/service-workers/push-console-messages-showNotification-async.https.html
 http/wpt/service-workers/push-console-messages-showNotification-late.https.html [ Skip ]
 http/wpt/service-workers/push-console-messages-showNotification-sync.https.html [ Skip ]
 
+fast/layers/banner-view-overlays [ Skip ]
+
 http/tests/media/fairplay [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
