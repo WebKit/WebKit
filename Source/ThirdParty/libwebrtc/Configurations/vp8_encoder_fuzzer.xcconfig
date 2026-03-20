@@ -27,7 +27,7 @@ PRODUCT_NAME = vp8_encoder_fuzzer;
 
 CODE_SIGN_STYLE = Automatic;
 
-HEADER_SEARCH_PATHS = $(inherited) Source/webrtc Source/third_party/abseil-cpp;
+HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/Source/webrtc $(SRCROOT)/Source/third_party/abseil-cpp;
 
 OTHER_CFLAGS = $(inherited) -DENCODER=vp8;
 OTHER_LDFLAGS = $(inherited) -lwebrtc;

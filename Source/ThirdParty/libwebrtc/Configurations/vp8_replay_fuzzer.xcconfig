@@ -34,4 +34,4 @@ PRODUCT_NAME = vp8_replay_fuzzer;
 
 GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 
-HEADER_SEARCH_PATHS = $(inherited) Source/third_party/json/include;
+HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/Source/third_party/json/include;

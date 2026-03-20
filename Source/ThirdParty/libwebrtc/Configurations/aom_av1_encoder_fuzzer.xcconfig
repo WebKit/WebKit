@@ -27,7 +27,7 @@ PRODUCT_NAME = aom_av1_encoder_fuzzer;
 
 CODE_SIGN_STYLE = Automatic;
 
-HEADER_SEARCH_PATHS = $(inherited) Source/webrtc Source/third_party/abseil-cpp;
+HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/Source/webrtc $(SRCROOT)/Source/third_party/abseil-cpp;
 
 OTHER_CFLAGS = $(inherited) -DENCODER=av1;
 

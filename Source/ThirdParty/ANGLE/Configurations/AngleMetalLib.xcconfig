@@ -3,7 +3,7 @@
 PRODUCT_NAME = ANGLEMetalLib;
 SKIP_INSTALL = YES;
 
-HEADER_SEARCH_PATHS = include src src/common/base src/common/third_party/base third_party/zlib/google;
+HEADER_SEARCH_PATHS = $(SRCROOT)/include $(SRCROOT)/src $(SRCROOT)/src/common/base $(SRCROOT)/src/common/third_party/base $(SRCROOT)/third_party/zlib/google;
 
 ANGLE_HEADERS_FOLDER_PATH = $(WK_LIBRARY_HEADERS_FOLDER_PATH)/ANGLE;
 

@@ -33,8 +33,8 @@ GCC_WARN_UNUSED_FUNCTION = NO;
 WARNING_CFLAGS = $(inherited) -Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-unused-function;
 
 // FIXME: Enable x86 optimization
-HEADER_SEARCH_PATHS[arch=x86_64] = $(inherited) Source/third_party/libaom/source/config/linux/generic Source/third_party/libaom/source/libaom Source/third_party/libaom/source/config;
-HEADER_SEARCH_PATHS[arch=arm64*] = $(inherited) Source/third_party/libaom/source/config/linux/arm64-cpu-detect Source/third_party/libaom/source/libaom Source/third_party/libaom/source/config;
+HEADER_SEARCH_PATHS[arch=x86_64] = $(inherited) $(SRCROOT)/Source/third_party/libaom/source/config/linux/generic $(SRCROOT)/Source/third_party/libaom/source/libaom $(SRCROOT)/Source/third_party/libaom/source/config;
+HEADER_SEARCH_PATHS[arch=arm64*] = $(inherited) $(SRCROOT)/Source/third_party/libaom/source/config/linux/arm64-cpu-detect $(SRCROOT)/Source/third_party/libaom/source/libaom $(SRCROOT)/Source/third_party/libaom/source/config;
 
 USE_HEADERMAP = NO;
 

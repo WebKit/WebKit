@@ -8,7 +8,7 @@ GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 COMBINE_HIDPI_IMAGES = NO;
 ENABLE_STRICT_OBJC_MSGSEND = YES;
 
-HEADER_SEARCH_PATHS = Source/third_party/opus/src/include Source/third_party/opus/src/celt Source/third_party/opus/src/silk Source/third_party/opus/src/silk/float Source/third_party/opus/src;
+HEADER_SEARCH_PATHS = $(SRCROOT)/Source/third_party/opus/src/include $(SRCROOT)/Source/third_party/opus/src/celt $(SRCROOT)/Source/third_party/opus/src/silk $(SRCROOT)/Source/third_party/opus/src/silk/float $(SRCROOT)/Source/third_party/opus/src;
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_INSTALL_PATH);
 PUBLIC_HEADERS_FOLDER_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/libwebrtc;
 USE_HEADERMAP = NO;
