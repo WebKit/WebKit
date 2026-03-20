@@ -101,6 +101,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -343,6 +344,46 @@ auto UserSelectNoneStateCache::computeState(Node& targetNode) -> State
 static String directionAttributeAndValue(TextDirection direction)
 {
     return makeString("dir=\""_s, direction == TextDirection::LTR ? "ltr"_s : "rtl"_s, '"');
+}
+
+// Used to identify <img> elements that represent emoji and can be replaced with their Unicode alt text.
+static bool containsOnlyEmoji(StringView text)
+{
+    if (text.isEmpty())
+        return false;
+
+    bool hasEmoji = false;
+    for (auto codePoint : text.codePoints()) {
+        if (isEmojiWithPresentationByDefault(codePoint)) {
+            hasEmoji = true;
+            continue;
+        }
+
+        if (isEmojiRegionalIndicator(codePoint)) {
+            hasEmoji = true;
+            continue;
+        }
+
+        // Non-Latin1 emoji characters (e.g., those needing VS16 for emoji presentation).
+        if (!isLatin1(codePoint) && u_hasBinaryProperty(codePoint, UCHAR_EMOJI)) {
+            hasEmoji = true;
+            continue;
+        }
+
+        // Emoji sequence components: ZWJ, VS16, skin tone modifiers, keycap bases, tag characters.
+        if (u_hasBinaryProperty(codePoint, UCHAR_EMOJI_COMPONENT))
+            continue;
+
+        // Combining Enclosing Keycap completes a keycap emoji sequence.
+        if (codePoint == 0x20E3) {
+            hasEmoji = true;
+            continue;
+        }
+
+        return false;
+    }
+
+    return hasEmoji;
 }
 
 enum class MSOListMode : bool { Preserve, DoNotPreserve };
@@ -855,6 +896,17 @@ RefPtr<Node> StyledMarkupAccumulator::traverseNodesForSerialization(Node& startN
 
         if (m_ignoresUserSelectNone && userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(node))
             return false;
+
+        if (shouldEmit) {
+            if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(node)) {
+                auto& alt = imgElement->attributeWithoutSynchronization(altAttr);
+                auto& src = imgElement->attributeWithoutSynchronization(srcAttr);
+                if (!alt.isEmpty() && src.endsWithIgnoringASCIICase(".svg"_s) && containsOnlyEmoji(alt)) {
+                    append(alt);
+                    return false;
+                }
+            }
+        }
 
         ++depth;
         if (shouldEmit)

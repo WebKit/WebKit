@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -307,6 +307,55 @@ TEST(CopyHTML, CopySelectedTextInTextDocument)
     TestWebKitAPI::Util::run(&doneLoading);
     EXPECT_WK_STREQ(expectedString.get(), [copiedText string]);
 #endif
+}
+
+TEST(CopyHTML, EmojiImgWithSVGSourceReplacedWithAltText)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<body>"
+        "<div id='copy'>Hello <img class='emoji' alt='\U0001F60C' src='/assets/emoji.svg'> world</div>"
+        "<script>getSelection().selectAllChildren(copy);</script>"
+        "</body>"];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    NSString *copiedMarkup = readHTMLStringFromPasteboard();
+    EXPECT_TRUE([copiedMarkup containsString:@"\U0001F60C"]);
+    EXPECT_TRUE([copiedMarkup containsString:@"Hello"]);
+    EXPECT_TRUE([copiedMarkup containsString:@"world"]);
+    EXPECT_FALSE([copiedMarkup containsString:@"<img"]);
+    EXPECT_FALSE([copiedMarkup containsString:@".svg"]);
+}
+
+TEST(CopyHTML, NonEmojiImgWithSVGSourcePreserved)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<body>"
+        "<div id='copy'>Hello <img alt='a logo' src='/assets/logo.svg'> world</div>"
+        "<script>getSelection().selectAllChildren(copy);</script>"
+        "</body>"];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    NSString *copiedMarkup = readHTMLStringFromPasteboard();
+    EXPECT_TRUE([copiedMarkup containsString:@"<img"]);
+}
+
+TEST(CopyHTML, EmojiImgWithNonSVGSourcePreserved)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<body>"
+        "<div id='copy'>Hello <img alt='\U0001F60C' src='/assets/emoji.png'> world</div>"
+        "<script>getSelection().selectAllChildren(copy);</script>"
+        "</body>"];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    NSString *copiedMarkup = readHTMLStringFromPasteboard();
+    EXPECT_TRUE([copiedMarkup containsString:@"<img"]);
 }
 
 #endif // PLATFORM(COCOA)
