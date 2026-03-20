@@ -5945,6 +5945,7 @@ SessionState WebPageProxy::sessionState(WTF::Function<bool (WebBackForwardListIt
         sessionState.provisionalURL = URL { provisionalURLString };
 
     sessionState.renderTreeSize = renderTreeSize();
+    sessionState.pageZoomFactor = m_pageZoomFactor;
     sessionState.isAppInitiated = m_lastNavigationWasAppInitiated;
     return sessionState;
 }
@@ -5956,6 +5957,9 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
     m_lastNavigationWasAppInitiated = sessionState.isAppInitiated;
     m_sessionRestorationRenderTreeSize = 0;
     m_hitRenderTreeSizeThreshold = false;
+
+    if (sessionState.pageZoomFactor != m_pageZoomFactor)
+        setPageZoomFactor(sessionState.pageZoomFactor);
 
     bool hasBackForwardList = !!sessionState.backForwardListState.currentIndex;
 
