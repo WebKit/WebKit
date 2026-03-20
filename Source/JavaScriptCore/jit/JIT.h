@@ -295,6 +295,7 @@ namespace JSC {
         using enum WriteBarrierMode;
         // value register in write barrier is used before any scratch registers
         // so may safely be the same as either of the scratch registers.
+        void emitWriteBarrier(JSValueRegs owner, WriteBarrierMode);
         void emitWriteBarrier(VirtualRegister owner, WriteBarrierMode);
         void emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode);
         void emitWriteBarrier(JSCell* owner);
