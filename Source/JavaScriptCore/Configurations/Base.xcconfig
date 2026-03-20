@@ -152,6 +152,7 @@ WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_thin);
 
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
+WK_USE_FATAL_EXCEPTIONS = $(OVERRIDE_WK_USE_FATAL_EXCEPTIONS:default=YES);
 
 // Shared variables used for dynamic or static linking of JavaScriptCore and jsc.
 
