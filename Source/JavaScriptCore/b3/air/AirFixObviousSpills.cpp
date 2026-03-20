@@ -55,9 +55,7 @@ public:
 
     void run()
     {
-        if (AirFixObviousSpillsInternal::verbose)
-            dataLog("Code before fixObviousSpills:\n", m_code);
-        
+        dataLogLnIf(AirFixObviousSpillsInternal::verbose, "Code before fixObviousSpills:\n", m_code);
         computeAliases();
         fixCode();
     }
@@ -79,11 +77,13 @@ private:
                 m_block = block;
                 m_state = m_atHead[block];
 
-                if (AirFixObviousSpillsInternal::verbose)
-                    dataLog("Executing block ", *m_block, ": ", m_state, "\n");
-                
-                for (m_instIndex = 0; m_instIndex < block->size(); ++m_instIndex)
-                    executeInst();
+                dataLogLnIf(AirFixObviousSpillsInternal::verbose, "Executing block ", *m_block, ": ", m_state);
+                for (m_instIndex = 0; m_instIndex < block->size(); ++m_instIndex) {
+                    dataLogLnIf(AirFixObviousSpillsInternal::verbose, "    Executing ", m_block->at(m_instIndex), ": ", m_state);
+                    clobberEarlyDefs();
+                    clobberLateDefs();
+                    addInstAliases();
+                }
 
                 // Before we call merge we must make sure that the two states are sorted.
                 m_state.sort();
@@ -116,8 +116,10 @@ private:
             RELEASE_ASSERT(m_notBottom.quickGet(block->index()));
 
             for (m_instIndex = 0; m_instIndex < block->size(); ++m_instIndex) {
+                clobberEarlyDefs();
                 fixInst();
-                executeInst();
+                clobberLateDefs();
+                addInstAliases();
             }
         }
     }
@@ -181,27 +183,33 @@ private:
         }
     }
 
-    void executeInst()
+    void clobberDefs(Inst* prevInst, Inst* nextInst)
     {
-        Inst& inst = m_block->at(m_instIndex);
-
-        if (AirFixObviousSpillsInternal::verbose)
-            dataLog("    Executing ", inst, ": ", m_state, "\n");
-
-        Inst::forEachDefWithExtraClobberedRegs<Reg>(&inst, &inst,
+        Inst::forEachDefWithExtraClobberedRegs<Reg>(prevInst, nextInst,
             [&] (const Reg& reg, Arg::Role, Bank, Width, PreservedWidth) {
-                if (AirFixObviousSpillsInternal::verbose)
-                    dataLog("        Clobbering ", reg, "\n");
+                dataLogLnIf(AirFixObviousSpillsInternal::verbose, "        Clobbering ", reg);
                 m_state.clobber(reg);
             });
 
-        Inst::forEachDef<StackSlot*>(&inst, &inst,
+        Inst::forEachDef<StackSlot*>(prevInst, nextInst,
             [&] (StackSlot* slot, Arg::Role, Bank, Width) {
-                if (AirFixObviousSpillsInternal::verbose)
-                    dataLog("        Clobbering ", *slot, "\n");
+                dataLogLnIf(AirFixObviousSpillsInternal::verbose, "        Clobbering ", *slot);
                 m_state.clobber(slot);
             });
+    }
 
+    void clobberEarlyDefs()
+    {
+        clobberDefs(nullptr, &m_block->at(m_instIndex));
+    }
+
+    void clobberLateDefs()
+    {
+        clobberDefs(&m_block->at(m_instIndex), nullptr);
+    }
+
+    void addInstAliases()
+    {
         forAllAliases(
             [&] (const auto& alias) {
                 m_state.addAlias(alias);
@@ -211,9 +219,7 @@ private:
     void fixInst()
     {
         Inst& inst = m_block->at(m_instIndex);
-
-        if (AirFixObviousSpillsInternal::verbose)
-            dataLog("Fixing inst ", inst, ": ", m_state, "\n");
+        dataLogLnIf(AirFixObviousSpillsInternal::verbose, "Fixing inst ", inst, ": ", m_state);
         
         // Check if alias analysis says that this is unnecessary.
         bool shouldLive = true;
@@ -289,14 +295,12 @@ private:
                 case Width64:
                     if (alias->mode != RegSlot::AllBits)
                         return;
-                    if (AirFixObviousSpillsInternal::verbose)
-                        dataLog("    Replacing ", arg, " with ", alias->reg, "\n");
+                    dataLogLnIf(AirFixObviousSpillsInternal::verbose, "    Replacing ", arg, " with ", alias->reg);
                     arg = Tmp(alias->reg);
                     didThings = true;
                     return;
                 case Width32:
-                    if (AirFixObviousSpillsInternal::verbose)
-                        dataLog("    Replacing ", arg, " with ", alias->reg, " (subwidth case)\n");
+                    dataLogLnIf(AirFixObviousSpillsInternal::verbose, "    Replacing ", arg, " with ", alias->reg, " (subwidth case)");
                     arg = Tmp(alias->reg);
                     didThings = true;
                     return;
@@ -307,8 +311,7 @@ private:
 
             // Revert to immediate if that didn't work.
             if (const SlotConst* alias = m_state.getSlotConst(arg.stackSlot())) {
-                if (AirFixObviousSpillsInternal::verbose)
-                    dataLog("    Replacing ", arg, " with constant ", alias->constant, "\n");
+                dataLogLnIf(AirFixObviousSpillsInternal::verbose, "    Replacing ", arg, " with constant ", alias->constant);
                 if (Arg::isValidImmForm(alias->constant))
                     arg = Arg::imm(alias->constant);
                 else
