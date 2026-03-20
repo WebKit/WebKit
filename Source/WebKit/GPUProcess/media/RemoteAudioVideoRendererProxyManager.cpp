@@ -223,8 +223,11 @@ void RemoteAudioVideoRendererProxyManager::addTrack(RemoteAudioVideoRendererIden
         completionHandler(makeUnexpected(PlatformMediaError::NotSupportedError));
         return;
     }
-    auto trackIdentifier = renderer->addTrack(type);
-    completionHandler(trackIdentifier);
+    if (auto trackIdentifier = renderer->addTrack(type)) {
+        completionHandler(*trackIdentifier);
+        return;
+    }
+    completionHandler(makeUnexpected(PlatformMediaError::NotSupportedError));
 }
 
 void RemoteAudioVideoRendererProxyManager::removeTrack(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier)

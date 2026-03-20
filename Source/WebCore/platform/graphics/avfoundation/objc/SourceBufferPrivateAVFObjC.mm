@@ -508,10 +508,17 @@ void SourceBufferPrivateAVFObjC::videoTrackDidChangeSelected(TrackID trackId, bo
     if (selected) {
         if (m_enabledVideoTrackID == trackId)
             return;
+        auto trackIdentifier = protectedRenderer()->addTrack(TrackInfo::TrackType::Video);
+        if (!trackIdentifier) {
+            ERROR_LOG(LOGIDENTIFIER, "failed to add video track");
+            if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(m_mediaSource.get()))
+                mediaSource->failedToCreateRenderer(MediaSourcePrivateClient::RendererType::Video);
+            return;
+        }
         if (m_enabledVideoTrackID)
             removeTrackID(*m_enabledVideoTrackID);
         m_enabledVideoTrackID = trackId;
-        m_trackIdentifiers.emplace(trackId, protectedRenderer()->addTrack(TrackInfo::TrackType::Video));
+        m_trackIdentifiers.emplace(trackId, *trackIdentifier);
     }
 
     if (!selected && isEnabledVideoTrackID(trackId)) {
@@ -537,12 +544,17 @@ void SourceBufferPrivateAVFObjC::audioTrackDidChangeEnabled(TrackID trackId, boo
         return;
     }
 
-    if (auto trackIdentifier = trackIdentifierFor(trackId))
+    if (auto existingTrackIdentifier = trackIdentifierFor(trackId))
         return;
-    TrackIdentifier trackIdentifier = protectedRenderer()->addTrack(TrackInfo::TrackType::Audio);
-    // FIXME: check if error has been set here.
-    m_trackIdentifiers.emplace(trackId, trackIdentifier);
-    protectedRenderer()->notifyTrackNeedsReenqueuing(trackIdentifier, [weakThis = ThreadSafeWeakPtr { *this }, trackId](TrackIdentifier, const MediaTime&) {
+    auto trackIdentifier = protectedRenderer()->addTrack(TrackInfo::TrackType::Audio);
+    if (!trackIdentifier) {
+        ERROR_LOG(LOGIDENTIFIER, "failed to add audio track");
+        if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(m_mediaSource.get()))
+            mediaSource->failedToCreateRenderer(MediaSourcePrivateClient::RendererType::Audio);
+        return;
+    }
+    m_trackIdentifiers.emplace(trackId, *trackIdentifier);
+    protectedRenderer()->notifyTrackNeedsReenqueuing(*trackIdentifier, [weakThis = ThreadSafeWeakPtr { *this }, trackId](TrackIdentifier, const MediaTime&) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -551,7 +563,7 @@ void SourceBufferPrivateAVFObjC::audioTrackDidChangeEnabled(TrackID trackId, boo
         });
     });
 
-    callOnMainThreadWithPlayer([trackIdentifier](auto& player) {
+    callOnMainThreadWithPlayer([trackIdentifier = *trackIdentifier](auto& player) {
         player.addAudioTrack(trackIdentifier);
     });
 }

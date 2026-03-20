@@ -210,13 +210,12 @@ void MediaPlayerPrivateWebM::load(const URL& url, const LoadOptions& options)
     m_renderer->notifyWhenErrorOccurs([weakThis = ThreadSafeWeakPtr { *this }](PlatformMediaError error) {
         ensureOnMainThread([weakThis, error] {
             if (RefPtr protectedThis = weakThis.get()) {
-                protectedThis->m_errored = true;
                 if (RefPtr player = protectedThis->m_player.get(); player && error == PlatformMediaError::IPCError) {
+                    protectedThis->m_errored = true;
                     player->reloadAndResumePlaybackIfNeeded();
                     return;
                 }
-                protectedThis->setNetworkState(MediaPlayer::NetworkState::DecodeError);
-                protectedThis->setReadyState(MediaPlayer::ReadyState::HaveNothing);
+                protectedThis->errorOccurred();
             }
         });
     });
@@ -871,6 +870,13 @@ void MediaPlayerPrivateWebM::characteristicsChanged()
         player->characteristicChanged();
 }
 
+void MediaPlayerPrivateWebM::errorOccurred()
+{
+    m_errored = true;
+    setNetworkState(MediaPlayer::NetworkState::DecodeError);
+    setReadyState(MediaPlayer::ReadyState::HaveNothing);
+}
+
 void MediaPlayerPrivateWebM::setPreservesPitch(bool preservesPitch)
 {
     ALWAYS_LOG(LOGIDENTIFIER, preservesPitch);
@@ -1136,9 +1142,15 @@ void MediaPlayerPrivateWebM::trackDidChangeSelected(VideoTrackPrivate& track, bo
     ALWAYS_LOG(LOGIDENTIFIER, "video trackID = ", trackId, ", selected = ", selected);
 
     if (selected) {
+        auto trackIdentifier = m_renderer->addTrack(TrackType::Video);
+        if (!trackIdentifier) {
+            ERROR_LOG(LOGIDENTIFIER, "failed to add video track");
+            errorOccurred();
+            return;
+        }
         m_enabledVideoTrackID = trackId;
         m_readyForMoreSamplesMap[trackId] = true;
-        m_trackIdentifiers.emplace(trackId, m_renderer->addTrack(TrackType::Video));
+        m_trackIdentifiers.emplace(trackId, *trackIdentifier);
         return;
     }
 
@@ -1162,12 +1174,17 @@ void MediaPlayerPrivateWebM::trackDidChangeEnabled(AudioTrackPrivate& track, boo
 
     if (enabled) {
         auto trackIdentifier = m_renderer->addTrack(TrackType::Audio);
-        m_trackIdentifiers.emplace(trackId, trackIdentifier);
+        if (!trackIdentifier) {
+            ERROR_LOG(LOGIDENTIFIER, "failed to add audio track");
+            errorOccurred();
+            return;
+        }
+        m_trackIdentifiers.emplace(trackId, *trackIdentifier);
         if (!m_errored) {
             m_readyForMoreSamplesMap[trackId] = true;
             characteristicsChanged();
         }
-        m_renderer->notifyTrackNeedsReenqueuing(trackIdentifier, [weakThis = ThreadSafeWeakPtr { *this }, trackId](TrackIdentifier, const MediaTime&) {
+        m_renderer->notifyTrackNeedsReenqueuing(*trackIdentifier, [weakThis = ThreadSafeWeakPtr { *this }, trackId](TrackIdentifier, const MediaTime&) {
             ensureOnMainThread([weakThis, trackId] {
                 if (RefPtr protectedThis = weakThis.get())
                     protectedThis->reenqueSamples(trackId, NeedsFlush::No);

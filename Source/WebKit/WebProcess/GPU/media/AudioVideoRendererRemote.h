@@ -153,7 +153,7 @@ private:
     void setPreferences(WebCore::VideoRendererPreferences) final;
     void setHasProtectedVideoContent(bool) final;
 
-    TrackIdentifier addTrack(TrackType) final;
+    std::optional<TrackIdentifier> addTrack(TrackType) final;
     void removeTrack(TrackIdentifier) final;
 
     void enqueueSample(TrackIdentifier, Ref<WebCore::MediaSample>&&, std::optional<MediaTime>) final;

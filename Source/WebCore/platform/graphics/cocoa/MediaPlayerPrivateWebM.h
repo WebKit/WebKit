@@ -182,6 +182,7 @@ private:
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
     void characteristicsChanged();
+    void errorOccurred();
 
     void setPreservesPitch(bool) final;
     void setPresentationSize(const IntSize&) final;

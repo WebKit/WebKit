@@ -71,7 +71,7 @@ public:
     void setHasProtectedVideoContent(bool) final;
 
     // TracksRendererInterface
-    TrackIdentifier addTrack(TrackType) final;
+    std::optional<TrackIdentifier> addTrack(TrackType) final;
     void removeTrack(TrackIdentifier) final;
 
     void enqueueSample(TrackIdentifier, Ref<MediaSample>&&, std::optional<MediaTime>) final;
