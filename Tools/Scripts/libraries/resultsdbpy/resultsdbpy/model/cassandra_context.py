@@ -62,29 +62,30 @@ class CassandraContext(object):
         return os.getenv(CQLENG_ALLOW_SCHEMA_MANAGEMENT, False)
 
     @classmethod
-    def drop_keyspace(cls, nodes=None, keyspace='results_database', auth_provider=None):
+    def drop_keyspace(cls, nodes=None, keyspace='results_database', auth_provider=None, protocol_version=4):
         nodes = nodes if nodes else ['localhost']
         connection_id = uuid.uuid4()
 
         try:
-            register_connection(name=str(connection_id), session=Cluster(nodes, auth_provider=auth_provider).connect())
+            register_connection(name=str(connection_id), session=Cluster(nodes, auth_provider=auth_provider, protocol_version=protocol_version).connect())
             does_keyspace_exist = keyspace in get_cluster(str(connection_id)).metadata.keyspaces
             if does_keyspace_exist:
                 drop_keyspace(keyspace, connections=[str(connection_id)])
         finally:
             unregister_connection(name=str(connection_id))
 
-    def __init__(self, nodes=None, keyspace='results_database', auth_provider=None, create_keyspace=False, replication_map=None):
+    def __init__(self, nodes=None, keyspace='results_database', auth_provider=None, create_keyspace=False, replication_map=None, protocol_version=4):
         self.keyspace = keyspace
         self._depth = 0
         self._connection_id = uuid.uuid4()
         self._models = {}
         self._nodes = nodes if nodes else ['localhost']
         self._auth_provider = auth_provider
+        self._protocol_version = protocol_version
         self._batch = []
 
         try:
-            register_connection(name=str(self._connection_id), session=Cluster(self._nodes, auth_provider=self._auth_provider).connect())
+            register_connection(name=str(self._connection_id), session=Cluster(self._nodes, auth_provider=self._auth_provider, protocol_version=self._protocol_version).connect())
             does_keyspace_exist = self.keyspace in get_cluster(str(self._connection_id)).metadata.keyspaces
 
             if create_keyspace and not does_keyspace_exist:
@@ -101,7 +102,7 @@ class CassandraContext(object):
 
     def __enter__(self):
         if self._depth == 0:
-            register_connection(name=str(self._connection_id), session=Cluster(self._nodes, auth_provider=self._auth_provider).connect(keyspace=self.keyspace))
+            register_connection(name=str(self._connection_id), session=Cluster(self._nodes, auth_provider=self._auth_provider, protocol_version=self._protocol_version).connect(keyspace=self.keyspace))
         self._depth += 1
 
     def __exit__(self, *args, **kwargs):

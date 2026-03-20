@@ -139,7 +139,7 @@ class Docker(object):
             if all_ports_open:
                 try:
                     if has_cassandra:
-                        connection = Cluster(['localhost']).connect()
+                        connection = Cluster(['localhost'], protocol_version=4).connect()
                         connection.cluster.shutdown()
                     return
                 except NoHostAvailable:

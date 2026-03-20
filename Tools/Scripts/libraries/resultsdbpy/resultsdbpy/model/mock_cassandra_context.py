@@ -41,7 +41,7 @@ class MockCluster(object):
     metadata = Metadata()
     database = {}
 
-    def __init__(self, contact_points=["127.0.0.1"], port=9042, auth_provider=None):
+    def __init__(self, contact_points=["127.0.0.1"], port=9042, auth_provider=None, protocol_version=None):
         assert isinstance(contact_points, list)
         self.contact_points = contact_points
         self.port = port
