@@ -1412,6 +1412,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::TextCheckingType': ['<WebCore/TextChecking.h>'],
         'WebCore::TextDrawingModeFlags': ['<WebCore/GraphicsTypes.h>'],
+        'WebCore::TextEffectData': ['<WebCore/TextAnimationTypes.h>'],
         'WebCore::TextExtraction::Item': ['<WebCore/TextExtractionTypes.h>'],
         'WebCore::TextExtraction::Result': ['<WebCore/TextExtractionTypes.h>'],
         'WebCore::TextIndicatorData': ['<WebCore/TextIndicator.h>'],

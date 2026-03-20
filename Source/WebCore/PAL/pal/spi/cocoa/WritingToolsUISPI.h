@@ -30,33 +30,25 @@
 
 DECLARE_SYSTEM_HEADER
 
-#if ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
+#if ENABLE(WRITING_TOOLS)
+
+#import <CoreGraphics/CoreGraphics.h>
+#import <Foundation/Foundation.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <WritingToolsUI/WritingToolsUI.h>
 #import <WritingToolsUI/WritingToolsUI_Private.h>
 
-#else
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
+#import <WebKitAdditions/WTTextEffectManagerEffectTypeAdditions.h>
+#pragma clang diagnostic pop
 
-#import <AppKit/AppKit.h>
-#import <CoreGraphics/CoreGraphics.h>
+#else // !USE(APPLE_INTERNAL_SDK)
+#define WTTextEffectManagerEffectTypeDefault (WTTextEffectManagerEffectType)0
 
 // MARK: Forward-declared Writing Tools types
-
-typedef NS_ENUM(NSInteger, WTRequestedTool);
-
-@protocol WTWritingToolsDelegate;
-
-// MARK: _WTTextChunk
-
-@interface _WTTextChunk : NSObject
-
-@property (readonly) NSString *identifier;
-
-- (instancetype)initChunkWithIdentifier:(NSString *)identifier;
-
-@end
 
 // MARK: _WTTextPreview
 
@@ -81,6 +73,24 @@ typedef NS_ENUM(NSInteger, WTRequestedTool);
 - (instancetype)initWithSnapshotImage:(CGImageRef)snapshotImage presentationFrame:(CGRect)presentationFrame backgroundColor:(CGColorRef)backgroundColor clippingPath:(CGPathRef)clippingPath scale:(CGFloat)scale;
 
 - (instancetype)initWithSnapshotImage:(CGImageRef)snapshotImage presentationFrame:(CGRect)presentationFrame backgroundColor:(CGColorRef)backgroundColor clippingPath:(CGPathRef)clippingPath scale:(CGFloat)scale candidateRects:(NSArray <NSValue *> *)candidateRects;
+
+@end
+
+#if PLATFORM(MAC)
+
+#import <AppKit/AppKit.h>
+
+typedef NS_ENUM(NSInteger, WTRequestedTool);
+
+@protocol WTWritingToolsDelegate;
+
+// MARK: _WTTextChunk
+
+@interface _WTTextChunk : NSObject
+
+@property (readonly) NSString *identifier;
+
+- (instancetype)initChunkWithIdentifier:(NSString *)identifier;
 
 @end
 
@@ -211,6 +221,8 @@ NS_ASSUME_NONNULL_END
 - (BOOL)hasActiveEffect:(NSUUID *)effectID;
 
 @end
+
+#endif // PLATFORM(MAC)
 
 #endif // !USE(APPLE_INTERNAL_SDK)
 

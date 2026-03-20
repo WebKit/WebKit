@@ -207,6 +207,9 @@ class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 class WindowEventLoop;
 
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+class TextEffectController;
+#endif
 #if ENABLE(WRITING_TOOLS)
 class WritingToolsController;
 
@@ -1300,6 +1303,9 @@ public:
     WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForActiveWritingToolsSession() const;
     WEBCORE_EXPORT void intelligenceTextAnimationsDidComplete();
 #endif
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+    TextEffectController& textEffectController() { return m_textEffectController.get(); }
+#endif
 
     bool hasActiveNowPlayingSession() const { return m_hasActiveNowPlayingSession; }
     void hasActiveNowPlayingSessionChanged();
@@ -1817,6 +1823,9 @@ private:
 
 #if ENABLE(WRITING_TOOLS)
     const UniqueRef<WritingToolsController> m_writingToolsController;
+#endif
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+    const UniqueRef<TextEffectController> m_textEffectController;
 #endif
 
 #if HAVE(SUPPORT_HDR_DISPLAY)

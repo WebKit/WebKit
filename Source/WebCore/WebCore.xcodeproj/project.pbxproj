@@ -1655,6 +1655,7 @@
 		4480E06B2A67D86A0081EAE8 /* ContentVisibilityAutoStateChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4480E06A2A67D8690081EAE8 /* ContentVisibilityAutoStateChangeEvent.h */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		448C95942AC4417700161D5A /* RenderSVGResourceClipperInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 448C95932AC4417600161D5A /* RenderSVGResourceClipperInlines.h */; };
+		448DF9DC2F60EFA700F068C3 /* TextEffectController.h in Headers */ = {isa = PBXBuildFile; fileRef = 448DF9DB2F60EFA700F068C3 /* TextEffectController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4492DD302B0B9FB100122BF7 /* LegacyRenderSVGResourceFilterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 4492DD2B2B0B9FB000122BF7 /* LegacyRenderSVGResourceFilterInlines.h */; };
 		4492DD332B0B9FB100122BF7 /* LegacyRenderSVGResourceFilterPrimitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 4492DD2E2B0B9FB100122BF7 /* LegacyRenderSVGResourceFilterPrimitive.h */; };
 		4492DD342B0B9FB200122BF7 /* LegacyRenderSVGResourceFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4492DD2F2B0B9FB100122BF7 /* LegacyRenderSVGResourceFilter.h */; };
@@ -11390,6 +11391,8 @@
 		448B1B780F3A2F9B0047A9E2 /* AutosizeStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutosizeStatus.h; sourceTree = "<group>"; };
 		448C95932AC3327611163E1A /* RenderSVGResourceLinearGradientInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceLinearGradientInlines.h; sourceTree = "<group>"; };
 		448C95932AC4417600161D5A /* RenderSVGResourceClipperInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceClipperInlines.h; sourceTree = "<group>"; };
+		448DF9DA2F60EF8600F068C3 /* TextEffectController.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = TextEffectController.mm; sourceTree = "<group>"; };
+		448DF9DB2F60EFA700F068C3 /* TextEffectController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextEffectController.h; sourceTree = "<group>"; };
 		449098B10F8F82520076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		4492DD2B2B0B9FB000122BF7 /* LegacyRenderSVGResourceFilterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyRenderSVGResourceFilterInlines.h; sourceTree = "<group>"; };
 		4492DD2C2B0B9FB000122BF7 /* LegacyRenderSVGResourceFilterPrimitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyRenderSVGResourceFilterPrimitive.cpp; sourceTree = "<group>"; };
@@ -23894,6 +23897,8 @@
 		07E2C0702C13962800BE6743 /* writing-tools */ = {
 			isa = PBXGroup;
 			children = (
+				448DF9DB2F60EFA700F068C3 /* TextEffectController.h */,
+				448DF9DA2F60EF8600F068C3 /* TextEffectController.mm */,
 				07E2C0742C13A9D100BE6743 /* WritingToolsController.h */,
 				07E2C0752C13A9D100BE6743 /* WritingToolsController.mm */,
 				07E2C0722C1396F600BE6743 /* WritingToolsTypes.h */,
@@ -48212,6 +48217,7 @@
 				BC4A53252560555F0028C592 /* TextDirectionSubmenuInclusionBehavior.h in Headers */,
 				97BC84B412371180000C6161 /* TextDocument.h in Headers */,
 				97BC84841236FD93000C6161 /* TextDocumentParser.h in Headers */,
+				448DF9DC2F60EFA700F068C3 /* TextEffectController.h in Headers */,
 				933A14300B7D188600A53FFD /* TextEvent.h in Headers */,
 				A77B41A012E675A90054343D /* TextEventInputType.h in Headers */,
 				F457F4C32F156C5D00E97771 /* TextExtraction.h in Headers */,

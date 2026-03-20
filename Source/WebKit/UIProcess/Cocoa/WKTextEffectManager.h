@@ -25,36 +25,24 @@
 
 #pragma once
 
-#include <WebCore/WritingDirection.h>
-#include <wtf/Markable.h>
-#include <wtf/UUID.h>
+#import <Foundation/Foundation.h>
 
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
 
 namespace WebCore {
+struct TextEffectData;
+}
 
-enum class TextAnimationRunMode : uint8_t {
-    DoNotRun,
-    OnlyReplaceText,
-    RunAnimation
-};
+OBJC_CLASS WKWebView;
 
-enum class TextAnimationType : uint8_t {
-    Initial,
-    Source,
-    Final
-};
+@interface WKTextEffectManager : NSObject
 
-struct TextAnimationData {
-    TextAnimationType style;
-    TextAnimationRunMode runMode;
-    Markable<WTF::UUID> unanimatedRangeUUID;
-    Markable<WTF::UUID> sourceAnimationUUID;
-    Markable<WTF::UUID> destinationAnimationUUID;
+- (instancetype)initWithWebView:(WKWebView *)webView;
+- (void)addTextEffectForID:(NSUUID *)uuid withData:(const WebCore::TextEffectData&)data;
+- (void)removeTextEffectForID:(NSUUID *)uuid;
 
-};
+- (void)removeAllTextEffects;
 
-struct TextEffectData {
-    WritingDirection writingDirection;
-};
+@end
 
-} // namespace WebKit
+#endif // ENABLE(WRITING_TOOLS_TEXT_EFFECTS)

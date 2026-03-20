@@ -347,6 +347,7 @@ struct TargetedElementInfo;
 struct TargetedElementRequest;
 struct TextAnimationData;
 struct TextCheckingResult;
+struct TextEffectData;
 struct TextManipulationControllerExclusionRule;
 struct TextManipulationControllerManipulationResult;
 struct TextManipulationItem;
@@ -2095,8 +2096,10 @@ public:
     void proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&);
 
     void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&, const RefPtr<WebCore::TextIndicator>, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& = { });
-
     void removeTextAnimationForAnimationID(const WTF::UUID&);
+
+    void addTextEffectForID(const WTF::UUID&, const WebCore::TextEffectData&, RefPtr<WebCore::TextIndicator>&&, RefPtr<WebCore::TextIndicator>&&);
+    void removeTextEffectForID(const WTF::UUID&);
 
     void removeInitialTextAnimationForActiveWritingToolsSession();
     void addInitialTextAnimationForActiveWritingToolsSession();
@@ -2708,6 +2711,9 @@ private:
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
 
     void intelligenceTextAnimationsDidComplete();
+
+    void updateUnderlyingTextVisibilityForTextEffectID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
+    void createTextIndicatorForTextEffectID(const WTF::UUID&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
 #endif
 
     void remotePostMessage(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);

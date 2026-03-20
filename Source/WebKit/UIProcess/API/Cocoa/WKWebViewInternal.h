@@ -130,6 +130,7 @@ struct AppHighlight;
 struct ExceptionData;
 struct ExceptionDetails;
 struct TextAnimationData;
+struct TextEffectData;
 enum class BoxSide : uint8_t;
 enum class WheelScrollGestureState : uint8_t;
 
@@ -603,6 +604,9 @@ struct PerWebProcessState {
 
 - (void)_addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)styleData;
 - (void)_removeTextAnimationForAnimationID:(NSUUID *)uuid;
+
+- (void)_addTextEffectForID:(NSUUID *)uuid withData:(const WebCore::TextEffectData&)data;
+- (void)_removeTextEffectForID:(NSUUID *)uuid;
 
 - (void)_clearWritingToolsPreservedNodes;
 

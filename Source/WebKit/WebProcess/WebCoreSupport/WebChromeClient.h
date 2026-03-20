@@ -560,6 +560,9 @@ private:
     void saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange&);
 
     void clearAnimationsForActiveWritingToolsSession() final;
+
+    void addTextEffectForID(const WTF::UUID&, const WebCore::TextEffectData&, RefPtr<WebCore::TextIndicator>&&, RefPtr<WebCore::TextIndicator>&&) final;
+    void removeTextEffectForID(const WTF::UUID&) final;
 #endif
 
     WebCore::HTMLFrameOwnerElement* frameOwnerElementForFrameID(WebCore::FrameIdentifier) const final;

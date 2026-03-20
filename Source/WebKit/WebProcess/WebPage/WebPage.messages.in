@@ -908,6 +908,9 @@ messages -> WebPage WantsAsyncDispatchMessage {
     UpdateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
 
     IntelligenceTextAnimationsDidComplete();
+
+    UpdateUnderlyingTextVisibilityForTextEffectID(WTF::UUID uuid, bool visible) -> ()
+    CreateTextIndicatorForTextEffectID(WTF::UUID uuid) -> (RefPtr<WebCore::TextIndicator> textIndicator)
 #endif
 
 #if PLATFORM(COCOA)

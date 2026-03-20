@@ -491,6 +491,7 @@ UIProcess/Cocoa/WKScreenTimeConfigurationObserver.mm @nonARC
 UIProcess/Cocoa/WKTextPlaceholder.mm @nonARC
 UIProcess/Cocoa/WKTextSelectionRect.mm @nonARC
 UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm @nonARC
+UIProcess/Cocoa/WKTextEffectManager.mm @nonARC
 
 UIProcess/DigitalCredentials/WKDigitalCredentialsPicker.mm @nonARC
 

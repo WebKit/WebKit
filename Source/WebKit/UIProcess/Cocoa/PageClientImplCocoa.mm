@@ -364,6 +364,16 @@ void PageClientImplCocoa::removeTextAnimationForAnimationID(const WTF::UUID& uui
     [webView() _removeTextAnimationForAnimationID:uuid.createNSUUID().get()];
 }
 
+void PageClientImplCocoa::addTextEffectForID(const WTF::UUID& uuid, const WebCore::TextEffectData& data)
+{
+    [webView() _addTextEffectForID:uuid.createNSUUID().get() withData:data];
+}
+
+void PageClientImplCocoa::removeTextEffectForID(const WTF::UUID& uuid)
+{
+    [webView() _removeTextEffectForID:uuid.createNSUUID().get()];
+}
+
 #endif
 
 #if ENABLE(SCREEN_TIME)

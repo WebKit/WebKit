@@ -262,6 +262,7 @@ page/scrolling/mac/ScrollingTreeMac.mm @nonARC
 page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm @nonARC
 page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.mm @nonARC
 page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm @nonARC
+page/writing-tools/TextEffectController.mm @nonARC
 page/writing-tools/WritingToolsController.mm @nonARC
 platform/VideoFrame.mm @nonARC
 platform/audio/AudioSession.cpp

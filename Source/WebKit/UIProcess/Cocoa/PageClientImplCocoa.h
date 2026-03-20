@@ -47,6 +47,7 @@ class IntPoint;
 class IntSize;
 
 struct AppHighlight;
+struct TextEffectData;
 }
 
 namespace WebKit {
@@ -146,6 +147,9 @@ public:
 
     void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) final;
     void removeTextAnimationForAnimationID(const WTF::UUID&) final;
+
+    void addTextEffectForID(const WTF::UUID&, const WebCore::TextEffectData&) final;
+    void removeTextEffectForID(const WTF::UUID&) final;
 #endif
 
 #if ENABLE(SCREEN_TIME)

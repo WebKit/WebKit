@@ -42,6 +42,9 @@
 #include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderText.h"
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+#include "TextEffectController.h"
+#endif
 #include "RenderedDocumentMarker.h"
 #include "TextIterator.h"
 #include <stdio.h>
@@ -90,10 +93,26 @@ auto DocumentMarkerController::collectTextRanges(const SimpleRange& range) -> Ve
 bool DocumentMarkerController::addMarker(const SimpleRange& range, DocumentMarkerType type, const DocumentMarker::Data& data)
 {
     bool added = false;
+
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+    auto* page = m_document->page();
+    bool needsTextEffect = type == DocumentMarkerType::Grammar && page;
+    RefPtr<TextIndicator> textIndicator;
+    if (needsTextEffect)
+        textIndicator = page->textEffectController().createTextIndicatorForRange(range);
+#endif
+
     for (auto& textPiece : collectTextRanges(range)) {
         if (addMarker(textPiece.node, { type, textPiece.range, DocumentMarker::Data { data } }))
             added = true;
     }
+
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+    if (needsTextEffect) {
+        auto decorationIndicator = page->textEffectController().createTextIndicatorForRange(range);
+        page->textEffectController().addTextEffect(range, WTF::move(textIndicator), WTF::move(decorationIndicator));
+    }
+#endif
     return added;
 }
 
@@ -146,6 +165,12 @@ void DocumentMarkerController::removeAllDictationStreamingOpacityMarkers()
 
 void DocumentMarkerController::removeMarkers(const SimpleRange& range, OptionSet<DocumentMarkerType> types, RemovePartiallyOverlappingMarker overlapRule)
 {
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+    if (types.contains(DocumentMarkerType::Grammar)) {
+        if (RefPtr page = m_document->page())
+            page->textEffectController().removeTextEffect(range);
+    }
+#endif
     filterMarkers(range, nullptr, types, overlapRule);
 }
 

@@ -399,6 +399,7 @@ public:
 
 #if ENABLE(WRITING_TOOLS)
     HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> textIndicatorForAnimationID;
+    HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> decorationIndicatorForAnimationID;
     HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
     HashMap<WTF::UUID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>)>> completionHandlerForDestinationTextIndicatorForSourceID;
     HashMap<WTF::UUID, WTF::UUID> sourceAnimationIDtoDestinationAnimationID;

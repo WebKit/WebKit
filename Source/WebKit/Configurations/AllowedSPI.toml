@@ -309,6 +309,15 @@ selectors = [
 ]
 requires = ["PLATFORM_VISION"]
 
+[[temporary-usage]]
+request = "rdar://12345!"
+cleanup = "rdar://12345!"
+selectors = [
+    { name = "cancelAllAnimations", class = "?" },
+    { name = "cancelAnimationForSuggestionWithUUID:", class = "?" },
+    { name = "startAnimationForSuggestionWithUUID:writingDirection:effectType:completion:", class = "?" },
+]
+
 [[staging]]
 request = "rdar://171222829"
 selectors = [

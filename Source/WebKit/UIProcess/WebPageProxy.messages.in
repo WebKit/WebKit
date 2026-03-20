@@ -282,6 +282,9 @@ messages -> WebPageProxy {
     AddTextAnimationForAnimationIDWithCompletionHandler(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, RefPtr<WebCore::TextIndicator> textIndicator) -> (enum:uint8_t WebCore::TextAnimationRunMode runMode)
     RemoveTextAnimationForAnimationID(WTF::UUID uuid)
     DidEndPartialIntelligenceTextAnimation()
+
+    AddTextEffectForID(WTF::UUID uuid, struct WebCore::TextEffectData data, RefPtr<WebCore::TextIndicator> textIndicator, RefPtr<WebCore::TextIndicator> decorationIndicator)
+    RemoveTextEffectForID(WTF::UUID uuid)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

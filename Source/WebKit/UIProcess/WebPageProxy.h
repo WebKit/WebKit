@@ -345,6 +345,7 @@ struct SystemPreviewInfo;
 struct TargetedElementRequest;
 struct TextAlternativeWithRange;
 struct TextCheckingResult;
+struct TextEffectData;
 struct TextIndicatorData;
 struct TextManipulationControllerExclusionRule;
 struct TextManipulationControllerManipulationFailure;
@@ -2803,6 +2804,9 @@ public:
     void addTextAnimationForAnimationIDWithCompletionHandler(IPC::Connection&, const WTF::UUID&, const WebCore::TextAnimationData&, const RefPtr<WebCore::TextIndicator>, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
     void removeTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&);
 
+    void addTextEffectForID(IPC::Connection&, const WTF::UUID&, const WebCore::TextEffectData&, const RefPtr<WebCore::TextIndicator>, const RefPtr<WebCore::TextIndicator> decorationIndicator);
+    void removeTextEffectForID(IPC::Connection&, const WTF::UUID&);
+
     void callCompletionHandlerForAnimationID(const WTF::UUID&, WebCore::TextAnimationRunMode);
 #if PLATFORM(IOS_FAMILY)
     void storeDestinationCompletionHandlerForAnimationID(const WTF::UUID&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
@@ -2815,6 +2819,10 @@ public:
 
     void didEndPartialIntelligenceTextAnimation(IPC::Connection&);
     void didEndPartialIntelligenceTextAnimationImpl();
+
+    void updateUnderlyingTextVisibilityForTextEffectID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
+    void getTextIndicatorForTextEffectID(const WTF::UUID&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
+    void getDecorationIndicatorForTextEffectID(const WTF::UUID&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
 #endif
 
 #if PLATFORM(COCOA)

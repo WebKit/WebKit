@@ -814,6 +814,9 @@ public:
 
     virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;
     virtual void removeTextAnimationForAnimationID(const WTF::UUID&) = 0;
+
+    virtual void addTextEffectForID(const WTF::UUID&, const WebCore::TextEffectData&) = 0;
+    virtual void removeTextEffectForID(const WTF::UUID&) = 0;
 #endif
 
 #if ENABLE(DATA_DETECTION)

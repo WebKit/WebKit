@@ -45,4 +45,9 @@ header: <WebCore/TextAnimationTypes.h>
     Markable<WTF::UUID> destinationAnimationUUID;
 };
 
+header: <WebCore/TextAnimationTypes.h>
+[CustomHeader] struct WebCore::TextEffectData {
+    WebCore::WritingDirection writingDirection;
+};
+
 #endif

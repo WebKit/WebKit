@@ -96,6 +96,7 @@ OBJC_CLASS WKTextSelectionController;
 OBJC_CLASS WKViewLayoutStrategy;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
+OBJC_CLASS WKTextEffectManager;
 OBJC_CLASS _WKRemoteObjectRegistry;
 OBJC_CLASS _WKThumbnailView;
 
@@ -832,6 +833,9 @@ public:
     void removeTextAnimationForAnimationID(WTF::UUID);
 
     void hideTextAnimationView();
+
+    void addTextEffectForID(WTF::UUID, const WebCore::TextEffectData&);
+    void removeTextEffectForID(WTF::UUID);
 #endif
 
 #if HAVE(INLINE_PREDICTIONS)
@@ -1119,6 +1123,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(WRITING_TOOLS)
     RetainPtr<WKTextAnimationManager> m_textAnimationTypeManager;
+    RetainPtr<WKTextEffectManager> m_textEffectManager;
 #endif
 
     WebCore::IntPoint m_lastPageScrollPosition;

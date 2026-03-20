@@ -247,6 +247,10 @@
 #include "AccessibilityRootAtspi.h"
 #endif
 
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+#include "TextEffectController.h"
+#endif
+
 #if ENABLE(WRITING_TOOLS)
 #include "WritingToolsController.h"
 #endif
@@ -479,6 +483,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
 #if ENABLE(WRITING_TOOLS)
     , m_writingToolsController(makeUniqueRef<WritingToolsController>(*this))
+#endif
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+    , m_textEffectController(makeUniqueRef<TextEffectController>(*this))
 #endif
     , m_activeNowPlayingSessionUpdateTimer(*this, &Page::updateActiveNowPlayingSessionNow)
     , m_topDocumentSyncData(DocumentSyncData::create())

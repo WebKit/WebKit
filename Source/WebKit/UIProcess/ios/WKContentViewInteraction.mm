@@ -213,6 +213,7 @@
 
 #if ENABLE(WRITING_TOOLS)
 #import "WKTextAnimationManagerIOS.h"
+#import "WKTextEffectManager.h"
 #endif
 
 #if ENABLE(MODEL_PROCESS) || ENABLE(WRITING_TOOLS)
@@ -14325,6 +14326,31 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
         return;
 
     [_textAnimationManager removeTextAnimationForAnimationID:uuid];
+}
+
+- (void)addTextEffectForID:(NSUUID *)uuid withData:(const WebCore::TextEffectData&)data
+{
+    if (!protect(_page->preferences())->textEffectsEnabled())
+        return;
+
+    if (!_textEffectManager)
+        _textEffectManager = adoptNS([[WKTextEffectManager alloc] initWithWebView:self.webView]);
+
+    [_textEffectManager addTextEffectForID:uuid withData:data];
+}
+
+- (void)removeTextEffectForID:(NSUUID *)uuid
+{
+    if (!uuid)
+        return;
+
+    if (!protect(_page->preferences())->textEffectsEnabled())
+        return;
+
+    if (!_textEffectManager)
+        return;
+
+    [_textEffectManager removeTextEffectForID:uuid];
 }
 
 #endif

@@ -150,6 +150,10 @@ SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageIDInMainFrameProcess().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
+#if __has_include(<os/feature_private.h>)
+#include <os/feature_private.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -1501,6 +1505,25 @@ void WebPageProxy::setSelectionForActiveWritingToolsSession(const WebCore::Chara
     protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::SetSelectionForActiveWritingToolsSession(rangeRelativeToSessionRange), WTF::move(completionHandler), webPageIDInMainFrameProcess());
 }
 
+void WebPageProxy::addTextEffectForID(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextEffectData& data, const RefPtr<WebCore::TextIndicator> textIndicator, const RefPtr<WebCore::TextIndicator> decorationIndicator)
+{
+    MESSAGE_CHECK(uuid.isValid(), connection);
+
+    internals().textIndicatorForAnimationID.add(uuid, textIndicator);
+    internals().decorationIndicatorForAnimationID.add(uuid, decorationIndicator);
+
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->addTextEffectForID(uuid, data);
+}
+
+void WebPageProxy::removeTextEffectForID(IPC::Connection& connection, const WTF::UUID& uuid)
+{
+    MESSAGE_CHECK(uuid.isValid(), connection);
+
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->removeTextEffectForID(uuid);
+}
+
 void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const RefPtr<WebCore::TextIndicator> textIndicator)
 {
     addTextAnimationForAnimationIDWithCompletionHandler(connection, uuid, styleData, textIndicator, { });
@@ -1595,6 +1618,43 @@ void WebPageProxy::didEndPartialIntelligenceTextAnimationImpl()
 void WebPageProxy::didEndPartialIntelligenceTextAnimation(IPC::Connection&)
 {
     didEndPartialIntelligenceTextAnimationImpl();
+}
+
+void WebPageProxy::updateUnderlyingTextVisibilityForTextEffectID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler();
+        return;
+    }
+
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::UpdateUnderlyingTextVisibilityForTextEffectID(uuid, visible), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::getTextIndicatorForTextEffectID(const WTF::UUID& uuid, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    RefPtr textIndicator = internals().textIndicatorForAnimationID.get(uuid);
+    if (textIndicator) {
+        completionHandler(WTF::move(textIndicator));
+        return;
+    }
+
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::CreateTextIndicatorForTextEffectID(uuid), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::getDecorationIndicatorForTextEffectID(const WTF::UUID& uuid, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    RefPtr decorationIndicator = internals().decorationIndicatorForAnimationID.get(uuid);
+    completionHandler(WTF::move(decorationIndicator));
 }
 
 bool WebPageProxy::writingToolsTextReplacementsFinished()

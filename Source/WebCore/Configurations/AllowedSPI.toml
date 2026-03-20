@@ -131,3 +131,11 @@ cleanup = "rdar://170092414"
 symbols = [
     "CGPatternCreateWithImageTransformStep",
 ]
+
+[[temporary-usage]]
+request = "rdar://12345"
+cleanup = "rdar://12345"
+classes = [
+    "_WTTextEffectManager",
+    "_WTTextPreview",
+]

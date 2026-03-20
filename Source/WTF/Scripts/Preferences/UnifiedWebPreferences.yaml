@@ -8248,6 +8248,20 @@ TextAutosizingUsesIdempotentMode:
     WebCore:
       default: false
 
+TextEffectsEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Text Effects"
+  humanReadableDescription: "Text Effects"
+  condition: ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 TextExtractionDebugUIEnabled:
   type: bool
   status: internal

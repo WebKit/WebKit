@@ -171,6 +171,7 @@ struct SimpleRange;
 struct StringWithDirection;
 struct SystemPreviewInfo;
 struct TextRecognitionOptions;
+struct TextEffectData;
 struct ViewportArguments;
 struct WindowFeatures;
 
@@ -784,6 +785,9 @@ public:
     virtual void saveSnapshotOfTextPlaceholderForAnimation(const SimpleRange&) { };
 
     virtual void clearAnimationsForActiveWritingToolsSession() { };
+
+    virtual void addTextEffectForID(const WTF::UUID&, const TextEffectData&, RefPtr<TextIndicator>&&, RefPtr<TextIndicator>&&) { }
+    virtual void removeTextEffectForID(const WTF::UUID&) { }
 #endif
 
     virtual void setIsInRedo(bool) { }
