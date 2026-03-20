@@ -150,6 +150,9 @@ bool LiteralParser<CharType, reviverMode>::tryJSONPParse(Vector<JSONPData>& resu
 template<typename CharType, JSONReviverMode reviverMode>
 ALWAYS_INLINE bool LiteralParser<CharType, reviverMode>::equalIdentifier(UniquedStringImpl* rep, typename Lexer::LiteralParserTokenPtr token)
 {
+    // In the literal parser, we don't want to follow property addition transitions if the property name is a symbol.
+    if (rep->isSymbol())
+        return false;
     if (token->type == TokIdentifier)
         return WTF::equal(rep, token->identifier());
     ASSERT(token->type == TokString);
