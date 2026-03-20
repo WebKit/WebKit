@@ -67,7 +67,7 @@ public:
     };
     const Extensions& extensions() const LIFETIME_BOUND { return m_extensions; }
 
-#if USE(GBM) || OS(ANDROID)
+#if USE(GBM) || USE(NEXUS) || OS(ANDROID)
     struct BufferFormat {
         FourCC fourcc { 0 };
 #if USE(GBM)

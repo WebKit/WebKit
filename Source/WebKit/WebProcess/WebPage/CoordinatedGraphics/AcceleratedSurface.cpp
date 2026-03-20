@@ -64,10 +64,18 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <GLES2/gl2.h>
 #endif
 
+#if USE(GBM) || USE(NEXUS)
+#include <drm_fourcc.h>
+#endif
+
 #if USE(GBM)
 #include <WebCore/DRMDeviceManager.h>
 #include <WebCore/GBMVersioning.h>
-#include <drm_fourcc.h>
+#endif
+
+#if USE(NEXUS)
+#include <nexus_platform.h>
+#include <nexus_surface.h>
 #endif
 
 #if USE(WPE_RENDERER)
@@ -351,6 +359,94 @@ AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(AcceleratedSurfac
 }
 #endif // USE(GBM)
 
+#if USE(NEXUS)
+std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTargetEGLImage::create(uint64_t surfaceID, const WebCore::IntSize& size, const BufferFormat& bufferFormat)
+{
+    auto& display = WebCore::PlatformDisplay::sharedDisplay();
+    NEXUS_PixelFormat nexusFormat;
+    uint32_t fourcc;
+
+    if (!bufferFormat.fourcc) {
+        // Fall back to a supported format as we don't advertise any
+        // preferred buffer formats right now in the wayland code
+        // (this is only supported for dmabuf right now)
+        fourcc = display.bufferFormats()[0].fourcc.value;
+    } else
+        fourcc = bufferFormat.fourcc;
+
+    switch (fourcc) {
+    case DRM_FORMAT_ARGB8888:
+        nexusFormat = NEXUS_PixelFormat_eA8_R8_G8_B8;
+        break;
+    case DRM_FORMAT_XRGB8888:
+        nexusFormat = NEXUS_PixelFormat_eX8_R8_G8_B8;
+        break;
+    case DRM_FORMAT_ABGR8888:
+        nexusFormat = NEXUS_PixelFormat_eA8_B8_G8_R8;
+        break;
+    case DRM_FORMAT_XBGR8888:
+        nexusFormat = NEXUS_PixelFormat_eX8_B8_G8_R8;
+        break;
+    case DRM_FORMAT_RGBA8888:
+        nexusFormat = NEXUS_PixelFormat_eR8_G8_B8_A8;
+        break;
+    case DRM_FORMAT_RGBX8888:
+        nexusFormat = NEXUS_PixelFormat_eR8_G8_B8_X8;
+        break;
+    case DRM_FORMAT_BGRA8888:
+        nexusFormat = NEXUS_PixelFormat_eB8_G8_R8_A8;
+        break;
+    case DRM_FORMAT_BGRX8888:
+        nexusFormat = NEXUS_PixelFormat_eB8_G8_R8_X8;
+        break;
+    case DRM_FORMAT_RGB565:
+        nexusFormat = NEXUS_PixelFormat_eR5_G6_B5;
+        break;
+    case DRM_FORMAT_BGR565:
+        nexusFormat = NEXUS_PixelFormat_eB5_G6_R5;
+        break;
+    default:
+        LOG_ERROR("Failed to create Nexus_Surface of size %dx%d: no valid format found (FourCC=%s)",
+            size.width(), size.height(), FourCC(bufferFormat.fourcc).string().data());
+        return nullptr;
+    }
+
+    NEXUS_SurfaceCreateSettings surfaceCreateSettings;
+    NEXUS_Surface_GetDefaultCreateSettings(&surfaceCreateSettings);
+    // This is needed to be able to back EGLImages with it
+    surfaceCreateSettings.compatibility.graphicsv3d = true;
+    surfaceCreateSettings.pixelFormat = nexusFormat;
+    surfaceCreateSettings.width = size.width();
+    surfaceCreateSettings.height = size.height();
+    surfaceCreateSettings.heap = NEXUS_Platform_GetFramebufferHeap(NEXUS_OFFSCREEN_SURFACE);
+    NEXUS_SurfaceHandle surfaceHandle = NEXUS_Surface_Create(&surfaceCreateSettings);
+
+    if (surfaceHandle == nullptr) {
+        LOG_ERROR("Failed to create Nexus_Surface of size %dx%d: surface allocation failed (FourCC=%s)",
+            size.width(), size.height(), FourCC(bufferFormat.fourcc).string().data());
+        return nullptr;
+    }
+
+    const Vector<EGLint> attributesList { EGL_NONE };
+    auto image = display.createEGLImage(EGL_NO_CONTEXT, EGL_NATIVE_PIXMAP_KHR, (EGLClientBuffer)surfaceHandle, attributesList);
+    if (image == EGL_NO_IMAGE) {
+        LOG_ERROR("Failed to bind Nexus_Surface to an EGLImage. EGL error: %#04x", eglGetError());
+        return nullptr;
+    }
+
+    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, surfaceHandle);
+}
+
+AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage image, NEXUS_SurfaceHandle surfaceHandle)
+    : RenderTargetShareableBuffer(surfaceID, size)
+    , m_image(image)
+{
+    initializeColorBuffer();
+    // surfaceHandle will be owned by WPEBuffer once initialized in backing store, not freed here
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateNexusSurface(m_id, reinterpret_cast<uintptr_t>(surfaceHandle)), surfaceID);
+}
+#endif
+
 #if OS(ANDROID)
 static uint64_t usageToAHardwareBufferUsage(RendererBufferFormat::Usage usage)
 {
@@ -420,7 +516,7 @@ AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(AcceleratedSurfac
 }
 #endif // OS(ANDROID)
 
-#if USE(GBM) || OS(ANDROID)
+#if USE(GBM) || USE(NEXUS) || OS(ANDROID)
 void AcceleratedSurface::RenderTargetEGLImage::initializeColorBuffer()
 {
     glGenRenderbuffers(1, &m_colorBuffer);
@@ -437,7 +533,7 @@ AcceleratedSurface::RenderTargetEGLImage::~RenderTargetEGLImage()
     if (m_image)
         PlatformDisplay::sharedDisplay().destroyEGLImage(m_image);
 }
-#endif // USE(GBM) || OS(ANDROID)
+#endif // USE(GBM) || USE(NEXUS) || OS(ANDROID)
 
 std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTargetSHMImage::create(AcceleratedSurface& surface, const IntSize& size)
 {
@@ -642,6 +738,11 @@ AcceleratedSurface::SwapChain::SwapChain(AcceleratedSurface& surface)
             m_type = Type::SharedMemory;
         break;
 #endif
+#if USE(NEXUS)
+    case PlatformDisplay::Type::BroadcomNexus:
+        m_type = Type::EGLImage;
+        break;
+#endif
 #if OS(ANDROID)
     case PlatformDisplay::Type::Android:
     case PlatformDisplay::Type::Default:
@@ -667,7 +768,7 @@ AcceleratedSurface::SwapChain::SwapChain(AcceleratedSurface& surface)
     }
 }
 
-#if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || OS(ANDROID))
+#if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
 void AcceleratedSurface::SwapChain::setupBufferFormat()
 {
     if (m_type != Type::EGLImage)
@@ -766,7 +867,7 @@ bool AcceleratedSurface::SwapChain::resize(const IntSize& size)
 
 bool AcceleratedSurface::SwapChain::handleBufferFormatChangeIfNeeded()
 {
-#if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || OS(ANDROID))
+#if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     if (m_type == Type::EGLImage) {
         Locker locker { m_bufferFormatLock };
         if (m_bufferFormatChanged) {
@@ -783,7 +884,7 @@ std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::SwapChain:
 {
     switch (m_type) {
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
-#if USE(GBM) || OS(ANDROID)
+#if USE(GBM) || USE(NEXUS) || OS(ANDROID)
     case Type::EGLImage:
         return RenderTargetEGLImage::create(m_surface.get(), m_size, m_bufferFormat);
 #endif
@@ -902,7 +1003,7 @@ void AcceleratedSurface::SwapChain::addDamage(const std::optional<Damage>& damag
 }
 #endif
 
-#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
 void AcceleratedSurface::preferredBufferFormatsDidChange()
 {
     m_swapChain.setupBufferFormat();
@@ -941,7 +1042,7 @@ void AcceleratedSurface::backgroundColorDidChange()
     if (isOpaque == wasOpaque)
         return;
 
-#if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || OS(ANDROID))
+#if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     m_swapChain.setupBufferFormat();
 #endif
 }

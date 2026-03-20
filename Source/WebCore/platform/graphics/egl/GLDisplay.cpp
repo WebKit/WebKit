@@ -38,9 +38,12 @@
 #include "BufferFormatAndroid.h"
 #include <android/hardware_buffer.h>
 #include <drm/drm_fourcc.h>
-#include <wtf/NeverDestroyed.h>
-#elif USE(GBM)
+#elif USE(GBM) || USE(NEXUS)
 #include <drm_fourcc.h>
+#endif
+
+#if USE(NEXUS) || OS(ANDROID)
+#include <wtf/NeverDestroyed.h>
 #endif
 
 #if !USE(LIBEPOXY)
@@ -285,5 +288,20 @@ const Vector<GLDisplay::BufferFormat>& GLDisplay::bufferFormats()
     return formats.get();
 }
 #endif // OS(ANDROID)
+
+#if USE(NEXUS)
+const Vector<GLDisplay::BufferFormat>& GLDisplay::bufferFormats()
+{
+    static LazyNeverDestroyed<Vector<GLDisplay::BufferFormat>> formats;
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        formats.construct();
+        // Nothing else appears to be supported for Nexus buffers that
+        // can be used to back EGLImages, so only add this for now.
+        formats->append(GLDisplay::BufferFormat(DRM_FORMAT_ABGR8888));
+    });
+    return formats.get();
+}
+#endif
 
 } // namespace WebCore

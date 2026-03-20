@@ -33,6 +33,10 @@ messages -> AcceleratedBackingStore {
     DidCreateAndroidBuffer(uint64_t id, RefPtr<AHardwareBuffer> androidBuffer)
 #endif
 
+#if USE(NEXUS)
+    DidCreateNexusSurface(uint64_t id, uintptr_t surfaceHandle)
+#endif
+
     DidDestroyBuffer(uint64_t id)
     Frame(uint64_t id, Vector<WebCore::IntRect, 1> damage, UnixFileDescriptor syncFD)
 

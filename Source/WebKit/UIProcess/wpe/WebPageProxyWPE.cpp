@@ -45,11 +45,11 @@
 #include <wpe/wpe-platform.h>
 #endif
 
-#if USE(GBM) || OS(ANDROID)
+#if USE(GBM) || USE(NEXUS) || OS(ANDROID)
 #include "RendererBufferFormat.h"
 #endif
 
-#if ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+#if ENABLE(WPE_PLATFORM) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
 #include "MessageSenderInlines.h"
 #include "WebPageMessages.h"
 #endif
@@ -126,7 +126,7 @@ void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
         static_cast<PageClientImpl&>(*pageClient).setInputMethodState(WTF::move(state));
 }
 
-#if USE(GBM) || OS(ANDROID)
+#if USE(GBM) || USE(NEXUS) || OS(ANDROID)
 Vector<RendererBufferFormat> WebPageProxy::preferredBufferFormats() const
 {
 #if ENABLE(WPE_PLATFORM)

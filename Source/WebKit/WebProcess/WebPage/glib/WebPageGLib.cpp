@@ -278,6 +278,11 @@ void WebPage::getRenderProcessInfo(CompletionHandler<void(RenderProcessInfo&&)>&
         }
         break;
 #endif
+#if USE(NEXUS)
+    case PlatformDisplay::Type::BroadcomNexus:
+        info.platform = "BroadcomNexus"_s;
+        break;
+#endif
 #endif
 #if OS(ANDROID)
     case PlatformDisplay::Type::Android:

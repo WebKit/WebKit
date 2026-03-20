@@ -57,6 +57,10 @@
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CStringView.h>
 
+#if USE(NEXUS)
+#include <nxclient.h>
+#endif
+
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and egl.h checks that to decide whether it's Wayland platform.
 #include <wayland-egl.h>
@@ -104,6 +108,9 @@ struct _WPEDisplayWaylandPrivate {
     Vector<GRefPtr<WPEScreen>, 1> screens;
     GRefPtr<WPEClipboard> clipboard;
     GRefPtr<GSource> eventSource;
+#if USE(NEXUS)
+    bool nexusConnected;
+#endif
 };
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(WPEDisplayWayland, wpe_display_wayland, WPE_TYPE_DISPLAY, WPEDisplay,
     wpeEnsureExtensionPointsRegistered();
@@ -248,6 +255,12 @@ static void wpeDisplayWaylandDispose(GObject* object)
     g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);
     g_clear_pointer(&priv->wlCompositor, wl_compositor_destroy);
     g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
+#if USE(NEXUS)
+    if (priv->nexusConnected) {
+        NxClient_Uninit();
+        priv->nexusConnected = false;
+    }
+#endif
 
     G_OBJECT_CLASS(wpe_display_wayland_parent_class)->dispose(object);
 }
@@ -466,6 +479,19 @@ static gboolean wpeDisplayWaylandSetup(WPEDisplayWayland* display, GError** erro
 
     if (priv->wlSeat || priv->linuxDMABuf || !priv->screens.isEmpty())
         wl_display_roundtrip(priv->wlDisplay);
+
+#if USE(NEXUS)
+    if (!priv->nexusConnected) {
+        NxClient_JoinSettings joinSettings;
+        NxClient_GetDefaultJoinSettings(&joinSettings);
+        SAFE_SPRINTF(std::span { joinSettings.name }, "%s", "WPEDisplay"_s);
+        NEXUS_Error rc = NxClient_Join(&joinSettings);
+        if (rc == NEXUS_SUCCESS) {
+            priv->nexusConnected = true;
+            g_debug("Joined Nexus on UI process");
+        }
+    }
+#endif
 
     if (!priv->drmDevice)
         wpeDisplayWaylandInitializeDRMDeviceFromEGL(display);

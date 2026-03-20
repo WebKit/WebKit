@@ -171,7 +171,7 @@ bool PlatformDisplay::destroyEGLImage(EGLImage image) const
     return m_eglDisplay->destroyImage(image);
 }
 
-#if USE(GBM) || OS(ANDROID)
+#if USE(GBM) || USE(NEXUS) || OS(ANDROID)
 const Vector<GLDisplay::BufferFormat>& PlatformDisplay::bufferFormats()
 {
     return m_eglDisplay->bufferFormats();

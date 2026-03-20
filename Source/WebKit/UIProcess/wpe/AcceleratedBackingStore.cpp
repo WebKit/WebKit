@@ -45,6 +45,10 @@
 #include <drm/drm_fourcc.h>
 #endif
 
+#if USE(NEXUS)
+#include <wpe/WPEBufferBroadcomNexus.h>
+#endif
+
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h>
@@ -184,6 +188,17 @@ void AcceleratedBackingStore::didCreateAndroidBuffer(uint64_t id, RefPtr<AHardwa
     notifyBufferConfigurationIfNeeded();
 }
 #endif // OS(ANDROID)
+
+#if USE(NEXUS)
+void AcceleratedBackingStore::didCreateNexusSurface(uint64_t id, uintptr_t surfaceHandle)
+{
+    auto buffer = adoptGRef(WPE_BUFFER(wpe_buffer_broadcom_nexus_new(wpe_view_get_display(m_wpeView.get()), surfaceHandle)));
+    m_bufferIDs.add(buffer.get(), id);
+    m_buffers.add(id, WTF::move(buffer));
+
+    notifyBufferConfigurationIfNeeded();
+}
+#endif
 
 void AcceleratedBackingStore::didDestroyBuffer(uint64_t id)
 {
@@ -363,6 +378,10 @@ RendererBufferDescription AcceleratedBackingStore::bufferDescription() const
         description.fourcc = wpe_buffer_android_get_format(bufferAndroid);
     }
 #endif // OS(ANDROID)
+#if USE(NEXUS)
+    else if (WPE_IS_BUFFER_BROADCOM_NEXUS(buffer))
+        description.type = RendererBufferDescription::Type::BroadcomNexus;
+#endif
 
     return description;
 }

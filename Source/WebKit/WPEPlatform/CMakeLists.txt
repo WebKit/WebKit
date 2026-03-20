@@ -13,6 +13,7 @@ configure_file(wpe/WPEVersion.h.in ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/WPEVer
 set(WPEPlatform_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBuffer.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferAndroid.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferBroadcomNexus.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferDMABuf.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferFormats.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferSHM.cpp
@@ -48,6 +49,7 @@ set(WPEPlatform_SOURCES
 set(WPEPlatform_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBuffer.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferAndroid.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferBroadcomNexus.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferDMABuf.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferFormats.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEBufferSHM.h
@@ -111,7 +113,12 @@ set(WPEPlatform_LIBRARIES
     WebKit::WTF
     XkbCommon::XkbCommon
     bmalloc
+    rt
 )
+
+if (USE_NEXUS)
+    list(APPEND WPEPlatform_LIBRARIES nexus nxclient)
+endif ()
 
 if (USE_GBM)
     list(APPEND WPEPlatform_LIBRARIES GBM::GBM)

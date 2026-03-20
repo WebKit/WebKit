@@ -119,7 +119,7 @@ private:
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
-#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     void preferredBufferFormatsDidChange() override;
 #endif
 #if ENABLE(DAMAGE_TRACKING)

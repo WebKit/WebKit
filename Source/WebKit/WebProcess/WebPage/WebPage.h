@@ -511,7 +511,7 @@ enum class WebMouseEventInputSource : uint8_t;
 struct ContentWorldData;
 struct ContentWorldIdentifierType;
 struct CoreIPCAuditToken;
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || OS(ANDROID))
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
 struct RendererBufferFormat;
 #endif
 struct DataDetectionResult;
@@ -2082,7 +2082,7 @@ public:
     const Logger& logger() const;
     uint64_t NODELETE logIdentifier() const;
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || OS(ANDROID))
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     const Vector<RendererBufferFormat>& preferredBufferFormats() const LIFETIME_BOUND { return m_preferredBufferFormats; }
 #endif
 
@@ -2670,7 +2670,7 @@ private:
     void getRenderProcessInfo(CompletionHandler<void(RenderProcessInfo&&)>&&);
 #endif
 
-#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     void preferredBufferFormatsDidChange(Vector<RendererBufferFormat>&&);
 #endif
 
@@ -3247,7 +3247,7 @@ private:
     WebCore::Color m_accentColor;
 #endif
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || OS(ANDROID))
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     Vector<RendererBufferFormat> m_preferredBufferFormats;
 #endif
 
