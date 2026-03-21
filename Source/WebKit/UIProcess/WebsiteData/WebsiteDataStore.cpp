@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2552,6 +2552,11 @@ void WebsiteDataStore::renameOriginInWebsiteData(WebCore::SecurityOriginData&& o
 void WebsiteDataStore::originDirectoryForTesting(WebCore::ClientOrigin&& origin, OptionSet<WebsiteDataType> type, CompletionHandler<void(const String&)>&& completionHandler)
 {
     protectedNetworkProcess()->websiteDataOriginDirectoryForTesting(m_sessionID, WTF::move(origin), type, WTF::move(completionHandler));
+}
+
+void WebsiteDataStore::lastPageLoadNetworkActivityCompletionCodeForTesting(WebCore::PageIdentifier pageID, CompletionHandler<void(std::optional<NetworkActivityTracker::CompletionCode>)>&& completionHandler)
+{
+    protect(networkProcess())->lastPageLoadNetworkActivityCompletionCodeForTesting(m_sessionID, pageID, WTF::move(completionHandler));
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)

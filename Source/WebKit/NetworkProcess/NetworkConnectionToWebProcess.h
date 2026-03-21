@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -281,6 +281,8 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
+    std::optional<NetworkActivityTracker::CompletionCode> lastRootActivityCompletionCodeForTesting(WebCore::PageIdentifier) const;
+
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier&&);
 
@@ -472,11 +474,12 @@ private:
         WebCore::PageIdentifier pageID;
         Markable<WebCore::ResourceLoaderIdentifier> resourceID;
         bool isRootActivity { false };
+        bool isTopResource { false };
         NetworkActivityTracker networkActivity;
     };
 
     void stopAllNetworkActivityTracking();
-    void stopAllNetworkActivityTrackingForPage(WebCore::PageIdentifier);
+    void stopAllNetworkActivityTrackingForPage(WebCore::PageIdentifier, NetworkActivityTracker::CompletionCode rootCompletionCode = NetworkActivityTracker::CompletionCode::Cancel);
     size_t findRootNetworkActivity(WebCore::PageIdentifier);
     size_t findNetworkActivityTracker(WebCore::ResourceLoaderIdentifier resourceID);
 
@@ -521,6 +524,7 @@ private:
     NetworkResourceLoadMap m_networkResourceLoaders;
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
+    HashMap<WebCore::PageIdentifier, NetworkActivityTracker::CompletionCode> m_lastRootActivityCompletionCodesForTesting;
 
     HashMap<WebCore::ResourceLoaderIdentifier, std::unique_ptr<WebCore::NetworkLoadInformation>> m_networkLoadInformationByID;
 

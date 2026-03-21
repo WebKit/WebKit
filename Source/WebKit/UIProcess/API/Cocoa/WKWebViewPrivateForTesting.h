@@ -188,6 +188,8 @@ struct WKAppPrivacyReportTestingData {
 - (NSString *)_progressBasedTimelinesForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID;
 #endif
 
+- (void)_lastPageLoadNetworkActivityCompletionCodeForTesting:(void(^)(NSNumber * _Nullable completionCode))completionHandler;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {

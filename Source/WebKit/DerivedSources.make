@@ -605,6 +605,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
 	ModelProcess/ModelProcessCreationParameters.serialization.in \
+	NetworkProcess/NetworkActivityTracker.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
 	NetworkProcess/NetworkSessionCreationParameters.serialization.in \

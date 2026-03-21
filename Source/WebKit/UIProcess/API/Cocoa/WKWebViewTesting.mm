@@ -1256,6 +1256,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 }
 #endif
 
+- (void)_lastPageLoadNetworkActivityCompletionCodeForTesting:(void(^)(NSNumber * _Nullable))completionHandler
+{
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    _page->protectedWebsiteDataStore()->protectedNetworkProcess()->lastPageLoadNetworkActivityCompletionCodeForTesting(_page->sessionID(), _page->webPageIDInMainFrameProcess(), [completionHandlerCopy = WTF::move(completionHandlerCopy)](std::optional<WebKit::NetworkActivityTracker::CompletionCode> code) {
+        completionHandlerCopy(code ? @(static_cast<uint8_t>(*code)) : nil);
+    });
+}
 @end
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

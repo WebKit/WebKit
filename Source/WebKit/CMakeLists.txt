@@ -446,6 +446,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     ModelProcess/ModelProcessCreationParameters.serialization.in
 
+    NetworkProcess/NetworkActivityTracker.serialization.in
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
     NetworkProcess/NetworkResourceLoadParameters.serialization.in
     NetworkProcess/NetworkSessionCreationParameters.serialization.in

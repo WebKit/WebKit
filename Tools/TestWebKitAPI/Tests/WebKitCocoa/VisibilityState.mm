@@ -29,6 +29,7 @@
 #import "Test.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
 
 #if !PLATFORM(IOS_SIMULATOR)

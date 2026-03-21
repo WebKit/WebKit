@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3108,6 +3108,19 @@ RefPtr<NetworkConnectionToWebProcess> NetworkProcess::protectedWebProcessConnect
             return webProcessConnection;
     }
     return nullptr;
+}
+
+void NetworkProcess::lastPageLoadNetworkActivityCompletionCodeForTesting(PAL::SessionID sessionID, PageIdentifier pageID, CompletionHandler<void(std::optional<NetworkActivityTracker::CompletionCode>)>&& completionHandler)
+{
+    for (auto& connection : m_webProcessConnections.values()) {
+        if (connection->sessionID() == sessionID) {
+            if (auto code = connection->lastRootActivityCompletionCodeForTesting(pageID)) {
+                completionHandler(code);
+                return;
+            }
+        }
+    }
+    completionHandler(std::nullopt);
 }
 
 const Seconds NetworkProcess::defaultServiceWorkerFetchTimeout = 70_s;

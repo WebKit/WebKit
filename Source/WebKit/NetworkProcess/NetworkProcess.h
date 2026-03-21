@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "DataTaskIdentifier.h"
 #include "DownloadID.h"
 #include "DownloadManager.h"
+#include "NetworkActivityTracker.h"
 #include "NetworkContentRuleListManager.h"
 #include "QuotaIncreaseRequestIdentifier.h"
 #include "UseDownloadPlaceholder.h"
@@ -411,6 +412,8 @@ public:
     void resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<void()>&&);
     Seconds serviceWorkerFetchTimeout() const { return m_serviceWorkerFetchTimeout; }
     void terminateIdleServiceWorkers(WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
+
+    void lastPageLoadNetworkActivityCompletionCodeForTesting(PAL::SessionID, WebCore::PageIdentifier, CompletionHandler<void(std::optional<NetworkActivityTracker::CompletionCode>)>&&);
 
     static Seconds randomClosedPortDelay();
 
