@@ -1,0 +1,23 @@
+
+PASS Character Tabulation (U+9) is stripped.
+PASS Line Feed (U+a) is stripped.
+PASS Form Feed (U+c) is stripped.
+PASS Carriage Return (U+d) is stripped.
+PASS Space (U+20) is stripped.
+PASS No-Break Space (U+a0) is not stripped.
+PASS Ogham Space Mark (U+1680) is not stripped.
+PASS EN Quad (U+2000) is not stripped.
+PASS EM Quad (U+2001) is not stripped.
+PASS EN Space (U+2002) is not stripped.
+PASS EM Space (U+2003) is not stripped.
+PASS Three-Per-Em Space (U+2004) is not stripped.
+PASS Four-Per-Em Space (U+2005) is not stripped.
+PASS Six-Per-Em Space (U+2006) is not stripped.
+PASS Figure Space (U+2007) is not stripped.
+PASS Punctuation Space (U+2008) is not stripped.
+PASS Thin Space (U+2009) is not stripped.
+PASS Hair Space (U+200a) is not stripped.
+PASS Narrow No-Break Space (U+202f) is not stripped.
+PASS Medium Mathematical Space (U+205f) is not stripped.
+PASS Ideographic Space (U+3000) is not stripped.
+
