@@ -292,7 +292,7 @@ class CppGenerator(Generator):
         return cpp_name
 
     @staticmethod
-    def cpp_type_for_event_parameter(_type, is_optional):
+    def cpp_type_for_event_parameter(_type, is_optional, is_nullable=False, use_nullable_value=False):
         if isinstance(_type, AliasedType):
             _type = _type.aliased_type
             # Fallthrough.
@@ -302,38 +302,91 @@ class CppGenerator(Generator):
             # Fallthrough.
 
         if isinstance(_type, (ArrayType, ObjectType)):
-            if is_optional:
+            if is_nullable or use_nullable_value:
+                cpp_name = 'Ref<%s>' % CppGenerator.cpp_protocol_type_for_type(_type)
+            elif is_optional:
                 return 'RefPtr<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
-            return 'Ref<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
-
-        if _type.qualified_name() == 'object':
-            if is_optional:
+            else:
+                return 'Ref<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
+        elif _type.qualified_name() == 'object':
+            if is_nullable or use_nullable_value:
+                cpp_name = 'Ref<JSON::Object>'
+            elif is_optional:
                 return 'RefPtr<JSON::Object>&&'
-            return 'Ref<JSON::Object>&&'
-
-        if _type.qualified_name() == 'array':
-            if is_optional:
+            else:
+                return 'Ref<JSON::Object>&&'
+        elif _type.qualified_name() == 'array':
+            if is_nullable or use_nullable_value:
+                cpp_name = 'Ref<JSON::Array>'
+            elif is_optional:
                 return 'RefPtr<JSON::Array>&&'
-            return 'Ref<JSON::Array>&&'
-
-        if _type.qualified_name() == 'any':
-            if is_optional:
+            else:
+                return 'Ref<JSON::Array>&&'
+        elif _type.qualified_name() == 'any':
+            if is_nullable or use_nullable_value:
+                cpp_name = 'Ref<JSON::Value>'
+            elif is_optional:
                 return 'RefPtr<JSON::Value>&&'
-            return 'Ref<JSON::Value>&&'
-
-        if _type.qualified_name() == 'string':
-            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
-
-        if isinstance(_type, EnumType):
+            else:
+                return 'Ref<JSON::Value>&&'
+        elif _type.qualified_name() == 'string':
+            if is_nullable or use_nullable_value:
+                cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
+            else:
+                return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
+        elif isinstance(_type, EnumType):
             cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
         elif isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
         else:
             raise ValueError("unknown type")
 
-        if is_optional:
+        if is_nullable:
+            cpp_name = 'Nullable<%s>' % cpp_name
+            if is_optional:
+                return 'std::optional<%s>&&' % cpp_name
+            return '%s&&' % cpp_name
+
+        if is_optional and not use_nullable_value:
             cpp_name = 'std::optional<%s>&&' % cpp_name
         return cpp_name
+
+    @staticmethod
+    def cpp_resolved_event_parameter_type(_type):
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+            # Fallthrough.
+
+        if isinstance(_type, EnumType) and _type.is_anonymous:
+            _type = _type.primitive_type
+            # Fallthrough.
+
+        return _type
+
+    @staticmethod
+    def cpp_unwrapped_event_parameter_value(_type, parameter_name, is_optional):
+        _type = CppGenerator.cpp_resolved_event_parameter_type(_type)
+        parameter_value = parameter_name
+
+        if _type.is_enum():
+            if is_optional:
+                return '*' + parameter_value
+            return parameter_value
+        if CppGenerator.should_release_argument(_type, is_optional):
+            return parameter_value + '.releaseNonNull()'
+        if CppGenerator.should_dereference_argument(_type, is_optional):
+            return '*' + parameter_value
+        if CppGenerator.should_move_argument(_type, is_optional):
+            return 'WTF::move(%s)' % parameter_value
+        return parameter_value
+
+    def cpp_serialized_event_parameter_value(self, _type, parameter_name, is_optional):
+        _type = CppGenerator.cpp_resolved_event_parameter_type(_type)
+        parameter_value = CppGenerator.cpp_unwrapped_event_parameter_value(_type, parameter_name, is_optional)
+
+        if _type.is_enum():
+            return 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), parameter_value)
+        return parameter_value
 
     @staticmethod
     def cpp_type_for_enum(enum_type, name):

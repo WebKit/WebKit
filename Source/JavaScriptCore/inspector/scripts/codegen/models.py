@@ -540,7 +540,7 @@ class Protocol:
         log.debug("parse parameter %s" % json['name'])
 
         type_ref = TypeReference(json.get('type'), json.get('$ref'), json.get('enum'), json.get('items'))
-        return Parameter(json['name'], type_ref, json.get('optional', False), json.get('description', ""))
+        return Parameter(json['name'], type_ref, json.get('optional', False), json.get('nullable', False), json.get('description', ""))
 
     def resolve_types(self):
         qualified_declared_type_names = set(['boolean', 'string', 'integer', 'number', 'enum', 'array', 'object', 'any'])
@@ -709,14 +709,17 @@ class TypeMember:
 
 
 class Parameter:
-    def __init__(self, parameter_name, type_ref, is_optional, description):
+    def __init__(self, parameter_name, type_ref, is_optional, is_nullable, description):
         self.parameter_name = parameter_name
         self.type_ref = type_ref
         self.is_optional = is_optional
+        self.is_nullable = is_nullable
         self.description = description
 
         if not isinstance(self.is_optional, bool):
             raise ParseException("The 'optional' flag for a parameter must be a boolean literal.")
+        if not isinstance(self.is_nullable, bool):
+            raise ParseException("The 'nullable' flag for a parameter must be a boolean literal.")
 
     def resolve_type_references(self, protocol, domain):
         log.debug(">>> Resolving type references for parameter: %s" % self.parameter_name)
