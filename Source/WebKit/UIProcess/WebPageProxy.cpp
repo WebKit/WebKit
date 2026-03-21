@@ -5483,8 +5483,14 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
         m_mainFrameWebsitePolicies = mainFrameWebsitePolicies->copy();
 
     // There is no way we'll be able to return to the page in the previous page so close it.
-    if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage))
-        send(Messages::WebPage::Close());
+    if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage)) {
+        auto pageID = identifier();
+        Ref oldProcess = legacyMainFrameProcess();
+        oldProcess->addPagePendingClose(pageID);
+        sendWithAsyncReply(Messages::WebPage::CloseWithReply(), [oldProcess, pageID] {
+            oldProcess->removePagePendingClose(pageID);
+        });
+    }
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (m_immersive)

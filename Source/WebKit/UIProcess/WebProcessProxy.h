@@ -192,6 +192,31 @@ public:
     enum class ShouldLaunchProcess : bool { No, Yes };
     enum class LockdownMode : bool { Disabled, Enabled };
 
+    enum class SiteState : uint8_t { NotYetSpecified, MultipleSites, SharedProcess };
+
+    enum class WillShutDown : bool { No, Yes };
+
+    enum class BeginsUsingDataStore : bool { No, Yes };
+
+    enum class EndsUsingDataStore : bool { No, Yes };
+
+    enum ShutdownPreventingScopeType { };
+
+    enum class IsWeak : bool { No, Yes };
+
+    struct RemoteWorkerInformation {
+        WebPageProxyIdentifier remoteWorkerPageProxyID;
+        WebCore::PageIdentifier remoteWorkerPageID;
+        RemoteWorkerInitializationData initializationData;
+        RefPtr<ProcessThrottler::Activity> activity;
+        WeakHashSet<WebProcessProxy> clientProcesses;
+    };
+
+    struct AudibleMediaActivity {
+        Ref<ProcessAssertion> assertion;
+        WebProcessWithAudibleMediaToken token;
+    };
+
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::Site&&, WebsiteDataStore&, LockdownMode, EnhancedSecurity);
 
@@ -212,6 +237,9 @@ public:
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const { return m_sharedPreferencesForWebProcess; }
+    const Expected<WebCore::Site, SiteState>& site() const { return m_site; }
+    const std::optional<WebCore::Site>& sharedProcessMainFrameSite() const { return m_sharedProcessMainFrameSite; }
+    const HashSet<WebCore::RegistrableDomain>& sharedProcessDomains() const { return m_sharedProcessDomains; }
     std::optional<SharedPreferencesForWebProcess> updateSharedPreferences(const WebPreferencesStore&);
     void didSyncSharedPreferencesForWebProcessWithNetworkProcess(uint64_t syncedPreferencesVersion);
 #if ENABLE(GPU_PROCESS)
@@ -222,15 +250,8 @@ public:
 #endif
     void waitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion, CompletionHandler<void(bool success)>&&);
 
-    enum class SiteState : uint8_t { NotYetSpecified, MultipleSites, SharedProcess };
-    const Expected<WebCore::Site, SiteState>& site() const { return m_site; }
-
     bool isSharedProcess() const { return !m_site && m_site.error() == SiteState::SharedProcess; }
-    const std::optional<WebCore::Site>& sharedProcessMainFrameSite() const { return m_sharedProcessMainFrameSite; }
     void addSharedProcessDomain(const WebCore::RegistrableDomain&);
-    const HashSet<WebCore::RegistrableDomain>& sharedProcessDomains() const { return m_sharedProcessDomains; }
-
-    enum class WillShutDown : bool { No, Yes };
     void setIsInProcessCache(bool, WillShutDown = WillShutDown::No);
     bool isInProcessCache() const { return m_isInProcessCache; }
 
@@ -255,12 +276,10 @@ public:
     static WebPageProxy* webPageWithActiveXRSession();
 #endif
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
-
-    enum class BeginsUsingDataStore : bool { No, Yes };
     void addExistingWebPage(WebPageProxy&, BeginsUsingDataStore);
-
-    enum class EndsUsingDataStore : bool { No, Yes };
     void removeWebPage(WebPageProxy&, EndsUsingDataStore);
+    void addPagePendingClose(WebPageProxyIdentifier);
+    void removePagePendingClose(WebPageProxyIdentifier);
 
     void addProvisionalPageProxy(ProvisionalPageProxy&);
     void removeProvisionalPageProxy(ProvisionalPageProxy&);
@@ -403,8 +422,6 @@ public:
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
     void shutDown();
-
-    enum ShutdownPreventingScopeType { };
     using ShutdownPreventingScopeCounter = RefCounter<ShutdownPreventingScopeType>;
     ShutdownPreventingScopeCounter::Token shutdownPreventingScope() { return m_shutdownPreventingScopeCounter.count(); }
 
@@ -740,8 +757,6 @@ private:
     void deleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier);
     void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, String&& message);
 #endif
-
-    enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
         WeakOrStrongPtr(T& object, IsWeak isWeak)
@@ -785,6 +800,7 @@ private:
     WeakHashSet<RemotePageProxy> m_remotePages;
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
     WeakHashSet<SuspendedPageProxy> m_suspendedPages;
+    HashSet<WebPageProxyIdentifier> m_pagesPendingClose;
     UserInitiatedActionMap m_userInitiatedActionMap;
     HashMap<WebCore::PageIdentifier, UserInitiatedActionByAuthorizationTokenMap> m_userInitiatedActionByAuthorizationTokenMap;
 
@@ -837,22 +853,9 @@ private:
     MediaCaptureSandboxExtensions m_mediaCaptureSandboxExtensions { SandboxExtensionType::None };
 #endif
     RefPtr<Logger> m_logger;
-
-    struct RemoteWorkerInformation {
-        WebPageProxyIdentifier remoteWorkerPageProxyID;
-        WebCore::PageIdentifier remoteWorkerPageID;
-        RemoteWorkerInitializationData initializationData;
-        RefPtr<ProcessThrottler::Activity> activity;
-        WeakHashSet<WebProcessProxy> clientProcesses;
-    };
     std::optional<RemoteWorkerInformation> m_serviceWorkerInformation;
     std::optional<RemoteWorkerInformation> m_sharedWorkerInformation;
     bool m_hasServiceWorkerBackgroundProcessing { false };
-
-    struct AudibleMediaActivity {
-        Ref<ProcessAssertion> assertion;
-        WebProcessWithAudibleMediaToken token;
-    };
     std::optional<AudibleMediaActivity> m_audibleMediaActivity;
 
     std::optional<WebProcessWithMediaStreamingToken> m_mediaStreamingActivity;

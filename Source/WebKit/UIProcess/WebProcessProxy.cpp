@@ -921,6 +921,16 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     maybeShutDown();
 }
 
+void WebProcessProxy::addPagePendingClose(WebPageProxyIdentifier pageID)
+{
+    m_pagesPendingClose.add(pageID);
+}
+
+void WebProcessProxy::removePagePendingClose(WebPageProxyIdentifier pageID)
+{
+    m_pagesPendingClose.remove(pageID);
+}
+
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
     auto& users = m_visitedLinkStoresWithUsers.ensure(visitedLinkStore, [] {
@@ -2339,6 +2349,10 @@ bool WebProcessProxy::isAssociatedWithPage(WebPageProxyIdentifier pageID) const
 {
     if (m_pageMap.contains(pageID))
         return true;
+    for (Ref remotePage : m_remotePages) {
+        if (remotePage->page() && remotePage->page()->identifier() == pageID)
+            return true;
+    }
     for (Ref provisionalPage : m_provisionalPages) {
         if (provisionalPage->page() && provisionalPage->page()->identifier() == pageID)
             return true;
@@ -2347,6 +2361,8 @@ bool WebProcessProxy::isAssociatedWithPage(WebPageProxyIdentifier pageID) const
         if (suspendedPage->page() && suspendedPage->page()->identifier() == pageID)
             return true;
     }
+    if (m_pagesPendingClose.contains(pageID))
+        return true;
     return false;
 }
 
@@ -3178,6 +3194,7 @@ void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentC
     RefPtr page = WebPageProxy::fromIdentifier(pageID);
     if (!page)
         return completionHandler(makeUnexpected(String()));
+    MESSAGE_CHECK_COMPLETION(isAssociatedWithPage(pageID), completionHandler(makeUnexpected(String())));
     RefPtr controller = WebUserContentControllerProxy::get(identifier);
     if (!controller)
         return completionHandler(makeUnexpected(String()));

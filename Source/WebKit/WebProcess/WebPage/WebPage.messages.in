@@ -278,6 +278,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     Resume() -> (bool success)
 
     Close()
+    CloseWithReply() -> ()
     TryClose() -> (bool shouldClose)
 
     SetEditable(bool editable)
