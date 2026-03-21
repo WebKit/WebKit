@@ -2223,9 +2223,6 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.htm
 
 webkit.org/b/275713 fast/text/international/system-language/declarative-language.html [ Failure ]
 
-# rdar://124307254 ([ Sequoia+ ]: Bad rendering of EmojiImage)
-[ Sequoia+ ] fast/css/font-fallback-private-use-area-apple-logo-exception.html [ ImageOnlyFailure ]
-
 # rdar://124314393 ([ Sequoia+ ] fast/text/combining-mark-paint.html is a consistent image failure)
 [ Sequoia+ ] fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 
