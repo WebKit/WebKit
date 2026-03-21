@@ -1962,6 +1962,12 @@ void WebPage::exitAcceleratedCompositingMode(WebCore::Frame& frame)
     protectedDrawingArea()->setRootCompositingLayer(frame, nullptr);
 }
 
+void WebPage::closeWithReply(CompletionHandler<void()>&& completionHandler)
+{
+    close();
+    completionHandler();
+}
+
 void WebPage::close()
 {
     if (m_isClosed)
