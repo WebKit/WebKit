@@ -224,9 +224,12 @@ template<typename CharacterType> inline Expected<Ref<StringImpl>, UTF8Conversion
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
     originalString->~StringImpl();
-    SUPPRESS_UNCOUNTED_LOCAL auto* string = static_cast<StringImpl*>(StringImplMalloc::tryRealloc(&originalString.leakRef(), allocationSize<CharacterType>(length)));
-    if (!string)
+    SUPPRESS_UNCOUNTED_LOCAL auto* rawPointer = &originalString.leakRef();
+    SUPPRESS_UNCOUNTED_LOCAL auto* string = static_cast<StringImpl*>(StringImplMalloc::tryRealloc(rawPointer, allocationSize<CharacterType>(length)));
+    if (!string) {
+        StringImplMalloc::free(rawPointer);
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
+    }
 
     data = string->tailPointer<CharacterType>();
     return constructInternal<CharacterType>(*string, length);
