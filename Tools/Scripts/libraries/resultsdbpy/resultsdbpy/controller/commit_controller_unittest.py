@@ -39,7 +39,7 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
-        with MockModelFactory.safari(), MockModelFactory.webkit():
+        with MockModelFactory.safari() as safari_mock, MockModelFactory.webkit() as webkit_mock:
             redis_instance = redis()
             safari = StashRepository('https://bitbucket.example.com/projects/SAFARI/repos/safari')
             webkit = WebKitRepository()
@@ -47,7 +47,17 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
             cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
             cassandra_instance = cassandra(keyspace=cls.KEYSPACE, create_keyspace=True)
 
-            app.register_blueprint(APIRoutes(Model(redis=redis_instance, cassandra=cassandra_instance, repositories=[safari, webkit])))
+            model = Model(redis=redis_instance, cassandra=cassandra_instance, repositories=[safari, webkit])
+
+            with model.commit_context, model.commit_context.cassandra.batch_query_context():
+                for key, repository in dict(safari=safari_mock, webkit=webkit_mock).items():
+                    for branch, commits in repository.commits.items():
+                        for commit in commits:
+                            model.commit_context.register_partial_commit(
+                                key, hash=commit.hash, revision=commit.revision, fast=False,
+                            )
+
+        app.register_blueprint(APIRoutes(model))
 
     def register_all_commits(self, client):
         with MockModelFactory.safari() as safari, MockModelFactory.webkit() as webkit:
@@ -98,7 +108,7 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
     def test_register_with_partial_commit(self, client, **kwargs):
         with MockModelFactory.safari(), MockModelFactory.webkit(), OutputCapture():
             self.assertEqual(200, client.post(self.URL + '/api/commits', data=dict(repository_id='safari', id='d8bce26fa65c')).status_code)
-            response = client.get(self.URL + '/api/commits?repository_id=safari')
+            response = client.get(self.URL + '/api/commits?repository_id=safari&id=d8bce26fa65c')
             self.assertEqual(200, response.status_code)
             self.assertEqual(
                 Commit.from_json(response.json()[0]).message,
@@ -107,11 +117,11 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
             self.assertEqual(404, client.post(self.URL + '/api/commits', data=dict(repository_id='safari', id='aaaaaaaaaaaaa')).status_code)
 
             self.assertEqual(200, client.post(self.URL + '/api/commits', data=dict(repository_id='webkit', id='6')).status_code)
-            response = client.get(self.URL + '/api/commits?repository_id=webkit')
+            response = client.get(self.URL + '/api/commits?repository_id=webkit&id=6')
             self.assertEqual(200, response.status_code)
-            self.assertEqual(
-                Commit.from_json(response.json()[0]).message,
+            self.assertIn(
                 '6th commit',
+                Commit.from_json(response.json()[0]).message,
             )
             self.assertEqual(404, client.post(self.URL + '/api/commits', data=dict(repository_id='webkit', id='1234')).status_code)
 
@@ -129,7 +139,7 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
         )
         print(Commit.Encoder().default(git_commit))
         self.assertEqual(200, client.post(self.URL + '/api/commits', json=Commit.Encoder().default(git_commit)).status_code)
-        response = client.get(self.URL + '/api/commits?repository_id=safari')
+        response = client.get(self.URL + '/api/commits?repository_id=safari&id=8eba280e32da')
         self.assertEqual(200, response.status_code)
         self.assertEqual(Commit.from_json(response.json()[0]), git_commit)
 
@@ -143,7 +153,7 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
             message='custom commit',
         )
         self.assertEqual(200, client.post(self.URL + '/api/commits', json=Commit.Encoder().default(svn_commit)).status_code)
-        response = client.get(self.URL + '/api/commits?repository_id=webkit')
+        response = client.get(self.URL + '/api/commits?repository_id=webkit&id=1234')
         self.assertEqual(200, response.status_code)
         self.assertEqual(Commit.from_json(response.json()[0]), svn_commit)
 

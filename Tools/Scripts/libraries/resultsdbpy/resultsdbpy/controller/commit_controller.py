@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import requests.exceptions
 
 from collections import defaultdict
 from flask import abort, jsonify, request
@@ -343,7 +344,7 @@ class CommitController(HasCommitContext):
                 identifier=commit.get('identifier'),
                 fast=fast,
             )
-        except (RuntimeError, ScmBase.Exception) as error:
+        except (RuntimeError, ScmBase.Exception, requests.exceptions.RequestException) as error:
             abort(404, description=str(error))
 
         if is_endpoint:

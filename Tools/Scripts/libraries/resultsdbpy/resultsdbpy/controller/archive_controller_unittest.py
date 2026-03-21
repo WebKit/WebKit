@@ -45,22 +45,31 @@ class ArchiveControllerUnittest(FlaskTestCase, WaitForDockerTestCase):
 
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
-        redis_instance = redis()
+        with MockModelFactory.safari() as safari_mock, MockModelFactory.webkit() as webkit_mock:
+            redis_instance = redis()
+            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra_instance = cassandra(keyspace=cls.KEYSPACE, create_keyspace=True)
 
-        with MockModelFactory.safari(), MockModelFactory.webkit():
-            safari = StashRepository('https://bitbucket.example.com/projects/SAFARI/repos/safari')
-            webkit = WebKitRepository()
+            model = Model(
+                redis=redis_instance,
+                cassandra=cassandra_instance,
+                repositories=[
+                    StashRepository('https://bitbucket.example.com/projects/SAFARI/repos/safari'),
+                    WebKitRepository(),
+                ],
+                default_ttl_seconds=None,
+                archive_ttl_seconds=None,
+            )
 
-        cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
-        cassandra_instance = cassandra(keyspace=cls.KEYSPACE, create_keyspace=True)
+            with model.commit_context, model.commit_context.cassandra.batch_query_context():
+                for key, repository in dict(safari=safari_mock, webkit=webkit_mock).items():
+                    for branch, commits in repository.commits.items():
+                        for commit in commits:
+                            model.commit_context.register_partial_commit(
+                                key, hash=commit.hash, revision=commit.revision, fast=False,
+                            )
 
-        app.register_blueprint(APIRoutes(Model(
-            redis=redis_instance,
-            cassandra=cassandra_instance,
-            repositories=[safari, webkit],
-            default_ttl_seconds=None,
-            archive_ttl_seconds=None,
-        )))
+        app.register_blueprint(APIRoutes(model))
 
     @classmethod
     def upload_file(cls, client, url, meta_data, content):

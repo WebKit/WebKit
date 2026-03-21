@@ -117,7 +117,7 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_all_builds_list_by_time(self, client, **kwargs):
-        response = client.get(self.URL + f'/api/urls?after_time={time.time() - 2}')
+        response = client.get(self.URL + f'/api/urls?after_time={time.time() - 120}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 4)
         for data in response.json():

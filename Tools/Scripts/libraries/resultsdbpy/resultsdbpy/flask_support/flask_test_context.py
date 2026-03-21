@@ -21,10 +21,25 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import requests
+import socket
 import time
 
 from flask import Flask
 from multiprocessing import Process, Semaphore
+
+_ORIGINAL_CREATE_CONNECTION = socket.create_connection
+_LOCALHOST_ADDRESSES = frozenset(('localhost', '127.0.0.1', '::1'))
+
+
+def _block_external_connections():
+    def _localhost_only(address, *args, **kwargs):
+        host = address[0] if isinstance(address, tuple) else address
+        if host in _LOCALHOST_ADDRESSES:
+            return _ORIGINAL_CREATE_CONNECTION(address, *args, **kwargs)
+        raise ConnectionRefusedError(
+            f'Test server blocked connection to external host: {host}'
+        )
+    socket.create_connection = _localhost_only
 
 
 class FlaskTestContext(object):
@@ -32,6 +47,7 @@ class FlaskTestContext(object):
 
     @staticmethod
     def start_webserver(cls, semaphore, **kwargs):
+        _block_external_connections()
         try:
             app = Flask('testing')
             cls.setup_webserver(app, **kwargs)
