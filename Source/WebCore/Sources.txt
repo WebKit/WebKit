@@ -700,6 +700,7 @@ bindings/js/JSDOMGuardedObject.cpp
 bindings/js/JSDOMIterator.cpp
 bindings/js/JSDOMMapLike.cpp
 bindings/js/JSDOMPromise.cpp
+bindings/js/JSDOMSourceOriginChangeObserver.cpp
 bindings/js/JSDOMPromiseDeferred.cpp
 bindings/js/JSDOMQuadCustom.cpp
 bindings/js/JSDOMSetLike.cpp

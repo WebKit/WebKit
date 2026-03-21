@@ -2172,6 +2172,7 @@
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F04DFCBEDED74A4E92B8A9DA /* PinballHandlerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8791D173F2EE43A7E6469029 /* PinballHandlerContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F300DBB02E259A8B00430A24 /* MARReportCrashPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F300DBAE2E259A7900430A24 /* MARReportCrashPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F4C041C82A9BB87300D61F82 /* SourceOriginChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C041C72A9BB87300D61F82 /* SourceOriginChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F323932D2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F323932B2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F395BE252A43C5920083DE3A /* InPlaceInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = F395BE242A43C58B0083DE3A /* InPlaceInterpreter.h */; };
 		F3D9C2392A426CB8006EE152 /* WasmIPIntGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D9C2352A426CB7006EE152 /* WasmIPIntGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6138,6 +6139,7 @@
 		F323932B2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFunctionIPIntMetadataGenerator.h; sourceTree = "<group>"; };
 		F323932C2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFunctionIPIntMetadataGenerator.cpp; sourceTree = "<group>"; };
 		F3459D7423973ABD00DCD27A /* InspectorTarget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTarget.cpp; sourceTree = "<group>"; };
+		F4C041C72A9BB87300D61F82 /* SourceOriginChangeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceOriginChangeObserver.h; sourceTree = "<group>"; };
 		F395BE222A43C58B0083DE3A /* InPlaceInterpreter.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; name = InPlaceInterpreter.asm; path = llint/InPlaceInterpreter.asm; sourceTree = "<group>"; };
 		F395BE232A43C58B0083DE3A /* InPlaceInterpreter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InPlaceInterpreter.cpp; path = llint/InPlaceInterpreter.cpp; sourceTree = "<group>"; };
 		F395BE242A43C58B0083DE3A /* InPlaceInterpreter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = InPlaceInterpreter.h; path = llint/InPlaceInterpreter.h; sourceTree = "<group>"; };
@@ -9268,6 +9270,7 @@
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
 				425BA1337E4344E1B269A671 /* SourceOrigin.h */,
+				F4C041C72A9BB87300D61F82 /* SourceOriginChangeObserver.h */,
 				0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */,
 				0FB7F39215ED8E3800F167B2 /* SparseArrayValueMap.h */,
 				E32EF01D2BD72AEF001675BA /* StableSort.h */,
@@ -12356,6 +12359,7 @@
 				70B791911C024A13002481E2 /* SourceCodeKey.h in Headers */,
 				5350356527147E5A00EC1A7E /* SourceID.h in Headers */,
 				2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */,
+				F4C041C82A9BB87300D61F82 /* SourceOriginChangeObserver.h in Headers */,
 				FEF9AD642D8B985E005821C5 /* SourceProfiler.h in Headers */,
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,

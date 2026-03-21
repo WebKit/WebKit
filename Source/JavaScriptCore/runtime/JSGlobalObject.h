@@ -61,6 +61,12 @@ namespace Inspector {
 class JSGlobalObjectInspectorController;
 }
 
+#if ENABLE(RESOURCE_ANALYTICS)
+namespace WTF {
+class CompletionHandlerCallingScope;
+}
+#endif
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
@@ -126,6 +132,10 @@ class StringConstructor;
 class SymbolTable;
 class WrapperMap;
 class WrapForValidIteratorPrototype;
+
+#if ENABLE(RESOURCE_ANALYTICS)
+class SourceOriginChangeObserver;
+#endif
 
 enum class ArrayBufferSharingMode : bool;
 enum class CodeGenerationMode : uint8_t;
@@ -622,6 +632,11 @@ public:
     bool isSetPrototypeAddFastAndNonObservable();
     bool isArgumentsPrototypeIteratorProtocolFastAndNonObservable();
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    void setSourceOriginChangeObserver(SourceOriginChangeObserver* observer) { m_sourceOriginChangeObserver = observer; }
+    bool hasSourceOriginTracking() const { return m_sourceOriginChangeObserver; }
+#endif
+
 #if ENABLE(DFG_JIT)
     using ReferencedGlobalPropertyWatchpointSets = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
     ReferencedGlobalPropertyWatchpointSets m_referencedGlobalPropertyWatchpointSets;
@@ -637,6 +652,10 @@ public:
     RuntimeFlags m_runtimeFlags;
     WeakPtr<ConsoleClient> m_consoleClient;
     std::optional<unsigned> m_stackTraceLimit;
+#if ENABLE(RESOURCE_ANALYTICS)
+    SourceOriginChangeObserver* m_sourceOriginChangeObserver { nullptr };
+    Vector<SourceOrigin> m_sourceOriginStack;
+#endif
     Weak<FunctionExecutable> m_executableForCachedFunctionExecutableForFunctionConstructor;
 
     TrustedTypesEnforcement m_trustedTypesEnforcement { TrustedTypesEnforcement::None };
@@ -720,6 +739,11 @@ public:
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+
+#if ENABLE(RESOURCE_ANALYTICS)
+    JS_EXPORT_PRIVATE SourceOrigin currentSourceOrigin() const;
+    JS_EXPORT_PRIVATE WTF::CompletionHandlerCallingScope makeProgramExecutionScope(const SourceOrigin&);
+#endif
 
     bool canDeclareGlobalFunction(const Identifier&);
     template<BindingCreationContext> void createGlobalFunctionBinding(const Identifier&);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,20 @@
 
 #pragma once
 
-#include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
-#include "JSDOMConvertStrings.h"
-#include "ScheduledAction.h"
+#if ENABLE(RESOURCE_ANALYTICS)
 
-namespace WebCore {
+namespace JSC {
 
-template<> struct Converter<IDLScheduledAction> : DefaultConverter<IDLScheduledAction> {
-    using Result = ConversionResult<IDLScheduledAction>;
+class SourceOrigin;
 
-    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, const String& sink)
-    {
-        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-        auto scope = DECLARE_THROW_SCOPE(vm);
+class SourceOriginChangeObserver {
+public:
+    virtual ~SourceOriginChangeObserver() { }
 
-        if (!value.isCallable()) {
-            auto code = Converter<IDLStringContextTrustedScriptAdaptor<IDLDOMString>>::convert(lexicalGlobalObject, value, sink);
-            RETURN_IF_EXCEPTION(scope, Result::exception());
-            return ScheduledAction::create(globalObject, code.releaseReturnValue());
-        }
-
-        // The value must be an object at this point because no non-object values are callable.
-        ASSERT(value.isObject());
-        return ScheduledAction::create(globalObject, JSC::Strong<JSC::JSObject> { vm, JSC::asObject(value) });
-    }
+    virtual void willBeginProgramExecution(const SourceOrigin&) = 0;
+    virtual void didEndProgramExecution(const SourceOrigin&) = 0;
 };
 
-}
+} // namespace JSC
 
+#endif // ENABLE(RESOURCE_ANALYTICS)

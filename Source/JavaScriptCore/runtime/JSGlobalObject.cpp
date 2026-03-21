@@ -332,6 +332,11 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/MakeString.h>
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include "SourceOriginChangeObserver.h"
+#include <wtf/CompletionHandler.h>
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"
 #include "JSGlobalObjectInspectorController.h"
@@ -3805,6 +3810,36 @@ void JSGlobalObject::cachedFunctionExecutableForFunctionConstructor(FunctionExec
 Inspector::JSGlobalObjectInspectorController& JSGlobalObject::inspectorController() const
 {
     return *m_inspectorController.get();
+}
+#endif
+
+#if ENABLE(RESOURCE_ANALYTICS)
+SourceOrigin JSGlobalObject::currentSourceOrigin() const
+{
+    auto index = m_sourceOriginStack.findIf([](auto& sourceOrigin) {
+        return !sourceOrigin.isNull();
+    });
+    if (index == notFound)
+        return { };
+    return m_sourceOriginStack[index];
+}
+
+CompletionHandlerCallingScope JSGlobalObject::makeProgramExecutionScope(const SourceOrigin& origin)
+{
+    if (!m_sourceOriginChangeObserver)
+        return { };
+
+    if (origin.isNull() || (m_sourceOriginStack.size() && m_sourceOriginStack.last().url() == origin.url()))
+        return { };
+
+    m_sourceOriginChangeObserver->willBeginProgramExecution(origin);
+
+    m_sourceOriginStack.append(origin);
+
+    return { [this] {
+        auto origin = m_sourceOriginStack.takeLast();
+        m_sourceOriginChangeObserver->didEndProgramExecution(origin);
+    } };
 }
 #endif
 

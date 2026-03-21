@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ ResourceAnalyticsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that internals.currentSourceOrigin() returns the page URL for inline scripts.");
+
+if (window.internals) {
+    var origin = internals.currentSourceOrigin();
+    shouldBeTrue("origin.indexOf('source-origin-inline-script.html') !== -1");
+} else
+    debug("This test requires window.internals.");
+
+</script>
+</body>
+</html>

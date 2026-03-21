@@ -439,6 +439,10 @@
 #import "MockMediaDeviceRouteController.h"
 #endif
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include <JavaScriptCore/SourceOrigin.h>
+#endif
+
 using JSC::CallData;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
@@ -8330,6 +8334,16 @@ ExceptionOr<Vector<Internals::FrameDamage>> Internals::getFrameDamageHistory() c
     });
 
     return damageDetails;
+}
+#endif
+
+#if ENABLE(RESOURCE_ANALYTICS)
+String Internals::currentSourceOrigin()
+{
+    auto* document = contextDocument();
+    if (!document)
+        return String();
+    return document->currentSourceOrigin().string();
 }
 #endif
 

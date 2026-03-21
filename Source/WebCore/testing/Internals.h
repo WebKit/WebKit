@@ -1696,6 +1696,10 @@ public:
     ExceptionOr<Vector<FrameDamage>> getFrameDamageHistory() const;
 #endif // ENABLE(DAMAGE_TRACKING)
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    String currentSourceOrigin();
+#endif
+
     ExceptionOr<Ref<ReadableStream>> readableStreamFromMessagePort(JSDOMGlobalObject&, MessagePort&);
     ExceptionOr<Ref<WritableStream>> writableStreamFromMessagePort(JSDOMGlobalObject&, MessagePort&);
 

@@ -791,6 +791,8 @@ enum ContentsFormat {
 
     [Conditional=DAMAGE_TRACKING] sequence<FrameDamage> getFrameDamageHistory();
 
+    [Conditional=RESOURCE_ANALYTICS] DOMString currentSourceOrigin();
+
     // Flags for layerTreeAsText.
     const unsigned short LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1;
     const unsigned short LAYER_TREE_INCLUDES_TILE_CACHES = 2;

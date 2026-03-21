@@ -70,6 +70,10 @@ public:
         return jsEventListener && jsEventListener->wasCreatedFromMarkup();
     }
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    WEBCORE_EXPORT void setSourceOriginIfNeeded(ScriptExecutionContext&) const;
+#endif
+
 private:
     virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const;
 
@@ -144,6 +148,10 @@ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& 
     JSC::VM& vm = m_isolatedWorld->vm();
     Ref protect = const_cast<JSEventListener&>(*this);
     JSC::EnsureStillAliveScope protectedWrapper(m_wrapper.get());
+
+#if ENABLE(RESOURCE_ANALYTICS)
+    setSourceOriginIfNeeded(scriptExecutionContext);
+#endif
 
     if (!m_isInitialized) {
         ASSERT(!m_jsFunction);

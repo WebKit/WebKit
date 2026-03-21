@@ -102,6 +102,10 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include <JavaScriptCore/SourceOrigin.h>
+#endif
+
 namespace WebCore {
 using namespace Inspector;
 
@@ -1050,5 +1054,15 @@ WebCoreOpaqueRoot root(ScriptExecutionContext* context)
 {
     return WebCoreOpaqueRoot { context };
 }
+
+#if ENABLE(RESOURCE_ANALYTICS)
+JSC::SourceOrigin ScriptExecutionContext::currentSourceOrigin()
+{
+    if (auto* globalObject = this->globalObject())
+        return globalObject->currentSourceOrigin();
+
+    return { };
+}
+#endif
 
 } // namespace WebCore

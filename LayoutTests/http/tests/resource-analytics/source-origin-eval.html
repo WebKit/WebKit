@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ ResourceAnalyticsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that internals.currentSourceOrigin() tracks eval correctly. Direct eval should report the caller's source origin.");
+
+if (window.internals) {
+    var evalOrigin = eval("internals.currentSourceOrigin()");
+    shouldBeTrue("evalOrigin.indexOf('source-origin-eval.html') !== -1");
+
+    var nestedEvalOrigin = eval("eval('internals.currentSourceOrigin()')");
+    shouldBeTrue("nestedEvalOrigin.indexOf('source-origin-eval.html') !== -1");
+} else
+    debug("This test requires window.internals.");
+
+</script>
+</body>
+</html>

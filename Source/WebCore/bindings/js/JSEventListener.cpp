@@ -46,6 +46,10 @@
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
 
+#if ENABLE(RESOURCE_ANALYTICS)
+#include <wtf/CompletionHandler.h>
+#endif
+
 namespace WebCore {
 using namespace JSC;
 
@@ -57,6 +61,15 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
     , m_wrapper(wrapper)
     , m_isolatedWorld(&isolatedWorld)
 {
+#if ENABLE(RESOURCE_ANALYTICS)
+    auto* jsObject = function ? function : wrapper;
+    auto* globalObject = jsObject ? jsObject->globalObject() : nullptr;
+    if (globalObject && globalObject->hasSourceOriginTracking()) [[unlikely]] {
+        if (auto* jsDOMGlobalObject = jsDynamicCast<JSDOMGlobalObject*>(globalObject))
+            jsDOMGlobalObject->trackEventListenerOrigin(*this, jsDOMGlobalObject->currentSourceOrigin());
+    }
+#endif
+
     if (function) {
         ASSERT(wrapper);
         m_jsFunction = JSC::Weak<JSC::JSObject>(function);
@@ -129,6 +142,22 @@ static void handleBeforeUnloadEventReturnValue(BeforeUnloadEvent& event, const S
         event.setReturnValue(returnValue);
 }
 
+#if ENABLE(RESOURCE_ANALYTICS)
+void JSEventListener::setSourceOriginIfNeeded(ScriptExecutionContext& context) const
+{
+    if (!wasCreatedFromMarkup())
+        return;
+    auto* globalObject = context.globalObject();
+    if (!globalObject || !globalObject->hasSourceOriginTracking()) [[likely]]
+        return;
+    auto* jsDOMGlobalObject = jsDynamicCast<JSDOMGlobalObject*>(globalObject);
+    if (!jsDOMGlobalObject)
+        return;
+    if (jsDOMGlobalObject->originForEventListener(*this).isNull())
+        jsDOMGlobalObject->trackEventListenerOrigin(const_cast<JSEventListener&>(*this), JSC::SourceOrigin { context.url() });
+}
+#endif
+
 void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event)
 {
     if (scriptExecutionContext.isJSExecutionForbidden())
@@ -153,6 +182,11 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     if (!globalObject)
         return;
 
+#if ENABLE(RESOURCE_ANALYTICS)
+    CompletionHandlerCallingScope programScope;
+    if (globalObject->hasSourceOriginTracking()) [[unlikely]]
+        programScope = globalObject->makeProgramExecutionScope(globalObject->originForEventListener(*this));
+#endif
     if (scriptExecutionContext.isDocument()) {
         auto* window = jsCast<JSDOMWindow*>(globalObject);
         RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(window->wrapped());

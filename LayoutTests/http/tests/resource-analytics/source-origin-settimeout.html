@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ ResourceAnalyticsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that setTimeout callbacks carry the source origin of the script that scheduled them.");
+
+window.jsTestIsAsync = true;
+
+if (window.internals) {
+    var schedulerOrigin = internals.currentSourceOrigin();
+    shouldBeTrue("schedulerOrigin.indexOf('source-origin-settimeout.html') !== -1");
+
+    setTimeout(function() {
+        callbackOrigin = internals.currentSourceOrigin();
+        shouldBeTrue("callbackOrigin.indexOf('source-origin-settimeout.html') !== -1");
+        finishJSTest();
+    }, 0);
+} else {
+    debug("This test requires window.internals.");
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>
