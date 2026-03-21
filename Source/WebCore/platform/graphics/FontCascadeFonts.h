@@ -25,7 +25,7 @@
 #include <WebCore/FontRanges.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GlyphPage.h>
-#include <WebCore/WidthCache.h>
+#include <WebCore/TextMeasurementCache.h>
 #include <wtf/EnumeratedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
@@ -73,6 +73,7 @@ public:
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
     unsigned generation() const { return m_generation; }
 
+    using WidthCache = TextMeasurementCache<float>;
     WidthCache& widthCache() { return m_widthCache; }
     const WidthCache& widthCache() const { return m_widthCache; }
 
@@ -106,7 +107,7 @@ private:
 
         bool isNull() const { return !m_singleFont && !m_mixedFont; }
         bool isMixedFont() const { return !!m_mixedFont; }
-    
+
     private:
         // Only one of these is non-null.
         RefPtr<GlyphPage> m_singleFont;

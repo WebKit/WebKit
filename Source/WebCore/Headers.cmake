@@ -2756,6 +2756,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/SystemFontDatabase.h
     platform/graphics/SystemImage.h
     platform/graphics/TabSize.h
+    platform/graphics/TextMeasurementCache.h
     platform/graphics/TextRun.h
     platform/graphics/TextRunHash.h
     platform/graphics/TextTrackRepresentation.h
@@ -2771,7 +2772,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/VideoTarget.h
     platform/graphics/VideoTrackPrivate.h
     platform/graphics/VideoTrackPrivateClient.h
-    platform/graphics/WidthCache.h
     platform/graphics/WidthIterator.h
     platform/graphics/WindRule.h
 

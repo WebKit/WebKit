@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WidthCache_h
-#define WidthCache_h
+#pragma once
 
 #include <WebCore/TextRun.h>
 #include <WebCore/TextSpacing.h>
@@ -40,9 +39,8 @@
 
 namespace WebCore {
 
-struct GlyphOverflow;
-
-class WidthCache {
+template <typename CachedType>
+class TextMeasurementCache {
 private:
     // Used to optimize small strings as hash table keys. Avoids malloc'ing an out-of-line StringImpl.
     class SmallStringKey {
@@ -105,13 +103,13 @@ private:
     };
 
 public:
-    WidthCache()
+    TextMeasurementCache()
         : m_interval(s_maxInterval)
         , m_countdown(m_interval)
     {
     }
 
-    float* add(StringView text, float entry)
+    CachedType* add(StringView text, const CachedType& entry)
     {
         unsigned length = text.length();
 
@@ -130,16 +128,13 @@ public:
         return addSlowCase(text, entry);
     }
 
-    float* add(const TextRun& run, float entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, bool hasTextSpacing, GlyphOverflow* glyphOverflow)
+    CachedType* add(const TextRun& run, const CachedType& entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, bool hasTextSpacing)
     {
         // The width cache is not really profitable unless we're doing expensive glyph transformations.
         if (!hasKerningOrLigatures)
             return nullptr;
         // Word spacing and letter spacing can change the width of a word.
         if (hasWordSpacingOrLetterSpacing)
-            return nullptr;
-        // Since this is just a width cache, we don't have enough information to satisfy glyph queries.
-        if (glyphOverflow)
             return nullptr;
         // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
         if (run.allowTabs())
@@ -159,14 +154,14 @@ public:
 
 private:
 
-    float* addSlowCase(StringView text, float entry)
+    CachedType* addSlowCase(StringView text, const CachedType& entry)
     {
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             return nullptr;
 
         unsigned length = text.length();
         bool isNewEntry;
-        float* value;
+        CachedType* value;
         if (length == 1) {
             // The map use 0 for empty key, thus we do +1 here to avoid conflicting against empty key.
             // This is fine since the key is uint32_t while character is char16_t. So +1 never causes overflow.
@@ -217,8 +212,8 @@ private:
         return false;
     }
 
-    using Map = HashMap<SmallStringKey, float, DefaultHash<SmallStringKey>, SmallStringKeyHashTraits, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
-    using SingleCharMap = HashMap<uint32_t, float, DefaultHash<uint32_t>, HashTraits<uint32_t>, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
+    using Map = HashMap<SmallStringKey, CachedType, DefaultHash<SmallStringKey>, SmallStringKeyHashTraits>;
+    using SingleCharMap = HashMap<uint32_t, CachedType, DefaultHash<uint32_t>, HashTraits<uint32_t>>;
 
     static constexpr int s_minInterval = -3; // A cache hit pays for about 3 cache misses.
     static constexpr int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
@@ -232,5 +227,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WidthCache_h
