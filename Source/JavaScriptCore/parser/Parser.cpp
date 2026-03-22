@@ -5126,7 +5126,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::tryParseArguments
     // the clause with token type IDENT.
     if (currentScope()->isStaticBlock()
         || m_parserState.isParsingClassFieldInitializer
-        || currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext) [[unlikely]]
+        || closestScopeOwningArguments()->evalContextType() == EvalContextType::InstanceFieldEvalContext) [[unlikely]]
         return 0;
 
     SavePoint argumentsSavePoint = createSavePoint(context);
@@ -5211,8 +5211,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     identifierExpression:
         JSTextPosition start = tokenStartPosition();
         const Identifier* ident = m_token.m_data.ident;
-        if (currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext) [[unlikely]]
-            failIfTrue(*ident == m_vm.propertyNames->arguments, "arguments is not valid in this context");
+        if (*ident == m_vm.propertyNames->arguments) [[unlikely]]
+            failIfTrue(closestScopeOwningArguments()->evalContextType() == EvalContextType::InstanceFieldEvalContext, "arguments is not valid in this context");
         JSTokenLocation location(tokenLocation());
         next();
 

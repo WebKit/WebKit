@@ -213,11 +213,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         }
 
         EvalContextType evalContextType;
-        if (callerUnlinkedCodeBlock->parseMode() == SourceParseMode::ClassFieldInitializerMode)
-            evalContextType = EvalContextType::InstanceFieldEvalContext;
-        else if (isFunctionParseMode(callerUnlinkedCodeBlock->parseMode()))
-            evalContextType = EvalContextType::FunctionEvalContext;
-        else if (callerUnlinkedCodeBlock->codeType() == EvalCode)
+        if (isFunctionParseMode(callerUnlinkedCodeBlock->parseMode()) || callerUnlinkedCodeBlock->codeType() == EvalCode)
             evalContextType = callerUnlinkedCodeBlock->evalContextType();
         else
             evalContextType = EvalContextType::None;

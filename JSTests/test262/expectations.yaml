@@ -798,18 +798,6 @@ test/language/expressions/call/tco-non-eval-global.js:
   default: 'RangeError: Maximum call stack size exceeded.'
 test/language/expressions/call/tco-non-eval-with.js:
   default: 'RangeError: Maximum call stack size exceeded.'
-test/language/expressions/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/expressions/class/elements/arrow-body-private-direct-eval-err-contains-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/expressions/class/elements/nested-direct-eval-err-contains-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/expressions/class/elements/nested-private-direct-eval-err-contains-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
 test/language/expressions/delete/super-property-uninitialized-this.js:
   default: 'Test262Error: Expected a ReferenceError but got a Test262Error'
   strict mode: 'Test262Error: Expected a ReferenceError but got a Test262Error'
@@ -885,18 +873,6 @@ test/language/statements/async-generator/yield-star-promise-not-unwrapped.js:
 test/language/statements/async-generator/yield-star-return-then-getter-ticks.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Actual [start, tick 1, tick 2, get then, tick 3, get return, get then] and expected [start, tick 1, get then, tick 2, get return, get then, tick 3] should have the same contents. Ticks for return with thenable getter'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Actual [start, tick 1, tick 2, get then, tick 3, get return, get then] and expected [start, tick 1, get then, tick 2, get return, get then, tick 3] should have the same contents. Ticks for return with thenable getter'
-test/language/statements/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/statements/class/elements/arrow-body-private-direct-eval-err-contains-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/statements/class/elements/nested-direct-eval-err-contains-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/statements/class/elements/nested-private-direct-eval-err-contains-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
 test/language/statements/class/elements/private-class-field-on-nonextensible-objects.js:
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/class/subclass/default-constructor-spread-override.js:
@@ -911,11 +887,6 @@ test/language/statements/for-in/head-lhs-let.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
-test/language/statements/for-of/head-await-using-bound-names-fordecl-tdz.js:
-  default: "SyntaxError: Unexpected identifier 'x'. Expected either 'in' or 'of' in enumeration syntax."
-  strict mode: "SyntaxError: Unexpected identifier 'x'. Expected either 'in' or 'of' in enumeration syntax."
-test/language/statements/for-of/head-await-using-fresh-binding-per-iteration.js:
-  module: "SyntaxError: Unexpected identifier 'x'. Expected either 'in' or 'of' in enumeration syntax."
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."
 test/language/statements/with/get-binding-value-call-with-proxy-env.js:

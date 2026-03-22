@@ -1270,6 +1270,19 @@ private:
         return scope;
     }
 
+    // Walk to the closest scope that has its own `arguments` binding (or the top-level
+    // scope). Arrow functions and lexical scopes are transparent for `arguments`.
+    Scope* closestScopeOwningArguments()
+    {
+        Scope* scope = currentScope();
+        while (scope->containingScope()) {
+            if (scope->isFunctionBoundary() && !scope->isArrowFunctionBoundary())
+                break;
+            scope = scope->containingScope();
+        }
+        return scope;
+    }
+
     Scope* closestClassScopeOrTopLevelScope()
     {
         Scope* scope = currentScope();

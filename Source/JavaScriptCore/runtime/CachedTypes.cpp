@@ -1937,6 +1937,7 @@ public:
     unsigned scriptMode() const { return m_scriptMode; }
     unsigned superBinding() const { return m_superBinding; }
     unsigned derivedContextType() const { return m_derivedContextType; }
+    unsigned evalContextType() const { return m_evalContextType; }
     unsigned inlineAttribute() const { return m_inlineAttribute; }
     unsigned needsClassFieldInitializer() const { return m_needsClassFieldInitializer; }
     unsigned privateBrandRequirement() const { return m_privateBrandRequirement; }
@@ -1972,6 +1973,7 @@ private:
     unsigned m_constructorKind : 2;
     unsigned m_functionMode : 2; // FunctionMode
     unsigned m_derivedContextType: 2;
+    unsigned m_evalContextType : 2;
     unsigned m_inlineAttribute : 1;
     unsigned m_needsClassFieldInitializer : 1;
     unsigned m_implementationVisibility : bitWidthOfImplementationVisibility;
@@ -2349,6 +2351,7 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
     m_scriptMode = executable.m_scriptMode;
     m_superBinding = executable.m_superBinding;
     m_derivedContextType = executable.m_derivedContextType;
+    m_evalContextType = executable.m_evalContextType;
     m_inlineAttribute = executable.m_inlineAttribute;
     m_needsClassFieldInitializer = executable.m_needsClassFieldInitializer;
     m_implementationVisibility = executable.m_implementationVisibility;
@@ -2403,6 +2406,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_functionMode(cachedExecutable.functionMode())
     , m_derivedContextType(cachedExecutable.derivedContextType())
     , m_inlineAttribute(cachedExecutable.inlineAttribute())
+    , m_evalContextType(cachedExecutable.evalContextType())
     , m_unlinkedCodeBlockForCall()
     , m_unlinkedCodeBlockForConstruct()
 
