@@ -238,7 +238,9 @@ ALWAYS_INLINE JSString* fastArrayJoin(JSGlobalObject* globalObject, JSObject* th
 
 inline bool canUseDefaultArrayJoinForToString(JSObject* thisObject)
 {
-    JSGlobalObject* globalObject = thisObject->globalObject();
+    JSGlobalObject* globalObject = thisObject->realmMayBeNull();
+    if (!globalObject)
+        return false;
 
     if (!globalObject->arrayJoinWatchpointSet().isStillValid())
         return false;

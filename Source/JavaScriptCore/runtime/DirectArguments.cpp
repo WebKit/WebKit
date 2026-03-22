@@ -178,7 +178,7 @@ unsigned DirectArguments::mappedArgumentsSize()
 bool DirectArguments::isIteratorProtocolFastAndNonObservable()
 {
     Structure* structure = this->structure();
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     if (!globalObject->isArgumentsPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 

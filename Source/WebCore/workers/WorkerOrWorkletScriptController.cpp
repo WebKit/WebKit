@@ -610,18 +610,18 @@ void WorkerOrWorkletScriptController::initScriptWithSubclass()
     RefPtr globalScope = m_globalScope.get();
     SUPPRESS_MEMORY_UNSAFE_CAST auto& scope = static_cast<GlobalScope&>(*globalScope);
     m_globalScopeWrapper.set(*m_vm, JSGlobalScope::create(*m_vm, structure, scope, proxy));
-    contextPrototypeStructure->setGlobalObject(*m_vm, m_globalScopeWrapper.get());
-    ASSERT(structure->globalObject() == m_globalScopeWrapper);
-    ASSERT(m_globalScopeWrapper->structure()->globalObject() == m_globalScopeWrapper);
-    contextPrototype->structure()->setGlobalObject(*m_vm, m_globalScopeWrapper.get());
+    contextPrototypeStructure->setRealm(*m_vm, m_globalScopeWrapper.get());
+    ASSERT(structure->realm() == m_globalScopeWrapper);
+    ASSERT(m_globalScopeWrapper->realmMayBeNull() == m_globalScopeWrapper);
+    contextPrototype->structure()->setRealm(*m_vm, m_globalScopeWrapper.get());
     auto* globalScopePrototype = JSGlobalScope::prototype(*m_vm, *m_globalScopeWrapper.get());
     globalScopePrototype->didBecomePrototype(*m_vm);
     contextPrototype->structure()->setPrototypeWithoutTransition(*m_vm, globalScopePrototype);
 
     proxy->setTarget(*m_vm, m_globalScopeWrapper.get());
 
-    ASSERT(m_globalScopeWrapper->globalObject() == m_globalScopeWrapper);
-    ASSERT(asObject(m_globalScopeWrapper->getPrototypeDirect())->globalObject() == m_globalScopeWrapper);
+    ASSERT(m_globalScopeWrapper->realmMayBeNull() == m_globalScopeWrapper);
+    ASSERT(asObject(m_globalScopeWrapper->getPrototypeDirect())->realmMayBeNull() == m_globalScopeWrapper);
 
     m_consoleClient = makeUnique<WorkerConsoleClient>(*globalScope);
     m_globalScopeWrapper->setConsoleClient(*m_consoleClient);

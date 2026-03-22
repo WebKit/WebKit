@@ -40,7 +40,7 @@ const ClassInfo ProxyConstructor::s_info = { "Proxy"_s, &Base::s_info, nullptr, 
 ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
 {
     ProxyConstructor* constructor = new (NotNull, allocateCell<ProxyConstructor>(vm)) ProxyConstructor(vm, structure);
-    constructor->finishCreation(vm, structure->globalObject());
+    constructor->finishCreation(vm, structure->realm());
     return constructor;
 }
 

@@ -41,7 +41,7 @@ JSSet* JSSet::clone(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 
 bool JSSet::isAddFastAndNonObservable(Structure* structure)
 {
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     if (!globalObject->isSetPrototypeAddFastAndNonObservable())
         return false;
 

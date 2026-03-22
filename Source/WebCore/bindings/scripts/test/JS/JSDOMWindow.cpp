@@ -199,9 +199,9 @@ void JSDOMWindow::finishCreation(VM& vm, JSWindowProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 
-    auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext();
+    auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext();
 
-    if (((scriptExecutionContext && scriptExecutionContext->isSecureContext()) && TestEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())))
+    if (((scriptExecutionContext && scriptExecutionContext->isSecureContext()) && TestEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())))
         putDirectCustomAccessor(vm, builtinNames(vm).TestEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsDOMWindow_TestEnabledForContextConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
 }
 
@@ -217,7 +217,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowConstructor, (JSGlobalObject* lexicalGlobalO
     auto* prototype = jsDynamicCast<JSDOMWindowPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSDOMWindow::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSDOMWindow::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsDOMWindow_DOMWindowConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)

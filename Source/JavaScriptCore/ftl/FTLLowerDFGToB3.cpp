@@ -10006,7 +10006,7 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
         ValueFromBlock derivedStructure = m_out.anchor(structure);
-        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_globalObject), weakPointer(globalObject)), usually(fastAllocationCase), rarely(slowCase));
+        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_realm), weakPointer(globalObject)), usually(fastAllocationCase), rarely(slowCase));
 
         m_out.appendTo(fastAllocationCase, slowCase);
         LValue promise;
@@ -10061,7 +10061,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(JSClass::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
-        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_globalObject), weakPointer(globalObject)), usually(fastAllocationCase), rarely(slowCase));
+        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_realm), weakPointer(globalObject)), usually(fastAllocationCase), rarely(slowCase));
 
         m_out.appendTo(fastAllocationCase, slowCase);
         LValue object = allocateObject<JSClass>(structure, m_out.intPtrZero, slowCase);
@@ -12097,7 +12097,7 @@ IGNORE_CLANG_WARNINGS_END
     void compileGetGlobalObject()
     {
         LValue structure = loadStructure(lowObject(m_node->child1()));
-        setJSValue(m_out.loadPtr(structure, m_heaps.Structure_globalObject));
+        setJSValue(m_out.loadPtr(structure, m_heaps.Structure_realm));
     }
 
     void compileGetGlobalThis()
@@ -12987,7 +12987,7 @@ IGNORE_CLANG_WARNINGS_END
         if (JSValue calleeValue = m_state.forNode(calleeEdge).value()) {
             if (auto* callee = jsDynamicCast<JSFunction*>(calleeValue)) {
                 m_graph.freeze(callee);
-                calleeScope = callee->globalObject();
+                calleeScope = callee->realm();
             }
         }
         TaggedNativeFunction nativeFunction;
@@ -21757,7 +21757,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 isTruthyObject = m_out.notEqual(
                     weakPointer(m_graph.globalObjectFor(m_origin.semantic)),
-                    m_out.loadPtr(loadStructure(value), m_heaps.Structure_globalObject));
+                    m_out.loadPtr(loadStructure(value), m_heaps.Structure_realm));
             }
             results.append(m_out.anchor(isTruthyObject));
             m_out.jump(continuation);
@@ -21868,7 +21868,7 @@ IGNORE_CLANG_WARNINGS_END
             results.append(m_out.anchor(
                 m_out.equal(
                     weakPointer(m_graph.globalObjectFor(m_origin.semantic)),
-                    m_out.loadPtr(structure, m_heaps.Structure_globalObject))));
+                    m_out.loadPtr(structure, m_heaps.Structure_realm))));
             m_out.jump(continuation);
         }
 

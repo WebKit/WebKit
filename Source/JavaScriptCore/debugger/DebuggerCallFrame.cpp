@@ -113,7 +113,7 @@ RefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
 
 JSGlobalObject* DebuggerCallFrame::globalObject(VM& vm)
 {
-    return scope(vm)->globalObject();
+    return scope(vm)->realm();
 }
 
 SourceID DebuggerCallFrame::sourceID() const
@@ -266,7 +266,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
     JSValue result;
     {
         auto* jsScope = debuggerCallFrame->scope(vm)->jsScope();
-        VMEntryScope entryScope(vm, jsScope->globalObject());
+        VMEntryScope entryScope(vm, jsScope->realm());
         if (vm.disallowVMEntryCount) [[unlikely]]
             result = VM::checkVMEntryPermission();
         else

@@ -76,13 +76,12 @@ public:
     const Wasm::RTT& rtt() const LIFETIME_BOUND { return m_rtt; }
     const Wasm::TypeDefinition& typeDefinition() const LIFETIME_BOUND { return m_type; }
 
-    static WebAssemblyGCStructure* create(VM&, JSGlobalObject*, const TypeInfo&, const ClassInfo*, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& expandedType, Ref<const Wasm::RTT>&&);
+    static WebAssemblyGCStructure* create(VM&, const TypeInfo&, const ClassInfo*, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& expandedType, Ref<const Wasm::RTT>&&);
 
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyGCStructure, m_rtt); }
 
 private:
-    WebAssemblyGCStructure(VM&, JSGlobalObject*, const TypeInfo&, const ClassInfo*, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& expandedType, Ref<const Wasm::RTT>&&);
-    WebAssemblyGCStructure(VM&, WebAssemblyGCStructure* previous);
+    WebAssemblyGCStructure(VM&, const TypeInfo&, const ClassInfo*, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& expandedType, Ref<const Wasm::RTT>&&);
 
     const Ref<const Wasm::RTT> m_rtt;
     const Ref<const Wasm::TypeDefinition> m_type;

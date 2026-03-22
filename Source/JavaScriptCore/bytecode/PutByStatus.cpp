@@ -269,7 +269,7 @@ PutByStatus PutByStatus::computeForPropertyInlineCache
                     currStructure = object->structure();
 
                 // For now, we only support cases which JSGlobalObject is the same to the currently profiledBlock.
-                if (currStructure->globalObject() != profiledBlock->globalObject())
+                if (currStructure->realm() != profiledBlock->globalObject())
                     return PutByStatus(JSC::slowVersion(summary), *propertyCache);
 
                 auto customAccessorSetter = access.as<GetterSetterAccessCase>().customAccessor();

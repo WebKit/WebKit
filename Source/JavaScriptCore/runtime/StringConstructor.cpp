@@ -67,7 +67,7 @@ void StringConstructor::finishCreation(VM& vm, StringPrototype* stringPrototype)
 
 StringConstructor* StringConstructor::create(VM& vm, Structure* structure, StringPrototype* stringPrototype)
 {
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     NativeExecutable* executable = vm.getHostFunction(callStringConstructor, ImplementationVisibility::Public, StringConstructorIntrinsic, constructWithStringConstructor, nullptr, vm.propertyNames->String.string());
     StringConstructor* constructor = new (NotNull, allocateCell<StringConstructor>(vm)) StringConstructor(vm, executable, globalObject, structure);
     constructor->finishCreation(vm, stringPrototype);

@@ -70,7 +70,7 @@ void BooleanConstructor::finishCreation(VM& vm, BooleanPrototype* booleanPrototy
 
 BooleanConstructor* BooleanConstructor::create(VM& vm, Structure* structure, BooleanPrototype* booleanPrototype)
 {
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     NativeExecutable* executable = vm.getHostFunction(callBooleanConstructor, ImplementationVisibility::Public, BooleanConstructorIntrinsic, constructWithBooleanConstructor, nullptr, vm.propertyNames->Boolean.string());
     BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(vm)) BooleanConstructor(vm, executable, globalObject, structure);
     constructor->finishCreation(vm, booleanPrototype);

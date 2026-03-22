@@ -845,7 +845,7 @@ static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalO
                     // Figure out what to do here. We can probably get the global object
                     // from the top-most Wasm Instance. https://bugs.webkit.org/show_bug.cgi?id=165721
                     if (visitor->callee().isCell() && visitor->callee().asCell()->isObject())
-                        m_globalObject = jsCast<JSObject*>(visitor->callee().asCell())->globalObject();
+                        m_globalObject = jsCast<JSObject*>(visitor->callee().asCell())->realm();
                 }
                 return IterationStatus::Done;
             }

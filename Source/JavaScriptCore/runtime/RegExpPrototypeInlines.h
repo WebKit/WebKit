@@ -28,7 +28,10 @@ namespace JSC {
 
 ALWAYS_INLINE bool regExpExecWatchpointIsValid(VM& vm, JSObject* thisObject)
 {
-    JSGlobalObject* globalObject = thisObject->globalObject();
+    JSGlobalObject* globalObject = thisObject->realmMayBeNull();
+    if (!globalObject)
+        return false;
+
     RegExpPrototype* regExpPrototype = globalObject->regExpPrototype();
 
     ASSERT(globalObject->regExpPrimordialPropertiesWatchpointSet().state() != ClearWatchpoint);
@@ -46,7 +49,7 @@ ALWAYS_INLINE bool regExpExecWatchpointIsValid(VM& vm, JSObject* thisObject)
 
 ALWAYS_INLINE bool regExpMatchAllWathpointIsValid(RegExpObject* regExpObject)
 {
-    JSGlobalObject* globalObject = regExpObject->globalObject();
+    JSGlobalObject* globalObject = regExpObject->realm();
     RegExpPrototype* regExpPrototype = globalObject->regExpPrototype();
 
     if (regExpPrototype != regExpObject->getPrototypeDirect())

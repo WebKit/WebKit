@@ -328,7 +328,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor, (JSGlobalObject* 
     auto* prototype = jsDynamicCast<JSTestNamedGetterCallWithPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestNamedGetterCallWith::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestNamedGetterCallWith::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestNamedGetterCallWith::subspaceForImpl(JSC::VM& vm)

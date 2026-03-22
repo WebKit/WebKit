@@ -715,7 +715,7 @@ EncodedJSValue JSCallbackObject<Parent>::staticFunctionGetterImpl(JSGlobalObject
             if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(globalObject)) {
                 if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
                     if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
-                        JSObject* o = JSCallbackFunction::create(vm, thisObj->globalObject(), callAsFunction, name);
+                        JSObject* o = JSCallbackFunction::create(vm, thisObj->realm(), callAsFunction, name);
                         thisObj->putDirect(vm, propertyName, o, entry->attributes);
                         return JSValue::encode(o);
                     }

@@ -162,7 +162,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierOperationNamedToStringConstructor, (JS
     auto* prototype = jsDynamicCast<JSTestStringifierOperationNamedToStringPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestStringifierOperationNamedToString::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestStringifierOperationNamedToString::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSC::EncodedJSValue jsTestStringifierOperationNamedToStringPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierOperationNamedToString>::ClassParameter castedThis)

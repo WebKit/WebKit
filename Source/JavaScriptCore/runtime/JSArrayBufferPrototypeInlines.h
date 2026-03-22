@@ -37,7 +37,7 @@ static constexpr bool verbose = false;
 
 ALWAYS_INLINE bool speciesWatchpointIsValid(JSObject* thisObject, ArrayBufferSharingMode mode)
 {
-    JSGlobalObject* globalObject = thisObject->globalObject();
+    JSGlobalObject* globalObject = thisObject->realm();
     auto* prototype = globalObject->arrayBufferPrototype(mode);
 
     if (globalObject->arrayBufferSpeciesWatchpointSet(mode).state() == ClearWatchpoint) {

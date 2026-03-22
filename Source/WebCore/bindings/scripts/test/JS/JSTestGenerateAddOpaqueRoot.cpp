@@ -160,7 +160,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateAddOpaqueRootConstructor, (JSGlobalObject
     auto* prototype = jsDynamicCast<JSTestGenerateAddOpaqueRootPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestGenerateAddOpaqueRoot::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestGenerateAddOpaqueRoot::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestGenerateAddOpaqueRoot_someAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGenerateAddOpaqueRoot& thisObject)

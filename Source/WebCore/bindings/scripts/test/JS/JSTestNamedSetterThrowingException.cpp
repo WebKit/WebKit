@@ -347,7 +347,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterThrowingExceptionConstructor, (JSGloba
     auto* prototype = jsDynamicCast<JSTestNamedSetterThrowingExceptionPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestNamedSetterThrowingException::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestNamedSetterThrowingException::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestNamedSetterThrowingException::subspaceForImpl(JSC::VM& vm)

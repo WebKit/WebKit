@@ -82,7 +82,7 @@ template<typename JSClass> inline JSC::Structure* JSDOMBuiltinConstructor<JSClas
     auto& vm = JSC::getVM(lexicalGlobalObject);
 
     if (newTarget == this) [[likely]]
-        return getDOMStructure<JSClass>(vm, *globalObject());
+        return getDOMStructure<JSClass>(vm, *realm());
 
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* newTargetGlobalObject = JSC::getFunctionRealm(lexicalGlobalObject, newTarget);
@@ -99,7 +99,7 @@ template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES J
     if (!structure) [[unlikely]]
         return { };
 
-    auto* jsObject = JSClass::create(structure, castedThis->globalObject());
+    auto* jsObject = JSClass::create(structure, castedThis->realm());
     JSC::call(lexicalGlobalObject, castedThis->initializeFunction(), jsObject, JSC::ArgList(callFrame), "This error should never occur: initialize function is guaranteed to be callable."_s);
     return JSC::JSValue::encode(jsObject);
 }

@@ -102,7 +102,7 @@ void JSShadowRealmGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 
-    if (jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().webAPIsInShadowRealmEnabled)
+    if (jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->settingsValues().webAPIsInShadowRealmEnabled)
         putDirectCustomAccessor(vm, builtinNames(vm).ExposedStarPublicName(), CustomGetterSetter::create(vm, jsShadowRealmGlobalScope_ExposedStarConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
 }
 
@@ -124,7 +124,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScopeConstructor, (JSGlobalObject* l
     auto* prototype = jsDynamicCast<JSShadowRealmGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSShadowRealmGlobalScope::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSShadowRealmGlobalScope::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsShadowRealmGlobalScope_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSShadowRealmGlobalScope& thisObject)

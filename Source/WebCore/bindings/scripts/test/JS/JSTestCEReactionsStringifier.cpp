@@ -170,7 +170,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifierConstructor, (JSGlobalObjec
     auto* prototype = jsDynamicCast<JSTestCEReactionsStringifierPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestCEReactionsStringifier::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestCEReactionsStringifier::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestCEReactionsStringifier_valueGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject)

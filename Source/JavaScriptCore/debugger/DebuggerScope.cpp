@@ -37,7 +37,7 @@ const ClassInfo DebuggerScope::s_info = { "DebuggerScope"_s, &Base::s_info, null
 
 DebuggerScope* DebuggerScope::create(VM& vm, JSScope* scope)
 {
-    Structure* structure = scope->globalObject()->debuggerScopeStructure();
+    Structure* structure = scope->realm()->debuggerScopeStructure();
     DebuggerScope* debuggerScope = new (NotNull, allocateCell<DebuggerScope>(vm)) DebuggerScope(vm, structure, scope);
     debuggerScope->finishCreation(vm);
     return debuggerScope;

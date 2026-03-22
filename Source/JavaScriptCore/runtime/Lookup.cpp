@@ -28,7 +28,7 @@ namespace JSC {
 
 void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObject, PropertyName propertyName)
 {
-    JSGlobalObject* globalObject = thisObject.globalObject();
+    JSGlobalObject* globalObject = thisObject.realm();
     JSObject* getter = nullptr;
     if (value.hasGetter()) {
         if (value.attributes() & PropertyAttribute::Builtin)
@@ -46,7 +46,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
 
 bool setUpStaticFunctionSlot(VM& vm, const ClassInfo* classInfo, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
-    ASSERT(thisObject->globalObject());
+    ASSERT(thisObject->realm());
     ASSERT(entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyProperty);
     unsigned attributes;
     bool isAccessor = entry->attributes() & PropertyAttribute::Accessor;

@@ -487,7 +487,7 @@ private:
                                 return;
                             }
 
-                            if (structure->globalObject() != globalObject) {
+                            if (structure->realm() != globalObject) {
                                 canFold = false;
                                 return;
                             }
@@ -512,7 +512,7 @@ private:
                     bool canFold = !abstractValue.m_structure.isClear();
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     abstractValue.m_structure.forEach([&](RegisteredStructure structure) {
-                        if (structure->globalObject() != globalObject) {
+                        if (structure->realm() != globalObject) {
                             canFold = false;
                             return;
                         }
@@ -991,7 +991,7 @@ private:
                                 Structure* structure = rareData->internalFunctionAllocationStructure();
                                 if (structure
                                     && structure->classInfoForCells() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
-                                    && structure->globalObject() == globalObject) {
+                                    && structure->realm() == globalObject) {
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                     node->convertToNewInternalFieldObject(m_graph.registerStructure(structure));
@@ -1016,7 +1016,7 @@ private:
                                     Structure* structure = rareData->internalFunctionAllocationStructure();
                                     if (structure
                                         && structure->classInfoForCells() == classInfo
-                                        && structure->globalObject() == globalObject) {
+                                        && structure->realm() == globalObject) {
                                         m_graph.freeze(rareData);
                                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                         node->convertToNewInternalFieldObject(m_graph.registerStructure(structure));
@@ -1415,7 +1415,7 @@ private:
                     auto* newTarget = jsDynamicCast<JSFunction*>(newTargetValue);
                     if (callee && newTarget) {
                         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                        if (callee->globalObject() == globalObject) {
+                        if (callee->realmMayBeNull() == globalObject) {
                             if (FunctionRareData* rareData = newTarget->rareData()) {
                                 if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
                                     Structure* structure = rareData->internalFunctionAllocationStructure();

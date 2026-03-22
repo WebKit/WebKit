@@ -323,7 +323,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyOverrideBuiltInsConstructor,
     auto* prototype = jsDynamicCast<JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestNamedSetterWithLegacyOverrideBuiltIns::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestNamedSetterWithLegacyOverrideBuiltIns::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestNamedSetterWithLegacyOverrideBuiltIns::subspaceForImpl(JSC::VM& vm)

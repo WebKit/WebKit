@@ -2515,8 +2515,10 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarGlobalObjectFor, (JSGlobalObject* globalO
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
     JSValue arg = callFrame->argument(0);
-    if (arg.isObject())
-        return JSValue::encode(asObject(arg)->globalObject()->globalThis());
+    if (arg.isObject()) {
+        if (auto* realmGlobalObject = asObject(arg)->realmMayBeNull())
+            return JSValue::encode(realmGlobalObject->globalThis());
+    }
 
     return JSValue::encode(jsUndefined());
 }
@@ -2957,7 +2959,7 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
     auto ticket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::AtSomePoint, vm, callback, { });
     auto dispatch = [callback, ticket] {
         callback->vm().deferredWorkTimer->scheduleWorkSoon(ticket, [callback](DeferredWorkTimer::Ticket) {
-            JSGlobalObject* globalObject = callback->globalObject();
+            JSGlobalObject* globalObject = callback->realm();
             MarkedArgumentBuffer args;
             call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
         });

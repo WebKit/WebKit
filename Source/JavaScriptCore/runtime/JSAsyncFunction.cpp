@@ -43,7 +43,7 @@ JSAsyncFunction::JSAsyncFunction(VM& vm, FunctionExecutable* executable, JSScope
 JSAsyncFunction* JSAsyncFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSAsyncFunction* asyncFunction = new (NotNull, allocateCell<JSAsyncFunction>(vm)) JSAsyncFunction(vm, executable, scope, structure);
-    ASSERT(asyncFunction->structure()->globalObject());
+    ASSERT(asyncFunction->realm());
     asyncFunction->finishCreation(vm);
     return asyncFunction;
 }

@@ -103,7 +103,7 @@ WebKitJSHandle::WebKitJSHandle(JSC::JSObject* object)
 {
     auto addResult = handleMap().ensure(m_identifier, [&] {
         return JSHandleData {
-            JSC::Strong<JSC::JSObject> { object->globalObject()->vm(), object },
+            JSC::Strong<JSC::JSObject> { object->vm(), object },
             0 // Immediately incremented.
         };
     });

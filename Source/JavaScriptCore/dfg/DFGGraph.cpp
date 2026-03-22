@@ -2025,7 +2025,7 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
     ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
     bool allGood = true;
     value.m_structure.forEach([&] (RegisteredStructure structure) {
-        allGood &= structure->globalObject() == globalObject 
+        allGood &= structure->realm() == globalObject 
             && structure->hasMonoProto()
             && structure->storedPrototype() == arrayPrototype
             && !structure->isDictionary()

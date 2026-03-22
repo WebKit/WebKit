@@ -455,7 +455,7 @@ WASM_IPINT_EXTERN_CPP_DECL(throw_exception, CallFrame* callFrame, IPIntStackEntr
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(!throwScope.exception());
 
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     Ref<const Wasm::Tag> tag = instance->tag(exceptionIndex);
 
     FixedVector<uint64_t> values(tag->parameterBufferSize());
@@ -477,7 +477,7 @@ WASM_IPINT_EXTERN_CPP_DECL(rethrow_exception, CallFrame* callFrame, IPIntStackEn
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -503,7 +503,7 @@ WASM_IPINT_EXTERN_CPP_DECL(throw_ref, CallFrame* callFrame, EncodedJSValue exnre
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 

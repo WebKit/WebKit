@@ -3940,7 +3940,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         Structure* structure = rareData->internalFunctionAllocationStructure();
                         if (structure
                             && structure->classInfoForCells() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
-                            && structure->globalObject() == globalObject) {
+                            && structure->realm() == globalObject) {
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                             didFoldClobberWorld();
@@ -3967,7 +3967,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                             Structure* structure = rareData->internalFunctionAllocationStructure();
                             if (structure
                                 && structure->classInfoForCells() == classInfo
-                                && structure->globalObject() == globalObject) {
+                                && structure->realm() == globalObject) {
                                 m_graph.freeze(rareData);
                                 m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                 didFoldClobberWorld();
@@ -4257,8 +4257,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetGlobalObject: {
         JSValue child = forNode(node->child1()).value();
         if (child) {
-            setConstant(node, *m_graph.freeze(JSValue(asObject(child)->globalObject())));
-            break;
+            if (JSGlobalObject* globalObject = asObject(child)->realmMayBeNull()) {
+                setConstant(node, *m_graph.freeze(JSValue(globalObject)));
+                break;
+            }
         }
 
         if (forNode(node->child1()).m_structure.isFinite()) {
@@ -4266,9 +4268,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             bool ok = true;
             forNode(node->child1()).m_structure.forEach(
                 [&] (RegisteredStructure structure) {
-                    if (!globalObject)
-                        globalObject = structure->globalObject();
-                    else if (globalObject != structure->globalObject())
+                    if (!globalObject) {
+                        globalObject = structure->realm();
+                        if (!globalObject)
+                            ok = false;
+                    } else if (globalObject != structure->realm())
                         ok = false;
                 });
             if (globalObject && ok) {
@@ -4287,9 +4291,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             bool ok = true;
             forNode(node->child1()).m_structure.forEach(
                 [&] (RegisteredStructure structure) {
-                    if (!globalObject)
-                        globalObject = structure->globalObject();
-                    else if (globalObject != structure->globalObject())
+                    if (!globalObject) {
+                        globalObject = structure->realm();
+                        if (!globalObject)
+                            ok = false;
+                    } else if (globalObject != structure->realm())
                         ok = false;
                 });
             if (globalObject && ok) {
@@ -5546,7 +5552,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             auto* newTarget = jsDynamicCast<JSFunction*>(newTargetValue);
             if (callee && newTarget) {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                if (callee->globalObject() == globalObject) {
+                if (callee->realmMayBeNull() == globalObject) {
                     if (FunctionRareData* rareData = newTarget->rareData()) {
                         if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
                             Structure* structure = rareData->internalFunctionAllocationStructure();

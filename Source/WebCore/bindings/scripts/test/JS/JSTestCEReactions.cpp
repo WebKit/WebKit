@@ -191,7 +191,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsConstructor, (JSGlobalObject* lexicalG
     auto* prototype = jsDynamicCast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestCEReactions::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestCEReactions::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestCEReactions_attributeWithCEReactionsGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject)
@@ -267,7 +267,7 @@ static inline JSValue jsTestCEReactions_stringifierAttributeGetter(JSGlobalObjec
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestCEReactionsStringifier>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.stringifierAttribute())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestCEReactionsStringifier>>(lexicalGlobalObject, *thisObject.realm(), throwScope, impl.stringifierAttribute())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactions_stringifierAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -372,7 +372,7 @@ static inline JSValue jsTestCEReactions_stringifierAttributeNotNeededGetter(JSGl
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestCEReactionsStringifier>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.stringifierAttributeNotNeeded())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestCEReactionsStringifier>>(lexicalGlobalObject, *thisObject.realm(), throwScope, impl.stringifierAttributeNotNeeded())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactions_stringifierAttributeNotNeeded, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

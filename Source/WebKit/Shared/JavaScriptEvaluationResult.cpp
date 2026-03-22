@@ -500,7 +500,8 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
         if (!object)
             return JSValueMakeUndefined(context);
         auto [lexicalGlobalObject, domGlobalObject, document] = globalObjectTuple(context);
-        if (lexicalGlobalObject != object->globalObject())
+        auto* objectRealm = object->realmMayBeNull();
+        if (!objectRealm || lexicalGlobalObject != objectRealm)
             return JSValueMakeUndefined(context);
         return ::toRef(object);
     }, [&] (UniqueRef<WebCore::SerializedNode>&& serializedNode) -> JSValueRef {

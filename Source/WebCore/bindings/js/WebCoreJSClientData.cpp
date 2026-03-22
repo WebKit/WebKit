@@ -208,7 +208,7 @@ String JSVMClientData::overrideSourceURL(const JSC::StackFrame& frame, const Str
     if (auto* codeBlock = frame.codeBlock())
         globalObject = codeBlock->globalObject();
     else if (auto* callee = jsDynamicCast<JSObject*>(frame.callee()))
-        globalObject = callee->globalObject();
+        globalObject = callee->realm();
     RELEASE_ASSERT(globalObject);
 
     if (!globalObject->inherits<JSDOMWindowBase>())

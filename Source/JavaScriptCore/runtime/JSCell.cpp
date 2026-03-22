@@ -105,7 +105,7 @@ CallData JSCell::getConstructData(JSCell*)
 
 bool JSCell::isValidCallee() const
 {
-    return isObject() && asObject(this)->globalObject();
+    return isObject() && asObject(this)->realmMayBeNull();
 }
 
 bool JSCell::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier, JSValue value, PutPropertySlot& slot)

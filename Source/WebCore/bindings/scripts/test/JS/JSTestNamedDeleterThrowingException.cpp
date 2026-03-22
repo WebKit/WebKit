@@ -318,7 +318,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedDeleterThrowingExceptionConstructor, (JSGlob
     auto* prototype = jsDynamicCast<JSTestNamedDeleterThrowingExceptionPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestNamedDeleterThrowingException::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestNamedDeleterThrowingException::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestNamedDeleterThrowingException::subspaceForImpl(JSC::VM& vm)

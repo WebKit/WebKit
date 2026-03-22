@@ -49,7 +49,7 @@ JSC::JSValue JSMessageEvent::ports(JSC::JSGlobalObject& lexicalGlobalObject) con
 {
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
     return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().cachedPorts(), [&](JSC::ThrowScope& throwScope) {
-        return toJS<IDLFrozenArray<IDLInterface<MessagePort>>>(lexicalGlobalObject, *globalObject(), throwScope, wrapped().ports());
+        return toJS<IDLFrozenArray<IDLInterface<MessagePort>>>(lexicalGlobalObject, *realm(), throwScope, wrapped().ports());
     });
 }
 
@@ -62,9 +62,9 @@ JSC::JSValue JSMessageEvent::data(JSC::JSGlobalObject& lexicalGlobalObject) cons
         }, [&lexicalGlobalObject] (const String& data) {
             return toJS<IDLDOMString>(lexicalGlobalObject, data);
         }, [this, &lexicalGlobalObject] (const Ref<Blob>& data) {
-            return toJS<IDLInterface<Blob>>(lexicalGlobalObject, *globalObject(), data);
+            return toJS<IDLInterface<Blob>>(lexicalGlobalObject, *realm(), data);
         }, [this, &lexicalGlobalObject] (const Ref<ArrayBuffer>& data) {
-            return toJS<IDLInterface<ArrayBuffer>>(lexicalGlobalObject, *globalObject(), data);
+            return toJS<IDLInterface<ArrayBuffer>>(lexicalGlobalObject, *realm(), data);
         });
     });
 }

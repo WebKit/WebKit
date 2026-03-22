@@ -209,10 +209,11 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
             // it should not be observable that we do not use the iterator.
 
             if (!iteratorFunc.isUndefinedOrNull()
-                && (iteratorFunc != object->globalObject()->arrayProtoValuesFunction()
+                && object->realmMayBeNull()
+                && (iteratorFunc != object->realm()->arrayProtoValuesFunction()
                     || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
                     || hasAnyArrayStorage(object->indexingType())
-                    || !object->globalObject()->arrayIteratorProtocolWatchpointSet().isStillValid())) {
+                    || !object->realm()->arrayIteratorProtocolWatchpointSet().isStillValid())) {
                     RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewFromIterator<ViewClass>(globalObject, structure, object, iteratorFunc));
             }
 

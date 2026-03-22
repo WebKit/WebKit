@@ -342,7 +342,7 @@ GetByStatus GetByStatus::computeForPropertyInlineCacheWithoutExitSiteFeedback(co
                 if (auto* object = access.tryGetAlternateBase())
                     currStructure = object->structure();
                 // For now, we only support cases which JSGlobalObject is the same to the currently profiledBlock.
-                if (currStructure->globalObject() != profiledBlock->globalObject())
+                if (currStructure->realm() != profiledBlock->globalObject())
                     return GetByStatus(JSC::slowVersion(summary), propertyCache);
 
                 auto customAccessorGetter = access.as<GetterSetterAccessCase>().customAccessor();

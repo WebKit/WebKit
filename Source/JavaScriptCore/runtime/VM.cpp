@@ -268,6 +268,9 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , machineCodeBytesPerBytecodeWordForBaselineJIT(makeUnique<SimpleStats>())
     , symbolImplToSymbolMap(*this)
     , atomStringToJSStringMap(*this)
+#if ENABLE(WEBASSEMBLY)
+    , wasmGCStructureMap(*this)
+#endif
     , m_regExpCache(makeUnique<RegExpCache>())
     , m_compactVariableMap(adoptRef(*new CompactTDZEnvironmentMap))
     , m_codeCache(makeUnique<CodeCache>())
@@ -1377,7 +1380,7 @@ void VM::dumpTypeProfilerData()
 
 void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
 {
-    JSObject* callback = promise->globalObject()->unhandledRejectionCallback();
+    JSObject* callback = promise->realm()->unhandledRejectionCallback();
     if (!callback)
         return;
 
@@ -1390,7 +1393,7 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
     args.append(promise.get());
     args.append(promise->result());
     ASSERT(!args.hasOverflowed());
-    call(promise->globalObject(), callback, callData, jsNull(), args);
+    call(promise->realm(), callback, callData, jsNull(), args);
     scope.clearException();
 }
 

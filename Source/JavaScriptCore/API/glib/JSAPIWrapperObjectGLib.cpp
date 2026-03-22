@@ -63,7 +63,7 @@ bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::
     // the same wrapped object in multiple global objects keeps all of the global objects alive.
     if (!wrapperObject->wrappedObject())
         return false;
-    return visitor.vm().heap.isMarked(wrapperObject->structure()->globalObject()) && visitor.containsOpaqueRoot(wrapperObject->wrappedObject());
+    return visitor.vm().heap.isMarked(wrapperObject->realm()) && visitor.containsOpaqueRoot(wrapperObject->wrappedObject());
 }
 
 namespace JSC {

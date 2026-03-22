@@ -57,7 +57,7 @@ void RuntimeObject::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
-        JSFunction::create(vm, globalObject(), 1, "[Symbol.toPrimitive]"_s, convertRuntimeObjectToPrimitive, ImplementationVisibility::Public),
+        JSFunction::create(vm, realm(), 1, "[Symbol.toPrimitive]"_s, convertRuntimeObjectToPrimitive, ImplementationVisibility::Public),
         std::to_underlying(PropertyAttribute::DontEnum));
 }
 

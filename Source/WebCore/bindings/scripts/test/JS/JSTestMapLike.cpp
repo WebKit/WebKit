@@ -185,7 +185,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeConstructor, (JSGlobalObject* lexicalGloba
     auto* prototype = jsDynamicCast<JSTestMapLikePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestMapLike::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestMapLike::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestMapLike_sizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLike& thisObject)

@@ -37,7 +37,7 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     : Base(vm, structure)
     , m_functionForCall(toTagged(functionForCall))
     , m_functionForConstruct(functionForConstruct ? toTagged(functionForConstruct) : callHostFunctionAsConstructor)
-    , m_globalObject(structure->globalObject(), WriteBarrierEarlyInit)
+    , m_globalObject(structure->realm(), WriteBarrierEarlyInit)
 {
     ASSERT_WITH_MESSAGE(m_functionForCall, "[[Call]] must be implemented");
     ASSERT(m_functionForConstruct);
@@ -141,7 +141,7 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSGlobalObject* baseGlobalObject = baseClass->globalObject();
+    JSGlobalObject* baseGlobalObject = baseClass->realm();
 
     ASSERT(baseClass->hasMonoProto());
 
@@ -166,7 +166,7 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
 
     FunctionRareData* rareData = targetFunction->ensureRareData(vm);
     Structure* structure = rareData->internalFunctionAllocationStructure();
-    if (structure && structure->classInfoForCells() == baseClass->classInfoForCells() && structure->globalObject() == baseGlobalObject) [[likely]]
+    if (structure && structure->classInfoForCells() == baseClass->classInfoForCells() && structure->realm() == baseGlobalObject) [[likely]]
         return structure;
 
     // .prototype can't be a getter if we canUseAllocationProfiles().
@@ -216,7 +216,7 @@ JSGlobalObject* getFunctionRealm(JSGlobalObject* globalObject, JSObject* object)
             continue;
         }
 
-        return object->globalObject();
+        return object->realm();
     }
 }
 

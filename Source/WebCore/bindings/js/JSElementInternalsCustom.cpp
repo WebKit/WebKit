@@ -85,7 +85,7 @@ static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, co
     if (cachedObjectValue)
         cachedObject = asObject(cachedObjectValue);
     else {
-        cachedObject = constructEmptyObject(vm, thisObject.globalObject()->nullPrototypeObjectStructure());
+        cachedObject = constructEmptyObject(vm, thisObject.realm()->nullPrototypeObjectStructure());
         const_cast<JSElementInternals&>(thisObject).putDirect(vm, builtinNames(vm).cachedAttrAssociatedElementsPrivateName(), cachedObject);
     }
 
@@ -98,7 +98,7 @@ static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, co
             return cachedValue;
     }
 
-    JSValue elementsValue = toJS<IDLNullable<IDLFrozenArray<IDLInterface<Element>>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, elements);
+    JSValue elementsValue = toJS<IDLNullable<IDLFrozenArray<IDLInterface<Element>>>>(lexicalGlobalObject, *thisObject.realm(), throwScope, elements);
     cachedObject->putDirect(vm, propertyName, elementsValue);
     return elementsValue;
 }

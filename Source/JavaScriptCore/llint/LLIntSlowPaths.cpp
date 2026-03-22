@@ -1255,7 +1255,7 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, JSGlobalObject* globalObject, Code
             if (object->indexingType() == ArrayWithContiguous && i < object->butterfly()->publicLength()) {
                 // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
                 // https://bugs.webkit.org/show_bug.cgi?id=182940
-                auto* globalObject = object->globalObject();
+                auto* globalObject = object->realm();
                 skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
             }
 
@@ -2071,7 +2071,7 @@ static UGPRPair handleHostCall(CallFrame* calleeFrame, JSValue callee, CodeSpeci
         if (callData.type == CallData::Type::Native) {
             SlowPathFrameTracer tracer(vm, calleeFrame);
             calleeFrame->setCallee(asObject(callee));
-            vm.encodedHostCallReturnValue = callData.native.function(asObject(callee)->globalObject(), calleeFrame);
+            vm.encodedHostCallReturnValue = callData.native.function(asObject(callee)->realm(), calleeFrame);
             AssertNoGC assertNoGC;
             auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
             LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), JSEntryPtrTag);
@@ -2091,7 +2091,7 @@ static UGPRPair handleHostCall(CallFrame* calleeFrame, JSValue callee, CodeSpeci
     if (constructData.type == CallData::Type::Native) {
         SlowPathFrameTracer tracer(vm, calleeFrame);
         calleeFrame->setCallee(asObject(callee));
-        vm.encodedHostCallReturnValue = constructData.native.function(asObject(callee)->globalObject(), calleeFrame);
+        vm.encodedHostCallReturnValue = constructData.native.function(asObject(callee)->realm(), calleeFrame);
         AssertNoGC assertNoGC;
         auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
         LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), JSEntryPtrTag);
@@ -2814,7 +2814,7 @@ extern "C" UGPRPair SYSV_ABI llint_throw_stack_overflow_error(VM* vm, ProtoCallF
     if (callFrame)
         globalObject = callFrame->lexicalGlobalObject(*vm);
     else
-        globalObject = protoFrame->callee()->globalObject();
+        globalObject = protoFrame->callee()->realm();
     throwStackOverflowError(globalObject, scope);
     return encodeResult(nullptr, nullptr);
 }

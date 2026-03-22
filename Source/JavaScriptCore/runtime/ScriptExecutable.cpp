@@ -256,7 +256,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
     ASSERT(vm.heap.isDeferred());
     ASSERT(endColumn() != UINT_MAX);
 
-    JSGlobalObject* globalObject = scope->globalObject();
+    JSGlobalObject* globalObject = scope->realm();
 
     if (classInfo() == EvalExecutable::info()) {
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
@@ -392,7 +392,7 @@ void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSFunction* function, JSS
     DeferGCForAWhile deferGC(vm);
 
     if (vm.getAndClearFailNextNewCodeBlock()) [[unlikely]] {
-        JSGlobalObject* globalObject = scope->globalObject();
+        JSGlobalObject* globalObject = scope->realm();
         throwException(globalObject, throwScope, createError(globalObject, "Forced Failure"_s));
         return;
     }

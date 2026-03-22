@@ -147,7 +147,7 @@ JSValue JSJavaScriptCallFrame::scopeDescriptions(JSGlobalObject* globalObject)
 
 JSValue JSJavaScriptCallFrame::caller(JSGlobalObject* lexicalGlobalObject) const
 {
-    return toJS(lexicalGlobalObject, this->globalObject(), impl().caller());
+    return toJS(lexicalGlobalObject, this->realm(), impl().caller());
 }
 
 JSValue JSJavaScriptCallFrame::sourceID(JSGlobalObject*) const
@@ -196,7 +196,7 @@ JSValue JSJavaScriptCallFrame::scopeChain(JSGlobalObject* globalObject) const
         return { };
     }
 
-    return constructArray(this->globalObject(), static_cast<ArrayAllocationProfile*>(nullptr), list);
+    return constructArray(this->realm(), static_cast<ArrayAllocationProfile*>(nullptr), list);
 }
 
 JSValue JSJavaScriptCallFrame::thisObject(JSGlobalObject* globalObject) const

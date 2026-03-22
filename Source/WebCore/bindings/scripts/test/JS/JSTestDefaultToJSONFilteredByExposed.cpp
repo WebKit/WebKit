@@ -132,19 +132,19 @@ void JSTestDefaultToJSONFilteredByExposedPrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestDefaultToJSONFilteredByExposed::info(), JSTestDefaultToJSONFilteredByExposedPrototypeTableValues, *this);
     bool hasDisabledRuntimeProperties = false;
-    if (!(globalObject())->inherits<JSDOMWindowBase>()) {
+    if (!(realm())->inherits<JSDOMWindowBase>()) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "filteredByExposedWindowAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+        JSObject::deleteProperty(this, realm(), propertyName, slot);
     }
-    if (!(globalObject())->inherits<JSWorkerGlobalScopeBase>()) {
+    if (!(realm())->inherits<JSWorkerGlobalScopeBase>()) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "filteredByExposedWorkerAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+        JSObject::deleteProperty(this, realm(), propertyName, slot);
     }
     if (hasDisabledRuntimeProperties && structure()->isDictionary())
         flattenDictionaryObject(vm);
@@ -190,7 +190,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedConstructor, (JSGlo
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONFilteredByExposedPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestDefaultToJSONFilteredByExposed::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestDefaultToJSONFilteredByExposed::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestDefaultToJSONFilteredByExposed_normalAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONFilteredByExposed& thisObject)
@@ -242,12 +242,12 @@ static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFuncti
     auto normalAttributeValue = toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.normalAttribute());
     RETURN_IF_EXCEPTION(throwScope, { });
     result->putDirect(vm, Identifier::fromString(vm, "normalAttribute"_s), normalAttributeValue);
-    if ((castedThis->globalObject())->inherits<JSDOMWindowBase>()) {
+    if ((castedThis->realm())->inherits<JSDOMWindowBase>()) {
         auto filteredByExposedWindowAttributeValue = toJS<IDLDouble>(*lexicalGlobalObject, throwScope, impl.filteredByExposedWindowAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWindowAttribute"_s), filteredByExposedWindowAttributeValue);
     }
-    if ((castedThis->globalObject())->inherits<JSWorkerGlobalScopeBase>()) {
+    if ((castedThis->realm())->inherits<JSWorkerGlobalScopeBase>()) {
         auto filteredByExposedWorkerAttributeValue = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.filteredByExposedWorkerAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWorkerAttribute"_s), filteredByExposedWorkerAttributeValue);

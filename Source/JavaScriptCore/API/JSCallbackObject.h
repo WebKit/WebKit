@@ -145,7 +145,7 @@ public:
     static JSCallbackObject* create(JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, void* data)
     {
         VM& vm = getVM(globalObject);
-        ASSERT_UNUSED(globalObject, !structure->globalObject() || structure->globalObject() == globalObject);
+        ASSERT_UNUSED(globalObject, !structure->realm() || structure->realm() == globalObject);
         JSCallbackObject* callbackObject = new (NotNull, allocateCell<JSCallbackObject>(vm)) JSCallbackObject(globalObject, structure, classRef, data);
         callbackObject->finishCreation(globalObject);
         return callbackObject;

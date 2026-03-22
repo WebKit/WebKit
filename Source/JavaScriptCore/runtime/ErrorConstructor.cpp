@@ -42,7 +42,7 @@ ErrorConstructor::ErrorConstructor(VM& vm, Structure* structure)
 
 void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
 {
-    JSGlobalObject* globalObject = errorPrototype->globalObject();
+    JSGlobalObject* globalObject = errorPrototype->realm();
 
     Base::finishCreation(vm, 1, vm.propertyNames->Error.string(), PropertyAdditionMode::WithoutStructureTransition);
     // ECMA 15.11.3.1 Error.prototype

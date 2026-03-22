@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebAssemblyGCStructure.h"
 
+#include "DeferGC.h"
 #include "JSCInlines.h"
 #include "WasmFormat.h"
 
@@ -71,30 +72,27 @@ void WebAssemblyGCStructureTypeDependencies::process(Wasm::FieldType fieldType, 
     }
 }
 
-WebAssemblyGCStructure::WebAssemblyGCStructure(VM& vm, JSGlobalObject* globalObject, const TypeInfo& typeInfo, const ClassInfo* classInfo, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
-    : Structure(vm, StructureVariant::WebAssemblyGC, globalObject, typeInfo, classInfo)
+WebAssemblyGCStructure::WebAssemblyGCStructure(VM& vm, const TypeInfo& typeInfo, const ClassInfo* classInfo, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
+    : Structure(vm, StructureVariant::WebAssemblyGC, nullptr, typeInfo, classInfo)
     , m_rtt(WTF::move(rtt))
     , m_type(WTF::move(type))
     , m_typeDependencies(WebAssemblyGCStructureTypeDependencies { WTF::move(unexpandedType) })
 {
+    setMayBePrototype(true);
+    ASSERT(!typeInfo.masqueradesAsUndefined()); // MasqueradesAsUndefined requires non-null Realm.
 }
 
-WebAssemblyGCStructure::WebAssemblyGCStructure(VM& vm, WebAssemblyGCStructure* previous)
-    : Structure(vm, StructureVariant::WebAssemblyGC, previous)
-    , m_rtt(previous->m_rtt)
-    , m_type(previous->m_type)
-    , m_typeDependencies(previous->m_typeDependencies)
-{
-}
-
-
-WebAssemblyGCStructure* WebAssemblyGCStructure::create(VM& vm, JSGlobalObject* globalObject, const TypeInfo& typeInfo, const ClassInfo* classInfo, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
+WebAssemblyGCStructure* WebAssemblyGCStructure::create(VM& vm, const TypeInfo& typeInfo, const ClassInfo* classInfo, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
 {
     ASSERT(vm.structureStructure);
-    WebAssemblyGCStructure* newStructure = new (NotNull, allocateCell<WebAssemblyGCStructure>(vm)) WebAssemblyGCStructure(vm, globalObject, typeInfo, classInfo, WTF::move(unexpandedType), WTF::move(type), WTF::move(rtt));
-    newStructure->finishCreation(vm);
-    ASSERT(newStructure->type() == StructureType);
-    return newStructure;
+    const Wasm::RTT* rttPtr = rtt.ptr();
+    DeferGC deferGC(vm);
+    return vm.wasmGCStructureMap.ensureValue(rttPtr, [&] {
+        WebAssemblyGCStructure* newStructure = new (NotNull, allocateCell<WebAssemblyGCStructure>(vm)) WebAssemblyGCStructure(vm, typeInfo, classInfo, WTF::move(unexpandedType), WTF::move(type), WTF::move(rtt));
+        newStructure->finishCreation(vm);
+        ASSERT(newStructure->type() == StructureType);
+        return newStructure;
+    });
 }
 
 } // namespace JSC

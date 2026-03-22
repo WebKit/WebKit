@@ -63,6 +63,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmThunks.h"
 #include "WasmTypeDefinition.h"
 #include "WebAssemblyFunctionBase.h"
+#include "WebAssemblyGCStructure.h"
 #include <bit>
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
@@ -1451,7 +1452,6 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, uint32_t typeInd
     RELEASE_ASSERT(m_info.hasGCObjectTypes());
     JumpList slowPath;
     const ArrayType* typeDefinition = m_info.typeSignatures[typeIndex]->expand().template as<ArrayType>();
-    Ref<const RTT> rtt = m_info.rtts[typeIndex];
     MacroAssembler::Address allocatorBufferBase(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
     MacroAssembler::Address structureIDAddress(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfGCObjectStructureID(m_info, typeIndex));
     Location sizeLocation;
@@ -1469,7 +1469,6 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, uint32_t typeInd
             static_assert(JSCell::structureIDOffset() + sizeof(int32_t) == JSCell::indexingTypeAndMiscOffset());
             m_jit.storePair32(scratchGPR, scratchGPR2, MacroAssembler::Address(resultGPR, JSCell::structureIDOffset()));
             m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()));
-            m_jit.storePtr(TrustedImmPtr(rtt.ptr()), MacroAssembler::Address(resultGPR, WebAssemblyGCObjectBase::offsetOfRTT()));
             m_jit.store32(TrustedImm32(size.asI32()), MacroAssembler::Address(resultGPR, JSWebAssemblyArray::offsetOfSize()));
         } else {
             // FIXME: emitCCall can't handle being passed a destination... which is why we just jump to the slow path here.
@@ -1492,7 +1491,6 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, uint32_t typeInd
         static_assert(JSCell::structureIDOffset() + sizeof(int32_t) == JSCell::indexingTypeAndMiscOffset());
         m_jit.storePair32(scratchGPR, scratchGPR2, MacroAssembler::Address(resultGPR, JSCell::structureIDOffset()));
         m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()));
-        m_jit.storePtr(TrustedImmPtr(rtt.ptr()), MacroAssembler::Address(resultGPR, WebAssemblyGCObjectBase::offsetOfRTT()));
         m_jit.store32(sizeLocation.asGPR(), MacroAssembler::Address(resultGPR, JSWebAssemblyArray::offsetOfSize()));
     }
 
@@ -1993,7 +1991,6 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, uint32_t typeIn
     RELEASE_ASSERT(m_info.hasGCObjectTypes());
     JumpList slowPath;
     const StructType* typeDefinition = m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
-    Ref<const RTT> rtt = m_info.rtts[typeIndex];
     MacroAssembler::Address allocatorBufferBase(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
     MacroAssembler::Address structureIDAddress(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfGCObjectStructureID(m_info, typeIndex));
     Location sizeLocation;
@@ -2010,7 +2007,6 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, uint32_t typeIn
         static_assert(JSCell::structureIDOffset() + sizeof(int32_t) == JSCell::indexingTypeAndMiscOffset());
         m_jit.storePair32(scratchGPR, scratchGPR2, MacroAssembler::Address(resultGPR, JSCell::structureIDOffset()));
         m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()));
-        m_jit.storePtr(TrustedImmPtr(rtt.ptr()), MacroAssembler::Address(resultGPR, WebAssemblyGCObjectBase::offsetOfRTT()));
     } else {
         // FIXME: emitCCall can't handle being passed a destination... which is why we just jump to the slow path here.
         slowPath.append(m_jit.jump());
@@ -2307,7 +2303,8 @@ void BBQJIT::emitRefTestOrCast(CastKind castKind, const TypedExpression& typedVa
                 failureCases.append(m_jit.branchIfNotCell(valueGPR, DoNotHaveTagRegisters));
             if (!typedValue.type().definitelyIsWasmGCObjectOrNull())
                 failureCases.append(m_jit.branchIfNotType(valueGPR, JSType::WebAssemblyGCObjectType));
-            m_jit.loadPtr(Address(valueGPR, WebAssemblyGCObjectBase::offsetOfRTT()), wasmScratchGPR);
+            m_jit.emitLoadStructure(valueGPR, wasmScratchGPR);
+            m_jit.loadPtr(Address(wasmScratchGPR, WebAssemblyGCStructure::offsetOfRTT()), wasmScratchGPR);
             failureCases.append(m_jit.branch8(CCallHelpers::NotEqual, Address(wasmScratchGPR, RTT::offsetOfKind()), TrustedImm32(static_cast<int32_t>(static_cast<TypeKind>(toHeapType) == Wasm::TypeKind::Arrayref ? RTTKind::Array : RTTKind::Struct))));
             break;
         }
@@ -2327,7 +2324,8 @@ void BBQJIT::emitRefTestOrCast(CastKind castKind, const TypedExpression& typedVa
                 if (!typedValue.type().definitelyIsWasmGCObjectOrNull())
                     failureCases.append(m_jit.branchIfNotType(valueGPR, JSType::WebAssemblyGCObjectType));
 
-                m_jit.loadPtr(Address(valueGPR, WebAssemblyGCObjectBase::offsetOfRTT()), wasmScratchGPR);
+                m_jit.emitLoadStructure(valueGPR, wasmScratchGPR);
+                m_jit.loadPtr(Address(wasmScratchGPR, WebAssemblyGCStructure::offsetOfRTT()), wasmScratchGPR);
                 if (targetRTT->displaySizeExcludingThis() < RTT::inlinedDisplaySize) {
                     m_jit.loadPtr(Address(wasmScratchGPR, RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(RefPtr<const RTT>)), wasmScratchGPR);
                     failureCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, wasmScratchGPR, TrustedImmPtr(targetRTT.ptr())));

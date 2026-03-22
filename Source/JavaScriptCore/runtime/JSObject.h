@@ -814,11 +814,17 @@ public:
     }
     void shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM&, Structure* structure, size_t outOfLineCapacityAfter);
 
-    JSGlobalObject* globalObject() const
+    JSGlobalObject* realmMayBeNull() const
     {
-        ASSERT(structure()->globalObject());
-        ASSERT(!isGlobalObject() || ((JSObject*)structure()->globalObject()) == this);
-        return structure()->globalObject();
+        return structure()->realm();
+    }
+
+    JSGlobalObject* realm() const
+    {
+        auto* result = realmMayBeNull();
+        RELEASE_ASSERT(result, "Do not call JSObject::realm() on objects with realmless structures (e.g., WebAssembly GC objects)");
+        ASSERT(!isGlobalObject() || ((JSObject*)result) == this);
+        return result;
     }
 
     void switchToSlowPutArrayStorage(VM&);

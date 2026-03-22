@@ -36,7 +36,7 @@ inline Structure* JSSet::createStructure(VM& vm, JSGlobalObject* globalObject, J
 
 ALWAYS_INLINE bool JSSet::isIteratorProtocolFastAndNonObservable()
 {
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->isSetPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 

@@ -180,7 +180,7 @@ void Debugger::attach(JSGlobalObject* globalObject)
             if (isJSCellKind(kind)) {
                 auto* cell = static_cast<JSCell*>(heapCell);
                 if (auto* function = jsDynamicCast<JSFunction*>(cell)) {
-                    if (function->scope()->globalObject() == globalObject && function->executable()->isFunctionExecutable() && !function->isHostOrBuiltinFunction())
+                    if (function->scope()->realm() == globalObject && function->executable()->isFunctionExecutable() && !function->isHostOrBuiltinFunction())
                         sourceProviders.add(jsCast<FunctionExecutable*>(function->executable())->source().provider());
                 }
             }

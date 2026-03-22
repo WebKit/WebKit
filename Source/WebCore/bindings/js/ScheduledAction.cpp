@@ -107,7 +107,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     if (callData.type == CallData::Type::None)
         return;
 
-    auto* jsFunctionGlobalObject = jsFunction->globalObject();
+    auto* jsFunctionGlobalObject = jsFunction->realm();
 
     JSGlobalObject* lexicalGlobalObject = globalObject;
 

@@ -89,7 +89,7 @@ bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, JSGlobalObjec
     if (propertyName.uid() == vm.propertyNames->toPrimitiveSymbol.impl())
         return false;
 
-    if (!element->globalObject()->world().isNormal()) {
+    if (!element->realm()->world().isNormal()) {
         JSValue proto = element->getPrototypeDirect();
         if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(lexicalGlobalObject, propertyName))
             return false;

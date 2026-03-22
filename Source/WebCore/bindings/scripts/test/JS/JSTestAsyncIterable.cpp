@@ -167,7 +167,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestAsyncIterableConstructor, (JSGlobalObject* lexica
     auto* prototype = jsDynamicCast<JSTestAsyncIterablePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestAsyncIterable::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestAsyncIterable::getConstructor(vm, prototype->realm()));
 }
 
 struct TestAsyncIterableIteratorTraits {

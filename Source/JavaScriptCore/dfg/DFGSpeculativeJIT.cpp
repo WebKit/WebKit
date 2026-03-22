@@ -8285,7 +8285,7 @@ void SpeculativeJIT::compileGetGlobalObject(Node* node)
     speculateObject(node->child1(), objectGPR);
 
     emitLoadStructure(vm(), objectGPR, resultGPR);
-    loadPtr(Address(resultGPR, Structure::globalObjectOffset()), resultGPR);
+    loadPtr(Address(resultGPR, Structure::realmOffset()), resultGPR);
     cellResult(resultGPR, node);
 }
 
@@ -15731,7 +15731,7 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
     move(TrustedImmPtr(node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info()), scratch1GPR);
     slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::classInfoOffset())));
     loadLinkableConstant(LinkableConstant::globalObject(*this, node), scratch1GPR);
-    slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::globalObjectOffset())));
+    slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::realmOffset())));
 
     fastPromisePath.link(this);
     auto butterfly = TrustedImmPtr(nullptr);
@@ -15778,7 +15778,7 @@ void SpeculativeJIT::compileCreateInternalFieldObject(Node* node, Operation oper
     move(TrustedImmPtr(JSClass::info()), scratch1GPR);
     slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::classInfoOffset())));
     loadLinkableConstant(LinkableConstant::globalObject(*this, node), scratch1GPR);
-    slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::globalObjectOffset())));
+    slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::realmOffset())));
 
     auto butterfly = TrustedImmPtr(nullptr);
     emitAllocateJSObjectWithKnownSize<JSClass>(resultGPR, structureGPR, butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSClass), SlowAllocationResult::UndefinedBehavior);

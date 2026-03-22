@@ -62,7 +62,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWebAssembly);
 static UNUSED_FUNCTION JSValue create##capitalName(VM&, JSObject* object) \
 { \
     JSWebAssembly* webAssembly = jsCast<JSWebAssembly*>(object); \
-    JSGlobalObject* globalObject = webAssembly->globalObject(); \
+    JSGlobalObject* globalObject = webAssembly->realm(); \
     return globalObject->properName##Constructor(); \
 }
 
@@ -236,7 +236,7 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
     module->module().compileAsync(vm, instance->memoryMode(), createSharedTask<Wasm::CalleeGroup::CallbackType>([ticket, promise, instance, module, resolveKind, creationMode, &vm, alwaysAsync] (Ref<Wasm::CalleeGroup>&& calleeGroup, bool isAsync) mutable {
         auto callback = [promise, instance, module, resolveKind, creationMode, &vm, calleeGroup = WTF::move(calleeGroup)](DeferredWorkTimer::Ticket) mutable {
             auto scope = DECLARE_THROW_SCOPE(vm);
-            JSGlobalObject* globalObject = instance->globalObject();
+            JSGlobalObject* globalObject = instance->realm();
             instance->finalizeCreation(vm, globalObject, WTF::move(calleeGroup), creationMode);
             if (scope.exception()) [[unlikely]] {
                 promise->rejectWithCaughtException(globalObject, scope);

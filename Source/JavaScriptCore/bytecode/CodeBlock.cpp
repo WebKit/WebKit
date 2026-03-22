@@ -343,7 +343,7 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
 
 CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope)
     : JSCell(vm, structure)
-    , m_globalObject(scope->globalObject(), WriteBarrierEarlyInit)
+    , m_globalObject(scope->realm(), WriteBarrierEarlyInit)
     , m_shouldAlwaysBeInlined(true)
 #if ENABLE(JIT)
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)

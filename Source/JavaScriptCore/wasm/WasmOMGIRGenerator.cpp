@@ -928,7 +928,7 @@ private:
 
     Value* allocatorForWasmGCHeapCellSize(Value* size, BasicBlock* slowPath);
     Value* allocateWasmGCHeapCell(Value* allocator, BasicBlock* slowPath);
-    Value* allocateWasmGCObject(const RTT*, Value* allocator, Value* structureID, Value* typeInfo, BasicBlock* slowPath);
+    Value* allocateWasmGCObject(Value* allocator, Value* structureID, Value* typeInfo, BasicBlock* slowPath);
     Value* allocateWasmGCArrayUninitialized(uint32_t typeIndex, Value* size);
 
     void mutatorFence();
@@ -4120,7 +4120,7 @@ Value* OMGIRGenerator::allocateWasmGCHeapCell(Value* allocator, BasicBlock* slow
     return patchpoint;
 }
 
-Value* OMGIRGenerator::allocateWasmGCObject(const RTT* rtt, Value* allocator, Value* structureID, Value* typeInfo, BasicBlock* slowPath)
+Value* OMGIRGenerator::allocateWasmGCObject(Value* allocator, Value* structureID, Value* typeInfo, BasicBlock* slowPath)
 {
     auto* cell = allocateWasmGCHeapCell(allocator, slowPath);
 
@@ -4132,9 +4132,6 @@ Value* OMGIRGenerator::allocateWasmGCObject(const RTT* rtt, Value* allocator, Va
 
     auto* storeButterfly = m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Store, origin(), constant(pointerType(), 0), cell, safeCast<int32_t>(JSObject::butterflyOffset()));
     m_heaps.decorateMemory(&m_heaps.JSObject_butterfly, storeButterfly);
-
-    auto* storeRTT = m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Store, origin(), constant(pointerType(), std::bit_cast<uintptr_t>(rtt)), cell, safeCast<int32_t>(WebAssemblyGCObjectBase::offsetOfRTT()));
-    m_heaps.decorateMemory(&m_heaps.WebAssemblyGCObjectBase_rtt, storeRTT);
 
     return cell;
 }
@@ -4150,14 +4147,13 @@ Value* OMGIRGenerator::allocateWasmGCArrayUninitialized(uint32_t typeIndex, Valu
     structureID->setControlDependent(false);
 
     const ArrayType* typeDefinition = m_info.typeSignatures[typeIndex]->expand().template as<ArrayType>();
-    Ref<const RTT> rtt = m_info.rtts[typeIndex];
     size_t elementSize = typeDefinition->elementType().type.elementSize();
     auto* extended = pointerOfInt32(size);
     auto* shifted = m_currentBlock->appendNew<Value>(m_proc, Shl, origin(), extended, constant(Int32, getLSBSet(elementSize)));
     auto* sizeInBytes = m_currentBlock->appendNew<Value>(m_proc, Add, pointerType(), origin(), shifted, constant(pointerType(), sizeof(JSWebAssemblyArray)));
     auto* allocator = allocatorForWasmGCHeapCellSize(sizeInBytes, slowPath);
     auto* typeInfo = constant(Int32, JSWebAssemblyArray::typeInfoBlob().blob());
-    auto* cell = allocateWasmGCObject(rtt.ptr(), allocator, structureID, typeInfo, slowPath);
+    auto* cell = allocateWasmGCObject(allocator, structureID, typeInfo, slowPath);
     auto* fastValue = m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), wasmRefOfCell(cell));
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
     continuation->addPredecessor(m_currentBlock);

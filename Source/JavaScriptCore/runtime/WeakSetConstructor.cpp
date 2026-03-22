@@ -84,7 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWeakSet, (JSGlobalObject* globalObject, CallFr
     forEachInIterable(globalObject, iterable, [&](VM&, JSGlobalObject* globalObject, JSValue nextValue) {
         if (canPerformFastAdd) {
             if (!canBeHeldWeakly(nextValue)) [[unlikely]] {
-                throwTypeError(asObject(adderFunction)->globalObject(), scope, WeakSetInvalidValueError);
+                throwTypeError(asObject(adderFunction)->realm(), scope, WeakSetInvalidValueError);
                 return;
             }
             weakSet->add(vm, nextValue.asCell());

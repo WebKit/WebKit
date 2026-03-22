@@ -200,7 +200,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
 
         if (ident == vm.propertyNames->callee) {
             if (isStrictMode || executable->usesNonSimpleParameterList()) {
-                slot.setGetterSlot(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor, thisObject->globalObject()->throwTypeErrorArgumentsCalleeGetterSetter());
+                slot.setGetterSlot(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor, thisObject->realm()->throwTypeErrorArgumentsCalleeGetterSetter());
                 return true;
             }
             // This happens when ClonedArguments is created for non strict functions via `func.arguments` access.
@@ -209,7 +209,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
         }
 
         if (ident == vm.propertyNames->iteratorSymbol) {
-            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->globalObject()->arrayProtoValuesFunction());
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->realm()->arrayProtoValuesFunction());
             return true;
         }
     }
@@ -272,11 +272,11 @@ void ClonedArguments::materializeSpecials(JSGlobalObject* globalObject)
     bool isStrictMode = executable->isInStrictContext();
     
     if (isStrictMode || executable->usesNonSimpleParameterList())
-        putDirectAccessor(globalObject, vm.propertyNames->callee, this->globalObject()->throwTypeErrorArgumentsCalleeGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+        putDirectAccessor(globalObject, vm.propertyNames->callee, this->realm()->throwTypeErrorArgumentsCalleeGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     else
         putDirect(vm, vm.propertyNames->callee, JSValue(m_callee.get()));
 
-    putDirect(vm, vm.propertyNames->iteratorSymbol, this->globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->iteratorSymbol, this->realm()->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     m_callee.clear();
 }
@@ -340,7 +340,7 @@ void ClonedArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* fir
 bool ClonedArguments::isIteratorProtocolFastAndNonObservable()
 {
     Structure* structure = this->structure();
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     if (!globalObject->isArgumentsPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 

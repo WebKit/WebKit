@@ -1879,7 +1879,7 @@ void LOLJIT::emit_op_typeof_is_undefined(const JSInstruction* currentInstruction
     emitLoadStructure(vm(), operandRegs.payloadGPR(), s_scratch);
     // We don't need operandRegs anymore so it's ok to use dstRegs even if it is operandRegs.
     loadGlobalObject(dstRegs.gpr());
-    loadPtr(Address(s_scratch, Structure::globalObjectOffset()), s_scratch);
+    loadPtr(Address(s_scratch, Structure::realmOffset()), s_scratch);
     comparePtr(Equal, dstRegs.gpr(), s_scratch, s_scratch);
 
     notMasqueradesAsUndefined.link(this);
@@ -2218,7 +2218,7 @@ void LOLJIT::emit_op_jeq_null(const JSInstruction* currentInstruction)
     Jump isNotMasqueradesAsUndefined = branchTest8(Zero, Address(valueRegs.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
     emitLoadStructure(vm(), valueRegs.payloadGPR(), s_scratch);
     loadGlobalObject(regT0);
-    addJump(branchPtr(Equal, Address(s_scratch, Structure::globalObjectOffset()), regT0), target);
+    addJump(branchPtr(Equal, Address(s_scratch, Structure::realmOffset()), regT0), target);
     Jump masqueradesGlobalObjectIsForeign = jump();
 
     // Now handle the immediate cases - undefined & null
@@ -2245,7 +2245,7 @@ void LOLJIT::emit_op_jneq_null(const JSInstruction* currentInstruction)
     addJump(branchTest8(Zero, Address(valueRegs.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)), target);
     emitLoadStructure(vm(), valueRegs.payloadGPR(), s_scratch);
     loadGlobalObject(regT0);
-    addJump(branchPtr(NotEqual, Address(s_scratch, Structure::globalObjectOffset()), regT0), target);
+    addJump(branchPtr(NotEqual, Address(s_scratch, Structure::realmOffset()), regT0), target);
     Jump wasNotImmediate = jump();
 
     // Now handle the immediate cases - undefined & null

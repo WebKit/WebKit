@@ -85,13 +85,7 @@ inline Structure* Structure::create(VM& vm, Structure* previous, DeferredStructu
         return result;
     }
     case StructureVariant::WebAssemblyGC: {
-#if ENABLE(WEBASSEMBLY)
-        auto* result = new (NotNull, allocateCell<WebAssemblyGCStructure>(vm)) WebAssemblyGCStructure(vm, jsCast<WebAssemblyGCStructure*>(previous));
-        result->finishCreation(vm, previous, deferred);
-        return result;
-#else
-        return nullptr;
-#endif
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("WebAssemblyGCStructure should not do transition");
     }
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -130,7 +124,7 @@ inline bool Structure::mayInterceptIndexedAccesses() const
     // having a bad time. Hence, when A is set as O's prototype, O will be
     // converted to SlowPutArrayStorage.
 
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     if (!globalObject)
         return false;
     return globalObject->isHavingABadTime();
@@ -140,7 +134,7 @@ inline bool Structure::holesMustForwardToPrototype(JSObject* base) const
 {
     ASSERT(base->structure() == this);
     if (typeInfo().type() == ArrayType) {
-        JSGlobalObject* globalObject = this->globalObject();
+        JSGlobalObject* globalObject = this->realm();
         if (globalObject->isOriginalArrayStructure(const_cast<Structure*>(this)) && globalObject->arrayPrototypeChainIsSane()) [[likely]]
             return false;
     }
@@ -305,7 +299,7 @@ inline bool Structure::hasIndexingHeader(const JSCell* cell) const
 
 inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)
 {
-    return typeInfo().masqueradesAsUndefined() && globalObject() == lexicalGlobalObject;
+    return typeInfo().masqueradesAsUndefined() && realm() == lexicalGlobalObject;
 }
 
 inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
@@ -719,9 +713,9 @@ ALWAYS_INLINE void Structure::setPrototypeWithoutTransition(VM& vm, JSValue prot
     m_prototype.set(vm, this, prototype);
 }
 
-ALWAYS_INLINE void Structure::setGlobalObject(VM& vm, JSGlobalObject* globalObject)
+ALWAYS_INLINE void Structure::setRealm(VM& vm, JSGlobalObject* globalObject)
 {
-    m_globalObject.set(vm, this, globalObject);
+    m_realm.set(vm, this, globalObject);
 }
 
 ALWAYS_INLINE void Structure::setPropertyTable(VM& vm, PropertyTable* table)
@@ -794,7 +788,7 @@ ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const
 inline Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, TransitionKind transitionKind, DeferredStructureTransitionWatchpointFire* deferred)
 {
     if (changesIndexingType(transitionKind)) {
-        if (JSGlobalObject* globalObject = structure->m_globalObject.get()) {
+        if (JSGlobalObject* globalObject = structure->m_realm.get()) {
             if (globalObject->isOriginalArrayStructure(structure)) {
                 IndexingType indexingModeIncludingHistory = newIndexingType(structure->indexingModeIncludingHistory(), transitionKind);
                 Structure* result = globalObject->originalArrayStructureForIndexingType(indexingModeIncludingHistory);

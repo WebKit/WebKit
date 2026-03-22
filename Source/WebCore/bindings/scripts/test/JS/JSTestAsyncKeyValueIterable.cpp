@@ -171,7 +171,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestAsyncKeyValueIterableConstructor, (JSGlobalObject
     auto* prototype = jsDynamicCast<JSTestAsyncKeyValueIterablePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestAsyncKeyValueIterable::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestAsyncKeyValueIterable::getConstructor(vm, prototype->realm()));
 }
 
 struct TestAsyncKeyValueIterableIteratorTraits {

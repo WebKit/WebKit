@@ -38,7 +38,6 @@ const ClassInfo WebAssemblyGCObjectBase::s_info = { "WebAssemblyGCObjectBase"_s,
 
 WebAssemblyGCObjectBase::WebAssemblyGCObjectBase(VM& vm, WebAssemblyGCStructure* structure)
     : Base(vm, structure)
-    , m_rtt(&gcStructure()->rtt())
 {
 }
 

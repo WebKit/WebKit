@@ -58,7 +58,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
     // We only allow access to Location.replace() cross origin.
     if (propertyName == vm.propertyNames->replace) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
-        auto* jsFunction = thisObject.globalObject()->createCrossOriginFunction(&lexicalGlobalObject, propertyName, entry->function(), entry->functionLength());
+        auto* jsFunction = thisObject.realm()->createCrossOriginFunction(&lexicalGlobalObject, propertyName, entry->function(), entry->functionLength());
         slot.setValue(&thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, jsFunction);
         return true;
     }
@@ -67,7 +67,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
     // a descriptor that has a setter but no getter.
     if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == builtinNames(vm).hrefPublicName()) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
-        auto* getterSetter = thisObject.globalObject()->createCrossOriginGetterSetter(&lexicalGlobalObject, propertyName, nullptr, entry->propertyPutter());
+        auto* getterSetter = thisObject.realm()->createCrossOriginGetterSetter(&lexicalGlobalObject, propertyName, nullptr, entry->propertyPutter());
         slot.setGetterSlot(&thisObject, PropertyAttribute::Accessor | PropertyAttribute::DontEnum, getterSetter);
         return true;
     }

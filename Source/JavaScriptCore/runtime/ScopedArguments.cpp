@@ -166,7 +166,7 @@ void ScopedArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* fir
 bool ScopedArguments::isIteratorProtocolFastAndNonObservable()
 {
     Structure* structure = this->structure();
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     if (!globalObject->isArgumentsPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 

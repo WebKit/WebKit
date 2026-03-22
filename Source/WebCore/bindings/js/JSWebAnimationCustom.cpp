@@ -59,7 +59,7 @@ EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, Call
 
     if (callFrame.argument(1).isUndefined()) {
         auto object = WebAnimation::create(document, effect.releaseReturnValue());
-        return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(*lexicalGlobalObject, *jsConstructor->globalObject(), WTF::move(object)));
+        return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(*lexicalGlobalObject, *jsConstructor->realm(), WTF::move(object)));
     }
 
     auto timeline = convert<IDLNullable<IDLInterface<AnimationTimeline>>>(*lexicalGlobalObject, callFrame.uncheckedArgument(1), [](JSGlobalObject& lexicalGlobalObject, ThrowScope& scope) {
@@ -69,7 +69,7 @@ EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, Call
         return encodedJSValue();
 
     auto object = WebAnimation::create(document, effect.releaseReturnValue(), timeline.releaseReturnValue());
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(*lexicalGlobalObject, *jsConstructor->globalObject(), WTF::move(object)));
+    return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(*lexicalGlobalObject, *jsConstructor->realm(), WTF::move(object)));
 }
 
 } // namespace WebCore

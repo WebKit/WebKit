@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Test that Wasm GC objects (realmless) interact correctly with DOM APIs that use JSValueInWrappedObject / isWorldCompatible.");
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+// Build a minimal Wasm GC module that exports makeStruct and makeArray.
+// WAT:
+//   (module
+//     (type $Struct (struct (field (mut i32))))
+//     (type $Array (array (mut i32)))
+//     (func (export "makeStruct") (result (ref $Struct))
+//       (struct.new $Struct (i32.const 42)))
+//     (func (export "makeArray") (result (ref $Array))
+//       (array.new $Array (i32.const 7) (i32.const 3)))
+//   )
+function buildWasmGCModule() {
+    // Helpers for LEB128 encoding
+    function unsignedLEB128(n) {
+        const bytes = [];
+        do {
+            let byte = n & 0x7f;
+            n >>>= 7;
+            if (n !== 0) byte |= 0x80;
+            bytes.push(byte);
+        } while (n !== 0);
+        return bytes;
+    }
+    function signedLEB128(n) {
+        const bytes = [];
+        let more = true;
+        while (more) {
+            let byte = n & 0x7f;
+            n >>= 7;
+            if ((n === 0 && (byte & 0x40) === 0) || (n === -1 && (byte & 0x40) !== 0))
+                more = false;
+            else
+                byte |= 0x80;
+            bytes.push(byte);
+        }
+        return bytes;
+    }
+    function encodeString(s) {
+        const encoded = new TextEncoder().encode(s);
+        return [...unsignedLEB128(encoded.length), ...encoded];
+    }
+    function section(id, content) {
+        return [id, ...unsignedLEB128(content.length), ...content];
+    }
+
+    // Type section: 2 rec types
+    // type 0: struct (field (mut i32))
+    // type 1: array (mut i32)
+    const recGroup = [
+        0x4e, // rec
+        ...unsignedLEB128(2), // 2 types
+        // type 0: struct (field (mut i32))
+        0x5f, // struct
+        ...unsignedLEB128(1), // 1 field
+        0x7f, // i32
+        0x01, // mut
+        // type 1: array (mut i32)
+        0x5e, // array
+        0x7f, // i32
+        0x01, // mut
+    ];
+    const typeSection = section(1, [...unsignedLEB128(1), ...recGroup]); // 1 rec group
+
+    // Function section: 2 functions, type indices via inline types
+    // func 0: () -> (ref $Struct)  = type index with result ref 0
+    // func 1: () -> (ref $Array)   = type index with result ref 1
+    // We need to define function types for the functions.
+    // Actually, for GC, we need to put the function types in the type section too.
+
+    // Let me redo this with explicit function types in the type section.
+    // type 0: struct (field (mut i32))
+    // type 1: array (mut i32)
+    // type 2: func () -> (ref 0)
+    // type 3: func () -> (ref 1)
+    const recGroup2 = [
+        0x4e, // rec
+        ...unsignedLEB128(4), // 4 types
+        // type 0: struct (field (mut i32))
+        0x5f, // struct
+        ...unsignedLEB128(1), // 1 field
+        0x7f, // i32
+        0x01, // mut
+        // type 1: array (mut i32)
+        0x5e, // array
+        0x7f, // i32
+        0x01, // mut
+        // type 2: func () -> (ref 0)
+        0x60, // func
+        ...unsignedLEB128(0), // 0 params
+        ...unsignedLEB128(1), // 1 result
+        0x64, // ref (non-null)
+        ...unsignedLEB128(0), // type index 0
+        // type 3: func () -> (ref 1)
+        0x60, // func
+        ...unsignedLEB128(0), // 0 params
+        ...unsignedLEB128(1), // 1 result
+        0x64, // ref (non-null)
+        ...unsignedLEB128(1), // type index 1
+    ];
+    const typeSection2 = section(1, [...unsignedLEB128(1), ...recGroup2]);
+
+    // Function section: 2 functions
+    const funcSection = section(3, [
+        ...unsignedLEB128(2), // 2 functions
+        ...unsignedLEB128(2), // func 0 -> type 2
+        ...unsignedLEB128(3), // func 1 -> type 3
+    ]);
+
+    // Export section: export "makeStruct" (func 0) and "makeArray" (func 1)
+    const exportSection = section(7, [
+        ...unsignedLEB128(2), // 2 exports
+        ...encodeString("makeStruct"), 0x00, ...unsignedLEB128(0),
+        ...encodeString("makeArray"), 0x00, ...unsignedLEB128(1),
+    ]);
+
+    // Code section
+    // func 0: struct.new $Struct (i32.const 42)
+    const func0Body = [
+        ...unsignedLEB128(0), // 0 locals
+        0x41, ...signedLEB128(42), // i32.const 42
+        0xfb, 0x00, // struct.new
+        ...unsignedLEB128(0), // type index 0
+        0x0b, // end
+    ];
+    // func 1: array.new $Array (i32.const 7) (i32.const 3)
+    const func1Body = [
+        ...unsignedLEB128(0), // 0 locals
+        0x41, ...signedLEB128(7), // i32.const 7 (init value)
+        0x41, ...signedLEB128(3), // i32.const 3 (length)
+        0xfb, 0x06, // array.new
+        ...unsignedLEB128(1), // type index 1
+        0x0b, // end
+    ];
+    const codeSection = section(10, [
+        ...unsignedLEB128(2), // 2 function bodies
+        ...unsignedLEB128(func0Body.length), ...func0Body,
+        ...unsignedLEB128(func1Body.length), ...func1Body,
+    ]);
+
+    const module = [
+        0x00, 0x61, 0x73, 0x6d, // magic
+        0x01, 0x00, 0x00, 0x00, // version
+        ...typeSection2,
+        ...funcSection,
+        ...exportSection,
+        ...codeSection,
+    ];
+
+    return new Uint8Array(module);
+}
+
+async function runTests() {
+    try {
+        const bytes = buildWasmGCModule();
+        const mod = await WebAssembly.compile(bytes);
+        const instance = await WebAssembly.instantiate(mod);
+        window.wasmStruct = instance.exports.makeStruct();
+        window.wasmArray = instance.exports.makeArray();
+
+        // Test 1: CustomEvent.detail with Wasm GC struct
+        window.receivedDetail = null;
+        var receivedCount = 0;
+        var target = new EventTarget();
+        target.addEventListener("test", (e) => {
+            window.receivedDetail = e.detail;
+            receivedCount++;
+        });
+        target.dispatchEvent(new CustomEvent("test", { detail: wasmStruct }));
+        shouldBeTrue("window.receivedDetail === window.wasmStruct");
+
+        // Access detail multiple times to test cache works
+        window.ev = new CustomEvent("test2", { detail: wasmStruct });
+        shouldBeTrue("window.ev.detail === window.wasmStruct");
+        shouldBeTrue("window.ev.detail === window.ev.detail");
+        testPassed("CustomEvent.detail with Wasm GC struct works (cache hit)");
+
+        // Test 2: CustomEvent.detail with Wasm GC array
+        window.ev = new CustomEvent("test3", { detail: wasmArray });
+        shouldBeTrue("window.ev.detail === window.wasmArray");
+        shouldBeTrue("window.ev.detail === window.ev.detail");
+        testPassed("CustomEvent.detail with Wasm GC array works (cache hit)");
+
+        // Test 3: ErrorEvent.error with Wasm GC struct
+        window.ev = new ErrorEvent("error", { error: wasmStruct });
+        window.errorVal = ev.error;
+        shouldBeTrue("window.errorVal === window.wasmStruct || window.errorVal === null");
+        testPassed("ErrorEvent.error with Wasm GC struct does not crash");
+
+        // Test 4: addEventListener with Wasm GC object as listener (should not crash)
+        {
+            const div = document.createElement("div");
+            // A Wasm GC struct is not callable and has no handleEvent, so
+            // adding it as a listener and dispatching should silently fail.
+            let didThrow = false;
+            try {
+                div.addEventListener("click", wasmStruct);
+                div.dispatchEvent(new Event("click"));
+            } catch (e) {
+                didThrow = true;
+            }
+            // Whether it throws or silently fails, no crash is the key assertion.
+            testPassed("addEventListener with Wasm GC object as listener does not crash");
+        }
+
+        // Test 5: NodeFilter callback interface with Wasm GC object (should not crash)
+        {
+            const root = document.createElement("div");
+            root.innerHTML = "<span>a</span><span>b</span>";
+            document.body.appendChild(root);
+            let didThrow = false;
+            try {
+                const walker = document.createTreeWalker(root, NodeFilter.SHOW_ALL, wasmStruct);
+                walker.nextNode();
+            } catch (e) {
+                didThrow = true;
+            }
+            document.body.removeChild(root);
+            testPassed("NodeFilter with Wasm GC object does not crash");
+        }
+
+    } catch (e) {
+        testFailed("Unexpected exception: " + e.toString() + "\n" + e.stack);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTests();
+</script>

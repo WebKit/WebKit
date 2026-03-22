@@ -1284,7 +1284,7 @@ private:
 
 inline JSObject* JSScope::globalThis()
 { 
-    return globalObject()->globalThis();
+    return realm()->globalThis();
 }
 
 inline JSObject* JSGlobalObject::globalThis() const

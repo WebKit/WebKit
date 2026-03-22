@@ -80,7 +80,7 @@ ALWAYS_INLINE bool JSArray::holesMustForwardToPrototype() const
 {
     Structure* structure = this->structure();
     if (type() == ArrayType) [[likely]] {
-        JSGlobalObject* globalObject = structure->globalObject();
+        JSGlobalObject* globalObject = structure->realm();
         if (structure->hasMonoProto() && structure->storedPrototype() == globalObject->arrayPrototype() && globalObject->arrayPrototypeChainIsSane()) [[likely]]
             return false;
     }
@@ -106,7 +106,7 @@ inline bool JSArray::canFastAppend(JSArray* otherArray) const
 
 inline bool JSArray::canDoFastIndexedAccess() const
 {
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->arrayPrototypeChainIsSane())
         return false;
 
@@ -126,7 +126,7 @@ inline bool JSArray::canDoFastIndexedAccess() const
 
 ALWAYS_INLINE bool JSArray::definitelyNegativeOneMiss() const
 {
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->arrayPrototypeChainIsSane())
         return false;
 

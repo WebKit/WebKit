@@ -400,7 +400,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedAndIndexedSetterWithIdentifierConstructor, (
     auto* prototype = jsDynamicCast<JSTestNamedAndIndexedSetterWithIdentifierPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestNamedAndIndexedSetterWithIdentifier::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestNamedAndIndexedSetterWithIdentifier::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSC::EncodedJSValue jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunction_namedSetterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedAndIndexedSetterWithIdentifier>::ClassParameter castedThis)

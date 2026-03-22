@@ -129,7 +129,7 @@ inline DOMWrapperWorld& currentWorld(JSC::JSGlobalObject& lexicalGlobalObject)
 
 inline DOMWrapperWorld& worldForDOMObject(JSC::JSObject& object)
 {
-    return JSC::jsCast<JSDOMGlobalObject*>(object.globalObject())->world();
+    return JSC::jsCast<JSDOMGlobalObject*>(object.realm())->world();
 }
 
 } // namespace WebCore

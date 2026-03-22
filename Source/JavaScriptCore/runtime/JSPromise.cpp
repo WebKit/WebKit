@@ -677,7 +677,7 @@ void JSPromise::fulfillWithInternalMicrotask(VM& vm, JSGlobalObject* globalObjec
 
 bool JSPromise::isThenFastAndNonObservable()
 {
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     Structure* structure = this->structure();
     if (!globalObject->promiseThenWatchpointSet().isStillValid()) [[unlikely]] {
         if (inherits<JSInternalPromise>())
@@ -785,7 +785,7 @@ JSObject* JSPromise::promiseResolve(JSGlobalObject* globalObject, JSObject* cons
     if (argument.inherits<JSPromise>()) {
         auto* promise = jsCast<JSPromise*>(argument);
         if (promiseSpeciesWatchpointIsValid(vm, promise)) [[likely]] {
-            if (constructor == promise->globalObject()->promiseConstructor())
+            if (constructor == promise->realm()->promiseConstructor())
                 return promise;
         } else {
             auto property = promise->get(globalObject, vm.propertyNames->constructor);

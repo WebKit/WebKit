@@ -294,7 +294,7 @@ JSGlobalObject* CallLinkInfo::globalObjectForSlowPath(JSCell* owner)
 #if ENABLE(WEBASSEMBLY)
     auto* module = jsDynamicCast<JSWebAssemblyModule*>(owner);
     if (module)
-        return module->globalObject();
+        return module->realm();
 #endif
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

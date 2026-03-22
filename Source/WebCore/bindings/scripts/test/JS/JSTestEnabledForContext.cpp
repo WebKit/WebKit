@@ -135,7 +135,7 @@ void JSTestEnabledForContext::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    if ((downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled && TestSubObjEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())))
+    if ((downcast<Document>(jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testSettingEnabled && TestSubObjEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())))
         putDirectCustomAccessor(vm, builtinNames(vm).TestSubObjEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsTestEnabledForContext_TestSubObjEnabledForContextConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
 }
 
@@ -169,13 +169,13 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledForContextConstructor, (JSGlobalObject* le
     auto* prototype = jsDynamicCast<JSTestEnabledForContextPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestEnabledForContext::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestEnabledForContext::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestEnabledForContext_TestSubObjEnabledForContextConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledForContext& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+    return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.realm());
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledForContext_TestSubObjEnabledForContextConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

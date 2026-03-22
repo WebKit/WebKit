@@ -256,7 +256,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operan
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
         loadLinkableConstant(LinkableConstant::globalObject(*this, m_currentNode), localGlobalObjectGPR);
         emitLoadStructure(vm(), argGPR, resultGPR);
-        loadPtr(Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
+        loadPtr(Address(resultGPR, Structure::realmOffset()), remoteGlobalObjectGPR);
         comparePtr(Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, resultGPR);
         done.append(jump());
         if (!isKnownCell(operand.node()))
@@ -308,7 +308,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
 
         loadLinkableConstant(LinkableConstant::globalObject(*this, m_currentNode), localGlobalObjectGPR);
         emitLoadStructure(vm(), argGPR, resultGPR);
-        loadPtr(Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
+        loadPtr(Address(resultGPR, Structure::realmOffset()), remoteGlobalObjectGPR);
         branchPtr(Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, taken);
 
         if (!isKnownCell(operand.node())) {
@@ -1001,7 +1001,7 @@ void SpeculativeJIT::emitCall(Node* node)
         if (JSValue calleeValue = m_state.forNode(calleeEdge).value()) {
             if (auto* callee = jsDynamicCast<JSFunction*>(calleeValue)) {
                 m_graph.freeze(callee);
-                calleeScope = callee->globalObject();
+                calleeScope = callee->realm();
             }
         }
         TaggedNativeFunction nativeFunction;
@@ -2059,7 +2059,7 @@ void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
         speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse, 
             branchLinkableConstant(
                 Equal,
-                Address(structureGPR, Structure::globalObjectOffset()),
+                Address(structureGPR, Structure::realmOffset()),
                 LinkableConstant::globalObject(*this, m_currentNode)));
 
         isNotMasqueradesAsUndefined.link(this);
@@ -2215,7 +2215,7 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
         speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse,
             branchLinkableConstant(
                 Equal,
-                Address(structureGPR, Structure::globalObjectOffset()),
+                Address(structureGPR, Structure::realmOffset()),
                 LinkableConstant::globalObject(*this, m_currentNode)));
 
         isNotMasqueradesAsUndefined.link(this);
@@ -2306,7 +2306,7 @@ void SpeculativeJIT::emitUntypedBranch(Edge nodeUse, BasicBlock* taken, BasicBlo
             branchTest8(Zero, Address(valueGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), taken);
             emitLoadStructure(vm(), valueGPR, temp1GPR);
             loadLinkableConstant(LinkableConstant::globalObject(*this, m_currentNode), temp2GPR);
-            branchPtr(NotEqual, Address(temp1GPR, Structure::globalObjectOffset()), temp2GPR, taken);
+            branchPtr(NotEqual, Address(temp1GPR, Structure::realmOffset()), temp2GPR, taken);
             jump(notTaken, ForceJump);
         } else
             jump(taken, ForceJump);
@@ -5189,7 +5189,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
             loadLinkableConstant(LinkableConstant::globalObject(*this, node), localGlobalObjectGPR);
             emitLoadStructure(vm(), value.gpr(), result.gpr());
-            loadPtr(Address(result.gpr(), Structure::globalObjectOffset()), remoteGlobalObjectGPR);
+            loadPtr(Address(result.gpr(), Structure::realmOffset()), remoteGlobalObjectGPR);
             comparePtr(Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, result.gpr());
         }
 

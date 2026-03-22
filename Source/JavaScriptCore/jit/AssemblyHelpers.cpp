@@ -901,7 +901,7 @@ void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, 
 {
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, scratch3);
     emitLoadStructure(vm, scratch3, scratch3);
-    loadPtr(Address(scratch3, Structure::globalObjectOffset()), scratch3);
+    loadPtr(Address(scratch3, Structure::realmOffset()), scratch3);
     // Now, scratch3 holds JSGlobalObject*.
 
     auto loadFromHigh = [&](GPRReg high) {
@@ -1301,7 +1301,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
         isNotMasqueradesAsUndefined.append(branchTest8(Zero, Address(value.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)));
         emitLoadStructure(vm, value.payloadGPR(), result);
         move(TrustedImmPtr(globalObject), scratchIfShouldCheckMasqueradesAsUndefined);
-        isNotMasqueradesAsUndefined.append(branchPtr(NotEqual, Address(result, Structure::globalObjectOffset()), scratchIfShouldCheckMasqueradesAsUndefined));
+        isNotMasqueradesAsUndefined.append(branchPtr(NotEqual, Address(result, Structure::realmOffset()), scratchIfShouldCheckMasqueradesAsUndefined));
 
         // We act like we are "undefined" here.
         move(invert ? TrustedImm32(1) : TrustedImm32(0), result);
@@ -1397,7 +1397,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
             move(std::get<GPRReg>(globalObject), scratchIfShouldCheckMasqueradesAsUndefined);
         else
             loadPtr(Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchIfShouldCheckMasqueradesAsUndefined);
-        isNotMasqueradesAsUndefined.append(branchPtr(NotEqual, Address(scratch, Structure::globalObjectOffset()), scratchIfShouldCheckMasqueradesAsUndefined));
+        isNotMasqueradesAsUndefined.append(branchPtr(NotEqual, Address(scratch, Structure::realmOffset()), scratchIfShouldCheckMasqueradesAsUndefined));
 
         // We act like we are "undefined" here.
         if (invert)

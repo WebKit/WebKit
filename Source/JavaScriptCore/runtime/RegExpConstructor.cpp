@@ -93,7 +93,7 @@ void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype)
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, regExpPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
-    JSGlobalObject* globalObject = regExpPrototype->globalObject();
+    JSGlobalObject* globalObject = regExpPrototype->realm();
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("escape"_s, regExpConstructorEscape, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
 

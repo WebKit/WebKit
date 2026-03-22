@@ -88,7 +88,7 @@ JSValue JSXMLHttpRequest::response(JSGlobalObject& lexicalGlobalObject) const
         return jsUndefined();
 
     case XMLHttpRequest::ResponseType::Json:
-        value = toJS<IDLJSON>(*globalObject(), wrapped().responseTextIgnoringResponseType());
+        value = toJS<IDLJSON>(*realm(), wrapped().responseTextIgnoringResponseType());
         if (!value)
             value = jsNull();
         break;
@@ -96,16 +96,16 @@ JSValue JSXMLHttpRequest::response(JSGlobalObject& lexicalGlobalObject) const
     case XMLHttpRequest::ResponseType::Document: {
         auto document = wrapped().responseXML();
         ASSERT(!document.hasException());
-        value = toJS<IDLNullable<IDLInterface<Document>>>(lexicalGlobalObject, *globalObject(), document.releaseReturnValue());
+        value = toJS<IDLNullable<IDLInterface<Document>>>(lexicalGlobalObject, *realm(), document.releaseReturnValue());
         break;
     }
 
     case XMLHttpRequest::ResponseType::Blob:
-        value = toJSNewlyCreated<IDLInterface<Blob>>(lexicalGlobalObject, *globalObject(), wrapped().createResponseBlob());
+        value = toJSNewlyCreated<IDLInterface<Blob>>(lexicalGlobalObject, *realm(), wrapped().createResponseBlob());
         break;
 
     case XMLHttpRequest::ResponseType::Arraybuffer:
-        value = toJS<IDLNullable<IDLInterface<ArrayBuffer>>>(lexicalGlobalObject, *globalObject(), wrapped().createResponseArrayBuffer());
+        value = toJS<IDLNullable<IDLInterface<ArrayBuffer>>>(lexicalGlobalObject, *realm(), wrapped().createResponseArrayBuffer());
         break;
     }
 

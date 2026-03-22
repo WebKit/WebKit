@@ -485,19 +485,19 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
         if (value.attributes() & PropertyAttribute::Accessor)
             reifyStaticAccessor(vm, value, thisObj, propertyName);
         else
-            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
+            thisObj.putDirectBuiltinFunction(vm, thisObj.realm(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
         return;
     }
 
     if (value.attributes() & PropertyAttribute::Function) {
         if (value.attributes() & PropertyAttribute::DOMJITFunction) {
             thisObj.putDirectNativeFunction(
-                vm, thisObj.globalObject(), propertyName, value.functionLength(),
+                vm, thisObj.realm(), propertyName, value.functionLength(),
                 value.domJITFunction(), ImplementationVisibility::Public, value.intrinsic(), value.signature(), attributesForStructure(value.attributes()));
             return;
         }
         thisObj.putDirectNativeFunction(
-            vm, thisObj.globalObject(), propertyName, value.functionLength(),
+            vm, thisObj.realm(), propertyName, value.functionLength(),
             value.function(), ImplementationVisibility::Public, value.intrinsic(), attributesForStructure(value.attributes()));
         return;
     }

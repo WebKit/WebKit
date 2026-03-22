@@ -231,7 +231,7 @@ static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, JSGlobalObject* glo
 
 inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSCellButterfly* immutableButterfly)
 {
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     Structure* originalStructure = globalObject->originalArrayStructureForIndexingType(immutableButterfly->indexingMode());
     ASSERT(originalStructure->indexingMode() == immutableButterfly->indexingMode());
     ASSERT(isCopyOnWrite(immutableButterfly->indexingMode()));

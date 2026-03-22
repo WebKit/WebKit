@@ -4572,8 +4572,11 @@ bool Internals::isFromCurrentWorld(JSC::JSValue value) const
 {
     if (!value.isObject())
         return true;
-    // FIXME: Realmless objects (e.g. WebAssembly GC structs/arrays) have no realm
-    // and should be handled here.
+
+    auto* realm = value.getObject()->realmMayBeNull();
+    if (!realm)
+        return false;
+
     JSC::VM& vm = contextDocument()->vm();
     return &worldForDOMObject(*value.getObject()) == &currentWorld(*vm.topCallFrame->lexicalGlobalObject(vm));
 }

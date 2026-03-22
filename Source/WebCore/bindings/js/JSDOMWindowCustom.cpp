@@ -98,7 +98,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_webkit, (JSGlobalObject* lexicalGlobalObjec
     if (!localDOMWindow)
         return JSValue::encode(jsUndefined());
     RefPtr webkitNamespace = localDOMWindow->webkitNamespace();
-    return JSValue::encode(webkitNamespace ? toJS(lexicalGlobalObject, castedThis->globalObject(), webkitNamespace.releaseNonNull()) : jsNull());
+    return JSValue::encode(webkitNamespace ? toJS(lexicalGlobalObject, castedThis->realm(), webkitNamespace.releaseNonNull()) : jsNull());
 }
 #endif
 
@@ -601,7 +601,7 @@ JSValue JSDOMWindow::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFra
     if (!functionValue.isCallable()) [[unlikely]]
         return JSValue::decode(throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 0, "callback"_s, "Window"_s, "queueMicrotask"_s));
 
-    auto* globalObject = asObject(functionValue)->globalObject();
+    auto* globalObject = asObject(functionValue)->realm();
 
     scope.release();
     queueMicrotaskToEventLoop(*this, JSC::QueuedTask { nullptr, JSC::InternalMicrotask::InvokeFunctionJob, 0, globalObject, functionValue });
@@ -680,16 +680,16 @@ static inline JSC::EncodedJSValue jsDOMWindowInstanceFunctionOpenDatabaseBody(JS
     if (!DeprecatedGlobalSettings::webSQLEnabled()) {
         if (name.returnValue() != "null"_s || version.returnValue() != "null"_s || displayName.returnValue() != "null"_s || estimatedSize.returnValue())
             propagateException(*lexicalGlobalObject, throwScope, Exception(ExceptionCode::UnknownError, "Web SQL is deprecated"_s));
-        return JSValue::encode(constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype()));
+        return JSValue::encode(constructEmptyObject(lexicalGlobalObject, castedThis->realm()->objectPrototype()));
     }
 
-    auto creationCallback = convert<IDLNullable<IDLCallbackFunction<JSDatabaseCallback>>>(*lexicalGlobalObject, callFrame->argument(4), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) {
+    auto creationCallback = convert<IDLNullable<IDLCallbackFunction<JSDatabaseCallback>>>(*lexicalGlobalObject, callFrame->argument(4), *castedThis->realm(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) {
         throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 4, "creationCallback"_s, "Window"_s, "openDatabase"_s);
     });
     if (creationCallback.hasException(throwScope)) [[unlikely]]
         return encodedJSValue();
 
-    return JSValue::encode(toJS<IDLNullable<IDLInterface<Database>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WebCore::LocalDOMWindowWebDatabase::openDatabase(*impl, name.releaseReturnValue(), version.releaseReturnValue(), displayName.releaseReturnValue(), estimatedSize.releaseReturnValue(), creationCallback.releaseReturnValue())));
+    return JSValue::encode(toJS<IDLNullable<IDLInterface<Database>>>(*lexicalGlobalObject, *castedThis->realm(), throwScope, WebCore::LocalDOMWindowWebDatabase::openDatabase(*impl, name.releaseReturnValue(), version.releaseReturnValue(), displayName.releaseReturnValue(), estimatedSize.releaseReturnValue(), creationCallback.releaseReturnValue())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsDOMWindowInstanceFunction_openDatabase, (JSGlobalObject* globalObject, CallFrame* callFrame))

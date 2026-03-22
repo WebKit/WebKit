@@ -128,7 +128,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     JSObject& prototypeObject = *asObject(prototypeValue);
 
     QualifiedName name(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI);
-    auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
+    auto elementInterface = JSCustomElementInterface::create(name, constructor, realm());
 
     auto* connectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "connectedCallback"_s));
     if (connectedCallback)
@@ -235,12 +235,12 @@ JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject
 {
     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(lexicalGlobalObject.vm());
 
-    ASSERT(globalObject());
+    ASSERT(realm());
     auto* result = JSPromise::create(lexicalGlobalObject.vm(), lexicalGlobalObject.promiseStructure());
-    JSValue promise = whenDefinedPromise(lexicalGlobalObject, callFrame, *globalObject(), wrapped(), *result);
+    JSValue promise = whenDefinedPromise(lexicalGlobalObject, callFrame, *realm(), wrapped(), *result);
 
     if (catchScope.exception()) [[unlikely]] {
-        rejectPromiseWithExceptionIfAny(lexicalGlobalObject, *globalObject(), *result, catchScope);
+        rejectPromiseWithExceptionIfAny(lexicalGlobalObject, *realm(), *result, catchScope);
         // FIXME: We could have error since any JS call can throw stack-overflow errors.
         // https://bugs.webkit.org/show_bug.cgi?id=203402
         RETURN_IF_EXCEPTION(catchScope, JSC::jsUndefined());

@@ -1152,7 +1152,7 @@ bool TypeInformation::isReferenceValueAssignable(JSValue refValue, bool allowNul
         auto* object = jsDynamicCast<WebAssemblyGCObjectBase*>(refValue);
         if (!object)
             return false;
-        return object->rtt()->isSubRTT(*rtt);
+        return object->rtt().isSubRTT(*rtt);
     }
     }
 

@@ -91,7 +91,7 @@ public:
     static String defaultAgentClusterID();
 
     // Make binding code generation easier.
-    JSDOMGlobalObject* globalObject() { return this; }
+    JSDOMGlobalObject* realm() { return this; }
 
     DECLARE_VISIT_CHILDREN;
 

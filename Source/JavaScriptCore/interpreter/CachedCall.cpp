@@ -39,7 +39,7 @@ namespace JSC {
 CachedCall::CachedCall(JSGlobalObject* globalObject, JSFunction* function, int argumentCount)
     : CallLinkInfoBase(CallSiteType::CachedCall)
     , m_vm(globalObject->vm())
-    , m_entryScope(m_vm, function->scope()->globalObject())
+    , m_entryScope(m_vm, function->scope()->realm())
     , m_functionExecutable(function->jsExecutable())
     , m_scope(function->scope())
 {
@@ -72,7 +72,7 @@ CachedCall::CachedCall(JSGlobalObject* globalObject, JSFunction* function, int a
     if (scope.exception()) [[unlikely]]
         return;
     m_numParameters = newCodeBlock->numParameters();
-    m_protoCallFrame.init(newCodeBlock, function->globalObject(), function, jsUndefined(), nullptr, argumentCount + 1, const_cast<EncodedJSValue*>(m_arguments.data()));
+    m_protoCallFrame.init(newCodeBlock, function->realm(), function, jsUndefined(), nullptr, argumentCount + 1, const_cast<EncodedJSValue*>(m_arguments.data()));
 }
 
 void CachedCall::relink()

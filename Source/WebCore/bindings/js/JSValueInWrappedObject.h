@@ -139,8 +139,7 @@ inline bool JSValueInWrappedObject::isWorldCompatible(JSC::JSGlobalObject& lexic
     JSC::JSValue value = getValue();
     if (!value.isObject())
         return true;
-    // FIXME: For realmless objects (e.g. WebAssembly GC structs/arrays) that have no realm,
-    // this stored world is the only way to determine world compatibility.
+
     auto* world = m_world.get();
     if (!world)
         return false;

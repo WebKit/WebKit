@@ -1,0 +1,20 @@
+Test that Wasm GC objects (realmless) interact correctly with DOM APIs that use JSValueInWrappedObject / isWorldCompatible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS window.receivedDetail === window.wasmStruct is true
+PASS window.ev.detail === window.wasmStruct is true
+PASS window.ev.detail === window.ev.detail is true
+PASS CustomEvent.detail with Wasm GC struct works (cache hit)
+PASS window.ev.detail === window.wasmArray is true
+PASS window.ev.detail === window.ev.detail is true
+PASS CustomEvent.detail with Wasm GC array works (cache hit)
+PASS window.errorVal === window.wasmStruct || window.errorVal === null is true
+PASS ErrorEvent.error with Wasm GC struct does not crash
+PASS addEventListener with Wasm GC object as listener does not crash
+PASS NodeFilter with Wasm GC object does not crash
+

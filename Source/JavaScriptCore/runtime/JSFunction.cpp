@@ -110,7 +110,7 @@ JSFunction::JSFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* glo
     , m_executableOrRareData(std::bit_cast<uintptr_t>(executable))
 {
     assertTypeInfoFlagInvariants();
-    ASSERT(structure->globalObject() == globalObject);
+    ASSERT(structure->realm() == globalObject);
 }
 
 #if ASSERT_ENABLED
@@ -171,9 +171,9 @@ JSObject* JSFunction::prototypeForConstruction(VM& vm, JSGlobalObject* globalObj
     if (prototype.isObject()) [[likely]]
         return asObject(prototype);
     if (isHostOrBuiltinFunction())
-        return this->globalObject()->objectPrototype();
+        return this->realm()->objectPrototype();
 
-    JSGlobalObject* scopeGlobalObject = this->scope()->globalObject();
+    JSGlobalObject* scopeGlobalObject = this->scope()->realm();
     // https://tc39.github.io/ecma262/#sec-generator-function-definitions-runtime-semantics-evaluatebody
     if (isGeneratorWrapperParseMode(jsExecutable()->parseMode()))
         return scopeGlobalObject->generatorPrototype();
@@ -191,7 +191,7 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(JSGlobalObject* glob
     VM& vm = globalObject->vm();
     JSObject* prototype = prototypeForConstruction(vm, globalObject);
     FunctionRareData* rareData = FunctionRareData::create(vm, std::bit_cast<ExecutableBase*>(executableOrRareData));
-    rareData->initializeObjectAllocationProfile(vm, this->globalObject(), prototype, inlineCapacity, this);
+    rareData->initializeObjectAllocationProfile(vm, this->realm(), prototype, inlineCapacity, this);
     executableOrRareData = std::bit_cast<uintptr_t>(rareData) | rareDataTag;
 
     // A DFG compilation thread may be trying to read the rare data
@@ -212,7 +212,7 @@ FunctionRareData* JSFunction::initializeRareData(JSGlobalObject* globalObject, s
     VM& vm = globalObject->vm();
     JSObject* prototype = prototypeForConstruction(vm, globalObject);
     FunctionRareData* rareData = std::bit_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
-    rareData->initializeObjectAllocationProfile(vm, this->globalObject(), prototype, inlineCapacity, this);
+    rareData->initializeObjectAllocationProfile(vm, this->realm(), prototype, inlineCapacity, this);
     return rareData;
 }
 
@@ -320,7 +320,7 @@ static constexpr unsigned prototypeAttributesForNonClass = PropertyAttribute::Do
 static inline JSObject* constructPrototypeObject(JSGlobalObject* globalObject, JSFunction* thisObject)
 {
     VM& vm = globalObject->vm();
-    JSGlobalObject* scopeGlobalObject = thisObject->scope()->globalObject();
+    JSGlobalObject* scopeGlobalObject = thisObject->scope()->realm();
     // Unlike Function instances, the prototype object of GeneratorFunction instances lacks own "constructor" property.
     // https://tc39.es/ecma262/#sec-runtime-semantics-instantiategeneratorfunctionobject (step 6)
     if (isGeneratorWrapperParseMode(thisObject->jsExecutable()->parseMode()))

@@ -159,7 +159,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestExceptionConstructor, (JSGlobalObject* lexicalGlo
     auto* prototype = jsDynamicCast<JSTestExceptionPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestException::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestException::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestException_nameGetter(JSGlobalObject& lexicalGlobalObject, JSTestException& thisObject)

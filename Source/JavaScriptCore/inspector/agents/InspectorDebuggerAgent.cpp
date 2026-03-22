@@ -1591,7 +1591,7 @@ JSC::JSObject* InspectorDebuggerAgent::debuggerScopeExtensionObject(JSC::Debugge
     if (injectedScript.hasNoValue())
         return JSC::Debugger::Client::debuggerScopeExtensionObject(debugger, globalObject, debuggerCallFrame);
 
-    auto* debuggerGlobalObject = debuggerCallFrame.scope(globalObject->vm())->globalObject();
+    auto* debuggerGlobalObject = debuggerCallFrame.scope(globalObject->vm())->realm();
     auto callFrame = toJS(debuggerGlobalObject, debuggerGlobalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr());
     return injectedScript.createCommandLineAPIObject(callFrame);
 }
@@ -1691,7 +1691,7 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
     ASSERT(!m_pausedGlobalObject);
     m_pausedGlobalObject = globalObject;
 
-    auto* debuggerGlobalObject = debuggerCallFrame.scope(globalObject->vm())->globalObject();
+    auto* debuggerGlobalObject = debuggerCallFrame.scope(globalObject->vm())->realm();
     m_currentCallStack = { m_pausedGlobalObject->vm(), toJS(debuggerGlobalObject, debuggerGlobalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr()) };
 
     auto injectedScript = injectedScriptManager().injectedScriptFor(m_pausedGlobalObject);

@@ -63,7 +63,7 @@ void TemporalPlainDateTime::finishCreation(VM& vm)
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
-            auto* globalObject = jsCast<TemporalPlainDateTime*>(init.owner)->globalObject();
+            auto* globalObject = jsCast<TemporalPlainDateTime*>(init.owner)->realm();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
         });

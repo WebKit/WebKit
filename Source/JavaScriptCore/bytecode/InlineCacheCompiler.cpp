@@ -1844,7 +1844,7 @@ Ref<InlineCacheHandler> InlineCacheHandler::createPreCompiled(Ref<InlineCacheHan
             currStructure = holder->structure();
             result->u.s1.m_holder = holder;
         }
-        result->u.s1.m_globalObject = currStructure->globalObject();
+        result->u.s1.m_globalObject = currStructure->realm();
         result->u.s1.m_customAccessor = accessCase.as<GetterSetterAccessCase>().customAccessor().taggedPtr();
         break;
     }
@@ -3380,8 +3380,10 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             }
 
             if (Options::useDOMJIT() && access.domAttribute()->domJIT) {
-                emitDOMJITGetter(accessCase.structure()->globalObject(), access.domAttribute()->domJIT, baseGPR);
-                return;
+                if (auto* globalObject = accessCase.structure()->realm()) {
+                    emitDOMJITGetter(globalObject, access.domAttribute()->domJIT, baseGPR);
+                    return;
+                }
             }
         }
 
@@ -3398,7 +3400,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         // We do not need to keep globalObject alive since
         // 1. if it is CustomValue, the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock) must keep it alive.
         // 2. if it is CustomAccessor, structure should hold it.
-        JSGlobalObject* globalObject = currStructure->globalObject();
+        JSGlobalObject* globalObject = currStructure->realm();
 
         // Need to make room for the C call so any of our stack spillage isn't overwritten. It's
         // hard to track if someone did spillage or not, so we just assume that we always need

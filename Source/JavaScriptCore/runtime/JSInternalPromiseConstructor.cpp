@@ -58,7 +58,7 @@ const ClassInfo JSInternalPromiseConstructor::s_info = { "Function"_s, &Base::s_
 
 JSInternalPromiseConstructor* JSInternalPromiseConstructor::create(VM& vm, Structure* structure, JSInternalPromisePrototype* promisePrototype)
 {
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     FunctionExecutable* executable = promiseConstructorInternalPromiseConstructorCodeGenerator(vm);
     JSInternalPromiseConstructor* constructor = new (NotNull, allocateCell<JSInternalPromiseConstructor>(vm)) JSInternalPromiseConstructor(vm, executable, globalObject, structure);
     constructor->finishCreation(vm, promisePrototype);

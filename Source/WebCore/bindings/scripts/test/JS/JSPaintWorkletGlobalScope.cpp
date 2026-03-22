@@ -141,7 +141,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScopeConstructor, (JSGlobalObject* 
     auto* prototype = jsDynamicCast<JSPaintWorkletGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSPaintWorkletGlobalScope::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSPaintWorkletGlobalScope::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsPaintWorkletGlobalScope_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSPaintWorkletGlobalScope& thisObject)

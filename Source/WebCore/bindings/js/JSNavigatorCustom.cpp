@@ -45,7 +45,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSNavigator);
 #if ENABLE(MEDIA_STREAM)
 JSC::JSValue JSNavigator::getUserMedia(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
-    auto* function = globalObject()->builtinInternalFunctions().jsDOMBindingInternals().m_getUserMediaShimFunction.get();
+    auto* function = realm()->builtinInternalFunctions().jsDOMBindingInternals().m_getUserMediaShimFunction.get();
     ASSERT(function);
 
     auto callData = JSC::getCallData(function);

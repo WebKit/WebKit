@@ -1964,7 +1964,7 @@ public:
         DollarVMAssertScope assertScope;
         Base::finishCreation(vm);
 
-        JSGlobalObject* globalObject = this->globalObject();
+        JSGlobalObject* globalObject = this->realm();
         putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "addBytes"_s), 0, functionWasmStreamingParserAddBytes, ImplementationVisibility::Public, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
         putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "finalize"_s), 0, functionWasmStreamingParserFinalize, ImplementationVisibility::Public, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
@@ -2052,7 +2052,7 @@ public:
         DollarVMAssertScope assertScope;
         Base::finishCreation(vm);
 
-        JSGlobalObject* globalObject = this->globalObject();
+        JSGlobalObject* globalObject = this->realm();
         putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "addBytes"_s), 0, functionWasmStreamingCompilerAddBytes, ImplementationVisibility::Public, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
 
@@ -2969,7 +2969,9 @@ JSC_DEFINE_HOST_FUNCTION(functionHaveABadTime, (JSGlobalObject* globalObject, Ca
         JSObject* obj = callFrame->argument(0).getObject();
         if (!obj)
             return throwVMTypeError(globalObject, scope, "haveABadTime expects first argument to be an object if provided"_s);
-        target = obj->globalObject();
+        target = obj->realmMayBeNull();
+        if (!target)
+            return throwVMTypeError(globalObject, scope, "haveABadTime: object has no associated realm"_s);
     }
 
     target->haveABadTime(vm);
@@ -2988,7 +2990,9 @@ JSC_DEFINE_HOST_FUNCTION(functionIsHavingABadTime, (JSGlobalObject* globalObject
         JSObject* obj = callFrame->argument(0).getObject();
         if (!obj)
             return throwVMTypeError(globalObject, scope, "isHavingABadTime expects first argument to be an object if provided"_s);
-        target = obj->globalObject();
+        target = obj->realmMayBeNull();
+        if (!target)
+            return throwVMTypeError(globalObject, scope, "isHavingABadTime: object has no associated realm"_s);
     }
 
     return JSValue::encode(jsBoolean(target->isHavingABadTime()));
@@ -3733,8 +3737,9 @@ JSC_DEFINE_HOST_FUNCTION(functionGlobalObjectForObject, (JSGlobalObject*, CallFr
     DollarVMAssertScope assertScope;
     JSValue value = callFrame->argument(0);
     RELEASE_ASSERT(value.isObject());
-    JSGlobalObject* result = jsCast<JSObject*>(value)->globalObject();
-    RELEASE_ASSERT(result);
+    JSGlobalObject* result = jsCast<JSObject*>(value)->realmMayBeNull();
+    if (!result)
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(result->globalThis());
 }
 
@@ -4323,7 +4328,7 @@ void JSDollarVM::finishCreation(VM& vm)
     DollarVMAssertScope assertScope;
     Base::finishCreation(vm);
 
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
 
     auto addFunction = [&] (VM& vm, ASCIILiteral name, NativeFunction function, unsigned arguments) {
         DollarVMAssertScope assertScope;

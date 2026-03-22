@@ -43,7 +43,7 @@ JSAsyncGeneratorFunction::JSAsyncGeneratorFunction(VM& vm, FunctionExecutable* e
 JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSAsyncGeneratorFunction* asyncGenerator = new (NotNull, allocateCell<JSAsyncGeneratorFunction>(vm)) JSAsyncGeneratorFunction(vm, executable, scope, structure);
-    ASSERT(asyncGenerator->structure()->globalObject());
+    ASSERT(asyncGenerator->realm());
     asyncGenerator->finishCreation(vm);
     return asyncGenerator;
 }

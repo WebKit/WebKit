@@ -106,7 +106,7 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     bool trustedOnly = false;
     if (options.webkitTrustedOnly) {
         auto* function = listener->jsFunction();
-        if (function && worldForDOMObject(*function).allowAutofill())
+        if (function && function->realmMayBeNull() && worldForDOMObject(*function).allowAutofill())
             trustedOnly = true;
     }
 
@@ -373,7 +373,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         JSC::EnsureStillAliveScope jsFunctionProtector(callback->jsFunction());
 
         if (event.isAutofillEvent()) [[unlikely]] {
-            if (!worldForDOMObject(*callback->jsFunction()).allowAutofill())
+            if (!callback->jsFunction()->realmMayBeNull() || !worldForDOMObject(*callback->jsFunction()).allowAutofill())
                 continue; // webkitrequestautofill only fires in a world with autofill capability.
         }
 

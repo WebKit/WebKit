@@ -374,7 +374,7 @@ void CallFrame::convertToZombieFrame(VM& vm, CodeBlock* codeBlockToKeepAliveUnti
 
     JSGlobalObject* globalObject = nullptr;
     if (throwOriginFrame)
-        globalObject = throwOriginFrame->jsCallee()->globalObject();
+        globalObject = throwOriginFrame->jsCallee()->realm();
     else
         globalObject = vm.entryScope->globalObject();
     JSObject* zombieFrameCallee = globalObject->zombieFrameCallee();
@@ -390,7 +390,7 @@ JSGlobalObject* CallFrame::lexicalGlobalObjectFromNativeCallee(VM& vm) const
     switch (nativeCallee->category()) {
     case NativeCallee::Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
-        return wasmInstance()->globalObject();
+        return wasmInstance()->realm();
 #else
         return nullptr;
 #endif

@@ -416,11 +416,11 @@ public:
     
     inline bool holesMustForwardToPrototype(JSObject*) const;
         
-    JSGlobalObject* globalObject() const LIFETIME_BOUND { return m_globalObject.get(); }
+    JSGlobalObject* realm() const LIFETIME_BOUND { return m_realm.get(); }
 
-    // NOTE: This method should only be called during the creation of structures, since the global
-    // object of a structure is presumed to be immutable in a bunch of places.
-    void setGlobalObject(VM&, JSGlobalObject*);
+    // NOTE: This method should only be called during the creation of structures, since the realm
+    // of a structure is presumed to be immutable in a bunch of places.
+    void setRealm(VM&, JSGlobalObject*);
 
     ALWAYS_INLINE bool hasMonoProto() const
     {
@@ -714,9 +714,9 @@ public:
         return OBJECT_OFFSETOF(Structure, m_prototype);
     }
 
-    static constexpr ptrdiff_t globalObjectOffset()
+    static constexpr ptrdiff_t realmOffset()
     {
-        return OBJECT_OFFSETOF(Structure, m_globalObject);
+        return OBJECT_OFFSETOF(Structure, m_realm);
     }
 
     static constexpr ptrdiff_t classInfoOffset()
@@ -1081,7 +1081,7 @@ private:
     SeenProperties m_seenProperties;
 
 
-    WriteBarrier<JSGlobalObject> m_globalObject;
+    WriteBarrier<JSGlobalObject> m_realm;
     WriteBarrier<Unknown> m_prototype;
     mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
 

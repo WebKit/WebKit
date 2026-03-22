@@ -163,7 +163,7 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
     // isn't any good place to put the structure on Internal Functions.
     if (targetJSFunction) {
         Structure* structure = targetJSFunction->ensureRareData(vm)->getBoundFunctionStructure();
-        if (structure && structure->storedPrototype() == prototype && structure->globalObject() == globalObject)
+        if (structure && structure->storedPrototype() == prototype && structure->realm() == globalObject)
             return structure;
     }
 
@@ -172,9 +172,9 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
     // It would be nice if the structure map was keyed global objects in addition to the other things. Unfortunately, it is not
     // currently. Whoever works on caching structure changes for prototype transitions should consider this problem as well.
     // See: https://bugs.webkit.org/show_bug.cgi?id=152738
-    if (prototype.isObject() && prototype.getObject()->globalObject() == globalObject) {
+    if (prototype.isObject() && prototype.getObject()->realmMayBeNull() == globalObject) {
         result = globalObject->structureCache().emptyStructureForPrototypeFromBaseStructure(globalObject, prototype.getObject(), result);
-        ASSERT_WITH_SECURITY_IMPLICATION(result->globalObject() == globalObject);
+        ASSERT_WITH_SECURITY_IMPLICATION(result->realm() == globalObject);
     } else
         result = Structure::create(vm, globalObject, prototype, result->typeInfo(), result->classInfoForCells());
 
@@ -251,7 +251,7 @@ JSArray* JSBoundFunction::boundArgsCopy(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSArray* result = constructEmptyArray(this->globalObject(), nullptr);
+    JSArray* result = constructEmptyArray(this->realm(), nullptr);
     RETURN_IF_EXCEPTION(scope, nullptr);
     forEachBoundArg([&](JSValue argument) -> IterationStatus {
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -265,7 +265,7 @@ JSArray* JSBoundFunction::boundArgsCopy(JSGlobalObject* globalObject)
 
 JSString* JSBoundFunction::nameSlow(VM& vm)
 {
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     DeferTerminationForAWhile deferScope(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
@@ -406,7 +406,7 @@ bool JSBoundFunction::canSkipNameAndLengthMaterialization(JSGlobalObject* global
         return false;
     if (structure->storedPrototype() != globalObject->functionPrototype())
         return false;
-    if (structure->globalObject() != globalObject)
+    if (structure->realm() != globalObject)
         return false;
 
     if (structure->classInfoForCells()->isSubClassOf(JSBoundFunction::info()))

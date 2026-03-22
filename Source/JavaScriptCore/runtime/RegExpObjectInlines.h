@@ -36,7 +36,7 @@ namespace JSC {
 
 ALWAYS_INLINE bool RegExpObject::isSymbolReplaceFastAndNonObservable()
 {
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->regExpPrimordialPropertiesWatchpointSet().isStillValid())
         return false;
 

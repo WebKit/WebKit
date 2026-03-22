@@ -67,8 +67,8 @@ inline JSReadableStreamDefaultController& ReadableStreamDefaultController::jsCon
 inline JSDOMGlobalObject& ReadableStreamDefaultController::globalObject() const
 {
     ASSERT(m_jsController);
-    ASSERT(m_jsController->globalObject());
-    return *static_cast<JSDOMGlobalObject*>(m_jsController->globalObject());
+    ASSERT(m_jsController->realm());
+    return *static_cast<JSDOMGlobalObject*>(m_jsController->realm());
 }
 
 } // namespace WebCore

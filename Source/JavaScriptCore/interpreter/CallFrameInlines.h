@@ -73,7 +73,7 @@ inline JSGlobalObject* CallFrame::lexicalGlobalObject(VM& vm) const
 {
     if (callee().isNativeCallee())
         return lexicalGlobalObjectFromNativeCallee(vm);
-    return jsCallee()->globalObject();
+    return jsCallee()->realm();
 }
 
 inline JSCell* CallFrame::codeOwnerCell() const
@@ -87,7 +87,7 @@ inline bool CallFrame::isZombieFrame() const
 {
     if (callee().isNativeCallee())
         return false;
-    return jsCallee() == jsCallee()->globalObject()->zombieFrameCallee();
+    return jsCallee() == jsCallee()->realm()->zombieFrameCallee();
 }
 
 inline bool CallFrame::isNativeCalleeFrame() const

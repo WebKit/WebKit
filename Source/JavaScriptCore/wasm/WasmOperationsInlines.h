@@ -183,7 +183,7 @@ inline JSValue arrayNewFixed(JSWebAssemblyInstance* instance, WebAssemblyGCStruc
 template<typename T>
 EncodedJSValue createArrayFromDataSegment(JSWebAssemblyInstance* instance, WebAssemblyGCStructure* structure, size_t arraySize, unsigned dataSegmentIndex, unsigned offset)
 {
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     VM& vm = globalObject->vm();
     auto* array = JSWebAssemblyArray::tryCreate(vm, structure, arraySize);
     if (!array) [[unlikely]]
@@ -463,7 +463,7 @@ inline bool arrayInitData(JSWebAssemblyInstance* instance, EncodedJSValue dst, u
 // structNew() expects the `arguments` array (when used) to be in reverse order
 inline JSValue structNew(JSWebAssemblyInstance* instance, WebAssemblyGCStructure* structure, bool useDefault, IPInt::IPIntStackEntry* arguments)
 {
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     VM& vm = globalObject->vm();
 
     ASSERT(structure->typeDefinition().is<StructType>());
@@ -819,7 +819,7 @@ inline int32_t memoryAtomicNotify(JSWebAssemblyInstance* instance, unsigned base
 
 inline void* throwWasmToJSException(CallFrame* callFrame, Wasm::ExceptionType type, JSWebAssemblyInstance* instance)
 {
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
 
     // Do not retrieve VM& from CallFrame since CallFrame's callee is not a JSCell.
     VM& vm = globalObject->vm();

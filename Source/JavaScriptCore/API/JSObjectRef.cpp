@@ -876,7 +876,7 @@ JSGlobalContextRef JSObjectGetGlobalContext(JSObjectRef objectRef)
     JSObject* object = toJS(objectRef);
     if (!object)
         return nullptr;
-    return reinterpret_cast<JSGlobalContextRef>(object->globalObject());
+    return reinterpret_cast<JSGlobalContextRef>(object->realmMayBeNull());
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

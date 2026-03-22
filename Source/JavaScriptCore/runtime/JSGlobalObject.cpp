@@ -2462,15 +2462,17 @@ inline void GlobalObjectDependencyFinder::visit(JSObject* object)
         return;
 
     JSObject* current = object;
-    JSGlobalObject* objectGlobalObject = object->globalObject();
+    JSGlobalObject* objectGlobalObject = object->realmMayBeNull();
+    if (!objectGlobalObject)
+        return;
     do {
         JSValue prototypeValue = current->getPrototypeDirect();
         if (prototypeValue.isNull())
             return;
         current = asObject(prototypeValue);
 
-        JSGlobalObject* protoGlobalObject = current->globalObject();
-        if (protoGlobalObject != objectGlobalObject)
+        JSGlobalObject* protoGlobalObject = current->realmMayBeNull();
+        if (protoGlobalObject && protoGlobalObject != objectGlobalObject)
             addDependency(protoGlobalObject, objectGlobalObject);
     } while (true);
 }
@@ -2544,7 +2546,7 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
         bool objectMayBePrototype { false };
 
         if (mode == BadTimeFinderMode::SingleGlobal) {
-            objectGlobalObject = object->globalObject();
+            objectGlobalObject = object->realmMayBeNull();
             if (objectGlobalObject == m_globalObject)
                 return true;
 
@@ -2552,14 +2554,14 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
         }
 
         for (JSObject* current = object; ;) {
-            JSGlobalObject* currentGlobalObject = current->globalObject();
+            JSGlobalObject* currentGlobalObject = current->realmMayBeNull();
             if (mode == BadTimeFinderMode::SingleGlobal) {
                 if (objectMayBePrototype && currentGlobalObject != objectGlobalObject)
                     m_needsMultiGlobalsScan = true;
                 if (currentGlobalObject == m_globalObject)
                     return true;
             } else {
-                if (m_globalObjects->contains(currentGlobalObject))
+                if (currentGlobalObject && m_globalObjects->contains(currentGlobalObject))
                     return true;
             }
 
@@ -2575,8 +2577,8 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
         if (hasBrokenIndexing(structure->indexingType())) {
             bool isRelevantGlobalObject =
                 (mode == BadTimeFinderMode::SingleGlobal
-                    ? m_globalObject == structure->globalObject()
-                    : m_globalObjects->contains(structure->globalObject()))
+                    ? m_globalObject == structure->realm()
+                    : m_globalObjects->contains(structure->realm()))
                 || (structure->hasMonoProto() && !structure->storedPrototype().isNull() && isInAffectedGlobalObject(asObject(structure->storedPrototype())));
             return isRelevantGlobalObject;
         }
@@ -3700,7 +3702,7 @@ void JSGlobalObject::finishCreation(VM& vm)
 {
     DeferTermination deferTermination(vm);
     Base::finishCreation(vm);
-    structure()->setGlobalObject(vm, this);
+    structure()->setRealm(vm, this);
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
     init(vm);
     setGlobalThis(vm, JSGlobalProxy::create(vm, JSGlobalProxy::createStructure(vm, this, getPrototypeDirect()), this));
@@ -3711,7 +3713,7 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
     DeferTermination deferTermination(vm);
     Base::finishCreation(vm);
-    structure()->setGlobalObject(vm, this);
+    structure()->setRealm(vm, this);
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
     init(vm);
     setGlobalThis(vm, thisValue);

@@ -50,7 +50,7 @@ inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSObject* script
 {
     ASSERT_WITH_MESSAGE(!m_dependencies.isEmpty(), "dependencies shouldn't be empty since it should contain the target");
     ASSERT_WITH_MESSAGE(isTargetObject(), "target must be a JSObject");
-    target()->globalObject()->addWeakTicket(this);
+    target()->realm()->addWeakTicket(this);
 }
 
 inline Ref<DeferredWorkTimer::TicketData> DeferredWorkTimer::TicketData::create(WorkType type, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies)
@@ -124,7 +124,7 @@ void DeferredWorkTimer::doWork(VM& vm)
 
         // We shouldn't access the TicketData to get this globalObject until
         // after we confirm that the ticket is still valid (which we did above).
-        auto globalObject = ticket->target()->globalObject();
+        auto globalObject = ticket->target()->realm();
         switch (globalObject->globalObjectMethodTable()->scriptExecutionStatus(globalObject, ticket->scriptExecutionOwner())) {
         case ScriptExecutionStatus::Suspended:
             suspendedTasks.append(std::make_tuple(ticket, WTF::move(task)));
@@ -192,7 +192,7 @@ DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(WorkType type, VM& v
     for (unsigned i = 0; i < dependencies.size(); ++i)
         ASSERT(dependencies[i] != target && dependencies[i]);
 
-    auto* globalObject = target->globalObject();
+    auto* globalObject = target->realm();
     JSObject* scriptExecutionOwner = globalObject->globalObjectMethodTable()->currentScriptExecutionOwner(globalObject);
     dependencies.append(target);
 
@@ -270,7 +270,7 @@ void DeferredWorkTimer::cancelPendingWork(VM& vm)
 
     dataLogLnIf(DeferredWorkTimerInternal::verbose, "Cancel pending work for vm ", RawPointer(&vm));
     auto isValid = [&](auto& ticket) {
-        bool isTargetGlobalObjectLive = vm.heap.isMarked(ticket->target()->globalObject());
+        bool isTargetGlobalObjectLive = vm.heap.isMarked(ticket->target()->realm());
 #if ASSERT_ENABLED
         if (isTargetGlobalObjectLive) {
             for (JSCell* dependency : ticket->dependencies())

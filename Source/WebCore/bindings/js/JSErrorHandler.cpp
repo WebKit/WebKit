@@ -87,7 +87,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         Ref<JSErrorHandler> protectedThis(*this);
 
         RefPtr<Event> savedEvent;
-        auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunction->globalObject());
+        auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunction->realm());
         if (jsFunctionWindow) {
             savedEvent = jsFunctionWindow->currentEvent();
 
@@ -142,7 +142,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
             return nullptr;
         }());
         if (exception)
-            reportException(jsFunction->globalObject(), exception);
+            reportException(jsFunction->realm(), exception);
     }
 }
 

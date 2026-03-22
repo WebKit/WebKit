@@ -166,7 +166,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierReadWriteAttributeConstructor, (JSGlob
     auto* prototype = jsDynamicCast<JSTestStringifierReadWriteAttributePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestStringifierReadWriteAttribute::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestStringifierReadWriteAttribute::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestStringifierReadWriteAttribute_identifierGetter(JSGlobalObject& lexicalGlobalObject, JSTestStringifierReadWriteAttribute& thisObject)

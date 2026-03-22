@@ -120,7 +120,7 @@ void JSWindowProxy::setWindow(DOMWindow& domWindow)
             localWindow->setAsWrappedWithoutInitializedSecurityOrigin();
     }
 
-    prototype->structure()->setGlobalObject(vm, window);
+    prototype->structure()->setRealm(vm, window);
 
     auto& propertiesStructure = *JSDOMWindowProperties::createStructure(vm, window, JSEventTarget::prototype(vm, *window));
     auto& properties = *JSDOMWindowProperties::create(&propertiesStructure, *window);
@@ -129,8 +129,8 @@ void JSWindowProxy::setWindow(DOMWindow& domWindow)
 
     setWindow(vm, *window);
 
-    ASSERT(window->globalObject() == window);
-    ASSERT(prototype->globalObject() == window);
+    ASSERT(window->realm() == window);
+    ASSERT(prototype->realm() == window);
 }
 
 WindowProxy* JSWindowProxy::windowProxy() const

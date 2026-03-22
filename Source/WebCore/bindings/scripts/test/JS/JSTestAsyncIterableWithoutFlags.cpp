@@ -166,7 +166,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestAsyncIterableWithoutFlagsConstructor, (JSGlobalOb
     auto* prototype = jsDynamicCast<JSTestAsyncIterableWithoutFlagsPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestAsyncIterableWithoutFlags::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestAsyncIterableWithoutFlags::getConstructor(vm, prototype->realm()));
 }
 
 struct TestAsyncIterableWithoutFlagsIteratorTraits {

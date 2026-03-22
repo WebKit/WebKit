@@ -41,7 +41,7 @@ ALWAYS_INLINE void JSMap::set(JSGlobalObject* globalObject, JSValue key, JSValue
 
 ALWAYS_INLINE bool JSMap::isIteratorProtocolFastAndNonObservable()
 {
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->isMapPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 

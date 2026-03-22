@@ -88,7 +88,7 @@ JSC_DEFINE_HOST_FUNCTION(remoteFunctionCallForJSFunction, (JSGlobalObject* globa
     JSRemoteFunction* remoteFunction = jsCast<JSRemoteFunction*>(callFrame->jsCallee());
     ASSERT(remoteFunction->isRemoteFunction());
     JSFunction* targetFunction = jsCast<JSFunction*>(remoteFunction->targetFunction());
-    JSGlobalObject* targetGlobalObject = targetFunction->globalObject();
+    JSGlobalObject* targetGlobalObject = targetFunction->realm();
 
     MarkedArgumentBuffer args;
     auto clearArgOverflowCheckAndReturnAbortValue = [&] () -> EncodedJSValue {
@@ -129,7 +129,7 @@ JSC_DEFINE_HOST_FUNCTION(remoteFunctionCallGeneric, (JSGlobalObject* globalObjec
     JSRemoteFunction* remoteFunction = jsCast<JSRemoteFunction*>(callFrame->jsCallee());
     ASSERT(remoteFunction->isRemoteFunction());
     JSObject* targetFunction = remoteFunction->targetFunction();
-    JSGlobalObject* targetGlobalObject = targetFunction->globalObject();
+    JSGlobalObject* targetGlobalObject = targetFunction->realm();
 
     MarkedArgumentBuffer args;
     auto clearArgOverflowCheckAndReturnAbortValue = [&] () -> EncodedJSValue {

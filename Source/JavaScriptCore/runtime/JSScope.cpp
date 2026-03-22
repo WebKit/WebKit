@@ -236,7 +236,7 @@ ALWAYS_INLINE JSObject* JSScope::resolve(JSGlobalObject* globalObject, JSScope* 
 
         // Global scope.
         if (++it == end) {
-            JSScope* globalScopeExtension = scope->globalObject()->globalScopeExtension();
+            JSScope* globalScopeExtension = scope->realm()->globalScopeExtension();
             if (globalScopeExtension) [[unlikely]] {
                 bool hasProperty = object->hasProperty(globalObject, ident);
                 RETURN_IF_EXCEPTION(throwScope, nullptr);

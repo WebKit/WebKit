@@ -44,7 +44,7 @@ Structure* JSFinalizationRegistry::createStructure(VM& vm, JSGlobalObject* globa
 JSFinalizationRegistry* JSFinalizationRegistry::create(VM& vm, Structure* structure, JSObject* callback)
 {
     JSFinalizationRegistry* instance = new (NotNull, allocateCell<JSFinalizationRegistry>(vm)) JSFinalizationRegistry(vm, structure);
-    instance->finishCreation(vm, structure->globalObject(), callback);
+    instance->finishCreation(vm, structure->realm(), callback);
     return instance;
 }
 
@@ -154,7 +154,7 @@ void JSFinalizationRegistry::finalizeUnconditionally(VM& vm, CollectionScope)
         auto ticket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::ImminentlyScheduled, vm, this, { });
         ASSERT(vm.deferredWorkTimer->hasPendingWork(ticket));
         vm.deferredWorkTimer->scheduleWorkSoon(ticket, [this](DeferredWorkTimer::Ticket) {
-            JSGlobalObject* globalObject = this->globalObject();
+            JSGlobalObject* globalObject = this->realm();
             this->m_hasAlreadyScheduledWork = false;
             this->runFinalizationCleanup(globalObject);
         });

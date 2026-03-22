@@ -836,7 +836,6 @@ private:
                     fastPathContinuation->appendNew<MemoryValue>(m_proc, Store, m_origin, structureID, cell, static_cast<int32_t>(JSCell::structureIDOffset()));
                     fastPathContinuation->appendNew<MemoryValue>(m_proc, Store, m_origin, typeInfo, cell, static_cast<int32_t>(JSCell::indexingTypeAndMiscOffset()));
                     fastPathContinuation->appendNew<MemoryValue>(m_proc, Store, m_origin, fastPathContinuation->appendIntConstant(m_proc, m_origin, pointerType(), 0), cell, static_cast<int32_t>(JSObject::butterflyOffset()));
-                    fastPathContinuation->appendNew<MemoryValue>(m_proc, Store, m_origin, fastPathContinuation->appendIntConstant(m_proc, m_origin, pointerType(), std::bit_cast<uintptr_t>(rtt.ptr())), cell, static_cast<int32_t>(WebAssemblyGCObjectBase::offsetOfRTT()));
 
                     fastUpsilon = fastPathContinuation->appendNew<UpsilonValue>(m_proc, m_origin, cell);
                     fastPathContinuation->appendNew<Value>(m_proc, Jump, m_origin);
@@ -1376,7 +1375,10 @@ private:
 
                     emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, jsType, constant(Int32, JSType::WebAssemblyGCObjectType)), castFailure, falseBlock);
                 }
-                Value* rtt = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), m_origin, value, safeCast<int32_t>(WebAssemblyGCObjectBase::offsetOfRTT()));
+                Value* sid = currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, m_origin, value, safeCast<int32_t>(JSCell::structureIDOffset()));
+                Value* structure = currentBlock->appendNew<Value>(m_proc, ZExt32, m_origin, sid);
+                structure = currentBlock->appendNew<Value>(m_proc, BitOr, m_origin, structure, currentBlock->appendIntConstant(m_proc, m_origin, Int64, structureIDBase()));
+                Value* rtt = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), m_origin, structure, safeCast<int32_t>(WebAssemblyGCStructure::offsetOfRTT()));
                 auto* kind = currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, m_origin, rtt, safeCast<int32_t>(Wasm::RTT::offsetOfKind()));
                 kind->setControlDependent(false);
 
@@ -1402,7 +1404,12 @@ private:
                         emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, jsType, constant(Int32, JSType::WebAssemblyGCObjectType)), castFailure, falseBlock);
                     }
 
-                    rtt = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), m_origin, value, safeCast<int32_t>(WebAssemblyGCObjectBase::offsetOfRTT()));
+                    {
+                        Value* sid = currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, m_origin, value, safeCast<int32_t>(JSCell::structureIDOffset()));
+                        Value* structure = currentBlock->appendNew<Value>(m_proc, ZExt32, m_origin, sid);
+                        structure = currentBlock->appendNew<Value>(m_proc, BitOr, m_origin, structure, currentBlock->appendIntConstant(m_proc, m_origin, Int64, structureIDBase()));
+                        rtt = currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), m_origin, structure, safeCast<int32_t>(WebAssemblyGCStructure::offsetOfRTT()));
+                    }
                     if (targetRTT->isFinalType()) {
                         // If signature is final type and pointer equality failed, this value must not be a subtype.
                         emitCheckOrBranchForCast(castKind, currentBlock->appendNew<Value>(m_proc, NotEqual, m_origin, rtt, targetRTTPointer), castFailure, falseBlock);

@@ -347,7 +347,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterNoIdentifierConstructor, (JSGlobalObje
     auto* prototype = jsDynamicCast<JSTestNamedSetterNoIdentifierPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestNamedSetterNoIdentifier::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestNamedSetterNoIdentifier::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestNamedSetterNoIdentifier::subspaceForImpl(JSC::VM& vm)

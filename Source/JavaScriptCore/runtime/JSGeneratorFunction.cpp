@@ -43,7 +43,7 @@ JSGeneratorFunction::JSGeneratorFunction(VM& vm, FunctionExecutable* executable,
 JSGeneratorFunction* JSGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSGeneratorFunction* generatorFunction = new (NotNull, allocateCell<JSGeneratorFunction>(vm)) JSGeneratorFunction(vm, executable, scope, structure);
-    ASSERT(generatorFunction->structure()->globalObject());
+    ASSERT(generatorFunction->realm());
     generatorFunction->finishCreation(vm);
     return generatorFunction;
 }

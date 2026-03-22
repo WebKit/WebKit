@@ -685,8 +685,10 @@ private:
 
         case GetGlobalObject: {
             if (JSObject* object = m_node->child1()->dynamicCastConstant<JSObject*>()) {
-                m_graph.convertToConstant(m_node, object->globalObject());
-                m_changed = true;
+                if (JSGlobalObject* globalObject = object->realmMayBeNull()) {
+                    m_graph.convertToConstant(m_node, globalObject);
+                    m_changed = true;
+                }
                 break;
             }
             break;
@@ -748,7 +750,7 @@ private:
             if (m_node->op() == RegExpExec || m_node->op() == RegExpTest || m_node->op() == RegExpMatchFast || m_node->op() == RegExpSearch) {
                 regExpObjectNode = m_node->child2().node();
                 if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>()) {
-                    JSGlobalObject* globalObject = regExpObject->globalObject();
+                    JSGlobalObject* globalObject = regExpObject->realm();
                     if (globalObject->isRegExpRecompiled()) {
                         dataLogLnIf(verbose, "Giving up because RegExp recompile happens.");
                         break;
@@ -1175,7 +1177,7 @@ private:
             Node* regExpObjectNode = m_node->child2().node();
             RegExp* regExp;
             if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>()) {
-                JSGlobalObject* globalObject = regExpObject->globalObject();
+                JSGlobalObject* globalObject = regExpObject->realm();
                 if (m_graph.m_plan.isUnlinked() && globalObject != m_graph.globalObjectFor(m_node->origin.semantic)) {
                     dataLogLnIf(verbose, "Giving up because unlinked DFG requires globalObject is the same to the node's origin.");
                     break;

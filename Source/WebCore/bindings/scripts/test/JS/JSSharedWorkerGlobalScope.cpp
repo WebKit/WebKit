@@ -141,7 +141,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsSharedWorkerGlobalScopeConstructor, (JSGlobalObject* 
     auto* prototype = jsDynamicCast<JSSharedWorkerGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSSharedWorkerGlobalScope::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSSharedWorkerGlobalScope::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsSharedWorkerGlobalScope_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSSharedWorkerGlobalScope& thisObject)

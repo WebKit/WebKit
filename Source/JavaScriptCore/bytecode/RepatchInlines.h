@@ -90,7 +90,7 @@ inline void* handleHostCall(VM& vm, JSCell* owner, CallFrame* calleeFrame, JSVal
         if (callData.type == CallData::Type::Native) {
             NativeCallFrameTracer tracer(vm, calleeFrame);
             calleeFrame->setCallee(asObject(callee));
-            vm.encodedHostCallReturnValue = callData.native.function(asObject(callee)->globalObject(), calleeFrame);
+            vm.encodedHostCallReturnValue = callData.native.function(asObject(callee)->realm(), calleeFrame);
             AssertNoGC assertNoGC;
             if (scope.exception()) [[unlikely]]
                 return nullptr;
@@ -111,7 +111,7 @@ inline void* handleHostCall(VM& vm, JSCell* owner, CallFrame* calleeFrame, JSVal
     if (constructData.type == CallData::Type::Native) {
         NativeCallFrameTracer tracer(vm, calleeFrame);
         calleeFrame->setCallee(asObject(callee));
-        vm.encodedHostCallReturnValue = constructData.native.function(asObject(callee)->globalObject(), calleeFrame);
+        vm.encodedHostCallReturnValue = constructData.native.function(asObject(callee)->realm(), calleeFrame);
         AssertNoGC assertNoGC;
         if (scope.exception()) [[unlikely]]
             return nullptr;

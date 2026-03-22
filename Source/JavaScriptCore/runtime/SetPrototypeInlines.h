@@ -30,9 +30,9 @@
 
 namespace JSC {
 
-ALWAYS_INLINE bool setPrimordialWatchpointIsValid(VM& vm, JSObject* object)
+ALWAYS_INLINE bool setPrimordialWatchpointIsValid(VM& vm, JSSet* object)
 {
-    JSGlobalObject* globalObject = object->globalObject();
+    JSGlobalObject* globalObject = object->realm();
 
     if (globalObject->jsSetPrototype() != object->getPrototypeDirect())
         return false;

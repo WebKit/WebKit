@@ -165,7 +165,7 @@ private:
 
 std::unique_ptr<Vector<StackFrame>> getStackTrace(VM& vm, JSObject* obj, bool useCurrentFrame, JSCell* ownerOfCallLinkInfo, CallLinkInfo* callLinkInfo, JSCell* subclassCaller)
 {
-    JSGlobalObject* globalObject = obj->globalObject();
+    JSGlobalObject* globalObject = obj->realm();
     if (!globalObject->stackTraceLimit())
         return nullptr;
 

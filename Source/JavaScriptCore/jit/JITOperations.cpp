@@ -166,7 +166,7 @@ static JSValue getWrappedValue(JSGlobalObject* globalObject, JSGlobalObject* tar
 
 JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSRemoteFunction* callee, EncodedJSValue encodedValue))
 {
-    JSGlobalObject* globalObject = callee->globalObject();
+    JSGlobalObject* globalObject = callee->realm();
     VM& vm = globalObject->vm();
 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -174,13 +174,13 @@ JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSR
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(isRemoteFunction(callee));
 
-    JSGlobalObject* targetGlobalObject = callee->targetFunction()->globalObject();
+    JSGlobalObject* targetGlobalObject = callee->targetFunction()->realm();
     OPERATION_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, targetGlobalObject, JSValue::decode(encodedValue))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSRemoteFunction* callee, EncodedJSValue encodedValue))
 {
-    JSGlobalObject* globalObject = callee->globalObject();
+    JSGlobalObject* globalObject = callee->realm();
     VM& vm = globalObject->vm();
 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -213,7 +213,7 @@ static inline UGPRPair materializeTargetCode(VM& vm, JSFunction* targetFunction)
 
 JSC_DEFINE_JIT_OPERATION(operationMaterializeBoundFunctionTargetCode, UGPRPair, (JSBoundFunction* callee))
 {
-    JSGlobalObject* globalObject = callee->globalObject();
+    JSGlobalObject* globalObject = callee->realm();
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
@@ -224,7 +224,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeBoundFunctionTargetCode, UGPRPair, 
 
 JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair, (JSRemoteFunction* callee))
 {
-    JSGlobalObject* globalObject = callee->globalObject();
+    JSGlobalObject* globalObject = callee->realm();
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
@@ -236,7 +236,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair,
 
 JSC_DEFINE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction* callee))
 {
-    JSGlobalObject* globalObject = callee->globalObject();
+    JSGlobalObject* globalObject = callee->realm();
     VM& vm = globalObject->vm();
 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -3472,7 +3472,7 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
                 && static_cast<uint32_t>(i) < object->butterfly()->publicLength()) {
                 // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
                 // https://bugs.webkit.org/show_bug.cgi?id=182940
-                auto* globalObject = object->globalObject();
+                auto* globalObject = object->realm();
                 skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
             }
 
@@ -3607,7 +3607,7 @@ ALWAYS_INLINE static JSValue getByValWithThis(JSGlobalObject* globalObject, Call
                 && static_cast<uint32_t>(i) < object->butterfly()->publicLength()) {
                 // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
                 // https://bugs.webkit.org/show_bug.cgi?id=182940
-                auto* globalObject = object->globalObject();
+                auto* globalObject = object->realm();
                 skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
             }
 
@@ -5235,7 +5235,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebuggerWillCallNativeExecutable, voi
 {
     ASSERT(!callFrame->isNativeCalleeFrame());
 
-    auto* globalObject = callFrame->jsCallee()->globalObject();
+    auto* globalObject = callFrame->jsCallee()->realm();
     if (!globalObject)
         return;
 

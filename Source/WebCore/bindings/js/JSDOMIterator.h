@@ -109,7 +109,7 @@ public:
 
 protected:
     template<typename... ArgTypes> JSDOMIteratorBase(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind, InternalIterator&& iterator)
-        : Base(structure, *iteratedObject.globalObject())
+        : Base(structure, *iteratedObject.realm())
         , m_iterator(WTF::move(iterator))
         , m_kind(kind)
     {
@@ -144,8 +144,8 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject&,
 
 template<typename JSIterator, typename... ArgTypes> JSC::JSValue iteratorCreate(typename JSIterator::Wrapper& thisObject, JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, IterationKind kind, ArgTypes... args)
 {
-    ASSERT(thisObject.globalObject());
-    JSDOMGlobalObject& globalObject = *thisObject.globalObject();
+    ASSERT(thisObject.realm());
+    JSDOMGlobalObject& globalObject = *thisObject.realm();
 
     auto result = thisObject.wrapped().createIterator(protect(globalObject.scriptExecutionContext()).get(), std::forward<ArgTypes>(args)...);
 
@@ -166,11 +166,11 @@ template<typename IteratorValue, typename T> inline EnableIfMap<T, JSC::JSValue>
     
     switch (m_kind) {
     case IterationKind::Keys:
-        return toJS<typename Traits::KeyType>(lexicalGlobalObject, *globalObject(), value->key);
+        return toJS<typename Traits::KeyType>(lexicalGlobalObject, *realm(), value->key);
     case IterationKind::Values:
-        return toJS<typename Traits::ValueType>(lexicalGlobalObject, *globalObject(), value->value);
+        return toJS<typename Traits::ValueType>(lexicalGlobalObject, *realm(), value->value);
     case IterationKind::Entries:
-        return jsPair<typename Traits::KeyType, typename Traits::ValueType>(lexicalGlobalObject, *globalObject(), value->key, value->value);
+        return jsPair<typename Traits::KeyType, typename Traits::ValueType>(lexicalGlobalObject, *realm(), value->key, value->value);
     };
     
     ASSERT_NOT_REACHED();
@@ -182,7 +182,7 @@ template<typename IteratorValue, typename T> inline EnableIfSet<T, JSC::JSValue>
 {
     ASSERT(value);
 
-    auto globalObject = this->globalObject();
+    auto globalObject = this->realm();
     auto result = toJS<IDLNullable<typename Traits::ValueType>>(lexicalGlobalObject, *globalObject, value);
 
     switch (m_kind) {
@@ -226,7 +226,7 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject& 
     auto iterator = thisObject.wrapped().createIterator(protect(JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()).get());
     while (auto value = iterator.next()) {
         JSC::MarkedArgumentBuffer arguments;
-        appendForEachArguments<JSIterator>(lexicalGlobalObject, *thisObject.globalObject(), arguments, value);
+        appendForEachArguments<JSIterator>(lexicalGlobalObject, *thisObject.realm(), arguments, value);
         arguments.append(&thisObject);
         if (arguments.hasOverflowed()) [[unlikely]] {
             throwOutOfMemoryError(&lexicalGlobalObject, scope);

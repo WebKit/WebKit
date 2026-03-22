@@ -64,7 +64,7 @@ void TemporalPlainMonthDay::finishCreation(VM& vm)
         [] (const auto& init) {
             VM& vm = init.vm;
             auto* plainMonthDay = jsCast<TemporalPlainMonthDay*>(init.owner);
-            auto* globalObject = plainMonthDay->globalObject();
+            auto* globalObject = plainMonthDay->realm();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
         });

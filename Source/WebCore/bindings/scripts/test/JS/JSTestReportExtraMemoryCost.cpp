@@ -163,7 +163,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestReportExtraMemoryCostConstructor, (JSGlobalObject
     auto* prototype = jsDynamicCast<JSTestReportExtraMemoryCostPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestReportExtraMemoryCost::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestReportExtraMemoryCost::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestReportExtraMemoryCost::subspaceForImpl(JSC::VM& vm)

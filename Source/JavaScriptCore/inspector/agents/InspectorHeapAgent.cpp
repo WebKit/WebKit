@@ -200,7 +200,7 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
     if (!structure)
         return makeUnexpected("Unable to get object details - Structure"_s);
 
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     if (!globalObject)
         return makeUnexpected("Unable to get object details - GlobalObject"_s);
 
@@ -240,7 +240,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent
     if (!structure)
         return makeUnexpected("Unable to get object details - Structure"_s);
 
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     if (!globalObject)
         return makeUnexpected("Unable to get object details - GlobalObject"_s);
 
@@ -298,7 +298,7 @@ void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
 bool InspectorHeapAgent::heapSnapshotBuilderIgnoreNode(const HeapSnapshotBuilder&, JSC::JSCell* cell)
 {
     if (const Structure* structure = cell->structure()) {
-        if (JSGlobalObject* globalObject = structure->globalObject()) {
+        if (JSGlobalObject* globalObject = structure->realm()) {
             if (!protect(m_environment)->canAccessInspectedScriptState(globalObject))
                 return true;
         }

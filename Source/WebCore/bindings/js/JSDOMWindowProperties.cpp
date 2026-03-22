@@ -64,9 +64,9 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
             if (htmlDocument->windowNamedItemContainsMultipleElements(atomPropertyName)) [[unlikely]] {
                 Ref<HTMLCollection> collection = document->windowNamedItems(atomPropertyName);
                 ASSERT(collection->length() > 1);
-                namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), collection);
+                namedItem = toJS(lexicalGlobalObject, thisObject->realm(), collection);
             } else
-                namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), *htmlDocument->windowNamedItem(atomPropertyName));
+                namedItem = toJS(lexicalGlobalObject, thisObject->realm(), *htmlDocument->windowNamedItem(atomPropertyName));
             slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontEnum), namedItem);
             return true;
         }
@@ -95,7 +95,7 @@ bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, JSGlobalObject*
     if (proto->hasProperty(lexicalGlobalObject, propertyName))
         return false;
 
-    auto* jsWindow = jsDynamicCast<JSDOMWindowBase*>(thisObject->globalObject());
+    auto* jsWindow = jsDynamicCast<JSDOMWindowBase*>(thisObject->realm());
     if (!jsWindow)
         return false;
 

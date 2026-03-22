@@ -312,7 +312,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operan
         isMasqueradesAsUndefined.link(this);
         loadLinkableConstant(LinkableConstant::globalObject(*this, m_currentNode), localGlobalObjectGPR);
         loadPtr(Address(argPayloadGPR, JSCell::structureIDOffset()), resultPayloadGPR);
-        loadPtr(Address(resultPayloadGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
+        loadPtr(Address(resultPayloadGPR, Structure::realmOffset()), remoteGlobalObjectGPR);
         compare32(Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, resultPayloadGPR);
     }
  
@@ -377,7 +377,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
    
         loadLinkableConstant(LinkableConstant::globalObject(*this, m_currentNode), localGlobalObjectGPR);
         loadPtr(Address(argPayloadGPR, JSCell::structureIDOffset()), resultGPR);
-        loadPtr(Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
+        loadPtr(Address(resultGPR, Structure::realmOffset()), remoteGlobalObjectGPR);
         branchPtr(Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, invert ? notTaken : taken);
     }
  
@@ -1549,7 +1549,7 @@ void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
         speculationCheck(BadType, JSValueRegs(valueTagGPR, valuePayloadGPR), nodeUse, 
             branchLinkableConstant(
                 Equal,
-                Address(structureGPR, Structure::globalObjectOffset()),
+                Address(structureGPR, Structure::realmOffset()),
                 LinkableConstant::globalObject(*this, m_currentNode)));
 
         isNotMasqueradesAsUndefined.link(this);
@@ -1674,7 +1674,7 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
         speculationCheck(BadType, JSValueRegs(valueTagGPR, valuePayloadGPR), nodeUse,
             branchLinkableConstant(
                 Equal,
-                Address(scratchGPR, Structure::globalObjectOffset()),
+                Address(scratchGPR, Structure::realmOffset()),
                 LinkableConstant::globalObject(*this, m_currentNode)));
 
         isNotMasqueradesAsUndefined.link(this);
@@ -3749,7 +3749,7 @@ void SpeculativeJIT::compile(Node* node)
             isMasqueradesAsUndefined.link(this);
             loadLinkableConstant(LinkableConstant::globalObject(*this, node), localGlobalObjectGPR);
             loadPtr(Address(value.payloadGPR(), JSCell::structureIDOffset()), result.gpr());
-            loadPtr(Address(result.gpr(), Structure::globalObjectOffset()), remoteGlobalObjectGPR);
+            loadPtr(Address(result.gpr(), Structure::realmOffset()), remoteGlobalObjectGPR);
             compare32(Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, result.gpr());
         }
 

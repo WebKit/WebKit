@@ -46,8 +46,8 @@ public:
 
     static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
 
-    JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(Base::globalObject()); }
-    ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
+    JSDOMGlobalObject* realm() const { return JSC::jsCast<JSDOMGlobalObject*>(Base::realm()); }
+    ScriptExecutionContext* scriptExecutionContext() const { return realm()->scriptExecutionContext(); }
 
 protected:
     JSDOMConstructorBase(JSC::VM& vm, JSC::Structure* structure, JSC::NativeFunction functionForConstruct)

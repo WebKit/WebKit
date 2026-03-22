@@ -169,7 +169,9 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
     }
 
-    auto* jsFunctionGlobalObject = jsFunction->globalObject();
+    auto* jsFunctionGlobalObject = jsFunction->realmMayBeNull();
+    if (!jsFunctionGlobalObject)
+        return;
 
     RefPtr<Event> savedEvent;
     auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunctionGlobalObject);

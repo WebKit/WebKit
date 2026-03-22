@@ -183,8 +183,10 @@ class Signature;
 
 #if ENABLE(WEBASSEMBLY)
 class JSWebAssemblyInstance;
+class WebAssemblyGCStructure;
 namespace Wasm {
 class IPIntCallee;
+class RTT;
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
 struct DebugState;
 #endif
@@ -750,6 +752,9 @@ public:
 
     WeakGCMap<SymbolImpl*, Symbol, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> atomStringToJSStringMap;
+#if ENABLE(WEBASSEMBLY)
+    WeakGCMap<const Wasm::RTT*, WebAssemblyGCStructure, PtrHash<const Wasm::RTT*>> wasmGCStructureMap;
+#endif
 
     enum class DeletePropertyMode {
         // Default behaviour of deleteProperty, matching the spec.

@@ -67,7 +67,7 @@ void TemporalPlainTime::finishCreation(VM& vm)
         [] (const auto& init) {
             VM& vm = init.vm;
             auto* plainTime = jsCast<TemporalPlainTime*>(init.owner);
-            auto* globalObject = plainTime->globalObject();
+            auto* globalObject = plainTime->realm();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
         });

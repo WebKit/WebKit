@@ -140,7 +140,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsDedicatedWorkerGlobalScopeConstructor, (JSGlobalObjec
     auto* prototype = jsDynamicCast<JSDedicatedWorkerGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSDedicatedWorkerGlobalScope::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSDedicatedWorkerGlobalScope::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsDedicatedWorkerGlobalScope_DedicatedWorkerGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDedicatedWorkerGlobalScope& thisObject)

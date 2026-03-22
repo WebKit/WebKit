@@ -952,7 +952,7 @@ macro equalNullComparisonOp(opcodeName, opcodeStruct, fn)
         loadi JSCell::m_structureID[t0], t1
         loadp CodeBlock[cfr], t0
         loadp CodeBlock::m_globalObject[t0], t0
-        cpeq Structure::m_globalObject[t1], t0, t1
+        cpeq Structure::m_realm[t1], t0, t1
         jmp .opEqNullNotImmediate
     .opEqNullImmediate:
         cieq t1, NullTag, t2
@@ -1354,7 +1354,7 @@ llintOpWithReturn(op_typeof_is_undefined, OpTypeofIsUndefined, macro (size, get,
     loadi JSCell::m_structureID[t3], t1
     loadp CodeBlock[cfr], t3
     loadp CodeBlock::m_globalObject[t3], t3
-    cpeq Structure::m_globalObject[t1], t3, t1
+    cpeq Structure::m_realm[t1], t3, t1
     return(BooleanTag, t1)
 end)
 
@@ -2027,7 +2027,7 @@ equalNullJumpOp(jeq_null, OpJeqNull,
         btbz value, MasqueradesAsUndefined, .opJeqNullNotMasqueradesAsUndefined
         loadp CodeBlock[cfr], t0
         loadp CodeBlock::m_globalObject[t0], t0
-        bpeq Structure::m_globalObject[structure], t0, target
+        bpeq Structure::m_realm[structure], t0, target
     .opJeqNullNotMasqueradesAsUndefined:
     end,
     macro (value, target) bieq value, NullTag, target end)
@@ -2038,7 +2038,7 @@ equalNullJumpOp(jneq_null, OpJneqNull,
         btbz value, MasqueradesAsUndefined, target
         loadp CodeBlock[cfr], t0
         loadp CodeBlock::m_globalObject[t0], t0
-        bpneq Structure::m_globalObject[structure], t0, target
+        bpneq Structure::m_realm[structure], t0, target
     end,
     macro (value, target) bineq value, NullTag, target end)
 

@@ -3016,7 +3016,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegExpUntyped, JSObject*, (JSGlobalObject* 
         encodedFlags
     };
 
-    JSGlobalObject* regExpGlobalObject = structure->globalObject();
+    JSGlobalObject* regExpGlobalObject = structure->realm();
     JSObject* regExpConstructor = regExpGlobalObject->regExpConstructor();
     OPERATION_RETURN(scope, constructRegExp(regExpGlobalObject, ArgList { args, 2 }, regExpConstructor, regExpConstructor));
 }
@@ -3032,7 +3032,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegExpString, JSObject*, (JSGlobalObject* g
         JSValue::encode(flags)
     };
 
-    JSGlobalObject* regExpGlobalObject = structure->globalObject();
+    JSGlobalObject* regExpGlobalObject = structure->realm();
     OPERATION_RETURN(scope, constructRegExp(regExpGlobalObject, ArgList { args, 2 }, regExpGlobalObject->regExpConstructor()));
 }
 
@@ -5501,7 +5501,7 @@ JSC_DEFINE_JIT_OPERATION(operationThrowStaticError, void, (JSGlobalObject* globa
 
 JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (DirectCallLinkInfo* callLinkInfo, JSFunction* callee))
 {
-    JSGlobalObject* globalObject = callee->globalObject();
+    JSGlobalObject* globalObject = callee->realm();
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);

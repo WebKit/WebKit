@@ -155,7 +155,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestTaggedWrapperConstructor, (JSGlobalObject* lexica
     auto* prototype = jsDynamicCast<JSTestTaggedWrapperPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestTaggedWrapper::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestTaggedWrapper::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestTaggedWrapper::subspaceForImpl(JSC::VM& vm)

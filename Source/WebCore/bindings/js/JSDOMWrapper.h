@@ -65,8 +65,8 @@ public:
     template<typename, JSC::SubspaceAccess>
     static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 
-    JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject()); }
-    ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
+    JSDOMGlobalObject* realm() const { return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::realm()); }
+    ScriptExecutionContext* scriptExecutionContext() const { return realm()->scriptExecutionContext(); }
 
 protected:
     WEBCORE_EXPORT JSDOMObject(JSC::Structure*, JSC::JSGlobalObject&);

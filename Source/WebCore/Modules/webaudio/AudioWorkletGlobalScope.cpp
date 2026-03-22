@@ -83,13 +83,13 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
         return Exception { ExceptionCode::NotSupportedError, "A processor was already registered with this name"_s };
 
     JSC::JSObject* jsConstructor = processorConstructor->callbackData()->callback();
-    auto* globalObject = jsConstructor->globalObject();
-    auto& vm = globalObject->vm();
+    auto& vm = jsConstructor->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!jsConstructor->isConstructor())
         return Exception { ExceptionCode::TypeError, "Class definition passed to registerProcessor() is not a constructor"_s };
 
+    auto* globalObject = jsConstructor->realm();
     auto prototype = jsConstructor->getPrototype(globalObject);
     RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 

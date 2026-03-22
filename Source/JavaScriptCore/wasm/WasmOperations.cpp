@@ -76,7 +76,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSToWasmCallee
 {
     dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame sp: ", RawPointer(sp), " fp: ", RawPointer(callFrame));
 
-    auto* globalObject = function->globalObject();
+    auto* globalObject = function->realm();
     VM& vm = globalObject->vm();
 
     if (function->taintedness() >= SourceTaintedOrigin::IndirectlyTainted)
@@ -151,7 +151,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
 
     auto* instance = callFrame->wasmInstance();
     ASSERT(instance);
-    ASSERT(instance->globalObject());
+    ASSERT(instance->realm());
     VM& vm = instance->vm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
 
@@ -182,7 +182,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
         if (functionSignature.returnType(0).isI32())
             result = jsNumber(*access.operator()<int32_t>(registerSpace, 0));
         else if (functionSignature.returnType(0).isI64()) {
-            result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, 0));
+            result = JSBigInt::makeHeapBigIntOrBigInt32(instance->realm(), *access.operator()<int64_t>(registerSpace, 0));
             OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
         } else if (functionSignature.returnType(0).isF32())
             result = jsNumber(purifyNaN(*access.operator()<float>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + 0)));
@@ -215,7 +215,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
         }
     }
 
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     JSArray* resultArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), functionSignature.returnCount());
     if (!resultArray) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
@@ -310,7 +310,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
 
     CallFrame* calleeFrame = std::bit_cast<CallFrame*>(reinterpret_cast<uintptr_t>(sp) - sizeof(CallerFrameAndPC));
     ASSERT(instance);
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     ASSERT(globalObject);
     VM& vm = instance->vm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
@@ -482,7 +482,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
     const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
     const auto& signature = *typeDefinition.as<FunctionSignature>();
 
-    auto* globalObject = instance->globalObject();
+    auto* globalObject = instance->realm();
 
     auto wasmCC = wasmCallingConvention().callInformationFor(typeDefinition, CallRole::Callee);
 
@@ -1271,7 +1271,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToI64, int64_t, (JSWebAssemblyInstance*
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
     OPERATION_RETURN(scope, JSValue::decode(v).toBigInt64(globalObject));
@@ -1282,7 +1282,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToF64, double, (JSWebAssemblyInstance* 
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
     OPERATION_RETURN(scope, JSValue::decode(v).toNumber(globalObject));
@@ -1293,7 +1293,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToI32, UCPUStrictInt32, (JSWebAssemblyI
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
     OPERATION_RETURN(scope, toUCPUStrictInt32(JSValue::decode(v).toInt32(globalObject)));
@@ -1304,7 +1304,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToF32, float, (JSWebAssemblyInstance* i
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
     OPERATION_RETURN(scope, static_cast<float>(JSValue::decode(v).toNumber(globalObject)));
@@ -1315,7 +1315,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (JSWebAssemb
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1344,7 +1344,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (JSWebAssembl
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1365,7 +1365,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (JSWebAssembl
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
     OPERATION_RETURN(scope, JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, value)));
@@ -1377,7 +1377,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance* 
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1485,7 +1485,7 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssembly
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     assertCalleeIsReferenced(callFrame, instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1655,7 +1655,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmThrow, void*, (JSWebAssemblyInsta
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
 
     Ref<const Wasm::Tag> tag = instance->tag(exceptionIndex);
 
@@ -1681,7 +1681,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRethrow, void*, (JSWebAssemblyIns
     WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSGlobalObject* globalObject = instance->realm();
 
     JSValue thrownValue = JSValue::decode(encodedThrownValue);
     throwException(globalObject, throwScope, thrownValue);

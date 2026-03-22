@@ -209,7 +209,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
     if (!thisRegExp) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
-    if (thisRegExp->globalObject() != globalObject)
+    if (thisRegExp->realm() != globalObject)
         return throwVMTypeError(globalObject, scope, "RegExp.prototype.compile function's Realm must be the same to |this| RegExp object"_s);
 
     if (!thisRegExp->areLegacyFeaturesEnabled())

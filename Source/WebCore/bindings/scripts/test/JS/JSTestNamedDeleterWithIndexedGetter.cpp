@@ -335,7 +335,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedDeleterWithIndexedGetterConstructor, (JSGlob
     auto* prototype = jsDynamicCast<JSTestNamedDeleterWithIndexedGetterPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestNamedDeleterWithIndexedGetter::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestNamedDeleterWithIndexedGetter::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestNamedDeleterWithIndexedGetter::subspaceForImpl(JSC::VM& vm)

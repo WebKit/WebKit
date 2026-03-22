@@ -159,7 +159,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscoreConstructor, (JSGlobalO
     auto* prototype = jsDynamicCast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestInterfaceLeadingUnderscore::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestInterfaceLeadingUnderscore::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestInterfaceLeadingUnderscore_readonlyGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterfaceLeadingUnderscore& thisObject)

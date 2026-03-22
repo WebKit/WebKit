@@ -53,7 +53,7 @@ public:
     DECLARE_INFO;
 
     static inline TypeInfoBlob typeInfoBlob();
-    static inline WebAssemblyGCStructure* createStructure(VM&, JSGlobalObject*, Ref<const Wasm::TypeDefinition>&&, Ref<const Wasm::RTT>&&);
+    static inline WebAssemblyGCStructure* createStructure(VM&, Ref<const Wasm::TypeDefinition>&&, Ref<const Wasm::RTT>&&);
 
     static JSWebAssemblyArray* tryCreate(VM& vm, WebAssemblyGCStructure* structure, unsigned size);
 
@@ -128,6 +128,9 @@ private:
 #if ASSERT_ENABLED
     bool m_isUnpopulated { false };
 #endif
+
+    // Padding to keep sizeof(JSWebAssemblyArray) a multiple of 16 for v128 array data alignment.
+    uint64_t m_paddingForV128Alignment { 0 };
 };
 
 static_assert(std::is_final_v<JSWebAssemblyArray>, "JSWebAssemblyArray is a TrailingArray-like object so must know about all members");

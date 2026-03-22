@@ -251,7 +251,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestPluginInterfaceConstructor, (JSGlobalObject* lexi
     auto* prototype = jsDynamicCast<JSTestPluginInterfacePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestPluginInterface::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestPluginInterface::getConstructor(vm, prototype->realm()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestPluginInterface::subspaceForImpl(JSC::VM& vm)

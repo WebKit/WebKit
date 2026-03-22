@@ -137,7 +137,7 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
             // then this test will fail even if function is Object.prototype.toString. The only
             // way this test will be work everytime is if we check against the
             // Object.prototype.toString of the function's own globalObject.
-            if (function && function == function->globalObject()->objectProtoToStringFunctionConcurrently())
+            if (function && function == function->realm()->objectProtoToStringFunctionConcurrently())
                 calleeName = "Object.prototype.toString"_s;
             throwTypeError(globalObject, scope, makeString(calleeName, " cannot be called on a Proxy that has been revoked"_s));
             return false;

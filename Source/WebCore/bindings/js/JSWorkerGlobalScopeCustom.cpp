@@ -68,7 +68,7 @@ JSValue JSWorkerGlobalScope::queueMicrotask(JSGlobalObject& lexicalGlobalObject,
     if (!functionValue.isCallable()) [[unlikely]]
         return JSValue::decode(throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 0, "callback"_s, "WorkerGlobalScope"_s, "queueMicrotask"_s));
 
-    auto* globalObject = asObject(functionValue)->globalObject();
+    auto* globalObject = asObject(functionValue)->realm();
 
     scope.release();
     queueMicrotaskToEventLoop(*this, JSC::QueuedTask { nullptr, JSC::InternalMicrotask::InvokeFunctionJob, 0, globalObject, functionValue });

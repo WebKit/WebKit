@@ -167,7 +167,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDelegateToSharedSyntheticAttributeConstructor, (J
     auto* prototype = jsDynamicCast<JSTestDelegateToSharedSyntheticAttributePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestDelegateToSharedSyntheticAttribute::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestDelegateToSharedSyntheticAttribute::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestDelegateToSharedSyntheticAttribute_sharedAttribute1Getter(JSGlobalObject& lexicalGlobalObject, JSTestDelegateToSharedSyntheticAttribute& thisObject, PropertyName propertyName)

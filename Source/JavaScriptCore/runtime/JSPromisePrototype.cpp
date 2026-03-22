@@ -94,7 +94,7 @@ void JSPromisePrototype::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObjec
 bool promiseSpeciesWatchpointIsValid(VM& vm, JSPromise* thisObject)
 {
     auto* structure = thisObject->structure();
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     if (globalObject->promiseSpeciesWatchpointSet().state() != IsWatched) [[unlikely]] {
         if (structure->classInfoForCells() == JSInternalPromise::info())
             return true;

@@ -145,16 +145,12 @@ void JSWebAssemblyInstance::finishCreation(VM& vm)
     ASSERT(inherits(info()));
 
     // FIXME: We should only generate these structures if the module uses GC objects.
-    // FIXME: Maybe we should cache these structures. It's unclear how profitable this would be though since there's typically only one instance per module per VM.
-    // Since we don't have a global GC it's somewhat unlikely we'd end up de-duplicating much. It's also a bit unclear how much of a perf win it would be at least
-    // until folks start doing dynamic code loading.
-    JSGlobalObject* globalObject = this->globalObject();
     for (unsigned i = 0; i < m_moduleInformation->typeCount(); ++i) {
         Ref rtt = m_moduleInformation->rtts[i];
         if (rtt->kind() == RTTKind::Array)
-            gcObjectStructureID(i).set(vm, this, JSWebAssemblyArray::createStructure(vm, globalObject, m_moduleInformation->typeSignatures[i], WTF::move(rtt)));
+            gcObjectStructureID(i).set(vm, this, JSWebAssemblyArray::createStructure(vm, m_moduleInformation->typeSignatures[i], WTF::move(rtt)));
         else if (rtt->kind() == RTTKind::Struct)
-            gcObjectStructureID(i).set(vm, this, JSWebAssemblyStruct::createStructure(vm, globalObject, m_moduleInformation->typeSignatures[i], WTF::move(rtt)));
+            gcObjectStructureID(i).set(vm, this, JSWebAssemblyStruct::createStructure(vm, m_moduleInformation->typeSignatures[i], WTF::move(rtt)));
     }
 
     m_vm->traps().registerMirror(m_stackMirror);
@@ -526,7 +522,7 @@ void JSWebAssemblyInstance::initElementSegment(uint32_t tableIndex, const Elemen
     RELEASE_ASSERT(length <= segment.length());
 
     JSWebAssemblyTable* jsTable = this->jsTable(tableIndex);
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     VM& vm = globalObject->vm();
 
     for (uint32_t index = 0; index < length; ++index) {

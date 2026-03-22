@@ -183,7 +183,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeConstructor, (JSGlobalObject* lexicalGloba
     auto* prototype = jsDynamicCast<JSTestSetLikePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestSetLike::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestSetLike::getConstructor(vm, prototype->realm()));
 }
 
 static inline JSValue jsTestSetLike_sizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSetLike& thisObject)

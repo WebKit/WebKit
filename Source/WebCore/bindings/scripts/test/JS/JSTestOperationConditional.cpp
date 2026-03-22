@@ -183,7 +183,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestOperationConditionalConstructor, (JSGlobalObject*
     auto* prototype = jsDynamicCast<JSTestOperationConditionalPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestOperationConditional::getConstructor(vm, prototype->globalObject()));
+    return JSValue::encode(JSTestOperationConditional::getConstructor(vm, prototype->realm()));
 }
 
 #if ENABLE(ConditionBase)

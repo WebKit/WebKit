@@ -242,7 +242,7 @@ JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (ArrayBuffer* buffer = unsharedBuffer())
-        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(), *buffer);
+        return vm.m_typedArrayController->toJS(globalObject, this->realm(), *buffer);
     scope.throwException(globalObject, createOutOfMemoryError(globalObject));
     return nullptr;
 }
@@ -252,7 +252,7 @@ JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (ArrayBuffer* buffer = possiblySharedBuffer())
-        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(), *buffer);
+        return vm.m_typedArrayController->toJS(globalObject, this->realm(), *buffer);
     scope.throwException(globalObject, createOutOfMemoryError(globalObject));
     return nullptr;
 }
@@ -265,7 +265,7 @@ void JSArrayBufferView::detachFromArrayBuffer()
     m_length = 0;
     m_byteOffset = 0;
     m_vector.clear();
-    globalObject()->notifyArrayBufferDetaching();
+    realm()->notifyArrayBufferDetaching();
 }
 
 ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
@@ -361,7 +361,7 @@ bool JSArrayBufferView::isIteratorProtocolFastAndNonObservable()
     if (!isTypedArrayType(type()))
         return false;
 
-    JSGlobalObject* globalObject = this->globalObject();
+    JSGlobalObject* globalObject = this->realm();
     TypedArrayType typedArrayType = JSC::typedArrayType(type());
     if (!globalObject->isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(typedArrayType))
         return false;

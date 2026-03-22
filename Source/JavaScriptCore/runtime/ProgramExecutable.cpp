@@ -85,7 +85,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
     DeferTermination deferScope(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(scope);
-    ASSERT(globalObject == scope->globalObject());
+    ASSERT(globalObject == scope->realm());
     RELEASE_ASSERT(globalObject);
     ASSERT(&globalObject->vm() == &vm);
 

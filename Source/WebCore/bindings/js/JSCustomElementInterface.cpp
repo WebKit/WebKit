@@ -137,7 +137,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
     if (!element) {
         auto* exception = scope.exception();
         scope.clearException();
-        reportException(m_constructor->globalObject(), exception);
+        reportException(m_constructor->realm(), exception);
         return nullptr;
     }
 
@@ -323,7 +323,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     InspectorInstrumentation::didCallFunction(context.get());
 
     if (exception)
-        reportException(callback->globalObject(), exception);
+        reportException(callback->realm(), exception);
 }
 
 void JSCustomElementInterface::setConnectedCallback(JSC::JSObject* callback)

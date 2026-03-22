@@ -103,7 +103,7 @@ inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, ViewCla
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool inSameRealm = exemplar->globalObject() == globalObject;
+    bool inSameRealm = exemplar->realm() == globalObject;
     if (inSameRealm) [[likely]] {
         bool isValid = speciesWatchpointIsValid(globalObject, exemplar);
         RETURN_IF_EXCEPTION(scope, nullptr);
@@ -2042,7 +2042,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGl
         Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, arrayBuffer->isResizableOrGrowableShared());
         return ViewClass::create(globalObject, structure, WTF::move(arrayBuffer), newByteOffset, count);
     }, [&](MarkedArgumentBuffer& args) {
-        args.append(vm.m_typedArrayController->toJS(globalObject, thisObject->globalObject(), *arrayBuffer));
+        args.append(vm.m_typedArrayController->toJS(globalObject, thisObject->realm(), *arrayBuffer));
         args.append(jsNumber(newByteOffset));
         if (count)
             args.append(jsNumber(count.value()));

@@ -303,7 +303,7 @@ static RefPtr<DOMPromise> createDOMPromise(const DeferredPromise& deferredPromis
 
     auto promiseValue = deferredPromise.promise();
     auto& jsPromise = *JSC::jsCast<JSC::JSPromise*>(promiseValue);
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsPromise.globalObject());
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsPromise.realm());
 
     return DOMPromise::create(globalObject, jsPromise);
 }

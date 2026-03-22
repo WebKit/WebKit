@@ -41,7 +41,7 @@ JSMap* JSMap::clone(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 
 bool JSMap::isSetFastAndNonObservable(Structure* structure)
 {
-    JSGlobalObject* globalObject = structure->globalObject();
+    JSGlobalObject* globalObject = structure->realm();
     if (!globalObject->isMapPrototypeSetFastAndNonObservable())
         return false;
 

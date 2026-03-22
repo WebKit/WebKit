@@ -261,7 +261,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
     DEFINE_WASM_BUILTIN_HOST_FUNCTION(setName, builtinName, EncodedJSValue arg, const JSWebAssemblyInstance* wasmInstance) \
     { \
         JSValue value = JSValue::decode(arg); \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), value); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), value); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_R_R(setName, builtinName) \
@@ -278,7 +278,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
     DEFINE_WASM_BUILTIN_HOST_FUNCTION(setName, builtinName, EncodedJSValue arg, const JSWebAssemblyInstance* wasmInstance) \
     { \
         JSValue value = JSValue::decode(arg); \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), value); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), value); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_I_R(setName, builtinName) \
@@ -295,7 +295,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
 #define DEFINE_BUILTIN_ENTRY_R_I(setName, builtinName) \
     DEFINE_WASM_BUILTIN_HOST_FUNCTION(setName, builtinName, int32_t arg, const JSWebAssemblyInstance* wasmInstance) \
     { \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), arg); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), arg); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_R_I(setName, builtinName) \
@@ -316,7 +316,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
     { \
         JSValue left = JSValue::decode(arg0); \
         JSValue right = JSValue::decode(arg1); \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), left, right); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), left, right); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_R_RR(setName, builtinName) \
@@ -335,7 +335,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
     { \
         JSValue value0 = JSValue::decode(arg0); \
         JSValue value1 = JSValue::decode(arg1); \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), value0, value1); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), value0, value1); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_I_RR(setName, builtinName) \
@@ -354,7 +354,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
     DEFINE_WASM_BUILTIN_HOST_FUNCTION(setName, builtinName, EncodedJSValue arg0, int32_t arg1, const JSWebAssemblyInstance* wasmInstance) \
     { \
         JSValue value0 = JSValue::decode(arg0); \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), value0, arg1); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), value0, arg1); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_I_RI(setName, builtinName) \
@@ -375,7 +375,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
     DEFINE_WASM_BUILTIN_HOST_FUNCTION(setName, builtinName, EncodedJSValue arg0, int32_t arg1, int32_t arg2, const JSWebAssemblyInstance* wasmInstance) \
     { \
         JSValue value0 = JSValue::decode(arg0); \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), value0, arg1, arg2); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), value0, arg1, arg2); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_R_RII(setName, builtinName) \
@@ -398,7 +398,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
     DEFINE_WASM_BUILTIN_HOST_FUNCTION(setName, builtinName, EncodedJSValue arg0, int32_t arg1, int32_t arg2, const JSWebAssemblyInstance* wasmInstance) \
     { \
         JSValue value0 = JSValue::decode(arg0); \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), value0, arg1, arg2); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), value0, arg1, arg2); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_R_AII(setName, builtinName) \
@@ -423,7 +423,7 @@ static bool isMutI16Array(const JSWebAssemblyArray* array)
     { \
         JSValue value0 = JSValue::decode(arg0); \
         JSValue value1 = JSValue::decode(arg1); \
-        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->globalObject(), value0, value1, arg2); \
+        return BUILTIN_IMPLEMENTATION_NAME(setName, builtinName)(wasmInstance->realm(), value0, value1, arg2); \
     }
 
 #define DEFINE_BUILTIN_JS_ENTRY_I_RAI(setName, builtinName) \
