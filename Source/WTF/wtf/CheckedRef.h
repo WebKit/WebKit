@@ -229,7 +229,7 @@ struct GetPtrHelper<CheckedRef<T, PtrTraits>> {
 template <typename T, typename U>
 struct IsSmartPtr<CheckedRef<T, U>> {
     static constexpr bool value = true;
-    static constexpr bool isNullable = true;
+    static constexpr bool isNullable = false;
 };
 
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
