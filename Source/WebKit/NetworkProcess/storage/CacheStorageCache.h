@@ -34,6 +34,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 class CacheStorageCache;
 }
@@ -54,17 +58,17 @@ public:
 
     void getSize(CompletionHandler<void(uint64_t)>&&);
     void open(WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void retrieveRecords(WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
-    void removeRecords(WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
-    void putRecords(Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void retrieveRecords(IPC::Connection&, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
+    void removeRecords(IPC::Connection&, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void putRecords(IPC::Connection&, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void removeAllRecords();
     void close();
 
 private:
     CacheStorageCache(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);
-    CacheStorageRecordInformation* findExistingRecord(const WebCore::ResourceRequest&, std::optional<uint64_t> = std::nullopt);
-    void putRecordsAfterQuotaCheck(Vector<CacheStorageRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
-    void putRecordsInStore(Vector<CacheStorageRecord>&&, Vector<std::optional<CacheStorageRecord>>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    Expected<CacheStorageRecordInformation*, WebCore::DOMCacheEngine::Error> findExistingRecord(const WebCore::ResourceRequest&, std::optional<uint64_t> = std::nullopt);
+    void putRecordsAfterQuotaCheck(IPC::Connection&, Vector<CacheStorageRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void putRecordsInStore(IPC::Connection&, Vector<CacheStorageRecord>&&, Vector<std::optional<CacheStorageRecord>>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void assertIsOnCorrectQueue() const
     {
 #if ASSERT_ENABLED
@@ -72,7 +76,7 @@ private:
 #endif
     }
 
-    static String computeKeyURL(const URL&);
+    static std::optional<String> computeKeyURL(const URL&);
     using RecordsMap = HashMap<String, Vector<CacheStorageRecordInformation>>;
 
     WeakPtr<CacheStorageManager> m_manager;

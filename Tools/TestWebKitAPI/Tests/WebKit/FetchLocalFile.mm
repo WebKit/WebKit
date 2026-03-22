@@ -37,6 +37,8 @@
         <script> \
         fetch('%s').then(v => v.arrayBuffer()).then(txt => { \
             window.local_file_content = (btoa(String.fromCharCode.apply(null, new Uint8Array(txt)))); \
+        }).finally(() => { \
+            window.webkit.messageHandlers.testHandler.postMessage('done'); \
         }) \
     </script> \
     </body>"
@@ -107,7 +109,10 @@ TEST(WebKit, FetchLocalFileFromTempDirectory)
 
     RetainPtr request = [NSURLRequest requestWithURL:fetchFileURL.createNSURL().get()];
 
+    __block bool fetchDone = false;
+    [webView performAfterReceivingMessage:@"done" action:^{ fetchDone = true; }];
     [webView synchronouslyLoadRequest:request.get()];
+    TestWebKitAPI::Util::run(&fetchDone);
 
     __block bool done = false;
     [webView evaluateJavaScript:@"window.local_file_content" completionHandler:^(id result, NSError *err) {
