@@ -123,6 +123,7 @@ enum class RecordType : uint32_t {
     JITCodeDebugInfo = 2,
     JITCodeClose = 3,
     JITCodeUnwindingInfo = 4,
+    SamplyJITCodeDebugInfo2 = 827346260,
 };
 
 struct RecordHeader {
@@ -159,6 +160,50 @@ struct DebugEntry {
     uint64_t codeAddress { 0 };
     uint32_t line { 0 };
     uint32_t discrim { 0 };
+};
+
+
+// samply's JITDump extension for inline call tree representation.
+// https://gist.github.com/mstange/8db7a7a0ec21ca1e93c5f7fc12077559
+
+struct SamplyDebugInfo2Record {
+    RecordHeader header {
+        RecordType::SamplyJITCodeDebugInfo2,
+        0,
+        0,
+    };
+    uint64_t codeAddress { 0 };
+    uint64_t codeOffsetCount { 0 };
+    uint64_t sourcePositionCount { 0 };
+    uint64_t stringCount { 0 };
+};
+
+struct CodeOffsetRecord {
+    // The code address offset, relative to the function start address.
+    // This record describes all instructions starting at this offset,
+    // up to the next code offset record's offset.
+    uint32_t codeOffset { 0 };
+    // The index of the source position.
+    uint32_t sourcePosition { 0 };
+};
+
+struct SourcePosition {
+    // The index of the caller source position, if this source position
+    // is within an inlined function. Otherwise -1.
+    int32_t callerIndex { -1 };
+    // The name of the function. This is an index into the string list.
+    uint32_t functionName { 0 };
+    // The name of the file which the function is declared in. This is
+    // an index into the string list. -1 if unknown.
+    int32_t file { -1 };
+    // The line number where the function starts, 1-based. 0 if unknown.
+    uint32_t functionStartLine { 0 };
+    // The column number where the function starts, 1-based. 0 if unknown.
+    uint32_t functionStartColumn { 0 };
+    // The line number, 1-based. 0 if unknown.
+    uint32_t line { 0 };
+    // The column number, 1-based. 0 if unknown.
+    uint32_t column { 0 };
 };
 
 } // namespace JITDump
@@ -230,13 +275,6 @@ void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> c
 
         CString irFilePath;
         Vector<std::pair<uint32_t, uint32_t>> lineEntries;
-        struct SourceEntry {
-            uint32_t codeOffset;
-            uint32_t line;
-            uint32_t column;
-            CString filePath;
-        };
-        Vector<SourceEntry> sourceEntries;
 
         if (irDebugInfo) {
             auto baseName = makeString("irdump-"_s, String::fromUTF8(irDebugInfo->functionName.span()), "-"_s, WTF::getCurrentProcessID(), "-"_s, timestamp);
@@ -272,15 +310,6 @@ void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> c
             }
         }
 
-        if (sourceCodeDebugInfo) {
-            const CString& sourceCodeDumpDir = logger.m_sourceCodeDumpDirectory;
-            for (auto& entry : sourceCodeDebugInfo->codeEntries) {
-                CString filePath = protect(entry.sourceProvider)->sourceCodeDumpFilePath(sourceCodeDumpDir);
-                if (!filePath.isNull())
-                    sourceEntries.append({ entry.codeOffset, entry.lineColumn.line, entry.lineColumn.column, WTF::move(filePath) });
-            }
-        }
-
         Locker locker { logger.m_lock };
 
         if (!irFilePath.isNull() && !lineEntries.isEmpty()) {
@@ -291,7 +320,7 @@ void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> c
 
             uint32_t totalSize = sizeof(JITDump::DebugInfoRecord);
             for (size_t i = 0; i < lineEntries.size(); ++i)
-                totalSize += sizeof(JITDump::DebugEntry) + (irFilePath.length() + 1);
+                totalSize += sizeof(JITDump::DebugEntry) + irFilePath.spanIncludingNullTerminator().size();
             debugRecord.header.totalSize = totalSize;
 
             logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&debugRecord), sizeof(JITDump::DebugInfoRecord)));
@@ -306,32 +335,108 @@ void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> c
             }
         }
 
-        if (!sourceEntries.isEmpty()) {
-            JITDump::DebugInfoRecord debugRecord;
-            debugRecord.header.timestamp = timestamp;
-            debugRecord.codeAddress = std::bit_cast<uintptr_t>(executableAddress);
-            debugRecord.nrEntry = sourceEntries.size();
+        if (sourceCodeDebugInfo && !sourceCodeDebugInfo->codeEntries.isEmpty()) {
+            const CString& sourceCodeDumpDir = logger.m_sourceCodeDumpDirectory;
 
-            uint32_t totalSize = sizeof(JITDump::DebugInfoRecord);
-            for (auto& sourceEntry : sourceEntries)
-                totalSize += sizeof(JITDump::DebugEntry) + (sourceEntry.filePath.length() + 1);
-            debugRecord.header.totalSize = totalSize;
+            UncheckedKeyHashMap<CString, int32_t> stringIndexMap;
+            UncheckedKeyHashMap<SourceProvider*, int32_t> sourceProviderStringIndexMap;
+            Vector<CString> stringTable;
+            auto internString = [&](const CString& str) -> int32_t {
+                if (str.isNull())
+                    return -1;
+                auto result = stringIndexMap.add(str, stringTable.size());
+                if (result.isNewEntry)
+                    stringTable.append(str);
+                return result.iterator->value;
+            };
 
-            logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&debugRecord), sizeof(JITDump::DebugInfoRecord)));
+            auto internSource = [&](SourceProvider& sourceProvider) -> int32_t {
+                auto result = sourceProviderStringIndexMap.find(&sourceProvider);
+                if (result != sourceProviderStringIndexMap.end())
+                    return result->value;
 
-            for (auto& sourceEntry : sourceEntries) {
-                JITDump::DebugEntry debugEntry;
-                debugEntry.codeAddress = std::bit_cast<uintptr_t>(executableAddress) + sourceEntry.codeOffset;
-                debugEntry.line = sourceEntry.line;
-                debugEntry.discrim = sourceEntry.column;
-                logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&debugEntry), sizeof(JITDump::DebugEntry)));
-                logger.write(locker, sourceEntry.filePath.spanIncludingNullTerminator());
+                CString filePath = sourceProvider.sourceCodeDumpFilePath(sourceCodeDumpDir);
+                auto index = internString(filePath);
+                sourceProviderStringIndexMap.add(&sourceProvider, index);
+                return index;
+            };
+
+            UncheckedKeyHashMap<SourceCodeDumpDebugInfo::FrameInfo*, int32_t> frameToPositionIndex;
+            Vector<JITDump::SourcePosition> sourcePositions;
+
+            auto resolveFrame = [&](SourceCodeDumpDebugInfo::FrameInfo* innermost) -> uint32_t {
+                Vector<SourceCodeDumpDebugInfo::FrameInfo*, 8> chain;
+                for (SUPPRESS_UNCOUNTED_LOCAL auto* frame = innermost; frame; frame = frame->parent.get()) {
+                    if (frameToPositionIndex.contains(frame))
+                        continue;
+                    chain.append(frame);
+                }
+
+                for (SUPPRESS_UNCOUNTED_LOCAL auto* frame : chain | std::views::reverse) {
+                    int32_t callerIndex = -1;
+                    if (frame->parent) {
+                        auto it = frameToPositionIndex.find(frame->parent.get());
+                        ASSERT(it != frameToPositionIndex.end());
+                        callerIndex = it->value;
+                    }
+
+                    uint32_t functionNameIndex = internString(sourceCodeDebugInfo->functionNames.get(frame->codeBlock));
+                    int32_t fileIndex = internSource(frame->sourceProvider);
+
+                    int32_t index = sourcePositions.size();
+                    frameToPositionIndex.add(frame, index);
+
+                    JITDump::SourcePosition pos;
+                    pos.callerIndex = callerIndex;
+                    pos.functionName = functionNameIndex;
+                    pos.file = fileIndex;
+                    pos.functionStartLine = frame->functionStartLineColumn.line;
+                    pos.functionStartColumn = frame->functionStartLineColumn.column;
+                    pos.line = frame->lineColumn.line;
+                    pos.column = frame->lineColumn.column;
+                    sourcePositions.append(pos);
+                }
+
+                auto it = frameToPositionIndex.find(innermost);
+                ASSERT(it != frameToPositionIndex.end());
+                return it->value;
+            };
+
+            Vector<JITDump::CodeOffsetRecord> codeOffsetRecords;
+            for (auto& entry : sourceCodeDebugInfo->codeEntries) {
+                uint32_t index = resolveFrame(entry.frameInfo.ptr());
+                codeOffsetRecords.append({ entry.codeOffset, index });
             }
+
+            uint32_t totalSize = sizeof(JITDump::SamplyDebugInfo2Record);
+            totalSize += codeOffsetRecords.size() * sizeof(JITDump::CodeOffsetRecord);
+            totalSize += sourcePositions.size() * sizeof(JITDump::SourcePosition);
+            for (auto& str : stringTable)
+                totalSize += str.spanIncludingNullTerminator().size();
+
+            JITDump::SamplyDebugInfo2Record debugRecord;
+            debugRecord.header.timestamp = timestamp;
+            debugRecord.header.totalSize = totalSize;
+            debugRecord.codeAddress = std::bit_cast<uintptr_t>(executableAddress);
+            debugRecord.codeOffsetCount = codeOffsetRecords.size();
+            debugRecord.sourcePositionCount = sourcePositions.size();
+            debugRecord.stringCount = stringTable.size();
+
+            logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&debugRecord), sizeof(JITDump::SamplyDebugInfo2Record)));
+
+            for (auto& record : codeOffsetRecords)
+                logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&record), sizeof(JITDump::CodeOffsetRecord)));
+
+            for (auto& pos : sourcePositions)
+                logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&pos), sizeof(JITDump::SourcePosition)));
+
+            for (auto& str : stringTable)
+                logger.write(locker, str.spanIncludingNullTerminator());
         }
 
         JITDump::CodeLoadRecord record;
         record.header.timestamp = timestamp;
-        record.header.totalSize = sizeof(JITDump::CodeLoadRecord) + (name.length() + 1) + size;
+        record.header.totalSize = sizeof(JITDump::CodeLoadRecord) + name.spanIncludingNullTerminator().size() + size;
         record.pid = getCurrentProcessID();
         record.tid = tid;
         record.vma = std::bit_cast<uintptr_t>(executableAddress);

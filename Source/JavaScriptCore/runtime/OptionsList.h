@@ -152,6 +152,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useIRDump, false, Normal, "generates IR dump files and JIT_CODE_DEBUG_INFO in JITDump"_s) \
     v(OptionString, irDumpDirectory, nullptr, Normal, "Directory to place IR dump files"_s) \
     v(Bool, useSourceCodeDump, false, Normal, "generates source code debug info in JITDump"_s) \
+    v(Bool, useJITTiersInSourceCodeDump, true, Normal, "attaches JIT tier prefix to function names in SAMPLY_JIT_CODE_DEBUG_INFO2 records"_s) \
     v(OptionString, sourceCodeDumpDirectory, nullptr, Normal, "Directory to place dumped source files"_s) \
     v(OptionString, textMarkersDirectory, nullptr, Normal, "Directory to place MarkerTxt") \
     v(OptionRange, bytecodeRangeToJITCompile, nullptr, Normal, "bytecode size range to allow compilation on, e.g. 1:100"_s) \

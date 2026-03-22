@@ -49,6 +49,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+class CodeBlock;
 class SourceProvider;
 
 class IRDumpDebugInfo {
@@ -82,10 +83,29 @@ class SourceCodeDumpDebugInfo {
     WTF_MAKE_TZONE_ALLOCATED(SourceCodeDumpDebugInfo);
     WTF_MAKE_NONCOPYABLE(SourceCodeDumpDebugInfo);
 public:
+    struct FrameInfo final : RefCounted<FrameInfo> {
+        static Ref<FrameInfo> create(CodeBlock* codeBlock, Ref<SourceProvider>&& sourceProvider, LineColumn lineColumn, LineColumn functionStartLineColumn, RefPtr<FrameInfo>&& parent)
+        {
+            return adoptRef(*new FrameInfo(codeBlock, WTF::move(sourceProvider), lineColumn, functionStartLineColumn, WTF::move(parent)));
+        }
+        SUPPRESS_FORWARD_DECL_MEMBER CodeBlock* codeBlock; // This is just used for dedup key. Not accessed actually.
+        Ref<SourceProvider> sourceProvider;
+        LineColumn lineColumn;
+        LineColumn functionStartLineColumn;
+        RefPtr<FrameInfo> parent;
+    private:
+        FrameInfo(CodeBlock* codeBlock, Ref<SourceProvider>&& sourceProvider, LineColumn lineColumn, LineColumn functionStartLineColumn, RefPtr<FrameInfo>&& parent)
+            : codeBlock(codeBlock)
+            , sourceProvider(WTF::move(sourceProvider))
+            , lineColumn(lineColumn)
+            , functionStartLineColumn(functionStartLineColumn)
+            , parent(WTF::move(parent))
+        { }
+    };
+
     struct CodeEntry {
         uint32_t codeOffset;
-        LineColumn lineColumn;
-        Ref<SourceProvider> sourceProvider;
+        Ref<FrameInfo> frameInfo;
     };
 
     SourceCodeDumpDebugInfo(CString&& name)
@@ -95,6 +115,7 @@ public:
 
     CString functionName;
     Vector<CodeEntry> codeEntries;
+    UncheckedKeyHashMap<CodeBlock*, CString> functionNames;
 };
 
 // LinkBuffer:

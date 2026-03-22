@@ -48,6 +48,7 @@
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
 #include "SlowPathCall.h"
+#include "SourceCodeDumpUtils.h"
 #include "StackAlignment.h"
 #include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
@@ -973,7 +974,8 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
         pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTF::move(m_pcToCodeOriginMapBuilder), patchBuffer);
 
     if (Options::useSourceCodeDump() && m_profiledCodeBlock) [[unlikely]] {
-        auto debugInfo = makeUnique<SourceCodeDumpDebugInfo>(m_profiledCodeBlock->inferredName());
+        auto debugInfo = makeUnique<SourceCodeDumpDebugInfo>(functionNameForJITDump(LinkBuffer::Profile::Baseline, m_profiledCodeBlock));
+        debugInfo->functionNames.add(m_profiledCodeBlock, sourceCodeDumpFunctionName(LinkBuffer::Profile::Baseline, m_profiledCodeBlock));
         if (RefPtr provider = m_profiledCodeBlock->ownerExecutable()->source().provider()) {
             void* codeStart = patchBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
             for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
@@ -983,9 +985,11 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
                 if (bytecodeIndex.offset() >= m_profiledCodeBlock->instructionsSize())
                     continue;
                 LineColumn lineColumn = m_profiledCodeBlock->lineColumnForBytecodeIndex(bytecodeIndex);
+                LineColumn functionStartLineColumn = m_profiledCodeBlock->functionStartLineColumn();
                 auto location = patchBuffer.locationOf<DisassemblyPtrTag>(m_labels[bytecodeOffset]);
                 uint32_t codeOffset = static_cast<uint32_t>(location.dataLocation<uintptr_t>() - reinterpret_cast<uintptr_t>(codeStart));
-                debugInfo->codeEntries.append({ codeOffset, lineColumn, Ref { *provider } });
+                auto frame = SourceCodeDumpDebugInfo::FrameInfo::create(m_profiledCodeBlock, Ref { *provider }, lineColumn, functionStartLineColumn, nullptr);
+                debugInfo->codeEntries.append({ codeOffset, WTF::move(frame) });
             }
             patchBuffer.setSourceCodeDumpDebugInfo(WTF::move(debugInfo));
         }

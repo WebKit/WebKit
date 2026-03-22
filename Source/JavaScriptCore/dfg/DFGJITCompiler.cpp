@@ -41,6 +41,7 @@
 #include "LinkBuffer.h"
 #include "Options.h"
 #include "ProbeContext.h"
+#include "SourceCodeDumpUtils.h"
 #include "ThunkGenerators.h"
 #include "VM.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -398,32 +399,47 @@ void JITCompiler::collectSourceCodeDumpDebugInfo(LinkBuffer& linkBuffer)
     if (m_irDumpLabels.isEmpty())
         return;
 
-    auto debugInfo = makeUnique<SourceCodeDumpDebugInfo>(m_graph.m_codeBlock->inferredName());
+    auto debugInfo = makeUnique<SourceCodeDumpDebugInfo>(functionNameForJITDump(LinkBuffer::Profile::DFG, m_graph.m_codeBlock));
     void* codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();
+
+    UncheckedKeyHashMap<CodeOrigin, Ref<SourceCodeDumpDebugInfo::FrameInfo>> frameInfoCache;
+
+    CodeOrigin currentOrigin;
+    std::optional<uint32_t> currentCodeOffset;
+    RefPtr<SourceCodeDumpDebugInfo::FrameInfo> currentFrameInfo;
+    auto flush = [&] {
+        if (currentCodeOffset && currentFrameInfo)
+            debugInfo->codeEntries.append({ currentCodeOffset.value(), currentFrameInfo.releaseNonNull() });
+        currentOrigin = CodeOrigin();
+        currentCodeOffset = std::nullopt;
+        currentFrameInfo = nullptr;
+    };
 
     for (auto& entry : m_irDumpLabels) {
         CodeOrigin codeOrigin = entry.node->origin.semantic;
         if (!codeOrigin.isSet())
             continue;
 
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame();
-        CodeBlock* codeBlock = inlineCallFrame ? inlineCallFrame->baselineCodeBlock.get() : m_graph.m_codeBlock;
-        if (!codeBlock)
+        if (currentOrigin == codeOrigin)
             continue;
 
-        BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
-        if (bytecodeIndex.offset() >= codeBlock->instructionsSize())
+        flush();
+
+        auto frameInfo = resolveSourceCodeDumpFrameInfo(codeOrigin, m_graph.m_codeBlock, LinkBuffer::Profile::DFG, frameInfoCache, debugInfo->functionNames);
+        if (!frameInfo)
             continue;
 
-        LineColumn lineColumn = codeBlock->lineColumnForBytecodeIndex(bytecodeIndex);
-        RefPtr provider = codeBlock->ownerExecutable()->source().provider();
-        if (!provider)
-            continue;
+        currentOrigin = codeOrigin;
+        currentFrameInfo = WTF::move(frameInfo);
 
         auto location = linkBuffer.locationOf<DisassemblyPtrTag>(entry.label);
-        uint32_t codeOffset = static_cast<uint32_t>(location.dataLocation<uintptr_t>() - reinterpret_cast<uintptr_t>(codeStart));
-        debugInfo->codeEntries.append({ codeOffset, lineColumn, provider.releaseNonNull() });
+        currentCodeOffset = static_cast<uint32_t>(location.dataLocation<uintptr_t>() - reinterpret_cast<uintptr_t>(codeStart));
     }
+    flush();
+
+    // Ensure the first entry covers offset 0 so the initial code region is attributed.
+    if (!debugInfo->codeEntries.isEmpty())
+        debugInfo->codeEntries[0].codeOffset = 0;
 
     linkBuffer.setSourceCodeDumpDebugInfo(WTF::move(debugInfo));
 }

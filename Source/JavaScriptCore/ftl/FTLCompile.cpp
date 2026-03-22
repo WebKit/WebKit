@@ -47,6 +47,7 @@
 #include "LinkBuffer.h"
 #include "Options.h"
 #include "PCToCodeOriginMap.h"
+#include "SourceCodeDumpUtils.h"
 #include "ThunkGenerators.h"
 #include <wtf/RecursableLambda.h>
 #include <wtf/SetForScope.h>
@@ -114,22 +115,22 @@ static void collectSourceCodeDumpDebugInfo(State& state, CodeBlock* codeBlock)
     if (!Options::useSourceCodeDump() || !state.proc->needsPCToOriginMap())
         return;
 
-    auto debugInfo = makeUnique<SourceCodeDumpDebugInfo>(codeBlock->inferredName());
+    auto debugInfo = makeUnique<SourceCodeDumpDebugInfo>(functionNameForJITDump(LinkBuffer::Profile::FTL, codeBlock));
 
     auto& originMap = state.proc->pcToOriginMap();
     void* codeStart = state.b3CodeLinkBuffer->entrypoint<DisassemblyPtrTag>().untaggedPtr();
 
+    UncheckedKeyHashMap<CodeOrigin, Ref<SourceCodeDumpDebugInfo::FrameInfo>> frameInfoCache;
+
     CodeOrigin currentOrigin;
     std::optional<uint32_t> currentCodeOffset;
-    LineColumn currentLineColumn;
-    SourceProvider* currentProvider = nullptr;
+    RefPtr<SourceCodeDumpDebugInfo::FrameInfo> currentFrameInfo;
     auto flush = [&] {
-        if (currentCodeOffset && currentProvider)
-            debugInfo->codeEntries.append({ currentCodeOffset.value(), currentLineColumn, *currentProvider });
+        if (currentCodeOffset && currentFrameInfo)
+            debugInfo->codeEntries.append({ currentCodeOffset.value(), currentFrameInfo.releaseNonNull() });
         currentOrigin = CodeOrigin();
         currentCodeOffset = std::nullopt;
-        currentLineColumn = { };
-        currentProvider = nullptr;
+        currentFrameInfo = nullptr;
     };
 
     for (auto& range : originMap.ranges()) {
@@ -149,25 +150,21 @@ static void collectSourceCodeDumpDebugInfo(State& state, CodeBlock* codeBlock)
 
         flush();
 
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame();
-        CodeBlock* originCodeBlock = inlineCallFrame
-            ? inlineCallFrame->baselineCodeBlock.get()
-            : codeBlock;
-        if (!originCodeBlock)
-            continue;
-
-        BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
-        if (bytecodeIndex.offset() >= originCodeBlock->instructionsSize())
+        auto frameInfo = resolveSourceCodeDumpFrameInfo(codeOrigin, codeBlock, LinkBuffer::Profile::FTL, frameInfoCache, debugInfo->functionNames);
+        if (!frameInfo)
             continue;
 
         currentOrigin = codeOrigin;
-        currentLineColumn = originCodeBlock->lineColumnForBytecodeIndex(bytecodeIndex);
-        currentProvider = originCodeBlock->ownerExecutable()->source().provider();
+        currentFrameInfo = WTF::move(frameInfo);
 
         auto location = state.b3CodeLinkBuffer->locationOf<DisassemblyPtrTag>(range.label);
         currentCodeOffset = static_cast<uint32_t>(location.dataLocation<uintptr_t>() - reinterpret_cast<uintptr_t>(codeStart));
     }
     flush();
+
+    // Ensure the first entry covers offset 0 so the initial code region is attributed.
+    if (!debugInfo->codeEntries.isEmpty())
+        debugInfo->codeEntries[0].codeOffset = 0;
 
     state.b3CodeLinkBuffer->setSourceCodeDumpDebugInfo(WTF::move(debugInfo));
 }

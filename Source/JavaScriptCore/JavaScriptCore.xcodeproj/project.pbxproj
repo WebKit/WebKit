@@ -699,6 +699,7 @@
 		141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 141448CC13A1783700F5BA1A /* TinyBloomFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14150133154BB13F005D8C98 /* WeakSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 14150132154BB13F005D8C98 /* WeakSetInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14201D591DECF26A00904BD3 /* SourceCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14201D581DECF26A00904BD3 /* SourceCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5CD0000000000000000000A3 /* SourceCodeDumpUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD0000000000000000000A2 /* SourceCodeDumpUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D77C0ED20D7300B89619 /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D77B0ED20D7300B89619 /* Interpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D8DC0ED2205B00B89619 /* CallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D9300ED22D7000B89619 /* JIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D92E0ED22D7000B89619 /* JIT.h */; };
@@ -3771,6 +3772,8 @@
 		141448CC13A1783700F5BA1A /* TinyBloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyBloomFilter.h; sourceTree = "<group>"; };
 		14150132154BB13F005D8C98 /* WeakSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakSetInlines.h; sourceTree = "<group>"; };
 		14201D581DECF26A00904BD3 /* SourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceCode.h; sourceTree = "<group>"; };
+		5CD0000000000000000000A1 /* SourceCodeDumpUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceCodeDumpUtils.cpp; sourceTree = "<group>"; };
+		5CD0000000000000000000A2 /* SourceCodeDumpUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceCodeDumpUtils.h; sourceTree = "<group>"; };
 		1421359A0A677F4F00A8195E /* JSBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBase.cpp; sourceTree = "<group>"; };
 		142711380A460BBB0080EEEA /* JSBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBase.h; sourceTree = "<group>"; };
 		1429D77B0ED20D7300B89619 /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
@@ -10186,6 +10189,8 @@
 				865DA0C425B8957400875772 /* SetPrivateBrandVariant.h */,
 				E33B33352B9BA14E0011E80F /* SharedJITStubSet.cpp */,
 				E33B33342B9BA14E0011E80F /* SharedJITStubSet.h */,
+				5CD0000000000000000000A1 /* SourceCodeDumpUtils.cpp */,
+				5CD0000000000000000000A2 /* SourceCodeDumpUtils.h */,
 				5350356427147E5900EC1A7E /* SourceID.h */,
 				0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */,
 				0FD82E4F141DAEA100179C94 /* SpeculatedType.h */,
@@ -12353,6 +12358,7 @@
 				E3F23A801ECF13F500978D99 /* SnippetReg.h in Headers */,
 				E3F23A7F1ECF13EE00978D99 /* SnippetSlowPathCalls.h in Headers */,
 				14201D591DECF26A00904BD3 /* SourceCode.h in Headers */,
+				5CD0000000000000000000A3 /* SourceCodeDumpUtils.h in Headers */,
 				70B791911C024A13002481E2 /* SourceCodeKey.h in Headers */,
 				5350356527147E5A00EC1A7E /* SourceID.h in Headers */,
 				2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */,
