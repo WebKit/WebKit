@@ -931,6 +931,20 @@ void WebProcessProxy::removePagePendingClose(WebPageProxyIdentifier pageID)
     m_pagesPendingClose.remove(pageID);
 }
 
+bool WebProcessProxy::hasCommittedClientOrigin(const WebCore::ClientOrigin& clientOrigin) const
+{
+    if (isRunningWorkers()) {
+        ASSERT(m_site);
+        return Site { clientOrigin.topOrigin } == *m_site && Site { clientOrigin.clientOrigin } == *m_site;
+    }
+    return m_committedClientOrigins.contains(clientOrigin);
+}
+
+void WebProcessProxy::didCommitLoadClientOrigin(WebCore::ClientOrigin&& clientOrigin)
+{
+    m_committedClientOrigins.add(WTF::move(clientOrigin));
+}
+
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
     auto& users = m_visitedLinkStoresWithUsers.ensure(visitedLinkStore, [] {

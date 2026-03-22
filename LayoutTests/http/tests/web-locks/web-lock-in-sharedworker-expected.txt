@@ -1,0 +1,3 @@
+This tests acquiring a web lock in a shared worker. You should see PASS below
+
+PASS

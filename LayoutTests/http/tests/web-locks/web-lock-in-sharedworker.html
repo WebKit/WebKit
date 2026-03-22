@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => testRunner.notifyDone(), 3000);
+}
+
+const worker = new SharedWorker('./resources/shared-worker.js');
+worker.port.onmessage = (event) => {
+    result.textContent = event.data;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+<p>This tests acquiring a web lock in a shared worker. You should see PASS below</p>
+<div id="result">Running</div>
+</body>
+</html>
