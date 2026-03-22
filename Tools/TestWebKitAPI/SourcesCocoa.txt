@@ -195,6 +195,7 @@ Tests/WebKitCocoa/MediaSession.mm @nonARC
 Tests/WebKitCocoa/MediaType.mm @nonARC
 Tests/WebKitCocoa/MemoryFootprintThreshold.mm @nonARC
 Tests/WebKitCocoa/MessagePortProviders.mm @nonARC
+Tests/WebKitCocoa/MessagePortSecurity.mm @nonARC
 Tests/WebKitCocoa/ModalAlerts.mm @nonARC
 Tests/WebKitCocoa/ModelProcess.mm @nonARC
 Tests/WebKitCocoa/MouseSupportUIDelegate.mm @nonARC
