@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<title>View transitions: :active-view-transition-type() supports ident()</title>
+<link rel="help" href="https://drafts.csswg.org/css-view-transitions-2/#selectordef-active-view-transition-type">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#ident">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+<script>
+test_valid_selector(
+  "html:active-view-transition-type(ident(foo))",
+  "html:active-view-transition-type(foo)"
+);
+test_valid_selector(
+  "html:active-view-transition-type(ident(\"my\" \"type\"), ident(ba 1))",
+  "html:active-view-transition-type(mytype, ba1)"
+);
+test_valid_selector(
+  "html:active-view-transition-type(ident(-- foo))",
+  "html:active-view-transition-type(--foo)"
+);
+
+test_invalid_selector("html:active-view-transition-type(ident())");
+test_invalid_selector("html:active-view-transition-type(ident( ))");
+test_invalid_selector("html:active-view-transition-type(ident(1.5))");
+test_invalid_selector("html:active-view-transition-type(ident(calc(1 + 2)))");
+test_invalid_selector("html:active-view-transition-type(ident(5px))");
+</script>
