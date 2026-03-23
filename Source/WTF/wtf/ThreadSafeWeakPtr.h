@@ -239,9 +239,10 @@ public:
             bits -= refIncrement;
             newStrongOnlyRefCount = bits;
             return true;
-        }, std::memory_order_relaxed);
+        }, std::memory_order_release);
         if (didDerefStrongOnly) {
             if (newStrongOnlyRefCount == strongOnlyFlag) {
+                std::atomic_thread_fence(std::memory_order_acquire);
                 ASSERT(m_bits.exchangeOr(destructionStartedFlag) == newStrongOnlyRefCount);
                 SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto deleteObject = [this] {
                     delete static_cast<const T*>(this);
