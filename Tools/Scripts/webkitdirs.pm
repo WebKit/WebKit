@@ -1571,11 +1571,11 @@ sub safariPath
         }
     }
 
-    if ($safariBundle) {
-        $safariPath = "$safariBundle/Contents/MacOS/Safari";
-    } else {
-        $safariPath = "/Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment";
+    if (!$safariBundle) {
+        $safariBundle = "/Applications/Safari.app";
     }
+
+    $safariPath = "$safariBundle/Contents/MacOS/Safari";
 
     die "Can't find executable at $safariPath.\n" if !-x $safariPath;
     return $safariPath;
