@@ -568,6 +568,7 @@ void FontCascadeFonts::pruneSystemFallbacks()
         });
     }
     m_systemFallbackFontSet.clear();
+    m_shapedTextCache.clear();
 }
 
 const CachedShapedText* FontCascadeFonts::getOrCreateCachedShapedText(const TextRun& run, const FontCascade& fontCascade)
