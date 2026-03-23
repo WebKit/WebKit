@@ -159,7 +159,7 @@ void EXTDisjointTimerQuery::endQueryEXT(GCGLenum target)
     context->graphicsContextGL()->endQueryEXT(target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    context->scriptExecutionContext()->eventLoop().queueMicrotask([query = WTF::move(context->m_activeQuery)] {
+    context->protectedScriptExecutionContext()->checkedEventLoop()->queueMicrotask([query = context->m_activeQuery.releaseNonNull()] {
         query->makeResultAvailable();
     });
 }
@@ -190,8 +190,8 @@ void EXTDisjointTimerQuery::queryCounterEXT(WebGLTimerQueryEXT& query, GCGLenum 
     context->graphicsContextGL()->queryCounterEXT(query.object(), target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    context->scriptExecutionContext()->eventLoop().queueMicrotask([&] {
-        query.makeResultAvailable();
+    context->protectedScriptExecutionContext()->checkedEventLoop()->queueMicrotask([query = Ref { query }] {
+        query->makeResultAvailable();
     });
 }
 
