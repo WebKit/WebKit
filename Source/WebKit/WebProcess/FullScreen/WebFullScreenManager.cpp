@@ -439,7 +439,9 @@ void WebFullScreenManager::performEnterFullScreen()
     }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
+#if ENABLE(VIDEO)
     FullScreenMediaDetails mediaDetails;
+#endif
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     if (m_pendingImageMediaDetails) {
         mediaDetails = WTF::move(*m_pendingImageMediaDetails);

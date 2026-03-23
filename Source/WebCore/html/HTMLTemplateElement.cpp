@@ -36,6 +36,7 @@
 #include "DocumentFragment.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
+#include "EventTargetInlines.h"
 #include "HTMLNames.h"
 #include "NodeInlines.h"
 #include "NodeTraversal.h"

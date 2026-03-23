@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class IntRect;
+class MediaPlayer;
 class MediaPlayerPrivateGStreamer;
 
 enum class ElementRuntimeCharacteristics : uint8_t {

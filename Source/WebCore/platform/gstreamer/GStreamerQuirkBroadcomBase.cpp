@@ -21,11 +21,10 @@
 #include "config.h"
 #include "GStreamerQuirkBroadcomBase.h"
 
-#include <string.h>
-
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include <string.h>
 
 namespace WebCore {
 
@@ -190,4 +189,4 @@ GStreamerQuirkBroadcomBase::GStreamerQuirkBroadcomBaseState& GStreamerQuirkBroad
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

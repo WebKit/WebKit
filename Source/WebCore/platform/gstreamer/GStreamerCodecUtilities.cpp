@@ -76,6 +76,7 @@ std::pair<CStringView, String> GStreamerCodecUtilities::parseH264ProfileAndLevel
     return { profile, level };
 }
 
+#if ENABLE(VIDEO)
 static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(const String& codecString)
 {
     auto outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
@@ -110,6 +111,7 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(con
     auto inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, pixelFormat.ascii().data(), nullptr));
     return { inputCaps, outputCaps };
 }
+#endif // ENABLE(VIDEO)
 
 CStringView GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
 {
@@ -144,6 +146,7 @@ CStringView GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
     return CStringView::unsafeFromUTF8(gst_codec_utils_h265_get_profile(profileTierLevel.data(), profileTierLevel.size()));
 }
 
+#if ENABLE(VIDEO)
 static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h265CapsFromCodecString(const String& codecString)
 {
     auto outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
@@ -507,11 +510,13 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(cons
     GST_DEBUG("Codec %s maps to input %" GST_PTR_FORMAT " and output %" GST_PTR_FORMAT, codecString.ascii().data(), inputCaps.get(), outputCaps.get());
     return { inputCaps, outputCaps };
 }
+#endif // ENABLE(VIDEO)
 
 std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> GStreamerCodecUtilities::capsFromCodecString(const String& codecString, const IntSize& size, std::optional<double> frameRate)
 {
     ensureDebugCategoryInitialized();
 
+#if ENABLE(VIDEO)
     auto completeCaps = [&](GRefPtr<GstCaps>&& caps) -> GRefPtr<GstCaps> {
         if (!caps)
             return nullptr;
@@ -553,6 +558,11 @@ std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> GStreamerCodecUtilities::capsFromC
         auto [inputCaps, outputCaps] = h265CapsFromCodecString(codecString);
         return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
+#else
+    UNUSED_PARAM(codecString);
+    UNUSED_PARAM(size);
+    UNUSED_PARAM(frameRate);
+#endif // ENABLE(VIDEO)
 
     return { nullptr, nullptr };
 }

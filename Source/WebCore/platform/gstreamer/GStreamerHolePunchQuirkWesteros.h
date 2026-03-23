@@ -20,7 +20,7 @@
 
 #pragma once
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerQuirks.h"
 
@@ -37,4 +37,4 @@ public:
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

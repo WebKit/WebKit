@@ -22,9 +22,10 @@
 #include "GStreamerHolePunchQuirkWesteros.h"
 #include "MediaPlayerPrivateGStreamer.h"
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include "IntRect.h"
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -63,4 +64,4 @@ bool GStreamerHolePunchQuirkWesteros::setHolePunchVideoRectangle(GstElement* vid
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

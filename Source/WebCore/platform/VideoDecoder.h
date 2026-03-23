@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(VIDEO)
+
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/ProcessIdentity.h>
 #include <span>
@@ -94,3 +96,5 @@ protected:
 };
 
 }
+
+#endif // ENABLE(VIDEO)

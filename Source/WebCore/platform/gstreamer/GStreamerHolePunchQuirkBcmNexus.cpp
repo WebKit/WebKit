@@ -21,10 +21,11 @@
 #include "config.h"
 #include "GStreamerHolePunchQuirkBcmNexus.h"
 
-#include "GStreamerCommon.h"
-#include <wtf/text/MakeString.h>
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#if USE(GSTREAMER)
+#include "GStreamerCommon.h"
+#include "IntRect.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -40,4 +41,4 @@ bool GStreamerHolePunchQuirkBcmNexus::setHolePunchVideoRectangle(GstElement* vid
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

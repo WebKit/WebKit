@@ -21,9 +21,10 @@
 #include "config.h"
 #include "GStreamerQuirkBcmNexus.h"
 
-#if USE(GSTREAMER)
+#if ENABLE(WEB_AUDIO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include "IntRect.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -66,4 +67,4 @@ std::optional<bool> GStreamerQuirkBcmNexus::isHardwareAccelerated(GstElementFact
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(WEB_AUDIO) && USE(GSTREAMER)

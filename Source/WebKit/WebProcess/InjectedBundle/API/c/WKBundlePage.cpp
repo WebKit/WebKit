@@ -727,7 +727,7 @@ void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef pageRef, WKStringRef mode
     if (displayMode.has_value())
         captionPreferences->setCaptionDisplayMode(displayMode.value());
 #else
-    UNUSED_PARAM(page);
+    UNUSED_PARAM(pageRef);
     UNUSED_PARAM(mode);
 #endif
 }
@@ -741,7 +741,7 @@ WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPrefere
     Ref captionPreferences = protect(page->group())->ensureCaptionPreferences();
     return WebKit::toAPILeakingRef(API::CaptionUserPreferencesTestingModeToken::create(captionPreferences.get()));
 #else
-    UNUSED_PARAM(page);
+    UNUSED_PARAM(pageRef);
     return { };
 #endif
 }

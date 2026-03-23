@@ -224,6 +224,7 @@ TEST_F(GStreamerTest, capsFromCodecString)
 #undef TEST_CAPS_FROM_CODEC_FULL
 }
 
+#if ENABLE(VIDEO)
 TEST_F(GStreamerTest, displayAspectRatioCalculation)
 {
 #define TEST_DAR_CALCULATION(videoWidth, videoHeight, parN, parD, displayWidth, displayHeight) G_STMT_START { \
@@ -356,6 +357,8 @@ TEST_F(GStreamerTest, protocolValidationEnvironmentVariable)
 
     g_unsetenv("WEBKIT_GST_ALLOWED_URI_PROTOCOLS");
 }
+#endif // ENABLE(VIDEO)
+
 } // namespace TestWebKitAPI
 
 #endif // USE(GSTREAMER)

@@ -26,9 +26,10 @@
 #include "config.h"
 #include "GStreamerHolePunchQuirkRialto.h"
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include "IntRect.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include <wtf/text/MakeString.h>
 
@@ -60,4 +61,4 @@ bool GStreamerHolePunchQuirkRialto::setHolePunchVideoRectangle(GstElement* video
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

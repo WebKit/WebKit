@@ -20,7 +20,7 @@
 
 #pragma once
 
-#if USE(GSTREAMER)
+#if ENABLE(WEB_AUDIO) && USE(GSTREAMER)
 
 #include "GStreamerQuirkBroadcomBase.h"
 #include "GStreamerQuirks.h"
@@ -43,4 +43,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(WEB_AUDIO) && USE(GSTREAMER)

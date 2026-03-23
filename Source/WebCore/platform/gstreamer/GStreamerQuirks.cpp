@@ -36,6 +36,7 @@
 #include "GStreamerQuirkRealtek.h"
 #include "GStreamerQuirkRialto.h"
 #include "GStreamerQuirkWesteros.h"
+#include "IntRect.h"
 #include <optional>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
@@ -154,6 +155,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
         return;
     }
 
+#if ENABLE(VIDEO)
     // TODO: Maybe check this is coherent (somehow) with the quirk(s) selected above.
     if (WTF::equalLettersIgnoringASCIICase(identifierString.span(), "bcmnexus"_s))
         m_holePunchQuirk = WTF::makeUnique<GStreamerHolePunchQuirkBcmNexus>();
@@ -165,6 +167,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
         m_holePunchQuirk = WTF::makeUnique<GStreamerHolePunchQuirkFake>();
     else
         GST_WARNING("HolePunch quirk %s un-supported.", identifierString.utf8());
+#endif // ENABLE(VIDEO)
 }
 
 bool GStreamerQuirksManager::isEnabled() const

@@ -34,6 +34,7 @@
 #include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
+#include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleTextAlign.h"
 #include <wtf/TZoneMallocInlines.h>
