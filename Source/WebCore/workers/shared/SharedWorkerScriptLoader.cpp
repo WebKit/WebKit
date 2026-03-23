@@ -29,6 +29,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "InspectorInstrumentation.h"
+#include "SecurityOrigin.h"
 #include "SharedWorker.h"
 #include "WorkerFetchResult.h"
 #include "WorkerInitializationData.h"
@@ -84,6 +85,15 @@ void SharedWorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionConte
     }
 
     auto fetchResult = m_loader->fetchResult();
+
+    // These URLs carry no HTTP headers; inherit the creating document's
+    // CSP, matching Worker::didReceiveResponse().
+    if (scriptExecutionContext) {
+        const auto& responseURL = fetchResult.responseURL;
+        if (responseURL.protocolIsBlob() || responseURL.protocolIsFile() || SecurityOrigin::create(responseURL)->isOpaque())
+            fetchResult.contentSecurityPolicy = scriptExecutionContext->checkedContentSecurityPolicy()->responseHeaders();
+    }
+
     if (fetchResult.referrerPolicy.isNull() && scriptExecutionContext)
         fetchResult.referrerPolicy = referrerPolicyToString(scriptExecutionContext->referrerPolicy());
     m_completionHandler(WTF::move(fetchResult), WorkerInitializationData {
