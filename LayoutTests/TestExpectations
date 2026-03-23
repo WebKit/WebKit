@@ -7816,6 +7816,7 @@ inspector/css/getMatchedStylesForNodeNestingStyleGrouping.html [ Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=266843 flakey tests with racey promise console.logs
 imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]
+imported/w3c/web-platform-tests/dom/observable/ [ Skip ]
 
 # It is failing only via WebKit Test Runner but passes on WPT dashboard
 imported/w3c/web-platform-tests/dom/xslt/encoding-single-chunk.html [ ImageOnlyFailure ]
