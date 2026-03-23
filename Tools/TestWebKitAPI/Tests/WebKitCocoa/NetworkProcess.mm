@@ -34,12 +34,14 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKErrorPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKScriptMessageHandler.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKDataTask.h>
 #import <WebKit/_WKDataTaskDelegate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <mach/mach_init.h>
 #import <mach/mach_port.h>
@@ -971,3 +973,131 @@ TEST(NetworkProcess, URLSchemeHandlerWasPrivateRelayed)
 
     EXPECT_EQ(NO, [webView _wasPrivateRelayed]);
 }
+
+#if ENABLE(IPC_TESTING_API)
+
+static bool attackerReceivedMessage = false;
+static bool attackerReady = false;
+static RetainPtr<NSString> interceptedMessageName;
+
+@interface BroadcastChannelSpoofMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation BroadcastChannelSpoofMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    NSString *body = [message body];
+    if ([body isEqualToString:@"ready"])
+        attackerReady = true;
+    else if ([body hasPrefix:@"INTERCEPTED:"]) {
+        interceptedMessageName = body;
+        attackerReceivedMessage = true;
+    }
+}
+@end
+
+static RetainPtr<WKWebViewConfiguration> createConfigurationWithIPCTestingAPI()
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    return configuration;
+}
+
+static constexpr auto attackerHTML = R"IPCRESOURCE(
+<!DOCTYPE html><html><body>
+<script src='/coreipc.js'></script>
+<script>
+if (!window.IPC)
+    webkit.messageHandlers.test.postMessage('ready');
+else {
+    CoreIPC.Networking.NetworkBroadcastChannelRegistry.RegisterChannel(0, {
+        origin: {
+            topOrigin: {
+                data: {
+                    variantType: 'WebCore::SecurityOriginData::Tuple',
+                    variant: { protocol: 'http', host: 'victim.example', port: { } }
+                }
+            },
+            clientOrigin: {
+                data: {
+                    variantType: 'WebCore::SecurityOriginData::Tuple',
+                    variant: { protocol: 'http', host: 'victim.example', port: { } }
+                }
+            }
+        },
+        name: 'secret'
+    });
+
+    IPC.addIncomingMessageListener('Networking', (msg) => {
+        const postMsgName = IPC.messages.WebBroadcastChannelRegistry_PostMessageToRemote?.name;
+        if (postMsgName && msg.name === postMsgName)
+            webkit.messageHandlers.test.postMessage('INTERCEPTED:' + msg.name);
+    });
+
+    webkit.messageHandlers.test.postMessage('ready');
+}
+</script></body></html>"
+)IPCRESOURCE"_s;
+
+TEST(NetworkProcess, BroadcastChannelOriginSpoof)
+{
+    using namespace TestWebKitAPI;
+
+    attackerReceivedMessage = false;
+    attackerReady = false;
+    interceptedMessageName = nil;
+
+    // For the types involved in this attack, we need coreipc.js
+    NSURL *coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
+    if (!coreIPCURL)
+        coreIPCURL = [NSBundle.mainBundle URLForResource:@"coreipc" withExtension:@"js"];
+    ASSERT_TRUE(coreIPCURL);
+    NSString *coreIPCJS = [NSString stringWithContentsOfURL:coreIPCURL encoding:NSUTF8StringEncoding error:nil];
+
+    HTTPServer server({
+        { "/attacker.html"_s, { attackerHTML } },
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, String(coreIPCJS) } },
+    });
+
+    auto configuration = createConfigurationWithIPCTestingAPI();
+
+    auto messageHandler = adoptNS([[BroadcastChannelSpoofMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"test"];
+
+    // The attacking page registers its connection to listen for broadcast channel messages
+    // that it otherwise should not receive.
+    auto attackerView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [attackerView loadRequest:server.request("/attacker.html"_s)];
+    Util::run(&attackerReady);
+
+    auto attackerPID = [attackerView _webProcessIdentifier];
+    EXPECT_NE(attackerPID, 0);
+
+    auto victimView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSString *victimHTML = @"<script>let bc = new BroadcastChannel('secret');</script>";
+    [victimView synchronouslyLoadHTMLString:victimHTML baseURL:[NSURL URLWithString:@"http://victim.example/"]];
+
+    auto victimPID = [victimView _webProcessIdentifier];
+    EXPECT_NE(victimPID, 0);
+    EXPECT_NE(attackerPID, victimPID);
+
+    bool finishedRunningScript = false;
+    [victimView evaluateJavaScript:@"bc.postMessage('sensitive-data')" completionHandler:[&](id, NSError *error) {
+        EXPECT_TRUE(!error);
+        finishedRunningScript = true;
+    }];
+    Util::run(&finishedRunningScript);
+
+    // Wait for the attacker to receive the intercepted message.
+    // If it doesn't happen within a second, it probably never will.
+    Util::runFor(&attackerReceivedMessage, 1_s);
+
+    EXPECT_FALSE([interceptedMessageName hasPrefix:@"INTERCEPTED:"]);
+}
+
+#endif // ENABLE(IPC_TESTING_API)
