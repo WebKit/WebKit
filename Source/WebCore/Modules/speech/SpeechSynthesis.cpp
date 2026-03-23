@@ -364,6 +364,18 @@ void SpeechSynthesis::simulateVoicesListChange()
         voicesDidChange();
 }
 
+void SpeechSynthesis::suspend(ReasonForSuspension)
+{
+    if (speaking())
+        cancel();
+}
+
+void SpeechSynthesis::stop()
+{
+    if (speaking())
+        cancel();
+}
+
 bool SpeechSynthesis::virtualHasPendingActivity() const
 {
     return m_voiceList && m_hasEventListener;

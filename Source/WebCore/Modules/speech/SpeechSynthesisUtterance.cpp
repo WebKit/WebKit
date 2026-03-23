@@ -102,7 +102,8 @@ void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, unsigned lo
         return;
     }
 
-    dispatchEvent(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
+    if (isAllowedToRunScript())
+        dispatchEvent(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
 }
 
 void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode errorCode)
@@ -112,7 +113,8 @@ void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, Speech
         return;
     }
 
-    dispatchEvent(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
+    if (isAllowedToRunScript())
+        dispatchEvent(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
 }
 
 void SpeechSynthesisUtterance::incrementActivityCountForEventDispatch()

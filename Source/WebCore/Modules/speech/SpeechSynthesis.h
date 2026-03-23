@@ -101,6 +101,8 @@ private:
     void voicesChanged() override;
 
     // ActiveDOMObject
+    void suspend(ReasonForSuspension) final;
+    void stop() final;
     bool virtualHasPendingActivity() const final;
 
     void startSpeakingImmediately(SpeechSynthesisUtterance&);

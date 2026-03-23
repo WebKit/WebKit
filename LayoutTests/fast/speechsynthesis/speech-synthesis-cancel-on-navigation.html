@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that speech synthesis is cancelled when the page enters the back-forward cache.');
+window.jsTestIsAsync = true;
+
+if (window.internals)
+    window.internals.enableMockSpeechSynthesizer();
+
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        testPassed("Page was restored from the page cache");
+        shouldBeFalse("speechSynthesis.speaking");
+        shouldBeFalse("speechSynthesis.pending");
+        finishJSTest();
+    }
+});
+
+var u = new SpeechSynthesisUtterance("This is a test utterance that should be cancelled on navigation");
+
+// Start speaking and navigate in a setTimeout after load to ensure the page is
+// fully loaded and has a proper history entry for back-forward cache eligibility.
+window.addEventListener("load", function() {
+    setTimeout(function() {
+        speechSynthesis.speak(u);
+        // The mock synthesizer fires didStartSpeaking synchronously, so speech
+        // is active right after speak() returns.
+        shouldBeTrue("speechSynthesis.speaking");
+        window.location.href = "../history/resources/page-cache-helper.html";
+    }, 0);
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
