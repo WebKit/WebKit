@@ -167,6 +167,31 @@ TEST(WTF, StringParsingBufferStringView)
     EXPECT_EQ(viewRemaining[1], 'c');
 }
 
+TEST(WTF, StringParsingBufferConsumeCount)
+{
+    StringView string { "abcdef"_s };
+    StringParsingBuffer parsingBuffer { string.span8() };
+
+    // Consume 3 characters; the returned span should contain only the consumed characters.
+    auto consumed = parsingBuffer.consume(3);
+    EXPECT_EQ(consumed.size(), 3u);
+    EXPECT_EQ(consumed[0], 'a');
+    EXPECT_EQ(consumed[1], 'b');
+    EXPECT_EQ(consumed[2], 'c');
+
+    // The buffer should have advanced past the consumed characters.
+    EXPECT_EQ(parsingBuffer.lengthRemaining(), 3u);
+    EXPECT_EQ(*parsingBuffer, 'd');
+
+    // Consume the rest.
+    auto remaining = parsingBuffer.consume(3);
+    EXPECT_EQ(remaining.size(), 3u);
+    EXPECT_EQ(remaining[0], 'd');
+    EXPECT_EQ(remaining[1], 'e');
+    EXPECT_EQ(remaining[2], 'f');
+    EXPECT_TRUE(parsingBuffer.atEnd());
+}
+
 TEST(WTF, StringParsingBufferReadCharactersForParsing)
 {
     auto latin1 = StringView { "abc"_s };

@@ -73,7 +73,7 @@ public:
     std::span<const CharacterType> consume(size_t count) LIFETIME_BOUND
     {
         ASSERT(count <= lengthRemaining());
-        auto result = m_data;
+        auto result = m_data.first(count);
         m_data = m_data.subspan(count);
         return result;
     }
