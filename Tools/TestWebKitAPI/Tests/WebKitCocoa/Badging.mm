@@ -39,6 +39,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
@@ -104,7 +105,16 @@ return "DONE";
     id innerBadge = badge;
     if (!innerBadge)
         innerBadge = [NSNull null];
-    EXPECT_TRUE([_expectedAppBadgeSequence[_appBadgeIndex++] isEqual:innerBadge]);
+
+    if (_expectedAppBadgeSequence)
+        EXPECT_TRUE([_expectedAppBadgeSequence[_appBadgeIndex++] isEqual:innerBadge]);
+    else {
+        // This badging delegate expects no badge updates, so getting any is bad news.
+        // But we'll still bump the _appBadgeIndex variable to register that we received
+        // a badge update for other parts of the test.
+        ++_appBadgeIndex;
+        FAIL();
+    }
 
     if (_serverURL) {
         if (!_shouldAllowOriginViolations)
@@ -538,3 +548,73 @@ TEST(Badging, ServiceWorkerOverride)
 
     EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 2);
 }
+
+#if ENABLE(IPC_TESTING_API)
+
+static constexpr auto badgeAttackBytes = R"TESTRESOURCE(
+<script src="coreipc.js"></script>
+<script>
+async function sendSpoofedBadgeIPC()
+{
+    const CoreIPC = new CoreIPCClass();
+
+    CoreIPC.UI.WebProcessProxy.SetAppBadgeFromWorker(0, {
+        origin: {
+            data: {
+                variantType: 'WebCore::SecurityOriginData::Tuple',
+                variant: {
+                    protocol: 'https',
+                    host: 'apple.com',
+                    port: { }
+                }
+            }
+        },
+        badge: {
+            optionalValue: 1337
+        }
+    });
+}
+</script>
+)TESTRESOURCE"_s;
+
+TEST(Badging, SetAppBadgeFromWorkerOriginSpoof)
+{
+    NSURL *coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
+    NSData *coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { badgeAttackBytes } },
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData } },
+    });
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    configuration.get().preferences._appBadgeEnabled = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+
+    auto badgeDelegate = adoptNS([BadgeDelegate new]);
+    badgeDelegate.get().expectedAppBadgeSequence = nil;
+
+    webView.get().UIDelegate = badgeDelegate.get();
+    configuration.get().websiteDataStore._delegate = badgeDelegate.get();
+
+    [webView synchronouslyLoadRequest:server.request("/"_s)];
+
+    static bool javascriptDone = false;
+    [webView callAsyncJavaScript:@"sendSpoofedBadgeIPC();" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        javascriptDone = true;
+    }];
+    TestWebKitAPI::Util::run(&javascriptDone);
+
+    // Give the IPC message time to be processed.
+    TestWebKitAPI::Util::spinRunLoop(30);
+
+    EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 0);
+}
+
+#endif // ENABLE(IPC_TESTING_API)

@@ -2944,8 +2944,25 @@ void WebProcessProxy::unwrapCryptoKey(WrappedCryptoKey&& wrappedKey, CompletionH
 
 }
 
+bool WebProcessProxy::allowsFirstPartyAccess(const WebCore::RegistrableDomain& domain) const
+{
+    if (m_site)
+        return domain == m_site->domain();
+
+    switch (m_site.error()) {
+    case SiteState::NotYetSpecified:
+        return true;
+    case SiteState::MultipleSites:
+        // A web process under the MultipleSites categorization should not be sending badge updates.
+        return false;
+    case SiteState::SharedProcess:
+        return sharedProcessDomains().contains(domain);
+    }
+}
+
 void WebProcessProxy::setAppBadgeFromWorker(const SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
+    MESSAGE_CHECK(allowsFirstPartyAccess(WebCore::RegistrableDomain { origin }));
     protectedWebsiteDataStore()->workerUpdatedAppBadge(origin, badge);
 }
 
