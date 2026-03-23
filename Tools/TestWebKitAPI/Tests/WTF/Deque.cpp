@@ -188,4 +188,77 @@ TEST(WTF_Deque, MoveAssignmentOperator)
     }
 }
 
+TEST(WTF_Deque, RemoveAllMatching)
+{
+    Deque<int> deque = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+    // Remove even numbers.
+    size_t removed = deque.removeAllMatching([](int value) { return !(value % 2); });
+    EXPECT_EQ(4u, removed);
+    EXPECT_EQ(4u, deque.size());
+
+    // Verify remaining elements and their order.
+    auto it = deque.begin();
+    EXPECT_EQ(1, *it);
+    ++it;
+    EXPECT_EQ(3, *it);
+    ++it;
+    EXPECT_EQ(5, *it);
+    ++it;
+    EXPECT_EQ(7, *it);
+    ++it;
+    EXPECT_TRUE(it == deque.end());
+}
+
+TEST(WTF_Deque, RemoveAllMatchingNone)
+{
+    Deque<int> deque = { 1, 2, 3 };
+
+    size_t removed = deque.removeAllMatching([](int) { return false; });
+    EXPECT_EQ(0u, removed);
+    EXPECT_EQ(3u, deque.size());
+}
+
+TEST(WTF_Deque, RemoveAllMatchingAll)
+{
+    Deque<int> deque = { 1, 2, 3, 4 };
+
+    size_t removed = deque.removeAllMatching([](int) { return true; });
+    EXPECT_EQ(4u, removed);
+    EXPECT_TRUE(deque.isEmpty());
+}
+
+TEST(WTF_Deque, RemoveAllMatchingSingleElement)
+{
+    Deque<int> deque = { 42 };
+
+    size_t removed = deque.removeAllMatching([](int value) { return value == 42; });
+    EXPECT_EQ(1u, removed);
+    EXPECT_TRUE(deque.isEmpty());
+}
+
+TEST(WTF_Deque, RemoveFirstMatching)
+{
+    Deque<int> deque = { 1, 2, 3, 2, 4 };
+
+    bool found = deque.removeFirstMatching([](int value) { return value == 2; });
+    EXPECT_TRUE(found);
+    EXPECT_EQ(4u, deque.size());
+
+    // Only the first 2 should be removed.
+    auto it = deque.begin();
+    EXPECT_EQ(1, *it);
+    ++it;
+    EXPECT_EQ(3, *it);
+    ++it;
+    EXPECT_EQ(2, *it);
+    ++it;
+    EXPECT_EQ(4, *it);
+
+    // No match.
+    found = deque.removeFirstMatching([](int value) { return value == 99; });
+    EXPECT_FALSE(found);
+    EXPECT_EQ(4u, deque.size());
+}
+
 } // namespace TestWebKitAPI

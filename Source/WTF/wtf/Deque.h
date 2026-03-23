@@ -580,7 +580,7 @@ inline size_t Deque<T, inlineCapacity>::removeAllMatching(const Func& func)
         if (!func(value))
             append(WTFMove(value));
     }
-    return size() - oldSize;
+    return oldSize - size();
 }
 
 template<typename T, size_t inlineCapacity>
