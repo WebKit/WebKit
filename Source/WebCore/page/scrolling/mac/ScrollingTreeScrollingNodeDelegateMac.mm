@@ -60,8 +60,8 @@ void ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed()
 
 void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingStateScrollingNode& scrollingStateNode)
 {
-    CheckedRef horizontalScroller = m_scrollerPair->horizontalScroller();
-    CheckedRef verticalScroller = m_scrollerPair->verticalScroller();
+    Ref horizontalScroller = m_scrollerPair->horizontalScroller();
+    Ref verticalScroller = m_scrollerPair->verticalScroller();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::PainterForScrollbar)) {
         auto horizontalScrollbar = scrollingStateNode.horizontalScrollerImp();
