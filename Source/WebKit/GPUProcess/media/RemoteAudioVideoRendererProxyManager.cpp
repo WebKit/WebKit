@@ -224,6 +224,11 @@ void RemoteAudioVideoRendererProxyManager::addTrack(RemoteAudioVideoRendererIden
         return;
     }
     if (auto trackIdentifier = renderer->addTrack(type)) {
+        renderer->notifyTrackNeedsReenqueuing(*trackIdentifier, [weakThis = WeakPtr { *this }, identifier](TrackIdentifier trackIdentifier, const MediaTime& time) {
+            if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_renderers.contains(identifier))
+                protectedThis->m_gpuConnectionToWebProcess.get()->connection().send(Messages::AudioVideoRendererRemoteMessageReceiver::TrackNeedsReenqueuing(trackIdentifier, time, protectedThis->stateFor(identifier)), identifier);
+        });
+
         completionHandler(*trackIdentifier);
         return;
     }
